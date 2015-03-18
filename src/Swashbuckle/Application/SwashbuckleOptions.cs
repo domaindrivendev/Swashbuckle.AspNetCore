@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Swashbuckle.Application
+namespace Swashbuckle.Swagger.Application
 {
     public class SwashbuckleOptions
     {

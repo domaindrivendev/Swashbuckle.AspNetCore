@@ -1,7 +1,7 @@
 ﻿using System;
-using Swashbuckle.Swagger;
+using Swashbuckle.Swagger.Generator;
 
-namespace Swashbuckle.Application
+namespace Swashbuckle.Swagger.Application
 {
     public class InfoBuilder
     {

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using Newtonsoft.Json.Serialization;
 
-namespace Swashbuckle.Swagger
+namespace Swashbuckle.Swagger.Generator
 {
     public static class JsonPropertyExtensions
     {

@@ -5,7 +5,7 @@ using System.Text;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Converters;
 
-namespace Swashbuckle.Swagger
+namespace Swashbuckle.Swagger.Generator
 {
     public class SchemaGenerator
     {

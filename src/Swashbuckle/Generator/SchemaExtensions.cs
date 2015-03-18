@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json.Serialization;
 
-namespace Swashbuckle.Swagger
+namespace Swashbuckle.Swagger.Generator
 {
     public static class SchemaExtensions
     {

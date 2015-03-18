@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Swashbuckle.Test.Fixtures
+namespace Swashbuckle.Swagger.Fixtures
 {
     public class JsonAnnotatedType
     {

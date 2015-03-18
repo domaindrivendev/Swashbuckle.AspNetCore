@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Collections.ObjectModel;
-using Swashbuckle.Swagger;
+using Swashbuckle.Swagger.Generator;
 
-namespace Swashbuckle.Application
+namespace Swashbuckle.Swagger.Application
 {
     public class VersionInfoBuilder
     {

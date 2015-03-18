@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNet.Mvc;
 using Newtonsoft.Json.Serialization;
 
-namespace Swashbuckle.Swagger
+namespace Swashbuckle.Swagger.Generator
 {
     public static class JsonContractExtensions
     {

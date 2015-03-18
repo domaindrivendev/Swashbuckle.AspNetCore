@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using Swashbuckle.Swagger;
+using Swashbuckle.Swagger.Generator;
 
-namespace Swashbuckle.Application
+namespace Swashbuckle.Swagger.Application
 {
     public abstract class SecuritySchemeBuilder
     {

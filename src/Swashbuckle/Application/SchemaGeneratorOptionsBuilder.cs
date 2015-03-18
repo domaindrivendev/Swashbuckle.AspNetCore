@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Swashbuckle.Swagger;
+using Swashbuckle.Swagger.Generator;
 
-namespace Swashbuckle.Application
+namespace Swashbuckle.Swagger.Application
 {
     public class SchemaGeneratorOptionsBuilder
     {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNet.Mvc.ApplicationModels;
 using SampleApi.Controllers;
-using Swashbuckle.Application;
+using Swashbuckle.Swagger.Application;
 
 namespace SampleApi
 {

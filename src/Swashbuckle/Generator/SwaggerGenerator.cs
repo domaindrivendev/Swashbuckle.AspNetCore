@@ -6,7 +6,7 @@ using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Schema;
 using Microsoft.AspNet.Mvc.ModelBinding;
 
-namespace Swashbuckle.Swagger
+namespace Swashbuckle.Swagger.Generator
 {
     public class SwaggerGenerator : ISwaggerProvider
     {

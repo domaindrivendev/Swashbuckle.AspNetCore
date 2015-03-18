@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNet.Mvc.Description;
 
-namespace Swashbuckle.Swagger
+namespace Swashbuckle.Swagger.Generator
 {
     public interface IDocumentFilter
     {

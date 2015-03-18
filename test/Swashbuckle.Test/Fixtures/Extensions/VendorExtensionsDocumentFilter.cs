@@ -1,8 +1,8 @@
 ﻿using System;
 using Microsoft.AspNet.Mvc.Description;
-using Swashbuckle.Swagger;
+using Swashbuckle.Swagger.Generator;
 
-namespace Swashbuckle.Test.Fixtures.Extensions
+namespace Swashbuckle.Swagger.Fixtures.Extensions
 {
     public class VendorExtensionsDocumentFilter : IDocumentFilter
     {

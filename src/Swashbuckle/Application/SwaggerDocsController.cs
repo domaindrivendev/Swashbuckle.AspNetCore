@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNet.Mvc;
 using Microsoft.Framework.OptionsModel;
 using Newtonsoft.Json;
-using Swashbuckle.Swagger;
+using Swashbuckle.Swagger.Generator;
 
-namespace Swashbuckle.Application
+namespace Swashbuckle.Swagger.Application
 {
     [ApiExplorerSettings(IgnoreApi = true)]
     public class SwaggerDocsController : Controller

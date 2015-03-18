@@ -1,12 +1,11 @@
 ﻿using System;
 using Microsoft.Framework.DependencyInjection;
-using Microsoft.Framework.OptionsModel;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Description;
-using Swashbuckle.Swagger;
 using Newtonsoft.Json.Serialization;
+using Swashbuckle.Swagger.Generator;
 
-namespace Swashbuckle.Application
+namespace Swashbuckle.Swagger.Application
 {
     public static class ApplicationBuilderExtensions
     {

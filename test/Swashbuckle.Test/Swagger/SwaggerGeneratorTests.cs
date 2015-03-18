@@ -2,12 +2,12 @@
 using System.Linq;
 using Newtonsoft.Json.Serialization;
 using Xunit;
-using Swashbuckle.Swagger;
-using Swashbuckle.Application;
-using Swashbuckle.Test.Fixtures.ApiDescriptions;
-using Swashbuckle.Test.Fixtures.Extensions;
+using Swashbuckle.Swagger.Generator;
+using Swashbuckle.Swagger.Application;
+using Swashbuckle.Swagger.Fixtures.ApiDescriptions;
+using Swashbuckle.Swagger.Fixtures.Extensions;
 
-namespace Swashbuckle.Test.Swagger
+namespace Swashbuckle.Swagger
 {
     public class SwaggerGeneratorTests
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Swashbuckle.Test.Fixtures
+namespace Swashbuckle.Swagger.Fixtures
 {
     public abstract class PolymorphicType
     {

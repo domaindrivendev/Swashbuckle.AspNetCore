@@ -1,7 +1,7 @@
 ﻿using System;
-using Swashbuckle.Swagger;
+using Swashbuckle.Swagger.Generator;
 
-namespace Swashbuckle.Test.Fixtures.Extensions
+namespace Swashbuckle.Swagger.Fixtures.Extensions
 {
     public class VendorExtensionsSchemaFilter : ISchemaFilter
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Swashbuckle.Test.Fixtures
+namespace Swashbuckle.Swagger.Fixtures
 {
     public class ListOfSelf : List<ListOfSelf>
     {

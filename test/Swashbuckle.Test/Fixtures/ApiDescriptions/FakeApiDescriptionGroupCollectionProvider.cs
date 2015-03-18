@@ -10,7 +10,7 @@ using Microsoft.AspNet.Mvc.Routing;
 using Microsoft.AspNet.Mvc.ModelBinding;
 using Moq;
 
-namespace Swashbuckle.Test.Fixtures.ApiDescriptions
+namespace Swashbuckle.Swagger.Fixtures.ApiDescriptions
 {
     public class FakeApiDescriptionGroupCollectionProvider : IApiDescriptionGroupCollectionProvider
     {

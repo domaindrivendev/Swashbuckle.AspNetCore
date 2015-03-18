@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Swashbuckle.Swagger
+namespace Swashbuckle.Swagger.Generator
 {
     public interface ISchemaFilter
     {

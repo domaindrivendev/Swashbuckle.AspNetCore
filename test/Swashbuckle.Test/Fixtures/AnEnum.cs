@@ -1,4 +1,4 @@
-﻿namespace Swashbuckle.Test.Fixtures
+﻿namespace Swashbuckle.Swagger.Fixtures
 {
     public enum AnEnum
     {
