@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.Mvc;
+using Microsoft.Framework.OptionsModel;
 using Newtonsoft.Json;
 using Swashbuckle.Swagger;
 
@@ -9,7 +10,7 @@ namespace Swashbuckle.Application
     {
         private ISwaggerProvider _swaggerProvider;
 
-        public SwaggerDocsController(ISwaggerProvider swaggerProvider)
+        public SwaggerDocsController(ISwaggerProvider swaggerProvider, IOptions<SwashbuckleOptions> optionsAccessor)
         {
             _swaggerProvider = swaggerProvider;
         }

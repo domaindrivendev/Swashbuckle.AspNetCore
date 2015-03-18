@@ -2,6 +2,7 @@
 using Microsoft.AspNet.Mvc;
 using Microsoft.Framework.DependencyInjection;
 using Swashbuckle.Application;
+using System.Linq;
 
 namespace SampleApi
 {
@@ -11,7 +12,21 @@ namespace SampleApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.AddSwashbuckle();
+
+            services.AddSwashbuckle(s =>
+            {
+                //s.DocsRoute();
+
+                //s.ApiRoutUrl();
+                s.SwaggerGenerator(c =>
+                {
+                    c.ResolveConflictingActions(apiDescriptions =>
+                    {
+                        var maxParamCount = apiDescriptions.Max(apiDesc => apiDesc.ParameterDescriptions.Count());
+                        return apiDescriptions.First(apiDesc => apiDesc.ParameterDescriptions.Count == maxParamCount);
+                    });
+                });
+            });
 
             // TODO: Encapsulate below as default behavior behind AddSwashbuckle
             services.Configure<MvcOptions>(options =>

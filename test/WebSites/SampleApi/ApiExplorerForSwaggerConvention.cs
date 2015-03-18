@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.Mvc.ApplicationModels;
+using SampleApi.Controllers;
 using Swashbuckle.Application;
 
 namespace SampleApi
@@ -9,7 +10,8 @@ namespace SampleApi
         {
             foreach (var controller in application.Controllers)
             {
-                controller.ApiExplorer.IsVisible = controller.ControllerType != typeof(SwaggerDocsController);
+                controller.ApiExplorer.IsVisible = controller.ControllerType == typeof(JsonAnnotationsController);
+                    //controller.ControllerType != typeof(SwaggerDocsController);
                 controller.ApiExplorer.GroupName = controller.ControllerName;
             }
         }

@@ -147,17 +147,6 @@ namespace Swashbuckle.Test.Swagger
             Assert.Contains("ComplexType", swagger.definitions.Keys);
         }
 
-        [Fact]
-        public void GetSwagger_GeneratesMultipleQueryParameters_ForComplexParamsWithFromQueryAttribute()
-        {
-            var swaggerGenerator = Subject(setupApis: apis => apis
-                .Add("GET", "collection", nameof(ActionFixtures.AcceptsComplexTypeFromQuery)));
-
-            var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
-
-            var operation = swagger.paths["/collection"].get;
-            Assert.Equal(5, operation.parameters.Count);
-        }
 
         [Theory]
         [InlineData("collection/{param}", true)]
@@ -190,6 +179,21 @@ namespace Swashbuckle.Test.Swagger
             var param = swagger.paths["/collection"].get.parameters.First();
             Assert.Equal("param", param.name);
             Assert.Equal(expectedRequired, param.required);
+        }
+
+        [Fact]
+        public void GetSwagger_GeneratesQueryParameters_ForComplexParamsWithFromQueryAttribute()
+        {
+            var swaggerGenerator = Subject(setupApis: apis => apis
+                .Add("GET", "collection", nameof(ActionFixtures.AcceptsComplexTypeFromQuery)));
+
+            var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
+
+            var operation = swagger.paths["/collection"].get;
+            Assert.Equal(3, operation.parameters.Count);
+            Assert.Equal("Property1", operation.parameters[0].name);
+            Assert.Equal("Property2", operation.parameters[1].name);
+            Assert.Equal("Property3.Property1", operation.parameters[2].name);
         }
 
         [Theory]
@@ -428,7 +432,7 @@ namespace Swashbuckle.Test.Swagger
         }
 
         [Fact]
-        public void GetSwagger_HandlesNonBoundRouteParams()
+        public void GetSwagger_HandlesUnboundRouteParams()
         {
             var swaggerGenerator = Subject(setupApis: apis => apis
                 .Add("GET", "{version}/collection", nameof(ActionFixtures.AcceptsNothing)));
