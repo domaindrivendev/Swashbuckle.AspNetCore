@@ -7,7 +7,7 @@ using Swashbuckle.Swagger.Application;
 using Swashbuckle.Swagger.Fixtures.ApiDescriptions;
 using Swashbuckle.Swagger.Fixtures.Extensions;
 
-namespace Swashbuckle.Swagger
+namespace Swashbuckle.Swagger.Generator
 {
     public class SwaggerGeneratorTests
     {

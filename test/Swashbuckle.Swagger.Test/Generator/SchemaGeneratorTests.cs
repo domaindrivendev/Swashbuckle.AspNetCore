@@ -12,7 +12,7 @@ using Swashbuckle.Swagger.Fixtures;
 using Swashbuckle.Swagger.Fixtures.Extensions;
 using Swashbuckle.Swagger.Application;
 
-namespace Swashbuckle.Swagger
+namespace Swashbuckle.Swagger.Generator
 {
     public class SchemaGeneratorTests
     {
