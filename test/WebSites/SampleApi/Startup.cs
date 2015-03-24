@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Mvc;
+﻿using System.Linq;
+using Microsoft.AspNet.Builder;
 using Microsoft.Framework.DependencyInjection;
 using Swashbuckle.Swagger.Application;
-using System.Linq;
 
 namespace SampleApi
 {
@@ -15,23 +14,29 @@ namespace SampleApi
 
             services.AddSwashbuckle(s =>
             {
-                //s.DocsRoute();
+                //s.RouteTemplate("docs/{apiVersion}/swagger.json");
 
-                //s.ApiRoutUrl();
+                //s.RootUrl(request => "http://foo/api");
+
                 s.SwaggerGenerator(c =>
                 {
+                    c.Schemes(new[] { "http", "https" });
+
+                    c.SingleApiVersion("v1", "Swashbuckle Sample API")
+                        .Description("A sample API for testing Swashbuckle")
+                        .TermsOfService("Some terms ...");
+
                     c.ResolveConflictingActions(apiDescriptions =>
                     {
                         var maxParamCount = apiDescriptions.Max(apiDesc => apiDesc.ParameterDescriptions.Count());
                         return apiDescriptions.First(apiDesc => apiDesc.ParameterDescriptions.Count == maxParamCount);
                     });
                 });
-            });
 
-            // TODO: Encapsulate below as default behavior behind AddSwashbuckle
-            services.Configure<MvcOptions>(options =>
-            {
-                options.ApplicationModelConventions.Add(new ApiExplorerForSwaggerConvention());
+                s.SchemaGenerator(c =>
+                {
+                    c.DescribeAllEnumsAsStrings();
+                });
             });
         }
 

@@ -10,6 +10,7 @@ using Swashbuckle.Swagger.Generator;
 using Swashbuckle.Swagger.Application;
 using Swashbuckle.Swagger.Fixtures;
 using Swashbuckle.Swagger.Fixtures.Extensions;
+using Swashbuckle.Swagger.Application;
 
 namespace Swashbuckle.Swagger
 {

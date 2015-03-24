@@ -11,22 +11,22 @@ namespace Swashbuckle.Swagger.Generator
     public class SwaggerGenerator : ISwaggerProvider
     {
         private readonly IApiDescriptionGroupCollectionProvider _apiDescriptionsProvider;
-        private readonly IContractResolver _jsonContractResolver;
+        private readonly Func<ISchemaRegistry> _schemaRegistryFactory;
         private readonly SwaggerGeneratorOptions _options;
 
         public SwaggerGenerator(
             IApiDescriptionGroupCollectionProvider apiDescriptionsProvider,
-            IContractResolver jsonContractResolver,
+            Func<ISchemaRegistry> schemaRegistryFactory,
             SwaggerGeneratorOptions options = null)
         {
             _apiDescriptionsProvider = apiDescriptionsProvider;
-            _jsonContractResolver = jsonContractResolver;
+            _schemaRegistryFactory = schemaRegistryFactory;
             _options = options ?? new SwaggerGeneratorOptions();
         }
 
         public SwaggerDocument GetSwagger(string rootUrl, string apiVersion)
         {
-            var schemaRegistry = new SchemaGenerator(_jsonContractResolver);
+            var schemaRegistry = _schemaRegistryFactory();
             //_options.CustomSchemaMappings,
             //_options.SchemaFilters,
             //_options.IgnoreObsoleteProperties,
@@ -75,7 +75,7 @@ namespace Swashbuckle.Swagger.Generator
                 : allDescriptions.Where(apiDesc => _options.VersionSupportResolver(apiDesc, apiVersion));
         }
 
-        private PathItem CreatePathItem(IEnumerable<ApiDescription> apiDescriptions, SchemaGenerator schemaRegistry)
+        private PathItem CreatePathItem(IEnumerable<ApiDescription> apiDescriptions, ISchemaRegistry schemaRegistry)
         {
             var pathItem = new PathItem();
 
@@ -120,7 +120,7 @@ namespace Swashbuckle.Swagger.Generator
             return pathItem;
         }
 
-        private Operation CreateOperation(ApiDescription apiDescription, SchemaGenerator schemaRegistry)
+        private Operation CreateOperation(ApiDescription apiDescription, ISchemaRegistry schemaRegistry)
         {
             var groupName = _options.GroupNameSelector(apiDescription);
 
@@ -154,7 +154,7 @@ namespace Swashbuckle.Swagger.Generator
             return operation;
         }
 
-        private Parameter CreateParameter(ApiParameterDescription paramDesc, SchemaGenerator schemaRegistry)
+        private Parameter CreateParameter(ApiParameterDescription paramDesc, ISchemaRegistry schemaRegistry)
         {
             var parameter = new Parameter
             {

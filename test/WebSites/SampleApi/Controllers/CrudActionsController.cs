@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace SampleApi.Controllers
 {
+    [Route("/products")]
     public class CrudActionsController
     {
         [HttpPost("/products")]

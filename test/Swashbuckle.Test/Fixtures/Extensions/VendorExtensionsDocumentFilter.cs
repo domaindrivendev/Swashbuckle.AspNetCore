@@ -8,7 +8,7 @@ namespace Swashbuckle.Swagger.Fixtures.Extensions
     {
         public void Apply(
             SwaggerDocument swaggerDoc,
-            SchemaGenerator schemaRegistry,
+            ISchemaRegistry schemaRegistry,
             ApiDescriptionGroupCollection apiDescriptionGroups)
         {
             swaggerDoc.vendorExtensions.Add("X-property1", "value");

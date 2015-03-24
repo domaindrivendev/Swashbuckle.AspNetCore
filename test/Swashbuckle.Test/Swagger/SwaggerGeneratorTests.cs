@@ -456,7 +456,7 @@ namespace Swashbuckle.Swagger
 
             return new SwaggerGenerator(
                 apiDescriptionsProvider,
-                new DefaultContractResolver(),
+                () => new SchemaGenerator(new DefaultContractResolver()),
                 optionsBuilder.Build()
             );
         }

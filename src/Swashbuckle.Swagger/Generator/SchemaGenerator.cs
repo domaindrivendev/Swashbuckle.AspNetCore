@@ -7,7 +7,7 @@ using Newtonsoft.Json.Converters;
 
 namespace Swashbuckle.Swagger.Generator
 {
-    public class SchemaGenerator
+    public class SchemaGenerator : ISchemaRegistry
     {
         private readonly IContractResolver _jsonContractResolver;
         private readonly SchemaGeneratorOptions _options;

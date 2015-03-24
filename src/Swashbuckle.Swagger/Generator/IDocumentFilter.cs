@@ -4,6 +4,6 @@ namespace Swashbuckle.Swagger.Generator
 {
     public interface IDocumentFilter
     {
-        void Apply(SwaggerDocument swaggerDoc, SchemaGenerator schemaRegistry, ApiDescriptionGroupCollection apiDescriptionGroups);
+        void Apply(SwaggerDocument swaggerDoc, ISchemaRegistry schemaRegistry, ApiDescriptionGroupCollection apiDescriptionGroups);
     }
 }

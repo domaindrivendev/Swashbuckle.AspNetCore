@@ -1,9 +1,9 @@
-﻿{
+{
     "webroot": "wwwroot",
     "version": "1.0.0-*",
     "dependencies": {
         "Microsoft.AspNet.Server.IIS": "1.0.0-beta3",
-        "Swashbuckle": "1.0.0-*"
+        "Swashbuckle.Swagger": "1.0.0-*"
     },
     "frameworks": {
         "aspnet50": { }
