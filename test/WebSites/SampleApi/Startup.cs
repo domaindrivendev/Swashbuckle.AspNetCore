@@ -14,9 +14,9 @@ namespace SampleApi
 
             services.AddSwashbuckle(s =>
             {
-                //s.RouteTemplate("docs/{apiVersion}/swagger.json");
+                s.RouteTemplate = "docs/{apiVersion}/swagger.json";
 
-                //s.RootUrl(request => "http://foo/api");
+                s.RootUrlResolver = (request) => "http://foo/api";
 
                 s.SwaggerGenerator(c =>
                 {
