@@ -27,11 +27,6 @@ namespace Swashbuckle.Swagger.Generator
         public SwaggerDocument GetSwagger(string rootUrl, string apiVersion)
         {
             var schemaRegistry = _schemaRegistryFactory();
-            //_options.CustomSchemaMappings,
-            //_options.SchemaFilters,
-            //_options.IgnoreObsoleteProperties,
-            //_options.UseFullTypeNameInSchemaIds,
-            //_options.DescribeAllEnumsAsStrings);
 
             Info info;
             _options.ApiVersions.TryGetValue(apiVersion, out info);
@@ -57,9 +52,10 @@ namespace Swashbuckle.Swagger.Generator
                 securityDefinitions = _options.SecurityDefinitions
             };
 
+            var filterContext = new DocumentFilterContext(_apiDescriptionsProvider.ApiDescriptionGroups, schemaRegistry);
             foreach (var filter in _options.DocumentFilters)
             {
-                filter.Apply(swaggerDoc, schemaRegistry, _apiDescriptionsProvider.ApiDescriptionGroups);
+                filter.Apply(swaggerDoc, filterContext);
             }
 
             return swaggerDoc;
@@ -146,10 +142,11 @@ namespace Swashbuckle.Swagger.Generator
                 //deprecated = apiDescription.IsObsolete()
             };
 
-            //foreach (var filter in _options.OperationFilters)
-            //{
-            //    filter.Apply(operation, schemaRegistry, apiDescription);
-            //}
+            var filterContext = new OperationFilterContext(apiDescription, schemaRegistry);
+            foreach (var filter in _options.OperationFilters)
+            {
+                filter.Apply(operation, filterContext);
+            }
 
             return operation;
         }

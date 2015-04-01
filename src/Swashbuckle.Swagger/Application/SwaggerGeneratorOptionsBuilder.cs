@@ -15,12 +15,14 @@ namespace Swashbuckle.Swagger.Application
         private bool _ignoreObsoleteActions;
         private Func<ApiDescription, string> _groupNameSelector;
         private IComparer<string> _groupNameComparer;
+        private IList<Func<IOperationFilter>> _operationFilters;
         private IList<Func<IDocumentFilter>> _documentFilters;
         private Func<IEnumerable<ApiDescription>, ApiDescription> _conflictingActionsResolver;
 
         public SwaggerGeneratorOptionsBuilder()
         {
             _securitySchemeBuilders = new Dictionary<string, SecuritySchemeBuilder>();
+            _operationFilters = new List<Func<IOperationFilter>>();
             _documentFilters = new List<Func<IDocumentFilter>>();
 
             SingleApiVersion("v1", "API V1");
@@ -82,6 +84,17 @@ namespace Swashbuckle.Swagger.Application
             _groupNameComparer = groupNameComparer;
         }
 
+        public void OperationFilter<TFilter>()
+            where TFilter : IOperationFilter, new()
+        {
+            OperationFilter(() => new TFilter());
+        }
+
+        public void OperationFilter(Func<IOperationFilter> createFilter)
+        {
+            _operationFilters.Add(createFilter);
+        }
+
         public void DocumentFilter<TFilter>()
             where TFilter : IDocumentFilter, new()
         {
@@ -104,6 +117,7 @@ namespace Swashbuckle.Swagger.Application
             var securityDefinitions = _securitySchemeBuilders
                 .ToDictionary(entry => entry.Key, entry => entry.Value.Build());
 
+            var operationFilters = _operationFilters.Select(factory => factory());
             var documentFilters = _documentFilters.Select(factory => factory());
 
             return new SwaggerGeneratorOptions(
@@ -114,6 +128,7 @@ namespace Swashbuckle.Swagger.Application
                 ignoreObsoleteActions: _ignoreObsoleteActions,
                 groupNameSelector: _groupNameSelector,
                 groupNameComparer: _groupNameComparer,
+                operationFilters: operationFilters,
                 documentFilters: documentFilters,
                 conflictingActionsResolver: _conflictingActionsResolver);
         }

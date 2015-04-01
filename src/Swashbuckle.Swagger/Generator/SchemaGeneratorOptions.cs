@@ -7,14 +7,14 @@ namespace Swashbuckle.Swagger.Generator
     {
         public SchemaGeneratorOptions(
             IReadOnlyDictionary<Type, Func<Schema>> customTypeMappings = null,
-            IEnumerable<ISchemaFilter> schemaFilters = null,
+            IEnumerable<IModelFilter> modelFilters = null,
             bool ignoreObsoleteProperties = false,
             bool useFullTypeNameInSchemaIds = false,
             bool describeAllEnumsAsStrings = false,
             string schemaReferencePrefix = "#/definitions/")
         {
             CustomTypeMappings = customTypeMappings ?? new Dictionary<Type, Func<Schema>>();
-            SchemaFilters = schemaFilters ?? new ISchemaFilter[] { };
+            ModelFilters = modelFilters ?? new IModelFilter[] { };
             IgnoreObsoleteProperties = ignoreObsoleteProperties;
             UseFullTypeNameInSchemaIds = useFullTypeNameInSchemaIds;
             DescribeAllEnumsAsStrings = describeAllEnumsAsStrings;
@@ -23,7 +23,7 @@ namespace Swashbuckle.Swagger.Generator
 
         public IReadOnlyDictionary<Type, Func<Schema>> CustomTypeMappings { get; private set; }
 
-        public IEnumerable<ISchemaFilter> SchemaFilters { get; private set; }
+        public IEnumerable<IModelFilter> ModelFilters { get; private set; }
 
         public bool IgnoreObsoleteProperties { get; private set; }
 

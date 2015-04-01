@@ -144,9 +144,10 @@ namespace Swashbuckle.Swagger.Generator
                 type = "object"
             };
 
-            foreach (var filter in _options.SchemaFilters)
+            var filterContext = new ModelFilterContext(jsonContract.UnderlyingType, jsonContract, this);
+            foreach (var filter in _options.ModelFilters)
             {
-                filter.Apply(schema, this, jsonContract.UnderlyingType);
+                filter.Apply(schema, filterContext);
             }
 
             return schema;

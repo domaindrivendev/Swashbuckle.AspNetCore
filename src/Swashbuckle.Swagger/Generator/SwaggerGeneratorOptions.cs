@@ -16,6 +16,7 @@ namespace Swashbuckle.Swagger.Generator
             bool ignoreObsoleteActions = false,
             Func<ApiDescription, string> groupNameSelector = null,
             IComparer<string> groupNameComparer = null,
+            IEnumerable<IOperationFilter> operationFilters = null,
             IEnumerable<IDocumentFilter> documentFilters = null,
             Func<IEnumerable<ApiDescription>, ApiDescription> conflictingActionsResolver = null)
         {
@@ -26,6 +27,7 @@ namespace Swashbuckle.Swagger.Generator
             IgnoreObsoleteActions = ignoreObsoleteActions;
             GroupNameSelector = groupNameSelector ?? ((apiDesc) => apiDesc.GroupName);
             GroupNameComparer = groupNameComparer ?? Comparer<string>.Default;
+            OperationFilters = operationFilters ?? new List<IOperationFilter>();
             DocumentFilters = documentFilters ?? new List<IDocumentFilter>();
             ConflictingActionsResolver = conflictingActionsResolver ?? DefaultConflictingActionsResolver;
         }
@@ -43,6 +45,8 @@ namespace Swashbuckle.Swagger.Generator
         public Func<ApiDescription, string> GroupNameSelector { get; private set; }
 
         public IComparer<string> GroupNameComparer { get; private set; }
+
+        public IEnumerable<IOperationFilter> OperationFilters { get; private set; }
 
         public IEnumerable<IDocumentFilter> DocumentFilters { get; private set; }
 

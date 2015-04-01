@@ -9,7 +9,7 @@ namespace Swashbuckle.Swagger.Application
     public class SchemaGeneratorOptionsBuilder
     {
         private IDictionary<Type, Func<Schema>> _customTypeMappings;
-        private IList<Func<ISchemaFilter>> _schemaFilters;
+        private IList<Func<IModelFilter>> _modelFilters;
         private bool _ignoreObsoleteProperties;
         private bool _useFullTypeNameInSchemaIds;
         private bool _describeAllEnumsAsStrings;
@@ -18,7 +18,7 @@ namespace Swashbuckle.Swagger.Application
         public SchemaGeneratorOptionsBuilder()
         {
             _customTypeMappings = new Dictionary<Type, Func<Schema>>();
-            _schemaFilters = new List<Func<ISchemaFilter>>();
+            _modelFilters = new List<Func<IModelFilter>>();
         }
 
         public void MapType<T>(Func<Schema> createSchema)
@@ -26,15 +26,15 @@ namespace Swashbuckle.Swagger.Application
             _customTypeMappings[typeof(T)] = createSchema;
         }
 
-        public void SchemaFilter<TFilter>()
-            where TFilter : ISchemaFilter, new()
+        public void ModelFilter<TFilter>()
+            where TFilter : IModelFilter, new()
         {
-            SchemaFilter(() => new TFilter());
+            ModelFilter(() => new TFilter());
         }
 
-        public void SchemaFilter(Func<ISchemaFilter> createFilter)
+        public void ModelFilter(Func<IModelFilter> createFilter)
         {
-            _schemaFilters.Add(createFilter);
+            _modelFilters.Add(createFilter);
         }
 
         public void IgnoreObsoleteProperties()
@@ -54,11 +54,11 @@ namespace Swashbuckle.Swagger.Application
 
         public SchemaGeneratorOptions Build()
         {
-            var schemaFilters = _schemaFilters.Select(factory => factory());
+            var modelFilters = _modelFilters.Select(factory => factory());
 
             return new SchemaGeneratorOptions(
                 customTypeMappings: new ReadOnlyDictionary<Type, Func<Schema>>(_customTypeMappings),
-                schemaFilters: schemaFilters,
+                modelFilters: modelFilters,
                 ignoreObsoleteProperties: _ignoreObsoleteProperties,
                 useFullTypeNameInSchemaIds: _useFullTypeNameInSchemaIds,
                 describeAllEnumsAsStrings: _describeAllEnumsAsStrings

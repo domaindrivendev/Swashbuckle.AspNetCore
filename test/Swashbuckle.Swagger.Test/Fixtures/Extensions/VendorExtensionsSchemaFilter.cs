@@ -1,13 +1,12 @@
-﻿using System;
-using Swashbuckle.Swagger.Generator;
+﻿using Swashbuckle.Swagger.Generator;
 
 namespace Swashbuckle.Swagger.Fixtures.Extensions
 {
-    public class VendorExtensionsSchemaFilter : ISchemaFilter
+    public class VendorExtensionsSchemaFilter : IModelFilter
     {
-        public void Apply(Schema schema, ISchemaRegistry schemaRegistry, Type type)
+        public void Apply(Schema model, ModelFilterContext context)
         {
-            schema.vendorExtensions.Add("X-property1", "value");
+            model.vendorExtensions.Add("X-property1", "value");
         }
     }
 }

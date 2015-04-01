@@ -2,7 +2,6 @@
 using System.Linq;
 using Newtonsoft.Json.Serialization;
 using Xunit;
-using Swashbuckle.Swagger.Generator;
 using Swashbuckle.Swagger.Application;
 using Swashbuckle.Swagger.Fixtures.ApiDescriptions;
 using Swashbuckle.Swagger.Fixtures.Extensions;
@@ -399,6 +398,25 @@ namespace Swashbuckle.Swagger.Generator
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
 
             Assert.Equal(new[] { "/F", "/D", "/B", "/A" }, swagger.paths.Keys.ToArray());
+        }
+
+        [Fact]
+        public void GetSwagger_SupportsOptionToPostModifyOperations()
+        {
+            var swaggerGenerator = Subject(
+                setupApis: apis =>
+                {
+                    apis.Add("GET", "collection", nameof(ActionFixtures.ReturnsEnumerable));
+                },
+                setupOptions: opts =>
+                {
+                    opts.OperationFilter<VendorExtensionsOperationFilter>();
+                });
+
+            var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
+            
+            var operation = swagger.paths["/collection"].get;
+            Assert.NotEmpty(operation.vendorExtensions);
         }
 
         [Fact]
