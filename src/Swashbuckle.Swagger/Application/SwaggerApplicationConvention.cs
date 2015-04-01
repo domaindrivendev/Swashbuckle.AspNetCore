@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.AspNet.Mvc.ApplicationModels;
 
 namespace Swashbuckle.Swagger.Application
@@ -16,17 +17,32 @@ namespace Swashbuckle.Swagger.Application
         {
             foreach (var controller in application.Controllers)
             {
-                if (controller.ControllerType == typeof(SwaggerDocsController))
+                ApplyControllerConventions(controller);
+
+                foreach (var action in controller.Actions)
                 {
-                    controller.AttributeRoutes.First().Template = _routeTemplate;
-                    controller.ApiExplorer.IsVisible = false;
-                }
-                else
-                {
-                    controller.ApiExplorer.IsVisible = true;
-                    controller.ApiExplorer.GroupName = controller.ControllerName;
+                    ApplyActionConventions(action);
                 }
             }
+        }
+
+        private void ApplyControllerConventions(ControllerModel controller)
+        {
+            if (controller.ControllerType == typeof(SwaggerDocsController))
+            {
+                controller.AttributeRoutes.First().Template = _routeTemplate;
+                controller.ApiExplorer.IsVisible = false;
+            }
+            else
+            {
+                controller.ApiExplorer.IsVisible = true;
+                controller.ApiExplorer.GroupName = controller.ControllerName;
+            }
+        }
+
+        private void ApplyActionConventions(ActionModel action)
+        {
+            // TODO: Upgrade Mvc - later version will have Properties available here
         }
     }
 }

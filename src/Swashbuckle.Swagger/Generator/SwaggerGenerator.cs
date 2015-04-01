@@ -34,10 +34,10 @@ namespace Swashbuckle.Swagger.Generator
                 throw new UnknownApiVersion(apiVersion);
 
             var paths = GetApiDescriptionsFor(apiVersion)
+                .Where(apiDesc => !(_options.IgnoreObsoleteActions && apiDesc.IsObsolete()))
                 .OrderBy(_options.GroupNameSelector, _options.GroupNameComparer)
                 .GroupBy(apiDesc => apiDesc.RelativePathSansQueryString())
                 .ToDictionary(group => "/" + group.Key, group => CreatePathItem(group, schemaRegistry));
-                //.Where(apiDesc => !(_options.IgnoreObsoleteActions && apiDesc.IsObsolete()))
 
             var rootUri = new Uri(rootUrl);
 
@@ -139,7 +139,7 @@ namespace Swashbuckle.Swagger.Generator
                 //consumes = apiDescription.Consumes().ToList(),
                 parameters = parameters.Any() ? parameters : null, // parameters can be null but not empty
                 responses = responses,
-                //deprecated = apiDescription.IsObsolete()
+                deprecated = apiDescription.IsObsolete()
             };
 
             var filterContext = new OperationFilterContext(apiDescription, schemaRegistry);
