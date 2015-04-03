@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json.Serialization;
 
-namespace Swashbuckle.Swagger.Generator
+namespace Swashbuckle.Swagger
 {
     public interface IModelFilter
     {

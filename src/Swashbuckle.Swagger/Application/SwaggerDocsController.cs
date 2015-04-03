@@ -2,9 +2,9 @@
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using Newtonsoft.Json;
-using Swashbuckle.Swagger.Generator;
+using Swashbuckle.Swagger;
 
-namespace Swashbuckle.Swagger.Application
+namespace Swashbuckle.Application
 {
     [Route("/swagger/docs/{apiVersion}")]
     public class SwaggerDocsController : Controller

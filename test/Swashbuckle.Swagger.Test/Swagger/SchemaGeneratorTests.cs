@@ -6,13 +6,11 @@ using Microsoft.AspNet.Mvc;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Linq;
 using Xunit;
-using Swashbuckle.Swagger.Generator;
-using Swashbuckle.Swagger.Application;
-using Swashbuckle.Swagger.Fixtures;
-using Swashbuckle.Swagger.Fixtures.Extensions;
-using Swashbuckle.Swagger.Application;
+using Swashbuckle.Application;
+using Swashbuckle.Fixtures;
+using Swashbuckle.Fixtures.Extensions;
 
-namespace Swashbuckle.Swagger.Generator
+namespace Swashbuckle.Swagger
 {
     public class SchemaGeneratorTests
     {
@@ -237,8 +235,8 @@ namespace Swashbuckle.Swagger.Generator
             var jsonReference1 = schemaGenerator.GetOrRegister(typeof(Fixtures.Namespace1.ConflictingType));
             var jsonReference2 = schemaGenerator.GetOrRegister(typeof(Fixtures.Namespace2.ConflictingType));
 
-            Assert.Equal("#/definitions/Swashbuckle.Swagger.Fixtures.Namespace1.ConflictingType", jsonReference1.@ref);
-            Assert.Equal("#/definitions/Swashbuckle.Swagger.Fixtures.Namespace2.ConflictingType", jsonReference2.@ref);
+            Assert.Equal("#/definitions/Swashbuckle.Fixtures.Namespace1.ConflictingType", jsonReference1.@ref);
+            Assert.Equal("#/definitions/Swashbuckle.Fixtures.Namespace2.ConflictingType", jsonReference2.@ref);
         }
 
         [Fact]

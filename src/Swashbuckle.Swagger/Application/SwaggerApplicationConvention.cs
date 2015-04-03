@@ -1,8 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Microsoft.AspNet.Mvc.ApplicationModels;
 
-namespace Swashbuckle.Swagger.Application
+namespace Swashbuckle.Application
 {
     public class SwaggerApplicationConvention : IApplicationModelConvention
     {

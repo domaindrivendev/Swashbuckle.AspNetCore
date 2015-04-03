@@ -2,11 +2,11 @@
 using System.Linq;
 using Newtonsoft.Json.Serialization;
 using Xunit;
-using Swashbuckle.Swagger.Application;
-using Swashbuckle.Swagger.Fixtures.ApiDescriptions;
-using Swashbuckle.Swagger.Fixtures.Extensions;
+using Swashbuckle.Application;
+using Swashbuckle.Fixtures.ApiDescriptions;
+using Swashbuckle.Fixtures.Extensions;
 
-namespace Swashbuckle.Swagger.Generator
+namespace Swashbuckle.Swagger
 {
     public class SwaggerGeneratorTests
     {

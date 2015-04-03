@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNet.Mvc.Description;
 
-namespace Swashbuckle.Swagger.Generator
+namespace Swashbuckle.Swagger
 {
     public interface IOperationFilter
     {

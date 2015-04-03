@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNet.Mvc;
 
-namespace Swashbuckle.Swagger.Fixtures.ApiDescriptions
+namespace Swashbuckle.Fixtures.ApiDescriptions
 {
     public class ActionFixtures
     {

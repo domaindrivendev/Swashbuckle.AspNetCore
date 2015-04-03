@@ -1,6 +1,6 @@
-﻿using Swashbuckle.Swagger.Generator;
+﻿using Swashbuckle.Swagger;
 
-namespace Swashbuckle.Swagger.Application
+namespace Swashbuckle.Application
 {
     public class ContactBuilder
     {

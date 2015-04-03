@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Microsoft.AspNet.Mvc.Description;
 using Microsoft.AspNet.Mvc;
 
-namespace Swashbuckle.Swagger.Generator
+namespace Swashbuckle.Swagger
 {
     public static class ApiDescriptionExtensions
     {

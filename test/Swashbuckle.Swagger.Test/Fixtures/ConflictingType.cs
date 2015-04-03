@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Swashbuckle.Swagger.Fixtures
+namespace Swashbuckle.Fixtures
 {
     namespace Namespace1
     {

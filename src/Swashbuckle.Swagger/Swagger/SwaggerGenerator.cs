@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNet.Mvc.Description;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json.Schema;
-using Microsoft.AspNet.Mvc.ModelBinding;
 
-namespace Swashbuckle.Swagger.Generator
+namespace Swashbuckle.Swagger
 {
     public class SwaggerGenerator : ISwaggerProvider
     {

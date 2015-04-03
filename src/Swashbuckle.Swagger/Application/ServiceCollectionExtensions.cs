@@ -3,9 +3,9 @@ using Microsoft.Framework.DependencyInjection;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Description;
 using Newtonsoft.Json.Serialization;
-using Swashbuckle.Swagger.Generator;
+using Swashbuckle.Swagger;
 
-namespace Swashbuckle.Swagger.Application
+namespace Swashbuckle.Application
 {
     public static class ServiceCollectionExtensions
     {

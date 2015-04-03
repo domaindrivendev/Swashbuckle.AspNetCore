@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Swashbuckle.Swagger.Fixtures
+namespace Swashbuckle.Fixtures
 {
     public class NestedComplexType
     {

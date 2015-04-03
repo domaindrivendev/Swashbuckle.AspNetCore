@@ -1,7 +1,6 @@
-﻿using System;
-using Swashbuckle.Swagger.Generator;
+﻿using Swashbuckle.Swagger;
 
-namespace Swashbuckle.Swagger.Fixtures.Extensions
+namespace Swashbuckle.Fixtures.Extensions
 {
     public class VendorExtensionsOperationFilter : IOperationFilter
     {

@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Microsoft.AspNet.Builder;
 using Microsoft.Framework.DependencyInjection;
-using Swashbuckle.Swagger.Application;
+using Swashbuckle.Application;
 
 namespace SampleApi
 {
