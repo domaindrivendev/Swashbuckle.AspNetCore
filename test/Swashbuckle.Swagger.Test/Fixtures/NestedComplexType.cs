@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
-
-namespace Swashbuckle.Fixtures
+﻿namespace Swashbuckle.Fixtures
 {
     public class NestedComplexType
     {
-        public ComplexType Property1 { get; set; }
+        public InnerType Property1 { get; set; }
 
-        public IEnumerable<ComplexType> Property2 { get; set; }
+        public class InnerType
+        {
+            public string Property2 { get; set; }
+        }
     }
 }

@@ -263,6 +263,24 @@ namespace Swashbuckle.Swagger
         }
 
         [Fact]
+        public void GetOrRegister_HandlesCompositeComplexTypes()
+        {
+            var schemaGenerator = Subject();
+
+            schemaGenerator.GetOrRegister(typeof(CompositeComplexType));
+
+            var rootSchema = schemaGenerator.Definitions["CompositeComplexType"];
+            Assert.NotNull(rootSchema);
+            Assert.Equal("object", rootSchema.type);
+            Assert.Equal("#/definitions/ComplexType", rootSchema.properties["Property1"].@ref);
+            Assert.Equal("array", rootSchema.properties["Property2"].type);
+            Assert.Equal("#/definitions/ComplexType", rootSchema.properties["Property2"].items.@ref);
+            var componentSchema = schemaGenerator.Definitions["ComplexType"];
+            Assert.NotNull(componentSchema);
+            Assert.Equal("object", componentSchema.type);
+            Assert.Equal(5, componentSchema.properties.Count);
+        }
+
         public void GetOrRegister_HandlesNestedComplexTypes()
         {
             var schemaGenerator = Subject();
@@ -272,13 +290,11 @@ namespace Swashbuckle.Swagger
             var rootSchema = schemaGenerator.Definitions["NestedComplexType"];
             Assert.NotNull(rootSchema);
             Assert.Equal("object", rootSchema.type);
-            Assert.Equal("#/definitions/ComplexType", rootSchema.properties["Property1"].@ref);
-            Assert.Equal("array", rootSchema.properties["Property2"].type);
-            Assert.Equal("#/definitions/ComplexType", rootSchema.properties["Property2"].items.@ref);
-            var nestedSchema = schemaGenerator.Definitions["ComplexType"];
+            Assert.Equal("#/definitions/InnerType", rootSchema.properties["Property1"].@ref);
+            var nestedSchema = schemaGenerator.Definitions["InnerType"];
             Assert.NotNull(nestedSchema);
             Assert.Equal("object", nestedSchema.type);
-            Assert.Equal(5, nestedSchema.properties.Count);
+            Assert.Equal(1, nestedSchema.properties.Count);
         }
 
         [Theory]

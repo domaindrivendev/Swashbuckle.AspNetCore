@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Net;
 using Microsoft.AspNet.Mvc;
+using Swashbuckle.Swagger.Annotations;
 
 namespace Swashbuckle.Fixtures.ApiDescriptions
 {
@@ -57,5 +59,30 @@ namespace Swashbuckle.Fixtures.ApiDescriptions
         [Obsolete]
         public void MarkedObsolete()
         { }
-    }
+
+        /// <summary>
+        /// summary for AnnotatedWithSummaryAndRemarksXml
+        /// </summary>
+        /// <remarks>
+        /// type remarks
+        /// </remarks>
+        public void AnnotatedWithSummaryAndRemarksXml()
+        {}
+
+        /// <param name="param1">description for parma1</param>
+        /// <param name="param2">description for param2</param>
+        public void AnnotatedWithParamsXml(int param1, IEnumerable<ComplexType> param2)
+        {}
+
+        [SwaggerResponseRemoveDefaults]
+        public void AnnotatedWithSwaggerResponseRemoveDefaults()
+        {}
+
+        [SwaggerResponse(HttpStatusCode.Created, "ComplexType Created", typeof(int))]
+        [SwaggerResponse(HttpStatusCode.Accepted, "ComplexType Initiated", typeof(int))]
+        public int AnnotatedWithSwaggerResponses(ComplexType param)
+        {
+            throw new NotImplementedException();
+        }
+   }
 }

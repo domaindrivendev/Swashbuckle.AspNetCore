@@ -157,7 +157,7 @@ namespace Swashbuckle.Swagger
         {
             if (!referencedTypeMap.ContainsKey(type))
             {
-                var schemaId = SchemaIdFor(type);
+                var schemaId = type.FriendlyId(_options.UseFullTypeNameInSchemaIds);
                 if (referencedTypeMap.Any(entry => entry.Value.SchemaId == schemaId))
                 {
                     var conflictingType = referencedTypeMap.First(entry => entry.Value.SchemaId == schemaId).Key;
@@ -171,27 +171,6 @@ namespace Swashbuckle.Swagger
             }
 
             return new Schema { @ref = _options.SchemaReferencePrefix + referencedTypeMap[type].SchemaId };
-        }
-
-        public string SchemaIdFor(Type type)
-        {
-            var typeName = type.Name;
-            if (_options.UseFullTypeNameInSchemaIds)
-                typeName = type.Namespace + "." + typeName;
-
-            if (type.IsGenericType)
-            {
-                var genericArgumentIds = type.GetGenericArguments()
-                    .Select(t => SchemaIdFor(t))
-                    .ToArray();
-
-                return new StringBuilder(typeName)
-                    .Replace(String.Format("`{0}", genericArgumentIds.Count()), String.Empty)
-                    .Append(String.Format("[{0}]", String.Join(",", genericArgumentIds).TrimEnd(',')))
-                    .ToString();
-            }
-
-            return typeName;
         }
 
         private static readonly Dictionary<Type, Func<Schema>> PrimitiveTypeMap = new Dictionary<Type, Func<Schema>>

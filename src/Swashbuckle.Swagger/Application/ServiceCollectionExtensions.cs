@@ -11,9 +11,9 @@ namespace Swashbuckle.Application
     {
         public static void AddSwashbuckle(
             this IServiceCollection serviceCollection,
-            Action<SwaggerOptions> configure)
+            Action<SwaggerOptionsBuilder> configure)
         {
-            var options = new SwaggerOptions();
+            var options = new SwaggerOptionsBuilder();
             if (configure != null) configure(options);
 
             serviceCollection.Configure<MvcOptions>(c =>

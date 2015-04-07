@@ -4,9 +4,9 @@ using Swashbuckle.Swagger;
 
 namespace Swashbuckle.Application
 {
-    public class SwaggerOptions
+    public class SwaggerOptionsBuilder
     {
-        public SwaggerOptions()
+        public SwaggerOptionsBuilder()
         {
             RouteTemplate = "swagger/docs/{apiVersion}";
             RootUrlResolver = DefaultRootUrlResolver;
