@@ -22,7 +22,7 @@ namespace Swashbuckle.Swagger
         [InlineData(typeof(ComplexType), "Swashbuckle.Fixtures.ComplexType")]
         [InlineData(typeof(IEnumerable<string>), "System.Collections.Generic.IEnumerable[System.String]")]
         [InlineData(typeof(IDictionary<string, decimal>), "System.Collections.Generic.IDictionary[System.String,System.Decimal]")]
-        [InlineData(typeof(NestedComplexType.InnerType), "Swashbuckle.Fixtures.NestedComplexType.InnerType")]
+        [InlineData(typeof(ContainingType.NestedType), "Swashbuckle.Fixtures.ContainingType.NestedType")]
         public void FriendlyId_ReturnsFullQualifiedFriendlyId_IfFullyQualifiedFlagIsSet(
             Type systemType,
             string expectedReturnValue)

@@ -1,10 +1,10 @@
 ﻿namespace Swashbuckle.Fixtures
 {
-    public class NestedComplexType
+    public class ContainingType
     {
-        public InnerType Property1 { get; set; }
+        public NestedType Property1 { get; set; }
 
-        public class InnerType
+        public class NestedType
         {
             public string Property2 { get; set; }
         }

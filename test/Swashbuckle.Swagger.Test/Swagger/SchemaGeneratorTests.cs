@@ -263,13 +263,13 @@ namespace Swashbuckle.Swagger
         }
 
         [Fact]
-        public void GetOrRegister_HandlesCompositeComplexTypes()
+        public void GetOrRegister_HandlesCompositeTypes()
         {
             var schemaGenerator = Subject();
 
-            schemaGenerator.GetOrRegister(typeof(CompositeComplexType));
+            schemaGenerator.GetOrRegister(typeof(CompositeType));
 
-            var rootSchema = schemaGenerator.Definitions["CompositeComplexType"];
+            var rootSchema = schemaGenerator.Definitions["CompositeType"];
             Assert.NotNull(rootSchema);
             Assert.Equal("object", rootSchema.type);
             Assert.Equal("#/definitions/ComplexType", rootSchema.properties["Property1"].@ref);
@@ -281,17 +281,18 @@ namespace Swashbuckle.Swagger
             Assert.Equal(5, componentSchema.properties.Count);
         }
 
-        public void GetOrRegister_HandlesNestedComplexTypes()
+        [Fact]
+        public void GetOrRegister_HandlesNestedTypes()
         {
             var schemaGenerator = Subject();
 
-            schemaGenerator.GetOrRegister(typeof(NestedComplexType));
+            schemaGenerator.GetOrRegister(typeof(ContainingType));
 
-            var rootSchema = schemaGenerator.Definitions["NestedComplexType"];
+            var rootSchema = schemaGenerator.Definitions["ContainingType"];
             Assert.NotNull(rootSchema);
             Assert.Equal("object", rootSchema.type);
-            Assert.Equal("#/definitions/InnerType", rootSchema.properties["Property1"].@ref);
-            var nestedSchema = schemaGenerator.Definitions["InnerType"];
+            Assert.Equal("#/definitions/NestedType", rootSchema.properties["Property1"].@ref);
+            var nestedSchema = schemaGenerator.Definitions["NestedType"];
             Assert.NotNull(nestedSchema);
             Assert.Equal("object", nestedSchema.type);
             Assert.Equal(1, nestedSchema.properties.Count);

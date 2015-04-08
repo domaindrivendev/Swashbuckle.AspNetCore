@@ -2,7 +2,7 @@
 
 namespace Swashbuckle.Fixtures
 {
-    public class CompositeComplexType
+    public class CompositeType
     {
         public ComplexType Property1 { get; set; }
 
