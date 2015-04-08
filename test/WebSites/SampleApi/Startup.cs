@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNet.Builder;
+using Microsoft.AspNet.Mvc.Description;
 using Microsoft.Framework.DependencyInjection;
 using Swashbuckle.Application;
 
@@ -12,11 +14,9 @@ namespace SampleApi
         {
             services.AddMvc();
 
-            services.AddSwashbuckle(s =>
+            services.AddSwagger("docs/{apiVersion}/swagger.json", s =>
             {
-                s.RouteTemplate = "docs/{apiVersion}/swagger.json";
-
-                s.RootUrlResolver = (request) => "http://foo/api";
+                s.RootUrl(req => "http://foo/api");
 
                 s.SwaggerGenerator(c =>
                 {
@@ -26,11 +26,7 @@ namespace SampleApi
                         .Description("A sample API for testing Swashbuckle")
                         .TermsOfService("Some terms ...");
 
-                    c.ResolveConflictingActions(apiDescriptions =>
-                    {
-                        var maxParamCount = apiDescriptions.Max(apiDesc => apiDesc.ParameterDescriptions.Count());
-                        return apiDescriptions.First(apiDesc => apiDesc.ParameterDescriptions.Count == maxParamCount);
-                    });
+                    c.ResolveConflictingActions(MaxParametersWins);
                 });
 
                 s.SchemaGenerator(c =>
@@ -43,6 +39,12 @@ namespace SampleApi
         public void Configure(IApplicationBuilder app)
         {
             app.UseMvc();
+        }
+
+        private ApiDescription MaxParametersWins(IEnumerable<ApiDescription> apiDescriptions)
+        {
+            var maxParamCount = apiDescriptions.Max(apiDesc => apiDesc.ParameterDescriptions.Count());
+            return apiDescriptions.First(apiDesc => apiDesc.ParameterDescriptions.Count == maxParamCount);
         }
     }
 }

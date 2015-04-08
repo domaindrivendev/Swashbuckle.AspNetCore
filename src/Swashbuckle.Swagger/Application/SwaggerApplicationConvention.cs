@@ -7,9 +7,9 @@ namespace Swashbuckle.Application
     {
         private readonly string _routeTemplate;
 
-        public SwaggerApplicationConvention(string docsRouteTemplate)
+        public SwaggerApplicationConvention(string routeTemplate)
         {
-            _routeTemplate = docsRouteTemplate;
+            _routeTemplate = routeTemplate;
         }
 
         public void Apply(ApplicationModel application)

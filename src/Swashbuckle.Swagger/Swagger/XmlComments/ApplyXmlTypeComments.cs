@@ -11,9 +11,9 @@ namespace Swashbuckle.Swagger.XmlComments
 
         private readonly XPathNavigator _navigator;
 
-        public ApplyXmlTypeComments(string xmlCommentsPath)
+        public ApplyXmlTypeComments(string filePath)
         {
-            _navigator = new XPathDocument(xmlCommentsPath).CreateNavigator();
+            _navigator = new XPathDocument(filePath).CreateNavigator();
         }
 
         public void Apply(Schema model, ModelFilterContext context)

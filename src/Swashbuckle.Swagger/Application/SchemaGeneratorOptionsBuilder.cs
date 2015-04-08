@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
+using System.Collections.ObjectModel;
 using Swashbuckle.Swagger;
 
 namespace Swashbuckle.Application
@@ -13,7 +13,6 @@ namespace Swashbuckle.Application
         private bool _ignoreObsoleteProperties;
         private bool _useFullTypeNameInSchemaIds;
         private bool _describeAllEnumsAsStrings;
-        private string _schemaReferencePrefix;
 
         public SchemaGeneratorOptionsBuilder()
         {

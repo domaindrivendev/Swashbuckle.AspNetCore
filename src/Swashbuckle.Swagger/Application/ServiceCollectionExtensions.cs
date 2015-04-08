@@ -9,23 +9,31 @@ namespace Swashbuckle.Application
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddSwashbuckle(
+        public static void AddSwagger(
             this IServiceCollection serviceCollection,
             Action<SwaggerOptionsBuilder> configure)
         {
-            var options = new SwaggerOptionsBuilder();
-            if (configure != null) configure(options);
+            serviceCollection.AddSwagger("swagger/docs/{apiVersion}", configure);
+        }
 
+        public static void AddSwagger(
+            this IServiceCollection serviceCollection,
+            string routeTemplate,
+            Action<SwaggerOptionsBuilder> configure)
+        {
             serviceCollection.Configure<MvcOptions>(c =>
-                c.ApplicationModelConventions.Add(new SwaggerApplicationConvention(options.RouteTemplate)));
+                c.ApplicationModelConventions.Add(new SwaggerApplicationConvention(routeTemplate)));
 
-            serviceCollection.AddTransient(services => options.RootUrlResolver);
+            var optionsBuilder = new SwaggerOptionsBuilder();
+            if (configure != null) configure(optionsBuilder);
+
+            serviceCollection.AddTransient(services => optionsBuilder.RootUrlResolver);
             
             serviceCollection.AddTransient(services =>
-                CreateSchemaRegistry(services, options.SchemaGeneratorOptions));
+                CreateSchemaRegistry(services, optionsBuilder.SchemaGeneratorOptionsBuilder.Build()));
 
             serviceCollection.AddTransient(services =>
-                CreateSwaggerProvider(services, options.SwaggerGeneratorOptions));
+                CreateSwaggerProvider(services, optionsBuilder.SwaggerGeneratorOptionsBuilder.Build()));
         }
 
         private static ISchemaRegistry CreateSchemaRegistry(

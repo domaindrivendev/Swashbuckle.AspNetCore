@@ -1,39 +1,41 @@
 ﻿using System;
 using Microsoft.AspNet.Http;
-using Swashbuckle.Swagger;
+using Swashbuckle.Swagger.XmlComments;
 
 namespace Swashbuckle.Application
 {
     public class SwaggerOptionsBuilder
     {
+        internal Func<HttpRequest, string> RootUrlResolver { get; private set; }
+        internal SchemaGeneratorOptionsBuilder SchemaGeneratorOptionsBuilder { get; private set; }
+        internal SwaggerGeneratorOptionsBuilder SwaggerGeneratorOptionsBuilder { get; private set; }
+
         public SwaggerOptionsBuilder()
         {
-            RouteTemplate = "swagger/docs/{apiVersion}";
             RootUrlResolver = DefaultRootUrlResolver;
-            SwaggerGeneratorOptions= new SwaggerGeneratorOptions();
-            SchemaGeneratorOptions= new SchemaGeneratorOptions();
+            SchemaGeneratorOptionsBuilder = new SchemaGeneratorOptionsBuilder();
+            SwaggerGeneratorOptionsBuilder = new SwaggerGeneratorOptionsBuilder();
         }
 
-        public  string RouteTemplate { get; set; }
-
-        public Func<HttpRequest, string> RootUrlResolver { get; set; }
-
-        internal SwaggerGeneratorOptions SwaggerGeneratorOptions { get; private set; }
-
-        internal SchemaGeneratorOptions SchemaGeneratorOptions { get; private set; }
-
-        public void SwaggerGenerator(Action<SwaggerGeneratorOptionsBuilder> configure)
+        public void RootUrl(Func<HttpRequest, string> rootUrlResolver)
         {
-            var builder = new SwaggerGeneratorOptionsBuilder(); 
-            configure(builder);
-            SwaggerGeneratorOptions = builder.Build();
+            RootUrlResolver = rootUrlResolver;
         }
 
         public void SchemaGenerator(Action<SchemaGeneratorOptionsBuilder> configure)
         {
-            var builder = new SchemaGeneratorOptionsBuilder();
-            configure(builder);
-            SchemaGeneratorOptions = builder.Build();
+            configure(SchemaGeneratorOptionsBuilder);
+        }
+
+        public void SwaggerGenerator(Action<SwaggerGeneratorOptionsBuilder> configure)
+        {
+            configure(SwaggerGeneratorOptionsBuilder);
+        }
+
+        public void IncludeXmlComments(string filePath)
+        {
+            SchemaGeneratorOptionsBuilder.ModelFilter(() => new ApplyXmlTypeComments(filePath));
+            SwaggerGeneratorOptionsBuilder.OperationFilter(() => new ApplyXmlActionComments(filePath));
         }
 
         private static string DefaultRootUrlResolver(HttpRequest request)
