@@ -71,10 +71,11 @@ namespace Swashbuckle.Swagger
                     ? CreateJsonReference(type)
                     : CreateArraySchema(arrayContract);
 
-            if (jsonContract is JsonObjectContract && !jsonContract.IsDeterministic())
+            var objectContract = jsonContract as JsonObjectContract;
+            if (objectContract != null)
                 return refIfComplex
                     ? CreateJsonReference(type)
-                    : CreateObjectSchema((JsonObjectContract)jsonContract);
+                    : CreateObjectSchema(objectContract);
 
             // None of the above, fallback to abstract "object"
             return CreateSchema(typeof(object), refIfComplex);

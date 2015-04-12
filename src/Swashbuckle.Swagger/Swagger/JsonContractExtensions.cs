@@ -14,10 +14,5 @@ namespace Swashbuckle.Swagger
         {
             return arrayContract.UnderlyingType == arrayContract.CollectionItemType;
         }
-
-        public static bool IsDeterministic(this JsonContract jsonContract)
-        {
-            return typeof(IActionResult).IsAssignableFrom(jsonContract.UnderlyingType);
-        }
     }
 }

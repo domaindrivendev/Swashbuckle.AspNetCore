@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Net;
 using Microsoft.AspNet.Mvc;
+using Newtonsoft.Json.Linq;
 using Swashbuckle.Swagger.Annotations;
 
 namespace Swashbuckle.Fixtures.ApiDescriptions
@@ -23,6 +24,11 @@ namespace Swashbuckle.Fixtures.ApiDescriptions
         }
 
         public ComplexType ReturnsComplexType()
+        {
+            throw new NotImplementedException();
+        }
+
+        public JObject ReturnsJObject()
         {
             throw new NotImplementedException();
         }

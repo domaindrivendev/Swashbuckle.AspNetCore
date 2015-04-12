@@ -122,11 +122,10 @@ namespace Swashbuckle.Swagger
                 .ToList();
 
             var responses = new Dictionary<string, Response>();
-            var responseType = apiDescription.ResponseType;
-            if (responseType == typeof(void) || responseType == null)
+            if (apiDescription.ResponseType == typeof(void))
                 responses.Add("204", new Response { description = "No Content" });
             else
-                responses.Add("200", new Response { description = "OK", schema = schemaRegistry.GetOrRegister(responseType) });
+                responses.Add("200", CreateSuccessResponse(apiDescription.ResponseType, schemaRegistry));
 
             var operation = new Operation
             { 
@@ -170,6 +169,15 @@ namespace Swashbuckle.Swagger
                 parameter.PopulateFrom(schema);
 
             return parameter;
+        }
+
+        private Response CreateSuccessResponse(Type responseType, ISchemaRegistry schemaRegistry)
+        {
+            return new Response
+            {
+                description = "OK",
+                schema = (responseType != null) ? schemaRegistry.GetOrRegister(responseType) : null
+            };
         }
     }
 }

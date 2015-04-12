@@ -199,7 +199,8 @@ namespace Swashbuckle.Swagger
         [InlineData(nameof(ActionFixtures.ReturnsVoid), "204", false)]
         [InlineData(nameof(ActionFixtures.ReturnsEnumerable), "200", true)]
         [InlineData(nameof(ActionFixtures.ReturnsComplexType), "200", true)]
-        [InlineData(nameof(ActionFixtures.ReturnsActionResult), "200", true)]
+        [InlineData(nameof(ActionFixtures.ReturnsJObject), "200", true)]
+        [InlineData(nameof(ActionFixtures.ReturnsActionResult), "200", false)]
         public void GetSwagger_SetsResponseStatusCodeAndSchema_AccordingToActionReturnType(
             string actionFixtureName,
             string expectedStatusCode,

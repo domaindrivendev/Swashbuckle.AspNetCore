@@ -110,7 +110,6 @@ namespace Swashbuckle.Swagger
         [Theory]
         [InlineData(typeof(JObject))]
         [InlineData(typeof(JToken))]
-        [InlineData(typeof(IActionResult))]
         public void GetOrRegister_RegistersBaseObjectSchema_ForRuntimeTypes(Type systemType)
         {
             var schemaGenerator = Subject();
