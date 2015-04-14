@@ -1,47 +1,45 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.AspNet.Mvc.ApplicationModels;
 
 namespace Swashbuckle.Application
 {
     public class SwaggerApplicationConvention : IApplicationModelConvention
     {
-        private readonly string _routeTemplate;
+        private readonly string _customRoute;
 
-        public SwaggerApplicationConvention(string routeTemplate)
+        public SwaggerApplicationConvention(string customRoute)
         {
-            _routeTemplate = routeTemplate;
+            _customRoute = customRoute;
         }
 
         public void Apply(ApplicationModel application)
         {
             foreach (var controller in application.Controllers)
             {
-                ApplyControllerConventions(controller);
-
-                foreach (var action in controller.Actions)
+                if (controller.ControllerType == typeof(SwaggerDocsController))
                 {
-                    ApplyActionConventions(action);
+                    ApplySwaggerDocsControllerConvention(controller);
+                }
+                else
+                {
+                    ApplyAppControllerConvention(controller);
                 }
             }
         }
 
-        private void ApplyControllerConventions(ControllerModel controller)
+        private void ApplySwaggerDocsControllerConvention(ControllerModel controller)
         {
-            if (controller.ControllerType == typeof(SwaggerDocsController))
-            {
-                controller.AttributeRoutes.First().Template = _routeTemplate;
-                controller.ApiExplorer.IsVisible = false;
-            }
-            else
-            {
-                controller.ApiExplorer.IsVisible = true;
-                controller.ApiExplorer.GroupName = controller.ControllerName;
-            }
+            controller.ApiExplorer.IsVisible = false;
+
+            if (_customRoute != null)
+                controller.Actions.First().AttributeRouteModel.Template = _customRoute;
         }
 
-        private void ApplyActionConventions(ActionModel action)
+        private void ApplyAppControllerConvention(ControllerModel controller)
         {
-            // TODO: Upgrade Mvc - later version will have Properties available here
+            controller.ApiExplorer.IsVisible = true;
+            controller.ApiExplorer.GroupName = controller.ControllerName;
         }
     }
 }
