@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNet.Http;
 using Swashbuckle.Swagger.XmlComments;
+using Swashbuckle.Swagger.Annotations;
 
 namespace Swashbuckle.Application
 {
@@ -13,8 +14,11 @@ namespace Swashbuckle.Application
         public SwaggerOptionsBuilder()
         {
             RootUrlResolver = DefaultRootUrlResolver;
+
             SchemaGeneratorOptionsBuilder = new SchemaGeneratorOptionsBuilder();
+
             SwaggerGeneratorOptionsBuilder = new SwaggerGeneratorOptionsBuilder();
+            SwaggerGeneratorOptionsBuilder.OperationFilter<AddResponsesFromAttributes>();
         }
 
         public void RootUrl(Func<HttpRequest, string> rootUrlResolver)
