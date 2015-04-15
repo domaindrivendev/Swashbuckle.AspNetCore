@@ -14,10 +14,8 @@ namespace SampleApi
         {
             services.AddMvc();
 
-            services.AddSwagger("docs/{apiVersion}/swagger.json", s =>
+            services.AddSwagger(s =>
             {
-                s.RootUrl(req => "http://foo/api");
-
                 s.SwaggerGenerator(c =>
                 {
                     c.Schemes(new[] { "http", "https" });
@@ -39,6 +37,9 @@ namespace SampleApi
         public void Configure(IApplicationBuilder app)
         {
             app.UseMvc();
+
+            app.UseSwagger("docs/{apiVersion}/swagger.json");
+            app.UseSwaggerUi("docs/ui/{*assetPath}");
         }
 
         private ApiDescription MaxParametersWins(IEnumerable<ApiDescription> apiDescriptions)

@@ -6,6 +6,7 @@ using Newtonsoft.Json.Converters;
 
 namespace SampleApi.Controllers
 {
+    [Produces("application/json")]
     public class JsonAnnotationsController
     {
         [HttpGet("/promotions")]

@@ -4,7 +4,8 @@ using Microsoft.AspNet.Mvc;
 
 namespace SampleApi.Controllers
 {
-    public class DateAnnotationsController : Controller
+    [Produces("application/json")]
+    public class DataAnnotationsController : Controller
     {
         [HttpPost("payments/authorize")]
         [Produces("application/json", Type = typeof(int))]

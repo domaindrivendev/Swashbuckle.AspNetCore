@@ -6,6 +6,7 @@ using Newtonsoft.Json.Linq;
 
 namespace SampleApi.Controllers
 {
+    [Produces("application/json")]
     public class DynamicTypesController
     {
         [HttpPost("kittens")]

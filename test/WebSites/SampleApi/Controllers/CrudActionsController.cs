@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 namespace SampleApi.Controllers
 {
     [Route("/products")]
+    [Produces("application/json")]
     public class CrudActionsController
     {
         [HttpPost("/products")]
@@ -20,11 +21,11 @@ namespace SampleApi.Controllers
             throw new NotImplementedException();
         }
 
-        [HttpGet("/products")]
-        public IEnumerable<Product> GetAllByType([FromQuery, Required]ProductType type)
-        {
-            throw new NotImplementedException();
-        }
+        //[HttpGet("/products")]
+        //public IEnumerable<Product> GetAllByType([FromQuery, Required]ProductType type)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         [HttpGet("/products/{id}")]
         public Product GetById(int id)

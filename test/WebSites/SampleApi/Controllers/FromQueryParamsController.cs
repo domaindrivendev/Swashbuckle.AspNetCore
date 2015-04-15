@@ -3,6 +3,7 @@ using System;
 
 namespace SampleApi.Controllers
 {
+    [Produces("application/json")]
     public class FromQueryParamsController
     {
         [HttpGet("adresses/valdidate")]

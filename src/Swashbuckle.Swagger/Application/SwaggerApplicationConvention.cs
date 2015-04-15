@@ -1,45 +1,48 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.ApplicationModels;
 
 namespace Swashbuckle.Application
 {
     public class SwaggerApplicationConvention : IApplicationModelConvention
     {
-        private readonly string _customRoute;
-
-        public SwaggerApplicationConvention(string customRoute)
-        {
-            _customRoute = customRoute;
-        }
-
         public void Apply(ApplicationModel application)
         {
             foreach (var controller in application.Controllers)
             {
-                if (controller.ControllerType == typeof(SwaggerDocsController))
+                ApplyControllerConvention(controller);
+            }
+        }
+
+        private void ApplyControllerConvention(ControllerModel controller)
+        {
+            foreach (var action in controller.Actions)
+            {
+                if (ApiExplorerShouldIgnore(action))
                 {
-                    ApplySwaggerDocsControllerConvention(controller);
+                    action.ApiExplorer.IsVisible = false;
                 }
                 else
                 {
-                    ApplyAppControllerConvention(controller);
+                    action.ApiExplorer.IsVisible = true;
+                    action.ApiExplorer.GroupName = controller.ControllerName;
                 }
             }
         }
 
-        private void ApplySwaggerDocsControllerConvention(ControllerModel controller)
+        private bool ApiExplorerShouldIgnore(ActionModel action)
         {
-            controller.ApiExplorer.IsVisible = false;
+            var actionSettings = action.Attributes
+                .OfType<ApiExplorerSettingsAttribute>()
+                .FirstOrDefault();
+            if (actionSettings != null) return actionSettings.IgnoreApi;
 
-            if (_customRoute != null)
-                controller.Actions.First().AttributeRouteModel.Template = _customRoute;
-        }
+            var controllerSettings = action.Controller.Attributes
+                .OfType<ApiExplorerSettingsAttribute>()
+                .FirstOrDefault();
+            if (controllerSettings != null) return controllerSettings.IgnoreApi;
 
-        private void ApplyAppControllerConvention(ControllerModel controller)
-        {
-            controller.ApiExplorer.IsVisible = true;
-            controller.ApiExplorer.GroupName = controller.ControllerName;
+            return false;
         }
     }
 }

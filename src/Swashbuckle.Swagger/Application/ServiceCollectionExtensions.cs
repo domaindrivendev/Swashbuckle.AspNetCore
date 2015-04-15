@@ -11,18 +11,10 @@ namespace Swashbuckle.Application
     {
         public static void AddSwagger(
             this IServiceCollection serviceCollection,
-            Action<SwaggerOptionsBuilder> configure)
-        {
-            serviceCollection.AddSwagger("swagger/docs/{apiVersion}", configure);
-        }
-
-        public static void AddSwagger(
-            this IServiceCollection serviceCollection,
-            string routeTemplate,
-            Action<SwaggerOptionsBuilder> configure)
+            Action<SwaggerOptionsBuilder> configure = null)
         {
             serviceCollection.Configure<MvcOptions>(c =>
-                c.ApplicationModelConventions.Add(new SwaggerApplicationConvention(routeTemplate)));
+                c.ApplicationModelConventions.Add(new SwaggerApplicationConvention()));
 
             var optionsBuilder = new SwaggerOptionsBuilder();
             if (configure != null) configure(optionsBuilder);

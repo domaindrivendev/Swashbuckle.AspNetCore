@@ -6,7 +6,7 @@ using Swashbuckle.Swagger;
 
 namespace Swashbuckle.Application
 {
-    [Route("/swagger/docs/{apiVersion}")]
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class SwaggerDocsController : Controller
     {
         private Func<HttpRequest, string> _rootUrlResolver;
@@ -22,7 +22,7 @@ namespace Swashbuckle.Application
 
         [HttpGet]
         [Produces("application/json")]
-        public IActionResult Get(string apiVersion)
+        public IActionResult GetDocs(string apiVersion)
         {
             var rootUrl = _rootUrlResolver(Request);
             var swagger = _swaggerProvider.GetSwagger(rootUrl, apiVersion);

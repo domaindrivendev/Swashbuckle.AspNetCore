@@ -5,6 +5,7 @@ using Microsoft.AspNet.Mvc;
 
 namespace Swashbuckle.Application
 {
+    [ApiExplorerSettings(IgnoreApi = true)]
     public class SwaggerUiController : Controller
     {
         private IFileProvider _fileProvider;
@@ -14,8 +15,8 @@ namespace Swashbuckle.Application
             _fileProvider = new EmbeddedFileProvider(GetType().Assembly, "bower_components/swagger-ui/dist");
         }
 
-        [HttpGet("swagger/ui/{*assetPath}")]
-        public IActionResult Get(string assetPath)
+        [HttpGet]
+        public IActionResult GetAsset(string assetPath)
         {
             if (assetPath == "index.html")
                 return View("/SwaggerUi/Index.cshtml");
