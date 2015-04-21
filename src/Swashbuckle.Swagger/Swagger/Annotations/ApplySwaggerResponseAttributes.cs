@@ -4,7 +4,7 @@ using System.Net;
 
 namespace Swashbuckle.Swagger.Annotations
 {
-    public class AddResponsesFromAttributes : IOperationFilter
+    public class ApplySwaggerResponseAttributes : IOperationFilter
     {
         public void Apply(Operation operation, OperationFilterContext context)
         {

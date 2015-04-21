@@ -19,7 +19,8 @@ namespace Swashbuckle.Application
             SchemaGeneratorOptionsBuilder = new SchemaGeneratorOptionsBuilder();
 
             SwaggerGeneratorOptionsBuilder = new SwaggerGeneratorOptionsBuilder();
-            SwaggerGeneratorOptionsBuilder.OperationFilter<AddResponsesFromAttributes>();
+            SwaggerGeneratorOptionsBuilder.OperationFilter<ApplySwaggerOperationAttributes>();
+            SwaggerGeneratorOptionsBuilder.OperationFilter<ApplySwaggerResponseAttributes>();
         }
 
         public void RootUrl(Func<HttpRequest, string> rootUrlResolver)

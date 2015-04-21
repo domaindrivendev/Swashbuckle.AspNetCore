@@ -7,7 +7,7 @@ using Swashbuckle.Fixtures.ApiDescriptions;
 
 namespace Swashbuckle.Swagger.Annotations
 {
-    public class AddResponsesFromAttributesTests
+    public class ApplySwaggerResponseAttributesTests
     {
         [Fact]
         public void Apply_RemovesExistingResponses_IfControllerDecoratedWithRemoveDefaultsAttribute()
@@ -122,9 +122,9 @@ namespace Swashbuckle.Swagger.Annotations
                 new SchemaGenerator(new DefaultContractResolver()));
         }
 
-        private AddResponsesFromAttributes Subject()
+        private ApplySwaggerResponseAttributes Subject()
         {
-            return new AddResponsesFromAttributes();
+            return new ApplySwaggerResponseAttributes();
         }
     }
 }

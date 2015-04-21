@@ -80,6 +80,10 @@ namespace Swashbuckle.Fixtures.ApiDescriptions
         public void AnnotatedWithParamsXml(int param1, IEnumerable<ComplexType> param2)
         {}
 
+        [SwaggerOperation("CustomOperationId", Tags = new[] { "customTag" }, Schemes = new[] { "customScheme" })]
+        public void AnnotatedWithSwaggerOperation()
+        { }
+
         [SwaggerResponseRemoveDefaults]
         public void AnnotatedWithSwaggerResponseRemoveDefaults()
         {}
