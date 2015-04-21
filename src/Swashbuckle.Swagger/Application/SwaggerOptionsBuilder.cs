@@ -2,6 +2,7 @@
 using Microsoft.AspNet.Http;
 using Swashbuckle.Swagger.XmlComments;
 using Swashbuckle.Swagger.Annotations;
+using System.Globalization;
 
 namespace Swashbuckle.Application
 {
@@ -42,14 +43,15 @@ namespace Swashbuckle.Application
             SwaggerGeneratorOptionsBuilder.OperationFilter(() => new ApplyXmlActionComments(filePath));
         }
 
-        private static string DefaultRootUrlResolver(HttpRequest request)
+        public static string DefaultRootUrlResolver(HttpRequest request)
         {
-            var scheme = request.Headers["X-Forwarded-Proto"] ?? request.Scheme;
+            var requestUri = new Uri(string.Format("{0}://{1}{2}", request.Scheme, request.Host, request.PathBase));
 
-            //var host = request.Headers["X-Forwarded-Host"] ?? hostAndPort[0];
-            //var port = request.Headers["X-Forwarded-Port"] ?? hostAndPort[1];
+            var scheme = request.Headers["X-Forwarded-Proto"] ?? requestUri.Scheme;
+            var host = request.Headers["X-Forwarded-Host"] ?? requestUri.Host;
+            var port = request.Headers["X-Forwarded-Port"] ?? requestUri.Port.ToString(CultureInfo.InvariantCulture);
 
-            return string.Format("{0}://{1}{2}", scheme, request.Host, request.PathBase);
+            return string.Format("{0}://{1}:{2}{3}", scheme, host, port, request.PathBase);
         }
     }
 }
