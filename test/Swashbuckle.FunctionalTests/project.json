@@ -1,0 +1,11 @@
+﻿{
+    "version": "1.0.0-*",
+    "dependencies": {
+        "Microsoft.AspNet.Testing":  ""
+    },
+
+    "frameworks" : {
+        "aspnet50" : { 
+        }
+    }
+}

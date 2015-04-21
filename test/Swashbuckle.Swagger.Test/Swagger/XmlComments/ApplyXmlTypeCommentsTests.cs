@@ -8,44 +8,50 @@ namespace Swashbuckle.Swagger.XmlComments
 {
     public class ApplyXmlTypeCommentsTests
     {
-        [Fact]
-        public void Apply_SetsDescription_FromClassSummaryTag()
+        [Theory]
+        [InlineData(typeof(XmlAnnotatedType), "summary for XmlAnnotatedType")]
+        [InlineData(typeof(XmlAnnotatedWithNestedType.NestedType), "summary for NestedType")]
+        [InlineData(typeof(XmlAnnotatedGenericType<string>), "summary for XmlAnnotatedGenericType")]
+        public void Apply_SetsDescription_FromClassSummaryTag(
+            Type type,
+            string expectedDescription)
         {
             var schema = new Schema
             {
                 properties = new Dictionary<string, Schema>()
             };
-            var filterContext = FilterContextFor<XmlAnnotatedType>();
+            var filterContext = FilterContextFor(type);
 
             Subject().Apply(schema, filterContext);
 
-            Assert.Equal("summary for XmlAnnotatedType", schema.description);
+            Assert.Equal(expectedDescription, schema.description);
         }
 
-        [Fact]
-        public void Apply_SetsPropertyDescriptions_FromPropertySummaryTag()
+        [Theory]
+        [InlineData(typeof(XmlAnnotatedType), "Property", "summary for Property")]
+        [InlineData(typeof(XmlAnnotatedSubType), "BaseProperty", "summary for BaseProperty")]
+        [InlineData(typeof(XmlAnnotatedGenericType<string>), "GenericProperty", "summary for GenericProperty")]
+        public void Apply_SetsPropertyDescriptions_FromPropertySummaryTag(
+            Type type,
+            string propertyName,
+            string expectedDescription)
         {
             var schema = new Schema
             {
                 properties = new Dictionary<string, Schema>()
                 {
-                    { "Property", new Schema() },
-                    { "NestedTypeProperty", new Schema() },
-                    { "BaseProperty", new Schema() }
+                    { propertyName, new Schema() }
                 }
             };
-            var filterContext = FilterContextFor<XmlAnnotatedType>();
+            var filterContext = FilterContextFor(type);
 
             Subject().Apply(schema, filterContext);
 
-            Assert.Equal("summary for Property", schema.properties["Property"].description);
-            Assert.Equal("summary for NestedTypeProperty", schema.properties["NestedTypeProperty"].description);
-            Assert.Equal("summary for BaseProperty", schema.properties["BaseProperty"].description);
+            Assert.Equal(expectedDescription, schema.properties[propertyName].description);
         }
 
-        private ModelFilterContext FilterContextFor<T>()
+        private ModelFilterContext FilterContextFor(Type type)
         {
-            var type = typeof(T);
             var jsonObjectContract = new DefaultContractResolver().ResolveContract(type);
             return new ModelFilterContext(type, (jsonObjectContract as JsonObjectContract), null);
         }

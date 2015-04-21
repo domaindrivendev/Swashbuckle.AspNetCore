@@ -43,18 +43,18 @@ namespace Swashbuckle.Swagger.XmlComments
 
 		private static string GetMethodXPath(MethodInfo methodInfo)
         {
-            var classKey = methodInfo.DeclaringType.XmlCommentsId();
+            var typeLookupName = methodInfo.DeclaringType.XmlLookupName();
             var actionName = methodInfo.Name;
 
-            var paramTypeKeys = methodInfo.GetParameters()
-                .Select(paramInfo => paramInfo.ParameterType.XmlCommentsId())
+            var paramLookupNames = methodInfo.GetParameters()
+                .Select(paramInfo => paramInfo.ParameterType.XmlLookupNameWithTypeParameters())
                 .ToArray();
 
-            var parameters = (paramTypeKeys.Any())
-                ? string.Format("({0})", String.Join(",", paramTypeKeys))
+            var parameters = (paramLookupNames.Any())
+                ? string.Format("({0})", string.Join(",", paramLookupNames))
                 : string.Empty;
 
-            return string.Format(MethodExpression, classKey, actionName, parameters);
+            return string.Format(MethodExpression, typeLookupName, actionName, parameters);
         }
 
         private static void ApplyParamComments(Operation operation, XPathNavigator methodNode)

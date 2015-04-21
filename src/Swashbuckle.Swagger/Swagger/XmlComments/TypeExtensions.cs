@@ -6,15 +6,22 @@ namespace Swashbuckle.Swagger.XmlComments
 {
     public static class TypeExtensions
     {
-        public static string XmlCommentsId(this Type type)
+        public static string XmlLookupName(this Type type)
         {
             var builder = new StringBuilder(type.FullNameSansTypeParameters());
-            builder.Replace("+", ".");
+            return builder
+                .Replace("+", ".")
+                .ToString();
+        }
+
+        public static string XmlLookupNameWithTypeParameters(this Type type)
+        {
+            var builder = new StringBuilder(type.XmlLookupName());
 
             if (type.IsGenericType)
             {
                 var genericArgumentIds = type.GetGenericArguments()
-                    .Select(t => t.XmlCommentsId())
+                    .Select(t => t.XmlLookupNameWithTypeParameters())
                     .ToArray();
 
                 builder

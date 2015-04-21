@@ -21,81 +21,30 @@
         summary for XmlAnnotatedType
         </summary>
     </member>
+    <member name="T:Swashbuckle.Fixtures.XmlAnnotatedWithNestedType.NestedType">
+        <summary>
+        summary for NestedType
+        </summary>
+    </member>
+    <member name="T:Swashbuckle.Fixtures.XmlAnnotatedGenericType`1">
+        <summary>
+        summary for XmlAnnotatedGenericType
+        </summary>
+    </member>
     <member name="P:Swashbuckle.Fixtures.XmlAnnotatedType.Property">
         <summary>
         summary for Property
         </summary>
     </member>
-    <member name="P:Swashbuckle.Fixtures.XmlAnnotatedType.NestedTypeProperty">
-        <summary>
-        summary for NestedTypeProperty
-        </summary>
-    </member>
-    <member name="P:Swashbuckle.Fixtures.XmlAnnotatedTypeBase.BaseProperty">
+    <member name="P:Swashbuckle.Fixtures.XmlAnnotatedBaseType.BaseProperty">
         <summary>
         summary for BaseProperty
         </summary>
     </member>
+    <member name="P:Swashbuckle.Fixtures.XmlAnnotatedGenericType`1.GenericProperty">
+        <summary>
+        summary for GenericProperty
+        </summary>
+    </member>
   </members>
 </doc>
-
-        <!--<member name="M:Swashbuckle.Dummy.Controllers.XmlAnnotatedController.UpdateSubAccount(Swashbuckle.Dummy.Controllers.SubAccount)">
-            <summary>
-            Updates a SubAccount.
-            </summary>
-        </member>
-        <member name="M:Swashbuckle.Dummy.Controllers.XmlAnnotatedController.Search(System.Collections.Generic.IEnumerable{System.String})">
-            <summary>
-            Search all registered accounts by keywords 
-            </summary>
-            <remarks>Restricted to admin users only</remarks>
-            <param name="keywords">List of search keywords</param>
-            <returns></returns>
-        </member>
-        <member name="M:Swashbuckle.Dummy.Controllers.XmlAnnotatedController.PutOnHold(System.Int32)">
-            <summary>
-            Prevents the account from being used
-            </summary>
-        </member>
-        <member name="T:Swashbuckle.Dummy.Controllers.Account">
-            <summary>
-            Account details
-            </summary>
-        </member>
-        <member name="P:Swashbuckle.Dummy.Controllers.Account.AccountID">
-            <summary>
-            The ID for Accounts is 5 digits long.
-            </summary>
-        </member>
-        <member name="P:Swashbuckle.Dummy.Controllers.Account.Username">
-            <summary>
-            Uniquely identifies the account
-            </summary>
-        </member>
-        <member name="P:Swashbuckle.Dummy.Controllers.Account.Password">
-            <summary>
-            For authentication
-            </summary>
-        </member>
-        <member name="P:Swashbuckle.Dummy.Controllers.Account.AccountPreferences.DisplayName">
-            <summary>
-            Provide a display name to use instead of Username when signed in
-            </summary>
-        </member>
-        <member name="P:Swashbuckle.Dummy.Controllers.Account.AccountPreferences.AllowMarketingEmails">
-            <summary>
-            Flag to indicate if marketing emails may be sent
-            </summary>
-        </member>
-        <member name="T:Swashbuckle.Dummy.Controllers.SubAccount">
-            <summary>
-            A Sub-Type of Account
-            </summary>
-        </member>
-        <member name="P:Swashbuckle.Dummy.Controllers.SubAccount.AccountID">
-            <summary>
-            The Account ID for SubAccounts should be 7 digits.
-            </summary>
-        </member>
-    </members>
-<-->
