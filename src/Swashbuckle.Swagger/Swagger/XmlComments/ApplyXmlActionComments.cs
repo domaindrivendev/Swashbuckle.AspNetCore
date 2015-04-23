@@ -59,6 +59,8 @@ namespace Swashbuckle.Swagger.XmlComments
 
         private static void ApplyParamComments(Operation operation, XPathNavigator methodNode)
         {
+            if (operation.parameters == null) return;
+
             var paramNodes = methodNode.Select(ParameterExpression);
             while (paramNodes.MoveNext())
             {
