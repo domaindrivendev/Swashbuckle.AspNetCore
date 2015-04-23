@@ -2,7 +2,7 @@
 using Swashbuckle.Swagger.Annotations;
 using Microsoft.AspNet.Mvc;
 
-namespace SampleApi.Controllers
+namespace BasicApi.Controllers
 {
     public class SwaggerAnnotatedController
     {

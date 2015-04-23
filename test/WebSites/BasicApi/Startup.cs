@@ -5,7 +5,7 @@ using Microsoft.AspNet.Mvc.Description;
 using Microsoft.Framework.DependencyInjection;
 using Swashbuckle.Application;
 
-namespace SampleApi
+namespace BasicApi
 {
     public class Startup
     {

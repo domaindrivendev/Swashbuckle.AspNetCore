@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNet.Mvc;
 using System;
 
-namespace SampleApi.Controllers
+namespace BasicApi.Controllers
 {
     [Produces("application/json")]
     public class FromQueryParamsController

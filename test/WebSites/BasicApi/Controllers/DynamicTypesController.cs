@@ -4,7 +4,7 @@ using System.Dynamic;
 using Microsoft.AspNet.Mvc;
 using Newtonsoft.Json.Linq;
 
-namespace SampleApi.Controllers
+namespace BasicApi.Controllers
 {
     [Produces("application/json")]
     public class DynamicTypesController

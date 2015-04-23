@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.AspNet.Mvc;
 using System.ComponentModel.DataAnnotations;
 
-namespace SampleApi.Controllers
+namespace BasicApi.Controllers
 {
     [Route("/products")]
     [Produces("application/json")]

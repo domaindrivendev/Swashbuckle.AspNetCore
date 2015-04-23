@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNet.Mvc;
 
-namespace SampleApi.Controllers
+namespace BasicApi.Controllers
 {
     [Produces("application/json")]
     public class DataAnnotationsController : Controller
