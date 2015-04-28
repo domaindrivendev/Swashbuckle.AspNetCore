@@ -52,8 +52,7 @@ namespace Swashbuckle.Swagger.XmlComments
 
         private ApplyXmlActionComments Subject()
         {
-            var path = string.Format(@"{0}\Fixtures\XmlComments.xml", AppDomain.CurrentDomain.BaseDirectory);
-            return new ApplyXmlActionComments(path);
+            return new ApplyXmlActionComments("Fixtures/XmlComments.xml");
         }
     }
 }

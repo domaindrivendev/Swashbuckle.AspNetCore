@@ -1,13 +1,15 @@
 ﻿{
     "version": "1.0.0-*",
     "dependencies": {
-        "Microsoft.AspNet.Mvc": "6.0.0-beta3"
+        "Microsoft.AspNet.Mvc": "6.0.0-beta4-*",
+        "Microsoft.Framework.DependencyInjection.Interfaces": "1.0.0-beta4-*",
+        "System.Reflection": "4.0.10-beta-*"
     },
 
     "resources": "bower_components/swagger-ui/dist/**",
 
-    "frameworks" : {
-        "aspnet50" : { 
-        }
+    "frameworks": {
+        "dnx451": { },
+        "dnxcore50": { }
     }
 }

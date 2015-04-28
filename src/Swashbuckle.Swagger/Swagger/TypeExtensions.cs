@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using System.Reflection;
 
 namespace Swashbuckle.Swagger
 {
@@ -12,7 +13,7 @@ namespace Swashbuckle.Swagger
                 ? type.FullNameSansTypeParameters().Replace("+", ".")
                 : type.Name;
 
-            if (type.IsGenericType)
+            if (type.GetTypeInfo().IsGenericType)
             {
                 var genericArgumentIds = type.GetGenericArguments()
                     .Select(t => t.FriendlyId(fullyQualified))

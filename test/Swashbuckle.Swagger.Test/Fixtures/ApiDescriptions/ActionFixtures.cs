@@ -50,7 +50,7 @@ namespace Swashbuckle.Fixtures.ApiDescriptions
         public void AcceptsComplexTypeFromQuery([FromQuery]ComplexType param)
         { }
 
-        public void AcceptsRequiredStringFromQuery([FromQuery][Required]string param)
+        public void AcceptsRequiredStringFromQuery([FromQuery, Required]string param)
         { }
 
         public void AcceptsStringFromHeader([FromHeader]string param)

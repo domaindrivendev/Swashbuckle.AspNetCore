@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Reflection;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Converters;
 
@@ -86,15 +86,16 @@ namespace Swashbuckle.Swagger
             var type = Nullable.GetUnderlyingType(primitiveContract.UnderlyingType)
                 ?? primitiveContract.UnderlyingType;
 
-            if (type.IsEnum)
+            var typeInfo = type.GetTypeInfo();
+            if (typeInfo.IsEnum)
             {
                 var converter = primitiveContract.Converter;
                 var describeAsString = _options.DescribeAllEnumsAsStrings
                     || (converter != null && converter.GetType() == typeof(StringEnumConverter));
 
                 return describeAsString
-                    ? new Schema { type = "string", @enum = type.GetEnumNames() }
-                    : new Schema { type = "integer", format = "int32", @enum = type.GetEnumValues().Cast<object>().ToArray() };
+                    ? new Schema { type = "string", @enum = Enum.GetNames(type) }
+                    : new Schema { type = "integer", format = "int32", @enum = Enum.GetValues(type).Cast<object>().ToArray() };
             }
 
             if (PrimitiveTypeMap.ContainsKey(type))

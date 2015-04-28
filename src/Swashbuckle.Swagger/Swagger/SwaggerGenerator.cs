@@ -118,6 +118,7 @@ namespace Swashbuckle.Swagger
             var groupName = _options.GroupNameSelector(apiDescription);
 
             var parameters = apiDescription.ParameterDescriptions
+                .Where(paramDesc => paramDesc.Source.IsFromRequest)
                 .Select(paramDesc => CreateParameter(paramDesc, schemaRegistry))
                 .ToList();
 
@@ -152,7 +153,7 @@ namespace Swashbuckle.Swagger
             var parameter = new Parameter
             {
                 name = paramDesc.Name,
-                @in = paramDesc.Source.DisplayName.ToLowerInvariant(),
+                @in = paramDesc.Source.Id.ToLower(),
                 required = paramDesc.IsRequired()
             };
 

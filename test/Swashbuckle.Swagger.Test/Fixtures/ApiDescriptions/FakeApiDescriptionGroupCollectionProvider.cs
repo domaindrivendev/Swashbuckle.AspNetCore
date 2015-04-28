@@ -8,6 +8,7 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Description;
 using Microsoft.AspNet.Mvc.Routing;
 using Microsoft.AspNet.Mvc.ModelBinding;
+using Microsoft.AspNet.Mvc.ModelBinding.Metadata;
 using Moq;
 
 namespace Swashbuckle.Fixtures.ApiDescriptions
@@ -61,10 +62,8 @@ namespace Swashbuckle.Fixtures.ApiDescriptions
                     {
                         Name = paramInfo.Name,
                         ParameterType = paramInfo.ParameterType,
-                        BinderMetadata = paramInfo.GetCustomAttributes(false)
-                            .OfType<IBinderMetadata>()
-                            .FirstOrDefault()
-                })
+                        BindingInfo = BindingInfo.GetBindingInfo(paramInfo.GetCustomAttributes(false))
+                    })
                 .ToList();
 
             return descriptor;
@@ -86,21 +85,21 @@ namespace Swashbuckle.Fixtures.ApiDescriptions
                 CreateModelMetadataProvider()
             );
 
-            provider.Invoke(context, () => { });
+            provider.OnProvidersExecuting(context);
+            provider.OnProvidersExecuted(context);
             return new ReadOnlyCollection<ApiDescription>(context.Results);
         }
 
         private IModelMetadataProvider CreateModelMetadataProvider()
         {
-            return new DataAnnotationsModelMetadataProvider();
-            //var metadataDetailsProvider = new DefaultCompositeMetadataDetailsProvider(
-            //    new IMetadataDetailsProvider[]
-            //    {
-            //        new DefaultBindingMetadataProvider(),
-            //        new DataAnnotationsMetadataDetailsProvider()
-            //    }
-            //);
-            //return new DefaultModelMetadataProvider(metadataDetailsProvider);
+            var metadataDetailsProvider = new DefaultCompositeMetadataDetailsProvider(
+                new IMetadataDetailsProvider[]
+                {
+                    new DefaultBindingMetadataProvider(),
+                    new DataAnnotationsMetadataProvider()
+                }
+            );
+            return new DefaultModelMetadataProvider(metadataDetailsProvider);
         }
     }
 }

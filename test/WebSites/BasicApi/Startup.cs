@@ -1,7 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Mvc.Description;
+using Microsoft.AspNet.Hosting;
+using Microsoft.AspNet.Http;
+using Microsoft.AspNet.Routing;
 using Microsoft.Framework.DependencyInjection;
 using Swashbuckle.Application;
 
@@ -9,10 +13,18 @@ namespace BasicApi
 {
     public class Startup
     {
-        // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=398940
+        public Startup(IHostingEnvironment env)
+        {
+        }
+
+        // This method gets called by a runtime.
+        // Use this method to add services to the container
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            // Uncomment the following line to add Web API services which makes it easier to port Web API 2 controllers.
+            // You will also need to add the Microsoft.AspNet.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
+            // services.AddWebApiConventions();
 
             services.AddSwagger(s =>
             {
@@ -23,8 +35,6 @@ namespace BasicApi
                     c.SingleApiVersion("v1", "Swashbuckle Sample API")
                         .Description("A sample API for testing Swashbuckle")
                         .TermsOfService("Some terms ...");
-
-                    c.ResolveConflictingActions(MaxParametersWins);
                 });
 
                 s.SchemaGenerator(c =>
@@ -34,18 +44,19 @@ namespace BasicApi
             });
         }
 
-        public void Configure(IApplicationBuilder app)
+        // Configure is called after ConfigureServices is called.
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            // Configure the HTTP request pipeline.
+            app.UseStaticFiles();
+
+            // Add MVC to the request pipeline.
             app.UseMvc();
+            // Add the following route for porting Web API 2 controllers.
+            // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
 
-            app.UseSwagger("docs/{apiVersion}/swagger.json");
-            app.UseSwaggerUi("docs/ui/{*assetPath}");
-        }
-
-        private ApiDescription MaxParametersWins(IEnumerable<ApiDescription> apiDescriptions)
-        {
-            var maxParamCount = apiDescriptions.Max(apiDesc => apiDesc.ParameterDescriptions.Count());
-            return apiDescriptions.First(apiDesc => apiDesc.ParameterDescriptions.Count == maxParamCount);
+            app.UseSwagger();
+            app.UseSwaggerUi();
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using System.Reflection;
 
 namespace Swashbuckle.Swagger.XmlComments
 {
@@ -18,7 +19,7 @@ namespace Swashbuckle.Swagger.XmlComments
         {
             var builder = new StringBuilder(type.XmlLookupName());
 
-            if (type.IsGenericType)
+            if (type.GetTypeInfo().IsGenericType)
             {
                 var genericArgumentIds = type.GetGenericArguments()
                     .Select(t => t.XmlLookupNameWithTypeParameters())

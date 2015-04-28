@@ -1,11 +1,15 @@
 ﻿{
     "version": "1.0.0-*",
     "dependencies": {
-        "Microsoft.AspNet.Mvc": "6.0.0-beta3"
+        "Microsoft.AspNet.Mvc": "6.0.0-beta4-*",
+        "System.Reflection": "4.0.10-*",
+        "System.Xml.XPath.XmlDocument": "4.0.0-beta-*",
+        "System.Reflection.TypeExtensions": "4.0.0-beta-*",
+        "System.Reflection.Extensions": "4.0.0-beta-*"
     },
 
     "frameworks": {
-        "aspnet50": {
-        }
+        "dnx451": { },
+        "dnxcore50": { }
     }
 }

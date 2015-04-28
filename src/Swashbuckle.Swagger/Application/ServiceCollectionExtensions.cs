@@ -14,7 +14,7 @@ namespace Swashbuckle.Application
             Action<SwaggerOptionsBuilder> configure = null)
         {
             serviceCollection.Configure<MvcOptions>(c =>
-                c.ApplicationModelConventions.Add(new SwaggerApplicationConvention()));
+                c.Conventions.Add(new SwaggerApplicationConvention()));
 
             var optionsBuilder = new SwaggerOptionsBuilder();
             if (configure != null) configure(optionsBuilder);

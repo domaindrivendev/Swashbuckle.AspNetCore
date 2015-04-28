@@ -6,10 +6,9 @@ namespace Swashbuckle.Swagger
     {
         public static bool IsRequired(this ApiParameterDescription paramDesc)
         {
-            if (paramDesc.RouteInfo != null)
-                return !paramDesc.RouteInfo.IsOptional;
-
-            return paramDesc.ModelMetadata.IsRequired;
+            return (paramDesc.RouteInfo != null)
+                ? !paramDesc.RouteInfo.IsOptional
+                : false;
         }
     }
 }

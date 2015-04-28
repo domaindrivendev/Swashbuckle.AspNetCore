@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using Microsoft.Framework.Runtime;
 using Microsoft.AspNet.FileProviders;
 using Microsoft.AspNet.Mvc;
 
@@ -8,11 +10,17 @@ namespace Swashbuckle.Application
     [ApiExplorerSettings(IgnoreApi = true)]
     public class SwaggerUiController : Controller
     {
-        private IFileProvider _fileProvider;
+        private readonly IEnumerable<IFileProvider> _fileProviders;
 
-        public SwaggerUiController()
+        public SwaggerUiController(IApplicationEnvironment applicationEnvironment)
         {
-            _fileProvider = new EmbeddedFileProvider(GetType().Assembly, "bower_components/swagger-ui/dist");
+            var thisAssembly = GetType().GetTypeInfo().Assembly;
+            var customAssetsPath = applicationEnvironment.ApplicationBasePath + "/SwaggerUi";
+            _fileProviders = new IFileProvider[]
+            {
+                new PhysicalFileProvider(customAssetsPath),
+                new EmbeddedFileProvider(thisAssembly, "bower_components/swagger-ui/dist")
+            };
         }
 
         [HttpGet]
@@ -21,16 +29,19 @@ namespace Swashbuckle.Application
             if (assetPath == "index.html")
                 return View("/SwaggerUi/Index.cshtml");
 
-            return EmbeddedAssetFor(assetPath);
+            foreach (var fileProvider in _fileProviders)
+            {
+                var fileInfo = fileProvider.GetFileInfo(assetPath);
+                if (fileInfo.Exists) return CreateFileStreamResult(fileInfo);
+            }
+
+            return new HttpNotFoundResult();
         }
  
-        private IActionResult EmbeddedAssetFor(string assetPath)
+        private FileStreamResult CreateFileStreamResult(IFileInfo fileInfo)
         {
-            var fileInfo = _fileProvider.GetFileInfo(assetPath);
-            if (!fileInfo.Exists) return HttpNotFound();
-
-            var contentType = ContentTypeMap[assetPath.Split('.').Last()];
-            return new FileStreamResult(fileInfo.CreateReadStream(), contentType); 
+            var extension = fileInfo.Name.Split('.').Last();
+            return new FileStreamResult(fileInfo.CreateReadStream(), ContentTypeMap[extension]); 
         }
 
         private static Dictionary<string, string> ContentTypeMap = new Dictionary<string, string>
