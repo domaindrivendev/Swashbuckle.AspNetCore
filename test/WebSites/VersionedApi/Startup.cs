@@ -53,12 +53,13 @@ namespace VersionedApi
             app.UseStaticFiles();
 
             // Add MVC to the request pipeline.
-            app.UseMvc();
+            app.UseMvc(routes =>
+            {
+                routes.EnableSwagger();
+                routes.EnableSwaggerUi();
+            });
             // Add the following route for porting Web API 2 controllers.
             // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
-
-            app.UseSwagger();
-            app.UseSwaggerUi();
         }
         private static bool ResolveVersionSupportByVersionsConstraint(ApiDescription apiDesc, string version)
         {
