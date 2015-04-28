@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.ApplicationModels;
+﻿using Microsoft.AspNet.Mvc.ApplicationModels;
 
 namespace Swashbuckle.Application
 {
@@ -8,41 +6,11 @@ namespace Swashbuckle.Application
     {
         public void Apply(ApplicationModel application)
         {
+            application.ApiExplorer.IsVisible = true;
             foreach (var controller in application.Controllers)
             {
-                ApplyControllerConvention(controller);
+                controller.ApiExplorer.GroupName = controller.ControllerName;
             }
-        }
-
-        private void ApplyControllerConvention(ControllerModel controller)
-        {
-            foreach (var action in controller.Actions)
-            {
-                if (ApiExplorerShouldIgnore(action))
-                {
-                    action.ApiExplorer.IsVisible = false;
-                }
-                else
-                {
-                    action.ApiExplorer.IsVisible = true;
-                    action.ApiExplorer.GroupName = controller.ControllerName;
-                }
-            }
-        }
-
-        private bool ApiExplorerShouldIgnore(ActionModel action)
-        {
-            var actionSettings = action.Attributes
-                .OfType<ApiExplorerSettingsAttribute>()
-                .FirstOrDefault();
-            if (actionSettings != null) return actionSettings.IgnoreApi;
-
-            var controllerSettings = action.Controller.Attributes
-                .OfType<ApiExplorerSettingsAttribute>()
-                .FirstOrDefault();
-            if (controllerSettings != null) return controllerSettings.IgnoreApi;
-
-            return false;
         }
     }
 }
