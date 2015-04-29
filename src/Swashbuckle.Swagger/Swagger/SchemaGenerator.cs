@@ -172,7 +172,7 @@ namespace Swashbuckle.Swagger
                 referencedTypeMap.Add(type, new SchemaInfo { SchemaId = schemaId });
             }
 
-            return new Schema { @ref = _options.SchemaReferencePrefix + referencedTypeMap[type].SchemaId };
+            return new Schema { @ref = "#/definitions/" + referencedTypeMap[type].SchemaId };
         }
 
         private static readonly Dictionary<Type, Func<Schema>> PrimitiveTypeMap = new Dictionary<Type, Func<Schema>>

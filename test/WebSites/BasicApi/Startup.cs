@@ -7,6 +7,7 @@ using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Routing;
 using Microsoft.Framework.DependencyInjection;
+using Swashbuckle.Swagger;
 using Swashbuckle.Application;
 
 namespace BasicApi
@@ -28,19 +29,18 @@ namespace BasicApi
 
             services.AddSwagger(s =>
             {
-                s.SwaggerGenerator(c =>
+                s.SwaggerGenerator(opt =>
                 {
-                    c.Schemes(new[] { "http", "https" });
-
-                    c.SingleApiVersion("v1", "Swashbuckle Sample API")
-                        .Description("A sample API for testing Swashbuckle")
-                        .TermsOfService("Some terms ...");
+                    opt.Schemes = new[] { "http", "https" };
+                    opt.SingleApiVersion(new Info
+                    {
+                        title = "Swashbuckle Sample API",
+                        description = "A sample API for testing Swashbuckle",
+                        termsOfService = "Some terms ..."
+                    });
                 });
 
-                s.SchemaGenerator(c =>
-                {
-                    c.DescribeAllEnumsAsStrings();
-                });
+                s.SchemaGenerator(opt => opt.DescribeAllEnumsAsStrings = true);
             });
         }
 

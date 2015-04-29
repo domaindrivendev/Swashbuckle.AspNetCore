@@ -2,13 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNet.Mvc;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Linq;
 using Xunit;
-using Swashbuckle.Application;
 using Swashbuckle.Fixtures;
 using Swashbuckle.Fixtures.Extensions;
+using Swashbuckle.Application;
 
 namespace Swashbuckle.Swagger
 {
@@ -218,7 +217,7 @@ namespace Swashbuckle.Swagger
         [Fact]
         public void GetOrRegister_SupportsOptionToIgnoreObsoleteProperties()
         {
-            var schemaGenerator = Subject(opts => opts.IgnoreObsoleteProperties());
+            var schemaGenerator = Subject(opts => opts.IgnoreObsoleteProperties = true);
 
             schemaGenerator.GetOrRegister(typeof(ObsoletePropertiesType));
 
@@ -229,7 +228,7 @@ namespace Swashbuckle.Swagger
         [Fact]
         public void GetOrRegister_SupportsOptionToUseFullTypeNamesInSchemaIds()
         {
-            var schemaGenerator = Subject(opts => opts.UseFullTypeNameInSchemaIds());
+            var schemaGenerator = Subject(opts => opts.UseFullTypeNameInSchemaIds = true);
 
             var jsonReference1 = schemaGenerator.GetOrRegister(typeof(Fixtures.Namespace1.ConflictingType));
             var jsonReference2 = schemaGenerator.GetOrRegister(typeof(Fixtures.Namespace2.ConflictingType));
@@ -241,7 +240,7 @@ namespace Swashbuckle.Swagger
         [Fact]
         public void GetOrRegister_SupportsOptionToDescribeAllEnumsAsStrings()
         {
-            var schemaGenerator = Subject(opts => opts.DescribeAllEnumsAsStrings());
+            var schemaGenerator = Subject(opts => opts.DescribeAllEnumsAsStrings = true);
 
             var schema = schemaGenerator.GetOrRegister(typeof(AnEnum));
 
@@ -324,12 +323,12 @@ namespace Swashbuckle.Swagger
             });
         }
 
-        private SchemaGenerator Subject(Action<SchemaGeneratorOptionsBuilder> setupOptions = null)
+        private SchemaGenerator Subject(Action<SchemaGeneratorOptions> configure = null)
         {
-            var optionsBuilder = new SchemaGeneratorOptionsBuilder();
-            if (setupOptions != null) setupOptions(optionsBuilder);
+            var options = new SchemaGeneratorOptions();
+            if (configure != null) configure(options);
 
-            return new SchemaGenerator(new DefaultContractResolver(), optionsBuilder.Build());
+            return new SchemaGenerator(new DefaultContractResolver(), options);
         }
     }
 }

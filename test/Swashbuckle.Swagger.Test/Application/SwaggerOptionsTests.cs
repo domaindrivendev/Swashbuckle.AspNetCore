@@ -6,7 +6,7 @@ using Microsoft.AspNet.Http.Core.Collections;
 
 namespace Swashbuckle
 {
-    public class SwaggerOptionsBuilderTests
+    public class SwaggerOptionsTests
     {
         [Theory]
         [InlineData("http", "tempuri.org:1234", "/api", "http://tempuri.org:1234/api")]
@@ -23,7 +23,7 @@ namespace Swashbuckle
             request.Setup(req => req.PathBase).Returns(new PathString(requestPathBase));
             request.Setup(req => req.Headers).Returns(new HeaderDictionary());
 
-            var rootUrl = SwaggerOptionsBuilder.DefaultRootUrlResolver(request.Object);
+            var rootUrl = SwaggerOptions.DefaultRootUrlResolver(request.Object);
 
             Assert.Equal(expectedRootUrl, rootUrl);
         }
@@ -41,7 +41,7 @@ namespace Swashbuckle
                 { "X-Forwarded-Port", new[] { "5678" } }
             });
 
-            var rootUrl = SwaggerOptionsBuilder.DefaultRootUrlResolver(request.Object);
+            var rootUrl = SwaggerOptions.DefaultRootUrlResolver(request.Object);
 
             Assert.Equal("https://acmecorp.org:5678", rootUrl);
         }

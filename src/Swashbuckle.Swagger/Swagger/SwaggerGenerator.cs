@@ -25,8 +25,7 @@ namespace Swashbuckle.Swagger
         {
             var schemaRegistry = _schemaRegistryFactory();
 
-            Info info;
-            _options.ApiVersions.TryGetValue(apiVersion, out info);
+            var info = _options.ApiVersions.FirstOrDefault(v => v.version == apiVersion);
             if (info == null)
                 throw new UnknownApiVersion(apiVersion);
 
@@ -80,9 +79,11 @@ namespace Swashbuckle.Swagger
             {
                 var httpMethod = group.Key;
 
-                var apiDescription = (group.Count() == 1)
-                    ? group.First()
-                    : _options.ConflictingActionsResolver(group);
+                if (group.Count() > 1) throw new NotSupportedException(string.Format(
+                    "Not supported by Swagger 2.0: Multiple operations with path '{0}' and method '{1}'.",
+                    group.First().RelativePathSansQueryString(), httpMethod));
+
+                var apiDescription = group.Single();
 
                 switch (httpMethod)
                 {

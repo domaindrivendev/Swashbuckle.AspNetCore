@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Linq;
+using System.Collections.Generic;
 using Newtonsoft.Json.Serialization;
 using Xunit;
-using Swashbuckle.Application;
 using Swashbuckle.Fixtures.ApiDescriptions;
 using Swashbuckle.Fixtures.Extensions;
+using Swashbuckle.Application;
 
 namespace Swashbuckle.Swagger
 {
@@ -236,7 +237,7 @@ namespace Swashbuckle.Swagger
         public void GetSwagger_SupportsOptionToProvideAdditionalApiInfo()
         {
             var swaggerGenerator = Subject(
-                setupOptions: opts => opts.SingleApiVersion("v3", "My API"));
+                configure: opts => opts.SingleApiVersion(new Info { version = "v3", title = "My API" }));
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v3");
 
@@ -255,15 +256,15 @@ namespace Swashbuckle.Swagger
                     apis.Add("GET", "v1/collection", nameof(ActionFixtures.ReturnsEnumerable));
                     apis.Add("GET", "v2/collection", nameof(ActionFixtures.ReturnsEnumerable));
                 },
-                setupOptions: opts =>
+                configure: opts =>
                 {
                     opts.MultipleApiVersions(
-                        (apiDesc, targetApiVersion) => apiDesc.RelativePath.StartsWith(targetApiVersion),
-                        (vc) =>
+                        new []
                         {
-                            vc.Version("v2", "API V2");
-                            vc.Version("v1", "API V1");
-                        });
+                            new Info { version = "v2", title = "API V2" },
+                            new Info { version = "v1", title = "API V1" }
+                        },
+                        (apiDesc, targetApiVersion) => apiDesc.RelativePath.StartsWith(targetApiVersion));
                 });
 
             var v2Swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v2");
@@ -276,7 +277,7 @@ namespace Swashbuckle.Swagger
         [Fact]
         public void GetSwagger_SupportsOptionToProvideExplicitHttpSchemes()
         {
-            var swaggerGenerator = Subject(setupOptions: opts => opts.Schemes(new[] { "http", "https" }));
+            var swaggerGenerator = Subject(configure: opts => opts.Schemes = new[] { "http", "https" });
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
 
@@ -286,9 +287,12 @@ namespace Swashbuckle.Swagger
         [Fact]
         public void GetSwagger_SupportsOptionToDefineBasicAuthScheme()
         {
-            var swaggerGenerator = Subject(setupOptions: opts =>
-                opts.BasicAuth("basic")
-                    .Description("Basic HTTP Authentication"));
+            var swaggerGenerator = Subject(configure: opts =>
+                opts.SecurityDefinitions.Add("basic", new SecurityScheme
+                {
+                    type = "basic",
+                    description = "Basic HTTP Authentication"
+                }));
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
 
@@ -301,11 +305,14 @@ namespace Swashbuckle.Swagger
         [Fact]
         public void GetSwagger_SupportsOptionToDefineApiKeyScheme()
         {
-            var swaggerGenerator = Subject(setupOptions: opts =>
-                opts.ApiKey("apiKey")
-                    .Description("API Key Authentication")
-                    .Name("apiKey")
-                    .In("header"));
+            var swaggerGenerator = Subject(configure: opts =>
+                opts.SecurityDefinitions.Add("apiKey", new SecurityScheme
+                {
+                    type = "apiKey",
+                    description = "API Key Authentication",
+                    name = "apiKey",
+                    @in = "header"
+                }));
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
 
@@ -320,17 +327,20 @@ namespace Swashbuckle.Swagger
         [Fact]
         public void GetSwagger_SupportsOptionToDefineOAuth2Scheme()
         {
-            var swaggerGenerator = Subject(setupOptions: opts =>
-                opts.OAuth2("oauth2")
-                    .Description("OAuth2 Authorization Code Grant")
-                    .Flow("accessCode")
-                    .AuthorizationUrl("https://tempuri.org/auth")
-                    .TokenUrl("https://tempuri.org/token")
-                    .Scopes(s =>
+            var swaggerGenerator = Subject(configure: opts =>
+                opts.SecurityDefinitions.Add("oauth2", new SecurityScheme
+                {
+                    type = "oauth2",
+                    description = "OAuth2 Authorization Code Grant",
+                    flow = "accessCode",
+                    authorizationUrl = "https://tempuri.org/auth",
+                    tokenUrl = "https://tempuri.org/token",
+                    scopes = new Dictionary<string, string>
                     {
-                        s.Add("read", "Read access to protected resources");
-                        s.Add("write", "Write access to protected resources");
-                    }));
+                        { "read", "Read access to protected resources" },
+                        { "write", "Write access to protected resources" }
+                    }
+                }));
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
 
@@ -355,7 +365,7 @@ namespace Swashbuckle.Swagger
                     apis.Add("GET", "collection1", nameof(ActionFixtures.ReturnsEnumerable));
                     apis.Add("GET", "collection2", nameof(ActionFixtures.MarkedObsolete));
                 },
-                setupOptions: opts => opts.IgnoreObsoleteActions());
+                configure: opts => opts.IgnoreObsoleteActions = true);
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
 
@@ -371,7 +381,7 @@ namespace Swashbuckle.Swagger
                     apis.Add("GET", "collection1", nameof(ActionFixtures.ReturnsEnumerable));
                     apis.Add("GET", "collection2", nameof(ActionFixtures.ReturnsInt));
                 },
-                setupOptions: opts => opts.GroupActionsBy((apiDesc) => apiDesc.RelativePath));
+                configure: opts => opts.GroupActionsBy((apiDesc) => apiDesc.RelativePath));
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
 
@@ -390,7 +400,7 @@ namespace Swashbuckle.Swagger
                     apis.Add("GET", "F", nameof(ActionFixtures.ReturnsVoid));
                     apis.Add("GET", "D", nameof(ActionFixtures.ReturnsVoid));
                 },
-                setupOptions: opts =>
+                configure: opts =>
                 {
                     opts.GroupActionsBy((apiDesc) => apiDesc.RelativePath);
                     opts.OrderActionGroupsBy(new DescendingAlphabeticComparer());
@@ -409,7 +419,7 @@ namespace Swashbuckle.Swagger
                 {
                     apis.Add("GET", "collection", nameof(ActionFixtures.ReturnsEnumerable));
                 },
-                setupOptions: opts =>
+                configure: opts =>
                 {
                     opts.OperationFilter<VendorExtensionsOperationFilter>();
                 });
@@ -423,31 +433,12 @@ namespace Swashbuckle.Swagger
         [Fact]
         public void GetSwagger_SupportsOptionToPostModifySwaggerDocument()
         {
-            var swaggerGenerator = Subject(setupOptions: opts =>
+            var swaggerGenerator = Subject(configure: opts =>
                 opts.DocumentFilter<VendorExtensionsDocumentFilter>());
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
             
             Assert.NotEmpty(swagger.vendorExtensions);
-        }
-
-        [Fact]
-        public void GetSwagger_SupportsOptionToResolveMultipleActionsWithSameHttpMethodAndPath()
-        {
-            var swaggerGenerator = Subject(
-                setupApis: apis =>
-                {
-                    apis.Add("GET", "collection1", nameof(ActionFixtures.AcceptsNothing));
-                    apis.Add("GET", "collection1", nameof(ActionFixtures.AcceptsStringFromQuery));
-                },
-                setupOptions: opts =>
-                {
-                    opts.ResolveConflictingActions(apiDescs => apiDescs.First());
-                });
-
-            var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
-
-            Assert.Equal(new[] { "/collection1" }, swagger.paths.Keys.ToArray());
         }
 
         [Fact]
@@ -465,18 +456,18 @@ namespace Swashbuckle.Swagger
 
         private SwaggerGenerator Subject(
             Action<FakeApiDescriptionGroupCollectionProvider> setupApis = null,
-            Action<SwaggerGeneratorOptionsBuilder> setupOptions = null)
+            Action<SwaggerGeneratorOptions> configure = null)
         {
             var apiDescriptionsProvider = new FakeApiDescriptionGroupCollectionProvider();
             if (setupApis != null) setupApis(apiDescriptionsProvider);
 
-            var optionsBuilder = new SwaggerGeneratorOptionsBuilder();
-            if (setupOptions != null) setupOptions(optionsBuilder);
+            var options = new SwaggerGeneratorOptions();
+            if (configure != null) configure(options);
 
             return new SwaggerGenerator(
                 apiDescriptionsProvider,
                 () => new SchemaGenerator(new DefaultContractResolver()),
-                optionsBuilder.Build()
+                options
             );
         }
     }

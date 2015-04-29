@@ -1,73 +1,75 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using Microsoft.AspNet.Mvc.Description;
 
 namespace Swashbuckle.Swagger
 {
     public class SwaggerGeneratorOptions
     {
-        internal SwaggerGeneratorOptions(
-            IReadOnlyDictionary<string, Info> apiVersions = null,
-            Func<ApiDescription, string, bool> versionSupportResolver = null,
-            IEnumerable<string> schemes = null,
-            IDictionary<string, SecurityScheme> securityDefinitions = null,
-            bool ignoreObsoleteActions = false,
-            Func<ApiDescription, string> groupNameSelector = null,
-            IComparer<string> groupNameComparer = null,
-            IEnumerable<IOperationFilter> operationFilters = null,
-            IEnumerable<IDocumentFilter> documentFilters = null,
-            Func<IEnumerable<ApiDescription>, ApiDescription> conflictingActionsResolver = null)
+        private IList<Info> _apiVersions;
+
+        public SwaggerGeneratorOptions()
         {
-            ApiVersions = apiVersions ?? DefaultApiVersions();
-            VersionSupportResolver = versionSupportResolver;
-            Schemes = schemes;
-            SecurityDefinitions = securityDefinitions;
-            IgnoreObsoleteActions = ignoreObsoleteActions;
-            GroupNameSelector = groupNameSelector ?? ((apiDesc) => apiDesc.GroupName);
-            GroupNameComparer = groupNameComparer ?? Comparer<string>.Default;
-            OperationFilters = operationFilters ?? new List<IOperationFilter>();
-            DocumentFilters = documentFilters ?? new List<IDocumentFilter>();
-            ConflictingActionsResolver = conflictingActionsResolver ?? DefaultConflictingActionsResolver;
+            _apiVersions = new List<Info>();
+            _apiVersions.Add(new Info { version = "v1", title = "API V1" });
+
+            SecurityDefinitions = new Dictionary<string, SecurityScheme>();
+
+            GroupNameSelector = ((apiDesc) => apiDesc.GroupName);
+            GroupNameComparer = Comparer<string>.Default;
+
+            OperationFilters = new List<IOperationFilter>();
+            DocumentFilters = new List<IDocumentFilter>();
         }
 
-        public IReadOnlyDictionary<string, Info> ApiVersions { get; private set; }
+        public IEnumerable<Info> ApiVersions
+        {
+            get { return _apiVersions; }
+        }
 
         public Func<ApiDescription, string, bool> VersionSupportResolver { get; private set; }
 
-        public IEnumerable<string> Schemes { get; private set; }
+        public IList<string> Schemes { get; set; }
 
         public IDictionary<string, SecurityScheme> SecurityDefinitions { get; private set; }
 
-        public bool IgnoreObsoleteActions { get; private set; }
+        public bool IgnoreObsoleteActions { get; set; }
 
         public Func<ApiDescription, string> GroupNameSelector { get; private set; }
 
         public IComparer<string> GroupNameComparer { get; private set; }
 
-        public IEnumerable<IOperationFilter> OperationFilters { get; private set; }
+        public IList<IOperationFilter> OperationFilters { get; private set; }
 
-        public IEnumerable<IDocumentFilter> DocumentFilters { get; private set; }
+        public IList<IDocumentFilter> DocumentFilters { get; private set; }
 
-        public Func<IEnumerable<ApiDescription>, ApiDescription> ConflictingActionsResolver { get; private set; }
-
-        private IReadOnlyDictionary<string, Info> DefaultApiVersions()
+        public void SingleApiVersion(Info info)
         {
-            return new ReadOnlyDictionary<string, Info>(
-                new Dictionary<string, Info>
-                {
-                    { "v1", new Info { version = "v1" , title = "API V1" } }
-                });
+            _apiVersions.Clear();
+            _apiVersions.Add(info);
+            VersionSupportResolver = null;
         }
 
-        private ApiDescription DefaultConflictingActionsResolver(IEnumerable<ApiDescription> apiDescriptions)
+        public void MultipleApiVersions(
+            IEnumerable<Info> apiVersions,
+            Func<ApiDescription, string, bool> versionSupportResolver)
         {
-            var first = apiDescriptions.First();
-            throw new NotSupportedException(string.Format(
-                "Not supported by Swagger 2.0: Multiple operations with path '{0}' and method '{1}'. " +
-                "See the config setting - \"ResolveConflictingActions\" for a potential workaround",
-                first.RelativePathSansQueryString(), first.HttpMethod));
+            _apiVersions.Clear();
+            foreach (var version in apiVersions)
+            {
+                _apiVersions.Add(version);
+            }
+            VersionSupportResolver = versionSupportResolver;
+        }
+
+        public void GroupActionsBy(Func<ApiDescription, string> groupNameSelector)
+        {
+            GroupNameSelector = groupNameSelector;
+        }
+
+        public void OrderActionGroupsBy(IComparer<string> groupNameComparer)
+        {
+            GroupNameComparer = groupNameComparer;
         }
     }
 }

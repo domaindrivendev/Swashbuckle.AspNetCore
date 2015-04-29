@@ -8,6 +8,7 @@ using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Routing;
 using Microsoft.Framework.DependencyInjection;
 using Microsoft.AspNet.Mvc.Description;
+using Swashbuckle.Swagger;
 using Swashbuckle.Application;
 using VersionedApi.Versioning;
 using VersionedApi.Swagger;
@@ -29,19 +30,19 @@ namespace VersionedApi
             // You will also need to add the Microsoft.AspNet.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
             // services.AddWebApiConventions();
 
-            services.AddSwagger(config =>
+            services.AddSwagger(s =>
             {
-                config.SwaggerGenerator(c =>
+                s.SwaggerGenerator(opt =>
                 {
-                    c.MultipleApiVersions(
-                        ResolveVersionSupportByVersionsConstraint,
-                        versions =>
+                    opt.MultipleApiVersions(
+                        new []
                         {
-                            versions.Version("v1", "API V1");
-                            versions.Version("v2", "API V2");
-                        });
+                            new Info { version = "v1", title = "API V1" },
+                            new Info { version = "v1", title = "API V2" }
+                        },
+                        ResolveVersionSupportByVersionsConstraint);
 
-                    c.DocumentFilter<AddVersionToBasePath>();
+                    opt.DocumentFilter<AddVersionToBasePath>();
                 });
             });
         }

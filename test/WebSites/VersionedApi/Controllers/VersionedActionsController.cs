@@ -8,7 +8,6 @@ using VersionedApi.Versioning;
 namespace VersionedApi.Controllers
 {
     [Route("/{version}/products")]
-    [Produces("application/json")]
     public class VersionedActionsController
     {
         [HttpPost()]
