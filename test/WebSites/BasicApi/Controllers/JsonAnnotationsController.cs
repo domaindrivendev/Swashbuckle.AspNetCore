@@ -12,7 +12,11 @@ namespace BasicApi.Controllers
         [HttpGet("/promotions")]
         public IEnumerable<Promotion> GetPromotions()
         {
-            throw new NotImplementedException();
+            return new[]
+            {
+                new Promotion { Code = "A", DiscountType = DiscountType.Amount, Discount = 30 },
+                new Promotion { Code = "B", DiscountType = DiscountType.Percentage, Discount = 10 }
+            };
         }
     }
 

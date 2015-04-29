@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNet.Mvc;
-using System;
 
 namespace BasicApi.Controllers
 {
@@ -7,9 +6,9 @@ namespace BasicApi.Controllers
     public class FromQueryParamsController
     {
         [HttpGet("adresses/valdidate")]
-        public bool ValidateAddress([FromQuery]Address address)
+        public IActionResult ValidateAddress([FromQuery]Address address)
         {
-            throw new NotImplementedException();
+            return new NoContentResult(); 
         }
     }
 

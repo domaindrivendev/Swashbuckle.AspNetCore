@@ -1,12 +1,14 @@
 ﻿using System.Collections.Generic;
-using Microsoft.AspNet.Mvc;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNet.Mvc;
+using Microsoft.AspNet.Authorization;
 
-namespace BasicApi.Controllers
+namespace SecureApi.Controllers
 {
     [Route("/products")]
     [Produces("application/json")]
-    public class CrudActionsController
+    [Authorize(Roles = "read")]
+    public class OAuthProtectedController
     {
         [HttpPost()]
         public int Create([FromBody, Required]Product product)

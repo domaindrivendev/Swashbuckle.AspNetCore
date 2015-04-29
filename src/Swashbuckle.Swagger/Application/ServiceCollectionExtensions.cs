@@ -18,7 +18,7 @@ namespace Swashbuckle.Application
             serviceCollection.Configure<MvcOptions>(c =>
                 c.Conventions.Add(new SwaggerApplicationConvention()));
 
-            serviceCollection.Configure<SwaggerOptions>(configure);
+            serviceCollection.Configure<SwaggerOptions>(configure ?? ((options) => {}));
 
             serviceCollection.AddTransient(GetRootUrlResolver);
             serviceCollection.AddTransient(GetSchemaRegistry);

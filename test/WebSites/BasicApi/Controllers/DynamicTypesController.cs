@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Dynamic;
 using Microsoft.AspNet.Mvc;
 using Newtonsoft.Json.Linq;
@@ -12,25 +11,29 @@ namespace BasicApi.Controllers
         [HttpPost("kittens")]
         public int CreateKitten([FromBody]dynamic kitten)
         {
-            throw new NotImplementedException();
+            return 1;
         }
 
         [HttpGet("unicorns")]
         public ExpandoObject GetUnicorns()
         {
-            throw new NotImplementedException();
+            return new ExpandoObject(); 
         }
 
         [HttpPost("dragons")]
         public IActionResult CreateDragons([FromBody]object dragon)
         {
-            throw new NotImplementedException();
+            return new ObjectResult(1);
         }
 
         [HttpGet("wizards")]
         public IEnumerable<JObject> GetWizards()
         {
-            throw new NotImplementedException();
+            return new[]
+            {
+                new JObject(),
+                new JObject()
+            };
         }
     }
 }

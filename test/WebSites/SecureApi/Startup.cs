@@ -7,13 +7,11 @@ using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Routing;
 using Microsoft.Framework.DependencyInjection;
-using Microsoft.AspNet.Mvc.Description;
-using Swashbuckle.Swagger;
 using Swashbuckle.Application;
-using VersionedApi.Versioning;
-using VersionedApi.Swagger;
+using Swashbuckle.Swagger;
+using SecureApi.Swagger;
 
-namespace VersionedApi
+namespace SecureApi
 {
     public class Startup
     {
@@ -32,17 +30,21 @@ namespace VersionedApi
 
             services.AddSwagger(s =>
             {
-                s.SwaggerGenerator(opt =>
+                s.SwaggerGenerator(opts =>
                 {
-                    opt.MultipleApiVersions(
-                        new []
+                    opts.SecurityDefinitions.Add("oauth2", new SecurityScheme
+                    {
+                        type = "oauth2",
+                        flow = "implicit",
+                        authorizationUrl = "http://petstore.swagger.io/api/oauth/dialog",
+                        scopes = new Dictionary<string, string>
                         {
-                            new Info { version = "v1", title = "API V1" },
-                            new Info { version = "v2", title = "API V2" }
-                        },
-                        ResolveVersionSupportByVersionsConstraint);
+                            { "read", "read access" },
+                            { "write", "write access" }
+                        }
+                    });
 
-                    opt.DocumentFilter<AddVersionToBasePath>();
+                    opts.OperationFilter<AssignSecurityRequirements>();
                 });
             });
         }
@@ -61,14 +63,11 @@ namespace VersionedApi
             });
             // Add the following route for porting Web API 2 controllers.
             // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
-        }
-        private static bool ResolveVersionSupportByVersionsConstraint(ApiDescription apiDesc, string version)
-        {
-            var versionAttribute = apiDesc.ActionDescriptor.ActionConstraints.OfType<VersionsAttribute>()
-                .FirstOrDefault();
-            if (versionAttribute == null) return true;
 
-            return versionAttribute.AcceptedVersions.Contains(version);
+            // TOOD: Figure out oauth middleware to validate token
+            //app.UseOAuthBearerAuthentication(opts =>
+            //{
+            //});
         }
     }
 }

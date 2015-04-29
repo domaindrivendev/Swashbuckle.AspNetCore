@@ -1,5 +1,4 @@
-﻿using System;
-using Swashbuckle.Swagger.Annotations;
+﻿using Swashbuckle.Swagger.Annotations;
 using Microsoft.AspNet.Mvc;
 
 namespace BasicApi.Controllers
@@ -11,10 +10,12 @@ namespace BasicApi.Controllers
         [HttpGet("/carts/{id}")]
         public Cart GetById(int id)
         {
-            throw new NotImplementedException();
+            return new Cart { Id = id };
         }
     }
 
     public class Cart
-    {}
+    {
+        public int Id { get; set; }
+    }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNet.Mvc;
 
 namespace BasicApi.Controllers
@@ -14,7 +13,7 @@ namespace BasicApi.Controllers
             if (!ModelState.IsValid)
                 return new BadRequestObjectResult(ModelState);
 
-            throw new NotImplementedException();
+            return new ObjectResult(1);
         }
     }
 
