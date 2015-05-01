@@ -22,15 +22,15 @@ namespace SecureApi.Swagger
 
             if (scopes.Any())
             {
-                if (operation.security == null)
-                    operation.security = new List<IDictionary<string, IEnumerable<string>>>();
+                if (operation.Security == null)
+                    operation.Security = new List<IDictionary<string, IEnumerable<string>>>();
 
                 var oAuthRequirements = new Dictionary<string, IEnumerable<string>>
                 {
                     { "oauth2", scopes }
                 };
 
-                operation.security.Add(oAuthRequirements);
+                operation.Security.Add(oAuthRequirements);
             }
         }
     }

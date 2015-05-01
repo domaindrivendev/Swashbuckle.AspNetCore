@@ -12,13 +12,13 @@ namespace Swashbuckle.Swagger.Annotations
             if (attribute == null) return;
 
             if (attribute.OperationId != null)
-                operation.operationId = attribute.OperationId;
+                operation.OperationId = attribute.OperationId;
             
             if (attribute.Tags != null)
-                operation.tags = attribute.Tags;
+                operation.Tags = attribute.Tags;
 
             if (attribute.Schemes != null)
-                operation.schemes = attribute.Schemes;
+                operation.Schemes = attribute.Schemes;
         }
     }
 }

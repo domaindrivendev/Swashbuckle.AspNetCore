@@ -11,15 +11,15 @@ namespace Swashbuckle.Swagger.Annotations
         {
             var operation = new Operation
             {
-                operationId = "foobar" 
+                OperationId = "foobar" 
             };
             var filterContext = FilterContextFor(nameof(ActionFixtures.AnnotatedWithSwaggerOperation));
 
             Subject().Apply(operation, filterContext);
 
-            Assert.Equal("CustomOperationId", operation.operationId);
-            Assert.Equal(new[] { "customTag" }, operation.tags.ToArray());
-            Assert.Equal(new[] { "customScheme" }, operation.schemes.ToArray());
+            Assert.Equal("CustomOperationId", operation.OperationId);
+            Assert.Equal(new[] { "customTag" }, operation.Tags.ToArray());
+            Assert.Equal(new[] { "customScheme" }, operation.Schemes.ToArray());
         }
 
         private OperationFilterContext FilterContextFor(string actionFixtureName)

@@ -32,12 +32,12 @@ namespace SecureApi
             {
                 s.SwaggerGenerator(opts =>
                 {
-                    opts.SecurityDefinitions.Add("oauth2", new SecurityScheme
+                    opts.SecurityDefinitions.Add("oauth2", new OAuth2Scheme
                     {
-                        type = "oauth2",
-                        flow = "implicit",
-                        authorizationUrl = "http://petstore.swagger.io/api/oauth/dialog",
-                        scopes = new Dictionary<string, string>
+                        Type = "oauth2",
+                        Flow = "implicit",
+                        AuthorizationUrl = "http://petstore.swagger.io/api/oauth/dialog",
+                        Scopes = new Dictionary<string, string>
                         {
                             { "read", "read access" },
                             { "write", "write access" }

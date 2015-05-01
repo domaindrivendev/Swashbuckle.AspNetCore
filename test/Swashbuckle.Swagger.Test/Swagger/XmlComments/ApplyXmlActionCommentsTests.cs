@@ -16,8 +16,8 @@ namespace Swashbuckle.Swagger.XmlComments
 
             Subject().Apply(operation, filterContext);
 
-            Assert.Equal("summary for AnnotatedWithSummaryAndRemarksXml", operation.summary);
-            Assert.Equal("remarks for AnnotatedWithSummaryAndRemarksXml", operation.description);
+            Assert.Equal("summary for AnnotatedWithSummaryAndRemarksXml", operation.Summary);
+            Assert.Equal("remarks for AnnotatedWithSummaryAndRemarksXml", operation.Description);
         }
 
         [Fact]
@@ -25,18 +25,18 @@ namespace Swashbuckle.Swagger.XmlComments
         {
             var operation = new Operation
             {
-                parameters = new List<Parameter>
+                Parameters = new List<IParameter>
                 {
-                    new Parameter { name = "param1" },
-                    new Parameter { name = "param2" }
+                    new NonBodyParameter { Name = "param1" },
+                    new NonBodyParameter { Name = "param2" }
                 }
             };
             var filterContext = FilterContextFor(nameof(ActionFixtures.AnnotatedWithParamsXml));
 
             Subject().Apply(operation, filterContext);
 
-            Assert.Equal("description for param1", operation.parameters.First().description);
-            Assert.Equal("description for param2", operation.parameters.Last().description);
+            Assert.Equal("description for param1", operation.Parameters.First().Description);
+            Assert.Equal("description for param2", operation.Parameters.Last().Description);
         }
 
         private OperationFilterContext FilterContextFor(string actionFixtureName)

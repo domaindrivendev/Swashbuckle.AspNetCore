@@ -16,8 +16,8 @@ namespace Swashbuckle.Swagger
         {
             var swagger = Subject().GetSwagger("https://tempuri.org", "v1");
 
-            Assert.Equal("v1", swagger.info.version);
-            Assert.Equal("API V1", swagger.info.title);
+            Assert.Equal("v1", swagger.Info.Version);
+            Assert.Equal("API V1", swagger.Info.Title);
         }
 
         [Theory]
@@ -31,9 +31,9 @@ namespace Swashbuckle.Swagger
         {
             var swagger = Subject().GetSwagger(rootUrl, "v1");
 
-            Assert.Equal(expectedHost, swagger.host);
-            Assert.Equal(expectedBasePath, swagger.basePath);
-            Assert.Equal(expectedSchemes, swagger.schemes.ToArray());
+            Assert.Equal(expectedHost, swagger.Host);
+            Assert.Equal(expectedBasePath, swagger.BasePath);
+            Assert.Equal(expectedSchemes, swagger.Schemes.ToArray());
         }
 
         [Fact]
@@ -56,7 +56,7 @@ namespace Swashbuckle.Swagger
                     "/collection2",
                     "/collection2/{id}"
                 },
-                swagger.paths.Keys.ToArray());
+                swagger.Paths.Keys.ToArray());
         }
 
         [Fact]
@@ -74,30 +74,30 @@ namespace Swashbuckle.Swagger
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
 
             // GET collection
-            var operation = swagger.paths["/collection"].get;
+            var operation = swagger.Paths["/collection"].Get;
             Assert.NotNull(operation);
-            Assert.Equal("ReturnsEnumerable", operation.operationId);
-            Assert.Equal(new[] { "application/json", "text/json" }, operation.produces.ToArray());
+            Assert.Equal("ReturnsEnumerable", operation.OperationId);
+            Assert.Equal(new[] { "application/json", "text/json" }, operation.Produces.ToArray());
             // PUT collection/{id}
-            operation = swagger.paths["/collection/{id}"].put;
+            operation = swagger.Paths["/collection/{id}"].Put;
             Assert.NotNull(operation);
-            Assert.Equal("ReturnsVoid", operation.operationId);
-            Assert.Empty(operation.produces.ToArray());
+            Assert.Equal("ReturnsVoid", operation.OperationId);
+            Assert.Empty(operation.Produces.ToArray());
             // POST collection
-            operation = swagger.paths["/collection"].post;
+            operation = swagger.Paths["/collection"].Post;
             Assert.NotNull(operation);
-            Assert.Equal("ReturnsInt", operation.operationId);
-            Assert.Equal(new[] { "application/json", "text/json" }, operation.produces.ToArray());
+            Assert.Equal("ReturnsInt", operation.OperationId);
+            Assert.Equal(new[] { "application/json", "text/json" }, operation.Produces.ToArray());
             // DELETE collection/{id}
-            operation = swagger.paths["/collection/{id}"].delete;
+            operation = swagger.Paths["/collection/{id}"].Delete;
             Assert.NotNull(operation);
-            Assert.Equal("ReturnsVoid", operation.operationId);
-            Assert.Empty(operation.produces.ToArray());
+            Assert.Equal("ReturnsVoid", operation.OperationId);
+            Assert.Empty(operation.Produces.ToArray());
             // PATCH collection
-            operation = swagger.paths["/collection/{id}"].patch;
+            operation = swagger.Paths["/collection/{id}"].Patch;
             Assert.NotNull(operation);
-            Assert.Equal("ReturnsVoid", operation.operationId);
-            Assert.Empty(operation.produces.ToArray());
+            Assert.Equal("ReturnsVoid", operation.OperationId);
+            Assert.Empty(operation.Produces.ToArray());
         }
 
         [Fact]
@@ -108,8 +108,8 @@ namespace Swashbuckle.Swagger
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
 
-            var operation = swagger.paths["/collection"].get;
-            Assert.Null(operation.parameters);
+            var operation = swagger.Paths["/collection"].Get;
+            Assert.Null(operation.Parameters);
         }
 
         [Theory]
@@ -125,10 +125,12 @@ namespace Swashbuckle.Swagger
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
 
-            var param = swagger.paths["/" + routeTemplate].get.parameters.First();
-            Assert.Equal("param", param.name);
-            Assert.Equal(expectedIn, param.@in);
-            Assert.Equal("string", param.type);
+            var param = swagger.Paths["/" + routeTemplate].Get.Parameters.First();
+            Assert.IsAssignableFrom<NonBodyParameter>(param);
+            var nonBodyParam = param as NonBodyParameter;
+            Assert.Equal("param", nonBodyParam.Name);
+            Assert.Equal(expectedIn, nonBodyParam.In);
+            Assert.Equal("string", nonBodyParam.Type);
         }
 
         [Fact]
@@ -139,14 +141,15 @@ namespace Swashbuckle.Swagger
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
 
-            var param = swagger.paths["/collection"].post.parameters.First();
-            Assert.Equal("param", param.name);
-            Assert.Equal("body", param.@in);
-            Assert.NotNull(param.schema);
-            Assert.Equal("#/definitions/ComplexType", param.schema.@ref);
-            Assert.Contains("ComplexType", swagger.definitions.Keys);
+            var param = swagger.Paths["/collection"].Post.Parameters.First();
+            Assert.IsAssignableFrom<BodyParameter>(param);
+            var bodyParam = param as BodyParameter;
+            Assert.Equal("param", bodyParam.Name);
+            Assert.Equal("body", bodyParam.In);
+            Assert.NotNull(bodyParam.Schema);
+            Assert.Equal("#/definitions/ComplexType", bodyParam.Schema.Ref);
+            Assert.Contains("ComplexType", swagger.Definitions.Keys);
         }
-
 
         [Theory]
         [InlineData("collection/{param}", true)]
@@ -160,9 +163,9 @@ namespace Swashbuckle.Swagger
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
 
-            var param = swagger.paths["/collection/{param}"].get.parameters.First();
-            Assert.Equal("param", param.name);
-            Assert.Equal(expectedRequired, param.required);
+            var param = swagger.Paths["/collection/{param}"].Get.Parameters.First();
+            Assert.Equal("param", param.Name);
+            Assert.Equal(expectedRequired, param.Required);
         }
 
         [Theory]
@@ -176,9 +179,9 @@ namespace Swashbuckle.Swagger
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
 
-            var param = swagger.paths["/collection"].get.parameters.First();
-            Assert.Equal("param", param.name);
-            Assert.Equal(expectedRequired, param.required);
+            var param = swagger.Paths["/collection"].Get.Parameters.First();
+            Assert.Equal("param", param.Name);
+            Assert.Equal(expectedRequired, param.Required);
         }
 
         [Fact]
@@ -189,11 +192,11 @@ namespace Swashbuckle.Swagger
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
 
-            var operation = swagger.paths["/collection"].get;
-            Assert.Equal(3, operation.parameters.Count);
-            Assert.Equal("Property1", operation.parameters[0].name);
-            Assert.Equal("Property2", operation.parameters[1].name);
-            Assert.Equal("Property3.Property1", operation.parameters[2].name);
+            var operation = swagger.Paths["/collection"].Get;
+            Assert.Equal(3, operation.Parameters.Count);
+            Assert.Equal("Property1", operation.Parameters[0].Name);
+            Assert.Equal("Property2", operation.Parameters[1].Name);
+            Assert.Equal("Property3.Property1", operation.Parameters[2].Name);
         }
 
         [Theory]
@@ -212,13 +215,13 @@ namespace Swashbuckle.Swagger
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
 
-            var responses = swagger.paths["/collection"].get.responses;
+            var responses = swagger.Paths["/collection"].Get.Responses;
             Assert.Equal(new[] { expectedStatusCode }, responses.Keys.ToArray());
             var response = responses[expectedStatusCode];
             if (expectsSchema)
-                Assert.NotNull(response.schema);
+                Assert.NotNull(response.Schema);
             else
-                Assert.Null(response.schema);
+                Assert.Null(response.Schema);
         }
 
         [Fact]
@@ -229,21 +232,21 @@ namespace Swashbuckle.Swagger
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
 
-            var operation = swagger.paths["/collection"].get;
-            Assert.Equal(true, operation.deprecated);
+            var operation = swagger.Paths["/collection"].Get;
+            Assert.Equal(true, operation.Deprecated);
         }
 
         [Fact]
         public void GetSwagger_SupportsOptionToProvideAdditionalApiInfo()
         {
             var swaggerGenerator = Subject(
-                configure: opts => opts.SingleApiVersion(new Info { version = "v3", title = "My API" }));
+                configure: opts => opts.SingleApiVersion(new Info { Version = "v3", Title = "My API" }));
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v3");
 
-            Assert.NotNull(swagger.info);
-            Assert.Equal("v3", swagger.info.version);
-            Assert.Equal("My API", swagger.info.title);
+            Assert.NotNull(swagger.Info);
+            Assert.Equal("v3", swagger.Info.Version);
+            Assert.Equal("My API", swagger.Info.Title);
             // TODO: More ...
         }
 
@@ -261,8 +264,8 @@ namespace Swashbuckle.Swagger
                     opts.MultipleApiVersions(
                         new []
                         {
-                            new Info { version = "v2", title = "API V2" },
-                            new Info { version = "v1", title = "API V1" }
+                            new Info { Version = "v2", Title = "API V2" },
+                            new Info { Version = "v1", Title = "API V1" }
                         },
                         (apiDesc, targetApiVersion) => apiDesc.RelativePath.StartsWith(targetApiVersion));
                 });
@@ -270,8 +273,8 @@ namespace Swashbuckle.Swagger
             var v2Swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v2");
             var v1Swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
 
-            Assert.Equal(new[] { "/v2/collection" }, v2Swagger.paths.Keys.ToArray());
-            Assert.Equal(new[] { "/v1/collection" }, v1Swagger.paths.Keys.ToArray());
+            Assert.Equal(new[] { "/v2/collection" }, v2Swagger.Paths.Keys.ToArray());
+            Assert.Equal(new[] { "/v1/collection" }, v1Swagger.Paths.Keys.ToArray());
         }
 
         [Fact]
@@ -281,61 +284,63 @@ namespace Swashbuckle.Swagger
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
 
-            Assert.Equal(new[] { "http", "https" }, swagger.schemes.ToArray());
+            Assert.Equal(new[] { "http", "https" }, swagger.Schemes.ToArray());
         }
 
         [Fact]
         public void GetSwagger_SupportsOptionToDefineBasicAuthScheme()
         {
             var swaggerGenerator = Subject(configure: opts =>
-                opts.SecurityDefinitions.Add("basic", new SecurityScheme
+                opts.SecurityDefinitions.Add("basic", new BasicAuthScheme
                 {
-                    type = "basic",
-                    description = "Basic HTTP Authentication"
+                    Type = "basic",
+                    Description = "Basic HTTP Authentication"
                 }));
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
 
-            Assert.Contains("basic", swagger.securityDefinitions.Keys);
-            var definition = swagger.securityDefinitions["basic"];
-            Assert.Equal("basic", definition.type);
-            Assert.Equal("Basic HTTP Authentication", definition.description);
+            Assert.Contains("basic", swagger.SecurityDefinitions.Keys);
+            var scheme = swagger.SecurityDefinitions["basic"];
+            Assert.Equal("basic", scheme.Type);
+            Assert.Equal("Basic HTTP Authentication", scheme.Description);
         }
 
         [Fact]
         public void GetSwagger_SupportsOptionToDefineApiKeyScheme()
         {
             var swaggerGenerator = Subject(configure: opts =>
-                opts.SecurityDefinitions.Add("apiKey", new SecurityScheme
+                opts.SecurityDefinitions.Add("apiKey", new ApiKeyScheme
                 {
-                    type = "apiKey",
-                    description = "API Key Authentication",
-                    name = "apiKey",
-                    @in = "header"
+                    Type = "apiKey",
+                    Description = "API Key Authentication",
+                    Name = "apiKey",
+                    In = "header"
                 }));
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
 
-            Assert.Contains("apiKey", swagger.securityDefinitions.Keys);
-            var definition = swagger.securityDefinitions["apiKey"];
-            Assert.Equal("apiKey", definition.type);
-            Assert.Equal("API Key Authentication", definition.description);
-            Assert.Equal("apiKey", definition.name);
-            Assert.Equal("header", definition.@in);
+            Assert.Contains("apiKey", swagger.SecurityDefinitions.Keys);
+            var scheme = swagger.SecurityDefinitions["apiKey"];
+            Assert.IsAssignableFrom<ApiKeyScheme>(scheme);
+            var apiKeyScheme = scheme as ApiKeyScheme;
+            Assert.Equal("apiKey", apiKeyScheme.Type);
+            Assert.Equal("API Key Authentication", apiKeyScheme.Description);
+            Assert.Equal("apiKey", apiKeyScheme.Name);
+            Assert.Equal("header", apiKeyScheme.In);
         }
 
         [Fact]
         public void GetSwagger_SupportsOptionToDefineOAuth2Scheme()
         {
             var swaggerGenerator = Subject(configure: opts =>
-                opts.SecurityDefinitions.Add("oauth2", new SecurityScheme
+                opts.SecurityDefinitions.Add("oauth2", new OAuth2Scheme
                 {
-                    type = "oauth2",
-                    description = "OAuth2 Authorization Code Grant",
-                    flow = "accessCode",
-                    authorizationUrl = "https://tempuri.org/auth",
-                    tokenUrl = "https://tempuri.org/token",
-                    scopes = new Dictionary<string, string>
+                    Type = "oauth2",
+                    Description = "OAuth2 Authorization Code Grant",
+                    Flow = "accessCode",
+                    AuthorizationUrl = "https://tempuri.org/auth",
+                    TokenUrl = "https://tempuri.org/token",
+                    Scopes = new Dictionary<string, string>
                     {
                         { "read", "Read access to protected resources" },
                         { "write", "Write access to protected resources" }
@@ -344,16 +349,18 @@ namespace Swashbuckle.Swagger
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
 
-            Assert.Contains("oauth2", swagger.securityDefinitions.Keys);
-            var definition = swagger.securityDefinitions["oauth2"];
-            Assert.Equal("oauth2", definition.type);
-            Assert.Equal("OAuth2 Authorization Code Grant", definition.description);
-            Assert.Equal("accessCode", definition.flow);
-            Assert.Equal("https://tempuri.org/auth", definition.authorizationUrl);
-            Assert.Equal("https://tempuri.org/token", definition.tokenUrl);
-            Assert.Equal(new[] { "read", "write" }, definition.scopes.Keys.ToArray());
-            Assert.Equal("Read access to protected resources", definition.scopes["read"]);
-            Assert.Equal("Write access to protected resources", definition.scopes["write"]);
+            Assert.Contains("oauth2", swagger.SecurityDefinitions.Keys);
+            var scheme = swagger.SecurityDefinitions["oauth2"];
+            Assert.IsAssignableFrom<OAuth2Scheme>(scheme);
+            var oAuth2Scheme = scheme as OAuth2Scheme;
+            Assert.Equal("oauth2", oAuth2Scheme.Type);
+            Assert.Equal("OAuth2 Authorization Code Grant", oAuth2Scheme.Description);
+            Assert.Equal("accessCode", oAuth2Scheme.Flow);
+            Assert.Equal("https://tempuri.org/auth", oAuth2Scheme.AuthorizationUrl);
+            Assert.Equal("https://tempuri.org/token", oAuth2Scheme.TokenUrl);
+            Assert.Equal(new[] { "read", "write" }, oAuth2Scheme.Scopes.Keys.ToArray());
+            Assert.Equal("Read access to protected resources", oAuth2Scheme.Scopes["read"]);
+            Assert.Equal("Write access to protected resources", oAuth2Scheme.Scopes["write"]);
         }
 
         [Fact]
@@ -369,7 +376,7 @@ namespace Swashbuckle.Swagger
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
 
-            Assert.Equal(new[] { "/collection1" }, swagger.paths.Keys.ToArray());
+            Assert.Equal(new[] { "/collection1" }, swagger.Paths.Keys.ToArray());
         }
 
         [Fact]
@@ -385,8 +392,8 @@ namespace Swashbuckle.Swagger
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
 
-            Assert.Equal(new[] { "collection1" }, swagger.paths["/collection1"].get.tags);
-            Assert.Equal(new[] { "collection2" }, swagger.paths["/collection2"].get.tags);
+            Assert.Equal(new[] { "collection1" }, swagger.Paths["/collection1"].Get.Tags);
+            Assert.Equal(new[] { "collection2" }, swagger.Paths["/collection2"].Get.Tags);
         }
 
         [Fact]
@@ -408,7 +415,7 @@ namespace Swashbuckle.Swagger
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
 
-            Assert.Equal(new[] { "/F", "/D", "/B", "/A" }, swagger.paths.Keys.ToArray());
+            Assert.Equal(new[] { "/F", "/D", "/B", "/A" }, swagger.Paths.Keys.ToArray());
         }
 
         [Fact]
@@ -426,8 +433,8 @@ namespace Swashbuckle.Swagger
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
             
-            var operation = swagger.paths["/collection"].get;
-            Assert.NotEmpty(operation.vendorExtensions);
+            var operation = swagger.Paths["/collection"].Get;
+            Assert.NotEmpty(operation.Extensions);
         }
 
         [Fact]
@@ -438,7 +445,7 @@ namespace Swashbuckle.Swagger
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
             
-            Assert.NotEmpty(swagger.vendorExtensions);
+            Assert.NotEmpty(swagger.Extensions);
         }
 
         [Fact]
@@ -449,9 +456,9 @@ namespace Swashbuckle.Swagger
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
 
-            var param = swagger.paths["/{version}/collection"].get.parameters.First();
-            Assert.Equal("version", param.name);
-            Assert.Equal(true, param.required);
+            var param = swagger.Paths["/{version}/collection"].Get.Parameters.First();
+            Assert.Equal("version", param.Name);
+            Assert.Equal(true, param.Required);
         }
 
         private SwaggerGenerator Subject(

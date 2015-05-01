@@ -6,7 +6,7 @@ namespace Swashbuckle.Fixtures.Extensions
     {
         public void Apply(Operation operation, OperationFilterContext contex)
         {
-            operation.vendorExtensions.Add("X-property1", "value");
+            operation.Extensions.Add("X-property1", "value");
         }
     }
 }

@@ -18,13 +18,13 @@ namespace Swashbuckle.Swagger.XmlComments
         {
             var schema = new Schema
             {
-                properties = new Dictionary<string, Schema>()
+                Properties = new Dictionary<string, Schema>()
             };
             var filterContext = FilterContextFor(type);
 
             Subject().Apply(schema, filterContext);
 
-            Assert.Equal(expectedDescription, schema.description);
+            Assert.Equal(expectedDescription, schema.Description);
         }
 
         [Theory]
@@ -38,7 +38,7 @@ namespace Swashbuckle.Swagger.XmlComments
         {
             var schema = new Schema
             {
-                properties = new Dictionary<string, Schema>()
+                Properties = new Dictionary<string, Schema>()
                 {
                     { propertyName, new Schema() }
                 }
@@ -47,7 +47,7 @@ namespace Swashbuckle.Swagger.XmlComments
 
             Subject().Apply(schema, filterContext);
 
-            Assert.Equal(expectedDescription, schema.properties[propertyName].description);
+            Assert.Equal(expectedDescription, schema.Properties[propertyName].Description);
         }
 
         private ModelFilterContext FilterContextFor(Type type)

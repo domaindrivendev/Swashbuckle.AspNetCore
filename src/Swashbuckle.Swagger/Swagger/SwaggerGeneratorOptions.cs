@@ -11,7 +11,7 @@ namespace Swashbuckle.Swagger
         public SwaggerGeneratorOptions()
         {
             _apiVersions = new List<Info>();
-            _apiVersions.Add(new Info { version = "v1", title = "API V1" });
+            _apiVersions.Add(new Info { Version = "v1", Title = "API V1" });
 
             SecurityDefinitions = new Dictionary<string, SecurityScheme>();
 

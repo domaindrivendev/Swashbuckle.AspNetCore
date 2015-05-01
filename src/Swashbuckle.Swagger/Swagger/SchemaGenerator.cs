@@ -94,15 +94,15 @@ namespace Swashbuckle.Swagger
                     || (converter != null && converter.GetType() == typeof(StringEnumConverter));
 
                 return describeAsString
-                    ? new Schema { type = "string", @enum = Enum.GetNames(type) }
-                    : new Schema { type = "integer", format = "int32", @enum = Enum.GetValues(type).Cast<object>().ToArray() };
+                    ? new Schema { Type = "string", Enum = Enum.GetNames(type) }
+                    : new Schema { Type = "integer", Format = "int32", Enum = Enum.GetValues(type).Cast<object>().ToArray() };
             }
 
             if (PrimitiveTypeMap.ContainsKey(type))
                 return PrimitiveTypeMap[type]();
 
             // None of the above, fallback to string
-            return new Schema { type = "string" };
+            return new Schema { Type = "string" };
         }
 
         private Schema CreateDictionarySchema(JsonDictionaryContract dictionaryContract)
@@ -110,8 +110,8 @@ namespace Swashbuckle.Swagger
             var valueType = dictionaryContract.DictionaryValueType ?? typeof(object);
             return new Schema
                 {
-                    type = "object",
-                    additionalProperties = CreateSchema(valueType, true)
+                    Type = "object",
+                    AdditionalProperties = CreateSchema(valueType, true)
                 };
         }
 
@@ -120,8 +120,8 @@ namespace Swashbuckle.Swagger
             var itemType = arrayContract.CollectionItemType ?? typeof(object);
             return new Schema
                 {
-                    type = "array",
-                    items = CreateSchema(itemType, true)
+                    Type = "array",
+                    Items = CreateSchema(itemType, true)
                 };
         }
 
@@ -141,9 +141,9 @@ namespace Swashbuckle.Swagger
 
             var schema = new Schema
             {
-                required = required.Any() ? required : null, // required can be null but not empty
-                properties = properties,
-                type = "object"
+                Required = required.Any() ? required : null, // required can be null but not empty
+                Properties = properties,
+                Type = "object"
             };
 
             var filterContext = new ModelFilterContext(jsonContract.UnderlyingType, jsonContract, this);
@@ -172,25 +172,25 @@ namespace Swashbuckle.Swagger
                 referencedTypeMap.Add(type, new SchemaInfo { SchemaId = schemaId });
             }
 
-            return new Schema { @ref = "#/definitions/" + referencedTypeMap[type].SchemaId };
+            return new Schema { Ref = "#/definitions/" + referencedTypeMap[type].SchemaId };
         }
 
         private static readonly Dictionary<Type, Func<Schema>> PrimitiveTypeMap = new Dictionary<Type, Func<Schema>>
         {
-            { typeof(short), () => new Schema { type = "integer", format = "int32" } },
-            { typeof(ushort), () => new Schema { type = "integer", format = "int32" } },
-            { typeof(int), () => new Schema { type = "integer", format = "int32" } },
-            { typeof(uint), () => new Schema { type = "integer", format = "int32" } },
-            { typeof(long), () => new Schema { type = "integer", format = "int64" } },
-            { typeof(ulong), () => new Schema { type = "integer", format = "int64" } },
-            { typeof(float), () => new Schema { type = "number", format = "float" } },
-            { typeof(double), () => new Schema { type = "number", format = "double" } },
-            { typeof(decimal), () => new Schema { type = "number", format = "double" } },
-            { typeof(byte), () => new Schema { type = "string", format = "byte" } },
-            { typeof(sbyte), () => new Schema { type = "string", format = "byte" } },
-            { typeof(bool), () => new Schema { type = "boolean" } },
-            { typeof(DateTime), () => new Schema { type = "string", format = "date-time" } },
-            { typeof(DateTimeOffset), () => new Schema { type = "string", format = "date-time" } }
+            { typeof(short), () => new Schema { Type = "integer", Format = "int32" } },
+            { typeof(ushort), () => new Schema { Type = "integer", Format = "int32" } },
+            { typeof(int), () => new Schema { Type = "integer", Format = "int32" } },
+            { typeof(uint), () => new Schema { Type = "integer", Format = "int32" } },
+            { typeof(long), () => new Schema { Type = "integer", Format = "int64" } },
+            { typeof(ulong), () => new Schema { Type = "integer", Format = "int64" } },
+            { typeof(float), () => new Schema { Type = "number", Format = "float" } },
+            { typeof(double), () => new Schema { Type = "number", Format = "double" } },
+            { typeof(decimal), () => new Schema { Type = "number", Format = "double" } },
+            { typeof(byte), () => new Schema { Type = "string", Format = "byte" } },
+            { typeof(sbyte), () => new Schema { Type = "string", Format = "byte" } },
+            { typeof(bool), () => new Schema { Type = "boolean" } },
+            { typeof(DateTime), () => new Schema { Type = "string", Format = "date-time" } },
+            { typeof(DateTimeOffset), () => new Schema { Type = "string", Format = "date-time" } }
         };
     }
 }

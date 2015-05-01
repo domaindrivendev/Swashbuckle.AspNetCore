@@ -32,11 +32,11 @@ namespace Swashbuckle.Swagger.XmlComments
 
             var summaryNode = methodNode.SelectSingleNode(SummaryExpression);
             if (summaryNode != null)
-                operation.summary = summaryNode.ExtractContent();
+                operation.Summary = summaryNode.ExtractContent();
 
             var remarksNode = methodNode.SelectSingleNode(RemarksExpression);
             if (remarksNode != null)
-                operation.description = remarksNode.ExtractContent();
+                operation.Description = remarksNode.ExtractContent();
 
             ApplyParamComments(operation, methodNode);
         }
@@ -59,16 +59,16 @@ namespace Swashbuckle.Swagger.XmlComments
 
         private static void ApplyParamComments(Operation operation, XPathNavigator methodNode)
         {
-            if (operation.parameters == null) return;
+            if (operation.Parameters == null) return;
 
             var paramNodes = methodNode.Select(ParameterExpression);
             while (paramNodes.MoveNext())
             {
                 var paramNode = paramNodes.Current;
-                var parameter = operation.parameters
-                    .SingleOrDefault(param => param.name == paramNode.GetAttribute("name", ""));
+                var parameter = operation.Parameters
+                    .SingleOrDefault(param => param.Name == paramNode.GetAttribute("name", ""));
                 if (parameter != null)
-                    parameter.description = paramNode.ExtractContent();
+                    parameter.Description = paramNode.ExtractContent();
             }
         }
     }

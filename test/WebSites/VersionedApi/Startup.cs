@@ -37,8 +37,8 @@ namespace VersionedApi
                     opt.MultipleApiVersions(
                         new []
                         {
-                            new Info { version = "v1", title = "API V1" },
-                            new Info { version = "v2", title = "API V2" }
+                            new Info { Version = "v1", Title = "API V1" },
+                            new Info { Version = "v2", Title = "API V2" }
                         },
                         ResolveVersionSupportByVersionsConstraint);
 

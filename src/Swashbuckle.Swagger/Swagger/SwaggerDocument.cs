@@ -5,316 +5,402 @@ namespace Swashbuckle.Swagger
 {
     public class SwaggerDocument
     {
-        public readonly string swagger = "2.0";
+        public SwaggerDocument()
+        {
+            Extensions = new Dictionary<string, object>();
+        }
 
-        public Info info;
+        public string Swagger
+        {
+            get { return "2.0"; }
+        }
 
-        public string host;
+        public Info Info { get; set; }
 
-        public string basePath;
+        public string Host { get; set; }
 
-        public IList<string> schemes;
+        public string BasePath { get; set; }
 
-        public IList<string> consumes;
+        public IList<string> Schemes { get; set; }
 
-        public IList<string> produces;
+        public IList<string> Consumes { get; set; }
 
-        public IDictionary<string, PathItem> paths;
+        public IList<string> Produces { get; set; }
 
-        public IDictionary<string, Schema> definitions;
+        public IDictionary<string, PathItem> Paths { get; set; }
 
-        public IDictionary<string, Parameter> parameters;
+        public IDictionary<string, Schema> Definitions { get; set; }
 
-        public IDictionary<string, Response> responses;
+        public IDictionary<string, IParameter> Parameters { get; set; }
 
-        public IDictionary<string, SecurityScheme> securityDefinitions;
+        public IDictionary<string, Response> Responses { get; set; }
 
-        public IList<IDictionary<string, IEnumerable<string>>> security;
+        public IDictionary<string, SecurityScheme> SecurityDefinitions { get; set; }
 
-        public IList<Tag> tags;
+        public IList<IDictionary<string, IEnumerable<string>>> Security { get; set; }
 
-        public ExternalDocs externalDocs;
+        public IList<Tag> Tags { get; set; }
+
+        public ExternalDocs ExternalDocs { get; set; }
 
         [JsonExtensionData]
-        public Dictionary<string, object> vendorExtensions = new Dictionary<string, object>();
+        public Dictionary<string, object> Extensions { get; private set; }
     }
 
     public class Info
     {
-        public string version;
+        public Info()
+        {
+            Extensions = new Dictionary<string, object>();
+        }
 
-        public string title;
+        public string Version { get; set; }
 
-        public string description;
+        public string Title { get; set; }
 
-        public string termsOfService;
+        public string Description { get; set; }
 
-        public Contact contact;
+        public string TermsOfService { get; set; }
 
-        public License license;
+        public Contact Contact { get; set; }
+
+        public License License { get; set; }
 
         [JsonExtensionData]
-        public Dictionary<string, object> vendorExtensions = new Dictionary<string, object>();
+        public Dictionary<string, object> Extensions { get; private set; }
     }
 
     public class Contact
     {
-        public string name;
+        public string Name { get; set; }
 
-        public string url;
+        public string Url { get; set; }
 
-        public string email;
+        public string Email { get; set; }
     }
 
     public class License
     {
-        public string name;
+        public string Name { get; set; }
 
-        public string url;
+        public string Url { get; set; }
     }
 
     public class PathItem
     {
+        public PathItem()
+        {
+            Extensions = new Dictionary<string, object>();
+        }
+
         [JsonProperty("$ref")]
-        public string @ref;
+        public string Ref { get; set; }
 
-        public Operation get;
+        public Operation Get { get; set; }
 
-        public Operation put;
+        public Operation Put { get; set; }
 
-        public Operation post;
+        public Operation Post { get; set; }
 
-        public Operation delete;
+        public Operation Delete { get; set; }
 
-        public Operation options;
+        public Operation Options { get; set; }
 
-        public Operation head;
+        public Operation Head { get; set; }
 
-        public Operation patch;
+        public Operation Patch { get; set; }
 
-        public IList<Parameter> parameters;
+        public IList<IParameter> Parameters { get; set; }
 
         [JsonExtensionData]
-        public Dictionary<string, object> vendorExtensions = new Dictionary<string, object>();
+        public Dictionary<string, object> Extensions { get; private set; }
     }
 
     public class Operation
     {
-        public IList<string> tags;
+        public Operation()
+        {
+            Extensions = new Dictionary<string, object>();
+        }
 
-        public string summary;
+        public IList<string> Tags { get; set; }
 
-        public string description;
+        public string Summary { get; set; }
 
-        public ExternalDocs externalDocs;
+        public string Description { get; set; }
 
-        public string operationId;
+        public ExternalDocs ExternalDocs { get; set; }
 
-        public IList<string> consumes;
+        public string OperationId { get; set; }
 
-        public IList<string> produces;
+        public IList<string> Consumes { get; set; }
 
-        public IList<Parameter> parameters;
+        public IList<string> Produces { get; set; }
 
-        public IDictionary<string, Response> responses;
+        public IList<IParameter> Parameters { get; set; }
 
-        public IList<string> schemes;
+        public IDictionary<string, Response> Responses { get; set; }
 
-        public bool deprecated;
+        public IList<string> Schemes { get; set; }
 
-        public IList<IDictionary<string, IEnumerable<string>>> security;
+        public bool Deprecated { get; set; }
+
+        public IList<IDictionary<string, IEnumerable<string>>> Security { get; set; }
 
         [JsonExtensionData]
-        public Dictionary<string, object> vendorExtensions = new Dictionary<string, object>();
+        public Dictionary<string, object> Extensions { get; private set; }
     }
 
     public class Tag
     {
-        public string name;
+        public Tag()
+        {
+            Extensions = new Dictionary<string, object>();
+        }
 
-        public string description;
+        public string Name { get; set; }
 
-        public ExternalDocs externalDocs;
+        public string Description { get; set; }
+
+        public ExternalDocs ExternalDocs { get; set; }
 
         [JsonExtensionData]
-        public Dictionary<string, object> vendorExtensions = new Dictionary<string, object>();
+        public Dictionary<string, object> Extensions { get; private set; }
     }
 
     public class ExternalDocs
     {
-        public string description;
+        public string Description { get; set; }
 
-        public string url;
+        public string Url { get; set; }
     }
 
-    public class Parameter : PartialSchema
+
+    public interface IParameter
     {
-        public string name;
+        string Name { get; set; }
 
-        public string @in;
+        string In { get; set; }
 
-        public string description;
+        string Description { get; set; }
 
-        public bool required;
+        bool Required { get; set; }
 
-        public Schema schema;
+        Dictionary<string, object> Extensions { get; }
+    }
+
+    public class BodyParameter : IParameter
+    {
+        public BodyParameter()
+        {
+            Extensions = new Dictionary<string, object>();
+        }
+
+        public string Name { get; set; }
+
+        public string In { get; set; }
+
+        public string Description { get; set; }
+
+        public bool Required { get; set; }
 
         [JsonExtensionData]
-        public Dictionary<string, object> vendorExtensions = new Dictionary<string, object>();
+        public Dictionary<string, object> Extensions { get; private set; }
+
+        public Schema Schema { get; set; }
+    }
+
+    public class NonBodyParameter : PartialSchema, IParameter
+    {
+        public NonBodyParameter()
+        {
+            Extensions = new Dictionary<string, object>();
+        }
+
+        public string Name { get; set; }
+
+        public string In { get; set; }
+
+        public string Description { get; set; }
+
+        public bool Required { get; set; }
+
+        [JsonExtensionData]
+        public Dictionary<string, object> Extensions { get; private set; }
     }
 
     public class Schema
     {
+        public Schema()
+        {
+            Extensions = new Dictionary<string, object>();
+        }
+
         [JsonProperty("$ref")]
-        public string @ref;
+        public string Ref { get; set; }
 
-        public string format;
+        public string Format { get; set; }
 
-        public string title;
+        public string Title { get; set; }
 
-        public string description;
+        public string Description { get; set; }
 
-        public object @default;
+        public object Default { get; set; }
 
-        public int? multipleOf;
+        public int? MultipleOf { get; set; }
 
-        public int? maximum;
+        public int? Maximum { get; set; }
 
-        public bool? exclusiveMaximum;
+        public bool? ExclusiveMaximum { get; set; }
 
-        public int? minimum;
+        public int? Minimum { get; set; }
 
-        public bool? exclusiveMinimum;
+        public bool? ExclusiveMinimum { get; set; }
 
-        public int? maxLength;
+        public int? MaxLength { get; set; }
 
-        public int? minLength;
+        public int? MinLength { get; set; }
 
-        public string pattern;
+        public string Pattern { get; set; }
 
-        public int? maxItems;
+        public int? MaxItems { get; set; }
 
-        public int? minItems;
+        public int? MinItems { get; set; }
 
-        public bool? uniqueItems;
+        public bool? UniqueItems { get; set; }
 
-        public int? maxProperties;
+        public int? MaxProperties { get; set; }
 
-        public int? minProperties;
+        public int? MinProperties { get; set; }
 
-        public IList<string> required;
+        public IList<string> Required { get; set; }
 
-        public IList<object> @enum;
+        public IList<object> Enum { get; set; }
 
-        public string type;
+        public string Type { get; set; }
 
-        public Schema items;
+        public Schema Items { get; set; }
 
-        public IList<Schema> allOf;
+        public IList<Schema> AllOf { get; set; }
 
-        public IDictionary<string, Schema> properties;
+        public IDictionary<string, Schema> Properties { get; set; }
 
-        public Schema additionalProperties;
+        public Schema AdditionalProperties { get; set; }
 
-        public string discriminator;
+        public string Discriminator { get; set; }
 
-        public bool? readOnly;
+        public bool? ReadOnly { get; set; }
 
-        public Xml xml;
+        public Xml Xml { get; set; }
 
-        public ExternalDocs externalDocs;
+        public ExternalDocs ExternalDocs { get; set; }
 
-        public object example;
+        public object Example { get; set; }
 
         [JsonExtensionData]
-        public Dictionary<string, object> vendorExtensions = new Dictionary<string, object>();
+        public Dictionary<string, object> Extensions { get; private set; }
     }
 
     public class PartialSchema
     {
-        public string type;
+        public string Type { get; set; }
 
-        public string format; 
+        public string Format { get; set; }
 
-        public PartialSchema items;
+        public PartialSchema Items { get; set; }
 
-        public string collectionFormat;
+        public string CollectionFormat { get; set; }
 
-        public object @default;
+        public object Default { get; set; }
 
-        public int? maximum;
+        public int? Maximum { get; set; }
 
-        public bool? exclusiveMaximum;
+        public bool? ExclusiveMaximum { get; set; }
 
-        public int? minimum;
+        public int? Minimum { get; set; }
 
-        public bool? exclusiveMinimum;
+        public bool? ExclusiveMinimum { get; set; }
 
-        public int? maxLength;
+        public int? MaxLength { get; set; }
 
-        public int? minLength;
+        public int? MinLength { get; set; }
 
-        public string pattern;
+        public string Pattern { get; set; }
 
-        public int? maxItems;
+        public int? MaxItems { get; set; }
 
-        public int? minItems;
+        public int? MinItems { get; set; }
 
-        public bool? uniqueItems;
+        public bool? UniqueItems { get; set; }
 
-        public IList<object> @enum;
+        public IList<object> Enum { get; set; }
 
-        public int? multipleOf;
+        public int? MultipleOf { get; set; }
     }
 
     public class Response
     {
-        public string description;
+        public string Description { get; set; }
 
-        public Schema schema;
+        public Schema Schema { get; set; }
 
-        public IList<Header> headers;
+        public IList<Header> Headers { get; set; }
 
-        public object examples;
+        public object Examples { get; set; }
     }
 
     public class Header : PartialSchema
     {
-        public string description;
+        public string Description { get; set; }
     }
 
     public class Xml
     {
-        public string name;
+        public string Name { get; set; }
 
-        public string @namespace;
+        public string Namespace { get; set; }
 
-        public string prefix;
+        public string Prefix { get; set; }
 
-        public bool? attribute;
+        public bool? Attribute { get; set; }
 
-        public bool? wrapped;
+        public bool? Wrapped { get; set; }
     }
 
-    public class SecurityScheme
+    public abstract class SecurityScheme
     {
-        public string type;
+        public SecurityScheme()
+        {
+            Extensions = new Dictionary<string, object>();
+        }
 
-        public string description;
+        public string Type { get; set; }
 
-        public string name;
-
-        public string @in;
-
-        public string flow;
-
-        public string authorizationUrl;
-
-        public string tokenUrl;
-
-        public IDictionary<string, string> scopes;
+        public string Description { get; set; }
 
         [JsonExtensionData]
-        public Dictionary<string, object> vendorExtensions = new Dictionary<string, object>();
+        public Dictionary<string, object> Extensions { get; private set; }
+    }
+
+    public class BasicAuthScheme : SecurityScheme
+    {
+    }
+
+    public class ApiKeyScheme : SecurityScheme
+    {
+        public string Name { get; set; }
+
+        public string In { get; set; }
+    }
+
+    public class OAuth2Scheme : SecurityScheme
+    {
+        public string Flow { get; set; }
+
+        public string AuthorizationUrl { get; set; }
+
+        public string TokenUrl { get; set; }
+
+        public IDictionary<string, string> Scopes { get; set; }
     }
 }

@@ -25,7 +25,7 @@ namespace Swashbuckle.Swagger
         {
             var schemaRegistry = _schemaRegistryFactory();
 
-            var info = _options.ApiVersions.FirstOrDefault(v => v.version == apiVersion);
+            var info = _options.ApiVersions.FirstOrDefault(v => v.Version == apiVersion);
             if (info == null)
                 throw new UnknownApiVersion(apiVersion);
 
@@ -39,13 +39,13 @@ namespace Swashbuckle.Swagger
 
             var swaggerDoc = new SwaggerDocument
             {
-                info = info,
-                host = rootUri.Host + ":" + rootUri.Port,
-                basePath = (rootUri.AbsolutePath != "/") ? rootUri.AbsolutePath : null,
-                schemes = (_options.Schemes != null) ? _options.Schemes.ToList() : new[] { rootUri.Scheme }.ToList(),
-                paths = paths,
-                definitions = schemaRegistry.Definitions,
-                securityDefinitions = _options.SecurityDefinitions
+                Info = info,
+                Host = rootUri.Host + ":" + rootUri.Port,
+                BasePath = (rootUri.AbsolutePath != "/") ? rootUri.AbsolutePath : null,
+                Schemes = (_options.Schemes != null) ? _options.Schemes.ToList() : new[] { rootUri.Scheme }.ToList(),
+                Paths = paths,
+                Definitions = schemaRegistry.Definitions,
+                SecurityDefinitions = _options.SecurityDefinitions
             };
 
             var filterContext = new DocumentFilterContext(_apiDescriptionsProvider.ApiDescriptionGroups, schemaRegistry);
@@ -88,25 +88,25 @@ namespace Swashbuckle.Swagger
                 switch (httpMethod)
                 {
                     case "get":
-                        pathItem.get = CreateOperation(apiDescription, schemaRegistry);
+                        pathItem.Get = CreateOperation(apiDescription, schemaRegistry);
                         break;
                     case "put":
-                        pathItem.put = CreateOperation(apiDescription, schemaRegistry);
+                        pathItem.Put = CreateOperation(apiDescription, schemaRegistry);
                         break;
                     case "post":
-                        pathItem.post = CreateOperation(apiDescription, schemaRegistry);
+                        pathItem.Post = CreateOperation(apiDescription, schemaRegistry);
                         break;
                     case "delete":
-                        pathItem.delete = CreateOperation(apiDescription, schemaRegistry);
+                        pathItem.Delete = CreateOperation(apiDescription, schemaRegistry);
                         break;
                     case "options":
-                        pathItem.options = CreateOperation(apiDescription, schemaRegistry);
+                        pathItem.Options = CreateOperation(apiDescription, schemaRegistry);
                         break;
                     case "head":
-                        pathItem.head = CreateOperation(apiDescription, schemaRegistry);
+                        pathItem.Head = CreateOperation(apiDescription, schemaRegistry);
                         break;
                     case "patch":
-                        pathItem.patch = CreateOperation(apiDescription, schemaRegistry);
+                        pathItem.Patch = CreateOperation(apiDescription, schemaRegistry);
                         break;
                 }
             }
@@ -125,19 +125,19 @@ namespace Swashbuckle.Swagger
 
             var responses = new Dictionary<string, Response>();
             if (apiDescription.ResponseType == typeof(void))
-                responses.Add("204", new Response { description = "No Content" });
+                responses.Add("204", new Response { Description = "No Content" });
             else
                 responses.Add("200", CreateSuccessResponse(apiDescription.ResponseType, schemaRegistry));
 
             var operation = new Operation
             { 
-                tags = (groupName != null) ? new[] { groupName } : null,
-                operationId = apiDescription.ActionDescriptor.DisplayName,
-                produces = apiDescription.Produces().ToList(),
+                Tags = (groupName != null) ? new[] { groupName } : null,
+                OperationId = apiDescription.ActionDescriptor.DisplayName,
+                Produces = apiDescription.Produces().ToList(),
                 //consumes = apiDescription.Consumes().ToList(),
-                parameters = parameters.Any() ? parameters : null, // parameters can be null but not empty
-                responses = responses,
-                deprecated = apiDescription.IsObsolete()
+                Parameters = parameters.Any() ? parameters : null, // parameters can be null but not empty
+                Responses = responses,
+                Deprecated = apiDescription.IsObsolete()
             };
 
             var filterContext = new OperationFilterContext(apiDescription, schemaRegistry);
@@ -149,36 +149,40 @@ namespace Swashbuckle.Swagger
             return operation;
         }
 
-        private Parameter CreateParameter(ApiParameterDescription paramDesc, ISchemaRegistry schemaRegistry)
+        private IParameter CreateParameter(ApiParameterDescription paramDesc, ISchemaRegistry schemaRegistry)
         {
-            var parameter = new Parameter
-            {
-                name = paramDesc.Name,
-                @in = paramDesc.Source.Id.ToLower(),
-                required = paramDesc.IsRequired()
-            };
+            var source = paramDesc.Source.Id.ToLower();
+            var schema = (paramDesc.Type != null) ? schemaRegistry.GetOrRegister(paramDesc.Type) : null;
 
-            if (paramDesc.Type == null)
+            if (source == "body")
             {
-                parameter.type = "string";
-                return parameter; 
+                return new BodyParameter
+                {
+                    Name = paramDesc.Name,
+                    In = source,
+                    Required = paramDesc.IsRequired(),
+                    Schema = schema
+                };
             }
-
-            var schema = schemaRegistry.GetOrRegister(paramDesc.Type);
-            if (parameter.@in == "body")
-                parameter.schema = schema;
             else
-                parameter.PopulateFrom(schema);
-
-            return parameter;
+            {
+                var nonBodyParam = new NonBodyParameter
+                {
+                    Name = paramDesc.Name,
+                    In = source,
+                    Required = paramDesc.IsRequired(),
+                };
+                if (schema != null) nonBodyParam.PopulateFrom(schema);
+                return nonBodyParam;
+            }
         }
 
         private Response CreateSuccessResponse(Type responseType, ISchemaRegistry schemaRegistry)
         {
             return new Response
             {
-                description = "OK",
-                schema = (responseType != null) ? schemaRegistry.GetOrRegister(responseType) : null
+                Description = "OK",
+                Schema = (responseType != null) ? schemaRegistry.GetOrRegister(responseType) : null
             };
         }
     }

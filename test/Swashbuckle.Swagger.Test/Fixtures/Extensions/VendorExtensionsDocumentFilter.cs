@@ -6,7 +6,7 @@ namespace Swashbuckle.Fixtures.Extensions
     {
         public void Apply(SwaggerDocument swaggerDoc, DocumentFilterContext context)
         {
-            swaggerDoc.vendorExtensions.Add("X-property1", "value");
+            swaggerDoc.Extensions.Add("X-property1", "value");
         }
     }
 }

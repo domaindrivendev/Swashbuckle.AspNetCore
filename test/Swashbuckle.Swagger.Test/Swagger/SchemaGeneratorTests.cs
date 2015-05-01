@@ -36,18 +36,18 @@ namespace Swashbuckle.Swagger
         {
             var schema = Subject().GetOrRegister(systemType);
 
-            Assert.Equal(expectedType, schema.type);
-            Assert.Equal(expectedFormat, schema.format);
+            Assert.Equal(expectedType, schema.Type);
+            Assert.Equal(expectedFormat, schema.Format);
         }
 
         [Fact]
         public void GetOrRegister_ReturnsEnumSchema_ForEnumTypes()
         {
             var schema = Subject().GetOrRegister(typeof(AnEnum));
-            Assert.Equal("integer", schema.type);
-            Assert.Equal("int32", schema.format);
-            Assert.Contains(AnEnum.Value1, schema.@enum);
-            Assert.Contains(AnEnum.Value2, schema.@enum);
+            Assert.Equal("integer", schema.Type);
+            Assert.Equal("int32", schema.Format);
+            Assert.Contains(AnEnum.Value1, schema.Enum);
+            Assert.Contains(AnEnum.Value2, schema.Enum);
         }
 
         [Theory]
@@ -62,10 +62,10 @@ namespace Swashbuckle.Swagger
         {
             var schema = Subject().GetOrRegister(systemType);
 
-            Assert.Equal("array", schema.type);
-            Assert.Equal(expectedItemsType, schema.items.type);
-            Assert.Equal(expectedItemsFormat, schema.items.format);
-            Assert.Equal(expectedItemsRef, schema.items.@ref);
+            Assert.Equal("array", schema.Type);
+            Assert.Equal(expectedItemsType, schema.Items.Type);
+            Assert.Equal(expectedItemsFormat, schema.Items.Format);
+            Assert.Equal(expectedItemsRef, schema.Items.Ref);
         }
 
         [Fact]
@@ -73,8 +73,8 @@ namespace Swashbuckle.Swagger
         {
             var schema = Subject().GetOrRegister(typeof(Dictionary<string, string>));
 
-            Assert.Equal("object", schema.type);
-            Assert.Equal("string", schema.additionalProperties.type);
+            Assert.Equal("object", schema.Type);
+            Assert.Equal("string", schema.AdditionalProperties.Type);
         }
 
         [Fact]
@@ -82,7 +82,7 @@ namespace Swashbuckle.Swagger
         {
             var jsonReference = Subject().GetOrRegister(typeof(ComplexType));
 
-            Assert.Equal("#/definitions/ComplexType", jsonReference.@ref);
+            Assert.Equal("#/definitions/ComplexType", jsonReference.Ref);
         }
 
         [Fact]
@@ -94,16 +94,16 @@ namespace Swashbuckle.Swagger
 
             var schema = schemaGenerator.Definitions["ComplexType"];
             Assert.NotNull(schema);
-            Assert.Equal("boolean", schema.properties["Property1"].type);
-            Assert.Null(schema.properties["Property1"].format);
-            Assert.Equal("string", schema.properties["Property2"].type);
-            Assert.Equal("date-time", schema.properties["Property2"].format);
-            Assert.Equal("string", schema.properties["Property3"].type);
-            Assert.Equal("date-time", schema.properties["Property3"].format);
-            Assert.Equal("string", schema.properties["Property4"].type);
-            Assert.Null(schema.properties["Property4"].format);
-            Assert.Equal("string", schema.properties["Property5"].type);
-            Assert.Null(schema.properties["Property5"].format);
+            Assert.Equal("boolean", schema.Properties["Property1"].Type);
+            Assert.Null(schema.Properties["Property1"].Format);
+            Assert.Equal("string", schema.Properties["Property2"].Type);
+            Assert.Equal("date-time", schema.Properties["Property2"].Format);
+            Assert.Equal("string", schema.Properties["Property3"].Type);
+            Assert.Equal("date-time", schema.Properties["Property3"].Format);
+            Assert.Equal("string", schema.Properties["Property4"].Type);
+            Assert.Null(schema.Properties["Property4"].Format);
+            Assert.Equal("string", schema.Properties["Property5"].Type);
+            Assert.Null(schema.Properties["Property5"].Format);
         }
 
         [Theory]
@@ -117,7 +117,7 @@ namespace Swashbuckle.Swagger
 
             var schema = schemaGenerator.Definitions["Object"];
             Assert.NotNull(schema);
-            Assert.Empty(schema.properties);
+            Assert.Empty(schema.Properties);
         }
 
         [Fact]
@@ -128,10 +128,10 @@ namespace Swashbuckle.Swagger
             schemaGenerator.GetOrRegister(typeof(SubType));
 
             var schema = schemaGenerator.Definitions["SubType"];
-            Assert.Equal("string", schema.properties["BaseProperty"].type);
-            Assert.Null(schema.properties["BaseProperty"].format);
-            Assert.Equal("integer", schema.properties["SubTypeProperty"].type);
-            Assert.Equal("int32", schema.properties["SubTypeProperty"].format);
+            Assert.Equal("string", schema.Properties["BaseProperty"].Type);
+            Assert.Null(schema.Properties["BaseProperty"].Format);
+            Assert.Equal("integer", schema.Properties["SubTypeProperty"].Type);
+            Assert.Equal("int32", schema.Properties["SubTypeProperty"].Format);
         }
 
         [Fact]
@@ -142,8 +142,8 @@ namespace Swashbuckle.Swagger
             schemaGenerator.GetOrRegister(typeof(IndexedType));
 
             var schema = schemaGenerator.Definitions["IndexedType"];
-            Assert.Equal(1, schema.properties.Count);
-            Assert.Contains("Property1", schema.properties.Keys);
+            Assert.Equal(1, schema.Properties.Count);
+            Assert.Contains("Property1", schema.Properties.Keys);
         }
 
         [Fact]
@@ -154,9 +154,9 @@ namespace Swashbuckle.Swagger
             schemaGenerator.GetOrRegister(typeof(JsonAnnotatedType));
 
             var schema = schemaGenerator.Definitions["JsonAnnotatedType"];
-            Assert.Equal(2, schema.properties.Count);
-            Assert.Contains("foobar", schema.properties.Keys);
-            Assert.Equal(new[] { "Property3" }, schema.required.ToArray());
+            Assert.Equal(2, schema.Properties.Count);
+            Assert.Contains("foobar", schema.Properties.Keys);
+            Assert.Equal(new[] { "Property3" }, schema.Required.ToArray());
         }
 
         [Fact]
@@ -167,15 +167,15 @@ namespace Swashbuckle.Swagger
             schemaGenerator.GetOrRegister(typeof(DataAnnotatedType));
 
             var schema = schemaGenerator.Definitions["DataAnnotatedType"];
-            Assert.Equal(1, schema.properties["RangeProperty"].minimum);
-            Assert.Equal(12, schema.properties["RangeProperty"].maximum);
-            Assert.Equal("^[3-6]?\\d{12,15}$", schema.properties["PatternProperty"].pattern);
-            Assert.Equal(5, schema.properties["StringProperty1"].minLength);
-            Assert.Equal(10, schema.properties["StringProperty1"].maxLength);
-            Assert.Equal(1, schema.properties["StringProperty2"].minLength);
-            Assert.Equal(3, schema.properties["StringProperty2"].maxLength);
-            Assert.Equal("^[3-6]?\\d{12,15}$", schema.properties["PatternProperty"].pattern);
-            Assert.Equal(new[] { "RangeProperty", "PatternProperty" }, schema.required.ToArray());
+            Assert.Equal(1, schema.Properties["RangeProperty"].Minimum);
+            Assert.Equal(12, schema.Properties["RangeProperty"].Maximum);
+            Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["PatternProperty"].Pattern);
+            Assert.Equal(5, schema.Properties["StringProperty1"].MinLength);
+            Assert.Equal(10, schema.Properties["StringProperty1"].MaxLength);
+            Assert.Equal(1, schema.Properties["StringProperty2"].MinLength);
+            Assert.Equal(3, schema.Properties["StringProperty2"].MaxLength);
+            Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["PatternProperty"].Pattern);
+            Assert.Equal(new[] { "RangeProperty", "PatternProperty" }, schema.Required.ToArray());
         }
 
         [Fact]
@@ -183,22 +183,22 @@ namespace Swashbuckle.Swagger
         {
             var schema = Subject().GetOrRegister(typeof(JsonConvertedEnum));
             
-            Assert.Equal("string", schema.type);
-            Assert.Contains("Value1", schema.@enum);
-            Assert.Contains("Value2", schema.@enum);
+            Assert.Equal("string", schema.Type);
+            Assert.Contains("Value1", schema.Enum);
+            Assert.Contains("Value2", schema.Enum);
         }
 
         [Fact]
         public void GetOrRegister_SupportsOptionToExplicitlyMapTypes()
         {
             var schemaGenerator = Subject(opts =>
-                opts.MapType<ComplexType>(() => new Schema { type = "string" })
+                opts.MapType<ComplexType>(() => new Schema { Type = "string" })
             );
 
             var schema = schemaGenerator.GetOrRegister(typeof(ComplexType));
 
-            Assert.Equal("string", schema.type);
-            Assert.Null(schema.properties);
+            Assert.Equal("string", schema.Type);
+            Assert.Null(schema.Properties);
         }
 
         [Fact]
@@ -211,7 +211,7 @@ namespace Swashbuckle.Swagger
             schemaGenerator.GetOrRegister(typeof(ComplexType));
 
             var schema = schemaGenerator.Definitions["ComplexType"];
-            Assert.NotEmpty(schema.vendorExtensions);
+            Assert.NotEmpty(schema.Extensions);
         }
 
         [Fact]
@@ -222,7 +222,7 @@ namespace Swashbuckle.Swagger
             schemaGenerator.GetOrRegister(typeof(ObsoletePropertiesType));
 
             var schema = schemaGenerator.Definitions["ObsoletePropertiesType"];
-            Assert.DoesNotContain("ObsoleteProperty", schema.properties.Keys);
+            Assert.DoesNotContain("ObsoleteProperty", schema.Properties.Keys);
         }
 
         [Fact]
@@ -233,8 +233,8 @@ namespace Swashbuckle.Swagger
             var jsonReference1 = schemaGenerator.GetOrRegister(typeof(Fixtures.Namespace1.ConflictingType));
             var jsonReference2 = schemaGenerator.GetOrRegister(typeof(Fixtures.Namespace2.ConflictingType));
 
-            Assert.Equal("#/definitions/Swashbuckle.Fixtures.Namespace1.ConflictingType", jsonReference1.@ref);
-            Assert.Equal("#/definitions/Swashbuckle.Fixtures.Namespace2.ConflictingType", jsonReference2.@ref);
+            Assert.Equal("#/definitions/Swashbuckle.Fixtures.Namespace1.ConflictingType", jsonReference1.Ref);
+            Assert.Equal("#/definitions/Swashbuckle.Fixtures.Namespace2.ConflictingType", jsonReference2.Ref);
         }
 
         [Fact]
@@ -244,9 +244,9 @@ namespace Swashbuckle.Swagger
 
             var schema = schemaGenerator.GetOrRegister(typeof(AnEnum));
 
-            Assert.Equal("string", schema.type);
-            Assert.Contains("Value1", schema.@enum);
-            Assert.Contains("Value2", schema.@enum);
+            Assert.Equal("string", schema.Type);
+            Assert.Contains("Value1", schema.Enum);
+            Assert.Contains("Value2", schema.Enum);
         }
 
         [Fact]
@@ -254,10 +254,10 @@ namespace Swashbuckle.Swagger
         {
             var schema = Subject().GetOrRegister(typeof(int[][]));
 
-            Assert.Equal("array", schema.type);
-            Assert.Equal("array", schema.items.type);
-            Assert.Equal("integer", schema.items.items.type);
-            Assert.Equal("int32", schema.items.items.format);
+            Assert.Equal("array", schema.Type);
+            Assert.Equal("array", schema.Items.Type);
+            Assert.Equal("integer", schema.Items.Items.Type);
+            Assert.Equal("int32", schema.Items.Items.Format);
         }
 
         [Fact]
@@ -269,14 +269,14 @@ namespace Swashbuckle.Swagger
 
             var rootSchema = schemaGenerator.Definitions["CompositeType"];
             Assert.NotNull(rootSchema);
-            Assert.Equal("object", rootSchema.type);
-            Assert.Equal("#/definitions/ComplexType", rootSchema.properties["Property1"].@ref);
-            Assert.Equal("array", rootSchema.properties["Property2"].type);
-            Assert.Equal("#/definitions/ComplexType", rootSchema.properties["Property2"].items.@ref);
+            Assert.Equal("object", rootSchema.Type);
+            Assert.Equal("#/definitions/ComplexType", rootSchema.Properties["Property1"].Ref);
+            Assert.Equal("array", rootSchema.Properties["Property2"].Type);
+            Assert.Equal("#/definitions/ComplexType", rootSchema.Properties["Property2"].Items.Ref);
             var componentSchema = schemaGenerator.Definitions["ComplexType"];
             Assert.NotNull(componentSchema);
-            Assert.Equal("object", componentSchema.type);
-            Assert.Equal(5, componentSchema.properties.Count);
+            Assert.Equal("object", componentSchema.Type);
+            Assert.Equal(5, componentSchema.Properties.Count);
         }
 
         [Fact]
@@ -288,12 +288,12 @@ namespace Swashbuckle.Swagger
 
             var rootSchema = schemaGenerator.Definitions["ContainingType"];
             Assert.NotNull(rootSchema);
-            Assert.Equal("object", rootSchema.type);
-            Assert.Equal("#/definitions/NestedType", rootSchema.properties["Property1"].@ref);
+            Assert.Equal("object", rootSchema.Type);
+            Assert.Equal("#/definitions/NestedType", rootSchema.Properties["Property1"].Ref);
             var nestedSchema = schemaGenerator.Definitions["NestedType"];
             Assert.NotNull(nestedSchema);
-            Assert.Equal("object", nestedSchema.type);
-            Assert.Equal(1, nestedSchema.properties.Count);
+            Assert.Equal("object", nestedSchema.Type);
+            Assert.Equal(1, nestedSchema.Properties.Count);
         }
 
         [Theory]

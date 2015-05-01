@@ -17,38 +17,38 @@ namespace Swashbuckle.Swagger
             {
                 var regex = attribute as RegularExpressionAttribute;
                 if (regex != null)
-                    schema.pattern = regex.Pattern;
+                    schema.Pattern = regex.Pattern;
 
                 var range = attribute as RangeAttribute;
                 if (range != null)
                 {
                     int maximum;
                     if (Int32.TryParse(range.Maximum.ToString(), out maximum))
-                        schema.maximum = maximum;
+                        schema.Maximum = maximum;
 
                     int minimum;
                     if (Int32.TryParse(range.Minimum.ToString(), out minimum))
-                        schema.minimum = minimum;
+                        schema.Minimum = minimum;
                 }
 
                 var minLength = attribute as MinLengthAttribute;
                 if (minLength != null)
-                    schema.minLength = minLength.Length;
+                    schema.MinLength = minLength.Length;
 
                 var maxLength = attribute as MaxLengthAttribute;
                 if (maxLength != null)
-                    schema.maxLength = maxLength.Length;
+                    schema.MaxLength = maxLength.Length;
 
                 var stringLength = attribute as StringLengthAttribute;
                 if (stringLength != null)
                 {
-                    schema.minLength = stringLength.MinimumLength;
-                    schema.maxLength = stringLength.MaximumLength;
+                    schema.MinLength = stringLength.MinimumLength;
+                    schema.MaxLength = stringLength.MaximumLength;
                 }
             }
 
             if (!jsonProperty.Writable)
-                schema.readOnly = true;
+                schema.ReadOnly = true;
 
             return schema;
         }
@@ -57,29 +57,29 @@ namespace Swashbuckle.Swagger
         {
             if (schema == null) return;
 
-            partialSchema.type = schema.type;
-            partialSchema.format = schema.format;
+            partialSchema.Type = schema.Type;
+            partialSchema.Format = schema.Format;
 
-            if (schema.items != null)
+            if (schema.Items != null)
             {
                 // TODO: Handle jagged primitive array and error on jagged object array
-                partialSchema.items = new PartialSchema();
-                partialSchema.items.PopulateFrom(schema.items);
+                partialSchema.Items = new PartialSchema();
+                partialSchema.Items.PopulateFrom(schema.Items);
             }
 
-            partialSchema.@default = schema.@default;
-            partialSchema.maximum = schema.maximum;
-            partialSchema.exclusiveMaximum = schema.exclusiveMaximum;
-            partialSchema.minimum = schema.minimum;
-            partialSchema.exclusiveMinimum = schema.exclusiveMinimum;
-            partialSchema.maxLength = schema.maxLength;
-            partialSchema.minLength = schema.minLength;
-            partialSchema.pattern = schema.pattern;
-            partialSchema.maxItems = schema.maxItems;
-            partialSchema.minItems = schema.minItems;
-            partialSchema.uniqueItems = schema.uniqueItems;
-            partialSchema.@enum = schema.@enum;
-            partialSchema.multipleOf = schema.multipleOf;
+            partialSchema.Default = schema.Default;
+            partialSchema.Maximum = schema.Maximum;
+            partialSchema.ExclusiveMaximum = schema.ExclusiveMaximum;
+            partialSchema.Minimum = schema.Minimum;
+            partialSchema.ExclusiveMinimum = schema.ExclusiveMinimum;
+            partialSchema.MaxLength = schema.MaxLength;
+            partialSchema.MinLength = schema.MinLength;
+            partialSchema.Pattern = schema.Pattern;
+            partialSchema.MaxItems = schema.MaxItems;
+            partialSchema.MinItems = schema.MinItems;
+            partialSchema.UniqueItems = schema.UniqueItems;
+            partialSchema.Enum = schema.Enum;
+            partialSchema.MultipleOf = schema.MultipleOf;
         }
     }
 }

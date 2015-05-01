@@ -37,6 +37,7 @@ namespace Swashbuckle.Application
         {
             var formatter = new JsonOutputFormatter();
             formatter.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+            formatter.SerializerSettings.ContractResolver = new SwaggerDocumentContractResolver();
             return formatter;
         }
     }

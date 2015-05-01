@@ -14,7 +14,7 @@ namespace Swashbuckle.Swagger.Annotations
         {
             var operation = new Operation
             {
-                responses = new Dictionary<string, Response>
+                Responses = new Dictionary<string, Response>
                 {
                     { "200", new Response() }
                 }
@@ -24,7 +24,7 @@ namespace Swashbuckle.Swagger.Annotations
 
             Subject().Apply(operation, filterContext);
 
-            Assert.Empty(operation.responses);
+            Assert.Empty(operation.Responses);
         }
 
         [Fact]
@@ -32,7 +32,7 @@ namespace Swashbuckle.Swagger.Annotations
         {
             var operation = new Operation
             {
-                responses = new Dictionary<string, Response>
+                Responses = new Dictionary<string, Response>
                 {
                     { "200", new Response() }
                 }
@@ -42,7 +42,7 @@ namespace Swashbuckle.Swagger.Annotations
 
             Subject().Apply(operation, filterContext);
 
-            Assert.Empty(operation.responses);
+            Assert.Empty(operation.Responses);
         }
 
         [Fact]
@@ -50,7 +50,7 @@ namespace Swashbuckle.Swagger.Annotations
         {
             var operation = new Operation
             {
-                responses = new Dictionary<string, Response>
+                Responses = new Dictionary<string, Response>
                 {
                     { "200", new Response() }
                 }
@@ -64,7 +64,7 @@ namespace Swashbuckle.Swagger.Annotations
 
             Subject().Apply(operation, filterContext);
 
-            Assert.Equal(new[] { "200", "400", "500" }, operation.responses.Keys.ToArray());
+            Assert.Equal(new[] { "200", "400", "500" }, operation.Responses.Keys.ToArray());
             Assert.Equal(new[] { "ComplexType" }, filterContext.SchemaRegistry.Definitions.Keys.ToArray());
         }
 
@@ -73,7 +73,7 @@ namespace Swashbuckle.Swagger.Annotations
         {
             var operation = new Operation
             {
-                responses = new Dictionary<string, Response>
+                Responses = new Dictionary<string, Response>
                 {
                     { "200", new Response() }
                 }
@@ -83,7 +83,7 @@ namespace Swashbuckle.Swagger.Annotations
 
             Subject().Apply(operation, filterContext);
 
-            Assert.Equal(new[] { "200", "201", "202" }, operation.responses.Keys.ToArray());
+            Assert.Equal(new[] { "200", "201", "202" }, operation.Responses.Keys.ToArray());
         }
 
         [Fact]
@@ -91,7 +91,7 @@ namespace Swashbuckle.Swagger.Annotations
         {
             var operation = new Operation
             {
-                responses = new Dictionary<string, Response>
+                Responses = new Dictionary<string, Response>
                 {
                     { "200", new Response() }
                 }
@@ -104,8 +104,8 @@ namespace Swashbuckle.Swagger.Annotations
 
             Subject().Apply(operation, filterContext);
 
-            Assert.Equal(new[] { "200", "201", "202" }, operation.responses.Keys.ToArray());
-            Assert.Equal("ComplexType Created", operation.responses["201"].description);
+            Assert.Equal(new[] { "200", "201", "202" }, operation.Responses.Keys.ToArray());
+            Assert.Equal("ComplexType Created", operation.Responses["201"].Description);
         }
 
 

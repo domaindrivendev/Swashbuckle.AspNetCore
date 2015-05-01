@@ -25,10 +25,10 @@ namespace Swashbuckle.Swagger.XmlComments
             {
                 var summaryNode = typeNode.SelectSingleNode(SummaryExpression);
                 if (summaryNode != null)
-                    model.description = summaryNode.ExtractContent();
+                    model.Description = summaryNode.ExtractContent();
             }
 
-            foreach (var entry in model.properties)
+            foreach (var entry in model.Properties)
             {
                 var jsonProperty = context.JsonObjectContract.Properties[entry.Key];
                 if (jsonProperty == null) continue;
@@ -47,7 +47,7 @@ namespace Swashbuckle.Swagger.XmlComments
             var propSummaryNode = propertyNode.SelectSingleNode(SummaryExpression);
             if (propSummaryNode != null)
             {
-                propertySchema.description = propSummaryNode.ExtractContent();
+                propertySchema.Description = propSummaryNode.ExtractContent();
             }
         }
     }

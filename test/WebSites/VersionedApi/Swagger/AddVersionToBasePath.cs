@@ -7,32 +7,32 @@ namespace VersionedApi.Swagger
     {
         public void Apply(SwaggerDocument swaggerDoc, DocumentFilterContext context)
         {
-            swaggerDoc.basePath = "/" + swaggerDoc.info.version;
+            swaggerDoc.BasePath = "/" + swaggerDoc.Info.Version;
 
-            swaggerDoc.paths = swaggerDoc.paths.ToDictionary(
+            swaggerDoc.Paths = swaggerDoc.Paths.ToDictionary(
                 entry => entry.Key.Replace("/{version}", ""),
                 entry =>
                 {
                     var pathItem = entry.Value;
-                    RemoveVersionParamFrom(pathItem.get);
-                    RemoveVersionParamFrom(pathItem.put);
-                    RemoveVersionParamFrom(pathItem.post);
-                    RemoveVersionParamFrom(pathItem.delete);
-                    RemoveVersionParamFrom(pathItem.options);
-                    RemoveVersionParamFrom(pathItem.head);
-                    RemoveVersionParamFrom(pathItem.patch);
+                    RemoveVersionParamFrom(pathItem.Get);
+                    RemoveVersionParamFrom(pathItem.Put);
+                    RemoveVersionParamFrom(pathItem.Post);
+                    RemoveVersionParamFrom(pathItem.Delete);
+                    RemoveVersionParamFrom(pathItem.Options);
+                    RemoveVersionParamFrom(pathItem.Head);
+                    RemoveVersionParamFrom(pathItem.Patch);
                     return pathItem;
                 });
         }
 
         private void RemoveVersionParamFrom(Operation operation)
         {
-            if (operation == null || operation.parameters == null) return;
+            if (operation == null || operation.Parameters == null) return;
 
-            var versionParam = operation.parameters.FirstOrDefault(param => param.name == "version");
+            var versionParam = operation.Parameters.FirstOrDefault(param => param.Name == "version");
             if (versionParam == null) return;
 
-            operation.parameters.Remove(versionParam) ;
+            operation.Parameters.Remove(versionParam) ;
         }
     }
 }

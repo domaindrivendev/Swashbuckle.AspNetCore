@@ -12,7 +12,7 @@ namespace Swashbuckle.Swagger.Annotations
             if (apiDesc.GetControllerAttributes().OfType<SwaggerResponseRemoveDefaultsAttribute>().Any() ||
                 apiDesc.GetActionAttributes().OfType<SwaggerResponseRemoveDefaultsAttribute>().Any())
             {
-                operation.responses.Clear();
+                operation.Responses.Clear();
             }
 
             var controllerAttributes = apiDesc.GetControllerAttributes().OfType<SwaggerResponseAttribute>()
@@ -33,10 +33,10 @@ namespace Swashbuckle.Swagger.Annotations
             {
                 var statusCode = attr.StatusCode.ToString();
 
-                operation.responses[statusCode] = new Response
+                operation.Responses[statusCode] = new Response
                 {
-                    description = attr.Description ?? InferDescriptionFrom(statusCode),
-                    schema = (attr.Type != null) ? schemaRegistry.GetOrRegister(attr.Type) : null
+                    Description = attr.Description ?? InferDescriptionFrom(statusCode),
+                    Schema = (attr.Type != null) ? schemaRegistry.GetOrRegister(attr.Type) : null
                 };
             }
         }
