@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
+using System.Net;
 using Newtonsoft.Json.Serialization;
 using Xunit;
 using Swashbuckle.Fixtures;
@@ -19,8 +20,9 @@ namespace Swashbuckle.Swagger.Annotations
                     { "200", new Response() }
                 }
             };
-            var filterContext = FilterContextFor(nameof(ActionFixtures.ReturnsVoid));
-            filterContext.ApiDescription.SetControllerAttributes(new[] { new SwaggerResponseRemoveDefaultsAttribute() });
+            var filterContext = FilterContextFor(nameof(ActionFixtures.ReturnsActionResult));
+            filterContext.ApiDescription.ActionDescriptor.Properties.Add("ControllerAttributes",
+                new[] { new SwaggerResponseRemoveDefaultsAttribute() });
 
             Subject().Apply(operation, filterContext);
 
@@ -38,7 +40,6 @@ namespace Swashbuckle.Swagger.Annotations
                 }
             };
             var filterContext = FilterContextFor(nameof(ActionFixtures.AnnotatedWithSwaggerResponseRemoveDefaults));
-            filterContext.ApiDescription.SetControllerAttributes(new object[] { });
 
             Subject().Apply(operation, filterContext);
 
@@ -55,12 +56,13 @@ namespace Swashbuckle.Swagger.Annotations
                     { "200", new Response() }
                 }
             };
-            var filterContext = FilterContextFor(nameof(ActionFixtures.ReturnsVoid));
-            filterContext.ApiDescription.SetControllerAttributes(new[]
-            {
-                new SwaggerResponseAttribute(500, "Internal Server Error", typeof(ComplexType)),
-                new SwaggerResponseAttribute(400, "Bad Request", typeof(ComplexType))
-            });
+            var filterContext = FilterContextFor(nameof(ActionFixtures.ReturnsActionResult));
+            filterContext.ApiDescription.ActionDescriptor.Properties.Add("ControllerAttributes",
+                new[]
+                {
+                    new SwaggerResponseAttribute(500, "Internal Server Error", typeof(ComplexType)),
+                    new SwaggerResponseAttribute(400, "Bad Request", typeof(ComplexType))
+                });
 
             Subject().Apply(operation, filterContext);
 
@@ -79,7 +81,6 @@ namespace Swashbuckle.Swagger.Annotations
                 }
             };
             var filterContext = FilterContextFor(nameof(ActionFixtures.AnnotatedWithSwaggerResponses));
-            filterContext.ApiDescription.SetControllerAttributes(new object[] { });
 
             Subject().Apply(operation, filterContext);
 
@@ -97,10 +98,11 @@ namespace Swashbuckle.Swagger.Annotations
                 }
             };
             var filterContext = FilterContextFor(nameof(ActionFixtures.AnnotatedWithSwaggerResponses));
-            filterContext.ApiDescription.SetControllerAttributes(new []
-            {
-                new SwaggerResponseAttribute(201, "Created")
-            });
+            filterContext.ApiDescription.ActionDescriptor.Properties.Add("ControllerAttributes",
+                new []
+                {
+                    new SwaggerResponseAttribute(201, "Created")
+                });
 
             Subject().Apply(operation, filterContext);
 

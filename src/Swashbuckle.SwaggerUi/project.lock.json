@@ -3609,15 +3609,15 @@
         "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.ObjectModel.dll"
       ]
     },
-    "System.Reflection/4.0.10-beta-22825": {
+    "System.Reflection/4.0.10-beta-22830": {
       "serviceable": false,
-      "sha": "BSRyEPr9alk02FAl0b0rzz+Z6ZO6ILjfwZ08mf2He7/ORJA88YvJh4oZ7BL3iQpyELBW056M3GTwE04gRxrSXQ==",
+      "sha": "lA3KzmVmyf78++LrGdPRtYCasc4UIHS62EmxnVVW6Y7K6Q1npRwZiEq/yogqGfQ62IQs9SGqHuo4ApgZoKss8A==",
       "frameworks": {
         "DNX,Version=v4.5.1": {
           "dependencies": {
-            "System.IO": "4.0.0-beta-22825",
-            "System.Reflection.Primitives": "4.0.0-beta-22825",
-            "System.Runtime": "4.0.20-beta-22825"
+            "System.IO": "4.0.0-beta-22830",
+            "System.Reflection.Primitives": "4.0.0-beta-22830",
+            "System.Runtime": "4.0.20-beta-22830"
           },
           "frameworkAssemblies": [],
           "runtimeAssemblies": [
@@ -3629,9 +3629,9 @@
         },
         "DNXCore,Version=v5.0": {
           "dependencies": {
-            "System.IO": "4.0.0-beta-22825",
-            "System.Reflection.Primitives": "4.0.0-beta-22825",
-            "System.Runtime": "4.0.20-beta-22825"
+            "System.IO": "4.0.0-beta-22830",
+            "System.Reflection.Primitives": "4.0.0-beta-22830",
+            "System.Runtime": "4.0.20-beta-22830"
           },
           "frameworkAssemblies": [],
           "runtimeAssemblies": [
@@ -3644,8 +3644,8 @@
       },
       "files": [
         "License.rtf",
-        "System.Reflection.4.0.10-beta-22825.nupkg",
-        "System.Reflection.4.0.10-beta-22825.nupkg.sha512",
+        "System.Reflection.4.0.10-beta-22830.nupkg",
+        "System.Reflection.4.0.10-beta-22830.nupkg.sha512",
         "System.Reflection.nuspec",
         "lib/aspnetcore50/System.Reflection.dll",
         "lib/contract/System.Reflection.dll",
@@ -3735,13 +3735,13 @@
         "lib/portable-net45+win8/System.Reflection.Metadata.xml"
       ]
     },
-    "System.Reflection.Primitives/4.0.0-beta-22825": {
+    "System.Reflection.Primitives/4.0.0-beta-22830": {
       "serviceable": false,
-      "sha": "5i84IxYpqZgFXufoJHsqvvcGpowXilCfEnYFcSc1fa5Gjb5k5BDy5vBu07xpqdbz3vbICDa6i0koqfxR2HdNyQ==",
+      "sha": "TbMnwEi09FzV25fQHkZ6lnWtWuyzyuqJL+AImZ4LuVed+eA+plfP14ILzAR7bGQyp9q1uDOJ4aZrevMK/lXpZw==",
       "frameworks": {
         "DNX,Version=v4.5.1": {
           "dependencies": {
-            "System.Runtime": "4.0.0-beta-22825"
+            "System.Runtime": "4.0.0-beta-22830"
           },
           "frameworkAssemblies": [],
           "runtimeAssemblies": [
@@ -3753,7 +3753,7 @@
         },
         "DNXCore,Version=v5.0": {
           "dependencies": {
-            "System.Runtime": "4.0.0-beta-22825"
+            "System.Runtime": "4.0.0-beta-22830"
           },
           "frameworkAssemblies": [],
           "runtimeAssemblies": [
@@ -3766,8 +3766,8 @@
       },
       "files": [
         "License.rtf",
-        "System.Reflection.Primitives.4.0.0-beta-22825.nupkg",
-        "System.Reflection.Primitives.4.0.0-beta-22825.nupkg.sha512",
+        "System.Reflection.Primitives.4.0.0-beta-22830.nupkg",
+        "System.Reflection.Primitives.4.0.0-beta-22830.nupkg.sha512",
         "System.Reflection.Primitives.nuspec",
         "lib/aspnetcore50/System.Reflection.Primitives.dll",
         "lib/contract/System.Reflection.Primitives.dll",
@@ -3859,9 +3859,9 @@
         "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Resources.ResourceManager.dll"
       ]
     },
-    "System.Runtime/4.0.20-beta-22825": {
+    "System.Runtime/4.0.20-beta-22830": {
       "serviceable": false,
-      "sha": "gACeNAfarolY37OVV2pdngjxG8Bxapbtkat6mpD0vcTCQEO0idFd6uoAxKERNMkyowaojZq8phrlOVQNgPfW0A==",
+      "sha": "B4uzMZPXw6ad8H+iOsET437sQuXkD3D1+D1RT496po/T0KWMJFrwRe+bcLktVRNGVtCtbwad1VYGKdp0djNFaw==",
       "frameworks": {
         "DNX,Version=v4.5.1": {
           "dependencies": {},
@@ -3886,8 +3886,8 @@
       },
       "files": [
         "License.rtf",
-        "System.Runtime.4.0.20-beta-22825.nupkg",
-        "System.Runtime.4.0.20-beta-22825.nupkg.sha512",
+        "System.Runtime.4.0.20-beta-22830.nupkg",
+        "System.Runtime.4.0.20-beta-22830.nupkg.sha512",
         "System.Runtime.nuspec",
         "lib/aspnetcore50/System.Runtime.dll",
         "lib/contract/System.Runtime.dll",

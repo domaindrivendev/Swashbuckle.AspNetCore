@@ -66,6 +66,11 @@ namespace Swashbuckle.Fixtures.ApiDescriptions
                     })
                 .ToList();
 
+            // Set some additional properties - typically done via IApplicationModelConvention
+            var attributes = descriptor.MethodInfo.GetCustomAttributes(true);
+            descriptor.Properties.Add("ActionAttributes", attributes);
+            descriptor.Properties.Add("IsObsolete", attributes.OfType<ObsoleteAttribute>().Any());
+
             return descriptor;
         }
 
