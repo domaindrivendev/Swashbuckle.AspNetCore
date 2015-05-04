@@ -1,17 +1,15 @@
 ﻿{
   "version": "6.0.0-beta1",
-  "description": "Swashbuckle.SwaggerUi - Packaged swagger-ui for WebApi",
+  "description": "Swashbuckle - Swagger for WebApi",
   "authors": [ "Richard Morris" ],
   "tags": [ "Swagger SwaggerUi Documentation Discovery Help WebApi AspNet vNext" ],
   "projectUrl": "https://github.com/domaindrivendev/Ahoy",
   "licenseUrl": "https://github.com/domaindrivendev/Ahoy/LICENSE",
 
   "dependencies": {
-    "Microsoft.AspNet.Mvc": "6.0.0-beta4-*",
-    "System.Reflection": "4.0.10-beta-*"
+    "Swashbuckle.Swagger": "6.0.0-beta1",
+    "Swashbuckle.SwaggerUi": "6.0.0-beta1"
   },
-
-  "resource": "bower_components/swagger-ui/dist/**",
 
   "frameworks": {
     "dnx451": { },
