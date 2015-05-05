@@ -3088,6 +3088,104 @@
         "tools/install.ps1"
       ]
     },
+    "Swashbuckle.Swagger/6.0.0-beta1": {
+      "serviceable": false,
+      "sha": "jbOvDDEzH5Q/JGyXRKJCfGEbb8jrlt1JVPRt4BlfS4XhxKr5jRAG3RUkg8yzlk7/DpjoGAPcmUCa424OADqXuA==",
+      "frameworks": {
+        "DNX,Version=v4.5.1": {
+          "dependencies": {
+            "Microsoft.AspNet.Mvc": "6.0.0-beta4",
+            "System.Reflection": "4.0.10-beta-22830",
+            "System.Xml.XPath.XmlDocument": "4.0.0-beta-22830",
+            "System.Reflection.TypeExtensions": "4.0.0-beta-22830",
+            "System.Reflection.Extensions": "4.0.0-beta-22830"
+          },
+          "frameworkAssemblies": [
+            "mscorlib",
+            "System",
+            "System.Core",
+            "Microsoft.CSharp"
+          ],
+          "runtimeAssemblies": [
+            "lib/dnx451/Swashbuckle.Swagger.dll"
+          ],
+          "compileAssemblies": [
+            "lib/dnx451/Swashbuckle.Swagger.dll"
+          ]
+        },
+        "DNXCore,Version=v5.0": {
+          "dependencies": {
+            "Microsoft.AspNet.Mvc": "6.0.0-beta4",
+            "System.Reflection": "4.0.10-beta-22830",
+            "System.Xml.XPath.XmlDocument": "4.0.0-beta-22830",
+            "System.Reflection.TypeExtensions": "4.0.0-beta-22830",
+            "System.Reflection.Extensions": "4.0.0-beta-22830"
+          },
+          "frameworkAssemblies": [],
+          "runtimeAssemblies": [
+            "lib/dnxcore50/Swashbuckle.Swagger.dll"
+          ],
+          "compileAssemblies": [
+            "lib/dnxcore50/Swashbuckle.Swagger.dll"
+          ]
+        }
+      },
+      "files": [
+        "Swashbuckle.Swagger.6.0.0-beta1.nupkg",
+        "Swashbuckle.Swagger.6.0.0-beta1.nupkg.sha512",
+        "Swashbuckle.Swagger.nuspec",
+        "lib/dnx451/Swashbuckle.Swagger.dll",
+        "lib/dnx451/Swashbuckle.Swagger.xml",
+        "lib/dnxcore50/Swashbuckle.Swagger.dll",
+        "lib/dnxcore50/Swashbuckle.Swagger.xml"
+      ]
+    },
+    "Swashbuckle.SwaggerUi/6.0.0-beta1": {
+      "serviceable": false,
+      "sha": "mir+O1h3EYlW3JTU7msCWxWIc9rpkqXe6lv+NvDL+djuG2Kw5D8P6gQpGlgc+By+PZfxdQ/OgK5wdupXYE7umw==",
+      "frameworks": {
+        "DNX,Version=v4.5.1": {
+          "dependencies": {
+            "Microsoft.AspNet.Mvc": "6.0.0-beta4",
+            "System.Reflection": "4.0.10-beta-22830"
+          },
+          "frameworkAssemblies": [
+            "mscorlib",
+            "System",
+            "System.Core",
+            "Microsoft.CSharp"
+          ],
+          "runtimeAssemblies": [
+            "lib/dnx451/Swashbuckle.SwaggerUi.dll"
+          ],
+          "compileAssemblies": [
+            "lib/dnx451/Swashbuckle.SwaggerUi.dll"
+          ]
+        },
+        "DNXCore,Version=v5.0": {
+          "dependencies": {
+            "Microsoft.AspNet.Mvc": "6.0.0-beta4",
+            "System.Reflection": "4.0.10-beta-22830"
+          },
+          "frameworkAssemblies": [],
+          "runtimeAssemblies": [
+            "lib/dnxcore50/Swashbuckle.SwaggerUi.dll"
+          ],
+          "compileAssemblies": [
+            "lib/dnxcore50/Swashbuckle.SwaggerUi.dll"
+          ]
+        }
+      },
+      "files": [
+        "Swashbuckle.SwaggerUi.6.0.0-beta1.nupkg",
+        "Swashbuckle.SwaggerUi.6.0.0-beta1.nupkg.sha512",
+        "Swashbuckle.SwaggerUi.nuspec",
+        "lib/dnx451/Swashbuckle.SwaggerUi.dll",
+        "lib/dnx451/Swashbuckle.SwaggerUi.xml",
+        "lib/dnxcore50/Swashbuckle.SwaggerUi.dll",
+        "lib/dnxcore50/Swashbuckle.SwaggerUi.xml"
+      ]
+    },
     "System.Collections/4.0.10-beta-22816": {
       "serviceable": false,
       "sha": "pFwiLMtcsvAx8ZFsSIDVSuPAXXW2z1gkmE/YqiMELlxPVHKyJGrUZoJCIBfVg1HERxMnd1dyj7ffqj5Nx3mzGQ==",

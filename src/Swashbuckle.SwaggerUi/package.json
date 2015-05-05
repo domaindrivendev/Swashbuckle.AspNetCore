@@ -1,0 +1,8 @@
+{
+	"version": "1.0.0",
+	"name": "Swashbuckle",
+	"private": true,
+	"devDependencies": {
+        "grunt-bowercopy": "^1.2.0"
+	}
+}
