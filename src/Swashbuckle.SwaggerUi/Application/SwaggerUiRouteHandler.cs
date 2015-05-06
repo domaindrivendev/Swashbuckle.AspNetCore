@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNet.Routing;
 using Microsoft.AspNet.FileProviders;
-using Microsoft.AspNet.Http;
+using Microsoft.AspNet.WebUtilities;
 
 namespace Swashbuckle.Application
 {
@@ -22,35 +22,49 @@ namespace Swashbuckle.Application
             throw new NotImplementedException();
         }
 
-        public Task RouteAsync(RouteContext context)
+        public async Task RouteAsync(RouteContext context)
         {
             var response = context.HttpContext.Response;
             var assetPath = GetAssetPathFrom(context);
 
-            if (assetPath != null)
+            if (assetPath == null)
             {
-                var fileInfo = _fileProvider.GetFileInfo(assetPath);
-                if (fileInfo.Exists)
-                {
-                    response.ContentType = ContentTypeMap[assetPath.Split('.').Last()];
-                    return WriteFileAsync(fileInfo, response);
-                }
+                RedirectToIndex(context);
+                return;
             }
 
-            throw new Exception("Redirect");
+            var fileInfo = _fileProvider.GetFileInfo(assetPath);
+            if (!fileInfo.Exists)
+            {
+                ReturnNotFound(context);
+                return;
+            }
+
+            await WriteFileContentsAsync(context, fileInfo);
         }
 
         private string GetAssetPathFrom(RouteContext context)
         {
-            var routeData = context.RouteData;
-            if (routeData != null && routeData.Values != null && routeData.Values.ContainsKey("assetPath"))
-                return routeData.Values["assetPath"].ToString();
-
-            return null;
+            object routeValue;
+            context.RouteData.Values.TryGetValue("assetPath", out routeValue);
+            return (routeValue == null) ? null : routeValue.ToString();
         }
 
-        private Task WriteFileAsync(IFileInfo fileInfo, HttpResponse response)
+        private void RedirectToIndex(RouteContext context)
         {
+            throw new NotImplementedException();
+        }
+
+        private void ReturnNotFound(RouteContext context)
+        {
+            context.HttpContext.Response.StatusCode = StatusCodes.Status404NotFound;
+        }
+
+        private Task WriteFileContentsAsync(RouteContext context, IFileInfo fileInfo)
+        {
+            var extension = fileInfo.Name.Split('.').Last();
+            var response = context.HttpContext.Response;
+            response.ContentType = ContentTypeMap[extension];
             return fileInfo.CreateReadStream().CopyToAsync(response.Body);
         }
 
