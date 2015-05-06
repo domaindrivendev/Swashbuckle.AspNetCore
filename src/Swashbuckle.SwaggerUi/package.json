@@ -3,6 +3,7 @@
 	"name": "Swashbuckle",
 	"private": true,
 	"devDependencies": {
-        "grunt-bowercopy": "^1.2.0"
+      "grunt": "^0.4.5",
+      "grunt-bowercopy": "^1.2.0"
 	}
 }

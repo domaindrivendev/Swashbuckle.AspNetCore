@@ -24,7 +24,7 @@ namespace Microsoft.AspNet.Builder
         private static IRouter CreateSwaggerUiHandler(IServiceProvider serviceProvider)
         {
             var thisAssembly = typeof(SwaggerUiRouteHandler).GetTypeInfo().Assembly;
-            var fileProvider = new EmbeddedFileProvider(thisAssembly, "bower_components/swagger-ui/dist");
+            var fileProvider = new EmbeddedFileProvider(thisAssembly, "SwaggerUi");
             return new SwaggerUiRouteHandler(fileProvider);
         }
     }
