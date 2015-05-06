@@ -6,7 +6,7 @@ using Swashbuckle.Swagger;
 
 namespace Swashbuckle.Application
 {
-    public static class ApplicationBuilderExtensions
+    public static class SwaggerRouteBuilderExtensions
     {
         public static void EnableSwagger(
             this IRouteBuilder routeBuilder,

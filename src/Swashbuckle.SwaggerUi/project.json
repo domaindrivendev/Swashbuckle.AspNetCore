@@ -11,10 +11,15 @@
     "System.Reflection": "4.0.10-beta-*"
   },
 
-  "resource": "bower_components/swagger-ui/dist/**",
+  "resource": "SwaggerUi",
 
   "frameworks": {
     "dnx451": { },
     "dnxcore50": { }
-  }
+  },
+
+  "exclude": [
+    "node_modules",
+    "bower_components"
+  ]
 }

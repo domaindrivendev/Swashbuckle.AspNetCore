@@ -57,8 +57,10 @@ namespace VersionedApi
             app.UseMvc(routes =>
             {
                 routes.EnableSwagger();
-                routes.EnableSwaggerUi();
             });
+
+            app.UseSwaggerUi();
+
             // Add the following route for porting Web API 2 controllers.
             // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
         }

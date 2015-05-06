@@ -2,3 +2,6 @@
 [Bb]in/
 .vs/
 bower_components/
+node_modules/
+SwaggerUi/
+!SwaggerUi/index.html

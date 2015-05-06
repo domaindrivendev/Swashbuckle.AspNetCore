@@ -2557,6 +2557,52 @@
         "tools/install.ps1"
       ]
     },
+    "Swashbuckle.SwaggerUi/6.0.0-beta1": {
+      "serviceable": false,
+      "sha": "mir+O1h3EYlW3JTU7msCWxWIc9rpkqXe6lv+NvDL+djuG2Kw5D8P6gQpGlgc+By+PZfxdQ/OgK5wdupXYE7umw==",
+      "frameworks": {
+        "DNX,Version=v4.5.1": {
+          "dependencies": {
+            "Microsoft.AspNet.Mvc": "6.0.0-beta4",
+            "System.Reflection": "4.0.10-beta-22830"
+          },
+          "frameworkAssemblies": [
+            "mscorlib",
+            "System",
+            "System.Core",
+            "Microsoft.CSharp"
+          ],
+          "runtimeAssemblies": [
+            "lib/dnx451/Swashbuckle.SwaggerUi.dll"
+          ],
+          "compileAssemblies": [
+            "lib/dnx451/Swashbuckle.SwaggerUi.dll"
+          ]
+        },
+        "DNXCore,Version=v5.0": {
+          "dependencies": {
+            "Microsoft.AspNet.Mvc": "6.0.0-beta4",
+            "System.Reflection": "4.0.10-beta-22830"
+          },
+          "frameworkAssemblies": [],
+          "runtimeAssemblies": [
+            "lib/dnxcore50/Swashbuckle.SwaggerUi.dll"
+          ],
+          "compileAssemblies": [
+            "lib/dnxcore50/Swashbuckle.SwaggerUi.dll"
+          ]
+        }
+      },
+      "files": [
+        "Swashbuckle.SwaggerUi.6.0.0-beta1.nupkg",
+        "Swashbuckle.SwaggerUi.6.0.0-beta1.nupkg.sha512",
+        "Swashbuckle.SwaggerUi.nuspec",
+        "lib/dnx451/Swashbuckle.SwaggerUi.dll",
+        "lib/dnx451/Swashbuckle.SwaggerUi.xml",
+        "lib/dnxcore50/Swashbuckle.SwaggerUi.dll",
+        "lib/dnxcore50/Swashbuckle.SwaggerUi.xml"
+      ]
+    },
     "System.Collections/4.0.10-beta-22816": {
       "serviceable": false,
       "sha": "pFwiLMtcsvAx8ZFsSIDVSuPAXXW2z1gkmE/YqiMELlxPVHKyJGrUZoJCIBfVg1HERxMnd1dyj7ffqj5Nx3mzGQ==",
@@ -3608,15 +3654,15 @@
         "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.ObjectModel.dll"
       ]
     },
-    "System.Reflection/4.0.10-beta-22830": {
+    "System.Reflection/4.0.10-beta-22904": {
       "serviceable": false,
-      "sha": "lA3KzmVmyf78++LrGdPRtYCasc4UIHS62EmxnVVW6Y7K6Q1npRwZiEq/yogqGfQ62IQs9SGqHuo4ApgZoKss8A==",
+      "sha": "WaadB0lSFOORxDQrE+wHAtm2wmMIRDKveO0OlWHMVY2uPC0QkDC153yfX/NulbyNKVF2iHG0HEWYKJD158nvGg==",
       "frameworks": {
         "DNX,Version=v4.5.1": {
           "dependencies": {
-            "System.IO": "4.0.0-beta-22830",
-            "System.Reflection.Primitives": "4.0.0-beta-22830",
-            "System.Runtime": "4.0.20-beta-22830"
+            "System.IO": "4.0.0-beta-22904",
+            "System.Reflection.Primitives": "4.0.0-beta-22904",
+            "System.Runtime": "4.0.20-beta-22904"
           },
           "frameworkAssemblies": [],
           "runtimeAssemblies": [
@@ -3628,9 +3674,9 @@
         },
         "DNXCore,Version=v5.0": {
           "dependencies": {
-            "System.IO": "4.0.0-beta-22830",
-            "System.Reflection.Primitives": "4.0.0-beta-22830",
-            "System.Runtime": "4.0.20-beta-22830"
+            "System.IO": "4.0.0-beta-22904",
+            "System.Reflection.Primitives": "4.0.0-beta-22904",
+            "System.Runtime": "4.0.20-beta-22904"
           },
           "frameworkAssemblies": [],
           "runtimeAssemblies": [
@@ -3643,8 +3689,8 @@
       },
       "files": [
         "License.rtf",
-        "System.Reflection.4.0.10-beta-22830.nupkg",
-        "System.Reflection.4.0.10-beta-22830.nupkg.sha512",
+        "System.Reflection.4.0.10-beta-22904.nupkg",
+        "System.Reflection.4.0.10-beta-22904.nupkg.sha512",
         "System.Reflection.nuspec",
         "lib/aspnetcore50/System.Reflection.dll",
         "lib/contract/System.Reflection.dll",
@@ -3734,13 +3780,13 @@
         "lib/portable-net45+win8/System.Reflection.Metadata.xml"
       ]
     },
-    "System.Reflection.Primitives/4.0.0-beta-22830": {
+    "System.Reflection.Primitives/4.0.0-beta-22904": {
       "serviceable": false,
-      "sha": "TbMnwEi09FzV25fQHkZ6lnWtWuyzyuqJL+AImZ4LuVed+eA+plfP14ILzAR7bGQyp9q1uDOJ4aZrevMK/lXpZw==",
+      "sha": "qLjeQ6DAO40Ie0wsw9Wx1KCV2lIeqDh0mLMIK5rLOyMTXWFJsKCurPeXdw/5mjM9qTiQf2CBQDFyaGUVg1ryUw==",
       "frameworks": {
         "DNX,Version=v4.5.1": {
           "dependencies": {
-            "System.Runtime": "4.0.0-beta-22830"
+            "System.Runtime": "4.0.0-beta-22904"
           },
           "frameworkAssemblies": [],
           "runtimeAssemblies": [
@@ -3752,7 +3798,7 @@
         },
         "DNXCore,Version=v5.0": {
           "dependencies": {
-            "System.Runtime": "4.0.0-beta-22830"
+            "System.Runtime": "4.0.0-beta-22904"
           },
           "frameworkAssemblies": [],
           "runtimeAssemblies": [
@@ -3765,8 +3811,8 @@
       },
       "files": [
         "License.rtf",
-        "System.Reflection.Primitives.4.0.0-beta-22830.nupkg",
-        "System.Reflection.Primitives.4.0.0-beta-22830.nupkg.sha512",
+        "System.Reflection.Primitives.4.0.0-beta-22904.nupkg",
+        "System.Reflection.Primitives.4.0.0-beta-22904.nupkg.sha512",
         "System.Reflection.Primitives.nuspec",
         "lib/aspnetcore50/System.Reflection.Primitives.dll",
         "lib/contract/System.Reflection.Primitives.dll",
@@ -3858,9 +3904,9 @@
         "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Resources.ResourceManager.dll"
       ]
     },
-    "System.Runtime/4.0.20-beta-22830": {
+    "System.Runtime/4.0.20-beta-22904": {
       "serviceable": false,
-      "sha": "B4uzMZPXw6ad8H+iOsET437sQuXkD3D1+D1RT496po/T0KWMJFrwRe+bcLktVRNGVtCtbwad1VYGKdp0djNFaw==",
+      "sha": "iOoUnKv94/XguOpgkg4TiWydFWFO7jxaPi3HzfvbDvetuA5sp6B/ujjAd3lxIRNLRqBc11/frSABj0yd6cD0SQ==",
       "frameworks": {
         "DNX,Version=v4.5.1": {
           "dependencies": {},
@@ -3885,8 +3931,8 @@
       },
       "files": [
         "License.rtf",
-        "System.Runtime.4.0.20-beta-22830.nupkg",
-        "System.Runtime.4.0.20-beta-22830.nupkg.sha512",
+        "System.Runtime.4.0.20-beta-22904.nupkg",
+        "System.Runtime.4.0.20-beta-22904.nupkg.sha512",
         "System.Runtime.nuspec",
         "lib/aspnetcore50/System.Runtime.dll",
         "lib/contract/System.Runtime.dll",
