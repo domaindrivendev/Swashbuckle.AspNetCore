@@ -55,11 +55,9 @@ namespace BasicApi
             app.UseStaticFiles();
 
             // Add MVC to the request pipeline.
-            app.UseMvc(routes =>
-            {
-                routes.EnableSwagger();
-            });
+            app.UseMvc();
 
+            app.UseSwagger();
             app.UseSwaggerUi();
 
             // Add the following route for porting Web API 2 controllers.

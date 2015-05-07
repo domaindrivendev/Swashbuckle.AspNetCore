@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNet.Routing;
 using Microsoft.AspNet.FileProviders;
-using Microsoft.AspNet.WebUtilities;
 
 namespace Swashbuckle.Application
 {
@@ -17,15 +16,9 @@ namespace Swashbuckle.Application
             _fileProvider = fileProvider;
         }
 
-        public VirtualPathData GetVirtualPath(VirtualPathContext context)
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task RouteAsync(RouteContext context)
         {
-            var response = context.HttpContext.Response;
-            var assetPath = GetAssetPathFrom(context);
+            var assetPath = GetAssetPath(context);
 
             if (assetPath == null)
             {
@@ -40,10 +33,10 @@ namespace Swashbuckle.Application
                 return;
             }
 
-            await WriteFileContentsAsync(context, fileInfo);
+            await ReturnFileContents(context, fileInfo);
         }
 
-        private string GetAssetPathFrom(RouteContext context)
+        private string GetAssetPath(RouteContext context)
         {
             object routeValue;
             context.RouteData.Values.TryGetValue("assetPath", out routeValue);
@@ -57,14 +50,15 @@ namespace Swashbuckle.Application
 
         private void ReturnNotFound(RouteContext context)
         {
-            context.HttpContext.Response.StatusCode = StatusCodes.Status404NotFound;
+            context.HttpContext.Response.StatusCode = 404;
         }
 
-        private Task WriteFileContentsAsync(RouteContext context, IFileInfo fileInfo)
+        private Task ReturnFileContents(RouteContext context, IFileInfo fileInfo)
         {
-            var extension = fileInfo.Name.Split('.').Last();
             var response = context.HttpContext.Response;
-            response.ContentType = ContentTypeMap[extension];
+
+            response.StatusCode = 200;
+            response.ContentType = ContentTypeMap[fileInfo.Name.Split('.').Last()];
             return fileInfo.CreateReadStream().CopyToAsync(response.Body);
         }
 
@@ -82,5 +76,10 @@ namespace Swashbuckle.Application
             { "ttf", "application/font-sfnt" },
             { "svg", "image/svg+xml" }
         };
+
+        public VirtualPathData GetVirtualPath(VirtualPathContext context)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

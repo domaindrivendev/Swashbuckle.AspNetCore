@@ -8,7 +8,9 @@ namespace Microsoft.AspNet.Builder
 {
     public static class BuilderExtensions
     {
-        public static IApplicationBuilder UseSwaggerUi(this IApplicationBuilder app)
+        public static IApplicationBuilder UseSwaggerUi(
+            this IApplicationBuilder app,
+            string routePrefix = "swagger/ui")
         {
             var routeBuilder = new RouteBuilder
             {
@@ -16,7 +18,8 @@ namespace Microsoft.AspNet.Builder
                 ServiceProvider = app.ApplicationServices
             };
 
-            routeBuilder.MapRoute("swagger_ui", "swagger/ui/{*assetPath}");
+            var routeTemplate = routePrefix.TrimEnd('/') + "/{*assetPath}";
+            routeBuilder.MapRoute("swagger_ui", routeTemplate);
 
             return app.UseRouter(routeBuilder.Build());
         }

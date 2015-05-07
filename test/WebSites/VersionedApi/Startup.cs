@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Routing;
 using Microsoft.Framework.DependencyInjection;
 using Microsoft.AspNet.Mvc.Description;
 using Swashbuckle.Swagger;
@@ -54,11 +49,9 @@ namespace VersionedApi
             app.UseStaticFiles();
 
             // Add MVC to the request pipeline.
-            app.UseMvc(routes =>
-            {
-                routes.EnableSwagger();
-            });
+            app.UseMvc();
 
+            app.UseSwagger();
             app.UseSwaggerUi();
 
             // Add the following route for porting Web API 2 controllers.
