@@ -7,11 +7,11 @@ using Microsoft.AspNet.FileProviders;
 
 namespace Swashbuckle.Application
 {
-    public class SwaggerUiRouteHandler : IRouter
+    public class SwaggerUiHandler : IRouter
     {
         private readonly IFileProvider _fileProvider;
 
-        public SwaggerUiRouteHandler(IFileProvider fileProvider)
+        public SwaggerUiHandler(IFileProvider fileProvider)
         {
             _fileProvider = fileProvider;
         }

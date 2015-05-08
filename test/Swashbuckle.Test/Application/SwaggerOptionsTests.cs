@@ -4,7 +4,7 @@ using Moq;
 using Swashbuckle.Application;
 using Microsoft.AspNet.Http.Core.Collections;
 
-namespace Swashbuckle
+namespace Swashbuckle.Application
 {
     public class SwaggerOptionsTests
     {

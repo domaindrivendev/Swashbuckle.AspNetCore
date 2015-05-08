@@ -4,7 +4,6 @@ using Microsoft.AspNet.Hosting;
 using Microsoft.Framework.DependencyInjection;
 using Microsoft.AspNet.Mvc.Description;
 using Swashbuckle.Swagger;
-using Swashbuckle.Application;
 using VersionedApi.Versioning;
 using VersionedApi.Swagger;
 

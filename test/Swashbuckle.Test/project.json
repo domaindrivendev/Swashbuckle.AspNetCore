@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0-*",
+  "dependencies": {
+    "xunit.runner.aspnet": "2.0.0-aspnet",
+    "Moq": "4.2-*",
+    "Swashbuckle": "6.0.0-*"
+  },
+  "commands": {
+    "test": "xunit.runner.aspnet"
+  },
+  "frameworks": {
+    "dnx451": { }
+  }
+}

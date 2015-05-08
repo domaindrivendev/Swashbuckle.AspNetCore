@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.Framework.DependencyInjection;
-using Swashbuckle.Swagger;
 using BasicApi.Swagger;
-using Swashbuckle.Application;
+using Swashbuckle.Swagger;
 
 namespace BasicApi
 {

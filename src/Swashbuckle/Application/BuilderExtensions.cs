@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Reflection;
 using Microsoft.Framework.DependencyInjection;
 using Microsoft.AspNet.Routing;
 using Microsoft.AspNet.Http;
+using Microsoft.AspNet.FileProviders;
 using Swashbuckle.Swagger;
 using Swashbuckle.Application;
 
@@ -23,12 +25,34 @@ namespace Microsoft.AspNet.Builder
 
             return app.UseRouter(routeBuilder.Build());
         }
+        public static IApplicationBuilder UseSwaggerUi(
+            this IApplicationBuilder app,
+            string routePrefix = "swagger/ui")
+        {
+            var routeBuilder = new RouteBuilder
+            {
+                DefaultHandler = CreateSwaggerUiHandler(app.ApplicationServices),
+                ServiceProvider = app.ApplicationServices
+            };
+
+            var routeTemplate = routePrefix.TrimEnd('/') + "/{*assetPath}";
+            routeBuilder.MapRoute("swagger_ui", routeTemplate);
+
+            return app.UseRouter(routeBuilder.Build());
+        }
 
         private static IRouter CreateSwaggerDocsHandler(IServiceProvider serviceProvider)
         {
             var routeUrlResolver = serviceProvider.GetRequiredService<Func<HttpRequest, string>>();
             var swaggerProvider = serviceProvider.GetRequiredService<ISwaggerProvider>();
             return new SwaggerDocsHandler(routeUrlResolver, swaggerProvider);
+        }
+
+        private static IRouter CreateSwaggerUiHandler(IServiceProvider serviceProvider)
+        {
+            var thisAssembly = typeof(SwaggerUiHandler).GetTypeInfo().Assembly;
+            var fileProvider = new EmbeddedFileProvider(thisAssembly, "SwaggerUi");
+            return new SwaggerUiHandler(fileProvider);
         }
     }
 }
