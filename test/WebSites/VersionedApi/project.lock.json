@@ -2942,12 +2942,15 @@
     },
     "Swashbuckle/6.0.0-beta1": {
       "serviceable": false,
-      "sha": "XGK+OEmM8197HgpDMfOB1v4+IiHhDEjQgG+KtncnIZzE78KWVeWEvjMYGLsLava3xGxdJWEe9Wp+2edhh5k0Vg==",
+      "sha": "Yr2Wz8BGoQHi7rhcdXLrwZIhjoee41d94s4Ayp81FPg7TyCI3e/ERugxNvfKC4Pf7xmDF05BPH56NJDn1eMV1Q==",
       "frameworks": {
         "DNX,Version=v4.5.1": {
           "dependencies": {
-            "Swashbuckle.Swagger": "6.0.0-beta1",
-            "Swashbuckle.SwaggerUi": "6.0.0-beta1"
+            "Microsoft.AspNet.Mvc": "6.0.0-beta4",
+            "System.Reflection": "4.0.10-beta-22906",
+            "System.Xml.XPath.XmlDocument": "4.0.0-beta-22906",
+            "System.Reflection.TypeExtensions": "4.0.0-beta-22906",
+            "System.Reflection.Extensions": "4.0.0-beta-22906"
           },
           "frameworkAssemblies": [
             "mscorlib",
@@ -2964,8 +2967,11 @@
         },
         "DNXCore,Version=v5.0": {
           "dependencies": {
-            "Swashbuckle.Swagger": "6.0.0-beta1",
-            "Swashbuckle.SwaggerUi": "6.0.0-beta1"
+            "Microsoft.AspNet.Mvc": "6.0.0-beta4",
+            "System.Reflection": "4.0.10-beta-22906",
+            "System.Xml.XPath.XmlDocument": "4.0.0-beta-22906",
+            "System.Reflection.TypeExtensions": "4.0.0-beta-22906",
+            "System.Reflection.Extensions": "4.0.0-beta-22906"
           },
           "frameworkAssemblies": [],
           "runtimeAssemblies": [
