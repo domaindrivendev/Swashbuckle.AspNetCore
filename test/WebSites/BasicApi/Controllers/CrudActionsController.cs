@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using Microsoft.AspNet.Mvc;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNet.Mvc;
 
 namespace BasicApi.Controllers
 {

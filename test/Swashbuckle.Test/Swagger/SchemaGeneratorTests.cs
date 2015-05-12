@@ -205,7 +205,7 @@ namespace Swashbuckle.Swagger
         public void GetOrRegister_SupportsOptionToPostModifyObjectSchemas()
         {
             var schemaGenerator = Subject(opts =>
-                opts.ModelFilter<VendorExtensionsSchemaFilter>()
+                opts.ModelFilter<VendorExtensionsModelFilter>()
             );
 
             schemaGenerator.GetOrRegister(typeof(ComplexType));

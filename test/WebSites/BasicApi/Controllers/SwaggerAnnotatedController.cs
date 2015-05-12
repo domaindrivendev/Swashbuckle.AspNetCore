@@ -1,5 +1,6 @@
 ﻿using Swashbuckle.Swagger.Annotations;
 using Microsoft.AspNet.Mvc;
+using BasicApi.Swagger;
 
 namespace BasicApi.Controllers
 {
@@ -14,6 +15,7 @@ namespace BasicApi.Controllers
         }
     }
 
+    [SwaggerModelFilter(typeof(AddCartDefault))]
     public class Cart
     {
         public int Id { get; set; }

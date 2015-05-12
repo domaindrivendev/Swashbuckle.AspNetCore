@@ -2,7 +2,7 @@
 
 namespace Swashbuckle.Fixtures.Extensions
 {
-    public class VendorExtensionsSchemaFilter : IModelFilter
+    public class VendorExtensionsModelFilter : IModelFilter
     {
         public void Apply(Schema model, ModelFilterContext context)
         {

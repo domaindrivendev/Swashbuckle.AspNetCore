@@ -5,6 +5,7 @@ using System.Net;
 using Microsoft.AspNet.Mvc;
 using Newtonsoft.Json.Linq;
 using Swashbuckle.Swagger.Annotations;
+using Swashbuckle.Fixtures.Extensions;
 
 namespace Swashbuckle.Fixtures.ApiDescriptions
 {
@@ -94,5 +95,9 @@ namespace Swashbuckle.Fixtures.ApiDescriptions
         {
             throw new NotImplementedException();
         }
+
+        [SwaggerOperationFilter(typeof(VendorExtensionsOperationFilter))]
+        public void AnnotatedWithSwaggerOperationFilter()
+        { }
    }
 }
