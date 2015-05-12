@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNet.Http;
+using Microsoft.AspNet.Http.Core.Collections;
 using Xunit;
 using Moq;
-using Swashbuckle.Application;
-using Microsoft.AspNet.Http.Core.Collections;
 
 namespace Swashbuckle.Application
 {
-    public class SwaggerOptionsTests
+    public class DefaultRootUrlResolverTests
     {
         [Theory]
         [InlineData("http", "tempuri.org:1234", "/api", "http://tempuri.org:1234/api")]
@@ -23,7 +22,7 @@ namespace Swashbuckle.Application
             request.Setup(req => req.PathBase).Returns(new PathString(requestPathBase));
             request.Setup(req => req.Headers).Returns(new HeaderDictionary());
 
-            var rootUrl = SwaggerOptions.DefaultRootUrlResolver(request.Object);
+            var rootUrl = Subject().ResolveFrom(request.Object);
 
             Assert.Equal(expectedRootUrl, rootUrl);
         }
@@ -41,9 +40,14 @@ namespace Swashbuckle.Application
                 { "X-Forwarded-Port", new[] { "5678" } }
             });
 
-            var rootUrl = SwaggerOptions.DefaultRootUrlResolver(request.Object);
+            var rootUrl = Subject().ResolveFrom(request.Object);
 
             Assert.Equal("https://acmecorp.org:5678", rootUrl);
+        }
+
+        private IRootUrlResolver Subject()
+        {
+            return new DefaultRootUrlResolver();
         }
     }
 }

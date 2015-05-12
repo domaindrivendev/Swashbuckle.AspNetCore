@@ -10,11 +10,11 @@ namespace Swashbuckle.Application
 {
     public class SwaggerDocsHandler : IRouter
     {
-        private Func<HttpRequest, string> _rootUrlResolver;
+        private IRootUrlResolver _rootUrlResolver;
         private ISwaggerProvider _swaggerProvider;
 
         public SwaggerDocsHandler(
-            Func<HttpRequest, string> rootUrlResolver,
+            IRootUrlResolver rootUrlResolver,
             ISwaggerProvider swaggerProvider)
         {
             _rootUrlResolver = rootUrlResolver;
@@ -23,12 +23,12 @@ namespace Swashbuckle.Application
 
         public Task RouteAsync(RouteContext context)
         {
-            var rootUrl = _rootUrlResolver(context.HttpContext.Request);
+            var rootUrl = _rootUrlResolver.ResolveFrom(context.HttpContext.Request);
             var apiVersion = GetApiVersion(context);
 
             var swagger = _swaggerProvider.GetSwagger(rootUrl, apiVersion);
 
-            ReturnSwaggerJson(context.HttpContext.Response, swagger);
+            ReturnSwaggerJson(context, swagger);
             return Task.FromResult(0);
         }
 
@@ -39,8 +39,9 @@ namespace Swashbuckle.Application
             return (routeValue == null) ? null : routeValue.ToString();
         }
 
-        private void ReturnSwaggerJson(HttpResponse response, SwaggerDocument swaggerDoc)
+        private void ReturnSwaggerJson(RouteContext context, SwaggerDocument swaggerDoc)
         {
+            var response = context.HttpContext.Response; 
             response.StatusCode = 200;
             response.ContentType = "application/json";
             using (var writer = new StreamWriter(response.Body))

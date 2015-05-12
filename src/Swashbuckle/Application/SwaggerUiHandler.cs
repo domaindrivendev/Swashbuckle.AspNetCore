@@ -9,10 +9,12 @@ namespace Swashbuckle.Application
 {
     public class SwaggerUiHandler : IRouter
     {
+        private readonly IRootUrlResolver _rootUrlResolver;
         private readonly IFileProvider _fileProvider;
 
-        public SwaggerUiHandler(IFileProvider fileProvider)
+        public SwaggerUiHandler(IRootUrlResolver rootUrlResolver, IFileProvider fileProvider)
         {
+            _rootUrlResolver = rootUrlResolver;
             _fileProvider = fileProvider;
         }
 

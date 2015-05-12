@@ -25,6 +25,7 @@ namespace Microsoft.AspNet.Builder
 
             return app.UseRouter(routeBuilder.Build());
         }
+
         public static IApplicationBuilder UseSwaggerUi(
             this IApplicationBuilder app,
             string routePrefix = "swagger/ui")
@@ -43,16 +44,17 @@ namespace Microsoft.AspNet.Builder
 
         private static IRouter CreateSwaggerDocsHandler(IServiceProvider serviceProvider)
         {
-            var routeUrlResolver = serviceProvider.GetRequiredService<Func<HttpRequest, string>>();
+            var rootUrlResolver = serviceProvider.GetService<IRootUrlResolver>() ?? new DefaultRootUrlResolver();
             var swaggerProvider = serviceProvider.GetRequiredService<ISwaggerProvider>();
-            return new SwaggerDocsHandler(routeUrlResolver, swaggerProvider);
+            return new SwaggerDocsHandler(rootUrlResolver, swaggerProvider);
         }
 
         private static IRouter CreateSwaggerUiHandler(IServiceProvider serviceProvider)
         {
+            var rootUrlResolver = serviceProvider.GetService<IRootUrlResolver>() ?? new DefaultRootUrlResolver();
             var thisAssembly = typeof(SwaggerUiHandler).GetTypeInfo().Assembly;
             var fileProvider = new EmbeddedFileProvider(thisAssembly, "SwaggerUi");
-            return new SwaggerUiHandler(fileProvider);
+            return new SwaggerUiHandler(rootUrlResolver, fileProvider);
         }
     }
 }

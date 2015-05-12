@@ -2,7 +2,6 @@
 using Microsoft.Framework.OptionsModel;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Description;
-using Microsoft.AspNet.Http;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.Swagger;
 using Swashbuckle.Application;
@@ -18,14 +17,14 @@ namespace Microsoft.Framework.DependencyInjection
             serviceCollection.Configure<MvcOptions>(c =>
                 c.Conventions.Add(new SwaggerApplicationConvention()));
 
-            serviceCollection.Configure<SwaggerOptions>(configure ?? ((options) => {}));
+            serviceCollection.Configure(configure ?? ((options) => {}));
 
             serviceCollection.AddTransient(GetRootUrlResolver);
             serviceCollection.AddTransient(GetSchemaRegistry);
             serviceCollection.AddTransient(GetSwaggerProvider);
         }
 
-        private static Func<HttpRequest, string> GetRootUrlResolver(IServiceProvider serviceProvider)
+        private static IRootUrlResolver GetRootUrlResolver(IServiceProvider serviceProvider)
         {
             var swaggerOptions = serviceProvider.GetService<IOptions<SwaggerOptions>>();
             return swaggerOptions.Options.RootUrlResolver;
