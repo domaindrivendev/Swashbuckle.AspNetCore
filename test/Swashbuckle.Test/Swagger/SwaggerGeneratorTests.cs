@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
 using Xunit;
 using Swashbuckle.Fixtures.ApiDescriptions;
 using Swashbuckle.Fixtures.Extensions;
-using Swashbuckle.Application;
 
 namespace Swashbuckle.Swagger
 {
@@ -473,7 +472,7 @@ namespace Swashbuckle.Swagger
 
             return new SwaggerGenerator(
                 apiDescriptionsProvider,
-                () => new SchemaGenerator(new DefaultContractResolver()),
+                () => new SchemaGenerator(new JsonSerializerSettings()),
                 options
             );
         }

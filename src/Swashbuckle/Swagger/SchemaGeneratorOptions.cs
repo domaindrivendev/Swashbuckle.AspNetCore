@@ -20,5 +20,7 @@ namespace Swashbuckle.Swagger
         public bool UseFullTypeNameInSchemaIds { get; set; }
 
         public bool DescribeAllEnumsAsStrings { get; set; }
+
+        public bool DescribeStringEnumsInCamelCase { get; set; }
     }
 }

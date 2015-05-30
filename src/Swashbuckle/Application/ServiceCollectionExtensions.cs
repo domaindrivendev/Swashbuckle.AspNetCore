@@ -2,7 +2,7 @@
 using Microsoft.Framework.OptionsModel;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Description;
-using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
 using Swashbuckle.Swagger;
 using Swashbuckle.Application;
 
@@ -32,9 +32,9 @@ namespace Microsoft.Framework.DependencyInjection
 
         private static ISchemaRegistry GetSchemaRegistry(IServiceProvider serviceProvider)
         {
-            var jsonContractResolver = GetJsonContractResolver(serviceProvider);
+            var jsonSerializerSettings = GetJsonSerializerSettings(serviceProvider);
             var swaggerOptions = serviceProvider.GetService<IOptions<SwaggerOptions>>();
-            return new SchemaGenerator(jsonContractResolver, swaggerOptions.Options.SchemaGeneratorOptions);
+            return new SchemaGenerator(jsonSerializerSettings, swaggerOptions.Options.SchemaGeneratorOptions);
         }
 
         private static ISwaggerProvider GetSwaggerProvider(IServiceProvider serviceProvider)
@@ -46,10 +46,11 @@ namespace Microsoft.Framework.DependencyInjection
                 swaggerOptions.Options.SwaggerGeneratorOptions);
         }
 
-        private static IContractResolver GetJsonContractResolver(IServiceProvider serviceProvider)
+        private static JsonSerializerSettings GetJsonSerializerSettings(IServiceProvider serviceProvider)
         {
             var mvcOptions = serviceProvider.GetService<MvcOptions>();
-            return new DefaultContractResolver();
+            // TODO: Get from mvcOptions
+            return new JsonSerializerSettings();
         }
     }
 }

@@ -2,12 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Converters;
 using Xunit;
 using Swashbuckle.Fixtures;
 using Swashbuckle.Fixtures.Extensions;
-using Swashbuckle.Application;
 
 namespace Swashbuckle.Swagger
 {
@@ -179,13 +179,26 @@ namespace Swashbuckle.Swagger
         }
 
         [Fact]
-        public void GetOrRegister_HonorsJsonConvertedEnums()
+        public void GetOrRegister_HonorsStringEnumConverters_ConfiguredViaAttributes()
         {
             var schema = Subject().GetOrRegister(typeof(JsonConvertedEnum));
             
             Assert.Equal("string", schema.Type);
-            Assert.Contains("Value1", schema.Enum);
-            Assert.Contains("Value2", schema.Enum);
+            Assert.Equal(new[] { "Value1", "Value2", "X" }, schema.Enum);
+        }
+
+        [Fact]
+        public void GetOrRegister_HonorsStringEnumConverters_ConfiguredViaSerializerSettings()
+        {
+            var subject = Subject(new JsonSerializerSettings
+            {
+                Converters = new[] { new StringEnumConverter { CamelCaseText = true } }
+            });
+
+            var schema = subject.GetOrRegister(typeof(AnEnum));
+            
+            Assert.Equal("string", schema.Type);
+            Assert.Equal(new[] { "value1", "value2", "x" }, schema.Enum);
         }
 
         [Fact]
@@ -245,8 +258,22 @@ namespace Swashbuckle.Swagger
             var schema = schemaGenerator.GetOrRegister(typeof(AnEnum));
 
             Assert.Equal("string", schema.Type);
-            Assert.Contains("Value1", schema.Enum);
-            Assert.Contains("Value2", schema.Enum);
+            Assert.Equal(new[] { "Value1", "Value2", "X" }, schema.Enum);
+        }
+
+        [Fact]
+        public void GetOrRegister_SupportsOptionToDescribeStringEnumsInCamelCase()
+        {
+            var schemaGenerator = Subject(opts =>
+            {
+                opts.DescribeAllEnumsAsStrings = true;
+                opts.DescribeStringEnumsInCamelCase = true;
+            });
+
+            var schema = schemaGenerator.GetOrRegister(typeof(AnEnum));
+
+            Assert.Equal("string", schema.Type);
+            Assert.Equal(new[] { "value1", "value2", "x" }, schema.Enum);
         }
 
         [Fact]
@@ -323,12 +350,17 @@ namespace Swashbuckle.Swagger
             });
         }
 
-        private SchemaGenerator Subject(Action<SchemaGeneratorOptions> configure = null)
+        private SchemaGenerator Subject(Action<SchemaGeneratorOptions> configureOptions = null)
         {
             var options = new SchemaGeneratorOptions();
-            if (configure != null) configure(options);
+            if (configureOptions != null) configureOptions(options);
 
-            return new SchemaGenerator(new DefaultContractResolver(), options);
+            return new SchemaGenerator(new JsonSerializerSettings(), options);
+        }
+
+        private SchemaGenerator Subject(JsonSerializerSettings jsonSerializerSettings)
+        {
+            return new SchemaGenerator(jsonSerializerSettings);
         }
     }
 }
