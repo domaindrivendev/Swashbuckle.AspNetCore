@@ -170,7 +170,7 @@ namespace Swashbuckle.Swagger
                 {
                     Name = paramDesc.Name,
                     In = source,
-                    Required = paramDesc.IsRequired(),
+                    Required = paramDesc.IsRequired()
                 };
                 if (schema != null) nonBodyParam.PopulateFrom(schema);
                 return nonBodyParam;

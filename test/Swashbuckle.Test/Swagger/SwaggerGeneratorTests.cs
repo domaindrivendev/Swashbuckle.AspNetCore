@@ -115,7 +115,7 @@ namespace Swashbuckle.Swagger
         [InlineData("collection/{param}", nameof(ActionFixtures.AcceptsStringFromRoute), "path")]
         [InlineData("collection", nameof(ActionFixtures.AcceptsStringFromQuery), "query")]
         [InlineData("collection", nameof(ActionFixtures.AcceptsStringFromHeader), "header")]
-        public void GetSwagger_SetsParameterIn_AccordingToParamBindingAttribute(
+        public void GetSwagger_CreatesNonBodyParameter_ForNonBodyParams(
             string routeTemplate,
             string actionFixtureName,
             string expectedIn )
@@ -133,7 +133,7 @@ namespace Swashbuckle.Swagger
         }
 
         [Fact]
-        public void GetSwagger_SetsParameterSchema_ForParamsWithFromBodyAttribute()
+        public void GetSwagger_CreatesBodyParam_ForFromBodyParams()
         {
             var swaggerGenerator = Subject(setupApis: apis => apis
                 .Add("POST", "collection", nameof(ActionFixtures.AcceptsComplexTypeFromBody)));
@@ -151,8 +151,8 @@ namespace Swashbuckle.Swagger
         }
 
         [Theory]
-        [InlineData("collection/{param}", true)]
         [InlineData("collection/{param?}", false)]
+        [InlineData("collection/{param}", true)]
         public void GetSwagger_SetsParameterRequired_ForRequiredRouteParams(
             string routeTemplate,
             bool expectedRequired)
@@ -163,24 +163,20 @@ namespace Swashbuckle.Swagger
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
 
             var param = swagger.Paths["/collection/{param}"].Get.Parameters.First();
-            Assert.Equal("param", param.Name);
             Assert.Equal(expectedRequired, param.Required);
         }
 
         [Theory]
-        [InlineData("AcceptsStringFromQuery", false)]
-        [InlineData("AcceptsRequiredStringFromQuery", true)]
-        public void GetSwagger_SetsParameterRequired_ForNonRouteParamsMarkedRequired(
-            string actionFixtureName,
-            bool expectedRequired)
+        [InlineData(nameof(ActionFixtures.AcceptsStringFromQuery))]
+        [InlineData(nameof(ActionFixtures.AcceptsStringFromHeader))]
+        public void GetSwagger_SetsParameterRequiredFalse_ForQueryAndHeaderParams(string actionFixtureName)
         {
             var swaggerGenerator = Subject(setupApis: apis => apis.Add("GET", "collection", actionFixtureName));
 
             var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
 
             var param = swagger.Paths["/collection"].Get.Parameters.First();
-            Assert.Equal("param", param.Name);
-            Assert.Equal(expectedRequired, param.Required);
+            Assert.Equal(false, param.Required);
         }
 
         [Fact]
