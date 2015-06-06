@@ -2,7 +2,6 @@
 using System.Reflection;
 using Microsoft.Framework.DependencyInjection;
 using Microsoft.AspNet.Routing;
-using Microsoft.AspNet.Http;
 using Microsoft.AspNet.FileProviders;
 using Swashbuckle.Swagger;
 using Swashbuckle.Application;
@@ -53,7 +52,7 @@ namespace Microsoft.AspNet.Builder
         {
             var rootUrlResolver = serviceProvider.GetService<IRootUrlResolver>() ?? new DefaultRootUrlResolver();
             var thisAssembly = typeof(SwaggerUiHandler).GetTypeInfo().Assembly;
-            var fileProvider = new EmbeddedFileProvider(thisAssembly, "SwaggerUi");
+            var fileProvider = new EmbeddedFileProvider(thisAssembly, "Swashbuckle.SwaggerUi");
             return new SwaggerUiHandler(rootUrlResolver, fileProvider);
         }
     }

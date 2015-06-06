@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Framework.OptionsModel;
 using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Description;
+using Microsoft.AspNet.Mvc.ApiExplorer;
 using Newtonsoft.Json;
 using Swashbuckle.Swagger;
 using Swashbuckle.Application;

@@ -8,7 +8,8 @@
   "licenseUrl": "https://github.com/domaindrivendev/Ahoy/LICENSE",
 
   "dependencies": {
-    "Microsoft.AspNet.Mvc": "6.0.0-beta4-*",
+    "Microsoft.AspNet.Mvc": "6.0.0-beta5-*",
+    "Microsoft.AspNet.FileProviders.Embedded": "1.0.0-beta5-*",
     "System.Reflection": "4.0.10-*",
     "System.Xml.XPath.XmlDocument": "4.0.0-beta-*",
     "System.Reflection.TypeExtensions": "4.0.0-beta-*",

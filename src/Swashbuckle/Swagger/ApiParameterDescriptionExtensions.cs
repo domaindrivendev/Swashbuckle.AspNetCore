@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNet.Mvc.Description;
+﻿using Microsoft.AspNet.Mvc.ApiExplorer;
 
 namespace Swashbuckle.Swagger
 {

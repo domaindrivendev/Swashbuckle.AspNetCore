@@ -2,7 +2,7 @@
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.Framework.DependencyInjection;
-using Microsoft.AspNet.Mvc.Description;
+using Microsoft.AspNet.Mvc.ApiExplorer;
 using Swashbuckle.Swagger;
 using VersionedApi.Versioning;
 using VersionedApi.Swagger;

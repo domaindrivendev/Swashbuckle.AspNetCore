@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Http.Core.Collections;
 using Xunit;
 using Moq;
+using Microsoft.AspNet.Http.Internal;
 
 namespace Swashbuckle.Application
 {

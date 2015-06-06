@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections.ObjectModel;
+using Microsoft.Framework.OptionsModel;
 using Microsoft.AspNet.Routing;
 using Microsoft.AspNet.Routing.Constraints;
 using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Description;
+using Microsoft.AspNet.Mvc.ApiExplorer;
 using Microsoft.AspNet.Mvc.Routing;
 using Microsoft.AspNet.Mvc.ModelBinding;
 using Microsoft.AspNet.Mvc.ModelBinding.Metadata;
@@ -78,14 +79,17 @@ namespace Swashbuckle.Fixtures.ApiDescriptions
         {
             var context = new ApiDescriptionProviderContext(_actionDescriptors);
 
-            var formattersProvider = new Mock<IOutputFormattersProvider>();
-            formattersProvider.Setup(i => i.OutputFormatters).Returns(new[] { new JsonOutputFormatter() });
+            var options = new MvcOptions();
+            options.OutputFormatters.Add(new JsonOutputFormatter());
+
+            var optionsAccessor = new Mock<IOptions<MvcOptions>>();
+            optionsAccessor.Setup(o => o.Options).Returns(options);
 
             var constraintResolver = new Mock<IInlineConstraintResolver>();
             constraintResolver.Setup(i => i.ResolveConstraint("int")).Returns(new IntRouteConstraint());
 
             var provider = new DefaultApiDescriptionProvider(
-                formattersProvider.Object,
+                optionsAccessor.Object,
                 constraintResolver.Object,
                 CreateModelMetadataProvider()
             );
