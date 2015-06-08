@@ -524,6 +524,27 @@
           "lib/dnx451/Microsoft.AspNet.Routing.dll": {}
         }
       },
+      "Microsoft.AspNet.StaticFiles/1.0.0-beta5-11977": {
+        "dependencies": {
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-beta5-11550",
+          "Microsoft.AspNet.FileProviders.Abstractions": "1.0.0-beta5-11449",
+          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-beta5-11901",
+          "Microsoft.Framework.Logging.Abstractions": "1.0.0-beta5-11414",
+          "Microsoft.Framework.WebEncoders": "1.0.0-beta5-11550"
+        },
+        "frameworkAssemblies": [
+          "mscorlib",
+          "System",
+          "System.Core",
+          "Microsoft.CSharp"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.AspNet.StaticFiles.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.AspNet.StaticFiles.dll": {}
+        }
+      },
       "Microsoft.AspNet.WebUtilities/1.0.0-beta5-11550": {
         "dependencies": {
           "Microsoft.Framework.WebEncoders.Core": "1.0.0-beta5-11550"
@@ -1607,6 +1628,19 @@
         "lib/dnx451/Microsoft.AspNet.Routing.xml",
         "lib/dnxcore50/Microsoft.AspNet.Routing.dll",
         "lib/dnxcore50/Microsoft.AspNet.Routing.xml"
+      ]
+    },
+    "Microsoft.AspNet.StaticFiles/1.0.0-beta5-11977": {
+      "serviceable": true,
+      "sha512": "oqtOFF6H9SwWuer7k0pwP4uftMhofY8ju1QmDsPq3+9lkK7bDSQEhMxh0+t34qaxN6Kz+9gtN/o3WfvQLOcnlg==",
+      "files": [
+        "Microsoft.AspNet.StaticFiles.1.0.0-beta5-11977.nupkg",
+        "Microsoft.AspNet.StaticFiles.1.0.0-beta5-11977.nupkg.sha512",
+        "Microsoft.AspNet.StaticFiles.nuspec",
+        "lib/dnx451/Microsoft.AspNet.StaticFiles.dll",
+        "lib/dnx451/Microsoft.AspNet.StaticFiles.xml",
+        "lib/dnxcore50/Microsoft.AspNet.StaticFiles.dll",
+        "lib/dnxcore50/Microsoft.AspNet.StaticFiles.xml"
       ]
     },
     "Microsoft.AspNet.WebUtilities/1.0.0-beta5-11550": {

@@ -9,6 +9,7 @@
 
   "dependencies": {
     "Microsoft.AspNet.Mvc": "6.0.0-beta5-*",
+    "Microsoft.AspNet.StaticFiles": "1.0.0-beta5-*",
     "Microsoft.AspNet.FileProviders.Embedded": "1.0.0-beta5-*",
     "System.Reflection": "4.0.10-*",
     "System.Xml.XPath.XmlDocument": "4.0.0-beta-*",
@@ -16,15 +17,10 @@
     "System.Reflection.Extensions": "4.0.0-beta-*"
   },
 
-  "resource": "SwaggerUi",
+  "resource": "bower_components",
 
   "frameworks": {
     "dnx451": { },
     "dnxcore50": { }
-  },
-
-  "exclude": [
-    "node_modules",
-    "bower_components"
-  ]
+  }
 }

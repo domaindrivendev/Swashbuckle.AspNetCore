@@ -620,13 +620,13 @@
           "lib/dnx451/Microsoft.AspNet.Server.WebListener.dll": {}
         }
       },
-      "Microsoft.AspNet.StaticFiles/1.0.0-beta5-11924": {
+      "Microsoft.AspNet.StaticFiles/1.0.0-beta5-11977": {
         "dependencies": {
-          "Microsoft.AspNet.Http.Extensions": "1.0.0-beta5-11486",
-          "Microsoft.AspNet.FileProviders.Abstractions": "1.0.0-beta5-11384",
-          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-beta5-11809",
-          "Microsoft.Framework.Logging.Abstractions": "1.0.0-beta5-11352",
-          "Microsoft.Framework.WebEncoders": "1.0.0-beta5-11486"
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-beta5-11550",
+          "Microsoft.AspNet.FileProviders.Abstractions": "1.0.0-beta5-11449",
+          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-beta5-11901",
+          "Microsoft.Framework.Logging.Abstractions": "1.0.0-beta5-11414",
+          "Microsoft.Framework.WebEncoders": "1.0.0-beta5-11550"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -1743,13 +1743,13 @@
           "lib/dnxcore50/Microsoft.AspNet.Server.WebListener.dll": {}
         }
       },
-      "Microsoft.AspNet.StaticFiles/1.0.0-beta5-11924": {
+      "Microsoft.AspNet.StaticFiles/1.0.0-beta5-11977": {
         "dependencies": {
-          "Microsoft.AspNet.Http.Extensions": "1.0.0-beta5-11486",
-          "Microsoft.AspNet.FileProviders.Abstractions": "1.0.0-beta5-11384",
-          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-beta5-11809",
-          "Microsoft.Framework.Logging.Abstractions": "1.0.0-beta5-11352",
-          "Microsoft.Framework.WebEncoders": "1.0.0-beta5-11486"
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-beta5-11550",
+          "Microsoft.AspNet.FileProviders.Abstractions": "1.0.0-beta5-11449",
+          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-beta5-11901",
+          "Microsoft.Framework.Logging.Abstractions": "1.0.0-beta5-11414",
+          "Microsoft.Framework.WebEncoders": "1.0.0-beta5-11550"
         },
         "compile": {
           "lib/dnxcore50/Microsoft.AspNet.StaticFiles.dll": {}
@@ -3384,12 +3384,12 @@
         "lib/dnxcore50/Microsoft.AspNet.Server.WebListener.xml"
       ]
     },
-    "Microsoft.AspNet.StaticFiles/1.0.0-beta5-11924": {
+    "Microsoft.AspNet.StaticFiles/1.0.0-beta5-11977": {
       "serviceable": true,
-      "sha512": "hRh45cSvPCLcVDh/bEyhlsdaveFikJIRLHc66XG61cfYXDMbzWLEs4WdoIqH1bnUNNweybcL4Q3jfFk3AAuEJQ==",
+      "sha512": "oqtOFF6H9SwWuer7k0pwP4uftMhofY8ju1QmDsPq3+9lkK7bDSQEhMxh0+t34qaxN6Kz+9gtN/o3WfvQLOcnlg==",
       "files": [
-        "Microsoft.AspNet.StaticFiles.1.0.0-beta5-11924.nupkg",
-        "Microsoft.AspNet.StaticFiles.1.0.0-beta5-11924.nupkg.sha512",
+        "Microsoft.AspNet.StaticFiles.1.0.0-beta5-11977.nupkg",
+        "Microsoft.AspNet.StaticFiles.1.0.0-beta5-11977.nupkg.sha512",
         "Microsoft.AspNet.StaticFiles.nuspec",
         "lib/dnx451/Microsoft.AspNet.StaticFiles.dll",
         "lib/dnx451/Microsoft.AspNet.StaticFiles.xml",
@@ -4717,7 +4717,7 @@
       "Microsoft.AspNet.Mvc >= 6.0.0-beta5-*",
       "Microsoft.AspNet.Server.IIS >= 1.0.0-beta5-*",
       "Microsoft.AspNet.Server.WebListener >= 1.0.0-beta5-*",
-      "Microsoft.AspNet.StaticFiles >= 1.0.0-beta5",
+      "Microsoft.AspNet.StaticFiles >= 1.0.0-beta5-*",
       "Swashbuckle >= 6.0.0-*"
     ],
     "DNX,Version=v4.5.1": [],
