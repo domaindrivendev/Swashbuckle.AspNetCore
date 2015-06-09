@@ -2,7 +2,6 @@
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Routing;
-using Microsoft.AspNet.Http;
 using Newtonsoft.Json;
 using Swashbuckle.Swagger;
 
@@ -10,23 +9,19 @@ namespace Swashbuckle.Application
 {
     public class SwaggerDocsHandler : IRouter
     {
-        private IRootUrlResolver _rootUrlResolver;
         private ISwaggerProvider _swaggerProvider;
 
-        public SwaggerDocsHandler(
-            IRootUrlResolver rootUrlResolver,
-            ISwaggerProvider swaggerProvider)
+        public SwaggerDocsHandler(ISwaggerProvider swaggerProvider)
         {
-            _rootUrlResolver = rootUrlResolver;
             _swaggerProvider = swaggerProvider;
         }
 
         public Task RouteAsync(RouteContext context)
         {
-            var rootUrl = _rootUrlResolver.ResolveFrom(context.HttpContext.Request);
             var apiVersion = GetApiVersion(context);
 
-            var swagger = _swaggerProvider.GetSwagger(rootUrl, apiVersion);
+            var virtualPathRoot = context.HttpContext.Request.PathBase;
+            var swagger = _swaggerProvider.GetSwagger(apiVersion, null, virtualPathRoot);
 
             ReturnSwaggerJson(context, swagger);
             return Task.FromResult(0);

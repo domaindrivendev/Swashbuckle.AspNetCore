@@ -13,30 +13,14 @@ namespace Swashbuckle.Swagger
         [Fact]
         public void GetSwagger_ReturnsDefaultInfoVersionAndTitle()
         {
-            var swagger = Subject().GetSwagger("https://tempuri.org", "v1");
+            var swagger = Subject().GetSwagger("v1");
 
             Assert.Equal("v1", swagger.Info.Version);
             Assert.Equal("API V1", swagger.Info.Title);
         }
 
-        [Theory]
-        [InlineData("http://tempuri.org:8080/foobar", "tempuri.org:8080", "/foobar", new[] { "http" })]
-        [InlineData("https://tempuri.org:443", "tempuri.org:443", null, new[] { "https" })]
-        public void GetSwagger_ReturnsHostBasePathAndSchemes_FromRootUrl(
-            string rootUrl,
-            string expectedHost,
-            string expectedBasePath,
-            string[] expectedSchemes)
-        {
-            var swagger = Subject().GetSwagger(rootUrl, "v1");
-
-            Assert.Equal(expectedHost, swagger.Host);
-            Assert.Equal(expectedBasePath, swagger.BasePath);
-            Assert.Equal(expectedSchemes, swagger.Schemes.ToArray());
-        }
-
         [Fact]
-        public void GetSwagger_ReturnsPathItem_PerRelativePathSansQueryString()
+        public void GetSwagger_IncludesPathItem_PerRelativePathSansQueryString()
         {
             var swaggerGenerator = Subject(setupApis: apis => apis
                 .Add("GET", "collection1", nameof(ActionFixtures.ReturnsEnumerable))
@@ -46,7 +30,7 @@ namespace Swashbuckle.Swagger
                 .Add("GET", "collection2/{id}", nameof(ActionFixtures.ReturnsComplexType))
             );
 
-            var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
+            var swagger = swaggerGenerator.GetSwagger("v1");
 
             Assert.Equal(new[]
                 {
@@ -59,7 +43,7 @@ namespace Swashbuckle.Swagger
         }
 
         [Fact]
-        public void GetSwagger_GeneratesOperation_PerHttpMethodPerRelativePathSansQueryString()
+        public void GetSwagger_IncludesOperation_PerHttpMethodPerRelativePathSansQueryString()
         {
             var swaggerGenerator = Subject(setupApis: apis => apis
                 .Add("GET", "collection", nameof(ActionFixtures.ReturnsEnumerable))
@@ -70,7 +54,7 @@ namespace Swashbuckle.Swagger
                 // TODO: OPTIONS & HEAD
             );
 
-            var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
+            var swagger = swaggerGenerator.GetSwagger("v1");
 
             // GET collection
             var operation = swagger.Paths["/collection"].Get;
@@ -105,7 +89,7 @@ namespace Swashbuckle.Swagger
             var swaggerGenerator = Subject(setupApis: apis => apis
                 .Add("GET", "collection", nameof(ActionFixtures.AcceptsNothing)));
 
-            var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
+            var swagger = swaggerGenerator.GetSwagger("v1");
 
             var operation = swagger.Paths["/collection"].Get;
             Assert.Null(operation.Parameters);
@@ -122,7 +106,7 @@ namespace Swashbuckle.Swagger
         {
             var swaggerGenerator = Subject(setupApis: apis => apis.Add("GET", routeTemplate, actionFixtureName));
 
-            var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
+            var swagger = swaggerGenerator.GetSwagger("v1");
 
             var param = swagger.Paths["/" + routeTemplate].Get.Parameters.First();
             Assert.IsAssignableFrom<NonBodyParameter>(param);
@@ -138,7 +122,7 @@ namespace Swashbuckle.Swagger
             var swaggerGenerator = Subject(setupApis: apis => apis
                 .Add("POST", "collection", nameof(ActionFixtures.AcceptsComplexTypeFromBody)));
 
-            var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
+            var swagger = swaggerGenerator.GetSwagger("v1");
 
             var param = swagger.Paths["/collection"].Post.Parameters.First();
             Assert.IsAssignableFrom<BodyParameter>(param);
@@ -160,7 +144,7 @@ namespace Swashbuckle.Swagger
             var swaggerGenerator = Subject(setupApis: apis => apis
                 .Add("GET", routeTemplate, nameof(ActionFixtures.AcceptsStringFromRoute)));
 
-            var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
+            var swagger = swaggerGenerator.GetSwagger("v1");
 
             var param = swagger.Paths["/collection/{param}"].Get.Parameters.First();
             Assert.Equal(expectedRequired, param.Required);
@@ -173,19 +157,19 @@ namespace Swashbuckle.Swagger
         {
             var swaggerGenerator = Subject(setupApis: apis => apis.Add("GET", "collection", actionFixtureName));
 
-            var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
+            var swagger = swaggerGenerator.GetSwagger("v1");
 
             var param = swagger.Paths["/collection"].Get.Parameters.First();
             Assert.Equal(false, param.Required);
         }
 
         [Fact]
-        public void GetSwagger_GeneratesQueryParameters_ForComplexParamsWithFromQueryAttribute()
+        public void GetSwagger_ExpandsOutQueryParameters_ForComplexParamsWithFromQueryAttribute()
         {
             var swaggerGenerator = Subject(setupApis: apis => apis
                 .Add("GET", "collection", nameof(ActionFixtures.AcceptsComplexTypeFromQuery)));
 
-            var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
+            var swagger = swaggerGenerator.GetSwagger("v1");
 
             var operation = swagger.Paths["/collection"].Get;
             Assert.Equal(3, operation.Parameters.Count);
@@ -208,7 +192,7 @@ namespace Swashbuckle.Swagger
             var swaggerGenerator = Subject(setupApis: apis =>
                 apis.Add("GET", "collection", actionFixtureName));
 
-            var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
+            var swagger = swaggerGenerator.GetSwagger("v1");
 
             var responses = swagger.Paths["/collection"].Get.Responses;
             Assert.Equal(new[] { expectedStatusCode }, responses.Keys.ToArray());
@@ -225,7 +209,7 @@ namespace Swashbuckle.Swagger
             var swaggerGenerator = Subject(setupApis: apis => apis
                 .Add("GET", "collection", nameof(ActionFixtures.MarkedObsolete)));
 
-            var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
+            var swagger = swaggerGenerator.GetSwagger("v1");
 
             var operation = swagger.Paths["/collection"].Get;
             Assert.Equal(true, operation.Deprecated);
@@ -237,7 +221,7 @@ namespace Swashbuckle.Swagger
             var swaggerGenerator = Subject(
                 configure: opts => opts.SingleApiVersion(new Info { Version = "v3", Title = "My API" }));
 
-            var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v3");
+            var swagger = swaggerGenerator.GetSwagger("v3");
 
             Assert.NotNull(swagger.Info);
             Assert.Equal("v3", swagger.Info.Version);
@@ -265,11 +249,31 @@ namespace Swashbuckle.Swagger
                         (apiDesc, targetApiVersion) => apiDesc.RelativePath.StartsWith(targetApiVersion));
                 });
 
-            var v2Swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v2");
-            var v1Swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
+            var v2Swagger = swaggerGenerator.GetSwagger("v2");
+            var v1Swagger = swaggerGenerator.GetSwagger("v1");
 
             Assert.Equal(new[] { "/v2/collection" }, v2Swagger.Paths.Keys.ToArray());
             Assert.Equal(new[] { "/v1/collection" }, v1Swagger.Paths.Keys.ToArray());
+        }
+
+        [Fact]
+        public void GetSwagger_SupportsOptionToProvideExplicitHost()
+        {
+            var swaggerGenerator = Subject(configure: opts => opts.Host = "tempuri.org:1234");
+
+            var swagger = swaggerGenerator.GetSwagger("v1");
+
+            Assert.Equal("tempuri.org:1234", swagger.Host);
+        }
+
+        [Fact]
+        public void GetSwagger_SupportsOptionToProvideExplicitBasePath()
+        {
+            var swaggerGenerator = Subject(configure: opts => opts.BasePath = "/foobar");
+
+            var swagger = swaggerGenerator.GetSwagger("v1");
+
+            Assert.Equal("/foobar", swagger.BasePath);
         }
 
         [Fact]
@@ -277,7 +281,7 @@ namespace Swashbuckle.Swagger
         {
             var swaggerGenerator = Subject(configure: opts => opts.Schemes = new[] { "http", "https" });
 
-            var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
+            var swagger = swaggerGenerator.GetSwagger("v1");
 
             Assert.Equal(new[] { "http", "https" }, swagger.Schemes.ToArray());
         }
@@ -292,7 +296,7 @@ namespace Swashbuckle.Swagger
                     Description = "Basic HTTP Authentication"
                 }));
 
-            var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
+            var swagger = swaggerGenerator.GetSwagger("v1");
 
             Assert.Contains("basic", swagger.SecurityDefinitions.Keys);
             var scheme = swagger.SecurityDefinitions["basic"];
@@ -312,7 +316,7 @@ namespace Swashbuckle.Swagger
                     In = "header"
                 }));
 
-            var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
+            var swagger = swaggerGenerator.GetSwagger("v1");
 
             Assert.Contains("apiKey", swagger.SecurityDefinitions.Keys);
             var scheme = swagger.SecurityDefinitions["apiKey"];
@@ -342,7 +346,7 @@ namespace Swashbuckle.Swagger
                     }
                 }));
 
-            var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
+            var swagger = swaggerGenerator.GetSwagger("v1");
 
             Assert.Contains("oauth2", swagger.SecurityDefinitions.Keys);
             var scheme = swagger.SecurityDefinitions["oauth2"];
@@ -369,7 +373,7 @@ namespace Swashbuckle.Swagger
                 },
                 configure: opts => opts.IgnoreObsoleteActions = true);
 
-            var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
+            var swagger = swaggerGenerator.GetSwagger("v1");
 
             Assert.Equal(new[] { "/collection1" }, swagger.Paths.Keys.ToArray());
         }
@@ -385,7 +389,7 @@ namespace Swashbuckle.Swagger
                 },
                 configure: opts => opts.GroupActionsBy((apiDesc) => apiDesc.RelativePath));
 
-            var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
+            var swagger = swaggerGenerator.GetSwagger("v1");
 
             Assert.Equal(new[] { "collection1" }, swagger.Paths["/collection1"].Get.Tags);
             Assert.Equal(new[] { "collection2" }, swagger.Paths["/collection2"].Get.Tags);
@@ -408,7 +412,7 @@ namespace Swashbuckle.Swagger
                     opts.OrderActionGroupsBy(new DescendingAlphabeticComparer());
                 });
 
-            var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
+            var swagger = swaggerGenerator.GetSwagger("v1");
 
             Assert.Equal(new[] { "/F", "/D", "/B", "/A" }, swagger.Paths.Keys.ToArray());
         }
@@ -426,7 +430,7 @@ namespace Swashbuckle.Swagger
                     opts.OperationFilter<VendorExtensionsOperationFilter>();
                 });
 
-            var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
+            var swagger = swaggerGenerator.GetSwagger("v1");
             
             var operation = swagger.Paths["/collection"].Get;
             Assert.NotEmpty(operation.Extensions);
@@ -438,7 +442,7 @@ namespace Swashbuckle.Swagger
             var swaggerGenerator = Subject(configure: opts =>
                 opts.DocumentFilter<VendorExtensionsDocumentFilter>());
 
-            var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
+            var swagger = swaggerGenerator.GetSwagger("v1");
             
             Assert.NotEmpty(swagger.Extensions);
         }
@@ -449,7 +453,7 @@ namespace Swashbuckle.Swagger
             var swaggerGenerator = Subject(setupApis: apis => apis
                 .Add("GET", "{version}/collection", nameof(ActionFixtures.AcceptsNothing)));
 
-            var swagger = swaggerGenerator.GetSwagger("https://tempuri.org", "v1");
+            var swagger = swaggerGenerator.GetSwagger("v1");
 
             var param = swagger.Paths["/{version}/collection"].Get.Parameters.First();
             Assert.Equal("version", param.Name);

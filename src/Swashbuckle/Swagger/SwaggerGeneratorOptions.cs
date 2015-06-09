@@ -29,6 +29,10 @@ namespace Swashbuckle.Swagger
 
         public Func<ApiDescription, string, bool> VersionSupportResolver { get; private set; }
 
+        public string Host { get; set; }
+
+        public string BasePath { get; set; }
+
         public IList<string> Schemes { get; set; }
 
         public IDictionary<string, SecurityScheme> SecurityDefinitions { get; private set; }

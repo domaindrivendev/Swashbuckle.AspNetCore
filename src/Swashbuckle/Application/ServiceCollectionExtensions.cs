@@ -19,15 +19,8 @@ namespace Microsoft.Framework.DependencyInjection
 
             serviceCollection.Configure(configure ?? ((options) => {}));
 
-            serviceCollection.AddTransient(GetRootUrlResolver);
             serviceCollection.AddTransient(GetSchemaRegistry);
             serviceCollection.AddTransient(GetSwaggerProvider);
-        }
-
-        private static IRootUrlResolver GetRootUrlResolver(IServiceProvider serviceProvider)
-        {
-            var swaggerOptions = serviceProvider.GetService<IOptions<SwaggerOptions>>();
-            return swaggerOptions.Options.RootUrlResolver;
         }
 
         private static ISchemaRegistry GetSchemaRegistry(IServiceProvider serviceProvider)
@@ -40,6 +33,7 @@ namespace Microsoft.Framework.DependencyInjection
         private static ISwaggerProvider GetSwaggerProvider(IServiceProvider serviceProvider)
         {
             var swaggerOptions = serviceProvider.GetService<IOptions<SwaggerOptions>>();
+
             return new SwaggerGenerator(
                 serviceProvider.GetService<IApiDescriptionGroupCollectionProvider>(),
                 () => serviceProvider.GetService<ISchemaRegistry>(),

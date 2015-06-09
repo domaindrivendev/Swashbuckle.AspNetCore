@@ -21,7 +21,11 @@ namespace Swashbuckle.Swagger
             _options = options ?? new SwaggerGeneratorOptions();
         }
 
-        public SwaggerDocument GetSwagger(string rootUrl, string apiVersion)
+        public SwaggerDocument GetSwagger(
+            string apiVersion,
+            string defaultHost = null,
+            string defaultBasePath = null,
+            string[] defaultSchemes = null)
         {
             var schemaRegistry = _schemaRegistryFactory();
 
@@ -35,14 +39,12 @@ namespace Swashbuckle.Swagger
                 .GroupBy(apiDesc => apiDesc.RelativePathSansQueryString())
                 .ToDictionary(group => "/" + group.Key, group => CreatePathItem(group, schemaRegistry));
 
-            var rootUri = new Uri(rootUrl);
-
             var swaggerDoc = new SwaggerDocument
             {
                 Info = info,
-                Host = rootUri.Host + ":" + rootUri.Port,
-                BasePath = (rootUri.AbsolutePath != "/") ? rootUri.AbsolutePath : null,
-                Schemes = (_options.Schemes != null) ? _options.Schemes.ToList() : new[] { rootUri.Scheme }.ToList(),
+                Host = _options.Host ?? defaultHost,
+                BasePath = _options.BasePath ?? defaultBasePath,
+                Schemes = _options.Schemes ?? defaultSchemes,
                 Paths = paths,
                 Definitions = schemaRegistry.Definitions,
                 SecurityDefinitions = _options.SecurityDefinitions

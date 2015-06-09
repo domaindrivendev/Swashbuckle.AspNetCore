@@ -25,9 +25,8 @@ namespace Microsoft.AspNet.Builder
 
         private static IRouter CreateSwaggerDocsHandler(IServiceProvider serviceProvider)
         {
-            var rootUrlResolver = serviceProvider.GetService<IRootUrlResolver>() ?? new DefaultRootUrlResolver();
             var swaggerProvider = serviceProvider.GetRequiredService<ISwaggerProvider>();
-            return new SwaggerDocsHandler(rootUrlResolver, swaggerProvider);
+            return new SwaggerDocsHandler(swaggerProvider);
         }
     }
 }
