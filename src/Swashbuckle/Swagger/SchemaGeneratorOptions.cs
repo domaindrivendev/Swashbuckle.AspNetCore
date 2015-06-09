@@ -22,5 +22,16 @@ namespace Swashbuckle.Swagger
         public bool DescribeAllEnumsAsStrings { get; set; }
 
         public bool DescribeStringEnumsInCamelCase { get; set; }
+
+        public void MapType<T>(Func<Schema> schemaFactory)
+        {
+            CustomTypeMappings.Add(typeof(T), schemaFactory);
+        }
+
+        public void ModelFilter<TFilter>()
+            where TFilter : IModelFilter, new()
+        {
+            ModelFilters.Add(new TFilter());
+        }
     }
 }

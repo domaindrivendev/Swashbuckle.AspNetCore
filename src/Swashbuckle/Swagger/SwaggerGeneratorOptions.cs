@@ -75,5 +75,17 @@ namespace Swashbuckle.Swagger
         {
             GroupNameComparer = groupNameComparer;
         }
+
+        public void OperationFilter<TFilter>()
+            where TFilter: IOperationFilter, new()
+        {
+            OperationFilters.Add(new TFilter());
+        }
+
+        public void DocumentFilter<TFilter>()
+            where TFilter: IDocumentFilter, new()
+        {
+            DocumentFilters.Add(new TFilter());
+        }
     }
 }
