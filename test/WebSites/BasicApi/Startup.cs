@@ -21,23 +21,19 @@ namespace BasicApi
             // You will also need to add the Microsoft.AspNet.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
             // services.AddWebApiConventions();
 
-            services.AddSwagger(s =>
+            services.AddSwagger(c =>
             {
-                s.SwaggerGenerator(c =>
-                {
-                    c.Schemes = new[] { "http", "https" };
-                    c.SingleApiVersion(new Info
+                c.SwaggerGeneratorOptions.Schemes = new[] { "http", "https" };
+                c.SwaggerGeneratorOptions.SingleApiVersion(new Info
                     {
-                        Version = "v1",
+                        Version = "v2",
                         Title = "Swashbuckle Sample API",
                         Description = "A sample API for testing Swashbuckle",
                         TermsOfService = "Some terms ..."
                     });
+                c.SwaggerGeneratorOptions.OperationFilter<AssignOperationVendorExtensions>();
 
-                    c.OperationFilter<AssignOperationVendorExtensions>();
-                });
-
-                s.SchemaGenerator(opt => opt.DescribeAllEnumsAsStrings = true);
+                c.SchemaGeneratorOptions.DescribeAllEnumsAsStrings = true;
             });
         }
 
@@ -51,7 +47,7 @@ namespace BasicApi
             app.UseMvc();
 
             app.UseSwagger();
-            app.UseSwaggerUi();
+            app.UseSwaggerUi(routePrefix: "/swagger/ui", swaggerUrl: "/swagger/v2/swagger.json");
 
             // Add the following route for porting Web API 2 controllers.
             // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");

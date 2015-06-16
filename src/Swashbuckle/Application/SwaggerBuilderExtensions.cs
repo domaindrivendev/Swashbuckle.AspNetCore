@@ -1,32 +1,42 @@
-﻿using System;
-using Microsoft.Framework.DependencyInjection;
-using Microsoft.AspNet.Routing;
-using Swashbuckle.Swagger;
+﻿using System.Reflection;
+using Microsoft.AspNet.FileProviders;
+using Microsoft.AspNet.StaticFiles;
 using Swashbuckle.Application;
 
 namespace Microsoft.AspNet.Builder
 {
     public static class SwaggerBuilderExtensions
     {
-        public static IApplicationBuilder UseSwagger(
+        public static void UseSwagger(
             this IApplicationBuilder app,
             string routeTemplate = "swagger/{apiVersion}/swagger.json")
         {
-            var routeBuilder = new RouteBuilder
-            {
-                DefaultHandler = CreateSwaggerDocsHandler(app.ApplicationServices),
-                ServiceProvider = app.ApplicationServices
-            };
+            // ThrowIfRequiredServicesNotRegistered(app.ApplicationServices);
 
-            routeBuilder.MapRoute("swagger_docs", routeTemplate);
-
-            return app.UseRouter(routeBuilder.Build());
+            app.UseMiddleware<SwaggerDocsMiddleware>(routeTemplate);
         }
 
-        private static IRouter CreateSwaggerDocsHandler(IServiceProvider serviceProvider)
+        public static void  UseSwaggerUi(
+            this IApplicationBuilder app,
+            string routePrefix = "/swagger/ui",
+            string swaggerUrl = "/swagger/v1/swagger.json")
         {
-            var swaggerProvider = serviceProvider.GetRequiredService<ISwaggerProvider>();
-            return new SwaggerDocsHandler(swaggerProvider);
+            // Serve index.html via middleware
+            app.UseMiddleware<SwaggerUiMiddleware>(routePrefix, swaggerUrl);
+
+            // Serve all other swagger-ui assets as static files
+            var options = new FileServerOptions();
+            options.RequestPath = routePrefix;
+            options.DefaultFilesOptions.DefaultFileNames.Clear();
+            options.DefaultFilesOptions.DefaultFileNames.Add("index.html");
+
+            options.StaticFileOptions.ContentTypeProvider = new FileExtensionContentTypeProvider();
+
+            options.FileProvider = new EmbeddedFileProvider(
+                typeof(SwaggerBuilderExtensions).GetTypeInfo().Assembly,
+                "Swashbuckle.bower_components.swagger_ui.dist");
+
+            app.UseFileServer(options);
         }
     }
 }

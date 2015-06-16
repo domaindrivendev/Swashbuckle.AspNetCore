@@ -17,7 +17,7 @@
     "System.Reflection.Extensions": "4.0.0-beta-*"
   },
 
-  "resource": "bower_components",
+  "resource": [ "SwaggerUi", "bower_components/swagger-ui/dist" ],
 
   "frameworks": {
     "dnx451": { },

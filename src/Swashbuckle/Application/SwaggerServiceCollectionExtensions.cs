@@ -8,7 +8,7 @@ using Swashbuckle.Application;
 
 namespace Microsoft.Framework.DependencyInjection
 {
-    public static class ServiceCollectionExtensions
+    public static class SwaggerServiceCollectionExtensions
     {
         public static void AddSwagger(
             this IServiceCollection serviceCollection,
@@ -32,12 +32,12 @@ namespace Microsoft.Framework.DependencyInjection
 
         private static ISwaggerProvider GetSwaggerProvider(IServiceProvider serviceProvider)
         {
-            var swaggerOptions = serviceProvider.GetService<IOptions<SwaggerOptions>>();
+            var optionAccessor = serviceProvider.GetService<IOptions<SwaggerOptions>>();
 
             return new SwaggerGenerator(
                 serviceProvider.GetService<IApiDescriptionGroupCollectionProvider>(),
                 () => serviceProvider.GetService<ISchemaRegistry>(),
-                swaggerOptions.Options.SwaggerGeneratorOptions);
+                optionAccessor.Options.SwaggerGeneratorOptions);
         }
 
         private static JsonSerializerSettings GetJsonSerializerSettings(IServiceProvider serviceProvider)

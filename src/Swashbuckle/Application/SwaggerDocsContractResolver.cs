@@ -3,11 +3,11 @@ using Newtonsoft.Json.Serialization;
 
 namespace Swashbuckle.Application
 {
-    public class SwaggerDocumentContractResolver : DefaultContractResolver
+    public class SwaggerDocsContractResolver : DefaultContractResolver
     {
         private readonly CamelCasePropertyNamesContractResolver _camelCasePropertyNamesContractResolver;
 
-        public SwaggerDocumentContractResolver()
+        public SwaggerDocsContractResolver()
         {
             _camelCasePropertyNamesContractResolver = new CamelCasePropertyNamesContractResolver();
         }

@@ -3,14 +3,12 @@ using Swashbuckle.Swagger;
 
 namespace VersionedApi.Swagger
 {
-    public class AddVersionToBasePath : IDocumentFilter
+    public class SetVersionInPaths : IDocumentFilter
     {
         public void Apply(SwaggerDocument swaggerDoc, DocumentFilterContext context)
         {
-            swaggerDoc.BasePath = "/" + swaggerDoc.Info.Version;
-
             swaggerDoc.Paths = swaggerDoc.Paths.ToDictionary(
-                entry => entry.Key.Replace("/{version}", ""),
+                entry => entry.Key.Replace("{version}", swaggerDoc.Info.Version),
                 entry =>
                 {
                     var pathItem = entry.Value;
