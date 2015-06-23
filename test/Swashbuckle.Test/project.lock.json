@@ -3,14 +3,14 @@
   "version": -9996,
   "targets": {
     "DNX,Version=v4.5.1": {
-      "Microsoft.AspNet.Authentication/1.0.0-beta5-12462": {
+      "Microsoft.AspNet.Authentication/1.0.0-beta6-12481": {
         "dependencies": {
-          "Microsoft.AspNet.DataProtection": "1.0.0-beta5-11441",
-          "Microsoft.AspNet.Http": "1.0.0-beta5-11550",
-          "Microsoft.AspNet.Http.Extensions": "1.0.0-beta5-11550",
-          "Microsoft.Framework.Logging.Abstractions": "1.0.0-beta5-11414",
-          "Microsoft.Framework.OptionsModel": "1.0.0-beta5-11392",
-          "Microsoft.Framework.WebEncoders": "1.0.0-beta5-11550"
+          "Microsoft.AspNet.DataProtection": "1.0.0-beta6-11455",
+          "Microsoft.AspNet.Http": "1.0.0-beta6-11564",
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-beta6-11564",
+          "Microsoft.Framework.Logging.Abstractions": "1.0.0-beta6-11427",
+          "Microsoft.Framework.OptionsModel": "1.0.0-beta6-11404",
+          "Microsoft.Framework.WebEncoders": "1.0.0-beta6-11564"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -25,11 +25,11 @@
           "lib/dnx451/Microsoft.AspNet.Authentication.dll": {}
         }
       },
-      "Microsoft.AspNet.Authorization/1.0.0-beta5-12462": {
+      "Microsoft.AspNet.Authorization/1.0.0-beta6-12481": {
         "dependencies": {
-          "Microsoft.AspNet.Http.Features": "1.0.0-beta5-11550",
-          "Microsoft.Framework.Logging.Abstractions": "1.0.0-beta5-11414",
-          "Microsoft.Framework.OptionsModel": "1.0.0-beta5-11392"
+          "Microsoft.AspNet.Http.Features": "1.0.0-beta6-11564",
+          "Microsoft.Framework.Logging.Abstractions": "1.0.0-beta6-11427",
+          "Microsoft.Framework.OptionsModel": "1.0.0-beta6-11404"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -44,11 +44,11 @@
           "lib/dnx451/Microsoft.AspNet.Authorization.dll": {}
         }
       },
-      "Microsoft.AspNet.Cors/1.0.0-beta5-10469": {
+      "Microsoft.AspNet.Cors/1.0.0-beta6-10488": {
         "dependencies": {
-          "Microsoft.AspNet.Cors.Core": "1.0.0-beta5-10469",
-          "Microsoft.AspNet.Http.Extensions": "1.0.0-beta5-11550",
-          "Microsoft.AspNet.WebUtilities": "1.0.0-beta5-11550"
+          "Microsoft.AspNet.Cors.Core": "1.0.0-beta6-10488",
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-beta6-11564",
+          "Microsoft.AspNet.WebUtilities": "1.0.0-beta6-11564"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -63,12 +63,12 @@
           "lib/dnx451/Microsoft.AspNet.Cors.dll": {}
         }
       },
-      "Microsoft.AspNet.Cors.Core/1.0.0-beta5-10469": {
+      "Microsoft.AspNet.Cors.Core/1.0.0-beta6-10488": {
         "dependencies": {
-          "Microsoft.Framework.Configuration.Abstractions": "1.0.0-beta5-11394",
-          "Microsoft.Framework.DependencyInjection.Abstractions": "1.0.0-beta5-11423",
-          "Microsoft.Framework.OptionsModel": "1.0.0-beta5-11392",
-          "Microsoft.AspNet.Http": "1.0.0-beta5-11550"
+          "Microsoft.Framework.Configuration.Abstractions": "1.0.0-beta6-11406",
+          "Microsoft.Framework.DependencyInjection.Abstractions": "1.0.0-beta6-11435",
+          "Microsoft.Framework.OptionsModel": "1.0.0-beta6-11404",
+          "Microsoft.AspNet.Http": "1.0.0-beta6-11564"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -83,7 +83,7 @@
           "lib/dnx451/Microsoft.AspNet.Cors.Core.dll": {}
         }
       },
-      "Microsoft.AspNet.Cryptography.Internal/1.0.0-beta5-11441": {
+      "Microsoft.AspNet.Cryptography.Internal/1.0.0-beta6-11455": {
         "frameworkAssemblies": [
           "mscorlib",
           "System",
@@ -97,13 +97,13 @@
           "lib/dnx451/Microsoft.AspNet.Cryptography.Internal.dll": {}
         }
       },
-      "Microsoft.AspNet.DataProtection/1.0.0-beta5-11441": {
+      "Microsoft.AspNet.DataProtection/1.0.0-beta6-11455": {
         "dependencies": {
-          "Microsoft.AspNet.Cryptography.Internal": "1.0.0-beta5-11441",
-          "Microsoft.AspNet.DataProtection.Abstractions": "1.0.0-beta5-11441",
-          "Microsoft.Framework.DependencyInjection.Abstractions": "1.0.0-beta5-11423",
-          "Microsoft.Framework.Logging.Abstractions": "1.0.0-beta5-11414",
-          "Microsoft.Framework.OptionsModel": "1.0.0-beta5-11392"
+          "Microsoft.AspNet.Cryptography.Internal": "1.0.0-beta6-11455",
+          "Microsoft.AspNet.DataProtection.Abstractions": "1.0.0-beta6-11455",
+          "Microsoft.Framework.DependencyInjection.Abstractions": "1.0.0-beta6-11435",
+          "Microsoft.Framework.Logging.Abstractions": "1.0.0-beta6-11427",
+          "Microsoft.Framework.OptionsModel": "1.0.0-beta6-11404"
         },
         "frameworkAssemblies": [
           "System.Security",
@@ -121,9 +121,9 @@
           "lib/dnx451/Microsoft.AspNet.DataProtection.dll": {}
         }
       },
-      "Microsoft.AspNet.DataProtection.Abstractions/1.0.0-beta5-11441": {
+      "Microsoft.AspNet.DataProtection.Abstractions/1.0.0-beta6-11455": {
         "dependencies": {
-          "Microsoft.Framework.Runtime.Abstractions": "1.0.0-beta5-11904"
+          "Microsoft.Framework.Runtime.Abstractions": "1.0.0-beta6-11941"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -138,7 +138,7 @@
           "lib/dnx451/Microsoft.AspNet.DataProtection.Abstractions.dll": {}
         }
       },
-      "Microsoft.AspNet.Diagnostics.Abstractions/1.0.0-beta5-13139": {
+      "Microsoft.AspNet.Diagnostics.Abstractions/1.0.0-beta6-13163": {
         "frameworkAssemblies": [
           "mscorlib",
           "System",
@@ -152,7 +152,7 @@
           "lib/dnx451/Microsoft.AspNet.Diagnostics.Abstractions.dll": {}
         }
       },
-      "Microsoft.AspNet.FeatureModel/1.0.0-beta5-11550": {
+      "Microsoft.AspNet.FeatureModel/1.0.0-beta6-11564": {
         "frameworkAssemblies": [
           "mscorlib",
           "System",
@@ -166,9 +166,9 @@
           "lib/dnx451/Microsoft.AspNet.FeatureModel.dll": {}
         }
       },
-      "Microsoft.AspNet.FileProviders.Abstractions/1.0.0-beta5-11449": {
+      "Microsoft.AspNet.FileProviders.Abstractions/1.0.0-beta6-11462": {
         "dependencies": {
-          "Microsoft.Framework.Caching.Abstractions": "1.0.0-beta5-11421"
+          "Microsoft.Framework.Caching.Abstractions": "1.0.0-beta6-11434"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -183,9 +183,9 @@
           "lib/dnx451/Microsoft.AspNet.FileProviders.Abstractions.dll": {}
         }
       },
-      "Microsoft.AspNet.FileProviders.Embedded/1.0.0-beta5-11449": {
+      "Microsoft.AspNet.FileProviders.Embedded/1.0.0-beta6-11457": {
         "dependencies": {
-          "Microsoft.AspNet.FileProviders.Abstractions": "1.0.0-beta5-11449"
+          "Microsoft.AspNet.FileProviders.Abstractions": "1.0.0-beta6-11457"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -200,9 +200,9 @@
           "lib/dnx451/Microsoft.AspNet.FileProviders.Embedded.dll": {}
         }
       },
-      "Microsoft.AspNet.FileProviders.Physical/1.0.0-beta5-11449": {
+      "Microsoft.AspNet.FileProviders.Physical/1.0.0-beta6-11462": {
         "dependencies": {
-          "Microsoft.AspNet.FileProviders.Abstractions": "1.0.0-beta5-11449"
+          "Microsoft.AspNet.FileProviders.Abstractions": "1.0.0-beta6-11462"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -217,10 +217,10 @@
           "lib/dnx451/Microsoft.AspNet.FileProviders.Physical.dll": {}
         }
       },
-      "Microsoft.AspNet.Hosting.Abstractions/1.0.0-beta5-11901": {
+      "Microsoft.AspNet.Hosting.Abstractions/1.0.0-beta6-11921": {
         "dependencies": {
-          "Microsoft.AspNet.Http.Abstractions": "1.0.0-beta5-11550",
-          "Microsoft.AspNet.FileProviders.Abstractions": "1.0.0-beta5-11449"
+          "Microsoft.AspNet.Http.Abstractions": "1.0.0-beta6-11564",
+          "Microsoft.AspNet.FileProviders.Abstractions": "1.0.0-beta6-11462"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -235,13 +235,13 @@
           "lib/dnx451/Microsoft.AspNet.Hosting.Abstractions.dll": {}
         }
       },
-      "Microsoft.AspNet.Http/1.0.0-beta5-11550": {
+      "Microsoft.AspNet.Http/1.0.0-beta6-11564": {
         "dependencies": {
-          "Microsoft.AspNet.FeatureModel": "1.0.0-beta5-11550",
-          "Microsoft.AspNet.Http.Abstractions": "1.0.0-beta5-11550",
-          "Microsoft.AspNet.Http.Features": "1.0.0-beta5-11550",
-          "Microsoft.AspNet.WebUtilities": "1.0.0-beta5-11550",
-          "Microsoft.Net.Http.Headers": "1.0.0-beta5-11550"
+          "Microsoft.AspNet.FeatureModel": "1.0.0-beta6-11564",
+          "Microsoft.AspNet.Http.Abstractions": "1.0.0-beta6-11564",
+          "Microsoft.AspNet.Http.Features": "1.0.0-beta6-11564",
+          "Microsoft.AspNet.WebUtilities": "1.0.0-beta6-11564",
+          "Microsoft.Net.Http.Headers": "1.0.0-beta6-11564"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -256,9 +256,9 @@
           "lib/dnx451/Microsoft.AspNet.Http.dll": {}
         }
       },
-      "Microsoft.AspNet.Http.Abstractions/1.0.0-beta5-11550": {
+      "Microsoft.AspNet.Http.Abstractions/1.0.0-beta6-11564": {
         "dependencies": {
-          "Microsoft.Framework.WebEncoders.Core": "1.0.0-beta5-11550"
+          "Microsoft.Framework.WebEncoders.Core": "1.0.0-beta6-11564"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -273,12 +273,12 @@
           "lib/dnx451/Microsoft.AspNet.Http.Abstractions.dll": {}
         }
       },
-      "Microsoft.AspNet.Http.Extensions/1.0.0-beta5-11550": {
+      "Microsoft.AspNet.Http.Extensions/1.0.0-beta6-11564": {
         "dependencies": {
-          "Microsoft.AspNet.Http.Abstractions": "1.0.0-beta5-11550",
-          "Microsoft.AspNet.Http.Features": "1.0.0-beta5-11550",
-          "Microsoft.Framework.WebEncoders.Core": "1.0.0-beta5-11550",
-          "Microsoft.Net.Http.Headers": "1.0.0-beta5-11550"
+          "Microsoft.AspNet.Http.Abstractions": "1.0.0-beta6-11564",
+          "Microsoft.AspNet.Http.Features": "1.0.0-beta6-11564",
+          "Microsoft.Framework.WebEncoders.Core": "1.0.0-beta6-11564",
+          "Microsoft.Net.Http.Headers": "1.0.0-beta6-11564"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -293,7 +293,7 @@
           "lib/dnx451/Microsoft.AspNet.Http.Extensions.dll": {}
         }
       },
-      "Microsoft.AspNet.Http.Features/1.0.0-beta5-11550": {
+      "Microsoft.AspNet.Http.Features/1.0.0-beta6-11564": {
         "frameworkAssemblies": [
           "mscorlib",
           "System",
@@ -307,9 +307,9 @@
           "lib/dnx451/Microsoft.AspNet.Http.Features.dll": {}
         }
       },
-      "Microsoft.AspNet.JsonPatch/1.0.0-beta5-13994": {
+      "Microsoft.AspNet.JsonPatch/1.0.0-beta6-14023": {
         "dependencies": {
-          "Microsoft.AspNet.Http.Extensions": "1.0.0-beta5-11550",
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-beta6-11564",
           "Newtonsoft.Json": "6.0.6"
         },
         "frameworkAssemblies": [
@@ -325,14 +325,14 @@
           "lib/dnx451/Microsoft.AspNet.JsonPatch.dll": {}
         }
       },
-      "Microsoft.AspNet.Mvc/6.0.0-beta5-13994": {
+      "Microsoft.AspNet.Mvc/6.0.0-beta6-14023": {
         "dependencies": {
-          "Microsoft.AspNet.Authorization": "1.0.0-beta5-12462",
-          "Microsoft.AspNet.Cors": "1.0.0-beta5-10469",
-          "Microsoft.AspNet.Mvc.ApiExplorer": "6.0.0-beta5-13994",
-          "Microsoft.AspNet.Mvc.Razor": "6.0.0-beta5-13994",
-          "Microsoft.Framework.Caching.Memory": "1.0.0-beta5-11421",
-          "Microsoft.Framework.DependencyInjection": "1.0.0-beta5-11423"
+          "Microsoft.AspNet.Authorization": "1.0.0-beta6-12481",
+          "Microsoft.AspNet.Cors": "1.0.0-beta6-10488",
+          "Microsoft.AspNet.Mvc.ApiExplorer": "6.0.0-beta6-14023",
+          "Microsoft.AspNet.Mvc.Razor": "6.0.0-beta6-14023",
+          "Microsoft.Framework.Caching.Memory": "1.0.0-beta6-11434",
+          "Microsoft.Framework.DependencyInjection": "1.0.0-beta6-11435"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -347,9 +347,9 @@
           "lib/dnx451/Microsoft.AspNet.Mvc.dll": {}
         }
       },
-      "Microsoft.AspNet.Mvc.Abstractions/6.0.0-beta5-13994": {
+      "Microsoft.AspNet.Mvc.Abstractions/6.0.0-beta6-14023": {
         "dependencies": {
-          "Microsoft.AspNet.Routing": "1.0.0-beta5-11792"
+          "Microsoft.AspNet.Routing": "1.0.0-beta6-11812"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -364,9 +364,9 @@
           "lib/dnx451/Microsoft.AspNet.Mvc.Abstractions.dll": {}
         }
       },
-      "Microsoft.AspNet.Mvc.ApiExplorer/6.0.0-beta5-13994": {
+      "Microsoft.AspNet.Mvc.ApiExplorer/6.0.0-beta6-14023": {
         "dependencies": {
-          "Microsoft.AspNet.Mvc.Core": "6.0.0-beta5-13994"
+          "Microsoft.AspNet.Mvc.Core": "6.0.0-beta6-14023"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -381,22 +381,22 @@
           "lib/dnx451/Microsoft.AspNet.Mvc.ApiExplorer.dll": {}
         }
       },
-      "Microsoft.AspNet.Mvc.Core/6.0.0-beta5-13994": {
+      "Microsoft.AspNet.Mvc.Core/6.0.0-beta6-14023": {
         "dependencies": {
-          "Microsoft.AspNet.Authentication": "1.0.0-beta5-12462",
-          "Microsoft.AspNet.Authorization": "1.0.0-beta5-12462",
-          "Microsoft.AspNet.Cors.Core": "1.0.0-beta5-10469",
-          "Microsoft.AspNet.DataProtection": "1.0.0-beta5-11441",
-          "Microsoft.AspNet.Diagnostics.Abstractions": "1.0.0-beta5-13139",
-          "Microsoft.AspNet.FileProviders.Abstractions": "1.0.0-beta5-11449",
-          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-beta5-11901",
-          "Microsoft.AspNet.Http.Extensions": "1.0.0-beta5-11550",
-          "Microsoft.AspNet.JsonPatch": "1.0.0-beta5-13994",
-          "Microsoft.AspNet.Mvc.Abstractions": "6.0.0-beta5-13994",
-          "Microsoft.AspNet.Routing": "1.0.0-beta5-11792",
-          "Microsoft.Framework.Logging.Abstractions": "1.0.0-beta5-11414",
-          "Microsoft.Framework.Runtime.Abstractions": "1.0.0-beta5-11904",
-          "Microsoft.Framework.WebEncoders": "1.0.0-beta5-11550"
+          "Microsoft.AspNet.Authentication": "1.0.0-beta6-12481",
+          "Microsoft.AspNet.Authorization": "1.0.0-beta6-12481",
+          "Microsoft.AspNet.Cors.Core": "1.0.0-beta6-10488",
+          "Microsoft.AspNet.DataProtection": "1.0.0-beta6-11455",
+          "Microsoft.AspNet.Diagnostics.Abstractions": "1.0.0-beta6-13163",
+          "Microsoft.AspNet.FileProviders.Abstractions": "1.0.0-beta6-11462",
+          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-beta6-11921",
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-beta6-11564",
+          "Microsoft.AspNet.JsonPatch": "1.0.0-beta6-14023",
+          "Microsoft.AspNet.Mvc.Abstractions": "6.0.0-beta6-14023",
+          "Microsoft.AspNet.Routing": "1.0.0-beta6-11812",
+          "Microsoft.Framework.Logging.Abstractions": "1.0.0-beta6-11427",
+          "Microsoft.Framework.Runtime.Abstractions": "1.0.0-beta6-11941",
+          "Microsoft.Framework.WebEncoders": "1.0.0-beta6-11564"
         },
         "frameworkAssemblies": [
           "System.ComponentModel.DataAnnotations",
@@ -413,14 +413,14 @@
           "lib/dnx451/Microsoft.AspNet.Mvc.Core.dll": {}
         }
       },
-      "Microsoft.AspNet.Mvc.Razor/6.0.0-beta5-13994": {
+      "Microsoft.AspNet.Mvc.Razor/6.0.0-beta6-14023": {
         "dependencies": {
-          "Microsoft.AspNet.Diagnostics.Abstractions": "1.0.0-beta5-13139",
-          "Microsoft.AspNet.Mvc.Core": "6.0.0-beta5-13994",
-          "Microsoft.AspNet.Mvc.Razor.Host": "6.0.0-beta5-13994",
-          "Microsoft.AspNet.PageExecutionInstrumentation.Interfaces": "1.0.0-beta5-13994",
-          "Microsoft.Framework.Runtime.Roslyn.Common": "1.0.0-beta5-11904",
-          "Microsoft.Framework.Runtime.Roslyn.Abstractions": "1.0.0-beta5-11904"
+          "Microsoft.AspNet.Diagnostics.Abstractions": "1.0.0-beta6-13163",
+          "Microsoft.AspNet.Mvc.Core": "6.0.0-beta6-14023",
+          "Microsoft.AspNet.Mvc.Razor.Host": "6.0.0-beta6-14023",
+          "Microsoft.AspNet.PageExecutionInstrumentation.Interfaces": "1.0.0-beta6-14023",
+          "Microsoft.Framework.Runtime.Roslyn.Common": "1.0.0-beta6-11941",
+          "Microsoft.Framework.Runtime.Roslyn.Abstractions": "1.0.0-beta6-11941"
         },
         "frameworkAssemblies": [
           "System.Collections",
@@ -440,12 +440,12 @@
           "lib/dnx451/Microsoft.AspNet.Mvc.Razor.dll": {}
         }
       },
-      "Microsoft.AspNet.Mvc.Razor.Host/6.0.0-beta5-13994": {
+      "Microsoft.AspNet.Mvc.Razor.Host/6.0.0-beta6-14023": {
         "dependencies": {
-          "Microsoft.AspNet.FileProviders.Physical": "1.0.0-beta5-11449",
-          "Microsoft.AspNet.Razor.Runtime": "4.0.0-beta5-11491",
-          "Microsoft.Framework.Caching.Memory": "1.0.0-beta5-11421",
-          "Microsoft.Framework.Runtime.Abstractions": "1.0.0-beta5-11904"
+          "Microsoft.AspNet.FileProviders.Physical": "1.0.0-beta6-11462",
+          "Microsoft.AspNet.Razor.Runtime": "4.0.0-beta6-11505",
+          "Microsoft.Framework.Caching.Memory": "1.0.0-beta6-11434",
+          "Microsoft.Framework.Runtime.Abstractions": "1.0.0-beta6-11941"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -460,7 +460,7 @@
           "lib/dnx451/Microsoft.AspNet.Mvc.Razor.Host.dll": {}
         }
       },
-      "Microsoft.AspNet.PageExecutionInstrumentation.Interfaces/1.0.0-beta5-13994": {
+      "Microsoft.AspNet.PageExecutionInstrumentation.Interfaces/1.0.0-beta6-14023": {
         "frameworkAssemblies": [
           "mscorlib",
           "System",
@@ -474,7 +474,7 @@
           "lib/dnx451/Microsoft.AspNet.PageExecutionInstrumentation.Interfaces.dll": {}
         }
       },
-      "Microsoft.AspNet.Razor/4.0.0-beta5-11491": {
+      "Microsoft.AspNet.Razor/4.0.0-beta6-11505": {
         "frameworkAssemblies": [
           "mscorlib",
           "System",
@@ -488,9 +488,9 @@
           "lib/dnx451/Microsoft.AspNet.Razor.dll": {}
         }
       },
-      "Microsoft.AspNet.Razor.Runtime/4.0.0-beta5-11491": {
+      "Microsoft.AspNet.Razor.Runtime/4.0.0-beta6-11505": {
         "dependencies": {
-          "Microsoft.AspNet.Razor": "4.0.0-beta5-11491"
+          "Microsoft.AspNet.Razor": "4.0.0-beta6-11505"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -505,11 +505,11 @@
           "lib/dnx451/Microsoft.AspNet.Razor.Runtime.dll": {}
         }
       },
-      "Microsoft.AspNet.Routing/1.0.0-beta5-11792": {
+      "Microsoft.AspNet.Routing/1.0.0-beta6-11812": {
         "dependencies": {
-          "Microsoft.AspNet.Http.Extensions": "1.0.0-beta5-11550",
-          "Microsoft.Framework.Logging.Abstractions": "1.0.0-beta5-11414",
-          "Microsoft.Framework.OptionsModel": "1.0.0-beta5-11392"
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-beta6-11564",
+          "Microsoft.Framework.Logging.Abstractions": "1.0.0-beta6-11427",
+          "Microsoft.Framework.OptionsModel": "1.0.0-beta6-11404"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -524,13 +524,13 @@
           "lib/dnx451/Microsoft.AspNet.Routing.dll": {}
         }
       },
-      "Microsoft.AspNet.StaticFiles/1.0.0-beta5-11977": {
+      "Microsoft.AspNet.StaticFiles/1.0.0-beta6-11990": {
         "dependencies": {
-          "Microsoft.AspNet.Http.Extensions": "1.0.0-beta5-11550",
-          "Microsoft.AspNet.FileProviders.Abstractions": "1.0.0-beta5-11449",
-          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-beta5-11901",
-          "Microsoft.Framework.Logging.Abstractions": "1.0.0-beta5-11414",
-          "Microsoft.Framework.WebEncoders": "1.0.0-beta5-11550"
+          "Microsoft.AspNet.Http.Extensions": "1.0.0-beta6-11559",
+          "Microsoft.AspNet.FileProviders.Abstractions": "1.0.0-beta6-11457",
+          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-beta6-11916",
+          "Microsoft.Framework.Logging.Abstractions": "1.0.0-beta6-11422",
+          "Microsoft.Framework.WebEncoders": "1.0.0-beta6-11559"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -545,9 +545,9 @@
           "lib/dnx451/Microsoft.AspNet.StaticFiles.dll": {}
         }
       },
-      "Microsoft.AspNet.WebUtilities/1.0.0-beta5-11550": {
+      "Microsoft.AspNet.WebUtilities/1.0.0-beta6-11564": {
         "dependencies": {
-          "Microsoft.Framework.WebEncoders.Core": "1.0.0-beta5-11550"
+          "Microsoft.Framework.WebEncoders.Core": "1.0.0-beta6-11564"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -562,16 +562,16 @@
           "lib/dnx451/Microsoft.AspNet.WebUtilities.dll": {}
         }
       },
-      "Microsoft.CodeAnalysis.Analyzers/1.0.0-rc3-20150525-02": {
+      "Microsoft.CodeAnalysis.Analyzers/1.0.0-rc3-20150529-04": {
         "frameworkAssemblies": [
           "System"
         ]
       },
-      "Microsoft.CodeAnalysis.Common/1.0.0-rc3-20150525-02": {
+      "Microsoft.CodeAnalysis.Common/1.0.0-rc3-20150529-04": {
         "dependencies": {
           "System.Collections.Immutable": "1.1.36",
           "System.Reflection.Metadata": "1.0.21",
-          "Microsoft.CodeAnalysis.Analyzers": "[1.0.0-rc3-20150525-02]"
+          "Microsoft.CodeAnalysis.Analyzers": "[1.0.0-rc3-20150529-04]"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.dll": {}
@@ -580,9 +580,9 @@
           "lib/net45/Microsoft.CodeAnalysis.dll": {}
         }
       },
-      "Microsoft.CodeAnalysis.CSharp/1.0.0-rc3-20150525-02": {
+      "Microsoft.CodeAnalysis.CSharp/1.0.0-rc3-20150529-04": {
         "dependencies": {
-          "Microsoft.CodeAnalysis.Common": "[1.0.0-rc3-20150525-02]"
+          "Microsoft.CodeAnalysis.Common": "[1.0.0-rc3-20150529-04]"
         },
         "compile": {
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
@@ -591,25 +591,7 @@
           "lib/net45/Microsoft.CodeAnalysis.CSharp.dll": {}
         }
       },
-      "Microsoft.Framework.ApplicationHost/1.0.0-beta6-11944": {
-        "dependencies": {
-          "Microsoft.Framework.Runtime": "1.0.0-beta6-11944",
-          "Microsoft.Framework.Runtime.Abstractions": "1.0.0-beta6-11944"
-        },
-        "frameworkAssemblies": [
-          "mscorlib",
-          "System",
-          "System.Core",
-          "Microsoft.CSharp"
-        ],
-        "compile": {
-          "lib/dnx451/Microsoft.Framework.ApplicationHost.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/Microsoft.Framework.ApplicationHost.dll": {}
-        }
-      },
-      "Microsoft.Framework.Caching.Abstractions/1.0.0-beta5-11421": {
+      "Microsoft.Framework.Caching.Abstractions/1.0.0-beta6-11434": {
         "frameworkAssemblies": [
           "mscorlib",
           "System",
@@ -623,10 +605,10 @@
           "lib/dnx451/Microsoft.Framework.Caching.Abstractions.dll": {}
         }
       },
-      "Microsoft.Framework.Caching.Memory/1.0.0-beta5-11421": {
+      "Microsoft.Framework.Caching.Memory/1.0.0-beta6-11434": {
         "dependencies": {
-          "Microsoft.Framework.Caching.Abstractions": "1.0.0-beta5-11421",
-          "Microsoft.Framework.OptionsModel": "1.0.0-beta5-11392"
+          "Microsoft.Framework.Caching.Abstractions": "1.0.0-beta6-11434",
+          "Microsoft.Framework.OptionsModel": "1.0.0-beta6-11404"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -641,7 +623,7 @@
           "lib/dnx451/Microsoft.Framework.Caching.Memory.dll": {}
         }
       },
-      "Microsoft.Framework.CommandLineUtils.Sources/1.0.0-beta6-11944": {
+      "Microsoft.Framework.CommandLineUtils.Sources/1.0.0-beta6-12108": {
         "frameworkAssemblies": [
           "mscorlib",
           "System",
@@ -655,9 +637,9 @@
           "lib/dnx451/Microsoft.Framework.CommandLineUtils.Sources.dll": {}
         }
       },
-      "Microsoft.Framework.Configuration/1.0.0-beta5-11394": {
+      "Microsoft.Framework.Configuration/1.0.0-beta6-11406": {
         "dependencies": {
-          "Microsoft.Framework.Configuration.Abstractions": "1.0.0-beta5-11394"
+          "Microsoft.Framework.Configuration.Abstractions": "1.0.0-beta6-11406"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -672,7 +654,7 @@
           "lib/dnx451/Microsoft.Framework.Configuration.dll": {}
         }
       },
-      "Microsoft.Framework.Configuration.Abstractions/1.0.0-beta5-11394": {
+      "Microsoft.Framework.Configuration.Abstractions/1.0.0-beta6-11406": {
         "frameworkAssemblies": [
           "mscorlib",
           "System",
@@ -686,9 +668,9 @@
           "lib/dnx451/Microsoft.Framework.Configuration.Abstractions.dll": {}
         }
       },
-      "Microsoft.Framework.Configuration.Binder/1.0.0-beta5-11394": {
+      "Microsoft.Framework.Configuration.Binder/1.0.0-beta6-11406": {
         "dependencies": {
-          "Microsoft.Framework.Configuration": "1.0.0-beta5-11394"
+          "Microsoft.Framework.Configuration": "1.0.0-beta6-11406"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -703,9 +685,9 @@
           "lib/dnx451/Microsoft.Framework.Configuration.Binder.dll": {}
         }
       },
-      "Microsoft.Framework.DependencyInjection/1.0.0-beta5-11423": {
+      "Microsoft.Framework.DependencyInjection/1.0.0-beta6-11435": {
         "dependencies": {
-          "Microsoft.Framework.DependencyInjection.Abstractions": "1.0.0-beta5-11423"
+          "Microsoft.Framework.DependencyInjection.Abstractions": "1.0.0-beta6-11435"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -720,7 +702,7 @@
           "lib/dnx451/Microsoft.Framework.DependencyInjection.dll": {}
         }
       },
-      "Microsoft.Framework.DependencyInjection.Abstractions/1.0.0-beta6-11437": {
+      "Microsoft.Framework.DependencyInjection.Abstractions/1.0.0-beta6-11513": {
         "frameworkAssemblies": [
           "mscorlib",
           "System",
@@ -734,10 +716,10 @@
           "lib/dnx451/Microsoft.Framework.DependencyInjection.Abstractions.dll": {}
         }
       },
-      "Microsoft.Framework.Logging/1.0.0-beta6-11429": {
+      "Microsoft.Framework.Logging/1.0.0-beta6-11503": {
         "dependencies": {
-          "Microsoft.Framework.DependencyInjection.Abstractions": "1.0.0-beta6-11437",
-          "Microsoft.Framework.Logging.Abstractions": "1.0.0-beta6-11429"
+          "Microsoft.Framework.DependencyInjection.Abstractions": "1.0.0-beta6-11513",
+          "Microsoft.Framework.Logging.Abstractions": "1.0.0-beta6-11503"
         },
         "frameworkAssemblies": [
           "System.Collections.Concurrent",
@@ -753,7 +735,7 @@
           "lib/dnx451/Microsoft.Framework.Logging.dll": {}
         }
       },
-      "Microsoft.Framework.Logging.Abstractions/1.0.0-beta6-11429": {
+      "Microsoft.Framework.Logging.Abstractions/1.0.0-beta6-11503": {
         "frameworkAssemblies": [
           "mscorlib",
           "System",
@@ -767,10 +749,10 @@
           "lib/dnx451/Microsoft.Framework.Logging.Abstractions.dll": {}
         }
       },
-      "Microsoft.Framework.OptionsModel/1.0.0-beta5-11392": {
+      "Microsoft.Framework.OptionsModel/1.0.0-beta6-11404": {
         "dependencies": {
-          "Microsoft.Framework.Configuration.Binder": "1.0.0-beta5-11394",
-          "Microsoft.Framework.DependencyInjection.Abstractions": "1.0.0-beta5-11423"
+          "Microsoft.Framework.Configuration.Binder": "1.0.0-beta6-11406",
+          "Microsoft.Framework.DependencyInjection.Abstractions": "1.0.0-beta6-11435"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -785,11 +767,11 @@
           "lib/dnx451/Microsoft.Framework.OptionsModel.dll": {}
         }
       },
-      "Microsoft.Framework.Runtime/1.0.0-beta6-11944": {
+      "Microsoft.Framework.Runtime/1.0.0-beta6-12108": {
         "dependencies": {
-          "Microsoft.Framework.Runtime.Loader": "1.0.0-beta6-11944",
-          "Microsoft.Framework.Runtime.Caching": "1.0.0-beta6-11944",
-          "Microsoft.Framework.Runtime.Abstractions": "1.0.0-beta6-11944"
+          "Microsoft.Framework.Runtime.Loader": "1.0.0-beta6-12108",
+          "Microsoft.Framework.Runtime.Caching": "1.0.0-beta6-12108",
+          "Microsoft.Framework.Runtime.Abstractions": "1.0.0-beta6-12108"
         },
         "frameworkAssemblies": [
           "System.Collections",
@@ -813,7 +795,7 @@
           "lib/dnx451/Microsoft.Framework.Runtime.dll": {}
         }
       },
-      "Microsoft.Framework.Runtime.Abstractions/1.0.0-beta6-11944": {
+      "Microsoft.Framework.Runtime.Abstractions/1.0.0-beta6-12108": {
         "frameworkAssemblies": [
           "mscorlib",
           "System",
@@ -827,9 +809,9 @@
           "lib/dnx451/Microsoft.Framework.Runtime.Abstractions.dll": {}
         }
       },
-      "Microsoft.Framework.Runtime.Caching/1.0.0-beta6-11944": {
+      "Microsoft.Framework.Runtime.Caching/1.0.0-beta6-12108": {
         "dependencies": {
-          "Microsoft.Framework.Runtime.Abstractions": "1.0.0-beta6-11944"
+          "Microsoft.Framework.Runtime.Abstractions": "1.0.0-beta6-12108"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -844,9 +826,9 @@
           "lib/dnx451/Microsoft.Framework.Runtime.Caching.dll": {}
         }
       },
-      "Microsoft.Framework.Runtime.Loader/1.0.0-beta6-11944": {
+      "Microsoft.Framework.Runtime.Loader/1.0.0-beta6-12108": {
         "dependencies": {
-          "Microsoft.Framework.Runtime.Abstractions": "1.0.0-beta6-11944"
+          "Microsoft.Framework.Runtime.Abstractions": "1.0.0-beta6-12108"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -861,10 +843,10 @@
           "lib/dnx451/Microsoft.Framework.Runtime.Loader.dll": {}
         }
       },
-      "Microsoft.Framework.Runtime.Roslyn.Abstractions/1.0.0-beta5-11904": {
+      "Microsoft.Framework.Runtime.Roslyn.Abstractions/1.0.0-beta6-11941": {
         "dependencies": {
-          "Microsoft.Framework.Runtime.Abstractions": "1.0.0-beta5-11904",
-          "Microsoft.CodeAnalysis.CSharp": "1.0.0-rc3-20150525-02"
+          "Microsoft.Framework.Runtime.Abstractions": "1.0.0-beta6-11941",
+          "Microsoft.CodeAnalysis.CSharp": "1.0.0-rc3-20150529-04"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -879,10 +861,10 @@
           "lib/dnx451/Microsoft.Framework.Runtime.Roslyn.Abstractions.dll": {}
         }
       },
-      "Microsoft.Framework.Runtime.Roslyn.Common/1.0.0-beta5-11904": {
+      "Microsoft.Framework.Runtime.Roslyn.Common/1.0.0-beta6-11941": {
         "dependencies": {
-          "Microsoft.CodeAnalysis.CSharp": "1.0.0-rc3-20150525-02",
-          "Microsoft.Framework.Runtime.Abstractions": "1.0.0-beta5-11904"
+          "Microsoft.CodeAnalysis.CSharp": "1.0.0-rc3-20150529-04",
+          "Microsoft.Framework.Runtime.Abstractions": "1.0.0-beta6-11941"
         },
         "frameworkAssemblies": [
           "System.Runtime",
@@ -898,7 +880,7 @@
           "lib/dnx451/Microsoft.Framework.Runtime.Roslyn.Common.dll": {}
         }
       },
-      "Microsoft.Framework.TestAdapter/1.0.0-beta6-11564": {
+      "Microsoft.Framework.TestAdapter/1.0.0-beta6-11659": {
         "frameworkAssemblies": [
           "mscorlib",
           "System",
@@ -912,14 +894,13 @@
           "lib/dnx451/Microsoft.Framework.TestAdapter.dll": {}
         }
       },
-      "Microsoft.Framework.TestHost/1.0.0-beta6-11564": {
+      "Microsoft.Framework.TestHost/1.0.0-beta6-11659": {
         "dependencies": {
-          "Microsoft.Framework.TestAdapter": "1.0.0-beta6-11564",
-          "Microsoft.Framework.ApplicationHost": "1.0.0-beta6-11944",
-          "Microsoft.Framework.CommandLineUtils.Sources": "1.0.0-beta6-11944",
-          "Microsoft.Framework.Logging": "1.0.0-beta6-11429",
-          "Microsoft.Framework.Runtime": "1.0.0-beta6-11944",
-          "Microsoft.Framework.Runtime.Abstractions": "1.0.0-beta6-11944",
+          "Microsoft.Framework.TestAdapter": "1.0.0-beta6-11659",
+          "Microsoft.Framework.CommandLineUtils.Sources": "1.0.0-beta6-12108",
+          "Microsoft.Framework.Logging": "1.0.0-beta6-11503",
+          "Microsoft.Framework.Runtime": "1.0.0-beta6-12108",
+          "Microsoft.Framework.Runtime.Abstractions": "1.0.0-beta6-12108",
           "Newtonsoft.Json": "6.0.6"
         },
         "frameworkAssemblies": [
@@ -935,11 +916,11 @@
           "lib/dnx451/Microsoft.Framework.TestHost.dll": {}
         }
       },
-      "Microsoft.Framework.WebEncoders/1.0.0-beta5-11550": {
+      "Microsoft.Framework.WebEncoders/1.0.0-beta6-11564": {
         "dependencies": {
-          "Microsoft.Framework.DependencyInjection.Abstractions": "1.0.0-beta5-11423",
-          "Microsoft.Framework.OptionsModel": "1.0.0-beta5-11392",
-          "Microsoft.Framework.WebEncoders.Core": "1.0.0-beta5-11550"
+          "Microsoft.Framework.DependencyInjection.Abstractions": "1.0.0-beta6-11435",
+          "Microsoft.Framework.OptionsModel": "1.0.0-beta6-11404",
+          "Microsoft.Framework.WebEncoders.Core": "1.0.0-beta6-11564"
         },
         "frameworkAssemblies": [
           "mscorlib",
@@ -954,7 +935,7 @@
           "lib/dnx451/Microsoft.Framework.WebEncoders.dll": {}
         }
       },
-      "Microsoft.Framework.WebEncoders.Core/1.0.0-beta5-11550": {
+      "Microsoft.Framework.WebEncoders.Core/1.0.0-beta6-11564": {
         "frameworkAssemblies": [
           "mscorlib",
           "System",
@@ -968,7 +949,7 @@
           "lib/dnx451/Microsoft.Framework.WebEncoders.Core.dll": {}
         }
       },
-      "Microsoft.Net.Http.Headers/1.0.0-beta5-11550": {
+      "Microsoft.Net.Http.Headers/1.0.0-beta6-11564": {
         "frameworkAssemblies": [
           "mscorlib",
           "System",
@@ -998,65 +979,12 @@
           "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
-      "Swashbuckle/6.0.0-beta1": {
-        "dependencies": {
-          "Microsoft.AspNet.Mvc": "6.0.0-beta4",
-          "System.Reflection": "4.0.10-beta-22906",
-          "System.Xml.XPath.XmlDocument": "4.0.0-beta-22906",
-          "System.Reflection.TypeExtensions": "4.0.0-beta-22906",
-          "System.Reflection.Extensions": "4.0.0-beta-22906"
-        },
-        "frameworkAssemblies": [
-          "mscorlib",
-          "System",
-          "System.Core",
-          "Microsoft.CSharp"
-        ],
-        "compile": {
-          "lib/dnx451/Swashbuckle.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/Swashbuckle.dll": {}
-        }
-      },
       "System.Collections.Immutable/1.1.36": {
         "compile": {
           "lib/portable-net45+win8+wp8+wpa81/System.Collections.Immutable.dll": {}
         },
         "runtime": {
           "lib/portable-net45+win8+wp8+wpa81/System.Collections.Immutable.dll": {}
-        }
-      },
-      "System.IO/4.0.10-beta-22231": {
-        "dependencies": {
-          "System.Runtime": "4.0.0-beta-22231",
-          "System.Text.Encoding": "4.0.0-beta-22231",
-          "System.Threading.Tasks": "4.0.0-beta-22231"
-        }
-      },
-      "System.Reflection/4.0.10-beta-22913": {
-        "dependencies": {
-          "System.IO": "4.0.0-beta-22913",
-          "System.Reflection.Primitives": "4.0.0-beta-22913",
-          "System.Runtime": "4.0.20-beta-22913"
-        },
-        "compile": {
-          "lib/net45/System.Reflection.dll": {}
-        },
-        "runtime": {
-          "lib/net45/System.Reflection.dll": {}
-        }
-      },
-      "System.Reflection.Extensions/4.0.0-beta-22913": {
-        "dependencies": {
-          "System.Reflection": "4.0.0-beta-22913",
-          "System.Runtime": "4.0.0-beta-22913"
-        },
-        "compile": {
-          "lib/net45/System.Reflection.Extensions.dll": {}
-        },
-        "runtime": {
-          "lib/net45/System.Reflection.Extensions.dll": {}
         }
       },
       "System.Reflection.Metadata/1.0.21": {
@@ -1068,83 +996,6 @@
         },
         "runtime": {
           "lib/portable-net45+win8/System.Reflection.Metadata.dll": {}
-        }
-      },
-      "System.Reflection.Primitives/4.0.0-beta-22913": {
-        "dependencies": {
-          "System.Runtime": "4.0.0-beta-22913"
-        },
-        "compile": {
-          "lib/net45/System.Reflection.Primitives.dll": {}
-        },
-        "runtime": {
-          "lib/net45/System.Reflection.Primitives.dll": {}
-        }
-      },
-      "System.Reflection.TypeExtensions/4.0.0-beta-22913": {
-        "dependencies": {
-          "System.Reflection": "4.0.0-beta-22913",
-          "System.Runtime": "4.0.0-beta-22913"
-        }
-      },
-      "System.Runtime/4.0.20-beta-22913": {
-        "compile": {
-          "lib/net45/System.Runtime.dll": {}
-        },
-        "runtime": {
-          "lib/net45/System.Runtime.dll": {}
-        }
-      },
-      "System.Text.Encoding/4.0.10-beta-22231": {
-        "dependencies": {
-          "System.Runtime": "4.0.0-beta-22231"
-        }
-      },
-      "System.Threading.Tasks/4.0.10-beta-22231": {
-        "dependencies": {
-          "System.Runtime": "4.0.0-beta-22231"
-        }
-      },
-      "System.Xml.ReaderWriter/4.0.10-beta-22231": {
-        "dependencies": {
-          "System.IO": "4.0.0-beta-22231",
-          "System.Runtime": "4.0.0-beta-22231",
-          "System.Text.Encoding": "4.0.0-beta-22231",
-          "System.Threading.Tasks": "4.0.0-beta-22231"
-        }
-      },
-      "System.Xml.XmlDocument/4.0.0-beta-22913": {
-        "dependencies": {
-          "System.IO": "4.0.0-beta-22913",
-          "System.Runtime": "4.0.0-beta-22913",
-          "System.Xml.ReaderWriter": "4.0.0-beta-22913"
-        },
-        "compile": {
-          "lib/net45/System.Xml.XmlDocument.dll": {}
-        },
-        "runtime": {
-          "lib/net45/System.Xml.XmlDocument.dll": {}
-        }
-      },
-      "System.Xml.XPath/4.0.0-beta-22913": {
-        "dependencies": {
-          "System.IO": "4.0.0-beta-22913",
-          "System.Runtime": "4.0.0-beta-22913",
-          "System.Xml.ReaderWriter": "4.0.0-beta-22913"
-        },
-        "compile": {
-          "lib/net45/System.Xml.XPath.dll": {}
-        },
-        "runtime": {
-          "lib/net45/System.Xml.XPath.dll": {}
-        }
-      },
-      "System.Xml.XPath.XmlDocument/4.0.0-beta-22913": {
-        "dependencies": {
-          "System.Runtime": "4.0.0-beta-22913",
-          "System.Xml.ReaderWriter": "4.0.0-beta-22913",
-          "System.Xml.XmlDocument": "4.0.0-beta-22913",
-          "System.Xml.XPath": "4.0.0-beta-22913"
         }
       },
       "xunit.abstractions/2.0.0-rc3-build2880": {
@@ -1163,7 +1014,7 @@
           "lib/portable-net45+aspnetcore50+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS/xunit.assert.dll": {}
         }
       },
-      "xunit.execution.AspNet/2.0.0-aspnet-beta5-10305": {
+      "xunit.execution.AspNet/2.0.0-aspnet-beta6-10331": {
         "dependencies": {
           "xunit.abstractions": "2.0.0-rc3-build2880",
           "xunit.extensibility.core": "2.0.0-rc3-build2880"
@@ -1201,13 +1052,13 @@
           "lib/portable-net45+aspnetcore50+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS/xunit.core.dll": {}
         }
       },
-      "xunit.runner.aspnet/2.0.0-aspnet-beta6-10490": {
+      "xunit.runner.aspnet/2.0.0-aspnet-beta6-10575": {
         "dependencies": {
-          "Microsoft.Framework.Runtime.Abstractions": "1.0.0-beta6-11944",
-          "Microsoft.Framework.TestHost": "1.0.0-beta6-11564",
+          "Microsoft.Framework.Runtime.Abstractions": "1.0.0-beta6-12108",
+          "Microsoft.Framework.TestHost": "1.0.0-beta6-11659",
           "xunit.assert": "2.0.0-rc3-build2880",
-          "xunit.execution.AspNet": "2.0.0-aspnet-beta5-10305",
-          "xunit.runner.utility.AspNet": "2.0.0-aspnet-beta5-10305"
+          "xunit.execution.AspNet": "2.0.0-aspnet-beta6-10331",
+          "xunit.runner.utility.AspNet": "2.0.0-aspnet-beta6-10331"
         },
         "frameworkAssemblies": [
           "System.ObjectModel",
@@ -1226,7 +1077,7 @@
           "lib/dnx451/xunit.runner.aspnet.dll": {}
         }
       },
-      "xunit.runner.utility.AspNet/2.0.0-aspnet-beta5-10305": {
+      "xunit.runner.utility.AspNet/2.0.0-aspnet-beta6-10331": {
         "dependencies": {
           "xunit.abstractions": "2.0.0-rc3-build2880"
         },
@@ -1249,12 +1100,12 @@
     }
   },
   "libraries": {
-    "Microsoft.AspNet.Authentication/1.0.0-beta5-12462": {
+    "Microsoft.AspNet.Authentication/1.0.0-beta6-12481": {
       "serviceable": true,
-      "sha512": "vMiCK50ZyF4QNr2kFmNj2cfJ3SfvuBrIC6FlVHfzn/et7hH6eUTL6gfWMptLYD/ZY8BceTv9/SobF/Mzy4JreA==",
+      "sha512": "P0SAYjaG0GMGTN1LtKVUbx+7ZiEOQWnh8aec0m6UlMXZgEtesLKTGygGTCLLGBjoK2RkG3YsCKt6HjiphTzmLg==",
       "files": [
-        "Microsoft.AspNet.Authentication.1.0.0-beta5-12462.nupkg",
-        "Microsoft.AspNet.Authentication.1.0.0-beta5-12462.nupkg.sha512",
+        "Microsoft.AspNet.Authentication.1.0.0-beta6-12481.nupkg",
+        "Microsoft.AspNet.Authentication.1.0.0-beta6-12481.nupkg.sha512",
         "Microsoft.AspNet.Authentication.nuspec",
         "lib/dnx451/Microsoft.AspNet.Authentication.dll",
         "lib/dnx451/Microsoft.AspNet.Authentication.xml",
@@ -1262,12 +1113,12 @@
         "lib/dnxcore50/Microsoft.AspNet.Authentication.xml"
       ]
     },
-    "Microsoft.AspNet.Authorization/1.0.0-beta5-12462": {
+    "Microsoft.AspNet.Authorization/1.0.0-beta6-12481": {
       "serviceable": true,
-      "sha512": "NpgF/oZwRV+sws0Mp+IdD0RTUWcKOS3mq8l63URjCN+8Kl6bCCiN7Tfn11Sy7XP3qfKdvUV9wcrD3mE3L2JhZg==",
+      "sha512": "ItA3rGM4rYHbYyG/9rYQbuxdCYY7kYev7lVGtYskUUWDRDgoMjE9x5b4Z23t5fq4ry68h0+pZgWBtdnbwYxGmQ==",
       "files": [
-        "Microsoft.AspNet.Authorization.1.0.0-beta5-12462.nupkg",
-        "Microsoft.AspNet.Authorization.1.0.0-beta5-12462.nupkg.sha512",
+        "Microsoft.AspNet.Authorization.1.0.0-beta6-12481.nupkg",
+        "Microsoft.AspNet.Authorization.1.0.0-beta6-12481.nupkg.sha512",
         "Microsoft.AspNet.Authorization.nuspec",
         "lib/dnx451/Microsoft.AspNet.Authorization.dll",
         "lib/dnx451/Microsoft.AspNet.Authorization.xml",
@@ -1275,12 +1126,12 @@
         "lib/dnxcore50/Microsoft.AspNet.Authorization.xml"
       ]
     },
-    "Microsoft.AspNet.Cors/1.0.0-beta5-10469": {
+    "Microsoft.AspNet.Cors/1.0.0-beta6-10488": {
       "serviceable": true,
-      "sha512": "VbRuXaLzVcshqAfPPBss24q816/73M90BtliIowPorLiCUewpBE+iYL7dNpKq53XgbdwYaED6f163QHJuDEVNA==",
+      "sha512": "HYJpGAMWgeBiAUbjiAzoy726kq7XV6zXX7GymzSfG9iI9Y0bOMKcJAo7Z7sMMz28F1yMVro0xkN+rMe+J0CKjQ==",
       "files": [
-        "Microsoft.AspNet.Cors.1.0.0-beta5-10469.nupkg",
-        "Microsoft.AspNet.Cors.1.0.0-beta5-10469.nupkg.sha512",
+        "Microsoft.AspNet.Cors.1.0.0-beta6-10488.nupkg",
+        "Microsoft.AspNet.Cors.1.0.0-beta6-10488.nupkg.sha512",
         "Microsoft.AspNet.Cors.nuspec",
         "lib/dnx451/Microsoft.AspNet.Cors.dll",
         "lib/dnx451/Microsoft.AspNet.Cors.xml",
@@ -1288,12 +1139,12 @@
         "lib/dnxcore50/Microsoft.AspNet.Cors.xml"
       ]
     },
-    "Microsoft.AspNet.Cors.Core/1.0.0-beta5-10469": {
+    "Microsoft.AspNet.Cors.Core/1.0.0-beta6-10488": {
       "serviceable": true,
-      "sha512": "WaezWnUkepOI6RmStZTURj9ePA1bVZLstScOkYyQyKz+u+iublVTlXpUkLxT6MgwrwI0TzuI31ZV4CjAQEhR7Q==",
+      "sha512": "gNWHYSpn09lthSqGNqDapPmPJFdSvPER74TyOjsAo5UGQiRPeVkAaGCmq+nBWDniZNQoK0jYRJd59MS6fmgnHw==",
       "files": [
-        "Microsoft.AspNet.Cors.Core.1.0.0-beta5-10469.nupkg",
-        "Microsoft.AspNet.Cors.Core.1.0.0-beta5-10469.nupkg.sha512",
+        "Microsoft.AspNet.Cors.Core.1.0.0-beta6-10488.nupkg",
+        "Microsoft.AspNet.Cors.Core.1.0.0-beta6-10488.nupkg.sha512",
         "Microsoft.AspNet.Cors.Core.nuspec",
         "lib/dnx451/Microsoft.AspNet.Cors.Core.dll",
         "lib/dnx451/Microsoft.AspNet.Cors.Core.xml",
@@ -1301,12 +1152,12 @@
         "lib/dnxcore50/Microsoft.AspNet.Cors.Core.xml"
       ]
     },
-    "Microsoft.AspNet.Cryptography.Internal/1.0.0-beta5-11441": {
+    "Microsoft.AspNet.Cryptography.Internal/1.0.0-beta6-11455": {
       "serviceable": true,
-      "sha512": "Fbf+9WuVCRscdpK68Tsfje79yW1aFMhN1TO0Fffm06Nq4Zje8jbhRU7IEheh1kK0O2Yxv+gfjw6P5OIMr3FrxA==",
+      "sha512": "Z3rDudr20laWEniyKETEqwVGQgiqaKNX4vlFZ4f4Pj2wwpXQuKxVl/EXKxWg4lg86GNxhnzE30VBONLkWUzDPg==",
       "files": [
-        "Microsoft.AspNet.Cryptography.Internal.1.0.0-beta5-11441.nupkg",
-        "Microsoft.AspNet.Cryptography.Internal.1.0.0-beta5-11441.nupkg.sha512",
+        "Microsoft.AspNet.Cryptography.Internal.1.0.0-beta6-11455.nupkg",
+        "Microsoft.AspNet.Cryptography.Internal.1.0.0-beta6-11455.nupkg.sha512",
         "Microsoft.AspNet.Cryptography.Internal.nuspec",
         "lib/dnx451/Microsoft.AspNet.Cryptography.Internal.dll",
         "lib/dnx451/Microsoft.AspNet.Cryptography.Internal.xml",
@@ -1316,12 +1167,12 @@
         "lib/net451/Microsoft.AspNet.Cryptography.Internal.xml"
       ]
     },
-    "Microsoft.AspNet.DataProtection/1.0.0-beta5-11441": {
+    "Microsoft.AspNet.DataProtection/1.0.0-beta6-11455": {
       "serviceable": true,
-      "sha512": "Q9FQlS1WblNytGNbd/9nS/t0mqKscfKKiyMXoDyEEOlGVxgYTezzJYgJOTMMNWdYJs32vHwEmvY/dmbpMZW5JQ==",
+      "sha512": "yNGsQrx6zP6Be2xMSLo2DwnIg8KOl3ZYnSdRwuWzUEDvh7R8aOLxhNHtwlJhxRd98VAI2ifB0MmuAN4v+TwV4Q==",
       "files": [
-        "Microsoft.AspNet.DataProtection.1.0.0-beta5-11441.nupkg",
-        "Microsoft.AspNet.DataProtection.1.0.0-beta5-11441.nupkg.sha512",
+        "Microsoft.AspNet.DataProtection.1.0.0-beta6-11455.nupkg",
+        "Microsoft.AspNet.DataProtection.1.0.0-beta6-11455.nupkg.sha512",
         "Microsoft.AspNet.DataProtection.nuspec",
         "lib/dnx451/Microsoft.AspNet.DataProtection.dll",
         "lib/dnx451/Microsoft.AspNet.DataProtection.xml",
@@ -1331,12 +1182,12 @@
         "lib/net451/Microsoft.AspNet.DataProtection.xml"
       ]
     },
-    "Microsoft.AspNet.DataProtection.Abstractions/1.0.0-beta5-11441": {
+    "Microsoft.AspNet.DataProtection.Abstractions/1.0.0-beta6-11455": {
       "serviceable": true,
-      "sha512": "th2sFEV16ayvQW9zJbdoknsLL0gBU/pusD/u4NwQRpQn65Tve8QaNF+Be2W4c5N2+0OuuWjMI45a9qFjVBlCQQ==",
+      "sha512": "HFGPJ+tgNsqdDrkrEWlHLKuv14I8vB2FXY4BArm9mw3lBnL5El3FgqDM1IbMQtv/EhQ5KBQF8CYjvyAzjVtOCg==",
       "files": [
-        "Microsoft.AspNet.DataProtection.Abstractions.1.0.0-beta5-11441.nupkg",
-        "Microsoft.AspNet.DataProtection.Abstractions.1.0.0-beta5-11441.nupkg.sha512",
+        "Microsoft.AspNet.DataProtection.Abstractions.1.0.0-beta6-11455.nupkg",
+        "Microsoft.AspNet.DataProtection.Abstractions.1.0.0-beta6-11455.nupkg.sha512",
         "Microsoft.AspNet.DataProtection.Abstractions.nuspec",
         "lib/dnx451/Microsoft.AspNet.DataProtection.Abstractions.dll",
         "lib/dnx451/Microsoft.AspNet.DataProtection.Abstractions.xml",
@@ -1346,12 +1197,12 @@
         "lib/net451/Microsoft.AspNet.DataProtection.Abstractions.xml"
       ]
     },
-    "Microsoft.AspNet.Diagnostics.Abstractions/1.0.0-beta5-13139": {
+    "Microsoft.AspNet.Diagnostics.Abstractions/1.0.0-beta6-13163": {
       "serviceable": true,
-      "sha512": "9eMDoNohftfC0dFFiujcOl1aSTO/lhwTf40/4WWuyG/oA49VioCkyZnrE1fhSLm7RD+Zh70LXz9BIySTk2I47g==",
+      "sha512": "++uIpySyGNWuiN38szExRJATW84qeCWseN6BY59QzULWIvA4ajyIa2ADh5ydyWysY+Ma2Iovu3+Pgve8Np5IfQ==",
       "files": [
-        "Microsoft.AspNet.Diagnostics.Abstractions.1.0.0-beta5-13139.nupkg",
-        "Microsoft.AspNet.Diagnostics.Abstractions.1.0.0-beta5-13139.nupkg.sha512",
+        "Microsoft.AspNet.Diagnostics.Abstractions.1.0.0-beta6-13163.nupkg",
+        "Microsoft.AspNet.Diagnostics.Abstractions.1.0.0-beta6-13163.nupkg.sha512",
         "Microsoft.AspNet.Diagnostics.Abstractions.nuspec",
         "lib/dnx451/Microsoft.AspNet.Diagnostics.Abstractions.dll",
         "lib/dnx451/Microsoft.AspNet.Diagnostics.Abstractions.xml",
@@ -1359,12 +1210,12 @@
         "lib/dnxcore50/Microsoft.AspNet.Diagnostics.Abstractions.xml"
       ]
     },
-    "Microsoft.AspNet.FeatureModel/1.0.0-beta5-11550": {
+    "Microsoft.AspNet.FeatureModel/1.0.0-beta6-11564": {
       "serviceable": true,
-      "sha512": "TK+c1XaBYITN6SHaPHJPMCTd7yFqVSP1mbGY40zU3fbWf3o6y06bzvaiSglnPKrJBKC0+cset+Z3YtHNhFhMXQ==",
+      "sha512": "QhQssdCzwteT/d8at8xyFS4f5ZKhK/vD4grRgGJYHK88jhFs549jKAZ/wjmoin1qCa4nXndhtUkTCm1Z4VlJMA==",
       "files": [
-        "Microsoft.AspNet.FeatureModel.1.0.0-beta5-11550.nupkg",
-        "Microsoft.AspNet.FeatureModel.1.0.0-beta5-11550.nupkg.sha512",
+        "Microsoft.AspNet.FeatureModel.1.0.0-beta6-11564.nupkg",
+        "Microsoft.AspNet.FeatureModel.1.0.0-beta6-11564.nupkg.sha512",
         "Microsoft.AspNet.FeatureModel.nuspec",
         "lib/dnx451/Microsoft.AspNet.FeatureModel.dll",
         "lib/dnx451/Microsoft.AspNet.FeatureModel.xml",
@@ -1372,12 +1223,12 @@
         "lib/dnxcore50/Microsoft.AspNet.FeatureModel.xml"
       ]
     },
-    "Microsoft.AspNet.FileProviders.Abstractions/1.0.0-beta5-11449": {
+    "Microsoft.AspNet.FileProviders.Abstractions/1.0.0-beta6-11462": {
       "serviceable": true,
-      "sha512": "PKFUtlRBsXMWRav4D3uhuXchIerrcBXObmhX4TrT0RjTHtxAei4XmNvj+UfEB0NKFBHSwUvntfP6/FFffDGGoQ==",
+      "sha512": "R1q8QZfdm6QkaLGWRctHwS9eg+nvpu62J59CeLv8yk4eeQqFuRLib+y8W8tuFk/650jz9jwlloMuch4Nh8S7+g==",
       "files": [
-        "Microsoft.AspNet.FileProviders.Abstractions.1.0.0-beta5-11449.nupkg",
-        "Microsoft.AspNet.FileProviders.Abstractions.1.0.0-beta5-11449.nupkg.sha512",
+        "Microsoft.AspNet.FileProviders.Abstractions.1.0.0-beta6-11462.nupkg",
+        "Microsoft.AspNet.FileProviders.Abstractions.1.0.0-beta6-11462.nupkg.sha512",
         "Microsoft.AspNet.FileProviders.Abstractions.nuspec",
         "lib/dnx451/Microsoft.AspNet.FileProviders.Abstractions.dll",
         "lib/dnx451/Microsoft.AspNet.FileProviders.Abstractions.xml",
@@ -1387,12 +1238,12 @@
         "lib/net45/Microsoft.AspNet.FileProviders.Abstractions.xml"
       ]
     },
-    "Microsoft.AspNet.FileProviders.Embedded/1.0.0-beta5-11449": {
+    "Microsoft.AspNet.FileProviders.Embedded/1.0.0-beta6-11457": {
       "serviceable": true,
-      "sha512": "zuLqYwQgASu2hEa9YBEgPju/EE9bn/u+au5xox/UZhnLtoj6mxN6mJUrgNGTWOAd+5AVX9/hjcvna2nViexjUg==",
+      "sha512": "hgZg/SyIG1DebQ2vqswLDpMh9V3nauvCqjPNIJAV58oeijS+y4lXxI9m7ev8IDTvCiGjDB1HQ17UJ7m7Y9XZ2w==",
       "files": [
-        "Microsoft.AspNet.FileProviders.Embedded.1.0.0-beta5-11449.nupkg",
-        "Microsoft.AspNet.FileProviders.Embedded.1.0.0-beta5-11449.nupkg.sha512",
+        "Microsoft.AspNet.FileProviders.Embedded.1.0.0-beta6-11457.nupkg",
+        "Microsoft.AspNet.FileProviders.Embedded.1.0.0-beta6-11457.nupkg.sha512",
         "Microsoft.AspNet.FileProviders.Embedded.nuspec",
         "lib/dnx451/Microsoft.AspNet.FileProviders.Embedded.dll",
         "lib/dnx451/Microsoft.AspNet.FileProviders.Embedded.xml",
@@ -1402,12 +1253,12 @@
         "lib/net45/Microsoft.AspNet.FileProviders.Embedded.xml"
       ]
     },
-    "Microsoft.AspNet.FileProviders.Physical/1.0.0-beta5-11449": {
+    "Microsoft.AspNet.FileProviders.Physical/1.0.0-beta6-11462": {
       "serviceable": true,
-      "sha512": "0ED2Kdyv8c+I8089mtRHgxUiy7t77sLNKwLLE3HD2yxJKsGhMlfs/hpOow5p9El5O8BerCOTjn/pQ2W10IyVdw==",
+      "sha512": "4tMp282YSq887B9nQ4C2swQ7ZeamfJ5hp+V3FSu3RDTzuRjaes9ImF6R4QPgwBFX1bohJNw5VbCic5gQINxMuw==",
       "files": [
-        "Microsoft.AspNet.FileProviders.Physical.1.0.0-beta5-11449.nupkg",
-        "Microsoft.AspNet.FileProviders.Physical.1.0.0-beta5-11449.nupkg.sha512",
+        "Microsoft.AspNet.FileProviders.Physical.1.0.0-beta6-11462.nupkg",
+        "Microsoft.AspNet.FileProviders.Physical.1.0.0-beta6-11462.nupkg.sha512",
         "Microsoft.AspNet.FileProviders.Physical.nuspec",
         "lib/dnx451/Microsoft.AspNet.FileProviders.Physical.dll",
         "lib/dnx451/Microsoft.AspNet.FileProviders.Physical.xml",
@@ -1417,12 +1268,12 @@
         "lib/net45/Microsoft.AspNet.FileProviders.Physical.xml"
       ]
     },
-    "Microsoft.AspNet.Hosting.Abstractions/1.0.0-beta5-11901": {
+    "Microsoft.AspNet.Hosting.Abstractions/1.0.0-beta6-11921": {
       "serviceable": true,
-      "sha512": "xocUX2W8DT1oa/2Ankj12gRasNxmYjV9OBZPYYGrh9Qv4pJdzQhDuNaitKppjYyKxDofvNrVUtztaDievCoShQ==",
+      "sha512": "sQmgpo7CUEFKbHB3ZNGcr8cO94RqgvNGudohCsqtahDHHlkQ1xkTS/didNVA/rmCVOPA1nabUzje2bVcGK+WUg==",
       "files": [
-        "Microsoft.AspNet.Hosting.Abstractions.1.0.0-beta5-11901.nupkg",
-        "Microsoft.AspNet.Hosting.Abstractions.1.0.0-beta5-11901.nupkg.sha512",
+        "Microsoft.AspNet.Hosting.Abstractions.1.0.0-beta6-11921.nupkg",
+        "Microsoft.AspNet.Hosting.Abstractions.1.0.0-beta6-11921.nupkg.sha512",
         "Microsoft.AspNet.Hosting.Abstractions.nuspec",
         "lib/dnx451/Microsoft.AspNet.Hosting.Abstractions.dll",
         "lib/dnx451/Microsoft.AspNet.Hosting.Abstractions.xml",
@@ -1430,12 +1281,12 @@
         "lib/dnxcore50/Microsoft.AspNet.Hosting.Abstractions.xml"
       ]
     },
-    "Microsoft.AspNet.Http/1.0.0-beta5-11550": {
+    "Microsoft.AspNet.Http/1.0.0-beta6-11564": {
       "serviceable": true,
-      "sha512": "KkOxnd2Y1MR4YEXX1piDFaX9Bg5F3K7CVArmcPPPjm/nNTNCvOuUIqfYor7SjozkW1/GcMwvBWlryQUIyqZ+vg==",
+      "sha512": "Z0Lh462VM4k/uB/nDB7+iy6X7daMmQPsuDZt3PQiy0zQkki1fdQB0sZjA+9ciNZhg6niK1QnfEx1NUtDTAGdYQ==",
       "files": [
-        "Microsoft.AspNet.Http.1.0.0-beta5-11550.nupkg",
-        "Microsoft.AspNet.Http.1.0.0-beta5-11550.nupkg.sha512",
+        "Microsoft.AspNet.Http.1.0.0-beta6-11564.nupkg",
+        "Microsoft.AspNet.Http.1.0.0-beta6-11564.nupkg.sha512",
         "Microsoft.AspNet.Http.nuspec",
         "lib/dnx451/Microsoft.AspNet.Http.dll",
         "lib/dnx451/Microsoft.AspNet.Http.xml",
@@ -1443,12 +1294,12 @@
         "lib/dnxcore50/Microsoft.AspNet.Http.xml"
       ]
     },
-    "Microsoft.AspNet.Http.Abstractions/1.0.0-beta5-11550": {
+    "Microsoft.AspNet.Http.Abstractions/1.0.0-beta6-11564": {
       "serviceable": true,
-      "sha512": "BCLbnYVcU1uYmWWmE57vug2HqPS9VDxNEG0AAyOAUUEbp7OzZFpxdDOZ1FwhyJhMRC3BMSpB+Yb0kJskrsysvQ==",
+      "sha512": "rHGSRmgFprtp74mmaw26X3A8TnKe8OLNmiOmM9nSB9gGkcGGE8Z0kvOYXkp8Lf7Iqg+24jZNKAw2qKWcDAYmNA==",
       "files": [
-        "Microsoft.AspNet.Http.Abstractions.1.0.0-beta5-11550.nupkg",
-        "Microsoft.AspNet.Http.Abstractions.1.0.0-beta5-11550.nupkg.sha512",
+        "Microsoft.AspNet.Http.Abstractions.1.0.0-beta6-11564.nupkg",
+        "Microsoft.AspNet.Http.Abstractions.1.0.0-beta6-11564.nupkg.sha512",
         "Microsoft.AspNet.Http.Abstractions.nuspec",
         "lib/dnx451/Microsoft.AspNet.Http.Abstractions.dll",
         "lib/dnx451/Microsoft.AspNet.Http.Abstractions.xml",
@@ -1456,12 +1307,12 @@
         "lib/dnxcore50/Microsoft.AspNet.Http.Abstractions.xml"
       ]
     },
-    "Microsoft.AspNet.Http.Extensions/1.0.0-beta5-11550": {
+    "Microsoft.AspNet.Http.Extensions/1.0.0-beta6-11564": {
       "serviceable": true,
-      "sha512": "YYzO8J3K6vpJhNVGIqmummfxDewMAuHmFZWRu5l+ENtm+CwYkVHMT9uDRVJV8hmKc/t9X+rx9ZWPVAsyM/UU0g==",
+      "sha512": "fVRJPwT6GHExU/XZHvvt+w9EqobRnvRJoSQlwIdzl7qk5TyORqjYQmHqrqG55nTQ6bf1gKbW20Wk1aVWrWraKA==",
       "files": [
-        "Microsoft.AspNet.Http.Extensions.1.0.0-beta5-11550.nupkg",
-        "Microsoft.AspNet.Http.Extensions.1.0.0-beta5-11550.nupkg.sha512",
+        "Microsoft.AspNet.Http.Extensions.1.0.0-beta6-11564.nupkg",
+        "Microsoft.AspNet.Http.Extensions.1.0.0-beta6-11564.nupkg.sha512",
         "Microsoft.AspNet.Http.Extensions.nuspec",
         "lib/dnx451/Microsoft.AspNet.Http.Extensions.dll",
         "lib/dnx451/Microsoft.AspNet.Http.Extensions.xml",
@@ -1469,12 +1320,12 @@
         "lib/dnxcore50/Microsoft.AspNet.Http.Extensions.xml"
       ]
     },
-    "Microsoft.AspNet.Http.Features/1.0.0-beta5-11550": {
+    "Microsoft.AspNet.Http.Features/1.0.0-beta6-11564": {
       "serviceable": true,
-      "sha512": "a0JiHvz8/r6Z4thysXRJm9yUuD37yWn3T7MSw3fpKGTiC+VLfj2CrhtbqCxDnSkeDV0r7IHgXu8uOMDlf0jzuQ==",
+      "sha512": "NPk503QAR34WBnJZxoAG+LpWAvdalqzc3/a9lWnqKnhR9hRvfzqzpheNcu8usDNUobWCIVC5ct4ZT3JxSIUxfg==",
       "files": [
-        "Microsoft.AspNet.Http.Features.1.0.0-beta5-11550.nupkg",
-        "Microsoft.AspNet.Http.Features.1.0.0-beta5-11550.nupkg.sha512",
+        "Microsoft.AspNet.Http.Features.1.0.0-beta6-11564.nupkg",
+        "Microsoft.AspNet.Http.Features.1.0.0-beta6-11564.nupkg.sha512",
         "Microsoft.AspNet.Http.Features.nuspec",
         "lib/dnx451/Microsoft.AspNet.Http.Features.dll",
         "lib/dnx451/Microsoft.AspNet.Http.Features.xml",
@@ -1482,12 +1333,12 @@
         "lib/dnxcore50/Microsoft.AspNet.Http.Features.xml"
       ]
     },
-    "Microsoft.AspNet.JsonPatch/1.0.0-beta5-13994": {
+    "Microsoft.AspNet.JsonPatch/1.0.0-beta6-14023": {
       "serviceable": true,
-      "sha512": "2fWZ9UgTfEyHkfdQdMTePXaSDTBxOulC1+vAAwOtRvGvMDmtfSQAelSrSIiREvR/U7EHcHpgJNEPaWasZ2NLww==",
+      "sha512": "sOzeRHccM5HMpoBoOkA2hmyy0fILVdYFOLLO1m6+WGGiM+df81I8s7AK0K6DqY+jyiUExAXCWF7n9Qtz3LTOng==",
       "files": [
-        "Microsoft.AspNet.JsonPatch.1.0.0-beta5-13994.nupkg",
-        "Microsoft.AspNet.JsonPatch.1.0.0-beta5-13994.nupkg.sha512",
+        "Microsoft.AspNet.JsonPatch.1.0.0-beta6-14023.nupkg",
+        "Microsoft.AspNet.JsonPatch.1.0.0-beta6-14023.nupkg.sha512",
         "Microsoft.AspNet.JsonPatch.nuspec",
         "lib/dnx451/Microsoft.AspNet.JsonPatch.dll",
         "lib/dnx451/Microsoft.AspNet.JsonPatch.xml",
@@ -1495,12 +1346,12 @@
         "lib/dnxcore50/Microsoft.AspNet.JsonPatch.xml"
       ]
     },
-    "Microsoft.AspNet.Mvc/6.0.0-beta5-13994": {
+    "Microsoft.AspNet.Mvc/6.0.0-beta6-14023": {
       "serviceable": true,
-      "sha512": "h+g0WIiS/3f1arqSEKBsORedFK3QkZdSW+DVQr69/SFM7F1qwOhrDBPXCRY/I0UJR8x+Rh2LwMQvOiMQvWEwJg==",
+      "sha512": "T+OQDk+xS6eKIyl/Qdnu3PetlJg446kKnSxvfL8X0OhBxm8n7O9lf4Jo4HkO7iBNK4FCQqjP0niGf2WrNapHMw==",
       "files": [
-        "Microsoft.AspNet.Mvc.6.0.0-beta5-13994.nupkg",
-        "Microsoft.AspNet.Mvc.6.0.0-beta5-13994.nupkg.sha512",
+        "Microsoft.AspNet.Mvc.6.0.0-beta6-14023.nupkg",
+        "Microsoft.AspNet.Mvc.6.0.0-beta6-14023.nupkg.sha512",
         "Microsoft.AspNet.Mvc.nuspec",
         "lib/dnx451/Microsoft.AspNet.Mvc.dll",
         "lib/dnx451/Microsoft.AspNet.Mvc.xml",
@@ -1508,12 +1359,12 @@
         "lib/dnxcore50/Microsoft.AspNet.Mvc.xml"
       ]
     },
-    "Microsoft.AspNet.Mvc.Abstractions/6.0.0-beta5-13994": {
+    "Microsoft.AspNet.Mvc.Abstractions/6.0.0-beta6-14023": {
       "serviceable": true,
-      "sha512": "ibljUv2Xj58fcApS+kb4Ycfzduh5Is7HExTEV/F+LuEvw/7gB7gDYxD4UnqfKCSIVxM6cpY4qPz2nx6M0DemSA==",
+      "sha512": "34qwzHMkOmRBP0jePoVXbpbKjlAcyN7I6fg0CscKiVbpiwV2rVTy1hTrOmThYMRboLLWWj7ioSPMBx9iKQdyLw==",
       "files": [
-        "Microsoft.AspNet.Mvc.Abstractions.6.0.0-beta5-13994.nupkg",
-        "Microsoft.AspNet.Mvc.Abstractions.6.0.0-beta5-13994.nupkg.sha512",
+        "Microsoft.AspNet.Mvc.Abstractions.6.0.0-beta6-14023.nupkg",
+        "Microsoft.AspNet.Mvc.Abstractions.6.0.0-beta6-14023.nupkg.sha512",
         "Microsoft.AspNet.Mvc.Abstractions.nuspec",
         "lib/dnx451/Microsoft.AspNet.Mvc.Abstractions.dll",
         "lib/dnx451/Microsoft.AspNet.Mvc.Abstractions.xml",
@@ -1521,11 +1372,11 @@
         "lib/dnxcore50/Microsoft.AspNet.Mvc.Abstractions.xml"
       ]
     },
-    "Microsoft.AspNet.Mvc.ApiExplorer/6.0.0-beta5-13994": {
-      "sha512": "tQBLY9mXbjow3Y9x8GVcQgXd5n7eHT1qXzQ/9AKQ555ty2jwbDBCu/XCt8mELVbV5TZLYt/q+MVlik3kzj+e1w==",
+    "Microsoft.AspNet.Mvc.ApiExplorer/6.0.0-beta6-14023": {
+      "sha512": "l/AequoQCc+YvEt3LHXesCAewXg3HR1orSLw48jMUbg1ptXG0wtPTXBRAY975w1VVPw2jfZHBrrDaRGJGs1/3g==",
       "files": [
-        "Microsoft.AspNet.Mvc.ApiExplorer.6.0.0-beta5-13994.nupkg",
-        "Microsoft.AspNet.Mvc.ApiExplorer.6.0.0-beta5-13994.nupkg.sha512",
+        "Microsoft.AspNet.Mvc.ApiExplorer.6.0.0-beta6-14023.nupkg",
+        "Microsoft.AspNet.Mvc.ApiExplorer.6.0.0-beta6-14023.nupkg.sha512",
         "Microsoft.AspNet.Mvc.ApiExplorer.nuspec",
         "lib/dnx451/Microsoft.AspNet.Mvc.ApiExplorer.dll",
         "lib/dnx451/Microsoft.AspNet.Mvc.ApiExplorer.xml",
@@ -1533,12 +1384,12 @@
         "lib/dnxcore50/Microsoft.AspNet.Mvc.ApiExplorer.xml"
       ]
     },
-    "Microsoft.AspNet.Mvc.Core/6.0.0-beta5-13994": {
+    "Microsoft.AspNet.Mvc.Core/6.0.0-beta6-14023": {
       "serviceable": true,
-      "sha512": "6B3dZOgr7KrHjZjd9VyhB6jltXpXxWoRyt90ahOtosAL+AUF/B5WYKAVTKQHb2iN8o5pEzUXgDtHwh9aO5hXDw==",
+      "sha512": "q3g/JElr59PQMO2SlAby5XMo8hJQDXpMcGBIl0kMvh37cT35dbydY+BskutVjBtBWT5WTm1sNmw1b1Jfa+o6Xw==",
       "files": [
-        "Microsoft.AspNet.Mvc.Core.6.0.0-beta5-13994.nupkg",
-        "Microsoft.AspNet.Mvc.Core.6.0.0-beta5-13994.nupkg.sha512",
+        "Microsoft.AspNet.Mvc.Core.6.0.0-beta6-14023.nupkg",
+        "Microsoft.AspNet.Mvc.Core.6.0.0-beta6-14023.nupkg.sha512",
         "Microsoft.AspNet.Mvc.Core.nuspec",
         "lib/dnx451/Microsoft.AspNet.Mvc.Core.dll",
         "lib/dnx451/Microsoft.AspNet.Mvc.Core.xml",
@@ -1546,12 +1397,12 @@
         "lib/dnxcore50/Microsoft.AspNet.Mvc.Core.xml"
       ]
     },
-    "Microsoft.AspNet.Mvc.Razor/6.0.0-beta5-13994": {
+    "Microsoft.AspNet.Mvc.Razor/6.0.0-beta6-14023": {
       "serviceable": true,
-      "sha512": "Qp9hwwA0NU0C9ImQsbUXsnvcPstkARUqNe+SAlWn1GTS1O/QCdcm7OMYgsAvU7cazJIvzJIXQJ59oCfHZaj4oQ==",
+      "sha512": "efGAHW0C5x7oxJ5SJcrzYIdWcLpDWQLxX29+hIy479+1SxJ8lIuWZyPW6SWSvc97rfrZ+MlW3LHSsS/S+VQHeA==",
       "files": [
-        "Microsoft.AspNet.Mvc.Razor.6.0.0-beta5-13994.nupkg",
-        "Microsoft.AspNet.Mvc.Razor.6.0.0-beta5-13994.nupkg.sha512",
+        "Microsoft.AspNet.Mvc.Razor.6.0.0-beta6-14023.nupkg",
+        "Microsoft.AspNet.Mvc.Razor.6.0.0-beta6-14023.nupkg.sha512",
         "Microsoft.AspNet.Mvc.Razor.nuspec",
         "lib/dnx451/Microsoft.AspNet.Mvc.Razor.dll",
         "lib/dnx451/Microsoft.AspNet.Mvc.Razor.xml",
@@ -1559,12 +1410,12 @@
         "lib/dnxcore50/Microsoft.AspNet.Mvc.Razor.xml"
       ]
     },
-    "Microsoft.AspNet.Mvc.Razor.Host/6.0.0-beta5-13994": {
+    "Microsoft.AspNet.Mvc.Razor.Host/6.0.0-beta6-14023": {
       "serviceable": true,
-      "sha512": "/a77MGk0iezmjvQ2GgK5WX65IMCrJTtQB4au7X6ClX7ZpXxJdOLr5XSkLF7LdMBPBKDf00AWk4LxI580E/gylQ==",
+      "sha512": "5wquT8v4C7K3TnQ/90jYZWXRBvDGM8Mqjil7nLusJc5PaTmjD3uvosCBUZiadEVjJTp7to44SVy+ZssSpVe63g==",
       "files": [
-        "Microsoft.AspNet.Mvc.Razor.Host.6.0.0-beta5-13994.nupkg",
-        "Microsoft.AspNet.Mvc.Razor.Host.6.0.0-beta5-13994.nupkg.sha512",
+        "Microsoft.AspNet.Mvc.Razor.Host.6.0.0-beta6-14023.nupkg",
+        "Microsoft.AspNet.Mvc.Razor.Host.6.0.0-beta6-14023.nupkg.sha512",
         "Microsoft.AspNet.Mvc.Razor.Host.nuspec",
         "lib/dnx451/Microsoft.AspNet.Mvc.Razor.Host.dll",
         "lib/dnx451/Microsoft.AspNet.Mvc.Razor.Host.xml",
@@ -1574,12 +1425,12 @@
         "lib/net45/Microsoft.AspNet.Mvc.Razor.Host.xml"
       ]
     },
-    "Microsoft.AspNet.PageExecutionInstrumentation.Interfaces/1.0.0-beta5-13994": {
+    "Microsoft.AspNet.PageExecutionInstrumentation.Interfaces/1.0.0-beta6-14023": {
       "serviceable": true,
-      "sha512": "5rB9izFpkPrtABTakmv0tETl3TuvV65HNJIuWW+tMoQjB8c8CDrRADNPtfBB3sy5rOoSgswaflSHDj/6+yl8gg==",
+      "sha512": "EDkJSlTfDmWothCSqtOJoRfKgIMWpLUOIq6g1kIUEC0okOCTNWGmHFl+NR5Ciw0JRFeBYKUSgFfMLstrrSW2Fg==",
       "files": [
-        "Microsoft.AspNet.PageExecutionInstrumentation.Interfaces.1.0.0-beta5-13994.nupkg",
-        "Microsoft.AspNet.PageExecutionInstrumentation.Interfaces.1.0.0-beta5-13994.nupkg.sha512",
+        "Microsoft.AspNet.PageExecutionInstrumentation.Interfaces.1.0.0-beta6-14023.nupkg",
+        "Microsoft.AspNet.PageExecutionInstrumentation.Interfaces.1.0.0-beta6-14023.nupkg.sha512",
         "Microsoft.AspNet.PageExecutionInstrumentation.Interfaces.nuspec",
         "lib/dnx451/Microsoft.AspNet.PageExecutionInstrumentation.Interfaces.dll",
         "lib/dnx451/Microsoft.AspNet.PageExecutionInstrumentation.Interfaces.xml",
@@ -1587,12 +1438,12 @@
         "lib/dnxcore50/Microsoft.AspNet.PageExecutionInstrumentation.Interfaces.xml"
       ]
     },
-    "Microsoft.AspNet.Razor/4.0.0-beta5-11491": {
+    "Microsoft.AspNet.Razor/4.0.0-beta6-11505": {
       "serviceable": true,
-      "sha512": "zGi6zUWv6lfz0+7F1RDp73Ip3ssF3KmQm5UovDj14g7mLbv7r5m+7E74lKh/Wa25sZvX7KMITMDNacui7NdaKg==",
+      "sha512": "PBwugO/nB3JJCAOss3sPRlED+T3pK+WsZxJ5gIZrt9/r5yVYeMfoa8CbTjFQAyEVT1nHu2wtG66OlLYDG06Ewg==",
       "files": [
-        "Microsoft.AspNet.Razor.4.0.0-beta5-11491.nupkg",
-        "Microsoft.AspNet.Razor.4.0.0-beta5-11491.nupkg.sha512",
+        "Microsoft.AspNet.Razor.4.0.0-beta6-11505.nupkg",
+        "Microsoft.AspNet.Razor.4.0.0-beta6-11505.nupkg.sha512",
         "Microsoft.AspNet.Razor.nuspec",
         "lib/dnx451/Microsoft.AspNet.Razor.dll",
         "lib/dnx451/Microsoft.AspNet.Razor.xml",
@@ -1602,12 +1453,12 @@
         "lib/net45/Microsoft.AspNet.Razor.xml"
       ]
     },
-    "Microsoft.AspNet.Razor.Runtime/4.0.0-beta5-11491": {
+    "Microsoft.AspNet.Razor.Runtime/4.0.0-beta6-11505": {
       "serviceable": true,
-      "sha512": "zZ5hum+vEROCSITYToc7nm4QPjuHpn+fKuOgTbXJUG2WYpMcLiL1exye3weC7PRTMdzu3rNh5bL1oo9zX8tXLA==",
+      "sha512": "QxfCbX9fMDFEkTnPTgucpAd9RoNA5Ka01uFmHmFvs+v5ngjI8kbkPPhqvBRxW04e4Or6EgmRRs4dKUmIKfRt9A==",
       "files": [
-        "Microsoft.AspNet.Razor.Runtime.4.0.0-beta5-11491.nupkg",
-        "Microsoft.AspNet.Razor.Runtime.4.0.0-beta5-11491.nupkg.sha512",
+        "Microsoft.AspNet.Razor.Runtime.4.0.0-beta6-11505.nupkg",
+        "Microsoft.AspNet.Razor.Runtime.4.0.0-beta6-11505.nupkg.sha512",
         "Microsoft.AspNet.Razor.Runtime.nuspec",
         "lib/dnx451/Microsoft.AspNet.Razor.Runtime.dll",
         "lib/dnx451/Microsoft.AspNet.Razor.Runtime.xml",
@@ -1617,12 +1468,12 @@
         "lib/net45/Microsoft.AspNet.Razor.Runtime.xml"
       ]
     },
-    "Microsoft.AspNet.Routing/1.0.0-beta5-11792": {
+    "Microsoft.AspNet.Routing/1.0.0-beta6-11812": {
       "serviceable": true,
-      "sha512": "K4MNU/TZvhIUBOYJ3EQtt+8pK6pvIiI0FLk6sHH/o6yBiGTJLcuX6pw+892OMbDkxsGVcmmCKIi8mALmPMtVuA==",
+      "sha512": "ZMVqD3N41SCuGgqgV1CsgVNALsRDwBWIYze2SkcR1k6cNyJn2yX58TR7TFhAIY7b0Rh/qltff0tI0ZdHnAWCEw==",
       "files": [
-        "Microsoft.AspNet.Routing.1.0.0-beta5-11792.nupkg",
-        "Microsoft.AspNet.Routing.1.0.0-beta5-11792.nupkg.sha512",
+        "Microsoft.AspNet.Routing.1.0.0-beta6-11812.nupkg",
+        "Microsoft.AspNet.Routing.1.0.0-beta6-11812.nupkg.sha512",
         "Microsoft.AspNet.Routing.nuspec",
         "lib/dnx451/Microsoft.AspNet.Routing.dll",
         "lib/dnx451/Microsoft.AspNet.Routing.xml",
@@ -1630,12 +1481,12 @@
         "lib/dnxcore50/Microsoft.AspNet.Routing.xml"
       ]
     },
-    "Microsoft.AspNet.StaticFiles/1.0.0-beta5-11977": {
+    "Microsoft.AspNet.StaticFiles/1.0.0-beta6-11990": {
       "serviceable": true,
-      "sha512": "oqtOFF6H9SwWuer7k0pwP4uftMhofY8ju1QmDsPq3+9lkK7bDSQEhMxh0+t34qaxN6Kz+9gtN/o3WfvQLOcnlg==",
+      "sha512": "04wkXfaOcBr46kuO/dJybbVrmjpwWSulBlVlwOl5Ch4PPOU0bUvxyQyhwGQdkaXu7i9NjNpP6xvxsahpbmiVpg==",
       "files": [
-        "Microsoft.AspNet.StaticFiles.1.0.0-beta5-11977.nupkg",
-        "Microsoft.AspNet.StaticFiles.1.0.0-beta5-11977.nupkg.sha512",
+        "Microsoft.AspNet.StaticFiles.1.0.0-beta6-11990.nupkg",
+        "Microsoft.AspNet.StaticFiles.1.0.0-beta6-11990.nupkg.sha512",
         "Microsoft.AspNet.StaticFiles.nuspec",
         "lib/dnx451/Microsoft.AspNet.StaticFiles.dll",
         "lib/dnx451/Microsoft.AspNet.StaticFiles.xml",
@@ -1643,12 +1494,12 @@
         "lib/dnxcore50/Microsoft.AspNet.StaticFiles.xml"
       ]
     },
-    "Microsoft.AspNet.WebUtilities/1.0.0-beta5-11550": {
+    "Microsoft.AspNet.WebUtilities/1.0.0-beta6-11564": {
       "serviceable": true,
-      "sha512": "e02Nbl7s3Q0V7tmJ+kRaNUViAzyqT+QNICywLTnExqbrvM15LMYLxW9s3VdKzGtGiTWep4RjnR1SwdEkdTVnUA==",
+      "sha512": "X4d1VZdOQvjUiFfsU9EM353wIpAJZsvOHV/3h51hZZ8cG+yThN/RZ/7p9wSuC4w7dObWuD2/KS4RZwI/dGj8Zw==",
       "files": [
-        "Microsoft.AspNet.WebUtilities.1.0.0-beta5-11550.nupkg",
-        "Microsoft.AspNet.WebUtilities.1.0.0-beta5-11550.nupkg.sha512",
+        "Microsoft.AspNet.WebUtilities.1.0.0-beta6-11564.nupkg",
+        "Microsoft.AspNet.WebUtilities.1.0.0-beta6-11564.nupkg.sha512",
         "Microsoft.AspNet.WebUtilities.nuspec",
         "lib/dnx451/Microsoft.AspNet.WebUtilities.dll",
         "lib/dnx451/Microsoft.AspNet.WebUtilities.xml",
@@ -1656,26 +1507,26 @@
         "lib/dnxcore50/Microsoft.AspNet.WebUtilities.xml"
       ]
     },
-    "Microsoft.CodeAnalysis.Analyzers/1.0.0-rc3-20150525-02": {
-      "sha512": "I2XLFuKL7vmsTwQ3cwgGB5uGzx+m9hjlnR/9gWjyaNw90IARIO5+zLm3ul8XzX36yIJXLhgPxHN5lIYMADdrmA==",
+    "Microsoft.CodeAnalysis.Analyzers/1.0.0-rc3-20150529-04": {
+      "sha512": "3OKYZSMwSsgHA7uyx3U3BqAzdJLHKhR6Y95mhuOFRgg2Piw3vKEPmxmG/IQiD0qeCL0pbkcCQzpa60Yo1Jn0yg==",
       "files": [
-        "Microsoft.CodeAnalysis.Analyzers.1.0.0-rc3-20150525-02.nupkg",
-        "Microsoft.CodeAnalysis.Analyzers.1.0.0-rc3-20150525-02.nupkg.sha512",
+        "Microsoft.CodeAnalysis.Analyzers.1.0.0-rc3-20150529-04.nupkg",
+        "Microsoft.CodeAnalysis.Analyzers.1.0.0-rc3-20150529-04.nupkg.sha512",
         "Microsoft.CodeAnalysis.Analyzers.nuspec",
         "ThirdPartyNotices.rtf",
+        "analyzers/portable50/cs/Microsoft.CodeAnalysis.Analyzers.dll",
+        "analyzers/portable50/cs/Microsoft.CodeAnalysis.CSharp.Analyzers.dll",
+        "analyzers/portable50/vb/Microsoft.CodeAnalysis.Analyzers.dll",
+        "analyzers/portable50/vb/Microsoft.CodeAnalysis.VisualBasic.Analyzers.dll",
         "tools/install.ps1",
-        "tools/uninstall.ps1",
-        "tools/analyzers/C#/Microsoft.CodeAnalysis.Analyzers.dll",
-        "tools/analyzers/C#/Microsoft.CodeAnalysis.CSharp.Analyzers.dll",
-        "tools/analyzers/VB.NET/Microsoft.CodeAnalysis.Analyzers.dll",
-        "tools/analyzers/VB.NET/Microsoft.CodeAnalysis.VisualBasic.Analyzers.dll"
+        "tools/uninstall.ps1"
       ]
     },
-    "Microsoft.CodeAnalysis.Common/1.0.0-rc3-20150525-02": {
-      "sha512": "9R/y1UNQpuN0iHwLZAwKCZL3vMF+LBoR3ltvgxMbzlegb/wNKa1e/9+W5fLyXsO/g2QHbhNkCK6l09zwaQYPww==",
+    "Microsoft.CodeAnalysis.Common/1.0.0-rc3-20150529-04": {
+      "sha512": "B5aFOpPSQeEG5pafehkWJvJgTzI7dN9jLWqX6rk8u4RSQHiAldwRgniGo+jcKJGbdsxFUQISjZsvaNY+k9kXvg==",
       "files": [
-        "Microsoft.CodeAnalysis.Common.1.0.0-rc3-20150525-02.nupkg",
-        "Microsoft.CodeAnalysis.Common.1.0.0-rc3-20150525-02.nupkg.sha512",
+        "Microsoft.CodeAnalysis.Common.1.0.0-rc3-20150529-04.nupkg",
+        "Microsoft.CodeAnalysis.Common.1.0.0-rc3-20150529-04.nupkg.sha512",
         "Microsoft.CodeAnalysis.Common.nuspec",
         "ThirdPartyNotices.rtf",
         "lib/net45/Microsoft.CodeAnalysis.dll",
@@ -1684,11 +1535,11 @@
         "lib/portable-net45+win8/Microsoft.CodeAnalysis.xml"
       ]
     },
-    "Microsoft.CodeAnalysis.CSharp/1.0.0-rc3-20150525-02": {
-      "sha512": "xlzkBrlfJpjWag/Mn7iuOlupMtLkN27BP7wKRe6J+gCjAhgQpkUzxc0DtqQgojnRMGTntg1idNa3qMyiYNWuWA==",
+    "Microsoft.CodeAnalysis.CSharp/1.0.0-rc3-20150529-04": {
+      "sha512": "iS92guFlOKM4GNXwuWkQDgMwZDWxEny9LsilhAGyc8gfdX1rmbOrQTLR6ti8CQA3Jk0s9UB7O1MZmI8lKvcTMw==",
       "files": [
-        "Microsoft.CodeAnalysis.CSharp.1.0.0-rc3-20150525-02.nupkg",
-        "Microsoft.CodeAnalysis.CSharp.1.0.0-rc3-20150525-02.nupkg.sha512",
+        "Microsoft.CodeAnalysis.CSharp.1.0.0-rc3-20150529-04.nupkg",
+        "Microsoft.CodeAnalysis.CSharp.1.0.0-rc3-20150529-04.nupkg.sha512",
         "Microsoft.CodeAnalysis.CSharp.nuspec",
         "ThirdPartyNotices.rtf",
         "lib/net45/Microsoft.CodeAnalysis.CSharp.dll",
@@ -1697,24 +1548,12 @@
         "lib/portable-net45+win8/Microsoft.CodeAnalysis.CSharp.xml"
       ]
     },
-    "Microsoft.Framework.ApplicationHost/1.0.0-beta6-11944": {
-      "sha512": "IpxPEmWG7oQFwc0Gihu/HlzmmeK99/yFliAf6Iu+mLzrPt4dWdi3bC5AciTg3uwLQzCBtIzzGoxL8cCRSAKdQw==",
-      "files": [
-        "Microsoft.Framework.ApplicationHost.1.0.0-beta6-11944.nupkg",
-        "Microsoft.Framework.ApplicationHost.1.0.0-beta6-11944.nupkg.sha512",
-        "Microsoft.Framework.ApplicationHost.nuspec",
-        "lib/dnx451/Microsoft.Framework.ApplicationHost.dll",
-        "lib/dnx451/Microsoft.Framework.ApplicationHost.xml",
-        "lib/dnxcore50/Microsoft.Framework.ApplicationHost.dll",
-        "lib/dnxcore50/Microsoft.Framework.ApplicationHost.xml"
-      ]
-    },
-    "Microsoft.Framework.Caching.Abstractions/1.0.0-beta5-11421": {
+    "Microsoft.Framework.Caching.Abstractions/1.0.0-beta6-11434": {
       "serviceable": true,
-      "sha512": "Myz+VwyeLXdqP3pvPqx4OEq4TUd0jffmYOfugUjnXuBwtSCX/e8mCJkuQyrfi2B0y3Ja3Bo76DF0IurW+22ocw==",
+      "sha512": "U/A3w8rVhEXfVWxsJDWZlBKohuqGK7wqxtmZmLFWlQbOnk7+QbQL2SC3Gi6XPAT/cOWReIaNGpc3bleM+UNkFw==",
       "files": [
-        "Microsoft.Framework.Caching.Abstractions.1.0.0-beta5-11421.nupkg",
-        "Microsoft.Framework.Caching.Abstractions.1.0.0-beta5-11421.nupkg.sha512",
+        "Microsoft.Framework.Caching.Abstractions.1.0.0-beta6-11434.nupkg",
+        "Microsoft.Framework.Caching.Abstractions.1.0.0-beta6-11434.nupkg.sha512",
         "Microsoft.Framework.Caching.Abstractions.nuspec",
         "lib/dnx451/Microsoft.Framework.Caching.Abstractions.dll",
         "lib/dnx451/Microsoft.Framework.Caching.Abstractions.xml",
@@ -1726,12 +1565,12 @@
         "lib/portable-net45+win/Microsoft.Framework.Caching.Abstractions.xml"
       ]
     },
-    "Microsoft.Framework.Caching.Memory/1.0.0-beta5-11421": {
+    "Microsoft.Framework.Caching.Memory/1.0.0-beta6-11434": {
       "serviceable": true,
-      "sha512": "J66Fh4UZtGSPGtDmr6WH8IIx1hxAZLu7SEQCNhiWPN1pOhE3vY1a70dA+axis0JfsA0z6SaOwwc/rJHzkAj3DQ==",
+      "sha512": "pIN6o6QJ8dzkCMZ65BcDGXdnq9JAGd2DFjcWDRFunRbM9oYvA3ixTCP/da3JgdUVc+ZdNpXfCGrx0uc/NWGGtA==",
       "files": [
-        "Microsoft.Framework.Caching.Memory.1.0.0-beta5-11421.nupkg",
-        "Microsoft.Framework.Caching.Memory.1.0.0-beta5-11421.nupkg.sha512",
+        "Microsoft.Framework.Caching.Memory.1.0.0-beta6-11434.nupkg",
+        "Microsoft.Framework.Caching.Memory.1.0.0-beta6-11434.nupkg.sha512",
         "Microsoft.Framework.Caching.Memory.nuspec",
         "lib/dnx451/Microsoft.Framework.Caching.Memory.dll",
         "lib/dnx451/Microsoft.Framework.Caching.Memory.xml",
@@ -1743,11 +1582,11 @@
         "lib/portable-net45+win/Microsoft.Framework.Caching.Memory.xml"
       ]
     },
-    "Microsoft.Framework.CommandLineUtils.Sources/1.0.0-beta6-11944": {
-      "sha512": "hYQh7br5t/dTF0/gzNS7teJ2A7B3piP7esVDUdiMuZQ4jciZztXAw8HLn0h88rvep3pbv8Ozcus8jJg8FAf/zw==",
+    "Microsoft.Framework.CommandLineUtils.Sources/1.0.0-beta6-12108": {
+      "sha512": "MEkNgJvGSjAHv4k2WMcnbDutQCTKVtnVXw3/g4ODB+/DkM7yNBSJRI0bATZsQagEhoxhe62hJ2RZCGEeBYo23Q==",
       "files": [
-        "Microsoft.Framework.CommandLineUtils.Sources.1.0.0-beta6-11944.nupkg",
-        "Microsoft.Framework.CommandLineUtils.Sources.1.0.0-beta6-11944.nupkg.sha512",
+        "Microsoft.Framework.CommandLineUtils.Sources.1.0.0-beta6-12108.nupkg",
+        "Microsoft.Framework.CommandLineUtils.Sources.1.0.0-beta6-12108.nupkg.sha512",
         "Microsoft.Framework.CommandLineUtils.Sources.nuspec",
         "lib/dnx451/Microsoft.Framework.CommandLineUtils.Sources.dll",
         "lib/dnx451/Microsoft.Framework.CommandLineUtils.Sources.xml",
@@ -1760,12 +1599,12 @@
         "shared/CommandOptionType.cs"
       ]
     },
-    "Microsoft.Framework.Configuration/1.0.0-beta5-11394": {
+    "Microsoft.Framework.Configuration/1.0.0-beta6-11406": {
       "serviceable": true,
-      "sha512": "ytlJEXZPTxkYTNJ0nF2r2PMy1HDAnsugUASxvT4aNffSIv/G+G4fWlG4lfrDW98fp1v8bcj7sjRU1ebPondXbw==",
+      "sha512": "cYnm/OQ0EYko7jc6JMyBs07iMWgGweWf+Fvw5cWX3A0r59rwgqRMidBIOx/s5zNFe0yxKPNYeuvlKJYcB2iNqg==",
       "files": [
-        "Microsoft.Framework.Configuration.1.0.0-beta5-11394.nupkg",
-        "Microsoft.Framework.Configuration.1.0.0-beta5-11394.nupkg.sha512",
+        "Microsoft.Framework.Configuration.1.0.0-beta6-11406.nupkg",
+        "Microsoft.Framework.Configuration.1.0.0-beta6-11406.nupkg.sha512",
         "Microsoft.Framework.Configuration.nuspec",
         "lib/dnx451/Microsoft.Framework.Configuration.dll",
         "lib/dnx451/Microsoft.Framework.Configuration.xml",
@@ -1777,12 +1616,12 @@
         "lib/portable-net45+win/Microsoft.Framework.Configuration.xml"
       ]
     },
-    "Microsoft.Framework.Configuration.Abstractions/1.0.0-beta5-11394": {
+    "Microsoft.Framework.Configuration.Abstractions/1.0.0-beta6-11406": {
       "serviceable": true,
-      "sha512": "nU1H8uejlKW2IQR8ckRUA/iHT525o6ogB/6JGTGFuow7NeykW3d4LYVw+5Mjxa0CDc48NEY7l0yDb7KsLOStJQ==",
+      "sha512": "GLsx9jBrzeViFqUKGxKLyK+vOgNs38WNN487ZPIqPyYGVgwxns5e3DVXjmC2OIUeI/woVSCpcrW5ojKVzZdfdg==",
       "files": [
-        "Microsoft.Framework.Configuration.Abstractions.1.0.0-beta5-11394.nupkg",
-        "Microsoft.Framework.Configuration.Abstractions.1.0.0-beta5-11394.nupkg.sha512",
+        "Microsoft.Framework.Configuration.Abstractions.1.0.0-beta6-11406.nupkg",
+        "Microsoft.Framework.Configuration.Abstractions.1.0.0-beta6-11406.nupkg.sha512",
         "Microsoft.Framework.Configuration.Abstractions.nuspec",
         "lib/dnx451/Microsoft.Framework.Configuration.Abstractions.dll",
         "lib/dnx451/Microsoft.Framework.Configuration.Abstractions.xml",
@@ -1794,12 +1633,12 @@
         "lib/portable-net45+win/Microsoft.Framework.Configuration.Abstractions.xml"
       ]
     },
-    "Microsoft.Framework.Configuration.Binder/1.0.0-beta5-11394": {
+    "Microsoft.Framework.Configuration.Binder/1.0.0-beta6-11406": {
       "serviceable": true,
-      "sha512": "lgP/OHUPM9j/oez/pvcNqt3GBARzrLSltnlGB698jaPHQKOCb3oJfeXHNftqzIsapvVyG9RfT9KxgHpb43eKrg==",
+      "sha512": "IcsCD+Whzx4cF2YR4h+ocQktPvTELl1qID8Tqv1SIsKYKaERGQ4jq7AZAi2dXh91QefIPPfyiItNDD1U8AeP8g==",
       "files": [
-        "Microsoft.Framework.Configuration.Binder.1.0.0-beta5-11394.nupkg",
-        "Microsoft.Framework.Configuration.Binder.1.0.0-beta5-11394.nupkg.sha512",
+        "Microsoft.Framework.Configuration.Binder.1.0.0-beta6-11406.nupkg",
+        "Microsoft.Framework.Configuration.Binder.1.0.0-beta6-11406.nupkg.sha512",
         "Microsoft.Framework.Configuration.Binder.nuspec",
         "lib/dnx451/Microsoft.Framework.Configuration.Binder.dll",
         "lib/dnx451/Microsoft.Framework.Configuration.Binder.xml",
@@ -1811,12 +1650,12 @@
         "lib/portable-net45+win/Microsoft.Framework.Configuration.Binder.xml"
       ]
     },
-    "Microsoft.Framework.DependencyInjection/1.0.0-beta5-11423": {
+    "Microsoft.Framework.DependencyInjection/1.0.0-beta6-11435": {
       "serviceable": true,
-      "sha512": "Kk+vPJ6cwvXJwdWzE0nimnVqut0VOW+yNja9AUN71vQLEhJ4+M34UH2a2H5LCVx2YxJTmZodQg0DjNdsWoMZvg==",
+      "sha512": "Ax114+xVwW6w1SqwuM9MF/uqUrapt7nbZpgviLg2Vac0jwFj3xCAtqjM+XBBnoooFZjnpufRkWgkdHhy2dB66A==",
       "files": [
-        "Microsoft.Framework.DependencyInjection.1.0.0-beta5-11423.nupkg",
-        "Microsoft.Framework.DependencyInjection.1.0.0-beta5-11423.nupkg.sha512",
+        "Microsoft.Framework.DependencyInjection.1.0.0-beta6-11435.nupkg",
+        "Microsoft.Framework.DependencyInjection.1.0.0-beta6-11435.nupkg.sha512",
         "Microsoft.Framework.DependencyInjection.nuspec",
         "lib/dnx451/Microsoft.Framework.DependencyInjection.dll",
         "lib/dnx451/Microsoft.Framework.DependencyInjection.xml",
@@ -1828,63 +1667,57 @@
         "lib/portable-net45+win/Microsoft.Framework.DependencyInjection.xml"
       ]
     },
-    "Microsoft.Framework.DependencyInjection.Abstractions/1.0.0-beta6-11437": {
+    "Microsoft.Framework.DependencyInjection.Abstractions/1.0.0-beta6-11513": {
       "serviceable": true,
-      "sha512": "tR9Shum2N6IAJCW12UTvKyZgGQRvvGcVCQNQe0A8Z9+iaZfNWwUtmaSJhX89IVSbycqypzorvtlPqDXVGP21mg==",
+      "sha512": "jvhIT6OunFW4gH4ay/K6GMVUPtPbu/SgwR/SH284dyq8cK5TCAOuBN2m2Wln/aKZw2ipIkavCJePm14hurjBIg==",
       "files": [
-        "Microsoft.Framework.DependencyInjection.Abstractions.1.0.0-beta6-11437.nupkg",
-        "Microsoft.Framework.DependencyInjection.Abstractions.1.0.0-beta6-11437.nupkg.sha512",
+        "Microsoft.Framework.DependencyInjection.Abstractions.1.0.0-beta6-11513.nupkg",
+        "Microsoft.Framework.DependencyInjection.Abstractions.1.0.0-beta6-11513.nupkg.sha512",
         "Microsoft.Framework.DependencyInjection.Abstractions.nuspec",
         "lib/dnx451/Microsoft.Framework.DependencyInjection.Abstractions.dll",
         "lib/dnx451/Microsoft.Framework.DependencyInjection.Abstractions.xml",
-        "lib/dnxcore50/Microsoft.Framework.DependencyInjection.Abstractions.dll",
-        "lib/dnxcore50/Microsoft.Framework.DependencyInjection.Abstractions.xml",
+        "lib/dotnet/Microsoft.Framework.DependencyInjection.Abstractions.dll",
+        "lib/dotnet/Microsoft.Framework.DependencyInjection.Abstractions.xml",
         "lib/net45/Microsoft.Framework.DependencyInjection.Abstractions.dll",
-        "lib/net45/Microsoft.Framework.DependencyInjection.Abstractions.xml",
-        "lib/portable-net45+win/Microsoft.Framework.DependencyInjection.Abstractions.dll",
-        "lib/portable-net45+win/Microsoft.Framework.DependencyInjection.Abstractions.xml"
+        "lib/net45/Microsoft.Framework.DependencyInjection.Abstractions.xml"
       ]
     },
-    "Microsoft.Framework.Logging/1.0.0-beta6-11429": {
+    "Microsoft.Framework.Logging/1.0.0-beta6-11503": {
       "serviceable": true,
-      "sha512": "oEiB001uFD4eGoViF5RfX5KN/3ORBWQGv3gp+Od5+IZeoneVdeJovDoC+ctpmfUwkW5BAfh3Pz1ZCRYkRPfRqA==",
+      "sha512": "B2us9AtuuHG8CWFFEmXOUlkayBG/8WRTcQTPyWP9oHtEtDcnzJLVmM/EuZq1DJR6VxL5iyBkEC79dVE+X9IUzQ==",
       "files": [
-        "Microsoft.Framework.Logging.1.0.0-beta6-11429.nupkg",
-        "Microsoft.Framework.Logging.1.0.0-beta6-11429.nupkg.sha512",
+        "Microsoft.Framework.Logging.1.0.0-beta6-11503.nupkg",
+        "Microsoft.Framework.Logging.1.0.0-beta6-11503.nupkg.sha512",
         "Microsoft.Framework.Logging.nuspec",
         "lib/dnx451/Microsoft.Framework.Logging.dll",
         "lib/dnx451/Microsoft.Framework.Logging.xml",
-        "lib/dnxcore50/Microsoft.Framework.Logging.dll",
-        "lib/dnxcore50/Microsoft.Framework.Logging.xml",
+        "lib/dotnet/Microsoft.Framework.Logging.dll",
+        "lib/dotnet/Microsoft.Framework.Logging.xml",
         "lib/net45/Microsoft.Framework.Logging.dll",
-        "lib/net45/Microsoft.Framework.Logging.xml",
-        "lib/portable-net45+win/Microsoft.Framework.Logging.dll",
-        "lib/portable-net45+win/Microsoft.Framework.Logging.xml"
+        "lib/net45/Microsoft.Framework.Logging.xml"
       ]
     },
-    "Microsoft.Framework.Logging.Abstractions/1.0.0-beta6-11429": {
+    "Microsoft.Framework.Logging.Abstractions/1.0.0-beta6-11503": {
       "serviceable": true,
-      "sha512": "Bzsqxf7BQflTEmG+j5z+W0sA20EqYuhGseqIBiqTPZPb+QHTGqsQMABCF9sQLaaTpdvzmVgfXTzKONANhz+GWA==",
+      "sha512": "GvmFgNTh7Kj1b9AuuomskRDQvtGT+VaujKph0y0H7lfmttp86jhnmiYUYg+Gx2Fowf3PSXM4KMlu/WCb2G51Uw==",
       "files": [
-        "Microsoft.Framework.Logging.Abstractions.1.0.0-beta6-11429.nupkg",
-        "Microsoft.Framework.Logging.Abstractions.1.0.0-beta6-11429.nupkg.sha512",
+        "Microsoft.Framework.Logging.Abstractions.1.0.0-beta6-11503.nupkg",
+        "Microsoft.Framework.Logging.Abstractions.1.0.0-beta6-11503.nupkg.sha512",
         "Microsoft.Framework.Logging.Abstractions.nuspec",
         "lib/dnx451/Microsoft.Framework.Logging.Abstractions.dll",
         "lib/dnx451/Microsoft.Framework.Logging.Abstractions.xml",
-        "lib/dnxcore50/Microsoft.Framework.Logging.Abstractions.dll",
-        "lib/dnxcore50/Microsoft.Framework.Logging.Abstractions.xml",
+        "lib/dotnet/Microsoft.Framework.Logging.Abstractions.dll",
+        "lib/dotnet/Microsoft.Framework.Logging.Abstractions.xml",
         "lib/net45/Microsoft.Framework.Logging.Abstractions.dll",
-        "lib/net45/Microsoft.Framework.Logging.Abstractions.xml",
-        "lib/portable-net45+win/Microsoft.Framework.Logging.Abstractions.dll",
-        "lib/portable-net45+win/Microsoft.Framework.Logging.Abstractions.xml"
+        "lib/net45/Microsoft.Framework.Logging.Abstractions.xml"
       ]
     },
-    "Microsoft.Framework.OptionsModel/1.0.0-beta5-11392": {
+    "Microsoft.Framework.OptionsModel/1.0.0-beta6-11404": {
       "serviceable": true,
-      "sha512": "oVmpE47HI0VIszfkFJRGhfhJalqammp0bgZ5mZ1o8Kflvx3A3ovIWtZcsmqZSYqoNLVIEFfq6BejxHkJjmhXMA==",
+      "sha512": "HibsyYTG2m/9n5ETrIsWpmSHczKt19WcVLIHmbVNKfoXpWZOyPJ6G7mkEM1UQtN8SUIhP/PMv2mVp88a+syBRw==",
       "files": [
-        "Microsoft.Framework.OptionsModel.1.0.0-beta5-11392.nupkg",
-        "Microsoft.Framework.OptionsModel.1.0.0-beta5-11392.nupkg.sha512",
+        "Microsoft.Framework.OptionsModel.1.0.0-beta6-11404.nupkg",
+        "Microsoft.Framework.OptionsModel.1.0.0-beta6-11404.nupkg.sha512",
         "Microsoft.Framework.OptionsModel.nuspec",
         "lib/dnx451/Microsoft.Framework.OptionsModel.dll",
         "lib/dnx451/Microsoft.Framework.OptionsModel.xml",
@@ -1896,12 +1729,12 @@
         "lib/portable-net45+win/Microsoft.Framework.OptionsModel.xml"
       ]
     },
-    "Microsoft.Framework.Runtime/1.0.0-beta6-11944": {
+    "Microsoft.Framework.Runtime/1.0.0-beta6-12108": {
       "serviceable": true,
-      "sha512": "nV9oVS5roPXEdqu+7TUPnOIdBLw/cEU12slbWYNKv/WyXw/wNaQE0DXQU85HCV4V0vPZqlfgWmISmOp1Zb3BAA==",
+      "sha512": "pax5gRJquNlbUrU3pUxSG+v+lp8+4GA7p6lrb0xtszuI/NtxGT7K7CrvnkVYFcNFLd1GJcon7GH3A7jsJlM1XA==",
       "files": [
-        "Microsoft.Framework.Runtime.1.0.0-beta6-11944.nupkg",
-        "Microsoft.Framework.Runtime.1.0.0-beta6-11944.nupkg.sha512",
+        "Microsoft.Framework.Runtime.1.0.0-beta6-12108.nupkg",
+        "Microsoft.Framework.Runtime.1.0.0-beta6-12108.nupkg.sha512",
         "Microsoft.Framework.Runtime.nuspec",
         "lib/dnx451/Microsoft.Framework.Runtime.dll",
         "lib/dnx451/Microsoft.Framework.Runtime.xml",
@@ -1909,12 +1742,12 @@
         "lib/dnxcore50/Microsoft.Framework.Runtime.xml"
       ]
     },
-    "Microsoft.Framework.Runtime.Abstractions/1.0.0-beta6-11944": {
+    "Microsoft.Framework.Runtime.Abstractions/1.0.0-beta6-12108": {
       "serviceable": true,
-      "sha512": "PDV3cFkLXbKdocoK6oegArb0zjZcdPqgOqUeMF089TUxEea9BU5dtzCONi4bV2WtsBRUXuZNDLuWj0zZJYWaRg==",
+      "sha512": "KwRlMZAVkzwFvY9Tfq6tH6yUYRuXU6SRSWYXzBHZ7drHkQZct4AnhKdsTyRPfWkRe6zRAd/6MzZBfefQaEfaBA==",
       "files": [
-        "Microsoft.Framework.Runtime.Abstractions.1.0.0-beta6-11944.nupkg",
-        "Microsoft.Framework.Runtime.Abstractions.1.0.0-beta6-11944.nupkg.sha512",
+        "Microsoft.Framework.Runtime.Abstractions.1.0.0-beta6-12108.nupkg",
+        "Microsoft.Framework.Runtime.Abstractions.1.0.0-beta6-12108.nupkg.sha512",
         "Microsoft.Framework.Runtime.Abstractions.nuspec",
         "lib/dnx451/Microsoft.Framework.Runtime.Abstractions.dll",
         "lib/dnx451/Microsoft.Framework.Runtime.Abstractions.xml",
@@ -1922,11 +1755,11 @@
         "lib/dnxcore50/Microsoft.Framework.Runtime.Abstractions.xml"
       ]
     },
-    "Microsoft.Framework.Runtime.Caching/1.0.0-beta6-11944": {
-      "sha512": "CfUyt92HuoYppiNbi2xp43aBhxwhUrAJlU4Eui2RyW5WN5WXPl4qyWZKxNwbXdbhNkAKMC6X5bJB5Vgl6XzGEw==",
+    "Microsoft.Framework.Runtime.Caching/1.0.0-beta6-12108": {
+      "sha512": "1oDRuYohhJnZ5rCx3Et9EzyLSXv0jvSrM1VV91/K1jQN35IbjGAMsgLfWFKscQ9Dqxprn0BAwPgkcu81zAn4Kg==",
       "files": [
-        "Microsoft.Framework.Runtime.Caching.1.0.0-beta6-11944.nupkg",
-        "Microsoft.Framework.Runtime.Caching.1.0.0-beta6-11944.nupkg.sha512",
+        "Microsoft.Framework.Runtime.Caching.1.0.0-beta6-12108.nupkg",
+        "Microsoft.Framework.Runtime.Caching.1.0.0-beta6-12108.nupkg.sha512",
         "Microsoft.Framework.Runtime.Caching.nuspec",
         "lib/dnx451/Microsoft.Framework.Runtime.Caching.dll",
         "lib/dnx451/Microsoft.Framework.Runtime.Caching.xml",
@@ -1934,12 +1767,12 @@
         "lib/dnxcore50/Microsoft.Framework.Runtime.Caching.xml"
       ]
     },
-    "Microsoft.Framework.Runtime.Loader/1.0.0-beta6-11944": {
+    "Microsoft.Framework.Runtime.Loader/1.0.0-beta6-12108": {
       "serviceable": true,
-      "sha512": "WW8LPuD8oMDD9CRQhYd/mjbP+NRvsUyyu6Pa21bzKvIPmWKVxeIa5j63DNGQX94SpqEm7iP/ugryx1UPFaUOBA==",
+      "sha512": "RJWb/rWi63CFwJaz1JruakLqaD/bvBdQSI+G52gPuGuER97vCS2Af2yhb4z+B2qSOwQr7ERX8fPeq52MqfU7iQ==",
       "files": [
-        "Microsoft.Framework.Runtime.Loader.1.0.0-beta6-11944.nupkg",
-        "Microsoft.Framework.Runtime.Loader.1.0.0-beta6-11944.nupkg.sha512",
+        "Microsoft.Framework.Runtime.Loader.1.0.0-beta6-12108.nupkg",
+        "Microsoft.Framework.Runtime.Loader.1.0.0-beta6-12108.nupkg.sha512",
         "Microsoft.Framework.Runtime.Loader.nuspec",
         "lib/dnx451/Microsoft.Framework.Runtime.Loader.dll",
         "lib/dnx451/Microsoft.Framework.Runtime.Loader.xml",
@@ -1947,12 +1780,12 @@
         "lib/dnxcore50/Microsoft.Framework.Runtime.Loader.xml"
       ]
     },
-    "Microsoft.Framework.Runtime.Roslyn.Abstractions/1.0.0-beta5-11904": {
+    "Microsoft.Framework.Runtime.Roslyn.Abstractions/1.0.0-beta6-11941": {
       "serviceable": true,
-      "sha512": "EWdLiEQi6fIfJdkK2e9qQDaMcd05pIqgFA3Oh4DSF3ecwGCL12fcc3H8h8nJntbr3P6eKGDZ02U0saQPX4hMZw==",
+      "sha512": "VUJqOqA6rw8KXd0OA5sTH58E3GGkoxE2KZo/1r/0kDZnUnuaLaI5P9W5JKsVwyTCXyRn1j776Jt+dzZEMOqYiA==",
       "files": [
-        "Microsoft.Framework.Runtime.Roslyn.Abstractions.1.0.0-beta5-11904.nupkg",
-        "Microsoft.Framework.Runtime.Roslyn.Abstractions.1.0.0-beta5-11904.nupkg.sha512",
+        "Microsoft.Framework.Runtime.Roslyn.Abstractions.1.0.0-beta6-11941.nupkg",
+        "Microsoft.Framework.Runtime.Roslyn.Abstractions.1.0.0-beta6-11941.nupkg.sha512",
         "Microsoft.Framework.Runtime.Roslyn.Abstractions.nuspec",
         "lib/dnx451/Microsoft.Framework.Runtime.Roslyn.Abstractions.dll",
         "lib/dnx451/Microsoft.Framework.Runtime.Roslyn.Abstractions.xml",
@@ -1960,12 +1793,12 @@
         "lib/dnxcore50/Microsoft.Framework.Runtime.Roslyn.Abstractions.xml"
       ]
     },
-    "Microsoft.Framework.Runtime.Roslyn.Common/1.0.0-beta5-11904": {
+    "Microsoft.Framework.Runtime.Roslyn.Common/1.0.0-beta6-11941": {
       "serviceable": true,
-      "sha512": "hmM5BXNwIFZTm5OxVO/XTJzwYAviDG3NY8kffU9O7zPoNBzsKv97E3/z+/Juy2mjevJxRxPs2k+ZtPTKbfoiXw==",
+      "sha512": "Ri79GdjMHOnVcx5GkNQ7ELuv+D9Nwl0/j7N5jj5cVRrqueljm+UeFmo4VpdSBQki6JB/kgG08agl6yQEqH6CSA==",
       "files": [
-        "Microsoft.Framework.Runtime.Roslyn.Common.1.0.0-beta5-11904.nupkg",
-        "Microsoft.Framework.Runtime.Roslyn.Common.1.0.0-beta5-11904.nupkg.sha512",
+        "Microsoft.Framework.Runtime.Roslyn.Common.1.0.0-beta6-11941.nupkg",
+        "Microsoft.Framework.Runtime.Roslyn.Common.1.0.0-beta6-11941.nupkg.sha512",
         "Microsoft.Framework.Runtime.Roslyn.Common.nuspec",
         "lib/dnx451/Microsoft.Framework.Runtime.Roslyn.Common.dll",
         "lib/dnx451/Microsoft.Framework.Runtime.Roslyn.Common.xml",
@@ -1973,12 +1806,12 @@
         "lib/dnxcore50/Microsoft.Framework.Runtime.Roslyn.Common.xml"
       ]
     },
-    "Microsoft.Framework.TestAdapter/1.0.0-beta6-11564": {
+    "Microsoft.Framework.TestAdapter/1.0.0-beta6-11659": {
       "serviceable": true,
-      "sha512": "7qutvLNGcMpOdYgcw9LaLBtSC6P/ThVWBBmTOG0vRB2ySXzEUkpNaBLksLm1yOS0IyWcCyOlokSAdKWJbL3JjA==",
+      "sha512": "yLWjbC9phac63hN221YWZ+6i/VdHZKni4QB7SewWCV/n7f/A/ROynb/cR8yzLIY9vSnS/8GKDYSST3qjS1U6sQ==",
       "files": [
-        "Microsoft.Framework.TestAdapter.1.0.0-beta6-11564.nupkg",
-        "Microsoft.Framework.TestAdapter.1.0.0-beta6-11564.nupkg.sha512",
+        "Microsoft.Framework.TestAdapter.1.0.0-beta6-11659.nupkg",
+        "Microsoft.Framework.TestAdapter.1.0.0-beta6-11659.nupkg.sha512",
         "Microsoft.Framework.TestAdapter.nuspec",
         "lib/dnx451/Microsoft.Framework.TestAdapter.dll",
         "lib/dnx451/Microsoft.Framework.TestAdapter.xml",
@@ -1986,12 +1819,12 @@
         "lib/dnxcore50/Microsoft.Framework.TestAdapter.xml"
       ]
     },
-    "Microsoft.Framework.TestHost/1.0.0-beta6-11564": {
+    "Microsoft.Framework.TestHost/1.0.0-beta6-11659": {
       "serviceable": true,
-      "sha512": "ZQFc8trBwYxpOI3SY80eD5fVb+ogqZW3JbuoWHuJ1KT65cyI7PYK7VjWLppUFau5Twl7qZiaIqesVg0e3DBy+g==",
+      "sha512": "R0NssigZFX/ywRQ30jtfGN0OsFTCx3aVTDH7vXExzCGpLu1AbmQnwqtkVB6Nyeo+sN951epJVU6bODPdcxcxOA==",
       "files": [
-        "Microsoft.Framework.TestHost.1.0.0-beta6-11564.nupkg",
-        "Microsoft.Framework.TestHost.1.0.0-beta6-11564.nupkg.sha512",
+        "Microsoft.Framework.TestHost.1.0.0-beta6-11659.nupkg",
+        "Microsoft.Framework.TestHost.1.0.0-beta6-11659.nupkg.sha512",
         "Microsoft.Framework.TestHost.nuspec",
         "app/project.json",
         "lib/dnx451/Microsoft.Framework.TestHost.dll",
@@ -2000,12 +1833,12 @@
         "lib/dnxcore50/Microsoft.Framework.TestHost.xml"
       ]
     },
-    "Microsoft.Framework.WebEncoders/1.0.0-beta5-11550": {
+    "Microsoft.Framework.WebEncoders/1.0.0-beta6-11564": {
       "serviceable": true,
-      "sha512": "agB64SZx8wur91NXLWelUgwyXnkqg4ba0cFatQZ9vnEgSW7pKgCJ61qlMCtdue9I1NAUy+DtJMe9NOHF+F4MAg==",
+      "sha512": "/9bZdm+otxijQLypW/+cxExKFFmZN8ql20UuouswWwDiSkhmSTbJXw1pD2HPYaKpeYhMAJhlWr+oIzF6dVz7qg==",
       "files": [
-        "Microsoft.Framework.WebEncoders.1.0.0-beta5-11550.nupkg",
-        "Microsoft.Framework.WebEncoders.1.0.0-beta5-11550.nupkg.sha512",
+        "Microsoft.Framework.WebEncoders.1.0.0-beta6-11564.nupkg",
+        "Microsoft.Framework.WebEncoders.1.0.0-beta6-11564.nupkg.sha512",
         "Microsoft.Framework.WebEncoders.nuspec",
         "lib/dnx451/Microsoft.Framework.WebEncoders.dll",
         "lib/dnx451/Microsoft.Framework.WebEncoders.xml",
@@ -2015,12 +1848,12 @@
         "lib/net45/Microsoft.Framework.WebEncoders.xml"
       ]
     },
-    "Microsoft.Framework.WebEncoders.Core/1.0.0-beta5-11550": {
+    "Microsoft.Framework.WebEncoders.Core/1.0.0-beta6-11564": {
       "serviceable": true,
-      "sha512": "lnKURz0jNx4nqjKWylENoDpAlCJxMElLQZ0WkTVGCwh2OC1FCk6TReI8Uts0XM9lS+pyqi2H6xrGMiPtVR1vzQ==",
+      "sha512": "2rgnJsA/UyMx14q4mekS5+CC3vZHjFfPpJh5nclhAPqGYxF1Z0wHR9wkHlddDFRn7jOavp70ALedCYfV4iMxBg==",
       "files": [
-        "Microsoft.Framework.WebEncoders.Core.1.0.0-beta5-11550.nupkg",
-        "Microsoft.Framework.WebEncoders.Core.1.0.0-beta5-11550.nupkg.sha512",
+        "Microsoft.Framework.WebEncoders.Core.1.0.0-beta6-11564.nupkg",
+        "Microsoft.Framework.WebEncoders.Core.1.0.0-beta6-11564.nupkg.sha512",
         "Microsoft.Framework.WebEncoders.Core.nuspec",
         "lib/dnx451/Microsoft.Framework.WebEncoders.Core.dll",
         "lib/dnx451/Microsoft.Framework.WebEncoders.Core.xml",
@@ -2030,12 +1863,12 @@
         "lib/net45/Microsoft.Framework.WebEncoders.Core.xml"
       ]
     },
-    "Microsoft.Net.Http.Headers/1.0.0-beta5-11550": {
+    "Microsoft.Net.Http.Headers/1.0.0-beta6-11564": {
       "serviceable": true,
-      "sha512": "43e4LbV6k0VUZsOcDNHgWoV4xfnt+cf2f5f4Pq5xsornnpZYb4ljP1IFIy4U+DJHsDcQMuY6aGMyPqVgPJgSUQ==",
+      "sha512": "i0X1OS+w37IRXOYvOPTuXjFA/Nfnx8bEDHVqrs6rDdcU53qu93iWfIEzd0+OF7B8eSmheXpuFxPnB4jiJkvHnw==",
       "files": [
-        "Microsoft.Net.Http.Headers.1.0.0-beta5-11550.nupkg",
-        "Microsoft.Net.Http.Headers.1.0.0-beta5-11550.nupkg.sha512",
+        "Microsoft.Net.Http.Headers.1.0.0-beta6-11564.nupkg",
+        "Microsoft.Net.Http.Headers.1.0.0-beta6-11564.nupkg.sha512",
         "Microsoft.Net.Http.Headers.nuspec",
         "lib/dnx451/Microsoft.Net.Http.Headers.dll",
         "lib/dnx451/Microsoft.Net.Http.Headers.xml",
@@ -2082,18 +1915,6 @@
         "tools/install.ps1"
       ]
     },
-    "Swashbuckle/6.0.0-beta1": {
-      "sha512": "Yr2Wz8BGoQHi7rhcdXLrwZIhjoee41d94s4Ayp81FPg7TyCI3e/ERugxNvfKC4Pf7xmDF05BPH56NJDn1eMV1Q==",
-      "files": [
-        "Swashbuckle.6.0.0-beta1.nupkg",
-        "Swashbuckle.6.0.0-beta1.nupkg.sha512",
-        "Swashbuckle.nuspec",
-        "lib/dnx451/Swashbuckle.dll",
-        "lib/dnx451/Swashbuckle.xml",
-        "lib/dnxcore50/Swashbuckle.dll",
-        "lib/dnxcore50/Swashbuckle.xml"
-      ]
-    },
     "System.Collections.Immutable/1.1.36": {
       "serviceable": true,
       "sha512": "MOlivTIeAIQPPMUPWIIoMCvZczjFRLYUWSYwqi1szu8QPyeIbsaPeI+hpXe1DzTxNwnRnmfYaoToi6kXIfSPNg==",
@@ -2106,43 +1927,6 @@
         "lib/portable-net45+win8+wp8+wpa81/System.Collections.Immutable.xml"
       ]
     },
-    "System.IO/4.0.10-beta-22231": {
-      "sha512": "EdJrv2X/XGww0Pa7n62EgTzMowbok2QvFhv9aNnraN06baluqhA//bZ1P15O/8BtSq51jzYqW9vXrTU/Kiz95A==",
-      "files": [
-        "License.rtf",
-        "System.IO.4.0.10-beta-22231.nupkg",
-        "System.IO.4.0.10-beta-22231.nupkg.sha512",
-        "System.IO.nuspec",
-        "lib/aspnetcore50/System.IO.dll",
-        "lib/contract/System.IO.dll"
-      ]
-    },
-    "System.Reflection/4.0.10-beta-22913": {
-      "sha512": "xIniWRM4afCsS8X2sLa8oJA2mD+rvIsVAa66j/ldUUPWCPSKqss6C3OwfPY8pfoDNmjTJ3DW3JL2f+QKwIsMKg==",
-      "files": [
-        "License.rtf",
-        "System.Reflection.4.0.10-beta-22913.nupkg",
-        "System.Reflection.4.0.10-beta-22913.nupkg.sha512",
-        "System.Reflection.nuspec",
-        "lib/aspnetcore50/System.Reflection.dll",
-        "lib/contract/System.Reflection.dll",
-        "lib/net45/System.Reflection.dll",
-        "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Reflection.dll"
-      ]
-    },
-    "System.Reflection.Extensions/4.0.0-beta-22913": {
-      "sha512": "cGKZIbX13yVAcVokHzvskFlgGrm7c7FaJdj/QTg+FJ6mnXct+CRL8mXlKONjnokZeXTI4Tychgym93qmVHIFzg==",
-      "files": [
-        "License.rtf",
-        "System.Reflection.Extensions.4.0.0-beta-22913.nupkg",
-        "System.Reflection.Extensions.4.0.0-beta-22913.nupkg.sha512",
-        "System.Reflection.Extensions.nuspec",
-        "lib/aspnetcore50/System.Reflection.Extensions.dll",
-        "lib/contract/System.Reflection.Extensions.dll",
-        "lib/net45/System.Reflection.Extensions.dll",
-        "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Reflection.Extensions.dll"
-      ]
-    },
     "System.Reflection.Metadata/1.0.21": {
       "serviceable": true,
       "sha512": "CAhcY0EJFLXfxo5YRV/ytkTOeTBho8zKjLu+9LvEI5NIVmanp1yMUzYQdjvXpHbyV0Qt1KuLXcTCc9t9FVH3Wg==",
@@ -2153,117 +1937,6 @@
         "System.Reflection.Metadata.nuspec",
         "lib/portable-net45+win8/System.Reflection.Metadata.dll",
         "lib/portable-net45+win8/System.Reflection.Metadata.xml"
-      ]
-    },
-    "System.Reflection.Primitives/4.0.0-beta-22913": {
-      "sha512": "QLyWA7vaEUIM0lipeYPr6CzRxqOPZgf43RMhvztaoNUhxE8fxru5s3/QXV+fE2IPqWOROA+GejBJj1Ec4RPKmg==",
-      "files": [
-        "License.rtf",
-        "System.Reflection.Primitives.4.0.0-beta-22913.nupkg",
-        "System.Reflection.Primitives.4.0.0-beta-22913.nupkg.sha512",
-        "System.Reflection.Primitives.nuspec",
-        "lib/aspnetcore50/System.Reflection.Primitives.dll",
-        "lib/contract/System.Reflection.Primitives.dll",
-        "lib/net45/System.Reflection.Primitives.dll",
-        "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Reflection.Primitives.dll"
-      ]
-    },
-    "System.Reflection.TypeExtensions/4.0.0-beta-22913": {
-      "sha512": "BBqDz71Y0CXGhHpMVp58wBG4vwa3r4BgS+3EippT/7xVUvwSUzu5Um9YrCDc86ICzjsi/2iz41BrFhUVenix5g==",
-      "files": [
-        "License.rtf",
-        "System.Reflection.TypeExtensions.4.0.0-beta-22913.nupkg",
-        "System.Reflection.TypeExtensions.4.0.0-beta-22913.nupkg.sha512",
-        "System.Reflection.TypeExtensions.nuspec",
-        "lib/aspnetcore50/System.Reflection.TypeExtensions.dll",
-        "lib/contract/System.Reflection.TypeExtensions.dll",
-        "lib/net45/_._",
-        "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Reflection.TypeExtensions.dll"
-      ]
-    },
-    "System.Runtime/4.0.20-beta-22913": {
-      "sha512": "xPFLEPfTzYa55T1ZdTIuxbJ2F9qWdK/tlUlcLnBskEJK9n+I6IDPlfWfokscXTaZjQxpS6p95L79vRWqphfyAw==",
-      "files": [
-        "License.rtf",
-        "System.Runtime.4.0.20-beta-22913.nupkg",
-        "System.Runtime.4.0.20-beta-22913.nupkg.sha512",
-        "System.Runtime.nuspec",
-        "lib/aspnetcore50/System.Runtime.dll",
-        "lib/contract/System.Runtime.dll",
-        "lib/net45/System.Runtime.dll",
-        "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Runtime.dll"
-      ]
-    },
-    "System.Text.Encoding/4.0.10-beta-22231": {
-      "sha512": "qHdaFAtqeplZ4VHyxmkJDs38UN3rP9OzayYd3I7sGQD4GRFtnpJF0NGWIUMVqd229z4GrsaVVPvNNwd0mgbr+w==",
-      "files": [
-        "License.rtf",
-        "System.Text.Encoding.4.0.10-beta-22231.nupkg",
-        "System.Text.Encoding.4.0.10-beta-22231.nupkg.sha512",
-        "System.Text.Encoding.nuspec",
-        "lib/aspnetcore50/System.Text.Encoding.dll",
-        "lib/contract/System.Text.Encoding.dll"
-      ]
-    },
-    "System.Threading.Tasks/4.0.10-beta-22231": {
-      "sha512": "lPHfw+jq9ENtRDTRgY9gCpiiphQzIi5Oh/Wg/2Jf6xJN+FH+oWWcCozaKvRT8Ovt5iNraDLbGBLoUoQvGTTXog==",
-      "files": [
-        "License.rtf",
-        "System.Threading.Tasks.4.0.10-beta-22231.nupkg",
-        "System.Threading.Tasks.4.0.10-beta-22231.nupkg.sha512",
-        "System.Threading.Tasks.nuspec",
-        "lib/aspnetcore50/System.Threading.Tasks.dll",
-        "lib/contract/System.Threading.Tasks.dll"
-      ]
-    },
-    "System.Xml.ReaderWriter/4.0.10-beta-22231": {
-      "sha512": "lCaHS/CVu6RNZLkdApd4Jjq43dZ9Az0PEWxNn9pYAb41hJzh2ya2bLPOlYIpIfFia/Nti4rx8vPIHm7FKscPeA==",
-      "files": [
-        "License.rtf",
-        "System.Xml.ReaderWriter.4.0.10-beta-22231.nupkg",
-        "System.Xml.ReaderWriter.4.0.10-beta-22231.nupkg.sha512",
-        "System.Xml.ReaderWriter.nuspec",
-        "lib/aspnetcore50/System.Xml.ReaderWriter.dll",
-        "lib/contract/System.Xml.ReaderWriter.dll"
-      ]
-    },
-    "System.Xml.XmlDocument/4.0.0-beta-22913": {
-      "sha512": "66GXwtLGK79szwAgpuA9pSWq/agxxz9vkA6/Vi/2PSGewVq48EVrwO5lmD9g4hFBPPmuMiwnaLQQTMPrp2rN8Q==",
-      "files": [
-        "License.rtf",
-        "System.Xml.XmlDocument.4.0.0-beta-22913.nupkg",
-        "System.Xml.XmlDocument.4.0.0-beta-22913.nupkg.sha512",
-        "System.Xml.XmlDocument.nuspec",
-        "lib/aspnetcore50/System.Xml.XmlDocument.dll",
-        "lib/contract/System.Xml.XmlDocument.dll",
-        "lib/net45/System.Xml.XmlDocument.dll",
-        "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Xml.XmlDocument.dll"
-      ]
-    },
-    "System.Xml.XPath/4.0.0-beta-22913": {
-      "sha512": "rTWlOVDo9x/8j+96ZC2hiCXsTzA6xp+alk8finFKi3ESct46VeybM6bYDIWAUwuY0bW/sqcLRsxjsi6bmLUBxg==",
-      "files": [
-        "License.rtf",
-        "System.Xml.XPath.4.0.0-beta-22913.nupkg",
-        "System.Xml.XPath.4.0.0-beta-22913.nupkg.sha512",
-        "System.Xml.XPath.nuspec",
-        "lib/aspnetcore50/System.Xml.XPath.dll",
-        "lib/contract/System.Xml.XPath.dll",
-        "lib/net45/System.Xml.XPath.dll",
-        "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Xml.XPath.dll"
-      ]
-    },
-    "System.Xml.XPath.XmlDocument/4.0.0-beta-22913": {
-      "sha512": "SKsXjAHR9qhnQIBT6pS7KhQDz0Aw9tBKdSz6INcY2gWPpAW3qiSAMUPLR0Nv45kcERovsTNoL+4M1LzHYFAbTg==",
-      "files": [
-        "License.rtf",
-        "System.Xml.XPath.XmlDocument.4.0.0-beta-22913.nupkg",
-        "System.Xml.XPath.XmlDocument.4.0.0-beta-22913.nupkg.sha512",
-        "System.Xml.XPath.XmlDocument.nuspec",
-        "lib/aspnetcore50/System.Xml.XPath.XmlDocument.dll",
-        "lib/contract/System.Xml.XPath.XmlDocument.dll",
-        "lib/net45/_._",
-        "lib/portable-wpa81+wp80+win80+net45+aspnetcore50/System.Xml.XPath.XmlDocument.dll"
       ]
     },
     "xunit.abstractions/2.0.0-rc3-build2880": {
@@ -2289,11 +1962,11 @@
         "lib/portable-net45+aspnetcore50+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS/xunit.assert.xml"
       ]
     },
-    "xunit.execution.AspNet/2.0.0-aspnet-beta5-10305": {
-      "sha512": "iUR80TwDVEjvRAlIlrUkB4Vvn5vlg0Zfr31MbDia5/5GVH5BBjAOb/f8yol65v7uEWDLsM4ut15csj71DJqfYQ==",
+    "xunit.execution.AspNet/2.0.0-aspnet-beta6-10331": {
+      "sha512": "P6z1H6aF68WssJGhDDVak4dlxnh1rxKqwiFX0zpc4tC5WGX6MM1ocuE1JbE5qiMQj042LL72/WQHitLRrIG+LA==",
       "files": [
-        "xunit.execution.AspNet.2.0.0-aspnet-beta5-10305.nupkg",
-        "xunit.execution.AspNet.2.0.0-aspnet-beta5-10305.nupkg.sha512",
+        "xunit.execution.AspNet.2.0.0-aspnet-beta6-10331.nupkg",
+        "xunit.execution.AspNet.2.0.0-aspnet-beta6-10331.nupkg.sha512",
         "xunit.execution.AspNet.nuspec",
         "lib/dnx451/xunit.execution.AspNet.dll",
         "lib/dnx451/xunit.execution.AspNet.xml",
@@ -2315,11 +1988,11 @@
         "lib/portable-net45+aspnetcore50+win+wpa81+wp80+monotouch+monoandroid+Xamarin.iOS/xunit.runner.utility.desktop.dll"
       ]
     },
-    "xunit.runner.aspnet/2.0.0-aspnet-beta6-10490": {
-      "sha512": "9qowYagHedCdlvBhWYbQD1ayMxsKkMAS3kU94YOPm4sPvsbj9Wg+BmmErQqePADtXI745FcXygPFRx5fmCziQQ==",
+    "xunit.runner.aspnet/2.0.0-aspnet-beta6-10575": {
+      "sha512": "Bxa7LZKv05L0bx3PsumAAkogfKzHh95psX2SZJmDVdQSqlgO8uAAv11s7kX3quefttrOXF0brukDSehi+AEXWA==",
       "files": [
-        "xunit.runner.aspnet.2.0.0-aspnet-beta6-10490.nupkg",
-        "xunit.runner.aspnet.2.0.0-aspnet-beta6-10490.nupkg.sha512",
+        "xunit.runner.aspnet.2.0.0-aspnet-beta6-10575.nupkg",
+        "xunit.runner.aspnet.2.0.0-aspnet-beta6-10575.nupkg.sha512",
         "xunit.runner.aspnet.nuspec",
         "lib/dnx451/xunit.runner.aspnet.dll",
         "lib/dnx451/xunit.runner.aspnet.xml",
@@ -2327,11 +2000,11 @@
         "lib/dnxcore50/xunit.runner.aspnet.xml"
       ]
     },
-    "xunit.runner.utility.AspNet/2.0.0-aspnet-beta5-10305": {
-      "sha512": "6UIrQMPuISNxSunFtwW2VGgQFKthoXaMRPsMeNHOt2WGKywDLIMsq2p6ePC1T90kuVJEgCvyY6LJzZt2Ri457Q==",
+    "xunit.runner.utility.AspNet/2.0.0-aspnet-beta6-10331": {
+      "sha512": "t1EM2g0tBVKZapRedKfkmF0npOkYIeTzZbgfTNqCsZtR1Hz0Jf2NiDFfxRbhiXlcuemSIfoi1vjk8yaz+T8sNA==",
       "files": [
-        "xunit.runner.utility.AspNet.2.0.0-aspnet-beta5-10305.nupkg",
-        "xunit.runner.utility.AspNet.2.0.0-aspnet-beta5-10305.nupkg.sha512",
+        "xunit.runner.utility.AspNet.2.0.0-aspnet-beta6-10331.nupkg",
+        "xunit.runner.utility.AspNet.2.0.0-aspnet-beta6-10331.nupkg.sha512",
         "xunit.runner.utility.AspNet.nuspec",
         "lib/dnx451/xunit.runner.utility.AspNet.dll",
         "lib/dnx451/xunit.runner.utility.AspNet.xml",

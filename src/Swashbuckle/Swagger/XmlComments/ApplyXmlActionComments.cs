@@ -1,7 +1,6 @@
-﻿using System;
-using System.Linq;
-using System.Xml.XPath;
+﻿using System.Linq;
 using System.Reflection;
+using System.Xml.XPath;
 using Microsoft.AspNet.Mvc;
 
 namespace Swashbuckle.Swagger.XmlComments

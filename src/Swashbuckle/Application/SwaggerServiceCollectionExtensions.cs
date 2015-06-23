@@ -21,6 +21,8 @@ namespace Microsoft.Framework.DependencyInjection
 
             serviceCollection.AddTransient(GetSchemaRegistry);
             serviceCollection.AddTransient(GetSwaggerProvider);
+
+            serviceCollection.AddSingleton<SwaggerPathHelper>();
         }
 
         private static ISchemaRegistry GetSchemaRegistry(IServiceProvider serviceProvider)

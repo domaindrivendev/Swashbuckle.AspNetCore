@@ -47,7 +47,7 @@ namespace BasicApi
             app.UseMvc();
 
             app.UseSwagger();
-            app.UseSwaggerUi(routePrefix: "/swagger/ui", swaggerUrl: "/swagger/v2/swagger.json");
+            app.UseSwaggerUi();
 
             // Add the following route for porting Web API 2 controllers.
             // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Builder;
@@ -25,10 +26,7 @@ namespace Swashbuckle.Application
             _next = next;
             _swaggerProvider = swaggerProvider;
 
-            _requestMatcher = new TemplateMatcher(
-                TemplateParser.Parse(routeTemplate),
-                new Dictionary<string, object> { { "apiVersion", "v1" } });
-
+            _requestMatcher = new TemplateMatcher(TemplateParser.Parse(routeTemplate), null);
             _swaggerSerializer = new JsonSerializer
             {
                 NullValueHandling = NullValueHandling.Ignore,
@@ -55,7 +53,7 @@ namespace Swashbuckle.Application
             if (request.Method != "GET") return false;
 
             var routeValues = _requestMatcher.Match(request.Path.ToUriComponent().TrimStart('/'));
-            if (routeValues == null) return false;
+            if (routeValues == null || !routeValues.ContainsKey("apiVersion")) return false;
 
             apiVersion = routeValues["apiVersion"].ToString();
             return true;

@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Routing.Template;
@@ -12,22 +13,20 @@ namespace Swashbuckle.Application
     public class SwaggerUiMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly SwaggerPathHelper _swaggerPathHelper;
         private readonly TemplateMatcher _requestMatcher;
         private readonly Assembly _resourceAssembly;
-        private readonly string _swaggerUrl;
 
         public SwaggerUiMiddleware(
             RequestDelegate next,
-            string routePrefix,
-            string swaggerUrl)
+            SwaggerPathHelper swaggerPathHelper,
+            string routeTemplate)
         {
             _next = next;
+            _swaggerPathHelper = swaggerPathHelper;
 
-            var indexPath = routePrefix.Trim('/') + "/index.html";
-            _requestMatcher = new TemplateMatcher(TemplateParser.Parse(indexPath), null);
+            _requestMatcher = new TemplateMatcher(TemplateParser.Parse(routeTemplate), null);
             _resourceAssembly = GetType().GetTypeInfo().Assembly;
-
-            _swaggerUrl = swaggerUrl;
         }
 
         public async Task Invoke(HttpContext httpContext)
@@ -55,7 +54,11 @@ namespace Swashbuckle.Application
 
         private Stream AssignPlaceholderValuesTo(Stream template, HttpContext httpContext)
         {
-            var swaggerUrl = httpContext.Request.PathBase + _swaggerUrl;
+            var swaggerPath = _swaggerPathHelper.GetPaths().FirstOrDefault();
+            var swaggerUrl = (swaggerPath == null)
+                ? string.Empty
+                : httpContext.Request.PathBase + "/" + swaggerPath;
+
             var placeholderValues = new Dictionary<string, string>
             {
                 { "%(SwaggerUrl)", swaggerUrl }
