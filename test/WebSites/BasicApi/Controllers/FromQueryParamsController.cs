@@ -6,7 +6,7 @@ namespace BasicApi.Controllers
     public class FromQueryParamsController
     {
         [HttpGet("adresses/valdidate")]
-        public IActionResult ValidateAddress(Address address)
+        public IActionResult ValidateAddress([FromQuery]Address address)
         {
             return new NoContentResult(); 
         }
@@ -14,10 +14,8 @@ namespace BasicApi.Controllers
 
     public class Address
     {
-        [FromQuery]
         public string Country { get; set; }
 
-        [FromQuery]
         public string City { get; set; }
     }
 }

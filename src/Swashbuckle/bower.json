@@ -2,7 +2,7 @@
     "name": "Swashbuckle",
     "private": true,
     "dependencies": {
-      "swagger-ui": "2.1.1-M2"
+      "swagger-ui": "2.1.0"
     },
     "exportsOverride": {
     }
