@@ -1,10 +1,10 @@
 {
   "profiles": {
     "IIS Express": {
-      "commandName" : "IISExpress",
+      "commandName": "IISExpress",
       "launchBrowser": true,
       "launchUrl": "swagger/ui/index.html",
-      "environmentVariables" : {
+      "environmentVariables": {
         "ASPNET_ENV": "Development"
       }
     }

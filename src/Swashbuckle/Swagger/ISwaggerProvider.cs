@@ -8,7 +8,7 @@ namespace Swashbuckle.Swagger
             string apiVersion,
             string defaultHost = null,
             string defaultBasePath = null,
-            string[] defaultScheme = null);
+            string[] defaultSchemes = null);
     }
 
     public class UnknownApiVersion : Exception
