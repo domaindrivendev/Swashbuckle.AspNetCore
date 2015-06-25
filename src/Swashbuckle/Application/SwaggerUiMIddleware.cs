@@ -46,15 +46,13 @@ namespace Swashbuckle.Application
         {
             if (request.Method != "GET") return false;
 
-            var routeValues = _requestMatcher.Match(request.Path.ToUriComponent().TrimStart('/'));
-            if (routeValues == null) return false;
-
-            return true;
+            var routeValues = _requestMatcher.Match(request.Path.ToUriComponent().Trim('/'));
+            return (routeValues != null);
         }
 
         private Stream AssignPlaceholderValuesTo(Stream template, HttpContext httpContext)
         {
-            var swaggerPath = _swaggerPathHelper.GetPaths().FirstOrDefault();
+            var swaggerPath = _swaggerPathHelper.GetLocalPaths().FirstOrDefault();
             var swaggerUrl = (swaggerPath == null)
                 ? string.Empty
                 : httpContext.Request.PathBase + "/" + swaggerPath;

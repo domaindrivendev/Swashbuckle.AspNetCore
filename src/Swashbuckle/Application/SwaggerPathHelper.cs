@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Framework.OptionsModel;
 
@@ -20,13 +19,10 @@ namespace Swashbuckle.Application
             _routeTemplate = routeTemplate;
         }
         
-        public IEnumerable<string> GetPaths()
+        public IEnumerable<string> GetLocalPaths()
         {
             var swaggerOptions = _optionsAccessor.Options;
-            if (swaggerOptions == null) return Enumerable.Empty<string>();
-
-            if (_routeTemplate == null)
-                throw new InvalidOperationException("Failed to build Swagger Paths - route template not set");
+            if (swaggerOptions == null || _routeTemplate == null) return Enumerable.Empty<string>();
 
             return swaggerOptions.SwaggerGeneratorOptions.ApiVersions
                 .Select(info => _routeTemplate.Replace("{apiVersion}", info.Version));
