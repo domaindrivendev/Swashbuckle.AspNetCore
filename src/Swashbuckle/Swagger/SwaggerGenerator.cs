@@ -174,7 +174,12 @@ namespace Swashbuckle.Swagger
                     In = source,
                     Required = paramDesc.IsRequired()
                 };
+
                 if (schema != null) nonBodyParam.PopulateFrom(schema);
+
+                if (nonBodyParam.Type == "array")
+                    nonBodyParam.CollectionFormat = "multi";
+
                 return nonBodyParam;
             }
         }

@@ -102,7 +102,7 @@ namespace Swashbuckle.Swagger
         public void GetSwagger_CreatesNonBodyParameter_ForNonBodyParams(
             string routeTemplate,
             string actionFixtureName,
-            string expectedIn )
+            string expectedIn)
         {
             var swaggerGenerator = Subject(setupApis: apis => apis.Add("GET", routeTemplate, actionFixtureName));
 
@@ -114,6 +114,18 @@ namespace Swashbuckle.Swagger
             Assert.Equal("param", nonBodyParam.Name);
             Assert.Equal(expectedIn, nonBodyParam.In);
             Assert.Equal("string", nonBodyParam.Type);
+        }
+
+        [Fact]
+        public void GetSwagger_SetsCollectionFormatMulti_ForNonBodyArrayParams()
+        {
+            var swaggerGenerator = Subject(setupApis: apis => apis
+                .Add("GET", "resource", nameof(ActionFixtures.AcceptsArrayFromQuery)));
+
+            var swagger = swaggerGenerator.GetSwagger("v1");
+
+            var param = (NonBodyParameter)swagger.Paths["/resource"].Get.Parameters.First();
+            Assert.Equal("multi", param.CollectionFormat);
         }
 
         [Fact]
@@ -172,10 +184,12 @@ namespace Swashbuckle.Swagger
             var swagger = swaggerGenerator.GetSwagger("v1");
 
             var operation = swagger.Paths["/collection"].Get;
-            Assert.Equal(3, operation.Parameters.Count);
+            Assert.Equal(5, operation.Parameters.Count);
             Assert.Equal("Property1", operation.Parameters[0].Name);
             Assert.Equal("Property2", operation.Parameters[1].Name);
-            Assert.Equal("Property3.Property1", operation.Parameters[2].Name);
+            Assert.Equal("Property3", operation.Parameters[2].Name);
+            Assert.Equal("Property4", operation.Parameters[3].Name);
+            Assert.Equal("Property5", operation.Parameters[4].Name);
         }
 
         [Theory]
