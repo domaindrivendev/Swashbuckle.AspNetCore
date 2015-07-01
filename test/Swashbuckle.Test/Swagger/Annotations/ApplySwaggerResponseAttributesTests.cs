@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
-using System.Net;
-using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json;
 using Xunit;
 using Swashbuckle.Fixtures;
 using Swashbuckle.Fixtures.ApiDescriptions;
@@ -121,7 +120,7 @@ namespace Swashbuckle.Swagger.Annotations
 
             return new OperationFilterContext(
                 apiDescription,
-                new SchemaGenerator(new DefaultContractResolver()));
+                new SchemaGenerator(new JsonSerializerSettings()));
         }
 
         private ApplySwaggerResponseAttributes Subject()

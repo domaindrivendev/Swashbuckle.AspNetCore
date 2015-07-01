@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Net;
 using Microsoft.AspNet.Mvc;
 using Newtonsoft.Json.Linq;
@@ -51,13 +50,10 @@ namespace Swashbuckle.Fixtures.ApiDescriptions
         public void AcceptsComplexTypeFromQuery([FromQuery]ComplexType param)
         { }
 
-        public void AcceptsRequiredStringFromQuery([FromQuery, Required]string param)
+        public void AcceptsArrayFromQuery([FromQuery]IEnumerable<string> param)
         { }
 
         public void AcceptsStringFromHeader([FromHeader]string param)
-        { }
-
-        public void AcceptsStringFromBody([FromBody]ComplexType param)
         { }
 
         public void AcceptsComplexTypeFromBody([FromBody]ComplexType param)

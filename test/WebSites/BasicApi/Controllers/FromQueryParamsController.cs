@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Mvc;
+﻿using System.Collections.Generic;
+using Microsoft.AspNet.Mvc;
 
 namespace BasicApi.Controllers
 {
@@ -6,7 +7,13 @@ namespace BasicApi.Controllers
     public class FromQueryParamsController
     {
         [HttpGet("adresses/valdidate")]
-        public IActionResult ValidateAddress(Address address)
+        public IActionResult ValidateAddress([FromQuery]Address addresse)
+        {
+            return new NoContentResult(); 
+        }
+
+        [HttpGet("zip-codes/valdidate")]
+        public IActionResult ValidateZipCodes([FromQuery]IEnumerable<string> zipCodes)
         {
             return new NoContentResult(); 
         }
@@ -14,10 +21,8 @@ namespace BasicApi.Controllers
 
     public class Address
     {
-        [FromQuery]
         public string Country { get; set; }
 
-        [FromQuery]
         public string City { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.AspNet.Mvc.Description;
+using Microsoft.AspNet.Mvc.ApiExplorer;
 
 namespace Swashbuckle.Swagger
 {
@@ -28,6 +28,10 @@ namespace Swashbuckle.Swagger
         }
 
         public Func<ApiDescription, string, bool> VersionSupportResolver { get; private set; }
+
+        public string Host { get; set; }
+
+        public string BasePath { get; set; }
 
         public IList<string> Schemes { get; set; }
 
@@ -70,6 +74,18 @@ namespace Swashbuckle.Swagger
         public void OrderActionGroupsBy(IComparer<string> groupNameComparer)
         {
             GroupNameComparer = groupNameComparer;
+        }
+
+        public void OperationFilter<TFilter>()
+            where TFilter: IOperationFilter, new()
+        {
+            OperationFilters.Add(new TFilter());
+        }
+
+        public void DocumentFilter<TFilter>()
+            where TFilter: IDocumentFilter, new()
+        {
+            DocumentFilters.Add(new TFilter());
         }
     }
 }

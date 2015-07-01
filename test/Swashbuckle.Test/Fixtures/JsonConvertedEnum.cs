@@ -7,6 +7,7 @@ namespace Swashbuckle.Fixtures
     public enum JsonConvertedEnum
     {
         Value1 = 2,
-        Value2 = 4
+        Value2 = 4,
+        X = 8
     }
 }

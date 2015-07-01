@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNet.Mvc.Description;
+using Microsoft.AspNet.Mvc.ApiExplorer;
 
 namespace Swashbuckle.Swagger
 {
@@ -21,7 +21,11 @@ namespace Swashbuckle.Swagger
             _options = options ?? new SwaggerGeneratorOptions();
         }
 
-        public SwaggerDocument GetSwagger(string rootUrl, string apiVersion)
+        public SwaggerDocument GetSwagger(
+            string apiVersion,
+            string defaultHost = null,
+            string defaultBasePath = null,
+            string[] defaultSchemes = null)
         {
             var schemaRegistry = _schemaRegistryFactory();
 
@@ -35,14 +39,12 @@ namespace Swashbuckle.Swagger
                 .GroupBy(apiDesc => apiDesc.RelativePathSansQueryString())
                 .ToDictionary(group => "/" + group.Key, group => CreatePathItem(group, schemaRegistry));
 
-            var rootUri = new Uri(rootUrl);
-
             var swaggerDoc = new SwaggerDocument
             {
                 Info = info,
-                Host = rootUri.Host + ":" + rootUri.Port,
-                BasePath = (rootUri.AbsolutePath != "/") ? rootUri.AbsolutePath : null,
-                Schemes = (_options.Schemes != null) ? _options.Schemes.ToList() : new[] { rootUri.Scheme }.ToList(),
+                Host = _options.Host ?? defaultHost,
+                BasePath = _options.BasePath ?? defaultBasePath,
+                Schemes = _options.Schemes ?? defaultSchemes,
                 Paths = paths,
                 Definitions = schemaRegistry.Definitions,
                 SecurityDefinitions = _options.SecurityDefinitions
@@ -170,9 +172,14 @@ namespace Swashbuckle.Swagger
                 {
                     Name = paramDesc.Name,
                     In = source,
-                    Required = paramDesc.IsRequired(),
+                    Required = paramDesc.IsRequired()
                 };
+
                 if (schema != null) nonBodyParam.PopulateFrom(schema);
+
+                if (nonBodyParam.Type == "array")
+                    nonBodyParam.CollectionFormat = "multi";
+
                 return nonBodyParam;
             }
         }

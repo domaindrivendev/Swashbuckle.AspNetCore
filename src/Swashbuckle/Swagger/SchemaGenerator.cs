@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Converters;
 
@@ -9,10 +10,12 @@ namespace Swashbuckle.Swagger
 {
     public class SchemaGenerator : ISchemaRegistry
     {
-        private readonly IContractResolver _jsonContractResolver;
+        private readonly JsonSerializerSettings _jsonSerializerSettings;
         private readonly SchemaGeneratorOptions _options;
 
+        private readonly IContractResolver _jsonContractResolver;
         private IDictionary<Type, SchemaInfo> referencedTypeMap;
+
         private class SchemaInfo
         {
             public string SchemaId;
@@ -20,12 +23,13 @@ namespace Swashbuckle.Swagger
         } 
 
         public SchemaGenerator(
-            IContractResolver jsonContractResolver,
+            JsonSerializerSettings jsonSerializerSettings,
             SchemaGeneratorOptions options = null)
         {
-            _jsonContractResolver = jsonContractResolver;
+            _jsonSerializerSettings = jsonSerializerSettings;
             _options = options ?? new SchemaGeneratorOptions();
 
+            _jsonContractResolver = _jsonSerializerSettings.ContractResolver ?? new DefaultContractResolver();
             referencedTypeMap = new Dictionary<Type, SchemaInfo>();
             Definitions = new Dictionary<string, Schema>();
         }
@@ -86,23 +90,41 @@ namespace Swashbuckle.Swagger
             var type = Nullable.GetUnderlyingType(primitiveContract.UnderlyingType)
                 ?? primitiveContract.UnderlyingType;
 
-            var typeInfo = type.GetTypeInfo();
-            if (typeInfo.IsEnum)
-            {
-                var converter = primitiveContract.Converter;
-                var describeAsString = _options.DescribeAllEnumsAsStrings
-                    || (converter != null && converter.GetType() == typeof(StringEnumConverter));
-
-                return describeAsString
-                    ? new Schema { Type = "string", Enum = Enum.GetNames(type) }
-                    : new Schema { Type = "integer", Format = "int32", Enum = Enum.GetValues(type).Cast<object>().ToArray() };
-            }
+            if (type.GetTypeInfo().IsEnum)
+                return CreateEnumSchema(primitiveContract, type);
 
             if (PrimitiveTypeMap.ContainsKey(type))
                 return PrimitiveTypeMap[type]();
 
             // None of the above, fallback to string
             return new Schema { Type = "string" };
+        }
+
+        private Schema CreateEnumSchema(JsonPrimitiveContract primitiveContract, Type type)
+        {
+            var stringEnumConverter = primitiveContract.Converter as StringEnumConverter
+                ?? _jsonSerializerSettings.Converters.OfType<StringEnumConverter>().FirstOrDefault();
+
+            if (_options.DescribeAllEnumsAsStrings || stringEnumConverter != null)
+            {
+                var camelCase = _options.DescribeStringEnumsInCamelCase
+                    || (stringEnumConverter != null && stringEnumConverter.CamelCaseText);
+
+                return new Schema
+                {
+                    Type = "string",
+                    Enum = (camelCase)
+                        ? Enum.GetNames(type).Select(name => name.ToCamelCase()).ToArray()
+                        : Enum.GetNames(type)
+                };
+            }
+
+            return new Schema
+            {
+                Type = "integer",
+                Format = "int32",
+                Enum = Enum.GetValues(type).Cast<object>().ToArray()
+            };
         }
 
         private Schema CreateDictionarySchema(JsonDictionaryContract dictionaryContract)

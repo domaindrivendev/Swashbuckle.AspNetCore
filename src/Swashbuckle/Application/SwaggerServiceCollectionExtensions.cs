@@ -1,14 +1,14 @@
 ﻿using System;
 using Microsoft.Framework.OptionsModel;
 using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Description;
-using Newtonsoft.Json.Serialization;
+using Microsoft.AspNet.Mvc.ApiExplorer;
+using Newtonsoft.Json;
 using Swashbuckle.Swagger;
 using Swashbuckle.Application;
 
 namespace Microsoft.Framework.DependencyInjection
 {
-    public static class ServiceCollectionExtensions
+    public static class SwaggerServiceCollectionExtensions
     {
         public static void AddSwagger(
             this IServiceCollection serviceCollection,
@@ -19,37 +19,34 @@ namespace Microsoft.Framework.DependencyInjection
 
             serviceCollection.Configure(configure ?? ((options) => {}));
 
-            serviceCollection.AddTransient(GetRootUrlResolver);
             serviceCollection.AddTransient(GetSchemaRegistry);
             serviceCollection.AddTransient(GetSwaggerProvider);
-        }
 
-        private static IRootUrlResolver GetRootUrlResolver(IServiceProvider serviceProvider)
-        {
-            var swaggerOptions = serviceProvider.GetService<IOptions<SwaggerOptions>>();
-            return swaggerOptions.Options.RootUrlResolver;
+            serviceCollection.AddSingleton<SwaggerPathHelper>();
         }
 
         private static ISchemaRegistry GetSchemaRegistry(IServiceProvider serviceProvider)
         {
-            var jsonContractResolver = GetJsonContractResolver(serviceProvider);
+            var jsonSerializerSettings = GetJsonSerializerSettings(serviceProvider);
             var swaggerOptions = serviceProvider.GetService<IOptions<SwaggerOptions>>();
-            return new SchemaGenerator(jsonContractResolver, swaggerOptions.Options.SchemaGeneratorOptions);
+            return new SchemaGenerator(jsonSerializerSettings, swaggerOptions.Options.SchemaGeneratorOptions);
         }
 
         private static ISwaggerProvider GetSwaggerProvider(IServiceProvider serviceProvider)
         {
-            var swaggerOptions = serviceProvider.GetService<IOptions<SwaggerOptions>>();
+            var optionAccessor = serviceProvider.GetService<IOptions<SwaggerOptions>>();
+
             return new SwaggerGenerator(
                 serviceProvider.GetService<IApiDescriptionGroupCollectionProvider>(),
                 () => serviceProvider.GetService<ISchemaRegistry>(),
-                swaggerOptions.Options.SwaggerGeneratorOptions);
+                optionAccessor.Options.SwaggerGeneratorOptions);
         }
 
-        private static IContractResolver GetJsonContractResolver(IServiceProvider serviceProvider)
+        private static JsonSerializerSettings GetJsonSerializerSettings(IServiceProvider serviceProvider)
         {
             var mvcOptions = serviceProvider.GetService<MvcOptions>();
-            return new DefaultContractResolver();
+            // TODO: Get from mvcOptions
+            return new JsonSerializerSettings();
         }
     }
 }
