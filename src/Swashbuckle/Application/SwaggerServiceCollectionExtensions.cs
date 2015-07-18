@@ -45,7 +45,12 @@ namespace Microsoft.Framework.DependencyInjection
         private static JsonSerializerSettings GetJsonSerializerSettings(IServiceProvider serviceProvider)
         {
             var mvcOptions = serviceProvider.GetService<MvcOptions>();
-            // TODO: Get from mvcOptions
+            
+            // get serialization settings if available
+            var formatter = serviceProvider.GetService<JsonOutputFormatter>();
+            if (formatter != null) return formatter.SerializerSettings;
+            
+            //otherwise create new serialization settings
             return new JsonSerializerSettings();
         }
     }
