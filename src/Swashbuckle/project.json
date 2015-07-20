@@ -16,6 +16,11 @@
   "resource": [ "SwaggerUi", "bower_components/swagger-ui/dist" ],
 
   "frameworks": {
-    "dnx451": { }
+    "dnx451": { },
+    "dnxcore50": {
+      "dependencies": {
+        "System.Xml.XPath": "4.0.0-beta-*"
+      }
+    }
   }
 }
