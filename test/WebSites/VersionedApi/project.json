@@ -16,11 +16,7 @@
 
   "frameworks": {
     "dnx451": { },
-    "dnxcore50": {
-      "dependencies": {
-        "System.Xml.XPath": "4.0.0-beta-*"
-      }
-    }
+    "dnxcore50": { }
   },
 
   "exclude": [
