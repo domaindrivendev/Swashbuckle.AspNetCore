@@ -9,6 +9,7 @@ namespace Swashbuckle.Swagger
         {
             CustomTypeMappings = new Dictionary<Type, Func<Schema>>();
             ModelFilters = new List<IModelFilter>();
+            SchemaIdSelector = (type) => type.FriendlyId(false);
         }
 
         public IDictionary<Type, Func<Schema>> CustomTypeMappings { get; private set; }
@@ -17,7 +18,7 @@ namespace Swashbuckle.Swagger
 
         public bool IgnoreObsoleteProperties { get; set; }
 
-        public bool UseFullTypeNameInSchemaIds { get; set; }
+        public Func<Type, string> SchemaIdSelector { get; set; }
 
         public bool DescribeAllEnumsAsStrings { get; set; }
 
@@ -32,6 +33,11 @@ namespace Swashbuckle.Swagger
             where TFilter : IModelFilter, new()
         {
             ModelFilters.Add(new TFilter());
+        }
+
+        public void UseFullTypeNameInSchemaIds()
+        {
+            SchemaIdSelector = (type) => type.FriendlyId(true);
         }
     }
 }

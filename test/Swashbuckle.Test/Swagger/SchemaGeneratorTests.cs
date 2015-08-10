@@ -239,9 +239,24 @@ namespace Swashbuckle.Swagger
         }
 
         [Fact]
+        public void GetOrRegister_SupportsOptionToFullyCustomizeSchemaIds()
+        {
+            var schemaGenerator = Subject(opts =>
+            {
+                opts.SchemaIdSelector = (type) => type.FriendlyId(true).Replace("Swashbuckle.Fixtures.", "");
+            });
+
+            var jsonReference1 = schemaGenerator.GetOrRegister(typeof(Fixtures.Namespace1.ConflictingType));
+            var jsonReference2 = schemaGenerator.GetOrRegister(typeof(Fixtures.Namespace2.ConflictingType));
+
+            Assert.Equal("#/definitions/Namespace1.ConflictingType", jsonReference1.Ref);
+            Assert.Equal("#/definitions/Namespace2.ConflictingType", jsonReference2.Ref);
+        }
+
+        [Fact]
         public void GetOrRegister_SupportsOptionToUseFullTypeNamesInSchemaIds()
         {
-            var schemaGenerator = Subject(opts => opts.UseFullTypeNameInSchemaIds = true);
+            var schemaGenerator = Subject(opts => opts.UseFullTypeNameInSchemaIds());
 
             var jsonReference1 = schemaGenerator.GetOrRegister(typeof(Fixtures.Namespace1.ConflictingType));
             var jsonReference2 = schemaGenerator.GetOrRegister(typeof(Fixtures.Namespace2.ConflictingType));

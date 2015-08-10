@@ -181,7 +181,7 @@ namespace Swashbuckle.Swagger
         {
             if (!referencedTypeMap.ContainsKey(type))
             {
-                var schemaId = type.FriendlyId(_options.UseFullTypeNameInSchemaIds);
+                var schemaId = _options.SchemaIdSelector(type);
                 if (referencedTypeMap.Any(entry => entry.Value.SchemaId == schemaId))
                 {
                     var conflictingType = referencedTypeMap.First(entry => entry.Value.SchemaId == schemaId).Key;
