@@ -147,11 +147,9 @@ namespace Swashbuckle.Swagger
         }
 
         [Theory]
-        [InlineData("collection/{param?}", false)]
-        [InlineData("collection/{param}", true)]
-        public void GetSwagger_SetsParameterRequired_ForRequiredRouteParams(
-            string routeTemplate,
-            bool expectedRequired)
+        [InlineData("collection/{param}")]
+        [InlineData("collection/{param?}")]
+        public void GetSwagger_SetsParameterRequired_ForRequiredAllRouteParams(string routeTemplate)
         {
             var swaggerGenerator = Subject(setupApis: apis => apis
                 .Add("GET", routeTemplate, nameof(ActionFixtures.AcceptsStringFromRoute)));
@@ -159,7 +157,7 @@ namespace Swashbuckle.Swagger
             var swagger = swaggerGenerator.GetSwagger("v1");
 
             var param = swagger.Paths["/collection/{param}"].Get.Parameters.First();
-            Assert.Equal(expectedRequired, param.Required);
+            Assert.Equal(true, param.Required);
         }
 
         [Theory]
