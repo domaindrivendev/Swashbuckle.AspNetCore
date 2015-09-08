@@ -6,9 +6,9 @@ namespace Swashbuckle.Swagger
     {
         SwaggerDocument GetSwagger(
             string apiVersion,
-            string defaultHost = null,
-            string defaultBasePath = null,
-            string[] defaultSchemes = null);
+            string host = null,
+            string basePath = null,
+            string[] schemes = null);
     }
 
     public class UnknownApiVersion : Exception

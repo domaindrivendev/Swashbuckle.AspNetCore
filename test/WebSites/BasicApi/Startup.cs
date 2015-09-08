@@ -23,7 +23,6 @@ namespace BasicApi
 
             services.AddSwagger(c =>
             {
-                c.SwaggerGeneratorOptions.Schemes = new[] { "http", "https" };
                 c.SwaggerGeneratorOptions.SingleApiVersion(new Info
                     {
                         Version = "v2",

@@ -269,36 +269,6 @@ namespace Swashbuckle.Swagger
         }
 
         [Fact]
-        public void GetSwagger_SupportsOptionToProvideExplicitHost()
-        {
-            var swaggerGenerator = Subject(configure: opts => opts.Host = "tempuri.org:1234");
-
-            var swagger = swaggerGenerator.GetSwagger("v1");
-
-            Assert.Equal("tempuri.org:1234", swagger.Host);
-        }
-
-        [Fact]
-        public void GetSwagger_SupportsOptionToProvideExplicitBasePath()
-        {
-            var swaggerGenerator = Subject(configure: opts => opts.BasePath = "/foobar");
-
-            var swagger = swaggerGenerator.GetSwagger("v1");
-
-            Assert.Equal("/foobar", swagger.BasePath);
-        }
-
-        [Fact]
-        public void GetSwagger_SupportsOptionToProvideExplicitHttpSchemes()
-        {
-            var swaggerGenerator = Subject(configure: opts => opts.Schemes = new[] { "http", "https" });
-
-            var swagger = swaggerGenerator.GetSwagger("v1");
-
-            Assert.Equal(new[] { "http", "https" }, swagger.Schemes.ToArray());
-        }
-
-        [Fact]
         public void GetSwagger_SupportsOptionToDefineBasicAuthScheme()
         {
             var swaggerGenerator = Subject(configure: opts =>

@@ -23,9 +23,9 @@ namespace Swashbuckle.Swagger
 
         public SwaggerDocument GetSwagger(
             string apiVersion,
-            string defaultHost = null,
-            string defaultBasePath = null,
-            string[] defaultSchemes = null)
+            string host = null,
+            string basePath = null,
+            string[] schemes = null)
         {
             var schemaRegistry = _schemaRegistryFactory();
 
@@ -42,9 +42,9 @@ namespace Swashbuckle.Swagger
             var swaggerDoc = new SwaggerDocument
             {
                 Info = info,
-                Host = _options.Host ?? defaultHost,
-                BasePath = _options.BasePath ?? defaultBasePath,
-                Schemes = _options.Schemes ?? defaultSchemes,
+                Host = host,
+                BasePath = basePath,
+                Schemes = schemes,
                 Paths = paths,
                 Definitions = schemaRegistry.Definitions,
                 SecurityDefinitions = _options.SecurityDefinitions
