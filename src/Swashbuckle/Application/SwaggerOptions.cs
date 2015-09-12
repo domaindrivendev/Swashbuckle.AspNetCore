@@ -24,5 +24,10 @@ namespace Swashbuckle.Application
             SchemaGeneratorOptions.ModelFilters.Add(new ApplyXmlTypeComments(filePath));
             SwaggerGeneratorOptions.OperationFilters.Add(new ApplyXmlActionComments(filePath));
         }
+
+        public void IncludePathDetails()
+        {
+            SwaggerGeneratorOptions.OperationFilters.Add(new ApplySwaggerPathDetailsAttributes());
+        }
     }
 }

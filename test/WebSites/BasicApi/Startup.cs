@@ -31,6 +31,7 @@ namespace BasicApi
                         TermsOfService = "Some terms ..."
                     });
                 c.SwaggerGeneratorOptions.OperationFilter<AssignOperationVendorExtensions>();
+                c.IncludePathDetails();
 
                 c.SchemaGeneratorOptions.DescribeAllEnumsAsStrings = true;
             });
