@@ -8,16 +8,16 @@ namespace Swashbuckle.Swagger
     public class SwaggerGenerator : ISwaggerProvider
     {
         private readonly IApiDescriptionGroupCollectionProvider _apiDescriptionsProvider;
-        private readonly Func<ISchemaRegistry> _schemaRegistryFactory;
+        private readonly ISchemaProvider _schemaProvider;
         private readonly SwaggerGeneratorOptions _options;
 
         public SwaggerGenerator(
             IApiDescriptionGroupCollectionProvider apiDescriptionsProvider,
-            Func<ISchemaRegistry> schemaRegistryFactory,
+            ISchemaProvider schemaProvider,
             SwaggerGeneratorOptions options = null)
         {
             _apiDescriptionsProvider = apiDescriptionsProvider;
-            _schemaRegistryFactory = schemaRegistryFactory;
+            _schemaProvider = schemaProvider;
             _options = options ?? new SwaggerGeneratorOptions();
         }
 
@@ -27,7 +27,7 @@ namespace Swashbuckle.Swagger
             string basePath = null,
             string[] schemes = null)
         {
-            var schemaRegistry = _schemaRegistryFactory();
+            var schemaDefinitions = new Dictionary<string, Schema>();
 
             var info = _options.ApiVersions.FirstOrDefault(v => v.Version == apiVersion);
             if (info == null)
@@ -37,7 +37,7 @@ namespace Swashbuckle.Swagger
                 .Where(apiDesc => !(_options.IgnoreObsoleteActions && apiDesc.IsObsolete()))
                 .OrderBy(_options.GroupNameSelector, _options.GroupNameComparer)
                 .GroupBy(apiDesc => apiDesc.RelativePathSansQueryString())
-                .ToDictionary(group => "/" + group.Key, group => CreatePathItem(group, schemaRegistry));
+                .ToDictionary(group => "/" + group.Key, group => CreatePathItem(group, schemaDefinitions));
 
             var swaggerDoc = new SwaggerDocument
             {
@@ -46,11 +46,14 @@ namespace Swashbuckle.Swagger
                 BasePath = basePath,
                 Schemes = schemes,
                 Paths = paths,
-                Definitions = schemaRegistry.Definitions,
+                Definitions = schemaDefinitions,
                 SecurityDefinitions = _options.SecurityDefinitions
             };
 
-            var filterContext = new DocumentFilterContext(_apiDescriptionsProvider.ApiDescriptionGroups, schemaRegistry);
+            var filterContext = new DocumentFilterContext(
+                _apiDescriptionsProvider.ApiDescriptionGroups,
+                null);
+
             foreach (var filter in _options.DocumentFilters)
             {
                 filter.Apply(swaggerDoc, filterContext);
@@ -69,7 +72,9 @@ namespace Swashbuckle.Swagger
                 : allDescriptions.Where(apiDesc => _options.VersionSupportResolver(apiDesc, apiVersion));
         }
 
-        private PathItem CreatePathItem(IEnumerable<ApiDescription> apiDescriptions, ISchemaRegistry schemaRegistry)
+        private PathItem CreatePathItem(
+            IEnumerable<ApiDescription> apiDescriptions,
+            IDictionary<string, Schema> schemaDefinitions)
         {
             var pathItem = new PathItem();
 
@@ -90,25 +95,25 @@ namespace Swashbuckle.Swagger
                 switch (httpMethod)
                 {
                     case "get":
-                        pathItem.Get = CreateOperation(apiDescription, schemaRegistry);
+                        pathItem.Get = CreateOperation(apiDescription, schemaDefinitions);
                         break;
                     case "put":
-                        pathItem.Put = CreateOperation(apiDescription, schemaRegistry);
+                        pathItem.Put = CreateOperation(apiDescription, schemaDefinitions);
                         break;
                     case "post":
-                        pathItem.Post = CreateOperation(apiDescription, schemaRegistry);
+                        pathItem.Post = CreateOperation(apiDescription, schemaDefinitions);
                         break;
                     case "delete":
-                        pathItem.Delete = CreateOperation(apiDescription, schemaRegistry);
+                        pathItem.Delete = CreateOperation(apiDescription, schemaDefinitions);
                         break;
                     case "options":
-                        pathItem.Options = CreateOperation(apiDescription, schemaRegistry);
+                        pathItem.Options = CreateOperation(apiDescription, schemaDefinitions);
                         break;
                     case "head":
-                        pathItem.Head = CreateOperation(apiDescription, schemaRegistry);
+                        pathItem.Head = CreateOperation(apiDescription, schemaDefinitions);
                         break;
                     case "patch":
-                        pathItem.Patch = CreateOperation(apiDescription, schemaRegistry);
+                        pathItem.Patch = CreateOperation(apiDescription, schemaDefinitions);
                         break;
                 }
             }
@@ -116,20 +121,22 @@ namespace Swashbuckle.Swagger
             return pathItem;
         }
 
-        private Operation CreateOperation(ApiDescription apiDescription, ISchemaRegistry schemaRegistry)
+        private Operation CreateOperation(
+            ApiDescription apiDescription,
+            IDictionary<string, Schema> schemaDefinitions)
         {
             var groupName = _options.GroupNameSelector(apiDescription);
 
             var parameters = apiDescription.ParameterDescriptions
                 .Where(paramDesc => paramDesc.Source.IsFromRequest)
-                .Select(paramDesc => CreateParameter(paramDesc, schemaRegistry))
+                .Select(paramDesc => CreateParameter(paramDesc, schemaDefinitions))
                 .ToList();
 
             var responses = new Dictionary<string, Response>();
             if (apiDescription.ResponseType == typeof(void))
                 responses.Add("204", new Response { Description = "No Content" });
             else
-                responses.Add("200", CreateSuccessResponse(apiDescription.ResponseType, schemaRegistry));
+                responses.Add("200", CreateSuccessResponse(apiDescription.ResponseType, schemaDefinitions));
 
             var operation = new Operation
             { 
@@ -142,7 +149,7 @@ namespace Swashbuckle.Swagger
                 Deprecated = apiDescription.IsObsolete()
             };
 
-            var filterContext = new OperationFilterContext(apiDescription, schemaRegistry);
+            var filterContext = new OperationFilterContext(apiDescription, schemaDefinitions, _schemaProvider);
             foreach (var filter in _options.OperationFilters)
             {
                 filter.Apply(operation, filterContext);
@@ -151,10 +158,14 @@ namespace Swashbuckle.Swagger
             return operation;
         }
 
-        private IParameter CreateParameter(ApiParameterDescription paramDesc, ISchemaRegistry schemaRegistry)
+        private IParameter CreateParameter(
+            ApiParameterDescription paramDesc,
+            IDictionary<string, Schema> schemaDefinitions)
         {
             var source = paramDesc.Source.Id.ToLower();
-            var schema = (paramDesc.Type != null) ? schemaRegistry.GetOrRegister(paramDesc.Type) : null;
+            var schema = (paramDesc.Type != null)
+                ? _schemaProvider.GetSchema(paramDesc.Type, schemaDefinitions)
+                : null;
 
             if (source == "body")
             {
@@ -183,12 +194,16 @@ namespace Swashbuckle.Swagger
             }
         }
 
-        private Response CreateSuccessResponse(Type responseType, ISchemaRegistry schemaRegistry)
+        private Response CreateSuccessResponse(
+            Type responseType,
+            IDictionary<string, Schema> schemaDefinitions)
         {
             return new Response
             {
                 Description = "OK",
-                Schema = (responseType != null) ? schemaRegistry.GetOrRegister(responseType) : null
+                Schema = (responseType != null)
+                    ? _schemaProvider.GetSchema(responseType, schemaDefinitions)
+                    : null
             };
         }
     }

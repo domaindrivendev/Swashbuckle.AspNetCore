@@ -13,17 +13,17 @@ namespace Swashbuckle.Swagger
         public ModelFilterContext(
             Type systemType,
             JsonObjectContract jsonObjectContract,
-            ISchemaRegistry schemaRegistry)
+            ISchemaProvider schemaProvider)
         {
             SystemType = systemType;
             JsonObjectContract = jsonObjectContract;
-            SchemaRegistry = schemaRegistry;
+            SchemaProvider = schemaProvider;
         }
 
         public Type SystemType { get; private set; }
 
         public JsonObjectContract JsonObjectContract { get; private set; }
 
-        public ISchemaRegistry SchemaRegistry { get; private set; }
+        public ISchemaProvider SchemaProvider { get; private set; }
     }
 }

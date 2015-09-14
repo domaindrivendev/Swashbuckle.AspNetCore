@@ -66,7 +66,7 @@ namespace Swashbuckle.Swagger.Annotations
             Subject().Apply(operation, filterContext);
 
             Assert.Equal(new[] { "200", "400", "500" }, operation.Responses.Keys.ToArray());
-            Assert.Equal(new[] { "ComplexType" }, filterContext.SchemaRegistry.Definitions.Keys.ToArray());
+            Assert.Equal(new[] { "ComplexType" }, filterContext.SchemaDefinitions.Keys.ToArray());
         }
 
         [Fact]
@@ -120,7 +120,8 @@ namespace Swashbuckle.Swagger.Annotations
 
             return new OperationFilterContext(
                 apiDescription,
-                new SchemaGenerator(new JsonSerializerSettings()));
+                new Dictionary<string, Schema>(),
+                new DefaultSchemaProvider(new JsonSerializerSettings()));
         }
 
         private ApplySwaggerResponseAttributes Subject()

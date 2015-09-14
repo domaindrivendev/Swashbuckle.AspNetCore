@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 
@@ -17,17 +18,18 @@ namespace Swashbuckle.Swagger.Annotations
 
             var controllerAttributes = apiDesc.GetControllerAttributes().OfType<SwaggerResponseAttribute>()
                 .OrderBy(attr => attr.StatusCode);
-            ApplyResponsesFrom(operation, controllerAttributes, context.SchemaRegistry);
+            ApplyResponsesFrom(controllerAttributes, operation, context.SchemaDefinitions, context.SchemaProvider);
 
             var actionAttributes = apiDesc.GetActionAttributes().OfType<SwaggerResponseAttribute>()
                 .OrderBy(attr => attr.StatusCode);
-            ApplyResponsesFrom(operation, actionAttributes, context.SchemaRegistry);
+            ApplyResponsesFrom(actionAttributes, operation, context.SchemaDefinitions, context.SchemaProvider);
         }
 
         private void ApplyResponsesFrom(
-            Operation operation,
             IOrderedEnumerable<SwaggerResponseAttribute> attributes,
-            ISchemaRegistry schemaRegistry)
+            Operation operation,
+            IDictionary<string, Schema> schemaDefinitions,
+            ISchemaProvider schemaProvider)
         {
             foreach (var attr in attributes)
             {
@@ -36,7 +38,9 @@ namespace Swashbuckle.Swagger.Annotations
                 operation.Responses[statusCode] = new Response
                 {
                     Description = attr.Description ?? InferDescriptionFrom(statusCode),
-                    Schema = (attr.Type != null) ? schemaRegistry.GetOrRegister(attr.Type) : null
+                    Schema = (attr.Type == null)
+                        ? null
+                        : schemaProvider.GetSchema(attr.Type, schemaDefinitions)
                 };
             }
         }

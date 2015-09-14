@@ -19,17 +19,17 @@ namespace Microsoft.Framework.DependencyInjection
 
             serviceCollection.Configure(configure ?? ((options) => {}));
 
-            serviceCollection.AddTransient(GetSchemaRegistry);
+            serviceCollection.AddTransient(GetSchemaProvider);
             serviceCollection.AddTransient(GetSwaggerProvider);
 
             serviceCollection.AddSingleton<SwaggerPathHelper>();
         }
 
-        private static ISchemaRegistry GetSchemaRegistry(IServiceProvider serviceProvider)
+        private static ISchemaProvider GetSchemaProvider(IServiceProvider serviceProvider)
         {
             var jsonSerializerSettings = GetJsonSerializerSettings(serviceProvider);
             var swaggerOptions = serviceProvider.GetService<IOptions<SwaggerOptions>>();
-            return new SchemaGenerator(jsonSerializerSettings, swaggerOptions.Options.SchemaGeneratorOptions);
+            return new DefaultSchemaProvider(jsonSerializerSettings, swaggerOptions.Options.SchemaGeneratorOptions);
         }
 
         private static ISwaggerProvider GetSwaggerProvider(IServiceProvider serviceProvider)
@@ -38,7 +38,7 @@ namespace Microsoft.Framework.DependencyInjection
 
             return new SwaggerGenerator(
                 serviceProvider.GetService<IApiDescriptionGroupCollectionProvider>(),
-                () => serviceProvider.GetService<ISchemaRegistry>(),
+                serviceProvider.GetService<ISchemaProvider>(),
                 optionAccessor.Options.SwaggerGeneratorOptions);
         }
 
