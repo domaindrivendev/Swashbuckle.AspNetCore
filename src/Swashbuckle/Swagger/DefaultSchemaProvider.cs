@@ -12,7 +12,7 @@ namespace Swashbuckle.Swagger
     {
         private readonly JsonSerializerSettings _jsonSerializerSettings;
         private readonly IContractResolver _jsonContractResolver;
-        private readonly SchemaGeneratorOptions _options;
+        private readonly SwaggerSchemaOptions _options;
 
         private struct ReferencedType
         {
@@ -22,11 +22,11 @@ namespace Swashbuckle.Swagger
 
         public DefaultSchemaProvider(
             JsonSerializerSettings jsonSerializerSettings,
-            SchemaGeneratorOptions options = null)
+            SwaggerSchemaOptions options = null)
         {
             _jsonSerializerSettings = jsonSerializerSettings;
             _jsonContractResolver = _jsonSerializerSettings.ContractResolver ?? new DefaultContractResolver();
-            _options = options ?? new SchemaGeneratorOptions();
+            _options = options ?? new SwaggerSchemaOptions();
         }
 
         public Schema GetSchema(Type type, IDictionary<string, Schema> definitions)

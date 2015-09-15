@@ -4,54 +4,69 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.ApiExplorer;
 using Newtonsoft.Json;
 using Swashbuckle.Swagger;
+using Swashbuckle.Swagger.Annotations;
 using Swashbuckle.Application;
 
 namespace Microsoft.Framework.DependencyInjection
 {
     public static class SwaggerServiceCollectionExtensions
     {
-        public static void AddSwagger(
-            this IServiceCollection serviceCollection,
-            Action<SwaggerOptions> configure = null)
+        public static void AddSwagger(this IServiceCollection services)
         {
-            serviceCollection.Configure<MvcOptions>(c =>
+            services.Configure<MvcOptions>(c =>
                 c.Conventions.Add(new SwaggerApplicationConvention()));
 
-            serviceCollection.Configure(configure ?? ((options) => {}));
+            services.AddSingleton(SchemaProviderFactory);
+            services.Configure<SwaggerSchemaOptions>(options =>
+            {
+                options.ModelFilter<ApplySwaggerModelFilterAttributes>();
+            });
 
-            serviceCollection.AddTransient(GetSchemaProvider);
-            serviceCollection.AddTransient(GetSwaggerProvider);
+            services.AddSingleton(SwaggerProviderFactory);
+            services.Configure<SwaggerDocumentOptions>(options =>
+            {
+                options.OperationFilter<ApplySwaggerOperationAttributes>();
+                options.OperationFilter<ApplySwaggerOperationFilterAttributes>();
+                options.OperationFilter<ApplySwaggerResponseAttributes>();
+            });
 
-            serviceCollection.AddSingleton<SwaggerPathHelper>();
+            services.AddSingleton<SwaggerPathHelper>();
         }
 
-        private static ISchemaProvider GetSchemaProvider(IServiceProvider serviceProvider)
+        public static void ConfigureSwaggerSchema(
+            this IServiceCollection services,
+            Action<SwaggerSchemaOptions> options)
+        {
+            services.Configure(options);
+        }
+
+        public static void ConfigureSwaggerDocument(
+            this IServiceCollection services,
+            Action<SwaggerDocumentOptions> options)
+        {
+            services.Configure(options);
+        }
+
+        private static ISchemaProvider SchemaProviderFactory(IServiceProvider serviceProvider)
         {
             var jsonSerializerSettings = GetJsonSerializerSettings(serviceProvider);
-            var swaggerOptions = serviceProvider.GetService<IOptions<SwaggerOptions>>();
-            return new DefaultSchemaProvider(jsonSerializerSettings, swaggerOptions.Options.SchemaGeneratorOptions);
+            var optionsAccessor = serviceProvider.GetService<IOptions<SwaggerSchemaOptions>>();
+            return new DefaultSchemaProvider(jsonSerializerSettings, optionsAccessor.Options);
         }
 
-        private static ISwaggerProvider GetSwaggerProvider(IServiceProvider serviceProvider)
+        private static ISwaggerProvider SwaggerProviderFactory(IServiceProvider serviceProvider)
         {
-            var optionAccessor = serviceProvider.GetService<IOptions<SwaggerOptions>>();
-
-            return new SwaggerGenerator(
-                serviceProvider.GetService<IApiDescriptionGroupCollectionProvider>(),
-                serviceProvider.GetService<ISchemaProvider>(),
-                optionAccessor.Options.SwaggerGeneratorOptions);
+            var optionsAccessor = serviceProvider.GetService<IOptions<SwaggerDocumentOptions>>();
+            return new DefaultSwaggerProvider(
+                serviceProvider.GetRequiredService<IApiDescriptionGroupCollectionProvider>(),
+                serviceProvider.GetRequiredService<ISchemaProvider>(),
+                optionsAccessor.Options);
         }
 
         private static JsonSerializerSettings GetJsonSerializerSettings(IServiceProvider serviceProvider)
         {
-            var mvcOptions = serviceProvider.GetService<MvcOptions>();
-            
-            // get serialization settings if available
-            var formatter = serviceProvider.GetService<JsonOutputFormatter>();
-            if (formatter != null) return formatter.SerializerSettings;
-            
-            //otherwise create new serialization settings
-            return new JsonSerializerSettings();
+            var jsonOptions = serviceProvider.GetService<IOptions<MvcJsonOptions>>();
+            return jsonOptions.Options.SerializerSettings;
         }
     }
 }

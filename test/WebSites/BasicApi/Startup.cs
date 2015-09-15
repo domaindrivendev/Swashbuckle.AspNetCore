@@ -21,18 +21,22 @@ namespace BasicApi
             // You will also need to add the Microsoft.AspNet.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
             // services.AddWebApiConventions();
 
-            services.AddSwagger(c =>
+            services.AddSwagger();
+            services.ConfigureSwaggerDocument(options =>
             {
-                c.SwaggerGeneratorOptions.SingleApiVersion(new Info
+                options.SingleApiVersion(new Info
                     {
                         Version = "v2",
                         Title = "Swashbuckle Sample API",
                         Description = "A sample API for testing Swashbuckle",
                         TermsOfService = "Some terms ..."
                     });
-                c.SwaggerGeneratorOptions.OperationFilter<AssignOperationVendorExtensions>();
 
-                c.SchemaGeneratorOptions.DescribeAllEnumsAsStrings = true;
+                options.OperationFilter<AssignOperationVendorExtensions>();
+            });
+            services.ConfigureSwaggerSchema(options =>
+            {
+                options.DescribeAllEnumsAsStrings = true;
             });
         }
 

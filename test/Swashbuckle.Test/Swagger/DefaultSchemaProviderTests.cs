@@ -249,7 +249,7 @@ namespace Swashbuckle.Swagger
         {
             var subject = Subject(opts =>
             {
-                opts.SchemaIdSelector = (type) => type.FriendlyId(true).Replace("Swashbuckle.Fixtures.", "");
+                opts.CustomSchemaIds((type) => type.FriendlyId(true).Replace("Swashbuckle.Fixtures.", ""));
             });
 
             var definitions = new Dictionary<string, Schema>();
@@ -348,9 +348,9 @@ namespace Swashbuckle.Swagger
             Assert.Contains(expectedSchemaId, definitions.Keys);
         }
 
-        private DefaultSchemaProvider Subject(Action<SchemaGeneratorOptions> configureOptions = null)
+        private DefaultSchemaProvider Subject(Action<SwaggerSchemaOptions> configureOptions = null)
         {
-            var options = new SchemaGeneratorOptions();
+            var options = new SwaggerSchemaOptions();
             if (configureOptions != null) configureOptions(options);
 
             return new DefaultSchemaProvider(new JsonSerializerSettings(), options);

@@ -5,20 +5,20 @@ using Microsoft.AspNet.Mvc.ApiExplorer;
 
 namespace Swashbuckle.Swagger
 {
-    public class SwaggerGenerator : ISwaggerProvider
+    public class DefaultSwaggerProvider : ISwaggerProvider
     {
         private readonly IApiDescriptionGroupCollectionProvider _apiDescriptionsProvider;
         private readonly ISchemaProvider _schemaProvider;
-        private readonly SwaggerGeneratorOptions _options;
+        private readonly SwaggerDocumentOptions _options;
 
-        public SwaggerGenerator(
+        public DefaultSwaggerProvider(
             IApiDescriptionGroupCollectionProvider apiDescriptionsProvider,
             ISchemaProvider schemaProvider,
-            SwaggerGeneratorOptions options = null)
+            SwaggerDocumentOptions options = null)
         {
             _apiDescriptionsProvider = apiDescriptionsProvider;
             _schemaProvider = schemaProvider;
-            _options = options ?? new SwaggerGeneratorOptions();
+            _options = options ?? new SwaggerDocumentOptions();
         }
 
         public SwaggerDocument GetSwagger(
