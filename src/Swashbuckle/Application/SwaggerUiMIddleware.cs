@@ -52,14 +52,12 @@ namespace Swashbuckle.Application
 
         private Stream AssignPlaceholderValuesTo(Stream template, HttpContext httpContext)
         {
-            var swaggerPath = _swaggerPathHelper.GetLocalPaths().FirstOrDefault();
-            var swaggerUrl = (swaggerPath == null)
-                ? string.Empty
-                : httpContext.Request.PathBase + "/" + swaggerPath;
+            var basePath = httpContext.Request.PathBase;
+            var swaggerPath = _swaggerPathHelper.GetPathDescriptors(basePath).First().Path;
 
             var placeholderValues = new Dictionary<string, string>
             {
-                { "%(SwaggerUrl)", swaggerUrl }
+                { "%(SwaggerUrl)", swaggerPath }
             };
 
             var templateText = new StreamReader(template).ReadToEnd();

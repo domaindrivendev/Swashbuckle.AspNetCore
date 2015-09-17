@@ -24,17 +24,19 @@ namespace VersionedApi
             // You will also need to add the Microsoft.AspNet.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
             // services.AddWebApiConventions();
 
-            services.AddSwagger(c =>
+            services.AddSwagger();
+            services.ConfigureSwaggerDocument(options =>
             {
-                c.SwaggerGeneratorOptions.MultipleApiVersions(
+                options.MultipleApiVersions(
                     new []
                     {
                         new Info { Version = "v1", Title = "API V1" },
                         new Info { Version = "v2", Title = "API V2" }
                     },
-                    ResolveVersionSupportByVersionsConstraint);
+                    ResolveVersionSupportByVersionsConstraint
+                );
 
-                c.SwaggerGeneratorOptions.DocumentFilter<SetVersionInPaths>();
+                options.DocumentFilter<SetVersionInPaths>();
             });
         }
 

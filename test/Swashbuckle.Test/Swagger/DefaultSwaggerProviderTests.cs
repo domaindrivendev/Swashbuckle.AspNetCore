@@ -8,7 +8,7 @@ using Swashbuckle.Fixtures.Extensions;
 
 namespace Swashbuckle.Swagger
 {
-    public class SwaggerGeneratorTests
+    public class DefaultSwaggerProviderTests
     {
         [Fact]
         public void GetSwagger_ReturnsDefaultInfoVersionAndTitle()
@@ -22,7 +22,7 @@ namespace Swashbuckle.Swagger
         [Fact]
         public void GetSwagger_IncludesPathItem_PerRelativePathSansQueryString()
         {
-            var swaggerGenerator = Subject(setupApis: apis => apis
+            var subject = Subject(setupApis: apis => apis
                 .Add("GET", "collection1", nameof(ActionFixtures.ReturnsEnumerable))
                 .Add("GET", "collection1/{id}", nameof(ActionFixtures.ReturnsComplexType))
                 .Add("GET", "collection2", nameof(ActionFixtures.AcceptsStringFromQuery))
@@ -30,7 +30,7 @@ namespace Swashbuckle.Swagger
                 .Add("GET", "collection2/{id}", nameof(ActionFixtures.ReturnsComplexType))
             );
 
-            var swagger = swaggerGenerator.GetSwagger("v1");
+            var swagger = subject.GetSwagger("v1");
 
             Assert.Equal(new[]
                 {
@@ -45,7 +45,7 @@ namespace Swashbuckle.Swagger
         [Fact]
         public void GetSwagger_IncludesOperation_PerHttpMethodPerRelativePathSansQueryString()
         {
-            var swaggerGenerator = Subject(setupApis: apis => apis
+            var subject = Subject(setupApis: apis => apis
                 .Add("GET", "collection", nameof(ActionFixtures.ReturnsEnumerable))
                 .Add("PUT", "collection/{id}", nameof(ActionFixtures.ReturnsVoid))
                 .Add("POST", "collection", nameof(ActionFixtures.ReturnsInt))
@@ -54,7 +54,7 @@ namespace Swashbuckle.Swagger
                 // TODO: OPTIONS & HEAD
             );
 
-            var swagger = swaggerGenerator.GetSwagger("v1");
+            var swagger = subject.GetSwagger("v1");
 
             // GET collection
             var operation = swagger.Paths["/collection"].Get;
@@ -86,10 +86,10 @@ namespace Swashbuckle.Swagger
         [Fact]
         public void GetSwagger_SetsParametersToNull_ForParameterlessActions()
         {
-            var swaggerGenerator = Subject(setupApis: apis => apis
+            var subject = Subject(setupApis: apis => apis
                 .Add("GET", "collection", nameof(ActionFixtures.AcceptsNothing)));
 
-            var swagger = swaggerGenerator.GetSwagger("v1");
+            var swagger = subject.GetSwagger("v1");
 
             var operation = swagger.Paths["/collection"].Get;
             Assert.Null(operation.Parameters);
@@ -104,9 +104,9 @@ namespace Swashbuckle.Swagger
             string actionFixtureName,
             string expectedIn)
         {
-            var swaggerGenerator = Subject(setupApis: apis => apis.Add("GET", routeTemplate, actionFixtureName));
+            var subject = Subject(setupApis: apis => apis.Add("GET", routeTemplate, actionFixtureName));
 
-            var swagger = swaggerGenerator.GetSwagger("v1");
+            var swagger = subject.GetSwagger("v1");
 
             var param = swagger.Paths["/" + routeTemplate].Get.Parameters.First();
             Assert.IsAssignableFrom<NonBodyParameter>(param);
@@ -119,10 +119,10 @@ namespace Swashbuckle.Swagger
         [Fact]
         public void GetSwagger_SetsCollectionFormatMulti_ForNonBodyArrayParams()
         {
-            var swaggerGenerator = Subject(setupApis: apis => apis
+            var subject = Subject(setupApis: apis => apis
                 .Add("GET", "resource", nameof(ActionFixtures.AcceptsArrayFromQuery)));
 
-            var swagger = swaggerGenerator.GetSwagger("v1");
+            var swagger = subject.GetSwagger("v1");
 
             var param = (NonBodyParameter)swagger.Paths["/resource"].Get.Parameters.First();
             Assert.Equal("multi", param.CollectionFormat);
@@ -131,10 +131,10 @@ namespace Swashbuckle.Swagger
         [Fact]
         public void GetSwagger_CreatesBodyParam_ForFromBodyParams()
         {
-            var swaggerGenerator = Subject(setupApis: apis => apis
+            var subject = Subject(setupApis: apis => apis
                 .Add("POST", "collection", nameof(ActionFixtures.AcceptsComplexTypeFromBody)));
 
-            var swagger = swaggerGenerator.GetSwagger("v1");
+            var swagger = subject.GetSwagger("v1");
 
             var param = swagger.Paths["/collection"].Post.Parameters.First();
             Assert.IsAssignableFrom<BodyParameter>(param);
@@ -151,10 +151,10 @@ namespace Swashbuckle.Swagger
         [InlineData("collection/{param?}")]
         public void GetSwagger_SetsParameterRequired_ForRequiredAllRouteParams(string routeTemplate)
         {
-            var swaggerGenerator = Subject(setupApis: apis => apis
+            var subject = Subject(setupApis: apis => apis
                 .Add("GET", routeTemplate, nameof(ActionFixtures.AcceptsStringFromRoute)));
 
-            var swagger = swaggerGenerator.GetSwagger("v1");
+            var swagger = subject.GetSwagger("v1");
 
             var param = swagger.Paths["/collection/{param}"].Get.Parameters.First();
             Assert.Equal(true, param.Required);
@@ -165,9 +165,9 @@ namespace Swashbuckle.Swagger
         [InlineData(nameof(ActionFixtures.AcceptsStringFromHeader))]
         public void GetSwagger_SetsParameterRequiredFalse_ForQueryAndHeaderParams(string actionFixtureName)
         {
-            var swaggerGenerator = Subject(setupApis: apis => apis.Add("GET", "collection", actionFixtureName));
+            var subject = Subject(setupApis: apis => apis.Add("GET", "collection", actionFixtureName));
 
-            var swagger = swaggerGenerator.GetSwagger("v1");
+            var swagger = subject.GetSwagger("v1");
 
             var param = swagger.Paths["/collection"].Get.Parameters.First();
             Assert.Equal(false, param.Required);
@@ -176,10 +176,10 @@ namespace Swashbuckle.Swagger
         [Fact]
         public void GetSwagger_ExpandsOutQueryParameters_ForComplexParamsWithFromQueryAttribute()
         {
-            var swaggerGenerator = Subject(setupApis: apis => apis
+            var subject = Subject(setupApis: apis => apis
                 .Add("GET", "collection", nameof(ActionFixtures.AcceptsComplexTypeFromQuery)));
 
-            var swagger = swaggerGenerator.GetSwagger("v1");
+            var swagger = subject.GetSwagger("v1");
 
             var operation = swagger.Paths["/collection"].Get;
             Assert.Equal(5, operation.Parameters.Count);
@@ -201,10 +201,10 @@ namespace Swashbuckle.Swagger
             string expectedStatusCode,
             bool expectsSchema)
         {
-            var swaggerGenerator = Subject(setupApis: apis =>
+            var subject = Subject(setupApis: apis =>
                 apis.Add("GET", "collection", actionFixtureName));
 
-            var swagger = swaggerGenerator.GetSwagger("v1");
+            var swagger = subject.GetSwagger("v1");
 
             var responses = swagger.Paths["/collection"].Get.Responses;
             Assert.Equal(new[] { expectedStatusCode }, responses.Keys.ToArray());
@@ -218,10 +218,10 @@ namespace Swashbuckle.Swagger
         [Fact]
         public void GetSwagger_SetsDeprecated_ForActionsMarkedObsolete()
         {
-            var swaggerGenerator = Subject(setupApis: apis => apis
+            var subject = Subject(setupApis: apis => apis
                 .Add("GET", "collection", nameof(ActionFixtures.MarkedObsolete)));
 
-            var swagger = swaggerGenerator.GetSwagger("v1");
+            var swagger = subject.GetSwagger("v1");
 
             var operation = swagger.Paths["/collection"].Get;
             Assert.Equal(true, operation.Deprecated);
@@ -230,10 +230,10 @@ namespace Swashbuckle.Swagger
         [Fact]
         public void GetSwagger_SupportsOptionToProvideAdditionalApiInfo()
         {
-            var swaggerGenerator = Subject(
+            var subject = Subject(
                 configure: opts => opts.SingleApiVersion(new Info { Version = "v3", Title = "My API" }));
 
-            var swagger = swaggerGenerator.GetSwagger("v3");
+            var swagger = subject.GetSwagger("v3");
 
             Assert.NotNull(swagger.Info);
             Assert.Equal("v3", swagger.Info.Version);
@@ -244,7 +244,7 @@ namespace Swashbuckle.Swagger
         [Fact]
         public void GetSwagger_SupportsOptionToDescribeMultipleApiVersions()
         {
-            var swaggerGenerator = Subject(
+            var subject = Subject(
                 setupApis: apis =>
                 {
                     apis.Add("GET", "v1/collection", nameof(ActionFixtures.ReturnsEnumerable));
@@ -261,8 +261,8 @@ namespace Swashbuckle.Swagger
                         (apiDesc, targetApiVersion) => apiDesc.RelativePath.StartsWith(targetApiVersion));
                 });
 
-            var v2Swagger = swaggerGenerator.GetSwagger("v2");
-            var v1Swagger = swaggerGenerator.GetSwagger("v1");
+            var v2Swagger = subject.GetSwagger("v2");
+            var v1Swagger = subject.GetSwagger("v1");
 
             Assert.Equal(new[] { "/v2/collection" }, v2Swagger.Paths.Keys.ToArray());
             Assert.Equal(new[] { "/v1/collection" }, v1Swagger.Paths.Keys.ToArray());
@@ -271,14 +271,14 @@ namespace Swashbuckle.Swagger
         [Fact]
         public void GetSwagger_SupportsOptionToDefineBasicAuthScheme()
         {
-            var swaggerGenerator = Subject(configure: opts =>
+            var subject = Subject(configure: opts =>
                 opts.SecurityDefinitions.Add("basic", new BasicAuthScheme
                 {
                     Type = "basic",
                     Description = "Basic HTTP Authentication"
                 }));
 
-            var swagger = swaggerGenerator.GetSwagger("v1");
+            var swagger = subject.GetSwagger("v1");
 
             Assert.Contains("basic", swagger.SecurityDefinitions.Keys);
             var scheme = swagger.SecurityDefinitions["basic"];
@@ -289,7 +289,7 @@ namespace Swashbuckle.Swagger
         [Fact]
         public void GetSwagger_SupportsOptionToDefineApiKeyScheme()
         {
-            var swaggerGenerator = Subject(configure: opts =>
+            var subject = Subject(configure: opts =>
                 opts.SecurityDefinitions.Add("apiKey", new ApiKeyScheme
                 {
                     Type = "apiKey",
@@ -298,7 +298,7 @@ namespace Swashbuckle.Swagger
                     In = "header"
                 }));
 
-            var swagger = swaggerGenerator.GetSwagger("v1");
+            var swagger = subject.GetSwagger("v1");
 
             Assert.Contains("apiKey", swagger.SecurityDefinitions.Keys);
             var scheme = swagger.SecurityDefinitions["apiKey"];
@@ -313,7 +313,7 @@ namespace Swashbuckle.Swagger
         [Fact]
         public void GetSwagger_SupportsOptionToDefineOAuth2Scheme()
         {
-            var swaggerGenerator = Subject(configure: opts =>
+            var subject = Subject(configure: opts =>
                 opts.SecurityDefinitions.Add("oauth2", new OAuth2Scheme
                 {
                     Type = "oauth2",
@@ -328,7 +328,7 @@ namespace Swashbuckle.Swagger
                     }
                 }));
 
-            var swagger = swaggerGenerator.GetSwagger("v1");
+            var swagger = subject.GetSwagger("v1");
 
             Assert.Contains("oauth2", swagger.SecurityDefinitions.Keys);
             var scheme = swagger.SecurityDefinitions["oauth2"];
@@ -347,7 +347,7 @@ namespace Swashbuckle.Swagger
         [Fact]
         public void GetSwagger_SupportsOptionToIgnoreObsoleteActions()
         {
-            var swaggerGenerator = Subject(
+            var subject = Subject(
                 setupApis: apis =>
                 {
                     apis.Add("GET", "collection1", nameof(ActionFixtures.ReturnsEnumerable));
@@ -355,7 +355,7 @@ namespace Swashbuckle.Swagger
                 },
                 configure: opts => opts.IgnoreObsoleteActions = true);
 
-            var swagger = swaggerGenerator.GetSwagger("v1");
+            var swagger = subject.GetSwagger("v1");
 
             Assert.Equal(new[] { "/collection1" }, swagger.Paths.Keys.ToArray());
         }
@@ -363,7 +363,7 @@ namespace Swashbuckle.Swagger
         [Fact]
         public void GetSwagger_SupportsOptionToCustomizeGroupingOfActions()
         {
-            var swaggerGenerator = Subject(
+            var subject = Subject(
                 setupApis: apis =>
                 {
                     apis.Add("GET", "collection1", nameof(ActionFixtures.ReturnsEnumerable));
@@ -371,7 +371,7 @@ namespace Swashbuckle.Swagger
                 },
                 configure: opts => opts.GroupActionsBy((apiDesc) => apiDesc.RelativePath));
 
-            var swagger = swaggerGenerator.GetSwagger("v1");
+            var swagger = subject.GetSwagger("v1");
 
             Assert.Equal(new[] { "collection1" }, swagger.Paths["/collection1"].Get.Tags);
             Assert.Equal(new[] { "collection2" }, swagger.Paths["/collection2"].Get.Tags);
@@ -380,7 +380,7 @@ namespace Swashbuckle.Swagger
         [Fact]
         public void GetSwagger_SupportsOptionToCustomizeOderingOfActionGroups()
         {
-            var swaggerGenerator = Subject(
+            var subject = Subject(
                 setupApis: apis =>
                 {
                     apis.Add("GET", "A", nameof(ActionFixtures.ReturnsVoid));
@@ -394,7 +394,7 @@ namespace Swashbuckle.Swagger
                     opts.OrderActionGroupsBy(new DescendingAlphabeticComparer());
                 });
 
-            var swagger = swaggerGenerator.GetSwagger("v1");
+            var swagger = subject.GetSwagger("v1");
 
             Assert.Equal(new[] { "/F", "/D", "/B", "/A" }, swagger.Paths.Keys.ToArray());
         }
@@ -402,7 +402,7 @@ namespace Swashbuckle.Swagger
         [Fact]
         public void GetSwagger_SupportsOptionToPostModifyOperations()
         {
-            var swaggerGenerator = Subject(
+            var subject = Subject(
                 setupApis: apis =>
                 {
                     apis.Add("GET", "collection", nameof(ActionFixtures.ReturnsEnumerable));
@@ -412,7 +412,7 @@ namespace Swashbuckle.Swagger
                     opts.OperationFilter<VendorExtensionsOperationFilter>();
                 });
 
-            var swagger = swaggerGenerator.GetSwagger("v1");
+            var swagger = subject.GetSwagger("v1");
             
             var operation = swagger.Paths["/collection"].Get;
             Assert.NotEmpty(operation.Extensions);
@@ -421,10 +421,10 @@ namespace Swashbuckle.Swagger
         [Fact]
         public void GetSwagger_SupportsOptionToPostModifySwaggerDocument()
         {
-            var swaggerGenerator = Subject(configure: opts =>
+            var subject = Subject(configure: opts =>
                 opts.DocumentFilter<VendorExtensionsDocumentFilter>());
 
-            var swagger = swaggerGenerator.GetSwagger("v1");
+            var swagger = subject.GetSwagger("v1");
             
             Assert.NotEmpty(swagger.Extensions);
         }
@@ -432,29 +432,29 @@ namespace Swashbuckle.Swagger
         [Fact]
         public void GetSwagger_HandlesUnboundRouteParams()
         {
-            var swaggerGenerator = Subject(setupApis: apis => apis
+            var subject = Subject(setupApis: apis => apis
                 .Add("GET", "{version}/collection", nameof(ActionFixtures.AcceptsNothing)));
 
-            var swagger = swaggerGenerator.GetSwagger("v1");
+            var swagger = subject.GetSwagger("v1");
 
             var param = swagger.Paths["/{version}/collection"].Get.Parameters.First();
             Assert.Equal("version", param.Name);
             Assert.Equal(true, param.Required);
         }
 
-        private SwaggerGenerator Subject(
+        private DefaultSwaggerProvider Subject(
             Action<FakeApiDescriptionGroupCollectionProvider> setupApis = null,
-            Action<SwaggerGeneratorOptions> configure = null)
+            Action<SwaggerDocumentOptions> configure = null)
         {
             var apiDescriptionsProvider = new FakeApiDescriptionGroupCollectionProvider();
             if (setupApis != null) setupApis(apiDescriptionsProvider);
 
-            var options = new SwaggerGeneratorOptions();
+            var options = new SwaggerDocumentOptions();
             if (configure != null) configure(options);
 
-            return new SwaggerGenerator(
+            return new DefaultSwaggerProvider(
                 apiDescriptionsProvider,
-                () => new SchemaGenerator(new JsonSerializerSettings()),
+                new DefaultSchemaRegistryFactory(new JsonSerializerSettings(), new SwaggerSchemaOptions()),
                 options
             );
         }

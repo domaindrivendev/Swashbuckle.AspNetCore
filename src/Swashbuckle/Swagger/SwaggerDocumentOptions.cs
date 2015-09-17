@@ -4,47 +4,38 @@ using Microsoft.AspNet.Mvc.ApiExplorer;
 
 namespace Swashbuckle.Swagger
 {
-    public class SwaggerGeneratorOptions
+    public class SwaggerDocumentOptions
     {
-        private IList<Info> _apiVersions;
-
-        public SwaggerGeneratorOptions()
+        public SwaggerDocumentOptions()
         {
-            _apiVersions = new List<Info>();
-            _apiVersions.Add(new Info { Version = "v1", Title = "API V1" });
-
+            ApiVersions = new List<Info> { new Info { Version = "v1", Title = "API V1" } };
             SecurityDefinitions = new Dictionary<string, SecurityScheme>();
-
-            GroupNameSelector = ((apiDesc) => apiDesc.GroupName);
+            GroupNameSelector = (apiDesc) => apiDesc.GroupName;
             GroupNameComparer = Comparer<string>.Default;
-
             OperationFilters = new List<IOperationFilter>();
             DocumentFilters = new List<IDocumentFilter>();
         }
 
-        public IEnumerable<Info> ApiVersions
-        {
-            get { return _apiVersions; }
-        }
+        internal IList<Info> ApiVersions { get; private set; }
 
-        public Func<ApiDescription, string, bool> VersionSupportResolver { get; private set; }
+        internal Func<ApiDescription, string, bool> VersionSupportResolver { get; private set; }
 
         public IDictionary<string, SecurityScheme> SecurityDefinitions { get; private set; }
 
         public bool IgnoreObsoleteActions { get; set; }
 
-        public Func<ApiDescription, string> GroupNameSelector { get; private set; }
+        internal Func<ApiDescription, string> GroupNameSelector { get; private set; }
 
-        public IComparer<string> GroupNameComparer { get; private set; }
+        internal IComparer<string> GroupNameComparer { get; private set; }
 
-        public IList<IOperationFilter> OperationFilters { get; private set; }
+        internal IList<IOperationFilter> OperationFilters { get; private set; }
 
-        public IList<IDocumentFilter> DocumentFilters { get; private set; }
+        internal IList<IDocumentFilter> DocumentFilters { get; private set; }
 
         public void SingleApiVersion(Info info)
         {
-            _apiVersions.Clear();
-            _apiVersions.Add(info);
+            ApiVersions.Clear();
+            ApiVersions.Add(info);
             VersionSupportResolver = null;
         }
 
@@ -52,10 +43,10 @@ namespace Swashbuckle.Swagger
             IEnumerable<Info> apiVersions,
             Func<ApiDescription, string, bool> versionSupportResolver)
         {
-            _apiVersions.Clear();
+            ApiVersions.Clear();
             foreach (var version in apiVersions)
             {
-                _apiVersions.Add(version);
+                ApiVersions.Add(version);
             }
             VersionSupportResolver = versionSupportResolver;
         }
@@ -71,15 +62,27 @@ namespace Swashbuckle.Swagger
         }
 
         public void OperationFilter<TFilter>()
-            where TFilter: IOperationFilter, new()
+            where TFilter : IOperationFilter, new()
         {
-            OperationFilters.Add(new TFilter());
+            OperationFilter(new TFilter());
+        }
+
+        public void OperationFilter<TFilter>(TFilter filter)
+            where TFilter : IOperationFilter, new()
+        {
+            OperationFilters.Add(filter);
         }
 
         public void DocumentFilter<TFilter>()
-            where TFilter: IDocumentFilter, new()
+            where TFilter : IDocumentFilter, new()
         {
-            DocumentFilters.Add(new TFilter());
+            DocumentFilter(new TFilter());
+        }
+
+        public void DocumentFilter<TFilter>(TFilter filter)
+            where TFilter : IDocumentFilter, new()
+        {
+            DocumentFilters.Add(filter);
         }
     }
 }

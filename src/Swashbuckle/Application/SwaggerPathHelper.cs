@@ -1,15 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Microsoft.Framework.OptionsModel;
+using Swashbuckle.Swagger;
 
 namespace Swashbuckle.Application
 {
     public class SwaggerPathHelper
     {
-        private readonly IOptions<SwaggerOptions> _optionsAccessor;
+        private readonly IOptions<SwaggerDocumentOptions> _optionsAccessor;
         private string _routeTemplate;
 
-        public SwaggerPathHelper(IOptions<SwaggerOptions> optionsAccessor)
+        public SwaggerPathHelper(IOptions<SwaggerDocumentOptions> optionsAccessor)
         {
             _optionsAccessor = optionsAccessor;
         }
@@ -19,13 +21,26 @@ namespace Swashbuckle.Application
             _routeTemplate = routeTemplate;
         }
         
-        public IEnumerable<string> GetLocalPaths()
+        public IEnumerable<SwaggerPathDescriptor> GetPathDescriptors(string basePath)
         {
-            var swaggerOptions = _optionsAccessor.Options;
-            if (swaggerOptions == null || _routeTemplate == null) return Enumerable.Empty<string>();
-
-            return swaggerOptions.SwaggerGeneratorOptions.ApiVersions
-                .Select(info => _routeTemplate.Replace("{apiVersion}", info.Version));
+            return _optionsAccessor.Options.ApiVersions
+                .Select((info) => CreatePathDescriptor(info, basePath));
         }
+
+        private SwaggerPathDescriptor CreatePathDescriptor(Info info, string basePath)
+        {
+            var pathBuilder = new StringBuilder("/" + _routeTemplate.Replace("{apiVersion}", info.Version));
+            if (basePath != null)
+                pathBuilder.Insert(0, basePath);
+
+            return new SwaggerPathDescriptor { Path = pathBuilder.ToString(), Info = info };
+        }
+    }
+
+    public class SwaggerPathDescriptor
+    {
+        public Info Info { get; set; }
+
+        public string Path { get; set; }
     }
 }

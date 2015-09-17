@@ -5,20 +5,20 @@ using Microsoft.AspNet.Mvc.ApiExplorer;
 
 namespace Swashbuckle.Swagger
 {
-    public class SwaggerGenerator : ISwaggerProvider
+    public class DefaultSwaggerProvider : ISwaggerProvider
     {
         private readonly IApiDescriptionGroupCollectionProvider _apiDescriptionsProvider;
-        private readonly Func<ISchemaRegistry> _schemaRegistryFactory;
-        private readonly SwaggerGeneratorOptions _options;
+        private readonly ISchemaRegistryFactory _schemaRegistryFactory;
+        private readonly SwaggerDocumentOptions _options;
 
-        public SwaggerGenerator(
+        public DefaultSwaggerProvider(
             IApiDescriptionGroupCollectionProvider apiDescriptionsProvider,
-            Func<ISchemaRegistry> schemaRegistryFactory,
-            SwaggerGeneratorOptions options = null)
+            ISchemaRegistryFactory schemaRegistryFactory,
+            SwaggerDocumentOptions options = null)
         {
             _apiDescriptionsProvider = apiDescriptionsProvider;
             _schemaRegistryFactory = schemaRegistryFactory;
-            _options = options ?? new SwaggerGeneratorOptions();
+            _options = options ?? new SwaggerDocumentOptions();
         }
 
         public SwaggerDocument GetSwagger(
@@ -27,7 +27,7 @@ namespace Swashbuckle.Swagger
             string basePath = null,
             string[] schemes = null)
         {
-            var schemaRegistry = _schemaRegistryFactory();
+            var schemaRegistry = _schemaRegistryFactory.Create();
 
             var info = _options.ApiVersions.FirstOrDefault(v => v.Version == apiVersion);
             if (info == null)
@@ -50,7 +50,10 @@ namespace Swashbuckle.Swagger
                 SecurityDefinitions = _options.SecurityDefinitions
             };
 
-            var filterContext = new DocumentFilterContext(_apiDescriptionsProvider.ApiDescriptionGroups, schemaRegistry);
+            var filterContext = new DocumentFilterContext(
+                _apiDescriptionsProvider.ApiDescriptionGroups,
+                null);
+
             foreach (var filter in _options.DocumentFilters)
             {
                 filter.Apply(swaggerDoc, filterContext);
@@ -154,7 +157,7 @@ namespace Swashbuckle.Swagger
         private IParameter CreateParameter(ApiParameterDescription paramDesc, ISchemaRegistry schemaRegistry)
         {
             var source = paramDesc.Source.Id.ToLower();
-            var schema = (paramDesc.Type != null) ? schemaRegistry.GetOrRegister(paramDesc.Type) : null;
+            var schema = (paramDesc.Type == null) ? null : schemaRegistry.GetOrRegister(paramDesc.Type);
 
             if (source == "body")
             {
@@ -188,7 +191,9 @@ namespace Swashbuckle.Swagger
             return new Response
             {
                 Description = "OK",
-                Schema = (responseType != null) ? schemaRegistry.GetOrRegister(responseType) : null
+                Schema = (responseType != null)
+                    ? schemaRegistry.GetOrRegister(responseType)
+                    : null
             };
         }
     }
