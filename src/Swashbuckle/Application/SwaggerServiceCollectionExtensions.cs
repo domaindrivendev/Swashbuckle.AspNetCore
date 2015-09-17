@@ -16,13 +16,13 @@ namespace Microsoft.Framework.DependencyInjection
             services.Configure<MvcOptions>(c =>
                 c.Conventions.Add(new SwaggerApplicationConvention()));
 
-            services.AddSingleton(SchemaProviderFactory);
+            services.AddSingleton(CreateSchemaRegistryFactory);
             services.Configure<SwaggerSchemaOptions>(options =>
             {
                 options.ModelFilter<ApplySwaggerModelFilterAttributes>();
             });
 
-            services.AddSingleton(SwaggerProviderFactory);
+            services.AddSingleton(CreateSwaggerProvider);
             services.Configure<SwaggerDocumentOptions>(options =>
             {
                 options.OperationFilter<ApplySwaggerOperationAttributes>();
@@ -47,19 +47,19 @@ namespace Microsoft.Framework.DependencyInjection
             services.Configure(options);
         }
 
-        private static ISchemaProvider SchemaProviderFactory(IServiceProvider serviceProvider)
+        private static ISchemaRegistryFactory CreateSchemaRegistryFactory(IServiceProvider serviceProvider)
         {
             var jsonSerializerSettings = GetJsonSerializerSettings(serviceProvider);
             var optionsAccessor = serviceProvider.GetService<IOptions<SwaggerSchemaOptions>>();
-            return new DefaultSchemaProvider(jsonSerializerSettings, optionsAccessor.Options);
+            return new DefaultSchemaRegistryFactory(jsonSerializerSettings, optionsAccessor.Options);
         }
 
-        private static ISwaggerProvider SwaggerProviderFactory(IServiceProvider serviceProvider)
+        private static ISwaggerProvider CreateSwaggerProvider(IServiceProvider serviceProvider)
         {
             var optionsAccessor = serviceProvider.GetService<IOptions<SwaggerDocumentOptions>>();
             return new DefaultSwaggerProvider(
                 serviceProvider.GetRequiredService<IApiDescriptionGroupCollectionProvider>(),
-                serviceProvider.GetRequiredService<ISchemaProvider>(),
+                serviceProvider.GetRequiredService<ISchemaRegistryFactory>(),
                 optionsAccessor.Options);
         }
 

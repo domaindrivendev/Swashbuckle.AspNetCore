@@ -47,7 +47,7 @@ namespace Swashbuckle.Swagger.XmlComments
                 .ApiDescriptionGroups.Items.First()
                 .Items.First();
 
-            return new OperationFilterContext(apiDescription, null, null);
+            return new OperationFilterContext(apiDescription, null);
         }
 
         private ApplyXmlActionComments Subject()

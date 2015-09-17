@@ -11,7 +11,7 @@ using Swashbuckle.Fixtures.Extensions;
 
 namespace Swashbuckle.Swagger
 {
-    public class DefaultSchemaProviderTests
+    public class DefaultSchemaRegistryTests
     {
         [Theory]
         [InlineData(typeof(short), "integer", "int32")]
@@ -29,21 +29,21 @@ namespace Swashbuckle.Swagger
         [InlineData(typeof(DateTime), "string", "date-time")]
         [InlineData(typeof(DateTimeOffset), "string", "date-time")]
         [InlineData(typeof(string), "string", null)]
-        public void GetSchema_ReturnsPrimitiveSchema_ForSimpleTypes(
+        public void GetOrRegister_ReturnsPrimitiveSchema_ForSimpleTypes(
             Type systemType,
             string expectedType,
             string expectedFormat)
         {
-            var schema = Subject().GetSchema(systemType, new Dictionary<string, Schema>());
+            var schema = Subject().GetOrRegister(systemType);
 
             Assert.Equal(expectedType, schema.Type);
             Assert.Equal(expectedFormat, schema.Format);
         }
 
         [Fact]
-        public void GetSchema_ReturnsEnumSchema_ForEnumTypes()
+        public void GetOrRegister_ReturnsEnumSchema_ForEnumTypes()
         {
-            var schema = Subject().GetSchema(typeof(AnEnum), new Dictionary<string, Schema>());
+            var schema = Subject().GetOrRegister(typeof(AnEnum));
             Assert.Equal("integer", schema.Type);
             Assert.Equal("int32", schema.Format);
             Assert.Contains(AnEnum.Value1, schema.Enum);
@@ -54,13 +54,13 @@ namespace Swashbuckle.Swagger
         [InlineData(typeof(int[]), "integer", "int32", null)]
         [InlineData(typeof(IEnumerable<string>), "string", null, null)]
         [InlineData(typeof(IEnumerable), null, null, "#/definitions/Object")]
-        public void GetSchema_ReturnsArraySchema_ForEnumerableTypes(
+        public void GetOrRegister_ReturnsArraySchema_ForEnumerableTypes(
             Type systemType,
             string expectedItemsType,
             string expectedItemsFormat,
             string expectedItemsRef)
         {
-            var schema = Subject().GetSchema(systemType, new Dictionary<string, Schema>());
+            var schema = Subject().GetOrRegister(systemType);
 
             Assert.Equal("array", schema.Type);
             Assert.Equal(expectedItemsType, schema.Items.Type);
@@ -69,34 +69,30 @@ namespace Swashbuckle.Swagger
         }
 
         [Fact]
-        public void GetSchema_ReturnsMapSchema_ForDictionaryTypes()
+        public void GetOrRegister_ReturnsMapSchema_ForDictionaryTypes()
         {
-            var schema = Subject().GetSchema(
-                typeof(Dictionary<string, string>),
-                new Dictionary<string, Schema>());
+            var schema = Subject().GetOrRegister(typeof(Dictionary<string, string>));
 
             Assert.Equal("object", schema.Type);
             Assert.Equal("string", schema.AdditionalProperties.Type);
         }
 
         [Fact]
-        public void GetSchema_ReturnsJsonReference_ForComplexTypes()
+        public void GetOrRegister_ReturnsJsonReference_ForComplexTypes()
         {
-            var definitions = new Dictionary<string, Schema>();
-
-            var reference = Subject().GetSchema(typeof(ComplexType), definitions);
+            var reference = Subject().GetOrRegister(typeof(ComplexType));
 
             Assert.Equal("#/definitions/ComplexType", reference.Ref);
         }
 
         [Fact]
-        public void GetSchema_DefinesObjectSchema_ForComplexTypes()
+        public void GetOrRegister_DefinesObjectSchema_ForComplexTypes()
         {
-            var definitions = new Dictionary<string, Schema>();
+            var subject = Subject();
 
-            Subject().GetSchema(typeof(ComplexType), definitions);
+            subject.GetOrRegister(typeof(ComplexType));
 
-            var schema = definitions["ComplexType"];
+            var schema = subject.Definitions["ComplexType"];
             Assert.NotNull(schema);
             Assert.Equal("boolean", schema.Properties["Property1"].Type);
             Assert.Null(schema.Properties["Property1"].Format);
@@ -113,25 +109,25 @@ namespace Swashbuckle.Swagger
         [Theory]
         [InlineData(typeof(JObject))]
         [InlineData(typeof(JToken))]
-        public void GetSchema_DefinesBaseObjectSchema_ForRuntimeTypes(Type systemType)
+        public void GetOrRegister_DefinesBaseObjectSchema_ForRuntimeTypes(Type systemType)
         {
-            var definitions = new Dictionary<string, Schema>();
+            var subject = Subject(); 
 
-            Subject().GetSchema(systemType, definitions);
+            subject.GetOrRegister(systemType);
 
-            var schema = definitions["Object"];
+            var schema = subject.Definitions["Object"];
             Assert.NotNull(schema);
             Assert.Empty(schema.Properties);
         }
 
         [Fact]
-        public void GetSchema_IncludesInheritedProperties_ForSubTypes()
+        public void GetOrRegister_IncludesInheritedProperties_ForSubTypes()
         {
-            var definitions = new Dictionary<string, Schema>();
+            var subject = Subject(); 
 
-            Subject().GetSchema(typeof(SubType), definitions);
+            subject.GetOrRegister(typeof(SubType));
 
-            var schema = definitions["SubType"];
+            var schema = subject.Definitions["SubType"];
             Assert.Equal("string", schema.Properties["BaseProperty"].Type);
             Assert.Null(schema.Properties["BaseProperty"].Format);
             Assert.Equal("integer", schema.Properties["SubTypeProperty"].Type);
@@ -139,38 +135,38 @@ namespace Swashbuckle.Swagger
         }
 
         [Fact]
-        public void GetSchema_IgnoresIndexerProperties_ForIndexedTypes()
+        public void GetOrRegister_IgnoresIndexerProperties_ForIndexedTypes()
         {
-            var definitions = new Dictionary<string, Schema>();
+            var subject = Subject(); 
 
-            Subject().GetSchema(typeof(IndexedType), definitions);
+            subject.GetOrRegister(typeof(IndexedType));
 
-            var schema = definitions["IndexedType"];
+            var schema = subject.Definitions["IndexedType"];
             Assert.Equal(1, schema.Properties.Count);
             Assert.Contains("Property1", schema.Properties.Keys);
         }
 
         [Fact]
-        public void GetSchema_HonorsJsonAttributes()
+        public void GetOrRegister_HonorsJsonAttributes()
         {
-            var definitions = new Dictionary<string, Schema>();
+            var subject = Subject(); 
 
-            Subject().GetSchema(typeof(JsonAnnotatedType), definitions);
+            subject.GetOrRegister(typeof(JsonAnnotatedType));
 
-            var schema = definitions["JsonAnnotatedType"];
+            var schema = subject.Definitions["JsonAnnotatedType"];
             Assert.Equal(2, schema.Properties.Count);
             Assert.Contains("foobar", schema.Properties.Keys);
             Assert.Equal(new[] { "Property3" }, schema.Required.ToArray());
         }
 
         [Fact]
-        public void GetSchema_HonorsDataAttributes()
+        public void GetOrRegister_HonorsDataAttributes()
         {
-            var definitions = new Dictionary<string, Schema>();
+            var subject = Subject(); 
 
-            Subject().GetSchema(typeof(DataAnnotatedType), definitions);
+            subject.GetOrRegister(typeof(DataAnnotatedType));
 
-            var schema = definitions["DataAnnotatedType"];
+            var schema = subject.Definitions["DataAnnotatedType"];
             Assert.Equal(1, schema.Properties["RangeProperty"].Minimum);
             Assert.Equal(12, schema.Properties["RangeProperty"].Maximum);
             Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["PatternProperty"].Pattern);
@@ -183,96 +179,93 @@ namespace Swashbuckle.Swagger
         }
 
         [Fact]
-        public void GetSchema_HonorsStringEnumConverters_ConfiguredViaAttributes()
+        public void GetOrRegister_HonorsStringEnumConverters_ConfiguredViaAttributes()
         {
-            var schema = Subject().GetSchema(typeof(JsonConvertedEnum), new Dictionary<string, Schema>());
+            var schema = Subject().GetOrRegister(typeof(JsonConvertedEnum));
 
             Assert.Equal("string", schema.Type);
             Assert.Equal(new[] { "Value1", "Value2", "X" }, schema.Enum);
         }
 
         [Fact]
-        public void GetSchema_HonorsStringEnumConverters_ConfiguredViaSerializerSettings()
+        public void GetOrRegister_HonorsStringEnumConverters_ConfiguredViaSerializerSettings()
         {
             var subject = Subject(new JsonSerializerSettings
             {
                 Converters = new[] { new StringEnumConverter { CamelCaseText = true } }
             });
 
-            var schema = subject.GetSchema(typeof(AnEnum), new Dictionary<string, Schema>());
+            var schema = subject.GetOrRegister(typeof(AnEnum));
 
             Assert.Equal("string", schema.Type);
             Assert.Equal(new[] { "value1", "value2", "x" }, schema.Enum);
         }
 
         [Fact]
-        public void GetSchema_SupportsOptionToExplicitlyMapTypes()
+        public void GetOrRegister_SupportsOptionToExplicitlyMapTypes()
         {
             var subject = Subject(opts =>
                 opts.MapType<ComplexType>(() => new Schema { Type = "string" })
             );
 
-            var schema = subject.GetSchema(typeof(ComplexType), new Dictionary<string, Schema>());
+            var schema = subject.GetOrRegister(typeof(ComplexType));
 
             Assert.Equal("string", schema.Type);
             Assert.Null(schema.Properties);
         }
 
         [Fact]
-        public void GetSchema_SupportsOptionToPostModifyObjectSchemas()
+        public void GetOrRegister_SupportsOptionToPostModifyObjectSchemas()
         {
-            var definitions = new Dictionary<string, Schema>();
             var subject = Subject(opts =>
                 opts.ModelFilter<VendorExtensionsModelFilter>()
             );
 
-            subject.GetSchema(typeof(ComplexType), definitions);
+            subject.GetOrRegister(typeof(ComplexType));
 
-            var schema = definitions["ComplexType"];
+            var schema = subject.Definitions["ComplexType"];
             Assert.NotEmpty(schema.Extensions);
         }
 
         [Fact]
-        public void GetSchema_SupportsOptionToIgnoreObsoleteProperties()
+        public void GetOrRegister_SupportsOptionToIgnoreObsoleteProperties()
         {
-            var definitions = new Dictionary<string, Schema>();
             var subject = Subject(opts => opts.IgnoreObsoleteProperties = true);
 
-            subject.GetSchema(typeof(ObsoletePropertiesType), definitions);
+            subject.GetOrRegister(typeof(ObsoletePropertiesType));
 
-            var schema = definitions["ObsoletePropertiesType"];
+            var schema = subject.Definitions["ObsoletePropertiesType"];
             Assert.DoesNotContain("ObsoleteProperty", schema.Properties.Keys);
         }
 
         [Fact]
-        public void GetSchema_SupportsOptionToCustomizeSchemaIds()
+        public void GetOrRegister_SupportsOptionToCustomizeSchemaIds()
         {
             var subject = Subject(opts =>
             {
                 opts.CustomSchemaIds((type) => type.FriendlyId(true).Replace("Swashbuckle.Fixtures.", ""));
             });
 
-            var definitions = new Dictionary<string, Schema>();
-            var jsonReference1 = subject.GetSchema(typeof(Fixtures.Namespace1.ConflictingType), definitions);
-            var jsonReference2 = subject.GetSchema(typeof(Fixtures.Namespace2.ConflictingType), definitions);
+            var jsonReference1 = subject.GetOrRegister(typeof(Fixtures.Namespace1.ConflictingType));
+            var jsonReference2 = subject.GetOrRegister(typeof(Fixtures.Namespace2.ConflictingType));
 
             Assert.Equal("#/definitions/Namespace1.ConflictingType", jsonReference1.Ref);
             Assert.Equal("#/definitions/Namespace2.ConflictingType", jsonReference2.Ref);
         }
 
         [Fact]
-        public void GetSchema_SupportsOptionToDescribeAllEnumsAsStrings()
+        public void GetOrRegister_SupportsOptionToDescribeAllEnumsAsStrings()
         {
             var subject = Subject(opts => opts.DescribeAllEnumsAsStrings = true);
 
-            var schema = subject.GetSchema(typeof(AnEnum), new Dictionary<string, Schema>());
+            var schema = subject.GetOrRegister(typeof(AnEnum));
 
             Assert.Equal("string", schema.Type);
             Assert.Equal(new[] { "Value1", "Value2", "X" }, schema.Enum);
         }
 
         [Fact]
-        public void GetSchema_SupportsOptionToDescribeStringEnumsInCamelCase()
+        public void GetOrRegister_SupportsOptionToDescribeStringEnumsInCamelCase()
         {
             var subject = Subject(opts =>
             {
@@ -280,16 +273,16 @@ namespace Swashbuckle.Swagger
                 opts.DescribeStringEnumsInCamelCase = true;
             });
 
-            var schema = subject.GetSchema(typeof(AnEnum), new Dictionary<string, Schema>());
+            var schema = subject.GetOrRegister(typeof(AnEnum));
 
             Assert.Equal("string", schema.Type);
             Assert.Equal(new[] { "value1", "value2", "x" }, schema.Enum);
         }
 
         [Fact]
-        public void GetSchema_HandlesMultiDemensionalArrays()
+        public void GetOrRegister_HandlesMultiDemensionalArrays()
         {
-            var schema = Subject().GetSchema(typeof(int[][]), new Dictionary<string, Schema>());
+            var schema = Subject().GetOrRegister(typeof(int[][]));
 
             Assert.Equal("array", schema.Type);
             Assert.Equal("array", schema.Items.Type);
@@ -298,36 +291,36 @@ namespace Swashbuckle.Swagger
         }
 
         [Fact]
-        public void GetSchema_HandlesCompositeTypes()
+        public void GetOrRegister_HandlesCompositeTypes()
         {
-            var definitions = new Dictionary<string, Schema>();
+            var subject = Subject();
 
-            Subject().GetSchema(typeof(CompositeType), definitions);
+            subject.GetOrRegister(typeof(CompositeType));
 
-            var rootSchema = definitions["CompositeType"];
+            var rootSchema = subject.Definitions["CompositeType"];
             Assert.NotNull(rootSchema);
             Assert.Equal("object", rootSchema.Type);
             Assert.Equal("#/definitions/ComplexType", rootSchema.Properties["Property1"].Ref);
             Assert.Equal("array", rootSchema.Properties["Property2"].Type);
             Assert.Equal("#/definitions/ComplexType", rootSchema.Properties["Property2"].Items.Ref);
-            var componentSchema = definitions["ComplexType"];
+            var componentSchema = subject.Definitions["ComplexType"];
             Assert.NotNull(componentSchema);
             Assert.Equal("object", componentSchema.Type);
             Assert.Equal(5, componentSchema.Properties.Count);
         }
 
         [Fact]
-        public void GetSchema_HandlesNestedTypes()
+        public void GetOrRegister_HandlesNestedTypes()
         {
-            var definitions = new Dictionary<string, Schema>();
+            var subject = Subject();
 
-            Subject().GetSchema(typeof(ContainingType), definitions);
+            subject.GetOrRegister(typeof(ContainingType));
 
-            var rootSchema = definitions["ContainingType"];
+            var rootSchema = subject.Definitions["ContainingType"];
             Assert.NotNull(rootSchema);
             Assert.Equal("object", rootSchema.Type);
             Assert.Equal("#/definitions/NestedType", rootSchema.Properties["Property1"].Ref);
-            var nestedSchema = definitions["NestedType"];
+            var nestedSchema = subject.Definitions["NestedType"];
             Assert.NotNull(nestedSchema);
             Assert.Equal("object", nestedSchema.Type);
             Assert.Equal(1, nestedSchema.Properties.Count);
@@ -337,28 +330,40 @@ namespace Swashbuckle.Swagger
         [InlineData(typeof(SelfReferencingType), "SelfReferencingType")]
         [InlineData(typeof(ListOfSelf), "ListOfSelf")]
         [InlineData(typeof(DictionaryOfSelf), "DictionaryOfSelf")]
-        public void GetSchema_HandlesSelfReferencingTypes(
+        public void GetOrRegister_HandlesSelfReferencingTypes(
             Type systemType,
             string expectedSchemaId)
         {
-            var definitions = new Dictionary<string, Schema>();
+            var subject = Subject();
 
-            Subject().GetSchema(systemType, definitions);
+            subject.GetOrRegister(systemType);
 
-            Assert.Contains(expectedSchemaId, definitions.Keys);
+            Assert.Contains(expectedSchemaId, subject.Definitions.Keys);
         }
 
-        private DefaultSchemaProvider Subject(Action<SwaggerSchemaOptions> configureOptions = null)
+        [Fact]
+        public void GetOrRegister_Errors_OnConflictingClassName()
+        {
+            var subject = Subject();
+
+            subject.GetOrRegister(typeof(Fixtures.Namespace1.ConflictingType));
+            Assert.Throws<InvalidOperationException>(() =>
+            {
+                subject.GetOrRegister(typeof(Fixtures.Namespace2.ConflictingType));
+            });
+        }
+
+        private DefaultSchemaRegistry Subject(Action<SwaggerSchemaOptions> configureOptions = null)
         {
             var options = new SwaggerSchemaOptions();
             if (configureOptions != null) configureOptions(options);
 
-            return new DefaultSchemaProvider(new JsonSerializerSettings(), options);
+            return new DefaultSchemaRegistry(new JsonSerializerSettings(), options);
         }
 
-        private DefaultSchemaProvider Subject(JsonSerializerSettings jsonSerializerSettings)
+        private DefaultSchemaRegistry Subject(JsonSerializerSettings jsonSerializerSettings)
         {
-            return new DefaultSchemaProvider(jsonSerializerSettings);
+            return new DefaultSchemaRegistry(jsonSerializerSettings);
         }
     }
 }

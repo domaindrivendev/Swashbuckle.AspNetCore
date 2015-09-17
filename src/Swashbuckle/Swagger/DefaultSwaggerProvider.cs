@@ -8,16 +8,16 @@ namespace Swashbuckle.Swagger
     public class DefaultSwaggerProvider : ISwaggerProvider
     {
         private readonly IApiDescriptionGroupCollectionProvider _apiDescriptionsProvider;
-        private readonly ISchemaProvider _schemaProvider;
+        private readonly ISchemaRegistryFactory _schemaRegistryFactory;
         private readonly SwaggerDocumentOptions _options;
 
         public DefaultSwaggerProvider(
             IApiDescriptionGroupCollectionProvider apiDescriptionsProvider,
-            ISchemaProvider schemaProvider,
+            ISchemaRegistryFactory schemaRegistryFactory,
             SwaggerDocumentOptions options = null)
         {
             _apiDescriptionsProvider = apiDescriptionsProvider;
-            _schemaProvider = schemaProvider;
+            _schemaRegistryFactory = schemaRegistryFactory;
             _options = options ?? new SwaggerDocumentOptions();
         }
 
@@ -27,7 +27,7 @@ namespace Swashbuckle.Swagger
             string basePath = null,
             string[] schemes = null)
         {
-            var schemaDefinitions = new Dictionary<string, Schema>();
+            var schemaRegistry = _schemaRegistryFactory.Create();
 
             var info = _options.ApiVersions.FirstOrDefault(v => v.Version == apiVersion);
             if (info == null)
@@ -37,7 +37,7 @@ namespace Swashbuckle.Swagger
                 .Where(apiDesc => !(_options.IgnoreObsoleteActions && apiDesc.IsObsolete()))
                 .OrderBy(_options.GroupNameSelector, _options.GroupNameComparer)
                 .GroupBy(apiDesc => apiDesc.RelativePathSansQueryString())
-                .ToDictionary(group => "/" + group.Key, group => CreatePathItem(group, schemaDefinitions));
+                .ToDictionary(group => "/" + group.Key, group => CreatePathItem(group, schemaRegistry));
 
             var swaggerDoc = new SwaggerDocument
             {
@@ -46,7 +46,7 @@ namespace Swashbuckle.Swagger
                 BasePath = basePath,
                 Schemes = schemes,
                 Paths = paths,
-                Definitions = schemaDefinitions,
+                Definitions = schemaRegistry.Definitions,
                 SecurityDefinitions = _options.SecurityDefinitions
             };
 
@@ -72,9 +72,7 @@ namespace Swashbuckle.Swagger
                 : allDescriptions.Where(apiDesc => _options.VersionSupportResolver(apiDesc, apiVersion));
         }
 
-        private PathItem CreatePathItem(
-            IEnumerable<ApiDescription> apiDescriptions,
-            IDictionary<string, Schema> schemaDefinitions)
+        private PathItem CreatePathItem(IEnumerable<ApiDescription> apiDescriptions, ISchemaRegistry schemaRegistry)
         {
             var pathItem = new PathItem();
 
@@ -95,25 +93,25 @@ namespace Swashbuckle.Swagger
                 switch (httpMethod)
                 {
                     case "get":
-                        pathItem.Get = CreateOperation(apiDescription, schemaDefinitions);
+                        pathItem.Get = CreateOperation(apiDescription, schemaRegistry);
                         break;
                     case "put":
-                        pathItem.Put = CreateOperation(apiDescription, schemaDefinitions);
+                        pathItem.Put = CreateOperation(apiDescription, schemaRegistry);
                         break;
                     case "post":
-                        pathItem.Post = CreateOperation(apiDescription, schemaDefinitions);
+                        pathItem.Post = CreateOperation(apiDescription, schemaRegistry);
                         break;
                     case "delete":
-                        pathItem.Delete = CreateOperation(apiDescription, schemaDefinitions);
+                        pathItem.Delete = CreateOperation(apiDescription, schemaRegistry);
                         break;
                     case "options":
-                        pathItem.Options = CreateOperation(apiDescription, schemaDefinitions);
+                        pathItem.Options = CreateOperation(apiDescription, schemaRegistry);
                         break;
                     case "head":
-                        pathItem.Head = CreateOperation(apiDescription, schemaDefinitions);
+                        pathItem.Head = CreateOperation(apiDescription, schemaRegistry);
                         break;
                     case "patch":
-                        pathItem.Patch = CreateOperation(apiDescription, schemaDefinitions);
+                        pathItem.Patch = CreateOperation(apiDescription, schemaRegistry);
                         break;
                 }
             }
@@ -121,22 +119,20 @@ namespace Swashbuckle.Swagger
             return pathItem;
         }
 
-        private Operation CreateOperation(
-            ApiDescription apiDescription,
-            IDictionary<string, Schema> schemaDefinitions)
+        private Operation CreateOperation(ApiDescription apiDescription, ISchemaRegistry schemaRegistry)
         {
             var groupName = _options.GroupNameSelector(apiDescription);
 
             var parameters = apiDescription.ParameterDescriptions
                 .Where(paramDesc => paramDesc.Source.IsFromRequest)
-                .Select(paramDesc => CreateParameter(paramDesc, schemaDefinitions))
+                .Select(paramDesc => CreateParameter(paramDesc, schemaRegistry))
                 .ToList();
 
             var responses = new Dictionary<string, Response>();
             if (apiDescription.ResponseType == typeof(void))
                 responses.Add("204", new Response { Description = "No Content" });
             else
-                responses.Add("200", CreateSuccessResponse(apiDescription.ResponseType, schemaDefinitions));
+                responses.Add("200", CreateSuccessResponse(apiDescription.ResponseType, schemaRegistry));
 
             var operation = new Operation
             { 
@@ -149,7 +145,7 @@ namespace Swashbuckle.Swagger
                 Deprecated = apiDescription.IsObsolete()
             };
 
-            var filterContext = new OperationFilterContext(apiDescription, schemaDefinitions, _schemaProvider);
+            var filterContext = new OperationFilterContext(apiDescription, schemaRegistry);
             foreach (var filter in _options.OperationFilters)
             {
                 filter.Apply(operation, filterContext);
@@ -158,14 +154,10 @@ namespace Swashbuckle.Swagger
             return operation;
         }
 
-        private IParameter CreateParameter(
-            ApiParameterDescription paramDesc,
-            IDictionary<string, Schema> schemaDefinitions)
+        private IParameter CreateParameter(ApiParameterDescription paramDesc, ISchemaRegistry schemaRegistry)
         {
             var source = paramDesc.Source.Id.ToLower();
-            var schema = (paramDesc.Type != null)
-                ? _schemaProvider.GetSchema(paramDesc.Type, schemaDefinitions)
-                : null;
+            var schema = (paramDesc.Type == null) ? null : schemaRegistry.GetOrRegister(paramDesc.Type);
 
             if (source == "body")
             {
@@ -194,15 +186,13 @@ namespace Swashbuckle.Swagger
             }
         }
 
-        private Response CreateSuccessResponse(
-            Type responseType,
-            IDictionary<string, Schema> schemaDefinitions)
+        private Response CreateSuccessResponse(Type responseType, ISchemaRegistry schemaRegistry)
         {
             return new Response
             {
                 Description = "OK",
                 Schema = (responseType != null)
-                    ? _schemaProvider.GetSchema(responseType, schemaDefinitions)
+                    ? schemaRegistry.GetOrRegister(responseType)
                     : null
             };
         }

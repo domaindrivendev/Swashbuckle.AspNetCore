@@ -18,18 +18,17 @@ namespace Swashbuckle.Swagger.Annotations
 
             var controllerAttributes = apiDesc.GetControllerAttributes().OfType<SwaggerResponseAttribute>()
                 .OrderBy(attr => attr.StatusCode);
-            ApplyResponsesFrom(controllerAttributes, operation, context.SchemaDefinitions, context.SchemaProvider);
+            ApplyResponsesFrom(controllerAttributes, operation, context.SchemaRegistry);
 
             var actionAttributes = apiDesc.GetActionAttributes().OfType<SwaggerResponseAttribute>()
                 .OrderBy(attr => attr.StatusCode);
-            ApplyResponsesFrom(actionAttributes, operation, context.SchemaDefinitions, context.SchemaProvider);
+            ApplyResponsesFrom(actionAttributes, operation, context.SchemaRegistry);
         }
 
         private void ApplyResponsesFrom(
             IOrderedEnumerable<SwaggerResponseAttribute> attributes,
             Operation operation,
-            IDictionary<string, Schema> schemaDefinitions,
-            ISchemaProvider schemaProvider)
+            ISchemaRegistry schemaRegistry)
         {
             foreach (var attr in attributes)
             {
@@ -40,7 +39,7 @@ namespace Swashbuckle.Swagger.Annotations
                     Description = attr.Description ?? InferDescriptionFrom(statusCode),
                     Schema = (attr.Type == null)
                         ? null
-                        : schemaProvider.GetSchema(attr.Type, schemaDefinitions)
+                        : schemaRegistry.GetOrRegister(attr.Type)
                 };
             }
         }

@@ -11,14 +11,14 @@ namespace Swashbuckle.Swagger
     {
         public DocumentFilterContext(
             ApiDescriptionGroupCollection apiDescriptionsGroups,
-            ISchemaProvider schemaProvider)
+            ISchemaRegistry schemaRegistry)
         {
             ApiDescriptionsGroups = apiDescriptionsGroups;
-            SchemaProvider = schemaProvider;
+            SchemaRegistry = schemaRegistry;
         }
 
         public ApiDescriptionGroupCollection ApiDescriptionsGroups { get; private set; }
 
-        public ISchemaProvider SchemaProvider { get; private set; }
+        public ISchemaRegistry SchemaRegistry { get; private set; }
     }
 }

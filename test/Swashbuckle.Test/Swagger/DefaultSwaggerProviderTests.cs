@@ -454,7 +454,7 @@ namespace Swashbuckle.Swagger
 
             return new DefaultSwaggerProvider(
                 apiDescriptionsProvider,
-                new DefaultSchemaProvider(new JsonSerializerSettings()),
+                new DefaultSchemaRegistryFactory(new JsonSerializerSettings(), new SwaggerSchemaOptions()),
                 options
             );
         }

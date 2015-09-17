@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNet.Mvc.ApiExplorer;
+﻿using Microsoft.AspNet.Mvc.ApiExplorer;
 
 namespace Swashbuckle.Swagger
 {
@@ -10,20 +9,14 @@ namespace Swashbuckle.Swagger
 
     public class OperationFilterContext
     {
-        public OperationFilterContext(
-            ApiDescription apiDescription,
-            IDictionary<string, Schema> schemaDefinitions,
-            ISchemaProvider schemaProvider)
+        public OperationFilterContext(ApiDescription apiDescription, ISchemaRegistry schemaRegistry)
         {
             ApiDescription = apiDescription;
-            SchemaDefinitions = schemaDefinitions;
-            SchemaProvider = schemaProvider;
+            SchemaRegistry = schemaRegistry;
         }
 
         public ApiDescription ApiDescription { get; private set; }
 
-        public IDictionary<string, Schema> SchemaDefinitions { get; private set; }
-
-        public ISchemaProvider SchemaProvider { get; private set; }
+        public ISchemaRegistry SchemaRegistry { get; private set; }
     }
 }
