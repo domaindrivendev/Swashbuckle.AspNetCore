@@ -6,7 +6,10 @@ using Microsoft.Framework.OptionsModel;
 using Microsoft.AspNet.Routing;
 using Microsoft.AspNet.Routing.Constraints;
 using Microsoft.AspNet.Mvc;
+using Microsoft.AspNet.Mvc.ActionConstraints;
+using Microsoft.AspNet.Mvc.Actions;
 using Microsoft.AspNet.Mvc.ApiExplorer;
+using Microsoft.AspNet.Mvc.Formatters;
 using Microsoft.AspNet.Mvc.Routing;
 using Microsoft.AspNet.Mvc.ModelBinding;
 using Microsoft.AspNet.Mvc.ModelBinding.Metadata;
@@ -83,7 +86,7 @@ namespace Swashbuckle.Fixtures.ApiDescriptions
             options.OutputFormatters.Add(new JsonOutputFormatter());
 
             var optionsAccessor = new Mock<IOptions<MvcOptions>>();
-            optionsAccessor.Setup(o => o.Options).Returns(options);
+            optionsAccessor.Setup(o => o.Value).Returns(options);
 
             var constraintResolver = new Mock<IInlineConstraintResolver>();
             constraintResolver.Setup(i => i.ResolveConstraint("int")).Returns(new IntRouteConstraint());
