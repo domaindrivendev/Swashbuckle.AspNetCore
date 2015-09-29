@@ -1411,14 +1411,14 @@
           "lib/dnx451/xunit.execution.dotnet.dll": {}
         }
       },
-      "xunit.runner.dnx/2.1.0-beta5-build169": {
+      "xunit.runner.dnx/2.1.0-beta5a-build188": {
         "type": "package",
         "dependencies": {
           "Microsoft.Dnx.Runtime.Abstractions": "1.0.0-beta7",
           "Microsoft.Dnx.TestAdapter": "1.0.0-beta7",
           "Microsoft.Dnx.TestHost": "1.0.0-beta7",
-          "xunit.runner.reporters": "2.1.0-rc1-build3168",
-          "xunit.runner.utility": "2.1.0-rc1-build3168"
+          "xunit.runner.reporters": "2.1.0",
+          "xunit.runner.utility": "2.1.0"
         },
         "frameworkAssemblies": [
           "Microsoft.CSharp",
@@ -1434,11 +1434,11 @@
           "lib/dnx451/xunit.runner.dnx.dll": {}
         }
       },
-      "xunit.runner.reporters/2.1.0-rc1-build3168": {
+      "xunit.runner.reporters/2.1.0": {
         "type": "package",
         "dependencies": {
           "Newtonsoft.Json": "7.0.1",
-          "xunit.runner.utility": "[2.1.0-rc1-build3168]"
+          "xunit.runner.utility": "[2.1.0]"
         },
         "compile": {
           "lib/dnx451/xunit.runner.reporters.dotnet.dll": {}
@@ -1447,7 +1447,7 @@
           "lib/dnx451/xunit.runner.reporters.dotnet.dll": {}
         }
       },
-      "xunit.runner.utility/2.1.0-rc1-build3168": {
+      "xunit.runner.utility/2.1.0": {
         "type": "package",
         "dependencies": {
           "xunit.abstractions": "[2.0.0]"
@@ -3204,35 +3204,35 @@
         "xunit.extensibility.execution.nuspec"
       ]
     },
-    "xunit.runner.dnx/2.1.0-beta5-build169": {
+    "xunit.runner.dnx/2.1.0-beta5a-build188": {
       "type": "package",
-      "sha512": "E5cYXk8/6Vrai9Zq8TMnYaXPbC3SWO0JsjN3X+S276lkVKISiSEWXN2ICd6VsDPuJFz0TN7lZdylU0GPxve24A==",
+      "sha512": "m48yZLJhQZm+o7EMbF1XhWhhcrqnVHvjoJJZivJTAjKheIFMY2DpQI7wL/HJx+bOlqlKJrJKlYwsrNH/taWRVg==",
       "files": [
         "lib/dnx451/xunit.runner.dnx.dll",
         "lib/dnx451/xunit.runner.dnx.xml",
         "lib/dnxcore50/xunit.runner.dnx.dll",
         "lib/dnxcore50/xunit.runner.dnx.xml",
         "repo.json",
-        "xunit.runner.dnx.2.1.0-beta5-build169.nupkg",
-        "xunit.runner.dnx.2.1.0-beta5-build169.nupkg.sha512",
+        "xunit.runner.dnx.2.1.0-beta5a-build188.nupkg",
+        "xunit.runner.dnx.2.1.0-beta5a-build188.nupkg.sha512",
         "xunit.runner.dnx.nuspec"
       ]
     },
-    "xunit.runner.reporters/2.1.0-rc1-build3168": {
+    "xunit.runner.reporters/2.1.0": {
       "type": "package",
-      "sha512": "jvshOBaWng7Y3xtI3FenHPDGzLUZFnvJOczIOGwfsLKgbXc/e9+1YmDfuh4I4H4zrs7Kp4rKBaXboe9ER7CFOQ==",
+      "sha512": "ja0kJrvwSiho2TRFpfHfa+6tGJI5edcyD8fdekTkjn7Us17PbGqglIihRe8sR9YFAmS4ipEC8+7CXOM/b69ENQ==",
       "files": [
         "lib/dnx451/xunit.runner.reporters.dotnet.dll",
         "lib/dotnet/xunit.runner.reporters.dotnet.dll",
         "lib/net45/xunit.runner.reporters.desktop.dll",
-        "xunit.runner.reporters.2.1.0-rc1-build3168.nupkg",
-        "xunit.runner.reporters.2.1.0-rc1-build3168.nupkg.sha512",
+        "xunit.runner.reporters.2.1.0.nupkg",
+        "xunit.runner.reporters.2.1.0.nupkg.sha512",
         "xunit.runner.reporters.nuspec"
       ]
     },
-    "xunit.runner.utility/2.1.0-rc1-build3168": {
+    "xunit.runner.utility/2.1.0": {
       "type": "package",
-      "sha512": "4raBhWPr7w8eQa+Rc1eYCVC5sTJeovtuJwj59OqCHUTpSyaTT/9rps2eI+mXRSD7uH46TS2o0IoQ3bsSsrcedQ==",
+      "sha512": "jJJHROwskIhdQuYw7exe7KaW20dOCa+lzV/lY7Zdh1ZZzdUPpScMi9ReJIutqiyjhemGF8V/GaMIPrcjyZ4ioQ==",
       "files": [
         "lib/dnx451/xunit.runner.utility.dotnet.dll",
         "lib/dnx451/xunit.runner.utility.dotnet.pdb",
@@ -3246,8 +3246,8 @@
         "lib/portable-net45+win8+wp8+wpa81/xunit.runner.utility.dotnet.dll",
         "lib/portable-net45+win8+wp8+wpa81/xunit.runner.utility.dotnet.pdb",
         "lib/portable-net45+win8+wp8+wpa81/xunit.runner.utility.dotnet.xml",
-        "xunit.runner.utility.2.1.0-rc1-build3168.nupkg",
-        "xunit.runner.utility.2.1.0-rc1-build3168.nupkg.sha512",
+        "xunit.runner.utility.2.1.0.nupkg",
+        "xunit.runner.utility.2.1.0.nupkg.sha512",
         "xunit.runner.utility.nuspec"
       ]
     }
