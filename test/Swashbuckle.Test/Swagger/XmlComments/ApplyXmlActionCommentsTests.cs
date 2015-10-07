@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using Xunit;
-using Swashbuckle.Fixtures.ApiDescriptions;
+using Swashbuckle.Swagger.Fixtures.ApiDescriptions;
 
 namespace Swashbuckle.Swagger.XmlComments
 {

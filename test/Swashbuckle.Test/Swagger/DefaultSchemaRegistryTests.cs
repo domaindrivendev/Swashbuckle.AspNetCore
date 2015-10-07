@@ -6,8 +6,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Converters;
 using Xunit;
-using Swashbuckle.Fixtures;
-using Swashbuckle.Fixtures.Extensions;
+using Swashbuckle.Swagger.Fixtures;
+using Swashbuckle.Swagger.Fixtures.Extensions;
 
 namespace Swashbuckle.Swagger
 {
@@ -243,7 +243,7 @@ namespace Swashbuckle.Swagger
         {
             var subject = Subject(opts =>
             {
-                opts.CustomSchemaIds((type) => type.FriendlyId(true).Replace("Swashbuckle.Fixtures.", ""));
+                opts.CustomSchemaIds((type) => type.FriendlyId(true).Replace("Swashbuckle.Swagger.Fixtures.", ""));
             });
 
             var jsonReference1 = subject.GetOrRegister(typeof(Fixtures.Namespace1.ConflictingType));

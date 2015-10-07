@@ -3,8 +3,8 @@ using System.Linq;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Xunit;
-using Swashbuckle.Fixtures.ApiDescriptions;
-using Swashbuckle.Fixtures.Extensions;
+using Swashbuckle.Swagger.Fixtures.ApiDescriptions;
+using Swashbuckle.Swagger.Fixtures.Extensions;
 
 namespace Swashbuckle.Swagger
 {

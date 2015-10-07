@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <doc>
   <assembly>
-    <name>Swashbuckle.Fixtures.ApiDescriptions</name>
+    <name>Swashbuckle.Swagger.Fixtures.ApiDescriptions</name>
   </assembly>
   <members>
-    <member name="M:Swashbuckle.Fixtures.ApiDescriptions.ActionFixtures.AnnotatedWithSummaryAndRemarksXml">
+    <member name="M:Swashbuckle.Swagger.Fixtures.ApiDescriptions.ActionFixtures.AnnotatedWithSummaryAndRemarksXml">
       <summary>
       summary for AnnotatedWithSummaryAndRemarksXml
       </summary>
@@ -12,36 +12,36 @@
       remarks for AnnotatedWithSummaryAndRemarksXml
       </remarks>
     </member>
-    <member name="M:Swashbuckle.Fixtures.ApiDescriptions.ActionFixtures.AnnotatedWithParamsXml(System.Int32,System.Collections.Generic.IEnumerable{Swashbuckle.Fixtures.ComplexType})">
+    <member name="M:Swashbuckle.Swagger.Fixtures.ApiDescriptions.ActionFixtures.AnnotatedWithParamsXml(System.Int32,System.Collections.Generic.IEnumerable{Swashbuckle.Swagger.Fixtures.ComplexType})">
         <param name="param1">description for param1</param>
         <param name="param2">description for param2</param>
     </member>
-    <member name="T:Swashbuckle.Fixtures.XmlAnnotatedType">
+    <member name="T:Swashbuckle.Swagger.Fixtures.XmlAnnotatedType">
         <summary>
         summary for XmlAnnotatedType
         </summary>
     </member>
-    <member name="T:Swashbuckle.Fixtures.XmlAnnotatedWithNestedType.NestedType">
+    <member name="T:Swashbuckle.Swagger.Fixtures.XmlAnnotatedWithNestedType.NestedType">
         <summary>
         summary for NestedType
         </summary>
     </member>
-    <member name="T:Swashbuckle.Fixtures.XmlAnnotatedGenericType`1">
+    <member name="T:Swashbuckle.Swagger.Fixtures.XmlAnnotatedGenericType`1">
         <summary>
         summary for XmlAnnotatedGenericType
         </summary>
     </member>
-    <member name="P:Swashbuckle.Fixtures.XmlAnnotatedType.Property">
+    <member name="P:Swashbuckle.Swagger.Fixtures.XmlAnnotatedType.Property">
         <summary>
         summary for Property
         </summary>
     </member>
-    <member name="P:Swashbuckle.Fixtures.XmlAnnotatedBaseType.BaseProperty">
+    <member name="P:Swashbuckle.Swagger.Fixtures.XmlAnnotatedBaseType.BaseProperty">
         <summary>
         summary for BaseProperty
         </summary>
     </member>
-    <member name="P:Swashbuckle.Fixtures.XmlAnnotatedGenericType`1.GenericProperty">
+    <member name="P:Swashbuckle.Swagger.Fixtures.XmlAnnotatedGenericType`1.GenericProperty">
         <summary>
         summary for GenericProperty
         </summary>

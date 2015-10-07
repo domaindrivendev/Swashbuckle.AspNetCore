@@ -1,6 +1,6 @@
 ﻿using Swashbuckle.Swagger;
 
-namespace Swashbuckle.Fixtures.Extensions
+namespace Swashbuckle.Swagger.Fixtures.Extensions
 {
     public class VendorExtensionsModelFilter : IModelFilter
     {

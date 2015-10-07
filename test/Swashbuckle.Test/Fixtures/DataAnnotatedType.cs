@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Swashbuckle.Fixtures
+namespace Swashbuckle.Swagger.Fixtures
 {
     public class DataAnnotatedType
     {

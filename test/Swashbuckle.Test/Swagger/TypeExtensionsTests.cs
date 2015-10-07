@@ -1,7 +1,7 @@
-﻿using Swashbuckle.Fixtures;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Xunit;
+using Swashbuckle.Swagger.Fixtures;
 
 namespace Swashbuckle.Swagger
 {
@@ -19,10 +19,10 @@ namespace Swashbuckle.Swagger
         }
 
         [Theory]
-        [InlineData(typeof(ComplexType), "Swashbuckle.Fixtures.ComplexType")]
+        [InlineData(typeof(ComplexType), "Swashbuckle.Swagger.Fixtures.ComplexType")]
         [InlineData(typeof(IEnumerable<string>), "System.Collections.Generic.IEnumerable[System.String]")]
         [InlineData(typeof(IDictionary<string, decimal>), "System.Collections.Generic.IDictionary[System.String,System.Decimal]")]
-        [InlineData(typeof(ContainingType.NestedType), "Swashbuckle.Fixtures.ContainingType.NestedType")]
+        [InlineData(typeof(ContainingType.NestedType), "Swashbuckle.Swagger.Fixtures.ContainingType.NestedType")]
         public void FriendlyId_ReturnsFullQualifiedFriendlyId_IfFullyQualifiedFlagIsSet(
             Type systemType,
             string expectedReturnValue)

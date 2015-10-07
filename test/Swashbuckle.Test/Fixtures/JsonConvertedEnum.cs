@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace Swashbuckle.Fixtures
+namespace Swashbuckle.Swagger.Fixtures
 {
     [JsonConverter(typeof(StringEnumConverter))]
     public enum JsonConvertedEnum

@@ -1,6 +1,6 @@
 ﻿using System;
 using Xunit;
-using Swashbuckle.Fixtures;
+using Swashbuckle.Swagger.Fixtures;
 
 namespace Swashbuckle.Swagger.Annotations
 {

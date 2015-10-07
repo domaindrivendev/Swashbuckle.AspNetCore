@@ -4,9 +4,9 @@ using System.Net;
 using Microsoft.AspNet.Mvc;
 using Newtonsoft.Json.Linq;
 using Swashbuckle.Swagger.Annotations;
-using Swashbuckle.Fixtures.Extensions;
+using Swashbuckle.Swagger.Fixtures.Extensions;
 
-namespace Swashbuckle.Fixtures.ApiDescriptions
+namespace Swashbuckle.Swagger.Fixtures.ApiDescriptions
 {
     public class ActionFixtures
     {

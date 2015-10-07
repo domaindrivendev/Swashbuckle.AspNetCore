@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Xunit;
-using Swashbuckle.Fixtures.ApiDescriptions;
-using Swashbuckle.Fixtures.Extensions;
+using Swashbuckle.Swagger.Fixtures.ApiDescriptions;
+using Swashbuckle.Swagger.Fixtures.Extensions;
 
 namespace Swashbuckle.Swagger.Annotations
 {

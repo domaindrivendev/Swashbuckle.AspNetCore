@@ -1,7 +1,7 @@
 ﻿using Swashbuckle.Swagger.Annotations;
-using Swashbuckle.Fixtures.Extensions;
+using Swashbuckle.Swagger.Fixtures.Extensions;
 
-namespace Swashbuckle.Fixtures
+namespace Swashbuckle.Swagger.Fixtures
 {
     [SwaggerModelFilter(typeof(VendorExtensionsModelFilter))]
     public class SwaggerAnnotatedType

@@ -12,7 +12,7 @@ using Microsoft.AspNet.Mvc.ModelBinding;
 using Microsoft.AspNet.Mvc.ModelBinding.Metadata;
 using Moq;
 
-namespace Swashbuckle.Fixtures.ApiDescriptions
+namespace Swashbuckle.Swagger.Fixtures.ApiDescriptions
 {
     public class FakeApiDescriptionGroupCollectionProvider : IApiDescriptionGroupCollectionProvider
     {

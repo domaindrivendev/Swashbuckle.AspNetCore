@@ -1,4 +1,4 @@
-﻿namespace Swashbuckle.Fixtures
+﻿namespace Swashbuckle.Swagger.Fixtures
 {
     /// <summary>
     /// summary for XmlAnnotatedType

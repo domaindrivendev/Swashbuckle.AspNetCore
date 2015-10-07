@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Swashbuckle.Fixtures
+namespace Swashbuckle.Swagger.Fixtures
 {
     public class CompositeType
     {

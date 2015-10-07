@@ -27,7 +27,7 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Swashbuckle.Swagger", "src\
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Swashbuckle.SwaggerUi", "src\Swashbuckle.SwaggerUi\Swashbuckle.SwaggerUi.xproj", "{1C14CC40-1D89-4DA9-A1D8-237FD8922371}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Swashbuckle.Test", "test\Swashbuckle.Test\Swashbuckle.Test.xproj", "{6E1DF729-097E-4BAA-86E4-61BD8A6C5209}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Swashbuckle.Swagger.Test", "test\Swashbuckle.Test\Swashbuckle.Swagger.Test.xproj", "{6E1DF729-097E-4BAA-86E4-61BD8A6C5209}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

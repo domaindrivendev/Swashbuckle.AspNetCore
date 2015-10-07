@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Xunit;
 using Newtonsoft.Json.Serialization;
-using Swashbuckle.Fixtures;
+using Swashbuckle.Swagger.Fixtures;
 
 namespace Swashbuckle.Swagger.XmlComments
 {

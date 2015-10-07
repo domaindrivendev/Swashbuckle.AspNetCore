@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Xunit;
-using Swashbuckle.Fixtures;
-using Swashbuckle.Fixtures.ApiDescriptions;
+using Swashbuckle.Swagger.Fixtures;
+using Swashbuckle.Swagger.Fixtures.ApiDescriptions;
 
 namespace Swashbuckle.Swagger.Annotations
 {
