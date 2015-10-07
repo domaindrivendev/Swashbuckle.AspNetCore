@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNet.Mvc;
 
-namespace BasicApi.Controllers
+namespace Basic.Controllers
 {
     [Route("/products")]
     [Produces("application/json")]

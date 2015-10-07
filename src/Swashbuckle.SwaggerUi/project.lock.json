@@ -195,36 +195,6 @@
           "lib/dnx451/Microsoft.AspNet.FileProviders.Physical.dll": {}
         }
       },
-      "Microsoft.AspNet.Hosting/1.0.0-beta7": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.AspNet.FileProviders.Physical": "1.0.0-beta7",
-          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-beta7",
-          "Microsoft.AspNet.Hosting.Server.Abstractions": "1.0.0-beta7",
-          "Microsoft.AspNet.Http": "1.0.0-beta7",
-          "Microsoft.AspNet.Http.Extensions": "1.0.0-beta7",
-          "Microsoft.Dnx.Runtime.Abstractions": "1.0.0-beta7",
-          "Microsoft.Framework.Configuration": "1.0.0-beta7",
-          "Microsoft.Framework.Configuration.CommandLine": "1.0.0-beta7",
-          "Microsoft.Framework.Configuration.EnvironmentVariables": "1.0.0-beta7",
-          "Microsoft.Framework.Configuration.Ini": "1.0.0-beta7",
-          "Microsoft.Framework.DependencyInjection": "1.0.0-beta7",
-          "Microsoft.Framework.Logging": "1.0.0-beta7",
-          "Newtonsoft.Json": "6.0.6"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/dnx451/Microsoft.AspNet.Hosting.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/Microsoft.AspNet.Hosting.dll": {}
-        }
-      },
       "Microsoft.AspNet.Hosting.Abstractions/1.0.0-beta7": {
         "type": "package",
         "dependencies": {
@@ -242,25 +212,6 @@
         },
         "runtime": {
           "lib/dnx451/Microsoft.AspNet.Hosting.Abstractions.dll": {}
-        }
-      },
-      "Microsoft.AspNet.Hosting.Server.Abstractions/1.0.0-beta7": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.AspNet.Http.Features": "1.0.0-beta7",
-          "Microsoft.Framework.Configuration.Abstractions": "1.0.0-beta7"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/dnx451/Microsoft.AspNet.Hosting.Server.Abstractions.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/Microsoft.AspNet.Hosting.Server.Abstractions.dll": {}
         }
       },
       "Microsoft.AspNet.Html.Abstractions/1.0.0-beta7": {
@@ -373,32 +324,6 @@
         "runtime": {
           "lib/dnx451/Microsoft.AspNet.JsonPatch.dll": {}
         }
-      },
-      "Microsoft.AspNet.Loader.IIS/1.0.0-beta7": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.AspNet.DataProtection.Abstractions": "1.0.0-beta7",
-          "Microsoft.AspNet.Hosting": "1.0.0-beta7",
-          "Microsoft.Dnx.Compilation.Abstractions": "1.0.0-beta7",
-          "Microsoft.Framework.Configuration.EnvironmentVariables": "1.0.0-beta7",
-          "Microsoft.Framework.Configuration.Ini": "1.0.0-beta7",
-          "Microsoft.Framework.WebEncoders.Core": "1.0.0-beta7"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/dnx451/Microsoft.AspNet.Loader.IIS.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/Microsoft.AspNet.Loader.IIS.dll": {}
-        }
-      },
-      "Microsoft.AspNet.Loader.IIS.Interop/1.0.0-beta7": {
-        "type": "package"
       },
       "Microsoft.AspNet.Localization/1.0.0-beta7": {
         "type": "package",
@@ -729,33 +654,6 @@
           "lib/dnx451/Microsoft.AspNet.Routing.dll": {}
         }
       },
-      "Microsoft.AspNet.Server.IIS/1.0.0-beta7": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.AspNet.Loader.IIS": "1.0.0-beta7",
-          "Microsoft.AspNet.Loader.IIS.Interop": "1.0.0-beta7"
-        }
-      },
-      "Microsoft.AspNet.Server.WebListener/1.0.0-beta7": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.AspNet.Hosting": "1.0.0-beta7",
-          "Microsoft.Net.Http.Headers": "1.0.0-beta7",
-          "Microsoft.Net.Http.Server": "1.0.0-beta7"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/dnx451/Microsoft.AspNet.Server.WebListener.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/Microsoft.AspNet.Server.WebListener.dll": {}
-        }
-      },
       "Microsoft.AspNet.StaticFiles/1.0.0-beta7": {
         "type": "package",
         "dependencies": {
@@ -986,60 +884,6 @@
           "lib/dnx451/Microsoft.Framework.Configuration.Binder.dll": {}
         }
       },
-      "Microsoft.Framework.Configuration.CommandLine/1.0.0-beta7": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.Framework.Configuration": "1.0.0-beta7"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/dnx451/Microsoft.Framework.Configuration.CommandLine.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/Microsoft.Framework.Configuration.CommandLine.dll": {}
-        }
-      },
-      "Microsoft.Framework.Configuration.EnvironmentVariables/1.0.0-beta7": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.Framework.Configuration": "1.0.0-beta7"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/dnx451/Microsoft.Framework.Configuration.EnvironmentVariables.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/Microsoft.Framework.Configuration.EnvironmentVariables.dll": {}
-        }
-      },
-      "Microsoft.Framework.Configuration.Ini/1.0.0-beta7": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.Framework.Configuration": "1.0.0-beta7"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/dnx451/Microsoft.Framework.Configuration.Ini.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/Microsoft.Framework.Configuration.Ini.dll": {}
-        }
-      },
       "Microsoft.Framework.DependencyInjection/1.0.0-beta7": {
         "type": "package",
         "dependencies": {
@@ -1121,26 +965,6 @@
         },
         "runtime": {
           "lib/dnx451/Microsoft.Framework.Localization.Abstractions.dll": {}
-        }
-      },
-      "Microsoft.Framework.Logging/1.0.0-beta7": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.Framework.DependencyInjection.Abstractions": "1.0.0-beta7",
-          "Microsoft.Framework.Logging.Abstractions": "1.0.0-beta7"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Collections.Concurrent",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/dnx451/Microsoft.Framework.Logging.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/Microsoft.Framework.Logging.dll": {}
         }
       },
       "Microsoft.Framework.Logging.Abstractions/1.0.0-beta7": {
@@ -1248,40 +1072,6 @@
           "lib/dnx451/Microsoft.Net.Http.Headers.dll": {}
         }
       },
-      "Microsoft.Net.Http.Server/1.0.0-beta7": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.Framework.Logging.Abstractions": "1.0.0-beta7",
-          "Microsoft.Net.WebSockets": "1.0.0-beta7"
-        },
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/dnx451/Microsoft.Net.Http.Server.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/Microsoft.Net.Http.Server.dll": {}
-        }
-      },
-      "Microsoft.Net.WebSockets/1.0.0-beta7": {
-        "type": "package",
-        "frameworkAssemblies": [
-          "Microsoft.CSharp",
-          "mscorlib",
-          "System",
-          "System.Core"
-        ],
-        "compile": {
-          "lib/dnx451/Microsoft.Net.WebSockets.dll": {}
-        },
-        "runtime": {
-          "lib/dnx451/Microsoft.Net.WebSockets.dll": {}
-        }
-      },
       "Newtonsoft.Json/6.0.6": {
         "type": "package",
         "compile": {
@@ -1297,12 +1087,6 @@
           "Microsoft.AspNet.FileProviders.Embedded": "1.0.0-beta7",
           "Microsoft.AspNet.Mvc": "6.0.0-beta7",
           "Microsoft.AspNet.StaticFiles": "1.0.0-beta7"
-        }
-      },
-      "Swashbuckle.SwaggerUi/6.0.0-beta7": {
-        "type": "project",
-        "dependencies": {
-          "Swashbuckle.Swagger": "6.0.0-beta7"
         }
       },
       "System.Collections/4.0.0": {
@@ -1623,31 +1407,6 @@
           "lib/dnxcore50/Microsoft.AspNet.FileProviders.Physical.dll": {}
         }
       },
-      "Microsoft.AspNet.Hosting/1.0.0-beta7": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.AspNet.FileProviders.Physical": "1.0.0-beta7",
-          "Microsoft.AspNet.Hosting.Abstractions": "1.0.0-beta7",
-          "Microsoft.AspNet.Hosting.Server.Abstractions": "1.0.0-beta7",
-          "Microsoft.AspNet.Http": "1.0.0-beta7",
-          "Microsoft.AspNet.Http.Extensions": "1.0.0-beta7",
-          "Microsoft.Dnx.Runtime.Abstractions": "1.0.0-beta7",
-          "Microsoft.Framework.Configuration": "1.0.0-beta7",
-          "Microsoft.Framework.Configuration.CommandLine": "1.0.0-beta7",
-          "Microsoft.Framework.Configuration.EnvironmentVariables": "1.0.0-beta7",
-          "Microsoft.Framework.Configuration.Ini": "1.0.0-beta7",
-          "Microsoft.Framework.DependencyInjection": "1.0.0-beta7",
-          "Microsoft.Framework.Logging": "1.0.0-beta7",
-          "Newtonsoft.Json": "6.0.6",
-          "System.Console": "4.0.0-beta-23225"
-        },
-        "compile": {
-          "lib/dnxcore50/Microsoft.AspNet.Hosting.dll": {}
-        },
-        "runtime": {
-          "lib/dnxcore50/Microsoft.AspNet.Hosting.dll": {}
-        }
-      },
       "Microsoft.AspNet.Hosting.Abstractions/1.0.0-beta7": {
         "type": "package",
         "dependencies": {
@@ -1659,19 +1418,6 @@
         },
         "runtime": {
           "lib/dnxcore50/Microsoft.AspNet.Hosting.Abstractions.dll": {}
-        }
-      },
-      "Microsoft.AspNet.Hosting.Server.Abstractions/1.0.0-beta7": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.AspNet.Http.Features": "1.0.0-beta7",
-          "Microsoft.Framework.Configuration.Abstractions": "1.0.0-beta7"
-        },
-        "compile": {
-          "lib/dnxcore50/Microsoft.AspNet.Hosting.Server.Abstractions.dll": {}
-        },
-        "runtime": {
-          "lib/dnxcore50/Microsoft.AspNet.Hosting.Server.Abstractions.dll": {}
         }
       },
       "Microsoft.AspNet.Html.Abstractions/1.0.0-beta7": {
@@ -1786,35 +1532,6 @@
         "runtime": {
           "lib/dnxcore50/Microsoft.AspNet.JsonPatch.dll": {}
         }
-      },
-      "Microsoft.AspNet.Loader.IIS/1.0.0-beta7": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.AspNet.DataProtection.Abstractions": "1.0.0-beta7",
-          "Microsoft.AspNet.Hosting": "1.0.0-beta7",
-          "Microsoft.Dnx.Compilation.Abstractions": "1.0.0-beta7",
-          "Microsoft.Framework.Configuration.EnvironmentVariables": "1.0.0-beta7",
-          "Microsoft.Framework.Configuration.Ini": "1.0.0-beta7",
-          "Microsoft.Framework.WebEncoders.Core": "1.0.0-beta7",
-          "Microsoft.Win32.Registry": "4.0.0-beta-23225",
-          "System.Diagnostics.Process": "4.0.0-beta-23225",
-          "System.Net.NetworkInformation": "4.0.10-beta-23123",
-          "System.Reflection.Extensions": "4.0.1-beta-23225",
-          "System.Security.Principal.Windows": "4.0.0-beta-23225",
-          "System.Text.Encoding": "4.0.11-beta-23225",
-          "System.Text.Encoding.Extensions": "4.0.11-beta-23225",
-          "System.Threading": "4.0.11-beta-23225",
-          "System.Threading.ThreadPool": "4.0.10-beta-23225"
-        },
-        "compile": {
-          "lib/dnxcore50/Microsoft.AspNet.Loader.IIS.dll": {}
-        },
-        "runtime": {
-          "lib/dnxcore50/Microsoft.AspNet.Loader.IIS.dll": {}
-        }
-      },
-      "Microsoft.AspNet.Loader.IIS.Interop/1.0.0-beta7": {
-        "type": "package"
       },
       "Microsoft.AspNet.Localization/1.0.0-beta7": {
         "type": "package",
@@ -2077,28 +1794,6 @@
           "lib/dnxcore50/Microsoft.AspNet.Routing.dll": {}
         }
       },
-      "Microsoft.AspNet.Server.IIS/1.0.0-beta7": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.AspNet.Loader.IIS": "1.0.0-beta7",
-          "Microsoft.AspNet.Loader.IIS.Interop": "1.0.0-beta7"
-        }
-      },
-      "Microsoft.AspNet.Server.WebListener/1.0.0-beta7": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.AspNet.Hosting": "1.0.0-beta7",
-          "Microsoft.Net.Http.Headers": "1.0.0-beta7",
-          "Microsoft.Net.Http.Server": "1.0.0-beta7",
-          "System.Security.Claims": "4.0.1-beta-23225"
-        },
-        "compile": {
-          "lib/dnxcore50/Microsoft.AspNet.Server.WebListener.dll": {}
-        },
-        "runtime": {
-          "lib/dnxcore50/Microsoft.AspNet.Server.WebListener.dll": {}
-        }
-      },
       "Microsoft.AspNet.StaticFiles/1.0.0-beta7": {
         "type": "package",
         "dependencies": {
@@ -2322,42 +2017,6 @@
           "lib/dotnet/Microsoft.Framework.Configuration.Binder.dll": {}
         }
       },
-      "Microsoft.Framework.Configuration.CommandLine/1.0.0-beta7": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.Framework.Configuration": "1.0.0-beta7"
-        },
-        "compile": {
-          "lib/dotnet/Microsoft.Framework.Configuration.CommandLine.dll": {}
-        },
-        "runtime": {
-          "lib/dotnet/Microsoft.Framework.Configuration.CommandLine.dll": {}
-        }
-      },
-      "Microsoft.Framework.Configuration.EnvironmentVariables/1.0.0-beta7": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.Framework.Configuration": "1.0.0-beta7"
-        },
-        "compile": {
-          "lib/dotnet/Microsoft.Framework.Configuration.EnvironmentVariables.dll": {}
-        },
-        "runtime": {
-          "lib/dotnet/Microsoft.Framework.Configuration.EnvironmentVariables.dll": {}
-        }
-      },
-      "Microsoft.Framework.Configuration.Ini/1.0.0-beta7": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.Framework.Configuration": "1.0.0-beta7"
-        },
-        "compile": {
-          "lib/dotnet/Microsoft.Framework.Configuration.Ini.dll": {}
-        },
-        "runtime": {
-          "lib/dotnet/Microsoft.Framework.Configuration.Ini.dll": {}
-        }
-      },
       "Microsoft.Framework.DependencyInjection/1.0.0-beta7": {
         "type": "package",
         "dependencies": {
@@ -2443,25 +2102,6 @@
         },
         "runtime": {
           "lib/dnxcore50/Microsoft.Framework.Localization.Abstractions.dll": {}
-        }
-      },
-      "Microsoft.Framework.Logging/1.0.0-beta7": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.Framework.DependencyInjection.Abstractions": "1.0.0-beta7",
-          "Microsoft.Framework.Logging.Abstractions": "1.0.0-beta7",
-          "System.Collections": "4.0.11-beta-23225",
-          "System.Collections.Concurrent": "4.0.11-beta-23225",
-          "System.ComponentModel": "4.0.1-beta-23225",
-          "System.Globalization": "4.0.11-beta-23225",
-          "System.Linq": "4.0.1-beta-23225",
-          "System.Threading": "4.0.11-beta-23225"
-        },
-        "compile": {
-          "lib/dotnet/Microsoft.Framework.Logging.dll": {}
-        },
-        "runtime": {
-          "lib/dotnet/Microsoft.Framework.Logging.dll": {}
         }
       },
       "Microsoft.Framework.Logging.Abstractions/1.0.0-beta7": {
@@ -2585,53 +2225,7 @@
           "lib/dnxcore50/Microsoft.Net.Http.Headers.dll": {}
         }
       },
-      "Microsoft.Net.Http.Server/1.0.0-beta7": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.Framework.Logging.Abstractions": "1.0.0-beta7",
-          "Microsoft.Net.WebSockets": "1.0.0-beta7",
-          "Microsoft.Win32.Primitives": "4.0.1-beta-23225",
-          "System.Diagnostics.Debug": "4.0.11-beta-23225",
-          "System.IO.FileSystem": "4.0.1-beta-23225",
-          "System.Security.Claims": "4.0.1-beta-23225",
-          "System.Security.Cryptography.X509Certificates": "4.0.0-beta-23225",
-          "System.Security.Principal.Windows": "4.0.0-beta-23225",
-          "System.Threading.Overlapped": "4.0.1-beta-23225"
-        },
-        "compile": {
-          "lib/dnxcore50/Microsoft.Net.Http.Server.dll": {}
-        },
-        "runtime": {
-          "lib/dnxcore50/Microsoft.Net.Http.Server.dll": {}
-        }
-      },
-      "Microsoft.Net.WebSockets/1.0.0-beta7": {
-        "type": "package",
-        "dependencies": {
-          "System.Collections": "4.0.11-beta-23225",
-          "System.Diagnostics.Contracts": "4.0.1-beta-23225",
-          "System.Diagnostics.Tools": "4.0.1-beta-23225",
-          "System.IO": "4.0.11-beta-23225",
-          "System.Linq": "4.0.1-beta-23225",
-          "System.Net.Primitives": "4.0.11-beta-23225",
-          "System.Net.WebSockets": "4.0.0-beta-23225",
-          "System.Resources.ResourceManager": "4.0.1-beta-23225",
-          "System.Runtime.Extensions": "4.0.11-beta-23225",
-          "System.Security.Cryptography.Algorithms": "4.0.0-beta-23225",
-          "System.Text.Encoding.Extensions": "4.0.11-beta-23225",
-          "System.Threading": "4.0.11-beta-23225",
-          "System.Threading.Tasks": "4.0.11-beta-23225",
-          "System.Threading.ThreadPool": "4.0.10-beta-23225",
-          "System.Threading.Timer": "4.0.1-beta-23225"
-        },
-        "compile": {
-          "lib/dnxcore50/Microsoft.Net.WebSockets.dll": {}
-        },
-        "runtime": {
-          "lib/dnxcore50/Microsoft.Net.WebSockets.dll": {}
-        }
-      },
-      "Microsoft.Win32.Primitives/4.0.1-beta-23225": {
+      "Microsoft.Win32.Primitives/4.0.0": {
         "type": "package",
         "dependencies": {
           "System.Runtime": "4.0.20",
@@ -2678,12 +2272,6 @@
           "Microsoft.AspNet.Mvc": "6.0.0-beta7",
           "Microsoft.AspNet.StaticFiles": "1.0.0-beta7",
           "System.Xml.XPath": "4.0.0-beta"
-        }
-      },
-      "Swashbuckle.SwaggerUi/6.0.0-beta7": {
-        "type": "project",
-        "dependencies": {
-          "Swashbuckle.Swagger": "6.0.0-beta7"
         }
       },
       "System.Collections/4.0.11-beta-23225": {
@@ -2828,26 +2416,6 @@
           "lib/dotnet/System.ComponentModel.TypeConverter.dll": {}
         }
       },
-      "System.Console/4.0.0-beta-23225": {
-        "type": "package",
-        "dependencies": {
-          "System.IO": "4.0.10",
-          "System.IO.FileSystem.Primitives": "4.0.0",
-          "System.Resources.ResourceManager": "4.0.0",
-          "System.Runtime": "4.0.20",
-          "System.Runtime.InteropServices": "4.0.20",
-          "System.Text.Encoding": "4.0.10",
-          "System.Text.Encoding.Extensions": "4.0.10",
-          "System.Threading": "4.0.10",
-          "System.Threading.Tasks": "4.0.10"
-        },
-        "compile": {
-          "ref/dotnet/System.Console.dll": {}
-        },
-        "runtime": {
-          "lib/DNXCore50/System.Console.dll": {}
-        }
-      },
       "System.Diagnostics.Contracts/4.0.1-beta-23225": {
         "type": "package",
         "dependencies": {
@@ -2870,37 +2438,6 @@
         },
         "runtime": {
           "lib/DNXCore50/System.Diagnostics.Debug.dll": {}
-        }
-      },
-      "System.Diagnostics.Process/4.0.0-beta-23225": {
-        "type": "package",
-        "dependencies": {
-          "Microsoft.Win32.Primitives": "4.0.0",
-          "Microsoft.Win32.Registry": "4.0.0-beta-23225",
-          "System.Collections": "4.0.10",
-          "System.Diagnostics.Debug": "4.0.10",
-          "System.Globalization": "4.0.10",
-          "System.IO": "4.0.10",
-          "System.IO.FileSystem": "4.0.0",
-          "System.IO.FileSystem.Primitives": "4.0.0",
-          "System.Resources.ResourceManager": "4.0.0",
-          "System.Runtime": "4.0.20",
-          "System.Runtime.Extensions": "4.0.10",
-          "System.Runtime.Handles": "4.0.0",
-          "System.Runtime.InteropServices": "4.0.20",
-          "System.Security.SecureString": "4.0.0-beta-23225",
-          "System.Text.Encoding": "4.0.10",
-          "System.Text.Encoding.Extensions": "4.0.10",
-          "System.Threading": "4.0.10",
-          "System.Threading.Tasks": "4.0.10",
-          "System.Threading.Thread": "4.0.0-beta-23225",
-          "System.Threading.ThreadPool": "4.0.10-beta-23225"
-        },
-        "compile": {
-          "ref/dotnet/System.Diagnostics.Process.dll": {}
-        },
-        "runtime": {
-          "lib/DNXCore50/System.Diagnostics.Process.dll": {}
         }
       },
       "System.Diagnostics.Tools/4.0.1-beta-23225": {
@@ -3090,18 +2627,6 @@
         },
         "runtime": {
           "lib/DNXCore50/System.Linq.Expressions.dll": {}
-        }
-      },
-      "System.Net.NetworkInformation/4.0.10-beta-23123": {
-        "type": "package",
-        "dependencies": {
-          "System.Private.Networking": "4.0.0"
-        },
-        "compile": {
-          "ref/dotnet/System.Net.NetworkInformation.dll": {}
-        },
-        "runtime": {
-          "lib/DNXCore50/System.Net.NetworkInformation.dll": {}
         }
       },
       "System.Net.Primitives/4.0.11-beta-23225": {
@@ -3561,23 +3086,6 @@
           "lib/DNXCore50/System.Security.Principal.Windows.dll": {}
         }
       },
-      "System.Security.SecureString/4.0.0-beta-23225": {
-        "type": "package",
-        "dependencies": {
-          "System.Resources.ResourceManager": "4.0.0",
-          "System.Runtime": "4.0.20",
-          "System.Runtime.Handles": "4.0.0",
-          "System.Runtime.InteropServices": "4.0.20",
-          "System.Security.Cryptography.Primitives": "4.0.0-beta-23225",
-          "System.Threading": "4.0.10"
-        },
-        "compile": {
-          "ref/dotnet/System.Security.SecureString.dll": {}
-        },
-        "runtime": {
-          "lib/DNXCore50/System.Security.SecureString.dll": {}
-        }
-      },
       "System.Text.Encoding/4.0.11-beta-23225": {
         "type": "package",
         "dependencies": {
@@ -3633,7 +3141,7 @@
           "lib/DNXCore50/System.Threading.dll": {}
         }
       },
-      "System.Threading.Overlapped/4.0.1-beta-23225": {
+      "System.Threading.Overlapped/4.0.0": {
         "type": "package",
         "dependencies": {
           "System.Runtime": "4.0.0",
@@ -3687,31 +3195,6 @@
         },
         "runtime": {
           "lib/DNXCore50/System.Threading.Thread.dll": {}
-        }
-      },
-      "System.Threading.ThreadPool/4.0.10-beta-23225": {
-        "type": "package",
-        "dependencies": {
-          "System.Runtime": "4.0.0",
-          "System.Runtime.InteropServices": "4.0.0"
-        },
-        "compile": {
-          "ref/dotnet/System.Threading.ThreadPool.dll": {}
-        },
-        "runtime": {
-          "lib/DNXCore50/System.Threading.ThreadPool.dll": {}
-        }
-      },
-      "System.Threading.Timer/4.0.1-beta-23225": {
-        "type": "package",
-        "dependencies": {
-          "System.Runtime": "4.0.0"
-        },
-        "compile": {
-          "ref/dotnet/System.Threading.Timer.dll": {}
-        },
-        "runtime": {
-          "lib/DNXCore50/System.Threading.Timer.dll": {}
         }
       },
       "System.Xml.ReaderWriter/4.0.10": {
@@ -3781,11 +3264,7 @@
   "libraries": {
     "Swashbuckle.Swagger/6.0.0-beta7": {
       "type": "project",
-      "path": "../../../src/Swashbuckle.Swagger/project.json"
-    },
-    "Swashbuckle.SwaggerUi/6.0.0-beta7": {
-      "type": "project",
-      "path": "../../../src/Swashbuckle.SwaggerUi/project.json"
+      "path": "../Swashbuckle.Swagger/project.json"
     },
     "Microsoft.AspNet.Antiforgery/1.0.0-beta7": {
       "type": "package",
@@ -3949,21 +3428,6 @@
         "repo.json"
       ]
     },
-    "Microsoft.AspNet.Hosting/1.0.0-beta7": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "/4jM5wmy64e5CIh20hjaymQ8XXcK43Sy6WQNVsaclfiJQS1ANNHIpcsJKnc7jHrLJrLbI2EdG2obk8msxhVeaw==",
-      "files": [
-        "lib/dnx451/Microsoft.AspNet.Hosting.dll",
-        "lib/dnx451/Microsoft.AspNet.Hosting.xml",
-        "lib/dnxcore50/Microsoft.AspNet.Hosting.dll",
-        "lib/dnxcore50/Microsoft.AspNet.Hosting.xml",
-        "Microsoft.AspNet.Hosting.1.0.0-beta7.nupkg",
-        "Microsoft.AspNet.Hosting.1.0.0-beta7.nupkg.sha512",
-        "Microsoft.AspNet.Hosting.nuspec",
-        "repo.json"
-      ]
-    },
     "Microsoft.AspNet.Hosting.Abstractions/1.0.0-beta7": {
       "type": "package",
       "serviceable": true,
@@ -3976,20 +3440,6 @@
         "Microsoft.AspNet.Hosting.Abstractions.1.0.0-beta7.nupkg",
         "Microsoft.AspNet.Hosting.Abstractions.1.0.0-beta7.nupkg.sha512",
         "Microsoft.AspNet.Hosting.Abstractions.nuspec",
-        "repo.json"
-      ]
-    },
-    "Microsoft.AspNet.Hosting.Server.Abstractions/1.0.0-beta7": {
-      "type": "package",
-      "sha512": "jhS4jniofH3S4V+mBIa0J9tXOWvAydLRLjGFzJJ2eQzbyAXwbcYixzbBkm1yLz1Z8Mgnhtrr4yeFlZRfKKto2Q==",
-      "files": [
-        "lib/dnx451/Microsoft.AspNet.Hosting.Server.Abstractions.dll",
-        "lib/dnx451/Microsoft.AspNet.Hosting.Server.Abstractions.xml",
-        "lib/dnxcore50/Microsoft.AspNet.Hosting.Server.Abstractions.dll",
-        "lib/dnxcore50/Microsoft.AspNet.Hosting.Server.Abstractions.xml",
-        "Microsoft.AspNet.Hosting.Server.Abstractions.1.0.0-beta7.nupkg",
-        "Microsoft.AspNet.Hosting.Server.Abstractions.1.0.0-beta7.nupkg.sha512",
-        "Microsoft.AspNet.Hosting.Server.Abstractions.nuspec",
         "repo.json"
       ]
     },
@@ -4082,33 +3532,6 @@
         "Microsoft.AspNet.JsonPatch.1.0.0-beta7.nupkg.sha512",
         "Microsoft.AspNet.JsonPatch.nuspec",
         "repo.json"
-      ]
-    },
-    "Microsoft.AspNet.Loader.IIS/1.0.0-beta7": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "ArxchXTe/HjZOIvwmdPib6VZf9jR0zFJjHCyq5wwN+wID1IoE3wJZ9lUo3ChnaeInu31V/NcD58bXFbhVDv/pA==",
-      "files": [
-        "lib/dnx451/Microsoft.AspNet.Loader.IIS.dll",
-        "lib/dnx451/Microsoft.AspNet.Loader.IIS.xml",
-        "lib/dnxcore50/Microsoft.AspNet.Loader.IIS.dll",
-        "lib/dnxcore50/Microsoft.AspNet.Loader.IIS.xml",
-        "Microsoft.AspNet.Loader.IIS.1.0.0-beta7.nupkg",
-        "Microsoft.AspNet.Loader.IIS.1.0.0-beta7.nupkg.sha512",
-        "Microsoft.AspNet.Loader.IIS.nuspec"
-      ]
-    },
-    "Microsoft.AspNet.Loader.IIS.Interop/1.0.0-beta7": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "H85twhbRnyAwpK4aXwiSXWV4bkmJZKhxKvcxwv1jMYlXgBBCmb0SqOKoyhZr+rygQq4lkPIWr2vsVnw/yST1VQ==",
-      "files": [
-        "InteropAssemblies/amd64/Microsoft.AspNet.Loader.IIS.Interop.dll",
-        "InteropAssemblies/x86/Microsoft.AspNet.Loader.IIS.Interop.dll",
-        "Microsoft.AspNet.Loader.IIS.Interop.1.0.0-beta7.nupkg",
-        "Microsoft.AspNet.Loader.IIS.Interop.1.0.0-beta7.nupkg.sha512",
-        "Microsoft.AspNet.Loader.IIS.Interop.nuspec",
-        "tools/AspNet.Loader.dll"
       ]
     },
     "Microsoft.AspNet.Localization/1.0.0-beta7": {
@@ -4351,29 +3774,6 @@
         "Microsoft.AspNet.Routing.1.0.0-beta7.nupkg.sha512",
         "Microsoft.AspNet.Routing.nuspec",
         "repo.json"
-      ]
-    },
-    "Microsoft.AspNet.Server.IIS/1.0.0-beta7": {
-      "type": "package",
-      "sha512": "ZETgGVNPN4IHCvQaqAskpEpuzSEoO4tft9tKOSL23LJcD9t4aiSooJcMUv4WtcpUk5sbOoVgXO8EeM2R1UHR7g==",
-      "files": [
-        "Microsoft.AspNet.Server.IIS.1.0.0-beta7.nupkg",
-        "Microsoft.AspNet.Server.IIS.1.0.0-beta7.nupkg.sha512",
-        "Microsoft.AspNet.Server.IIS.nuspec"
-      ]
-    },
-    "Microsoft.AspNet.Server.WebListener/1.0.0-beta7": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "BYLRthuG147FgIabcKVaLgOyara2JahsfolPCRYvO5XuQQaeZvNfWEwqokaCIKDiJOAfEOSoKpyS+E8rGWtSzg==",
-      "files": [
-        "lib/dnx451/Microsoft.AspNet.Server.WebListener.dll",
-        "lib/dnx451/Microsoft.AspNet.Server.WebListener.xml",
-        "lib/dnxcore50/Microsoft.AspNet.Server.WebListener.dll",
-        "lib/dnxcore50/Microsoft.AspNet.Server.WebListener.xml",
-        "Microsoft.AspNet.Server.WebListener.1.0.0-beta7.nupkg",
-        "Microsoft.AspNet.Server.WebListener.1.0.0-beta7.nupkg.sha512",
-        "Microsoft.AspNet.Server.WebListener.nuspec"
       ]
     },
     "Microsoft.AspNet.StaticFiles/1.0.0-beta7": {
@@ -4621,57 +4021,6 @@
         "repo.json"
       ]
     },
-    "Microsoft.Framework.Configuration.CommandLine/1.0.0-beta7": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "PZPhfiuMj1WNxMg0z59Y0EY4XMB0Pp4HPLb1+kxojS4K1q+79/b5WQmGz/5wwfCMxhuOrQ8pySR7Z10TIse7lQ==",
-      "files": [
-        "lib/dnx451/Microsoft.Framework.Configuration.CommandLine.dll",
-        "lib/dnx451/Microsoft.Framework.Configuration.CommandLine.xml",
-        "lib/dotnet/Microsoft.Framework.Configuration.CommandLine.dll",
-        "lib/dotnet/Microsoft.Framework.Configuration.CommandLine.xml",
-        "lib/net45/Microsoft.Framework.Configuration.CommandLine.dll",
-        "lib/net45/Microsoft.Framework.Configuration.CommandLine.xml",
-        "Microsoft.Framework.Configuration.CommandLine.1.0.0-beta7.nupkg",
-        "Microsoft.Framework.Configuration.CommandLine.1.0.0-beta7.nupkg.sha512",
-        "Microsoft.Framework.Configuration.CommandLine.nuspec",
-        "repo.json"
-      ]
-    },
-    "Microsoft.Framework.Configuration.EnvironmentVariables/1.0.0-beta7": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "6A01+6kwuMLt0/1HWBf16GzQLa5mIppoQBCaUZX2UnRWwzKUT5Q6f8snIDFGDKgviUWGxoUobcWRSOznDhzkvA==",
-      "files": [
-        "lib/dnx451/Microsoft.Framework.Configuration.EnvironmentVariables.dll",
-        "lib/dnx451/Microsoft.Framework.Configuration.EnvironmentVariables.xml",
-        "lib/dotnet/Microsoft.Framework.Configuration.EnvironmentVariables.dll",
-        "lib/dotnet/Microsoft.Framework.Configuration.EnvironmentVariables.xml",
-        "lib/net45/Microsoft.Framework.Configuration.EnvironmentVariables.dll",
-        "lib/net45/Microsoft.Framework.Configuration.EnvironmentVariables.xml",
-        "Microsoft.Framework.Configuration.EnvironmentVariables.1.0.0-beta7.nupkg",
-        "Microsoft.Framework.Configuration.EnvironmentVariables.1.0.0-beta7.nupkg.sha512",
-        "Microsoft.Framework.Configuration.EnvironmentVariables.nuspec",
-        "repo.json"
-      ]
-    },
-    "Microsoft.Framework.Configuration.Ini/1.0.0-beta7": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "3tGDv1jWSps/B5wCagKFjY1wRbS8brz0ZhDfOpHJhhldeSVaKyw7wF7FDtuFCFUF3UG7R2fHLNSP4070p7fTwQ==",
-      "files": [
-        "lib/dnx451/Microsoft.Framework.Configuration.Ini.dll",
-        "lib/dnx451/Microsoft.Framework.Configuration.Ini.xml",
-        "lib/dotnet/Microsoft.Framework.Configuration.Ini.dll",
-        "lib/dotnet/Microsoft.Framework.Configuration.Ini.xml",
-        "lib/net45/Microsoft.Framework.Configuration.Ini.dll",
-        "lib/net45/Microsoft.Framework.Configuration.Ini.xml",
-        "Microsoft.Framework.Configuration.Ini.1.0.0-beta7.nupkg",
-        "Microsoft.Framework.Configuration.Ini.1.0.0-beta7.nupkg.sha512",
-        "Microsoft.Framework.Configuration.Ini.nuspec",
-        "repo.json"
-      ]
-    },
     "Microsoft.Framework.DependencyInjection/1.0.0-beta7": {
       "type": "package",
       "serviceable": true,
@@ -4745,23 +4094,6 @@
         "Microsoft.Framework.Localization.Abstractions.1.0.0-beta7.nupkg",
         "Microsoft.Framework.Localization.Abstractions.1.0.0-beta7.nupkg.sha512",
         "Microsoft.Framework.Localization.Abstractions.nuspec",
-        "repo.json"
-      ]
-    },
-    "Microsoft.Framework.Logging/1.0.0-beta7": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "Os9opQuoB9EJ3pp4Vj5TWwaqAMG4D6WUdhg1WxVV3unc/rfhtN78SBaJXiTV59OUqt5NCI9JyeRJprtldPnNVA==",
-      "files": [
-        "lib/dnx451/Microsoft.Framework.Logging.dll",
-        "lib/dnx451/Microsoft.Framework.Logging.xml",
-        "lib/dotnet/Microsoft.Framework.Logging.dll",
-        "lib/dotnet/Microsoft.Framework.Logging.xml",
-        "lib/net45/Microsoft.Framework.Logging.dll",
-        "lib/net45/Microsoft.Framework.Logging.xml",
-        "Microsoft.Framework.Logging.1.0.0-beta7.nupkg",
-        "Microsoft.Framework.Logging.1.0.0-beta7.nupkg.sha512",
-        "Microsoft.Framework.Logging.nuspec",
         "repo.json"
       ]
     },
@@ -4865,42 +4197,10 @@
         "repo.json"
       ]
     },
-    "Microsoft.Net.Http.Server/1.0.0-beta7": {
+    "Microsoft.Win32.Primitives/4.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "IaMiWd7rdZgSnLtIfJOeLki4X8YQBS2a5yd+dbn0amSZN1/81GjGo266aIpULr5PMnwKiVdMEe+lL8seC+EYTw==",
-      "files": [
-        "lib/dnx451/Microsoft.Net.Http.Server.dll",
-        "lib/dnx451/Microsoft.Net.Http.Server.xml",
-        "lib/dnxcore50/Microsoft.Net.Http.Server.dll",
-        "lib/dnxcore50/Microsoft.Net.Http.Server.xml",
-        "lib/net451/Microsoft.Net.Http.Server.dll",
-        "lib/net451/Microsoft.Net.Http.Server.xml",
-        "Microsoft.Net.Http.Server.1.0.0-beta7.nupkg",
-        "Microsoft.Net.Http.Server.1.0.0-beta7.nupkg.sha512",
-        "Microsoft.Net.Http.Server.nuspec"
-      ]
-    },
-    "Microsoft.Net.WebSockets/1.0.0-beta7": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "DDFEge2rJ9x0EOfApaW6cdaQxHViJmZ1dBDIE5BNBw5GMkVQMEGtr3RdiRV7TxPpdfW9gKo0kEloAdFnrLlmdQ==",
-      "files": [
-        "lib/dnx451/Microsoft.Net.WebSockets.dll",
-        "lib/dnx451/Microsoft.Net.WebSockets.xml",
-        "lib/dnxcore50/Microsoft.Net.WebSockets.dll",
-        "lib/dnxcore50/Microsoft.Net.WebSockets.xml",
-        "lib/net451/Microsoft.Net.WebSockets.dll",
-        "lib/net451/Microsoft.Net.WebSockets.xml",
-        "Microsoft.Net.WebSockets.1.0.0-beta7.nupkg",
-        "Microsoft.Net.WebSockets.1.0.0-beta7.nupkg.sha512",
-        "Microsoft.Net.WebSockets.nuspec"
-      ]
-    },
-    "Microsoft.Win32.Primitives/4.0.1-beta-23225": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "TWQTvEUCXe1mlQ6OTHOO4AfpsQeaWpfU1PBjNkSAuZNdDlb2uIBRt0ruO1aSqM9jH+hok87RpaWffIyJyOnpCg==",
+      "sha512": "CypEz9/lLOup8CEhiAmvr7aLs1zKPYyEU1sxQeEr6G0Ci8/F0Y6pYR1zzkROjM8j8Mq0typmbu676oYyvErQvg==",
       "files": [
         "lib/dotnet/Microsoft.Win32.Primitives.dll",
         "lib/MonoAndroid10/_._",
@@ -4908,10 +4208,20 @@
         "lib/net46/Microsoft.Win32.Primitives.dll",
         "lib/xamarinios10/_._",
         "lib/xamarinmac20/_._",
-        "Microsoft.Win32.Primitives.4.0.1-beta-23225.nupkg",
-        "Microsoft.Win32.Primitives.4.0.1-beta-23225.nupkg.sha512",
+        "Microsoft.Win32.Primitives.4.0.0.nupkg",
+        "Microsoft.Win32.Primitives.4.0.0.nupkg.sha512",
         "Microsoft.Win32.Primitives.nuspec",
+        "ref/dotnet/de/Microsoft.Win32.Primitives.xml",
+        "ref/dotnet/es/Microsoft.Win32.Primitives.xml",
+        "ref/dotnet/fr/Microsoft.Win32.Primitives.xml",
+        "ref/dotnet/it/Microsoft.Win32.Primitives.xml",
+        "ref/dotnet/ja/Microsoft.Win32.Primitives.xml",
+        "ref/dotnet/ko/Microsoft.Win32.Primitives.xml",
         "ref/dotnet/Microsoft.Win32.Primitives.dll",
+        "ref/dotnet/Microsoft.Win32.Primitives.xml",
+        "ref/dotnet/ru/Microsoft.Win32.Primitives.xml",
+        "ref/dotnet/zh-hans/Microsoft.Win32.Primitives.xml",
+        "ref/dotnet/zh-hant/Microsoft.Win32.Primitives.xml",
         "ref/MonoAndroid10/_._",
         "ref/MonoTouch10/_._",
         "ref/net46/Microsoft.Win32.Primitives.dll",
@@ -5226,28 +4536,6 @@
         "System.ComponentModel.TypeConverter.nuspec"
       ]
     },
-    "System.Console/4.0.0-beta-23225": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "IWF/w/9CKVjopFkBIq6dz3XGMOdPBPRAxdp2tu+UPzr9bDG0nB+5MQ+91MQcjcFWpnenKSiRsJu1BccnnXb/RA==",
-      "files": [
-        "lib/DNXCore50/System.Console.dll",
-        "lib/MonoAndroid10/_._",
-        "lib/MonoTouch10/_._",
-        "lib/net46/System.Console.dll",
-        "lib/xamarinios10/_._",
-        "lib/xamarinmac20/_._",
-        "ref/dotnet/System.Console.dll",
-        "ref/MonoAndroid10/_._",
-        "ref/MonoTouch10/_._",
-        "ref/net46/System.Console.dll",
-        "ref/xamarinios10/_._",
-        "ref/xamarinmac20/_._",
-        "System.Console.4.0.0-beta-23225.nupkg",
-        "System.Console.4.0.0-beta-23225.nupkg.sha512",
-        "System.Console.nuspec"
-      ]
-    },
     "System.Diagnostics.Contracts/4.0.1-beta-23225": {
       "type": "package",
       "serviceable": true,
@@ -5341,28 +4629,6 @@
         "System.Diagnostics.Debug.4.0.11-beta-23225.nupkg",
         "System.Diagnostics.Debug.4.0.11-beta-23225.nupkg.sha512",
         "System.Diagnostics.Debug.nuspec"
-      ]
-    },
-    "System.Diagnostics.Process/4.0.0-beta-23225": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "Pt6QAiXPNKIobDWHcNqX/wz6+YaTqqxw7f245sX1lz4rZxCmGwlUI0yhV/fXXvT7iPJRDLXSEXTnS3F8GsxK9g==",
-      "files": [
-        "lib/DNXCore50/System.Diagnostics.Process.dll",
-        "lib/MonoAndroid10/_._",
-        "lib/MonoTouch10/_._",
-        "lib/net46/System.Diagnostics.Process.dll",
-        "lib/xamarinios10/_._",
-        "lib/xamarinmac20/_._",
-        "ref/dotnet/System.Diagnostics.Process.dll",
-        "ref/MonoAndroid10/_._",
-        "ref/MonoTouch10/_._",
-        "ref/net46/System.Diagnostics.Process.dll",
-        "ref/xamarinios10/_._",
-        "ref/xamarinmac20/_._",
-        "System.Diagnostics.Process.4.0.0-beta-23225.nupkg",
-        "System.Diagnostics.Process.4.0.0-beta-23225.nupkg.sha512",
-        "System.Diagnostics.Process.nuspec"
       ]
     },
     "System.Diagnostics.Tools/4.0.1-beta-23225": {
@@ -5733,37 +4999,6 @@
         "System.Linq.Expressions.4.0.11-beta-23225.nupkg",
         "System.Linq.Expressions.4.0.11-beta-23225.nupkg.sha512",
         "System.Linq.Expressions.nuspec"
-      ]
-    },
-    "System.Net.NetworkInformation/4.0.10-beta-23123": {
-      "type": "package",
-      "sha512": "NkKpsUm2MLoxT+YlSwexidAw2jGFIJuc6i4H9pT3nU3TQj7MZVursD/ohWj3nyBxthy7i00XLWkRZAwGao/zsg==",
-      "files": [
-        "lib/DNXCore50/System.Net.NetworkInformation.dll",
-        "lib/MonoAndroid10/_._",
-        "lib/MonoTouch10/_._",
-        "lib/net46/_._",
-        "lib/xamarinios10/_._",
-        "lib/xamarinmac20/_._",
-        "ref/dotnet/de/System.Net.NetworkInformation.xml",
-        "ref/dotnet/es/System.Net.NetworkInformation.xml",
-        "ref/dotnet/fr/System.Net.NetworkInformation.xml",
-        "ref/dotnet/it/System.Net.NetworkInformation.xml",
-        "ref/dotnet/ja/System.Net.NetworkInformation.xml",
-        "ref/dotnet/ko/System.Net.NetworkInformation.xml",
-        "ref/dotnet/ru/System.Net.NetworkInformation.xml",
-        "ref/dotnet/System.Net.NetworkInformation.dll",
-        "ref/dotnet/System.Net.NetworkInformation.xml",
-        "ref/dotnet/zh-hans/System.Net.NetworkInformation.xml",
-        "ref/dotnet/zh-hant/System.Net.NetworkInformation.xml",
-        "ref/MonoAndroid10/_._",
-        "ref/MonoTouch10/_._",
-        "ref/net46/_._",
-        "ref/xamarinios10/_._",
-        "ref/xamarinmac20/_._",
-        "System.Net.NetworkInformation.4.0.10-beta-23123.nupkg",
-        "System.Net.NetworkInformation.4.0.10-beta-23123.nupkg.sha512",
-        "System.Net.NetworkInformation.nuspec"
       ]
     },
     "System.Net.Primitives/4.0.11-beta-23225": {
@@ -6651,28 +5886,6 @@
         "System.Security.Principal.Windows.nuspec"
       ]
     },
-    "System.Security.SecureString/4.0.0-beta-23225": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "fWZiVly2v05MLJFbtJBwThJmSQAh1slsEUqVxjy/K58RWHN8ar8BNz/1h318eHNd5vcTA7155awMNNMzY/Cbag==",
-      "files": [
-        "lib/DNXCore50/System.Security.SecureString.dll",
-        "lib/MonoAndroid10/_._",
-        "lib/MonoTouch10/_._",
-        "lib/net46/System.Security.SecureString.dll",
-        "lib/xamarinios10/_._",
-        "lib/xamarinmac20/_._",
-        "ref/dotnet/System.Security.SecureString.dll",
-        "ref/MonoAndroid10/_._",
-        "ref/MonoTouch10/_._",
-        "ref/net46/System.Security.SecureString.dll",
-        "ref/xamarinios10/_._",
-        "ref/xamarinmac20/_._",
-        "System.Security.SecureString.4.0.0-beta-23225.nupkg",
-        "System.Security.SecureString.4.0.0-beta-23225.nupkg.sha512",
-        "System.Security.SecureString.nuspec"
-      ]
-    },
     "System.Text.Encoding/4.0.0": {
       "type": "package",
       "sha512": "AMxFNOXpA6Ab8swULbXuJmoT2K5w6TnV3ObF5wsmEcIHQUJghoZtDVfVHb08O2wW15mOSI1i9Wg0Dx0pY13o8g==",
@@ -6911,18 +6124,28 @@
         "System.Threading.nuspec"
       ]
     },
-    "System.Threading.Overlapped/4.0.1-beta-23225": {
+    "System.Threading.Overlapped/4.0.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "RV3QnaZs+mvukC6STkvwpyVps8r8tco9qh85BBChapX0AgiIgarGbDlPLeuAfPm584Qh8efKYMiqFkaSI08kZg==",
+      "sha512": "X5LuQFhM5FTqaez3eXKJ9CbfSGZ7wj6j4hSVtxct3zmwQXLqG95qoWdvILcgN7xtrDOBIFtpiyDg0vmoI0jE2A==",
       "files": [
         "lib/DNXCore50/System.Threading.Overlapped.dll",
         "lib/net46/System.Threading.Overlapped.dll",
         "lib/netcore50/System.Threading.Overlapped.dll",
+        "ref/dotnet/de/System.Threading.Overlapped.xml",
+        "ref/dotnet/es/System.Threading.Overlapped.xml",
+        "ref/dotnet/fr/System.Threading.Overlapped.xml",
+        "ref/dotnet/it/System.Threading.Overlapped.xml",
+        "ref/dotnet/ja/System.Threading.Overlapped.xml",
+        "ref/dotnet/ko/System.Threading.Overlapped.xml",
+        "ref/dotnet/ru/System.Threading.Overlapped.xml",
         "ref/dotnet/System.Threading.Overlapped.dll",
+        "ref/dotnet/System.Threading.Overlapped.xml",
+        "ref/dotnet/zh-hans/System.Threading.Overlapped.xml",
+        "ref/dotnet/zh-hant/System.Threading.Overlapped.xml",
         "ref/net46/System.Threading.Overlapped.dll",
-        "System.Threading.Overlapped.4.0.1-beta-23225.nupkg",
-        "System.Threading.Overlapped.4.0.1-beta-23225.nupkg.sha512",
+        "System.Threading.Overlapped.4.0.0.nupkg",
+        "System.Threading.Overlapped.4.0.0.nupkg.sha512",
         "System.Threading.Overlapped.nuspec"
       ]
     },
@@ -6990,49 +6213,6 @@
         "System.Threading.Thread.4.0.0-beta-23225.nupkg",
         "System.Threading.Thread.4.0.0-beta-23225.nupkg.sha512",
         "System.Threading.Thread.nuspec"
-      ]
-    },
-    "System.Threading.ThreadPool/4.0.10-beta-23225": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "QX+0t6MbaSJ+NedX9HhT8inVFkuaCM3OQioPw6+Ma6SVS9kJoWY4K8H280wssZSjVB7+tv5qUqTYtJ/wodvSTg==",
-      "files": [
-        "lib/DNXCore50/System.Threading.ThreadPool.dll",
-        "lib/MonoAndroid10/_._",
-        "lib/MonoTouch10/_._",
-        "lib/net46/System.Threading.ThreadPool.dll",
-        "lib/xamarinios10/_._",
-        "lib/xamarinmac20/_._",
-        "ref/dotnet/System.Threading.ThreadPool.dll",
-        "ref/MonoAndroid10/_._",
-        "ref/MonoTouch10/_._",
-        "ref/net46/System.Threading.ThreadPool.dll",
-        "ref/xamarinios10/_._",
-        "ref/xamarinmac20/_._",
-        "System.Threading.ThreadPool.4.0.10-beta-23225.nupkg",
-        "System.Threading.ThreadPool.4.0.10-beta-23225.nupkg.sha512",
-        "System.Threading.ThreadPool.nuspec"
-      ]
-    },
-    "System.Threading.Timer/4.0.1-beta-23225": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "/9Vpl4IufMAx4Rea4ZlpjtlF744vSraJbYj8yFG3pXTHtH27VYcDUpBScVaM1mmHgOZSh8zyaohhXpzUtIg2/A==",
-      "files": [
-        "lib/DNXCore50/System.Threading.Timer.dll",
-        "lib/net451/_._",
-        "lib/netcore50/System.Threading.Timer.dll",
-        "lib/win81/_._",
-        "lib/wpa81/_._",
-        "ref/dotnet/System.Threading.Timer.dll",
-        "ref/net451/_._",
-        "ref/netcore50/System.Threading.Timer.dll",
-        "ref/win81/_._",
-        "ref/wpa81/_._",
-        "runtimes/win8-aot/lib/netcore50/System.Threading.Timer.dll",
-        "System.Threading.Timer.4.0.1-beta-23225.nupkg",
-        "System.Threading.Timer.4.0.1-beta-23225.nupkg.sha512",
-        "System.Threading.Timer.nuspec"
       ]
     },
     "System.Xml.ReaderWriter/4.0.10": {
@@ -7104,11 +6284,7 @@
   },
   "projectFileDependencyGroups": {
     "": [
-      "Microsoft.AspNet.Mvc >= 6.0.0-beta7",
-      "Microsoft.AspNet.Server.IIS >= 1.0.0-beta7",
-      "Microsoft.AspNet.Server.WebListener >= 1.0.0-beta7",
-      "Microsoft.AspNet.StaticFiles >= 1.0.0-beta7",
-      "Swashbuckle.SwaggerUi >= 6.0.0-*"
+      "Swashbuckle.Swagger >= 6.0.0-beta7"
     ],
     "DNX,Version=v4.5.1": [],
     "DNXCore,Version=v5.0": []

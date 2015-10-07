@@ -4,10 +4,10 @@ using Microsoft.AspNet.Hosting;
 using Microsoft.Framework.DependencyInjection;
 using Microsoft.AspNet.Mvc.ApiExplorer;
 using Swashbuckle.Swagger;
-using VersionedApi.Versioning;
-using VersionedApi.Swagger;
+using MultipleVersions.Versioning;
+using MultipleVersions.Swagger;
 
-namespace VersionedApi
+namespace MultipleVersions
 {
     public class Startup
     {

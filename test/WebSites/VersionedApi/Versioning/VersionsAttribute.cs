@@ -3,7 +3,7 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.ActionConstraints;
 using System.Linq;
 
-namespace VersionedApi.Versioning
+namespace MultipleVersions.Versioning
 {
     public class VersionsAttribute : Attribute, IActionConstraintFactory
     {

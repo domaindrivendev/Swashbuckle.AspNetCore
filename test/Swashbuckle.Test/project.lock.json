@@ -1194,7 +1194,7 @@
           "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
-      "Swashbuckle/6.0.0-beta7": {
+      "Swashbuckle.Swagger/6.0.0-beta7": {
         "type": "project",
         "dependencies": {
           "Microsoft.AspNet.FileProviders.Embedded": "1.0.0-beta7",
@@ -1462,9 +1462,9 @@
     }
   },
   "libraries": {
-    "Swashbuckle/6.0.0-beta7": {
+    "Swashbuckle.Swagger/6.0.0-beta7": {
       "type": "project",
-      "path": "../../src/Swashbuckle/project.json"
+      "path": "../../src/Swashbuckle.Swagger/project.json"
     },
     "Microsoft.AspNet.Antiforgery/1.0.0-beta7": {
       "type": "package",
@@ -3257,7 +3257,7 @@
       "xunit >= 2.1.0-rc1-*",
       "xunit.runner.dnx >= 2.1.0-beta5-*",
       "Moq >= 4.2-*",
-      "Swashbuckle >= 6.0.0-*"
+      "Swashbuckle.Swagger >= 6.0.0-*"
     ],
     "DNX,Version=v4.5.1": []
   }

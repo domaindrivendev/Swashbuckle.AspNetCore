@@ -1292,11 +1292,23 @@
         }
       },
       "Swashbuckle/6.0.0-beta7": {
-        "type": "project",
+        "type": "package",
         "dependencies": {
           "Microsoft.AspNet.FileProviders.Embedded": "1.0.0-beta7",
           "Microsoft.AspNet.Mvc": "6.0.0-beta7",
           "Microsoft.AspNet.StaticFiles": "1.0.0-beta7"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Swashbuckle.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Swashbuckle.dll": {}
         }
       },
       "System.Collections/4.0.0": {
@@ -2666,12 +2678,18 @@
         }
       },
       "Swashbuckle/6.0.0-beta7": {
-        "type": "project",
+        "type": "package",
         "dependencies": {
           "Microsoft.AspNet.FileProviders.Embedded": "1.0.0-beta7",
           "Microsoft.AspNet.Mvc": "6.0.0-beta7",
           "Microsoft.AspNet.StaticFiles": "1.0.0-beta7",
           "System.Xml.XPath": "4.0.0-beta"
+        },
+        "compile": {
+          "lib/dnxcore50/Swashbuckle.dll": {}
+        },
+        "runtime": {
+          "lib/dnxcore50/Swashbuckle.dll": {}
         }
       },
       "System.Collections/4.0.11-beta-23225": {
@@ -3767,10 +3785,6 @@
     }
   },
   "libraries": {
-    "Swashbuckle/6.0.0-beta7": {
-      "type": "project",
-      "path": "../../../src/Swashbuckle/project.json"
-    },
     "Microsoft.AspNet.Antiforgery/1.0.0-beta7": {
       "type": "package",
       "serviceable": true,
@@ -4939,6 +4953,19 @@
         "Newtonsoft.Json.6.0.6.nupkg.sha512",
         "Newtonsoft.Json.nuspec",
         "tools/install.ps1"
+      ]
+    },
+    "Swashbuckle/6.0.0-beta7": {
+      "type": "package",
+      "sha512": "ZDK1bMm/kbbvgPZPBOxrayLy5uCRqlOxl6BSdSimEbnZDvZiU06tsYW0X2Kqf/OfL9pHmSolOz2Bers5lbu8MA==",
+      "files": [
+        "lib/dnx451/Swashbuckle.dll",
+        "lib/dnx451/Swashbuckle.xml",
+        "lib/dnxcore50/Swashbuckle.dll",
+        "lib/dnxcore50/Swashbuckle.xml",
+        "Swashbuckle.6.0.0-beta7.nupkg",
+        "Swashbuckle.6.0.0-beta7.nupkg.sha512",
+        "Swashbuckle.nuspec"
       ]
     },
     "System.Collections/4.0.0": {

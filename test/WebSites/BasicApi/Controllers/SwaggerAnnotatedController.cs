@@ -1,8 +1,8 @@
 ﻿using Swashbuckle.Swagger.Annotations;
 using Microsoft.AspNet.Mvc;
-using BasicApi.Swagger;
+using Basic.Swagger;
 
-namespace BasicApi.Controllers
+namespace Basic.Controllers
 {
     public class SwaggerAnnotatedController
     {

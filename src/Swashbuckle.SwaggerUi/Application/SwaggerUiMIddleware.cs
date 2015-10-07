@@ -37,7 +37,7 @@ namespace Swashbuckle.Application
                 return;
             }
 
-            var template = _resourceAssembly.GetManifestResourceStream("Swashbuckle.SwaggerUi.index.html");
+            var template = _resourceAssembly.GetManifestResourceStream("Swashbuckle.SwaggerUi.SwaggerUi.index.html");
             var content = AssignPlaceholderValuesTo(template, httpContext);
             RespondWithContentHtml(httpContext.Response, content);
         }

@@ -1,6 +1,6 @@
 ﻿using Swashbuckle.Swagger;
 
-namespace BasicApi.Swagger
+namespace Basic.Swagger
 {
     public class AddCartDefault : IModelFilter
     {

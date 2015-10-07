@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.Framework.DependencyInjection;
-using BasicApi.Swagger;
+using Basic.Swagger;
 using Swashbuckle.Swagger;
 
-namespace BasicApi
+namespace Basic
 {
     public class Startup
     {
@@ -26,7 +26,7 @@ namespace BasicApi
             {
                 options.SingleApiVersion(new Info
                     {
-                        Version = "v2",
+                        Version = "v1",
                         Title = "Swashbuckle Sample API",
                         Description = "A sample API for testing Swashbuckle",
                         TermsOfService = "Some terms ..."

@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Swashbuckle.Swagger;
 
-namespace VersionedApi.Swagger
+namespace MultipleVersions.Swagger
 {
     public class SetVersionInPaths : IDocumentFilter
     {

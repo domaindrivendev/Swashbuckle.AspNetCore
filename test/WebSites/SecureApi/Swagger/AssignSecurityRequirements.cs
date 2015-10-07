@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.AspNet.Authorization;
 using Swashbuckle.Swagger;
 
-namespace SecureApi.Swagger
+namespace SecuritySchemes.Swagger
 {
     public class AssignSecurityRequirements : IOperationFilter
     {

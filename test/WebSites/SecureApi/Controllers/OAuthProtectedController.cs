@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Authorization;
 
-namespace SecureApi.Controllers
+namespace SecuritySchemes.Controllers
 {
     [Route("/products")]
     [Produces("application/json")]

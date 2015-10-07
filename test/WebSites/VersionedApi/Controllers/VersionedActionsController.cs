@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNet.Mvc;
-using VersionedApi.Versioning;
+using MultipleVersions.Versioning;
 
-namespace VersionedApi.Controllers
+namespace MultipleVersions.Controllers
 {
     [Route("/{version}/products")]
     public class VersionedActionsController

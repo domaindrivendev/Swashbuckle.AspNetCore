@@ -18,7 +18,6 @@ namespace Swashbuckle.Application
         {
             _next = next;
             _toPath = toPath;
-
             _requestMatcher = new TemplateMatcher(TemplateParser.Parse(fromPath), null);
         }
 

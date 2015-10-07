@@ -39,8 +39,8 @@ namespace Swashbuckle.Application
 
     public class SwaggerPathDescriptor
     {
-        public Info Info { get; set; }
-
         public string Path { get; set; }
+
+        public Info Info { get; set; }
     }
 }

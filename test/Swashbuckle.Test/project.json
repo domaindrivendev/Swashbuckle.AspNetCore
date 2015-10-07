@@ -4,7 +4,7 @@
     "xunit": "2.1.0-rc1-*",
     "xunit.runner.dnx": "2.1.0-beta5-*",
     "Moq": "4.2-*",
-    "Swashbuckle": "6.0.0-*"
+    "Swashbuckle.Swagger": "6.0.0-*"
   },
   "commands": {
     "test": "xunit.runner.dnx"

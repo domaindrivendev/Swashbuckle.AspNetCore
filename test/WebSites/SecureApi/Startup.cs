@@ -4,9 +4,9 @@ using Microsoft.AspNet.Hosting;
 using Microsoft.Framework.DependencyInjection;
 using Swashbuckle.Application;
 using Swashbuckle.Swagger;
-using SecureApi.Swagger;
+using SecuritySchemes.Swagger;
 
-namespace SecureApi
+namespace SecuritySchemes
 {
     public class Startup
     {

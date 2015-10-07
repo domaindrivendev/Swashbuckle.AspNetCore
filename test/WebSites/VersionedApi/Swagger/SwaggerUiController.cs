@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNet.Mvc;
 using Swashbuckle.Application;
 
-namespace VersionedApi.Swagger
+namespace MultipleVersions.Swagger
 {
     public class SwaggerUiController : Controller
     {

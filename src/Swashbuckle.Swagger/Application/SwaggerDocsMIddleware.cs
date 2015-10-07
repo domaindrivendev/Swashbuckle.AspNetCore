@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
@@ -14,7 +15,6 @@ namespace Swashbuckle.Application
     {
         private readonly RequestDelegate _next;
         private readonly ISwaggerProvider _swaggerProvider;
-
         private readonly TemplateMatcher _requestMatcher;
         private readonly JsonSerializer _swaggerSerializer;
 
@@ -25,7 +25,6 @@ namespace Swashbuckle.Application
         {
             _next = next;
             _swaggerProvider = swaggerProvider;
-
             _requestMatcher = new TemplateMatcher(TemplateParser.Parse(routeTemplate), null);
             _swaggerSerializer = new JsonSerializer
             {

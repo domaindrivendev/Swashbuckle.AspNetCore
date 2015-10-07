@@ -4,7 +4,7 @@ using Microsoft.AspNet.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace BasicApi.Controllers
+namespace Basic.Controllers
 {
     [Produces("application/json")]
     public class JsonAnnotationsController
