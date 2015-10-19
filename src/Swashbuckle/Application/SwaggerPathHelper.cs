@@ -21,7 +21,7 @@ namespace Swashbuckle.Application
         
         public IEnumerable<string> GetLocalPaths()
         {
-            var swaggerOptions = _optionsAccessor.Options;
+            var swaggerOptions = _optionsAccessor.Value;
             if (swaggerOptions == null || _routeTemplate == null) return Enumerable.Empty<string>();
 
             return swaggerOptions.SwaggerGeneratorOptions.ApiVersions

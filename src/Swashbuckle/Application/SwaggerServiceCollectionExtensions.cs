@@ -29,7 +29,7 @@ namespace Microsoft.Framework.DependencyInjection
         {
             var jsonSerializerSettings = GetJsonSerializerSettings(serviceProvider);
             var swaggerOptions = serviceProvider.GetService<IOptions<SwaggerOptions>>();
-            return new SchemaGenerator(jsonSerializerSettings, swaggerOptions.Options.SchemaGeneratorOptions);
+            return new SchemaGenerator(jsonSerializerSettings, swaggerOptions.Value.SchemaGeneratorOptions);
         }
 
         private static ISwaggerProvider GetSwaggerProvider(IServiceProvider serviceProvider)
@@ -39,7 +39,7 @@ namespace Microsoft.Framework.DependencyInjection
             return new SwaggerGenerator(
                 serviceProvider.GetService<IApiDescriptionGroupCollectionProvider>(),
                 () => serviceProvider.GetService<ISchemaRegistry>(),
-                optionAccessor.Options.SwaggerGeneratorOptions);
+                optionAccessor.Value.SwaggerGeneratorOptions);
         }
 
         private static JsonSerializerSettings GetJsonSerializerSettings(IServiceProvider serviceProvider)
