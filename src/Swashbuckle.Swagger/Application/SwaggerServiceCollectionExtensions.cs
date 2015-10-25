@@ -51,7 +51,7 @@ namespace Microsoft.Framework.DependencyInjection
         {
             var jsonSerializerSettings = GetJsonSerializerSettings(serviceProvider);
             var optionsAccessor = serviceProvider.GetService<IOptions<SwaggerSchemaOptions>>();
-            return new DefaultSchemaRegistryFactory(jsonSerializerSettings, optionsAccessor.Options);
+            return new DefaultSchemaRegistryFactory(jsonSerializerSettings, optionsAccessor.Value);
         }
 
         private static ISwaggerProvider CreateSwaggerProvider(IServiceProvider serviceProvider)
@@ -60,13 +60,13 @@ namespace Microsoft.Framework.DependencyInjection
             return new DefaultSwaggerProvider(
                 serviceProvider.GetRequiredService<IApiDescriptionGroupCollectionProvider>(),
                 serviceProvider.GetRequiredService<ISchemaRegistryFactory>(),
-                optionsAccessor.Options);
+                optionsAccessor.Value);
         }
 
         private static JsonSerializerSettings GetJsonSerializerSettings(IServiceProvider serviceProvider)
         {
             var jsonOptions = serviceProvider.GetService<IOptions<MvcJsonOptions>>();
-            return jsonOptions.Options.SerializerSettings;
+            return jsonOptions.Value.SerializerSettings;
         }
     }
 }

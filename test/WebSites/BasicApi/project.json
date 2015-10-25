@@ -3,15 +3,17 @@
   "version": "1.0.0-*",
 
   "dependencies": {
-    "Microsoft.AspNet.Mvc": "6.0.0-beta7",
-    "Microsoft.AspNet.Server.IIS": "1.0.0-beta7",
-    "Microsoft.AspNet.Server.WebListener": "1.0.0-beta7",
-    "Microsoft.AspNet.StaticFiles": "1.0.0-beta7",
+    "Microsoft.AspNet.Mvc": "6.0.0-beta8",
+    "Microsoft.AspNet.IISPlatformHandler": "1.0.0-beta8",
+    "Microsoft.AspNet.Server.Kestrel": "1.0.0-beta8",
+    "Microsoft.AspNet.Server.WebListener": "1.0.0-beta8",
+    "Microsoft.AspNet.StaticFiles": "1.0.0-beta8",
     "Swashbuckle.SwaggerUi": "6.0.0-*"
   },
 
   "commands": {
-    "web": "Microsoft.AspNet.Hosting --server Microsoft.AspNet.Server.WebListener --server.urls http://localhost:5000"
+    "web": "Microsoft.AspNet.Server.WebListener",
+    "kestrel": "Microsoft.AspNet.Server.Kestrel"
   },
 
   "frameworks": {

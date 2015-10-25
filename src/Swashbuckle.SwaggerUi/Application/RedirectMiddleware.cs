@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Http;
+using Microsoft.AspNet.Routing;
 using Microsoft.AspNet.Routing.Template;
 
 namespace Swashbuckle.Application
@@ -18,7 +19,7 @@ namespace Swashbuckle.Application
         {
             _next = next;
             _toPath = toPath;
-            _requestMatcher = new TemplateMatcher(TemplateParser.Parse(fromPath), null);
+            _requestMatcher = new TemplateMatcher(TemplateParser.Parse(fromPath), new RouteValueDictionary());
         }
 
         public async Task Invoke(HttpContext httpContext)

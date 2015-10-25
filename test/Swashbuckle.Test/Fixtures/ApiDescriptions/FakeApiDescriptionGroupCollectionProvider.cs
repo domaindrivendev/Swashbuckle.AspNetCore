@@ -6,7 +6,11 @@ using Microsoft.Framework.OptionsModel;
 using Microsoft.AspNet.Routing;
 using Microsoft.AspNet.Routing.Constraints;
 using Microsoft.AspNet.Mvc;
+using Microsoft.AspNet.Mvc.Abstractions;
+using Microsoft.AspNet.Mvc.ActionConstraints;
 using Microsoft.AspNet.Mvc.ApiExplorer;
+using Microsoft.AspNet.Mvc.Controllers;
+using Microsoft.AspNet.Mvc.Formatters;
 using Microsoft.AspNet.Mvc.Routing;
 using Microsoft.AspNet.Mvc.ModelBinding;
 using Microsoft.AspNet.Mvc.ModelBinding.Metadata;
@@ -83,7 +87,7 @@ namespace Swashbuckle.Swagger.Fixtures.ApiDescriptions
             options.OutputFormatters.Add(new JsonOutputFormatter());
 
             var optionsAccessor = new Mock<IOptions<MvcOptions>>();
-            optionsAccessor.Setup(o => o.Options).Returns(options);
+            optionsAccessor.Setup(o => o.Value).Returns(options);
 
             var constraintResolver = new Mock<IInlineConstraintResolver>();
             constraintResolver.Setup(i => i.ResolveConstraint("int")).Returns(new IntRouteConstraint());
@@ -104,7 +108,12 @@ namespace Swashbuckle.Swagger.Fixtures.ApiDescriptions
             var metadataDetailsProvider = new DefaultCompositeMetadataDetailsProvider(
                 new IMetadataDetailsProvider[]
                 {
-                    new DefaultBindingMetadataProvider(),
+                    new DefaultBindingMetadataProvider(new ModelBindingMessageProvider
+                    {
+                        MissingBindRequiredValueAccessor = name => $"A value for the '{ name }' property was not provided.",
+                        MissingKeyOrValueAccessor = () => $"A value is required.",
+                        ValueMustNotBeNullAccessor = value => $"The value '{ value }' is invalid.",
+                    }),
                     new DataAnnotationsMetadataProvider()
                 }
             );

@@ -43,6 +43,9 @@ namespace MultipleVersions
         // Configure is called after ConfigureServices is called.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            // Add the platform handler to the request pipeline.
+            app.UseIISPlatformHandler();
+
             // Configure the HTTP request pipeline.
             app.UseStaticFiles();
 

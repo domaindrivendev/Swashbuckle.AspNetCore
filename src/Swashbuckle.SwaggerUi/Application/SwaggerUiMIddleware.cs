@@ -6,6 +6,7 @@ using System.Text;
 using System.Linq;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Http;
+using Microsoft.AspNet.Routing;
 using Microsoft.AspNet.Routing.Template;
 
 namespace Swashbuckle.Application
@@ -25,7 +26,7 @@ namespace Swashbuckle.Application
             _next = next;
             _swaggerPathHelper = swaggerPathHelper;
 
-            _requestMatcher = new TemplateMatcher(TemplateParser.Parse(routeTemplate), null);
+            _requestMatcher = new TemplateMatcher(TemplateParser.Parse(routeTemplate), new RouteValueDictionary());
             _resourceAssembly = GetType().GetTypeInfo().Assembly;
         }
 

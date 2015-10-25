@@ -23,7 +23,7 @@ namespace Swashbuckle.Application
         
         public IEnumerable<SwaggerPathDescriptor> GetPathDescriptors(string basePath)
         {
-            return _optionsAccessor.Options.ApiVersions
+            return _optionsAccessor.Value.ApiVersions
                 .Select((info) => CreatePathDescriptor(info, basePath));
         }
 
