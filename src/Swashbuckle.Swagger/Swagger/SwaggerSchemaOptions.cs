@@ -41,7 +41,7 @@ namespace Swashbuckle.Swagger
         }
 
         public void ModelFilter<TFilter>(TFilter filter)
-            where TFilter : IModelFilter, new()
+            where TFilter : IModelFilter
         {
             ModelFilters.Add(filter);
         }

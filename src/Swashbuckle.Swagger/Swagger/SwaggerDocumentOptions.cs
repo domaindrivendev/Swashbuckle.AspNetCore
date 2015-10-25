@@ -68,7 +68,7 @@ namespace Swashbuckle.Swagger
         }
 
         public void OperationFilter<TFilter>(TFilter filter)
-            where TFilter : IOperationFilter, new()
+            where TFilter : IOperationFilter
         {
             OperationFilters.Add(filter);
         }
@@ -80,7 +80,7 @@ namespace Swashbuckle.Swagger
         }
 
         public void DocumentFilter<TFilter>(TFilter filter)
-            where TFilter : IDocumentFilter, new()
+            where TFilter : IDocumentFilter
         {
             DocumentFilters.Add(filter);
         }
