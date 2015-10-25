@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Http;
+using Microsoft.AspNet.Routing;
 using Microsoft.AspNet.Routing.Template;
 using Newtonsoft.Json;
 using Swashbuckle.Swagger;
@@ -25,7 +26,7 @@ namespace Swashbuckle.Application
         {
             _next = next;
             _swaggerProvider = swaggerProvider;
-            _requestMatcher = new TemplateMatcher(TemplateParser.Parse(routeTemplate), null);
+            _requestMatcher = new TemplateMatcher(TemplateParser.Parse(routeTemplate), new RouteValueDictionary());
             _swaggerSerializer = new JsonSerializer
             {
                 NullValueHandling = NullValueHandling.Ignore,
