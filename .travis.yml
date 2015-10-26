@@ -1,0 +1,15 @@
+language: csharp
+solution: Ahoy.sln
+sudo: false
+mono:
+  - latest
+install:
+  - curl -sSL https://raw.githubusercontent.com/aspnet/Home/dev/dnvminstall.sh | DNX_BRANCH=dev sh && source ~/.dnx/dnvm/dnvm.sh
+  - dnvm upgrade
+  - dnu restore
+os:
+  - linux
+  - osx
+script:
+  - dnu build **/project.json
+  - cd test/Swashbuckle.Test && dnx test -parallel none
