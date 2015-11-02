@@ -1326,6 +1326,13 @@
           "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
+      "Swashbuckle/6.0.0-beta8": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1",
+        "dependencies": {
+          "Swashbuckle.Swagger": "6.0.0-beta8"
+        }
+      },
       "Swashbuckle.Swagger/6.0.0-beta8": {
         "type": "project",
         "framework": "DNX,Version=v4.5.1",
@@ -1333,13 +1340,6 @@
           "Microsoft.AspNet.FileProviders.Embedded": "1.0.0-beta8",
           "Microsoft.AspNet.Mvc": "6.0.0-beta8",
           "Microsoft.AspNet.StaticFiles": "1.0.0-beta8"
-        }
-      },
-      "Swashbuckle.SwaggerUi/6.0.0-beta8": {
-        "type": "project",
-        "framework": "DNX,Version=v4.5.1",
-        "dependencies": {
-          "Swashbuckle.Swagger": "6.0.0-beta8"
         }
       },
       "System.Collections/4.0.0": {
@@ -2744,6 +2744,13 @@
           "lib/portable-net45+wp80+win8+wpa81+aspnetcore50/Newtonsoft.Json.dll": {}
         }
       },
+      "Swashbuckle/6.0.0-beta8": {
+        "type": "project",
+        "framework": "DNXCore,Version=v5.0",
+        "dependencies": {
+          "Swashbuckle.Swagger": "6.0.0-beta8"
+        }
+      },
       "Swashbuckle.Swagger/6.0.0-beta8": {
         "type": "project",
         "framework": "DNXCore,Version=v5.0",
@@ -2752,13 +2759,6 @@
           "Microsoft.AspNet.Mvc": "6.0.0-beta8",
           "Microsoft.AspNet.StaticFiles": "1.0.0-beta8",
           "System.Xml.XPath": "4.0.0"
-        }
-      },
-      "Swashbuckle.SwaggerUi/6.0.0-beta8": {
-        "type": "project",
-        "framework": "DNXCore,Version=v5.0",
-        "dependencies": {
-          "Swashbuckle.Swagger": "6.0.0-beta8"
         }
       },
       "System.Collections/4.0.11-beta-23409": {
@@ -4970,6 +4970,13 @@
           "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
+      "Swashbuckle/6.0.0-beta8": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1",
+        "dependencies": {
+          "Swashbuckle.Swagger": "6.0.0-beta8"
+        }
+      },
       "Swashbuckle.Swagger/6.0.0-beta8": {
         "type": "project",
         "framework": "DNX,Version=v4.5.1",
@@ -4977,13 +4984,6 @@
           "Microsoft.AspNet.FileProviders.Embedded": "1.0.0-beta8",
           "Microsoft.AspNet.Mvc": "6.0.0-beta8",
           "Microsoft.AspNet.StaticFiles": "1.0.0-beta8"
-        }
-      },
-      "Swashbuckle.SwaggerUi/6.0.0-beta8": {
-        "type": "project",
-        "framework": "DNX,Version=v4.5.1",
-        "dependencies": {
-          "Swashbuckle.Swagger": "6.0.0-beta8"
         }
       },
       "System.Collections/4.0.0": {
@@ -6502,6 +6502,13 @@
           "lib/net45/Newtonsoft.Json.dll": {}
         }
       },
+      "Swashbuckle/6.0.0-beta8": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1",
+        "dependencies": {
+          "Swashbuckle.Swagger": "6.0.0-beta8"
+        }
+      },
       "Swashbuckle.Swagger/6.0.0-beta8": {
         "type": "project",
         "framework": "DNX,Version=v4.5.1",
@@ -6509,13 +6516,6 @@
           "Microsoft.AspNet.FileProviders.Embedded": "1.0.0-beta8",
           "Microsoft.AspNet.Mvc": "6.0.0-beta8",
           "Microsoft.AspNet.StaticFiles": "1.0.0-beta8"
-        }
-      },
-      "Swashbuckle.SwaggerUi/6.0.0-beta8": {
-        "type": "project",
-        "framework": "DNX,Version=v4.5.1",
-        "dependencies": {
-          "Swashbuckle.Swagger": "6.0.0-beta8"
         }
       },
       "System.Collections/4.0.0": {
@@ -8134,6 +8134,13 @@
           "runtimes/win7/lib/DNXCore50/System.Threading.dll": {}
         }
       },
+      "Swashbuckle/6.0.0-beta8": {
+        "type": "project",
+        "framework": "DNXCore,Version=v5.0",
+        "dependencies": {
+          "Swashbuckle.Swagger": "6.0.0-beta8"
+        }
+      },
       "Swashbuckle.Swagger/6.0.0-beta8": {
         "type": "project",
         "framework": "DNXCore,Version=v5.0",
@@ -8142,13 +8149,6 @@
           "Microsoft.AspNet.Mvc": "6.0.0-beta8",
           "Microsoft.AspNet.StaticFiles": "1.0.0-beta8",
           "System.Xml.XPath": "4.0.0"
-        }
-      },
-      "Swashbuckle.SwaggerUi/6.0.0-beta8": {
-        "type": "project",
-        "framework": "DNXCore,Version=v5.0",
-        "dependencies": {
-          "Swashbuckle.Swagger": "6.0.0-beta8"
         }
       },
       "System.Collections/4.0.11-beta-23409": {
@@ -10621,6 +10621,13 @@
           "runtimes/win7/lib/DNXCore50/System.Threading.dll": {}
         }
       },
+      "Swashbuckle/6.0.0-beta8": {
+        "type": "project",
+        "framework": "DNXCore,Version=v5.0",
+        "dependencies": {
+          "Swashbuckle.Swagger": "6.0.0-beta8"
+        }
+      },
       "Swashbuckle.Swagger/6.0.0-beta8": {
         "type": "project",
         "framework": "DNXCore,Version=v5.0",
@@ -10629,13 +10636,6 @@
           "Microsoft.AspNet.Mvc": "6.0.0-beta8",
           "Microsoft.AspNet.StaticFiles": "1.0.0-beta8",
           "System.Xml.XPath": "4.0.0"
-        }
-      },
-      "Swashbuckle.SwaggerUi/6.0.0-beta8": {
-        "type": "project",
-        "framework": "DNXCore,Version=v5.0",
-        "dependencies": {
-          "Swashbuckle.Swagger": "6.0.0-beta8"
         }
       },
       "System.Collections/4.0.11-beta-23409": {
@@ -11683,13 +11683,13 @@
     }
   },
   "libraries": {
+    "Swashbuckle/6.0.0-beta8": {
+      "type": "project",
+      "path": "../../../src/Swashbuckle/project.json"
+    },
     "Swashbuckle.Swagger/6.0.0-beta8": {
       "type": "project",
       "path": "../../../src/Swashbuckle.Swagger/project.json"
-    },
-    "Swashbuckle.SwaggerUi/6.0.0-beta8": {
-      "type": "project",
-      "path": "../../../src/Swashbuckle.SwaggerUi/project.json"
     },
     "Microsoft.AspNet.Antiforgery/1.0.0-beta8": {
       "type": "package",
@@ -16037,7 +16037,7 @@
       "Microsoft.Framework.Logging >= 1.0.0-beta8",
       "Microsoft.Framework.Logging.Console >= 1.0.0-beta8",
       "Microsoft.Framework.Logging.Debug >= 1.0.0-beta8",
-      "Swashbuckle.SwaggerUi >= 6.0.0-*"
+      "Swashbuckle >= 6.0.0-*"
     ],
     "DNX,Version=v4.5.1": [],
     "DNXCore,Version=v5.0": []

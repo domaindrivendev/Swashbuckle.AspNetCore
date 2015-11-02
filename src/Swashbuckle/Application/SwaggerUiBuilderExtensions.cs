@@ -30,7 +30,7 @@ namespace Microsoft.AspNet.Builder
             options.StaticFileOptions.ContentTypeProvider = new FileExtensionContentTypeProvider();
             options.FileProvider = new EmbeddedFileProvider(
                 typeof(SwaggerUiBuilderExtensions).GetTypeInfo().Assembly,
-                "Swashbuckle.SwaggerUi.bower_components.swagger_ui.dist");
+                "Swashbuckle.bower_components.swagger_ui.dist");
 
             app.UseFileServer(options);
         }
