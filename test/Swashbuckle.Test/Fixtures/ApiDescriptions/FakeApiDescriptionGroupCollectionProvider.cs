@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections.ObjectModel;
-using Microsoft.Framework.OptionsModel;
+using Microsoft.Extensions.OptionsModel;
 using Microsoft.AspNet.Routing;
 using Microsoft.AspNet.Routing.Constraints;
 using Microsoft.AspNet.Mvc;

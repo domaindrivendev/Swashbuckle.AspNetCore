@@ -47,7 +47,7 @@ namespace Swashbuckle.Application
         {
             if (request.Method != "GET") return false;
 
-            var routeValues = _requestMatcher.Match(request.Path.ToUriComponent().Trim('/'));
+            var routeValues = _requestMatcher.Match(request.Path);
             return (routeValues != null);
         }
 
