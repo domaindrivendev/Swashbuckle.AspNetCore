@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.Framework.OptionsModel;
+using Microsoft.Extensions.OptionsModel;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.ApiExplorer;
 using Newtonsoft.Json;
@@ -7,7 +7,7 @@ using Swashbuckle.Swagger;
 using Swashbuckle.Swagger.Annotations;
 using Swashbuckle.Application;
 
-namespace Microsoft.Framework.DependencyInjection
+namespace Microsoft.Extensions.DependencyInjection
 {
     public static class SwaggerServiceCollectionExtensions
     {

@@ -52,7 +52,7 @@ namespace Swashbuckle.Application
             apiVersion = null;
             if (request.Method != "GET") return false;
 
-            var routeValues = _requestMatcher.Match(request.Path.ToUriComponent().Trim('/'));
+            var routeValues = _requestMatcher.Match(request.Path);
             if (routeValues == null || !routeValues.ContainsKey("apiVersion")) return false;
 
             apiVersion = routeValues["apiVersion"].ToString();
