@@ -61,26 +61,31 @@ namespace Swashbuckle.Swagger
             Assert.NotNull(operation);
             Assert.Equal("ReturnsEnumerable", operation.OperationId);
             Assert.Equal(new[] { "application/json", "text/json" }, operation.Produces.ToArray());
+            Assert.False(operation.Deprecated);
             // PUT collection/{id}
             operation = swagger.Paths["/collection/{id}"].Put;
             Assert.NotNull(operation);
             Assert.Equal("ReturnsVoid", operation.OperationId);
             Assert.Empty(operation.Produces.ToArray());
+            Assert.False(operation.Deprecated);
             // POST collection
             operation = swagger.Paths["/collection"].Post;
             Assert.NotNull(operation);
             Assert.Equal("ReturnsInt", operation.OperationId);
             Assert.Equal(new[] { "application/json", "text/json" }, operation.Produces.ToArray());
+            Assert.False(operation.Deprecated);
             // DELETE collection/{id}
             operation = swagger.Paths["/collection/{id}"].Delete;
             Assert.NotNull(operation);
             Assert.Equal("ReturnsVoid", operation.OperationId);
             Assert.Empty(operation.Produces.ToArray());
+            Assert.False(operation.Deprecated);
             // PATCH collection
             operation = swagger.Paths["/collection/{id}"].Patch;
             Assert.NotNull(operation);
             Assert.Equal("ReturnsVoid", operation.OperationId);
             Assert.Empty(operation.Produces.ToArray());
+            Assert.False(operation.Deprecated);
         }
 
         [Fact]
@@ -224,7 +229,7 @@ namespace Swashbuckle.Swagger
             var swagger = subject.GetSwagger("v1");
 
             var operation = swagger.Paths["/collection"].Get;
-            Assert.Equal(true, operation.Deprecated);
+            Assert.True(operation.Deprecated);
         }
 
         [Fact]
@@ -440,6 +445,18 @@ namespace Swashbuckle.Swagger
             var param = swagger.Paths["/{version}/collection"].Get.Parameters.First();
             Assert.Equal("version", param.Name);
             Assert.Equal(true, param.Required);
+        }
+
+        [Fact]
+        public void GetSwagger_ThrowsInformativeException_OnUnspecifiedHttpMethod()
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add(null, "collection", nameof(ActionFixtures.AcceptsNothing)));
+
+            var exception = Assert.Throws<NotSupportedException>(() => subject.GetSwagger("v1"));
+            Assert.Equal(
+                "Unbounded HTTP verbs for path 'collection'. Are you missing an HttpMethodAttribute?",
+                exception.Message);
         }
 
         private DefaultSwaggerProvider Subject(

@@ -8,13 +8,13 @@ namespace Basic.Controllers
     [Produces("application/json")]
     public class CrudActionsController
     {
-        [HttpPost()]
+        [HttpPost]
         public int Create([FromBody, Required]Product product)
         {
             return 1;
         }
 
-        [HttpGet()]
+        [HttpGet]
         public IEnumerable<Product> GetAll()
         {
             return new[]

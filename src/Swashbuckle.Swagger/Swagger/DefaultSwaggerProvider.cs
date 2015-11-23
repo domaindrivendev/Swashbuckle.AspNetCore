@@ -78,39 +78,45 @@ namespace Swashbuckle.Swagger
 
             // Group further by http method
             var perMethodGrouping = apiDescriptions
-                .GroupBy(apiDesc => apiDesc.HttpMethod.ToLower());
-
+                .GroupBy(apiDesc => apiDesc.HttpMethod);
+                
             foreach (var group in perMethodGrouping)
             {
                 var httpMethod = group.Key;
 
-                if (group.Count() > 1) throw new NotSupportedException(string.Format(
-                    "Not supported by Swagger 2.0: Multiple operations with path '{0}' and method '{1}'.",
-                    group.First().RelativePathSansQueryString(), httpMethod));
+                if (httpMethod == null)
+                    throw new NotSupportedException(string.Format(
+                        "Unbounded HTTP verbs for path '{0}'. Are you missing an HttpMethodAttribute?",
+                        group.First().RelativePathSansQueryString()));
+
+                if (group.Count() > 1)
+                    throw new NotSupportedException(string.Format(
+                        "Multiple operations with path '{0}' and method '{1}'. Are you overloading action methods?",
+                        group.First().RelativePathSansQueryString(), httpMethod));
 
                 var apiDescription = group.Single();
 
                 switch (httpMethod)
                 {
-                    case "get":
+                    case "GET":
                         pathItem.Get = CreateOperation(apiDescription, schemaRegistry);
                         break;
-                    case "put":
+                    case "PUT":
                         pathItem.Put = CreateOperation(apiDescription, schemaRegistry);
                         break;
-                    case "post":
+                    case "POST":
                         pathItem.Post = CreateOperation(apiDescription, schemaRegistry);
                         break;
-                    case "delete":
+                    case "DELETE":
                         pathItem.Delete = CreateOperation(apiDescription, schemaRegistry);
                         break;
-                    case "options":
+                    case "OPTIONS":
                         pathItem.Options = CreateOperation(apiDescription, schemaRegistry);
                         break;
-                    case "head":
+                    case "HEAD":
                         pathItem.Head = CreateOperation(apiDescription, schemaRegistry);
                         break;
-                    case "patch":
+                    case "PATCH":
                         pathItem.Patch = CreateOperation(apiDescription, schemaRegistry);
                         break;
                 }
@@ -135,7 +141,7 @@ namespace Swashbuckle.Swagger
                 responses.Add("200", CreateSuccessResponse(apiDescription.ResponseType, schemaRegistry));
 
             var operation = new Operation
-            { 
+            {
                 Tags = (groupName != null) ? new[] { groupName } : null,
                 OperationId = apiDescription.ActionDescriptor.DisplayName,
                 Produces = apiDescription.Produces().ToList(),

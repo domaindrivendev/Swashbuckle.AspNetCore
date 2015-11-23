@@ -51,10 +51,10 @@ namespace Swashbuckle.Swagger.Fixtures.ApiDescriptions
             descriptor.SetProperty(new ApiDescriptionActionData());
             descriptor.DisplayName = actionFixtureName;
 
-            descriptor.ActionConstraints = new List<IActionConstraintMetadata>
-            {
-                new HttpMethodConstraint(new[] { httpMethod })
-            };
+            descriptor.ActionConstraints = new List<IActionConstraintMetadata>();
+            if (httpMethod != null)
+                descriptor.ActionConstraints.Add(new HttpMethodConstraint(new[] { httpMethod }));
+
             descriptor.AttributeRouteInfo = new AttributeRouteInfo { Template = routeTemplate };
 
             descriptor.MethodInfo = typeof(ActionFixtures).GetMethod(actionFixtureName);
@@ -74,7 +74,6 @@ namespace Swashbuckle.Swagger.Fixtures.ApiDescriptions
             // Set some additional properties - typically done via IApplicationModelConvention
             var attributes = descriptor.MethodInfo.GetCustomAttributes(true);
             descriptor.Properties.Add("ActionAttributes", attributes);
-            descriptor.Properties.Add("IsObsolete", attributes.OfType<ObsoleteAttribute>().Any());
 
             return descriptor;
         }
