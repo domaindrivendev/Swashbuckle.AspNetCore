@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Http;
@@ -43,7 +40,9 @@ namespace Swashbuckle.Application
                 return;
             }
 
-            var swagger = _swaggerProvider.GetSwagger(apiVersion, null, httpContext.Request.PathBase);
+            var basePath = "/" + httpContext.Request.PathBase;
+            var swagger = _swaggerProvider.GetSwagger(apiVersion, null, basePath);
+
             RespondWithSwaggerJson(httpContext.Response, swagger);
         }
 
