@@ -2,4 +2,4 @@
 [Bb]in/
 .vs/
 bower_components/
-*.lock.json
+project.lock.json
