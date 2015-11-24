@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Xunit;
-using Swashbuckle.Swagger.Fixtures;
 using Swashbuckle.Swagger.Fixtures.ApiDescriptions;
 
 namespace Swashbuckle.Swagger.Annotations
@@ -10,7 +9,7 @@ namespace Swashbuckle.Swagger.Annotations
     public class ApplySwaggerResponseAttributesTests
     {
         [Fact]
-        public void Apply_RemovesExistingResponses_IfControllerDecoratedWithRemoveDefaultsAttribute()
+        public void Apply_RemovesExistingResponses_IfControllerAnnotatedWithRemoveDefaultsAttribute()
         {
             var operation = new Operation
             {
@@ -19,9 +18,10 @@ namespace Swashbuckle.Swagger.Annotations
                     { "200", new Response() }
                 }
             };
-            var filterContext = FilterContextFor(nameof(ActionFixtures.ReturnsActionResult));
-            filterContext.ApiDescription.ActionDescriptor.Properties.Add("ControllerAttributes",
-                new[] { new SwaggerResponseRemoveDefaultsAttribute() });
+            var filterContext = FilterContextFor(
+                nameof(ActionFixtures.ReturnsActionResult),
+                nameof(ControllerFixtures.AnnotatedWithSwaggerResponseRemoveDefaults)
+            );
 
             Subject().Apply(operation, filterContext);
 
@@ -29,7 +29,7 @@ namespace Swashbuckle.Swagger.Annotations
         }
 
         [Fact]
-        public void Apply_RemovesExistingResponses_IfActionDecoratedWithRemoveDefaultsAttribute()
+        public void Apply_RemovesExistingResponses_IfActionAnnotatedWithRemoveDefaultsAttribute()
         {
             var operation = new Operation
             {
@@ -55,18 +55,16 @@ namespace Swashbuckle.Swagger.Annotations
                     { "200", new Response() }
                 }
             };
-            var filterContext = FilterContextFor(nameof(ActionFixtures.ReturnsActionResult));
-            filterContext.ApiDescription.ActionDescriptor.Properties.Add("ControllerAttributes",
-                new[]
-                {
-                    new SwaggerResponseAttribute(500, "Internal Server Error", typeof(ComplexType)),
-                    new SwaggerResponseAttribute(400, "Bad Request", typeof(ComplexType))
-                });
+            var filterContext = FilterContextFor(
+                nameof(ActionFixtures.ReturnsActionResult),
+                nameof(ControllerFixtures.AnnotatedWithSwaggerResponses)
+            );
 
             Subject().Apply(operation, filterContext);
 
-            Assert.Equal(new[] { "200", "400", "500" }, operation.Responses.Keys.ToArray());
-            Assert.Equal(new[] { "ComplexType" }, filterContext.SchemaRegistry.Definitions.Keys.ToArray());
+            Assert.Equal(new[] { "200", "400" }, operation.Responses.Keys.ToArray());
+            Assert.Equal("Controller defined 200", operation.Responses["200"].Description);
+            Assert.Equal("Controller defined 400", operation.Responses["400"].Description);
         }
 
         [Fact]
@@ -83,11 +81,13 @@ namespace Swashbuckle.Swagger.Annotations
 
             Subject().Apply(operation, filterContext);
 
-            Assert.Equal(new[] { "200", "201", "202" }, operation.Responses.Keys.ToArray());
+            Assert.Equal(new[] { "200", "400" }, operation.Responses.Keys.ToArray());
+            Assert.Equal("Action defined 200", operation.Responses["200"].Description);
+            Assert.Equal("Action defined 400", operation.Responses["400"].Description);
         }
 
         [Fact]
-        public void Apply_FavorsActionAttributes_IfControllerAndActionBothDecoratedWithSameStatusCode()
+        public void Apply_FavorsActionAttributes_IfControllerAndActionBothAnnotatedWithSameStatusCode()
         {
             var operation = new Operation
             {
@@ -96,25 +96,26 @@ namespace Swashbuckle.Swagger.Annotations
                     { "200", new Response() }
                 }
             };
-            var filterContext = FilterContextFor(nameof(ActionFixtures.AnnotatedWithSwaggerResponses));
-            filterContext.ApiDescription.ActionDescriptor.Properties.Add("ControllerAttributes",
-                new []
-                {
-                    new SwaggerResponseAttribute(201, "Created")
-                });
+            var filterContext = FilterContextFor(
+                nameof(ActionFixtures.AnnotatedWithSwaggerResponses),
+                nameof(ControllerFixtures.AnnotatedWithSwaggerResponses)
+            );
 
             Subject().Apply(operation, filterContext);
 
-            Assert.Equal(new[] { "200", "201", "202" }, operation.Responses.Keys.ToArray());
-            Assert.Equal("ComplexType Created", operation.Responses["201"].Description);
+            Assert.Equal(new[] { "200", "400" }, operation.Responses.Keys.ToArray());
+            Assert.Equal("Action defined 200", operation.Responses["200"].Description);
+            Assert.Equal("Action defined 400", operation.Responses["400"].Description);
         }
 
 
-        private OperationFilterContext FilterContextFor(string actionFixtureName)
+        private OperationFilterContext FilterContextFor(
+            string actionFixtureName,
+            string controllerFixtureName = "NotAnnotated")
         {
             var fakeProvider = new FakeApiDescriptionGroupCollectionProvider();
             var apiDescription = fakeProvider
-                .Add("GET", "collection", actionFixtureName)
+                .Add("GET", "collection", actionFixtureName, controllerFixtureName)
                 .ApiDescriptionGroups.Items.First()
                 .Items.First();
 

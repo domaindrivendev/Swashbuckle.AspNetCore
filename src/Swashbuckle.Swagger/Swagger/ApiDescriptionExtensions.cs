@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Collections.Generic;
+using System.Reflection;
 using Microsoft.AspNet.Mvc.ApiExplorer;
-using System;
+using Microsoft.AspNet.Mvc.Controllers;
 
 namespace Swashbuckle.Swagger
 {
@@ -26,18 +28,18 @@ namespace Swashbuckle.Swagger
 
         public static IEnumerable<object> GetControllerAttributes(this ApiDescription apiDescription)
         {
-            var actionDescriptor = apiDescription.ActionDescriptor;
-            return (actionDescriptor.Properties.ContainsKey("ControllerAttributes"))
-                ? (object[])actionDescriptor.Properties["ControllerAttributes"]
-                : new object[] { };
+            var actionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
+            return (actionDescriptor != null)
+                ? actionDescriptor.ControllerTypeInfo.GetCustomAttributes(false)
+                : Enumerable.Empty<object>();
         }
 
         public static IEnumerable<object> GetActionAttributes(this ApiDescription apiDescription)
         {
-            var actionDescriptor = apiDescription.ActionDescriptor;
-            return (actionDescriptor.Properties.ContainsKey("ActionAttributes"))
-                ? (object[])actionDescriptor.Properties["ActionAttributes"]
-                : new object[] { };
+            var actionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
+            return (actionDescriptor != null)
+                ? actionDescriptor.MethodInfo.GetCustomAttributes(false)
+                : Enumerable.Empty<object>();
         }
     }
 }

@@ -448,6 +448,20 @@ namespace Swashbuckle.Swagger
         }
 
         [Fact]
+        public void GetSwagger_ThrowsInformativeException_OnOverloadedActions()
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add("GET", "collection", nameof(ActionFixtures.AcceptsNothing))
+                .Add("GET", "collection", nameof(ActionFixtures.AcceptsStringFromQuery))
+            );
+
+            var exception = Assert.Throws<NotSupportedException>(() => subject.GetSwagger("v1"));
+            Assert.Equal(
+                "Multiple operations with path 'collection' and method 'GET'. Are you overloading action methods?",
+                exception.Message);
+        }
+
+        [Fact]
         public void GetSwagger_ThrowsInformativeException_OnUnspecifiedHttpMethod()
         {
             var subject = Subject(setupApis: apis => apis

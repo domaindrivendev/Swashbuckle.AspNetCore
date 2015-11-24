@@ -85,8 +85,8 @@ namespace Swashbuckle.Swagger.Fixtures.ApiDescriptions
         public void AnnotatedWithSwaggerResponseRemoveDefaults()
         {}
 
-        [SwaggerResponse(HttpStatusCode.Created, "ComplexType Created", typeof(int))]
-        [SwaggerResponse(HttpStatusCode.Accepted, "ComplexType Initiated", typeof(int))]
+        [SwaggerResponse(HttpStatusCode.OK, "Action defined 200", typeof(int))]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "Action defined 400", typeof(int))]
         public int AnnotatedWithSwaggerResponses(ComplexType param)
         {
             throw new NotImplementedException();

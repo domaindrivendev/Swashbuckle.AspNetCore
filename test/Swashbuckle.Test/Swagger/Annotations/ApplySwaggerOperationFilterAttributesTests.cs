@@ -8,15 +8,16 @@ namespace Swashbuckle.Swagger.Annotations
     public class ApplySwaggerOperationFilterAttributesTests
     {
         [Fact]
-        public void Apply_DelegatesToSpecifiedFilter_IfControllerDecoratedWithFilterAttribute()
+        public void Apply_DelegatesToSpecifiedFilter_IfControllerAnnotatedWithFilterAttribute()
         {
             var operation = new Operation
             {
                 OperationId = "foobar" 
             };
-            var filterContext = FilterContextFor(nameof(ActionFixtures.ReturnsActionResult));
-            filterContext.ApiDescription.ActionDescriptor.Properties.Add("ControllerAttributes",
-                new[] { new SwaggerOperationFilterAttribute(typeof(VendorExtensionsOperationFilter)) });
+            var filterContext = FilterContextFor(
+                nameof(ActionFixtures.ReturnsActionResult),
+                nameof(ControllerFixtures.AnnotatedWithSwaggerOperationFilter)
+            );
 
             Subject().Apply(operation, filterContext);
 
@@ -24,7 +25,7 @@ namespace Swashbuckle.Swagger.Annotations
         }
 
         [Fact]
-        public void Apply_DelegatesToSpecifiedFilter_IfActionDecoratedWithFilterAttribute()
+        public void Apply_DelegatesToSpecifiedFilter_IfActionAnnotatedWithFilterAttribute()
         {
             var operation = new Operation
             {
@@ -37,11 +38,14 @@ namespace Swashbuckle.Swagger.Annotations
             Assert.NotEmpty(operation.Extensions);
         }
 
-        private OperationFilterContext FilterContextFor(string actionFixtureName)
+        private OperationFilterContext FilterContextFor(
+            string actionFixtureName,
+            string controllerFixtureName = "NotAnnotated"
+        )
         {
             var fakeProvider = new FakeApiDescriptionGroupCollectionProvider();
             var apiDescription = fakeProvider
-                .Add("GET", "collection", actionFixtureName)
+                .Add("GET", "collection", actionFixtureName, controllerFixtureName)
                 .ApiDescriptionGroups.Items.First()
                 .Items.First();
 
