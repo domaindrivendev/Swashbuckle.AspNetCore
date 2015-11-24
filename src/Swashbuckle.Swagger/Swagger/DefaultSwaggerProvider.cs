@@ -183,7 +183,10 @@ namespace Swashbuckle.Swagger
                     Required = (source == "path")
                 };
 
-                if (schema != null) nonBodyParam.PopulateFrom(schema);
+                if (schema == null)
+                    nonBodyParam.Type = "string";
+                else
+                    nonBodyParam.PopulateFrom(schema);
 
                 if (nonBodyParam.Type == "array")
                     nonBodyParam.CollectionFormat = "multi";

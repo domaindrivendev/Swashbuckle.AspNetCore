@@ -154,7 +154,7 @@ namespace Swashbuckle.Swagger
         [Theory]
         [InlineData("collection/{param}")]
         [InlineData("collection/{param?}")]
-        public void GetSwagger_SetsParameterRequired_ForRequiredAllRouteParams(string routeTemplate)
+        public void GetSwagger_SetsParameterRequired_ForAllRouteParams(string routeTemplate)
         {
             var subject = Subject(setupApis: apis => apis
                 .Add("GET", routeTemplate, nameof(ActionFixtures.AcceptsStringFromRoute)));
@@ -176,6 +176,22 @@ namespace Swashbuckle.Swagger
 
             var param = swagger.Paths["/collection"].Get.Parameters.First();
             Assert.Equal(false, param.Required);
+        }
+
+        [Fact]
+        public void GetSwagger_SetsParameterTypeString_ForUnboundRouteParams()
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add("GET", "collection/{param}", nameof(ActionFixtures.AcceptsNothing)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var param = swagger.Paths["/collection/{param}"].Get.Parameters.First();
+            Assert.IsAssignableFrom<NonBodyParameter>(param);
+            var nonBodyParam = param as NonBodyParameter;
+            Assert.Equal("param", nonBodyParam.Name);
+            Assert.Equal("path", nonBodyParam.In);
+            Assert.Equal("string", nonBodyParam.Type);
         }
 
         [Fact]
