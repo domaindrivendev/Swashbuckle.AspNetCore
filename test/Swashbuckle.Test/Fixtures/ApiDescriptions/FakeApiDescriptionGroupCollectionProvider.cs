@@ -59,7 +59,6 @@ namespace Swashbuckle.Swagger.Fixtures.ApiDescriptions
         {
             var descriptor = new ControllerActionDescriptor();
             descriptor.SetProperty(new ApiDescriptionActionData());
-            descriptor.DisplayName = actionFixtureName;
 
             descriptor.ActionConstraints = new List<IActionConstraintMetadata>();
             if (httpMethod != null)

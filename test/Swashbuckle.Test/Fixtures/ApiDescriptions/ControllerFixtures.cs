@@ -20,5 +20,8 @@ namespace Swashbuckle.Swagger.Fixtures.ApiDescriptions
         [SwaggerResponse(400, "Controller defined 400", typeof(ComplexType))]
         public class AnnotatedWithSwaggerResponses
         {}
+
+        public class TestController
+        {}
     }
 }

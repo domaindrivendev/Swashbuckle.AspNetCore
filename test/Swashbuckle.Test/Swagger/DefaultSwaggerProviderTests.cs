@@ -59,33 +59,45 @@ namespace Swashbuckle.Swagger
             // GET collection
             var operation = swagger.Paths["/collection"].Get;
             Assert.NotNull(operation);
-            Assert.Equal("ReturnsEnumerable", operation.OperationId);
             Assert.Equal(new[] { "application/json", "text/json" }, operation.Produces.ToArray());
             Assert.False(operation.Deprecated);
             // PUT collection/{id}
             operation = swagger.Paths["/collection/{id}"].Put;
             Assert.NotNull(operation);
-            Assert.Equal("ReturnsVoid", operation.OperationId);
             Assert.Empty(operation.Produces.ToArray());
             Assert.False(operation.Deprecated);
             // POST collection
             operation = swagger.Paths["/collection"].Post;
             Assert.NotNull(operation);
-            Assert.Equal("ReturnsInt", operation.OperationId);
             Assert.Equal(new[] { "application/json", "text/json" }, operation.Produces.ToArray());
             Assert.False(operation.Deprecated);
             // DELETE collection/{id}
             operation = swagger.Paths["/collection/{id}"].Delete;
             Assert.NotNull(operation);
-            Assert.Equal("ReturnsVoid", operation.OperationId);
             Assert.Empty(operation.Produces.ToArray());
             Assert.False(operation.Deprecated);
             // PATCH collection
             operation = swagger.Paths["/collection/{id}"].Patch;
             Assert.NotNull(operation);
-            Assert.Equal("ReturnsVoid", operation.OperationId);
             Assert.Empty(operation.Produces.ToArray());
             Assert.False(operation.Deprecated);
+        }
+
+        [Theory]
+        [InlineData("api/products", "ApiProductsGet")]
+        [InlineData("addresses/validate", "AddressesValidateGet")]
+        [InlineData("carts/{cartId}/items/{id}", "CartsByCartIdItemsByIdGet")]
+        public void GetSwagger_SetsOperationId_AccordingToRouteTemplateAndHttpMethod(
+            string routeTemplate,
+            string expectedOperationId
+        )
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add("GET", routeTemplate, nameof(ActionFixtures.AcceptsNothing)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            Assert.Equal(expectedOperationId, swagger.Paths["/" + routeTemplate].Get.OperationId);
         }
 
         [Fact]

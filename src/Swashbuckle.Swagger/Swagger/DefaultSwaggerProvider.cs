@@ -143,7 +143,7 @@ namespace Swashbuckle.Swagger
             var operation = new Operation
             {
                 Tags = (groupName != null) ? new[] { groupName } : null,
-                OperationId = apiDescription.ActionDescriptor.DisplayName,
+                OperationId = apiDescription.FriendlyId(),
                 Produces = apiDescription.Produces().ToList(),
                 //consumes = apiDescription.Consumes().ToList(),
                 Parameters = parameters.Any() ? parameters : null, // parameters can be null but not empty
