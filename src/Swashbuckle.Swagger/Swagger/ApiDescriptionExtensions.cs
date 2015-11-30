@@ -22,7 +22,7 @@ namespace Swashbuckle.Swagger
 
                 builder.AppendFormat("{0}{1}",
                     (part.StartsWith("{") ? "By" : string.Empty),
-                    (char.ToUpper(trimmed[0]) + trimmed.Substring(1))
+                    trimmed.ToTitleCase()
                 );
             }
 
