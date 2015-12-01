@@ -1,4 +1,4 @@
-﻿using Swashbuckle.Swagger;
+﻿using Swashbuckle.SwaggerGen;
 
 namespace Basic.Swagger
 {

@@ -13,11 +13,11 @@
     <tags>Swagger Documentation Discovery Help WebApi AspNet vNext</tags>
     <dependencies>
       <group targetFramework="DNX4.5.1">
-        <dependency id="Swashbuckle.Swagger" version="6.0.0-rc1-final" />
+        <dependency id="Swashbuckle.SwaggerGen" version="6.0.0-rc1-final" />
         <dependency id="Swashbuckle.SwaggerUi" version="6.0.0-rc1-final" />
       </group>
       <group targetFramework="DNXCore5.0">
-        <dependency id="Swashbuckle.Swagger" version="6.0.0-rc1-final" />
+        <dependency id="Swashbuckle.SwaggerGen" version="6.0.0-rc1-final" />
         <dependency id="Swashbuckle.SwaggerUi" version="6.0.0-rc1-final" />
       </group>
     </dependencies>

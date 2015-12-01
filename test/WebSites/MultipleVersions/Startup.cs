@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Mvc.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Swashbuckle.Swagger;
+using Swashbuckle.SwaggerGen;
 using MultipleVersions.Versioning;
 using MultipleVersions.Swagger;
 
@@ -28,7 +25,7 @@ namespace MultipleVersions
             // You will also need to add the Microsoft.AspNet.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
             // services.AddWebApiConventions();
 
-            services.AddSwagger();
+            services.AddSwaggerGen();
             services.ConfigureSwaggerDocument(options =>
             {
                 options.MultipleApiVersions(
@@ -62,7 +59,7 @@ namespace MultipleVersions
             // Add the following route for porting Web API 2 controllers.
             // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
 
-            app.UseSwagger();
+            app.UseSwaggerGen();
             app.UseSwaggerUi();
         }
 

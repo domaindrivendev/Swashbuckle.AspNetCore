@@ -10,7 +10,7 @@ namespace CustomizedUi
         {
             services.AddMvc();
 
-            services.AddSwagger();
+            services.AddSwaggerGen();
         }
 
         public void Configure(IApplicationBuilder app)
@@ -22,7 +22,7 @@ namespace CustomizedUi
 
             app.UseMvc();
 
-            app.UseSwagger();
+            app.UseSwaggerGen();
             app.UseSwaggerUi();
         }
     }

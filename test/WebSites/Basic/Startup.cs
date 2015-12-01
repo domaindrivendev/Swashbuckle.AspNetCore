@@ -3,7 +3,7 @@ using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
-using Swashbuckle.Swagger;
+using Swashbuckle.SwaggerGen;
 using Basic.Swagger;
 
 namespace Basic
@@ -29,7 +29,7 @@ namespace Basic
             // You will also need to add the Microsoft.AspNet.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
             // services.AddWebApiConventions();
 
-            services.AddSwagger();
+            services.AddSwaggerGen();
             services.ConfigureSwaggerDocument(options =>
             {
                 options.SingleApiVersion(new Info
@@ -67,7 +67,7 @@ namespace Basic
             // Add the following route for porting Web API 2 controllers.
             // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
 
-            app.UseSwagger();
+            app.UseSwaggerGen();
             app.UseSwaggerUi();
         }
     }

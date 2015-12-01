@@ -20,7 +20,7 @@ namespace VirtualDirectory
             // You will also need to add the Microsoft.AspNet.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
             // services.AddWebApiConventions();
 
-            services.AddSwagger();
+            services.AddSwaggerGen();
         }
 
         // Configure is called after ConfigureServices is called.
@@ -43,7 +43,7 @@ namespace VirtualDirectory
                 // Add the following route for porting Web API 2 controllers.
                 // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
 
-                subApp.UseSwagger();
+                subApp.UseSwaggerGen();
                 subApp.UseSwaggerUi(swaggerUrl: "/vdir/swagger/v1/swagger.json");
             });
         }

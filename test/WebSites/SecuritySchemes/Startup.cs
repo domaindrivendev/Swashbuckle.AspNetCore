@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Swashbuckle.Swagger;
+using Swashbuckle.SwaggerGen;
 using SecuritySchemes.Swagger;
 
 namespace SecuritySchemes
@@ -26,7 +23,7 @@ namespace SecuritySchemes
             // You will also need to add the Microsoft.AspNet.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
             // services.AddWebApiConventions();
 
-            services.AddSwagger();
+            services.AddSwaggerGen();
             services.ConfigureSwaggerDocument(options =>
             {
                 options.SecurityDefinitions.Add("oauth2", new OAuth2Scheme
@@ -63,7 +60,7 @@ namespace SecuritySchemes
             // Add the following route for porting Web API 2 controllers.
             // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
 
-            app.UseSwagger();
+            app.UseSwaggerGen();
             app.UseSwaggerUi();
 
             // TOOD: Figure out oauth middleware to validate token

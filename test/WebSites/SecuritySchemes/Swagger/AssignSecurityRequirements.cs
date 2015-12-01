@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using Microsoft.AspNet.Authorization;
-using Swashbuckle.Swagger;
+using Swashbuckle.SwaggerGen;
 
 namespace SecuritySchemes.Swagger
 {
