@@ -14,19 +14,19 @@ namespace Swashbuckle.Application
     public class SwaggerUiMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly SwaggerPathHelper _swaggerPathHelper;
         private readonly TemplateMatcher _requestMatcher;
+        private readonly string _swaggerUrl;
         private readonly Assembly _resourceAssembly;
 
         public SwaggerUiMiddleware(
             RequestDelegate next,
-            SwaggerPathHelper swaggerPathHelper,
-            string routeTemplate)
+            string baseRoute,
+            string swaggerUrl
+        )
         {
             _next = next;
-            _swaggerPathHelper = swaggerPathHelper;
-
-            _requestMatcher = new TemplateMatcher(TemplateParser.Parse(routeTemplate), new RouteValueDictionary());
+            _requestMatcher = new TemplateMatcher(TemplateParser.Parse(baseRoute), new RouteValueDictionary());
+            _swaggerUrl = swaggerUrl;
             _resourceAssembly = GetType().GetTypeInfo().Assembly;
         }
 
@@ -38,8 +38,8 @@ namespace Swashbuckle.Application
                 return;
             }
 
-            var template = _resourceAssembly.GetManifestResourceStream("Swashbuckle.SwaggerUi.index.html");
-            var content = AssignPlaceholderValuesTo(template, httpContext);
+            var template = _resourceAssembly.GetManifestResourceStream("Swashbuckle.SwaggerUi.SwaggerUi.index.html");
+            var content = AssignPlaceholderValuesTo(template);
             RespondWithContentHtml(httpContext.Response, content);
         }
 
@@ -51,14 +51,11 @@ namespace Swashbuckle.Application
             return (routeValues != null);
         }
 
-        private Stream AssignPlaceholderValuesTo(Stream template, HttpContext httpContext)
+        private Stream AssignPlaceholderValuesTo(Stream template)
         {
-            var basePath = httpContext.Request.PathBase;
-            var swaggerPath = _swaggerPathHelper.GetPathDescriptors(basePath).First().Path;
-
             var placeholderValues = new Dictionary<string, string>
             {
-                { "%(SwaggerUrl)", swaggerPath }
+                { "%(SwaggerUrl)", _swaggerUrl }
             };
 
             var templateText = new StreamReader(template).ReadToEnd();

@@ -29,8 +29,6 @@ namespace Microsoft.Extensions.DependencyInjection
                 options.OperationFilter<ApplySwaggerOperationFilterAttributes>();
                 options.OperationFilter<ApplySwaggerResponseAttributes>();
             });
-
-            services.AddSingleton<SwaggerPathHelper>();
         }
 
         public static void ConfigureSwaggerSchema(

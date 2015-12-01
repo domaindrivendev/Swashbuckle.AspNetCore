@@ -40,7 +40,10 @@ namespace Swashbuckle.Application
                 return;
             }
 
-            var basePath = "/" + httpContext.Request.PathBase;
+            var basePath = string.IsNullOrEmpty(httpContext.Request.PathBase)
+                ? "/"
+                : httpContext.Request.PathBase.ToString();
+
             var swagger = _swaggerProvider.GetSwagger(apiVersion, null, basePath);
 
             RespondWithSwaggerJson(httpContext.Response, swagger);

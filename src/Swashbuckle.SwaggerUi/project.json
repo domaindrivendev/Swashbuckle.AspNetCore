@@ -8,7 +8,9 @@
   "licenseUrl": "https://github.com/domaindrivendev/Swashbuckle/LICENSE",
 
   "dependencies": {
-    "Swashbuckle.Swagger": "6.0.0-rc1-final" 
+    "Microsoft.AspNet.Mvc": "6.0.0-rc1-final",
+    "Microsoft.AspNet.StaticFiles": "1.0.0-rc1-final",
+    "Microsoft.AspNet.FileProviders.Embedded": "1.0.0-rc1-final"
   },
 
   "resource": [ "SwaggerUi", "bower_components/swagger-ui/dist" ],

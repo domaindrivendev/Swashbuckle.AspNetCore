@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNet.Mvc;
 
-namespace CustomizedUi.Controllers
+namespace VirtualDirectory.Controllers
 {
     [Route("/products")]
     [Produces("application/json")]

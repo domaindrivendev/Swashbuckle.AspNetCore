@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Swashbuckle.Application.SwaggerPathDescriptor>
+﻿@model IDictionary<string, string>
 
 <!DOCTYPE html>
 <html>
@@ -35,7 +35,7 @@
       if (url && url.length > 1) {
         url = decodeURIComponent(url[1]);
       } else {
-        url = "@Model.Last().Path";
+        url = "@Model.Last().Value";
       }
 
       // Pre load translate...
@@ -116,9 +116,9 @@
       </div>
       <div class='input'>
         <select id="select_version">
-          @foreach (var pathDescriptor in Model.Reverse())
+          @foreach (var entry in Model.Reverse())
           {
-              <option value="@pathDescriptor.Path">@pathDescriptor.Info.Title</option>
+              <option value="@entry.Value">@entry.Key Docs</option>
           }
         </select>
         <script type="text/javascript">
