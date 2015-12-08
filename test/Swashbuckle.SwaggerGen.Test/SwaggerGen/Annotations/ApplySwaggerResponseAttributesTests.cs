@@ -121,7 +121,7 @@ namespace Swashbuckle.SwaggerGen.Annotations
 
             return new OperationFilterContext(
                 apiDescription,
-                new DefaultSchemaRegistry(new JsonSerializerSettings()));
+                new SchemaRegistry(new JsonSerializerSettings()));
         }
 
         private ApplySwaggerResponseAttributes Subject()

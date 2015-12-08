@@ -25,10 +25,9 @@ namespace MultipleVersions
             // You will also need to add the Microsoft.AspNet.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
             // services.AddWebApiConventions();
 
-            services.AddSwaggerGen();
-            services.ConfigureSwaggerDocument(options =>
+            services.AddSwaggerGen(c =>
             {
-                options.MultipleApiVersions(
+                c.MultipleApiVersions(
                     new[]
                     {
                         new Info { Version = "v1", Title = "API V1" },
@@ -37,7 +36,7 @@ namespace MultipleVersions
                     ResolveVersionSupportByVersionsConstraint
                 );
 
-                options.DocumentFilter<SetVersionInPaths>();
+                c.DocumentFilter<SetVersionInPaths>();
             });
         }
 

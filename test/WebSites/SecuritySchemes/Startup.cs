@@ -23,10 +23,9 @@ namespace SecuritySchemes
             // You will also need to add the Microsoft.AspNet.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
             // services.AddWebApiConventions();
 
-            services.AddSwaggerGen();
-            services.ConfigureSwaggerDocument(options =>
+            services.AddSwaggerGen(c =>
             {
-                options.SecurityDefinitions.Add("oauth2", new OAuth2Scheme
+                c.AddSecurityDefinition("oauth2", new OAuth2Scheme
                 {
                     Type = "oauth2",
                     Flow = "implicit",
@@ -38,7 +37,7 @@ namespace SecuritySchemes
                         }
                 });
 
-                options.OperationFilter<AssignSecurityRequirements>();
+                c.OperationFilter<AssignSecurityRequirements>();
             });
         }
 

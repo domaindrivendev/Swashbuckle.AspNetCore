@@ -29,10 +29,9 @@ namespace Basic
             // You will also need to add the Microsoft.AspNet.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
             // services.AddWebApiConventions();
 
-            services.AddSwaggerGen();
-            services.ConfigureSwaggerDocument(options =>
+            services.AddSwaggerGen(c =>
             {
-                options.SingleApiVersion(new Info
+                c.SingleApiVersion(new Info
                 {
                     Version = "v1",
                     Title = "Swashbuckle Sample API",
@@ -40,11 +39,8 @@ namespace Basic
                     TermsOfService = "Some terms ..."
                 });
 
-                options.OperationFilter<AssignOperationVendorExtensions>();
-            });
-            services.ConfigureSwaggerSchema(options =>
-            {
-                options.DescribeAllEnumsAsStrings = true;
+                c.OperationFilter<AssignOperationVendorExtensions>();
+                c.DescribeAllEnumsAsStrings();
             });
         }
 

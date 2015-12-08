@@ -8,20 +8,20 @@ using Newtonsoft.Json.Converters;
 
 namespace Swashbuckle.SwaggerGen
 {
-    public class DefaultSchemaRegistry : ISchemaRegistry
+    public class SchemaRegistry : ISchemaRegistry
     {
         private readonly JsonSerializerSettings _jsonSerializerSettings;
         private readonly IContractResolver _jsonContractResolver;
-        private readonly SwaggerSchemaOptions _options;
+        private readonly SchemaRegistryOptions _options;
         private readonly IDictionary<string, Type> _referencedTypeMap;
 
-        public DefaultSchemaRegistry(
+        public SchemaRegistry(
             JsonSerializerSettings jsonSerializerSettings,
-            SwaggerSchemaOptions options = null)
+            SchemaRegistryOptions options = null)
         {
             _jsonSerializerSettings = jsonSerializerSettings;
             _jsonContractResolver = _jsonSerializerSettings.ContractResolver ?? new DefaultContractResolver();
-            _options = options ?? new SwaggerSchemaOptions();
+            _options = options ?? new SchemaRegistryOptions();
             _referencedTypeMap = new Dictionary<string, Type>();
             Definitions = new Dictionary<string, Schema>();
         }

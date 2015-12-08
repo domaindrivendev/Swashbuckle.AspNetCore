@@ -205,7 +205,7 @@ namespace Swashbuckle.SwaggerGen
         public void GetOrRegister_SupportsOptionToExplicitlyMapTypes()
         {
             var subject = Subject(opts =>
-                opts.MapType<ComplexType>(() => new Schema { Type = "string" })
+                opts.CustomTypeMappings.Add(typeof(ComplexType), () => new Schema { Type = "string" })
             );
 
             var schema = subject.GetOrRegister(typeof(ComplexType));
@@ -218,7 +218,7 @@ namespace Swashbuckle.SwaggerGen
         public void GetOrRegister_SupportsOptionToPostModifyObjectSchemas()
         {
             var subject = Subject(opts =>
-                opts.ModelFilter<VendorExtensionsModelFilter>()
+                opts.ModelFilters.Add(new VendorExtensionsModelFilter())
             );
 
             subject.GetOrRegister(typeof(ComplexType));
@@ -243,7 +243,7 @@ namespace Swashbuckle.SwaggerGen
         {
             var subject = Subject(opts =>
             {
-                opts.CustomSchemaIds((type) => type.FriendlyId(true).Replace("Swashbuckle.SwaggerGen.Fixtures.", ""));
+                opts.SchemaIdSelector = (type) => type.FriendlyId(true).Replace("Swashbuckle.SwaggerGen.Fixtures.", "");
             });
 
             var jsonReference1 = subject.GetOrRegister(typeof(Fixtures.Namespace1.ConflictingType));
@@ -353,17 +353,17 @@ namespace Swashbuckle.SwaggerGen
             });
         }
 
-        private DefaultSchemaRegistry Subject(Action<SwaggerSchemaOptions> configureOptions = null)
+        private SchemaRegistry Subject(Action<SchemaRegistryOptions> configureOptions = null)
         {
-            var options = new SwaggerSchemaOptions();
+            var options = new SchemaRegistryOptions();
             if (configureOptions != null) configureOptions(options);
 
-            return new DefaultSchemaRegistry(new JsonSerializerSettings(), options);
+            return new SchemaRegistry(new JsonSerializerSettings(), options);
         }
 
-        private DefaultSchemaRegistry Subject(JsonSerializerSettings jsonSerializerSettings)
+        private SchemaRegistry Subject(JsonSerializerSettings jsonSerializerSettings)
         {
-            return new DefaultSchemaRegistry(jsonSerializerSettings);
+            return new SchemaRegistry(jsonSerializerSettings);
         }
     }
 }

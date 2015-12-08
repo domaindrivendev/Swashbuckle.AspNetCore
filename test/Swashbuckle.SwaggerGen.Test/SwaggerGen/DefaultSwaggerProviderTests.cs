@@ -402,7 +402,7 @@ namespace Swashbuckle.SwaggerGen
                     apis.Add("GET", "collection1", nameof(ActionFixtures.ReturnsEnumerable));
                     apis.Add("GET", "collection2", nameof(ActionFixtures.ReturnsInt));
                 },
-                configure: opts => opts.GroupActionsBy((apiDesc) => apiDesc.RelativePath));
+                configure: opts => opts.GroupNameSelector = (apiDesc) => apiDesc.RelativePath);
 
             var swagger = subject.GetSwagger("v1");
 
@@ -423,8 +423,8 @@ namespace Swashbuckle.SwaggerGen
                 },
                 configure: opts =>
                 {
-                    opts.GroupActionsBy((apiDesc) => apiDesc.RelativePath);
-                    opts.OrderActionGroupsBy(new DescendingAlphabeticComparer());
+                    opts.GroupNameSelector = (apiDesc) => apiDesc.RelativePath;
+                    opts.GroupNameComparer = new DescendingAlphabeticComparer();
                 });
 
             var swagger = subject.GetSwagger("v1");
@@ -442,7 +442,7 @@ namespace Swashbuckle.SwaggerGen
                 },
                 configure: opts =>
                 {
-                    opts.OperationFilter<VendorExtensionsOperationFilter>();
+                    opts.OperationFilters.Add(new VendorExtensionsOperationFilter());
                 });
 
             var swagger = subject.GetSwagger("v1");
@@ -455,7 +455,7 @@ namespace Swashbuckle.SwaggerGen
         public void GetSwagger_SupportsOptionToPostModifySwaggerDocument()
         {
             var subject = Subject(configure: opts =>
-                opts.DocumentFilter<VendorExtensionsDocumentFilter>());
+                opts.DocumentFilters.Add(new VendorExtensionsDocumentFilter()));
 
             var swagger = subject.GetSwagger("v1");
             
@@ -501,19 +501,19 @@ namespace Swashbuckle.SwaggerGen
                 exception.Message);
         }
 
-        private DefaultSwaggerProvider Subject(
+        private SwaggerProvider Subject(
             Action<FakeApiDescriptionGroupCollectionProvider> setupApis = null,
-            Action<SwaggerDocumentOptions> configure = null)
+            Action<SwaggerProviderOptions> configure = null)
         {
             var apiDescriptionsProvider = new FakeApiDescriptionGroupCollectionProvider();
             if (setupApis != null) setupApis(apiDescriptionsProvider);
 
-            var options = new SwaggerDocumentOptions();
+            var options = new SwaggerProviderOptions();
             if (configure != null) configure(options);
 
-            return new DefaultSwaggerProvider(
+            return new SwaggerProvider(
                 apiDescriptionsProvider,
-                new DefaultSchemaRegistryFactory(new JsonSerializerSettings(), new SwaggerSchemaOptions()),
+                new SchemaRegistryFactory(new JsonSerializerSettings(), new SchemaRegistryOptions()),
                 options
             );
         }

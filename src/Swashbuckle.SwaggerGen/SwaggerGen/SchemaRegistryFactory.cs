@@ -2,14 +2,14 @@
 
 namespace Swashbuckle.SwaggerGen
 {
-    public class DefaultSchemaRegistryFactory : ISchemaRegistryFactory
+    public class SchemaRegistryFactory : ISchemaRegistryFactory
     {
         private readonly JsonSerializerSettings _jsonSerializerSettings;
-        private readonly SwaggerSchemaOptions _options;
+        private readonly SchemaRegistryOptions _options;
 
-        public DefaultSchemaRegistryFactory(
+        public SchemaRegistryFactory(
             JsonSerializerSettings jsonSerializerSettings,
-            SwaggerSchemaOptions options)
+            SchemaRegistryOptions options)
         {
             _jsonSerializerSettings = jsonSerializerSettings;
             _options = options;
@@ -17,7 +17,7 @@ namespace Swashbuckle.SwaggerGen
 
         public ISchemaRegistry Create()
         {
-            return new DefaultSchemaRegistry(_jsonSerializerSettings, _options);
+            return new SchemaRegistry(_jsonSerializerSettings, _options);
         }
     }
 }
