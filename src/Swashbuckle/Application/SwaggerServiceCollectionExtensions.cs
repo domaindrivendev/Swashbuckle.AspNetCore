@@ -1,12 +1,12 @@
 ﻿using System;
-using Microsoft.Framework.OptionsModel;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.ApiExplorer;
+using Microsoft.Extensions.OptionsModel;
 using Newtonsoft.Json;
 using Swashbuckle.Swagger;
 using Swashbuckle.Application;
 
-namespace Microsoft.Framework.DependencyInjection
+namespace Microsoft.Extensions.DependencyInjection
 {
     public static class SwaggerServiceCollectionExtensions
     {
