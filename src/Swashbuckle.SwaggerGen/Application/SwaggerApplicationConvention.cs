@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNet.Mvc.ApplicationModels;
 
-namespace Swashbuckle.Application
+namespace Swashbuckle.SwaggerGen.Application
 {
     public class SwaggerApplicationConvention : IApplicationModelConvention
     {

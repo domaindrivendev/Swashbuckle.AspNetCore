@@ -5,9 +5,9 @@ using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Routing;
 using Microsoft.AspNet.Routing.Template;
 using Newtonsoft.Json;
-using Swashbuckle.SwaggerGen;
+using Swashbuckle.SwaggerGen.Generator;
 
-namespace Swashbuckle.Application
+namespace Swashbuckle.SwaggerGen.Application
 {
     public class SwaggerGenMiddleware
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.AspNet.Mvc;
-using Swashbuckle.Application;
+using Swashbuckle.SwaggerGen.Application;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
