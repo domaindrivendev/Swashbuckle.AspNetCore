@@ -1,6 +1,6 @@
 ﻿using System;
-using Swashbuckle.Application;
-using Swashbuckle.SwaggerGen;
+using Swashbuckle.SwaggerGen.Application;
+using Swashbuckle.SwaggerGen.Generator;
 
 namespace Microsoft.AspNet.Builder
 {

@@ -3,7 +3,7 @@ using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Swashbuckle.SwaggerGen;
+using Swashbuckle.SwaggerGen.Generator;
 using SecuritySchemes.Swagger;
 
 namespace SecuritySchemes

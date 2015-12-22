@@ -1,27 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Xml.XPath;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.ApiExplorer;
 using Microsoft.Extensions.OptionsModel;
 using Microsoft.Extensions.DependencyInjection;
-using Swashbuckle.SwaggerGen;
-using System.Linq;
+using Swashbuckle.SwaggerGen.Generator;
+using Swashbuckle.SwaggerGen.Annotations;
 
-namespace Swashbuckle.Application
+namespace Swashbuckle.SwaggerGen.Application
 {
     public class SwaggerProviderBuilder
     {
         private readonly SwaggerProviderOptions _swaggerProviderOptions;
         private readonly SchemaRegistryOptions _schemaRegistryOptions;
 
-        private List<FilterTypeOrInstance<IOperationFilter>> _operationFilterDescriptors;
-        private List<FilterTypeOrInstance<IDocumentFilter>> _documentFilterDescriptors;
-        private List<FilterTypeOrInstance<IModelFilter>> _modelFilterDescriptors;
+        private List<FilterDescriptor<IOperationFilter>> _operationFilterDescriptors;
+        private List<FilterDescriptor<IDocumentFilter>> _documentFilterDescriptors;
+        private List<FilterDescriptor<IModelFilter>> _modelFilterDescriptors;
 
-        private struct FilterTypeOrInstance<TFilter>
+        private struct FilterDescriptor<TFilter>
         {
             public Type Type;
-            public TFilter Instance;
+            public object[] Parameters;
         }
 
         public SwaggerProviderBuilder()
@@ -29,9 +31,13 @@ namespace Swashbuckle.Application
             _swaggerProviderOptions = new SwaggerProviderOptions();
             _schemaRegistryOptions = new SchemaRegistryOptions();
 
-            _operationFilterDescriptors = new List<FilterTypeOrInstance<IOperationFilter>>();
-            _documentFilterDescriptors = new List<FilterTypeOrInstance<IDocumentFilter>>();
-            _modelFilterDescriptors = new List<FilterTypeOrInstance<IModelFilter>>();
+            _operationFilterDescriptors = new List<FilterDescriptor<IOperationFilter>>();
+            _documentFilterDescriptors = new List<FilterDescriptor<IDocumentFilter>>();
+            _modelFilterDescriptors = new List<FilterDescriptor<IModelFilter>>();
+
+            // Enable Annotations
+            OperationFilter<SwaggerAttributesOperationFilter>();
+            ModelFilter<SwaggerAttributesModelFilter>();
         }
 
         public void SingleApiVersion(Info info)
@@ -90,37 +96,41 @@ namespace Swashbuckle.Application
             _schemaRegistryOptions.IgnoreObsoleteProperties = true;
         }
 
-        public void OperationFilter(IOperationFilter filter)
-        {
-            _operationFilterDescriptors.Add(new FilterTypeOrInstance<IOperationFilter> { Instance = filter });
-        }
-
-        public void OperationFilter<TFilter>()
+        public void OperationFilter<TFilter>(params object[] parameters)
             where TFilter : IOperationFilter
         {
-            _operationFilterDescriptors.Add(new FilterTypeOrInstance<IOperationFilter> { Type = typeof(TFilter) });
+            _operationFilterDescriptors.Add(new FilterDescriptor<IOperationFilter>
+            {
+                Type = typeof(TFilter),
+                Parameters = parameters
+            });
         }
 
-        public void DocumentFilter(IDocumentFilter filter)
-        {
-            _documentFilterDescriptors.Add(new FilterTypeOrInstance<IDocumentFilter> { Instance = filter });
-        }
-
-        public void DocumentFilter<TFilter>()
+        public void DocumentFilter<TFilter>(params object[] parameters)
             where TFilter : IDocumentFilter
         {
-            _documentFilterDescriptors.Add(new FilterTypeOrInstance<IDocumentFilter> { Type = typeof(TFilter) });
+            _documentFilterDescriptors.Add(new FilterDescriptor<IDocumentFilter>
+            {
+                Type = typeof(TFilter),
+                Parameters = parameters
+            });
         }
 
-        public void ModelFilter(IModelFilter filter)
-        {
-            _modelFilterDescriptors.Add(new FilterTypeOrInstance<IModelFilter> { Instance = filter });
-        }
-
-        public void ModelFilter<TFilter>()
+        public void ModelFilter<TFilter>(params object[] parameters)
             where TFilter : IModelFilter
         {
-            _modelFilterDescriptors.Add(new FilterTypeOrInstance<IModelFilter> { Type = typeof(TFilter) });
+            _modelFilterDescriptors.Add(new FilterDescriptor<IModelFilter>
+            {
+                Type = typeof(TFilter),
+                Parameters = parameters
+            });
+        }
+
+        public void IncludeXmlComments(string xmlDocPath)
+        {
+            var xmlDoc = new XPathDocument(xmlDocPath);
+            OperationFilter<XmlCommentsOperationFilter>(xmlDoc);
+            ModelFilter<XmlCommentsModelFilter>(xmlDoc);
         }
 
         public ISwaggerProvider Build(IServiceProvider serviceProvider)
@@ -139,7 +149,7 @@ namespace Swashbuckle.Application
         {
             var options = _schemaRegistryOptions.Clone();
 
-            foreach (var filter in ResolveFilters(_modelFilterDescriptors, serviceProvider))
+            foreach (var filter in CreateFilters(_modelFilterDescriptors, serviceProvider))
             {
                 options.ModelFilters.Add(filter);
             }
@@ -151,12 +161,12 @@ namespace Swashbuckle.Application
         {
             var options = _swaggerProviderOptions.Clone();
 
-            foreach (var filter in ResolveFilters(_operationFilterDescriptors, serviceProvider))
+            foreach (var filter in CreateFilters(_operationFilterDescriptors, serviceProvider))
             {
                 options.OperationFilters.Add(filter);
             }
 
-            foreach (var filter in ResolveFilters(_documentFilterDescriptors, serviceProvider))
+            foreach (var filter in CreateFilters(_documentFilterDescriptors, serviceProvider))
             {
                 options.DocumentFilters.Add(filter);
             }
@@ -164,14 +174,13 @@ namespace Swashbuckle.Application
             return options;
         }
 
-        private IEnumerable<TFilter> ResolveFilters<TFilter>(
-            List<FilterTypeOrInstance<TFilter>> _filterDescriptors,
+        private IEnumerable<TFilter> CreateFilters<TFilter>(
+            List<FilterDescriptor<TFilter>> _filterDescriptors,
             IServiceProvider serviceProvider)
         {
             return _filterDescriptors.Select(descriptor =>
             {
-                if (descriptor.Instance != null) return descriptor.Instance;
-                return (TFilter)ActivatorUtilities.GetServiceOrCreateInstance(serviceProvider, descriptor.Type);
+                return (TFilter)ActivatorUtilities.CreateInstance(serviceProvider, descriptor.Type, descriptor.Parameters);
             });
         }
     }

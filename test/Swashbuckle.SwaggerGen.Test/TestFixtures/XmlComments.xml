@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<doc>
+  <assembly>
+    <name>Swashbuckle.SwaggerGen.TestFixtures.ApiDescriptions</name>
+  </assembly>
+  <members>
+    <member name="M:Swashbuckle.SwaggerGen.TestFixtures.ApiDescriptions.ActionFixtures.AnnotatedWithSummaryAndRemarksXml">
+      <summary>
+      summary for AnnotatedWithSummaryAndRemarksXml
+      </summary>
+      <remarks>
+      remarks for AnnotatedWithSummaryAndRemarksXml
+      </remarks>
+    </member>
+    <member name="M:Swashbuckle.SwaggerGen.TestFixtures.ApiDescriptions.ActionFixtures.AnnotatedWithParamsXml(System.Int32,System.Collections.Generic.IEnumerable{Swashbuckle.SwaggerGen.TestFixtures.ComplexType})">
+        <param name="param1">description for param1</param>
+        <param name="param2">description for param2</param>
+    </member>
+    <member name="T:Swashbuckle.SwaggerGen.TestFixtures.XmlAnnotatedType">
+        <summary>
+        summary for XmlAnnotatedType
+        </summary>
+    </member>
+    <member name="T:Swashbuckle.SwaggerGen.TestFixtures.XmlAnnotatedWithNestedType.NestedType">
+        <summary>
+        summary for NestedType
+        </summary>
+    </member>
+    <member name="T:Swashbuckle.SwaggerGen.TestFixtures.XmlAnnotatedGenericType`1">
+        <summary>
+        summary for XmlAnnotatedGenericType
+        </summary>
+    </member>
+    <member name="P:Swashbuckle.SwaggerGen.TestFixtures.XmlAnnotatedType.Property">
+        <summary>
+        summary for Property
+        </summary>
+    </member>
+    <member name="P:Swashbuckle.SwaggerGen.TestFixtures.XmlAnnotatedBaseType.BaseProperty">
+        <summary>
+        summary for BaseProperty
+        </summary>
+    </member>
+    <member name="P:Swashbuckle.SwaggerGen.TestFixtures.XmlAnnotatedGenericType`1.GenericProperty">
+        <summary>
+        summary for GenericProperty
+        </summary>
+    </member>
+  </members>
+</doc>

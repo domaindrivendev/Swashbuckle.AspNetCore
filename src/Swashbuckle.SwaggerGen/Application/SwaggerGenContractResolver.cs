@@ -1,7 +1,7 @@
 ﻿using System;
 using Newtonsoft.Json.Serialization;
 
-namespace Swashbuckle.Application
+namespace Swashbuckle.SwaggerGen.Application
 {
     public class SwaggerGenContractResolver : DefaultContractResolver
     {

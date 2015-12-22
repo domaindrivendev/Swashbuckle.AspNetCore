@@ -4,7 +4,7 @@ using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Mvc.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Swashbuckle.SwaggerGen;
+using Swashbuckle.SwaggerGen.Generator;
 using MultipleVersions.Versioning;
 using MultipleVersions.Swagger;
 

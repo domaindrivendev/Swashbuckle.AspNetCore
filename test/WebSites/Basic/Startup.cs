@@ -2,14 +2,22 @@
 using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.PlatformAbstractions;
 using Newtonsoft.Json.Serialization;
-using Swashbuckle.SwaggerGen;
+using Swashbuckle.SwaggerGen.Generator;
 using Basic.Swagger;
 
 namespace Basic
 {
     public class Startup
     {
+        private IApplicationEnvironment _appEnv;
+
+        public Startup(IApplicationEnvironment appEnv)
+        {
+            _appEnv = appEnv;
+        }
+
         public Startup(IHostingEnvironment env)
         {
         }
@@ -39,8 +47,15 @@ namespace Basic
                     TermsOfService = "Some terms ..."
                 });
 
-                c.OperationFilter<AssignOperationVendorExtensions>();
                 c.DescribeAllEnumsAsStrings();
+
+                c.OperationFilter<AssignOperationVendorExtensions>();
+
+                c.IncludeXmlComments(string.Format(@"{0}\..\..\..\artifacts\bin\Basic\{1}\{2}{3}\Basic.xml",
+                    _appEnv.ApplicationBasePath,
+                    _appEnv.Configuration,
+                    _appEnv.RuntimeFramework.Identifier,
+                    _appEnv.RuntimeFramework.Version.ToString().Replace(".", string.Empty)));
             });
         }
 
