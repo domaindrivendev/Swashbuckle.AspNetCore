@@ -10,17 +10,17 @@ namespace Swashbuckle.SwaggerGen.Annotations
         private const string SummaryExpression = "summary";
         private const string PropertyExpression = "/doc/members/member[@name='P:{0}.{1}']";
 
-        private readonly XPathNavigator _navigator;
+        private readonly XPathNavigator _xmlNavigator;
 
-        public XmlCommentsModelFilter(string filePath)
+        public XmlCommentsModelFilter(XPathDocument xmlDoc)
         {
-            _navigator = new XPathDocument(filePath).CreateNavigator();
+            _xmlNavigator = xmlDoc.CreateNavigator();
         }
 
         public void Apply(Schema model, ModelFilterContext context)
         {
             var typeXPath = string.Format(TypeExpression, context.SystemType.XmlLookupName());
-            var typeNode = _navigator.SelectSingleNode(typeXPath);
+            var typeNode = _xmlNavigator.SelectSingleNode(typeXPath);
 
             if (typeNode != null)
             {
@@ -42,7 +42,7 @@ namespace Swashbuckle.SwaggerGen.Annotations
         {
             var propertyXPath =
                 string.Format(PropertyExpression, memberInfo.DeclaringType.XmlLookupName(), memberInfo.Name);
-            var propertyNode = _navigator.SelectSingleNode(propertyXPath);
+            var propertyNode = _xmlNavigator.SelectSingleNode(propertyXPath);
             if (propertyNode == null) return;
 
             var propSummaryNode = propertyNode.SelectSingleNode(SummaryExpression);

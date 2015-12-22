@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
+using System.Xml.XPath;
 using Xunit;
 using Swashbuckle.SwaggerGen.Generator;
 using Swashbuckle.SwaggerGen.TestFixtures.ApiDescriptions;
@@ -52,7 +53,7 @@ namespace Swashbuckle.SwaggerGen.Annotations
 
         private XmlCommentsOperationFilter Subject()
         {
-            return new XmlCommentsOperationFilter("TestFixtures/XmlComments.xml");
+            return new XmlCommentsOperationFilter(new XPathDocument("TestFixtures/XmlComments.xml"));
         }
     }
 }

@@ -14,11 +14,11 @@ namespace Swashbuckle.SwaggerGen.Annotations
         private const string ParameterExpression = "param";
         private const string ResponseExpression = "response";
         
-        private readonly XPathNavigator _navigator;
+        private readonly XPathNavigator _xmlNavigator;
 
-        public XmlCommentsOperationFilter(string filePath)
+        public XmlCommentsOperationFilter(XPathDocument xmlDoc)
         {
-            _navigator = new XPathDocument(filePath).CreateNavigator();
+            _xmlNavigator = xmlDoc.CreateNavigator();
         }
 
         public void Apply(Operation operation, OperationFilterContext context)
@@ -27,7 +27,7 @@ namespace Swashbuckle.SwaggerGen.Annotations
             if (controllerActionDescriptor == null) return;
 
             var methodXPath = GetMethodXPath(controllerActionDescriptor.MethodInfo);
-            var methodNode = _navigator.SelectSingleNode(methodXPath);
+            var methodNode = _xmlNavigator.SelectSingleNode(methodXPath);
             if (methodNode == null) return;
 
             var summaryNode = methodNode.SelectSingleNode(SummaryExpression);

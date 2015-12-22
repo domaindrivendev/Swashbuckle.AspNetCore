@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.XPath;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.ApiExplorer;
 using Microsoft.Extensions.OptionsModel;
@@ -123,6 +124,13 @@ namespace Swashbuckle.SwaggerGen.Application
                 Type = typeof(TFilter),
                 Parameters = parameters
             });
+        }
+
+        public void IncludeXmlComments(string xmlDocPath)
+        {
+            var xmlDoc = new XPathDocument(xmlDocPath);
+            OperationFilter<XmlCommentsOperationFilter>(xmlDoc);
+            ModelFilter<XmlCommentsModelFilter>(xmlDoc);
         }
 
         public ISwaggerProvider Build(IServiceProvider serviceProvider)
