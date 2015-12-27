@@ -1,8 +1,9 @@
 {
-    "sources": [ "src", "test" ],
-    "sdk": {
-        "version": "1.0.0-rc1-final",
-        "runtime": "clr",
-        "architecture": "x86"
-    }
+  "sources": [ "src", "test" ],
+  "sdk": {
+    "version": "1.0.0-rc1-final",
+    "runtime": "clr",
+    "architecture": "x86"
+  },
+  "projects": [ "test/WebSites", "src" ]
 }

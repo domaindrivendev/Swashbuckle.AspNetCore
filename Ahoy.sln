@@ -38,6 +38,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Swashbuckle", "Swashbuckle"
 		src\Swashbuckle\Swashbuckle.nuspec = src\Swashbuckle\Swashbuckle.nuspec
 	EndProjectSection
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Swashbuckle.IntegrationTests", "test\Swashbuckle.IntegrationTests\Swashbuckle.IntegrationTests.xproj", "{FAE3AE3A-E5B2-44B1-B402-FD96899C444B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -76,6 +78,10 @@ Global
 		{28B55065-BFE6-4C82-AFD3-6157408BBC37}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28B55065-BFE6-4C82-AFD3-6157408BBC37}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28B55065-BFE6-4C82-AFD3-6157408BBC37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FAE3AE3A-E5B2-44B1-B402-FD96899C444B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FAE3AE3A-E5B2-44B1-B402-FD96899C444B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FAE3AE3A-E5B2-44B1-B402-FD96899C444B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FAE3AE3A-E5B2-44B1-B402-FD96899C444B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -91,5 +97,6 @@ Global
 		{55DCE4FA-9D46-43CD-B19C-17215EEE68E4} = {245144DE-BC89-4822-B044-020458BFECC0}
 		{28B55065-BFE6-4C82-AFD3-6157408BBC37} = {245144DE-BC89-4822-B044-020458BFECC0}
 		{06E1906A-B74B-417A-B7D3-58C3FD71B1AB} = {15A55F4A-FC33-4D96-BAAD-FBDCDD96D5F5}
+		{FAE3AE3A-E5B2-44B1-B402-FD96899C444B} = {1669F896-133C-4996-B58C-E7CDA299ADFF}
 	EndGlobalSection
 EndGlobal

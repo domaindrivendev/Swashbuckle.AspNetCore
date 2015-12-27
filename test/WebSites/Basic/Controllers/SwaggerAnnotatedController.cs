@@ -10,7 +10,7 @@ namespace Basic.Controllers
         [SwaggerResponseRemoveDefaults]
         [SwaggerResponse(201, "Cart created", typeof(Cart))]
         [HttpPost("/carts")]
-        public Cart Create(Cart cart)
+        public Cart Create([FromBody]Cart cart)
         {
             return new Cart { Id = 1 };
         }
