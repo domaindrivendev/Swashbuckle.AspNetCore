@@ -1,5 +1,6 @@
 ﻿using System;
 using Xunit;
+using Moq;
 using Swashbuckle.SwaggerGen.Generator;
 using Swashbuckle.SwaggerGen.TestFixtures;
 
@@ -25,7 +26,7 @@ namespace Swashbuckle.SwaggerGen.Annotations
 
         private SwaggerAttributesModelFilter Subject()
         {
-            return new SwaggerAttributesModelFilter();
+            return new SwaggerAttributesModelFilter(new Mock<IServiceProvider>().Object);
         }
     }
 }

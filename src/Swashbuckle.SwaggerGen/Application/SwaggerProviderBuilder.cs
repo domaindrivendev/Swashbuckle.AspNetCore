@@ -23,7 +23,7 @@ namespace Swashbuckle.SwaggerGen.Application
         private struct FilterDescriptor<TFilter>
         {
             public Type Type;
-            public object[] Parameters;
+            public object[] Arguments;
         }
 
         public SwaggerProviderBuilder()
@@ -102,7 +102,7 @@ namespace Swashbuckle.SwaggerGen.Application
             _operationFilterDescriptors.Add(new FilterDescriptor<IOperationFilter>
             {
                 Type = typeof(TFilter),
-                Parameters = parameters
+                Arguments = parameters
             });
         }
 
@@ -112,7 +112,7 @@ namespace Swashbuckle.SwaggerGen.Application
             _documentFilterDescriptors.Add(new FilterDescriptor<IDocumentFilter>
             {
                 Type = typeof(TFilter),
-                Parameters = parameters
+                Arguments = parameters
             });
         }
 
@@ -122,7 +122,7 @@ namespace Swashbuckle.SwaggerGen.Application
             _modelFilterDescriptors.Add(new FilterDescriptor<IModelFilter>
             {
                 Type = typeof(TFilter),
-                Parameters = parameters
+                Arguments = parameters
             });
         }
 
@@ -180,7 +180,7 @@ namespace Swashbuckle.SwaggerGen.Application
         {
             return _filterDescriptors.Select(descriptor =>
             {
-                return (TFilter)ActivatorUtilities.CreateInstance(serviceProvider, descriptor.Type, descriptor.Parameters);
+                return (TFilter)ActivatorUtilities.CreateInstance(serviceProvider, descriptor.Type, descriptor.Arguments);
             });
         }
     }

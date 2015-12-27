@@ -5,11 +5,14 @@ namespace Swashbuckle.SwaggerGen.Annotations
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class SwaggerModelFilterAttribute : Attribute
     {
-        public SwaggerModelFilterAttribute(Type filterType)
+        public SwaggerModelFilterAttribute(Type type)
         {
-            FilterType = filterType;
+            Type = type;
+            Arguments = new object[]{ };
         }
 
-        public Type FilterType { get; private set; }
+        public Type Type { get; private set; }
+
+        public object[] Arguments { get; set; }
     }
 }
