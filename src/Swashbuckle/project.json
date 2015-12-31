@@ -10,7 +10,7 @@
   "dependencies": {
     "Microsoft.AspNet.Mvc": "6.0.0-rc1-final",
     "Microsoft.AspNet.StaticFiles": "1.0.0-rc1-final",
-    "Microsoft.AspNet.FileProviders.Embedded": "1.0.0-rc1-final"
+    "Microsoft.AspNet.FileProviders.Embedded": "1.0.0-rc2-15793"
   },
 
   "resource": [ "SwaggerUi", "bower_components/swagger-ui/dist" ],
