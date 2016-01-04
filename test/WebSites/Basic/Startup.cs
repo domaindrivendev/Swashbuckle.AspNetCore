@@ -14,10 +14,12 @@ namespace Basic
 {
     public class Startup
     {
-        private IApplicationEnvironment _appEnv;
+        private readonly IApplicationEnvironment _appEnv;
+        private readonly IHostingEnvironment _hostingEnv;
 
-        public Startup(IApplicationEnvironment appEnv)
+        public Startup(IHostingEnvironment hostingEnv, IApplicationEnvironment appEnv)
         {
+            _hostingEnv = hostingEnv;
             _appEnv = appEnv;
         }
 
@@ -49,13 +51,19 @@ namespace Basic
                 c.DescribeAllEnumsAsStrings();
 
                 c.OperationFilter<AssignOperationVendorExtensions>();
-
-                c.IncludeXmlComments(string.Format(@"{0}\artifacts\bin\Basic\{1}\{2}{3}\Basic.xml",
-                    GetSolutionBasePath(),
-                    _appEnv.Configuration,
-                    _appEnv.RuntimeFramework.Identifier,
-                    _appEnv.RuntimeFramework.Version.ToString().Replace(".", string.Empty)));
             });
+
+            if (_hostingEnv.IsDevelopment())
+            {
+                services.ConfigureSwaggerGen(c =>
+                {
+                    c.IncludeXmlComments(string.Format(@"{0}\artifacts\bin\Basic\{1}\{2}{3}\Basic.xml",
+                        GetSolutionBasePath(),
+                        _appEnv.Configuration,
+                        _appEnv.RuntimeFramework.Identifier,
+                        _appEnv.RuntimeFramework.Version.ToString().Replace(".", string.Empty)));
+                });
+            }
         }
 
         // Configure is called after ConfigureServices is called.

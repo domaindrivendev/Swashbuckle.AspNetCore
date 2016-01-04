@@ -1,6 +1,9 @@
 ﻿using System;
 using Microsoft.AspNet.Mvc;
+using Microsoft.AspNet.Mvc.ApiExplorer;
+using Microsoft.Extensions.OptionsModel;
 using Swashbuckle.SwaggerGen.Application;
+using Swashbuckle.SwaggerGen.Generator;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -8,15 +11,39 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static void AddSwaggerGen(
             this IServiceCollection services,
-            Action<SwaggerProviderBuilder> configure = null)
+            Action<SwaggerGenOptions> setupAction = null)
         {
             services.Configure<MvcOptions>(c =>
                 c.Conventions.Add(new SwaggerApplicationConvention()));
 
-            var swaggerProviderBuilder = new SwaggerProviderBuilder();
-            if (configure != null) configure(swaggerProviderBuilder);
+            services.Configure(setupAction ?? (opts => { }));
 
-            services.AddSingleton(swaggerProviderBuilder.Build);
+            services.AddSingleton(CreateSwaggerProvider);
+        }
+
+        public static void ConfigureSwaggerGen(
+            this IServiceCollection services,
+            Action<SwaggerGenOptions> setupAction)
+        {
+            services.Configure(setupAction);
+        }
+
+        private static ISwaggerProvider CreateSwaggerProvider(IServiceProvider serviceProvider)
+        {
+            var swaggerGenOptions = serviceProvider.GetRequiredService<IOptions<SwaggerGenOptions>>().Value;
+            var mvcJsonOptions = serviceProvider.GetRequiredService<IOptions<MvcJsonOptions>>().Value;
+            var apiDescriptionsProvider = serviceProvider.GetRequiredService<IApiDescriptionGroupCollectionProvider>();
+
+            var schemaRegistryFactory = new SchemaRegistryFactory(
+                mvcJsonOptions.SerializerSettings,
+                swaggerGenOptions.GetSchemaRegistryOptions(serviceProvider)
+            );
+
+            return new SwaggerProvider(
+                apiDescriptionsProvider,
+                schemaRegistryFactory,
+                swaggerGenOptions.GetSwaggerProviderOptions(serviceProvider)
+            );
         }
     }
 }

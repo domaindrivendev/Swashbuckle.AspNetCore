@@ -2,16 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.XPath;
-using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.ApiExplorer;
-using Microsoft.Extensions.OptionsModel;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.SwaggerGen.Generator;
 using Swashbuckle.SwaggerGen.Annotations;
 
 namespace Swashbuckle.SwaggerGen.Application
 {
-    public class SwaggerProviderBuilder
+    public class SwaggerGenOptions
     {
         private readonly SwaggerProviderOptions _swaggerProviderOptions;
         private readonly SchemaRegistryOptions _schemaRegistryOptions;
@@ -26,7 +24,7 @@ namespace Swashbuckle.SwaggerGen.Application
             public object[] Arguments;
         }
 
-        public SwaggerProviderBuilder()
+        public SwaggerGenOptions()
         {
             _swaggerProviderOptions = new SwaggerProviderOptions();
             _schemaRegistryOptions = new SchemaRegistryOptions();
@@ -133,19 +131,7 @@ namespace Swashbuckle.SwaggerGen.Application
             ModelFilter<XmlCommentsModelFilter>(xmlDoc);
         }
 
-        public ISwaggerProvider Build(IServiceProvider serviceProvider)
-        {
-            var schemaRegistryFactory = new SchemaRegistryFactory(
-                serviceProvider.GetRequiredService<IOptions<MvcJsonOptions>>().Value.SerializerSettings,
-                BuildSchemaRegistryOptions(serviceProvider));
-
-            return new SwaggerProvider(
-                serviceProvider.GetRequiredService<IApiDescriptionGroupCollectionProvider>(),
-                schemaRegistryFactory,
-                BuildSwaggerProviderOptions(serviceProvider));
-        }
-
-        private SchemaRegistryOptions BuildSchemaRegistryOptions(IServiceProvider serviceProvider)
+        internal SchemaRegistryOptions GetSchemaRegistryOptions(IServiceProvider serviceProvider)
         {
             var options = _schemaRegistryOptions.Clone();
 
@@ -157,7 +143,7 @@ namespace Swashbuckle.SwaggerGen.Application
             return options;
         }
 
-        private SwaggerProviderOptions BuildSwaggerProviderOptions(IServiceProvider serviceProvider)
+        internal SwaggerProviderOptions GetSwaggerProviderOptions(IServiceProvider serviceProvider)
         {
             var options = _swaggerProviderOptions.Clone();
 
