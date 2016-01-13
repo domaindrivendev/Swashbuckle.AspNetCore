@@ -55,7 +55,7 @@ namespace Swashbuckle.IntegrationTests
             validationResponse.EnsureSuccessStatusCode();
             var validationErrorsString = await validationResponse.Content.ReadAsStringAsync();
             _output.WriteLine(validationErrorsString);
-            Assert.Equal("[]", validationErrorsString);
+            Assert.Equal("{}", validationErrorsString);
         }
     }
 }

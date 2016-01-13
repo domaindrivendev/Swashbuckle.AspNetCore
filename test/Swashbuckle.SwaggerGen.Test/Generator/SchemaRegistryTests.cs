@@ -8,6 +8,7 @@ using Newtonsoft.Json.Converters;
 using Xunit;
 using Swashbuckle.SwaggerGen.TestFixtures;
 using Swashbuckle.SwaggerGen.TestFixtures.Extensions;
+using System.Dynamic;
 
 namespace Swashbuckle.SwaggerGen.Generator
 {
@@ -132,6 +133,18 @@ namespace Swashbuckle.SwaggerGen.Generator
             Assert.Null(schema.Properties["BaseProperty"].Format);
             Assert.Equal("integer", schema.Properties["SubTypeProperty"].Type);
             Assert.Equal("int32", schema.Properties["SubTypeProperty"].Format);
+        }
+
+        [Fact]
+        public void GetOrRegister_IncludesTypedProperties_ForDynamicObjectSubTypes()
+        {
+            var subject = Subject(); 
+
+            subject.GetOrRegister(typeof(DynamicObjectSubType));
+
+            var schema = subject.Definitions["DynamicObjectSubType"];
+            Assert.Equal(1, schema.Properties.Count);
+            Assert.Equal("string", schema.Properties["Property1"].Type);
         }
 
         [Fact]
