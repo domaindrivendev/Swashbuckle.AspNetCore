@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Text;
 using System.Reflection;
+using System.Runtime.Serialization;
 
 namespace Swashbuckle.SwaggerGen.Generator
 {
@@ -34,5 +35,19 @@ namespace Swashbuckle.SwaggerGen.Generator
             var chopIndex = fullName.IndexOf("[[");
             return (chopIndex == -1) ? fullName : fullName.Substring(0, chopIndex);
         }
+
+        // Need to figure out dependencies for using [EnumMemberAttribute] in Core
+        //public static string[] GetEnumNamesForSerialization(this Type enumType)
+        //{
+        //    return enumType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
+        //        .Select(fieldInfo =>
+        //        {
+        //            var memberAttribute = fieldInfo.GetCustomAttributes(false).OfType<EnumMemberAttribute>().FirstOrDefault();
+        //            return (memberAttribute == null || string.IsNullOrWhiteSpace(memberAttribute.Value))
+        //                ? fieldInfo.Name
+        //                : memberAttribute.Value;
+        //        })
+        //        .ToArray();
+        //}
     }
 }
