@@ -6,9 +6,8 @@ namespace Swashbuckle.SwaggerGen.Annotations
 {
     public class XmlCommentsModelFilter : IModelFilter
     {
-        private const string TypeExpression = "/doc/members/member[@name='T:{0}']";
-        private const string SummaryExpression = "summary";
-        private const string PropertyExpression = "/doc/members/member[@name='P:{0}.{1}']";
+        private const string MemberXPath = "/doc/members/member[@name='{0}']";
+        private const string SummaryTag = "summary";
 
         private readonly XPathNavigator _xmlNavigator;
 
@@ -19,12 +18,12 @@ namespace Swashbuckle.SwaggerGen.Annotations
 
         public void Apply(Schema model, ModelFilterContext context)
         {
-            var typeXPath = string.Format(TypeExpression, context.SystemType.XmlLookupName());
-            var typeNode = _xmlNavigator.SelectSingleNode(typeXPath);
+            var commentId = XmlCommentsIdHelper.GetCommentIdForType(context.SystemType);
+            var typeNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, commentId));
 
             if (typeNode != null)
             {
-                var summaryNode = typeNode.SelectSingleNode(SummaryExpression);
+                var summaryNode = typeNode.SelectSingleNode(SummaryTag);
                 if (summaryNode != null)
                     model.Description = summaryNode.ExtractContent();
             }
@@ -38,17 +37,17 @@ namespace Swashbuckle.SwaggerGen.Annotations
             }
         }
 
-        private void ApplyPropertyComments(Schema propertySchema, MemberInfo memberInfo)
+        private void ApplyPropertyComments(Schema propertySchema, PropertyInfo propertyInfo)
         {
-            var propertyXPath =
-                string.Format(PropertyExpression, memberInfo.DeclaringType.XmlLookupName(), memberInfo.Name);
-            var propertyNode = _xmlNavigator.SelectSingleNode(propertyXPath);
+
+            var commentId = XmlCommentsIdHelper.GetCommentIdForProperty(propertyInfo);
+            var propertyNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, commentId));
             if (propertyNode == null) return;
 
-            var propSummaryNode = propertyNode.SelectSingleNode(SummaryExpression);
-            if (propSummaryNode != null)
+            var summaryNode = propertyNode.SelectSingleNode(SummaryTag);
+            if (summaryNode != null)
             {
-                propertySchema.Description = propSummaryNode.ExtractContent();
+                propertySchema.Description = summaryNode.ExtractContent();
             }
         }
     }

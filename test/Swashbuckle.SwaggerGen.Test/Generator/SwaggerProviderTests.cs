@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Xunit;
-using Swashbuckle.SwaggerGen.TestFixtures.ApiDescriptions;
+using Swashbuckle.SwaggerGen.TestFixtures;
 using Swashbuckle.SwaggerGen.TestFixtures.Extensions;
 
 namespace Swashbuckle.SwaggerGen.Generator
@@ -23,11 +23,11 @@ namespace Swashbuckle.SwaggerGen.Generator
         public void GetSwagger_IncludesPathItem_PerRelativePathSansQueryString()
         {
             var subject = Subject(setupApis: apis => apis
-                .Add("GET", "collection1", nameof(ActionFixtures.ReturnsEnumerable))
-                .Add("GET", "collection1/{id}", nameof(ActionFixtures.ReturnsComplexType))
-                .Add("GET", "collection2", nameof(ActionFixtures.AcceptsStringFromQuery))
-                .Add("PUT", "collection2", nameof(ActionFixtures.ReturnsVoid))
-                .Add("GET", "collection2/{id}", nameof(ActionFixtures.ReturnsComplexType))
+                .Add("GET", "collection1", nameof(FakeActions.ReturnsEnumerable))
+                .Add("GET", "collection1/{id}", nameof(FakeActions.ReturnsComplexType))
+                .Add("GET", "collection2", nameof(FakeActions.AcceptsStringFromQuery))
+                .Add("PUT", "collection2", nameof(FakeActions.ReturnsVoid))
+                .Add("GET", "collection2/{id}", nameof(FakeActions.ReturnsComplexType))
             );
 
             var swagger = subject.GetSwagger("v1");
@@ -46,11 +46,11 @@ namespace Swashbuckle.SwaggerGen.Generator
         public void GetSwagger_IncludesOperation_PerHttpMethodPerRelativePathSansQueryString()
         {
             var subject = Subject(setupApis: apis => apis
-                .Add("GET", "collection", nameof(ActionFixtures.ReturnsEnumerable))
-                .Add("PUT", "collection/{id}", nameof(ActionFixtures.ReturnsVoid))
-                .Add("POST", "collection", nameof(ActionFixtures.ReturnsInt))
-                .Add("DELETE", "collection/{id}", nameof(ActionFixtures.ReturnsVoid))
-                .Add("PATCH", "collection/{id}", nameof(ActionFixtures.ReturnsVoid))
+                .Add("GET", "collection", nameof(FakeActions.ReturnsEnumerable))
+                .Add("PUT", "collection/{id}", nameof(FakeActions.ReturnsVoid))
+                .Add("POST", "collection", nameof(FakeActions.ReturnsInt))
+                .Add("DELETE", "collection/{id}", nameof(FakeActions.ReturnsVoid))
+                .Add("PATCH", "collection/{id}", nameof(FakeActions.ReturnsVoid))
                 // TODO: OPTIONS & HEAD
             );
 
@@ -93,7 +93,7 @@ namespace Swashbuckle.SwaggerGen.Generator
         )
         {
             var subject = Subject(setupApis: apis => apis
-                .Add("GET", routeTemplate, nameof(ActionFixtures.AcceptsNothing)));
+                .Add("GET", routeTemplate, nameof(FakeActions.AcceptsNothing)));
 
             var swagger = subject.GetSwagger("v1");
 
@@ -104,7 +104,7 @@ namespace Swashbuckle.SwaggerGen.Generator
         public void GetSwagger_SetsParametersToNull_ForParameterlessActions()
         {
             var subject = Subject(setupApis: apis => apis
-                .Add("GET", "collection", nameof(ActionFixtures.AcceptsNothing)));
+                .Add("GET", "collection", nameof(FakeActions.AcceptsNothing)));
 
             var swagger = subject.GetSwagger("v1");
 
@@ -113,9 +113,9 @@ namespace Swashbuckle.SwaggerGen.Generator
         }
 
         [Theory]
-        [InlineData("collection/{param}", nameof(ActionFixtures.AcceptsStringFromRoute), "path")]
-        [InlineData("collection", nameof(ActionFixtures.AcceptsStringFromQuery), "query")]
-        [InlineData("collection", nameof(ActionFixtures.AcceptsStringFromHeader), "header")]
+        [InlineData("collection/{param}", nameof(FakeActions.AcceptsStringFromRoute), "path")]
+        [InlineData("collection", nameof(FakeActions.AcceptsStringFromQuery), "query")]
+        [InlineData("collection", nameof(FakeActions.AcceptsStringFromHeader), "header")]
         public void GetSwagger_CreatesNonBodyParameter_ForNonBodyParams(
             string routeTemplate,
             string actionFixtureName,
@@ -137,7 +137,7 @@ namespace Swashbuckle.SwaggerGen.Generator
         public void GetSwagger_SetsCollectionFormatMulti_ForNonBodyArrayParams()
         {
             var subject = Subject(setupApis: apis => apis
-                .Add("GET", "resource", nameof(ActionFixtures.AcceptsArrayFromQuery)));
+                .Add("GET", "resource", nameof(FakeActions.AcceptsArrayFromQuery)));
 
             var swagger = subject.GetSwagger("v1");
 
@@ -149,7 +149,7 @@ namespace Swashbuckle.SwaggerGen.Generator
         public void GetSwagger_CreatesBodyParam_ForFromBodyParams()
         {
             var subject = Subject(setupApis: apis => apis
-                .Add("POST", "collection", nameof(ActionFixtures.AcceptsComplexTypeFromBody)));
+                .Add("POST", "collection", nameof(FakeActions.AcceptsComplexTypeFromBody)));
 
             var swagger = subject.GetSwagger("v1");
 
@@ -169,7 +169,7 @@ namespace Swashbuckle.SwaggerGen.Generator
         public void GetSwagger_SetsParameterRequired_ForAllRouteParams(string routeTemplate)
         {
             var subject = Subject(setupApis: apis => apis
-                .Add("GET", routeTemplate, nameof(ActionFixtures.AcceptsStringFromRoute)));
+                .Add("GET", routeTemplate, nameof(FakeActions.AcceptsStringFromRoute)));
 
             var swagger = subject.GetSwagger("v1");
 
@@ -178,8 +178,8 @@ namespace Swashbuckle.SwaggerGen.Generator
         }
 
         [Theory]
-        [InlineData(nameof(ActionFixtures.AcceptsStringFromQuery))]
-        [InlineData(nameof(ActionFixtures.AcceptsStringFromHeader))]
+        [InlineData(nameof(FakeActions.AcceptsStringFromQuery))]
+        [InlineData(nameof(FakeActions.AcceptsStringFromHeader))]
         public void GetSwagger_SetsParameterRequiredFalse_ForQueryAndHeaderParams(string actionFixtureName)
         {
             var subject = Subject(setupApis: apis => apis.Add("GET", "collection", actionFixtureName));
@@ -194,7 +194,7 @@ namespace Swashbuckle.SwaggerGen.Generator
         public void GetSwagger_SetsParameterTypeString_ForUnboundRouteParams()
         {
             var subject = Subject(setupApis: apis => apis
-                .Add("GET", "collection/{param}", nameof(ActionFixtures.AcceptsNothing)));
+                .Add("GET", "collection/{param}", nameof(FakeActions.AcceptsNothing)));
 
             var swagger = subject.GetSwagger("v1");
 
@@ -210,7 +210,7 @@ namespace Swashbuckle.SwaggerGen.Generator
         public void GetSwagger_ExpandsOutQueryParameters_ForComplexParamsWithFromQueryAttribute()
         {
             var subject = Subject(setupApis: apis => apis
-                .Add("GET", "collection", nameof(ActionFixtures.AcceptsComplexTypeFromQuery)));
+                .Add("GET", "collection", nameof(FakeActions.AcceptsComplexTypeFromQuery)));
 
             var swagger = subject.GetSwagger("v1");
 
@@ -224,11 +224,11 @@ namespace Swashbuckle.SwaggerGen.Generator
         }
 
         [Theory]
-        [InlineData(nameof(ActionFixtures.ReturnsVoid), "204", false)]
-        [InlineData(nameof(ActionFixtures.ReturnsEnumerable), "200", true)]
-        [InlineData(nameof(ActionFixtures.ReturnsComplexType), "200", true)]
-        [InlineData(nameof(ActionFixtures.ReturnsJObject), "200", true)]
-        [InlineData(nameof(ActionFixtures.ReturnsActionResult), "200", false)]
+        [InlineData(nameof(FakeActions.ReturnsVoid), "204", false)]
+        [InlineData(nameof(FakeActions.ReturnsEnumerable), "200", true)]
+        [InlineData(nameof(FakeActions.ReturnsComplexType), "200", true)]
+        [InlineData(nameof(FakeActions.ReturnsJObject), "200", true)]
+        [InlineData(nameof(FakeActions.ReturnsActionResult), "200", false)]
         public void GetSwagger_SetsResponseStatusCodeAndSchema_AccordingToActionReturnType(
             string actionFixtureName,
             string expectedStatusCode,
@@ -252,7 +252,7 @@ namespace Swashbuckle.SwaggerGen.Generator
         public void GetSwagger_SetsDeprecated_ForActionsMarkedObsolete()
         {
             var subject = Subject(setupApis: apis => apis
-                .Add("GET", "collection", nameof(ActionFixtures.MarkedObsolete)));
+                .Add("GET", "collection", nameof(FakeActions.MarkedObsolete)));
 
             var swagger = subject.GetSwagger("v1");
 
@@ -280,8 +280,8 @@ namespace Swashbuckle.SwaggerGen.Generator
             var subject = Subject(
                 setupApis: apis =>
                 {
-                    apis.Add("GET", "v1/collection", nameof(ActionFixtures.ReturnsEnumerable));
-                    apis.Add("GET", "v2/collection", nameof(ActionFixtures.ReturnsEnumerable));
+                    apis.Add("GET", "v1/collection", nameof(FakeActions.ReturnsEnumerable));
+                    apis.Add("GET", "v2/collection", nameof(FakeActions.ReturnsEnumerable));
                 },
                 configure: opts =>
                 {
@@ -383,8 +383,8 @@ namespace Swashbuckle.SwaggerGen.Generator
             var subject = Subject(
                 setupApis: apis =>
                 {
-                    apis.Add("GET", "collection1", nameof(ActionFixtures.ReturnsEnumerable));
-                    apis.Add("GET", "collection2", nameof(ActionFixtures.MarkedObsolete));
+                    apis.Add("GET", "collection1", nameof(FakeActions.ReturnsEnumerable));
+                    apis.Add("GET", "collection2", nameof(FakeActions.MarkedObsolete));
                 },
                 configure: opts => opts.IgnoreObsoleteActions = true);
 
@@ -399,8 +399,8 @@ namespace Swashbuckle.SwaggerGen.Generator
             var subject = Subject(
                 setupApis: apis =>
                 {
-                    apis.Add("GET", "collection1", nameof(ActionFixtures.ReturnsEnumerable));
-                    apis.Add("GET", "collection2", nameof(ActionFixtures.ReturnsInt));
+                    apis.Add("GET", "collection1", nameof(FakeActions.ReturnsEnumerable));
+                    apis.Add("GET", "collection2", nameof(FakeActions.ReturnsInt));
                 },
                 configure: opts => opts.GroupNameSelector = (apiDesc) => apiDesc.RelativePath);
 
@@ -416,10 +416,10 @@ namespace Swashbuckle.SwaggerGen.Generator
             var subject = Subject(
                 setupApis: apis =>
                 {
-                    apis.Add("GET", "A", nameof(ActionFixtures.ReturnsVoid));
-                    apis.Add("GET", "B", nameof(ActionFixtures.ReturnsVoid));
-                    apis.Add("GET", "F", nameof(ActionFixtures.ReturnsVoid));
-                    apis.Add("GET", "D", nameof(ActionFixtures.ReturnsVoid));
+                    apis.Add("GET", "A", nameof(FakeActions.ReturnsVoid));
+                    apis.Add("GET", "B", nameof(FakeActions.ReturnsVoid));
+                    apis.Add("GET", "F", nameof(FakeActions.ReturnsVoid));
+                    apis.Add("GET", "D", nameof(FakeActions.ReturnsVoid));
                 },
                 configure: opts =>
                 {
@@ -438,7 +438,7 @@ namespace Swashbuckle.SwaggerGen.Generator
             var subject = Subject(
                 setupApis: apis =>
                 {
-                    apis.Add("GET", "collection", nameof(ActionFixtures.ReturnsEnumerable));
+                    apis.Add("GET", "collection", nameof(FakeActions.ReturnsEnumerable));
                 },
                 configure: opts =>
                 {
@@ -466,7 +466,7 @@ namespace Swashbuckle.SwaggerGen.Generator
         public void GetSwagger_HandlesUnboundRouteParams()
         {
             var subject = Subject(setupApis: apis => apis
-                .Add("GET", "{version}/collection", nameof(ActionFixtures.AcceptsNothing)));
+                .Add("GET", "{version}/collection", nameof(FakeActions.AcceptsNothing)));
 
             var swagger = subject.GetSwagger("v1");
 
@@ -479,8 +479,8 @@ namespace Swashbuckle.SwaggerGen.Generator
         public void GetSwagger_ThrowsInformativeException_OnOverloadedActions()
         {
             var subject = Subject(setupApis: apis => apis
-                .Add("GET", "collection", nameof(ActionFixtures.AcceptsNothing))
-                .Add("GET", "collection", nameof(ActionFixtures.AcceptsStringFromQuery))
+                .Add("GET", "collection", nameof(FakeActions.AcceptsNothing))
+                .Add("GET", "collection", nameof(FakeActions.AcceptsStringFromQuery))
             );
 
             var exception = Assert.Throws<NotSupportedException>(() => subject.GetSwagger("v1"));
@@ -493,7 +493,7 @@ namespace Swashbuckle.SwaggerGen.Generator
         public void GetSwagger_ThrowsInformativeException_OnUnspecifiedHttpMethod()
         {
             var subject = Subject(setupApis: apis => apis
-                .Add(null, "collection", nameof(ActionFixtures.AcceptsNothing)));
+                .Add(null, "collection", nameof(FakeActions.AcceptsNothing)));
 
             var exception = Assert.Throws<NotSupportedException>(() => subject.GetSwagger("v1"));
             Assert.Equal(

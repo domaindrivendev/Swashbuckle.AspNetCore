@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Xunit;
 using Swashbuckle.SwaggerGen.Generator;
-using Swashbuckle.SwaggerGen.TestFixtures.ApiDescriptions;
+using Swashbuckle.SwaggerGen.TestFixtures;
 
 namespace Swashbuckle.SwaggerGen.Annotations
 {
@@ -16,7 +16,7 @@ namespace Swashbuckle.SwaggerGen.Annotations
             {
                 OperationId = "foobar" 
             };
-            var filterContext = FilterContextFor(nameof(ActionFixtures.AnnotatedWithSwaggerOperation));
+            var filterContext = FilterContextFor(nameof(FakeActions.AnnotatedWithSwaggerOperation));
 
             Subject().Apply(operation, filterContext);
 
@@ -33,8 +33,8 @@ namespace Swashbuckle.SwaggerGen.Annotations
                 OperationId = "foobar" 
             };
             var filterContext = FilterContextFor(
-                nameof(ActionFixtures.ReturnsActionResult),
-                nameof(ControllerFixtures.AnnotatedWithSwaggerOperationFilter)
+                nameof(FakeActions.ReturnsActionResult),
+                nameof(FakeControllers.AnnotatedWithSwaggerOperationFilter)
             );
 
             Subject().Apply(operation, filterContext);
@@ -49,7 +49,7 @@ namespace Swashbuckle.SwaggerGen.Annotations
             {
                 OperationId = "foobar" 
             };
-            var filterContext = FilterContextFor(nameof(ActionFixtures.AnnotatedWithSwaggerOperationFilter));
+            var filterContext = FilterContextFor(nameof(FakeActions.AnnotatedWithSwaggerOperationFilter));
 
             Subject().Apply(operation, filterContext);
 
@@ -67,8 +67,8 @@ namespace Swashbuckle.SwaggerGen.Annotations
                 }
             };
             var filterContext = FilterContextFor(
-                nameof(ActionFixtures.ReturnsActionResult),
-                nameof(ControllerFixtures.AnnotatedWithSwaggerResponseRemoveDefaults)
+                nameof(FakeActions.ReturnsActionResult),
+                nameof(FakeControllers.AnnotatedWithSwaggerResponseRemoveDefaults)
             );
 
             Subject().Apply(operation, filterContext);
@@ -86,7 +86,7 @@ namespace Swashbuckle.SwaggerGen.Annotations
                     { "200", new Response() }
                 }
             };
-            var filterContext = FilterContextFor(nameof(ActionFixtures.AnnotatedWithSwaggerResponseRemoveDefaults));
+            var filterContext = FilterContextFor(nameof(FakeActions.AnnotatedWithSwaggerResponseRemoveDefaults));
 
             Subject().Apply(operation, filterContext);
 
@@ -104,8 +104,8 @@ namespace Swashbuckle.SwaggerGen.Annotations
                 }
             };
             var filterContext = FilterContextFor(
-                nameof(ActionFixtures.ReturnsActionResult),
-                nameof(ControllerFixtures.AnnotatedWithSwaggerResponses)
+                nameof(FakeActions.ReturnsActionResult),
+                nameof(FakeControllers.AnnotatedWithSwaggerResponses)
             );
 
             Subject().Apply(operation, filterContext);
@@ -125,7 +125,7 @@ namespace Swashbuckle.SwaggerGen.Annotations
                     { "200", new Response() }
                 }
             };
-            var filterContext = FilterContextFor(nameof(ActionFixtures.AnnotatedWithSwaggerResponses));
+            var filterContext = FilterContextFor(nameof(FakeActions.AnnotatedWithSwaggerResponses));
 
             Subject().Apply(operation, filterContext);
 
@@ -145,8 +145,8 @@ namespace Swashbuckle.SwaggerGen.Annotations
                 }
             };
             var filterContext = FilterContextFor(
-                nameof(ActionFixtures.AnnotatedWithSwaggerResponses),
-                nameof(ControllerFixtures.AnnotatedWithSwaggerResponses)
+                nameof(FakeActions.AnnotatedWithSwaggerResponses),
+                nameof(FakeControllers.AnnotatedWithSwaggerResponses)
             );
 
             Subject().Apply(operation, filterContext);

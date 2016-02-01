@@ -6,9 +6,9 @@ using Newtonsoft.Json.Linq;
 using Swashbuckle.SwaggerGen.Annotations;
 using Swashbuckle.SwaggerGen.TestFixtures.Extensions;
 
-namespace Swashbuckle.SwaggerGen.TestFixtures.ApiDescriptions
+namespace Swashbuckle.SwaggerGen.TestFixtures
 {
-    public class ActionFixtures
+    public class FakeActions
     {
         public void ReturnsVoid()
         { }
@@ -63,19 +63,28 @@ namespace Swashbuckle.SwaggerGen.TestFixtures.ApiDescriptions
         public void MarkedObsolete()
         { }
 
-        /// <summary>
-        /// summary for AnnotatedWithSummaryAndRemarksXml
-        /// </summary>
-        /// <remarks>
-        /// type remarks
-        /// </remarks>
-        public void AnnotatedWithSummaryAndRemarksXml()
+        public void AcceptsNestedType(ContainingType.NestedType param1)
         {}
 
+        public void AcceptsGenericType(IEnumerable<string> param1)
+        {}
+
+        public void AcceptsGenericGenericType(IEnumerable<KeyValuePair<string, string>> param1)
+        {}
+
+        public void AcceptsGenericArrayType(KeyValuePair<string, string>[] param1)
+        {}
+
+        /// <summary>
+        /// summary for AnnotatedWithXml
+        /// </summary>
+        /// <remarks>
+        /// remarks for AnnotatedWithXml
+        /// </remarks>
         /// <param name="param1">description for parma1</param>
         /// <param name="param2">description for param2</param>
-        public void AnnotatedWithParamsXml(int param1, IEnumerable<ComplexType> param2)
-        {}
+        public void AnnotatedWithXml(int param1, IEnumerable<ComplexType> param2)
+        { }
 
         [SwaggerOperation("CustomOperationId", Tags = new[] { "customTag" }, Schemes = new[] { "customScheme" })]
         public void AnnotatedWithSwaggerOperation()

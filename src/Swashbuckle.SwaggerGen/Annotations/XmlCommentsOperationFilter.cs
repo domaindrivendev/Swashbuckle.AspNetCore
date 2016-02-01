@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Reflection;
 using System.Xml.XPath;
 using Microsoft.AspNet.Mvc.Controllers;
 using Swashbuckle.SwaggerGen.Generator;
@@ -8,11 +7,10 @@ namespace Swashbuckle.SwaggerGen.Annotations
 {
     public class XmlCommentsOperationFilter : IOperationFilter
     {
-        private const string MethodExpression = "/doc/members/member[@name='M:{0}.{1}{2}']";
-        private const string SummaryExpression = "summary";
-        private const string RemarksExpression = "remarks";
-        private const string ParameterExpression = "param";
-        private const string ResponseExpression = "response";
+        private const string MemberXPath = "/doc/members/member[@name='{0}']";
+        private const string SummaryTag = "summary";
+        private const string RemarksTag = "remarks";
+        private const string ParameterTag = "param";
         
         private readonly XPathNavigator _xmlNavigator;
 
@@ -26,42 +24,26 @@ namespace Swashbuckle.SwaggerGen.Annotations
             var controllerActionDescriptor = context.ApiDescription.ActionDescriptor as ControllerActionDescriptor;
             if (controllerActionDescriptor == null) return;
 
-            var methodXPath = GetMethodXPath(controllerActionDescriptor.MethodInfo);
-            var methodNode = _xmlNavigator.SelectSingleNode(methodXPath);
+            var commentId = XmlCommentsIdHelper.GetCommentIdForMethod(controllerActionDescriptor.MethodInfo);
+            var methodNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, commentId));
             if (methodNode == null) return;
 
-            var summaryNode = methodNode.SelectSingleNode(SummaryExpression);
+            var summaryNode = methodNode.SelectSingleNode(SummaryTag);
             if (summaryNode != null)
                 operation.Summary = summaryNode.ExtractContent();
 
-            var remarksNode = methodNode.SelectSingleNode(RemarksExpression);
+            var remarksNode = methodNode.SelectSingleNode(RemarksTag);
             if (remarksNode != null)
                 operation.Description = remarksNode.ExtractContent();
 
             ApplyParamComments(operation, methodNode);
         }
 
-		private static string GetMethodXPath(MethodInfo methodInfo)
-        {
-            var typeLookupName = methodInfo.DeclaringType.XmlLookupName();
-            var actionName = methodInfo.Name;
-
-            var paramLookupNames = methodInfo.GetParameters()
-                .Select(paramInfo => paramInfo.ParameterType.XmlLookupNameWithTypeParameters())
-                .ToArray();
-
-            var parameters = (paramLookupNames.Any())
-                ? string.Format("({0})", string.Join(",", paramLookupNames))
-                : string.Empty;
-
-            return string.Format(MethodExpression, typeLookupName, actionName, parameters);
-        }
-
         private static void ApplyParamComments(Operation operation, XPathNavigator methodNode)
         {
             if (operation.Parameters == null) return;
 
-            var paramNodes = methodNode.Select(ParameterExpression);
+            var paramNodes = methodNode.Select(ParameterTag);
             while (paramNodes.MoveNext())
             {
                 var paramNode = paramNodes.Current;

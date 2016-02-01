@@ -3,22 +3,24 @@ using System.Collections.Generic;
 using System.Xml.XPath;
 using Xunit;
 using Swashbuckle.SwaggerGen.Generator;
-using Swashbuckle.SwaggerGen.TestFixtures.ApiDescriptions;
+using Swashbuckle.SwaggerGen.TestFixtures;
 
 namespace Swashbuckle.SwaggerGen.Annotations
 {
     public class XmlCommentsOperationFilterTests
     {
-        [Fact]
-        public void Apply_SetsSummaryAndDescription_FromSummaryAndRemarksTags()
+        [Theory]
+        [InlineData(nameof(FakeActions.AnnotatedWithXml))]
+        public void Apply_SetsSummaryAndDescription_FromSummaryAndRemarksTags(
+            string actionFixtureName)
         {
             var operation = new Operation();
-            var filterContext = FilterContextFor(nameof(ActionFixtures.AnnotatedWithSummaryAndRemarksXml));
+            var filterContext = FilterContextFor(actionFixtureName);
 
             Subject().Apply(operation, filterContext);
 
-            Assert.Equal("summary for AnnotatedWithSummaryAndRemarksXml", operation.Summary);
-            Assert.Equal("remarks for AnnotatedWithSummaryAndRemarksXml", operation.Description);
+            Assert.Equal(string.Format("summary for {0}", actionFixtureName), operation.Summary);
+            Assert.Equal(string.Format("remarks for {0}", actionFixtureName), operation.Description);
         }
 
         [Fact]
@@ -32,7 +34,7 @@ namespace Swashbuckle.SwaggerGen.Annotations
                     new NonBodyParameter { Name = "param2" }
                 }
             };
-            var filterContext = FilterContextFor(nameof(ActionFixtures.AnnotatedWithParamsXml));
+            var filterContext = FilterContextFor(nameof(FakeActions.AnnotatedWithXml));
 
             Subject().Apply(operation, filterContext);
 

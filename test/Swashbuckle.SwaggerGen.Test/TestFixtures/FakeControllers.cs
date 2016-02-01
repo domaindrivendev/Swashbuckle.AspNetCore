@@ -1,9 +1,9 @@
 ﻿using Swashbuckle.SwaggerGen.Annotations;
 using Swashbuckle.SwaggerGen.TestFixtures.Extensions;
 
-namespace Swashbuckle.SwaggerGen.TestFixtures.ApiDescriptions
+namespace Swashbuckle.SwaggerGen.TestFixtures
 {
-    public class ControllerFixtures
+    public class FakeControllers
     {
         public class NotAnnotated
         {}

@@ -1,50 +1,56 @@
 <?xml version="1.0"?>
 <doc>
   <assembly>
-    <name>Swashbuckle.SwaggerGen.TestFixtures.ApiDescriptions</name>
+    <name>Swashbuckle.SwaggerGen.Test</name>
   </assembly>
   <members>
-    <member name="M:Swashbuckle.SwaggerGen.TestFixtures.ApiDescriptions.ActionFixtures.AnnotatedWithSummaryAndRemarksXml">
+    <member name="M:Swashbuckle.SwaggerGen.TestFixtures.FakeActions.AnnotatedWithXml(System.Int32,System.Collections.Generic.IEnumerable{Swashbuckle.SwaggerGen.TestFixtures.ComplexType})">
       <summary>
-      summary for AnnotatedWithSummaryAndRemarksXml
+        summary for AnnotatedWithXml
       </summary>
       <remarks>
-      remarks for AnnotatedWithSummaryAndRemarksXml
+        remarks for AnnotatedWithXml
+      </remarks>
+      <param name="param1">description for param1</param>
+      <param name="param2">description for param2</param>
+    </member>
+    <member name="M:Swashbuckle.SwaggerGen.TestFixtures.FakeActions.AnnotatedWithXmlAndAcceptsGenericArray(System.Collections.Generic.KeyValuePair{System.String,System.String}[])">
+      <summary>
+        summary for AnnotatedWithXmlAndAcceptsGenericArray
+      </summary>
+      <remarks>
+        type remarks
       </remarks>
     </member>
-    <member name="M:Swashbuckle.SwaggerGen.TestFixtures.ApiDescriptions.ActionFixtures.AnnotatedWithParamsXml(System.Int32,System.Collections.Generic.IEnumerable{Swashbuckle.SwaggerGen.TestFixtures.ComplexType})">
-        <param name="param1">description for param1</param>
-        <param name="param2">description for param2</param>
-    </member>
     <member name="T:Swashbuckle.SwaggerGen.TestFixtures.XmlAnnotatedType">
-        <summary>
+      <summary>
         summary for XmlAnnotatedType
-        </summary>
+      </summary>
     </member>
     <member name="T:Swashbuckle.SwaggerGen.TestFixtures.XmlAnnotatedWithNestedType.NestedType">
-        <summary>
+      <summary>
         summary for NestedType
-        </summary>
+      </summary>
     </member>
     <member name="T:Swashbuckle.SwaggerGen.TestFixtures.XmlAnnotatedGenericType`1">
-        <summary>
+      <summary>
         summary for XmlAnnotatedGenericType
-        </summary>
+      </summary>
     </member>
     <member name="P:Swashbuckle.SwaggerGen.TestFixtures.XmlAnnotatedType.Property">
-        <summary>
+      <summary>
         summary for Property
-        </summary>
+      </summary>
     </member>
     <member name="P:Swashbuckle.SwaggerGen.TestFixtures.XmlAnnotatedBaseType.BaseProperty">
-        <summary>
+      <summary>
         summary for BaseProperty
-        </summary>
+      </summary>
     </member>
     <member name="P:Swashbuckle.SwaggerGen.TestFixtures.XmlAnnotatedGenericType`1.GenericProperty">
-        <summary>
+      <summary>
         summary for GenericProperty
-        </summary>
+      </summary>
     </member>
   </members>
 </doc>

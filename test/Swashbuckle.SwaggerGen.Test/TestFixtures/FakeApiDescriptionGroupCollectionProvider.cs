@@ -17,7 +17,7 @@ using Microsoft.AspNet.Mvc.ModelBinding;
 using Microsoft.AspNet.Mvc.ModelBinding.Metadata;
 using Moq;
 
-namespace Swashbuckle.SwaggerGen.TestFixtures.ApiDescriptions
+namespace Swashbuckle.SwaggerGen.TestFixtures
 {
     public class FakeApiDescriptionGroupCollectionProvider : IApiDescriptionGroupCollectionProvider
     {
@@ -66,7 +66,7 @@ namespace Swashbuckle.SwaggerGen.TestFixtures.ApiDescriptions
 
             descriptor.AttributeRouteInfo = new AttributeRouteInfo { Template = routeTemplate };
 
-            descriptor.MethodInfo = typeof(ActionFixtures).GetMethod(actionFixtureName);
+            descriptor.MethodInfo = typeof(FakeActions).GetMethod(actionFixtureName);
             if (descriptor.MethodInfo == null)
                 throw new InvalidOperationException(
                     string.Format("{0} is not declared in ActionFixtures", actionFixtureName));
@@ -80,7 +80,7 @@ namespace Swashbuckle.SwaggerGen.TestFixtures.ApiDescriptions
                     })
                 .ToList();
 
-            var controllerType = typeof(ControllerFixtures).GetNestedType(controllerFixtureName);
+            var controllerType = typeof(FakeControllers).GetNestedType(controllerFixtureName);
             if (controllerType == null)
                 throw new InvalidOperationException(
                     string.Format("{0} is not declared in ControllerFixtures", controllerFixtureName));
