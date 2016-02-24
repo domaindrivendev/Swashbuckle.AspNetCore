@@ -206,6 +206,8 @@ namespace Swashbuckle.SwaggerGen.Generator
             { typeof(decimal), () => new Schema { Type = "number", Format = "double" } },
             { typeof(byte), () => new Schema { Type = "string", Format = "byte" } },
             { typeof(sbyte), () => new Schema { Type = "string", Format = "byte" } },
+            { typeof(byte[]), () => new Schema { Type = "string", Format = "byte" } },
+            { typeof(sbyte[]), () => new Schema { Type = "string", Format = "byte" } },
             { typeof(bool), () => new Schema { Type = "boolean" } },
             { typeof(DateTime), () => new Schema { Type = "string", Format = "date-time" } },
             { typeof(DateTimeOffset), () => new Schema { Type = "string", Format = "date-time" } }

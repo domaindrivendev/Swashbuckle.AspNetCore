@@ -26,6 +26,8 @@ namespace Swashbuckle.SwaggerGen.Generator
         [InlineData(typeof(decimal), "number", "double")]
         [InlineData(typeof(byte), "string", "byte")]
         [InlineData(typeof(sbyte), "string", "byte")]
+        [InlineData(typeof(byte[]), "string", "byte")]
+        [InlineData(typeof(sbyte[]), "string", "byte")]
         [InlineData(typeof(bool), "boolean", null)]
         [InlineData(typeof(DateTime), "string", "date-time")]
         [InlineData(typeof(DateTimeOffset), "string", "date-time")]
