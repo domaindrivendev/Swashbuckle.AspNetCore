@@ -4,7 +4,7 @@
     "Microsoft.AspNetCore.Mvc.Core": "1.0.0-rc2-*",
     "Microsoft.AspNetCore.TestHost": "1.0.0-rc2-*",
     "xunit": "2.1.0-*",
-    "xunit.runner.dnx": "2.1.0-rc1*",
+    "xunit.runner.dnx": "2.1.0-rc1-*",
     "Basic": "1.0.0-*",
     "CustomizedUi": "1.0.0-*",
     "MultipleVersions": "1.0.0-*",
@@ -12,7 +12,7 @@
     "VirtualDirectory": "1.0.0-*"
   },
   "commands": {
-    "test": "xunit.runner.dnx"
+    
   },
   "frameworks": {
     "dnx451": { }
