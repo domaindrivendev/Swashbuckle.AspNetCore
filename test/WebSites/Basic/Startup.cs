@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.PlatformAbstractions;
@@ -35,7 +35,7 @@ namespace Basic
                 });
 
             // Uncomment the following line to add Web API services which makes it easier to port Web API 2 controllers.
-            // You will also need to add the Microsoft.AspNet.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
+            // You will also need to add the Microsoft.AspNetCore.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
             // services.AddWebApiConventions();
 
             services.AddSwaggerGen(c =>
@@ -59,7 +59,7 @@ namespace Basic
                 {
                     c.IncludeXmlComments(string.Format(@"{0}\artifacts\bin\Basic\{1}\{2}{3}\Basic.xml",
                         GetSolutionBasePath(),
-                        _appEnv.Configuration,
+                        _hostingEnv.Configuration,
                         _appEnv.RuntimeFramework.Identifier,
                         _appEnv.RuntimeFramework.Version.ToString().Replace(".", string.Empty)));
                 });
@@ -69,7 +69,6 @@ namespace Basic
         // Configure is called after ConfigureServices is called.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.MinimumLevel = LogLevel.Information;
             loggerFactory.AddConsole();
             loggerFactory.AddDebug();
 
@@ -87,6 +86,18 @@ namespace Basic
 
             app.UseSwaggerGen();
             app.UseSwaggerUi();
+        }
+
+        public static void Main(string[] args)
+        {
+            var host = new WebHostBuilder()
+                .UseDefaultConfiguration(args)
+                .UseIISPlatformHandlerUrl()
+                .UseStartup<Startup>()
+                .UseServer("Microsoft.AspNetCore.Server.Kestrel")
+                .Build();
+
+            host.Run();
         }
 
         private string GetSolutionBasePath()

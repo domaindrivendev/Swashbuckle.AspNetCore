@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.Builder;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CustomizedUi
@@ -24,6 +25,18 @@ namespace CustomizedUi
 
             app.UseSwaggerGen();
             app.UseSwaggerUi();
+        }
+
+        public static void Main(string[] args)
+        {
+            var host = new WebHostBuilder()
+                .UseDefaultConfiguration(args)
+                .UseIISPlatformHandlerUrl()
+                .UseStartup<Startup>()
+                .UseServer("Microsoft.AspNetCore.Server.Kestrel")
+                .Build();
+
+            host.Run();
         }
     }
 }
