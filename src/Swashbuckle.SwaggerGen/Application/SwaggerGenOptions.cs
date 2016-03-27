@@ -70,10 +70,16 @@ namespace Swashbuckle.SwaggerGen.Application
             _swaggerProviderOptions.SecurityDefinitions.Add(name, securityScheme);
         }
 
+        public void MapType(Type type, Func<Schema> schemaFactory)
+        {
+            _schemaRegistryOptions.CustomTypeMappings.Add(type, schemaFactory);
+        }
+
         public void MapType<T>(Func<Schema> schemaFactory)
         {
-            _schemaRegistryOptions.CustomTypeMappings.Add(typeof(T), schemaFactory);
+            MapType(typeof(T), schemaFactory);
         }
+
         public void DescribeAllEnumsAsStrings()
         {
             _schemaRegistryOptions.DescribeAllEnumsAsStrings = true;
