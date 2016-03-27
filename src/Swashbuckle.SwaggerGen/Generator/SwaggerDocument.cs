@@ -347,6 +347,9 @@ namespace Swashbuckle.SwaggerGen.Generator
         public IList<Header> Headers { get; set; }
 
         public object Examples { get; set; }
+
+        [JsonExtensionData]
+        public Dictionary<string, object> Extensions { get; private set; }
     }
 
     public class Header : PartialSchema
