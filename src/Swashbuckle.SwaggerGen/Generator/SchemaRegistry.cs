@@ -210,7 +210,8 @@ namespace Swashbuckle.SwaggerGen.Generator
             { typeof(sbyte[]), () => new Schema { Type = "string", Format = "byte" } },
             { typeof(bool), () => new Schema { Type = "boolean" } },
             { typeof(DateTime), () => new Schema { Type = "string", Format = "date-time" } },
-            { typeof(DateTimeOffset), () => new Schema { Type = "string", Format = "date-time" } }
+            { typeof(DateTimeOffset), () => new Schema { Type = "string", Format = "date-time" } },
+            { typeof(Guid), () => new Schema { Type = "string", Format = "uuid" } }
         };
     }
 }

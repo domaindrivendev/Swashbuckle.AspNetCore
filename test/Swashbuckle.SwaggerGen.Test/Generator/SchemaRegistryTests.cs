@@ -8,7 +8,6 @@ using Newtonsoft.Json.Converters;
 using Xunit;
 using Swashbuckle.SwaggerGen.TestFixtures;
 using Swashbuckle.SwaggerGen.TestFixtures.Extensions;
-using System.Dynamic;
 
 namespace Swashbuckle.SwaggerGen.Generator
 {
@@ -27,10 +26,10 @@ namespace Swashbuckle.SwaggerGen.Generator
         [InlineData(typeof(byte), "string", "byte")]
         [InlineData(typeof(sbyte), "string", "byte")]
         [InlineData(typeof(byte[]), "string", "byte")]
-        [InlineData(typeof(sbyte[]), "string", "byte")]
         [InlineData(typeof(bool), "boolean", null)]
         [InlineData(typeof(DateTime), "string", "date-time")]
         [InlineData(typeof(DateTimeOffset), "string", "date-time")]
+        [InlineData(typeof(Guid), "string", "uuid")]
         [InlineData(typeof(string), "string", null)]
         public void GetOrRegister_ReturnsPrimitiveSchema_ForSimpleTypes(
             Type systemType,
