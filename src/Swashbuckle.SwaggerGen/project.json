@@ -1,5 +1,5 @@
 ﻿{
-  "version": "6.0.0-rc1-final",
+  "version": "6.0.0-rc2",
   "description": "Swashbuckle - Swagger Generator for WebApi (AspNet 5.0)",
   "summary": "Swagger Generator component for next generation of Swashbuckle, targeting AspNet 5.0 (vNext)",
   "authors": [ "Richard Morris" ],
@@ -8,15 +8,12 @@
   "licenseUrl": "https://github.com/domaindrivendev/Swashbuckle/LICENSE",
 
   "dependencies": {
-    "Microsoft.AspNet.Mvc": "6.0.0-rc1-final"
+    "Microsoft.AspNetCore.Mvc.Dnx": "1.0.0-*",
+    "Microsoft.AspNetCore.Mvc.ApiExplorer": "1.0.0-*",
+    "Microsoft.NETCore.Platforms": "1.0.1-*"
   },
 
   "frameworks": {
-    "dnx451": { },
-    "dnxcore50": {
-      "dependencies": {
-        "System.Xml.XPath": "4.0.0"
-      }
-    }
+    "dnx451": { }
   }
 }

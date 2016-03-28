@@ -1,9 +1,9 @@
 ﻿using System;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.ApiExplorer;
-using Microsoft.Extensions.OptionsModel;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Swashbuckle.SwaggerGen.Application;
 using Swashbuckle.SwaggerGen.Generator;
+using Microsoft.Extensions.Options;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
