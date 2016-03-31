@@ -132,12 +132,28 @@ namespace Swashbuckle.SwaggerGen.Generator
 
         private Schema CreateDictionarySchema(JsonDictionaryContract dictionaryContract)
         {
+            var keyType = dictionaryContract.DictionaryKeyType ?? typeof(object);
             var valueType = dictionaryContract.DictionaryValueType ?? typeof(object);
-            return new Schema
+
+            if (keyType.GetTypeInfo().IsEnum)
+            {
+                return new Schema
+                {
+                    Type = "object",
+                    Properties = Enum.GetNames(keyType).ToDictionary(
+                        (name) => dictionaryContract.PropertyNameResolver(name),
+                        (name) => CreateInlineSchema(valueType)
+                    )
+                };
+            }
+            else
+            {
+                return new Schema
                 {
                     Type = "object",
                     AdditionalProperties = CreateInlineSchema(valueType)
                 };
+            }
         }
 
         private Schema CreateArraySchema(JsonArrayContract arrayContract)

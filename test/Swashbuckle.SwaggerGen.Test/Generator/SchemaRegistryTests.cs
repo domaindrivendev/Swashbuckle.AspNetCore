@@ -78,6 +78,18 @@ namespace Swashbuckle.SwaggerGen.Generator
         }
 
         [Fact]
+        public void GetOrRegister_ReturnsObjectSchema_ForDictionarTypesWithEnumKeys()
+        {
+            var schema = Subject().GetOrRegister(typeof(Dictionary<AnEnum, string>));
+
+            Assert.Equal("object", schema.Type);
+            Assert.NotNull(schema.Properties);
+            Assert.Equal("string", schema.Properties["Value1"].Type);
+            Assert.Equal("string", schema.Properties["Value2"].Type);
+            Assert.Equal("string", schema.Properties["X"].Type);
+        }
+
+        [Fact]
         public void GetOrRegister_ReturnsJsonReference_ForComplexTypes()
         {
             var reference = Subject().GetOrRegister(typeof(ComplexType));
