@@ -53,21 +53,19 @@ namespace Swashbuckle.SwaggerGen.Generator
         }
 
         [Theory]
-        [InlineData(typeof(int[]), "integer", "int32", null)]
-        [InlineData(typeof(IEnumerable<string>), "string", null, null)]
-        [InlineData(typeof(IEnumerable), null, null, "#/definitions/Object")]
+        [InlineData(typeof(int[]), "integer", "int32")]
+        [InlineData(typeof(IEnumerable<string>), "string", null)]
+        [InlineData(typeof(IEnumerable), "object", null)]
         public void GetOrRegister_ReturnsArraySchema_ForEnumerableTypes(
             Type systemType,
             string expectedItemsType,
-            string expectedItemsFormat,
-            string expectedItemsRef)
+            string expectedItemsFormat)
         {
             var schema = Subject().GetOrRegister(systemType);
 
             Assert.Equal("array", schema.Type);
             Assert.Equal(expectedItemsType, schema.Items.Type);
             Assert.Equal(expectedItemsFormat, schema.Items.Format);
-            Assert.Equal(expectedItemsRef, schema.Items.Ref);
         }
 
         [Fact]
@@ -85,6 +83,18 @@ namespace Swashbuckle.SwaggerGen.Generator
             var reference = Subject().GetOrRegister(typeof(ComplexType));
 
             Assert.Equal("#/definitions/ComplexType", reference.Ref);
+        }
+
+        [Theory]
+        [InlineData(typeof(object))]
+        [InlineData(typeof(JToken))]
+        [InlineData(typeof(JToken))]
+        public void GetOrRegister_ReturnsEmptyObjectSchema_ForAmbiguousTypes(Type systemType)
+        {
+            var schema = Subject().GetOrRegister(systemType);
+
+            Assert.Equal("object", schema.Type);
+            Assert.Null(schema.Properties);
         }
 
         [Fact]
@@ -106,20 +116,6 @@ namespace Swashbuckle.SwaggerGen.Generator
             Assert.Null(schema.Properties["Property4"].Format);
             Assert.Equal("string", schema.Properties["Property5"].Type);
             Assert.Null(schema.Properties["Property5"].Format);
-        }
-
-        [Theory]
-        [InlineData(typeof(JObject))]
-        [InlineData(typeof(JToken))]
-        public void GetOrRegister_DefinesBaseObjectSchema_ForRuntimeTypes(Type systemType)
-        {
-            var subject = Subject(); 
-
-            subject.GetOrRegister(systemType);
-
-            var schema = subject.Definitions["Object"];
-            Assert.NotNull(schema);
-            Assert.Empty(schema.Properties);
         }
 
         [Fact]

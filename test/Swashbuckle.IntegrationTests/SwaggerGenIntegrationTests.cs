@@ -23,7 +23,7 @@ namespace Swashbuckle.IntegrationTests
             };
         }
 
-        [Theory]
+        [Theory(Skip = "online.swagger.io/validator/debug is currently unavailable")]
         [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(CustomizedUi.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(MultipleVersions.Startup), "/swagger/v1/swagger.json")]

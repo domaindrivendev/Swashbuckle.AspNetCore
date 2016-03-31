@@ -30,19 +30,19 @@ namespace Swashbuckle.SwaggerGen.Generator
 
         public Schema GetOrRegister(Type type)
         {
-            var schema = CreateSchema(type, true);
+            var schema = CreateInlineSchema(type);
 
             // Ensure a corresponding definition exists for all referenced types
             string pendingSchemaId;
             while ((pendingSchemaId = GetPendingSchemaIds().FirstOrDefault()) != null)
             {
-                Definitions.Add(pendingSchemaId, CreateSchema(_referencedTypeMap[pendingSchemaId], false));
+                Definitions.Add(pendingSchemaId, CreateDefinitionSchema(_referencedTypeMap[pendingSchemaId]));
             }
 
             return schema;
         }
 
-        private Schema CreateSchema(Type type, bool refIfComplex)
+        private Schema CreateInlineSchema(Type type)
         {
             if (_options.CustomTypeMappings.ContainsKey(type))
                 return _options.CustomTypeMappings[type]();
@@ -54,24 +54,22 @@ namespace Swashbuckle.SwaggerGen.Generator
 
             var dictionaryContract = jsonContract as JsonDictionaryContract;
             if (dictionaryContract != null)
-                return dictionaryContract.IsSelfReferencing() && refIfComplex
-                    ? CreateJsonReference(type)
+                return dictionaryContract.IsSelfReferencing()
+                    ? CreateRefSchema(type)
                     : CreateDictionarySchema(dictionaryContract);
 
             var arrayContract = jsonContract as JsonArrayContract;
             if (arrayContract != null)
-                return arrayContract.IsSelfReferencing() && refIfComplex
-                    ? CreateJsonReference(type)
+                return arrayContract.IsSelfReferencing()
+                    ? CreateRefSchema(type)
                     : CreateArraySchema(arrayContract);
 
             var objectContract = jsonContract as JsonObjectContract;
-            if (objectContract != null)
-                return refIfComplex
-                    ? CreateJsonReference(type)
-                    : CreateObjectSchema(objectContract);
+            if (objectContract != null && !objectContract.IsAmbiguous())
+                return CreateRefSchema(type);
 
             // None of the above, fallback to abstract "object"
-            return CreateSchema(typeof(object), refIfComplex);
+            return new Schema { Type = "object" };
         }
 
         private Schema CreatePrimitiveSchema(JsonPrimitiveContract primitiveContract)
@@ -116,7 +114,7 @@ namespace Swashbuckle.SwaggerGen.Generator
             };
         }
 
-        private Schema CreateJsonReference(Type type)
+        private Schema CreateRefSchema(Type type)
         {
             var schemaId = _options.SchemaIdSelector(type);
 
@@ -138,7 +136,7 @@ namespace Swashbuckle.SwaggerGen.Generator
             return new Schema
                 {
                     Type = "object",
-                    AdditionalProperties = CreateSchema(valueType, true)
+                    AdditionalProperties = CreateInlineSchema(valueType)
                 };
         }
 
@@ -148,8 +146,25 @@ namespace Swashbuckle.SwaggerGen.Generator
             return new Schema
                 {
                     Type = "array",
-                    Items = CreateSchema(itemType, true)
+                    Items = CreateInlineSchema(itemType)
                 };
+        }
+
+        private Schema CreateDefinitionSchema(Type type)
+        {
+            var jsonContract = _jsonContractResolver.ResolveContract(type);
+
+            if (jsonContract is JsonDictionaryContract)
+                return CreateDictionarySchema((JsonDictionaryContract)jsonContract);
+
+            if (jsonContract is JsonArrayContract)
+                return CreateArraySchema((JsonArrayContract)jsonContract);
+
+            if (jsonContract is JsonObjectContract)
+                return CreateObjectSchema((JsonObjectContract)jsonContract);
+
+            throw new InvalidOperationException(
+                string.Format("Unsupported type - {0} for Defintitions. Must be Dictionary, Array or Object", type));
         }
 
         private Schema CreateObjectSchema(JsonObjectContract jsonContract)
@@ -159,7 +174,7 @@ namespace Swashbuckle.SwaggerGen.Generator
                 .Where(p => !(_options.IgnoreObsoleteProperties && p.IsObsolete()))
                 .ToDictionary(
                     prop => prop.PropertyName,
-                    prop => CreateSchema(prop.PropertyType, true).AssignValidationProperties(prop)
+                    prop => CreateInlineSchema(prop.PropertyType).AssignValidationProperties(prop)
                 );
 
             var required = jsonContract.Properties.Where(prop => prop.IsRequired())
