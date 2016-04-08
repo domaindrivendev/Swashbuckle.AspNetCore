@@ -6,13 +6,13 @@ namespace Microsoft.AspNet.Builder
 {
     public static class SwaggerGenBuilderExtensions
     {
-        public static void UseSwaggerGen(
+        public static IApplicationBuilder UseSwaggerGen(
             this IApplicationBuilder app,
             string routeTemplate = "swagger/{apiVersion}/swagger.json")
         {
             ThrowIfServiceNotRegistered(app.ApplicationServices);
 
-            app.UseMiddleware<SwaggerGenMiddleware>(routeTemplate);
+            return app.UseMiddleware<SwaggerGenMiddleware>(routeTemplate);
         }
 
         private static void ThrowIfServiceNotRegistered(IServiceProvider applicationServices)
