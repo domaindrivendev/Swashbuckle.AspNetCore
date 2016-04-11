@@ -7,7 +7,7 @@ namespace Microsoft.AspNet.Builder
 {
     public static class SwaggerUiBuilderExtensions
     {
-        public static void  UseSwaggerUi(
+        public static IApplicationBuilder  UseSwaggerUi(
             this IApplicationBuilder app,
             string baseRoute = "swagger/ui",
             string swaggerUrl = "/swagger/v1/swagger.json")
@@ -31,6 +31,7 @@ namespace Microsoft.AspNet.Builder
                 "Swashbuckle.SwaggerUi.bower_components.swagger_ui.dist");
 
             app.UseFileServer(options);
+            return app;
         }
     }
 }
