@@ -344,7 +344,7 @@ namespace Swashbuckle.SwaggerGen.Generator
 
         public Schema Schema { get; set; }
 
-        public IList<Header> Headers { get; set; }
+        public IDictionary<string, Header> Headers { get; set; }
 
         public object Examples { get; set; }
 
