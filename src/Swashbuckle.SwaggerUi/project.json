@@ -1,5 +1,5 @@
 ﻿{
-  "version": "6.0.0-rc2-20100",
+  "version": "6.0.0-rc2-20221",
   "description": "Swashbuckle - Swagger UI for WebApi (ASP.NET Core)",
   "summary": "Swagger UI component for next generation of Swashbuckle, targeting ASP.NET Core",
   "authors": [ "Richard Morris" ],
@@ -27,10 +27,10 @@
         "System.Text.Encoding": "",
         "System.Reflection": ""
       }
-     }
-    },
+    }
+  },
 
   "scripts": {
-    "postrestore": [ "npm install", "bower install" ] 
+    "postrestore": [ "npm install", "bower install" ]
   }
 }
