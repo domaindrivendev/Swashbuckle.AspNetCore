@@ -57,11 +57,12 @@ namespace Basic
             {
                 services.ConfigureSwaggerGen(c =>
                 {
-                    c.IncludeXmlComments(string.Format(@"{0}\artifacts\bin\Basic\{1}\{2}{3}\Basic.xml",
-                        GetSolutionBasePath(),
-                        _hostingEnv.Configuration,
-                        _appEnv.RuntimeFramework.Identifier,
-                        _appEnv.RuntimeFramework.Version.ToString().Replace(".", string.Empty)));
+                    //TODO: @RC2UPdate - Die Configuration gibt es nicht mehr im HostingEnvironment
+                    //c.IncludeXmlComments(string.Format(@"{0}\artifacts\bin\Basic\{1}\{2}{3}\Basic.xml",
+                    //    GetSolutionBasePath(),
+                    //    _hostingEnv.Configuration,
+                    //    _appEnv.RuntimeFramework.Identifier,
+                    //    _appEnv.RuntimeFramework.Version.ToString().Replace(".", string.Empty)));
                 });
             }
         }

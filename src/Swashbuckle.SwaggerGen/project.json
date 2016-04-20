@@ -12,10 +12,18 @@
   },
 
   "frameworks": {
-    "dnx451": { },
-    "dnxcore50": {
+    "net451": {
       "dependencies": {
-        "System.Xml.XPath": "4.0.0"
+      },
+      "frameworkAssemblies": {
+        "System.Runtime": "",
+        "System.ComponentModel": "",
+        "System.Threading.Tasks": "",
+        "System.Collections": "",
+        "System.Text.Encoding": "",
+        "System.Reflection": "",
+        "System.Reflection.Extensions": "",
+        "System.Linq": ""
       }
     }
   }

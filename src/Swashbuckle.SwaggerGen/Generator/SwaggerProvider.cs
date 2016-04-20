@@ -135,10 +135,10 @@ namespace Swashbuckle.SwaggerGen.Generator
                 .ToList();
 
             var responses = new Dictionary<string, Response>();
-            if (apiDescription.ResponseType == typeof(void))
+            if (apiDescription.FirstOrDefaultResponseType() == typeof(void))
                 responses.Add("204", new Response { Description = "No Content" });
             else
-                responses.Add("200", CreateSuccessResponse(apiDescription.ResponseType, schemaRegistry));
+                responses.Add("200", CreateSuccessResponse(apiDescription.FirstOrDefaultResponseType(), schemaRegistry));
 
             var operation = new Operation
             {

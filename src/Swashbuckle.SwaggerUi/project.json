@@ -16,9 +16,19 @@
   "resource": [ "SwaggerUi", "bower_components/swagger-ui/dist" ],
 
   "frameworks": {
-    "dnx451": { },
-    "dnxcore50": { }
-  },
+    "net451": {
+      "dependencies": {
+      },
+      "frameworkAssemblies": {
+        "System.Runtime": "",
+        "System.ComponentModel": "",
+        "System.Threading.Tasks": "",
+        "System.Collections": "",
+        "System.Text.Encoding": "",
+        "System.Reflection": ""
+      }
+     }
+    },
 
   "scripts": {
     "postrestore": [ "npm install", "bower install" ] 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Text;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -31,9 +30,34 @@ namespace Swashbuckle.SwaggerGen.Generator
 
         public static IEnumerable<string> Produces(this ApiDescription apiDescription)
         {
-            return apiDescription.SupportedResponseFormats
-                .Select(format => format.MediaType)
-                .Distinct();
+            List<string> formates = new List<string>();
+
+            foreach (var respTypes in apiDescription.SupportedResponseTypes)
+            {
+                if (respTypes.ApiResponseFormats != null)
+                {
+                    foreach (var respFormats in respTypes.ApiResponseFormats)
+                    {
+                        formates.Add(respFormats.MediaType);
+                    }
+                }
+            }
+
+            return formates.Distinct();
+
+            //return apiDescription.SupportedResponseFormats
+            //    .Select(format => format.MediaType)
+            //    .Distinct();
+        }
+
+        public static Type FirstOrDefaultResponseType(this ApiDescription apiDescription)
+        {
+            if (apiDescription?.SupportedResponseTypes == null || apiDescription.SupportedResponseTypes.Count <= 0)
+            {
+                return typeof(void);
+            }
+
+            return apiDescription.SupportedResponseTypes[0].Type;
         }
 
         public static string RelativePathSansQueryString(this ApiDescription apiDescription)
@@ -50,7 +74,7 @@ namespace Swashbuckle.SwaggerGen.Generator
         {
             var actionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
             return (actionDescriptor != null)
-                ? actionDescriptor.ControllerTypeInfo.GetCustomAttributes(false)
+                ? actionDescriptor.ControllerTypeInfo.GetType().GetCustomAttributes(false)
                 : Enumerable.Empty<object>();
         }
 
@@ -58,7 +82,7 @@ namespace Swashbuckle.SwaggerGen.Generator
         {
             var actionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
             return (actionDescriptor != null)
-                ? actionDescriptor.MethodInfo.GetCustomAttributes(false)
+                ? actionDescriptor.MethodInfo.GetType().GetCustomAttributes(false)
                 : Enumerable.Empty<object>();
         }
     }

@@ -6,6 +6,7 @@
   },
 
   "dependencies": {
+    "Microsoft.AspNetCore.Hosting": "1.0.0-rc2-16343",
     "Microsoft.AspNetCore.IISPlatformHandler": "1.0.0-rc2-*",
     "Microsoft.AspNetCore.Mvc": "1.0.0-rc2-*",
     "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-rc2-*",
@@ -22,8 +23,7 @@
   },
 
   "frameworks": {
-    "dnx451": { },
-    "dnxcore50": { }
+    "net451": { }
   },
 
   "exclude": [

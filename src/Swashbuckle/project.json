@@ -9,11 +9,10 @@
 
   "dependencies": {
     "Swashbuckle.SwaggerGen": "6.0.0-rc2-*",
-	"Swashbuckle.SwaggerUi": "6.0.0-rc2-*"
+	  "Swashbuckle.SwaggerUi": "6.0.0-rc2-*"
   },
 
   "frameworks": {
-    "dnx451": { },
-    "dnxcore50": { }
+    "net451": { }
   }
 }
