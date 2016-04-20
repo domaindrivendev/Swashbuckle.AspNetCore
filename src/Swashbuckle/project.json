@@ -1,5 +1,5 @@
 ﻿{
-  "version": "6.0.0-rc2-20221",
+  "version": "6.0.0-rc2-20581",
   "description": "Swashbuckle - Swagger Generator for WebApi (ASP.NET Core)",
   "summary": "Swagger Generator component for next generation of Swashbuckle, targeting ASP.NET Core",
   "authors": [ "Richard Morris" ],
@@ -9,7 +9,7 @@
 
   "dependencies": {
     "Swashbuckle.SwaggerGen": "6.0.0-rc2-*",
-	  "Swashbuckle.SwaggerUi": "6.0.0-rc2-*"
+    "Swashbuckle.SwaggerUi": "6.0.0-rc2-*"
   },
 
   "frameworks": {
