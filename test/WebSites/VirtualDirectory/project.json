@@ -1,26 +1,29 @@
 ﻿{
   "webroot": "wwwroot",
   "version": "1.0.0-*",
+  "compilationOptions": {
+    "emitEntryPoint": true
+  },
 
   "dependencies": {
-    "Microsoft.AspNet.IISPlatformHandler": "1.0.0-rc1-final",
-    "Microsoft.AspNet.Mvc": "6.0.0-rc1-final",
-    "Microsoft.AspNet.Server.Kestrel": "1.0.0-rc1-final",
-    "Microsoft.AspNet.StaticFiles": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Logging": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Logging.Console": "1.0.0-rc1-final",
-    "Microsoft.Extensions.Logging.Debug": "1.0.0-rc1-final",
-    "Swashbuckle.SwaggerGen": "6.0.0-rc1-final",
-    "Swashbuckle.SwaggerUi": "6.0.0-rc1-final"
+    "Microsoft.AspNetCore.Hosting": "1.0.0-rc2-16343",
+    "Microsoft.AspNetCore.IISPlatformHandler": "1.0.0-rc2-*",
+    "Microsoft.AspNetCore.Mvc": "1.0.0-rc2-*",
+    "Microsoft.AspNetCore.Server.Kestrel": "1.0.0-rc2-*",
+    "Microsoft.AspNetCore.StaticFiles": "1.0.0-rc2-*",
+    "Microsoft.Extensions.Logging": "1.0.0-rc2-*",
+    "Microsoft.Extensions.Logging.Console": "1.0.0-rc2-*",
+    "Microsoft.Extensions.Logging.Debug": "1.0.0-rc2-*",
+    "Swashbuckle.SwaggerGen": "6.0.0-rc2-*",
+    "Swashbuckle.SwaggerUi": "6.0.0-rc2-*"
   },
 
   "commands": {
-    "web": "Microsoft.AspNet.Server.Kestrel"
+    "web": "VirtualDirectory"
   },
 
   "frameworks": {
-    "dnx451": { },
-    "dnxcore50": { }
+    "net451": { }
   },
 
   "exclude": [

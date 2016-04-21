@@ -1,0 +1,20 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\Common7\\IDE\\Extensions\\Microsoft\\Web Tools\\External\\\\node\\node',
+1 verbose cli   'C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\Common7\\IDE\\Extensions\\Microsoft\\Web Tools\\External\\npm\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'install' ]
+2 info using npm@1.4.9
+3 info using node@v0.10.31
+4 verbose node symlink C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\Extensions\Microsoft\Web Tools\External\\node\node
+5 error install Couldn't read dependencies
+6 error package.json ENOENT, open 'C:\C3\SOURCE\Repositories\Ahoy\src\Swashbuckle.SwaggerUi\package.json'
+6 error package.json This is most likely not a problem with npm itself.
+6 error package.json npm can't find a package.json file in your current directory.
+7 error System Windows_NT 6.2.9200
+8 error command "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\Common7\\IDE\\Extensions\\Microsoft\\Web Tools\\External\\\\node\\node" "C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\Common7\\IDE\\Extensions\\Microsoft\\Web Tools\\External\\npm\\node_modules\\npm\\bin\\npm-cli.js" "install"
+9 error cwd C:\C3\SOURCE\Repositories\Ahoy\src\Swashbuckle.SwaggerUi
+10 error node -v v0.10.31
+11 error npm -v 1.4.9
+12 error path C:\C3\SOURCE\Repositories\Ahoy\src\Swashbuckle.SwaggerUi\package.json
+13 error code ENOPACKAGEJSON
+14 error errno 34
+15 verbose exit [ 34, true ]

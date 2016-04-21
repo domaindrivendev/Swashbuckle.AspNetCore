@@ -8,23 +8,11 @@
   "licenseUrl": "https://github.com/domaindrivendev/Swashbuckle/LICENSE",
 
   "dependencies": {
-    "Microsoft.AspNetCore.Mvc": "1.0.0-rc2-*"
+    "Swashbuckle.SwaggerGen": "6.0.0-rc2-*",
+    "Swashbuckle.SwaggerUi": "6.0.0-rc2-*"
   },
 
   "frameworks": {
-    "net451": {
-      "dependencies": {
-      },
-      "frameworkAssemblies": {
-        "System.Runtime": "",
-        "System.ComponentModel": "",
-        "System.Threading.Tasks": "",
-        "System.Collections": "",
-        "System.Text.Encoding": "",
-        "System.Reflection": "",
-        "System.Reflection.Extensions": "",
-        "System.Linq": ""
-      }
-    }
+    "net451": { }
   }
 }

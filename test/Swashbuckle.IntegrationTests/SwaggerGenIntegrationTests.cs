@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.TestHost;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Xunit.Abstractions;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Swashbuckle.IntegrationTests
 {
@@ -34,10 +35,10 @@ namespace Swashbuckle.IntegrationTests
             Type startupType,
             string swaggerRequestUri)
         {
-            var client = new TestServer(TestServer.CreateBuilder()
+            var client = new TestServer(new WebHostBuilder()
                 .UseStartup(startupType)
                 // Use a Convention to only surface ApiDescriptions if action belongs to test app assembly
-                .UseServices(services =>
+                .ConfigureServices(services =>
                     services.Configure<MvcOptions>(c => c.Conventions.Add(new TestAppActionModel(startupType.Assembly)))
                 ))
                 .CreateClient();
