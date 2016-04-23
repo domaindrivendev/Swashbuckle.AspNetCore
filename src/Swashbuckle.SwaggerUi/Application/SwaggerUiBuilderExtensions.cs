@@ -1,9 +1,9 @@
 ﻿using System.Reflection;
-using Microsoft.AspNet.FileProviders;
-using Microsoft.AspNet.StaticFiles;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.StaticFiles;
 using Swashbuckle.Application;
 
-namespace Microsoft.AspNet.Builder
+namespace Microsoft.AspNetCore.Builder
 {
     public static class SwaggerUiBuilderExtensions
     {

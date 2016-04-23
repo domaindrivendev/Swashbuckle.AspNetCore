@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Xml.XPath;
-using Microsoft.AspNet.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Swashbuckle.SwaggerGen.Generator;
 
 namespace Swashbuckle.SwaggerGen.Annotations
