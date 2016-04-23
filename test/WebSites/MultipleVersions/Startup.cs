@@ -1,7 +1,7 @@
 ﻿using System.Linq;
-using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.SwaggerGen.Generator;
@@ -41,11 +41,11 @@ namespace MultipleVersions
         }
 
         // Configure is called after ConfigureServices is called.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app)
         {
-            loggerFactory.MinimumLevel = LogLevel.Information;
-            loggerFactory.AddConsole();
-            loggerFactory.AddDebug();
+            var factory = app.ApplicationServices.GetRequiredService<ILoggerFactory>();
+            factory.AddConsole();
+            factory.AddDebug();
 
             // Add the platform handler to the request pipeline.
             app.UseIISPlatformHandler();
