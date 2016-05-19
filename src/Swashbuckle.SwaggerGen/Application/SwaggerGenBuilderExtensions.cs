@@ -1,8 +1,9 @@
 ﻿using System;
+using Microsoft.AspNetCore.Builder;
 using Swashbuckle.SwaggerGen.Application;
 using Swashbuckle.SwaggerGen.Generator;
 
-namespace Microsoft.AspNet.Builder
+namespace Microsoft.AspNetCore.Builder
 {
     public static class SwaggerGenBuilderExtensions
     {
