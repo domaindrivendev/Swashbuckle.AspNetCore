@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.XPath;
-using Microsoft.AspNet.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.SwaggerGen.Generator;
 using Swashbuckle.SwaggerGen.Annotations;

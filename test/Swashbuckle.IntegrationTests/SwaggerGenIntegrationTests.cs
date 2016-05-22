@@ -1,16 +1,25 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.TestHost;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Xunit.Abstractions;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
+using System.Reflection;
+using Microsoft.Extensions.PlatformAbstractions;
+using Microsoft.AspNetCore.Mvc.ViewComponents;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Microsoft.AspNetCore.Mvc.Controllers;
 
 namespace Swashbuckle.IntegrationTests
 {
     public class SwaggerGenIntegrationTests
     {
+        private Type _startupType;
+        private TestServer _server;
         private readonly ITestOutputHelper _output;
         private readonly HttpClient _validatorClient;
 
@@ -34,13 +43,18 @@ namespace Swashbuckle.IntegrationTests
             Type startupType,
             string swaggerRequestUri)
         {
-            var client = new TestServer(TestServer.CreateBuilder()
-                .UseStartup(startupType)
-                // Use a Convention to only surface ApiDescriptions if action belongs to test app assembly
-                .UseServices(services =>
-                    services.Configure<MvcOptions>(c => c.Conventions.Add(new TestAppActionModel(startupType.Assembly)))
-                ))
-                .CreateClient();
+            _startupType = startupType;
+
+            // TODO Gencebay
+            var builder = new WebHostBuilder()
+                  .UseContentRoot(GetApplicationPath("~/"))
+                  .ConfigureServices(InitializeServices)
+                  .UseStartup(startupType);
+
+            _server = new TestServer(builder);
+
+            var client = _server.CreateClient();
+            client.BaseAddress = new Uri("http://localhost");
 
             var swaggerResponse = await client.GetAsync(swaggerRequestUri);
 
@@ -56,6 +70,30 @@ namespace Swashbuckle.IntegrationTests
             var validationErrorsString = await validationResponse.Content.ReadAsStringAsync();
             _output.WriteLine(validationErrorsString);
             Assert.Equal("{}", validationErrorsString);
+        }
+
+        private string GetApplicationPath(string relativePath)
+        {
+            var startupAssembly = _startupType.GetTypeInfo().Assembly;
+            var applicationName = startupAssembly.GetName().Name;
+            var applicationBasePath = PlatformServices.Default.Application.ApplicationBasePath;
+            return Path.GetFullPath(Path.Combine(applicationBasePath, relativePath, applicationName));
+        }
+
+        protected virtual void InitializeServices(IServiceCollection services)
+        {
+            var startupAssembly = _startupType.GetTypeInfo().Assembly;
+
+            // Inject a custom application part manager. Overrides AddMvcCore() because that uses TryAdd().
+            var manager = new ApplicationPartManager();
+            manager.ApplicationParts.Add(new AssemblyPart(startupAssembly));
+
+            manager.FeatureProviders.Add(new ControllerFeatureProvider());
+            manager.FeatureProviders.Add(new ViewComponentFeatureProvider());
+
+            services.Configure<MvcOptions>(c => c.Conventions.Add(new TestAppActionModel(_startupType.GetTypeInfo().Assembly)));
+
+            services.AddSingleton(manager);
         }
     }
 }

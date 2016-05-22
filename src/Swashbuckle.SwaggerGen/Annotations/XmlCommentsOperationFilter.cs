@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 using System.Xml.XPath;
-using Microsoft.AspNet.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Swashbuckle.SwaggerGen.Generator;
 
 namespace Swashbuckle.SwaggerGen.Annotations
@@ -11,7 +11,7 @@ namespace Swashbuckle.SwaggerGen.Annotations
         private const string SummaryTag = "summary";
         private const string RemarksTag = "remarks";
         private const string ParameterTag = "param";
-        
+
         private readonly XPathNavigator _xmlNavigator;
 
         public XmlCommentsOperationFilter(XPathDocument xmlDoc)

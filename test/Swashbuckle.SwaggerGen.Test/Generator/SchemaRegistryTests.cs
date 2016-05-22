@@ -5,9 +5,9 @@ using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Converters;
-using Xunit;
 using Swashbuckle.SwaggerGen.TestFixtures;
 using Swashbuckle.SwaggerGen.TestFixtures.Extensions;
+using Xunit;
 
 namespace Swashbuckle.SwaggerGen.Generator
 {

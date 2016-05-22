@@ -3,8 +3,8 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
-using Microsoft.AspNet.Mvc.ApiExplorer;
-using Microsoft.AspNet.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Controllers;
 
 namespace Swashbuckle.SwaggerGen.Generator
 {
@@ -31,8 +31,8 @@ namespace Swashbuckle.SwaggerGen.Generator
 
         public static IEnumerable<string> Produces(this ApiDescription apiDescription)
         {
-            return apiDescription.SupportedResponseFormats
-                .Select(format => format.MediaType.MediaType)
+            return apiDescription.SupportedResponseTypes.SelectMany(x => x.ApiResponseFormats)
+                .Select(format => format.MediaType)
                 .Distinct();
         }
 

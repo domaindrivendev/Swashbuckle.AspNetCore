@@ -1,9 +1,9 @@
 ﻿using System.Reflection;
-using Microsoft.AspNet.FileProviders;
-using Microsoft.AspNet.StaticFiles;
+using Microsoft.AspNetCore.StaticFiles;
 using Swashbuckle.Application;
+using Microsoft.Extensions.FileProviders;
 
-namespace Microsoft.AspNet.Builder
+namespace Microsoft.AspNetCore.Builder
 {
     public static class SwaggerUiBuilderExtensions
     {
@@ -26,8 +26,10 @@ namespace Microsoft.AspNet.Builder
             options.RequestPath = "/" + baseRoute;
             options.EnableDefaultFiles = false;
             options.StaticFileOptions.ContentTypeProvider = new FileExtensionContentTypeProvider();
-            options.FileProvider = new EmbeddedFileProvider(
-                typeof(SwaggerUiBuilderExtensions).GetTypeInfo().Assembly,
+
+            var embedFiles = typeof(SwaggerUiBuilderExtensions).GetTypeInfo().Assembly.GetManifestResourceNames();
+
+            options.FileProvider = new EmbeddedFileProvider(typeof(SwaggerUiBuilderExtensions).GetTypeInfo().Assembly,
                 "Swashbuckle.SwaggerUi.bower_components.swagger_ui.dist");
 
             app.UseFileServer(options);
