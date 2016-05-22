@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -26,15 +26,11 @@ namespace VirtualDirectory
         // Configure is called after ConfigureServices is called.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.MinimumLevel = LogLevel.Information;
-            loggerFactory.AddConsole();
-            loggerFactory.AddDebug();
+            loggerFactory.AddConsole(LogLevel.Information);
+            loggerFactory.AddDebug(LogLevel.Information);
 
             app.Map("/vdir", subApp =>
             {
-                // Add the platform handler to the request pipeline.
-                subApp.UseIISPlatformHandler();
-
                 // Configure the HTTP request pipeline.
                 subApp.UseStaticFiles();
 

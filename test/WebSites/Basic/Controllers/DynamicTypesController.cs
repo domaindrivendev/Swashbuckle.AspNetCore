@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Dynamic;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 
 namespace Basic.Controllers

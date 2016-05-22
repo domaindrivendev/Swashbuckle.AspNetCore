@@ -3,19 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Collections.ObjectModel;
 using System.Reflection;
-using Microsoft.Extensions.OptionsModel;
-using Microsoft.AspNet.Routing;
-using Microsoft.AspNet.Routing.Constraints;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Abstractions;
-using Microsoft.AspNet.Mvc.ActionConstraints;
-using Microsoft.AspNet.Mvc.ApiExplorer;
-using Microsoft.AspNet.Mvc.Controllers;
-using Microsoft.AspNet.Mvc.Formatters;
-using Microsoft.AspNet.Mvc.Routing;
-using Microsoft.AspNet.Mvc.ModelBinding;
-using Microsoft.AspNet.Mvc.ModelBinding.Metadata;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Routing.Constraints;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.ActionConstraints;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Moq;
+using Microsoft.AspNetCore.Mvc.Internal;
+using Microsoft.AspNetCore.Mvc.DataAnnotations.Internal;
 
 namespace Swashbuckle.SwaggerGen.TestFixtures
 {
@@ -62,7 +64,7 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
 
             descriptor.ActionConstraints = new List<IActionConstraintMetadata>();
             if (httpMethod != null)
-                descriptor.ActionConstraints.Add(new HttpMethodConstraint(new[] { httpMethod }));
+                descriptor.ActionConstraints.Add(new HttpMethodActionConstraint(new[] { httpMethod }));
 
             descriptor.AttributeRouteInfo = new AttributeRouteInfo { Template = routeTemplate };
 
@@ -123,6 +125,10 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
                         MissingBindRequiredValueAccessor = name => $"A value for the '{ name }' property was not provided.",
                         MissingKeyOrValueAccessor = () => $"A value is required.",
                         ValueMustNotBeNullAccessor = value => $"The value '{ value }' is invalid.",
+                        AttemptedValueIsInvalidAccessor = (value1, value2) => $"The value '{value1}' is invalid.",
+                        UnknownValueIsInvalidAccessor = (value) => $"The value '{value}' is unknown.",
+                        ValueIsInvalidAccessor = (value) => $"The value '{value}' is invalid",
+                        ValueMustBeANumberAccessor = (value) => $"The value '{value}' must be a number"
                     }),
                     new DataAnnotationsMetadataProvider()
                 }

@@ -1,15 +1,23 @@
 {
   "version": "1.0.0-*",
-  "dependencies": {
-    "xunit": "2.1.0-*",
-    "xunit.runner.dnx": "2.1.0-rc1*",
-    "Moq": "4.2-*",
-    "Swashbuckle.SwaggerGen": "6.0.0-*"
+  "testRunner": "xunit",
+  "buildOptions": {
+    "preserveCompilationContext": true,
+    "copyToOutput": {
+      "include": [ "config.json", "TestFixtures/XmlComments.xml" ]
+    }
   },
-  "commands": {
-    "test": "xunit.runner.dnx"
+  "dependencies": {
+    "xunit": "2.1.0",
+    "dotnet-test-xunit": "1.0.0-rc3-build10019",
+    "Microsoft.NETCore.Platforms": "1.0.1-rc2-24027",
+    "Moq": "4.2.1510.2205",
+    "Swashbuckle.SwaggerGen": "6.0.0-rc2-final"
   },
   "frameworks": {
-    "dnx451": { }
+    "net451": {
+      "dependencies": {
+      }
+    }
   }
 }

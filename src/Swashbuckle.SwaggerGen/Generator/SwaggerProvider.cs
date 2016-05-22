@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNet.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace Swashbuckle.SwaggerGen.Generator
 {
@@ -79,7 +79,7 @@ namespace Swashbuckle.SwaggerGen.Generator
             // Group further by http method
             var perMethodGrouping = apiDescriptions
                 .GroupBy(apiDesc => apiDesc.HttpMethod);
-                
+
             foreach (var group in perMethodGrouping)
             {
                 var httpMethod = group.Key;
@@ -135,10 +135,20 @@ namespace Swashbuckle.SwaggerGen.Generator
                 .ToList();
 
             var responses = new Dictionary<string, Response>();
-            if (apiDescription.ResponseType == typeof(void))
-                responses.Add("204", new Response { Description = "No Content" });
-            else
-                responses.Add("200", CreateSuccessResponse(apiDescription.ResponseType, schemaRegistry));
+            var responseTypes = apiDescription.SupportedResponseTypes.Select(responseType => responseType.Type);
+            foreach (var responseType in responseTypes)
+            {
+                if (responseType == typeof(void))
+                    responses.Add("204", new Response { Description = "No Content" });
+                else
+                    responses.Add("200", CreateSuccessResponse(responseType, schemaRegistry));
+            }
+
+            //var responseType = apiDescription.SupportedResponseTypes.FirstOrDefault(apiResponseType => apiResponseType.Type == typeof(void));
+            //if (responseType == null)
+            //    responses.Add("204", new Response { Description = "No Content" });
+            //else
+            //    responses.Add("200", CreateSuccessResponse(responseType.Type, schemaRegistry));
 
             var operation = new Operation
             {
