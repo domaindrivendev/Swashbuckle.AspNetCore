@@ -141,7 +141,7 @@ namespace Swashbuckle.SwaggerGen.Generator
                 {
                     Type = "object",
                     Properties = Enum.GetNames(keyType).ToDictionary(
-                        (name) => dictionaryContract.PropertyNameResolver(name),
+                        (name) => dictionaryContract.DictionaryKeyResolver(name),
                         (name) => CreateInlineSchema(valueType)
                     )
                 };

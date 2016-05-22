@@ -144,12 +144,6 @@ namespace Swashbuckle.SwaggerGen.Generator
                     responses.Add("200", CreateSuccessResponse(responseType, schemaRegistry));
             }
 
-            //var responseType = apiDescription.SupportedResponseTypes.FirstOrDefault(apiResponseType => apiResponseType.Type == typeof(void));
-            //if (responseType == null)
-            //    responses.Add("204", new Response { Description = "No Content" });
-            //else
-            //    responses.Add("200", CreateSuccessResponse(responseType.Type, schemaRegistry));
-
             var operation = new Operation
             {
                 Tags = (groupName != null) ? new[] { groupName } : null,
