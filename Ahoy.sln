@@ -1,13 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23103.0
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{15A55F4A-FC33-4D96-BAAD-FBDCDD96D5F5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FA1B4021-0A97-4F68-B966-148191F6AAA8}"
 	ProjectSection(SolutionItems) = preProject
 		global.json = global.json
+		NuGet.config = NuGet.config
 	EndProjectSection
 	ProjectSection(FolderGlobals) = preProject
 		global_1json__JSONSchema = http://json.schemastore.org/global

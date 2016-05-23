@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Collections.ObjectModel;
 using System.Reflection;
-using Microsoft.Extensions.OptionsModel;
-using Microsoft.AspNet.Routing;
-using Microsoft.AspNet.Routing.Constraints;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
@@ -16,6 +16,8 @@ using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Moq;
+using Microsoft.AspNetCore.Mvc.Internal;
+using Microsoft.AspNetCore.Mvc.DataAnnotations.Internal;
 
 namespace Swashbuckle.SwaggerGen.TestFixtures
 {
@@ -62,7 +64,7 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
 
             descriptor.ActionConstraints = new List<IActionConstraintMetadata>();
             if (httpMethod != null)
-                descriptor.ActionConstraints.Add(new HttpMethodConstraint(new[] { httpMethod }));
+                descriptor.ActionConstraints.Add(new HttpMethodActionConstraint(new[] { httpMethod }));
 
             descriptor.AttributeRouteInfo = new AttributeRouteInfo { Template = routeTemplate };
 
@@ -80,7 +82,7 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
                     })
                 .ToList();
 
-            var controllerType = typeof(FakeControllers).GetNestedType(controllerFixtureName);
+            var controllerType = typeof(FakeControllers).GetNestedType(controllerFixtureName, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
             if (controllerType == null)
                 throw new InvalidOperationException(
                     string.Format("{0} is not declared in ControllerFixtures", controllerFixtureName));

@@ -7,7 +7,14 @@
     "dotnet-test-xunit": "1.0.0-*",
     "Microsoft.NETCore.Platforms": "1.0.1-*",
     "Microsoft.AspNetCore.Mvc": "1.0.0-rc2-final",
-    "Microsoft.AspNetCore.TestHost": "1.0.0-rc2-final"
+    "Microsoft.AspNetCore.TestHost": "1.0.0-rc2-final",
+    "Basic": "1.0.0-*",
+    "CustomizedUi": "1.0.0-*",
+    "VirtualDirectory": "1.0.0-*",
+    "MultipleVersions": "1.0.0-*",
+    "SecuritySchemes": "1.0.0-*",
+    "Swashbuckle.SwaggerGen": "6.0.0-rc2-beta",
+    "Swashbuckle.SwaggerUi": "6.0.0-rc2-beta"
   },
   "testRunner": "xunit",
   "frameworks": {
@@ -17,20 +24,13 @@
         "portable-net451+win8"
       ],
       "dependencies": {
-        "Basic": "1.0.0-*",
-        "CustomizedUi": "1.0.0-*",
         "Microsoft.NETCore.App": {
           "version": "1.0.0-*",
           "type": "platform"
         },
         "moq.netcore": "4.4.0-beta8",
-        "MultipleVersions": "1.0.0-*",
-        "SecuritySchemes": "1.0.0-*",
-        "Swashbuckle.SwaggerGen": "6.0.0-rc2-beta",
-        "Swashbuckle.SwaggerUi": "6.0.0-rc2-beta",
         "System.Diagnostics.Process": "4.1.0-*",
-        "System.Diagnostics.TraceSource": "4.0.0-*",
-        "VirtualDirectory": "1.0.0-*"
+        "System.Diagnostics.TraceSource": "4.0.0-*"
       }
     },
     "net451": {

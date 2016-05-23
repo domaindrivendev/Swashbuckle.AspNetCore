@@ -35,8 +35,8 @@
       }
     },
     "net451": {
-      "dependencies": {
-        "System.Xml": "4.0.0"
+      "frameworkAssemblies": {
+        "System.Xml": "4.0.0.0"
       }
     }
   }
