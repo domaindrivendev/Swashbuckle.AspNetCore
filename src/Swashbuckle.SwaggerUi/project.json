@@ -1,6 +1,6 @@
 ﻿{
-  "version": "6.0.0-rc2-beta",
-  "description": "Swashbuckle - Swagger Generator for WebApi (AspNet 5.0)",
+  "version": "6.0.0-rc2-final",
+  "description": "Swashbuckle - Swagger Generator for WebApi (AspNet Core 1.0)",
   "authors": [ "Richard Morris" ],
 
   "buildOptions": {
@@ -11,7 +11,7 @@
   },
 
   "packOptions": {
-    "tags": [ "Swagger Documentation Discovery Help WebApi AspNet vNext" ],
+    "tags": [ "Swagger Documentation Discovery Help WebApi AspNet Core 1.0" ],
     "projectUrl": "https://github.com/domaindrivendev/Swashbuckle",
     "licenseUrl": "https://github.com/domaindrivendev/Swashbuckle/LICENSE",
     "summary": "Swagger Generator component for next generation of Swashbuckle, targeting AspNet Core 1.0"
@@ -21,7 +21,7 @@
     "Microsoft.AspNetCore.Mvc": "1.0.0-rc2-final",
     "Microsoft.AspNetCore.Mvc.Core": "1.0.0-rc2-final",
     "Microsoft.AspNetCore.StaticFiles": "1.0.0-rc2-final",
-    "Microsoft.Extensions.FileProviders.Embedded": "1.0.0-rc2-final",
+    "Microsoft.Extensions.FileProviders.Embedded": "1.0.0-rc2-final"
   },
 
   "frameworks": {
