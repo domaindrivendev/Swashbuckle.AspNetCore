@@ -13,8 +13,8 @@
     "VirtualDirectory": "1.0.0-*",
     "MultipleVersions": "1.0.0-*",
     "SecuritySchemes": "1.0.0-*",
-    "Swashbuckle.SwaggerGen": "6.0.0-rc2-beta",
-    "Swashbuckle.SwaggerUi": "6.0.0-rc2-beta"
+    "Swashbuckle.SwaggerGen": "6.0.0-rc2-final",
+    "Swashbuckle.SwaggerUi": "6.0.0-rc2-final"
   },
   "testRunner": "xunit",
   "frameworks": {

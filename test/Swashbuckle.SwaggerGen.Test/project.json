@@ -9,9 +9,10 @@
     "Microsoft.AspNetCore.Mvc": "1.0.0-rc2-final",
     "Microsoft.AspNetCore.Mvc.Core": "1.0.0-rc2-final",
     "Microsoft.AspNetCore.TestHost": "1.0.0-rc2-final",
-    "Swashbuckle.SwaggerGen": "6.0.0-rc2-beta",
-    "Swashbuckle.SwaggerUi": "6.0.0-rc2-beta",
-    "Microsoft.AspNetCore.Mvc.DataAnnotations": "1.0.0-rc2-final"
+    "Swashbuckle.SwaggerGen": "6.0.0-rc2-final",
+    "Swashbuckle.SwaggerUi": "6.0.0-rc2-final",
+    "Microsoft.AspNetCore.Mvc.DataAnnotations": "1.0.0-rc2-final",
+    "Microsoft.AspNetCore.Mvc.Formatters.Xml": "1.0.0-rc2-final"
   },
   "testRunner": "xunit",
   "frameworks": {
@@ -25,12 +26,16 @@
           "version": "1.0.0-*",
           "type": "platform"
         },
-        "moq.netcore": "4.4.0-beta8"
+        "moq.netcore": "4.4.0-beta8",
+        "System.Diagnostics.TraceSource": "4.0.0-rc2-24027"
       }
     },
     "net451": {
       "dependencies": {
         "Moq": "4.2.1312.1622"
+      },
+      "frameworkAssemblies": {
+        "System.Diagnostics.Tracing": "4.0.10.0"
       }
     }
   }

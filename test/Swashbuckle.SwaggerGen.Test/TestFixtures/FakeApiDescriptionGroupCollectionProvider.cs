@@ -91,6 +91,45 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
             return descriptor;
         }
 
+        //private IReadOnlyList<ApiDescription> GetApiDescriptions(
+        //    ActionDescriptor action,
+        //    List<MockInputFormatter> inputFormatters = null,
+        //    List<MockOutputFormatter> outputFormatters = null)
+        //{
+        //    var context = new ApiDescriptionProviderContext(new ActionDescriptor[] { action });
+
+        //    var options = new MvcOptions();
+        //    foreach (var formatter in inputFormatters ?? CreateInputFormatters())
+        //    {
+        //        options.InputFormatters.Add(formatter);
+        //    }
+
+        //    foreach (var formatter in outputFormatters ?? CreateOutputFormatters())
+        //    {
+        //        options.OutputFormatters.Add(formatter);
+        //    }
+
+        //    var optionsAccessor = new Mock<IOptions<MvcOptions>>();
+        //    optionsAccessor.SetupGet(o => o.Value)
+        //        .Returns(options);
+
+        //    var constraintResolver = new Mock<IInlineConstraintResolver>();
+        //    constraintResolver.Setup(c => c.ResolveConstraint("int"))
+        //        .Returns(new IntRouteConstraint());
+
+        //    var modelMetadataProvider = CreateDefaultProvider();
+
+        //    var provider = new DefaultApiDescriptionProvider(
+        //        optionsAccessor.Object,
+        //        constraintResolver.Object,
+        //        modelMetadataProvider);
+
+        //    provider.OnProvidersExecuting(context);
+        //    provider.OnProvidersExecuted(context);
+
+        //    return new ReadOnlyCollection<ApiDescription>(context.Results);
+        //}
+
         private IReadOnlyList<ApiDescription> GetApiDescriptions()
         {
             var context = new ApiDescriptionProviderContext(_actionDescriptors);
@@ -107,7 +146,7 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
             var provider = new DefaultApiDescriptionProvider(
                 optionsAccessor.Object,
                 constraintResolver.Object,
-                CreateModelMetadataProvider()
+                CreateDefaultProvider()
             );
 
             provider.OnProvidersExecuting(context);
@@ -115,21 +154,32 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
             return new ReadOnlyCollection<ApiDescription>(context.Results);
         }
 
-        private IModelMetadataProvider CreateModelMetadataProvider()
+        public IModelMetadataProvider CreateDefaultProvider()
         {
-            var metadataDetailsProvider = new DefaultCompositeMetadataDetailsProvider(
-                new IMetadataDetailsProvider[]
-                {
-                    new DefaultBindingMetadataProvider(new ModelBindingMessageProvider
-                    {
-                        MissingBindRequiredValueAccessor = name => $"A value for the '{ name }' property was not provided.",
-                        MissingKeyOrValueAccessor = () => $"A value is required.",
-                        ValueMustNotBeNullAccessor = value => $"The value '{ value }' is invalid.",
-                    }),
-                    new DataAnnotationsMetadataProvider()
-                }
-            );
-            return new DefaultModelMetadataProvider(metadataDetailsProvider);
+            var detailsProviders = new IMetadataDetailsProvider[]
+            {
+                new DefaultBindingMetadataProvider(CreateMessageProvider()),
+                new DefaultValidationMetadataProvider(),
+                new DataAnnotationsMetadataProvider(),
+                new DataMemberRequiredBindingMetadataProvider(),
+            };
+
+            var compositeDetailsProvider = new DefaultCompositeMetadataDetailsProvider(detailsProviders);
+            return new DefaultModelMetadataProvider(compositeDetailsProvider);
+        }
+
+        private static ModelBindingMessageProvider CreateMessageProvider()
+        {
+            return new ModelBindingMessageProvider
+            {
+                MissingBindRequiredValueAccessor = name => $"A value for the '{ name }' property was not provided.",
+                MissingKeyOrValueAccessor = () => $"A value is required.",
+                ValueMustNotBeNullAccessor = value => $"The value '{ value }' is invalid.",
+                AttemptedValueIsInvalidAccessor = (value, name) => $"The value '{ value }' is not valid for { name }.",
+                UnknownValueIsInvalidAccessor = name => $"The supplied value is invalid for { name }.",
+                ValueIsInvalidAccessor = value => $"The value '{ value }' is invalid.",
+                ValueMustBeANumberAccessor = name => $"The field { name } must be a number.",
+            };
         }
     }
 }
