@@ -91,45 +91,6 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
             return descriptor;
         }
 
-        //private IReadOnlyList<ApiDescription> GetApiDescriptions(
-        //    ActionDescriptor action,
-        //    List<MockInputFormatter> inputFormatters = null,
-        //    List<MockOutputFormatter> outputFormatters = null)
-        //{
-        //    var context = new ApiDescriptionProviderContext(new ActionDescriptor[] { action });
-
-        //    var options = new MvcOptions();
-        //    foreach (var formatter in inputFormatters ?? CreateInputFormatters())
-        //    {
-        //        options.InputFormatters.Add(formatter);
-        //    }
-
-        //    foreach (var formatter in outputFormatters ?? CreateOutputFormatters())
-        //    {
-        //        options.OutputFormatters.Add(formatter);
-        //    }
-
-        //    var optionsAccessor = new Mock<IOptions<MvcOptions>>();
-        //    optionsAccessor.SetupGet(o => o.Value)
-        //        .Returns(options);
-
-        //    var constraintResolver = new Mock<IInlineConstraintResolver>();
-        //    constraintResolver.Setup(c => c.ResolveConstraint("int"))
-        //        .Returns(new IntRouteConstraint());
-
-        //    var modelMetadataProvider = CreateDefaultProvider();
-
-        //    var provider = new DefaultApiDescriptionProvider(
-        //        optionsAccessor.Object,
-        //        constraintResolver.Object,
-        //        modelMetadataProvider);
-
-        //    provider.OnProvidersExecuting(context);
-        //    provider.OnProvidersExecuted(context);
-
-        //    return new ReadOnlyCollection<ApiDescription>(context.Results);
-        //}
-
         private IReadOnlyList<ApiDescription> GetApiDescriptions()
         {
             var context = new ApiDescriptionProviderContext(_actionDescriptors);

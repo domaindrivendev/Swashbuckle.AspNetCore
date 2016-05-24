@@ -33,9 +33,6 @@
     "net451": {
       "dependencies": {
         "Moq": "4.2.1312.1622"
-      },
-      "frameworkAssemblies": {
-        "System.Diagnostics.Tracing": "4.0.10.0"
       }
     }
   }

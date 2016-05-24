@@ -35,6 +35,5 @@ namespace Swashbuckle.SwaggerGen.Generator
         {
             throw new NotImplementedException();
         }
-
     }
 }

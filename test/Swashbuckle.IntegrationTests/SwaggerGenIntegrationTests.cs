@@ -45,9 +45,10 @@ namespace Swashbuckle.IntegrationTests
         {
             _startupType = startupType;
 
-            // TODO Gencebay
+            var siteContentRoot = GetApplicationPath(@"..\..\..\..\WebSites\");
+
             var builder = new WebHostBuilder()
-                  .UseContentRoot(GetApplicationPath("~/"))
+                  .UseContentRoot(siteContentRoot)
                   .ConfigureServices(InitializeServices)
                   .UseStartup(startupType);
 
