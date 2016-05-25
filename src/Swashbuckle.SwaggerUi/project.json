@@ -16,7 +16,9 @@
   },
 
   "buildOptions": {
-    "embed": [ "SwaggerUi", "bower_components/swagger-ui/dist" ]
+    "embed": {
+      "include": [ "SwaggerUi/**", "bower_components/swagger-ui/dist/**" ]
+    }
   },
 
   "frameworks": {

@@ -135,13 +135,18 @@ namespace Swashbuckle.SwaggerGen.Generator
                 .ToList();
 
             var responses = new Dictionary<string, Response>();
-            var responseTypes = apiDescription.SupportedResponseTypes.Select(responseType => responseType.Type);
-            foreach (var responseType in responseTypes)
+            var descriptions = apiDescription.SupportedResponseTypes;
+
+            if (!descriptions.Any())
             {
-                if (responseType == typeof(void))
-                    responses.Add("204", new Response { Description = "No Content" });
-                else
-                    responses.Add("200", CreateSuccessResponse(responseType, schemaRegistry));
+                responses.Add("204", new Response { Description = "No Content" });
+            }
+            else
+            {
+                foreach (var description in descriptions.OrderBy(responseType => responseType.StatusCode))
+                {
+                    responses.Add("200", CreateSuccessResponse(description.Type, schemaRegistry));
+                }
             }
 
             var operation = new Operation

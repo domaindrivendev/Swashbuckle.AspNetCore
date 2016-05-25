@@ -35,13 +35,6 @@ namespace Swashbuckle.IntegrationTests
             Type startupType,
             string swaggerRequestUri)
         {
-            //var client = new TestServer(TestServer.CreateBuilder()
-            //    .UseStartup(startupType)
-            //    // Use a Convention to only surface ApiDescriptions if action belongs to test app assembly
-            //    .UseServices(services =>
-            //        services.Configure<MvcOptions>(c => c.Conventions.Add(new TestAppActionModel(startupType.Assembly)))
-            //    ))
-            //    .CreateClient();
             using (var testServer = new TestServer(new WebHostBuilder().UseStartup(startupType)))
             {
                 using (var client = testServer.CreateClient())
