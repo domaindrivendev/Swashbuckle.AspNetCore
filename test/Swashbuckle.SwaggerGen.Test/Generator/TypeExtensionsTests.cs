@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Xunit;
 using Swashbuckle.SwaggerGen.TestFixtures;
+using Swashbuckle.SwaggerGen.Extensions;
 
 namespace Swashbuckle.SwaggerGen.Generator
 {

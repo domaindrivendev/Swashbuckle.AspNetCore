@@ -1,13 +1,14 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.Reflection;
 using Newtonsoft.Json.Serialization;
+using Swashbuckle.SwaggerGen.Generator;
+using System.Reflection;
 
-namespace Swashbuckle.SwaggerGen.Generator
+namespace Swashbuckle.SwaggerGen.Extensions
 {
-    public static class SchemaExtensions
+    internal static class SchemaExtensions
     {
-        public static Schema AssignValidationProperties(this Schema schema, JsonProperty jsonProperty)
+        internal static Schema AssignValidationProperties(this Schema schema, JsonProperty jsonProperty)
         {
             var propInfo = jsonProperty.PropertyInfo();
             if (propInfo == null)
@@ -53,7 +54,7 @@ namespace Swashbuckle.SwaggerGen.Generator
             return schema;
         }
 
-        public static void PopulateFrom(this PartialSchema partialSchema, Schema schema)
+        internal static void PopulateFrom(this PartialSchema partialSchema, Schema schema)
         {
             if (schema == null) return;
 

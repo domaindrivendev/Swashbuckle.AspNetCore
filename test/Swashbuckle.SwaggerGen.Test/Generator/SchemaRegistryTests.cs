@@ -8,6 +8,7 @@ using Newtonsoft.Json.Converters;
 using Swashbuckle.SwaggerGen.TestFixtures;
 using Swashbuckle.SwaggerGen.TestFixtures.Extensions;
 using Xunit;
+using Swashbuckle.SwaggerGen.Extensions;
 
 namespace Swashbuckle.SwaggerGen.Generator
 {
@@ -284,6 +285,17 @@ namespace Swashbuckle.SwaggerGen.Generator
 
             Assert.Equal("string", schema.Type);
             Assert.Equal(new[] { "Value1", "Value2", "X" }, schema.Enum);
+        }
+
+        [Fact]
+        public void GetOrRegister_SupportsOptionToDescribeAllEnumsAsIdPair()
+        {
+            var subject = Subject(opts => opts.DescribeAllEnumsAsIdTextPair = true);
+
+            var schema = subject.GetOrRegister(typeof(AnEnum));
+
+            Assert.Equal("string", schema.Type);
+            Assert.Equal(new[] { "2:Value1", "4:Value 2", "8:X" }, schema.Enum);
         }
 
         [Fact]

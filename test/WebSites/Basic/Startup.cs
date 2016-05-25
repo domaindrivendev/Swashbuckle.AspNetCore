@@ -47,7 +47,7 @@ namespace Basic
                     TermsOfService = "Some terms ..."
                 });
 
-                c.DescribeAllEnumsAsStrings();
+                c.DescribeAllEnumsAsIdTextPair();
 
                 c.OperationFilter<AssignOperationVendorExtensions>();
             });

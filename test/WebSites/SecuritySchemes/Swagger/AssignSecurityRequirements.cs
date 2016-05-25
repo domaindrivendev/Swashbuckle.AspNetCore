@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Swashbuckle.SwaggerGen.Generator;
+using Swashbuckle.SwaggerGen.Extensions;
 
 namespace SecuritySchemes.Swagger
 {

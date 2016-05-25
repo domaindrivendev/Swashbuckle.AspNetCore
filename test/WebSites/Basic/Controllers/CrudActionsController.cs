@@ -74,6 +74,14 @@ namespace Basic.Controllers
         }
     }
 
+    public enum ProductStatus
+    {
+        Unknown = 0,
+        [Display(Name = "Out Of Stock")]
+        OutOfStock = 1,
+        InStock = 2
+    }
+
     /// <summary>
     /// Represents a product
     /// </summary>
@@ -88,5 +96,7 @@ namespace Basic.Controllers
         /// Describes the product
         /// </summary>
         public string Description { get; set; }
+
+        public ProductStatus Status { get; set; }
     }
 }

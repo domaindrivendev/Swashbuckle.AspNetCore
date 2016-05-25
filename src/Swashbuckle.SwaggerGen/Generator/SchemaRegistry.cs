@@ -5,6 +5,8 @@ using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Converters;
+using Swashbuckle.SwaggerGen.Helper;
+using Swashbuckle.SwaggerGen.Extensions;
 
 namespace Swashbuckle.SwaggerGen.Generator
 {
@@ -91,6 +93,19 @@ namespace Swashbuckle.SwaggerGen.Generator
         {
             var stringEnumConverter = primitiveContract.Converter as StringEnumConverter
                 ?? _jsonSerializerSettings.Converters.OfType<StringEnumConverter>().FirstOrDefault();
+
+            // TODO Swagger UI Model Schema Section: Set enum integer value as default when click for set as parameter value
+            if (_options.DescribeAllEnumsAsIdTextPair)
+            {
+                var camelCase = _options.DescribeStringEnumsInCamelCase
+                    || (stringEnumConverter != null && stringEnumConverter.CamelCaseText);
+
+                return new Schema
+                {
+                    Type = "string",
+                    Enum = (camelCase) ? EnumHelper.GetEnumAsIdTextPair(type) : EnumHelper.GetEnumAsIdTextPair(type, camelCase)
+                };
+            }
 
             if (_options.DescribeAllEnumsAsStrings || stringEnumConverter != null)
             {
