@@ -1,7 +1,7 @@
 ﻿using System.Linq;
-using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
-using Microsoft.AspNet.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Swashbuckle.SwaggerGen.Generator;
@@ -43,12 +43,8 @@ namespace MultipleVersions
         // Configure is called after ConfigureServices is called.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.MinimumLevel = LogLevel.Information;
-            loggerFactory.AddConsole();
-            loggerFactory.AddDebug();
-
-            // Add the platform handler to the request pipeline.
-            app.UseIISPlatformHandler();
+            loggerFactory.AddConsole(LogLevel.Information);
+            loggerFactory.AddDebug(LogLevel.Information);
 
             // Configure the HTTP request pipeline.
             app.UseStaticFiles();

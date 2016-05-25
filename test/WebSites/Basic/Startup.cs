@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.PlatformAbstractions;
@@ -14,13 +14,13 @@ namespace Basic
 {
     public class Startup
     {
-        private readonly IApplicationEnvironment _appEnv;
+        private readonly ApplicationEnvironment _appEnv;
         private readonly IHostingEnvironment _hostingEnv;
 
-        public Startup(IHostingEnvironment hostingEnv, IApplicationEnvironment appEnv)
+        public Startup(IHostingEnvironment hostingEnv)
         {
             _hostingEnv = hostingEnv;
-            _appEnv = appEnv;
+            _appEnv = PlatformServices.Default.Application;
         }
 
         // This method gets called by a runtime.
@@ -59,7 +59,12 @@ namespace Basic
                 {
                     c.IncludeXmlComments(string.Format(@"{0}\artifacts\bin\Basic\{1}\{2}{3}\Basic.xml",
                         GetSolutionBasePath(),
-                        _appEnv.Configuration,
+                        // TODO: Find a better way to replace _appEnv.Configuration,
+#if DEBUG
+                        "Debug",
+#else
+                        "Release"
+#endif
                         _appEnv.RuntimeFramework.Identifier,
                         _appEnv.RuntimeFramework.Version.ToString().Replace(".", string.Empty)));
                 });
@@ -69,12 +74,8 @@ namespace Basic
         // Configure is called after ConfigureServices is called.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.MinimumLevel = LogLevel.Information;
-            loggerFactory.AddConsole();
-            loggerFactory.AddDebug();
-
-            // Add the platform handler to the request pipeline.
-            app.UseIISPlatformHandler();
+            loggerFactory.AddConsole(LogLevel.Information);
+            loggerFactory.AddDebug(LogLevel.Information);
 
             // Configure the HTTP request pipeline.
             app.UseStaticFiles();
