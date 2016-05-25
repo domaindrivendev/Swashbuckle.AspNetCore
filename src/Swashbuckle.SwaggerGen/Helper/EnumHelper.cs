@@ -10,9 +10,6 @@ namespace Swashbuckle.SwaggerGen.Helper
 {
     internal static class EnumHelper
     {
-        // Or - short-circuit evaluation
-        internal static readonly string EnumPairSeperator = "|";
-
         internal static bool HasFlags(Type type)
         {
             if (type == null)
@@ -88,7 +85,7 @@ namespace Swashbuckle.SwaggerGen.Helper
             var idPairList = GetSelectList(type, camelCase);
             IList<string> items = new List<string>();
             foreach (var item in idPairList)
-                items.Add($"{item.Id}{EnumPairSeperator}{item.Text}");
+                items.Add($"{item.Id}{SwaggerConstants.EnumPairSeperator}{item.Text}");
 
             return items.ToArray();
         }

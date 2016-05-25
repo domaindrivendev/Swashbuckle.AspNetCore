@@ -9,6 +9,7 @@ using Swashbuckle.SwaggerGen.TestFixtures;
 using Swashbuckle.SwaggerGen.TestFixtures.Extensions;
 using Xunit;
 using Swashbuckle.SwaggerGen.Extensions;
+using Swashbuckle.SwaggerGen.Types;
 
 namespace Swashbuckle.SwaggerGen.Generator
 {
@@ -295,7 +296,12 @@ namespace Swashbuckle.SwaggerGen.Generator
             var schema = subject.GetOrRegister(typeof(AnEnum));
 
             Assert.Equal("integer", schema.Type);
-            Assert.Equal(new[] { "2:Value1", "4:Value 2", "8:X" }, schema.Enum);
+            Assert.Equal(new[] 
+            {
+                $"2{SwaggerConstants.EnumPairSeperator}Value1",
+                $"4{SwaggerConstants.EnumPairSeperator}Value 2",
+                $"8{SwaggerConstants.EnumPairSeperator}X"
+            }, schema.Enum);
         }
 
         [Fact]
