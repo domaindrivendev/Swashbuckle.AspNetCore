@@ -102,7 +102,8 @@ namespace Swashbuckle.SwaggerGen.Generator
 
                 return new Schema
                 {
-                    Type = "string",
+                    Type = "integer",
+                    Format = "int32",
                     Enum = (camelCase) ? EnumHelper.GetEnumAsIdTextPair(type) : EnumHelper.GetEnumAsIdTextPair(type, camelCase)
                 };
             }

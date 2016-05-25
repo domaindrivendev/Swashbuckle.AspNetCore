@@ -288,13 +288,13 @@ namespace Swashbuckle.SwaggerGen.Generator
         }
 
         [Fact]
-        public void GetOrRegister_SupportsOptionToDescribeAllEnumsAsIdPair()
+        public void GetOrRegister_SupportsOptionToDescribeAllEnumsAsIdTextPair()
         {
             var subject = Subject(opts => opts.DescribeAllEnumsAsIdTextPair = true);
 
             var schema = subject.GetOrRegister(typeof(AnEnum));
 
-            Assert.Equal("string", schema.Type);
+            Assert.Equal("integer", schema.Type);
             Assert.Equal(new[] { "2:Value1", "4:Value 2", "8:X" }, schema.Enum);
         }
 
