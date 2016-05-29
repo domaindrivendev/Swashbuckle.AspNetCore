@@ -94,20 +94,6 @@ namespace Swashbuckle.SwaggerGen.Generator
             var stringEnumConverter = primitiveContract.Converter as StringEnumConverter
                 ?? _jsonSerializerSettings.Converters.OfType<StringEnumConverter>().FirstOrDefault();
 
-            // TODO Swagger UI Model Schema Section: Set enum integer value as default when click for set as parameter value
-            if (_options.DescribeAllEnumsAsIdTextPair)
-            {
-                var camelCase = _options.DescribeStringEnumsInCamelCase
-                    || (stringEnumConverter != null && stringEnumConverter.CamelCaseText);
-
-                return new Schema
-                {
-                    Type = "integer",
-                    Format = "int32",
-                    Enum = (camelCase) ? EnumHelper.GetEnumAsIdTextPair(type) : EnumHelper.GetEnumAsIdTextPair(type, camelCase)
-                };
-            }
-
             if (_options.DescribeAllEnumsAsStrings || stringEnumConverter != null)
             {
                 var camelCase = _options.DescribeStringEnumsInCamelCase
@@ -157,7 +143,7 @@ namespace Swashbuckle.SwaggerGen.Generator
                 {
                     Type = "object",
                     Properties = Enum.GetNames(keyType).ToDictionary(
-                        (name) => dictionaryContract.PropertyNameResolver(name),
+                        (name) => dictionaryContract.DictionaryKeyResolver(name),
                         (name) => CreateInlineSchema(valueType)
                     )
                 };

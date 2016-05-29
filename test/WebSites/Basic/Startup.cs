@@ -5,11 +5,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.PlatformAbstractions;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.SwaggerGen.Generator;
 using Basic.Swagger;
-using Microsoft.AspNetCore.Builder;
 
 namespace Basic
 {
@@ -46,8 +44,6 @@ namespace Basic
                     Description = "A sample API for testing Swashbuckle",
                     TermsOfService = "Some terms ..."
                 });
-
-                c.DescribeAllEnumsAsIdTextPair();
 
                 c.OperationFilter<AssignOperationVendorExtensions>();
             });

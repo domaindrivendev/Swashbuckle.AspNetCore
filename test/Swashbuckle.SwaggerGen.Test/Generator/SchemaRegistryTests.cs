@@ -289,22 +289,6 @@ namespace Swashbuckle.SwaggerGen.Generator
         }
 
         [Fact]
-        public void GetOrRegister_SupportsOptionToDescribeAllEnumsAsIdTextPair()
-        {
-            var subject = Subject(opts => opts.DescribeAllEnumsAsIdTextPair = true);
-
-            var schema = subject.GetOrRegister(typeof(AnEnum));
-
-            Assert.Equal("integer", schema.Type);
-            Assert.Equal(new[] 
-            {
-                $"2{SwaggerConstants.EnumPairSeperator}Value1",
-                $"4{SwaggerConstants.EnumPairSeperator}Value 2",
-                $"8{SwaggerConstants.EnumPairSeperator}X"
-            }, schema.Enum);
-        }
-
-        [Fact]
         public void GetOrRegister_SupportsOptionToDescribeStringEnumsInCamelCase()
         {
             var subject = Subject(opts =>

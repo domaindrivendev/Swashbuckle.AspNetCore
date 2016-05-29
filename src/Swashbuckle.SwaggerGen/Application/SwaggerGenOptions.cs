@@ -85,11 +85,6 @@ namespace Swashbuckle.SwaggerGen.Application
             _schemaRegistryOptions.DescribeAllEnumsAsStrings = true;
         }
 
-        public void DescribeAllEnumsAsIdTextPair()
-        {
-            _schemaRegistryOptions.DescribeAllEnumsAsIdTextPair = true;
-        }
-
         public void DescribeStringEnumsInCamelCase()
         {
             _schemaRegistryOptions.DescribeStringEnumsInCamelCase = true;
