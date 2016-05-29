@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -78,19 +75,6 @@ namespace Basic
 
             app.UseSwaggerGen();
             app.UseSwaggerUi();
-        }
-
-        private string GetSolutionBasePath()
-        {
-            var dir = Directory.CreateDirectory(_hostingEnv.ContentRootPath);
-            while (dir.Parent != null)
-            {
-                if (dir.GetFiles("global.json").Any())
-                    return dir.FullName;
-
-                dir = dir.Parent;
-            }
-            throw new InvalidOperationException("Failed to detect solution base path - global.json not found.");
         }
     }
 }
