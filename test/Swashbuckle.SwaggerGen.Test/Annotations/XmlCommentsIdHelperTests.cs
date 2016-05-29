@@ -2,6 +2,7 @@
 using Xunit;
 using Swashbuckle.SwaggerGen.Annotations;
 using Swashbuckle.SwaggerGen.TestFixtures;
+using System.Reflection;
 
 namespace Swashbuckle.SwaggerGen.Test.Annotations
 {

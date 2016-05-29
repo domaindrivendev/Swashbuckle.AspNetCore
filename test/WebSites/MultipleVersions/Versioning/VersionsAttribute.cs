@@ -1,6 +1,6 @@
 ﻿using System;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.ActionConstraints;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using System.Linq;
 
 namespace MultipleVersions.Versioning
@@ -13,6 +13,14 @@ namespace MultipleVersions.Versioning
         }
 
         public string[] AcceptedVersions { get; private set; }
+
+        public bool IsReusable
+        {
+            get
+            {
+                return true;
+            }
+        }
 
         public IActionConstraint CreateInstance(IServiceProvider services)
         {

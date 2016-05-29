@@ -3,19 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Collections.ObjectModel;
 using System.Reflection;
-using Microsoft.Extensions.OptionsModel;
-using Microsoft.AspNet.Routing;
-using Microsoft.AspNet.Routing.Constraints;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Abstractions;
-using Microsoft.AspNet.Mvc.ActionConstraints;
-using Microsoft.AspNet.Mvc.ApiExplorer;
-using Microsoft.AspNet.Mvc.Controllers;
-using Microsoft.AspNet.Mvc.Formatters;
-using Microsoft.AspNet.Mvc.Routing;
-using Microsoft.AspNet.Mvc.ModelBinding;
-using Microsoft.AspNet.Mvc.ModelBinding.Metadata;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Routing.Constraints;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.ActionConstraints;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Moq;
+using Microsoft.AspNetCore.Mvc.Internal;
+using Microsoft.AspNetCore.Mvc.DataAnnotations.Internal;
 
 namespace Swashbuckle.SwaggerGen.TestFixtures
 {
@@ -62,7 +64,7 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
 
             descriptor.ActionConstraints = new List<IActionConstraintMetadata>();
             if (httpMethod != null)
-                descriptor.ActionConstraints.Add(new HttpMethodConstraint(new[] { httpMethod }));
+                descriptor.ActionConstraints.Add(new HttpMethodActionConstraint(new[] { httpMethod }));
 
             descriptor.AttributeRouteInfo = new AttributeRouteInfo { Template = routeTemplate };
 
@@ -80,7 +82,7 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
                     })
                 .ToList();
 
-            var controllerType = typeof(FakeControllers).GetNestedType(controllerFixtureName);
+            var controllerType = typeof(FakeControllers).GetNestedType(controllerFixtureName, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
             if (controllerType == null)
                 throw new InvalidOperationException(
                     string.Format("{0} is not declared in ControllerFixtures", controllerFixtureName));
@@ -105,7 +107,7 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
             var provider = new DefaultApiDescriptionProvider(
                 optionsAccessor.Object,
                 constraintResolver.Object,
-                CreateModelMetadataProvider()
+                CreateDefaultProvider()
             );
 
             provider.OnProvidersExecuting(context);
@@ -113,21 +115,32 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
             return new ReadOnlyCollection<ApiDescription>(context.Results);
         }
 
-        private IModelMetadataProvider CreateModelMetadataProvider()
+        public IModelMetadataProvider CreateDefaultProvider()
         {
-            var metadataDetailsProvider = new DefaultCompositeMetadataDetailsProvider(
-                new IMetadataDetailsProvider[]
-                {
-                    new DefaultBindingMetadataProvider(new ModelBindingMessageProvider
-                    {
-                        MissingBindRequiredValueAccessor = name => $"A value for the '{ name }' property was not provided.",
-                        MissingKeyOrValueAccessor = () => $"A value is required.",
-                        ValueMustNotBeNullAccessor = value => $"The value '{ value }' is invalid.",
-                    }),
-                    new DataAnnotationsMetadataProvider()
-                }
-            );
-            return new DefaultModelMetadataProvider(metadataDetailsProvider);
+            var detailsProviders = new IMetadataDetailsProvider[]
+            {
+                new DefaultBindingMetadataProvider(CreateMessageProvider()),
+                new DefaultValidationMetadataProvider(),
+                new DataAnnotationsMetadataProvider(),
+                new DataMemberRequiredBindingMetadataProvider(),
+            };
+
+            var compositeDetailsProvider = new DefaultCompositeMetadataDetailsProvider(detailsProviders);
+            return new DefaultModelMetadataProvider(compositeDetailsProvider);
+        }
+
+        private static ModelBindingMessageProvider CreateMessageProvider()
+        {
+            return new ModelBindingMessageProvider
+            {
+                MissingBindRequiredValueAccessor = name => $"A value for the '{ name }' property was not provided.",
+                MissingKeyOrValueAccessor = () => $"A value is required.",
+                ValueMustNotBeNullAccessor = value => $"The value '{ value }' is invalid.",
+                AttemptedValueIsInvalidAccessor = (value, name) => $"The value '{ value }' is not valid for { name }.",
+                UnknownValueIsInvalidAccessor = name => $"The supplied value is invalid for { name }.",
+                ValueIsInvalidAccessor = value => $"The value '{ value }' is invalid.",
+                ValueMustBeANumberAccessor = name => $"The field { name } must be a number.",
+            };
         }
     }
 }

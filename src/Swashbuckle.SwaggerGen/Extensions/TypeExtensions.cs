@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Linq;
-using System.Text;
 using System.Reflection;
-using System.Runtime.Serialization;
+using System.Text;
 
-namespace Swashbuckle.SwaggerGen.Generator
+namespace Swashbuckle.SwaggerGen.Extensions
 {
     public static class TypeExtensions
     {
@@ -29,25 +28,34 @@ namespace Swashbuckle.SwaggerGen.Generator
             return typeName;
         }
 
-        public static string FullNameSansTypeParameters(this Type type)
+        internal static string FullNameSansTypeParameters(this Type type)
         {
             var fullName = type.FullName;
             var chopIndex = fullName.IndexOf("[[");
             return (chopIndex == -1) ? fullName : fullName.Substring(0, chopIndex);
         }
 
-        // Need to figure out dependencies for using [EnumMemberAttribute] in Core
-        //public static string[] GetEnumNamesForSerialization(this Type enumType)
-        //{
-        //    return enumType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
-        //        .Select(fieldInfo =>
-        //        {
-        //            var memberAttribute = fieldInfo.GetCustomAttributes(false).OfType<EnumMemberAttribute>().FirstOrDefault();
-        //            return (memberAttribute == null || string.IsNullOrWhiteSpace(memberAttribute.Value))
-        //                ? fieldInfo.Name
-        //                : memberAttribute.Value;
-        //        })
-        //        .ToArray();
-        //}
+        internal static Type GetNonNullableType(this Type type)
+        {
+            if (!type.IsNullableType())
+                return type;
+
+            return type.GetGenericArguments()[0];
+        }
+
+        internal static bool IsNullableType(this Type type)
+        {
+            return Nullable.GetUnderlyingType(type) != null;
+        }
+
+        internal static bool IsGenericType(this PropertyInfo propInfo)
+        {
+            return IntrospectionExtensions.GetTypeInfo(propInfo.PropertyType).IsGenericType;
+        }
+
+        internal static bool IsEnumType(this Type type)
+        {
+            return IntrospectionExtensions.GetTypeInfo(type.GetNonNullableType()).IsEnum;
+        }
     }
 }

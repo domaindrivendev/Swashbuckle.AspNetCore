@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNet.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CustomizedUi
@@ -15,9 +15,6 @@ namespace CustomizedUi
 
         public void Configure(IApplicationBuilder app)
         {
-            // Add the platform handler to the request pipeline.
-            app.UseIISPlatformHandler();
-
             app.UseStaticFiles();
 
             app.UseMvc();

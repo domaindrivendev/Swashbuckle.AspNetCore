@@ -228,7 +228,7 @@ namespace Swashbuckle.SwaggerGen.Generator
         [InlineData(nameof(FakeActions.ReturnsEnumerable), "200", true)]
         [InlineData(nameof(FakeActions.ReturnsComplexType), "200", true)]
         [InlineData(nameof(FakeActions.ReturnsJObject), "200", true)]
-        [InlineData(nameof(FakeActions.ReturnsActionResult), "200", false)]
+        [InlineData(nameof(FakeActions.ReturnsActionResult), "204", false)]
         public void GetSwagger_SetsResponseStatusCodeAndSchema_AccordingToActionReturnType(
             string actionFixtureName,
             string expectedStatusCode,
