@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Template;
 
-namespace Swashbuckle.Application
+namespace Swashbuckle.SwaggerUi.Application
 {
     public class RedirectMiddleware
     {

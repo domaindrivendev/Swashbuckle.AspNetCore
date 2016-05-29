@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Template;
 
-namespace Swashbuckle.Application
+namespace Swashbuckle.SwaggerUi.Application
 {
     public class SwaggerUiMiddleware
     {
@@ -36,7 +36,7 @@ namespace Swashbuckle.Application
                 return;
             }
 
-            var template = _resourceAssembly.GetManifestResourceStream("Swashbuckle.SwaggerUi.SwaggerUi.index.html");
+            var template = _resourceAssembly.GetManifestResourceStream("Swashbuckle.SwaggerUi.CustomAssets.index.html");
             var content = AssignPlaceholderValuesTo(template);
             RespondWithContentHtml(httpContext.Response, content);
         }

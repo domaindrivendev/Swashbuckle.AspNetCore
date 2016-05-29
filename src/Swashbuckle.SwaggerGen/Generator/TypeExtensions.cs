@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Swashbuckle.SwaggerGen.Extensions
+namespace Swashbuckle.SwaggerGen.Generator
 {
     public static class TypeExtensions
     {

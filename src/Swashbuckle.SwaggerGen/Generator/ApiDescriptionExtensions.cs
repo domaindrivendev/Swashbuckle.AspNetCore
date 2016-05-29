@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using System.Reflection;
 
-namespace Swashbuckle.SwaggerGen.Extensions
+namespace Swashbuckle.SwaggerGen.Generator
 {
     public static class ApiDescriptionExtensions
     {

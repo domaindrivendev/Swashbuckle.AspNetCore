@@ -1,4 +1,4 @@
-﻿using Swashbuckle.SwaggerGen.Extensions;
+﻿using Swashbuckle.SwaggerGen.Generator;
 using System;
 using System.Collections.Generic;
 

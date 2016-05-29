@@ -1,5 +1,4 @@
 ﻿using Swashbuckle.SwaggerGen.Annotations;
-using Swashbuckle.SwaggerGen.TestFixtures.Extensions;
 
 namespace Swashbuckle.SwaggerGen.TestFixtures
 {

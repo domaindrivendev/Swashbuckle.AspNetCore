@@ -2,11 +2,11 @@
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Builder;
 using Swashbuckle.SwaggerGen.Generator;
 using MultipleVersions.Versioning;
 using MultipleVersions.Swagger;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Builder;
 
 namespace MultipleVersions
 {

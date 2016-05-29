@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Swashbuckle.SwaggerGen.TestFixtures.Extensions
+namespace Swashbuckle.SwaggerGen.TestFixtures
 {
     public class DescendingAlphabeticComparer : IComparer<string>
     {

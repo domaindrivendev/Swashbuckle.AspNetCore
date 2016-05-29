@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Swashbuckle.SwaggerGen.Generator;
-using SecuritySchemes.Swagger;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Builder;
+using Swashbuckle.SwaggerGen.Generator;
+using SecuritySchemes.Swagger;
 
 namespace SecuritySchemes
 {

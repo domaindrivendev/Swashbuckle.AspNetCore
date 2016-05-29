@@ -47,6 +47,18 @@ namespace Basic
 
                 c.OperationFilter<AssignOperationVendorExtensions>();
             });
+
+            if (_hostingEnv.IsDevelopment())
+            {
+                services.ConfigureSwaggerGen(c =>
+                {
+                    c.IncludeXmlComments(string.Format(@"{0}/bin/{1}/{2}/Basic.xml",
+                        _hostingEnv.ContentRootPath,
+                        "Debug", // TODO: resolve dynamically
+                        "netcoreapp1.0" // TODO: resolve dynamically
+                    ));
+                });
+            }
         }
 
         // Configure is called after ConfigureServices is called.

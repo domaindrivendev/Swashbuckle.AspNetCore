@@ -6,7 +6,7 @@
   "buildOptions": {
     "embed": [
       "bower_components/**/*.*",
-      "SwaggerUi/index.html"
+      "CustomAssets/index.html"
     ]
   },
 

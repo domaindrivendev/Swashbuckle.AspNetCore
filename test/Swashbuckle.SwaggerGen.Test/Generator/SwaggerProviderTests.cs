@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Xunit;
 using Swashbuckle.SwaggerGen.TestFixtures;
-using Swashbuckle.SwaggerGen.TestFixtures.Extensions;
 
 namespace Swashbuckle.SwaggerGen.Generator
 {

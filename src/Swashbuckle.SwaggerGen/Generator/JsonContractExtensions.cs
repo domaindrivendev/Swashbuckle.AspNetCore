@@ -2,7 +2,7 @@
 using System.Linq;
 using Newtonsoft.Json.Serialization;
 
-namespace Swashbuckle.SwaggerGen.Extensions
+namespace Swashbuckle.SwaggerGen.Generator
 {
     internal static class JsonContractExtensions
     {

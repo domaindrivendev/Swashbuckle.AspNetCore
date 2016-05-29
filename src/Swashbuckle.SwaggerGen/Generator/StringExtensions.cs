@@ -1,4 +1,4 @@
-﻿namespace Swashbuckle.SwaggerGen.Extensions
+﻿namespace Swashbuckle.SwaggerGen.Generator
 {
     internal static class StringExtensions
     {

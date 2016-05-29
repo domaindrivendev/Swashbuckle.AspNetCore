@@ -4,7 +4,6 @@ using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using Swashbuckle.SwaggerGen.Annotations;
-using Swashbuckle.SwaggerGen.TestFixtures.Extensions;
 
 namespace Swashbuckle.SwaggerGen.TestFixtures
 {

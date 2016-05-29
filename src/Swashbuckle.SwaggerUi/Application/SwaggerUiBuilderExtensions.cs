@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using Microsoft.AspNetCore.StaticFiles;
-using Swashbuckle.Application;
 using Microsoft.Extensions.FileProviders;
+using Swashbuckle.SwaggerUi.Application;
 
 namespace Microsoft.AspNetCore.Builder
 {

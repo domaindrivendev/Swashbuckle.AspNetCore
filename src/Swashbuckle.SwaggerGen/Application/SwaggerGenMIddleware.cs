@@ -2,9 +2,9 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Template;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Swashbuckle.SwaggerGen.Generator;
-using Microsoft.AspNetCore.Http;
 
 namespace Swashbuckle.SwaggerGen.Application
 {

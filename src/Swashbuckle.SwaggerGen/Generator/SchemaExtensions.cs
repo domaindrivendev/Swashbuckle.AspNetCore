@@ -4,7 +4,7 @@ using Newtonsoft.Json.Serialization;
 using Swashbuckle.SwaggerGen.Generator;
 using System.Reflection;
 
-namespace Swashbuckle.SwaggerGen.Extensions
+namespace Swashbuckle.SwaggerGen.Generator
 {
     internal static class SchemaExtensions
     {
