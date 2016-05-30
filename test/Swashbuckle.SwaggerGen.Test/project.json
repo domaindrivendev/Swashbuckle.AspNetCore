@@ -11,8 +11,8 @@
     "Microsoft.AspNetCore.TestHost": "1.0.0-rc2-final",
     "Microsoft.AspNetCore.Mvc.DataAnnotations": "1.0.0-rc2-final",
     "Microsoft.AspNetCore.Mvc.Formatters.Xml": "1.0.0-rc2-final",
-    "Swashbuckle.SwaggerGen": "6.0.0-beta2",
-    "Swashbuckle.SwaggerUi": "6.0.0-beta2"
+    "Swashbuckle.SwaggerGen": "6.0.0-beta9",
+    "Swashbuckle.SwaggerUi": "6.0.0-beta9"
   },
   "testRunner": "xunit",
   "frameworks": {

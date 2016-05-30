@@ -2,23 +2,19 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>Swashbuckle</id>
-    <version>6.0.0-rc1-final</version>
-    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <version>6.0.0-beta9</version>
+    <description>Swashbuckle - Swagger components for AspNet Core 1.0</description>
     <authors>Richard Morris</authors>
-    <owners>Richard Morris</owners>
-    <licenseUrl>https://github.com/domaindrivendev/Swashbuckle/LICENSE</licenseUrl>
+    <tags>Swagger Documentation Discovery Help WebApi AspNet AspNetCore</tags>
     <projectUrl>https://github.com/domaindrivendev/Swashbuckle</projectUrl>
-    <description>Swashbuckle - Swagger generator and embedded swagger-ui for WebApi (AspNet 5.0)</description>
-    <summary>Next generation of Swashbuckle, targeting AspNet 5.0 (vNext)</summary>
-    <tags>Swagger Documentation Discovery Help WebApi AspNet vNext</tags>
+    <licenseUrl>https://github.com/domaindrivendev/Swashbuckle/LICENSE</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <summary>Swagger components for next generation of Swashbuckle, targeting AspNet Core 1.0</summary>
+    <owners>Richard Morris</owners>
     <dependencies>
-      <group targetFramework="DNX4.5.1">
-        <dependency id="Swashbuckle.SwaggerGen" version="6.0.0-rc1-final" />
-        <dependency id="Swashbuckle.SwaggerUi" version="6.0.0-rc1-final" />
-      </group>
-      <group targetFramework="DNXCore5.0">
-        <dependency id="Swashbuckle.SwaggerGen" version="6.0.0-rc1-final" />
-        <dependency id="Swashbuckle.SwaggerUi" version="6.0.0-rc1-final" />
+      <group targetFramework=".NETStandard1.0">
+        <dependency id="Swashbuckle.SwaggerGen" version="6.0.0-beta9" />
+        <dependency id="Swashbuckle.SwaggerUi" version="6.0.0-beta9" />
       </group>
     </dependencies>
   </metadata>
