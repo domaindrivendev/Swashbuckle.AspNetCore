@@ -183,7 +183,7 @@ namespace Swashbuckle.SwaggerGen.Generator
                 var nonBodyParam = new NonBodyParameter
                 {
                     Name = paramDesc.Name,
-                    In = source,
+                    In = (source == "form") ? "formData" : source,
                     Required = (source == "path")
                 };
 
