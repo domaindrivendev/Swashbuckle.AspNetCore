@@ -12,9 +12,7 @@
     "CustomizedUi": "1.0.0-*",
     "VirtualDirectory": "1.0.0-*",
     "MultipleVersions": "1.0.0-*",
-    "SecuritySchemes": "1.0.0-*",
-    "Swashbuckle.SwaggerGen": "6.0.0-beta9",
-    "Swashbuckle.SwaggerUi": "6.0.0-beta9"
+    "SecuritySchemes": "1.0.0-*"
   },
   "testRunner": "xunit",
   "frameworks": {

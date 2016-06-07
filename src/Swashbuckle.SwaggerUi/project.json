@@ -1,11 +1,11 @@
 ﻿{
   "version": "6.0.0-beta9",
-  "description": "Swashbuckle - Swagger Generator for AspNet Core 1.0",
+  "description": "Swagger UI component for Swashbuckle - a Swagger toolchain for AspNet Core",
   "authors": [ "Richard Morris" ],
 
   "buildOptions": {
     "embed": [
-      "bower_components/**/*.*",
+      "bower_components/swagger-ui/**/*.*",
       "CustomAssets/index.html"
     ]
   },
@@ -14,7 +14,7 @@
     "tags": [ "Swagger Documentation Discovery Help WebApi AspNet AspNetCore" ],
     "projectUrl": "https://github.com/domaindrivendev/Swashbuckle",
     "licenseUrl": "https://github.com/domaindrivendev/Swashbuckle/LICENSE",
-    "summary": "Swagger Generator component for next generation of Swashbuckle, targeting AspNet Core 1.0"
+    "summary": "Provides an embedded version of the swagger-ui tool that can be served from your application"
   },
 
   "dependencies": {

@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
+using Swashbuckle.Swagger.Model;
 using Swashbuckle.SwaggerGen.Generator;
 
 namespace SecuritySchemes.Swagger

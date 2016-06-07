@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Builder;
-using Swashbuckle.SwaggerGen.Generator;
+using Swashbuckle.Swagger.Model;
 using SecuritySchemes.Swagger;
 
 namespace SecuritySchemes
@@ -55,7 +55,7 @@ namespace SecuritySchemes
             // Add the following route for porting Web API 2 controllers.
             // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
 
-            app.UseSwaggerGen();
+            app.UseSwagger();
             app.UseSwaggerUi();
 
             // TOOD: Figure out oauth middleware to validate token

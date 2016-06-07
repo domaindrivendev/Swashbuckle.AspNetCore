@@ -1,5 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json.Serialization;
+using Swashbuckle.Swagger.Model;
 
 namespace Swashbuckle.SwaggerGen.Generator
 {

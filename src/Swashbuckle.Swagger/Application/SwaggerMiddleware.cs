@@ -1,33 +1,32 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Template;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Swashbuckle.SwaggerGen.Generator;
+using Swashbuckle.Swagger.Model;
 
-namespace Swashbuckle.SwaggerGen.Application
+namespace Swashbuckle.Swagger.Application
 {
-    public class SwaggerGenMiddleware
+    public class SwaggerMiddleware
     {
         private readonly RequestDelegate _next;
         private readonly ISwaggerProvider _swaggerProvider;
-        private readonly TemplateMatcher _requestMatcher;
         private readonly JsonSerializer _swaggerSerializer;
+        private readonly TemplateMatcher _requestMatcher;
 
-        public SwaggerGenMiddleware(
+        public SwaggerMiddleware(
             RequestDelegate next,
             ISwaggerProvider swaggerProvider,
+            IOptions<MvcJsonOptions> mvcJsonOptions,
             string routeTemplate)
         {
             _next = next;
             _swaggerProvider = swaggerProvider;
+            _swaggerSerializer = SwaggerSerializerFactory.Create(mvcJsonOptions);
             _requestMatcher = new TemplateMatcher(TemplateParser.Parse(routeTemplate), new RouteValueDictionary());
-            _swaggerSerializer = new JsonSerializer
-            {
-                NullValueHandling = NullValueHandling.Ignore,
-                ContractResolver = new SwaggerGenContractResolver()
-            };
         }
 
         public async Task Invoke(HttpContext httpContext)

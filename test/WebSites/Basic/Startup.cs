@@ -3,8 +3,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Serialization;
-using Swashbuckle.SwaggerGen.Generator;
+using Swashbuckle.Swagger.Model;
 using Basic.Swagger;
+using Microsoft.Extensions.PlatformAbstractions;
+using System;
+using System.IO;
 
 namespace Basic
 {
@@ -49,11 +52,7 @@ namespace Basic
             {
                 services.ConfigureSwaggerGen(c =>
                 {
-                    c.IncludeXmlComments(string.Format(@"{0}/bin/{1}/{2}/Basic.xml",
-                        _hostingEnv.ContentRootPath,
-                        "Debug", // TODO: resolve dynamically
-                        "netcoreapp1.0" // TODO: resolve dynamically
-                    ));
+                    c.IncludeXmlComments(GetXmlCommentsPath());
                 });
             }
         }
@@ -73,8 +72,14 @@ namespace Basic
             // Add the following route for porting Web API 2 controllers.
             // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
 
-            app.UseSwaggerGen();
+            app.UseSwagger();
             app.UseSwaggerUi();
+        }
+
+        private string GetXmlCommentsPath()
+        {
+            var app = PlatformServices.Default.Application;
+            return Path.Combine(app.ApplicationBasePath, Path.ChangeExtension(app.ApplicationName, "xml"));
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Xunit;
+using Swashbuckle.Swagger.Model;
 using Swashbuckle.SwaggerGen.Generator;
 using Swashbuckle.SwaggerGen.TestFixtures;
 

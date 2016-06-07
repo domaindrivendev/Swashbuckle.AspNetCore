@@ -5,6 +5,7 @@ using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Converters;
+using Swashbuckle.Swagger.Model;
 
 namespace Swashbuckle.SwaggerGen.Generator
 {

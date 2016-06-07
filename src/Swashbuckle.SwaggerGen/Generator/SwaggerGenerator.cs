@@ -2,24 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Swashbuckle.SwaggerGen.Generator;
+using Swashbuckle.Swagger.Model;
 
 namespace Swashbuckle.SwaggerGen.Generator
 {
-    public class SwaggerProvider : ISwaggerProvider
+    public class SwaggerGenerator : ISwaggerProvider
     {
         private readonly IApiDescriptionGroupCollectionProvider _apiDescriptionsProvider;
         private readonly ISchemaRegistryFactory _schemaRegistryFactory;
-        private readonly SwaggerProviderOptions _options;
+        private readonly SwaggerGeneratorOptions _options;
 
-        public SwaggerProvider(
+        public SwaggerGenerator(
             IApiDescriptionGroupCollectionProvider apiDescriptionsProvider,
             ISchemaRegistryFactory schemaRegistryFactory,
-            SwaggerProviderOptions options = null)
+            SwaggerGeneratorOptions options = null)
         {
             _apiDescriptionsProvider = apiDescriptionsProvider;
             _schemaRegistryFactory = schemaRegistryFactory;
-            _options = options ?? new SwaggerProviderOptions();
+            _options = options ?? new SwaggerGeneratorOptions();
         }
 
         public SwaggerDocument GetSwagger(

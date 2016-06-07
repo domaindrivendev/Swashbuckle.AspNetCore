@@ -4,6 +4,7 @@ using System.Linq;
 using System.Xml.XPath;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
+using Swashbuckle.Swagger.Model;
 using Swashbuckle.SwaggerGen.Generator;
 using Swashbuckle.SwaggerGen.Annotations;
 
@@ -11,7 +12,7 @@ namespace Swashbuckle.SwaggerGen.Application
 {
     public class SwaggerGenOptions
     {
-        private readonly SwaggerProviderOptions _swaggerProviderOptions;
+        private readonly SwaggerGeneratorOptions _swaggerGeneratorOptions;
         private readonly SchemaRegistryOptions _schemaRegistryOptions;
 
         private List<FilterDescriptor<IOperationFilter>> _operationFilterDescriptors;
@@ -26,7 +27,7 @@ namespace Swashbuckle.SwaggerGen.Application
 
         public SwaggerGenOptions()
         {
-            _swaggerProviderOptions = new SwaggerProviderOptions();
+            _swaggerGeneratorOptions = new SwaggerGeneratorOptions();
             _schemaRegistryOptions = new SchemaRegistryOptions();
 
             _operationFilterDescriptors = new List<FilterDescriptor<IOperationFilter>>();
@@ -40,34 +41,34 @@ namespace Swashbuckle.SwaggerGen.Application
 
         public void SingleApiVersion(Info info)
         {
-            _swaggerProviderOptions.SingleApiVersion(info);
+            _swaggerGeneratorOptions.SingleApiVersion(info);
         }
 
         public void MultipleApiVersions(
             IEnumerable<Info> apiVersions,
             Func<ApiDescription, string, bool> versionSupportResolver)
         {
-            _swaggerProviderOptions.MultipleApiVersions(apiVersions, versionSupportResolver);
+            _swaggerGeneratorOptions.MultipleApiVersions(apiVersions, versionSupportResolver);
         }
 
         public void IgnoreObsoleteActions()
         {
-            _swaggerProviderOptions.IgnoreObsoleteActions = true;
+            _swaggerGeneratorOptions.IgnoreObsoleteActions = true;
         }
 
         public void GroupActionsBy(Func<ApiDescription, string> groupNameSelector)
         {
-            _swaggerProviderOptions.GroupNameSelector = groupNameSelector;
+            _swaggerGeneratorOptions.GroupNameSelector = groupNameSelector;
         }
 
         public void OrderActionGroupsBy(IComparer<string> groupNameComparer)
         {
-            _swaggerProviderOptions.GroupNameComparer = groupNameComparer;
+            _swaggerGeneratorOptions.GroupNameComparer = groupNameComparer;
         }
 
         public void AddSecurityDefinition(string name, SecurityScheme securityScheme)
         {
-            _swaggerProviderOptions.SecurityDefinitions.Add(name, securityScheme);
+            _swaggerGeneratorOptions.SecurityDefinitions.Add(name, securityScheme);
         }
 
         public void MapType(Type type, Func<Schema> schemaFactory)
@@ -149,9 +150,9 @@ namespace Swashbuckle.SwaggerGen.Application
             return options;
         }
 
-        internal SwaggerProviderOptions GetSwaggerProviderOptions(IServiceProvider serviceProvider)
+        internal SwaggerGeneratorOptions GetSwaggerGeneratorOptions(IServiceProvider serviceProvider)
         {
-            var options = _swaggerProviderOptions.Clone();
+            var options = _swaggerGeneratorOptions.Clone();
 
             foreach (var filter in CreateFilters(_operationFilterDescriptors, serviceProvider))
             {

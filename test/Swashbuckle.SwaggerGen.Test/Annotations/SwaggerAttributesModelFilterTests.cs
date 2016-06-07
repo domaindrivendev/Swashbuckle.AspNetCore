@@ -1,6 +1,7 @@
 ﻿using System;
 using Xunit;
 using Moq;
+using Swashbuckle.Swagger.Model;
 using Swashbuckle.SwaggerGen.Generator;
 using Swashbuckle.SwaggerGen.TestFixtures;
 

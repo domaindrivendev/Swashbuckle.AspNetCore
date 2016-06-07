@@ -3,11 +3,12 @@ using System.Linq;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Xunit;
+using Swashbuckle.Swagger.Model;
 using Swashbuckle.SwaggerGen.TestFixtures;
 
 namespace Swashbuckle.SwaggerGen.Generator
 {
-    public class SwaggerProviderTests
+    public class SwaggerGeneratorTests
     {
         [Fact]
         public void GetSwagger_ReturnsDefaultInfoVersionAndTitle()
@@ -500,17 +501,17 @@ namespace Swashbuckle.SwaggerGen.Generator
                 exception.Message);
         }
 
-        private SwaggerProvider Subject(
+        private SwaggerGenerator Subject(
             Action<FakeApiDescriptionGroupCollectionProvider> setupApis = null,
-            Action<SwaggerProviderOptions> configure = null)
+            Action<SwaggerGeneratorOptions> configure = null)
         {
             var apiDescriptionsProvider = new FakeApiDescriptionGroupCollectionProvider();
             if (setupApis != null) setupApis(apiDescriptionsProvider);
 
-            var options = new SwaggerProviderOptions();
+            var options = new SwaggerGeneratorOptions();
             if (configure != null) configure(options);
 
-            return new SwaggerProvider(
+            return new SwaggerGenerator(
                 apiDescriptionsProvider,
                 new SchemaRegistryFactory(new JsonSerializerSettings(), new SchemaRegistryOptions()),
                 options

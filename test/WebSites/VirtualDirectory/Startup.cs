@@ -39,7 +39,7 @@ namespace VirtualDirectory
                 // Add the following route for porting Web API 2 controllers.
                 // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
 
-                subApp.UseSwaggerGen();
+                subApp.UseSwagger();
                 subApp.UseSwaggerUi(swaggerUrl: "/vdir/swagger/v1/swagger.json");
             });
         }

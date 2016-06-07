@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Swashbuckle.Swagger.Model;
 using Swashbuckle.SwaggerGen.Generator;
 
 namespace Basic.Swagger

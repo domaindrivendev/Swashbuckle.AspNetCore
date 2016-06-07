@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Swashbuckle.SwaggerGen.Generator
+namespace Swashbuckle.Swagger.Model
 {
     public interface ISwaggerProvider
     {

@@ -1,14 +1,17 @@
 ﻿using System;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Swashbuckle.SwaggerGen.Application
+namespace Swashbuckle.Swagger.Application
 {
-    public class SwaggerGenContractResolver : DefaultContractResolver
+    public class SwaggerContractResolver : DefaultContractResolver
     {
+        private readonly JsonSerializer _appJsonSerializer;
         private readonly CamelCasePropertyNamesContractResolver _camelCasePropertyNamesContractResolver;
 
-        public SwaggerGenContractResolver()
+        public SwaggerContractResolver(JsonSerializerSettings appSerializerSettings)
         {
+            _appJsonSerializer = JsonSerializer.Create(appSerializerSettings);
             _camelCasePropertyNamesContractResolver = new CamelCasePropertyNamesContractResolver();
         }
 

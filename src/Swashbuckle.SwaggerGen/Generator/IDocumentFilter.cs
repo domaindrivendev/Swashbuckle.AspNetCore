@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Swashbuckle.Swagger.Model;
 
 namespace Swashbuckle.SwaggerGen.Generator
 {

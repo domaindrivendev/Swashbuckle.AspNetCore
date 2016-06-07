@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Swashbuckle.Swagger.Model;
 using Swashbuckle.SwaggerGen.Generator;
 
 namespace MultipleVersions.Swagger

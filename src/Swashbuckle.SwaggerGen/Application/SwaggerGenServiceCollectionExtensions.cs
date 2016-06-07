@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Options;
+using Swashbuckle.Swagger.Model;
 using Swashbuckle.SwaggerGen.Application;
 using Swashbuckle.SwaggerGen.Generator;
 
@@ -39,10 +40,10 @@ namespace Microsoft.Extensions.DependencyInjection
                 swaggerGenOptions.GetSchemaRegistryOptions(serviceProvider)
             );
 
-            return new SwaggerProvider(
+            return new SwaggerGenerator(
                 apiDescriptionsProvider,
                 schemaRegistryFactory,
-                swaggerGenOptions.GetSwaggerProviderOptions(serviceProvider)
+                swaggerGenOptions.GetSwaggerGeneratorOptions(serviceProvider)
             );
         }
     }

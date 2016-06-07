@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Xml.XPath;
 using Newtonsoft.Json.Serialization;
 using Xunit;
+using Swashbuckle.Swagger.Model;
 using Swashbuckle.SwaggerGen.Generator;
 using Swashbuckle.SwaggerGen.TestFixtures;
 

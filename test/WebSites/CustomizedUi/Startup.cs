@@ -19,7 +19,7 @@ namespace CustomizedUi
 
             app.UseMvc();
 
-            app.UseSwaggerGen();
+            app.UseSwagger();
             app.UseSwaggerUi();
         }
     }

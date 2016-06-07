@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Swashbuckle.Swagger.Model;
 
 namespace Swashbuckle.SwaggerGen.Generator
 {
-    public class SwaggerProviderOptions
+    public class SwaggerGeneratorOptions
     {
-        public SwaggerProviderOptions()
+        public SwaggerGeneratorOptions()
         {
             ApiVersions = new List<Info> { new Info { Version = "v1", Title = "API V1" } };
             GroupNameSelector = (apiDesc) => apiDesc.GroupName;
@@ -51,9 +52,9 @@ namespace Swashbuckle.SwaggerGen.Generator
             VersionSupportResolver = versionSupportResolver;
         }
 
-        internal SwaggerProviderOptions Clone()
+        internal SwaggerGeneratorOptions Clone()
         {
-            return new SwaggerProviderOptions
+            return new SwaggerGeneratorOptions
             {
                 ApiVersions = ApiVersions,
                 VersionSupportResolver = VersionSupportResolver,
