@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Swashbuckle.Swagger.Model;
+using System;
 
 namespace Swashbuckle.Swagger.Application
 {
@@ -15,17 +16,20 @@ namespace Swashbuckle.Swagger.Application
         private readonly RequestDelegate _next;
         private readonly ISwaggerProvider _swaggerProvider;
         private readonly JsonSerializer _swaggerSerializer;
+        private readonly Action<HttpRequest, SwaggerDocument> _documentFilter;
         private readonly TemplateMatcher _requestMatcher;
 
         public SwaggerMiddleware(
             RequestDelegate next,
             ISwaggerProvider swaggerProvider,
             IOptions<MvcJsonOptions> mvcJsonOptions,
+            Action<HttpRequest, SwaggerDocument> documentFilter,
             string routeTemplate)
         {
             _next = next;
             _swaggerProvider = swaggerProvider;
             _swaggerSerializer = SwaggerSerializerFactory.Create(mvcJsonOptions);
+            _documentFilter = documentFilter;
             _requestMatcher = new TemplateMatcher(TemplateParser.Parse(routeTemplate), new RouteValueDictionary());
         }
 
@@ -43,6 +47,9 @@ namespace Swashbuckle.Swagger.Application
                 : httpContext.Request.PathBase.ToString();
 
             var swagger = _swaggerProvider.GetSwagger(apiVersion, null, basePath);
+
+            // One last opportunity to modify the Swagger Document - this time with request context
+            _documentFilter(httpContext.Request, swagger);
 
             RespondWithSwaggerJson(httpContext.Response, swagger);
         }
