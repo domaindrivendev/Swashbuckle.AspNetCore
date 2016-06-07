@@ -10,22 +10,6 @@ namespace Swashbuckle.SwaggerGen.Generator
 {
     public static class ApiDescriptionExtensions
     {
-        public static IEnumerable<object> GetControllerAttributes(this ApiDescription apiDescription)
-        {
-            var actionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
-            return (actionDescriptor != null)
-                ? actionDescriptor.ControllerTypeInfo.GetCustomAttributes(false)
-                : Enumerable.Empty<object>();
-        }
-
-        public static IEnumerable<object> GetActionAttributes(this ApiDescription apiDescription)
-        {
-            var actionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
-            return (actionDescriptor != null)
-                ? actionDescriptor.MethodInfo.GetCustomAttributes(false)
-                : Enumerable.Empty<object>();
-        }
-
         internal static string FriendlyId(this ApiDescription apiDescription)
         {
             var parts = (apiDescription.RelativePathSansQueryString() + "/" + apiDescription.HttpMethod.ToLower())
@@ -45,12 +29,37 @@ namespace Swashbuckle.SwaggerGen.Generator
             return builder.ToString();
         }
 
-        internal static IEnumerable<string> Produces(this ApiDescription apiDescription)
+        internal static IEnumerable<string> SupportedRequestMediaTypes(this ApiDescription apiDescription)
         {
-            return apiDescription.SupportedResponseTypes.SelectMany(x => x.ApiResponseFormats)
-                .Select(format => format.MediaType)
+            return apiDescription.SupportedRequestFormats
+                .Select(requestFormat => requestFormat.MediaType);
+        }
+
+        internal static IEnumerable<string> SupportedResponseMediaTypes(this ApiDescription apiDescription)
+        {
+            return apiDescription.SupportedResponseTypes
+                .SelectMany(responseType => responseType.ApiResponseFormats)
+                .Select(responseFormat => responseFormat.MediaType)
                 .Distinct();
         }
+
+        public static IEnumerable<object> GetControllerAttributes(this ApiDescription apiDescription)
+        {
+            var actionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
+            return (actionDescriptor != null)
+                ? actionDescriptor.ControllerTypeInfo.GetCustomAttributes(false)
+                : Enumerable.Empty<object>();
+        }
+
+        public static IEnumerable<object> GetActionAttributes(this ApiDescription apiDescription)
+        {
+            var actionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
+            return (actionDescriptor != null)
+                ? actionDescriptor.MethodInfo.GetCustomAttributes(false)
+                : Enumerable.Empty<object>();
+        }
+
+
 
         internal static string RelativePathSansQueryString(this ApiDescription apiDescription)
         {

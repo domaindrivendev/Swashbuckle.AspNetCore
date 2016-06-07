@@ -47,10 +47,10 @@ namespace Swashbuckle.SwaggerGen.Generator
         {
             var subject = Subject(setupApis: apis => apis
                 .Add("GET", "collection", nameof(FakeActions.ReturnsEnumerable))
-                .Add("PUT", "collection/{id}", nameof(FakeActions.ReturnsVoid))
-                .Add("POST", "collection", nameof(FakeActions.ReturnsInt))
+                .Add("PUT", "collection/{id}", nameof(FakeActions.AcceptsComplexTypeFromBody))
+                .Add("POST", "collection", nameof(FakeActions.AcceptsComplexTypeFromBody))
                 .Add("DELETE", "collection/{id}", nameof(FakeActions.ReturnsVoid))
-                .Add("PATCH", "collection/{id}", nameof(FakeActions.ReturnsVoid))
+                .Add("PATCH", "collection/{id}", nameof(FakeActions.AcceptsComplexTypeFromBody))
                 // TODO: OPTIONS & HEAD
             );
 
@@ -59,26 +59,31 @@ namespace Swashbuckle.SwaggerGen.Generator
             // GET collection
             var operation = swagger.Paths["/collection"].Get;
             Assert.NotNull(operation);
+            Assert.Empty(operation.Consumes);
             Assert.Equal(new[] { "application/json", "text/json" }, operation.Produces.ToArray());
             Assert.False(operation.Deprecated);
             // PUT collection/{id}
             operation = swagger.Paths["/collection/{id}"].Put;
             Assert.NotNull(operation);
+            Assert.Equal(new[] { "application/json", "text/json" }, operation.Consumes.ToArray());
             Assert.Empty(operation.Produces.ToArray());
             Assert.False(operation.Deprecated);
             // POST collection
             operation = swagger.Paths["/collection"].Post;
             Assert.NotNull(operation);
-            Assert.Equal(new[] { "application/json", "text/json" }, operation.Produces.ToArray());
+            Assert.Equal(new[] { "application/json", "text/json" }, operation.Consumes.ToArray());
+            Assert.Empty(operation.Produces.ToArray());
             Assert.False(operation.Deprecated);
             // DELETE collection/{id}
             operation = swagger.Paths["/collection/{id}"].Delete;
             Assert.NotNull(operation);
+            Assert.Empty(operation.Consumes.ToArray());
             Assert.Empty(operation.Produces.ToArray());
             Assert.False(operation.Deprecated);
             // PATCH collection
             operation = swagger.Paths["/collection/{id}"].Patch;
             Assert.NotNull(operation);
+            Assert.Equal(new[] { "application/json", "text/json" }, operation.Consumes.ToArray());
             Assert.Empty(operation.Produces.ToArray());
             Assert.False(operation.Deprecated);
         }

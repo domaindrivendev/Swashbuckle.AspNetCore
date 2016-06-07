@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections.ObjectModel;
 using System.Reflection;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.AspNetCore.Mvc;
@@ -15,9 +16,9 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
-using Moq;
 using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.AspNetCore.Mvc.DataAnnotations.Internal;
+using Moq;
 
 namespace Swashbuckle.SwaggerGen.TestFixtures
 {
@@ -96,6 +97,7 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
             var context = new ApiDescriptionProviderContext(_actionDescriptors);
 
             var options = new MvcOptions();
+            options.InputFormatters.Add(new JsonInputFormatter(new Mock<ILogger>().Object));
             options.OutputFormatters.Add(new JsonOutputFormatter());
 
             var optionsAccessor = new Mock<IOptions<MvcOptions>>();

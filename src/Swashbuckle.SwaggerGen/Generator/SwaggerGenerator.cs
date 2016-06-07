@@ -148,8 +148,8 @@ namespace Swashbuckle.SwaggerGen.Generator
             {
                 Tags = (groupName != null) ? new[] { groupName } : null,
                 OperationId = apiDescription.FriendlyId(),
-                Produces = apiDescription.Produces().ToList(),
-                //consumes = apiDescription.Consumes().ToList(),
+                Consumes = apiDescription.SupportedRequestMediaTypes().ToList(),
+                Produces = apiDescription.SupportedResponseMediaTypes().ToList(),
                 Parameters = parameters.Any() ? parameters : null, // parameters can be null but not empty
                 Responses = responses,
                 Deprecated = apiDescription.IsObsolete()
