@@ -11,8 +11,9 @@
   },
 
   "dependencies": {
-    "Microsoft.AspNetCore.Mvc": "1.0.0-rc2-final",
     "Microsoft.AspNetCore.Mvc.Core": "1.0.0-rc2-final",
+    "Microsoft.AspNetCore.Mvc.ApiExplorer": "1.0.0-rc2-final",
+    "Microsoft.AspNetCore.Mvc.DataAnnotations": "1.0.0-rc2-final",
     "Swashbuckle.Swagger":  "6.0.0-beta9"
   },
 

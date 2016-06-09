@@ -123,8 +123,7 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
             {
                 new DefaultBindingMetadataProvider(CreateMessageProvider()),
                 new DefaultValidationMetadataProvider(),
-                new DataAnnotationsMetadataProvider(),
-                new DataMemberRequiredBindingMetadataProvider(),
+                new DataAnnotationsMetadataProvider()
             };
 
             var compositeDetailsProvider = new DefaultCompositeMetadataDetailsProvider(detailsProviders);
