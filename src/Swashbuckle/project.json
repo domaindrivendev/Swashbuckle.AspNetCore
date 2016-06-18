@@ -1,0 +1,27 @@
+﻿{
+  "version": "6.0.0-beta9",
+  "description": "Swashbuckle - Swagger components for ASP.NET Core 1.0",
+  "authors": [ "Richard Morris" ],
+
+  "packOptions": {
+    "tags": [ "Swagger Documentation Discovery Help WebApi AspNet AspNetCore" ],
+    "projectUrl": "https://github.com/domaindrivendev/Swashbuckle",
+    "licenseUrl": "https://github.com/domaindrivendev/Swashbuckle/LICENSE",
+    "summary": "Swagger components for next generation of Swashbuckle, targeting AspNet Core 1.0"
+  },
+
+  "dependencies": {
+    "Swashbuckle.SwaggerGen": "6.0.0-*",
+    "Swashbuckle.SwaggerUi": "6.0.0-*"
+  },
+
+  "frameworks": {
+    "netstandard1.5": {
+      "imports": [
+        "dnxcore50",
+        "portable-net451+win8"
+      ]
+    },
+    "net451": { }
+  }
+}
