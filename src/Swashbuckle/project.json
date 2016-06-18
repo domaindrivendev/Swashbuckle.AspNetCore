@@ -7,7 +7,7 @@
     "tags": [ "Swagger Documentation Discovery Help WebApi AspNet AspNetCore" ],
     "projectUrl": "https://github.com/domaindrivendev/Swashbuckle",
     "licenseUrl": "https://github.com/domaindrivendev/Swashbuckle/LICENSE",
-    "summary": "Swagger components for next generation of Swashbuckle, targeting AspNet Core 1.0"
+    "summary": "Swagger components for next generation of Swashbuckle, targeting ASP.NET Core 1.0"
   },
 
   "dependencies": {
