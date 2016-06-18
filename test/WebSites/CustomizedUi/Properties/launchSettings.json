@@ -13,13 +13,13 @@
       "launchBrowser": true,
       "launchUrl": "swagger/ui",
       "environmentVariables": {
-        "ASPNET_ENV": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "web": {
-      "commandName": "web",
+    "CustomizedUi": {
+      "commandName": "Project",
       "environmentVariables": {
-        "ASPNET_ENV": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     }
   }

@@ -1,6 +1,6 @@
 ﻿{
   "version": "6.0.0-beta9",
-  "description": "Core components for Swashbuckle - a Swagger toolchain for AspNet Core",
+  "description": "Core components for Swashbuckle - a Swagger toolchain for ASP.NET Core",
   "authors": [ "Richard Morris" ],
 
   "packOptions": {

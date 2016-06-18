@@ -1,6 +1,7 @@
 {
   "buildOptions": {
-    "warningsAsErrors": true
+    "warningsAsErrors": true,
+    "copyToOutput": "TestFixtures/XmlComments.xml"
   },
   "dependencies": {
     "xunit": "2.1.0",
