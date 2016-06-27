@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Basic.Controllers;
+using Microsoft.Extensions.Logging;
 using Swashbuckle.Swagger.Model;
 using Swashbuckle.SwaggerGen.Generator;
 
@@ -17,9 +18,9 @@ namespace Basic.Swagger
         {
             _logger.LogInformation("Applying an awesome IModelFilter that leverages Dependency Injection");
 
-            model.Default = new
+            model.Default = new Cart
             {
-                Id = "myCartId"
+                Id = 123
             };
         }
     }
