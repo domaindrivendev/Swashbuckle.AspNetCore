@@ -1,27 +1,28 @@
 ﻿{
-  "version": "6.0.0-beta9",
-  "description": "Core components for Swashbuckle - a Swagger toolchain for AspNet Core",
-  "authors": [ "Richard Morris" ],
-
-  "packOptions": {
-    "tags": [ "Swagger Documentation Discovery Help WebApi AspNet AspNetCore" ],
-    "projectUrl": "https://github.com/domaindrivendev/Swashbuckle",
-    "licenseUrl": "https://github.com/domaindrivendev/Swashbuckle/LICENSE",
-    "summary": "Provides a Swagger object model and middleware that can be used to expose Swagger descriptions for your API"
-  },
-
   "dependencies": {
-    "Microsoft.AspNetCore.Mvc.Core": "1.0.0-rc2-final",
-    "Microsoft.AspNetCore.Mvc.Formatters.Json": "1.0.0-rc2-final"
+    "Microsoft.AspNetCore.Mvc.Core": "1.0.0",
+    "Microsoft.AspNetCore.Mvc.Formatters.Json": "1.0.0"
   },
-
+  "description": "Core components for Swashbuckle - a Swagger toolchain for AspNet Core",
   "frameworks": {
-    "netstandard1.5": {
+    "net451": {},
+    "netstandard1.6": {
       "imports": [
         "dnxcore50",
         "portable-net451+win8"
       ]
-    },
-    "net451": { }
-  }
+    }
+  },
+  "packOptions": {
+    "licenseUrl": "https://github.com/domaindrivendev/Swashbuckle/LICENSE",
+    "owners": [
+      "Richard Morris"
+    ],
+    "projectUrl": "https://github.com/domaindrivendev/Swashbuckle",
+    "summary": "Provides a Swagger object model and middleware that can be used to expose Swagger descriptions for your API",
+    "tags": [
+      "Swagger Documentation Discovery Help WebApi AspNet AspNetCore"
+    ]
+  },
+  "version": "6.0.0-rtm1"
 }

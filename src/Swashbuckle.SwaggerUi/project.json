@@ -1,42 +1,42 @@
 ﻿{
-  "version": "6.0.0-beta9",
-  "description": "Swagger UI component for Swashbuckle - a Swagger toolchain for AspNet Core",
-  "authors": [ "Richard Morris" ],
-
   "buildOptions": {
     "embed": [
       "bower_components/swagger-ui/**/*.*",
       "CustomAssets/index.html"
     ]
   },
-
-  "packOptions": {
-    "tags": [ "Swagger Documentation Discovery Help WebApi AspNet AspNetCore" ],
-    "projectUrl": "https://github.com/domaindrivendev/Swashbuckle",
-    "licenseUrl": "https://github.com/domaindrivendev/Swashbuckle/LICENSE",
-    "summary": "Provides an embedded version of the swagger-ui tool that can be served from your application"
-  },
-
   "dependencies": {
-    "Microsoft.AspNetCore.Mvc.Core": "1.0.0-rc2-final",
-    "Microsoft.AspNetCore.StaticFiles": "1.0.0-rc2-final",
-    "Microsoft.Extensions.FileProviders.Embedded": "1.0.0-rc2-final"
+    "Microsoft.AspNetCore.Mvc.Core": "1.0.0",
+    "Microsoft.AspNetCore.StaticFiles": "1.0.0",
+    "Microsoft.Extensions.FileProviders.Embedded": "1.0.0"
   },
-
+  "description": "Swagger UI component for Swashbuckle - a Swagger toolchain for AspNet Core",
   "frameworks": {
-    "netstandard1.5": {
-      "imports": [
-        "dnxcore50",
-        "portable-net451+win8"
-      ],
-      "dependencies": {
-        "System.Xml.XPath": "4.0.1-rc2-24027"
-      }
-    },
     "net451": {
       "frameworkAssemblies": {
         "System.Xml": "4.0.0.0"
       }
+    },
+    "netstandard1.6": {
+      "dependencies": {
+        "System.Xml.XPath": "4.0.1"
+      },
+      "imports": [
+        "dnxcore50",
+        "portable-net451+win8"
+      ]
     }
-  }
+  },
+  "packOptions": {
+    "licenseUrl": "https://github.com/domaindrivendev/Swashbuckle/LICENSE",
+    "owners": [
+      "Richard Morris"
+    ],
+    "projectUrl": "https://github.com/domaindrivendev/Swashbuckle",
+    "summary": "Provides an embedded version of the swagger-ui tool that can be served from your application",
+    "tags": [
+      "Swagger Documentation Discovery Help WebApi AspNet AspNetCore"
+    ]
+  },
+  "version": "6.0.0-rtm1"
 }
