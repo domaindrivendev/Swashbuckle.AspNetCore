@@ -12,11 +12,10 @@
     "MultipleVersions": "1.0.0-*",
     "SecuritySchemes": "1.0.0-*",
     "VirtualDirectory": "1.0.0-*",
-    "dotnet-test-xunit": "1.0.0-rc2-*",
-    "xunit": "2.2.0-beta1-*"
+    "dotnet-test-xunit": "2.2.0-preview2-*",
+    "xunit": "2.2.0-beta2-*"
   },
   "frameworks": {
-    "net451": {},
     "netcoreapp1.0": {
       "dependencies": {
         "Microsoft.NETCore.App": {
