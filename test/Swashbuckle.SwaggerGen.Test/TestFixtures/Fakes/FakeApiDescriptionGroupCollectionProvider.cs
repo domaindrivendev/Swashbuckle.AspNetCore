@@ -97,8 +97,8 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
             var context = new ApiDescriptionProviderContext(_actionDescriptors);
 
             var options = new MvcOptions();
-            options.InputFormatters.Add(new JsonInputFormatter(new Mock<ILogger>().Object));
-            options.OutputFormatters.Add(new JsonOutputFormatter());
+            options.InputFormatters.Add(Mock.Of<JsonInputFormatter>());
+            options.OutputFormatters.Add(Mock.Of<JsonOutputFormatter>());
 
             var optionsAccessor = new Mock<IOptions<MvcOptions>>();
             optionsAccessor.Setup(o => o.Value).Returns(options);
