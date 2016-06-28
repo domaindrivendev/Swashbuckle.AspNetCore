@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections.ObjectModel;
 using System.Reflection;
+using Newtonsoft.Json;
+using Microsoft.Extensions.ObjectPool;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Routing;
@@ -97,8 +100,10 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
             var context = new ApiDescriptionProviderContext(_actionDescriptors);
 
             var options = new MvcOptions();
-            options.InputFormatters.Add(new JsonInputFormatter(new Mock<ILogger>().Object));
-            options.OutputFormatters.Add(new JsonOutputFormatter());
+            var serializerSettings = new JsonSerializerSettings();
+            var objectPoolProvider = new DefaultObjectPoolProvider();
+            options.InputFormatters.Add(new JsonInputFormatter(new Mock<ILogger>().Object, serializerSettings, ArrayPool<char>.Shared, objectPoolProvider));
+            options.OutputFormatters.Add(new JsonOutputFormatter(serializerSettings, ArrayPool<char>.Shared));
 
             var optionsAccessor = new Mock<IOptions<MvcOptions>>();
             optionsAccessor.Setup(o => o.Value).Returns(options);
