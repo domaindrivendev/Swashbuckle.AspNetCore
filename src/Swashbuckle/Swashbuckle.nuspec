@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>Swashbuckle</id>
-    <version>6.0.0-beta9</version>
+    <version>6.0.0-beta10</version>
     <description>Swashbuckle - Swagger components for AspNet Core 1.0</description>
     <authors>Richard Morris</authors>
     <tags>Swagger Documentation Discovery Help WebApi AspNet AspNetCore</tags>
