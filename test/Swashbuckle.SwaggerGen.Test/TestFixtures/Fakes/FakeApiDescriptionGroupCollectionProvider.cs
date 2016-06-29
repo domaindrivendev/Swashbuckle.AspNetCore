@@ -19,6 +19,8 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.AspNetCore.Mvc.DataAnnotations.Internal;
 using Moq;
+using System.Buffers;
+using Microsoft.Extensions.ObjectPool;
 
 namespace Swashbuckle.SwaggerGen.TestFixtures
 {
@@ -91,14 +93,16 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
 
             return descriptor;
         }
-
         private IReadOnlyList<ApiDescription> GetApiDescriptions()
         {
             var context = new ApiDescriptionProviderContext(_actionDescriptors);
 
             var options = new MvcOptions();
-            options.InputFormatters.Add(new JsonInputFormatter(new Mock<ILogger>().Object));
-            options.OutputFormatters.Add(new JsonOutputFormatter());
+            var cfg = JsonSerializerSettingsProvider.CreateSerializerSettings();
+            var apool = ArrayPool<char>.Shared;
+            var opool = new DefaultObjectPoolProvider();
+            options.InputFormatters.Add(new JsonInputFormatter(new Mock<ILogger>().Object, cfg, apool, opool));
+            options.OutputFormatters.Add(new JsonOutputFormatter(cfg, apool));
 
             var optionsAccessor = new Mock<IOptions<MvcOptions>>();
             optionsAccessor.Setup(o => o.Value).Returns(options);
@@ -116,7 +120,6 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
             provider.OnProvidersExecuted(context);
             return new ReadOnlyCollection<ApiDescription>(context.Results);
         }
-
         public IModelMetadataProvider CreateDefaultProvider()
         {
             var detailsProviders = new IMetadataDetailsProvider[]

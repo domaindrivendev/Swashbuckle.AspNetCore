@@ -1,0 +1,457 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "v1",
+    "title": "Swashbuckle Sample API",
+    "description": "A sample API for testing Swashbuckle",
+    "termsOfService": "Some terms ..."
+  },
+  "host": "localhost",
+  "basePath": "/",
+  "paths": {
+    "/products": {
+      "get": {
+        "tags": [ "CrudActions" ],
+        "operationId": "ProductsGet",
+        "consumes": [],
+        "produces": [ "application/json" ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/Product" }
+            }
+          }
+        },
+        "deprecated": false,
+        "x-purpose": "test"
+      },
+      "post": {
+        "tags": [ "CrudActions" ],
+        "operationId": "ProductsPost",
+        "consumes": [ "application/json", "text/json", "application/json-patch+json" ],
+        "produces": [ "application/json" ],
+        "parameters": [
+          {
+            "name": "product",
+            "in": "body",
+            "required": false,
+            "schema": { "$ref": "#/definitions/Product" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-purpose": "test"
+      }
+    },
+    "/products/{id}": {
+      "get": {
+        "tags": [ "CrudActions" ],
+        "operationId": "ProductsByIdGet",
+        "consumes": [],
+        "produces": [ "application/json" ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/Product" }
+          }
+        },
+        "deprecated": false,
+        "x-purpose": "test"
+      },
+      "put": {
+        "tags": [ "CrudActions" ],
+        "operationId": "ProductsByIdPut",
+        "consumes": [ "application/json", "text/json", "application/json-patch+json" ],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "product",
+            "in": "body",
+            "required": false,
+            "schema": { "$ref": "#/definitions/Product" }
+          }
+        ],
+        "responses": { "204": { "description": "No Content" } },
+        "deprecated": false,
+        "x-purpose": "test"
+      },
+      "delete": {
+        "tags": [ "CrudActions" ],
+        "operationId": "ProductsByIdDelete",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": { "204": { "description": "No Content" } },
+        "deprecated": false,
+        "x-purpose": "test"
+      },
+      "patch": {
+        "tags": [ "CrudActions" ],
+        "operationId": "ProductsByIdPatch",
+        "consumes": [ "application/json", "text/json", "application/json-patch+json" ],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "updates",
+            "in": "body",
+            "required": false,
+            "schema": {
+              "type": "object",
+              "additionalProperties": { "type": "object" }
+            }
+          }
+        ],
+        "responses": { "204": { "description": "No Content" } },
+        "deprecated": false,
+        "x-purpose": "test"
+      }
+    },
+    "/payments/authorize": {
+      "post": {
+        "tags": [ "DataAnnotations" ],
+        "operationId": "PaymentsAuthorizePost",
+        "consumes": [ "application/json", "text/json", "application/json-patch+json" ],
+        "produces": [ "application/json" ],
+        "parameters": [
+          {
+            "name": "request",
+            "in": "body",
+            "required": false,
+            "schema": { "$ref": "#/definitions/PaymentRequest" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-purpose": "test"
+      }
+    },
+    "/kittens": {
+      "post": {
+        "tags": [ "DynamicTypes" ],
+        "operationId": "KittensPost",
+        "consumes": [ "application/json", "text/json", "application/json-patch+json" ],
+        "produces": [ "application/json" ],
+        "parameters": [
+          {
+            "name": "kitten",
+            "in": "body",
+            "required": false,
+            "schema": { "type": "object" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "format": "int32",
+              "type": "integer"
+            }
+          }
+        },
+        "deprecated": false,
+        "x-purpose": "test"
+      }
+    },
+    "/unicorns": {
+      "get": {
+        "tags": [ "DynamicTypes" ],
+        "operationId": "UnicornsGet",
+        "consumes": [],
+        "produces": [ "application/json" ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "additionalProperties": { "type": "object" }
+            }
+          }
+        },
+        "deprecated": false,
+        "x-purpose": "test"
+      }
+    },
+    "/dragons": {
+      "post": {
+        "tags": [ "DynamicTypes" ],
+        "operationId": "DragonsPost",
+        "consumes": [ "application/json", "text/json", "application/json-patch+json" ],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "dragon",
+            "in": "body",
+            "required": false,
+            "schema": { "type": "object" }
+          }
+        ],
+        "responses": { "204": { "description": "No Content" } },
+        "deprecated": false,
+        "x-purpose": "test"
+      }
+    },
+    "/wizards": {
+      "get": {
+        "tags": [ "DynamicTypes" ],
+        "operationId": "WizardsGet",
+        "consumes": [],
+        "produces": [ "application/json" ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": { "type": "object" }
+            }
+          }
+        },
+        "deprecated": false,
+        "x-purpose": "test"
+      }
+    },
+    "/adresses/valdidate": {
+      "get": {
+        "tags": [ "FromQueryParams" ],
+        "operationId": "AdressesValdidateGet",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "Country",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "City",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": { "204": { "description": "No Content" } },
+        "deprecated": false,
+        "x-purpose": "test"
+      }
+    },
+    "/zip-codes/valdidate": {
+      "get": {
+        "tags": [ "FromQueryParams" ],
+        "operationId": "Zip-codesValdidateGet",
+        "consumes": [],
+        "produces": [],
+        "parameters": [
+          {
+            "name": "zipCodes",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": { "type": "string" },
+            "collectionFormat": "multi"
+          }
+        ],
+        "responses": { "204": { "description": "No Content" } },
+        "deprecated": false,
+        "x-purpose": "test"
+      }
+    },
+    "/promotions": {
+      "get": {
+        "tags": [ "JsonAnnotations" ],
+        "operationId": "PromotionsGet",
+        "consumes": [],
+        "produces": [ "application/json" ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#/definitions/Promotion" }
+            }
+          }
+        },
+        "deprecated": false,
+        "x-purpose": "test"
+      }
+    },
+    "/carts": {
+      "post": {
+        "tags": [ "SwaggerAnnotated" ],
+        "operationId": "CreateCart",
+        "consumes": [ "application/json", "text/json", "application/json-patch+json" ],
+        "produces": [ "text/plain", "application/json", "text/json" ],
+        "parameters": [
+          {
+            "name": "cart",
+            "in": "body",
+            "required": false,
+            "schema": { "$ref": "#/definitions/Cart" }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Cart created",
+            "schema": { "$ref": "#/definitions/Cart" }
+          }
+        },
+        "deprecated": false,
+        "x-purpose": "test"
+      }
+    },
+    "/carts/{id}": {
+      "get": {
+        "tags": [ "SwaggerAnnotated" ],
+        "operationId": "GetCartById",
+        "consumes": [],
+        "produces": [ "text/plain", "application/json", "text/json" ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": { "$ref": "#/definitions/Cart" }
+          },
+          "404": { "description": "Cart not found" }
+        },
+        "deprecated": false,
+        "x-purpose": "test"
+      }
+    }
+  },
+  "definitions": {
+    "Product": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "format": "int32",
+          "type": "integer"
+        },
+        "description": { "type": "string" },
+        "status": {
+          "format": "int32",
+          "enum": [ 0, 1, 2 ],
+          "type": "integer"
+        }
+      }
+    },
+    "PaymentRequest": {
+      "required": [ "transaction", "creditCard" ],
+      "type": "object",
+      "properties": {
+        "transaction": { "$ref": "#/definitions/Transaction" },
+        "creditCard": { "$ref": "#/definitions/CreditCard" }
+      }
+    },
+    "Transaction": {
+      "required": [ "amount" ],
+      "type": "object",
+      "properties": {
+        "amount": {
+          "format": "double",
+          "type": "number"
+        },
+        "note": { "type": "string" }
+      }
+    },
+    "CreditCard": {
+      "required": [ "cardNumber", "expMonth", "expYear" ],
+      "type": "object",
+      "properties": {
+        "cardNumber": {
+          "pattern": "^[3-6]?\\d{12,15}$",
+          "type": "string"
+        },
+        "expMonth": {
+          "format": "int32",
+          "maximum": 12,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "expYear": {
+          "format": "int32",
+          "maximum": 99,
+          "minimum": 14,
+          "type": "integer"
+        }
+      }
+    },
+    "Promotion": {
+      "type": "object",
+      "properties": {
+        "promo-code": { "type": "string" },
+        "discountType": {
+          "enum": [ "Percentage", "Amount" ],
+          "type": "string"
+        }
+      }
+    },
+    "Cart": {
+      "default": { "id": -1 },
+      "type": "object",
+      "properties": {
+        "id": {
+          "format": "int32",
+          "type": "integer",
+          "readOnly": true
+        }
+      }
+    }
+  },
+  "securityDefinitions": {}
+}
