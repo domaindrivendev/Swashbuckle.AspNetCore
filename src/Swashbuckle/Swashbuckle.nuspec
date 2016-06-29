@@ -2,19 +2,19 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>Swashbuckle</id>
-    <version>6.0.0-beta9</version>
-    <description>Swashbuckle - Swagger components for AspNet Core 1.0</description>
+    <version>6.0.0-rc-001</version>
+    <description>Swashbuckle - Swagger components for ASP.NET Core</description>
     <authors>Richard Morris</authors>
-    <tags>Swagger Documentation Discovery Help WebApi AspNet AspNetCore</tags>
+    <tags>swagger documentation discovery help webapi aspnet aspnetcore</tags>
     <projectUrl>https://github.com/domaindrivendev/Swashbuckle</projectUrl>
     <licenseUrl>https://github.com/domaindrivendev/Swashbuckle/LICENSE</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <summary>Swagger components for next generation of Swashbuckle, targeting AspNet Core 1.0</summary>
+    <summary>Swagger components for next generation of Swashbuckle, targeting ASP.NET Core 1.0</summary>
     <owners>Richard Morris</owners>
     <dependencies>
       <group targetFramework=".NETStandard1.0">
-        <dependency id="Swashbuckle.SwaggerGen" version="6.0.0-beta9" />
-        <dependency id="Swashbuckle.SwaggerUi" version="6.0.0-beta9" />
+        <dependency id="Swashbuckle.SwaggerGen" version="6.0.0-rc-001" />
+        <dependency id="Swashbuckle.SwaggerUi" version="6.0.0-rc-001" />
       </group>
     </dependencies>
   </metadata>
