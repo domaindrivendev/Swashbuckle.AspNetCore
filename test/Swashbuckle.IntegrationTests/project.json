@@ -4,10 +4,9 @@
   },
   "dependencies": {
     "xunit": "2.1.0",
-    "dotnet-test-xunit": "1.0.0-*",
-    "Microsoft.NETCore.Platforms": "1.0.1-*",
-    "Microsoft.AspNetCore.Mvc": "1.0.0-rc2-final",
-    "Microsoft.AspNetCore.TestHost": "1.0.0-rc2-final",
+    "Microsoft.NETCore.Platforms": "1.0.1",
+    "Microsoft.AspNetCore.Mvc": "1.0.0",
+    "Microsoft.AspNetCore.TestHost": "1.0.0",
     "Basic": "1.0.0-*",
     "CustomizedUi": "1.0.0-*",
     "VirtualDirectory": "1.0.0-*",
@@ -18,8 +17,9 @@
   "frameworks": {
     "netcoreapp1.0": {
       "imports": [
+        "dotnet5.6",
         "dnxcore50",
-        "portable-net451+win8"
+        "portable-net45+win8"
       ],
       "dependencies": {
         "Microsoft.NETCore.App": {

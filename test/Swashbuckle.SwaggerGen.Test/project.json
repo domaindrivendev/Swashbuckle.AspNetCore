@@ -4,27 +4,28 @@
   },
   "dependencies": {
     "xunit": "2.1.0",
-    "dotnet-test-xunit": "1.0.0-*",
-    "Microsoft.NETCore.Platforms": "1.0.1-*",
-    "Microsoft.AspNetCore.Mvc.Core": "1.0.0-rc2-final",
-    "Microsoft.AspNetCore.Mvc.DataAnnotations": "1.0.0-rc2-final",
-    "Swashbuckle.SwaggerGen": "6.0.0-beta9",
-    "Swashbuckle.SwaggerUi": "6.0.0-beta9"
+    "dotnet-test-xunit": "1.0.0-rc2-build10015",
+    "Microsoft.NETCore.Platforms": "1.0.1",
+    "Microsoft.AspNetCore.Mvc.Core": "1.0.0",
+    "Microsoft.AspNetCore.Mvc.DataAnnotations": "1.0.0",
+    "Swashbuckle.SwaggerGen": "6.0.0-beta10",
+    "Swashbuckle.SwaggerUi": "6.0.0-beta10"
   },
   "testRunner": "xunit",
   "frameworks": {
     "netcoreapp1.0": {
       "imports": [
+        "dotnet5.6",
         "dnxcore50",
-        "portable-net451+win8"
+        "portable-net45+win8"
       ],
       "dependencies": {
         "Microsoft.NETCore.App": {
-          "version": "1.0.0-*",
+          "version": "1.0.0",
           "type": "platform"
         },
         "moq.netcore": "4.4.0-beta8",
-        "System.Diagnostics.TraceSource": "4.0.0-rc2-24027"
+        "System.Diagnostics.TraceSource": "4.0.0"
       }
     },
     "net451": {
