@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
 using System.Collections.ObjectModel;
@@ -18,7 +19,9 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.AspNetCore.Mvc.DataAnnotations.Internal;
+using Microsoft.Extensions.ObjectPool;
 using Moq;
+using Newtonsoft.Json;
 
 namespace Swashbuckle.SwaggerGen.TestFixtures
 {
@@ -97,8 +100,8 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
             var context = new ApiDescriptionProviderContext(_actionDescriptors);
 
             var options = new MvcOptions();
-            options.InputFormatters.Add(new JsonInputFormatter(new Mock<ILogger>().Object));
-            options.OutputFormatters.Add(new JsonOutputFormatter());
+            options.InputFormatters.Add(new JsonInputFormatter(new Mock<ILogger>().Object, new JsonSerializerSettings(), ArrayPool<char>.Shared, new DefaultObjectPoolProvider()));
+            options.OutputFormatters.Add(new JsonOutputFormatter(new JsonSerializerSettings(), ArrayPool<char>.Shared));
 
             var optionsAccessor = new Mock<IOptions<MvcOptions>>();
             optionsAccessor.Setup(o => o.Value).Returns(options);

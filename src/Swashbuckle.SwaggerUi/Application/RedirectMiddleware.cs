@@ -36,8 +36,9 @@ namespace Swashbuckle.SwaggerUi.Application
         {
             if (request.Method != "GET") return false;
 
-            var routeValues = _requestMatcher.Match(request.Path);
-            return (routeValues != null);
+            var routeValues = new RouteValueDictionary();
+            return _requestMatcher.TryMatch(request.Path, routeValues);
+            //return (routeValues != null);
         }
 
         private void RespondWithRedirect(HttpResponse response, string pathBase)
