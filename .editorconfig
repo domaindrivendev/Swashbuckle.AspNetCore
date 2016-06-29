@@ -1,0 +1,28 @@
+; EditorConfig to support per-solution formatting.
+; Use the EditorConfig VS add-in to make this work.
+; http://editorconfig.org/
+
+; This is the default for the codeline.
+root = true
+
+[*]
+end_of_line = CRLF
+
+[*.{config,cs,xml}]
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+
+[*.{proj,props,sln,targets}]
+indent_style = tab
+trim_trailing_whitespace = true
+
+[*.{kproj,csproj,json,ps1,psd1,psm1,resx,rst}]
+indent_style = space
+indent_size = 2
+trim_trailing_whitespace = true
+
+[NuGet.Config]
+indent_style = space
+indent_size = 2
+trim_trailing_whitespace = true
