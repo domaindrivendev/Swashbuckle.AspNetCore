@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Basic.Controllers;
+using Microsoft.Extensions.Logging;
 using Swashbuckle.Swagger.Model;
 using Swashbuckle.SwaggerGen.Generator;
 
@@ -19,7 +20,7 @@ namespace Basic.Swagger
 
             model.Default = new
             {
-                Id = "myCartId"
+                Id = 123
             };
         }
     }

@@ -1,27 +1,34 @@
 ﻿{
-  "version": "6.0.0-beta9",
-  "description": "Core components for Swashbuckle - a Swagger toolchain for AspNet Core",
-  "authors": [ "Richard Morris" ],
-
+  "version": "6.0.0-beta901",
+  "description": "Core components for Swashbuckle - a Swagger toolchain for ASP.NET Core",
   "packOptions": {
-    "tags": [ "Swagger Documentation Discovery Help WebApi AspNet AspNetCore" ],
-    "projectUrl": "https://github.com/domaindrivendev/Swashbuckle",
     "licenseUrl": "https://github.com/domaindrivendev/Swashbuckle/LICENSE",
-    "summary": "Provides a Swagger object model and middleware that can be used to expose Swagger descriptions for your API"
+    "owners": [
+      "Richard Morris"
+    ],
+    "projectUrl": "https://github.com/domaindrivendev/Swashbuckle",
+    "summary": "Provides a Swagger object model and middleware that can be used to expose Swagger descriptions for your API.",
+    "tags": [
+      "swagger",
+      "documentation",
+      "discovery",
+      "help",
+      "webapi",
+      "aspnet",
+      "aspnetcore"
+    ]
   },
-
   "dependencies": {
-    "Microsoft.AspNetCore.Mvc.Core": "1.0.0-rc2-final",
-    "Microsoft.AspNetCore.Mvc.Formatters.Json": "1.0.0-rc2-final"
+    "Microsoft.AspNetCore.Mvc.Core": "1.0.0",
+    "Microsoft.AspNetCore.Mvc.Formatters.Json": "1.0.0"
   },
-
   "frameworks": {
-    "netstandard1.5": {
+    "net451": {},
+    "netstandard1.6": {
       "imports": [
         "dnxcore50",
         "portable-net451+win8"
       ]
-    },
-    "net451": { }
+    }
   }
 }
