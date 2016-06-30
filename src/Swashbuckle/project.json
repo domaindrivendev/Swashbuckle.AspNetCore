@@ -1,5 +1,5 @@
 ﻿{
-  "version": "6.0.0-beta9",
+  "version": "6.0.0-beta901",
   "description": "Swashbuckle - Swagger components for ASP.NET Core 1.0",
   "authors": [ "Richard Morris" ],
 
@@ -16,7 +16,7 @@
   },
 
   "frameworks": {
-    "netstandard1.5": {
+    "netstandard1.6": {
       "imports": [
         "dnxcore50",
         "portable-net451+win8"

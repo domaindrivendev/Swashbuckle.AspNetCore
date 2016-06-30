@@ -3,5 +3,5 @@
 .vs/
 bower_components/
 project.lock.json
-*.userartifacts/
+*.user
 artifacts/
