@@ -18,7 +18,7 @@ namespace Basic.Swagger
         {
             _logger.LogInformation("Applying an awesome IModelFilter that leverages Dependency Injection");
 
-            model.Default = new Cart
+            model.Default = new
             {
                 Id = 123
             };

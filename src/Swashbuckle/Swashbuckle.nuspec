@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>Swashbuckle</id>
-    <version>6.0.0-rc-001</version>
+    <version>6.0.0-beta901</version>
     <description>Swashbuckle - Swagger components for ASP.NET Core</description>
     <authors>Richard Morris</authors>
     <tags>swagger documentation discovery help webapi aspnet aspnetcore</tags>
@@ -13,8 +13,8 @@
     <owners>Richard Morris</owners>
     <dependencies>
       <group targetFramework=".NETStandard1.0">
-        <dependency id="Swashbuckle.SwaggerGen" version="6.0.0-rc-001" />
-        <dependency id="Swashbuckle.SwaggerUi" version="6.0.0-rc-001" />
+        <dependency id="Swashbuckle.SwaggerGen" version="6.0.0-beta901" />
+        <dependency id="Swashbuckle.SwaggerUi" version="6.0.0-beta901" />
       </group>
     </dependencies>
   </metadata>
