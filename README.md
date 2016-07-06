@@ -69,7 +69,7 @@ Sorry :( - still in progress but coming real soon! For now, take a look at the s
 
 - https://github.com/domaindrivendev/Ahoy/tree/master/test/WebSites/Basic
 - https://github.com/domaindrivendev/Ahoy/tree/master/test/WebSites/CustomizedUi
-- https://github.com/domaindrivendev/Ahoy/tree/master/test/WebSites/MulipleVersions
+- https://github.com/domaindrivendev/Ahoy/tree/master/test/WebSites/MultipleVersions
 - https://github.com/domaindrivendev/Ahoy/tree/master/test/WebSites/SecuritySchemes
 - https://github.com/domaindrivendev/Ahoy/tree/master/test/WebSites/VirtualDirectory
 
