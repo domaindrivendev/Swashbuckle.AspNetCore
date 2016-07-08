@@ -1,5 +1,5 @@
 ﻿{
-  "version": "6.0.0-beta10",
+  "version": "6.0.0-beta91",
   "description": "Swagger UI component for Swashbuckle - a Swagger toolchain for AspNet Core",
   "authors": [ "Richard Morris" ],
 
@@ -30,8 +30,7 @@
         "portable-net451+win8"
       ],
       "dependencies": {
-        "NETStandard.Library": "1.6.0",
-        "System.Xml.XPath": "4.0.1-rc2-24027"
+        "NETStandard.Library": "1.6.0"
       }
     },
     "net451": {

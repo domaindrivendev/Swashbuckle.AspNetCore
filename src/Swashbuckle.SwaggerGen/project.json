@@ -1,5 +1,5 @@
 {
-  "version": "6.0.0-beta10",
+  "version": "6.0.0-beta91",
   "description": "Swagger Generator component for Swashbuckle - a Swagger toolchain for AspNet Core",
   "authors": [ "Richard Morris" ],
 
@@ -14,7 +14,7 @@
     "Microsoft.AspNetCore.Mvc.Core": "1.0.0",
     "Microsoft.AspNetCore.Mvc.ApiExplorer": "1.0.0",
     "Microsoft.AspNetCore.Mvc.DataAnnotations": "1.0.0",
-    "Swashbuckle.Swagger": "6.0.0-beta10"
+    "Swashbuckle.Swagger": "6.0.0-beta91"
   },
 
   "frameworks": {
