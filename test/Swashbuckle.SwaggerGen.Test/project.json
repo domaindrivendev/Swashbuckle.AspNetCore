@@ -1,5 +1,8 @@
 {
   "buildOptions": {
+    "embed": [
+      "TestFixtures/XmlComments.xml"
+    ],
     "warningsAsErrors": true
   },
   "dependencies": {
