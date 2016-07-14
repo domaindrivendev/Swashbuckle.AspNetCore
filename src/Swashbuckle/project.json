@@ -1,6 +1,7 @@
 ﻿{
   "version": "6.0.0-beta901",
   "description": "Swashbuckle - Swagger components for ASP.NET Core",
+
   "packOptions": {
     "licenseUrl": "https://github.com/domaindrivendev/Swashbuckle/LICENSE",
     "owners": [
@@ -18,11 +19,13 @@
       "aspnetcore"
     ]
   },
+
   "dependencies": {
     "Swashbuckle.Swagger": "6.0.0-beta901",
     "Swashbuckle.SwaggerGen": "6.0.0-beta901",
     "Swashbuckle.SwaggerUi": "6.0.0-beta901"
   },
+
   "frameworks": {
     "net451": {},
     "netstandard1.6": {

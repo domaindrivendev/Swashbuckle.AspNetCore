@@ -1,6 +1,11 @@
 ﻿{
   "version": "6.0.0-beta901",
   "description": "Core components for Swashbuckle - a Swagger toolchain for ASP.NET Core",
+
+  "buildOptions": {
+    "keyFile": "Swashbuckle.Swagger.snk"
+  },
+
   "packOptions": {
     "licenseUrl": "https://github.com/domaindrivendev/Swashbuckle/LICENSE",
     "owners": [
@@ -18,10 +23,12 @@
       "aspnetcore"
     ]
   },
+
   "dependencies": {
     "Microsoft.AspNetCore.Mvc.Core": "1.0.0",
     "Microsoft.AspNetCore.Mvc.Formatters.Json": "1.0.0"
   },
+
   "frameworks": {
     "net451": {},
     "netstandard1.6": {

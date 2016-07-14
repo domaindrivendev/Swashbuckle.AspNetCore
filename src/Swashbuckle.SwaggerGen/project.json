@@ -1,6 +1,11 @@
 {
   "version": "6.0.0-beta901",
   "description": "Swagger generator component for Swashbuckle - a Swagger toolchain for ASP.NET Core.",
+
+  "buildOptions": {
+    "keyFile": "Swashbuckle.SwaggerGen.snk"
+  },
+
   "packOptions": {
     "licenseUrl": "https://github.com/domaindrivendev/Swashbuckle/LICENSE",
     "owners": [
@@ -18,12 +23,14 @@
       "aspnetcore"
     ]
   },
+
   "dependencies": {
     "Microsoft.AspNetCore.Mvc.ApiExplorer": "1.0.0",
     "Microsoft.AspNetCore.Mvc.Core": "1.0.0",
     "Microsoft.AspNetCore.Mvc.DataAnnotations": "1.0.0",
     "Swashbuckle.Swagger": "6.0.0-beta901"
   },
+
   "frameworks": {
     "net451": {
       "frameworkAssemblies": {
