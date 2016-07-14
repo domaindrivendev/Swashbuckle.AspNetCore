@@ -1,7 +1,9 @@
 {
   "buildOptions": {
     "emitEntryPoint": true,
-    "preserveCompilationContext": true
+    "preserveCompilationContext": true,
+    "xmlDoc": true,
+    "nowarn": [ "1591" ]
   },
   "dependencies": {
     "Microsoft.AspNetCore.Authentication.Cookies": "1.0.0",

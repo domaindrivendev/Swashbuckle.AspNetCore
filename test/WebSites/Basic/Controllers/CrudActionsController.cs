@@ -20,11 +20,11 @@ namespace Basic.Controllers
         }
 
         /// <summary>
-        /// Returns the collection of all products
+        /// Searches the collection of products by description key words
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public IEnumerable<Product> GetAll()
+        public IEnumerable<Product> Search([FromQuery]string keywords = null)
         {
             return new[]
             {
@@ -76,7 +76,7 @@ namespace Basic.Controllers
 
     public enum ProductStatus
     {
-        Unknown = 0,
+        All = 0,
         [Display(Name = "Out Of Stock")]
         OutOfStock = 1,
         InStock = 2

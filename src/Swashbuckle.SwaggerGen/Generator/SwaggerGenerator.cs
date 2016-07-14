@@ -53,7 +53,7 @@ namespace Swashbuckle.SwaggerGen.Generator
 
             var filterContext = new DocumentFilterContext(
                 _apiDescriptionsProvider.ApiDescriptionGroups,
-                null);
+                schemaRegistry);
 
             foreach (var filter in _options.DocumentFilters)
             {
