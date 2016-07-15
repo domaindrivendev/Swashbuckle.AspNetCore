@@ -1,23 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.SwaggerGen.Annotations;
 using Basic.Swagger;
+using System.Collections.Generic;
 
 namespace Basic.Controllers
 {
-    public class SwaggerAnnotatedController
+    public class SwaggerAnnotationsController
     {
         [SwaggerOperation("CreateCart")]
-        [SwaggerResponseRemoveDefaults]
-        [SwaggerResponse(201, "Cart created", typeof(Cart))]
         [HttpPost("/carts")]
         public Cart Create([FromBody]Cart cart)
         {
             return new Cart { Id = 1 };
         }
 
-        [SwaggerOperation("GetCartById")]
-        [SwaggerResponse(404, "Cart not found")]
         [HttpGet("/carts/{id}")]
+        [SwaggerOperationFilter(typeof(AddCartsByIdGetExternalDocs))]
         public Cart GetById(int id)
         {
             return new Cart { Id = id };

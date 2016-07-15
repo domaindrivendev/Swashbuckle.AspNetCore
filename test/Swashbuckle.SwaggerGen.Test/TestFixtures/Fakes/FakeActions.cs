@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using Swashbuckle.SwaggerGen.Annotations;
@@ -82,23 +81,21 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
         /// </remarks>
         /// <param name="param1">description for parma1</param>
         /// <param name="param2">description for param2</param>
+        /// <response code="200">description for 200</param>
+        /// <response code="400">description for 400</param>
         public void AnnotatedWithXml(int param1, IEnumerable<ComplexType> param2)
         { }
+            
+        [ProducesResponseType(typeof(void), 204)]
+        [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
+        public IActionResult AnnotatedWithResponseTypeAttributes()
+        {
+            throw new NotImplementedException();
+        }
 
         [SwaggerOperation("CustomOperationId", Tags = new[] { "customTag" }, Schemes = new[] { "customScheme" })]
         public void AnnotatedWithSwaggerOperation()
         { }
-
-        [SwaggerResponseRemoveDefaults]
-        public void AnnotatedWithSwaggerResponseRemoveDefaults()
-        {}
-
-        [SwaggerResponse(HttpStatusCode.OK, "Action defined 200", typeof(int))]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "Action defined 400", typeof(int))]
-        public int AnnotatedWithSwaggerResponses(ComplexType param)
-        {
-            throw new NotImplementedException();
-        }
 
         [SwaggerOperationFilter(typeof(VendorExtensionsOperationFilter))]
         public void AnnotatedWithSwaggerOperationFilter()

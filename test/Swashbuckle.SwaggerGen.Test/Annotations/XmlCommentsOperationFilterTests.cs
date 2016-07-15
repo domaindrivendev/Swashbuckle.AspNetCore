@@ -13,10 +13,13 @@ namespace Swashbuckle.SwaggerGen.Annotations
     {
         [Theory]
         [InlineData(nameof(FakeActions.AnnotatedWithXml))]
-        public void Apply_SetsSummaryAndDescription_FromSummaryAndRemarksTags(
+        public void Apply_SetsSummaryAndDescriptionFromSummaryAndRemarksTags(
             string actionFixtureName)
         {
-            var operation = new Operation();
+            var operation = new Operation
+            {
+                Responses = new Dictionary<string, Response>()
+            };
             var filterContext = FilterContextFor(actionFixtureName);
 
             Subject().Apply(operation, filterContext);
@@ -26,7 +29,7 @@ namespace Swashbuckle.SwaggerGen.Annotations
         }
 
         [Fact]
-        public void Apply_SetsParameterDescriptions_FromParamTags()
+        public void Apply_SetsParameterDescriptionsFromParamTags()
         {
             var operation = new Operation
             {
@@ -34,7 +37,8 @@ namespace Swashbuckle.SwaggerGen.Annotations
                 {
                     new NonBodyParameter { Name = "param1" },
                     new NonBodyParameter { Name = "param2" }
-                }
+                },
+                Responses = new Dictionary<string, Response>()
             };
             var filterContext = FilterContextFor(nameof(FakeActions.AnnotatedWithXml));
 
@@ -42,6 +46,45 @@ namespace Swashbuckle.SwaggerGen.Annotations
 
             Assert.Equal("description for param1", operation.Parameters.First().Description);
             Assert.Equal("description for param2", operation.Parameters.Last().Description);
+        }
+
+        [Fact]
+        public void Apply_OverwritesResponseDescriptionFromResponseTag_IfResponsePresent()
+        {
+            var operation = new Operation
+            {
+                Responses = new Dictionary<string, Response>
+                {
+                    { "200", new Response { Description = "Success", Schema = new Schema { Ref = "#/definitions/foo" } } },
+                    { "400", new Response { Description = "Client Error", Schema = new Schema { Ref = "#/definitions/bar" } } }
+                }
+            };
+            var filterContext = FilterContextFor(nameof(FakeActions.AnnotatedWithXml));
+
+            Subject().Apply(operation, filterContext);
+
+            Assert.Equal("description for 200", operation.Responses["200"].Description);
+            Assert.NotNull(operation.Responses["200"].Schema.Ref);
+            Assert.Equal("description for 400", operation.Responses["400"].Description);
+            Assert.NotNull(operation.Responses["400"].Schema.Ref);
+        }
+
+        [Fact]
+        public void Apply_AddsResponseWithDescriptionFromResponseTag_IfResponseNotPresent()
+        {
+            var operation = new Operation
+            {
+                Responses = new Dictionary<string, Response>
+                {
+                    { "200", new Response { Description = "Success", Schema = new Schema { Ref = "#/definitions/foo" } } },
+                }
+            };
+            var filterContext = FilterContextFor(nameof(FakeActions.AnnotatedWithXml));
+
+            Subject().Apply(operation, filterContext);
+
+            Assert.Equal(new[] { "200", "400" }, operation.Responses.Keys.ToArray());
+            Assert.Equal("description for 400", operation.Responses["400"].Description);
         }
 
         private OperationFilterContext FilterContextFor(string actionFixtureName)

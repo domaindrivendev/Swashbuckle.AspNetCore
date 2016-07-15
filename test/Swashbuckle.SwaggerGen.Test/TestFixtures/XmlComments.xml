@@ -13,6 +13,8 @@
       </remarks>
       <param name="param1">description for param1</param>
       <param name="param2">description for param2</param>
+      <response code="200">description for 200</response>
+      <response code="400">description for 400</response>
     </member>
     <member name="M:Swashbuckle.SwaggerGen.TestFixtures.FakeActions.AnnotatedWithXmlAndAcceptsGenericArray(System.Collections.Generic.KeyValuePair{System.String,System.String}[])">
       <summary>

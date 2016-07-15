@@ -12,6 +12,7 @@ namespace Swashbuckle.SwaggerGen.Annotations
         private const string SummaryTag = "summary";
         private const string RemarksTag = "remarks";
         private const string ParameterTag = "param";
+        private const string ResponseTag = "response";
 
         private readonly XPathNavigator _xmlNavigator;
 
@@ -38,6 +39,8 @@ namespace Swashbuckle.SwaggerGen.Annotations
                 operation.Description = remarksNode.ExtractContent();
 
             ApplyParamComments(operation, methodNode);
+
+            ApplyResponseComments(operation, methodNode);
         }
 
         private static void ApplyParamComments(Operation operation, XPathNavigator methodNode)
@@ -52,6 +55,22 @@ namespace Swashbuckle.SwaggerGen.Annotations
                     .SingleOrDefault(param => param.Name == paramNode.GetAttribute("name", ""));
                 if (parameter != null)
                     parameter.Description = paramNode.ExtractContent();
+            }
+        }
+
+        private static void ApplyResponseComments(Operation operation, XPathNavigator methodNode)
+        {
+            var responseNodes = methodNode.Select(ResponseTag);
+            while (responseNodes.MoveNext())
+            {
+                var responseNode = responseNodes.Current;
+                var code = responseNode.GetAttribute("code", "");
+
+                var response = operation.Responses.ContainsKey(code)
+                    ? operation.Responses[code]
+                    : operation.Responses[code] = new Response();
+
+                response.Description = responseNode.ExtractContent();
             }
         }
     }

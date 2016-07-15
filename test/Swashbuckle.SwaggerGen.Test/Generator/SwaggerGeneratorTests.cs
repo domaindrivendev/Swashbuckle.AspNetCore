@@ -229,28 +229,48 @@ namespace Swashbuckle.SwaggerGen.Generator
         }
 
         [Theory]
-        [InlineData(nameof(FakeActions.ReturnsVoid), "204", false)]
-        [InlineData(nameof(FakeActions.ReturnsEnumerable), "200", true)]
-        [InlineData(nameof(FakeActions.ReturnsComplexType), "200", true)]
-        [InlineData(nameof(FakeActions.ReturnsJObject), "200", true)]
-        [InlineData(nameof(FakeActions.ReturnsActionResult), "204", false)]
-        public void GetSwagger_SetsResponseStatusCodeAndSchema_AccordingToActionReturnType(
+        [InlineData(nameof(FakeActions.ReturnsVoid), "200", "Success", false)]
+        [InlineData(nameof(FakeActions.ReturnsEnumerable), "200", "Success", true)]
+        [InlineData(nameof(FakeActions.ReturnsComplexType), "200", "Success", true)]
+        [InlineData(nameof(FakeActions.ReturnsJObject), "200", "Success", true)]
+        [InlineData(nameof(FakeActions.ReturnsActionResult), "200", "Success", false)]
+        public void GetSwagger_SetsResponseFromReturnType_IfResponseTypeAttributesNotPresent(
             string actionFixtureName,
             string expectedStatusCode,
-            bool expectsSchema)
+            string expectedDescriptions,
+            bool expectASchema)
         {
             var subject = Subject(setupApis: apis =>
                 apis.Add("GET", "collection", actionFixtureName));
 
             var swagger = subject.GetSwagger("v1");
-
+            
             var responses = swagger.Paths["/collection"].Get.Responses;
             Assert.Equal(new[] { expectedStatusCode }, responses.Keys.ToArray());
             var response = responses[expectedStatusCode];
-            if (expectsSchema)
+            Assert.Equal(expectedDescriptions, response.Description);
+            if (expectASchema)
                 Assert.NotNull(response.Schema);
             else
                 Assert.Null(response.Schema);
+        }
+
+        [Fact]
+        public void GetSwagger_SetsResponsesFromResponseTypeAttributes_IfResponseTypeAttributesPresent()
+        {
+            var subject = Subject(setupApis: apis =>
+                apis.Add("GET", "collection", nameof(FakeActions.AnnotatedWithResponseTypeAttributes)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var responses = swagger.Paths["/collection"].Get.Responses;
+            Assert.Equal(new[] { "204", "400" }, responses.Keys.ToArray());
+            var response1 = responses["204"];
+            Assert.Equal("Success", response1.Description);
+            Assert.Null(response1.Schema);
+            var response2 = responses["400"];
+            Assert.Equal("Client Error", response2.Description);
+            Assert.NotNull(response2.Schema);
         }
 
         [Fact]

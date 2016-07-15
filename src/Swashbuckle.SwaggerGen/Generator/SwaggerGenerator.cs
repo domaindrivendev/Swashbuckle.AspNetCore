@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Swashbuckle.Swagger.Model;
 
@@ -135,14 +136,12 @@ namespace Swashbuckle.SwaggerGen.Generator
                 .Select(paramDesc => CreateParameter(paramDesc, schemaRegistry))
                 .ToList();
 
-            var responses = new Dictionary<string, Response>();
-            if (!apiDescription.SupportedResponseTypes.Any())
-                responses.Add("204", new Response { Description = "No Content" });
-            else
-            {
-                var description = apiDescription.SupportedResponseTypes.OrderBy(responseType => responseType.StatusCode).FirstOrDefault();
-                responses.Add("200", CreateSuccessResponse(description.Type, schemaRegistry));
-            }
+            var responses = apiDescription.SupportedResponseTypes
+                .DefaultIfEmpty(new ApiResponseType { StatusCode = 200 })
+                .ToDictionary(
+                    apiResponseType => apiResponseType.StatusCode.ToString(),
+                    apiResponseType => CreateResponse(apiResponseType, schemaRegistry)
+                 );
 
             var operation = new Operation
             {
@@ -199,15 +198,28 @@ namespace Swashbuckle.SwaggerGen.Generator
             }
         }
 
-        private Response CreateSuccessResponse(Type responseType, ISchemaRegistry schemaRegistry)
+        private Response CreateResponse(ApiResponseType apiResponseType, ISchemaRegistry schemaRegistry)
         {
+            var description = ResponseDescriptionMap
+                .FirstOrDefault((entry) => Regex.IsMatch(apiResponseType.StatusCode.ToString(), entry.Key))
+                .Value;
+
             return new Response
             {
-                Description = "OK",
-                Schema = (responseType != null)
-                    ? schemaRegistry.GetOrRegister(responseType)
+                Description = description,
+                Schema = (apiResponseType.Type != null && apiResponseType.Type != typeof(void))
+                    ? schemaRegistry.GetOrRegister(apiResponseType.Type)
                     : null
             };
         }
+
+        private static readonly Dictionary<string, string> ResponseDescriptionMap = new Dictionary<string, string>
+        {
+            { "1\\d{2}", "Information" },
+            { "2\\d{2}", "Success" },
+            { "3\\d{2}", "Redirect" },
+            { "4\\d{2}", "Client Error" },
+            { "5\\d{2}", "Server Error" }
+        };
     }
 }
