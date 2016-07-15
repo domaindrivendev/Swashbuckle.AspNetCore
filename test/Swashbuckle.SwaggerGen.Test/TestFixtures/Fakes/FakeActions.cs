@@ -81,6 +81,8 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
         /// </remarks>
         /// <param name="param1">description for parma1</param>
         /// <param name="param2">description for param2</param>
+        /// <response code="200">description for 200</param>
+        /// <response code="400">description for 400</param>
         public void AnnotatedWithXml(int param1, IEnumerable<ComplexType> param2)
         { }
             

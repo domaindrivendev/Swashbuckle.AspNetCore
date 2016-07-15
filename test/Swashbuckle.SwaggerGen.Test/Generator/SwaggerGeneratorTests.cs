@@ -260,7 +260,7 @@ namespace Swashbuckle.SwaggerGen.Generator
         {
             var subject = Subject(setupApis: apis =>
                 apis.Add("GET", "collection", nameof(FakeActions.AnnotatedWithResponseTypeAttributes)));
-            $
+
             var swagger = subject.GetSwagger("v1");
 
             var responses = swagger.Paths["/collection"].Get.Responses;

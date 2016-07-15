@@ -6,8 +6,14 @@ namespace Basic.Controllers
 {
     [Route("/orders")]
     [Produces("application/json")]
-    public class ResponseTypeAnnotatedController
+    public class ResponseTypeAnnotationsController
     {
+        /// <summary>
+        /// Creates an order 
+        /// </summary>
+        /// <param name="order"></param>
+        /// <response code="201">Order created</response>
+        /// <response code="400">Order invalid</response>
         [HttpPost]
         [ProducesResponseType(typeof(int), 201)]
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
