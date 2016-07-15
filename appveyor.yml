@@ -1,0 +1,14 @@
+version: 1.0.{build}
+os: Visual Studio 2015
+before_build:
+- ps: >-
+    dnvm install 1.0.0-beta8 -Alias default
+
+    dnu restore
+build:
+  verbosity: minimal
+test_script:
+- cmd: >-
+    cd test\Swashbuckle.Test
+
+    dnx test
