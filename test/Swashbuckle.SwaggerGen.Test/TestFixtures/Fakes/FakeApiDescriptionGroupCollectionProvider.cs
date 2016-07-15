@@ -22,6 +22,7 @@ using Moq;
 using Newtonsoft.Json;
 using System.Buffers;
 using Microsoft.Extensions.ObjectPool;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Swashbuckle.SwaggerGen.TestFixtures
 {
@@ -91,6 +92,10 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
                 throw new InvalidOperationException(
                     string.Format("{0} is not declared in ControllerFixtures", controllerFixtureName));
             descriptor.ControllerTypeInfo = controllerType.GetTypeInfo();
+
+            descriptor.FilterDescriptors = descriptor.MethodInfo.GetCustomAttributes<ProducesResponseTypeAttribute>()
+                .Select((filter) => new FilterDescriptor(filter, FilterScope.Action))
+                .ToList();
 
             return descriptor;
         }
