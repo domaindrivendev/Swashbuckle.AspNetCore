@@ -34,7 +34,11 @@ namespace Swashbuckle.SwaggerGen.Annotations
                 var jsonProperty = context.JsonObjectContract.Properties[entry.Key];
                 if (jsonProperty == null) continue;
 
-                ApplyPropertyComments(entry.Value, jsonProperty.PropertyInfo());
+                var propertyInfo = jsonProperty.PropertyInfo();
+                if (propertyInfo != null)
+                {
+                    ApplyPropertyComments(entry.Value, propertyInfo);
+                }
             }
         }
 
