@@ -34,7 +34,7 @@ namespace Swashbuckle.SwaggerGen.Annotations
                 var jsonProperty = context.JsonObjectContract.Properties[entry.Key];
                 if (jsonProperty == null) continue;
 
-                var propertyInfo = context.JsonObjectContract.UnderlyingType.GetProperty(jsonProperty.UnderlyingName);
+                var propertyInfo = jsonProperty.PropertyInfo();
                 if (propertyInfo != null)
                 {
                     ApplyPropertyComments(entry.Value, propertyInfo);
