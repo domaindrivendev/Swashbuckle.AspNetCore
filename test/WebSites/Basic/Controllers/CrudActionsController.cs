@@ -9,8 +9,18 @@ namespace Basic.Controllers
     public class CrudActionsController
     {
         /// <summary>
-        /// Creates a product
+        /// Creates a <paramref name="product"/>
         /// </summary>
+        /// <remarks>
+        /// ## Heading 1
+        /// 
+        ///     POST /products
+        ///     {
+        ///         "id": "123",
+        ///         "description": "Some product"
+        ///     }
+        /// 
+        /// </remarks>
         /// <param name="product"></param>
         /// <returns></returns>
         [HttpPost]

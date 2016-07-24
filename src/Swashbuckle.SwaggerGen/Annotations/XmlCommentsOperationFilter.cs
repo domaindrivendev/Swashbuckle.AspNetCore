@@ -32,11 +32,11 @@ namespace Swashbuckle.SwaggerGen.Annotations
 
             var summaryNode = methodNode.SelectSingleNode(SummaryTag);
             if (summaryNode != null)
-                operation.Summary = summaryNode.ExtractContent();
+                operation.Summary = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
 
             var remarksNode = methodNode.SelectSingleNode(RemarksTag);
             if (remarksNode != null)
-                operation.Description = remarksNode.ExtractContent();
+                operation.Description = XmlCommentsTextHelper.Humanize(remarksNode.InnerXml);
 
             ApplyParamComments(operation, methodNode);
 
@@ -54,7 +54,7 @@ namespace Swashbuckle.SwaggerGen.Annotations
                 var parameter = operation.Parameters
                     .SingleOrDefault(param => param.Name == paramNode.GetAttribute("name", ""));
                 if (parameter != null)
-                    parameter.Description = paramNode.ExtractContent();
+                    parameter.Description = XmlCommentsTextHelper.Humanize(paramNode.InnerXml);
             }
         }
 
@@ -70,7 +70,7 @@ namespace Swashbuckle.SwaggerGen.Annotations
                     ? operation.Responses[code]
                     : operation.Responses[code] = new Response();
 
-                response.Description = responseNode.ExtractContent();
+                response.Description = XmlCommentsTextHelper.Humanize(responseNode.InnerXml);
             }
         }
     }

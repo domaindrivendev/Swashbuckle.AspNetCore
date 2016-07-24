@@ -8,14 +8,16 @@ namespace Swashbuckle.SwaggerGen.Annotations
         private static Regex ParamPattern = new Regex(@"<(see|paramref) (name|cref)=""([TPF]{1}:)?(?<display>.+?)"" />");
         private static Regex ConstPattern = new Regex(@"<c>(?<display>.+?)</c>");
 
-        public static string ExtractContent(this XPathNavigator node)
-        {
-            if (node == null) return null;
+        //public static string ExtractContent(this XPathNavigator node)
+        //{
+        //    if (node == null) return null;
 
-            return ConstPattern.Replace(
-                ParamPattern.Replace(node.InnerXml, GetParamRefName),
-                GetConstRefName).Trim();
-        }
+        //    return XmlCommentsTextHelper.Prepare(
+        //        ConstPattern.Replace(
+        //            ParamPattern.Replace(node.InnerXml, GetParamRefName),
+        //            GetConstRefName).Trim()
+        //        );
+        //}
 
         private static string GetConstRefName(Match match)
         {

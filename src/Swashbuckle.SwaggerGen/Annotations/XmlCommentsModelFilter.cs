@@ -26,7 +26,7 @@ namespace Swashbuckle.SwaggerGen.Annotations
             {
                 var summaryNode = typeNode.SelectSingleNode(SummaryTag);
                 if (summaryNode != null)
-                    model.Description = summaryNode.ExtractContent();
+                    model.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
             }
 
             foreach (var entry in model.Properties)
@@ -52,7 +52,7 @@ namespace Swashbuckle.SwaggerGen.Annotations
             var summaryNode = propertyNode.SelectSingleNode(SummaryTag);
             if (summaryNode != null)
             {
-                propertySchema.Description = summaryNode.ExtractContent();
+                propertySchema.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
             }
         }
     }
