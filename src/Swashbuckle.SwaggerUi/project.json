@@ -1,6 +1,15 @@
 ﻿{
   "version": "6.0.0-beta901",
   "description": "Swagger UI component for Swashbuckle - a Swagger toolchain for ASP.NET Core.",
+
+  "buildOptions": {
+    "embed": [
+      "bower_components/swagger-ui/**/*.*",
+      "CustomAssets/index.html"
+    ],
+    "keyFile": "Swashbuckle.SwaggerUi.snk"
+  },
+
   "packOptions": {
     "licenseUrl": "https://github.com/domaindrivendev/Swashbuckle/LICENSE",
     "owners": [
@@ -18,17 +27,13 @@
       "aspnetcore"
     ]
   },
-  "buildOptions": {
-    "embed": [
-      "bower_components/swagger-ui/**/*.*",
-      "CustomAssets/index.html"
-    ]
-  },
+
   "dependencies": {
     "Microsoft.AspNetCore.Mvc.Core": "1.0.0",
     "Microsoft.AspNetCore.StaticFiles": "1.0.0",
     "Microsoft.Extensions.FileProviders.Embedded": "1.0.0"
   },
+
   "frameworks": {
     "net451": {
       "frameworkAssemblies": {
