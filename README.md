@@ -54,7 +54,7 @@ Next, you'll need to configure Swagger in your _Startup.cs_.
     }
     
 
-Once this is done, you should be able to spin up you app and browse browse the following Swagger JSON and UI endpoints respectively:
+Once this is done, you should be able to spin up you app and browse the following Swagger JSON and UI endpoints respectively:
 
 ***\<your-root-url\>/swagger/v1/swagger.json***
 
