@@ -22,7 +22,7 @@ namespace Basic.Controllers
         }
     }
 
-    [SwaggerModelFilter(typeof(AddCartDefault))]
+    [SwaggerSchemaFilter(typeof(AddCartDefault))]
     public class Cart
     {
         public int Id { get; internal set; }

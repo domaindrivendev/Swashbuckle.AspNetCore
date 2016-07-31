@@ -1,24 +1,28 @@
 ﻿using System.Xml.XPath;
 using System.Reflection;
+using Newtonsoft.Json.Serialization;
 using Swashbuckle.SwaggerGen.Generator;
 using Swashbuckle.Swagger.Model;
 
 namespace Swashbuckle.SwaggerGen.Annotations
 {
-    public class XmlCommentsModelFilter : IModelFilter
+    public class XmlCommentsSchemaFilter : ISchemaFilter
     {
         private const string MemberXPath = "/doc/members/member[@name='{0}']";
         private const string SummaryTag = "summary";
 
         private readonly XPathNavigator _xmlNavigator;
 
-        public XmlCommentsModelFilter(XPathDocument xmlDoc)
+        public XmlCommentsSchemaFilter(XPathDocument xmlDoc)
         {
             _xmlNavigator = xmlDoc.CreateNavigator();
         }
 
-        public void Apply(Schema model, ModelFilterContext context)
+        public void Apply(Schema schema, SchemaFilterContext context)
         {
+            var jsonObjectContract = context.JsonContract as JsonObjectContract;
+            if (jsonObjectContract == null) return;
+
             var commentId = XmlCommentsIdHelper.GetCommentIdForType(context.SystemType);
             var typeNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, commentId));
 
@@ -26,12 +30,12 @@ namespace Swashbuckle.SwaggerGen.Annotations
             {
                 var summaryNode = typeNode.SelectSingleNode(SummaryTag);
                 if (summaryNode != null)
-                    model.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
+                    schema.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
             }
 
-            foreach (var entry in model.Properties)
+            foreach (var entry in schema.Properties)
             {
-                var jsonProperty = context.JsonObjectContract.Properties[entry.Key];
+                var jsonProperty = jsonObjectContract.Properties[entry.Key];
                 if (jsonProperty == null) continue;
 
                 var propertyInfo = jsonProperty.PropertyInfo();

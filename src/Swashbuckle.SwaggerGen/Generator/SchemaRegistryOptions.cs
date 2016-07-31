@@ -10,7 +10,7 @@ namespace Swashbuckle.SwaggerGen.Generator
         {
             CustomTypeMappings = new Dictionary<Type, Func<Schema>>();
             SchemaIdSelector = (type) => type.FriendlyId(false);
-            ModelFilters = new List<IModelFilter>();
+            SchemaFilters = new List<ISchemaFilter>();
         }
 
         public IDictionary<Type, Func<Schema>> CustomTypeMappings { get; private set; }
@@ -23,7 +23,7 @@ namespace Swashbuckle.SwaggerGen.Generator
 
         public bool IgnoreObsoleteProperties { get; set; }
 
-        public IList<IModelFilter> ModelFilters { get; private set; }
+        public IList<ISchemaFilter> SchemaFilters { get; private set; }
 
         internal SchemaRegistryOptions Clone()
         {
@@ -34,7 +34,7 @@ namespace Swashbuckle.SwaggerGen.Generator
                 DescribeStringEnumsInCamelCase = DescribeStringEnumsInCamelCase,
                 IgnoreObsoleteProperties = IgnoreObsoleteProperties,
                 SchemaIdSelector = SchemaIdSelector,
-                ModelFilters = ModelFilters
+                SchemaFilters = SchemaFilters
             };
         }
     }

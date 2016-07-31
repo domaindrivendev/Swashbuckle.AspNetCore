@@ -3,9 +3,9 @@
 namespace Swashbuckle.SwaggerGen.Annotations
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class SwaggerModelFilterAttribute : Attribute
+    public class SwaggerSchemaFilterAttribute : Attribute
     {
-        public SwaggerModelFilterAttribute(Type type)
+        public SwaggerSchemaFilterAttribute(Type type)
         {
             Type = type;
             Arguments = new object[]{ };

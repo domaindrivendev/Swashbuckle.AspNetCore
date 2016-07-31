@@ -1,11 +1,10 @@
-﻿using Basic.Controllers;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Swashbuckle.Swagger.Model;
 using Swashbuckle.SwaggerGen.Generator;
 
 namespace Basic.Swagger
 {
-    public class AddCartDefault : IModelFilter
+    public class AddCartDefault : ISchemaFilter
     {
         private ILogger<AddCartDefault> _logger;
 
@@ -14,11 +13,11 @@ namespace Basic.Swagger
             _logger = logger;
         }
 
-        public void Apply(Schema model, ModelFilterContext context)
+        public void Apply(Schema schema, SchemaFilterContext context)
         {
-            _logger.LogInformation("Applying an awesome IModelFilter that leverages Dependency Injection");
+            _logger.LogInformation("Applying an awesome Schema Filter that leverages Dependency Injection");
 
-            model.Default = new
+            schema.Default = new
             {
                 Id = 123
             };

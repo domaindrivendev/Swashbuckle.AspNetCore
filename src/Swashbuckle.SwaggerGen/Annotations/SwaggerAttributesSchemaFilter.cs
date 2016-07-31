@@ -7,24 +7,24 @@ using Swashbuckle.SwaggerGen.Generator;
 
 namespace Swashbuckle.SwaggerGen.Annotations
 {
-    public class SwaggerAttributesModelFilter : IModelFilter
+    public class SwaggerAttributesSchemaFilter : ISchemaFilter
     {
         private readonly IServiceProvider _serviceProvider;
 
-        public SwaggerAttributesModelFilter(IServiceProvider serviceProvider)
+        public SwaggerAttributesSchemaFilter(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }
 
-        public void Apply(Schema model, ModelFilterContext context)
+        public void Apply(Schema schema, SchemaFilterContext context)
         {
             var typeInfo = context.SystemType.GetTypeInfo();
-            var attributes = typeInfo.GetCustomAttributes(false).OfType<SwaggerModelFilterAttribute>();
+            var attributes = typeInfo.GetCustomAttributes(false).OfType<SwaggerSchemaFilterAttribute>();
 
             foreach (var attr in attributes)
             {
-                var filter = (IModelFilter)ActivatorUtilities.CreateInstance(_serviceProvider, attr.Type, attr.Arguments);
-                filter.Apply(model, context);
+                var filter = (ISchemaFilter)ActivatorUtilities.CreateInstance(_serviceProvider, attr.Type, attr.Arguments);
+                filter.Apply(schema, context);
             }
         }
     }

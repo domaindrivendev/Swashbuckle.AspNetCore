@@ -17,7 +17,7 @@ namespace Swashbuckle.SwaggerGen.Application
 
         private List<FilterDescriptor<IOperationFilter>> _operationFilterDescriptors;
         private List<FilterDescriptor<IDocumentFilter>> _documentFilterDescriptors;
-        private List<FilterDescriptor<IModelFilter>> _modelFilterDescriptors;
+        private List<FilterDescriptor<ISchemaFilter>> _schemaFilterDescriptors;
 
         private struct FilterDescriptor<TFilter>
         {
@@ -32,11 +32,11 @@ namespace Swashbuckle.SwaggerGen.Application
 
             _operationFilterDescriptors = new List<FilterDescriptor<IOperationFilter>>();
             _documentFilterDescriptors = new List<FilterDescriptor<IDocumentFilter>>();
-            _modelFilterDescriptors = new List<FilterDescriptor<IModelFilter>>();
+            _schemaFilterDescriptors = new List<FilterDescriptor<ISchemaFilter>>();
 
             // Enable Annotations
             OperationFilter<SwaggerAttributesOperationFilter>();
-            ModelFilter<SwaggerAttributesModelFilter>();
+            SchemaFilter<SwaggerAttributesSchemaFilter>();
         }
 
         public void SingleApiVersion(Info info)
@@ -121,10 +121,10 @@ namespace Swashbuckle.SwaggerGen.Application
             });
         }
 
-        public void ModelFilter<TFilter>(params object[] parameters)
-            where TFilter : IModelFilter
+        public void SchemaFilter<TFilter>(params object[] parameters)
+            where TFilter : ISchemaFilter
         {
-            _modelFilterDescriptors.Add(new FilterDescriptor<IModelFilter>
+            _schemaFilterDescriptors.Add(new FilterDescriptor<ISchemaFilter>
             {
                 Type = typeof(TFilter),
                 Arguments = parameters
@@ -135,16 +135,16 @@ namespace Swashbuckle.SwaggerGen.Application
         {
             var xmlDoc = new XPathDocument(xmlDocPath);
             OperationFilter<XmlCommentsOperationFilter>(xmlDoc);
-            ModelFilter<XmlCommentsModelFilter>(xmlDoc);
+            SchemaFilter<XmlCommentsSchemaFilter>(xmlDoc);
         }
 
         internal SchemaRegistryOptions GetSchemaRegistryOptions(IServiceProvider serviceProvider)
         {
             var options = _schemaRegistryOptions.Clone();
 
-            foreach (var filter in CreateFilters(_modelFilterDescriptors, serviceProvider))
+            foreach (var filter in CreateFilters(_schemaFilterDescriptors, serviceProvider))
             {
-                options.ModelFilters.Add(filter);
+                options.SchemaFilters.Add(filter);
             }
 
             return options;

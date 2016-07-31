@@ -10,7 +10,7 @@ using Swashbuckle.SwaggerGen.TestFixtures;
 
 namespace Swashbuckle.SwaggerGen.Annotations
 {
-    public class XmlCommentsModelFilterTests
+    public class XmlCommentsSchemaFilterTests
     {
         [Theory]
         [InlineData(typeof(XmlAnnotatedType), "summary for XmlAnnotatedType")]
@@ -54,19 +54,19 @@ namespace Swashbuckle.SwaggerGen.Annotations
             Assert.Equal(expectedDescription, schema.Properties[propertyName].Description);
         }
 
-        private ModelFilterContext FilterContextFor(Type type)
+        private SchemaFilterContext FilterContextFor(Type type)
         {
             var jsonObjectContract = new DefaultContractResolver().ResolveContract(type);
-            return new ModelFilterContext(type, (jsonObjectContract as JsonObjectContract), null);
+            return new SchemaFilterContext(type, (jsonObjectContract as JsonObjectContract), null);
         }
 
-        private XmlCommentsModelFilter Subject()
+        private XmlCommentsSchemaFilter Subject()
         {
             var xmlComments = GetType().GetTypeInfo()
                 .Assembly
                 .GetManifestResourceStream("Swashbuckle.SwaggerGen.Test.TestFixtures.XmlComments.xml");
 
-            return new XmlCommentsModelFilter(new XPathDocument(xmlComments));
+            return new XmlCommentsSchemaFilter(new XPathDocument(xmlComments));
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Swashbuckle.SwaggerGen.TestFixtures
 {
-    [SwaggerModelFilter(typeof(VendorExtensionsModelFilter))]
+    [SwaggerSchemaFilter(typeof(VendorExtensionsSchemaFilter))]
     public class SwaggerAnnotatedType
     {
         public string Property { get; set; }

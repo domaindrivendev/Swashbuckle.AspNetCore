@@ -7,7 +7,7 @@ using Swashbuckle.SwaggerGen.TestFixtures;
 
 namespace Swashbuckle.SwaggerGen.Annotations
 {
-    public class SwaggerAttributesModelFilterTests
+    public class SwaggerAttributesSchemaFilterTests
     {
         [Fact]
         public void Apply_DelegatesToSpecifiedFilter_IfTypeDecoratedWithFilterAttribute()
@@ -20,14 +20,14 @@ namespace Swashbuckle.SwaggerGen.Annotations
             Assert.NotEmpty(schema.Extensions);
         }
 
-        private ModelFilterContext FilterContextFor(Type type)
+        private SchemaFilterContext FilterContextFor(Type type)
         {
-            return new ModelFilterContext(type, null, null);
+            return new SchemaFilterContext(type, null, null);
         }
 
-        private SwaggerAttributesModelFilter Subject()
+        private SwaggerAttributesSchemaFilter Subject()
         {
-            return new SwaggerAttributesModelFilter(new Mock<IServiceProvider>().Object);
+            return new SwaggerAttributesSchemaFilter(new Mock<IServiceProvider>().Object);
         }
     }
 }

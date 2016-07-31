@@ -4,26 +4,26 @@ using Swashbuckle.Swagger.Model;
 
 namespace Swashbuckle.SwaggerGen.Generator
 {
-    public interface IModelFilter
+    public interface ISchemaFilter
     {
-        void Apply(Schema model, ModelFilterContext context);
+        void Apply(Schema model, SchemaFilterContext context);
     }
 
-    public class ModelFilterContext
+    public class SchemaFilterContext
     {
-        public ModelFilterContext(
+        public SchemaFilterContext(
             Type systemType,
-            JsonObjectContract jsonObjectContract,
+            JsonContract jsonContract,
             ISchemaRegistry schemaRegistry)
         {
             SystemType = systemType;
-            JsonObjectContract = jsonObjectContract;
+            JsonContract = jsonContract;
             SchemaRegistry = schemaRegistry;
         }
 
         public Type SystemType { get; private set; }
 
-        public JsonObjectContract JsonObjectContract { get; private set; }
+        public JsonContract JsonContract { get; private set; }
 
         public ISchemaRegistry SchemaRegistry { get; private set; }
     }

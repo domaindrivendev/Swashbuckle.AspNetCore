@@ -14,7 +14,14 @@ namespace Swashbuckle.SwaggerGen.Generator
         private readonly JsonSerializerSettings _jsonSerializerSettings;
         private readonly IContractResolver _jsonContractResolver;
         private readonly SchemaRegistryOptions _options;
-        private readonly IDictionary<string, Type> _referencedTypeMap;
+
+        class ReferencedType
+        {
+            public Type Type;
+            public string SchemaId;
+            public Schema Schema;
+        }
+        private IList<ReferencedType> _referencedTypes;
 
         public SchemaRegistry(
             JsonSerializerSettings jsonSerializerSettings,
@@ -23,7 +30,7 @@ namespace Swashbuckle.SwaggerGen.Generator
             _jsonSerializerSettings = jsonSerializerSettings;
             _jsonContractResolver = _jsonSerializerSettings.ContractResolver ?? new DefaultContractResolver();
             _options = options ?? new SchemaRegistryOptions();
-            _referencedTypeMap = new Dictionary<string, Type>();
+            _referencedTypes = new List<ReferencedType>();
             Definitions = new Dictionary<string, Schema>();
         }
 
@@ -31,46 +38,89 @@ namespace Swashbuckle.SwaggerGen.Generator
 
         public Schema GetOrRegister(Type type)
         {
-            var schema = CreateInlineSchema(type);
+            var schema = CreateSchema(type);
 
-            // Ensure a corresponding definition exists for all referenced types
-            string pendingSchemaId;
-            while ((pendingSchemaId = GetPendingSchemaIds().FirstOrDefault()) != null)
+            // Iterate referenced types and ensure Schemas have been generated and added to Definitions
+            ReferencedType todo;
+            while ((todo = _referencedTypes.FirstOrDefault(rt => rt.Schema == null)) != null)
             {
-                Definitions.Add(pendingSchemaId, CreateDefinitionSchema(_referencedTypeMap[pendingSchemaId]));
+                todo.Schema = CreateInlineSchema(todo.Type);
+                Definitions.Add(todo.SchemaId, todo.Schema);
             }
 
             return schema;
         }
 
+        private Schema CreateSchema(Type type)
+        {
+            var jsonContract = _jsonContractResolver.ResolveContract(type);
+
+            var createReference = !_options.CustomTypeMappings.ContainsKey(type)
+                && type != typeof(object)
+                && (jsonContract is JsonObjectContract || jsonContract.IsSelfReferencingArrayOrDictionary());
+
+            return createReference ? CreateReferenceSchema(type) : CreateInlineSchema(type);
+        }
+
+        private Schema CreateReferenceSchema(Type type)
+        {
+            var referencedType = _referencedTypes.FirstOrDefault(rt => rt.Type == type);
+            if (referencedType == null)
+            {
+                referencedType = new ReferencedType { Type = type, SchemaId = GetSchemaIdFor(type) };
+                _referencedTypes.Add(referencedType);
+            }
+
+            return new Schema { Ref = "#/definitions/" + referencedType.SchemaId };
+        }
+
+        private string GetSchemaIdFor(Type type)
+        {
+            var schemaId = _options.SchemaIdSelector(type);
+
+            var conflict = _referencedTypes.FirstOrDefault(rt => rt.Type != type && rt.SchemaId == schemaId);
+            if (conflict != null)
+                throw new InvalidOperationException(string.Format(
+                    "Conflicting schemaIds: Identical schemaIds detected for types {0} and {1}. " +
+                    "See config settings - \"UseFullTypeNameInSchemaIds\" or \"CustomSchemaIds\" for a workaround",
+                    type.FullName, conflict.Type.FullName));
+
+            return schemaId;
+        }
+
         private Schema CreateInlineSchema(Type type)
         {
-            if (_options.CustomTypeMappings.ContainsKey(type))
-                return _options.CustomTypeMappings[type]();
+            Schema schema;
 
             var jsonContract = _jsonContractResolver.ResolveContract(type);
 
-            if (jsonContract is JsonPrimitiveContract)
-                return CreatePrimitiveSchema((JsonPrimitiveContract)jsonContract);
+            if (_options.CustomTypeMappings.ContainsKey(type))
+            {
+                schema = _options.CustomTypeMappings[type]();
+            }
+            else
+            {
+                // TODO: Perhaps a "Chain of Responsibility" would clean this up a little?
+                if (jsonContract is JsonPrimitiveContract)
+                    schema = CreatePrimitiveSchema((JsonPrimitiveContract)jsonContract);
+                else if (jsonContract is JsonDictionaryContract)
+                    schema = CreateDictionarySchema((JsonDictionaryContract)jsonContract);
+                else if (jsonContract is JsonArrayContract)
+                    schema = CreateArraySchema((JsonArrayContract)jsonContract);
+                else if (jsonContract is JsonObjectContract && type != typeof(object))
+                    schema = CreateObjectSchema((JsonObjectContract)jsonContract);
+                else
+                    // None of the above, fallback to abstract "object"
+                    return new Schema { Type = "object" };
+            }
 
-            var dictionaryContract = jsonContract as JsonDictionaryContract;
-            if (dictionaryContract != null)
-                return dictionaryContract.IsSelfReferencing()
-                    ? CreateRefSchema(type)
-                    : CreateDictionarySchema(dictionaryContract);
+            var filterContext = new SchemaFilterContext(type, jsonContract, this);
+            foreach (var filter in _options.SchemaFilters)
+            {
+                filter.Apply(schema, filterContext);
+            }
 
-            var arrayContract = jsonContract as JsonArrayContract;
-            if (arrayContract != null)
-                return arrayContract.IsSelfReferencing()
-                    ? CreateRefSchema(type)
-                    : CreateArraySchema(arrayContract);
-
-            var objectContract = jsonContract as JsonObjectContract;
-            if (objectContract != null && !objectContract.IsAmbiguous())
-                return CreateRefSchema(type);
-
-            // None of the above, fallback to abstract "object"
-            return new Schema { Type = "object" };
+            return schema;
         }
 
         private Schema CreatePrimitiveSchema(JsonPrimitiveContract primitiveContract)
@@ -115,22 +165,6 @@ namespace Swashbuckle.SwaggerGen.Generator
             };
         }
 
-        private Schema CreateRefSchema(Type type)
-        {
-            var schemaId = _options.SchemaIdSelector(type);
-
-            if (_referencedTypeMap.ContainsKey(schemaId) && _referencedTypeMap[schemaId] != type)
-                throw new InvalidOperationException(string.Format(
-                    "Conflicting schemaIds: Duplicate schemaIds detected for types {0} and {1}. " +
-                    "See the config setting - \"UseFullTypeNameInSchemaIds\" for a potential workaround",
-                    type.FullName, _referencedTypeMap[schemaId].FullName));
-
-            if (!_referencedTypeMap.ContainsKey(schemaId))
-                _referencedTypeMap.Add(schemaId, type);
-
-            return new Schema { Ref = "#/definitions/" + schemaId };
-        }
-
         private Schema CreateDictionarySchema(JsonDictionaryContract dictionaryContract)
         {
             var keyType = dictionaryContract.DictionaryKeyType ?? typeof(object);
@@ -143,7 +177,7 @@ namespace Swashbuckle.SwaggerGen.Generator
                     Type = "object",
                     Properties = Enum.GetNames(keyType).ToDictionary(
                         (name) => dictionaryContract.DictionaryKeyResolver(name),
-                        (name) => CreateInlineSchema(valueType)
+                        (name) => CreateSchema(valueType)
                     )
                 };
             }
@@ -152,7 +186,7 @@ namespace Swashbuckle.SwaggerGen.Generator
                 return new Schema
                 {
                     Type = "object",
-                    AdditionalProperties = CreateInlineSchema(valueType)
+                    AdditionalProperties = CreateSchema(valueType)
                 };
             }
         }
@@ -161,27 +195,10 @@ namespace Swashbuckle.SwaggerGen.Generator
         {
             var itemType = arrayContract.CollectionItemType ?? typeof(object);
             return new Schema
-                {
-                    Type = "array",
-                    Items = CreateInlineSchema(itemType)
-                };
-        }
-
-        private Schema CreateDefinitionSchema(Type type)
-        {
-            var jsonContract = _jsonContractResolver.ResolveContract(type);
-
-            if (jsonContract is JsonDictionaryContract)
-                return CreateDictionarySchema((JsonDictionaryContract)jsonContract);
-
-            if (jsonContract is JsonArrayContract)
-                return CreateArraySchema((JsonArrayContract)jsonContract);
-
-            if (jsonContract is JsonObjectContract)
-                return CreateObjectSchema((JsonObjectContract)jsonContract);
-
-            throw new InvalidOperationException(
-                string.Format("Unsupported type - {0} for Defintitions. Must be Dictionary, Array or Object", type));
+            {
+                Type = "array",
+                Items = CreateSchema(itemType)
+            };
         }
 
         private Schema CreateObjectSchema(JsonObjectContract jsonContract)
@@ -191,7 +208,7 @@ namespace Swashbuckle.SwaggerGen.Generator
                 .Where(p => !(_options.IgnoreObsoleteProperties && p.IsObsolete()))
                 .ToDictionary(
                     prop => prop.PropertyName,
-                    prop => CreateInlineSchema(prop.PropertyType).AssignValidationProperties(prop)
+                    prop => CreateSchema(prop.PropertyType).AssignValidationProperties(prop)
                 );
 
             var required = jsonContract.Properties.Where(prop => prop.IsRequired())
@@ -205,24 +222,7 @@ namespace Swashbuckle.SwaggerGen.Generator
                 Type = "object"
             };
 
-            var filterContext = new ModelFilterContext(
-                jsonContract.UnderlyingType,
-                jsonContract,
-                this);
-
-            foreach (var filter in _options.ModelFilters)
-            {
-                filter.Apply(schema, filterContext);
-            }
-
             return schema;
-        }
-
-        private IEnumerable<string> GetPendingSchemaIds()
-        {
-            var referenced = _referencedTypeMap.Keys;
-            var defined = Definitions.Keys;
-            return referenced.Except(defined);
         }
 
         private static readonly Dictionary<Type, Func<Schema>> PrimitiveTypeMap = new Dictionary<Type, Func<Schema>>
