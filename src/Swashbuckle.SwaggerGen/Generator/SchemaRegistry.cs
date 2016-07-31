@@ -122,7 +122,7 @@ namespace Swashbuckle.SwaggerGen.Generator
             if (_referencedTypeMap.ContainsKey(schemaId) && _referencedTypeMap[schemaId] != type)
                 throw new InvalidOperationException(string.Format(
                     "Conflicting schemaIds: Duplicate schemaIds detected for types {0} and {1}. " +
-                    "See the config setting - \"UseFullTypeNameInSchemaIds\" for a potential workaround",
+                    "Set the SchemaRegistryOptions.SchemaIdSelector to \"t => t.FriendlyId(true)\" for a potential workaround.",
                     type.FullName, _referencedTypeMap[schemaId].FullName));
 
             if (!_referencedTypeMap.ContainsKey(schemaId))
