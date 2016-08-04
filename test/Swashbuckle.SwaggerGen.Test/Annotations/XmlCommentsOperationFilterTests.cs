@@ -28,19 +28,20 @@ namespace Swashbuckle.SwaggerGen.Annotations
             Assert.Equal(string.Format("remarks for {0}", actionFixtureName), operation.Description);
         }
 
-        [Fact]
-        public void Apply_SetsParameterDescriptionsFromParamTags()
+        [Theory]
+        [InlineData(nameof(FakeActions.AnnotatedWithXml), new[] { "param1", "param2" })]
+        [InlineData(nameof(FakeActions.AnnotatedWithXmlHavingParameterNameBindings), new[] { "p1", "p2" })]
+        public void Apply_SetsParameterDescriptionsFromParamTags(
+            string actionName,
+            string[] parameterNames
+        )
         {
             var operation = new Operation
             {
-                Parameters = new List<IParameter>
-                {
-                    new NonBodyParameter { Name = "param1" },
-                    new NonBodyParameter { Name = "param2" }
-                },
+                Parameters = parameterNames.Select(pn => new NonBodyParameter { Name = pn }).ToArray(),
                 Responses = new Dictionary<string, Response>()
             };
-            var filterContext = FilterContextFor(nameof(FakeActions.AnnotatedWithXml));
+            var filterContext = FilterContextFor(actionName);
 
             Subject().Apply(operation, filterContext);
 

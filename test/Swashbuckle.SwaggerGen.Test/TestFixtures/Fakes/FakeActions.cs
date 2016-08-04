@@ -85,6 +85,13 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
         /// <response code="400">description for 400</param>
         public void AnnotatedWithXml(int param1, IEnumerable<ComplexType> param2)
         { }
+
+        /// <param name="param1">description for parma1</param>
+        /// <param name="param2">description for param2</param>
+        public void AnnotatedWithXmlHavingParameterNameBindings(
+            [FromQuery(Name="p1")]string param1,
+            [FromQuery(Name="p2")]string param2)
+        { }
             
         [ProducesResponseType(typeof(void), 204)]
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]

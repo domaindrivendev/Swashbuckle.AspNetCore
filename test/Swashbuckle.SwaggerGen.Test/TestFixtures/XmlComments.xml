@@ -16,13 +16,9 @@
       <response code="200">description for 200</response>
       <response code="400">description for 400</response>
     </member>
-    <member name="M:Swashbuckle.SwaggerGen.TestFixtures.FakeActions.AnnotatedWithXmlAndAcceptsGenericArray(System.Collections.Generic.KeyValuePair{System.String,System.String}[])">
-      <summary>
-        summary for AnnotatedWithXmlAndAcceptsGenericArray
-      </summary>
-      <remarks>
-        type remarks
-      </remarks>
+    <member name="M:Swashbuckle.SwaggerGen.TestFixtures.FakeActions.AnnotatedWithXmlHavingParameterBindings(System.String,System.String)">
+      <param name="param1">description for param1</param>
+      <param name="param2">description for param2</param>
     </member>
     <member name="T:Swashbuckle.SwaggerGen.TestFixtures.XmlAnnotatedType">
       <summary>
