@@ -111,7 +111,7 @@ namespace Swashbuckle.SwaggerGen.Generator
                     schema = CreateObjectSchema((JsonObjectContract)jsonContract);
                 else
                     // None of the above, fallback to abstract "object"
-                    return new Schema { Type = "object" };
+                    schema = new Schema { Type = "object" };
             }
 
             var filterContext = new SchemaFilterContext(type, jsonContract, this);

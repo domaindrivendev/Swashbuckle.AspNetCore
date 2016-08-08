@@ -237,12 +237,12 @@ namespace Swashbuckle.SwaggerGen.Generator
         }
 
         [Theory]
-        [InlineData(typeof(int), "System.Int32")]
-        [InlineData(typeof(int[]), "System.Int32[]")]
-        [InlineData(typeof(ComplexType), "Swashbuckle.SwaggerGen.TestFixtures.ComplexType")]
-        public void GetOrRegister_SupportsOptionToPostModifyAllInlineSchemas(
-            Type systemType,
-            string expectedExtensionValue)
+        [InlineData(typeof(int))]
+        [InlineData(typeof(IDictionary<string, string>))]
+        [InlineData(typeof(int[]))]
+        [InlineData(typeof(ComplexType))]
+        [InlineData(typeof(object))]
+        public void GetOrRegister_SupportsOptionToPostModifyAllInlineSchemas(Type systemType)
         {
             var subject = Subject(opts =>
                 opts.SchemaFilters.Add(new VendorExtensionsSchemaFilter())
@@ -254,9 +254,7 @@ namespace Swashbuckle.SwaggerGen.Generator
                 ? schemaOrRef
                 : subject.Definitions[schemaOrRef.Ref.Replace("#/definitions/", "")];
 
-
-            Assert.True(schema.Extensions.ContainsKey("x-dotnet-type"));
-            Assert.Equal(expectedExtensionValue, schema.Extensions["x-dotnet-type"]);
+            Assert.True(schema.Extensions.ContainsKey("X-property1"));
         }
 
         [Fact]

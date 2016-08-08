@@ -7,7 +7,7 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
     {
         public void Apply(Schema schema, SchemaFilterContext context)
         {
-            schema.Extensions.Add("x-dotnet-type", context.SystemType.FullName);
+            schema.Extensions.Add("X-property1", "value");
         }
     }
 }
