@@ -33,6 +33,7 @@ namespace Swashbuckle.SwaggerGen.Annotations
                     schema.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
             }
 
+            if (schema.Properties == null) return;
             foreach (var entry in schema.Properties)
             {
                 var jsonProperty = jsonObjectContract.Properties[entry.Key];

@@ -51,7 +51,7 @@ namespace Basic
             {
                 services.ConfigureSwaggerGen(c =>
                 {
-                    c.IncludeXmlComments(GetXmlCommentsPath());
+                    c.IncludeXmlComments(GetXmlCommentsPath(PlatformServices.Default.Application));
                 });
             }
         }
@@ -79,10 +79,9 @@ namespace Basic
             app.UseSwaggerUi();
         }
 
-        private string GetXmlCommentsPath()
+        private string GetXmlCommentsPath(ApplicationEnvironment appEnvironment)
         {
-            var app = PlatformServices.Default.Application;
-            return Path.Combine(app.ApplicationBasePath, Path.ChangeExtension(app.ApplicationName, "xml"));
+            return Path.Combine(appEnvironment.ApplicationBasePath, "Basic.xml");
         }
     }
 }
