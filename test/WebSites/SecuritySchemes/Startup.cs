@@ -29,7 +29,7 @@ namespace SecuritySchemes
                 {
                     Type = "oauth2",
                     Flow = "implicit",
-                    AuthorizationUrl = "http://petstore.swagger.io/api/oauth/dialog",
+                    AuthorizationUrl = "http://petstore.swagger.io/oauth/dialog",
                     Scopes = new Dictionary<string, string>
                         {
                             { "read", "read access" },
