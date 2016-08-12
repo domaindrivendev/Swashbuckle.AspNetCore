@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace Swashbuckle.SwaggerGen.Annotations
 {
-    public static class XPathNavigatorExtensiosn
+    public static class XPathNavigatorExtensions
     {
         private static Regex ParamPattern = new Regex(@"<(see|paramref) (name|cref)=""([TPF]{1}:)?(?<display>.+?)"" />");
         private static Regex ConstPattern = new Regex(@"<c>(?<display>.+?)</c>");

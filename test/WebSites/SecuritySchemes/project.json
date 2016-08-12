@@ -27,8 +27,8 @@
       "type": "build",
       "version": "1.0.0-preview2-final"
     },
-    "Swashbuckle.SwaggerGen": "6.0.0-beta901",
-    "Swashbuckle.SwaggerUi": "6.0.0-beta901"
+    "Swashbuckle.SwaggerGen": "6.0.0-beta902",
+    "Swashbuckle.SwaggerUi": "6.0.0-beta902"
   },
   "frameworks": {
     "net451": {},

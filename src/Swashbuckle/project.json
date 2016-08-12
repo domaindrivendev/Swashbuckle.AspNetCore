@@ -1,5 +1,5 @@
 ﻿{
-  "version": "6.0.0-beta901",
+  "version": "6.0.0-beta902",
   "description": "Swashbuckle - Swagger components for ASP.NET Core",
 
   "packOptions": {
@@ -21,9 +21,9 @@
   },
 
   "dependencies": {
-    "Swashbuckle.Swagger": "6.0.0-beta901",
-    "Swashbuckle.SwaggerGen": "6.0.0-beta901",
-    "Swashbuckle.SwaggerUi": "6.0.0-beta901"
+    "Swashbuckle.Swagger": "6.0.0-beta902",
+    "Swashbuckle.SwaggerGen": "6.0.0-beta902",
+    "Swashbuckle.SwaggerUi": "6.0.0-beta902"
   },
 
   "frameworks": {
