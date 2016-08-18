@@ -37,7 +37,7 @@ namespace Swashbuckle.SwaggerUi.Application
             }
 
             var template = _resourceAssembly.GetManifestResourceStream("Swashbuckle.SwaggerUi.CustomAssets.index.html");
-            var content = AssignPlaceholderValuesTo(template);
+            var content = AssignPlaceholderValuesTo(template, httpContext);
             RespondWithContentHtml(httpContext.Response, content);
         }
 
@@ -48,11 +48,11 @@ namespace Swashbuckle.SwaggerUi.Application
 			return _requestMatcher.TryMatch(request.Path, new RouteValueDictionary());
         }
 
-        private Stream AssignPlaceholderValuesTo(Stream template)
+        private Stream AssignPlaceholderValuesTo(Stream template, HttpContext httpContext)
         {
             var placeholderValues = new Dictionary<string, string>
             {
-                { "%(SwaggerUrl)", _swaggerUrl }
+                { "%(SwaggerUrl)", BuildSwaggerUrl(httpContext, _swaggerUrl) }
             };
 
             var templateText = new StreamReader(template).ReadToEnd();
@@ -70,6 +70,20 @@ namespace Swashbuckle.SwaggerUi.Application
             response.StatusCode = 200;
             response.ContentType = "text/html";
             content.CopyTo(response.Body);
+        }
+
+        private static string BuildSwaggerUrl(HttpContext httpContext, string swaggerUrl)
+        {
+            string url = string.IsNullOrEmpty(httpContext.Request.PathBase.ToString())
+                ? ""
+                : httpContext.Request.PathBase.ToString().TrimEnd('/');
+
+            if (!swaggerUrl.StartsWith("/"))
+                url += "/";
+
+            url += swaggerUrl;
+
+            return url;
         }
     }
 }

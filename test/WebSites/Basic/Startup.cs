@@ -62,6 +62,9 @@ namespace Basic
             loggerFactory.AddConsole();
             loggerFactory.AddDebug();
 
+            // For testing Swagger behind a Request.PathBase
+            app.UseMiddleware<AdjustPathBaseMiddleware>();
+
             // Configure the HTTP request pipeline.
             app.UseStaticFiles();
 
