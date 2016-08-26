@@ -36,13 +36,16 @@ namespace Basic
 
             services.AddSwaggerGen(c =>
             {
-                c.SingleApiVersion(new Info
-                {
-                    Version = "v1",
-                    Title = "Swashbuckle Sample API",
-                    Description = "A sample API for testing Swashbuckle",
-                    TermsOfService = "Some terms ..."
-                });
+                c.SwaggerDoc(
+                    "v1",
+                    new Info
+                    {
+                        Version = "v1",
+                        Title = "Swashbuckle Sample API",
+                        Description = "A sample API for testing Swashbuckle",
+                        TermsOfService = "Some terms ..."
+                    }
+                );
 
                 c.OperationFilter<AssignOperationVendorExtensions>();
             });
@@ -71,7 +74,7 @@ namespace Basic
             // Add the following route for porting Web API 2 controllers.
             // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
 
-            app.UseSwagger((httpRequest, swaggerDoc) =>
+            app.UseSwagger(documentFilter: (swaggerDoc, httpRequest) =>
             {
                 swaggerDoc.Host = httpRequest.Host.Value;
             });

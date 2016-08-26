@@ -5,7 +5,7 @@ namespace MultipleVersions.Swagger
 {
     public class SwaggerUiController : Controller
     {
-        [HttpGet("swagger/ui/index.html")]
+        [HttpGet("swagger/index.html")]
         [ApiExplorerSettings(IgnoreApi=true)]
         public IActionResult Index()
         {

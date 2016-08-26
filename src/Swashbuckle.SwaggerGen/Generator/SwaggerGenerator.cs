@@ -11,67 +11,61 @@ namespace Swashbuckle.SwaggerGen.Generator
     {
         private readonly IApiDescriptionGroupCollectionProvider _apiDescriptionsProvider;
         private readonly ISchemaRegistryFactory _schemaRegistryFactory;
-        private readonly SwaggerGeneratorOptions _options;
+        private readonly SwaggerGeneratorSettings _settings;
 
         public SwaggerGenerator(
             IApiDescriptionGroupCollectionProvider apiDescriptionsProvider,
             ISchemaRegistryFactory schemaRegistryFactory,
-            SwaggerGeneratorOptions options = null)
+            SwaggerGeneratorSettings settings = null)
         {
             _apiDescriptionsProvider = apiDescriptionsProvider;
             _schemaRegistryFactory = schemaRegistryFactory;
-            _options = options ?? new SwaggerGeneratorOptions();
+            _settings = settings ?? new SwaggerGeneratorSettings();
         }
 
         public SwaggerDocument GetSwagger(
-            string apiVersion,
+            string documentName,
             string host = null,
             string basePath = null,
             string[] schemes = null)
         {
             var schemaRegistry = _schemaRegistryFactory.Create();
 
-            var info = _options.ApiVersions.FirstOrDefault(v => v.Version == apiVersion);
-            if (info == null)
-                throw new UnknownApiVersion(apiVersion);
+            SwaggerDocumentDescriptor documentDescriptor;
+            if (!_settings.SwaggerDocs.TryGetValue(documentName, out documentDescriptor))
+                throw new UnknownSwaggerDocument(documentName);
 
-            var paths = GetApiDescriptionsFor(apiVersion)
-                .Where(apiDesc => !(_options.IgnoreObsoleteActions && apiDesc.IsObsolete()))
-                .OrderBy(_options.GroupNameSelector, _options.GroupNameComparer)
+            var apiDescriptions = _apiDescriptionsProvider.ApiDescriptionGroups.Items
+                .SelectMany(group => group.Items)
+                .Where(apiDesc => documentDescriptor.IncludeActionPredicate(apiDesc))
+                .Where(apiDesc => !(_settings.IgnoreObsoleteActions && apiDesc.IsObsolete()))
+                .OrderBy(_settings.GroupNameSelector, _settings.GroupNameComparer);
+
+            var paths = apiDescriptions
                 .GroupBy(apiDesc => apiDesc.RelativePathSansQueryString())
                 .ToDictionary(group => "/" + group.Key, group => CreatePathItem(group, schemaRegistry));
 
             var swaggerDoc = new SwaggerDocument
             {
-                Info = info,
+                Info = documentDescriptor.Info,
                 Host = host,
                 BasePath = basePath,
                 Schemes = schemes,
                 Paths = paths,
                 Definitions = schemaRegistry.Definitions,
-                SecurityDefinitions = _options.SecurityDefinitions
+                SecurityDefinitions = _settings.SecurityDefinitions
             };
 
             var filterContext = new DocumentFilterContext(
                 _apiDescriptionsProvider.ApiDescriptionGroups,
                 schemaRegistry);
 
-            foreach (var filter in _options.DocumentFilters)
+            foreach (var filter in _settings.DocumentFilters)
             {
                 filter.Apply(swaggerDoc, filterContext);
             }
 
             return swaggerDoc;
-        }
-
-        private IEnumerable<ApiDescription> GetApiDescriptionsFor(string apiVersion)
-        {
-            var allDescriptions = _apiDescriptionsProvider.ApiDescriptionGroups.Items
-                .SelectMany(group => group.Items);
-
-            return (_options.VersionSupportResolver == null)
-                ? allDescriptions
-                : allDescriptions.Where(apiDesc => _options.VersionSupportResolver(apiDesc, apiVersion));
         }
 
         private PathItem CreatePathItem(IEnumerable<ApiDescription> apiDescriptions, ISchemaRegistry schemaRegistry)
@@ -129,7 +123,7 @@ namespace Swashbuckle.SwaggerGen.Generator
 
         private Operation CreateOperation(ApiDescription apiDescription, ISchemaRegistry schemaRegistry)
         {
-            var groupName = _options.GroupNameSelector(apiDescription);
+            var groupName = _settings.GroupNameSelector(apiDescription);
 
             var parameters = apiDescription.ParameterDescriptions
                 .Where(paramDesc => paramDesc.Source.IsFromRequest)
@@ -155,7 +149,7 @@ namespace Swashbuckle.SwaggerGen.Generator
             };
 
             var filterContext = new OperationFilterContext(apiDescription, schemaRegistry);
-            foreach (var filter in _options.OperationFilters)
+            foreach (var filter in _settings.OperationFilters)
             {
                 filter.Apply(operation, filterContext);
             }

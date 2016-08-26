@@ -13,7 +13,7 @@ namespace Swashbuckle.SwaggerGen.Generator
     {
         private readonly JsonSerializerSettings _jsonSerializerSettings;
         private readonly IContractResolver _jsonContractResolver;
-        private readonly SchemaRegistryOptions _options;
+        private readonly SchemaRegistrySettings _settings;
 
         class ReferencedType
         {
@@ -25,11 +25,11 @@ namespace Swashbuckle.SwaggerGen.Generator
 
         public SchemaRegistry(
             JsonSerializerSettings jsonSerializerSettings,
-            SchemaRegistryOptions options = null)
+            SchemaRegistrySettings options = null)
         {
             _jsonSerializerSettings = jsonSerializerSettings;
             _jsonContractResolver = _jsonSerializerSettings.ContractResolver ?? new DefaultContractResolver();
-            _options = options ?? new SchemaRegistryOptions();
+            _settings = options ?? new SchemaRegistrySettings();
             _referencedTypes = new List<ReferencedType>();
             Definitions = new Dictionary<string, Schema>();
         }
@@ -55,7 +55,7 @@ namespace Swashbuckle.SwaggerGen.Generator
         {
             var jsonContract = _jsonContractResolver.ResolveContract(type);
 
-            var createReference = !_options.CustomTypeMappings.ContainsKey(type)
+            var createReference = !_settings.CustomTypeMappings.ContainsKey(type)
                 && type != typeof(object)
                 && (jsonContract is JsonObjectContract || jsonContract.IsSelfReferencingArrayOrDictionary());
 
@@ -76,7 +76,7 @@ namespace Swashbuckle.SwaggerGen.Generator
 
         private string GetSchemaIdFor(Type type)
         {
-            var schemaId = _options.SchemaIdSelector(type);
+            var schemaId = _settings.SchemaIdSelector(type);
 
             var conflict = _referencedTypes.FirstOrDefault(rt => rt.Type != type && rt.SchemaId == schemaId);
             if (conflict != null)
@@ -94,9 +94,9 @@ namespace Swashbuckle.SwaggerGen.Generator
 
             var jsonContract = _jsonContractResolver.ResolveContract(type);
 
-            if (_options.CustomTypeMappings.ContainsKey(type))
+            if (_settings.CustomTypeMappings.ContainsKey(type))
             {
-                schema = _options.CustomTypeMappings[type]();
+                schema = _settings.CustomTypeMappings[type]();
             }
             else
             {
@@ -115,7 +115,7 @@ namespace Swashbuckle.SwaggerGen.Generator
             }
 
             var filterContext = new SchemaFilterContext(type, jsonContract, this);
-            foreach (var filter in _options.SchemaFilters)
+            foreach (var filter in _settings.SchemaFilters)
             {
                 filter.Apply(schema, filterContext);
             }
@@ -143,9 +143,9 @@ namespace Swashbuckle.SwaggerGen.Generator
             var stringEnumConverter = primitiveContract.Converter as StringEnumConverter
                 ?? _jsonSerializerSettings.Converters.OfType<StringEnumConverter>().FirstOrDefault();
 
-            if (_options.DescribeAllEnumsAsStrings || stringEnumConverter != null)
+            if (_settings.DescribeAllEnumsAsStrings || stringEnumConverter != null)
             {
-                var camelCase = _options.DescribeStringEnumsInCamelCase
+                var camelCase = _settings.DescribeStringEnumsInCamelCase
                     || (stringEnumConverter != null && stringEnumConverter.CamelCaseText);
 
                 return new Schema
@@ -205,7 +205,7 @@ namespace Swashbuckle.SwaggerGen.Generator
         {
             var properties = jsonContract.Properties
                 .Where(p => !p.Ignored)
-                .Where(p => !(_options.IgnoreObsoleteProperties && p.IsObsolete()))
+                .Where(p => !(_settings.IgnoreObsoleteProperties && p.IsObsolete()))
                 .ToDictionary(
                     prop => prop.PropertyName,
                     prop => CreateSchema(prop.PropertyType).AssignValidationProperties(prop)

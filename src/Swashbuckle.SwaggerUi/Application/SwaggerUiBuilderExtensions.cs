@@ -8,7 +8,9 @@ namespace Microsoft.AspNetCore.Builder
 {
     public static class SwaggerUiBuilderExtensions
     {
-        public static IApplicationBuilder UseSwaggerUi(this IApplicationBuilder app, Action<SwaggerUiConfig> configure = null)
+        public static IApplicationBuilder UseSwaggerUi(
+            this IApplicationBuilder app,
+            Action<SwaggerUiConfig> configure = null)
         {
             var config = new SwaggerUiConfig();
             configure?.Invoke(config);

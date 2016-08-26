@@ -9,20 +9,13 @@ namespace Microsoft.AspNetCore.Builder
     {
         public static IApplicationBuilder UseSwagger(
             this IApplicationBuilder app,
-            string routeTemplate = "swagger/{apiVersion}/swagger.json")
+            string routeTemplate = "swagger/{documentName}/swagger.json",
+            Action<SwaggerDocument, HttpRequest> documentFilter = null)
         {
-            return app.UseSwagger(NullDocumentFilter, routeTemplate);
+            return app.UseMiddleware<SwaggerMiddleware>(routeTemplate, documentFilter ?? PassThroughDocumentFilter);
         }
 
-        public static IApplicationBuilder UseSwagger(
-            this IApplicationBuilder app,
-            Action<HttpRequest, SwaggerDocument> documentFilter,
-            string routeTemplate = "swagger/{apiVersion}/swagger.json")
-        {
-            return app.UseMiddleware<SwaggerMiddleware>(documentFilter, routeTemplate);
-        }
-
-        private static void NullDocumentFilter(HttpRequest httpRequest, SwaggerDocument swaggerDoc)
+        private static void PassThroughDocumentFilter(SwaggerDocument swaggerDoc, HttpRequest httpRequest)
         {}
     }
 }

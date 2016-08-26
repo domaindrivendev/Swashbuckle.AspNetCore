@@ -4,9 +4,9 @@ using Swashbuckle.Swagger.Model;
 
 namespace Swashbuckle.SwaggerGen.Generator
 {
-    public class SchemaRegistryOptions
+    public class SchemaRegistrySettings
     {
-        public SchemaRegistryOptions()
+        public SchemaRegistrySettings()
         {
             CustomTypeMappings = new Dictionary<Type, Func<Schema>>();
             SchemaIdSelector = (type) => type.FriendlyId(false);
@@ -25,9 +25,9 @@ namespace Swashbuckle.SwaggerGen.Generator
 
         public IList<ISchemaFilter> SchemaFilters { get; private set; }
 
-        internal SchemaRegistryOptions Clone()
+        internal SchemaRegistrySettings Clone()
         {
-            return new SchemaRegistryOptions
+            return new SchemaRegistrySettings
             {
                 CustomTypeMappings = CustomTypeMappings,
                 DescribeAllEnumsAsStrings = DescribeAllEnumsAsStrings,

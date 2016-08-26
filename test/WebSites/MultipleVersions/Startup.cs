@@ -27,13 +27,16 @@ namespace MultipleVersions
 
             services.AddSwaggerGen(c =>
             {
-                c.MultipleApiVersions(
-                    new[]
-                    {
-                        new Info { Version = "v1", Title = "API V1" },
-                        new Info { Version = "v2", Title = "API V2" }
-                    },
-                    ResolveVersionSupportByVersionsConstraint
+                c.SwaggerDoc(
+                    "v1",
+                    new Info { Version = "v1", Title = "API V1" },
+                    ((apiDesc) => AcceptsVersion(apiDesc, "v1"))
+                );
+
+                c.SwaggerDoc(
+                    "v2",
+                    new Info { Version = "v2", Title = "API V2" },
+                    ((apiDesc) => AcceptsVersion(apiDesc, "v2"))
                 );
 
                 c.DocumentFilter<SetVersionInPaths>();
@@ -59,7 +62,7 @@ namespace MultipleVersions
             app.UseSwaggerUi();
         }
 
-        private static bool ResolveVersionSupportByVersionsConstraint(ApiDescription apiDesc, string version)
+        private static bool AcceptsVersion(ApiDescription apiDesc, string version)
         {
             var versionAttribute = apiDesc.ActionDescriptor.ActionConstraints.OfType<VersionsAttribute>()
                 .FirstOrDefault();
