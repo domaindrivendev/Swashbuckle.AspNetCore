@@ -12,6 +12,7 @@
     "MultipleVersions": "1.0.0-*",
     "SecuritySchemes": "1.0.0-*",
     "VirtualDirectory": "1.0.0-*",
+    "CustomAssets": "1.0.0-*",
     "dotnet-test-xunit": "2.2.0-preview2-*",
     "xunit": "2.2.0-beta2-*"
   },

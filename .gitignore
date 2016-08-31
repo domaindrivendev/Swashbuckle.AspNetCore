@@ -1,6 +1,8 @@
 [Oo]bj/
 [Bb]in/
 .vs/
+.vscode/
+.idea*
 bower_components/
 project.lock.json
 *.user
