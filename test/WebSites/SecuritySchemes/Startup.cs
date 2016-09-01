@@ -58,7 +58,10 @@ namespace SecuritySchemes
             // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
 
             app.UseSwagger();
-            app.UseSwaggerUi();
+            app.UseSwaggerUi(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
+            });
 
             // TOOD: Figure out oauth middleware to validate token
             //app.UseOAuthBearerAuthentication(opts =>

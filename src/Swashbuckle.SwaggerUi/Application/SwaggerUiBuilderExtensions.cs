@@ -10,26 +10,27 @@ namespace Microsoft.AspNetCore.Builder
     {
         public static IApplicationBuilder UseSwaggerUi(
             this IApplicationBuilder app,
-            Action<SwaggerUiConfig> configure = null)
+            Action<SwaggerUiOptions> setupAction = null)
         {
-            var config = new SwaggerUiConfig();
-            configure?.Invoke(config);
+            var options = new SwaggerUiOptions();
+            setupAction?.Invoke(options);
 
             // Enable redirect from basePath to indexPath
-            app.UseMiddleware<RedirectMiddleware>(config.BaseRoute, config.IndexPath);
+            app.UseMiddleware<RedirectMiddleware>(options.BaseRoute, options.IndexPath);
 
             // Serve indexPath via middleware
-            app.UseMiddleware<SwaggerUiMiddleware>(config);
+            app.UseMiddleware<SwaggerUiMiddleware>(options);
 
-            var options = new FileServerOptions();
-            options.RequestPath = $"/{config.BaseRoute}";
-            options.EnableDefaultFiles = false;
-            options.StaticFileOptions.ContentTypeProvider = new FileExtensionContentTypeProvider();
-
-            options.FileProvider = new EmbeddedFileProvider(typeof(SwaggerUiBuilderExtensions).GetTypeInfo().Assembly,
-                "Swashbuckle.SwaggerUi.bower_components.swagger_ui.dist");
-
-            app.UseFileServer(options);
+            // Serve everything else via static file server
+            var fileServerOptions = new FileServerOptions
+            {
+                RequestPath = $"/{options.BaseRoute}",
+                EnableDefaultFiles = false,
+                FileProvider = new EmbeddedFileProvider(typeof(SwaggerUiBuilderExtensions).GetTypeInfo().Assembly,
+                    "Swashbuckle.SwaggerUi.bower_components.swagger_ui.dist")
+            };
+            fileServerOptions.StaticFileOptions.ContentTypeProvider = new FileExtensionContentTypeProvider();
+            app.UseFileServer(fileServerOptions);
 
             return app;
         }

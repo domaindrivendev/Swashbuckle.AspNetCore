@@ -10,11 +10,11 @@ namespace Swashbuckle.IntegrationTests
         {
             var client = new TestSite(typeof(CustomAssets.Startup)).BuildClient();
 
-            var response = await client.GetAsync("/swagger/ui/index.html");
+            var response = await client.GetAsync("/swagger/index.html");
             var content = await response.Content.ReadAsStringAsync();
 
             Assert.Contains("/ext/custom-script.js", content);
-            Assert.Contains("<link href='/ext/custom-stylesheet.css' media='screen' rel='stylesheet' type='text/css' />", content);
+            Assert.Contains("<link href='/ext/custom-stylesheet.css' rel='stylesheet' media='screen' type='text/css' />", content);
         }
     }
 }

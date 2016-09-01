@@ -36,8 +36,7 @@ namespace Basic
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc(
-                    "v1",
+                c.SwaggerDoc("v1",
                     new Info
                     {
                         Version = "v1",
@@ -79,7 +78,10 @@ namespace Basic
                 swaggerDoc.Host = httpRequest.Host.Value;
             });
 
-            app.UseSwaggerUi();
+            app.UseSwaggerUi(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
+            });
         }
 
         private string GetXmlCommentsPath(ApplicationEnvironment appEnvironment)

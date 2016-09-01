@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using Swashbuckle.Swagger.Model;
 
 namespace CustomAssets
 {
@@ -11,7 +11,10 @@ namespace CustomAssets
         {
             services.AddMvc();
 
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Version = "v1", Title = "Swashbuckle Sample API" });
+            });
         }
 
         public void Configure(IApplicationBuilder app)
@@ -23,6 +26,7 @@ namespace CustomAssets
             app.UseSwagger();
             app.UseSwaggerUi(c =>
             {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
                 c.InjectJavaScript("/ext/custom-script.js");
                 c.InjectStylesheet("/ext/custom-stylesheet.css");
             });

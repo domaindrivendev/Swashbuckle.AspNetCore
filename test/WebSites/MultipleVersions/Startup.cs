@@ -27,14 +27,12 @@ namespace MultipleVersions
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc(
-                    "v1",
+                c.SwaggerDoc("v1",
                     new Info { Version = "v1", Title = "API V1" },
                     ((apiDesc) => AcceptsVersion(apiDesc, "v1"))
                 );
 
-                c.SwaggerDoc(
-                    "v2",
+                c.SwaggerDoc("v2",
                     new Info { Version = "v2", Title = "API V2" },
                     ((apiDesc) => AcceptsVersion(apiDesc, "v2"))
                 );
@@ -59,7 +57,11 @@ namespace MultipleVersions
             // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
 
             app.UseSwagger();
-            app.UseSwaggerUi();
+            app.UseSwaggerUi(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v2/swagger.json", "V2 Docs");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
+            });
         }
 
         private static bool AcceptsVersion(ApiDescription apiDesc, string version)

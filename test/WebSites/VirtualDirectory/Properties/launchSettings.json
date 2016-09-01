@@ -11,7 +11,7 @@
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "vdir/swagger/ui",
+      "launchUrl": "vdir/swagger",
       "environmentVariables": {
         "ASPNET_ENV": "Development"
       }
