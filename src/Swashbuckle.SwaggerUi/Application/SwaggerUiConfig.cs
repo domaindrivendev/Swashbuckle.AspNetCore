@@ -34,7 +34,10 @@ namespace Swashbuckle.SwaggerUi.Application
         public void InjectJavaScript(string path)
         {
             var stringBuilder = new StringBuilder(_templateParams["%(CustomScripts)"]);
-            stringBuilder.AppendLine($"<script src='{path}' type='text/javascript'></script>");
+            if (stringBuilder.Length > 0)
+                stringBuilder.Append("|");
+
+            stringBuilder.Append(path);
             _templateParams["%(CustomScripts)"] = stringBuilder.ToString();
         }
 

@@ -14,7 +14,7 @@ namespace Swashbuckle.IntegrationTests
             var response = await client.GetAsync("/swagger/ui/index.html");
             var content = await response.Content.ReadAsStringAsync();
 
-            Assert.Contains("<script src='/ext/custom-script.js' type='text/javascript'></script>", content);
+            Assert.Contains("/ext/custom-script.js", content);
             Assert.Contains("<link href='/ext/custom-stylesheet.css' media='screen' rel='stylesheet' type='text/css' />", content);
         }
     }

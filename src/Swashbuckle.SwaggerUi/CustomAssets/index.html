@@ -26,7 +26,6 @@
   <script src='lib/jsoneditor.min.js' type='text/javascript'></script>
   <script src='lib/marked.js' type='text/javascript'></script>
   <script src='lib/swagger-oauth.js' type='text/javascript'></script>
-  %(CustomScripts)
 
   <!-- Some basic translations -->
   <!-- <script src='lang/translator.js' type='text/javascript'></script> -->
@@ -39,6 +38,14 @@
       hljs.configure({
         highlightSizeThreshold: 5000
       });
+
+      function arrayFrom(configString) {
+        return (configString !== "") ? configString.split('|') : [];
+      }
+
+      var swashbuckleConfig = {
+        customScripts: arrayFrom('%(CustomScripts)')
+      };
 
       // Pre load translate...
       if(window.SwaggerTranslator) {
@@ -63,6 +70,10 @@
           if(window.SwaggerTranslator) {
             window.SwaggerTranslator.translate();
           }
+
+          _.each(swashbuckleConfig.customScripts, function (script) {
+            $.getScript(script);
+          });
         },
         onFailure: function(data) {
           log("Unable to Load SwaggerUI");
