@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -13,18 +14,17 @@ namespace Swashbuckle.SwaggerUi.Application
     {
         private readonly RequestDelegate _next;
         private readonly TemplateMatcher _requestMatcher;
-        private readonly string _swaggerUrl;
+        private readonly SwaggerUiConfig _config;
         private readonly Assembly _resourceAssembly;
 
         public SwaggerUiMiddleware(
             RequestDelegate next,
-            string baseRoute,
-            string swaggerUrl
+            SwaggerUiConfig config
         )
         {
             _next = next;
-            _requestMatcher = new TemplateMatcher(TemplateParser.Parse(baseRoute), new RouteValueDictionary());
-            _swaggerUrl = swaggerUrl;
+            _requestMatcher = new TemplateMatcher(TemplateParser.Parse(config.IndexPath), new RouteValueDictionary());
+            _config = config;
             _resourceAssembly = GetType().GetTypeInfo().Assembly;
         }
 
@@ -50,14 +50,9 @@ namespace Swashbuckle.SwaggerUi.Application
 
         private Stream AssignPlaceholderValuesTo(Stream template)
         {
-            var placeholderValues = new Dictionary<string, string>
-            {
-                { "%(SwaggerUrl)", _swaggerUrl }
-            };
-
             var templateText = new StreamReader(template).ReadToEnd();
             var contentBuilder = new StringBuilder(templateText);
-            foreach (var entry in placeholderValues)
+            foreach (var entry in _config.GetPlaceholderValues())
             {
                 contentBuilder.Replace(entry.Key, entry.Value);
             }
