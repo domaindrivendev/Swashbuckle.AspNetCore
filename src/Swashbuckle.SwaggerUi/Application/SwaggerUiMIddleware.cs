@@ -37,14 +37,13 @@ namespace Swashbuckle.SwaggerUi.Application
 
             var template = _resourceAssembly.GetManifestResourceStream("Swashbuckle.SwaggerUi.CustomAssets.index.html");
             var content = GenerateContent(template, _options.IndexConfig.ToParamDictionary());
+
             RespondWithHtmlContent(httpContext.Response, content);
         }
 
         private bool RequestingSwaggerUi(HttpRequest request)
         {
-            if (request.Method != "GET") return false;
-
-			return _requestMatcher.TryMatch(request.Path, new RouteValueDictionary());
+            return (request.Method == "GET") && _requestMatcher.TryMatch(request.Path, new RouteValueDictionary());
         }
         
         private Stream GenerateContent(Stream template, IDictionary<string, string> templateParams)
