@@ -1,20 +1,20 @@
-﻿{
+{
   "buildOptions": {
     "warningsAsErrors": true
   },
   "dependencies": {
-    "Basic": "1.0.0-*",
-    "CustomizedUi": "1.0.0-*",
     "Microsoft.AspNetCore.Mvc": "1.0.0",
     "Microsoft.AspNetCore.TestHost": "1.0.0",
     "Microsoft.NETCore.Platforms": "1.0.1",
     "Moq": "4.6.25-*",
+    "dotnet-test-xunit": "2.2.0-preview2-*",
+    "xunit": "2.2.0-beta2-*",
+    "Basic": "1.0.0-*",
+    "CustomAssets": "1.0.0-*",
+    "CustomizedUi": "1.0.0-*",
     "MultipleVersions": "1.0.0-*",
     "SecuritySchemes": "1.0.0-*",
-    "VirtualDirectory": "1.0.0-*",
-    "CustomAssets": "1.0.0-*",
-    "dotnet-test-xunit": "2.2.0-preview2-*",
-    "xunit": "2.2.0-beta2-*"
+    "VirtualDirectory": "1.0.0-*"
   },
   "frameworks": {
     "netcoreapp1.0": {
