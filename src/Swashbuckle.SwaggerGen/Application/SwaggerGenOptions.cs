@@ -39,6 +39,18 @@ namespace Swashbuckle.SwaggerGen.Application
             SchemaFilter<SwaggerAttributesSchemaFilter>();
         }
 
+        public void NoDefaultResponses()
+        {
+            var filterDescriptor = new FilterDescriptor<IOperationFilter>
+            {
+                Type = typeof(SwaggerResponseRemoveDefaultsOperationFilter),
+                Arguments = null
+            };
+
+            //insert this filter as first filter so it will be the first filter to run and actually clear the defaults
+            _operationFilterDescriptors.Insert(0, filterDescriptor); 
+        }
+
         public void SingleApiVersion(Info info)
         {
             _swaggerGeneratorOptions.SingleApiVersion(info);
