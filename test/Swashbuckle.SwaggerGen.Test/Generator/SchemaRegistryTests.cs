@@ -198,6 +198,7 @@ namespace Swashbuckle.SwaggerGen.Generator
             Assert.Equal(3, schema.Properties["StringProperty2"].MaxLength);
             Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["PatternProperty"].Pattern);
             Assert.Equal(new[] { "RangeProperty", "PatternProperty" }, schema.Required.ToArray());
+            Assert.Equal("DefaultValue", schema.Properties["DefaultValueProperty"].Default);
         }
 
         [Fact]
