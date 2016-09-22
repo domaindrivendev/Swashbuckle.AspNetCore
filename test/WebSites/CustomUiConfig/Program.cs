@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using System.IO;
 
-namespace CustomAssets
+namespace CustomUiConfig
 {
     public class Program
     {

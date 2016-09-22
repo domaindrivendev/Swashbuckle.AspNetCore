@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CustomizedUi.Controllers
+namespace CustomUiConfig.Controllers
 {
     [Route("/products")]
     [Produces("application/json")]

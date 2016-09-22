@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using System.IO;
 
-namespace CustomizedUi
+namespace CustomIndexHtml
 {
     public class Program
     {

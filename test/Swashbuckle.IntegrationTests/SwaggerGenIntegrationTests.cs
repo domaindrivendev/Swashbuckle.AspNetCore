@@ -22,7 +22,8 @@ namespace Swashbuckle.IntegrationTests
 
         [Theory]
         [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
-		[InlineData(typeof(CustomizedUi.Startup), "/swagger/v1/swagger.json")]
+		[InlineData(typeof(CustomIndexHtml.Startup), "/swagger/v1/swagger.json")]
+		[InlineData(typeof(CustomUiConfig.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(MultipleVersions.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(MultipleVersions.Startup), "/swagger/v2/swagger.json")]
         [InlineData(typeof(SecuritySchemes.Startup), "/swagger/v1/swagger.json")]

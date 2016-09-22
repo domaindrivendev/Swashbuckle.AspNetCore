@@ -8,7 +8,7 @@ namespace Swashbuckle.IntegrationTests
         [Fact]
         public async Task CustomStylesheetsAndScriptsCanBeInjected()
         {
-            var client = new TestSite(typeof(CustomAssets.Startup)).BuildClient();
+            var client = new TestSite(typeof(CustomUiConfig.Startup)).BuildClient();
 
             var response = await client.GetAsync("/swagger/index.html");
             var content = await response.Content.ReadAsStringAsync();
