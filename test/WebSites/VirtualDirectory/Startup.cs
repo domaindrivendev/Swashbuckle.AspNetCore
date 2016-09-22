@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Swashbuckle.Swagger.Model;
 
 namespace VirtualDirectory
 {
@@ -20,7 +21,10 @@ namespace VirtualDirectory
             // You will also need to add the Microsoft.AspNetCore.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
             // services.AddWebApiConventions();
 
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "API V1", Version = "v1" });
+            });
         }
 
         // Configure is called after ConfigureServices is called.
@@ -40,7 +44,10 @@ namespace VirtualDirectory
                 // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
 
                 subApp.UseSwagger();
-                subApp.UseSwaggerUi(c => c.SwaggerUrl = "/vdir/swagger/v1/swagger.json");
+                subApp.UseSwaggerUi(c =>
+                {
+                    c.SwaggerEndpoint("/vdir/swagger/v1/swagger.json", "V1 Docs");
+                });
             });
         }
     }

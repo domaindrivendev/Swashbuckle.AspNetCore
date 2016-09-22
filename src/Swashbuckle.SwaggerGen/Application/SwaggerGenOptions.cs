@@ -12,8 +12,8 @@ namespace Swashbuckle.SwaggerGen.Application
 {
     public class SwaggerGenOptions
     {
-        private readonly SwaggerGeneratorOptions _swaggerGeneratorOptions;
-        private readonly SchemaRegistryOptions _schemaRegistryOptions;
+        private readonly SwaggerGeneratorSettings _swaggerGeneratorSettings;
+        private readonly SchemaRegistrySettings _schemaRegistrySettings;
 
         private List<FilterDescriptor<IOperationFilter>> _operationFilterDescriptors;
         private List<FilterDescriptor<IDocumentFilter>> _documentFilterDescriptors;
@@ -27,8 +27,8 @@ namespace Swashbuckle.SwaggerGen.Application
 
         public SwaggerGenOptions()
         {
-            _swaggerGeneratorOptions = new SwaggerGeneratorOptions();
-            _schemaRegistryOptions = new SchemaRegistryOptions();
+            _swaggerGeneratorSettings = new SwaggerGeneratorSettings();
+            _schemaRegistrySettings = new SchemaRegistrySettings();
 
             _operationFilterDescriptors = new List<FilterDescriptor<IOperationFilter>>();
             _documentFilterDescriptors = new List<FilterDescriptor<IDocumentFilter>>();
@@ -39,41 +39,34 @@ namespace Swashbuckle.SwaggerGen.Application
             SchemaFilter<SwaggerAttributesSchemaFilter>();
         }
 
-        public void SingleApiVersion(Info info)
+        public void SwaggerDoc(string name, Info info, Func<ApiDescription, bool> includeActionPredicate = null)
         {
-            _swaggerGeneratorOptions.SingleApiVersion(info);
-        }
-
-        public void MultipleApiVersions(
-            IEnumerable<Info> apiVersions,
-            Func<ApiDescription, string, bool> versionSupportResolver)
-        {
-            _swaggerGeneratorOptions.MultipleApiVersions(apiVersions, versionSupportResolver);
+            _swaggerGeneratorSettings.SwaggerDocs.Add(name, new SwaggerDocumentDescriptor(info, includeActionPredicate));
         }
 
         public void IgnoreObsoleteActions()
         {
-            _swaggerGeneratorOptions.IgnoreObsoleteActions = true;
+            _swaggerGeneratorSettings.IgnoreObsoleteActions = true;
         }
 
         public void GroupActionsBy(Func<ApiDescription, string> groupNameSelector)
         {
-            _swaggerGeneratorOptions.GroupNameSelector = groupNameSelector;
+            _swaggerGeneratorSettings.GroupNameSelector = groupNameSelector;
         }
 
         public void OrderActionGroupsBy(IComparer<string> groupNameComparer)
         {
-            _swaggerGeneratorOptions.GroupNameComparer = groupNameComparer;
+            _swaggerGeneratorSettings.GroupNameComparer = groupNameComparer;
         }
 
         public void AddSecurityDefinition(string name, SecurityScheme securityScheme)
         {
-            _swaggerGeneratorOptions.SecurityDefinitions.Add(name, securityScheme);
+            _swaggerGeneratorSettings.SecurityDefinitions.Add(name, securityScheme);
         }
 
         public void MapType(Type type, Func<Schema> schemaFactory)
         {
-            _schemaRegistryOptions.CustomTypeMappings.Add(type, schemaFactory);
+            _schemaRegistrySettings.CustomTypeMappings.Add(type, schemaFactory);
         }
 
         public void MapType<T>(Func<Schema> schemaFactory)
@@ -83,22 +76,22 @@ namespace Swashbuckle.SwaggerGen.Application
 
         public void DescribeAllEnumsAsStrings()
         {
-            _schemaRegistryOptions.DescribeAllEnumsAsStrings = true;
+            _schemaRegistrySettings.DescribeAllEnumsAsStrings = true;
         }
 
         public void DescribeStringEnumsInCamelCase()
         {
-            _schemaRegistryOptions.DescribeStringEnumsInCamelCase = true;
+            _schemaRegistrySettings.DescribeStringEnumsInCamelCase = true;
         }
 
         public void CustomSchemaIds(Func<Type, string> schemaIdSelector)
         {
-            _schemaRegistryOptions.SchemaIdSelector = schemaIdSelector; 
+            _schemaRegistrySettings.SchemaIdSelector = schemaIdSelector; 
         }
 
         public void IgnoreObsoleteProperties()
         {
-            _schemaRegistryOptions.IgnoreObsoleteProperties = true;
+            _schemaRegistrySettings.IgnoreObsoleteProperties = true;
         }
 
         public void OperationFilter<TFilter>(params object[] parameters)
@@ -138,33 +131,33 @@ namespace Swashbuckle.SwaggerGen.Application
             SchemaFilter<XmlCommentsSchemaFilter>(xmlDoc);
         }
 
-        internal SchemaRegistryOptions GetSchemaRegistryOptions(IServiceProvider serviceProvider)
+        internal SchemaRegistrySettings GetSchemaRegistrySettings(IServiceProvider serviceProvider)
         {
-            var options = _schemaRegistryOptions.Clone();
+            var settings = _schemaRegistrySettings.Clone();
 
             foreach (var filter in CreateFilters(_schemaFilterDescriptors, serviceProvider))
             {
-                options.SchemaFilters.Add(filter);
+                settings.SchemaFilters.Add(filter);
             }
 
-            return options;
+            return settings;
         }
 
-        internal SwaggerGeneratorOptions GetSwaggerGeneratorOptions(IServiceProvider serviceProvider)
+        internal SwaggerGeneratorSettings GetSwaggerGeneratorSettings(IServiceProvider serviceProvider)
         {
-            var options = _swaggerGeneratorOptions.Clone();
+            var settings = _swaggerGeneratorSettings.Clone();
 
             foreach (var filter in CreateFilters(_operationFilterDescriptors, serviceProvider))
             {
-                options.OperationFilters.Add(filter);
+                settings.OperationFilters.Add(filter);
             }
 
             foreach (var filter in CreateFilters(_documentFilterDescriptors, serviceProvider))
             {
-                options.DocumentFilters.Add(filter);
+                settings.DocumentFilters.Add(filter);
             }
 
-            return options;
+            return settings;
         }
 
         private IEnumerable<TFilter> CreateFilters<TFilter>(

@@ -37,13 +37,13 @@ namespace Microsoft.Extensions.DependencyInjection
 
             var schemaRegistryFactory = new SchemaRegistryFactory(
                 mvcJsonOptions.SerializerSettings,
-                swaggerGenOptions.GetSchemaRegistryOptions(serviceProvider)
+                swaggerGenOptions.GetSchemaRegistrySettings(serviceProvider)
             );
 
             return new SwaggerGenerator(
                 apiDescriptionsProvider,
                 schemaRegistryFactory,
-                swaggerGenOptions.GetSwaggerGeneratorOptions(serviceProvider)
+                swaggerGenOptions.GetSwaggerGeneratorSettings(serviceProvider)
             );
         }
     }

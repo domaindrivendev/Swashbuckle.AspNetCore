@@ -16,14 +16,14 @@ namespace Swashbuckle.Swagger.Application
         private readonly RequestDelegate _next;
         private readonly ISwaggerProvider _swaggerProvider;
         private readonly JsonSerializer _swaggerSerializer;
-        private readonly Action<HttpRequest, SwaggerDocument> _documentFilter;
+        private readonly Action<SwaggerDocument, HttpRequest> _documentFilter;
         private readonly TemplateMatcher _requestMatcher;
 
         public SwaggerMiddleware(
             RequestDelegate next,
             ISwaggerProvider swaggerProvider,
             IOptions<MvcJsonOptions> mvcJsonOptions,
-            Action<HttpRequest, SwaggerDocument> documentFilter,
+            Action<SwaggerDocument, HttpRequest> documentFilter,
             string routeTemplate)
         {
             _next = next;
@@ -35,8 +35,8 @@ namespace Swashbuckle.Swagger.Application
 
         public async Task Invoke(HttpContext httpContext)
         {
-            string apiVersion;
-            if (!RequestingSwaggerDocs(httpContext.Request, out apiVersion))
+            string documentName;
+            if (!RequestingSwaggerDocument(httpContext.Request, out documentName))
             {
                 await _next(httpContext);
                 return;
@@ -46,23 +46,23 @@ namespace Swashbuckle.Swagger.Application
                 ? "/"
                 : httpContext.Request.PathBase.ToString();
 
-            var swagger = _swaggerProvider.GetSwagger(apiVersion, null, basePath);
+            var swagger = _swaggerProvider.GetSwagger(documentName, null, basePath);
 
             // One last opportunity to modify the Swagger Document - this time with request context
-            _documentFilter(httpContext.Request, swagger);
+            _documentFilter(swagger, httpContext.Request);
 
             RespondWithSwaggerJson(httpContext.Response, swagger);
         }
 
-        private bool RequestingSwaggerDocs(HttpRequest request, out string apiVersion)
+        private bool RequestingSwaggerDocument(HttpRequest request, out string documentName)
         {
-            apiVersion = null;
+            documentName = null;
             if (request.Method != "GET") return false;
 
 			var routeValues = new RouteValueDictionary();
-            if (!_requestMatcher.TryMatch(request.Path, routeValues) || !routeValues.ContainsKey("apiVersion")) return false;
+            if (!_requestMatcher.TryMatch(request.Path, routeValues) || !routeValues.ContainsKey("documentName")) return false;
 
-            apiVersion = routeValues["apiVersion"].ToString();
+            documentName = routeValues["documentName"].ToString();
             return true;
         }
 

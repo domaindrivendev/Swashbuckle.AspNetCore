@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Swashbuckle.Swagger.Model;
 
 namespace CustomizedUi
 {
@@ -10,7 +11,10 @@ namespace CustomizedUi
         {
             services.AddMvc();
 
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "API V1", Version = "v1" });
+            });
         }
 
         public void Configure(IApplicationBuilder app)
@@ -20,7 +24,10 @@ namespace CustomizedUi
             app.UseMvc();
 
             app.UseSwagger();
-            app.UseSwaggerUi();
+            app.UseSwaggerUi(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
+            });
         }
     }
 }

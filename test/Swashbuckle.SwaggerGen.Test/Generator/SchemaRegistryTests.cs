@@ -226,8 +226,8 @@ namespace Swashbuckle.SwaggerGen.Generator
         [Fact]
         public void GetOrRegister_SupportsOptionToExplicitlyMapTypes()
         {
-            var subject = Subject(opts =>
-                opts.CustomTypeMappings.Add(typeof(ComplexType), () => new Schema { Type = "string" })
+            var subject = Subject(c =>
+                c.CustomTypeMappings.Add(typeof(ComplexType), () => new Schema { Type = "string" })
             );
 
             var schema = subject.GetOrRegister(typeof(ComplexType));
@@ -244,8 +244,8 @@ namespace Swashbuckle.SwaggerGen.Generator
         [InlineData(typeof(object))]
         public void GetOrRegister_SupportsOptionToPostModifyAllInlineSchemas(Type systemType)
         {
-            var subject = Subject(opts =>
-                opts.SchemaFilters.Add(new VendorExtensionsSchemaFilter())
+            var subject = Subject(c =>
+                c.SchemaFilters.Add(new VendorExtensionsSchemaFilter())
             );
 
             var schemaOrRef = subject.GetOrRegister(systemType);
@@ -260,7 +260,7 @@ namespace Swashbuckle.SwaggerGen.Generator
         [Fact]
         public void GetOrRegister_SupportsOptionToIgnoreObsoleteProperties()
         {
-            var subject = Subject(opts => opts.IgnoreObsoleteProperties = true);
+            var subject = Subject(c => c.IgnoreObsoleteProperties = true);
 
             subject.GetOrRegister(typeof(ObsoletePropertiesType));
 
@@ -271,9 +271,9 @@ namespace Swashbuckle.SwaggerGen.Generator
         [Fact]
         public void GetOrRegister_SupportsOptionToCustomizeSchemaIds()
         {
-            var subject = Subject(opts =>
+            var subject = Subject(c =>
             {
-                opts.SchemaIdSelector = (type) => type.FriendlyId(true).Replace("Swashbuckle.SwaggerGen.TestFixtures.", "");
+                c.SchemaIdSelector = (type) => type.FriendlyId(true).Replace("Swashbuckle.SwaggerGen.TestFixtures.", "");
             });
 
             var jsonReference1 = subject.GetOrRegister(typeof(TestFixtures.Namespace1.ConflictingType));
@@ -286,7 +286,7 @@ namespace Swashbuckle.SwaggerGen.Generator
         [Fact]
         public void GetOrRegister_SupportsOptionToDescribeAllEnumsAsStrings()
         {
-            var subject = Subject(opts => opts.DescribeAllEnumsAsStrings = true);
+            var subject = Subject(c => c.DescribeAllEnumsAsStrings = true);
 
             var schema = subject.GetOrRegister(typeof(AnEnum));
 
@@ -297,10 +297,10 @@ namespace Swashbuckle.SwaggerGen.Generator
         [Fact]
         public void GetOrRegister_SupportsOptionToDescribeStringEnumsInCamelCase()
         {
-            var subject = Subject(opts =>
+            var subject = Subject(c =>
             {
-                opts.DescribeAllEnumsAsStrings = true;
-                opts.DescribeStringEnumsInCamelCase = true;
+                c.DescribeAllEnumsAsStrings = true;
+                c.DescribeStringEnumsInCamelCase = true;
             });
 
             var schema = subject.GetOrRegister(typeof(AnEnum));
@@ -383,12 +383,12 @@ namespace Swashbuckle.SwaggerGen.Generator
             });
         }
 
-        private SchemaRegistry Subject(Action<SchemaRegistryOptions> configureOptions = null)
+        private SchemaRegistry Subject(Action<SchemaRegistrySettings> configure = null)
         {
-            var options = new SchemaRegistryOptions();
-            if (configureOptions != null) configureOptions(options);
+            var settings = new SchemaRegistrySettings();
+            if (configure != null) configure(settings);
 
-            return new SchemaRegistry(new JsonSerializerSettings(), options);
+            return new SchemaRegistry(new JsonSerializerSettings(), settings);
         }
 
         private SchemaRegistry Subject(JsonSerializerSettings jsonSerializerSettings)

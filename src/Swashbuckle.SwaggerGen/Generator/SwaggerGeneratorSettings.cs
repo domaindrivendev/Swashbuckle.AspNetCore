@@ -5,11 +5,11 @@ using Swashbuckle.Swagger.Model;
 
 namespace Swashbuckle.SwaggerGen.Generator
 {
-    public class SwaggerGeneratorOptions
+    public class SwaggerGeneratorSettings
     {
-        public SwaggerGeneratorOptions()
+        public SwaggerGeneratorSettings()
         {
-            ApiVersions = new List<Info> { new Info { Version = "v1", Title = "API V1" } };
+            SwaggerDocs = new Dictionary<string, SwaggerDocumentDescriptor>();
             GroupNameSelector = (apiDesc) => apiDesc.GroupName;
             GroupNameComparer = Comparer<string>.Default;
             SecurityDefinitions = new Dictionary<string, SecurityScheme>();
@@ -17,9 +17,7 @@ namespace Swashbuckle.SwaggerGen.Generator
             DocumentFilters = new List<IDocumentFilter>();
         }
 
-        public IList<Info> ApiVersions { get; private set; }
-
-        public Func<ApiDescription, string, bool> VersionSupportResolver { get; private set; }
+        public IDictionary<string, SwaggerDocumentDescriptor> SwaggerDocs { get; private set; }
 
         public bool IgnoreObsoleteActions { get; set; }
 
@@ -33,31 +31,11 @@ namespace Swashbuckle.SwaggerGen.Generator
 
         public IList<IDocumentFilter> DocumentFilters { get; private set; }
 
-        public void SingleApiVersion(Info info)
+        internal SwaggerGeneratorSettings Clone()
         {
-            ApiVersions.Clear();
-            ApiVersions.Add(info);
-            VersionSupportResolver = null;
-        }
-
-        public void MultipleApiVersions(
-            IEnumerable<Info> apiVersions,
-            Func<ApiDescription, string, bool> versionSupportResolver)
-        {
-            ApiVersions.Clear();
-            foreach (var version in apiVersions)
+            return new SwaggerGeneratorSettings
             {
-                ApiVersions.Add(version);
-            }
-            VersionSupportResolver = versionSupportResolver;
-        }
-
-        internal SwaggerGeneratorOptions Clone()
-        {
-            return new SwaggerGeneratorOptions
-            {
-                ApiVersions = ApiVersions,
-                VersionSupportResolver = VersionSupportResolver,
+                SwaggerDocs = SwaggerDocs,
                 IgnoreObsoleteActions = IgnoreObsoleteActions,
                 GroupNameSelector = GroupNameSelector,
                 GroupNameComparer = GroupNameComparer,
@@ -66,5 +44,18 @@ namespace Swashbuckle.SwaggerGen.Generator
                 DocumentFilters = DocumentFilters
             };
         }
+    }
+
+    public class SwaggerDocumentDescriptor
+    {
+        public SwaggerDocumentDescriptor(Info info, Func<ApiDescription, bool> includeActionPredicate = null)
+        {
+            Info = info;
+            IncludeActionPredicate = includeActionPredicate ?? ((apiDesc) => true); // includes all actions by default
+        }
+
+        public Info Info { get; private set; }
+
+        public Func<ApiDescription, bool> IncludeActionPredicate { get; private set; }
     }
 }
