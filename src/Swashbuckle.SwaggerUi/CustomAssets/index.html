@@ -44,7 +44,6 @@
       if(window.SwaggerTranslator) {
         window.SwaggerTranslator.translate();
       }
-
       window.swaggerUi = new SwaggerUi({
         url: JSConfig.SwaggerEndpoints[0].Url,
         dom_id: "swagger-ui-container",
@@ -97,8 +96,7 @@
       <div class='input'>
         <input placeholder="http://example.com/api" id="input_baseUrl" name="baseUrl" type="text" />
         <div id='auth_container'></div>
-        <select id="select_document">
-        </select>
+        <select id="select_document"></select>
         <script type="text/javascript">
           // Append configured endpoints as options in the document selector
           var options = '';
