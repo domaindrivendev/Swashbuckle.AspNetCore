@@ -10,7 +10,7 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class SwaggerGenServiceCollectionExtensions
     {
-        public static void AddSwaggerGen(
+        public static IServiceCollection AddSwaggerGen(
             this IServiceCollection services,
             Action<SwaggerGenOptions> setupAction = null)
         {
@@ -20,6 +20,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.Configure(setupAction ?? (opts => { }));
 
             services.AddSingleton(CreateSwaggerProvider);
+
+            return services;
         }
 
         public static void ConfigureSwaggerGen(
