@@ -27,7 +27,11 @@ namespace CustomUiConfig
             app.UseSwaggerUi(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
-                c.InjectJavaScript("/ext/custom-script.js");
+                c.EnabledValidator();
+                c.BooleanValues(new object[] { 0, 1 });
+                c.DocExpansion("full");
+                c.SupportedSubmitMethods(new[] { "get", "post", "put", "patch" });
+                c.InjectOnCompleteJavaScript("/ext/custom-script.js");
                 c.InjectStylesheet("/ext/custom-stylesheet.css");
             });
         }

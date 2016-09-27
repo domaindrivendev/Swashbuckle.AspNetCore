@@ -61,6 +61,7 @@ namespace SecuritySchemes
             app.UseSwaggerUi(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
+                c.ConfigureOAuth2("test-client-id", "test-client-secret", "test-realm", "test-app");
             });
 
             // TOOD: Figure out oauth middleware to validate token

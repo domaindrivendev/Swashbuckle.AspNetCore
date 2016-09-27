@@ -46,17 +46,19 @@
       }
       window.swaggerUi = new SwaggerUi({
         url: JSConfig.SwaggerEndpoints[0].Url,
+        validatorUrl: JSConfig.ValidatorUrl,
         dom_id: "swagger-ui-container",
-        supportedSubmitMethods: ['get', 'post', 'put', 'delete', 'patch'],
+        booleanValues: JSConfig.BooleanValues,
+        supportedSubmitMethods: JSConfig.SupportedSubmitMethods, 
         onComplete: function(swaggerApi, swaggerUi){
           if(typeof initOAuth == "function") {
             initOAuth({
-              clientId: "your-client-id",
-              clientSecret: "your-client-secret-if-required",
-              realm: "your-realms",
-              appName: "your-app-name",
-              scopeSeparator: " ",
-              additionalQueryStringParams: {}
+              clientId: JSConfig.OAuth2ClientId,
+              clientSecret: JSConfig.OAuth2ClientSecret,
+              realm: JSConfig.OAuth2Realm,
+              appName: JSConfig.OAuth2AppName,
+              scopeSeparator: JSConfig.OAuth2ScopeSeparator,
+              additionalQueryStringParams: JSConfig.OAuth2AdditionalQueryStringParams
             });
           }
 
@@ -70,11 +72,15 @@
         },
         onFailure: function(data) {
           log("Unable to Load SwaggerUI");
+
+          _.each(JSConfig.OnFailureScripts, function (script) {
+            $.getScript(script);
+          });
         },
-        docExpansion: "none",
-        jsonEditor: false,
+        docExpansion: JSConfig.DocExpansion,
+        jsonEditor: JSConfig.JsonEditor,
         defaultModelRendering: 'schema',
-        showRequestHeaders: false
+        showRequestHeaders: JSConfig.ShowRequestHeaders
       });
 
       window.swaggerUi.load();
