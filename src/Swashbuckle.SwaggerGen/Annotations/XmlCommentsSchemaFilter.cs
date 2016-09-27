@@ -49,7 +49,6 @@ namespace Swashbuckle.SwaggerGen.Annotations
 
         private void ApplyPropertyComments(Schema propertySchema, PropertyInfo propertyInfo)
         {
-
             var commentId = XmlCommentsIdHelper.GetCommentIdForProperty(propertyInfo);
             var propertyNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, commentId));
             if (propertyNode == null) return;

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Xml.XPath;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.Swagger.Model;
 using Swashbuckle.SwaggerGen.Generator;
 using Swashbuckle.SwaggerGen.Annotations;
@@ -15,6 +17,7 @@ namespace Swashbuckle.SwaggerGen.Application
         private readonly SwaggerGeneratorSettings _swaggerGeneratorSettings;
         private readonly SchemaRegistrySettings _schemaRegistrySettings;
 
+        private IList<string> _xmlCommentsPaths;
         private List<FilterDescriptor<IOperationFilter>> _operationFilterDescriptors;
         private List<FilterDescriptor<IDocumentFilter>> _documentFilterDescriptors;
         private List<FilterDescriptor<ISchemaFilter>> _schemaFilterDescriptors;
@@ -30,6 +33,7 @@ namespace Swashbuckle.SwaggerGen.Application
             _swaggerGeneratorSettings = new SwaggerGeneratorSettings();
             _schemaRegistrySettings = new SchemaRegistrySettings();
 
+            _xmlCommentsPaths = new List<string>();
             _operationFilterDescriptors = new List<FilterDescriptor<IOperationFilter>>();
             _documentFilterDescriptors = new List<FilterDescriptor<IDocumentFilter>>();
             _schemaFilterDescriptors = new List<FilterDescriptor<ISchemaFilter>>();
@@ -124,14 +128,38 @@ namespace Swashbuckle.SwaggerGen.Application
             });
         }
 
-        public void IncludeXmlComments(string xmlDocPath)
+        public void IncludeXmlComments(string filePath)
         {
-            var xmlDoc = new XPathDocument(xmlDocPath);
-            OperationFilter<XmlCommentsOperationFilter>(xmlDoc);
-            SchemaFilter<XmlCommentsSchemaFilter>(xmlDoc);
+            _xmlCommentsPaths.Add(filePath);
         }
 
-        internal SchemaRegistrySettings GetSchemaRegistrySettings(IServiceProvider serviceProvider)
+        internal ISwaggerProvider CreateSwaggerProvider(IServiceProvider serviceProvider)
+        {
+            var swaggerGeneratorSettings = CreateSwaggerGeneratorSettings(serviceProvider);
+            var schemaRegistrySettings = CreateSchemaRegistrySettings(serviceProvider);
+
+            // Instantiate & add the XML comments filters here so they're executed before any custom
+            // filters AND so they can share the same XPathDocument (perf. optimization)
+            foreach (var filePath in _xmlCommentsPaths)
+            {
+                var xmlDoc = new XPathDocument(filePath);
+                swaggerGeneratorSettings.OperationFilters.Insert(0, new XmlCommentsOperationFilter(xmlDoc));
+                schemaRegistrySettings.SchemaFilters.Insert(0, new XmlCommentsSchemaFilter(xmlDoc));
+            }
+
+            var schemaRegistryFactory = new SchemaRegistryFactory(
+                serviceProvider.GetRequiredService<IOptions<MvcJsonOptions>>().Value.SerializerSettings,
+                schemaRegistrySettings
+            );
+
+            return new SwaggerGenerator(
+                serviceProvider.GetRequiredService<IApiDescriptionGroupCollectionProvider>(),
+                schemaRegistryFactory,
+                swaggerGeneratorSettings
+            );
+        }
+
+        private SchemaRegistrySettings CreateSchemaRegistrySettings(IServiceProvider serviceProvider)
         {
             var settings = _schemaRegistrySettings.Clone();
 
@@ -143,7 +171,7 @@ namespace Swashbuckle.SwaggerGen.Application
             return settings;
         }
 
-        internal SwaggerGeneratorSettings GetSwaggerGeneratorSettings(IServiceProvider serviceProvider)
+        private SwaggerGeneratorSettings CreateSwaggerGeneratorSettings(IServiceProvider serviceProvider)
         {
             var settings = _swaggerGeneratorSettings.Clone();
 

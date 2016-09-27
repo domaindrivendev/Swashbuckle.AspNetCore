@@ -1,10 +1,8 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Options;
 using Swashbuckle.Swagger.Model;
 using Swashbuckle.SwaggerGen.Application;
-using Swashbuckle.SwaggerGen.Generator;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -19,7 +17,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.Configure(setupAction ?? (opts => { }));
 
-            services.AddSingleton(CreateSwaggerProvider);
+            services.AddTransient(CreateSwaggerProvider);
 
             return services;
         }
@@ -34,19 +32,7 @@ namespace Microsoft.Extensions.DependencyInjection
         private static ISwaggerProvider CreateSwaggerProvider(IServiceProvider serviceProvider)
         {
             var swaggerGenOptions = serviceProvider.GetRequiredService<IOptions<SwaggerGenOptions>>().Value;
-            var mvcJsonOptions = serviceProvider.GetRequiredService<IOptions<MvcJsonOptions>>().Value;
-            var apiDescriptionsProvider = serviceProvider.GetRequiredService<IApiDescriptionGroupCollectionProvider>();
-
-            var schemaRegistryFactory = new SchemaRegistryFactory(
-                mvcJsonOptions.SerializerSettings,
-                swaggerGenOptions.GetSchemaRegistrySettings(serviceProvider)
-            );
-
-            return new SwaggerGenerator(
-                apiDescriptionsProvider,
-                schemaRegistryFactory,
-                swaggerGenOptions.GetSwaggerGeneratorSettings(serviceProvider)
-            );
+            return swaggerGenOptions.CreateSwaggerProvider(serviceProvider);
         }
     }
 }
