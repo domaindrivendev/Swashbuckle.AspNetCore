@@ -17,7 +17,7 @@ namespace Swashbuckle.SwaggerGen.Application
         private readonly SwaggerGeneratorSettings _swaggerGeneratorSettings;
         private readonly SchemaRegistrySettings _schemaRegistrySettings;
 
-        private IList<string> _xmlCommentsPaths;
+        private IList<Func<XPathDocument>> _xmlDocFactories;
         private List<FilterDescriptor<IOperationFilter>> _operationFilterDescriptors;
         private List<FilterDescriptor<IDocumentFilter>> _documentFilterDescriptors;
         private List<FilterDescriptor<ISchemaFilter>> _schemaFilterDescriptors;
@@ -33,7 +33,7 @@ namespace Swashbuckle.SwaggerGen.Application
             _swaggerGeneratorSettings = new SwaggerGeneratorSettings();
             _schemaRegistrySettings = new SchemaRegistrySettings();
 
-            _xmlCommentsPaths = new List<string>();
+            _xmlDocFactories = new List<Func<XPathDocument>>();
             _operationFilterDescriptors = new List<FilterDescriptor<IOperationFilter>>();
             _documentFilterDescriptors = new List<FilterDescriptor<IDocumentFilter>>();
             _schemaFilterDescriptors = new List<FilterDescriptor<ISchemaFilter>>();
@@ -128,9 +128,14 @@ namespace Swashbuckle.SwaggerGen.Application
             });
         }
 
+        public void IncludeXmlComments(Func<XPathDocument> xmlDocFactory)
+        {
+            _xmlDocFactories.Add(xmlDocFactory);
+        }
+
         public void IncludeXmlComments(string filePath)
         {
-            _xmlCommentsPaths.Add(filePath);
+            IncludeXmlComments(() => new XPathDocument(filePath));
         }
 
         internal ISwaggerProvider CreateSwaggerProvider(IServiceProvider serviceProvider)
@@ -140,9 +145,9 @@ namespace Swashbuckle.SwaggerGen.Application
 
             // Instantiate & add the XML comments filters here so they're executed before any custom
             // filters AND so they can share the same XPathDocument (perf. optimization)
-            foreach (var filePath in _xmlCommentsPaths)
+            foreach (var xmlDocFactory in _xmlDocFactories)
             {
-                var xmlDoc = new XPathDocument(filePath);
+                var xmlDoc = xmlDocFactory();
                 swaggerGeneratorSettings.OperationFilters.Insert(0, new XmlCommentsOperationFilter(xmlDoc));
                 schemaRegistrySettings.SchemaFilters.Insert(0, new XmlCommentsSchemaFilter(xmlDoc));
             }
