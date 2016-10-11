@@ -372,6 +372,14 @@ namespace Swashbuckle.SwaggerGen.Generator
         }
 
         [Fact]
+        public void GetOrRegister_HandlesRecursion_IfCalledAgainWithinAFilter()
+        {
+            var subject = Subject(c => c.SchemaFilters.Add(new RecursiveCallSchemaFilter()));
+
+            subject.GetOrRegister(typeof(object));
+        }
+
+        [Fact]
         public void GetOrRegister_Errors_OnConflictingClassName()
         {
             var subject = Subject();
