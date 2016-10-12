@@ -68,7 +68,8 @@ The above snippet demonstrates the minimum configuration required to get the Swa
 Sorry :( - still in progress but coming real soon! For now, take a look at the sample projects for inspiration:
 
 - https://github.com/domaindrivendev/Ahoy/tree/master/test/WebSites/Basic
-- https://github.com/domaindrivendev/Ahoy/tree/master/test/WebSites/CustomizedUi
+- https://github.com/domaindrivendev/Ahoy/tree/master/test/WebSites/CustomindexHtml
+- https://github.com/domaindrivendev/Ahoy/tree/master/test/WebSites/CustomUIConfig
 - https://github.com/domaindrivendev/Ahoy/tree/master/test/WebSites/MultipleVersions
 - https://github.com/domaindrivendev/Ahoy/tree/master/test/WebSites/SecuritySchemes
 - https://github.com/domaindrivendev/Ahoy/tree/master/test/WebSites/VirtualDirectory
