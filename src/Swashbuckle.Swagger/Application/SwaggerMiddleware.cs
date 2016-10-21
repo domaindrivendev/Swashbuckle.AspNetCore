@@ -46,7 +46,7 @@ namespace Swashbuckle.Swagger.Application
                 ? "/"
                 : httpContext.Request.PathBase.ToString();
 
-            var swagger = _swaggerProvider.GetSwagger(documentName, null, basePath);
+            var swagger = _swaggerProvider.GetSwagger(documentName, httpContext.Request.Host.ToString(), basePath);
 
             // One last opportunity to modify the Swagger Document - this time with request context
             _documentFilter(swagger, httpContext.Request);
