@@ -28,6 +28,7 @@ namespace Swashbuckle.SwaggerGen.Annotations
         [Theory]
         [InlineData(typeof(ContainingType.NestedType), "T:Swashbuckle.SwaggerGen.TestFixtures.ContainingType.NestedType")]
         [InlineData(typeof(XmlAnnotatedGenericType<>), "T:Swashbuckle.SwaggerGen.TestFixtures.XmlAnnotatedGenericType`1")]
+        [InlineData(typeof(NoNamespaceType), "T:NoNamespaceType")]
         public void GetCommentIdForType_ReturnsCorrectXmlCommentId_ForGivenType(
             Type type,
             string expectedCommentId
