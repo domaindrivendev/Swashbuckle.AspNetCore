@@ -143,7 +143,7 @@ namespace Swashbuckle.Swagger.Model
 
         public IList<string> Schemes { get; set; }
 
-        public bool Deprecated { get; set; }
+        public bool? Deprecated { get; set; }
 
         public IList<IDictionary<string, IEnumerable<string>>> Security { get; set; }
 
