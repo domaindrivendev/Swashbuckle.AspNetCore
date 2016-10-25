@@ -1,0 +1,25 @@
+version: 6.0.0-build{build}
+build_script:
+# TODO: Figure out why the unit test fails on appveyor and switch back to ps: .\build.ps1
+- ps: >-
+    Import-Module .\tools\psake\psake.psm1;
+    Invoke-psake .\build-definition.ps1 init, dotnet-restore, dotnet-build, dotnet-pack;
+test: off
+artifacts:
+- path: artifacts/nuget/*.nupkg
+deploy:
+- provider: NuGet
+  server: https://www.myget.org/F/ahoy/
+  on:
+    branch: master
+  api_key:
+    secure: 3cB4QYLjlvLWYXMZs/3d+BW7YKVDxp7MkyEeB9al8HtHYhIFxgCUiLu/765g8dEY
+  skip_symbols: true
+# TODO: Push tags to nuget.org instead
+- provider: NuGet
+  server: https://www.myget.org/F/ahoy/
+  on:
+    appveyor_repo_tag: true
+  api_key:
+    secure: 3cB4QYLjlvLWYXMZs/3d+BW7YKVDxp7MkyEeB9al8HtHYhIFxgCUiLu/765g8dEY
+  skip_symbols: true

@@ -23,6 +23,14 @@ Properties {
         "src/Swashbuckle.SwaggerGen",
         "src/Swashbuckle.SwaggerUi"
     )
+
+    if ("$env:APPVEYOR" -eq "True") {
+        if ($env:APPVEYOR_REPO_TAG -eq "true") {
+            $BuildNumber = $env:APPVEYOR_REPO_TAG_NAME
+        } else {
+            $BuildNumber = "preview" + $env:APPVEYOR_BUILD_NUMBER
+        }
+    }
 }
 
 FormatTaskName ("`n" + ("-"*25) + "[{0}]" + ("-"*25) + "`n")
