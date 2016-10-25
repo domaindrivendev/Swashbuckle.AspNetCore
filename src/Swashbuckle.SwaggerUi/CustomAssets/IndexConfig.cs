@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace Swashbuckle.SwaggerUi.CustomAssets
@@ -9,6 +11,8 @@ namespace Swashbuckle.SwaggerUi.CustomAssets
         public IList<StylesheetDescriptor> Stylesheets { get; private set; } = new List<StylesheetDescriptor>();
 
         public JSConfig JSConfig { get; private set; } = new JSConfig();
+
+        public Func<Stream> IndexTemplateStreamFactory { get; set; }
 
         public IDictionary<string, string> ToParamDictionary()
         {

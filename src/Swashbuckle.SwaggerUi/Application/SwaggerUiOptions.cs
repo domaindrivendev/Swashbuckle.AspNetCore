@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Swashbuckle.SwaggerUi.CustomAssets;
 
 namespace Swashbuckle.SwaggerUi.Application
@@ -65,6 +66,11 @@ namespace Swashbuckle.SwaggerUi.Application
         public void ShowJsonEditor()
         {
             IndexConfig.JSConfig.JsonEditor = true;
+        }
+
+        public void IndexTemplateStreamFactory(Func<Stream> streamFactory)
+        {
+            IndexConfig.IndexTemplateStreamFactory = streamFactory;
         }
 
         public void ConfigureOAuth2(

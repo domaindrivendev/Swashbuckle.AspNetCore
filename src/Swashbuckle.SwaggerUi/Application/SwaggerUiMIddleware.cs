@@ -35,7 +35,7 @@ namespace Swashbuckle.SwaggerUi.Application
                 return;
             }
 
-            var template = _resourceAssembly.GetManifestResourceStream("Swashbuckle.SwaggerUi.CustomAssets.index.html");
+            var template = _options.IndexConfig.IndexTemplateStreamFactory?.Invoke() ?? _resourceAssembly.GetManifestResourceStream("Swashbuckle.SwaggerUi.CustomAssets.index.html");
             var content = GenerateContent(template, _options.IndexConfig.ToParamDictionary());
 
             RespondWithHtmlContent(httpContext.Response, content);
@@ -45,17 +45,21 @@ namespace Swashbuckle.SwaggerUi.Application
         {
             return (request.Method == "GET") && _requestMatcher.TryMatch(request.Path, new RouteValueDictionary());
         }
-        
+
         private Stream GenerateContent(Stream template, IDictionary<string, string> templateParams)
         {
-            var templateText = new StreamReader(template).ReadToEnd();
-            var contentBuilder = new StringBuilder(templateText);
-            foreach (var entry in templateParams)
+            using (var reader = new StreamReader(template))
             {
-                contentBuilder.Replace(entry.Key, entry.Value);
-            }
+                var templateText = reader.ReadToEnd();
+                var contentBuilder = new StringBuilder(templateText);
 
-            return new MemoryStream(Encoding.UTF8.GetBytes(contentBuilder.ToString()));
+                foreach (var entry in templateParams)
+                {
+                    contentBuilder.Replace(entry.Key, entry.Value);
+                }
+
+                return new MemoryStream(Encoding.UTF8.GetBytes(contentBuilder.ToString()));
+            }
         }
 
         private void RespondWithHtmlContent(HttpResponse response, Stream content)
