@@ -405,5 +405,10 @@ namespace Swashbuckle.Swagger.Model
         public string TokenUrl { get; set; }
 
         public IDictionary<string, string> Scopes { get; set; }
+        
+        public OAuth2Scheme()
+        {
+            Type = "oauth2";
+        }
     }
 }
