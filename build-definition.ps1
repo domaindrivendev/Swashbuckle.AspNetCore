@@ -28,7 +28,7 @@ Properties {
         if ($env:APPVEYOR_REPO_TAG -eq "true") {
             $BuildNumber = $env:APPVEYOR_REPO_TAG_NAME
         } else {
-            $BuildNumber = "pre" + ((Get-Date).ToUniversalTime().ToString("yyyyMMddHHmm")) + "b" + $env:APPVEYOR_BUILD_NUMBER
+            $BuildNumber = "pre" + [DateTime]::Parse($env:APPVEYOR_REPO_COMMIT_TIMESTAMP).ToUniversalTime().ToString("yyyyMMddHHmm") + "b" + $env:APPVEYOR_BUILD_NUMBER
         }
     }
 }
