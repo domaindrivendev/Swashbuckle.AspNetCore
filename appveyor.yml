@@ -9,17 +9,17 @@ artifacts:
 - path: artifacts/nuget/*.nupkg
 deploy:
 - provider: NuGet
-  server: https://www.myget.org/F/ahoy/
+  server: https://www.myget.org/F/domaindrivendev/api/v2
   on:
     branch: master
   api_key:
-    secure: 3cB4QYLjlvLWYXMZs/3d+BW7YKVDxp7MkyEeB9al8HtHYhIFxgCUiLu/765g8dEY
+    secure: 9QrW8KWCDr8G2ufmOX4O7U4yjneFOYY+5h+auICuWYb1YPaKpQBtUVqrRExg8VXR
   skip_symbols: true
-# TODO: Push tags to nuget.org instead
 - provider: NuGet
-  server: https://www.myget.org/F/ahoy/
+  server: https://www.nuget.org/api/v2/package
   on:
+	branch: master
     appveyor_repo_tag: true
   api_key:
-    secure: 3cB4QYLjlvLWYXMZs/3d+BW7YKVDxp7MkyEeB9al8HtHYhIFxgCUiLu/765g8dEY
+    secure: S2MgK7qypxpy/OtArorFwdH1XASpkxeJu4L7JtgiEBVWe9bOUQ0D8huWmf4VGrBZ
   skip_symbols: true
