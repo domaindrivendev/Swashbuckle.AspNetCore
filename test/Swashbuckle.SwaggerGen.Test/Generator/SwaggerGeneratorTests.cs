@@ -154,6 +154,8 @@ namespace Swashbuckle.SwaggerGen.Generator
         [InlineData("collection/{param}", nameof(FakeActions.AcceptsStringFromRoute), "path")]
         [InlineData("collection", nameof(FakeActions.AcceptsStringFromQuery), "query")]
         [InlineData("collection", nameof(FakeActions.AcceptsStringFromHeader), "header")]
+        [InlineData("collection", nameof(FakeActions.AcceptsStringFromForm), "formData")]
+        [InlineData("collection", nameof(FakeActions.AcceptStringFromDefault), "query")]
         public void GetSwagger_GeneratesNonBodyParameters_ForNonBodyParams(
             string routeTemplate,
             string actionFixtureName,
@@ -166,6 +168,7 @@ namespace Swashbuckle.SwaggerGen.Generator
             var param = swagger.Paths["/" + routeTemplate].Get.Parameters.First();
             Assert.IsAssignableFrom<NonBodyParameter>(param);
             var nonBodyParam = param as NonBodyParameter;
+            Assert.NotNull(nonBodyParam);
             Assert.Equal("param", nonBodyParam.Name);
             Assert.Equal(expectedIn, nonBodyParam.In);
             Assert.Equal("string", nonBodyParam.Type);
@@ -530,7 +533,7 @@ namespace Swashbuckle.SwaggerGen.Generator
                 "v1",
                 new SwaggerDocumentDescriptor(new Info { Title = "API", Version = "v1" })
             );
-                    
+
             configure?.Invoke(options);
 
             return new SwaggerGenerator(

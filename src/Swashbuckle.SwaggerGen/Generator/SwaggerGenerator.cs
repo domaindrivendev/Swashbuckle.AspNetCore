@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Swashbuckle.Swagger.Model;
 
 namespace Swashbuckle.SwaggerGen.Generator
@@ -75,7 +76,7 @@ namespace Swashbuckle.SwaggerGen.Generator
             // Group further by http method
             var perMethodGrouping = apiDescriptions
                 .GroupBy(apiDesc => apiDesc.HttpMethod);
-                
+
             foreach (var group in perMethodGrouping)
             {
                 var httpMethod = group.Key;
@@ -157,6 +158,20 @@ namespace Swashbuckle.SwaggerGen.Generator
             return operation;
         }
 
+        private string GetParameterLocation(ApiParameterDescription paramDesc)
+        {
+            if (paramDesc.Source == BindingSource.Form)
+                return "formData";
+            else if (paramDesc.Source == BindingSource.Body)
+                return "body";
+            else if (paramDesc.Source == BindingSource.Header)
+                return "header";
+            else if (paramDesc.Source == BindingSource.Path)
+                return "path";
+            else
+                return "query";
+        }
+
         private IParameter CreateParameter(ApiParameterDescription paramDesc, ISchemaRegistry schemaRegistry)
         {
             var source = paramDesc.Source.Id.ToLower();
@@ -176,7 +191,7 @@ namespace Swashbuckle.SwaggerGen.Generator
                 var nonBodyParam = new NonBodyParameter
                 {
                     Name = paramDesc.Name,
-                    In = source,
+                    In = GetParameterLocation(paramDesc),
                     Required = (source == "path")
                 };
 
@@ -212,6 +227,14 @@ namespace Swashbuckle.SwaggerGen.Generator
             { "1\\d{2}", "Information" },
             { "2\\d{2}", "Success" },
             { "3\\d{2}", "Redirect" },
+            { "400", "Bad Request" },
+            { "401", "Unauthorized" },
+            { "403", "Forbidden" },
+            { "404", "Not Found" },
+            { "405", "Method Not Allowed" },
+            { "406", "Not Acceptable" },
+            { "408", "Request Timeout" },
+            { "409", "Conflict" },
             { "4\\d{2}", "Client Error" },
             { "5\\d{2}", "Server Error" }
         };

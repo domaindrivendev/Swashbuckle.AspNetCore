@@ -54,6 +54,12 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
         public void AcceptsStringFromHeader([FromHeader]string param)
         { }
 
+        public void AcceptsStringFromForm([FromForm]string param)
+        { }
+
+        public void AcceptStringFromDefault(string param)
+        { }
+
         public void AcceptsComplexTypeFromBody([FromBody]ComplexType param)
         { }
 
@@ -92,7 +98,7 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
             [FromQuery(Name="p1")]string param1,
             [FromQuery(Name="p2")]string param2)
         { }
-            
+
         [ProducesResponseType(typeof(void), 204)]
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
         public IActionResult AnnotatedWithResponseTypeAttributes()

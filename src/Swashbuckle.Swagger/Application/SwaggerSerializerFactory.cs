@@ -12,6 +12,7 @@ namespace Swashbuckle.Swagger.Application
             return new JsonSerializer
             {
                 NullValueHandling = NullValueHandling.Ignore,
+                Formatting = mvcJsonOptions.Value.SerializerSettings.Formatting,
                 ContractResolver = new SwaggerContractResolver(mvcJsonOptions.Value.SerializerSettings)
             };
         }
