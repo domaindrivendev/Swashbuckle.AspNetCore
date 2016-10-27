@@ -18,7 +18,7 @@ deploy:
 - provider: NuGet
   server: https://www.nuget.org/api/v2/package
   on:
-	branch: master
+    branch: master
     appveyor_repo_tag: true
   api_key:
     secure: S2MgK7qypxpy/OtArorFwdH1XASpkxeJu4L7JtgiEBVWe9bOUQ0D8huWmf4VGrBZ
