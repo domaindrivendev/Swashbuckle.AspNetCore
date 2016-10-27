@@ -21,7 +21,7 @@ namespace Swashbuckle.SwaggerUi.Application
             IndexConfig.JSConfig.SwaggerEndpoints.Add(new EndpointDescriptor { Url = url, Description = description });
         }
 
-        public void EnabledValidator(string validatorUrl = "http://online.swagger.io/validator")
+        public void EnabledValidator(string validatorUrl = "https://online.swagger.io/validator")
         {
             IndexConfig.JSConfig.ValidatorUrl = validatorUrl;
         }
