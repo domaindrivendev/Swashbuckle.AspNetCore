@@ -76,11 +76,11 @@ Sorry :( - still in progress but coming real soon! For now, take a look at the s
 - https://github.com/domaindrivendev/Ahoy/tree/master/test/WebSites/SecuritySchemes
 - https://github.com/domaindrivendev/Ahoy/tree/master/test/WebSites/VirtualDirectory
 
-## Nightly builds 
+## Preview Builds 
 
 Preview packages are available on MyGet:
 
-* https://www.myget.org/F/ahoy/api/v3/index.json
+* https://www.myget.org/F/domaindrivendev/api/v3/index.json
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -88,7 +88,7 @@ Preview packages are available on MyGet:
   <packageSources>
     <clear />
     <add key="NuGet v3" value="https://api.nuget.org/v3/index.json" />
-    <add key="Ahoy Preview MyGet" value="https://www.myget.org/F/ahoy/api/v3/index.json" />
+    <add key="Ahoy Preview MyGet" value="https://www.myget.org/F/domaindrivendev/api/v3/index.json" />
   </packageSources>
 </configuration>
 ```
