@@ -1,7 +1,7 @@
 Swashbuckle
 =========
 
-[![Build status](https://ci.appveyor.com/api/projects/status/74l4ccq44gni6wim?svg=true)](https://ci.appveyor.com/project/moander/ahoy)
+[![Build status](https://ci.appveyor.com/api/projects/status/xpsk2cj1xn12c0r7?svg=true)](https://ci.appveyor.com/project/domaindrivendev/ahoy)
 
 Seamlessly adds a [Swagger](http://swagger.io/) to API's that are built with AspNet Core! It combines the built in metadata functionality ([ApiExplorer](https://github.com/aspnet/Mvc/tree/dev/src/Microsoft.AspNetCore.Mvc.ApiExplorer)) and Swagger/swagger-ui to provide a rich discovery, documentation and playground experience to your API consumers.
 
