@@ -1,9 +1,6 @@
 version: 6.0.0-build{build}
 build_script:
-# TODO: Figure out why the unit test fails on appveyor and switch back to ps: .\build.ps1
-- ps: >-
-    Import-Module .\tools\psake\psake.psm1;
-    Invoke-psake .\build-definition.ps1 init, dotnet-restore, dotnet-build, dotnet-pack;
+- ps: .\build.ps1	
 test: off
 artifacts:
 - path: artifacts/nuget/*.nupkg
