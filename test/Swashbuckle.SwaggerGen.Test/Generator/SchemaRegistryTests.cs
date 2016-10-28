@@ -201,6 +201,21 @@ namespace Swashbuckle.SwaggerGen.Generator
         }
 
         [Fact]
+        public void GetOrRegister_HonorsDataAttributes_ViaModelMetadataType()
+        {
+            var subject = Subject();
+
+            subject.GetOrRegister(typeof(MetadataAnnotatedType));
+
+            var schema = subject.Definitions["MetadataAnnotatedType"];
+            Assert.Equal(1, schema.Properties["RangeProperty"].Minimum);
+            Assert.Equal(12, schema.Properties["RangeProperty"].Maximum);
+            Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["PatternProperty"].Pattern);
+            Assert.Equal(new[] { "RangeProperty", "PatternProperty" }, schema.Required.ToArray());
+        }
+
+
+        [Fact]
         public void GetOrRegister_HonorsStringEnumConverters_ConfiguredViaAttributes()
         {
             var schema = Subject().GetOrRegister(typeof(JsonConvertedEnum));

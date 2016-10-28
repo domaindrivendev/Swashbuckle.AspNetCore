@@ -1,6 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Serialization;
 
 namespace Swashbuckle.SwaggerGen.Generator
@@ -28,7 +30,17 @@ namespace Swashbuckle.SwaggerGen.Generator
 
         internal static PropertyInfo PropertyInfo(this JsonProperty jsonProperty)
         {
-            return jsonProperty.DeclaringType.GetProperty(jsonProperty.UnderlyingName, jsonProperty.PropertyType);
+            if (jsonProperty.UnderlyingName == null) return null;
+
+            var metadata = jsonProperty.DeclaringType.GetTypeInfo()
+                .GetCustomAttributes(typeof(ModelMetadataTypeAttribute), true)
+                .FirstOrDefault();
+
+            var typeToReflect = (metadata != null)
+                ? ((ModelMetadataTypeAttribute)metadata).MetadataType
+                : jsonProperty.DeclaringType;
+
+            return typeToReflect.GetProperty(jsonProperty.UnderlyingName, jsonProperty.PropertyType);
         }
     }
 }
