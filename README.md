@@ -1,6 +1,8 @@
 Swashbuckle
 =========
 
+[![Build status](https://ci.appveyor.com/api/projects/status/74l4ccq44gni6wim?svg=true)](https://ci.appveyor.com/project/moander/ahoy)
+
 Seamlessly adds a [Swagger](http://swagger.io/) to API's that are built with AspNet Core! It combines the built in metadata functionality ([ApiExplorer](https://github.com/aspnet/Mvc/tree/dev/src/Microsoft.AspNetCore.Mvc.ApiExplorer)) and Swagger/swagger-ui to provide a rich discovery, documentation and playground experience to your API consumers.
 
 In addition to its [Swagger](http://swagger.io/specification/) generator, Swashbuckle also contains an embedded version of the [swagger-ui](https://github.com/swagger-api/swagger-ui) which it will automatically serve up once Swashbuckle is installed. This means you can complement your API with a slick discovery UI to assist consumers with their integration efforts. Best of all, it requires minimal coding and maintenance, allowing you to focus on building an awesome API
@@ -73,6 +75,23 @@ Sorry :( - still in progress but coming real soon! For now, take a look at the s
 - https://github.com/domaindrivendev/Ahoy/tree/master/test/WebSites/MultipleVersions
 - https://github.com/domaindrivendev/Ahoy/tree/master/test/WebSites/SecuritySchemes
 - https://github.com/domaindrivendev/Ahoy/tree/master/test/WebSites/VirtualDirectory
+
+## Nightly builds 
+
+Preview packages are available on MyGet:
+
+* https://www.myget.org/F/ahoy/api/v3/index.json
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <packageSources>
+    <clear />
+    <add key="NuGet v3" value="https://api.nuget.org/v3/index.json" />
+    <add key="Ahoy Preview MyGet" value="https://www.myget.org/F/ahoy/api/v3/index.json" />
+  </packageSources>
+</configuration>
+```
 
 <!--
 

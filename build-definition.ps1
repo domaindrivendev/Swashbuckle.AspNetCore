@@ -23,6 +23,14 @@ Properties {
         "src/Swashbuckle.SwaggerGen",
         "src/Swashbuckle.SwaggerUi"
     )
+
+    if ("$env:APPVEYOR" -eq "True") {
+        if ($env:APPVEYOR_REPO_TAG -eq "true") {
+            $BuildNumber = $env:APPVEYOR_REPO_TAG_NAME
+        } else {
+            $BuildNumber = "ci" + [DateTime]::Parse($env:APPVEYOR_REPO_COMMIT_TIMESTAMP).ToUniversalTime().ToString("yyyyMMdd") + "b" + $env:APPVEYOR_BUILD_NUMBER
+        }
+    }
 }
 
 FormatTaskName ("`n" + ("-"*25) + "[{0}]" + ("-"*25) + "`n")
@@ -59,12 +67,12 @@ Task dotnet-install {
         exec { dotnet --version }
     } else {
         Write-Host "Installing dotnet SDK"
-        
+
         $installScript = Join-Path $ArtifactsPath "dotnet-install.ps1"
-        
+
         Invoke-WebRequest "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1" `
             -OutFile $installScript
-            
+
         & $installScript
     }
 }

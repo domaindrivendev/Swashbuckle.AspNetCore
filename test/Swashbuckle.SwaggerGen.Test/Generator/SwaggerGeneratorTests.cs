@@ -305,7 +305,7 @@ namespace Swashbuckle.SwaggerGen.Generator
             Assert.Equal("Success", response1.Description);
             Assert.Null(response1.Schema);
             var response2 = responses["400"];
-            Assert.Equal("Client Error", response2.Description);
+            Assert.Equal("Bad Request", response2.Description);
             Assert.NotNull(response2.Schema);
         }
 

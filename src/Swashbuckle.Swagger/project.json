@@ -1,5 +1,5 @@
 ﻿{
-  "version": "6.0.0-beta902",
+  "version": "6.0.0-*",
   "description": "Core components for Swashbuckle - a Swagger toolchain for ASP.NET Core",
 
   "buildOptions": {

@@ -10,8 +10,8 @@
     "Microsoft.AspNetCore.Mvc.DataAnnotations": "1.0.0",
     "Microsoft.NETCore.Platforms": "1.0.1",
     "Moq": "4.6.25-*",
-    "Swashbuckle.SwaggerGen": "6.0.0-beta902",
-    "Swashbuckle.SwaggerUi": "6.0.0-beta902",
+    "Swashbuckle.SwaggerGen": "6.0.0-*",
+    "Swashbuckle.SwaggerUi": "6.0.0-*",
     "dotnet-test-xunit": "2.2.0-preview2-*",
     "xunit": "2.2.0-beta2-*"
   },
