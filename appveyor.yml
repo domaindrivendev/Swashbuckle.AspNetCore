@@ -1,4 +1,6 @@
 version: 6.0.0-build{build}
+init:
+- git config --global core.autocrlf false
 build_script:
 - ps: .\build.ps1	
 test: off
