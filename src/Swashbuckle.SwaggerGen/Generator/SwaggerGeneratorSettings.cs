@@ -10,8 +10,8 @@ namespace Swashbuckle.SwaggerGen.Generator
         public SwaggerGeneratorSettings()
         {
             SwaggerDocs = new Dictionary<string, SwaggerDocumentDescriptor>();
-            GroupNameSelector = (apiDesc) => apiDesc.GroupName;
-            GroupNameComparer = Comparer<string>.Default;
+            TagSelector = (apiDesc) => apiDesc.ControllerName();
+            TagComparer = Comparer<string>.Default;
             SecurityDefinitions = new Dictionary<string, SecurityScheme>();
             OperationFilters = new List<IOperationFilter>();
             DocumentFilters = new List<IDocumentFilter>();
@@ -21,9 +21,9 @@ namespace Swashbuckle.SwaggerGen.Generator
 
         public bool IgnoreObsoleteActions { get; set; }
 
-        public Func<ApiDescription, string> GroupNameSelector { get; set; }
+        public Func<ApiDescription, string> TagSelector { get; set; }
 
-        public IComparer<string> GroupNameComparer { get; set; }
+        public IComparer<string> TagComparer { get; set; }
 
         public IDictionary<string, SecurityScheme> SecurityDefinitions { get; private set; }
 
@@ -37,8 +37,8 @@ namespace Swashbuckle.SwaggerGen.Generator
             {
                 SwaggerDocs = SwaggerDocs,
                 IgnoreObsoleteActions = IgnoreObsoleteActions,
-                GroupNameSelector = GroupNameSelector,
-                GroupNameComparer = GroupNameComparer,
+                TagSelector = TagSelector,
+                TagComparer = TagComparer,
                 SecurityDefinitions = SecurityDefinitions,
                 OperationFilters = OperationFilters,
                 DocumentFilters = DocumentFilters

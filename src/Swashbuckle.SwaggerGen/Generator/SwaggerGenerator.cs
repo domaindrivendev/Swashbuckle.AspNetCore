@@ -40,7 +40,7 @@ namespace Swashbuckle.SwaggerGen.Generator
                 .SelectMany(group => group.Items)
                 .Where(apiDesc => documentDescriptor.IncludeActionPredicate(apiDesc))
                 .Where(apiDesc => !(_settings.IgnoreObsoleteActions && apiDesc.IsObsolete()))
-                .OrderBy(_settings.GroupNameSelector, _settings.GroupNameComparer);
+                .OrderBy(_settings.TagSelector, _settings.TagComparer);
 
             var paths = apiDescriptions
                 .GroupBy(apiDesc => apiDesc.RelativePathSansQueryString())
@@ -124,8 +124,6 @@ namespace Swashbuckle.SwaggerGen.Generator
 
         private Operation CreateOperation(ApiDescription apiDescription, ISchemaRegistry schemaRegistry)
         {
-            var groupName = _settings.GroupNameSelector(apiDescription);
-
             var parameters = apiDescription.ParameterDescriptions
                 .Where(paramDesc => paramDesc.Source.IsFromRequest)
                 .Select(paramDesc => CreateParameter(paramDesc, schemaRegistry))
@@ -140,7 +138,7 @@ namespace Swashbuckle.SwaggerGen.Generator
 
             var operation = new Operation
             {
-                Tags = (groupName != null) ? new[] { groupName } : null,
+                Tags = new[] { _settings.TagSelector(apiDescription) },
                 OperationId = apiDescription.FriendlyId(),
                 Consumes = apiDescription.SupportedRequestMediaTypes().ToList(),
                 Produces = apiDescription.SupportedResponseMediaTypes().ToList(),

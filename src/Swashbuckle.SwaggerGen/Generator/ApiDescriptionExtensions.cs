@@ -2,14 +2,19 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Text;
+using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
-using System.Reflection;
 
 namespace Swashbuckle.SwaggerGen.Generator
 {
     public static class ApiDescriptionExtensions
     {
+        internal static string RelativePathSansQueryString(this ApiDescription apiDescription)
+        {
+            return apiDescription.RelativePath.Split('?').First();
+        }
+
         internal static string FriendlyId(this ApiDescription apiDescription)
         {
             var parts = (apiDescription.RelativePathSansQueryString() + "/" + apiDescription.HttpMethod.ToLower())
@@ -43,32 +48,31 @@ namespace Swashbuckle.SwaggerGen.Generator
                 .Distinct();
         }
 
-        public static IEnumerable<object> GetControllerAttributes(this ApiDescription apiDescription)
+        public static string ControllerName(this ApiDescription apiDescription)
         {
             var actionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
-            return (actionDescriptor != null)
-                ? actionDescriptor.ControllerTypeInfo.GetCustomAttributes(false)
-                : Enumerable.Empty<object>();
+            return (actionDescriptor == null) ? null : actionDescriptor.ControllerName;
         }
 
-        public static IEnumerable<object> GetActionAttributes(this ApiDescription apiDescription)
+        public static IEnumerable<object> ControllerAttributes(this ApiDescription apiDescription)
         {
             var actionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
-            return (actionDescriptor != null)
-                ? actionDescriptor.MethodInfo.GetCustomAttributes(false)
-                : Enumerable.Empty<object>();
+            return (actionDescriptor == null)
+                ? Enumerable.Empty<object>()
+                : actionDescriptor.ControllerTypeInfo.GetCustomAttributes(false);
         }
 
-
-
-        internal static string RelativePathSansQueryString(this ApiDescription apiDescription)
+        public static IEnumerable<object> ActionAttributes(this ApiDescription apiDescription)
         {
-            return apiDescription.RelativePath.Split('?').First();
+            var actionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
+            return (actionDescriptor == null)
+                ? Enumerable.Empty<object>()
+                : actionDescriptor.MethodInfo.GetCustomAttributes(false);
         }
 
         internal static bool IsObsolete(this ApiDescription apiDescription)
         {
-            return apiDescription.GetActionAttributes().OfType<ObsoleteAttribute>().Any();
+            return apiDescription.ActionAttributes().OfType<ObsoleteAttribute>().Any();
         }
     }
 }

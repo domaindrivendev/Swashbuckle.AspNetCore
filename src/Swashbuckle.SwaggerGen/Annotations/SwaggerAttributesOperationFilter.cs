@@ -15,7 +15,7 @@ namespace Swashbuckle.SwaggerGen.Annotations
 
         private static void ApplyOperationAttributes(Operation operation, OperationFilterContext context)
         {
-            var attribute = context.ApiDescription.GetActionAttributes()
+            var attribute = context.ApiDescription.ActionAttributes()
                 .OfType<SwaggerOperationAttribute>()
                 .FirstOrDefault();
             if (attribute == null) return;
@@ -34,8 +34,8 @@ namespace Swashbuckle.SwaggerGen.Annotations
         {
             var apiDesc = context.ApiDescription;
 
-            var controllerAttributes = apiDesc.GetControllerAttributes().OfType<SwaggerOperationFilterAttribute>();
-            var actionAttributes = apiDesc.GetActionAttributes().OfType<SwaggerOperationFilterAttribute>();
+            var controllerAttributes = apiDesc.ControllerAttributes().OfType<SwaggerOperationFilterAttribute>();
+            var actionAttributes = apiDesc.ActionAttributes().OfType<SwaggerOperationFilterAttribute>();
 
             foreach (var attribute in controllerAttributes.Union(actionAttributes))
             {

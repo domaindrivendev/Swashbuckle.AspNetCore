@@ -414,7 +414,7 @@ namespace Swashbuckle.SwaggerGen.Generator
         }
 
         [Fact]
-        public void GetSwagger_GroupsActions_AsSpecifiedBySettings()
+        public void GetSwagger_TagsActions_AsSpecifiedBySettings()
         {
             var subject = Subject(
                 setupApis: apis =>
@@ -422,7 +422,7 @@ namespace Swashbuckle.SwaggerGen.Generator
                     apis.Add("GET", "collection1", nameof(FakeActions.ReturnsEnumerable));
                     apis.Add("GET", "collection2", nameof(FakeActions.ReturnsInt));
                 },
-                configure: c => c.GroupNameSelector = (apiDesc) => apiDesc.RelativePath);
+                configure: c => c.TagSelector = (apiDesc) => apiDesc.RelativePath);
 
             var swagger = subject.GetSwagger("v1");
 
@@ -431,7 +431,7 @@ namespace Swashbuckle.SwaggerGen.Generator
         }
 
         [Fact]
-        public void GetSwagger_OrdersActionGroups_AsSpecifiedBySettings()
+        public void GetSwagger_OrdersActionTags_AsSpecifiedBySettings()
         {
             var subject = Subject(
                 setupApis: apis =>
@@ -443,8 +443,8 @@ namespace Swashbuckle.SwaggerGen.Generator
                 },
                 configure: c =>
                 {
-                    c.GroupNameSelector = (apiDesc) => apiDesc.RelativePath;
-                    c.GroupNameComparer = new DescendingAlphabeticComparer();
+                    c.TagSelector = (apiDesc) => apiDesc.RelativePath;
+                    c.TagComparer = new DescendingAlphabeticComparer();
                 });
 
             var swagger = subject.GetSwagger("v1");

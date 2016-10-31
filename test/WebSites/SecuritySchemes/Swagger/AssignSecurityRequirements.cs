@@ -11,11 +11,11 @@ namespace SecuritySchemes.Swagger
         public void Apply(Operation operation, OperationFilterContext context)
         {
             // Correspond each "Authorize" role to an oauth2 scope
-            var controllerScopes = context.ApiDescription.GetControllerAttributes()
+            var controllerScopes = context.ApiDescription.ControllerAttributes()
                 .OfType<AuthorizeAttribute>()
                 .SelectMany(attr => attr.Roles.Split(','));
 
-            var actionScopes = context.ApiDescription.GetActionAttributes()
+            var actionScopes = context.ApiDescription.ActionAttributes()
                 .OfType<AuthorizeAttribute>()
                 .SelectMany(attr => attr.Roles.Split(','));
 

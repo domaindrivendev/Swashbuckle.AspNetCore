@@ -53,14 +53,14 @@ namespace Swashbuckle.SwaggerGen.Application
             _swaggerGeneratorSettings.IgnoreObsoleteActions = true;
         }
 
-        public void GroupActionsBy(Func<ApiDescription, string> groupNameSelector)
+        public void TagActionsBy(Func<ApiDescription, string> tagSelector)
         {
-            _swaggerGeneratorSettings.GroupNameSelector = groupNameSelector;
+            _swaggerGeneratorSettings.TagSelector = tagSelector;
         }
 
-        public void OrderActionGroupsBy(IComparer<string> groupNameComparer)
+        public void OrderActionTagsBy(IComparer<string> tagComparer)
         {
-            _swaggerGeneratorSettings.GroupNameComparer = groupNameComparer;
+            _swaggerGeneratorSettings.TagComparer = tagComparer;
         }
 
         public void AddSecurityDefinition(string name, SecurityScheme securityScheme)
