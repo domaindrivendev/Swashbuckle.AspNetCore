@@ -8,3 +8,5 @@ project.lock.json
 *.user
 artifacts/
 *.nuget.props
+.DS_Store
+Thumbs.db
