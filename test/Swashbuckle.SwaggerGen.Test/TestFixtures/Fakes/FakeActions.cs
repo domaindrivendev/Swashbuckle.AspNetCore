@@ -57,10 +57,10 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
         public void AcceptsStringFromForm([FromForm]string param)
         { }
 
-        public void AcceptStringFromDefault(string param)
+        public void AcceptsComplexTypeFromBody([FromBody]ComplexType param)
         { }
 
-        public void AcceptsComplexTypeFromBody([FromBody]ComplexType param)
+        public void AcceptsUnboundParameter(string param)
         { }
 
         [Obsolete]

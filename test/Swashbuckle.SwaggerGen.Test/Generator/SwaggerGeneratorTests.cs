@@ -155,7 +155,7 @@ namespace Swashbuckle.SwaggerGen.Generator
         [InlineData("collection", nameof(FakeActions.AcceptsStringFromQuery), "query")]
         [InlineData("collection", nameof(FakeActions.AcceptsStringFromHeader), "header")]
         [InlineData("collection", nameof(FakeActions.AcceptsStringFromForm), "formData")]
-        [InlineData("collection", nameof(FakeActions.AcceptStringFromDefault), "query")]
+        [InlineData("collection", nameof(FakeActions.AcceptsStringFromQuery), "query")]
         public void GetSwagger_GeneratesNonBodyParameters_ForNonBodyParams(
             string routeTemplate,
             string actionFixtureName,
@@ -496,7 +496,20 @@ namespace Swashbuckle.SwaggerGen.Generator
         }
 
         [Fact]
-        public void GetSwagger_ThrowsInformativeException_IfActionsAreOverloaded()
+        public void GetSwagger_ThrowsInformativeException_IfHttpMethodAttributeNotPresent()
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add(null, "collection", nameof(FakeActions.AcceptsNothing)));
+
+            var exception = Assert.Throws<NotSupportedException>(() => subject.GetSwagger("v1"));
+            Assert.Equal(
+                "Ambiguous HTTP method for action - Swashbuckle.SwaggerGen.TestFixtures.FakeControllers+NotAnnotated.AcceptsNothing (Swashbuckle.SwaggerGen.Test). " +
+                "Actions require an explicit HttpMethod binding for Swagger",
+                exception.Message);
+        }
+
+        [Fact]
+        public void GetSwagger_ThrowsInformativeException_IfHttpMethodAndPathAreOverloaded()
         {
             var subject = Subject(setupApis: apis => apis
                 .Add("GET", "collection", nameof(FakeActions.AcceptsNothing))
@@ -505,22 +518,27 @@ namespace Swashbuckle.SwaggerGen.Generator
 
             var exception = Assert.Throws<NotSupportedException>(() => subject.GetSwagger("v1"));
             Assert.Equal(
-                "Multiple operations with path 'collection' and method 'GET'. Are you overloading action methods?",
+                "HTTP method \"GET\" & path \"collection\" overloaded by actions - " +
+                "Swashbuckle.SwaggerGen.TestFixtures.FakeControllers+NotAnnotated.AcceptsNothing (Swashbuckle.SwaggerGen.Test)," +
+                "Swashbuckle.SwaggerGen.TestFixtures.FakeControllers+NotAnnotated.AcceptsStringFromQuery (Swashbuckle.SwaggerGen.Test). " +
+                "Actions require unique method/path combination for Swagger",
                 exception.Message);
         }
 
         [Fact]
-        public void GetSwagger_ThrowsInformativeException_IfHttpMethodAttributeNotPresent()
+        public void GetSwagger_ThrowsInformativeException_IfParameterBindingNotPresent()
         {
             var subject = Subject(setupApis: apis => apis
-                .Add(null, "collection", nameof(FakeActions.AcceptsNothing)));
+                .Add("GET", "collection", nameof(FakeActions.AcceptsUnboundParameter)));
 
             var exception = Assert.Throws<NotSupportedException>(() => subject.GetSwagger("v1"));
             Assert.Equal(
-                "Unbounded HTTP verbs for path 'collection'. Are you missing an HttpMethodAttribute?",
+                "Ambiguous location (path, query etc.) for one or more parameters in action - " +
+                "Swashbuckle.SwaggerGen.TestFixtures.FakeControllers+NotAnnotated.AcceptsUnboundParameter (Swashbuckle.SwaggerGen.Test). " +
+                "Action parameters require an explicit \"From\" binding for Swagger",
                 exception.Message);
         }
-
+        
         private SwaggerGenerator Subject(
             Action<FakeApiDescriptionGroupCollectionProvider> setupApis = null,
             Action<SwaggerGeneratorSettings> configure = null)

@@ -39,7 +39,7 @@ namespace Swashbuckle.SwaggerGen.Generator
             var apiDescriptions = _apiDescriptionsProvider.ApiDescriptionGroups.Items
                 .SelectMany(group => group.Items)
                 .Where(apiDesc => documentDescriptor.IncludeActionPredicate(apiDesc))
-                .Where(apiDesc => !(_settings.IgnoreObsoleteActions && apiDesc.IsObsolete()))
+                .Where(apiDesc => !_settings.IgnoreObsoleteActions || !apiDesc.IsObsolete())
                 .OrderBy(_settings.TagSelector, _settings.TagComparer);
 
             var paths = apiDescriptions
@@ -83,13 +83,17 @@ namespace Swashbuckle.SwaggerGen.Generator
 
                 if (httpMethod == null)
                     throw new NotSupportedException(string.Format(
-                        "Unbounded HTTP verbs for path '{0}'. Are you missing an HttpMethodAttribute?",
-                        group.First().RelativePathSansQueryString()));
+                        "Ambiguous HTTP method for action - {0}. " +
+                        "Actions require an explicit HttpMethod binding for Swagger",
+                        group.First().ActionDescriptor.DisplayName));
 
                 if (group.Count() > 1)
                     throw new NotSupportedException(string.Format(
-                        "Multiple operations with path '{0}' and method '{1}'. Are you overloading action methods?",
-                        group.First().RelativePathSansQueryString(), httpMethod));
+                        "HTTP method \"{0}\" & path \"{1}\" overloaded by actions - {2}. " +
+                        "Actions require unique method/path combination for Swagger",
+                        httpMethod,
+                        group.First().RelativePathSansQueryString(),
+                        string.Join(",", group.Select(apiDesc => apiDesc.ActionDescriptor.DisplayName))));
 
                 var apiDescription = group.Single();
 
@@ -126,7 +130,7 @@ namespace Swashbuckle.SwaggerGen.Generator
         {
             var parameters = apiDescription.ParameterDescriptions
                 .Where(paramDesc => paramDesc.Source.IsFromRequest)
-                .Select(paramDesc => CreateParameter(paramDesc, schemaRegistry))
+                .Select(paramDesc => CreateParameter(apiDescription, paramDesc, schemaRegistry))
                 .ToList();
 
             var responses = apiDescription.SupportedResponseTypes
@@ -156,53 +160,58 @@ namespace Swashbuckle.SwaggerGen.Generator
             return operation;
         }
 
-        private string GetParameterLocation(ApiParameterDescription paramDesc)
+        private IParameter CreateParameter(
+            ApiDescription apiDescription,
+            ApiParameterDescription paramDescription,
+            ISchemaRegistry schemaRegistry)
         {
-            if (paramDesc.Source == BindingSource.Form)
-                return "formData";
-            else if (paramDesc.Source == BindingSource.Body)
-                return "body";
-            else if (paramDesc.Source == BindingSource.Header)
-                return "header";
-            else if (paramDesc.Source == BindingSource.Path)
-                return "path";
-            else
-                return "query";
-        }
+            var location = GetParameterLocation(apiDescription, paramDescription);
+            var schema = (paramDescription.Type == null) ? null : schemaRegistry.GetOrRegister(paramDescription.Type);
 
-        private IParameter CreateParameter(ApiParameterDescription paramDesc, ISchemaRegistry schemaRegistry)
-        {
-            var source = paramDesc.Source.Id.ToLower();
-            var schema = (paramDesc.Type == null) ? null : schemaRegistry.GetOrRegister(paramDesc.Type);
-
-            if (source == "body")
+            if (location == "body")
             {
                 return new BodyParameter
                 {
-                    Name = paramDesc.Name,
-                    In = source,
+                    Name = paramDescription.Name,
                     Schema = schema
                 };
             }
-            else
+
+            var nonBodyParam = new NonBodyParameter
             {
-                var nonBodyParam = new NonBodyParameter
-                {
-                    Name = paramDesc.Name,
-                    In = GetParameterLocation(paramDesc),
-                    Required = (source == "path")
-                };
+                Name = paramDescription.Name,
+                In = location,
+                Required = (location == "path")
+            };
 
-                if (schema == null)
-                    nonBodyParam.Type = "string";
-                else
-                    nonBodyParam.PopulateFrom(schema);
+            if (schema == null)
+                nonBodyParam.Type = "string";
+            else
+                nonBodyParam.PopulateFrom(schema);
 
-                if (nonBodyParam.Type == "array")
-                    nonBodyParam.CollectionFormat = "multi";
+            if (nonBodyParam.Type == "array")
+                nonBodyParam.CollectionFormat = "multi";
 
-                return nonBodyParam;
-            }
+            return nonBodyParam;
+        }
+
+        private string GetParameterLocation(ApiDescription apiDescription, ApiParameterDescription paramDescription)
+        {
+            if (paramDescription.Source == BindingSource.Form)
+                return "formData";
+            else if (paramDescription.Source == BindingSource.Body)
+                return "body";
+            else if (paramDescription.Source == BindingSource.Header)
+                return "header";
+            else if (paramDescription.Source == BindingSource.Path)
+                return "path";
+            else if (paramDescription.Source == BindingSource.Query)
+                return "query";
+
+            throw new NotSupportedException(string.Format(
+                "Ambiguous location (path, query etc.) for one or more parameters in action - {0}. " +
+                "Action parameters require an explicit \"From\" binding for Swagger",
+                apiDescription.ActionDescriptor.DisplayName));
         }
 
         private Response CreateResponse(ApiResponseType apiResponseType, ISchemaRegistry schemaRegistry)

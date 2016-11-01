@@ -193,6 +193,7 @@ namespace Swashbuckle.Swagger.Model
     {
         public BodyParameter()
         {
+            In = "body";
             Extensions = new Dictionary<string, object>();
         }
 
