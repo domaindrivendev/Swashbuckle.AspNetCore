@@ -1,5 +1,5 @@
 {
-    "name": "Swashbuckle",
+    "name": "swashbuckle",
     "private": true,
     "dependencies": {
       "swagger-ui": "2.2.6"
