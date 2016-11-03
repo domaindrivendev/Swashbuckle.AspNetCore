@@ -35,7 +35,7 @@ Properties {
 
 FormatTaskName ("`n" + ("-"*25) + "[{0}]" + ("-"*25) + "`n")
 
-Task Default -depends init, clean, dotnet-install, dotnet-restore, dotnet-build, dotnet-test, dotnet-pack
+Task Default -depends init, clean, dotnet-install, dotnet-restore, bower-restore, dotnet-build, dotnet-test, dotnet-pack
 
 Task init {
 
@@ -80,6 +80,13 @@ Task dotnet-install {
 Task dotnet-restore {
 
     exec { dotnet restore -v Minimal }
+}
+
+Task bower-restore {
+
+    exec { cd src/Swashbuckle.SwaggerUi }
+	exec { bower install }
+	exec { cd ../../ }
 }
 
 Task dotnet-build {
