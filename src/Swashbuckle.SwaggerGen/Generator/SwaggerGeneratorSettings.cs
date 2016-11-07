@@ -25,6 +25,8 @@ namespace Swashbuckle.SwaggerGen.Generator
 
         public IComparer<string> TagComparer { get; set; }
 
+        public bool DescribeAllParametersInCamelCase { get; set; }
+
         public IDictionary<string, SecurityScheme> SecurityDefinitions { get; private set; }
 
         public IList<IOperationFilter> OperationFilters { get; private set; }

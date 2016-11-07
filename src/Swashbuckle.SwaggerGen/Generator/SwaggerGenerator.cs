@@ -166,20 +166,25 @@ namespace Swashbuckle.SwaggerGen.Generator
             ISchemaRegistry schemaRegistry)
         {
             var location = GetParameterLocation(apiDescription, paramDescription);
+
+            var name = _settings.DescribeAllParametersInCamelCase
+                ? paramDescription.Name.ToCamelCase()
+                : paramDescription.Name;
+
             var schema = (paramDescription.Type == null) ? null : schemaRegistry.GetOrRegister(paramDescription.Type);
 
             if (location == "body")
             {
                 return new BodyParameter
                 {
-                    Name = paramDescription.Name,
+                    Name = name,
                     Schema = schema
                 };
             }
 
             var nonBodyParam = new NonBodyParameter
             {
-                Name = paramDescription.Name,
+                Name = name,
                 In = location,
                 Required = (location == "path")
             };

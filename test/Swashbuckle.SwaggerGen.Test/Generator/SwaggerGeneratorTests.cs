@@ -264,6 +264,25 @@ namespace Swashbuckle.SwaggerGen.Generator
             Assert.Equal("Property5", operation.Parameters[4].Name);
         }
 
+        [Fact]
+        public void GetSwagger_DescribesParametersInCamelCase_IfSpecifiedBySettings()
+        {
+            var subject = Subject(
+                setupApis: apis => apis.Add("GET", "collection", nameof(FakeActions.AcceptsComplexTypeFromQuery)),
+                configure: c => c.DescribeAllParametersInCamelCase = true
+            );
+
+            var swagger = subject.GetSwagger("v1");
+
+            var operation = swagger.Paths["/collection"].Get;
+            Assert.Equal(5, operation.Parameters.Count);
+            Assert.Equal("property1", operation.Parameters[0].Name);
+            Assert.Equal("property2", operation.Parameters[1].Name);
+            Assert.Equal("property3", operation.Parameters[2].Name);
+            Assert.Equal("property4", operation.Parameters[3].Name);
+            Assert.Equal("property5", operation.Parameters[4].Name);
+        }
+
         [Theory]
         [InlineData(nameof(FakeActions.ReturnsVoid), "200", "Success", false)]
         [InlineData(nameof(FakeActions.ReturnsEnumerable), "200", "Success", true)]
