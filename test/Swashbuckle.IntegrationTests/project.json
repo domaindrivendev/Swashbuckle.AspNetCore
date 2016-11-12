@@ -12,6 +12,7 @@
     "Basic": "1.0.0-*",
     "CustomIndexHtml": "1.0.0-*",
     "CustomUiConfig": "1.0.0-*",
+    "GenericControllers": "1.0.0-*",
     "MultipleVersions": "1.0.0-*",
     "SecuritySchemes": "1.0.0-*",
     "VirtualDirectory": "1.0.0-*"
