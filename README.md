@@ -80,7 +80,7 @@ Sorry :( - still in progress but coming real soon! For now, take a look at the s
 
 Preview packages are available on MyGet:
 
-* https://www.myget.org/F/domaindrivendev/api/v3/index.json
+* https://www.myget.org/gallery/domaindrivendev
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
