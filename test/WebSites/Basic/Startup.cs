@@ -47,6 +47,7 @@ namespace Basic
                 );
 
                 c.OperationFilter<AssignOperationVendorExtensions>();
+                c.OperationFilter<FormDataOperationFilter>();
             });
 
             if (_hostingEnv.IsDevelopment())
