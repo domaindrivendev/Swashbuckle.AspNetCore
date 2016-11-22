@@ -113,5 +113,12 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
         [SwaggerOperationFilter(typeof(VendorExtensionsOperationFilter))]
         public void AnnotatedWithSwaggerOperationFilter()
         { }
-   }
+
+        [SwaggerProducesResponseType(204, typeof(void), "No content is returned.")]
+        [SwaggerProducesResponseType(400, typeof(IDictionary<string, string>), "This returns a dictionary.")]
+        public IActionResult AnnotatedWithSwaggerResponseTypeAttributes()
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
