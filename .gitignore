@@ -6,6 +6,7 @@
 bower_components/
 project.lock.json
 *.user
+*.pdb
 artifacts/
 *.nuget.props
 .DS_Store
