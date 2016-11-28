@@ -324,6 +324,24 @@ namespace Swashbuckle.SwaggerGen.Generator
         }
 
         [Fact]
+        public void GetSwagger_GeneratesResponsesFromSwaggerResponseAttributes_IfResponseAttributesPresent()
+        {
+            var subject = Subject(setupApis: apis =>
+                apis.Add("GET", "collection", nameof(FakeActions.AnnotatedWithSwaggerResponseAttributes)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var responses = swagger.Paths["/collection"].Get.Responses;
+            Assert.Equal(new[] { "204", "400" }, responses.Keys.ToArray());
+            var response1 = responses["204"];
+            Assert.Equal("Success", response1.Description);
+            Assert.Null(response1.Schema);
+            var response2 = responses["400"];
+            Assert.Equal("Bad Request", response2.Description);
+            Assert.NotNull(response2.Schema);
+        }
+
+        [Fact]
         public void GetSwagger_SetsDeprecated_IfActionsMarkedObsolete()
         {
             var subject = Subject(setupApis: apis => apis
@@ -552,7 +570,7 @@ namespace Swashbuckle.SwaggerGen.Generator
                 "Action parameters require an explicit \"From\" binding for Swagger",
                 exception.Message);
         }
-        
+
         private SwaggerGenerator Subject(
             Action<FakeApiDescriptionGroupCollectionProvider> setupApis = null,
             Action<SwaggerGeneratorSettings> configure = null)

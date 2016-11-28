@@ -40,6 +40,7 @@ namespace Swashbuckle.SwaggerGen.Application
 
             // Enable Annotations
             OperationFilter<SwaggerAttributesOperationFilter>();
+            OperationFilter<SwaggerResponseAttributeFilter>();
             SchemaFilter<SwaggerAttributesSchemaFilter>();
         }
 
@@ -95,7 +96,7 @@ namespace Swashbuckle.SwaggerGen.Application
 
         public void CustomSchemaIds(Func<Type, string> schemaIdSelector)
         {
-            _schemaRegistrySettings.SchemaIdSelector = schemaIdSelector; 
+            _schemaRegistrySettings.SchemaIdSelector = schemaIdSelector;
         }
 
         public void IgnoreObsoleteProperties()
