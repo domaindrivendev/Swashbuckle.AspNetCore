@@ -1,22 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
-using MultipleVersions.Versioning;
 
-namespace MultipleVersions.Controllers
+namespace MultipleVersions.V2
 {
-    [Route("/{version}/products")]
-    public class VersionedActionsController
+    [Route("/v2/products")]
+    [Produces("application/json")]
+    public class ProductsController
     {
-        [HttpPost()]
-        [Versions("v1", "v2")]
-        public int Create([FromBody]Product product)
+        [HttpPost]
+        public int Create([FromBody, Required]Product product)
         {
             return 1;
         }
 
-        [HttpGet()]
-        [Versions("v1", "v2")]
+        [HttpGet]
         public IEnumerable<Product> GetAll()
         {
             return new[]
@@ -27,26 +25,17 @@ namespace MultipleVersions.Controllers
         }
 
         [HttpGet("{id}")]
-        [Versions("v1", "v2")]
         public Product GetById(int id)
         {
             return new Product { Id = id, Description = "A product" };
         }
 
         [HttpPut("{id}")]
-        [Versions("v1", "v2")]
         public void Update(int id, [FromBody, Required]Product product)
         {
         }
 
-        [HttpPatch("{id}")]
-        [Versions("v2")]
-        public void PartialUpdate(int id, [FromBody, Required]IDictionary<string, object> updates)
-        {
-        }
-
         [HttpDelete("{id}")]
-        [Versions("v2")]
         public void Delete(int id)
         {
         }

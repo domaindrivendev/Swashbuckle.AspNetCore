@@ -32,13 +32,13 @@ namespace Swashbuckle.SwaggerGen.Generator
         {
             var schemaRegistry = _schemaRegistryFactory.Create();
 
-            SwaggerDocumentDescriptor documentDescriptor;
-            if (!_settings.SwaggerDocs.TryGetValue(documentName, out documentDescriptor))
+            Info info;
+            if (!_settings.SwaggerDocs.TryGetValue(documentName, out info))
                 throw new UnknownSwaggerDocument(documentName);
 
             var apiDescriptions = _apiDescriptionsProvider.ApiDescriptionGroups.Items
                 .SelectMany(group => group.Items)
-                .Where(apiDesc => documentDescriptor.IncludeActionPredicate(apiDesc))
+                .Where(apiDesc => _settings.DocInclusionPredicate(documentName, apiDesc))
                 .Where(apiDesc => !_settings.IgnoreObsoleteActions || !apiDesc.IsObsolete())
                 .OrderBy(_settings.TagSelector, _settings.TagComparer);
 
@@ -48,7 +48,7 @@ namespace Swashbuckle.SwaggerGen.Generator
 
             var swaggerDoc = new SwaggerDocument
             {
-                Info = documentDescriptor.Info,
+                Info = info,
                 Host = host,
                 BasePath = basePath,
                 Schemes = schemes,

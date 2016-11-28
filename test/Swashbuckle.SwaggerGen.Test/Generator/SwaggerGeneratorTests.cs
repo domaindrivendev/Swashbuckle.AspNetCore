@@ -33,14 +33,9 @@ namespace Swashbuckle.SwaggerGen.Generator
                 configure: c =>
                 {
                     c.SwaggerDocs.Clear();
-                    c.SwaggerDocs.Add(
-                        "v1",
-                        new SwaggerDocumentDescriptor(v1Info, (apiDesc) => apiDesc.RelativePath.StartsWith("v1"))
-                    );
-                    c.SwaggerDocs.Add(
-                        "v2",
-                        new SwaggerDocumentDescriptor(v2Info, (apiDesc) => apiDesc.RelativePath.StartsWith("v2"))
-                    );
+                    c.SwaggerDocs.Add("v1", v1Info);
+                    c.SwaggerDocs.Add("v2", v2Info);
+                    c.DocInclusionPredicate = (docName, api) => api.RelativePath.StartsWith(docName);
                 });
 
             var v1Swagger = subject.GetSwagger("v1");
@@ -566,10 +561,7 @@ namespace Swashbuckle.SwaggerGen.Generator
             setupApis?.Invoke(apiDescriptionsProvider);
 
             var options = new SwaggerGeneratorSettings();
-            options.SwaggerDocs.Add(
-                "v1",
-                new SwaggerDocumentDescriptor(new Info { Title = "API", Version = "v1" })
-            );
+            options.SwaggerDocs.Add("v1", new Info { Title = "API", Version = "v1" });
 
             configure?.Invoke(options);
 
