@@ -40,7 +40,7 @@ namespace Swashbuckle.SwaggerGen.Application
 
             // Enable Annotations
             OperationFilter<SwaggerAttributesOperationFilter>();
-            OperationFilter<SwaggerProducesResponseTypeFilter>();
+            OperationFilter<SwaggerResponseAttributeFilter>();
             SchemaFilter<SwaggerAttributesSchemaFilter>();
         }
 

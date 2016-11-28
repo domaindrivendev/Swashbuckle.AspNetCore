@@ -324,10 +324,10 @@ namespace Swashbuckle.SwaggerGen.Generator
         }
 
         [Fact]
-        public void GetSwagger_GeneratesResponsesFromSwaggerResponseTypeAttributes_IfResponseTypeAttributesPresent()
+        public void GetSwagger_GeneratesResponsesFromSwaggerResponseAttributes_IfResponseAttributesPresent()
         {
             var subject = Subject(setupApis: apis =>
-                apis.Add("GET", "collection", nameof(FakeActions.AnnotatedWithSwaggerResponseTypeAttributes)));
+                apis.Add("GET", "collection", nameof(FakeActions.AnnotatedWithSwaggerResponseAttributes)));
 
             var swagger = subject.GetSwagger("v1");
 

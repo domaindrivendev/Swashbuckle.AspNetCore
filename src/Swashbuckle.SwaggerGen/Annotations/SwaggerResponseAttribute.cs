@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace Swashbuckle.SwaggerGen.Annotations
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
-    public class SwaggerProducesResponseTypeAttribute : ProducesResponseTypeAttribute
+    public class SwaggerResponseAttribute : ProducesResponseTypeAttribute
     {
-        public SwaggerProducesResponseTypeAttribute(int statusCode, Type type = null, string description = null)
+        public SwaggerResponseAttribute(int statusCode, Type type = null, string description = null)
             : base(type == null ? typeof(void) : type, statusCode)
         {
             this.Description = description;

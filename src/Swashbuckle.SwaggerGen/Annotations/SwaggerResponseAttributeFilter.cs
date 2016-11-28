@@ -7,7 +7,7 @@ using Swashbuckle.SwaggerGen.Generator;
 
 namespace Swashbuckle.SwaggerGen.Annotations
 {
-    public class SwaggerProducesResponseTypeFilter : IOperationFilter
+    public class SwaggerResponseAttributeFilter : IOperationFilter
     {
         public void Apply(Operation operation, OperationFilterContext context)
         {
@@ -40,7 +40,7 @@ namespace Swashbuckle.SwaggerGen.Annotations
             }
         }
 
-        private static void ApplyAttribute(Operation operation, OperationFilterContext context, SwaggerProducesResponseTypeAttribute attribute)
+        private static void ApplyAttribute(Operation operation, OperationFilterContext context, SwaggerResponseAttribute attribute)
         {
             var key = attribute.StatusCode.ToString();
             Response response;
@@ -58,10 +58,10 @@ namespace Swashbuckle.SwaggerGen.Annotations
             operation.Responses[key] = response;
         }
 
-        private static IEnumerable<SwaggerProducesResponseTypeAttribute> GetActionAttributes(ApiDescription apiDesc)
+        private static IEnumerable<SwaggerResponseAttribute> GetActionAttributes(ApiDescription apiDesc)
         {
-            var controllerAttributes = apiDesc.ControllerAttributes().OfType<SwaggerProducesResponseTypeAttribute>();
-            var actionAttributes = apiDesc.ActionAttributes().OfType<SwaggerProducesResponseTypeAttribute>();
+            var controllerAttributes = apiDesc.ControllerAttributes().OfType<SwaggerResponseAttribute>();
+            var actionAttributes = apiDesc.ActionAttributes().OfType<SwaggerResponseAttribute>();
             return controllerAttributes.Union(actionAttributes);
         }
     }

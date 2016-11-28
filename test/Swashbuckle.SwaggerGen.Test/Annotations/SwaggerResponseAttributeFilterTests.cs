@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Swashbuckle.SwaggerGen.Annotations
 {
-    public class SwaggerProducesResponseTypeFilterTests
+    public class SwaggerResponseAttributeFilterTests
     {
         [Fact]
         public void Apply_SetsResponses_FromAttributes()
@@ -16,7 +16,7 @@ namespace Swashbuckle.SwaggerGen.Annotations
             {
                 OperationId = "foobar"
             };
-            var filterContext = this.FilterContextFor(nameof(FakeActions.AnnotatedWithSwaggerResponseTypeAttributes));
+            var filterContext = this.FilterContextFor(nameof(FakeActions.AnnotatedWithSwaggerResponseAttributes));
 
             this.Subject().Apply(operation, filterContext);
 
@@ -45,9 +45,9 @@ namespace Swashbuckle.SwaggerGen.Annotations
                 new SchemaRegistry(new JsonSerializerSettings()));
         }
 
-        private SwaggerProducesResponseTypeFilter Subject()
+        private SwaggerResponseAttributeFilter Subject()
         {
-            return new SwaggerProducesResponseTypeFilter();
+            return new SwaggerResponseAttributeFilter();
         }
     }
 }
