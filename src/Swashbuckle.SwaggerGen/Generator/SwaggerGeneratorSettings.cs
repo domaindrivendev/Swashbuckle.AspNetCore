@@ -9,7 +9,8 @@ namespace Swashbuckle.SwaggerGen.Generator
     {
         public SwaggerGeneratorSettings()
         {
-            SwaggerDocs = new Dictionary<string, SwaggerDocumentDescriptor>();
+            SwaggerDocs = new Dictionary<string, Info>();
+            DocInclusionPredicate = (docName, api) => api.GroupName == null || api.GroupName == docName;
             TagSelector = (apiDesc) => apiDesc.ControllerName();
             TagComparer = Comparer<string>.Default;
             SecurityDefinitions = new Dictionary<string, SecurityScheme>();
@@ -17,7 +18,9 @@ namespace Swashbuckle.SwaggerGen.Generator
             DocumentFilters = new List<IDocumentFilter>();
         }
 
-        public IDictionary<string, SwaggerDocumentDescriptor> SwaggerDocs { get; private set; }
+        public IDictionary<string, Info> SwaggerDocs { get; set; }
+
+        public Func<string, ApiDescription, bool> DocInclusionPredicate { get; set; }
 
         public bool IgnoreObsoleteActions { get; set; }
 
@@ -46,18 +49,5 @@ namespace Swashbuckle.SwaggerGen.Generator
                 DocumentFilters = DocumentFilters
             };
         }
-    }
-
-    public class SwaggerDocumentDescriptor
-    {
-        public SwaggerDocumentDescriptor(Info info, Func<ApiDescription, bool> includeActionPredicate = null)
-        {
-            Info = info;
-            IncludeActionPredicate = includeActionPredicate ?? ((apiDesc) => true); // includes all actions by default
-        }
-
-        public Info Info { get; private set; }
-
-        public Func<ApiDescription, bool> IncludeActionPredicate { get; private set; }
     }
 }

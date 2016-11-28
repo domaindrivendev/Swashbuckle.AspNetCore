@@ -44,9 +44,14 @@ namespace Swashbuckle.SwaggerGen.Application
             SchemaFilter<SwaggerAttributesSchemaFilter>();
         }
 
-        public void SwaggerDoc(string name, Info info, Func<ApiDescription, bool> includeActionPredicate = null)
+        public void SwaggerDoc(string name, Info info)
         {
-            _swaggerGeneratorSettings.SwaggerDocs.Add(name, new SwaggerDocumentDescriptor(info, includeActionPredicate));
+            _swaggerGeneratorSettings.SwaggerDocs.Add(name, info);
+        }
+
+        public void DocInclusionPredicate(Func<string, ApiDescription, bool> predicate)
+        {
+            _swaggerGeneratorSettings.DocInclusionPredicate = predicate;
         }
 
         public void IgnoreObsoleteActions()
