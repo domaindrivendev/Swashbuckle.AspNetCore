@@ -7,27 +7,8 @@ using Swashbuckle.SwaggerGen.Generator;
 
 namespace Swashbuckle.SwaggerGen.Annotations
 {
-    /// <summary>
-    /// Operation filter that adds Swagger response information to an operation.
-    /// </summary>
-    /// <remarks>
-    /// <para>
-    /// This filter applies the values specified in <see cref="SwaggerProducesResponseTypeAttribute"/>
-    /// settings to an operation. This will override or append to the set of responses
-    /// as needed.
-    /// </para>
-    /// </remarks>
-    /// <seealso cref="SwaggerProducesResponseTypeAttribute" />
     public class SwaggerProducesResponseTypeFilter : IOperationFilter
     {
-        /// <summary>
-        /// Applies the filter specified operation.
-        /// </summary>
-        /// <param name="operation">The operation to which the filter is being applied.</param>
-        /// <param name="context">The filter context containing information to help in applying the filter.</param>
-        /// <exception cref="System.ArgumentNullException">
-        /// Thrown if <paramref name="operation" /> or <paramref name="context" /> is <see langword="null" />.
-        /// </exception>
         public void Apply(Operation operation, OperationFilterContext context)
         {
             if (operation == null)
