@@ -12,7 +12,7 @@ namespace Swashbuckle.SwaggerGen.Generator
             SwaggerDocs = new Dictionary<string, Info>();
             DocInclusionPredicate = (docName, api) => api.GroupName == null || api.GroupName == docName;
             TagSelector = (apiDesc) => apiDesc.ControllerName();
-            TagComparer = Comparer<string>.Default;
+            SortKeySelector = (apiDesc) => TagSelector(apiDesc);
             SecurityDefinitions = new Dictionary<string, SecurityScheme>();
             OperationFilters = new List<IOperationFilter>();
             DocumentFilters = new List<IDocumentFilter>();
@@ -26,7 +26,7 @@ namespace Swashbuckle.SwaggerGen.Generator
 
         public Func<ApiDescription, string> TagSelector { get; set; }
 
-        public IComparer<string> TagComparer { get; set; }
+        public Func<ApiDescription, string> SortKeySelector { get; set; }
 
         public bool DescribeAllParametersInCamelCase { get; set; }
 
@@ -41,9 +41,10 @@ namespace Swashbuckle.SwaggerGen.Generator
             return new SwaggerGeneratorSettings
             {
                 SwaggerDocs = SwaggerDocs,
+                DocInclusionPredicate = DocInclusionPredicate,
                 IgnoreObsoleteActions = IgnoreObsoleteActions,
                 TagSelector = TagSelector,
-                TagComparer = TagComparer,
+                SortKeySelector = SortKeySelector,
                 SecurityDefinitions = SecurityDefinitions,
                 OperationFilters = OperationFilters,
                 DocumentFilters = DocumentFilters

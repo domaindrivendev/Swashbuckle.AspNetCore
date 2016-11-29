@@ -40,7 +40,7 @@ namespace Swashbuckle.SwaggerGen.Generator
                 .SelectMany(group => group.Items)
                 .Where(apiDesc => _settings.DocInclusionPredicate(documentName, apiDesc))
                 .Where(apiDesc => !_settings.IgnoreObsoleteActions || !apiDesc.IsObsolete())
-                .OrderBy(_settings.TagSelector, _settings.TagComparer);
+                .OrderBy(_settings.SortKeySelector);
 
             var paths = apiDescriptions
                 .GroupBy(apiDesc => apiDesc.RelativePathSansQueryString())

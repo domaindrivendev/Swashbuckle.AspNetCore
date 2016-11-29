@@ -64,9 +64,9 @@ namespace Swashbuckle.SwaggerGen.Application
             _swaggerGeneratorSettings.TagSelector = tagSelector;
         }
 
-        public void OrderActionTagsBy(IComparer<string> tagComparer)
+        public void OrderActionsBy(Func<ApiDescription, string> sortKeySelector)
         {
-            _swaggerGeneratorSettings.TagComparer = tagComparer;
+            _swaggerGeneratorSettings.SortKeySelector = sortKeySelector;
         }
 
         public void AddSecurityDefinition(string name, SecurityScheme securityScheme)

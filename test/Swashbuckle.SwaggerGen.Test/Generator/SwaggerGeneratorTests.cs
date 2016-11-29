@@ -463,25 +463,24 @@ namespace Swashbuckle.SwaggerGen.Generator
         }
 
         [Fact]
-        public void GetSwagger_OrdersActionTags_AsSpecifiedBySettings()
+        public void GetSwagger_OrdersActions_AsSpecifiedBySettings()
         {
             var subject = Subject(
                 setupApis: apis =>
                 {
-                    apis.Add("GET", "A", nameof(FakeActions.ReturnsVoid));
                     apis.Add("GET", "B", nameof(FakeActions.ReturnsVoid));
+                    apis.Add("GET", "A", nameof(FakeActions.ReturnsVoid));
                     apis.Add("GET", "F", nameof(FakeActions.ReturnsVoid));
                     apis.Add("GET", "D", nameof(FakeActions.ReturnsVoid));
                 },
                 configure: c =>
                 {
-                    c.TagSelector = (apiDesc) => apiDesc.RelativePath;
-                    c.TagComparer = new DescendingAlphabeticComparer();
+                    c.SortKeySelector = (apiDesc) => apiDesc.RelativePath;
                 });
 
             var swagger = subject.GetSwagger("v1");
 
-            Assert.Equal(new[] { "/F", "/D", "/B", "/A" }, swagger.Paths.Keys.ToArray());
+            Assert.Equal(new[] { "/A", "/B", "/D", "/F" }, swagger.Paths.Keys.ToArray());
         }
 
         [Fact]
