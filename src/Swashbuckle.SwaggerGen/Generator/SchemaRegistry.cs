@@ -219,6 +219,7 @@ namespace Swashbuckle.SwaggerGen.Generator
             { typeof(double), () => new Schema { Type = "number", Format = "double" } },
             { typeof(decimal), () => new Schema { Type = "number", Format = "double" } },
             { typeof(byte), () => new Schema { Type = "string", Format = "byte" } },
+            { typeof(byte[]), () => new Schema { Type = "string", Format = "byte" } },
             { typeof(sbyte), () => new Schema { Type = "string", Format = "byte" } },
             { typeof(byte[]), () => new Schema { Type = "string", Format = "byte" } },
             { typeof(sbyte[]), () => new Schema { Type = "string", Format = "byte" } },
