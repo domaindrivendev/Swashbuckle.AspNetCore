@@ -159,7 +159,7 @@ namespace Swashbuckle.SwaggerGen.Generator
 
             //the operation filters may remove parameters that are not supported such as services injections or CancellationToken
             //we need to validate rule this AFTER we apply the filters
-            var allowedParameterSources = new[] { "fromData", "body", "header", "path", "query" };
+            var allowedParameterSources = new[] { "formData", "body", "header", "path", "query" };
             if (operation.Parameters != null && operation.Parameters.Any(c => !allowedParameterSources.Contains(c.In, StringComparer.OrdinalIgnoreCase)))
             {
                 throw new NotSupportedException(string.Format("Ambiguous location (path, query etc.) for one or more parameters in action - {0}. " +
