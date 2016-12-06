@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using Swashbuckle.SwaggerGen.Annotations;
@@ -61,6 +62,9 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
         { }
 
         public void AcceptsUnboundParameter(string param)
+        { }
+
+        public void AcceptsCancellationToken(CancellationToken cancellationToken)
         { }
 
         [Obsolete]

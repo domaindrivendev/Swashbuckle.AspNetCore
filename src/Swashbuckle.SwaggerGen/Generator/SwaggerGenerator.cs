@@ -129,7 +129,7 @@ namespace Swashbuckle.SwaggerGen.Generator
         private Operation CreateOperation(ApiDescription apiDescription, ISchemaRegistry schemaRegistry)
         {
             var parameters = apiDescription.ParameterDescriptions
-                .Where(paramDesc => paramDesc.Source.IsFromRequest)
+                .Where(paramDesc => paramDesc.Source.IsFromRequest && !paramDesc.IsPartOfCancellationToken())
                 .Select(paramDesc => CreateParameter(apiDescription, paramDesc, schemaRegistry))
                 .ToList();
 

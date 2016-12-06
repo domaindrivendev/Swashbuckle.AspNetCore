@@ -260,6 +260,18 @@ namespace Swashbuckle.SwaggerGen.Generator
         }
 
         [Fact]
+        public void GetSwagger_IgnoresParameters_IfPartOfCancellationToken()
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add("GET", "collection", nameof(FakeActions.AcceptsCancellationToken)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var operation = swagger.Paths["/collection"].Get;
+            Assert.Null(operation.Parameters);
+        }
+
+        [Fact]
         public void GetSwagger_DescribesParametersInCamelCase_IfSpecifiedBySettings()
         {
             var subject = Subject(
