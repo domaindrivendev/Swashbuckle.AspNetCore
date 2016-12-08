@@ -35,6 +35,12 @@
         "dotnet5.6",
         "portable-net45+win8"
       ]
+    },
+    "netstandard1.6": {
+      "imports": [
+        "dotnet5.6",
+        "portable-net45+win8"
+      ]
     }
   }
 }
