@@ -1,4 +1,7 @@
 ﻿{
+  "runtimes": {
+    "win10-x64": {}
+  },
   "version": "6.0.0-*",
   "description": "Core components for Swashbuckle - a Swagger toolchain for ASP.NET Core",
 
@@ -31,6 +34,12 @@
 
   "frameworks": {
     "net451": {},
+    "netcoreapp1.1.0": {
+      "imports": [
+        "dotnet5.6",
+        "portable-net45+win8"
+      ]
+    },
     "netstandard1.6": {
       "imports": [
         "dnxcore50",

@@ -1,4 +1,7 @@
 {
+  "runtimes": {
+    "win10-x64": {}
+  },
   "buildOptions": {
     "emitEntryPoint": true,
     "preserveCompilationContext": true,
@@ -17,19 +20,33 @@
   },
   "frameworks": {
     "net451": {},
-    "netcoreapp1.0": {
-      "dependencies": {
+    "netcoreapp1.1.0": {
+       "dependencies": {
         "Microsoft.NETCore.App": {
           "type": "platform",
-          "version": "1.0.0"
+          "version": "1.1.0"
         }
+        },
+        "imports": [
+          "dotnet5.6",
+          "dnxcore50",
+          "netstandard1.6",
+          "portable-net45+win8"
+        ]
       },
-      "imports": [
-        "dotnet5.6",
-        "dnxcore50",
-        "netstandard1.6",
-        "portable-net45+win8"
-      ]
+      "netcoreapp1.0": {
+        "dependencies": {
+          "Microsoft.NETCore.App": {
+            "type": "platform",
+            "version": "1.0.0"
+          }
+        },
+        "imports": [
+          "dotnet5.6",
+          "dnxcore50",
+          "netstandard1.6",
+          "portable-net45+win8"
+        ]
+      }
     }
-  }
 }

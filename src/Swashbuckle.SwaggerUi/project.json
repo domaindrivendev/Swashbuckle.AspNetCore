@@ -41,6 +41,12 @@
         "System.Xml": "4.0.0.0"
       }
     },
+    "netcoreapp1.1.0": {
+      "imports": [
+        "dotnet5.6",
+        "portable-net45+win8"
+      ]
+    },
     "netstandard1.6": {
       "dependencies": {
         "System.Xml.XPath": "4.0.1"
