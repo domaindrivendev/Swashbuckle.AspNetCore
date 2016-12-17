@@ -1,0 +1,40 @@
+{
+  "buildOptions": {
+    "emitEntryPoint": true,
+    "preserveCompilationContext": true,
+    "xmlDoc": true,
+    "nowarn": [ "1591" ]
+  },
+
+  "dependencies": {
+    "Microsoft.AspNetCore.Mvc": "1.0.0",
+    "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0",
+    "Microsoft.AspNetCore.Server.Kestrel": "1.0.0",
+    "Microsoft.AspNetCore.Diagnostics": "1.0.0",
+    "Microsoft.Extensions.Logging.Console": "1.0.0",
+    "Microsoft.Extensions.Logging.Debug": "1.0.0",
+    "Microsoft.Extensions.Configuration.FileExtensions": "1.0.0",
+    "Microsoft.Extensions.Configuration.Json": "1.0.0",
+    "IdentityServer4": "1.0.0-rc4-update1",
+    "IdentityServer4.AccessTokenValidation": "1.0.1-rc4-update1",
+    "Swashbuckle.SwaggerGen": "6.0.0-*",
+    "Swashbuckle.SwaggerUi": "6.0.0-*"
+  },
+
+  "frameworks": {
+    "netcoreapp1.0": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.0.0"
+        }
+      },
+      "imports": [
+        "dotnet5.6",
+        "dnxcore50",
+        "netstandard1.6",
+        "portable-net45+win8"
+      ]
+    }
+  }
+}

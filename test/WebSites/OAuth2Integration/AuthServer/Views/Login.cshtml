@@ -1,0 +1,23 @@
+﻿@model OAuth2Integration.AuthServer.Controllers.LoginViewModel
+
+<style>
+    input {
+        display: block;
+    }
+</style>
+
+<h1>Login</h1>
+<form asp-controller="Account" asp-action="Login">
+    <input type="hidden" asp-for="ReturnUrl" />
+    <fieldset>
+        <label>
+            Username:
+            <input type="text" asp-for="Username" />
+        </label>
+        <label>
+            Password:
+            <input type="text" asp-for="Password" />
+        </label>
+    </fieldset>
+    <button type="submit">Login</button>
+</form>
