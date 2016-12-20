@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using Newtonsoft.Json.Serialization;
@@ -16,6 +17,11 @@ namespace Swashbuckle.SwaggerGen.Generator
 
             foreach (var attribute in propInfo.GetCustomAttributes(false))
             {
+
+                var defaultValue = attribute as DefaultValueAttribute;
+                if (defaultValue != null)
+                    schema.Default = defaultValue.Value;
+
                 var regex = attribute as RegularExpressionAttribute;
                 if (regex != null)
                     schema.Pattern = regex.Pattern;

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Swashbuckle.SwaggerGen.TestFixtures
 {
@@ -17,5 +18,8 @@ namespace Swashbuckle.SwaggerGen.TestFixtures
         public string StringProperty2 { get; set; }
 
         public string OptionalProperty { get; set; }
+
+        [DefaultValue("DefaultValue")]
+        public string DefaultValueProperty { get; set; }
     }
 }
