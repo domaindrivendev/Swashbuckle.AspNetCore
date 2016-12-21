@@ -31,6 +31,7 @@ namespace Swashbuckle.SwaggerGen.Generator
         [InlineData(typeof(DateTimeOffset), "string", "date-time")]
         [InlineData(typeof(Guid), "string", "uuid")]
         [InlineData(typeof(string), "string", null)]
+        [InlineData(typeof(Guid), "string", "uuid")]
         public void GetOrRegister_ReturnsPrimitiveSchema_ForSimpleTypes(
             Type systemType,
             string expectedType,
