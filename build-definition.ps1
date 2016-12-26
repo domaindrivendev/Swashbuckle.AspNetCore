@@ -14,6 +14,7 @@ Properties {
     $ArtifactsPathTests = "tests"
 
     # Artifacts-subfolder in which NuGet packages should be placed
+    $ArtifactsPathNuGet = "nuget"
 
     # A list of projects for which NuGet packages should be created
     $NugetLibraries = @(
