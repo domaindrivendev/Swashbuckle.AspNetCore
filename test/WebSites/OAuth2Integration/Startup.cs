@@ -6,8 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using IdentityServer4.Models;
 using IdentityServer4.Configuration;
-using Swashbuckle.Swagger.Model;
 using OAuth2Integration.ResourceServer.Swagger;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace OAuth2Integration
 {
