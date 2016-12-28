@@ -157,6 +157,16 @@ namespace Swashbuckle.SwaggerGen.Generator
                 filter.Apply(operation, filterContext);
             }
 
+            //the operation filters may remove parameters that are not supported such as services injections or CancellationToken
+            //we need to validate rule this AFTER we apply the filters
+            var allowedParameterSources = new[] { "formData", "body", "header", "path", "query" };
+            if (operation.Parameters != null && operation.Parameters.Any(c => !allowedParameterSources.Contains(c.In, StringComparer.OrdinalIgnoreCase)))
+            {
+                throw new NotSupportedException(string.Format("Ambiguous location (path, query etc.) for one or more parameters in action - {0}. " +
+                                                              "Action parameters require an explicit \"From\" binding for Swagger",
+                                                              apiDescription.ActionDescriptor.DisplayName));
+            }
+
             return operation;
         }
 
@@ -212,10 +222,16 @@ namespace Swashbuckle.SwaggerGen.Generator
                 return "path";
             else if (paramDescription.Source == BindingSource.Query)
                 return "query";
-
-            throw new NotSupportedException(string.Format(
-                "Ambiguous location (path, query etc.) for one or more parameters in action - {0}. " +
-                "Action parameters require an explicit \"From\" binding for Swagger",
+            else if (paramDescription.Source == BindingSource.ModelBinding)
+                return "modelBinding";
+            else if (paramDescription.Source == BindingSource.Services)
+                return "services";
+            else if (paramDescription.Source == BindingSource.Custom)
+                return "custom";
+            
+            throw new NotSupportedException(string.Format("Model binding source {0} is not supported for parameter {1} in action {2}.",
+                paramDescription.Source,
+                paramDescription.Name,
                 apiDescription.ActionDescriptor.DisplayName));
         }
 
