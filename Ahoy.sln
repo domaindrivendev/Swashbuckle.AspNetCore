@@ -56,6 +56,8 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "OAuth2Integration", "test\W
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "VirtualDirectory", "test\WebSites\VirtualDirectory\VirtualDirectory.xproj", "{28B55065-BFE6-4C82-AFD3-6157408BBC37}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Swashbuckle.AspNetCore", "src\Swashbuckle.AspNetCore\Swashbuckle.AspNetCore.xproj", "{7D077710-1B4A-4DEC-96E9-CE6192D4493D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -110,6 +112,10 @@ Global
 		{28B55065-BFE6-4C82-AFD3-6157408BBC37}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28B55065-BFE6-4C82-AFD3-6157408BBC37}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28B55065-BFE6-4C82-AFD3-6157408BBC37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D077710-1B4A-4DEC-96E9-CE6192D4493D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D077710-1B4A-4DEC-96E9-CE6192D4493D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D077710-1B4A-4DEC-96E9-CE6192D4493D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D077710-1B4A-4DEC-96E9-CE6192D4493D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -130,5 +136,6 @@ Global
 		{B23C0C45-5B6F-4428-851B-766408517B13} = {245144DE-BC89-4822-B044-020458BFECC0}
 		{C9528DA0-28A7-49DC-8DD1-EC4304341C72} = {245144DE-BC89-4822-B044-020458BFECC0}
 		{28B55065-BFE6-4C82-AFD3-6157408BBC37} = {245144DE-BC89-4822-B044-020458BFECC0}
+		{7D077710-1B4A-4DEC-96E9-CE6192D4493D} = {15A55F4A-FC33-4D96-BAAD-FBDCDD96D5F5}
 	EndGlobalSection
 EndGlobal
