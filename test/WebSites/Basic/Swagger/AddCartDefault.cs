@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using Swashbuckle.Swagger.Model;
-using Swashbuckle.SwaggerGen.Generator;
+using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Basic.Swagger
 {

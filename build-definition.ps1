@@ -18,10 +18,10 @@ Properties {
 
     # A list of projects for which NuGet packages should be created
     $NugetLibraries = @(
-        "src/Swashbuckle",
-        "src/Swashbuckle.Swagger",
-        "src/Swashbuckle.SwaggerGen",
-        "src/Swashbuckle.SwaggerUi"
+        "src/Swashbuckle.AspNetCore",
+        "src/Swashbuckle.AspNetCore.Swagger",
+        "src/Swashbuckle.AspNetCore.SwaggerGen",
+        "src/Swashbuckle.AspNetCore.SwaggerUi"
     )
 
     if ("$env:APPVEYOR" -eq "True") {
@@ -84,7 +84,7 @@ Task dotnet-restore {
 
 Task bower-restore {
 
-    exec { cd src/Swashbuckle.SwaggerUi }
+    exec { cd src/Swashbuckle.AspNetCore.SwaggerUi }
 	exec { bower install }
 	exec { cd ../../ }
 }

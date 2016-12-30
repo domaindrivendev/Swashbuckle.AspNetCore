@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<doc>
+  <assembly>
+    <name>Swashbuckle.AspNetCore.SwaggerGen.Test</name>
+  </assembly>
+  <members>
+    <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeActions.AnnotatedWithXml(System.Int32,System.Collections.Generic.IEnumerable{Swashbuckle.AspNetCore.SwaggerGen.Test.ComplexType})">
+      <summary>
+        summary for AnnotatedWithXml
+      </summary>
+      <remarks>
+        remarks for AnnotatedWithXml
+      </remarks>
+      <param name="param1">description for param1</param>
+      <param name="param2">description for param2</param>
+      <response code="200">description for 200</response>
+      <response code="400">description for 400</response>
+    </member>
+    <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeActions.AnnotatedWithXmlHavingParameterNameBindings(System.String,System.String)">
+      <param name="param1">description for param1</param>
+      <param name="param2">description for param2</param>
+    </member>
+    <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType">
+      <summary>
+        summary for XmlAnnotatedType
+      </summary>
+    </member>
+    <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedWithNestedType.NestedType">
+      <summary>
+        summary for NestedType
+      </summary>
+    </member>
+    <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedGenericType`1">
+      <summary>
+        summary for XmlAnnotatedGenericType
+      </summary>
+    </member>
+    <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.Property">
+      <summary>
+        summary for Property
+      </summary>
+    </member>
+    <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedBaseType.BaseProperty">
+      <summary>
+        summary for BaseProperty
+      </summary>
+    </member>
+    <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedGenericType`1.GenericProperty">
+      <summary>
+        summary for GenericProperty
+      </summary>
+    </member>
+  </members>
+</doc>

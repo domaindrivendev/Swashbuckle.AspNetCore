@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.Swagger.Model;
-using Swashbuckle.SwaggerGen.Generator;
-using System.Linq;
+﻿using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Basic.Swagger
 {

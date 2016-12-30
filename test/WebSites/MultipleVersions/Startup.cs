@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Builder;
-using Swashbuckle.Swagger.Model;
+using Swashbuckle.AspNetCore.Swagger;
 using MultipleVersions.Conventions;
 
 namespace MultipleVersions

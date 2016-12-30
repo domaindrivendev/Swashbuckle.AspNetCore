@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Swashbuckle.Swagger.Model;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace VirtualDirectory
 {
