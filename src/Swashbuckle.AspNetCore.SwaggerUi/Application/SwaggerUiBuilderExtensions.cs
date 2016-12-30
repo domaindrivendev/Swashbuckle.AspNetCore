@@ -27,7 +27,7 @@ namespace Microsoft.AspNetCore.Builder
                 RequestPath = $"/{options.BaseRoute}",
                 EnableDefaultFiles = false,
                 FileProvider = new EmbeddedFileProvider(typeof(SwaggerUiBuilderExtensions).GetTypeInfo().Assembly,
-                    "Swashbuckle.SwaggerUi.bower_components.swagger_ui.dist")
+                    "Swashbuckle.AspNetCore.SwaggerUi.bower_components.swagger_ui.dist")
             };
             fileServerOptions.StaticFileOptions.ContentTypeProvider = new FileExtensionContentTypeProvider();
             app.UseFileServer(fileServerOptions);
