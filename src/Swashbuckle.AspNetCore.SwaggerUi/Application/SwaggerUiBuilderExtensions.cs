@@ -15,8 +15,8 @@ namespace Microsoft.AspNetCore.Builder
             var options = new SwaggerUiOptions();
             setupAction?.Invoke(options);
 
-            // Enable redirect from basePath to indexPath
-            app.UseMiddleware<RedirectMiddleware>(options.BaseRoute, options.IndexPath);
+            // Redirect base path to index page
+            app.UseMiddleware<RedirectMiddleware>(options.RoutePrefix, options.IndexPath);
 
             // Serve indexPath via middleware
             app.UseMiddleware<SwaggerUiMiddleware>(options);
@@ -24,7 +24,7 @@ namespace Microsoft.AspNetCore.Builder
             // Serve everything else via static file server
             var fileServerOptions = new FileServerOptions
             {
-                RequestPath = $"/{options.BaseRoute}",
+                RequestPath = $"/{options.RoutePrefix}",
                 EnableDefaultFiles = false,
                 FileProvider = new EmbeddedFileProvider(typeof(SwaggerUiBuilderExtensions).GetTypeInfo().Assembly,
                     "Swashbuckle.AspNetCore.SwaggerUi.bower_components.swagger_ui.dist")

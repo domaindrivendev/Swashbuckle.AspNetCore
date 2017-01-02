@@ -104,10 +104,7 @@ namespace OAuth2Integration
 
                 resourceServer.UseMvc();
 
-                resourceServer.UseSwagger(documentFilter: (swaggerDoc, req) =>
-                {
-                    swaggerDoc.Host = req.Host.Value;
-                });
+                resourceServer.UseSwagger();
 
                 resourceServer.UseSwaggerUi(c =>
                 {

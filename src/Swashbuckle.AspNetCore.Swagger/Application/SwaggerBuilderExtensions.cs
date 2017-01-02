@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.AspNetCore.Http;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Microsoft.AspNetCore.Builder
@@ -8,13 +7,12 @@ namespace Microsoft.AspNetCore.Builder
     {
         public static IApplicationBuilder UseSwagger(
             this IApplicationBuilder app,
-            string routeTemplate = "swagger/{documentName}/swagger.json",
-            Action<SwaggerDocument, HttpRequest> documentFilter = null)
+            Action<SwaggerOptions> setupAction = null)
         {
-            return app.UseMiddleware<SwaggerMiddleware>(routeTemplate, documentFilter ?? PassThroughDocumentFilter);
-        }
+            var options = new SwaggerOptions();
+            setupAction?.Invoke(options);
 
-        private static void PassThroughDocumentFilter(SwaggerDocument swaggerDoc, HttpRequest httpRequest)
-        {}
+            return app.UseMiddleware<SwaggerMiddleware>(options);
+        }
     }
 }

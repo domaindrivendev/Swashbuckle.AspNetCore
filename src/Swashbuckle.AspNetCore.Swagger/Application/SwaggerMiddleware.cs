@@ -15,21 +15,20 @@ namespace Swashbuckle.AspNetCore.Swagger
         private readonly RequestDelegate _next;
         private readonly ISwaggerProvider _swaggerProvider;
         private readonly JsonSerializer _swaggerSerializer;
-        private readonly Action<SwaggerDocument, HttpRequest> _documentFilter;
+        private readonly SwaggerOptions _options;
         private readonly TemplateMatcher _requestMatcher;
 
         public SwaggerMiddleware(
             RequestDelegate next,
             ISwaggerProvider swaggerProvider,
             IOptions<MvcJsonOptions> mvcJsonOptions,
-            Action<SwaggerDocument, HttpRequest> documentFilter,
-            string routeTemplate)
+            SwaggerOptions options)
         {
             _next = next;
             _swaggerProvider = swaggerProvider;
             _swaggerSerializer = SwaggerSerializerFactory.Create(mvcJsonOptions);
-            _documentFilter = documentFilter;
-            _requestMatcher = new TemplateMatcher(TemplateParser.Parse(routeTemplate), new RouteValueDictionary());
+            _options = options;
+            _requestMatcher = new TemplateMatcher(TemplateParser.Parse(options.RouteTemplate), new RouteValueDictionary());
         }
 
         public async Task Invoke(HttpContext httpContext)
@@ -48,7 +47,10 @@ namespace Swashbuckle.AspNetCore.Swagger
             var swagger = _swaggerProvider.GetSwagger(documentName, null, basePath);
 
             // One last opportunity to modify the Swagger Document - this time with request context
-            _documentFilter(swagger, httpContext.Request);
+            foreach (var filter in _options.PreSerializeFilters)
+            {
+                filter(swagger, httpContext.Request);
+            }
 
             RespondWithSwaggerJson(httpContext.Response, swagger);
         }
