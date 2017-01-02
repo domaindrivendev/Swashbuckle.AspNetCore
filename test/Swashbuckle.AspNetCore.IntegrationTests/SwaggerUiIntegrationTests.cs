@@ -6,7 +6,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
     public class SwaggerUiIntegrationTests
     {
         [Fact]
-        public async Task SwaggerUiRequest_IncludesCustomStylesheetsAndScripts_IfConfigured()
+        public async Task SwaggerUiIndex_IncludesCustomStylesheetsAndScripts_IfConfigured()
         {
             var client = new TestSite(typeof(CustomUiConfig.Startup)).BuildClient();
 
