@@ -1,6 +1,6 @@
 ﻿{
   "version": "6.0.0-*",
-  "description": "Swashbuckle - Swagger components for ASP.NET Core",
+  "description": "Swagger tools for documenting API's built on ASP.NET Core",
 
   "packOptions": {
     "licenseUrl": "https://github.com/domaindrivendev/Swashbuckle/LICENSE",
@@ -8,7 +8,7 @@
       "Richard Morris"
     ],
     "projectUrl": "https://github.com/domaindrivendev/Swashbuckle",
-    "summary": "Swagger components for next generation of Swashbuckle, targeting ASP.NET Core",
+    "summary": "Generate beautiful API documentation, including a UI to explore and test operations, directly from your routes, controllers and models",
     "tags": [
       "swagger",
       "documentation",

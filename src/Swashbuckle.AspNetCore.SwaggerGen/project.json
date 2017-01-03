@@ -1,6 +1,6 @@
 {
   "version": "1.0.0-*",
-  "description": "Swagger generator component for Swashbuckle - a Swagger toolchain for ASP.NET Core.",
+  "description": "Swagger Generator for API's built on ASP.NET Core",
 
   "buildOptions": {
     "keyFile": "Swashbuckle.AspNetCore.SwaggerGen.snk"
@@ -12,7 +12,7 @@
       "Richard Morris"
     ],
     "projectUrl": "https://github.com/domaindrivendev/Swashbuckle",
-    "summary": "Provides a generator that can create accurate Swagger descriptions directly from your API implementation.",
+    "summary": "Includes an implementation of ISwaggerProvider that automatically generates SwaggerDocument(s) from routes, controllers and models",
     "tags": [
       "swagger",
       "documentation",

@@ -67,7 +67,7 @@ Swashbuckle consists of three packages - a Swagger generator, middleware to expo
 
 |Package|Description|
 |---------|-----------|
-|__Swashbuckle.AspNetCore.Swagger__|Exposes _SwaggerDocument_ objects as a JSON API. It expects an implementation of _ISwaggerProvider_ to be registered and queries it to retrieve documents by name before returning as serialized JSON|
+|__Swashbuckle.AspNetCore.Swagger__|Exposes _SwaggerDocument_ objects as a JSON API. It expects an implementation of _ISwaggerProvider_ to be registered which it queries to retrieve Swagger document(s) before returning as serialized JSON|
 |__Swashbuckle.AspNetCore.SwaggerGen__|Injects an implementation of _ISwaggerProvider_ that can be used by the above component. This particular implementation automatically generates _SwaggerDocument_(s) from your routes, controllers and models|
 |__Swashbuckle.AspNetCore.SwaggerUi__|Exposes an embedded version of the swagger-ui. You specify the API endpoints where it can obtain Swagger JSON and it uses them to power interactive docs for your API|
 

@@ -1,6 +1,6 @@
 ﻿{
   "version": "1.0.0-*",
-  "description": "Core components for Swashbuckle - a Swagger toolchain for ASP.NET Core",
+  "description": "Middleware to expose Swagger JSON endpoints from API's built on ASP.NET Core",
 
   "buildOptions": {
     "keyFile": "Swashbuckle.AspNetCore.Swagger.snk"
@@ -12,7 +12,7 @@
       "Richard Morris"
     ],
     "projectUrl": "https://github.com/domaindrivendev/Swashbuckle",
-    "summary": "Provides a Swagger object model and middleware that can be used to expose Swagger descriptions for your API.",
+    "summary": "Exposes SwaggerDocument(s) as a JSON API. It requires an implementation of ISwaggerProvider to be registered which it queries to retrieve Swagger document(s) before returning as serialized JSON",
     "tags": [
       "swagger",
       "documentation",

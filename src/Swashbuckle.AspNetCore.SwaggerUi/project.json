@@ -1,6 +1,6 @@
 ﻿{
   "version": "1.0.0-*",
-  "description": "Swagger UI component for Swashbuckle - a Swagger toolchain for ASP.NET Core.",
+  "description": "Middleware to expose an embedded version of the swagger-ui from an ASP.NET Core application",
 
   "buildOptions": {
     "embed": [
@@ -16,7 +16,7 @@
       "Richard Morris"
     ],
     "projectUrl": "https://github.com/domaindrivendev/Swashbuckle",
-    "summary": "Provides an embedded version of the swagger-ui tool that can be served from your application.",
+    "summary": "You specify the API endpoints where it can obtain Swagger JSON and it uses them to power interactive docs for your API",
     "tags": [
       "swagger",
       "documentation",
