@@ -1,5 +1,5 @@
 ﻿{
-  "version": "6.0.0-*",
+  "version": "1.0.0-*",
   "description": "Swagger tools for documenting API's built on ASP.NET Core",
 
   "packOptions": {

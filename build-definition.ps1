@@ -26,7 +26,7 @@ Properties {
 
     if ("$env:APPVEYOR" -eq "True") {
         if ($env:APPVEYOR_REPO_TAG -eq "true") {
-            $BuildNumber = $env:APPVEYOR_REPO_TAG_NAME
+            $BuildNumber = $env:APPVEYOR_REPO_TAG_NAME.SubString(5) # i.e. the "-*" part if present
         } else {
             $BuildNumber = "preview-" + $env:APPVEYOR_BUILD_NUMBER.PadLeft(4, '0')
         }
