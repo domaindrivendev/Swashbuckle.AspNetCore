@@ -19,7 +19,7 @@
     "web": {
       "commandName": "web",
       "environmentVariables": {
-        "Hosting:Environment": "Development"
+        "ASPNET_ENV": "Development"
       }
     }
   }

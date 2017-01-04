@@ -1,6 +1,8 @@
-﻿using Newtonsoft.Json;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
+using Newtonsoft.Json;
 
 namespace Swashbuckle.AspNetCore.SwaggerUi
 {
@@ -12,6 +14,12 @@ namespace Swashbuckle.AspNetCore.SwaggerUi
 
         public IDictionary<string, string> ToParamDictionary()
         {
+            if (!JSConfig.SwaggerEndpoints.Any())
+                throw new InvalidOperationException(
+                    "Swagger endpoint(s) not specified. " +
+                    "One or more Swagger JSON URL's must be provided to use the swagger-ui."
+                );
+
             return new Dictionary<string, string>
             {
                 { "%(StylesheetsHtml)", GetStylesheetsHtml() },
