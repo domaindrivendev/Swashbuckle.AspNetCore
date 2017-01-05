@@ -8,6 +8,11 @@ namespace Swashbuckle.AspNetCore.SwaggerUi
 {
     public class IndexConfig
     {
+        private static readonly JsonSerializerSettings jsConfigSerializationSettings = new JsonSerializerSettings
+        {
+            ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver()
+        };
+
         public IList<StylesheetDescriptor> Stylesheets { get; private set; } = new List<StylesheetDescriptor>();
 
         public JSConfig JSConfig { get; private set; } = new JSConfig();
@@ -23,7 +28,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUi
             return new Dictionary<string, string>
             {
                 { "%(StylesheetsHtml)", GetStylesheetsHtml() },
-                { "%(JSConfig)", JsonConvert.SerializeObject(JSConfig) }
+                { "%(JSConfig)", JsonConvert.SerializeObject(JSConfig, jsConfigSerializationSettings) }
             };
         }
 
