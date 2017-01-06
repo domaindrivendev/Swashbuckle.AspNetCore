@@ -40,7 +40,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
     ...
     ```
 
-    _NOTE: If you omit the explicit bindings, the generator will describe them as "query" params by default._
+    _NOTE: If you omit the explicit parameter bindings, the generator will describe them as "query" params by default._
 
 4. In the _Configure_ method, insert middleware to expose the generated Swagger as JSON endpoint(s)
 
