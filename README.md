@@ -28,7 +28,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
     });
     ```
 
-3. Ensure your API actions and parameters are decorated with explicit "Http" and "From" bindings.
+3. Ensure your API actions and non-route parameters are decorated with explicit "Http" and "From" bindings.
 
     ```csharp
     [HttpPost]
@@ -40,7 +40,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
     ...
     ```
 
-    _This is a pre-requisite to using Swashbuckle and the Swagger generator will raise an exception if they're omitted._
+    _NOTE: If you omit the explicit bindings, the generator will describe them as "query" params by default._
 
 4. In the _Configure_ method, insert middleware to expose the generated Swagger as JSON endpoint(s)
 
