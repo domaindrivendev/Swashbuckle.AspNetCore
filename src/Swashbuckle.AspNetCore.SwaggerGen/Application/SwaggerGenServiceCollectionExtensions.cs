@@ -10,7 +10,7 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddSwaggerGen(
             this IServiceCollection services,
-            Action<SwaggerGenOptions> setupAction = null)
+            Action<SwaggerGenOptions> setupAction)
         {
             services.Configure<MvcOptions>(c =>
                 c.Conventions.Add(new SwaggerApplicationConvention()));
