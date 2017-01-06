@@ -7,11 +7,11 @@
   },
 
   "packOptions": {
-    "licenseUrl": "https://github.com/domaindrivendev/Swashbuckle/LICENSE",
+    "licenseUrl": "https://raw.githubusercontent.com/domaindrivendev/Swashbuckle.AspNetCore/master/LICENSE",
     "owners": [
       "Richard Morris"
     ],
-    "projectUrl": "https://github.com/domaindrivendev/Swashbuckle",
+    "projectUrl": "https://github.com/domaindrivendev/Swashbuckle.AspNetCore",
     "summary": "Includes an implementation of ISwaggerProvider that automatically generates SwaggerDocument(s) from routes, controllers and models",
     "tags": [
       "swagger",

@@ -11,11 +11,11 @@
   },
 
   "packOptions": {
-    "licenseUrl": "https://github.com/domaindrivendev/Swashbuckle/LICENSE",
+    "licenseUrl": "https://raw.githubusercontent.com/domaindrivendev/Swashbuckle.AspNetCore/master/LICENSE",
     "owners": [
       "Richard Morris"
     ],
-    "projectUrl": "https://github.com/domaindrivendev/Swashbuckle",
+    "projectUrl": "https://github.com/domaindrivendev/Swashbuckle.AspNetCore",
     "summary": "You specify the API endpoints where it can obtain Swagger JSON and it uses them to power interactive docs for your API",
     "tags": [
       "swagger",
