@@ -213,10 +213,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             else if (paramDescription.Source == BindingSource.Query)
                 return "query";
 
-            throw new NotSupportedException(string.Format(
-                "Ambiguous location (path, query etc.) for one or more parameters in action - {0}. " +
-                "Action parameters require an explicit \"From\" binding for Swagger",
-                apiDescription.ActionDescriptor.DisplayName));
+            // None of the above, default to "query"
+            // Wanted to default to "body" for PUT/POST but ApiExplorer flattens out complex params into multiple
+            // params for ALL non-bound params regardless of HttpMethod. So "query" across the board makes most sense
+            return "query";
         }
 
         private Response CreateResponse(ApiResponseType apiResponseType, ISchemaRegistry schemaRegistry)

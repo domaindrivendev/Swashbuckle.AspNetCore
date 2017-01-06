@@ -51,6 +51,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void AcceptsArrayFromQuery([FromQuery]IEnumerable<string> param)
         { }
 
+        public void AcceptsArrayFromHeader([FromHeader]IEnumerable<string> param)
+        { }
+
         public void AcceptsStringFromHeader([FromHeader]string param)
         { }
 
@@ -60,7 +63,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void AcceptsComplexTypeFromBody([FromBody]ComplexType param)
         { }
 
-        public void AcceptsUnboundParameter(string param)
+        public void AcceptsUnboundStringParameter(string param)
+        { }
+
+        public void AcceptsUnboundComplexParameter(ComplexType param)
         { }
 
         public void AcceptsCancellationToken(CancellationToken cancellationToken)

@@ -150,7 +150,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData("collection", nameof(FakeActions.AcceptsStringFromHeader), "header")]
         [InlineData("collection", nameof(FakeActions.AcceptsStringFromForm), "formData")]
         [InlineData("collection", nameof(FakeActions.AcceptsStringFromQuery), "query")]
-        public void GetSwagger_GeneratesNonBodyParameters_ForNonBodyParams(
+        public void GetSwagger_GeneratesNonBodyParameters_ForPathQueryHeaderOrFormBoundParams(
             string routeTemplate,
             string actionFixtureName,
             string expectedIn)
@@ -169,7 +169,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void GetSwagger_SetsCollectionFormatMulti_ForNonBodyArrayParams()
+        public void GetSwagger_SetsCollectionFormatMulti_ForQueryOrHeaderBoundArrayParams()
         {
             var subject = Subject(setupApis: apis => apis
                 .Add("GET", "resource", nameof(FakeActions.AcceptsArrayFromQuery)));
@@ -181,7 +181,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void GetSwagger_GeneratesBodyParams_ForFromBodyParams()
+        public void GetSwagger_GeneratesBodyParams_ForBodyBoundParams()
         {
             var subject = Subject(setupApis: apis => apis
                 .Add("POST", "collection", nameof(FakeActions.AcceptsComplexTypeFromBody)));
@@ -196,6 +196,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.NotNull(bodyParam.Schema);
             Assert.Equal("#/definitions/ComplexType", bodyParam.Schema.Ref);
             Assert.Contains("ComplexType", swagger.Definitions.Keys);
+        }
+
+        [Fact]
+        public void GetSwagger_GeneratesQueryParams_ForAllUnboundParams()
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add("GET", "collection", nameof(FakeActions.AcceptsUnboundStringParameter))
+                .Add("POST", "collection", nameof(FakeActions.AcceptsUnboundComplexParameter)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var getParam = swagger.Paths["/collection"].Get.Parameters.First();
+            Assert.Equal("query", getParam.In);
+            // Multiple post parameters as ApiExplorer flattens out the complex type
+            var postParams = swagger.Paths["/collection"].Post.Parameters;
+            Assert.All(postParams, (p) => Assert.Equal("query", p.In));
         }
 
         [Theory]
@@ -564,20 +580,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 "Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllers+NotAnnotated.AcceptsNothing (Swashbuckle.AspNetCore.SwaggerGen.Test)," +
                 "Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllers+NotAnnotated.AcceptsStringFromQuery (Swashbuckle.AspNetCore.SwaggerGen.Test). " +
                 "Actions require unique method/path combination for Swagger",
-                exception.Message);
-        }
-
-        [Fact]
-        public void GetSwagger_ThrowsInformativeException_IfParameterBindingNotPresent()
-        {
-            var subject = Subject(setupApis: apis => apis
-                .Add("GET", "collection", nameof(FakeActions.AcceptsUnboundParameter)));
-
-            var exception = Assert.Throws<NotSupportedException>(() => subject.GetSwagger("v1"));
-            Assert.Equal(
-                "Ambiguous location (path, query etc.) for one or more parameters in action - " +
-                "Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllers+NotAnnotated.AcceptsUnboundParameter (Swashbuckle.AspNetCore.SwaggerGen.Test). " +
-                "Action parameters require an explicit \"From\" binding for Swagger",
                 exception.Message);
         }
 
