@@ -624,7 +624,7 @@ public class SecurityRequirementsOperationFilter : IOperationFilter
             .OfType<AuthorizeAttribute>()
             .Select(attr => attr.Policy);
 
-        var requireScopes = controllerScopes.Union(actionScopes).Distinct();
+        var requiredScopes = controllerScopes.Union(actionScopes).Distinct();
 
         if (requiredScopes.Any())
         {

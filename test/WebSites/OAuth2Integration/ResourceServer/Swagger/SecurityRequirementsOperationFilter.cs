@@ -19,9 +19,9 @@ namespace OAuth2Integration.ResourceServer.Swagger
                 .OfType<AuthorizeAttribute>()
                 .Select(attr => attr.Policy);
 
-            var requireScopes = controllerScopes.Union(actionScopes).Distinct();
+            var requiredScopes = controllerScopes.Union(actionScopes).Distinct();
 
-            if (requireScopes.Any())
+            if (requiredScopes.Any())
             {
                 operation.Responses.Add("401", new Response { Description = "Unauthorized" });
                 operation.Responses.Add("403", new Response { Description = "Forbidden" });
@@ -29,7 +29,7 @@ namespace OAuth2Integration.ResourceServer.Swagger
                 operation.Security = new List<IDictionary<string, IEnumerable<string>>>();
                 operation.Security.Add(new Dictionary<string, IEnumerable<string>>
                 {
-                    { "oauth2", requireScopes }
+                    { "oauth2", requiredScopes }
                 });
             }
         }
