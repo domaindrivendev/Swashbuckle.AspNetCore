@@ -36,8 +36,11 @@ namespace Swashbuckle.SwaggerGen.Annotations
 
         private static void AppendFullTypeName(Type type, StringBuilder builder, bool expandGenericArgs = false)
         {
-            builder.Append(type.Namespace);
-            builder.Append(".");
+            if (type.Namespace != null)
+            {
+                builder.Append(type.Namespace);
+                builder.Append(".");
+            }
             AppendTypeName(type, builder, expandGenericArgs);
         }
 

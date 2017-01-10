@@ -94,31 +94,31 @@ namespace Swashbuckle.SwaggerGen.Generator
             Assert.NotNull(operation);
             Assert.Empty(operation.Consumes);
             Assert.Equal(new[] { "application/json", "text/json" }, operation.Produces.ToArray());
-            Assert.False(operation.Deprecated);
+            Assert.Null(operation.Deprecated);
             // PUT collection/{id}
             operation = swagger.Paths["/collection/{id}"].Put;
             Assert.NotNull(operation);
             Assert.Equal(new[] { "application/json", "text/json" }, operation.Consumes.ToArray());
             Assert.Empty(operation.Produces.ToArray());
-            Assert.False(operation.Deprecated);
+            Assert.Null(operation.Deprecated);
             // POST collection
             operation = swagger.Paths["/collection"].Post;
             Assert.NotNull(operation);
             Assert.Equal(new[] { "application/json", "text/json" }, operation.Consumes.ToArray());
             Assert.Empty(operation.Produces.ToArray());
-            Assert.False(operation.Deprecated);
+            Assert.Null(operation.Deprecated);
             // DELETE collection/{id}
             operation = swagger.Paths["/collection/{id}"].Delete;
             Assert.NotNull(operation);
             Assert.Empty(operation.Consumes.ToArray());
             Assert.Empty(operation.Produces.ToArray());
-            Assert.False(operation.Deprecated);
+            Assert.Null(operation.Deprecated);
             // PATCH collection
             operation = swagger.Paths["/collection/{id}"].Patch;
             Assert.NotNull(operation);
             Assert.Equal(new[] { "application/json", "text/json" }, operation.Consumes.ToArray());
             Assert.Empty(operation.Produces.ToArray());
-            Assert.False(operation.Deprecated);
+            Assert.Null(operation.Deprecated);
         }
 
         [Theory]
