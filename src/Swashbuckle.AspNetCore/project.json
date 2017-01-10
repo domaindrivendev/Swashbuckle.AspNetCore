@@ -1,0 +1,38 @@
+﻿{
+  "version": "1.0.0-*",
+  "description": "Swagger tools for documenting API's built on ASP.NET Core",
+
+  "packOptions": {
+    "licenseUrl": "https://raw.githubusercontent.com/domaindrivendev/Swashbuckle.AspNetCore/master/LICENSE",
+    "owners": [
+      "Richard Morris"
+    ],
+    "projectUrl": "https://github.com/domaindrivendev/Swashbuckle.AspNetCore",
+    "summary": "Generate beautiful API documentation, including a UI to explore and test operations, directly from your routes, controllers and models",
+    "tags": [
+      "swagger",
+      "documentation",
+      "discovery",
+      "help",
+      "webapi",
+      "aspnet",
+      "aspnetcore"
+    ]
+  },
+
+  "dependencies": {
+    "Swashbuckle.AspNetCore.Swagger": "1.0.0-*",
+    "Swashbuckle.AspNetCore.SwaggerGen": "1.0.0-*",
+    "Swashbuckle.AspNetCore.SwaggerUi": "1.0.0-*"
+  },
+
+  "frameworks": {
+    "net451": {},
+    "netstandard1.6": {
+      "imports": [
+        "dnxcore50",
+        "portable-net451+win8"
+      ]
+    }
+  }
+}

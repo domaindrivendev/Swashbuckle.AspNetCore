@@ -1,0 +1,54 @@
+﻿{
+  "version": "1.0.0-*",
+  "description": "Middleware to expose an embedded version of the swagger-ui from an ASP.NET Core application",
+
+  "buildOptions": {
+    "embed": [
+      "bower_components/swagger-ui/**/*.*",
+      "CustomAssets/index.html"
+    ],
+    "keyFile": "Swashbuckle.AspNetCore.SwaggerUi.snk"
+  },
+
+  "packOptions": {
+    "licenseUrl": "https://raw.githubusercontent.com/domaindrivendev/Swashbuckle.AspNetCore/master/LICENSE",
+    "owners": [
+      "Richard Morris"
+    ],
+    "projectUrl": "https://github.com/domaindrivendev/Swashbuckle.AspNetCore",
+    "summary": "You specify the API endpoints where it can obtain Swagger JSON and it uses them to power interactive docs for your API",
+    "tags": [
+      "swagger",
+      "documentation",
+      "discovery",
+      "help",
+      "webapi",
+      "aspnet",
+      "aspnetcore"
+    ]
+  },
+
+  "dependencies": {
+    "Microsoft.AspNetCore.Routing": "1.0.0",
+    "Microsoft.AspNetCore.StaticFiles": "1.0.0",
+    "Microsoft.Extensions.FileProviders.Embedded": "1.0.0",
+    "Newtonsoft.Json": "9.0.1"
+  },
+
+  "frameworks": {
+    "net451": {
+      "frameworkAssemblies": {
+        "System.Xml": "4.0.0.0"
+      }
+    },
+    "netstandard1.6": {
+      "dependencies": {
+        "System.Xml.XPath": "4.0.1"
+      },
+      "imports": [
+        "dnxcore50",
+        "portable-net451+win8"
+      ]
+    }
+  }
+}

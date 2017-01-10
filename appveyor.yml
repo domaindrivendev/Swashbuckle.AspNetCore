@@ -1,0 +1,26 @@
+version: 1.0.0-build{build}
+init:
+- git config --global core.autocrlf true
+install:
+- cmd: npm install -g bower
+build_script:
+- ps: .\build.ps1	
+test: off
+artifacts:
+- path: artifacts/nuget/*.nupkg
+deploy:
+- provider: NuGet
+  server: https://www.myget.org/F/domaindrivendev/api/v2
+  on:
+    branch: master
+  api_key:
+    secure: 9QrW8KWCDr8G2ufmOX4O7U4yjneFOYY+5h+auICuWYb1YPaKpQBtUVqrRExg8VXR
+  skip_symbols: true
+- provider: NuGet
+  server: https://www.nuget.org/api/v2/package
+  on:
+    branch: master
+    appveyor_repo_tag: true
+  api_key:
+    secure: S2MgK7qypxpy/OtArorFwdH1XASpkxeJu4L7JtgiEBVWe9bOUQ0D8huWmf4VGrBZ
+  skip_symbols: true

@@ -1,0 +1,25 @@
+﻿@model OAuth2Integration.AuthServer.Controllers.ConsentViewModel
+
+<style>
+</style>
+
+<h1>Consent</h1>
+<p>
+    @Model.ClientName is requesting your permission to ...
+</p>
+<form asp-controller="Consent" asp-action="Consent">
+    <input type="hidden" asp-for="ReturnUrl" />
+    <fieldset>
+        <ul>
+            @foreach (var scope in Model.ScopesRequested)
+            {
+                <li>
+                    <label>
+                        <input name="ScopesConsented" type="checkbox" value="@scope.Name" checked />@scope.DisplayName
+                    </label> 
+                </li> 
+            }
+        </ul>
+    </fieldset>
+    <button type="submit">Grant Access</button>
+</form>

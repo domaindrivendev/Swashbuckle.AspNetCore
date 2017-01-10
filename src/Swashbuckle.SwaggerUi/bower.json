@@ -1,9 +1,0 @@
-{
-    "name": "Swashbuckle",
-    "private": true,
-    "dependencies": {
-      "swagger-ui": "2.2.4"
-    },
-    "exportsOverride": {
-    }
-}

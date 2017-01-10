@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.SwaggerGen.Annotations;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using Basic.Swagger;
-using System.Collections.Generic;
 
 namespace Basic.Controllers
 {
