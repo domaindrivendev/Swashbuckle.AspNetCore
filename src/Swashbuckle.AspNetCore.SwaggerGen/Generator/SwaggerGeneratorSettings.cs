@@ -45,6 +45,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 IgnoreObsoleteActions = IgnoreObsoleteActions,
                 TagSelector = TagSelector,
                 SortKeySelector = SortKeySelector,
+                DescribeAllParametersInCamelCase = DescribeAllParametersInCamelCase,
                 SecurityDefinitions = SecurityDefinitions,
                 OperationFilters = OperationFilters,
                 DocumentFilters = DocumentFilters

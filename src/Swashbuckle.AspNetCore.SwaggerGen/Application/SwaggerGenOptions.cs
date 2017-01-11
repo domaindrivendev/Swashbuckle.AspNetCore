@@ -67,6 +67,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             _swaggerGeneratorSettings.SortKeySelector = sortKeySelector;
         }
 
+        public void DescribeAllParametersInCamelCase()
+        {
+            _swaggerGeneratorSettings.DescribeAllParametersInCamelCase = true;
+        }
+
         public void AddSecurityDefinition(string name, SecurityScheme securityScheme)
         {
             _swaggerGeneratorSettings.SecurityDefinitions.Add(name, securityScheme);

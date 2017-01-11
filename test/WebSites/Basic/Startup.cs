@@ -48,6 +48,8 @@ namespace Basic
 
                 c.OperationFilter<AssignOperationVendorExtensions>();
                 c.OperationFilter<FormDataOperationFilter>();
+
+                c.DescribeAllParametersInCamelCase();
             });
 
             if (_hostingEnv.IsDevelopment())
