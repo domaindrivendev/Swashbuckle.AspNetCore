@@ -28,6 +28,27 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.NotNull(response2.Schema);
         }
 
+        [Fact]
+        public void Apply_SetsResponses_FromAttributes_WithHttpStatusCodes()
+        {
+            var operation = new Operation
+            {
+                OperationId = "foobar"
+            };
+            var filterContext = this.FilterContextFor(nameof(FakeActions.AlsoAnnotatedWithSwaggerResponseAttributes));
+
+            this.Subject().Apply(operation, filterContext);
+
+            var responses = operation.Responses;
+            Assert.Equal(new[] { "204", "400" }, responses.Keys.ToArray());
+            var response1 = responses["204"];
+            Assert.Equal("No content is returned.", response1.Description);
+            Assert.Null(response1.Schema);
+            var response2 = responses["400"];
+            Assert.Equal("This returns a dictionary.", response2.Description);
+            Assert.NotNull(response2.Schema);
+        }
+
         private OperationFilterContext FilterContextFor(
             string actionFixtureName,
             string controllerFixtureName = "NotAnnotated")
