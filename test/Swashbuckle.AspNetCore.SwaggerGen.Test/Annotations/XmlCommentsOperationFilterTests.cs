@@ -29,7 +29,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Theory]
         [InlineData(nameof(FakeActions.AnnotatedWithXml), new[] { "param1", "param2" })]
         [InlineData(nameof(FakeActions.AnnotatedWithXmlHavingParameterNameBindings), new[] { "p1", "p2" })]
-        public void Apply_SetsParameterDescriptionsFromParamTags(
+        public void Apply_AppliesParamsXml_ToActionParameters(
             string actionName,
             string[] parameterNames
         )
@@ -45,6 +45,21 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.Equal("description for param1", operation.Parameters.First().Description);
             Assert.Equal("description for param2", operation.Parameters.Last().Description);
+        }
+
+        [Fact]
+        public void Apply_AppliesPropertiesXml_ToPropertyParameters()
+        {
+            var operation = new Operation
+            {
+                Parameters = new List<IParameter>() { new NonBodyParameter { Name = "Property" } },
+                Responses = new Dictionary<string, Response>()
+            };
+            var filterContext = FilterContextFor(nameof(FakeActions.AcceptsXmlAnnotatedTypeFromQuery));
+
+            Subject().Apply(operation, filterContext);
+
+            Assert.Equal("summary for Property", operation.Parameters.First().Description);
         }
 
         [Fact]

@@ -49,7 +49,7 @@ namespace Basic
                 c.OperationFilter<AssignOperationVendorExtensions>();
                 c.OperationFilter<FormDataOperationFilter>();
 
-                c.DescribeAllParametersInCamelCase();
+                //c.DescribeAllParametersInCamelCase();
             });
 
             if (_hostingEnv.IsDevelopment())
