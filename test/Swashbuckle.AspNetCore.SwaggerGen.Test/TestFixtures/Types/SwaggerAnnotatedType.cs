@@ -7,7 +7,7 @@
     }
 
     [SwaggerSchemaFilter(typeof(VendorExtensionsSchemaFilter))]
-    public class SwaggerAnnotatedStruct
+    public struct SwaggerAnnotatedStruct
     {
         public string Property { get; set; }
     }
