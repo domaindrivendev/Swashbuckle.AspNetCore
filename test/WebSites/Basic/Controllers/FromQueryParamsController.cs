@@ -6,13 +6,13 @@ namespace Basic.Controllers
     [Produces("application/json")]
     public class FromQueryParamsController
     {
-        [HttpGet("adresses/valdidate")]
-        public IActionResult ValidateAddress([FromQuery]Address addresse)
+        [HttpGet("addresses/validate")]
+        public IActionResult ValidateAddress([FromQuery]Address address)
         {
             return new NoContentResult(); 
         }
 
-        [HttpGet("zip-codes/valdidate")]
+        [HttpGet("zip-codes/validate")]
         public IActionResult ValidateZipCodes([FromQuery]IEnumerable<string> zipCodes)
         {
             return new NoContentResult(); 
@@ -21,8 +21,14 @@ namespace Basic.Controllers
 
     public class Address
     {
+        /// <summary>
+        /// 3-letter ISO country code
+        /// </summary>
         public string Country { get; set; }
 
+        /// <summary>
+        /// Name of city
+        /// </summary>
         public string City { get; set; }
     }
 }

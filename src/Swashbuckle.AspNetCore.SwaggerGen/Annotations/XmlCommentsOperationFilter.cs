@@ -1,6 +1,10 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Xml.XPath;
+using System.Reflection;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -27,8 +31,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var commentId = XmlCommentsIdHelper.GetCommentIdForMethod(controllerActionDescriptor.MethodInfo);
             var methodNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, commentId));
-            if (methodNode == null) return;
 
+            if (methodNode != null)
+            {
+                ApplyMethodXmlToOperation(operation, methodNode);
+                ApplyParamsXmlToActionParameters(operation.Parameters, methodNode, context.ApiDescription);
+                ApplyResponsesXmlToResponses(operation.Responses, methodNode.Select(ResponsesXPath));
+            }
+
+            // Special handling for parameters that are bound to model properties
+            ApplyPropertiesXmlToPropertyParameters(operation.Parameters, context.ApiDescription);
+        }
+
+        private void ApplyMethodXmlToOperation(Operation operation, XPathNavigator methodNode)
+        {
             var summaryNode = methodNode.SelectSingleNode(SummaryXPath);
             if (summaryNode != null)
                 operation.Summary = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
@@ -36,27 +52,21 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var remarksNode = methodNode.SelectSingleNode(RemarksXPath);
             if (remarksNode != null)
                 operation.Description = XmlCommentsTextHelper.Humanize(remarksNode.InnerXml);
-
-            ApplyParamComments(operation, methodNode, context);
-
-            ApplyResponseComments(operation, methodNode);
         }
 
-        private static void ApplyParamComments(Operation operation, XPathNavigator methodNode, OperationFilterContext context)
+        private void ApplyParamsXmlToActionParameters(
+            IList<IParameter> parameters,
+            XPathNavigator methodNode,
+            ApiDescription apiDescription)
         {
-            if (operation.Parameters == null) return;
+            if (parameters == null) return;
 
-            foreach (var parameter in operation.Parameters)
+            foreach (var parameter in parameters)
             {
-                // Inspect context to find the corresponding action parameter
-                // NOTE: If a parameter binding is present (e.g. [FromQuery(Name..)]), then the lookup needs
-                // to be against the "bound" name and not the actual parameter name
-                var actionParameter = context.ApiDescription.ActionDescriptor
-                    .Parameters
-                    .FirstOrDefault(paramDesc =>
-                        (paramDesc.BindingInfo != null && paramDesc.BindingInfo.BinderModelName == parameter.Name)
-                        || paramDesc.Name == parameter.Name
-                     );
+                // Check for a corresponding action parameter?
+                var actionParameter = apiDescription.ActionDescriptor.Parameters
+                    .FirstOrDefault(p => parameter.Name.Equals(
+                        (p.BindingInfo?.BinderModelName ?? p.Name), StringComparison.OrdinalIgnoreCase));
                 if (actionParameter == null) continue;
 
                 var paramNode = methodNode.SelectSingleNode(string.Format(ParamXPath, actionParameter.Name));
@@ -65,19 +75,44 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
         }
 
-        private static void ApplyResponseComments(Operation operation, XPathNavigator methodNode)
+        private void ApplyResponsesXmlToResponses(IDictionary<string, Response> responses, XPathNodeIterator responseNodes)
         {
-            var responseNodes = methodNode.Select(ResponsesXPath);
             while (responseNodes.MoveNext())
             {
-                var responseNode = responseNodes.Current;
-                var code = responseNode.GetAttribute("code", "");
+                var code = responseNodes.Current.GetAttribute("code", "");
+                var response = responses.ContainsKey(code)
+                    ? responses[code]
+                    : responses[code] = new Response();
 
-                var response = operation.Responses.ContainsKey(code)
-                    ? operation.Responses[code]
-                    : operation.Responses[code] = new Response();
+                response.Description = XmlCommentsTextHelper.Humanize(responseNodes.Current.InnerXml);
+            }
+        }
 
-                response.Description = XmlCommentsTextHelper.Humanize(responseNode.InnerXml);
+        private void ApplyPropertiesXmlToPropertyParameters(
+            IList<IParameter> parameters,
+            ApiDescription apiDescription)
+        {
+            if (parameters == null) return;
+
+            foreach (var parameter in parameters)
+            {
+                // Check for a corresponding  API parameter (from ApiExplorer) that's property-bound?
+                var propertyParam = apiDescription.ParameterDescriptions
+                    .Where(p => p.ModelMetadata.ContainerType != null && p.ModelMetadata.PropertyName != null)
+                    .FirstOrDefault(p => parameter.Name.Equals(p.Name, StringComparison.OrdinalIgnoreCase));
+                if (propertyParam == null) continue;
+
+                var metadata = propertyParam.ModelMetadata;
+                var propertyInfo = metadata.ContainerType.GetTypeInfo().GetProperty(metadata.PropertyName);
+                if (propertyInfo == null) continue;
+
+                var commentId = XmlCommentsIdHelper.GetCommentIdForProperty(propertyInfo);
+                var propertyNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, commentId));
+                if (propertyNode == null) continue;
+
+                var summaryNode = propertyNode.SelectSingleNode(SummaryXPath);
+                if (summaryNode != null)
+                    parameter.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
             }
         }
     }

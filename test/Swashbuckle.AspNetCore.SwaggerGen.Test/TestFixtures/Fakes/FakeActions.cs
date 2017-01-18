@@ -88,6 +88,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void AcceptsGenericArrayType(KeyValuePair<string, string>[] param1)
         {}
 
+        public void AcceptsXmlAnnotatedTypeFromQuery([FromQuery]XmlAnnotatedType param1)
+        {}
+
         /// <summary>
         /// summary for AnnotatedWithXml
         /// </summary>
