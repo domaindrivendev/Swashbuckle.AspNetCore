@@ -10,23 +10,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         public void Apply(Operation operation, OperationFilterContext context)
         {
-            if (operation == null)
-            {
-                throw new ArgumentNullException(nameof(operation));
-            }
-
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
             var apiDesc = context.ApiDescription;
             var attributes = GetActionAttributes(apiDesc);
 
             if (!attributes.Any())
-            {
                 return;
-            }
 
             if (operation.Responses == null)
             {
@@ -48,11 +36,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 response = new Response();
             }
 
-            response.Description = attribute.Description;
+            if (attribute.Description != null)
+                response.Description = attribute.Description;
+
             if (attribute.Type != null && attribute.Type != typeof(void))
-            {
                 response.Schema = context.SchemaRegistry.GetOrRegister(attribute.Type);
-            }
 
             operation.Responses[key] = response;
         }
