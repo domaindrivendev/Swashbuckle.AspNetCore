@@ -2,6 +2,8 @@
 using Xunit;
 using Moq;
 using Swashbuckle.AspNetCore.Swagger;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -10,12 +12,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void Apply_DelegatesToSpecifiedFilter_IfTypeDecoratedWithFilterAttribute()
         {
-            var schema = new Schema { };
-            var filterContext = FilterContextFor(typeof(SwaggerAnnotatedType));
+            IEnumerable<Schema> schemas;
+            var filterContexts = new[]
+            {
+                FilterContextFor(typeof(SwaggerAnnotatedClass)),
+                FilterContextFor(typeof(SwaggerAnnotatedStruct))
+            };
 
-            Subject().Apply(schema, filterContext);
+            schemas = filterContexts.Select(c => {
+                var schema = new Schema();
+                Subject().Apply(schema, c);
+                return schema;
+            });
 
-            Assert.NotEmpty(schema.Extensions);
+            Assert.All(schemas, s => Assert.NotEmpty(s.Extensions));
         }
 
         private SchemaFilterContext FilterContextFor(Type type)

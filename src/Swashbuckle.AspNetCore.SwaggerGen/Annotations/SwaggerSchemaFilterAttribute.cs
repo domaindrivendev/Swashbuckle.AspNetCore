@@ -2,7 +2,7 @@
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false)]
     public class SwaggerSchemaFilterAttribute : Attribute
     {
         public SwaggerSchemaFilterAttribute(Type type)
