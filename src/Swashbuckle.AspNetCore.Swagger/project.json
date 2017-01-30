@@ -3,7 +3,9 @@
   "description": "Middleware to expose Swagger JSON endpoints from API's built on ASP.NET Core",
 
   "buildOptions": {
-    "keyFile": "Swashbuckle.AspNetCore.Swagger.snk"
+    "keyFile": "Swashbuckle.AspNetCore.Swagger.snk",
+    "xmlDoc": true,
+    "nowarn": [ "1591" ]
   },
 
   "packOptions": {

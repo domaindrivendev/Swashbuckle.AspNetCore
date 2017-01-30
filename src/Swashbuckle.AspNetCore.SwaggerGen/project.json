@@ -3,7 +3,9 @@
   "description": "Swagger Generator for API's built on ASP.NET Core",
 
   "buildOptions": {
-    "keyFile": "Swashbuckle.AspNetCore.SwaggerGen.snk"
+    "keyFile": "Swashbuckle.AspNetCore.SwaggerGen.snk",
+    "xmlDoc": true,
+    "nowarn": [ "1591" ]
   },
 
   "packOptions": {

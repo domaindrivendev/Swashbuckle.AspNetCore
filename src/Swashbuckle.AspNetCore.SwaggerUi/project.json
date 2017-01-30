@@ -7,7 +7,9 @@
       "bower_components/swagger-ui/**/*.*",
       "CustomAssets/index.html"
     ],
-    "keyFile": "Swashbuckle.AspNetCore.SwaggerUi.snk"
+    "keyFile": "Swashbuckle.AspNetCore.SwaggerUi.snk",
+    "xmlDoc": true,
+    "nowarn": [ "1591" ]
   },
 
   "packOptions": {
