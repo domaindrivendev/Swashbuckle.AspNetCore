@@ -10,14 +10,8 @@ namespace Swashbuckle.AspNetCore.Swagger
             Extensions = new Dictionary<string, object>();
         }
 
-        /// <summary>
-        /// The type of the security scheme. Valid values are "basic", "apiKey" or "oauth2".
-        /// </summary>
         public string Type { get; set; }
 
-        /// <summary>
-        /// A short description for security scheme.
-        /// </summary>
         public string Description { get; set; }
 
         [JsonExtensionData]
