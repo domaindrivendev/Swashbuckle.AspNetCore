@@ -369,6 +369,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GetSwagger_GeneratesProducesFromProducesAttribute_IfProducesAttributesPresent()
+        {
+            var subject = Subject(setupApis: apis =>
+                apis.Add("GET", "collection", nameof(FakeActions.AnnotatedWithProducesAttribute)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var produces = swagger.Paths["/collection"].Get.Produces;
+            Assert.Equal(1, produces.Count);
+            var produce = produces[0];
+            Assert.Equal("application/x-www-form-urlencoded", produce);
+        }
+
+        [Fact]
         public void GetSwagger_SetsDeprecated_IfActionsMarkedObsolete()
         {
             var subject = Subject(setupApis: apis => apis

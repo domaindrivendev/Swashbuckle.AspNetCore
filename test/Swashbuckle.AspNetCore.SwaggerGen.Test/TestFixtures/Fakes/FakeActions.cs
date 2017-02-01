@@ -118,6 +118,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             throw new NotImplementedException();
         }
 
+        [Produces("application/x-www-form-urlencoded")]
+        public IActionResult AnnotatedWithProducesAttribute()
+        {
+            throw new NotImplementedException();
+        }
+
         [SwaggerOperation("CustomOperationId", Tags = new[] { "customTag" }, Schemes = new[] { "customScheme" })]
         public void AnnotatedWithSwaggerOperation()
         { }
