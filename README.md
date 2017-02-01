@@ -292,7 +292,7 @@ services.AddSwaggerGen(c =>
 
 _Take note of the first argument to SwaggerDoc. It MUST be a URI-friendly name that uniquely identifies the document. It's subsequently used to make up the path for requesting the corresponding Swagger JSON. For example, with the default routing, the above documents will be available at "/swagger/v1/swagger.json" and "/swagger/v2/swagger.json"._
 
-Next, you'll need to inform Swashbuckle which actions to include in each document. The generator uses the _ApiDescription.GroupName_ property, part of the built-in metadata layer that ships with ASP.NET Core, to make this distinction. You can set this by decorating individual actions OR by applying an application wide convention.
+Next, you'll need to inform Swashbuckle which actions to include in each document. Although this can be customized (see below), by default, the generator will use the _ApiDescription.GroupName_ property, part of the built-in metadata layer that ships with ASP.NET Core, to make this distinction. You can set this by decorating individual actions OR by applying an application wide convention.
 
 #### Decorate Individual Actions ####
 
@@ -332,15 +332,24 @@ public void ConfigureServices(IServiceCollection services)
 }
 ```
 
-_NOTE: If you're using the _SwaggerUi_ middleware, you'll need to specify the version endpoints you want to list:
+#### Customize the Action Selection Process ####
 
-```
-app.UseSwaggerUi(c =>
+When selecting actions for a given Swagger document, the generator invokes a _DocInclusionPredicate_ against every _ApiDescription_ that's surfaced by the framework. The default implementation inspects _ApiDescription.GroupName_ and returns true if the value is either null OR equal to the requested document name. However, you can also provide a custom inclusion predicate. For example, if you're using an attribute-based approach to implement API versioning (e.g. Microsoft.AspNetCore.Mvc.Versioning), you could configure a custom predicate that leverages this instead:
+
+```csharp
+c.DocInclusionPredicate((docName, apiDesc) =>
 {
-    c.SwaggerEndpoint("/swagger/v2/swagger.json", "My API V2");
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-})
+    var versions = apiDesc.ControllerAttributes()
+        .OfType<ApiVersionAttribute>()
+        .SelectMany(attr => attr.Versions);
+
+    return versions.Any(v => $"v{v.ToString()}" == docName);
+});
 ```
+
+#### Exposing Multiple Documents through the UI ####
+
+If you're using the _SwaggerUi_ middleware, you'll need to specify any additional Swagger endpoints you want to expose. See [List Multiple Swagger Documents](#list-multiple-swagger-documents) for more.
 
 ### Omit Obsolete Operations and/or Schema Properties ###
 

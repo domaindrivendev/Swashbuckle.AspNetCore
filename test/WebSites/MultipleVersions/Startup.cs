@@ -1,9 +1,12 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Builder;
 using Swashbuckle.AspNetCore.Swagger;
-using MultipleVersions.Conventions;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using MultipleVersions.Swagger;
 
 namespace MultipleVersions
 {
@@ -17,9 +20,8 @@ namespace MultipleVersions
         // Use this method to add services to the container
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(c =>
-                c.Conventions.Add(new ApiExplorerGroupPerVersionConvention())
-            );
+            services.AddMvc();
+            services.AddApiVersioning();
 
             // Uncomment the following line to add Web API services which makes it easier to port Web API 2 controllers.
             // You will also need to add the Microsoft.AspNetCore.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
@@ -29,6 +31,18 @@ namespace MultipleVersions
             {
                 c.SwaggerDoc("v1", new Info { Version = "v1", Title = "API V1" });
                 c.SwaggerDoc("v2", new Info { Version = "v2", Title = "API V2" });
+
+                c.DocInclusionPredicate((docName, apiDesc) =>
+                {
+                    var versions = apiDesc.ControllerAttributes()
+                        .OfType<ApiVersionAttribute>()
+                        .SelectMany(attr => attr.Versions);
+
+                    return versions.Any(v => $"v{v.ToString()}" == docName);
+                });
+
+                c.OperationFilter<RemoveVersionParameters>();
+                c.DocumentFilter<SetVersionInPaths>();
             });
         }
 
@@ -38,6 +52,7 @@ namespace MultipleVersions
             loggerFactory.AddConsole();
             loggerFactory.AddDebug();
 
+            app.UseDeveloperExceptionPage();
 
             // Configure the HTTP request pipeline.
             app.UseStaticFiles();
