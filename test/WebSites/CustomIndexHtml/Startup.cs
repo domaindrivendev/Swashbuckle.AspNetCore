@@ -19,6 +19,8 @@ namespace CustomIndexHtml
 
         public void Configure(IApplicationBuilder app)
         {
+            // Allow wwwroot/swagger/index.html to be served at /swagger
+            app.UseDefaultFiles();
             app.UseStaticFiles();
 
             app.UseMvc();

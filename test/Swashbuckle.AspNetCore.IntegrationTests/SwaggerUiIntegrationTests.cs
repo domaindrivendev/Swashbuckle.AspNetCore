@@ -10,7 +10,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         {
             var client = new TestSite(typeof(CustomUiConfig.Startup)).BuildClient();
 
-            var response = await client.GetAsync("/swagger/index.html");
+            var response = await client.GetAsync("/swagger/");
             var content = await response.Content.ReadAsStringAsync();
 
             Assert.Contains("/ext/custom-script.js", content);

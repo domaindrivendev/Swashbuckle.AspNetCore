@@ -15,22 +15,19 @@ namespace Microsoft.AspNetCore.Builder
             var options = new SwaggerUiOptions();
             setupAction?.Invoke(options);
 
-            // Redirect base path to index page
-            app.UseMiddleware<RedirectMiddleware>(options.RoutePrefix, options.IndexPath);
-
-            // Serve indexPath via middleware
-            app.UseMiddleware<SwaggerUiMiddleware>(options);
-
-            // Serve everything else via static file server
+            // Serve static assets (CSS, JavaScript etc.) via static file server
             var fileServerOptions = new FileServerOptions
             {
                 RequestPath = $"/{options.RoutePrefix}",
-                EnableDefaultFiles = false,
+                EnableDefaultFiles = true,
                 FileProvider = new EmbeddedFileProvider(typeof(SwaggerUiBuilderExtensions).GetTypeInfo().Assembly,
                     "Swashbuckle.AspNetCore.SwaggerUi.bower_components.swagger_ui.dist")
             };
             fileServerOptions.StaticFileOptions.ContentTypeProvider = new FileExtensionContentTypeProvider();
             app.UseFileServer(fileServerOptions);
+
+            // Serve the index.html page at /{options.RoutePrefix}/ via middleware
+            app.UseMiddleware<SwaggerUiMiddleware>(options);
 
             return app;
         }

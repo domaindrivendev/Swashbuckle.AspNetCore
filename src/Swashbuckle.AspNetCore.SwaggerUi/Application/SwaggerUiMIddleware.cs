@@ -22,16 +22,25 @@ namespace Swashbuckle.AspNetCore.SwaggerUi
         )
         {
             _next = next;
-            _requestMatcher = new TemplateMatcher(TemplateParser.Parse(options.IndexPath), new RouteValueDictionary());
+            _requestMatcher = new TemplateMatcher(TemplateParser.Parse(options.RoutePrefix), new RouteValueDictionary());
             _options = options;
             _resourceAssembly = GetType().GetTypeInfo().Assembly;
         }
 
         public async Task Invoke(HttpContext httpContext)
         {
-            if (!RequestingSwaggerUi(httpContext.Request))
+            var request = httpContext.Request;
+
+            if (!RequestingSwaggerUi(request))
             {
                 await _next(httpContext);
+                return;
+            }
+
+            // Enforce trailing slash so that relative paths are resolved correctly
+            if (!request.Path.Value.EndsWith("/"))
+            {
+                httpContext.Response.Redirect(request.Path + "/");
                 return;
             }
 
