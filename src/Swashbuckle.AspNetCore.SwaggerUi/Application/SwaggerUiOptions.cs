@@ -24,7 +24,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUi
         }
 
         /// <summary>
-        /// Provide one or more Swagger JSON endpoints to power the UI
+        /// Provide one or more Swagger JSON endpoints. Can be fully-qualified or relative to the UI page
         /// </summary>
         /// <param name="url">Can be fully qualified or relative to the current host</param>
         /// <param name="description">The description that appears in the document selector drop-down</param>
