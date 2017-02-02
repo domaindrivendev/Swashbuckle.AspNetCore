@@ -9,8 +9,6 @@ namespace Swashbuckle.AspNetCore.SwaggerUi
         /// </summary>
         public string RoutePrefix { get; set; } = "swagger";
 
-        public string IndexPath => RoutePrefix.Trim('/') + "/index.html";
-
         internal IndexConfig IndexConfig { get; private set; } = new IndexConfig();
 
         /// <summary>
