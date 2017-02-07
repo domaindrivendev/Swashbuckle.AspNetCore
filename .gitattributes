@@ -1,0 +1,2 @@
+# Set the default end-of-line to UNIX
+* text=auto eol=lf

@@ -113,6 +113,7 @@ The steps described above will get you up and running with minimal setup. Howeve
 
 * [Swashbuckle.AspNetCore.SwaggerUI](#swashbuckleaspnetcoreswaggerui)
     * [Change Releative Path to the UI](#change-relative-path-to-the-ui)
+    * [Change Document Title](#change-document-title)
     * [List Multiple Swagger Documents](#list-multiple-swagger-documents)
     * [Apply swagger-ui Parameters](#apply-swagger-ui-parameters)
     * [Inject Custom CSS](#inject-custom-css)
@@ -687,6 +688,18 @@ By default, the Swagger UI will be exposed at "/swagger". If neccessary, you can
 app.UseSwaggerUI(c =>
 {
     c.RoutePrefix = "api-docs"
+    ...
+}
+```
+
+### Change Document Title ###
+
+By default, the Swagger UI will have a generic document title. When you have multiple Swagger pages open, it can be difficult to tell them apart. You can alter this when enabling the SwaggerUi middleware:
+
+```csharp
+app.UseSwaggerUi(c =>
+{
+    c.DocumentTitle("My Swagger UI");
     ...
 }
 ```

@@ -50,6 +50,15 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         }
 
         /// <summary>
+        /// Change the title of the Swagger UI
+        /// </summary>
+        /// <param name="value">Title given to Swagger UI</param>
+        public void DocumentTitle(string value)
+        {
+            IndexSettings.DocTitle = value;
+        }
+
+        /// <summary>
         /// Controls how the API listing is displayed. See swagger-ui project for more info
         /// </summary>
         /// <param name="value">"none", "list" (default) or "full"</param>
