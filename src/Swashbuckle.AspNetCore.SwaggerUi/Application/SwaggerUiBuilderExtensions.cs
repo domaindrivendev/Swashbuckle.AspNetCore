@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Reflection;
 using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.Extensions.FileProviders;
 using Swashbuckle.AspNetCore.SwaggerUi;
 
 namespace Microsoft.AspNetCore.Builder
@@ -15,18 +13,16 @@ namespace Microsoft.AspNetCore.Builder
             var options = new SwaggerUiOptions();
             setupAction?.Invoke(options);
 
-            // Serve static assets (CSS, JavaScript etc.) via static file server
+            // Serve swagger-ui assets with the FileServer middleware, using a custom FileProvider
+            // to inject parameters into "index.html"
             var fileServerOptions = new FileServerOptions
             {
                 RequestPath = $"/{options.RoutePrefix}",
-                FileProvider = new EmbeddedFileProvider(typeof(SwaggerUiBuilderExtensions).GetTypeInfo().Assembly,
-                    "Swashbuckle.AspNetCore.SwaggerUi.bower_components.swagger_ui.dist")
+                FileProvider = new SwaggerUiFileProvider(options.IndexConfig.ToParamDictionary()),
+                EnableDefaultFiles = true, // serve index.html at /{options.RoutePrefix}/
             };
             fileServerOptions.StaticFileOptions.ContentTypeProvider = new FileExtensionContentTypeProvider();
             app.UseFileServer(fileServerOptions);
-
-            // Serve the index.html page at /{options.RoutePrefix}/ via middleware
-            app.UseMiddleware<SwaggerUiMiddleware>(options);
 
             return app;
         }

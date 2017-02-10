@@ -7,9 +7,6 @@
       "include": [
         "bower_components/swagger-ui/dist/**/*.*",
         "CustomAssets/index.html"
-      ],
-      "excludeFiles": [
-        "bower_components/swagger-ui/dist/index.html"
       ]
     },
     "keyFile": "Swashbuckle.AspNetCore.SwaggerUi.snk",

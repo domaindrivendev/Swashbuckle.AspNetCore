@@ -1,0 +1,44 @@
+﻿using System.Reflection;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Primitives;
+using System.Collections.Generic;
+
+namespace Swashbuckle.AspNetCore.SwaggerUi
+{
+    public class SwaggerUiFileProvider : IFileProvider
+    {
+        private const string StaticFilesNamespace =
+            "Swashbuckle.AspNetCore.SwaggerUi.bower_components.swagger_ui.dist";
+        private const string IndexResourceName =
+            "Swashbuckle.AspNetCore.SwaggerUi.CustomAssets.index.html";
+
+        private readonly Assembly _thisAssembly;
+        private readonly EmbeddedFileProvider _staticFileProvider;
+        private readonly IDictionary<string, string> _indexParameters;
+
+        public SwaggerUiFileProvider(IDictionary<string, string> indexParameters)
+        {
+            _thisAssembly = GetType().GetTypeInfo().Assembly;
+            _staticFileProvider = new EmbeddedFileProvider(_thisAssembly, StaticFilesNamespace);
+            _indexParameters = indexParameters;
+        }
+
+        public IDirectoryContents GetDirectoryContents(string subpath)
+        {
+            return _staticFileProvider.GetDirectoryContents(subpath);
+        }
+
+        public IFileInfo GetFileInfo(string subpath)
+        {
+            if (subpath == "/index.html")
+                return new SwaggerUiIndexFileInfo(_thisAssembly, IndexResourceName, _indexParameters);
+
+            return _staticFileProvider.GetFileInfo(subpath);
+        }
+
+        public IChangeToken Watch(string filter)
+        {
+            return _staticFileProvider.Watch(filter);
+        }
+    }
+}
