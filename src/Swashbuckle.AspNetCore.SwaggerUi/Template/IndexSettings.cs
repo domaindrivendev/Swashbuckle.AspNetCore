@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace Swashbuckle.AspNetCore.SwaggerUi
 {
-    public class IndexConfig
+    public class IndexSettings
     {
         private static readonly JsonSerializerSettings jsConfigSerializationSettings = new JsonSerializerSettings
         {
@@ -17,7 +17,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUi
 
         public JSConfig JSConfig { get; private set; } = new JSConfig();
 
-        public IDictionary<string, string> ToParamDictionary()
+        public IDictionary<string, string> ToTemplateParameters()
         {
             if (!JSConfig.SwaggerEndpoints.Any())
                 throw new InvalidOperationException(

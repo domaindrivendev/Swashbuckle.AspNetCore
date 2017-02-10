@@ -18,7 +18,7 @@ namespace Microsoft.AspNetCore.Builder
             var fileServerOptions = new FileServerOptions
             {
                 RequestPath = $"/{options.RoutePrefix}",
-                FileProvider = new SwaggerUiFileProvider(options.IndexConfig.ToParamDictionary()),
+                FileProvider = new SwaggerUiFileProvider(options.IndexSettings.ToTemplateParameters()),
                 EnableDefaultFiles = true, // serve index.html at /{options.RoutePrefix}/
             };
             fileServerOptions.StaticFileOptions.ContentTypeProvider = new FileExtensionContentTypeProvider();

@@ -10,7 +10,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUi
         private const string StaticFilesNamespace =
             "Swashbuckle.AspNetCore.SwaggerUi.bower_components.swagger_ui.dist";
         private const string IndexResourceName =
-            "Swashbuckle.AspNetCore.SwaggerUi.CustomAssets.index.html";
+            "Swashbuckle.AspNetCore.SwaggerUi.Template.index.html";
 
         private readonly Assembly _thisAssembly;
         private readonly EmbeddedFileProvider _staticFileProvider;

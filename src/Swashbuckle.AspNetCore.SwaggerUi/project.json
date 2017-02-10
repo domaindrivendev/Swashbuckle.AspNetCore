@@ -6,7 +6,7 @@
     "embed": {
       "include": [
         "bower_components/swagger-ui/dist/**/*.*",
-        "CustomAssets/index.html"
+        "Template/index.html"
       ]
     },
     "keyFile": "Swashbuckle.AspNetCore.SwaggerUi.snk",
