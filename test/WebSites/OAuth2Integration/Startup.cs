@@ -106,7 +106,7 @@ namespace OAuth2Integration
 
                 resourceServer.UseSwagger();
 
-                resourceServer.UseSwaggerUi(c =>
+                resourceServer.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/resource-server/swagger/v1/swagger.json", "My API V1");
                     c.ConfigureOAuth2("swagger-ui", "swagger-ui-secret".Sha256(), "swagger-ui-realm", "Swagger UI");

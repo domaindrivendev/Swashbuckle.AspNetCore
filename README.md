@@ -57,7 +57,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 5. Optionally insert the swagger-ui middleware if you want to expose interactive documentation, specifying the Swagger JSON endpoint(s) to power it from.
 
     ```csharp
-    app.UseSwaggerUi(c =>
+    app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
     })
@@ -73,7 +73,7 @@ Swashbuckle consists of three packages - a Swagger generator, middleware to expo
 |---------|-----------|
 |__Swashbuckle.AspNetCore.Swagger__|Exposes _SwaggerDocument_ objects as a JSON API. It expects an implementation of _ISwaggerProvider_ to be registered which it queries to retrieve Swagger document(s) before returning as serialized JSON|
 |__Swashbuckle.AspNetCore.SwaggerGen__|Injects an implementation of _ISwaggerProvider_ that can be used by the above component. This particular implementation automatically generates _SwaggerDocument_(s) from your routes, controllers and models|
-|__Swashbuckle.AspNetCore.SwaggerUi__|Exposes an embedded version of the swagger-ui. You specify the API endpoints where it can obtain Swagger JSON and it uses them to power interactive docs for your API|
+|__Swashbuckle.AspNetCore.SwaggerUI__|Exposes an embedded version of the swagger-ui. You specify the API endpoints where it can obtain Swagger JSON and it uses them to power interactive docs for your API|
 
 # Configuration & Customization #
 
@@ -100,7 +100,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Extend Generator with Operation, Schema & Document Filters](#extend-generator-with-operation-schema--document-filters)
     * [Add Security Definitions and Requirements](#add-security-definitions-and-requirements)
 
-* [Swashbuckle.AspNetCore.SwaggerUi](#swashbuckleaspnetcoreswaggerui)
+* [Swashbuckle.AspNetCore.SwaggerUI](#swashbuckleaspnetcoreswaggerui)
     * [Change Releative Path to the UI](#change-relative-path-to-the-ui)
     * [List Multiple Swagger Documents](#list-multiple-swagger-documents)
     * [Apply swagger-ui Parameters](#apply-swagger-ui-parameters)
@@ -120,10 +120,10 @@ app.UseSwagger(c =>
 });
 ```
 
-_NOTE: If you're using the SwaggerUi middleware, you'll also need to update it's configuration to reflect the new endpoints:_
+_NOTE: If you're using the SwaggerUI middleware, you'll also need to update it's configuration to reflect the new endpoints:_
 
 ```csharp
-app.UseSwaggerUi(c =>
+app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/api-docs/v1/swagger.json", "My API V1");
 })
@@ -349,7 +349,7 @@ c.DocInclusionPredicate((docName, apiDesc) =>
 
 #### Exposing Multiple Documents through the UI ####
 
-If you're using the _SwaggerUi_ middleware, you'll need to specify any additional Swagger endpoints you want to expose. See [List Multiple Swagger Documents](#list-multiple-swagger-documents) for more.
+If you're using the _SwaggerUI_ middleware, you'll need to specify any additional Swagger endpoints you want to expose. See [List Multiple Swagger Documents](#list-multiple-swagger-documents) for more.
 
 ### Omit Obsolete Operations and/or Schema Properties ###
 
@@ -414,7 +414,7 @@ public void ConfigureServices(IServiceCollection services)
 
 ### Customize Operation Tags (e.g. for UI Grouping) ###
 
-The [Swagger spec](http://swagger.io/specification/) allows one or more "tags" to be assigned to an operation. The Swagger generator will assign the controller name as the default tag. This is particularly interesting if you're using the _SwaggerUi_ middleware as it uses this value to group operations.
+The [Swagger spec](http://swagger.io/specification/) allows one or more "tags" to be assigned to an operation. The Swagger generator will assign the controller name as the default tag. This is particularly interesting if you're using the _SwaggerUI_ middleware as it uses this value to group operations.
 
 You can override the default tag by providing a function that applies tags by convention. For example, the following configuration will tag, and therefore group operations in the UI, by HTTP method:
 
@@ -594,7 +594,7 @@ public class TagDescriptionsDocumentFilter : IDocumentFilter
 }
 ```
 
-_NOTE: If you're using the SwaggerUi middleware, this filter can be used to display additional descriptions beside each group of Operations._
+_NOTE: If you're using the SwaggerUI middleware, this filter can be used to display additional descriptions beside each group of Operations._
 
 ### Add Security Definitions and Requirements ###
 
@@ -654,16 +654,16 @@ public class SecurityRequirementsOperationFilter : IOperationFilter
 }
 ```
 
-_NOTE: If you're using the SwaggerUi middleware, you can enable interactive OAuth2.0 flows that are powered by the emitted security metadata. See [Enabling OAuth2.0 Flows](#) for more details._
+_NOTE: If you're using the SwaggerUI middleware, you can enable interactive OAuth2.0 flows that are powered by the emitted security metadata. See [Enabling OAuth2.0 Flows](#) for more details._
 
-## Swashbuckle.AspNetCore.SwaggerUi ##
+## Swashbuckle.AspNetCore.SwaggerUI ##
 
 ### Change Relative Path to the UI ###
 
-By default, the Swagger UI will be exposed at "/swagger". If neccessary, you can alter this when enabling the SwaggerUi middleware:
+By default, the Swagger UI will be exposed at "/swagger". If neccessary, you can alter this when enabling the SwaggerUI middleware:
 
 ```csharp
-app.UseSwaggerUi(c =>
+app.UseSwaggerUI(c =>
 {
     c.RoutePrefix = "api-docs"
     ...
@@ -675,7 +675,7 @@ app.UseSwaggerUi(c =>
 When enabling the middleware, you're required to specify one or more Swagger endpoints (fully qualified or relative to the current host) to power the UI. If you provide multiple endpoints, they'll be listed in the top right corner of the page, allowing users to toggle between the different documents. For example, the following configuration could be used to document different versions of an API.
 
 ```csharp
-app.UseSwaggerUi(c =>
+app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
     c.SwaggerEndpoint("/swagger/v2/swagger.json", "V2 Docs");
@@ -684,10 +684,10 @@ app.UseSwaggerUi(c =>
 
 ### Apply swagger-ui Parameters ###
 
-The swagger-ui ships with it's own set of configuration parameters, all described here https://github.com/swagger-api/swagger-ui#swaggerui. In Swashbuckle, most of these are surfaced through the SwaggerUi middleware options:
+The swagger-ui ships with it's own set of configuration parameters, all described here https://github.com/swagger-api/swagger-ui#swaggerui. In Swashbuckle, most of these are surfaced through the SwaggerUI middleware options:
 
 ```csharp
-app.UseSwaggerUi(c =>
+app.UseSwaggerUI(c =>
 {
     c.EnabledValidator();
     c.BooleanValues(new object[] { 0, 1 });
@@ -707,7 +707,7 @@ Most of them are self explanatory, mapping back to the corresponding swagger-ui 
 To tweak the look and feel, you can inject additional CSS stylesheets by adding them to your _wwwroot_ folder and specifying the relative paths in the middleware options:
 
 ```csharp
-app.UseSwaggerUi(c =>
+app.UseSwaggerUI(c =>
 {
     ...
     c.InjectStylesheet("/swagger-ui/custom.css");
@@ -721,7 +721,7 @@ The swagger-ui has built-in support to participate in OAuth2.0 authorization flo
 If you're Swagger endpoint includes the appropriate security metadata, you can enable the UI interaction as follows:
 
 ```csharp
-app.UseSwaggerUi(c =>
+app.UseSwaggerUI(c =>
 {
     ...
     // Provide client ID, client ID, realm and application name

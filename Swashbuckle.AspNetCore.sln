@@ -38,7 +38,7 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Swashbuckle.AspNetCore.Swag
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Swashbuckle.AspNetCore.SwaggerGen.Test", "test\Swashbuckle.AspNetCore.SwaggerGen.Test\Swashbuckle.AspNetCore.SwaggerGen.Test.xproj", "{6E1DF729-097E-4BAA-86E4-61BD8A6C5209}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Swashbuckle.AspNetCore.SwaggerUi", "src\Swashbuckle.AspNetCore.SwaggerUi\Swashbuckle.AspNetCore.SwaggerUi.xproj", "{1C14CC40-1D89-4DA9-A1D8-237FD8922371}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Swashbuckle.AspNetCore.SwaggerUI", "src\Swashbuckle.AspNetCore.SwaggerUI\Swashbuckle.AspNetCore.SwaggerUI.xproj", "{1C14CC40-1D89-4DA9-A1D8-237FD8922371}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Swashbuckle.AspNetCore.IntegrationTests", "test\Swashbuckle.AspNetCore.IntegrationTests\Swashbuckle.AspNetCore.IntegrationTests.xproj", "{FAE3AE3A-E5B2-44B1-B402-FD96899C444B}"
 EndProject
@@ -46,7 +46,7 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Basic", "test\WebSites\Basi
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CustomIndexHtml", "test\WebSites\CustomIndexHtml\CustomIndexHtml.xproj", "{55DCE4FA-9D46-43CD-B19C-17215EEE68E4}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CustomUiConfig", "test\WebSites\CustomUiConfig\CustomUiConfig.xproj", "{D513E8EE-06EE-4CE2-B375-28B73AF13E86}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CustomUIConfig", "test\WebSites\CustomUIConfig\CustomUIConfig.xproj", "{D513E8EE-06EE-4CE2-B375-28B73AF13E86}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "GenericControllers", "test\WebSites\GenericControllers\GenericControllers.xproj", "{12C3C4EA-2F91-4E2E-9411-5D341045C7D4}"
 EndProject

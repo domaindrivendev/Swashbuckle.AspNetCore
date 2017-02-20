@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Swashbuckle.AspNetCore.SwaggerUi
+namespace Swashbuckle.AspNetCore.SwaggerUI
 {
-    public class SwaggerUiOptions
+    public class SwaggerUIOptions
     {
         /// <summary>
         /// Set a custom route prefix for accessing the swagger-ui.

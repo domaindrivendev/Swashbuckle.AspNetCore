@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
 
-namespace CustomUiConfig
+namespace CustomUIConfig
 {
     public class Startup
     {
@@ -24,7 +24,7 @@ namespace CustomUiConfig
             app.UseMvc();
 
             app.UseSwagger();
-            app.UseSwaggerUi(c =>
+            app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
                 c.EnabledValidator();

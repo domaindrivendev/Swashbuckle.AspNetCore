@@ -1,16 +1,16 @@
 ﻿using System;
 using Microsoft.AspNetCore.StaticFiles;
-using Swashbuckle.AspNetCore.SwaggerUi;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace Microsoft.AspNetCore.Builder
 {
-    public static class SwaggerUiBuilderExtensions
+    public static class SwaggerUIBuilderExtensions
     {
-        public static IApplicationBuilder UseSwaggerUi(
+        public static IApplicationBuilder UseSwaggerUI(
             this IApplicationBuilder app,
-            Action<SwaggerUiOptions> setupAction)
+            Action<SwaggerUIOptions> setupAction)
         {
-            var options = new SwaggerUiOptions();
+            var options = new SwaggerUIOptions();
             setupAction?.Invoke(options);
 
             // Serve swagger-ui assets with the FileServer middleware, using a custom FileProvider
@@ -18,7 +18,7 @@ namespace Microsoft.AspNetCore.Builder
             var fileServerOptions = new FileServerOptions
             {
                 RequestPath = $"/{options.RoutePrefix}",
-                FileProvider = new SwaggerUiFileProvider(options.IndexSettings.ToTemplateParameters()),
+                FileProvider = new SwaggerUIFileProvider(options.IndexSettings.ToTemplateParameters()),
                 EnableDefaultFiles = true, // serve index.html at /{options.RoutePrefix}/
             };
             fileServerOptions.StaticFileOptions.ContentTypeProvider = new FileExtensionContentTypeProvider();

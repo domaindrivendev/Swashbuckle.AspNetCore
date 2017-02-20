@@ -41,7 +41,7 @@ namespace GenericControllers
             // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
 
             app.UseSwagger();
-            app.UseSwaggerUi(c =>
+            app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
             });

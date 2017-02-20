@@ -3,12 +3,12 @@ using Xunit;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests
 {
-    public class SwaggerUiIntegrationTests
+    public class SwaggerUIIntegrationTests
     {
         [Fact]
-        public async Task SwaggerUiIndex_IncludesCustomStylesheetsAndScripts_IfConfigured()
+        public async Task SwaggerUIIndex_IncludesCustomStylesheetsAndScripts_IfConfigured()
         {
-            var client = new TestSite(typeof(CustomUiConfig.Startup)).BuildClient();
+            var client = new TestSite(typeof(CustomUIConfig.Startup)).BuildClient();
 
             var response = await client.GetAsync("/swagger/");
             var content = await response.Content.ReadAsStringAsync();

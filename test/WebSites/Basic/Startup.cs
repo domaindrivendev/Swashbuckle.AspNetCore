@@ -67,9 +67,6 @@ namespace Basic
             loggerFactory.AddConsole();
             loggerFactory.AddDebug();
 
-            // Configure the HTTP request pipeline.
-            app.UseStaticFiles();
-
             // Add MVC to the request pipeline.
             app.UseDeveloperExceptionPage();
             app.UseMvc();
@@ -81,7 +78,7 @@ namespace Basic
                 c.PreSerializeFilters.Add((swagger, httpReq) => swagger.Host = httpReq.Host.Value);
             });
 
-            app.UseSwaggerUi(c =>
+            app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
             });

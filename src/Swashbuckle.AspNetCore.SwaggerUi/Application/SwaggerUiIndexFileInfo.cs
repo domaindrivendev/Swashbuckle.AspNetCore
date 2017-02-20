@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Extensions.FileProviders;
 
-namespace Swashbuckle.AspNetCore.SwaggerUi
+namespace Swashbuckle.AspNetCore.SwaggerUI
 {
-    public class SwaggerUiIndexFileInfo : IFileInfo
+    public class SwaggerUIIndexFileInfo : IFileInfo
     {
         private readonly Assembly _assembly;
         private readonly string _resourcePath;
@@ -15,7 +15,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUi
 
         private long? _length;
 
-        public SwaggerUiIndexFileInfo(Assembly assembly, string resourcePath, IDictionary<string, string> parameters)
+        public SwaggerUIIndexFileInfo(Assembly assembly, string resourcePath, IDictionary<string, string> parameters)
         {
             _assembly = assembly;
             _resourcePath = resourcePath;

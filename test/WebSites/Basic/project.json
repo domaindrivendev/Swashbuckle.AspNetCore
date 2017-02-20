@@ -13,7 +13,7 @@
     "Microsoft.Extensions.Logging.Console": "1.0.0",
     "Microsoft.Extensions.Logging.Debug": "1.0.0",
     "Swashbuckle.AspNetCore.SwaggerGen": "1.0.0-*",
-    "Swashbuckle.AspNetCore.SwaggerUi": "1.0.0-*"
+    "Swashbuckle.AspNetCore.SwaggerUI": "1.0.0-*"
   },
   "frameworks": {
     "net451": {},

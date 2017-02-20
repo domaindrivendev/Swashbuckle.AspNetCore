@@ -21,7 +21,7 @@ Properties {
         "src/Swashbuckle.AspNetCore",
         "src/Swashbuckle.AspNetCore.Swagger",
         "src/Swashbuckle.AspNetCore.SwaggerGen",
-        "src/Swashbuckle.AspNetCore.SwaggerUi"
+        "src/Swashbuckle.AspNetCore.SwaggerUI"
     )
 
     if ($env:APPVEYOR -eq "True") {
@@ -84,7 +84,7 @@ Task dotnet-restore {
 
 Task bower-restore {
 
-    exec { cd src/Swashbuckle.AspNetCore.SwaggerUi }
+    exec { cd src/Swashbuckle.AspNetCore.SwaggerUI }
     exec { bower install }
     exec { cd ../../ }
 }

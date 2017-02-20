@@ -4,7 +4,7 @@ using System.Text;
 using System.Linq;
 using Newtonsoft.Json;
 
-namespace Swashbuckle.AspNetCore.SwaggerUi
+namespace Swashbuckle.AspNetCore.SwaggerUI
 {
     public class IndexSettings
     {
