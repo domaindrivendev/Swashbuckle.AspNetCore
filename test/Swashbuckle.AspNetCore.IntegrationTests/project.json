@@ -11,7 +11,7 @@
     "xunit": "2.2.0-beta2-*",
     "Basic": "1.0.0-*",
     "CustomIndexHtml": "1.0.0-*",
-    "CustomUiConfig": "1.0.0-*",
+    "CustomUIConfig": "1.0.0-*",
     "GenericControllers": "1.0.0-*",
     "MultipleVersions": "1.0.0-*",
     "OAuth2Integration": "1.0.0-*"
