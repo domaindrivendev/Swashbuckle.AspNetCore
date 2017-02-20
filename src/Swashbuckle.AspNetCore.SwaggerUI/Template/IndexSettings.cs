@@ -11,6 +11,9 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         private static readonly JsonSerializerSettings jsConfigSerializationSettings = new JsonSerializerSettings
         {
             ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver()
+            {
+                NamingStrategy = new Newtonsoft.Json.Serialization.DefaultNamingStrategy()
+            }
         };
 
         public IList<StylesheetDescriptor> Stylesheets { get; private set; } = new List<StylesheetDescriptor>();
