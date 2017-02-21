@@ -2,17 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.IO;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Swashbuckle.AspNetCore.SwaggerUI
 {
     public class IndexSettings
     {
-        private static readonly JsonSerializerSettings jsConfigSerializationSettings = new JsonSerializerSettings
-        {
-            ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver()
-        };
-
         public IList<StylesheetDescriptor> Stylesheets { get; private set; } = new List<StylesheetDescriptor>();
 
         public JSConfig JSConfig { get; private set; } = new JSConfig();
@@ -28,7 +25,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             return new Dictionary<string, string>
             {
                 { "%(StylesheetsHtml)", GetStylesheetsHtml() },
-                { "%(JSConfig)", JsonConvert.SerializeObject(JSConfig, jsConfigSerializationSettings) }
+                { "%(JSConfig)", GetJSConfigJson() }
             };
         }
 
@@ -40,6 +37,21 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
                 builder.AppendLine($"<link href='{ss.Href}' rel='stylesheet' media='{ss.Media}' type='text/css' />");
             }
             return builder.ToString();
+        }
+
+        private string GetJSConfigJson()
+        {
+            var serializer = new JsonSerializer
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                ContractResolver = new DefaultContractResolver()
+            };
+
+            using (var writer = new StringWriter())
+            {
+                serializer.Serialize(writer, JSConfig);
+                return writer.ToString();
+            }
         }
     }
 
