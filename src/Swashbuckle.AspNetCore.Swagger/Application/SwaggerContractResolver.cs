@@ -19,35 +19,32 @@ namespace Swashbuckle.AspNetCore.Swagger
         {
             var jsonProperty = base.CreateProperty(member, memberSerialization);
 
-            if (member.Name == "Example" || member.Name == "Default")
+            if (member.Name == "Example" || member.Name == "Examples" || member.Name == "Default")
                 jsonProperty.Converter = _applicationTypeConverter;
 
             return jsonProperty;
         }
-    }
 
-    internal class ApplicationTypeConverter : JsonConverter
-    {
-        private JsonSerializer _applicationTypeSerializer;
-
-        public ApplicationTypeConverter(JsonSerializerSettings applicationSerializerSettings)
+        private class ApplicationTypeConverter : JsonConverter
         {
-            _applicationTypeSerializer = JsonSerializer.Create(applicationSerializerSettings);
-        }
+            private JsonSerializer _applicationTypeSerializer;
 
-        public override bool CanConvert(Type objectType)
-        {
-            return true;
-        }
+            public ApplicationTypeConverter(JsonSerializerSettings applicationSerializerSettings)
+            {
+                _applicationTypeSerializer = JsonSerializer.Create(applicationSerializerSettings);
+            }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            throw new NotImplementedException();
-        }
+            public override bool CanConvert(Type objectType) { return true; }
 
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            _applicationTypeSerializer.Serialize(writer, value);
+            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+            {
+                throw new NotImplementedException();
+            }
+
+            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+            {
+                _applicationTypeSerializer.Serialize(writer, value);
+            }
         }
     }
 }
