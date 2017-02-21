@@ -1,4 +1,4 @@
-﻿{
+{
   "buildOptions": {
     "emitEntryPoint": true,
     "preserveCompilationContext": true
@@ -11,6 +11,7 @@
     "Microsoft.AspNetCore.Diagnostics": "1.0.0",
     "Microsoft.Extensions.Logging.Console": "1.0.0",
     "Microsoft.Extensions.Logging.Debug": "1.0.0",
+    "Swashbuckle.AspNetCore.Swagger": "1.0.0-*",
     "Swashbuckle.AspNetCore.SwaggerGen": "1.0.0-*",
     "Swashbuckle.AspNetCore.SwaggerUI": "1.0.0-*"
   },

@@ -6,14 +6,14 @@ namespace Swashbuckle.AspNetCore.Swagger
 {
     public class SwaggerSerializerFactory
     {
-        internal static JsonSerializer Create(IOptions<MvcJsonOptions> mvcJsonOptions)
+        internal static JsonSerializer Create(IOptions<MvcJsonOptions> applicationJsonOptions)
         {
             // TODO: Should this handle case where mvcJsonOptions.Value == null?
             return new JsonSerializer
             {
                 NullValueHandling = NullValueHandling.Ignore,
-                Formatting = mvcJsonOptions.Value.SerializerSettings.Formatting,
-                ContractResolver = new SwaggerContractResolver(mvcJsonOptions.Value.SerializerSettings)
+                Formatting = applicationJsonOptions.Value.SerializerSettings.Formatting,
+                ContractResolver = new SwaggerContractResolver(applicationJsonOptions.Value.SerializerSettings)
             };
         }
     }
