@@ -62,7 +62,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-    })
+    });
     ```
 
     _Now you can restart your application and check out the auto-generated, interactive docs at "/swagger"._
