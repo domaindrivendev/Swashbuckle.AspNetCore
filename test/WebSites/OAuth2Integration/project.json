@@ -17,6 +17,7 @@
     "Microsoft.Extensions.Configuration.Json": "1.0.0",
     "IdentityServer4": "1.0.0-rc4-update1",
     "IdentityServer4.AccessTokenValidation": "1.0.1-rc4-update1",
+    "Swashbuckle.AspNetCore.Swagger": "1.0.0-*",
     "Swashbuckle.AspNetCore.SwaggerGen": "1.0.0-*",
     "Swashbuckle.AspNetCore.SwaggerUI": "1.0.0-*"
   },

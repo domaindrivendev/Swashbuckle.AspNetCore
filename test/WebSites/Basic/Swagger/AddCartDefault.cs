@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Basic.Controllers;
 
 namespace Basic.Swagger
 {
@@ -17,9 +18,9 @@ namespace Basic.Swagger
         {
             _logger.LogInformation("Applying an awesome Schema Filter that leverages Dependency Injection");
 
-            schema.Default = new
+            schema.Default = new Cart
             {
-                Id = 123
+                Id = 123,
             };
         }
     }

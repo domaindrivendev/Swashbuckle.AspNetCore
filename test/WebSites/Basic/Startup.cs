@@ -27,7 +27,7 @@ namespace Basic
                 .AddMvc()
                 .AddJsonOptions(options =>
                 {
-                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    options.SerializerSettings.ContractResolver = new DefaultContractResolver();
                 });
 
             // Uncomment the following line to add Web API services which makes it easier to port Web API 2 controllers.
