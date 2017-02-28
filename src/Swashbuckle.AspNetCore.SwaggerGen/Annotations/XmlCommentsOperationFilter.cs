@@ -98,7 +98,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 // Check for a corresponding  API parameter (from ApiExplorer) that's property-bound?
                 var propertyParam = apiDescription.ParameterDescriptions
-                    .Where(p => p.ModelMetadata.ContainerType != null && p.ModelMetadata.PropertyName != null)
+                    .Where(p => p.ModelMetadata?.ContainerType != null && p.ModelMetadata?.PropertyName != null)
                     .FirstOrDefault(p => parameter.Name.Equals(p.Name, StringComparison.OrdinalIgnoreCase));
                 if (propertyParam == null) continue;
 
