@@ -62,7 +62,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// An array of of the HTTP operations that will have the 'Try it out!' option. See swagger-ui project for more info
         /// </summary>
         /// <param name="supportedSubmitMethods"></param>
-        public void SupportedSubmitMethods(string[] supportedSubmitMethods)
+        public void SupportedSubmitMethods(params string[] supportedSubmitMethods)
         {
             IndexSettings.JSConfig.SupportedSubmitMethods = supportedSubmitMethods;
         }
