@@ -4,8 +4,16 @@ using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
+    /// <summary>
+    /// Used to implement a logic of Swagger-flavored JSONSchema modification.
+    /// </summary>
     public interface ISchemaFilter
     {
+        /// <summary>
+        /// Applies modification logic to each Swagger schema item.
+        /// </summary>
+        /// <param name="model">Swagger schema item.</param>
+        /// <param name="context">Swagger schema item context.</param>
         void Apply(Schema model, SchemaFilterContext context);
     }
 
