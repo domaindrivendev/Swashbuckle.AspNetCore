@@ -92,9 +92,9 @@ Task bower-restore {
 Task dotnet-build {
 
     if ($VersionSuffix.Length -gt 0) {
-        exec { dotnet build **\project.json -c $BuildConfiguration --version-suffix $VersionSuffix }
+        exec { dotnet build -c $BuildConfiguration --version-suffix $VersionSuffix }
     } else {
-        exec { dotnet build **\project.json -c $BuildConfiguration }
+        exec { dotnet build -c $BuildConfiguration }
     }
 }
 
@@ -103,30 +103,21 @@ Task dotnet-test {
     $testOutput = Join-Path $ArtifactsPath $ArtifactsPathTests
     New-Item $testOutput -ItemType Directory -ErrorAction Ignore | Out-Null
 
-    # Find every library that has a configured testRunner and test it.
-    # Run all libraries, even if one fails to make sure we have test results for all libraries.
-
     $testFailed = $false
 
-    Get-ChildItem -Filter project.json -Recurse | ForEach-Object {
+    # Find all projects that are directly under the tests folder
 
-        $projectJson = Get-Content -Path $_.FullName -Raw -ErrorAction Ignore | ConvertFrom-Json -ErrorAction Ignore
+    Get-ChildItem -Path "test\**\*.csproj" | ForEach-Object {
 
-        if ($projectJson -and $projectJson.testRunner -ne $null)
-        {
-            $library = Split-Path $_.DirectoryName -Leaf
-            $testResultOutput = Join-Path $testOutput "$library.xml"
+      Write-Host ""
+      Write-Host "Testing $library"
+      Write-Host ""
 
-            Write-Host ""
-            Write-Host "Testing $library"
-            Write-Host ""
+      dotnet test $_.FullName -c $BuildConfiguration --no-build
 
-            dotnet test $_.Directory -c $BuildConfiguration --no-build -xml $testResultOutput
-
-            if ($LASTEXITCODE -ne 0) {
-                $testFailed = $true
-            }
-        }
+      if ($LASTEXITCODE -ne 0) {
+          $testFailed = $true
+      }
     }
 
     if ($testFailed) {
