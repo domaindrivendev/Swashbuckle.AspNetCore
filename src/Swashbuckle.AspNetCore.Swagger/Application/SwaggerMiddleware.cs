@@ -60,7 +60,7 @@ namespace Swashbuckle.AspNetCore.Swagger
             documentName = null;
             if (request.Method != "GET") return false;
 
-			var routeValues = new RouteValueDictionary();
+            var routeValues = new RouteValueDictionary();
             if (!_requestMatcher.TryMatch(request.Path, routeValues) || !routeValues.ContainsKey("documentName")) return false;
 
             documentName = routeValues["documentName"].ToString();

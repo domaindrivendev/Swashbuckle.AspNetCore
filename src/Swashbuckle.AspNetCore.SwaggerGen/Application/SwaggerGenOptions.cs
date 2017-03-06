@@ -43,6 +43,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         }
 
         /// <summary>
+        /// Define document name format which depends on value.
+        /// </summary>
+        /// <param name="docNameFormatString">Document name format string</param>
+        public void DocNameFormat(string docNameFormatString)
+        {
+            string.Format(docNameFormatString, 0);
+            _swaggerGeneratorSettings.DocumentNameFormat = docNameFormatString;
+        }
+
+        /// <summary>
         /// Define one or more documents to be created by the Swagger generator
         /// </summary>
         /// <param name="name">A URI-friendly name that uniquely identifies the document</param>
