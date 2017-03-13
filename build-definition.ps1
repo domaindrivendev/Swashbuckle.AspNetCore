@@ -10,9 +10,6 @@ Properties {
     # The folder in which all output artifacts should be placed
     $ArtifactsPath = "artifacts"
 
-    # Artifacts-subfolder in which test results should be placed
-    $ArtifactsPathTests = "tests"
-
     # Artifacts-subfolder in which NuGet packages should be placed
     $ArtifactsPathNuGet = "nuget"
 
@@ -35,20 +32,19 @@ Properties {
 
 FormatTaskName ("`n" + ("-"*25) + "[{0}]" + ("-"*25) + "`n")
 
-Task Default -depends init, clean, dotnet-install, dotnet-restore, bower-restore, dotnet-build, dotnet-test, dotnet-pack
+#Task Default -depends init, clean, dotnet-restore, bower-restore, dotnet-build, dotnet-test, dotnet-pack
+Task Default -depends init, clean, dotnet-pack
 
 Task init {
 
     Write-Host "VersionSuffix: $VersionSuffix"
     Write-Host "BuildConfiguration: $BuildConfiguration"
     Write-Host "ArtifactsPath: $ArtifactsPath"
-    Write-Host "ArtifactsPathTests: $ArtifactsPathTests"
     Write-Host "ArtifactsPathNuGet: $ArtifactsPathNuGet"
 
     Assert ($VersionSuffix -ne $null) "Property 'VersionSuffix' may not be null."
     Assert ($BuildConfiguration -ne $null) "Property 'BuildConfiguration' may not be null."
     Assert ($ArtifactsPath -ne $null) "Property 'ArtifactsPath' may not be null."
-    Assert ($ArtifactsPathTests -ne $null) "Property 'ArtifactsPathTests' may not be null."
     Assert ($ArtifactsPathNuGet -ne $null) "Property 'ArtifactsPathNuGet' may not be null."
 }
 
@@ -58,23 +54,6 @@ Task clean {
     New-Item $ArtifactsPath -ItemType Directory -ErrorAction Ignore | Out-Null
 
     Write-Host "Created artifacts folder '$ArtifactsPath'"
-}
-
-Task dotnet-install {
-
-    if (Get-Command "dotnet.exe" -ErrorAction SilentlyContinue) {
-        Write-Host "dotnet SDK already installed"
-        exec { dotnet --version }
-    } else {
-        Write-Host "Installing dotnet SDK"
-
-        $installScript = Join-Path $ArtifactsPath "dotnet-install.ps1"
-
-        Invoke-WebRequest "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1" `
-            -OutFile $installScript
-
-        & $installScript
-    }
 }
 
 Task dotnet-restore {
@@ -99,9 +78,6 @@ Task dotnet-build {
 }
 
 Task dotnet-test {
-
-    $testOutput = Join-Path $ArtifactsPath $ArtifactsPathTests
-    New-Item $testOutput -ItemType Directory -ErrorAction Ignore | Out-Null
 
     $testFailed = $false
 
@@ -135,16 +111,17 @@ Task dotnet-pack {
     $NugetLibraries | ForEach-Object {
 
         $library = $_
-        $libraryOutput = Join-Path $ArtifactsPath $ArtifactsPathNuGet
+        $outputPath = Join-Path $ArtifactsPath $ArtifactsPathNuGet
+        $fullOutputPath = Join-Path $env:APPVEYOR_BUILD_FOLDER $outputPath
 
         Write-Host ""
-        Write-Host "Packaging $library to $libraryOutput"
+        Write-Host "Packaging $library to $fullOutputPath"
         Write-Host ""
 
         if ($VersionSuffix.Length -gt 0) {
-            exec { dotnet pack $library -c $BuildConfiguration --no-build -o $libraryOutput --version-suffix $VersionSuffix }
+            exec { dotnet pack $library -c $BuildConfiguration --no-build -o $fullOutputPath --version-suffix $VersionSuffix }
         } else {
-            exec { dotnet pack $library -c $BuildConfiguration --no-build -o $libraryOutput }
+            exec { dotnet pack $library -c $BuildConfiguration --no-build -o $fullOutputPath }
         }
     }
 }
