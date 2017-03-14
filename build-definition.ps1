@@ -10,9 +10,6 @@ Properties {
     # The folder in which all output artifacts should be placed
     $ArtifactsPath = "artifacts"
 
-    # Artifacts-subfolder in which test results should be placed
-    $ArtifactsPathTests = "tests"
-
     # Artifacts-subfolder in which NuGet packages should be placed
     $ArtifactsPathNuGet = "nuget"
 
@@ -35,20 +32,18 @@ Properties {
 
 FormatTaskName ("`n" + ("-"*25) + "[{0}]" + ("-"*25) + "`n")
 
-Task Default -depends init, clean, dotnet-install, dotnet-restore, bower-restore, dotnet-build, dotnet-test, dotnet-pack
+Task Default -depends init, clean, dotnet-restore, bower-restore, dotnet-build, dotnet-test, dotnet-pack
 
 Task init {
 
     Write-Host "VersionSuffix: $VersionSuffix"
     Write-Host "BuildConfiguration: $BuildConfiguration"
     Write-Host "ArtifactsPath: $ArtifactsPath"
-    Write-Host "ArtifactsPathTests: $ArtifactsPathTests"
     Write-Host "ArtifactsPathNuGet: $ArtifactsPathNuGet"
 
     Assert ($VersionSuffix -ne $null) "Property 'VersionSuffix' may not be null."
     Assert ($BuildConfiguration -ne $null) "Property 'BuildConfiguration' may not be null."
     Assert ($ArtifactsPath -ne $null) "Property 'ArtifactsPath' may not be null."
-    Assert ($ArtifactsPathTests -ne $null) "Property 'ArtifactsPathTests' may not be null."
     Assert ($ArtifactsPathNuGet -ne $null) "Property 'ArtifactsPathNuGet' may not be null."
 }
 
@@ -58,23 +53,6 @@ Task clean {
     New-Item $ArtifactsPath -ItemType Directory -ErrorAction Ignore | Out-Null
 
     Write-Host "Created artifacts folder '$ArtifactsPath'"
-}
-
-Task dotnet-install {
-
-    if (Get-Command "dotnet.exe" -ErrorAction SilentlyContinue) {
-        Write-Host "dotnet SDK already installed"
-        exec { dotnet --version }
-    } else {
-        Write-Host "Installing dotnet SDK"
-
-        $installScript = Join-Path $ArtifactsPath "dotnet-install.ps1"
-
-        Invoke-WebRequest "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain/install.ps1" `
-            -OutFile $installScript
-
-        & $installScript
-    }
 }
 
 Task dotnet-restore {
@@ -92,41 +70,29 @@ Task bower-restore {
 Task dotnet-build {
 
     if ($VersionSuffix.Length -gt 0) {
-        exec { dotnet build **\project.json -c $BuildConfiguration --version-suffix $VersionSuffix }
+        exec { dotnet build -c $BuildConfiguration --version-suffix $VersionSuffix }
     } else {
-        exec { dotnet build **\project.json -c $BuildConfiguration }
+        exec { dotnet build -c $BuildConfiguration }
     }
 }
 
 Task dotnet-test {
 
-    $testOutput = Join-Path $ArtifactsPath $ArtifactsPathTests
-    New-Item $testOutput -ItemType Directory -ErrorAction Ignore | Out-Null
-
-    # Find every library that has a configured testRunner and test it.
-    # Run all libraries, even if one fails to make sure we have test results for all libraries.
-
     $testFailed = $false
 
-    Get-ChildItem -Filter project.json -Recurse | ForEach-Object {
+    # Find all projects that are directly under the tests folder
 
-        $projectJson = Get-Content -Path $_.FullName -Raw -ErrorAction Ignore | ConvertFrom-Json -ErrorAction Ignore
+    Get-ChildItem -Path "test\**\*.csproj" | ForEach-Object {
 
-        if ($projectJson -and $projectJson.testRunner -ne $null)
-        {
-            $library = Split-Path $_.DirectoryName -Leaf
-            $testResultOutput = Join-Path $testOutput "$library.xml"
+      Write-Host ""
+      Write-Host "Testing $library"
+      Write-Host ""
 
-            Write-Host ""
-            Write-Host "Testing $library"
-            Write-Host ""
+      dotnet test $_.FullName -c $BuildConfiguration --no-build
 
-            dotnet test $_.Directory -c $BuildConfiguration --no-build -xml $testResultOutput
-
-            if ($LASTEXITCODE -ne 0) {
-                $testFailed = $true
-            }
-        }
+      if ($LASTEXITCODE -ne 0) {
+          $testFailed = $true
+      }
     }
 
     if ($testFailed) {
@@ -144,16 +110,17 @@ Task dotnet-pack {
     $NugetLibraries | ForEach-Object {
 
         $library = $_
-        $libraryOutput = Join-Path $ArtifactsPath $ArtifactsPathNuGet
+        $outputPath = Join-Path $ArtifactsPath $ArtifactsPathNuGet
+        $fullOutputPath = Join-Path $env:APPVEYOR_BUILD_FOLDER $outputPath
 
         Write-Host ""
-        Write-Host "Packaging $library to $libraryOutput"
+        Write-Host "Packaging $library to $fullOutputPath"
         Write-Host ""
 
         if ($VersionSuffix.Length -gt 0) {
-            exec { dotnet pack $library -c $BuildConfiguration --no-build -o $libraryOutput --version-suffix $VersionSuffix }
+            exec { dotnet pack $library -c $BuildConfiguration --no-build -o $fullOutputPath --version-suffix $VersionSuffix }
         } else {
-            exec { dotnet pack $library -c $BuildConfiguration --no-build -o $libraryOutput }
+            exec { dotnet pack $library -c $BuildConfiguration --no-build -o $fullOutputPath }
         }
     }
 }
