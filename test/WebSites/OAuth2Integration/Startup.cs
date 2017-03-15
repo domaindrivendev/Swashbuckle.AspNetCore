@@ -109,7 +109,7 @@ namespace OAuth2Integration
                 resourceServer.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/resource-server/swagger/v1/swagger.json", "My API V1");
-                    c.ConfigureOAuth2("swagger-ui", "swagger-ui-secret".Sha256(), "swagger-ui-realm", "Swagger UI");
+                    c.ConfigureOAuth2("swagger-ui", null, null, "Swagger UI");
                 });
             });
         }

@@ -126,8 +126,8 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         {
             var jsConfig = IndexSettings.JSConfig;
             jsConfig.OAuth2ClientId = clientId;
-            jsConfig.OAuth2ClientSecret = clientSecret;
-            jsConfig.OAuth2Realm = realm;
+            jsConfig.OAuth2ClientSecret = clientSecret ?? "na"; //swagger-ui needs a value
+            jsConfig.OAuth2Realm = realm ?? "na"; //swagger-ui needs a value
             jsConfig.OAuth2AppName = appName;
             jsConfig.OAuth2ScopeSeparator = scopeSeparator;
             jsConfig.OAuth2AdditionalQueryStringParams = additionalQueryStringParameters ?? new { };
