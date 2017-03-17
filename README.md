@@ -745,7 +745,7 @@ If you're Swagger endpoint includes the appropriate security metadata, you can e
 app.UseSwaggerUI(c =>
 {
     ...
-    // Provide client ID, client ID, realm and application name
+    // Provide client ID, client secret, realm and application name
     c.ConfigureOAuth2("swagger-ui", "swagger-ui-secret", "swagger-ui-realm", "Swagger UI");
 }
 ```
