@@ -67,7 +67,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
     _Now you can restart your application and check out the auto-generated, interactive docs at "/swagger"._
 
-# Swashbuckle & ApiExplorer #
+# Swashbuckle, ApiExplorer, and Routing #
 
 Swashbuckle relies heavily on _ApiExplorer_, the API metadata layer that ships with ASP.NET Core. If you're using the _AddMvc_ helper to bootstrap the MVC stack, then _ApiExplorer_ will be automatically registered and SB will work without issue. However, if you're using _AddMvcCore_ for a more paired-down MVC stack, you'll need to explicitly add the Api Explorer service:
 
@@ -75,6 +75,28 @@ Swashbuckle relies heavily on _ApiExplorer_, the API metadata layer that ships w
 services.AddMvcCore()
     .AddApiExplorer();
 ```
+
+Additionally, if you are using _[conventional routing](https://docs.microsoft.com/en-us/aspnet/core/mvc/controllers/routing#conventional-routing)_ (as opposed to attribute routing), any controllers and the actions on those controllers that use conventional routing will not be represented in ApiExplorer, which means Swashbuckle won't be able to find those controllers and generate Swagger documents from them. For instance:
+
+```csharp
+app.UseMvc(routes =>
+{
+   // SwaggerGen won't find controllers that are routed via this technique.
+   routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
+});
+```
+
+You **must** use attribute routing for any controllers that you want represented in your Swagger document(s):
+
+```csharp
+[Route("example")]
+public class ExampleController : Controller
+{
+    [HttpGet("")]
+    public IActionResult DoStuff() { /**/ }
+}
+```
+Refer to the [routing documentation](https://docs.microsoft.com/en-us/aspnet/core/mvc/controllers/routing) for more information.
 
 # Components #
 
