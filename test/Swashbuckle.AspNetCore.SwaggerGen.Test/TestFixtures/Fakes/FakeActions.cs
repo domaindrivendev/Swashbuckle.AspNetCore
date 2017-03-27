@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Threading;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -132,5 +134,40 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             throw new NotImplementedException();
         }
+
+        public class AnnotatedWithDataAnnotationsOperationRequest
+        {
+            [FromQuery(Name = "p1")]
+            [Required]
+            public string Param1 { get; set; }
+
+            [FromQuery(Name = "p2")]
+            public string Param2 { get; set; }
+
+            [FromQuery(Name = "p3")]
+            [RegularExpression("[0-9]*")]
+            public string Param3 { get; set; }
+
+            [FromQuery(Name = "p4")]
+            [Range(100, 1000)]
+            [DefaultValue(200)]
+            public int Param4 { get; set; }
+
+            [FromQuery(Name = "p5")]
+            [MinLength(10)]
+            public int Param5 { get; set; }
+
+            [FromQuery(Name = "p6")]
+            [MaxLength(100)]
+            public int Param6 { get; set; }
+
+            [FromQuery(Name = "p7")]
+            [StringLength(50, MinimumLength = 25)]
+            public int Param7 { get; set; }
+        }
+
+        public void AnnotatedWithDataAnnotationsOperation(
+            AnnotatedWithDataAnnotationsOperationRequest request)
+        { }
     }
 }
