@@ -13,6 +13,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         public void Apply(Operation operation, OperationFilterContext context)
         {
+            if (operation.Parameters == null)
+            {
+                return;
+            }
+
             for (var index = 0; index < operation.Parameters.Count; index++)
             {
                 var parameter = operation.Parameters[index];
