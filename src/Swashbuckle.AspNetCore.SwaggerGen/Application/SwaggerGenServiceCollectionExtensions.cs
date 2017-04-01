@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -17,7 +18,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.Configure(setupAction ?? (opts => { }));
 
-            services.AddTransient(CreateSwaggerProvider);
+            services.TryAddTransient(CreateSwaggerProvider);
 
             return services;
         }
