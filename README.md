@@ -144,7 +144,7 @@ The steps described above will get you up and running with minimal setup. Howeve
 
 ### Change the Path for Swagger JSON Endpoints ###
 
-By default, Swagger JSON will be exposed at the following route - "/swagger/{documentName}/swagger.json". If neccessary, you can change this when enabling the Swagger middleware. Custom routes MUST include the {documentName} parameter.
+By default, Swagger JSON will be exposed at the following route - "/swagger/{documentName}/swagger.json". If necessary, you can change this when enabling the Swagger middleware. Custom routes MUST include the {documentName} parameter.
 
 ```csharp
 app.UseSwagger(c =>
@@ -153,7 +153,7 @@ app.UseSwagger(c =>
 });
 ```
 
-_NOTE: If you're using the SwaggerUI middleware, you'll also need to update it's configuration to reflect the new endpoints:_
+_NOTE: If you're using the SwaggerUI middleware, you'll also need to update its configuration to reflect the new endpoints:_
 
 ```csharp
 app.UseSwaggerUI(c =>
@@ -173,7 +173,7 @@ app.UseSwagger(c =>
 });
 ```
 
-The _SwaggerDocument_ and the current _HttpRequest_ are passed to the filter. This provides a lot of flexibilty. For example, you can assign the "host" property (as shown) or you could inspect session information or an Authoriation header and remove operations int the document based on user permissions. 
+The _SwaggerDocument_ and the current _HttpRequest_ are passed to the filter. This provides a lot of flexibility. For example, you can assign the "host" property (as shown) or you could inspect session information or an Authorization header and remove operations int the document based on user permissions. 
 
 ## Swashbuckle.AspNetCore.SwaggerGen ##
 
@@ -242,7 +242,7 @@ To enhance the generated docs with human-friendly descriptions, you can annotate
 
 1. Open the Properties dialog for your project, click the "Build" tab and ensure that "XML documentation file" is checked. This will produce a file containing all XML comments at build-time.
 
-    _At this point, any classes or methods that are NOT annotated with XML comments will trigger a build warning. To supress this, enter the warning code "1591" into the "Supress warnings" field in the properties dialog._
+    _At this point, any classes or methods that are NOT annotated with XML comments will trigger a build warning. To suppress this, enter the warning code "1591" into the "Suppress warnings" field in the properties dialog._
 
 2. Configure Swashbuckle to incorporate the XML comments on file into the generated Swagger JSON:
 
@@ -396,7 +396,7 @@ services.AddSwaggerGen(c =>
 };
 ```
 
-A similar approach can also be used to omit obsolete properties from Schema's in the Swagger output. That is, you can decorate model properties with the _ObsoleteAttribute_ and configure Swashbuckle to omit those properties when generating JSON Schemas:
+A similar approach can also be used to omit obsolete properties from Schemas in the Swagger output. That is, you can decorate model properties with the _ObsoleteAttribute_ and configure Swashbuckle to omit those properties when generating JSON Schemas:
 
 ```csharp
 services.AddSwaggerGen(c =>
@@ -502,7 +502,7 @@ services.AddSwaggerGen(c =>
 
 When describing parameters and responses, Swashbuckle does its best to reflect the application's serialization settings. For example, if the _CamelCaseContractResolver_ is enabled, Schema property names will be camelCased in the generated Swagger.
 
-Similarly for enum types, if the _StringEnumConverter_ is enabled, then the corresponding Schema's will list enum names rather than integer values.
+Similarly for enum types, if the _StringEnumConverter_ is enabled, then the corresponding Schemas will list enum names rather than integer values.
 
 For most cases this should be sufficient. However, if you need more control, Swashbuckle exposes the following options to override the default behavior:
 
@@ -517,9 +517,9 @@ services.AddSwaggerGen(c =>
 
 ### Override Schema for Specific Types ###
 
-Out-of-the-box, Swashbuckle does a decent job at generating JSON Schema's that accurately describe your request and response payloads. However, if you're customizing serialization behavior for certain types in your API, you may need to help it out.
+Out-of-the-box, Swashbuckle does a decent job at generating JSON Schemas that accurately describe your request and response payloads. However, if you're customizing serialization behavior for certain types in your API, you may need to help it out.
 
-For example, you might have a class with muliple properties that you want to represent in JSON as a comma-separated string. To do this you would probably implement a custom _JsonConverter_. In this case, Swashbuckle doesn't know how the converter is implemented and so you would need to provide it with a Schema that accurately describes the type:
+For example, you might have a class with multiple properties that you want to represent in JSON as a comma-separated string. To do this you would probably implement a custom _JsonConverter_. In this case, Swashbuckle doesn't know how the converter is implemented and so you would need to provide it with a Schema that accurately describes the type:
 
 ```csharp
 // PhoneNumber.cs
@@ -703,7 +703,7 @@ _NOTE: If you're using the SwaggerUI middleware, you can enable interactive OAut
 
 ### Change Relative Path to the UI ###
 
-By default, the Swagger UI will be exposed at "/swagger". If neccessary, you can alter this when enabling the SwaggerUI middleware:
+By default, the Swagger UI will be exposed at "/swagger". If necessary, you can alter this when enabling the SwaggerUI middleware:
 
 ```csharp
 app.UseSwaggerUI(c =>
