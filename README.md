@@ -645,7 +645,7 @@ services.AddSwaggerGen(c =>
     {
         Type = "oauth2",
         Flow = "implicit",
-        AuthorizationUrl = "http://petstore.swagger.io/oauth/dialog"
+        AuthorizationUrl = "http://petstore.swagger.io/oauth/dialog",
         Scopes = new Dictionary<string, string>
         {
             { "readAccess", "Access read operations" },
