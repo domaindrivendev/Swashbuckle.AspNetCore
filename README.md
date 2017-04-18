@@ -1,6 +1,6 @@
-:mega: Attention early adopters - please note the package rename to Swashbuckle.AspNetCore|
---------------
-If you've been using Swashbuckle for ASP.NET Core since it's inception, you may be referencing "Swashbuckle.6.0.0-beta\*" packages. These are no longer valid. The original intention had been to move the [Swashbuckle project](https://github.com/domaindrivendev/Swashbuckle) from ASP.NET WebApi onto the ASP.NET Core stack in a major version bump. However, now that Microsoft plans to support WebApi for at least 4 more years, I felt it was more appropriate to split into separate projects, allowing both to live on with their respective frameworks. Although, I personally will be devoting most of my time to this version.|
+| :mega: Attention early adopters - please note the package rename to Swashbuckle.AspNetCore |
+| ------------- |
+| If you've been using Swashbuckle for ASP.NET Core since it's inception, you may be referencing "Swashbuckle.6.0.0-beta\*" packages. These are no longer valid. The original intention had been to move the [Swashbuckle project](https://github.com/domaindrivendev/Swashbuckle) from ASP.NET WebApi onto the ASP.NET Core stack in a major version bump. However, now that Microsoft plans to support WebApi for at least 4 more years, I felt it was more appropriate to split into separate projects, allowing both to live on with their respective frameworks. Although, I personally will be devoting most of my time to this version. |
 
 Swashbuckle.AspNetCore
 =========
