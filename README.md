@@ -17,7 +17,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 # Getting Started #
 
-1. Install the standard Nuget package (currently pre-release) into your ASP.NET Core application.
+1. Install the standard Nuget package into your ASP.NET Core application.
 
     ```
     Install-Package Swashbuckle.AspNetCore
