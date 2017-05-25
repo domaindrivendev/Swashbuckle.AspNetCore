@@ -25,20 +25,23 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         }
 
         public SwaggerDocument GetSwagger(
-            string documentName,
+            string documentVersion,
             string host = null,
             string basePath = null,
             string[] schemes = null)
         {
             var schemaRegistry = _schemaRegistryFactory.Create();
 
+            var documentNameFormat = _settings.DocumentNameFormat;
+            string documentName = documentNameFormat == null ? documentVersion
+                                                      : string.Format(documentNameFormat, documentVersion);
             Info info;
             if (!_settings.SwaggerDocs.TryGetValue(documentName, out info))
                 throw new UnknownSwaggerDocument(documentName);
 
             var apiDescriptions = _apiDescriptionsProvider.ApiDescriptionGroups.Items
                 .SelectMany(group => group.Items)
-                .Where(apiDesc => _settings.DocInclusionPredicate(documentName, apiDesc))
+                .Where(apiDesc => _settings.DocInclusionPredicate(documentVersion, apiDesc))
                 .Where(apiDesc => !_settings.IgnoreObsoleteActions || !apiDesc.IsObsolete())
                 .OrderBy(_settings.SortKeySelector);
 

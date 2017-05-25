@@ -36,6 +36,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public IList<IDocumentFilter> DocumentFilters { get; private set; }
 
+        public string DocumentNameFormat { get; set; }
+
         internal SwaggerGeneratorSettings Clone()
         {
             return new SwaggerGeneratorSettings
@@ -48,7 +50,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 DescribeAllParametersInCamelCase = DescribeAllParametersInCamelCase,
                 SecurityDefinitions = SecurityDefinitions,
                 OperationFilters = OperationFilters,
-                DocumentFilters = DocumentFilters
+                DocumentFilters = DocumentFilters,
+                DocumentNameFormat = DocumentNameFormat
             };
         }
     }
