@@ -59,7 +59,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 5. Optionally insert the swagger-ui middleware if you want to expose interactive documentation, specifying the Swagger JSON endpoint(s) to power it from.
 
     ```csharp
-    app.UseSwaggerUI(c =>
+    app.UseSwaggerUi(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
     });
