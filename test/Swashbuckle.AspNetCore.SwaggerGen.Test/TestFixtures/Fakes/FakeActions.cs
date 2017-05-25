@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
+using System.Net;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -129,6 +130,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [SwaggerResponse(204, typeof(void), "No content is returned.")]
         [SwaggerResponse(400, typeof(IDictionary<string, string>), "This returns a dictionary.")]
         public IActionResult AnnotatedWithSwaggerResponseAttributes()
+        {
+            throw new NotImplementedException();
+        }
+
+        [SwaggerResponse(HttpStatusCode.NoContent, typeof(void), "No content is returned.")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, typeof(IDictionary<string, string>), "This returns a dictionary.")]
+        public IActionResult AlsoAnnotatedWithSwaggerResponseAttributes()
         {
             throw new NotImplementedException();
         }
