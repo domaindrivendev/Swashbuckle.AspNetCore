@@ -52,6 +52,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     schema.MinLength = stringLength.MinimumLength;
                     schema.MaxLength = stringLength.MaximumLength;
                 }
+                
+                var emailAddress = attribute as EmailAddressAttribute;
+                if (emailAddress != null)
+                    schema.Format = "email";
             }
 
             if (!jsonProperty.Writable)
