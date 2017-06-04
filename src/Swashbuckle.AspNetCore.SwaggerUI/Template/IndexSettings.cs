@@ -12,6 +12,8 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
     {
         public IList<StylesheetDescriptor> Stylesheets { get; private set; } = new List<StylesheetDescriptor>();
 
+        public string DocTitle { get; set; } = "Swagger UI";
+
         public JSConfig JSConfig { get; private set; } = new JSConfig();
 
         public IDictionary<string, string> ToTemplateParameters()
@@ -24,6 +26,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
 
             return new Dictionary<string, string>
             {
+                { "%(DocumentTitle)", DocTitle },
                 { "%(StylesheetsHtml)", GetStylesheetsHtml() },
                 { "%(JSConfig)", GetJSConfigJson() }
             };

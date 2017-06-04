@@ -33,6 +33,7 @@ namespace CustomUIConfig
                 c.SupportedSubmitMethods(new[] { "get", "post", "put", "patch" });
                 c.InjectOnCompleteJavaScript("/ext/custom-script.js");
                 c.InjectStylesheet("/ext/custom-stylesheet.css");
+                c.DocumentTitle("Custom API - Swagger UI");
             });
         }
     }
