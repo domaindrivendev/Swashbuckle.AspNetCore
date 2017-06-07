@@ -182,11 +182,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 };
             }
 
+            var defaultValue = paramDescription.RouteInfo?.DefaultValue;
             var nonBodyParam = new NonBodyParameter
             {
                 Name = name,
                 In = location,
-                Required = (location == "path") || paramDescription.IsRequired()
+                Required = (location == "path") || paramDescription.IsRequired(),
+                Description = paramDescription.ModelMetadata?.Description
             };
 
             if (schema == null)
@@ -196,6 +198,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (nonBodyParam.Type == "array")
                 nonBodyParam.CollectionFormat = "multi";
+
+            if (defaultValue != null)
+                nonBodyParam.Default = defaultValue;
 
             return nonBodyParam;
         }
