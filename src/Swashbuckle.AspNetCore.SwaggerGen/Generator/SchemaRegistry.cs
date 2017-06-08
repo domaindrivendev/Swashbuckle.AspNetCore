@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Converters;
@@ -134,8 +135,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 {
                     Type = "string",
                     Enum = (camelCase)
-                        ? Enum.GetNames(type).Select(name => name.ToCamelCase()).ToArray()
-                        : Enum.GetNames(type)
+                        ? GetEnumNames(type).Select(name => name.ToCamelCase()).ToArray()
+                        : GetEnumNames(type)
                 };
             }
 
@@ -145,6 +146,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 Format = "int32",
                 Enum = Enum.GetValues(type).Cast<object>().ToArray()
             };
+        }
+
+        private string[] GetEnumNames(Type type)
+        {
+            return (from f in type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static)
+                    let attribute = (EnumMemberAttribute)f.GetCustomAttributes(typeof(EnumMemberAttribute), false).FirstOrDefault()
+                    select attribute == null || string.IsNullOrWhiteSpace(attribute.Value) ? f.Name : attribute.Value)
+                .ToArray();
         }
 
         private Schema CreateDictionarySchema(JsonDictionaryContract dictionaryContract, Queue<Type> referencedTypes)
