@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using System.Xml.Serialization;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -56,6 +57,81 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (!jsonProperty.Writable)
                 schema.ReadOnly = true;
+
+            return schema;
+        }
+        internal static Schema AssignXmlProperties(this Schema schema, JsonProperty jsonProperty)
+        {
+            var propInfo = jsonProperty.PropertyInfo();
+            if (propInfo == null)
+                return schema;
+
+            foreach (var attribute in propInfo.GetCustomAttributes(false))
+            {
+                var xmlAttribute = attribute as XmlAttributeAttribute;
+                if (xmlAttribute != null)
+                {
+                    if (schema.Xml == null) schema.Xml = new Xml();
+
+                    schema.Xml.Attribute = true;
+
+                    if (!string.IsNullOrWhiteSpace(xmlAttribute.AttributeName))
+                    {
+                        schema.Xml.Name = xmlAttribute.AttributeName;
+                    }
+                }
+
+                var xmlElement = attribute as XmlElementAttribute;
+                if (xmlElement != null)
+                {
+                    if (schema.Xml == null) schema.Xml = new Xml();
+
+                    schema.Xml.Attribute = false;
+
+                    if (!string.IsNullOrWhiteSpace(xmlElement.ElementName))
+                    {
+                        schema.Xml.Name = xmlElement.ElementName;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(xmlElement.Namespace))
+                    {
+                        schema.Xml.Namespace = xmlElement.Namespace;
+                    }
+                }
+
+                var xmlArrayItem = attribute as XmlArrayItemAttribute;
+                if (xmlArrayItem != null)
+                {
+                    if (schema.Items.Xml == null) schema.Items.Xml = new Xml();
+
+                    if (!string.IsNullOrWhiteSpace(xmlArrayItem.ElementName))
+                    {
+                        schema.Items.Xml.Name = xmlArrayItem.ElementName;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(xmlArrayItem.Namespace))
+                    {
+                        schema.Items.Xml.Namespace = xmlArrayItem.Namespace;
+                    }
+                }
+
+                var xmlArray = attribute as XmlArrayAttribute;
+                if (xmlArray != null)
+                {
+                    if (schema.Xml == null) schema.Xml = new Xml();
+
+                    if (!string.IsNullOrWhiteSpace(xmlArray.ElementName))
+                    {
+                        schema.Xml.Name = xmlArray.ElementName;
+                        schema.Xml.Wrapped = true;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(xmlArray.Namespace))
+                    {
+                        schema.Xml.Namespace = xmlArray.Namespace;
+                    }
+                }
+            }
 
             return schema;
         }

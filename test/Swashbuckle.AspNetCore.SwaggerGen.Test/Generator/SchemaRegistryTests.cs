@@ -181,6 +181,80 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GetOrRegister_HonorsXmlSerializerAttributes()
+        {
+            var subject = Subject();
+
+            subject.GetOrRegister(typeof(XmlSerializerAnnotatedType));
+
+            var schema = subject.Definitions["XmlSerializerAnnotatedType"];
+            Assert.Equal(8, schema.Properties.Count);
+
+            Assert.Contains("AttributeButNotRenamed", schema.Properties.Keys);
+            var attributeButNotRenamed = schema.Properties["AttributeButNotRenamed"];
+            Assert.NotNull(attributeButNotRenamed.Xml);
+            Assert.NotNull(attributeButNotRenamed.Xml.Attribute);
+            Assert.Equal(true, attributeButNotRenamed.Xml.Attribute);
+            Assert.Null(attributeButNotRenamed.Xml.Name);
+
+            Assert.Contains("Property1", schema.Properties.Keys);
+            var property1 = schema.Properties["Property1"];
+            Assert.NotNull(property1.Xml);
+            Assert.NotNull(property1.Xml.Attribute);
+            Assert.Equal(true, property1.Xml.Attribute);
+            Assert.NotNull(property1.Xml.Name);
+            Assert.Equal("AttributeAndRenamed", property1.Xml.Name);
+
+            Assert.Contains("ImplicitElement", schema.Properties.Keys);
+            var implicitElement = schema.Properties["ImplicitElement"];
+            Assert.Null(implicitElement.Xml);
+
+            Assert.Contains("ExplicitElementButNotRenamed", schema.Properties.Keys);
+            var explicitElementButNotRenamed = schema.Properties["ExplicitElementButNotRenamed"];
+            Assert.NotNull(explicitElementButNotRenamed.Xml);
+            Assert.NotNull(explicitElementButNotRenamed.Xml.Attribute);
+            Assert.Equal(false, explicitElementButNotRenamed.Xml.Attribute);
+            Assert.Null(explicitElementButNotRenamed.Xml.Name);
+
+            Assert.Contains("Property2", schema.Properties.Keys);
+            var property2 = schema.Properties["Property2"];
+            Assert.NotNull(property2.Xml);
+            Assert.NotNull(property2.Xml.Attribute);
+            Assert.Equal(false, property2.Xml.Attribute);
+            Assert.NotNull(property2.Xml.Name);
+            Assert.Equal("ExplicitElementAndRenamed", property2.Xml.Name);
+
+            Assert.Contains("NamespacedElement", schema.Properties.Keys);
+            var namespacedElement = schema.Properties["NamespacedElement"];
+            Assert.NotNull(namespacedElement.Xml);
+            Assert.NotNull(namespacedElement.Xml.Attribute);
+            Assert.Equal(false, namespacedElement.Xml.Attribute);
+            Assert.Equal("http://mynamespace.com", namespacedElement.Xml.Namespace);
+
+            Assert.Contains("ListOfPrimatives", schema.Properties.Keys);
+            var listOfChildPrimatives = schema.Properties["ListOfPrimatives"];
+            Assert.NotNull(listOfChildPrimatives.Xml);
+            Assert.Equal("ChildPrimatives", listOfChildPrimatives.Xml.Name);
+            Assert.Equal("http://mynamespace.com/childprimativelist", listOfChildPrimatives.Xml.Namespace);
+            Assert.Equal(true, listOfChildPrimatives.Xml.Wrapped);
+
+            Assert.NotNull(listOfChildPrimatives.Items.Xml);
+            Assert.Equal("ChildPrimative", listOfChildPrimatives.Items.Xml.Name);
+            Assert.Equal("http://mynamespace.com/childprimative", listOfChildPrimatives.Items.Xml.Namespace);
+
+            Assert.Contains("ListOfChildObjects", schema.Properties.Keys);
+            var listOfChildObjects = schema.Properties["ListOfChildObjects"];
+            Assert.NotNull(listOfChildObjects.Xml);
+            Assert.Equal("ChildObjects", listOfChildObjects.Xml.Name);
+            Assert.Equal("http://mynamespace.com/childobjectlist", listOfChildObjects.Xml.Namespace);
+            Assert.Equal(true, listOfChildObjects.Xml.Wrapped);
+
+            Assert.NotNull(listOfChildObjects.Items.Xml);
+            Assert.Equal("ChildObject", listOfChildObjects.Items.Xml.Name);
+            Assert.Equal("http://mynamespace.com/childobject", listOfChildObjects.Items.Xml.Namespace);
+        }
+
+        [Fact]
         public void GetOrRegister_HonorsDataAttributes()
         {
             var subject = Subject(); 

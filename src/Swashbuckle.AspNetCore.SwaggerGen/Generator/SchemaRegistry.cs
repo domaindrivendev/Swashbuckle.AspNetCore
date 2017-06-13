@@ -190,7 +190,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 .Where(p => !(_settings.IgnoreObsoleteProperties && p.IsObsolete()))
                 .ToDictionary(
                     prop => prop.PropertyName,
-                    prop => CreateSchema(prop.PropertyType, referencedTypes).AssignValidationProperties(prop)
+                    prop => CreateSchema(prop.PropertyType, referencedTypes).AssignValidationProperties(prop).AssignXmlProperties(prop)
                 );
 
             var required = jsonContract.Properties.Where(prop => prop.IsRequired())
