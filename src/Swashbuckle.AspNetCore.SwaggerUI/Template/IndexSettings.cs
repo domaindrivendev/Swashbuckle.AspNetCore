@@ -71,6 +71,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
 
         public string ValidatorUrl { get; set; } = null;
 
+        [Obsolete("BooleanValues is no longer supported by Swagger UI")]
         public object[] BooleanValues { get; set; } = new[] { "false", "true" };
 
         public string DocExpansion { get; set; } = "list";
@@ -83,6 +84,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
 
         public bool ShowRequestHeaders { get; set; } = false;
 
+        [Obsolete("JsonEditor is no longer supported by Swagger UI")]
         public bool JsonEditor { get; set; } = false;
 
         public string OAuth2ClientId { get; set; } = "your-client-id";
