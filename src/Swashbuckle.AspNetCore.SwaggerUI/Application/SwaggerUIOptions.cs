@@ -40,10 +40,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             IndexSettings.JSConfig.ValidatorUrl = validatorUrl;
         }
 
-        /// <summary>
-        /// You can use this parameter to change the values in "boolean" dropdowns. See swagger-ui project for more info
-        /// </summary>
-        /// <param name="values"></param>
+        [Obsolete("Boolean display values for dropdowns are no longer supported by Swagger UI")]
         public void BooleanValues(object[] values)
         {
             IndexSettings.JSConfig.BooleanValues = values;
@@ -108,9 +105,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             IndexSettings.JSConfig.ShowRequestHeaders = true;
         }
 
-        /// <summary>
-        /// Enables a graphical view for editing complex bodies. See swagger-ui project for more info
-        /// </summary>
+        [Obsolete("JSON editor option is no longer supported by Swagger UI")]
         public void ShowJsonEditor()
         {
             IndexSettings.JSConfig.JsonEditor = true;
