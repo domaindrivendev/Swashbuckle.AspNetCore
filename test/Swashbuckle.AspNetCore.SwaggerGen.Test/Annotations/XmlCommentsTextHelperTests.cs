@@ -15,7 +15,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var output = XmlCommentsTextHelper.Humanize(input);
 
-            Assert.Equal("A line of text", output);
+            Assert.Equal("A line of text", output, false, true);
         }
 
         [Fact]
@@ -53,7 +53,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 	    ""name"": ""value""
 	  }
 	}",
-                output
+                output,
+                false,
+                true
             );
         }
 
@@ -73,7 +75,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 @"## Heading 1
 
 A line of text",
-                output
+                output,
+                false,
+                true
             );
         }
 
@@ -93,7 +97,9 @@ A line of text",
 @"## Heading 1
 
 A line of text",
-                output
+                output,
+                false,
+                true
             );
         }
 
@@ -114,7 +120,7 @@ A line of text",
     Space Indentation Line 2
 	Misplaced Tab Indentation
     Space Indentation Line 4",
-            output);
+            output, false, true);
         }
 
         [Theory]
@@ -127,7 +133,7 @@ A line of text",
         {
             var output = XmlCommentsTextHelper.Humanize(input);
 
-            Assert.Equal(expectedOutput, output);
+            Assert.Equal(expectedOutput, output, false, true);
         }
     }
 }
