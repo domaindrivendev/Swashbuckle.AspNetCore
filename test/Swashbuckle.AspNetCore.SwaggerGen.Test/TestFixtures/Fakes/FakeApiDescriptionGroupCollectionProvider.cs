@@ -9,7 +9,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ActionConstraints;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -23,6 +22,7 @@ using Moq;
 using Newtonsoft.Json;
 using Microsoft.Extensions.ObjectPool;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.Abstractions;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -100,7 +100,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             return descriptor;
         }
 
-        private IReadOnlyList<ApiDescription> GetApiDescriptions()
+        private IReadOnlyList<Microsoft.AspNetCore.Mvc.ApiExplorer.ApiDescription> GetApiDescriptions()
         {
             var context = new ApiDescriptionProviderContext(_actionDescriptors);
 
@@ -129,27 +129,27 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var detailsProviders = new IMetadataDetailsProvider[]
             {
-                new DefaultBindingMetadataProvider(CreateMessageProvider()),
+                new DefaultBindingMetadataProvider(),//CreateMessageProvider()),
                 new DefaultValidationMetadataProvider(),
-                new DataAnnotationsMetadataProvider()
+                new DataAnnotationsMetadataProvider(null,null)
             };
 
             var compositeDetailsProvider = new DefaultCompositeMetadataDetailsProvider(detailsProviders);
             return new DefaultModelMetadataProvider(compositeDetailsProvider);
         }
 
-        private static ModelBindingMessageProvider CreateMessageProvider()
-        {
-            return new ModelBindingMessageProvider
-            {
-                MissingBindRequiredValueAccessor = name => $"A value for the '{ name }' property was not provided.",
-                MissingKeyOrValueAccessor = () => $"A value is required.",
-                ValueMustNotBeNullAccessor = value => $"The value '{ value }' is invalid.",
-                AttemptedValueIsInvalidAccessor = (value, name) => $"The value '{ value }' is not valid for { name }.",
-                UnknownValueIsInvalidAccessor = name => $"The supplied value is invalid for { name }.",
-                ValueIsInvalidAccessor = value => $"The value '{ value }' is invalid.",
-                ValueMustBeANumberAccessor = name => $"The field { name } must be a number.",
-            };
-        }
+        //private static ModelBindingMessageProvider CreateMessageProvider()
+        //{
+        //    return new ModelBindingMessageProvider
+        //    {
+        //        MissingBindRequiredValueAccessor = name => $"A value for the '{ name }' property was not provided.",
+        //        MissingKeyOrValueAccessor = () => $"A value is required.",
+        //        ValueMustNotBeNullAccessor = value => $"The value '{ value }' is invalid.",
+        //        AttemptedValueIsInvalidAccessor = (value, name) => $"The value '{ value }' is not valid for { name }.",
+        //        UnknownValueIsInvalidAccessor = name => $"The supplied value is invalid for { name }.",
+        //        ValueIsInvalidAccessor = value => $"The value '{ value }' is invalid.",
+        //        ValueMustBeANumberAccessor = name => $"The field { name } must be a number."
+        //    };
+        //}
     }
 }
