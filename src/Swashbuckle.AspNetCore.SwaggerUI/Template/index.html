@@ -80,10 +80,8 @@ window.onload = function() {
       console.log.apply(console, arguments);
     }
   }
-  
-  // Build a system
-  const ui = SwaggerUIBundle({
-    url: JSConfig.SwaggerEndpoints[0].Url,
+
+  var uiConfig = {
     validatorUrl: JSConfig.ValidatorUrl,
     dom_id: '#swagger-ui',
     deepLinking: true,
@@ -99,15 +97,26 @@ window.onload = function() {
       SwaggerUIBundle.plugins.DownloadUrl
     ],
     layout: "StandaloneLayout",
-    onFailure: function(data) {
+    onFailure: function (data) {
       log("Unable to Load SwaggerUI");
 
-      _.each(JSConfig.OnFailureScripts, function (script) {
+      JSConfig.OnFailureScripts.forEach(function (script) {
         $.getScript(script);
       });
     },
-  });
-  
+  };
+
+  if (JSConfig.SwaggerEndpoints.length === 1) {
+    uiConfig.url = JSConfig.SwaggerEndpoints[0].Url;
+  } else {
+    uiConfig.urls = JSConfig.SwaggerEndpoints.map(function (endpoint) {
+      return { url: endpoint.Url, name: endpoint.Description }
+    });
+  }
+
+  // Build a system
+  const ui = SwaggerUIBundle(uiConfig);
+
   ui.initOAuth({
     clientId: JSConfig.OAuth2ClientId,
     clientSecret: JSConfig.OAuth2ClientSecret,
@@ -118,8 +127,8 @@ window.onload = function() {
   });
 
   window.ui = ui;
-  
-  _.each(JSConfig.OnCompleteScripts, function (script) {
+
+  JSConfig.OnCompleteScripts.forEach(function (script) {
     $.getScript(script);
   });
 }
