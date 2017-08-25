@@ -88,6 +88,40 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("string", schema.Properties["X"].Type);
         }
 
+        [Theory]
+        [InlineData(typeof(short?), "integer", "int32")]
+        [InlineData(typeof(long?), "integer", "int64")]
+        [InlineData(typeof(float?), "number", "float")]
+        [InlineData(typeof(byte?), "string", "byte")]
+        [InlineData(typeof(DateTime?), "string", "date-time")]
+        public void GetOrRegister_ReturnsPrimitiveSchema_ForNullableTypes(
+            Type systemType,
+            string expectedType,
+            string expectedFormat)
+        {
+            var schema = Subject().GetOrRegister(systemType);
+
+            Assert.Equal(expectedType, schema.Type);
+            Assert.Equal(expectedFormat, schema.Format);
+        }
+
+        [Theory]
+        [InlineData(typeof(Microsoft.FSharp.Core.FSharpOption<short>), "integer", "int32")]
+        [InlineData(typeof(Microsoft.FSharp.Core.FSharpOption<long>), "integer", "int64")]
+        [InlineData(typeof(Microsoft.FSharp.Core.FSharpOption<float>), "number", "float")]
+        [InlineData(typeof(Microsoft.FSharp.Core.FSharpOption<byte>), "string", "byte")]
+        [InlineData(typeof(Microsoft.FSharp.Core.FSharpOption<DateTime>), "string", "date-time")]
+        public void GetOrRegister_ReturnsPrimitiveSchema_ForOptionTypes(
+            Type systemType,
+            string expectedType,
+            string expectedFormat)
+        {
+            var schema = Subject().GetOrRegister(systemType);
+
+            Assert.Equal(expectedType, schema.Type);
+            Assert.Equal(expectedFormat, schema.Format);
+        }
+
         [Fact]
         public void GetOrRegister_ReturnsJsonReference_ForComplexTypes()
         {
