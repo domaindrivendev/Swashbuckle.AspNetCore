@@ -53,6 +53,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private Schema CreateSchema(Type type, Queue<Type> referencedTypes)
         {
+            type = GetUnderlyingType(type);
+
             var jsonContract = _jsonContractResolver.ResolveContract(type);
 
             var createReference = !_settings.CustomTypeMappings.ContainsKey(type)
@@ -107,8 +109,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private Schema CreatePrimitiveSchema(JsonPrimitiveContract primitiveContract)
         {
-            var type = Nullable.GetUnderlyingType(primitiveContract.UnderlyingType)
-                ?? primitiveContract.UnderlyingType;
+            var type = primitiveContract.UnderlyingType;
 
             if (type.GetTypeInfo().IsEnum)
                 return CreateEnumSchema(primitiveContract, type);
@@ -205,6 +206,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             };
 
             return schema;
+        }
+
+        /// <summary>
+        /// Unpacks actual type from Nullable-like constructs. When called over
+        /// non-nullable type, it just return it back.
+        /// </summary>
+        private Type GetUnderlyingType(Type type)
+        {
+            // Option<T>
+            if (type.FullNameSansTypeParameters() == "Microsoft.FSharp.Core.FSharpOption`1")
+            {
+                return type.GetGenericArguments().First();
+            }
+
+            // Nullable<T>
+            return Nullable.GetUnderlyingType(type) ?? type;
         }
 
         private static readonly Dictionary<Type, Func<Schema>> PrimitiveTypeMap = new Dictionary<Type, Func<Schema>>
