@@ -17,7 +17,7 @@ namespace Microsoft.AspNetCore.Builder
             // to inject parameters into "index.html"
             var fileServerOptions = new FileServerOptions
             {
-                RequestPath = $"/{options.RoutePrefix}",
+                RequestPath = string.IsNullOrWhiteSpace(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
                 FileProvider = new SwaggerUIFileProvider(options.IndexSettings.ToTemplateParameters()),
                 EnableDefaultFiles = true, // serve index.html at /{options.RoutePrefix}/
             };
