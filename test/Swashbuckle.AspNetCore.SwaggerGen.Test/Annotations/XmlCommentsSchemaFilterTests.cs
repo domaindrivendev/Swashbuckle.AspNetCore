@@ -31,6 +31,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         [Theory]
         [InlineData(typeof(XmlAnnotatedType), "Property", "summary for Property")]
+        [InlineData(typeof(XmlAnnotatedType), "PublicField", "summary for PublicField")]
         [InlineData(typeof(XmlAnnotatedSubType), "BaseProperty", "summary for BaseProperty")]
         [InlineData(typeof(XmlAnnotatedGenericType<string>), "GenericProperty", "summary for GenericProperty")]
         public void Apply_SetsPropertyDescriptions_FromPropertySummaryTag(

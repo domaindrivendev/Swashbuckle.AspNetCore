@@ -24,9 +24,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return builder.ToString();
         }
 
-        public static string GetCommentIdForProperty(PropertyInfo propertyInfo)
+        public static string GetCommentIdForProperty(MemberInfo propertyInfo)
         {
-            var builder = new StringBuilder("P:");
+            var builder = new StringBuilder(((propertyInfo.MemberType & MemberTypes.Field) != 0) ? "F:" : "P:");
             AppendFullTypeName(propertyInfo.DeclaringType, builder);
             builder.Append(".");
             AppendPropertyName(propertyInfo, builder);
@@ -94,7 +94,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             builder.Replace(",", ")", builder.Length - 1, 1);
         }
 
-        private static void AppendPropertyName(PropertyInfo propertyInfo, StringBuilder builder)
+        private static void AppendPropertyName(MemberInfo propertyInfo, StringBuilder builder)
         {
             builder.Append(propertyInfo.Name);
         }

@@ -40,6 +40,11 @@
         summary for Property
       </summary>
     </member>
+    <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.PublicField">
+        <summary>
+        summary for PublicField
+        </summary>
+    </member>
     <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedBaseType.BaseProperty">
       <summary>
         summary for BaseProperty

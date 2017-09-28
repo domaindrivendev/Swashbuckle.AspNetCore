@@ -46,7 +46,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
         }
 
-        private void ApplyPropertyComments(Schema propertySchema, PropertyInfo propertyInfo)
+        private void ApplyPropertyComments(Schema propertySchema, MemberInfo propertyInfo)
         {
             var commentId = XmlCommentsIdHelper.GetCommentIdForProperty(propertyInfo);
             var propertyNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, commentId));

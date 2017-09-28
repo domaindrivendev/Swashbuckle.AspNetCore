@@ -28,7 +28,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return propInfo != null && propInfo.GetCustomAttribute<T>() != null;
         }
 
-        internal static PropertyInfo PropertyInfo(this JsonProperty jsonProperty)
+        internal static MemberInfo PropertyInfo(this JsonProperty jsonProperty)
         {
             if (jsonProperty.UnderlyingName == null) return null;
 
@@ -40,7 +40,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 ? ((ModelMetadataTypeAttribute)metadata).MetadataType
                 : jsonProperty.DeclaringType;
 
-            return typeToReflect.GetProperty(jsonProperty.UnderlyingName, jsonProperty.PropertyType);
+            return PropertyInfo(typeToReflect, jsonProperty.UnderlyingName);
+        }
+
+        internal static MemberInfo PropertyInfo(Type typeToReflect, string memberName)
+        {
+            var members = typeToReflect.GetTypeInfo().GetMember(memberName);
+            return (members.Length == 1) ? members[0] : null;
         }
     }
 }

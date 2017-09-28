@@ -103,7 +103,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 if (propertyParam == null) continue;
 
                 var metadata = propertyParam.ModelMetadata;
-                var propertyInfo = metadata.ContainerType.GetTypeInfo().GetProperty(metadata.PropertyName);
+                var propertyInfo = JsonPropertyExtensions.PropertyInfo(metadata.ContainerType, metadata.PropertyName);
                 if (propertyInfo == null) continue;
 
                 var commentId = XmlCommentsIdHelper.GetCommentIdForProperty(propertyInfo);
