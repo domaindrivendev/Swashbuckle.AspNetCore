@@ -1,5 +1,5 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Routing;
@@ -72,7 +72,7 @@ namespace Swashbuckle.AspNetCore.Swagger
             response.StatusCode = 200;
             response.ContentType = "application/json";
 
-            using (var writer = new StreamWriter(response.Body))
+            using (var writer = new StreamWriter(response.Body, Encoding.UTF8, 1024, true))
             {
                 _swaggerSerializer.Serialize(writer, swagger);
             }
