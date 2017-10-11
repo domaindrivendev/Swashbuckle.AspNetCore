@@ -62,9 +62,22 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// Controls how the API listing is displayed. See swagger-ui project for more info
         /// </summary>
         /// <param name="value">"none", "list" (default) or "full"</param>
-        public void DocExpansion(string value)
+        public void DocExpansion(Models.DocExpansion value)
         {
-            IndexSettings.JSConfig.DocExpansion = value;
+            switch (value)
+            {
+                case Models.DocExpansion.None:
+                    IndexSettings.JSConfig.DocExpansion = "none";
+                    break;
+                case Models.DocExpansion.List:
+                    IndexSettings.JSConfig.DocExpansion = "list";
+                    break;
+                case Models.DocExpansion.Full:
+                    IndexSettings.JSConfig.DocExpansion = "full";
+                    break;
+                default:
+                    break;
+            }
         }
 
         /// <summary>

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerUI.Models;
 
 namespace CustomUIConfig
 {
@@ -29,7 +30,7 @@ namespace CustomUIConfig
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
                 c.EnabledValidator();
                 c.BooleanValues(new object[] { 0, 1 });
-                c.DocExpansion("full");
+                c.DocExpansion(DocExpansion.Full);
                 c.SupportedSubmitMethods(new[] { "get", "post", "put", "patch" });
                 c.InjectOnCompleteJavaScript("/ext/custom-script.js");
                 c.InjectStylesheet("/ext/custom-stylesheet.css");
