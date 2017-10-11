@@ -61,7 +61,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// <summary>
         /// Controls how the API listing is displayed. See swagger-ui project for more info
         /// </summary>
-        /// <param name="value">"none", "list" (default) or "full"</param>
+        /// <param name="value">DocExpansion Type (None, List, Full)</param>
         public void DocExpansion(Models.DocExpansion value)
         {
             switch (value)
