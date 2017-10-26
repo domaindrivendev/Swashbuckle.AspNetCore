@@ -1,15 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp1.0</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
     <NoWarn>$(NoWarn);1591</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <PreserveCompilationContext>true</PreserveCompilationContext>
-    <AssemblyName>OAuth2Integration</AssemblyName>
-    <OutputType>Exe</OutputType>
-    <PackageId>OAuth2Integration</PackageId>
-    <PackageTargetFallback>$(PackageTargetFallback);dotnet5.6;dnxcore50;netstandard1.6;portable-net45+win8</PackageTargetFallback>
-    <RuntimeFrameworkVersion>1.0.3</RuntimeFrameworkVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,5 +24,4 @@
     <PackageReference Include="IdentityServer4" Version="1.0.0-rc4-update1" />
     <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="1.0.1-rc4-update1" />
   </ItemGroup>
-
 </Project>
