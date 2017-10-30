@@ -92,13 +92,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             // PUT collection/{id}
             operation = swagger.Paths["/collection/{id}"].Put;
             Assert.NotNull(operation);
-            Assert.Equal(new[] { "application/json", "text/json" }, operation.Consumes.ToArray());
+            Assert.Equal(new[] { "application/json", "text/json", "application/*+json" }, operation.Consumes.ToArray());
             Assert.Empty(operation.Produces.ToArray());
             Assert.Null(operation.Deprecated);
             // POST collection
             operation = swagger.Paths["/collection"].Post;
             Assert.NotNull(operation);
-            Assert.Equal(new[] { "application/json", "text/json" }, operation.Consumes.ToArray());
+            Assert.Equal(new[] { "application/json", "text/json", "application/*+json" }, operation.Consumes.ToArray());
             Assert.Empty(operation.Produces.ToArray());
             Assert.Null(operation.Deprecated);
             // DELETE collection/{id}
@@ -110,7 +110,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             // PATCH collection
             operation = swagger.Paths["/collection/{id}"].Patch;
             Assert.NotNull(operation);
-            Assert.Equal(new[] { "application/json", "text/json" }, operation.Consumes.ToArray());
+            Assert.Equal(new[] { "application/json", "text/json", "application/*+json" }, operation.Consumes.ToArray());
             Assert.Empty(operation.Produces.ToArray());
             Assert.Null(operation.Deprecated);
         }

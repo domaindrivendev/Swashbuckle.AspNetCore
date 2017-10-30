@@ -1,7 +1,9 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using IdentityServer4.Services.InMemory;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using IdentityServer4;
+using IdentityServer4.Test;
 
 namespace OAuth2Integration.AuthServer.Controllers
 {
@@ -9,17 +11,17 @@ namespace OAuth2Integration.AuthServer.Controllers
     [Route("account")]
     public class AccountController : Controller
     {
-        private readonly InMemoryUserLoginService _loginService;
+        private readonly TestUserStore _userStore;
 
-        public AccountController(InMemoryUserLoginService loginService)
+        public AccountController()
         {
-            _loginService = loginService;
+            _userStore = new TestUserStore(Config.TestUsers());
         }
 
         [HttpGet("login")]
         public IActionResult Login(string returnUrl)
         {
-            var viewModel = new LoginViewModel { ReturnUrl = returnUrl };
+            var viewModel = new LoginViewModel { Username = "joebloggs", Password = "pass123", ReturnUrl = returnUrl };
 
             return View("/AuthServer/Views/Login.cshtml", viewModel);
         }
@@ -27,7 +29,7 @@ namespace OAuth2Integration.AuthServer.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromForm]LoginViewModel viewModel)
         {
-            if (!_loginService.ValidateCredentials(viewModel.Username, viewModel.Password))
+            if (!_userStore.ValidateCredentials(viewModel.Username, viewModel.Password))
             {
                 ModelState.AddModelError("", "Invalid username or password");
                 viewModel.Password = string.Empty;
@@ -36,7 +38,7 @@ namespace OAuth2Integration.AuthServer.Controllers
 
             // Use an IdentityServer-compatible ClaimsPrincipal
             var principal = IdentityServerPrincipal.Create(viewModel.Username, viewModel.Username);
-            await HttpContext.Authentication.SignInAsync("Cookies", principal);
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
             return Redirect(viewModel.ReturnUrl);
         }

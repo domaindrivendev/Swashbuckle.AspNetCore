@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.PlatformAbstractions;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
 using Basic.Swagger;
@@ -56,7 +55,8 @@ namespace Basic
             {
                 services.ConfigureSwaggerGen(c =>
                 {
-                    c.IncludeXmlComments(GetXmlCommentsPath(PlatformServices.Default.Application));
+                    var xmlCommentsPath = Path.Combine(System.AppContext.BaseDirectory, "Basic.xml");
+                    c.IncludeXmlComments(xmlCommentsPath);
                 });
             }
         }
@@ -82,11 +82,6 @@ namespace Basic
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
             });
-        }
-
-        private string GetXmlCommentsPath(ApplicationEnvironment appEnvironment)
-        {
-            return Path.Combine(appEnvironment.ApplicationBasePath, "Basic.xml");
         }
     }
 }
