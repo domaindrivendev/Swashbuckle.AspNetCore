@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Reflection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.PlatformAbstractions;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests
 {
@@ -42,7 +41,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         {
             var startupAssembly = _startupType.GetTypeInfo().Assembly;
             var applicationName = startupAssembly.GetName().Name;
-            var applicationBasePath = PlatformServices.Default.Application.ApplicationBasePath;
+            var applicationBasePath = System.AppContext.BaseDirectory;
             return Path.GetFullPath(Path.Combine(applicationBasePath, relativePath, applicationName));
         }
     }

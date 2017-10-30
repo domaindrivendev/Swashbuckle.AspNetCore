@@ -4,8 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using IdentityServer4.Models;
-using IdentityServer4.Configuration;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using OAuth2Integration.ResourceServer.Swagger;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -30,14 +29,22 @@ namespace OAuth2Integration
         {
             // Register IdentityServer services to power OAuth2.0 flows
             services.AddIdentityServer()
+                .AddDeveloperSigningCredential()
                 .AddInMemoryClients(AuthServer.Config.Clients())
                 .AddInMemoryApiResources(AuthServer.Config.ApiResources())
-                .AddInMemoryUsers(AuthServer.Config.Users())
-                .AddTemporarySigningCredential();
-            services.Configure<IdentityServerOptions>(c =>
-            {
-                c.AuthenticationOptions.AuthenticationScheme = "Cookies";
-            });
+                .AddTestUsers(AuthServer.Config.TestUsers());
+
+            // The auth setup is a little nuanced because this app provides the auth-server & the resource-server
+            // Use the "Cookies" scheme by default & explicitly require "Bearer" in the resource-server controllers
+            // See https://docs.microsoft.com/en-us/aspnet/core/security/authorization/limitingidentitybyscheme?tabs=aspnetcore2x
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie()
+                .AddIdentityServerAuthentication(c =>
+                {
+                    c.Authority = "http://localhost:50581/auth-server/";
+                    c.RequireHttpsMetadata = false;
+                    c.ApiName = "api";
+                });
 
             // Configure named auth policies that map directly to OAuth2.0 scopes
             services.AddAuthorization(c =>
@@ -85,27 +92,17 @@ namespace OAuth2Integration
 
             app.Map("/auth-server", authServer =>
             {
-                authServer.UseCookieAuthentication(new CookieAuthenticationOptions
-                {
-                    AuthenticationScheme = "Cookies"
-                });
-
+                authServer.UseAuthentication();
                 authServer.UseIdentityServer();
                 authServer.UseMvc();
             });
 
             app.Map("/resource-server", resourceServer =>
             {
-                resourceServer.UseIdentityServerAuthentication(new IdentityServerAuthenticationOptions
-                {
-                    Authority = "http://localhost:50581/auth-server/",
-                    RequireHttpsMetadata = false
-                });
-
+                resourceServer.UseAuthentication();
                 resourceServer.UseMvc();
 
                 resourceServer.UseSwagger();
-
                 resourceServer.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/resource-server/swagger/v1/swagger.json", "My API V1");

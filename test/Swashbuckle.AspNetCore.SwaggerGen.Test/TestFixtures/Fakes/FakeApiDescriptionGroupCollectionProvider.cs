@@ -23,6 +23,7 @@ using Moq;
 using Newtonsoft.Json;
 using Microsoft.Extensions.ObjectPool;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.DataAnnotations;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -107,7 +108,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var options = new MvcOptions();
             options.InputFormatters.Add(new JsonInputFormatter(Mock.Of<ILogger>(), new JsonSerializerSettings(), ArrayPool<char>.Shared, new DefaultObjectPoolProvider()));
             options.OutputFormatters.Add(new JsonOutputFormatter(new JsonSerializerSettings(), ArrayPool<char>.Shared));
-
+            
             var optionsAccessor = new Mock<IOptions<MvcOptions>>();
             optionsAccessor.Setup(o => o.Value).Returns(options);
 
@@ -117,7 +118,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var provider = new DefaultApiDescriptionProvider(
                 optionsAccessor.Object,
                 constraintResolver.Object,
-                CreateDefaultProvider()
+                CreateModelMetadataProvider()
             );
 
             provider.OnProvidersExecuting(context);
@@ -125,31 +126,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             return new ReadOnlyCollection<ApiDescription>(context.Results);
         }
 
-        public IModelMetadataProvider CreateDefaultProvider()
+        public IModelMetadataProvider CreateModelMetadataProvider()
         {
             var detailsProviders = new IMetadataDetailsProvider[]
             {
-                new DefaultBindingMetadataProvider(CreateMessageProvider()),
+                new DefaultBindingMetadataProvider(),
                 new DefaultValidationMetadataProvider(),
-                new DataAnnotationsMetadataProvider()
+                new DataAnnotationsMetadataProvider(new Mock<IOptions<MvcDataAnnotationsLocalizationOptions>>().Object, null)
             };
 
             var compositeDetailsProvider = new DefaultCompositeMetadataDetailsProvider(detailsProviders);
             return new DefaultModelMetadataProvider(compositeDetailsProvider);
-        }
-
-        private static ModelBindingMessageProvider CreateMessageProvider()
-        {
-            return new ModelBindingMessageProvider
-            {
-                MissingBindRequiredValueAccessor = name => $"A value for the '{ name }' property was not provided.",
-                MissingKeyOrValueAccessor = () => $"A value is required.",
-                ValueMustNotBeNullAccessor = value => $"The value '{ value }' is invalid.",
-                AttemptedValueIsInvalidAccessor = (value, name) => $"The value '{ value }' is not valid for { name }.",
-                UnknownValueIsInvalidAccessor = name => $"The supplied value is invalid for { name }.",
-                ValueIsInvalidAccessor = value => $"The value '{ value }' is invalid.",
-                ValueMustBeANumberAccessor = name => $"The field { name } must be a number.",
-            };
         }
     }
 }

@@ -8,7 +8,7 @@ namespace OAuth2Integration.ResourceServer.Controllers
     public class ProductsController : Controller
     {
         [HttpGet]
-        [Authorize("readAccess")]
+        [Authorize(AuthenticationSchemes = "Bearer", Policy = "readAccess")]
         public IEnumerable<Product> GetAll()
         {
             yield return new Product
@@ -19,7 +19,7 @@ namespace OAuth2Integration.ResourceServer.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize("readAccess")]
+        [Authorize(AuthenticationSchemes = "Bearer", Policy = "readAccess")]
         public Product GetById(int id)
         {
             return new Product
