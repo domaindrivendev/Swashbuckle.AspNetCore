@@ -80,6 +80,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (controllerActionDescriptor == null)
             {
                 controllerActionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
+                
                 if (controllerActionDescriptor != null)
                 {
                     apiDescription.SetProperty(controllerActionDescriptor);
