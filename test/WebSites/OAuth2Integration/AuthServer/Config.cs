@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using IdentityServer4.Models;
-using IdentityServer4.Services.InMemory;
+using IdentityServer4.Test;
 
 namespace OAuth2Integration.AuthServer
 {
@@ -34,16 +34,15 @@ namespace OAuth2Integration.AuthServer
             };
         }
 
-        internal static List<InMemoryUser> Users()
+        internal static List<TestUser> TestUsers()
         {
-            return new List<InMemoryUser>
+            return new List<TestUser>
             {
-                new InMemoryUser
+                new TestUser
                 {
-                    Subject = "joebloggs",
+                    SubjectId = "joebloggs",
                     Username = "joebloggs",
-                    Password = "pass123",
-                    Enabled = true
+                    Password = "pass123"
                 }
             };
         }
