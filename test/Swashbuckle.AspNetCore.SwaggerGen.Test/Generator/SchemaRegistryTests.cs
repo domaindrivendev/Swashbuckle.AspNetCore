@@ -130,9 +130,25 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GetOrRegister_DefinesObjectSchema_ForComplexTypesWithObjectExtensionData()
+        {
+            var subject = Subject();
+
+            subject.GetOrRegister(typeof(ExtensionDataObjectType));
+
+            var schema = subject.Definitions["ExtensionDataObjectType"];
+            Assert.NotNull(schema);
+            Assert.Equal("boolean", schema.Properties["Property1"].Type);
+            Assert.Null(schema.Properties["Property1"].Format);
+            Assert.NotNull(schema.AdditionalProperties);
+            Assert.Equal("object", schema.AdditionalProperties.Type);
+            Assert.Null(schema.AdditionalProperties.AdditionalProperties);
+        }
+
+        [Fact]
         public void GetOrRegister_IncludesInheritedProperties_ForSubTypes()
         {
-            var subject = Subject(); 
+            var subject = Subject();
 
             subject.GetOrRegister(typeof(SubType));
 
@@ -146,7 +162,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void GetOrRegister_IncludesTypedProperties_ForDynamicObjectSubTypes()
         {
-            var subject = Subject(); 
+            var subject = Subject();
 
             subject.GetOrRegister(typeof(DynamicObjectSubType));
 
@@ -158,7 +174,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void GetOrRegister_IgnoresIndexerProperties_ForIndexedTypes()
         {
-            var subject = Subject(); 
+            var subject = Subject();
 
             subject.GetOrRegister(typeof(IndexedType));
 
@@ -170,7 +186,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void GetOrRegister_HonorsJsonAttributes()
         {
-            var subject = Subject(); 
+            var subject = Subject();
 
             subject.GetOrRegister(typeof(JsonAnnotatedType));
 
@@ -183,7 +199,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void GetOrRegister_HonorsDataAttributes()
         {
-            var subject = Subject(); 
+            var subject = Subject();
 
             subject.GetOrRegister(typeof(DataAnnotatedType));
 
