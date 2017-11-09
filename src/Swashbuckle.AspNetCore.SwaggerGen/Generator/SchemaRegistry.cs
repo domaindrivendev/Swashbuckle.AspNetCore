@@ -185,22 +185,29 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private Schema CreateObjectSchema(JsonObjectContract jsonContract, Queue<Type> referencedTypes)
         {
-            var properties = jsonContract.Properties
-                .Where(p => !p.Ignored)
-                .Where(p => !(_settings.IgnoreObsoleteProperties && p.IsObsolete()))
+            var applicableJsonProperties = jsonContract.Properties
+                .Where(prop => !prop.Ignored)
+                .Where(prop => !(_settings.IgnoreObsoleteProperties && prop.IsObsolete()))
+                .Select(prop => prop);
+
+            var required = applicableJsonProperties
+                .Where(prop => prop.IsRequired())
+                .Select(propInfo => propInfo.PropertyName)
+                .ToList();
+
+            var hasExtensionData = jsonContract.ExtensionDataValueType != null;
+
+            var properties = applicableJsonProperties
                 .ToDictionary(
                     prop => prop.PropertyName,
                     prop => CreateSchema(prop.PropertyType, referencedTypes).AssignValidationProperties(prop)
                 );
 
-            var required = jsonContract.Properties.Where(prop => prop.IsRequired())
-                .Select(propInfo => propInfo.PropertyName)
-                .ToList();
-
             var schema = new Schema
             {
                 Required = required.Any() ? required : null, // required can be null but not empty
                 Properties = properties,
+                AdditionalProperties = hasExtensionData ? new Schema { Type = "object" } : null,
                 Type = "object"
             };
 
