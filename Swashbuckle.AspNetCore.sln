@@ -1,17 +1,14 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2002
+VisualStudioVersion = 15.0.27004.2006
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{15A55F4A-FC33-4D96-BAAD-FBDCDD96D5F5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FA1B4021-0A97-4F68-B966-148191F6AAA8}"
 	ProjectSection(SolutionItems) = preProject
 		appveyor.yml = appveyor.yml
-		build-definition.ps1 = build-definition.ps1
-		build.ps1 = build.ps1
 		CONTRIBUTING.md = CONTRIBUTING.md
 		ISSUE_TEMPLATE.md = ISSUE_TEMPLATE.md
-		NuGet.config = NuGet.config
 		README.md = README.md
 	EndProjectSection
 	ProjectSection(FolderGlobals) = preProject
@@ -21,14 +18,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{1669F896-133C-4996-B58C-E7CDA299ADFF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebSites", "WebSites", "{245144DE-BC89-4822-B044-020458BFECC0}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "psake", "psake", "{9EE36544-121A-4D8C-95C5-0C872C21D978}"
-	ProjectSection(SolutionItems) = preProject
-		tools\psake\psake.cmd = tools\psake\psake.cmd
-		tools\psake\psake.ps1 = tools\psake\psake.ps1
-		tools\psake\psake.psd1 = tools\psake\psake.psd1
-		tools\psake\psake.psm1 = tools\psake\psake.psm1
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore.Swagger", "src\Swashbuckle.AspNetCore.Swagger\Swashbuckle.AspNetCore.Swagger.csproj", "{60EF9E95-84D6-44CE-968D-50237424CB16}"
 EndProject
@@ -53,6 +42,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OAuth2Integration", "test\WebSites\OAuth2Integration\OAuth2Integration.csproj", "{C9528DA0-28A7-49DC-8DD1-EC4304341C72}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore", "src\Swashbuckle.AspNetCore\Swashbuckle.AspNetCore.csproj", "{7D077710-1B4A-4DEC-96E9-CE6192D4493D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ci", "ci", "{65B4042A-F6DC-423A-A494-7CFD610E671B}"
+	ProjectSection(SolutionItems) = preProject
+		ci\build.ps1 = ci\build.ps1
+		ci\test.ps1 = ci\test.ps1
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

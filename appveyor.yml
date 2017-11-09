@@ -1,22 +1,28 @@
-os: Visual Studio 2017
-version: 1.0.0-build{build}
+image: Visual Studio 2017
+
 init:
 - git config --global core.autocrlf true
-install:
-- cmd: npm install -g bower
+- npm install -g bower
+
 build_script:
-- ps: .\build.ps1	
-test: off
+- ps: ci\build.ps1 
+
+test_script:
+- ps: ci\test.ps1
+
 artifacts:
-- path: artifacts/nuget/*.nupkg
+- path: artifacts\*.nupkg
+
 deploy:
 - provider: NuGet
   server: https://www.myget.org/F/domaindrivendev/api/v2
   on:
     branch: master
+    appveyor_repo_tag: false
   api_key:
     secure: 9QrW8KWCDr8G2ufmOX4O7U4yjneFOYY+5h+auICuWYb1YPaKpQBtUVqrRExg8VXR
   skip_symbols: true
+
 - provider: NuGet
   server: https://www.nuget.org/api/v2/package
   on:
