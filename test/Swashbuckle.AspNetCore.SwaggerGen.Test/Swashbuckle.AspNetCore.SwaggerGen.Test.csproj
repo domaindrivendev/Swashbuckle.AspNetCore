@@ -10,9 +10,10 @@
     <RuntimeFrameworkVersion>1.0.3</RuntimeFrameworkVersion>
   </PropertyGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="TestFixtures\XmlComments.xml" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
-  </ItemGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netcoreapp1.0\Swashbuckle.AspNetCore.SwaggerGen.Test.xml</DocumentationFile>
+    <NoWarn>1701;1702;1705;1591</NoWarn>
+  </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Swashbuckle.AspNetCore.Swagger\Swashbuckle.AspNetCore.Swagger.csproj" />

@@ -5,6 +5,7 @@ using System.Reflection;
 using Newtonsoft.Json.Serialization;
 using Xunit;
 using Swashbuckle.AspNetCore.Swagger;
+using System.IO;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -33,7 +34,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(XmlAnnotatedType), "Property", "summary for Property")]
         [InlineData(typeof(XmlAnnotatedType), "PublicField", "summary for PublicField")]
         [InlineData(typeof(XmlAnnotatedSubType), "BaseProperty", "summary for BaseProperty")]
-        [InlineData(typeof(XmlAnnotatedGenericType<string>), "GenericProperty", "summary for GenericProperty")]
+        [InlineData(typeof(XmlAnnotatedGenericType<string>), "GenericProperty", "Summary for GenericProperty")]
         public void Apply_SetsPropertyDescriptions_FromPropertySummaryTag(
             Type type,
             string propertyName,
@@ -61,11 +62,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         private XmlCommentsSchemaFilter Subject()
         {
-            var xmlComments = GetType().GetTypeInfo()
-                .Assembly
-                .GetManifestResourceStream("Swashbuckle.AspNetCore.SwaggerGen.Test.TestFixtures.XmlComments.xml");
-
-            return new XmlCommentsSchemaFilter(new XPathDocument(xmlComments));
+            using (var xmlComments = File.OpenText(GetType().GetTypeInfo()
+                    .Assembly.GetName().Name + ".xml"))
+            {
+                return new XmlCommentsSchemaFilter(new XPathDocument(xmlComments));
+            }
         }
     }
 }
