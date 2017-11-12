@@ -5,7 +5,7 @@
 Swashbuckle.AspNetCore
 =========
 
-[![Build status](https://ci.appveyor.com/api/projects/status/xpsk2cj1xn12c0r7?svg=true)](https://ci.appveyor.com/project/domaindrivendev/Swashbuckle.AspNetCore)
+[![Build status](https://ci.appveyor.com/api/projects/status/xpsk2cj1xn12c0r7/branch/master?svg=true)](https://ci.appveyor.com/project/domaindrivendev/ahoy/branch/master)
 
 [Swagger](http://swagger.io) tooling for API's built with ASP.NET Core. Generate beautiful API documentation, including a UI to explore and test operations, directly from your routes, controllers and models.
 
@@ -716,10 +716,10 @@ app.UseSwaggerUI(c =>
 
 ### Change Document Title ###
 
-By default, the Swagger UI will have a generic document title. When you have multiple Swagger pages open, it can be difficult to tell them apart. You can alter this when enabling the SwaggerUi middleware:
+By default, the Swagger UI will have a generic document title. When you have multiple Swagger pages open, it can be difficult to tell them apart. You can alter this when enabling the SwaggerUI middleware:
 
 ```csharp
-app.UseSwaggerUi(c =>
+app.UseSwaggerUI(c =>
 {
     c.DocumentTitle("My Swagger UI");
     ...
@@ -750,7 +750,7 @@ app.UseSwaggerUI(c =>
     c.DocExpansion("full");
     c.InjectOnCompleteJavaScript("/swagger-ui/on-complete.js");
     c.InjectOnFailureJavaScript("/swagger-ui/on-failure.js");
-    c.SupportedSubmitMethods(new[] { "get", "post", "put", "patch" });
+    c.SupportedSubmitMethods("get", "post", "put", "patch");
     c.ShowRequestHeaders();
     c.ShowJsonEditor();
 });
