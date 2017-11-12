@@ -15,6 +15,11 @@
     <NoWarn>1701;1702;1705;1591</NoWarn>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <NoWarn>1701;1702;1705;1591</NoWarn>
+    <DocumentationFile>bin\Release\netcoreapp1.0\Swashbuckle.AspNetCore.SwaggerGen.Test.xml</DocumentationFile>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\Swashbuckle.AspNetCore.Swagger\Swashbuckle.AspNetCore.Swagger.csproj" />
     <ProjectReference Include="..\..\src\Swashbuckle.AspNetCore.SwaggerGen\Swashbuckle.AspNetCore.SwaggerGen.csproj" />
