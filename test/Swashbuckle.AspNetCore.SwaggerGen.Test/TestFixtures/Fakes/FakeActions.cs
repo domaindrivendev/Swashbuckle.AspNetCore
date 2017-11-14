@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 
@@ -43,6 +44,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         { }
 
         public void AcceptsStringFromQuery([FromQuery]string param)
+        { }
+
+        public void AcceptsIntegerFromQuery([FromQuery]int param)
         { }
 
         public void AcceptsComplexTypeFromQuery([FromQuery]ComplexType param)

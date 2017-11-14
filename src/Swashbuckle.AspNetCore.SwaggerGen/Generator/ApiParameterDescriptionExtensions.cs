@@ -14,5 +14,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 || name == "IsCancellationRequested"
                 || name.StartsWith("WaitHandle.");
         }
+
+        public static bool IsRequired(this ApiParameterDescription parameterDescription)
+        {
+            var modelMetadata = parameterDescription.ModelMetadata;
+            return (modelMetadata == null) ? false : modelMetadata.IsRequired;
+        }
     }
 }

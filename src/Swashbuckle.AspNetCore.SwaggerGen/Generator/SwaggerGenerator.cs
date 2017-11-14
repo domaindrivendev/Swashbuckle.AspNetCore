@@ -186,7 +186,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 Name = name,
                 In = location,
-                Required = (location == "path")
+                Required = (location == "path") || paramDescription.IsRequired()
             };
 
             if (schema == null)
