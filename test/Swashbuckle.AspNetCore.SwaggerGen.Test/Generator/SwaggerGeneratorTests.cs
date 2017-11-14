@@ -229,16 +229,34 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
-        [InlineData(nameof(FakeActions.AcceptsStringFromQuery))]
-        [InlineData(nameof(FakeActions.AcceptsStringFromHeader))]
-        public void GetSwagger_SetsParameterRequiredFalse_ForQueryAndHeaderParams(string actionFixtureName)
+        [InlineData(nameof(FakeActions.AcceptsStringFromQuery), false)]
+        [InlineData(nameof(FakeActions.AcceptsIntegerFromQuery), true)]
+        public void GetSwagger_SetsParameterRequired_ForNonNullableActionParams(
+            string actionFixtureName, bool expectedRequired)
         {
             var subject = Subject(setupApis: apis => apis.Add("GET", "collection", actionFixtureName));
 
             var swagger = subject.GetSwagger("v1");
 
             var param = swagger.Paths["/collection"].Get.Parameters.First();
-            Assert.Equal(false, param.Required);
+            Assert.Equal(expectedRequired, param.Required);
+        }
+
+        [Theory]
+        [InlineData("Property2", false)] // DateTime
+        [InlineData("Property1", true)] // bool
+        [InlineData("Property4", true)] // string with RequiredAttribute
+        public void GetSwagger_SetsParameterRequired_ForNonNullableOrExplicitlyRequiredPropertyBasedParams(
+            string paramName, bool expectedRequired)
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add("GET", "collection", nameof(FakeActions.AcceptsComplexTypeFromQuery)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var operation = swagger.Paths["/collection"].Get;
+            var param = swagger.Paths["/collection"].Get.Parameters.First(p => p.Name == paramName);
+            Assert.Equal(expectedRequired, param.Required);
         }
 
         [Fact]
@@ -255,23 +273,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("param", nonBodyParam.Name);
             Assert.Equal("path", nonBodyParam.In);
             Assert.Equal("string", nonBodyParam.Type);
-        }
-
-        [Fact]
-        public void GetSwagger_ExpandsOutQueryParameters_ForComplexParamsWithFromQueryAttribute()
-        {
-            var subject = Subject(setupApis: apis => apis
-                .Add("GET", "collection", nameof(FakeActions.AcceptsComplexTypeFromQuery)));
-
-            var swagger = subject.GetSwagger("v1");
-
-            var operation = swagger.Paths["/collection"].Get;
-            Assert.Equal(5, operation.Parameters.Count);
-            Assert.Equal("Property1", operation.Parameters[0].Name);
-            Assert.Equal("Property2", operation.Parameters[1].Name);
-            Assert.Equal("Property3", operation.Parameters[2].Name);
-            Assert.Equal("Property4", operation.Parameters[3].Name);
-            Assert.Equal("Property5", operation.Parameters[4].Name);
         }
 
         [Fact]
