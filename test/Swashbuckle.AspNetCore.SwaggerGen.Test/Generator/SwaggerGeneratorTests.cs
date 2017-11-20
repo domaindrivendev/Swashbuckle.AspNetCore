@@ -584,6 +584,21 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 exception.Message);
         }
 
+        [Fact]
+        public void GetSwagger_UseCustomRouteNameCreator_IfCustomRouteNameCreatorIsProvided()
+        {
+            var subject = Subject(setupApis: apis => apis .Add("GET", "Collection", nameof(FakeActions.AcceptsNothing)),
+                                    configure: (settings) =>
+                                    {
+                                        settings.RouteNameCreator = (routeName) => routeName.ToLowerInvariant();
+                                    });
+
+            var swagger = subject.GetSwagger("v1");
+            var paths = swagger.Paths.Keys;
+
+            Assert.True(paths.First().Equals("/collection", StringComparison.Ordinal));
+        }
+
         private SwaggerGenerator Subject(
             Action<FakeApiDescriptionGroupCollectionProvider> setupApis = null,
             Action<SwaggerGeneratorSettings> configure = null)
