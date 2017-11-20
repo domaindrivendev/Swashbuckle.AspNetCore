@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.Routing;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -19,6 +20,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private List<FilterDescriptor<IOperationFilter>> _operationFilterDescriptors;
         private List<FilterDescriptor<IDocumentFilter>> _documentFilterDescriptors;
         private List<FilterDescriptor<ISchemaFilter>> _schemaFilterDescriptors;
+
+        private bool _useRouteOptionsForNaming;
 
         private struct FilterDescriptor<TFilter>
         {
@@ -40,6 +43,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             OperationFilter<SwaggerAttributesOperationFilter>();
             OperationFilter<SwaggerResponseAttributeFilter>();
             SchemaFilter<SwaggerAttributesSchemaFilter>();
+        }
+
+        /// <summary>
+        /// Use (injected) <see cref="RouteOptions"/> to update route naming.
+        /// </summary>
+        public void UseRouteOptionsForRouteNames()
+        {
+            _useRouteOptionsForNaming = true;
         }
 
         /// <summary>
@@ -277,6 +288,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             foreach (var filter in CreateFilters(_documentFilterDescriptors, serviceProvider))
             {
                 settings.DocumentFilters.Add(filter);
+            }
+
+            if(_useRouteOptionsForNaming)
+            {
+                var routeOptions = serviceProvider.GetRequiredService<IOptions<RouteOptions>>().Value;
+                settings.RouteNameCreator = (routeName) => routeOptions.LowercaseUrls ? routeName.ToLowerInvariant() : routeName;
             }
 
             return settings;

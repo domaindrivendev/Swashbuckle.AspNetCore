@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.Routing;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -16,6 +17,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             SecurityDefinitions = new Dictionary<string, SecurityScheme>();
             OperationFilters = new List<IOperationFilter>();
             DocumentFilters = new List<IDocumentFilter>();
+            RouteNameCreator = (routeName) => routeName;
         }
 
         public IDictionary<string, Info> SwaggerDocs { get; set; }
@@ -36,6 +38,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public IList<IDocumentFilter> DocumentFilters { get; private set; }
 
+        public Func<string, string> RouteNameCreator
+        { get; set; }
+
         internal SwaggerGeneratorSettings Clone()
         {
             return new SwaggerGeneratorSettings
@@ -48,7 +53,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 DescribeAllParametersInCamelCase = DescribeAllParametersInCamelCase,
                 SecurityDefinitions = SecurityDefinitions,
                 OperationFilters = OperationFilters,
-                DocumentFilters = DocumentFilters
+                DocumentFilters = DocumentFilters,
+                RouteNameCreator = RouteNameCreator
             };
         }
     }

@@ -44,7 +44,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var paths = apiDescriptions
                 .GroupBy(apiDesc => apiDesc.RelativePathSansQueryString())
-                .ToDictionary(group => "/" + group.Key, group => CreatePathItem(group, schemaRegistry));
+                .ToDictionary(group => "/" + _settings.RouteNameCreator(group.Key), group => CreatePathItem(group, schemaRegistry));
 
             var swaggerDoc = new SwaggerDocument
             {
