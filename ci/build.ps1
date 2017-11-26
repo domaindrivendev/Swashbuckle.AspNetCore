@@ -11,6 +11,9 @@ function bower-install {
   Push-Location src/Swashbuckle.AspNetCore.SwaggerUI
   bower install
   Pop-Location
+  Push-Location src/Swashbuckle.AspNetCore.SwaggerUI3
+  bower install
+  Pop-Location
 }
 
 function dotnet-build {
