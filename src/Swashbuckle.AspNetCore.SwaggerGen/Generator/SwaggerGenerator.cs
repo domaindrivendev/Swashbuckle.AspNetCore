@@ -182,7 +182,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 {
                     Name = name,
                     Schema = schema,
-                    Description = description?.Description
+                    Description = description != null ? description.Description : ""
                 };
             }
 
@@ -190,7 +190,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 Name = name,
                 In = location,
-                Description = description?.Description,
+                Description = description != null ? description.Description : "",
                 Required = (location == "path") || paramDescription.IsRequired()
             };
 
