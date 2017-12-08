@@ -174,7 +174,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 : paramDescription.Name;
 
             var schema = (paramDescription.Type == null) ? null : schemaRegistry.GetOrRegister(paramDescription.Type);
-            var description = paramDescription.Type.GetTypeInfo().GetCustomAttribute<DescriptionAttribute>();
+            var description = (paramDescription.Type == null) ? null : paramDescription.Type.GetTypeInfo().GetCustomAttribute<DescriptionAttribute>();
             
             if (location == "body")
             {
@@ -182,7 +182,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 {
                     Name = name,
                     Schema = schema,
-                    Description = description != null ? description.Description : ""
+                    Description = description?.Description
                 };
             }
 
@@ -190,7 +190,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 Name = name,
                 In = location,
-                Description = description != null ? description.Description : "",
+                Description = description?.Description,
                 Required = (location == "path") || paramDescription.IsRequired()
             };
 
