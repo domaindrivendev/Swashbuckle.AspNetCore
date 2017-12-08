@@ -5,6 +5,8 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Swashbuckle.AspNetCore.Swagger;
+using System.ComponentModel;
+using System.Reflection;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -172,13 +174,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 : paramDescription.Name;
 
             var schema = (paramDescription.Type == null) ? null : schemaRegistry.GetOrRegister(paramDescription.Type);
-
+            var description = (paramDescription.Type == null) ? null : paramDescription.Type.GetTypeInfo().GetCustomAttribute<DescriptionAttribute>();
+            
             if (location == "body")
             {
                 return new BodyParameter
                 {
                     Name = name,
-                    Schema = schema
+                    Schema = schema,
+                    Description = description?.Description
                 };
             }
 
@@ -186,6 +190,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 Name = name,
                 In = location,
+                Description = description?.Description,
                 Required = (location == "path") || paramDescription.IsRequired()
             };
 
