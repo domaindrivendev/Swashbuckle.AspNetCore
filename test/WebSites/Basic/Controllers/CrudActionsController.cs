@@ -1,6 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Newtonsoft.Json;
 
 namespace Basic.Controllers
 {
@@ -53,6 +58,17 @@ namespace Basic.Controllers
         public Product GetById(int id)
         {
             return new Product { Id = id, Description = "A product" };
+        }
+
+        /// <summary>
+        /// Returns a specific product  from a strongly typed key
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        [HttpGet("struct/{key}")]
+        public Product GetStructById(ProductKey key)
+        {
+            return new Product { Id = key.Id, Description = "A product" };
         }
 
         /// <summary>
@@ -109,5 +125,52 @@ namespace Basic.Controllers
         public string Description { get; set; }
 
         public ProductStatus Status { get; set; }
+    }
+
+    /// <summary>
+    /// Represents a strongly typed product identifier.
+    /// </summary>
+    [ModelBinder(typeof(ProductKeyModelBinder))]
+    [JsonConverter(typeof(ProductKeyConverter))]
+    public struct ProductKey
+    {
+        private readonly int id;
+
+        public ProductKey(int id)
+        {
+            this.id = id;
+        }
+
+        public int Id { get { return id; } }
+
+        public sealed class ProductKeyConverter : JsonConverter
+        {
+            public override bool CanConvert(Type objectType)
+            {
+                return objectType == typeof(ProductKey);
+            }
+
+            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+            {
+                var rawId = int.Parse(reader.Value.ToString());
+                return new ProductKey(rawId);
+            }
+
+            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+            {
+                var id = ((ProductKey)value).id;
+                writer.WriteValue(id.ToString(CultureInfo.InvariantCulture));
+            }
+        }
+
+        public sealed class ProductKeyModelBinder : IModelBinder
+        {
+            public Task BindModelAsync(ModelBindingContext bindingContext)
+            {
+                var sid = bindingContext.ValueProvider.GetValue(bindingContext.FieldName).FirstValue;
+                bindingContext.Result = ModelBindingResult.Success(new ProductKey(int.Parse(sid, CultureInfo.InvariantCulture)));
+                return Task.CompletedTask;
+            }
+        }
     }
 }

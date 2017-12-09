@@ -212,6 +212,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 return "path";
             else if (paramDescription.Source == BindingSource.Query)
                 return "query";
+            else if ((paramDescription.Source == BindingSource.Custom) && (apiDescription.RelativePath != null) && apiDescription.RelativePath.Contains('{' + paramDescription.Name + '}'))
+            {
+                return "path";
+            }
 
             // None of the above, default to "query"
             // Wanted to default to "body" for PUT/POST but ApiExplorer flattens out complex params into multiple
