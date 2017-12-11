@@ -168,6 +168,23 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("string", nonBodyParam.Type);
         }
 
+        [Theory]
+        [InlineData("collection", nameof(FakeActions.AcceptsStringFromQuery), "param description")]
+        [InlineData("collection", nameof(FakeActions.AcceptsComplexTypeFromQuery), "param description")]
+        public void GetSwagger_Descriptions_FromQueryParams(string routeTemplate,
+            string actionFixtureName,
+            string expectedIn)
+        {
+            var subject = Subject(setupApis: apis => apis.Add("GET", routeTemplate, actionFixtureName));
+            var swagger = subject.GetSwagger("v1");
+
+            var param = swagger.Paths["/" + routeTemplate].Get.Parameters.First();
+            var nonBodyParam = param as NonBodyParameter;
+
+
+            Assert.Equal(expectedIn, nonBodyParam.Description);
+        }
+
         [Fact]
         public void GetSwagger_SetsCollectionFormatMulti_ForQueryOrHeaderBoundArrayParams()
         {

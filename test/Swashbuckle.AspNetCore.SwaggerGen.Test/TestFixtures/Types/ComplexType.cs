@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Swashbuckle.AspNetCore.SwaggerGen.Annotations;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     public class ComplexType
     {
+        [SwaggerDescription("param description")]
         public bool Property1 { get; set; }
 
         public DateTime? Property2 { get; set; }
