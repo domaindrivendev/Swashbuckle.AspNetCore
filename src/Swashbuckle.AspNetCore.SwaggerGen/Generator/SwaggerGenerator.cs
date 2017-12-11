@@ -49,22 +49,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var paths = apiDescriptions
                 .GroupBy(apiDesc => apiDesc.RelativePathSansQueryString())
                 .ToDictionary(group => "/" + group.Key, group => CreatePathItem(group, schemaRegistry));
-
-            IList<Tag> tags = apiDescriptions
-                .Select(x => x.ControllerInfo())
-                .Select(x =>
-                {
-                    var attrib = x.GetCustomAttributes(false).OfType<SwaggerTagAttribute>().FirstOrDefault();
-                    if (attrib?.Name == "")
-                    {
-                        attrib.Name = x.Name;
-                    }
-                    return attrib != null ? attrib.Tag : new Tag() { Name = x.Name.Replace("Controller", "") };
-                })
-                .GroupBy(x => x.Name)
-                .Select(g => g.First())
-                .OrderBy(x => x.Name)
-                .ToList();
+                        
 
             var swaggerDoc = new SwaggerDocument
             {
@@ -73,7 +58,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 BasePath = basePath,
                 Schemes = schemes,
                 Paths = paths,
-                Tags = tags,
                 Definitions = schemaRegistry.Definitions,
                 SecurityDefinitions = _settings.SecurityDefinitions
             };
@@ -216,8 +200,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 : paramDescription.Name;
 
             var schema = (paramDescription.Type == null) ? null : schemaRegistry.GetOrRegister(paramDescription.Type);
-            var description = (paramDescription.Type == null) ? null : paramDescription.Type.GetTypeInfo().GetCustomAttribute<DescriptionAttribute>();
-            
+                        
             if (location == "body")
             {
                 return new BodyParameter
