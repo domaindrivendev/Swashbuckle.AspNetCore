@@ -3,6 +3,7 @@ using System;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Annotations
 {
+    [AttributeUsage(AttributeTargets.Class)]
     public class SwaggerTagAttribute : Attribute
     {
         public SwaggerTagAttribute(string name = null, string description = null)

@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen.Annotations;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
