@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen.Annotations;
+using System.Reflection;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
