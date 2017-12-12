@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Reflection;
+using System.IO;
 
 namespace Swashbuckle.AspNetCore.SwaggerUI
 {
@@ -8,6 +10,12 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// Set a custom route prefix for accessing the swagger-ui.
         /// </summary>
         public string RoutePrefix { get; set; } = "swagger";
+
+        /// <summary>
+        /// Set a Stream function to use your own version of index.html
+        /// </summary>
+        public Func<Stream> IndexStream { get; set; } = () => typeof(SwaggerUIOptions).GetTypeInfo().Assembly
+            .GetManifestResourceStream("Swashbuckle.AspNetCore.SwaggerUI.Template.index.html");
 
         internal IndexSettings IndexSettings { get; private set; } = new IndexSettings();
 
