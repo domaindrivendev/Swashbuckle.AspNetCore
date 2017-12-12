@@ -1,8 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Linq;
-using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -75,7 +75,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
 
         public string DocExpansion { get; set; } = "list";
 
-        public string[] SupportedSubmitMethods { get; set; }  = new[] { "get", "post", "put", "delete", "patch" };
+        public string[] SupportedSubmitMethods { get; set; } = new[] { "get", "post", "put", "delete", "patch" };
 
         public IList<string> OnCompleteScripts { get; private set; } = new List<string>();
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Reflection;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -19,15 +20,14 @@ namespace CustomIndexHtml
 
         public void Configure(IApplicationBuilder app)
         {
-            // Allow wwwroot/swagger/index.html to be served at /swagger
-            app.UseDefaultFiles();
-            app.UseStaticFiles();
-
             app.UseMvc();
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
+                c.IndexStream = () => GetType().GetTypeInfo().Assembly
+                    .GetManifestResourceStream("CustomIndexHtml.Swagger.index.html");
+
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
             });
         }
