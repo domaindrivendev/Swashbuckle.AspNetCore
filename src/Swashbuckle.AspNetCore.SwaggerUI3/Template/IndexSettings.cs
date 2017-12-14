@@ -94,6 +94,10 @@ namespace Swashbuckle.AspNetCore.SwaggerUI3
         public object OAuth2AdditionalQueryStringParams { get; set; } = new { };
 
         public bool OAuth2UseBasicAuthenticationWithAccessCodeGrant { get; set; }
+
+        public int DefaultModelExpandDepth { get; set; } = 1;
+
+        public string DefaultModelRendering { get; set; } = "example";
     }
 
     public class EndpointDescriptor
