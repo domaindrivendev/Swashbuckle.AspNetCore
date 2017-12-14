@@ -121,5 +121,23 @@ namespace Swashbuckle.AspNetCore.SwaggerUI3
             jsConfig.OAuth2AdditionalQueryStringParams = additionalQueryStringParameters ?? new { };
             jsConfig.OAuth2UseBasicAuthenticationWithAccessCodeGrant = useBasicAuthenticationWithAccessCodeGrant;
         }
+
+        /// <summary>
+        /// The default expansion depth for models.
+        /// </summary>
+        /// <param name="number">Expansion depth level</param>
+        public void DefaultModelExpandDepth(int number)
+        {
+            IndexSettings.JSConfig.DefaultModelExpandDepth = number;
+        }
+
+        /// <summary>
+        /// Controls how models are shown when the API is first rendered
+        /// </summary>
+        /// <param name="example"></param>
+        public void DefaultModelRendering(string example)
+        {
+            IndexSettings.JSConfig.DefaultModelRendering = example;
+        }
     }
 }

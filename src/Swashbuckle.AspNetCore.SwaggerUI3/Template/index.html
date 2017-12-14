@@ -85,7 +85,7 @@ window.onload = function() {
     deepLinking: true,
     supportedSubmitMethods: JSConfig.SupportedSubmitMethods,
     docExpansion: JSConfig.DocExpansion,
-    defaultModelRendering: 'schema',
+    defaultModelRendering: JSConfig.DefaultModelRendering,
     showRequestHeaders: JSConfig.ShowRequestHeaders,
     presets: [
       SwaggerUIBundle.presets.apis,
@@ -101,6 +101,8 @@ window.onload = function() {
         $.getScript(script);
       });
     },
+    defaultModelExpandDepth: JSConfig.DefaultModelExpandDepth,
+    oauth2RedirectUrl: `${window.location.protocol}//${window.location.hostname}${window.location.port ? `:${window.location.port}` : ''}/swagger/oauth2-redirect.html`
   };
   if (JSConfig.SwaggerEndpoints.length === 1) {
     uiConfig.url = JSConfig.SwaggerEndpoints[0].Url;
