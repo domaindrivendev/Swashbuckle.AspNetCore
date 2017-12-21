@@ -8,6 +8,7 @@ using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Swashbuckle.AspNetCore.SwaggerGen.Annotations;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Reflection;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -146,8 +147,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                  );
 
 
-            SwaggerDescriptionAttribute description = apiDescription.ActionMethodInfo()
-                .GetCustomAttributes(false)
+            SwaggerDescriptionAttribute description = apiDescription.ActionAttributes()
                 .OfType<SwaggerDescriptionAttribute>()
                 .FirstOrDefault();
 
@@ -155,6 +155,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 Tags = new[] { _settings.TagSelector(apiDescription) },
                 Description = description?.Description,
+                Summary =  description?.Summary,
                 OperationId = apiDescription.FriendlyId(),
                 Consumes = apiDescription.SupportedRequestMediaTypes().ToList(),
                 Produces = apiDescription.SupportedResponseMediaTypes().ToList(),

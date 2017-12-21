@@ -9,7 +9,7 @@ namespace Basic.Controllers
     public class FromQueryParamsController
     {
         [HttpGet("addresses/validate")]
-        [SwaggerDescription("This method validates addresses")]
+        [SwaggerDescription("This method validates addresses", "Validates Addresses")]
         public IActionResult ValidateAddress([FromQuery]Address address, [FromQuery, SwaggerDescription("Test Boolean Description")]bool flag)
         {
             return new NoContentResult(); 
