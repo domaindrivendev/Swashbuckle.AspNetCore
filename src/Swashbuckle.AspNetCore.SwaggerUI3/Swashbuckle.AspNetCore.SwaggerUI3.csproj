@@ -18,11 +18,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="bower_components\swagger-ui\dist\**\*.png" />
-    <EmbeddedResource Include="bower_components\swagger-ui\dist\**\*.html" />
-    <EmbeddedResource Include="bower_components\swagger-ui\dist\**\*.css" />
-    <EmbeddedResource Include="bower_components\swagger-ui\dist\**\swagger-ui-bundle.js;bower_components\swagger-ui\dist\**\swagger-ui-standalone-preset.js" />
-    <EmbeddedResource Include="Template\index.html" />
+    <EmbeddedResource Include="index-old.html" />
+    <EmbeddedResource Include="index.html" />
+    <EmbeddedResource Include="bower_components\swagger-ui\dist\**\*.*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="index.html" />
   </ItemGroup>
 
   <ItemGroup>
