@@ -41,7 +41,7 @@ namespace Swashbuckle.AspNetCore.Swagger
             }
 
             var basePath = string.IsNullOrEmpty(httpContext.Request.PathBase)
-                ? "/"
+                ? null
                 : httpContext.Request.PathBase.ToString();
 
             var swagger = _swaggerProvider.GetSwagger(documentName, null, basePath);
