@@ -21,7 +21,7 @@ namespace Microsoft.AspNetCore.Builder
             {
                 RequestPath = $"/{options.RoutePrefix}",
                 FileProvider = new EmbeddedFileProvider(typeof(SwaggerUIBuilderExtensions).GetTypeInfo().Assembly, EmbeddedFilesNamespace),
-                EnableDefaultFiles = true //serve index.html at /{ options.RoutePrefix }/
+                EnableDirectoryBrowsing = true // will redirect to /{options.RoutePrefix}/ when trailing slash is missing
             });
 
             return app;

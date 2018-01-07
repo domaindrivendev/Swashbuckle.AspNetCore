@@ -151,6 +151,7 @@ namespace Microsoft.AspNetCore.Builder
         /// Setting it to null will disable validation 
         /// </summary>
         /// <param name="options"></param>
+        /// <param name="url"></param>
         public static void ValidatorUrl(this SwaggerUIOptions options, string url)
         {
             options.ConfigObject["validatorUrl"] = url;
