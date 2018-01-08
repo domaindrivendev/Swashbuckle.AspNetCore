@@ -742,13 +742,11 @@ The swagger-ui ships with it's own set of configuration parameters, all describe
 app.UseSwaggerUI(c =>
 {
     c.EnabledValidator();
-    c.BooleanValues(new object[] { 0, 1 });
     c.DocExpansion("full");
     c.InjectOnCompleteJavaScript("/swagger-ui/on-complete.js");
     c.InjectOnFailureJavaScript("/swagger-ui/on-failure.js");
     c.SupportedSubmitMethods("get", "post", "put", "patch");
     c.ShowRequestHeaders();
-    c.ShowJsonEditor();
 });
 ```
 
