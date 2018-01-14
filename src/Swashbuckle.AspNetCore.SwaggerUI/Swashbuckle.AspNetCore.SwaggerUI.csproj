@@ -20,7 +20,7 @@
   <ItemGroup>
     <EmbeddedResource Include="bower_components\swagger-ui\dist\**\*.png" />
     <EmbeddedResource Include="bower_components\swagger-ui\dist\**\*.css" />
-	<EmbeddedResource Include="bower_components\swagger-ui\dist\**\oauth2-redirect.html" />
+    <EmbeddedResource Include="bower_components\swagger-ui\dist\**\oauth2-redirect.html" />
     <EmbeddedResource Include="bower_components\swagger-ui\dist\**\swagger-ui-bundle.js" />
     <EmbeddedResource Include="bower_components\swagger-ui\dist\**\swagger-ui-standalone-preset.js" />
     <EmbeddedResource Include="index.html" />
