@@ -48,6 +48,7 @@ namespace Basic
                 c.OperationFilter<AssignOperationVendorExtensions>();
                 c.OperationFilter<FormDataOperationFilter>();
 
+                c.DescribeAllEnumsAsStrings();
                 //c.DescribeAllParametersInCamelCase();
             });
 

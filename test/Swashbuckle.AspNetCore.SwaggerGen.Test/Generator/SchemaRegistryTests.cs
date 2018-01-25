@@ -320,9 +320,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var subject = Subject(c => c.DescribeAllEnumsAsStrings = true);
 
             var schema = subject.GetOrRegister(typeof(AnEnum));
-
-            Assert.Equal("string", schema.Type);
-            Assert.Equal(new[] { "Value1", "Value2", "X" }, schema.Enum);
+            Assert.Equal("#/definitions/AnEnum", schema.Ref);
+            Assert.Equal(new[] { "Value1", "Value2", "X" }, subject.Definitions["AnEnum"].Enum);
         }
 
         [Fact]
@@ -336,8 +335,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var schema = subject.GetOrRegister(typeof(AnEnum));
 
-            Assert.Equal("string", schema.Type);
-            Assert.Equal(new[] { "value1", "value2", "x" }, schema.Enum);
+            Assert.Equal("#/definitions/AnEnum", schema.Ref);
+            Assert.Equal(new[] { "value1", "value2", "x" }, subject.Definitions["AnEnum"].Enum);
         }
 
         [Fact]
