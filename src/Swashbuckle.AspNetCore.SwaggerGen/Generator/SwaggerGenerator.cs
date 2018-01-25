@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Swashbuckle.AspNetCore.Swagger;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -149,12 +151,34 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     apiResponseType => CreateResponse(apiResponseType, schemaRegistry)
                  );
 
+            var producesFilterDescriptors = apiDescription.Properties.Values.OfType<ControllerActionDescriptor>()
+                .Select(cad => cad.FilterDescriptors)
+                .SelectMany(fd => fd)
+                .Where(fd => fd.Filter is ProducesAttribute);
+
+            if (producesFilterDescriptors.Any())
+            {
+                // Filters can be applied as Action, Controller, First, Global, and Last (per FilterScope class).
+                // Global filters have a value of 10, controllers: 20, and actions: 30. To allow Produces attributes
+                // to override those of a lower scope, only consider those Produces attributes with the highest scope.
+                var maxScope = producesFilterDescriptors.Max(fd => fd.Scope);
+                producesFilterDescriptors = producesFilterDescriptors.Where(pfd => pfd.Scope == maxScope);
+            }
+
+            var producesContentTypes = producesFilterDescriptors
+                .Select(fd => (ProducesAttribute)fd.Filter)
+                .SelectMany(pa => pa.ContentTypes);
+
+            var produces = apiDescription.SupportedResponseMediaTypes()
+                .Union(producesContentTypes)
+                .ToList();
+
             var operation = new Operation
             {
                 Tags = new[] { _settings.TagSelector(apiDescription) },
                 OperationId = apiDescription.FriendlyId(),
                 Consumes = apiDescription.SupportedRequestMediaTypes().ToList(),
-                Produces = apiDescription.SupportedResponseMediaTypes().ToList(),
+                Produces = produces,
                 Parameters = parameters.Any() ? parameters : null, // parameters can be null but not empty
                 Responses = responses,
                 Deprecated = apiDescription.IsObsolete() ? true : (bool?)null
