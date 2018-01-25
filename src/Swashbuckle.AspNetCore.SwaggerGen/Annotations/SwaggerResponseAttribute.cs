@@ -11,7 +11,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             this.Description = description;
         }
-
+        public SwaggerResponseAttribute(HttpStatusCode statusCode, Type type = null, string description = null)
+            : base(type == null ? typeof(void) : type, (int)statusCode)
+        {
+            this.Description = description;
+        }
         public string Description { get; set; }
     }
 }
