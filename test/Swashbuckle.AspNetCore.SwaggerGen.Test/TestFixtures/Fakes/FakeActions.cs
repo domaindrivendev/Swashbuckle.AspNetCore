@@ -136,5 +136,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             throw new NotImplementedException();
         }
+
+        [Produces("image/png")]
+        public IActionResult AnnotatedWithOneProducesAttribute()
+        {
+            throw new NotImplementedException();
+        }
+
+        [Produces("application/json", "application/xml")]
+        public IActionResult AnnotatedWithTwoProducesAttributes()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

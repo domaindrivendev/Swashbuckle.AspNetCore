@@ -65,7 +65,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             string controllerFixtureName
         )
         {
-            var descriptor = new ControllerActionDescriptor();
+            var descriptor = new ControllerActionDescriptor
+            {
+                FilterDescriptors = new List<FilterDescriptor>()
+            };
             descriptor.SetProperty(new ApiDescriptionActionData());
 
             descriptor.ActionConstraints = new List<IActionConstraintMetadata>();
@@ -94,9 +97,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     string.Format("{0} is not declared in ControllerFixtures", controllerFixtureName));
             descriptor.ControllerTypeInfo = controllerType.GetTypeInfo();
 
-            descriptor.FilterDescriptors = descriptor.MethodInfo.GetCustomAttributes<ProducesResponseTypeAttribute>()
-                .Select((filter) => new FilterDescriptor(filter, FilterScope.Action))
-                .ToList();
+            foreach (var attribute in controllerType.GetCustomAttributes<ProducesAttribute>())
+                descriptor.FilterDescriptors.Add(new FilterDescriptor(attribute, FilterScope.Controller));
+
+            foreach (var attribute in descriptor.MethodInfo.GetCustomAttributes<ProducesAttribute>())
+                descriptor.FilterDescriptors.Add(new FilterDescriptor(attribute, FilterScope.Action));
+
+            foreach (var attribute in descriptor.MethodInfo.GetCustomAttributes<ProducesResponseTypeAttribute>())
+                descriptor.FilterDescriptors.Add(new FilterDescriptor(attribute, FilterScope.Action));
 
             return descriptor;
         }
