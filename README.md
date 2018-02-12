@@ -103,6 +103,7 @@ Swashbuckle consists of three packages - a Swagger generator, middleware to expo
 |__Swashbuckle.AspNetCore.Swagger__|Exposes _SwaggerDocument_ objects as a JSON API. It expects an implementation of _ISwaggerProvider_ to be registered which it queries to retrieve Swagger document(s) before returning as serialized JSON|
 |__Swashbuckle.AspNetCore.SwaggerGen__|Injects an implementation of _ISwaggerProvider_ that can be used by the above component. This particular implementation automatically generates _SwaggerDocument_(s) from your routes, controllers and models|
 |__Swashbuckle.AspNetCore.SwaggerUI__|Exposes an embedded version of the swagger-ui. You specify the API endpoints where it can obtain Swagger JSON and it uses them to power interactive docs for your API|
+|__dotnet-swagger__ (Beta)|Provides a CLI interface for retrieving Swagger directly from a startup assembly, and writing to file|
 
 # Configuration & Customization #
 
@@ -136,6 +137,9 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Apply swagger-ui Parameters](#apply-swagger-ui-parameters)
     * [Inject Custom CSS](#inject-custom-css)
     * [Enable OAuth2.0 Flows](#enable-oauth20-flows)
+
+* [dotnet-swagger (CLI tool)](#dotnet-swagger-cli-tool)
+	* [Retrieve Swagger Directly from a Startup Assembly](#retrieve-swagger-directly-from-a-startup-assembly)
 
 ## Swashbuckle.AspNetCore.Swagger ##
 
@@ -780,3 +784,38 @@ app.UseSwaggerUI(c =>
     c.ConfigureOAuth2("swagger-ui", "swagger-ui-secret", "swagger-ui-realm", "Swagger UI");
 }
 ```
+
+## dotnet-swagger (CLI Tool) ##
+
+_NOTE:_ This feature is currently beta only. If you use it, please post feedback to the following [issue](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/541)
+
+### Retrieve Swagger Directly from a Startup Assembly ###
+
+The dotnet-swagger CLI tool can retrieve Swagger JSON directly from your application startup assembly, and write it to file. This can be useful if you want to incorporate Swagger generation into a CI/CD process, or if you want to serve it from static file at run-time.
+
+The tool can be installed as a [per-project, framework-dependent CLI extension](https://docs.microsoft.com/en-us/dotnet/core/tools/extensibility#per-project-based-extensibility) by adding the following reference to your .csproj file and running `dotnet restore`:
+
+```xml
+<ItemGroup>
+  <DotNetCliToolReference Include="dotnet-swagger" Version="1.2.0-beta1" />
+</ItemGroup>
+```
+
+Once this is done, you can run the following command from your project root:
+
+```
+dotnet swagger tofile --help
+```
+
+Before you invoke the `tofile` command, you need to ensure your application is configured to expose Swagger JSON, as described in [Getting Started](#getting-started). Once this is done, you can point to your startup assembly and generate a local Swagger JSON file with the following command:
+
+```
+dotnet swagger tofile [startupassembly] [swaggerdoc] [output]
+```
+
+Where ...
+* [startupassembly] is the relative path to your application's startup assembly
+* [swaggerdoc] is the name of the swagger document you want to retrieve, as configured in your startup class
+* [output] is the relative path where the Swagger JSON will be output to
+
+Checkout the [CliExample app](test/WebSites/CliExample) for more inspiration. It leverages the MSBuild Exec command to generate Swagger JSON at build-time.
