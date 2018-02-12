@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
@@ -38,11 +39,33 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 
             swaggerResponse.EnsureSuccessStatusCode();
 
+            await AssertResponseDoesNotContainByteOrderMark(swaggerResponse);
+
             // NOTE: the online swagger validator INCORRECTLY returns an error for the Swagger generated
             // by the "Basic" sample Website. As a temporary workaround, bypass the valid swagger assertion
             if (startupType == typeof(Basic.Startup)) return;
 
             await AssertValidSwaggerAsync(swaggerResponse);
+        }
+
+        private async Task AssertResponseDoesNotContainByteOrderMark(HttpResponseMessage swaggerResponse)
+        {
+            var responseAsByteArray = await swaggerResponse.Content.ReadAsByteArrayAsync();
+            var bomByteArray = Encoding.UTF8.GetPreamble();
+
+            var byteIndex = 0;
+            var doesContainBom = true;
+            while (byteIndex < bomByteArray.Length && doesContainBom)
+            {
+                if (bomByteArray[byteIndex] != responseAsByteArray[byteIndex])
+                {
+                    doesContainBom = false;
+                }
+
+                byteIndex += 1;
+            }
+
+            Assert.False(doesContainBom);
         }
 
         private async Task AssertValidSwaggerAsync(HttpResponseMessage swaggerResponse)
