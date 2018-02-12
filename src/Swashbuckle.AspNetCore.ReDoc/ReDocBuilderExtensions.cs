@@ -7,7 +7,7 @@ namespace Microsoft.AspNetCore.Builder
 {
     public static class ReDocBuilderExtensions
     {
-        private const string EmbeddedFilesNamespace = "Swashbuckle.AspNetCore.ReDoc.bower_components.redoc.dist";
+        private const string EmbeddedFilesNamespace = "Swashbuckle.AspNetCore.ReDoc.redoc.dist";
 
         public static IApplicationBuilder UseReDoc(
             this IApplicationBuilder app,

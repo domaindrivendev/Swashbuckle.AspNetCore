@@ -17,7 +17,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="index.html" />
-    <EmbeddedResource Include="bower_components\redoc\dist\**\*.*" />
+    <EmbeddedResource Include="redoc\dist\**\*.*" />
   </ItemGroup>
 
   <ItemGroup>

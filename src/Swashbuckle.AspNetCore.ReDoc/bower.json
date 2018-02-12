@@ -1,9 +1,0 @@
-{
-  "name": "swashbuckle",
-  "private": true,
-  "dependencies": {
-    "redoc": "1.19.3"
-  },
-  "exportsOverride": {
-  }
-}
