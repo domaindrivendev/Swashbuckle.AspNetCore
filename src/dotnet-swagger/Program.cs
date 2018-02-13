@@ -6,6 +6,7 @@ using System.Runtime.Loader;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -67,7 +68,7 @@ namespace Swashbuckle.AspNetCore.Cli
                         .Build();
 
                     // 2) Retrieve Swagger via configured provider
-                    var swaggerProvider = (ISwaggerProvider)host.Services.GetService(typeof(ISwaggerProvider));
+                    var swaggerProvider = host.Services.GetRequiredService<ISwaggerProvider>();
                     var swagger = swaggerProvider.GetSwagger(
                         namedArgs["swaggerdoc"],
                         namedArgs.ContainsKey("--host") ? namedArgs["--host"] : null,

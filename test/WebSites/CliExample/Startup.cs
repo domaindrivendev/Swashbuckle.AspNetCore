@@ -31,15 +31,8 @@ namespace CliExample
                 app.UseDeveloperExceptionPage();
             }
 
-            // If available, serve Swagger JSON from static file (i.e. pre-generated via "dotnet swagger")
+            // Serve Swagger JSON from static file (i.e. pre-generated via "dotnet swagger")
             app.UseStaticFiles();
-
-            // Otherwise, generate on-the-fly via regular Swagger middleware
-            app.UseSwagger(c =>
-            {
-                c.RouteTemplate = "api-docs/{documentName}/swagger.json";
-                c.PreSerializeFilters.Add((swagger, httpReq) => swagger.Host = httpReq.Host.Value);
-            });
 
             app.UseSwaggerUI(c =>
             {
