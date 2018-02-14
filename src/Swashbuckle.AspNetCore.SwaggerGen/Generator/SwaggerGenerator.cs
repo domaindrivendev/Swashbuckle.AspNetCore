@@ -192,12 +192,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (schema == null)
                 nonBodyParam.Type = "string";
             else
-            {
                 nonBodyParam.PopulateFrom(schema);
-
-                if (schema.Ref != null)
-                    nonBodyParam.Ref = schema.Ref;
-            }
 
             if (nonBodyParam.Type == "array")
                 nonBodyParam.CollectionFormat = "multi";

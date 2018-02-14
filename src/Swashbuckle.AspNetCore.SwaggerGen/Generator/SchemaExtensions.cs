@@ -87,6 +87,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             partialSchema.UniqueItems = schema.UniqueItems;
             partialSchema.Enum = schema.Enum;
             partialSchema.MultipleOf = schema.MultipleOf;
+
+            var nonBodyParam = partialSchema as NonBodyParameter;
+            if (nonBodyParam != null)
+                nonBodyParam.Ref = schema.Ref;
         }
     }
 }
