@@ -15,7 +15,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var controllerActionDescriptor = apiDescription.ControllerActionDescriptor();
             return (controllerActionDescriptor == null)
                 ? Enumerable.Empty<object>()
-                : controllerActionDescriptor.ControllerTypeInfo.GetCustomAttributes(false);
+                : controllerActionDescriptor.ControllerTypeInfo.GetCustomAttributes(true);
         }
 
         public static IEnumerable<object> ActionAttributes(this ApiDescription apiDescription)
@@ -23,7 +23,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var controllerActionDescriptor = apiDescription.ControllerActionDescriptor();
             return (controllerActionDescriptor == null)
                 ? Enumerable.Empty<object>()
-                : controllerActionDescriptor.MethodInfo.GetCustomAttributes(false);
+                : controllerActionDescriptor.MethodInfo.GetCustomAttributes(true);
         }
 
         internal static string ControllerName(this ApiDescription apiDescription)
