@@ -19,7 +19,7 @@ namespace Microsoft.AspNetCore.Builder
             app.UseMiddleware<SwaggerUIIndexMiddleware>(options);
             app.UseFileServer(new FileServerOptions
             {
-                RequestPath = $"/{options.RoutePrefix}",
+                RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
                 FileProvider = new EmbeddedFileProvider(typeof(SwaggerUIBuilderExtensions).GetTypeInfo().Assembly, EmbeddedFilesNamespace),
                 EnableDefaultFiles = true //serve index.html at /{ options.RoutePrefix }/
             });

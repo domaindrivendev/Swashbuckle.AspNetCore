@@ -32,7 +32,8 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
 
         private bool RequestingSwaggerUIIndex(HttpRequest request)
         {
-            return (request.Method == "GET" && request.Path == $"/{_options.RoutePrefix}/");
+            var indexPath = string.IsNullOrEmpty(_options.RoutePrefix) ? "/" : $"/{_options.RoutePrefix}/";
+            return (request.Method == "GET" && request.Path == indexPath);
         }
 
         private async void RespondWithIndexHtml(HttpResponse response)
