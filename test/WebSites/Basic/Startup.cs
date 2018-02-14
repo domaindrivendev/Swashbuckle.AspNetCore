@@ -80,6 +80,7 @@ namespace Basic
 
             app.UseSwaggerUI(c =>
             {
+                c.RoutePrefix = ""; // serve the UI at root
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
             });
         }

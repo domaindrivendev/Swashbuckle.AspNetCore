@@ -19,7 +19,7 @@ namespace Microsoft.AspNetCore.Builder
             app.UseMiddleware<ReDocIndexMiddleware>(options);
             app.UseFileServer(new FileServerOptions
             {
-                RequestPath = $"/{options.RoutePrefix}",
+                RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
                 FileProvider = new EmbeddedFileProvider(typeof(ReDocBuilderExtensions).GetTypeInfo().Assembly, EmbeddedFilesNamespace),
                 EnableDirectoryBrowsing = true // will redirect to /{options.RoutePrefix}/ when trailing slash is missing
             });
