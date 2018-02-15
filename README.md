@@ -113,6 +113,7 @@ The steps described above will get you up and running with minimal setup. Howeve
  
     * [Change the Path for Swagger JSON Endpoints](#change-the-path-for-swagger-json-endpoints)
     * [Modify Swagger with Request Context](#modify-swagger-with-request-context)
+    * [Pretty Print Swagger JSON](#pretty-print-swagger-json)
  
 * [Swashbuckle.AspNetCore.SwaggerGen](#swashbuckleaspnetcoreswaggergen)
  
@@ -175,6 +176,18 @@ app.UseSwagger(c =>
 ```
 
 The _SwaggerDocument_ and the current _HttpRequest_ are passed to the filter. This provides a lot of flexibility. For example, you can assign the "host" property (as shown) or you could inspect session information or an Authorization header and remove operations int the document based on user permissions. 
+
+### Pretty Print Swagger JSON ###
+
+By default, Swagger JSON will not be formatted. If the Swagger JSON should be indented properly, set the _SerializerSettings_  option in your _AddMvc_ helper:
+
+```csharp
+services.AddMvc()
+    .AddJsonOptions(options =>
+    {
+        options.SerializerSettings.Formatting = Formatting.Indented;
+    });
+```
 
 ## Swashbuckle.AspNetCore.SwaggerGen ##
 
