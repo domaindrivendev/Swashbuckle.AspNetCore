@@ -9,7 +9,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.Swagger\Swashbuckle.AspNetCore.Swagger.csproj" />
     <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.SwaggerGen\Swashbuckle.AspNetCore.SwaggerGen.csproj" />
-    <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.SwaggerUI3\Swashbuckle.AspNetCore.SwaggerUI3.csproj" />
   </ItemGroup>
 
   <ItemGroup>
