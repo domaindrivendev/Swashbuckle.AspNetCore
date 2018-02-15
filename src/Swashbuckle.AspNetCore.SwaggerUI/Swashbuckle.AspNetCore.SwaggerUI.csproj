@@ -1,15 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>Middleware to expose an embedded version of the swagger-ui from an ASP.NET Core application</Description>
+    <Description>Middleware to expose an embedded version of the swagger-ui 3 from an ASP.NET Core application</Description>
     <TargetFrameworks>net451;netstandard1.6</TargetFrameworks>
     <NoWarn>$(NoWarn);1591</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>Swashbuckle.AspNetCore.SwaggerUI</AssemblyName>
-    <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.SwaggerUI.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.SwaggerUI3.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
-    <PackageId>Swashbuckle.AspNetCore.SwaggerUI</PackageId>
+    <PackageId>Swashbuckle.AspNetCore.SwaggerUI3</PackageId>
     <VersionPrefix>1.2.0</VersionPrefix>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>
     <PackageProjectUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</PackageProjectUrl>
@@ -18,7 +18,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="bower_components\swagger-ui\dist\**\*.*;Template\index.html" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
+    <EmbeddedResource Include="index.html" />
+    <EmbeddedResource Include="bower_components\swagger-ui\dist\**\*.*" />
   </ItemGroup>
 
   <ItemGroup>
