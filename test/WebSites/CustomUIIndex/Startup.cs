@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
 
-namespace CustomIndexHtml
+namespace CustomUIIndex
 {
     public class Startup
     {
@@ -26,7 +26,7 @@ namespace CustomIndexHtml
             app.UseSwaggerUI(c =>
             {
                 c.IndexStream = () => GetType().GetTypeInfo().Assembly
-                    .GetManifestResourceStream("CustomIndexHtml.Swagger.index.html");
+                    .GetManifestResourceStream("CustomUIIndex.Swagger.index.html");
 
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
             });

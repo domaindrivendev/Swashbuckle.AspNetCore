@@ -6,8 +6,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WebSites\Basic\Basic.csproj" />
-    <ProjectReference Include="..\WebSites\CustomIndexHtml\CustomIndexHtml.csproj" />
     <ProjectReference Include="..\WebSites\CustomUIConfig\CustomUIConfig.csproj" />
+    <ProjectReference Include="..\WebSites\CustomUIIndex\CustomUIIndex.csproj" />
     <ProjectReference Include="..\WebSites\GenericControllers\GenericControllers.csproj" />
     <ProjectReference Include="..\WebSites\MultipleVersions\MultipleVersions.csproj" />
     <ProjectReference Include="..\WebSites\OAuth2Integration\OAuth2Integration.csproj" />

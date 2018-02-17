@@ -6,10 +6,10 @@
     <NoWarn>$(NoWarn);1591</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>Swashbuckle.AspNetCore.SwaggerUI</AssemblyName>
-    <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.SwaggerUI3.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.SwaggerUI.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
-    <PackageId>Swashbuckle.AspNetCore.SwaggerUI3</PackageId>
+    <PackageId>Swashbuckle.AspNetCore.SwaggerUI</PackageId>
     <VersionPrefix>1.2.0</VersionPrefix>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>
     <PackageProjectUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</PackageProjectUrl>

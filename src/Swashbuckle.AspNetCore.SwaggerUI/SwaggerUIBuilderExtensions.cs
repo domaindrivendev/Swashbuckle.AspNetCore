@@ -7,14 +7,16 @@ namespace Microsoft.AspNetCore.Builder
 {
     public static class SwaggerUIBuilderExtensions
     {
-        private const string EmbeddedFilesNamespace = "Swashbuckle.AspNetCore.SwaggerUI3.bower_components.swagger_ui.dist";
+        private const string EmbeddedFilesNamespace = "Swashbuckle.AspNetCore.SwaggerUI.bower_components.swagger_ui.dist";
 
-        public static IApplicationBuilder UseSwaggerUI3(
+        public static IApplicationBuilder UseSwaggerUI(
             this IApplicationBuilder app,
             Action<SwaggerUIOptions> setupAction)
         {
             var options = new SwaggerUIOptions();
             setupAction?.Invoke(options);
+
+            var assembly = typeof(SwaggerUIBuilderExtensions).GetTypeInfo().Assembly;
 
             app.UseMiddleware<SwaggerUIIndexMiddleware>(options);
             app.UseFileServer(new FileServerOptions
