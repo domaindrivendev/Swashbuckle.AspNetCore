@@ -711,7 +711,7 @@ public class SecurityRequirementsOperationFilter : IOperationFilter
 }
 ```
 
-_NOTE: If you're using the SwaggerUI middleware, you can enable interactive OAuth2.0 flows that are powered by the emitted security metadata. See [Enabling OAuth2.0 Flows](#) for more details._
+_NOTE: If you're using the SwaggerUI middleware, you can enable interactive OAuth2.0 flows that are powered by the emitted security metadata. See [Enabling OAuth2.0 Flows](#enable-oauth20-flows) for more details._
 
 ## Swashbuckle.AspNetCore.SwaggerUI ##
 
