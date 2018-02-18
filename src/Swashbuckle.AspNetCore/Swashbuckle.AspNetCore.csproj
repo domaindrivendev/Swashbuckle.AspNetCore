@@ -5,7 +5,7 @@
     <TargetFrameworks>net451;netstandard1.6</TargetFrameworks>
     <AssemblyName>Swashbuckle.AspNetCore</AssemblyName>
     <PackageId>Swashbuckle.AspNetCore</PackageId>
-    <VersionPrefix>1.2.0</VersionPrefix>
+    <VersionPrefix>2.0.0</VersionPrefix>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>
     <PackageProjectUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/domaindrivendev/Swashbuckle.AspNetCore/master/LICENSE</PackageLicenseUrl>

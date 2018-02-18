@@ -11,6 +11,13 @@ And that's not all ...
 
 Once you have an API that can describe itself in Swagger, you've opened the treasure chest of Swagger-based tools including a client generator that can be targeted to a wide range of popular platforms. See [swagger-codegen](https://github.com/swagger-api/swagger-codegen) for more details.
 
+# Compatability #
+
+|Swashbuckle Version|.NET Core|Swagger (OpenAPI) Spec.|swagger-ui|
+|----------|----------|----------|----------|
+|[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master)|>=netstandard1.6|2.0|v3|
+|[1.2.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v1.2.0)|>=netstandard1.6|2.0|v2|
+
 # Getting Started #
 
 1. Install the standard Nuget package into your ASP.NET Core application.
@@ -137,6 +144,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [List Multiple Swagger Documents](#list-multiple-swagger-documents)
     * [Apply swagger-ui Parameters](#apply-swagger-ui-parameters)
     * [Inject Custom CSS](#inject-custom-css)
+    * [Customize index.html](#customize-indexhtml)
     * [Enable OAuth2.0 Flows](#enable-oauth20-flows)
 
 * [dotnet-swagger (CLI tool)](#dotnet-swagger-cli-tool)
@@ -734,7 +742,7 @@ By default, the Swagger UI will have a generic document title. When you have mul
 ```csharp
 app.UseSwaggerUI(c =>
 {
-    c.DocumentTitle("My Swagger UI");
+    c.DocumentTitle = "My Swagger UI";
     ...
 }
 ```
@@ -753,23 +761,27 @@ app.UseSwaggerUI(c =>
 
 ### Apply swagger-ui Parameters ###
 
-The swagger-ui ships with it's own set of configuration parameters, all described here https://github.com/swagger-api/swagger-ui#swaggerui. In Swashbuckle, most of these are surfaced through the SwaggerUI middleware options:
+The swagger-ui ships with it's own set of configuration parameters, all described here https://github.com/swagger-api/swagger-ui/blob/v3.8.1/docs/usage/configuration.md#display. In Swashbuckle, most of these are surfaced through the SwaggerUI middleware options:
 
 ```csharp
 app.UseSwaggerUI(c =>
 {
-    c.EnabledValidator();
-    c.BooleanValues(new object[] { 0, 1 });
-    c.DocExpansion("full");
-    c.InjectOnCompleteJavaScript("/swagger-ui/on-complete.js");
-    c.InjectOnFailureJavaScript("/swagger-ui/on-failure.js");
-    c.SupportedSubmitMethods("get", "post", "put", "patch");
-    c.ShowRequestHeaders();
-    c.ShowJsonEditor();
+    c.DefaultModelExpandDepth(2);
+    c.DefaultModelRendering(ModelRendering.Model);
+    c.DefaultModelsExpandDepth(-1);
+    c.DisplayOperationId();
+    c.DisplayRequestDuration();
+    c.DocExpansion(DocExpansion.None);
+    c.EnableDeepLinking();
+    c.EnableFilter();
+    c.MaxDisplayedTags(5);
+    c.ShowExtensions();
+    c.ValidatorUrl(null);
+    c.SupportedSubmitMethods(SubmitMethod.Get, SubmitMethod.Head);
 });
 ```
 
-Most of them are self explanatory, mapping back to the corresponding swagger-ui docs. To inject custom JavaScript (i.e. _InjectOnCompleteJavaScript_ and _InjectOnFailureJavaScript_), you'll need to add the scripts to your application and provide the relative paths as shown above. In ASP.NET Core, this is easily done by placing your script files in the _wwwroot_ folder.
+__NOTE:__ The `InjectOnCompleteJavaScript` and `InjectOnFailureJavaScript` options have been removed because the latest version of swagger-ui doesn't expose the neccessary hooks. Instead, it provides a [flexible customization system](https://github.com/swagger-api/swagger-ui/blob/master/docs/customization/overview.md) based on concepts and patterns from React and Redux. To leverage this, you'll need to provide a custom version of index.html as described [below](#customize-indexhtml). 
 
 ### Inject Custom CSS ###
 
@@ -783,20 +795,25 @@ app.UseSwaggerUI(c =>
 }
 ```
 
-### Enable OAuth2.0 Flows ###
+### Customize index.html ###
 
-The swagger-ui has built-in support to participate in OAuth2.0 authorization flows. It interacts with authorization and/or token endpoints, as specified in the Swagger JSON, to obtain access tokens for subsequent API calls. See [Adding Security Definitions and Requirements](#add-security-definitions-and-requirements) for an example of adding OAuth2.0 metadata to the generated Swagger.
-
-If you're Swagger endpoint includes the appropriate security metadata, you can enable the UI interaction as follows:
+To customize the UI beyond the basic options listed above, you can provide your own version of the swagger-ui index.html page:
 
 ```csharp
 app.UseSwaggerUI(c =>
 {
-    ...
-    // Provide client ID, client secret, realm and application name
-    c.ConfigureOAuth2("swagger-ui", "swagger-ui-secret", "swagger-ui-realm", "Swagger UI");
-}
+    c.IndexStream = () => GetType().GetTypeInfo().Assembly
+        .GetManifestResourceStream("CustomUIIndex.Swagger.index.html"); // requires file to be added as an embedded resource
+});
 ```
+
+To get started, you should base your custom index.html on the [default version](src/Swashbuckle.AspNetCore.SwaggerUI/index.html)
+
+### Enable OAuth2.0 Flows ###
+
+The swagger-ui has built-in support to participate in OAuth2.0 authorization flows. It interacts with authorization and/or token endpoints, as specified in the Swagger JSON, to obtain access tokens for subsequent API calls. See [Adding Security Definitions and Requirements](#add-security-definitions-and-requirements) for an example of adding OAuth2.0 metadata to the generated Swagger.
+
+If you're Swagger endpoint includes the appropriate security metadata, the UI interaction should be automatically enabled:
 
 ## dotnet-swagger (CLI Tool) ##
 

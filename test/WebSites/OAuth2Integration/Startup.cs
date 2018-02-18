@@ -106,7 +106,7 @@ namespace OAuth2Integration
                 resourceServer.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/resource-server/swagger/v1/swagger.json", "My API V1");
-                    c.ConfigureOAuth2("swagger-ui", null, null, "Swagger UI");
+                    c.OAuth2RedirectUrl("http://localhost:50581/resource-server/swagger/oauth2-redirect.html");
                 });
             });
         }

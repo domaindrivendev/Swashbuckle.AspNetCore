@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CustomIndexHtml.Controllers
+namespace CustomUIIndex.Controllers
 {
     [Route("/products")]
     [Produces("application/json")]

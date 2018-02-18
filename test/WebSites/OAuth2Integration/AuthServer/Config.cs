@@ -16,7 +16,7 @@ namespace OAuth2Integration.AuthServer
                 ClientId = "swagger-ui",
                 ClientName = "Swagger UI",
                 ClientSecrets = new[] { new Secret("swagger-ui-secret".Sha256()) },
-                RedirectUris = new[] { "http://localhost:50581/resource-server/swagger/o2c.html" }
+                RedirectUris = new[] { "http://localhost:50581/resource-server/swagger/oauth2-redirect.html" }
             };
         }
 

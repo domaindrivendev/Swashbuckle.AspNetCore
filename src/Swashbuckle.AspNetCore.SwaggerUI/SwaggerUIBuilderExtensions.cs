@@ -16,12 +16,14 @@ namespace Microsoft.AspNetCore.Builder
             var options = new SwaggerUIOptions();
             setupAction?.Invoke(options);
 
+            var assembly = typeof(SwaggerUIBuilderExtensions).GetTypeInfo().Assembly;
+
             app.UseMiddleware<SwaggerUIIndexMiddleware>(options);
             app.UseFileServer(new FileServerOptions
             {
                 RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
                 FileProvider = new EmbeddedFileProvider(typeof(SwaggerUIBuilderExtensions).GetTypeInfo().Assembly, EmbeddedFilesNamespace),
-                EnableDefaultFiles = true //serve index.html at /{ options.RoutePrefix }/
+                EnableDirectoryBrowsing = true // will redirect to /{options.RoutePrefix}/ when trailing slash is missing
             });
 
             return app;
