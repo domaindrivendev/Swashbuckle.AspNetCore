@@ -810,7 +810,7 @@ The tool can be installed as a [per-project, framework-dependent CLI extension](
 
 ```xml
 <ItemGroup>
-  <DotNetCliToolReference Include="dotnet-swagger" Version="1.2.0-preview-0309" /> <!-- myget.org -->
+  <DotNetCliToolReference Include="dotnet-swagger" Version="1.2.0-beta1" />
 </ItemGroup>
 ```
 

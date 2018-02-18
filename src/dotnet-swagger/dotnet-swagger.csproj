@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Description>Swashbuckle (Swagger) Command Line Tools</Description>
     <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
-    <VersionPrefix>1.2.0</VersionPrefix>
+    <VersionPrefix>1.2.0-beta1</VersionPrefix>
     <OutputType>Exe</OutputType>
     <RootNamespace>Swashbuckle.AspNetCore.Cli</RootNamespace>
   </PropertyGroup>
