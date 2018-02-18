@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Linq;
 using Newtonsoft.Json.Linq;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
@@ -134,6 +135,18 @@ namespace Microsoft.AspNetCore.Builder
             options.ConfigObject["showExtensions"] = true;
         }
 
+        /// <summary>
+        /// List of HTTP methods that have the Try it out feature enabled. An empty array disables Try it out for all operations.
+        /// This does not filter the operations from the display
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="submitMethods"></param>
+        public static void SupportedSubmitMethods(this SwaggerUIOptions options, params SubmitMethod[] submitMethods)
+        {
+            options.ConfigObject["supportedSubmitMethods"] = JArray.FromObject(
+                submitMethods.Select(sm => sm.ToString().ToLowerInvariant())
+            );
+        }
 
         /// <summary>
         /// OAuth redirect URL
@@ -198,5 +211,17 @@ namespace Microsoft.AspNetCore.Builder
         List,
         Full,
         None
+    }
+
+    public enum SubmitMethod
+    {
+        Get,
+        Put,
+        Post,
+        Delete,
+        Options,
+        Head,
+        Patch,
+        Trace
     }
 }

@@ -41,6 +41,7 @@ namespace CustomUIConfig
 
                 // Network
                 c.ValidatorUrl(null);
+                c.SupportedSubmitMethods(SubmitMethod.Get);
 
                 // Other
                 c.DocumentTitle = "CustomUIConfig";

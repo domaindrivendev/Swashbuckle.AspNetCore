@@ -777,6 +777,7 @@ app.UseSwaggerUI(c =>
     c.MaxDisplayedTags(5);
     c.ShowExtensions();
     c.ValidatorUrl(null);
+    c.SupportedSubmitMethods(SubmitMethod.Get, SubmitMethod.Head);
 });
 ```
 
