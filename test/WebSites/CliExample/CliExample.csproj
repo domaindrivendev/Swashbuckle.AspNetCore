@@ -12,10 +12,11 @@
     <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.SwaggerGen\Swashbuckle.AspNetCore.SwaggerGen.csproj" />
     <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.SwaggerUI\Swashbuckle.AspNetCore.SwaggerUI.csproj" />
     <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.Swagger\Swashbuckle.AspNetCore.Swagger.csproj" />
+    <ProjectReference Include="..\..\..\src\dotnet-swagger\dotnet-swagger.csproj" />
   </ItemGroup>
 
   <!--
-    NOTE: In practice, you would comment out the following snippet to install the dotnet-swagger tool via Nuget.
+    NOTE: In practice, you would uncomment the following snippet to install the dotnet-swagger tool via Nuget.
     Then, the exec command below could be simplified to the following "dotnet swagger tofile ..."
   -->
 
