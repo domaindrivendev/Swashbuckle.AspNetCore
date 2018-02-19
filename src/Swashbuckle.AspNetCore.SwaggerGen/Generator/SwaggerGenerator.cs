@@ -84,13 +84,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 if (httpMethod == null)
                     throw new NotSupportedException(string.Format(
                         "Ambiguous HTTP method for action - {0}. " +
-                        "Actions require an explicit HttpMethod binding for Swagger",
+                        "Actions require an explicit HttpMethod binding for Swagger 2.0",
                         group.First().ActionDescriptor.DisplayName));
 
                 if (group.Count() > 1)
                     throw new NotSupportedException(string.Format(
                         "HTTP method \"{0}\" & path \"{1}\" overloaded by actions - {2}. " +
-                        "Actions require unique method/path combination for Swagger",
+                        "Actions require unique method/path combination for Swagger 2.0",
                         httpMethod,
                         group.First().RelativePathSansQueryString(),
                         string.Join(",", group.Select(apiDesc => apiDesc.ActionDescriptor.DisplayName))));
@@ -167,6 +167,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var location = GetParameterLocation(apiDescription, paramDescription);
 
+            if (location == "path" && !paramDescription.IsRequired())
+                throw new NotSupportedException(string.Format(
+                    "Route contains optional parameters for action - {0}. " +
+                    "Optional route parameters are not allowed in Swagger 2.0",
+                    apiDescription.ActionDescriptor.DisplayName));
+
             var name = _settings.DescribeAllParametersInCamelCase
                 ? paramDescription.Name.ToCamelCase()
                 : paramDescription.Name;
@@ -186,7 +192,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 Name = name,
                 In = location,
-                Required = (location == "path") || paramDescription.IsRequired()
+                Required = paramDescription.IsRequired()
             };
 
             if (schema == null)

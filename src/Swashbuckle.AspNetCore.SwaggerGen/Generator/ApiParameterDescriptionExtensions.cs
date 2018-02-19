@@ -17,8 +17,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public static bool IsRequired(this ApiParameterDescription parameterDescription)
         {
-            var modelMetadata = parameterDescription.ModelMetadata;
-            return (modelMetadata == null) ? false : modelMetadata.IsRequired;
+            if (parameterDescription.RouteInfo != null)
+                return !parameterDescription.RouteInfo.IsOptional;
+
+            if (parameterDescription.ModelMetadata != null)
+                return parameterDescription.ModelMetadata.IsRequired;
+
+            return false;
         }
     }
 }

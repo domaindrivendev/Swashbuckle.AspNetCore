@@ -215,20 +215,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
-        [InlineData("collection/{param}")]
-        [InlineData("collection/{param?}")]
-        public void GetSwagger_SetsParameterRequired_ForAllRouteParams(string routeTemplate)
-        {
-            var subject = Subject(setupApis: apis => apis
-                .Add("GET", routeTemplate, nameof(FakeActions.AcceptsStringFromRoute)));
-
-            var swagger = subject.GetSwagger("v1");
-
-            var param = swagger.Paths["/collection/{param}"].Get.Parameters.First();
-            Assert.Equal(true, param.Required);
-        }
-
-        [Theory]
         [InlineData(nameof(FakeActions.AcceptsStringFromQuery), false)]
         [InlineData(nameof(FakeActions.AcceptsIntegerFromQuery), true)]
         public void GetSwagger_SetsParameterRequired_ForNonNullableActionParams(
@@ -554,6 +540,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(true, param.Required);
         }
 
+
         [Fact]
         public void GetSwagger_ThrowsInformativeException_IfHttpMethodAttributeNotPresent()
         {
@@ -563,7 +550,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var exception = Assert.Throws<NotSupportedException>(() => subject.GetSwagger("v1"));
             Assert.Equal(
                 "Ambiguous HTTP method for action - Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllers+NotAnnotated.AcceptsNothing (Swashbuckle.AspNetCore.SwaggerGen.Test). " +
-                "Actions require an explicit HttpMethod binding for Swagger",
+                "Actions require an explicit HttpMethod binding for Swagger 2.0",
                 exception.Message);
         }
 
@@ -580,7 +567,21 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 "HTTP method \"GET\" & path \"collection\" overloaded by actions - " +
                 "Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllers+NotAnnotated.AcceptsNothing (Swashbuckle.AspNetCore.SwaggerGen.Test)," +
                 "Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllers+NotAnnotated.AcceptsStringFromQuery (Swashbuckle.AspNetCore.SwaggerGen.Test). " +
-                "Actions require unique method/path combination for Swagger",
+                "Actions require unique method/path combination for Swagger 2.0",
+                exception.Message);
+        }
+
+        [Fact]
+        public void GetSwagger_ThrowsInformativeException_IfRouteContainsOptionalParameters()
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add("GET", "collection/{param?}", nameof(FakeActions.AcceptsStringFromRoute)));
+
+            var exception = Assert.Throws<NotSupportedException>(() => subject.GetSwagger("v1"));
+            Assert.Equal(
+                "Route contains optional parameters for action - " +
+                "Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllers+NotAnnotated.AcceptsStringFromRoute (Swashbuckle.AspNetCore.SwaggerGen.Test). " +
+                "Optional route parameters are not allowed in Swagger 2.0",
                 exception.Message);
         }
 
