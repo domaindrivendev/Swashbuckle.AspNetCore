@@ -110,7 +110,7 @@ Swashbuckle consists of three packages - a Swagger generator, middleware to expo
 |__Swashbuckle.AspNetCore.Swagger__|Exposes _SwaggerDocument_ objects as a JSON API. It expects an implementation of _ISwaggerProvider_ to be registered which it queries to retrieve Swagger document(s) before returning as serialized JSON|
 |__Swashbuckle.AspNetCore.SwaggerGen__|Injects an implementation of _ISwaggerProvider_ that can be used by the above component. This particular implementation automatically generates _SwaggerDocument_(s) from your routes, controllers and models|
 |__Swashbuckle.AspNetCore.SwaggerUI__|Exposes an embedded version of the swagger-ui. You specify the API endpoints where it can obtain Swagger JSON and it uses them to power interactive docs for your API|
-|__dotnet-swagger__ (Beta)|Provides a CLI interface for retrieving Swagger directly from a startup assembly, and writing to file|
+|__Swashbuckle.AspNetCore.Cli__ (Beta)|Provides a CLI interface for retrieving Swagger directly from a startup assembly, and writing to file|
 
 # Configuration & Customization #
 
@@ -147,7 +147,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Customize index.html](#customize-indexhtml)
     * [Enable OAuth2.0 Flows](#enable-oauth20-flows)
 
-* [dotnet-swagger (CLI tool)](#dotnet-swagger-cli-tool)
+* [Swashbuckle.AspNetCore.Cli](#swashbuckleaspnetcorecli)
 	* [Retrieve Swagger Directly from a Startup Assembly](#retrieve-swagger-directly-from-a-startup-assembly)
 
 ## Swashbuckle.AspNetCore.Swagger ##
@@ -815,7 +815,7 @@ The swagger-ui has built-in support to participate in OAuth2.0 authorization flo
 
 If you're Swagger endpoint includes the appropriate security metadata, the UI interaction should be automatically enabled:
 
-## dotnet-swagger (CLI Tool) ##
+## Swashbuckle.AspNetCore.Cli ##
 
 _NOTE:_ This feature is currently beta only. If you use it, please post feedback to the following [issue](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/541)
 

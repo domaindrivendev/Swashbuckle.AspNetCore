@@ -5,7 +5,8 @@
     <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
     <VersionPrefix>2.0.0-beta1</VersionPrefix>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Swashbuckle.AspNetCore.Cli</RootNamespace>
+    <AssemblyName>dotnet-swagger</AssemblyName>
+    <PackageId>Swashbuckle.AspNetCore.Cli</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
