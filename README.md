@@ -821,17 +821,17 @@ _NOTE:_ This feature is currently beta only. If you use it, please post feedback
 
 ### Retrieve Swagger Directly from a Startup Assembly ###
 
-The dotnet-swagger CLI tool can retrieve Swagger JSON directly from your application startup assembly, and write it to file. This can be useful if you want to incorporate Swagger generation into a CI/CD process, or if you want to serve it from static file at run-time.
+The Swashbuckle CLI tool can retrieve Swagger JSON directly from your application startup assembly, and write it to file. This can be useful if you want to incorporate Swagger generation into a CI/CD process, or if you want to serve it from static file at run-time.
 
 The tool can be installed as a [per-project, framework-dependent CLI extension](https://docs.microsoft.com/en-us/dotnet/core/tools/extensibility#per-project-based-extensibility) by adding the following reference to your .csproj file and running `dotnet restore`:
 
 ```xml
 <ItemGroup>
-  <DotNetCliToolReference Include="dotnet-swagger" Version="1.2.0-beta1" />
+  <DotNetCliToolReference Include="Swashbuckle.AspNetCore.Cli" Version="2.0.0-beta1" />
 </ItemGroup>
 ```
 
-Once this is done, you can run the following command from your project root:
+Once this is done, you should be able to run the following command from your project root:
 
 ```
 dotnet swagger tofile --help

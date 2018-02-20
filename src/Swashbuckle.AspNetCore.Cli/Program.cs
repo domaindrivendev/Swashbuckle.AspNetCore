@@ -29,7 +29,7 @@ namespace Swashbuckle.AspNetCore.Cli
             {
                 c.Argument("startupassembly", "relative path to the application's startup assembly");
                 c.Argument("swaggerdoc", "name of the swagger doc you want to retrieve, as configured in your startup class");
-                c.Argument("output", "relative path where the Swagger will be output");
+                c.Option("--output", "relative path where the Swagger will be output, defaults to stdout");
                 c.Option("--host", "a specific host to include in the Swagger output");
                 c.Option("--basepath", "a specific basePath to inlcude in the Swagger output");
                 c.OnRun((namedArgs) =>
@@ -51,13 +51,13 @@ namespace Swashbuckle.AspNetCore.Cli
             });
 
             // > dotnet swagger _tofile ... (* should only be invoked via "dotnet exec")
-            runner.SubCommand("_tofile", "retrieves Swagger from a startup assembly, and writes to file ", c =>
+            runner.SubCommand("_tofile", "", c =>
             {
-                c.Argument("startupassembly", "relative path to the application's startup assembly");
-                c.Argument("swaggerdoc", "name of the swagger doc you want to retrieve, as configured in your startup class");
-                c.Argument("output", "relative path where the Swagger will be output");
-                c.Option("--host", "a specific host to include in the Swagger output");
-                c.Option("--basepath", "a specific basePath to inlcude in the Swagger output");
+                c.Argument("startupassembly", "");
+                c.Argument("swaggerdoc", "");
+                c.Option("--output", "");
+                c.Option("--host", "");
+                c.Option("--basepath", "");
                 c.OnRun((namedArgs) =>
                 {
                     // 1) Configure host with provided startupassembly
@@ -75,12 +75,16 @@ namespace Swashbuckle.AspNetCore.Cli
                         namedArgs.ContainsKey("--basepath") ? namedArgs["--basepath"] : null,
                         null);
 
-                    // 3) Write to specified output location
-                    var outputPath = $"{Directory.GetCurrentDirectory()}\\{namedArgs["output"]}";
-                    var mvcOptionsAccessor = (IOptions<MvcJsonOptions>)host.Services.GetService(typeof(IOptions<MvcJsonOptions>));
-                    var serializer = SwaggerSerializerFactory.Create(mvcOptionsAccessor);
-                    using (var streamWriter = File.CreateText(outputPath))
+                    // 3) Serialize to specified output location or stdout
+                    var outputPath = namedArgs.ContainsKey("--output")
+                        ? $"{Directory.GetCurrentDirectory()}\\{namedArgs["--output"]}"
+                        : null;
+
+                    using (var streamWriter = (outputPath != null ? File.CreateText(outputPath) : Console.Out))
                     {
+                        var mvcOptionsAccessor = (IOptions<MvcJsonOptions>)host.Services.GetService(typeof(IOptions<MvcJsonOptions>));
+                        var serializer = SwaggerSerializerFactory.Create(mvcOptionsAccessor);
+
                         serializer.Serialize(streamWriter, swagger);
                         Console.WriteLine($"Swagger JSON succesfully written to {outputPath}");
                     }
