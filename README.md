@@ -64,7 +64,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
     ```csharp
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API v1");
     });
     ```
 
