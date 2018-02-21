@@ -81,8 +81,15 @@ window.onload = function() {
   
   // Build a system
   const ui = SwaggerUIBundle(configObject);
-
-  window.ui = ui
+  ui.initOAuth({
+    clientId: configObject.OAuth2ClientId,
+    clientSecret: configObject.OAuth2ClientSecret,
+    realm: configObject.OAuth2Realm,
+    appName: configObject.OAuth2AppName,
+    scopeSeparator: configObject.OAuth2ScopeSeparator,
+    useBasicAuthenticationWithAccessCodeGrant: configObject.useBasicAuthenticationWithAccessCodeGrant
+  });
+  window.ui = ui;
 }
 </script>
 </body>

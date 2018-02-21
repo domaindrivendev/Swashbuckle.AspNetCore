@@ -170,34 +170,32 @@ namespace Microsoft.AspNetCore.Builder
             options.ConfigObject["validatorUrl"] = url;
         }
 
-        /////// <summary>
-        /////// Enable OAuth2 UI Interactions. See swagger-ui project for more info.
-        /////// </summary>
-        /////// <param name="clientId">Default clientId</param>
-        /////// <param name="clientSecret">Default clientId</param>
-        /////// <param name="realm">Realm query parameter (for oauth1) added to authorizationUrl and tokenUrl</param>
-        /////// <param name="appName">Application name, displayed in authorization popup</param>
-        /////// <param name="scopeSeparator">Scope separator for passing scopes, encoded before calling, default value is a space (encoded value %20)</param>
-        /////// <param name="additionalQueryStringParameters">Additional query parameters added to authorizationUrl and tokenUrl</param>
-        /////// <param name="useBasicAuthenticationWithAccessCodeGrant">Only activated for the accessCode flow. During the authorization_code request to the tokenUrl, pass the Client Password using the HTTP Basic Authentication scheme (Authorization header with Basic base64encoded[client_id:client_secret])</param>
-        ////public void ConfigureOAuth2(
-        ////    string clientId,
-        ////    string clientSecret = null,
-        ////    string realm = null,
-        ////    string appName = "",
-        ////    string scopeSeparator = " ",
-        ////    object additionalQueryStringParameters = null,
-        ////    bool useBasicAuthenticationWithAccessCodeGrant = false)
-        ////{
-        ////    var jsConfig = IndexSettings.JSConfig;
-        ////    jsConfig.OAuth2ClientId = clientId;
-        ////    jsConfig.OAuth2ClientSecret = clientSecret ?? "na"; //swagger-ui needs a value
-        ////    jsConfig.OAuth2Realm = realm ?? "na"; //swagger-ui needs a value
-        ////    jsConfig.OAuth2AppName = appName;
-        ////    jsConfig.OAuth2ScopeSeparator = scopeSeparator;
-        ////    jsConfig.OAuth2AdditionalQueryStringParams = additionalQueryStringParameters ?? new { };
-        ////    jsConfig.OAuth2UseBasicAuthenticationWithAccessCodeGrant = useBasicAuthenticationWithAccessCodeGrant;
-        ////}
+        /// <summary>
+        /// Enable OAuth2 UI Interactions. See swagger-ui project for more info.
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="clientId">Default clientId</param>
+        /// <param name="clientSecret">Default clientId</param>
+        /// <param name="realm">Realm query parameter (for oauth1) added to authorizationUrl and tokenUrl</param>
+        /// <param name="appName">Application name, displayed in authorization popup</param>
+        /// <param name="scopeSeparator">Scope separator for passing scopes, encoded before calling, default value is a space (encoded value %20)</param>
+        /// <param name="useBasicAuthenticationWithAccessCodeGrant">Only activated for the accessCode flow. During the authorization_code request to the tokenUrl, pass the Client Password using the HTTP Basic Authentication scheme (Authorization header with Basic base64encoded[client_id:client_secret])</param>
+        public static void ConfigureOAuth2(
+            this SwaggerUIOptions options,
+            string clientId,
+            string clientSecret = null,
+            string realm = null,
+            string appName = "",
+            string scopeSeparator = " ",
+            bool useBasicAuthenticationWithAccessCodeGrant = false)
+        {
+            options.ConfigObject["OAuth2ClientId"] = clientId;
+            options.ConfigObject["OAuth2ClientSecret"] = clientSecret ?? "na"; //swagger-ui needs a value
+            options.ConfigObject["OAuth2Realm"] = realm ?? "na"; //swagger-ui needs a value
+            options.ConfigObject["OAuth2AppName"] = appName;
+            options.ConfigObject["OAuth2ScopeSeparator"] = scopeSeparator;
+            options.ConfigObject["OAuth2UseBasicAuthenticationWithAccessCodeGrant"] = useBasicAuthenticationWithAccessCodeGrant;
+        }
     }
 
     public enum ModelRendering

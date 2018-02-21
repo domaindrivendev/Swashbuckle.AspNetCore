@@ -18,8 +18,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="bower_components\swagger-ui\dist\**\*.png" />
+    <EmbeddedResource Include="bower_components\swagger-ui\dist\**\*.css" />
+    <EmbeddedResource Include="bower_components\swagger-ui\dist\**\oauth2-redirect.html" />
+    <EmbeddedResource Include="bower_components\swagger-ui\dist\**\swagger-ui-bundle.js" />
+    <EmbeddedResource Include="bower_components\swagger-ui\dist\**\swagger-ui-standalone-preset.js" />
     <EmbeddedResource Include="index.html" />
-    <EmbeddedResource Include="bower_components\swagger-ui\dist\**\*.*" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,12 +31,6 @@
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="1.0.4" />
     <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="1.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
-    <Reference Include="System.Xml" />
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
