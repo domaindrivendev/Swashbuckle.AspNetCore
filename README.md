@@ -840,12 +840,12 @@ dotnet swagger tofile --help
 Before you invoke the `tofile` command, you need to ensure your application is configured to expose Swagger JSON, as described in [Getting Started](#getting-started). Once this is done, you can point to your startup assembly and generate a local Swagger JSON file with the following command:
 
 ```
-dotnet swagger tofile [startupassembly] [swaggerdoc] [output]
+dotnet swagger tofile --output [output] [startupassembly] [swaggerdoc]
 ```
 
 Where ...
+* [output] is the relative path where the Swagger JSON will be output to
 * [startupassembly] is the relative path to your application's startup assembly
 * [swaggerdoc] is the name of the swagger document you want to retrieve, as configured in your startup class
-* [output] is the relative path where the Swagger JSON will be output to
 
 Checkout the [CliExample app](test/WebSites/CliExample) for more inspiration. It leverages the MSBuild Exec command to generate Swagger JSON at build-time.
