@@ -62,7 +62,7 @@ namespace Swashbuckle.AspNetCore.Cli
                 {
                     // 1) Configure host with provided startupassembly
                     var startupAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(
-                        $"{Directory.GetCurrentDirectory()}\\{namedArgs["startupassembly"]}");
+                        Path.Combine(Directory.GetCurrentDirectory(), namedArgs["startupassembly"]));
                     var host = WebHost.CreateDefaultBuilder()
                         .UseStartup(startupAssembly.FullName)
                         .Build();
@@ -77,7 +77,7 @@ namespace Swashbuckle.AspNetCore.Cli
 
                     // 3) Serialize to specified output location or stdout
                     var outputPath = namedArgs.ContainsKey("--output")
-                        ? $"{Directory.GetCurrentDirectory()}\\{namedArgs["--output"]}"
+                        ? Path.Combine(Directory.GetCurrentDirectory(), namedArgs["--output"])
                         : null;
 
                     using (var streamWriter = (outputPath != null ? File.CreateText(outputPath) : Console.Out))
