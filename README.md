@@ -817,7 +817,7 @@ If you're Swagger endpoint includes the appropriate security metadata, the UI in
 
 ## Swashbuckle.AspNetCore.Cli ##
 
-_NOTE:_ This feature is currently beta only. If you use it, please post feedback to the following [issue](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/541)
+_NOTE:_ This feature is currently beta only. You can download the latest preview by wiring up myget.org as a package source. If you use it, please post feedback to the following [issue](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/541)
 
 ### Retrieve Swagger Directly from a Startup Assembly ###
 
@@ -827,7 +827,7 @@ The tool can be installed as a [per-project, framework-dependent CLI extension](
 
 ```xml
 <ItemGroup>
-  <DotNetCliToolReference Include="Swashbuckle.AspNetCore.Cli" Version="2.0.0-beta1" />
+  <DotNetCliToolReference Include="Swashbuckle.AspNetCore.Cli" Version="2.0.0-beta1-preview-0354" />
 </ItemGroup>
 ```
 
