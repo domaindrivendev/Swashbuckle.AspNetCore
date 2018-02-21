@@ -813,7 +813,22 @@ To get started, you should base your custom index.html on the [default version](
 
 The swagger-ui has built-in support to participate in OAuth2.0 authorization flows. It interacts with authorization and/or token endpoints, as specified in the Swagger JSON, to obtain access tokens for subsequent API calls. See [Adding Security Definitions and Requirements](#add-security-definitions-and-requirements) for an example of adding OAuth2.0 metadata to the generated Swagger.
 
-If you're Swagger endpoint includes the appropriate security metadata, the UI interaction should be automatically enabled:
+If you're Swagger endpoint includes the appropriate security metadata, the UI interaction should be automatically enabled. However, you can further customize OAuth support in the UI with the following settings below. See https://github.com/swagger-api/swagger-ui/blob/v3.10.0/docs/usage/oauth2.md for more info:
+
+```csharp
+app.UseSwaggerUI(c =>
+{
+	...
+
+	c.OAuthClientId("test-id");
+	c.OAuthClientSecret("test-secret");
+	c.OAuthRealm("test-realm");
+	c.OAuthAppName("test-app");
+	c.OAuthScopeSeparator(" ");
+	c.OAuthAdditionalQueryStringParams(new { foo = "bar" });
+	c.OAuthUseBasicAuthenticationWithAccessCodeGrant();
+});
+```
 
 ## Swashbuckle.AspNetCore.Cli ##
 

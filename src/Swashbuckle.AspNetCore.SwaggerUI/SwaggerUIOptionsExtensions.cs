@@ -171,30 +171,74 @@ namespace Microsoft.AspNetCore.Builder
         }
 
         /// <summary>
-        /// Enable OAuth2 UI Interactions. See swagger-ui project for more info.
+        /// Default clientId
         /// </summary>
         /// <param name="options"></param>
-        /// <param name="clientId">Default clientId</param>
-        /// <param name="clientSecret">Default clientId</param>
-        /// <param name="realm">Realm query parameter (for oauth1) added to authorizationUrl and tokenUrl</param>
-        /// <param name="appName">Application name, displayed in authorization popup</param>
-        /// <param name="scopeSeparator">Scope separator for passing scopes, encoded before calling, default value is a space (encoded value %20)</param>
-        /// <param name="useBasicAuthenticationWithAccessCodeGrant">Only activated for the accessCode flow. During the authorization_code request to the tokenUrl, pass the Client Password using the HTTP Basic Authentication scheme (Authorization header with Basic base64encoded[client_id:client_secret])</param>
-        public static void ConfigureOAuth2(
-            this SwaggerUIOptions options,
-            string clientId,
-            string clientSecret = null,
-            string realm = null,
-            string appName = "",
-            string scopeSeparator = " ",
-            bool useBasicAuthenticationWithAccessCodeGrant = false)
+        /// <param name="value"></param>
+        public static void OAuthClientId(this SwaggerUIOptions options, string value)
         {
-            options.ConfigObject["OAuth2ClientId"] = clientId;
-            options.ConfigObject["OAuth2ClientSecret"] = clientSecret ?? "na"; //swagger-ui needs a value
-            options.ConfigObject["OAuth2Realm"] = realm ?? "na"; //swagger-ui needs a value
-            options.ConfigObject["OAuth2AppName"] = appName;
-            options.ConfigObject["OAuth2ScopeSeparator"] = scopeSeparator;
-            options.ConfigObject["OAuth2UseBasicAuthenticationWithAccessCodeGrant"] = useBasicAuthenticationWithAccessCodeGrant;
+            options.OAuthConfigObject["clientId"] = value;
+        }
+
+        /// <summary>
+        /// Default clientSecret
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="value"></param>
+        public static void OAuthClientSecret(this SwaggerUIOptions options, string value)
+        {
+            options.OAuthConfigObject["clientSecret"] = value;
+        }
+
+        /// <summary>
+        /// realm query parameter (for oauth1) added to authorizationUrl and tokenUrl
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="value"></param>
+        public static void OAuthRealm(this SwaggerUIOptions options, string value)
+        {
+            options.OAuthConfigObject["realm"] = value;
+        }
+
+        /// <summary>
+        /// Application name, displayed in authorization popup
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="value"></param>
+        public static void OAuthAppName(this SwaggerUIOptions options, string value)
+        {
+            options.OAuthConfigObject["appName"] = value;
+        }
+
+        /// <summary>
+        /// Scope separator for passing scopes, encoded before calling, default value is a space (encoded value %20)
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="value"></param>
+        public static void OAuthScopeSeparator(this SwaggerUIOptions options, string value)
+        {
+            options.OAuthConfigObject["scopeSeparator"] = value;
+        }
+
+        /// <summary>
+        /// Additional query parameters added to authorizationUrl and tokenUrl
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="value"></param>
+        public static void OAuthAdditionalQueryStringParams(this SwaggerUIOptions options, object value)
+        {
+            options.OAuthConfigObject["additionalQueryStringParams"] = JObject.FromObject(value);
+        }
+
+        /// <summary>
+        /// Only activated for the accessCode flow. During the authorization_code request to the tokenUrl,
+        /// pass the Client Password using the HTTP Basic Authentication scheme (Authorization header with
+        /// Basic base64encoded[client_id:client_secret]). The default is false
+        /// </summary>
+        /// <param name="options"></param>
+        public static void OAuthUseBasicAuthenticationWithAccessCodeGrant(this SwaggerUIOptions options)
+        {
+            options.OAuthConfigObject["useBasicAuthenticationWithAccessCodeGrant"] = true;
         }
     }
 

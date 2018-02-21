@@ -107,6 +107,15 @@ namespace OAuth2Integration
                 {
                     c.SwaggerEndpoint("/resource-server/swagger/v1/swagger.json", "My API V1");
                     c.OAuth2RedirectUrl("http://localhost:50581/resource-server/swagger/oauth2-redirect.html");
+
+                    // Additional OAuth settings (See https://github.com/swagger-api/swagger-ui/blob/v3.10.0/docs/usage/oauth2.md)
+                    c.OAuthClientId("test-id");
+                    c.OAuthClientSecret("test-secret");
+                    c.OAuthRealm("test-realm");
+                    c.OAuthAppName("test-app");
+                    c.OAuthScopeSeparator(" ");
+                    c.OAuthAdditionalQueryStringParams(new { foo = "bar" });
+                    c.OAuthUseBasicAuthenticationWithAccessCodeGrant();
                 });
             });
         }

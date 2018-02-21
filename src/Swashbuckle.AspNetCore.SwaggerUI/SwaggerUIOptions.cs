@@ -35,5 +35,12 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         {
             urls = new object[] { }
         });
+
+        /// <summary>
+        /// Gets the JavaScript config object, represented as JSON, that will be passed to the initOAuth method
+        /// </summary>
+        public JObject OAuthConfigObject { get; } = JObject.FromObject(new
+        {
+        });
     }
 }

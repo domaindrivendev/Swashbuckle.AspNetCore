@@ -71,26 +71,21 @@
 <script src="./swagger-ui-bundle.js"> </script>
 <script src="./swagger-ui-standalone-preset.js"> </script>
 <script>
-window.onload = function() {
-  var configObject = JSON.parse('%(ConfigObject)');
+  window.onload = function () {
+    var configObject = JSON.parse('%(ConfigObject)');
+    var oauthConfigObject = JSON.parse('%(OAuthConfigObject)');
 
-  // Apply mandatory parameters
-  configObject.dom_id = "#swagger-ui";
-  configObject.presets = [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset];
-  configObject.layout = "StandaloneLayout";
-  
-  // Build a system
-  const ui = SwaggerUIBundle(configObject);
-  ui.initOAuth({
-    clientId: configObject.OAuth2ClientId,
-    clientSecret: configObject.OAuth2ClientSecret,
-    realm: configObject.OAuth2Realm,
-    appName: configObject.OAuth2AppName,
-    scopeSeparator: configObject.OAuth2ScopeSeparator,
-    useBasicAuthenticationWithAccessCodeGrant: configObject.useBasicAuthenticationWithAccessCodeGrant
-  });
-  window.ui = ui;
-}
+    // Apply mandatory parameters
+    configObject.dom_id = "#swagger-ui";
+    configObject.presets = [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset];
+    configObject.layout = "StandaloneLayout";
+
+    // Build a system
+    const ui = SwaggerUIBundle(configObject);
+
+    // Apply OAuth config
+    ui.initOAuth(oauthConfigObject);
+  }
 </script>
 </body>
 

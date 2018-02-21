@@ -18,11 +18,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="bower_components\swagger-ui\dist\**\*.png" />
-    <EmbeddedResource Include="bower_components\swagger-ui\dist\**\*.css" />
-    <EmbeddedResource Include="bower_components\swagger-ui\dist\**\oauth2-redirect.html" />
-    <EmbeddedResource Include="bower_components\swagger-ui\dist\**\swagger-ui-bundle.js" />
-    <EmbeddedResource Include="bower_components\swagger-ui\dist\**\swagger-ui-standalone-preset.js" />
+    <EmbeddedResource Include="bower_components\swagger-ui\dist\**\*.*" Exclude="bower_components\swagger-ui\dist\**\*.map" />
     <EmbeddedResource Include="index.html" />
   </ItemGroup>
 
@@ -32,9 +28,4 @@
     <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="1.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
   </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
-    <PackageReference Include="System.Xml.XPath" Version="4.0.0" />
-  </ItemGroup>
-
 </Project>

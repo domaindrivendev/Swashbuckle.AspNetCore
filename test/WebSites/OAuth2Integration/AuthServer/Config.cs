@@ -13,9 +13,9 @@ namespace OAuth2Integration.AuthServer
                 AllowAccessTokensViaBrowser = true,
                 AllowedGrantTypes = GrantTypes.Implicit,
                 AllowedScopes = new[] { "readAccess", "writeAccess" },
-                ClientId = "swagger-ui",
-                ClientName = "Swagger UI",
-                ClientSecrets = new[] { new Secret("swagger-ui-secret".Sha256()) },
+                ClientId = "test-id",
+                ClientName = "test-app",
+                ClientSecrets = new[] { new Secret("test-secret".Sha256()) },
                 RedirectUris = new[] { "http://localhost:50581/resource-server/swagger/oauth2-redirect.html" }
             };
         }
