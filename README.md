@@ -13,10 +13,11 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 # Compatability #
 
-|Swashbuckle Version|.NET Core|Swagger (OpenAPI) Spec.|swagger-ui|
+|Swashbuckle Version|ASP.NET Core|Swagger (OpenAPI) Spec.|swagger-ui|
 |----------|----------|----------|----------|
-|[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master)|>=netstandard1.6|2.0|v3|
-|[1.2.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v1.2.0)|>=netstandard1.6|2.0|v2|
+|[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master)|>=1.0.4|2.0|3.10.0|
+|[2.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v2.0.0)|>=1.0.4|2.0|3.10.0|
+|[1.2.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v1.2.0)|>=1.0.4|2.0|2.2.10|
 
 # Getting Started #
 
@@ -832,7 +833,7 @@ app.UseSwaggerUI(c =>
 
 ## Swashbuckle.AspNetCore.Cli ##
 
-_NOTE:_ This feature is currently beta only. You can download the latest preview by wiring up myget.org as a package source. If you use it, please post feedback to the following [issue](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/541)
+_NOTE:_ This feature is currently beta only. Please post feedback to the following [issue](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/541)
 
 ### Retrieve Swagger Directly from a Startup Assembly ###
 
@@ -842,7 +843,7 @@ The tool can be installed as a [per-project, framework-dependent CLI extension](
 
 ```xml
 <ItemGroup>
-  <DotNetCliToolReference Include="Swashbuckle.AspNetCore.Cli" Version="2.0.0-beta1-preview-0354" />
+  <DotNetCliToolReference Include="Swashbuckle.AspNetCore.Cli" Version="2.0.0-beta1" />
 </ItemGroup>
 ```
 
