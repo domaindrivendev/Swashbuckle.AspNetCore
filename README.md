@@ -631,6 +631,20 @@ services.AddSwaggerGen(c =>
 };
 ```
 
+You can also use the `SwaggerSchemaFilter` attribute to apply an `ISchemaFilter` schema to your model.
+
+```
+[SwaggerSchemaFilter(typeof(PhoneNumberSchemaFilter))]
+public class PhoneNumber
+{
+    public string CountryCode { get; set; }
+
+    public string AreaCode { get; set; }
+
+    public string SubscriberId { get; set; }
+}
+```
+
 #### Document Filters ####
 
 Once a _Swagger Document_ has been generated, it too can be passed through a set of pre-configured _Document_ Filters. This gives full control to modify the document however you see fit. To ensure you're still returning valid Swagger JSON, you should have a read through the [specification](http://swagger.io/specification/) before using this filter type.
