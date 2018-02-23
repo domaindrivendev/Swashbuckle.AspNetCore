@@ -44,11 +44,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void GetOrRegister_ReturnsEnumSchema_ForEnumTypes()
         {
-            var schema = Subject().GetOrRegister(typeof(AnEnum));
-            Assert.Equal("integer", schema.Type);
-            Assert.Equal("int32", schema.Format);
-            Assert.Contains(AnEnum.Value1, schema.Enum);
-            Assert.Contains(AnEnum.Value2, schema.Enum);
+            var subject = Subject();
+            var schema = subject.GetOrRegister(typeof(AnEnum));
+            Assert.Equal("#/definitions/AnEnum", schema.Ref);
+            Assert.Contains(AnEnum.Value1, subject.Definitions["AnEnum"].Enum);
+            Assert.Contains(AnEnum.Value2, subject.Definitions["AnEnum"].Enum);
         }
 
         [Theory]
@@ -234,10 +234,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void GetOrRegister_HonorsStringEnumConverters_ConfiguredViaAttributes()
         {
-            var schema = Subject().GetOrRegister(typeof(JsonConvertedEnum));
+            var subject = Subject();
+            var schema = subject.GetOrRegister(typeof(JsonConvertedEnum));
 
-            Assert.Equal("string", schema.Type);
-            Assert.Equal(new[] { "Value1", "Value2", "X" }, schema.Enum);
+            Assert.Equal("#/definitions/JsonConvertedEnum", schema.Ref);
+            Assert.Equal(new[] { "Value1", "Value2", "X" }, subject.Definitions["JsonConvertedEnum"].Enum);
         }
 
         [Fact]
@@ -250,8 +251,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var schema = subject.GetOrRegister(typeof(AnEnum));
 
-            Assert.Equal("string", schema.Type);
-            Assert.Equal(new[] { "value1", "value2", "x" }, schema.Enum);
+            Assert.Equal("#/definitions/AnEnum", schema.Ref);
+            Assert.Equal(new[] { "value1", "value2", "x" }, subject.Definitions["AnEnum"].Enum);
         }
 
         [Fact]

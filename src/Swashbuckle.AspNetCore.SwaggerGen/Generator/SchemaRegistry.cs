@@ -62,7 +62,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     // Type is self-referencing
                     jsonContract.IsSelfReferencingArrayOrDictionary() ||
                     // Enums are strings and type describes an enum
-                    (_settings.DescribeAllEnumsAsStrings && type.IsEnumType()));
+                    type.IsEnumType());
 
             return createReference
                 ? CreateReferenceSchema(type, referencedTypes)
