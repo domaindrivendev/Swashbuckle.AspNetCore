@@ -40,7 +40,7 @@ namespace CustomUIConfig
                 c.ShowExtensions();
 
                 // Network
-                c.ValidatorUrl(null);
+                c.EnableValidator();
                 c.SupportedSubmitMethods(SubmitMethod.Get);
 
                 // Other

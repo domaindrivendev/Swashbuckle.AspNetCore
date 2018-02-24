@@ -33,7 +33,8 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// </summary>
         public JObject ConfigObject { get; } = JObject.FromObject(new
         {
-            urls = new object[] { }
+            urls = new object[] { },
+            validatorUrl = JValue.CreateNull()
         });
 
         /// <summary>

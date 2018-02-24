@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 using Swashbuckle.AspNetCore.SwaggerUI;
@@ -158,14 +159,19 @@ namespace Microsoft.AspNetCore.Builder
             options.ConfigObject["oauth2RedirectUrl"] = url;
         }
 
+        [Obsolete("The validator is disabled by default. Use EnableValidator to enable it")]
+        public static void ValidatorUrl(this SwaggerUIOptions options, string url)
+        {
+            options.ConfigObject["validatorUrl"] = url;
+        }
+
         /// <summary>
-        /// By default, Swagger-UI attempts to validate specs against swagger.io's online validator.
-        /// You can use this parameter to set a different validator URL, for example for locally deployed validators (Validator Badge).
+        /// You can use this parameter to enable the swagger-ui's built-in validator (badge) functionality
         /// Setting it to null will disable validation 
         /// </summary>
         /// <param name="options"></param>
         /// <param name="url"></param>
-        public static void ValidatorUrl(this SwaggerUIOptions options, string url)
+        public static void EnableValidator(this SwaggerUIOptions options, string url = "https://online.swagger.io/validator")
         {
             options.ConfigObject["validatorUrl"] = url;
         }
