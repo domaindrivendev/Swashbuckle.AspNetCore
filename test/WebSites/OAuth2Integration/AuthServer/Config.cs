@@ -16,7 +16,10 @@ namespace OAuth2Integration.AuthServer
                 ClientId = "test-id",
                 ClientName = "test-app",
                 ClientSecrets = new[] { new Secret("test-secret".Sha256()) },
-                RedirectUris = new[] { "http://localhost:50581/resource-server/swagger/oauth2-redirect.html" }
+                RedirectUris = new[] {
+                    "http://localhost:50581/resource-server/swagger/oauth2-redirect.html", // IIS Express
+                    "http://localhost:5000/resource-server/swagger/oauth2-redirect.html", // Kestrel
+                }
             };
         }
 

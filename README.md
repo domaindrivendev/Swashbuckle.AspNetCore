@@ -857,7 +857,7 @@ The tool can be installed as a [per-project, framework-dependent CLI extension](
 
 ```xml
 <ItemGroup>
-  <DotNetCliToolReference Include="Swashbuckle.AspNetCore.Cli" Version="2.0.0-beta1" />
+  <DotNetCliToolReference Include="Swashbuckle.AspNetCore.Cli" Version="2.1.0-beta1" />
 </ItemGroup>
 ```
 
