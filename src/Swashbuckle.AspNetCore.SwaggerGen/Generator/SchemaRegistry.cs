@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Converters;
@@ -130,12 +131,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var camelCase = _settings.DescribeStringEnumsInCamelCase
                     || (stringEnumConverter != null && stringEnumConverter.CamelCaseText);
 
+                var enumNames = type.GetFields(BindingFlags.Public | BindingFlags.Static)
+                    .Select(f =>
+                    {
+                        var enumMemberAttribute = f.GetCustomAttributes().OfType<EnumMemberAttribute>().FirstOrDefault();
+                        var serializeName = (enumMemberAttribute == null) ? f.Name : enumMemberAttribute.Value;
+                        return camelCase ? serializeName.ToCamelCase() : serializeName;
+                    });
+
                 return new Schema
                 {
                     Type = "string",
-                    Enum = (camelCase)
-                        ? Enum.GetNames(type).Select(name => name.ToCamelCase()).ToArray()
-                        : Enum.GetNames(type)
+                    Enum = enumNames.ToArray()
                 };
             }
 
