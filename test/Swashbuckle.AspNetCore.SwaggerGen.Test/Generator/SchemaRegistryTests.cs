@@ -255,6 +255,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GetOrRegister_HonorsEnumMemberAttributes()
+        {
+            var subject = Subject(new JsonSerializerSettings
+            {
+                Converters = new[] { new StringEnumConverter() }
+            });
+
+            var schema = subject.GetOrRegister(typeof(AnAnnotatedEnum));
+
+            Assert.Equal("string", schema.Type);
+            Assert.Equal(new[] { "foo-bar", "bar-foo" }, schema.Enum);
+        }
+
+        [Fact]
         public void GetOrRegister_SupportsOptionToExplicitlyMapTypes()
         {
             var subject = Subject(c =>

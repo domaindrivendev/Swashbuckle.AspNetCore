@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.Serialization;
 
 namespace Basic.Controllers
 {
@@ -88,7 +89,6 @@ namespace Basic.Controllers
     public enum ProductStatus
     {
         All = 0,
-        [Display(Name = "Out Of Stock")]
         OutOfStock = 1,
         InStock = 2
     }
