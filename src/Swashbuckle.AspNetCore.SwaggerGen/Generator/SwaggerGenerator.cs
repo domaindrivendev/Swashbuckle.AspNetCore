@@ -54,7 +54,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 Schemes = schemes,
                 Paths = paths,
                 Definitions = schemaRegistry.Definitions,
-                SecurityDefinitions = _settings.SecurityDefinitions
+                SecurityDefinitions = _settings.SecurityDefinitions,
+                Security = _settings.SecurityRequirements
             };
 
             var filterContext = new DocumentFilterContext(

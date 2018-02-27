@@ -77,6 +77,7 @@ namespace OAuth2Integration
                         { "writeAccess", "Access write operations" }
                     }
                 });
+
                 // Assign scope requirements to operations based on AuthorizeAttribute
                 c.OperationFilter<SecurityRequirementsOperationFilter>();
             });
