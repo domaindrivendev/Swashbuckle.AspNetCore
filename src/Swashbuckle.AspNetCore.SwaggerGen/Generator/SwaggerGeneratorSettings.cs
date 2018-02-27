@@ -14,6 +14,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             TagSelector = (apiDesc) => apiDesc.ControllerName();
             SortKeySelector = (apiDesc) => TagSelector(apiDesc);
             SecurityDefinitions = new Dictionary<string, SecurityScheme>();
+            SecurityRequirements = new List<IDictionary<string, IEnumerable<string>>>();
             OperationFilters = new List<IOperationFilter>();
             DocumentFilters = new List<IDocumentFilter>();
         }
@@ -32,6 +33,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public IDictionary<string, SecurityScheme> SecurityDefinitions { get; private set; }
 
+        public IList<IDictionary<string, IEnumerable<string>>> SecurityRequirements { get; private set; }
+
         public IList<IOperationFilter> OperationFilters { get; private set; }
 
         public IList<IDocumentFilter> DocumentFilters { get; private set; }
@@ -47,6 +50,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 SortKeySelector = SortKeySelector,
                 DescribeAllParametersInCamelCase = DescribeAllParametersInCamelCase,
                 SecurityDefinitions = SecurityDefinitions,
+                SecurityRequirements = SecurityRequirements,
                 OperationFilters = OperationFilters,
                 DocumentFilters = DocumentFilters
             };

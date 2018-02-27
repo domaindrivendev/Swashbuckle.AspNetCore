@@ -668,15 +668,16 @@ _NOTE: If you're using the SwaggerUI middleware, this filter can be used to disp
 
 ### Add Security Definitions and Requirements ###
 
-In Swagger, you can describe how your API is secured by defining one or more _Security Scheme's_ (e.g basic, api key, oauth etc.) and declaring which of those schemes are applicable globally OR for specific operations. For more details, take a look at the "securityDefinitions" and "security" fields in the [Swagger spec](http://swagger.io/specification/#swaggerObject).
+In Swagger, you can describe how your API is secured by defining one or more security schemes (e.g basic, api key, oauth2 etc.) and declaring which of those schemes are applicable globally OR for specific operations. For more details, take a look at the "securityDefinitions" and "security" fields in the [Swagger spec](http://swagger.io/specification/#swaggerObject).
 
-You can use some of the options described above to include security metadata in the generated _Swagger Document_. The example below adds an [OAuth 2.0](https://oauth.net/2/) definition to the global metadata and a corresponding _Operation Filter_ that uses the presence of an _AuthorizeAttribute_ to determine which operations the scheme applies to.
+In Swashbuckle, you can define schemes by invoking the `AddSecurityDefinition` method, providing a name and an instance of BasicAuthScheme, ApiKeyScheme or OAuth2Scheme. For example you can define an [OAuth 2.0 - implicit flow](https://oauth.net/2/) as follows:
 
 ```csharp
 // Startup.cs
 services.AddSwaggerGen(c =>
 {
     ...
+
     // Define the OAuth2.0 scheme that's in use (i.e. Implicit Flow)
     c.AddSecurityDefinition("oauth2", new OAuth2Scheme
     {
@@ -689,52 +690,58 @@ services.AddSwaggerGen(c =>
             { "writeAccess", "Access write operations" }
         }
     });
-    // Assign scope requirements to operations based on AuthorizeAttribute
-    c.OperationFilter<SecurityRequirementsOperationFilter>();
 };
+```
 
+__NOTE__: In addition to defining a scheme, you also need to indicate which operations that scheme is applicable to. You can apply schemes globally (i.e. to ALL operations) through the `AddSecurityRequirement` method. The example below indicates that the scheme called "oauth2" should be applied to all operations, and that the "readAccess" and "writeAccess" scopes are required. When applying schemes of type other than "oauth2", the array of scopes MUST be empty.
+
+```csharp
+c.AddSwaggerGen(c =>
+{
+	...
+
+    c.AddSecurityRequirement(new Dictionary<string, IEnumerable<string>>
+    {
+        { "oauth2", new[] { "readAccess", "writeAccess" } }
+    });
+})
+```
+
+If you have schemes that only apply to specific operations, you can apply them through an `OperationFilter`. For example, the following filter adds OAuth2 requirements based on the presence of the `AuthorizeAttribute`:
+
+```csharp
 // SecurityRequirementsOperationFilter.cs
 public class SecurityRequirementsOperationFilter : IOperationFilter
 {
-    private readonly IOptions<AuthorizationOptions> authorizationOptions;
-
-    public SecurityRequirementsOperationFilter(IOptions<AuthorizationOptions> authorizationOptions)
-    {
-        this.authorizationOptions = authorizationOptions;
-    }
-
     public void Apply(Operation operation, OperationFilterContext context)
     {
-        var controllerPolicies = context.ApiDescription.ControllerAttributes()
+        // Policy names map to scopes
+        var controllerScopes = context.ApiDescription.ControllerAttributes()
             .OfType<AuthorizeAttribute>()
             .Select(attr => attr.Policy);
-        var actionPolicies = context.ApiDescription.ActionAttributes()
-            .OfType<AuthorizeAttribute>()
-            .Select(attr => attr.Policy);
-        var policies = controllerPolicies.Union(actionPolicies).Distinct();
-        var requiredClaimTypes = policies
-            .Select(x => this.authorizationOptions.Value.GetPolicy(x))
-            .SelectMany(x => x.Requirements)
-            .OfType<ClaimsAuthorizationRequirement>()
-            .Select(x => x.ClaimType);
 
-        if (requiredClaimTypes.Any())
+        var actionScopes = context.ApiDescription.ActionAttributes()
+            .OfType<AuthorizeAttribute>()
+            .Select(attr => attr.Policy);
+
+        var requiredScopes = controllerScopes.Union(actionScopes).Distinct();
+
+        if (requiredScopes.Any())
         {
             operation.Responses.Add("401", new Response { Description = "Unauthorized" });
             operation.Responses.Add("403", new Response { Description = "Forbidden" });
 
             operation.Security = new List<IDictionary<string, IEnumerable<string>>>();
-            operation.Security.Add(
-                new Dictionary<string, IEnumerable<string>>
-                {
-                    { "oauth2", requiredClaimTypes }
-                });
+            operation.Security.Add(new Dictionary<string, IEnumerable<string>>
+            {
+                { "oauth2", requiredScopes }
+            });
         }
     }
 }
 ```
 
-_NOTE: If you're using the SwaggerUI middleware, you can enable interactive OAuth2.0 flows that are powered by the emitted security metadata. See [Enabling OAuth2.0 Flows](#enable-oauth20-flows) for more details._
+__NOTE__: If you're using the SwaggerUI middleware, you can enable interactive OAuth2.0 flows that are powered by the emitted security metadata. See [Enabling OAuth2.0 Flows](#enable-oauth20-flows) for more details.
 
 ## Swashbuckle.AspNetCore.SwaggerUI ##
 

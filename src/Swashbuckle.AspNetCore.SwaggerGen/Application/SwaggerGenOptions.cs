@@ -110,6 +110,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         }
 
         /// <summary>
+        /// Adds a global security requirement
+        /// </summary>
+        /// <param name="requirement">
+        /// A dictionary of required schemes (logical AND). Keys must correspond to schemes defined through AddSecurityDefinition
+        /// If the scheme is of type "oauth2", then the value is a list of scopes, otherwise it MUST be an empty array
+        /// </param>
+        public void AddSecurityRequirement(IDictionary<string, IEnumerable<string>> requirement)
+        {
+            _swaggerGeneratorSettings.SecurityRequirements.Add(requirement);
+        }
+
+
+
+        /// <summary>
         /// Provide a custom mapping, for a given type, to the Swagger-flavored JSONSchema
         /// </summary>
         /// <param name="type">System type</param>
