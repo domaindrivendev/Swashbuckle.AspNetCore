@@ -344,6 +344,11 @@ namespace Swashbuckle.AspNetCore.Swagger
 
     public class Response
     {
+        public Response()
+        {
+            Extensions = new Dictionary<string, object>();
+        }
+
         public string Description { get; set; }
 
         public Schema Schema { get; set; }
