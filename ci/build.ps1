@@ -7,12 +7,6 @@ if ($env:APPVEYOR -eq "True" -and $env:APPVEYOR_REPO_TAG -eq "false") {
 # Target folder for build artifacts (e.g. nugets)
 $ArtifactsPath = "$(pwd)" + "\artifacts"
 
-function bower-install {
-  Push-Location src/Swashbuckle.AspNetCore.SwaggerUI
-  bower install
-  Pop-Location
-}
-
 function dotnet-build {
   if ($VersionSuffix.Length -gt 0) {
     dotnet build -c Release --version-suffix $VersionSuffix
@@ -31,7 +25,7 @@ function dotnet-pack {
   }
 }
 
-@( "bower-install", "dotnet-build", "dotnet-pack" ) | ForEach-Object {
+@( "dotnet-build", "dotnet-pack" ) | ForEach-Object {
   echo ""
   echo "***** $_ *****"
   echo ""

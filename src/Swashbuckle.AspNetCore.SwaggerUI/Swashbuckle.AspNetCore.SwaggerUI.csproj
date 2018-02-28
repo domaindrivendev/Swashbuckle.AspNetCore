@@ -18,8 +18,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="bower_components\swagger-ui\dist\**\*.*" Exclude="bower_components\swagger-ui\dist\**\*.map" />
     <EmbeddedResource Include="index.html" />
+    <EmbeddedResource Include="node_modules/swagger-ui-dist/**/*" Exclude="node_modules/swagger-ui-dist/**/*.map" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,4 +28,8 @@
     <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="1.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
   </ItemGroup>
+
+  <Target Name="NpmInstall" BeforeTargets="Build">
+    <Exec Command="npm install" />
+  </Target>
 </Project>
