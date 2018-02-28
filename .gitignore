@@ -3,8 +3,7 @@
 .vs/
 .vscode/
 .idea*
-bower_components/
-project.lock.json
+node_modules/
 *.user
 *.pdb
 artifacts/

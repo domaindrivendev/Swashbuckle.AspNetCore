@@ -1,9 +1,8 @@
 {
   "name": "swashbuckle",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "swagger-ui": "3.10.0"
-  },
-  "exportsOverride": {
+    "swagger-ui-dist": "3.11.0"
   }
 }
