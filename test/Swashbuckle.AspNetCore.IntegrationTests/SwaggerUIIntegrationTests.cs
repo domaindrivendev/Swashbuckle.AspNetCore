@@ -13,10 +13,14 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         {
             var client = new TestSite(typeof(Basic.Startup)).BuildClient();
 
-            var response = await client.GetAsync("/"); // Basic is configured to serve UI at root
-            var content = await response.Content.ReadAsStringAsync();
+            var indexResponse = await client.GetAsync("/"); // Basic is configured to serve UI at root
+            var jsResponse = await client.GetAsync("/swagger-ui.js");
+            var cssResponse = await client.GetAsync("/swagger-ui.css");
 
-            Assert.Contains("SwaggerUIBundle", content);
+            var indexContent = await indexResponse.Content.ReadAsStringAsync();
+            Assert.Contains("SwaggerUIBundle", indexContent);
+            Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, cssResponse.StatusCode);
         }
 
         [Fact]
