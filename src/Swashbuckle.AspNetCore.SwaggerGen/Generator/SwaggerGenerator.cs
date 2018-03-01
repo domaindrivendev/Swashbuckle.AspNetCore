@@ -168,12 +168,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var location = GetParameterLocation(apiDescription, paramDescription);
 
-            if (location == "path" && !paramDescription.IsRequired())
-                throw new NotSupportedException(string.Format(
-                    "Route contains optional parameters for action - {0}. " +
-                    "Optional route parameters are not allowed in Swagger 2.0",
-                    apiDescription.ActionDescriptor.DisplayName));
-
             var name = _settings.DescribeAllParametersInCamelCase
                 ? paramDescription.Name.ToCamelCase()
                 : paramDescription.Name;
@@ -193,7 +187,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 Name = name,
                 In = location,
-                Required = paramDescription.IsRequired()
+                Required = (location == "path") || paramDescription.IsRequired()
             };
 
             if (schema == null)

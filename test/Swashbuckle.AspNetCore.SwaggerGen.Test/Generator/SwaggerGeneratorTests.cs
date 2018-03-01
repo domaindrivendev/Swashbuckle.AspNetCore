@@ -215,6 +215,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
+        [InlineData("collection/{param}")]
+        [InlineData("collection/{param?}")]
+        public void GetSwagger_SetsParameterRequired_ForRequiredAndOptionalPathParameters(string routeTemplate)
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add("GET", routeTemplate, nameof(FakeActions.AcceptsStringFromRoute)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var param = swagger.Paths["/collection/{param}"].Get.Parameters.First();
+            Assert.True(param.Required);
+        }
+
+        [Theory]
         [InlineData(nameof(FakeActions.AcceptsStringFromQuery), false)]
         [InlineData(nameof(FakeActions.AcceptsIntegerFromQuery), true)]
         public void GetSwagger_SetsParameterRequired_ForNonNullableActionParams(
@@ -568,20 +582,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 "Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllers+NotAnnotated.AcceptsNothing (Swashbuckle.AspNetCore.SwaggerGen.Test)," +
                 "Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllers+NotAnnotated.AcceptsStringFromQuery (Swashbuckle.AspNetCore.SwaggerGen.Test). " +
                 "Actions require unique method/path combination for Swagger 2.0",
-                exception.Message);
-        }
-
-        [Fact]
-        public void GetSwagger_ThrowsInformativeException_IfRouteContainsOptionalParameters()
-        {
-            var subject = Subject(setupApis: apis => apis
-                .Add("GET", "collection/{param?}", nameof(FakeActions.AcceptsStringFromRoute)));
-
-            var exception = Assert.Throws<NotSupportedException>(() => subject.GetSwagger("v1"));
-            Assert.Equal(
-                "Route contains optional parameters for action - " +
-                "Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllers+NotAnnotated.AcceptsStringFromRoute (Swashbuckle.AspNetCore.SwaggerGen.Test). " +
-                "Optional route parameters are not allowed in Swagger 2.0",
                 exception.Message);
         }
 
