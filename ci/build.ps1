@@ -7,6 +7,12 @@ if ($env:APPVEYOR -eq "True" -and $env:APPVEYOR_REPO_TAG -eq "false") {
 # Target folder for build artifacts (e.g. nugets)
 $ArtifactsPath = "$(pwd)" + "\artifacts"
 
+function install-swagger-ui {
+  Push-Location src/Swashbuckle.AspNetCore.SwaggerUI
+  npm install
+  Pop-Location
+}
+
 function dotnet-build {
   if ($VersionSuffix.Length -gt 0) {
     dotnet build -c Release --version-suffix $VersionSuffix
@@ -25,7 +31,7 @@ function dotnet-pack {
   }
 }
 
-@( "dotnet-build", "dotnet-pack" ) | ForEach-Object {
+@( "install-swagger-ui", "dotnet-build", "dotnet-pack" ) | ForEach-Object {
   echo ""
   echo "***** $_ *****"
   echo ""
