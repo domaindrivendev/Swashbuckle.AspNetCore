@@ -490,7 +490,7 @@ By default, actions are ordered by assigned tag (see above) before they're group
 services.AddSwaggerGen(c =>
 {
     ...
-    c.OrderActionsBy((apiDesc) => $"{apiDesc.ControllerName()}_{apiDesc.HttpMethod}");
+    c.OrderActionsBy((apiDesc) => $"{apiDesc.ActionDescriptor.RouteValues["controller"]}_{apiDesc.HttpMethod}");
 };
 ```
 
