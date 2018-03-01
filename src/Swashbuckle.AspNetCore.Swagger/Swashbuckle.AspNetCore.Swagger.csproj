@@ -1,5 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\..\version.props" />
+
   <PropertyGroup>
     <Description>Middleware to expose Swagger JSON endpoints from API's built on ASP.NET Core</Description>
     <TargetFrameworks>net451;netstandard1.6</TargetFrameworks>
@@ -10,7 +12,6 @@
     <SignAssembly>true</SignAssembly>
     <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
     <PackageId>Swashbuckle.AspNetCore.Swagger</PackageId>
-    <VersionPrefix>2.1.0</VersionPrefix>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>
     <PackageProjectUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/domaindrivendev/Swashbuckle.AspNetCore/master/LICENSE</PackageLicenseUrl>
