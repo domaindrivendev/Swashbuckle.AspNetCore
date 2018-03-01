@@ -72,6 +72,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         }
 
         /// <summary>
+        /// Merge actions that have conflicting HTTP methods and paths (must be unique for Swagger 2.0)
+        /// </summary>
+        /// <param name="resolver"></param>
+        public void ResolveConflictingActions(Func<IEnumerable<ApiDescription>, ApiDescription> resolver)
+        {
+            _swaggerGeneratorSettings.ConflictingActionsResolver = resolver;
+        }
+
+        /// <summary>
         /// Provide a custom strategy for assigning a default "tag" to actions
         /// </summary>
         /// <param name="tagSelector"></param>

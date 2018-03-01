@@ -88,15 +88,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         "Actions require an explicit HttpMethod binding for Swagger 2.0",
                         group.First().ActionDescriptor.DisplayName));
 
-                if (group.Count() > 1)
+                if (group.Count() > 1 && _settings.ConflictingActionsResolver == null)
                     throw new NotSupportedException(string.Format(
                         "HTTP method \"{0}\" & path \"{1}\" overloaded by actions - {2}. " +
-                        "Actions require unique method/path combination for Swagger 2.0",
+                        "Actions require unique method/path combination for Swagger 2.0. Use ConflictingActionsResolver as a workaround",
                         httpMethod,
                         group.First().RelativePathSansQueryString(),
                         string.Join(",", group.Select(apiDesc => apiDesc.ActionDescriptor.DisplayName))));
 
-                var apiDescription = group.Single();
+                var apiDescription = (group.Count() > 1) ? _settings.ConflictingActionsResolver(group) : group.Single();
 
                 switch (httpMethod)
                 {

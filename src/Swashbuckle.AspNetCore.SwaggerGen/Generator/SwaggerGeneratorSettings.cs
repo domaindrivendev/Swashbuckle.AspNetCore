@@ -25,6 +25,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public bool IgnoreObsoleteActions { get; set; }
 
+        public Func<IEnumerable<ApiDescription>, ApiDescription> ConflictingActionsResolver { get; set; }
+
         public Func<ApiDescription, string> TagSelector { get; set; }
 
         public Func<ApiDescription, string> SortKeySelector { get; set; }
@@ -46,6 +48,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 SwaggerDocs = SwaggerDocs,
                 DocInclusionPredicate = DocInclusionPredicate,
                 IgnoreObsoleteActions = IgnoreObsoleteActions,
+                ConflictingActionsResolver = ConflictingActionsResolver,
                 TagSelector = TagSelector,
                 SortKeySelector = SortKeySelector,
                 DescribeAllParametersInCamelCase = DescribeAllParametersInCamelCase,

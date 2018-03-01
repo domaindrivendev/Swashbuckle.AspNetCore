@@ -217,7 +217,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Theory]
         [InlineData("collection/{param}")]
         [InlineData("collection/{param?}")]
-        public void GetSwagger_SetsParameterRequired_ForRequiredAndOptionalPathParameters(string routeTemplate)
+        public void GetSwagger_SetsParameterRequired_ForRequiredOrOptionalPathParameters(string routeTemplate)
         {
             var subject = Subject(setupApis: apis => apis
                 .Add("GET", routeTemplate, nameof(FakeActions.AcceptsStringFromRoute)));
@@ -556,7 +556,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
 
         [Fact]
-        public void GetSwagger_ThrowsInformativeException_IfHttpMethodAttributeNotPresent()
+        public void GetSwagger_ThrowsInformativeException_IfActionsHaveNoHttpBinding()
         {
             var subject = Subject(setupApis: apis => apis
                 .Add(null, "collection", nameof(FakeActions.AcceptsNothing)));
@@ -569,7 +569,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void GetSwagger_ThrowsInformativeException_IfHttpMethodAndPathAreOverloaded()
+        public void GetSwagger_ThrowsInformativeException_IfActionsHaveConflictingHttpMethodAndPath()
         {
             var subject = Subject(setupApis: apis => apis
                 .Add("GET", "collection", nameof(FakeActions.AcceptsNothing))
@@ -581,8 +581,24 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 "HTTP method \"GET\" & path \"collection\" overloaded by actions - " +
                 "Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllers+NotAnnotated.AcceptsNothing (Swashbuckle.AspNetCore.SwaggerGen.Test)," +
                 "Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllers+NotAnnotated.AcceptsStringFromQuery (Swashbuckle.AspNetCore.SwaggerGen.Test). " +
-                "Actions require unique method/path combination for Swagger 2.0",
+                "Actions require unique method/path combination for Swagger 2.0. Use ConflictingActionsResolver as a workaround",
                 exception.Message);
+        }
+
+        [Fact]
+        public void GetSwagger_MergesActionsWithConflictingHttpMethodAndPath_IfResolverIsProvidedWithSettings()
+        {
+            var subject = Subject(setupApis:
+                apis => apis
+                    .Add("GET", "collection", nameof(FakeActions.AcceptsNothing))
+                    .Add("GET", "collection", nameof(FakeActions.AcceptsStringFromQuery)),
+                configure: c => { c.ConflictingActionsResolver = (apiDescriptions) => apiDescriptions.First(); }
+            );
+
+            var swagger = subject.GetSwagger("v1");
+
+            var operation = swagger.Paths["/collection"].Get;
+            Assert.Null(operation.Parameters); // first one has no parameters
         }
 
         private SwaggerGenerator Subject(
