@@ -26,7 +26,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
                 return;
             }
 
-            RespondWithIndexHtml(httpContext.Response);
+            await RespondWithIndexHtml(httpContext.Response);
         }
 
         private bool RequestingSwaggerUIIndex(HttpRequest request)
@@ -35,7 +35,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             return (request.Method == "GET" && request.Path == indexPath);
         }
 
-        private async void RespondWithIndexHtml(HttpResponse response)
+        private async Task RespondWithIndexHtml(HttpResponse response)
         {
             response.StatusCode = 200;
             response.ContentType = "text/html";
