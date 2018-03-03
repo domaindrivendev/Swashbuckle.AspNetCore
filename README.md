@@ -805,6 +805,8 @@ app.UseSwaggerUI(c =>
 
 __NOTE:__ The `InjectOnCompleteJavaScript` and `InjectOnFailureJavaScript` options have been removed because the latest version of swagger-ui doesn't expose the neccessary hooks. Instead, it provides a [flexible customization system](https://github.com/swagger-api/swagger-ui/blob/master/docs/customization/overview.md) based on concepts and patterns from React and Redux. To leverage this, you'll need to provide a custom version of index.html as described [below](#customize-indexhtml). 
 
+The [custom index sample app](test/WebSites/CustomUIIndex/Swagger/index.html) demonstrates this approach, using the swagger-ui plugin system provide a custom topbar, and to hide the info component.
+
 ### Inject Custom CSS ###
 
 To tweak the look and feel, you can inject additional CSS stylesheets by adding them to your _wwwroot_ folder and specifying the relative paths in the middleware options:

@@ -23,6 +23,7 @@ namespace CustomUIIndex
             app.UseMvc();
 
             app.UseSwagger();
+
             app.UseSwaggerUI(c =>
             {
                 c.IndexStream = () => GetType().GetTypeInfo().Assembly

@@ -5,10 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Swagger\index.html" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Include="Swagger\index.html" />
   </ItemGroup>
 

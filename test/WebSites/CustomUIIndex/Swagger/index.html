@@ -71,30 +71,38 @@
 <script src="./swagger-ui-bundle.js"> </script>
 <script src="./swagger-ui-standalone-preset.js"> </script>
 <script>
-window.onload = function() {
-  var configObject = JSON.parse('%(ConfigObject)');
+  window.onload = function() {
+    var configObject = JSON.parse('%(ConfigObject)');
+    var oauthConfigObject = JSON.parse('%(OAuthConfigObject)');
 
-  // Create a swagger-ui plugin that hides the "info" component
-  // See https://github.com/swagger-api/swagger-ui/blob/master/docs/customization/plugin-api.md for more on swagger-ui customization
-  function HideInfoPlugin() {
-    return {
-      components: {
-        info: function () { return null; }
+    // Apply mandatory parameters
+    configObject.dom_id = "#swagger-ui";
+    configObject.presets = [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset];
+    configObject.layout = "StandaloneLayout";
+
+    // Use swagger-ui plugin system to provide custom Topbar, and to hide the info component
+    // See https://github.com/swagger-api/swagger-ui/blob/master/docs/customization/overview.md
+    configObject.plugins = [
+      function (system) {
+        return {
+          components: {
+            Topbar: function () {
+              var e = system.React.createElement;
+              return e("div", { id: "topbar" },
+                e("h1", null, "Example.com"));
+            },
+            info: function () { return null; }
+          }
+        }
       }
-    }
-  };
-  configObject.plugins = [HideInfoPlugin];
+    ];
 
-  // Apply mandatory parameters
-  configObject.dom_id = "#swagger-ui";
-  configObject.presets = [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset];
-  configObject.layout = "StandaloneLayout";
-  
-  // Build a system
-  const ui = SwaggerUIBundle(configObject);
+    // Build a system
+    const ui = SwaggerUIBundle(configObject);
 
-  window.ui = ui
-}
+    // Apply OAuth config
+    ui.initOAuth(oauthConfigObject);
+  }
 </script>
 </body>
 

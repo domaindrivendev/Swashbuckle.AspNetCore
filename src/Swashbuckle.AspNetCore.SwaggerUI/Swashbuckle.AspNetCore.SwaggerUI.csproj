@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="index.html" />
-    <EmbeddedResource Include="node_modules/swagger-ui-dist/**/*" Exclude="node_modules/swagger-ui-dist/**/*.map" />
+    <EmbeddedResource Include="node_modules/swagger-ui-dist/**/*" Exclude="node_modules/swagger-ui-dist/**/*.map;node_modules/swagger-ui-dist/index.html" />
   </ItemGroup>
 
   <ItemGroup>
