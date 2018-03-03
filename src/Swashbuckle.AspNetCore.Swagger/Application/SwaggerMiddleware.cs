@@ -52,7 +52,7 @@ namespace Swashbuckle.AspNetCore.Swagger
                 filter(swagger, httpContext.Request);
             }
 
-            RespondWithSwaggerJson(httpContext.Response, swagger);
+            await RespondWithSwaggerJson(httpContext.Response, swagger);
         }
 
         private bool RequestingSwaggerDocument(HttpRequest request, out string documentName)
@@ -67,14 +67,16 @@ namespace Swashbuckle.AspNetCore.Swagger
             return true;
         }
 
-        private void RespondWithSwaggerJson(HttpResponse response, SwaggerDocument swagger)
+        private async Task RespondWithSwaggerJson(HttpResponse response, SwaggerDocument swagger)
         {
             response.StatusCode = 200;
             response.ContentType = "application/json";
 
-            using (var writer = new StreamWriter(response.Body, new UTF8Encoding(false), 1024, true))
+            var jsonBuilder = new StringBuilder();
+            using (var writer = new StringWriter(jsonBuilder))
             {
                 _swaggerSerializer.Serialize(writer, swagger);
+                await response.WriteAsync(jsonBuilder.ToString(), new UTF8Encoding(false));
             }
         }
     }
