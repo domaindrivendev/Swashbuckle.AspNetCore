@@ -54,7 +54,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             var response = await client.GetAsync("/swagger/");
             var content = await response.Content.ReadAsStringAsync();
 
-            Assert.Contains("HideInfoPlugin", content);
+            Assert.Contains("Topbar", content);
         }
 
     }
