@@ -22,7 +22,6 @@ namespace Basic.Controllers
         }
     }
 
-    [SwaggerSchemaFilter(typeof(AddCartDefault))]
     public class Cart
     {
         public int Id { get; internal set; }

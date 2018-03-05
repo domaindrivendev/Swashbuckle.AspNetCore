@@ -38,13 +38,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             var swaggerResponse = await client.GetAsync(swaggerRequestUri);
 
             swaggerResponse.EnsureSuccessStatusCode();
-
             await AssertResponseDoesNotContainByteOrderMark(swaggerResponse);
-
-            // NOTE: the online swagger validator INCORRECTLY returns an error for the Swagger generated
-            // by the "Basic" sample Website. As a temporary workaround, bypass the valid swagger assertion
-            if (startupType == typeof(Basic.Startup)) return;
-
             await AssertValidSwaggerAsync(swaggerResponse);
         }
 

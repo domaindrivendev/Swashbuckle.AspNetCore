@@ -45,10 +45,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void GetOrRegister_ReturnsEnumSchema_ForEnumTypes()
         {
             var schema = Subject().GetOrRegister(typeof(AnEnum));
+
             Assert.Equal("integer", schema.Type);
             Assert.Equal("int32", schema.Format);
-            Assert.Contains(AnEnum.Value1, schema.Enum);
-            Assert.Contains(AnEnum.Value2, schema.Enum);
+            Assert.Equal(new List<object> { AnEnum.Value1, AnEnum.Value2, AnEnum.X }, schema.Enum);
         }
 
         [Theory]
@@ -237,7 +237,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var schema = Subject().GetOrRegister(typeof(JsonConvertedEnum));
 
             Assert.Equal("string", schema.Type);
-            Assert.Equal(new[] { "Value1", "Value2", "X" }, schema.Enum);
+            Assert.Equal(new List<object> { "Value1", "Value2", "X" }, schema.Enum);
         }
 
         [Fact]
@@ -251,7 +251,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var schema = subject.GetOrRegister(typeof(AnEnum));
 
             Assert.Equal("string", schema.Type);
-            Assert.Equal(new[] { "value1", "value2", "x" }, schema.Enum);
+            Assert.Equal(new List<object> { "value1", "value2", "x" }, schema.Enum);
         }
 
         [Fact]
@@ -336,7 +336,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var schema = subject.GetOrRegister(typeof(AnEnum));
 
             Assert.Equal("string", schema.Type);
-            Assert.Equal(new[] { "Value1", "Value2", "X" }, schema.Enum);
+            Assert.Equal(new List<object> { "Value1", "Value2", "X" }, schema.Enum);
         }
 
         [Fact]
@@ -351,7 +351,21 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var schema = subject.GetOrRegister(typeof(AnEnum));
 
             Assert.Equal("string", schema.Type);
-            Assert.Equal(new[] { "value1", "value2", "x" }, schema.Enum);
+            Assert.Equal(new List<object> { "value1", "value2", "x" }, schema.Enum);
+        }
+
+        [Fact]
+        public void GetOrRegister_SupportsOptionToUseReferencedDefinitionsForEnums()
+        {
+            var subject = Subject(c =>
+            {
+                c.UseReferencedDefinitionsForEnums = true;
+            });
+
+            var schema = subject.GetOrRegister(typeof(AnEnum));
+
+            Assert.NotNull(schema.Ref);
+            Assert.Contains(schema.Ref.Replace("#/definitions/", string.Empty), subject.Definitions.Keys);
         }
 
         [Fact]

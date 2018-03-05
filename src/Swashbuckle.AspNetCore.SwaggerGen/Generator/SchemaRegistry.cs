@@ -58,7 +58,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var createReference = !_settings.CustomTypeMappings.ContainsKey(type)
                 && type != typeof(object)
-                && (jsonContract is JsonObjectContract || jsonContract.IsSelfReferencingArrayOrDictionary());
+                && (// Type describes an object
+                    jsonContract is JsonObjectContract ||
+                    // Type is self-referencing
+                    jsonContract.IsSelfReferencingArrayOrDictionary() ||
+                    // Type is enum and opt-in flag set
+                    (type.IsEnumType() && _settings.UseReferencedDefinitionsForEnums));
 
             return createReference
                 ? CreateReferenceSchema(type, referencedTypes)

@@ -191,9 +191,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             };
 
             if (schema == null)
+            {
                 nonBodyParam.Type = "string";
+            }
             else
+            {
+                // In some cases (e.g. enum types), the schemaRegistry may return a reference instead of a
+                // full schema. Retrieve the full schema before populating the parameter description
+                var fullSchema = (schema.Ref != null)
+                    ? schemaRegistry.Definitions[schema.Ref.Replace("#/definitions/", string.Empty)]
+                    : schema;
+
                 nonBodyParam.PopulateFrom(schema);
+            }
 
             if (nonBodyParam.Type == "array")
                 nonBodyParam.CollectionFormat = "multi";
