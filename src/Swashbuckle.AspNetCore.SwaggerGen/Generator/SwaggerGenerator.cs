@@ -5,6 +5,8 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen.Annotations;
+using System.Reflection;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -46,6 +48,21 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 .GroupBy(apiDesc => apiDesc.RelativePathSansQueryString())
                 .ToDictionary(group => "/" + group.Key, group => CreatePathItem(group, schemaRegistry));
 
+            IList<Tag> tags = apiDescriptions
+                .Select(x => x.ControllerInfo())
+                .Select(x =>
+                {
+                    var attrib = x.GetCustomAttributes(false).OfType<SwaggerTagAttribute>().FirstOrDefault();
+                    if (attrib?.Name == "")
+                    {
+                        attrib.Name = x.Name;
+                    }
+                    return attrib != null ? attrib.Tag : new Tag() { Name = x.Name.Replace("Controller", "") };
+                })
+                .GroupBy(x => x.Name)
+                .Select(g => g.First())
+                .OrderBy(x => x.Name)
+                .ToList();
             var swaggerDoc = new SwaggerDocument
             {
                 Info = info,
@@ -53,6 +70,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 BasePath = basePath,
                 Schemes = schemes,
                 Paths = paths,
+                Tags = tags,
                 Definitions = schemaRegistry.Definitions,
                 SecurityDefinitions = _settings.SecurityDefinitions,
                 Security = _settings.SecurityRequirements

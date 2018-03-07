@@ -10,6 +10,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class ApiDescriptionExtensions
     {
+        public static TypeInfo ControllerInfo(this ApiDescription apiDescription)
+        {
+            var controllerActionDescriptor = apiDescription.ControllerActionDescriptor();
+            return controllerActionDescriptor?.ControllerTypeInfo;
+        }
         public static IEnumerable<object> ControllerAttributes(this ApiDescription apiDescription)
         {
             var controllerActionDescriptor = apiDescription.ControllerActionDescriptor();
