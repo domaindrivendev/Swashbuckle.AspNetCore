@@ -4,6 +4,7 @@ using System.Text;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Swashbuckle.AspNetCore.SwaggerUI
 {
@@ -59,9 +60,18 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             {
                 { "%(DocumentTitle)", _options.DocumentTitle },
                 { "%(HeadContent)", _options.HeadContent },
-                { "%(ConfigObject)", JsonConvert.SerializeObject(_options.ConfigObject) },
-                { "%(OAuthConfigObject)", JsonConvert.SerializeObject(_options.OAuthConfigObject) }
+                { "%(ConfigObject)", SerializeToJson(_options.ConfigObject) },
+                { "%(OAuthConfigObject)", SerializeToJson(_options.OAuthConfigObject) }
             };
+        }
+
+        private string SerializeToJson(JObject jObject)
+        {
+            return JsonConvert.SerializeObject(jObject, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Include,
+                Formatting = Formatting.None
+            });
         }
     }
 }
