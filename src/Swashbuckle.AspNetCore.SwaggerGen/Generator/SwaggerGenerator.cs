@@ -46,6 +46,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 .GroupBy(apiDesc => apiDesc.RelativePathSansQueryString())
                 .ToDictionary(group => "/" + group.Key, group => CreatePathItem(group, schemaRegistry));
 
+            var securityDefinitions = _settings.SecurityDefinitions;
+            var securityRequirements = _settings.SecurityRequirements;
+
             var swaggerDoc = new SwaggerDocument
             {
                 Info = info,
@@ -54,8 +57,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 Schemes = schemes,
                 Paths = paths,
                 Definitions = schemaRegistry.Definitions,
-                SecurityDefinitions = _settings.SecurityDefinitions,
-                Security = _settings.SecurityRequirements
+                SecurityDefinitions = securityDefinitions.Any() ? securityDefinitions : null,
+                Security = securityRequirements.Any() ? securityRequirements : null
             };
 
             var filterContext = new DocumentFilterContext(
