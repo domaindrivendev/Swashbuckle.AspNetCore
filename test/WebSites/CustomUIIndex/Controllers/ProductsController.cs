@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MultipleVersions.V1
+namespace CustomUIIndex.Controllers
 {
-    [ApiVersion("1")]
-    [ApiVersion("2")]
-    [Route("v{version:apiVersion}/products")]
+    [Route("/products")]
     [Produces("application/json")]
     public class ProductsController
     {

@@ -1,13 +1,11 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MultipleVersions.V1
+namespace CustomUIConfig.Controllers
 {
-    [ApiVersion("1")]
-    [ApiVersion("2")]
-    [Route("v{version:apiVersion}/products")]
+    [Route("/products")]
     [Produces("application/json")]
-    public class ProductsController
+    public class ProdutcsController
     {
         [HttpGet]
         public IEnumerable<Product> GetAll()
