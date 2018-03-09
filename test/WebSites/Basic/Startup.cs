@@ -49,6 +49,9 @@ namespace Basic
                 c.OperationFilter<FormDataOperationFilter>();
 
                 c.DescribeAllEnumsAsStrings();
+
+                c.SchemaFilter<ExamplesSchemaFilter>();
+
                 //c.DescribeAllParametersInCamelCase();
             });
 

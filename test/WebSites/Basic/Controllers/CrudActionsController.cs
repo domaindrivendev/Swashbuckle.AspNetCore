@@ -25,9 +25,9 @@ namespace Basic.Controllers
         /// <param name="product"></param>
         /// <returns></returns>
         [HttpPost]
-        public int Create([FromBody, Required]Product product)
+        public Product Create([FromBody, Required]Product product)
         {
-            return 1;
+            return product;
         }
 
         /// <summary>

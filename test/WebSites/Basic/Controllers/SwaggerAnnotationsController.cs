@@ -7,7 +7,6 @@ namespace Basic.Controllers
     public class SwaggerAnnotationsController
     {
         [SwaggerOperation("CreateCart")]
-        [SwaggerOperationFilter(typeof(AddCreateCartResponseExamples))]
         [HttpPost("/carts")]
         public Cart Create([FromBody]Cart cart)
         {
