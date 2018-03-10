@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using IdentityServer4.Models;
-using IdentityServer4.Services.InMemory;
+using IdentityServer4.Test;
 
 namespace OAuth2Integration.AuthServer
 {
@@ -13,10 +13,13 @@ namespace OAuth2Integration.AuthServer
                 AllowAccessTokensViaBrowser = true,
                 AllowedGrantTypes = GrantTypes.Implicit,
                 AllowedScopes = new[] { "readAccess", "writeAccess" },
-                ClientId = "swagger-ui",
-                ClientName = "Swagger UI",
-                ClientSecrets = new[] { new Secret("swagger-ui-secret".Sha256()) },
-                RedirectUris = new[] { "http://localhost:50581/resource-server/swagger/o2c.html" }
+                ClientId = "test-id",
+                ClientName = "test-app",
+                ClientSecrets = new[] { new Secret("test-secret".Sha256()) },
+                RedirectUris = new[] {
+                    "http://localhost:50581/resource-server/swagger/oauth2-redirect.html", // IIS Express
+                    "http://localhost:5000/resource-server/swagger/oauth2-redirect.html", // Kestrel
+                }
             };
         }
 
@@ -34,16 +37,15 @@ namespace OAuth2Integration.AuthServer
             };
         }
 
-        internal static List<InMemoryUser> Users()
+        internal static List<TestUser> TestUsers()
         {
-            return new List<InMemoryUser>
+            return new List<TestUser>
             {
-                new InMemoryUser
+                new TestUser
                 {
-                    Subject = "joebloggs",
+                    SubjectId = "joebloggs",
                     Username = "joebloggs",
-                    Password = "pass123",
-                    Enabled = true
+                    Password = "pass123"
                 }
             };
         }

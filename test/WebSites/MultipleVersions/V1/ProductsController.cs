@@ -18,12 +18,6 @@ namespace MultipleVersions.V1
                 new Product { Id = 2, Description = "Another product" },
             };
         }
-
-        [HttpGet("{id}")]
-        public Product GetById(int id)
-        {
-            return new Product { Id = id, Description = "A product" };
-        }
     }
 
     public class Product

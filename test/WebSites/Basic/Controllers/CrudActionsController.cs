@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.Serialization;
 
 namespace Basic.Controllers
 {
@@ -24,9 +25,9 @@ namespace Basic.Controllers
         /// <param name="product"></param>
         /// <returns></returns>
         [HttpPost]
-        public int Create([FromBody, Required]Product product)
+        public Product Create([FromBody, Required]Product product)
         {
-            return 1;
+            return product;
         }
 
         /// <summary>
@@ -35,7 +36,7 @@ namespace Basic.Controllers
         /// <param name="keywords">A list of search terms</param>
         /// <returns></returns>
         [HttpGet]
-        public IEnumerable<Product> Search([FromQuery(Name = "kw")]string keywords = null)
+        public IEnumerable<Product> Search([FromQuery(Name = "kw")]string keywords)
         {
             return new[]
             {
@@ -88,7 +89,6 @@ namespace Basic.Controllers
     public enum ProductStatus
     {
         All = 0,
-        [Display(Name = "Out Of Stock")]
         OutOfStock = 1,
         InStock = 2
     }

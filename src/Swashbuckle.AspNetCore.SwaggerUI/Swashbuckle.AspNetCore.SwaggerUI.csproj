@@ -1,7 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\..\version.props" />
+
   <PropertyGroup>
-    <Description>Middleware to expose an embedded version of the swagger-ui from an ASP.NET Core application</Description>
+    <Description>Middleware to expose an embedded version of the swagger-ui 3 from an ASP.NET Core application</Description>
     <TargetFrameworks>net451;netstandard1.6</TargetFrameworks>
     <NoWarn>$(NoWarn);1591</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -17,24 +19,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="bower_components\swagger-ui\dist\**\*.*;Template\index.html" Exclude="bin\**;obj\**;**\*.xproj;packages\**;@(EmbeddedResource)" />
+    <EmbeddedResource Include="index.html" />
+    <EmbeddedResource Include="node_modules/swagger-ui-dist/**/*" Exclude="node_modules/swagger-ui-dist/**/*.map;node_modules/swagger-ui-dist/index.html" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Routing" Version="1.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="1.0.0" />
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="1.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Routing" Version="1.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="1.0.4" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="1.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
-    <Reference Include="System.Xml" />
-    <Reference Include="System" />
-    <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
-    <PackageReference Include="System.Xml.XPath" Version="4.0.0" />
-  </ItemGroup>
-
+  <Target Name="NpmInstall" BeforeTargets="Build">
+    <Exec Command="npm install" />
+  </Target>
 </Project>

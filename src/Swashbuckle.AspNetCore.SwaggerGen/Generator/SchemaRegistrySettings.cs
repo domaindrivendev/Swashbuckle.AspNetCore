@@ -19,6 +19,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public bool DescribeStringEnumsInCamelCase { get; set; }
 
+        public bool UseReferencedDefinitionsForEnums { get; set; }
+
         public Func<Type, string> SchemaIdSelector { get; set; }
 
         public bool IgnoreObsoleteProperties { get; set; }
@@ -32,6 +34,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 CustomTypeMappings = CustomTypeMappings,
                 DescribeAllEnumsAsStrings = DescribeAllEnumsAsStrings,
                 DescribeStringEnumsInCamelCase = DescribeStringEnumsInCamelCase,
+                UseReferencedDefinitionsForEnums = UseReferencedDefinitionsForEnums,
                 IgnoreObsoleteProperties = IgnoreObsoleteProperties,
                 SchemaIdSelector = SchemaIdSelector,
                 SchemaFilters = SchemaFilters

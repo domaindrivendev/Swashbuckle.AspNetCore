@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using Xunit.Abstractions;
@@ -22,8 +23,8 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 
         [Theory]
         [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
-        [InlineData(typeof(CustomIndexHtml.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(CustomUIConfig.Startup), "/swagger/v1/swagger.json")]
+        [InlineData(typeof(CustomUIIndex.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(GenericControllers.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(MultipleVersions.Startup), "/swagger/v2/swagger.json")]
         [InlineData(typeof(OAuth2Integration.Startup), "/resource-server/swagger/v1/swagger.json")]
@@ -37,12 +38,28 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             var swaggerResponse = await client.GetAsync(swaggerRequestUri);
 
             swaggerResponse.EnsureSuccessStatusCode();
-
-            // NOTE: the online swagger validator INCORRECTLY returns an error for the Swagger generated
-            // by the "Basic" sample Website. As a temporary workaround, bypass the valid swagger assertion
-            if (startupType == typeof(Basic.Startup)) return;
-
+            await AssertResponseDoesNotContainByteOrderMark(swaggerResponse);
             await AssertValidSwaggerAsync(swaggerResponse);
+        }
+
+        private async Task AssertResponseDoesNotContainByteOrderMark(HttpResponseMessage swaggerResponse)
+        {
+            var responseAsByteArray = await swaggerResponse.Content.ReadAsByteArrayAsync();
+            var bomByteArray = Encoding.UTF8.GetPreamble();
+
+            var byteIndex = 0;
+            var doesContainBom = true;
+            while (byteIndex < bomByteArray.Length && doesContainBom)
+            {
+                if (bomByteArray[byteIndex] != responseAsByteArray[byteIndex])
+                {
+                    doesContainBom = false;
+                }
+
+                byteIndex += 1;
+            }
+
+            Assert.False(doesContainBom);
         }
 
         private async Task AssertValidSwaggerAsync(HttpResponseMessage swaggerResponse)

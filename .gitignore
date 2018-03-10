@@ -3,11 +3,11 @@
 .vs/
 .vscode/
 .idea*
-bower_components/
-project.lock.json
+node_modules/
 *.user
 *.pdb
 artifacts/
 *.nuget.props
 .DS_Store
 Thumbs.db
+test/WebSites/CliExample/wwwroot/api-docs/v1/*.json

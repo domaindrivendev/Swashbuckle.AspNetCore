@@ -72,6 +72,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         }
 
         /// <summary>
+        /// Merge actions that have conflicting HTTP methods and paths (must be unique for Swagger 2.0)
+        /// </summary>
+        /// <param name="resolver"></param>
+        public void ResolveConflictingActions(Func<IEnumerable<ApiDescription>, ApiDescription> resolver)
+        {
+            _swaggerGeneratorSettings.ConflictingActionsResolver = resolver;
+        }
+
+        /// <summary>
         /// Provide a custom strategy for assigning a default "tag" to actions
         /// </summary>
         /// <param name="tagSelector"></param>
@@ -110,6 +119,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         }
 
         /// <summary>
+        /// Adds a global security requirement
+        /// </summary>
+        /// <param name="requirement">
+        /// A dictionary of required schemes (logical AND). Keys must correspond to schemes defined through AddSecurityDefinition
+        /// If the scheme is of type "oauth2", then the value is a list of scopes, otherwise it MUST be an empty array
+        /// </param>
+        public void AddSecurityRequirement(IDictionary<string, IEnumerable<string>> requirement)
+        {
+            _swaggerGeneratorSettings.SecurityRequirements.Add(requirement);
+        }
+
+
+
+        /// <summary>
         /// Provide a custom mapping, for a given type, to the Swagger-flavored JSONSchema
         /// </summary>
         /// <param name="type">System type</param>
@@ -143,6 +166,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public void DescribeStringEnumsInCamelCase()
         {
             _schemaRegistrySettings.DescribeStringEnumsInCamelCase = true;
+        }
+
+        /// <summary>
+        /// Use referenced definitions for enum types within body parameter and response schemas
+        /// </summary>
+        public void UseReferencedDefinitionsForEnums()
+        {
+            _schemaRegistrySettings.UseReferencedDefinitionsForEnums = true;
         }
 
         /// <summary>

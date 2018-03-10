@@ -92,13 +92,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             // PUT collection/{id}
             operation = swagger.Paths["/collection/{id}"].Put;
             Assert.NotNull(operation);
-            Assert.Equal(new[] { "application/json", "text/json" }, operation.Consumes.ToArray());
+            Assert.Equal(new[] { "application/json", "text/json", "application/*+json" }, operation.Consumes.ToArray());
             Assert.Empty(operation.Produces.ToArray());
             Assert.Null(operation.Deprecated);
             // POST collection
             operation = swagger.Paths["/collection"].Post;
             Assert.NotNull(operation);
-            Assert.Equal(new[] { "application/json", "text/json" }, operation.Consumes.ToArray());
+            Assert.Equal(new[] { "application/json", "text/json", "application/*+json" }, operation.Consumes.ToArray());
             Assert.Empty(operation.Produces.ToArray());
             Assert.Null(operation.Deprecated);
             // DELETE collection/{id}
@@ -110,7 +110,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             // PATCH collection
             operation = swagger.Paths["/collection/{id}"].Patch;
             Assert.NotNull(operation);
-            Assert.Equal(new[] { "application/json", "text/json" }, operation.Consumes.ToArray());
+            Assert.Equal(new[] { "application/json", "text/json", "application/*+json" }, operation.Consumes.ToArray());
             Assert.Empty(operation.Produces.ToArray());
             Assert.Null(operation.Deprecated);
         }
@@ -217,7 +217,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Theory]
         [InlineData("collection/{param}")]
         [InlineData("collection/{param?}")]
-        public void GetSwagger_SetsParameterRequired_ForAllRouteParams(string routeTemplate)
+        public void GetSwagger_SetsParameterRequired_ForRequiredOrOptionalPathParameters(string routeTemplate)
         {
             var subject = Subject(setupApis: apis => apis
                 .Add("GET", routeTemplate, nameof(FakeActions.AcceptsStringFromRoute)));
@@ -225,20 +225,38 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var swagger = subject.GetSwagger("v1");
 
             var param = swagger.Paths["/collection/{param}"].Get.Parameters.First();
-            Assert.Equal(true, param.Required);
+            Assert.True(param.Required);
         }
 
         [Theory]
-        [InlineData(nameof(FakeActions.AcceptsStringFromQuery))]
-        [InlineData(nameof(FakeActions.AcceptsStringFromHeader))]
-        public void GetSwagger_SetsParameterRequiredFalse_ForQueryAndHeaderParams(string actionFixtureName)
+        [InlineData(nameof(FakeActions.AcceptsStringFromQuery), false)]
+        [InlineData(nameof(FakeActions.AcceptsIntegerFromQuery), true)]
+        public void GetSwagger_SetsParameterRequired_ForNonNullableActionParams(
+            string actionFixtureName, bool expectedRequired)
         {
             var subject = Subject(setupApis: apis => apis.Add("GET", "collection", actionFixtureName));
 
             var swagger = subject.GetSwagger("v1");
 
             var param = swagger.Paths["/collection"].Get.Parameters.First();
-            Assert.Equal(false, param.Required);
+            Assert.Equal(expectedRequired, param.Required);
+        }
+
+        [Theory]
+        [InlineData("Property2", false)] // DateTime
+        [InlineData("Property1", true)] // bool
+        [InlineData("Property4", true)] // string with RequiredAttribute
+        public void GetSwagger_SetsParameterRequired_ForNonNullableOrExplicitlyRequiredPropertyBasedParams(
+            string paramName, bool expectedRequired)
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add("GET", "collection", nameof(FakeActions.AcceptsComplexTypeFromQuery)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var operation = swagger.Paths["/collection"].Get;
+            var param = swagger.Paths["/collection"].Get.Parameters.First(p => p.Name == paramName);
+            Assert.Equal(expectedRequired, param.Required);
         }
 
         [Fact]
@@ -255,23 +273,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("param", nonBodyParam.Name);
             Assert.Equal("path", nonBodyParam.In);
             Assert.Equal("string", nonBodyParam.Type);
-        }
-
-        [Fact]
-        public void GetSwagger_ExpandsOutQueryParameters_ForComplexParamsWithFromQueryAttribute()
-        {
-            var subject = Subject(setupApis: apis => apis
-                .Add("GET", "collection", nameof(FakeActions.AcceptsComplexTypeFromQuery)));
-
-            var swagger = subject.GetSwagger("v1");
-
-            var operation = swagger.Paths["/collection"].Get;
-            Assert.Equal(5, operation.Parameters.Count);
-            Assert.Equal("Property1", operation.Parameters[0].Name);
-            Assert.Equal("Property2", operation.Parameters[1].Name);
-            Assert.Equal("Property3", operation.Parameters[2].Name);
-            Assert.Equal("Property4", operation.Parameters[3].Name);
-            Assert.Equal("Property5", operation.Parameters[4].Name);
         }
 
         [Fact]
@@ -553,8 +554,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(true, param.Required);
         }
 
+
         [Fact]
-        public void GetSwagger_ThrowsInformativeException_IfHttpMethodAttributeNotPresent()
+        public void GetSwagger_ThrowsInformativeException_IfActionsHaveNoHttpBinding()
         {
             var subject = Subject(setupApis: apis => apis
                 .Add(null, "collection", nameof(FakeActions.AcceptsNothing)));
@@ -562,12 +564,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var exception = Assert.Throws<NotSupportedException>(() => subject.GetSwagger("v1"));
             Assert.Equal(
                 "Ambiguous HTTP method for action - Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllers+NotAnnotated.AcceptsNothing (Swashbuckle.AspNetCore.SwaggerGen.Test). " +
-                "Actions require an explicit HttpMethod binding for Swagger",
+                "Actions require an explicit HttpMethod binding for Swagger 2.0",
                 exception.Message);
         }
 
         [Fact]
-        public void GetSwagger_ThrowsInformativeException_IfHttpMethodAndPathAreOverloaded()
+        public void GetSwagger_ThrowsInformativeException_IfActionsHaveConflictingHttpMethodAndPath()
         {
             var subject = Subject(setupApis: apis => apis
                 .Add("GET", "collection", nameof(FakeActions.AcceptsNothing))
@@ -579,8 +581,24 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 "HTTP method \"GET\" & path \"collection\" overloaded by actions - " +
                 "Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllers+NotAnnotated.AcceptsNothing (Swashbuckle.AspNetCore.SwaggerGen.Test)," +
                 "Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllers+NotAnnotated.AcceptsStringFromQuery (Swashbuckle.AspNetCore.SwaggerGen.Test). " +
-                "Actions require unique method/path combination for Swagger",
+                "Actions require unique method/path combination for Swagger 2.0. Use ConflictingActionsResolver as a workaround",
                 exception.Message);
+        }
+
+        [Fact]
+        public void GetSwagger_MergesActionsWithConflictingHttpMethodAndPath_IfResolverIsProvidedWithSettings()
+        {
+            var subject = Subject(setupApis:
+                apis => apis
+                    .Add("GET", "collection", nameof(FakeActions.AcceptsNothing))
+                    .Add("GET", "collection", nameof(FakeActions.AcceptsStringFromQuery)),
+                configure: c => { c.ConflictingActionsResolver = (apiDescriptions) => apiDescriptions.First(); }
+            );
+
+            var swagger = subject.GetSwagger("v1");
+
+            var operation = swagger.Paths["/collection"].Get;
+            Assert.Null(operation.Parameters); // first one has no parameters
         }
 
         private SwaggerGenerator Subject(

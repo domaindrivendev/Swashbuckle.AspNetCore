@@ -19,21 +19,36 @@ namespace CustomUIConfig
 
         public void Configure(IApplicationBuilder app)
         {
-            app.UseStaticFiles();
-
-            app.UseMvc();
+            app.UseDeveloperExceptionPage();
 
             app.UseSwagger();
+
             app.UseSwaggerUI(c =>
             {
+                // Core
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
-                c.EnabledValidator();
-                c.BooleanValues(new object[] { 0, 1 });
-                c.DocExpansion("full");
-                c.SupportedSubmitMethods(new[] { "get", "post", "put", "patch" });
-                c.InjectOnCompleteJavaScript("/ext/custom-script.js");
+
+                // Display
+                c.DefaultModelExpandDepth(2);
+                c.DefaultModelRendering(ModelRendering.Model);
+                c.DefaultModelsExpandDepth(-1);
+                c.DisplayOperationId();
+                c.DisplayRequestDuration();
+                c.DocExpansion(DocExpansion.None);
+                c.EnableDeepLinking();
+                c.EnableFilter();
+                c.ShowExtensions();
+
+                // Network
+                c.EnableValidator();
+                c.SupportedSubmitMethods(SubmitMethod.Get);
+
+                // Other
+                c.DocumentTitle = "CustomUIConfig";
                 c.InjectStylesheet("/ext/custom-stylesheet.css");
             });
+
+            app.UseMvc();
         }
     }
 }

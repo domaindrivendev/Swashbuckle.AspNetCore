@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Converters;
@@ -57,7 +58,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var createReference = !_settings.CustomTypeMappings.ContainsKey(type)
                 && type != typeof(object)
-                && (jsonContract is JsonObjectContract || jsonContract.IsSelfReferencingArrayOrDictionary());
+                && (// Type describes an object
+                    jsonContract is JsonObjectContract ||
+                    // Type is self-referencing
+                    jsonContract.IsSelfReferencingArrayOrDictionary() ||
+                    // Type is enum and opt-in flag set
+                    (type.IsEnumType() && _settings.UseReferencedDefinitionsForEnums));
 
             return createReference
                 ? CreateReferenceSchema(type, referencedTypes)
@@ -130,12 +136,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var camelCase = _settings.DescribeStringEnumsInCamelCase
                     || (stringEnumConverter != null && stringEnumConverter.CamelCaseText);
 
+                var enumNames = type.GetFields(BindingFlags.Public | BindingFlags.Static)
+                    .Select(f =>
+                    {
+                        var enumMemberAttribute = f.GetCustomAttributes().OfType<EnumMemberAttribute>().FirstOrDefault();
+                        var serializeName = (enumMemberAttribute == null) ? f.Name : enumMemberAttribute.Value;
+                        return camelCase ? serializeName.ToCamelCase() : serializeName;
+                    });
+
                 return new Schema
                 {
                     Type = "string",
-                    Enum = (camelCase)
-                        ? Enum.GetNames(type).Select(name => name.ToCamelCase()).ToArray()
-                        : Enum.GetNames(type)
+                    Enum = enumNames.ToArray()
                 };
             }
 
@@ -185,27 +197,23 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private Schema CreateObjectSchema(JsonObjectContract jsonContract, Queue<Type> referencedTypes)
         {
-            var candidateProperties = jsonContract.Properties
+            var applicableJsonProperties = jsonContract.Properties
                 .Where(prop => !prop.Ignored)
                 .Where(prop => !(_settings.IgnoreObsoleteProperties && prop.IsObsolete()))
                 .Select(prop => prop);
 
-            var properties = candidateProperties
-                .ToDictionary(
-                    prop => prop.PropertyName,
-                    prop => CreateSchema(prop.PropertyType, referencedTypes).AssignValidationProperties(prop)
-                );
-
-            var required = candidateProperties
+            var required = applicableJsonProperties
                 .Where(prop => prop.IsRequired())
                 .Select(propInfo => propInfo.PropertyName)
                 .ToList();
 
-            var hasExtensionData = jsonContract.Properties
-                .Where(prop => prop.Ignored)
-                .Where(prop => !(_settings.IgnoreObsoleteProperties && prop.IsObsolete()))
-                .Where(prop => prop.HasAttribute<JsonExtensionDataAttribute>())
-                .Any();
+            var hasExtensionData = jsonContract.ExtensionDataValueType != null;
+
+            var properties = applicableJsonProperties
+                .ToDictionary(
+                    prop => prop.PropertyName,
+                    prop => CreateSchema(prop.PropertyType, referencedTypes).AssignValidationProperties(prop)
+                );
 
             var schema = new Schema
             {
