@@ -139,9 +139,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var enumNames = type.GetFields(BindingFlags.Public | BindingFlags.Static)
                     .Select(f =>
                     {
+                        var name = f.Name;
+
                         var enumMemberAttribute = f.GetCustomAttributes().OfType<EnumMemberAttribute>().FirstOrDefault();
-                        var serializeName = (enumMemberAttribute == null) ? f.Name : enumMemberAttribute.Value;
-                        return camelCase ? serializeName.ToCamelCase() : serializeName;
+                        if (enumMemberAttribute != null && enumMemberAttribute.Value != null)
+                        {
+                            name = enumMemberAttribute.Value;
+                        }
+
+                        return camelCase ? name.ToCamelCase() : name;
                     });
 
                 return new Schema
