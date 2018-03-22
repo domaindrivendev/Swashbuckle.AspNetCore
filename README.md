@@ -230,7 +230,7 @@ If you need to specify a different status code and/or additional responses, or y
 [HttpPost("{id}")]
 [ProducesResponseType(typeof(Product), 200)]
 [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
-[ProducesResponseType(typeof(void), 500)]
+[ProducesResponseType(500)]
 public IActionResult GetById(int id)
 ```
 
@@ -298,7 +298,7 @@ To enhance the generated docs with human-friendly descriptions, you can annotate
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(Product), 200)]
     [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
-    [ProducesResponseType(typeof(void), 500)]
+    [ProducesResponseType(500)]
     public Product GetById(int id)
     ```
 
