@@ -8,5 +8,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         FooBar,
         [EnumMember(Value = "bar-foo")]
         BarFoo,
+        [EnumMember]
+        Default
     }
 }

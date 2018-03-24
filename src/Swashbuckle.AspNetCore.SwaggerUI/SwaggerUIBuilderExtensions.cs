@@ -11,7 +11,7 @@ namespace Microsoft.AspNetCore.Builder
 
         public static IApplicationBuilder UseSwaggerUI(
             this IApplicationBuilder app,
-            Action<SwaggerUIOptions> setupAction)
+            Action<SwaggerUIOptions> setupAction = null)
         {
             var options = new SwaggerUIOptions();
             setupAction?.Invoke(options);

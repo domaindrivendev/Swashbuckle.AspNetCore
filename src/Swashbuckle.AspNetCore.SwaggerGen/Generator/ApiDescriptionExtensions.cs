@@ -58,7 +58,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         internal static IEnumerable<string> SupportedRequestMediaTypes(this ApiDescription apiDescription)
         {
             return apiDescription.SupportedRequestFormats
-                .Select(requestFormat => requestFormat.MediaType);
+                .Select(requestFormat => requestFormat.MediaType)
+                .Distinct();
         }
 
         internal static IEnumerable<string> SupportedResponseMediaTypes(this ApiDescription apiDescription)

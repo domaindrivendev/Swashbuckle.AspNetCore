@@ -10,7 +10,7 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddSwaggerGen(
             this IServiceCollection services,
-            Action<SwaggerGenOptions> setupAction)
+            Action<SwaggerGenOptions> setupAction = null)
         {
             services.Configure<MvcOptions>(c =>
                 c.Conventions.Add(new SwaggerApplicationConvention()));
@@ -24,9 +24,9 @@ namespace Microsoft.Extensions.DependencyInjection
 
         public static void ConfigureSwaggerGen(
             this IServiceCollection services,
-            Action<SwaggerGenOptions> setupAction)
+            Action<SwaggerGenOptions> setupAction = null)
         {
-            services.Configure(setupAction);
+            services.Configure(setupAction ?? (opts => { }));
         }
 
         private static ISwaggerProvider CreateSwaggerProvider(IServiceProvider serviceProvider)

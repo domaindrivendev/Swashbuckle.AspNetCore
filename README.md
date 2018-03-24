@@ -11,12 +11,12 @@ And that's not all ...
 
 Once you have an API that can describe itself in Swagger, you've opened the treasure chest of Swagger-based tools including a client generator that can be targeted to a wide range of popular platforms. See [swagger-codegen](https://github.com/swagger-api/swagger-codegen) for more details.
 
-# Compatability #
+# Compatibility #
 
 |Swashbuckle Version|ASP.NET Core|Swagger (OpenAPI) Spec.|swagger-ui|
 |----------|----------|----------|----------|
-|[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master)|>=1.0.4|2.0|3.12.0|
-|[2.2.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v2.0.0)|>=1.0.4|2.0|3.11.0|
+|[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master)|>=1.0.4|2.0|3.13.0|
+|[2.3.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v2.0.0)|>=1.0.4|2.0|3.12.0|
 |[1.2.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v1.2.0)|>=1.0.4|2.0|2.2.10|
 
 # Getting Started #
@@ -230,7 +230,7 @@ If you need to specify a different status code and/or additional responses, or y
 [HttpPost("{id}")]
 [ProducesResponseType(typeof(Product), 200)]
 [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
-[ProducesResponseType(typeof(void), 500)]
+[ProducesResponseType(500)]
 public IActionResult GetById(int id)
 ```
 
@@ -298,7 +298,7 @@ To enhance the generated docs with human-friendly descriptions, you can annotate
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(Product), 200)]
     [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
-    [ProducesResponseType(typeof(void), 500)]
+    [ProducesResponseType(500)]
     public Product GetById(int id)
     ```
 

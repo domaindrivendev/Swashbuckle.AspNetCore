@@ -265,7 +265,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var schema = subject.GetOrRegister(typeof(AnAnnotatedEnum));
 
             Assert.Equal("string", schema.Type);
-            Assert.Equal(new[] { "foo-bar", "bar-foo" }, schema.Enum);
+            Assert.Equal(new[] { "foo-bar", "bar-foo", "Default" }, schema.Enum);
         }
 
         [Fact]
