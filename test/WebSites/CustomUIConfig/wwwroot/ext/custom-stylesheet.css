@@ -1,3 +1,4 @@
-﻿marquee {
-    color: red;
+﻿#swagger-ui {
+  max-width: 1000px;
+  margin: auto;
 }

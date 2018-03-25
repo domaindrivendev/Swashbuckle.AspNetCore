@@ -23,7 +23,6 @@ namespace Microsoft.AspNetCore.Builder
             {
                 RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
                 FileProvider = new EmbeddedFileProvider(typeof(SwaggerUIBuilderExtensions).GetTypeInfo().Assembly, EmbeddedFilesNamespace),
-                EnableDirectoryBrowsing = true // will redirect to /{options.RoutePrefix}/ when trailing slash is missing
             });
 
             return app;

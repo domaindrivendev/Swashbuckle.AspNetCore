@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
 
 namespace Swashbuckle.AspNetCore.SwaggerUI
 {
@@ -27,13 +28,27 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
                 return;
             }
 
+            // If trailing slash is missing, force it so that relative links work
+            if (!httpContext.Request.Path.Value.EndsWith("/"))
+            {
+                RespondWithRedirect(httpContext.Response, $"{_options.RoutePrefix}/");
+                return;
+            }
+
             await RespondWithIndexHtml(httpContext.Response);
+            return;
         }
 
-        private bool RequestingSwaggerUIIndex(HttpRequest request)
+        public bool RequestingSwaggerUIIndex(HttpRequest request)
         {
-            var indexPath =  string.IsNullOrEmpty(_options.RoutePrefix) ? "/" : $"/{_options.RoutePrefix}/";
-            return (request.Method == "GET" && request.Path == indexPath);
+            return (request.Method == "GET"
+                && Regex.IsMatch(request.Path, $"^/{_options.RoutePrefix}/?$"));
+        }
+
+        private void RespondWithRedirect(HttpResponse response, string redirectPath)
+        {
+            response.StatusCode = 301;
+            response.Headers["Location"] = redirectPath;
         }
 
         private async Task RespondWithIndexHtml(HttpResponse response)
