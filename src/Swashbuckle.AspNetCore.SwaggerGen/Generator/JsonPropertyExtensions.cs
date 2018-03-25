@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json.Serialization;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -13,12 +14,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             return jsonProperty.Required == Newtonsoft.Json.Required.AllowNull
                 || jsonProperty.Required == Newtonsoft.Json.Required.Always
-                || jsonProperty.HasAttribute<RequiredAttribute>();
+                || jsonProperty.HasAttribute<RequiredAttribute>()
+                || jsonProperty.HasAttribute<BindRequiredAttribute>();
         }
 
         internal static bool IsObsolete(this JsonProperty jsonProperty)
         {
             return jsonProperty.HasAttribute<ObsoleteAttribute>();
+        }
+
+        internal static bool BindNever(this JsonProperty jsonProperty)
+        {
+            return jsonProperty.HasAttribute<BindNeverAttribute>();
         }
 
         internal static bool HasAttribute<T>(this JsonProperty jsonProperty)

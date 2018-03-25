@@ -109,6 +109,21 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GetOrRegister_DefinesObjectSchema_ForBindingTypes()
+        {
+            var subject = Subject();
+
+            subject.GetOrRegister(typeof(BindingType));
+
+            var schema = subject.Definitions["BindingType"];
+            Assert.NotNull(schema);
+            Assert.Equal("string", schema.Properties["Property1"].Type);
+            Assert.False(schema.Properties.ContainsKey("Property2"));
+            Assert.Equal("string", schema.Properties["Property3"].Type);
+            Assert.Equal(new[] { "Property3" }, schema.Required.ToArray());
+        }
+
+        [Fact]
         public void GetOrRegister_DefinesObjectSchema_ForComplexTypes()
         {
             var subject = Subject();

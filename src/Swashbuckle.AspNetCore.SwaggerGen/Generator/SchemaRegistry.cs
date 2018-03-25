@@ -204,7 +204,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private Schema CreateObjectSchema(JsonObjectContract jsonContract, Queue<Type> referencedTypes)
         {
             var applicableJsonProperties = jsonContract.Properties
-                .Where(prop => !prop.Ignored)
+                .Where(prop => !prop.Ignored && !prop.BindNever())
                 .Where(prop => !(_settings.IgnoreObsoleteProperties && prop.IsObsolete()))
                 .Select(prop => prop);
 
