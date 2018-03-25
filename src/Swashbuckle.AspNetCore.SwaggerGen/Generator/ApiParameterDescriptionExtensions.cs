@@ -21,7 +21,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 return !parameterDescription.RouteInfo.IsOptional;
 
             if (parameterDescription.ModelMetadata != null)
-                return parameterDescription.ModelMetadata.IsRequired;
+                return (parameterDescription.ModelMetadata.IsRequired || parameterDescription.ModelMetadata.IsBindingRequired);
 
             return false;
         }
