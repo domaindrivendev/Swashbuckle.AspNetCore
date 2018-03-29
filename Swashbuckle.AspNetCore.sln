@@ -67,6 +67,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OAuth2Integration", "test\W
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfigFromFile", "test\WebSites\ConfigFromFile\ConfigFromFile.csproj", "{221F533C-BCB5-4742-ACE3-25561D545EA4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swashbuckle.AspNetCore.AzureFunctions", "src\Swashbuckle.AspNetCore.AzureFunctions\Swashbuckle.AspNetCore.AzureFunctions.csproj", "{339459FD-838A-4D0C-89CC-A265FC517FBC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionApp", "test\WebSites\FunctionApp\FunctionApp.csproj", "{252D2094-15DE-4DA8-B3F7-2E4A4BF9B36A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
