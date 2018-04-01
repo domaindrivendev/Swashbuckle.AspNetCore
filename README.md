@@ -126,6 +126,7 @@ The steps described above will get you up and running with minimal setup. Howeve
 * [Swashbuckle.AspNetCore.SwaggerGen](#swashbuckleaspnetcoreswaggergen)
  
     * [List Operations Responses](#list-operation-responses)
+    * [Flag Required Parameters and Schema Properties](#flag-required-parameters-and-schema-properties)
     * [Include Descriptions from XML Comments](#include-descriptions-from-xml-comments)
     * [Provide Global API Metadata](#provide-global-api-metadata)
     * [Generate Multiple Swagger Documents](#generate-multiple-swagger-documents)
@@ -258,6 +259,69 @@ responses: {
   }
 }
 ```
+
+### Flag Required Parameters and Schema Properties ###
+
+In a Swagger document, you can flag parameters and schema properties that are required for a request. As is generally the case with Swashbuckle, this metadata will be inferred automatically so long as you're using ASP.NET Core [Model Binding](https://docs.microsoft.com/en-us/aspnet/core/mvc/models/model-binding#customize-model-binding-behavior-with-attributes) or [Data Validation](https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-mvc-app/validation) attributes to implement request validation.
+
+#### Model Binding Attributes ####
+
+In ASP.NET Core, you can use the `BindRequired` attribute on non-body (query, header etc.) parameters to ensure they're present in the request:
+
+```csharp
+// ProductsController.cs
+public IActionResult Search([FromQuery]SearchParams searchParams)
+{
+    if (!ModelState.IsValid)
+        return BadRequest(ModelState);
+    ...
+}
+
+// SearchParams.cs
+public class SearchParams
+{
+    [BindRequired]
+    public string Keywords { get; set; }
+
+    public int PageNo { get; set; } = 1;
+
+    public int PageSize { get; set; } = 20;
+}
+```
+
+With this implementation, Swashbuckle will automatically describe `Keywords` as a required parameter. 
+
+__NOTE__: At the time of writing, ASP.NET Core does not support the use of `BindRequired` on action parameters directly. This feature is due to be added in version 2.1. Until then, you'll need to encapsulate your non-body parameters in a model class, as shown above.
+
+#### Data Annotations ####
+
+ASP.NET Core's built-in validation also honors the `Required` attribute from the DataAnnotations library:
+
+```csharp
+// ProductsController.cs
+public IActionResult Create([FromBody]Product product)
+{
+    if (!ModelState.IsValid)
+        return BadRequest(ModelState);
+    ...
+}
+
+// Product.cs
+public class Product
+{
+    [Required]
+    public int? Id { get; set; }
+
+    [Required]
+    public string Name { get; set; }
+
+    public string Description { get; set; }
+}
+```
+
+Again, Swashbuckle will automatically detect this metadata and list `Id` and `Name` as required fields in the generated JSON Schema.
+
+__NOTE__: When using ASP.NET Core validation, the `Required` attribute will have no effect on properties that default to a non-null value. This means value types should always be converted to `Nullable<T>` for validation to work, and therefore for Swashbuckle to flag the parameter or schema property as being required.
 
 ### Include Descriptions from XML Comments ###
 

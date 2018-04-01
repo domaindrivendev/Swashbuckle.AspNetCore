@@ -57,5 +57,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             return IntrospectionExtensions.GetTypeInfo(type.GetNonNullableType()).IsEnum;
         }
+
+        internal static bool IsAssignableToNull(this Type type)
+        {
+            return !type.GetTypeInfo().IsValueType || type.IsNullableType();
+        }
     }
 }

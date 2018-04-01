@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -11,7 +10,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         public DateTimeOffset Property3 { get; set; }
 
-        [Required]
         public string Property4 { get; set; }
 
         public char Property5 { get; set; }

@@ -204,16 +204,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             subject.GetOrRegister(typeof(DataAnnotatedType));
 
             var schema = subject.Definitions["DataAnnotatedType"];
-            Assert.Equal(1, schema.Properties["RangeProperty"].Minimum);
-            Assert.Equal(12, schema.Properties["RangeProperty"].Maximum);
-            Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["PatternProperty"].Pattern);
-            Assert.Equal(5, schema.Properties["StringProperty1"].MinLength);
-            Assert.Equal(10, schema.Properties["StringProperty1"].MaxLength);
-            Assert.Equal(1, schema.Properties["StringProperty2"].MinLength);
-            Assert.Equal(3, schema.Properties["StringProperty2"].MaxLength);
-            Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["PatternProperty"].Pattern);
-            Assert.Equal(new[] { "RangeProperty", "PatternProperty" }, schema.Required.ToArray());
-            Assert.Equal("DefaultValue", schema.Properties["DefaultValueProperty"].Default);
+            Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);
+            Assert.Equal(12, schema.Properties["IntWithRange"].Maximum);
+            Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["StringWithRegularExpression"].Pattern);
+            Assert.Equal(5, schema.Properties["StringWithStringLength"].MinLength);
+            Assert.Equal(10, schema.Properties["StringWithStringLength"].MaxLength);
+            Assert.Equal(1, schema.Properties["StringWithMinMaxLength"].MinLength);
+            Assert.Equal(3, schema.Properties["StringWithMinMaxLength"].MaxLength);
+            Assert.Equal(new[] { "StringWithRequired", "NullableIntWithRequired" }, schema.Required.ToArray());
         }
 
         [Fact]
@@ -224,12 +222,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             subject.GetOrRegister(typeof(MetadataAnnotatedType));
 
             var schema = subject.Definitions["MetadataAnnotatedType"];
-            Assert.Equal(1, schema.Properties["RangeProperty"].Minimum);
-            Assert.Equal(12, schema.Properties["RangeProperty"].Maximum);
-            Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["PatternProperty"].Pattern);
-            Assert.Equal(new[] { "RangeProperty", "PatternProperty" }, schema.Required.ToArray());
+            Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);
+            Assert.Equal(12, schema.Properties["IntWithRange"].Maximum);
+            Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["StringWithRegularExpression"].Pattern);
+            Assert.Equal(new[] { "StringWithRequired", "NullableIntWithRequired" }, schema.Required.ToArray());
         }
-
 
         [Fact]
         public void GetOrRegister_HonorsStringEnumConverters_ConfiguredViaAttributes()
