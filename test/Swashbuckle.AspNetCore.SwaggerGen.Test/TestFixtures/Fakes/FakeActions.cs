@@ -101,14 +101,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         /// <remarks>
         /// remarks for AnnotatedWithXml
         /// </remarks>
-        /// <param name="param1">description for parma1</param>
+        /// <param name="param1">description for param1</param>
         /// <param name="param2">description for param2</param>
-        /// <response code="200">description for 200</param>
-        /// <response code="400">description for 400</param>
+        /// <response code="200">description for 200</response>
+        /// <response code="400">description for 400</response>
         public void AnnotatedWithXml(int param1, IEnumerable<ComplexType> param2)
         { }
 
-        /// <param name="param1">description for parma1</param>
+        /// <param name="param1">description for param1</param>
         /// <param name="param2">description for param2</param>
         public void AnnotatedWithXmlHavingParameterNameBindings(
             [FromQuery(Name="p1")]string param1,

@@ -4,6 +4,7 @@ using System.Xml.XPath;
 using System.Reflection;
 using Xunit;
 using Swashbuckle.AspNetCore.Swagger;
+using System.IO;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -114,11 +115,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         private XmlCommentsOperationFilter Subject()
         {
-            var xmlComments = GetType().GetTypeInfo()
-                .Assembly
-                .GetManifestResourceStream("Swashbuckle.AspNetCore.SwaggerGen.Test.TestFixtures.XmlComments.xml");
-
-            return new XmlCommentsOperationFilter(new XPathDocument(xmlComments));
+            using (var xmlComments = File.OpenText(GetType().GetTypeInfo()
+                    .Assembly.GetName().Name + ".xml"))
+            {
+                return new XmlCommentsOperationFilter(new XPathDocument(xmlComments));
+            }
         }
     }
 }
