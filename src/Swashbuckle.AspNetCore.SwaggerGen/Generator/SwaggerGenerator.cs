@@ -5,6 +5,11 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Swashbuckle.AspNetCore.SwaggerGen.Annotations;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Reflection;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -45,6 +50,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var paths = apiDescriptions
                 .GroupBy(apiDesc => apiDesc.RelativePathSansQueryString())
                 .ToDictionary(group => "/" + group.Key, group => CreatePathItem(group, schemaRegistry));
+                        
 
             var securityDefinitions = _settings.SecurityDefinitions;
             var securityRequirements = _settings.SecurityRequirements;
@@ -144,9 +150,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     apiResponseType => CreateResponse(apiResponseType, schemaRegistry)
                  );
 
+
+            SwaggerDescriptionAttribute description = apiDescription.ActionAttributes()
+                .OfType<SwaggerDescriptionAttribute>()
+                .FirstOrDefault();
+
             var operation = new Operation
             {
                 Tags = new[] { _settings.TagSelector(apiDescription) },
+                Description = description?.Description,
+                Summary =  description?.Summary,
                 OperationId = apiDescription.FriendlyId(),
                 Consumes = apiDescription.SupportedRequestMediaTypes().ToList(),
                 Produces = apiDescription.SupportedResponseMediaTypes().ToList(),
@@ -170,19 +183,36 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             ISchemaRegistry schemaRegistry)
         {
             var location = GetParameterLocation(apiDescription, paramDescription);
+            SwaggerDescriptionAttribute description = null;
+            var propertyAttributes = ((DefaultModelMetadata)paramDescription.ModelMetadata)?
+                .Attributes?.PropertyAttributes;
+            if (propertyAttributes != null)
+            {
+                // Handles model property descriptions
+                description = propertyAttributes.OfType<SwaggerDescriptionAttribute>().FirstOrDefault();
+            }
+            else
+            {
+                // Handles method parameter descriptions
+                description = apiDescription.ActionMethodInfo().GetParameters()
+                .FirstOrDefault(x => x.Name == paramDescription.Name)?.GetCustomAttributes(false)
+                .OfType<SwaggerDescriptionAttribute>().FirstOrDefault();
+            }
+
 
             var name = _settings.DescribeAllParametersInCamelCase
                 ? paramDescription.Name.ToCamelCase()
                 : paramDescription.Name;
 
             var schema = (paramDescription.Type == null) ? null : schemaRegistry.GetOrRegister(paramDescription.Type);
-
+                        
             if (location == "body")
             {
                 return new BodyParameter
                 {
                     Name = name,
-                    Schema = schema
+                    Schema = schema,
+                    Description = description?.Description
                 };
             }
 
@@ -190,6 +220,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 Name = name,
                 In = location,
+                Description = description?.Description,
                 Required = (location == "path") || paramDescription.IsRequired()
             };
 

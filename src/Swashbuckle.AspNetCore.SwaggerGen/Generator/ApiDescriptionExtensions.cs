@@ -10,6 +10,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class ApiDescriptionExtensions
     {
+        public static TypeInfo ControllerInfo(this ApiDescription apiDescription)
+        {
+            var controllerActionDescriptor = apiDescription.ControllerActionDescriptor();
+            return controllerActionDescriptor?.ControllerTypeInfo;
+        }
         public static IEnumerable<object> ControllerAttributes(this ApiDescription apiDescription)
         {
             var controllerActionDescriptor = apiDescription.ControllerActionDescriptor();
@@ -32,13 +37,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return (controllerActionDescriptor == null) ? null : controllerActionDescriptor.ControllerName;
         }
 
+        internal static MethodInfo ActionMethodInfo(this ApiDescription apiDescription)
+        {
+            var controllerActionDescriptor = apiDescription.ControllerActionDescriptor();
+            return controllerActionDescriptor?.MethodInfo;
+        }
+
         internal static string FriendlyId(this ApiDescription apiDescription)
         {
             var parts = (apiDescription.RelativePathSansQueryString() + "/" + apiDescription.HttpMethod.ToLower())
                 .Split('/');
 
             var builder = new StringBuilder();
-            foreach (var part in parts) 
+            foreach (var part in parts)
             {
                 var trimmed = part.Trim('{', '}');
                 builder.AppendFormat("{0}{1}",
@@ -81,13 +92,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (controllerActionDescriptor == null)
             {
                 controllerActionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
-                
+
                 if (controllerActionDescriptor != null)
                 {
                     apiDescription.SetProperty(controllerActionDescriptor);
                 }
             }
-            return controllerActionDescriptor; 
+            return controllerActionDescriptor;
         }
 
     }

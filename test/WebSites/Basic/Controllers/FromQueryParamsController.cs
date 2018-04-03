@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using Swashbuckle.AspNetCore.SwaggerGen.Annotations;
 
 namespace Basic.Controllers
 {
@@ -8,7 +9,8 @@ namespace Basic.Controllers
     public class FromQueryParamsController
     {
         [HttpGet("addresses/validate")]
-        public IActionResult ValidateAddress([FromQuery]Address address)
+        [SwaggerDescription("This method validates addresses", "Validates Addresses")]
+        public IActionResult ValidateAddress([FromQuery]Address address, [FromQuery, SwaggerDescription("Test Boolean Description")]bool flag)
         {
             return new NoContentResult(); 
         }
@@ -22,10 +24,8 @@ namespace Basic.Controllers
 
     public class Address
     {
-        /// <summary>
-        /// 3-letter ISO country code
-        /// </summary>
         [Required]
+        [SwaggerDescription("3-letter ISO country code")]
         public string Country { get; set; }
 
         /// <summary>
