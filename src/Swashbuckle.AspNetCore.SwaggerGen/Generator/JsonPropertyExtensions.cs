@@ -24,29 +24,23 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         internal static bool HasAttribute<T>(this JsonProperty jsonProperty)
             where T : Attribute
         {
-            var propInfo = jsonProperty.PropertyInfo();
-            return propInfo != null && propInfo.GetCustomAttribute<T>() != null;
+            var memberInfo = jsonProperty.MemberInfo();
+            return memberInfo != null && memberInfo.GetCustomAttribute<T>() != null;
         }
 
-        internal static MemberInfo PropertyInfo(this JsonProperty jsonProperty)
+        internal static MemberInfo MemberInfo(this JsonProperty jsonProperty)
         {
             if (jsonProperty.UnderlyingName == null) return null;
 
-            var metadata = jsonProperty.DeclaringType.GetTypeInfo()
+            var metadataAttribute = jsonProperty.DeclaringType.GetTypeInfo()
                 .GetCustomAttributes(typeof(ModelMetadataTypeAttribute), true)
                 .FirstOrDefault();
 
-            var typeToReflect = (metadata != null)
-                ? ((ModelMetadataTypeAttribute)metadata).MetadataType
+            var typeToReflect = (metadataAttribute != null)
+                ? ((ModelMetadataTypeAttribute)metadataAttribute).MetadataType
                 : jsonProperty.DeclaringType;
 
-            return PropertyInfo(typeToReflect, jsonProperty.UnderlyingName);
-        }
-
-        internal static MemberInfo PropertyInfo(Type typeToReflect, string memberName)
-        {
-            var members = typeToReflect.GetTypeInfo().GetMember(memberName);
-            return (members.Length == 1) ? members[0] : null;
+            return typeToReflect.GetMember(jsonProperty.UnderlyingName).FirstOrDefault();
         }
     }
 }

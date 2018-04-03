@@ -103,14 +103,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 if (propertyParam == null) continue;
 
                 var metadata = propertyParam.ModelMetadata;
-                var propertyInfo = JsonPropertyExtensions.PropertyInfo(metadata.ContainerType, metadata.PropertyName);
-                if (propertyInfo == null) continue;
+                var memberInfo = metadata.ContainerType.GetMember(metadata.PropertyName).FirstOrDefault();
+                if (memberInfo == null) continue;
 
-                var commentId = XmlCommentsIdHelper.GetCommentIdForProperty(propertyInfo);
-                var propertyNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, commentId));
-                if (propertyNode == null) continue;
+                var commentId = XmlCommentsIdHelper.GetCommentIdForMember(memberInfo);
+                var memberNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, commentId));
+                if (memberNode == null) continue;
 
-                var summaryNode = propertyNode.SelectSingleNode(SummaryXPath);
+                var summaryNode = memberNode.SelectSingleNode(SummaryXPath);
                 if (summaryNode != null)
                     parameter.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
             }

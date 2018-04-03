@@ -14,6 +14,5 @@
         /// summary for PublicField
         /// </summary>
         public string PublicField;
-
     }
 }

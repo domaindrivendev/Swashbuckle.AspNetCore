@@ -38,21 +38,21 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var jsonProperty = jsonObjectContract.Properties[entry.Key];
                 if (jsonProperty == null) continue;
 
-                var propertyInfo = jsonProperty.PropertyInfo();
-                if (propertyInfo != null)
+                var memberInfo = jsonProperty.MemberInfo();
+                if (memberInfo != null)
                 {
-                    ApplyPropertyComments(entry.Value, propertyInfo);
+                    ApplyPropertyComments(entry.Value, memberInfo);
                 }
             }
         }
 
-        private void ApplyPropertyComments(Schema propertySchema, MemberInfo propertyInfo)
+        private void ApplyPropertyComments(Schema propertySchema, MemberInfo memberInfo)
         {
-            var commentId = XmlCommentsIdHelper.GetCommentIdForProperty(propertyInfo);
-            var propertyNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, commentId));
-            if (propertyNode == null) return;
+            var commentId = XmlCommentsIdHelper.GetCommentIdForMember(memberInfo);
+            var memberNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, commentId));
+            if (memberNode == null) return;
 
-            var summaryNode = propertyNode.SelectSingleNode(SummaryTag);
+            var summaryNode = memberNode.SelectSingleNode(SummaryTag);
             if (summaryNode != null)
             {
                 propertySchema.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);

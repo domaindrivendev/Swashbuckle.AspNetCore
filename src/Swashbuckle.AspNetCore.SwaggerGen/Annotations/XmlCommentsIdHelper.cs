@@ -24,12 +24,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return builder.ToString();
         }
 
-        public static string GetCommentIdForProperty(MemberInfo propertyInfo)
+        public static string GetCommentIdForMember(MemberInfo memberInfo)
         {
-            var builder = new StringBuilder(((propertyInfo.MemberType & MemberTypes.Field) != 0) ? "F:" : "P:");
-            AppendFullTypeName(propertyInfo.DeclaringType, builder);
+            var builder = new StringBuilder(((memberInfo.MemberType & MemberTypes.Field) != 0) ? "F:" : "P:");
+            AppendFullTypeName(memberInfo.DeclaringType, builder);
             builder.Append(".");
-            AppendPropertyName(propertyInfo, builder);
+            AppendMemberName(memberInfo, builder);
 
             return builder.ToString();
         }
@@ -94,9 +94,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             builder.Replace(",", ")", builder.Length - 1, 1);
         }
 
-        private static void AppendPropertyName(MemberInfo propertyInfo, StringBuilder builder)
+        private static void AppendMemberName(MemberInfo memberInfo, StringBuilder builder)
         {
-            builder.Append(propertyInfo.Name);
+            builder.Append(memberInfo.Name);
         }
     }
 }

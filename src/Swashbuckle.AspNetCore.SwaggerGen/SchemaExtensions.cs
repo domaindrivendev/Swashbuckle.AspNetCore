@@ -11,7 +11,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         internal static Schema AssignValidationProperties(this Schema schema, JsonProperty jsonProperty)
         {
-            var propInfo = jsonProperty.PropertyInfo();
+            var propInfo = jsonProperty.MemberInfo();
             if (propInfo == null)
                 return schema;
 

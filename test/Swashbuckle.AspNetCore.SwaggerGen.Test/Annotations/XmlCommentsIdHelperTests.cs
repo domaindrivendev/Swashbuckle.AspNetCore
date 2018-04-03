@@ -49,7 +49,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var propertyInfo = type.GetProperty(propertyName);
 
-            var commentId = XmlCommentsIdHelper.GetCommentIdForProperty(propertyInfo);
+            var commentId = XmlCommentsIdHelper.GetCommentIdForMember(propertyInfo);
 
             Assert.Equal(expectedCommentId, commentId);
         }
