@@ -86,6 +86,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void AcceptsGenericType(IEnumerable<string> param1)
         {}
 
+        public void AcceptsRequiredParameters([Required] string queryParam)
+        { }
+
         public void AcceptsGenericGenericType(IEnumerable<KeyValuePair<string, string>> param1)
         {}
 

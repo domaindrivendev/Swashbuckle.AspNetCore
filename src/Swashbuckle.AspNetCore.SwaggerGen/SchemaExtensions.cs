@@ -17,7 +17,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             foreach (var attribute in propInfo.GetCustomAttributes(false))
             {
-
                 var defaultValue = attribute as DefaultValueAttribute;
                 if (defaultValue != null)
                     schema.Default = defaultValue.Value;

@@ -601,6 +601,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Null(operation.Parameters); // first one has no parameters
         }
 
+        [Fact(Skip = "It will work in ASP.NET Core 2.1")]
+        public void GetSwagger_SetsRequiredParameter_ForRequireAndBindRequireAttributes()
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add("GET", "collection", nameof(FakeActions.AcceptsRequiredParameters)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var operation = swagger.Paths["/collection"].Get;
+            Assert.NotNull(operation.Parameters);
+            Assert.NotNull(operation.Parameters[0]);
+            Assert.True(operation.Parameters[0].Required);
+        }
+
         private SwaggerGenerator Subject(
             Action<FakeApiDescriptionGroupCollectionProvider> setupApis = null,
             Action<SwaggerGeneratorSettings> configure = null)
