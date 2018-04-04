@@ -8,10 +8,7 @@
     <VersionPrefix>2.4.0-beta1</VersionPrefix>
     <OutputType>Exe</OutputType>
     <AssemblyName>dotnet-swagger</AssemblyName>
-    <PackageId>ErazerBrecht.Swashbuckle.AspNetCore</PackageId>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
-    <Version>1.0.0</Version>
+    <PackageId>Swashbuckle.AspNetCore.Cli</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
