@@ -7,9 +7,10 @@ namespace Microsoft.AspNetCore.Builder
 {
     public static class SwaggerUIBuilderExtensions
     {
-        private const string NpmEmbeddedFilesNamespace = "Swashbuckle.AspNetCore.SwaggerUI.node_modules.swagger_ui_dist";
-        private const string JsEmbeddedFilesNamespace = "Swashbuckle.AspNetCore.SwaggerUI.js";
-        private const string CssEmbeddedFilesNamespace = "Swashbuckle.AspNetCore.SwaggerUI.css";
+        private const string RootNameSpace = "Swashbuckle.AspNetCore.SwaggerUI";
+        private const string NpmEmbeddedFilesNamespace = RootNameSpace + ".node_modules.swagger_ui_dist";
+        private const string JsEmbeddedFilesNamespace = RootNameSpace + ".js";
+        private const string CssEmbeddedFilesNamespace = RootNameSpace + ".css";
 
         public static IApplicationBuilder UseSwaggerUI(
             this IApplicationBuilder app,
@@ -19,22 +20,23 @@ namespace Microsoft.AspNetCore.Builder
             setupAction?.Invoke(options);
 
             var assembly = typeof(SwaggerUIBuilderExtensions).GetTypeInfo().Assembly;
+            var requestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}";
 
             app.UseMiddleware<SwaggerUIIndexMiddleware>(options);
             app.UseFileServer(new FileServerOptions
             {
-                RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
-                FileProvider = new EmbeddedFileProvider(typeof(SwaggerUIBuilderExtensions).GetTypeInfo().Assembly, NpmEmbeddedFilesNamespace),
+                RequestPath = requestPath,
+                FileProvider = new EmbeddedFileProvider(assembly, NpmEmbeddedFilesNamespace),
             });
             app.UseStaticFiles(new StaticFileOptions
             {
-                RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
-                FileProvider = new EmbeddedFileProvider(typeof(SwaggerUIBuilderExtensions).GetTypeInfo().Assembly, JsEmbeddedFilesNamespace),
+                RequestPath = requestPath,
+                FileProvider = new EmbeddedFileProvider(assembly, JsEmbeddedFilesNamespace),
             });
             app.UseStaticFiles(new StaticFileOptions
             {
-                RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
-                FileProvider = new EmbeddedFileProvider(typeof(SwaggerUIBuilderExtensions).GetTypeInfo().Assembly, CssEmbeddedFilesNamespace),
+                RequestPath = requestPath,
+                FileProvider = new EmbeddedFileProvider(assembly, CssEmbeddedFilesNamespace),
             });
 
             return app;

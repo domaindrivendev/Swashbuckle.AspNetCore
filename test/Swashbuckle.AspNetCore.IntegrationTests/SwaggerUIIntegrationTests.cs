@@ -14,13 +14,23 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             var client = new TestSite(typeof(Basic.Startup)).BuildClient();
 
             var indexResponse = await client.GetAsync("/"); // Basic is configured to serve UI at root
-            var jsResponse = await client.GetAsync("/swagger-ui.js");
-            var cssResponse = await client.GetAsync("/swagger-ui.css");
+            var jsBundleResponse = await client.GetAsync("/swagger-ui.js");
+            var cssBundleResponse = await client.GetAsync("/swagger-ui.css");
+
+            var jsEdgeFixResponse = await client.GetAsync("/edge-fix.js");
+            var jsConfigResponse = await client.GetAsync("/config.js");
+            var cssStyleResponse = await client.GetAsync("/style.css");
 
             var indexContent = await indexResponse.Content.ReadAsStringAsync();
-            Assert.Contains("SwaggerUIBundle", indexContent);
-            Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
-            Assert.Equal(HttpStatusCode.OK, cssResponse.StatusCode);
+            var jsConfigContent = await jsConfigResponse.Content.ReadAsStringAsync();
+
+            Assert.Contains("{'urls':[{'url':'/swagger/v1/swagger.json','name':'V1 Docs'}],'validatorUrl':null}".Replace("'", "\""), indexContent);
+            Assert.Contains("SwaggerUIBundle", jsConfigContent);
+            Assert.Equal(HttpStatusCode.OK, jsBundleResponse.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, cssBundleResponse.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, jsEdgeFixResponse.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, jsConfigResponse.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, cssStyleResponse.StatusCode);
         }
 
         [Fact]
