@@ -1,15 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\version.props"/>
+  <Import Project="..\..\version.props" />
 
   <PropertyGroup>
     <Description>Swagger tools for documenting APIs built on ASP.NET Core</Description>
     <TargetFrameworks>net451;netstandard1.6</TargetFrameworks>
     <AssemblyName>Swashbuckle.AspNetCore</AssemblyName>
-    <PackageId>Swashbuckle.AspNetCore</PackageId>
+    <PackageId>ErazerBrecht.Swashbuckle.AspNetCore</PackageId>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>
-    <PackageProjectUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</PackageProjectUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/domaindrivendev/Swashbuckle.AspNetCore/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/ErazerBrecht/Swashbuckle.AspNetCore</PackageProjectUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/ErazerBrecht/Swashbuckle.AspNetCore/master/LICENSE</PackageLicenseUrl>
     <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard1.6' ">$(PackageTargetFallback);dnxcore50;portable-net451+win8</PackageTargetFallback>
   </PropertyGroup>
 
