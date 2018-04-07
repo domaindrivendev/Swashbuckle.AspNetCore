@@ -29,8 +29,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var controllerActionDescriptor = context.ApiDescription.ActionDescriptor as ControllerActionDescriptor;
             if (controllerActionDescriptor == null) return;
 
-            var commentId = XmlCommentsIdHelper.GetCommentIdForMethod(controllerActionDescriptor.MethodInfo);
-            var methodNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, commentId));
+            var memberName = XmlCommentsMemberNameHelper.GetMemberNameForMethod(controllerActionDescriptor.MethodInfo);
+            var methodNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, memberName));
 
             if (methodNode != null)
             {
@@ -106,8 +106,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var memberInfo = metadata.ContainerType.GetMember(metadata.PropertyName).FirstOrDefault();
                 if (memberInfo == null) continue;
 
-                var commentId = XmlCommentsIdHelper.GetCommentIdForMember(memberInfo);
-                var memberNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, commentId));
+                var memberName = XmlCommentsMemberNameHelper.GetMemberNameForMember(memberInfo);
+                var memberNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, memberName));
                 if (memberNode == null) continue;
 
                 var summaryNode = memberNode.SelectSingleNode(SummaryXPath);

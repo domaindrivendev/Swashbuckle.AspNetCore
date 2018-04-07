@@ -7,10 +7,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class TypeExtensions
     {
+        internal static string FullNameSansTypeArguments(this Type type)
+        {
+            var fullName = type.FullName;
+            var chopIndex = fullName.IndexOf("[[");
+            return (chopIndex == -1) ? fullName : fullName.Substring(0, chopIndex);
+        }
+
         public static string FriendlyId(this Type type, bool fullyQualified = false)
         {
             var typeName = fullyQualified
-                ? type.FullNameSansTypeParameters().Replace("+", ".")
+                ? type.FullNameSansTypeArguments().Replace("+", ".")
                 : type.Name;
 
             if (type.GetTypeInfo().IsGenericType)
@@ -26,13 +33,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
 
             return typeName;
-        }
-
-        internal static string FullNameSansTypeParameters(this Type type)
-        {
-            var fullName = type.FullName;
-            var chopIndex = fullName.IndexOf("[[");
-            return (chopIndex == -1) ? fullName : fullName.Substring(0, chopIndex);
         }
 
         internal static Type GetNonNullableType(this Type type)

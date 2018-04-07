@@ -2,54 +2,53 @@
 using System.Collections.Generic;
 using System.Xml.XPath;
 using System.Reflection;
+using System.IO;
 using Xunit;
 using Swashbuckle.AspNetCore.Swagger;
-using System.IO;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     public class XmlCommentsOperationFilterTests
     {
-        [Theory]
-        [InlineData(nameof(FakeActions.AnnotatedWithXml))]
-        public void Apply_SetsSummaryAndDescriptionFromSummaryAndRemarksTags(
-            string actionFixtureName)
+        [Fact]
+        public void Apply_SetsSummaryAndDescription_FromSummaryAndRemarksTags()
         {
             var operation = new Operation
             {
                 Responses = new Dictionary<string, Response>()
             };
-            var filterContext = FilterContextFor(actionFixtureName);
+            var filterContext = FilterContextFor(nameof(FakeActions.AnnotatedWithXml));
 
             Subject().Apply(operation, filterContext);
 
-            Assert.Equal(string.Format("summary for {0}", actionFixtureName), operation.Summary);
-            Assert.Equal(string.Format("remarks for {0}", actionFixtureName), operation.Description);
-        }
-
-        [Theory]
-        [InlineData(nameof(FakeActions.AnnotatedWithXml), new[] { "param1", "param2" })]
-        [InlineData(nameof(FakeActions.AnnotatedWithXmlHavingParameterNameBindings), new[] { "p1", "p2" })]
-        public void Apply_AppliesParamsXml_ToActionParameters(
-            string actionName,
-            string[] parameterNames
-        )
-        {
-            var operation = new Operation
-            {
-                Parameters = parameterNames.Select(pn => new NonBodyParameter { Name = pn }).ToArray(),
-                Responses = new Dictionary<string, Response>()
-            };
-            var filterContext = FilterContextFor(actionName);
-
-            Subject().Apply(operation, filterContext);
-
-            Assert.Equal("description for param1", operation.Parameters.First().Description);
-            Assert.Equal("description for param2", operation.Parameters.Last().Description);
+            Assert.Equal("summary for AnnotatedWithXml", operation.Summary);
+            Assert.Equal("remarks for AnnotatedWithXml", operation.Description);
         }
 
         [Fact]
-        public void Apply_AppliesPropertiesXml_ToPropertyParameters()
+        public void Apply_SetsParameterDescriptions_FromParamTags()
+        {
+            var operation = new Operation
+            {
+                Parameters = new List<IParameter>
+                {
+                    new NonBodyParameter { Name = "param1" }, 
+                    new NonBodyParameter { Name = "param2" }, 
+                    new NonBodyParameter { Name = "Param-3" } 
+                },
+                Responses = new Dictionary<string, Response>()
+            };
+            var filterContext = FilterContextFor(nameof(FakeActions.AnnotatedWithXml));
+
+            Subject().Apply(operation, filterContext);
+
+            Assert.Equal("description for param1", operation.Parameters[0].Description);
+            Assert.Equal("description for param2", operation.Parameters[1].Description);
+            Assert.Equal("description for param3", operation.Parameters[2].Description);
+        }
+
+        [Fact]
+        public void Apply_SetsParameterDescription_FromSummaryTagsOfParameterBoundProperties()
         {
             var operation = new Operation
             {

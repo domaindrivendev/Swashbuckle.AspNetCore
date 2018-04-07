@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Xml.XPath;
 using System.Reflection;
+using System.IO;
 using Newtonsoft.Json.Serialization;
 using Xunit;
 using Swashbuckle.AspNetCore.Swagger;
-using System.IO;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -13,9 +13,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
     {
         [Theory]
         [InlineData(typeof(XmlAnnotatedType), "summary for XmlAnnotatedType")]
-        [InlineData(typeof(XmlAnnotatedWithNestedType.NestedType), "summary for NestedType")]
-        [InlineData(typeof(XmlAnnotatedGenericType<string>), "summary for XmlAnnotatedGenericType")]
-        public void Apply_SetsDescription_FromClassSummaryTag(
+        [InlineData(typeof(XmlAnnotatedType.NestedType), "summary for NestedType")]
+        [InlineData(typeof(XmlAnnotatedGenericType<int, string>), "summary for XmlAnnotatedGenericType")]
+        public void Apply_SetsDescription_FromSummaryTag(
             Type type,
             string expectedDescription)
         {
@@ -32,10 +32,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         [Theory]
         [InlineData(typeof(XmlAnnotatedType), "Property", "summary for Property")]
-        [InlineData(typeof(XmlAnnotatedType), "PublicField", "summary for PublicField")]
-        [InlineData(typeof(XmlAnnotatedSubType), "BaseProperty", "summary for BaseProperty")]
-        [InlineData(typeof(XmlAnnotatedGenericType<string>), "GenericProperty", "Summary for GenericProperty")]
-        public void Apply_SetsPropertyDescriptions_FromPropertySummaryTag(
+        [InlineData(typeof(XmlAnnotatedType), "Field", "summary for Field")]
+        [InlineData(typeof(XmlAnnotatedSubType), "Property", "summary for Property")]
+        [InlineData(typeof(XmlAnnotatedGenericType<string, bool>), "GenericProperty", "Summary for GenericProperty")]
+        public void Apply_SetsPropertyDescriptions_FromPropertySummaryTags(
             Type type,
             string propertyName,
             string expectedDescription)

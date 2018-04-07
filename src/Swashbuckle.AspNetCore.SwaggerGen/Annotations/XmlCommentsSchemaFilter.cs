@@ -22,8 +22,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var jsonObjectContract = context.JsonContract as JsonObjectContract;
             if (jsonObjectContract == null) return;
 
-            var commentId = XmlCommentsIdHelper.GetCommentIdForType(context.SystemType);
-            var typeNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, commentId));
+            var memberName = XmlCommentsMemberNameHelper.GetMemberNameForType(context.SystemType);
+            var typeNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, memberName));
 
             if (typeNode != null)
             {
@@ -48,8 +48,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private void ApplyPropertyComments(Schema propertySchema, MemberInfo memberInfo)
         {
-            var commentId = XmlCommentsIdHelper.GetCommentIdForMember(memberInfo);
-            var memberNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, commentId));
+            var memberName = XmlCommentsMemberNameHelper.GetMemberNameForMember(memberInfo);
+            var memberNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, memberName));
             if (memberNode == null) return;
 
             var summaryNode = memberNode.SelectSingleNode(SummaryTag);

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
 using GenericControllers.Swagger;
+using System.IO;
 
 namespace GenericControllers
 {
@@ -23,7 +24,10 @@ namespace GenericControllers
                     }
                 );
 
-                c.OperationFilter<ApplySummariesOperationFilter>();
+                //c.OperationFilter<ApplySummariesOperationFilter>();
+
+                var xmlCommentsPath = Path.Combine(System.AppContext.BaseDirectory, "GenericControllers.xml");
+                c.IncludeXmlComments(xmlCommentsPath);
             });
         }
 

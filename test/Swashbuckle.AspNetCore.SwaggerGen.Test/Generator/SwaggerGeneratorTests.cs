@@ -202,8 +202,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void GetSwagger_GeneratesQueryParams_ForAllUnboundParams()
         {
             var subject = Subject(setupApis: apis => apis
-                .Add("GET", "collection", nameof(FakeActions.AcceptsUnboundStringParameter))
-                .Add("POST", "collection", nameof(FakeActions.AcceptsUnboundComplexParameter)));
+                .Add("GET", "collection", nameof(FakeActions.AcceptsString))
+                .Add("POST", "collection", nameof(FakeActions.AcceptsComplexType)));
 
             var swagger = subject.GetSwagger("v1");
 

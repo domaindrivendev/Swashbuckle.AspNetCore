@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 
@@ -40,6 +39,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void AcceptsNothing()
         { }
 
+        public void AcceptsString(string param)
+        { }
+
+        public void AcceptsComplexType(ComplexType param)
+        { }
+
         public void AcceptsStringFromRoute([FromRoute]string param)
         { }
 
@@ -55,9 +60,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void AcceptsArrayFromQuery([FromQuery]IEnumerable<string> param)
         { }
 
-        public void AcceptsArrayFromHeader([FromHeader]IEnumerable<string> param)
-        { }
-
         public void AcceptsStringFromHeader([FromHeader]string param)
         { }
 
@@ -67,30 +69,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void AcceptsComplexTypeFromBody([FromBody]ComplexType param)
         { }
 
-        public void AcceptsUnboundStringParameter(string param)
-        { }
-
-        public void AcceptsUnboundComplexParameter(ComplexType param)
-        { }
-
         public void AcceptsCancellationToken(CancellationToken cancellationToken)
         { }
-
-        [Obsolete]
-        public void MarkedObsolete()
-        { }
-
-        public void AcceptsNestedType(ContainingType.NestedType param1)
-        {}
-
-        public void AcceptsGenericType(IEnumerable<string> param1)
-        {}
-
-        public void AcceptsGenericGenericType(IEnumerable<KeyValuePair<string, string>> param1)
-        {}
-
-        public void AcceptsGenericArrayType(KeyValuePair<string, string>[] param1)
-        {}
 
         public void AcceptsXmlAnnotatedTypeFromQuery([FromQuery]XmlAnnotatedType param1)
         {}
@@ -103,16 +83,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         /// </remarks>
         /// <param name="param1">description for param1</param>
         /// <param name="param2">description for param2</param>
+        /// <param name="param3">description for param3</param>
         /// <response code="200">description for 200</response>
         /// <response code="400">description for 400</response>
-        public void AnnotatedWithXml(int param1, IEnumerable<ComplexType> param2)
-        { }
-
-        /// <param name="param1">description for param1</param>
-        /// <param name="param2">description for param2</param>
-        public void AnnotatedWithXmlHavingParameterNameBindings(
-            [FromQuery(Name="p1")]string param1,
-            [FromQuery(Name="p2")]string param2)
+        public void AnnotatedWithXml(
+            int param1,
+            IEnumerable<ComplexType> param2,
+            [FromQuery(Name = "Param-3")]string param3)
         { }
 
         [ProducesResponseType(typeof(void), 204)]
@@ -136,5 +113,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             throw new NotImplementedException();
         }
+
+        [Obsolete]
+        public void MarkedObsolete()
+        { }
     }
 }

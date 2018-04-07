@@ -6,6 +6,11 @@ namespace GenericControllers.Controllers
 {
     public abstract class GenericResourceController<TResource> where TResource : new()
     {
+        /// <summary>
+        /// creates a resource
+        /// </summary>
+        /// <param name="resource"></param>
+        /// <returns></returns>
         [HttpPost]
         public int Create([FromBody, Required]TResource resource)
         {
