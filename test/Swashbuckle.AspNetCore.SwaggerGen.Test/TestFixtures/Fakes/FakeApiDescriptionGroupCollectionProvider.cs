@@ -108,15 +108,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var options = new MvcOptions();
             options.InputFormatters.Add(new JsonInputFormatter(Mock.Of<ILogger>(), new JsonSerializerSettings(), ArrayPool<char>.Shared, new DefaultObjectPoolProvider()));
             options.OutputFormatters.Add(new JsonOutputFormatter(new JsonSerializerSettings(), ArrayPool<char>.Shared));
-            
-            var optionsAccessor = new Mock<IOptions<MvcOptions>>();
-            optionsAccessor.Setup(o => o.Value).Returns(options);
 
             var constraintResolver = new Mock<IInlineConstraintResolver>();
             constraintResolver.Setup(i => i.ResolveConstraint("int")).Returns(new IntRouteConstraint());
 
             var provider = new DefaultApiDescriptionProvider(
-                optionsAccessor.Object,
+                Options.Create(options),
                 constraintResolver.Object,
                 CreateModelMetadataProvider()
             );
@@ -132,11 +129,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             {
                 new DefaultBindingMetadataProvider(),
                 new DefaultValidationMetadataProvider(),
-                new DataAnnotationsMetadataProvider(new Mock<IOptions<MvcDataAnnotationsLocalizationOptions>>().Object, null)
+                new DataAnnotationsMetadataProvider(
+                    Options.Create(new MvcDataAnnotationsLocalizationOptions()),
+                    null)
             };
 
             var compositeDetailsProvider = new DefaultCompositeMetadataDetailsProvider(detailsProviders);
-            return new DefaultModelMetadataProvider(compositeDetailsProvider);
+            return new DefaultModelMetadataProvider(compositeDetailsProvider, Options.Create(new MvcOptions()));
         }
     }
 }

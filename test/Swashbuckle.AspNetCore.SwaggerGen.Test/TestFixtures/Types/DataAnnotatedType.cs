@@ -1,25 +1,30 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     public class DataAnnotatedType
     {
-        [Required, Range(1, 12)]
-        public int RangeProperty { get; set; }
+        public string StringWithNoAttributes { get; set; }
 
-        [Required, RegularExpression("^[3-6]?\\d{12,15}$")]
-        public string PatternProperty { get; set; }
+        [Required]
+        public string StringWithRequired { get; set; }
+
+        [Required]
+        public int IntWithRequired { get; set; }
+
+        [Required]
+        public int? NullableIntWithRequired { get; set; }
+
+        [Range(1, 12)]
+        public int IntWithRange { get; set; }
+
+        [RegularExpression("^[3-6]?\\d{12,15}$")]
+        public string StringWithRegularExpression { get; set; }
 
         [StringLength(10, MinimumLength = 5)]
-        public string StringProperty1 { get; set; }
+        public string StringWithStringLength { get; set; }
 
         [MinLength(1), MaxLength(3)]
-        public string StringProperty2 { get; set; }
-
-        public string OptionalProperty { get; set; }
-
-        [DefaultValue("DefaultValue")]
-        public string DefaultValueProperty { get; set; }
+        public string StringWithMinMaxLength { get; set; }
     }
 }

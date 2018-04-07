@@ -133,7 +133,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private Operation CreateOperation(ApiDescription apiDescription, ISchemaRegistry schemaRegistry)
         {
             var parameters = apiDescription.ParameterDescriptions
-                .Where(paramDesc => paramDesc.Source.IsFromRequest && !paramDesc.IsPartOfCancellationToken())
+                .Where(paramDesc =>
+                    {
+                        return paramDesc.Source.IsFromRequest
+                            && (paramDesc.ModelMetadata == null || paramDesc.ModelMetadata.IsBindingAllowed)
+                            && !paramDesc.IsPartOfCancellationToken();
+                    })
                 .Select(paramDesc => CreateParameter(apiDescription, paramDesc, schemaRegistry))
                 .ToList();
 
