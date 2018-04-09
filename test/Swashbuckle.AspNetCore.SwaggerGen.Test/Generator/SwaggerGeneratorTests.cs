@@ -628,6 +628,24 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Null(operation.Parameters); // first one has no parameters
         }
 
+        [Theory]
+        [InlineData(nameof(FakeActions.ReturnsActionResult), new string[] { "application/json" })]
+        [InlineData(nameof(FakeActions.AnnotatedWithOneProducesAttribute), new string[] { "image/png" })]
+        [InlineData(nameof(FakeActions.AnnotatedWithTwoProducesAttributes), new string[] { "application/json", "application/xml" })]
+        public void GetSwagger_GeneratesProducesArrayFromProducesAttribute(
+            string actionFixtureName, string[] expectedProduces)
+        {
+            var subject = Subject(setupApis: apis =>
+                apis.Add("GET", "collection", actionFixtureName, nameof(FakeControllers.AnnotatedWithProducesAttribute))
+            );
+
+            var swagger = subject.GetSwagger("v1");
+
+            var produces = swagger.Paths["/collection"].Get.Produces.ToArray();
+
+            Assert.Equal(produces, expectedProduces);
+        }
+
         private SwaggerGenerator Subject(
             Action<FakeApiDescriptionGroupCollectionProvider> setupApis = null,
             Action<SwaggerGeneratorSettings> configure = null)
