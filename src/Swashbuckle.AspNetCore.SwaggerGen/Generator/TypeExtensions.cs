@@ -35,32 +35,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return typeName;
         }
 
-        internal static Type GetNonNullableType(this Type type)
-        {
-            if (!type.IsNullableType())
-                return type;
-
-            return type.GetGenericArguments()[0];
-        }
-
-        internal static bool IsNullableType(this Type type)
+        internal static bool IsNullable(this Type type)
         {
             return Nullable.GetUnderlyingType(type) != null;
         }
 
-        internal static bool IsGenericType(this PropertyInfo propInfo)
+        internal static bool IsFSharpOption(this Type type)
         {
-            return IntrospectionExtensions.GetTypeInfo(propInfo.PropertyType).IsGenericType;
-        }
-
-        internal static bool IsEnumType(this Type type)
-        {
-            return IntrospectionExtensions.GetTypeInfo(type.GetNonNullableType()).IsEnum;
+            return type.FullNameSansTypeArguments() == "Microsoft.FSharp.Core.FSharpOption`1";
         }
 
         internal static bool IsAssignableToNull(this Type type)
         {
-            return !type.GetTypeInfo().IsValueType || type.IsNullableType();
+            return !type.GetTypeInfo().IsValueType || type.IsNullable();
         }
     }
 }

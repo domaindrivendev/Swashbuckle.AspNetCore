@@ -54,7 +54,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private Schema CreateSchema(Type type, Queue<Type> referencedTypes)
         {
-            type = GetUnderlyingType(type);
+            // If Option<T> (F#), use the type argument
+            if (type.IsFSharpOption())
+                type = type.GetGenericArguments()[0];
 
             var jsonContract = _jsonContractResolver.ResolveContract(type);
 
@@ -65,7 +67,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     // Type is self-referencing
                     jsonContract.IsSelfReferencingArrayOrDictionary() ||
                     // Type is enum and opt-in flag set
-                    (type.IsEnumType() && _settings.UseReferencedDefinitionsForEnums));
+                    (type.GetTypeInfo().IsEnum && _settings.UseReferencedDefinitionsForEnums));
 
             return createReference
                 ? CreateReferenceSchema(type, referencedTypes)
@@ -115,7 +117,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private Schema CreatePrimitiveSchema(JsonPrimitiveContract primitiveContract)
         {
-            var type = primitiveContract.UnderlyingType;
+            // If Nullable<T>, use the type argument
+            var type = primitiveContract.UnderlyingType.IsNullable()
+                ? Nullable.GetUnderlyingType(primitiveContract.UnderlyingType)
+                : primitiveContract.UnderlyingType;
 
             if (type.GetTypeInfo().IsEnum)
                 return CreateEnumSchema(primitiveContract, type);
@@ -231,22 +236,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             };
 
             return schema;
-        }
-
-        /// <summary>
-        /// Unpacks actual type from Nullable-like constructs. When called over
-        /// non-nullable type, it just return it back.
-        /// </summary>
-        private Type GetUnderlyingType(Type type)
-        {
-            // Option<T>
-            if (type.FullNameSansTypeArguments() == "Microsoft.FSharp.Core.FSharpOption`1")
-            {
-                return type.GetGenericArguments().First();
-            }
-
-            // Nullable<T>
-            return Nullable.GetUnderlyingType(type) ?? type;
         }
 
         private static readonly Dictionary<Type, Func<Schema>> PrimitiveTypeMap = new Dictionary<Type, Func<Schema>>
