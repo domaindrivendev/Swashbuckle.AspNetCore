@@ -2,10 +2,11 @@
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Text.RegularExpressions;
 
 namespace Swashbuckle.AspNetCore.SwaggerUI
 {
@@ -22,16 +23,20 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
 
         public async Task Invoke(HttpContext httpContext)
         {
-            if (!RequestingSwaggerUIIndex(httpContext.Request))
+            var request = httpContext.Request;
+
+            if (!RequestingSwaggerUIIndex(request))
             {
                 await _next(httpContext);
                 return;
             }
 
-            // If trailing slash is missing, force it so that relative links work
-            if (!httpContext.Request.Path.Value.EndsWith("/"))
+            // If trailing slash is missing, force via redirect
+            if (!request.Path.Value.EndsWith("/"))
             {
-                RespondWithRedirect(httpContext.Response, $"{_options.RoutePrefix}/");
+                // NOTE: the redirect is relative to the last segment of the incoming request so that
+                // the slash is added to the URL as seen by the client. This supports proxy-based setups
+                RespondWithRedirect(httpContext.Response, $"{request.Path.Value.Split('/').Last()}/");
                 return;
             }
 
