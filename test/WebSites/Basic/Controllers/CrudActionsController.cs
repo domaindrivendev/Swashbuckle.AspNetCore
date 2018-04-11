@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.Serialization;
 
 namespace Basic.Controllers
 {
+    /// <summary>
+    /// Summary for CrudActionsController
+    /// </summary>
     [Route("/products")]
     [Produces("application/json")]
     public class CrudActionsController

@@ -63,6 +63,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var filterContext = new DocumentFilterContext(
                 _apiDescriptionsProvider.ApiDescriptionGroups,
+                apiDescriptions,
                 schemaRegistry);
 
             foreach (var filter in _settings.DocumentFilters)
