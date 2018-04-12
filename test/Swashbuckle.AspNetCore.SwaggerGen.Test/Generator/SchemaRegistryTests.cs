@@ -22,8 +22,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(float), "number", "float")]
         [InlineData(typeof(double), "number", "double")]
         [InlineData(typeof(decimal), "number", "double")]
-        [InlineData(typeof(byte), "string", "byte")]
-        [InlineData(typeof(sbyte), "string", "byte")]
+        [InlineData(typeof(byte), "integer", "int32")]
+        [InlineData(typeof(sbyte), "integer", "int32")]
         [InlineData(typeof(byte[]), "string", "byte")]
         [InlineData(typeof(bool), "boolean", null)]
         [InlineData(typeof(DateTime), "string", "date-time")]
@@ -92,7 +92,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(short?), "integer", "int32")]
         [InlineData(typeof(long?), "integer", "int64")]
         [InlineData(typeof(float?), "number", "float")]
-        [InlineData(typeof(byte?), "string", "byte")]
+        [InlineData(typeof(byte?), "integer", "int32")]
         [InlineData(typeof(DateTime?), "string", "date-time")]
         public void GetOrRegister_ReturnsPrimitiveSchema_ForNullableTypes(
             Type systemType,
@@ -109,7 +109,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(Microsoft.FSharp.Core.FSharpOption<short>), "integer", "int32")]
         [InlineData(typeof(Microsoft.FSharp.Core.FSharpOption<long>), "integer", "int64")]
         [InlineData(typeof(Microsoft.FSharp.Core.FSharpOption<float>), "number", "float")]
-        [InlineData(typeof(Microsoft.FSharp.Core.FSharpOption<byte>), "string", "byte")]
+        [InlineData(typeof(Microsoft.FSharp.Core.FSharpOption<byte>), "integer", "int32")]
         [InlineData(typeof(Microsoft.FSharp.Core.FSharpOption<DateTime>), "string", "date-time")]
         public void GetOrRegister_ReturnsPrimitiveSchema_ForOptionTypes(
             Type systemType,
