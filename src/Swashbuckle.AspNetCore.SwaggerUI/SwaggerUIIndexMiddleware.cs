@@ -7,6 +7,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 
 namespace Swashbuckle.AspNetCore.SwaggerUI
 {
@@ -14,6 +15,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
     {
         private readonly RequestDelegate _next;
         private readonly SwaggerUIOptions _options;
+        private string _basePath;
 
         public SwaggerUIIndexMiddleware(RequestDelegate next, SwaggerUIOptions options)
         {
@@ -31,14 +33,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
                 return;
             }
 
-            // If trailing slash is missing, force via redirect
-            if (!request.Path.Value.EndsWith("/"))
-            {
-                // NOTE: the redirect is relative to the last segment of the incoming request so that
-                // the slash is added to the URL as seen by the client. This supports proxy-based setups
-                RespondWithRedirect(httpContext.Response, $"{request.Path.Value.Split('/').Last()}/");
-                return;
-            }
+            _basePath = new Uri($"{httpContext.Request.Scheme}://{httpContext.Request.Host}{httpContext.Request.Path}/").ToString();
 
             await RespondWithIndexHtml(httpContext.Response);
             return;
@@ -48,12 +43,6 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         {
             return (request.Method == "GET"
                 && Regex.IsMatch(request.Path, $"^/{_options.RoutePrefix}/?$"));
-        }
-
-        private void RespondWithRedirect(HttpResponse response, string redirectPath)
-        {
-            response.StatusCode = 301;
-            response.Headers["Location"] = redirectPath;
         }
 
         private async Task RespondWithIndexHtml(HttpResponse response)
@@ -81,7 +70,8 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
                 { "%(DocumentTitle)", _options.DocumentTitle },
                 { "%(HeadContent)", _options.HeadContent },
                 { "%(ConfigObject)", SerializeToJson(_options.ConfigObject) },
-                { "%(OAuthConfigObject)", SerializeToJson(_options.OAuthConfigObject) }
+                { "%(OAuthConfigObject)", SerializeToJson(_options.OAuthConfigObject) },
+                { "%(SwaggerUIBasePath)", _basePath }
             };
         }
 
