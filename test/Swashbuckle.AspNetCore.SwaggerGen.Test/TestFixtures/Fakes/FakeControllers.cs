@@ -9,7 +9,10 @@
         public class AnnotatedWithSwaggerOperationFilter
         {}
 
-        public class TestController
+        /// <summary>
+        /// summary for AnnotatedWithXml
+        /// </summary>
+        public class AnnotatedWithXml
         {}
     }
 }

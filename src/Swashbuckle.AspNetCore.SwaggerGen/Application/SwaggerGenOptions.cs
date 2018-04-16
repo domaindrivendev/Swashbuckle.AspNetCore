@@ -16,6 +16,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private readonly SchemaRegistrySettings _schemaRegistrySettings;
 
         private IList<Func<XPathDocument>> _xmlDocFactories;
+        private bool _includeControllerXmlComments;
         private List<FilterDescriptor<IOperationFilter>> _operationFilterDescriptors;
         private List<FilterDescriptor<IDocumentFilter>> _documentFilterDescriptors;
         private List<FilterDescriptor<ISchemaFilter>> _schemaFilterDescriptors;
@@ -244,18 +245,27 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         /// Inject human-friendly descriptions for Operations, Parameters and Schemas based on XML Comment files
         /// </summary>
         /// <param name="xmlDocFactory">A factory method that returns XML Comments as an XPathDocument</param>
-        public void IncludeXmlComments(Func<XPathDocument> xmlDocFactory)
+        /// <param name="includeControllerXmlComments">
+        /// Flag to indicate if controller XML comments (i.e. summary) should be used to assign Tag descriptions.
+        /// Don't set this flag if you're customizing the default tag for operations via TagActionsBy.
+        /// </param>
+        public void IncludeXmlComments(Func<XPathDocument> xmlDocFactory, bool includeControllerXmlComments = false)
         {
             _xmlDocFactories.Add(xmlDocFactory);
+            _includeControllerXmlComments = includeControllerXmlComments;
         }
 
         /// <summary>
         /// Inject human-friendly descriptions for Operations, Parameters and Schemas based on XML Comment files
         /// </summary>
         /// <param name="filePath">An abolsute path to the file that contains XML Comments</param>
-        public void IncludeXmlComments(string filePath)
+        /// <param name="includeControllerXmlComments">
+        /// Flag to indicate if controller XML comments (i.e. summary) should be used to assign Tag descriptions.
+        /// Don't set this flag if you're customizing the default tag for operations via TagActionsBy.
+        /// </param>
+        public void IncludeXmlComments(string filePath, bool includeControllerXmlComments = false)
         {
-            IncludeXmlComments(() => new XPathDocument(filePath));
+            IncludeXmlComments(() => new XPathDocument(filePath), includeControllerXmlComments);
         }
 
         internal ISwaggerProvider CreateSwaggerProvider(IServiceProvider serviceProvider)
@@ -268,8 +278,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             foreach (var xmlDocFactory in _xmlDocFactories)
             {
                 var xmlDoc = xmlDocFactory();
-                swaggerGeneratorSettings.OperationFilters.Insert(0, new XmlCommentsOperationFilter(xmlDoc));
                 schemaRegistrySettings.SchemaFilters.Insert(0, new XmlCommentsSchemaFilter(xmlDoc));
+                swaggerGeneratorSettings.OperationFilters.Insert(0, new XmlCommentsOperationFilter(xmlDoc));
+
+                if (_includeControllerXmlComments)
+                    swaggerGeneratorSettings.DocumentFilters.Insert(0, new XmlCommentsDocumentFilter(xmlDoc));
             }
 
             var schemaRegistryFactory = new SchemaRegistryFactory(
