@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
+using System.Collections.Generic;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -17,7 +18,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             foreach (var attribute in propInfo.GetCustomAttributes(false))
             {
-
                 var defaultValue = attribute as DefaultValueAttribute;
                 if (defaultValue != null)
                     schema.Default = defaultValue.Value;
@@ -51,6 +51,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 {
                     schema.MinLength = stringLength.MinimumLength;
                     schema.MaxLength = stringLength.MaximumLength;
+                }
+
+                var dataTypeAttribute = attribute as DataTypeAttribute;
+                if (dataTypeAttribute != null && schema.Type == "string")
+                {
+                    if (DataTypeFormatMap.TryGetValue(dataTypeAttribute.DataType, out string format))
+                        schema.Format = format;
                 }
             }
 
@@ -88,5 +95,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             partialSchema.Enum = schema.Enum;
             partialSchema.MultipleOf = schema.MultipleOf;
         }
+
+        private static readonly Dictionary<DataType, string> DataTypeFormatMap = new Dictionary<DataType, string>
+        {
+            { DataType.Date, "date" },
+            { DataType.DateTime, "date-time" },
+            { DataType.Password, "password" }
+        };
     }
 }

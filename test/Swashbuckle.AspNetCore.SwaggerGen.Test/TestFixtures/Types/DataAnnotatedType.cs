@@ -26,5 +26,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         [MinLength(1), MaxLength(3)]
         public string StringWithMinMaxLength { get; set; }
+
+        [DataType(DataType.Date)]
+        public string StringWithDataTypeDate { get; set; }
+
+        [DataType(DataType.DateTime)]
+        public string StringWithDataTypeDateTime { get; set; }
+
+        [DataType(DataType.Password)]
+        public string StringWithDataTypePassword { get; set; }
     }
 }

@@ -246,6 +246,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(1, schema.Properties["StringWithMinMaxLength"].MinLength);
             Assert.Equal(3, schema.Properties["StringWithMinMaxLength"].MaxLength);
             Assert.Equal(new[] { "StringWithRequired", "NullableIntWithRequired" }, schema.Required.ToArray());
+            Assert.Equal("date", schema.Properties["StringWithDataTypeDate"].Format);
+            Assert.Equal("date-time", schema.Properties["StringWithDataTypeDateTime"].Format);
+            Assert.Equal("password", schema.Properties["StringWithDataTypePassword"].Format);
         }
 
         [Fact]
