@@ -24,17 +24,6 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         }
 
         [Fact]
-        public async Task SwaggerUIIndex_RedirectsToTrailingSlash_IfNotProvided()
-        {
-            var client = new TestSite(typeof(CustomUIConfig.Startup)).BuildClient();
-
-            var response = await client.GetAsync("/swagger");
-
-            Assert.Equal(HttpStatusCode.MovedPermanently, response.StatusCode);
-            Assert.Equal("swagger/", response.Headers.Location.ToString());
-        }
-
-        [Fact]
         public async Task SwaggerUIIndex_IncludesCustomPageTitleAndStylesheets_IfConfigured()
         {
             var client = new TestSite(typeof(CustomUIConfig.Startup)).BuildClient();

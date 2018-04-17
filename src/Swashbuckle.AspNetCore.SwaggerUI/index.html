@@ -5,9 +5,6 @@
   <meta charset="UTF-8">
   <title>%(DocumentTitle)</title>
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Source+Code+Pro:300,600|Titillium+Web:400,600,700" rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="./swagger-ui.css" >
-  <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32" />
-  <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16" />
   <style>
     html
     {
@@ -69,16 +66,61 @@
 <div id="swagger-ui"></div>
 
 <!-- Workaround for https://github.com/swagger-api/swagger-editor/issues/1371 -->
-<script>
+<script id="edgefix">
   if (window.navigator.userAgent.indexOf("Edge") > -1) {
     console.log("Removing native Edge fetch in favor of swagger-ui's polyfill")
     window.fetch = undefined;
   }
 </script>
 
-<script src="./swagger-ui-bundle.js"> </script>
-<script src="./swagger-ui-standalone-preset.js"> </script>
 <script>
+  function joinPath(base, path) {
+    if (base.slice(-1) == '/') {
+      if (path.slice(0, 1) == '/') {
+        return base + path.slice(1);
+      } else {
+        return base + path;
+      }
+    } else {
+      if (path.slice(0, 1) == '/') {
+        return base + path;
+      } else {
+        return base + '/' + path;
+      }
+    }
+  }
+
+  var ref = document.getElementsByTagName('link')[0];
+  var scriptRef = document.getElementById('edgefix');
+
+  var css = document.createElement('link');
+  css.rel = 'stylesheet';
+  css.type = 'text/css';
+  css.href = joinPath(window.location.href, 'swagger-ui.css');
+  ref.parentNode.insertBefore(css, ref.nextSibling);
+
+  var iconLg = document.createElement('link');
+  iconLg.rel = 'icon';
+  iconLg.type = 'image/png';
+  iconLg.href = joinPath(window.location.href, 'favicon-32x32.png');
+  iconLg.sizes = '32x32';
+  ref.parentNode.insertBefore(iconLg, ref.nextSibling);
+
+  var iconSm = document.createElement('link');
+  iconSm.rel = 'icon';
+  iconSm.type = 'image/png';
+  iconSm.href = joinPath(window.location.href, 'favicon-16x16.png');
+  iconSm.sizes = '16x16';
+  ref.parentNode.insertBefore(iconSm, ref.nextSibling);
+
+  var bundle = document.createElement('script');
+  bundle.src = joinPath(window.location.href, 'swagger-ui-bundle.js');
+  scriptRef.parentNode.insertBefore(bundle, scriptRef.nextSibling);
+
+  var standalone = document.createElement('script');
+  standalone.src = joinPath(window.location.href, 'swagger-ui-standalone-preset.js');
+  scriptRef.parentNode.insertBefore(standalone, bundle);
+
   window.onload = function () {
     var configObject = JSON.parse('%(ConfigObject)');
     var oauthConfigObject = JSON.parse('%(OAuthConfigObject)');
@@ -89,7 +131,7 @@
     configObject.layout = "StandaloneLayout";
 
     if (!configObject.hasOwnProperty("oauth2RedirectUrl"))
-      configObject.oauth2RedirectUrl = window.location + "oauth2-redirect.html"; // use the built-in default
+      configObject.oauth2RedirectUrl = joinPath(window.location.href, "oauth2-redirect.html"); // use the built-in default
 
     // Build a system
     const ui = SwaggerUIBundle(configObject);

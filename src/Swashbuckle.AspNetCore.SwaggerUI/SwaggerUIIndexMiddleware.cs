@@ -31,15 +31,6 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
                 return;
             }
 
-            // If trailing slash is missing, force via redirect
-            if (!request.Path.Value.EndsWith("/"))
-            {
-                // NOTE: the redirect is relative to the last segment of the incoming request so that
-                // the slash is added to the URL as seen by the client. This supports proxy-based setups
-                RespondWithRedirect(httpContext.Response, $"{request.Path.Value.Split('/').Last()}/");
-                return;
-            }
-
             await RespondWithIndexHtml(httpContext.Response);
             return;
         }
@@ -48,12 +39,6 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         {
             return (request.Method == "GET"
                 && Regex.IsMatch(request.Path, $"^/{_options.RoutePrefix}/?$"));
-        }
-
-        private void RespondWithRedirect(HttpResponse response, string redirectPath)
-        {
-            response.StatusCode = 301;
-            response.Headers["Location"] = redirectPath;
         }
 
         private async Task RespondWithIndexHtml(HttpResponse response)
