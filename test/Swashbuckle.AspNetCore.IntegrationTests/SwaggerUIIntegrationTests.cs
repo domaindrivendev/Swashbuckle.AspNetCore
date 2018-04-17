@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -7,13 +6,23 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 {
     public class SwaggerUIIntegrationTests
     {
+        [Fact]
+        public async Task RoutePrefix_RedirectsToRelativeIndexUrl()
+        {
+            var client = new TestSite(typeof(CustomUIConfig.Startup)).BuildClient();
+
+            var response = await client.GetAsync("/swagger");
+
+            Assert.Equal(HttpStatusCode.MovedPermanently, response.StatusCode);
+            Assert.Equal("swagger/index.html", response.Headers.Location.ToString());
+        }
 
         [Fact]
-        public async Task SwaggerUIIndex_ServesAnEmbeddedVersionOfTheSwaggerUI()
+        public async Task IndexUrl_ReturnsEmbeddedVersionOfTheSwaggerUI()
         {
             var client = new TestSite(typeof(Basic.Startup)).BuildClient();
 
-            var indexResponse = await client.GetAsync("/"); // Basic is configured to serve UI at root
+            var indexResponse = await client.GetAsync("/index.html"); // Basic is configured to serve UI at root
             var jsResponse = await client.GetAsync("/swagger-ui.js");
             var cssResponse = await client.GetAsync("/swagger-ui.css");
 
@@ -24,22 +33,11 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         }
 
         [Fact]
-        public async Task SwaggerUIIndex_RedirectsToTrailingSlash_IfNotProvided()
+        public async Task IndexUrl_ReturnsCustomPageTitleAndStylesheets_IfConfigured()
         {
             var client = new TestSite(typeof(CustomUIConfig.Startup)).BuildClient();
 
-            var response = await client.GetAsync("/swagger");
-
-            Assert.Equal(HttpStatusCode.MovedPermanently, response.StatusCode);
-            Assert.Equal("swagger/", response.Headers.Location.ToString());
-        }
-
-        [Fact]
-        public async Task SwaggerUIIndex_IncludesCustomPageTitleAndStylesheets_IfConfigured()
-        {
-            var client = new TestSite(typeof(CustomUIConfig.Startup)).BuildClient();
-
-            var response = await client.GetAsync("/swagger/");
+            var response = await client.GetAsync("/swagger/index.html");
             var content = await response.Content.ReadAsStringAsync();
 
             Assert.Contains("<title>CustomUIConfig</title>", content);
@@ -47,15 +45,14 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         }
 
         [Fact]
-        public async Task SwaggerUIIndex_ServesCustomIndexHtml_IfConfigured()
+        public async Task IndexUrl_ReturnsCustomIndexHtml_IfConfigured()
         {
             var client = new TestSite(typeof(CustomUIIndex.Startup)).BuildClient();
 
-            var response = await client.GetAsync("/swagger/");
+            var response = await client.GetAsync("/swagger/index.html");
             var content = await response.Content.ReadAsStringAsync();
 
             Assert.Contains("Example.com", content);
         }
-
     }
 }
