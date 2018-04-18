@@ -24,10 +24,10 @@ namespace GenericControllers
                     }
                 );
 
-                //c.OperationFilter<ApplySummariesOperationFilter>();
+                c.OperationFilter<ApplySummariesOperationFilter>();
 
-                var xmlCommentsPath = Path.Combine(System.AppContext.BaseDirectory, "GenericControllers.xml");
-                c.IncludeXmlComments(xmlCommentsPath);
+                //var xmlCommentsPath = Path.Combine(System.AppContext.BaseDirectory, "GenericControllers.xml");
+                //c.IncludeXmlComments(xmlCommentsPath);
             });
         }
 

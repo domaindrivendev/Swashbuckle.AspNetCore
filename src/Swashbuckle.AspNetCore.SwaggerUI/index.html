@@ -88,8 +88,9 @@
     configObject.presets = [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset];
     configObject.layout = "StandaloneLayout";
 
+    // If oauth2RedirectUrl isn't specified, use the built-in default
     if (!configObject.hasOwnProperty("oauth2RedirectUrl"))
-      configObject.oauth2RedirectUrl = window.location + "oauth2-redirect.html"; // use the built-in default
+      configObject.oauth2RedirectUrl = window.location.href.replace("index.html", "oauth2-redirect.html");
 
     // Build a system
     const ui = SwaggerUIBundle(configObject);
