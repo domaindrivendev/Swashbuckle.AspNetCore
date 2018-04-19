@@ -5,10 +5,6 @@
         public class NotAnnotated
         {}
 
-        [SwaggerOperationFilter(typeof(VendorExtensionsOperationFilter))]
-        public class AnnotatedWithSwaggerOperationFilter
-        {}
-
         /// <summary>
         /// summary for AnnotatedWithXml
         /// </summary>

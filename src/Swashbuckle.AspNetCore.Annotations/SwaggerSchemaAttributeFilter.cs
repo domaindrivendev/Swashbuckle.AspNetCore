@@ -3,14 +3,15 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Swashbuckle.AspNetCore.SwaggerGen
+namespace Swashbuckle.AspNetCore.Annotations
 {
-    public class SwaggerAttributesSchemaFilter : ISchemaFilter
+    public class SwaggerSchemaAttributeFilter : ISchemaFilter
     {
         private readonly IServiceProvider _serviceProvider;
 
-        public SwaggerAttributesSchemaFilter(IServiceProvider serviceProvider)
+        public SwaggerSchemaAttributeFilter(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Swashbuckle.AspNetCore.SwaggerGen
+namespace Swashbuckle.AspNetCore.Annotations
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false)]
     public class SwaggerSchemaFilterAttribute : Attribute

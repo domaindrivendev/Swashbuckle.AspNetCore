@@ -1,9 +1,13 @@
-﻿using System.Linq;
+﻿using System.Reflection;
+using System.Linq;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Newtonsoft.Json;
 using Xunit;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Swashbuckle.AspNetCore.SwaggerGen.Test
+namespace Swashbuckle.AspNetCore.Annotations.Test
 {
     public class SwaggerResponseAttributeFilterTests
     {
@@ -14,7 +18,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             {
                 OperationId = "foobar"
             };
-            var filterContext = this.FilterContextFor(nameof(FakeActions.AnnotatedWithSwaggerResponseAttributes));
+            var filterContext = FilterContextFor(nameof(TestController.ActionWithSwaggerResponseAttributes));
 
             this.Subject().Apply(operation, filterContext);
 
@@ -28,15 +32,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.NotNull(response2.Schema);
         }
 
-        private OperationFilterContext FilterContextFor(
-            string actionFixtureName,
-            string controllerFixtureName = "NotAnnotated")
+        private OperationFilterContext FilterContextFor(string fakeActionName)
         {
-            var fakeProvider = new FakeApiDescriptionGroupCollectionProvider();
-            var apiDescription = fakeProvider
-                .Add("GET", "collection", actionFixtureName, controllerFixtureName)
-                .ApiDescriptionGroups.Items.First()
-                .Items.First();
+            var apiDescription = new ApiDescription
+            {
+                ActionDescriptor = new ControllerActionDescriptor
+                {
+                    ControllerTypeInfo = typeof(TestController).GetTypeInfo(),
+                    MethodInfo = typeof(TestController).GetMethod(fakeActionName)
+                }
+            };
 
             return new OperationFilterContext(
                 apiDescription,

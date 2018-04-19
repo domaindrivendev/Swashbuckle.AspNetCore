@@ -53,6 +53,8 @@ namespace Basic
                 c.SchemaFilter<ExamplesSchemaFilter>();
 
                 //c.DescribeAllParametersInCamelCase();
+
+                c.EnableAnnotations();
             });
 
             if (_hostingEnv.IsDevelopment())
@@ -86,6 +88,8 @@ namespace Basic
             {
                 c.RoutePrefix = ""; // serve the UI at root
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
+                c.DisplayOperationId();
+                c.ShowExtensions();
             });
         }
     }

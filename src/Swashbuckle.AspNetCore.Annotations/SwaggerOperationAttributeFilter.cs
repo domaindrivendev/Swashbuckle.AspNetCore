@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Linq;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Swashbuckle.AspNetCore.SwaggerGen
+namespace Swashbuckle.AspNetCore.Annotations
 {
-    public class SwaggerAttributesOperationFilter : IOperationFilter
+    public class SwaggerOperationAttributeFilter : IOperationFilter
     {
         public void Apply(Operation operation, OperationFilterContext context)
         {
