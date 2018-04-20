@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.Abstractions;
-using Microsoft.AspNetCore.Mvc.Controllers;
+﻿using Microsoft.AspNetCore.Mvc.Controllers;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -10,34 +10,30 @@ namespace Swashbuckle.AspNetCore.Annotations
 {
     public class SwaggerTagAttributeDocumentFilter : IDocumentFilter
     {
-        private static Type swaggerTagType = typeof(SwaggerTagAttribute);
-
         public void Apply(SwaggerDocument swaggerDoc, DocumentFilterContext context)
         {
-            var controllerNamesAndTagAttributes = context.ApiDescriptions
-                    .Select(apiDesc => apiDesc.ActionDescriptor as ControllerActionDescriptor)
-                    .SkipWhile(actionDesc => !HasSwaggerTags(actionDesc))
-                    .GroupBy(actionDesc => actionDesc.ControllerName)
-                    .ToDictionary(grp => grp.Key, grp => grp.Last().ControllerTypeInfo
-                        .GetCustomAttributes<SwaggerTagAttribute>()
-                        .Select(attr => attr.Tag)
-                        .ToList());
+            var controllersWithTags =
+                context.ApiDescriptions
+                    .Select(apiDesc => apiDesc.ActionDescriptor)
+                    .OfType<ControllerActionDescriptor>()
+                    .Select(controllerDescriptor => new
+                    {
+                        ControllerName = controllerDescriptor.ControllerName,
+                        Tags = controllerDescriptor.ControllerTypeInfo.GetCustomAttributes<SwaggerTagAttribute>().Select(attr => attr.Tag)
+                    })
+                    .Where(controller => controller.Tags.Any())
+                    .GroupBy(controller => controller.ControllerName)
+                    .ToDictionary(group => group.Key, group => group.First().Tags);
 
-            foreach (var tag in controllerNamesAndTagAttributes.SelectMany(controller => controller.Value))
+            if (swaggerDoc.Tags == null)
+            {
+                swaggerDoc.Tags = new List<Tag>();
+            }
+
+            foreach (var tag in controllersWithTags.SelectMany(controller => controller.Value))
             {
                 swaggerDoc.Tags.Add(tag);
             }
         }
-
-        private static bool HasSwaggerTags(ActionDescriptor actionDescription)
-        {
-            if (actionDescription is ControllerActionDescriptor controllerDescriptor)
-            {
-                return controllerDescriptor.ControllerTypeInfo.CustomAttributes.Any(t => t.AttributeType == swaggerTagType);
-            }
-
-            return false;
-        }
-        
     }
 }
