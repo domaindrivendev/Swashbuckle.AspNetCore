@@ -42,6 +42,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             Assert.Contains(document.Tags, tag => tag.Name == "Tag1" && tag.Description == "Description1");
             Assert.Contains(document.Tags, tag => tag.Name == "Tag2" && tag.Description == "Description2");
             Assert.Contains(document.Tags, tag => tag.Name == "Tag42" && tag.Description == "Description42");
+            Assert.DoesNotContain(document.Tags, tag => tag.Description == "ThisDescriptionShouldNotBeIncluded");
         }
 
         private DocumentFilterContext FilterContextFor<TController>()

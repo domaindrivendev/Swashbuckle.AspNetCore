@@ -3,6 +3,7 @@
     [SwaggerTag("Tag1", "Description1")]
     [SwaggerTag("Tag2", "Description2")]
     [SwaggerTag("Tag42", "Description42")]
+    [SwaggerTag("", "ThisDescriptionShouldNotBeIncluded")]
     internal class TaggedController
     {
         public void EmptyAction()
