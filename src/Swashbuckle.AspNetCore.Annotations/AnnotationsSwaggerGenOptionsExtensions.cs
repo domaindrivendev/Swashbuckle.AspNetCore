@@ -10,7 +10,6 @@ namespace Microsoft.Extensions.DependencyInjection
             options.SchemaFilter<SwaggerSchemaAttributeFilter>();
             options.OperationFilter<SwaggerResponseAttributeFilter>();
             options.OperationFilter<SwaggerOperationAttributeFilter>();
-            options.OperationFilter<SwaggerTagAttributeOperationFilter>();
             options.DocumentFilter<SwaggerTagAttributeDocumentFilter>();
         }
     }
