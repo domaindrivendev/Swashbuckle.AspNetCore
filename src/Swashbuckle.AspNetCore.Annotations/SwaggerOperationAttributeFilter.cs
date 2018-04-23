@@ -28,6 +28,12 @@ namespace Swashbuckle.AspNetCore.Annotations
 
             if (attribute.Schemes != null)
                 operation.Schemes = attribute.Schemes;
+
+            if (attribute.Produces != null)
+                operation.Produces = attribute.Produces;
+
+            if (attribute.Consumes != null)
+                operation.Consumes = attribute.Consumes;
         }
 
         public static void ApplyOperationFilterAttributes(Operation operation, OperationFilterContext context)
