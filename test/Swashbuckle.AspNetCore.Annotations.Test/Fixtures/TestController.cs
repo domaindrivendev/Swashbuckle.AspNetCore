@@ -11,7 +11,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
         public void ActionWithNoAttributes()
         { }
 
-        [SwaggerOperation("CustomOperationId", Tags = new[] { "customTag" }, Schemes = new[] { "customScheme" })]
+        [SwaggerOperation("CustomOperationId", Tags = new[] { "customTag" }, Schemes = new[] { "customScheme" }, Produces = new string[] { "customType1", "customType2" }, Consumes = new string[] { "customType3", "customType4" })]
         public void ActionWithSwaggerOperationAttribute()
         { }
 
