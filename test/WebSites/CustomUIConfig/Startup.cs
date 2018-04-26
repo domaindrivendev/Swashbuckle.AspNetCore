@@ -46,6 +46,7 @@ namespace CustomUIConfig
                 // Other
                 c.DocumentTitle = "CustomUIConfig";
                 c.InjectStylesheet("/ext/custom-stylesheet.css");
+                c.InjectJavascript("/ext/custom-javascript.js");
             });
 
             app.UseStaticFiles();
