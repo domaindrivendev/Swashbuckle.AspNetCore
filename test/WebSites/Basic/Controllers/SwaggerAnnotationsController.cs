@@ -20,6 +20,13 @@ namespace Basic.Controllers
         {
             return new Cart { Id = id };
         }
+
+        [HttpDelete("/carts/{id}")]
+        [SwaggerOperation(Consumes = new string[] { "test/plain", "application/json" }, Produces = new string[] { "application/javascript", "application/xml" })]
+        public Cart Delete(int id)
+        {
+            return new Cart { Id = id };
+        }
     }
 
     public class Cart

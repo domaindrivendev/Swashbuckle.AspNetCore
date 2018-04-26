@@ -23,6 +23,8 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             Assert.Equal("CustomOperationId", operation.OperationId);
             Assert.Equal(new[] { "customTag" }, operation.Tags.ToArray());
             Assert.Equal(new[] { "customScheme" }, operation.Schemes.ToArray());
+            Assert.Equal(new[] { "customType1", "customType2" }, operation.Produces.ToArray());
+            Assert.Equal(new[] { "customType3", "customType4" }, operation.Consumes.ToArray());
         }
 
         [Fact]
