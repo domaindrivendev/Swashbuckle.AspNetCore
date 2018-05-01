@@ -26,12 +26,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 if (attribute is RangeAttribute range)
                 {
-                    int maximum;
-                    if (Int32.TryParse(range.Maximum.ToString(), out maximum))
+                    if (Int32.TryParse(range.Maximum.ToString(), out int maximum))
                         schema.Maximum = maximum;
 
-                    int minimum;
-                    if (Int32.TryParse(range.Minimum.ToString(), out minimum))
+                    if (Int32.TryParse(range.Minimum.ToString(), out int minimum))
                         schema.Minimum = minimum;
                 }
 

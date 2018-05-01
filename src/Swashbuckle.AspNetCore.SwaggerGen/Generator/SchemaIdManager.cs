@@ -17,8 +17,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public string IdFor(Type type)
         {
-            string schemaId;
-            if (!_schemaIdMap.TryGetValue(type, out schemaId))
+            if (!_schemaIdMap.TryGetValue(type, out string schemaId))
             {
                 schemaId = _schemaIdSelector(type);
 

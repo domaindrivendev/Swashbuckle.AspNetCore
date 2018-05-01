@@ -32,8 +32,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var schemaRegistry = _schemaRegistryFactory.Create();
 
-            Info info;
-            if (!_settings.SwaggerDocs.TryGetValue(documentName, out info))
+            if (!_settings.SwaggerDocs.TryGetValue(documentName, out Info info))
                 throw new UnknownSwaggerDocument(documentName);
 
             var apiDescriptions = _apiDescriptionsProvider.ApiDescriptionGroups.Items
