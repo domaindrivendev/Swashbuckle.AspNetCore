@@ -23,7 +23,7 @@ namespace Basic.Controllers
 
         [HttpDelete("/carts/{id}")]
         [SwaggerOperation(Consumes = new string[] { "test/plain", "application/json" }, Produces = new string[] { "application/javascript", "application/xml" })]
-        public Cart Delete(int id)
+        public Cart Delete([SwaggerParameter("The Id of the cart to delete")]int id, [SwaggerParameter("An audit reason for why the cart was deleted", true), FromBody]string auditReason = null)
         {
             return new Cart { Id = id };
         }
