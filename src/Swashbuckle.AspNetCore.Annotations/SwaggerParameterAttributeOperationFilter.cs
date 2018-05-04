@@ -61,6 +61,7 @@ namespace Swashbuckle.AspNetCore.Annotations
 
             return parameter;
         }
+
         /// <summary>
         /// Gets the parameter attributes from the operation
         /// </summary>
@@ -69,10 +70,31 @@ namespace Swashbuckle.AspNetCore.Annotations
         private Dictionary<string, SwaggerParameterAttribute> GetParameterAttributes(OperationFilterContext context)
         {
             var controllerActionDescriptor = context.ApiDescription.ControllerActionDescriptor();
-            return controllerActionDescriptor?.Parameters?.OfType<ControllerParameterDescriptor>()
-                .Select(param => new { Name = param?.Name, Attribute = param?.ParameterInfo?.GetCustomAttributes(false)?.OfType<SwaggerParameterAttribute>().SingleOrDefault() })
+
+            if (controllerActionDescriptor?.Parameters == null)
+            {
+                return new Dictionary<string, SwaggerParameterAttribute>();
+            }
+
+            return controllerActionDescriptor.Parameters.OfType<ControllerParameterDescriptor>()
+                .Select(param => new { Name = param.Name, Attribute = GetSwaggerParameter(param) })
                 .Where(attr => attr?.Attribute != null)
                 .ToDictionary(k => k.Name, v => v.Attribute);
+        }
+
+        /// <summary>
+        /// Gets the swagger parameter from the parameter descriptor, returns null if nothing is found
+        /// </summary>
+        /// <param name="descriptor">The descriptor.</param>
+        /// <returns>A SwaggerParameterAttribute</returns>
+        private static SwaggerParameterAttribute GetSwaggerParameter(ControllerParameterDescriptor descriptor)
+        {
+            if (descriptor.ParameterInfo == null)
+            {
+                return null;
+            }
+
+            return descriptor.ParameterInfo.GetCustomAttributes(false).OfType<SwaggerParameterAttribute>().SingleOrDefault();
         }
     }
 }
