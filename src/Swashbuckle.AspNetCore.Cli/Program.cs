@@ -12,7 +12,7 @@ using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.Cli
 {
-    class Program
+    public class Program
     {
         static int Main(string[] args)
         {
@@ -32,6 +32,7 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Option("--output", "relative path where the Swagger will be output, defaults to stdout");
                 c.Option("--host", "a specific host to include in the Swagger output");
                 c.Option("--basepath", "a specific basePath to inlcude in the Swagger output");
+                c.Option("--format", "overrides the format of the Swagger output, can be Indented or None");
                 c.OnRun((namedArgs) =>
                 {
                     var depsFile = namedArgs["startupassembly"].Replace(".dll", ".deps.json");
@@ -58,6 +59,7 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Option("--output", "");
                 c.Option("--host", "");
                 c.Option("--basepath", "");
+                c.Option("--format", "");
                 c.OnRun((namedArgs) =>
                 {
                     // 1) Configure host with provided startupassembly
@@ -83,10 +85,21 @@ namespace Swashbuckle.AspNetCore.Cli
                     using (var streamWriter = (outputPath != null ? File.CreateText(outputPath) : Console.Out))
                     {
                         var mvcOptionsAccessor = (IOptions<MvcJsonOptions>)host.Services.GetService(typeof(IOptions<MvcJsonOptions>));
+
+                        if(namedArgs.ContainsKey("--format"))
+                        {
+                            // TODO: Should this handle case where mvcJsonOptions.Value == null?
+                            mvcOptionsAccessor.Value.SerializerSettings.Formatting = ParseEnum<Newtonsoft.Json.Formatting>(namedArgs["--format"]);
+                        }
+
                         var serializer = SwaggerSerializerFactory.Create(mvcOptionsAccessor);
 
                         serializer.Serialize(streamWriter, swagger);
-                        Console.WriteLine($"Swagger JSON succesfully written to {outputPath}");
+
+                        if (!string.IsNullOrWhiteSpace(outputPath))
+                        {
+                            Console.WriteLine($"Swagger JSON succesfully written to {outputPath}");
+                        }
                     }
 
                     return 0;
@@ -94,6 +107,18 @@ namespace Swashbuckle.AspNetCore.Cli
             });
 
             return runner.Run(args);
+        }
+
+        /// <summary>
+        /// Parses a given option value into a specified enumeration value
+        /// </summary>
+        /// <param name="optionValue">Expects the string representation of a valid Enumeration value,
+        /// anything else defaults to the Enumeration's default value</param>
+        protected static T ParseEnum<T>(string optionValue) where T : struct, IConvertible
+        {
+            var isParsed = Enum.TryParse(optionValue, true, out T parsed);
+            
+            return isParsed ? parsed : default(T);
         }
     }
 }
