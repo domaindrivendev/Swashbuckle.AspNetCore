@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -8,37 +9,40 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         public void Apply(Operation operation, OperationFilterContext context)
         {
+            if (context.ControllerActionDescriptor == null) return;
+
             ApplyOperationAttributes(operation, context);
             ApplyOperationFilterAttributes(operation, context);
         }
 
         private static void ApplyOperationAttributes(Operation operation, OperationFilterContext context)
         {
-            var attribute = context.ApiDescription.ActionAttributes()
+            var swaggerOperationAttribute = context.ControllerActionDescriptor.MethodInfo
+                .GetCustomAttributes(true)
                 .OfType<SwaggerOperationAttribute>()
                 .FirstOrDefault();
-            if (attribute == null) return;
 
-            if (attribute.OperationId != null)
-                operation.OperationId = attribute.OperationId;
+            if (swaggerOperationAttribute == null) return;
 
-            if (attribute.Tags != null)
-                operation.Tags = attribute.Tags;
+            if (swaggerOperationAttribute.OperationId != null)
+                operation.OperationId = swaggerOperationAttribute.OperationId;
 
-            if (attribute.Schemes != null)
-                operation.Schemes = attribute.Schemes;
+            if (swaggerOperationAttribute.Tags != null)
+                operation.Tags = swaggerOperationAttribute.Tags;
+
+            if (swaggerOperationAttribute.Schemes != null)
+                operation.Schemes = swaggerOperationAttribute.Schemes;
         }
 
         public static void ApplyOperationFilterAttributes(Operation operation, OperationFilterContext context)
         {
-            var apiDesc = context.ApiDescription;
+            var swaggerOperationFilterAttributes = context.ControllerActionDescriptor
+                .GetControllerAndActionAttributes(true)
+                .OfType<SwaggerOperationFilterAttribute>();
 
-            var controllerAttributes = apiDesc.ControllerAttributes().OfType<SwaggerOperationFilterAttribute>();
-            var actionAttributes = apiDesc.ActionAttributes().OfType<SwaggerOperationFilterAttribute>();
-
-            foreach (var attribute in controllerAttributes.Union(actionAttributes))
+            foreach (var swaggerOperationFilterAttribute in swaggerOperationFilterAttributes)
             {
-                var filter = (IOperationFilter)Activator.CreateInstance(attribute.FilterType);
+                var filter = (IOperationFilter)Activator.CreateInstance(swaggerOperationFilterAttribute.FilterType);
                 filter.Apply(operation, context);
             }
         }

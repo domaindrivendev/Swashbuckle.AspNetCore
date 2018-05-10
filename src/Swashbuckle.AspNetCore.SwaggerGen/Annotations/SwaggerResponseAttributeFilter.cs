@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -10,10 +8,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         public void Apply(Operation operation, OperationFilterContext context)
         {
-            var apiDesc = context.ApiDescription;
-            var attributes = GetActionAttributes(apiDesc);
+            if (context.ControllerActionDescriptor == null) return;
 
-            if (!attributes.Any())
+            var swaggerResponseAttributes = context.ControllerActionDescriptor
+                .GetControllerAndActionAttributes(true)
+                .OfType<SwaggerResponseAttribute>();
+
+            if (!swaggerResponseAttributes.Any())
                 return;
 
             if (operation.Responses == null)
@@ -21,7 +22,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 operation.Responses = new Dictionary<string, Response>();
             }
 
-            foreach (var attribute in attributes)
+            foreach (var attribute in swaggerResponseAttributes)
             {
                 ApplyAttribute(operation, context, attribute);
             }
@@ -43,13 +44,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 response.Schema = context.SchemaRegistry.GetOrRegister(attribute.Type);
 
             operation.Responses[key] = response;
-        }
-
-        private static IEnumerable<SwaggerResponseAttribute> GetActionAttributes(ApiDescription apiDesc)
-        {
-            var controllerAttributes = apiDesc.ControllerAttributes().OfType<SwaggerResponseAttribute>();
-            var actionAttributes = apiDesc.ActionAttributes().OfType<SwaggerResponseAttribute>();
-            return controllerAttributes.Union(actionAttributes);
         }
     }
 }

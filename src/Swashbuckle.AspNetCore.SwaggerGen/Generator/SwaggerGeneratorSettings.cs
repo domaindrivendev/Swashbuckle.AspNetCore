@@ -11,7 +11,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             SwaggerDocs = new Dictionary<string, Info>();
             DocInclusionPredicate = (docName, api) => api.GroupName == null || api.GroupName == docName;
-            TagSelector = (apiDesc) => apiDesc.ControllerName();
+            TagSelector = (apiDesc) => apiDesc.ActionDescriptor.RouteValues["controller"];
             SortKeySelector = (apiDesc) => TagSelector(apiDesc);
             SecurityDefinitions = new Dictionary<string, SecurityScheme>();
             SecurityRequirements = new List<IDictionary<string, IEnumerable<string>>>();

@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Xunit;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.Mvc.Controllers;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {

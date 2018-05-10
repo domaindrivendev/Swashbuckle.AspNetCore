@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -161,7 +162,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 Deprecated = apiDescription.IsObsolete() ? true : (bool?)null
             };
 
-            var filterContext = new OperationFilterContext(apiDescription, schemaRegistry);
+            var filterContext = new OperationFilterContext(
+                apiDescription,
+                schemaRegistry);
+
             foreach (var filter in _settings.OperationFilters)
             {
                 filter.Apply(operation, filterContext);

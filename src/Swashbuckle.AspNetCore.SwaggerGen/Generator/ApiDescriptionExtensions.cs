@@ -10,26 +10,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class ApiDescriptionExtensions
     {
+        [Obsolete("Deprecated: Use OperationFilterContext.ControllerActionDescriptor")]
         public static IEnumerable<object> ControllerAttributes(this ApiDescription apiDescription)
         {
-            var controllerActionDescriptor = apiDescription.ControllerActionDescriptor();
+            var controllerActionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
             return (controllerActionDescriptor == null)
                 ? Enumerable.Empty<object>()
                 : controllerActionDescriptor.ControllerTypeInfo.GetCustomAttributes(true);
         }
 
+        [Obsolete("Deprecated: Use OperationFilterContext.ControllerActionDescriptor")]
         public static IEnumerable<object> ActionAttributes(this ApiDescription apiDescription)
         {
-            var controllerActionDescriptor = apiDescription.ControllerActionDescriptor();
+            var controllerActionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
             return (controllerActionDescriptor == null)
                 ? Enumerable.Empty<object>()
                 : controllerActionDescriptor.MethodInfo.GetCustomAttributes(true);
-        }
-
-        internal static string ControllerName(this ApiDescription apiDescription)
-        {
-            var controllerActionDescriptor = apiDescription.ControllerActionDescriptor();
-            return (controllerActionDescriptor == null) ? null : controllerActionDescriptor.ControllerName;
         }
 
         internal static string FriendlyId(this ApiDescription apiDescription)
@@ -72,23 +68,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         internal static bool IsObsolete(this ApiDescription apiDescription)
         {
-            return apiDescription.ActionAttributes().OfType<ObsoleteAttribute>().Any();
+            var controllerActionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
+            return (controllerActionDescriptor != null)
+                ? controllerActionDescriptor.GetControllerAndActionAttributes(true).OfType<ObsoleteAttribute>().Any()
+                : false;
         }
-
-        private static ControllerActionDescriptor ControllerActionDescriptor(this ApiDescription apiDescription)
-        {
-            var controllerActionDescriptor = apiDescription.GetProperty<ControllerActionDescriptor>();
-            if (controllerActionDescriptor == null)
-            {
-                controllerActionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
-                
-                if (controllerActionDescriptor != null)
-                {
-                    apiDescription.SetProperty(controllerActionDescriptor);
-                }
-            }
-            return controllerActionDescriptor; 
-        }
-
     }
 }

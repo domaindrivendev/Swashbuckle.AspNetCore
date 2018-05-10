@@ -81,11 +81,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             descriptor.Parameters = descriptor.MethodInfo.GetParameters()
                 .Select(paramInfo => new ParameterDescriptor
-                    {
-                        Name = paramInfo.Name,
-                        ParameterType = paramInfo.ParameterType,
-                        BindingInfo = BindingInfo.GetBindingInfo(paramInfo.GetCustomAttributes(false))
-                    })
+                {
+                    Name = paramInfo.Name,
+                    ParameterType = paramInfo.ParameterType,
+                    BindingInfo = BindingInfo.GetBindingInfo(paramInfo.GetCustomAttributes(false))
+                })
                 .ToList();
 
             var controllerType = typeof(FakeControllers).GetNestedType(controllerFixtureName, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
@@ -97,6 +97,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             descriptor.FilterDescriptors = descriptor.MethodInfo.GetCustomAttributes<ProducesResponseTypeAttribute>()
                 .Select((filter) => new FilterDescriptor(filter, FilterScope.Action))
                 .ToList();
+
+            descriptor.RouteValues = new Dictionary<string, string> { { "controller", controllerFixtureName } };
 
             return descriptor;
         }
