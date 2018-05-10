@@ -9,6 +9,7 @@ using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Collections.Generic;
 
 namespace Swashbuckle.AspNetCore.Annotations.Test
 {
@@ -17,7 +18,12 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
         [Fact]
         public void Apply_AssignsDescriptionAndDoesNotOverrideRequired()
         {
-            var operation = new Operation { OperationId = "foobar" };
+            var operation = new Operation
+            {
+                OperationId = "foobar",
+                Parameters = new List<IParameter>() { new NonBodyParameter { Name = "input" } },
+            };
+
             var filterContext = FilterContextFor(nameof(TestController.ActionWithSwaggerParameterAndOptionalInputParameter));
 
             Subject().Apply(operation, filterContext);
@@ -30,7 +36,12 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
         [Fact]
         public void Apply_AssignsDescriptionAndSetsRequired()
         {
-            var operation = new Operation { OperationId = "foobar" };
+            var operation = new Operation
+            {
+                OperationId = "foobar",
+                Parameters = new List<IParameter>() { new NonBodyParameter { Name = "input" } },
+            };
+
             var filterContext = FilterContextFor(nameof(TestController.ActionWithSwaggerParameterAndOptionalInputParameterMarkedAsRequired));
 
             Subject().Apply(operation, filterContext);
@@ -43,7 +54,11 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
         [Fact]
         public void Apply_AssignsDescription()
         {
-            var operation = new Operation { OperationId = "foobar" };
+            var operation = new Operation {
+                OperationId = "foobar",
+                Parameters = new List<IParameter>() { new NonBodyParameter { Name = "id" } },
+            };
+
             var filterContext = FilterContextFor(nameof(TestController.ActionWithSwaggerParameterAndRequiredInputParameter));
 
             Subject().Apply(operation, filterContext);
@@ -61,7 +76,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
                             Name = paramInfo.Name,
                             ParameterType = paramInfo.ParameterType,
                             ParameterInfo = paramInfo,
-                            BindingInfo = BindingInfo.GetBindingInfo(paramInfo.GetCustomAttributes(false))
+                            BindingInfo = BindingInfo.GetBindingInfo(paramInfo.GetCustomAttributes(true))
                         }).Cast<ParameterDescriptor>().ToList();
 
             var apiDescription = new ApiDescription
