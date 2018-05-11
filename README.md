@@ -24,7 +24,8 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 1. Install the standard Nuget package into your ASP.NET Core application.
 
     ```
-    Install-Package Swashbuckle.AspNetCore
+    Package Manager : Install-Package Swashbuckle.AspNetCore
+    CLI : dotnet add package Swashbuckle.AspNetCore
     ```
 
 2. In the _ConfigureServices_ method of _Startup.cs_, register the Swagger generator, defining one or more Swagger documents.
