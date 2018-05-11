@@ -75,7 +75,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return apiDescription.ActionAttributes().OfType<ObsoleteAttribute>().Any();
         }
 
-        private static ControllerActionDescriptor ControllerActionDescriptor(this ApiDescription apiDescription)
+        public static ControllerActionDescriptor ControllerActionDescriptor(this ApiDescription apiDescription)
         {
             var controllerActionDescriptor = apiDescription.GetProperty<ControllerActionDescriptor>();
             if (controllerActionDescriptor == null)
