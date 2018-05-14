@@ -29,7 +29,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var controllerActionDescriptor = context.ApiDescription.ActionDescriptor as ControllerActionDescriptor;
             if (controllerActionDescriptor == null) return;
 
-            var memberName = XmlCommentsMemberNameHelper.GetMemberNameForMethod(controllerActionDescriptor.MethodInfo);
+            var memberName = XmlCommentsMemberNameHelper.GetMemberNameForMethod(controllerActionDescriptor.MethodInfo, controllerActionDescriptor.Parameters.Select(x => x.ParameterType).ToArray());
             var methodNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, memberName));
 
             if (methodNode != null)
