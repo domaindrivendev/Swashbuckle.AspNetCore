@@ -9,6 +9,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         internal static string FullNameSansTypeArguments(this Type type)
         {
+            if (string.IsNullOrEmpty(type.FullName))
+            {
+                return string.Empty;
+            }
+
             var fullName = type.FullName;
             var chopIndex = fullName.IndexOf("[[");
             return (chopIndex == -1) ? fullName : fullName.Substring(0, chopIndex);
