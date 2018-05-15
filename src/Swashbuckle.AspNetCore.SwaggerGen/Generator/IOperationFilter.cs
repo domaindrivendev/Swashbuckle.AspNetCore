@@ -16,14 +16,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             ISchemaRegistry schemaRegistry)
         {
             ApiDescription = apiDescription;
-            SchemaRegistry = schemaRegistry;
             ControllerActionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
+            SchemaRegistry = schemaRegistry;
         }
 
         public ApiDescription ApiDescription { get; private set; }
 
+        public ControllerActionDescriptor ControllerActionDescriptor { get; }
+
         public ISchemaRegistry SchemaRegistry { get; private set; }
 
-        public ControllerActionDescriptor ControllerActionDescriptor { get; }
     }
 }
