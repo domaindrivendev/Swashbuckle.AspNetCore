@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -25,7 +26,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(XmlAnnotatedType), "AcceptsArrayOfConstructedGenericType",
             "M:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.AcceptsArrayOfConstructedGenericType(System.Nullable{System.Int32}[])")]
         [InlineData(typeof(XmlAnnotatedGenericType<int,string>), "AcceptsTypeParameters",
-            "M:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedGenericType`2.AcceptsTypeParameters(System.Int32,`0,`1)")]
+            "M:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedGenericType`2.AcceptsTypeParameters(System.Int32,System.Int32,System.String)")]
         public void GetMemberNameForMethod_ReturnsCorrectXmlCommentsMemberName_ForGivenMethodInfo(
             Type declaringType, 
             string name,
