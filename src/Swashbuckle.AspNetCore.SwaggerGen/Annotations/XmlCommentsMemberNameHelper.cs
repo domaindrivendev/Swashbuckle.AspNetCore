@@ -7,19 +7,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class XmlCommentsMemberNameHelper
     {
-        public static string GetMemberNameForMethod(MethodInfo method, Type[] inputParametersTypes)
+        public static string GetMemberNameForMethod(MethodInfo method)
         {
             var builder = new StringBuilder("M:");
 
-            // If method is from a constructed generic type, use the generic type
-            var sourceMethod = method.DeclaringType.IsConstructedGenericType
-                ? method.DeclaringType.GetGenericTypeDefinition().GetMethods().FirstOrDefault(x => x.Name == method.Name && x.GetParameters().Select(p => p.ParameterType).SequenceEqual(inputParametersTypes))
-                : method;
+            builder.Append(method.DeclaringType.FullNameSansTypeArguments().Replace("+", "."));
+            builder.Append($".{method.Name}");
 
-            builder.Append(sourceMethod.DeclaringType.FullNameSansTypeArguments().Replace("+", "."));
-            builder.Append($".{sourceMethod.Name}");
-
-            var parameters = sourceMethod.GetParameters();
+            var parameters = method.GetParameters();
             if (parameters.Any())
             {
                 var tokens = parameters.Select(p =>
