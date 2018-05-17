@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\version.props"/>
+  <Import Project="..\..\version.props" />
 
   <PropertyGroup>
     <Description>Swagger tools for documenting APIs built on ASP.NET Core</Description>
-    <TargetFrameworks>net451;netstandard1.6</TargetFrameworks>
+    <TargetFrameworks>net451;netstandard1.6;netstandard2.0</TargetFrameworks>
     <AssemblyName>Swashbuckle.AspNetCore</AssemblyName>
     <PackageId>Swashbuckle.AspNetCore</PackageId>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>
