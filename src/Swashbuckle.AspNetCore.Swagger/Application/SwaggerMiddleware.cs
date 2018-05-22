@@ -33,8 +33,7 @@ namespace Swashbuckle.AspNetCore.Swagger
 
         public async Task Invoke(HttpContext httpContext)
         {
-            string documentName;
-            if (!RequestingSwaggerDocument(httpContext.Request, out documentName))
+            if (!RequestingSwaggerDocument(httpContext.Request, out string documentName))
             {
                 await _next(httpContext);
                 return;

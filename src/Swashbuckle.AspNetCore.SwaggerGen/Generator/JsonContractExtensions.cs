@@ -6,12 +6,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         internal static bool IsSelfReferencingArrayOrDictionary(this JsonContract jsonContract)
         {
-            var arrayContract = jsonContract as JsonArrayContract;
-            if (arrayContract != null)
+            if (jsonContract is JsonArrayContract arrayContract)
                 return arrayContract.UnderlyingType == arrayContract.CollectionItemType;
 
-            var dictionaryContract = jsonContract as JsonDictionaryContract;
-            if (dictionaryContract != null)
+            if (jsonContract is JsonDictionaryContract dictionaryContract)
                 return dictionaryContract.UnderlyingType == dictionaryContract.DictionaryValueType;
 
             return false;
