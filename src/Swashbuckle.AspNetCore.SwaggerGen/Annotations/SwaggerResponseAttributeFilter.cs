@@ -31,8 +31,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private static void ApplyAttribute(Operation operation, OperationFilterContext context, SwaggerResponseAttribute attribute)
         {
             var key = attribute.StatusCode.ToString();
-            Response response;
-            if (!operation.Responses.TryGetValue(key, out response))
+            if (!operation.Responses.TryGetValue(key, out Response response))
             {
                 response = new Response();
             }
