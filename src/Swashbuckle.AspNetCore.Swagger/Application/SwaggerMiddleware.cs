@@ -70,7 +70,7 @@ namespace Swashbuckle.AspNetCore.Swagger
         private async Task RespondWithSwaggerJson(HttpResponse response, SwaggerDocument swagger)
         {
             response.StatusCode = 200;
-            response.ContentType = "application/json";
+            response.ContentType = "application/json;charset=utf-8";
 
             var jsonBuilder = new StringBuilder();
             using (var writer = new StringWriter(jsonBuilder))

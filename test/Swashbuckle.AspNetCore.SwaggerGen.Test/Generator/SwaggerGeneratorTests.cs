@@ -132,18 +132,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(expectedOperationId, swagger.Paths["/" + routeTemplate].Get.OperationId);
         }
 
-        [Fact]
-        public void GetSwagger_SetsParametersToNull_ForParameterlessActions()
-        {
-            var subject = Subject(setupApis: apis => apis
-                .Add("GET", "collection", nameof(FakeActions.AcceptsNothing)));
-
-            var swagger = subject.GetSwagger("v1");
-
-            var operation = swagger.Paths["/collection"].Get;
-            Assert.Null(operation.Parameters);
-        }
-
         [Theory]
         [InlineData("collection/{param}", nameof(FakeActions.AcceptsStringFromRoute), "path")]
         [InlineData("collection", nameof(FakeActions.AcceptsStringFromQuery), "query")]
@@ -281,7 +269,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var swagger = subject.GetSwagger("v1");
 
             var operation = swagger.Paths["/collection"].Get;
-            Assert.Null(operation.Parameters);
+            Assert.Empty(operation.Parameters);
         }
 
         [Fact]
@@ -607,7 +595,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var swagger = subject.GetSwagger("v1");
 
             var operation = swagger.Paths["/collection"].Get;
-            Assert.Null(operation.Parameters); // first one has no parameters
+            Assert.Empty(operation.Parameters); // first one has no parameters
         }
 
         private SwaggerGenerator Subject(

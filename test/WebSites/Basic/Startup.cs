@@ -45,6 +45,8 @@ namespace Basic
                     }
                 );
 
+                c.ParameterFilter<TestParameterFilter>();
+
                 c.OperationFilter<AssignOperationVendorExtensions>();
                 c.OperationFilter<FormDataOperationFilter>();
 
@@ -86,6 +88,8 @@ namespace Basic
             {
                 c.RoutePrefix = ""; // serve the UI at root
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
+
+                c.ShowExtensions();
             });
         }
     }

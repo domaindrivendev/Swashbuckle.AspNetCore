@@ -5,7 +5,9 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Swashbuckle.AspNetCore.Swagger;
+using System.Reflection;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -31,24 +33,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             string basePath = null,
             string[] schemes = null)
         {
-            var schemaRegistry = _schemaRegistryFactory.Create();
-
-            Info info;
-            if (!_settings.SwaggerDocs.TryGetValue(documentName, out info))
+            if (!_settings.SwaggerDocs.TryGetValue(documentName, out Info info))
                 throw new UnknownSwaggerDocument(documentName);
 
-            var apiDescriptions = _apiDescriptionsProvider.ApiDescriptionGroups.Items
+            var applicableApiDescriptions = _apiDescriptionsProvider.ApiDescriptionGroups.Items
                 .SelectMany(group => group.Items)
                 .Where(apiDesc => _settings.DocInclusionPredicate(documentName, apiDesc))
-                .Where(apiDesc => !_settings.IgnoreObsoleteActions || !apiDesc.IsObsolete())
-                .OrderBy(_settings.SortKeySelector);
+                .Where(apiDesc => !_settings.IgnoreObsoleteActions || !apiDesc.IsObsolete());
 
-            var paths = apiDescriptions
-                .GroupBy(apiDesc => apiDesc.RelativePathSansQueryString())
-                .ToDictionary(group => "/" + group.Key, group => CreatePathItem(group, schemaRegistry));
-
-            var securityDefinitions = _settings.SecurityDefinitions;
-            var securityRequirements = _settings.SecurityRequirements;
+            var schemaRegistry = _schemaRegistryFactory.Create();
 
             var swaggerDoc = new SwaggerDocument
             {
@@ -56,15 +49,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 Host = host,
                 BasePath = basePath,
                 Schemes = schemes,
-                Paths = paths,
+                Paths = CreatePathItems(applicableApiDescriptions, schemaRegistry),
                 Definitions = schemaRegistry.Definitions,
-                SecurityDefinitions = securityDefinitions.Any() ? securityDefinitions : null,
-                Security = securityRequirements.Any() ? securityRequirements : null
+                SecurityDefinitions = _settings.SecurityDefinitions.Any() ? _settings.SecurityDefinitions : null,
+                Security = _settings.SecurityRequirements.Any() ? _settings.SecurityRequirements : null
             };
 
             var filterContext = new DocumentFilterContext(
                 _apiDescriptionsProvider.ApiDescriptionGroups,
-                apiDescriptions,
+                applicableApiDescriptions,
                 schemaRegistry);
 
             foreach (var filter in _settings.DocumentFilters)
@@ -75,7 +68,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return swaggerDoc;
         }
 
-        private PathItem CreatePathItem(IEnumerable<ApiDescription> apiDescriptions, ISchemaRegistry schemaRegistry)
+        private Dictionary<string, PathItem> CreatePathItems(
+            IEnumerable<ApiDescription> apiDescriptions,
+            ISchemaRegistry schemaRegistry)
+        {
+            return apiDescriptions
+                .OrderBy(_settings.SortKeySelector)
+                .GroupBy(apiDesc => apiDesc.RelativePathSansQueryString())
+                .ToDictionary(group => "/" + group.Key, group => CreatePathItem(group, schemaRegistry));
+        }
+
+        private PathItem CreatePathItem(
+            IEnumerable<ApiDescription> apiDescriptions,
+            ISchemaRegistry schemaRegistry)
         {
             var pathItem = new PathItem();
 
@@ -132,33 +137,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return pathItem;
         }
 
-        private Operation CreateOperation(ApiDescription apiDescription, ISchemaRegistry schemaRegistry)
+        private Operation CreateOperation(
+            ApiDescription apiDescription,
+            ISchemaRegistry schemaRegistry)
         {
-            var parameters = apiDescription.ParameterDescriptions
-                .Where(paramDesc =>
-                    {
-                        return paramDesc.Source.IsFromRequest
-                            && (paramDesc.ModelMetadata == null || paramDesc.ModelMetadata.IsBindingAllowed)
-                            && !paramDesc.IsPartOfCancellationToken();
-                    })
-                .Select(paramDesc => CreateParameter(apiDescription, paramDesc, schemaRegistry))
-                .ToList();
-
-            var responses = apiDescription.SupportedResponseTypes
-                .DefaultIfEmpty(new ApiResponseType { StatusCode = 200 })
-                .ToDictionary(
-                    apiResponseType => apiResponseType.StatusCode.ToString(),
-                    apiResponseType => CreateResponse(apiResponseType, schemaRegistry)
-                 );
-
             var operation = new Operation
             {
                 Tags = new[] { _settings.TagSelector(apiDescription) },
                 OperationId = apiDescription.FriendlyId(),
                 Consumes = apiDescription.SupportedRequestMediaTypes().ToList(),
                 Produces = apiDescription.SupportedResponseMediaTypes().ToList(),
-                Parameters = parameters.Any() ? parameters : null, // parameters can be null but not empty
-                Responses = responses,
+                Parameters = CreateParameters(apiDescription, schemaRegistry),
+                Responses = CreateResponses(apiDescription, schemaRegistry),
                 Deprecated = apiDescription.IsObsolete() ? true : (bool?)null
             };
 
@@ -174,33 +164,74 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return operation;
         }
 
-        private IParameter CreateParameter(
+        private IList<IParameter> CreateParameters(
             ApiDescription apiDescription,
-            ApiParameterDescription paramDescription,
             ISchemaRegistry schemaRegistry)
         {
-            var location = GetParameterLocation(apiDescription, paramDescription);
-
-            var name = _settings.DescribeAllParametersInCamelCase
-                ? paramDescription.Name.ToCamelCase()
-                : paramDescription.Name;
-
-            var schema = (paramDescription.Type == null) ? null : schemaRegistry.GetOrRegister(paramDescription.Type);
-
-            if (location == "body")
-            {
-                return new BodyParameter
+            var applicableParamDescriptions = apiDescription.ParameterDescriptions
+                .Where(paramDesc =>
                 {
-                    Name = name,
-                    Schema = schema
-                };
+                    return paramDesc.Source.IsFromRequest
+                        && (paramDesc.ModelMetadata == null || paramDesc.ModelMetadata.IsBindingAllowed)
+                        && !paramDesc.IsPartOfCancellationToken();
+                });
+
+            return applicableParamDescriptions
+                .Select(paramDesc => CreateParameter(apiDescription, paramDesc, schemaRegistry))
+                .ToList();
+        }
+
+        private IParameter CreateParameter(
+            ApiDescription apiDescription,
+            ApiParameterDescription apiParameterDescription,
+            ISchemaRegistry schemaRegistry)
+        {
+            var name = _settings.DescribeAllParametersInCamelCase
+                ? apiParameterDescription.Name.ToCamelCase()
+                : apiParameterDescription.Name;
+
+            var location = ParameterLocationMap.ContainsKey(apiParameterDescription.Source)
+                ? ParameterLocationMap[apiParameterDescription.Source]
+                : "query";
+
+            var schema = (apiParameterDescription.Type != null)
+                ? schemaRegistry.GetOrRegister(apiParameterDescription.Type)
+                : null;
+
+            var isRequired = apiParameterDescription.IsRequired();
+
+            var controllerParameterDescriptor = GetControllerParameterDescriptorOrNull(
+                apiDescription, apiParameterDescription);
+
+            var parameter = (location == "body")
+                ? new BodyParameter { Name = name, Schema = schema, Required = isRequired }
+                : CreateNonBodyParameter(name, location, schema, isRequired, schemaRegistry);
+
+            var filterContext = new ParameterFilterContext(
+                apiParameterDescription,
+                controllerParameterDescriptor,
+                schemaRegistry);
+
+            foreach (var filter in _settings.ParameterFilters)
+            {
+                filter.Apply(parameter, filterContext);
             }
 
+            return parameter;
+        }
+
+        private IParameter CreateNonBodyParameter(
+            string name,
+            string location,
+            Schema schema,
+            bool isRequired,
+            ISchemaRegistry schemaRegistry)
+        {
             var nonBodyParam = new NonBodyParameter
             {
                 Name = name,
                 In = location,
-                Required = (location == "path") || paramDescription.IsRequired()
+                Required = (location == "path") ? true : isRequired
             };
 
             if (schema == null)
@@ -224,23 +255,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return nonBodyParam;
         }
 
-        private string GetParameterLocation(ApiDescription apiDescription, ApiParameterDescription paramDescription)
+        private IDictionary<string, Response> CreateResponses(
+            ApiDescription apiDescription,
+            ISchemaRegistry schemaRegistry)
         {
-            if (paramDescription.Source == BindingSource.Form)
-                return "formData";
-            else if (paramDescription.Source == BindingSource.Body)
-                return "body";
-            else if (paramDescription.Source == BindingSource.Header)
-                return "header";
-            else if (paramDescription.Source == BindingSource.Path)
-                return "path";
-            else if (paramDescription.Source == BindingSource.Query)
-                return "query";
+            var supportedApiResponseTypes = apiDescription.SupportedResponseTypes
+                .DefaultIfEmpty(new ApiResponseType { StatusCode = 200 });
 
-            // None of the above, default to "query"
-            // Wanted to default to "body" for PUT/POST but ApiExplorer flattens out complex params into multiple
-            // params for ALL non-bound params regardless of HttpMethod. So "query" across the board makes most sense
-            return "query";
+            return supportedApiResponseTypes
+                .ToDictionary(
+                    apiResponseType => apiResponseType.StatusCode.ToString(),
+                    apiResponseType => CreateResponse(apiResponseType, schemaRegistry));
         }
 
         private Response CreateResponse(ApiResponseType apiResponseType, ISchemaRegistry schemaRegistry)
@@ -257,6 +282,32 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     : null
             };
         }
+
+        private ControllerParameterDescriptor GetControllerParameterDescriptorOrNull(
+            ApiDescription apiDescription,
+            ApiParameterDescription apiParameterDescription)
+        {
+            if (apiParameterDescription.ModelMetadata?.MetadataKind == ModelMetadataKind.Property)
+                return null;
+
+            var parameterDescriptor = apiDescription.ActionDescriptor.Parameters
+                .FirstOrDefault(paramDescriptor =>
+                {
+                    return (apiParameterDescription.Name == paramDescriptor.BindingInfo?.BinderModelName)
+                        || (apiParameterDescription.Name == paramDescriptor.Name);
+                });
+
+            return parameterDescriptor as ControllerParameterDescriptor;
+        }
+
+        private static Dictionary<BindingSource, string> ParameterLocationMap = new Dictionary<BindingSource, string>
+        {
+            { BindingSource.Form, "formData" },
+            { BindingSource.Body, "body" },
+            { BindingSource.Header, "header" },
+            { BindingSource.Path, "path" },
+            { BindingSource.Query, "query" }
+        };
 
         private static readonly Dictionary<string, string> ResponseDescriptionMap = new Dictionary<string, string>
         {
