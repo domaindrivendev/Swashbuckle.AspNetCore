@@ -11,7 +11,7 @@ namespace OAuth2Integration.ResourceServer.Swagger
         public void Apply(Operation operation, OperationFilterContext context)
         {
             // Policy names map to scopes
-            var requiredScopes = context.ControllerActionDescriptor.MethodInfo
+            var requiredScopes = context.MethodInfo
                 .GetCustomAttributes(true)
                 .OfType<AuthorizeAttribute>()
                 .Select(attr => attr.Policy)

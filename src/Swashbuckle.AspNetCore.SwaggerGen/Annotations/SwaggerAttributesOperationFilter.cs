@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Collections.Generic;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -9,16 +10,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         public void Apply(Operation operation, OperationFilterContext context)
         {
-            if (context.ControllerActionDescriptor == null) return;
+           if (context.MethodInfo == null) return;
 
-            ApplyOperationAttributes(operation, context);
-            ApplyOperationFilterAttributes(operation, context);
+           var actionAttributes = context.MethodInfo.GetCustomAttributes(true);
+           var controllerAttributes = context.MethodInfo.DeclaringType.GetTypeInfo().GetCustomAttributes(true);
+
+            ApplyOperationAttributes(operation, actionAttributes);
+            ApplyOperationFilterAttributes(operation, actionAttributes, controllerAttributes, context);
         }
 
-        private static void ApplyOperationAttributes(Operation operation, OperationFilterContext context)
+        private static void ApplyOperationAttributes(Operation operation, IEnumerable<object> actionAttributes)
         {
-            var swaggerOperationAttribute = context.ControllerActionDescriptor.MethodInfo
-                .GetCustomAttributes(true)
+            var swaggerOperationAttribute = actionAttributes
                 .OfType<SwaggerOperationAttribute>()
                 .FirstOrDefault();
 
@@ -34,10 +37,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 operation.Schemes = swaggerOperationAttribute.Schemes;
         }
 
-        public static void ApplyOperationFilterAttributes(Operation operation, OperationFilterContext context)
+        public static void ApplyOperationFilterAttributes(
+            Operation operation,
+            IEnumerable<object> actionAttributes,
+            IEnumerable<object> controllerAttributes,
+            OperationFilterContext context)
         {
-            var swaggerOperationFilterAttributes = context.ControllerActionDescriptor
-                .GetControllerAndActionAttributes(true)
+            var swaggerOperationFilterAttributes = actionAttributes.Union(controllerAttributes)
                 .OfType<SwaggerOperationFilterAttribute>();
 
             foreach (var swaggerOperationFilterAttribute in swaggerOperationFilterAttributes)

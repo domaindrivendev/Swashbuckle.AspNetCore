@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
+﻿using System.Linq;
+using System.Reflection;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -15,18 +18,35 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 || name.StartsWith("WaitHandle.");
         }
 
-        public static bool IsRequired(this ApiParameterDescription parameterDescription)
+        internal static bool TryGetParameterInfo(
+            this ApiParameterDescription apiParameterDescription,
+            ApiDescription apiDescription,
+            out ParameterInfo parameterInfo)
         {
-            if (parameterDescription.RouteInfo?.IsOptional == false)
-                return true;
+            var controllerParameterDescriptor = apiDescription.ActionDescriptor.Parameters
+                .OfType<ControllerParameterDescriptor>()
+                .FirstOrDefault(descriptor =>
+                {
+                    return (apiParameterDescription.Name == descriptor.BindingInfo?.BinderModelName)
+                        || (apiParameterDescription.Name == descriptor.Name);
+                });
 
-            if (parameterDescription.ModelMetadata?.IsBindingRequired == true)
-                return true;
+            parameterInfo = controllerParameterDescriptor?.ParameterInfo;
 
-            if (parameterDescription.ModelMetadata?.IsRequired == true && parameterDescription.Type.IsAssignableToNull())
-                return true;
+            return (parameterInfo != null);
+        }
 
-            return false;
+        internal static bool TryGetPropertyInfo(
+            this ApiParameterDescription apiParameterDescription,
+            out PropertyInfo propertyInfo)
+        {
+            var modelMetadata = apiParameterDescription.ModelMetadata;
+
+            propertyInfo = (modelMetadata?.ContainerType != null)
+                ? modelMetadata.ContainerType.GetProperty(modelMetadata.PropertyName)
+                : null;
+
+            return (propertyInfo != null);
         }
     }
 }

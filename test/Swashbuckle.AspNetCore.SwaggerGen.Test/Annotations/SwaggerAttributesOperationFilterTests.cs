@@ -1,8 +1,9 @@
 ﻿using System.Linq;
+using System.Reflection;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Newtonsoft.Json;
 using Xunit;
 using Swashbuckle.AspNetCore.Swagger;
-using Microsoft.AspNetCore.Mvc.Controllers;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -15,7 +16,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             {
                 OperationId = "foobar" 
             };
-            var filterContext = FilterContextFor(nameof(FakeActions.AnnotatedWithSwaggerOperation));
+            var filterContext = FilterContextFor<FakeController>(
+                nameof(FakeController.AnnotatedWithSwaggerOperation));
 
             Subject().Apply(operation, filterContext);
 
@@ -31,10 +33,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             {
                 OperationId = "foobar" 
             };
-            var filterContext = FilterContextFor(
-                nameof(FakeActions.ReturnsActionResult),
-                nameof(FakeControllers.AnnotatedWithSwaggerOperationFilter)
-            );
+            var filterContext = FilterContextFor<SwaggerAnnotatedController>(
+                nameof(SwaggerAnnotatedController.ReturnsVoid));
 
             Subject().Apply(operation, filterContext);
 
@@ -48,26 +48,27 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             {
                 OperationId = "foobar" 
             };
-            var filterContext = FilterContextFor(nameof(FakeActions.AnnotatedWithSwaggerOperationFilter));
+            var filterContext = FilterContextFor<FakeController>(
+                nameof(FakeController.AnnotatedWithSwaggerOperationFilter));
 
             Subject().Apply(operation, filterContext);
 
             Assert.NotEmpty(operation.Extensions);
         }
 
-        private OperationFilterContext FilterContextFor(
-            string actionFixtureName,
-            string controllerFixtureName = "NotAnnotated")
+        private OperationFilterContext FilterContextFor<TController>(string actionName)
         {
             var fakeProvider = new FakeApiDescriptionGroupCollectionProvider();
             var apiDescription = fakeProvider
-                .Add("GET", "collection", actionFixtureName, controllerFixtureName)
+                .Add("GET", "collection", actionName, typeof(TController))
                 .ApiDescriptionGroups.Items.First()
                 .Items.First();
 
+
             return new OperationFilterContext(
                 apiDescription,
-                new SchemaRegistry(new JsonSerializerSettings()));
+                new SchemaRegistry(new JsonSerializerSettings()),
+                (apiDescription.ActionDescriptor as ControllerActionDescriptor).MethodInfo);
         }
 
         private SwaggerAttributesOperationFilter Subject()

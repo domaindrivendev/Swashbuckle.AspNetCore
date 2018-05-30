@@ -12,9 +12,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Required]
         public int IntWithRequired { get; set; }
 
-        [Required]
-        public int? NullableIntWithRequired { get; set; }
-
         [Range(1, 12)]
         public int IntWithRange { get; set; }
 

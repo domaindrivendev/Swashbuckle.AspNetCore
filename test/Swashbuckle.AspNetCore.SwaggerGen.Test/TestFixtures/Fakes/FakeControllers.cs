@@ -1,18 +1,8 @@
 ﻿namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
-    public class FakeControllers
-    {
-        public class NotAnnotated
-        {}
-
-        [SwaggerOperationFilter(typeof(VendorExtensionsOperationFilter))]
-        public class AnnotatedWithSwaggerOperationFilter
-        {}
-
-        /// <summary>
-        /// summary for AnnotatedWithXml
-        /// </summary>
-        public class AnnotatedWithXml
-        {}
-    }
+    /// <summary>
+    /// summary for XmlAnnotatedController
+    /// </summary>
+    public class XmlAnnotatedController
+    {}
 }

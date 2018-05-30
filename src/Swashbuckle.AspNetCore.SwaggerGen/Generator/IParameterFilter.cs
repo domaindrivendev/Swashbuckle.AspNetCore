@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.AspNetCore.Mvc.Controllers;
+﻿using System;
+using System.Reflection;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -13,18 +15,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         public ParameterFilterContext(
             ApiParameterDescription apiParameterDescription,
-            ControllerParameterDescriptor controllerParameterDescriptor,
-            ISchemaRegistry schemaRegistry)
+            ISchemaRegistry schemaRegistry,
+            ParameterInfo parameterInfo,
+            PropertyInfo propertyInfo)
         {
             ApiParameterDescription = apiParameterDescription;
-            ControllerParameterDescriptor = controllerParameterDescriptor;
             SchemaRegistry = schemaRegistry;
+            ParameterInfo = parameterInfo;
+            PropertyInfo = propertyInfo;
         }
 
         public ApiParameterDescription ApiParameterDescription { get; }
 
-        public ControllerParameterDescriptor ControllerParameterDescriptor { get; }
-
         public ISchemaRegistry SchemaRegistry { get; }
+
+        public ParameterInfo ParameterInfo { get; }
+
+        public PropertyInfo PropertyInfo { get; }
     }
 }

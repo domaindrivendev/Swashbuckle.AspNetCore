@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
-    public class FakeActions
+    public class FakeController
     {
         public void ReturnsVoid()
         { }
@@ -60,8 +60,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void AcceptsDataAnnotatedParams(
             string stringWithNoAttributes,
             [Required]string stringWithRequired,
-            [Required]int intWithRequired,
-            [Required]int? nullableIntWithRequired)
+            [Required]int intWithRequired)
         { }
 
         public void AcceptsModelBoundType(ModelBoundType param)
