@@ -15,7 +15,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 |Swashbuckle Version|ASP.NET Core|Swagger (OpenAPI) Spec.|swagger-ui|
 |----------|----------|----------|----------|
-|[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master)|>=1.0.4|2.0|3.13.2|
+|[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master)|>=1.0.4|2.0|3.16.0|
 |[2.4.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v2.0.0)|>=1.0.4|2.0|3.12.2|
 |[1.2.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v1.2.0)|>=1.0.4|2.0|2.2.10|
 
