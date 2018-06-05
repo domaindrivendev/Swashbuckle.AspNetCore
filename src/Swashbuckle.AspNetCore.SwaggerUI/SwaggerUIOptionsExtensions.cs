@@ -22,6 +22,18 @@ namespace Microsoft.AspNetCore.Builder
         }
 
         /// <summary>
+        /// Injects additional Javascript codes into the index.html page
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="path">A path to the stylesheet - i.e. the script "src" attribute</param>
+        public static void InjectJavascript(this SwaggerUIOptions options, string path)
+        {
+            var builder = new StringBuilder(options.HeadContent);
+            builder.AppendLine($"<script src='{path}' type='text/javascript' />");
+            options.HeadContent = builder.ToString();
+        }
+
+        /// <summary>
         /// Adds Swagger JSON endpoints. Can be fully-qualified or relative to the UI page
         /// </summary>
         /// <param name="options"></param>

@@ -17,5 +17,17 @@ namespace Microsoft.AspNetCore.Builder
             builder.AppendLine($"<link href='{path}' rel='stylesheet' media='{media}' type='text/css' />");
             options.HeadContent = builder.ToString();
         }
+
+        /// <summary>
+        /// Injects additional Javascript codes into the index.html page
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="path">A path to the stylesheet - i.e. the script "src" attribute</param>
+        public static void InjectJavascript(this ReDocOptions options, string path)
+        {
+            var builder = new StringBuilder(options.HeadContent);
+            builder.AppendLine($"<script src='{path}' type='text/javascript' />");
+            options.HeadContent = builder.ToString();
+        }
     }
 }
