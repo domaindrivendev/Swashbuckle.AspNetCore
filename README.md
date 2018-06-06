@@ -119,13 +119,13 @@ Swashbuckle consists of three packages - a Swagger generator, middleware to expo
 The steps described above will get you up and running with minimal setup. However, Swashbuckle offers a lot of flexibility to customize as you see fit. Check out the table below for the full list of options:
 
 * [Swashbuckle.AspNetCore.Swagger](#swashbuckleaspnetcoreswagger)
- 
+
     * [Change the Path for Swagger JSON Endpoints](#change-the-path-for-swagger-json-endpoints)
     * [Modify Swagger with Request Context](#modify-swagger-with-request-context)
     * [Pretty Print Swagger JSON](#pretty-print-swagger-json)
- 
+
 * [Swashbuckle.AspNetCore.SwaggerGen](#swashbuckleaspnetcoreswaggergen)
- 
+
     * [List Operations Responses](#list-operation-responses)
     * [Flag Required Parameters and Schema Properties](#flag-required-parameters-and-schema-properties)
     * [Include Descriptions from XML Comments](#include-descriptions-from-xml-comments)
@@ -177,7 +177,7 @@ app.UseSwaggerUI(c =>
 
 ### Modify Swagger with Request Context ###
 
-If you need to set some Swagger metadata based on the current request, you can configure a filter that's executed prior to serializing the document. 
+If you need to set some Swagger metadata based on the current request, you can configure a filter that's executed prior to serializing the document.
 
 ```csharp
 app.UseSwagger(c =>
@@ -186,7 +186,7 @@ app.UseSwagger(c =>
 });
 ```
 
-The _SwaggerDocument_ and the current _HttpRequest_ are passed to the filter. This provides a lot of flexibility. For example, you can assign the "host" property (as shown) or you could inspect session information or an Authorization header and remove operations int the document based on user permissions. 
+The _SwaggerDocument_ and the current _HttpRequest_ are passed to the filter. This provides a lot of flexibility. For example, you can assign the "host" property (as shown) or you could inspect session information or an Authorization header and remove operations int the document based on user permissions.
 
 ### Pretty Print Swagger JSON ###
 
@@ -290,7 +290,7 @@ public class SearchParams
 }
 ```
 
-With this implementation, Swashbuckle will automatically describe `Keywords` as a required parameter. 
+With this implementation, Swashbuckle will automatically describe `Keywords` as a required parameter.
 
 __NOTE__: At the time of writing, ASP.NET Core does not support the use of `BindRequired` on action parameters directly. This feature is due to be added in version 2.1. Until then, you'll need to encapsulate your non-body parameters in a model class, as shown above.
 
@@ -350,7 +350,7 @@ To enhance the generated docs with human-friendly descriptions, you can annotate
     }
     ```
 
-3. Annotate your actions with summary, remarks and response tags
+3. Annotate your actions with summary, remarks and response tags:
 
     ```csharp
     /// <summary>
@@ -367,7 +367,26 @@ To enhance the generated docs with human-friendly descriptions, you can annotate
     public Product GetById(int id)
     ```
 
-4. Rebuild your project to update the XML Comments file and navigate to the Swagger JSON endpoint. Note how the descriptions are mapped onto corresponding Swagger fields.
+4. You can also annotate types with summary and example tags:
+
+    ```csharp
+    public class Product
+    {
+        /// <summary>
+        /// The name of the product
+        /// </summary>
+        /// <example>Men's basketball shoes</example>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Quantity left in stock
+        /// </summary>
+        /// <example>10</example>
+        public int AvailableStock { get; set; }
+    }
+    ```
+
+5. Rebuild your project to update the XML Comments file and navigate to the Swagger JSON endpoint. Note how the descriptions are mapped onto corresponding Swagger fields.
 
 _NOTE: You can also provide Swagger Schema descriptions by annotating your API models and their properties with summary tags. If you have multiple XML comments files (e.g. separate libraries for controllers and models), you can invoke the IncludeXmlComments method multiple times and they will all be merged into the outputted Swagger JSON._
 
@@ -448,7 +467,7 @@ public void ConfigureServices(IServiceCollection services)
     services.AddMvc(c =>
         c.Conventions.Add(new ApiExplorerGroupPerVersionConvention())
     );
-    
+
     ...
 }
 ```
@@ -497,7 +516,7 @@ services.AddSwaggerGen(c =>
 ### Omit Arbitrary Operations ###
 
 You can omit operations from the Swagger output by decorating individual actions OR by applying an application wide convention.
-  
+
 #### Decorate Individual Actions ####
 
 To omit a specific action, decorate it with the _ApiExplorerSettingsAttribute_ and set the _IgnoreApi_ flag:
@@ -528,7 +547,7 @@ public void ConfigureServices(IServiceCollection services)
     services.AddMvc(c =>
         c.Conventions.Add(new ApiExplorerGetsOnlyConvention())
     );
-    
+
     ...
 }
 ```
@@ -562,7 +581,7 @@ services.AddSwaggerGen(c =>
 _NOTE: This dictates the sort order BEFORE actions are grouped and transformed into the Swagger format. So, it affects the ordering of groups (i.e. Swagger PathItems), AND the ordering of operations within a group, in the Swagger output._
 
 ### Customize Schema Id's ###
- 
+
 If the generator encounters complex parameter or response types, it will generate a corresponding JSON Schema, add it to the global "definitions" dictionary, and reference it from the operation description by unique Id. For example, if you have an action that returns a "Product" type, the generated schema will be referenced as follows:
 
 ```
@@ -573,7 +592,7 @@ responses: {
       $ref: "#/definitions/Product"
     }
   }
-} 
+}
 ```
 
 However, if it encounters multiple "Product" classes under different namespaces (e.g. "RequestModels.Product" & "ResponseModels.Product"), then Swashbuckle will raise an exception due to "Conflicting schemaIds". In this case, you'll need to provide a custom Id strategy that further qualifies the name:
@@ -868,7 +887,7 @@ app.UseSwaggerUI(c =>
 });
 ```
 
-__NOTE:__ The `InjectOnCompleteJavaScript` and `InjectOnFailureJavaScript` options have been removed because the latest version of swagger-ui doesn't expose the neccessary hooks. Instead, it provides a [flexible customization system](https://github.com/swagger-api/swagger-ui/blob/master/docs/customization/overview.md) based on concepts and patterns from React and Redux. To leverage this, you'll need to provide a custom version of index.html as described [below](#customize-indexhtml). 
+__NOTE:__ The `InjectOnCompleteJavaScript` and `InjectOnFailureJavaScript` options have been removed because the latest version of swagger-ui doesn't expose the neccessary hooks. Instead, it provides a [flexible customization system](https://github.com/swagger-api/swagger-ui/blob/master/docs/customization/overview.md) based on concepts and patterns from React and Redux. To leverage this, you'll need to provide a custom version of index.html as described [below](#customize-indexhtml).
 
 The [custom index sample app](test/WebSites/CustomUIIndex/Swagger/index.html) demonstrates this approach, using the swagger-ui plugin system provide a custom topbar, and to hide the info component.
 

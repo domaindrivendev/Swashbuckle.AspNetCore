@@ -9,6 +9,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         private const string MemberXPath = "/doc/members/member[@name='{0}']";
         private const string SummaryTag = "summary";
+        private const string ExampleXPath = "example";
 
         private readonly XPathNavigator _xmlNavigator;
 
@@ -57,6 +58,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 propertySchema.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
             }
+
+            var exampleNode = memberNode.SelectSingleNode(ExampleXPath);
+            if (exampleNode != null)
+                propertySchema.Example = XmlCommentsTextHelper.Humanize(exampleNode.InnerXml);
         }
     }
 }
