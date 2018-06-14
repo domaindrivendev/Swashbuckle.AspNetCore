@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using MultipleVersions.Swagger;
+using System.Reflection;
 
 namespace MultipleVersions
 {
@@ -35,11 +36,9 @@ namespace MultipleVersions
 
                 c.DocInclusionPredicate((docName, apiDesc) =>
                 {
-                    var controllerActionDescriptor = apiDesc.ActionDescriptor as ControllerActionDescriptor;
+                    if (!apiDesc.TryGetMethodInfo(out MethodInfo methodInfo)) return false;
 
-                    if (controllerActionDescriptor == null) return false;
-
-                    var versions = controllerActionDescriptor.MethodInfo
+                    var versions = methodInfo.DeclaringType
                         .GetCustomAttributes(true)
                         .OfType<ApiVersionAttribute>()
                         .SelectMany(attr => attr.Versions);

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
+﻿using System.Reflection;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -13,18 +14,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         public OperationFilterContext(
             ApiDescription apiDescription,
-            ISchemaRegistry schemaRegistry)
+            ISchemaRegistry schemaRegistry,
+            MethodInfo methodInfo)
         {
             ApiDescription = apiDescription;
-            ControllerActionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
             SchemaRegistry = schemaRegistry;
+            MethodInfo = methodInfo;
         }
 
         public ApiDescription ApiDescription { get; private set; }
 
-        public ControllerActionDescriptor ControllerActionDescriptor { get; }
-
         public ISchemaRegistry SchemaRegistry { get; private set; }
 
+        public MethodInfo MethodInfo { get; }
     }
 }

@@ -38,11 +38,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return type.FullNameSansTypeArguments() == "Microsoft.FSharp.Core.FSharpOption`1";
         }
 
-        internal static bool IsAssignableToNull(this Type type)
-        {
-            return !type.GetTypeInfo().IsValueType || type.IsNullable();
-        }
-
         private static string FullNameSansTypeArguments(this Type type)
         {
             if (string.IsNullOrEmpty(type.FullName)) return string.Empty;

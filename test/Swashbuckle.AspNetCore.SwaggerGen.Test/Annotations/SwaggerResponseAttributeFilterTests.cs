@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Reflection;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Newtonsoft.Json;
 using Xunit;
@@ -15,7 +16,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             {
                 OperationId = "foobar"
             };
-            var filterContext = this.FilterContextFor(nameof(FakeActions.AnnotatedWithSwaggerResponseAttributes));
+            var filterContext = FilterContextFor(nameof(FakeController.AnnotatedWithSwaggerResponseAttributes));
 
             this.Subject().Apply(operation, filterContext);
 
@@ -29,19 +30,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.NotNull(response2.Schema);
         }
 
-        private OperationFilterContext FilterContextFor(
-            string actionFixtureName,
-            string controllerFixtureName = "NotAnnotated")
+        private OperationFilterContext FilterContextFor(string actionFixtureName)
         {
             var fakeProvider = new FakeApiDescriptionGroupCollectionProvider();
             var apiDescription = fakeProvider
-                .Add("GET", "collection", actionFixtureName, controllerFixtureName)
+                .Add("GET", "collection", actionFixtureName)
                 .ApiDescriptionGroups.Items.First()
                 .Items.First();
 
             return new OperationFilterContext(
                 apiDescription,
-                new SchemaRegistry(new JsonSerializerSettings()));
+                new SchemaRegistry(new JsonSerializerSettings()),
+                (apiDescription.ActionDescriptor as ControllerActionDescriptor).MethodInfo);
         }
 
         private SwaggerResponseAttributeFilter Subject()

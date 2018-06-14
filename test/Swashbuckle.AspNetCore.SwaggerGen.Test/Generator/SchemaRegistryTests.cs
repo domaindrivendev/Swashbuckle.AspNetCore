@@ -245,7 +245,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(10, schema.Properties["StringWithStringLength"].MaxLength);
             Assert.Equal(1, schema.Properties["StringWithMinMaxLength"].MinLength);
             Assert.Equal(3, schema.Properties["StringWithMinMaxLength"].MaxLength);
-            Assert.Equal(new[] { "StringWithRequired", "NullableIntWithRequired" }, schema.Required.ToArray());
+            Assert.Equal(new[] { "StringWithRequired", "IntWithRequired" }, schema.Required.ToArray());
             Assert.Equal("date", schema.Properties["StringWithDataTypeDate"].Format);
             Assert.Equal("date-time", schema.Properties["StringWithDataTypeDateTime"].Format);
             Assert.Equal("password", schema.Properties["StringWithDataTypePassword"].Format);
@@ -262,7 +262,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);
             Assert.Equal(12, schema.Properties["IntWithRange"].Maximum);
             Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["StringWithRegularExpression"].Pattern);
-            Assert.Equal(new[] { "StringWithRequired", "NullableIntWithRequired" }, schema.Required.ToArray());
+            Assert.Equal(new[] { "StringWithRequired", "IntWithRequired" }, schema.Required.ToArray());
         }
 
         [Fact]

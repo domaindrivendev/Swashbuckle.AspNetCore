@@ -479,7 +479,10 @@ When selecting actions for a given Swagger document, the generator invokes a _Do
 ```csharp
 c.DocInclusionPredicate((docName, apiDesc) =>
 {
-    var versions = apiDesc.ControllerAttributes()
+    if (!apiDesc.TryGetMethodInfo(out MethodInfo methodInfo)) return false;
+
+    var versions = methodInfo.DeclaringType
+        .GetCustomAttributes(true)
         .OfType<ApiVersionAttribute>()
         .SelectMany(attr => attr.Versions);
 

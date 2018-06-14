@@ -9,7 +9,7 @@ namespace Basic.Swagger
     {
         public void Apply(Operation operation, OperationFilterContext context)
         {
-            var formMediaType = context.ControllerActionDescriptor.MethodInfo
+            var formMediaType = context.MethodInfo
                 .GetCustomAttributes(true)
                 .OfType<ConsumesAttribute>()
                 .SelectMany(attr => attr.ContentTypes)

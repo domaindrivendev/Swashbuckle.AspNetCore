@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Reflection;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Swashbuckle.AspNetCore.Swagger;
-using System.Reflection;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -141,6 +140,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             ApiDescription apiDescription,
             ISchemaRegistry schemaRegistry)
         {
+            // Try to retrieve additional metadata that's not provided by ApiExplorer
+            MethodInfo methodInfo;
+
+            var customAttributes = Enumerable.Empty<object>();
+            if (apiDescription.TryGetMethodInfo(out methodInfo))
+            {
+                customAttributes = methodInfo.GetCustomAttributes(true)
+                    .Union(methodInfo.DeclaringType.GetTypeInfo().GetCustomAttributes(true));
+            }
+
+            var isDeprecated = customAttributes.Any(attr => attr.GetType() == typeof(ObsoleteAttribute));
+
             var operation = new Operation
             {
                 Tags = new[] { _settings.TagSelector(apiDescription) },
@@ -149,12 +160,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 Produces = apiDescription.SupportedResponseMediaTypes().ToList(),
                 Parameters = CreateParameters(apiDescription, schemaRegistry),
                 Responses = CreateResponses(apiDescription, schemaRegistry),
-                Deprecated = apiDescription.IsObsolete() ? true : (bool?)null
+                Deprecated = isDeprecated ? true : (bool?)null
             };
 
             var filterContext = new OperationFilterContext(
                 apiDescription,
-                schemaRegistry);
+                schemaRegistry,
+                methodInfo);
 
             foreach (var filter in _settings.OperationFilters)
             {
@@ -198,10 +210,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 ? schemaRegistry.GetOrRegister(apiParameterDescription.Type)
                 : null;
 
-            var isRequired = apiParameterDescription.IsRequired();
+            // Try to retrieve additional metadata that's not provided by ApiExplorer
+            ParameterInfo parameterInfo = null;
+            PropertyInfo propertyInfo = null;
 
-            var controllerParameterDescriptor = GetControllerParameterDescriptorOrNull(
-                apiDescription, apiParameterDescription);
+            var customAttributes = Enumerable.Empty<object>();
+            if (apiParameterDescription.TryGetParameterInfo(apiDescription, out parameterInfo))
+                customAttributes = parameterInfo.GetCustomAttributes(true);
+            else if (apiParameterDescription.TryGetPropertyInfo(out propertyInfo))
+                customAttributes = propertyInfo.GetCustomAttributes(true);
+
+            var isRequired = customAttributes.Any(attr =>
+                new[] { typeof(RequiredAttribute), typeof(BindRequiredAttribute) }.Contains(attr.GetType()));
 
             var parameter = (location == "body")
                 ? new BodyParameter { Name = name, Schema = schema, Required = isRequired }
@@ -209,8 +229,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var filterContext = new ParameterFilterContext(
                 apiParameterDescription,
-                controllerParameterDescriptor,
-                schemaRegistry);
+                schemaRegistry,
+                parameterInfo,
+                propertyInfo);
 
             foreach (var filter in _settings.ParameterFilters)
             {
@@ -281,23 +302,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     ? schemaRegistry.GetOrRegister(apiResponseType.Type)
                     : null
             };
-        }
-
-        private ControllerParameterDescriptor GetControllerParameterDescriptorOrNull(
-            ApiDescription apiDescription,
-            ApiParameterDescription apiParameterDescription)
-        {
-            if (apiParameterDescription.ModelMetadata?.MetadataKind == ModelMetadataKind.Property)
-                return null;
-
-            var parameterDescriptor = apiDescription.ActionDescriptor.Parameters
-                .FirstOrDefault(paramDescriptor =>
-                {
-                    return (apiParameterDescription.Name == paramDescriptor.BindingInfo?.BinderModelName)
-                        || (apiParameterDescription.Name == paramDescriptor.Name);
-                });
-
-            return parameterDescriptor as ControllerParameterDescriptor;
         }
 
         private static Dictionary<BindingSource, string> ParameterLocationMap = new Dictionary<BindingSource, string>

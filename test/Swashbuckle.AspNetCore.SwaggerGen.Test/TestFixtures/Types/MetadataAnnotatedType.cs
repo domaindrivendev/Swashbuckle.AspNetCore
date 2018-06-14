@@ -10,8 +10,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         public int IntWithRequired { get; set; }
 
-        public int? NullableIntWithRequired { get; set; }
-
         public int IntWithRange { get; set; }
 
         public string StringWithRegularExpression { get; set; }
@@ -24,9 +22,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         [Required]
         public int IntWithRequired { get; set; }
-
-        [Required]
-        public int? NullableIntWithRequired { get; set; }
 
         [Range(1, 12)]
         public int IntWithRange { get; set; }

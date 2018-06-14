@@ -10,7 +10,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class ApiDescriptionExtensions
     {
-        [Obsolete("Deprecated: Use OperationFilterContext.ControllerActionDescriptor")]
+        [Obsolete("Deprecated: Use TryGetMethodInfo")]
         public static IEnumerable<object> ControllerAttributes(this ApiDescription apiDescription)
         {
             var controllerActionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
@@ -19,13 +19,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 : controllerActionDescriptor.ControllerTypeInfo.GetCustomAttributes(true);
         }
 
-        [Obsolete("Deprecated: Use OperationFilterContext.ControllerActionDescriptor")]
+        [Obsolete("Deprecated: Use TryGetMethodInfo")]
         public static IEnumerable<object> ActionAttributes(this ApiDescription apiDescription)
         {
             var controllerActionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
             return (controllerActionDescriptor == null)
                 ? Enumerable.Empty<object>()
                 : controllerActionDescriptor.MethodInfo.GetCustomAttributes(true);
+        }
+
+        public static bool TryGetMethodInfo(this ApiDescription apiDescription, out MethodInfo methodInfo)
+        {
+            var controllerActionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
+
+            methodInfo = controllerActionDescriptor?.MethodInfo;
+
+            return (methodInfo != null);
         }
 
         internal static string FriendlyId(this ApiDescription apiDescription)
@@ -68,10 +77,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         internal static bool IsObsolete(this ApiDescription apiDescription)
         {
-            var controllerActionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
-            return (controllerActionDescriptor != null)
-                ? controllerActionDescriptor.GetControllerAndActionAttributes(true).OfType<ObsoleteAttribute>().Any()
-                : false;
+            if (!apiDescription.TryGetMethodInfo(out MethodInfo methodInfo))
+                return false;
+
+            return methodInfo.GetCustomAttributes(true)
+                .Union(methodInfo.DeclaringType.GetTypeInfo().GetCustomAttributes(true))
+                .Any(attr => attr.GetType() == typeof(ObsoleteAttribute));
         }
+
     }
 }

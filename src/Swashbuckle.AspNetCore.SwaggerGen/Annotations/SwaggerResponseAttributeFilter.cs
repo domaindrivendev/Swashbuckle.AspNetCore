@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
+using System.Reflection;
+using System.Collections.Generic;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -8,10 +9,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         public void Apply(Operation operation, OperationFilterContext context)
         {
-            if (context.ControllerActionDescriptor == null) return;
+            if (context.MethodInfo == null) return;
 
-            var swaggerResponseAttributes = context.ControllerActionDescriptor
-                .GetControllerAndActionAttributes(true)
+            var swaggerResponseAttributes = context.MethodInfo.GetCustomAttributes(true)
+                .Union(context.MethodInfo.DeclaringType.GetTypeInfo().GetCustomAttributes(true))
                 .OfType<SwaggerResponseAttribute>();
 
             if (!swaggerResponseAttributes.Any())
