@@ -297,6 +297,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 var xmlDoc = xmlDocFactory();
                 schemaRegistrySettings.SchemaFilters.Insert(0, new XmlCommentsSchemaFilter(xmlDoc));
+                schemaRegistrySettings.SchemaFilters.Insert(1, new DescriptionSchemaFilter());
                 swaggerGeneratorSettings.OperationFilters.Insert(0, new XmlCommentsOperationFilter(xmlDoc));
 
                 if (_includeControllerXmlComments)
