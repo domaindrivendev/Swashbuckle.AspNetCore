@@ -7,6 +7,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Converters;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
+using Microsoft.AspNetCore.Mvc.Internal;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -16,30 +19,34 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private readonly IContractResolver _jsonContractResolver;
         private readonly SchemaRegistrySettings _settings;
         private readonly SchemaIdManager _schemaIdManager;
-
+        private readonly IModelMetadataProvider _metadataProvider;
         public SchemaRegistry(
             JsonSerializerSettings jsonSerializerSettings,
+            IModelMetadataProvider modelMetadataProvider,
             SchemaRegistrySettings settings = null)
         {
             _jsonSerializerSettings = jsonSerializerSettings;
             _jsonContractResolver = _jsonSerializerSettings.ContractResolver ?? new DefaultContractResolver();
             _settings = settings ?? new SchemaRegistrySettings();
             _schemaIdManager = new SchemaIdManager(_settings.SchemaIdSelector);
+            _metadataProvider = modelMetadataProvider;
             Definitions = new Dictionary<string, Schema>();
         }
 
         public IDictionary<string, Schema> Definitions { get; private set; }
 
+
         public Schema GetOrRegister(Type type)
         {
-            var referencedTypes = new Queue<Type>();
-            var schema = CreateSchema(type, referencedTypes);
+            var referencedTypes = new Queue<ModelMetadata>();
+            var metadata = _metadataProvider.GetMetadataForType(type);
+            var schema = CreateSchema(metadata, referencedTypes);
 
             // Ensure all referenced types have a corresponding definition
             while (referencedTypes.Any())
             {
                 var referencedType = referencedTypes.Dequeue();
-                var schemaId = _schemaIdManager.IdFor(referencedType);
+                var schemaId = _schemaIdManager.IdFor(referencedType.ModelType);
                 if (Definitions.ContainsKey(schemaId)) continue;
 
                 // NOTE: Add the schemaId first with a null value. This indicates a work-in-progress
@@ -52,61 +59,63 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return schema;
         }
 
-        private Schema CreateSchema(Type type, Queue<Type> referencedTypes)
+        private Schema CreateSchema(ModelMetadata modelMetaData, Queue<ModelMetadata> referencedTypes)
         {
             // If Option<T> (F#), use the type argument
-            if (type.IsFSharpOption())
-                type = type.GetGenericArguments()[0];
+            if (modelMetaData.ModelType.IsFSharpOption())
+            {
+                modelMetaData = _metadataProvider.GetMetadataForType(modelMetaData.ModelType.GetGenericArguments()[0]);
+            }
 
-            var jsonContract = _jsonContractResolver.ResolveContract(type);
+            var jsonContract = _jsonContractResolver.ResolveContract(modelMetaData.ModelType);
 
-            var createReference = !_settings.CustomTypeMappings.ContainsKey(type)
-                && type != typeof(object)
+            var createReference = !_settings.CustomTypeMappings.ContainsKey(modelMetaData.ModelType)
+                && modelMetaData.ModelType != typeof(object)
                 && (// Type describes an object
                     jsonContract is JsonObjectContract ||
                     // Type is self-referencing
                     jsonContract.IsSelfReferencingArrayOrDictionary() ||
                     // Type is enum and opt-in flag set
-                    (type.GetTypeInfo().IsEnum && _settings.UseReferencedDefinitionsForEnums));
+                    (modelMetaData.IsEnum && _settings.UseReferencedDefinitionsForEnums));
 
             return createReference
-                ? CreateReferenceSchema(type, referencedTypes)
-                : CreateInlineSchema(type, referencedTypes);
+                ? CreateReferenceSchema(modelMetaData, referencedTypes)
+                : CreateInlineSchema(modelMetaData, referencedTypes);
         }
 
-        private Schema CreateReferenceSchema(Type type, Queue<Type> referencedTypes)
+        private Schema CreateReferenceSchema(ModelMetadata modelMetaData, Queue<ModelMetadata> referencedTypes)
         {
-            referencedTypes.Enqueue(type);
-            return new Schema { Ref = "#/definitions/" + _schemaIdManager.IdFor(type) };
+            referencedTypes.Enqueue(modelMetaData);
+            return new Schema { Ref = "#/definitions/" + _schemaIdManager.IdFor(modelMetaData.ModelType) };
         }
 
-        private Schema CreateInlineSchema(Type type, Queue<Type> referencedTypes)
+        private Schema CreateInlineSchema(ModelMetadata modelMetaData, Queue<ModelMetadata> referencedTypes)
         {
             Schema schema;
 
-            var jsonContract = _jsonContractResolver.ResolveContract(type);
+            var jsonContract = _jsonContractResolver.ResolveContract(modelMetaData.ModelType);
 
-            if (_settings.CustomTypeMappings.ContainsKey(type))
+            if (_settings.CustomTypeMappings.ContainsKey(modelMetaData.ModelType))
             {
-                schema = _settings.CustomTypeMappings[type]();
+                schema = _settings.CustomTypeMappings[modelMetaData.ModelType]();
             }
             else
             {
                 // TODO: Perhaps a "Chain of Responsibility" would clean this up a little?
                 if (jsonContract is JsonPrimitiveContract)
-                    schema = CreatePrimitiveSchema((JsonPrimitiveContract)jsonContract);
+                    schema = CreatePrimitiveSchema((JsonPrimitiveContract)jsonContract, modelMetaData);
                 else if (jsonContract is JsonDictionaryContract)
-                    schema = CreateDictionarySchema((JsonDictionaryContract)jsonContract, referencedTypes);
+                    schema = CreateDictionarySchema((JsonDictionaryContract)jsonContract, modelMetaData, referencedTypes);
                 else if (jsonContract is JsonArrayContract)
-                    schema = CreateArraySchema((JsonArrayContract)jsonContract, referencedTypes);
-                else if (jsonContract is JsonObjectContract && type != typeof(object))
-                    schema = CreateObjectSchema((JsonObjectContract)jsonContract, referencedTypes);
+                    schema = CreateArraySchema((JsonArrayContract)jsonContract, modelMetaData, referencedTypes);
+                else if (jsonContract is JsonObjectContract && modelMetaData.ModelType != typeof(object))
+                    schema = CreateObjectSchema((JsonObjectContract)jsonContract, modelMetaData, referencedTypes);
                 else
                     // None of the above, fallback to abstract "object"
                     schema = new Schema { Type = "object" };
             }
 
-            var filterContext = new SchemaFilterContext(type, jsonContract, this);
+            var filterContext = new SchemaFilterContext(modelMetaData.ModelType, modelMetaData, jsonContract, this);
             foreach (var filter in _settings.SchemaFilters)
             {
                 filter.Apply(schema, filterContext);
@@ -115,7 +124,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return schema;
         }
 
-        private Schema CreatePrimitiveSchema(JsonPrimitiveContract primitiveContract)
+        private Schema CreatePrimitiveSchema(JsonPrimitiveContract primitiveContract, ModelMetadata modelMetaData)
         {
             // If Nullable<T>, use the type argument
             var type = primitiveContract.UnderlyingType.IsNullable()
@@ -171,7 +180,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             };
         }
 
-        private Schema CreateDictionarySchema(JsonDictionaryContract dictionaryContract, Queue<Type> referencedTypes)
+        private Schema CreateDictionarySchema(JsonDictionaryContract dictionaryContract, ModelMetadata modelMetaData, Queue<ModelMetadata> referencedTypes)
         {
             var keyType = dictionaryContract.DictionaryKeyType ?? typeof(object);
             var valueType = dictionaryContract.DictionaryValueType ?? typeof(object);
@@ -183,7 +192,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     Type = "object",
                     Properties = Enum.GetNames(keyType).ToDictionary(
                         (name) => dictionaryContract.DictionaryKeyResolver(name),
-                        (name) => CreateSchema(valueType, referencedTypes)
+                        (name) => CreateSchema(_metadataProvider.GetMetadataForType(valueType), referencedTypes)
                     )
                 };
             }
@@ -192,22 +201,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 return new Schema
                 {
                     Type = "object",
-                    AdditionalProperties = CreateSchema(valueType, referencedTypes)
+                    AdditionalProperties = CreateSchema(_metadataProvider.GetMetadataForType(valueType), referencedTypes)
                 };
             }
         }
 
-        private Schema CreateArraySchema(JsonArrayContract arrayContract, Queue<Type> referencedTypes)
+        private Schema CreateArraySchema(JsonArrayContract arrayContract, ModelMetadata modelMetaData, Queue<ModelMetadata> referencedTypes)
         {
             var itemType = arrayContract.CollectionItemType ?? typeof(object);
             return new Schema
             {
                 Type = "array",
-                Items = CreateSchema(itemType, referencedTypes)
+                Items = CreateSchema(_metadataProvider.GetMetadataForType(itemType), referencedTypes)
             };
         }
 
-        private Schema CreateObjectSchema(JsonObjectContract jsonContract, Queue<Type> referencedTypes)
+        private Schema CreateObjectSchema(JsonObjectContract jsonContract, ModelMetadata modelMetaData, Queue<ModelMetadata> referencedTypes)
         {
             var applicableJsonProperties = jsonContract.Properties
                 .Where(prop => !prop.Ignored)
@@ -224,7 +233,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var properties = applicableJsonProperties
                 .ToDictionary(
                     prop => prop.PropertyName,
-                    prop => CreateSchema(prop.PropertyType, referencedTypes).AssignValidationProperties(prop)
+                    prop => CreateSchema(_metadataProvider.GetMetadataForType(prop.PropertyType), referencedTypes).AssignValidationProperties(prop)
                 );
 
             var schema = new Schema

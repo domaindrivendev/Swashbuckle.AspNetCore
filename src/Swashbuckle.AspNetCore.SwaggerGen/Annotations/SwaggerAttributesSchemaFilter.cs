@@ -17,7 +17,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public void Apply(Schema schema, SchemaFilterContext context)
         {
-            var typeInfo = context.SystemType.GetTypeInfo();
+            var typeInfo = context.ModelMetadata.ModelType.GetTypeInfo();
             var attributes = typeInfo.GetCustomAttributes(false).OfType<SwaggerSchemaFilterAttribute>();
 
             foreach (var attr in attributes)
