@@ -11,14 +11,14 @@ using System.Reflection;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public class DescriptionSchemaFilter : ISchemaFilter
+    public class ModelMetaDataSchemaFilter : ISchemaFilter
     {
-        public DescriptionSchemaFilter() { }
+        public ModelMetaDataSchemaFilter() { }
         public void Apply(Schema schema, SchemaFilterContext context)
         {
             if (context.ModelMetadata is DefaultModelMetadata defaultModelMetadata)
             {
-                SetDescription(schema, defaultModelMetadata);
+                SetAttributes(schema, defaultModelMetadata);
             }
             if (schema.Properties == null || context.ModelMetadata?.Properties == null) return;
             foreach (var prop in context.ModelMetadata.Properties)
@@ -37,13 +37,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var propertyKeyValue = schema.Properties.SingleOrDefault(x => string.Equals(x.Key, propertyName, System.StringComparison.CurrentCultureIgnoreCase));
                 if (propertyKeyValue.Equals(default(KeyValuePair<string, Schema>)) == false)
                 {
-                    SetDescription(propertyKeyValue.Value, defaultPropModelMetadata);
+                    SetAttributes(propertyKeyValue.Value, defaultPropModelMetadata);
                 }
             }
             
         }
 
-        private static void SetDescription(Schema schema, DefaultModelMetadata modelMetadata)
+        private static void SetAttributes(Schema schema, DefaultModelMetadata modelMetadata)
         {
             if (schema.Description == null)
             {
