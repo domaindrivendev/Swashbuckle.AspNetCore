@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Converters;
 using Xunit;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -489,12 +490,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var settings = new SchemaRegistrySettings();
             if (configure != null) configure(settings);
 
-            return new SchemaRegistry(new JsonSerializerSettings(), settings);
+            return new SchemaRegistry(new JsonSerializerSettings(), new EmptyModelMetadataProvider(), settings);
         }
 
         private SchemaRegistry Subject(JsonSerializerSettings jsonSerializerSettings)
         {
-            return new SchemaRegistry(jsonSerializerSettings);
+            return new SchemaRegistry(jsonSerializerSettings, new EmptyModelMetadataProvider());
         }
     }
 }

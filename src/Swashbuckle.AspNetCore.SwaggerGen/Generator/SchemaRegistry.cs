@@ -76,7 +76,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     // Type is self-referencing
                     jsonContract.IsSelfReferencingArrayOrDictionary() ||
                     // Type is enum and opt-in flag set
-                    (modelMetaData.IsEnum && _settings.UseReferencedDefinitionsForEnums));
+                    (modelMetaData.ModelType.GetTypeInfo().IsEnum && _settings.UseReferencedDefinitionsForEnums));
 
             return createReference
                 ? CreateReferenceSchema(modelMetaData, referencedTypes)
