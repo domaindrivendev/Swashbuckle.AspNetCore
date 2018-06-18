@@ -224,16 +224,28 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var properties = applicableJsonProperties
                 .ToDictionary(
                     prop => prop.PropertyName,
-                    prop => CreateSchema(prop.PropertyType, referencedTypes).AssignValidationProperties(prop)
-                );
+                    prop => CreatePropertySchema(prop, referencedTypes));
 
             var schema = new Schema
             {
                 Required = required.Any() ? required : null, // required can be null but not empty
                 Properties = properties,
                 AdditionalProperties = hasExtensionData ? new Schema { Type = "object" } : null,
-                Type = "object"
+                Type = "object",
             };
+
+            return schema;
+        }
+
+        private Schema CreatePropertySchema(JsonProperty jsonProperty, Queue<Type> referencedTypes)
+        {
+            var schema = CreateSchema(jsonProperty.PropertyType, referencedTypes);
+
+            if (!jsonProperty.Writable)
+                schema.ReadOnly = true;
+
+            if (jsonProperty.TryGetMemberInfo(out MemberInfo memberInfo))
+                schema.AssignAttributeMetadata(memberInfo.GetCustomAttributes(true));
 
             return schema;
         }

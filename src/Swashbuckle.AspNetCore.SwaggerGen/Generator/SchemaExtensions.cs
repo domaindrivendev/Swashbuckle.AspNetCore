@@ -1,8 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Reflection;
-using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Collections.Generic;
 
@@ -10,13 +8,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     internal static class SchemaExtensions
     {
-        internal static Schema AssignValidationProperties(this Schema schema, JsonProperty jsonProperty)
+        internal static Schema AssignAttributeMetadata(this Schema schema, IEnumerable<object> attributes)
         {
-            var propInfo = jsonProperty.MemberInfo();
-            if (propInfo == null)
-                return schema;
-
-            foreach (var attribute in propInfo.GetCustomAttributes(false))
+            foreach (var attribute in attributes)
             {
                 if (attribute is DefaultValueAttribute defaultValue)
                     schema.Default = defaultValue.Value;
@@ -51,9 +45,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         schema.Format = format;
                 }
             }
-
-            if (!jsonProperty.Writable)
-                schema.ReadOnly = true;
 
             return schema;
         }

@@ -249,6 +249,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("date", schema.Properties["StringWithDataTypeDate"].Format);
             Assert.Equal("date-time", schema.Properties["StringWithDataTypeDateTime"].Format);
             Assert.Equal("password", schema.Properties["StringWithDataTypePassword"].Format);
+            Assert.Equal("foobar", schema.Properties["StringWithDefaultValue"].Default);
         }
 
         [Fact]

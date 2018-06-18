@@ -39,8 +39,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var jsonProperty = jsonObjectContract.Properties[entry.Key];
                 if (jsonProperty == null) continue;
 
-                var memberInfo = jsonProperty.MemberInfo();
-                if (memberInfo != null)
+                if (jsonProperty.TryGetMemberInfo(out MemberInfo memberInfo))
                 {
                     ApplyPropertyComments(entry.Value, memberInfo);
                 }
