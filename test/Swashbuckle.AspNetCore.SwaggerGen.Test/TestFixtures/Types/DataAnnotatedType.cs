@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -32,5 +33,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         [DataType(DataType.Password)]
         public string StringWithDataTypePassword { get; set; }
+
+        [DefaultValue("foobar")]
+        public string StringWithDefaultValue { get; set; }
     }
 }

@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Swashbuckle.AspNetCore.Swagger;
+using System.ComponentModel;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -198,6 +199,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             ApiParameterDescription apiParameterDescription,
             ISchemaRegistry schemaRegistry)
         {
+            // Try to retrieve additional metadata that's not provided by ApiExplorer
+            ParameterInfo parameterInfo = null;
+            PropertyInfo propertyInfo = null;
+            var attributes = Enumerable.Empty<object>();
+
+            if (apiParameterDescription.TryGetParameterInfo(apiDescription, out parameterInfo))
+                attributes = parameterInfo.GetCustomAttributes(true);
+            else if (apiParameterDescription.TryGetPropertyInfo(out propertyInfo))
+                attributes = propertyInfo.GetCustomAttributes(true);
+
             var name = _settings.DescribeAllParametersInCamelCase
                 ? apiParameterDescription.Name.ToCamelCase()
                 : apiParameterDescription.Name;
@@ -209,18 +220,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var schema = (apiParameterDescription.Type != null)
                 ? schemaRegistry.GetOrRegister(apiParameterDescription.Type)
                 : null;
+            schema.AssignAttributeMetadata(attributes);
 
-            // Try to retrieve additional metadata that's not provided by ApiExplorer
-            ParameterInfo parameterInfo = null;
-            PropertyInfo propertyInfo = null;
-
-            var customAttributes = Enumerable.Empty<object>();
-            if (apiParameterDescription.TryGetParameterInfo(apiDescription, out parameterInfo))
-                customAttributes = parameterInfo.GetCustomAttributes(true);
-            else if (apiParameterDescription.TryGetPropertyInfo(out propertyInfo))
-                customAttributes = propertyInfo.GetCustomAttributes(true);
-
-            var isRequired = customAttributes.Any(attr =>
+            var isRequired = attributes.Any(attr =>
                 new[] { typeof(RequiredAttribute), typeof(BindRequiredAttribute) }.Contains(attr.GetType()));
 
             var parameter = (location == "body")
@@ -252,7 +254,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 Name = name,
                 In = location,
-                Required = (location == "path") ? true : isRequired
+                Required = (location == "path") ? true : isRequired,
             };
 
             if (schema == null)
