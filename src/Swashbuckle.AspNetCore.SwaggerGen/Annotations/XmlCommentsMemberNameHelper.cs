@@ -61,8 +61,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (!string.IsNullOrEmpty(type.Namespace))
                 builder.Append($"{type.Namespace}.");
 
-            if (type.IsNested)
-                builder.Append($"{type.DeclaringType.Name}.");
+            var nestedType = type;
+            var nestedNameBuilder = new StringBuilder();
+            while (nestedType.IsNested)
+            {
+                nestedNameBuilder.Insert(0, $"{nestedType.DeclaringType.Name}.");
+                nestedType = nestedType.DeclaringType;
+            }
+
+            builder.Append($"{nestedNameBuilder}");
 
             if (type.IsConstructedGenericType && expandGenericArgs)
             {
