@@ -220,7 +220,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var schema = (apiParameterDescription.Type != null)
                 ? schemaRegistry.GetOrRegister(apiParameterDescription.Type)
                 : null;
-            schema.AssignAttributeMetadata(attributes);
 
             var isRequired = attributes.Any(attr =>
                 new[] { typeof(RequiredAttribute), typeof(BindRequiredAttribute) }.Contains(attr.GetType()));

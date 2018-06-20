@@ -255,9 +255,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (!jsonProperty.Writable)
                 schema.ReadOnly = true;
 
-            if (jsonProperty.TryGetMemberInfo(out MemberInfo memberInfo))
-                schema.AssignAttributeMetadata(memberInfo.GetCustomAttributes(true));
-
             return schema;
         }
 

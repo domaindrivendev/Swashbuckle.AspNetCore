@@ -302,7 +302,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 if (_includeControllerXmlComments)
                     swaggerGeneratorSettings.DocumentFilters.Insert(0, new XmlCommentsDocumentFilter(xmlDoc));
             }
-
+            schemaRegistrySettings.SchemaFilters.Add(new ModelMetaDataSchemaFilter());
             var schemaRegistryFactory = new SchemaRegistryFactory(
                 serviceProvider.GetRequiredService<IOptions<MvcJsonOptions>>().Value.SerializerSettings,
                 serviceProvider.GetRequiredService<IModelMetadataProvider>(),

@@ -8,47 +8,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     internal static class SchemaExtensions
     {
-        internal static Schema AssignAttributeMetadata(this Schema schema, IEnumerable<object> attributes)
-        {
-            foreach (var attribute in attributes)
-            {
-                if (attribute is DefaultValueAttribute defaultValue)
-                    schema.Default = defaultValue.Value;
-
-                if (attribute is RegularExpressionAttribute regex)
-                    schema.Pattern = regex.Pattern;
-
-                if (attribute is RangeAttribute range)
-                {
-                    if (Int32.TryParse(range.Maximum.ToString(), out int maximum))
-                        schema.Maximum = maximum;
-
-                    if (Int32.TryParse(range.Minimum.ToString(), out int minimum))
-                        schema.Minimum = minimum;
-                }
-
-                if (attribute is MinLengthAttribute minLength)
-                    schema.MinLength = minLength.Length;
-
-                if (attribute is MaxLengthAttribute maxLength)
-                    schema.MaxLength = maxLength.Length;
-
-                if (attribute is StringLengthAttribute stringLength)
-                {
-                    schema.MinLength = stringLength.MinimumLength;
-                    schema.MaxLength = stringLength.MaximumLength;
-                }
-
-                if (attribute is DataTypeAttribute dataTypeAttribute && schema.Type == "string")
-                {
-                    if (DataTypeFormatMap.TryGetValue(dataTypeAttribute.DataType, out string format))
-                        schema.Format = format;
-                }
-            }
-
-            return schema;
-        }
-
+        
         internal static void PopulateFrom(this PartialSchema partialSchema, Schema schema)
         {
             if (schema == null) return;
