@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-
+using System.Linq;
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class ModelMetaDataSchemaFilter : ISchemaFilter
@@ -28,15 +28,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         }
         private static void SetAttributes(Schema schema, ModelMetadata modelMetadata, string propertyName = null)
         {
-            if(string.IsNullOrEmpty(schema.Description))
-                schema.Description = modelMetadata.GetAttribute<DescriptionAttribute>(propertyName)?.Description;
+            var attributes = modelMetadata.GetAttributes(propertyName);
+            if (attributes.Count == 0) return;
+            if (string.IsNullOrEmpty(schema.Description))
+                schema.Description = attributes.OfType<DescriptionAttribute>().LastOrDefault()?.Description;
             if (schema.Default == null)
-                schema.Default = modelMetadata.GetAttribute<DefaultValueAttribute>(propertyName)?.Value;
+                schema.Default = attributes.OfType<DefaultValueAttribute>().LastOrDefault()?.Value;
             if (string.IsNullOrEmpty(schema.Pattern))
-                schema.Pattern = modelMetadata.GetAttribute<RegularExpressionAttribute>(propertyName)?.Pattern;
+                schema.Pattern = attributes.OfType<RegularExpressionAttribute>().LastOrDefault()?.Pattern;
             if (schema.Maximum == null && schema.Minimum == null)
             {
-                var range = modelMetadata.GetAttribute<RangeAttribute>(propertyName);
+                var range = attributes.OfType<RangeAttribute>().LastOrDefault();
                 if (range != null)
                 {
                     if (Int32.TryParse(range.Maximum.ToString(), out int maximum))
@@ -47,12 +49,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 }
             }
             if(schema.MinLength == null)
-                schema.MinLength = modelMetadata.GetAttribute<MinLengthAttribute>(propertyName)?.Length;
+                schema.MinLength = attributes.OfType<MinLengthAttribute>().LastOrDefault()?.Length;
             if(schema.MaxLength == null)
-                schema.Maximum = modelMetadata.GetAttribute<MaxLengthAttribute>(propertyName)?.Length;
+                schema.Maximum = attributes.OfType<MaxLengthAttribute>().LastOrDefault()?.Length;
             if(schema.MinLength == null && schema.MaxLength == null)
             {
-                var stringLengthAttribute = modelMetadata.GetAttribute<StringLengthAttribute>(propertyName);
+                var stringLengthAttribute = attributes.OfType<StringLengthAttribute>().LastOrDefault();
                 if (stringLengthAttribute != null)
                 {
                     schema.MinItems = stringLengthAttribute.MinimumLength;
@@ -60,10 +62,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 }
             }
             if (string.IsNullOrEmpty(schema.Title))
-                schema.Title = modelMetadata.GetAttribute<DisplayNameAttribute>(propertyName)?.DisplayName;
+                schema.Title = attributes.OfType<DisplayNameAttribute>().LastOrDefault()?.DisplayName;
             if(string.IsNullOrEmpty(schema.Format) && schema.Type == "string")
             {
-                var dataTypeAttribute = modelMetadata.GetAttribute<DataTypeAttribute>(propertyName);
+                var dataTypeAttribute = attributes.OfType<DataTypeAttribute>().LastOrDefault();
         
                 if (dataTypeAttribute != null && DataTypeFormatMap.TryGetValue(dataTypeAttribute.DataType, out string format))
                     schema.Format = format;

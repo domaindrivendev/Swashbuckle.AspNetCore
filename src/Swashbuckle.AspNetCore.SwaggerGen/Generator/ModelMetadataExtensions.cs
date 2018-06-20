@@ -12,19 +12,23 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Generator
 {
     internal static class ModelMetadataExtensions
     {
-        internal static T GetAttribute<T>(this ModelMetadata modelMetadata, string propertyName) where T : Attribute
+        internal static IList<Attribute> GetAttributes(this ModelMetadata modelMetadata, string propertyName)
         {
             if (modelMetadata.HasProperty(propertyName))
             {
                 var property = modelMetadata.ModelType.GetProperty(propertyName);
-                var attribute = property.GetCustomAttributes<T>(true).LastOrDefault();
+                var attribute = property.GetCustomAttributes<Attribute>(true).ToList();
                 return attribute;
             }
             else
             {
-                var attribute = modelMetadata.ModelType.GetTypeInfo().GetCustomAttributes<T>(true).LastOrDefault();
+                var attribute = modelMetadata.ModelType.GetTypeInfo().GetCustomAttributes<Attribute>(true).ToList();
                 return attribute;
             }
+        }
+        internal static T GetAttribute<T>(this ModelMetadata modelMetadata, string propertyName) where T : Attribute
+        {
+            return GetAttributes(modelMetadata, propertyName).OfType<T>().LastOrDefault();
         }
 
         internal static bool HasProperty(this ModelMetadata modelMetadata, string propertyName)
