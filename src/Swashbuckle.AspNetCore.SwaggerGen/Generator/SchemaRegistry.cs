@@ -8,8 +8,6 @@ using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Converters;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
-using Microsoft.AspNetCore.Mvc.Internal;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {

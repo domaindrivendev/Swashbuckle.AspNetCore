@@ -17,9 +17,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (jsonProperty.Required == Newtonsoft.Json.Required.Always)
                 return true;
 
-            if (jsonProperty.HasAttribute<RequiredAttribute>())
-                return true;
-
             return false;
         }
 

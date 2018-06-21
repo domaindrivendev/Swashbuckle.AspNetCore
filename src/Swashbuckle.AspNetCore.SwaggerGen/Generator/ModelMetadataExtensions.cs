@@ -12,9 +12,29 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Generator
 {
     internal static class ModelMetadataExtensions
     {
-        internal static IList<Attribute> GetAttributes(this ModelMetadata modelMetadata, string propertyName)
+        internal static List<Attribute> GetReflectedAttributes(this ModelMetadata modelMetadata, string propertyName)
         {
-            if (modelMetadata.HasProperty(propertyName))
+            var reflectedType = modelMetadata.GetReflectedType(propertyName);
+            if (reflectedType == null) return new List<Attribute>();
+            return reflectedType.GetCustomAttributes().ToList();
+        }
+        internal static List<T> GetReflectedAttributes<T>(this ModelMetadata modelMetadata, string propertyName) where T : Attribute
+        {
+            var reflectedType = modelMetadata.GetReflectedType(propertyName);
+            if (reflectedType == null) return new List<T>();
+            return reflectedType.GetCustomAttributes<T>().ToList();
+        }
+        internal static MemberInfo GetReflectedType(this ModelMetadata modelMetadata, string propertyName)
+        {
+            var modelMetadataTypeAttribute = modelMetadata.ModelType.GetTypeInfo().GetCustomAttributes<ModelMetadataTypeAttribute>(false).FirstOrDefault();
+            if (modelMetadataTypeAttribute == null) return null;
+
+            var reflectedType = modelMetadataTypeAttribute.MetadataType.GetMember(propertyName).FirstOrDefault();
+            return reflectedType;
+        }
+        internal static IList<Attribute> GetAttributes(this ModelMetadata modelMetadata, string propertyName = null)
+        {
+            if (propertyName != null && modelMetadata.HasProperty(propertyName))
             {
                 var property = modelMetadata.ModelType.GetProperty(propertyName);
                 var attribute = property.GetCustomAttributes<Attribute>(true).ToList();
@@ -22,7 +42,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Generator
             }
             else
             {
-                var attribute = modelMetadata.ModelType.GetTypeInfo().GetCustomAttributes<Attribute>(true).ToList();
+                var type = modelMetadata.ModelType.GetTypeInfo();
+                var attribute = type.GetCustomAttributes<Attribute>(true).ToList();
                 return attribute;
             }
         }
