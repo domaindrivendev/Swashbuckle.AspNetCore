@@ -256,6 +256,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GetSwagger_SetsDefaultValue_ForOptionalTopLevelParams()
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add("GET", "collection/{param}", nameof(FakeController.AcceptsOptionalParameter)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var param = swagger.Paths["/collection/{param}"].Get.Parameters.First();
+            Assert.IsAssignableFrom<NonBodyParameter>(param);
+            var nonBodyParam = param as NonBodyParameter;
+            Assert.Equal("foobar", nonBodyParam.Default);
+        }
+
+        [Fact]
         public void GetSwagger_IgnoresParameters_IfPartOfCancellationToken()
         {
             var subject = Subject(setupApis: apis => apis

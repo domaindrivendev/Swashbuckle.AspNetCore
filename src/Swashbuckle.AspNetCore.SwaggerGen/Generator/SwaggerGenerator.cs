@@ -7,7 +7,6 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Swashbuckle.AspNetCore.Swagger;
-using System.ComponentModel;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -143,8 +142,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             // Try to retrieve additional metadata that's not provided by ApiExplorer
             MethodInfo methodInfo;
-
             var customAttributes = Enumerable.Empty<object>();
+
             if (apiDescription.TryGetMethodInfo(out methodInfo))
             {
                 customAttributes = methodInfo.GetCustomAttributes(true)
@@ -202,12 +201,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             // Try to retrieve additional metadata that's not provided by ApiExplorer
             ParameterInfo parameterInfo = null;
             PropertyInfo propertyInfo = null;
-            var attributes = Enumerable.Empty<object>();
+            var customAttributes = Enumerable.Empty<object>();
 
             if (apiParameterDescription.TryGetParameterInfo(apiDescription, out parameterInfo))
-                attributes = parameterInfo.GetCustomAttributes(true);
+                customAttributes = parameterInfo.GetCustomAttributes(true);
             else if (apiParameterDescription.TryGetPropertyInfo(out propertyInfo))
-                attributes = propertyInfo.GetCustomAttributes(true);
+                customAttributes = propertyInfo.GetCustomAttributes(true);
 
             var name = _settings.DescribeAllParametersInCamelCase
                 ? apiParameterDescription.Name.ToCamelCase()
@@ -220,14 +219,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var schema = (apiParameterDescription.Type != null)
                 ? schemaRegistry.GetOrRegister(apiParameterDescription.Type)
                 : null;
-            schema.AssignAttributeMetadata(attributes);
 
-            var isRequired = attributes.Any(attr =>
+            var isRequired = customAttributes.Any(attr =>
                 new[] { typeof(RequiredAttribute), typeof(BindRequiredAttribute) }.Contains(attr.GetType()));
 
             var parameter = (location == "body")
                 ? new BodyParameter { Name = name, Schema = schema, Required = isRequired }
-                : CreateNonBodyParameter(name, location, schema, isRequired, schemaRegistry);
+                : CreateNonBodyParameter(
+                    name,
+                    location,
+                    schema,
+                    schemaRegistry,
+                    isRequired,
+                    customAttributes,
+                    parameterInfo);
 
             var filterContext = new ParameterFilterContext(
                 apiParameterDescription,
@@ -247,8 +252,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             string name,
             string location,
             Schema schema,
+            ISchemaRegistry schemaRegistry,
             bool isRequired,
-            ISchemaRegistry schemaRegistry)
+            IEnumerable<object> customAttributes,
+            ParameterInfo parameterInfo)
         {
             var nonBodyParam = new NonBodyParameter
             {
@@ -263,11 +270,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
             else
             {
-                // In some cases (e.g. enum types), the schemaRegistry may return a reference instead of a
-                // full schema. Retrieve the full schema before populating the parameter description
-                var fullSchema = (schema.Ref != null)
-                    ? schemaRegistry.Definitions[schema.Ref.Replace("#/definitions/", string.Empty)]
-                    : schema;
+                if (schema.Ref != null)
+                {
+                    // It's a referenced Schema and therefore needs to be located. This also means it's not neccessarily
+                    // exclusive to this parameter and so, we can't assign any parameter specific attributes or metadata.
+                    schema = schemaRegistry.Definitions[schema.Ref.Replace("#/definitions/", string.Empty)];
+                }
+                else
+                {
+                    // It's a value Schema. This means it's exclusive to this parameter and so, we can assign
+                    // parameter specific attributes and metadata.
+                    // Yep, it's hacky and needs to be refactored - SchemaRegistry should be stateless
+                    schema.AssignAttributeMetadata(customAttributes);
+                    schema.Default = (parameterInfo != null && parameterInfo.IsOptional)
+                        ? parameterInfo.DefaultValue
+                        : null;
+                }
 
                 nonBodyParam.PopulateFrom(schema);
             }

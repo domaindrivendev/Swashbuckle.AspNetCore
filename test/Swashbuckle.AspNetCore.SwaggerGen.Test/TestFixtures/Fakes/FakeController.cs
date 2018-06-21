@@ -69,6 +69,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void AcceptsDataAnnotatedType(DataAnnotatedType param)
         { }
 
+        public void AcceptsOptionalParameter(string param = "foobar")
+        { }
+
         public void AcceptsStringFromRoute([FromRoute]string param)
         { }
 

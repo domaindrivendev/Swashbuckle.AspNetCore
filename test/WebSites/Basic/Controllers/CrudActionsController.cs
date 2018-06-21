@@ -38,7 +38,7 @@ namespace Basic.Controllers
         /// <param name="keywords">A list of search terms</param>
         /// <returns></returns>
         [HttpGet]
-        public IEnumerable<Product> Search([FromQuery(Name = "kw")]string keywords)
+        public IEnumerable<Product> Search([FromQuery(Name = "kw")]string keywords = "foobar")
         {
             return new[]
             {
