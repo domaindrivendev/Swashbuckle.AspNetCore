@@ -12,12 +12,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Generator
 {
     internal static class ModelMetadataExtensions
     {
-        internal static List<Attribute> GetReflectedAttributes(this ModelMetadata modelMetadata, string propertyName)
-        {
-            var reflectedType = modelMetadata.GetReflectedType(propertyName);
-            if (reflectedType == null) return new List<Attribute>();
-            return reflectedType.GetCustomAttributes().ToList();
-        }
         internal static List<T> GetReflectedAttributes<T>(this ModelMetadata modelMetadata, string propertyName) where T : Attribute
         {
             var reflectedType = modelMetadata.GetReflectedType(propertyName);
@@ -32,29 +26,24 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Generator
             var reflectedType = modelMetadataTypeAttribute.MetadataType.GetMember(propertyName).FirstOrDefault();
             return reflectedType;
         }
-        internal static IList<Attribute> GetAttributes(this ModelMetadata modelMetadata, string propertyName = null)
+        internal static IList<T> GetAttributes<T>(this ModelMetadata modelMetadata) where T : Attribute
         {
-            if (propertyName != null && modelMetadata.HasProperty(propertyName))
-            {
-                var property = modelMetadata.ModelType.GetProperty(propertyName);
-                var attribute = property.GetCustomAttributes<Attribute>(true).ToList();
-                return attribute;
-            }
-            else
-            {
-                var type = modelMetadata.ModelType.GetTypeInfo();
-                var attribute = type.GetCustomAttributes<Attribute>(true).ToList();
-                return attribute;
-            }
+            var type = modelMetadata.ModelType.GetTypeInfo();
+            var attribute = type.GetCustomAttributes<T>(true).ToList();
+            return attribute;
+        }
+        internal static IList<T> GetAttributes<T>(this ModelMetadata modelMetadata, string propertyName) where T : Attribute
+        {
+            if (propertyName == null || modelMetadata.Properties.Any(x => x.PropertyName == propertyName) == false) return new List<T>();
+            
+            var property = modelMetadata.ModelType.GetProperty(propertyName);
+            var attribute = property.GetCustomAttributes<T>(true)
+                            .Union(modelMetadata.GetReflectedAttributes<T>(propertyName)).ToList();
+            return attribute;
         }
         internal static T GetAttribute<T>(this ModelMetadata modelMetadata, string propertyName) where T : Attribute
         {
-            return GetAttributes(modelMetadata, propertyName).OfType<T>().LastOrDefault();
-        }
-
-        internal static bool HasProperty(this ModelMetadata modelMetadata, string propertyName)
-        {
-            return modelMetadata.Properties.Any(x => x.PropertyName == propertyName);
+            return GetAttributes<T>(modelMetadata, propertyName).OfType<T>().LastOrDefault();
         }
     }
 }
