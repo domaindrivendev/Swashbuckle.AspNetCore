@@ -231,42 +231,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(new[] { "Property3" }, schema.Required.ToArray());
         }
 
-        //[Fact]
-        //public void GetOrRegister_HonorsDataAttributes()
-        //{
-        //    var subject = Subject();
-
-        //    subject.GetOrRegister(typeof(DataAnnotatedType));
-
-        //    var schema = subject.Definitions["DataAnnotatedType"];
-        //    Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);
-        //    Assert.Equal(12, schema.Properties["IntWithRange"].Maximum);
-        //    Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["StringWithRegularExpression"].Pattern);
-        //    Assert.Equal(5, schema.Properties["StringWithStringLength"].MinLength);
-        //    Assert.Equal(10, schema.Properties["StringWithStringLength"].MaxLength);
-        //    Assert.Equal(1, schema.Properties["StringWithMinMaxLength"].MinLength);
-        //    Assert.Equal(3, schema.Properties["StringWithMinMaxLength"].MaxLength);
-        //    Assert.Equal(new[] { "StringWithRequired", "IntWithRequired" }, schema.Required.ToArray());
-        //    Assert.Equal("date", schema.Properties["StringWithDataTypeDate"].Format);
-        //    Assert.Equal("date-time", schema.Properties["StringWithDataTypeDateTime"].Format);
-        //    Assert.Equal("password", schema.Properties["StringWithDataTypePassword"].Format);
-        //    Assert.Equal("foobar", schema.Properties["StringWithDefaultValue"].Default);
-        //}
-
-        //[Fact]
-        //public void GetOrRegister_HonorsDataAttributes_ViaModelMetadataType()
-        //{
-        //    var subject = Subject();
-
-        //    subject.GetOrRegister(typeof(MetadataAnnotatedType));
-
-        //    var schema = subject.Definitions["MetadataAnnotatedType"];
-        //    Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);
-        //    Assert.Equal(12, schema.Properties["IntWithRange"].Maximum);
-        //    Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["StringWithRegularExpression"].Pattern);
-        //    Assert.Equal(new[] { "StringWithRequired", "IntWithRequired" }, schema.Required.ToArray());
-        //}
-
         [Fact]
         public void GetOrRegister_HonorsStringEnumConverters_ConfiguredViaAttributes()
         {

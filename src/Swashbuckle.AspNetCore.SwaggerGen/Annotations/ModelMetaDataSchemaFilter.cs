@@ -19,16 +19,29 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (!(context.JsonContract is JsonObjectContract jsonObjectContract)) return;
             foreach (var prop in jsonObjectContract.Properties)
             {
-                var ignore = context.ModelMetadata.GetAttribute<JsonIgnoreAttribute>(prop.UnderlyingName);
-                if (ignore != null)
+                var ignoreAttribute = context.ModelMetadata.GetAttribute<JsonIgnoreAttribute>(prop.UnderlyingName);
+                if (ignoreAttribute != null)
                     continue;
+                if (schema.Required == null || schema.Required.Contains(prop.PropertyName) == false)
+                {
+                    var requiredAttribute = context.ModelMetadata.GetAttribute<RequiredAttribute>(prop.UnderlyingName);
+                    if (requiredAttribute != null)
+                    {
+                        if (schema.Required == null)
+                            schema.Required = new List<string>();
+                        schema.Required.Add(prop.PropertyName);
+                    }
+                }
                 SetAttributes(schema.Properties[prop.PropertyName], context.ModelMetadata, prop.UnderlyingName);
             }
 
         }
         private static void SetAttributes(Schema schema, ModelMetadata modelMetadata, string propertyName = null)
         {
-            var attributes = modelMetadata.GetAttributes(propertyName);
+            var attributes = propertyName == null
+                ? modelMetadata.GetAttributes<Attribute>()
+                : modelMetadata.GetAttributes<Attribute>(propertyName);
+
             if (attributes.Count == 0) return;
             if (string.IsNullOrEmpty(schema.Description))
                 schema.Description = attributes.OfType<DescriptionAttribute>().LastOrDefault()?.Description;
@@ -51,13 +64,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if(schema.MinLength == null)
                 schema.MinLength = attributes.OfType<MinLengthAttribute>().LastOrDefault()?.Length;
             if(schema.MaxLength == null)
-                schema.Maximum = attributes.OfType<MaxLengthAttribute>().LastOrDefault()?.Length;
+                schema.MaxLength = attributes.OfType<MaxLengthAttribute>().LastOrDefault()?.Length;
             if(schema.MinLength == null && schema.MaxLength == null)
             {
                 var stringLengthAttribute = attributes.OfType<StringLengthAttribute>().LastOrDefault();
                 if (stringLengthAttribute != null)
                 {
-                    schema.MinItems = stringLengthAttribute.MinimumLength;
+                    schema.MinLength = stringLengthAttribute.MinimumLength;
                     schema.MaxLength = stringLengthAttribute.MaximumLength;
                 }
             }
