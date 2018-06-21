@@ -19,16 +19,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (!(context.JsonContract is JsonObjectContract jsonObjectContract)) return;
             foreach (var prop in jsonObjectContract.Properties)
             {
-   
                 var ignoreAttribute = context.ModelMetadata.GetAttribute<JsonIgnoreAttribute>(prop.UnderlyingName);
                 if (ignoreAttribute != null)
                     continue;
-                
                 if (schema.Required == null || schema.Required.Contains(prop.PropertyName) == false)
                 {
                     var requiredAttribute = context.ModelMetadata.GetAttribute<RequiredAttribute>(prop.UnderlyingName);
-                    if(requiredAttribute == null)
-                        requiredAttribute = context.ModelMetadata.GetReflectedAttributes<RequiredAttribute>(prop.UnderlyingName).FirstOrDefault();
                     if (requiredAttribute != null)
                     {
                         if (schema.Required == null)
@@ -42,9 +38,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         }
         private static void SetAttributes(Schema schema, ModelMetadata modelMetadata, string propertyName = null)
         {
-            var attributes = modelMetadata.GetAttributes(propertyName);
-            if(propertyName != null)
-                attributes = attributes.Union(modelMetadata.GetReflectedAttributes(propertyName)).ToList();
+            var attributes = propertyName == null
+                ? modelMetadata.GetAttributes<Attribute>()
+                : modelMetadata.GetAttributes<Attribute>(propertyName);
 
             if (attributes.Count == 0) return;
             if (string.IsNullOrEmpty(schema.Description))
