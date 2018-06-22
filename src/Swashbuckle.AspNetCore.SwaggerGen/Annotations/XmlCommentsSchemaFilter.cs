@@ -23,7 +23,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var jsonObjectContract = context.JsonContract as JsonObjectContract;
             if (jsonObjectContract == null) return;
 
-            var memberName = XmlCommentsMemberNameHelper.GetMemberNameForType(context.SystemType);
+            var memberName = XmlCommentsMemberNameHelper.GetMemberNameForType(context.ModelMetadata.ModelType);
             var typeNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, memberName));
 
             if (typeNode != null)
@@ -57,7 +57,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 propertySchema.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
             }
-
             var exampleNode = memberNode.SelectSingleNode(ExampleXPath);
             if (exampleNode != null)
                 propertySchema.Example = XmlCommentsTextHelper.Humanize(exampleNode.InnerXml);

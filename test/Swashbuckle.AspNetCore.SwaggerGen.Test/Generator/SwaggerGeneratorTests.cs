@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Xunit;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -621,7 +622,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             return new SwaggerGenerator(
                 apiDescriptionsProvider,
-                new SchemaRegistryFactory(new JsonSerializerSettings(), new SchemaRegistrySettings()),
+                new SchemaRegistryFactory(new JsonSerializerSettings(), new EmptyModelMetadataProvider(), new SchemaRegistrySettings()),
                 options
             );
         }

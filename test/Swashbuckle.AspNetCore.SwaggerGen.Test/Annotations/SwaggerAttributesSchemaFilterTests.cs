@@ -4,6 +4,7 @@ using Moq;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Linq;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -30,7 +31,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         private SchemaFilterContext FilterContextFor(Type type)
         {
-            return new SchemaFilterContext(type, null, null);
+            var metaData = new EmptyModelMetadataProvider().GetMetadataForType(type);
+            return new SchemaFilterContext(type, metaData, null, null);
         }
 
         private SwaggerAttributesSchemaFilter Subject()

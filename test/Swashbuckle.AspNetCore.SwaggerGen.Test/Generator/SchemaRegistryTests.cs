@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Converters;
 using Xunit;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -228,42 +229,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(2, schema.Properties.Count);
             Assert.Contains("foobar", schema.Properties.Keys);
             Assert.Equal(new[] { "Property3" }, schema.Required.ToArray());
-        }
-
-        [Fact]
-        public void GetOrRegister_HonorsDataAttributes()
-        {
-            var subject = Subject();
-
-            subject.GetOrRegister(typeof(DataAnnotatedType));
-
-            var schema = subject.Definitions["DataAnnotatedType"];
-            Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);
-            Assert.Equal(12, schema.Properties["IntWithRange"].Maximum);
-            Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["StringWithRegularExpression"].Pattern);
-            Assert.Equal(5, schema.Properties["StringWithStringLength"].MinLength);
-            Assert.Equal(10, schema.Properties["StringWithStringLength"].MaxLength);
-            Assert.Equal(1, schema.Properties["StringWithMinMaxLength"].MinLength);
-            Assert.Equal(3, schema.Properties["StringWithMinMaxLength"].MaxLength);
-            Assert.Equal(new[] { "StringWithRequired", "IntWithRequired" }, schema.Required.ToArray());
-            Assert.Equal("date", schema.Properties["StringWithDataTypeDate"].Format);
-            Assert.Equal("date-time", schema.Properties["StringWithDataTypeDateTime"].Format);
-            Assert.Equal("password", schema.Properties["StringWithDataTypePassword"].Format);
-            Assert.Equal("foobar", schema.Properties["StringWithDefaultValue"].Default);
-        }
-
-        [Fact]
-        public void GetOrRegister_HonorsDataAttributes_ViaModelMetadataType()
-        {
-            var subject = Subject();
-
-            subject.GetOrRegister(typeof(MetadataAnnotatedType));
-
-            var schema = subject.Definitions["MetadataAnnotatedType"];
-            Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);
-            Assert.Equal(12, schema.Properties["IntWithRange"].Maximum);
-            Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["StringWithRegularExpression"].Pattern);
-            Assert.Equal(new[] { "StringWithRequired", "IntWithRequired" }, schema.Required.ToArray());
         }
 
         [Fact]
@@ -490,12 +455,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var settings = new SchemaRegistrySettings();
             if (configure != null) configure(settings);
 
-            return new SchemaRegistry(new JsonSerializerSettings(), settings);
+            return new SchemaRegistry(new JsonSerializerSettings(), new EmptyModelMetadataProvider(), settings);
         }
 
         private SchemaRegistry Subject(JsonSerializerSettings jsonSerializerSettings)
         {
-            return new SchemaRegistry(jsonSerializerSettings);
+            return new SchemaRegistry(jsonSerializerSettings, new EmptyModelMetadataProvider());
         }
     }
 }
