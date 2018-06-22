@@ -68,6 +68,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GetOrRegister_ReturnsSetSchema_ForSetTypes()
+        {
+            var schema = Subject().GetOrRegister(typeof(ISet<string>));
+
+            Assert.Equal("array", schema.Type);
+            Assert.Equal("string", schema.Items.Type);
+            Assert.Equal(true, schema.UniqueItems);
+        }
+
+        [Fact]
         public void GetOrRegister_ReturnsMapSchema_ForDictionaryTypes()
         {
             var schema = Subject().GetOrRegister(typeof(Dictionary<string, string>));

@@ -199,11 +199,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private Schema CreateArraySchema(JsonArrayContract arrayContract, Queue<Type> referencedTypes)
         {
+            var type = arrayContract.UnderlyingType;
             var itemType = arrayContract.CollectionItemType ?? typeof(object);
+
+            var isASet = (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(ISet<>)
+                || type.GetInterfaces().Any(i => i.GetTypeInfo().IsGenericType && i.GetGenericTypeDefinition() == typeof(ISet<>)));
+
             return new Schema
             {
                 Type = "array",
-                Items = CreateSchema(itemType, referencedTypes)
+                Items = CreateSchema(itemType, referencedTypes),
+                UniqueItems = isASet
             };
         }
 
