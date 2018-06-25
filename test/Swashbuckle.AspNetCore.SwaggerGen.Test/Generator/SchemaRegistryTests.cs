@@ -68,6 +68,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GetOrRegister_ReturnsSetSchema_ForSetTypes()
+        {
+            var schema = Subject().GetOrRegister(typeof(ISet<string>));
+
+            Assert.Equal("array", schema.Type);
+            Assert.Equal("string", schema.Items.Type);
+            Assert.Equal(true, schema.UniqueItems);
+        }
+
+        [Fact]
         public void GetOrRegister_ReturnsMapSchema_ForDictionaryTypes()
         {
             var schema = Subject().GetOrRegister(typeof(Dictionary<string, string>));
@@ -245,10 +255,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(10, schema.Properties["StringWithStringLength"].MaxLength);
             Assert.Equal(1, schema.Properties["StringWithMinMaxLength"].MinLength);
             Assert.Equal(3, schema.Properties["StringWithMinMaxLength"].MaxLength);
-            Assert.Equal(new[] { "StringWithRequired", "NullableIntWithRequired" }, schema.Required.ToArray());
+            Assert.Equal(new[] { "StringWithRequired", "IntWithRequired" }, schema.Required.ToArray());
             Assert.Equal("date", schema.Properties["StringWithDataTypeDate"].Format);
             Assert.Equal("date-time", schema.Properties["StringWithDataTypeDateTime"].Format);
             Assert.Equal("password", schema.Properties["StringWithDataTypePassword"].Format);
+            Assert.Equal("foobar", schema.Properties["StringWithDefaultValue"].Default);
         }
 
         [Fact]
@@ -262,7 +273,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);
             Assert.Equal(12, schema.Properties["IntWithRange"].Maximum);
             Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["StringWithRegularExpression"].Pattern);
-            Assert.Equal(new[] { "StringWithRequired", "NullableIntWithRequired" }, schema.Required.ToArray());
+            Assert.Equal(new[] { "StringWithRequired", "IntWithRequired" }, schema.Required.ToArray());
         }
 
         [Fact]

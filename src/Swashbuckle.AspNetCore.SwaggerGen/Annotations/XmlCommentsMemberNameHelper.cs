@@ -16,19 +16,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 ? method.DeclaringType.GetGenericTypeDefinition().GetMethod(method.Name)
                 : method;
 
-            builder.Append(sourceMethod.DeclaringType.FullNameSansTypeArguments().Replace("+", "."));
+            builder.Append(QualifiedNameFor(sourceMethod.DeclaringType));
             builder.Append($".{sourceMethod.Name}");
 
             var parameters = sourceMethod.GetParameters();
             if (parameters.Any())
             {
-                var tokens = parameters.Select(p =>
+                var parametersNames = parameters.Select(p =>
                 {
                     return p.ParameterType.IsGenericParameter
                         ? $"`{p.ParameterType.GenericParameterPosition}"
-                        : BuildTypeToken(p.ParameterType);
+                        : QualifiedNameFor(p.ParameterType, expandGenericArgs: true);
                 });
-                builder.Append($"({string.Join(",", tokens)})");
+                builder.Append($"({string.Join(",", parametersNames)})");
             }
 
             return builder.ToString();
@@ -37,7 +37,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public static string GetMemberNameForType(Type type)
         {
             var builder = new StringBuilder("T:");
-            builder.Append(type.FullNameSansTypeArguments().Replace("+", "."));
+            builder.Append(QualifiedNameFor(type));
 
             return builder.ToString();
         }
@@ -45,24 +45,42 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public static string GetMemberNameForMember(MemberInfo memberInfo)
         {
             var builder = new StringBuilder(((memberInfo.MemberType & MemberTypes.Field) != 0) ? "F:" : "P:");
-            builder.Append(memberInfo.DeclaringType.FullNameSansTypeArguments().Replace("+", "."));
+            builder.Append(QualifiedNameFor(memberInfo.DeclaringType));
             builder.Append($".{memberInfo.Name}");
 
             return builder.ToString();
         }
 
-        private static string BuildTypeToken(Type type)
+        private static string QualifiedNameFor(Type type, bool expandGenericArgs = false)
         {
             if (type.IsArray)
-                return $"{BuildTypeToken(type.GetElementType())}[]";
+                return $"{QualifiedNameFor(type.GetElementType(), expandGenericArgs)}[]";
 
-            var builder = new StringBuilder(type.FullNameSansTypeArguments().Replace("+", "."));
+            var builder = new StringBuilder();
 
-            var genericArgs = type.GetGenericArguments();
-            if (genericArgs.Any())
+            if (!string.IsNullOrEmpty(type.Namespace))
+                builder.Append($"{type.Namespace}.");
+
+            if (type.IsNested)
+                builder.Append($"{type.DeclaringType.Name}.");
+
+            if (type.IsConstructedGenericType && expandGenericArgs)
             {
-                var tokens = genericArgs.Select(t => BuildTypeToken(t));
-                builder.Replace($"`{genericArgs.Count()}", $"{{{string.Join(",", tokens)}}}");
+                var nameSansGenericArgs = type.Name.Split('`').First();
+                builder.Append(nameSansGenericArgs);
+
+                var genericArgsNames = type.GetGenericArguments().Select(t =>
+                {
+                    return t.IsGenericParameter
+                        ? $"`{t.GenericParameterPosition}"
+                        : QualifiedNameFor(t, true);
+                });
+
+                builder.Append($"{{{string.Join(",", genericArgsNames)}}}");
+            }
+            else
+            {
+                builder.Append(type.Name);
             }
 
             return builder.ToString();

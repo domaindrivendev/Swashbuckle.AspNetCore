@@ -199,11 +199,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private Schema CreateArraySchema(JsonArrayContract arrayContract, Queue<Type> referencedTypes)
         {
+            var type = arrayContract.UnderlyingType;
             var itemType = arrayContract.CollectionItemType ?? typeof(object);
+
+            var isASet = (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(ISet<>)
+                || type.GetInterfaces().Any(i => i.GetTypeInfo().IsGenericType && i.GetGenericTypeDefinition() == typeof(ISet<>)));
+
             return new Schema
             {
                 Type = "array",
-                Items = CreateSchema(itemType, referencedTypes)
+                Items = CreateSchema(itemType, referencedTypes),
+                UniqueItems = isASet
             };
         }
 
@@ -224,16 +230,28 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var properties = applicableJsonProperties
                 .ToDictionary(
                     prop => prop.PropertyName,
-                    prop => CreateSchema(prop.PropertyType, referencedTypes).AssignValidationProperties(prop)
-                );
+                    prop => CreatePropertySchema(prop, referencedTypes));
 
             var schema = new Schema
             {
                 Required = required.Any() ? required : null, // required can be null but not empty
                 Properties = properties,
                 AdditionalProperties = hasExtensionData ? new Schema { Type = "object" } : null,
-                Type = "object"
+                Type = "object",
             };
+
+            return schema;
+        }
+
+        private Schema CreatePropertySchema(JsonProperty jsonProperty, Queue<Type> referencedTypes)
+        {
+            var schema = CreateSchema(jsonProperty.PropertyType, referencedTypes);
+
+            if (!jsonProperty.Writable)
+                schema.ReadOnly = true;
+
+            if (jsonProperty.TryGetMemberInfo(out MemberInfo memberInfo))
+                schema.AssignAttributeMetadata(memberInfo.GetCustomAttributes(true));
 
             return schema;
         }

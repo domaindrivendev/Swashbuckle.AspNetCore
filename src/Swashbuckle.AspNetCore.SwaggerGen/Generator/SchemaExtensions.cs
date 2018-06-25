@@ -1,8 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Reflection;
-using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Collections.Generic;
 
@@ -10,59 +8,43 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     internal static class SchemaExtensions
     {
-        internal static Schema AssignValidationProperties(this Schema schema, JsonProperty jsonProperty)
+        internal static Schema AssignAttributeMetadata(this Schema schema, IEnumerable<object> attributes)
         {
-            var propInfo = jsonProperty.MemberInfo();
-            if (propInfo == null)
-                return schema;
-
-            foreach (var attribute in propInfo.GetCustomAttributes(false))
+            foreach (var attribute in attributes)
             {
-                var defaultValue = attribute as DefaultValueAttribute;
-                if (defaultValue != null)
+                if (attribute is DefaultValueAttribute defaultValue)
                     schema.Default = defaultValue.Value;
 
-                var regex = attribute as RegularExpressionAttribute;
-                if (regex != null)
+                if (attribute is RegularExpressionAttribute regex)
                     schema.Pattern = regex.Pattern;
 
-                var range = attribute as RangeAttribute;
-                if (range != null)
+                if (attribute is RangeAttribute range)
                 {
-                    int maximum;
-                    if (Int32.TryParse(range.Maximum.ToString(), out maximum))
+                    if (Int32.TryParse(range.Maximum.ToString(), out int maximum))
                         schema.Maximum = maximum;
 
-                    int minimum;
-                    if (Int32.TryParse(range.Minimum.ToString(), out minimum))
+                    if (Int32.TryParse(range.Minimum.ToString(), out int minimum))
                         schema.Minimum = minimum;
                 }
 
-                var minLength = attribute as MinLengthAttribute;
-                if (minLength != null)
+                if (attribute is MinLengthAttribute minLength)
                     schema.MinLength = minLength.Length;
 
-                var maxLength = attribute as MaxLengthAttribute;
-                if (maxLength != null)
+                if (attribute is MaxLengthAttribute maxLength)
                     schema.MaxLength = maxLength.Length;
 
-                var stringLength = attribute as StringLengthAttribute;
-                if (stringLength != null)
+                if (attribute is StringLengthAttribute stringLength)
                 {
                     schema.MinLength = stringLength.MinimumLength;
                     schema.MaxLength = stringLength.MaximumLength;
                 }
 
-                var dataTypeAttribute = attribute as DataTypeAttribute;
-                if (dataTypeAttribute != null && schema.Type == "string")
+                if (attribute is DataTypeAttribute dataTypeAttribute && schema.Type == "string")
                 {
                     if (DataTypeFormatMap.TryGetValue(dataTypeAttribute.DataType, out string format))
                         schema.Format = format;
                 }
             }
-
-            if (!jsonProperty.Writable)
-                schema.ReadOnly = true;
 
             return schema;
         }

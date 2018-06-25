@@ -54,6 +54,29 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(expectedDescription, schema.Properties[propertyName].Description);
         }
 
+        [Theory]
+        [InlineData(typeof(XmlAnnotatedType), "Property", "property example")]
+        [InlineData(typeof(XmlAnnotatedType), "Field", "field example")]
+        [InlineData(typeof(XmlAnnotatedSubType), "Property", "property example")]
+        public void Apply_SetsPropertyExample_FromPropertyExampleTags(
+            Type type,
+            string propertyName,
+            object expectedExample)
+        {
+            var schema = new Schema
+            {
+                Properties = new Dictionary<string, Schema>()
+                {
+                    { propertyName, new Schema() }
+                }
+            };
+            var filterContext = FilterContextFor(type);
+
+            Subject().Apply(schema, filterContext);
+
+            Assert.Equal(expectedExample, schema.Properties[propertyName].Example);
+        }
+
         private SchemaFilterContext FilterContextFor(Type type)
         {
             var jsonObjectContract = new DefaultContractResolver().ResolveContract(type);

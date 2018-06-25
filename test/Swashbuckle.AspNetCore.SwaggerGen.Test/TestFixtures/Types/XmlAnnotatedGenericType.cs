@@ -1,4 +1,7 @@
-﻿namespace Swashbuckle.AspNetCore.SwaggerGen.Test
+﻿using System.Collections;
+using System.Collections.Generic;
+
+namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     /// <summary>
     /// summary for XmlAnnotatedGenericType
@@ -13,12 +16,19 @@
         public T GenericProperty { get; set; }
 
         /// <summary>
-        /// summary of AcceptsTheTypeParameters
+        /// summary of AcceptsTypeParameters
         /// </summary>
         /// <param name="param1"></param>
         /// <param name="param2"></param>
         /// <param name="param3"></param>
         public void AcceptsTypeParameters(int param1, T param2, K param3)
+        { }
+
+        /// <summary>
+        /// summary of AcceptsConstructedOfTypeParametersType
+        /// </summary>
+        /// <param name="param1"></param>
+        public void AcceptsConstructedOfTypeParametersType(IDictionary<T, K> param1)
         { }
     }
 }

@@ -7,13 +7,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class TypeExtensions
     {
-        internal static string FullNameSansTypeArguments(this Type type)
-        {
-            var fullName = type.FullName;
-            var chopIndex = fullName.IndexOf("[[");
-            return (chopIndex == -1) ? fullName : fullName.Substring(0, chopIndex);
-        }
-
         public static string FriendlyId(this Type type, bool fullyQualified = false)
         {
             var typeName = fullyQualified
@@ -45,9 +38,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return type.FullNameSansTypeArguments() == "Microsoft.FSharp.Core.FSharpOption`1";
         }
 
-        internal static bool IsAssignableToNull(this Type type)
+        private static string FullNameSansTypeArguments(this Type type)
         {
-            return !type.GetTypeInfo().IsValueType || type.IsNullable();
+            if (string.IsNullOrEmpty(type.FullName)) return string.Empty;
+
+            var fullName = type.FullName;
+            var chopIndex = fullName.IndexOf("[[");
+            return (chopIndex == -1) ? fullName : fullName.Substring(0, chopIndex);
         }
     }
 }

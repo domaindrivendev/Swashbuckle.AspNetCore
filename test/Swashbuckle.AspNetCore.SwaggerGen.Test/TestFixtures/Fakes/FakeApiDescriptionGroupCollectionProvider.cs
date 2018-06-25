@@ -39,12 +39,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public FakeApiDescriptionGroupCollectionProvider Add(
             string httpMethod,
             string routeTemplate,
-            string actionFixtureName,
-            string controllerFixtureName = "NotAnnotated"
-        )
+            string actionName,
+            Type controllerType = null)
         {
-            _actionDescriptors.Add(
-                CreateActionDescriptor(httpMethod, routeTemplate, actionFixtureName, controllerFixtureName));
+            controllerType = controllerType ?? typeof(FakeController);
+            _actionDescriptors.Add(CreateActionDescriptor(httpMethod, routeTemplate, controllerType, actionName));
             return this;
         }
 
@@ -61,11 +60,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         private ControllerActionDescriptor CreateActionDescriptor(
             string httpMethod,
             string routeTemplate,
-            string actionFixtureName,
-            string controllerFixtureName
-        )
+            Type controllerType,
+            string actionName)
         {
             var descriptor = new ControllerActionDescriptor();
+
             descriptor.SetProperty(new ApiDescriptionActionData());
 
             descriptor.ActionConstraints = new List<IActionConstraintMetadata>();
@@ -74,29 +73,32 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             descriptor.AttributeRouteInfo = new AttributeRouteInfo { Template = routeTemplate };
 
-            descriptor.MethodInfo = typeof(FakeActions).GetMethod(actionFixtureName);
+            descriptor.MethodInfo = controllerType.GetMethod(actionName);
             if (descriptor.MethodInfo == null)
                 throw new InvalidOperationException(
-                    string.Format("{0} is not declared in ActionFixtures", actionFixtureName));
+                    string.Format("{0} is not declared in {1}", actionName, controllerType));
 
-            descriptor.Parameters = descriptor.MethodInfo.GetParameters()
-                .Select(paramInfo => new ParameterDescriptor
-                    {
-                        Name = paramInfo.Name,
-                        ParameterType = paramInfo.ParameterType,
-                        BindingInfo = BindingInfo.GetBindingInfo(paramInfo.GetCustomAttributes(false))
-                    })
-                .ToList();
+            descriptor.Parameters = new List<ParameterDescriptor>();
+            foreach (var parameterInfo in descriptor.MethodInfo.GetParameters())
+            {
+                descriptor.Parameters.Add(new ControllerParameterDescriptor
+                {
+                    Name = parameterInfo.Name,
+                    ParameterType = parameterInfo.ParameterType,
+                    ParameterInfo = parameterInfo,
+                    BindingInfo = BindingInfo.GetBindingInfo(parameterInfo.GetCustomAttributes(false))
+                });
+            };
 
-            var controllerType = typeof(FakeControllers).GetNestedType(controllerFixtureName, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
-            if (controllerType == null)
-                throw new InvalidOperationException(
-                    string.Format("{0} is not declared in ControllerFixtures", controllerFixtureName));
             descriptor.ControllerTypeInfo = controllerType.GetTypeInfo();
 
             descriptor.FilterDescriptors = descriptor.MethodInfo.GetCustomAttributes<ProducesResponseTypeAttribute>()
                 .Select((filter) => new FilterDescriptor(filter, FilterScope.Action))
                 .ToList();
+
+            descriptor.RouteValues = new Dictionary<string, string> {
+                { "controller", controllerType.Name.Replace("Controller", string.Empty) }
+            };
 
             return descriptor;
         }

@@ -91,7 +91,8 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
 
             return new OperationFilterContext(
                 apiDescription,
-                new SchemaRegistry(new JsonSerializerSettings()));
+                new SchemaRegistry(new JsonSerializerSettings()),
+                (apiDescription.ActionDescriptor as ControllerActionDescriptor).MethodInfo);
         }
 
         private SwaggerParameterAttributeOperationFilter Subject()

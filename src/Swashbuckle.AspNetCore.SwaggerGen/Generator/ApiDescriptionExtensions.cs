@@ -10,26 +10,31 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class ApiDescriptionExtensions
     {
+        [Obsolete("Deprecated: Use TryGetMethodInfo")]
         public static IEnumerable<object> ControllerAttributes(this ApiDescription apiDescription)
         {
-            var controllerActionDescriptor = apiDescription.ControllerActionDescriptor();
+            var controllerActionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
             return (controllerActionDescriptor == null)
                 ? Enumerable.Empty<object>()
                 : controllerActionDescriptor.ControllerTypeInfo.GetCustomAttributes(true);
         }
 
+        [Obsolete("Deprecated: Use TryGetMethodInfo")]
         public static IEnumerable<object> ActionAttributes(this ApiDescription apiDescription)
         {
-            var controllerActionDescriptor = apiDescription.ControllerActionDescriptor();
+            var controllerActionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
             return (controllerActionDescriptor == null)
                 ? Enumerable.Empty<object>()
                 : controllerActionDescriptor.MethodInfo.GetCustomAttributes(true);
         }
 
-        internal static string ControllerName(this ApiDescription apiDescription)
+        public static bool TryGetMethodInfo(this ApiDescription apiDescription, out MethodInfo methodInfo)
         {
-            var controllerActionDescriptor = apiDescription.ControllerActionDescriptor();
-            return (controllerActionDescriptor == null) ? null : controllerActionDescriptor.ControllerName;
+            var controllerActionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
+
+            methodInfo = controllerActionDescriptor?.MethodInfo;
+
+            return (methodInfo != null);
         }
 
         internal static string FriendlyId(this ApiDescription apiDescription)
@@ -72,23 +77,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         internal static bool IsObsolete(this ApiDescription apiDescription)
         {
-            return apiDescription.ActionAttributes().OfType<ObsoleteAttribute>().Any();
-        }
+            if (!apiDescription.TryGetMethodInfo(out MethodInfo methodInfo))
+                return false;
 
-        public static ControllerActionDescriptor ControllerActionDescriptor(this ApiDescription apiDescription)
-        {
-            var controllerActionDescriptor = apiDescription.GetProperty<ControllerActionDescriptor>();
-            if (controllerActionDescriptor == null)
-            {
-                controllerActionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
-                
-                if (controllerActionDescriptor != null)
-                {
-                    apiDescription.SetProperty(controllerActionDescriptor);
-                }
-            }
-            return controllerActionDescriptor; 
+            return methodInfo.GetCustomAttributes(true)
+                .Union(methodInfo.DeclaringType.GetTypeInfo().GetCustomAttributes(true))
+                .Any(attr => attr.GetType() == typeof(ObsoleteAttribute));
         }
-
     }
 }

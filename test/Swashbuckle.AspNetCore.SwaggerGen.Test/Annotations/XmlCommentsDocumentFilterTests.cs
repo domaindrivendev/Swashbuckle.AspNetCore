@@ -23,16 +23,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     {
                         ActionDescriptor = new ControllerActionDescriptor
                         {
-                            ControllerTypeInfo = typeof(FakeControllers.AnnotatedWithXml).GetTypeInfo(),
-                            ControllerName = nameof(FakeControllers.AnnotatedWithXml)
+                            ControllerTypeInfo = typeof(XmlAnnotatedController).GetTypeInfo(),
+                            ControllerName = nameof(XmlAnnotatedController)
                         }
                     },
                     new ApiDescription
                     {
                         ActionDescriptor = new ControllerActionDescriptor
                         {
-                            ControllerTypeInfo = typeof(FakeControllers.AnnotatedWithXml).GetTypeInfo(),
-                            ControllerName = nameof(FakeControllers.AnnotatedWithXml)
+                            ControllerTypeInfo = typeof(XmlAnnotatedController).GetTypeInfo(),
+                            ControllerName = nameof(XmlAnnotatedController)
                         }
                     }
                 },
@@ -41,7 +41,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Subject().Apply(document, filterContext);
 
             Assert.Equal(1, document.Tags.Count);
-            Assert.Equal("summary for AnnotatedWithXml", document.Tags[0].Description);
+            Assert.Equal("summary for XmlAnnotatedController", document.Tags[0].Description);
         }
 
         private XmlCommentsDocumentFilter Subject()

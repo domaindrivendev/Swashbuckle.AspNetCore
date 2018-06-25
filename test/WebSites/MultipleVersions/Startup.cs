@@ -4,9 +4,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using MultipleVersions.Swagger;
+using System.Reflection;
 
 namespace MultipleVersions
 {
@@ -34,7 +36,10 @@ namespace MultipleVersions
 
                 c.DocInclusionPredicate((docName, apiDesc) =>
                 {
-                    var versions = apiDesc.ControllerAttributes()
+                    if (!apiDesc.TryGetMethodInfo(out MethodInfo methodInfo)) return false;
+
+                    var versions = methodInfo.DeclaringType
+                        .GetCustomAttributes(true)
                         .OfType<ApiVersionAttribute>()
                         .SelectMany(attr => attr.Versions);
 

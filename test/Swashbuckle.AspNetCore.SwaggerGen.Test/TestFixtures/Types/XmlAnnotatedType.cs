@@ -10,11 +10,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         /// <summary>
         /// summary for Property
         /// </summary>
+        /// <example>property example</example>
         public string Property { get; set; }
 
         /// <summary>
         /// summary for Field
         /// </summary>
+        /// <example>field example</example>
         public string Field;
 
         /// <summary>

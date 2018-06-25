@@ -9,7 +9,8 @@ namespace Basic.Swagger
     {
         public void Apply(Operation operation, OperationFilterContext context)
         {
-            var formMediaType = context.ApiDescription.ActionAttributes()
+            var formMediaType = context.MethodInfo
+                .GetCustomAttributes(true)
                 .OfType<ConsumesAttribute>()
                 .SelectMany(attr => attr.ContentTypes)
                 .FirstOrDefault(mediaType => mediaType == "multipart/form-data");

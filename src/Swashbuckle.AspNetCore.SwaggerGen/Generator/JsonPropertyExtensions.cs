@@ -17,7 +17,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (jsonProperty.Required == Newtonsoft.Json.Required.Always)
                 return true;
 
-            if (jsonProperty.HasAttribute<RequiredAttribute>() && jsonProperty.PropertyType.IsAssignableToNull())
+            if (jsonProperty.HasAttribute<RequiredAttribute>())
                 return true;
 
             return false;
@@ -31,13 +31,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         internal static bool HasAttribute<T>(this JsonProperty jsonProperty)
             where T : Attribute
         {
-            var memberInfo = jsonProperty.MemberInfo();
-            return memberInfo != null && memberInfo.GetCustomAttribute<T>() != null;
+            if (!jsonProperty.TryGetMemberInfo(out MemberInfo memberInfo))
+                return false;
+
+            return memberInfo.GetCustomAttribute<T>() != null;
         }
 
-        internal static MemberInfo MemberInfo(this JsonProperty jsonProperty)
+        internal static bool TryGetMemberInfo(this JsonProperty jsonProperty, out MemberInfo memberInfo)
         {
-            if (jsonProperty.UnderlyingName == null) return null;
+            if (jsonProperty.UnderlyingName == null)
+            {
+                memberInfo = null;
+                return false;
+            }
 
             var metadataAttribute = jsonProperty.DeclaringType.GetTypeInfo()
                 .GetCustomAttributes(typeof(ModelMetadataTypeAttribute), true)
@@ -47,7 +53,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 ? ((ModelMetadataTypeAttribute)metadataAttribute).MetadataType
                 : jsonProperty.DeclaringType;
 
-            return typeToReflect.GetMember(jsonProperty.UnderlyingName).FirstOrDefault();
+            memberInfo = typeToReflect.GetMember(jsonProperty.UnderlyingName).FirstOrDefault();
+
+            return (memberInfo != null);
         }
     }
 }

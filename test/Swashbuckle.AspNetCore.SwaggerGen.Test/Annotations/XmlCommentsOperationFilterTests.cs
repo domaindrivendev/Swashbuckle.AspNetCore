@@ -17,7 +17,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             {
                 Responses = new Dictionary<string, Response>()
             };
-            var filterContext = FilterContextFor(nameof(FakeActions.AnnotatedWithXml));
+            var filterContext = FilterContextFor(nameof(FakeController.AnnotatedWithXml));
 
             Subject().Apply(operation, filterContext);
 
@@ -38,7 +38,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 },
                 Responses = new Dictionary<string, Response>()
             };
-            var filterContext = FilterContextFor(nameof(FakeActions.AnnotatedWithXml));
+            var filterContext = FilterContextFor(nameof(FakeController.AnnotatedWithXml));
 
             Subject().Apply(operation, filterContext);
 
@@ -55,7 +55,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 Parameters = new List<IParameter>() { new NonBodyParameter { Name = "Property" } },
                 Responses = new Dictionary<string, Response>()
             };
-            var filterContext = FilterContextFor(nameof(FakeActions.AcceptsXmlAnnotatedTypeFromQuery));
+            var filterContext = FilterContextFor(nameof(FakeController.AcceptsXmlAnnotatedTypeFromQuery));
 
             Subject().Apply(operation, filterContext);
 
@@ -73,7 +73,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     { "400", new Response { Description = "Client Error", Schema = new Schema { Ref = "#/definitions/bar" } } }
                 }
             };
-            var filterContext = FilterContextFor(nameof(FakeActions.AnnotatedWithXml));
+            var filterContext = FilterContextFor(nameof(FakeController.AnnotatedWithXml));
 
             Subject().Apply(operation, filterContext);
 
@@ -93,7 +93,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     { "200", new Response { Description = "Success", Schema = new Schema { Ref = "#/definitions/foo" } } },
                 }
             };
-            var filterContext = FilterContextFor(nameof(FakeActions.AnnotatedWithXml));
+            var filterContext = FilterContextFor(nameof(FakeController.AnnotatedWithXml));
 
             Subject().Apply(operation, filterContext);
 
@@ -109,7 +109,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 .ApiDescriptionGroups.Items.First()
                 .Items.First();
 
-            return new OperationFilterContext(apiDescription, null);
+            return new OperationFilterContext(apiDescription, null, null);
         }
 
         private XmlCommentsOperationFilter Subject()

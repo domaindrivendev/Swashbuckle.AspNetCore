@@ -17,6 +17,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private IList<Func<XPathDocument>> _xmlDocFactories;
         private bool _includeControllerXmlComments;
+        private List<FilterDescriptor<IParameterFilter>> _parameterFilterDescriptors;
         private List<FilterDescriptor<IOperationFilter>> _operationFilterDescriptors;
         private List<FilterDescriptor<IDocumentFilter>> _documentFilterDescriptors;
         private List<FilterDescriptor<ISchemaFilter>> _schemaFilterDescriptors;
@@ -33,6 +34,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             _schemaRegistrySettings = new SchemaRegistrySettings();
 
             _xmlDocFactories = new List<Func<XPathDocument>>();
+            _parameterFilterDescriptors = new List<FilterDescriptor<IParameterFilter>>();
             _operationFilterDescriptors = new List<FilterDescriptor<IOperationFilter>>();
             _documentFilterDescriptors = new List<FilterDescriptor<IDocumentFilter>>();
             _schemaFilterDescriptors = new List<FilterDescriptor<ISchemaFilter>>();
@@ -192,6 +194,21 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         }
 
         /// <summary>
+        /// Extend the Swagger Generator with "filters" that can modify Parameters after they're initially generated
+        /// </summary>
+        /// <typeparam name="TFilter">A type that derives from IParameterFilter</typeparam>
+        /// <param name="parameters">Optionally inject parameters through filter constructors</param>
+        public void ParameterFilter<TFilter>(params object[] parameters)
+            where TFilter : IParameterFilter
+        {
+            _parameterFilterDescriptors.Add(new FilterDescriptor<IParameterFilter>
+            {
+                Type = typeof(TFilter),
+                Arguments = parameters
+            });
+        }
+
+        /// <summary>
         /// Extend the Swagger Generator with "filters" that can modify Operations after they're initially generated
         /// </summary>
         /// <typeparam name="TFilter">A type that derives from IOperationFilter</typeparam>
@@ -307,6 +324,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private SwaggerGeneratorSettings CreateSwaggerGeneratorSettings(IServiceProvider serviceProvider)
         {
             var settings = _swaggerGeneratorSettings.Clone();
+
+            foreach (var filter in CreateFilters(_parameterFilterDescriptors, serviceProvider))
+            {
+                settings.ParameterFilters.Add(filter);
+            }
 
             foreach (var filter in CreateFilters(_operationFilterDescriptors, serviceProvider))
             {

@@ -20,7 +20,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             };
             var filterContext = FilterContextFor(nameof(TestController.ActionWithSwaggerResponseAttributes));
 
-            this.Subject().Apply(operation, filterContext);
+            Subject().Apply(operation, filterContext);
 
             var responses = operation.Responses;
             Assert.Equal(new[] { "204", "400" }, responses.Keys.ToArray());
@@ -45,7 +45,8 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
 
             return new OperationFilterContext(
                 apiDescription,
-                new SchemaRegistry(new JsonSerializerSettings()));
+                new SchemaRegistry(new JsonSerializerSettings()),
+                (apiDescription.ActionDescriptor as ControllerActionDescriptor).MethodInfo);
         }
 
         private SwaggerResponseAttributeFilter Subject()
