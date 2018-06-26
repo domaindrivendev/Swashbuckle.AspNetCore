@@ -11,22 +11,15 @@ namespace Swashbuckle.AspNetCore.Annotations
         /// <summary>
         /// Initializes a new instance of the <see cref="SwaggerParameterAttribute"/> class.
         /// </summary>
-        /// <param name="description">The description.</param>
-        /// <param name="required">if set to <c>true</c> [required].</param>
-        public SwaggerParameterAttribute(string description = null, bool required = false)
+        /// <param name="description">The parameter description</param>
+        public SwaggerParameterAttribute(string description)
         {
-            this.Description = description;
-            this.Required = required;
+            Description = description;
         }
 
         /// <summary>
-        /// Gets or sets the description of the parameter
+        /// Gets or sets the parameter description
         /// </summary>
         public string Description { get;  set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether the annotated parameter is required.
-        /// </summary>
-        public bool Required { get; set; }
     }
 }

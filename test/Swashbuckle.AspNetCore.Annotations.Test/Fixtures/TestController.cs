@@ -26,15 +26,8 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             throw new NotImplementedException();
         }
 
-        public void ActionWithSwaggerParameterAndOptionalInputParameterMarkedAsRequired([SwaggerParameter("This is my input, it is required", true)] string input)
-        {
-        }
-        public void ActionWithSwaggerParameterAndOptionalInputParameter([SwaggerParameter("This is my input no requirement changes", false)] string input)
-        {
-        }
-
-        public void ActionWithSwaggerParameterAndRequiredInputParameter([SwaggerParameter("An Id for tests")]int id)
-        {
-        }
+        public void ActionWithSwaggerParameterAttribute(
+            [SwaggerParameter("description for param1")]string param1)
+        { }
     }
 }
