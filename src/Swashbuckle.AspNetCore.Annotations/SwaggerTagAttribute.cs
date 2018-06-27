@@ -1,13 +1,12 @@
-﻿using Swashbuckle.AspNetCore.Swagger;
-using System;
+﻿using System;
 
 namespace Swashbuckle.AspNetCore.Annotations
 {
     /// <summary>
-    /// Defines document tags and related descriptions
+    /// Provides additional metadata for the default operation tag (i.e. controller name)
     /// </summary>
     /// <remarks>
-    /// Tags defined on a controller will be added to the main swagger object.
+    /// Don't use this if you're customizing the default tag for operations via TagActionsBy.
     /// </remarks>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public class SwaggerTagAttribute : Attribute
@@ -15,34 +14,22 @@ namespace Swashbuckle.AspNetCore.Annotations
         /// <summary>
         /// Initializes a new instance of the <see cref="SwaggerTagAttribute"/> class.
         /// </summary>
-        /// <param name="name">The name of the tag, if an empty or whitespace name is given it wont be included</param>
-        /// <param name="description">An optional description for the tag</param>
-        /// <param name="externalDocUrl">An optional external document url</param>
-        public SwaggerTagAttribute(string name, string description = null, string externalDocUrl = null)
+        /// <param name="description">A tag description</param>
+        /// <param name="externalDocsUrl">A url to external docs for the tag</param>
+        public SwaggerTagAttribute(string description = null, string externalDocsUrl = null)
         {
-            this.Name = name;
-            this.Description = description;
-            this.Tag = new Tag { Name = this.Name, Description = this.Description };
-
-            if (externalDocUrl != null)
-            {
-                this.Tag.ExternalDocs = new ExternalDocs { Url = externalDocUrl };
-            }
+            Description = description;
+            ExternalDocsUrl = externalDocsUrl;
         }
 
         /// <summary>
-        /// Gets the name of the Tag
-        /// </summary>
-        public string Name { get; }
-
-        /// <summary>
-        /// Gets the Description description for the tag
+        /// Gets the tag description
         /// </summary>
         public string Description { get;  }
 
         /// <summary>
-        /// Gets the Tag that is going to be added to the Document model.
+        /// Gets the external docs url
         /// </summary>
-        public Tag Tag { get; }
+        public string ExternalDocsUrl { get; }
     }
 }

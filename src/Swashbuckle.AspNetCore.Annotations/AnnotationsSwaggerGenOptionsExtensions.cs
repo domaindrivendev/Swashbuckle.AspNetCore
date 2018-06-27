@@ -11,7 +11,7 @@ namespace Microsoft.Extensions.DependencyInjection
             options.ParameterFilter<SwaggerParameterAttributeFilter>();
             options.OperationFilter<SwaggerResponseAttributeFilter>();
             options.OperationFilter<SwaggerOperationAttributeFilter>();
-            options.DocumentFilter<SwaggerTagAttributeDocumentFilter>();
+            options.DocumentFilter<SwaggerTagAttributeFilter>();
         }
     }
 }

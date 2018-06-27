@@ -1,11 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Basic.Swagger;
 
 namespace Basic.Controllers
 {
-    [SwaggerTag("Carts", "Manipulate Carts to your heart's content", "http://www.github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/master/README.md")]
+    [SwaggerTag("Manipulate Carts to your heart's content", "http://www.tempuri.org")]
     public class SwaggerAnnotationsController
     {
         [HttpPost("/carts")]

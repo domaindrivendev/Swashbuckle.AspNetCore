@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Swashbuckle.AspNetCore.Annotations.Test
 {
     [SwaggerOperationFilter(typeof(VendorExtensionsOperationFilter))]
-    [SwaggerTag("TestTag", "TestDescription")]
+    [SwaggerTag("description for TestController", "http://tempuri.org")]
     internal class TestController
     {
         public void ActionWithNoAttributes()
