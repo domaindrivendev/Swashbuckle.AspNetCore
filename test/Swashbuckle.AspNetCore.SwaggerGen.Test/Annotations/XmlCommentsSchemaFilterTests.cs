@@ -6,6 +6,7 @@ using System.IO;
 using Newtonsoft.Json.Serialization;
 using Xunit;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -80,7 +81,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         private SchemaFilterContext FilterContextFor(Type type)
         {
             var jsonObjectContract = new DefaultContractResolver().ResolveContract(type);
-            return new SchemaFilterContext(type, (jsonObjectContract as JsonObjectContract), null);
+            var metaData = new EmptyModelMetadataProvider().GetMetadataForType(type);
+            return new SchemaFilterContext(type, metaData, (jsonObjectContract as JsonObjectContract), null);
         }
 
         private XmlCommentsSchemaFilter Subject()

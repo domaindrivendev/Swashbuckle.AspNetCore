@@ -8,8 +8,8 @@ namespace Basic.Swagger
     {
         public void Apply(Schema schema, SchemaFilterContext context)
         {
-            var type = context.SystemType;
-            schema.Example = GetExampleOrNullFor(context.SystemType);
+            var type = context.ModelMetadata.ModelType;
+            schema.Example = GetExampleOrNullFor(type);
         }
 
         private object GetExampleOrNullFor(Type systemType)

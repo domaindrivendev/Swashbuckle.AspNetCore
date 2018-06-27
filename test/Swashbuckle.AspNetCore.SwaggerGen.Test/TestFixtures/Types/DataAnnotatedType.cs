@@ -36,5 +36,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         [DefaultValue("foobar")]
         public string StringWithDefaultValue { get; set; }
+
+        [Description("Description")]
+        public string StringWithDescription { get; set; }
+
+        [DisplayName("DisplayName")]
+        public string StringWithDisplayName { get; set; }
     }
 }

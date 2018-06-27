@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Newtonsoft.Json;
 using Xunit;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -67,7 +68,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             return new OperationFilterContext(
                 apiDescription,
-                new SchemaRegistry(new JsonSerializerSettings()),
+                new SchemaRegistry(new JsonSerializerSettings(), new EmptyModelMetadataProvider()),
                 (apiDescription.ActionDescriptor as ControllerActionDescriptor).MethodInfo);
         }
 

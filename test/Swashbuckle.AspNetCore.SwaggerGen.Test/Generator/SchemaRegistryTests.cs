@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Converters;
 using Xunit;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -260,6 +261,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("date-time", schema.Properties["StringWithDataTypeDateTime"].Format);
             Assert.Equal("password", schema.Properties["StringWithDataTypePassword"].Format);
             Assert.Equal("foobar", schema.Properties["StringWithDefaultValue"].Default);
+            Assert.Equal("Description", schema.Properties["StringWithDescription"].Description);
+            Assert.Equal("DisplayName", schema.Properties["StringWithDisplayName"].Title);
+
         }
 
         [Fact]
@@ -500,12 +504,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var settings = new SchemaRegistrySettings();
             if (configure != null) configure(settings);
 
-            return new SchemaRegistry(new JsonSerializerSettings(), settings);
+            return new SchemaRegistry(new JsonSerializerSettings(), new EmptyModelMetadataProvider(), settings);
         }
 
         private SchemaRegistry Subject(JsonSerializerSettings jsonSerializerSettings)
         {
-            return new SchemaRegistry(jsonSerializerSettings);
+            return new SchemaRegistry(jsonSerializerSettings, new EmptyModelMetadataProvider());
         }
     }
 }

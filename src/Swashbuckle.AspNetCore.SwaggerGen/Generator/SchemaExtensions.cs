@@ -12,6 +12,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             foreach (var attribute in attributes)
             {
+                if (attribute is DisplayNameAttribute displayNameAttribute)
+                    schema.Title = displayNameAttribute.DisplayName;
+
+                if (attribute is DescriptionAttribute descriptionAttribute)
+                    schema.Description = descriptionAttribute.Description;
+
                 if (attribute is DefaultValueAttribute defaultValue)
                     schema.Default = defaultValue.Value;
 

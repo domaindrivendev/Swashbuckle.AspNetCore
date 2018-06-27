@@ -23,7 +23,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var jsonObjectContract = context.JsonContract as JsonObjectContract;
             if (jsonObjectContract == null) return;
 
-            var memberName = XmlCommentsMemberNameHelper.GetMemberNameForType(context.SystemType);
+            var memberName = XmlCommentsMemberNameHelper.GetMemberNameForType(context.ModelMetadata.ModelType);
             var typeNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, memberName));
 
             if (typeNode != null)

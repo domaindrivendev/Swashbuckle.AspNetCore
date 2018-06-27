@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -304,6 +305,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var schemaRegistryFactory = new SchemaRegistryFactory(
                 serviceProvider.GetRequiredService<IOptions<MvcJsonOptions>>().Value.SerializerSettings,
+                serviceProvider.GetRequiredService<IModelMetadataProvider>(),
                 schemaRegistrySettings
             );
 
