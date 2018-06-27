@@ -6,7 +6,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Annotations.Test
 {
-    public class SwaggerParameterAttributeFilterTests
+    public class AnnotationsParameterFilterTests
     {
         [Fact]
         public void Apply_AssignsParameterDescription_FromSwaggerParameterAttribute()
@@ -32,9 +32,9 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
                 null);
         }
 
-        private SwaggerParameterAttributeFilter Subject()
+        private AnnotationsParameterFilter Subject()
         {
-            return new SwaggerParameterAttributeFilter();
+            return new AnnotationsParameterFilter();
         }
     }
 }

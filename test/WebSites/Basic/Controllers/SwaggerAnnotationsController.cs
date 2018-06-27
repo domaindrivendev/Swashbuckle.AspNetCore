@@ -9,6 +9,8 @@ namespace Basic.Controllers
     {
         [HttpPost("/carts")]
         [SwaggerOperation("CreateCart", Tags = new string[] { "Carts", "Checkout" })]
+        [SwaggerResponse(201, typeof(Product), "The cart was created")]
+        [SwaggerResponse(400, typeof(void), "The cart data is invalid")]
         public Cart Create([FromBody]Cart cart)
         {
             return new Cart { Id = 1 };

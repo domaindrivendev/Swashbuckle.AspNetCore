@@ -7,7 +7,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Annotations.Test
 {
-    public class SwaggerSchemaAttributeFilterTests
+    public class AnnotationsSchemaFilterTests
     {
         [Fact]
         public void Apply_DelegatesToSpecifiedFilter_IfTypeDecoratedWithFilterAttribute()
@@ -34,9 +34,9 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             return new SchemaFilterContext(type, null, null);
         }
 
-        private SwaggerSchemaAttributeFilter Subject()
+        private AnnotationsSchemaFilter Subject()
         {
-            return new SwaggerSchemaAttributeFilter(null);
+            return new AnnotationsSchemaFilter(null);
         }
     }
 }

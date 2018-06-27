@@ -8,7 +8,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Annotations.Test
 {
-    public class SwaggerTagAttributeFilterTests
+    public class AnnotationsDocumentFilterTests
     {
         [Fact]
         public void Apply_CreatesMetadataForControllerNameTag_FromSwaggerTagAttribute()
@@ -41,9 +41,9 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
                 null);
         }
 
-        private SwaggerTagAttributeFilter Subject()
+        private AnnotationsDocumentFilter Subject()
         {
-            return new SwaggerTagAttributeFilter();
+            return new AnnotationsDocumentFilter();
         }
     }
 }

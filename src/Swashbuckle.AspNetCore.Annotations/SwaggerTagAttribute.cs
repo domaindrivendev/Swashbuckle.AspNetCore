@@ -8,7 +8,7 @@ namespace Swashbuckle.AspNetCore.Annotations
     /// <remarks>
     /// Don't use this if you're customizing the default tag for operations via TagActionsBy.
     /// </remarks>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class SwaggerTagAttribute : Attribute
     {
         /// <summary>

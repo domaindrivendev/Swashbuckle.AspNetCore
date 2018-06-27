@@ -7,9 +7,9 @@ namespace Swashbuckle.AspNetCore.Annotations
     public class SwaggerResponseAttribute : ProducesResponseTypeAttribute
     {
         public SwaggerResponseAttribute(int statusCode, Type type = null, string description = null)
-            : base(type == null ? typeof(void) : type, statusCode)
+            : base(type ?? typeof(void), statusCode)
         {
-            this.Description = description;
+            Description = description;
         }
 
         public string Description { get; set; }

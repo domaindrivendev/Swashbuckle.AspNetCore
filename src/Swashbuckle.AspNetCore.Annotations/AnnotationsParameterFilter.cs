@@ -6,7 +6,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Annotations
 {
-    public class SwaggerParameterAttributeFilter : IParameterFilter
+    public class AnnotationsParameterFilter : IParameterFilter
     {
         public void Apply(IParameter parameter, ParameterFilterContext context)
         {

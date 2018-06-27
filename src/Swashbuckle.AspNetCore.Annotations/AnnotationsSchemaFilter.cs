@@ -7,11 +7,11 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Annotations
 {
-    public class SwaggerSchemaAttributeFilter : ISchemaFilter
+    public class AnnotationsSchemaFilter : ISchemaFilter
     {
         private readonly IServiceProvider _serviceProvider;
 
-        public SwaggerSchemaAttributeFilter(IServiceProvider serviceProvider)
+        public AnnotationsSchemaFilter(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }

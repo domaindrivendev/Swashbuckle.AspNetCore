@@ -7,11 +7,10 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static void EnableAnnotations(this SwaggerGenOptions options)
         {
-            options.SchemaFilter<SwaggerSchemaAttributeFilter>();
-            options.ParameterFilter<SwaggerParameterAttributeFilter>();
-            options.OperationFilter<SwaggerResponseAttributeFilter>();
-            options.OperationFilter<SwaggerOperationAttributeFilter>();
-            options.DocumentFilter<SwaggerTagAttributeFilter>();
+            options.SchemaFilter<AnnotationsSchemaFilter>();
+            options.ParameterFilter<AnnotationsParameterFilter>();
+            options.OperationFilter<AnnotationsOperationFilter>();
+            options.DocumentFilter<AnnotationsDocumentFilter>();
         }
     }
 }

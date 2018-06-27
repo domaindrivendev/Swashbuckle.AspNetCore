@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Newtonsoft.Json;
 using Xunit;
@@ -10,7 +11,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Annotations.Test
 {
-    public class SwaggerOperationAttributeFilterTests
+    public class AnnotationsOperationFilterTests
     {
         [Fact]
         public void Apply_AssignsProperties_FromActionAttribute()
@@ -36,6 +37,29 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             Subject().Apply(operation, filterContext);
 
             Assert.NotEmpty(operation.Extensions);
+        }
+
+        [Fact]
+        public void Apply_AssignsResponseDescription_FromSwaggerResponseAttribute()
+        {
+            var operation = new Operation
+            {
+                OperationId = "foobar",
+                Responses = new Dictionary<string, Response>()
+                {
+                    { "204", new Response { } },
+                    { "400", new Response { } },
+                }
+            };
+            var filterContext = FilterContextFor(nameof(TestController.ActionWithSwaggerResponseAttributes));
+
+            Subject().Apply(operation, filterContext);
+
+            Assert.Equal(new[] { "204", "400" }, operation.Responses.Keys.ToArray());
+            var response1 = operation.Responses["204"];
+            Assert.Equal("No content is returned.", response1.Description);
+            var response2 = operation.Responses["400"];
+            Assert.Equal("This returns a dictionary.", response2.Description);
         }
 
         [Fact]
@@ -66,9 +90,9 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
                 (apiDescription.ActionDescriptor as ControllerActionDescriptor).MethodInfo);
         }
 
-        private SwaggerOperationAttributeFilter Subject()
+        private AnnotationsOperationFilter Subject()
         {
-            return new SwaggerOperationAttributeFilter();
+            return new AnnotationsOperationFilter();
         }
     }
 }
