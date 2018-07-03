@@ -6,7 +6,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public interface ISchemaFilter
     {
-        void Apply(Schema model, SchemaFilterContext context);
+        void Apply(Schema schema, SchemaFilterContext context);
     }
 
     public class SchemaFilterContext

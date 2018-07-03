@@ -3,19 +3,15 @@
 namespace Swashbuckle.AspNetCore.Annotations
 {
     /// <summary>
-    /// Provides additional metadata for the default operation tag (i.e. controller name)
+    /// Adds Tag metadata for a given controller (i.e. the controller name tag)
     /// </summary>
     /// <remarks>
-    /// Don't use this if you're customizing the default tag for operations via TagActionsBy.
+    /// Don't use this attribute if you're tagging Operations with something other than controller name
+    /// e.g. if you're customizing the tagging behavior with TagActionsBy.
     /// </remarks>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class SwaggerTagAttribute : Attribute
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SwaggerTagAttribute"/> class.
-        /// </summary>
-        /// <param name="description">A tag description</param>
-        /// <param name="externalDocsUrl">A url to external docs for the tag</param>
         public SwaggerTagAttribute(string description = null, string externalDocsUrl = null)
         {
             Description = description;
@@ -23,12 +19,12 @@ namespace Swashbuckle.AspNetCore.Annotations
         }
 
         /// <summary>
-        /// Gets the tag description
+        /// A short description for the tag. GFM syntax can be used for rich text representation.
         /// </summary>
         public string Description { get;  }
 
         /// <summary>
-        /// Gets the external docs url
+        /// A URL for additional external documentation. Value MUST be in the format of a URL.
         /// </summary>
         public string ExternalDocsUrl { get; }
     }

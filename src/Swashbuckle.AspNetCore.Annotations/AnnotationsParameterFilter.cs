@@ -12,9 +12,9 @@ namespace Swashbuckle.AspNetCore.Annotations
         {
             if (context.ParameterInfo == null) return;
 
-            var customattributes = context.ParameterInfo.GetCustomAttributes(true);
+            var customAttributes = context.ParameterInfo.GetCustomAttributes(true);
 
-            ApplySwaggerParameterAttribute(parameter, customattributes);
+            ApplySwaggerParameterAttribute(parameter, customAttributes);
         }
 
         private void ApplySwaggerParameterAttribute(IParameter parameter, IEnumerable<object> customAttributes)
@@ -25,7 +25,11 @@ namespace Swashbuckle.AspNetCore.Annotations
 
             if (swaggerParameterAttribute == null) return;
 
-            parameter.Description = swaggerParameterAttribute.Description;
+            if (swaggerParameterAttribute.Description != null)
+                parameter.Description = swaggerParameterAttribute.Description;
+
+            if (swaggerParameterAttribute.RequiredProvided)
+                parameter.Required = swaggerParameterAttribute.Required;
         }
     }
 }

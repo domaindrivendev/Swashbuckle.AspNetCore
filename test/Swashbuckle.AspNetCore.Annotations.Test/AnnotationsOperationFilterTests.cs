@@ -14,22 +14,24 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
     public class AnnotationsOperationFilterTests
     {
         [Fact]
-        public void Apply_AssignsProperties_FromActionAttribute()
+        public void Apply_EnrichesOperationMetadata_IfActionDecoratedWithSwaggerOperationAttribute()
         {
             var operation = new Operation { OperationId = "foobar" };
             var filterContext = FilterContextFor(nameof(TestController.ActionWithSwaggerOperationAttribute));
 
             Subject().Apply(operation, filterContext);
 
-            Assert.Equal("CustomOperationId", operation.OperationId);
+            Assert.Equal("summary for ActionWithSwaggerOperationAttribute", operation.Summary);
+            Assert.Equal("description for ActionWithSwaggerOperationAttribute", operation.Description);
+            Assert.Equal("customOperationId", operation.OperationId);
             Assert.Equal(new[] { "customTag" }, operation.Tags.ToArray());
-            Assert.Equal(new[] { "customScheme" }, operation.Schemes.ToArray());
-            Assert.Equal(new[] { "customType1", "customType2" }, operation.Produces.ToArray());
-            Assert.Equal(new[] { "customType3", "customType4" }, operation.Consumes.ToArray());
+            Assert.Equal(new[] { "customMimeType1" }, operation.Consumes.ToArray());
+            Assert.Equal(new[] { "customMimeType2" }, operation.Produces.ToArray());
+            Assert.Equal(new[] { "https" }, operation.Schemes.ToArray());
         }
 
         [Fact]
-        public void Apply_DelegatesToSpecifiedFilter_IfControllerAnnotatedWithFilterAttribute()
+        public void Apply_DelegatesToSpecifiedFilter_IfControllerDecoratedWithSwaggerOperationFilterAttribute()
         {
             var operation = new Operation { OperationId = "foobar" };
             var filterContext = FilterContextFor(nameof(TestController.ActionWithNoAttributes));
@@ -40,7 +42,18 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
         }
 
         [Fact]
-        public void Apply_AssignsResponseDescription_FromSwaggerResponseAttribute()
+        public void Apply_DelegatesToSpecifiedFilter_IfActionDecoratedWithSwaggerOperationFilterAttribute()
+        {
+            var operation = new Operation { OperationId = "foobar" };
+            var filterContext = FilterContextFor(nameof(TestController.ActionWithSwaggerOperationFilterAttribute));
+
+            Subject().Apply(operation, filterContext);
+
+            Assert.NotEmpty(operation.Extensions);
+        }
+
+        [Fact]
+        public void Apply_EnrichesResponseMetadata_IfActionDecoratedWithSwaggerResponseAttribute()
         {
             var operation = new Operation
             {
@@ -57,20 +70,9 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
 
             Assert.Equal(new[] { "204", "400" }, operation.Responses.Keys.ToArray());
             var response1 = operation.Responses["204"];
-            Assert.Equal("No content is returned.", response1.Description);
+            Assert.Equal("description for 204 response", response1.Description);
             var response2 = operation.Responses["400"];
-            Assert.Equal("This returns a dictionary.", response2.Description);
-        }
-
-        [Fact]
-        public void Apply_DelegatesToSpecifiedFilter_IfActionAnnotatedWithFilterAttribute()
-        {
-            var operation = new Operation { OperationId = "foobar" };
-            var filterContext = FilterContextFor(nameof(TestController.ActionWithSwaggerOperationFilterAttribute));
-
-            Subject().Apply(operation, filterContext);
-
-            Assert.NotEmpty(operation.Extensions);
+            Assert.Equal("description for 400 response", response2.Description);
         }
 
         private OperationFilterContext FilterContextFor(string fakeActionName)

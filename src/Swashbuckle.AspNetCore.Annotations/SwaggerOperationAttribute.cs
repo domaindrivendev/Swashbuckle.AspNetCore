@@ -3,53 +3,57 @@
 namespace Swashbuckle.AspNetCore.Annotations
 {
     /// <summary>
-    /// Overrides/defines operation specific attributes.
+    /// Enriches Operation metadata for a given action method
     /// </summary>
-    /// <seealso cref="System.Attribute" />
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
     public class SwaggerOperationAttribute : Attribute
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SwaggerOperationAttribute"/> class.
-        /// </summary>
-        /// <param name="operationId">The operation identifier.</param>
-        public SwaggerOperationAttribute(string operationId = null)
+        public SwaggerOperationAttribute(string summary = null, string description = null)
         {
-            OperationId = operationId;
+            Summary = summary;
+            Description = description;
         }
 
         /// <summary>
-        /// Override the OperationId otherwise set by the generator. Note that the OerationId should be unqiue.
+        /// A short summary of what the operation does. For maximum readability in the swagger-ui,
+        /// this field SHOULD be less than 120 characters.
+        /// </summary>
+        public string Summary { get; set; }
+
+        /// <summary>
+        /// A verbose explanation of the operation behavior. GFM syntax can be used for rich text representation.
+        /// </summary>
+        public string Description { get; set; }
+
+        /// <summary>
+        /// Unique string used to identify the operation. The id MUST be unique among all operations described
+        /// in the API. Tools and libraries MAY use the operationId to uniquely identify an operation, therefore,
+        /// it is recommended to follow common programming naming conventions.
         /// </summary>
         public string OperationId { get; set; }
 
         /// <summary>
-        /// Set the tags for the operation. Use this to override tags otherwise set by the generator.
+        /// A list of tags for API documentation control. Tags can be used for logical grouping of operations
+        /// by resources or any other qualifier.
         /// </summary>
         public string[] Tags { get; set; }
 
         /// <summary>
-        /// Sets the schemes for the operation. Use this to override the generator.
+        /// A list of MIME types the operation can consume. This overrides the consumes definition at the
+        /// Swagger Object. An empty value MAY be used to clear the global definition.
         /// </summary>
-        /// <remarks>
-        /// Consider using this if for instance you want to support HTTP and HTTPS but want to only "advertise" HTTPS.
-        /// </remarks>
-        public string[] Schemes { get; set; }
+        public string[] Consumes { get; set; }
 
         /// <summary>
-        /// Sets the content types produced by this operation. Use this to override the generator.
+        /// A list of MIME types the operation can produce. This overrides the produces definition at the
+        /// Swagger Object. An empty value MAY be used to clear the global definition.
         /// </summary>
-        /// <remarks>
-        /// You will typically set these when you want to convey information but don't want to actually disable the Mvc output formatters.
-        /// </remarks>
         public string[] Produces { get; set; }
 
         /// <summary>
-        /// Sets the content types consumed by this operation. Use this to override the generator.
+        /// The transfer protocol for the operation. Values MUST be from the list:
+        /// "http", "https", "ws", "wss". The value overrides the Swagger Object schemes definition.
         /// </summary>
-        /// <remarks>
-        /// You will typically set these when you want to convey information but don't want to actually disable the Mvc input formatters.
-        /// </remarks>
-        public string[] Consumes { get; set; }
+        public string[] Schemes { get; set; }
     }
 }

@@ -32,20 +32,26 @@ namespace Swashbuckle.AspNetCore.Annotations
 
             if (swaggerOperationAttribute == null) return;
 
+            if (swaggerOperationAttribute.Summary != null)
+                operation.Summary = swaggerOperationAttribute.Summary;
+
+            if (swaggerOperationAttribute.Description != null)
+                operation.Description = swaggerOperationAttribute.Description;
+
             if (swaggerOperationAttribute.OperationId != null)
                 operation.OperationId = swaggerOperationAttribute.OperationId;
 
             if (swaggerOperationAttribute.Tags != null)
                 operation.Tags = swaggerOperationAttribute.Tags;
 
-            if (swaggerOperationAttribute.Schemes != null)
-                operation.Schemes = swaggerOperationAttribute.Schemes;
+            if (swaggerOperationAttribute.Consumes != null)
+                operation.Consumes = swaggerOperationAttribute.Consumes;
 
             if (swaggerOperationAttribute.Produces != null)
                 operation.Produces = swaggerOperationAttribute.Produces;
 
-            if (swaggerOperationAttribute.Consumes != null)
-                operation.Consumes = swaggerOperationAttribute.Consumes;
+            if (swaggerOperationAttribute.Schemes != null)
+                operation.Schemes = swaggerOperationAttribute.Schemes;
         }
 
         public static void ApplySwaggerOperationFilterAttributes(

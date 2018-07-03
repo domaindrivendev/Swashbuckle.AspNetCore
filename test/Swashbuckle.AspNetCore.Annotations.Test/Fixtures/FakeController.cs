@@ -11,7 +11,14 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
         public void ActionWithNoAttributes()
         { }
 
-        [SwaggerOperation("CustomOperationId", Tags = new[] { "customTag" }, Schemes = new[] { "customScheme" }, Produces = new string[] { "customType1", "customType2" }, Consumes = new string[] { "customType3", "customType4" })]
+        [SwaggerOperation("summary for ActionWithSwaggerOperationAttribute",
+            Description = "description for ActionWithSwaggerOperationAttribute",
+            OperationId = "customOperationId",
+            Tags = new[] { "customTag" },
+            Consumes = new[] { "customMimeType1" },
+            Produces = new[] { "customMimeType2" },
+            Schemes = new[] { "https" }
+        )]
         public void ActionWithSwaggerOperationAttribute()
         { }
 
@@ -19,14 +26,17 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
         public void ActionWithSwaggerOperationFilterAttribute()
         { }
 
-        [SwaggerResponse(204, typeof(void), "No content is returned.")]
-        [SwaggerResponse(400, typeof(IDictionary<string, string>), "This returns a dictionary.")]
+        [SwaggerResponse(204, "description for 204 response")]
+        [SwaggerResponse(400, "description for 400 response", typeof(IDictionary<string, string>))]
         public IActionResult ActionWithSwaggerResponseAttributes()
         {
             throw new NotImplementedException();
         }
 
         public void ActionWithSwaggerParameterAttribute(
+            [SwaggerParameter("description for param1", Required = true)]string param1)
+        { }
+        public void ActionWithSwaggerParameterAttributeDescriptionOnly(
             [SwaggerParameter("description for param1")]string param1)
         { }
     }
