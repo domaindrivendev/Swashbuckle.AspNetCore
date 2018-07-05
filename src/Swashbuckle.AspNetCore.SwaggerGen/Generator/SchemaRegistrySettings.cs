@@ -37,7 +37,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 UseReferencedDefinitionsForEnums = UseReferencedDefinitionsForEnums,
                 IgnoreObsoleteProperties = IgnoreObsoleteProperties,
                 SchemaIdSelector = SchemaIdSelector,
-                SchemaFilters = SchemaFilters
+                SchemaFilters = new List<ISchemaFilter>(SchemaFilters)
             };
         }
     }

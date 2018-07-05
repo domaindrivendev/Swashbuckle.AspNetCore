@@ -57,9 +57,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 DescribeAllParametersInCamelCase = DescribeAllParametersInCamelCase,
                 SecurityDefinitions = SecurityDefinitions,
                 SecurityRequirements = SecurityRequirements,
-                ParameterFilters = ParameterFilters,
-                OperationFilters = OperationFilters,
-                DocumentFilters = DocumentFilters
+                ParameterFilters = new List<IParameterFilter>(ParameterFilters),
+                OperationFilters = new List<IOperationFilter>(OperationFilters),
+                DocumentFilters = new List<IDocumentFilter>(DocumentFilters)
             };
         }
     }
