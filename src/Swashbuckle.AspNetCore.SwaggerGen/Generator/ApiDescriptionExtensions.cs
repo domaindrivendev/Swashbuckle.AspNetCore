@@ -84,6 +84,5 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 .Union(methodInfo.DeclaringType.GetTypeInfo().GetCustomAttributes(true))
                 .Any(attr => attr.GetType() == typeof(ObsoleteAttribute));
         }
-
     }
 }

@@ -38,11 +38,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             _operationFilterDescriptors = new List<FilterDescriptor<IOperationFilter>>();
             _documentFilterDescriptors = new List<FilterDescriptor<IDocumentFilter>>();
             _schemaFilterDescriptors = new List<FilterDescriptor<ISchemaFilter>>();
-
-            // Enable Annotations
-            OperationFilter<SwaggerAttributesOperationFilter>();
-            OperationFilter<SwaggerResponseAttributeFilter>();
-            SchemaFilter<SwaggerAttributesSchemaFilter>();
         }
 
         /// <summary>

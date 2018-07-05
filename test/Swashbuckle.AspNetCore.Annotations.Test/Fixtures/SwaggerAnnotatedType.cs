@@ -1,4 +1,4 @@
-﻿namespace Swashbuckle.AspNetCore.SwaggerGen.Test
+﻿namespace Swashbuckle.AspNetCore.Annotations.Test
 {
     [SwaggerSchemaFilter(typeof(VendorExtensionsSchemaFilter))]
     public class SwaggerAnnotatedClass

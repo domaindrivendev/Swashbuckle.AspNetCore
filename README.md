@@ -105,14 +105,25 @@ Refer to the [routing documentation](https://docs.microsoft.com/en-us/aspnet/cor
 
 # Components #
 
-Swashbuckle consists of three packages - a Swagger generator, middleware to expose the generated Swagger as JSON endpoints and middleware to expose a swagger-ui that's powered by those endpoints. They can be installed together, via the "Swashbuckle.AspNetCore" meta-package, or independently according to your specific requirements. See the table below for more details.
+Swashbuckle consists of multiple components that can be used together or individually dependening on your needs. At its core, there's a Swagger object model, a Swagger generator and a packaged version of the [swagger-ui](https://github.com/swagger-api/swagger-ui). These 3 packages can be installed with the `Swashbuckle.AspNetCore` "metapackage" and will work together seamlessly (see [Getting Started](#getting-started)) to provide beautiful API docs that are automatically generated from your code.
+
+Additionally, there's add-on packages (CLI tools, [an alternate UI](https://github.com/Rebilly/ReDoc) etc.) that you can optinally install and configure as needed.
+
+## "Core" Packages (i.e. installed via Swashbuckle.AspNetCore)
 
 |Package|Description|
 |---------|-----------|
-|__Swashbuckle.AspNetCore.Swagger__|Exposes _SwaggerDocument_ objects as a JSON API. It expects an implementation of _ISwaggerProvider_ to be registered which it queries to retrieve Swagger document(s) before returning as serialized JSON|
-|__Swashbuckle.AspNetCore.SwaggerGen__|Injects an implementation of _ISwaggerProvider_ that can be used by the above component. This particular implementation automatically generates _SwaggerDocument_(s) from your routes, controllers and models|
-|__Swashbuckle.AspNetCore.SwaggerUI__|Exposes an embedded version of the swagger-ui. You specify the API endpoints where it can obtain Swagger JSON and it uses them to power interactive docs for your API|
-|__Swashbuckle.AspNetCore.Cli__ (Beta)|Provides a CLI interface for retrieving Swagger directly from a startup assembly, and writing to file|
+|Swashbuckle.AspNetCore.Swagger|Exposes _SwaggerDocument_ objects as a JSON API. It expects an implementation of _ISwaggerProvider_ to be registered which it queries to retrieve Swagger document(s) before returning as serialized JSON|
+|Swashbuckle.AspNetCore.SwaggerGen|Injects an implementation of _ISwaggerProvider_ that can be used by the above component. This particular implementation automatically generates _SwaggerDocument_(s) from your routes, controllers and models|
+|Swashbuckle.AspNetCore.SwaggerUI|Exposes an embedded version of the swagger-ui. You specify the API endpoints where it can obtain Swagger JSON and it uses them to power interactive docs for your API|
+
+## Additional Packages ##
+
+|Package|Description|
+|---------|-----------|
+|Swashbuckle.AspNetCore.Annotations|Includes a set of custom attributes that can be applied to controllers, actions and models to enrich the generated Swagger|
+|Swashbuckle.AspNetCore.Cli (Beta)|Provides a CLI interface for retrieving Swagger directly from a startup assembly, and writing to file|
+|Swashbuckle.AspNetCore.ReDoc|Exposes an embedded version of the ReDoc UI (an alternative to swagger-ui)|
 
 # Configuration & Customization #
 
@@ -150,8 +161,19 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Customize index.html](#customize-indexhtml)
     * [Enable OAuth2.0 Flows](#enable-oauth20-flows)
 
+* [Swashbuckle.AspNetCore.Annotations](#swashbuckleaspnetcoreannotations)
+	* [Install and Enable Annotations](#install-and-enable-annotations)
+	* [Enrich Operation Metadata](#enrich-operation-metadata)
+	* [Enrich Response Metadata](#enrich-response-metadata)
+	* [Enrich Parameter Metadata](#enrich-parameter-metadata)
+	* [Enrich Schema Metadata](#enrich-schema-metadata)
+	* [Add Tag Metadata](#add-tag-metadata)
+
 * [Swashbuckle.AspNetCore.Cli](#swashbuckleaspnetcorecli)
 	* [Retrieve Swagger Directly from a Startup Assembly](#retrieve-swagger-directly-from-a-startup-assembly)
+
+* [Swashbuckle.AspNetCore.ReDoc](#swashbuckleaspnetcoreredoc)
+	* Docs coming soon
 
 ## Swashbuckle.AspNetCore.Swagger ##
 
@@ -940,6 +962,106 @@ app.UseSwaggerUI(c =>
 	c.OAuthUseBasicAuthenticationWithAccessCodeGrant();
 });
 ```
+
+## Swashbuckle.AspNetCore.Annotations ##
+
+### Install and Enable Annotations ###
+
+1. Install the following Nuget package into your ASP.NET Core application.
+
+    ```
+    Package Manager : Install-Package Swashbuckle.AspNetCore.Annotations
+    CLI : dotnet add package Swashbuckle.AspNetCore.Annotations
+    ```
+
+2. In the _ConfigureServices_ method of _Startup.cs_, enable annotations within the `SwaggerGen` config block:
+
+    ```csharp
+    services.AddSwaggerGen(c =>
+    {
+       ...
+
+	   c.EnableAnnotations();
+    });
+    ```
+
+### Enrich Operation Metadata ###
+
+Once annotations have been enabled, you can enrich the generated Operation metadata by decorating actions with a `SwaggerOperationAttribute`.
+
+
+```csharp
+[HttpPost]
+
+[SwaggerOperation(
+	Summary = "Creates a new product",
+	Description = "Requires admin privileges",
+	OperationId = "CreateProduct",
+	Tags = new[] { "Purchase", "Products" }
+)]
+public IActionResult Create([FromBody]Product product)
+```
+
+### Enrich Response Metadata ###
+
+ASP.NET Core provides the `ProducesResponseTypeAttribute` for listing the different responses that can be returned by an action. These attributes can be combined with XML comments, as described [above](#include-descriptions-from-xml-comments), to include human friendly descriptions with each response in the generated Swagger. If you'd prefer to do all of this with a single attribute, and avoid the use of XML comments, you can alternatively apply one or more `SwaggerResponseAttributes`:
+
+```csharp
+[HttpPost)]
+[SwaggerResponse(201, "The product was created", typeof(Product))]
+[SwaggerResponse(400, "The product data is invalid")]
+public IActionResult Create([FromBody]Product product)
+```
+
+### Enrich Parameter Metadata ###
+
+You can annotate top-level parameters (i.e. not part of a model) with a `SwaggerParameterAttribute` to include a description and/or flag it as "required" in the generated Swagger document:
+
+```csharp
+[HttpGet]
+public IActionResult GetProducts(
+	[FromQuery, SwaggerParameter("Search keywords", Required = true)]string keywords)
+```
+
+### Enrich Schema Metadata ###
+
+The `SwaggerGen` package provides several extension points, including Schema Filters ([described here](#extend-generator-with-operation-schema--document-filter)) for customizing ALL generated Schemas. However, there may be cases where it's preferable to apply a filter to a specific Schema. For example, if you'd like to include an example for a specific type in your API. This can be done by decorating the type with a `SwaggerSchemaFilterAttribute`:
+
+```csharp
+// Product.cs
+[SwaggerSchemaFilter(typeof(ProductSchemaFilter))
+public class Product
+{
+	...
+}
+
+// ProductSchemaFilter.cs
+public class ProductSchemaFilter : ISchemaFilter
+{
+    public void Apply(Schema schema, SchemaFilterContext context)
+    {
+        schema.Example = new Product
+        {
+            Id = 1,
+            Description = "An awesome product"
+        };
+    }
+}
+```
+
+### Add Tag Metadata
+
+By default, the Swagger generator will tag all operations with the controller name. This tag is then used to drive the operation groupings in the swagger-ui. If you'd like to provide a description for each of these groups, you can do so by adding metadata for each controller name tag via the `SwaggerTagAttribute`:
+
+```csharp
+[SwaggerTag("Create, read, update and delete Products")]
+public class ProductsController
+{
+	...
+}
+```
+
+_NOTE:_ This will add the above description specifically to the tag named "Products". Therefore, you should avoid using this attribute if you're tagging Operations with something other than controller name - e.g. if you're customizing the tagging behavior with TagActionsBy.
 
 ## Swashbuckle.AspNetCore.Cli ##
 

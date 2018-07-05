@@ -4,5 +4,6 @@
     /// summary for XmlAnnotatedController
     /// </summary>
     public class XmlAnnotatedController
-    {}
+    {
+    }
 }

@@ -123,21 +123,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             throw new NotImplementedException();
         }
 
-        [SwaggerOperation("CustomOperationId", Tags = new[] { "customTag" }, Schemes = new[] { "customScheme" })]
-        public void AnnotatedWithSwaggerOperation()
-        { }
-
-        [SwaggerOperationFilter(typeof(VendorExtensionsOperationFilter))]
-        public void AnnotatedWithSwaggerOperationFilter()
-        { }
-
-        [SwaggerResponse(204, typeof(void), "No content is returned.")]
-        [SwaggerResponse(400, typeof(IDictionary<string, string>), "This returns a dictionary.")]
-        public IActionResult AnnotatedWithSwaggerResponseAttributes()
-        {
-            throw new NotImplementedException();
-        }
-
         [Obsolete]
         public void MarkedObsolete()
         { }
