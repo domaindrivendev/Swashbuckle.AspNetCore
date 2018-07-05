@@ -17,7 +17,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.Configure(setupAction ?? (opts => { }));
 
-            services.AddTransient(CreateSwaggerProvider);
+            services.AddSingleton(CreateSwaggerProvider);
 
             return services;
         }
