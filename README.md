@@ -16,6 +16,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 |Swashbuckle Version|ASP.NET Core|Swagger (OpenAPI) Spec.|swagger-ui|
 |----------|----------|----------|----------|
 |[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master)|>=1.0.4|2.0|3.17.1|
+|[3.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v3.0.0)|>=1.0.4|2.0|3.17.1|
 |[2.5.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v2.5.0)|>=1.0.4|2.0|3.16.0|
 |[1.2.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v1.2.0)|>=1.0.4|2.0|2.2.10|
 
@@ -248,7 +249,7 @@ responses: {
 
 #### Explicit Responses ####
 
-If you need to specify a different status code and/or additional responses, or your actions return _IActionResult_ instead of a response DTO, you can describe explicit responses with the _ProducesResponseTypeAttribute_ that ships with ASP.NET Core. For example ...
+If you need to specify a different status code and/or additional responses, or your actions return _IActionResult_ instead of a response DTO, you can describe explicit responses with the `ProducesResponseTypeAttribute` that ships with ASP.NET Core. For example ...
 
 ```csharp
 [HttpPost("{id}")]
@@ -285,15 +286,11 @@ responses: {
 
 ### Flag Required Parameters and Schema Properties ###
 
-In a Swagger document, you can flag parameters and schema properties that are required for a request. As is generally the case with Swashbuckle, this metadata will be inferred automatically so long as you're using ASP.NET Core [Model Binding](https://docs.microsoft.com/en-us/aspnet/core/mvc/models/model-binding#customize-model-binding-behavior-with-attributes) or [Data Validation](https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-mvc-app/validation) attributes to implement request validation.
-
-#### Model Binding Attributes ####
-
-In ASP.NET Core, you can use the `BindRequired` attribute on non-body (query, header etc.) parameters to ensure they're present in the request:
+In a Swagger document, you can flag parameters and schema properties that are required for a request. If a parameter (top-level or property-based) is decorated with the `BindRequiredAttribute` or `RequiredAttribute`, then Swashbuckle will automatically flag it as a "required" parameter in the generated Swagger:
 
 ```csharp
 // ProductsController.cs
-public IActionResult Search([FromQuery]SearchParams searchParams)
+public IActionResult Search(FromQuery, BindRequired]string keywords, [FromQuery]PagingParams pagingParams)
 {
     if (!ModelState.IsValid)
         return BadRequest(ModelState);
@@ -301,24 +298,16 @@ public IActionResult Search([FromQuery]SearchParams searchParams)
 }
 
 // SearchParams.cs
-public class SearchParams
+public class PagingParams
 {
-    [BindRequired]
-    public string Keywords { get; set; }
+    [Required]
+    public int PageNo { get; set; }
 
-    public int PageNo { get; set; } = 1;
-
-    public int PageSize { get; set; } = 20;
+    public int PageSize { get; set; }
 }
 ```
 
-With this implementation, Swashbuckle will automatically describe `Keywords` as a required parameter.
-
-__NOTE__: At the time of writing, ASP.NET Core does not support the use of `BindRequired` on action parameters directly. This feature is due to be added in version 2.1. Until then, you'll need to encapsulate your non-body parameters in a model class, as shown above.
-
-#### Data Annotations ####
-
-ASP.NET Core's built-in validation also honors the `Required` attribute from the DataAnnotations library:
+In addition to parameters, Swashbuckle will also honor the `RequiredAttribute` when used in a model that's bound to the request body. In this case, the decorated properties will be flagged as "required" properties in the body description:
 
 ```csharp
 // ProductsController.cs
@@ -333,18 +322,11 @@ public IActionResult Create([FromBody]Product product)
 public class Product
 {
     [Required]
-    public int? Id { get; set; }
-
-    [Required]
     public string Name { get; set; }
 
     public string Description { get; set; }
 }
 ```
-
-Again, Swashbuckle will automatically detect this metadata and list `Id` and `Name` as required fields in the generated JSON Schema.
-
-__NOTE__: When using ASP.NET Core validation, the `Required` attribute will have no effect on properties that default to a non-null value. This means value types should always be converted to `Nullable<T>` for validation to work, and therefore for Swashbuckle to flag the parameter or schema property as being required.
 
 ### Include Descriptions from XML Comments ###
 
@@ -688,9 +670,8 @@ public class AuthResponsesOperationFilter : IOperationFilter
 {
     public void Apply(Operation operation, OperationFilterContext context)
     {
-        var authAttributes = context.ApiDescription
-            .ControllerAttributes()
-            .Union(context.ApiDescription.ActionAttributes())
+        var authAttributes = context.MethodInfo.DeclaringType.GetCustomAttributes(true)
+            .Union(context.MethodInfo.GetCustomAttributes(true))
             .OfType<AuthorizeAttribute>();
 
         if (authAttributes.Any())
@@ -738,20 +719,6 @@ services.AddSwaggerGen(c =>
     ...
     c.SchemaFilter<AutoRestSchemaFilter>();
 };
-```
-
-You can also use the `SwaggerSchemaFilter` attribute to apply an `ISchemaFilter` schema to your model.
-
-```
-[SwaggerSchemaFilter(typeof(PhoneNumberSchemaFilter))]
-public class PhoneNumber
-{
-    public string CountryCode { get; set; }
-
-    public string AreaCode { get; set; }
-
-    public string SubscriberId { get; set; }
-}
 ```
 
 #### Document Filters ####
@@ -825,15 +792,11 @@ public class SecurityRequirementsOperationFilter : IOperationFilter
     public void Apply(Operation operation, OperationFilterContext context)
     {
         // Policy names map to scopes
-        var controllerScopes = context.ApiDescription.ControllerAttributes()
+        var requiredScopes = context.MethodInfo
+            .GetCustomAttributes(true)
             .OfType<AuthorizeAttribute>()
-            .Select(attr => attr.Policy);
-
-        var actionScopes = context.ApiDescription.ActionAttributes()
-            .OfType<AuthorizeAttribute>()
-            .Select(attr => attr.Policy);
-
-        var requiredScopes = controllerScopes.Union(actionScopes).Distinct();
+            .Select(attr => attr.Policy)
+            .Distinct();
 
         if (requiredScopes.Any())
         {
