@@ -3,6 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "redoc": "1.22.0"
+    "redoc": "1.22.0",
+    "@angular/common": "^4.1.1",
+    "@angular/compiler": "^4.1.1",
+    "@angular/compiler-cli": "^4.1.1",
+    "@angular/core": "^4.1.1",
+    "@angular/forms": "^4.1.1",
+    "@angular/platform-browser": "^4.1.1",
+    "@angular/platform-browser-dynamic": "^4.1.1",
+    "@angular/platform-server": "^4.1.1",
+    "core-js": "^2.4.1",
+    "rxjs": "^5.3.1"
   }
 }
