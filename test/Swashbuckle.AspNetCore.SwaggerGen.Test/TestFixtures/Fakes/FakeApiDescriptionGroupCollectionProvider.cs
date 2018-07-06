@@ -30,6 +30,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
     public class FakeApiDescriptionGroupCollectionProvider : IApiDescriptionGroupCollectionProvider
     {
         private readonly List<ControllerActionDescriptor> _actionDescriptors;
+        private ApiDescriptionGroupCollection _apiDescriptionGroupCollection;
 
         public FakeApiDescriptionGroupCollectionProvider()
         {
@@ -51,9 +52,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             get
             {
-                var apiDescriptions = GetApiDescriptions();
-                var group = new ApiDescriptionGroup("default", apiDescriptions);
-                return new ApiDescriptionGroupCollection(new[] { group }, 1);
+                if (_apiDescriptionGroupCollection == null)
+                {
+                    var apiDescriptions = GetApiDescriptions();
+                    var group = new ApiDescriptionGroup("default", apiDescriptions);
+                    _apiDescriptionGroupCollection = new ApiDescriptionGroupCollection(new[] { group }, 1);
+                }
+
+                return _apiDescriptionGroupCollection;
             }
         }
 

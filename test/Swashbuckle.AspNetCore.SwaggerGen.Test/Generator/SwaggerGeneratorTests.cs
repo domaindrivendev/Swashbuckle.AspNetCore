@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Xunit;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -358,6 +359,41 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GetSwagger_GeneratesDefaultResponseFromResponseTypeAttributes()
+        {
+            var subject = Subject(setupApis: apis =>
+            {
+                apis.Add("GET", "collection", nameof(FakeController.AnnotatedWithResponseTypeAttributes));
+                var operation = apis.ApiDescriptionGroups.Items[0].Items.First(f => f.RelativePath == "collection");
+                operation.SupportedResponseTypes.Add(new ApiResponseTypeV2 { IsDefaultResponse = true });
+            });
+
+            var swagger = subject.GetSwagger("v1");
+
+            var responses = swagger.Paths["/collection"].Get.Responses;
+            Assert.Collection(
+                responses,
+                kvp =>
+                {
+                    Assert.Equal("204", kvp.Key);
+                    var response = kvp.Value;
+                    Assert.Equal("Success", response.Description);
+                },
+                kvp =>
+                {
+                    Assert.Equal("400", kvp.Key);
+                    var response = kvp.Value;
+                    Assert.Equal("Bad Request", response.Description);
+                },
+                kvp =>
+                {
+                    Assert.Equal("default", kvp.Key);
+                    var response = kvp.Value;
+                    Assert.Null(response.Description);
+                });
+        }
+
+        [Fact]
         public void GetSwagger_SetsDeprecated_IfActionsMarkedObsolete()
         {
             var subject = Subject(setupApis: apis => apis
@@ -606,6 +642,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 new SchemaRegistryFactory(new JsonSerializerSettings(), new SchemaRegistrySettings()),
                 options
             );
+        }
+
+        private class ApiResponseTypeV2 : ApiResponseType
+        {
+            public bool IsDefaultResponse { get; set; }
         }
     }
 }

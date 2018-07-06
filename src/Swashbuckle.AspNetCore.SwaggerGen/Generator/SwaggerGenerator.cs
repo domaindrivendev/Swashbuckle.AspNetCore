@@ -305,7 +305,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             return supportedApiResponseTypes
                 .ToDictionary(
-                    apiResponseType => apiResponseType.StatusCode.ToString(),
+                    apiResponseType => apiResponseType.IsDefaultResponse() ? "default" : apiResponseType.StatusCode.ToString(),
                     apiResponseType => CreateResponse(apiResponseType, schemaRegistry));
         }
 
