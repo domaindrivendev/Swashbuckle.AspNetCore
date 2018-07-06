@@ -13,6 +13,12 @@ function install-swagger-ui {
   Pop-Location
 }
 
+function install-redoc {
+  Push-Location src/Swashbuckle.AspNetCore.ReDoc
+  npm install
+  Pop-Location
+}
+
 function dotnet-build {
   if ($VersionSuffix.Length -gt 0) {
     dotnet build -c Release --version-suffix $VersionSuffix
@@ -31,7 +37,7 @@ function dotnet-pack {
   }
 }
 
-@( "install-swagger-ui", "dotnet-build", "dotnet-pack" ) | ForEach-Object {
+@( "install-swagger-ui", "install-redoc", "dotnet-build", "dotnet-pack" ) | ForEach-Object {
   echo ""
   echo "***** $_ *****"
   echo ""

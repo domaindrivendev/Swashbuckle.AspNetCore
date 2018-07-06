@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="index.html" />
-    <EmbeddedResource Include="redoc\dist\**\*.*" />
+    <EmbeddedResource Include="node_modules/redoc/dist/redoc.min.*" />
   </ItemGroup>
 
   <ItemGroup>
