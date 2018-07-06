@@ -7,9 +7,9 @@
     <AssemblyName>Swashbuckle.AspNetCore.Annotations</AssemblyName>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
-    <!--<SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.ReDoc.snk</AssemblyOriginatorKeyFile>-->
-    <Description>TODO</Description>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.Annotations.snk</AssemblyOriginatorKeyFile>
+    <Description>Provides custom attributes that can be applied to controllers, actions and models to enrich the generated Swagger</Description>
     <PackageId>Swashbuckle.AspNetCore.Annotations</PackageId>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore;annotations</PackageTags>
     <PackageProjectUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</PackageProjectUrl>
