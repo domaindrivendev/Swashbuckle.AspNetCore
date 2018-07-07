@@ -18,7 +18,10 @@
   %(HeadContent)
 </head>
 <body>
-  <redoc spec-url='%(SpecUrl)'></redoc>
-  <script src="redoc.min.js"> </script>
+  <redoc></redoc>
+  <script src="redoc.min.js"></script>
+  <script type="text/javascript">
+    Redoc.init('%(SpecUrl)', JSON.parse('%(Options)'));
+  </script>
 </body>
 </html>

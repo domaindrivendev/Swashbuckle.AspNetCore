@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace Swashbuckle.AspNetCore.ReDoc
 {
@@ -76,8 +78,18 @@ namespace Swashbuckle.AspNetCore.ReDoc
             {
                 { "%(DocumentTitle)", _options.DocumentTitle },
                 { "%(HeadContent)", _options.HeadContent },
-                { "%(SpecUrl)", _options.SpecUrl }
+                { "%(SpecUrl)", _options.SpecUrl },
+                { "%(Options)", SerializeToJson(_options.Options) }
             };
+        }
+
+        private string SerializeToJson(object obj)
+        {
+            return JsonConvert.SerializeObject(obj, new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Include,
+                Formatting = Formatting.None
+            });
         }
     }
 }

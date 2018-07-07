@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.IO;
 using System.Reflection;
 
@@ -31,5 +32,11 @@ namespace Swashbuckle.AspNetCore.ReDoc
         /// Gets or sets the Swagger JSON endpoint. Can be fully-qualified or relative to the redoc page
         /// </summary>
         public string SpecUrl { get; set; } = "v1/swagger.json";
+
+        /// <summary>
+        /// Gets or sets an "options" object that is serialized to JSON and passed to Redoc.init
+        /// See https://github.com/Rebilly/ReDoc/tree/v1.22.0#advanced-usage for supported options
+        /// </summary>
+        public object Options { get; set; } = new { };
     }
 }

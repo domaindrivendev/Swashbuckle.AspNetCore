@@ -35,7 +35,13 @@ namespace ReDoc
             app.UseReDoc(c =>
             {
                 c.RoutePrefix = "api-docs";
+
                 c.SpecUrl = "v1/swagger.json";
+                c.Options = new
+                {
+                    hideDownloadButton = true,
+                    hideLoading = true,
+                };
             });
 
             app.UseMvc();
