@@ -290,7 +290,7 @@ In a Swagger document, you can flag parameters and schema properties that are re
 
 ```csharp
 // ProductsController.cs
-public IActionResult Search(FromQuery, BindRequired]string keywords, [FromQuery]PagingParams pagingParams)
+public IActionResult Search([FromQuery, BindRequired]string keywords, [FromQuery]PagingParams pagingParams)
 {
     if (!ModelState.IsValid)
         return BadRequest(ModelState);
