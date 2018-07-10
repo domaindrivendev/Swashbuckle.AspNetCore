@@ -19,7 +19,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 |Swashbuckle Version|ASP.NET Core|Swagger (OpenAPI) Spec.|swagger-ui|
 |----------|----------|----------|----------|
-|[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master)|>2.0.0|2.0|3.17.1|
+|[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master)|>=2.0.0|2.0|3.17.1|
 |[3.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v3.0.0)|>=1.0.4|2.0|3.17.1|
 |[2.5.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v2.5.0)|>=1.0.4|2.0|3.16.0|
 |[1.2.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v1.2.0)|>=1.0.4|2.0|2.2.10|
@@ -353,7 +353,7 @@ To enhance the generated docs with human-friendly descriptions, you can annotate
             }
          );
 
-         var filePath = Path.Combine(PlatformServices.Default.Application.ApplicationBasePath, "MyApi.xml");
+         var filePath = Path.Combine(System.AppContext.BaseDirectory, "MyApi.xml");
          c.IncludeXmlComments(filePath);
     }
     ```
