@@ -1,3 +1,7 @@
+| :mega: Upgrading to version 3.x? |
+|--------------|
+|If you're upgrading from 2.x to 3.x, there's a couple of breaking changes to be aware of. See the [release notes](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/releases/tag/v3.0.0) for details|
+
 Swashbuckle.AspNetCore
 =========
 
