@@ -17,7 +17,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             IEnumerable<ApiDescription> apiDescriptions,
             ISchemaRegistry schemaRegistry)
         {
+#pragma warning disable CS0618 // Type or member is obsolete
             ApiDescriptionsGroups = apiDescriptionsGroups;
+#pragma warning restore CS0618 // Type or member is obsolete
             ApiDescriptions = apiDescriptions;
             SchemaRegistry = schemaRegistry;
         }
