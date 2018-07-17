@@ -129,6 +129,7 @@ Additionally, there's add-on packages (CLI tools, [an alternate UI](https://gith
 |Swashbuckle.AspNetCore.Annotations|Includes a set of custom attributes that can be applied to controllers, actions and models to enrich the generated Swagger|
 |Swashbuckle.AspNetCore.Cli (Beta)|Provides a CLI interface for retrieving Swagger directly from a startup assembly, and writing to file|
 |Swashbuckle.AspNetCore.ReDoc|Exposes an embedded version of the ReDoc UI (an alternative to swagger-ui)|
+|[Swashbuckle.AspNetCore.Filters](https://github.com/mattfrear/Swashbuckle.AspNetCore.Filters)| Some useful 3rd party filters which add additional documentation, e.g. request and response examples |
 
 # Configuration & Customization #
 
