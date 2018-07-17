@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Collections.Generic;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -79,12 +79,21 @@ namespace Swashbuckle.AspNetCore.Annotations
             foreach (var swaggerResponseAttribute in swaggerResponseAttributes)
             {
                 var statusCode = swaggerResponseAttribute.StatusCode.ToString();
+
+                if (operation.Responses == null)
+                {
+                    operation.Responses = new Dictionary<string, Response>();
+                }
+
                 if (!operation.Responses.TryGetValue(statusCode, out Response response))
                 {
                     response = new Response();
                 }
 
-                if (swaggerResponseAttribute.Description != null)
+                // Action descriptions should take precedence over controller descriptions and
+                // the most derived controller descrption should take precedence over the least,
+                // so do not overwrite the description if there is a value already there.
+                if (swaggerResponseAttribute.Description != null && string.IsNullOrEmpty(response.Description))
                     response.Description = swaggerResponseAttribute.Description;
 
                 operation.Responses[statusCode] = response;

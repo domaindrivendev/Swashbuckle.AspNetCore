@@ -50,6 +50,23 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             Subject().Apply(operation, filterContext);
 
             Assert.NotEmpty(operation.Extensions);
+
+            Assert.Equal(new[] { "400" }, operation.Responses.Keys.ToArray());
+            var response = operation.Responses["400"];
+            Assert.Equal("description for 400 response at controller", response.Description);
+        }
+
+        [Fact]
+        public void Apply_DelegatesToSpecifiedFilter_IfActionDecoratedWithSwaggerOperationFilterAttributeInBaseClass()
+        {
+            var operation = new Operation { OperationId = "foobar" };
+            var filterContext = FilterContextFor(nameof(TestControllerBase.ActionWithNoAttributesInBaseClass));
+
+            Subject().Apply(operation, filterContext);
+
+            Assert.Equal(new[] { "400" }, operation.Responses.Keys.ToArray());
+            var response = operation.Responses["400"];
+            Assert.Equal("description for 400 response at base controller", response.Description);
         }
 
         [Fact]
@@ -72,7 +89,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             var response1 = operation.Responses["204"];
             Assert.Equal("description for 204 response", response1.Description);
             var response2 = operation.Responses["400"];
-            Assert.Equal("description for 400 response", response2.Description);
+            Assert.Equal("description for 400 response at action", response2.Description);
         }
 
         private OperationFilterContext FilterContextFor(string fakeActionName)
