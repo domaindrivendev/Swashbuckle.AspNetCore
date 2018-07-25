@@ -982,7 +982,7 @@ public IActionResult Create([FromBody]Product product)
 ASP.NET Core provides the `ProducesResponseTypeAttribute` for listing the different responses that can be returned by an action. These attributes can be combined with XML comments, as described [above](#include-descriptions-from-xml-comments), to include human friendly descriptions with each response in the generated Swagger. If you'd prefer to do all of this with a single attribute, and avoid the use of XML comments, you can alternatively apply one or more `SwaggerResponseAttributes`:
 
 ```csharp
-[HttpPost)]
+[HttpPost]
 [SwaggerResponse(201, "The product was created", typeof(Product))]
 [SwaggerResponse(400, "The product data is invalid")]
 public IActionResult Create([FromBody]Product product)
