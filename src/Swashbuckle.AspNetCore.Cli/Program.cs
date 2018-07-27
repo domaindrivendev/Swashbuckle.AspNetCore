@@ -86,7 +86,7 @@ namespace Swashbuckle.AspNetCore.Cli
                     {
                         var mvcOptionsAccessor = (IOptions<MvcJsonOptions>)host.Services.GetService(typeof(IOptions<MvcJsonOptions>));
 
-                        if(namedArgs.ContainsKey("--format"))
+                        if (namedArgs.ContainsKey("--format"))
                         {
                             // TODO: Should this handle case where mvcJsonOptions.Value == null?
                             mvcOptionsAccessor.Value.SerializerSettings.Formatting = ParseEnum<Newtonsoft.Json.Formatting>(namedArgs["--format"]);
@@ -112,12 +112,13 @@ namespace Swashbuckle.AspNetCore.Cli
         /// <summary>
         /// Parses a given option value into a specified enumeration value
         /// </summary>
+        /// <typeparam name="T">enum</typeparam>
         /// <param name="optionValue">Expects the string representation of a valid Enumeration value,
         /// anything else defaults to the Enumeration's default value</param>
         protected static T ParseEnum<T>(string optionValue) where T : struct, IConvertible
         {
             var isParsed = Enum.TryParse(optionValue, true, out T parsed);
-            
+
             return isParsed ? parsed : default(T);
         }
     }

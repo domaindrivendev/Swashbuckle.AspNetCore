@@ -94,7 +94,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     ParameterInfo = parameterInfo,
                     BindingInfo = BindingInfo.GetBindingInfo(parameterInfo.GetCustomAttributes(false))
                 });
-            };
+            }
 
             descriptor.ControllerTypeInfo = controllerType.GetTypeInfo();
 

@@ -11,6 +11,6 @@ function dotnet-test {
   echo ""
 
   # Invoke function and exit on error
-  &$_ 
+  &$_
   if ($LastExitCode -ne 0) { Exit $LastExitCode }
 }

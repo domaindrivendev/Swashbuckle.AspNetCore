@@ -575,9 +575,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var param = swagger.Paths["/{version}/collection"].Get.Parameters.First();
             Assert.Equal("version", param.Name);
-            Assert.Equal(true, param.Required);
+            Assert.True(param.Required);
         }
-
 
         [Fact]
         public void GetSwagger_ThrowsInformativeException_IfActionsHaveNoHttpBinding()

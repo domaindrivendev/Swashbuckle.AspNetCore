@@ -43,6 +43,6 @@ function dotnet-pack {
   echo ""
 
   # Invoke function and exit on error
-  &$_ 
+  &$_
   if ($LastExitCode -ne 0) { Exit $LastExitCode }
 }
