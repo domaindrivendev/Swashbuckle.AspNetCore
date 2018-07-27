@@ -65,7 +65,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             {
                 // Inject parameters before writing to response
                 var htmlBuilder = new StringBuilder(new StreamReader(stream).ReadToEnd());
-                foreach (var entry in GetIndexParameters())
+                foreach (var entry in GetIndexParameters(response.HttpContext.Request))
                 {
                     htmlBuilder.Replace(entry.Key, entry.Value);
                 }
@@ -74,13 +74,19 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             }
         }
 
-        private IDictionary<string, string> GetIndexParameters()
+        private IDictionary<string, string> GetIndexParameters(HttpRequest request)
         {
+            var configObject = (JObject)_options.ConfigObject.DeepClone();
+            foreach (var url in configObject.Value<JArray>("urls"))
+            {
+                url["url"] = _options.RewriterSwaggerFilePath(request, url["url"].Value<string>());
+            }
+
             return new Dictionary<string, string>()
             {
                 { "%(DocumentTitle)", _options.DocumentTitle },
                 { "%(HeadContent)", _options.HeadContent },
-                { "%(ConfigObject)", SerializeToJson(_options.ConfigObject) },
+                { "%(ConfigObject)", SerializeToJson(configObject) },
                 { "%(OAuthConfigObject)", SerializeToJson(_options.OAuthConfigObject) }
             };
         }

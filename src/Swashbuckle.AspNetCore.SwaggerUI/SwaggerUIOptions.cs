@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Newtonsoft.Json.Linq;
 
 namespace Swashbuckle.AspNetCore.SwaggerUI
@@ -17,6 +20,18 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// </summary>
         public Func<Stream> IndexStream { get; set; } = () => typeof(SwaggerUIOptions).GetTypeInfo().Assembly
             .GetManifestResourceStream("Swashbuckle.AspNetCore.SwaggerUI.index.html");
+
+        public Func<HttpRequest, string, string> RewriterSwaggerFilePath { get; set; } = DefaultRewriter;
+
+        private static string DefaultRewriter(HttpRequest request, string relativeUri)
+        {
+            if(request.Headers.TryGetValue("X-Forwarded-Prefix", out var prefix))
+            {
+                return UriHelper.BuildRelative(prefix.First(), relativeUri);
+            }
+
+            return relativeUri;
+        }
 
         /// <summary>
         /// Gets or sets a title for the swagger-ui page

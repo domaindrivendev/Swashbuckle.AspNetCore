@@ -18,6 +18,18 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         }
 
         [Fact]
+        public async Task ForwardedPrefix_Should_change_the_endpoints_uris()
+        {
+            var client = new TestSite(typeof(Basic.Startup)).BuildClient();
+            client.DefaultRequestHeaders.Add("X-Forwarded-Prefix", "/a-test-prefix");
+            var indexResponse = await client.GetAsync("/index.html");
+            Assert.Equal(HttpStatusCode.OK, indexResponse.StatusCode);
+            var indexContent = await indexResponse.Content.ReadAsStringAsync();
+            Assert.Contains("/a-test-prefix/swagger/v1/swagger.json", indexContent);
+
+        }
+
+        [Fact]
         public async Task IndexUrl_ReturnsEmbeddedVersionOfTheSwaggerUI()
         {
             var client = new TestSite(typeof(Basic.Startup)).BuildClient();
