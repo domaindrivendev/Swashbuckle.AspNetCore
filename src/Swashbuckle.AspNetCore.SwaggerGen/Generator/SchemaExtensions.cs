@@ -18,13 +18,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 if (attribute is RegularExpressionAttribute regex)
                     schema.Pattern = regex.Pattern;
 
+                if (attribute is MinimumAttribute minimum)
+                    schema.Minimum = minimum.Minimum;
+
+                if (attribute is MaximumAttribute maximum)
+                    schema.Maximum = maximum.Maximum;
+
                 if (attribute is RangeAttribute range)
                 {
-                    if (Int32.TryParse(range.Maximum.ToString(), out int maximum))
-                        schema.Maximum = maximum;
+                    if (Int32.TryParse(range.Maximum.ToString(), out int max))
+                        schema.Maximum = max;
 
-                    if (Int32.TryParse(range.Minimum.ToString(), out int minimum))
-                        schema.Minimum = minimum;
+                    if (Int32.TryParse(range.Minimum.ToString(), out int min))
+                        schema.Minimum = min;
                 }
 
                 if (attribute is MinLengthAttribute minLength)
