@@ -9,6 +9,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Swagger;
+using System.Linq;
+using Swashbuckle.AspNetCore.StartupAttribute;
 
 namespace Swashbuckle.AspNetCore.Cli
 {
@@ -65,6 +67,15 @@ namespace Swashbuckle.AspNetCore.Cli
                     // 1) Configure host with provided startupassembly
                     var startupAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(
                         Path.Combine(Directory.GetCurrentDirectory(), namedArgs["startupassembly"]));
+
+                    Console.WriteLine($"Startup Assembly Name: {startupAssembly.FullName}");
+                    startupAssembly.CustomAttributes.ToList().ForEach(customAttribute => Console.WriteLine(customAttribute.AttributeType.ToString()));
+
+                    Console.WriteLine("Startup classes detected (marked by StartupAttribute):");
+                    startupAssembly.GetClassesWithStartupAttribute().ToList().ForEach(type => Console.WriteLine("* " + type.FullName));
+                    //startupAssembly.GetTypes().Where(type => type.GetCustomAttribute(typeof(StartupAttribute), true));
+                    //startupAssembly.GetCustomAttribute(typeof(StartupBase).)
+
                     var host = WebHost.CreateDefaultBuilder()
                         .UseStartup(startupAssembly.FullName)
                         .Build();
