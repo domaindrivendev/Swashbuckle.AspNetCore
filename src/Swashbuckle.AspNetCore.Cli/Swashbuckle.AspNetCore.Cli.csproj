@@ -1,10 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="..\..\version.props" />
 
   <PropertyGroup>
     <Description>Swashbuckle (Swagger) Command Line Tools</Description>
-    <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <AssemblyName>dotnet-swagger</AssemblyName>
     <PackageId>Swashbuckle.AspNetCore.Cli</PackageId>
@@ -15,6 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore" Version="2.1.2" />
   </ItemGroup>
 </Project>
