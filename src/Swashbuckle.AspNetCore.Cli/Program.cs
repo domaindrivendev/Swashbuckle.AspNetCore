@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Swagger;
+using System.Linq;
 
 namespace Swashbuckle.AspNetCore.Cli
 {
@@ -32,7 +33,7 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Option("--output", "relative path where the Swagger will be output, defaults to stdout");
                 c.Option("--host", "a specific host to include in the Swagger output");
                 c.Option("--basepath", "a specific basePath to inlcude in the Swagger output");
-                c.Option("--format", "overrides the format of the Swagger output, can be Indented or None");
+                c.Option("--format", "overrides the format of the Swagger output, can be Indented or None");                
                 c.OnRun((namedArgs) =>
                 {
                     var depsFile = namedArgs["startupassembly"].Replace(".dll", ".deps.json");
@@ -59,15 +60,19 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Option("--output", "");
                 c.Option("--host", "");
                 c.Option("--basepath", "");
-                c.Option("--format", "");
+                c.Option("--format", "");                
                 c.OnRun((namedArgs) =>
-                {
+                {                    
                     // 1) Configure host with provided startupassembly
                     var startupAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(
                         Path.Combine(Directory.GetCurrentDirectory(), namedArgs["startupassembly"]));
-                    var host = WebHost.CreateDefaultBuilder()
-                        .UseStartup(startupAssembly.FullName)
-                        .Build();
+
+                    var webHostFactory = GetISwaggerWebHostFactoryInstance(startupAssembly);
+                    
+                    var host = webHostFactory != null? webHostFactory.BuildWebHost() :
+                        WebHost.CreateDefaultBuilder()
+                               .UseStartup(startupAssembly.FullName)
+                               .Build();
 
                     // 2) Retrieve Swagger via configured provider
                     var swaggerProvider = host.Services.GetRequiredService<ISwaggerProvider>();
@@ -107,6 +112,16 @@ namespace Swashbuckle.AspNetCore.Cli
             });
 
             return runner.Run(args);
+        }
+
+        protected static ISwaggerWebHostFactory GetISwaggerWebHostFactoryInstance(Assembly assembly)
+        {
+            var factoryTypes = assembly.DefinedTypes.Where(ti => ti.ImplementedInterfaces.Contains(typeof(ISwaggerWebHostFactory)));
+            if (factoryTypes.Count() > 1) throw new InvalidOperationException("Multiple ISwaggerWebHostFactory implementations.");
+            if (!factoryTypes.Any()) return null;
+            var factoryType = factoryTypes.Single();
+            Console.WriteLine($"ISwaggerWebHostFactory factory found. Using {factoryType.FullName}.");
+            return assembly.CreateInstance(factoryType.FullName) as ISwaggerWebHostFactory;
         }
 
         /// <summary>
