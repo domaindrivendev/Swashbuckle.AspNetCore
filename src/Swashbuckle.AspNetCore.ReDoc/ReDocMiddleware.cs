@@ -1,24 +1,44 @@
-﻿using System.Threading.Tasks;
-using System.IO;
-using System.Text;
-using System.Collections.Generic;
+﻿using System.Reflection;
+using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Text;
+using System.Collections.Generic;
+using System.IO;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json.Linq;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.StaticFiles;
 using Newtonsoft.Json;
 
 namespace Swashbuckle.AspNetCore.ReDoc
 {
-    public class ReDocIndexMiddleware
+    public class ReDocMiddleware
     {
-        private readonly RequestDelegate _next;
-        private readonly ReDocOptions _options;
+        private const string EmbeddedFileNamespace = "Swashbuckle.AspNetCore.ReDoc.node_modules.redoc.dist";
 
-        public ReDocIndexMiddleware(RequestDelegate next, ReDocOptions options)
+        private readonly ReDocOptions _options;
+        private readonly StaticFileMiddleware _staticFileMiddleware;
+
+        public ReDocMiddleware(
+            RequestDelegate next,
+            IHostingEnvironment hostingEnv,
+            ILoggerFactory loggerFactory,
+            IOptions<ReDocOptions> optionsAccessor)
+            : this(next, hostingEnv, loggerFactory, optionsAccessor.Value)
+        { }
+
+        public ReDocMiddleware(
+            RequestDelegate next,
+            IHostingEnvironment hostingEnv,
+            ILoggerFactory loggerFactory,
+            ReDocOptions options)
         {
-            _next = next;
-            _options = options;
+            _options = options ?? new ReDocOptions();
+            _staticFileMiddleware = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options);
         }
 
         public async Task Invoke(HttpContext httpContext)
@@ -44,14 +64,13 @@ namespace Swashbuckle.AspNetCore.ReDoc
                 return;
             }
 
-            await _next(httpContext);
-            return;
+            await _staticFileMiddleware.Invoke(httpContext);
         }
 
-        private void RespondWithRedirect(HttpResponse response, string redirectPath)
+        private void RespondWithRedirect(HttpResponse response, string location)
         {
             response.StatusCode = 301;
-            response.Headers["Location"] = redirectPath;
+            response.Headers["Location"] = location;
         }
 
         private async Task RespondWithIndexHtml(HttpResponse response)
@@ -61,9 +80,9 @@ namespace Swashbuckle.AspNetCore.ReDoc
 
             using (var stream = _options.IndexStream())
             {
-                // Inject parameters before writing to response
+                // Inject arguments before writing to response
                 var htmlBuilder = new StringBuilder(new StreamReader(stream).ReadToEnd());
-                foreach (var entry in GetIndexParameters())
+                foreach (var entry in GetIndexArguments())
                 {
                     htmlBuilder.Replace(entry.Key, entry.Value);
                 }
@@ -72,7 +91,7 @@ namespace Swashbuckle.AspNetCore.ReDoc
             }
         }
 
-        private IDictionary<string, string> GetIndexParameters()
+        private IDictionary<string, string> GetIndexArguments()
         {
             return new Dictionary<string, string>()
             {
@@ -90,6 +109,21 @@ namespace Swashbuckle.AspNetCore.ReDoc
                 NullValueHandling = NullValueHandling.Include,
                 Formatting = Formatting.None
             });
+        }
+
+        private StaticFileMiddleware CreateStaticFileMiddleware(
+            RequestDelegate next,
+            IHostingEnvironment hostingEnv,
+            ILoggerFactory loggerFactory,
+            ReDocOptions options)
+        {
+            var staticFileOptions = new StaticFileOptions
+            {
+                RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
+                FileProvider = new EmbeddedFileProvider(typeof(ReDocMiddleware).GetTypeInfo().Assembly, EmbeddedFileNamespace),
+            };
+
+            return new StaticFileMiddleware(next, hostingEnv, Options.Create(staticFileOptions), loggerFactory);
         }
     }
 }

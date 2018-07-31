@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Reflection;
-using Microsoft.Extensions.FileProviders;
 using Swashbuckle.AspNetCore.ReDoc;
 
 namespace Microsoft.AspNetCore.Builder
@@ -11,18 +9,21 @@ namespace Microsoft.AspNetCore.Builder
 
         public static IApplicationBuilder UseReDoc(
             this IApplicationBuilder app,
-            Action<ReDocOptions> setupAction)
+            Action<ReDocOptions> setupAction = null)
         {
-            var options = new ReDocOptions();
-            setupAction?.Invoke(options);
-
-            app.UseMiddleware<ReDocIndexMiddleware>(options);
-            app.UseFileServer(new FileServerOptions
+            if (setupAction == null)
             {
-                RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
-                FileProvider = new EmbeddedFileProvider(typeof(ReDocBuilderExtensions).GetTypeInfo().Assembly, EmbeddedFilesNamespace),
-                EnableDirectoryBrowsing = true // will redirect to /{options.RoutePrefix}/ when trailing slash is missing
-            });
+                // Don't pass options so it can be configured/injected via DI container instead
+                app.UseMiddleware<ReDocMiddleware>();
+            }
+            else
+            {
+                // Configure an options instance here and pass directly to the middleware
+                var options = new ReDocOptions();
+                setupAction.Invoke(options);
+
+                app.UseMiddleware<ReDocMiddleware>(options);
+            }
 
             return app;
         }

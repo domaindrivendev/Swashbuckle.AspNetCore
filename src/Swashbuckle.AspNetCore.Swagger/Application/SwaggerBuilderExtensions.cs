@@ -9,10 +9,21 @@ namespace Microsoft.AspNetCore.Builder
             this IApplicationBuilder app,
             Action<SwaggerOptions> setupAction = null)
         {
-            var options = new SwaggerOptions();
-            setupAction?.Invoke(options);
+            if (setupAction == null)
+            {
+                // Don't pass options so it can be configured/injected via DI container instead
+                app.UseMiddleware<SwaggerMiddleware>();
+            }
+            else
+            {
+                // Configure an options instance here and pass directly to the middleware
+                var options = new SwaggerOptions();
+                setupAction.Invoke(options);
 
-            return app.UseMiddleware<SwaggerMiddleware>(options);
+                app.UseMiddleware<SwaggerMiddleware>(options);
+            }
+
+            return app;
         }
     }
 }
