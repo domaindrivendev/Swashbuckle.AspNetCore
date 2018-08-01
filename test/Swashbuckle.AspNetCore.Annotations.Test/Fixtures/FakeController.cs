@@ -37,7 +37,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             [SwaggerParameter("description for param1", Required = true)]string param1)
         { }
         public void ActionWithSwaggerParameterAttributeDescriptionOnly(
-            [SwaggerParameter("description for param1")]string param1)
+             [SwaggerParameter("description for param1")]string param1)
         { }
     }
 }

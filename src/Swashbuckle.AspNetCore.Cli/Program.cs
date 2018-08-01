@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Reflection;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Runtime.Loader;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -9,8 +10,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Swagger;
-using System.Linq;
 using Swashbuckle.AspNetCore.StartupAttribute;
+using System.Linq;
 
 namespace Swashbuckle.AspNetCore.Cli
 {
@@ -35,6 +36,7 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Option("--host", "a specific host to include in the Swagger output");
                 c.Option("--basepath", "a specific basePath to inlcude in the Swagger output");
                 c.Option("--format", "overrides the format of the Swagger output, can be Indented or None");
+                c.Option("--startupattribute", "seeks startup classes marked with StartupClass attribute (allowing multiple ones");
                 c.OnRun((namedArgs) =>
                 {
                     var depsFile = namedArgs["startupassembly"].Replace(".dll", ".deps.json");
@@ -62,54 +64,69 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Option("--host", "");
                 c.Option("--basepath", "");
                 c.Option("--format", "");
+                c.Option("--startupattribute", "");
                 c.OnRun((namedArgs) =>
                 {
-                    // 1) Configure host with provided startupassembly
                     var startupAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(
                         Path.Combine(Directory.GetCurrentDirectory(), namedArgs["startupassembly"]));
 
                     Console.WriteLine($"Startup Assembly Name: {startupAssembly.FullName}");
-                    startupAssembly.CustomAttributes.ToList().ForEach(customAttribute => Console.WriteLine(customAttribute.AttributeType.ToString()));
 
-                    Console.WriteLine("Startup classes detected (marked by StartupAttribute):");
-                    startupAssembly.GetClassesWithStartupAttribute().ToList().ForEach(type => Console.WriteLine("* " + type.FullName));
-                    //startupAssembly.GetTypes().Where(type => type.GetCustomAttribute(typeof(StartupAttribute), true));
-                    //startupAssembly.GetCustomAttribute(typeof(StartupBase).)
-
-                    var host = WebHost.CreateDefaultBuilder()
-                        .UseStartup(startupAssembly.FullName)
-                        .Build();
-
-                    // 2) Retrieve Swagger via configured provider
-                    var swaggerProvider = host.Services.GetRequiredService<ISwaggerProvider>();
-                    var swagger = swaggerProvider.GetSwagger(
-                        namedArgs["swaggerdoc"],
-                        namedArgs.ContainsKey("--host") ? namedArgs["--host"] : null,
-                        namedArgs.ContainsKey("--basepath") ? namedArgs["--basepath"] : null,
-                        null);
-
-                    // 3) Serialize to specified output location or stdout
-                    var outputPath = namedArgs.ContainsKey("--output")
-                        ? Path.Combine(Directory.GetCurrentDirectory(), namedArgs["--output"])
-                        : null;
-
-                    using (var streamWriter = (outputPath != null ? File.CreateText(outputPath) : Console.Out))
+                    if (!namedArgs.ContainsKey("--startupattribute"))
                     {
-                        var mvcOptionsAccessor = (IOptions<MvcJsonOptions>)host.Services.GetService(typeof(IOptions<MvcJsonOptions>));
+                        // 1) Configure host with provided startupassembly
+                        IWebHost host = WebHost.CreateDefaultBuilder()
+                            .UseStartup(startupAssembly.FullName)
+                            .Build();
 
-                        if (namedArgs.ContainsKey("--format"))
+                        // 2) Retrieve Swagger via configured provider
+                        SwaggerDocument swaggerDocument = RetrieveSwagger(namedArgs, host);
+
+                        // 3) Serialize Swagger to specified output location or stdout
+                        string outputPath = namedArgs.ContainsKey("--output")
+                            ? Path.Combine(Directory.GetCurrentDirectory(), namedArgs["--output"])
+                            : null;
+                        SerializeSwagger(namedArgs, host, swaggerDocument, outputPath);
+                    }
+                    else
+                    {
+                        IEnumerable<Type> startupList = startupAssembly.GetClassesWithStartupAttribute();
+                        if (!startupList.Any())
                         {
-                            // TODO: Should this handle case where mvcJsonOptions.Value == null?
-                            mvcOptionsAccessor.Value.SerializerSettings.Formatting = ParseEnum<Newtonsoft.Json.Formatting>(namedArgs["--format"]);
+                            throw new StartupAttributeException("No classes marked with StartupClass attribute have been found");
                         }
 
-                        var serializer = SwaggerSerializerFactory.Create(mvcOptionsAccessor);
+                        Console.WriteLine("Startup classes detected (marked by StartupClass attribute):");
 
-                        serializer.Serialize(streamWriter, swagger);
-
-                        if (!string.IsNullOrWhiteSpace(outputPath))
+                        foreach (Type startupClass in startupList)
                         {
-                            Console.WriteLine($"Swagger JSON succesfully written to {outputPath}");
+                            if (!namedArgs.ContainsKey("--output"))
+                            {
+                                throw new StartupAttributeException("Missing --output argument");
+                            }
+
+                            Console.WriteLine("* " + startupClass.FullName);
+
+                            // 1) Configure host with provided startupassembly
+                            IWebHost host = WebHost.CreateDefaultBuilder()
+                                .UseStartup(startupClass)
+                                .Build();
+
+                            // 2) Retrieve Swagger via configured provider
+                            SwaggerDocument swaggerDocument = RetrieveSwagger(namedArgs, host);
+
+                            // 3) Serialize Swagger to specified output location or stdout
+                            string fileName = string.Concat(
+                                namedArgs["--output"],
+                                Path.DirectorySeparatorChar,
+                                startupClass.GetStartupAttributeName(),
+                                ".swagger.json");
+
+                            string outputPath = Path.Combine(
+                                Directory.GetCurrentDirectory(),
+                                fileName);
+
+                            SerializeSwagger(namedArgs, host, swaggerDocument, outputPath);
                         }
                     }
 
@@ -118,6 +135,52 @@ namespace Swashbuckle.AspNetCore.Cli
             });
 
             return runner.Run(args);
+        }
+
+        /// <summary>
+        /// Retrieves Swagger via configured provider
+        /// </summary>
+        /// <param name="namedArgs"></param>
+        /// <param name="host"></param>
+        /// <returns></returns>
+        protected static SwaggerDocument RetrieveSwagger(IDictionary<string, string> namedArgs, IWebHost host)
+        {
+            var swaggerProvider = host.Services.GetRequiredService<ISwaggerProvider>();
+            var swagger = swaggerProvider.GetSwagger(
+                namedArgs["swaggerdoc"],
+                namedArgs.ContainsKey("--host") ? namedArgs["--host"] : null,
+                namedArgs.ContainsKey("--basepath") ? namedArgs["--basepath"] : null,
+                null);
+            return swagger;
+        }
+
+        /// <summary>
+        /// Serializes Swagger to specified output location or stdout
+        /// </summary>
+        /// <param name="namedArgs"></param>
+        /// <param name="host"></param>
+        /// <param name="swagger"></param>
+        protected static void SerializeSwagger(IDictionary<string, string> namedArgs, IWebHost host, SwaggerDocument swagger, string outputPath)
+        {
+            using (var streamWriter = (outputPath != null ? File.CreateText(outputPath) : Console.Out))
+            {
+                var mvcOptionsAccessor = (IOptions<MvcJsonOptions>)host.Services.GetService(typeof(IOptions<MvcJsonOptions>));
+
+                if (namedArgs.ContainsKey("--format"))
+                {
+                    // TODO: Should this handle case where mvcJsonOptions.Value == null?
+                    mvcOptionsAccessor.Value.SerializerSettings.Formatting = ParseEnum<Newtonsoft.Json.Formatting>(namedArgs["--format"]);
+                }
+
+                var serializer = SwaggerSerializerFactory.Create(mvcOptionsAccessor);
+
+                serializer.Serialize(streamWriter, swagger);
+
+                if (!string.IsNullOrWhiteSpace(outputPath))
+                {
+                    Console.WriteLine($"Swagger JSON succesfully written to {outputPath}");
+                }
+            }
         }
 
         /// <summary>

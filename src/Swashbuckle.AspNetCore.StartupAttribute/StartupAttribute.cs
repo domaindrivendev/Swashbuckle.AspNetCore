@@ -2,17 +2,16 @@
 
 namespace Swashbuckle.AspNetCore.StartupAttribute
 {
-    [AttributeUsage(AttributeTargets.Class
-                    | AttributeTargets.Struct,
-                    AllowMultiple = true)  // multiuse attribute
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct,
+                    AllowMultiple = true)
     ]
-    public class StartupAttribute : Attribute
+    public class StartupClassAttribute: System.Attribute
     {
-        public string Name { get; } // public or private?
+        public string JsonName { get; }
 
-        public StartupAttribute(string name)
+        public StartupClassAttribute(string jsonName)
         {
-            Name = name;
+            JsonName = jsonName;
         }
     }
 }

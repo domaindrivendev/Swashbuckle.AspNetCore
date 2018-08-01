@@ -9,11 +9,19 @@ namespace Swashbuckle.AspNetCore.StartupAttribute
         {
             foreach (Type type in assembly.GetTypes())
             {
-                if (type.IsDefined(typeof(StartupAttribute), true))
+                if (type.IsDefined(typeof(StartupClassAttribute), true))
                 {
                     yield return type;
                 }
             }
+        }
+
+        static public string GetStartupAttributeName(this Type type)
+        {
+            StartupClassAttribute startupAttribute =
+                (StartupClassAttribute)Attribute.GetCustomAttribute(type, typeof(StartupClassAttribute));
+
+            return startupAttribute.JsonName;
         }
     }
 }

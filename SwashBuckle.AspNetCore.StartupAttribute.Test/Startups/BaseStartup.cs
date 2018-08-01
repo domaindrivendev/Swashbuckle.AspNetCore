@@ -4,10 +4,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 
-namespace SwashBuckle.AspNetCore.StartupAttribute.Test.Fixtures
+using SwashBuckle.AspNetCore.StartupAttribute.Test.Fixtures;
+
+namespace SwashBuckle.AspNetCore.StartupAttribute.Test.Startups
 {
     public abstract class BaseStartup
     {
@@ -59,49 +60,5 @@ namespace SwashBuckle.AspNetCore.StartupAttribute.Test.Fixtures
         public abstract void ConfigureMvcServices(IServiceCollection services);
 
         public abstract void ConfigureMvc(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory);
-    }
-
-    public class StartupPublic : BaseStartup
-    {
-        private static readonly ApiVersion ApiVersion = new ApiVersion(1, 0);
-
-        protected override ApiInfo ApiInfo => new ApiInfo("Public test API", "Public test API description", ApiVersion);
-
-        public StartupPublic(IConfiguration configuration) : base(configuration)
-        {
-            _controllerFilter = new TypedControllerFeatureProvider<Controller>();
-        }
-
-        public override void ConfigureMvc(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ConfigureMvcServices(IServiceCollection services)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class StartupPrivate : BaseStartup
-    {
-        private static readonly ApiVersion ApiVersion = new ApiVersion(1, 0);
-
-        protected override ApiInfo ApiInfo => new ApiInfo("Private test API", "Private test API description", ApiVersion);
-
-        public StartupPrivate(IConfiguration configuration) : base(configuration)
-        {
-            _controllerFilter = new TypedControllerFeatureProvider<PrivateApiController>();
-        }
-
-        public override void ConfigureMvc(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ConfigureMvcServices(IServiceCollection services)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

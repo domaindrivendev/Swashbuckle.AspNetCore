@@ -67,7 +67,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OAuth2Integration", "test\W
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore.StartupAttribute", "src\Swashbuckle.AspNetCore.StartupAttribute\Swashbuckle.AspNetCore.StartupAttribute.csproj", "{C6F9DBEF-65C7-4AEE-950F-A10309606185}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SwashBuckle.AspNetCore.StartupAttribute.Test", "SwashBuckle.AspNetCore.StartupAttribute.Test\SwashBuckle.AspNetCore.StartupAttribute.Test.csproj", "{0EB84ADC-CBE6-44B3-94A8-BE836AB361E5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SwashBuckle.AspNetCore.StartupAttribute.Test", "SwashBuckle.AspNetCore.StartupAttribute.Test\SwashBuckle.AspNetCore.StartupAttribute.Test.csproj", "{0EB84ADC-CBE6-44B3-94A8-BE836AB361E5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
