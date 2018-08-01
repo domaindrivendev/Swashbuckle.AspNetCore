@@ -21,13 +21,21 @@ namespace Swashbuckle.AspNetCore.Swagger
         public SwaggerMiddleware(
             RequestDelegate next,
             ISwaggerProvider swaggerProvider,
+            IOptions<MvcJsonOptions> mvcJsonOptionsAccessor,
+            IOptions<SwaggerOptions> optionsAccessor)
+            : this(next, swaggerProvider, mvcJsonOptionsAccessor, optionsAccessor.Value)
+        { }
+
+        public SwaggerMiddleware(
+            RequestDelegate next,
+            ISwaggerProvider swaggerProvider,
             IOptions<MvcJsonOptions> mvcJsonOptions,
             SwaggerOptions options)
         {
             _next = next;
             _swaggerProvider = swaggerProvider;
             _swaggerSerializer = SwaggerSerializerFactory.Create(mvcJsonOptions);
-            _options = options;
+            _options = options ?? new SwaggerOptions();
             _requestMatcher = new TemplateMatcher(TemplateParser.Parse(options.RouteTemplate), new RouteValueDictionary());
         }
 
