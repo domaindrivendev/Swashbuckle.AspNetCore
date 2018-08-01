@@ -1,26 +1,45 @@
-﻿using System.Threading.Tasks;
-using System.IO;
-using System.Text;
-using System.Collections.Generic;
+﻿using System.Reflection;
+using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Text;
+using System.Collections.Generic;
+using System.IO;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.StaticFiles;
 using Newtonsoft.Json.Linq;
-using Microsoft.AspNetCore.Routing.Template;
-using Microsoft.AspNetCore.Routing;
+using Newtonsoft.Json;
 
 namespace Swashbuckle.AspNetCore.SwaggerUI
 {
-    public class SwaggerUIIndexMiddleware
+    public class SwaggerUIMiddleware
     {
-        private readonly RequestDelegate _next;
-        private readonly SwaggerUIOptions _options;
+        private const string EmbeddedFileNamespace = "Swashbuckle.AspNetCore.SwaggerUI.node_modules.swagger_ui_dist";
 
-        public SwaggerUIIndexMiddleware(RequestDelegate next, SwaggerUIOptions options)
+        private readonly SwaggerUIOptions _options;
+        private readonly StaticFileMiddleware _staticFileMiddleware;
+
+        public SwaggerUIMiddleware(
+            RequestDelegate next,
+            IHostingEnvironment hostingEnv,
+            ILoggerFactory loggerFactory,
+            IOptions<SwaggerUIOptions> optionsAccessor)
+            : this(next, hostingEnv, loggerFactory, optionsAccessor.Value)
+        { }
+
+        public SwaggerUIMiddleware(
+            RequestDelegate next,
+            IHostingEnvironment hostingEnv,
+            ILoggerFactory loggerFactory,
+            SwaggerUIOptions options)
         {
-            _next = next;
-            _options = options;
+            _options = options ?? new SwaggerUIOptions();
+            _staticFileMiddleware = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options);
         }
 
         public async Task Invoke(HttpContext httpContext)
@@ -46,14 +65,13 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
                 return;
             }
 
-            await _next(httpContext);
-            return;
+            await _staticFileMiddleware.Invoke(httpContext);
         }
 
-        private void RespondWithRedirect(HttpResponse response, string redirectPath)
+        private void RespondWithRedirect(HttpResponse response, string location)
         {
             response.StatusCode = 301;
-            response.Headers["Location"] = redirectPath;
+            response.Headers["Location"] = location;
         }
 
         private async Task RespondWithIndexHtml(HttpResponse response)
@@ -63,9 +81,9 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
 
             using (var stream = _options.IndexStream())
             {
-                // Inject parameters before writing to response
+                // Inject arguments before writing to response
                 var htmlBuilder = new StringBuilder(new StreamReader(stream).ReadToEnd());
-                foreach (var entry in GetIndexParameters())
+                foreach (var entry in GetIndexArguments())
                 {
                     htmlBuilder.Replace(entry.Key, entry.Value);
                 }
@@ -74,7 +92,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             }
         }
 
-        private IDictionary<string, string> GetIndexParameters()
+        private IDictionary<string, string> GetIndexArguments()
         {
             return new Dictionary<string, string>()
             {
@@ -92,6 +110,21 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
                 NullValueHandling = NullValueHandling.Include,
                 Formatting = Formatting.None
             });
+        }
+
+        private StaticFileMiddleware CreateStaticFileMiddleware(
+            RequestDelegate next,
+            IHostingEnvironment hostingEnv,
+            ILoggerFactory loggerFactory,
+            SwaggerUIOptions options)
+        {
+            var staticFileOptions = new StaticFileOptions
+            {
+                RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
+                FileProvider = new EmbeddedFileProvider(typeof(SwaggerUIMiddleware).GetTypeInfo().Assembly, EmbeddedFileNamespace),
+            };
+
+            return new StaticFileMiddleware(next, hostingEnv, Options.Create(staticFileOptions), loggerFactory);
         }
     }
 }
