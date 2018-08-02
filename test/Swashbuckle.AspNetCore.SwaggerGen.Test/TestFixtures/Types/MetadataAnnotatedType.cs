@@ -10,6 +10,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         public int IntWithRequired { get; set; }
 
+        public int IntWithMinimum { get; set; }
+
+        public int IntWithMaximum { get; set; }
+
         public int IntWithRange { get; set; }
 
         public string StringWithRegularExpression { get; set; }
@@ -22,6 +26,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         [Required]
         public int IntWithRequired { get; set; }
+
+        [Minimum(1)]
+        public int IntWithMinimum { get; set; }
+
+        [Maximum(12)]
+        public int IntWithMaximum { get; set; }
 
         [Range(1, 12)]
         public int IntWithRange { get; set; }

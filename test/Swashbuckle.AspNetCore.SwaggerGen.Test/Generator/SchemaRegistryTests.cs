@@ -250,6 +250,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var schema = subject.Definitions["DataAnnotatedType"];
             Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);
             Assert.Equal(12, schema.Properties["IntWithRange"].Maximum);
+            Assert.Equal(1, schema.Properties["IntWithMinimum"].Minimum);
+            Assert.Equal(12, schema.Properties["IntWithMaximum"].Maximum);
             Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["StringWithRegularExpression"].Pattern);
             Assert.Equal(5, schema.Properties["StringWithStringLength"].MinLength);
             Assert.Equal(10, schema.Properties["StringWithStringLength"].MaxLength);
@@ -272,6 +274,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var schema = subject.Definitions["MetadataAnnotatedType"];
             Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);
             Assert.Equal(12, schema.Properties["IntWithRange"].Maximum);
+            Assert.Equal(1, schema.Properties["IntWithMinimum"].Minimum);
+            Assert.Equal(12, schema.Properties["IntWithMaximum"].Maximum);
             Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["StringWithRegularExpression"].Pattern);
             Assert.Equal(new[] { "StringWithRequired", "IntWithRequired" }, schema.Required.ToArray());
         }
