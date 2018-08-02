@@ -3,12 +3,12 @@
   <Import Project="..\..\version.props" />
 
   <PropertyGroup>
-    <Description>Attribute to be able to load information from different startups</Description>
+    <Description>Attribute to mark multiple startup classes, being able to load information from them</Description>
     <TargetFramework>netstandard2.0</TargetFramework>
     <NoWarn>$(NoWarn);1591</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>Swashbuckle.AspNetCore.StartupAttribute</AssemblyName>
-    <!--<AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.StartupAttribute.snk</AssemblyOriginatorKeyFile>-->
+    <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.StartupAttribute.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <PackageId>Swashbuckle.AspNetCore.StartupAttribute</PackageId>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore;attribute;startup</PackageTags>

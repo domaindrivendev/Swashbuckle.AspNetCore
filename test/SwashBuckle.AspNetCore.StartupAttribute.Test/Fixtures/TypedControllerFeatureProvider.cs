@@ -13,6 +13,7 @@ namespace SwashBuckle.AspNetCore.StartupAttribute.Test.Fixtures
             {
                 return false;
             }
+
             return base.IsController(typeInfo);
         }
     }

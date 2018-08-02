@@ -6,15 +6,12 @@ namespace SwashBuckle.AspNetCore.StartupAttribute.Test.Fixtures.Controllers
     public class PrivateController : PrivateApiController
     {
         [HttpPost]
-        public Entity Create([FromBody] Entity plugin)
+        public Entity Create([FromBody] Entity entity)
         {
-            return plugin;
+            return entity;
         }
 
         [HttpDelete]
-        public void Delete([FromBody] string id)
-        {
-            ;
-        }
+        public void Delete([FromBody] string id) { }
     }
 }

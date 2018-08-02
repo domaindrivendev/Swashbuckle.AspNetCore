@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -23,14 +22,8 @@ namespace SwashBuckle.AspNetCore.StartupAttribute.Test.Startups
             _controllerFilter = new TypedControllerFeatureProvider<Controller>();
         }
 
-        public override void ConfigureMvc(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-        {
-            throw new NotImplementedException();
-        }
+        public override void ConfigureMvc(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory) { }
 
-        public override void ConfigureMvcServices(IServiceCollection services)
-        {
-            throw new NotImplementedException();
-        }
+        public override void ConfigureMvcServices(IServiceCollection services) { }
     }
 }
