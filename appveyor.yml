@@ -4,7 +4,7 @@ init:
 - git config --global core.autocrlf true
 
 build_script:
-- ps: ci\build.ps1 
+- ps: ci\build.ps1
 
 test_script:
 - ps: ci\test.ps1

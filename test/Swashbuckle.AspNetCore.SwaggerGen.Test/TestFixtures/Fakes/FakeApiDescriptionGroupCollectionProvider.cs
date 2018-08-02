@@ -94,7 +94,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     ParameterInfo = parameterInfo,
                     BindingInfo = BindingInfo.GetBindingInfo(parameterInfo.GetCustomAttributes(false))
                 });
-            };
+            }
 
             descriptor.ControllerTypeInfo = controllerType.GetTypeInfo();
 
@@ -123,7 +123,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var provider = new DefaultApiDescriptionProvider(
                 Options.Create(options),
                 constraintResolver.Object,
-                CreateModelMetadataProvider()
+                CreateModelMetadataProvider(),
+                new ActionResultTypeMapper()
             );
 
             provider.OnProvidersExecuting(context);

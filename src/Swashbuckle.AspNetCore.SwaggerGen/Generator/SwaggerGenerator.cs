@@ -150,7 +150,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     .Union(methodInfo.DeclaringType.GetTypeInfo().GetCustomAttributes(true));
             }
 
-            var isDeprecated = customAttributes.Any(attr => attr.GetType() == typeof(ObsoleteAttribute));
+            var isDeprecated = customAttributes.Any(attr => (attr is ObsoleteAttribute));
 
             var operation = new Operation
             {
@@ -324,7 +324,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             };
         }
 
-        private static Dictionary<BindingSource, string> ParameterLocationMap = new Dictionary<BindingSource, string>
+        private static readonly Dictionary<BindingSource, string> ParameterLocationMap = new Dictionary<BindingSource, string>
         {
             { BindingSource.Form, "formData" },
             { BindingSource.Body, "body" },
