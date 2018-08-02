@@ -143,7 +143,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Theory]
         [InlineData(typeof(object))]
         [InlineData(typeof(JToken))]
-        [InlineData(typeof(JToken))]
         public void GetOrRegister_ReturnsEmptyObjectSchema_ForAmbiguousTypes(Type systemType)
         {
             var schema = Subject().GetOrRegister(systemType);

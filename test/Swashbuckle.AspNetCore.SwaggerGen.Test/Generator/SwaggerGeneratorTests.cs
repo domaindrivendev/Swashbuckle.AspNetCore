@@ -138,7 +138,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData("collection", nameof(FakeController.AcceptsStringFromQuery), "query")]
         [InlineData("collection", nameof(FakeController.AcceptsStringFromHeader), "header")]
         [InlineData("collection", nameof(FakeController.AcceptsStringFromForm), "formData")]
-        [InlineData("collection", nameof(FakeController.AcceptsStringFromQuery), "query")]
         public void GetSwagger_GeneratesNonBodyParameters_ForPathQueryHeaderOrFormBoundParams(
             string routeTemplate,
             string actionFixtureName,
