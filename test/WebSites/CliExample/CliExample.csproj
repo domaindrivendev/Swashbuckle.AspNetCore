@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
@@ -21,7 +21,7 @@
   -->
 
   <!--<ItemGroup>
-    <DotNetCliToolReference Include="Swashbuckle.AspNetCore.Cli" Version="1.2.0-beta1" />
+    <DotNetCliToolReference Include="Swashbuckle.AspNetCore.Cli" Version="3.0.0-beta1" />
   </ItemGroup>-->
 
   <Target Name="SwaggerToFile" AfterTargets="AfterBuild">

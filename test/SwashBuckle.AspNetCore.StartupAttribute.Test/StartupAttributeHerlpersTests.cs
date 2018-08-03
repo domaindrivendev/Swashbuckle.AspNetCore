@@ -5,7 +5,6 @@ using System.Reflection;
 using Xunit;
 
 using Swashbuckle.AspNetCore.StartupAttribute;
-using SwashBuckle.AspNetCore.StartupAttribute.Test.Startups;
 
 namespace SwashBuckle.AspNetCore.StartupAttribute.Test
 {
@@ -18,8 +17,8 @@ namespace SwashBuckle.AspNetCore.StartupAttribute.Test
 
             ICollection<Type> startupClasses = assembly.GetClassesWithStartupAttribute().ToList();
             Assert.Equal(2, startupClasses.Count);
-            Assert.Contains(nameof(PublicStartup), startupClasses.Select(type => type.Name));
-            Assert.Contains(nameof(PrivateStartup), startupClasses.Select(type => type.Name));
+            Assert.Contains(nameof(Startup2), startupClasses.Select(type => type.Name));
+            Assert.Contains(nameof(Startup1), startupClasses.Select(type => type.Name));
         }
 
         [Fact]
@@ -30,13 +29,13 @@ namespace SwashBuckle.AspNetCore.StartupAttribute.Test
             ICollection<Type> startupClasses = assembly.GetClassesWithStartupAttribute().ToList();
             foreach (Type startupClass in startupClasses)
             {
-                if (nameof(PublicStartup) == startupClass.Name)
+                if (nameof(Startup2) == startupClass.Name)
                 {
-                    Assert.Equal("PublicAPI", startupClass.GetStartupAttributeName());
+                    Assert.Equal("TestStartup2", startupClass.GetStartupAttributeName());
                 }
-                if (nameof(PrivateStartup) == startupClass.Name)
+                if (nameof(Startup1) == startupClass.Name)
                 {
-                    Assert.Equal("PrivateAPI", startupClass.GetStartupAttributeName());
+                    Assert.Equal("TestStartup1", startupClass.GetStartupAttributeName());
                 }
             }
         }

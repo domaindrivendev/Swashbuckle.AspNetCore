@@ -5,13 +5,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 
-namespace SwashBuckle.AspNetCore.StartupAttribute.Test.Startups
+namespace SwashBuckle.AspNetCore.StartupAttribute.Test
 {
-    public class StartupFake
+    public class NoAttributeStartup
     {
         public IConfiguration Configuration { get; }
 
-        protected StartupFake(IConfiguration configuration)
+        protected NoAttributeStartup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
@@ -25,13 +25,8 @@ namespace SwashBuckle.AspNetCore.StartupAttribute.Test.Startups
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
             app.UseMvc();
         }
     }

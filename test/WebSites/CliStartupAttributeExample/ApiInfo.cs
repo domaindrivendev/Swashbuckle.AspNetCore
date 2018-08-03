@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace SwashBuckle.AspNetCore.StartupAttribute.Test.Fixtures
+namespace CliStartupAttributeExample
 {
     public class ApiInfo
     {

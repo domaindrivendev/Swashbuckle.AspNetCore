@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace SwashBuckle.AspNetCore.StartupAttribute.Test.Fixtures.Controllers
+namespace CliStartupAttributeExample.Controllers
 {
-    [Route("public")]
+    [Route("publicAPI")]
     public class PublicController : Controller
     {
         [HttpGet("{id}")]

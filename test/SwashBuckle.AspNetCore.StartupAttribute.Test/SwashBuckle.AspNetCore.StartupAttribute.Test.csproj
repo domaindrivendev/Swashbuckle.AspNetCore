@@ -2,15 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore" Version="2.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.ApiExplorer" Version="2.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="2.1.0" />
     <PackageReference Include="Microsoft.Extensions.PlatformAbstractions" Version="1.1.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.8.0" />
     <PackageReference Include="xunit" Version="2.4.0" />
@@ -19,7 +16,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Swashbuckle.AspNetCore.Cli\Swashbuckle.AspNetCore.Cli.csproj" />
     <ProjectReference Include="..\..\src\Swashbuckle.AspNetCore.StartupAttribute\Swashbuckle.AspNetCore.StartupAttribute.csproj" />
+    <ProjectReference Include="..\Swashbuckle.AspNetCore.Cli.Test\Swashbuckle.AspNetCore.Cli.Test.csproj" />
+    <ProjectReference Include="..\WebSites\CliStartupAttributeExample\CliStartupAttributeExample.csproj" />
   </ItemGroup>
 
 </Project>

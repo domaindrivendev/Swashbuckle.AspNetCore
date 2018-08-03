@@ -5,10 +5,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Mvc;
 
-using SwashBuckle.AspNetCore.StartupAttribute.Test.Fixtures;
 using Swashbuckle.AspNetCore.StartupAttribute;
 
-namespace SwashBuckle.AspNetCore.StartupAttribute.Test.Startups
+namespace CliStartupAttributeExample.Startups
 {
     [StartupClass("PublicAPI")]
     public class PublicStartup : BaseStartup

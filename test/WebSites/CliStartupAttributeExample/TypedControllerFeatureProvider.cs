@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Controllers;
 using System.Reflection;
 
-namespace SwashBuckle.AspNetCore.StartupAttribute.Test.Fixtures
+namespace CliStartupAttributeExample
 {
     public class TypedControllerFeatureProvider<TController> :
         ControllerFeatureProvider where TController : ControllerBase

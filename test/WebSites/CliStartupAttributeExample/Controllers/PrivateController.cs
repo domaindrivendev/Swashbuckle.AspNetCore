@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace SwashBuckle.AspNetCore.StartupAttribute.Test.Fixtures.Controllers
+namespace CliStartupAttributeExample.Controllers
 {
-    [Route("private")]
+    [Route("privateAPI")]
     public class PrivateController : PrivateApiController
     {
         [HttpPost]

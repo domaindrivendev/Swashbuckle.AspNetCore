@@ -17,7 +17,7 @@ namespace Swashbuckle.AspNetCore.Cli
 {
     public class Program
     {
-        static int Main(string[] args)
+        public static int Main(string[] args)
         {
             // Helper to simplify command line parsing etc.
             var runner = new CommandRunner("dotnet swagger", "Swashbuckle (Swagger) Command Line Tools", Console.Out);
@@ -160,6 +160,7 @@ namespace Swashbuckle.AspNetCore.Cli
         /// <param name="namedArgs"></param>
         /// <param name="host"></param>
         /// <param name="swagger"></param>
+        /// <param name="outputPath"></param>
         protected static void SerializeSwagger(IDictionary<string, string> namedArgs, IWebHost host, SwaggerDocument swagger, string outputPath)
         {
             using (var streamWriter = (outputPath != null ? File.CreateText(outputPath) : Console.Out))
