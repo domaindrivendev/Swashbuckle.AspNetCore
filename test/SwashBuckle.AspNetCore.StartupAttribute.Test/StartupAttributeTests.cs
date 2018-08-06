@@ -30,7 +30,47 @@ namespace SwashBuckle.AspNetCore.StartupAttribute.Test
             foreach (Type startupClass in startupClasses)
             {
                 string expectedFileName = startupClass.GetStartupAttributeName() + ".swagger.json";
-                Assert.True(File.Exists(Path.Combine(SwaggerDir, expectedFileName)));
+                string filePath = Path.Combine(SwaggerDir, expectedFileName);
+                Assert.True(File.Exists(filePath));
+
+                StreamReader reader = new StreamReader(filePath);
+                string parsedFile = null;
+                using (reader)
+                {
+                    parsedFile = reader.ReadToEnd();
+                }
+
+                Assert.NotNull(parsedFile);
+
+                if (startupClass.Name == nameof(CliStartupAttributeExample.Startups.PublicStartup))
+                {
+                    Assert.Contains("Public test API", parsedFile);
+
+                    Assert.DoesNotContain("privateAPI", parsedFile);
+                    Assert.DoesNotContain("post", parsedFile);
+                    Assert.DoesNotContain("PrivateAPIPost", parsedFile);
+                    Assert.DoesNotContain("delete", parsedFile);
+                    Assert.DoesNotContain("PrivateAPIDelete", parsedFile);
+
+                    Assert.Contains("publicAPI", parsedFile);
+                    Assert.Contains("get", parsedFile);
+                    Assert.Contains("PublicAPIByIdGet", parsedFile);
+                }
+
+                if (startupClass.Name == nameof(CliStartupAttributeExample.Startups.PrivateStartup))
+                {
+                    Assert.Contains("Private test API", parsedFile);
+
+                    Assert.Contains("privateAPI", parsedFile);
+                    Assert.Contains("post", parsedFile);
+                    Assert.Contains("PrivateAPIPost", parsedFile);
+                    Assert.Contains("delete", parsedFile);
+                    Assert.Contains("PrivateAPIDelete", parsedFile);
+
+                    Assert.DoesNotContain("publicAPI", parsedFile);
+                    Assert.DoesNotContain("get", parsedFile);
+                    Assert.DoesNotContain("PublicAPIByIdGet", parsedFile);
+                }
             }
         }
     }

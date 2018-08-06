@@ -67,7 +67,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
                     doesContainBom = false;
                 }
 
-                byteIndex += 1;
+                ++byteIndex;
             }
 
             Assert.False(doesContainBom);

@@ -1,10 +1,11 @@
 ﻿using System;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.PlatformAbstractions;
 
 namespace CliStartupAttributeExample.Startups
 {
@@ -27,6 +28,13 @@ namespace CliStartupAttributeExample.Startups
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
+            // Separate Public and Private APIs
+            services.AddMvc().ConfigureApplicationPartManager(manager =>
+            {
+                manager.FeatureProviders.Clear();
+                manager.FeatureProviders.Add(_controllerFilter);
+            });
+
             services.AddApiVersioning(options =>
             {
                 options.ReportApiVersions = true;
@@ -36,13 +44,15 @@ namespace CliStartupAttributeExample.Startups
 
             services.AddMvcCore().AddApiExplorer();
 
+            string packageVersion = PlatformServices.Default.Application.ApplicationVersion;
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc(SwaggerDocumentVersion,
                     new Swashbuckle.AspNetCore.Swagger.Info
                     {
                         Title = ApiInfo.Title,
-                        Description = ApiInfo.Description
+                        Description = ApiInfo.Description,
+                        Version = packageVersion
                     });
             });
 
@@ -68,8 +78,9 @@ namespace CliStartupAttributeExample.Startups
 
             app.UseSwaggerUI(c =>
             {
-                c.RoutePrefix = "api-docs";
-                c.SwaggerEndpoint("v1/swagger.json", "V1 Docs");
+                c.SwaggerEndpoint(
+                    $"/swagger/{SwaggerDocumentVersion}/swagger.json",
+                    $"{SwaggerDocumentVersion} docs");
             });
 
             app.UseMvc();
