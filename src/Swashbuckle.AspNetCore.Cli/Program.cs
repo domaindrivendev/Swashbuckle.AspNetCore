@@ -36,7 +36,7 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Option("--host", "a specific host to include in the Swagger output");
                 c.Option("--basepath", "a specific basePath to inlcude in the Swagger output");
                 c.Option("--format", "overrides the format of the Swagger output, can be Indented or None");
-                c.Option("--multiplestartups", "seeks startup classes marked with SwaggerStartup attribute, creating a file for each marked startup class. (--output option must be a directory);
+                c.Option("--multiplestartups", "seeks startup classes marked with SwaggerStartup attribute, creating a file for each marked startup class. (--output option must be a directory)");
                 c.OnRun((namedArgs) =>
                 {
                     var depsFile = namedArgs["startupassembly"].Replace(".dll", ".deps.json");
