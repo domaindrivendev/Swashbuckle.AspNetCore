@@ -19,7 +19,7 @@ namespace SwashBuckle.AspNetCore.SwaggerStartupAttr.Test
         [Fact]
         public void FileGeneration()
         {
-            string publishCommand = $"dotnet publish {ProjectFolder}{ProjectName}.csproj -c Debug";
+            string publishCommand = $"dotnet publish {ProjectFolder}{ProjectName}.csproj -c Release";
             var x = publishCommand.Run();
 
             Assert.True(Directory.Exists(SwaggerDir));
