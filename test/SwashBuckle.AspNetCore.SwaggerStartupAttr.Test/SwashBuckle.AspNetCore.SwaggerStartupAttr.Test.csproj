@@ -17,9 +17,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Swashbuckle.AspNetCore.Cli\Swashbuckle.AspNetCore.Cli.csproj" />
-    <ProjectReference Include="..\..\src\Swashbuckle.AspNetCore.StartupAttribute\Swashbuckle.AspNetCore.StartupAttribute.csproj" />
+    <ProjectReference Include="..\..\src\Swashbuckle.AspNetCore.SwaggerStartupAttr\Swashbuckle.AspNetCore.SwaggerStartupAttr.csproj" />
     <ProjectReference Include="..\Swashbuckle.AspNetCore.Cli.Test\Swashbuckle.AspNetCore.Cli.Test.csproj" />
-    <ProjectReference Include="..\WebSites\CliStartupAttributeExample\CliStartupAttributeExample.csproj" />
+    <ProjectReference Include="..\WebSites\CliMultipleStartupsExample\CliMultipleStartupsExample.csproj" />
   </ItemGroup>
 
 </Project>

@@ -3,13 +3,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 
-namespace SwashBuckle.AspNetCore.StartupAttribute.Test
+namespace SwashBuckle.AspNetCore.SwaggerStartupAttr.Test
 {
-    public class NoAttributeStartup
+    public class Startup
     {
         public IConfiguration Configuration { get; }
 
-        protected NoAttributeStartup(IConfiguration configuration)
+        protected Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }

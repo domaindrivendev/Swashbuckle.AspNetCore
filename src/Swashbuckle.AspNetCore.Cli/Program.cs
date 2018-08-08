@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
 using Microsoft.AspNetCore;
@@ -10,8 +11,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Swagger;
-using Swashbuckle.AspNetCore.StartupAttribute;
-using System.Linq;
+using Swashbuckle.AspNetCore.SwaggerStartupAttr;
 
 namespace Swashbuckle.AspNetCore.Cli
 {
@@ -36,7 +36,7 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Option("--host", "a specific host to include in the Swagger output");
                 c.Option("--basepath", "a specific basePath to inlcude in the Swagger output");
                 c.Option("--format", "overrides the format of the Swagger output, can be Indented or None");
-                c.Option("--startupattribute", "seeks startup classes marked with StartupClass attribute (allowing multiple ones");
+                c.Option("--multiplestartups", "seeks startup classes marked with SwaggerStartup attribute, creating a file for each marked startup class. (--output option must be a directory);
                 c.OnRun((namedArgs) =>
                 {
                     var depsFile = namedArgs["startupassembly"].Replace(".dll", ".deps.json");
@@ -64,7 +64,7 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Option("--host", "");
                 c.Option("--basepath", "");
                 c.Option("--format", "");
-                c.Option("--startupattribute", "");
+                c.Option("--multiplestartups", "");
                 c.OnRun((namedArgs) =>
                 {
                     var startupAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(
@@ -72,7 +72,7 @@ namespace Swashbuckle.AspNetCore.Cli
 
                     Console.WriteLine($"Startup Assembly Name: {startupAssembly.FullName}");
 
-                    if (!namedArgs.ContainsKey("--startupattribute"))
+                    if (!namedArgs.ContainsKey("--multiplestartups"))
                     {
                         // 1) Configure host with provided startupassembly
                         IWebHost host = WebHost.CreateDefaultBuilder()
@@ -90,10 +90,10 @@ namespace Swashbuckle.AspNetCore.Cli
                     }
                     else
                     {
-                        IEnumerable<Type> startupList = startupAssembly.GetClassesWithStartupAttribute();
+                        IEnumerable<Type> startupList = startupAssembly.GetClassesWithSwaggerStartupAttribute();
                         if (!startupList.Any())
                         {
-                            throw new StartupAttributeException("No classes marked with StartupClass attribute have been found");
+                            throw new SwaggerStartupAttributeException("No classes marked with StartupClass attribute have been found");
                         }
 
                         Console.WriteLine("Startup classes detected (marked by StartupClass attribute):");
@@ -102,7 +102,7 @@ namespace Swashbuckle.AspNetCore.Cli
                         {
                             if (!namedArgs.ContainsKey("--output"))
                             {
-                                throw new StartupAttributeException("Missing --output argument");
+                                throw new SwaggerStartupAttributeException("Missing --output argument");
                             }
 
                             Console.WriteLine("* " + startupClass.FullName);
@@ -119,8 +119,7 @@ namespace Swashbuckle.AspNetCore.Cli
                             string fileName = string.Concat(
                                 namedArgs["--output"],
                                 Path.DirectorySeparatorChar,
-                                startupClass.GetStartupAttributeName(),
-                                ".swagger.json");
+                                startupClass.GetSwaggerStartupAttribute().OpenApiFileName);
 
                             string outputPath = Path.Combine(
                                 Directory.GetCurrentDirectory(),

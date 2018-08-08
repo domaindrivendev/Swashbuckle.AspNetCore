@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
-using CliStartupAttributeExample.Startups;
+using CliMultipleStartupsExample.Startups;
 
-namespace CliStartupAttributeExample
+namespace CliMultipleStartupsExample
 {
     public class Program
     {

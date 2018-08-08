@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace CliStartupAttributeExample
+namespace CliMultipleStartupsExample
 {
     public class ApiInfo
     {

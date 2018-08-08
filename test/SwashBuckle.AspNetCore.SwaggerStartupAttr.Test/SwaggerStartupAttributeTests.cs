@@ -5,13 +5,13 @@ using System.IO;
 using System.Reflection;
 using Xunit;
 
-using Swashbuckle.AspNetCore.StartupAttribute;
+using Swashbuckle.AspNetCore.SwaggerStartupAttr;
 
-namespace SwashBuckle.AspNetCore.StartupAttribute.Test
+namespace SwashBuckle.AspNetCore.SwaggerStartupAttr.Test
 {
-    public class StartupAttributeTests
+    public class SwaggerStartupAttributeTests
     {
-        private const string ProjectName = "CliStartupAttributeExample";
+        private const string ProjectName = "CliMultipleStartupsExample";
         private const string ProjectFolder = "../../../../WebSites/" + ProjectName + "/";
         private const string SwaggerDirName = "bin/SwaggerDir";
         private const string SwaggerDir = ProjectFolder + SwaggerDirName;
@@ -19,17 +19,17 @@ namespace SwashBuckle.AspNetCore.StartupAttribute.Test
         [Fact]
         public void FileGeneration()
         {
-            string publishCommand = $"dotnet publish {ProjectFolder}{ProjectName}.csproj -c Release";
-            publishCommand.Run();
+            string publishCommand = $"dotnet publish {ProjectFolder}{ProjectName}.csproj -c Debug";
+            var x = publishCommand.Run();
 
             Assert.True(Directory.Exists(SwaggerDir));
 
-            Assembly assembly = Assembly.GetAssembly(typeof(CliStartupAttributeExample.PrivateApiController));
+            Assembly assembly = Assembly.GetAssembly(typeof(CliMultipleStartupsExample.PrivateApiController));
 
-            ICollection<Type> startupClasses = assembly.GetClassesWithStartupAttribute().ToList();
+            ICollection<Type> startupClasses = assembly.GetClassesWithSwaggerStartupAttribute().ToList();
             foreach (Type startupClass in startupClasses)
             {
-                string expectedFileName = startupClass.GetStartupAttributeName() + ".swagger.json";
+                string expectedFileName = startupClass.GetSwaggerStartupAttribute().OpenApiFileName;
                 string filePath = Path.Combine(SwaggerDir, expectedFileName);
                 Assert.True(File.Exists(filePath));
 
@@ -42,7 +42,7 @@ namespace SwashBuckle.AspNetCore.StartupAttribute.Test
 
                 Assert.NotNull(parsedFile);
 
-                if (startupClass.Name == nameof(CliStartupAttributeExample.Startups.PublicStartup))
+                if (startupClass.Name == nameof(CliMultipleStartupsExample.Startups.PublicStartup))
                 {
                     Assert.Contains("Public test API", parsedFile);
 
@@ -57,7 +57,7 @@ namespace SwashBuckle.AspNetCore.StartupAttribute.Test
                     Assert.Contains("PublicAPIByIdGet", parsedFile);
                 }
 
-                if (startupClass.Name == nameof(CliStartupAttributeExample.Startups.PrivateStartup))
+                if (startupClass.Name == nameof(CliMultipleStartupsExample.Startups.PrivateStartup))
                 {
                     Assert.Contains("Private test API", parsedFile);
 

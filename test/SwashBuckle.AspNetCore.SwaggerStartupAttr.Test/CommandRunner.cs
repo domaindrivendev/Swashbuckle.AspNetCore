@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace SwashBuckle.AspNetCore.StartupAttribute.Test
+namespace SwashBuckle.AspNetCore.SwaggerStartupAttr.Test
 {
     public static class CommandRunner
     {
@@ -13,15 +13,15 @@ namespace SwashBuckle.AspNetCore.StartupAttribute.Test
                     FileName = "cmd",
                     Arguments = $"/c {args}",
 
+                    CreateNoWindow = true,
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
-                    CreateNoWindow = false,
                 }
             };
 
             process.Start();
-            string result = process.StandardOutput.ReadToEnd();
             process.WaitForExit();
+            string result = process.StandardOutput.ReadToEnd();
 
             return result;
         }

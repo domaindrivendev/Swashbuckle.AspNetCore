@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace SwashBuckle.AspNetCore.StartupAttribute.Test
+namespace SwashBuckle.AspNetCore.SwaggerStartupAttr.Test
 {
     public abstract class BaseStartup
     {

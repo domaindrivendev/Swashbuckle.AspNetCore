@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.StartupAttribute\Swashbuckle.AspNetCore.StartupAttribute.csproj" />
+    <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.SwaggerStartupAttr\Swashbuckle.AspNetCore.SwaggerStartupAttr.csproj" />
     <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.SwaggerGen\Swashbuckle.AspNetCore.SwaggerGen.csproj" />
     <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.SwaggerUI\Swashbuckle.AspNetCore.SwaggerUI.csproj" />
     <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.Swagger\Swashbuckle.AspNetCore.Swagger.csproj" />
@@ -32,7 +32,7 @@
 
   <Target Name="GenerateSwaggerSpec" AfterTargets="Publish">
     <MakeDir Directories="$(SwaggerDir)" Condition="!Exists('$(SwaggerDir)')" />
-    <Exec Command="dotnet ..\..\..\src\Swashbuckle.AspNetCore.Cli\bin\$(Configuration)\netcoreapp2.1\dotnet-swagger.dll tofile --startupattribute true --output $(SwaggerDir) $(OutputPath)$(AssemblyName).dll v1.0" />
+    <Exec Command="dotnet ..\..\..\src\Swashbuckle.AspNetCore.Cli\bin\$(Configuration)\netcoreapp2.1\dotnet-swagger.dll tofile --multiplestartups true --output $(SwaggerDir) $(OutputPath)$(AssemblyName).dll v1.0" />
   </Target>
 
 </Project>

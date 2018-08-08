@@ -1,4 +1,4 @@
-﻿namespace CliStartupAttributeExample
+﻿namespace CliMultipleStartupsExample
 {
     public class Entity
     {

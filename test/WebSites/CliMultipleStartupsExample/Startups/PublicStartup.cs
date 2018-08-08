@@ -5,11 +5,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Mvc;
 
-using Swashbuckle.AspNetCore.StartupAttribute;
+using Swashbuckle.AspNetCore.SwaggerStartupAttr;
 
-namespace CliStartupAttributeExample.Startups
+namespace CliMultipleStartupsExample.Startups
 {
-    [StartupClass("PublicAPI")]
+    [SwaggerStartup(
+    openApiFileName: "PublicAPI",
+    ClientClassName = "PublicClient",
+    ClientNamespace = "Public.Client")]
     public class PublicStartup : BaseStartup
     {
         private static readonly ApiVersion ApiVersion = new ApiVersion(1, 0);

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace CliStartupAttributeExample.Controllers
+namespace CliMultipleStartupsExample.Controllers
 {
     [Route("privateAPI")]
     public class PrivateController : PrivateApiController

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Controllers;
 using System.Reflection;
 
-namespace CliStartupAttributeExample
+namespace CliMultipleStartupsExample
 {
     public class TypedControllerFeatureProvider<TController> :
         ControllerFeatureProvider where TController : ControllerBase
