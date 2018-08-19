@@ -13,6 +13,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.StaticFiles;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json.Converters;
 
 namespace Swashbuckle.AspNetCore.ReDoc
 {
@@ -98,7 +100,7 @@ namespace Swashbuckle.AspNetCore.ReDoc
                 { "%(DocumentTitle)", _options.DocumentTitle },
                 { "%(HeadContent)", _options.HeadContent },
                 { "%(SpecUrl)", _options.SpecUrl },
-                { "%(Options)", SerializeToJson(_options.Options) }
+                { "%(ConfigObject)", SerializeToJson(_options.ConfigObject) }
             };
         }
 
@@ -106,7 +108,9 @@ namespace Swashbuckle.AspNetCore.ReDoc
         {
             return JsonConvert.SerializeObject(obj, new JsonSerializerSettings
             {
-                NullValueHandling = NullValueHandling.Include,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Converters = new[] { new StringEnumConverter(true) },
+                NullValueHandling = NullValueHandling.Ignore,
                 Formatting = Formatting.None
             });
         }
