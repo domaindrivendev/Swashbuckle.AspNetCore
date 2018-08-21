@@ -14,6 +14,8 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.StaticFiles;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using Newtonsoft.Json.Converters;
 
 namespace Swashbuckle.AspNetCore.SwaggerUI
 {
@@ -103,11 +105,13 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             };
         }
 
-        private string SerializeToJson(JObject jObject)
+        private string SerializeToJson(object obj)
         {
-            return JsonConvert.SerializeObject(jObject, new JsonSerializerSettings
+            return JsonConvert.SerializeObject(obj, new JsonSerializerSettings
             {
-                NullValueHandling = NullValueHandling.Include,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Converters = new[] { new StringEnumConverter(true) },
+                NullValueHandling = NullValueHandling.Ignore,
                 Formatting = Formatting.None
             });
         }
