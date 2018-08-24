@@ -81,6 +81,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private Schema CreateReferenceSchema(Type type, Queue<Type> referencedTypes)
         {
+            // If Nullable<T>, use the type argument
+            type = Nullable.GetUnderlyingType(type) ?? type;
             referencedTypes.Enqueue(type);
             return new Schema { Ref = "#/definitions/" + _schemaIdManager.IdFor(type) };
         }
