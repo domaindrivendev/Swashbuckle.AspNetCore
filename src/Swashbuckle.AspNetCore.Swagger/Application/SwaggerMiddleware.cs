@@ -21,13 +21,21 @@ namespace Swashbuckle.AspNetCore.Swagger
         public SwaggerMiddleware(
             RequestDelegate next,
             ISwaggerProvider swaggerProvider,
+            IOptions<MvcJsonOptions> mvcJsonOptionsAccessor,
+            IOptions<SwaggerOptions> optionsAccessor)
+            : this(next, swaggerProvider, mvcJsonOptionsAccessor, optionsAccessor.Value)
+        { }
+
+        public SwaggerMiddleware(
+            RequestDelegate next,
+            ISwaggerProvider swaggerProvider,
             IOptions<MvcJsonOptions> mvcJsonOptions,
             SwaggerOptions options)
         {
             _next = next;
             _swaggerProvider = swaggerProvider;
             _swaggerSerializer = SwaggerSerializerFactory.Create(mvcJsonOptions);
-            _options = options;
+            _options = options ?? new SwaggerOptions();
             _requestMatcher = new TemplateMatcher(TemplateParser.Parse(options.RouteTemplate), new RouteValueDictionary());
         }
 
@@ -43,15 +51,22 @@ namespace Swashbuckle.AspNetCore.Swagger
                 ? null
                 : httpContext.Request.PathBase.ToString();
 
-            var swagger = _swaggerProvider.GetSwagger(documentName, null, basePath);
-
-            // One last opportunity to modify the Swagger Document - this time with request context
-            foreach (var filter in _options.PreSerializeFilters)
+            try
             {
-                filter(swagger, httpContext.Request);
-            }
+                var swagger = _swaggerProvider.GetSwagger(documentName, null, basePath);
 
-            await RespondWithSwaggerJson(httpContext.Response, swagger);
+                // One last opportunity to modify the Swagger Document - this time with request context
+                foreach (var filter in _options.PreSerializeFilters)
+                {
+                    filter(swagger, httpContext.Request);
+                }
+
+                await RespondWithSwaggerJson(httpContext.Response, swagger);
+            }
+            catch (UnknownSwaggerDocument)
+            {
+                RespondWithNotFound(httpContext.Response);
+            }
         }
 
         private bool RequestingSwaggerDocument(HttpRequest request, out string documentName)
@@ -64,6 +79,11 @@ namespace Swashbuckle.AspNetCore.Swagger
 
             documentName = routeValues["documentName"].ToString();
             return true;
+        }
+
+        private void RespondWithNotFound(HttpResponse response)
+        {
+            response.StatusCode = 404;
         }
 
         private async Task RespondWithSwaggerJson(HttpResponse response, SwaggerDocument swagger)

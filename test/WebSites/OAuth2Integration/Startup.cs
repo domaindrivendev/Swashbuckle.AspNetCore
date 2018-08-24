@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using OAuth2Integration.ResourceServer.Swagger;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace OAuth2Integration
 {
@@ -114,7 +115,7 @@ namespace OAuth2Integration
                     c.OAuthRealm("test-realm");
                     c.OAuthAppName("test-app");
                     c.OAuthScopeSeparator(" ");
-                    c.OAuthAdditionalQueryStringParams(new { foo = "bar" });
+                    c.OAuthAdditionalQueryStringParams(new Dictionary<string, string> { { "foo", "bar" }});
                     c.OAuthUseBasicAuthenticationWithAccessCodeGrant();
                 });
             });
