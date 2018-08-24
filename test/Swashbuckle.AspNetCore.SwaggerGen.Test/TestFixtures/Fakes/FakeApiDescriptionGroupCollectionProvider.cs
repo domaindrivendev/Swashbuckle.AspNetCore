@@ -22,8 +22,8 @@ using Microsoft.AspNetCore.Mvc.DataAnnotations.Internal;
 using Moq;
 using Newtonsoft.Json;
 using Microsoft.Extensions.ObjectPool;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -99,7 +99,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             descriptor.ControllerTypeInfo = controllerType.GetTypeInfo();
 
             descriptor.FilterDescriptors = descriptor.MethodInfo.GetCustomAttributes<ProducesResponseTypeAttribute>()
-                .Select((filter) => new FilterDescriptor(filter, FilterScope.Action))
+                .Select((filter) => new Microsoft.AspNetCore.Mvc.Filters.FilterDescriptor(filter, FilterScope.Action))
                 .ToList();
 
             descriptor.RouteValues = new Dictionary<string, string> {

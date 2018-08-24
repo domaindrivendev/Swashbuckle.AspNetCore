@@ -13,33 +13,29 @@ namespace Swashbuckle.AspNetCore.Swagger
     public class SwaggerMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ISwaggerProvider _swaggerProvider;
         private readonly JsonSerializer _swaggerSerializer;
         private readonly SwaggerOptions _options;
         private readonly TemplateMatcher _requestMatcher;
 
         public SwaggerMiddleware(
             RequestDelegate next,
-            ISwaggerProvider swaggerProvider,
             IOptions<MvcJsonOptions> mvcJsonOptionsAccessor,
             IOptions<SwaggerOptions> optionsAccessor)
-            : this(next, swaggerProvider, mvcJsonOptionsAccessor, optionsAccessor.Value)
+            : this(next, mvcJsonOptionsAccessor, optionsAccessor.Value)
         { }
 
         public SwaggerMiddleware(
             RequestDelegate next,
-            ISwaggerProvider swaggerProvider,
             IOptions<MvcJsonOptions> mvcJsonOptions,
             SwaggerOptions options)
         {
             _next = next;
-            _swaggerProvider = swaggerProvider;
             _swaggerSerializer = SwaggerSerializerFactory.Create(mvcJsonOptions);
             _options = options ?? new SwaggerOptions();
             _requestMatcher = new TemplateMatcher(TemplateParser.Parse(options.RouteTemplate), new RouteValueDictionary());
         }
 
-        public async Task Invoke(HttpContext httpContext)
+        public async Task Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
         {
             if (!RequestingSwaggerDocument(httpContext.Request, out string documentName))
             {
@@ -53,7 +49,7 @@ namespace Swashbuckle.AspNetCore.Swagger
 
             try
             {
-                var swagger = _swaggerProvider.GetSwagger(documentName, null, basePath);
+                var swagger = swaggerProvider.GetSwagger(documentName, null, basePath);
 
                 // One last opportunity to modify the Swagger Document - this time with request context
                 foreach (var filter in _options.PreSerializeFilters)

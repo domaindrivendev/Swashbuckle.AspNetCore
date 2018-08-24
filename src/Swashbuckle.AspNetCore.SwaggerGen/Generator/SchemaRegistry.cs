@@ -14,17 +14,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         private readonly JsonSerializerSettings _jsonSerializerSettings;
         private readonly IContractResolver _jsonContractResolver;
-        private readonly SchemaRegistrySettings _settings;
+        private readonly SchemaRegistryOptions _options;
         private readonly SchemaIdManager _schemaIdManager;
 
         public SchemaRegistry(
             JsonSerializerSettings jsonSerializerSettings,
-            SchemaRegistrySettings settings = null)
+            SchemaRegistryOptions options = null)
         {
             _jsonSerializerSettings = jsonSerializerSettings;
             _jsonContractResolver = _jsonSerializerSettings.ContractResolver ?? new DefaultContractResolver();
-            _settings = settings ?? new SchemaRegistrySettings();
-            _schemaIdManager = new SchemaIdManager(_settings.SchemaIdSelector);
+            _options = options ?? new SchemaRegistryOptions();
+            _schemaIdManager = new SchemaIdManager(_options.SchemaIdSelector);
             Definitions = new Dictionary<string, Schema>();
         }
 
@@ -60,14 +60,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var jsonContract = _jsonContractResolver.ResolveContract(type);
 
-            var createReference = !_settings.CustomTypeMappings.ContainsKey(type)
+            var createReference = !_options.CustomTypeMappings.ContainsKey(type)
                 && type != typeof(object)
                 && (// Type describes an object
                     jsonContract is JsonObjectContract ||
                     // Type is self-referencing
                     jsonContract.IsSelfReferencingArrayOrDictionary() ||
                     // Type is enum and opt-in flag set
-                    (type.GetTypeInfo().IsEnum && _settings.UseReferencedDefinitionsForEnums));
+                    (type.GetTypeInfo().IsEnum && _options.UseReferencedDefinitionsForEnums));
 
             return createReference
                 ? CreateReferenceSchema(type, referencedTypes)
@@ -86,9 +86,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var jsonContract = _jsonContractResolver.ResolveContract(type);
 
-            if (_settings.CustomTypeMappings.ContainsKey(type))
+            if (_options.CustomTypeMappings.ContainsKey(type))
             {
-                schema = _settings.CustomTypeMappings[type]();
+                schema = _options.CustomTypeMappings[type]();
             }
             else
             {
@@ -107,7 +107,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
 
             var filterContext = new SchemaFilterContext(type, jsonContract, this);
-            foreach (var filter in _settings.SchemaFilters)
+            foreach (var filter in _options.SchemaFilters)
             {
                 filter.Apply(schema, filterContext);
             }
@@ -137,9 +137,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var stringEnumConverter = primitiveContract.Converter as StringEnumConverter
                 ?? _jsonSerializerSettings.Converters.OfType<StringEnumConverter>().FirstOrDefault();
 
-            if (_settings.DescribeAllEnumsAsStrings || stringEnumConverter != null)
+            if (_options.DescribeAllEnumsAsStrings || stringEnumConverter != null)
             {
-                var camelCase = _settings.DescribeStringEnumsInCamelCase
+                var camelCase = _options.DescribeStringEnumsInCamelCase
                     || (stringEnumConverter != null && stringEnumConverter.CamelCaseText);
 
                 var enumNames = type.GetFields(BindingFlags.Public | BindingFlags.Static)
@@ -217,7 +217,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var applicableJsonProperties = jsonContract.Properties
                 .Where(prop => !prop.Ignored)
-                .Where(prop => !(_settings.IgnoreObsoleteProperties && prop.IsObsolete()))
+                .Where(prop => !(_options.IgnoreObsoleteProperties && prop.IsObsolete()))
                 .Select(prop => prop);
 
             var required = applicableJsonProperties

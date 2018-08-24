@@ -495,12 +495,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             });
         }
 
-        private SchemaRegistry Subject(Action<SchemaRegistrySettings> configure = null)
+        private SchemaRegistry Subject(Action<SchemaRegistryOptions> setupAction = null)
         {
-            var settings = new SchemaRegistrySettings();
-            if (configure != null) configure(settings);
+            var options = new SchemaRegistryOptions();
+            if (setupAction != null) setupAction(options);
 
-            return new SchemaRegistry(new JsonSerializerSettings(), settings);
+            return new SchemaRegistry(new JsonSerializerSettings(), options);
         }
 
         private SchemaRegistry Subject(JsonSerializerSettings jsonSerializerSettings)

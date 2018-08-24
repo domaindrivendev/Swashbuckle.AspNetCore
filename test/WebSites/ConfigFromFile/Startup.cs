@@ -25,10 +25,7 @@ namespace ConfigFromFile
 
             services.AddSwaggerGen();
 
-            services.Configure<SwaggerGenOptions>(c =>
-            {
-                c.SwaggerDoc("v1", new Info { Version = "V1", Title = "My API" });
-            });
+            services.Configure<SwaggerGenOptions>(Configuration.GetSection("SwaggerGen"));
 
             services.Configure<SwaggerOptions>(Configuration.GetSection("Swagger"));
 
