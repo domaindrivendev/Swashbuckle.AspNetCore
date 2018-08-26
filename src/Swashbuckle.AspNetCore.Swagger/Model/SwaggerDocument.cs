@@ -304,6 +304,11 @@ namespace Swashbuckle.AspNetCore.Swagger
 
     public class PartialSchema
     {
+        public PartialSchema()
+        {
+            Extensions = new Dictionary<string, object>();
+        }
+
         public string Type { get; set; }
 
         public string Format { get; set; }
@@ -337,6 +342,9 @@ namespace Swashbuckle.AspNetCore.Swagger
         public IList<object> Enum { get; set; }
 
         public int? MultipleOf { get; set; }
+
+        [JsonExtensionData]
+        public Dictionary<string, object> Extensions { get; private set; }
     }
 
     public class Response
