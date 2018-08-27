@@ -7,7 +7,7 @@ namespace GenericControllers.Controllers
     public abstract class GenericResourceController<TResource> where TResource : new()
     {
         /// <summary>
-        /// creates a resource
+        /// Creates a resource
         /// </summary>
         /// <param name="resource"></param>
         /// <returns></returns>
@@ -17,14 +17,20 @@ namespace GenericControllers.Controllers
             return 1;
         }
 
+        /// <summary>
+        /// Retrieves all resources
+        /// </summary>
         [HttpGet]
-        public IEnumerable<TResource> GetAll()
+        public IEnumerable<TResource> Get()
         {
             return new[] { new TResource(), new TResource() };
         }
 
+        /// <summary>
+        /// Retrieves a specific resource
+        /// </summary>
         [HttpGet("{id}")]
-        public TResource GetById(int id)
+        public TResource Get(int id)
         {
             return new TResource();
         }

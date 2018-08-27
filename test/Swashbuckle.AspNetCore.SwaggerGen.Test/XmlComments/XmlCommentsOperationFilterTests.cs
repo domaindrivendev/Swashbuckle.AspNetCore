@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Xml.XPath;
 using System.Reflection;
 using System.IO;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Xunit;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -109,7 +110,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 .ApiDescriptionGroups.Items.First()
                 .Items.First();
 
-            return new OperationFilterContext(apiDescription, null, null);
+            var methodInfo = (apiDescription.ActionDescriptor as ControllerActionDescriptor).MethodInfo;
+
+            return new OperationFilterContext(apiDescription, null, methodInfo);
         }
 
         private XmlCommentsOperationFilter Subject()

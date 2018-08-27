@@ -26,10 +26,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public void Apply(Operation operation, OperationFilterContext context)
         {
-            var controllerActionDescriptor = context.ApiDescription.ActionDescriptor as ControllerActionDescriptor;
-            if (controllerActionDescriptor == null) return;
+            if (context.MethodInfo == null) return;
 
-            var memberName = XmlCommentsMemberNameHelper.GetMemberNameForMethod(controllerActionDescriptor.MethodInfo);
+            // If method is from a constructed generic type, look for comments from the generic type method
+            var targetMethod = context.MethodInfo.DeclaringType.IsConstructedGenericType
+                ? GetGenericTypeMethodOrNullFor(context.MethodInfo)
+                : context.MethodInfo;
+
+            if (targetMethod == null) return;
+
+            var memberName = XmlCommentsMemberNameHelper.GetMemberNameForMethod(targetMethod);
             var methodNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, memberName));
 
             if (methodNode != null)
@@ -41,6 +47,24 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             // Special handling for parameters that are bound to model properties
             ApplyPropertiesXmlToPropertyParameters(operation.Parameters, context.ApiDescription);
+        }
+
+        private MethodInfo GetGenericTypeMethodOrNullFor(MethodInfo constructedTypeMethod)
+        {
+            var constructedType = constructedTypeMethod.DeclaringType;
+            var genericTypeDefinition = constructedType.GetGenericTypeDefinition();
+
+            // Retrieve list of candidate methods that match name and parameter count
+            var candidateMethods = genericTypeDefinition.GetMethods()
+                .Where(m =>
+                {
+                    return (m.Name == constructedTypeMethod.Name)
+                        && (m.GetParameters().Length == constructedTypeMethod.GetParameters().Length);
+                });
+
+
+            // If inconclusive, just return null
+            return (candidateMethods.Count() == 1) ? candidateMethods.First() : null;
         }
 
         private void ApplyMethodXmlToOperation(Operation operation, XPathNavigator methodNode)

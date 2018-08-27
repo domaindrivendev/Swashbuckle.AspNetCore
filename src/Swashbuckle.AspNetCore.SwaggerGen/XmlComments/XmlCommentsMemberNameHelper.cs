@@ -11,15 +11,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var builder = new StringBuilder("M:");
 
-            // If method is from a constructed generic type, use the generic type
-            var sourceMethod = method.DeclaringType.IsConstructedGenericType
-                ? method.DeclaringType.GetGenericTypeDefinition().GetMethod(method.Name)
-                : method;
+            builder.Append(QualifiedNameFor(method.DeclaringType));
+            builder.Append($".{method.Name}");
 
-            builder.Append(QualifiedNameFor(sourceMethod.DeclaringType));
-            builder.Append($".{sourceMethod.Name}");
-
-            var parameters = sourceMethod.GetParameters();
+            var parameters = method.GetParameters();
             if (parameters.Any())
             {
                 var parametersNames = parameters.Select(p =>
