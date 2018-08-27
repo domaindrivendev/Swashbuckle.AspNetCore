@@ -250,11 +250,11 @@ namespace Swashbuckle.AspNetCore.Swagger
 
         public int? MultipleOf { get; set; }
 
-        public int? Maximum { get; set; }
+        public double? Maximum { get; set; }
 
         public bool? ExclusiveMaximum { get; set; }
 
-        public int? Minimum { get; set; }
+        public double? Minimum { get; set; }
 
         public bool? ExclusiveMinimum { get; set; }
 
@@ -319,11 +319,11 @@ namespace Swashbuckle.AspNetCore.Swagger
 
         public object Default { get; set; }
 
-        public int? Maximum { get; set; }
+        public double? Maximum { get; set; }
 
         public bool? ExclusiveMaximum { get; set; }
 
-        public int? Minimum { get; set; }
+        public double? Minimum { get; set; }
 
         public bool? ExclusiveMinimum { get; set; }
 
