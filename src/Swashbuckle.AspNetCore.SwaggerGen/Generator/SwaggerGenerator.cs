@@ -7,8 +7,8 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Swagger;
-using Microsoft.Extensions.Logging;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -165,12 +165,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 Tags = new[] { _options.TagSelector(apiDescription) },
                 OperationId = apiDescription.FriendlyId(),
-                Consumes = apiDescription.SupportedRequestMediaTypes().ToList(),
-                Produces = apiDescription.SupportedResponseMediaTypes().ToList(),
+                Consumes = CreateConsumes(apiDescription, customAttributes),
+                Produces = CreateProduces(apiDescription, customAttributes),
                 Parameters = CreateParameters(apiDescription, schemaRegistry),
                 Responses = CreateResponses(apiDescription, schemaRegistry),
                 Deprecated = isDeprecated ? true : (bool?)null
             };
+
+            if (operation.Consumes.Count() == 0 && operation.Parameters.Any(p => p.In == "formData"))
+                operation.Consumes.Add("application/x-www-form-urlencoded");
 
             var filterContext = new OperationFilterContext(
                 apiDescription,
@@ -183,6 +186,32 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
 
             return operation;
+        }
+
+        private IList<string> CreateConsumes(ApiDescription apiDescription, IEnumerable<object> customAttributes)
+        {
+            var consumesAttribute = customAttributes.OfType<ConsumesAttribute>().FirstOrDefault();
+
+            var mediaTypes = (consumesAttribute != null)
+                ? consumesAttribute.ContentTypes
+                : apiDescription.SupportedRequestFormats
+                    .Select(apiRequestFormat => apiRequestFormat.MediaType);
+
+            return mediaTypes.ToList();
+        }
+
+        private IList<string> CreateProduces(ApiDescription apiDescription, IEnumerable<object> customAttributes)
+        {
+            var producesAttribute = customAttributes.OfType<ProducesAttribute>().FirstOrDefault();
+
+            var mediaTypes = (producesAttribute != null)
+                ? producesAttribute.ContentTypes
+                : apiDescription.SupportedResponseTypes
+                    .SelectMany(apiResponseType => apiResponseType.ApiResponseFormats)
+                    .Select(apiResponseFormat => apiResponseFormat.MediaType)
+                    .Distinct();
+
+            return mediaTypes.ToList();
         }
 
         private IList<IParameter> CreateParameters(

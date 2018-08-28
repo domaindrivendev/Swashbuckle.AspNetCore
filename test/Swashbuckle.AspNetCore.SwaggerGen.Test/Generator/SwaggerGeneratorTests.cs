@@ -158,6 +158,42 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GetSwagger_SetsConsumesFromConsumesAttribute_IfPresentOnControllerOrAction()
+        {
+            var subject = Subject(setupApis: apis =>
+                apis.Add("POST", "resource", nameof(FakeController.AnnotatedWithConsumes)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var operation = swagger.Paths["/resource"].Post;
+            Assert.Equal(new[] { "application/xml" }, operation.Consumes.ToArray());
+        }
+
+        [Fact]
+        public void GetSwagger_SetsConsumesToFormMediaType_IfActionContainsFormParams()
+        {
+            var subject = Subject(setupApis: apis =>
+                apis.Add("POST", "form", nameof(FakeController.AcceptsStringFromForm)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var operation = swagger.Paths["/form"].Post;
+            Assert.Equal(new[] { "application/x-www-form-urlencoded" }, operation.Consumes.ToArray());
+        }
+
+        [Fact]
+        public void GetSwagger_SetsProducesFromProducesAttribute_IfPresentOnControllerOrAction()
+        {
+            var subject = Subject(setupApis: apis =>
+                apis.Add("GET", "resource", nameof(FakeController.AnnotatedWithProduces)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var operation = swagger.Paths["/resource"].Get;
+            Assert.Equal(new[] { "application/xml" }, operation.Produces.ToArray());
+        }
+
+        [Fact]
         public void GetSwagger_SetsCollectionFormatMulti_ForQueryOrHeaderBoundArrayParams()
         {
             var subject = Subject(setupApis: apis => apis

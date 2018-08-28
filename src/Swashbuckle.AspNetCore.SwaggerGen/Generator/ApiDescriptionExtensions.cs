@@ -60,21 +60,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return apiDescription.RelativePath.Split('?').First();
         }
 
-        internal static IEnumerable<string> SupportedRequestMediaTypes(this ApiDescription apiDescription)
-        {
-            return apiDescription.SupportedRequestFormats
-                .Select(requestFormat => requestFormat.MediaType)
-                .Distinct();
-        }
-
-        internal static IEnumerable<string> SupportedResponseMediaTypes(this ApiDescription apiDescription)
-        {
-            return apiDescription.SupportedResponseTypes
-                .SelectMany(responseType => responseType.ApiResponseFormats)
-                .Select(responseFormat => responseFormat.MediaType)
-                .Distinct();
-        }
-
         internal static bool IsObsolete(this ApiDescription apiDescription)
         {
             if (!apiDescription.TryGetMethodInfo(out MethodInfo methodInfo))
