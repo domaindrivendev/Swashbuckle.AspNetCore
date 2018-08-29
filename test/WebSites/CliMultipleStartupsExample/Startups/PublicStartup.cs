@@ -10,9 +10,9 @@ using Swashbuckle.AspNetCore.SwaggerStartupAttr;
 namespace CliMultipleStartupsExample.Startups
 {
     [SwaggerStartup(
-    openApiFileName: "PublicAPI",
-    ClientClassName = "PublicClient",
-    ClientNamespace = "Public.Client")]
+        openApiFileName: "PublicAPI",
+        ClientClassName = "PublicClient",
+        ClientNamespace = "Public.Client")]
     public class PublicStartup : BaseStartup
     {
         private static readonly ApiVersion ApiVersion = new ApiVersion(1, 0);

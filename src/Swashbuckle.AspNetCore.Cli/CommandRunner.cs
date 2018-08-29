@@ -90,7 +90,7 @@ namespace Swashbuckle.AspNetCore.Cli
                 namedArgs.Add(name, argsQueue.Dequeue());
             }
 
-            return argsQueue.Count() == 0;
+            return !argsQueue.Any();
         }
 
         private void PrintUsage()

@@ -11,18 +11,32 @@ namespace SwashBuckle.AspNetCore.SwaggerStartupAttr.Test
 {
     public class SwaggerStartupAttributeTests
     {
-        private const string ProjectName = "CliMultipleStartupsExample";
-        private const string ProjectFolder = "../../../../WebSites/" + ProjectName + "/";
-        private const string SwaggerDirName = "bin/SwaggerDir";
-        private const string SwaggerDir = ProjectFolder + SwaggerDirName;
+        private const string _solutionName = "Swashbuckle.AspNetCore";
+        private const string _projectName = "CliMultipleStartupsExample";
+        private const string _swaggerDirName = "bin\\SwaggerDir";
+        private readonly string _projectFolder;
+        private readonly string _swaggerDir;
+
+        public SwaggerStartupAttributeTests()
+        {
+            string pwd = Path.GetFullPath(Directory.GetCurrentDirectory());
+
+            string solutionDir = Path.Combine(
+                pwd.Substring(0, pwd.IndexOf($"\\{_solutionName}")),
+                $"{_solutionName}\\");
+
+            _projectFolder = Path.Combine(solutionDir, $"test\\WebSites\\{_projectName}");
+
+            _swaggerDir = Path.Combine(_projectFolder, _swaggerDirName);
+        }
 
         [Fact]
         public void FileGeneration()
         {
-            string publishCommand = $"dotnet publish {ProjectFolder}{ProjectName}.csproj -c Release";
-            var x = publishCommand.Run();
+            string publishCommand = $"dotnet publish {_projectFolder}{_projectName}.csproj -c Release";
+            publishCommand.Run();
 
-            Assert.True(Directory.Exists(SwaggerDir));
+            Assert.True(Directory.Exists(_swaggerDir));
 
             Assembly assembly = Assembly.GetAssembly(typeof(CliMultipleStartupsExample.PrivateApiController));
 
@@ -30,12 +44,11 @@ namespace SwashBuckle.AspNetCore.SwaggerStartupAttr.Test
             foreach (Type startupClass in startupClasses)
             {
                 string expectedFileName = startupClass.GetSwaggerStartupAttribute().OpenApiFileName;
-                string filePath = Path.Combine(SwaggerDir, expectedFileName);
+                string filePath = Path.Combine(_swaggerDir, expectedFileName);
                 Assert.True(File.Exists(filePath));
 
-                StreamReader reader = new StreamReader(filePath);
                 string parsedFile = null;
-                using (reader)
+                using (StreamReader reader = new StreamReader(filePath))
                 {
                     parsedFile = reader.ReadToEnd();
                 }
