@@ -12,27 +12,29 @@ namespace Microsoft.Extensions.DependencyInjection
             this IServiceCollection services,
             Action<SwaggerGenOptions> setupAction = null)
         {
+            // Add Mvc convention to ensure ApiExplorer is enabled for all actions
             services.Configure<MvcOptions>(c =>
                 c.Conventions.Add(new SwaggerApplicationConvention()));
 
-            services.Configure(setupAction ?? (opts => { }));
+            // Register generator and it's dependencies
+            services.AddTransient<ISwaggerProvider, SwaggerGenerator>();
+            services.AddTransient<ISchemaRegistryFactory, SchemaRegistryFactory>();
 
-            services.AddTransient(CreateSwaggerProvider);
+            // Register custom configurators that assign values from SwaggerGenOptions (i.e. high level config)
+            // to the service-specific options (i.e. lower-level config)
+            services.AddTransient<IConfigureOptions<SwaggerGeneratorOptions>, ConfigureSwaggerGeneratorOptions>();
+            services.AddTransient<IConfigureOptions<SchemaRegistryOptions>, ConfigureSchemaRegistryOptions>();
+
+            if (setupAction != null) services.ConfigureSwaggerGen(setupAction);
 
             return services;
         }
 
         public static void ConfigureSwaggerGen(
             this IServiceCollection services,
-            Action<SwaggerGenOptions> setupAction = null)
+            Action<SwaggerGenOptions> setupAction)
         {
-            services.Configure(setupAction ?? (opts => { }));
-        }
-
-        private static ISwaggerProvider CreateSwaggerProvider(IServiceProvider serviceProvider)
-        {
-            var swaggerGenOptions = serviceProvider.GetRequiredService<IOptions<SwaggerGenOptions>>().Value;
-            return swaggerGenOptions.CreateSwaggerProvider(serviceProvider);
+            services.Configure(setupAction);
         }
     }
 }

@@ -6,6 +6,8 @@ using System.Reflection;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -14,16 +16,23 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         private readonly IApiDescriptionGroupCollectionProvider _apiDescriptionsProvider;
         private readonly ISchemaRegistryFactory _schemaRegistryFactory;
-        private readonly SwaggerGeneratorSettings _settings;
+        private readonly SwaggerGeneratorOptions _options;
 
         public SwaggerGenerator(
             IApiDescriptionGroupCollectionProvider apiDescriptionsProvider,
             ISchemaRegistryFactory schemaRegistryFactory,
-            SwaggerGeneratorSettings settings = null)
+            IOptions<SwaggerGeneratorOptions> optionsAccessor)
+            : this (apiDescriptionsProvider, schemaRegistryFactory, optionsAccessor.Value)
+        { }
+
+        public SwaggerGenerator(
+            IApiDescriptionGroupCollectionProvider apiDescriptionsProvider,
+            ISchemaRegistryFactory schemaRegistryFactory,
+            SwaggerGeneratorOptions options)
         {
             _apiDescriptionsProvider = apiDescriptionsProvider;
             _schemaRegistryFactory = schemaRegistryFactory;
-            _settings = settings ?? new SwaggerGeneratorSettings();
+            _options = options ?? new SwaggerGeneratorOptions();
         }
 
         public SwaggerDocument GetSwagger(
@@ -32,13 +41,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             string basePath = null,
             string[] schemes = null)
         {
-            if (!_settings.SwaggerDocs.TryGetValue(documentName, out Info info))
+            if (!_options.SwaggerDocs.TryGetValue(documentName, out Info info))
                 throw new UnknownSwaggerDocument(documentName);
 
             var applicableApiDescriptions = _apiDescriptionsProvider.ApiDescriptionGroups.Items
                 .SelectMany(group => group.Items)
-                .Where(apiDesc => _settings.DocInclusionPredicate(documentName, apiDesc))
-                .Where(apiDesc => !_settings.IgnoreObsoleteActions || !apiDesc.IsObsolete());
+                .Where(apiDesc => _options.DocInclusionPredicate(documentName, apiDesc))
+                .Where(apiDesc => !_options.IgnoreObsoleteActions || !apiDesc.IsObsolete());
 
             var schemaRegistry = _schemaRegistryFactory.Create();
 
@@ -50,8 +59,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 Schemes = schemes,
                 Paths = CreatePathItems(applicableApiDescriptions, schemaRegistry),
                 Definitions = schemaRegistry.Definitions,
-                SecurityDefinitions = _settings.SecurityDefinitions.Any() ? _settings.SecurityDefinitions : null,
-                Security = _settings.SecurityRequirements.Any() ? _settings.SecurityRequirements : null
+                SecurityDefinitions = _options.SecurityDefinitions.Any() ? _options.SecurityDefinitions : null,
+                Security = _options.SecurityRequirements.Any() ? _options.SecurityRequirements : null
             };
 
             var filterContext = new DocumentFilterContext(
@@ -59,7 +68,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 applicableApiDescriptions,
                 schemaRegistry);
 
-            foreach (var filter in _settings.DocumentFilters)
+            foreach (var filter in _options.DocumentFilters)
             {
                 filter.Apply(swaggerDoc, filterContext);
             }
@@ -72,7 +81,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             ISchemaRegistry schemaRegistry)
         {
             return apiDescriptions
-                .OrderBy(_settings.SortKeySelector)
+                .OrderBy(_options.SortKeySelector)
                 .GroupBy(apiDesc => apiDesc.RelativePathSansQueryString())
                 .ToDictionary(group => "/" + group.Key, group => CreatePathItem(group, schemaRegistry));
         }
@@ -97,7 +106,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         "Actions require an explicit HttpMethod binding for Swagger 2.0",
                         group.First().ActionDescriptor.DisplayName));
 
-                if (group.Count() > 1 && _settings.ConflictingActionsResolver == null)
+                if (group.Count() > 1 && _options.ConflictingActionsResolver == null)
                     throw new NotSupportedException(string.Format(
                         "HTTP method \"{0}\" & path \"{1}\" overloaded by actions - {2}. " +
                         "Actions require unique method/path combination for Swagger 2.0. Use ConflictingActionsResolver as a workaround",
@@ -105,7 +114,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         group.First().RelativePathSansQueryString(),
                         string.Join(",", group.Select(apiDesc => apiDesc.ActionDescriptor.DisplayName))));
 
-                var apiDescription = (group.Count() > 1) ? _settings.ConflictingActionsResolver(group) : group.Single();
+                var apiDescription = (group.Count() > 1) ? _options.ConflictingActionsResolver(group) : group.Single();
 
                 switch (httpMethod)
                 {
@@ -154,26 +163,55 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var operation = new Operation
             {
-                Tags = new[] { _settings.TagSelector(apiDescription) },
+                Tags = new[] { _options.TagSelector(apiDescription) },
                 OperationId = apiDescription.FriendlyId(),
-                Consumes = apiDescription.SupportedRequestMediaTypes().ToList(),
-                Produces = apiDescription.SupportedResponseMediaTypes().ToList(),
+                Consumes = CreateConsumes(apiDescription, customAttributes),
+                Produces = CreateProduces(apiDescription, customAttributes),
                 Parameters = CreateParameters(apiDescription, schemaRegistry),
                 Responses = CreateResponses(apiDescription, schemaRegistry),
                 Deprecated = isDeprecated ? true : (bool?)null
             };
+
+            if (operation.Consumes.Count() == 0 && operation.Parameters.Any(p => p.In == "formData"))
+                operation.Consumes.Add("application/x-www-form-urlencoded");
 
             var filterContext = new OperationFilterContext(
                 apiDescription,
                 schemaRegistry,
                 methodInfo);
 
-            foreach (var filter in _settings.OperationFilters)
+            foreach (var filter in _options.OperationFilters)
             {
                 filter.Apply(operation, filterContext);
             }
 
             return operation;
+        }
+
+        private IList<string> CreateConsumes(ApiDescription apiDescription, IEnumerable<object> customAttributes)
+        {
+            var consumesAttribute = customAttributes.OfType<ConsumesAttribute>().FirstOrDefault();
+
+            var mediaTypes = (consumesAttribute != null)
+                ? consumesAttribute.ContentTypes
+                : apiDescription.SupportedRequestFormats
+                    .Select(apiRequestFormat => apiRequestFormat.MediaType);
+
+            return mediaTypes.ToList();
+        }
+
+        private IList<string> CreateProduces(ApiDescription apiDescription, IEnumerable<object> customAttributes)
+        {
+            var producesAttribute = customAttributes.OfType<ProducesAttribute>().FirstOrDefault();
+
+            var mediaTypes = (producesAttribute != null)
+                ? producesAttribute.ContentTypes
+                : apiDescription.SupportedResponseTypes
+                    .SelectMany(apiResponseType => apiResponseType.ApiResponseFormats)
+                    .Select(apiResponseFormat => apiResponseFormat.MediaType)
+                    .Distinct();
+
+            return mediaTypes.ToList();
         }
 
         private IList<IParameter> CreateParameters(
@@ -208,7 +246,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             else if (apiParameterDescription.TryGetPropertyInfo(out propertyInfo))
                 customAttributes = propertyInfo.GetCustomAttributes(true);
 
-            var name = _settings.DescribeAllParametersInCamelCase
+            var name = _options.DescribeAllParametersInCamelCase
                 ? apiParameterDescription.Name.ToCamelCase()
                 : apiParameterDescription.Name;
 
@@ -240,7 +278,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 parameterInfo,
                 propertyInfo);
 
-            foreach (var filter in _settings.ParameterFilters)
+            foreach (var filter in _options.ParameterFilters)
             {
                 filter.Apply(parameter, filterContext);
             }

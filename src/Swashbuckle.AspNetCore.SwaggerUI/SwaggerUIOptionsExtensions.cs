@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Linq;
+using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
@@ -42,8 +43,9 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="name">The description that appears in the document selector drop-down</param>
         public static void SwaggerEndpoint(this SwaggerUIOptions options, string url, string name)
         {
-            var urls = options.ConfigObject.Value<JArray>("urls");
-            urls.Add(JObject.FromObject(new { url = url, name = name }));
+            var urls = new List<UrlDescriptor>(options.ConfigObject.Urls ?? Enumerable.Empty<UrlDescriptor>());
+            urls.Add(new UrlDescriptor { Url = url, Name = name} );
+            options.ConfigObject.Urls = urls;
         }
 
         /// <summary>
@@ -52,7 +54,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="options"></param>
         public static void EnableDeepLinking(this SwaggerUIOptions options)
         {
-            options.ConfigObject["deepLinking"] = true;
+            options.ConfigObject.DeepLinking = true;
         }
 
         /// <summary>
@@ -61,7 +63,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="options"></param>
         public static void DisplayOperationId(this SwaggerUIOptions options)
         {
-            options.ConfigObject["displayOperationId"] = true;
+            options.ConfigObject.DisplayOperationId = true;
         }
 
         /// <summary>
@@ -71,7 +73,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="depth"></param>
         public static void DefaultModelsExpandDepth(this SwaggerUIOptions options, int depth)
         {
-            options.ConfigObject["defaultModelsExpandDepth"] = depth;
+            options.ConfigObject.DefaultModelsExpandDepth = depth;
         }
 
         /// <summary>
@@ -81,7 +83,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="depth"></param>
         public static void DefaultModelExpandDepth(this SwaggerUIOptions options, int depth)
         {
-            options.ConfigObject["defaultModelExpandDepth"] = depth;
+            options.ConfigObject.DefaultModelExpandDepth = depth;
         }
 
         /// <summary>
@@ -92,7 +94,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="modelRendering"></param>
         public static void DefaultModelRendering(this SwaggerUIOptions options, ModelRendering modelRendering)
         {
-            options.ConfigObject["defaultModelRendering"] = modelRendering.ToString().ToLower();
+            options.ConfigObject.DefaultModelRendering = modelRendering;
         }
 
         /// <summary>
@@ -101,7 +103,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="options"></param>
         public static void DisplayRequestDuration(this SwaggerUIOptions options)
         {
-            options.ConfigObject["displayRequestDuration"] = true;
+            options.ConfigObject.DisplayRequestDuration = true;
         }
 
         /// <summary>
@@ -112,7 +114,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="docExpansion"></param>
         public static void DocExpansion(this SwaggerUIOptions options, DocExpansion docExpansion)
         {
-            options.ConfigObject["docExpansion"] = docExpansion.ToString().ToLower();
+            options.ConfigObject.DocExpansion = docExpansion;
         }
 
         /// <summary>
@@ -124,10 +126,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="expression"></param>
         public static void EnableFilter(this SwaggerUIOptions options, string expression = null)
         {
-            if (expression == null)
-                options.ConfigObject["filter"] = true;
-            else
-                options.ConfigObject["filter"] = expression;
+            options.ConfigObject.Filter = expression ?? "";
         }
 
         /// <summary>
@@ -137,7 +136,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="count"></param>
         public static void MaxDisplayedTags(this SwaggerUIOptions options, int count)
         {
-            options.ConfigObject["maxDisplayedTags"] = count;
+            options.ConfigObject.MaxDisplayedTags = count;
         }
 
         /// <summary>
@@ -146,7 +145,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="options"></param>
         public static void ShowExtensions(this SwaggerUIOptions options)
         {
-            options.ConfigObject["showExtensions"] = true;
+            options.ConfigObject.ShowExtensions = true;
         }
 
         /// <summary>
@@ -157,9 +156,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="submitMethods"></param>
         public static void SupportedSubmitMethods(this SwaggerUIOptions options, params SubmitMethod[] submitMethods)
         {
-            options.ConfigObject["supportedSubmitMethods"] = JArray.FromObject(
-                submitMethods.Select(sm => sm.ToString().ToLowerInvariant())
-            );
+            options.ConfigObject.SupportedSubmitMethods = submitMethods;
         }
 
         /// <summary>
@@ -169,13 +166,13 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="url"></param>
         public static void OAuth2RedirectUrl(this SwaggerUIOptions options, string url)
         {
-            options.ConfigObject["oauth2RedirectUrl"] = url;
+            options.ConfigObject.OAuth2RedirectUrl = url;
         }
 
         [Obsolete("The validator is disabled by default. Use EnableValidator to enable it")]
         public static void ValidatorUrl(this SwaggerUIOptions options, string url)
         {
-            options.ConfigObject["validatorUrl"] = url;
+            options.ConfigObject.ValidatorUrl = url;
         }
 
         /// <summary>
@@ -186,7 +183,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="url"></param>
         public static void EnableValidator(this SwaggerUIOptions options, string url = "https://online.swagger.io/validator")
         {
-            options.ConfigObject["validatorUrl"] = url;
+            options.ConfigObject.ValidatorUrl = url;
         }
 
         /// <summary>
@@ -196,7 +193,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="value"></param>
         public static void OAuthClientId(this SwaggerUIOptions options, string value)
         {
-            options.OAuthConfigObject["clientId"] = value;
+            options.OAuthConfigObject.ClientId = value;
         }
 
         /// <summary>
@@ -206,7 +203,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="value"></param>
         public static void OAuthClientSecret(this SwaggerUIOptions options, string value)
         {
-            options.OAuthConfigObject["clientSecret"] = value;
+            options.OAuthConfigObject.ClientSecret = value;
         }
 
         /// <summary>
@@ -216,7 +213,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="value"></param>
         public static void OAuthRealm(this SwaggerUIOptions options, string value)
         {
-            options.OAuthConfigObject["realm"] = value;
+            options.OAuthConfigObject.Realm = value;
         }
 
         /// <summary>
@@ -226,7 +223,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="value"></param>
         public static void OAuthAppName(this SwaggerUIOptions options, string value)
         {
-            options.OAuthConfigObject["appName"] = value;
+            options.OAuthConfigObject.AppName = value;
         }
 
         /// <summary>
@@ -236,7 +233,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="value"></param>
         public static void OAuthScopeSeparator(this SwaggerUIOptions options, string value)
         {
-            options.OAuthConfigObject["scopeSeparator"] = value;
+            options.OAuthConfigObject.ScopeSeperator = value;
         }
 
         /// <summary>
@@ -244,9 +241,11 @@ namespace Microsoft.AspNetCore.Builder
         /// </summary>
         /// <param name="options"></param>
         /// <param name="value"></param>
-        public static void OAuthAdditionalQueryStringParams(this SwaggerUIOptions options, object value)
+        public static void OAuthAdditionalQueryStringParams(
+            this SwaggerUIOptions options,
+            Dictionary<string, string> value)
         {
-            options.OAuthConfigObject["additionalQueryStringParams"] = JObject.FromObject(value);
+            options.OAuthConfigObject.AdditionalQueryStringParams = value;
         }
 
         /// <summary>
@@ -257,32 +256,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="options"></param>
         public static void OAuthUseBasicAuthenticationWithAccessCodeGrant(this SwaggerUIOptions options)
         {
-            options.OAuthConfigObject["useBasicAuthenticationWithAccessCodeGrant"] = true;
+            options.OAuthConfigObject.UseBasicAuthenticationWithAccessCodeGrant = true;
         }
-    }
-
-    public enum ModelRendering
-    {
-        Example,
-        Model
-    }
-
-    public enum DocExpansion
-    {
-        List,
-        Full,
-        None
-    }
-
-    public enum SubmitMethod
-    {
-        Get,
-        Put,
-        Post,
-        Delete,
-        Options,
-        Head,
-        Patch,
-        Trace
     }
 }

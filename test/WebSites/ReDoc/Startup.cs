@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.ReDoc;
 
 namespace ReDoc
 {
@@ -37,10 +38,10 @@ namespace ReDoc
                 c.RoutePrefix = "api-docs";
 
                 c.SpecUrl = "v1/swagger.json";
-                c.Options = new
+                c.ConfigObject = new ConfigObject
                 {
-                    hideDownloadButton = true,
-                    hideLoading = true,
+                    HideDownloadButton = true,
+                    HideLoading = true
                 };
             });
 

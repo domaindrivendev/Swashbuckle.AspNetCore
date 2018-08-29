@@ -9,7 +9,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>Swashbuckle.AspNetCore.SwaggerGen</AssemblyName>
     <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.SwaggerGen.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly Condition="'$(OS)'=='Windows_NT'">true</SignAssembly>
     <PackageId>Swashbuckle.AspNetCore.SwaggerGen</PackageId>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>
     <PackageProjectUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</PackageProjectUrl>
