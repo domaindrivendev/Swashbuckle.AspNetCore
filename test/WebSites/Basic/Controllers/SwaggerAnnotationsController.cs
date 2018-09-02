@@ -24,6 +24,7 @@ namespace Basic.Controllers
 
         [HttpDelete("/carts/{id}")]
         [SwaggerOperation(
+            OperationId = "DeleteCart",
             Summary = "Deletes a specific cart",
             Description = "Requires admin privileges",
             Consumes = new string[] { "test/plain", "application/json" },
