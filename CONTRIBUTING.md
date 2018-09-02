@@ -1,7 +1,7 @@
 Contributing to Swashbuckle.AspNetCore
 =========
 
-Contributions to Swashbuckle.AspNetCore are welcomed in the form of construcutive, reproducible bug reports, feature requests that align to the project's goals, or better still a PR that's accompanied with passing tests.
+Contributions to Swashbuckle.AspNetCore are welcomed in the form of constructive, reproducible bug reports, feature requests that align to the project's goals, or better still a PR that's accompanied with passing tests.
 
 If you have general questions or feedback about using Swashbuckle.AspNetCore, PLEASE DON'T CREATE AN ISSUE AND POST TO STACKOVERFLOW INSTEAD.
 
