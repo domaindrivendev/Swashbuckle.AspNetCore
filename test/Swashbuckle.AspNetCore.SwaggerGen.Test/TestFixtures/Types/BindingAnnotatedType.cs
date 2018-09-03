@@ -2,7 +2,7 @@
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
-    public class ModelBoundType
+    public class BindingAnnotatedType
     {
         public string StringWithNoAttributes { get; set; }
 

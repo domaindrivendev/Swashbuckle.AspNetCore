@@ -61,6 +61,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 // TODO: Handle jagged primitive array and error on jagged object array
                 partialSchema.Items = new PartialSchema();
                 partialSchema.Items.PopulateFrom(schema.Items);
+                partialSchema.CollectionFormat = "multi";
             }
 
             partialSchema.Default = schema.Default;

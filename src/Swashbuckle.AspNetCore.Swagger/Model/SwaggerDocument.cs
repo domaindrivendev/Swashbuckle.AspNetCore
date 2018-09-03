@@ -213,11 +213,6 @@ namespace Swashbuckle.AspNetCore.Swagger
 
     public class NonBodyParameter : PartialSchema, IParameter
     {
-        public NonBodyParameter()
-        {
-            Extensions = new Dictionary<string, object>();
-        }
-
         public string Name { get; set; }
 
         public string In { get; set; }
@@ -225,9 +220,6 @@ namespace Swashbuckle.AspNetCore.Swagger
         public string Description { get; set; }
 
         public bool Required { get; set; }
-
-        [JsonExtensionData]
-        public Dictionary<string, object> Extensions { get; private set; }
     }
 
     public class Schema
