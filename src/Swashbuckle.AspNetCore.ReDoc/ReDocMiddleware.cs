@@ -111,7 +111,8 @@ namespace Swashbuckle.AspNetCore.ReDoc
                 ContractResolver = new CamelCasePropertyNamesContractResolver(),
                 Converters = new[] { new StringEnumConverter(true) },
                 NullValueHandling = NullValueHandling.Ignore,
-                Formatting = Formatting.None
+                Formatting = Formatting.None,
+                StringEscapeHandling = StringEscapeHandling.EscapeHtml
             });
         }
 
