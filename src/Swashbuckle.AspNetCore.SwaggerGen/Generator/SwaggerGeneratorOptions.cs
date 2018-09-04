@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -10,9 +12,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public SwaggerGeneratorOptions()
         {
             SwaggerDocs = new Dictionary<string, Info>();
-            DocInclusionPredicate = (docName, api) => api.GroupName == null || api.GroupName == docName;
-            TagSelector = (apiDesc) => apiDesc.ActionDescriptor.RouteValues["controller"];
-            SortKeySelector = (apiDesc) => TagSelector(apiDesc);
+            DocInclusionPredicate = DefaultDocInclusionPredicate;
+            OperationIdSelector = DefaultOperationIdSelector;
+            TagsSelector = DefaultTagsSelector;
+            SortKeySelector = DefaultSortKeySelector;
             SecurityDefinitions = new Dictionary<string, SecurityScheme>();
             SecurityRequirements = new List<IDictionary<string, IEnumerable<string>>>();
             ParameterFilters = new List<IParameterFilter>();
@@ -28,7 +31,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public Func<IEnumerable<ApiDescription>, ApiDescription> ConflictingActionsResolver { get; set; }
 
-        public Func<ApiDescription, string> TagSelector { get; set; }
+        public Func<ApiDescription, string> OperationIdSelector { get; set; }
+
+        public Func<ApiDescription, IList<string>> TagsSelector { get; set; }
 
         public Func<ApiDescription, string> SortKeySelector { get; set; }
 
@@ -43,5 +48,30 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public List<IOperationFilter> OperationFilters { get; set; }
 
         public IList<IDocumentFilter> DocumentFilters { get; set; }
+
+        private bool DefaultDocInclusionPredicate(string documentName, ApiDescription apiDescription)
+        {
+            return apiDescription.GroupName == null || apiDescription.GroupName == documentName;
+        }
+
+        private string DefaultOperationIdSelector(ApiDescription apiDescription)
+        {
+            var routeName = apiDescription.ActionDescriptor.AttributeRouteInfo?.Name;
+            if (routeName != null) return routeName;
+
+            if (apiDescription.TryGetMethodInfo(out MethodInfo methodInfo)) return methodInfo.Name;
+
+            return null;
+        }
+
+        private IList<string> DefaultTagsSelector(ApiDescription apiDescription)
+        {
+            return new[] { apiDescription.ActionDescriptor.RouteValues["controller"] };
+        }
+
+        private string DefaultSortKeySelector(ApiDescription apiDescription)
+        {
+            return TagsSelector(apiDescription).First();
+        }
     }
 }

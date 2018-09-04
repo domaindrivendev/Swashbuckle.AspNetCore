@@ -9,7 +9,7 @@ namespace ConfigFromFile.Controllers
     {
         // GET api/values
         [HttpGet]
-        public IEnumerable<Product> Get()
+        public IEnumerable<Product> GetProducts()
         {
             throw new NotImplementedException();
         }

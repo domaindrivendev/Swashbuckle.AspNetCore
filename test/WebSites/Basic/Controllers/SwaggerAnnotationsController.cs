@@ -8,6 +8,7 @@ namespace Basic.Controllers
     public class SwaggerAnnotationsController
     {
         [HttpPost("/carts")]
+        [SwaggerOperation(OperationId = "CreateCart")]
         [SwaggerResponse(201, "The cart was created", typeof(Cart))]
         [SwaggerResponse(400, "The cart data is invalid")]
         public Cart Create([FromBody]Cart cart)
@@ -16,8 +17,9 @@ namespace Basic.Controllers
         }
 
         [HttpGet("/carts/{id}")]
+        [SwaggerOperation(OperationId = "GetCart")]
         [SwaggerOperationFilter(typeof(AddCartsByIdGetExternalDocs))]
-        public Cart GetById(int id)
+        public Cart Get(int id)
         {
             return new Cart { Id = id };
         }

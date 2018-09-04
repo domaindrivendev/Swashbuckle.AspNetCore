@@ -79,8 +79,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             if (httpMethod != null)
                 descriptor.ActionConstraints.Add(new HttpMethodActionConstraint(new[] { httpMethod }));
 
-            descriptor.AttributeRouteInfo = new AttributeRouteInfo { Template = routeTemplate };
-
             descriptor.MethodInfo = controllerType.GetMethod(actionName);
             if (descriptor.MethodInfo == null)
                 throw new InvalidOperationException(
@@ -106,6 +104,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             descriptor.RouteValues = new Dictionary<string, string> {
                 { "controller", controllerType.Name.Replace("Controller", string.Empty) }
+            };
+
+            var httpMethodAttribute = descriptor.MethodInfo.GetCustomAttributes()
+                .OfType<HttpMethodAttribute>()
+                .FirstOrDefault();
+
+            descriptor.AttributeRouteInfo = new AttributeRouteInfo
+            {
+                Template = httpMethodAttribute?.Template ?? routeTemplate,
+                Name = httpMethodAttribute?.Name
             };
 
             return descriptor;

@@ -5,10 +5,10 @@ namespace CustomUIConfig.Controllers
 {
     [Route("/products")]
     [Produces("application/json")]
-    public class ProdutcsController
+    public class ProductsController
     {
         [HttpGet]
-        public IEnumerable<Product> GetAll()
+        public IEnumerable<Product> GetProducts()
         {
             return new[]
             {

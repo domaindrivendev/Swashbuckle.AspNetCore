@@ -43,7 +43,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             target.DocInclusionPredicate = source.DocInclusionPredicate;
             target.IgnoreObsoleteActions = source.IgnoreObsoleteActions;
             target.ConflictingActionsResolver = source.ConflictingActionsResolver;
-            target.TagSelector = source.TagSelector;
+            target.TagsSelector = source.TagsSelector;
             target.SortKeySelector = source.SortKeySelector;
             target.DescribeAllParametersInCamelCase = source.DescribeAllParametersInCamelCase;
             target.SecurityDefinitions = new Dictionary<string, SecurityScheme>(source.SecurityDefinitions);

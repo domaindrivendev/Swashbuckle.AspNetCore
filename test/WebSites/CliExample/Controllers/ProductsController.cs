@@ -8,7 +8,7 @@ namespace CliExample.Controllers
     public class ProductsController
     {
         [HttpGet]
-        public IEnumerable<Product> GetAll()
+        public IEnumerable<Product> GetProducts()
         {
             return new[]
             {
