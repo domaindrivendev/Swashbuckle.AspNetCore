@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Newtonsoft.Json;
 using Xunit;
+using Xunit.Abstractions;
 using Swashbuckle.AspNetCore.Swagger;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -133,32 +134,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(expectedOperationId, swagger.Paths["/" + routeTemplate].Get.OperationId);
         }
 
-        [Theory]
-        [InlineData("collection/{param}", nameof(FakeController.AcceptsStringFromRoute), "path")]
-        [InlineData("collection", nameof(FakeController.AcceptsStringFromQuery), "query")]
-        [InlineData("collection", nameof(FakeController.AcceptsStringFromHeader), "header")]
-        [InlineData("collection", nameof(FakeController.AcceptsStringFromForm), "formData")]
-        [InlineData("collection", nameof(FakeController.AcceptsStringFromQuery), "query")]
-        public void GetSwagger_GeneratesNonBodyParameters_ForPathQueryHeaderOrFormBoundParams(
-            string routeTemplate,
-            string actionFixtureName,
-            string expectedIn)
-        {
-            var subject = Subject(setupApis: apis => apis.Add("GET", routeTemplate, actionFixtureName));
-
-            var swagger = subject.GetSwagger("v1");
-
-            var param = swagger.Paths["/" + routeTemplate].Get.Parameters.First();
-            Assert.IsAssignableFrom<NonBodyParameter>(param);
-            var nonBodyParam = param as NonBodyParameter;
-            Assert.NotNull(nonBodyParam);
-            Assert.Equal("param", nonBodyParam.Name);
-            Assert.Equal(expectedIn, nonBodyParam.In);
-            Assert.Equal("string", nonBodyParam.Type);
-        }
-
         [Fact]
-        public void GetSwagger_SetsConsumesFromConsumesAttribute_IfPresentOnControllerOrAction()
+        public void GetSwagger_SetsConsumesFromConsumesAttribute_IfPresent()
         {
             var subject = Subject(setupApis: apis =>
                 apis.Add("POST", "resource", nameof(FakeController.AnnotatedWithConsumes)));
@@ -170,7 +147,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void GetSwagger_SetsConsumesToFormMediaType_IfActionContainsFormParams()
+        public void GetSwagger_SetsConsumesToMultipartFormData_IfOperationContainsFormParams()
         {
             var subject = Subject(setupApis: apis =>
                 apis.Add("POST", "form", nameof(FakeController.AcceptsStringFromForm)));
@@ -178,11 +155,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var swagger = subject.GetSwagger("v1");
 
             var operation = swagger.Paths["/form"].Post;
-            Assert.Equal(new[] { "application/x-www-form-urlencoded" }, operation.Consumes.ToArray());
+            Assert.Equal(new[] { "multipart/form-data" }, operation.Consumes.ToArray());
         }
 
         [Fact]
-        public void GetSwagger_SetsProducesFromProducesAttribute_IfPresentOnControllerOrAction()
+        public void GetSwagger_SetsProducesFromProducesAttribute_IfPresent()
         {
             var subject = Subject(setupApis: apis =>
                 apis.Add("GET", "resource", nameof(FakeController.AnnotatedWithProduces)));
@@ -206,7 +183,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void GetSwagger_GeneratesBodyParams_ForBodyBoundParams()
+        public void GetSwagger_GeneratesBodyParams_ForParamsBoundToBody()
         {
             var subject = Subject(setupApis: apis => apis
                 .Add("POST", "collection", nameof(FakeController.AcceptsComplexTypeFromBody)));
@@ -223,8 +200,31 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Contains("ComplexType", swagger.Definitions.Keys);
         }
 
+        [Theory]
+        [InlineData("resource/{param}", nameof(FakeController.AcceptsStringFromRoute), "path", "string")]
+        [InlineData("resource", nameof(FakeController.AcceptsIntegerFromQuery), "query", "integer")]
+        [InlineData("resource", nameof(FakeController.AcceptsStringFromHeader), "header", "string")]
+        [InlineData("resource", nameof(FakeController.AcceptsStringFromForm), "formData", "string")]
+        [InlineData("resource", nameof(FakeController.AcceptsIFormFile), "formData", "file")]
+        public void GetSwagger_GeneratesNonBodyParams_ForParamsBoundToSourcesOtherThanBody(
+            string routeTemplate,
+            string actionFixtureName,
+            string expectedIn,
+            string expectedType)
+        {
+            var subject = Subject(setupApis: apis => apis.Add("POST", routeTemplate, actionFixtureName));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var param = swagger.Paths["/" + routeTemplate].Post.Parameters.First();
+            Assert.IsAssignableFrom<NonBodyParameter>(param);
+            var nonBodyParam = param as NonBodyParameter;
+            Assert.Equal(expectedIn, nonBodyParam.In);
+            Assert.Equal(expectedType, nonBodyParam.Type);
+        }
+
         [Fact]
-        public void GetSwagger_GeneratesQueryParams_ForAllUnboundParams()
+        public void GetSwagger_GeneratesQueryParams_ForParamsWithNoBinding()
         {
             var subject = Subject(setupApis: apis => apis
                 .Add("GET", "collection", nameof(FakeController.AcceptsString))
@@ -260,9 +260,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(nameof(FakeController.AcceptsDataAnnotatedType), "StringWithNoAttributes", false)]
         [InlineData(nameof(FakeController.AcceptsDataAnnotatedType), "StringWithRequired", true)]
         [InlineData(nameof(FakeController.AcceptsDataAnnotatedType), "IntWithRequired", true)]
-        [InlineData(nameof(FakeController.AcceptsModelBoundType), "StringWithNoAttributes", false)]
-        [InlineData(nameof(FakeController.AcceptsModelBoundType), "StringWithBindRequired", true)]
-        [InlineData(nameof(FakeController.AcceptsModelBoundType), "IntWithBindRequired", true)]
+        [InlineData(nameof(FakeController.AcceptsBindingAnnotatedType), "StringWithNoAttributes", false)]
+        [InlineData(nameof(FakeController.AcceptsBindingAnnotatedType), "StringWithBindRequired", true)]
+        [InlineData(nameof(FakeController.AcceptsBindingAnnotatedType), "IntWithBindRequired", true)]
         public void GetSwagger_SetsParameterRequired_ForParametersWithRequiredOrBindRequiredAttribute(
             string actionFixtureName,
             string parameterName,
@@ -322,7 +322,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void GetSwagger_IgnoresParameters_IfDecoratedWithBindNever()
         {
             var subject = Subject(setupApis: apis => apis
-                .Add("GET", "collection", nameof(FakeController.AcceptsModelBoundType)));
+                .Add("GET", "collection", nameof(FakeController.AcceptsBindingAnnotatedType)));
 
             var swagger = subject.GetSwagger("v1");
 
@@ -336,7 +336,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void GetSwagger_DescribesParametersInCamelCase_IfSpecifiedBySettings()
         {
             var subject = Subject(
-                setupApis: apis => apis.Add("GET", "collection", nameof(FakeController.AcceptsModelBoundType)),
+                setupApis: apis => apis.Add("GET", "collection", nameof(FakeController.AcceptsBindingAnnotatedType)),
                 setupAction: c => c.DescribeAllParametersInCamelCase = true
             );
 

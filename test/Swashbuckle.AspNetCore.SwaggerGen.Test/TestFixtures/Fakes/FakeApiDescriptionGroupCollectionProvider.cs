@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Buffers;
+using System.Threading;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Routing;
@@ -19,11 +20,12 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.AspNetCore.Mvc.DataAnnotations.Internal;
-using Moq;
-using Newtonsoft.Json;
 using Microsoft.Extensions.ObjectPool;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Http;
+using Moq;
+using Newtonsoft.Json;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -139,7 +141,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 new DefaultValidationMetadataProvider(),
                 new DataAnnotationsMetadataProvider(
                     Options.Create(new MvcDataAnnotationsLocalizationOptions()),
-                    null)
+                    null),
+                new BindingSourceMetadataProvider(typeof(CancellationToken), BindingSource.Special),
+                new BindingSourceMetadataProvider(typeof(IFormFile), BindingSource.FormFile),
+                new BindingSourceMetadataProvider(typeof(IFormFileCollection), BindingSource.FormFile),
+                new BindingSourceMetadataProvider(typeof(IEnumerable<IFormFile>), BindingSource.FormFile)
             };
 
             var compositeDetailsProvider = new DefaultCompositeMetadataDetailsProvider(detailsProviders);
