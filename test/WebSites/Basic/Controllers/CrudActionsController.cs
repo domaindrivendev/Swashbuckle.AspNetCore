@@ -26,7 +26,7 @@ namespace Basic.Controllers
         /// </remarks>
         /// <param name="product"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost(Name = "CreateProduct")]
         public Product Create([FromBody, Required]Product product)
         {
             return product;
@@ -37,8 +37,8 @@ namespace Basic.Controllers
         /// </summary>
         /// <param name="keywords">A list of search terms</param>
         /// <returns></returns>
-        [HttpGet]
-        public IEnumerable<Product> Search([FromQuery(Name = "kw")]string keywords = "foobar")
+        [HttpGet(Name = "SearchProducts")]
+        public IEnumerable<Product> Get([FromQuery(Name = "kw")]string keywords = "foobar")
         {
             return new[]
             {
@@ -52,8 +52,8 @@ namespace Basic.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("{id}")]
-        public Product GetById(int id)
+        [HttpGet("{id}", Name = "GetProduct")]
+        public Product Get(int id)
         {
             return new Product { Id = id, Description = "A product" };
         }
@@ -63,7 +63,7 @@ namespace Basic.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <param name="product"></param>
-        [HttpPut("{id}")]
+        [HttpPut("{id}", Name = "UpdateProduct")]
         public void Update(int id, [FromBody, Required]Product product)
         {
         }
@@ -73,8 +73,8 @@ namespace Basic.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <param name="updates"></param>
-        [HttpPatch("{id}")]
-        public void PartialUpdate(int id, [FromBody, Required]IDictionary<string, object> updates)
+        [HttpPatch("{id}", Name = "PatchProduct")]
+        public void Patch(int id, [FromBody, Required]IDictionary<string, object> updates)
         {
         }
 
@@ -82,7 +82,7 @@ namespace Basic.Controllers
         /// Deletes a specific product
         /// </summary>
         /// <param name="id"></param>
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}", Name = "DeleteProduct")]
         public void Delete(int id)
         {
         }

@@ -9,13 +9,13 @@ namespace ReDoc.Controllers
     public class ProductsController
     {
         [HttpPost]
-        public int Create([FromBody, Required]Product product)
+        public int CreateProduct([FromBody, Required]Product product)
         {
             return 1;
         }
 
         [HttpGet]
-        public IEnumerable<Product> GetAll()
+        public IEnumerable<Product> GetProducts()
         {
             return new[]
             {
@@ -25,23 +25,23 @@ namespace ReDoc.Controllers
         }
 
         [HttpGet("{id}")]
-        public Product GetById(int id)
+        public Product GetProduct(int id)
         {
             return new Product { Id = id, Description = "A product" };
         }
 
         [HttpPut("{id}")]
-        public void Update(int id, [FromBody, Required]Product product)
+        public void UpdateProduct(int id, [FromBody, Required]Product product)
         {
         }
 
         [HttpPatch("{id}")]
-        public void PartialUpdate(int id, [FromBody, Required]IDictionary<string, object> updates)
+        public void PatchProduct(int id, [FromBody, Required]IDictionary<string, object> updates)
         {
         }
 
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public void DeleteProduct(int id)
         {
         }
     }

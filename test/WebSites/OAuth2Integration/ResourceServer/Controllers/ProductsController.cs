@@ -10,7 +10,7 @@ namespace OAuth2Integration.ResourceServer.Controllers
     {
         [HttpGet]
         [Authorize("readAccess")]
-        public IEnumerable<Product> GetAll()
+        public IEnumerable<Product> GetProducts()
         {
             yield return new Product
             {
@@ -21,7 +21,7 @@ namespace OAuth2Integration.ResourceServer.Controllers
 
         [HttpGet("{id}")]
         [Authorize("readAccess")]
-        public Product GetById(int id)
+        public Product GetProduct(int id)
         {
             return new Product
             {
@@ -33,13 +33,13 @@ namespace OAuth2Integration.ResourceServer.Controllers
 
         [HttpPost]
         [Authorize("writeAccess")]
-        public void Post([FromBody]Product product)
+        public void CreateProduct([FromBody]Product product)
         {
         }
 
         [HttpDelete("{id}")]
         [Authorize("writeAccess")]
-        public void Delete(int id)
+        public void DeleteProduct(int id)
         {
         }
     }

@@ -139,6 +139,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             throw new NotImplementedException();
         }
 
+        [HttpGet(Name = "GetResource")]
+        public IActionResult AnnotatedWithRouteName()
+        {
+           throw new NotImplementedException();
+        }
+
         [Obsolete]
         public void MarkedObsolete()
         { }

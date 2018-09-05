@@ -117,21 +117,26 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Null(operation.Deprecated);
         }
 
-        [Theory]
-        [InlineData("api/products", "ApiProductsGet")]
-        [InlineData("addresses/validate", "AddressesValidateGet")]
-        [InlineData("carts/{cartId}/items/{id}", "CartsByCartIdItemsByIdGet")]
-        public void GetSwagger_GeneratesOperationIds_AccordingToRouteTemplateAndHttpMethod(
-            string routeTemplate,
-            string expectedOperationId
-        )
+        [Fact]
+        public void GetSwagger_SetsOperationIdToActionName_ByDefault()
         {
             var subject = Subject(setupApis: apis => apis
-                .Add("GET", routeTemplate, nameof(FakeController.AcceptsNothing)));
+                .Add("GET", "resource", nameof(FakeController.AcceptsString)));
 
             var swagger = subject.GetSwagger("v1");
 
-            Assert.Equal(expectedOperationId, swagger.Paths["/" + routeTemplate].Get.OperationId);
+            Assert.Equal("AcceptsString", swagger.Paths["/resource"].Get.OperationId);
+        }
+
+        [Fact]
+        public void GetSwagger_SetsOperationIdToRouteName_IfProvidedWithHttpMethodAttribute()
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add("GET", "resource", nameof(FakeController.AnnotatedWithRouteName)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            Assert.Equal("GetResource", swagger.Paths["/resource"].Get.OperationId);
         }
 
         [Fact]
@@ -542,7 +547,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     apis.Add("GET", "collection1", nameof(FakeController.ReturnsEnumerable));
                     apis.Add("GET", "collection2", nameof(FakeController.ReturnsInt));
                 },
-                setupAction: c => c.TagSelector = (apiDesc) => apiDesc.RelativePath);
+                setupAction: c => c.TagsSelector = (apiDesc) => new[] { apiDesc.RelativePath });
 
             var swagger = subject.GetSwagger("v1");
 

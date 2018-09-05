@@ -164,8 +164,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var operation = new Operation
             {
-                Tags = new[] { _options.TagSelector(apiDescription) },
-                OperationId = apiDescription.FriendlyId(),
+                OperationId = _options.OperationIdSelector(apiDescription),
+                Tags = _options.TagsSelector(apiDescription),
                 Consumes = CreateConsumes(apiDescription, customAttributes),
                 Produces = CreateProduces(apiDescription, customAttributes),
                 Parameters = CreateParameters(apiDescription, schemaRegistry),

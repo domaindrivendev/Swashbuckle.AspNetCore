@@ -58,15 +58,38 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Provide a custom strategy for assigning a default "tag" to actions
+        /// Provide a custom strategy for assigning "operationId" to operations
+        /// </summary>
+        public static void CustomOperationIds(
+            this SwaggerGenOptions swaggerGenOptions,
+            Func<ApiDescription, string> operationIdSelector)
+        {
+            swaggerGenOptions.SwaggerGeneratorOptions.OperationIdSelector = operationIdSelector;
+        }
+
+        /// <summary>
+        /// Provide a custom strategy for assigning a default "tag" to operations
         /// </summary>
         /// <param name="swaggerGenOptions"></param>
         /// <param name="tagSelector"></param>
+        [Obsolete("Deprecated: Use the overload that accepts a Func that returns a list of tags")]
         public static void TagActionsBy(
             this SwaggerGenOptions swaggerGenOptions,
             Func<ApiDescription, string> tagSelector)
         {
-            swaggerGenOptions.SwaggerGeneratorOptions.TagSelector = tagSelector;
+            swaggerGenOptions.SwaggerGeneratorOptions.TagsSelector = (apiDesc) => new[] { tagSelector(apiDesc) };
+        }
+
+        /// <summary>
+        /// Provide a custom strategy for assigning "tags" to actions
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="tagsSelector"></param>
+        public static void TagActionsBy(
+            this SwaggerGenOptions swaggerGenOptions,
+            Func<ApiDescription, IList<string>> tagsSelector)
+        {
+            swaggerGenOptions.SwaggerGeneratorOptions.TagsSelector = tagsSelector;
         }
 
         /// <summary>

@@ -48,11 +48,11 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
     ```csharp
     [HttpPost]
-    public void Create([FromBody]Product product)
+    public void CreateProduct([FromBody]Product product)
     ...
 
     [HttpGet]
-    public IEnumerable<Product> Search([FromQuery]string keywords)
+    public IEnumerable<Product> SearchProducts([FromQuery]string keywords)
     ...
     ```
 
@@ -151,6 +151,7 @@ The steps described above will get you up and running with minimal setup. Howeve
 
 * [Swashbuckle.AspNetCore.SwaggerGen](#swashbuckleaspnetcoreswaggergen)
 
+    * [Assign Explicit OperationIds](#assign-explicit-operationids)
     * [List Operations Responses](#list-operation-responses)
     * [Flag Required Parameters and Schema Properties](#flag-required-parameters-and-schema-properties)
     * [Include Descriptions from XML Comments](#include-descriptions-from-xml-comments)
@@ -237,6 +238,26 @@ services.AddMvc()
 ```
 
 ## Swashbuckle.AspNetCore.SwaggerGen ##
+
+### Assign Explicit OperationIds ###
+
+In Swagger, Operations can be a assigned a unique `operationId`. This is often used by code generation tools (e.g. client libraries) and so, it's important for the value to follow common programming conventions while also revealing the purpose of the operation. To best meet these goals, Swashbuckle requires API authors to provide the value explicitly and provides two different options to do so:
+
+__Option 1) Action Names__
+
+```csharp
+[[HttpGet("{id}")]]
+public IActionResult GetProductById(int id) // operationId = "GetProductById"
+```
+
+__Option 2) Route Names__
+
+```csharp
+[[HttpGet("{id}", Name = "GetProductById")]]
+public IActionResult Get(int id) // operationId = "GetProductById"
+```
+
+_NOTE: In both cases, API authors are responsible for ensuring the uniqueness of `OperationId`s across all Operations_
 
 ### List Operation Responses ###
 
