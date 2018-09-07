@@ -77,7 +77,7 @@ namespace OpenAPI
             openAPIOptions =>
             {
                 openAPIOptions.CompabilityLayerActive = true;
-                openAPIOptions.Format = Microsoft.OpenApi.OpenApiFormat.Yaml;
+                openAPIOptions.Format = Microsoft.OpenApi.OpenApiFormat.Json;
                 openAPIOptions.Version = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0;
             });
 
