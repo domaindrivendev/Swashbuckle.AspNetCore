@@ -91,7 +91,7 @@ namespace Swashbuckle.AspNetCore.Cli
             // Process required args - ensure corresponding values are provided
             foreach (var name in _argumentDescriptors.Keys)
             {
-                if (!argsQueue.Any() || argsQueue.Peek().StartsWith("--")) return false;
+                if (!argsQueue.Any() || argsQueue.Peek().StartsWith("--")) break;
                 namedArgs.Add(name, argsQueue.Dequeue());
             }
 

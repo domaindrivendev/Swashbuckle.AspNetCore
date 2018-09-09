@@ -32,10 +32,14 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Option("--host", "a specific host to include in the Swagger output");
                 c.Option("--basepath", "a specific basePath to inlcude in the Swagger output");
                 c.Option("--serializeasv2", "output Swagger in the V2 format rather than V3", true);
+                c.Option("--project", "Specifies location of the project for which produce Swagger output");
+                c.Option("--configuration", "Specifies project configuration to get binaries from.");
                 c.OnRun((namedArgs) =>
                 {
-                    var depsFile = namedArgs["startupassembly"].Replace(".dll", ".deps.json");
-                    var runtimeConfig = namedArgs["startupassembly"].Replace(".dll", ".runtimeconfig.json");
+                    var startupAssembly = GetStartupAssembly(namedArgs);
+                    Console.WriteLine($"Swagger definition would be read from {startupAssembly}");
+                    var depsFile = startupAssembly.Replace(".dll", ".deps.json");
+                    var runtimeConfig = startupAssembly.Replace(".dll", ".runtimeconfig.json");
 
                     var subProcess = Process.Start("dotnet", string.Format(
                         "exec --depsfile {0} --runtimeconfig {1} {2} _{3}", // note the underscore
@@ -59,11 +63,13 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Option("--host", "");
                 c.Option("--basepath", "");
                 c.Option("--serializeasv2", "", true);
+                c.Option("--project", "");
+                c.Option("--configuration", "");
                 c.OnRun((namedArgs) =>
                 {
                     // 1) Configure host with provided startupassembly
                     var startupAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(
-                        Path.Combine(Directory.GetCurrentDirectory(), namedArgs["startupassembly"]));
+                        Path.Combine(Directory.GetCurrentDirectory(), GetStartupAssembly(namedArgs)));
                     var host = WebHost.CreateDefaultBuilder()
                         .UseStartup(startupAssembly.FullName)
                         .Build();
@@ -71,7 +77,7 @@ namespace Swashbuckle.AspNetCore.Cli
                     // 2) Retrieve Swagger via configured provider
                     var swaggerProvider = host.Services.GetRequiredService<ISwaggerProvider>();
                     var swagger = swaggerProvider.GetSwagger(
-                        namedArgs["swaggerdoc"],
+                        GetSwaggerDocumentName(namedArgs),
                         namedArgs.ContainsKey("--host") ? namedArgs["--host"] : null,
                         namedArgs.ContainsKey("--basepath") ? namedArgs["--basepath"] : null);
 
@@ -97,6 +103,45 @@ namespace Swashbuckle.AspNetCore.Cli
             });
 
             return runner.Run(args);
+        }
+
+        private static string GetSwaggerDocumentName(System.Collections.Generic.IDictionary<string, string> namedArgs)
+        {
+            if (!namedArgs.ContainsKey("swaggerdoc"))
+            {
+                return namedArgs["startupassembly"];
+            }
+
+            return namedArgs["swaggerdoc"];
+        }
+
+        private static string GetStartupAssembly(System.Collections.Generic.IDictionary<string, string> namedArgs)
+        {
+            if (!namedArgs.ContainsKey("swaggerdoc"))
+            {
+                var rootDirectory = namedArgs.ContainsKey("--project") ? namedArgs["--project"] : Directory.GetCurrentDirectory();
+                var configuration = namedArgs.ContainsKey("--configuration") ? namedArgs["--configuration"] : "Debug";
+                var projectName = Path.GetFileName(rootDirectory);
+                var binDir = Path.Combine(rootDirectory, "bin", configuration);
+                if (!Directory.Exists(binDir))
+                {
+                    throw new InvalidOperationException($@"The directory {binDir} does not exists.
+This is likely indication that the project was not built.
+Also check that --project option point to valid path.");
+                }
+
+                var directories = Directory.GetDirectories(binDir);
+                if (directories.Length != 1)
+                {
+                    throw new InvalidOperationException($"There more then one directory inside {binDir}. Could not detect which target framework to use.");
+                }
+
+                var outputDirectory = directories[0];
+                var startupAssembly = Path.Combine(outputDirectory, projectName + ".dll");
+                return startupAssembly;
+            }
+
+            return namedArgs["startupassembly"];
         }
 
         private static string EscapePath(string path)
