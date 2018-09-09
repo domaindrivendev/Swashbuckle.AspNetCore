@@ -75,7 +75,7 @@ namespace Swashbuckle.AspNetCore.Cli.Test
         [InlineData(new[] { "--opt1" }, new string[] { }, new[] { "cmd", "--opt1" }, true)]
         [InlineData(new[] { "--opt1" }, new string[] { }, new[] { "cmd", "--opt1", "--opt2" }, true)]
         [InlineData(new[] { "--opt1" }, new string[] { }, new[] { "cmd", "--opt1", "foo" }, false)]
-        [InlineData(new string[] { }, new[] { "arg1" }, new[] { "cmd" }, true)]
+        [InlineData(new string[] { }, new[] { "arg1" }, new[] { "cmd" }, false)]
         [InlineData(new string[] { }, new[] { "arg1" }, new[] { "cmd", "--opt1" }, true)]
         [InlineData(new string[] {}, new[] { "arg1" }, new[] { "cmd", "foo", "bar" }, true)]
         [InlineData(new string[] {}, new[] { "arg1" }, new[] { "cmd", "foo" }, false)]

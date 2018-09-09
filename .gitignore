@@ -11,3 +11,4 @@ artifacts/
 .DS_Store
 Thumbs.db
 test/WebSites/CliExample/wwwroot/api-docs/v1/*.json
+launchSettings.json
