@@ -246,14 +246,14 @@ In Swagger, Operations can be a assigned a unique `operationId`. This is often u
 __Option 1) Action Names__
 
 ```csharp
-[[HttpGet("{id}")]]
+[HttpGet("{id}")]
 public IActionResult GetProductById(int id) // operationId = "GetProductById"
 ```
 
 __Option 2) Route Names__
 
 ```csharp
-[[HttpGet("{id}", Name = "GetProductById")]]
+[HttpGet("{id}", Name = "GetProductById")]
 public IActionResult Get(int id) // operationId = "GetProductById"
 ```
 
