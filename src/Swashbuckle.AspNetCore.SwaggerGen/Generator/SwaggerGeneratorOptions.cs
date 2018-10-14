@@ -66,7 +66,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private IList<string> DefaultTagsSelector(ApiDescription apiDescription)
         {
-            return new[] { apiDescription.ActionDescriptor.RouteValues["controller"] };
+            var val = "";
+            apiDescription.ActionDescriptor.RouteValues.TryGetValue("controller", out val);
+            return new[] { val };
         }
 
         private string DefaultSortKeySelector(ApiDescription apiDescription)

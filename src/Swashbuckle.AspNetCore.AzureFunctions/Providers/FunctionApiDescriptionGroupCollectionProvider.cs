@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
-using System.Web.Http;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -154,7 +153,7 @@ namespace Swashbuckle.AspNetCore.AzureFunctions.Providers
                     continue;
 
                 bool hasHttpTrigerAttribute = parameter.GetCustomAttributes().Any(attr => attr is HttpTriggerAttribute);
-                bool hasFromUriAttribute = parameter.GetCustomAttributes().Any(attr => attr is FromUriAttribute);
+                bool hasFromUriAttribute = false; // parameter.GetCustomAttributes().Any(attr => attr is FromUriAttribute);
 
                 var type = hasHttpTrigerAttribute && requestBodyTypeAttribute != null
                     ? requestBodyTypeAttribute.Type
@@ -187,7 +186,7 @@ namespace Swashbuckle.AspNetCore.AzureFunctions.Providers
             if (parameter.ParameterType.IsAssignableFrom(typeof(Microsoft.Extensions.Logging.ILogger))) return true;
             if (parameter.GetCustomAttributes().Any(attr =>
                 !(attr is HttpTriggerAttribute)
-                && !(attr is FromUriAttribute)
+                //&& !(attr is FromUriAttribute)
                 && !(attr is RequestBodyTypeAttribute)
                 && !(attr.GetType().Namespace.Contains("Annotation")))) return true;
             return false;

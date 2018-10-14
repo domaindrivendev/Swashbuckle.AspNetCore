@@ -11,6 +11,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 using FunctionApp.Models;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.AzureFunctions.Filters;
 
 namespace FunctionApp
@@ -19,7 +20,7 @@ namespace FunctionApp
     {
         [FunctionName("HelloWorldFunction")]
         [SwaggerOperation("helloworld")]
-        [SwaggerResponse((int)HttpStatusCode.OK, typeof(GreetingsResponseModel), "Returns greetings")]
+        [SwaggerResponse((int)HttpStatusCode.OK, Type= typeof(GreetingsResponseModel), Description ="Returns greetings")]
         [OptionalQueryParameter("lastname", typeof(string))]
         [SupportedMediaType("application/json")]
         [SupportedMediaType("application/xml")]
@@ -34,12 +35,13 @@ namespace FunctionApp
             TraceWriter log)
         {
             // Get request body
-            var message = await req.Content.ReadAsAsync<MessageRequestModel>();
+            var message = req.Method == HttpMethod.Post ? await req.Content.ReadAsAsync<MessageRequestModel>() : null;
 
             // Get from query
-            var lastname = req.GetQueryNameValuePairs()
-                .FirstOrDefault(q => string.Compare(q.Key, "lastname", true) == 0)
-                .Value;
+            //var lastname = req.GetQueryNameValuePairs()
+            //    .FirstOrDefault(q => string.Compare(q.Key, "lastname", true) == 0)
+            //    .Value;
+            var lastname = "mmm";
 
             // parse query parameter
             var greetingsResponseModel = new GreetingsResponseModel()
