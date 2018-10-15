@@ -117,7 +117,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 var apiDescription = (group.Count() > 1) ? _options.ConflictingActionsResolver(group) : group.Single();
 
-                switch (httpMethod)
+                switch (httpMethod.ToUpper())
                 {
                     case "GET":
                         pathItem.Get = CreateOperation(apiDescription, schemaRegistry);
