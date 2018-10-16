@@ -40,8 +40,8 @@ namespace Swashbuckle.AspNetCore.Cli
 
                     var subProcess = Process.Start("dotnet", string.Format(
                         "exec --depsfile {0} --runtimeconfig {1} {2} _{3}", // note the underscore
-                        depsFile,
-                        runtimeConfig,
+                        EscapePath(depsFile),
+                        EscapePath(runtimeConfig),
                         typeof(Program).GetTypeInfo().Assembly.Location,
                         string.Join(" ", args)
                     ));
@@ -119,6 +119,20 @@ namespace Swashbuckle.AspNetCore.Cli
             var isParsed = Enum.TryParse(optionValue, true, out T parsed);
             
             return isParsed ? parsed : default(T);
+        }
+        
+        /// <summary>
+        /// Escape a given path value
+        /// </summary>
+        /// <param name="path">The path which should be escaped</param>
+        private static string EscapePath(string path)
+        {
+            if (path.Contains(" "))
+            {
+                return "\"" + path + "\"";
+            }
+
+            return path;
         }
     }
 }
