@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Converters;
 using Swashbuckle.AspNetCore.Swagger;
+using System.ComponentModel;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -137,6 +138,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var stringEnumConverter = primitiveContract.Converter as StringEnumConverter
                 ?? _jsonSerializerSettings.Converters.OfType<StringEnumConverter>().FirstOrDefault();
 
+            var enumDesc = new System.Text.StringBuilder();
             if (_options.DescribeAllEnumsAsStrings || stringEnumConverter != null)
             {
                 var camelCase = _options.DescribeStringEnumsInCamelCase
@@ -152,23 +154,38 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         {
                             name = enumMemberAttribute.Value;
                         }
-
-                        return camelCase ? name.ToCamelCase() : name;
+                        name = camelCase ? name.ToCamelCase() : name;
+                        if (Attribute.GetCustomAttribute(f, typeof(DescriptionAttribute)) is DescriptionAttribute descAttr)
+                        {
+                            enumDesc.Append($"<br/>{name}：{descAttr.Description}");
+                        }
+                        return name;
                     });
 
                 return new Schema
                 {
                     Type = "string",
+                    Description = enumDesc.ToString(),
                     Enum = enumNames.ToArray()
                 };
             }
-
-            return new Schema
+            else
             {
-                Type = "integer",
-                Format = "int32",
-                Enum = Enum.GetValues(type).Cast<object>().ToArray()
-            };
+                type.GetFields(BindingFlags.Public | BindingFlags.Static).ToList().ForEach(f =>
+                {
+                    if (Attribute.GetCustomAttribute(f, typeof(DescriptionAttribute)) is DescriptionAttribute descAttr)
+                    {
+                        enumDesc.Append($"<br/>{f.GetValue(null)}：{descAttr.Description}");
+                    }
+                });
+                return new Schema
+                {
+                    Type = "integer",
+                    Format = "int32",
+                    Description = enumDesc.ToString(),
+                    Enum = Enum.GetValues(type).Cast<object>().ToArray()
+                };
+            }
         }
 
         private Schema CreateDictionarySchema(JsonDictionaryContract dictionaryContract, Queue<Type> referencedTypes)
