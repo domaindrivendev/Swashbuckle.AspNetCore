@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
-using Xunit;
-using Xunit.Abstractions;
 using Swashbuckle.AspNetCore.Swagger;
+using Xunit;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -335,6 +335,44 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 .Parameters
                 .Select(p => p.Name);
             Assert.DoesNotContain("PropertyWithBindNever", parameterNames);
+        }
+
+        [Fact]
+        public void GetSwagger_UsesIsRequired_SpecifiedOnApiParameterDescription()
+        {
+            var subject = Subject(setupApis: apis =>
+            {
+                apis.Add("GET", "collection", nameof(FakeController.AnnotatedWithResponseTypeAttributes));
+                var operation = apis.ApiDescriptionGroups.Items[0].Items.First(f => f.RelativePath == "collection");
+                operation.ParameterDescriptions.Add(new ApiParameterDescription22
+                {
+                    Name = "param1",
+                    IsRequired = true,
+                    Source = BindingSource.Query,
+                });
+
+                operation.ParameterDescriptions.Add(new ApiParameterDescription22
+                {
+                    Name = "param2",
+                    Source = BindingSource.Query,
+                });
+            });
+
+            var swagger = subject.GetSwagger("v1");
+
+            var parameters = swagger.Paths["/collection"].Get.Parameters;
+            Assert.Collection(
+                parameters,
+                p =>
+                {
+                    Assert.Equal("param1", p.Name);
+                    Assert.True(p.Required);
+                },
+                p =>
+                {
+                    Assert.Equal("param2", p.Name);
+                    Assert.False(p.Required);
+                });
         }
 
         [Fact]
@@ -688,6 +726,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         private class ApiResponseTypeV2 : ApiResponseType
         {
             public bool IsDefaultResponse { get; set; }
+        }
+
+        private class ApiParameterDescription22 : ApiParameterDescription
+        {
+            public bool IsRequired { get; set; }
+
+            public object DefaultValue { get; set; }
         }
     }
 }

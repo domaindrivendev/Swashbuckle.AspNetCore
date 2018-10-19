@@ -253,7 +253,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 ? apiParameterDescription.Name.ToCamelCase()
                 : apiParameterDescription.Name;
 
-            var isRequired = customAttributes.Any(attr =>
+            var isRequired = apiParameterDescription.IsRequired() ?? customAttributes.Any(attr =>
                 new[] { typeof(RequiredAttribute), typeof(BindRequiredAttribute) }.Contains(attr.GetType()));
 
             var parameter = (apiParameterDescription.Source == BindingSource.Body)

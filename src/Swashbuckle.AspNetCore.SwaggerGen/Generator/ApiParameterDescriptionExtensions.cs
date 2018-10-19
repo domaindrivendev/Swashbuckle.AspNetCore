@@ -2,12 +2,24 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class ApiParameterDescriptionExtensions
     {
+        internal static bool? IsRequired(this ApiParameterDescription apiParameterDescription)
+        {
+            var property = apiParameterDescription.GetType().GetProperty("IsRequired");
+
+            if (property == null)
+            {
+                // ApiExplorer < 2.2 does not support IsRequired.
+                return null;
+            }
+
+            return (bool)property.GetValue(apiParameterDescription);
+        }
+
         internal static bool TryGetParameterInfo(
             this ApiParameterDescription apiParameterDescription,
             ApiDescription apiDescription,
