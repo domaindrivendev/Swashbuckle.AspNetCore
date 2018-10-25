@@ -728,7 +728,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             public bool IsDefaultResponse { get; set; }
         }
 
-        private class ApiParameterDescription22 : ApiParameterDescription
+        private class ApiParameterDescriptionStub : ApiParameterDescription
         {
             public bool IsRequired { get; set; }
 
