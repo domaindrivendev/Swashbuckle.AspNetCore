@@ -36,6 +36,8 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 2. In the _ConfigureServices_ method of _Startup.cs_, register the Swagger generator, defining one or more Swagger documents.
 
     ```csharp
+    using Swashbuckle.AspNetCore.Swagger;
+    
     services.AddMvc();
 
     services.AddSwaggerGen(c =>
