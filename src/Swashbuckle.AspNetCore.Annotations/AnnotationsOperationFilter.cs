@@ -19,7 +19,7 @@ namespace Swashbuckle.AspNetCore.Annotations
 
             ApplySwaggerOperationAttribute(operation, actionAttributes);
             ApplySwaggerOperationFilterAttributes(operation, context, actionAndControllerAttributes);
-            ApplySwaggerResponseAttributes(operation, actionAndControllerAttributes);
+            ApplySwaggerResponseAttributes(operation, actionAndControllerAttributes, context);
         }
 
         private static void ApplySwaggerOperationAttribute(
@@ -69,9 +69,8 @@ namespace Swashbuckle.AspNetCore.Annotations
             }
         }
 
-        private void ApplySwaggerResponseAttributes(
-            Operation operation,
-            IEnumerable<object> actionAndControllerAttributes)
+        private void ApplySwaggerResponseAttributes(Operation operation,
+            IEnumerable<object> actionAndControllerAttributes, OperationFilterContext context)
         {
             var swaggerResponseAttributes = actionAndControllerAttributes
                 .OfType<SwaggerResponseAttribute>();
@@ -86,6 +85,9 @@ namespace Swashbuckle.AspNetCore.Annotations
 
                 if (swaggerResponseAttribute.Description != null)
                     response.Description = swaggerResponseAttribute.Description;
+
+                if (swaggerResponseAttribute.Type != null)
+                    response.Schema = context.SchemaRegistry.GetOrRegister(swaggerResponseAttribute.Type);
 
                 operation.Responses[statusCode] = response;
             }

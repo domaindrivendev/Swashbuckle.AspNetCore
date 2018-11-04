@@ -182,6 +182,7 @@ namespace Swashbuckle.AspNetCore.AzureFunctions.Providers
             var ignoreParameterAttribute = parameter.GetCustomAttribute(typeof(SwaggerIgnoreAttribute));
             if (ignoreParameterAttribute != null) return true;
             if (parameter.ParameterType.Name == "TraceWriter") return true;
+            if (parameter.ParameterType == typeof(ExecutionContext)) return true;
             if (parameter.ParameterType == typeof(Microsoft.Extensions.Logging.ILogger)) return true;
             if (parameter.ParameterType.IsAssignableFrom(typeof(Microsoft.Extensions.Logging.ILogger))) return true;
             if (parameter.GetCustomAttributes().Any(attr =>
