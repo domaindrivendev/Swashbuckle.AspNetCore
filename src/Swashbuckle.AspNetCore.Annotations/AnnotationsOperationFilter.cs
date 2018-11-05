@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -20,6 +21,7 @@ namespace Swashbuckle.AspNetCore.Annotations
             ApplySwaggerOperationAttribute(operation, actionAttributes);
             ApplySwaggerOperationFilterAttributes(operation, context, actionAndControllerAttributes);
             ApplySwaggerResponseAttributes(operation, actionAndControllerAttributes, context);
+            ApplyProducesResponseAttributes(operation, actionAndControllerAttributes, context);
         }
 
         private static void ApplySwaggerOperationAttribute(
@@ -66,6 +68,26 @@ namespace Swashbuckle.AspNetCore.Annotations
             {
                 var filter = (IOperationFilter)Activator.CreateInstance(swaggerOperationFilterAttribute.FilterType);
                 filter.Apply(operation, context);
+            }
+        }
+
+        private void ApplyProducesResponseAttributes(Operation operation, IEnumerable<object> actionAndControllerAttributes, OperationFilterContext context)
+        {
+            var swaggerResponseAttributes = actionAndControllerAttributes
+                .OfType<ProducesResponseTypeAttribute>();
+
+            foreach (var producesResponseTypeAttribute in swaggerResponseAttributes)
+            {
+                var statusCode = producesResponseTypeAttribute.StatusCode.ToString();
+                if (!operation.Responses.TryGetValue(statusCode, out Response response))
+                {
+                    response = new Response();
+                }
+
+                if (producesResponseTypeAttribute.Type != null)
+                    response.Schema = context.SchemaRegistry.GetOrRegister(producesResponseTypeAttribute.Type);
+
+                operation.Responses[statusCode] = response;
             }
         }
 
