@@ -1,6 +1,6 @@
-| :mega: Upgrading to version 3.x? |
+| :mega: Important for anyone upgrading major versions! |
 |--------------|
-|If you're upgrading from 2.x to 3.x, there's a couple of breaking changes to be aware of. See the [release notes](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/releases/tag/v3.0.0) for details|
+|* If you're upgrading from 2.x to 3.x, there's a couple of breaking changes to be aware of. See the [release notes](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/releases/tag/v3.0.0) for details<br />* If you're upgrading from 3.x to 4.x, there's more breaking changes to be aware of. See those [release notes here](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/releases/tag/v4.0.0)|
 
 Swashbuckle.AspNetCore
 =========
