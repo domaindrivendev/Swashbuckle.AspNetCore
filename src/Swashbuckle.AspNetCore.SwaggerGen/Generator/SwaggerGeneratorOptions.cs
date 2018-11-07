@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -11,19 +11,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         public SwaggerGeneratorOptions()
         {
-            SwaggerDocs = new Dictionary<string, Info>();
+            SwaggerDocs = new Dictionary<string, OpenApiInfo>();
             DocInclusionPredicate = DefaultDocInclusionPredicate;
             OperationIdSelector = DefaultOperationIdSelector;
             TagsSelector = DefaultTagsSelector;
             SortKeySelector = DefaultSortKeySelector;
-            SecurityDefinitions = new Dictionary<string, SecurityScheme>();
+            SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>();
             SecurityRequirements = new List<IDictionary<string, IEnumerable<string>>>();
             ParameterFilters = new List<IParameterFilter>();
             OperationFilters = new List<IOperationFilter>();
             DocumentFilters = new List<IDocumentFilter>();
         }
 
-        public IDictionary<string, Info> SwaggerDocs { get; set; }
+        public IDictionary<string, OpenApiInfo> SwaggerDocs { get; set; }
 
         public Func<string, ApiDescription, bool> DocInclusionPredicate { get; set; }
 
@@ -39,7 +39,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public bool DescribeAllParametersInCamelCase { get; set; }
 
-        public IDictionary<string, SecurityScheme> SecurityDefinitions { get; set; }
+        public IDictionary<string, OpenApiSecurityScheme> SecuritySchemes { get; set; }
 
         public IList<IDictionary<string, IEnumerable<string>>> SecurityRequirements { get; set; }
 

@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Microsoft.AspNetCore.Mvc.Controllers;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Annotations
 {
     public class AnnotationsDocumentFilter : IDocumentFilter
     {
-        public void Apply(SwaggerDocument swaggerDoc, DocumentFilterContext context)
+        public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {
             if (swaggerDoc.Tags == null)
-                swaggerDoc.Tags = new List<Tag>();
+                swaggerDoc.Tags = new List<OpenApiTag>();
 
             // Collect (unique) controller names and custom attributes in a dictionary
             var controllerNamesAndAttributes = context.ApiDescriptions
@@ -29,7 +28,7 @@ namespace Swashbuckle.AspNetCore.Annotations
         }
 
         private void ApplySwaggerTagAttribute(
-            SwaggerDocument swaggerDoc,
+            OpenApiDocument swaggerDoc,
             string controllerName,
             IEnumerable<object> customAttributes)
         {
@@ -39,12 +38,12 @@ namespace Swashbuckle.AspNetCore.Annotations
 
             if (swaggerTagAttribute == null) return;
 
-            swaggerDoc.Tags.Add(new Tag
+            swaggerDoc.Tags.Add(new OpenApiTag
             {
                 Name = controllerName,
                 Description = swaggerTagAttribute.Description,
                 ExternalDocs = (swaggerTagAttribute.ExternalDocsUrl != null)
-                    ? new ExternalDocs { Url = swaggerTagAttribute.ExternalDocsUrl }
+                    ? new OpenApiExternalDocs { Url = new Uri(swaggerTagAttribute.ExternalDocsUrl) }
                     : null
             });
         }

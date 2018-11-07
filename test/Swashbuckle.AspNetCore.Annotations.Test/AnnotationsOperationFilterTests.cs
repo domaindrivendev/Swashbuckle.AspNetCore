@@ -1,12 +1,10 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Xunit;
-using Microsoft.AspNetCore.Mvc.Controllers;
-using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Annotations.Test
@@ -16,7 +14,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
         [Fact]
         public void Apply_EnrichesOperationMetadata_IfActionDecoratedWithSwaggerOperationAttribute()
         {
-            var operation = new Operation { OperationId = "foobar" };
+            var operation = new OpenApiOperation { OperationId = "foobar" };
             var filterContext = FilterContextFor(nameof(TestController.ActionWithSwaggerOperationAttribute));
 
             Subject().Apply(operation, filterContext);
@@ -24,16 +22,13 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             Assert.Equal("summary for ActionWithSwaggerOperationAttribute", operation.Summary);
             Assert.Equal("description for ActionWithSwaggerOperationAttribute", operation.Description);
             Assert.Equal("customOperationId", operation.OperationId);
-            Assert.Equal(new[] { "customTag" }, operation.Tags.ToArray());
-            Assert.Equal(new[] { "customMimeType1" }, operation.Consumes.ToArray());
-            Assert.Equal(new[] { "customMimeType2" }, operation.Produces.ToArray());
-            Assert.Equal(new[] { "https" }, operation.Schemes.ToArray());
+            Assert.Equal(new[] { "customTag" }, operation.Tags.Cast<OpenApiTag>().Select(t => t.Name));
         }
 
         [Fact]
         public void Apply_DelegatesToSpecifiedFilter_IfControllerDecoratedWithSwaggerOperationFilterAttribute()
         {
-            var operation = new Operation { OperationId = "foobar" };
+            var operation = new OpenApiOperation { OperationId = "foobar" };
             var filterContext = FilterContextFor(nameof(TestController.ActionWithNoAttributes));
 
             Subject().Apply(operation, filterContext);
@@ -44,7 +39,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
         [Fact]
         public void Apply_DelegatesToSpecifiedFilter_IfActionDecoratedWithSwaggerOperationFilterAttribute()
         {
-            var operation = new Operation { OperationId = "foobar" };
+            var operation = new OpenApiOperation { OperationId = "foobar" };
             var filterContext = FilterContextFor(nameof(TestController.ActionWithSwaggerOperationFilterAttribute));
 
             Subject().Apply(operation, filterContext);
@@ -55,13 +50,13 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
         [Fact]
         public void Apply_EnrichesResponseMetadata_IfActionDecoratedWithSwaggerResponseAttribute()
         {
-            var operation = new Operation
+            var operation = new OpenApiOperation
             {
                 OperationId = "foobar",
-                Responses = new Dictionary<string, Response>()
+                Responses = new OpenApiResponses
                 {
-                    { "204", new Response { } },
-                    { "400", new Response { } },
+                    { "204", new OpenApiResponse { } },
+                    { "400", new OpenApiResponse { } },
                 }
             };
             var filterContext = FilterContextFor(nameof(TestController.ActionWithSwaggerResponseAttributes));

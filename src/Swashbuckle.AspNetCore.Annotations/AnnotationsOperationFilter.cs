@@ -2,14 +2,14 @@
 using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Annotations
 {
     public class AnnotationsOperationFilter : IOperationFilter
     {
-        public void Apply(Operation operation, OperationFilterContext context)
+        public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
             if (context.MethodInfo == null) return;
 
@@ -23,7 +23,7 @@ namespace Swashbuckle.AspNetCore.Annotations
         }
 
         private static void ApplySwaggerOperationAttribute(
-            Operation operation,
+            OpenApiOperation operation,
             IEnumerable<object> actionAttributes)
         {
             var swaggerOperationAttribute = actionAttributes
@@ -42,20 +42,15 @@ namespace Swashbuckle.AspNetCore.Annotations
                 operation.OperationId = swaggerOperationAttribute.OperationId;
 
             if (swaggerOperationAttribute.Tags != null)
-                operation.Tags = swaggerOperationAttribute.Tags;
-
-            if (swaggerOperationAttribute.Consumes != null)
-                operation.Consumes = swaggerOperationAttribute.Consumes;
-
-            if (swaggerOperationAttribute.Produces != null)
-                operation.Produces = swaggerOperationAttribute.Produces;
-
-            if (swaggerOperationAttribute.Schemes != null)
-                operation.Schemes = swaggerOperationAttribute.Schemes;
+            {
+                operation.Tags = swaggerOperationAttribute.Tags
+                    .Select(tagName => new OpenApiTag { Name = tagName })
+                    .ToList();
+            }
         }
 
         public static void ApplySwaggerOperationFilterAttributes(
-            Operation operation,
+            OpenApiOperation operation,
             OperationFilterContext context,
             IEnumerable<object> actionAndControllerAttributes)
         {
@@ -70,7 +65,7 @@ namespace Swashbuckle.AspNetCore.Annotations
         }
 
         private void ApplySwaggerResponseAttributes(
-            Operation operation,
+            OpenApiOperation operation,
             IEnumerable<object> actionAndControllerAttributes,
             OperationFilterContext context)
         {
@@ -80,16 +75,13 @@ namespace Swashbuckle.AspNetCore.Annotations
             foreach (var swaggerResponseAttribute in swaggerResponseAttributes)
             {
                 var statusCode = swaggerResponseAttribute.StatusCode.ToString();
-                if (!operation.Responses.TryGetValue(statusCode, out Response response))
+                if (!operation.Responses.TryGetValue(statusCode, out OpenApiResponse response))
                 {
-                    response = new Response();
+                    response = new OpenApiResponse();
                 }
 
                 if (swaggerResponseAttribute.Description != null)
                     response.Description = swaggerResponseAttribute.Description;
-
-                if (swaggerResponseAttribute.Type != null)
-                    response.Schema = context.SchemaRegistry.GetOrRegister(swaggerResponseAttribute.Type);
 
                 operation.Responses[statusCode] = response;
             }

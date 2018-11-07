@@ -3,11 +3,10 @@ using System.Reflection;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.Loader;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Writers;
+using Microsoft.AspNetCore;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.Cli
@@ -32,7 +31,7 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Option("--output", "relative path where the Swagger will be output, defaults to stdout");
                 c.Option("--host", "a specific host to include in the Swagger output");
                 c.Option("--basepath", "a specific basePath to inlcude in the Swagger output");
-                c.Option("--format", "overrides the format of the Swagger output, can be Indented or None");
+                c.Option("--serializeasv2", "output Swagger in the V2 format rather than V3", true);
                 c.OnRun((namedArgs) =>
                 {
                     var depsFile = namedArgs["startupassembly"].Replace(".dll", ".deps.json");
@@ -59,7 +58,7 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Option("--output", "");
                 c.Option("--host", "");
                 c.Option("--basepath", "");
-                c.Option("--format", "");
+                c.Option("--serializeasv2", "", true);
                 c.OnRun((namedArgs) =>
                 {
                     // 1) Configure host with provided startupassembly
@@ -74,8 +73,7 @@ namespace Swashbuckle.AspNetCore.Cli
                     var swagger = swaggerProvider.GetSwagger(
                         namedArgs["swaggerdoc"],
                         namedArgs.ContainsKey("--host") ? namedArgs["--host"] : null,
-                        namedArgs.ContainsKey("--basepath") ? namedArgs["--basepath"] : null,
-                        null);
+                        namedArgs.ContainsKey("--basepath") ? namedArgs["--basepath"] : null);
 
                     // 3) Serialize to specified output location or stdout
                     var outputPath = namedArgs.ContainsKey("--output")
@@ -84,22 +82,14 @@ namespace Swashbuckle.AspNetCore.Cli
 
                     using (var streamWriter = (outputPath != null ? File.CreateText(outputPath) : Console.Out))
                     {
-                        var mvcOptionsAccessor = (IOptions<MvcJsonOptions>)host.Services.GetService(typeof(IOptions<MvcJsonOptions>));
+                        var jsonWriter = new OpenApiJsonWriter(streamWriter);
+                        if (namedArgs.ContainsKey("--serializeasv2"))
+                            swagger.SerializeAsV2(jsonWriter);
+                        else
+                            swagger.SerializeAsV3(jsonWriter);
 
-                        if(namedArgs.ContainsKey("--format"))
-                        {
-                            // TODO: Should this handle case where mvcJsonOptions.Value == null?
-                            mvcOptionsAccessor.Value.SerializerSettings.Formatting = ParseEnum<Newtonsoft.Json.Formatting>(namedArgs["--format"]);
-                        }
-
-                        var serializer = SwaggerSerializerFactory.Create(mvcOptionsAccessor);
-
-                        serializer.Serialize(streamWriter, swagger);
-
-                        if (!string.IsNullOrWhiteSpace(outputPath))
-                        {
+                        if (outputPath != null)
                             Console.WriteLine($"Swagger JSON succesfully written to {outputPath}");
-                        }
                     }
 
                     return 0;
@@ -109,22 +99,6 @@ namespace Swashbuckle.AspNetCore.Cli
             return runner.Run(args);
         }
 
-        /// <summary>
-        /// Parses a given option value into a specified enumeration value
-        /// </summary>
-        /// <param name="optionValue">Expects the string representation of a valid Enumeration value,
-        /// anything else defaults to the Enumeration's default value</param>
-        protected static T ParseEnum<T>(string optionValue) where T : struct, IConvertible
-        {
-            var isParsed = Enum.TryParse(optionValue, true, out T parsed);
-            
-            return isParsed ? parsed : default(T);
-        }
-        
-        /// <summary>
-        /// Escape a given path value
-        /// </summary>
-        /// <param name="path">The path which should be escaped</param>
         private static string EscapePath(string path)
         {
             if (path.Contains(" "))

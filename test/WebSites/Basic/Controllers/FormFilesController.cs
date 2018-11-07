@@ -4,16 +4,23 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Basic.Controllers
 {
-    public class FileUploadsController
+    [Route("files")]
+    public class FormFilesController
     {
-        [HttpPost("file")]
+        [HttpPost("single")]
         public IActionResult PostFile(IFormFile file)
         {
             throw new NotImplementedException();
         }
 
+        [HttpPost("multiple")]
+        public IActionResult PostFiles(IFormFileCollection files)
+        {
+            throw new NotImplementedException();
+        }
+
         [HttpPost("form-with-file")]
-        public IActionResult PostFormWithFile(FormWithFile formWithFile)
+        public IActionResult PostFormWithFile([FromForm]FormWithFile formWithFile)
         {
             throw new NotImplementedException();
         }

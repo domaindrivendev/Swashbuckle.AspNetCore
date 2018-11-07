@@ -9,34 +9,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     internal static class JsonPropertyExtensions
     {
-        internal static bool IsRequired(this JsonProperty jsonProperty)
-        {
-            if (jsonProperty.Required == Newtonsoft.Json.Required.AllowNull)
-                return true;
-
-            if (jsonProperty.Required == Newtonsoft.Json.Required.Always)
-                return true;
-
-            if (jsonProperty.HasAttribute<RequiredAttribute>())
-                return true;
-
-            return false;
-        }
-
-        internal static bool IsObsolete(this JsonProperty jsonProperty)
-        {
-            return jsonProperty.HasAttribute<ObsoleteAttribute>();
-        }
-
-        internal static bool HasAttribute<T>(this JsonProperty jsonProperty)
-            where T : Attribute
-        {
-            if (!jsonProperty.TryGetMemberInfo(out MemberInfo memberInfo))
-                return false;
-
-            return memberInfo.GetCustomAttribute<T>() != null;
-        }
-
         internal static bool TryGetMemberInfo(this JsonProperty jsonProperty, out MemberInfo memberInfo)
         {
             if (jsonProperty.UnderlyingName == null)
@@ -56,6 +28,34 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             memberInfo = typeToReflect.GetMember(jsonProperty.UnderlyingName).FirstOrDefault();
 
             return (memberInfo != null);
+        }
+
+        internal static bool IsRequired(this JsonProperty jsonProperty)
+        {
+            if (jsonProperty.Required == Newtonsoft.Json.Required.AllowNull)
+                return true;
+
+            if (jsonProperty.Required == Newtonsoft.Json.Required.Always)
+                return true;
+
+            if (jsonProperty.HasAttribute<RequiredAttribute>())
+                return true;
+
+            return false;
+        }
+
+        internal static bool IsObsolete(this JsonProperty jsonProperty)
+        {
+            return jsonProperty.HasAttribute<ObsoleteAttribute>();
+        }
+
+        private static bool HasAttribute<T>(this JsonProperty jsonProperty)
+            where T : Attribute
+        {
+            if (!jsonProperty.TryGetMemberInfo(out MemberInfo memberInfo))
+                return false;
+
+            return memberInfo.GetCustomAttribute<T>() != null;
         }
     }
 }

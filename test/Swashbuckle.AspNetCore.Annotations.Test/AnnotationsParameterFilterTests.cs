@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.OpenApi.Models;
 using Xunit;
-using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Annotations.Test
@@ -11,7 +11,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
         [Fact]
         public void Apply_EnrichesParameterMetadata_IfParameterDecoratedWithSwaggerParameterAttribute()
         {
-            var parameter = new NonBodyParameter { };
+            var parameter = new OpenApiParameter { };
             var filterContext = FilterContextFor(
                 nameof(TestController.ActionWithSwaggerParameterAttribute), "param1");
 
@@ -24,7 +24,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
         [Fact]
         public void Apply_DoesNotModifyTheRequiredFlag_IfNotSpecifiedWithSwaggerParameterAttribute()
         {
-            var parameter = new NonBodyParameter { Required = true };
+            var parameter = new OpenApiParameter { Required = true };
             var filterContext = FilterContextFor(
                 nameof(TestController.ActionWithSwaggerParameterAttributeDescriptionOnly), "param1");
 

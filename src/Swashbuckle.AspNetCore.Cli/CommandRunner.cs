@@ -8,7 +8,7 @@ namespace Swashbuckle.AspNetCore.Cli
     public class CommandRunner
     {
         private readonly Dictionary<string, string> _argumentDescriptors;
-        private readonly Dictionary<string, string> _optionDescriptors;
+        private readonly Dictionary<string, OptionDescriptor> _optionDescriptors;
         private Func<IDictionary<string, string>, int> _runFunc;
         private readonly List<CommandRunner> _subRunners;
         private readonly TextWriter _output;
@@ -18,7 +18,7 @@ namespace Swashbuckle.AspNetCore.Cli
             CommandName = commandName;
             CommandDescription = commandDescription;
             _argumentDescriptors = new Dictionary<string, string>();
-            _optionDescriptors = new Dictionary<string, string>();
+            _optionDescriptors = new Dictionary<string, OptionDescriptor>();
             _runFunc = (namedArgs) => { return 1; }; // noop
             _subRunners = new List<CommandRunner>();
             _output = output;
@@ -33,10 +33,10 @@ namespace Swashbuckle.AspNetCore.Cli
             _argumentDescriptors.Add(name, description);
         }
 
-        public void Option(string name, string description)
+        public void Option(string name, string description, bool isFlag = false)
         {
             if (!name.StartsWith("--")) throw new ArgumentException("name of option must begin with --");
-            _optionDescriptors.Add(name, description);
+            _optionDescriptors.Add(name, new OptionDescriptor { Description = description, IsFlag = isFlag });
         }
 
         public void OnRun(Func<IDictionary<string, string>, int> runFunc)
@@ -76,11 +76,16 @@ namespace Swashbuckle.AspNetCore.Cli
             // Process options first
             while (argsQueue.Any() && argsQueue.Peek().StartsWith("--"))
             {
-                // Ensure it's expected and that the value is also provided
+                // Ensure it's a known option
                 var name = argsQueue.Dequeue();
-                if (!_optionDescriptors.ContainsKey(name) || !argsQueue.Any() || argsQueue.Peek().StartsWith("--"))
+                if (!_optionDescriptors.TryGetValue(name, out OptionDescriptor optionDescriptor))
                     return false;
-                namedArgs.Add(name, argsQueue.Dequeue());
+
+                // If it's not a flag, ensure it's followed by a corresponding value
+                if (!optionDescriptor.IsFlag && (!argsQueue.Any() || argsQueue.Peek().StartsWith("--")))
+                    return false;
+
+                namedArgs.Add(name, (!optionDescriptor.IsFlag ? argsQueue.Dequeue() : null));
             }
 
             // Process required args - ensure corresponding values are provided
@@ -130,11 +135,17 @@ namespace Swashbuckle.AspNetCore.Cli
                     _output.WriteLine("options:");
                     foreach (var entry in _optionDescriptors)
                     {
-                        _output.WriteLine($"  {entry.Key}:  {entry.Value}");
+                        _output.WriteLine($"  {entry.Key}:  {entry.Value.Description}");
                     }
                     _output.WriteLine();
                 }
             }
+        }
+
+        private struct OptionDescriptor
+        {
+            public string Description;
+            public bool IsFlag;
         }
     }
 }

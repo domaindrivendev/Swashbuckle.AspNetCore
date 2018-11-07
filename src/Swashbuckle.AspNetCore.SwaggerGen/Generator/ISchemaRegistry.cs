@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public interface ISchemaRegistry
     {
-        Schema GetOrRegister(Type type);
+        OpenApiSchema GetOrRegister(Type type);
 
-        IDictionary<string, Schema> Definitions { get; }
+        IDictionary<string, OpenApiSchema> Schemas { get; }
     }
 }

@@ -1,13 +1,12 @@
 ﻿using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.AspNetCore.Mvc.Controllers;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public interface IOperationFilter
     {
-        void Apply(Operation operation, OperationFilterContext context);
+        void Apply(OpenApiOperation operation, OperationFilterContext context);
     }
 
     public class OperationFilterContext

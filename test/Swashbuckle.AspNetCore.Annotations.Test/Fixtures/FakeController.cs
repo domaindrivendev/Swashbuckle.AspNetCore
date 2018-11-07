@@ -14,10 +14,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
         [SwaggerOperation("summary for ActionWithSwaggerOperationAttribute",
             Description = "description for ActionWithSwaggerOperationAttribute",
             OperationId = "customOperationId",
-            Tags = new[] { "customTag" },
-            Consumes = new[] { "customMimeType1" },
-            Produces = new[] { "customMimeType2" },
-            Schemes = new[] { "https" }
+            Tags = new[] { "customTag" }
         )]
         public void ActionWithSwaggerOperationAttribute()
         { }

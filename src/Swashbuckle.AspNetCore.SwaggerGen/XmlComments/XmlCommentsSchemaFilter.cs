@@ -1,7 +1,8 @@
 ﻿using System.Xml.XPath;
 using System.Reflection;
 using Newtonsoft.Json.Serialization;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Any;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -18,7 +19,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             _xmlNavigator = xmlDoc.CreateNavigator();
         }
 
-        public void Apply(Schema schema, SchemaFilterContext context)
+        public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
             var jsonObjectContract = context.JsonContract as JsonObjectContract;
             if (jsonObjectContract == null) return;
@@ -46,7 +47,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
         }
 
-        private void ApplyPropertyComments(Schema propertySchema, MemberInfo memberInfo)
+        private void ApplyPropertyComments(OpenApiSchema propertySchema, MemberInfo memberInfo)
         {
             var memberName = XmlCommentsMemberNameHelper.GetMemberNameForMember(memberInfo);
             var memberNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, memberName));
@@ -60,7 +61,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var exampleNode = memberNode.SelectSingleNode(ExampleXPath);
             if (exampleNode != null)
-                propertySchema.Example = XmlCommentsTextHelper.Humanize(exampleNode.InnerXml);
+                propertySchema.Example = new OpenApiString(XmlCommentsTextHelper.Humanize(exampleNode.InnerXml));
         }
     }
 }

@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace Basic.Controllers
 {
     [Route("/orders")]
-    [Produces("application/json")]
+    [Consumes("application/xml")]
+    [Produces("application/xml")]
     public class ResponseTypeAnnotationsController
     {
         /// <summary>

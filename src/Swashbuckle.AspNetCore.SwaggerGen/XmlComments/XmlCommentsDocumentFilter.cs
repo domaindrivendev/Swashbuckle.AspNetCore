@@ -1,8 +1,8 @@
 ﻿using System.Xml.XPath;
-using Swashbuckle.AspNetCore.Swagger;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc.Controllers;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -18,7 +18,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             _xmlNavigator = xmlDoc.CreateNavigator();
         }
 
-        public void Apply(SwaggerDocument swaggerDoc, DocumentFilterContext context)
+        public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {
             // Collect (unique) controller names and types in a dictionary
             var controllerNamesAndTypes = context.ApiDescriptions
@@ -38,9 +38,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     if (summaryNode != null)
                     {
                         if (swaggerDoc.Tags == null)
-                            swaggerDoc.Tags = new List<Tag>();
+                            swaggerDoc.Tags = new List<OpenApiTag>();
 
-                        swaggerDoc.Tags.Add(new Tag
+                        swaggerDoc.Tags.Add(new OpenApiTag
                         {
                             Name = nameAndType.Key,
                             Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml)

@@ -1,18 +1,22 @@
-﻿using Swashbuckle.AspNetCore.SwaggerGen;
-using System.Linq;
-using Swashbuckle.AspNetCore.Swagger;
+﻿using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace MultipleVersions.Swagger
 {
     public class SetVersionInPaths : IDocumentFilter
     {
-        public void Apply(SwaggerDocument swaggerDoc, DocumentFilterContext context)
+        public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {
-            swaggerDoc.Paths = swaggerDoc.Paths
-                .ToDictionary(
-                    path => path.Key.Replace("v{version}", swaggerDoc.Info.Version),
-                    path => path.Value
-                );
+            var updatedPaths = new OpenApiPaths();
+
+            foreach (var entry in swaggerDoc.Paths)
+            {
+                updatedPaths.Add(
+                    entry.Key.Replace("v{version}", swaggerDoc.Info.Version),
+                    entry.Value);
+            }
+
+            swaggerDoc.Paths = updatedPaths;
         }
     }
 }

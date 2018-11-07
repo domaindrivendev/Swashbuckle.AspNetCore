@@ -4,8 +4,8 @@ using System.Xml.XPath;
 using System.Reflection;
 using System.IO;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.OpenApi.Models;
 using Xunit;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -14,9 +14,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void Apply_SetsSummaryAndDescription_FromSummaryAndRemarksTags()
         {
-            var operation = new Operation
+            var operation = new OpenApiOperation
             {
-                Responses = new Dictionary<string, Response>()
+                Responses = new OpenApiResponses()
             };
             var filterContext = FilterContextFor(nameof(FakeController.AnnotatedWithXml));
 
@@ -29,15 +29,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void Apply_SetsParameterDescriptions_FromParamTags()
         {
-            var operation = new Operation
+            var operation = new OpenApiOperation
             {
-                Parameters = new List<IParameter>
+                Parameters = new List<OpenApiParameter>
                 {
-                    new NonBodyParameter { Name = "param1" }, 
-                    new NonBodyParameter { Name = "param2" }, 
-                    new NonBodyParameter { Name = "Param-3" } 
+                    new OpenApiParameter { Name = "param1" }, 
+                    new OpenApiParameter { Name = "param2" }, 
+                    new OpenApiParameter { Name = "Param-3" } 
                 },
-                Responses = new Dictionary<string, Response>()
+                Responses = new OpenApiResponses()
             };
             var filterContext = FilterContextFor(nameof(FakeController.AnnotatedWithXml));
 
@@ -51,10 +51,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void Apply_SetsParameterDescription_FromSummaryTagsOfParameterBoundProperties()
         {
-            var operation = new Operation
+            var operation = new OpenApiOperation
             {
-                Parameters = new List<IParameter>() { new NonBodyParameter { Name = "Property" } },
-                Responses = new Dictionary<string, Response>()
+                Parameters = new List<OpenApiParameter>() { new OpenApiParameter { Name = "Property" } },
+                Responses = new OpenApiResponses()
             };
             var filterContext = FilterContextFor(nameof(FakeController.AcceptsXmlAnnotatedTypeFromQuery));
 
@@ -66,12 +66,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void Apply_OverwritesResponseDescriptionFromResponseTag_IfResponsePresent()
         {
-            var operation = new Operation
+            var operation = new OpenApiOperation
             {
-                Responses = new Dictionary<string, Response>
+                Responses = new OpenApiResponses
                 {
-                    { "200", new Response { Description = "Success", Schema = new Schema { Ref = "#/definitions/foo" } } },
-                    { "400", new Response { Description = "Client Error", Schema = new Schema { Ref = "#/definitions/bar" } } }
+                    { "200", new OpenApiResponse { Description = "Success" } },
+                    { "400", new OpenApiResponse { Description = "Client Error" } } 
                 }
             };
             var filterContext = FilterContextFor(nameof(FakeController.AnnotatedWithXml));
@@ -79,19 +79,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Subject().Apply(operation, filterContext);
 
             Assert.Equal("description for 200", operation.Responses["200"].Description);
-            Assert.NotNull(operation.Responses["200"].Schema.Ref);
             Assert.Equal("description for 400", operation.Responses["400"].Description);
-            Assert.NotNull(operation.Responses["400"].Schema.Ref);
         }
 
         [Fact]
         public void Apply_AddsResponseWithDescriptionFromResponseTag_IfResponseNotPresent()
         {
-            var operation = new Operation
+            var operation = new OpenApiOperation
             {
-                Responses = new Dictionary<string, Response>
+                Responses = new OpenApiResponses
                 {
-                    { "200", new Response { Description = "Success", Schema = new Schema { Ref = "#/definitions/foo" } } },
+                    { "200", new OpenApiResponse { Description = "Success" } } 
                 }
             };
             var filterContext = FilterContextFor(nameof(FakeController.AnnotatedWithXml));
