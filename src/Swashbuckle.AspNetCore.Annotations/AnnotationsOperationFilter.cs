@@ -13,13 +13,13 @@ namespace Swashbuckle.AspNetCore.Annotations
         {
             if (context.MethodInfo == null) return;
 
+            var controllerAttributes = context.MethodInfo.DeclaringType.GetTypeInfo().GetCustomAttributes(true).Reverse(); // Reverse so most derived types are last
             var actionAttributes = context.MethodInfo.GetCustomAttributes(true);
-            var controllerAttributes = context.MethodInfo.DeclaringType.GetTypeInfo().GetCustomAttributes(true);
-            var actionAndControllerAttributes = actionAttributes.Union(controllerAttributes);
+            var controllerAndActionAttributes = controllerAttributes.Union(actionAttributes);
 
             ApplySwaggerOperationAttribute(operation, actionAttributes);
-            ApplySwaggerOperationFilterAttributes(operation, context, actionAndControllerAttributes);
-            ApplySwaggerResponseAttributes(operation, actionAndControllerAttributes);
+            ApplySwaggerOperationFilterAttributes(operation, context, controllerAndActionAttributes);
+            ApplySwaggerResponseAttributes(operation, controllerAndActionAttributes);
         }
 
         private static void ApplySwaggerOperationAttribute(
@@ -93,8 +93,7 @@ namespace Swashbuckle.AspNetCore.Annotations
                 // Action descriptions should take precedence over controller descriptions and
                 // the most derived controller descrption should take precedence over the least,
                 // so do not overwrite the description if there is a value already there.
-                if (swaggerResponseAttribute.Description != null && string.IsNullOrEmpty(response.Description))
-                    response.Description = swaggerResponseAttribute.Description;
+                response.Description = swaggerResponseAttribute.Description;
 
                 operation.Responses[statusCode] = response;
             }
