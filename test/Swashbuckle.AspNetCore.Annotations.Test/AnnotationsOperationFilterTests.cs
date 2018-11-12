@@ -1,13 +1,12 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Newtonsoft.Json;
-using Xunit;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Xunit;
 
 namespace Swashbuckle.AspNetCore.Annotations.Test
 {
@@ -90,6 +89,26 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             Assert.Equal("description for 204 response", response1.Description);
             var response2 = operation.Responses["400"];
             Assert.Equal("description for 400 response at action", response2.Description);
+        }
+
+        [Fact]
+        public void Apply_EnrichesResponseMetadata_IfActionAndControllerNotDecoratedWithSwaggerResponseAttribute()
+        {
+            var operation = new Operation
+            {
+                OperationId = "foobar",
+                Responses = new Dictionary<string, Response>()
+                {
+                    { "400", new Response { } },
+                }
+            };
+            var filterContext = FilterContextFor(nameof(TestController2.ActionWithNoAttributesInBaseClass));
+
+            Subject().Apply(operation, filterContext);
+
+            Assert.Equal(new[] { "400" }, operation.Responses.Keys.ToArray());
+            var response = operation.Responses["400"];
+            Assert.Equal("description for 400 response at base controller", response.Description);
         }
 
         private OperationFilterContext FilterContextFor(string fakeActionName)

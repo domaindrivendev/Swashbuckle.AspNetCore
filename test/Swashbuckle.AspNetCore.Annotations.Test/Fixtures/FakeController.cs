@@ -48,4 +48,8 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
         public void ActionWithNoAttributesInBaseClass()
         { }
     }
+
+    internal class TestController2 : TestControllerBase
+    {
+    }
 }
