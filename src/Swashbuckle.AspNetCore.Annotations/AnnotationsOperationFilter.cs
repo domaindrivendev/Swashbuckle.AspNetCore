@@ -93,7 +93,8 @@ namespace Swashbuckle.AspNetCore.Annotations
                 // Action descriptions should take precedence over controller descriptions and
                 // the most derived controller descrption should take precedence over the least,
                 // so do not overwrite the description if there is a value already there.
-                response.Description = swaggerResponseAttribute.Description;
+                if (swaggerResponseAttribute.Description != null)
+                    response.Description = swaggerResponseAttribute.Description;
 
                 operation.Responses[statusCode] = response;
             }
