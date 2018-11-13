@@ -41,21 +41,6 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
         }
 
         [Fact]
-        public void Apply_DelegatesToSpecifiedFilter_IfActionDecoratedWithSwaggerOperationFilterAttribute()
-        {
-            var operation = new Operation { OperationId = "foobar" };
-            var filterContext = FilterContextFor(nameof(TestController.ActionWithSwaggerOperationFilterAttribute));
-
-            Subject().Apply(operation, filterContext);
-
-            Assert.NotEmpty(operation.Extensions);
-
-            Assert.Equal(new[] { "400" }, operation.Responses.Keys.ToArray());
-            var response = operation.Responses["400"];
-            Assert.Equal("description for 400 response at controller", response.Description);
-        }
-
-        [Fact]
         public void Apply_DelegatesToSpecifiedFilter_IfActionDecoratedWithSwaggerOperationFilterAttributeInBaseClass()
         {
             var operation = new Operation { OperationId = "foobar" };

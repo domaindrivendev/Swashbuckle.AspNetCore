@@ -16,7 +16,7 @@ namespace Swashbuckle.AspNetCore.Annotations
             // Action descriptions should take precedence over controller descriptions and
             // the most derived controller descrption should take precedence over the least,
             // so do not overwrite the description if there is a value already there.
-            var controllerAttributes = context.MethodInfo.DeclaringType.GetTypeInfo().GetCustomAttributes(true).Reverse(); // Reverse so most derived types are last
+            var controllerAttributes = context.MethodInfo.DeclaringType.GetTypeInfo().GetCustomAttributes(true);
             var actionAttributes = context.MethodInfo.GetCustomAttributes(true);
             var controllerAndActionAttributes = controllerAttributes.Union(actionAttributes);
 
