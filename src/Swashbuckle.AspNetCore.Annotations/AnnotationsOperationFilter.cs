@@ -13,6 +13,9 @@ namespace Swashbuckle.AspNetCore.Annotations
         {
             if (context.MethodInfo == null) return;
 
+            // Action descriptions should take precedence over controller descriptions and
+            // the most derived controller descrption should take precedence over the least,
+            // so do not overwrite the description if there is a value already there.
             var controllerAttributes = context.MethodInfo.DeclaringType.GetTypeInfo().GetCustomAttributes(true).Reverse(); // Reverse so most derived types are last
             var actionAttributes = context.MethodInfo.GetCustomAttributes(true);
             var controllerAndActionAttributes = controllerAttributes.Union(actionAttributes);
@@ -90,9 +93,6 @@ namespace Swashbuckle.AspNetCore.Annotations
                     response = new Response();
                 }
 
-                // Action descriptions should take precedence over controller descriptions and
-                // the most derived controller descrption should take precedence over the least,
-                // so do not overwrite the description if there is a value already there.
                 if (swaggerResponseAttribute.Description != null)
                     response.Description = swaggerResponseAttribute.Description;
 
