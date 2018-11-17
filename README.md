@@ -141,6 +141,7 @@ These packages are provided by the open-source community.
 |---------|-----------|
 |[Swashbuckle.AspNetCore.Filters](https://github.com/mattfrear/Swashbuckle.AspNetCore.Filters)| Some useful Swashbuckle filters which add additional documentation, e.g. request and response examples, a file upload button, etc. See its Readme for more details |
 |[MicroElements.Swashbuckle.FluentValidation](https://github.com/micro-elements/MicroElements.Swashbuckle.FluentValidation)| Use FluentValidation rules instead of ComponentModel attributes to augment generated Swagger Schemas |
+|[Swashbuckle.AspNetCore.AzureFunctions](https://github.com/bherila/Swashbuckle.AspNetCore.AzureFunctions)| Use Swashbuckle with Azure Functions 2.0 |
 
 # Configuration & Customization #
 
