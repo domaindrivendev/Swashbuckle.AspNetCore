@@ -43,7 +43,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             string[] schemes = null)
         {
             if (!_options.SwaggerDocs.TryGetValue(documentName, out Info info))
-                throw new UnknownSwaggerDocument(documentName);
+                throw new UnknownSwaggerDocument(documentName, _options.SwaggerDocs.Select(x => x.Key));
 
             var applicableApiDescriptions = _apiDescriptionsProvider.ApiDescriptionGroups.Items
                 .SelectMany(group => group.Items)
