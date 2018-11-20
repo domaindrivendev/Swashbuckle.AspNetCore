@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Reflection;
-using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
 using Swashbuckle.AspNetCore.Swagger;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Reflection;
+using System.Text.RegularExpressions;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -23,7 +23,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             IApiDescriptionGroupCollectionProvider apiDescriptionsProvider,
             ISchemaRegistryFactory schemaRegistryFactory,
             IOptions<SwaggerGeneratorOptions> optionsAccessor)
-            : this (apiDescriptionsProvider, schemaRegistryFactory, optionsAccessor.Value)
+            : this(apiDescriptionsProvider, schemaRegistryFactory, optionsAccessor.Value)
         { }
 
         public SwaggerGenerator(
@@ -199,7 +199,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var mediaTypes = (consumesAttribute != null)
                 ? consumesAttribute.ContentTypes
                 : apiDescription.SupportedRequestFormats
-                    .Select(apiRequestFormat => apiRequestFormat.MediaType);
+                    .Select(apiRequestFormat => apiRequestFormat.MediaType)
+                    .Distinct();
 
             return mediaTypes.ToList();
         }
