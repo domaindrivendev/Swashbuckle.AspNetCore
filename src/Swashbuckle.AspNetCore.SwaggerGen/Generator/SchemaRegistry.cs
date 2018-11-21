@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -199,17 +200,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private Schema CreateArraySchema(JsonArrayContract arrayContract, Queue<Type> referencedTypes)
         {
+            var uniqueTypes = new[] {typeof(ISet<>), typeof(KeyedCollection<,>)};
             var type = arrayContract.UnderlyingType;
             var itemType = arrayContract.CollectionItemType ?? typeof(object);
 
-            var isASet = (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(ISet<>)
-                || type.GetInterfaces().Any(i => i.GetTypeInfo().IsGenericType && i.GetGenericTypeDefinition() == typeof(ISet<>)));
+            var isAUniqueCollection = (type.GetTypeInfo().IsGenericType && uniqueTypes.Contains(type.GetGenericTypeDefinition())
+                || type.GetInterfaces().Any(i => i.GetTypeInfo().IsGenericType && uniqueTypes.Contains(i.GetGenericTypeDefinition())));
 
             return new Schema
             {
                 Type = "array",
                 Items = CreateSchema(itemType, referencedTypes),
-                UniqueItems = isASet
+                UniqueItems = isAUniqueCollection
             };
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -71,6 +72,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void GetOrRegister_ReturnsSetSchema_ForSetTypes()
         {
             var schema = Subject().GetOrRegister(typeof(ISet<string>));
+
+            Assert.Equal("array", schema.Type);
+            Assert.Equal("string", schema.Items.Type);
+            Assert.Equal(true, schema.UniqueItems);
+        }
+
+
+        [Fact]
+        public void GetOrRegister_ReturnsSetSchema_ForKeyedCollectionTypes()
+        {
+            var schema = Subject().GetOrRegister(typeof(KeyedCollection<string, string>));
 
             Assert.Equal("array", schema.Type);
             Assert.Equal("string", schema.Items.Type);
