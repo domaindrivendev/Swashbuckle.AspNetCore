@@ -203,9 +203,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var uniqueTypes = new[] {typeof(ISet<>), typeof(KeyedCollection<,>)};
             var type = arrayContract.UnderlyingType;
             var itemType = arrayContract.CollectionItemType ?? typeof(object);
-
             var isAUniqueCollection = (type.GetTypeInfo().IsGenericType && uniqueTypes.Contains(type.GetGenericTypeDefinition())
-                || type.GetInterfaces().Any(i => i.GetTypeInfo().IsGenericType && uniqueTypes.Contains(i.GetGenericTypeDefinition())));
+                                    || type.GetInterfaces().Any(i => i.GetTypeInfo().IsGenericType && uniqueTypes.Contains(i.GetGenericTypeDefinition()))
+                                    || uniqueTypes.Any(t => IsSubclassOfGeneric(type, t)));
 
             return new Schema
             {
@@ -278,5 +278,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             { typeof(DateTimeOffset), () => new Schema { Type = "string", Format = "date-time" } },
             { typeof(Guid), () => new Schema { Type = "string", Format = "uuid" } }
         };
+
+        private static bool IsSubclassOfGeneric(Type type, Type generic)
+        {
+            while (type != null && type != typeof(object))
+            {
+                var typeToCheck = type.IsGenericType ? type.GetGenericTypeDefinition() : type;
+                if (typeToCheck == generic)
+                {
+                    return true;
+                }
+                type = type.BaseType;
+            }
+            return false;
+        }
     }
 }
