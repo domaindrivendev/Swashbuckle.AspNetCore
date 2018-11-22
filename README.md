@@ -959,7 +959,7 @@ app.UseSwaggerUI(c =>
 	c.OAuthRealm("test-realm");
 	c.OAuthAppName("test-app");
 	c.OAuthScopeSeparator(" ");
-	c.OAuthAdditionalQueryStringParams(new { foo = "bar" });
+	c.OAuthAdditionalQueryStringParams(new Dictionary<string, string> { { "foo", "bar" }}); 
 	c.OAuthUseBasicAuthenticationWithAccessCodeGrant();
 });
 ```
