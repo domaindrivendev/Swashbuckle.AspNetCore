@@ -57,7 +57,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 {
                     Schemas = schemaRegistry.Schemas,
                     SecuritySchemes = _options.SecuritySchemes
-                }
+                },
+                SecurityRequirements = _options.SecurityRequirements
             };
 
             var filterContext = new DocumentFilterContext(applicableApiDescriptions, schemaRegistry);

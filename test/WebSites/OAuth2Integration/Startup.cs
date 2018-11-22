@@ -84,8 +84,19 @@ namespace OAuth2Integration
                     }
                 });
 
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
+                        },
+                        new[] { "readAccess", "writeAccess" }
+                    }
+                });
+
                 // Assign scope requirements to operations based on AuthorizeAttribute
-                c.OperationFilter<SecurityRequirementsOperationFilter>();
+                //c.OperationFilter<SecurityRequirementsOperationFilter>();
             });
         }
 

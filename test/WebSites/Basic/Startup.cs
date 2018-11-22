@@ -40,8 +40,8 @@ namespace Basic
                 c.SwaggerDoc("v1",
                     new OpenApiInfo
                     {
-                        Version = "v1",
                         Title = "Swashbuckle Sample API",
+                        Version = "v1",
                         Description = "A sample API for testing Swashbuckle",
                         TermsOfService = new Uri("http://tempuri.org/terms")
                     }

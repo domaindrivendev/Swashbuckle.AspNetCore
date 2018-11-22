@@ -17,7 +17,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             TagsSelector = DefaultTagsSelector;
             SortKeySelector = DefaultSortKeySelector;
             SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>();
-            SecurityRequirements = new List<IDictionary<string, IEnumerable<string>>>();
+            SecurityRequirements = new List<OpenApiSecurityRequirement>();
             ParameterFilters = new List<IParameterFilter>();
             OperationFilters = new List<IOperationFilter>();
             DocumentFilters = new List<IDocumentFilter>();
@@ -41,7 +41,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public IDictionary<string, OpenApiSecurityScheme> SecuritySchemes { get; set; }
 
-        public IList<IDictionary<string, IEnumerable<string>>> SecurityRequirements { get; set; }
+        public IList<OpenApiSecurityRequirement> SecurityRequirements { get; set; }
 
         public IList<IParameterFilter> ParameterFilters { get; set; }
 

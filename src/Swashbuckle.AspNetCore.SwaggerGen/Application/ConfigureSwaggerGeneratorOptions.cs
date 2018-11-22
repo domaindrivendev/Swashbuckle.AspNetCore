@@ -46,7 +46,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             target.SortKeySelector = source.SortKeySelector;
             target.DescribeAllParametersInCamelCase = source.DescribeAllParametersInCamelCase;
             target.SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>(source.SecuritySchemes);
-            target.SecurityRequirements = new List<IDictionary<string, IEnumerable<string>>>(source.SecurityRequirements);
+            target.SecurityRequirements = new List<OpenApiSecurityRequirement>(source.SecurityRequirements);
             target.ParameterFilters = new List<IParameterFilter>(source.ParameterFilters);
             target.OperationFilters = new List<IOperationFilter>(source.OperationFilters);
             target.DocumentFilters = new List<IDocumentFilter>(source.DocumentFilters);

@@ -132,15 +132,15 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Adds a global security requirement
         /// </summary>
         /// <param name="swaggerGenOptions"></param>
-        /// <param name="requirement">
+        /// <param name="securityRequirement">
         /// A dictionary of required schemes (logical AND). Keys must correspond to schemes defined through AddSecurityDefinition
         /// If the scheme is of type "oauth2", then the value is a list of scopes, otherwise it MUST be an empty array
         /// </param>
         public static void AddSecurityRequirement(
             this SwaggerGenOptions swaggerGenOptions,
-            IDictionary<string, IEnumerable<string>> requirement)
+            OpenApiSecurityRequirement securityRequirement)
         {
-            swaggerGenOptions.SwaggerGeneratorOptions.SecurityRequirements.Add(requirement);
+            swaggerGenOptions.SwaggerGeneratorOptions.SecurityRequirements.Add(securityRequirement);
         }
 
         /// <summary>
