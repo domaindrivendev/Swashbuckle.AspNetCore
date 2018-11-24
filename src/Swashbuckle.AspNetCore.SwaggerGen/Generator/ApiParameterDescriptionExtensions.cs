@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -8,8 +10,44 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class ApiParameterDescriptionExtensions
     {
-        internal static bool TryGetParameterInfo(
-            this ApiParameterDescription apiParameterDescription,
+        internal static void GetAdditionalMetadata(
+            this ApiParameterDescription parameterDescription,
+            ApiDescription apiDescription,
+            out ParameterInfo parameterInfo,
+            out PropertyInfo propertyInfo,
+            out IEnumerable<object> parameterOrPropertyAttributes)
+        {
+            parameterInfo = null;
+            propertyInfo = null;
+            parameterOrPropertyAttributes = Enumerable.Empty<object>();
+
+            if (parameterDescription.TryGetParameterInfo(apiDescription, out parameterInfo))
+                parameterOrPropertyAttributes = parameterInfo.GetCustomAttributes(true);
+            else if (parameterDescription.TryGetPropertyInfo(out propertyInfo))
+                parameterOrPropertyAttributes = propertyInfo.GetCustomAttributes(true);
+        }
+
+        internal static bool IsFromPath(this ApiParameterDescription parameterDescription)
+        {
+            return (parameterDescription.Source == BindingSource.Path);
+        }
+
+        internal static bool IsFromBody(this ApiParameterDescription parameterDescription)
+        {
+            return (parameterDescription.Source == BindingSource.Body);
+        }
+
+        internal static bool IsFromForm(this ApiParameterDescription parameterDescription)
+        {
+            var source = parameterDescription.Source;
+            var elementType = parameterDescription.ModelMetadata?.ElementType;
+
+            return (source == BindingSource.Form || source == BindingSource.FormFile)
+                || (elementType != null && typeof(IFormFile).IsAssignableFrom(elementType));
+        }
+
+        private static bool TryGetParameterInfo(
+            this ApiParameterDescription parameterDescription,
             ApiDescription apiDescription,
             out ParameterInfo parameterInfo)
         {
@@ -17,8 +55,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 .OfType<ControllerParameterDescriptor>()
                 .FirstOrDefault(descriptor =>
                 {
-                    return (apiParameterDescription.Name == descriptor.BindingInfo?.BinderModelName)
-                        || (apiParameterDescription.Name == descriptor.Name);
+                    return (parameterDescription.Name == descriptor.BindingInfo?.BinderModelName)
+                        || (parameterDescription.Name == descriptor.Name);
                 });
 
             parameterInfo = controllerParameterDescriptor?.ParameterInfo;
@@ -26,11 +64,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return (parameterInfo != null);
         }
 
-        internal static bool TryGetPropertyInfo(
-            this ApiParameterDescription apiParameterDescription,
+        private static bool TryGetPropertyInfo(
+            this ApiParameterDescription parameterDescription,
             out PropertyInfo propertyInfo)
         {
-            var modelMetadata = apiParameterDescription.ModelMetadata;
+            var modelMetadata = parameterDescription.ModelMetadata;
 
             propertyInfo = (modelMetadata?.ContainerType != null)
                 ? modelMetadata.ContainerType.GetProperty(modelMetadata.PropertyName)

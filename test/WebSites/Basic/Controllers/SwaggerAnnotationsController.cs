@@ -28,9 +28,7 @@ namespace Basic.Controllers
         [SwaggerOperation(
             OperationId = "DeleteCart",
             Summary = "Deletes a specific cart",
-            Description = "Requires admin privileges",
-            Consumes = new string[] { "test/plain", "application/json" },
-            Produces = new string[] { "application/javascript", "application/xml" })]
+            Description = "Requires admin privileges")]
         public Cart Delete([FromRoute(Name = "id"), SwaggerParameter("The cart identifier")]int cartId)
         {
             return new Cart { Id = cartId };

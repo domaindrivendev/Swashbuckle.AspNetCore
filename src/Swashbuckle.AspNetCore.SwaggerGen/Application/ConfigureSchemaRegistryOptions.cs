@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -31,7 +30,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private void DeepCopy(SchemaRegistryOptions source, SchemaRegistryOptions target)
         {
-            target.CustomTypeMappings = new Dictionary<Type, Func<Schema>>(source.CustomTypeMappings);
+            target.CustomTypeMappings = new Dictionary<Type, Func<OpenApiSchema>>(source.CustomTypeMappings);
             target.DescribeAllEnumsAsStrings = source.DescribeAllEnumsAsStrings;
             target.DescribeStringEnumsInCamelCase = source.DescribeStringEnumsInCamelCase;
             target.UseReferencedDefinitionsForEnums = source.UseReferencedDefinitionsForEnums;

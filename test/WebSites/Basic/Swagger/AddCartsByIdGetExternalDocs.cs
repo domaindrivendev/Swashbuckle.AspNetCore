@@ -1,16 +1,17 @@
-﻿using Swashbuckle.AspNetCore.Swagger;
+﻿using System;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Basic.Swagger
 {
     public class AddCartsByIdGetExternalDocs : IOperationFilter
     {
-        public void Apply(Operation operation, OperationFilterContext context)
+        public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
-            operation.ExternalDocs = new ExternalDocs
+            operation.ExternalDocs = new OpenApiExternalDocs
             {
                 Description = "External docs for CartsByIdGet",
-                Url = "https://tempuri.org/carts-by-id-get"
+                Url = new Uri("https://tempuri.org/carts-by-id-get")
             };
         }
     }

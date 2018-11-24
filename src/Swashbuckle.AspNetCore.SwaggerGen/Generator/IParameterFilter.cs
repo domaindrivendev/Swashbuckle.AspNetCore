@@ -1,14 +1,12 @@
-﻿using System;
-using System.Reflection;
-using System.Collections.Generic;
+﻿using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public interface IParameterFilter
     {
-        void Apply(IParameter parameter, ParameterFilterContext context);
+        void Apply(OpenApiParameter parameter, ParameterFilterContext context);
     }
 
     public class ParameterFilterContext

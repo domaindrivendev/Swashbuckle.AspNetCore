@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml.XPath;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -18,7 +18,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static void SwaggerDoc(
             this SwaggerGenOptions swaggerGenOptions,
             string name,
-            Info info)
+            OpenApiInfo info)
         {
             swaggerGenOptions.SwaggerGeneratorOptions.SwaggerDocs.Add(name, info);
         }
@@ -123,24 +123,24 @@ namespace Microsoft.Extensions.DependencyInjection
         public static void AddSecurityDefinition(
             this SwaggerGenOptions swaggerGenOptions,
             string name,
-            SecurityScheme securityScheme)
+            OpenApiSecurityScheme securityScheme)
         {
-            swaggerGenOptions.SwaggerGeneratorOptions.SecurityDefinitions.Add(name, securityScheme);
+            swaggerGenOptions.SwaggerGeneratorOptions.SecuritySchemes.Add(name, securityScheme);
         }
 
         /// <summary>
         /// Adds a global security requirement
         /// </summary>
         /// <param name="swaggerGenOptions"></param>
-        /// <param name="requirement">
+        /// <param name="securityRequirement">
         /// A dictionary of required schemes (logical AND). Keys must correspond to schemes defined through AddSecurityDefinition
         /// If the scheme is of type "oauth2", then the value is a list of scopes, otherwise it MUST be an empty array
         /// </param>
         public static void AddSecurityRequirement(
             this SwaggerGenOptions swaggerGenOptions,
-            IDictionary<string, IEnumerable<string>> requirement)
+            OpenApiSecurityRequirement securityRequirement)
         {
-            swaggerGenOptions.SwaggerGeneratorOptions.SecurityRequirements.Add(requirement);
+            swaggerGenOptions.SwaggerGeneratorOptions.SecurityRequirements.Add(securityRequirement);
         }
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static void MapType(
             this SwaggerGenOptions swaggerGenOptions,
             Type type,
-            Func<Schema> schemaFactory)
+            Func<OpenApiSchema> schemaFactory)
         {
             swaggerGenOptions.SchemaRegistryOptions.CustomTypeMappings.Add(type, schemaFactory);
         }
@@ -165,7 +165,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="schemaFactory">A factory method that generates Schema's for the provided type</param>
         public static void MapType<T>(
             this SwaggerGenOptions swaggerGenOptions,
-            Func<Schema> schemaFactory)
+            Func<OpenApiSchema> schemaFactory)
         {
             swaggerGenOptions.MapType(typeof(T), schemaFactory);
         }

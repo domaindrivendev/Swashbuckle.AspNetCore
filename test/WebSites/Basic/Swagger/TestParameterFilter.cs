@@ -1,13 +1,14 @@
 ﻿using Swashbuckle.AspNetCore.SwaggerGen;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Any;
 
 namespace Basic.Swagger
 {
     public class TestParameterFilter : IParameterFilter
     {
-        public void Apply(IParameter parameter, ParameterFilterContext context)
+        public void Apply(OpenApiParameter parameter, ParameterFilterContext context)
         {
-            parameter.Extensions.Add("x-foobar", true);
+            parameter.Extensions.Add("x-foobar", new OpenApiBoolean(true));
         }
     }
 }

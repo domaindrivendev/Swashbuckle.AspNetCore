@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace CustomUIConfig
@@ -14,7 +14,7 @@ namespace CustomUIConfig
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Version = "v1", Title = "Swashbuckle Sample API" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Version = "v1", Title = "Swashbuckle Sample API" });
             });
         }
 

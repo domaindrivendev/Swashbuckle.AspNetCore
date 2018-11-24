@@ -20,6 +20,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="2.0.0" />
+    <PackageReference Include="Microsoft.OpenApi" Version="1.1.1" />
   </ItemGroup>
 </Project>

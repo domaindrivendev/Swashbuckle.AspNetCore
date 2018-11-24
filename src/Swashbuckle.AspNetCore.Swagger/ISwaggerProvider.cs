@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.Swagger
 {
     public interface ISwaggerProvider
     {
-        SwaggerDocument GetSwagger(
+        OpenApiDocument GetSwagger(
             string documentName,
             string host = null,
-            string basePath = null,
-            string[] schemes = null);
+            string basePath = null);
     }
 
-    public class UnknownSwaggerDocument : Exception
+    public class UnknownSwaggerDocument : InvalidOperationException
     {
         public UnknownSwaggerDocument(string documentName, IEnumerable<string> knownDocuments)
             : base(string.Format("Unknown Swagger document - \"{0}\". Known Swagger documents: {1}{2}",

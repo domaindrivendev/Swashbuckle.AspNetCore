@@ -94,6 +94,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void AcceptsComplexTypeFromBody([FromBody]ComplexType param)
         { }
 
+        public void AcceptsComplexTypeFromForm([FromForm]ComplexType param)
+        { }
+
         public void AcceptsIFormFile(IFormFile formFile)
         { }
 
@@ -134,7 +137,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Produces("application/xml")]
-        public IActionResult AnnotatedWithProduces()
+        public ComplexType AnnotatedWithProduces()
         {
             throw new NotImplementedException();
         }

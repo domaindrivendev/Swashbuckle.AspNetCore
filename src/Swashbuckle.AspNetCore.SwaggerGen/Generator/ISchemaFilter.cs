@@ -1,12 +1,12 @@
 ﻿using System;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public interface ISchemaFilter
     {
-        void Apply(Schema schema, SchemaFilterContext context);
+        void Apply(OpenApiSchema schema, SchemaFilterContext context);
     }
 
     public class SchemaFilterContext

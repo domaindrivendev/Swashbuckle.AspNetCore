@@ -7,37 +7,41 @@ namespace Swashbuckle.AspNetCore.Cli.Test
     public class CommandRunnerTests
     {
         [Fact]
-        public void Run_ParsesArgumentsAndExecutesCommands_AccordingToPreConfiguredMetadata()
+        public void Run_ParsesArgumentsAndExecutesCommands_AccordingToConfiguredMetadata()
         {
             var receivedValues = new List<string>();
             var subject = new CommandRunner("test", "a test", new StringWriter());
             subject.SubCommand("cmd1", "", c => {
                 c.Option("--opt1", "");
+                c.Option("--opt2", "", true);
                 c.Argument("arg1", "");
                 c.OnRun((namedArgs) =>
                 {
                     receivedValues.Add(namedArgs["--opt1"]);
+                    receivedValues.Add(namedArgs["--opt2"]);
                     receivedValues.Add(namedArgs["arg1"]);
                     return 2;
                 });
             });
             subject.SubCommand("cmd2", "", c => {
                 c.Option("--opt1", "");
+                c.Option("--opt2", "", true);
                 c.Argument("arg1", "");
                 c.OnRun((namedArgs) =>
                 {
                     receivedValues.Add(namedArgs["--opt1"]);
+                    receivedValues.Add(namedArgs["--opt2"]);
                     receivedValues.Add(namedArgs["arg1"]);
                     return 3;
                 });
             });
 
-            var cmd1ExitCode = subject.Run(new[] { "cmd1", "--opt1", "foo", "bar" });
-            var cmd2ExitCode = subject.Run(new[] { "cmd2", "--opt1", "blah", "dblah" });
+            var cmd1ExitCode = subject.Run(new[] { "cmd1", "--opt1", "foo", "--opt2", "bar" });
+            var cmd2ExitCode = subject.Run(new[] { "cmd2", "--opt1", "blah", "--opt2", "dblah" });
 
             Assert.Equal(2, cmd1ExitCode);
             Assert.Equal(3, cmd2ExitCode);
-            Assert.Equal(new[] { "foo", "bar", "blah", "dblah" }, receivedValues.ToArray());
+            Assert.Equal(new[] { "foo", null, "bar", "blah", null, "dblah" }, receivedValues.ToArray());
         }
 
         [Fact]

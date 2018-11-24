@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.ReDoc;
 
 namespace ReDoc
@@ -16,7 +16,7 @@ namespace ReDoc
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "Test API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Test API", Version = "v1" });
             });
         }
 
@@ -31,6 +31,7 @@ namespace ReDoc
             app.UseSwagger(c =>
             {
                 c.RouteTemplate = "api-docs/{documentName}/swagger.json";
+                c.SerializeAsV2 = true;
             });
 
             app.UseReDoc(c =>

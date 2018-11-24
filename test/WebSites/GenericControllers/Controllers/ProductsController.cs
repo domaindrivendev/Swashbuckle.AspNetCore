@@ -2,7 +2,7 @@
 
 namespace GenericControllers.Controllers
 {
-    [Route("products")]
+    [Route("{tennantId}/products")]
     public class ProductsController : GenericResourceController<Product>
     { }
 

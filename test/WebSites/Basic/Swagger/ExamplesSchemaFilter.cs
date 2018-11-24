@@ -1,26 +1,27 @@
 ﻿using System;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Basic.Swagger
 {
     public class ExamplesSchemaFilter : ISchemaFilter
     {
-        public void Apply(Schema schema, SchemaFilterContext context)
+        public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
             var type = context.SystemType;
             schema.Example = GetExampleOrNullFor(context.SystemType);
         }
 
-        private object GetExampleOrNullFor(Type systemType)
+        private IOpenApiAny GetExampleOrNullFor(Type systemType)
         {
             switch (systemType.Name)
             {
                 case "Product":
-                    return new
+                    return new OpenApiObject
                     {
-                        Id = "123",
-                        Description = "foobar"
+                        [ "Id" ] = new OpenApiInteger(123),
+                        [ "Description" ] = new OpenApiString("foobar")
                     };
                 default:
                     return null;

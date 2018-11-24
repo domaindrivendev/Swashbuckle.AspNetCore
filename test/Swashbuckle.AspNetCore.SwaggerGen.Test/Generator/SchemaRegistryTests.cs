@@ -7,6 +7,8 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Converters;
 using Xunit;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Any;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -30,7 +32,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(DateTimeOffset), "string", "date-time")]
         [InlineData(typeof(Guid), "string", "uuid")]
         [InlineData(typeof(string), "string", null)]
-        public void GetOrRegister_ReturnsPrimitiveSchema_ForSimpleTypes(
+        public void GetOrRegister_ReturnsPrimitiveOpenApiSchema_ForSimpleTypes(
             Type systemType,
             string expectedType,
             string expectedFormat)
@@ -42,20 +44,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void GetOrRegister_ReturnsEnumSchema_ForEnumTypes()
+        public void GetOrRegister_ReturnsEnumOpenApiSchema_ForEnumTypes()
         {
             var schema = Subject().GetOrRegister(typeof(AnEnum));
 
             Assert.Equal("integer", schema.Type);
             Assert.Equal("int32", schema.Format);
-            Assert.Equal(new List<object> { AnEnum.Value1, AnEnum.Value2, AnEnum.X }, schema.Enum);
+            Assert.Equal(new[] { (int)AnEnum.Value1, (int)AnEnum.Value2, (int)AnEnum.X }, schema.Enum.Cast<OpenApiInteger>().Select(i => i.Value));
         }
 
         [Theory]
         [InlineData(typeof(int[]), "integer", "int32")]
         [InlineData(typeof(IEnumerable<string>), "string", null)]
         [InlineData(typeof(IEnumerable), "object", null)]
-        public void GetOrRegister_ReturnsArraySchema_ForEnumerableTypes(
+        public void GetOrRegister_ReturnsArrayOpenApiSchema_ForEnumerableTypes(
             Type systemType,
             string expectedItemsType,
             string expectedItemsFormat)
@@ -68,7 +70,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void GetOrRegister_ReturnsSetSchema_ForSetTypes()
+        public void GetOrRegister_ReturnsSetOpenApiSchema_ForSetTypes()
         {
             var schema = Subject().GetOrRegister(typeof(ISet<string>));
 
@@ -78,7 +80,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void GetOrRegister_ReturnsMapSchema_ForDictionaryTypes()
+        public void GetOrRegister_ReturnsMapOpenApiSchema_ForDictionaryTypes()
         {
             var schema = Subject().GetOrRegister(typeof(Dictionary<string, string>));
 
@@ -87,7 +89,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void GetOrRegister_ReturnsObjectSchema_ForDictionarTypesWithEnumKeys()
+        public void GetOrRegister_ReturnsObjectOpenApiSchema_ForDictionarTypesWithEnumKeys()
         {
             var schema = Subject().GetOrRegister(typeof(Dictionary<AnEnum, string>));
 
@@ -104,7 +106,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(float?), "number", "float")]
         [InlineData(typeof(byte?), "integer", "int32")]
         [InlineData(typeof(DateTime?), "string", "date-time")]
-        public void GetOrRegister_ReturnsPrimitiveSchema_ForNullableTypes(
+        public void GetOrRegister_ReturnsPrimitiveOpenApiSchema_ForNullableTypes(
             Type systemType,
             string expectedType,
             string expectedFormat)
@@ -121,7 +123,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(Microsoft.FSharp.Core.FSharpOption<float>), "number", "float")]
         [InlineData(typeof(Microsoft.FSharp.Core.FSharpOption<byte>), "integer", "int32")]
         [InlineData(typeof(Microsoft.FSharp.Core.FSharpOption<DateTime>), "string", "date-time")]
-        public void GetOrRegister_ReturnsPrimitiveSchema_ForOptionTypes(
+        public void GetOrRegister_ReturnsPrimitiveOpenApiSchema_ForOptionTypes(
             Type systemType,
             string expectedType,
             string expectedFormat)
@@ -135,31 +137,32 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void GetOrRegister_ReturnsJsonReference_ForComplexTypes()
         {
-            var reference = Subject().GetOrRegister(typeof(ComplexType));
+            var schema = Subject().GetOrRegister(typeof(ComplexType));
 
-            Assert.Equal("#/definitions/ComplexType", reference.Ref);
+            Assert.NotNull(schema.Reference);
+            Assert.Equal("ComplexType", schema.Reference.Id);
         }
 
         [Theory]
         [InlineData(typeof(object))]
         [InlineData(typeof(JToken))]
         [InlineData(typeof(JToken))]
-        public void GetOrRegister_ReturnsEmptyObjectSchema_ForAmbiguousTypes(Type systemType)
+        public void GetOrRegister_ReturnsEmptyObjectOpenApiSchema_ForAmbiguousTypes(Type systemType)
         {
             var schema = Subject().GetOrRegister(systemType);
 
             Assert.Equal("object", schema.Type);
-            Assert.Null(schema.Properties);
+            Assert.Empty(schema.Properties);
         }
 
         [Fact]
-        public void GetOrRegister_DefinesObjectSchema_ForComplexTypes()
+        public void GetOrRegister_DefinesObjectOpenApiSchema_ForComplexTypes()
         {
             var subject = Subject();
 
             subject.GetOrRegister(typeof(ComplexType));
 
-            var schema = subject.Definitions["ComplexType"];
+            var schema = subject.Schemas["ComplexType"];
             Assert.NotNull(schema);
             Assert.Equal("boolean", schema.Properties["Property1"].Type);
             Assert.Null(schema.Properties["Property1"].Format);
@@ -174,13 +177,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void GetOrRegister_DefinesObjectSchema_ForComplexTypesWithObjectExtensionData()
+        public void GetOrRegister_DefinesObjectOpenApiSchema_ForComplexTypesWithObjectExtensionData()
         {
             var subject = Subject();
 
             subject.GetOrRegister(typeof(ExtensionDataObjectType));
 
-            var schema = subject.Definitions["ExtensionDataObjectType"];
+            var schema = subject.Schemas["ExtensionDataObjectType"];
             Assert.NotNull(schema);
             Assert.Equal("boolean", schema.Properties["Property1"].Type);
             Assert.Null(schema.Properties["Property1"].Format);
@@ -196,7 +199,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             subject.GetOrRegister(typeof(SubType));
 
-            var schema = subject.Definitions["SubType"];
+            var schema = subject.Schemas["SubType"];
             Assert.Equal("string", schema.Properties["BaseProperty"].Type);
             Assert.Null(schema.Properties["BaseProperty"].Format);
             Assert.Equal("integer", schema.Properties["SubTypeProperty"].Type);
@@ -210,7 +213,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             subject.GetOrRegister(typeof(DynamicObjectSubType));
 
-            var schema = subject.Definitions["DynamicObjectSubType"];
+            var schema = subject.Schemas["DynamicObjectSubType"];
             Assert.Equal(1, schema.Properties.Count);
             Assert.Equal("string", schema.Properties["Property1"].Type);
         }
@@ -222,7 +225,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             subject.GetOrRegister(typeof(IndexedType));
 
-            var schema = subject.Definitions["IndexedType"];
+            var schema = subject.Schemas["IndexedType"];
             Assert.Equal(1, schema.Properties.Count);
             Assert.Contains("Property1", schema.Properties.Keys);
         }
@@ -234,7 +237,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             subject.GetOrRegister(typeof(JsonAnnotatedType));
 
-            var schema = subject.Definitions["JsonAnnotatedType"];
+            var schema = subject.Schemas["JsonAnnotatedType"];
             Assert.Equal(2, schema.Properties.Count);
             Assert.Contains("foobar", schema.Properties.Keys);
             Assert.Equal(new[] { "Property3" }, schema.Required.ToArray());
@@ -247,7 +250,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             subject.GetOrRegister(typeof(DataAnnotatedType));
 
-            var schema = subject.Definitions["DataAnnotatedType"];
+            var schema = subject.Schemas["DataAnnotatedType"];
             Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);
             Assert.Equal(12, schema.Properties["IntWithRange"].Maximum);
             Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["StringWithRegularExpression"].Pattern);
@@ -255,11 +258,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(10, schema.Properties["StringWithStringLength"].MaxLength);
             Assert.Equal(1, schema.Properties["StringWithMinMaxLength"].MinLength);
             Assert.Equal(3, schema.Properties["StringWithMinMaxLength"].MaxLength);
-            Assert.Equal(new[] { "StringWithRequired", "IntWithRequired" }, schema.Required.ToArray());
+            Assert.Equal(new[] { "IntWithRequired", "StringWithRequired" }, schema.Required.ToArray());
             Assert.Equal("date", schema.Properties["StringWithDataTypeDate"].Format);
             Assert.Equal("date-time", schema.Properties["StringWithDataTypeDateTime"].Format);
             Assert.Equal("password", schema.Properties["StringWithDataTypePassword"].Format);
-            Assert.Equal("foobar", schema.Properties["StringWithDefaultValue"].Default);
+            Assert.IsType<OpenApiString>(schema.Properties["StringWithDefaultValue"].Default);
+            Assert.Equal("foobar", ((OpenApiString)schema.Properties["StringWithDefaultValue"].Default).Value);
         }
 
         [Fact]
@@ -269,11 +273,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             subject.GetOrRegister(typeof(MetadataAnnotatedType));
 
-            var schema = subject.Definitions["MetadataAnnotatedType"];
+            var schema = subject.Schemas["MetadataAnnotatedType"];
             Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);
             Assert.Equal(12, schema.Properties["IntWithRange"].Maximum);
             Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["StringWithRegularExpression"].Pattern);
-            Assert.Equal(new[] { "StringWithRequired", "IntWithRequired" }, schema.Required.ToArray());
+            Assert.Equal(new[] { "IntWithRequired", "StringWithRequired" }, schema.Required.ToArray());
         }
 
         [Fact]
@@ -282,7 +286,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var schema = Subject().GetOrRegister(typeof(JsonConvertedEnum));
 
             Assert.Equal("string", schema.Type);
-            Assert.Equal(new List<object> { "Value1", "Value2", "X" }, schema.Enum);
+            Assert.Equal(new[] { "Value1", "Value2", "X" }, schema.Enum.Cast<OpenApiString>().Select(i => i.Value));
         }
 
         [Fact]
@@ -296,7 +300,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var schema = subject.GetOrRegister(typeof(AnEnum));
 
             Assert.Equal("string", schema.Type);
-            Assert.Equal(new List<object> { "value1", "value2", "x" }, schema.Enum);
+            Assert.Equal(new[] { "value1", "value2", "x" }, schema.Enum.Cast<OpenApiString>().Select(i => i.Value));
         }
 
         [Fact]
@@ -310,20 +314,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var schema = subject.GetOrRegister(typeof(AnAnnotatedEnum));
 
             Assert.Equal("string", schema.Type);
-            Assert.Equal(new[] { "foo-bar", "bar-foo", "Default" }, schema.Enum);
+            Assert.Equal(new[] { "foo-bar", "bar-foo", "Default" }, schema.Enum.Cast<OpenApiString>().Select(i => i.Value));
         }
 
         [Fact]
         public void GetOrRegister_SupportsOptionToExplicitlyMapTypes()
         {
             var subject = Subject(c =>
-                c.CustomTypeMappings.Add(typeof(ComplexType), () => new Schema { Type = "string" })
+                c.CustomTypeMappings.Add(typeof(ComplexType), () => new OpenApiSchema { Type = "string" })
             );
 
             var schema = subject.GetOrRegister(typeof(ComplexType));
 
             Assert.Equal("string", schema.Type);
-            Assert.Null(schema.Properties);
+            Assert.Empty(schema.Properties);
         }
 
         [Theory]
@@ -332,7 +336,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(int[]))]
         [InlineData(typeof(ComplexType))]
         [InlineData(typeof(object))]
-        public void GetOrRegister_SupportsOptionToPostModifyAllInlineSchemas(Type systemType)
+        public void GetOrRegister_SupportsOptionToPostModifyAllInlineOpenApiSchemas(Type systemType)
         {
             var subject = Subject(c =>
                 c.SchemaFilters.Add(new VendorExtensionsSchemaFilter())
@@ -340,9 +344,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var schemaOrRef = subject.GetOrRegister(systemType);
 
-            var schema = (schemaOrRef.Ref == null)
+            var schema = (schemaOrRef.Reference == null)
                 ? schemaOrRef
-                : subject.Definitions[schemaOrRef.Ref.Replace("#/definitions/", "")];
+                : subject.Schemas[schemaOrRef.Reference.Id];
 
             Assert.True(schema.Extensions.ContainsKey("X-property1"));
         }
@@ -354,12 +358,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             subject.GetOrRegister(typeof(ObsoletePropertiesType));
 
-            var schema = subject.Definitions["ObsoletePropertiesType"];
+            var schema = subject.Schemas["ObsoletePropertiesType"];
             Assert.DoesNotContain("ObsoleteProperty", schema.Properties.Keys);
         }
 
         [Fact]
-        public void GetOrRegister_SupportsOptionToCustomizeSchemaIds()
+        public void GetOrRegister_SupportsOptionToCustomizeOpenApiSchemaIds()
         {
             var subject = Subject(c =>
             {
@@ -369,8 +373,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var jsonReference1 = subject.GetOrRegister(typeof(Namespace1.ConflictingType));
             var jsonReference2 = subject.GetOrRegister(typeof(Namespace2.ConflictingType));
 
-            Assert.Equal("#/definitions/Namespace1.ConflictingType", jsonReference1.Ref);
-            Assert.Equal("#/definitions/Namespace2.ConflictingType", jsonReference2.Ref);
+            Assert.Equal("Namespace1.ConflictingType", jsonReference1.Reference.Id);
+            Assert.Equal("Namespace2.ConflictingType", jsonReference2.Reference.Id);
         }
 
         [Fact]
@@ -381,7 +385,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var schema = subject.GetOrRegister(typeof(AnEnum));
 
             Assert.Equal("string", schema.Type);
-            Assert.Equal(new List<object> { "Value1", "Value2", "X" }, schema.Enum);
+            Assert.Equal(new[] { "Value1", "Value2", "X" }, schema.Enum.Cast<OpenApiString>().Select(i => i.Value));
         }
 
         [Fact]
@@ -396,7 +400,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var schema = subject.GetOrRegister(typeof(AnEnum));
 
             Assert.Equal("string", schema.Type);
-            Assert.Equal(new List<object> { "value1", "value2", "x" }, schema.Enum);
+            Assert.Equal(new[] { "value1", "value2", "x" }, schema.Enum.Cast<OpenApiString>().Select(i => i.Value));
         }
 
         [Fact]
@@ -409,8 +413,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var schema = subject.GetOrRegister(typeof(AnEnum));
 
-            Assert.NotNull(schema.Ref);
-            Assert.Contains(schema.Ref.Replace("#/definitions/", string.Empty), subject.Definitions.Keys);
+            Assert.NotNull(schema.Reference);
+            Assert.Contains(schema.Reference.Id, subject.Schemas.Keys);
         }
 
         [Fact]
@@ -431,16 +435,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             subject.GetOrRegister(typeof(CompositeType));
 
-            var rootSchema = subject.Definitions["CompositeType"];
-            Assert.NotNull(rootSchema);
-            Assert.Equal("object", rootSchema.Type);
-            Assert.Equal("#/definitions/ComplexType", rootSchema.Properties["Property1"].Ref);
-            Assert.Equal("array", rootSchema.Properties["Property2"].Type);
-            Assert.Equal("#/definitions/ComplexType", rootSchema.Properties["Property2"].Items.Ref);
-            var componentSchema = subject.Definitions["ComplexType"];
-            Assert.NotNull(componentSchema);
-            Assert.Equal("object", componentSchema.Type);
-            Assert.Equal(5, componentSchema.Properties.Count);
+            var rootOpenApiSchema = subject.Schemas["CompositeType"];
+            Assert.NotNull(rootOpenApiSchema);
+            Assert.Equal("object", rootOpenApiSchema.Type);
+            Assert.Equal("ComplexType", rootOpenApiSchema.Properties["Property1"].Reference.Id);
+            Assert.Equal("array", rootOpenApiSchema.Properties["Property2"].Type);
+            Assert.Equal("ComplexType", rootOpenApiSchema.Properties["Property2"].Items.Reference.Id);
+            var componentOpenApiSchema = subject.Schemas["ComplexType"];
+            Assert.NotNull(componentOpenApiSchema);
+            Assert.Equal("object", componentOpenApiSchema.Type);
+            Assert.Equal(5, componentOpenApiSchema.Properties.Count);
         }
 
         [Fact]
@@ -450,14 +454,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             subject.GetOrRegister(typeof(ContainingType));
 
-            var rootSchema = subject.Definitions["ContainingType"];
-            Assert.NotNull(rootSchema);
-            Assert.Equal("object", rootSchema.Type);
-            Assert.Equal("#/definitions/NestedType", rootSchema.Properties["Property1"].Ref);
-            var nestedSchema = subject.Definitions["NestedType"];
-            Assert.NotNull(nestedSchema);
-            Assert.Equal("object", nestedSchema.Type);
-            Assert.Equal(1, nestedSchema.Properties.Count);
+            var rootOpenApiSchema = subject.Schemas["ContainingType"];
+            Assert.NotNull(rootOpenApiSchema);
+            Assert.Equal("object", rootOpenApiSchema.Type);
+            Assert.Equal("NestedType", rootOpenApiSchema.Properties["Property1"].Reference.Id);
+            var nestedOpenApiSchema = subject.Schemas["NestedType"];
+            Assert.NotNull(nestedOpenApiSchema);
+            Assert.Equal("object", nestedOpenApiSchema.Type);
+            Assert.Equal(1, nestedOpenApiSchema.Properties.Count);
         }
 
         [Theory]
@@ -466,13 +470,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(DictionaryOfSelf), "DictionaryOfSelf")]
         public void GetOrRegister_HandlesSelfReferencingTypes(
             Type systemType,
-            string expectedSchemaId)
+            string expectedOpenApiSchemaId)
         {
             var subject = Subject();
 
             subject.GetOrRegister(systemType);
 
-            Assert.Contains(expectedSchemaId, subject.Definitions.Keys);
+            Assert.Contains(expectedOpenApiSchemaId, subject.Schemas.Keys);
         }
 
         [Fact]

@@ -1,10 +1,12 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
-using Swashbuckle.AspNetCore.Swagger;
 using Basic.Swagger;
 
 namespace Basic
@@ -36,19 +38,18 @@ namespace Basic
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1",
-                    new Info
+                    new OpenApiInfo
                     {
-                        Version = "v1",
                         Title = "Swashbuckle Sample API",
+                        Version = "v1",
                         Description = "A sample API for testing Swashbuckle",
-                        TermsOfService = "Some terms ..."
+                        TermsOfService = new Uri("http://tempuri.org/terms")
                     }
                 );
 
                 c.ParameterFilter<TestParameterFilter>();
 
                 c.OperationFilter<AssignOperationVendorExtensions>();
-                c.OperationFilter<FormDataOperationFilter>();
 
                 c.DescribeAllEnumsAsStrings();
 
@@ -83,7 +84,10 @@ namespace Basic
 
             app.UseSwagger(c =>
             {
-                c.PreSerializeFilters.Add((swagger, httpReq) => swagger.Host = httpReq.Host.Value);
+                c.PreSerializeFilters.Add((swagger, httpReq) =>
+                {
+                    swagger.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" } };
+                });
             });
 
             app.UseSwaggerUI(c =>

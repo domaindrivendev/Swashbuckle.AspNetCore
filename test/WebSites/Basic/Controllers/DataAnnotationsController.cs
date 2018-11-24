@@ -7,7 +7,7 @@ namespace Basic.Controllers
     public class DataAnnotationsController : Controller
     {
         [HttpPost("payments/authorize")]
-        [Produces("application/json", Type = typeof(int))]
+        [ProducesResponseType(200, Type = typeof(int))]
         public IActionResult AuthorizePayment([FromBody]PaymentRequest request)
         {
             if (!ModelState.IsValid)

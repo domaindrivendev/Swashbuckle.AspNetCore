@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Xml.XPath;
 using System.Reflection;
 using System.IO;
+using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Any;
 using Newtonsoft.Json.Serialization;
 using Xunit;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -19,9 +20,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Type type,
             string expectedDescription)
         {
-            var schema = new Schema
+            var schema = new OpenApiSchema
             {
-                Properties = new Dictionary<string, Schema>()
+                Properties = new Dictionary<string, OpenApiSchema>()
             };
             var filterContext = FilterContextFor(type);
 
@@ -40,11 +41,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             string propertyName,
             string expectedDescription)
         {
-            var schema = new Schema
+            var schema = new OpenApiSchema
             {
-                Properties = new Dictionary<string, Schema>()
+                Properties = new Dictionary<string, OpenApiSchema>()
                 {
-                    { propertyName, new Schema() }
+                    { propertyName, new OpenApiSchema() }
                 }
             };
             var filterContext = FilterContextFor(type);
@@ -61,20 +62,21 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void Apply_SetsPropertyExample_FromPropertyExampleTags(
             Type type,
             string propertyName,
-            object expectedExample)
+            string expectedExample)
         {
-            var schema = new Schema
+            var schema = new OpenApiSchema
             {
-                Properties = new Dictionary<string, Schema>()
+                Properties = new Dictionary<string, OpenApiSchema>()
                 {
-                    { propertyName, new Schema() }
+                    { propertyName, new OpenApiSchema() }
                 }
             };
             var filterContext = FilterContextFor(type);
 
             Subject().Apply(schema, filterContext);
 
-            Assert.Equal(expectedExample, schema.Properties[propertyName].Example);
+            Assert.IsType<OpenApiString>(schema.Properties[propertyName].Example);
+            Assert.Equal(expectedExample, ((OpenApiString)schema.Properties[propertyName].Example).Value);
         }
 
         private SchemaFilterContext FilterContextFor(Type type)

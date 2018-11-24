@@ -3,9 +3,8 @@ using System.Linq;
 using System.Xml.XPath;
 using System.Reflection;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -24,7 +23,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             _xmlNavigator = xmlDoc.CreateNavigator();
         }
 
-        public void Apply(Operation operation, OperationFilterContext context)
+        public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
             if (context.MethodInfo == null) return;
 
@@ -67,7 +66,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return (candidateMethods.Count() == 1) ? candidateMethods.First() : null;
         }
 
-        private void ApplyMethodXmlToOperation(Operation operation, XPathNavigator methodNode)
+        private void ApplyMethodXmlToOperation(OpenApiOperation operation, XPathNavigator methodNode)
         {
             var summaryNode = methodNode.SelectSingleNode(SummaryXPath);
             if (summaryNode != null)
@@ -79,7 +78,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         }
 
         private void ApplyParamsXmlToActionParameters(
-            IList<IParameter> parameters,
+            IList<OpenApiParameter> parameters,
             XPathNavigator methodNode,
             ApiDescription apiDescription)
         {
@@ -99,21 +98,21 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
         }
 
-        private void ApplyResponsesXmlToResponses(IDictionary<string, Response> responses, XPathNodeIterator responseNodes)
+        private void ApplyResponsesXmlToResponses(IDictionary<string, OpenApiResponse> responses, XPathNodeIterator responseNodes)
         {
             while (responseNodes.MoveNext())
             {
                 var code = responseNodes.Current.GetAttribute("code", "");
                 var response = responses.ContainsKey(code)
                     ? responses[code]
-                    : responses[code] = new Response();
+                    : responses[code] = new OpenApiResponse();
 
                 response.Description = XmlCommentsTextHelper.Humanize(responseNodes.Current.InnerXml);
             }
         }
 
         private void ApplyPropertiesXmlToPropertyParameters(
-            IList<IParameter> parameters,
+            IList<OpenApiParameter> parameters,
             ApiDescription apiDescription)
         {
             if (parameters == null) return;
