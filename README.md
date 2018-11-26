@@ -269,11 +269,11 @@ __Option 2) Provide a custom strategy__
 services.AddSwaggerGen(c =>
 {
     ...
-
-	// Use method name as operationId
+    
+    // Use method name as operationId
     c.CustomOperationIds(apiDesc =>
     {
-	    return apiDesc.TryGetMethodInfo(out MethodInfo methodInfo) ? methodInfo.Name : null;
+        return apiDesc.TryGetMethodInfo(out MethodInfo methodInfo) ? methodInfo.Name : null;
     });
 })
 
