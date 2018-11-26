@@ -251,23 +251,38 @@ app.UseSwagger(c =>
 
 ### Assign Explicit OperationIds ###
 
-In Swagger, Operations can be assigned a unique `operationId`. This is often used by code generation tools (e.g. client libraries) and so, it's important for the value to follow common programming conventions while also revealing the purpose of the operation. To best meet these goals, Swashbuckle requires API authors to provide the value explicitly and provides two different options to do so:
+In Swagger, operations MAY be assigned an `operationId`. This ID MUST be unique among all operations described in the API. Tools and libraries (e.g. client generators) MAY use the operationId to uniquely identify an operation, therefore, it is RECOMMENDED to follow common programming naming conventions.
 
-__Option 1) Action Names__
+Auto-generating an ID that matches these requirements, while also providing a name that would be meaningful in client libraries is a non-trivial task and so, Swashbuckle omits the `operationId` by default. However, if neccessary, you can assign `operationIds` by decorating individual routes OR by providing a custom strategy.
 
-```csharp
-[HttpGet("{id}")]
-public IActionResult GetProductById(int id) // operationId = "GetProductById"
-```
-
-__Option 2) Route Names__
+__Option 1) Decorate routes with a `Name` property__
 
 ```csharp
 [HttpGet("{id}", Name = "GetProductById")]
 public IActionResult Get(int id) // operationId = "GetProductById"
 ```
 
-_NOTE: In both cases, API authors are responsible for ensuring the uniqueness of `OperationId`s across all Operations_
+__Option 2) Provide a custom strategy__
+
+```csharp
+// Startup.cs
+services.AddSwaggerGen(c =>
+{
+    ...
+
+	// Use method name as operationId
+    c.CustomOperationIds(apiDesc =>
+    {
+	    return apiDesc.TryGetMethodInfo(out MethodInfo methodInfo) ? methodInfo.Name : null;
+    });
+})
+
+// ProductsController.cs
+[HttpGet("{id}")]
+public IActionResult GetProductById(int id) // operationId = "GetProductById"
+```
+
+_NOTE: With either approach, API authors are responsible for ensuring the uniqueness of `operationIds` across all Operations_
 
 ### List Operation Responses ###
 

@@ -189,14 +189,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void GetSwagger_SetsOperationIdToActionName_ByDefault()
+        public void GetSwagger_SetsOperationIdToNull_ByDefault()
         {
             var subject = Subject(setupApis: apis => apis
                 .Add("GET", "resource", nameof(FakeController.AcceptsString)));
 
             var swagger = subject.GetSwagger("v1");
 
-            Assert.Equal("AcceptsString", swagger.Paths["/resource"].Operations[OperationType.Get].OperationId);
+            Assert.Null(swagger.Paths["/resource"].Operations[OperationType.Get].OperationId);
         }
 
         [Fact]

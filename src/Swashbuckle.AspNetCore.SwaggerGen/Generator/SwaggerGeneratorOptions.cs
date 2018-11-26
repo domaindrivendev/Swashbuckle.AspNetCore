@@ -56,12 +56,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private string DefaultOperationIdSelector(ApiDescription apiDescription)
         {
-            var routeName = apiDescription.ActionDescriptor.AttributeRouteInfo?.Name;
-            if (routeName != null) return routeName;
-
-            if (apiDescription.TryGetMethodInfo(out MethodInfo methodInfo)) return methodInfo.Name;
-
-            return null;
+            return apiDescription.ActionDescriptor.AttributeRouteInfo?.Name;
         }
 
         private IList<string> DefaultTagsSelector(ApiDescription apiDescription)
