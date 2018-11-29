@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Models;
+using System;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -25,7 +26,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 .Select(apiDesc => apiDesc.ActionDescriptor as ControllerActionDescriptor)
                 .SkipWhile(actionDesc => actionDesc == null)
                 .GroupBy(actionDesc => actionDesc.ControllerName)
-                .ToDictionary(grp => grp.Key, grp => grp.Last().ControllerTypeInfo.AsType());
+                .Select(group => new KeyValuePair<string, Type>(group.Key, group.First().ControllerTypeInfo.AsType()));
 
             foreach (var nameAndType in controllerNamesAndTypes)
             {

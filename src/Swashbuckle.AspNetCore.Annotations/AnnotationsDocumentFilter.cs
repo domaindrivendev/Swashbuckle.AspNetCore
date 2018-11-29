@@ -19,7 +19,7 @@ namespace Swashbuckle.AspNetCore.Annotations
                 .Select(apiDesc => apiDesc.ActionDescriptor as ControllerActionDescriptor)
                 .SkipWhile(actionDesc => actionDesc == null)
                 .GroupBy(actionDesc => actionDesc.ControllerName)
-                .ToDictionary(grp => grp.Key, grp => grp.Last().ControllerTypeInfo.GetCustomAttributes(true));
+                .Select(group => new KeyValuePair<string, IEnumerable<object>>(group.Key, group.First().ControllerTypeInfo.GetCustomAttributes(true)));
 
             foreach (var entry in controllerNamesAndAttributes)
             {
