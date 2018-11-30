@@ -1,0 +1,45 @@
+openapi: 3.0.1
+info:
+  title: XmlMediaTypes
+  version: '1.0'
+paths:
+  /users:
+    post:
+      tags:
+        - Users
+      operationId: CreateUser
+      requestBody:
+        content:
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/xml:
+              schema:
+                type: integer
+                format: int32
+      x-end: CreateUser
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          readOnly: true
+          xml:
+            name: Id
+        username:
+          type: string
+          nullable: true
+          xml:
+            name: alias
+      additionalProperties: false
+      xml:
+        namespace: http://example.com/schema
+  x-end: components

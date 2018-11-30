@@ -1,0 +1,36 @@
+openapi: 3.0.1
+info:
+  title: Admin API
+  version: v1
+paths:
+  /admin/users:
+    post:
+      tags:
+        - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          readOnly: true
+        username:
+          type: string
+          nullable: true
+      additionalProperties: false

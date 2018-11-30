@@ -1,0 +1,47 @@
+openapi: 3.0.1
+info:
+  title: NewtonsoftSupport
+  version: '1.0'
+paths:
+  /users:
+    post:
+      tags:
+        - Users
+      operationId: CreateUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
+      x-end: CreateUser
+components:
+  schemas:
+    User:
+      required:
+        - alias
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          readOnly: true
+        alias:
+          type: string
+        status:
+          $ref: '#/components/schemas/UserStatus'
+      additionalProperties: false
+    UserStatus:
+      enum:
+        - Enabled
+        - Disabled
+      type: string
+  x-end: components

@@ -1,0 +1,77 @@
+openapi: 3.0.1
+info:
+  title: OAuthSecurity
+  version: '1.0'
+paths:
+  /users:
+    post:
+      tags:
+        - Users
+      operationId: CreateUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+        - oauth2:
+            - writeOperations
+      x-end: CreateUser
+    get:
+      tags:
+        - Users
+      operationId: GetUsers
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      security:
+        - oauth2:
+            - readOperations
+      x-end: GetUsers
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          readOnly: true
+        username:
+          type: string
+          nullable: true
+      additionalProperties: false
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: /auth-server/connect/authorize
+          tokenUrl: /auth-server/connect/token
+          scopes:
+            readOperations: Access read operations
+            writeOperations: Access write operations
+  x-end: components

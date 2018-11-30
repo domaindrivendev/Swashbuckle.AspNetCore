@@ -1,0 +1,151 @@
+openapi: 3.0.1
+info:
+  title: FormMediaTypes
+  version: '1.0'
+paths:
+  /products:
+    post:
+      tags:
+        - Products
+      operationId: CreateProduct
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                Id:
+                  type: integer
+                  format: int32
+                Description:
+                  type: string
+                Picture:
+                  type: string
+                  format: binary
+                Gallery:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+            encoding:
+              Id:
+                style: form
+              Description:
+                style: form
+              Picture:
+                style: form
+              Gallery:
+                style: form
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: integer
+                format: int32
+            application/json:
+              schema:
+                type: integer
+                format: int32
+            text/json:
+              schema:
+                type: integer
+                format: int32
+      x-end: CreateProduct
+  '/products/{id}/picture':
+    put:
+      tags:
+        - Products
+      operationId: UpdatePicture
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                picture:
+                  type: string
+                  format: binary
+            encoding:
+              picture:
+                style: form
+      responses:
+        '200':
+          description: Success
+      x-end: UpdatePicture
+  '/products/{id}/gallery':
+    put:
+      tags:
+        - Products
+      operationId: UpdateGallery
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                gallery:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+            encoding:
+              gallery:
+                style: form
+      responses:
+        '200':
+          description: Success
+      x-end: UpdateGallery
+  /users:
+    post:
+      tags:
+        - Users
+      operationId: CreateUser
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                Id:
+                  type: integer
+                  format: int32
+                Username:
+                  type: string
+            encoding:
+              Id:
+                style: form
+              Username:
+                style: form
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: integer
+                format: int32
+            application/json:
+              schema:
+                type: integer
+                format: int32
+            text/json:
+              schema:
+                type: integer
+                format: int32
+      x-end: CreateUser
+components:
+  x-end: components

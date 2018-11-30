@@ -1,0 +1,108 @@
+openapi: 3.0.1
+info:
+  title: ListingResponseTypes
+  version: '1.0'
+paths:
+  /products:
+    post:
+      tags:
+        - Products
+      operationId: CreateProduct
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+      x-end: CreateProduct
+  /users:
+    get:
+      tags:
+        - Users
+      operationId: GetUsers
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+      x-end: GetUsers
+components:
+  schemas:
+    ProblemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          nullable: true
+        title:
+          type: string
+          nullable: true
+        status:
+          type: integer
+          format: int32
+          nullable: true
+        detail:
+          type: string
+          nullable: true
+        instance:
+          type: string
+          nullable: true
+      additionalProperties: { }
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          readOnly: true
+        description:
+          type: string
+          nullable: true
+      additionalProperties: false
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          readOnly: true
+        username:
+          type: string
+          nullable: true
+      additionalProperties: false
+  x-end: components

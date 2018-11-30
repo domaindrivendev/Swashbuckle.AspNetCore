@@ -1,0 +1,130 @@
+openapi: 3.0.1
+info:
+  title: XmlComments
+  version: '1.0'
+paths:
+  /products:
+    post:
+      tags:
+        - Products
+      summary: Creates a new product
+      description: Returns a unique id for the product
+      operationId: CreateProduct
+      requestBody:
+        description: The product info
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: Product created
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
+        '400':
+          description: Invalid product info
+      x-end: CreateProduct
+  /users:
+    post:
+      tags:
+        - Users
+      summary: Creates a new user
+      description: Returns a unique id for the user
+      operationId: CreateUser
+      requestBody:
+        description: The user info
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: User created
+        '400':
+          description: Invalid user info
+      x-end: CreateUser
+  /users/search:
+    get:
+      tags:
+        - Users
+      summary: Searches existing users by keywords
+      operationId: SearchUsers
+      parameters:
+        - name: keywords
+          in: query
+          description: The keywords to search on
+          schema:
+            type: string
+        - name: PageNo
+          in: query
+          description: Requested page no
+          schema:
+            type: integer
+            format: int32
+        - name: PageSize
+          in: query
+          description: Requested page size
+          schema:
+            type: integer
+            format: int32
+        - name: host
+          in: header
+          description: The server to which the request is being sent
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+      x-end: SearchUsers
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: A unique id for the product
+          format: int32
+          readOnly: true
+        description:
+          type: string
+          description: A description for the product
+          nullable: true
+      additionalProperties: false
+      description: Product info
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique id for the user
+          format: int32
+          readOnly: true
+        username:
+          type: string
+          description: Unique username for the user
+          nullable: true
+        status:
+          $ref: '#/components/schemas/UserStatus'
+      additionalProperties: false
+      description: User info
+    UserStatus:
+      enum:
+        - 0
+        - 1
+      type: integer
+      format: int32
+  x-end: components
+tags:
+  - name: Products
+    description: Product operations

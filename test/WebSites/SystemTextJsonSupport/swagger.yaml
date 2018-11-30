@@ -1,0 +1,46 @@
+openapi: 3.0.1
+info:
+  title: SystemTextJsonSupport
+  version: '1.0'
+paths:
+  /users:
+    post:
+      tags:
+        - Users
+      operationId: CreateUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
+      x-end: CreateUser
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          readOnly: true
+        alias:
+          type: string
+          nullable: true
+        status:
+          $ref: '#/components/schemas/UserStatus'
+      additionalProperties: false
+    UserStatus:
+      enum:
+        - enabled
+        - disabled
+      type: string
+  x-end: components

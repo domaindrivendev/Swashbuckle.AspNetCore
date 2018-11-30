@@ -53,7 +53,6 @@ namespace Swashbuckle.AspNetCore.ReDoc
             // If the RoutePrefix is requested (with or without trailing slash), redirect to index URL
             if (httpMethod == "GET" && Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$",  RegexOptions.IgnoreCase))
             {
-                // Use relative redirect to support proxy environments
                 var relativeIndexUrl = string.IsNullOrEmpty(path) || path.EndsWith("/")
                     ? "index.html"
                     : $"{path.Split('/').Last()}/index.html";

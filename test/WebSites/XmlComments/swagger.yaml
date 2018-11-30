@@ -1,0 +1,106 @@
+openapi: 3.0.1
+info:
+  title: XmlComments
+  version: '1.0'
+paths:
+  /products:
+    post:
+      tags:
+        - Products
+      operationId: CreateProduct
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Product'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
+      x-end: CreateProduct
+  /users:
+    post:
+      tags:
+        - Users
+      operationId: CreateUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: Success
+      x-end: CreateUser
+  /users/search:
+    get:
+      tags:
+        - Users
+      operationId: SearchUsers
+      parameters:
+        - name: keywords
+          in: query
+          schema:
+            type: string
+        - name: PageNo
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: PageSize
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: host
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+      x-end: SearchUsers
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          readOnly: true
+        description:
+          type: string
+          nullable: true
+      additionalProperties: false
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          readOnly: true
+        username:
+          type: string
+          nullable: true
+        status:
+          $ref: '#/components/schemas/UserStatus'
+      additionalProperties: false
+    UserStatus:
+      enum:
+        - 0
+        - 1
+      type: integer
+      format: int32
+  x-end: components

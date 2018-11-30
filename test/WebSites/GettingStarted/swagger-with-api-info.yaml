@@ -1,0 +1,96 @@
+openapi: 3.0.1
+info:
+  title: Example API
+  description: An example API
+  termsOfService: http://example.com/terms
+  contact:
+    name: API Support
+    url: http://example.com/support
+    email: support@example.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+paths:
+  /users:
+    post:
+      tags:
+        - Users
+      operationId: CreateUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int32
+      x-end: CreateUser
+    get:
+      tags:
+        - Users
+      operationId: GetUsers
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+      x-end: GetUsers
+  /users/search:
+    get:
+      tags:
+        - Users
+      operationId: SearchUsers
+      parameters:
+        - name: keywords
+          in: query
+          schema:
+            type: string
+        - name: PageNo
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: PageSize
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: host
+          in: header
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+      x-end: SearchUsers
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+          readOnly: true
+        username:
+          type: string
+          nullable: true
+      additionalProperties: false
+  x-end: components
