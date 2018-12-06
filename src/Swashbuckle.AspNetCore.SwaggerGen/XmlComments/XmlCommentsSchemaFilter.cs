@@ -1,8 +1,10 @@
-﻿using System.Xml.XPath;
+﻿using System;
+using System.ComponentModel;
+using System.Xml.XPath;
 using System.Reflection;
+using Microsoft.OpenApi.Any;
 using Newtonsoft.Json.Serialization;
 using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Any;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -61,7 +63,27 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var exampleNode = memberNode.SelectSingleNode(ExampleXPath);
             if (exampleNode != null)
-                propertySchema.Example = new OpenApiString(XmlCommentsTextHelper.Humanize(exampleNode.InnerXml));
+            {
+                var exampleString = XmlCommentsTextHelper.Humanize(exampleNode.InnerXml);
+                var memberType = (memberInfo.MemberType & MemberTypes.Field) != 0 ? ((FieldInfo) memberInfo).FieldType : ((PropertyInfo) memberInfo).PropertyType;
+                propertySchema.Example = ConvertToOpenApiType(exampleString, memberType);
+            }
+        }
+
+        private static IOpenApiPrimitive ConvertToOpenApiType(string value, Type type)
+        {
+            object typedExample;
+
+            try
+            {
+                typedExample = TypeDescriptor.GetConverter(type).ConvertFrom(value);
+            }
+            catch (Exception)
+            {
+                return new OpenApiString(value);
+            }
+
+            return OpenApiPrimitiveFactory.CreateFrom(typedExample) ?? new OpenApiString(value);
         }
     }
 }
