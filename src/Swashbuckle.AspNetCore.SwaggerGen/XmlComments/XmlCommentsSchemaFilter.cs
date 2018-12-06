@@ -1,4 +1,5 @@
-﻿using System.Xml.XPath;
+﻿using System;
+using System.Xml.XPath;
 using System.Reflection;
 using Newtonsoft.Json.Serialization;
 using Microsoft.OpenApi.Models;
@@ -61,7 +62,53 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var exampleNode = memberNode.SelectSingleNode(ExampleXPath);
             if (exampleNode != null)
-                propertySchema.Example = new OpenApiString(XmlCommentsTextHelper.Humanize(exampleNode.InnerXml));
+            {
+                var exampleString = XmlCommentsTextHelper.Humanize(exampleNode.InnerXml);
+                var memberType = (memberInfo.MemberType & MemberTypes.Field) != 0 ? ((FieldInfo) memberInfo).FieldType : ((PropertyInfo) memberInfo).PropertyType;
+                propertySchema.Example = ConvertToOpenApiType(exampleString, memberType);
+            }
+        }
+
+        private static IOpenApiAny ConvertToOpenApiType(string value, Type type)
+        {
+            var convertedType = ConvertToType(value, type);
+            if (convertedType == null)
+                return new OpenApiString(value);
+
+            switch (Type.GetTypeCode(type))
+            {
+                case TypeCode.Int32:
+                case TypeCode.Int16:
+                    return new OpenApiInteger((int) convertedType);
+                case TypeCode.Int64:
+                    return new OpenApiLong((long) convertedType);
+                case TypeCode.Double:
+                    return new OpenApiDouble((double) convertedType);
+                case TypeCode.Single:
+                    return new OpenApiDouble((double) new decimal((float) convertedType));
+                case TypeCode.Decimal:
+                    return new OpenApiDouble((double) (decimal) convertedType);
+                case TypeCode.Byte:
+                    return new OpenApiByte((byte) convertedType);
+                case TypeCode.Boolean:
+                    return new OpenApiBoolean((bool) convertedType);
+                case TypeCode.DateTime:
+                    return new OpenApiDate((DateTime) convertedType);
+                default:
+                    return new OpenApiString(value);
+            }
+        }
+
+        private static object ConvertToType(string value, Type type)
+        {
+            try
+            {
+                return Convert.ChangeType(value, type);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Xml.XPath;
 using System.Reflection;
 using System.IO;
+using Castle.Core;
+using FluentAssertions;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Any;
 using Newtonsoft.Json.Serialization;
@@ -55,14 +57,29 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(expectedDescription, schema.Properties[propertyName].Description);
         }
 
+        public static IEnumerable<object[]> PropertyExampleTestData =>
+            new List<object[]>
+            {
+                new object[] {typeof(XmlAnnotatedType), "Property", new OpenApiString("property example")},
+                new object[] {typeof(XmlAnnotatedSubType), "Property", new OpenApiString("property example")},
+                new object[] {typeof(XmlAnnotatedType), "Field", new OpenApiString("field example")},
+                new object[] {typeof(XmlAnnotatedType), "IntProperty", new OpenApiInteger(10)},
+                new object[] {typeof(XmlAnnotatedType), "LongProperty", new OpenApiLong(4294967295)},
+                new object[] {typeof(XmlAnnotatedType), "DoubleProperty", new OpenApiDouble(1.25)},
+                new object[] {typeof(XmlAnnotatedType), "FloatProperty", new OpenApiDouble(1.2)},
+                new object[] {typeof(XmlAnnotatedType), "ByteProperty", new OpenApiByte(0x10)},
+                new object[] {typeof(XmlAnnotatedType), "DateTimeProperty", new OpenApiDate(new DateTime(2016, 11, 15))},
+                new object[] {typeof(XmlAnnotatedType), "BoolField", new OpenApiBoolean(true)},
+                new object[] {typeof(XmlAnnotatedType), "GuidProperty", new OpenApiString("d3966535-2637-48fa-b911-e3c27405ee09")},
+                new object[] {typeof(XmlAnnotatedType), "BadExampleProperty", new OpenApiString("property bad example")},
+            };
+
         [Theory]
-        [InlineData(typeof(XmlAnnotatedType), "Property", "property example")]
-        [InlineData(typeof(XmlAnnotatedType), "Field", "field example")]
-        [InlineData(typeof(XmlAnnotatedSubType), "Property", "property example")]
+        [MemberData(nameof(PropertyExampleTestData))]
         public void Apply_SetsPropertyExample_FromPropertyExampleTags(
             Type type,
             string propertyName,
-            string expectedExample)
+            object expectedExample)
         {
             var schema = new OpenApiSchema
             {
@@ -75,8 +92,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Subject().Apply(schema, filterContext);
 
-            Assert.IsType<OpenApiString>(schema.Properties[propertyName].Example);
-            Assert.Equal(expectedExample, ((OpenApiString)schema.Properties[propertyName].Example).Value);
+            schema.Properties[propertyName].Example.Should().BeOfType(expectedExample.GetType());
+            schema.Properties[propertyName].Example.Should().BeEquivalentTo(expectedExample);
         }
 
         private SchemaFilterContext FilterContextFor(Type type)
