@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Xml.XPath;
 using System.Reflection;
 using System.IO;
-using Castle.Core;
-using FluentAssertions;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Any;
 using Newtonsoft.Json.Serialization;
@@ -57,29 +55,23 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(expectedDescription, schema.Properties[propertyName].Description);
         }
 
-        public static IEnumerable<object[]> PropertyExampleTestData =>
-            new List<object[]>
-            {
-                new object[] {typeof(XmlAnnotatedType), "Property", new OpenApiString("property example")},
-                new object[] {typeof(XmlAnnotatedSubType), "Property", new OpenApiString("property example")},
-                new object[] {typeof(XmlAnnotatedType), "Field", new OpenApiString("field example")},
-                new object[] {typeof(XmlAnnotatedType), "IntProperty", new OpenApiInteger(10)},
-                new object[] {typeof(XmlAnnotatedType), "LongProperty", new OpenApiLong(4294967295)},
-                new object[] {typeof(XmlAnnotatedType), "DoubleProperty", new OpenApiDouble(1.25)},
-                new object[] {typeof(XmlAnnotatedType), "FloatProperty", new OpenApiDouble(1.2)},
-                new object[] {typeof(XmlAnnotatedType), "ByteProperty", new OpenApiByte(0x10)},
-                new object[] {typeof(XmlAnnotatedType), "DateTimeProperty", new OpenApiDate(new DateTime(2016, 11, 15))},
-                new object[] {typeof(XmlAnnotatedType), "BoolField", new OpenApiBoolean(true)},
-                new object[] {typeof(XmlAnnotatedType), "GuidProperty", new OpenApiString("d3966535-2637-48fa-b911-e3c27405ee09")},
-                new object[] {typeof(XmlAnnotatedType), "BadExampleProperty", new OpenApiString("property bad example")},
-            };
-
         [Theory]
-        [MemberData(nameof(PropertyExampleTestData))]
+        [InlineData(typeof(XmlAnnotatedType), "Property", PrimitiveType.String, "property example")]
+        [InlineData(typeof(XmlAnnotatedSubType), "Property", PrimitiveType.String, "property example")]
+        [InlineData(typeof(XmlAnnotatedType), "Field", PrimitiveType.String, "field example")]
+        [InlineData(typeof(XmlAnnotatedType), "IntProperty", PrimitiveType.Integer, "10")]
+        [InlineData(typeof(XmlAnnotatedType), "LongProperty", PrimitiveType.Long, "4294967295")]
+        [InlineData(typeof(XmlAnnotatedType), "DoubleProperty", PrimitiveType.Double, "1.25")]
+        [InlineData(typeof(XmlAnnotatedType), "FloatProperty", PrimitiveType.Float, "1.2")]
+        [InlineData(typeof(XmlAnnotatedType), "ByteProperty", PrimitiveType.Byte, "16")]
+        [InlineData(typeof(XmlAnnotatedType), "BoolField", PrimitiveType.Boolean, "True")]
+        [InlineData(typeof(XmlAnnotatedType), "GuidProperty", PrimitiveType.String, "d3966535-2637-48fa-b911-e3c27405ee09")]
+        [InlineData(typeof(XmlAnnotatedType), "BadExampleIntProperty", PrimitiveType.String, "property bad example")]
         public void Apply_SetsPropertyExample_FromPropertyExampleTags(
             Type type,
             string propertyName,
-            object expectedExample)
+            PrimitiveType expectedPrimitiveType,
+            object expectedValueString)
         {
             var schema = new OpenApiSchema
             {
@@ -92,8 +84,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Subject().Apply(schema, filterContext);
 
-            schema.Properties[propertyName].Example.Should().BeOfType(expectedExample.GetType());
-            schema.Properties[propertyName].Example.Should().BeEquivalentTo(expectedExample);
+            var openApiPrimitive = (IOpenApiPrimitive)schema.Properties[propertyName].Example;
+            Assert.Equal(expectedPrimitiveType, openApiPrimitive.PrimitiveType);
+            Assert.Equal(expectedValueString, GetOpenApiPrimitiveValue(openApiPrimitive).ToString());
+        }
+
+        private static object GetOpenApiPrimitiveValue(IOpenApiPrimitive primitive)
+        {
+            return primitive.GetType().GetProperty("Value").GetValue(primitive);
         }
 
         private SchemaFilterContext FilterContextFor(Type type)

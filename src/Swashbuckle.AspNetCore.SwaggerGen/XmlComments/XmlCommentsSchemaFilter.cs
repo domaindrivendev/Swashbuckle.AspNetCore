@@ -1,9 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Xml.XPath;
 using System.Reflection;
+using Microsoft.OpenApi.Any;
 using Newtonsoft.Json.Serialization;
 using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Any;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -69,46 +70,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
         }
 
-        private static IOpenApiAny ConvertToOpenApiType(string value, Type type)
+        private static IOpenApiPrimitive ConvertToOpenApiType(string value, Type type)
         {
-            var convertedType = ConvertToType(value, type);
-            if (convertedType == null)
-                return new OpenApiString(value);
+            object typedExample;
 
-            switch (Type.GetTypeCode(type))
-            {
-                case TypeCode.Int32:
-                case TypeCode.Int16:
-                    return new OpenApiInteger((int) convertedType);
-                case TypeCode.Int64:
-                    return new OpenApiLong((long) convertedType);
-                case TypeCode.Double:
-                    return new OpenApiDouble((double) convertedType);
-                case TypeCode.Single:
-                    return new OpenApiDouble((double) new decimal((float) convertedType));
-                case TypeCode.Decimal:
-                    return new OpenApiDouble((double) (decimal) convertedType);
-                case TypeCode.Byte:
-                    return new OpenApiByte((byte) convertedType);
-                case TypeCode.Boolean:
-                    return new OpenApiBoolean((bool) convertedType);
-                case TypeCode.DateTime:
-                    return new OpenApiDate((DateTime) convertedType);
-                default:
-                    return new OpenApiString(value);
-            }
-        }
-
-        private static object ConvertToType(string value, Type type)
-        {
             try
             {
-                return Convert.ChangeType(value, type);
+                typedExample = TypeDescriptor.GetConverter(type).ConvertFrom(value);
             }
             catch (Exception)
             {
-                return null;
+                return new OpenApiString(value);
             }
+
+            return OpenApiPrimitiveFactory.CreateFrom(typedExample) ?? new OpenApiString(value);
         }
     }
 }
