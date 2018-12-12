@@ -18,12 +18,12 @@ namespace Microsoft.Extensions.DependencyInjection
 
             // Register generator and it's dependencies
             services.AddTransient<ISwaggerProvider, SwaggerGenerator>();
-            services.AddTransient<ISchemaRegistryFactory, SchemaRegistryFactory>();
+            services.AddTransient<ISchemaGenerator, SchemaGenerator>();
 
             // Register custom configurators that assign values from SwaggerGenOptions (i.e. high level config)
             // to the service-specific options (i.e. lower-level config)
             services.AddTransient<IConfigureOptions<SwaggerGeneratorOptions>, ConfigureSwaggerGeneratorOptions>();
-            services.AddTransient<IConfigureOptions<SchemaRegistryOptions>, ConfigureSchemaRegistryOptions>();
+            services.AddTransient<IConfigureOptions<SchemaGeneratorOptions>, ConfigureSchemaGeneratorOptions>();
 
             if (setupAction != null) services.ConfigureSwaggerGen(setupAction);
 

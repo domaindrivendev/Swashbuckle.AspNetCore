@@ -154,7 +154,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Type type,
             Func<OpenApiSchema> schemaFactory)
         {
-            swaggerGenOptions.SchemaRegistryOptions.CustomTypeMappings.Add(type, schemaFactory);
+            swaggerGenOptions.SchemaGeneratorOptions.CustomTypeMappings.Add(type, schemaFactory);
         }
 
         /// <summary>
@@ -175,7 +175,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         public static void DescribeAllEnumsAsStrings(this SwaggerGenOptions swaggerGenOptions)
         {
-            swaggerGenOptions.SchemaRegistryOptions.DescribeAllEnumsAsStrings = true;
+            swaggerGenOptions.SchemaGeneratorOptions.DescribeAllEnumsAsStrings = true;
         }
 
         /// <summary>
@@ -183,7 +183,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         public static void DescribeStringEnumsInCamelCase(this SwaggerGenOptions swaggerGenOptions)
         {
-            swaggerGenOptions.SchemaRegistryOptions.DescribeStringEnumsInCamelCase = true;
+            swaggerGenOptions.SchemaGeneratorOptions.DescribeStringEnumsInCamelCase = true;
         }
 
         /// <summary>
@@ -191,7 +191,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         public static void UseReferencedDefinitionsForEnums(this SwaggerGenOptions swaggerGenOptions)
         {
-            swaggerGenOptions.SchemaRegistryOptions.UseReferencedDefinitionsForEnums = true;
+            swaggerGenOptions.SchemaGeneratorOptions.UseReferencedDefinitionsForEnums = true;
         }
 
         /// <summary>
@@ -205,7 +205,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this SwaggerGenOptions swaggerGenOptions,
             Func<Type, string> schemaIdSelector)
         {
-            swaggerGenOptions.SchemaRegistryOptions.SchemaIdSelector = schemaIdSelector;
+            swaggerGenOptions.SchemaGeneratorOptions.SchemaIdSelector = schemaIdSelector;
         }
 
         /// <summary>
@@ -213,7 +213,20 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         public static void IgnoreObsoleteProperties(this SwaggerGenOptions swaggerGenOptions)
         {
-            swaggerGenOptions.SchemaRegistryOptions.IgnoreObsoleteProperties = true;
+            swaggerGenOptions.SchemaGeneratorOptions.IgnoreObsoleteProperties = true;
+        }
+
+        /// <summary>
+        /// Generate polymorphic schemas (i.e. "oneOf") based on discovered subtypes
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="subTypesResolver"></param>
+        public static void GeneratePolymorphicSchemas(this SwaggerGenOptions swaggerGenOptions, Func<Type, IEnumerable<Type>> subTypesResolver = null)
+        {
+            swaggerGenOptions.SchemaGeneratorOptions.GeneratePolymorphicSchemas = true;
+
+            if (subTypesResolver != null)
+                swaggerGenOptions.SchemaGeneratorOptions.SubTypesResolver = subTypesResolver;
         }
 
         /// <summary>

@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
-    public class ExtensionDataObjectType
+    public class ExtensionDataAnnotatedType
     {
         public bool Property1 { get; set; }
 

@@ -4,17 +4,18 @@ using Microsoft.OpenApi.Any;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public static class OpenApiPrimitiveFactory
+    public static class OpenApiAnyFactory
     {
-        public static IOpenApiPrimitive CreateFrom(object value)
+        public static bool TryCreateFrom(object value, out IOpenApiAny openApiAny)
         {
-            if (!FactoryMethodMap.TryGetValue(value.GetType(), out Func<object, IOpenApiPrimitive> factoryMethod))
-                return null;
+            openApiAny = FactoryMethodMap.TryGetValue(value.GetType(), out Func<object, IOpenApiAny> factoryMethod)
+                ? factoryMethod(value)
+                : null;
 
-            return factoryMethod(value);
+            return openApiAny != null;
         }
 
-        private static readonly Dictionary<Type, Func<object, IOpenApiPrimitive>> FactoryMethodMap = new Dictionary<Type, Func<object, IOpenApiPrimitive>>
+        private static readonly Dictionary<Type, Func<object, IOpenApiAny>> FactoryMethodMap = new Dictionary<Type, Func<object, IOpenApiAny>>
         {
             { typeof(string), (value) => new OpenApiString((string)value) },
             { typeof(short), (value) => new OpenApiInteger((int)value) },

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
@@ -18,8 +17,7 @@ namespace Swashbuckle.AspNetCore.Annotations
 
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
-            var typeInfo = context.SystemType.GetTypeInfo();
-            var attributes = typeInfo.GetCustomAttributes(false).OfType<SwaggerSchemaFilterAttribute>();
+            var attributes = context.Type.GetCustomAttributes<SwaggerSchemaFilterAttribute>(true);
 
             foreach (var attr in attributes)
             {

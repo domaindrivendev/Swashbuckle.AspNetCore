@@ -13,19 +13,23 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         public ParameterFilterContext(
             ApiParameterDescription apiParameterDescription,
-            ISchemaRegistry schemaRegistry,
+            ISchemaGenerator schemaGenerator,
+            SchemaRepository schemaRepository,
             ParameterInfo parameterInfo,
             PropertyInfo propertyInfo)
         {
             ApiParameterDescription = apiParameterDescription;
-            SchemaRegistry = schemaRegistry;
+            SchemaGenerator = schemaGenerator;
+            SchemaRepository = schemaRepository;
             ParameterInfo = parameterInfo;
             PropertyInfo = propertyInfo;
         }
 
         public ApiParameterDescription ApiParameterDescription { get; }
 
-        public ISchemaRegistry SchemaRegistry { get; }
+        public ISchemaGenerator SchemaGenerator { get; }
+
+        public SchemaRepository SchemaRepository { get; }
 
         public ParameterInfo ParameterInfo { get; }
 

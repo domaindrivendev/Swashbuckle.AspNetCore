@@ -26,7 +26,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var jsonObjectContract = context.JsonContract as JsonObjectContract;
             if (jsonObjectContract == null) return;
 
-            var memberName = XmlCommentsMemberNameHelper.GetMemberNameForType(context.SystemType);
+            var memberName = XmlCommentsMemberNameHelper.GetMemberNameForType(context.Type);
             var typeNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, memberName));
 
             if (typeNode != null)
@@ -70,7 +70,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
         }
 
-        private static IOpenApiPrimitive ConvertToOpenApiType(string value, Type type)
+        private static IOpenApiAny ConvertToOpenApiType(string value, Type type)
         {
             object typedExample;
 
@@ -83,7 +83,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 return new OpenApiString(value);
             }
 
-            return OpenApiPrimitiveFactory.CreateFrom(typedExample) ?? new OpenApiString(value);
+            return OpenApiAnyFactory.TryCreateFrom(typedExample, out IOpenApiAny openApiAny)
+                ? openApiAny
+                : new OpenApiString(value);
         }
     }
 }

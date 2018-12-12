@@ -6,12 +6,12 @@ using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    internal class ConfigureSchemaRegistryOptions : IConfigureOptions<SchemaRegistryOptions>
+    internal class ConfigureSchemaGeneratorOptions : IConfigureOptions<SchemaGeneratorOptions>
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly SwaggerGenOptions _swaggerGenOptions;
 
-        public ConfigureSchemaRegistryOptions(
+        public ConfigureSchemaGeneratorOptions(
             IServiceProvider serviceProvider,
             IOptions<SwaggerGenOptions> swaggerGenOptionsAccessor)
         {
@@ -19,16 +19,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             _swaggerGenOptions = swaggerGenOptionsAccessor.Value;
         }
 
-        public void Configure(SchemaRegistryOptions options)
+        public void Configure(SchemaGeneratorOptions options)
         {
-            DeepCopy(_swaggerGenOptions.SchemaRegistryOptions, options);
+            DeepCopy(_swaggerGenOptions.SchemaGeneratorOptions, options);
 
             // Create and add any filters that were specified through the FilterDescriptor lists
             _swaggerGenOptions.SchemaFilterDescriptors.ForEach(
                 filterDescriptor => options.SchemaFilters.Add(CreateFilter<ISchemaFilter>(filterDescriptor)));
         }
 
-        private void DeepCopy(SchemaRegistryOptions source, SchemaRegistryOptions target)
+        private void DeepCopy(SchemaGeneratorOptions source, SchemaGeneratorOptions target)
         {
             target.CustomTypeMappings = new Dictionary<Type, Func<OpenApiSchema>>(source.CustomTypeMappings);
             target.DescribeAllEnumsAsStrings = source.DescribeAllEnumsAsStrings;
@@ -36,6 +36,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             target.UseReferencedDefinitionsForEnums = source.UseReferencedDefinitionsForEnums;
             target.SchemaIdSelector = source.SchemaIdSelector;
             target.IgnoreObsoleteProperties = source.IgnoreObsoleteProperties;
+            target.GeneratePolymorphicSchemas = source.GeneratePolymorphicSchemas;
+            target.SubTypesResolver = source.SubTypesResolver;
             target.SchemaFilters = new List<ISchemaFilter>(source.SchemaFilters);
         }
 

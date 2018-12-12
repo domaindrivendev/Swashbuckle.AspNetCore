@@ -41,6 +41,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             return new ParameterFilterContext(
                 new ApiParameterDescription(),
                 null,
+                null,
                 parameterInfo,
                 null);
         }

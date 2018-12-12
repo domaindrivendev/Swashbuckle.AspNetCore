@@ -110,7 +110,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var methodInfo = (apiDescription.ActionDescriptor as ControllerActionDescriptor).MethodInfo;
 
-            return new OperationFilterContext(apiDescription, null, methodInfo);
+            return new OperationFilterContext(apiDescription, null, null, methodInfo);
         }
 
         private XmlCommentsOperationFilter Subject()
