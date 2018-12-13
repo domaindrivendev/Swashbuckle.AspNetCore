@@ -273,8 +273,6 @@ app.UseSwaggerUI(c =>
 }
 ```
 
-_NOTE: To display the `operationId` of Operations in the SwaggerUI_
-
 ### List Operation Responses ###
 
 By default, Swashbuckle will generate a "200" response for each operation. If the action returns a response DTO, then this will be used to generate a "schema" for the response body. For example ...
