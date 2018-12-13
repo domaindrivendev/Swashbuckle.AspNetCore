@@ -260,7 +260,20 @@ __Option 2) Route Names__
 public IActionResult Get(int id) // operationId = "GetProductById"
 ```
 
-_NOTE: In both cases, API authors are responsible for ensuring the uniqueness of `OperationId`s across all Operations_
+_NOTE: In both cases, API authors are responsible for ensuring the uniqueness of `operationId`s across all Operations_
+
+__Display Operations In SwaggerUI
+To display the operations in you SwaggerUI, you need to invoke `DisplayOperationId()` on the `SwaggerUIOptions` as follows:
+```csharp
+app.UseSwaggerUI(c =>
+{
+	...
+    c.DisplayOperationId();
+    ...
+}
+```
+
+_NOTE: To display the `operationId` of Operations in the SwaggerUI_
 
 ### List Operation Responses ###
 
