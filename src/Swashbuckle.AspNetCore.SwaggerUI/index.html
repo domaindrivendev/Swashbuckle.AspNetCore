@@ -91,7 +91,7 @@
 
     // If oauth2RedirectUrl isn't specified, use the built-in default
     if (!configObject.hasOwnProperty("oauth2RedirectUrl"))
-      configObject.oauth2RedirectUrl = window.location.href.replace("index.html", "oauth2-redirect.html");
+      configObject.oauth2RedirectUrl = window.location.href.replace("index.html", "oauth2-redirect.html").split('#')[0];
 
     // Build a system
     const ui = SwaggerUIBundle(configObject);
