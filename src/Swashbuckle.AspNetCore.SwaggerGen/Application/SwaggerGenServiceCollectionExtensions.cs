@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.ApiDescription;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -24,6 +27,9 @@ namespace Microsoft.Extensions.DependencyInjection
             // to the service-specific options (i.e. lower-level config)
             services.AddTransient<IConfigureOptions<SwaggerGeneratorOptions>, ConfigureSwaggerGeneratorOptions>();
             services.AddTransient<IConfigureOptions<SchemaGeneratorOptions>, ConfigureSchemaGeneratorOptions>();
+
+            // Used by the Microsoft.Extensions.ApiDescription tool
+            services.TryAddSingleton<IDocumentProvider, DocumentProvider>();
 
             if (setupAction != null) services.ConfigureSwaggerGen(setupAction);
 
