@@ -409,6 +409,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(nameof(FakeController.ReturnsComplexType), "200", "Success", new string[] { "application/json", "text/json" })]
         [InlineData(nameof(FakeController.ReturnsJObject), "200", "Success", new string[] { "application/json", "text/json" })]
         [InlineData(nameof(FakeController.ReturnsActionResult), "200", "Success", new string[] { })]
+        [InlineData(nameof(FakeController.AnnotatedWithWithNotModifiedResponseTypeAttributes), "304", "Not Modified", new string[] { })]
         public void GetSwagger_GeneratesResponses_ForSupportedApiResponseTypes(
             string actionFixtureName,
             string expectedStatusCode,

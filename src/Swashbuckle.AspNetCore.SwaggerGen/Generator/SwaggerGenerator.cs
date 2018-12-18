@@ -434,6 +434,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             { "1\\d{2}", "Information" },
             { "2\\d{2}", "Success" },
+            { "304", "Not Modified" },
             { "3\\d{2}", "Redirect" },
             { "400", "Bad Request" },
             { "401", "Unauthorized" },
