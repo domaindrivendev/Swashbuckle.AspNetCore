@@ -105,6 +105,21 @@ namespace Swashbuckle.AspNetCore.ReDoc
         /// </summary>
         public bool NativeScrollbars { get; set; } = false;
 
+        /// <summary>
+        /// Disable search indexing and search box
+        /// </summary>
+        public bool DisableSearch { get; set; } = false;
+
+        /// <summary>
+        /// Show only required fields in request samples
+        /// </summary>
+        public bool OnlyRequiredInSamples { get; set; } = false;
+
+        /// <summary>
+        /// Sort properties alphabetically
+        /// </summary>
+        public bool SortPropsAlphabetically { get; set; } = false;
+
         [JsonExtensionData]
         public Dictionary<string, object> AdditionalItems = new Dictionary<string, object>();
     }
