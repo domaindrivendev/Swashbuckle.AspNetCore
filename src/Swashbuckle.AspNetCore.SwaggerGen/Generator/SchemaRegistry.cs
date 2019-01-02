@@ -129,18 +129,25 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private OpenApiSchema CreatePrimitiveSchema(JsonPrimitiveContract primitiveContract)
         {
             // If Nullable<T>, use the type argument
-            var type = primitiveContract.UnderlyingType.IsNullable()
-                ? Nullable.GetUnderlyingType(primitiveContract.UnderlyingType)
-                : primitiveContract.UnderlyingType;
+            var type = primitiveContract.UnderlyingType;
+            var isNullable = primitiveContract.UnderlyingType.IsNullable();
+            if (isNullable) {
+                type = Nullable.GetUnderlyingType(primitiveContract.UnderlyingType);
+            }
 
             if (type.GetTypeInfo().IsEnum)
                 return CreateEnumSchema(primitiveContract, type);
 
-            if (PrimitiveTypeMap.ContainsKey(type))
-                return PrimitiveTypeMap[type]();
+            if (PrimitiveTypeMap.ContainsKey(type)) 
+            {
+                var schema = PrimitiveTypeMap[type]();
+                schema.Nullable = isNullable;
+
+                return schema;
+            }
 
             // None of the above, fallback to string
-            return new OpenApiSchema { Type = "string" };
+            return new OpenApiSchema { Type = "string", Nullable = isNullable };
         }
 
         private OpenApiSchema CreateEnumSchema(JsonPrimitiveContract primitiveContract, Type type)
@@ -169,6 +176,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 return new OpenApiSchema
                 {
+                    Nullable = primitiveContract.UnderlyingType.IsNullable(),
                     Type = "string",
                     Enum = enumNames
                         .Select(name => new OpenApiString(name))
@@ -178,6 +186,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             return new OpenApiSchema
             {
+                Nullable = primitiveContract.UnderlyingType.IsNullable(),
                 Type = "integer",
                 Format = "int32",
                 Enum = Enum.GetValues(type).Cast<int>()
