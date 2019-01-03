@@ -367,6 +367,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var property2 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property2");
             Assert.True(property2.Value.Nullable);
+
+            var property3 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property3");
+            Assert.False(property3.Value.Nullable);
+
+            var property6 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property6");
+            Assert.False(property6.Value.Nullable);
+
+            var property7 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property7");
+            Assert.True(property7.Value.Nullable);
         }
 
         [Fact]
@@ -402,7 +411,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.All(requestBody.Content.Values, mediaType =>
             {
                 Assert.NotNull(mediaType.Schema);
-                Assert.Equal(5, mediaType.Schema.Properties.Count);
+                Assert.Equal(7, mediaType.Schema.Properties.Count);
                 Assert.NotNull(mediaType.Encoding);
             });
         }
