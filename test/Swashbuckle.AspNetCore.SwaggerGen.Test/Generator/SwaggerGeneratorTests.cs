@@ -354,6 +354,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GetSwagger_GeneratesRequestBody_HonorsNullableType()
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add("POST", "collection", nameof(FakeController.AcceptsComplexTypeFromBody)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var schema = swagger.Components.Schemas.FirstOrDefault();
+            var property1 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property1");
+            Assert.False(property1.Value.Nullable);
+
+            var property2 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property2");
+            Assert.True(property2.Value.Nullable);
+        }
+
+        [Fact]
         public void GetSwagger_GeneratesRequestBody_ForFirstApiParameterThatIsBoundToBody()
         {
             var subject = Subject(setupApis: apis => apis
