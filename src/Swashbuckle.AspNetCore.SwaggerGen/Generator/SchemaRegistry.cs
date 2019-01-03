@@ -131,14 +131,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             // If Nullable<T>, use the type argument
             var type = primitiveContract.UnderlyingType;
             var isNullable = primitiveContract.UnderlyingType.IsNullable();
-            if (isNullable) {
+            if (isNullable)
+            {
                 type = Nullable.GetUnderlyingType(primitiveContract.UnderlyingType);
             }
 
             if (type.GetTypeInfo().IsEnum)
                 return CreateEnumSchema(primitiveContract, type);
 
-            if (PrimitiveTypeMap.ContainsKey(type)) 
+            if (PrimitiveTypeMap.ContainsKey(type))
             {
                 var schema = PrimitiveTypeMap[type]();
                 schema.Nullable = isNullable;
