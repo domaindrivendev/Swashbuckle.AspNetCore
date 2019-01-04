@@ -20,7 +20,7 @@ namespace Swashbuckle.AspNetCore.ReDoc
 {
     public class ReDocMiddleware
     {
-        private const string EmbeddedFileNamespace = "Swashbuckle.AspNetCore.ReDoc.node_modules.redoc.dist";
+        private const string EmbeddedFileNamespace = "Swashbuckle.AspNetCore.ReDoc.node_modules.redoc.bundles";
 
         private readonly ReDocOptions _options;
         private readonly StaticFileMiddleware _staticFileMiddleware;
