@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="index.html" />
-    <EmbeddedResource Include="node_modules/redoc/dist/redoc.min.*" />
+    <EmbeddedResource Include="node_modules/redoc/bundles/redoc.standalone.*" />
   </ItemGroup>
 
   <ItemGroup>
