@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace Swashbuckle.AspNetCore.ReDoc
 {
@@ -51,17 +50,6 @@ namespace Swashbuckle.AspNetCore.ReDoc
         /// This is often useful when there are fixed positioned elements at the top of the page, such as navbars, headers etc
         /// </summary>
         public int? ScrollYOffset { get; set; }
-
-        /// <summary>
-        /// If set, warnings are not rendered at the top of documentation (they still are logged to the console)
-        /// </summary>
-        public bool SupressWarnings { get; set; } = false;
-
-        /// <summary>
-        /// If set, enables lazy rendering mode in ReDoc. This mode is useful for APIs with big number of operations (e.g. > 50).
-        /// In this mode ReDoc shows initial screen ASAP and then renders the rest operations asynchronously while showing progress bar on the top
-        /// </summary>
-        public bool LazyRendering { get; set; } = false;
 
         /// <summary>
         /// If set, the protocol and hostname is not shown in the operation definition
