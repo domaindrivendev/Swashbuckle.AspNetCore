@@ -19,7 +19,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 |Swashbuckle Version|ASP.NET Core|Swagger / OpenAPI Spec.|swagger-ui|ReDoc UI|
 |----------|----------|----------|----------|----------|
-|[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master)|>=2.0.0|2.0, 3.0|3.19.5|1.22.2|
+|[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master)|>=2.0.0|2.0, 3.0|3.19.5|2.0.0-rc.0|
 |[5.0.0-beta](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v5.0.0-beta)|>=2.0.0|2.0, 3.0|3.19.5|1.22.2|
 |[4.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v4.0.0)|>=2.0.0|2.0|3.19.5|1.22.2|
 |[3.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v3.0.0)|>=1.0.4|2.0|3.17.1|1.20.0|
@@ -196,7 +196,11 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Retrieve Swagger Directly from a Startup Assembly](#retrieve-swagger-directly-from-a-startup-assembly)
 
 * [Swashbuckle.AspNetCore.ReDoc](#swashbuckleaspnetcoreredoc)
-    * Docs coming soon
+    * [Change Releative Path to the UI](#redoc-change-relative-path-to-the-ui)
+    * [Change Document Title](#redoc-change-document-title)
+    * [Apply ReDoc Parameters](#apply-redoc-parameters)
+    * [Inject Custom CSS](#redoc-inject-custom-css)
+    * [Customize index.html](#redoc-customize-indexhtml)
 
 ## Swashbuckle.AspNetCore.Swagger ##
 
@@ -1154,3 +1158,91 @@ Where ...
 * [swaggerdoc] is the name of the swagger document you want to retrieve, as configured in your startup class
 
 Checkout the [CliExample app](test/WebSites/CliExample) for more inspiration. It leverages the MSBuild Exec command to generate Swagger JSON at build-time.
+
+## Swashbuckle.AspNetCore.ReDoc ##
+
+<h3 id="redoc-change-relative-path-to-the-ui">Change Relative Path to the UI</h3>
+
+By default, the ReDoc UI will be exposed at "/api-docs". If necessary, you can alter this when enabling the ReDoc middleware:
+
+```csharp
+app.UseReDoc(c =>
+{
+    c.RoutePrefix = "docs"
+    ...
+}
+```
+
+<h3 id="redoc-change-document-title">Change Document Title</h3>
+
+By default, the ReDoc UI will have a generic document title. You can alter this when enabling the ReDoc middleware:
+
+```csharp
+app.UseReDoc(c =>
+{
+    c.DocumentTitle = "My API Docs";
+    ...
+}
+```
+
+### Apply ReDoc Parameters ###
+
+ReDoc ships with it's own set of configuration parameters, all described here https://github.com/Rebilly/ReDoc/blob/master/README.md#redoc-options-object. In Swashbuckle, most of these are surfaced through the ReDoc middleware options:
+
+```csharp
+app.UseReDoc(c =>
+{
+    c.SpecUrl("/v1/swagger.json");
+    c.UntrustedSpec();
+    c.ScrollYOffset(10);
+    c.HideHostname();
+    c.HideDownloadButton());
+    c.ExpandResponses("200,201");
+    c.RequiredPropsFirst();
+    c.NoAutoAuth();
+    c.PathInMiddlePanel();
+    c.HideLoading();
+    c.NativeScrollbars();
+    c.DisableSearch();
+    c.OnlyRequiredInSamples();
+    c.SortPropsAlphabetically();
+});
+```
+
+_Using `c.SpecUrl("/v1/swagger.json")` multiple times within the same `UseReDoc(...)` will not add multiple urls._
+
+<h3 id="redoc-inject-custom-css">Inject Custom CSS</h3>
+
+To tweak the look and feel, you can inject additional CSS stylesheets by adding them to your `wwwroot` folder and specifying the relative paths in the middleware options:
+
+```csharp
+app.UseReDoc(c =>
+{
+    ...
+    c.InjectStylesheet("/redoc/custom.css");
+}
+```
+
+It is also possible to modify the theme by using the `AdditionalItems` property, see https://github.com/Rebilly/ReDoc/blob/master/README.md#redoc-options-object for more information.
+
+```csharp
+app.UseReDoc(c =>
+{
+    ...
+    c.ConfigObject.AdditionalItems = ...
+}
+```
+
+<h3 id="redoc-customize-indexhtml">Customize index.html</h3>
+
+To customize the UI beyond the basic options listed above, you can provide your own version of the ReDoc index.html page:
+
+```csharp
+app.UseReDoc(c =>
+{
+    c.IndexStream = () => GetType().Assembly
+        .GetManifestResourceStream("CustomIndex.ReDoc.index.html"); // requires file to be added as an embedded resource
+});
+```
+
+_To get started, you should base your custom index.html on the [default version](src/Swashbuckle.AspNetCore.ReDoc/index.html)_
