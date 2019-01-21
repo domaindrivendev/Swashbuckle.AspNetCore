@@ -193,6 +193,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 ? apiParameter.Name.ToCamelCase()
                 : apiParameter.Name;
 
+            var location = ParameterLocationMap.ContainsKey(apiParameter.Source)
+                ? ParameterLocationMap[apiParameter.Source]
+                : ParameterLocation.Query;
+
             var isRequired = (apiParameter.IsFromPath())
                 || parameterOrPropertyAttributes.Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
 
@@ -207,7 +211,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var parameter = new OpenApiParameter
             {
                 Name = name,
-                In = ParameterLocationMap[apiParameter.Source],
+                In = location,
                 Required = isRequired,
                 Schema = schema
             };
@@ -419,7 +423,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private static Dictionary<BindingSource, ParameterLocation> ParameterLocationMap = new Dictionary<BindingSource, ParameterLocation>
         {
             { BindingSource.Query, ParameterLocation.Query },
-            { BindingSource.ModelBinding, ParameterLocation.Query },
             { BindingSource.Header, ParameterLocation.Header },
             { BindingSource.Path, ParameterLocation.Path }
         };
