@@ -39,8 +39,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (schema.Properties == null) return;
             foreach (var entry in schema.Properties)
             {
+                if (!jsonObjectContract.Properties.Contains(entry.Key))
+                {
+                    continue;
+                }
                 var jsonProperty = jsonObjectContract.Properties[entry.Key];
-                if (jsonProperty == null) continue;
 
                 if (jsonProperty.TryGetMemberInfo(out MemberInfo memberInfo))
                 {

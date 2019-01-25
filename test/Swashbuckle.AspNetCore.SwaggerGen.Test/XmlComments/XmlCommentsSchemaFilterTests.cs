@@ -89,6 +89,28 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(expectedValueString, GetOpenApiPrimitiveValue(openApiPrimitive).ToString());
         }
 
+        [Theory]
+        [InlineData(typeof(XmlAnnotatedType), "MissingStringProperty", "string")]
+        [InlineData(typeof(XmlAnnotatedType), "MissingIntegerProperty", "integer")]
+        public void Apply_IgnoresNonexistingProperty(Type type,
+            string propertyName,
+            string propertyType)
+        {
+            var schema = new OpenApiSchema
+            {
+                Properties = new Dictionary<string, OpenApiSchema>()
+                {
+                    { propertyName, new OpenApiSchema() { Type = propertyType } }
+                }
+            };
+            var filterContext = FilterContextFor(type);
+
+            Subject().Apply(schema, filterContext);
+
+            var openApiSchema = schema.Properties[propertyName];
+            Assert.Equal(propertyType, openApiSchema.Type);
+        }
+
         private static object GetOpenApiPrimitiveValue(IOpenApiPrimitive primitive)
         {
             return primitive.GetType().GetProperty("Value").GetValue(primitive);
