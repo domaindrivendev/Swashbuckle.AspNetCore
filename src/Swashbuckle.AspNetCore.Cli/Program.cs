@@ -41,7 +41,7 @@ namespace Swashbuckle.AspNetCore.Cli
                         "exec --depsfile {0} --runtimeconfig {1} {2} _{3}", // note the underscore
                         EscapePath(depsFile),
                         EscapePath(runtimeConfig),
-                        typeof(Program).GetTypeInfo().Assembly.Location,
+                        EscapePath(typeof(Program).GetTypeInfo().Assembly.Location),
                         string.Join(" ", args)
                     ));
 
