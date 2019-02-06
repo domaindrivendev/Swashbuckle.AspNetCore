@@ -13,5 +13,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public string Property4 { get; set; }
 
         public char Property5 { get; set; }
+
+        public string Property6 { get; }
+
+        public string Property7 { set { } }
     }
 }

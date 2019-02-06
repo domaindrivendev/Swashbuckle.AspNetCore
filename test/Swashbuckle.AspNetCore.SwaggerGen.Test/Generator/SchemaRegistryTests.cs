@@ -444,7 +444,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var componentOpenApiSchema = subject.Schemas["ComplexType"];
             Assert.NotNull(componentOpenApiSchema);
             Assert.Equal("object", componentOpenApiSchema.Type);
-            Assert.Equal(5, componentOpenApiSchema.Properties.Count);
+            Assert.Equal(6, componentOpenApiSchema.Properties.Count);
         }
 
         [Fact]
