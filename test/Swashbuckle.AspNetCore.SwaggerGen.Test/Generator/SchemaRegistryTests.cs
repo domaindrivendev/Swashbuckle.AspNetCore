@@ -174,6 +174,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Null(schema.Properties["Property4"].Format);
             Assert.Equal("string", schema.Properties["Property5"].Type);
             Assert.Null(schema.Properties["Property5"].Format);
+            Assert.Equal(false, schema.Properties["Property1"].ReadOnly);
+            Assert.Equal(false, schema.Properties["Property2"].ReadOnly);
+            Assert.Equal(false, schema.Properties["Property3"].ReadOnly);
+            Assert.Equal(false, schema.Properties["Property4"].ReadOnly);
+            Assert.Equal(false, schema.Properties["Property5"].ReadOnly);
+            Assert.Equal(true, schema.Properties["Property6"].ReadOnly);
         }
 
         [Fact]
