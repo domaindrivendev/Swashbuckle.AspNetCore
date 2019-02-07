@@ -174,6 +174,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Null(schema.Properties["Property4"].Format);
             Assert.Equal("string", schema.Properties["Property5"].Type);
             Assert.Null(schema.Properties["Property5"].Format);
+            Assert.Equal(false, schema.Properties["Property5"].ReadOnly);
+            Assert.Equal(false, schema.Properties["Property5"].WriteOnly);
+            Assert.Equal(true, schema.Properties["Property6"].ReadOnly);
+            Assert.Equal(false, schema.Properties["Property6"].WriteOnly);
+            Assert.Equal(false, schema.Properties["Property7"].ReadOnly);
+            Assert.Equal(true, schema.Properties["Property7"].WriteOnly);
         }
 
         [Fact]
@@ -444,7 +450,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var componentOpenApiSchema = subject.Schemas["ComplexType"];
             Assert.NotNull(componentOpenApiSchema);
             Assert.Equal("object", componentOpenApiSchema.Type);
-            Assert.Equal(5, componentOpenApiSchema.Properties.Count);
+            Assert.Equal(7, componentOpenApiSchema.Properties.Count);
         }
 
         [Fact]

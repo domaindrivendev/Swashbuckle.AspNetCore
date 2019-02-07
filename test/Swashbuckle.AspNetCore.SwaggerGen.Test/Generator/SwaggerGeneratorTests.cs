@@ -386,7 +386,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.All(requestBody.Content.Values, mediaType =>
             {
                 Assert.NotNull(mediaType.Schema);
-                Assert.Equal(5, mediaType.Schema.Properties.Count);
+                Assert.Equal(6, mediaType.Schema.Properties.Count);
                 Assert.NotNull(mediaType.Encoding);
             });
         }

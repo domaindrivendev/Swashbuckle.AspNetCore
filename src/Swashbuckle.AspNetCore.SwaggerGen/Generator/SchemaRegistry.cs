@@ -265,6 +265,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (!jsonProperty.Writable)
                 OpenApiSchema.ReadOnly = true;
 
+            if (!jsonProperty.Readable)
+                OpenApiSchema.WriteOnly = true;
+
             if (jsonProperty.TryGetMemberInfo(out MemberInfo memberInfo))
                 OpenApiSchema.AssignAttributeMetadata(memberInfo.GetCustomAttributes(true));
 
