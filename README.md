@@ -82,7 +82,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 # Swashbuckle, ApiExplorer, and Routing #
 
-Swashbuckle relies heavily on _ApiExplorer_, the API metadata layer that ships with ASP.NET Core. If you're using the _AddMvc_ helper to bootstrap the MVC stack, then _ApiExplorer_ will be automatically registered and SB will work without issue. However, if you're using _AddMvcCore_ for a more paired-down MVC stack, you'll need to explicitly add the Api Explorer service:
+Swashbuckle relies heavily on _ApiExplorer_, the API metadata layer that ships with ASP.NET Core. If you're using the _AddMvc_ helper to bootstrap the MVC stack, then _ApiExplorer_ will be automatically registered and SB will work without issue. However, if you're using _AddMvcCore_ for a more pared-down MVC stack, you'll need to explicitly add the Api Explorer service:
 
 ```csharp
 services.AddMvcCore()
