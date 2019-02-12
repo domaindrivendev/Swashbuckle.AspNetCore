@@ -34,6 +34,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                         }
                     }
                 },
+                null,
                 null);
 
             Subject().Apply(document, filterContext);

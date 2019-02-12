@@ -7,7 +7,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         public SwaggerGeneratorOptions SwaggerGeneratorOptions { get; set; } = new SwaggerGeneratorOptions();
 
-        public SchemaRegistryOptions SchemaRegistryOptions { get; set; } = new SchemaRegistryOptions();
+        public SchemaGeneratorOptions SchemaGeneratorOptions { get; set; } = new SchemaGeneratorOptions();
 
         // NOTE: Filter instances can be added directly to the options exposed above OR they can be specified in
         // the following lists. In the latter case, they will be instantiated and added when options are injected

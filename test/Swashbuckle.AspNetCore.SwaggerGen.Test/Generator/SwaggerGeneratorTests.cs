@@ -6,6 +6,8 @@ using Microsoft.OpenApi.Any;
 using Newtonsoft.Json;
 using Xunit;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -386,7 +388,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.All(requestBody.Content.Values, mediaType =>
             {
                 Assert.NotNull(mediaType.Schema);
-                Assert.Equal(6, mediaType.Schema.Properties.Count);
+                Assert.Equal(4, mediaType.Schema.Properties.Count);
                 Assert.NotNull(mediaType.Encoding);
             });
         }
@@ -542,7 +544,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             return new SwaggerGenerator(
                 apiDescriptionsProvider,
-                new SchemaRegistryFactory(new JsonSerializerSettings(), new SchemaRegistryOptions()),
+                new SchemaGenerator(new JsonSerializerSettings(), new SchemaGeneratorOptions()),
                 options
             );
         }

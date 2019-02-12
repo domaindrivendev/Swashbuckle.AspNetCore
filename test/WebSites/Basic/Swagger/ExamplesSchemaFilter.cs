@@ -9,8 +9,8 @@ namespace Basic.Swagger
     {
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
-            var type = context.SystemType;
-            schema.Example = GetExampleOrNullFor(context.SystemType);
+            var type = context.Type;
+            schema.Example = GetExampleOrNullFor(type);
         }
 
         private IOpenApiAny GetExampleOrNullFor(Type systemType)

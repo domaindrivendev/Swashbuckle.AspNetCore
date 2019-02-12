@@ -6,7 +6,7 @@
 
         public class NestedType
         {
-            public string Property2 { get; set; }
+            public string Property1 { get; set; }
         }
     }
 }

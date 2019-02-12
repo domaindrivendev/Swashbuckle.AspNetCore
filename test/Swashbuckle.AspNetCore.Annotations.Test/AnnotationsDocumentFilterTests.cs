@@ -37,6 +37,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
                         }
                     },
                 },
+                null,
                 null);
         }
 

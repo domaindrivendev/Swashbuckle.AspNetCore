@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
 
@@ -14,14 +13,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         public DocumentFilterContext(
             IEnumerable<ApiDescription> apiDescriptions,
-            ISchemaRegistry schemaRegistry)
+            ISchemaGenerator schemaGenerator,
+            SchemaRepository schemaRepository)
         {
             ApiDescriptions = apiDescriptions;
-            SchemaRegistry = schemaRegistry;
+            SchemaGenerator = schemaGenerator;
+            SchemaRepository = schemaRepository;
         }
 
-        public IEnumerable<ApiDescription> ApiDescriptions { get; private set; }
+        public IEnumerable<ApiDescription> ApiDescriptions { get; }
 
-        public ISchemaRegistry SchemaRegistry { get; private set; }
+        public ISchemaGenerator SchemaGenerator { get; }
+
+        public SchemaRepository SchemaRepository { get; }
     }
 }

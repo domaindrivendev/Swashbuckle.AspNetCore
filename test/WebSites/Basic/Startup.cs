@@ -57,6 +57,8 @@ namespace Basic
 
                 //c.DescribeAllParametersInCamelCase();
 
+                c.GeneratePolymorphicSchemas();
+
                 c.EnableAnnotations();
             });
 

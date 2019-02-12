@@ -2,10 +2,10 @@
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
-    public enum AnEnum
+    public enum LongEnum:long
     {
-        Value1 = 2,
-        Value2 = 4,
-        X = 8
+        Value2 = 2,
+        Value4 = 4,
+        Value8 = 8,
     }
 }

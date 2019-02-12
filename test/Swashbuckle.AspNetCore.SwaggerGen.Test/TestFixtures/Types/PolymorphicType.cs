@@ -5,8 +5,13 @@
         public string BaseProperty { get; set; }
     }
 
-    public class SubType : PolymorphicType
+    public class SubType1 : PolymorphicType
     {
-        public int SubTypeProperty { get; set; }
+        public int Property1 { get; set; }
+    }
+
+    public class SubType2 : PolymorphicType
+    {
+        public int Property2 { get; set; }
     }
 }
