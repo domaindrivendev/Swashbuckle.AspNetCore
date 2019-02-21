@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
@@ -20,10 +21,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(JObject))]
         public void GenerateSchema_GeneratesDynamicSchema_IfDynamicType(Type type)
         {
-            var schema = Subject().GenerateSchemaFor(type, new SchemaRepository());
+            var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
             Assert.Equal("object", schema.Type);
             Assert.Empty(schema.Properties);
+        }
+
+        [Theory]
+        [InlineData(typeof(IFormFile))]
+        public void GenerateSchema_GeneratesFileSchema_IfFormFileType(Type type)
+        {
+            var schema = Subject().GenerateSchema(type, new SchemaRepository());
+
+            Assert.Equal("string", schema.Type);
+            Assert.Equal("binary", schema.Format);
         }
 
         [Theory]
@@ -50,7 +61,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             string expectedSchemaType,
             string expectedSchemaFormat)
         {
-            var schema = Subject().GenerateSchemaFor(type, new SchemaRepository());
+            var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
             Assert.Equal(expectedSchemaType, schema.Type);
             Assert.Equal(expectedSchemaFormat, schema.Format);
@@ -68,7 +79,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             string expectedSchemaType,
             string expectedSchemaFormat)
         {
-            var schema = Subject().GenerateSchemaFor(type, new SchemaRepository());
+            var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
             Assert.Equal(expectedSchemaType, schema.Type);
             Assert.Equal(expectedSchemaFormat, schema.Format);
@@ -87,7 +98,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchemaFor(type, schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(type, schemaRepository);
 
             Assert.NotNull(referenceSchema.Reference);
             Assert.Equal(expectedSchemaId, referenceSchema.Reference.Id);
@@ -106,7 +117,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Type type,
             string expectedAdditionalPropertiesType)
         {
-            var schema = Subject().GenerateSchemaFor(type, new SchemaRepository());
+            var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
             Assert.Equal("object", schema.Type);
             Assert.True(schema.AdditionalPropertiesAllowed);
@@ -117,7 +128,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void GenerateSchema_GeneratesObjectSchema_IfDictionaryTypeWithEnumKeys()
         {
-            var schema = Subject().GenerateSchemaFor(typeof(IDictionary<IntEnum, int>), new SchemaRepository());
+            var schema = Subject().GenerateSchema(typeof(IDictionary<IntEnum, int>), new SchemaRepository());
 
             Assert.Equal("object", schema.Type);
             Assert.Equal(new[] { "Value2", "Value4", "Value8" }, schema.Properties.Keys);
@@ -128,7 +139,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchemaFor(typeof(DictionaryOfSelf), schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(typeof(DictionaryOfSelf), schemaRepository);
 
             Assert.NotNull(referenceSchema.Reference);
             Assert.Equal("DictionaryOfSelf", referenceSchema.Reference.Id);
@@ -143,7 +154,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             string expectedItemsType,
             string expectedItemsFormat)
         {
-            var schema = Subject().GenerateSchemaFor(type, new SchemaRepository());
+            var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
             Assert.Equal("array", schema.Type);
             Assert.NotNull(schema.Items);
@@ -156,7 +167,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchemaFor(typeof(ListOfSelf), schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(typeof(ListOfSelf), schemaRepository);
 
             Assert.NotNull(referenceSchema.Reference);
             Assert.Equal("ListOfSelf", referenceSchema.Reference.Id);
@@ -168,7 +179,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(SortedSet<string>))]
         public void Generateschema_SetsUniqueItems_IfSetType(Type type)
         {
-            var schema = Subject().GenerateSchemaFor(type, new SchemaRepository());
+            var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
             Assert.Equal("array", schema.Type);
             Assert.True(schema.UniqueItems);
@@ -186,7 +197,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchemaFor(type, schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(type, schemaRepository);
 
             Assert.Equal(expectedSchemaId, referenceSchema.Reference.Id);
             var schema = schemaRepository.Schemas[expectedSchemaId];
@@ -199,7 +210,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchemaFor(typeof(ComplexType), schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(typeof(ComplexType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal(false, schema.Properties["Property3"].ReadOnly);
@@ -215,7 +226,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchemaFor(typeof(SubType1), schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(typeof(SubType1), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("object", schema.Type);
@@ -227,7 +238,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchemaFor(typeof(IndexedType), schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(typeof(IndexedType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("object", schema.Type);
@@ -239,7 +250,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchemaFor(typeof(DataAnnotatedType), schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(typeof(DataAnnotatedType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);
@@ -262,7 +273,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchemaFor(typeof(MetadataAnnotatedType), schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(typeof(MetadataAnnotatedType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);
@@ -276,7 +287,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchemaFor(typeof(JsonAnnotatedType), schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(typeof(JsonAnnotatedType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.DoesNotContain("StringWithJsonIgnore", schema.Properties.Keys);
@@ -289,7 +300,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchemaFor(typeof(ExtensionDataAnnotatedType), schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(typeof(ExtensionDataAnnotatedType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.NotNull(schema.AdditionalProperties);
@@ -300,7 +311,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void GenerateSchema_HonorsStringEnumConverters_IfConfiguredViaAttributes()
         {
             var schemaRepository = new SchemaRepository();
-            var referenceSchema = Subject().GenerateSchemaFor(typeof(JsonConvertedEnum), schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(typeof(JsonConvertedEnum), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
 
@@ -313,11 +324,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(true, new[] { "value2", "value4", "value8" })]
         public void GenerateSchema_HonorsStringEnumConverters_IfConfiguredGlobally(bool camelCaseText, string[] expectedEnumValues)
         {
-            var subject = Subject(configureJsonSerializer: c =>
+            var subject = Subject(configureSerializer: c =>
                 c.Converters = new[] { new StringEnumConverter(camelCaseText) }
             );
             var schemaRepository = new SchemaRepository();
-            var referenceSchema = subject.GenerateSchemaFor(typeof(IntEnum), schemaRepository);
+            var referenceSchema = subject.GenerateSchema(typeof(IntEnum), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
 
@@ -328,7 +339,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void GenerateSchema_HandlesMultiDemensionalArrays()
         {
-            var schema = Subject().GenerateSchemaFor(typeof(int[][]), new SchemaRepository());
+            var schema = Subject().GenerateSchema(typeof(int[][]), new SchemaRepository());
 
             Assert.Equal("array", schema.Type);
             Assert.Equal("array", schema.Items.Type);
@@ -342,7 +353,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchemaFor(typeof(CompositeType), schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(typeof(CompositeType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("object", schema.Type);
@@ -356,7 +367,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchemaFor(typeof(ContainingType), schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(typeof(ContainingType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("object", schema.Type);
@@ -368,7 +379,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var subject = Subject(c => c.SchemaFilters.Add(new RecursiveCallSchemaFilter()));
 
-            subject.GenerateSchemaFor(typeof(object), new SchemaRepository());
+            subject.GenerateSchema(typeof(object), new SchemaRepository());
         }
 
         [Fact]
@@ -378,7 +389,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 c.CustomTypeMappings.Add(typeof(ComplexType), () => new OpenApiSchema { Type = "string" })
             );
 
-            var schema = subject.GenerateSchemaFor(typeof(ComplexType), new SchemaRepository());
+            var schema = subject.GenerateSchema(typeof(ComplexType), new SchemaRepository());
 
             Assert.Equal("string", schema.Type);
             Assert.Empty(schema.Properties);
@@ -396,7 +407,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             );
             var schemaRepository = new SchemaRepository();
 
-            var schema = subject.GenerateSchemaFor(type, schemaRepository);
+            var schema = subject.GenerateSchema(type, schemaRepository);
 
             if (schema.Reference == null)
                 Assert.Contains("X-property1", schema.Extensions.Keys);
@@ -412,7 +423,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             );
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = subject.GenerateSchemaFor(typeof(ObsoletePropertiesType), schemaRepository);
+            var referenceSchema = subject.GenerateSchema(typeof(ObsoletePropertiesType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.DoesNotContain("ObsoleteProperty", schema.Properties.Keys);
@@ -426,7 +437,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             );
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = subject.GenerateSchemaFor(typeof(ComplexType), schemaRepository);
+            var referenceSchema = subject.GenerateSchema(typeof(ComplexType), schemaRepository);
 
             Assert.Equal("Swashbuckle.AspNetCore.SwaggerGen.Test.ComplexType", referenceSchema.Reference.Id);
             Assert.Contains(referenceSchema.Reference.Id, schemaRepository.Schemas.Keys);
@@ -440,7 +451,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             );
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = subject.GenerateSchemaFor(typeof(IntEnum), schemaRepository);
+            var referenceSchema = subject.GenerateSchema(typeof(IntEnum), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("string", schema.Type);
@@ -457,7 +468,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             });
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = subject.GenerateSchemaFor(typeof(IntEnum), schemaRepository);
+            var referenceSchema = subject.GenerateSchema(typeof(IntEnum), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("string", schema.Type);
@@ -473,7 +484,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             });
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = subject.GenerateSchemaFor(typeof(PolymorphicType), schemaRepository);
+            var referenceSchema = subject.GenerateSchema(typeof(PolymorphicType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.NotNull(schema.OneOf);
@@ -492,24 +503,24 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var subject = Subject();
             var schemaRepository = new SchemaRepository();
 
-            subject.GenerateSchemaFor(typeof(Namespace1.ConflictingType), schemaRepository);
+            subject.GenerateSchema(typeof(Namespace1.ConflictingType), schemaRepository);
             Assert.Throws<InvalidOperationException>(() =>
             {
-                subject.GenerateSchemaFor(typeof(Namespace2.ConflictingType), schemaRepository);
+                subject.GenerateSchema(typeof(Namespace2.ConflictingType), schemaRepository);
             });
         }
 
         private ISchemaGenerator Subject(
             Action<SchemaGeneratorOptions> configureOptions = null,
-            Action<JsonSerializerSettings> configureJsonSerializer = null)
+            Action<JsonSerializerSettings> configureSerializer = null)
         {
             var options = new SchemaGeneratorOptions();
             configureOptions?.Invoke(options);
 
-            var jsonSerializerSettings = new JsonSerializerSettings();
-            configureJsonSerializer?.Invoke(jsonSerializerSettings);
+            var serializerSettings = new JsonSerializerSettings();
+            configureSerializer?.Invoke(serializerSettings);
 
-            return new SchemaGenerator(jsonSerializerSettings, options);
+            return new SchemaGenerator(options, serializerSettings);
         }
     }
 }

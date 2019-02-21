@@ -8,7 +8,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
     {
         public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {
-            context.SchemaGenerator.GenerateSchemaFor(typeof(DateTime), context.SchemaRepository);
+            context.SchemaGenerator.GenerateSchema(typeof(DateTime), context.SchemaRepository);
             swaggerDoc.Extensions.Add("X-property1", new OpenApiString("value"));
         }
     }

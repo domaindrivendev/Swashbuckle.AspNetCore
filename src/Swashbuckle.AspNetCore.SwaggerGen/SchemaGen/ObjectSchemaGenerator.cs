@@ -11,30 +11,20 @@ using Newtonsoft.Json.Serialization;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public class JsonObjectSchemaGenerator : ISchemaGenerator
+    public class ObjectSchemaGenerator : ChainableSchemaGenerator
     {
-        private readonly SchemaGeneratorOptions _options;
-        private readonly IContractResolver _jsonContractResolver;
-        private readonly ISchemaGenerator _schemaGenerator;
+        public ObjectSchemaGenerator(SchemaGeneratorOptions options, ISchemaGenerator rootGenerator, IContractResolver contractResolver)
+            : base(options, rootGenerator, contractResolver)
+        { }
 
-        public JsonObjectSchemaGenerator(
-            SchemaGeneratorOptions options,
-            IContractResolver jsonContractResolver,
-            ISchemaGenerator schemaGenerator)
+        protected override bool CanGenerateSchemaFor(Type type)
         {
-            _options = options;
-            _jsonContractResolver = jsonContractResolver;
-            _schemaGenerator = schemaGenerator;
+            return ContractResolver.ResolveContract(type) is JsonObjectContract;
         }
 
-        public bool CanGenerateSchemaFor(Type type)
+        protected override OpenApiSchema GenerateSchemaFor(Type type, SchemaRepository schemaRepository)
         {
-            return _jsonContractResolver.ResolveContract(type) is JsonObjectContract;
-        }
-
-        public OpenApiSchema GenerateSchemaFor(Type type, SchemaRepository schemaRepository)
-        {
-            var jsonObjectContract = (JsonObjectContract)_jsonContractResolver.ResolveContract(type);
+            var jsonObjectContract = (JsonObjectContract)ContractResolver.ResolveContract(type);
 
             var requiredPropertyNames = new List<string>();
             var properties = new Dictionary<string, OpenApiSchema>();
@@ -47,7 +37,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     ? memberInfo.GetCustomAttributes(true)
                     : new object[] { };
 
-                if (_options.IgnoreObsoleteProperties && attributes.OfType<ObsoleteAttribute>().Any()) continue;
+                if (Options.IgnoreObsoleteProperties && attributes.OfType<ObsoleteAttribute>().Any()) continue;
 
                 if (jsonProperty.Required == Required.AllowNull || jsonProperty.Required == Required.Always || attributes.OfType<RequiredAttribute>().Any())
                     requiredPropertyNames.Add(jsonProperty.PropertyName);
@@ -56,7 +46,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
 
             var additionalProperties = (jsonObjectContract.ExtensionDataValueType != null)
-                ? _schemaGenerator.GenerateSchemaFor(jsonObjectContract.ExtensionDataValueType, schemaRepository)
+                ? RootGenerator.GenerateSchema(jsonObjectContract.ExtensionDataValueType, schemaRepository)
                 : null;
 
             var schema = new OpenApiSchema
@@ -73,7 +63,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private OpenApiSchema GeneratePropertySchema(JsonProperty jsonProperty, object[] attributes, SchemaRepository schemaRepository) 
         {
-            var schema = _schemaGenerator.GenerateSchemaFor(jsonProperty.PropertyType, schemaRepository);
+            var schema = RootGenerator.GenerateSchema(jsonProperty.PropertyType, schemaRepository);
 
             schema.WriteOnly = jsonProperty.Writable && !jsonProperty.Readable;
             schema.ReadOnly = jsonProperty.Readable && !jsonProperty.Writable;

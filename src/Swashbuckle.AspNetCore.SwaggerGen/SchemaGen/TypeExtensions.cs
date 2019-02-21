@@ -15,6 +15,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             return type.FullName.StartsWith("Microsoft.FSharp.Core.FSharpOption`1");
         }
+
         public static bool IsSet(this Type type)
         {
             return new[] { type }
