@@ -79,7 +79,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         private async Task RespondWithIndexHtml(HttpResponse response)
         {
             response.StatusCode = 200;
-            response.ContentType = "text/html";
+            response.ContentType = "text/html;charset=utf-8";
 
             using (var stream = _options.IndexStream())
             {
