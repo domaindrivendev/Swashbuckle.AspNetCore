@@ -1,27 +1,28 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-  <title>%(DocumentTitle)</title>
-  <!-- needed for adaptive design -->
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>%(DocumentTitle)</title>
+    <!-- needed for adaptive design -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
 
-  <!--
-  ReDoc doesn't change outer page styles
-  -->
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-    }
-  </style>
-  %(HeadContent)
+    <!--
+    ReDoc doesn't change outer page styles
+    -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+    %(HeadContent)
 </head>
 <body>
-  <redoc></redoc>
-  <script src="redoc.min.js"></script>
-  <script type="text/javascript">
-    Redoc.init('%(SpecUrl)', JSON.parse('%(ConfigObject)'));
-  </script>
+    <div id="redoc-container"></div>
+    <script src="redoc.standalone.js"></script>
+    <script type="text/javascript">
+        Redoc.init('%(SpecUrl)', JSON.parse('%(ConfigObject)'), document.getElementById('redoc-container'))
+    </script>
 </body>
 </html>
