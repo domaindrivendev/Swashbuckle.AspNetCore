@@ -204,7 +204,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 || parameterOrPropertyAttributes.Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
 
             var schema = (apiParameter.ModelMetadata != null)
-                ? _schemaGenerator.GenerateSchemaFor(apiParameter.Type, schemaRepository)
+                ? _schemaGenerator.GenerateSchema(apiParameter.Type, schemaRepository)
                 : new OpenApiSchema { Type = "string" };
 
             // If it corresponds to an optional action parameter, assign the default value
@@ -289,6 +289,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 // Provide schema and corresponding encoding map to specify "form" serialization style for all properties
                 // This indicates that array properties must be submitted as multiple parameters with the same name.
+                // NOTE: the swagger-ui doesn't currently support arrays of files - https://github.com/swagger-api/swagger-ui/issues/4600
                 // NOTE: the swagger-ui doesn't currently honor encoding metadata - https://github.com/swagger-api/swagger-ui/issues/4836 
 
                 return new OpenApiMediaType
@@ -307,7 +308,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             return new OpenApiMediaType
             {
-                Schema = _schemaGenerator.GenerateSchemaFor(apiParameterFromBody.Type, schemaRepository)
+                Schema = _schemaGenerator.GenerateSchema(apiParameterFromBody.Type, schemaRepository)
             };
         }
 
@@ -328,7 +329,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                     var name = _options.DescribeAllParametersInCamelCase ? paramDesc.Name.ToCamelCase() : paramDesc.Name;
                     var isRequired = parameterOrPropertyAttributes.Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
-                    var schema = _schemaGenerator.GenerateSchemaFor(paramDesc.Type, schemaRepository);
+                    var schema = _schemaGenerator.GenerateSchema(paramDesc.Type, schemaRepository);
 
                     return new
                     {
@@ -411,7 +412,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             return new OpenApiMediaType
             {
-                Schema = _schemaGenerator.GenerateSchemaFor(type, schemaRespository)
+                Schema = _schemaGenerator.GenerateSchema(type, schemaRespository)
             };
         }
 

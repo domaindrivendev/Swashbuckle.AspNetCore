@@ -5,8 +5,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public interface ISchemaGenerator
     {
-        bool CanGenerateSchemaFor(Type type);
-
-        OpenApiSchema GenerateSchemaFor(Type type, SchemaRepository schemaRepository);
+        OpenApiSchema GenerateSchema(Type type, SchemaRepository schemaRepository);
     }
 }

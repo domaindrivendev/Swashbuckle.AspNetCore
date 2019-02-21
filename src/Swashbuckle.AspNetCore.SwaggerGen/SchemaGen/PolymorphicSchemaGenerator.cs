@@ -1,34 +1,33 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Serialization;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public class PolymorphicSchemaGenerator : ISchemaGenerator
+    public class PolymorphicSchemaGenerator : ChainableSchemaGenerator
     {
-        private readonly SchemaGeneratorOptions _options;
-        private readonly ISchemaGenerator _schemaGenerator;
+        public PolymorphicSchemaGenerator(
+            SchemaGeneratorOptions options,
+            ISchemaGenerator rootGenerator,
+            IContractResolver contractResolver)
+            : base(options, rootGenerator, contractResolver)
+        { }
 
-        public PolymorphicSchemaGenerator(SchemaGeneratorOptions options, ISchemaGenerator schemaGenerator)
+        protected override bool CanGenerateSchemaFor(Type type)
         {
-            _options = options;
-            _schemaGenerator = schemaGenerator;
-        }
-
-        public bool CanGenerateSchemaFor(Type type)
-        {
-            var subTypes = _options.SubTypesResolver(type);
+            var subTypes = Options.SubTypesResolver(type);
             return subTypes.Any();
         }
 
-        public OpenApiSchema GenerateSchemaFor(Type type, SchemaRepository schemaRepository)
+        protected override OpenApiSchema GenerateSchemaFor(Type type, SchemaRepository schemaRepository)
         {
-            var subTypes = _options.SubTypesResolver(type);
+            var subTypes = Options.SubTypesResolver(type);
 
             return new OpenApiSchema
             {
                 OneOf = subTypes
-                    .Select(subType => _schemaGenerator.GenerateSchemaFor(subType, schemaRepository))
+                    .Select(subType => RootGenerator.GenerateSchema(subType, schemaRepository))
                     .ToList()
             };
         }

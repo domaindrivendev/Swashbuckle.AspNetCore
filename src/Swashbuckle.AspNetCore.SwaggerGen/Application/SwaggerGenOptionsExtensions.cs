@@ -187,14 +187,6 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Use referenced definitions for enum types within body parameter and response schemas
-        /// </summary>
-        public static void UseReferencedDefinitionsForEnums(this SwaggerGenOptions swaggerGenOptions)
-        {
-            swaggerGenOptions.SchemaGeneratorOptions.UseReferencedDefinitionsForEnums = true;
-        }
-
-        /// <summary>
         /// Provide a custom strategy for generating the unique Id's that are used to reference object Schema's
         /// </summary>
         /// <param name="swaggerGenOptions"></param>

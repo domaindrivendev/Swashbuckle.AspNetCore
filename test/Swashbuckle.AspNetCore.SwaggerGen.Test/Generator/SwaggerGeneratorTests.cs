@@ -544,7 +544,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             return new SwaggerGenerator(
                 apiDescriptionsProvider,
-                new SchemaGenerator(new JsonSerializerSettings(), new SchemaGeneratorOptions()),
+                new SchemaGenerator(new SchemaGeneratorOptions(), new JsonSerializerSettings()),
                 options
             );
         }

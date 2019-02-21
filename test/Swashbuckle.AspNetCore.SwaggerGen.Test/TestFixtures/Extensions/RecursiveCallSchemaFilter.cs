@@ -9,7 +9,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void Apply(OpenApiSchema model, SchemaFilterContext context)
         {
             model.Properties = new Dictionary<string, OpenApiSchema>();
-            model.Properties.Add("ExtraProperty", context.SchemaGenerator.GenerateSchemaFor(typeof(ComplexType), context.SchemaRepository));
+            model.Properties.Add("ExtraProperty", context.SchemaGenerator.GenerateSchema(typeof(ComplexType), context.SchemaRepository));
         }
     }
 }

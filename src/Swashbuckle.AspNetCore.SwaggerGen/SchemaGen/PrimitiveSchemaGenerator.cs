@@ -9,30 +9,25 @@ using Newtonsoft.Json.Serialization;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public class JsonPrimitiveSchemaGenerator : ISchemaGenerator
+    public class PrimitiveSchemaGenerator : ChainableSchemaGenerator
     {
-        private readonly SchemaGeneratorOptions _options;
-        private readonly IContractResolver _jsonContractResolver;
-        private readonly JsonSerializerSettings _jsonSerializerSettings;
-
-        public JsonPrimitiveSchemaGenerator(
+        public PrimitiveSchemaGenerator(
             SchemaGeneratorOptions options,
-            IContractResolver jsonContractResolver,
-            JsonSerializerSettings jsonSerializerSettings)
+            ISchemaGenerator rootGenerator,
+            IContractResolver contractResolver,
+            JsonSerializerSettings serializerSettings) : base(options, rootGenerator, contractResolver)
         {
-            _options = options;
-            _jsonContractResolver = jsonContractResolver;
-            _jsonSerializerSettings = jsonSerializerSettings;
+            _serializerSettings = serializerSettings;
         }
 
-        public bool CanGenerateSchemaFor(Type type)
+        protected override bool CanGenerateSchemaFor(Type type)
         {
-            return _jsonContractResolver.ResolveContract(type) is JsonPrimitiveContract;
+            return ContractResolver.ResolveContract(type) is JsonPrimitiveContract;
         }
 
-        public OpenApiSchema GenerateSchemaFor(Type type, SchemaRepository schemaRepository)
+        protected override OpenApiSchema GenerateSchemaFor(Type type, SchemaRepository schemaRepository)
         {
-            var jsonPrimitiveContract = (JsonPrimitiveContract)_jsonContractResolver.ResolveContract(type);
+            var jsonPrimitiveContract = (JsonPrimitiveContract)ContractResolver.ResolveContract(type);
 
             var schema = jsonPrimitiveContract.UnderlyingType.IsEnum
                 ? GenerateEnumSchema(jsonPrimitiveContract)
@@ -43,13 +38,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private OpenApiSchema GenerateEnumSchema(JsonPrimitiveContract jsonPrimitiveContract)
         {
-            var stringEnumConverter = _jsonSerializerSettings.Converters.OfType<StringEnumConverter>().FirstOrDefault()
+            var stringEnumConverter = _serializerSettings.Converters.OfType<StringEnumConverter>().FirstOrDefault()
                 ?? (jsonPrimitiveContract.Converter as StringEnumConverter); 
 
-            var describeAsString = _options.DescribeAllEnumsAsStrings
+            var describeAsString = Options.DescribeAllEnumsAsStrings
                 || (stringEnumConverter != null);
 
-            var describeInCamelCase = _options.DescribeStringEnumsInCamelCase
+            var describeInCamelCase = Options.DescribeStringEnumsInCamelCase
                 || (stringEnumConverter != null && stringEnumConverter.CamelCaseText);
 
             var enumType = jsonPrimitiveContract.UnderlyingType;
@@ -103,5 +98,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             { typeof(DateTimeOffset), () => new OpenApiSchema { Type = "string", Format = "date-time" } },
             { typeof(Guid), () => new OpenApiSchema { Type = "string", Format = "uuid" } }
         };
+        private readonly JsonSerializerSettings _serializerSettings;
     }
 }
