@@ -133,6 +133,7 @@ namespace OAuth2Integration
                     c.OAuthScopeSeparator(" ");
                     c.OAuthAdditionalQueryStringParams(new Dictionary<string, string> { { "foo", "bar" }});
                     c.OAuthUseBasicAuthenticationWithAccessCodeGrant();
+                    c.ConfigObject.DeepLinking = true;
                 });
             });
         }
