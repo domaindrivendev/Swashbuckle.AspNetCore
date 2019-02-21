@@ -151,5 +151,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Obsolete]
         public void MarkedObsolete()
         { }
+
+        [ProducesResponseType(typeof(void), 304)]
+        public IActionResult AnnotatedWithWithNotModifiedResponseTypeAttributes()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
