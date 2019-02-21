@@ -16,8 +16,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         protected override bool CanGenerateSchemaFor(Type type)
         {
-            var subTypes = Options.SubTypesResolver(type);
-            return subTypes.Any();
+            return (Options.GeneratePolymorphicSchemas && Options.SubTypesResolver(type).Any());
         }
 
         protected override OpenApiSchema GenerateSchemaFor(Type type, SchemaRepository schemaRepository)
