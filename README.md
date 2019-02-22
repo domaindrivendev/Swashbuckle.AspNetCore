@@ -171,7 +171,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Add Security Definitions and Requirements](#add-security-definitions-and-requirements)
 
 * [Swashbuckle.AspNetCore.SwaggerUI](#swashbuckleaspnetcoreswaggerui)
-    * [Change Releative Path to the UI](#change-relative-path-to-the-ui)
+    * [Change Relative Path to the UI](#change-relative-path-to-the-ui)
     * [Change Document Title](#change-document-title)
     * [List Multiple Swagger Documents](#list-multiple-swagger-documents)
     * [Apply swagger-ui Parameters](#apply-swagger-ui-parameters)
