@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 namespace Microsoft.Extensions.ApiDescription
 {
     /// <summary>
-    /// his service will be looked up by name from the service collection when using
+    /// This service will be looked up by name from the service collection when using
     /// the Microsoft.Extensions.ApiDescription tool. Public only for testing.
     /// </summary>
     public interface IDocumentProvider
