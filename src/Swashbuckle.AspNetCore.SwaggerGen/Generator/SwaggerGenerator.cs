@@ -362,18 +362,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             foreach (var responseType in supportedResponseTypes)
             {
                 var statusCode = responseType.IsDefaultResponse() ? "default" : responseType.StatusCode.ToString();
-                responses.Add(statusCode, GenerateResponse(responseType, methodAttributes, schemaRepository));
+                responses.Add(statusCode, GenerateResponse(statusCode, responseType, methodAttributes, schemaRepository));
             }
             return responses;
         }
 
         private OpenApiResponse GenerateResponse(
+            string statusCode,
             ApiResponseType apiResponseType,
             IEnumerable<object> methodAttributes,
             SchemaRepository schemaRepository)
         {
             var description = ResponseDescriptionMap
-                .FirstOrDefault((entry) => Regex.IsMatch(apiResponseType.StatusCode.ToString(), entry.Key))
+                .FirstOrDefault((entry) => Regex.IsMatch(statusCode, entry.Key))
                 .Value;
 
             var responseContentTypes = InferResponseContentTypes(apiResponseType, methodAttributes);
@@ -456,7 +457,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             { "408", "Request Timeout" },
             { "409", "Conflict" },
             { "4\\d{2}", "Client Error" },
-            { "5\\d{2}", "Server Error" }
+            { "5\\d{2}", "Server Error" },
+            { "default", "Unexpected Error" }
         };
     }
 }
