@@ -42,35 +42,6 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             await AssertResponseDoesNotContainByteOrderMark(swaggerResponse);
             await AssertValidSwaggerAsync(swaggerResponse);
         }
-
-        [Theory]
-        [InlineData(typeof(Basic.Startup), "v1")]
-        [InlineData(typeof(CustomUIConfig.Startup), "v1")]
-        [InlineData(typeof(CustomUIIndex.Startup), "v1")]
-        [InlineData(typeof(GenericControllers.Startup), "v1")]
-        [InlineData(typeof(MultipleVersions.Startup), "v2")]
-        [InlineData(typeof(OAuth2Integration.Startup), "v1")]
-        public async Task DocumentProvider_WritesValidDocument(Type startupType, string documentName)
-        {
-            var testSite = new TestSite(startupType);
-            var server = testSite.BuildServer();
-            var services = server.Host.Services;
-            var documentProvider = (IDocumentProvider)services.GetService(typeof(IDocumentProvider));
-            using (var stream = new MemoryStream())
-            {
-                using (var writer = new StreamWriter(stream, Encoding.UTF8, bufferSize: 2048, leaveOpen: true))
-                {
-                    await documentProvider.GenerateAsync(documentName, writer);
-                    await writer.FlushAsync();
-                }
-
-                stream.Position = 0L;
-                new OpenApiStreamReader().Read(stream, out var diagnostic);
-                Assert.NotNull(diagnostic);
-                Assert.Empty(diagnostic.Errors);
-            }
-        }
-
         [Fact]
         public async Task SwaggerEndpoint_ReturnsNotFound_IfUnknownSwaggerDocument()
         {
@@ -80,20 +51,6 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             var swaggerResponse = await client.GetAsync("/swagger/v2/swagger.json");
 
             Assert.Equal(System.Net.HttpStatusCode.NotFound, swaggerResponse.StatusCode);
-        }
-
-        [Fact]
-        public async Task DocumentProvider_ThrowsUnknownDocument()
-        {
-            var testSite = new TestSite(typeof(Basic.Startup));
-            var server = testSite.BuildServer();
-            var services = server.Host.Services;
-            var documentProvider = (IDocumentProvider)services.GetService(typeof(IDocumentProvider));
-            using (var writer = new StringWriter())
-            {
-                await Assert.ThrowsAsync<UnknownSwaggerDocument>(
-                    () => documentProvider.GenerateAsync("NotADocument", writer));
-            }
         }
 
         private async Task AssertResponseDoesNotContainByteOrderMark(HttpResponseMessage swaggerResponse)

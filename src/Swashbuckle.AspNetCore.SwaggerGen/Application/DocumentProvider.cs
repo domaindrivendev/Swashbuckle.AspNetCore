@@ -1,13 +1,21 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
-using Microsoft.Extensions.ApiDescription;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Writers;
 using Swashbuckle.AspNetCore.Swagger;
 
-namespace Swashbuckle.AspNetCore.SwaggerGen
+namespace Microsoft.Extensions.ApiDescription
 {
-    internal class DocumentProvider : IDocumentProvider
+    /// <summary> 
+    /// This service will be looked up by name from the service collection when using
+    /// the Microsoft.Extensions.ApiDescription tool
+    /// </summary>
+    public interface IDocumentProvider
+    {
+        Task GenerateAsync(string documentName, TextWriter writer);
+    }
+
+    public class DocumentProvider : IDocumentProvider
     {
         private readonly SwaggerOptions _options;
         private readonly ISwaggerProvider _swaggerProvider;
