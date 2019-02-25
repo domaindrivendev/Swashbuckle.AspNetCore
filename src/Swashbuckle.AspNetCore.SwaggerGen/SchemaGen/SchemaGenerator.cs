@@ -27,7 +27,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var contractResolver = serializerSettings.ContractResolver ?? new DefaultContractResolver();
 
             _generatorChain = new TypeSpecificSchemaGenerator(options, this, contractResolver)
-                .Add(new FormFileSchemaGenerator(options, this, contractResolver))
+                .Add(new FileSchemaGenerator(options, this, contractResolver))
                 .Add(new ReferencedSchemaGenerator(options, this, contractResolver))
                 .Add(new PolymorphicSchemaGenerator(options, this, contractResolver))
                 .Add(new PrimitiveSchemaGenerator(options, this, contractResolver, serializerSettings))

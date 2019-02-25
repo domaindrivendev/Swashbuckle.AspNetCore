@@ -29,7 +29,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         [Theory]
         [InlineData(typeof(IFormFile))]
-        public void GenerateSchema_GeneratesFileSchema_IfFormFileType(Type type)
+        [InlineData(typeof(FileResult))]
+        public void GenerateSchema_GeneratesFileSchema_IfFormFileOrFileResultType(Type type)
         {
             var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
