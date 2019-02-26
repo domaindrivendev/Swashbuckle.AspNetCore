@@ -299,17 +299,21 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.True(parameter.Required == expectedRequired, $"{parameterName}.required != {expectedRequired}");
         }
 
-        [Fact]
-        public void GetSwagger_SetsDefaultValue_IfApiParameterCorrespondsToAnOptionalActionParameter()
+        [Theory]
+        [InlineData(nameof(FakeController.AcceptsOptionalParameter), "param", "foobar")]
+        [InlineData(nameof(FakeController.AcceptsDataAnnotatedType), "StringWithDefaultValue", "foobar")]
+        public void GetSwagger_SetsDefaultValue_IfApiParameterIsOptionalOrHasDefaultValueAttribute(
+            string actionFixtureName,
+            string parameterName,
+            string expectedDefaultValue)
         {
-            var subject = Subject(setupApis: apis => apis
-                .Add("GET", "collection/{param}", nameof(FakeController.AcceptsOptionalParameter)));
+            var subject = Subject(setupApis: apis => apis.Add("GET", "collection", actionFixtureName));
 
             var swagger = subject.GetSwagger("v1");
 
-            var parameter = swagger.Paths["/collection/{param}"].Operations[OperationType.Get].Parameters.First();
+            var parameter = swagger.Paths["/collection"].Operations[OperationType.Get].Parameters.First(p => p.Name == parameterName);
             Assert.IsType<OpenApiString>(parameter.Schema.Default);
-            Assert.Equal("foobar",((OpenApiString)parameter.Schema.Default).Value);
+            Assert.Equal(expectedDefaultValue, ((OpenApiString)parameter.Schema.Default).Value);
         }
 
         [Fact]

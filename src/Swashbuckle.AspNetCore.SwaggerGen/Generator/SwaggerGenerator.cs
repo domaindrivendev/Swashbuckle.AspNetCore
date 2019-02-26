@@ -11,6 +11,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Any;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Swagger;
+using System.ComponentModel;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -203,14 +204,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var isRequired = (apiParameter.IsFromPath())
                 || parameterOrPropertyAttributes.Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
 
+            var defaultValue = parameterInfo?.DefaultValue
+                ?? parameterOrPropertyAttributes.OfType<DefaultValueAttribute>().FirstOrDefault()?.Value;
+
             var schema = (apiParameter.ModelMetadata != null)
                 ? _schemaGenerator.GenerateSchema(apiParameter.Type, schemaRepository)
                 : new OpenApiSchema { Type = "string" };
 
-            // If it corresponds to an optional action parameter, assign the default value
-            if (parameterInfo?.DefaultValue != null && schema.Reference == null)
+            if (defaultValue != null && schema.Reference == null)
             {
-                schema.Default = OpenApiAnyFactory.TryCreateFrom(parameterInfo.DefaultValue, out IOpenApiAny openApiAny)
+                schema.Default = OpenApiAnyFactory.TryCreateFrom(defaultValue, out IOpenApiAny openApiAny)
                     ? openApiAny
                     : null;
             }
