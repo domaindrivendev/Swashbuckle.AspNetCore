@@ -42,6 +42,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             await AssertResponseDoesNotContainByteOrderMark(swaggerResponse);
             await AssertValidSwaggerAsync(swaggerResponse);
         }
+
         [Fact]
         public async Task SwaggerEndpoint_ReturnsNotFound_IfUnknownSwaggerDocument()
         {

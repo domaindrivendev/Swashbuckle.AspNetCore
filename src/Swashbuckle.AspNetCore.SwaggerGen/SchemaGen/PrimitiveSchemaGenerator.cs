@@ -11,6 +11,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class PrimitiveSchemaGenerator : ChainableSchemaGenerator
     {
+        private readonly JsonSerializerSettings _serializerSettings;
+
         public PrimitiveSchemaGenerator(
             SchemaGeneratorOptions options,
             ISchemaGenerator rootGenerator,
@@ -38,8 +40,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private OpenApiSchema GenerateEnumSchema(JsonPrimitiveContract jsonPrimitiveContract)
         {
-            var stringEnumConverter = _serializerSettings.Converters.OfType<StringEnumConverter>().FirstOrDefault()
-                ?? (jsonPrimitiveContract.Converter as StringEnumConverter); 
+            var stringEnumConverter = (jsonPrimitiveContract.Converter as StringEnumConverter)
+                ?? _serializerSettings.Converters.OfType<StringEnumConverter>().FirstOrDefault();
 
             var describeAsString = Options.DescribeAllEnumsAsStrings
                 || (stringEnumConverter != null);
@@ -58,7 +60,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     .Select(name =>
                     {
                         name = describeInCamelCase ? name.ToCamelCase() : name;
-                        return OpenApiAnyFactory.TryCreateFrom(name, out IOpenApiAny openApiAny) ? openApiAny : null;
+                        return (IOpenApiAny)(new OpenApiString(name));
                     })
                     .ToList();
             }
@@ -99,6 +101,5 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             { typeof(Guid), () => new OpenApiSchema { Type = "string", Format = "uuid" } },
             { typeof(Uri), () => new OpenApiSchema { Type = "string" } }
         };
-        private readonly JsonSerializerSettings _serializerSettings;
     }
 }
