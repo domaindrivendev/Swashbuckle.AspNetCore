@@ -61,7 +61,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return schema;
         }
 
-        private OpenApiSchema GeneratePropertySchema(JsonProperty jsonProperty, object[] attributes, SchemaRepository schemaRepository) 
+        private OpenApiSchema GeneratePropertySchema(JsonProperty jsonProperty, object[] attributes, SchemaRepository schemaRepository)
         {
             var schema = RootGenerator.GenerateSchema(jsonProperty.PropertyType, schemaRepository);
 
@@ -103,6 +103,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     schema.MinLength = stringLength.MinimumLength;
                     schema.MaxLength = stringLength.MaximumLength;
                 }
+                else if (attribute is EmailAddressAttribute)
+                {
+                    schema.Format = "email";
+                }
+                else if (attribute is CreditCardAttribute)
+                {
+                    schema.Format = "credit-card";
+                }
+                else if (attribute is PhoneAttribute)
+                {
+                    schema.Format = "tel";
+                }
                 else if (attribute is DataTypeAttribute dataTypeAttribute && schema.Type == "string")
                 {
                     schema.Format = DataTypeFormatMap.TryGetValue(dataTypeAttribute.DataType, out string format)
@@ -118,7 +130,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             { DataType.Date, "date" },
             { DataType.DateTime, "date-time" },
-            { DataType.Password, "password" }
+            { DataType.Password, "password" },
+            { DataType.CreditCard, "credit-card" },
+            { DataType.Currency, "currency" },
+            { DataType.Date, "date" },
+            { DataType.DateTime, "date-time" },
+            { DataType.Duration, "duration" },
+            { DataType.EmailAddress, "email" },
+            { DataType.Html, "html" },
+            { DataType.MultilineText, "multiline" },
+            { DataType.Password, "password" },
+            { DataType.PhoneNumber, "tel" },
+            { DataType.PostalCode, "postal-code" },
+            { DataType.Time, "time" },
+            { DataType.Url, "uri" },
         };
     }
 }
