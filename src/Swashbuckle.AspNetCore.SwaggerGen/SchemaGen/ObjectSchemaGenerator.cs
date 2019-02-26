@@ -128,9 +128,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private static readonly Dictionary<DataType, string> DataTypeFormatMap = new Dictionary<DataType, string>
         {
-            { DataType.Date, "date" },
-            { DataType.DateTime, "date-time" },
-            { DataType.Password, "password" },
             { DataType.CreditCard, "credit-card" },
             { DataType.Currency, "currency" },
             { DataType.Date, "date" },
