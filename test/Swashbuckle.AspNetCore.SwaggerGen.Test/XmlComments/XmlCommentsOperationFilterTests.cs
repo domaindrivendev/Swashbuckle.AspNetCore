@@ -18,7 +18,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             {
                 Responses = new OpenApiResponses()
             };
-            var filterContext = FilterContextFor(nameof(FakeController.AnnotatedWithXml));
+            var filterContext = FilterContextFor(nameof(XmlAnnotatedController.XmlAnnotatedAction));
 
             Subject().Apply(operation, filterContext);
 
@@ -39,7 +39,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 },
                 Responses = new OpenApiResponses()
             };
-            var filterContext = FilterContextFor(nameof(FakeController.AnnotatedWithXml));
+            var filterContext = FilterContextFor(nameof(XmlAnnotatedController.XmlAnnotatedAction));
 
             Subject().Apply(operation, filterContext);
 
@@ -56,7 +56,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 Parameters = new List<OpenApiParameter>() { new OpenApiParameter { Name = "Property" } },
                 Responses = new OpenApiResponses()
             };
-            var filterContext = FilterContextFor(nameof(FakeController.AcceptsXmlAnnotatedTypeFromQuery));
+            var filterContext = FilterContextFor(nameof(XmlAnnotatedController.AcceptsXmlAnnotatedTypeFromQuery));
 
             Subject().Apply(operation, filterContext);
 
@@ -64,7 +64,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void Apply_OverwritesResponseDescriptionFromResponseTag_IfResponsePresent()
+        public void Apply_SetsResponseDescription_IfActionOrControllerHasCorrespondingResponseTag()
         {
             var operation = new OpenApiOperation
             {
@@ -74,37 +74,39 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     { "400", new OpenApiResponse { Description = "Client Error" } } 
                 }
             };
-            var filterContext = FilterContextFor(nameof(FakeController.AnnotatedWithXml));
+            var filterContext = FilterContextFor(nameof(XmlAnnotatedController.XmlAnnotatedAction));
 
             Subject().Apply(operation, filterContext);
 
-            Assert.Equal("description for 200", operation.Responses["200"].Description);
-            Assert.Equal("description for 400", operation.Responses["400"].Description);
+            Assert.Equal(new[] { "200", "400" }, operation.Responses.Keys.ToArray());
+            Assert.Equal("controller-level description for 400", operation.Responses["400"].Description);
+            Assert.Equal("action-level description for 200", operation.Responses["200"].Description);
         }
 
         [Fact]
-        public void Apply_AddsResponseWithDescriptionFromResponseTag_IfResponseNotPresent()
+        public void Apply_AddsResponsesWithDescriptions_IfActionOrControllerHasResponseTags()
         {
             var operation = new OpenApiOperation
             {
                 Responses = new OpenApiResponses
                 {
-                    { "200", new OpenApiResponse { Description = "Success" } } 
+                    { "default", new OpenApiResponse { Description = "Unexpected Error" } } 
                 }
             };
-            var filterContext = FilterContextFor(nameof(FakeController.AnnotatedWithXml));
+            var filterContext = FilterContextFor(nameof(XmlAnnotatedController.XmlAnnotatedAction));
 
             Subject().Apply(operation, filterContext);
 
-            Assert.Equal(new[] { "200", "400" }, operation.Responses.Keys.ToArray());
-            Assert.Equal("description for 400", operation.Responses["400"].Description);
+            Assert.Equal(new[] { "default", "400", "200" }, operation.Responses.Keys.ToArray());
+            Assert.Equal("controller-level description for 400", operation.Responses["400"].Description);
+            Assert.Equal("action-level description for 200", operation.Responses["200"].Description);
         }
 
         private OperationFilterContext FilterContextFor(string actionFixtureName)
         {
             var fakeProvider = new FakeApiDescriptionGroupCollectionProvider();
             var apiDescription = fakeProvider
-                .Add("GET", "collection", actionFixtureName)
+                .Add("GET", "collection", actionFixtureName, typeof(XmlAnnotatedController))
                 .ApiDescriptionGroups.Items.First()
                 .Items.First();
 
