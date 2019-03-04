@@ -343,6 +343,43 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GetSwagger_HonorsNullableType()
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add("POST", "collection", nameof(FakeController.AcceptsComplexTypeFromBody)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var schema = swagger.Components.Schemas.FirstOrDefault(e => e.Key == "ComplexType");
+            var property1 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property1");
+            Assert.False(property1.Value.Nullable);
+
+            var property2 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property2");
+            Assert.False(property2.Value.Nullable);
+
+            var property3 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property3");
+            Assert.False(property3.Value.Nullable);
+
+            var property4 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property4");
+            Assert.False(property4.Value.Nullable);
+
+            var property5 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property5");
+            Assert.False(property5.Value.Nullable);
+
+            var property6 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property6");
+            Assert.False(property6.Value.Nullable);
+
+            var property7 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property7");
+            Assert.True(property7.Value.Nullable);
+
+            var property8 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property8");
+            Assert.True(property8.Value.Nullable);
+
+            var property9 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property9");
+            Assert.True(property9.Value.Nullable);
+        }
+
+        [Fact]
         public void GetSwagger_NamesAllParametersInCamelCase_IfSpecifiedBySettings()
         {
             var subject = Subject(
@@ -392,7 +429,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.All(requestBody.Content.Values, mediaType =>
             {
                 Assert.NotNull(mediaType.Schema);
-                Assert.Equal(4, mediaType.Schema.Properties.Count);
+                Assert.Equal(8, mediaType.Schema.Properties.Count);
                 Assert.NotNull(mediaType.Encoding);
             });
         }

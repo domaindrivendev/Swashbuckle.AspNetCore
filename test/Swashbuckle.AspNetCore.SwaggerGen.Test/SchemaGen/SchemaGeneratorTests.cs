@@ -187,7 +187,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
-        [InlineData(typeof(ComplexType), "ComplexType", new[] { "Property1", "Property2", "Property3", "Property4", "Property5" })]
+        [InlineData(typeof(ComplexType), "ComplexType", new[] { "Property1", "Property2", "Property3", "Property4", "Property5", "Property6", "Property7", "Property8", "Property9" })]
         [InlineData(typeof(ComplexTypeWithFields), "ComplexTypeWithFields", new[] { "Field1", "Field2", "Field3" })]
         [InlineData(typeof(GenericType<bool, int>), "BooleanInt32GenericType", new[] { "Property1", "Property2" })]
         [InlineData(typeof(ContainingType.NestedType), "NestedType", new[] { "Property1" })]
