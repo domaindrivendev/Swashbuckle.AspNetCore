@@ -34,14 +34,24 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (targetMethod == null) return;
 
-            var memberName = XmlCommentsMemberNameHelper.GetMemberNameForMethod(targetMethod);
-            var methodNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, memberName));
+            var typeMemberName = XmlCommentsMemberNameHelper.GetMemberNameForType(targetMethod.DeclaringType);
+            var typeNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, typeMemberName));
 
+            // Apply controller-level tags if any
+            if (typeNode != null)
+            {
+                ApplyResponsesXmlToResponses(operation.Responses, typeNode.Select(ResponsesXPath));
+            }
+
+            var methodMemberName = XmlCommentsMemberNameHelper.GetMemberNameForMethod(targetMethod);
+            var methodNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, methodMemberName));
+
+            // Apply method-level tags
             if (methodNode != null)
             {
                 ApplyMethodXmlToOperation(operation, methodNode);
-                ApplyParamsXmlToActionParameters(operation.Parameters, methodNode, context.ApiDescription);
-                ApplyResponsesXmlToResponses(operation.Responses, methodNode.Select(ResponsesXPath));
+                ApplyParamsXmlToActionParameters(operation.Parameters, context.ApiDescription, methodNode);
+                ApplyResponsesXmlToResponses(operation.Responses, methodNode.Select(ResponsesXPath)); // will override controller-level response tags
             }
 
             // Special handling for parameters that are bound to model properties
@@ -79,8 +89,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private void ApplyParamsXmlToActionParameters(
             IList<OpenApiParameter> parameters,
-            XPathNavigator methodNode,
-            ApiDescription apiDescription)
+            ApiDescription apiDescription,
+            XPathNavigator methodNode)
         {
             if (parameters == null) return;
 
