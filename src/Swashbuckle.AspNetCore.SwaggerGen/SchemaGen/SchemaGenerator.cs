@@ -39,10 +39,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public OpenApiSchema GenerateSchema(Type type, SchemaRepository schemaRepository)
         {
             // Check if is nullable
-            var isNullable = type.IsNullable();
+            var isNullable = type.IsNullable() || type.IsFSharpOption();
 
             // Update type
-            type = (type.IsNullable() || type.IsFSharpOption())
+            type = isNullable
                 ? type.GenericTypeArguments[0]
                 : type;
 
