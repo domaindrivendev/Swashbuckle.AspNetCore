@@ -60,10 +60,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
-        [InlineData(typeof(XmlAnnotatedType), "Property",
-            "P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.Property")]
-        [InlineData(typeof(XmlAnnotatedType), "Field",
-            "F:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.Field")]
+        [InlineData(typeof(XmlAnnotatedType), "StringProperty",
+            "P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.StringProperty")]
+        [InlineData(typeof(XmlAnnotatedType), "StringField",
+            "F:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.StringField")]
         [InlineData(typeof(XmlAnnotatedType.NestedType), "Property",
             "P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.NestedType.Property")]
         [InlineData(typeof(XmlAnnotatedGenericType<int,string>), "GenericProperty",

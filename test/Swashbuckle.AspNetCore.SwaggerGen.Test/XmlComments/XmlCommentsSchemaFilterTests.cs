@@ -32,9 +32,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
-        [InlineData(typeof(XmlAnnotatedType), "Property", "summary for Property")]
-        [InlineData(typeof(XmlAnnotatedType), "Field", "summary for Field")]
-        [InlineData(typeof(XmlAnnotatedSubType), "Property", "summary for Property")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringProperty), "summary for StringProperty")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringField), "summary for StringField")]
+        [InlineData(typeof(XmlAnnotatedSubType), nameof(XmlAnnotatedType.StringProperty), "summary for StringProperty")]
         [InlineData(typeof(XmlAnnotatedGenericType<string, bool>), "GenericProperty", "Summary for GenericProperty")]
         public void Apply_SetsPropertyDescriptions_FromPropertySummaryTags(
             Type type,
@@ -56,37 +56,41 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
-        [InlineData(typeof(XmlAnnotatedType), "Property", PrimitiveType.String, "property example")]
-        [InlineData(typeof(XmlAnnotatedSubType), "Property", PrimitiveType.String, "property example")]
-        [InlineData(typeof(XmlAnnotatedType), "Field", PrimitiveType.String, "field example")]
-        [InlineData(typeof(XmlAnnotatedType), "IntProperty", PrimitiveType.Integer, "10")]
-        [InlineData(typeof(XmlAnnotatedType), "LongProperty", PrimitiveType.Long, "4294967295")]
-        [InlineData(typeof(XmlAnnotatedType), "DoubleProperty", PrimitiveType.Double, "1.25")]
-        [InlineData(typeof(XmlAnnotatedType), "FloatProperty", PrimitiveType.Float, "1.2")]
-        [InlineData(typeof(XmlAnnotatedType), "ByteProperty", PrimitiveType.Byte, "16")]
-        [InlineData(typeof(XmlAnnotatedType), "BoolField", PrimitiveType.Boolean, "True")]
-        [InlineData(typeof(XmlAnnotatedType), "GuidProperty", PrimitiveType.String, "d3966535-2637-48fa-b911-e3c27405ee09")]
-        [InlineData(typeof(XmlAnnotatedType), "BadExampleIntProperty", PrimitiveType.String, "property bad example")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.BoolProperty), "boolean", null, true)]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.IntProperty), "integer", "int32", 10)]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.LongProperty), "integer", "int64", 4294967295L)]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.FloatProperty), "number", "float", 1.2F)]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.DoubleProperty), "number", "double", 1.25D)]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.EnumProperty), "integer", "int32", 2)]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.GuidProperty), "string", "uuid", "d3966535-2637-48fa-b911-e3c27405ee09")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringProperty), "string", null, "example for StringProperty")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.BadExampleIntProperty), "integer", "int32", null)]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringField), "string", null, "example for StringField")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.BoolField), "boolean", null, true)]
         public void Apply_SetsPropertyExample_FromPropertyExampleTags(
-            Type type,
-            string propertyName,
-            PrimitiveType expectedPrimitiveType,
-            object expectedValueString)
+            Type memberType,
+            string memberName,
+            string schemaType,
+            string schemaFormat,
+            object expectedValue)
         {
             var schema = new OpenApiSchema
             {
                 Properties = new Dictionary<string, OpenApiSchema>()
                 {
-                    { propertyName, new OpenApiSchema() }
+                    { memberName, new OpenApiSchema { Type = schemaType, Format = schemaFormat } }
                 }
             };
-            var filterContext = FilterContextFor(type);
+            var filterContext = FilterContextFor(memberType);
 
             Subject().Apply(schema, filterContext);
 
-            var openApiPrimitive = (IOpenApiPrimitive)schema.Properties[propertyName].Example;
-            Assert.Equal(expectedPrimitiveType, openApiPrimitive.PrimitiveType);
-            Assert.Equal(expectedValueString, GetOpenApiPrimitiveValue(openApiPrimitive).ToString());
+            var openApiPrimitive = (IOpenApiPrimitive)schema.Properties[memberName].Example;
+
+            if (expectedValue != null)
+                Assert.Equal(expectedValue, openApiPrimitive.GetType().GetProperty("Value").GetValue(openApiPrimitive));
+            else
+                Assert.Null(openApiPrimitive);
         }
 
         [Theory]
@@ -109,11 +113,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var openApiSchema = schema.Properties[propertyName];
             Assert.Equal(propertyType, openApiSchema.Type);
-        }
-
-        private static object GetOpenApiPrimitiveValue(IOpenApiPrimitive primitive)
-        {
-            return primitive.GetType().GetProperty("Value").GetValue(primitive);
         }
 
         private SchemaFilterContext FilterContextFor(Type type)

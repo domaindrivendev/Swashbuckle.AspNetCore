@@ -213,7 +213,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (defaultValue != null && schema.Reference == null)
             {
-                schema.Default = OpenApiAnyFactory.TryCreateFrom(defaultValue, out IOpenApiAny openApiAny)
+                schema.Default = OpenApiAnyFactory.TryCreateFor(schema, defaultValue, out IOpenApiAny openApiAny)
                     ? openApiAny
                     : null;
             }

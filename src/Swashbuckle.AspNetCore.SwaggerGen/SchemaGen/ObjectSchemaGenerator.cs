@@ -72,7 +72,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 if (attribute is DefaultValueAttribute defaultValue)
                 {
-                    schema.Default = OpenApiAnyFactory.TryCreateFrom(defaultValue.Value, out IOpenApiAny openApiAny)
+                    schema.Default = OpenApiAnyFactory.TryCreateFor(schema, defaultValue.Value, out IOpenApiAny openApiAny)
                         ? openApiAny
                         : schema.Default;
                 }

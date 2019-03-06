@@ -14,7 +14,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var jsonContract = ContractResolver.ResolveContract(type);
 
-            return type.IsEnum // enum
+            return (type.IsEnum && Options.UseReferencedDefinitionsForEnums) // enum
                 || (jsonContract is JsonObjectContract) // regular object
                 || (jsonContract is JsonArrayContract && ((JsonArrayContract)jsonContract).CollectionItemType == jsonContract.UnderlyingType) // self-referencing array
                 || (jsonContract is JsonDictionaryContract && ((JsonDictionaryContract)jsonContract).DictionaryValueType == jsonContract.UnderlyingType); // self-referencing dictionary

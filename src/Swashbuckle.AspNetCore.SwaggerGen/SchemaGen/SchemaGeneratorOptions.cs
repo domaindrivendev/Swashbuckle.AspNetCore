@@ -21,6 +21,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public bool DescribeStringEnumsInCamelCase { get; set; }
 
+        public bool UseReferencedDefinitionsForEnums { get; set; }
+
         public Func<Type, string> SchemaIdSelector { get; set; }
 
         public bool IgnoreObsoleteProperties { get; set; }

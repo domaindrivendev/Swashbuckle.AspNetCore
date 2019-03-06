@@ -53,14 +53,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var operation = new OpenApiOperation
             {
-                Parameters = new List<OpenApiParameter>() { new OpenApiParameter { Name = "Property" } },
+                Parameters = new List<OpenApiParameter>() { new OpenApiParameter { Name = "StringProperty" } },
                 Responses = new OpenApiResponses()
             };
             var filterContext = FilterContextFor(nameof(XmlAnnotatedController.AcceptsXmlAnnotatedTypeFromQuery));
 
             Subject().Apply(operation, filterContext);
 
-            Assert.Equal("summary for Property", operation.Parameters.First().Description);
+            Assert.Equal("summary for StringProperty", operation.Parameters.First().Description);
         }
 
         [Fact]
