@@ -9,10 +9,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
     public class XmlAnnotatedType
     {
         /// <summary>
-        /// summary for Property
+        /// summary for BoolProperty
         /// </summary>
-        /// <example>property example</example>
-        public string Property { get; set; }
+        /// <example>true</example>
+        public bool BoolProperty { get; set; }
 
         /// <summary>
         /// summary for IntProperty
@@ -27,22 +27,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public long LongProperty { get; set; }
 
         /// <summary>
-        /// summary for DoubleProperty
-        /// </summary>
-        /// <example>1.25</example>
-        public double DoubleProperty { get; set; }
-
-        /// <summary>
         /// summary for FloatProperty
         /// </summary>
         /// <example>1.2</example>
         public float FloatProperty { get; set; }
 
         /// <summary>
-        /// summary for ByteProperty
+        /// summary for DoubleProperty
         /// </summary>
-        /// <example>16</example>
-        public byte ByteProperty { get; set; }
+        /// <example>1.25</example>
+        public double DoubleProperty { get; set; }
+
+        /// <summary>
+        /// summary for EnumProperty
+        /// </summary>
+        /// <example>2</example>
+        public IntEnum EnumProperty { get; set; }
 
         /// <summary>
         /// summary for GuidProperty
@@ -51,16 +51,23 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public Guid GuidProperty { get; set; }
 
         /// <summary>
+        /// summary for StringProperty
+        /// </summary>
+        /// <example>example for StringProperty</example>
+        public string StringProperty { get; set; }
+
+
+        /// <summary>
         /// summary for BadExampleIntProperty
         /// </summary>
         /// <example>property bad example</example>
         public int BadExampleIntProperty { get; set; }
 
         /// <summary>
-        /// summary for Field
+        /// summary for StringField
         /// </summary>
-        /// <example>field example</example>
-        public string Field;
+        /// <example>example for StringField</example>
+        public string StringField;
 
         /// <summary>
         /// summary for BoolField

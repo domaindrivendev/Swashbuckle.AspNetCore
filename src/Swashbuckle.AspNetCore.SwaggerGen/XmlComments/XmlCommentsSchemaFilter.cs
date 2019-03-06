@@ -69,26 +69,26 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 var exampleString = XmlCommentsTextHelper.Humanize(exampleNode.InnerXml);
                 var memberType = (memberInfo.MemberType & MemberTypes.Field) != 0 ? ((FieldInfo) memberInfo).FieldType : ((PropertyInfo) memberInfo).PropertyType;
-                propertySchema.Example = ConvertToOpenApiType(exampleString, memberType);
+                propertySchema.Example = ConvertToOpenApiType(memberType, propertySchema, exampleString);
             }
         }
 
-        private static IOpenApiAny ConvertToOpenApiType(string value, Type type)
+        private static IOpenApiAny ConvertToOpenApiType(Type memberType, OpenApiSchema schema, string stringValue)
         {
-            object typedExample;
+            object typedValue;
 
             try
             {
-                typedExample = TypeDescriptor.GetConverter(type).ConvertFrom(value);
+                typedValue = TypeDescriptor.GetConverter(memberType).ConvertFrom(stringValue);
             }
             catch (Exception)
             {
-                return new OpenApiString(value);
+                return null;
             }
 
-            return OpenApiAnyFactory.TryCreateFrom(typedExample, out IOpenApiAny openApiAny)
+            return OpenApiAnyFactory.TryCreateFor(schema, typedValue, out IOpenApiAny openApiAny)
                 ? openApiAny
-                : new OpenApiString(value);
+                : null;
         }
     }
 }

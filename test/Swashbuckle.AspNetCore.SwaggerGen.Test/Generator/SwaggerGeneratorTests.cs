@@ -301,6 +301,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         [Theory]
         [InlineData(nameof(FakeController.AcceptsOptionalParameter), "param", "foobar")]
+        [InlineData(nameof(FakeController.AcceptsOptionalJsonConvertedEnum), "param", "Value1")]
         [InlineData(nameof(FakeController.AcceptsDataAnnotatedType), "StringWithDefaultValue", "foobar")]
         public void GetSwagger_SetsDefaultValue_IfApiParameterIsOptionalOrHasDefaultValueAttribute(
             string actionFixtureName,

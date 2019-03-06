@@ -1,37 +1,54 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class OpenApiAnyFactory
     {
-        public static bool TryCreateFrom(object value, out IOpenApiAny openApiAny)
+        public static bool TryCreateFor(OpenApiSchema schema, object value, out IOpenApiAny openApiAny)
         {
-            openApiAny = FactoryMethodMap.TryGetValue(value.GetType(), out Func<object, IOpenApiAny> factoryMethod)
-                ? factoryMethod(value)
-                : null;
+            openApiAny = null;
+
+            if (schema.Type == "boolean" && TryCast(value, out bool boolValue))
+                openApiAny = new OpenApiBoolean(boolValue);
+
+            else if (schema.Type == "integer" && schema.Format == "int32" && TryCast(value, out int intValue))
+                openApiAny = new OpenApiInteger(intValue);
+
+            else if (schema.Type == "integer" && schema.Format == "int64" && TryCast(value, out long longValue))
+                openApiAny = new OpenApiLong(longValue);
+
+            else if (schema.Type == "number" && schema.Format == "float" && TryCast(value, out float floatValue))
+                openApiAny = new OpenApiFloat(floatValue);
+
+            else if (schema.Type == "number" && schema.Format == "double" && TryCast(value, out double doubleValue))
+                openApiAny = new OpenApiDouble(doubleValue);
+
+            else if (schema.Type == "string" && value.GetType().IsEnum)
+                openApiAny = new OpenApiString(Enum.GetName(value.GetType(), value));
+
+            else if (schema.Type == "string" && schema.Format == "datetime" && TryCast(value, out DateTime dateTimeValue))
+                openApiAny = new OpenApiDate(dateTimeValue);
+
+            else if (schema.Type == "string")
+                openApiAny = new OpenApiString(value.ToString());
 
             return openApiAny != null;
         }
 
-        private static readonly Dictionary<Type, Func<object, IOpenApiAny>> FactoryMethodMap = new Dictionary<Type, Func<object, IOpenApiAny>>
+        private static bool TryCast<T>(object value, out T typedValue)
         {
-            { typeof(string), (value) => new OpenApiString((string)value) },
-            { typeof(short), (value) => new OpenApiInteger((int)value) },
-            { typeof(ushort), (value) => new OpenApiInteger((int)value) },
-            { typeof(int), (value) => new OpenApiInteger((int)value) },
-            { typeof(uint), (value) => new OpenApiInteger((int)value) },
-            { typeof(long), (value) => new OpenApiLong((long)value) },
-            { typeof(ulong), (value) => new OpenApiLong((long)value) },
-            { typeof(float), (value) => new OpenApiFloat((float)value) },
-            { typeof(double), (value) => new OpenApiDouble((double)value) },
-            { typeof(decimal), (value) => new OpenApiDouble((double)value) },
-            { typeof(byte), (value) => new OpenApiByte((byte)value) },
-            { typeof(sbyte), (value) => new OpenApiByte((byte)value) },
-            { typeof(bool), (value) => new OpenApiBoolean((bool)value) },
-            { typeof(DateTime), (value) => new OpenApiDate((DateTime)value) },
-            { typeof(DateTimeOffset), (value) => new OpenApiDateTime((DateTimeOffset)value) }
-        };
+            try
+            {
+                typedValue = (T)value;
+                return true;
+            }
+            catch (InvalidCastException)
+            {
+                typedValue = default(T);
+                return false;
+            }
+        }
     }
 }

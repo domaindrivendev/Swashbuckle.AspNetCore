@@ -71,7 +71,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     .Select(value =>
                     {
                         value = Convert.ChangeType(value, enumUnderlyingType);
-                        return OpenApiAnyFactory.TryCreateFrom(value, out IOpenApiAny openApiAny) ? openApiAny : null;
+                        return OpenApiAnyFactory.TryCreateFor(schema, value, out IOpenApiAny openApiAny) ? openApiAny : null;
                     })
                     .ToList();
             }
