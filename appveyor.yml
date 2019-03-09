@@ -6,14 +6,6 @@ init:
 environment:
   DOTNET_VERSION: 3.0.100-preview3-010431
 
-install:
-  - ps: $env:DOTNET_INSTALL_DIR = "$pwd\.dotnetsdk"
-  - ps: mkdir $env:DOTNET_INSTALL_DIR -Force | Out-Null
-  - ps: $installScript = [System.IO.Path]::Combine([System.IO.Path]::GetTempPath(), [System.IO.Path]::GetRandomFileName())
-  - ps: Invoke-WebRequest "https://dot.net/v1/dotnet-install.ps1" -OutFile $installScript -UseBasicParsing
-  - ps: '& $installScript -Version "$env:DOTNET_VERSION" -InstallDir "$env:DOTNET_INSTALL_DIR" -NoPath'
-  - ps: $env:Path = "$env:DOTNET_INSTALL_DIR;$env:Path"
-
 build_script:
 - ps: ci\build.ps1 
 
