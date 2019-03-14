@@ -90,6 +90,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(IntEnum), "IntEnum", "integer", "int32", 3)]
         [InlineData(typeof(LongEnum), "LongEnum", "integer", "int64", 3)]
         [InlineData(typeof(IntEnum?), "IntEnum", "integer", "int32", 3)]
+        [InlineData(typeof(IntEnum?), "IntEnum", "integer", "int32", 3)]
         public void GenerateSchema_GeneratesEnumSchema_IfEnumType(
             Type type,
             string expectedSchemaId,

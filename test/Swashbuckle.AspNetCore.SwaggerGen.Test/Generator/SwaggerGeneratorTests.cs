@@ -6,8 +6,6 @@ using Microsoft.OpenApi.Any;
 using Newtonsoft.Json;
 using Xunit;
 using Swashbuckle.AspNetCore.Swagger;
-using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
