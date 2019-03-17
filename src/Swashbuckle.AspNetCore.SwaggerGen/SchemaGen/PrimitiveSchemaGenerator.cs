@@ -57,6 +57,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (describeAsString)
             {
                 schema.Enum = enumType.GetEnumNames()
+                    .Distinct()
                     .Select(name =>
                     {
                         name = describeInCamelCase ? name.ToCamelCase() : name;
@@ -68,6 +69,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 schema.Enum = enumType.GetEnumValues()
                     .Cast<object>()
+                    .Distinct()
                     .Select(value =>
                     {
                         value = Convert.ChangeType(value, enumUnderlyingType);
