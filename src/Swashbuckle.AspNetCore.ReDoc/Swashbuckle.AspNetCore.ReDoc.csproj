@@ -35,6 +35,5 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.0' ">
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="3.0.0-preview3-19153-02" />
   </ItemGroup>
 </Project>
