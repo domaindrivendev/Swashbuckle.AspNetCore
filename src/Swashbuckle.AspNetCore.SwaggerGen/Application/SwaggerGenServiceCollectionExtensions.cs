@@ -27,10 +27,7 @@ namespace Microsoft.Extensions.DependencyInjection
 #endif
 
             services.AddTransient<ISwaggerProvider, SwaggerGenerator>();
-            services.AddTransient<ISchemaGenerator, SchemaGenerator>(p =>
-                new SchemaGenerator(
-                    p.GetRequiredService<IOptions<SchemaGeneratorOptions>>(),
-                    p.GetRequiredService<ISerializerSettingsAccessor>()));
+            services.AddTransient<ISchemaGenerator, SchemaGenerator>();
 
             // Register custom configurators that assign values from SwaggerGenOptions (i.e. high level config)
             // to the service-specific options (i.e. lower-level config)
@@ -55,26 +52,26 @@ namespace Microsoft.Extensions.DependencyInjection
 #if NETCOREAPP3_0
         private sealed class MvcNewtonsoftJsonOptionsAccessor : ISerializerSettingsAccessor
         {
+            private readonly IOptions<MvcNewtonsoftJsonOptions> _options;
+
             public MvcNewtonsoftJsonOptionsAccessor(IOptions<MvcNewtonsoftJsonOptions> options)
             {
-                Options = options;
+                _options = options;
             }
 
-            public JsonSerializerSettings SerializerSettings => Options.Value?.SerializerSettings;
-
-            private IOptions<MvcNewtonsoftJsonOptions> Options { get; }
+            public JsonSerializerSettings SerializerSettings => _options.Value?.SerializerSettings;
         }
 #else
         private sealed class MvcJsonOptionsAccessor : ISerializerSettingsAccessor
         {
+            private readonly IOptions<MvcJsonOptions> _options;
+
             public MvcJsonOptionsAccessor(IOptions<MvcJsonOptions> options)
             {
-                Options = options;
+                _options = options;
             }
 
-            public JsonSerializerSettings SerializerSettings => Options.Value?.SerializerSettings;
-
-            private IOptions<MvcJsonOptions> Options { get; }
+            public JsonSerializerSettings SerializerSettings => _options.Value?.SerializerSettings;
         }
 #endif
     }
