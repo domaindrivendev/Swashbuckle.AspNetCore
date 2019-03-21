@@ -104,6 +104,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             { typeof(char), () => new OpenApiSchema { Type = "string" } },
             { typeof(DateTime), () => new OpenApiSchema { Type = "string", Format = "date-time" } },
             { typeof(DateTimeOffset), () => new OpenApiSchema { Type = "string", Format = "date-time" } },
+            { typeof(TimeSpan), () => new OpenApiSchema { Type = "string", Format = "date-time" } },
             { typeof(Guid), () => new OpenApiSchema { Type = "string", Format = "uuid" } },
             { typeof(Uri), () => new OpenApiSchema { Type = "string" } }
         };
