@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace Basic.Controllers
 {
     [Route("/orders")]
-    [Produces("application/json")]
+    [Consumes("application/xml")]
+    [Produces("application/xml")]
     public class ResponseTypeAnnotationsController
     {
         /// <summary>
@@ -17,7 +18,7 @@ namespace Basic.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(int), 201)]
         [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
-        public IActionResult Create([FromBody, Required]Order order)
+        public IActionResult CreateOrder([FromBody, Required]Order order)
         {
             return new CreatedResult("/orders/1", 1);
         }

@@ -1,28 +1,29 @@
 ﻿using System;
 using System.Linq;
-using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Any;
 using Newtonsoft.Json;
 using Xunit;
 using Swashbuckle.AspNetCore.Swagger;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     public class SwaggerGeneratorTests
     {
         [Fact]
-        public void GetSwagger_RequiresTargetDocumentToBeSpecifiedBySettings()
+        public void GetSwagger_ThrowsException_IfDocumentNameIsUnknown()
         {
-            var subject = Subject(configure: (c) => c.SwaggerDocs.Clear());
+            var subject = Subject(setupAction: (c) => c.SwaggerDocs.Clear());
 
             Assert.Throws<UnknownSwaggerDocument>(() => subject.GetSwagger("v1"));
         }
 
         [Fact]
-        public void GetSwagger_GeneratesOneOrMoreDocuments_AsSpecifiedBySettings()
+        public void GetSwagger_GeneratesSwagger_ForEachConfiguredDocument()
         {
-            var v1Info = new Info { Version = "v2", Title = "API V2" };
-            var v2Info = new Info { Version = "v1", Title = "API V1" };
+            var v1Info = new OpenApiInfo { Version = "v2", Title = "API V2" };
+            var v2Info = new OpenApiInfo { Version = "v1", Title = "API V1" };
 
             var subject = Subject(
                 setupApis: apis =>
@@ -30,7 +31,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     apis.Add("GET", "v1/collection", nameof(FakeController.ReturnsEnumerable));
                     apis.Add("GET", "v2/collection", nameof(FakeController.ReturnsEnumerable));
                 },
-                configure: c =>
+                setupAction: c =>
                 {
                     c.SwaggerDocs.Clear();
                     c.SwaggerDocs.Add("v1", v1Info);
@@ -75,509 +76,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var subject = Subject(setupApis: apis => apis
                 .Add("GET", "collection", nameof(FakeController.ReturnsEnumerable))
-                .Add("PUT", "collection/{id}", nameof(FakeController.AcceptsComplexTypeFromBody))
                 .Add("POST", "collection", nameof(FakeController.AcceptsComplexTypeFromBody))
+                .Add("PUT", "collection/{id}", nameof(FakeController.AcceptsComplexTypeFromBody))
                 .Add("DELETE", "collection/{id}", nameof(FakeController.ReturnsVoid))
                 .Add("PATCH", "collection/{id}", nameof(FakeController.AcceptsComplexTypeFromBody))
-            // TODO: OPTIONS & HEAD
             );
 
             var swagger = subject.GetSwagger("v1");
 
-            // GET collection
-            var operation = swagger.Paths["/collection"].Get;
-            Assert.NotNull(operation);
-            Assert.Empty(operation.Consumes);
-            Assert.Equal(new[] { "application/json", "text/json" }, operation.Produces.ToArray());
-            Assert.Null(operation.Deprecated);
-            // PUT collection/{id}
-            operation = swagger.Paths["/collection/{id}"].Put;
-            Assert.NotNull(operation);
-            Assert.Equal(new[] { "application/json", "text/json", "application/*+json" }, operation.Consumes.ToArray());
-            Assert.Empty(operation.Produces.ToArray());
-            Assert.Null(operation.Deprecated);
-            // POST collection
-            operation = swagger.Paths["/collection"].Post;
-            Assert.NotNull(operation);
-            Assert.Equal(new[] { "application/json", "text/json", "application/*+json" }, operation.Consumes.ToArray());
-            Assert.Empty(operation.Produces.ToArray());
-            Assert.Null(operation.Deprecated);
-            // DELETE collection/{id}
-            operation = swagger.Paths["/collection/{id}"].Delete;
-            Assert.NotNull(operation);
-            Assert.Empty(operation.Consumes.ToArray());
-            Assert.Empty(operation.Produces.ToArray());
-            Assert.Null(operation.Deprecated);
-            // PATCH collection
-            operation = swagger.Paths["/collection/{id}"].Patch;
-            Assert.NotNull(operation);
-            Assert.Equal(new[] { "application/json", "text/json", "application/*+json" }, operation.Consumes.ToArray());
-            Assert.Empty(operation.Produces.ToArray());
-            Assert.Null(operation.Deprecated);
+            Assert.Equal(new[] { OperationType.Get, OperationType.Post }, swagger.Paths["/collection"].Operations.Keys);
+            Assert.Equal(new[] { OperationType.Put, OperationType.Delete, OperationType.Patch }, swagger.Paths["/collection/{id}"].Operations.Keys);
         }
-
-        [Theory]
-        [InlineData("api/products", "ApiProductsGet")]
-        [InlineData("addresses/validate", "AddressesValidateGet")]
-        [InlineData("carts/{cartId}/items/{id}", "CartsByCartIdItemsByIdGet")]
-        public void GetSwagger_GeneratesOperationIds_AccordingToRouteTemplateAndHttpMethod(
-            string routeTemplate,
-            string expectedOperationId
-        )
-        {
-            var subject = Subject(setupApis: apis => apis
-                .Add("GET", routeTemplate, nameof(FakeController.AcceptsNothing)));
-
-            var swagger = subject.GetSwagger("v1");
-
-            Assert.Equal(expectedOperationId, swagger.Paths["/" + routeTemplate].Get.OperationId);
-        }
-
-        [Theory]
-        [InlineData("collection/{param}", nameof(FakeController.AcceptsStringFromRoute), "path")]
-        [InlineData("collection", nameof(FakeController.AcceptsStringFromQuery), "query")]
-        [InlineData("collection", nameof(FakeController.AcceptsStringFromHeader), "header")]
-        [InlineData("collection", nameof(FakeController.AcceptsStringFromForm), "formData")]
-        [InlineData("collection", nameof(FakeController.AcceptsStringFromQuery), "query")]
-        public void GetSwagger_GeneratesNonBodyParameters_ForPathQueryHeaderOrFormBoundParams(
-            string routeTemplate,
-            string actionFixtureName,
-            string expectedIn)
-        {
-            var subject = Subject(setupApis: apis => apis.Add("GET", routeTemplate, actionFixtureName));
-
-            var swagger = subject.GetSwagger("v1");
-
-            var param = swagger.Paths["/" + routeTemplate].Get.Parameters.First();
-            Assert.IsAssignableFrom<NonBodyParameter>(param);
-            var nonBodyParam = param as NonBodyParameter;
-            Assert.NotNull(nonBodyParam);
-            Assert.Equal("param", nonBodyParam.Name);
-            Assert.Equal(expectedIn, nonBodyParam.In);
-            Assert.Equal("string", nonBodyParam.Type);
-        }
-
-        [Fact]
-        public void GetSwagger_SetsCollectionFormatMulti_ForQueryOrHeaderBoundArrayParams()
-        {
-            var subject = Subject(setupApis: apis => apis
-                .Add("GET", "resource", nameof(FakeController.AcceptsArrayFromQuery)));
-
-            var swagger = subject.GetSwagger("v1");
-
-            var param = (NonBodyParameter)swagger.Paths["/resource"].Get.Parameters.First();
-            Assert.Equal("multi", param.CollectionFormat);
-        }
-
-        [Fact]
-        public void GetSwagger_GeneratesBodyParams_ForBodyBoundParams()
-        {
-            var subject = Subject(setupApis: apis => apis
-                .Add("POST", "collection", nameof(FakeController.AcceptsComplexTypeFromBody)));
-
-            var swagger = subject.GetSwagger("v1");
-
-            var param = swagger.Paths["/collection"].Post.Parameters.First();
-            Assert.IsAssignableFrom<BodyParameter>(param);
-            var bodyParam = param as BodyParameter;
-            Assert.Equal("param", bodyParam.Name);
-            Assert.Equal("body", bodyParam.In);
-            Assert.NotNull(bodyParam.Schema);
-            Assert.Equal("#/definitions/ComplexType", bodyParam.Schema.Ref);
-            Assert.Contains("ComplexType", swagger.Definitions.Keys);
-        }
-
-        [Fact]
-        public void GetSwagger_GeneratesQueryParams_ForAllUnboundParams()
-        {
-            var subject = Subject(setupApis: apis => apis
-                .Add("GET", "collection", nameof(FakeController.AcceptsString))
-                .Add("POST", "collection", nameof(FakeController.AcceptsComplexType)));
-
-            var swagger = subject.GetSwagger("v1");
-
-            var getParam = swagger.Paths["/collection"].Get.Parameters.First();
-            Assert.Equal("query", getParam.In);
-            // Multiple post parameters as ApiExplorer flattens out the complex type
-            var postParams = swagger.Paths["/collection"].Post.Parameters;
-            Assert.All(postParams, (p) => Assert.Equal("query", p.In));
-        }
-
-        [Theory]
-        [InlineData("collection/{param}")]
-        [InlineData("collection/{param?}")]
-        public void GetSwagger_SetsParameterRequired_ForRequiredAndOptionalRouteParams(string routeTemplate)
-        {
-            var subject = Subject(setupApis: apis => apis
-                .Add("GET", routeTemplate, nameof(FakeController.AcceptsStringFromRoute)));
-
-            var swagger = subject.GetSwagger("v1");
-
-            var param = swagger.Paths["/collection/{param}"].Get.Parameters.First();
-            Assert.True(param.Required);
-        }
-
-        [Theory]
-        [InlineData(nameof(FakeController.AcceptsDataAnnotatedParams), "stringWithNoAttributes", false)]
-        [InlineData(nameof(FakeController.AcceptsDataAnnotatedParams), "stringWithRequired", true)]
-        [InlineData(nameof(FakeController.AcceptsDataAnnotatedParams), "intWithRequired", true)]
-        [InlineData(nameof(FakeController.AcceptsDataAnnotatedType), "StringWithNoAttributes", false)]
-        [InlineData(nameof(FakeController.AcceptsDataAnnotatedType), "StringWithRequired", true)]
-        [InlineData(nameof(FakeController.AcceptsDataAnnotatedType), "IntWithRequired", true)]
-        [InlineData(nameof(FakeController.AcceptsModelBoundType), "StringWithNoAttributes", false)]
-        [InlineData(nameof(FakeController.AcceptsModelBoundType), "StringWithBindRequired", true)]
-        [InlineData(nameof(FakeController.AcceptsModelBoundType), "IntWithBindRequired", true)]
-        public void GetSwagger_SetsParameterRequired_ForParametersWithRequiredOrBindRequiredAttribute(
-            string actionFixtureName,
-            string parameterName,
-            bool expectedRequired)
-        {
-            var subject = Subject(setupApis: apis => apis.Add("GET", "collection", actionFixtureName));
-
-            var swagger = subject.GetSwagger("v1");
-
-            var parameter = swagger.Paths["/collection"].Get.Parameters.First(p => p.Name == parameterName);
-            Assert.True(parameter.Required == expectedRequired, $"{parameterName}.required != {expectedRequired}");
-        }
-
-        [Fact]
-        public void GetSwagger_SetsParameterTypeString_ForUnboundRouteParams()
-        {
-            var subject = Subject(setupApis: apis => apis
-                .Add("GET", "collection/{param}", nameof(FakeController.AcceptsNothing)));
-
-            var swagger = subject.GetSwagger("v1");
-
-            var param = swagger.Paths["/collection/{param}"].Get.Parameters.First();
-            Assert.IsAssignableFrom<NonBodyParameter>(param);
-            var nonBodyParam = param as NonBodyParameter;
-            Assert.Equal("param", nonBodyParam.Name);
-            Assert.Equal("path", nonBodyParam.In);
-            Assert.Equal("string", nonBodyParam.Type);
-        }
-
-        [Fact]
-        public void GetSwagger_SetsDefaultValue_ForOptionalTopLevelParams()
-        {
-            var subject = Subject(setupApis: apis => apis
-                .Add("GET", "collection/{param}", nameof(FakeController.AcceptsOptionalParameter)));
-
-            var swagger = subject.GetSwagger("v1");
-
-            var param = swagger.Paths["/collection/{param}"].Get.Parameters.First();
-            Assert.IsAssignableFrom<NonBodyParameter>(param);
-            var nonBodyParam = param as NonBodyParameter;
-            Assert.Equal("foobar", nonBodyParam.Default);
-        }
-
-        [Fact]
-        public void GetSwagger_IgnoresParameters_IfPartOfCancellationToken()
-        {
-            var subject = Subject(setupApis: apis => apis
-                .Add("GET", "collection", nameof(FakeController.AcceptsCancellationToken)));
-
-            var swagger = subject.GetSwagger("v1");
-
-            var operation = swagger.Paths["/collection"].Get;
-            Assert.Empty(operation.Parameters);
-        }
-
-        [Fact]
-        public void GetSwagger_IgnoresParameters_IfDecoratedWithBindNever()
-        {
-            var subject = Subject(setupApis: apis => apis
-                .Add("GET", "collection", nameof(FakeController.AcceptsModelBoundType)));
-
-            var swagger = subject.GetSwagger("v1");
-
-            var parameterNames = swagger.Paths["/collection"].Get
-                .Parameters
-                .Select(p => p.Name);
-            Assert.DoesNotContain("PropertyWithBindNever", parameterNames);
-        }
-
-        [Fact]
-        public void GetSwagger_DescribesParametersInCamelCase_IfSpecifiedBySettings()
-        {
-            var subject = Subject(
-                setupApis: apis => apis.Add("GET", "collection", nameof(FakeController.AcceptsModelBoundType)),
-                configure: c => c.DescribeAllParametersInCamelCase = true
-            );
-
-            var swagger = subject.GetSwagger("v1");
-
-            var operation = swagger.Paths["/collection"].Get;
-            Assert.Equal(3, operation.Parameters.Count);
-            Assert.Equal("stringWithNoAttributes", operation.Parameters[0].Name);
-            Assert.Equal("stringWithBindRequired", operation.Parameters[1].Name);
-            Assert.Equal("intWithBindRequired", operation.Parameters[2].Name);
-        }
-
-        [Theory]
-        [InlineData(nameof(FakeController.ReturnsVoid), "200", "Success", false)]
-        [InlineData(nameof(FakeController.ReturnsEnumerable), "200", "Success", true)]
-        [InlineData(nameof(FakeController.ReturnsComplexType), "200", "Success", true)]
-        [InlineData(nameof(FakeController.ReturnsJObject), "200", "Success", true)]
-        [InlineData(nameof(FakeController.ReturnsActionResult), "200", "Success", false)]
-        public void GetSwagger_GeneratesResponsesFromReturnTypes_IfResponseTypeAttributesNotPresent(
-            string actionFixtureName,
-            string expectedStatusCode,
-            string expectedDescriptions,
-            bool expectASchema)
-        {
-            var subject = Subject(setupApis: apis =>
-                apis.Add("GET", "collection", actionFixtureName));
-
-            var swagger = subject.GetSwagger("v1");
-
-            var responses = swagger.Paths["/collection"].Get.Responses;
-            Assert.Equal(new[] { expectedStatusCode }, responses.Keys.ToArray());
-            var response = responses[expectedStatusCode];
-            Assert.Equal(expectedDescriptions, response.Description);
-            if (expectASchema)
-                Assert.NotNull(response.Schema);
-            else
-                Assert.Null(response.Schema);
-        }
-
-        [Fact]
-        public void GetSwagger_GeneratesResponsesFromResponseTypeAttributes_IfResponseTypeAttributesPresent()
-        {
-            var subject = Subject(setupApis: apis =>
-                apis.Add("GET", "collection", nameof(FakeController.AnnotatedWithResponseTypeAttributes)));
-
-            var swagger = subject.GetSwagger("v1");
-
-            var responses = swagger.Paths["/collection"].Get.Responses;
-            Assert.Equal(new[] { "204", "400" }, responses.Keys.ToArray());
-            var response1 = responses["204"];
-            Assert.Equal("Success", response1.Description);
-            Assert.Null(response1.Schema);
-            var response2 = responses["400"];
-            Assert.Equal("Bad Request", response2.Description);
-            Assert.NotNull(response2.Schema);
-        }
-
-        [Fact]
-        public void GetSwagger_GeneratesDefaultResponseFromResponseTypeAttributes()
-        {
-            var subject = Subject(setupApis: apis =>
-            {
-                apis.Add("GET", "collection", nameof(FakeController.AnnotatedWithResponseTypeAttributes));
-                var operation = apis.ApiDescriptionGroups.Items[0].Items.First(f => f.RelativePath == "collection");
-                operation.SupportedResponseTypes.Add(new ApiResponseTypeV2 { IsDefaultResponse = true });
-            });
-
-            var swagger = subject.GetSwagger("v1");
-
-            var responses = swagger.Paths["/collection"].Get.Responses;
-            Assert.Collection(
-                responses,
-                kvp =>
-                {
-                    Assert.Equal("204", kvp.Key);
-                    var response = kvp.Value;
-                    Assert.Equal("Success", response.Description);
-                },
-                kvp =>
-                {
-                    Assert.Equal("400", kvp.Key);
-                    var response = kvp.Value;
-                    Assert.Equal("Bad Request", response.Description);
-                },
-                kvp =>
-                {
-                    Assert.Equal("default", kvp.Key);
-                    var response = kvp.Value;
-                    Assert.Null(response.Description);
-                });
-        }
-
-        [Fact]
-        public void GetSwagger_SetsDeprecated_IfActionsMarkedObsolete()
-        {
-            var subject = Subject(setupApis: apis => apis
-                .Add("GET", "collection", nameof(FakeController.MarkedObsolete)));
-
-            var swagger = subject.GetSwagger("v1");
-
-            var operation = swagger.Paths["/collection"].Get;
-            Assert.True(operation.Deprecated);
-        }
-
-        [Fact]
-        public void GetSwagger_GeneratesBasicAuthSecurityDefinition_IfSpecifiedBySettings()
-        {
-            var subject = Subject(configure: c =>
-                c.SecurityDefinitions.Add("basic", new BasicAuthScheme
-                {
-                    Type = "basic",
-                    Description = "Basic HTTP Authentication"
-                }));
-
-            var swagger = subject.GetSwagger("v1");
-
-            Assert.Contains("basic", swagger.SecurityDefinitions.Keys);
-            var scheme = swagger.SecurityDefinitions["basic"];
-            Assert.Equal("basic", scheme.Type);
-            Assert.Equal("Basic HTTP Authentication", scheme.Description);
-        }
-
-        [Fact]
-        public void GetSwagger_GeneratesApiKeySecurityDefinition_IfSpecifiedBySettings()
-        {
-            var subject = Subject(configure: c =>
-                c.SecurityDefinitions.Add("apiKey", new ApiKeyScheme
-                {
-                    Type = "apiKey",
-                    Description = "API Key Authentication",
-                    Name = "apiKey",
-                    In = "header"
-                }));
-
-            var swagger = subject.GetSwagger("v1");
-
-            Assert.Contains("apiKey", swagger.SecurityDefinitions.Keys);
-            var scheme = swagger.SecurityDefinitions["apiKey"];
-            Assert.IsAssignableFrom<ApiKeyScheme>(scheme);
-            var apiKeyScheme = scheme as ApiKeyScheme;
-            Assert.Equal("apiKey", apiKeyScheme.Type);
-            Assert.Equal("API Key Authentication", apiKeyScheme.Description);
-            Assert.Equal("apiKey", apiKeyScheme.Name);
-            Assert.Equal("header", apiKeyScheme.In);
-        }
-
-        [Fact]
-        public void GetSwagger_GeneratesOAuthSecurityDefinition_IfSpecifiedBySettings()
-        {
-            var subject = Subject(configure: c =>
-                c.SecurityDefinitions.Add("oauth2", new OAuth2Scheme
-                {
-                    Type = "oauth2",
-                    Description = "OAuth2 Authorization Code Grant",
-                    Flow = "accessCode",
-                    AuthorizationUrl = "https://tempuri.org/auth",
-                    TokenUrl = "https://tempuri.org/token",
-                    Scopes = new Dictionary<string, string>
-                    {
-                        { "read", "Read access to protected resources" },
-                        { "write", "Write access to protected resources" }
-                    }
-                }));
-
-            var swagger = subject.GetSwagger("v1");
-
-            Assert.Contains("oauth2", swagger.SecurityDefinitions.Keys);
-            var scheme = swagger.SecurityDefinitions["oauth2"];
-            Assert.IsAssignableFrom<OAuth2Scheme>(scheme);
-            var oAuth2Scheme = scheme as OAuth2Scheme;
-            Assert.Equal("oauth2", oAuth2Scheme.Type);
-            Assert.Equal("OAuth2 Authorization Code Grant", oAuth2Scheme.Description);
-            Assert.Equal("accessCode", oAuth2Scheme.Flow);
-            Assert.Equal("https://tempuri.org/auth", oAuth2Scheme.AuthorizationUrl);
-            Assert.Equal("https://tempuri.org/token", oAuth2Scheme.TokenUrl);
-            Assert.Equal(new[] { "read", "write" }, oAuth2Scheme.Scopes.Keys.ToArray());
-            Assert.Equal("Read access to protected resources", oAuth2Scheme.Scopes["read"]);
-            Assert.Equal("Write access to protected resources", oAuth2Scheme.Scopes["write"]);
-        }
-
-        [Fact]
-        public void GetSwagger_IgnoresObsoleteActions_IfSpecifiedBySettings()
-        {
-            var subject = Subject(
-                setupApis: apis =>
-                {
-                    apis.Add("GET", "collection1", nameof(FakeController.ReturnsEnumerable));
-                    apis.Add("GET", "collection2", nameof(FakeController.MarkedObsolete));
-                },
-                configure: c => c.IgnoreObsoleteActions = true);
-
-            var swagger = subject.GetSwagger("v1");
-
-            Assert.Equal(new[] { "/collection1" }, swagger.Paths.Keys.ToArray());
-        }
-
-        [Fact]
-        public void GetSwagger_TagsActions_AsSpecifiedBySettings()
-        {
-            var subject = Subject(
-                setupApis: apis =>
-                {
-                    apis.Add("GET", "collection1", nameof(FakeController.ReturnsEnumerable));
-                    apis.Add("GET", "collection2", nameof(FakeController.ReturnsInt));
-                },
-                configure: c => c.TagSelector = (apiDesc) => apiDesc.RelativePath);
-
-            var swagger = subject.GetSwagger("v1");
-
-            Assert.Equal(new[] { "collection1" }, swagger.Paths["/collection1"].Get.Tags);
-            Assert.Equal(new[] { "collection2" }, swagger.Paths["/collection2"].Get.Tags);
-        }
-
-        [Fact]
-        public void GetSwagger_OrdersActions_AsSpecifiedBySettings()
-        {
-            var subject = Subject(
-                setupApis: apis =>
-                {
-                    apis.Add("GET", "B", nameof(FakeController.ReturnsVoid));
-                    apis.Add("GET", "A", nameof(FakeController.ReturnsVoid));
-                    apis.Add("GET", "F", nameof(FakeController.ReturnsVoid));
-                    apis.Add("GET", "D", nameof(FakeController.ReturnsVoid));
-                },
-                configure: c =>
-                {
-                    c.SortKeySelector = (apiDesc) => apiDesc.RelativePath;
-                });
-
-            var swagger = subject.GetSwagger("v1");
-
-            Assert.Equal(new[] { "/A", "/B", "/D", "/F" }, swagger.Paths.Keys.ToArray());
-        }
-
-        [Fact]
-        public void GetSwagger_ExecutesOperationFilters_IfSpecifiedBySettings()
-        {
-            var subject = Subject(
-                setupApis: apis =>
-                {
-                    apis.Add("GET", "collection", nameof(FakeController.ReturnsEnumerable));
-                },
-                configure: c =>
-                {
-                    c.OperationFilters.Add(new VendorExtensionsOperationFilter());
-                });
-
-            var swagger = subject.GetSwagger("v1");
-
-            var operation = swagger.Paths["/collection"].Get;
-            Assert.NotEmpty(operation.Extensions);
-        }
-
-        [Fact]
-        public void GetSwagger_ExecutesDocumentFilters_IfSpecifiedBySettings()
-        {
-            var subject = Subject(configure: opts =>
-                opts.DocumentFilters.Add(new VendorExtensionsDocumentFilter()));
-
-            var swagger = subject.GetSwagger("v1");
-
-            Assert.NotEmpty(swagger.Extensions);
-        }
-
-        [Fact]
-        public void GetSwagger_HandlesUnboundRouteParams()
-        {
-            var subject = Subject(setupApis: apis => apis
-                .Add("GET", "{version}/collection", nameof(FakeController.AcceptsNothing)));
-
-            var swagger = subject.GetSwagger("v1");
-
-            var param = swagger.Paths["/{version}/collection"].Get.Parameters.First();
-            Assert.Equal("version", param.Name);
-            Assert.Equal(true, param.Required);
-        }
-
 
         [Fact]
         public void GetSwagger_ThrowsInformativeException_IfActionsHaveNoHttpBinding()
@@ -605,41 +114,479 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 "HTTP method \"GET\" & path \"collection\" overloaded by actions - " +
                 "Swashbuckle.AspNetCore.SwaggerGen.Test.FakeController.AcceptsNothing (Swashbuckle.AspNetCore.SwaggerGen.Test)," +
                 "Swashbuckle.AspNetCore.SwaggerGen.Test.FakeController.AcceptsStringFromQuery (Swashbuckle.AspNetCore.SwaggerGen.Test). " +
-                "Actions require unique method/path combination for Swagger 2.0. Use ConflictingActionsResolver as a workaround",
+                "Actions require unique method/path combination for OpenAPI 3.0. Use ConflictingActionsResolver as a workaround",
                 exception.Message);
         }
 
         [Fact]
-        public void GetSwagger_MergesActionsWithConflictingHttpMethodAndPath_IfResolverIsProvidedWithSettings()
+        public void GetSwagger_MergesConflictingActions_AccordingToConfiguredStrategy()
         {
             var subject = Subject(setupApis:
                 apis => apis
                     .Add("GET", "collection", nameof(FakeController.AcceptsNothing))
                     .Add("GET", "collection", nameof(FakeController.AcceptsStringFromQuery)),
-                configure: c => { c.ConflictingActionsResolver = (apiDescriptions) => apiDescriptions.First(); }
+                setupAction: c => { c.ConflictingActionsResolver = (apiDescriptions) => apiDescriptions.First(); }
             );
 
             var swagger = subject.GetSwagger("v1");
 
-            var operation = swagger.Paths["/collection"].Get;
+            var operation = swagger.Paths["/collection"].Operations[OperationType.Get];
             Assert.Empty(operation.Parameters); // first one has no parameters
+        }
+
+        [Fact]
+        public void GetSwagger_IgnoresObsoleteActions_IfConfigFlagIsSet()
+        {
+            var subject = Subject(
+                setupApis: apis =>
+                {
+                    apis.Add("GET", "collection1", nameof(FakeController.ReturnsEnumerable));
+                    apis.Add("GET", "collection2", nameof(FakeController.MarkedObsolete));
+                },
+                setupAction: c => c.IgnoreObsoleteActions = true);
+
+            var swagger = subject.GetSwagger("v1");
+
+            Assert.Equal(new[] { "/collection1" }, swagger.Paths.Keys.ToArray());
+        }
+
+        [Fact]
+        public void GetSwagger_OrdersActions_AccordingToConfiguredStrategy()
+        {
+            var subject = Subject(
+                setupApis: apis =>
+                {
+                    apis.Add("GET", "B", nameof(FakeController.ReturnsVoid));
+                    apis.Add("GET", "A", nameof(FakeController.ReturnsVoid));
+                    apis.Add("GET", "F", nameof(FakeController.ReturnsVoid));
+                    apis.Add("GET", "D", nameof(FakeController.ReturnsVoid));
+                },
+                setupAction: c =>
+                {
+                    c.SortKeySelector = (apiDesc) => apiDesc.RelativePath;
+                });
+
+            var swagger = subject.GetSwagger("v1");
+
+            Assert.Equal(new[] { "/A", "/B", "/D", "/F" }, swagger.Paths.Keys.ToArray());
+        }
+
+        [Fact]
+        public void GetSwagger_TagsActions_AccordingToConfiguredStrategy()
+        {
+            var subject = Subject(
+                setupApis: apis =>
+                {
+                    apis.Add("GET", "collection1", nameof(FakeController.ReturnsEnumerable));
+                    apis.Add("GET", "collection2", nameof(FakeController.ReturnsInt));
+                },
+                setupAction: c => c.TagsSelector = (apiDesc) => new[] { apiDesc.RelativePath });
+
+            var paths = subject.GetSwagger("v1").Paths;
+
+            Assert.Equal(new[] { "collection1" }, paths["/collection1"].Operations[OperationType.Get].Tags.Select(t => t.Name));
+            Assert.Equal(new[] { "collection2" }, paths["/collection2"].Operations[OperationType.Get].Tags.Select(t => t.Name));
+        }
+
+        [Fact]
+        public void GetSwagger_SetsOperationIdToNull_ByDefault()
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add("GET", "resource", nameof(FakeController.AcceptsString)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            Assert.Null(swagger.Paths["/resource"].Operations[OperationType.Get].OperationId);
+        }
+
+        [Fact]
+        public void GetSwagger_SetsOperationIdToRouteName_IfProvidedWithHttpMethodAttribute()
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add("GET", "resource", nameof(FakeController.AnnotatedWithRouteName)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            Assert.Equal("GetResource", swagger.Paths["/resource"].Operations[OperationType.Get].OperationId);
+        }
+
+        [Theory]
+        [InlineData("resource/{param}", nameof(FakeController.AcceptsStringFromRoute), ParameterLocation.Path, "string")]
+        [InlineData("resource", nameof(FakeController.AcceptsIntegerFromQuery), ParameterLocation.Query, "integer")]
+        [InlineData("resource", nameof(FakeController.AcceptsStringFromHeader), ParameterLocation.Header, "string")]
+        public void GetSwagger_GeneratesParameters_ForApiParametersThatAreNotBoundToBodyOrForm(
+            string routeTemplate,
+            string actionFixtureName,
+            ParameterLocation expectedLocation,
+            string expectedType)
+        {
+            var subject = Subject(setupApis: apis => apis.Add("POST", routeTemplate, actionFixtureName));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var parameter = swagger.Paths["/" + routeTemplate].Operations[OperationType.Post].Parameters.First();
+            Assert.Equal(expectedLocation, parameter.In);
+            Assert.NotNull(parameter.Schema);
+            Assert.Equal(expectedType, parameter.Schema.Type);
+        }
+
+        [Fact]
+        public void GetSwagger_SetsParameterLocationToQuery_IfApiParameterHasNoExplicitBinding()
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add("GET", "collection", nameof(FakeController.AcceptsString))
+                .Add("POST", "collection", nameof(FakeController.AcceptsComplexType)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var getParameter = swagger.Paths["/collection"].Operations[OperationType.Get].Parameters.First();
+            Assert.Equal(ParameterLocation.Query, getParameter.In);
+            // Multiple post parameters as ApiExplorer flattens out the complex type
+            var postParameters = swagger.Paths["/collection"].Operations[OperationType.Post].Parameters;
+            Assert.All(postParameters, (p) => Assert.Equal(ParameterLocation.Query, p.In));
+        }
+
+        [Fact]
+        public void GetSwagger_SetsParameterTypeString_IfApiParameterHasNoCorrespondingActionParameter()
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add("GET", "collection/{param}", nameof(FakeController.AcceptsNothing)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var parameter = swagger.Paths["/collection/{param}"].Operations[OperationType.Get].Parameters.First();
+            Assert.Equal("param", parameter.Name);
+            Assert.NotNull(parameter.Schema);
+            Assert.Equal("string", parameter.Schema.Type);
+        }
+
+        [Theory]
+        [InlineData("collection/{param}")]
+        [InlineData("collection/{param?}")]
+        public void GetSwagger_SetsParameterRequired_IfApiParameterIsFromRoute(string routeTemplate)
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add("GET", routeTemplate, nameof(FakeController.AcceptsStringFromRoute)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var parameter = swagger.Paths["/collection/{param}"].Operations[OperationType.Get].Parameters.First();
+            Assert.True(parameter.Required);
+        }
+
+        [Theory]
+        [InlineData(nameof(FakeController.AcceptsDataAnnotatedParams), "stringWithNoAttributes", false)]
+        [InlineData(nameof(FakeController.AcceptsDataAnnotatedParams), "stringWithRequired", true)]
+        [InlineData(nameof(FakeController.AcceptsDataAnnotatedParams), "intWithRequired", true)]
+        [InlineData(nameof(FakeController.AcceptsDataAnnotatedType), "StringWithNoAttributes", false)]
+        [InlineData(nameof(FakeController.AcceptsDataAnnotatedType), "StringWithRequired", true)]
+        [InlineData(nameof(FakeController.AcceptsDataAnnotatedType), "IntWithRequired", true)]
+        [InlineData(nameof(FakeController.AcceptsBindingAnnotatedType), "StringWithNoAttributes", false)]
+        [InlineData(nameof(FakeController.AcceptsBindingAnnotatedType), "StringWithBindRequired", true)]
+        [InlineData(nameof(FakeController.AcceptsBindingAnnotatedType), "IntWithBindRequired", true)]
+        public void GetSwagger_SetsParameterRequired_IfApiParameterHasRequiredOrBindRequiredAttribute(
+            string actionFixtureName,
+            string parameterName,
+            bool expectedRequired)
+        {
+            var subject = Subject(setupApis: apis => apis.Add("GET", "collection", actionFixtureName));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var parameter = swagger.Paths["/collection"].Operations[OperationType.Get].Parameters.First(p => p.Name == parameterName);
+            Assert.True(parameter.Required == expectedRequired, $"{parameterName}.required != {expectedRequired}");
+        }
+
+        [Theory]
+        [InlineData(nameof(FakeController.AcceptsOptionalParameter), "param", "foobar")]
+        [InlineData(nameof(FakeController.AcceptsOptionalJsonConvertedEnum), "param", "Value1")]
+        [InlineData(nameof(FakeController.AcceptsDataAnnotatedType), "StringWithDefaultValue", "foobar")]
+        public void GetSwagger_SetsDefaultValue_IfApiParameterIsOptionalOrHasDefaultValueAttribute(
+            string actionFixtureName,
+            string parameterName,
+            string expectedDefaultValue)
+        {
+            var subject = Subject(setupApis: apis => apis.Add("GET", "collection", actionFixtureName));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var parameter = swagger.Paths["/collection"].Operations[OperationType.Get].Parameters.First(p => p.Name == parameterName);
+            Assert.IsType<OpenApiString>(parameter.Schema.Default);
+            Assert.Equal(expectedDefaultValue, ((OpenApiString)parameter.Schema.Default).Value);
+        }
+
+        [Fact]
+        public void GetSwagger_IgnoresParameters_IfApiParameterIsCancellationToken()
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add("GET", "collection", nameof(FakeController.AcceptsCancellationToken)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var operation = swagger.Paths["/collection"].Operations[OperationType.Get];
+            Assert.Empty(operation.Parameters);
+        }
+
+        [Fact]
+        public void GetSwagger_IgnoresParameters_IfApiParameterHasBindNeverAttribute()
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add("GET", "collection", nameof(FakeController.AcceptsBindingAnnotatedType)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var parameterNames = swagger.Paths["/collection"].Operations[OperationType.Get]
+                .Parameters
+                .Select(p => p.Name);
+            Assert.DoesNotContain("PropertyWithBindNever", parameterNames);
+        }
+
+        [Fact]
+        public void GetSwagger_HonorsNullableType()
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add("POST", "collection", nameof(FakeController.AcceptsComplexTypeFromBody)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var schema = swagger.Components.Schemas.FirstOrDefault(e => e.Key == "ComplexType");
+            var property1 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property1");
+            Assert.False(property1.Value.Nullable);
+
+            var property2 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property2");
+            Assert.False(property2.Value.Nullable);
+
+            var property3 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property3");
+            Assert.False(property3.Value.Nullable);
+
+            var property4 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property4");
+            Assert.False(property4.Value.Nullable);
+
+            var property5 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property5");
+            Assert.False(property5.Value.Nullable);
+
+            var property6 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property6");
+            Assert.False(property6.Value.Nullable);
+
+            var property7 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property7");
+            Assert.True(property7.Value.Nullable);
+
+            var property8 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property8");
+            Assert.True(property8.Value.Nullable);
+
+            var property9 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property9");
+            Assert.True(property9.Value.Nullable);
+        }
+
+        [Fact]
+        public void GetSwagger_NamesAllParametersInCamelCase_IfSpecifiedBySettings()
+        {
+            var subject = Subject(
+                setupApis: apis => apis.Add("GET", "collection", nameof(FakeController.AcceptsBindingAnnotatedType)),
+                setupAction: c => c.DescribeAllParametersInCamelCase = true
+            );
+
+            var swagger = subject.GetSwagger("v1");
+
+            var operation = swagger.Paths["/collection"].Operations[OperationType.Get];
+            Assert.Equal(3, operation.Parameters.Count);
+            Assert.Equal("stringWithNoAttributes", operation.Parameters[0].Name);
+            Assert.Equal("stringWithBindRequired", operation.Parameters[1].Name);
+            Assert.Equal("intWithBindRequired", operation.Parameters[2].Name);
+        }
+
+        [Fact]
+        public void GetSwagger_GeneratesRequestBody_ForFirstApiParameterThatIsBoundToBody()
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add("POST", "collection", nameof(FakeController.AcceptsComplexTypeFromBody)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var requestBody = swagger.Paths["/collection"].Operations[OperationType.Post].RequestBody;
+            Assert.NotNull(requestBody);
+            Assert.Equal(new[] { "application/json", "text/json", "application/*+json" }, requestBody.Content.Keys);
+            Assert.All(requestBody.Content.Values, mediaType =>
+            {
+                Assert.NotNull(mediaType.Schema);
+                Assert.NotNull(mediaType.Schema.Reference);
+                Assert.Equal("ComplexType", mediaType.Schema.Reference.Id);
+            });
+        }
+
+        [Fact]
+        public void GetSwagger_GeneratesRequestBody_ForApiParametersThatAreBoundToForm()
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add("POST", "collection", nameof(FakeController.AcceptsComplexTypeFromForm)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var requestBody = swagger.Paths["/collection"].Operations[OperationType.Post].RequestBody;
+            Assert.NotNull(requestBody);
+            Assert.Equal(new[] { "multipart/form-data" }, requestBody.Content.Keys);
+            Assert.All(requestBody.Content.Values, mediaType =>
+            {
+                Assert.NotNull(mediaType.Schema);
+                Assert.Equal(8, mediaType.Schema.Properties.Count);
+                Assert.NotNull(mediaType.Encoding);
+            });
+        }
+
+        [Fact]
+        public void GetSwagger_SetsRequestBodyContentTypesFromConsumesAttribute_IfPresent()
+        {
+            var subject = Subject(setupApis: apis =>
+                apis.Add("POST", "resource", nameof(FakeController.AnnotatedWithConsumes)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var operation = swagger.Paths["/resource"].Operations[OperationType.Post];
+            Assert.Equal(new[] { "application/xml" }, operation.RequestBody.Content.Keys);
+        }
+
+        [Theory]
+        [InlineData(nameof(FakeController.ReturnsVoid), "200", "Success", new string[] { })]
+        [InlineData(nameof(FakeController.ReturnsEnumerable), "200", "Success", new string[] { "application/json", "text/json" })]
+        [InlineData(nameof(FakeController.ReturnsComplexType), "200", "Success", new string[] { "application/json", "text/json" })]
+        [InlineData(nameof(FakeController.ReturnsJObject), "200", "Success", new string[] { "application/json", "text/json" })]
+        [InlineData(nameof(FakeController.ReturnsActionResult), "200", "Success", new string[] { })]
+        [InlineData(nameof(FakeController.AnnotatedWithWithNotModifiedResponseTypeAttributes), "304", "Not Modified", new string[] { })]
+        public void GetSwagger_GeneratesResponses_ForSupportedApiResponseTypes(
+            string actionFixtureName,
+            string expectedStatusCode,
+            string expectedDescriptions,
+            string[] expectedContentTypes)
+        {
+            var subject = Subject(setupApis: apis =>
+                apis.Add("GET", "collection", actionFixtureName));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var responses = swagger.Paths["/collection"].Operations[OperationType.Get].Responses;
+            Assert.Equal(new[] { expectedStatusCode }, responses.Keys.ToArray());
+            var response = responses[expectedStatusCode];
+            Assert.Equal(expectedDescriptions, response.Description);
+            Assert.Equal(expectedContentTypes, response.Content.Keys);
+        }
+
+        [Fact]
+        public void GetSwagger_GeneratesResponsesFromResponseTypeAttributes_IfPresent()
+        {
+            var subject = Subject(setupApis: apis =>
+                apis.Add("GET", "collection", nameof(FakeController.AnnotatedWithResponseTypeAttributes)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var responses = swagger.Paths["/collection"].Operations[OperationType.Get].Responses;
+            Assert.Equal(new[] { "204", "400" }, responses.Keys.ToArray());
+            Assert.Equal("Success", responses["204"].Description);
+            Assert.Empty(responses["204"].Content);
+            Assert.Equal("Bad Request", responses["400"].Description);
+            Assert.NotEmpty(responses["400"].Content);
+        }
+
+        [Fact]
+        public void GetSwagger_SetsResponseContentTypesFromProducesAttribute_IfPresent()
+        {
+            var subject = Subject(setupApis: apis =>
+                apis.Add("GET", "resource", nameof(FakeController.AnnotatedWithProduces)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var operation = swagger.Paths["/resource"].Operations[OperationType.Get];
+            Assert.Equal(new[] { "application/xml" }, operation.Responses["200"].Content.Keys);
+        }
+
+        [Fact]
+        public void GetSwagger_HonorsDefaultResponseFlagOnApiResponseType_IfPresent()
+        {
+            var subject = Subject(setupApis: apis =>
+            {
+                apis.Add("GET", "collection", nameof(FakeController.AnnotatedWithResponseTypeAttributes));
+                var operation = apis.ApiDescriptionGroups.Items[0].Items.First(f => f.RelativePath == "collection");
+                operation.SupportedResponseTypes.Add(new ApiResponseTypeV2 { IsDefaultResponse = true });
+            });
+
+            var swagger = subject.GetSwagger("v1");
+
+            var responses = swagger.Paths["/collection"].Operations[OperationType.Get].Responses;
+            Assert.Equal(new[] { "204", "400", "default" }, responses.Keys);
+            Assert.Equal("Unexpected Error", responses["default"].Description);
+        }
+
+        [Fact]
+        public void GetSwagger_SetsDeprecatedFlag_IfActionsMarkedObsolete()
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add("GET", "collection", nameof(FakeController.MarkedObsolete)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var operation = swagger.Paths["/collection"].Operations[OperationType.Get];
+            Assert.True(operation.Deprecated);
+        }
+
+        [Fact]
+        public void GetSwagger_IncludesSecuritySchemes_IfConfigured()
+        {
+            var subject = Subject(setupAction: c =>
+                c.SecuritySchemes.Add("basic", new OpenApiSecurityScheme
+                {
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "basic"
+                }));
+
+            var swagger = subject.GetSwagger("v1");
+
+            Assert.Equal(new[] { "basic" }, swagger.Components.SecuritySchemes.Keys);
+        }
+
+        [Fact]
+        public void GetSwagger_ExecutesOperationFilters_IfConfigured()
+        {
+            var subject = Subject(
+                setupApis: apis =>
+                {
+                    apis.Add("GET", "collection", nameof(FakeController.ReturnsEnumerable));
+                },
+                setupAction: c =>
+                {
+                    c.OperationFilters.Add(new VendorExtensionsOperationFilter());
+                });
+
+            var swagger = subject.GetSwagger("v1");
+
+            var operation = swagger.Paths["/collection"].Operations[OperationType.Get];
+            Assert.NotEmpty(operation.Extensions);
+        }
+
+        [Fact]
+        public void GetSwagger_ExecutesDocumentFilters_IfConfigured()
+        {
+            var subject = Subject(setupAction: opts =>
+                opts.DocumentFilters.Add(new VendorExtensionsDocumentFilter()));
+
+            var swagger = subject.GetSwagger("v1");
+
+            Assert.NotEmpty(swagger.Extensions);
         }
 
         private SwaggerGenerator Subject(
             Action<FakeApiDescriptionGroupCollectionProvider> setupApis = null,
-            Action<SwaggerGeneratorSettings> configure = null)
+            Action<SwaggerGeneratorOptions> setupAction = null)
         {
             var apiDescriptionsProvider = new FakeApiDescriptionGroupCollectionProvider();
             setupApis?.Invoke(apiDescriptionsProvider);
 
-            var options = new SwaggerGeneratorSettings();
-            options.SwaggerDocs.Add("v1", new Info { Title = "API", Version = "v1" });
+            var options = new SwaggerGeneratorOptions();
+            options.SwaggerDocs.Add("v1", new OpenApiInfo { Title = "API", Version = "v1" });
 
-            configure?.Invoke(options);
+            setupAction?.Invoke(options);
 
             return new SwaggerGenerator(
                 apiDescriptionsProvider,
-                new SchemaRegistryFactory(new JsonSerializerSettings(), new SchemaRegistrySettings()),
+                new SchemaGenerator(new SchemaGeneratorOptions(), new JsonSerializerSettings()),
                 options
             );
         }

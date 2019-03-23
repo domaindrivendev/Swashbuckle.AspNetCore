@@ -1,7 +1,6 @@
-﻿using System.Reflection;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
 
 namespace CustomUIIndex
 {
@@ -14,7 +13,7 @@ namespace CustomUIIndex
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "API V1", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "API V1", Version = "v1" });
             });
         }
 
@@ -26,8 +25,7 @@ namespace CustomUIIndex
 
             app.UseSwaggerUI(c =>
             {
-                c.IndexStream = () => GetType().GetTypeInfo().Assembly
-                    .GetManifestResourceStream("CustomUIIndex.Swagger.index.html");
+                c.IndexStream = () => GetType().Assembly.GetManifestResourceStream("CustomUIIndex.Swagger.index.html");
 
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
             });

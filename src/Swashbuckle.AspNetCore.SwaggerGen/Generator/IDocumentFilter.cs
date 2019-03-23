@@ -1,34 +1,30 @@
-﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Swashbuckle.AspNetCore.Swagger;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public interface IDocumentFilter
     {
-        void Apply(SwaggerDocument swaggerDoc, DocumentFilterContext context);
+        void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context);
     }
 
     public class DocumentFilterContext
     {
         public DocumentFilterContext(
-            ApiDescriptionGroupCollection apiDescriptionsGroups,
             IEnumerable<ApiDescription> apiDescriptions,
-            ISchemaRegistry schemaRegistry)
+            ISchemaGenerator schemaGenerator,
+            SchemaRepository schemaRepository)
         {
-#pragma warning disable CS0618 // Type or member is obsolete
-            ApiDescriptionsGroups = apiDescriptionsGroups;
-#pragma warning restore CS0618 // Type or member is obsolete
             ApiDescriptions = apiDescriptions;
-            SchemaRegistry = schemaRegistry;
+            SchemaGenerator = schemaGenerator;
+            SchemaRepository = schemaRepository;
         }
 
-        [Obsolete("Deprecated: Use ApiDescriptions")]
-        public ApiDescriptionGroupCollection ApiDescriptionsGroups { get; private set; }
+        public IEnumerable<ApiDescription> ApiDescriptions { get; }
 
-        public IEnumerable<ApiDescription> ApiDescriptions { get; private set; }
+        public ISchemaGenerator SchemaGenerator { get; }
 
-        public ISchemaRegistry SchemaRegistry { get; private set; }
+        public SchemaRepository SchemaRepository { get; }
     }
 }

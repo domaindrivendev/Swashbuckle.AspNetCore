@@ -1,7 +1,8 @@
-﻿using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using Newtonsoft.Json;
 
 namespace Swashbuckle.AspNetCore.ReDoc
 {
@@ -33,10 +34,81 @@ namespace Swashbuckle.AspNetCore.ReDoc
         /// </summary>
         public string SpecUrl { get; set; } = "v1/swagger.json";
 
+        public ConfigObject ConfigObject { get; set; } = new ConfigObject();
+    }
+
+    public class ConfigObject
+    {
         /// <summary>
-        /// Gets or sets an "options" object that is serialized to JSON and passed to Redoc.init
-        /// See https://github.com/Rebilly/ReDoc/tree/v1.22.0#advanced-usage for supported options
+        /// If set, the spec is considered untrusted and all HTML/markdown is sanitized to prevent XSS.
+        /// Disabled by default for performance reasons. Enable this option if you work with untrusted user data!
         /// </summary>
-        public object Options { get; set; } = new { };
+        public bool UntrustedSpec { get; set; } = false;
+
+        /// <summary>
+        /// If set, specifies a vertical scroll-offset in pixels.
+        /// This is often useful when there are fixed positioned elements at the top of the page, such as navbars, headers etc
+        /// </summary>
+        public int? ScrollYOffset { get; set; }
+
+        /// <summary>
+        /// If set, the protocol and hostname is not shown in the operation definition
+        /// </summary>
+        public bool HideHostname { get; set; } = false;
+
+        /// <summary>
+        /// Do not show "Download" spec button. THIS DOESN'T MAKE YOUR SPEC PRIVATE, it just hides the button
+        /// </summary>
+        public bool HideDownloadButton { get; set; } = false;
+
+        /// <summary>
+        /// Specify which responses to expand by default by response codes.
+        /// Values should be passed as comma-separated list without spaces e.g. "200,201". Special value "all" expands all responses by default.
+        /// Be careful: this option can slow-down documentation rendering time.
+        /// </summary>
+        public string ExpandResponses { get; set; } = "all";
+
+        /// <summary>
+        /// Show required properties first ordered in the same order as in required array
+        /// </summary>
+        public bool RequiredPropsFirst { get; set; } = false;
+
+        /// <summary>
+        /// Do not inject Authentication section automatically
+        /// </summary>
+        public bool NoAutoAuth { get; set; } = false;
+
+        /// <summary>
+        /// Show path link and HTTP verb in the middle panel instead of the right one
+        /// </summary>
+        public bool PathInMiddlePanel { get; set; } = false;
+
+        /// <summary>
+        /// Do not show loading animation. Useful for small docs
+        /// </summary>
+        public bool HideLoading { get; set; } = false;
+
+        /// <summary>
+        /// Use native scrollbar for sidemenu instead of perfect-scroll (scrolling performance optimization for big specs)
+        /// </summary>
+        public bool NativeScrollbars { get; set; } = false;
+
+        /// <summary>
+        /// Disable search indexing and search box
+        /// </summary>
+        public bool DisableSearch { get; set; } = false;
+
+        /// <summary>
+        /// Show only required fields in request samples
+        /// </summary>
+        public bool OnlyRequiredInSamples { get; set; } = false;
+
+        /// <summary>
+        /// Sort properties alphabetically
+        /// </summary>
+        public bool SortPropsAlphabetically { get; set; } = false;
+
+        [JsonExtensionData]
+        public Dictionary<string, object> AdditionalItems = new Dictionary<string, object>();
     }
 }

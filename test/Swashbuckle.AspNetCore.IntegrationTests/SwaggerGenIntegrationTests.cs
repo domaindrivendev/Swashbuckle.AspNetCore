@@ -1,7 +1,13 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.ApiDescription;
+using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Readers;
+using Swashbuckle.AspNetCore.Swagger;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -10,15 +16,10 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
     public class SwaggerGenIntegrationTests
     {
         private readonly ITestOutputHelper _output;
-        private readonly HttpClient _validatorClient;
 
         public SwaggerGenIntegrationTests(ITestOutputHelper output)
         {
             _output = output;
-            _validatorClient = new HttpClient
-            {
-                BaseAddress = new Uri("http://online.swagger.io")
-            };
         }
 
         [Theory]
@@ -40,6 +41,17 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             swaggerResponse.EnsureSuccessStatusCode();
             await AssertResponseDoesNotContainByteOrderMark(swaggerResponse);
             await AssertValidSwaggerAsync(swaggerResponse);
+        }
+
+        [Fact]
+        public async Task SwaggerEndpoint_ReturnsNotFound_IfUnknownSwaggerDocument()
+        {
+            var testSite = new TestSite(typeof(Basic.Startup));
+            var client = testSite.BuildClient();
+
+            var swaggerResponse = await client.GetAsync("/swagger/v2/swagger.json");
+
+            Assert.Equal(System.Net.HttpStatusCode.NotFound, swaggerResponse.StatusCode);
         }
 
         private async Task AssertResponseDoesNotContainByteOrderMark(HttpResponseMessage swaggerResponse)
@@ -64,13 +76,11 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 
         private async Task AssertValidSwaggerAsync(HttpResponseMessage swaggerResponse)
         {
-            var validationResponse = await _validatorClient.PostAsync("/validator/debug", swaggerResponse.Content);
+            var contentStream = await swaggerResponse.Content.ReadAsStreamAsync();
 
-            validationResponse.EnsureSuccessStatusCode();
-            var validationErrorsString = await validationResponse.Content.ReadAsStringAsync();
-            _output.WriteLine(validationErrorsString);
+            var openApiDocument = new OpenApiStreamReader().Read(contentStream, out OpenApiDiagnostic diagnostic);
 
-            Assert.Equal("{}", validationErrorsString);
+            Assert.Equal(Enumerable.Empty<OpenApiError>(), diagnostic.Errors);
         }
     }
 }

@@ -7,7 +7,7 @@
     <AssemblyName>Swashbuckle.AspNetCore.Annotations</AssemblyName>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly Condition="'$(OS)'=='Windows_NT'">true</SignAssembly>
     <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.Annotations.snk</AssemblyOriginatorKeyFile>
     <Description>Provides custom attributes that can be applied to controllers, actions and models to enrich the generated Swagger</Description>
     <PackageId>Swashbuckle.AspNetCore.Annotations</PackageId>

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <title>%(DocumentTitle)</title>
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700|Source+Code+Pro:300,600|Titillium+Web:400,600,700" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" type="text/css" href="./swagger-ui.css" >
   <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32" />
   <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16" />
@@ -90,7 +90,7 @@
 
     // If oauth2RedirectUrl isn't specified, use the built-in default
     if (!configObject.hasOwnProperty("oauth2RedirectUrl"))
-      configObject.oauth2RedirectUrl = window.location.href.replace("index.html", "oauth2-redirect.html");
+      configObject.oauth2RedirectUrl = window.location.href.replace("index.html", "oauth2-redirect.html").split('#')[0];
 
     // Build a system
     const ui = SwaggerUIBundle(configObject);

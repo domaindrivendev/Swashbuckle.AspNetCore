@@ -3,6 +3,9 @@ image: Visual Studio 2017
 init:
 - git config --global core.autocrlf true
 
+environment:
+  DOTNET_VERSION: 3.0.100-preview3-010431
+
 build_script:
 - ps: ci\build.ps1 
 

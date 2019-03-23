@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.IO;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Swashbuckle.AspNetCore.Swagger;
-using GenericControllers.Swagger;
-using System.IO;
+using Microsoft.OpenApi.Models;
 
 namespace GenericControllers
 {
@@ -17,17 +16,17 @@ namespace GenericControllers
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1",
-                    new Info
+                    new OpenApiInfo
                     {
                         Version = "v1",
                         Title = "Swashbuckle Sample API",
                     }
                 );
 
-                c.OperationFilter<ApplySummariesOperationFilter>();
+                //c.OperationFilter<ApplySummariesOperationFilter>();
 
-                //var xmlCommentsPath = Path.Combine(System.AppContext.BaseDirectory, "GenericControllers.xml");
-                //c.IncludeXmlComments(xmlCommentsPath);
+                var xmlCommentsPath = Path.Combine(System.AppContext.BaseDirectory, "GenericControllers.xml");
+                c.IncludeXmlComments(xmlCommentsPath);
             });
         }
 
@@ -44,7 +43,11 @@ namespace GenericControllers
             // Add the following route for porting Web API 2 controllers.
             // routes.MapWebApiRoute("DefaultApi", "api/{controller}/{id?}");
 
-            app.UseSwagger();
+            app.UseSwagger(c =>
+            {
+                //c.SerializeAsV2 = true;
+            });
+
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");

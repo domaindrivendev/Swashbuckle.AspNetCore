@@ -1,33 +1,35 @@
-﻿using System;
-using System.Reflection;
-using System.Collections.Generic;
+﻿using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public interface IParameterFilter
     {
-        void Apply(IParameter parameter, ParameterFilterContext context);
+        void Apply(OpenApiParameter parameter, ParameterFilterContext context);
     }
 
     public class ParameterFilterContext
     {
         public ParameterFilterContext(
             ApiParameterDescription apiParameterDescription,
-            ISchemaRegistry schemaRegistry,
+            ISchemaGenerator schemaGenerator,
+            SchemaRepository schemaRepository,
             ParameterInfo parameterInfo,
             PropertyInfo propertyInfo)
         {
             ApiParameterDescription = apiParameterDescription;
-            SchemaRegistry = schemaRegistry;
+            SchemaGenerator = schemaGenerator;
+            SchemaRepository = schemaRepository;
             ParameterInfo = parameterInfo;
             PropertyInfo = propertyInfo;
         }
 
         public ApiParameterDescription ApiParameterDescription { get; }
 
-        public ISchemaRegistry SchemaRegistry { get; }
+        public ISchemaGenerator SchemaGenerator { get; }
+
+        public SchemaRepository SchemaRepository { get; }
 
         public ParameterInfo ParameterInfo { get; }
 

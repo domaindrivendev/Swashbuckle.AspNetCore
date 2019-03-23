@@ -1,14 +1,13 @@
 ﻿using System.Linq;
+using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Mvc.Controllers;
-using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using MultipleVersions.Swagger;
-using System.Reflection;
 
 namespace MultipleVersions
 {
@@ -31,8 +30,8 @@ namespace MultipleVersions
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Version = "v1", Title = "API V1" });
-                c.SwaggerDoc("v2", new Info { Version = "v2", Title = "API V2" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Version = "v1", Title = "API V1" });
+                c.SwaggerDoc("v2", new OpenApiInfo { Version = "v2", Title = "API V2" });
 
                 c.DocInclusionPredicate((docName, apiDesc) =>
                 {

@@ -1,11 +1,14 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
-using Swashbuckle.AspNetCore.Swagger;
 using Basic.Swagger;
+using Newtonsoft.Json;
 
 namespace Basic
 {
@@ -29,6 +32,8 @@ namespace Basic
                     options.SerializerSettings.ContractResolver = new DefaultContractResolver();
                 });
 
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
+
             // Uncomment the following line to add Web API services which makes it easier to port Web API 2 controllers.
             // You will also need to add the Microsoft.AspNetCore.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.
             // services.AddWebApiConventions();
@@ -36,25 +41,26 @@ namespace Basic
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1",
-                    new Info
+                    new OpenApiInfo
                     {
-                        Version = "v1",
                         Title = "Swashbuckle Sample API",
+                        Version = "v1",
                         Description = "A sample API for testing Swashbuckle",
-                        TermsOfService = "Some terms ..."
+                        TermsOfService = new Uri("http://tempuri.org/terms")
                     }
                 );
 
                 c.ParameterFilter<TestParameterFilter>();
 
                 c.OperationFilter<AssignOperationVendorExtensions>();
-                c.OperationFilter<FormDataOperationFilter>();
 
                 c.DescribeAllEnumsAsStrings();
 
                 c.SchemaFilter<ExamplesSchemaFilter>();
 
                 //c.DescribeAllParametersInCamelCase();
+
+                c.GeneratePolymorphicSchemas();
 
                 c.EnableAnnotations();
             });
@@ -83,13 +89,17 @@ namespace Basic
 
             app.UseSwagger(c =>
             {
-                c.PreSerializeFilters.Add((swagger, httpReq) => swagger.Host = httpReq.Host.Value);
+                c.PreSerializeFilters.Add((swagger, httpReq) =>
+                {
+                    swagger.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" } };
+                });
             });
 
             app.UseSwaggerUI(c =>
             {
                 c.RoutePrefix = ""; // serve the UI at root
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
+                c.DisplayOperationId();
             });
         }
     }

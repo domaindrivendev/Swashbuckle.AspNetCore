@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.OpenApi.Models;
 using Xunit;
-using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Annotations.Test
@@ -13,20 +13,19 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
         [Fact]
         public void Apply_CreatesMetadataForControllerNameTag_FromSwaggerTagAttribute()
         {
-            var document = new SwaggerDocument();
+            var document = new OpenApiDocument();
             var filterContext = FilterContextFor<TestController>();
 
             Subject().Apply(document, filterContext);
 
             var tag = document.Tags.Single(t => t.Name == "TestController");
             Assert.Equal("description for TestController", tag.Description);
-            Assert.Equal("http://tempuri.org", tag.ExternalDocs.Url);
+            Assert.Equal("http://tempuri.org/", tag.ExternalDocs.Url.ToString());
         }
 
         private DocumentFilterContext FilterContextFor<TController>()
         {
             return new DocumentFilterContext(
-                null,
                 new[]
                 {
                     new ApiDescription
@@ -38,6 +37,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
                         }
                     },
                 },
+                null,
                 null);
         }
 

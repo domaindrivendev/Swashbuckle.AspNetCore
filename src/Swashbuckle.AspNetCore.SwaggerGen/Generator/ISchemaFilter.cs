@@ -1,30 +1,34 @@
 ﻿using System;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public interface ISchemaFilter
     {
-        void Apply(Schema schema, SchemaFilterContext context);
+        void Apply(OpenApiSchema schema, SchemaFilterContext context);
     }
 
     public class SchemaFilterContext
     {
         public SchemaFilterContext(
-            Type systemType,
+            Type type,
             JsonContract jsonContract,
-            ISchemaRegistry schemaRegistry)
+            SchemaRepository schemaRepository,
+            ISchemaGenerator schemaGenerator)
         {
-            SystemType = systemType;
+            Type = type;
             JsonContract = jsonContract;
-            SchemaRegistry = schemaRegistry;
+            SchemaRepository = schemaRepository;
+            SchemaGenerator = schemaGenerator;
         }
 
-        public Type SystemType { get; private set; }
+        public Type Type { get; }
 
-        public JsonContract JsonContract { get; private set; }
+        public JsonContract JsonContract { get; }
 
-        public ISchemaRegistry SchemaRegistry { get; private set; }
+        public SchemaRepository SchemaRepository { get; }
+
+        public ISchemaGenerator SchemaGenerator { get; }
     }
 }

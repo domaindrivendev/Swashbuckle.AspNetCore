@@ -2,7 +2,7 @@
 
 namespace GenericControllers.Controllers
 {
-    [Route("orders")]
+    [Route("{tennantId}/orders")]
     public class OrdersController : GenericResourceController<Order>
     { }
 

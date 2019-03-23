@@ -1,6 +1,6 @@
-| :mega: Upgrading to version 3.x? |
+| :mega: Important for anyone upgrading major versions! |
 |--------------|
-|If you're upgrading from 2.x to 3.x, there's a couple of breaking changes to be aware of. See the [release notes](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/releases/tag/v3.0.0) for details|
+|* If you're upgrading from 2.x to 3.x, there's a couple of breaking changes to be aware of. See the [release notes](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/releases/tag/v3.0.0) for details<br />* If you're upgrading from 3.x to 4.x, there's more breaking changes to be aware of. See those [release notes here](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/releases/tag/v4.0.0)|
 
 Swashbuckle.AspNetCore
 =========
@@ -17,12 +17,13 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 # Compatibility #
 
-|Swashbuckle Version|ASP.NET Core|Swagger (OpenAPI) Spec.|swagger-ui|
-|----------|----------|----------|----------|
-|[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master)|>=2.0.0|2.0|3.17.1|
-|[3.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v3.0.0)|>=1.0.4|2.0|3.17.1|
-|[2.5.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v2.5.0)|>=1.0.4|2.0|3.16.0|
-|[1.2.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v1.2.0)|>=1.0.4|2.0|2.2.10|
+|Swashbuckle Version|ASP.NET Core|Swagger / OpenAPI Spec.|swagger-ui|ReDoc UI|
+|----------|----------|----------|----------|----------|
+|[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master/README-v5.md)|>=2.0.0|2.0, 3.0|3.20.9|2.0.0-rc.2|
+|[5.0.0-beta](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master/README-v5.md)|>=2.0.0|2.0, 3.0|3.19.5|1.22.2|
+|[4.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v4.0.0)|>=2.0.0|2.0|3.19.5|1.22.2|
+|[3.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v3.0.0)|>=1.0.4|2.0|3.17.1|1.20.0|
+|[2.5.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v2.5.0)|>=1.0.4|2.0|3.16.0|1.20.0|
 
 # Getting Started #
 
@@ -36,6 +37,8 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 2. In the _ConfigureServices_ method of _Startup.cs_, register the Swagger generator, defining one or more Swagger documents.
 
     ```csharp
+    using Swashbuckle.AspNetCore.Swagger;
+    
     services.AddMvc();
 
     services.AddSwaggerGen(c =>
@@ -48,11 +51,11 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
     ```csharp
     [HttpPost]
-    public void Create([FromBody]Product product)
+    public void CreateProduct([FromBody]Product product)
     ...
 
     [HttpGet]
-    public IEnumerable<Product> Search([FromQuery]string keywords)
+    public IEnumerable<Product> SearchProducts([FromQuery]string keywords)
     ...
     ```
 
@@ -79,7 +82,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 # Swashbuckle, ApiExplorer, and Routing #
 
-Swashbuckle relies heavily on _ApiExplorer_, the API metadata layer that ships with ASP.NET Core. If you're using the _AddMvc_ helper to bootstrap the MVC stack, then _ApiExplorer_ will be automatically registered and SB will work without issue. However, if you're using _AddMvcCore_ for a more paired-down MVC stack, you'll need to explicitly add the Api Explorer service:
+Swashbuckle relies heavily on _ApiExplorer_, the API metadata layer that ships with ASP.NET Core. If you're using the _AddMvc_ helper to bootstrap the MVC stack, then _ApiExplorer_ will be automatically registered and SB will work without issue. However, if you're using _AddMvcCore_ for a more pared-down MVC stack, you'll need to explicitly add the Api Explorer service:
 
 ```csharp
 services.AddMvcCore()
@@ -130,6 +133,15 @@ Additionally, there's add-on packages (CLI tools, [an alternate UI](https://gith
 |Swashbuckle.AspNetCore.Cli (Beta)|Provides a CLI interface for retrieving Swagger directly from a startup assembly, and writing to file|
 |Swashbuckle.AspNetCore.ReDoc|Exposes an embedded version of the ReDoc UI (an alternative to swagger-ui)|
 
+## Community Packages ##
+
+These packages are provided by the open-source community.
+
+|Package|Description|
+|---------|-----------|
+|[Swashbuckle.AspNetCore.Filters](https://github.com/mattfrear/Swashbuckle.AspNetCore.Filters)| Some useful Swashbuckle filters which add additional documentation, e.g. request and response examples, a file upload button, etc. See its Readme for more details |
+|[MicroElements.Swashbuckle.FluentValidation](https://github.com/micro-elements/MicroElements.Swashbuckle.FluentValidation)| Use FluentValidation rules instead of ComponentModel attributes to augment generated Swagger Schemas |
+
 # Configuration & Customization #
 
 The steps described above will get you up and running with minimal setup. However, Swashbuckle offers a lot of flexibility to customize as you see fit. Check out the table below for the full list of options:
@@ -142,6 +154,7 @@ The steps described above will get you up and running with minimal setup. Howeve
 
 * [Swashbuckle.AspNetCore.SwaggerGen](#swashbuckleaspnetcoreswaggergen)
 
+    * [Assign Explicit OperationIds](#assign-explicit-operationids)
     * [List Operations Responses](#list-operation-responses)
     * [Flag Required Parameters and Schema Properties](#flag-required-parameters-and-schema-properties)
     * [Include Descriptions from XML Comments](#include-descriptions-from-xml-comments)
@@ -158,7 +171,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Add Security Definitions and Requirements](#add-security-definitions-and-requirements)
 
 * [Swashbuckle.AspNetCore.SwaggerUI](#swashbuckleaspnetcoreswaggerui)
-    * [Change Releative Path to the UI](#change-relative-path-to-the-ui)
+    * [Change Relative Path to the UI](#change-relative-path-to-the-ui)
     * [Change Document Title](#change-document-title)
     * [List Multiple Swagger Documents](#list-multiple-swagger-documents)
     * [Apply swagger-ui Parameters](#apply-swagger-ui-parameters)
@@ -229,6 +242,37 @@ services.AddMvc()
 
 ## Swashbuckle.AspNetCore.SwaggerGen ##
 
+### Assign Explicit OperationIds ###
+
+In Swagger, Operations can be a assigned a unique `operationId`. This is often used by code generation tools (e.g. client libraries) and so, it's important for the value to follow common programming conventions while also revealing the purpose of the operation. To best meet these goals, Swashbuckle requires API authors to provide the value explicitly and provides two different options to do so:
+
+__Option 1) Action Names__
+
+```csharp
+[HttpGet("{id}")]
+public IActionResult GetProductById(int id) // operationId = "GetProductById"
+```
+
+__Option 2) Route Names__
+
+```csharp
+[HttpGet("{id}", Name = "GetProductById")]
+public IActionResult Get(int id) // operationId = "GetProductById"
+```
+
+_NOTE: In both cases, API authors are responsible for ensuring the uniqueness of `operationId`s across all Operations_
+
+__Display Operations In SwaggerUI__
+To display the operations in you SwaggerUI, you need to invoke `DisplayOperationId()` on the `SwaggerUIOptions` as follows:
+```csharp
+app.UseSwaggerUI(c =>
+{
+	...
+    c.DisplayOperationId();
+    ...
+}
+```
+
 ### List Operation Responses ###
 
 By default, Swashbuckle will generate a "200" response for each operation. If the action returns a response DTO, then this will be used to generate a "schema" for the response body. For example ...
@@ -294,7 +338,7 @@ In a Swagger document, you can flag parameters and schema properties that are re
 
 ```csharp
 // ProductsController.cs
-public IActionResult Search(FromQuery, BindRequired]string keywords, [FromQuery]PagingParams pagingParams)
+public IActionResult Search([FromQuery, BindRequired]string keywords, [FromQuery]PagingParams pagingParams)
 {
     if (!ModelState.IsValid)
         return BadRequest(ModelState);
@@ -974,7 +1018,7 @@ public IActionResult Create([FromBody]Product product)
 ASP.NET Core provides the `ProducesResponseTypeAttribute` for listing the different responses that can be returned by an action. These attributes can be combined with XML comments, as described [above](#include-descriptions-from-xml-comments), to include human friendly descriptions with each response in the generated Swagger. If you'd prefer to do all of this with a single attribute, and avoid the use of XML comments, you can alternatively apply one or more `SwaggerResponseAttributes`:
 
 ```csharp
-[HttpPost)]
+[HttpPost]
 [SwaggerResponse(201, "The product was created", typeof(Product))]
 [SwaggerResponse(400, "The product data is invalid")]
 public IActionResult Create([FromBody]Product product)
@@ -996,7 +1040,7 @@ The `SwaggerGen` package provides several extension points, including Schema Fil
 
 ```csharp
 // Product.cs
-[SwaggerSchemaFilter(typeof(ProductSchemaFilter))
+[SwaggerSchemaFilter(typeof(ProductSchemaFilter))]
 public class Product
 {
 	...

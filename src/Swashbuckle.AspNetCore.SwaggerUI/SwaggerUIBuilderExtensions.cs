@@ -1,29 +1,27 @@
 ﻿using System;
-using System.Reflection;
-using Microsoft.Extensions.FileProviders;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace Microsoft.AspNetCore.Builder
 {
     public static class SwaggerUIBuilderExtensions
     {
-        private const string EmbeddedFilesNamespace = "Swashbuckle.AspNetCore.SwaggerUI.node_modules.swagger_ui_dist";
-
         public static IApplicationBuilder UseSwaggerUI(
             this IApplicationBuilder app,
             Action<SwaggerUIOptions> setupAction = null)
         {
-            var options = new SwaggerUIOptions();
-            setupAction?.Invoke(options);
-
-            var assembly = typeof(SwaggerUIBuilderExtensions).GetTypeInfo().Assembly;
-
-            app.UseMiddleware<SwaggerUIIndexMiddleware>(options);
-            app.UseFileServer(new FileServerOptions
+            if (setupAction == null)
             {
-                RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
-                FileProvider = new EmbeddedFileProvider(typeof(SwaggerUIBuilderExtensions).GetTypeInfo().Assembly, EmbeddedFilesNamespace),
-            });
+                // Don't pass options so it can be configured/injected via DI container instead
+                app.UseMiddleware<SwaggerUIMiddleware>();
+            }
+            else
+            {
+                // Configure an options instance here and pass directly to the middleware
+                var options = new SwaggerUIOptions();
+                setupAction.Invoke(options);
+
+                app.UseMiddleware<SwaggerUIMiddleware>(options);
+            }
 
             return app;
         }
