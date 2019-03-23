@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Linq;
-using System.Xml.XPath;
-using System.Reflection;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Xml.XPath;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
 
@@ -50,7 +50,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (methodNode != null)
             {
                 ApplyMethodXmlToOperation(operation, methodNode);
-                ApplyParamsXmlToActionParameters(operation.Parameters, context.ApiDescription, methodNode);
+                ApplyParamsXmlToActionParameters(operation.Parameters, operation.RequestBody, context.ApiDescription, methodNode);
                 ApplyResponsesXmlToResponses(operation.Responses, methodNode.Select(ResponsesXPath)); // will override controller-level response tags
             }
 
@@ -89,6 +89,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private void ApplyParamsXmlToActionParameters(
             IList<OpenApiParameter> parameters,
+            OpenApiRequestBody requestBody,
             ApiDescription apiDescription,
             XPathNavigator methodNode)
         {
@@ -105,6 +106,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var paramNode = methodNode.SelectSingleNode(string.Format(ParamXPath, actionParameter.Name));
                 if (paramNode != null)
                     parameter.Description = XmlCommentsTextHelper.Humanize(paramNode.InnerXml);
+            }
+
+            if (requestBody != null)
+            {
+                var actionParameter = apiDescription.ParameterDescriptions
+                    .FirstOrDefault(p => p.IsFromBody());
+
+                if (actionParameter != null)
+                {
+                    var paramNode = methodNode.SelectSingleNode(string.Format(ParamXPath, actionParameter.Name));
+                    if (paramNode != null)
+                        requestBody.Description = XmlCommentsTextHelper.Humanize(paramNode.InnerXml);
+                }
             }
         }
 
