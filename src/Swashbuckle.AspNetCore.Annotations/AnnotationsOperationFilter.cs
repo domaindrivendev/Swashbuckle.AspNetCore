@@ -69,8 +69,7 @@ namespace Swashbuckle.AspNetCore.Annotations
 
         private void ApplySwaggerResponseAttributes(
             OpenApiOperation operation,
-            IEnumerable<object> actionAndControllerAttributes,
-            OperationFilterContext context)
+            IEnumerable<object> actionAndControllerAttributes)
         {
             var swaggerResponseAttributes = actionAndControllerAttributes
                 .OfType<SwaggerResponseAttribute>();
@@ -81,7 +80,7 @@ namespace Swashbuckle.AspNetCore.Annotations
 
                 if (operation.Responses == null)
                 {
-                    operation.Responses = new Dictionary<string, OpenApiResponse>();
+                    operation.Responses = new OpenApiResponses();
                 }
 
                 if (!operation.Responses.TryGetValue(statusCode, out OpenApiResponse response))

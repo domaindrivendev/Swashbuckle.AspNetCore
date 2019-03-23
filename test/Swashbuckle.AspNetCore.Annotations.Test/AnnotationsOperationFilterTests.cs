@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
-using Xunit;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Xunit;
 
@@ -77,12 +75,12 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
         [Fact]
         public void Apply_EnrichesResponseMetadata_IfActionAndControllerNotDecoratedWithSwaggerResponseAttribute()
         {
-            var operation = new Operation
+            var operation = new OpenApiOperation
             {
                 OperationId = "foobar",
-                Responses = new Dictionary<string, Response>()
+                Responses = new OpenApiResponses()
                 {
-                    { "400", new Response { } },
+                    { "400", new OpenApiResponse { } },
                 }
             };
             var filterContext = FilterContextFor(nameof(TestController2.ActionWithNoAttributesInBaseClass));
