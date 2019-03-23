@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
-using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Any;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
-using System.ComponentModel;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -243,8 +243,25 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var requestContentTypes = InferRequestContentTypes(apiDescription, methodAttributes);
             if (!requestContentTypes.Any()) return null;
 
+            var bodyParameter = apiDescription.ParameterDescriptions
+                .FirstOrDefault(paramDesc => paramDesc.IsFromBody());
+
+            bool isRequired = false;
+
+            if (bodyParameter != null)
+            {
+                bodyParameter.GetAdditionalMetadata(
+                    apiDescription,
+                    out ParameterInfo parameterInfo,
+                    out PropertyInfo propertyInfo,
+                    out IEnumerable<object> parameterOrPropertyAttributes);
+
+                isRequired = parameterOrPropertyAttributes.Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
+            }
+
             return new OpenApiRequestBody
             {
+                Required = isRequired,
                 Content = requestContentTypes
                     .ToDictionary(
                         contentType => contentType,

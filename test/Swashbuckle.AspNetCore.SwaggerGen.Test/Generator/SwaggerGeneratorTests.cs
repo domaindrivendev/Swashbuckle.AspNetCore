@@ -405,6 +405,27 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var requestBody = swagger.Paths["/collection"].Operations[OperationType.Post].RequestBody;
             Assert.NotNull(requestBody);
+            Assert.False(requestBody.Required);
+            Assert.Equal(new[] { "application/json", "text/json", "application/*+json" }, requestBody.Content.Keys);
+            Assert.All(requestBody.Content.Values, mediaType =>
+            {
+                Assert.NotNull(mediaType.Schema);
+                Assert.NotNull(mediaType.Schema.Reference);
+                Assert.Equal("ComplexType", mediaType.Schema.Reference.Id);
+            });
+        }
+
+        [Fact]
+        public void GetSwagger_GeneratesRequestBody_ForFirstApiParameterThatIsBoundToBody_ThatIsRequired()
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add("POST", "collection", nameof(FakeController.AcceptsComplexTypeFromBodyThatIsRequired)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var requestBody = swagger.Paths["/collection"].Operations[OperationType.Post].RequestBody;
+            Assert.NotNull(requestBody);
+            Assert.True(requestBody.Required);
             Assert.Equal(new[] { "application/json", "text/json", "application/*+json" }, requestBody.Content.Keys);
             Assert.All(requestBody.Content.Values, mediaType =>
             {
