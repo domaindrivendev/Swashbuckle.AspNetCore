@@ -1,4 +1,4 @@
-window.onload = function () {
+window.onload = function() {
     var configObject = JSON.parse(document.getElementById('config').value);
     var oauthConfigObject = JSON.parse(document.getElementById('oath2').value);
 
