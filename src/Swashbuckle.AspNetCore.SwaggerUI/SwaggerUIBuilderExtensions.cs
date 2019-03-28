@@ -22,7 +22,7 @@ namespace Microsoft.AspNetCore.Builder
             var assembly = typeof(SwaggerUIBuilderExtensions).GetTypeInfo().Assembly;
             var requestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}";
 
-            app.UseMiddleware<SwaggerUIIndexMiddleware>(options);
+            app.UseMiddleware<SwaggerUIMiddleware>(options);
             app.UseFileServer(new FileServerOptions
             {
                 RequestPath = requestPath,
