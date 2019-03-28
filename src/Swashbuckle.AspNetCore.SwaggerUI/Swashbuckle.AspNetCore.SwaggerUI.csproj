@@ -25,6 +25,9 @@
 
   <ItemGroup>
     <EmbeddedResource Include="index.html" />
+	<EmbeddedResource Include="css\style.css" />
+    <EmbeddedResource Include="js\config.js" />
+    <EmbeddedResource Include="js\edge-fix.js" />
     <EmbeddedResource Include="node_modules/swagger-ui-dist/**/*" Exclude="**/*/*.map;**/*/*.json;**/*/*.md" />
   </ItemGroup>
 
