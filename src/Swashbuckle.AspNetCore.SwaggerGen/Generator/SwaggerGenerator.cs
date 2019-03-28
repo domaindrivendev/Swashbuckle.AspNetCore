@@ -240,42 +240,52 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             IEnumerable<object> methodAttributes,
             SchemaRepository schemaRepository)
         {
-            var requestContentTypes = InferRequestContentTypes(apiDescription, methodAttributes);
-            if (!requestContentTypes.Any()) return null;
-
             var bodyParameter = apiDescription.ParameterDescriptions
                 .FirstOrDefault(paramDesc => paramDesc.IsFromBody());
 
-            bool isRequired = false;
-
             if (bodyParameter != null)
-            {
-                bodyParameter.GetAdditionalMetadata(
-                    apiDescription,
-                    out ParameterInfo parameterInfo,
-                    out PropertyInfo propertyInfo,
-                    out IEnumerable<object> parameterOrPropertyAttributes);
+                return GenerateRequestBodyFromBodyParameter(apiDescription, methodAttributes, schemaRepository, bodyParameter);
 
-                isRequired = parameterOrPropertyAttributes.Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
-            }
+            var formParameters = apiDescription.ParameterDescriptions
+                .Where(paramDesc => paramDesc.IsFromForm());
+
+            if (formParameters != null)
+                return GenerateRequestBodyFromFormParameters(apiDescription, methodAttributes, schemaRepository, formParameters);
+
+            return null;
+        }
+
+        private OpenApiRequestBody GenerateRequestBodyFromBodyParameter(
+            ApiDescription apiDescription,
+            IEnumerable<object> methodAttributes,
+            SchemaRepository schemaRepository,
+            ApiParameterDescription bodyParameter)
+        {
+            var contentTypes = InferRequestContentTypes(apiDescription, methodAttributes);
+
+            bodyParameter.GetAdditionalMetadata(apiDescription,
+                out ParameterInfo parameterInfo,
+                out PropertyInfo propertyInfo,
+                out IEnumerable<object> parameterOrPropertyAttributes);
+
+            var isRequired = parameterOrPropertyAttributes.Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
 
             return new OpenApiRequestBody
             {
                 Required = isRequired,
-                Content = requestContentTypes
+                Content = contentTypes
                     .ToDictionary(
                         contentType => contentType,
-                        contentType => GenerateRequestMediaType(contentType, apiDescription, schemaRepository)
+                        contentType => new OpenApiMediaType
+                        {
+                            Schema = _schemaGenerator.GenerateSchema(bodyParameter.Type, schemaRepository)
+                        }
                     )
             };
         }
 
         private IEnumerable<string> InferRequestContentTypes(ApiDescription apiDescription, IEnumerable<object> methodAttributes)
         {
-            // If there's no api parameters from body or form, return an empty list (i.e. no content)
-            if (!apiDescription.ParameterDescriptions.Any(apiParam => apiParam.IsFromBody() || apiParam.IsFromForm()))
-                return Enumerable.Empty<string>();
-
             // If there's content types explicitly specified via ConsumesAttribute, use them
             var explicitContentTypes = methodAttributes.OfType<ConsumesAttribute>()
                 .SelectMany(attr => attr.ContentTypes)
@@ -288,47 +298,34 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 .Distinct();
             if (apiExplorerContentTypes.Any()) return apiExplorerContentTypes;
 
-            // As a last resort, try to infer from parameter bindings
-            return apiDescription.ParameterDescriptions.Any(paramDesc => paramDesc.IsFromForm())
-                ? new[] { "multipart/form-data" }
-                : Enumerable.Empty<string>();
+            return Enumerable.Empty<string>();
         }
 
-        private OpenApiMediaType GenerateRequestMediaType(
-            string contentType,
+        private OpenApiRequestBody GenerateRequestBodyFromFormParameters(
             ApiDescription apiDescription,
-            SchemaRepository schemaRepository)
+            IEnumerable<object> methodAttributes,
+            SchemaRepository schemaRepository,
+            IEnumerable<ApiParameterDescription> formParameters)
         {
-            // If there's form parameters, generate the form-flavoured media type  
-            var apiParametersFromForm = apiDescription.ParameterDescriptions
-                .Where(paramDesc => paramDesc.IsFromForm());
+            var contentTypes = InferRequestContentTypes(apiDescription, methodAttributes);
+            contentTypes = contentTypes.Any() ? contentTypes : new[] { "multipart/form-data" };
 
-            if (apiParametersFromForm.Any())
+            var schema = GenerateSchemaFromApiParameters(apiDescription, formParameters, schemaRepository);
+
+            return new OpenApiRequestBody
             {
-                var schema = GenerateSchemaFromApiParameters(apiDescription, apiParametersFromForm, schemaRepository);
-
-                // Provide schema and corresponding encoding map to specify "form" serialization style for all properties
-                // This indicates that array properties must be submitted as multiple parameters with the same name.
-                // NOTE: the swagger-ui doesn't currently support arrays of files - https://github.com/swagger-api/swagger-ui/issues/4600
-                // NOTE: the swagger-ui doesn't currently honor encoding metadata - https://github.com/swagger-api/swagger-ui/issues/4836 
-
-                return new OpenApiMediaType
-                {
-                    Schema = schema,
-                    Encoding = schema.Properties.ToDictionary(
-                        entry => entry.Key,
-                        entry => new OpenApiEncoding { Style = ParameterStyle.Form }
+                Content = contentTypes
+                    .ToDictionary(
+                        contentType => contentType,
+                        contentType => new OpenApiMediaType
+                        {
+                            Schema = schema,
+                            Encoding = schema.Properties.ToDictionary(
+                                entry => entry.Key,
+                                entry => new OpenApiEncoding { Style = ParameterStyle.Form }
+                            )
+                        }
                     )
-                };
-            } 
-
-            // Otherwise, generate a regular media type
-            var apiParameterFromBody = apiDescription.ParameterDescriptions
-                .First(paramDesc => paramDesc.IsFromBody());
-
-            return new OpenApiMediaType
-            {
-                Schema = _schemaGenerator.GenerateSchema(apiParameterFromBody.Type, schemaRepository)
             };
         }
 
