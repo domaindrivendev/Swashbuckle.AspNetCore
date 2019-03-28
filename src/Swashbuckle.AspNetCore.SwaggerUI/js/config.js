@@ -15,4 +15,4 @@ window.onload = function() {
 
      // Apply OAuth config
     ui.initOAuth(oauthConfigObject);
-} 
+};
