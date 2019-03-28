@@ -13,8 +13,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class ObjectSchemaGenerator : ChainableSchemaGenerator
     {
-        public ObjectSchemaGenerator(SchemaGeneratorOptions options, ISchemaGenerator rootGenerator, IContractResolver contractResolver)
-            : base(options, rootGenerator, contractResolver)
+        public ObjectSchemaGenerator(
+            IContractResolver contractResolver,
+            ISchemaGenerator rootGenerator,
+            SchemaGeneratorOptions options)
+            : base(contractResolver, rootGenerator, options)
         { }
 
         protected override bool CanGenerateSchemaFor(Type type)
@@ -26,8 +29,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var jsonObjectContract = (JsonObjectContract)ContractResolver.ResolveContract(type);
 
-            var requiredPropertyNames = new List<string>();
             var properties = new Dictionary<string, OpenApiSchema>();
+            var requiredPropertyNames = new List<string>();
 
             foreach (var jsonProperty in jsonObjectContract.Properties)
             {
@@ -39,10 +42,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 if (Options.IgnoreObsoleteProperties && attributes.OfType<ObsoleteAttribute>().Any()) continue;
 
+                properties.Add(jsonProperty.PropertyName, GeneratePropertySchema(jsonProperty, memberInfo, attributes, schemaRepository));
+
                 if (jsonProperty.Required == Required.AllowNull || jsonProperty.Required == Required.Always || attributes.OfType<RequiredAttribute>().Any())
                     requiredPropertyNames.Add(jsonProperty.PropertyName);
 
-                properties.Add(jsonProperty.PropertyName, GeneratePropertySchema(jsonProperty, attributes, schemaRepository));
             }
 
             var additionalProperties = (jsonObjectContract.ExtensionDataValueType != null)
@@ -61,7 +65,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return schema;
         }
 
-        private OpenApiSchema GeneratePropertySchema(JsonProperty jsonProperty, object[] attributes, SchemaRepository schemaRepository) 
+        private OpenApiSchema GeneratePropertySchema(
+            JsonProperty jsonProperty,
+            MemberInfo memberInfo,
+            object[] attributes,
+            SchemaRepository schemaRepository) 
         {
             var schema = RootGenerator.GenerateSchema(jsonProperty.PropertyType, schemaRepository);
 

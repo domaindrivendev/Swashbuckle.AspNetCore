@@ -4,6 +4,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public interface ISerializerSettingsAccessor
     {
-        JsonSerializerSettings SerializerSettings { get; }
+        JsonSerializerSettings Value { get; }
     }
 }

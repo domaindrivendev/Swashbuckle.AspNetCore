@@ -8,7 +8,7 @@ namespace Basic.Controllers
     {
         [HttpPost("payments/authorize")]
         [ProducesResponseType(200, Type = typeof(int))]
-        public IActionResult AuthorizePayment([FromBody]PaymentRequest request)
+        public IActionResult AuthorizePayment([FromBody, Required]PaymentRequest request)
         {
             if (!ModelState.IsValid)
                 return new BadRequestObjectResult(ModelState);

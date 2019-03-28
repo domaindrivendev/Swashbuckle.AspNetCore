@@ -8,8 +8,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class TypeSpecificSchemaGenerator : ChainableSchemaGenerator
     {
-        public TypeSpecificSchemaGenerator(SchemaGeneratorOptions options, ISchemaGenerator rootGenerator, IContractResolver contractResolver)
-            : base(options, rootGenerator, contractResolver)
+        public TypeSpecificSchemaGenerator(
+            IContractResolver contractResolver,
+            ISchemaGenerator rootGenerator,
+            SchemaGeneratorOptions options)
+            : base(contractResolver, rootGenerator, options)
         { }
 
         protected override bool CanGenerateSchemaFor(Type type)
