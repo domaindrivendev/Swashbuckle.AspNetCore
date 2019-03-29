@@ -146,6 +146,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Theory]
         [InlineData(typeof(int[]), "integer", "int32")]
         [InlineData(typeof(IEnumerable<string>), "string", null)]
+        [InlineData(typeof(DateTime?[]), "string", "date-time")]
         public void GenerateSchema_GeneratesArraySchema_IfEnumerableType(
             Type type,
             string expectedItemsType,
