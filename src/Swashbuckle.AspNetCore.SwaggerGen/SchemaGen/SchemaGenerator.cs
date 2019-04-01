@@ -40,10 +40,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             // Check if is nullable
             var isNullable = type.IsNullable() || type.IsFSharpOption();
 
-            // Update type
-            type = isNullable
-                ? type.GenericTypeArguments[0]
-                : type;
+            if (isNullable)
+            {
+                type = type.IsArray
+                    ? type.GetGenericArguments()[0].MakeArrayType()
+                    : type.GenericTypeArguments[0];
+            }
 
             var schema = _generatorChain.GenerateSchema(type, schemaRepository);
 
