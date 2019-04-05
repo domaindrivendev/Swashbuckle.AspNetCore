@@ -111,6 +111,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     schema.MinLength = stringLength.MinimumLength;
                     schema.MaxLength = stringLength.MaximumLength;
                 }
+                else if (attribute is EmailAddressAttribute)
+                {
+                    schema.Format = "email";
+                }
+                else if (attribute is CreditCardAttribute)
+                {
+                    schema.Format = "credit-card";
+                }
+                else if (attribute is PhoneAttribute)
+                {
+                    schema.Format = "tel";
+                }
                 else if (attribute is DataTypeAttribute dataTypeAttribute && schema.Type == "string")
                 {
                     schema.Format = DataTypeFormatMap.TryGetValue(dataTypeAttribute.DataType, out string format)
@@ -126,7 +138,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             { DataType.Date, "date" },
             { DataType.DateTime, "date-time" },
-            { DataType.Password, "password" }
+            { DataType.Time, "time" },
+            { DataType.Duration, "duration" },
+            { DataType.PhoneNumber, "tel" },
+            { DataType.Currency, "currency" },
+            { DataType.Text, "string" },
+            { DataType.Html, "html" },
+            { DataType.MultilineText, "multiline" },
+            { DataType.EmailAddress, "email" },
+            { DataType.Password, "password" },
+            { DataType.Url, "uri" },
+            { DataType.ImageUrl, "uri" },
+            { DataType.CreditCard, "credit-card" },
+            { DataType.PostalCode, "postal-code" },
         };
     }
 }
