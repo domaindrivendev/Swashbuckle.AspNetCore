@@ -6,15 +6,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class ReferencedSchemaGenerator : ChainableSchemaGenerator
     {
-        public ReferencedSchemaGenerator(SchemaGeneratorOptions options, ISchemaGenerator rootGenerator, IContractResolver contractResolver)
-            : base(options, rootGenerator, contractResolver)
+        public ReferencedSchemaGenerator(
+            IContractResolver contractResolver,
+            ISchemaGenerator rootGenerator,
+            SchemaGeneratorOptions options)
+            : base(contractResolver, rootGenerator, options)
         { }
 
         protected override bool CanGenerateSchemaFor(Type type)
         {
             var jsonContract = ContractResolver.ResolveContract(type);
 
-            return type.IsEnum // enum
+            return (type.IsEnum && Options.UseReferencedDefinitionsForEnums) // enum
                 || (jsonContract is JsonObjectContract) // regular object
                 || (jsonContract is JsonArrayContract && ((JsonArrayContract)jsonContract).CollectionItemType == jsonContract.UnderlyingType) // self-referencing array
                 || (jsonContract is JsonDictionaryContract && ((JsonDictionaryContract)jsonContract).DictionaryValueType == jsonContract.UnderlyingType); // self-referencing dictionary

@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 using Basic.Swagger;
+using Newtonsoft.Json;
 
 namespace Basic
 {
@@ -30,6 +31,8 @@ namespace Basic
                 {
                     options.SerializerSettings.ContractResolver = new DefaultContractResolver();
                 });
+
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
 
             // Uncomment the following line to add Web API services which makes it easier to port Web API 2 controllers.
             // You will also need to add the Microsoft.AspNetCore.Mvc.WebApiCompatShim package to the 'dependencies' section of project.json.

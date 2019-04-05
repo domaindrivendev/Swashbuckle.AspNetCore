@@ -90,20 +90,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(IntEnum), "IntEnum", "integer", "int32", 3)]
         [InlineData(typeof(LongEnum), "LongEnum", "integer", "int64", 3)]
         [InlineData(typeof(IntEnum?), "IntEnum", "integer", "int32", 3)]
-        public void GenerateSchema_GeneratesReferencedEnumSchema_IfEnumType(
+        [InlineData(typeof(IntEnum?), "IntEnum", "integer", "int32", 3)]
+        public void GenerateSchema_GeneratesEnumSchema_IfEnumType(
             Type type,
             string expectedSchemaId,
             string expectedSchemaType,
             string expectedSchemaFormat,
             int expectedEnumCount)
         {
-            var schemaRepository = new SchemaRepository();
+            var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
-            var referenceSchema = Subject().GenerateSchema(type, schemaRepository);
-
-            Assert.NotNull(referenceSchema.Reference);
-            Assert.Equal(expectedSchemaId, referenceSchema.Reference.Id);
-            var schema = schemaRepository.Schemas[expectedSchemaId];
             Assert.Equal(expectedSchemaType, schema.Type);
             Assert.Equal(expectedSchemaFormat, schema.Format);
             Assert.NotNull(schema.Enum);
@@ -150,6 +146,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Theory]
         [InlineData(typeof(int[]), "integer", "int32")]
         [InlineData(typeof(IEnumerable<string>), "string", null)]
+        [InlineData(typeof(DateTime?[]), "string", "date-time")]
         public void GenerateSchema_GeneratesArraySchema_IfEnumerableType(
             Type type,
             string expectedItemsType,
@@ -311,10 +308,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void GenerateSchema_HonorsStringEnumConverters_IfConfiguredViaAttributes()
         {
-            var schemaRepository = new SchemaRepository();
-            var referenceSchema = Subject().GenerateSchema(typeof(JsonConvertedEnum), schemaRepository);
-
-            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            var schema = Subject().GenerateSchema(typeof(JsonConvertedEnum), new SchemaRepository());
 
             Assert.Equal("string", schema.Type);
             Assert.Equal(new[] { "Value1", "Value2", "X" }, schema.Enum.Cast<OpenApiString>().Select(i => i.Value));
@@ -328,10 +322,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var subject = Subject(configureSerializer: c =>
                 c.Converters = new[] { new StringEnumConverter(camelCaseText) }
             );
-            var schemaRepository = new SchemaRepository();
-            var referenceSchema = subject.GenerateSchema(typeof(IntEnum), schemaRepository);
 
-            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            var schema = subject.GenerateSchema(typeof(IntEnum), new SchemaRepository());
 
             Assert.Equal("string", schema.Type);
             Assert.Equal(expectedEnumValues, schema.Enum.Cast<OpenApiString>().Select(i => i.Value));
@@ -450,11 +442,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var subject = Subject(c =>
                 c.DescribeAllEnumsAsStrings = true
             );
-            var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = subject.GenerateSchema(typeof(IntEnum), schemaRepository);
+            var schema = subject.GenerateSchema(typeof(IntEnum), new SchemaRepository());
 
-            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("string", schema.Type);
             Assert.Equal(new[] { "Value2", "Value4", "Value8" }, schema.Enum.Cast<OpenApiString>().Select(i => i.Value));
         }
@@ -467,13 +457,28 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 c.DescribeAllEnumsAsStrings = true;
                 c.DescribeStringEnumsInCamelCase = true;
             });
+
+            var schema = subject.GenerateSchema(typeof(IntEnum), new SchemaRepository());
+
+            Assert.Equal("string", schema.Type);
+            Assert.Equal(new[] { "value2", "value4", "value8" }, schema.Enum.Cast<OpenApiString>().Select(i => i.Value));
+        }
+
+        [Fact]
+        public void GenerateSchema_SupportsOptionToUserReferencedDefinitionsForEnums()
+        {
+            var subject = Subject(c =>
+            {
+                c.UseReferencedDefinitionsForEnums = true;
+            });
             var schemaRepository = new SchemaRepository();
 
             var referenceSchema = subject.GenerateSchema(typeof(IntEnum), schemaRepository);
 
+            Assert.NotNull(referenceSchema.Reference);
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal("string", schema.Type);
-            Assert.Equal(new[] { "value2", "value4", "value8" }, schema.Enum.Cast<OpenApiString>().Select(i => i.Value));
+            Assert.Equal("integer", schema.Type);
+            Assert.Equal(new[] { 2, 4, 8 }, schema.Enum.Cast<OpenApiInteger>().Select(i => i.Value));
         }
 
         [Fact]
@@ -515,13 +520,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Action<SchemaGeneratorOptions> configureOptions = null,
             Action<JsonSerializerSettings> configureSerializer = null)
         {
-            var options = new SchemaGeneratorOptions();
-            configureOptions?.Invoke(options);
 
             var serializerSettings = new JsonSerializerSettings();
             configureSerializer?.Invoke(serializerSettings);
 
-            return new SchemaGenerator(options, serializerSettings);
+            var options = new SchemaGeneratorOptions();
+            configureOptions?.Invoke(options);
+
+            return new SchemaGenerator(serializerSettings, options);
         }
     }
 }

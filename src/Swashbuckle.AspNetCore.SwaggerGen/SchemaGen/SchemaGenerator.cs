@@ -1,5 +1,4 @@
 ﻿using System;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
@@ -11,29 +10,32 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         private readonly ChainableSchemaGenerator _generatorChain;
 
-        public SchemaGenerator(IOptions<SchemaGeneratorOptions> optionsAccessor, IOptions<MvcJsonOptions> jsonOptionsAccessor)
-            : this(optionsAccessor.Value, jsonOptionsAccessor.Value?.SerializerSettings)
+        public SchemaGenerator(
+            ISerializerSettingsAccessor serializationSettingsAccessor,
+            IOptions<SchemaGeneratorOptions> optionsAccessor)
+            : this(serializationSettingsAccessor.Value, optionsAccessor.Value)
         { }
 
-        public SchemaGenerator(SchemaGeneratorOptions options, JsonSerializerSettings serializerSettings)
+        public SchemaGenerator(
+            JsonSerializerSettings serializerSettings,
+            SchemaGeneratorOptions options)
         {
-            options = options ?? new SchemaGeneratorOptions();
-
             // NOTE: An OpenApiSchema MAY be used to describe both JSON and non-JSON media types. However, this implementation of ISchemaGenerator
             // is optimized for JSON and therefore couples to several JSON.NET abstractions so that it can provide accurate descriptions of types
             // in their serialized form.
-
             serializerSettings = serializerSettings ?? new JsonSerializerSettings();
             var contractResolver = serializerSettings.ContractResolver ?? new DefaultContractResolver();
 
-            _generatorChain = new TypeSpecificSchemaGenerator(options, this, contractResolver)
-                .Add(new FileSchemaGenerator(options, this, contractResolver))
-                .Add(new ReferencedSchemaGenerator(options, this, contractResolver))
-                .Add(new PolymorphicSchemaGenerator(options, this, contractResolver))
-                .Add(new PrimitiveSchemaGenerator(options, this, contractResolver, serializerSettings))
-                .Add(new DictionarySchemaGenerator(options, this, contractResolver))
-                .Add(new ArraySchemaGenerator(options, this, contractResolver))
-                .Add(new ObjectSchemaGenerator(options, this, contractResolver));
+            options = options ?? new SchemaGeneratorOptions();
+
+            _generatorChain = new TypeSpecificSchemaGenerator(contractResolver, this, options)
+                .Add(new FileSchemaGenerator(contractResolver, this, options))
+                .Add(new ReferencedSchemaGenerator(contractResolver, this, options))
+                .Add(new PolymorphicSchemaGenerator(contractResolver, this, options))
+                .Add(new PrimitiveSchemaGenerator(contractResolver, this, serializerSettings, options))
+                .Add(new DictionarySchemaGenerator(contractResolver, this, options))
+                .Add(new ArraySchemaGenerator(contractResolver, this, options))
+                .Add(new ObjectSchemaGenerator(contractResolver, this, options));
         }
 
         public OpenApiSchema GenerateSchema(Type type, SchemaRepository schemaRepository)
@@ -41,10 +43,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             // Check if is nullable
             var isNullable = type.IsNullable() || type.IsFSharpOption();
 
-            // Update type
-            type = isNullable
-                ? type.GenericTypeArguments[0]
-                : type;
+            if (isNullable)
+            {
+                type = type.IsArray
+                    ? type.GetGenericArguments()[0].MakeArrayType()
+                    : type.GenericTypeArguments[0];
+            }
 
             var schema = _generatorChain.GenerateSchema(type, schemaRepository);
 
@@ -57,11 +61,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
     public abstract class ChainableSchemaGenerator : ISchemaGenerator
     {
-        protected ChainableSchemaGenerator(SchemaGeneratorOptions options, ISchemaGenerator rootGenerator, IContractResolver contractResolver)
+        protected ChainableSchemaGenerator(
+            IContractResolver contractResolver,
+            ISchemaGenerator rootGenerator,
+            SchemaGeneratorOptions options)
         {
-            Options = options;
-            RootGenerator = rootGenerator;
             ContractResolver = contractResolver;
+            RootGenerator = rootGenerator;
+            Options = options;
         }
 
         public OpenApiSchema GenerateSchema(Type type, SchemaRepository schemaRepository)
@@ -81,11 +88,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             throw new InvalidOperationException("TODO:");
         }
 
-        protected SchemaGeneratorOptions Options { get; }
+        protected IContractResolver ContractResolver { get; }
 
         protected ISchemaGenerator RootGenerator { get; }
 
-        protected IContractResolver ContractResolver { get; }
+        protected SchemaGeneratorOptions Options { get; }
 
         protected ChainableSchemaGenerator Next { get; private set; }
 

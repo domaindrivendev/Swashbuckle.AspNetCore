@@ -14,10 +14,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private readonly JsonSerializerSettings _serializerSettings;
 
         public PrimitiveSchemaGenerator(
-            SchemaGeneratorOptions options,
-            ISchemaGenerator rootGenerator,
             IContractResolver contractResolver,
-            JsonSerializerSettings serializerSettings) : base(options, rootGenerator, contractResolver)
+            ISchemaGenerator rootGenerator,
+            JsonSerializerSettings serializerSettings,
+            SchemaGeneratorOptions options)
+            : base(contractResolver, rootGenerator, options)
         {
             _serializerSettings = serializerSettings;
         }
@@ -47,7 +48,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 || (stringEnumConverter != null);
 
             var describeInCamelCase = Options.DescribeStringEnumsInCamelCase
+#if NETCOREAPP3_0
+                || (stringEnumConverter != null && stringEnumConverter.NamingStrategy is CamelCaseNamingStrategy);
+#else
                 || (stringEnumConverter != null && stringEnumConverter.CamelCaseText);
+#endif
 
             var enumType = jsonPrimitiveContract.UnderlyingType;
             var enumUnderlyingType = describeAsString ? typeof(string) : enumType.GetEnumUnderlyingType();
@@ -57,6 +62,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (describeAsString)
             {
                 schema.Enum = enumType.GetEnumNames()
+                    .Distinct()
                     .Select(name =>
                     {
                         name = describeInCamelCase ? name.ToCamelCase() : name;
@@ -68,10 +74,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 schema.Enum = enumType.GetEnumValues()
                     .Cast<object>()
+                    .Distinct()
                     .Select(value =>
                     {
                         value = Convert.ChangeType(value, enumUnderlyingType);
-                        return OpenApiAnyFactory.TryCreateFrom(value, out IOpenApiAny openApiAny) ? openApiAny : null;
+                        return OpenApiAnyFactory.TryCreateFor(schema, value, out IOpenApiAny openApiAny) ? openApiAny : null;
                     })
                     .ToList();
             }
@@ -99,7 +106,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             { typeof(DateTime), () => new OpenApiSchema { Type = "string", Format = "date-time" } },
             { typeof(DateTimeOffset), () => new OpenApiSchema { Type = "string", Format = "date-time" } },
             { typeof(Guid), () => new OpenApiSchema { Type = "string", Format = "uuid" } },
-            { typeof(Uri), () => new OpenApiSchema { Type = "string", Format = "uri" } }
+            { typeof(Uri), () => new OpenApiSchema { Type = "string" } },
+            { typeof(TimeSpan), () => new OpenApiSchema { Type = "string" } },
         };
     }
 }

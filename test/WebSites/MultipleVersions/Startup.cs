@@ -35,10 +35,7 @@ namespace MultipleVersions
 
                 c.DocInclusionPredicate((docName, apiDesc) =>
                 {
-                    if (!apiDesc.TryGetMethodInfo(out MethodInfo methodInfo)) return false;
-
-                    var versions = methodInfo.DeclaringType
-                        .GetCustomAttributes(true)
+                    var versions = apiDesc.CustomAttributes()
                         .OfType<ApiVersionAttribute>()
                         .SelectMany(attr => attr.Versions);
 

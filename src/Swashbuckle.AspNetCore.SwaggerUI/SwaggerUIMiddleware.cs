@@ -12,10 +12,12 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.StaticFiles;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Converters;
+#if NETCOREAPP3_0
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IWebHostEnvironment;
+#endif
 
 namespace Swashbuckle.AspNetCore.SwaggerUI
 {
@@ -24,6 +26,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         private const string EmbeddedFileNamespace = "Swashbuckle.AspNetCore.SwaggerUI.node_modules.swagger_ui_dist";
 
         private readonly SwaggerUIOptions _options;
+        private readonly JsonSerializer _jsonSerializer;
         private readonly StaticFileMiddleware _staticFileMiddleware;
 
         public SwaggerUIMiddleware(
@@ -41,6 +44,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             SwaggerUIOptions options)
         {
             _options = options ?? new SwaggerUIOptions();
+            _jsonSerializer = CreateJsonSerializer();
             _staticFileMiddleware = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options);
         }
 
@@ -68,6 +72,33 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             }
 
             await _staticFileMiddleware.Invoke(httpContext);
+        }
+
+        private JsonSerializer CreateJsonSerializer()
+        {
+            return JsonSerializer.Create(new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Converters = new[] { new StringEnumConverter(true) },
+                NullValueHandling = NullValueHandling.Ignore,
+                Formatting = Formatting.None,
+                StringEscapeHandling = StringEscapeHandling.EscapeHtml
+            });
+        }
+
+        private StaticFileMiddleware CreateStaticFileMiddleware(
+            RequestDelegate next,
+            IHostingEnvironment hostingEnv,
+            ILoggerFactory loggerFactory,
+            SwaggerUIOptions options)
+        {
+            var staticFileOptions = new StaticFileOptions
+            {
+                RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
+                FileProvider = new EmbeddedFileProvider(typeof(SwaggerUIMiddleware).GetTypeInfo().Assembly, EmbeddedFileNamespace),
+            };
+
+            return new StaticFileMiddleware(next, hostingEnv, Options.Create(staticFileOptions), loggerFactory);
         }
 
         private void RespondWithRedirect(HttpResponse response, string location)
@@ -107,29 +138,9 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
 
         private string SerializeToJson(object obj)
         {
-            return JsonConvert.SerializeObject(obj, new JsonSerializerSettings
-            {
-                ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                Converters = new[] { new StringEnumConverter(true) },
-                NullValueHandling = NullValueHandling.Ignore,
-                Formatting = Formatting.None,
-                StringEscapeHandling = StringEscapeHandling.EscapeHtml
-            });
-        }
-
-        private StaticFileMiddleware CreateStaticFileMiddleware(
-            RequestDelegate next,
-            IHostingEnvironment hostingEnv,
-            ILoggerFactory loggerFactory,
-            SwaggerUIOptions options)
-        {
-            var staticFileOptions = new StaticFileOptions
-            {
-                RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
-                FileProvider = new EmbeddedFileProvider(typeof(SwaggerUIMiddleware).GetTypeInfo().Assembly, EmbeddedFileNamespace),
-            };
-
-            return new StaticFileMiddleware(next, hostingEnv, Options.Create(staticFileOptions), loggerFactory);
+            var writer = new StringWriter();
+            _jsonSerializer.Serialize(writer, obj);
+            return writer.ToString();
         }
     }
 }

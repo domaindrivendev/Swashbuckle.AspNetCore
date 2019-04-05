@@ -7,8 +7,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class DictionarySchemaGenerator : ChainableSchemaGenerator
     {
-        public DictionarySchemaGenerator(SchemaGeneratorOptions options, ISchemaGenerator rootGenerator, IContractResolver contractResolver)
-            : base(options, rootGenerator, contractResolver)
+        public DictionarySchemaGenerator(
+            IContractResolver contractResolver,
+            ISchemaGenerator rootGenerator,
+            SchemaGeneratorOptions options)
+            : base(contractResolver, rootGenerator, options)
         { }
 
         protected override bool CanGenerateSchemaFor(Type type)

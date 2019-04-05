@@ -37,7 +37,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     new OpenApiParameter { Name = "param2" }, 
                     new OpenApiParameter { Name = "Param-3" } 
                 },
-                Responses = new OpenApiResponses()
+                Responses = new OpenApiResponses(),
+                RequestBody = new OpenApiRequestBody()
             };
             var filterContext = FilterContextFor(nameof(XmlAnnotatedController.XmlAnnotatedAction));
 
@@ -46,6 +47,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("description for param1", operation.Parameters[0].Description);
             Assert.Equal("description for param2", operation.Parameters[1].Description);
             Assert.Equal("description for param3", operation.Parameters[2].Description);
+            Assert.Equal("description for param4", operation.RequestBody.Description);
         }
 
         [Fact]
@@ -53,14 +55,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var operation = new OpenApiOperation
             {
-                Parameters = new List<OpenApiParameter>() { new OpenApiParameter { Name = "Property" } },
+                Parameters = new List<OpenApiParameter>() { new OpenApiParameter { Name = "StringProperty" } },
                 Responses = new OpenApiResponses()
             };
             var filterContext = FilterContextFor(nameof(XmlAnnotatedController.AcceptsXmlAnnotatedTypeFromQuery));
 
             Subject().Apply(operation, filterContext);
 
-            Assert.Equal("summary for Property", operation.Parameters.First().Description);
+            Assert.Equal("summary for StringProperty", operation.Parameters.First().Description);
         }
 
         [Fact]

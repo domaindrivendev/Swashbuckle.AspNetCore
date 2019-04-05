@@ -73,6 +73,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void AcceptsOptionalParameter(string param = "foobar")
         { }
 
+        public void AcceptsOptionalJsonConvertedEnum(JsonConvertedEnum param = JsonConvertedEnum.Value1)
+        { }
+
         public void AcceptsStringFromRoute([FromRoute]string param)
         { }
 
@@ -92,6 +95,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         { }
 
         public void AcceptsComplexTypeFromBody([FromBody]ComplexType param)
+        { }
+
+        public void AcceptsComplexTypeFromBodyThatIsRequired([FromBody, Required]ComplexType param)
         { }
 
         public void AcceptsComplexTypeFromForm([FromForm]ComplexType param)

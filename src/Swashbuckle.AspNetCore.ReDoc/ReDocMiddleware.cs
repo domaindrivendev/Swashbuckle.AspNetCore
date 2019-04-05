@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -15,6 +16,9 @@ using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+#if NETCOREAPP3_0
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IWebHostEnvironment;
+#endif
 
 namespace Swashbuckle.AspNetCore.ReDoc
 {
@@ -23,6 +27,7 @@ namespace Swashbuckle.AspNetCore.ReDoc
         private const string EmbeddedFileNamespace = "Swashbuckle.AspNetCore.ReDoc.node_modules.redoc.bundles";
 
         private readonly ReDocOptions _options;
+        private readonly JsonSerializer _jsonSerializer;
         private readonly StaticFileMiddleware _staticFileMiddleware;
 
         public ReDocMiddleware(
@@ -40,6 +45,7 @@ namespace Swashbuckle.AspNetCore.ReDoc
             ReDocOptions options)
         {
             _options = options ?? new ReDocOptions();
+            _jsonSerializer = CreateJsonSerializer();
             _staticFileMiddleware = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options);
         }
 
@@ -67,6 +73,33 @@ namespace Swashbuckle.AspNetCore.ReDoc
             }
 
             await _staticFileMiddleware.Invoke(httpContext);
+        }
+
+        private JsonSerializer CreateJsonSerializer()
+        {
+            return JsonSerializer.Create(new JsonSerializerSettings
+            {
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                Converters = new[] { new StringEnumConverter(true) },
+                NullValueHandling = NullValueHandling.Ignore,
+                Formatting = Formatting.None,
+                StringEscapeHandling = StringEscapeHandling.EscapeHtml
+            });
+        }
+
+        private StaticFileMiddleware CreateStaticFileMiddleware(
+            RequestDelegate next,
+            IHostingEnvironment hostingEnv,
+            ILoggerFactory loggerFactory,
+            ReDocOptions options)
+        {
+            var staticFileOptions = new StaticFileOptions
+            {
+                RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
+                FileProvider = new EmbeddedFileProvider(typeof(ReDocMiddleware).GetTypeInfo().Assembly, EmbeddedFileNamespace),
+            };
+
+            return new StaticFileMiddleware(next, hostingEnv, Options.Create(staticFileOptions), loggerFactory);
         }
 
         private void RespondWithRedirect(HttpResponse response, string location)
@@ -106,29 +139,9 @@ namespace Swashbuckle.AspNetCore.ReDoc
 
         private string SerializeToJson(object obj)
         {
-            return JsonConvert.SerializeObject(obj, new JsonSerializerSettings
-            {
-                ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                Converters = new[] { new StringEnumConverter(true) },
-                NullValueHandling = NullValueHandling.Ignore,
-                Formatting = Formatting.None,
-                StringEscapeHandling = StringEscapeHandling.EscapeHtml
-            });
-        }
-
-        private StaticFileMiddleware CreateStaticFileMiddleware(
-            RequestDelegate next,
-            IHostingEnvironment hostingEnv,
-            ILoggerFactory loggerFactory,
-            ReDocOptions options)
-        {
-            var staticFileOptions = new StaticFileOptions
-            {
-                RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
-                FileProvider = new EmbeddedFileProvider(typeof(ReDocMiddleware).GetTypeInfo().Assembly, EmbeddedFileNamespace),
-            };
-
-            return new StaticFileMiddleware(next, hostingEnv, Options.Create(staticFileOptions), loggerFactory);
+            var writer = new StringWriter();
+            _jsonSerializer.Serialize(writer, obj);
+            return writer.ToString();
         }
     }
 }
