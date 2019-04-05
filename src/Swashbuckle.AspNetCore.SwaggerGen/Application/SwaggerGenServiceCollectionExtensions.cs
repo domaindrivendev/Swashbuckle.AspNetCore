@@ -59,7 +59,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 _options = options;
             }
 
-            public JsonSerializerSettings SerializerSettings => _options.Value?.SerializerSettings;
+            public JsonSerializerSettings Value => _options.Value?.SerializerSettings;
         }
 #else
         private sealed class MvcJsonOptionsAccessor : ISerializerSettingsAccessor
@@ -71,7 +71,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 _options = options;
             }
 
-            public JsonSerializerSettings SerializerSettings => _options.Value?.SerializerSettings;
+            public JsonSerializerSettings Value => _options.Value?.SerializerSettings;
         }
 #endif
     }

@@ -8,10 +8,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     public class PolymorphicSchemaGenerator : ChainableSchemaGenerator
     {
         public PolymorphicSchemaGenerator(
-            SchemaGeneratorOptions options,
+            IContractResolver contractResolver,
             ISchemaGenerator rootGenerator,
-            IContractResolver contractResolver)
-            : base(options, rootGenerator, contractResolver)
+            SchemaGeneratorOptions options)
+            : base(contractResolver, rootGenerator, options)
         { }
 
         protected override bool CanGenerateSchemaFor(Type type)

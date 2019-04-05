@@ -520,13 +520,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Action<SchemaGeneratorOptions> configureOptions = null,
             Action<JsonSerializerSettings> configureSerializer = null)
         {
-            var options = new SchemaGeneratorOptions();
-            configureOptions?.Invoke(options);
 
             var serializerSettings = new JsonSerializerSettings();
             configureSerializer?.Invoke(serializerSettings);
 
-            return new SchemaGenerator(options, serializerSettings);
+            var options = new SchemaGeneratorOptions();
+            configureOptions?.Invoke(options);
+
+            return new SchemaGenerator(serializerSettings, options);
         }
     }
 }

@@ -607,7 +607,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             return new SwaggerGenerator(
                 apiDescriptionsProvider,
-                new SchemaGenerator(new SchemaGeneratorOptions(), new JsonSerializerSettings()),
+                new SchemaGenerator(new JsonSerializerSettings(), new SchemaGeneratorOptions()),
                 options
             );
         }

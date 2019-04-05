@@ -14,10 +14,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private readonly JsonSerializerSettings _serializerSettings;
 
         public PrimitiveSchemaGenerator(
-            SchemaGeneratorOptions options,
-            ISchemaGenerator rootGenerator,
             IContractResolver contractResolver,
-            JsonSerializerSettings serializerSettings) : base(options, rootGenerator, contractResolver)
+            ISchemaGenerator rootGenerator,
+            JsonSerializerSettings serializerSettings,
+            SchemaGeneratorOptions options)
+            : base(contractResolver, rootGenerator, options)
         {
             _serializerSettings = serializerSettings;
         }

@@ -9,38 +9,34 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class ApiDescriptionExtensions
     {
-        public static bool TryGetMethodInfo(this ApiDescription apiDescription, out MethodInfo methodInfo)
+        public static MethodInfo MethodInfo(this ApiDescription apiDescription)
         {
             var controllerActionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
-            methodInfo = controllerActionDescriptor?.MethodInfo;
-
-            return (methodInfo != null);
+            return controllerActionDescriptor?.MethodInfo;
         }
 
-        public static void GetAdditionalMetadata(
-            this ApiDescription apiDescription,
-            out MethodInfo methodInfo,
-            out IEnumerable<object> methodAttributes)
+        public static IEnumerable<object> CustomAttributes(this ApiDescription apiDescription)
         {
-            methodAttributes = Enumerable.Empty<object>();
+            var methodInfo = apiDescription.MethodInfo();
 
-            if (apiDescription.TryGetMethodInfo(out methodInfo))
-            {
-                methodAttributes = methodInfo.GetCustomAttributes(true)
-                    .Union(methodInfo.DeclaringType.GetCustomAttributes(true));
-            }
+            if (methodInfo == null) return Enumerable.Empty<object>();
+
+            return methodInfo.GetCustomAttributes(true)
+                .Union(methodInfo.DeclaringType.GetCustomAttributes(true));
+        }
+
+        [Obsolete("Use MethodInfo() and CustomAttributes() extension methods instead")]
+        public static void GetAdditionalMetadata(this ApiDescription apiDescription,
+            out MethodInfo methodInfo,
+            out IEnumerable<object> customAttributes)
+        {
+            methodInfo = apiDescription.MethodInfo();
+            customAttributes = apiDescription.CustomAttributes();
         }
 
         internal static string RelativePathSansQueryString(this ApiDescription apiDescription)
         {
             return apiDescription.RelativePath.Split('?').First();
-        }
-
-        internal static bool IsObsolete(this ApiDescription apiDescription)
-        {
-            apiDescription.GetAdditionalMetadata(out MethodInfo methodInfo, out IEnumerable<object> methodAttributes);
-
-            return methodAttributes.OfType<ObsoleteAttribute>().Any();
         }
     }
 }
