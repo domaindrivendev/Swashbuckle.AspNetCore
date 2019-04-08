@@ -240,7 +240,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var formParameters = apiDescription.ParameterDescriptions
                 .Where(paramDesc => paramDesc.IsFromForm());
 
-            if (formParameters != null)
+            if (formParameters.Any())
                 return GenerateRequestBodyFromFormParameters(apiDescription, schemaRepository, formParameters);
 
             return null;
