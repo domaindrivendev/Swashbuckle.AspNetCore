@@ -56,7 +56,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         /// <example>example for StringProperty</example>
         public string StringProperty { get; set; }
 
-
         /// <summary>
         /// summary for BadExampleIntProperty
         /// </summary>

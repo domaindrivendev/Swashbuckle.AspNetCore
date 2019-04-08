@@ -31,7 +31,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             else if (schema.Type == "string" && value.GetType().IsEnum)
                 openApiAny = new OpenApiString(Enum.GetName(value.GetType(), value));
 
-            else if (schema.Type == "string" && schema.Format == "datetime" && TryCast(value, out DateTime dateTimeValue))
+            else if (schema.Type == "string" && schema.Format == "date-time" && TryCast(value, out DateTime dateTimeValue))
                 openApiAny = new OpenApiDate(dateTimeValue);
 
             else if (schema.Type == "string")

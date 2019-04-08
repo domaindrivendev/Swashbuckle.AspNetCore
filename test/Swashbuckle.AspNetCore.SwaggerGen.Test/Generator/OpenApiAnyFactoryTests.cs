@@ -31,5 +31,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.NotNull(instance);
             Assert.IsType(expectedInstanceType, instance);
         }
+
+        [Fact]
+        public void TryCreateFor_CreatesAnInstance_ForDateTimeSchemaAndValue()
+        {
+            var schema = new OpenApiSchema { Type = "string", Format = "date-time" };
+
+            OpenApiAnyFactory.TryCreateFor(schema, DateTime.UtcNow, out IOpenApiAny instance);
+
+            Assert.NotNull(instance);
+            Assert.IsType(typeof(OpenApiDate), instance);
+        }
     }
 }
