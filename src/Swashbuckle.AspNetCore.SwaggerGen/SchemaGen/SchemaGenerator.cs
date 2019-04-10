@@ -50,12 +50,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     : type.GenericTypeArguments[0];
             }
 
-            var schema = _generatorChain.GenerateSchema(type, schemaRepository);
-
-            // Set Nullable
-            schema.Nullable = isNullable;
-
-            return schema;
+            return _generatorChain.GenerateSchema(type, schemaRepository);
         }
     }
 

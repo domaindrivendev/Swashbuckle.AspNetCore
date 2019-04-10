@@ -516,6 +516,59 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             });
         }
 
+        [Theory]
+        [InlineData(typeof(JsonRequiredType))]
+        [InlineData(typeof(JsonRequiredNullableType))]
+        public void GenerateSchema_HonorsRequired_ForJsonAnnotatedType(Type type)
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(type, schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            var nullableProp = new HashSet<string> { "ValAllowNull", "ValDefault" };
+            var requiredProp = new HashSet<string> { "ValAllowNull", "ValWithoutReq", "ValueWithoutAttr", "ValAlways" };
+            foreach (var property in schema.Properties)
+            {
+                var isNullable = nullableProp.Contains(property.Key);
+                Assert.Equal(isNullable, property.Value.Nullable);
+            }
+            Assert.True(schema.Required.SetEquals(requiredProp));
+        }
+
+        [Fact]
+        public void GenerateSchema_HonorsRequired_ForJsonAnnotatedChildType()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(typeof(JsonRequiredChildType), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            var nullableProp = new HashSet<string> { "RootValDefault", "BaseValAllowNull", "ValAllowNull", "ValDefault" };
+            var requiredProp = new HashSet<string> { "BaseValAllowNull", "ValAllowNull" };
+            foreach (var property in schema.Properties)
+            {
+                var isNullable = nullableProp.Contains(property.Key);
+                Assert.Equal(isNullable, property.Value.Nullable);
+            }
+            Assert.True(schema.Required.SetEquals(requiredProp));
+        }
+
+        [Fact]
+        public void GenerateSchema_HonorsRequiredOverride_ForJsonAnnotatedChildType()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(typeof(JsonRequiredAlwaysChildType), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            // All properties overridden to Required.Always.
+            var requiredProp = new HashSet<string> { "RootValDefault", "BaseValAllowNull" };
+
+            Assert.True(schema.Properties.All(p => !p.Value.Nullable));
+            Assert.True(schema.Required.SetEquals(requiredProp));
+        }
+
         private ISchemaGenerator Subject(
             Action<SchemaGeneratorOptions> configureOptions = null,
             Action<JsonSerializerSettings> configureSerializer = null)

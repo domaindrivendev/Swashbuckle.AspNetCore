@@ -42,11 +42,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 if (Options.IgnoreObsoleteProperties && attributes.OfType<ObsoleteAttribute>().Any()) continue;
 
-                properties.Add(jsonProperty.PropertyName, GeneratePropertySchema(jsonProperty, memberInfo, attributes, schemaRepository));
+                var required = GetRequiredValue(jsonProperty, jsonObjectContract, memberInfo);
+                properties.Add(jsonProperty.PropertyName, GeneratePropertySchema(jsonProperty, required, memberInfo, attributes, schemaRepository));
 
-                if (jsonProperty.Required == Required.AllowNull || jsonProperty.Required == Required.Always || attributes.OfType<RequiredAttribute>().Any())
+                if (required == Required.AllowNull || required == Required.Always || attributes.OfType<RequiredAttribute>().Any())
                     requiredPropertyNames.Add(jsonProperty.PropertyName);
-
             }
 
             var additionalProperties = (jsonObjectContract.ExtensionDataValueType != null)
@@ -67,6 +67,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private OpenApiSchema GeneratePropertySchema(
             JsonProperty jsonProperty,
+            Required? required,
             MemberInfo memberInfo,
             object[] attributes,
             SchemaRepository schemaRepository) 
@@ -75,6 +76,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             schema.WriteOnly = jsonProperty.Writable && !jsonProperty.Readable;
             schema.ReadOnly = jsonProperty.Readable && !jsonProperty.Writable;
+
+            if (required == null)
+            {
+                // No json attributes -> default for nullable types is true.
+                schema.Nullable = jsonProperty.PropertyType.IsNullable() || jsonProperty.PropertyType.IsFSharpOption();
+            }
+            else
+            {
+                schema.Nullable = required == Required.AllowNull || required == Required.Default;
+            }
 
             foreach (var attribute in attributes)
             {
@@ -120,6 +131,37 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
 
             return schema;
+        }
+        /// <summary>
+        /// Gets the <seealso cref="Required"/> value for the specified json property.
+        /// </summary>
+        /// <param name="jsonObject">Json object.</param>
+        /// <param name="jsonProperty">Json property.</param>
+        /// <param name="memberInfo">Member info.</param>
+        /// <returns><seealso cref="Required"/> value.</returns>
+        private Required? GetRequiredValue(JsonProperty jsonProperty, JsonObjectContract jsonObject, MemberInfo memberInfo)
+        {
+            if (jsonProperty.Required != Required.Default)
+                return jsonProperty.Required;
+
+            // Special handling only required for Required.Default.
+            // Check if Required.Default is actually specified or if it is just the default value.
+            // Those checks are needed to mirror the behaviour of newtonsoft json.
+            var requiredType = typeof(Required);
+            var jsonPropType = typeof(JsonPropertyAttribute);
+            var attributeData = memberInfo.GetCustomAttributeData(jsonPropType, true);
+            if (attributeData == null)
+            {
+                // No JsonPropertyAttribute found. Returns null if no JsonObjectAttribute is specified.
+                return jsonObject.ItemRequired;
+            }
+            // Check if the attribute is set on the property and the value for required is explicitly specified.
+            else if (attributeData.NamedArguments.Any(c => c.TypedValue.ArgumentType == requiredType))
+            {
+                return jsonProperty.Required;
+            }
+            // JsonProperty attribute is specified - don't return null.
+            return jsonObject.ItemRequired ?? Required.Default;
         }
 
         private static readonly Dictionary<DataType, string> DataTypeFormatMap = new Dictionary<DataType, string>
