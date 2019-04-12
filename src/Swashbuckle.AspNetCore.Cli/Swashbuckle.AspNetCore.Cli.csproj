@@ -4,10 +4,12 @@
 
   <PropertyGroup>
     <Description>Swashbuckle (Swagger) Command Line Tools</Description>
-    <TargetFrameworks>netcoreapp2.0</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <AssemblyName>dotnet-swagger</AssemblyName>
     <PackageId>Swashbuckle.AspNetCore.Cli</PackageId>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>swagger</ToolCommandName>
   </PropertyGroup>
 
   <ItemGroup>
