@@ -1082,24 +1082,35 @@ _NOTE:_ This feature is currently beta only. Please post feedback to the followi
 
 The Swashbuckle CLI tool can retrieve Swagger JSON directly from your application startup assembly, and write it to file. This can be useful if you want to incorporate Swagger generation into a CI/CD process, or if you want to serve it from static file at run-time.
 
-The tool can be installed as a [per-project, framework-dependent CLI extension](https://docs.microsoft.com/en-us/dotnet/core/tools/extensibility#per-project-based-extensibility) by adding the following reference to your .csproj file and running `dotnet restore`:
+The tool can be installed as a [.NET Core Global Tools](https://docs.microsoft.com/en-us/dotnet/core/tools/global-tools) either locally or globally by creation of `dotnet-tools.json` next to your .csproj file 
+or next to your solution file:
 
-```xml
-<ItemGroup>
-  <DotNetCliToolReference Include="Swashbuckle.AspNetCore.Cli" Version="2.1.0-beta1" />
-</ItemGroup>
+```json
+{
+  "version": 1,
+  "isRoot": true,
+  "tools": {
+  }
+}
 ```
+
+then to install tool locally, run following command
+```
+dotnet tool install swashbuckle.aspnetcore.cli
+```
+
+On clean machine to restore tool, please run `dotnet tool restore`
 
 Once this is done, you should be able to run the following command from your project root:
 
 ```
-dotnet swagger tofile --help
+dotnet tool run swagger tofile --help
 ```
 
 Before you invoke the `tofile` command, you need to ensure your application is configured to expose Swagger JSON, as described in [Getting Started](#getting-started). Once this is done, you can point to your startup assembly and generate a local Swagger JSON file with the following command:
 
 ```
-dotnet swagger tofile --output [output] [startupassembly] [swaggerdoc]
+dotnet tool run swagger tofile --output [output] [startupassembly] [swaggerdoc]
 ```
 
 Where ...
