@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.ApiDescription;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
@@ -81,6 +82,22 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             var openApiDocument = new OpenApiStreamReader().Read(contentStream, out OpenApiDiagnostic diagnostic);
 
             Assert.Equal(Enumerable.Empty<OpenApiError>(), diagnostic.Errors);
+        }
+
+        [Fact]
+        public async Task SwaggerEndpoint_ReturnsValidSwaggerOpenApiExamplesSchema()
+        {
+            var testSite = new TestSite(typeof(Basic.Startup));
+            var client = testSite.BuildClient();
+
+            var swaggerResponse = await client.GetAsync("/swagger/v1/swagger.json");
+            var contentStream = await swaggerResponse.Content.ReadAsStreamAsync();
+
+            var openApiDocument = new OpenApiStreamReader().Read(contentStream, out OpenApiDiagnostic diagnostic);
+
+            openApiDocument.Components.Schemas["Product"]
+                .Example.Should()
+                .BeEquivalentTo(Basic.Swagger.ExamplesSchemaFilter.Schemas["Product"]);
         }
     }
 }
