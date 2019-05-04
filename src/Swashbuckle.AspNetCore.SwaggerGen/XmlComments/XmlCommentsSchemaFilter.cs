@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Xml.XPath;
 using System.Reflection;
 using Microsoft.OpenApi.Any;
@@ -79,7 +80,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             try
             {
-                typedValue = TypeDescriptor.GetConverter(memberType).ConvertFrom(stringValue);
+                typedValue = TypeDescriptor.GetConverter(memberType).ConvertFromInvariantString(stringValue);
             }
             catch (Exception)
             {
