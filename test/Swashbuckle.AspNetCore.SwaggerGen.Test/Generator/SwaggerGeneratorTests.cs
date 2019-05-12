@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
@@ -14,7 +15,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void GetSwagger_ThrowsException_IfDocumentNameIsUnknown()
         {
-            var subject = Subject(setupAction: (c) => c.SwaggerDocs.Clear());
+            var subject = Subject(setupAction: (c) =>
+            {
+                c.SwaggerDocs.Clear();
+                c.StaticSwaggerDocs.Clear();
+            });
 
             Assert.Throws<UnknownSwaggerDocument>(() => subject.GetSwagger("v1"));
         }
@@ -46,6 +51,49 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(v1Info, v1Swagger.Info);
             Assert.Equal(new[] { "/v2/collection" }, v2Swagger.Paths.Keys.ToArray());
             Assert.Equal(v2Info, v2Swagger.Info);
+        }
+
+        [Fact]
+        public void GetSwagger_StaticSwagerDoc()
+        {
+            var v1Doc = new OpenApiDocument
+            {
+                Info = new OpenApiInfo
+                {
+                    Title = "Static API",
+                    Version = "v1"
+                },
+                Paths = new OpenApiPaths
+                {
+                    {
+                        "/v1/collection", new OpenApiPathItem
+                        {
+                            Operations = new Dictionary<OperationType, OpenApiOperation>
+                            {
+                                {
+                                    OperationType.Get, new OpenApiOperation
+                                    {
+                                        OperationId =nameof(FakeController.ReturnsEnumerable)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+
+            var subject = Subject(
+                setupAction: c =>
+                {
+                    c.SwaggerDocs.Clear();
+                    c.StaticSwaggerDocs.Clear();
+                    c.StaticSwaggerDocs.Add("v1", v1Doc);
+                });
+
+            var v1Swagger = subject.GetSwagger("v1");
+
+            Assert.Equal(new[] { "/v1/collection" }, v1Swagger.Paths.Keys.ToArray());
+            Assert.Equal(v1Doc.Info, v1Swagger.Info);
         }
 
         [Fact]
@@ -602,6 +650,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var options = new SwaggerGeneratorOptions();
             options.SwaggerDocs.Add("v1", new OpenApiInfo { Title = "API", Version = "v1" });
+            options.StaticSwaggerDocs.Add("v3", new OpenApiDocument { Info =  new OpenApiInfo { Title = "Static API", Version = "v3" } });
 
             setupAction?.Invoke(options);
 

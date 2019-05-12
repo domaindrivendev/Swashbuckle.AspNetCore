@@ -38,6 +38,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public void DeepCopy(SwaggerGeneratorOptions source, SwaggerGeneratorOptions target)
         {
             target.SwaggerDocs = new Dictionary<string, OpenApiInfo>(source.SwaggerDocs);
+            target.StaticSwaggerDocs = new Dictionary<string, OpenApiDocument>(source.StaticSwaggerDocs);
             target.DocInclusionPredicate = source.DocInclusionPredicate;
             target.IgnoreObsoleteActions = source.IgnoreObsoleteActions;
             target.ConflictingActionsResolver = source.ConflictingActionsResolver;

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml.XPath;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Swagger;
 using ApiExplorer = Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -21,6 +22,23 @@ namespace Microsoft.Extensions.DependencyInjection
             OpenApiInfo info)
         {
             swaggerGenOptions.SwaggerGeneratorOptions.SwaggerDocs.Add(name, info);
+        }
+
+        /// <summary>
+        /// Define one or more static documents to be created by the Swagger generator.
+        /// The main purpose of static documents is to main a predictable contract. Environment specific things such as servers
+        /// and security may be updated. <see cref="SwaggerOptions.PreSerializeFilters"/> will be applied to static documents.
+        /// Static documents may be read from files stored on disk rather than generated at run-time
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="name">A URI-friendly name that uniquely identifies the document</param>
+        /// <param name="document">The OpenApiDocument to be exposed</param>
+        public static void SwaggerDoc(
+            this SwaggerGenOptions swaggerGenOptions,
+            string name,
+            OpenApiDocument document)
+        {
+            swaggerGenOptions.SwaggerGeneratorOptions.StaticSwaggerDocs.Add(name, document);
         }
 
         /// <summary>

@@ -39,36 +39,51 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public OpenApiDocument GetSwagger(string documentName, string host = null, string basePath = null)
         {
-            if (!_options.SwaggerDocs.TryGetValue(documentName, out OpenApiInfo info))
-                throw new UnknownSwaggerDocument(documentName, _options.SwaggerDocs.Select(d => d.Key));
-
-            var applicableApiDescriptions = _apiDescriptionsProvider.ApiDescriptionGroups.Items
-                .SelectMany(group => group.Items)
-                .Where(apiDesc => !(_options.IgnoreObsoleteActions && apiDesc.CustomAttributes().OfType<ObsoleteAttribute>().Any()))
-                .Where(apiDesc => _options.DocInclusionPredicate(documentName, apiDesc));
-
-            var schemaRepository = new SchemaRepository();
-
-            var swaggerDoc = new OpenApiDocument
+            if (_options.SwaggerDocs.TryGetValue(documentName, out OpenApiInfo info))
             {
-                Info = info,
-                Servers = GenerateServers(host, basePath),
-                Paths = GeneratePaths(applicableApiDescriptions, schemaRepository),
-                Components = new OpenApiComponents
+                var applicableApiDescriptions = _apiDescriptionsProvider.ApiDescriptionGroups.Items
+                    .SelectMany(group => group.Items)
+                    .Where(apiDesc => !(_options.IgnoreObsoleteActions && apiDesc.CustomAttributes().OfType<ObsoleteAttribute>().Any()))
+                    .Where(apiDesc => _options.DocInclusionPredicate(documentName, apiDesc));
+
+                var schemaRepository = new SchemaRepository();
+
+                var swaggerDoc = new OpenApiDocument
                 {
-                    Schemas = schemaRepository.Schemas,
-                    SecuritySchemes = _options.SecuritySchemes
-                },
-                SecurityRequirements = _options.SecurityRequirements
-            };
+                    Info = info,
+                    Servers = GenerateServers(host, basePath),
+                    Paths = GeneratePaths(applicableApiDescriptions, schemaRepository),
+                    Components = new OpenApiComponents
+                    {
+                        Schemas = schemaRepository.Schemas,
+                        SecuritySchemes = _options.SecuritySchemes
+                    },
+                    SecurityRequirements = _options.SecurityRequirements
+                };
 
-            var filterContext = new DocumentFilterContext(applicableApiDescriptions, _schemaGenerator, schemaRepository);
-            foreach (var filter in _options.DocumentFilters)
-            {
-                filter.Apply(swaggerDoc, filterContext);
+                var filterContext = new DocumentFilterContext(applicableApiDescriptions, _schemaGenerator, schemaRepository);
+                foreach (var filter in _options.DocumentFilters)
+                {
+                    filter.Apply(swaggerDoc, filterContext);
+                }
+
+                return swaggerDoc;
             }
 
-            return swaggerDoc;
+            if (_options.StaticSwaggerDocs.TryGetValue(documentName, out OpenApiDocument apiDocument))
+            {
+                // the main purpose with static documents is to ensure that the contract doesn't accidentally change
+                // some values are updates based on the runtime environment
+                apiDocument.Servers = GenerateServers(host, basePath);
+                apiDocument.SecurityRequirements = _options.SecurityRequirements;
+
+                return apiDocument;
+            }
+
+            var knownDocuments = _options.SwaggerDocs.Select(d => d.Key).ToList();
+            knownDocuments.AddRange(_options.StaticSwaggerDocs.Select(d => d.Key));
+
+            throw new UnknownSwaggerDocument(documentName, knownDocuments);
         }
 
         private IList<OpenApiServer> GenerateServers(string host, string basePath)

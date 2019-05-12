@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <EmbeddedResource Include="index.html" />
-    <EmbeddedResource Include="node_modules/redoc/bundles/redoc.standalone.js" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
@@ -35,5 +34,9 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.0' ">
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="node_modules\redoc\bundles\" />
   </ItemGroup>
 </Project>

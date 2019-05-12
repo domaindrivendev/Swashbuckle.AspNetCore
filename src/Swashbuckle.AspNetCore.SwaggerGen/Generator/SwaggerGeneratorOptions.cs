@@ -12,6 +12,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public SwaggerGeneratorOptions()
         {
             SwaggerDocs = new Dictionary<string, OpenApiInfo>();
+            StaticSwaggerDocs = new Dictionary<string, OpenApiDocument>();
             DocInclusionPredicate = DefaultDocInclusionPredicate;
             OperationIdSelector = DefaultOperationIdSelector;
             TagsSelector = DefaultTagsSelector;
@@ -24,6 +25,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         }
 
         public IDictionary<string, OpenApiInfo> SwaggerDocs { get; set; }
+
+        public IDictionary<string, OpenApiDocument> StaticSwaggerDocs { get; set; }
 
         public Func<string, ApiDescription, bool> DocInclusionPredicate { get; set; }
 
