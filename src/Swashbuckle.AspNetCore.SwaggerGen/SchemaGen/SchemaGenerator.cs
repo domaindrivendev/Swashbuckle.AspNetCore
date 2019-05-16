@@ -85,7 +85,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (Next != null)
                 return Next.GenerateSchema(type, schemaRepository);
 
-            throw new InvalidOperationException("TODO:");
+            throw new InvalidOperationException($"Unable to generate schema for type - {type}");
         }
 
         protected IContractResolver ContractResolver { get; }

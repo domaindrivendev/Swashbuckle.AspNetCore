@@ -29,9 +29,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private static Dictionary<Type, Func<OpenApiSchema>> KnownTypeMappings = new Dictionary<Type, Func<OpenApiSchema>>
         {
-            { typeof(object), () => new OpenApiSchema { Type = "object" } },
-            { typeof(JToken), () => new OpenApiSchema { Type = "object" } },
-            { typeof(JObject), () => new OpenApiSchema { Type = "object" } }
+            [ typeof(object) ] = () => new OpenApiSchema { Type = "object" },
+            [ typeof(JToken) ] = () => new OpenApiSchema { Type = "object" },
+            [ typeof(JObject) ] = () => new OpenApiSchema { Type = "object" },
+            [ typeof(JArray) ] = () => new OpenApiSchema { Type = "array", Items = new OpenApiSchema { Type = "object" } }
         };
     }
 }

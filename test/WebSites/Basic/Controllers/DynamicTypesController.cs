@@ -35,5 +35,11 @@ namespace Basic.Controllers
                 new JObject()
             };
         }
+
+        [HttpGet("witches")]
+        public JArray GetWitches()
+        {
+            return JArray.FromObject(new[] { "foo", "bar" });
+        }
     }
 }
