@@ -197,7 +197,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var defaultValue = apiParameter.CustomAttributes().OfType<DefaultValueAttribute>().FirstOrDefault()?.Value
                 ?? apiParameter.ParameterInfo()?.DefaultValue;
 
-            if (defaultValue != null && schema.Reference == null)
+            // NOTE: Oddly, ParameterInfo.DefaultValue returns DBNull if not optional, hence the additional check below
+            if (schema.Reference == null && defaultValue != null && defaultValue != DBNull.Value)
             {
                 schema.Default = OpenApiAnyFactory.TryCreateFor(schema, defaultValue, out IOpenApiAny openApiAny)
                     ? openApiAny
@@ -333,7 +334,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var defaultValue = formParameter.CustomAttributes().OfType<DefaultValueAttribute>().FirstOrDefault()?.Value
                     ?? formParameter.ParameterInfo()?.DefaultValue;
 
-                if (defaultValue != null && schema.Reference == null)
+                // NOTE: Oddly, ParameterInfo.DefaultValue returns DBNull if not optional, hence the additional check below
+                if (schema.Reference == null && defaultValue != null && defaultValue != DBNull.Value)
                 {
                     schema.Default = OpenApiAnyFactory.TryCreateFor(schema, defaultValue, out IOpenApiAny openApiAny)
                         ? openApiAny
