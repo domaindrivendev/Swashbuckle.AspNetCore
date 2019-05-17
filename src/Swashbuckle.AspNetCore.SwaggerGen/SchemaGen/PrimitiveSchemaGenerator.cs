@@ -32,11 +32,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var jsonPrimitiveContract = (JsonPrimitiveContract)ContractResolver.ResolveContract(type);
 
-            var schema = jsonPrimitiveContract.UnderlyingType.IsEnum
-                ? GenerateEnumSchema(jsonPrimitiveContract)
-                : FactoryMethodMap[jsonPrimitiveContract.UnderlyingType]();
+            if (jsonPrimitiveContract.UnderlyingType.IsEnum)
+                return GenerateEnumSchema(jsonPrimitiveContract);
 
-            return schema;
+            if (FactoryMethodMap.ContainsKey(jsonPrimitiveContract.UnderlyingType))
+                return FactoryMethodMap[jsonPrimitiveContract.UnderlyingType]();
+
+            return new OpenApiSchema { Type = "string" };
         }
 
         private OpenApiSchema GenerateEnumSchema(JsonPrimitiveContract jsonPrimitiveContract)
