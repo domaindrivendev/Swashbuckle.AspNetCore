@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.ApiDescription;
+using Microsoft.Extensions.ApiDescriptions;
 using Microsoft.OpenApi.Readers;
 using Swashbuckle.AspNetCore.Swagger;
 using Xunit;

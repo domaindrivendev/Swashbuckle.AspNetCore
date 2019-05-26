@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Writers;
 using Swashbuckle.AspNetCore.Swagger;
 
-namespace Microsoft.Extensions.ApiDescription
+namespace Microsoft.Extensions.ApiDescriptions
 {
     /// <summary>
     /// This service will be looked up by name from the service collection when using
