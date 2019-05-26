@@ -79,7 +79,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             try
             {
-                typedValue = TypeDescriptor.GetConverter(memberType).ConvertFrom(stringValue);
+                typedValue = TypeDescriptor.GetConverter(memberType).ConvertFromInvariantString(stringValue);
             }
             catch (Exception)
             {
