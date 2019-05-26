@@ -6,16 +6,16 @@ using Swashbuckle.AspNetCore.Swagger;
 
 namespace Microsoft.Extensions.ApiDescription
 {
-    /// <summary> 
+    /// <summary>
     /// This service will be looked up by name from the service collection when using
     /// the Microsoft.Extensions.ApiDescription tool
     /// </summary>
-    public interface IDocumentProvider
+    internal interface IDocumentProvider
     {
         Task GenerateAsync(string documentName, TextWriter writer);
     }
 
-    public class DocumentProvider : IDocumentProvider
+    internal class DocumentProvider : IDocumentProvider
     {
         private readonly SwaggerOptions _options;
         private readonly ISwaggerProvider _swaggerProvider;
