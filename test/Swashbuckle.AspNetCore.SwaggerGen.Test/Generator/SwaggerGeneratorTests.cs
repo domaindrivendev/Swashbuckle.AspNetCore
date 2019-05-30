@@ -298,15 +298,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
-        [InlineData(nameof(FakeController.AcceptsOptionalParameter), "param", "foobar")]
-        [InlineData(nameof(FakeController.AcceptsOptionalJsonConvertedEnum), "param", "Value1")]
-        [InlineData(nameof(FakeController.AcceptsDataAnnotatedType), "StringWithDefaultValue", "foobar")]
+        [InlineData(nameof(FakeController.AcceptsOptionalParameter), "param", "foobar", false)]
+        [InlineData(nameof(FakeController.AcceptsOptionalJsonConvertedEnum), "param", "Value1", false)]
+        [InlineData(nameof(FakeController.AcceptsOptionalJsonConvertedEnum), "param", "value1", true)]
+        [InlineData(nameof(FakeController.AcceptsDataAnnotatedType), "StringWithDefaultValue", "foobar", false)]
         public void GetSwagger_SetsDefaultValue_IfApiParameterIsOptionalOrHasDefaultValueAttribute(
             string actionFixtureName,
             string parameterName,
-            string expectedDefaultValue)
+            string expectedDefaultValue,
+            bool describeStringEnumsInCamelCase)
         {
-            var subject = Subject(setupApis: apis => apis.Add("GET", "collection", actionFixtureName));
+            var subject = Subject(setupApis: apis => apis.Add("GET", "collection", actionFixtureName),
+                schemaSetupAction: o => o.DescribeStringEnumsInCamelCase = describeStringEnumsInCamelCase);
 
             var swagger = subject.GetSwagger("v1");
 
@@ -595,7 +598,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         private SwaggerGenerator Subject(
             Action<FakeApiDescriptionGroupCollectionProvider> setupApis = null,
-            Action<SwaggerGeneratorOptions> setupAction = null)
+            Action<SwaggerGeneratorOptions> setupAction = null,
+            Action<SchemaGeneratorOptions> schemaSetupAction = null)
         {
             var apiDescriptionsProvider = new FakeApiDescriptionGroupCollectionProvider();
             setupApis?.Invoke(apiDescriptionsProvider);
@@ -605,9 +609,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             setupAction?.Invoke(options);
 
+            var schemaOptions = new SchemaGeneratorOptions();
+            schemaSetupAction?.Invoke(schemaOptions);
+
             return new SwaggerGenerator(
                 apiDescriptionsProvider,
-                new SchemaGenerator(new JsonSerializerSettings(), new SchemaGeneratorOptions()),
+                new SchemaGenerator(new JsonSerializerSettings(), schemaOptions),
                 options
             );
         }

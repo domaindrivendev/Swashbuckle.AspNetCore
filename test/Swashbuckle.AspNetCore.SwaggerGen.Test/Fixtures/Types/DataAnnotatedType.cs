@@ -36,5 +36,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         [DefaultValue("foobar")]
         public string StringWithDefaultValue { get; set; }
+
+        [DefaultValue(IntEnum.Value4)]
+        public IntEnum IntEnumWithDefaultValue { get; set; }
     }
 }

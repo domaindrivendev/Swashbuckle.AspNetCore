@@ -267,6 +267,26 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("password", schema.Properties["StringWithDataTypePassword"].Format);
             Assert.IsType<OpenApiString>(schema.Properties["StringWithDefaultValue"].Default);
             Assert.Equal("foobar", ((OpenApiString)schema.Properties["StringWithDefaultValue"].Default).Value);
+            Assert.Equal(4, ((OpenApiInteger)schema.Properties["IntEnumWithDefaultValue"].Default).Value);
+        }
+
+        [Theory]
+        [InlineData(true, false, "Value4")]
+        [InlineData(true, true, "value4")]
+        public void GenerateSchema_SetsValidationProperties_ForEnumAsString(
+            bool describeAllEnumsAsStrings,
+            bool describeStringEnumsInCamelCase,
+            string expectedValue)
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject(o => {
+                o.DescribeAllEnumsAsStrings = describeAllEnumsAsStrings;
+                o.DescribeStringEnumsInCamelCase = describeStringEnumsInCamelCase;
+            }).GenerateSchema(typeof(DataAnnotatedType), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal(expectedValue, ((OpenApiString)schema.Properties["IntEnumWithDefaultValue"].Default).Value);
         }
 
         [Fact]

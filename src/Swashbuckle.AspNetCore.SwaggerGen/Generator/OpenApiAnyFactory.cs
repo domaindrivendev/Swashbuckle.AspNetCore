@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 
@@ -28,8 +29,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             else if (schema.Type == "number" && schema.Format == "double" && TryCast(value, out double doubleValue))
                 openApiAny = new OpenApiDouble(doubleValue);
 
-            else if (schema.Type == "string" && value.GetType().IsEnum)
-                openApiAny = new OpenApiString(Enum.GetName(value.GetType(), value));
+            else if (schema.Type == "string" && value.GetType().IsEnum) {
+                if (schema.Enum != null)
+                {
+                    var loweredValue = Enum.GetName(value.GetType(), value).ToLowerInvariant();
+                    var mappedValue = schema.Enum.Select(e => ((OpenApiString)e)?.Value).Where(v => v.ToLowerInvariant() == loweredValue).FirstOrDefault();
+                    if (mappedValue != null) openApiAny = new OpenApiString(mappedValue);
+                }
+            }
 
             else if (schema.Type == "string" && schema.Format == "date-time" && TryCast(value, out DateTime dateTimeValue))
                 openApiAny = new OpenApiDate(dateTimeValue);
