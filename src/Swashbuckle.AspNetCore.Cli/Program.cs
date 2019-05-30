@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Writers;
 using Microsoft.AspNetCore;
+using Microsoft.Extensions.Configuration;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.Cli
@@ -32,6 +33,7 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Option("--host", "a specific host to include in the Swagger output");
                 c.Option("--basepath", "a specific basePath to inlcude in the Swagger output");
                 c.Option("--serializeasv2", "output Swagger in the V2 format rather than V3", true);
+                c.Option("--config", "a relative path to a valid JSON configuration file");
                 c.OnRun((namedArgs) =>
                 {
                     var depsFile = namedArgs["startupassembly"].Replace(".dll", ".deps.json");
@@ -59,12 +61,18 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Option("--host", "");
                 c.Option("--basepath", "");
                 c.Option("--serializeasv2", "", true);
+                c.Option("--config", "");
                 c.OnRun((namedArgs) =>
                 {
                     // 1) Configure host with provided startupassembly
                     var startupAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(
                         Path.Combine(Directory.GetCurrentDirectory(), namedArgs["startupassembly"]));
                     var host = WebHost.CreateDefaultBuilder()
+                        .ConfigureAppConfiguration((hostingContext, config) =>
+                        {
+                            if (namedArgs.ContainsKey("--config"))
+                                config.AddJsonFile(namedArgs["--config"]);
+                        })
                         .UseStartup(startupAssembly.FullName)
                         .Build();
 
