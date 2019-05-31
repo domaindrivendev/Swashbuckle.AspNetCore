@@ -32,7 +32,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             else if (schema.Type == "string" && value.GetType().IsEnum) {
                 if (schema.Enum != null)
                 {
-                    var loweredValue = Enum.GetName(value.GetType(), value)?.ToLowerInvariant();
+                    var name = Enum.GetName(value.GetType(), value);
+                    var mappedValue = schema.Enum.FirstOrDefault(e => string.Equals(name, ((OpenApiString)e)?.Value, StringComparison.OrdinalIgnoreCase));
+                    if (mappedValue != null) openApiAny = mappedValue;
                     var mappedValue = schema.Enum.Select(e => ((OpenApiString)e)?.Value).Where(v => v.ToLowerInvariant() == loweredValue).FirstOrDefault();
                     if (mappedValue != null) openApiAny = new OpenApiString(mappedValue);
                 }
