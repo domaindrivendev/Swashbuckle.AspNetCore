@@ -115,7 +115,7 @@ Refer to the [routing documentation](https://docs.microsoft.com/en-us/aspnet/cor
 
 Swashbuckle consists of multiple components that can be used together or individually dependening on your needs. At its core, there's a Swagger object model, a Swagger generator and a packaged version of the [swagger-ui](https://github.com/swagger-api/swagger-ui). These 3 packages can be installed with the `Swashbuckle.AspNetCore` "metapackage" and will work together seamlessly (see [Getting Started](#getting-started)) to provide beautiful API docs that are automatically generated from your code.
 
-Additionally, there's add-on packages (CLI tools, [an alternate UI](https://github.com/Rebilly/ReDoc) etc.) that you can optinally install and configure as needed.
+Additionally, there's add-on packages (CLI tools, [an alternate UI](https://github.com/Rebilly/ReDoc) etc.) that you can optionally install and configure as needed.
 
 ## "Core" Packages (i.e. installed via Swashbuckle.AspNetCore)
 
