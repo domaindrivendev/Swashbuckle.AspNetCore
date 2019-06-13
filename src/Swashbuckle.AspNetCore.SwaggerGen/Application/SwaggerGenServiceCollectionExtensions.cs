@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.ApiDescription;
+using Microsoft.Extensions.ApiDescriptions;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -34,7 +34,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IConfigureOptions<SwaggerGeneratorOptions>, ConfigureSwaggerGeneratorOptions>();
             services.AddTransient<IConfigureOptions<SchemaGeneratorOptions>, ConfigureSchemaGeneratorOptions>();
 
-            // Used by the Microsoft.Extensions.ApiDescription tool
+            // Used by the <c>dotnet-getdocument</c> tool from the Microsoft.Extensions.ApiDescription.Server package.
             services.TryAddSingleton<IDocumentProvider, DocumentProvider>();
 
             if (setupAction != null) services.ConfigureSwaggerGen(setupAction);

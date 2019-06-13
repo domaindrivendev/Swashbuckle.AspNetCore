@@ -1,29 +1,43 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Writers;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Microsoft.Extensions.ApiDescription
+namespace Microsoft.Extensions.ApiDescriptions
 {
-    /// <summary> 
+    /// <summary>
     /// This service will be looked up by name from the service collection when using
-    /// the Microsoft.Extensions.ApiDescription tool
+    /// the <c>dotnet-getdocument</c> tool from the Microsoft.Extensions.ApiDescription.Server package.
     /// </summary>
-    public interface IDocumentProvider
+    internal interface IDocumentProvider
     {
+        IEnumerable<string> GetDocumentNames();
+
         Task GenerateAsync(string documentName, TextWriter writer);
     }
 
-    public class DocumentProvider : IDocumentProvider
+    internal class DocumentProvider : IDocumentProvider
     {
+        private readonly SwaggerGeneratorOptions _generatorOptions;
         private readonly SwaggerOptions _options;
         private readonly ISwaggerProvider _swaggerProvider;
 
-        public DocumentProvider(IOptions<SwaggerOptions> options, ISwaggerProvider swaggerProvider)
+        public DocumentProvider(
+            IOptions<SwaggerGeneratorOptions> generatorOptions,
+            IOptions<SwaggerOptions> options,
+            ISwaggerProvider swaggerProvider)
         {
+            _generatorOptions = generatorOptions.Value;
             _options = options.Value;
             _swaggerProvider = swaggerProvider;
+        }
+
+        public IEnumerable<string> GetDocumentNames()
+        {
+            return _generatorOptions.SwaggerDocs.Keys;
         }
 
         public Task GenerateAsync(string documentName, TextWriter writer)

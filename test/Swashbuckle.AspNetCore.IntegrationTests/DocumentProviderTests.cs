@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.ApiDescription;
+using Microsoft.Extensions.ApiDescriptions;
 using Microsoft.OpenApi.Readers;
 using Swashbuckle.AspNetCore.Swagger;
 using Xunit;
@@ -11,6 +11,25 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 {
     public class DocumentProviderTests
     {
+        [Theory]
+        [InlineData(typeof(Basic.Startup), new[] { "v1" })]
+        [InlineData(typeof(CustomUIConfig.Startup), new[] { "v1" })]
+        [InlineData(typeof(CustomUIIndex.Startup), new[] { "v1" })]
+        [InlineData(typeof(GenericControllers.Startup), new[] { "v1" })]
+        [InlineData(typeof(MultipleVersions.Startup), new[] { "v1", "v2" })]
+        [InlineData(typeof(OAuth2Integration.Startup), new[] { "v1" })]
+        public void DocumentProvider_ExposesAllDocumentNames(Type startupType, string[] expectedNames)
+        {
+            var testSite = new TestSite(startupType);
+            var server = testSite.BuildServer();
+            var services = server.Host.Services;
+            var documentProvider = (IDocumentProvider)services.GetService(typeof(IDocumentProvider));
+
+            var documentNames = documentProvider.GetDocumentNames();
+
+            Assert.Equal(expectedNames, documentNames);
+        }
+
         [Theory]
         [InlineData(typeof(Basic.Startup), "v1")]
         [InlineData(typeof(CustomUIConfig.Startup), "v1")]
