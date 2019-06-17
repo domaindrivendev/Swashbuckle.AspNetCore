@@ -9,13 +9,12 @@ namespace Basic.Swagger
     {
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
-            var type = context.Type;
-            schema.Example = GetExampleOrNullFor(type);
+            schema.Example = GetExampleOrNullFor(context.ModelMetadata.UnderlyingOrModelType);
         }
 
-        private IOpenApiAny GetExampleOrNullFor(Type systemType)
+        private IOpenApiAny GetExampleOrNullFor(Type modelType)
         {
-            switch (systemType.Name)
+            switch (modelType.Name)
             {
                 case "Product":
                     return new OpenApiObject

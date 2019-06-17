@@ -17,9 +17,9 @@ namespace Swashbuckle.AspNetCore.Annotations
 
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
-            var attributes = context.Type.GetCustomAttributes<SwaggerSchemaFilterAttribute>(true);
+            var schemaFilterAttributes = context.ModelMetadata.ModelType.GetCustomAttributes<SwaggerSchemaFilterAttribute>();
 
-            foreach (var attr in attributes)
+            foreach (var attr in schemaFilterAttributes)
             {
                 var filter = (ISchemaFilter)ActivatorUtilities.CreateInstance(_serviceProvider, attr.Type, attr.Arguments);
                 filter.Apply(schema, context);

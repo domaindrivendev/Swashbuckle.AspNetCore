@@ -4,11 +4,11 @@ using Xunit.Abstractions;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
-    public class XmlCommentsMemberNameHelperTests
+    public class XmlCommentsNodeNameHelperTests
     {
         private readonly ITestOutputHelper _output;
 
-        public XmlCommentsMemberNameHelperTests(ITestOutputHelper output)
+        public XmlCommentsNodeNameHelperTests(ITestOutputHelper output)
         {
             _output = output;
         }
@@ -31,7 +31,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var methodInfo = declaringType.GetMethod(name);
 
-            var memberName = XmlCommentsMemberNameHelper.GetMemberNameForMethod(methodInfo);
+            var memberName = XmlCommentsNodeNameHelper.GetMemberNameForMethod(methodInfo);
 
             _output.WriteLine(expectedMemberName);
             _output.WriteLine(memberName);
@@ -52,7 +52,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             string expectedMemberName
         )
         {
-            var memberName = XmlCommentsMemberNameHelper.GetMemberNameForType(type);
+            var memberName = XmlCommentsNodeNameHelper.GetMemberNameForType(type);
 
             _output.WriteLine(expectedMemberName);
             _output.WriteLine(memberName);
@@ -76,7 +76,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var memberInfo = declaringType.GetMember(fieldOrPropertyName)[0];
 
-            var memberName = XmlCommentsMemberNameHelper.GetMemberNameForMember(memberInfo);
+            var memberName = XmlCommentsNodeNameHelper.GetNodeNameForMember(memberInfo);
 
             _output.WriteLine(expectedMemberName);
             _output.WriteLine(memberName);

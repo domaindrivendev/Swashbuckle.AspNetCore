@@ -781,13 +781,14 @@ public class AutoRestSchemaFilter : ISchemaFilter
 {
     public void Apply(OpenApiSchema schema, SchemaFilterContext context)
     {
-        if (context.SystemType.IsEnum)
+		var type = context.ModelMetadata.UnderlyingOrModelType;
+        if (type.IsEnum)
         {
             schema.Extensions.Add(
                 "x-ms-enum",
                 new OpenApiObject
                 {
-                    ["name"] = new OpenApiString(context.SystemType.Name),
+                    ["name"] = new OpenApiString(type.Name),
                     ["modelAsString"] = new OpenApiBoolean(true)
                 }
             );

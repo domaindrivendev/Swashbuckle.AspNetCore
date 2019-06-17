@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.1.10" />
+    <PackageReference Include="Microsoft.AspNetCore.All" />
   </ItemGroup>
 
   <ItemGroup>
@@ -44,8 +44,4 @@
     <Exec Command="swagger tofile &#45;-host http://example.com &#45;-output wwwroot/api-docs/v1/swagger.json &quot;$(TargetPath)&quot; v1" />
   </Target>
   -->
-
-  <Target Name="SwaggerToFile" AfterTargets="AfterBuild">
-    <Exec Command="dotnet ../../../src/Swashbuckle.AspNetCore.Cli/bin/$(Configuration)/netcoreapp2.1/dotnet-swagger.dll tofile --host http://example.com --output wwwroot/api-docs/v1/swagger.json &quot;$(TargetPath)&quot; v1" />
-  </Target>
 </Project>

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     [ModelMetadataType(typeof(MetadataType))]
-    public class MetadataAnnotatedType
+    public class DataAnnotatedViaMetadataType
     {
         public string StringWithRequired { get; set; }
 

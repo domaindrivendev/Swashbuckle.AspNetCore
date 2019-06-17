@@ -34,7 +34,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (targetMethod == null) return;
 
-            var typeMemberName = XmlCommentsMemberNameHelper.GetMemberNameForType(targetMethod.DeclaringType);
+            var typeMemberName = XmlCommentsNodeNameHelper.GetMemberNameForType(targetMethod.DeclaringType);
             var typeNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, typeMemberName));
 
             // Apply controller-level tags if any
@@ -43,7 +43,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 ApplyResponsesXmlToResponses(operation.Responses, typeNode.Select(ResponsesXPath));
             }
 
-            var methodMemberName = XmlCommentsMemberNameHelper.GetMemberNameForMethod(targetMethod);
+            var methodMemberName = XmlCommentsNodeNameHelper.GetMemberNameForMethod(targetMethod);
             var methodNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, methodMemberName));
 
             // Apply method-level tags
@@ -153,7 +153,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var memberInfo = metadata.ContainerType.GetMember(metadata.PropertyName).FirstOrDefault();
                 if (memberInfo == null) continue;
 
-                var memberName = XmlCommentsMemberNameHelper.GetMemberNameForMember(memberInfo);
+                var memberName = XmlCommentsNodeNameHelper.GetNodeNameForMember(memberInfo);
                 var memberNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, memberName));
                 if (memberNode == null) continue;
 

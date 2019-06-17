@@ -13,11 +13,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             if (_reservedIds.ContainsValue(schemaId))
             {
-                var originalType = _reservedIds.First(entry => entry.Value == schemaId).Key;
+                var reservedForType = _reservedIds.First(entry => entry.Value == schemaId).Key;
 
                 throw new InvalidOperationException(
                     $"Can't use schemaId \"${schemaId}\" for type \"${type}\". " +
-                    $"The same schemaId was already used for type \"${originalType}\"");
+                    $"The same schemaId is already used for type \"${reservedForType}\"");
             }
 
             _reservedIds.Add(type, schemaId);
