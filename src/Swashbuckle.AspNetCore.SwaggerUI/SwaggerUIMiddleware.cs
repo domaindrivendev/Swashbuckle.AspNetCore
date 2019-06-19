@@ -79,7 +79,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             return JsonSerializer.Create(new JsonSerializerSettings
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                Converters = new[] { new StringEnumConverter(true) },
+                Converters = new[] { new StringEnumConverter(new DefaultNamingStrategy(), true) },
                 NullValueHandling = NullValueHandling.Ignore,
                 Formatting = Formatting.None,
                 StringEscapeHandling = StringEscapeHandling.EscapeHtml
