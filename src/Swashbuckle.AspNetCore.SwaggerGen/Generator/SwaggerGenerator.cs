@@ -434,14 +434,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             { "TRACE", OperationType.Trace }
         };
 
-        private static Dictionary<BindingSource, ParameterLocation> ParameterLocationMap = new Dictionary<BindingSource, ParameterLocation>
+        private static readonly Dictionary<BindingSource, ParameterLocation> ParameterLocationMap = new Dictionary<BindingSource, ParameterLocation>
         {
             { BindingSource.Query, ParameterLocation.Query },
             { BindingSource.Header, ParameterLocation.Header },
             { BindingSource.Path, ParameterLocation.Path }
         };
 
-        private static IEnumerable<Type> RequiredAttributeTypes = new[]
+        private static readonly IEnumerable<Type> RequiredAttributeTypes = new[]
         {
             typeof(BindRequiredAttribute),
             typeof(RequiredAttribute)

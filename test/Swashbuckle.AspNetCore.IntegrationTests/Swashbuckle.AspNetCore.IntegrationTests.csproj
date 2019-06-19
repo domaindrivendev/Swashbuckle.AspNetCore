@@ -1,6 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.IntegrationTests.snk</AssemblyOriginatorKeyFile>
+    <NoWarn>$(NoWarn);8002</NoWarn>
+    <SignAssembly>true</SignAssembly>
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
 
