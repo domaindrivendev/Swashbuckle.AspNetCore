@@ -56,8 +56,6 @@ namespace Swashbuckle.AspNetCore.ApiTesting
                     ? (OpenApiSchema)openApiDocument.ResolveReference(headerSpec.Schema.Reference)
                     : headerSpec.Schema;
 
-                if (value == null) continue;
-
                 if (!schema.TryParse(value, out object typedValue))
                     throw new ResponseDoesNotMatchSpecException($"Header '{entry.Key}' is not of type '{headerSpec.Schema.TypeIdentifier()}'");
             }
