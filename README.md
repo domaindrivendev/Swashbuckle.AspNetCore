@@ -2,6 +2,10 @@
 |--------------|
 |* If you're upgrading from 2.x to 3.x, there's a couple of breaking changes to be aware of. See the [release notes](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/releases/tag/v3.0.0) for details<br />* If you're upgrading from 3.x to 4.x, there's more breaking changes to be aware of. See those [release notes here](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/releases/tag/v4.0.0)|
 
+| :mega: Important for anyone using AspNetCore 3.0! |
+|--------------|
+|* If you're using AspNetCore 3.0, please use version [5.0.0-rc2](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/releases/tag/v5.0.0-rc2) and refer to the [v5 README](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master/README-v5.md)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|
+
 Swashbuckle.AspNetCore
 =========
 
