@@ -18,7 +18,7 @@
     <IncludeContentInPack>false</IncludeContentInPack>
     <IncludeSource>false</IncludeSource>
     <IncludeSymbols>false</IncludeSymbols>
-    <MicrosoftExtensionsApiDescriptionServerPackageVersion>0.3.0-preview6.19307.2</MicrosoftExtensionsApiDescriptionServerPackageVersion>
+    <MicrosoftExtensionsApiDescriptionServerPackageVersion>0.3.0-preview7.19365.7</MicrosoftExtensionsApiDescriptionServerPackageVersion>
     <NuspecFile>$(MSBuildProjectName).nuspec</NuspecFile>
   </PropertyGroup>
 
