@@ -42,5 +42,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.NotNull(instance);
             Assert.IsType(typeof(OpenApiDate), instance);
         }
+
+        [Fact]
+        public void TryCreateFor_CreatesAnInstance_ForDoubleSchemaAndValueWhenGivenDecimal()
+        {
+            var schema = new OpenApiSchema { Type = "number", Format = "double" };
+
+            OpenApiAnyFactory.TryCreateFor(schema, 3.4m, out IOpenApiAny instance);
+
+            Assert.NotNull(instance);
+            Assert.IsType(typeof(OpenApiDouble), instance);
+        }
     }
 }
