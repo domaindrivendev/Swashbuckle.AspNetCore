@@ -44,7 +44,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             try
             {
-                typedValue = (T)value;
+                typedValue = (T)Convert.ChangeType(value, typeof(T));
                 return true;
             }
             catch (InvalidCastException)
