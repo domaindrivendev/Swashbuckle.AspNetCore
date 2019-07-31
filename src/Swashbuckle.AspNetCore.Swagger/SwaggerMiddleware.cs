@@ -28,7 +28,7 @@ namespace Swashbuckle.AspNetCore.Swagger
         {
             _next = next;
             _options = options ?? new SwaggerOptions();
-            _requestMatcher = new TemplateMatcher(TemplateParser.Parse(options.RouteTemplate), new RouteValueDictionary());
+            _requestMatcher = new TemplateMatcher(TemplateParser.Parse(_options.RouteTemplate), new RouteValueDictionary());
         }
 
         public async Task Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
