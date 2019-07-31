@@ -54,7 +54,7 @@ namespace Basic
 
                 c.OperationFilter<AssignOperationVendorExtensions>();
 
-                c.DescribeAllEnumsAsStrings();
+                //c.DescribeAllEnumsAsStrings();
 
                 c.SchemaFilter<ExamplesSchemaFilter>();
 
