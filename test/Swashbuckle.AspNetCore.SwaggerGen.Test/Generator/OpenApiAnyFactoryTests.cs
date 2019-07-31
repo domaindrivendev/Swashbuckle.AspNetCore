@@ -9,6 +9,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
     {
         [Theory]
         [InlineData("boolean", null, true, typeof(OpenApiBoolean))]
+        [InlineData("integer", "int32", (byte)10, typeof(OpenApiInteger))]
+        [InlineData("integer", "int32", ByteEnum.Value2, typeof(OpenApiInteger))]
         [InlineData("integer", "int32", (short)10, typeof(OpenApiInteger))]
         [InlineData("integer", "int32", ShortEnum.Value2, typeof(OpenApiInteger))]
         [InlineData("integer", "int32", 10, typeof(OpenApiInteger))]
