@@ -226,7 +226,7 @@ app.UseSwagger(c =>
 });
 ```
 
-The _SwaggerDocument_ and the current _HttpRequest_ are passed to the filter. This provides a lot of flexibility. For example, you can assign the "host" property (as shown) or you could inspect session information or an Authorization header and remove operations int the document based on user permissions.
+The _SwaggerDocument_ and the current _HttpRequest_ are passed to the filter. This provides a lot of flexibility. For example, you can assign the "host" property (as shown) or you could inspect session information or an Authorization header and remove operations in the document based on user permissions.
 
 ### Pretty Print Swagger JSON ###
 
