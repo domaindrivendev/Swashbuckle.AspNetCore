@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
@@ -9,60 +10,50 @@ using Newtonsoft.Json.Serialization;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public class PrimitiveSchemaGenerator : ChainableSchemaGenerator
+    internal class JsonPrimitiveHandler : SchemaGeneratorHandler
     {
-        private readonly JsonSerializerSettings _serializerSettings;
+        public JsonPrimitiveHandler(SchemaGeneratorOptions schemaGeneratorOptions, SchemaGenerator schemaGenerator, JsonSerializerSettings jsonSerializerSettings)
+            : base(schemaGeneratorOptions, schemaGenerator, jsonSerializerSettings)
+        { }
 
-        public PrimitiveSchemaGenerator(
-            IContractResolver contractResolver,
-            ISchemaGenerator rootGenerator,
-            JsonSerializerSettings serializerSettings,
-            SchemaGeneratorOptions options)
-            : base(contractResolver, rootGenerator, options)
+        protected override bool CanGenerateSchemaFor(ModelMetadata modelMetadata, JsonContract jsonContract)
         {
-            _serializerSettings = serializerSettings;
+            return jsonContract is JsonPrimitiveContract
+                && (modelMetadata.UnderlyingOrModelType.IsEnum || FactoryMethodMap.ContainsKey(modelMetadata.UnderlyingOrModelType));
         }
 
-        protected override bool CanGenerateSchemaFor(Type type)
+        protected override OpenApiSchema GenerateSchemaFor(ModelMetadata modelMetadata, SchemaRepository schemaRepository, JsonContract jsonContract)
         {
-            return ContractResolver.ResolveContract(type) is JsonPrimitiveContract;
+            var jsonPrimitiveContract = (JsonPrimitiveContract)jsonContract;
+
+            var underlyingType = modelMetadata.UnderlyingOrModelType;
+
+            var schema = underlyingType.IsEnum
+                ? GenerateEnumSchema(underlyingType, jsonPrimitiveContract)
+                : FactoryMethodMap[underlyingType]();
+
+            if (modelMetadata.IsNullableValueType)
+                schema.Nullable = true;
+
+            return schema;
         }
 
-        protected override OpenApiSchema GenerateSchemaFor(Type type, SchemaRepository schemaRepository)
-        {
-            var jsonPrimitiveContract = (JsonPrimitiveContract)ContractResolver.ResolveContract(type);
-
-            if (jsonPrimitiveContract.UnderlyingType.IsEnum)
-                return GenerateEnumSchema(jsonPrimitiveContract);
-
-            if (FactoryMethodMap.ContainsKey(jsonPrimitiveContract.UnderlyingType))
-                return FactoryMethodMap[jsonPrimitiveContract.UnderlyingType]();
-
-            return new OpenApiSchema { Type = "string" };
-        }
-
-        private OpenApiSchema GenerateEnumSchema(JsonPrimitiveContract jsonPrimitiveContract)
+        private OpenApiSchema GenerateEnumSchema(Type enumType, JsonPrimitiveContract jsonPrimitiveContract)
         {
             var stringEnumConverter = (jsonPrimitiveContract.Converter as StringEnumConverter)
-                ?? _serializerSettings.Converters.OfType<StringEnumConverter>().FirstOrDefault();
+                ?? JsonSerializerSettings.Converters.OfType<StringEnumConverter>().FirstOrDefault();
 
-            var describeAsString = Options.DescribeAllEnumsAsStrings
-                || (stringEnumConverter != null);
-
-            var describeInCamelCase = Options.DescribeStringEnumsInCamelCase
-#if NETCOREAPP3_0
-                || (stringEnumConverter != null && stringEnumConverter.NamingStrategy is CamelCaseNamingStrategy);
-#else
-                || (stringEnumConverter != null && stringEnumConverter.CamelCaseText);
-#endif
-
-            var enumType = jsonPrimitiveContract.UnderlyingType;
-            var enumUnderlyingType = describeAsString ? typeof(string) : enumType.GetEnumUnderlyingType();
-
-            var schema = FactoryMethodMap[enumUnderlyingType]();
-
-            if (describeAsString)
+            if (SchemaGeneratorOptions.DescribeAllEnumsAsStrings || (stringEnumConverter != null))
             {
+                var describeInCamelCase = SchemaGeneratorOptions.DescribeStringEnumsInCamelCase
+                    #if NETCOREAPP3_0
+                    || (stringEnumConverter != null && stringEnumConverter.NamingStrategy is CamelCaseNamingStrategy);
+                    #else
+                    || (stringEnumConverter != null && stringEnumConverter.CamelCaseText);
+                    #endif
+
+                var schema = FactoryMethodMap[typeof(string)]();
+
                 schema.Enum = enumType.GetEnumNames()
                     .Distinct()
                     .Select(name =>
@@ -71,9 +62,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         return (IOpenApiAny)(new OpenApiString(name));
                     })
                     .ToList();
+
+                return schema;
             }
             else
             {
+                var enumUnderlyingType = enumType.GetEnumUnderlyingType();
+                var schema = FactoryMethodMap[enumUnderlyingType]();
+
                 schema.Enum = enumType.GetEnumValues()
                     .Cast<object>()
                     .Distinct()
@@ -83,9 +79,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         return OpenApiAnyFactory.TryCreateFor(schema, value, out IOpenApiAny openApiAny) ? openApiAny : null;
                     })
                     .ToList();
-            }
 
-            return schema;
+                return schema;
+            }
         }
 
         private static readonly Dictionary<Type, Func<OpenApiSchema>> FactoryMethodMap = new Dictionary<Type, Func<OpenApiSchema>>

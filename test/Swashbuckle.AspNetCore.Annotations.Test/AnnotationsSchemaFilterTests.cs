@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Linq;
-using System.Collections.Generic;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Xunit;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -9,29 +8,36 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
 {
     public class AnnotationsSchemaFilterTests
     {
-        [Fact]
-        public void Apply_DelegatesToSpecifiedFilter_IfTypeDecoratedWithFilterAttribute()
+        private readonly IModelMetadataProvider _modelMetadataProvider;
+
+        public AnnotationsSchemaFilterTests()
         {
-            IEnumerable<OpenApiSchema> schemas;
-            var filterContexts = new[]
-            {
-                FilterContextFor(typeof(SwaggerAnnotatedClass)),
-                FilterContextFor(typeof(SwaggerAnnotatedStruct))
-            };
+            _modelMetadataProvider = ModelMetadataHelper.GetDefaultModelMetadataProvider();
+        }
 
-            schemas = filterContexts.Select(c =>
-            {
-                var schema = new OpenApiSchema();
-                Subject().Apply(schema, c);
-                return schema;
-            });
+        [Theory]
+        [InlineData(typeof(SwaggerAnnotatedClass))]
+        [InlineData(typeof(SwaggerAnnotatedStruct))]
+        public void Apply_DelegatesToSpecifiedFilter_IfTypeDecoratedWithFilterAttribute(Type type)
+        {
+            var schema = new OpenApiSchema();
+            var context = FilterContextFor(type);
 
-            Assert.All(schemas, s => Assert.NotEmpty(s.Extensions));
+            Subject().Apply(schema, context);
+
+            Assert.NotEmpty(schema.Extensions);
         }
 
         private SchemaFilterContext FilterContextFor(Type type)
         {
-            return new SchemaFilterContext(type, null, null, null);
+            var modelMetadata = _modelMetadataProvider.GetMetadataForType(type);
+
+            return new SchemaFilterContext(
+                modelMetadata: modelMetadata,
+                schemaRepository: null, // NA for test
+                schemaGenerator: null, // NA for test
+                jsonContract: null // NA for test
+            );
         }
 
         private AnnotationsSchemaFilter Subject()

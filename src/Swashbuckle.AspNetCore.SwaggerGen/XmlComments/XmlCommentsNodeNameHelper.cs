@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public class XmlCommentsMemberNameHelper
+    public class XmlCommentsNodeNameHelper
     {
         public static string GetMemberNameForMethod(MethodInfo method)
         {
@@ -37,7 +37,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return builder.ToString();
         }
 
-        public static string GetMemberNameForMember(MemberInfo memberInfo)
+        public static string GetNodeNameForMember(MemberInfo memberInfo)
         {
             var builder = new StringBuilder(((memberInfo.MemberType & MemberTypes.Field) != 0) ? "F:" : "P:");
             builder.Append(QualifiedNameFor(memberInfo.DeclaringType));

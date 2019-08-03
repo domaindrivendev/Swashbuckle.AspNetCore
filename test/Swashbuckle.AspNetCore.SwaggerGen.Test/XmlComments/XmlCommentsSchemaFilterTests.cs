@@ -7,11 +7,21 @@ using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Any;
 using Newtonsoft.Json.Serialization;
 using Xunit;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     public class XmlCommentsSchemaFilterTests
     {
+        private readonly IModelMetadataProvider _modelMetadataProvider;
+        private readonly DefaultContractResolver _jsonContractResolver;
+
+        public XmlCommentsSchemaFilterTests()
+        {
+            _modelMetadataProvider = ModelMetadataHelper.GetDefaultModelMetadataProvider();
+            _jsonContractResolver = new DefaultContractResolver();
+        }
+
         [Theory]
         [InlineData(typeof(XmlAnnotatedType), "summary for XmlAnnotatedType")]
         [InlineData(typeof(XmlAnnotatedType.NestedType), "summary for NestedType")]
@@ -117,9 +127,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         private SchemaFilterContext FilterContextFor(Type type)
         {
-            var jsonObjectContract = new DefaultContractResolver().ResolveContract(type);
-            return new SchemaFilterContext(type, (jsonObjectContract as JsonObjectContract), new SchemaRepository(), null);
-            throw new NotImplementedException();
+            var modelMetadata = _modelMetadataProvider.GetMetadataForType(type);
+            var jsonContract = _jsonContractResolver.ResolveContract(type);
+
+            return new SchemaFilterContext(
+                modelMetadata: modelMetadata,
+                schemaRepository: null, // NA for test
+                schemaGenerator: null, // NA for test
+                jsonContract: jsonContract
+            );
         }
 
         private XmlCommentsSchemaFilter Subject()

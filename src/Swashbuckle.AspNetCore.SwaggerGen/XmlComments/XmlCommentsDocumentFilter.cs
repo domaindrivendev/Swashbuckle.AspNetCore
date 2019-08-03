@@ -30,7 +30,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             foreach (var nameAndType in controllerNamesAndTypes)
             {
-                var memberName = XmlCommentsMemberNameHelper.GetMemberNameForType(nameAndType.Value);
+                var memberName = XmlCommentsNodeNameHelper.GetMemberNameForType(nameAndType.Value);
                 var typeNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, memberName));
 
                 if (typeNode != null)

@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public interface ISchemaGenerator
     {
-        OpenApiSchema GenerateSchema(Type type, SchemaRepository schemaRepository);
+        OpenApiSchema GenerateSchema(ModelMetadata modelMetadata, SchemaRepository schemaRepository);
     }
 }

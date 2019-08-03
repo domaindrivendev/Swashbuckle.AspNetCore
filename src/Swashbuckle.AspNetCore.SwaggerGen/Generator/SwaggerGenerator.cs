@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -145,7 +146,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 Deprecated = apiDescription.CustomAttributes().OfType<ObsoleteAttribute>().Any()
             };
 
-            var filterContext = new OperationFilterContext(apiDescription, _schemaGenerator, schemaRepository, apiDescription.MethodInfo());
+            apiDescription.TryGetMethodInfo(out MethodInfo methodInfo);
+            var filterContext = new OperationFilterContext(apiDescription, _schemaGenerator, schemaRepository, methodInfo);
             foreach (var filter in _options.OperationFilters)
             {
                 filter.Apply(operation, filterContext);
@@ -191,7 +193,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 || apiParameter.CustomAttributes().Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
 
             var schema = (apiParameter.ModelMetadata != null)
-                ? _schemaGenerator.GenerateSchema(apiParameter.Type, schemaRepository)
+                ? _schemaGenerator.GenerateSchema(apiParameter.ModelMetadata, schemaRepository)
                 : new OpenApiSchema { Type = "string" };
 
             var defaultValue = apiParameter.CustomAttributes().OfType<DefaultValueAttribute>().FirstOrDefault()?.Value
@@ -263,7 +265,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         contentType => contentType,
                         contentType => new OpenApiMediaType
                         {
-                            Schema = _schemaGenerator.GenerateSchema(bodyParameter.Type, schemaRepository)
+                            Schema = _schemaGenerator.GenerateSchema(bodyParameter.ModelMetadata, schemaRepository)
                         }
                     ),
                 Required = isRequired
@@ -328,7 +330,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     : formParameter.Name;
 
                 var schema = (formParameter.ModelMetadata != null)
-                    ? _schemaGenerator.GenerateSchema(formParameter.Type, schemaRepository)
+                    ? _schemaGenerator.GenerateSchema(formParameter.ModelMetadata, schemaRepository)
                     : new OpenApiSchema { Type = "string" };
 
                 var defaultValue = formParameter.CustomAttributes().OfType<DefaultValueAttribute>().FirstOrDefault()?.Value
@@ -389,7 +391,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 Description = description,
                 Content = responseContentTypes.ToDictionary(
                     contentType => contentType,
-                    contentType => CreateResponseMediaType(apiResponseType.Type, schemaRepository)
+                    contentType => CreateResponseMediaType(apiResponseType.ModelMetadata, schemaRepository)
                 )
             };
         }
@@ -414,11 +416,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return Enumerable.Empty<string>();
         }
 
-        private OpenApiMediaType CreateResponseMediaType(Type type, SchemaRepository schemaRespository)
+        private OpenApiMediaType CreateResponseMediaType(ModelMetadata modelMetadata, SchemaRepository schemaRespository)
         {
             return new OpenApiMediaType
             {
-                Schema = _schemaGenerator.GenerateSchema(type, schemaRespository)
+                Schema = _schemaGenerator.GenerateSchema(modelMetadata, schemaRespository)
             };
         }
 

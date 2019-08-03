@@ -1,6 +1,7 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27004.2006
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28714.193
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{15A55F4A-FC33-4D96-BAAD-FBDCDD96D5F5}"
 EndProject
@@ -10,6 +11,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		appveyor.yml = appveyor.yml
 		CONTRIBUTING.md = CONTRIBUTING.md
 		ISSUE_TEMPLATE.md = ISSUE_TEMPLATE.md
+		README-v5.md = README-v5.md
 		README.md = README.md
 		version.props = version.props
 	EndProjectSection
@@ -67,15 +69,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OAuth2Integration", "test\W
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfigFromFile", "test\WebSites\ConfigFromFile\ConfigFromFile.csproj", "{221F533C-BCB5-4742-ACE3-25561D545EA4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestFirst", "test\WebSites\TestFirst\TestFirst.csproj", "{B69B8131-7F3B-4872-8C6E-B18EA82A138B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestFirst", "test\WebSites\TestFirst\TestFirst.csproj", "{B69B8131-7F3B-4872-8C6E-B18EA82A138B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestFirst.IntegrationTests", "test\WebSites\TestFirst.IntegrationTests\TestFirst.IntegrationTests.csproj", "{6A520C89-4048-43AD-B3B4-B3ED75C9297B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestFirst.IntegrationTests", "test\WebSites\TestFirst.IntegrationTests\TestFirst.IntegrationTests.csproj", "{6A520C89-4048-43AD-B3B4-B3ED75C9297B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swashbuckle.AspNetCore.ApiTesting", "src\Swashbuckle.AspNetCore.ApiTesting\Swashbuckle.AspNetCore.ApiTesting.csproj", "{E77079C1-51C1-47F1-A841-B4BF040EFFA0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore.ApiTesting", "src\Swashbuckle.AspNetCore.ApiTesting\Swashbuckle.AspNetCore.ApiTesting.csproj", "{E77079C1-51C1-47F1-A841-B4BF040EFFA0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swashbuckle.AspNetCore.ApiTesting.Xunit", "src\Swashbuckle.AspNetCore.ApiTesting.Xunit\Swashbuckle.AspNetCore.ApiTesting.Xunit.csproj", "{756A46AA-E577-4500-9FBA-D3D406811DB5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore.ApiTesting.Xunit", "src\Swashbuckle.AspNetCore.ApiTesting.Xunit\Swashbuckle.AspNetCore.ApiTesting.Xunit.csproj", "{756A46AA-E577-4500-9FBA-D3D406811DB5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swashbuckle.AspNetCore.ApiTesting.Test", "test\Swashbuckle.AspNetCore.ApiTesting.Test\Swashbuckle.AspNetCore.ApiTesting.Test.csproj", "{79A1A89C-11D0-4976-BFFB-78B0A2998666}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore.ApiTesting.Test", "test\Swashbuckle.AspNetCore.ApiTesting.Test\Swashbuckle.AspNetCore.ApiTesting.Test.csproj", "{79A1A89C-11D0-4976-BFFB-78B0A2998666}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

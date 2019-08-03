@@ -9,29 +9,43 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class ApiDescriptionExtensions
     {
-        public static MethodInfo MethodInfo(this ApiDescription apiDescription)
+        public static bool TryGetMethodInfo(this ApiDescription apiDescription, out MethodInfo methodInfo)
         {
-            var controllerActionDescriptor = apiDescription.ActionDescriptor as ControllerActionDescriptor;
-            return controllerActionDescriptor?.MethodInfo;
+            if (apiDescription.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor)
+            {
+                methodInfo = controllerActionDescriptor.MethodInfo;
+                return true;
+            }
+
+            methodInfo = null;
+            return false;
         }
 
         public static IEnumerable<object> CustomAttributes(this ApiDescription apiDescription)
         {
-            var methodInfo = apiDescription.MethodInfo();
+            if (apiDescription.TryGetMethodInfo(out MethodInfo methodInfo))
+            {
+                return methodInfo.GetCustomAttributes(true)
+                    .Union(methodInfo.DeclaringType.GetCustomAttributes(true));
+            }
 
-            if (methodInfo == null) return Enumerable.Empty<object>();
-
-            return methodInfo.GetCustomAttributes(true)
-                .Union(methodInfo.DeclaringType.GetCustomAttributes(true));
+            return Enumerable.Empty<object>();
         }
 
-        [Obsolete("Use MethodInfo() and CustomAttributes() extension methods instead")]
+        [Obsolete("Use TryGetMethodInfo() and CustomAttributes() instead")]
         public static void GetAdditionalMetadata(this ApiDescription apiDescription,
             out MethodInfo methodInfo,
             out IEnumerable<object> customAttributes)
         {
-            methodInfo = apiDescription.MethodInfo();
-            customAttributes = apiDescription.CustomAttributes();
+            if (apiDescription.TryGetMethodInfo(out methodInfo))
+            {
+                customAttributes = methodInfo.GetCustomAttributes(true)
+                    .Union(methodInfo.DeclaringType.GetCustomAttributes(true));
+
+                return;
+            }
+
+            customAttributes = Enumerable.Empty<object>();
         }
 
         internal static string RelativePathSansQueryString(this ApiDescription apiDescription)
