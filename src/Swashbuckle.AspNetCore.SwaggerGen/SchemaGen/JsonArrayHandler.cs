@@ -20,12 +20,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var jsonArrayContract = (JsonArrayContract)jsonContract;
 
-            var itemModelMetadata = modelMetadata.GetMetadataForType(jsonArrayContract.CollectionItemType);
+            var itemsType = jsonArrayContract.CollectionItemType ?? typeof(object);
 
             return new OpenApiSchema
             {
                 Type = "array",
-                Items = SchemaGenerator.GenerateSchema(itemModelMetadata, schemaRepository),
+                Items = SchemaGenerator.GenerateSchema(modelMetadata.GetMetadataForType(itemsType), schemaRepository),
                 UniqueItems = jsonArrayContract.UnderlyingType.IsSet() ? (bool?)true : null
             };
         }
