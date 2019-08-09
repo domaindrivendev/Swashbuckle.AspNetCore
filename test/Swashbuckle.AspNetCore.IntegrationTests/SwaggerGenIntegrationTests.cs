@@ -7,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
 using Xunit;
 using Xunit.Abstractions;
+using ReDocApp = ReDoc;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests
 {
@@ -21,11 +22,16 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 
         [Theory]
         [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
+        //[InlineData(typeof(CliExample.Startup), "/swagger/v1/swagger.json")] // netcoreapp2.1
+        //[InlineData(typeof(ConfigFromFile.Startup), "/swagger/v1/swagger.json")] // aspnetcore 2.0.9
         [InlineData(typeof(CustomUIConfig.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(CustomUIIndex.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(GenericControllers.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(MultipleVersions.Startup), "/swagger/v2/swagger.json")]
+        //[InlineData(typeof(NetCore3.Startup), "/swagger/v1/swagger.json")] // netcoreapp3.0
         [InlineData(typeof(OAuth2Integration.Startup), "/resource-server/swagger/v1/swagger.json")]
+        [InlineData(typeof(ReDocApp.Startup), "/api-docs/v1/swagger.json")]
+        [InlineData(typeof(TestFirst.Startup), "/api-docs/v1-generated/openapi.json")]
         public async Task SwaggerEndpoint_ReturnsValidSwaggerJson(
             Type startupType,
             string swaggerRequestUri)

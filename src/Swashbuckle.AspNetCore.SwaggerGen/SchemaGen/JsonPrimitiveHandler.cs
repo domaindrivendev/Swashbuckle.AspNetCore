@@ -32,7 +32,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 ? GenerateEnumSchema(underlyingType, jsonPrimitiveContract)
                 : FactoryMethodMap[underlyingType]();
 
-            if (modelMetadata.IsNullableValueType)
+            if (modelMetadata.IsReferenceOrNullableType)
                 schema.Nullable = true;
 
             return schema;

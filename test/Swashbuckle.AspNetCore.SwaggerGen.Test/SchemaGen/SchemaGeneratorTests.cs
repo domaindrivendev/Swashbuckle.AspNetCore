@@ -86,13 +86,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
+        [InlineData(typeof(string), "string", null)]
         [InlineData(typeof(bool?), "boolean", null)]
         [InlineData(typeof(int?), "integer", "int32")]
         [InlineData(typeof(DateTime?), "string", "date-time")]
         //[InlineData(typeof(Microsoft.FSharp.Core.FSharpOption<bool>), "boolean", null)]
         //[InlineData(typeof(Microsoft.FSharp.Core.FSharpOption<int>), "integer", "int32")]
         //[InlineData(typeof(Microsoft.FSharp.Core.FSharpOption<DateTime>), "string", "date-time")]
-        public void GenerateSchema_SetsNullable_IfNullablePrimitiveType(
+        public void GenerateSchema_SetsNullable_IfReferenceOrNullablePrimitiveType(
             Type type,
             string expectedSchemaType,
             string expectedSchemaFormat)
