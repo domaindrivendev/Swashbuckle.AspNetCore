@@ -16,7 +16,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         protected override bool CanGenerateSchemaFor(ModelMetadata modelMetadata, JsonContract jsonContract)
         {
-            return SchemaGeneratorOptions.SubTypesResolver(modelMetadata.ModelType).Any();
+            return SchemaGeneratorOptions.GeneratePolymorphicSchemas
+                && SchemaGeneratorOptions.SubTypesResolver(modelMetadata.ModelType).Any();
         }
 
         protected override OpenApiSchema GenerateSchemaFor(ModelMetadata modelMetadata, SchemaRepository schemaRepository, JsonContract jsonContract)
