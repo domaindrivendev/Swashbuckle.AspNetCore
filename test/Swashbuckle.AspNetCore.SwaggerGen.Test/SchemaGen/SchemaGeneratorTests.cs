@@ -400,6 +400,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GenerateSchema_HonorsEnumMemberAttributes_IfAppliedToEnumValues()
+        {
+            var subject = Subject(configureSerializer: c =>
+                c.Converters = new[] { new StringEnumConverter() }
+            );
+            var modelMetadata = _modelMetadataProvider.GetMetadataForType(typeof(AnnotatedEnum));
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = subject.GenerateSchema(modelMetadata, schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal("string", schema.Type);
+            Assert.Equal(new[] { "AE-FOO", "AE-BAR" }, schema.Enum.Cast<OpenApiString>().Select(i => i.Value));
+        }
+
+        [Fact]
         public void GenerateSchema_HandlesCompositeTypes()
         {
             var modelMetadata = _modelMetadataProvider.GetMetadataForType(typeof(CompositeType));

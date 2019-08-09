@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.Serialization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
@@ -54,13 +56,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 var schema = FactoryMethodMap[typeof(string)]();
 
-                schema.Enum = enumType.GetEnumNames()
+                schema.Enum = enumType.GetFields(BindingFlags.Public | BindingFlags.Static)
+                    .Select(f =>
+                        {
+                            var enumMemberAttribute = f.GetCustomAttributes().OfType<EnumMemberAttribute>().FirstOrDefault();
+                            var serialName = (enumMemberAttribute != null) ? enumMemberAttribute.Value : f.Name;
+                            return (IOpenApiAny)(new OpenApiString(describeInCamelCase ? serialName.ToCamelCase() : serialName));
+                        })
                     .Distinct()
-                    .Select(name =>
-                    {
-                        name = describeInCamelCase ? name.ToCamelCase() : name;
-                        return (IOpenApiAny)(new OpenApiString(name));
-                    })
                     .ToList();
 
                 return schema;
@@ -72,12 +75,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 schema.Enum = enumType.GetEnumValues()
                     .Cast<object>()
-                    .Distinct()
                     .Select(value =>
                     {
                         value = Convert.ChangeType(value, enumUnderlyingType);
                         return OpenApiAnyFactory.TryCreateFor(schema, value, out IOpenApiAny openApiAny) ? openApiAny : null;
                     })
+                    .Distinct()
                     .ToList();
 
                 return schema;
