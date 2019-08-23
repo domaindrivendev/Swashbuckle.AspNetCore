@@ -44,6 +44,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private IEnumerable<Type> DefaultSubTypeResolver(Type baseType)
         {
+            if (baseType == typeof(object))
+                return Enumerable.Empty<Type>();
+
             return baseType.Assembly.GetTypes().Where(type => type.IsSubclassOf(baseType));
         }
     }

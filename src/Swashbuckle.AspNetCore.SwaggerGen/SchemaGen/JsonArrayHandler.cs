@@ -1,31 +1,34 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
+﻿using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     internal class JsonArrayHandler : SchemaGeneratorHandler
     {
-        public JsonArrayHandler(SchemaGeneratorOptions schemaGeneratorOptions, SchemaGenerator schemaGenerator, JsonSerializerSettings jsonSerializerSettings)
-            : base(schemaGeneratorOptions, schemaGenerator, jsonSerializerSettings)
+        public JsonArrayHandler(SchemaGeneratorOptions schemaGeneratorOptions, ISchemaGenerator schemaGenerator)
+            : base(schemaGeneratorOptions, schemaGenerator)
         { }
 
-        protected override bool CanGenerateSchemaFor(ModelMetadata modelMetadata, JsonContract jsonContract)
+        protected override bool CanGenerateSchema(JsonContract jsonContract, out bool shouldBeReferenced)
         {
-            return jsonContract is JsonArrayContract;
+            if (jsonContract is JsonArrayContract jsonArrayContract)
+            {
+                shouldBeReferenced = (jsonArrayContract.UnderlyingType == jsonArrayContract.CollectionItemType);
+                return true;
+            }
+
+            shouldBeReferenced = false; return false;
         }
 
-        protected override OpenApiSchema GenerateSchemaFor(ModelMetadata modelMetadata, SchemaRepository schemaRepository, JsonContract jsonContract)
+        protected override OpenApiSchema GenerateDefinitionSchema(JsonContract jsonContract, SchemaRepository schemaRepository)
         {
             var jsonArrayContract = (JsonArrayContract)jsonContract;
-
             var itemsType = jsonArrayContract.CollectionItemType ?? typeof(object);
 
             return new OpenApiSchema
             {
                 Type = "array",
-                Items = SchemaGenerator.GenerateSchema(modelMetadata.GetMetadataForType(itemsType), schemaRepository),
+                Items = SchemaGenerator.GenerateSchema(itemsType, schemaRepository),
                 UniqueItems = jsonArrayContract.UnderlyingType.IsSet() ? (bool?)true : null
             };
         }

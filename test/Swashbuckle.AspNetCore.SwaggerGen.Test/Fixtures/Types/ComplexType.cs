@@ -1,4 +1,6 @@
-﻿namespace Swashbuckle.AspNetCore.SwaggerGen.Test
+﻿using Newtonsoft.Json;
+
+namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     public class ComplexType
     {
@@ -6,6 +8,6 @@
 
         public int Property2 { get; }
 
-        public string Property3 { set { } }
+        public int Property3 { set { } }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
-    public class ContainingType
+    public class TypeWithNestedType
     {
         public NestedType Property1 { get; set; }
 

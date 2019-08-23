@@ -1,39 +1,42 @@
 ﻿using System.Linq;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     internal class JsonDictionaryHandler : SchemaGeneratorHandler
     {
-        public JsonDictionaryHandler(SchemaGeneratorOptions schemaGeneratorOptions, SchemaGenerator schemaGenerator, JsonSerializerSettings jsonSerializerSettings)
-            : base(schemaGeneratorOptions, schemaGenerator, jsonSerializerSettings)
+        public JsonDictionaryHandler(SchemaGeneratorOptions schemaGeneratorOptions, ISchemaGenerator schemaGenerator)
+            : base(schemaGeneratorOptions, schemaGenerator)
         { }
 
-        protected override bool CanGenerateSchemaFor(ModelMetadata modelMetadata, JsonContract jsonContract)
+        protected override bool CanGenerateSchema(JsonContract jsonContract, out bool shouldBeReferenced)
         {
-            return jsonContract is JsonDictionaryContract;
+            if (jsonContract is JsonDictionaryContract jsonDictionaryContract)
+            {
+                shouldBeReferenced = (jsonDictionaryContract.UnderlyingType == jsonDictionaryContract.DictionaryValueType);
+                return true;
+            }
+
+            shouldBeReferenced = false; return false;
         }
 
-        protected override OpenApiSchema GenerateSchemaFor(ModelMetadata modelMetadata, SchemaRepository schemaRepository, JsonContract jsonContract)
+        protected override OpenApiSchema GenerateDefinitionSchema(JsonContract jsonContract, SchemaRepository schemaRepository)
         {
             var jsonDictionaryContract = (JsonDictionaryContract)jsonContract;
+            var keysType = jsonDictionaryContract.DictionaryKeyType ?? typeof(object);
+            var valuesType = jsonDictionaryContract.DictionaryValueType ?? typeof(object);
 
-            var keyType = jsonDictionaryContract.DictionaryKeyType ?? typeof(object);
-            var valueType = jsonDictionaryContract.DictionaryValueType ?? typeof(object);
-
-            if (keyType.IsEnum)
+            if (keysType.IsEnum)
             {
                 // This is a special case where we can include named properties based on the enum values
                 return new OpenApiSchema
                 {
                     Type = "object",
-                    Properties = jsonDictionaryContract.DictionaryKeyType.GetEnumNames()
+                    Properties = keysType.GetEnumNames()
                         .ToDictionary(
                             name => name,
-                            name => SchemaGenerator.GenerateSchema(modelMetadata.GetMetadataForType(valueType), schemaRepository)
+                            name => SchemaGenerator.GenerateSchema(valuesType, schemaRepository)
                         )
                 };
             }
@@ -42,7 +45,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 Type = "object",
                 AdditionalPropertiesAllowed = true,
-                AdditionalProperties = SchemaGenerator.GenerateSchema(modelMetadata.GetMetadataForType(valueType), schemaRepository)
+                AdditionalProperties = SchemaGenerator.GenerateSchema(valuesType, schemaRepository)
             };
         }
     }

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -11,24 +10,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
     public class SchemaFilterContext
     {
-        public SchemaFilterContext(
-            ModelMetadata modelMetadata,
-            SchemaRepository schemaRepository,
-            ISchemaGenerator schemaGenerator,
-            JsonContract jsonContract)
+        public SchemaFilterContext(JsonContract jsonContract, SchemaRepository schemaRepository, ISchemaGenerator schemaGenerator)
         {
-            ModelMetadata = modelMetadata;
+            JsonContract = jsonContract;
             SchemaRepository = schemaRepository;
             SchemaGenerator = schemaGenerator;
-            JsonContract = jsonContract;
         }
+
+        public JsonContract JsonContract { get; }
 
         public SchemaRepository SchemaRepository { get; }
 
         public ISchemaGenerator SchemaGenerator { get; }
-
-        public ModelMetadata ModelMetadata { get; }
-
-        public JsonContract JsonContract { get; }
     }
 }

@@ -193,7 +193,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 || apiParameter.CustomAttributes().Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
 
             var schema = (apiParameter.ModelMetadata != null)
-                ? _schemaGenerator.GenerateSchema(apiParameter.ModelMetadata, schemaRepository)
+                ? _schemaGenerator.GenerateSchema(apiParameter.ModelMetadata.ModelType, schemaRepository)
                 : new OpenApiSchema { Type = "string" };
 
             var defaultValue = apiParameter.CustomAttributes().OfType<DefaultValueAttribute>().FirstOrDefault()?.Value
@@ -265,7 +265,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         contentType => contentType,
                         contentType => new OpenApiMediaType
                         {
-                            Schema = _schemaGenerator.GenerateSchema(bodyParameter.ModelMetadata, schemaRepository)
+                            Schema = _schemaGenerator.GenerateSchema(bodyParameter.ModelMetadata.ModelType, schemaRepository)
                         }
                     ),
                 Required = isRequired
@@ -330,7 +330,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     : formParameter.Name;
 
                 var schema = (formParameter.ModelMetadata != null)
-                    ? _schemaGenerator.GenerateSchema(formParameter.ModelMetadata, schemaRepository)
+                    ? _schemaGenerator.GenerateSchema(formParameter.ModelMetadata.ModelType, schemaRepository)
                     : new OpenApiSchema { Type = "string" };
 
                 var defaultValue = formParameter.CustomAttributes().OfType<DefaultValueAttribute>().FirstOrDefault()?.Value
@@ -420,7 +420,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             return new OpenApiMediaType
             {
-                Schema = _schemaGenerator.GenerateSchema(modelMetadata, schemaRespository)
+                Schema = _schemaGenerator.GenerateSchema(modelMetadata.ModelType, schemaRespository)
             };
         }
 

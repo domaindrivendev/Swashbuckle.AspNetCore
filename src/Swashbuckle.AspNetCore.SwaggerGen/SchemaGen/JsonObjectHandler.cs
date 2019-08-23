@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Reflection;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -11,21 +11,32 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     internal class JsonObjectHandler : SchemaGeneratorHandler
     {
-        public JsonObjectHandler(SchemaGeneratorOptions schemaGeneratorOptions, SchemaGenerator schemaGenerator, JsonSerializerSettings jsonSerializerSettings)
-            : base(schemaGeneratorOptions, schemaGenerator, jsonSerializerSettings)
+        public JsonObjectHandler(SchemaGeneratorOptions schemaGeneratorOptions, ISchemaGenerator schemaGenerator)
+            : base(schemaGeneratorOptions, schemaGenerator)
         { }
 
-        protected override bool CanGenerateSchemaFor(ModelMetadata modelMetadata, JsonContract jsonContract)
+        protected override bool CanGenerateSchema(JsonContract jsonContract, out bool shouldBeReferenced)
         {
-            return jsonContract is JsonObjectContract;
+            if (jsonContract is JsonObjectContract jsonObjectContract)
+            {
+                shouldBeReferenced = (jsonObjectContract.UnderlyingType != typeof(object));
+                return true;
+            }
+
+            shouldBeReferenced = false; return false;
         }
 
-        protected override OpenApiSchema GenerateSchemaFor(ModelMetadata modelMetadata, SchemaRepository schemaRepository, JsonContract jsonContract)
+        protected override OpenApiSchema GenerateDefinitionSchema(JsonContract jsonContract, SchemaRepository schemaRepository)
         {
             var jsonObjectContract = (JsonObjectContract)jsonContract;
 
+            if (jsonObjectContract.UnderlyingType == typeof(object))
+            {
+                return new OpenApiSchema { Type = "object" };
+            }
+
             var additionalProperties = (jsonObjectContract.ExtensionDataValueType != null)
-                ? SchemaGenerator.GenerateSchema(modelMetadata.GetMetadataForType(jsonObjectContract.ExtensionDataValueType), schemaRepository)
+                ? SchemaGenerator.GenerateSchema(jsonObjectContract.ExtensionDataValueType, schemaRepository)
                 : null;
 
             var schema = new OpenApiSchema
@@ -39,16 +50,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             foreach (var jsonProperty in jsonObjectContract.Properties)
             {
-                var propertyMetadata = modelMetadata.Properties[jsonProperty.UnderlyingName]
-                    ?? modelMetadata.GetMetadataForType(jsonProperty.PropertyType);
+                var memberAttributes = jsonProperty.TryGetMemberInfo(out MemberInfo memberInfo)
+                    ? memberInfo.GetCustomAttributes(true)
+                    : Enumerable.Empty<object>();
 
-                var propertyAttributes = propertyMetadata.GetCustomAttributes();
+                if (memberAttributes.OfType<ObsoleteAttribute>().Any() || jsonProperty.Ignored)
+                {
+                    continue;
+                }
 
-                if (propertyAttributes.OfType<ObsoleteAttribute>().Any() || jsonProperty.Ignored) continue;
+                schema.Properties.Add(jsonProperty.PropertyName, GeneratePropertySchema(jsonProperty, schemaRepository));
 
-                schema.Properties.Add(jsonProperty.PropertyName, GeneratePropertySchemaFor(propertyMetadata, schemaRepository, jsonProperty));
-
-                if (propertyAttributes.OfType<RequiredAttribute>().Any()
+                if (memberAttributes.OfType<RequiredAttribute>().Any()
                     || jsonProperty.Required == Required.AllowNull
                     || jsonProperty.Required == Required.Always)
                 {
@@ -59,20 +72,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return schema;
         }
 
-        private OpenApiSchema GeneratePropertySchemaFor(
-            ModelMetadata modelMetadata,
-            SchemaRepository schemaRepository,
-            JsonProperty jsonProperty)
+        private OpenApiSchema GeneratePropertySchema(JsonProperty jsonProperty, SchemaRepository schemaRepository)
         {
-            var schema = SchemaGenerator.GenerateSchema(modelMetadata, schemaRepository);
+            var schema = SchemaGenerator.GenerateSchema(jsonProperty.PropertyType, schemaRepository);
 
-            // Only apply contextual metadata (e.g. property attributes etc.) if it's an inline definition
-            if (schema.Reference == null)
+            // If it's a reference schema exit as contextual metadata can't be applied
+            if (schema.Reference != null || !jsonProperty.TryGetMemberInfo(out MemberInfo memberInfo))
+                return schema;
+
+            schema.ApplyCustomAttributes(memberInfo.GetCustomAttributes(true));
+
+            if (memberInfo is PropertyInfo propertyInfo)
             {
-                schema.ApplyCustomAttributes(modelMetadata.GetCustomAttributes());
-
-                schema.WriteOnly = jsonProperty.Writable && !jsonProperty.Readable;
-                schema.ReadOnly = jsonProperty.Readable && !jsonProperty.Writable;
+                schema.ReadOnly = (propertyInfo.CanRead && !propertyInfo.CanWrite);
+                schema.WriteOnly = (propertyInfo.CanWrite && !propertyInfo.CanRead);
             }
 
             return schema;

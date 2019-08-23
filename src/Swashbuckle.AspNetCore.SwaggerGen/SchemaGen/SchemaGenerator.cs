@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using System;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
@@ -8,70 +8,73 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class SchemaGenerator : ISchemaGenerator
     {
+        private readonly SchemaGeneratorOptions _schemaGeneratorOptions;
         private readonly IContractResolver _jsonContractResolver;
         private readonly SchemaGeneratorHandler _chainOfHandlers;
 
         public SchemaGenerator(
             IOptions<SchemaGeneratorOptions> schemaGeneratorOptionsAccessor,
-            ISerializerSettingsAccessor jsonSerializerSettingsAccessor)
+            ISerializerSettingsAccessor serializerSettingsAccessor)
             : this(
                   schemaGeneratorOptionsAccessor.Value ?? new SchemaGeneratorOptions(),
-                  jsonSerializerSettingsAccessor.Value ?? new JsonSerializerSettings())
+                  serializerSettingsAccessor.Value ?? new JsonSerializerSettings())
         { }
 
         public SchemaGenerator(SchemaGeneratorOptions schemaGeneratorOptions, JsonSerializerSettings jsonSerializerSettings)
         {
+            _schemaGeneratorOptions = schemaGeneratorOptions;
             _jsonContractResolver = jsonSerializerSettings.ContractResolver ?? new DefaultContractResolver();
 
-            // To manage complexity, implement as a chain of responsibility
-            _chainOfHandlers = new KnownTypeHandler(schemaGeneratorOptions, this, jsonSerializerSettings)
-                .Add(new ReferenceableTypeHandler(schemaGeneratorOptions, this, jsonSerializerSettings))
-                .Add(new PolymorphicTypeHandler(schemaGeneratorOptions, this, jsonSerializerSettings))
+            _chainOfHandlers = new PolymorphicTypeHandler(schemaGeneratorOptions, this)
+                .Add(new FileTypeHandler(schemaGeneratorOptions, this))
                 .Add(new JsonPrimitiveHandler(schemaGeneratorOptions, this, jsonSerializerSettings))
-                .Add(new JsonArrayHandler(schemaGeneratorOptions, this, jsonSerializerSettings))
-                .Add(new JsonDictionaryHandler(schemaGeneratorOptions, this, jsonSerializerSettings))
-                .Add(new JsonObjectHandler(schemaGeneratorOptions, this, jsonSerializerSettings))
-                .Add(new FallbackHandler(schemaGeneratorOptions, this, jsonSerializerSettings));
+                .Add(new JsonDictionaryHandler(schemaGeneratorOptions, this))
+                .Add(new JsonArrayHandler(schemaGeneratorOptions, this))
+                .Add(new JsonObjectHandler(schemaGeneratorOptions, this))
+                .Add(new FallbackHandler(schemaGeneratorOptions, this));
         }
 
-        public OpenApiSchema GenerateSchema(ModelMetadata modelMetadata, SchemaRepository schemaRepository)
+        public OpenApiSchema GenerateSchema(Type type, SchemaRepository schemaRepository)
         {
-            var jsonContract = _jsonContractResolver.ResolveContract(modelMetadata.UnderlyingOrModelType);
+            if (_schemaGeneratorOptions.CustomTypeMappings.ContainsKey(type))
+                return _schemaGeneratorOptions.CustomTypeMappings[type]();
 
-            return _chainOfHandlers.GenerateSchema(modelMetadata, schemaRepository, jsonContract);
+            // Unwrap nullables before passing through the generator 
+            var typeToResolve = type.IsNullable(out Type valueType) ? valueType : type;
+
+            var jsonContract = _jsonContractResolver.ResolveContract(typeToResolve);
+
+            return _chainOfHandlers.GenerateSchema(jsonContract, schemaRepository);
         }
     }
 
     public abstract class SchemaGeneratorHandler
     {
-        protected SchemaGeneratorHandler(
-            SchemaGeneratorOptions schemaGeneratorOptions,
-            ISchemaGenerator schemaGenerator,
-            JsonSerializerSettings jsonSerializerSettings)
+        protected SchemaGeneratorHandler(SchemaGeneratorOptions schemaGeneratorOptions, ISchemaGenerator schemaGenerator)
         {
             SchemaGeneratorOptions = schemaGeneratorOptions;
             SchemaGenerator = schemaGenerator;
-            JsonSerializerSettings = jsonSerializerSettings;
         }
 
         protected SchemaGeneratorOptions SchemaGeneratorOptions { get; }
         protected ISchemaGenerator SchemaGenerator { get; }
-        protected JsonSerializerSettings JsonSerializerSettings { get; }
         protected SchemaGeneratorHandler Next { get; set; }
 
-        public OpenApiSchema GenerateSchema(ModelMetadata modelMetadata, SchemaRepository schemaRepository, JsonContract jsonContract)
+        public OpenApiSchema GenerateSchema(JsonContract jsonContract, SchemaRepository schemaRepository)
         {
-            if (CanGenerateSchemaFor(modelMetadata, jsonContract))
+            if (!CanGenerateSchema(jsonContract, out bool shouldBeReferenced))
+                return Next.GenerateSchema(jsonContract, schemaRepository);
+
+            if (shouldBeReferenced)
             {
-                var schema = GenerateSchemaFor(modelMetadata, schemaRepository, jsonContract);
+                var schemaId = SchemaGeneratorOptions.SchemaIdSelector(jsonContract.UnderlyingType);
 
-                if (schema.Reference == null)
-                    ApplyFilters(schema, modelMetadata, schemaRepository, jsonContract);
-
-                return schema;
+                return schemaRepository.GetOrAdd(jsonContract.UnderlyingType,
+                    schemaId,
+                    () => GenerateDefinitionSchemaAndApplyFilters(jsonContract, schemaRepository));
             }
 
-            return Next.GenerateSchema(modelMetadata, schemaRepository, jsonContract);
+            return GenerateDefinitionSchemaAndApplyFilters(jsonContract, schemaRepository);
         }
 
         public SchemaGeneratorHandler Add(SchemaGeneratorHandler handler)
@@ -83,18 +86,21 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return this;
         }
 
-        protected abstract bool CanGenerateSchemaFor(ModelMetadata modelMetadata, JsonContract jsonContract);
+        protected abstract bool CanGenerateSchema(JsonContract jsonContract, out bool shouldBeReferenced);
 
-        protected abstract OpenApiSchema GenerateSchemaFor(ModelMetadata modelMetadata, SchemaRepository schemaRepository, JsonContract jsonContract);
+        protected abstract OpenApiSchema GenerateDefinitionSchema(JsonContract jsonContract, SchemaRepository schemaRepository);
 
-        private void ApplyFilters(OpenApiSchema schema, ModelMetadata modelMetadata, SchemaRepository schemaRepository, JsonContract jsonContract)
+        private OpenApiSchema GenerateDefinitionSchemaAndApplyFilters(JsonContract jsonContract, SchemaRepository schemaRepository)
         {
-            var context = new SchemaFilterContext(modelMetadata, schemaRepository, SchemaGenerator, jsonContract);
+            var schema = GenerateDefinitionSchema(jsonContract, schemaRepository);
 
+            var filterContext = new SchemaFilterContext(jsonContract, schemaRepository, SchemaGenerator);
             foreach (var filter in SchemaGeneratorOptions.SchemaFilters)
             {
-                filter.Apply(schema, context);
+                filter.Apply(schema, filterContext);
             }
+
+            return schema;
         }
     }
 }

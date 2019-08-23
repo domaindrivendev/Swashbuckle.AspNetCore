@@ -1,38 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     internal class PolymorphicTypeHandler : SchemaGeneratorHandler
     {
-        public PolymorphicTypeHandler(SchemaGeneratorOptions schemaGeneratorOptions, ISchemaGenerator schemaGenerator, JsonSerializerSettings jsonSerializerSettings)
-            : base(schemaGeneratorOptions, schemaGenerator, jsonSerializerSettings)
+        public PolymorphicTypeHandler(SchemaGeneratorOptions schemaGeneratorOptions, SchemaGenerator schemaGenerator)
+            : base(schemaGeneratorOptions, schemaGenerator)
         { }
 
-        protected override bool CanGenerateSchemaFor(ModelMetadata modelMetadata, JsonContract jsonContract)
+        protected override bool CanGenerateSchema(JsonContract jsonContract, out bool shouldBeReferenced)
         {
-            return SchemaGeneratorOptions.GeneratePolymorphicSchemas
-                && SchemaGeneratorOptions.SubTypesResolver(modelMetadata.ModelType).Any();
+            if (SchemaGeneratorOptions.GeneratePolymorphicSchemas
+                && SchemaGeneratorOptions.SubTypesResolver(jsonContract.UnderlyingType).Any())
+            {
+                shouldBeReferenced = false;
+                return true;
+            }
+
+            return shouldBeReferenced = false;
         }
 
-        protected override OpenApiSchema GenerateSchemaFor(ModelMetadata modelMetadata, SchemaRepository schemaRepository, JsonContract jsonContract)
+        protected override OpenApiSchema GenerateDefinitionSchema(JsonContract jsonContract, SchemaRepository schemaRepository)
         {
             var schema = new OpenApiSchema
             {
                 OneOf = new List<OpenApiSchema>()
             };
 
-            foreach (var subType in SchemaGeneratorOptions.SubTypesResolver(modelMetadata.ModelType))
+            foreach (var subType in SchemaGeneratorOptions.SubTypesResolver(jsonContract.UnderlyingType))
             {
-                var subTypeMetadata = modelMetadata.GetMetadataForType(subType);
-                var subSchema = SchemaGenerator.GenerateSchema(subTypeMetadata, schemaRepository);
-
-                schema.OneOf.Add(subSchema);
+                schema.OneOf.Add(SchemaGenerator.GenerateSchema(subType, schemaRepository));
             }
 
             return schema;

@@ -23,7 +23,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
-            TryApplyTypeComments(schema, context.ModelMetadata.UnderlyingOrModelType);
+            TryApplyTypeComments(schema, context.JsonContract.UnderlyingType);
 
             if (!(context.JsonContract is JsonObjectContract jsonObjectContract))
                 return;

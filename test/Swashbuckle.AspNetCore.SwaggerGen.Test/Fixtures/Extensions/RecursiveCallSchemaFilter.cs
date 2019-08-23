@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -7,10 +6,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
     {
         public void Apply(OpenApiSchema model, SchemaFilterContext context)
         {
-            var complexTypeMetadata = context.ModelMetadata.GetMetadataForType(typeof(ComplexType));
-
-            model.Properties = new Dictionary<string, OpenApiSchema>();
-            model.Properties.Add("ExtraProperty", context.SchemaGenerator.GenerateSchema(complexTypeMetadata, context.SchemaRepository));
+            if (model.Type == "object")
+            {
+                model.Properties.Add("Self", context.SchemaGenerator.GenerateSchema(context.JsonContract.UnderlyingType, context.SchemaRepository));
+            }
         }
     }
 }

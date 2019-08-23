@@ -9,7 +9,30 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         private Dictionary<Type, string> _reservedIds = new Dictionary<Type, string>();
 
-        public void ReserveIdFor(Type type, string schemaId)
+        public Dictionary<string, OpenApiSchema> Schemas { get; private set; } = new Dictionary<string, OpenApiSchema>();
+
+        public OpenApiSchema GetOrAdd(Type type, string schemaId, Func<OpenApiSchema> factoryMethod)
+        {
+            if (!_reservedIds.TryGetValue(type, out string reservedId))
+            {
+                // First invocation of the factoryMethod for this type - reserve the provided schemaId first, and then invoke the factory method.
+                // Reserving the id first ensures that the factoryMethod will only be invoked once for a given type, even in recurrsive scenarios.
+                // If subsequent calls are made for the same type, a simple reference will be created instead.
+                ReserveIdFor(type, schemaId);
+                Schemas.Add(schemaId, factoryMethod());
+            }
+            else
+            {
+                schemaId = reservedId;
+            }
+
+            return new OpenApiSchema
+            {
+                Reference = new OpenApiReference { Id = schemaId, Type = ReferenceType.Schema }
+            };
+        }
+
+        private void ReserveIdFor(Type type, string schemaId)
         {
             if (_reservedIds.ContainsValue(schemaId))
             {
@@ -22,20 +45,5 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             _reservedIds.Add(type, schemaId);
         }
-
-        public bool TryGetIdFor(Type type, out string schemaId)
-        {
-            return _reservedIds.TryGetValue(type, out schemaId);
-        }
-
-        public void AddSchemaFor(Type type, OpenApiSchema schema)
-        {
-            if (!_reservedIds.TryGetValue(type, out string schemaId))
-                throw new InvalidOperationException("TODO:");
-
-            Schemas.Add(schemaId, schema);
-        }
-
-        public Dictionary<string, OpenApiSchema> Schemas { get; private set; } = new Dictionary<string, OpenApiSchema>();
     }
 }

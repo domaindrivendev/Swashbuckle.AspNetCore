@@ -1,24 +1,26 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
+﻿using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    internal class FallbackHandler : SchemaGeneratorHandler
+    public class FallbackHandler : SchemaGeneratorHandler
     {
-        internal FallbackHandler(SchemaGeneratorOptions schemaGeneratorOptions, ISchemaGenerator schemaGenerator, JsonSerializerSettings jsonSerializerSettings)
-            : base(schemaGeneratorOptions, schemaGenerator, jsonSerializerSettings)
+        public FallbackHandler(SchemaGeneratorOptions schemaGeneratorOptions, ISchemaGenerator schemaGenerator)
+            : base(schemaGeneratorOptions, schemaGenerator)
         { }
 
-        protected override bool CanGenerateSchemaFor(ModelMetadata modelMetadata, JsonContract jsonContract)
+        protected override bool CanGenerateSchema(JsonContract jsonContract, out bool shouldBeReferenced)
         {
+            shouldBeReferenced = false;
             return true;
         }
 
-        protected override OpenApiSchema GenerateSchemaFor(ModelMetadata modelMetadata, SchemaRepository schemaRepository, JsonContract jsonContract)
+        protected override OpenApiSchema GenerateDefinitionSchema(JsonContract jsonContract, SchemaRepository schemaRepository)
         {
-            return new OpenApiSchema { Type = "string" };
+            return new OpenApiSchema
+            {
+                Type = "object"
+            };
         }
     }
 }

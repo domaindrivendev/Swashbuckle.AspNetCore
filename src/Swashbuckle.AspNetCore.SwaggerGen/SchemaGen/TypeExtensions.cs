@@ -6,21 +6,27 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class TypeExtensions
     {
-        public static bool IsNullable(this Type type)
-        {
-            return type.FullName.StartsWith("System.Nullable`1");
-        }
-
-        public static bool IsFSharpOption(this Type type)
-        {
-            return type.FullName.StartsWith("Microsoft.FSharp.Core.FSharpOption`1");
-        }
-
         public static bool IsSet(this Type type)
         {
-            return new[] { type }
+            return type.IsConstructedFrom(typeof(ISet<>), out Type _);
+        }
+
+        public static bool IsNullable(this Type type, out Type valueType)
+        {
+            valueType = type.IsConstructedFrom(typeof(Nullable<>), out Type constructedType)
+                ? constructedType.GenericTypeArguments[0]
+                : null;
+
+            return (valueType != null);
+        }
+
+        private static bool IsConstructedFrom(this Type type, Type genericType, out Type constructedType)
+        {
+            constructedType = new[] { type }
                 .Union(type.GetInterfaces())
-                .Any(i => i.IsConstructedGenericType && i.GetGenericTypeDefinition() == typeof(ISet<>));
+                .FirstOrDefault(i => i.IsConstructedGenericType && i.GetGenericTypeDefinition() == genericType);
+
+            return (constructedType != null);
         }
     }
 }

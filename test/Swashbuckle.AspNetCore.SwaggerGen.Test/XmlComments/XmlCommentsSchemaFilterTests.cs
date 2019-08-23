@@ -18,7 +18,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         public XmlCommentsSchemaFilterTests()
         {
-            _modelMetadataProvider = ModelMetadataHelper.GetDefaultModelMetadataProvider();
             _jsonContractResolver = new DefaultContractResolver();
         }
 
@@ -127,14 +126,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         private SchemaFilterContext FilterContextFor(Type type)
         {
-            var modelMetadata = _modelMetadataProvider.GetMetadataForType(type);
-            var jsonContract = _jsonContractResolver.ResolveContract(type);
-
             return new SchemaFilterContext(
-                modelMetadata: modelMetadata,
+                _jsonContractResolver.ResolveContract(type),
                 schemaRepository: null, // NA for test
-                schemaGenerator: null, // NA for test
-                jsonContract: jsonContract
+                schemaGenerator: null // NA for test
             );
         }
 
