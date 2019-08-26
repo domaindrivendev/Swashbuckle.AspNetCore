@@ -159,6 +159,23 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(expectedItemsFormat, schema.Items.Format);
         }
 
+        [Theory]
+        [InlineData(typeof(int?[]), "integer", "int32")]
+        [InlineData(typeof(Guid?[]), "string", "uuid")]
+        public void GenerateSchema_GeneratesArraySchema_IfNullableType(
+            Type type,
+            string expectedItemsType,
+            string expectedItemsFormat)
+        {
+            var schema = Subject().GenerateSchema(type, new SchemaRepository());
+
+            Assert.Equal("array", schema.Type);
+            Assert.NotNull(schema.Items);
+            Assert.Equal(expectedItemsType, schema.Items.Type);
+            Assert.Equal(expectedItemsFormat, schema.Items.Format);
+            Assert.True(schema.Nullable);
+        }
+
         [Fact]
         public void GenerateSchema_GeneratesReferencedArraySchema_IfSelfReferencingEnumerableType()
         {
