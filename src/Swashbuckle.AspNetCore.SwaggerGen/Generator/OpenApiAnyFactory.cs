@@ -25,14 +25,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             else if (schema.Type == "number" && schema.Format == "double" && TryCast(value, out double doubleValue))
                 openApiAny = new OpenApiDouble(doubleValue);
 
-            else if (schema.Type == "string" && value.GetType().IsEnum)
+            else if (schema.Type == "string" && value !=null && value.GetType().IsEnum)
                 openApiAny = new OpenApiString(Enum.GetName(value.GetType(), value));
 
             else if (schema.Type == "string" && schema.Format == "date-time" && TryCast(value, out DateTime dateTimeValue))
                 openApiAny = new OpenApiDate(dateTimeValue);
 
             else if (schema.Type == "string")
-                openApiAny = new OpenApiString(value.ToString());
+                openApiAny = new OpenApiString(value?.ToString());
 
             return openApiAny != null;
         }
@@ -41,6 +41,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             try
             {
+                if (value == null)
+                {
+                    typedValue = default(T);
+                    return false;
+                }
                 typedValue = (T)Convert.ChangeType(value, typeof(T));
                 return true;
             }
