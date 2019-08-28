@@ -25,7 +25,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             else if (schema.Type == "number" && schema.Format == "double" && TryCast(value, out double doubleValue))
                 openApiAny = new OpenApiDouble(doubleValue);
 
-            else if (schema.Type == "string" && value !=null && value.GetType().IsEnum)
+            else if (schema.Type == "string" && value != null && value.GetType().IsEnum)
                 openApiAny = new OpenApiString(Enum.GetName(value.GetType(), value));
 
             else if (schema.Type == "string" && schema.Format == "date-time" && TryCast(value, out DateTime dateTimeValue))
