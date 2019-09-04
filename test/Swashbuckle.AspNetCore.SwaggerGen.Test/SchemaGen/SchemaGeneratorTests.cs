@@ -6,9 +6,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
+using Xunit;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Xunit;
+using Swashbuckle.AspNetCore.Newtonsoft;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -268,76 +269,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void GenerateSchema_HonorsStringEnumConverters_IfConfiguredViaAttributes()
-        {
-            var schemaRepository = new SchemaRepository();
-
-            var referenceSchema = Subject().GenerateSchema(typeof(JsonConvertedEnum), schemaRepository);
-
-            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal("string", schema.Type);
-            Assert.Equal(new[] { "Value1", "Value2", "X" }, schema.Enum.Cast<OpenApiString>().Select(i => i.Value));
-        }
-
-        [Theory]
-        [InlineData(false, new[] { "Value2", "Value4", "Value8" })]
-        [InlineData(true, new[] { "value2", "value4", "value8" })]
-        public void GenerateSchema_HonorsStringEnumConverters_IfConfiguredGlobally(bool camelCaseText, string[] expectedEnumValues)
-        {
-            var subject = Subject(
-                configureOptions: c => { },
-                configureSerializer: c => { c.Converters.Add(new StringEnumConverter(camelCaseText)); }
-            );
-            var schemaRepository = new SchemaRepository();
-
-            var referenceSchema = subject.GenerateSchema(typeof(IntEnum), schemaRepository);
-
-            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal("string", schema.Type);
-            Assert.Equal(expectedEnumValues, schema.Enum.Cast<OpenApiString>().Select(i => i.Value));
-        }
-
-        [Fact]
-        public void GenerateSchema_HonorsSerializerBehavior_IfJsonAnnotatedType()
-        {
-            var schemaRepository = new SchemaRepository();
-
-            var referenceSchema = Subject().GenerateSchema(typeof(JsonAnnotatedType), schemaRepository);
-
-            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.DoesNotContain("StringWithJsonIgnore", schema.Properties.Keys);
-            Assert.Contains("Foobar", schema.Properties.Keys);
-            Assert.Equal(new[] { "StringWithJsonPropertyRequired" }, schema.Required.ToArray());
-        }
-
-        [Fact]
-        public void GenerateSchema_SetsAdditionalProperties_IfExtensionDataAnnotatedType()
-        {
-            var schemaRepository = new SchemaRepository();
-
-            var referenceSchema = Subject().GenerateSchema(typeof(ExtensionDataAnnotatedType), schemaRepository);
-
-            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.NotNull(schema.AdditionalProperties);
-            Assert.Equal("object", schema.AdditionalProperties.Type);
-        }
-
-        [Fact]
-        public void GenerateSchema_HonorsEnumMemberAttributes_IfAppliedToEnumValues()
-        {
-            var subject = Subject(configureSerializer: c =>
-                c.Converters = new[] { new StringEnumConverter() }
-            );
-            var schemaRepository = new SchemaRepository();
-
-            var referenceSchema = subject.GenerateSchema(typeof(AnnotatedEnum), schemaRepository);
-
-            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal("string", schema.Type);
-            Assert.Equal(new[] { "AE-FOO", "AE-BAR" }, schema.Enum.Cast<OpenApiString>().Select(i => i.Value));
-        }
-
-        [Fact]
         public void GenerateSchema_SupportsOptionToCustomizeSchemaForSpecificTypes()
         {
             var subject = Subject(c =>
@@ -399,38 +330,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void GenerateSchema_SupportsOptionToDescribeAllEnumsAsStrings()
-        {
-            var subject = Subject(c =>
-                c.DescribeAllEnumsAsStrings = true
-            );
-            var schemaRepository = new SchemaRepository();
-
-            var referenceSchema = subject.GenerateSchema(typeof(IntEnum), schemaRepository);
-
-            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal("string", schema.Type);
-            Assert.Equal(new[] { "Value2", "Value4", "Value8" }, schema.Enum.Cast<OpenApiString>().Select(i => i.Value));
-        }
-
-        [Fact]
-        public void GenerateSchema_SupportsOptionToDescribeStringEnumsInCamelCase()
-        {
-            var subject = Subject(c =>
-            {
-                c.DescribeAllEnumsAsStrings = true;
-                c.DescribeStringEnumsInCamelCase = true;
-            });
-            var schemaRepository = new SchemaRepository();
-
-            var referenceSchema = subject.GenerateSchema(typeof(IntEnum), schemaRepository);
-
-            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal("string", schema.Type);
-            Assert.Equal(new[] { "value2", "value4", "value8" }, schema.Enum.Cast<OpenApiString>().Select(i => i.Value));
-        }
-
-        [Fact]
         public void GenerateSchema_SupportsOptionToGeneratePolymorphicSchemas()
         {
             var subject = Subject(c =>
@@ -488,17 +387,88 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             });
         }
 
+        [Fact]
+        public void GenerateSchema_HonorsStringEnumConverters_IfConfiguredViaAttributes()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(typeof(JsonConvertedEnum), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal("string", schema.Type);
+            Assert.Equal(new[] { "Value1", "Value2", "X" }, schema.Enum.Cast<OpenApiString>().Select(i => i.Value));
+        }
+
+        [Theory]
+        [InlineData(false, new[] { "Value2", "Value4", "Value8" })]
+        [InlineData(true, new[] { "value2", "value4", "value8" })]
+        public void GenerateSchema_HonorsStringEnumConverters_IfConfiguredGlobally(bool camelCaseText, string[] expectedEnumValues)
+        {
+            var subject = Subject(
+                configureOptions: c => { },
+                configureSerializer: c => { c.Converters.Add(new StringEnumConverter(camelCaseText)); }
+            );
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = subject.GenerateSchema(typeof(IntEnum), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal("string", schema.Type);
+            Assert.Equal(expectedEnumValues, schema.Enum.Cast<OpenApiString>().Select(i => i.Value));
+        }
+
+        [Fact]
+        public void GenerateSchema_HonorsSerializerBehavior_IfJsonAnnotatedType()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(typeof(JsonAnnotatedType), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.DoesNotContain("StringWithJsonIgnore", schema.Properties.Keys);
+            Assert.Contains("string-with-json-property-name", schema.Properties.Keys);
+            Assert.Equal(new[] { "StringWithJsonPropertyRequiredAllowNull", "StringWithJsonPropertyRequiredAlways" }, schema.Required.ToArray());
+            Assert.True(schema.Properties["StringWithJsonPropertyRequiredAllowNull"].Nullable);
+        }
+
+        [Fact]
+        public void GenerateSchema_SetsAdditionalProperties_IfExtensionDataAnnotatedType()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(typeof(ExtensionDataAnnotatedType), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.NotNull(schema.AdditionalProperties);
+            Assert.Equal("object", schema.AdditionalProperties.Type);
+        }
+
+        [Fact]
+        public void GenerateSchema_HonorsEnumMemberAttributes_IfAppliedToEnumValues()
+        {
+            var subject = Subject(configureSerializer: c =>
+                c.Converters = new[] { new StringEnumConverter() }
+            );
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = subject.GenerateSchema(typeof(AnnotatedEnum), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal("string", schema.Type);
+            Assert.Equal(new[] { "AE-FOO", "AE-BAR" }, schema.Enum.Cast<OpenApiString>().Select(i => i.Value));
+        }
+
         private ISchemaGenerator Subject(
             Action<SchemaGeneratorOptions> configureOptions = null,
             Action<JsonSerializerSettings> configureSerializer = null)
         {
-            var schemaGeneratorOptions = new SchemaGeneratorOptions();
-            configureOptions?.Invoke(schemaGeneratorOptions);
-
             var jsonSerializerSettings = new JsonSerializerSettings();
             configureSerializer?.Invoke(jsonSerializerSettings);
 
-            return new SchemaGenerator(schemaGeneratorOptions, jsonSerializerSettings);
+            var schemaGeneratorOptions = new SchemaGeneratorOptions();
+            configureOptions?.Invoke(schemaGeneratorOptions);
+
+            return new SchemaGenerator(new NewtonsoftApiModelResolver(jsonSerializerSettings), schemaGeneratorOptions);
         }
     }
 }

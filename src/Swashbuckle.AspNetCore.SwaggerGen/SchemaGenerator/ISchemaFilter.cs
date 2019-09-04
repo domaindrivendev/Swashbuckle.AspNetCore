@@ -1,5 +1,4 @@
 ﻿using Microsoft.OpenApi.Models;
-using Newtonsoft.Json.Serialization;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -10,14 +9,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
     public class SchemaFilterContext
     {
-        public SchemaFilterContext(JsonContract jsonContract, SchemaRepository schemaRepository, ISchemaGenerator schemaGenerator)
+        public SchemaFilterContext(
+            ApiModel apiModel,
+            SchemaRepository schemaRepository,
+            ISchemaGenerator schemaGenerator)
         {
-            JsonContract = jsonContract;
+            ApiModel = apiModel;
             SchemaRepository = schemaRepository;
             SchemaGenerator = schemaGenerator;
         }
 
-        public JsonContract JsonContract { get; }
+        public ApiModel ApiModel { get; }
 
         public SchemaRepository SchemaRepository { get; }
 

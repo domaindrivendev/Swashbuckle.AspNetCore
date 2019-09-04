@@ -28,7 +28,7 @@ namespace NetCore3.Controllers
     {
         public int Id { get; internal set; }
 
-        public ProductStatus Status { get; set; }
+        public ProductStatus? Status { get; set; }
 
         public string Test;
     }

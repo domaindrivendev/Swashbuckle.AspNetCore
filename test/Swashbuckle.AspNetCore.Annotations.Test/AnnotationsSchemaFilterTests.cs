@@ -2,17 +2,18 @@
 using Microsoft.OpenApi.Models;
 using Xunit;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using Newtonsoft.Json.Serialization;
+using Swashbuckle.AspNetCore.Newtonsoft;
+using Newtonsoft.Json;
 
 namespace Swashbuckle.AspNetCore.Annotations.Test
 {
     public class AnnotationsSchemaFilterTests
     {
-        private readonly DefaultContractResolver _jsonContractResolver;
+        private readonly IApiModelResolver _apiModelResolver;
 
         public AnnotationsSchemaFilterTests()
         {
-            _jsonContractResolver = new DefaultContractResolver();
+            _apiModelResolver = new NewtonsoftApiModelResolver(new JsonSerializerSettings());
         }
 
         [Theory]
@@ -31,7 +32,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
         private SchemaFilterContext FilterContextFor(Type type)
         {
             return new SchemaFilterContext(
-                _jsonContractResolver.ResolveContract(type),
+                _apiModelResolver.ResolveApiModelFor(type),
                 schemaRepository: null, // NA for test
                 schemaGenerator: null // NA for test
             );

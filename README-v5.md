@@ -170,7 +170,6 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Customize Operation Tags (e.g. for UI Grouping)](#customize-operation-tags-eg-for-ui-grouping)
     * [Change Operation Sort Order (e.g. for UI Sorting)](#change-operation-sort-order-eg-for-ui-sorting)
     * [Customize Schema Id's](#customize-schema-ids)
-    * [Customize Schema for Enum Types](#customize-schema-for-enum-types)
     * [Override Schema for Specific Types](#override-schema-for-specific-types)
     * [Extend Generator with Operation, Schema & Document Filters](#extend-generator-with-operation-schema--document-filters)
     * [Add Security Definitions and Requirements](#add-security-definitions-and-requirements)
@@ -689,23 +688,6 @@ services.AddSwaggerGen(c =>
 {
     ...
     c.CustomSchemaIds((type) => type.FullName);
-};
-```
-
-### Customize Schema for Enum Types ###
-
-When describing parameters and responses, Swashbuckle does its best to reflect the application's serialization settings. For example, if the `CamelCaseContractResolver` is enabled, Schema property names will be automatically camelCased in the generated Swagger.
-
-Similarly for enum types, if the `StringEnumConverter` is enabled, then the corresponding Schemas will list enum names rather than integer values.
-
-For most cases this should be sufficient. However, if you need more control, Swashbuckle exposes the following options to override the default behavior:
-
-```csharp
-services.AddSwaggerGen(c =>
-{
-    ...
-    c.DescribeAllEnumsAsStrings();
-    c.DescribeStringEnumsInCamelCase();
 };
 ```
 

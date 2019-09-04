@@ -5,20 +5,20 @@ using System.Reflection;
 using System.IO;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Any;
-using Newtonsoft.Json.Serialization;
 using Xunit;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Swashbuckle.AspNetCore.Newtonsoft;
+using Newtonsoft.Json;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     public class XmlCommentsSchemaFilterTests
     {
-        private readonly IModelMetadataProvider _modelMetadataProvider;
-        private readonly DefaultContractResolver _jsonContractResolver;
+        private readonly IApiModelResolver _apiModelResolver;
 
         public XmlCommentsSchemaFilterTests()
         {
-            _jsonContractResolver = new DefaultContractResolver();
+            _apiModelResolver = new NewtonsoftApiModelResolver(new JsonSerializerSettings());
         }
 
         [Theory]
@@ -127,7 +127,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         private SchemaFilterContext FilterContextFor(Type type)
         {
             return new SchemaFilterContext(
-                _jsonContractResolver.ResolveContract(type),
+                _apiModelResolver.ResolveApiModelFor(type),
                 schemaRepository: null, // NA for test
                 schemaGenerator: null // NA for test
             );

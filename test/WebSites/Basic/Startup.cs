@@ -54,11 +54,9 @@ namespace Basic
 
                 c.OperationFilter<AssignOperationVendorExtensions>();
 
-                //c.DescribeAllEnumsAsStrings();
-
                 c.SchemaFilter<ExamplesSchemaFilter>();
 
-                //c.DescribeAllParametersInCamelCase();
+                c.DescribeAllParametersInCamelCase();
 
                 c.GeneratePolymorphicSchemas();
 
@@ -98,7 +96,7 @@ namespace Basic
             app.UseSwaggerUI(c =>
             {
                 c.RoutePrefix = ""; // serve the UI at root
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
+                c.SwaggerEndpoint("swagger/v1/swagger.json", "V1 Docs");
                 c.DisplayOperationId();
             });
         }
