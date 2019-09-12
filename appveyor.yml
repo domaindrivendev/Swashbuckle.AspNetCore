@@ -4,7 +4,7 @@ init:
 - git config --global core.autocrlf true
 
 environment:
-  DOTNET_VERSION: 3.0.100-preview3-010431
+  DOTNET_VERSION: 3.0.100-preview8-013656
 
 build_script:
 - ps: ci\build.ps1 

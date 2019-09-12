@@ -7,10 +7,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [JsonIgnore]
         public string StringWithJsonIgnore { get; set; }
 
-        [JsonProperty("Foobar")]
+        [JsonProperty("string-with-json-property-name")]
         public string StringWithJsonPropertyName { get; set; }
 
+        [JsonProperty(Required = Required.AllowNull)]
+        public string StringWithJsonPropertyRequiredAllowNull { get; set; }
+
         [JsonProperty(Required = Required.Always)]
-        public string StringWithJsonPropertyRequired { get; set; }
+        public string StringWithJsonPropertyRequiredAlways { get; set; }
+
+        [JsonProperty(Required = Required.DisallowNull)]
+        public string StringWithJsonPropertyRequiredDisallowNull { get; set; }
     }
 }
