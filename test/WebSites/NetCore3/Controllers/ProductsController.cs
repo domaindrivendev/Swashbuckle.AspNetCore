@@ -19,7 +19,6 @@ namespace NetCore3.Controllers
             {
                 Id = id,
                 Status = ProductStatus.InStock,
-                Test = "foobar"
             };
         }
     }
@@ -29,8 +28,6 @@ namespace NetCore3.Controllers
         public int Id { get; internal set; }
 
         public ProductStatus? Status { get; set; }
-
-        public string Test;
     }
 
     public enum ProductStatus
