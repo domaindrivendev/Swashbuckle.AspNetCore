@@ -68,41 +68,40 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             var stringEnumConverter = (jsonPrimitiveContract.Converter as StringEnumConverter)
                 ?? _jsonSerializerSettings.Converters.OfType<StringEnumConverter>().FirstOrDefault();
 
-            if (stringEnumConverter != null)
-            {
-                var enumValues = type.GetFields(BindingFlags.Public | BindingFlags.Static)
-                    .Select(f =>
-                    {
-                        var enumMemberAttribute = f.GetCustomAttributes().OfType<EnumMemberAttribute>().FirstOrDefault();
-                        return enumMemberAttribute?.Value ?? ResolveApiEnumValue(f.Name, stringEnumConverter);
-                    })
-                    .Distinct();
-
-                return new ApiPrimitive(
-                    type: type,
-                    isStringEnum: true,
-                    apiEnumValues: enumValues);
-            }
-            else
+            if (stringEnumConverter == null)
             {
                 return new ApiPrimitive(
                     type: type,
                     isStringEnum: false,
                     apiEnumValues: type.GetEnumValues().Cast<object>());
             }
+
+            var enumValues = type.GetFields(BindingFlags.Public | BindingFlags.Static)
+                .Select(field =>
+                {
+                    var enumMemberAttribute = field.GetCustomAttributes<EnumMemberAttribute>().FirstOrDefault();
+                    var memberName = enumMemberAttribute?.Value ?? field.Name;
+                    return GetConvertedEnumName(memberName, stringEnumConverter);
+                })
+                .Distinct();
+
+            return new ApiPrimitive(
+                type: type,
+                isStringEnum: true,
+                apiEnumValues: enumValues);
         }
 
 #if NETCOREAPP3_0
-        private string ResolveApiEnumValue(string enumValue, StringEnumConverter stringEnumConverter)
+        private string GetConvertedEnumName(string memberName, StringEnumConverter stringEnumConverter)
         {
-            return stringEnumConverter.NamingStrategy?.GetPropertyName(enumValue, false) ?? enumValue;
+            return stringEnumConverter.NamingStrategy?.GetPropertyName(memberName, false) ?? memberName;
         }
 #else
-        private string ResolveApiEnumValue(string enumValue, StringEnumConverter stringEnumConverter)
+        private string GetConvertedEnumName(string memberName, StringEnumConverter stringEnumConverter)
         {
             return (stringEnumConverter.CamelCaseText)
-                ? new CamelCaseNamingStrategy().GetPropertyName(enumValue, false)
-                : enumValue;
+                ? new CamelCaseNamingStrategy().GetPropertyName(memberName, false)
+                : memberName;
         }
 #endif
 

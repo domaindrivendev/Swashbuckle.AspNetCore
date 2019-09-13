@@ -22,9 +22,9 @@ namespace NetCore3
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers()
-                .AddNewtonsoftJson(o =>
+                .AddNewtonsoftJson(c =>
                 {
-                    o.SerializerSettings.Converters.Add(new StringEnumConverter(namingStrategy: new CamelCaseNamingStrategy()));
+                    c.SerializerSettings.Converters.Add(new StringEnumConverter(namingStrategy: new CamelCaseNamingStrategy()));
                 });
                 //.AddJsonOptions(o =>
                 //{
