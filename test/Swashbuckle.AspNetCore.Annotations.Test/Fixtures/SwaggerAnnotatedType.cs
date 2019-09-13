@@ -11,4 +11,20 @@
     {
         public string Property { get; set; }
     }
+
+    public class SwaggerPropertyAnnotedClass
+    {
+        [SwaggerProperty(typeof(SerializedPropertyAnnotedClass))]
+        public DeclaredPropertyAnnotedClass Property { get; set; }
+    }
+
+    public class DeclaredPropertyAnnotedClass
+    {
+        public string NotSerializedProperty { get; set; }
+    }
+
+    public class SerializedPropertyAnnotedClass
+    {
+        public string SerializedProperty { get; set; }
+    }
 }
