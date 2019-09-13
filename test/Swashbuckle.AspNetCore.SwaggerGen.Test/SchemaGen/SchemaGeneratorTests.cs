@@ -351,6 +351,38 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GenerateSchema_SupportsOptionToDescribeAllEnumsAsStrings()
+        {
+            var subject = Subject(c =>
+                c.DescribeAllEnumsAsStrings = true
+            );
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = subject.GenerateSchema(typeof(IntEnum), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal("string", schema.Type);
+            Assert.Equal(new[] { "Value2", "Value4", "Value8" }, schema.Enum.Cast<OpenApiString>().Select(i => i.Value));
+        }
+
+        [Fact]
+        public void GenerateSchema_SupportsOptionToDescribeStringEnumsInCamelCase()
+        {
+            var subject = Subject(c =>
+            {
+                c.DescribeAllEnumsAsStrings = true;
+                c.DescribeStringEnumsInCamelCase = true;
+            });
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = subject.GenerateSchema(typeof(IntEnum), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal("string", schema.Type);
+            Assert.Equal(new[] { "value2", "value4", "value8" }, schema.Enum.Cast<OpenApiString>().Select(i => i.Value));
+        }
+
+        [Fact]
         public void GenerateSchema_HandlesTypesWithNestedTypes()
         {
             var schemaRepository = new SchemaRepository();
@@ -523,7 +555,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var schemaGeneratorOptions = new SchemaGeneratorOptions();
             configureOptions?.Invoke(schemaGeneratorOptions);
 
-            return new SchemaGenerator(new NewtonsoftApiModelResolver(jsonSerializerSettings), schemaGeneratorOptions);
+            return new SchemaGenerator(
+                new NewtonsoftApiModelResolver(jsonSerializerSettings, schemaGeneratorOptions),
+                schemaGeneratorOptions);
         }
     }
 }

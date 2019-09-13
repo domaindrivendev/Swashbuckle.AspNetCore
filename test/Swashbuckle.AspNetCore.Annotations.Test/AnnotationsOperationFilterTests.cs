@@ -82,9 +82,11 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
                 }
             };
 
+            var schemaOptions = new SchemaGeneratorOptions();
+
             return new OperationFilterContext(
                 apiDescription,
-                new SchemaGenerator(new NewtonsoftApiModelResolver(new JsonSerializerSettings()), new SchemaGeneratorOptions()),
+                new SchemaGenerator(new NewtonsoftApiModelResolver(new JsonSerializerSettings(), schemaOptions), schemaOptions),
                 new SchemaRepository(),
                 (apiDescription.ActionDescriptor as ControllerActionDescriptor).MethodInfo);
         }

@@ -13,7 +13,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
 
         public AnnotationsSchemaFilterTests()
         {
-            _apiModelResolver = new NewtonsoftApiModelResolver(new JsonSerializerSettings());
+            _apiModelResolver = new NewtonsoftApiModelResolver(new JsonSerializerSettings(), new SchemaGeneratorOptions());
         }
 
         [Theory]

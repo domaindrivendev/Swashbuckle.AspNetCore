@@ -568,9 +568,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             setupAction?.Invoke(options);
 
+            var schemaOptions = new SchemaGeneratorOptions();
+
             return new SwaggerGenerator(
                 apiDescriptionsProvider,
-                new SchemaGenerator(new NewtonsoftApiModelResolver(new JsonSerializerSettings()), new SchemaGeneratorOptions()),
+                new SchemaGenerator(new NewtonsoftApiModelResolver(new JsonSerializerSettings(), schemaOptions), schemaOptions),
                 options
             );
         }

@@ -57,16 +57,16 @@ namespace Microsoft.Extensions.DependencyInjection
             swaggerGenOptions.SwaggerGeneratorOptions.ConflictingActionsResolver = resolver;
         }
 
-        [Obsolete("If your serializer is configured to emit string enums (see StringEnumConverter), then Swashbuckle will reflect that automatically")]
+        [Obsolete("If the serializer is configured for string enums (e.g. StringEnumConverter) Swashbuckle will reflect that automatically")]
         public static void DescribeAllEnumsAsStrings(this SwaggerGenOptions swaggerGenOptions)
         {
-            // no longer in effect
+            swaggerGenOptions.SchemaGeneratorOptions.DescribeAllEnumsAsStrings = true;
         }
 
-        [Obsolete("If your serializer is configured to emit (camel-cased) string enums (see StringEnumConverter), then Swashbuckle will reflect that automatically")]
+        [Obsolete("If the serializer is configured for (camel-cased) string enums (e.g. StringEnumConverter) Swashbuckle will reflect that automatically")]
         public static void DescribeStringEnumsInCamelCase(this SwaggerGenOptions swaggerGenOptions)
         {
-            // no longer in effect
+            swaggerGenOptions.SchemaGeneratorOptions.DescribeStringEnumsInCamelCase = true;
         }
 
         /// <summary>

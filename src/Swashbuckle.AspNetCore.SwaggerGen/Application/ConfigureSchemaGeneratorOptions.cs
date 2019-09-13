@@ -36,6 +36,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             target.GeneratePolymorphicSchemas = source.GeneratePolymorphicSchemas;
             target.SubTypesResolver = source.SubTypesResolver;
             target.SchemaFilters = new List<ISchemaFilter>(source.SchemaFilters);
+            target.DescribeAllEnumsAsStrings = source.DescribeAllEnumsAsStrings;
+            target.DescribeStringEnumsInCamelCase = source.DescribeStringEnumsInCamelCase;
         }
 
         private TFilter CreateFilter<TFilter>(FilterDescriptor filterDescriptor)

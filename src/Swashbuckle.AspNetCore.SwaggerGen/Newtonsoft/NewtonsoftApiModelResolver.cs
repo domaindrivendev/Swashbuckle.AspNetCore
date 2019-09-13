@@ -15,21 +15,31 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
     {
         private readonly JsonSerializerSettings _jsonSerializerSettings;
         private readonly IContractResolver _jsonContractResolver;
+        private readonly SchemaGeneratorOptions _options;
 
 #if NETCOREAPP3_0
-        public NewtonsoftApiModelResolver(IOptions<MvcNewtonsoftJsonOptions> jsonOptionsAccessor)
-            : this(jsonOptionsAccessor.Value?.SerializerSettings ?? new JsonSerializerSettings())
+        public NewtonsoftApiModelResolver(
+            IOptions<MvcNewtonsoftJsonOptions> jsonOptionsAccessor,
+            IOptions<SchemaGeneratorOptions> optionsAccessor)
+            : this(
+                jsonOptionsAccessor.Value?.SerializerSettings ?? new JsonSerializerSettings(),
+                optionsAccessor.Value ?? new SchemaGeneratorOptions())
         { }
 #else
-        public NewtonsoftApiModelResolver(IOptions<MvcJsonOptions> jsonOptionsAccessor)
-            : this(jsonOptionsAccessor.Value?.SerializerSettings ?? new JsonSerializerSettings())
+        public NewtonsoftApiModelResolver(
+            IOptions<MvcJsonOptions> jsonOptionsAccessor,
+            IOptions<SchemaGeneratorOptions> optionsAccessor)
+            : this(
+                jsonOptionsAccessor.Value?.SerializerSettings ?? new JsonSerializerSettings(),
+                optionsAccessor.Value ?? new SchemaGeneratorOptions())
         { }
 #endif
 
-        public NewtonsoftApiModelResolver(JsonSerializerSettings jsonSerializerSettings)
+        public NewtonsoftApiModelResolver(JsonSerializerSettings jsonSerializerSettings, SchemaGeneratorOptions options)
         {
             _jsonSerializerSettings = jsonSerializerSettings;
             _jsonContractResolver = jsonSerializerSettings.ContractResolver ?? new DefaultContractResolver();
+            _options = options;
         }
 
         public ApiModel ResolveApiModelFor(Type type)
@@ -67,6 +77,12 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
             var stringEnumConverter = (jsonPrimitiveContract.Converter as StringEnumConverter)
                 ?? _jsonSerializerSettings.Converters.OfType<StringEnumConverter>().FirstOrDefault();
+
+            // Temporary shim to support obsolete config options
+            if (stringEnumConverter == null && _options.DescribeAllEnumsAsStrings)
+            {
+                stringEnumConverter = new StringEnumConverter(_options.DescribeStringEnumsInCamelCase);
+            };
 
             if (stringEnumConverter == null)
             {
@@ -138,15 +154,15 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     var memberInfo = jsonProperty.DeclaringType.GetMember(jsonProperty.UnderlyingName).FirstOrDefault();
                     var jsonPropertyAttribute = memberInfo?.GetCustomAttributes<JsonPropertyAttribute>(true).FirstOrDefault();
 
-                    var effectiveRequired = (jsonPropertyAttribute == null)
+                    var required = (jsonPropertyAttribute == null)
                         ? jsonObjectContract.ItemRequired
                         : jsonProperty.Required;
 
                     return new ApiProperty(
                         apiName: jsonProperty.PropertyName,
                         type: jsonProperty.PropertyType,
-                        apiRequired: (effectiveRequired == Required.Always || effectiveRequired == Required.AllowNull),
-                        apiNullable: (effectiveRequired != Required.Always && effectiveRequired != Required.DisallowNull && !jsonProperty.PropertyType.IsValueType),
+                        apiRequired: (required == Required.Always || required == Required.AllowNull),
+                        apiNullable: (required != Required.Always && required != Required.DisallowNull && !jsonProperty.PropertyType.IsValueType),
                         apiReadOnly: (jsonProperty.Readable && !jsonProperty.Writable),
                         apiWriteOnly: (jsonProperty.Writable && !jsonProperty.Readable),
                         memberInfo: memberInfo);

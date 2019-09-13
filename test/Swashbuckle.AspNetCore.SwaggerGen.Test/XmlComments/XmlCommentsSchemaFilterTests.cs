@@ -18,7 +18,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         public XmlCommentsSchemaFilterTests()
         {
-            _apiModelResolver = new NewtonsoftApiModelResolver(new JsonSerializerSettings());
+            _apiModelResolver = new NewtonsoftApiModelResolver(new JsonSerializerSettings(), new SchemaGeneratorOptions());
         }
 
         [Theory]
