@@ -418,17 +418,72 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void GenerateSchema_HonorsSerializerBehavior_IfJsonAnnotatedType()
+        public void GenerateSchema_HonorsJsonPropertyAnnotations()
         {
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(JsonAnnotatedType), schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(typeof(JsonPropertyAnnotatedType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.DoesNotContain("StringWithJsonIgnore", schema.Properties.Keys);
-            Assert.Contains("string-with-json-property-name", schema.Properties.Keys);
-            Assert.Equal(new[] { "StringWithJsonPropertyRequiredAllowNull", "StringWithJsonPropertyRequiredAlways" }, schema.Required.ToArray());
-            Assert.True(schema.Properties["StringWithJsonPropertyRequiredAllowNull"].Nullable);
+            Assert.Equal(
+                new[]
+                {
+                    //"StringWithJsonIgnore",
+                    "string-with-json-property-name",
+                    "IntWithRequiredDefault",
+                    "StringWithRequiredDefault",
+                    "StringWithRequiredDisallowNull",
+                    "StringWithRequiredAlways",
+                    "StringWithRequiredAllowNull"
+                },
+                schema.Properties.Keys.ToArray());
+
+            Assert.Equal(
+                new[]
+                {
+                    "StringWithRequiredAllowNull",
+                    "StringWithRequiredAlways"
+                },
+                schema.Required.ToArray());
+
+            Assert.True(schema.Properties["string-with-json-property-name"].Nullable);
+            Assert.False(schema.Properties["IntWithRequiredDefault"].Nullable);
+            Assert.True(schema.Properties["StringWithRequiredDefault"].Nullable);
+            Assert.False(schema.Properties["StringWithRequiredDisallowNull"].Nullable);
+            Assert.False(schema.Properties["StringWithRequiredAlways"].Nullable);
+            Assert.True(schema.Properties["StringWithRequiredAllowNull"].Nullable);
+        }
+
+        [Fact]
+        public void GenerateSchema_HonorsJsonObjectAnnotations()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(typeof(JsonObjectAnnotatedType), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal(
+                new[]
+                {
+                    "StringWithNoAnnotation",
+                    "StringWithRequiredDefault",
+                    "StringWithRequiredDisallowNull",
+                    "StringWithRequiredAllowNull"
+                },
+                schema.Properties.Keys.ToArray());
+
+            Assert.Equal(
+                new[]
+                {
+                    "StringWithNoAnnotation",
+                    "StringWithRequiredAllowNull"
+                },
+                schema.Required.ToArray());
+
+            Assert.False(schema.Properties["StringWithNoAnnotation"].Nullable);
+            Assert.True(schema.Properties["StringWithRequiredDefault"].Nullable);
+            Assert.False(schema.Properties["StringWithRequiredDisallowNull"].Nullable);
+            Assert.True(schema.Properties["StringWithRequiredAllowNull"].Nullable);
         }
 
         [Fact]

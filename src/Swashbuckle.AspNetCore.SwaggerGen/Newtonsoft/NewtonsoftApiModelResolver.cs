@@ -135,14 +135,21 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                 .Where(jsonProperty => !jsonProperty.Ignored)
                 .Select(jsonProperty =>
                 {
+                    var memberInfo = jsonProperty.DeclaringType.GetMember(jsonProperty.UnderlyingName).FirstOrDefault();
+                    var jsonPropertyAttribute = memberInfo?.GetCustomAttributes<JsonPropertyAttribute>(true).FirstOrDefault();
+
+                    var effectiveRequired = (jsonPropertyAttribute == null)
+                        ? jsonObjectContract.ItemRequired
+                        : jsonProperty.Required;
+
                     return new ApiProperty(
                         apiName: jsonProperty.PropertyName,
                         type: jsonProperty.PropertyType,
-                        apiRequired: (jsonProperty.Required == Required.Always || jsonProperty.Required == Required.AllowNull),
-                        apiNullable: (jsonProperty.Required == Required.AllowNull),
+                        apiRequired: (effectiveRequired == Required.Always || effectiveRequired == Required.AllowNull),
+                        apiNullable: (effectiveRequired != Required.Always && effectiveRequired != Required.DisallowNull && !jsonProperty.PropertyType.IsValueType),
                         apiReadOnly: (jsonProperty.Readable && !jsonProperty.Writable),
                         apiWriteOnly: (jsonProperty.Writable && !jsonProperty.Readable),
-                        memberInfo: jsonProperty.DeclaringType.GetMember(jsonProperty.UnderlyingName).FirstOrDefault());
+                        memberInfo: memberInfo);
                 });
 
             return new ApiObject(
