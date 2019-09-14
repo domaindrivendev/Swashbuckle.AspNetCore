@@ -51,7 +51,7 @@ namespace Swashbuckle.AspNetCore.Annotations
                     }
                 }
             }
-            else if(schema.Reference.IsLocal)
+            else if(schema.Reference != null && schema.Reference.IsLocal)
             {
                 foreach (var prop in context.ApiModel.Type.GetProperties())
                 {
