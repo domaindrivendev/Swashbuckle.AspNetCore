@@ -715,6 +715,27 @@ services.AddSwaggerGen(c =>
     c.MapType<PhoneNumber>(() => new OpenApiSchema { Type = "string" });
 };
 ```
+### Override Types for Specific Properties ###
+
+Shortcut of [Override Schema for Specific Types](#override-schema-for-specific-types) that allow to simply override a property type in case of JsonConverter for instance.
+
+```csharp
+public class SwaggerPropertyAnnoted
+{
+    [SwaggerProperty(typeof(SerializedPropertyAnnotedClass))]
+    public DeclaredPropertyAnnotedClass Property { get; set; }
+}
+
+public class DeclaredPropertyAnnotedClass
+{
+    public string NotSerializedProperty { get; set; }
+}
+
+public class SerializedPropertyAnnotedClass
+{
+    public string SerializedProperty { get; set; }
+}
+```
 
 ### Extend Generator with Operation, Schema & Document Filters ###
 
