@@ -465,7 +465,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             { "409", "Conflict" },
             { "4\\d{2}", "Client Error" },
             { "5\\d{2}", "Server Error" },
-            { "default", "Unexpected Error" }
+            { "default", "Error" }
         };
     }
 }

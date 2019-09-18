@@ -496,7 +496,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var responses = swagger.Paths["/collection"].Operations[OperationType.Get].Responses;
             Assert.Equal(new[] { "204", "400", "default" }, responses.Keys);
-            Assert.Equal("Unexpected Error", responses["default"].Description);
+            Assert.Equal("Error", responses["default"].Description);
         }
 
         [Fact]
