@@ -162,7 +162,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                         apiName: jsonProperty.PropertyName,
                         type: jsonProperty.PropertyType,
                         apiRequired: (required == Required.Always || required == Required.AllowNull),
-                        apiNullable: (required != Required.Always && required != Required.DisallowNull && !jsonProperty.PropertyType.IsValueType),
+                        apiNullable: (required != Required.Always && required != Required.DisallowNull && jsonProperty.PropertyType.IsReferenceOrNullableType()),
                         apiReadOnly: (jsonProperty.Readable && !jsonProperty.Writable),
                         apiWriteOnly: (jsonProperty.Writable && !jsonProperty.Readable),
                         memberInfo: memberInfo);

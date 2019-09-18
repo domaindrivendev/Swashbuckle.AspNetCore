@@ -20,6 +20,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return (valueType != null);
         }
 
+        public static bool IsReferenceOrNullableType(this Type type)
+        {
+            return (!type.IsValueType || type.IsNullable(out Type _));
+        }
+
         private static bool IsConstructedFrom(this Type type, Type genericType, out Type constructedType)
         {
             constructedType = new[] { type }

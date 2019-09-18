@@ -463,6 +463,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     //"StringWithJsonIgnore",
                     "string-with-json-property-name",
                     "IntWithRequiredDefault",
+                    "NullableIntWithRequiredDefault",
                     "StringWithRequiredDefault",
                     "StringWithRequiredDisallowNull",
                     "StringWithRequiredAlways",
@@ -480,6 +481,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.True(schema.Properties["string-with-json-property-name"].Nullable);
             Assert.False(schema.Properties["IntWithRequiredDefault"].Nullable);
+            Assert.True(schema.Properties["NullableIntWithRequiredDefault"].Nullable);
             Assert.True(schema.Properties["StringWithRequiredDefault"].Nullable);
             Assert.False(schema.Properties["StringWithRequiredDisallowNull"].Nullable);
             Assert.False(schema.Properties["StringWithRequiredAlways"].Nullable);

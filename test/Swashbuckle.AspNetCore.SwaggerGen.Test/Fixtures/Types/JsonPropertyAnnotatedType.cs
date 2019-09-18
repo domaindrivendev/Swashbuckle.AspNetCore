@@ -14,6 +14,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public int IntWithRequiredDefault { get; set; }
 
         [JsonProperty(Required = Required.Default)]
+        public int? NullableIntWithRequiredDefault { get; set; }
+
+        [JsonProperty(Required = Required.Default)]
         public string StringWithRequiredDefault { get; set; }
 
         [JsonProperty(Required = Required.DisallowNull)]
