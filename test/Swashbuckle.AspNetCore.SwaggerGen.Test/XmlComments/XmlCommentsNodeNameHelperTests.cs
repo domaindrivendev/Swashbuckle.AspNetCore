@@ -18,6 +18,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             "M:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.AcceptsNothing")]
         [InlineData(typeof(XmlAnnotatedType), "AcceptsNestedType",
             "M:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.AcceptsNestedType(Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.NestedType)")]
+        [InlineData(typeof(XmlAnnotatedType), "AcceptsNestedThreeType",
+            "M:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.AcceptsNestedThreeType(Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.NestedType.NestedTwoType.NestedThreeType)")]
         [InlineData(typeof(XmlAnnotatedType), "AcceptsConstructedGenericType",
             "M:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.AcceptsConstructedGenericType(System.Collections.Generic.KeyValuePair{System.String,System.Int32})")]
         [InlineData(typeof(XmlAnnotatedType), "AcceptsConstructedOfConstructedGenericType",
@@ -25,7 +27,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(XmlAnnotatedType), "AcceptsArrayOfConstructedGenericType",
             "M:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.AcceptsArrayOfConstructedGenericType(System.Nullable{System.Int32}[])")]
         public void GetMemberNameForMethod_ReturnsCorrectXmlCommentsMemberName_ForGivenMethodInfo(
-            Type declaringType, 
+            Type declaringType,
             string name,
             string expectedMemberName)
         {
@@ -43,10 +45,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             "T:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType")]
         [InlineData(typeof(XmlAnnotatedType.NestedType),
             "T:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.NestedType")]
-        [InlineData(typeof(XmlAnnotatedGenericType<int,string>),
+        [InlineData(typeof(XmlAnnotatedGenericType<int, string>),
             "T:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedGenericType`2")]
-        [InlineData(typeof(NoNamespaceType),
-            "T:NoNamespaceType")]
+        [InlineData(typeof(NoNamespaceType), "T:NoNamespaceType")]
+        [InlineData(typeof(NoNamespaceType.Nested1), "T:NoNamespaceType.Nested1")]
+        [InlineData(typeof(NoNamespaceType.Nested1.Nested2), "T:NoNamespaceType.Nested1.Nested2")]
+        [InlineData(typeof(NoNamespaceType.Nested1.Nested2.Nested3), "T:NoNamespaceType.Nested1.Nested2.Nested3")]
+        [InlineData(typeof(XmlAnnotatedType.NestedType.NestedTwoType.NestedThreeType),
+            "T:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.NestedType.NestedTwoType.NestedThreeType")]
         public void GetMemberNameForType_ReturnsCorrectXmlCommentsMemberName_ForGivenType(
             Type type,
             string expectedMemberName
@@ -66,8 +72,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             "F:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.StringField")]
         [InlineData(typeof(XmlAnnotatedType.NestedType), "Property",
             "P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.NestedType.Property")]
-        [InlineData(typeof(XmlAnnotatedGenericType<int,string>), "GenericProperty",
+        [InlineData(typeof(XmlAnnotatedGenericType<int, string>), "GenericProperty",
             "P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedGenericType`2.GenericProperty")]
+        [InlineData(typeof(XmlAnnotatedType.NestedType.NestedTwoType), "Two",
+            "P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.NestedType.NestedTwoType.Two")]
+        [InlineData(typeof(XmlAnnotatedType.NestedType.NestedTwoType.NestedThreeType), "Three",
+            "P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.NestedType.NestedTwoType.NestedThreeType.Three")]
         public void GetMemberNameForProperty_ReturnsCorrectXmlCommentMemberName_ForGivenMemberInfo(
             Type declaringType,
             string fieldOrPropertyName,

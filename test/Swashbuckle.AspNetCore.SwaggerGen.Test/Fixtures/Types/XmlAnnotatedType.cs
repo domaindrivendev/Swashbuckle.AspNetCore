@@ -87,6 +87,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void AcceptsNestedType(NestedType param)
         { }
 
+
+        /// <summary>
+        /// summary for NestedType.NestedTwoType.NestedThreeType
+        /// </summary>
+        /// <param name="param"></param>
+        public void AcceptsNestedThreeType(NestedType.NestedTwoType.NestedThreeType param)
+        { }
+
+
         /// <summary>
         /// summary for AcceptsConstructedGenericType
         /// </summary>
@@ -114,6 +123,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public class NestedType
         {
             public string Property { get; set; }
+
+            public NestedTwoType NestedTwoTypeInfo { get; set; }
+            public NestedTwoType.NestedThreeType ThreeType { get; set; }
+
+            public class NestedTwoType
+            {
+
+                public string Two { get; set; }
+
+                public class NestedThreeType
+                {
+                    public int Three { get; set; }
+                }
+            }
         }
     }
 }

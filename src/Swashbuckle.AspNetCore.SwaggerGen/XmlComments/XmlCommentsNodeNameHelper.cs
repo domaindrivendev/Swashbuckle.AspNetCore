@@ -53,11 +53,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var builder = new StringBuilder();
 
-            if (!string.IsNullOrEmpty(type.Namespace))
+            var withinNamespace = !string.IsNullOrEmpty(type.Namespace);
+            if (withinNamespace)
+            {
                 builder.Append($"{type.Namespace}.");
+            }
 
-            if (type.IsNested)
-                builder.Append($"{type.DeclaringType.Name}.");
+            if (type.DeclaringType?.FullName != null)
+            {
+                var declaringTypeName = type.DeclaringType.FullName
+                                            .Substring(builder.Length)
+                                            .Replace('+', '.');
+                builder.Append($"{declaringTypeName}.");
+            }
 
             if (type.IsConstructedGenericType && expandGenericArgs)
             {
