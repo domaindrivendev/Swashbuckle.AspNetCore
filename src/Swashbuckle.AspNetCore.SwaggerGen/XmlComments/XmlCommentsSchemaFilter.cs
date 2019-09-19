@@ -4,7 +4,6 @@ using System.Xml.XPath;
 using System.Reflection;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json.Serialization;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -23,23 +22,23 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
-            TryApplyTypeComments(schema, context.ModelMetadata.UnderlyingOrModelType);
+            TryApplyTypeComments(schema, context.ApiModel.Type);
 
-            if (!(context.JsonContract is JsonObjectContract jsonObjectContract))
+            if (!(context.ApiModel is ApiObject apiObject))
                 return;
 
-            foreach (var jsonProperty in jsonObjectContract.Properties)
+            foreach (var apiProperty in apiObject.ApiProperties)
             {
-                if (!schema.Properties.TryGetValue(jsonProperty.PropertyName, out OpenApiSchema propertySchema))
+                if (!schema.Properties.TryGetValue(apiProperty.ApiName, out OpenApiSchema propertySchema))
                     continue;
 
                 if (propertySchema.Reference != null) // can't add descriptions to a reference schema
                     continue;
 
-                if (!jsonProperty.TryGetMemberInfo(out MemberInfo memberInfo))
+                if (apiProperty.MemberInfo == null)
                     continue;
 
-                TryApplyMemberComments(propertySchema, memberInfo);
+                TryApplyMemberComments(propertySchema, apiProperty.MemberInfo);
             };
         }
 

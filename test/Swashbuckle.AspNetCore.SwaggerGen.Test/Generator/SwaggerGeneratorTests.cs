@@ -6,6 +6,7 @@ using Microsoft.OpenApi.Any;
 using Newtonsoft.Json;
 using Xunit;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.Newtonsoft;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -495,7 +496,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var responses = swagger.Paths["/collection"].Operations[OperationType.Get].Responses;
             Assert.Equal(new[] { "204", "400", "default" }, responses.Keys);
-            Assert.Equal("Unexpected Error", responses["default"].Description);
+            Assert.Equal("Error", responses["default"].Description);
         }
 
         [Fact]
@@ -567,9 +568,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             setupAction?.Invoke(options);
 
+            var schemaOptions = new SchemaGeneratorOptions();
+
             return new SwaggerGenerator(
                 apiDescriptionsProvider,
-                new SchemaGenerator(new SchemaGeneratorOptions(), new JsonSerializerSettings()),
+                new SchemaGenerator(new NewtonsoftApiModelResolver(new JsonSerializerSettings(), schemaOptions), schemaOptions),
                 options
             );
         }

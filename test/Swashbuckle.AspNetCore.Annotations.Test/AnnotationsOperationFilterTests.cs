@@ -6,6 +6,7 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Xunit;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.Newtonsoft;
 
 namespace Swashbuckle.AspNetCore.Annotations.Test
 {
@@ -81,9 +82,11 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
                 }
             };
 
+            var schemaOptions = new SchemaGeneratorOptions();
+
             return new OperationFilterContext(
                 apiDescription,
-                new SchemaGenerator(new SchemaGeneratorOptions(), new JsonSerializerSettings()),
+                new SchemaGenerator(new NewtonsoftApiModelResolver(new JsonSerializerSettings(), schemaOptions), schemaOptions),
                 new SchemaRepository(),
                 (apiDescription.ActionDescriptor as ControllerActionDescriptor).MethodInfo);
         }

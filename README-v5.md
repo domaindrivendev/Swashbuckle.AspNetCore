@@ -19,8 +19,8 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 |Swashbuckle Version|ASP.NET Core|Swagger / OpenAPI Spec.|swagger-ui|ReDoc UI|
 |----------|----------|----------|----------|----------|
-|[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master)|>=2.0.0|2.0, 3.0|3.23.4|2.0.0-rc.14|
-|[5.0.0-beta](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v5.0.0-beta)|>=2.0.0|2.0, 3.0|3.19.5|1.22.2|
+|[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master/README-v5.md)|>=2.0.0|2.0, 3.0|3.23.8|2.0.0-rc.14|
+|[5.0.0-rc2](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v5.0.0-rc2/README-v5.md)|>=2.0.0|2.0, 3.0|3.20.9|2.0.0-rc.2|
 |[4.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v4.0.0)|>=2.0.0|2.0|3.19.5|1.22.2|
 |[3.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v3.0.0)|>=1.0.4|2.0|3.17.1|1.20.0|
 |[2.5.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v2.5.0)|>=1.0.4|2.0|3.16.0|1.20.0|
@@ -170,7 +170,6 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Customize Operation Tags (e.g. for UI Grouping)](#customize-operation-tags-eg-for-ui-grouping)
     * [Change Operation Sort Order (e.g. for UI Sorting)](#change-operation-sort-order-eg-for-ui-sorting)
     * [Customize Schema Id's](#customize-schema-ids)
-    * [Customize Schema for Enum Types](#customize-schema-for-enum-types)
     * [Override Schema for Specific Types](#override-schema-for-specific-types)
     * [Extend Generator with Operation, Schema & Document Filters](#extend-generator-with-operation-schema--document-filters)
     * [Add Security Definitions and Requirements](#add-security-definitions-and-requirements)
@@ -689,23 +688,6 @@ services.AddSwaggerGen(c =>
 {
     ...
     c.CustomSchemaIds((type) => type.FullName);
-};
-```
-
-### Customize Schema for Enum Types ###
-
-When describing parameters and responses, Swashbuckle does its best to reflect the application's serialization settings. For example, if the `CamelCaseContractResolver` is enabled, Schema property names will be automatically camelCased in the generated Swagger.
-
-Similarly for enum types, if the `StringEnumConverter` is enabled, then the corresponding Schemas will list enum names rather than integer values.
-
-For most cases this should be sufficient. However, if you need more control, Swashbuckle exposes the following options to override the default behavior:
-
-```csharp
-services.AddSwaggerGen(c =>
-{
-    ...
-    c.DescribeAllEnumsAsStrings();
-    c.DescribeStringEnumsInCamelCase();
 };
 ```
 

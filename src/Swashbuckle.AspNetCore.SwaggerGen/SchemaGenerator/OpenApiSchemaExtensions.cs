@@ -8,11 +8,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class OpenApiSchemaExtensions
     {
-        public static void ApplyCustomAttributes(this OpenApiSchema schema, IEnumerable<object> memberAttributes)
+        public static void ApplyCustomAttributes(this OpenApiSchema schema, IEnumerable<object> customAttributes)
         {
-            foreach (var attribute in memberAttributes)
+            foreach (var attribute in customAttributes)
             {
-                if (attribute is DefaultValueAttribute defaultValue)
+                if (attribute is DefaultValueAttribute defaultValue && defaultValue.Value != null)
                 {
                     schema.Default = OpenApiAnyFactory.TryCreateFor(schema, defaultValue.Value, out IOpenApiAny openApiAny)
                         ? openApiAny

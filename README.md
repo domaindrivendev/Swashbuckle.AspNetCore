@@ -19,8 +19,8 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 |Swashbuckle Version|ASP.NET Core|Swagger / OpenAPI Spec.|swagger-ui|ReDoc UI|
 |----------|----------|----------|----------|----------|
-|[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master/README-v5.md)|>=2.0.0|2.0, 3.0|3.20.9|2.0.0-rc.2|
-|[5.0.0-beta](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master/README-v5.md)|>=2.0.0|2.0, 3.0|3.19.5|1.22.2|
+|[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master/README-v5.md)|>=2.0.0|2.0, 3.0|3.23.8|2.0.0-rc.14|
+|[5.0.0-rc2](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v5.0.0-rc2/README-v5.md)|>=2.0.0|2.0, 3.0|3.20.9|2.0.0-rc.2|
 |[4.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v4.0.0)|>=2.0.0|2.0|3.19.5|1.22.2|
 |[3.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v3.0.0)|>=1.0.4|2.0|3.17.1|1.20.0|
 |[2.5.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v2.5.0)|>=1.0.4|2.0|3.16.0|1.20.0|

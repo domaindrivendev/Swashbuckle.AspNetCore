@@ -17,10 +17,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public IDictionary<Type, Func<OpenApiSchema>> CustomTypeMappings { get; set; }
 
-        public bool DescribeAllEnumsAsStrings { get; set; }
-
-        public bool DescribeStringEnumsInCamelCase { get; set; }
-
         public Func<Type, string> SchemaIdSelector { get; set; }
 
         public bool IgnoreObsoleteProperties { get; set; }
@@ -30,6 +26,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public Func<Type, IEnumerable<Type>> SubTypesResolver { get; set; }
 
         public IList<ISchemaFilter> SchemaFilters { get; set; }
+
+        [Obsolete("If the serializer is configured for string enums (e.g. StringEnumConverter) Swashbuckle will reflect that automatically")]
+        public bool DescribeAllEnumsAsStrings { get; set; }
+
+        [Obsolete("If the serializer is configured for (camel-cased) string enums (e.g. StringEnumConverter) Swashbuckle will reflect that automatically")]
+        public bool DescribeStringEnumsInCamelCase { get; set; }
 
         private string DefaultSchemaIdSelector(Type modelType)
         {
@@ -44,6 +46,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private IEnumerable<Type> DefaultSubTypeResolver(Type baseType)
         {
+            if (baseType == typeof(object))
+                return Enumerable.Empty<Type>();
+
             return baseType.Assembly.GetTypes().Where(type => type.IsSubclassOf(baseType));
         }
     }

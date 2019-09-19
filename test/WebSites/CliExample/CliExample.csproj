@@ -26,22 +26,22 @@
   </ItemGroup>
 
   <!--
-    NOTE: In practice, you would uncomment the following snippet to install the dotnet-swagger tool via Nuget.
-    Then, the exec command below could be simplified to the following "dotnet tool run swagger tofile ..."
+    NOTE: In practice, you would install the CLI as a .NET Core Global Tool (i.e. dotnet tool install Swashbuckle.AspNetCore.Cli)
+    and incorporate it into your build process using the commented out target below
   -->
 
-  <!--
-  <Target Name="SwaggerToFile" AfterTargets="AfterBuild">
-    <Exec Command="dotnet tool run swagger tofile &#45;-host http://example.com &#45;-output wwwroot/api-docs/v1/swagger.json &quot;$(TargetPath)&quot; v1" />
-  </Target>
-  -->
-
-  <!--
-    NOTE: If you install swagger as global tool then you could run simply "swagger tofile ..."
-  -->
   <!--
   <Target Name="SwaggerToFile" AfterTargets="AfterBuild">
     <Exec Command="swagger tofile &#45;-host http://example.com &#45;-output wwwroot/api-docs/v1/swagger.json &quot;$(TargetPath)&quot; v1" />
   </Target>
   -->
+
+  <!--
+    HOWEVER ... This example invokes the CLI DLL directly so that its source code can be tested during the Swashbuckle build process
+  -->
+
+  <Target Name="SwaggerToFile" AfterTargets="AfterBuild">
+    <Exec Command="dotnet ../../../src/Swashbuckle.AspNetCore.Cli/bin/$(Configuration)/netcoreapp2.1/dotnet-swagger.dll tofile --host http://example.com --output wwwroot/api-docs/v1/swagger.json $(OutputPath)$(AssemblyName).dll v1" />
+  </Target>
+
 </Project>

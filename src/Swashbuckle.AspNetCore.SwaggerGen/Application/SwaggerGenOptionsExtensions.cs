@@ -57,6 +57,18 @@ namespace Microsoft.Extensions.DependencyInjection
             swaggerGenOptions.SwaggerGeneratorOptions.ConflictingActionsResolver = resolver;
         }
 
+        [Obsolete("If the serializer is configured for string enums (e.g. StringEnumConverter) Swashbuckle will reflect that automatically")]
+        public static void DescribeAllEnumsAsStrings(this SwaggerGenOptions swaggerGenOptions)
+        {
+            swaggerGenOptions.SchemaGeneratorOptions.DescribeAllEnumsAsStrings = true;
+        }
+
+        [Obsolete("If the serializer is configured for (camel-cased) string enums (e.g. StringEnumConverter) Swashbuckle will reflect that automatically")]
+        public static void DescribeStringEnumsInCamelCase(this SwaggerGenOptions swaggerGenOptions)
+        {
+            swaggerGenOptions.SchemaGeneratorOptions.DescribeStringEnumsInCamelCase = true;
+        }
+
         /// <summary>
         /// Provide a custom strategy for assigning "operationId" to operations
         /// </summary>
@@ -168,22 +180,6 @@ namespace Microsoft.Extensions.DependencyInjection
             Func<OpenApiSchema> schemaFactory)
         {
             swaggerGenOptions.MapType(typeof(T), schemaFactory);
-        }
-
-        /// <summary>
-        /// Use the enum names, as opposed to their integer values, when describing enum types
-        /// </summary>
-        public static void DescribeAllEnumsAsStrings(this SwaggerGenOptions swaggerGenOptions)
-        {
-            swaggerGenOptions.SchemaGeneratorOptions.DescribeAllEnumsAsStrings = true;
-        }
-
-        /// <summary>
-        /// If applicable, describe all enum names, regardless of how they appear in code, in camelCase.
-        /// </summary>
-        public static void DescribeStringEnumsInCamelCase(this SwaggerGenOptions swaggerGenOptions)
-        {
-            swaggerGenOptions.SchemaGeneratorOptions.DescribeStringEnumsInCamelCase = true;
         }
 
         /// <summary>
