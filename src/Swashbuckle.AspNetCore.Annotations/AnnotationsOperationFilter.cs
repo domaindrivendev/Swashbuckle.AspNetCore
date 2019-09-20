@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Collections.Generic;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -13,13 +13,16 @@ namespace Swashbuckle.AspNetCore.Annotations
         {
             if (context.MethodInfo == null) return;
 
-            var actionAttributes = context.MethodInfo.GetCustomAttributes(true);
+            // Action descriptions should take precedence over controller descriptions and
+            // the most derived controller descrption should take precedence over the least,
+            // so do not overwrite the description if there is a value already there.
             var controllerAttributes = context.MethodInfo.DeclaringType.GetTypeInfo().GetCustomAttributes(true);
-            var actionAndControllerAttributes = actionAttributes.Union(controllerAttributes);
+            var actionAttributes = context.MethodInfo.GetCustomAttributes(true);
+            var controllerAndActionAttributes = controllerAttributes.Union(actionAttributes);
 
             ApplySwaggerOperationAttribute(operation, actionAttributes);
-            ApplySwaggerOperationFilterAttributes(operation, context, actionAndControllerAttributes);
-            ApplySwaggerResponseAttributes(operation, actionAndControllerAttributes, context);
+            ApplySwaggerOperationFilterAttributes(operation, context, controllerAndActionAttributes);
+            ApplySwaggerResponseAttributes(operation, controllerAndActionAttributes);
         }
 
         private static void ApplySwaggerOperationAttribute(
@@ -66,8 +69,7 @@ namespace Swashbuckle.AspNetCore.Annotations
 
         private void ApplySwaggerResponseAttributes(
             OpenApiOperation operation,
-            IEnumerable<object> actionAndControllerAttributes,
-            OperationFilterContext context)
+            IEnumerable<object> actionAndControllerAttributes)
         {
             var swaggerResponseAttributes = actionAndControllerAttributes
                 .OfType<SwaggerResponseAttribute>();
@@ -75,6 +77,12 @@ namespace Swashbuckle.AspNetCore.Annotations
             foreach (var swaggerResponseAttribute in swaggerResponseAttributes)
             {
                 var statusCode = swaggerResponseAttribute.StatusCode.ToString();
+
+                if (operation.Responses == null)
+                {
+                    operation.Responses = new OpenApiResponses();
+                }
+
                 if (!operation.Responses.TryGetValue(statusCode, out OpenApiResponse response))
                 {
                     response = new OpenApiResponse();
