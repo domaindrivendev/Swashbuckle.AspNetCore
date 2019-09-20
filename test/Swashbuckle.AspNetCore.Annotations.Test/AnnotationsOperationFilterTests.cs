@@ -1,9 +1,10 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using Swashbuckle.AspNetCore.Newtonsoft;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Xunit;
 
@@ -103,9 +104,11 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
                 }
             };
 
+            var schemaOptions = new SchemaGeneratorOptions();
+
             return new OperationFilterContext(
                 apiDescription,
-                new SchemaGenerator(new SchemaGeneratorOptions(), new JsonSerializerSettings()),
+                new SchemaGenerator(new NewtonsoftApiModelResolver(new JsonSerializerSettings(), schemaOptions), schemaOptions),
                 new SchemaRepository(),
                 (apiDescription.ActionDescriptor as ControllerActionDescriptor).MethodInfo);
         }

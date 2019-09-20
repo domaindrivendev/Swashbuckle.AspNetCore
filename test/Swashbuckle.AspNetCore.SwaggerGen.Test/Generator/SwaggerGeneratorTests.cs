@@ -6,6 +6,7 @@ using Microsoft.OpenApi.Any;
 using Newtonsoft.Json;
 using Xunit;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.Newtonsoft;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -299,7 +300,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         [Theory]
         [InlineData(nameof(FakeController.AcceptsOptionalParameter), "param", "foobar")]
-        [InlineData(nameof(FakeController.AcceptsOptionalJsonConvertedEnum), "param", "Value1")]
         [InlineData(nameof(FakeController.AcceptsDataAnnotatedType), "StringWithDefaultValue", "foobar")]
         public void GetSwagger_SetsDefaultValue_IfApiParameterIsOptionalOrHasDefaultValueAttribute(
             string actionFixtureName,
@@ -342,43 +342,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void GetSwagger_HonorsNullableType()
-        {
-            var subject = Subject(setupApis: apis => apis
-                .Add("POST", "collection", nameof(FakeController.AcceptsComplexTypeFromBody)));
-
-            var swagger = subject.GetSwagger("v1");
-
-            var schema = swagger.Components.Schemas.FirstOrDefault(e => e.Key == "ComplexType");
-            var property1 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property1");
-            Assert.False(property1.Value.Nullable);
-
-            var property2 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property2");
-            Assert.False(property2.Value.Nullable);
-
-            var property3 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property3");
-            Assert.False(property3.Value.Nullable);
-
-            var property4 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property4");
-            Assert.False(property4.Value.Nullable);
-
-            var property5 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property5");
-            Assert.False(property5.Value.Nullable);
-
-            var property6 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property6");
-            Assert.False(property6.Value.Nullable);
-
-            var property7 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property7");
-            Assert.True(property7.Value.Nullable);
-
-            var property8 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property8");
-            Assert.True(property8.Value.Nullable);
-
-            var property9 = schema.Value.Properties.SingleOrDefault(e => e.Key == "Property9");
-            Assert.True(property9.Value.Nullable);
-        }
-
-        [Fact]
         public void GetSwagger_NamesAllParametersInCamelCase_IfSpecifiedBySettings()
         {
             var subject = Subject(
@@ -405,6 +368,27 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var requestBody = swagger.Paths["/collection"].Operations[OperationType.Post].RequestBody;
             Assert.NotNull(requestBody);
+            Assert.False(requestBody.Required);
+            Assert.Equal(new[] { "application/json", "text/json", "application/*+json" }, requestBody.Content.Keys);
+            Assert.All(requestBody.Content.Values, mediaType =>
+            {
+                Assert.NotNull(mediaType.Schema);
+                Assert.NotNull(mediaType.Schema.Reference);
+                Assert.Equal("ComplexType", mediaType.Schema.Reference.Id);
+            });
+        }
+
+        [Fact]
+        public void GetSwagger_GeneratesRequestBody_ForFirstApiParameterThatIsBoundToBody_ThatIsRequired()
+        {
+            var subject = Subject(setupApis: apis => apis
+                .Add("POST", "collection", nameof(FakeController.AcceptsComplexTypeFromBodyThatIsRequired)));
+
+            var swagger = subject.GetSwagger("v1");
+
+            var requestBody = swagger.Paths["/collection"].Operations[OperationType.Post].RequestBody;
+            Assert.NotNull(requestBody);
+            Assert.True(requestBody.Required);
             Assert.Equal(new[] { "application/json", "text/json", "application/*+json" }, requestBody.Content.Keys);
             Assert.All(requestBody.Content.Values, mediaType =>
             {
@@ -428,7 +412,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.All(requestBody.Content.Values, mediaType =>
             {
                 Assert.NotNull(mediaType.Schema);
-                Assert.Equal(8, mediaType.Schema.Properties.Count);
+                Assert.Equal(2, mediaType.Schema.Properties.Count);
                 Assert.NotNull(mediaType.Encoding);
             });
         }
@@ -512,7 +496,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var responses = swagger.Paths["/collection"].Operations[OperationType.Get].Responses;
             Assert.Equal(new[] { "204", "400", "default" }, responses.Keys);
-            Assert.Equal("Unexpected Error", responses["default"].Description);
+            Assert.Equal("Error", responses["default"].Description);
         }
 
         [Fact]
@@ -584,9 +568,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             setupAction?.Invoke(options);
 
+            var schemaOptions = new SchemaGeneratorOptions();
+
             return new SwaggerGenerator(
                 apiDescriptionsProvider,
-                new SchemaGenerator(new SchemaGeneratorOptions(), new JsonSerializerSettings()),
+                new SchemaGenerator(new NewtonsoftApiModelResolver(new JsonSerializerSettings(), schemaOptions), schemaOptions),
                 options
             );
         }

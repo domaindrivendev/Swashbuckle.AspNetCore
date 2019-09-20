@@ -5,13 +5,22 @@ using System.Reflection;
 using System.IO;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Any;
-using Newtonsoft.Json.Serialization;
 using Xunit;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Swashbuckle.AspNetCore.Newtonsoft;
+using Newtonsoft.Json;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     public class XmlCommentsSchemaFilterTests
     {
+        private readonly IApiModelResolver _apiModelResolver;
+
+        public XmlCommentsSchemaFilterTests()
+        {
+            _apiModelResolver = new NewtonsoftApiModelResolver(new JsonSerializerSettings(), new SchemaGeneratorOptions());
+        }
+
         [Theory]
         [InlineData(typeof(XmlAnnotatedType), "summary for XmlAnnotatedType")]
         [InlineData(typeof(XmlAnnotatedType.NestedType), "summary for NestedType")]
@@ -117,9 +126,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         private SchemaFilterContext FilterContextFor(Type type)
         {
-            var jsonObjectContract = new DefaultContractResolver().ResolveContract(type);
-            return new SchemaFilterContext(type, (jsonObjectContract as JsonObjectContract), new SchemaRepository(), null);
-            throw new NotImplementedException();
+            return new SchemaFilterContext(
+                _apiModelResolver.ResolveApiModelFor(type),
+                schemaRepository: null, // NA for test
+                schemaGenerator: null // NA for test
+            );
         }
 
         private XmlCommentsSchemaFilter Subject()

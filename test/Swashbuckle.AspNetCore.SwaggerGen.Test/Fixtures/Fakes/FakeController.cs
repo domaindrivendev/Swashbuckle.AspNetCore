@@ -97,6 +97,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void AcceptsComplexTypeFromBody([FromBody]ComplexType param)
         { }
 
+        public void AcceptsComplexTypeFromBodyThatIsRequired([FromBody, Required]ComplexType param)
+        { }
+
         public void AcceptsComplexTypeFromForm([FromForm]ComplexType param)
         { }
 

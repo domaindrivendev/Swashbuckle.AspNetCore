@@ -1,37 +1,41 @@
 ﻿using System;
-using System.Linq;
-using System.Collections.Generic;
 using Microsoft.OpenApi.Models;
 using Xunit;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.Newtonsoft;
+using Newtonsoft.Json;
 
 namespace Swashbuckle.AspNetCore.Annotations.Test
 {
     public class AnnotationsSchemaFilterTests
     {
-        [Fact]
-        public void Apply_DelegatesToSpecifiedFilter_IfTypeDecoratedWithFilterAttribute()
+        private readonly IApiModelResolver _apiModelResolver;
+
+        public AnnotationsSchemaFilterTests()
         {
-            IEnumerable<OpenApiSchema> schemas;
-            var filterContexts = new[]
-            {
-                FilterContextFor(typeof(SwaggerAnnotatedClass)),
-                FilterContextFor(typeof(SwaggerAnnotatedStruct))
-            };
+            _apiModelResolver = new NewtonsoftApiModelResolver(new JsonSerializerSettings(), new SchemaGeneratorOptions());
+        }
 
-            schemas = filterContexts.Select(c =>
-            {
-                var schema = new OpenApiSchema();
-                Subject().Apply(schema, c);
-                return schema;
-            });
+        [Theory]
+        [InlineData(typeof(SwaggerAnnotatedClass))]
+        [InlineData(typeof(SwaggerAnnotatedStruct))]
+        public void Apply_DelegatesToSpecifiedFilter_IfTypeDecoratedWithFilterAttribute(Type type)
+        {
+            var schema = new OpenApiSchema();
+            var context = FilterContextFor(type);
 
-            Assert.All(schemas, s => Assert.NotEmpty(s.Extensions));
+            Subject().Apply(schema, context);
+
+            Assert.NotEmpty(schema.Extensions);
         }
 
         private SchemaFilterContext FilterContextFor(Type type)
         {
-            return new SchemaFilterContext(type, null, null, null);
+            return new SchemaFilterContext(
+                _apiModelResolver.ResolveApiModelFor(type),
+                schemaRepository: null, // NA for test
+                schemaGenerator: null // NA for test
+            );
         }
 
         private AnnotationsSchemaFilter Subject()

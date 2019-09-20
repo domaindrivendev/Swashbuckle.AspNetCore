@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml.XPath;
 using Microsoft.OpenApi.Models;
-using ApiExplorer = Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -32,7 +32,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </param>
         public static void DocInclusionPredicate(
             this SwaggerGenOptions swaggerGenOptions,
-            Func<string, ApiExplorer.ApiDescription, bool> predicate)
+            Func<string, ApiDescription, bool> predicate)
         {
             swaggerGenOptions.SwaggerGeneratorOptions.DocInclusionPredicate = predicate;
         }
@@ -52,9 +52,21 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="resolver"></param>
         public static void ResolveConflictingActions(
             this SwaggerGenOptions swaggerGenOptions,
-            Func<IEnumerable<ApiExplorer.ApiDescription>, ApiExplorer.ApiDescription> resolver)
+            Func<IEnumerable<ApiDescription>, ApiDescription> resolver)
         {
             swaggerGenOptions.SwaggerGeneratorOptions.ConflictingActionsResolver = resolver;
+        }
+
+        [Obsolete("If the serializer is configured for string enums (e.g. StringEnumConverter) Swashbuckle will reflect that automatically")]
+        public static void DescribeAllEnumsAsStrings(this SwaggerGenOptions swaggerGenOptions)
+        {
+            swaggerGenOptions.SchemaGeneratorOptions.DescribeAllEnumsAsStrings = true;
+        }
+
+        [Obsolete("If the serializer is configured for (camel-cased) string enums (e.g. StringEnumConverter) Swashbuckle will reflect that automatically")]
+        public static void DescribeStringEnumsInCamelCase(this SwaggerGenOptions swaggerGenOptions)
+        {
+            swaggerGenOptions.SchemaGeneratorOptions.DescribeStringEnumsInCamelCase = true;
         }
 
         /// <summary>
@@ -62,7 +74,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         public static void CustomOperationIds(
             this SwaggerGenOptions swaggerGenOptions,
-            Func<ApiExplorer.ApiDescription, string> operationIdSelector)
+            Func<ApiDescription, string> operationIdSelector)
         {
             swaggerGenOptions.SwaggerGeneratorOptions.OperationIdSelector = operationIdSelector;
         }
@@ -75,7 +87,7 @@ namespace Microsoft.Extensions.DependencyInjection
         [Obsolete("Deprecated: Use the overload that accepts a Func that returns a list of tags")]
         public static void TagActionsBy(
             this SwaggerGenOptions swaggerGenOptions,
-            Func<ApiExplorer.ApiDescription, string> tagSelector)
+            Func<ApiDescription, string> tagSelector)
         {
             swaggerGenOptions.SwaggerGeneratorOptions.TagsSelector = (apiDesc) => new[] { tagSelector(apiDesc) };
         }
@@ -87,7 +99,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="tagsSelector"></param>
         public static void TagActionsBy(
             this SwaggerGenOptions swaggerGenOptions,
-            Func<ApiExplorer.ApiDescription, IList<string>> tagsSelector)
+            Func<ApiDescription, IList<string>> tagsSelector)
         {
             swaggerGenOptions.SwaggerGeneratorOptions.TagsSelector = tagsSelector;
         }
@@ -99,7 +111,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="sortKeySelector"></param>
         public static void OrderActionsBy(
             this SwaggerGenOptions swaggerGenOptions,
-            Func<ApiExplorer.ApiDescription, string> sortKeySelector)
+            Func<ApiDescription, string> sortKeySelector)
         {
             swaggerGenOptions.SwaggerGeneratorOptions.SortKeySelector = sortKeySelector;
         }
@@ -168,30 +180,6 @@ namespace Microsoft.Extensions.DependencyInjection
             Func<OpenApiSchema> schemaFactory)
         {
             swaggerGenOptions.MapType(typeof(T), schemaFactory);
-        }
-
-        /// <summary>
-        /// Use the enum names, as opposed to their integer values, when describing enum types
-        /// </summary>
-        public static void DescribeAllEnumsAsStrings(this SwaggerGenOptions swaggerGenOptions)
-        {
-            swaggerGenOptions.SchemaGeneratorOptions.DescribeAllEnumsAsStrings = true;
-        }
-
-        /// <summary>
-        /// If applicable, describe all enum names, regardless of how they appear in code, in camelCase.
-        /// </summary>
-        public static void DescribeStringEnumsInCamelCase(this SwaggerGenOptions swaggerGenOptions)
-        {
-            swaggerGenOptions.SchemaGeneratorOptions.DescribeStringEnumsInCamelCase = true;
-        }
-
-        /// <summary>
-        /// Use referenced schema definitions instead of inline schema's for enum types
-        /// </summary>
-        public static void UseReferencedDefinitionsForEnums(this SwaggerGenOptions swaggerGenOptions)
-        {
-            swaggerGenOptions.SchemaGeneratorOptions.UseReferencedDefinitionsForEnums = true;
         }
 
         /// <summary>

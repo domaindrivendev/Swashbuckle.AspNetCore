@@ -170,12 +170,12 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// <summary>
         /// Default clientId
         /// </summary>
-        public string ClientId { get; set; } = "clientId";
+        public string ClientId { get; set; } = null;
 
         /// <summary>
         /// Default clientSecret
         /// </summary>
-        public string ClientSecret { get; set; } = "clientSecret";
+        public string ClientSecret { get; set; } = null;
 
         /// <summary>
         /// Realm query parameter (for oauth1) added to authorizationUrl and tokenUrl
