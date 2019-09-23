@@ -1129,7 +1129,7 @@ The tool can be installed as a [.NET Core Global Tools](https://docs.microsoft.c
 Then, to install tool locally, run the following command:
 
 ```
-dotnet tool install swashbuckle.aspnetcore.cli
+dotnet tool install swashbuckle.aspnetcore.cli --version 5.0.0-rc3
 ```
 
 To restore the tool on a clean machine, run `dotnet tool restore`
