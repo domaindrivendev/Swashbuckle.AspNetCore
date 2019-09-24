@@ -7,6 +7,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
     {
         public string StringWithNoAnnotation { get; set; }
 
+        [JsonProperty]
+        public string StringWithRequiredUnspecified { get; set; }
+
         [JsonProperty(Required = Required.Default)]
         public string StringWithRequiredDefault { get; set; }
 

@@ -500,6 +500,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 new[]
                 {
                     "StringWithNoAnnotation",
+                    "StringWithRequiredUnspecified",
                     "StringWithRequiredDefault",
                     "StringWithRequiredDisallowNull",
                     "StringWithRequiredAllowNull"
@@ -510,11 +511,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 new[]
                 {
                     "StringWithNoAnnotation",
-                    "StringWithRequiredAllowNull"
+                    "StringWithRequiredAllowNull",
+                    "StringWithRequiredUnspecified"
                 },
                 schema.Required.ToArray());
 
             Assert.False(schema.Properties["StringWithNoAnnotation"].Nullable);
+            Assert.False(schema.Properties["StringWithRequiredUnspecified"].Nullable);
             Assert.True(schema.Properties["StringWithRequiredDefault"].Nullable);
             Assert.False(schema.Properties["StringWithRequiredDisallowNull"].Nullable);
             Assert.True(schema.Properties["StringWithRequiredAllowNull"].Nullable);

@@ -152,9 +152,10 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                 .Select(jsonProperty =>
                 {
                     var memberInfo = jsonProperty.DeclaringType.GetMember(jsonProperty.UnderlyingName).FirstOrDefault();
-                    var jsonPropertyAttribute = memberInfo?.GetCustomAttributes<JsonPropertyAttribute>(true).FirstOrDefault();
+                    var jsonPropertyAttributeData = memberInfo?.GetCustomAttributesData()
+                        .FirstOrDefault(attrData => attrData.AttributeType == typeof(JsonPropertyAttribute));
 
-                    var required = (jsonPropertyAttribute == null)
+                    var required = (jsonPropertyAttributeData == null || !jsonPropertyAttributeData.NamedArguments.Any(arg => arg.MemberName == "Required"))
                         ? jsonObjectContract.ItemRequired
                         : jsonProperty.Required;
 
