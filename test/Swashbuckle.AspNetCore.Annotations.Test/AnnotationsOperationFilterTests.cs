@@ -1,12 +1,12 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
-using Xunit;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.Newtonsoft;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using Xunit;
 
 namespace Swashbuckle.AspNetCore.Annotations.Test
 {
@@ -38,14 +38,16 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
         }
 
         [Fact]
-        public void Apply_DelegatesToSpecifiedFilter_IfActionDecoratedWithSwaggerOperationFilterAttribute()
+        public void Apply_DelegatesToSpecifiedFilter_IfActionDecoratedWithSwaggerOperationFilterAttributeInBaseClass()
         {
             var operation = new OpenApiOperation { OperationId = "foobar" };
-            var filterContext = FilterContextFor(nameof(TestController.ActionWithSwaggerOperationFilterAttribute));
+            var filterContext = FilterContextFor(nameof(TestControllerBase.ActionWithNoAttributesInBaseClass));
 
             Subject().Apply(operation, filterContext);
 
-            Assert.NotEmpty(operation.Extensions);
+            Assert.Equal(new[] { "400" }, operation.Responses.Keys.ToArray());
+            var response = operation.Responses["400"];
+            Assert.Equal("description for 400 response at base controller", response.Description);
         }
 
         [Fact]
@@ -68,7 +70,27 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             var response1 = operation.Responses["204"];
             Assert.Equal("description for 204 response", response1.Description);
             var response2 = operation.Responses["400"];
-            Assert.Equal("description for 400 response", response2.Description);
+            Assert.Equal("description for 400 response at action", response2.Description);
+        }
+
+        [Fact]
+        public void Apply_EnrichesResponseMetadata_IfActionAndControllerNotDecoratedWithSwaggerResponseAttribute()
+        {
+            var operation = new OpenApiOperation
+            {
+                OperationId = "foobar",
+                Responses = new OpenApiResponses()
+                {
+                    { "400", new OpenApiResponse { } },
+                }
+            };
+            var filterContext = FilterContextFor(nameof(TestController2.ActionWithNoAttributesInBaseClass));
+
+            Subject().Apply(operation, filterContext);
+
+            Assert.Equal(new[] { "400" }, operation.Responses.Keys.ToArray());
+            var response = operation.Responses["400"];
+            Assert.Equal("description for 400 response at base controller", response.Description);
         }
 
         private OperationFilterContext FilterContextFor(string fakeActionName)

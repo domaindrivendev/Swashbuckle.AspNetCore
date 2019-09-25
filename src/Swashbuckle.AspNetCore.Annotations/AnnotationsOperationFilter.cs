@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Linq;
-using System.Reflection;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -13,13 +12,16 @@ namespace Swashbuckle.AspNetCore.Annotations
         {
             if (context.MethodInfo == null) return;
 
+            var controllerAttributes = context.MethodInfo.DeclaringType.GetCustomAttributes(true);
             var actionAttributes = context.MethodInfo.GetCustomAttributes(true);
-            var controllerAttributes = context.MethodInfo.DeclaringType.GetTypeInfo().GetCustomAttributes(true);
-            var actionAndControllerAttributes = actionAttributes.Union(controllerAttributes);
+
+            // NOTE: When controller and action attributes are applicable, action attributes should take precendence.
+            // Hence why they're at the end of the list (i.e. last one wins)
+            var controllerAndActionAttributes = controllerAttributes.Union(actionAttributes);
 
             ApplySwaggerOperationAttribute(operation, actionAttributes);
-            ApplySwaggerOperationFilterAttributes(operation, context, actionAndControllerAttributes);
-            ApplySwaggerResponseAttributes(operation, actionAndControllerAttributes, context);
+            ApplySwaggerOperationFilterAttributes(operation, context, controllerAndActionAttributes);
+            ApplySwaggerResponseAttributes(operation, controllerAndActionAttributes);
         }
 
         private static void ApplySwaggerOperationAttribute(
@@ -52,9 +54,9 @@ namespace Swashbuckle.AspNetCore.Annotations
         public static void ApplySwaggerOperationFilterAttributes(
             OpenApiOperation operation,
             OperationFilterContext context,
-            IEnumerable<object> actionAndControllerAttributes)
+            IEnumerable<object> controllerAndActionAttributes)
         {
-            var swaggerOperationFilterAttributes = actionAndControllerAttributes
+            var swaggerOperationFilterAttributes = controllerAndActionAttributes
                 .OfType<SwaggerOperationFilterAttribute>();
 
             foreach (var swaggerOperationFilterAttribute in swaggerOperationFilterAttributes)
@@ -66,15 +68,20 @@ namespace Swashbuckle.AspNetCore.Annotations
 
         private void ApplySwaggerResponseAttributes(
             OpenApiOperation operation,
-            IEnumerable<object> actionAndControllerAttributes,
-            OperationFilterContext context)
+            IEnumerable<object> controllerAndActionAttributes)
         {
-            var swaggerResponseAttributes = actionAndControllerAttributes
+            var swaggerResponseAttributes = controllerAndActionAttributes
                 .OfType<SwaggerResponseAttribute>();
 
             foreach (var swaggerResponseAttribute in swaggerResponseAttributes)
             {
                 var statusCode = swaggerResponseAttribute.StatusCode.ToString();
+
+                if (operation.Responses == null)
+                {
+                    operation.Responses = new OpenApiResponses();
+                }
+
                 if (!operation.Responses.TryGetValue(statusCode, out OpenApiResponse response))
                 {
                     response = new OpenApiResponse();
