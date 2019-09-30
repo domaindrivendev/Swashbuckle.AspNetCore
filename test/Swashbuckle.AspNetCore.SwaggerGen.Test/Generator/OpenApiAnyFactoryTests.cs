@@ -32,6 +32,44 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.NotNull(instance);
             Assert.IsType(expectedInstanceType, instance);
+
+            // now check in the case where the schema is an array type (has Items)
+            var arraySchema = new OpenApiSchema { Items = new OpenApiSchema { Type = schemaType, Format = schemaFormat } };
+
+            OpenApiAnyFactory.TryCreateFor(arraySchema, value, out IOpenApiAny arrayInstance);
+
+            Assert.NotNull(arrayInstance);
+            Assert.IsType(typeof(OpenApiArray), arrayInstance);
+            Assert.IsType(expectedInstanceType, ((OpenApiArray)arrayInstance)[0]);
+        }
+
+        [Theory]
+        [InlineData("boolean", null, typeof(OpenApiBoolean), true, false, true)]
+        [InlineData("integer", "int32", typeof(OpenApiInteger), (byte)10, (byte)11)]
+        [InlineData("integer", "int32", typeof(OpenApiInteger), ByteEnum.Value2, ByteEnum.Value2)]
+        [InlineData("integer", "int32", typeof(OpenApiInteger), (short)10, (short)11)]
+        [InlineData("integer", "int32", typeof(OpenApiInteger), ShortEnum.Value2, ShortEnum.Value2)]
+        [InlineData("integer", "int32", typeof(OpenApiInteger), 10, 11, 12)]
+        [InlineData("integer", "int32", typeof(OpenApiInteger), IntEnum.Value2, IntEnum.Value2)]
+        [InlineData("integer", "int64", typeof(OpenApiLong), 4294967295L, 4294967296L)]
+        [InlineData("number", "float", typeof(OpenApiFloat), 1.2F, 1.3F)]
+        [InlineData("number", "double", typeof(OpenApiDouble), 1.25D, 1.50D)]
+        [InlineData("string", "uuid", typeof(OpenApiString), "d3966535-2637-48fa-b911-e3c27405ee09", "d3966535-2637-48fa-b911-e3c27405ee0a")]
+        [InlineData("string", null, typeof(OpenApiString), "foobar", "baz")]
+        public void TryCreateFor_CreatesAnInstance_ForProvidedArraySchemaAndValue(
+            string schemaType,
+            string schemaFormat,
+            Type expectedInstanceType,
+            params object[] values)
+        {
+            var schema = new OpenApiSchema { Items = new OpenApiSchema { Type = schemaType, Format = schemaFormat } };
+
+            OpenApiAnyFactory.TryCreateFor(schema, values, out IOpenApiAny instance);
+
+            Assert.NotNull(instance);
+            Assert.IsType(typeof(OpenApiArray), instance);
+            Assert.Equal(values.Length, ((OpenApiArray)instance).Count);
+            Assert.All((OpenApiArray)instance, v => v.GetType().Equals(expectedInstanceType));
         }
 
         [Fact]
