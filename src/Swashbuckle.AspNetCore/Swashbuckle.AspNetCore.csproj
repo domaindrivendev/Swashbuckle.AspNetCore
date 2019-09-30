@@ -18,8 +18,8 @@
     <IncludeContentInPack>false</IncludeContentInPack>
     <IncludeSource>false</IncludeSource>
     <IncludeSymbols>false</IncludeSymbols>
-    <MicrosoftExtensionsApiDescriptionServerPackageVersion>0.3.0-preview7.19365.7</MicrosoftExtensionsApiDescriptionServerPackageVersion>
     <NuspecFile>$(MSBuildProjectName).nuspec</NuspecFile>
+    <MicrosoftExtensionsApiDescriptionServerPackageVersion>3.0.0</MicrosoftExtensionsApiDescriptionServerPackageVersion>
   </PropertyGroup>
 
   <Target Name="PopulateNuspec">
@@ -36,7 +36,6 @@
         tags=$(PackageTags.Replace(';', ' '));
         targetPath=$(TargetPath);
         version=$(PackageVersion);
-
         microsoftExtensionsApiDescriptionServerPackageVersion=$(MicrosoftExtensionsApiDescriptionServerPackageVersion);
       </NuspecProperties>
     </PropertyGroup>
