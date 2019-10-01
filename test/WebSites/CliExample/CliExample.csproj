@@ -5,16 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="dotnet-tools.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="dotnet-tools.json">
-      <Generator>MSBuild:Compile</Generator>
-    </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" />
   </ItemGroup>
 
@@ -32,7 +22,7 @@
 
   <!--
   <Target Name="SwaggerToFile" AfterTargets="AfterBuild">
-    <Exec Command="swagger tofile &#45;-host http://example.com &#45;-output wwwroot/api-docs/v1/swagger.json &quot;$(TargetPath)&quot; v1" />
+    <Exec Command="dotnet swagger tofile &#45;-host http://example.com &#45;-output wwwroot/api-docs/v1/swagger.json &quot;$(TargetPath)&quot; v1" />
   </Target>
   -->
 

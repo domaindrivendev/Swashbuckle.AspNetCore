@@ -1138,13 +1138,13 @@ To restore the tool on a clean machine, run `dotnet tool restore`
 Once this is done, you should be able to run the following command from your project root:
 
 ```
-dotnet tool run swagger tofile --help
+dotnet swagger tofile --help
 ```
 
 Before you invoke the `tofile` command, you need to ensure your application is configured to expose Swagger JSON, as described in [Getting Started](#getting-started). Once this is done, you can point to your startup assembly and generate a local Swagger JSON file with the following command:
 
 ```
-dotnet tool run swagger tofile --output [output] [startupassembly] [swaggerdoc]
+dotnet swagger tofile --output [output] [startupassembly] [swaggerdoc]
 ```
 
 Where ...
