@@ -233,7 +233,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="value"></param>
         public static void OAuthScopeSeparator(this SwaggerUIOptions options, string value)
         {
-            options.OAuthConfigObject.ScopeSeperator = value;
+            options.OAuthConfigObject.ScopeSeparator = value;
         }
 
         /// <summary>

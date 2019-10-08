@@ -190,7 +190,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// <summary>
         /// Scope separator for passing scopes, encoded before calling, default value is a space (encoded value %20)
         /// </summary>
-        public string ScopeSeperator { get; set; } = " ";
+        public string ScopeSeparator { get; set; } = " ";
 
         /// <summary>
         /// Additional query parameters added to authorizationUrl and tokenUrl
