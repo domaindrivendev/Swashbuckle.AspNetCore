@@ -92,12 +92,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     apiEnumValues: type.GetEnumValues().Cast<object>());
             }
 
-            var enumValues = type.GetFields(BindingFlags.Public | BindingFlags.Static)
-                .Select(field =>
+            var enumValues = type.GetMembers(BindingFlags.Public | BindingFlags.Static)
+                .Select(enumMember =>
                 {
-                    var enumMemberAttribute = field.GetCustomAttributes<EnumMemberAttribute>().FirstOrDefault();
-                    var memberName = enumMemberAttribute?.Value ?? field.Name;
-                    return GetConvertedEnumName(memberName, stringEnumConverter);
+                    var enumMemberAttribute = enumMember.GetCustomAttributes<EnumMemberAttribute>().FirstOrDefault();
+                    return GetConvertedEnumName(stringEnumConverter, (enumMemberAttribute?.Value ?? enumMember.Name), (enumMemberAttribute?.Value != null));
                 })
                 .Distinct();
 
@@ -108,16 +107,16 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
         }
 
 #if NETCOREAPP3_0
-        private string GetConvertedEnumName(string memberName, StringEnumConverter stringEnumConverter)
+        private string GetConvertedEnumName(StringEnumConverter stringEnumConverter, string enumName, bool hasSpecifiedName)
         {
-            return stringEnumConverter.NamingStrategy?.GetPropertyName(memberName, false) ?? memberName;
+            return stringEnumConverter.NamingStrategy.GetPropertyName(enumName, hasSpecifiedName);
         }
 #else
-        private string GetConvertedEnumName(string memberName, StringEnumConverter stringEnumConverter)
+        private string GetConvertedEnumName(StringEnumConverter stringEnumConverter, string enumName, bool hasSpecifiedName)
         {
             return (stringEnumConverter.CamelCaseText)
-                ? new CamelCaseNamingStrategy().GetPropertyName(memberName, false)
-                : memberName;
+                ? new CamelCaseNamingStrategy().GetPropertyName(enumName, hasSpecifiedName)
+                : enumName;
         }
 #endif
 
