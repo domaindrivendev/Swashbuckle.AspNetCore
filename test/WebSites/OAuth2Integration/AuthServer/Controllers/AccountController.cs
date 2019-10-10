@@ -37,8 +37,9 @@ namespace OAuth2Integration.AuthServer.Controllers
             }
 
             // Use an IdentityServer-compatible ClaimsPrincipal
-            var principal = IdentityServerPrincipal.Create(viewModel.Username, viewModel.Username);
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+            var identityServerUser = new IdentityServerUser(viewModel.Username);
+            identityServerUser.DisplayName = viewModel.Username;
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, identityServerUser.CreatePrincipal());
 
             return Redirect(viewModel.ReturnUrl);
         }

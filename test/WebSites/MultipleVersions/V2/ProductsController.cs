@@ -4,9 +4,9 @@ using MultipleVersions.V1;
 
 namespace MultipleVersions.V2
 {
-    [ApiVersion("2")]
-    [Route("v{version:apiVersion}/products")]
-    [Produces("application/json")]
+    [ApiVersion("2.0")]
+    [ApiController]
+    [Route("[controller]")]
     public class ProductsController
     {
         [HttpPost]

@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.OpenApi.Models;
 using Xunit;
+using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.Newtonsoft;
-using Newtonsoft.Json;
 
 namespace Swashbuckle.AspNetCore.Annotations.Test
 {

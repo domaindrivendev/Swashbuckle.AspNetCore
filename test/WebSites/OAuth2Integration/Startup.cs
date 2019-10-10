@@ -2,28 +2,22 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using OAuth2Integration.ResourceServer.Swagger;
 
 namespace OAuth2Integration
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment env)
+        public Startup(IConfiguration configuration)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
-            Configuration = builder.Build();
+            Configuration = configuration;
         }
 
-        public IConfigurationRoot Configuration { get; }
+        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -42,7 +36,7 @@ namespace OAuth2Integration
                 .AddCookie()
                 .AddIdentityServerAuthentication(c =>
                 {
-                    c.Authority = "http://localhost:50581/auth-server/";
+                    c.Authority = "http://localhost:55202/auth-server/";
                     c.RequireHttpsMetadata = false;
                     c.ApiName = "api";
                 });
@@ -54,17 +48,11 @@ namespace OAuth2Integration
                 c.AddPolicy("writeAccess", p => p.RequireClaim("scope", "writeAccess"));
             });
 
-            services.AddMvc();
+            services.AddControllersWithViews();
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1",
-                    new OpenApiInfo
-                    {
-                        Title = "OAuth2Integration Example",
-                        Version = "v1"
-                    }
-                );
+                c.SwaggerDoc("v1", new OpenApiInfo { Version = "v1", Title = "Test API V1" });
 
                 // Define the OAuth2.0 scheme that's in use (i.e. Implicit Flow)
                 c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
@@ -101,24 +89,40 @@ namespace OAuth2Integration
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-
-            app.UseDeveloperExceptionPage();
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
 
             app.Map("/auth-server", authServer =>
             {
+                authServer.UseRouting();
+
                 authServer.UseAuthentication();
+
                 authServer.UseIdentityServer();
-                authServer.UseMvc();
+
+                authServer.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllers();
+                });
+
             });
 
             app.Map("/resource-server", resourceServer =>
             {
+                resourceServer.UseRouting();
+
                 resourceServer.UseAuthentication();
-                resourceServer.UseMvc();
+
+                resourceServer.UseAuthorization();
+
+                resourceServer.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllers();
+                });
 
                 resourceServer.UseSwagger();
                 resourceServer.UseSwaggerUI(c =>

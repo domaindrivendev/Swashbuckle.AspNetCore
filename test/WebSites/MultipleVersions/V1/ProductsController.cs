@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace MultipleVersions.V1
 {
-    [ApiVersion("1")]
-    [ApiVersion("2")]
-    [Route("v{version:apiVersion}/products")]
-    [Produces("application/json")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
+    [ApiController]
+    [Route("[controller]")]
     public class ProductsController
     {
         [HttpGet]

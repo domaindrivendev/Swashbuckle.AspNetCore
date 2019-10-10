@@ -50,7 +50,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         internal static string RelativePathSansQueryString(this ApiDescription apiDescription)
         {
-            return apiDescription.RelativePath.Split('?').First();
+            return apiDescription.RelativePath?.Split('?').First();
         }
     }
 }

@@ -16,10 +16,9 @@ namespace Swashbuckle.AspNetCore.Swagger
     public class UnknownSwaggerDocument : InvalidOperationException
     {
         public UnknownSwaggerDocument(string documentName, IEnumerable<string> knownDocuments)
-            : base(string.Format("Unknown Swagger document - \"{0}\". Known Swagger documents: {1}{2}",
+            : base(string.Format("Unknown Swagger document - \"{0}\". Known Swagger documents: {1}",
                 documentName,
-                Environment.NewLine,
-                string.Join(Environment.NewLine, knownDocuments?.Select(x => $"\"{x}\""))))
+                string.Join(",", knownDocuments?.Select(x => $"\"{x}\""))))
         {}
     }
 }
