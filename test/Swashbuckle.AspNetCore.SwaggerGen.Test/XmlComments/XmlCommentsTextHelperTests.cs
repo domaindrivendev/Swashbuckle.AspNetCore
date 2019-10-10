@@ -128,6 +128,7 @@ A line of text",
         [InlineData(@"<paramref name=""param1"" /> does something", "param1 does something")]
         [InlineData(@"<c>DoWork</c> is a method in <c>TestClass</c>.", "{DoWork} is a method in {TestClass}.")]
         [InlineData(@"<para>This is a paragraph</para>.", "<br>This is a paragraph.")]
+        [InlineData(@"GET /Todo?iscomplete=true&amp;owner=mike", "GET /Todo?iscomplete=true&owner=mike")]
         public void Humanize_HumanizesInlineTags(
             string input,
             string expectedOutput)
