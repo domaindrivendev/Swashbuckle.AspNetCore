@@ -3,15 +3,12 @@ using System.Text.Json;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
 using Xunit;
-using Swashbuckle.AspNetCore.Newtonsoft;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -352,38 +349,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void GenerateSchema_SupportsOption_DescribeAllEnumsAsStrings()
-        {
-            var subject = Subject(c =>
-                c.DescribeAllEnumsAsStrings = true
-            );
-            var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = subject.GenerateSchema(typeof(IntEnum), schemaRepository);
-
-            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal("string", schema.Type);
-            Assert.Equal(new[] { "Value2", "Value4", "Value8" }, schema.Enum.Cast<OpenApiString>().Select(i => i.Value));
-        }
-
-        [Fact]
-        public void GenerateSchema_SupportsOption_DescribeStringEnumsInCamelCase()
-        {
-            var subject = Subject(c =>
-            {
-                c.DescribeAllEnumsAsStrings = true;
-                c.DescribeStringEnumsInCamelCase = true;
-            });
-            var schemaRepository = new SchemaRepository();
-
-            var referenceSchema = subject.GenerateSchema(typeof(IntEnum), schemaRepository);
-
-            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal("string", schema.Type);
-            Assert.Equal(new[] { "value2", "value4", "value8" }, schema.Enum.Cast<OpenApiString>().Select(i => i.Value));
-        }
-
-        [Fact]
         public void GenerateSchema_HandlesTypesWithNestedTypes()
         {
             var schemaRepository = new SchemaRepository();
@@ -421,11 +387,26 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void GenerateSchema_HonorsSerializerOption_ContractResolver()
+        public void GenerateSchema_HonorsSerializerOption_IgnoreReadonlyProperties()
         {
             var subject = Subject(
                 configureOptions: c => { },
-                configureSerializer: c => { c.ContractResolver = new CamelCasePropertyNamesContractResolver(); }
+                configureSerializer: c => { c.IgnoreReadOnlyProperties = true; }
+            );
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = subject.GenerateSchema(typeof(ComplexType), schemaRepository);
+
+            Assert.NotNull(referenceSchema.Reference);
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+        }
+
+        [Fact]
+        public void GenerateSchema_HonorsSerializerOption_PropertyNamingPolicy()
+        {
+            var subject = Subject(
+                configureOptions: c => { },
+                configureSerializer: c => { c.PropertyNamingPolicy = JsonNamingPolicy.CamelCase; }
             );
             var schemaRepository = new SchemaRepository();
 
@@ -445,7 +426,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var subject = Subject(
                 configureOptions: c => { },
-                configureSerializer: c => { c.Converters.Add(new StringEnumConverter(camelCaseText)); }
+                configureSerializer: c => { c.Converters.Add(new JsonStringEnumConverter(namingPolicy: (camelCaseText ? JsonNamingPolicy.CamelCase : null), true)); }
             );
             var schemaRepository = new SchemaRepository();
 
@@ -507,15 +488,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         private ISchemaGenerator Subject(
             Action<SchemaGeneratorOptions> configureOptions = null,
-            Action<JsonSerializerSettings> configureSerializer = null)
+            Action<JsonSerializerOptions> configureSerializer = null)
         {
-            var jsonSerializerSettings = new JsonSerializerSettings();
-            configureSerializer?.Invoke(jsonSerializerSettings);
+            var jsonSerializerOptions = new JsonSerializerOptions();
+            configureSerializer?.Invoke(jsonSerializerOptions);
 
             var schemaGeneratorOptions = new SchemaGeneratorOptions();
             configureOptions?.Invoke(schemaGeneratorOptions);
 
-            return new SchemaGenerator(new NewtonsoftApiModelResolver(jsonSerializerSettings, schemaGeneratorOptions), schemaGeneratorOptions);
+            return new SchemaGenerator(new JsonApiModelResolver(jsonSerializerOptions), schemaGeneratorOptions);
         }
     }
 }
