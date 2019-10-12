@@ -18,14 +18,18 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
-using Microsoft.AspNetCore.Mvc.Internal;
-using Microsoft.AspNetCore.Mvc.DataAnnotations.Internal;
 using Microsoft.Extensions.ObjectPool;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+
+#if NETCOREAPP2_0
+using Microsoft.AspNetCore.Mvc.Internal;
+using Microsoft.AspNetCore.Mvc.DataAnnotations.Internal;
+#endif
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -73,7 +77,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var descriptor = new ControllerActionDescriptor();
 
+#if NETCOREAPP2_0
             descriptor.SetProperty(new ApiDescriptionActionData());
+#else
+            // SEE : https://github.com/aspnet/AspNetCore/issues/14454#issuecomment-535571938
+            descriptor.SetProperty(new ApiDescription());
+#endif
 
             descriptor.ActionConstraints = new List<IActionConstraintMetadata>();
             if (httpMethod != null)
