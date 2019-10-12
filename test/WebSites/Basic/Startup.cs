@@ -79,9 +79,10 @@ namespace Basic
         // Configure is called after ConfigureServices is called.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+#if NETCOREAPP2_1
             loggerFactory.AddConsole();
             loggerFactory.AddDebug();
-
+#endif
             // Add MVC to the request pipeline.
             app.UseDeveloperExceptionPage();
             app.UseMvc();

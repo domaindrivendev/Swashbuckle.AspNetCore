@@ -103,9 +103,10 @@ namespace OAuth2Integration
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+#if NETCOREAPP2_0
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
-
+#endif
             app.UseDeveloperExceptionPage();
 
             app.Map("/auth-server", authServer =>

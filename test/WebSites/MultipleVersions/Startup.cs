@@ -50,9 +50,10 @@ namespace MultipleVersions
         // Configure is called after ConfigureServices is called.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+#if NETCOREAPP2_0
             loggerFactory.AddConsole();
             loggerFactory.AddDebug();
-
+#endif
             app.UseDeveloperExceptionPage();
 
             // Configure the HTTP request pipeline.
