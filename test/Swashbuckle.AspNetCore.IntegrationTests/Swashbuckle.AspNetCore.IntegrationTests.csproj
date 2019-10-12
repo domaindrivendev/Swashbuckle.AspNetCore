@@ -4,7 +4,7 @@
     <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.IntegrationTests.snk</AssemblyOriginatorKeyFile>
     <NoWarn>$(NoWarn);8002</NoWarn>
     <SignAssembly>true</SignAssembly>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFrameworks>netcoreapp2.1;netcoreapp3.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -23,9 +23,17 @@
     <PackageReference Include="Moq" Version="4.7.142" />
     <PackageReference Include="xunit" Version="2.2.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
+    <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.1.1" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1'">
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.0.0" />
-    <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.1.1" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.0'">
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="3.0.0" />
   </ItemGroup>
 
   <ItemGroup>
