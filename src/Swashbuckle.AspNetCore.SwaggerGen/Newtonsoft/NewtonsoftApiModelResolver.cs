@@ -83,6 +83,12 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             {
                 stringEnumConverter = new StringEnumConverter(_options.DescribeStringEnumsInCamelCase);
             };
+#if NETCOREAPP3_0
+            if (stringEnumConverter != null && stringEnumConverter.NamingStrategy == null)
+            {
+                stringEnumConverter.NamingStrategy = new DefaultNamingStrategy();
+            }
+#endif
 
             if (stringEnumConverter == null)
             {
