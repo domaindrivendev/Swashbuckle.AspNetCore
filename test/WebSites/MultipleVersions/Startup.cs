@@ -21,7 +21,11 @@ namespace MultipleVersions
         // Use this method to add services to the container
         public void ConfigureServices(IServiceCollection services)
         {
+#if NETCOREAPP3_0
+            services.AddMvc(options => options.EnableEndpointRouting = false);
+#else
             services.AddMvc();
+#endif
             services.AddApiVersioning();
 
             // Uncomment the following line to add Web API services which makes it easier to port Web API 2 controllers.

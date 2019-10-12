@@ -25,12 +25,21 @@ namespace Basic
         // Use this method to add services to the container
         public void ConfigureServices(IServiceCollection services)
         {
+#if NETCOREAPP3_0
+            services
+                .AddMvc(options => options.EnableEndpointRouting = false)
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+                });
+#else
             services
                 .AddMvc()
                 .AddJsonOptions(options =>
                 {
                     options.SerializerSettings.ContractResolver = new DefaultContractResolver();
                 });
+#endif
 
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.Auto };
 

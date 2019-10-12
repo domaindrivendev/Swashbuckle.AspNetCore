@@ -54,7 +54,11 @@ namespace OAuth2Integration
                 c.AddPolicy("writeAccess", p => p.RequireClaim("scope", "writeAccess"));
             });
 
+#if NETCOREAPP3_0
+            services.AddMvc(options => options.EnableEndpointRouting = false);
+#else
             services.AddMvc();
+#endif
 
             services.AddSwaggerGen(c =>
             {

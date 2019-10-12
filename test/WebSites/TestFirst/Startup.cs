@@ -23,7 +23,11 @@ namespace TestFirst
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+#if NETCOREAPP3_0
+            services.AddMvc(options => options.EnableEndpointRouting = false);
+#else
             services.AddMvc();
+#endif
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

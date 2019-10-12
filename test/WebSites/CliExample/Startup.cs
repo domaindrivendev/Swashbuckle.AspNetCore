@@ -16,7 +16,11 @@ namespace CliExample
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CRUD API", Version = "v1" });
             });
 
+#if NETCOREAPP3_0
+            services.AddMvc(options => options.EnableEndpointRouting = false);
+#else
             services.AddMvc();
+#endif
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
