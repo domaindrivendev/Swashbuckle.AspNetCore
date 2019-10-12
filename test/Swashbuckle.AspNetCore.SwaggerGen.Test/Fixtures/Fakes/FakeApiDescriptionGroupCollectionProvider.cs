@@ -146,11 +146,21 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var constraintResolver = new Mock<IInlineConstraintResolver>();
             constraintResolver.Setup(i => i.ResolveConstraint("int")).Returns(new IntRouteConstraint());
 
+#if NETCOREAPP3_0
+            var provider = new DefaultApiDescriptionProvider(
+                Options.Create(options),
+                constraintResolver.Object,
+                CreateModelMetadataProvider(),
+                new Mock<IActionResultTypeMapper>().Object,
+                Options.Create(new RouteOptions())
+            );
+#else
             var provider = new DefaultApiDescriptionProvider(
                 Options.Create(options),
                 constraintResolver.Object,
                 CreateModelMetadataProvider()
             );
+#endif
 
             provider.OnProvidersExecuting(context);
             provider.OnProvidersExecuted(context);
@@ -159,6 +169,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         public IModelMetadataProvider CreateModelMetadataProvider()
         {
+#if NETCOREAPP3_0
+            return new EmptyModelMetadataProvider();
+#else
             var detailsProviders = new IMetadataDetailsProvider[]
             {
                 new DefaultBindingMetadataProvider(),
@@ -174,6 +187,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var compositeDetailsProvider = new DefaultCompositeMetadataDetailsProvider(detailsProviders);
             return new DefaultModelMetadataProvider(compositeDetailsProvider, Options.Create(new MvcOptions()));
+#endif
         }
     }
 }
