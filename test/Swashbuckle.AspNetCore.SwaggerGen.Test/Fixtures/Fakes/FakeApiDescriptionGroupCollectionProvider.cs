@@ -124,8 +124,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var context = new ApiDescriptionProviderContext(_actionDescriptors);
 
             var options = new MvcOptions();
-            options.InputFormatters.Add(new JsonInputFormatter(Mock.Of<ILogger>(), new JsonSerializerSettings(), ArrayPool<char>.Shared, new DefaultObjectPoolProvider()));
-            options.OutputFormatters.Add(new JsonOutputFormatter(new JsonSerializerSettings(), ArrayPool<char>.Shared));
+#if NETCOREAPP3_0
+            var inputFormatter = new NewtonsoftJsonInputFormatter(Mock.Of<ILogger>(), new JsonSerializerSettings(), ArrayPool<char>.Shared, new DefaultObjectPoolProvider(), options, new MvcNewtonsoftJsonOptions());
+            var outputFormatter = new NewtonsoftJsonOutputFormatter(new JsonSerializerSettings(), ArrayPool<char>.Shared, options);
+#else
+            var inputFormatter = new JsonInputFormatter(Mock.Of<ILogger>(), new JsonSerializerSettings(), ArrayPool<char>.Shared, new DefaultObjectPoolProvider());
+            var outputFormatter = new JsonOutputFormatter(new JsonSerializerSettings(), ArrayPool<char>.Shared);
+#endif
+            options.InputFormatters.Add(inputFormatter);
+            options.OutputFormatters.Add(outputFormatter);
 
             var constraintResolver = new Mock<IInlineConstraintResolver>();
             constraintResolver.Setup(i => i.ResolveConstraint("int")).Returns(new IntRouteConstraint());
