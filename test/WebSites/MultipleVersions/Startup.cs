@@ -48,7 +48,7 @@ namespace MultipleVersions
         // Configure is called after ConfigureServices is called.
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
-#if NETCOREAPP2_0
+#if !NETCOREAPP3_0
             loggerFactory.AddConsole();
             loggerFactory.AddDebug();
 #endif

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.OpenApi.Models;
 
-#if NETCOREAPP2_0
+#if !NETCOREAPP3_0
 using Microsoft.Extensions.Configuration;
 #endif
 
@@ -96,7 +96,7 @@ namespace OAuth2Integration
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
-#if NETCOREAPP2_0
+#if !NETCOREAPP3_0
             var configuration = app.ApplicationServices.GetService<IConfiguration>();
             loggerFactory.AddConsole(configuration.GetSection("Logging"));
             loggerFactory.AddDebug();

@@ -579,7 +579,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         private class ApiResponseTypeV2 : ApiResponseType
         {
+#if !NETCOREAPP3_0
             public bool IsDefaultResponse { get; set; }
+#endif
         }
     }
 }

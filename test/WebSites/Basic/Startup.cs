@@ -105,7 +105,7 @@ namespace Basic
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
-#if NETCOREAPP2_1
+#if !NETCOREAPP3_0
             loggerFactory.AddConsole();
             loggerFactory.AddDebug();
 #endif

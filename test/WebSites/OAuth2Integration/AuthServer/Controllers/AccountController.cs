@@ -37,12 +37,12 @@ namespace OAuth2Integration.AuthServer.Controllers
             }
 
             // Use an IdentityServer-compatible ClaimsPrincipal
-#if NETCOREAPP2_0
-            var principal = IdentityServerPrincipal.Create(viewModel.Username, viewModel.Username);
-#else
+#if NETCOREAPP3_0
             var identityServerUser = new IdentityServerUser(viewModel.Username);
             identityServerUser.DisplayName = viewModel.Username;
             var principal = identityServerUser.CreatePrincipal();
+#else
+            var principal = IdentityServerPrincipal.Create(viewModel.Username, viewModel.Username);
 #endif
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 

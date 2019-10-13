@@ -81,9 +81,15 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             // Temporary shim to support obsolete config options
             if (stringEnumConverter == null && _options.DescribeAllEnumsAsStrings)
             {
-                stringEnumConverter = new StringEnumConverter(_options.DescribeStringEnumsInCamelCase);
-            };
 #if NETCOREAPP3_0
+                stringEnumConverter = new StringEnumConverter(_options.DescribeStringEnumsInCamelCase ? (NamingStrategy)new CamelCaseNamingStrategy() : new DefaultNamingStrategy());
+#else
+                stringEnumConverter = new StringEnumConverter(_options.DescribeStringEnumsInCamelCase);
+#endif
+            }
+
+#if NETCOREAPP3_0
+            //NamingStrategy is null by default if the object is created with obsolete constructor
             if (stringEnumConverter != null && stringEnumConverter.NamingStrategy == null)
             {
                 stringEnumConverter.NamingStrategy = new DefaultNamingStrategy();

@@ -1,11 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc.DataAnnotations;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-#if NETCOREAPP2_0
+#if !NETCOREAPP3_0
+using Microsoft.AspNetCore.Mvc.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.DataAnnotations.Internal;
 using Microsoft.AspNetCore.Mvc.Internal;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
+using Microsoft.Extensions.Options;
 #endif
 
 namespace Swashbuckle.AspNetCore.Annotations.Test
@@ -14,7 +14,9 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
     {
         public static IModelMetadataProvider GetDefaultModelMetadataProvider()
         {
-#if NETCOREAPP2_0
+#if NETCOREAPP3_0
+            return new EmptyModelMetadataProvider();
+#else
             return new DefaultModelMetadataProvider(
                 new DefaultCompositeMetadataDetailsProvider(new IMetadataDetailsProvider[]
                 {
@@ -23,8 +25,6 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
                     new DataAnnotationsMetadataProvider(Options.Create(new MvcDataAnnotationsLocalizationOptions()), null),
                 }
             ));
-#else
-            return new EmptyModelMetadataProvider();
 #endif
         }
     }
