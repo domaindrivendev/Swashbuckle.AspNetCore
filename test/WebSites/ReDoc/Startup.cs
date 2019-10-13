@@ -4,6 +4,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.ReDoc;
 
+#if NETCOREAPP3_0
+using Microsoft.Extensions.Hosting;
+#endif
+
 namespace ReDoc
 {
     public class Startup
@@ -25,7 +29,11 @@ namespace ReDoc
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+#if NETCOREAPP3_0
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+#else
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+#endif
         {
             if (env.IsDevelopment())
             {

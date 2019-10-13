@@ -9,17 +9,23 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 using Basic.Swagger;
 using Newtonsoft.Json;
+using Swashbuckle.AspNetCore.SwaggerGen;
+
+#if NETCOREAPP3_0
+using Microsoft.Extensions.Hosting;
+#endif
 
 namespace Basic
 {
     public class Startup
     {
-        private readonly IHostingEnvironment _hostingEnv;
-
-        public Startup(IHostingEnvironment hostingEnv)
+#if !NETCOREAPP3_0
+        private readonly IHostingEnvironment _env;
+        public Startup(IHostingEnvironment env)
         {
-            _hostingEnv = hostingEnv;
+            _env = env;
         }
+#endif
 
         // This method gets called by a runtime.
         // Use this method to add services to the container
@@ -75,18 +81,29 @@ namespace Basic
                 c.EnableAnnotations();
             });
 
-            if (_hostingEnv.IsDevelopment())
+#if NETCOREAPP3_0
+            services.AddOptions<SwaggerGenOptions>()
+                    .Configure<IWebHostEnvironment>((options, env) =>
+                    {
+                        if (env.IsDevelopment())
+                        {
+                            var xmlCommentsPath = Path.Combine(AppContext.BaseDirectory, "Basic.xml");
+                            options.IncludeXmlComments(xmlCommentsPath, true);
+                        }
+                    });
+#else
+            if (_env.IsDevelopment())
             {
-                services.ConfigureSwaggerGen(c =>
+                services.Configure<SwaggerGenOptions>(options =>
                 {
-                    var xmlCommentsPath = Path.Combine(System.AppContext.BaseDirectory, "Basic.xml");
-                    c.IncludeXmlComments(xmlCommentsPath, true);
+                    var xmlCommentsPath = Path.Combine(AppContext.BaseDirectory, "Basic.xml");
+                    options.IncludeXmlComments(xmlCommentsPath, true);
                 });
             }
+#endif
         }
 
-        // Configure is called after ConfigureServices is called.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
 #if NETCOREAPP2_1
             loggerFactory.AddConsole();

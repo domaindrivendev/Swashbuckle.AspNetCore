@@ -3,6 +3,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
+#if NETCOREAPP3_0
+using Microsoft.Extensions.Hosting;
+#endif
+
 namespace CliExample
 {
     public class Startup
@@ -24,7 +28,11 @@ namespace CliExample
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+#if NETCOREAPP3_0
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+#else
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+#endif
         {
             if (env.IsDevelopment())
             {

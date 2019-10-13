@@ -7,6 +7,10 @@ using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
+#if NETCOREAPP3_0
+using Microsoft.Extensions.Hosting;
+#endif
+
 namespace ConfigFromFile
 {
     public class Startup
@@ -36,7 +40,7 @@ namespace ConfigFromFile
             {
                 Configuration.Bind("SwaggerUI", c);
 
-                c.ConfigObject.SupportedSubmitMethods = new SubmitMethod[]{ };
+                c.ConfigObject.SupportedSubmitMethods = new SubmitMethod[] { };
                 c.ConfigObject.AdditionalItems.Add("swaggerUIFoo", "bar");
             });
 
@@ -49,7 +53,11 @@ namespace ConfigFromFile
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+#if NETCOREAPP3_0
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+#else
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+#endif
         {
             if (env.IsDevelopment())
             {

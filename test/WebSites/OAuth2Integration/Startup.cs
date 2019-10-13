@@ -1,30 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.OpenApi.Models;
-using OAuth2Integration.ResourceServer.Swagger;
+
+#if NETCOREAPP2_0
+using Microsoft.Extensions.Configuration;
+#endif
 
 namespace OAuth2Integration
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment env)
-        {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
-            Configuration = builder.Build();
-        }
-
-        public IConfigurationRoot Configuration { get; }
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -105,10 +94,11 @@ namespace OAuth2Integration
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
 #if NETCOREAPP2_0
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            var configuration = app.ApplicationServices.GetService<IConfiguration>();
+            loggerFactory.AddConsole(configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 #endif
             app.UseDeveloperExceptionPage();
@@ -136,7 +126,7 @@ namespace OAuth2Integration
                     c.OAuthRealm("test-realm");
                     c.OAuthAppName("test-app");
                     c.OAuthScopeSeparator(" ");
-                    c.OAuthAdditionalQueryStringParams(new Dictionary<string, string> { { "foo", "bar" }});
+                    c.OAuthAdditionalQueryStringParams(new Dictionary<string, string> { { "foo", "bar" } });
                     c.OAuthUseBasicAuthenticationWithAccessCodeGrant();
                     c.ConfigObject.DeepLinking = true;
                 });
