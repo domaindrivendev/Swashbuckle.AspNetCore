@@ -1,9 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Hosting;
+
+#if NETCOREAPP3_0
+using Microsoft.Extensions.Hosting;
+#else
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
+#endif
 
 namespace OAuth2Integration
 {
@@ -11,14 +12,31 @@ namespace OAuth2Integration
     {
         public static void Main(string[] args)
         {
-            var host = new WebHostBuilder()
+            CreateHostBuilderAndRun(args);
+        }
+
+        public static void CreateHostBuilderAndRun(string[] args) =>
+#if NETCOREAPP3_0
+            NC3_CreateHostBuilder(args).Build().Run();
+#else
+            NC2_CreateHostBuilder().Build().Run();
+
+#endif
+
+#if NETCOREAPP3_0
+        public static IHostBuilder NC3_CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
+#else
+        public static IWebHostBuilder NC2_CreateHostBuilder() =>
+            new WebHostBuilder()
                 .UseKestrel()
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseIISIntegration()
-                .UseStartup<Startup>()
-                .Build();
-
-            host.Run();
-        }
+                .UseStartup<Startup>();
+#endif
     }
 }

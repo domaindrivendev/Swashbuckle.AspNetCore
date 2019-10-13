@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Hosting;
+
+#if NETCOREAPP3_0
+using Microsoft.Extensions.Hosting;
+#else
 using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
+#endif
 
 namespace ReDoc
 {
@@ -14,12 +12,29 @@ namespace ReDoc
     {
         public static void Main(string[] args)
         {
-            BuildWebHost(args).Run();
+            CreateHostBuilderAndRun(args);
         }
 
+        public static void CreateHostBuilderAndRun(string[] args) =>
+#if NETCOREAPP3_0
+            CreateHostBuilder(args).Build().Run();
+#else
+            BuildWebHost(args).Run();
+
+#endif
+
+#if NETCOREAPP3_0
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                });
+#else
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseStartup<Startup>()
                 .Build();
+#endif
     }
 }
