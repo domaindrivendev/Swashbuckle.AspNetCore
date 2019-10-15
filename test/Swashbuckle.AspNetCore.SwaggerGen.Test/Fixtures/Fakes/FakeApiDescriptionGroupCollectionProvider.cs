@@ -4,7 +4,6 @@ using System.Linq;
 using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Buffers;
-using System.Threading;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Routing;
@@ -25,6 +24,7 @@ using Newtonsoft.Json;
 #if NETCOREAPP3_0
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 #else
+using System.Threading;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.AspNetCore.Mvc.DataAnnotations;
@@ -79,8 +79,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var descriptor = new ControllerActionDescriptor();
 
 #if NETCOREAPP3_0
-            // SEE : https://github.com/aspnet/AspNetCore/issues/14454#issuecomment-535571938
-            descriptor.SetProperty(new ApiDescription());
+            //see https://github.com/domaindrivendev/Swashbuckle.AspNetCore/pull/1316#discussion_r334642335
+            var type = typeof(ControllerBase).Assembly.GetType("Microsoft.AspNetCore.Mvc.ApiDescriptionActionData", throwOnError: true);
+            var instance = Activator.CreateInstance(type);
+            descriptor.Properties[type] = instance;
 #else
             descriptor.SetProperty(new ApiDescriptionActionData());
 #endif
@@ -132,8 +134,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         private IReadOnlyList<ApiDescription> GetApiDescriptions()
         {
             var context = new ApiDescriptionProviderContext(_actionDescriptors);
-
             var options = new MvcOptions();
+
 #if NETCOREAPP3_0
             var inputFormatter = new NewtonsoftJsonInputFormatter(Mock.Of<ILogger>(), new JsonSerializerSettings(), ArrayPool<char>.Shared, new DefaultObjectPoolProvider(), options, new MvcNewtonsoftJsonOptions());
             var outputFormatter = new NewtonsoftJsonOutputFormatter(new JsonSerializerSettings(), ArrayPool<char>.Shared, options);
