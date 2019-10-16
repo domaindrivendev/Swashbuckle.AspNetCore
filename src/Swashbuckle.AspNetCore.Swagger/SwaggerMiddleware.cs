@@ -1,12 +1,9 @@
-﻿using System.IO;
-using System.Text;
+﻿using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Template;
-using Microsoft.AspNetCore.Http;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Writers;
+using Microsoft.Extensions.Options;
 
 namespace Swashbuckle.AspNetCore.Swagger
 {
@@ -15,6 +12,7 @@ namespace Swashbuckle.AspNetCore.Swagger
         private readonly RequestDelegate _next;
         private readonly SwaggerOptions _options;
         private readonly TemplateMatcher _requestMatcher;
+        private readonly SwaggerDocumentBuilder _swaggerDocumentBuilder;
 
         public SwaggerMiddleware(
             RequestDelegate next,
@@ -29,6 +27,7 @@ namespace Swashbuckle.AspNetCore.Swagger
             _next = next;
             _options = options ?? new SwaggerOptions();
             _requestMatcher = new TemplateMatcher(TemplateParser.Parse(_options.RouteTemplate), new RouteValueDictionary());
+            _swaggerDocumentBuilder = new SwaggerDocumentBuilder(_options);
         }
 
         public async Task Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
@@ -39,21 +38,15 @@ namespace Swashbuckle.AspNetCore.Swagger
                 return;
             }
 
-            var basePath = string.IsNullOrEmpty(httpContext.Request.PathBase)
-                ? null
-                : httpContext.Request.PathBase.ToString();
-
             try
             {
-                var swagger = swaggerProvider.GetSwagger(documentName, null, basePath);
+                var swaggerDocument =
+                    _swaggerDocumentBuilder.Build(
+                        httpContext.Request,
+                        swaggerProvider,
+                        documentName);
 
-                // One last opportunity to modify the Swagger Document - this time with request context
-                foreach (var filter in _options.PreSerializeFilters)
-                {
-                    filter(swagger, httpContext.Request);
-                }
-
-                await RespondWithSwaggerJson(httpContext.Response, swagger);
+                await RespondWithSwaggerJson(httpContext.Response, swaggerDocument);
             }
             catch (UnknownSwaggerDocument)
             {
@@ -67,7 +60,10 @@ namespace Swashbuckle.AspNetCore.Swagger
             if (request.Method != "GET") return false;
 
             var routeValues = new RouteValueDictionary();
-            if (!_requestMatcher.TryMatch(request.Path, routeValues) || !routeValues.ContainsKey("documentName")) return false;
+            if (!_requestMatcher.TryMatch(request.Path, routeValues) || !routeValues.ContainsKey("documentName"))
+            {
+                return false;
+            }
 
             documentName = routeValues["documentName"].ToString();
             return true;
@@ -78,18 +74,12 @@ namespace Swashbuckle.AspNetCore.Swagger
             response.StatusCode = 404;
         }
 
-        private async Task RespondWithSwaggerJson(HttpResponse response, OpenApiDocument swagger)
+        private async Task RespondWithSwaggerJson(HttpResponse response, string swaggerDocument)
         {
             response.StatusCode = 200;
             response.ContentType = "application/json;charset=utf-8";
 
-            using (var textWriter = new StringWriter())
-            {
-                var jsonWriter = new OpenApiJsonWriter(textWriter);
-                if (_options.SerializeAsV2) swagger.SerializeAsV2(jsonWriter); else swagger.SerializeAsV3(jsonWriter);
-
-                await response.WriteAsync(textWriter.ToString(), new UTF8Encoding(false));
-            }
+            await response.WriteAsync(swaggerDocument, new UTF8Encoding(false));
         }
     }
 }
