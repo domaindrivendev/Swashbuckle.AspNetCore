@@ -157,6 +157,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Change the Path for Swagger JSON Endpoints](#change-the-path-for-swagger-json-endpoints)
     * [Modify Swagger with Request Context](#modify-swagger-with-request-context)
     * [Serialize Swagger JSON in the 2.0 format](#serialize-swagger-in-the-20-format)
+    * [Use `SwaggerControllerBase` instead of Middleware](#use-swaggercontrollerbase-instead-of-middleware)
 
 * [Swashbuckle.AspNetCore.SwaggerGen](#swashbuckleaspnetcoreswaggergen)
 
@@ -183,6 +184,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Inject Custom CSS](#inject-custom-css)
     * [Customize index.html](#customize-indexhtml)
     * [Enable OAuth2.0 Flows](#enable-oauth20-flows)
+    * [Use `SwaggerUIControllerBase` instead of Middleware](#use-swaggeruicontrollerbase-instead-of-middleware)
 
 * [Swashbuckle.AspNetCore.Annotations](#swashbuckleaspnetcoreannotations)
     * [Install and Enable Annotations](#install-and-enable-annotations)
@@ -250,6 +252,29 @@ app.UseSwagger(c =>
     c.SerializeAsV2 = true;
 });
 ```
+
+### Use `SwaggerControllerBase` instead of Middleware ###
+
+If you want the handling of swagger to go through the traditional ASP.NET Core Controller-pipeline,
+you can extend the `SwaggerControllerBase`-class, instead of registering the middleware.
+
+Instead of registering the Swagger-middleware by using `app.UseSwagger()`,
+you implement your own inherited controller:
+
+```
+public class SwaggerController : SwaggerControllerBase
+{
+    [HttpGet(DefaultRouteTemplate)] // Default tempate: "swagger/{documentName}/swagger.json"
+    [HttpGet("custom-swagger/{documentName}")] // Custom template
+    public override IActionResult Get(string documentName)
+    {
+        return base.Get(documentName);
+    }
+}
+```
+
+Now you can control the flow of the controller as you normally would,
+by for example adding a `[Authorize]`-attribute.
 
 ## Swashbuckle.AspNetCore.SwaggerGen ##
 
@@ -1007,6 +1032,40 @@ app.UseSwaggerUI(c =>
     c.OAuthScopeSeparator(" ");
     c.OAuthAdditionalQueryStringParams(new Dictionary<string, string> { { "foo", "bar" }}); 
     c.OAuthUseBasicAuthenticationWithAccessCodeGrant();
+});
+```
+
+### Use `SwaggerUIControllerBase` instead of Middleware ###
+
+If you want the handling of swagger UI to go through the traditional ASP.NET Core Controller-pipeline,
+you can extend the `SwaggerUIControllerBase`-class, instead of registering the middleware.
+
+Instead of registering the Swagger-middleware by using `app.UseSwaggerUI()`,
+you implement your own inherited controller:
+
+```
+public class SwaggerUIController : SwaggerUIControllerBase
+{
+    [HttpGet(DefaultRouteTemplate)] // Default tempate: "swagger"
+    [HttpGet("custom-swagger-path")] // Custom template
+    public override IActionResult Get()
+    {
+        return base.Get();
+    }
+}
+```
+
+Now you can control the flow of the controller as you normally would,
+by for example adding a `[Authorize]`-attribute.
+
+You still need to configure the `SwaggerUIOptions`-object in the service-registration:
+
+```
+services.Configure<SwaggerUIOptions>(c =>
+{
+    // Used to set the base-path for resources in the HTML of Swagger UI
+    c.ResourcesBasePath = "/swagger/";
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
 });
 ```
 
