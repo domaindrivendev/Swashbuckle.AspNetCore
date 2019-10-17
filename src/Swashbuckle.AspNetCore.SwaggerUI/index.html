@@ -4,9 +4,9 @@
   <head>
     <meta charset="UTF-8">
     <title>%(DocumentTitle)</title>
-    <link rel="stylesheet" type="text/css" href="%(BasePath)swagger-ui.css" >
-    <link rel="icon" type="image/png" href="%(BasePath)favicon-32x32.png" sizes="32x32" />
-    <link rel="icon" type="image/png" href="%(BasePath)favicon-16x16.png" sizes="16x16" />
+    <link rel="stylesheet" type="text/css" href="%(ResourcesBasePath)swagger-ui.css" >
+    <link rel="icon" type="image/png" href="%(ResourcesBasePath)favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="%(ResourcesBasePath)favicon-16x16.png" sizes="16x16" />
     <style>
       html
       {
@@ -42,8 +42,8 @@
       }
     </script>
 
-    <script src="%(BasePath)swagger-ui-bundle.js"> </script>
-    <script src="%(BasePath)swagger-ui-standalone-preset.js"> </script>
+    <script src="%(ResourcesBasePath)swagger-ui-bundle.js"> </script>
+    <script src="%(ResourcesBasePath)swagger-ui-standalone-preset.js"> </script>
     <script>
     window.onload = function() {
       var configObject = JSON.parse('%(ConfigObject)');

@@ -42,7 +42,7 @@ namespace Microsoft.AspNetCore.Builder
             setupAction?.Invoke(options);
             
             var trimmedRequestPath =
-                $"/{options.BasePath.TrimStart('/').TrimEnd('/')}";
+                $"/{options.ResourcesBasePath.TrimStart('/').TrimEnd('/')}";
 
             app.UseStaticFiles(
                 new StaticFileOptions
@@ -59,7 +59,7 @@ namespace Microsoft.AspNetCore.Builder
         private static SwaggerUIOptions GetOptions(IServiceProvider services)
         {
             var options = services.GetService<IOptions<SwaggerUIOptions>>();
-
+            
             return options?.Value ?? new SwaggerUIOptions();
         }
     }

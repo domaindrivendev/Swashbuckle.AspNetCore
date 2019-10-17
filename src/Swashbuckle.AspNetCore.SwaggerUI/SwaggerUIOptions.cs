@@ -10,11 +10,6 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
     public class SwaggerUIOptions
     {
         /// <summary>
-        /// Gets or sets the base-path for the resources in the swagger-ui
-        /// </summary>
-        public string BasePath { get; set; } = "/swagger";
-
-        /// <summary>
         /// Gets or sets a route prefix for accessing the swagger-ui
         /// </summary>
         public string RoutePrefix { get; set; } = "swagger";
@@ -44,6 +39,11 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// Gets the JavaScript config object, represented as JSON, that will be passed to the initOAuth method
         /// </summary>
         public OAuthConfigObject OAuthConfigObject { get; set; } = new OAuthConfigObject();
+
+        /// <summary>
+        /// Gets or sets the base-path for the resources in the swagger-ui
+        /// </summary>
+        public string ResourcesBasePath { get; set; } = "/swagger";
     }
 
     public class ConfigObject

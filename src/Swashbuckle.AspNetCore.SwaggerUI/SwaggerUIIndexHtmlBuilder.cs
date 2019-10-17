@@ -48,13 +48,13 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
 
         private IDictionary<string, string> GetIndexArguments()
         {
-            var trimmedBasePath = $"{_options.BasePath.TrimEnd('/')}/";
+            var trimmedBasePath = $"{_options.ResourcesBasePath.TrimEnd('/')}/";
 
             return new Dictionary<string, string>()
             {
                 { "%(DocumentTitle)", _options.DocumentTitle },
                 { "%(HeadContent)", _options.HeadContent },
-                { "%(BasePath)", trimmedBasePath },
+                { "%(ResourcesBasePath)", trimmedBasePath },
                 { "%(ConfigObject)", SerializeToJson(_options.ConfigObject) },
                 { "%(OAuthConfigObject)", SerializeToJson(_options.OAuthConfigObject) },
             };

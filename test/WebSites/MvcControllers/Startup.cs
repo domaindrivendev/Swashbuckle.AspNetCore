@@ -61,7 +61,7 @@ namespace MvcControllers
 
             services.Configure<SwaggerUIOptions>(c =>
             {
-                c.BasePath = "/swagger/";
+                c.ResourcesBasePath = "/swagger/";
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
             });
 
