@@ -7,6 +7,8 @@ namespace Swashbuckle.AspNetCore.Swagger
 {
     public class SwaggerOptions
     {
+        public const string DefaultRouteTemplate = "swagger/{documentName}/swagger.json";
+
         public SwaggerOptions()
         {
             PreSerializeFilters = new List<Action<OpenApiDocument, HttpRequest>>();
@@ -16,7 +18,7 @@ namespace Swashbuckle.AspNetCore.Swagger
         /// <summary>
         /// Sets a custom route for the Swagger JSON endpoint(s). Must include the {documentName} parameter
         /// </summary>
-        public string RouteTemplate { get; set; } = "swagger/{documentName}/swagger.json";
+        public string RouteTemplate { get; set; } = DefaultRouteTemplate;
 
         
         /// <summary>
