@@ -35,12 +35,14 @@ namespace Microsoft.AspNetCore.Builder
 
         public static IApplicationBuilder UseSwaggerUIStaticFiles(
             this IApplicationBuilder app,
-            string requestPath = null)
+            Action<SwaggerUIOptions> setupAction = null)
         {
-            requestPath = requestPath ?? GetRequestPathFromOptions(app);
+            var options = GetOptions(app.ApplicationServices);
 
+            setupAction?.Invoke(options);
+            
             var trimmedRequestPath =
-                $"/{requestPath.TrimStart('/').TrimEnd('/')}";
+                $"/{options.BasePath.TrimStart('/').TrimEnd('/')}";
 
             app.UseStaticFiles(
                 new StaticFileOptions
@@ -54,16 +56,11 @@ namespace Microsoft.AspNetCore.Builder
             return app;
         }
 
-        private static string GetRequestPathFromOptions(IApplicationBuilder app)
+        private static SwaggerUIOptions GetOptions(IServiceProvider services)
         {
-            var options =
-                app
-                    .ApplicationServices
-                    .GetService<IOptions<SwaggerUIOptions>>();
+            var options = services.GetService<IOptions<SwaggerUIOptions>>();
 
-            var swaggerUiOptions = options?.Value ?? new SwaggerUIOptions();
-
-            return swaggerUiOptions.BasePath;
+            return options?.Value ?? new SwaggerUIOptions();
         }
     }
 }
