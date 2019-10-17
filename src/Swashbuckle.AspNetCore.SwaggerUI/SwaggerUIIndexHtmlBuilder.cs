@@ -26,7 +26,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         public string Build()
         {
             StringBuilder htmlBuilder;
-            string indexContent = string.Empty;
+            var indexContent = string.Empty;
 
             using (var stream = _options.IndexStream())
             {
@@ -48,12 +48,15 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
 
         private IDictionary<string, string> GetIndexArguments()
         {
+            var trimmedBasePath = $"{_options.BasePath.TrimEnd('/')}/";
+
             return new Dictionary<string, string>()
             {
                 { "%(DocumentTitle)", _options.DocumentTitle },
                 { "%(HeadContent)", _options.HeadContent },
+                { "%(BasePath)", trimmedBasePath },
                 { "%(ConfigObject)", SerializeToJson(_options.ConfigObject) },
-                { "%(OAuthConfigObject)", SerializeToJson(_options.OAuthConfigObject) }
+                { "%(OAuthConfigObject)", SerializeToJson(_options.OAuthConfigObject) },
             };
         }
 

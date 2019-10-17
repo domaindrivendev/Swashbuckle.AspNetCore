@@ -3,13 +3,17 @@ using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 
 namespace Swashbuckle.AspNetCore.SwaggerUI
 {
     public class SwaggerUIOptions
     {
+        /// <summary>
+        /// Gets or sets the base-path for the resources in the swagger-ui
+        /// </summary>
+        public string BasePath { get; set; } = "/swagger";
+
         /// <summary>
         /// Gets or sets a route prefix for accessing the swagger-ui
         /// </summary>

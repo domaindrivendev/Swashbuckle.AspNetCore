@@ -62,7 +62,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
 
             if (httpMethod == "GET" && Regex.IsMatch(path, $"/{_options.RoutePrefix}/?index.html"))
             {
-                await RespondWithIndexHtml(httpContext.Response);
+                await RespondWithIndexHtml(httpContext);
                 return;
             }
 
@@ -90,8 +90,10 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             response.Headers["Location"] = location;
         }
 
-        private async Task RespondWithIndexHtml(HttpResponse response)
+        private async Task RespondWithIndexHtml(HttpContext httpContext)
         {
+            var response = httpContext.Response;
+
             response.StatusCode = 200;
             response.ContentType = "text/html;charset=utf-8";
 
