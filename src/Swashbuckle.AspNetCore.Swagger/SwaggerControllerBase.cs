@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Swashbuckle.AspNetCore.Swagger
 {
@@ -29,8 +30,7 @@ namespace Swashbuckle.AspNetCore.Swagger
             var provider =
                 HttpContext
                     .RequestServices
-                    .GetService(typeof(ISwaggerProvider))
-                    as ISwaggerProvider;
+                    .GetService<ISwaggerProvider>();
 
             if (provider == null)
             {
@@ -46,8 +46,7 @@ namespace Swashbuckle.AspNetCore.Swagger
             var options =
                 HttpContext
                     .RequestServices
-                    .GetService(typeof(SwaggerOptions))
-                    as SwaggerOptions;
+                    .GetService<SwaggerOptions>();
 
             return options ?? new SwaggerOptions();
         }

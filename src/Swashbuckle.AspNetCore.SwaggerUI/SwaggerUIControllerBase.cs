@@ -25,7 +25,8 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         {
             var options =
                 HttpContext
-                    .RequestServices.GetService<IOptions<SwaggerUIOptions>>();
+                    .RequestServices
+                    .GetService<IOptions<SwaggerUIOptions>>();
 
             return options?.Value ?? new SwaggerUIOptions();
         }
