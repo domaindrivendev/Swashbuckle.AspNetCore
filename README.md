@@ -1058,7 +1058,16 @@ public class SwaggerUIController : SwaggerUIControllerBase
 Now you can control the flow of the controller as you normally would,
 by for example adding a `[Authorize]`-attribute.
 
-You still need to configure the `SwaggerUIOptions`-object in the service-registration:
+Since you're not using the traditional middleware, you need to register another middleware,
+which ensures that you'll get the web-resources need to run Swagger UI:
+
+```
+app.UseSwaggerUIStaticFiles();
+```
+
+You still need to configure the `SwaggerUIOptions`-object in the service-registration.
+If you're not using Swagger UI on the default path `/swagger`, you need to change the
+`ResourcesBasePath`-property.
 
 ```
 services.Configure<SwaggerUIOptions>(c =>
@@ -1068,6 +1077,8 @@ services.Configure<SwaggerUIOptions>(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
 });
 ```
+
+
 
 ## Swashbuckle.AspNetCore.Annotations ##
 
