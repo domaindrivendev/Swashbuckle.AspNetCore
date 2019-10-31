@@ -30,7 +30,7 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Argument("swaggerdoc", "name of the swagger doc you want to retrieve, as configured in your startup class");
                 c.Option("--output", "relative path where the Swagger will be output, defaults to stdout");
                 c.Option("--host", "a specific host to include in the Swagger output");
-                c.Option("--basepath", "a specific basePath to inlcude in the Swagger output");
+                c.Option("--basepath", "a specific basePath to include in the Swagger output");
                 c.Option("--serializeasv2", "output Swagger in the V2 format rather than V3", true);
                 c.OnRun((namedArgs) =>
                 {
