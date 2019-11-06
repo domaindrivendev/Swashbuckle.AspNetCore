@@ -32,6 +32,7 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Option("--host", "a specific host to include in the Swagger output");
                 c.Option("--basepath", "a specific basePath to inlcude in the Swagger output");
                 c.Option("--serializeasv2", "output Swagger in the V2 format rather than V3", true);
+                c.Option("--yaml", "exports swagger in a yaml format");
                 c.OnRun((namedArgs) =>
                 {
                     var depsFile = namedArgs["startupassembly"].Replace(".dll", ".deps.json");
@@ -59,6 +60,7 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Option("--host", "");
                 c.Option("--basepath", "");
                 c.Option("--serializeasv2", "", true);
+                c.Option("--yaml", "exports swagger in a yaml format");
                 c.OnRun((namedArgs) =>
                 {
                     // 1) Configure host with provided startupassembly
@@ -82,14 +84,19 @@ namespace Swashbuckle.AspNetCore.Cli
 
                     using (var streamWriter = (outputPath != null ? File.CreateText(outputPath) : Console.Out))
                     {
-                        var jsonWriter = new OpenApiJsonWriter(streamWriter);
-                        if (namedArgs.ContainsKey("--serializeasv2"))
-                            swagger.SerializeAsV2(jsonWriter);
+                        IOpenApiWriter writer;
+                        if (namedArgs.ContainsKey("--yaml"))
+                            writer = new OpenApiYamlWriter(streamWriter);
                         else
-                            swagger.SerializeAsV3(jsonWriter);
+                            writer = new OpenApiJsonWriter(streamWriter);
+
+                        if (namedArgs.ContainsKey("--serializeasv2"))
+                            swagger.SerializeAsV2(writer);
+                        else
+                            swagger.SerializeAsV3(writer);
 
                         if (outputPath != null)
-                            Console.WriteLine($"Swagger JSON succesfully written to {outputPath}");
+                            Console.WriteLine($"Swagger JSON/YAML succesfully written to {outputPath}");
                     }
 
                     return 0;
