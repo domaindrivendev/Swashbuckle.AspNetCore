@@ -115,13 +115,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 if (httpMethod == null)
                     throw new NotSupportedException(string.Format(
                         "Ambiguous HTTP method for action - {0}. " +
-                        "Actions require an explicit HttpMethod binding for Swagger 2.0",
+                        "Actions require an explicit HttpMethod binding for Swagger/OpenAPI 3.0",
                         group.First().ActionDescriptor.DisplayName));
 
                 if (group.Count() > 1 && _options.ConflictingActionsResolver == null)
                     throw new NotSupportedException(string.Format(
-                        "HTTP method \"{0}\" & path \"{1}\" overloaded by actions - {2}. " +
-                        "Actions require unique method/path combination for OpenAPI 3.0. Use ConflictingActionsResolver as a workaround",
+                        "Conflicting method/path combination \"{0} {1}\" for actions - {2}. " +
+                        "Actions require a unique method/path combination for Swagger/OpenAPI 3.0. Use ConflictingActionsResolver as a workaround",
                         httpMethod,
                         group.First().RelativePathSansQueryString(),
                         string.Join(",", group.Select(apiDesc => apiDesc.ActionDescriptor.DisplayName))));
@@ -169,6 +169,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 .Where(apiParam =>
                 {
                     return (!apiParam.IsFromBody() && !apiParam.IsFromForm())
+                        && (!apiParam.CustomAttributes().OfType<BindNeverAttribute>().Any())
                         && (apiParam.ModelMetadata == null || apiParam.ModelMetadata.IsBindingAllowed);
                 });
 
@@ -185,7 +186,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 ? apiParameter.Name.ToCamelCase()
                 : apiParameter.Name;
 
-            var location = ParameterLocationMap.ContainsKey(apiParameter.Source)
+            var location = (apiParameter.Source != null && ParameterLocationMap.ContainsKey(apiParameter.Source))
                 ? ParameterLocationMap[apiParameter.Source]
                 : ParameterLocation.Query;
 

@@ -25,7 +25,7 @@ namespace GenericControllers.Controllers
         /// </summary>
         [HttpGet]
         [Produces("application/json")]
-        public IEnumerable<TResource> Get(string keywords)
+        public IEnumerable<TResource> GetAll(string keywords)
         {
             return new[] { new TResource(), new TResource() };
         }
@@ -35,7 +35,7 @@ namespace GenericControllers.Controllers
         /// </summary>
         [HttpGet("{id}")]
         [Produces("application/json")]
-        public TResource Get(int id)
+        public TResource GetById(int id)
         {
             return new TResource();
         }

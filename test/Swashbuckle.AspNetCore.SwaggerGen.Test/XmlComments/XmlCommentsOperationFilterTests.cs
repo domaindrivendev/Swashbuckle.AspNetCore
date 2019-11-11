@@ -6,115 +6,164 @@ using System.IO;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Models;
 using Xunit;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     public class XmlCommentsOperationFilterTests
     {
         [Fact]
-        public void Apply_SetsSummaryAndDescription_FromSummaryAndRemarksTags()
+        public void Apply_SetsSummaryAndDescription_FromActionSummaryAndRemarksTags()
         {
             var operation = new OpenApiOperation
             {
                 Responses = new OpenApiResponses()
             };
-            var filterContext = FilterContextFor(nameof(XmlAnnotatedController.XmlAnnotatedAction));
+            var filterContext = FilterContextFor
+            (
+                ApiDescriptionFactory.Create<FakeControllerWithXmlComments>(
+                    c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "POST", relativePath: "resource")
+            );
 
             Subject().Apply(operation, filterContext);
 
-            Assert.Equal("summary for AnnotatedWithXml", operation.Summary);
-            Assert.Equal("remarks for AnnotatedWithXml", operation.Description);
+            Assert.Equal("Summary for ActionWithNoParameters", operation.Summary);
+            Assert.Equal("Remarks for ActionWithNoParameters", operation.Description);
         }
 
         [Fact]
-        public void Apply_SetsParameterDescriptions_FromParamTags()
+        public void Apply_SetsParameterDescriptions_FromCorrespondingActionParamTags()
         {
             var operation = new OpenApiOperation
             {
                 Parameters = new List<OpenApiParameter>
                 {
-                    new OpenApiParameter { Name = "param1" }, 
-                    new OpenApiParameter { Name = "param2" }, 
-                    new OpenApiParameter { Name = "Param-3" } 
+                    new OpenApiParameter { Name = "param1" },
+                    new OpenApiParameter { Name = "param2" },
                 },
-                Responses = new OpenApiResponses(),
-                RequestBody = new OpenApiRequestBody()
+                Responses = new OpenApiResponses()
             };
-            var filterContext = FilterContextFor(nameof(XmlAnnotatedController.XmlAnnotatedAction));
+            var filterContext = FilterContextFor
+            (
+                ApiDescriptionFactory.Create<FakeControllerWithXmlComments>(
+                    c => nameof(c.ActionWithMultipleParameters),
+                    groupName: "v1",
+                    httpMethod: "POST",
+                    relativePath: "resource",
+                    parameterDescriptions: new[]
+                    {
+                        new ApiParameterDescription { Name = "param1", Source = BindingSource.Query },
+                        new ApiParameterDescription { Name = "param2", Source = BindingSource.Query }
+                    })
+            );
 
             Subject().Apply(operation, filterContext);
 
-            Assert.Equal("description for param1", operation.Parameters[0].Description);
-            Assert.Equal("description for param2", operation.Parameters[1].Description);
-            Assert.Equal("description for param3", operation.Parameters[2].Description);
-            Assert.Equal("description for param4", operation.RequestBody.Description);
+            Assert.Equal("Description for param1", operation.Parameters[0].Description);
+            Assert.Equal("Description for param2", operation.Parameters[1].Description);
         }
 
         [Fact]
-        public void Apply_SetsParameterDescription_FromSummaryTagsOfParameterBoundProperties()
+        public void Apply_SetsParameterDescriptions_FromCorrespondingPropertySummaryTags()
         {
             var operation = new OpenApiOperation
             {
-                Parameters = new List<OpenApiParameter>() { new OpenApiParameter { Name = "StringProperty" } },
+                Parameters = new List<OpenApiParameter>
+                {
+                    new OpenApiParameter { Name = "BoolProperty" }
+                },
                 Responses = new OpenApiResponses()
             };
-            var filterContext = FilterContextFor(nameof(XmlAnnotatedController.AcceptsXmlAnnotatedTypeFromQuery));
+            var filterContext = FilterContextFor
+            (
+                ApiDescriptionFactory.Create<FakeControllerWithXmlComments>(
+                    c => nameof(c.ActionWithNoParameters),
+                    groupName: "v1",
+                    httpMethod: "POST",
+                    relativePath: "resource",
+                    parameterDescriptions: new[]
+                    {
+                        new ApiParameterDescription
+                        {
+                            Name = "BoolProperty",
+                            Source = BindingSource.Query,
+                            ModelMetadata = ModelMetadataFactory.CreateForProperty(typeof(XmlAnnotatedType), "BoolProperty")
+                        }
+                    })
+            );
 
             Subject().Apply(operation, filterContext);
 
-            Assert.Equal("summary for StringProperty", operation.Parameters.First().Description);
+            Assert.Equal("Summary for BoolProperty", operation.Parameters[0].Description);
         }
 
         [Fact]
-        public void Apply_SetsResponseDescription_IfActionOrControllerHasCorrespondingResponseTag()
+        public void Apply_SetsRequestBodyDescription_FromCorrespondingActionParamTags()
+        {
+            var operation = new OpenApiOperation
+            {
+                RequestBody = new OpenApiRequestBody(),
+                Responses = new OpenApiResponses()
+            };
+            var filterContext = FilterContextFor
+            (
+                ApiDescriptionFactory.Create<FakeControllerWithXmlComments>(
+                    c => nameof(c.ActionWithParamTag),
+                    groupName: "v1",
+                    httpMethod: "POST",
+                    relativePath: "resource",
+                    parameterDescriptions: new []
+                    {
+                        new ApiParameterDescription { Name = "param", Source = BindingSource.Body }
+                    })
+            );
+
+            Subject().Apply(operation, filterContext);
+
+            Assert.Equal("Description for param", operation.RequestBody.Description);
+        }
+
+        [Fact]
+        public void Apply_SetsResponseDescription_FromActionOrControllerResponseTags()
         {
             var operation = new OpenApiOperation
             {
                 Responses = new OpenApiResponses
                 {
                     { "200", new OpenApiResponse { Description = "Success" } },
-                    { "400", new OpenApiResponse { Description = "Client Error" } } 
+                    { "400", new OpenApiResponse { Description = "Client Error" } },
                 }
             };
-            var filterContext = FilterContextFor(nameof(XmlAnnotatedController.XmlAnnotatedAction));
+            var filterContext = FilterContextFor
+            (
+                ApiDescriptionFactory.Create<FakeControllerWithXmlComments>(
+                    c => nameof(c.ActionWithResponseTags),
+                    groupName: "v1",
+                    httpMethod: "POST",
+                    relativePath: "resource",
+                    supportedResponseTypes: new []
+                    {
+                        new ApiResponseType { StatusCode = 200 },
+                        new ApiResponseType { StatusCode = 400 },
+                    })
+            );
 
             Subject().Apply(operation, filterContext);
 
-            Assert.Equal(new[] { "200", "400" }, operation.Responses.Keys.ToArray());
-            Assert.Equal("controller-level description for 400", operation.Responses["400"].Description);
-            Assert.Equal("action-level description for 200", operation.Responses["200"].Description);
+            Assert.Equal(new[] { "200", "400", "default" }, operation.Responses.Keys.ToArray());
+            Assert.Equal("Description for 200 response", operation.Responses["200"].Description);
+            Assert.Equal("Description for 400 response", operation.Responses["400"].Description);
+            Assert.Equal("Description for default response", operation.Responses["default"].Description);
         }
 
-        [Fact]
-        public void Apply_AddsResponsesWithDescriptions_IfActionOrControllerHasResponseTags()
+        private OperationFilterContext FilterContextFor(ApiDescription apiDescription)
         {
-            var operation = new OpenApiOperation
-            {
-                Responses = new OpenApiResponses
-                {
-                    { "default", new OpenApiResponse { Description = "Unexpected Error" } } 
-                }
-            };
-            var filterContext = FilterContextFor(nameof(XmlAnnotatedController.XmlAnnotatedAction));
-
-            Subject().Apply(operation, filterContext);
-
-            Assert.Equal(new[] { "default", "400", "200" }, operation.Responses.Keys.ToArray());
-            Assert.Equal("controller-level description for 400", operation.Responses["400"].Description);
-            Assert.Equal("action-level description for 200", operation.Responses["200"].Description);
-        }
-
-        private OperationFilterContext FilterContextFor(string actionFixtureName)
-        {
-            var fakeProvider = new FakeApiDescriptionGroupCollectionProvider();
-            var apiDescription = fakeProvider
-                .Add("GET", "collection", actionFixtureName, typeof(XmlAnnotatedController))
-                .ApiDescriptionGroups.Items.First()
-                .Items.First();
-
-            var methodInfo = (apiDescription.ActionDescriptor as ControllerActionDescriptor).MethodInfo;
-
-            return new OperationFilterContext(apiDescription, null, null, methodInfo);
+            return new OperationFilterContext(
+                apiDescription,
+                null,
+                null,
+                (apiDescription.ActionDescriptor as ControllerActionDescriptor).MethodInfo);
         }
 
         private XmlCommentsOperationFilter Subject()

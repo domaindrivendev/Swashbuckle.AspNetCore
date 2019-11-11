@@ -6,7 +6,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
     {
         public bool Property1 { get; set; }
 
-        public int Property2 { get; }
+        public int Property2 { get; } = 123;
 
         public int Property3 { set { } }
     }

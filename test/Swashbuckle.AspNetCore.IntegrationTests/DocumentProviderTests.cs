@@ -16,7 +16,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         [InlineData(typeof(CustomUIConfig.Startup), new[] { "v1" })]
         [InlineData(typeof(CustomUIIndex.Startup), new[] { "v1" })]
         [InlineData(typeof(GenericControllers.Startup), new[] { "v1" })]
-        [InlineData(typeof(MultipleVersions.Startup), new[] { "v1", "v2" })]
+        [InlineData(typeof(MultipleVersions.Startup), new[] { "1.0", "2.0" })]
         [InlineData(typeof(OAuth2Integration.Startup), new[] { "v1" })]
         public void DocumentProvider_ExposesAllDocumentNames(Type startupType, string[] expectedNames)
         {
@@ -35,7 +35,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         [InlineData(typeof(CustomUIConfig.Startup), "v1")]
         [InlineData(typeof(CustomUIIndex.Startup), "v1")]
         [InlineData(typeof(GenericControllers.Startup), "v1")]
-        [InlineData(typeof(MultipleVersions.Startup), "v2")]
+        [InlineData(typeof(MultipleVersions.Startup), "2.0")]
         [InlineData(typeof(OAuth2Integration.Startup), "v1")]
         public async Task DocumentProvider_ExposesGeneratedSwagger(Type startupType, string documentName)
         {

@@ -109,7 +109,12 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 #if NETCOREAPP3_0
         private string GetConvertedEnumName(StringEnumConverter stringEnumConverter, string enumName, bool hasSpecifiedName)
         {
-            return stringEnumConverter.NamingStrategy.GetPropertyName(enumName, hasSpecifiedName);
+            if (stringEnumConverter.NamingStrategy != null)
+                return stringEnumConverter.NamingStrategy.GetPropertyName(enumName, hasSpecifiedName);
+
+            return (stringEnumConverter.CamelCaseText)
+                ? new CamelCaseNamingStrategy().GetPropertyName(enumName, hasSpecifiedName)
+                : enumName;
         }
 #else
         private string GetConvertedEnumName(StringEnumConverter stringEnumConverter, string enumName, bool hasSpecifiedName)

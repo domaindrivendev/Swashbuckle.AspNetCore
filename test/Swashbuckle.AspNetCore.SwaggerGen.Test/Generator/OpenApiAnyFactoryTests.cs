@@ -42,7 +42,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             OpenApiAnyFactory.TryCreateFor(schema, DateTime.UtcNow, out IOpenApiAny instance);
 
             Assert.NotNull(instance);
-            Assert.IsType(typeof(OpenApiDate), instance);
+            Assert.IsType<OpenApiDate>(instance);
         }
 
         [Fact]
@@ -53,7 +53,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             OpenApiAnyFactory.TryCreateFor(schema, 3.4m, out IOpenApiAny instance);
 
             Assert.NotNull(instance);
-            Assert.IsType(typeof(OpenApiDouble), instance);
+            Assert.IsType<OpenApiDouble>(instance);
         }
     }
 }

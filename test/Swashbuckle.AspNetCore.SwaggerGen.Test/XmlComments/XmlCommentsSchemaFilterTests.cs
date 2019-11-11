@@ -6,9 +6,8 @@ using System.IO;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Any;
 using Xunit;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Swashbuckle.AspNetCore.Newtonsoft;
 using Newtonsoft.Json;
+using Swashbuckle.AspNetCore.Newtonsoft;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -22,9 +21,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
-        [InlineData(typeof(XmlAnnotatedType), "summary for XmlAnnotatedType")]
-        [InlineData(typeof(XmlAnnotatedType.NestedType), "summary for NestedType")]
-        [InlineData(typeof(XmlAnnotatedGenericType<int, string>), "summary for XmlAnnotatedGenericType")]
+        [InlineData(typeof(XmlAnnotatedType), "Summary for XmlAnnotatedType")]
+        [InlineData(typeof(XmlAnnotatedType.NestedType), "Summary for NestedType")]
+        [InlineData(typeof(XmlAnnotatedGenericType<int, string>), "Summary for XmlAnnotatedGenericType")]
         public void Apply_SetsDescription_FromSummaryTag(
             Type type,
             string expectedDescription)
@@ -41,9 +40,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringProperty), "summary for StringProperty")]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringField), "summary for StringField")]
-        [InlineData(typeof(XmlAnnotatedSubType), nameof(XmlAnnotatedType.StringProperty), "summary for StringProperty")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringProperty), "Summary for StringProperty")]
+        [InlineData(typeof(XmlAnnotatedSubType), nameof(XmlAnnotatedType.StringProperty), "Summary for StringProperty")]
         [InlineData(typeof(XmlAnnotatedGenericType<string, bool>), "GenericProperty", "Summary for GenericProperty")]
         public void Apply_SetsPropertyDescriptions_FromPropertySummaryTags(
             Type type,
@@ -72,10 +70,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.DoubleProperty), "number", "double", 1.25D)]
         [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.EnumProperty), "integer", "int32", 2)]
         [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.GuidProperty), "string", "uuid", "d3966535-2637-48fa-b911-e3c27405ee09")]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringProperty), "string", null, "example for StringProperty")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringProperty), "string", null, "Example for StringProperty")]
         [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.BadExampleIntProperty), "integer", "int32", null)]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringField), "string", null, "example for StringField")]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.BoolField), "boolean", null, true)]
         public void Apply_SetsPropertyExample_FromPropertyExampleTags(
             Type memberType,
             string memberName,

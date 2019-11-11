@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     /// <summary>
-    /// summary for XmlAnnotatedGenericType
+    /// Summary for XmlAnnotatedGenericType
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="K"></typeparam>
@@ -16,7 +16,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public T GenericProperty { get; set; }
 
         /// <summary>
-        /// summary of AcceptsTypeParameters
+        /// Summary of AcceptsTypeParameters
         /// </summary>
         /// <param name="param1"></param>
         /// <param name="param2"></param>
@@ -25,7 +25,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         { }
 
         /// <summary>
-        /// summary of AcceptsConstructedOfTypeParametersType
+        /// Summary of AcceptsConstructedOfTypeParametersType
         /// </summary>
         /// <param name="param1"></param>
         public void AcceptsConstructedOfTypeParametersType(IDictionary<T, K> param1)

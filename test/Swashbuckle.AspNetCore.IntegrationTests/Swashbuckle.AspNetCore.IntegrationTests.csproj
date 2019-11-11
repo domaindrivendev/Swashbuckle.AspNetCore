@@ -1,34 +1,33 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.IntegrationTests.snk</AssemblyOriginatorKeyFile>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
     <NoWarn>$(NoWarn);8002</NoWarn>
     <SignAssembly>true</SignAssembly>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.IntegrationTests.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\WebSites\Basic\Basic.csproj" />
+    <ProjectReference Include="..\WebSites\CliExample\CliExample.csproj" />
+    <ProjectReference Include="..\WebSites\ConfigFromFile\ConfigFromFile.csproj" />
     <ProjectReference Include="..\WebSites\CustomUIConfig\CustomUIConfig.csproj" />
     <ProjectReference Include="..\WebSites\CustomUIIndex\CustomUIIndex.csproj" />
     <ProjectReference Include="..\WebSites\GenericControllers\GenericControllers.csproj" />
     <ProjectReference Include="..\WebSites\MultipleVersions\MultipleVersions.csproj" />
+    <ProjectReference Include="..\WebSites\NetCore21\NetCore21.csproj" />
     <ProjectReference Include="..\WebSites\OAuth2Integration\OAuth2Integration.csproj" />
     <ProjectReference Include="..\WebSites\ReDoc\ReDoc.csproj" />
     <ProjectReference Include="..\WebSites\TestFirst\TestFirst.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
-    <PackageReference Include="Moq" Version="4.7.142" />
-    <PackageReference Include="xunit" Version="2.2.0" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.0.0" />
-    <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.1.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="xunit" Version="2.4.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
+    <PackageReference Include="coverlet.collector" Version="1.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="3.0.0" />
+    <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.1.4" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
 </Project>

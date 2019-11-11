@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Reflection;
 using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -44,14 +45,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             foreach (var apiProperty in apiObject.ApiProperties)
             {
                 // For data annotations, support inline attributes (i.e. applied to member directly) OR attributes applied through a MetadataType
-                var memberAttributes = apiProperty.MemberInfo?.GetInlineOrMetadataTypeAttributes() ?? Enumerable.Empty<object>();
+                var propertyAttributes = (apiProperty.MemberInfo is PropertyInfo propertyInfo)
+                    ? propertyInfo.GetInlineOrMetadataTypeAttributes()
+                    : Enumerable.Empty<object>();
 
-                if (Options.IgnoreObsoleteProperties && memberAttributes.OfType<ObsoleteAttribute>().Any())
+                if (Options.IgnoreObsoleteProperties && propertyAttributes.OfType<ObsoleteAttribute>().Any())
                     continue;
 
-                schema.Properties.Add(apiProperty.ApiName, GeneratePropertySchema(apiProperty, memberAttributes, schemaRepository));
+                schema.Properties.Add(apiProperty.ApiName, GeneratePropertySchema(apiProperty, propertyAttributes, schemaRepository));
 
-                if (apiProperty.ApiRequired || memberAttributes.OfType<RequiredAttribute>().Any())
+                if (apiProperty.ApiRequired || propertyAttributes.OfType<RequiredAttribute>().Any())
                     schema.Required.Add(apiProperty.ApiName);
             }
 
@@ -60,7 +63,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private OpenApiSchema GeneratePropertySchema(
             ApiProperty apiObjectProperty,
-            IEnumerable<object> memberAttributes,
+            IEnumerable<object> propertyAttributes,
             SchemaRepository schemaRepository)
         {
             var schema = Generator.GenerateSchema(apiObjectProperty.Type, schemaRepository);
@@ -72,7 +75,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 schema.ReadOnly = apiObjectProperty.ApiReadOnly;
                 schema.WriteOnly = apiObjectProperty.ApiWriteOnly;
 
-                schema.ApplyCustomAttributes(memberAttributes);
+                schema.ApplyCustomAttributes(propertyAttributes);
             }
 
             return schema;
