@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GenericControllers</name>
+    </assembly>
+    <members>
+        <member name="M:GenericControllers.Controllers.GenericResourceController`1.Create(`0)">
+            <summary>
+            Creates a resource
+            </summary>
+            <param name="resource"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GenericControllers.Controllers.GenericResourceController`1.GetAll(System.String)">
+            <summary>
+            Retrieves all resources
+            </summary>
+        </member>
+        <member name="M:GenericControllers.Controllers.GenericResourceController`1.GetById(System.Int32)">
+            <summary>
+            Retrieves a specific resource
+            </summary>
+        </member>
+    </members>
+</doc>
