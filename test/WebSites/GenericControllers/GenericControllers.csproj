@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <DocumentationFile>C:\Users\Richie\src\Swashbuckle.AspNetCore\test\WebSites\GenericControllers\GenericControllers.xml</DocumentationFile>
+    <DocumentationFile>$(ProjectDir)Swashbuckle.AspNetCore\test\WebSites\GenericControllers\GenericControllers.xml</DocumentationFile>
     <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
 
