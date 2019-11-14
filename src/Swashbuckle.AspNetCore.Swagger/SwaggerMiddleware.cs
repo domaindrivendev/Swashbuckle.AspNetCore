@@ -54,17 +54,13 @@ namespace Swashbuckle.AspNetCore.Swagger
                     filter(swagger, httpContext.Request);
                 }
 
-                if(httpContext.Request.Headers["Accept"].Any(x => x.Contains("text/json")))
-                {
-                    await RespondWithSwaggerJson(httpContext.Response, swagger);
-                }
-                else if(httpContext.Request.Headers["Accept"].Any(x => x.Contains("text/yaml")))
+                if(httpContext.Request.Headers["Accept"].Any(x => x.Contains("text/yaml")))
                 {
                     await RespondWithSwaggerYaml(httpContext.Response, swagger);
                 }
                 else
                 {
-                    RespondWithNotFound(httpContext.Response);
+                    await RespondWithSwaggerJson(httpContext.Response, swagger);
                 }
             }
             catch (UnknownSwaggerDocument)
