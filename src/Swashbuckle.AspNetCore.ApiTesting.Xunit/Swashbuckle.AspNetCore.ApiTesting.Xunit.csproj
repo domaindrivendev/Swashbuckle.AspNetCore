@@ -4,7 +4,7 @@
 
   <PropertyGroup>
     <Description>Xunit add-on for Swagger/OpenAPI-driven integration testing API's built on ASP.NET Core</Description>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFrameworks>netcoreapp2.1;netcoreapp3.0</TargetFrameworks>
     <NoWarn>$(NoWarn);1591</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>Swashbuckle.AspNetCore.ApiTesting.Xunit</AssemblyName>
