@@ -60,9 +60,6 @@ namespace Basic
 
                 c.GeneratePolymorphicSchemas();
 
-                c.DescribeAllEnumsAsStrings();
-                //c.DescribeStringEnumsInCamelCase();
-
                 c.EnableAnnotations();
             });
 
