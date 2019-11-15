@@ -81,12 +81,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             object typedValue;
             var culture = CultureInfo.CurrentCulture;
+            CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 
             try
             {
-                var typeConverter = TypeDescriptor.GetConverter(memberType);
-                CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
-                typedValue = typeConverter.ConvertFrom(stringValue);
+                typedValue = TypeDescriptor.GetConverter(memberType).ConvertFrom(stringValue);
             }
             catch (Exception)
             {
