@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿
+using System.Text.Json.Serialization;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -7,7 +8,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [JsonIgnore]
         public string StringWithJsonIgnore { get; set; }
 
-        [JsonProperty("string-with-json-property-name")]
+        [JsonPropertyName("string-with-json-property-name")]
         public string StringWithJsonPropertyName { get; set; }
 
         public int IntProperty { get; set; }

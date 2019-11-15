@@ -19,8 +19,8 @@ namespace Basic.Swagger
                 case "Product":
                     return new OpenApiObject
                     {
-                        [ "Id" ] = new OpenApiInteger(123),
-                        [ "Description" ] = new OpenApiString("foobar")
+                        [ "id" ] = new OpenApiInteger(123),
+                        [ "description" ] = new OpenApiString("foobar")
                     };
                 default:
                     return null;
