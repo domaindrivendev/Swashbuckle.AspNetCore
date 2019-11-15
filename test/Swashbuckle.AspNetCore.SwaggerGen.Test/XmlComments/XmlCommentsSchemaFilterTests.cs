@@ -4,11 +4,10 @@ using System.Globalization;
 using System.Xml.XPath;
 using System.Reflection;
 using System.IO;
+using System.Text.Json;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Any;
 using Xunit;
-using Newtonsoft.Json;
-using Swashbuckle.AspNetCore.Newtonsoft;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -18,7 +17,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         public XmlCommentsSchemaFilterTests()
         {
-            _apiModelResolver = new NewtonsoftApiModelResolver(new JsonSerializerSettings(), new SchemaGeneratorOptions());
+            _apiModelResolver = new JsonApiModelResolver(new JsonSerializerOptions());
         }
 
         [Theory]

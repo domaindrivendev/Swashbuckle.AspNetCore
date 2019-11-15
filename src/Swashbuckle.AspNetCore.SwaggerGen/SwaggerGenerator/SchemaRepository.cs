@@ -32,6 +32,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             };
         }
 
+        public bool TryGetIdFor(Type type, out string schemaId)
+        {
+            return _reservedIds.TryGetValue(type, out schemaId);
+        }
+        
         private void ReserveIdFor(Type type, string schemaId)
         {
             if (_reservedIds.ContainsValue(schemaId))

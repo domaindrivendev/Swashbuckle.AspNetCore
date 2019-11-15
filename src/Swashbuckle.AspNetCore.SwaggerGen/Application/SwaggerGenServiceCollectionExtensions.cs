@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
-using Swashbuckle.AspNetCore.Newtonsoft;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -22,7 +21,7 @@ namespace Microsoft.Extensions.DependencyInjection
             // Register generator and it's dependencies
             services.AddTransient<ISwaggerProvider, SwaggerGenerator>();
             services.AddTransient<ISchemaGenerator, SchemaGenerator>();
-            services.AddTransient<IApiModelResolver, NewtonsoftApiModelResolver>();
+            services.AddTransient<IApiModelResolver, JsonApiModelResolver>();
 
             // Register custom configurators that assign values from SwaggerGenOptions (i.e. high level config)
             // to the service-specific options (i.e. lower-level config)

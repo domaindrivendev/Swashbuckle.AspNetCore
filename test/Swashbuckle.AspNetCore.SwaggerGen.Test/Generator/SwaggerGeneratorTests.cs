@@ -1,18 +1,13 @@
 ﻿using System;
 using System.Linq;
-using System.Text.Json;
 using System.Collections.Generic;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi.Any;
-using Microsoft.AspNetCore.Mvc;
 using Xunit;
 using Swashbuckle.AspNetCore.Swagger;
-using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using System.Runtime.Serialization;
-using Swashbuckle.AspNetCore.Newtonsoft;
-using Newtonsoft.Json;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -785,11 +780,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         private SwaggerGenerator Subject(IEnumerable<ApiDescription> apiDescriptions, SwaggerGeneratorOptions options = null)
         {
-            var schemaGeneratorOptions = new SchemaGeneratorOptions();
-
             return new SwaggerGenerator(
                 new FakeApiDescriptionGroupCollectionProvider(apiDescriptions),
-                new SchemaGenerator(new NewtonsoftApiModelResolver(new JsonSerializerSettings(), schemaGeneratorOptions), schemaGeneratorOptions), 
+                new SchemaGenerator(new JsonApiModelResolver(new JsonSerializerOptions()), new SchemaGeneratorOptions()),
                 options ?? DefaultOptions
             );
         }
