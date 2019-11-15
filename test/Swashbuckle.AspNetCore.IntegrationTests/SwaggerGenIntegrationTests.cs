@@ -56,7 +56,6 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         [InlineData("sv-SE")]
         public async Task SwaggerEndpoint_ReturnsCorrectPriceExample_ForDifferentCultures(string culture)
         {
-            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             var testSite = new TestSite(typeof(Basic.Startup));
             var client = testSite.BuildClient();
 
@@ -64,12 +63,20 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 
             swaggerResponse.EnsureSuccessStatusCode();
             var contentStream = await swaggerResponse.Content.ReadAsStreamAsync();
-            var openApiDocument = new OpenApiStreamReader().Read(contentStream, out OpenApiDiagnostic diagnostic);
-            var example = openApiDocument.Components.Schemas["Product"].Example as OpenApiObject;
-            var price = (example["Price"] as OpenApiDouble);
-            Assert.NotNull(price);
-            Assert.Equal(14.37, price.Value);
-
+            var currentCulture = CultureInfo.CurrentCulture;
+            CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+            try
+            {
+                var openApiDocument = new OpenApiStreamReader().Read(contentStream, out OpenApiDiagnostic diagnostic);
+                var example = openApiDocument.Components.Schemas["Product"].Example as OpenApiObject;
+                var price = (example["price"] as OpenApiDouble);
+                Assert.NotNull(price);
+                Assert.Equal(14.37, price.Value);
+            }
+            finally
+            {
+                CultureInfo.CurrentCulture = currentCulture;
+            }
         }
 
         [Fact]
