@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
+using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Xunit;
 using Xunit.Abstractions;
 using ReDocApp = ReDoc;
@@ -45,6 +49,27 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             swaggerResponse.EnsureSuccessStatusCode();
             await AssertResponseDoesNotContainByteOrderMark(swaggerResponse);
             await AssertValidSwaggerAsync(swaggerResponse);
+        }
+
+        [Theory]
+        [InlineData("en-US")]
+        [InlineData("sv-SE")]
+        public async Task SwaggerEndpoint_ReturnsCorrectPriceExample_ForDifferentCultures(string culture)
+        {
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+            var testSite = new TestSite(typeof(Basic.Startup));
+            var client = testSite.BuildClient();
+
+            var swaggerResponse = await client.GetAsync($"/swagger/v1/swagger.json?culture={culture}");
+
+            swaggerResponse.EnsureSuccessStatusCode();
+            var contentStream = await swaggerResponse.Content.ReadAsStreamAsync();
+            var openApiDocument = new OpenApiStreamReader().Read(contentStream, out OpenApiDiagnostic diagnostic);
+            var example = openApiDocument.Components.Schemas["Product"].Example as OpenApiObject;
+            var price = (example["Price"] as OpenApiDouble);
+            Assert.NotNull(price);
+            Assert.Equal(14.37, price.Value);
+
         }
 
         [Fact]
