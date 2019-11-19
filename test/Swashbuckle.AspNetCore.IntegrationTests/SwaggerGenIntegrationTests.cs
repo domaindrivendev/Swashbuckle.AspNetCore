@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.OpenApi.Models;
@@ -39,28 +38,8 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         {
             var testSite = new TestSite(startupType);
             var client = testSite.BuildClient();
-            var swaggerResponse = await client.GetAsync(swaggerRequestUri);
-
-            swaggerResponse.EnsureSuccessStatusCode();
-            await AssertResponseDoesNotContainByteOrderMark(swaggerResponse);
-            await AssertValidSwaggerAsync(swaggerResponse);
-        }
-
-        [Theory]
-        [InlineData(typeof(Basic.YamlStartup), "/swagger/v1/swagger.yaml")]
-        [InlineData(typeof(CustomUIConfig.YamlStartup), "/swagger/v1/swagger.yaml")]
-        [InlineData(typeof(CustomUIIndex.YamlStartup), "/swagger/v1/swagger.yaml")]
-        public async Task SwaggerEndpoint_ReturnsValidSwaggerYaml(
-            Type startupType,
-            string swaggerRequestUri)
-        {
-            var testSite = new TestSite(startupType);
-            var client = testSite.BuildClient();
-
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/yaml"));
 
             var swaggerResponse = await client.GetAsync(swaggerRequestUri);
-
 
             swaggerResponse.EnsureSuccessStatusCode();
             await AssertResponseDoesNotContainByteOrderMark(swaggerResponse);

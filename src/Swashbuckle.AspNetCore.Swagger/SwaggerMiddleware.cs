@@ -1,5 +1,4 @@
 ﻿using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
@@ -54,14 +53,7 @@ namespace Swashbuckle.AspNetCore.Swagger
                     filter(swagger, httpContext.Request);
                 }
 
-                if(httpContext.Request.Headers["Accept"].Any(x => x.Contains("text/yaml")))
-                {
-                    await RespondWithSwaggerYaml(httpContext.Response, swagger);
-                }
-                else
-                {
-                    await RespondWithSwaggerJson(httpContext.Response, swagger);
-                }
+                await RespondWithSwaggerJson(httpContext.Response, swagger);
             }
             catch (UnknownSwaggerDocument)
             {
@@ -95,19 +87,6 @@ namespace Swashbuckle.AspNetCore.Swagger
             {
                 var jsonWriter = new OpenApiJsonWriter(textWriter);
                 if (_options.SerializeAsV2) swagger.SerializeAsV2(jsonWriter); else swagger.SerializeAsV3(jsonWriter);
-
-                await response.WriteAsync(textWriter.ToString(), new UTF8Encoding(false));
-            }
-        }
-        private async Task RespondWithSwaggerYaml(HttpResponse response, OpenApiDocument swagger)
-        {
-            response.StatusCode = 200;
-            response.ContentType = "application/yaml;charset=utf-8";
-
-            using (var textWriter = new StringWriter())
-            {
-                var yamlWriter = new OpenApiYamlWriter(textWriter);
-                if (_options.SerializeAsV2) swagger.SerializeAsV2(yamlWriter); else swagger.SerializeAsV3(yamlWriter);
 
                 await response.WriteAsync(textWriter.ToString(), new UTF8Encoding(false));
             }
