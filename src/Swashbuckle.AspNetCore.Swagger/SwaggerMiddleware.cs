@@ -18,12 +18,6 @@ namespace Swashbuckle.AspNetCore.Swagger
 
         public SwaggerMiddleware(
             RequestDelegate next,
-            IOptions<SwaggerOptions> optionsAccessor)
-            : this(next, optionsAccessor.Value)
-        { }
-
-        public SwaggerMiddleware(
-            RequestDelegate next,
             SwaggerOptions options)
         {
             _next = next;

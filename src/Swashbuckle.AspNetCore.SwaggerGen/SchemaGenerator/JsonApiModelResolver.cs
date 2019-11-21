@@ -13,17 +13,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-#if NETCOREAPP3_0
-
-        public JsonApiModelResolver(IOptions<JsonOptions> jsonOptionsAccessor)
-            : this(jsonOptionsAccessor.Value?.JsonSerializerOptions ?? new JsonSerializerOptions())
-        { }
-#else
-        public JsonApiModelResolver()
-            : this(new JsonSerializerOptions())
-        { }
-#endif
-
         public JsonApiModelResolver(JsonSerializerOptions jsonSerializerOptions)
         {
             _jsonSerializerOptions = jsonSerializerOptions;

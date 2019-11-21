@@ -34,14 +34,6 @@ namespace Swashbuckle.AspNetCore.ReDoc
             RequestDelegate next,
             IHostingEnvironment hostingEnv,
             ILoggerFactory loggerFactory,
-            IOptions<ReDocOptions> optionsAccessor)
-            : this(next, hostingEnv, loggerFactory, optionsAccessor.Value)
-        { }
-
-        public ReDocMiddleware(
-            RequestDelegate next,
-            IHostingEnvironment hostingEnv,
-            ILoggerFactory loggerFactory,
             ReDocOptions options)
         {
             _options = options ?? new ReDocOptions();

@@ -24,13 +24,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public SwaggerGenerator(
             IApiDescriptionGroupCollectionProvider apiDescriptionsProvider,
             ISchemaGenerator schemaGenerator,
-            IOptions<SwaggerGeneratorOptions> optionsAccessor)
-            : this(apiDescriptionsProvider, schemaGenerator, optionsAccessor.Value)
-        { }
-
-        public SwaggerGenerator(
-            IApiDescriptionGroupCollectionProvider apiDescriptionsProvider,
-            ISchemaGenerator schemaGenerator,
             SwaggerGeneratorOptions options)
         {
             _apiDescriptionsProvider = apiDescriptionsProvider;
