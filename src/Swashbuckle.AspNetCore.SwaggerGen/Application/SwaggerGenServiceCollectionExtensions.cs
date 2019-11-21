@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.ApiDescriptions;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -19,9 +20,16 @@ namespace Microsoft.Extensions.DependencyInjection
                 c.Conventions.Add(new SwaggerApplicationConvention()));
 
             // Register generator and it's dependencies
+            services.AddTransient(s => s.GetRequiredService<IOptions<SwaggerGeneratorOptions>>().Value);
             services.AddTransient<ISwaggerProvider, SwaggerGenerator>();
+            services.AddTransient(s => s.GetRequiredService<IOptions<SchemaGeneratorOptions>>().Value);
             services.AddTransient<ISchemaGenerator, SchemaGenerator>();
-            services.AddTransient<IApiModelResolver, JsonApiModelResolver>();
+            services.AddTransient<IApiModelResolver>(s =>
+            {
+                var jsonSerializerOptions = s.GetJsonSerializerOptions() ?? new JsonSerializerOptions();
+
+                return new JsonApiModelResolver(jsonSerializerOptions);
+            });
 
             // Register custom configurators that assign values from SwaggerGenOptions (i.e. high level config)
             // to the service-specific options (i.e. lower-level config)
@@ -41,6 +49,15 @@ namespace Microsoft.Extensions.DependencyInjection
             Action<SwaggerGenOptions> setupAction)
         {
             services.Configure(setupAction);
+        }
+
+        private static JsonSerializerOptions GetJsonSerializerOptions(this IServiceProvider serviceProvider)
+        {
+#if NETCOREAPP3_0
+            return serviceProvider.GetService<IOptions<JsonOptions>>()?.Value?.JsonSerializerOptions;
+#else
+            return null;
+#endif
         }
     }
 }

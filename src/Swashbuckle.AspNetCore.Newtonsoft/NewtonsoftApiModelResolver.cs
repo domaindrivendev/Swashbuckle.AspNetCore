@@ -17,24 +17,6 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
         private readonly IContractResolver _jsonContractResolver;
         private readonly SchemaGeneratorOptions _options;
 
-#if NETCOREAPP3_0
-        public NewtonsoftApiModelResolver(
-            IOptions<MvcNewtonsoftJsonOptions> jsonOptionsAccessor,
-            IOptions<SchemaGeneratorOptions> optionsAccessor)
-            : this(
-                jsonOptionsAccessor.Value?.SerializerSettings ?? new JsonSerializerSettings(),
-                optionsAccessor.Value ?? new SchemaGeneratorOptions())
-        { }
-#else
-        public NewtonsoftApiModelResolver(
-            IOptions<MvcJsonOptions> jsonOptionsAccessor,
-            IOptions<SchemaGeneratorOptions> optionsAccessor)
-            : this(
-                jsonOptionsAccessor.Value?.SerializerSettings ?? new JsonSerializerSettings(),
-                optionsAccessor.Value ?? new SchemaGeneratorOptions())
-        { }
-#endif
-
         public NewtonsoftApiModelResolver(JsonSerializerSettings jsonSerializerSettings, SchemaGeneratorOptions options)
         {
             _jsonSerializerSettings = jsonSerializerSettings;

@@ -33,14 +33,6 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             RequestDelegate next,
             IHostingEnvironment hostingEnv,
             ILoggerFactory loggerFactory,
-            IOptions<SwaggerUIOptions> optionsAccessor)
-            : this(next, hostingEnv, loggerFactory, optionsAccessor.Value)
-        { }
-
-        public SwaggerUIMiddleware(
-            RequestDelegate next,
-            IHostingEnvironment hostingEnv,
-            ILoggerFactory loggerFactory,
             SwaggerUIOptions options)
         {
             _options = options ?? new SwaggerUIOptions();

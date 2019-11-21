@@ -10,12 +10,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private readonly SchemaGeneratorOptions _options;
         private readonly ApiModelHandler _chainOfHandlers;
 
-        public SchemaGenerator(IApiModelResolver apiModelResolver, IOptions<SchemaGeneratorOptions> optionsAccessor)
-            : this(
-                apiModelResolver,
-                optionsAccessor.Value ?? new SchemaGeneratorOptions())
-        { }
-
         public SchemaGenerator(IApiModelResolver apiModelResolver, SchemaGeneratorOptions options)
         {
             _apiModelResolver = apiModelResolver;
