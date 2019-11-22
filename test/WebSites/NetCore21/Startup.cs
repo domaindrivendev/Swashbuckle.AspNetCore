@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
 namespace NetCore21
@@ -21,7 +22,11 @@ namespace NetCore21
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc()
-                .AddJsonOptions(c => c.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver())
+                .AddJsonOptions(c =>
+                {
+                    c.SerializerSettings.Converters.Add(new StringEnumConverter());
+                    c.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddSwaggerGen(c =>

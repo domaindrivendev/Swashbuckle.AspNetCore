@@ -4,7 +4,7 @@
 
   <PropertyGroup>
     <Description>Core components for Swagger/OpenAPI-driven integration testing API's built on ASP.NET Core</Description>
-    <TargetFrameworks>netstandard2.1;netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.0</TargetFrameworks>
     <NoWarn>$(NoWarn);1591</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>Swashbuckle.AspNetCore.ApiTesting</AssemblyName>
@@ -22,7 +22,7 @@
     <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.1.4" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.1' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="2.1.2" />
   </ItemGroup>
 

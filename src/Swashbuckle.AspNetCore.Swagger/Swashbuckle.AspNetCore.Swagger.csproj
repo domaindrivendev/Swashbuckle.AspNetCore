@@ -4,7 +4,7 @@
 
   <PropertyGroup>
     <Description>Middleware to expose Swagger JSON endpoints from API's built on ASP.NET Core</Description>
-    <TargetFrameworks>netstandard2.1;netcoreapp2.1;netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.0</TargetFrameworks>
     <NoWarn>$(NoWarn);1591</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>Swashbuckle.AspNetCore.Swagger</AssemblyName>
@@ -18,25 +18,16 @@
     <RepositoryUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore.git</RepositoryUrl>
   </PropertyGroup>
 
-  <Choose>
-    <When Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">
-      <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.App" />
-        <PackageReference Include="Microsoft.OpenApi" Version="1.1.4" />
-      </ItemGroup>
-    </When>    
-    <When Condition=" '$(TargetFramework)' == 'netcoreapp3.0' ">
-      <ItemGroup>
-        <FrameworkReference Include="Microsoft.AspNetCore.App" />
-        <PackageReference Include="Microsoft.OpenApi" Version="1.1.4" />
-      </ItemGroup>
-    </When>
-    <Otherwise>
-      <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
-        <PackageReference Include="Microsoft.OpenApi" Version="1.1.4" />
-      </ItemGroup>
-    </Otherwise>
-  </Choose>
-  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.OpenApi" Version="1.1.4" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.0' ">
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
 </Project>
