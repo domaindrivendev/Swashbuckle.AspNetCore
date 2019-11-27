@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ConfigFromFile.Controllers
@@ -17,6 +18,7 @@ namespace ConfigFromFile.Controllers
 
     public class Product
     {
+        [JsonIgnore]
         public int Id { get; set; }
     }
 }

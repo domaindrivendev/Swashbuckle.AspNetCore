@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 
 namespace Basic.Controllers
 {
@@ -22,7 +20,7 @@ namespace Basic.Controllers
 
     public class Promotion
     {
-        [JsonProperty("promo-code")]
+        [JsonPropertyName("promo-code")]
         public string Code { get; set; }
 
         public DiscountType DiscountType { get; set; }
@@ -31,7 +29,7 @@ namespace Basic.Controllers
         public int Discount { get; set; }
     }
 
-    [JsonConverter(typeof(StringEnumConverter))]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum DiscountType
     {
         Percentage,
