@@ -20,7 +20,8 @@ namespace Basic.Swagger
                     return new OpenApiObject
                     {
                         [ "id" ] = new OpenApiInteger(123),
-                        [ "description" ] = new OpenApiString("foobar")
+                        [ "description" ] = new OpenApiString("foobar"),
+                        [ "price" ] = new OpenApiDouble(14.37)
                     };
                 default:
                     return null;

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Globalization;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
@@ -77,7 +78,7 @@ namespace Swashbuckle.AspNetCore.Swagger
             response.StatusCode = 200;
             response.ContentType = "application/json;charset=utf-8";
 
-            using (var textWriter = new StringWriter())
+            using (var textWriter = new StringWriter(CultureInfo.InvariantCulture))
             {
                 var jsonWriter = new OpenApiJsonWriter(textWriter);
                 if (_options.SerializeAsV2) swagger.SerializeAsV2(jsonWriter); else swagger.SerializeAsV3(jsonWriter);

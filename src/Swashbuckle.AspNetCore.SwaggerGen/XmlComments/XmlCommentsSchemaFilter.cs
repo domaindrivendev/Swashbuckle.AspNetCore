@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Globalization;
 using System.Xml.XPath;
 using System.Reflection;
 using Microsoft.OpenApi.Any;
@@ -79,6 +80,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private static IOpenApiAny ConvertToOpenApiType(Type memberType, OpenApiSchema schema, string stringValue)
         {
             object typedValue;
+            var culture = CultureInfo.CurrentCulture;
+            CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 
             try
             {
@@ -87,6 +90,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             catch (Exception)
             {
                 return null;
+            }
+            finally
+            {
+                CultureInfo.CurrentCulture = culture;
             }
 
             return OpenApiAnyFactory.TryCreateFor(schema, typedValue, out IOpenApiAny openApiAny)
