@@ -190,15 +190,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 ? _schemaGenerator.GenerateSchema(apiParameter.ModelMetadata.ModelType, schemaRepository)
                 : new OpenApiSchema { Type = "string" };
 
-            var defaultValue = apiParameter.CustomAttributes().OfType<DefaultValueAttribute>().FirstOrDefault()?.Value
-                ?? apiParameter.ParameterInfo()?.DefaultValue;
-
-            // NOTE: Oddly, ParameterInfo.DefaultValue returns DBNull if not optional, hence the additional check below
-            if (schema.Reference == null && defaultValue != null && defaultValue != DBNull.Value)
+            // If it's NOT a reference schema, apply contextual metadata (i.e. from custom attributes)
+            if (schema.Reference == null)
             {
-                schema.Default = OpenApiAnyFactory.TryCreateFor(schema, defaultValue, out IOpenApiAny openApiAny)
-                    ? openApiAny
-                    : null;
+                // Honor default value for optional action parameters
+                var parameterInfo = apiParameter.ParameterInfo();
+                if (parameterInfo != null && parameterInfo.HasDefaultValue)
+                {
+                    schema.Default = OpenApiAnyFactory.TryCreateFor(schema, parameterInfo.DefaultValue, out IOpenApiAny openApiAny)
+                        ? openApiAny
+                        : null;
+                }
+
+                schema.ApplyCustomAttributes(apiParameter.CustomAttributes());
             }
 
             var parameter = new OpenApiParameter
