@@ -1,40 +1,39 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    internal class PolymorphicTypeHandler : ApiModelHandler
+    public class PolymorphicTypeHandler : SchemaGeneratorHandler
     {
-        public PolymorphicTypeHandler(SchemaGeneratorOptions options, SchemaGenerator generator)
-            : base(options, generator)
-        { }
+        private readonly SchemaGeneratorOptions _generatorOptions;
+        private readonly ISchemaGenerator _schemaGenerator;
 
-        protected override bool CanGenerateSchema(ApiModel apiModel, out bool shouldBeReferenced)
+        public PolymorphicTypeHandler(SchemaGeneratorOptions generatorOptions, ISchemaGenerator schemaGenerator)
         {
-            if (Options.GeneratePolymorphicSchemas && Options.SubTypesResolver(apiModel.Type).Any())
+            _generatorOptions = generatorOptions;
+            _schemaGenerator = schemaGenerator;
+        }
+
+        public override bool CanCreateSchemaFor(Type type, out bool shouldBeReferenced)
+        {
+            if (_generatorOptions.GeneratePolymorphicSchemas && _generatorOptions.SubTypesResolver(type).Any())
             {
                 shouldBeReferenced = false;
                 return true;
             }
 
-            return shouldBeReferenced = false;
+            shouldBeReferenced = false; return false;
         }
 
-        protected override OpenApiSchema GenerateDefinitionSchema(ApiModel apiModel, SchemaRepository schemaRepository)
+        public override OpenApiSchema CreateDefinitionSchema(Type type, SchemaRepository schemaRepository)
         {
-            var schema = new OpenApiSchema
+            return new OpenApiSchema
             {
-                OneOf = new List<OpenApiSchema>()
+                OneOf = _generatorOptions.SubTypesResolver(type)
+                    .Select(subType => _schemaGenerator.GenerateSchema(subType, schemaRepository))
+                    .ToList()
             };
-
-            foreach (var subType in Options.SubTypesResolver(apiModel.Type))
-            {
-                schema.OneOf.Add(Generator.GenerateSchema(subType, schemaRepository));
-            }
-
-            return schema;
         }
     }
 }

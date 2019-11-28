@@ -5,6 +5,7 @@ using System.Xml.XPath;
 using System.Reflection;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
+using System.Linq;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -23,23 +24,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
-            TryApplyTypeComments(schema, context.ApiModel.Type);
+            TryApplyTypeComments(schema, context.Type);
 
-            if (!(context.ApiModel is ApiObject apiObject))
-                return;
-
-            foreach (var apiProperty in apiObject.ApiProperties)
+            foreach (var entry in schema.Properties)
             {
-                if (!schema.Properties.TryGetValue(apiProperty.ApiName, out OpenApiSchema propertySchema))
-                    continue;
+                var propertyName = entry.Key;
+                var propertySchema = entry.Value;
 
-                if (propertySchema.Reference != null) // can't add descriptions to a reference schema
-                    continue;
+                if (propertySchema.Reference != null) continue; // can't add descriptions to a reference schema
 
-                if (apiProperty.MemberInfo == null)
-                    continue;
+                // Try to find the backing member by name (i.e. best effort)
+                var memberInfo = context.Type.GetMembers()
+                    .FirstOrDefault(m => m.Name.Equals(propertyName, StringComparison.InvariantCultureIgnoreCase));
 
-                TryApplyMemberComments(propertySchema, apiProperty.MemberInfo);
+                if (memberInfo == null) continue;
+
+                TryApplyMemberComments(propertySchema, memberInfo);
             };
         }
 
@@ -96,9 +96,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 CultureInfo.CurrentCulture = culture;
             }
 
-            return OpenApiAnyFactory.TryCreateFor(schema, typedValue, out IOpenApiAny openApiAny)
-                ? openApiAny
-                : null;
+            return OpenApiAnyFactory.CreateFor(schema, typedValue);
         }
     }
 }

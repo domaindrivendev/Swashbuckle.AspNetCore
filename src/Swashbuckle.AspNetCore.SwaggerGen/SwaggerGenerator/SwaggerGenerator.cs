@@ -8,8 +8,6 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -197,9 +195,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var parameterInfo = apiParameter.ParameterInfo();
                 if (parameterInfo != null && parameterInfo.HasDefaultValue)
                 {
-                    schema.Default = OpenApiAnyFactory.TryCreateFor(schema, parameterInfo.DefaultValue, out IOpenApiAny openApiAny)
-                        ? openApiAny
-                        : null;
+                    schema.Default = OpenApiAnyFactory.CreateFor(schema, parameterInfo.DefaultValue);
                 }
 
                 schema.ApplyCustomAttributes(apiParameter.CustomAttributes());
@@ -337,9 +333,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 // NOTE: Oddly, ParameterInfo.DefaultValue returns DBNull if not optional, hence the additional check below
                 if (schema.Reference == null && defaultValue != null && defaultValue != DBNull.Value)
                 {
-                    schema.Default = OpenApiAnyFactory.TryCreateFor(schema, defaultValue, out IOpenApiAny openApiAny)
-                        ? openApiAny
-                        : null;
+                    schema.Default = OpenApiAnyFactory.CreateFor(schema, defaultValue);
                 }
 
                 properties.Add(name, schema);

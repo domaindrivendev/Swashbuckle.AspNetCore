@@ -8,13 +8,6 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
 {
     public class AnnotationsSchemaFilterTests
     {
-        private readonly IApiModelResolver _apiModelResolver;
-
-        public AnnotationsSchemaFilterTests()
-        {
-            _apiModelResolver = new JsonApiModelResolver(new JsonSerializerOptions());
-        }
-
         [Theory]
         [InlineData(typeof(SwaggerAnnotatedClass))]
         [InlineData(typeof(SwaggerAnnotatedStruct))]
@@ -31,7 +24,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
         private SchemaFilterContext FilterContextFor(Type type)
         {
             return new SchemaFilterContext(
-                _apiModelResolver.ResolveApiModelFor(type),
+                type: type,
                 schemaRepository: null, // NA for test
                 schemaGenerator: null // NA for test
             );

@@ -16,9 +16,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return (innerType != null);
         }
 
+        public static bool IsNullable(this Type type)
+        {
+            return type.IsNullable(out _);
+        }
+
         public static bool IsDictionary(this Type type, out Type keyType, out Type valueType)
         {
-            if (type.IsConstructedFrom(typeof(IDictionary<,>), out Type constructedType) || type.IsConstructedFrom(typeof(IReadOnlyDictionary<,>), out constructedType))
+            if (type.IsConstructedFrom(typeof(IDictionary<,>), out Type constructedType)
+                || type.IsConstructedFrom(typeof(IReadOnlyDictionary<,>), out constructedType))
             {
                 keyType = constructedType.GenericTypeArguments[0];
                 valueType = constructedType.GenericTypeArguments[1];
@@ -68,7 +74,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public static bool IsReferenceOrNullableType(this Type type)
         {
-            return (!type.IsValueType || type.IsNullable(out Type _));
+            return (!type.IsValueType || type.IsNullable());
+        }
+
+        public static bool IsOneOf(this Type type, params Type[] possibleTypes)
+        {
+            return possibleTypes.Any(possibleType => possibleType == type);
+        }
+
+        public static bool IsAssignableToOneOf(this Type type, params Type[] possibleTypes)
+        {
+            return possibleTypes.Any(possibleType => possibleType.IsAssignableFrom(type));
         }
 
         private static bool IsConstructedFrom(this Type type, Type genericType, out Type constructedType)

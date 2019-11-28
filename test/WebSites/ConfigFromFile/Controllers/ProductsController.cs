@@ -20,5 +20,7 @@ namespace ConfigFromFile.Controllers
     {
         [JsonIgnore]
         public int Id { get; set; }
+
+        public int[][] Foo { get; set; }
     }
 }

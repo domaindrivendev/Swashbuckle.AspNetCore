@@ -103,11 +103,11 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
                 }
             };
 
-            var schemaOptions = new SchemaGeneratorOptions();
+            var generatorOptions = new SchemaGeneratorOptions();
 
             return new OperationFilterContext(
                 apiDescription,
-                new SchemaGenerator(new JsonApiModelResolver(new JsonSerializerOptions()), schemaOptions),
+                new JsonSchemaGenerator(generatorOptions, new JsonSerializerOptions()),
                 new SchemaRepository(),
                 (apiDescription.ActionDescriptor as ControllerActionDescriptor).MethodInfo);
         }

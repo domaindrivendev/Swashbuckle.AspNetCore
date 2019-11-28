@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Swashbuckle.AspNetCore.SwaggerGen.Test
+namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 {
     public enum AnnotatedEnum
     {

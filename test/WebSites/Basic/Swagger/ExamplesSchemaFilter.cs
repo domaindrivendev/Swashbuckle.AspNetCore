@@ -9,7 +9,7 @@ namespace Basic.Swagger
     {
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
-            schema.Example = GetExampleOrNullFor(context.ApiModel.Type);
+            schema.Example = GetExampleOrNullFor(context.Type);
         }
 
         private IOpenApiAny GetExampleOrNullFor(Type type)

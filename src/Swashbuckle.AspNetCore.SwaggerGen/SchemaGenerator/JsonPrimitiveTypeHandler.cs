@@ -1,52 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using Microsoft.OpenApi.Any;
+using System.Text.Json;
 using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    internal class ApiPrimitiveHandler : ApiModelHandler
+    public class JsonPrimitiveTypeHandler : SchemaGeneratorHandler
     {
-        public ApiPrimitiveHandler( SchemaGeneratorOptions options, ISchemaGenerator generator)
-            : base(options, generator)
-        { }
+        private readonly JsonSerializerOptions _serializerOptions;
 
-        protected override bool CanGenerateSchema(ApiModel apiModel, out bool shouldBeReferenced)
+        public JsonPrimitiveTypeHandler(JsonSerializerOptions serializerOptions)
         {
-            if (apiModel is ApiPrimitive apiPrimitive)
+            _serializerOptions = serializerOptions;
+        }
+
+        public override bool CanCreateSchemaFor(Type type, out bool shouldBeReferenced)
+        {
+            if (PrimitiveTypeMap.ContainsKey(type) || (type.IsNullable(out Type innerType) && PrimitiveTypeMap.ContainsKey(innerType)))
             {
-                shouldBeReferenced = apiPrimitive.IsEnum;
+                shouldBeReferenced = false;
                 return true;
             }
 
             shouldBeReferenced = false; return false;
         }
 
-        protected override OpenApiSchema GenerateDefinitionSchema(ApiModel apiModel, SchemaRepository schemaRepository)
+        public override OpenApiSchema CreateDefinitionSchema(Type type, SchemaRepository schemaRepository)
         {
-            var apiPrimitive = (ApiPrimitive)apiModel;
+            var isNullable = type.IsNullable(out Type innerType);
 
-            if (apiPrimitive.IsEnum)
-                return GenerateEnumSchema(apiPrimitive);
+            var schema = isNullable
+                ? PrimitiveTypeMap[innerType]()
+                : PrimitiveTypeMap[type]();
 
-            return PrimitiveTypeMap.ContainsKey(apiPrimitive.Type)
-                ? PrimitiveTypeMap[apiPrimitive.Type]()
-                : PrimitiveTypeMap[typeof(string)](); // if no mapping exists, default to string
-        }
-
-        private OpenApiSchema GenerateEnumSchema(ApiPrimitive apiPrimitive)
-        {
-            var schema = apiPrimitive.IsStringEnum
-                ? PrimitiveTypeMap[typeof(string)]()
-                : PrimitiveTypeMap[apiPrimitive.Type.GetEnumUnderlyingType()]();
-
-            schema.Enum = apiPrimitive.ApiEnumValues
-                .Select(value =>
-                {
-                    return OpenApiAnyFactory.TryCreateFor(schema, value, out IOpenApiAny openApiAny) ? openApiAny : null;
-                })
-                .ToList();
+            if (_serializerOptions.IgnoreNullValues)
+            {
+                schema.Nullable = false;
+            }
+            else
+            {
+                schema.Nullable = (!type.IsValueType || isNullable);
+            }
 
             return schema;
         }
