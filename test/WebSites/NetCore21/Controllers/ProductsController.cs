@@ -23,5 +23,14 @@ namespace NetCore21
         public int Id { get; set; }
 
         public string Description { get; set; }
+
+        public ProductStatus Status { get; set; }
+    }
+
+    public enum ProductStatus
+    {
+        All = 0,
+        OutOfStock = 1,
+        InStock = 2
     }
 }

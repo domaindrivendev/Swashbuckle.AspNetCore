@@ -4,7 +4,7 @@
 
   <PropertyGroup>
     <Description>Swagger tools for documenting APIs built on ASP.NET Core</Description>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.0</TargetFrameworks>
     <PackageId>Swashbuckle.AspNetCore</PackageId>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>
     <PackageProjectUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</PackageProjectUrl>

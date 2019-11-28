@@ -3,10 +3,10 @@ using System.Reflection;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.Loader;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Writers;
-using Microsoft.AspNetCore;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.Cli

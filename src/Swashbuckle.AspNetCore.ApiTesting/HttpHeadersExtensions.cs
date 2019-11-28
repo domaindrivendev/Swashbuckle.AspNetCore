@@ -1,4 +1,5 @@
-﻿using System.Collections.Specialized;
+﻿using System;
+using System.Collections.Specialized;
 using System.Net.Http.Headers;
 
 namespace Swashbuckle.AspNetCore.ApiTesting
@@ -10,7 +11,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting
             var headerNameValues = new NameValueCollection();  
             foreach (var entry in httpHeaders)
             {
-                headerNameValues.Add(entry.Key, string.Join(',', entry.Value));
+                headerNameValues.Add(entry.Key, string.Join(",", entry.Value));
             }
             return headerNameValues;
         }
