@@ -60,9 +60,10 @@ namespace OAuth2Integration
                     Type = SecuritySchemeType.OAuth2,
                     Flows = new OpenApiOAuthFlows
                     {
-                        Implicit = new OpenApiOAuthFlow
+                        AuthorizationCode = new OpenApiOAuthFlow
                         {
                             AuthorizationUrl = new Uri("/auth-server/connect/authorize", UriKind.Relative),
+                            TokenUrl = new Uri("/auth-server/connect/token", UriKind.Relative),
                             Scopes = new Dictionary<string, string>
                             {
                                 { "readAccess", "Access read operations" },
@@ -79,7 +80,7 @@ namespace OAuth2Integration
                         {
                             Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
                         },
-                        new[] { "readAccess", "writeAccess" }
+                        new[] { "openid", "profile", "email", "api" }
                     }
                 });
 
@@ -128,15 +129,12 @@ namespace OAuth2Integration
                 resourceServer.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/resource-server/swagger/v1/swagger.json", "My API V1");
-
                     // Additional OAuth settings (See https://github.com/swagger-api/swagger-ui/blob/v3.10.0/docs/usage/oauth2.md)
-                    c.OAuthClientId("test-id");
+                    c.OAuthClientId("test-id.confidential");
                     c.OAuthClientSecret("test-secret");
-                    c.OAuthRealm("test-realm");
                     c.OAuthAppName("test-app");
                     c.OAuthScopeSeparator(" ");
-                    c.OAuthAdditionalQueryStringParams(new Dictionary<string, string> { { "foo", "bar" }});
-                    c.OAuthUseBasicAuthenticationWithAccessCodeGrant();
+                    c.OAuthUsePkce();
                     c.ConfigObject.DeepLinking = true;
                 });
             });
