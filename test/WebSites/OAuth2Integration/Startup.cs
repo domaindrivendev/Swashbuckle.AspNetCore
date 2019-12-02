@@ -80,7 +80,7 @@ namespace OAuth2Integration
                         {
                             Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
                         },
-                        new[] { "openid", "profile", "email", "api" }
+                        new[] { "readAccess", "writeAccess" }
                     }
                 });
 
