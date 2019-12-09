@@ -14,9 +14,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 if (attribute is DefaultValueAttribute defaultValue && defaultValue.Value != null)
                 {
-                    schema.Default = OpenApiAnyFactory.TryCreateFor(schema, defaultValue.Value, out IOpenApiAny openApiAny)
-                        ? openApiAny
-                        : schema.Default;
+                    schema.Default = OpenApiAnyFactory.CreateFor(schema, defaultValue.Value);
                 }
                 else if (attribute is RegularExpressionAttribute regex)
                 {

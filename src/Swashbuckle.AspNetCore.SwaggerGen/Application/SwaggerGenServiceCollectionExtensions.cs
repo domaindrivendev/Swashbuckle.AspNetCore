@@ -19,22 +19,21 @@ namespace Microsoft.Extensions.DependencyInjection
             services.Configure<MvcOptions>(c =>
                 c.Conventions.Add(new SwaggerApplicationConvention()));
 
+            // Register custom configurators that takes values from SwaggerGenOptions (i.e. high level config)
+            // and applies them to SwaggerGeneratorOptions and SchemaGeneratorOptoins (i.e. lower-level config)
+            services.AddTransient<IConfigureOptions<SwaggerGeneratorOptions>, ConfigureSwaggerGeneratorOptions>();
+            services.AddTransient<IConfigureOptions<SchemaGeneratorOptions>, ConfigureSchemaGeneratorOptions>();
+
             // Register generator and it's dependencies
             services.AddTransient(s => s.GetRequiredService<IOptions<SwaggerGeneratorOptions>>().Value);
             services.AddTransient<ISwaggerProvider, SwaggerGenerator>();
-            services.AddTransient(s => s.GetRequiredService<IOptions<SchemaGeneratorOptions>>().Value);
-            services.AddTransient<ISchemaGenerator, SchemaGenerator>();
-            services.AddTransient<IApiModelResolver>(s =>
+            services.AddTransient<ISchemaGenerator, JsonSchemaGenerator>(s =>
             {
-                var jsonSerializerOptions = s.GetJsonSerializerOptions() ?? new JsonSerializerOptions();
+                var generatorOptions = s.GetService<IOptions<SchemaGeneratorOptions>>()?.Value ?? new SchemaGeneratorOptions();
+                var serializerOptions = s.GetJsonSerializerOptions() ?? new JsonSerializerOptions();
 
-                return new JsonApiModelResolver(jsonSerializerOptions);
+                return new JsonSchemaGenerator(generatorOptions, serializerOptions);
             });
-
-            // Register custom configurators that assign values from SwaggerGenOptions (i.e. high level config)
-            // to the service-specific options (i.e. lower-level config)
-            services.AddTransient<IConfigureOptions<SwaggerGeneratorOptions>, ConfigureSwaggerGeneratorOptions>();
-            services.AddTransient<IConfigureOptions<SchemaGeneratorOptions>, ConfigureSchemaGeneratorOptions>();
 
             // Used by the <c>dotnet-getdocument</c> tool from the Microsoft.Extensions.ApiDescription.Server package.
             services.TryAddSingleton<IDocumentProvider, DocumentProvider>();

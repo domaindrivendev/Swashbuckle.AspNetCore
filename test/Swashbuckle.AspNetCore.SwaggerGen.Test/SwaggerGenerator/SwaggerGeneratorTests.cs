@@ -782,7 +782,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             return new SwaggerGenerator(
                 new FakeApiDescriptionGroupCollectionProvider(apiDescriptions),
-                new SchemaGenerator(new JsonApiModelResolver(new JsonSerializerOptions()), new SchemaGeneratorOptions()),
+                new JsonSchemaGenerator(new SchemaGeneratorOptions(), new JsonSerializerOptions()),
                 options ?? DefaultOptions
             );
         }

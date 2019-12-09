@@ -7,7 +7,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class SchemaRepository
     {
-        private Dictionary<Type, string> _reservedIds = new Dictionary<Type, string>();
+        private readonly Dictionary<Type, string> _reservedIds = new Dictionary<Type, string>();
 
         public Dictionary<string, OpenApiSchema> Schemas { get; private set; } = new Dictionary<string, OpenApiSchema>();
 
@@ -37,7 +37,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return _reservedIds.TryGetValue(type, out schemaId);
         }
         
-        private void ReserveIdFor(Type type, string schemaId)
+        public void ReserveIdFor(Type type, string schemaId)
         {
             if (_reservedIds.ContainsValue(schemaId))
             {

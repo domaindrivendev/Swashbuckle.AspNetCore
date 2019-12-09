@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using System;
+using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -10,16 +11,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     public class SchemaFilterContext
     {
         public SchemaFilterContext(
-            ApiModel apiModel,
+            Type type,
             SchemaRepository schemaRepository,
             ISchemaGenerator schemaGenerator)
         {
-            ApiModel = apiModel;
+            Type = type;
             SchemaRepository = schemaRepository;
             SchemaGenerator = schemaGenerator;
         }
 
-        public ApiModel ApiModel { get; }
+        public Type Type { get; }
 
         public SchemaRepository SchemaRepository { get; }
 

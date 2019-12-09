@@ -111,5 +111,7 @@ namespace Basic.Controllers
         public string Description { get; set; }
 
         public ProductStatus Status { get; set; }
+
+        public ProductStatus? Status2 { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace Swashbuckle.AspNetCore.SwaggerGen.Test
+﻿namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 {
     namespace Namespace1
     {

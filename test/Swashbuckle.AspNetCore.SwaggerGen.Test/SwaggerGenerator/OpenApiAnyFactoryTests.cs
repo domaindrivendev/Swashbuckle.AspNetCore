@@ -20,7 +20,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData("number", "double", 1.25D, typeof(OpenApiDouble))]
         [InlineData("string", "uuid", "d3966535-2637-48fa-b911-e3c27405ee09", typeof(OpenApiString))]
         [InlineData("string", null, "foobar", typeof(OpenApiString))]
-        public void TryCreateFor_CreatesAnInstance_ForProvidedSchemaAndValue(
+        public void CreateFor_CreatesAnInstance_ForProvidedSchemaAndValue(
             string schemaType,
             string schemaFormat,
             object value,
@@ -28,29 +28,29 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schema = new OpenApiSchema { Type = schemaType, Format = schemaFormat };
 
-            OpenApiAnyFactory.TryCreateFor(schema, value, out IOpenApiAny instance);
+            var instance = OpenApiAnyFactory.CreateFor(schema, value);
 
             Assert.NotNull(instance);
             Assert.IsType(expectedInstanceType, instance);
         }
 
         [Fact]
-        public void TryCreateFor_CreatesAnInstance_ForDateTimeSchemaAndValue()
+        public void CreateFor_CreatesAnInstance_ForDateTimeSchemaAndValue()
         {
             var schema = new OpenApiSchema { Type = "string", Format = "date-time" };
 
-            OpenApiAnyFactory.TryCreateFor(schema, DateTime.UtcNow, out IOpenApiAny instance);
+            var instance = OpenApiAnyFactory.CreateFor(schema, DateTime.UtcNow);
 
             Assert.NotNull(instance);
             Assert.IsType<OpenApiDate>(instance);
         }
 
         [Fact]
-        public void TryCreateFor_CreatesAnInstance_ForDoubleSchemaAndValueWhenGivenDecimal()
+        public void CreateFor_CreatesAnInstance_ForDoubleSchemaAndValueWhenGivenDecimal()
         {
             var schema = new OpenApiSchema { Type = "number", Format = "double" };
 
-            OpenApiAnyFactory.TryCreateFor(schema, 3.4m, out IOpenApiAny instance);
+            var instance = OpenApiAnyFactory.CreateFor(schema, 3.4m);
 
             Assert.NotNull(instance);
             Assert.IsType<OpenApiDouble>(instance);

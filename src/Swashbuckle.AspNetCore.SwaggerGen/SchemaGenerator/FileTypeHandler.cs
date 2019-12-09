@@ -1,30 +1,30 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    internal class FileTypeHandler : ApiModelHandler
+    public class FileTypeHandler : SchemaGeneratorHandler
     {
-        public FileTypeHandler(SchemaGeneratorOptions options, ISchemaGenerator generator)
-            : base(options, generator)
-        { }
-
-        protected override bool CanGenerateSchema(ApiModel apiModel, out bool shouldBeReferenced)
+        public override bool CanCreateSchemaFor(Type type, out bool shouldBeReferenced)
         {
-            if (typeof(IFormFile).IsAssignableFrom(apiModel.Type) || typeof(FileResult).IsAssignableFrom(apiModel.Type))
+            if (type.IsAssignableToOneOf(typeof(IFormFile), typeof(FileResult)))
             {
                 shouldBeReferenced = false;
                 return true;
             }
 
-            shouldBeReferenced = false;
-            return false;
+            shouldBeReferenced = false; return false;
         }
 
-        protected override OpenApiSchema GenerateDefinitionSchema(ApiModel apiModel, SchemaRepository schemaRepository)
+        public override OpenApiSchema CreateDefinitionSchema(Type type, SchemaRepository schemaRepository)
         {
-            return new OpenApiSchema { Type = "string", Format = "binary" };
+            return new OpenApiSchema
+            {
+                Type = "string",
+                Format = "binary"
+            };
         }
     }
 }

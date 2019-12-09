@@ -13,13 +13,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     public class XmlCommentsSchemaFilterTests
     {
-        private readonly IApiModelResolver _apiModelResolver;
-
-        public XmlCommentsSchemaFilterTests()
-        {
-            _apiModelResolver = new JsonApiModelResolver(new JsonSerializerOptions());
-        }
-
         [Theory]
         [InlineData(typeof(XmlAnnotatedType), "Summary for XmlAnnotatedType")]
         [InlineData(typeof(XmlAnnotatedType.NestedType), "Summary for NestedType")]
@@ -133,7 +126,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         private SchemaFilterContext FilterContextFor(Type type)
         {
             return new SchemaFilterContext(
-                _apiModelResolver.ResolveApiModelFor(type),
+                type: type,
                 schemaRepository: null, // NA for test
                 schemaGenerator: null // NA for test
             );

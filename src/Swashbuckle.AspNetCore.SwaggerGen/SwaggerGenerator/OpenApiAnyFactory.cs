@@ -6,35 +6,33 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class OpenApiAnyFactory
     {
-        public static bool TryCreateFor(OpenApiSchema schema, object value, out IOpenApiAny openApiAny)
+        public static IOpenApiAny CreateFor(OpenApiSchema schema, object value)
         {
-            openApiAny = null;
-
             if (schema.Type == "boolean" && TryCast(value, out bool boolValue))
-                openApiAny = new OpenApiBoolean(boolValue);
+                return new OpenApiBoolean(boolValue);
 
             else if (schema.Type == "integer" && schema.Format == "int32" && TryCast(value, out int intValue))
-                openApiAny = new OpenApiInteger(intValue);
+                return new OpenApiInteger(intValue);
 
             else if (schema.Type == "integer" && schema.Format == "int64" && TryCast(value, out long longValue))
-                openApiAny = new OpenApiLong(longValue);
+                return new OpenApiLong(longValue);
 
             else if (schema.Type == "number" && schema.Format == "float" && TryCast(value, out float floatValue))
-                openApiAny = new OpenApiFloat(floatValue);
+                return new OpenApiFloat(floatValue);
 
             else if (schema.Type == "number" && schema.Format == "double" && TryCast(value, out double doubleValue))
-                openApiAny = new OpenApiDouble(doubleValue);
+                return new OpenApiDouble(doubleValue);
 
             else if (schema.Type == "string" && value.GetType().IsEnum)
-                openApiAny = new OpenApiString(Enum.GetName(value.GetType(), value));
+                return new OpenApiString(Enum.GetName(value.GetType(), value));
 
             else if (schema.Type == "string" && schema.Format == "date-time" && TryCast(value, out DateTime dateTimeValue))
-                openApiAny = new OpenApiDate(dateTimeValue);
+                return new OpenApiDate(dateTimeValue);
 
             else if (schema.Type == "string")
-                openApiAny = new OpenApiString(value.ToString());
+                return new OpenApiString(value.ToString());
 
-            return openApiAny != null;
+            return null;
         }
 
         private static bool TryCast<T>(object value, out T typedValue)
