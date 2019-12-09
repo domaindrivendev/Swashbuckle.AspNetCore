@@ -34,7 +34,7 @@ namespace ConfigFromFile
             {
                 Configuration.Bind("SwaggerUI", c);
 
-                //c.ConfigObject.SupportedSubmitMethods = new SubmitMethod[]{ };
+                c.ConfigObject.SupportedSubmitMethods = new SubmitMethod[]{ };
                 c.ConfigObject.AdditionalItems.Add("swaggerUIFoo", "bar");
             });
 

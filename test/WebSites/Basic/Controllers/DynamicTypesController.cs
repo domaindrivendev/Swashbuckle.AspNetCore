@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Dynamic;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
 
 namespace Basic.Controllers
 {
@@ -24,22 +23,6 @@ namespace Basic.Controllers
         public IActionResult CreateDragons([FromBody]object dragon)
         {
             return new ObjectResult(1);
-        }
-
-        [HttpGet("wizards")]
-        public IEnumerable<JObject> GetWizards()
-        {
-            return new[]
-            {
-                new JObject(),
-                new JObject()
-            };
-        }
-
-        [HttpGet("witches")]
-        public JArray GetWitches()
-        {
-            return JArray.FromObject(new[] { "foo", "bar" });
         }
     }
 }

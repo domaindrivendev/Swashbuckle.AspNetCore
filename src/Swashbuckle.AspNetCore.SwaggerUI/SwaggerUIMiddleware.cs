@@ -12,9 +12,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.StaticFiles;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using Newtonsoft.Json.Converters;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 #if NETCOREAPP3_0
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IWebHostEnvironment;
 #endif
@@ -26,8 +25,8 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         private const string EmbeddedFileNamespace = "Swashbuckle.AspNetCore.SwaggerUI.node_modules.swagger_ui_dist";
 
         private readonly SwaggerUIOptions _options;
-        private readonly JsonSerializer _jsonSerializer;
         private readonly StaticFileMiddleware _staticFileMiddleware;
+        private readonly JsonSerializerOptions _jsonSerializerOptions;
 
         public SwaggerUIMiddleware(
             RequestDelegate next,
@@ -36,8 +35,13 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             SwaggerUIOptions options)
         {
             _options = options ?? new SwaggerUIOptions();
-            _jsonSerializer = CreateJsonSerializer();
+
             _staticFileMiddleware = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options);
+
+            _jsonSerializerOptions = new JsonSerializerOptions();
+            _jsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+            _jsonSerializerOptions.IgnoreNullValues = true;
+            _jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, false));
         }
 
         public async Task Invoke(HttpContext httpContext)
@@ -64,18 +68,6 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             }
 
             await _staticFileMiddleware.Invoke(httpContext);
-        }
-
-        private JsonSerializer CreateJsonSerializer()
-        {
-            return JsonSerializer.Create(new JsonSerializerSettings
-            {
-                ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                Converters = new[] { new StringEnumConverter(true) },
-                NullValueHandling = NullValueHandling.Ignore,
-                Formatting = Formatting.None,
-                StringEscapeHandling = StringEscapeHandling.EscapeHtml
-            });
         }
 
         private StaticFileMiddleware CreateStaticFileMiddleware(
@@ -123,16 +115,9 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             {
                 { "%(DocumentTitle)", _options.DocumentTitle },
                 { "%(HeadContent)", _options.HeadContent },
-                { "%(ConfigObject)", SerializeToJson(_options.ConfigObject) },
-                { "%(OAuthConfigObject)", SerializeToJson(_options.OAuthConfigObject) }
+                { "%(ConfigObject)", JsonSerializer.Serialize(_options.ConfigObject, _jsonSerializerOptions) },
+                { "%(OAuthConfigObject)", JsonSerializer.Serialize(_options.OAuthConfigObject, _jsonSerializerOptions) }
             };
-        }
-
-        private string SerializeToJson(object obj)
-        {
-            var writer = new StringWriter();
-            _jsonSerializer.Serialize(writer, obj);
-            return writer.ToString();
         }
     }
 }
