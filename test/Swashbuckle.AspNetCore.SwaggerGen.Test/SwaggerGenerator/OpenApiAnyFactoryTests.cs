@@ -55,5 +55,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.NotNull(instance);
             Assert.IsType<OpenApiDouble>(instance);
         }
+
+        [Fact]
+        public void CreateFor_ReturnsNull_IfValueIsNull()
+        {
+            var schema = new OpenApiSchema { Type = "string" };
+
+            var instance = OpenApiAnyFactory.CreateFor(schema, null);
+
+            Assert.Null(instance);
+        }
     }
 }

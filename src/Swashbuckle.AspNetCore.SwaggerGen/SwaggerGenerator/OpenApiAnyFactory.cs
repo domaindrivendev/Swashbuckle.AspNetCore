@@ -8,6 +8,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         public static IOpenApiAny CreateFor(OpenApiSchema schema, object value)
         {
+            if (value == null) return null;
+
             if (schema.Type == "boolean" && TryCast(value, out bool boolValue))
                 return new OpenApiBoolean(boolValue);
 
