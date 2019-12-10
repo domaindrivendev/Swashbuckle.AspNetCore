@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Swashbuckle.AspNetCore.ReDoc
 {
@@ -109,6 +109,6 @@ namespace Swashbuckle.AspNetCore.ReDoc
         public bool SortPropsAlphabetically { get; set; } = false;
 
         [JsonExtensionData]
-        public Dictionary<string, object> AdditionalItems = new Dictionary<string, object>();
+        public Dictionary<string, object> AdditionalItems { get; set; } = new Dictionary<string, object>();
     }
 }

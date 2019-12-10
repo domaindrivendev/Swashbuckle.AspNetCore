@@ -49,14 +49,18 @@
       var configObject = JSON.parse('%(ConfigObject)');
       var oauthConfigObject = JSON.parse('%(OAuthConfigObject)');
 
-      // Apply mandatory parameters
-      configObject.dom_id = "#swagger-ui";
-      configObject.presets = [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset];
-      configObject.layout = "StandaloneLayout";
+      // If validatorUrl is not explicitly provided, disable the feature by setting to null
+      if (!configObject.hasOwnProperty("validatorUrl"))
+        configObject.validatorUrl = null
 
       // If oauth2RedirectUrl isn't specified, use the built-in default
       if (!configObject.hasOwnProperty("oauth2RedirectUrl"))
         configObject.oauth2RedirectUrl = window.location.href.replace("index.html", "oauth2-redirect.html").split('#')[0];
+
+      // Apply mandatory parameters
+      configObject.dom_id = "#swagger-ui";
+      configObject.presets = [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset];
+      configObject.layout = "StandaloneLayout";
 
       // Begin Swagger UI call region
 
