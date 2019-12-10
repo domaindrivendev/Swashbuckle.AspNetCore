@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -60,6 +60,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     schema.Format = DataTypeFormatMap.TryGetValue(dataTypeAttribute.DataType, out string format)
                         ? format
                         : schema.Format;
+                }
+                else if (attribute is ObsoleteAttribute)
+                {
+                    schema.Deprecated = true;
                 }
             }
         }

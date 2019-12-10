@@ -274,6 +274,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GenerateSchema_SetsDeprecatedFlag_IfPropertyHasObsoleteAttribute()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(typeof(ObsoletePropertiesType), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.True(schema.Properties["ObsoleteProperty"].Deprecated);
+        }
+
+        [Fact]
         public void GenerateSchema_SupportsOption_CustomTypeMappings()
         {
             var subject = Subject(
