@@ -60,7 +60,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     .ToList();
             }
 
-            schema.Nullable = (!_serializerOptions.IgnoreNullValues && isNullable);
+            schema.Nullable = isNullable;
 
             return schema;
         }

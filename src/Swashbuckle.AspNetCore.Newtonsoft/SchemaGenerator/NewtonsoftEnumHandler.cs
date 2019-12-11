@@ -80,7 +80,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     .ToList();
             }
 
-            schema.Nullable = (_serializerSettings.NullValueHandling == NullValueHandling.Include) && isNullable;
+            schema.Nullable = isNullable;
 
             return schema;
         }

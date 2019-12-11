@@ -1,7 +1,5 @@
 ﻿using System;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -10,13 +8,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
     public class NewtonsoftArrayHandler : SchemaGeneratorHandler
     {
         private readonly IContractResolver _contractResolver;
-        private readonly JsonSerializerSettings _serializerSettings;
         private readonly ISchemaGenerator _schemaGenerator;
 
-        public NewtonsoftArrayHandler(IContractResolver contractResolver, JsonSerializerSettings serializerSettings, ISchemaGenerator schemaGenerator)
+        public NewtonsoftArrayHandler(IContractResolver contractResolver, ISchemaGenerator schemaGenerator)
         {
             _contractResolver = contractResolver;
-            _serializerSettings = serializerSettings;
             _schemaGenerator = schemaGenerator;
         }
 
@@ -43,7 +39,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                 Type = "array",
                 Items = _schemaGenerator.GenerateSchema(itemType, schemaRepository),
                 UniqueItems = type.IsSet() ? (bool?)true : null,
-                Nullable = (_serializerSettings.NullValueHandling == NullValueHandling.Include)
+                Nullable = true
             };
         }
     }

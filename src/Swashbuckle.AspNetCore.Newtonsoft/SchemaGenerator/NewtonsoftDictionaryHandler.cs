@@ -10,13 +10,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
     public class NewtonsoftDictionaryHandler : SchemaGeneratorHandler
     {
         private readonly IContractResolver _contractResolver;
-        private readonly JsonSerializerSettings _serializerSettings;
         private readonly ISchemaGenerator _schemaGenerator;
 
-        public NewtonsoftDictionaryHandler(IContractResolver contractResolver, JsonSerializerSettings serializerSettings, ISchemaGenerator schemaGenerator)
+        public NewtonsoftDictionaryHandler(IContractResolver contractResolver, ISchemaGenerator schemaGenerator)
         {
             _contractResolver = contractResolver;
-            _serializerSettings = serializerSettings;
             _schemaGenerator = schemaGenerator;
         }
 
@@ -39,34 +37,28 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             var keyType = jsonDictionaryContract.DictionaryKeyType ?? typeof(object);
             var valueType = jsonDictionaryContract.DictionaryValueType ?? typeof(object);
 
-            OpenApiSchema schema;
-
             if (keyType.IsEnum)
             {
                 // This is a special case where we can include named properties based on the enum values
-                schema = new OpenApiSchema
+                return new OpenApiSchema
                 {
                     Type = "object",
                     Properties = keyType.GetEnumNames()
                         .ToDictionary(
                             name => name,
                             name => _schemaGenerator.GenerateSchema(valueType, schemaRepository)
-                        )
+                        ),
+                    Nullable = true
                 };
             }
-            else
+
+            return new OpenApiSchema
             {
-                schema = new OpenApiSchema
-                {
-                    Type = "object",
-                    AdditionalPropertiesAllowed = true,
-                    AdditionalProperties = _schemaGenerator.GenerateSchema(valueType, schemaRepository)
-                };
-            }
-
-            schema.Nullable = (_serializerSettings.NullValueHandling == NullValueHandling.Include);
-
-            return schema;
+                Type = "object",
+                AdditionalPropertiesAllowed = true,
+                AdditionalProperties = _schemaGenerator.GenerateSchema(valueType, schemaRepository),
+                Nullable = true
+            };
         }
     }
 }

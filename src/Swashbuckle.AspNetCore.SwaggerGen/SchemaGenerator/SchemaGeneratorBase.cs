@@ -32,8 +32,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 if (!handler.CanCreateSchemaFor(type, out bool shouldBeReferenced)) continue;
 
                 return shouldBeReferenced
-                    ? CreateReferenceSchema(type, schemaRepository, () => ApplyFilters(handler.CreateDefinitionSchema(type, schemaRepository), type, schemaRepository))
-                    : ApplyFilters(handler.CreateDefinitionSchema(type, schemaRepository), type, schemaRepository);
+                    ? CreateReferenceSchema(type, schemaRepository, () => ApplyFiltersTo(handler.CreateDefinitionSchema(type, schemaRepository), type, schemaRepository))
+                    : ApplyFiltersTo(handler.CreateDefinitionSchema(type, schemaRepository), type, schemaRepository);
             }
 
             throw new NotSupportedException($"Cannot generate schema for type {type}");
@@ -47,7 +47,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 factoryMethod: factoryMethod);
         }
 
-        private OpenApiSchema ApplyFilters(OpenApiSchema schema, Type type, SchemaRepository schemaRepository)
+        private OpenApiSchema ApplyFiltersTo(OpenApiSchema schema, Type type, SchemaRepository schemaRepository)
         {
             var filterContext = new SchemaFilterContext(type, schemaRepository, this);
             foreach (var filter in _generatorOptions.SchemaFilters)

@@ -404,32 +404,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             });
         }
 
-        [Theory]
-        [InlineData(typeof(bool?))]
-        [InlineData(typeof(byte[]))]
-        [InlineData(typeof(string))]
-        [InlineData(typeof(IntEnum?))]
-        [InlineData(typeof(IDictionary<string, int>))]
-        [InlineData(typeof(int[]))]
-        [InlineData(typeof(IEnumerable<int>))]
-        [InlineData(typeof(ComplexType))]
-        public void GenerateSchema_HonorsSerializerOption_IgnoreNullValues(Type type)
-        {
-            var subject = Subject(
-                configureGenerator: c => { },
-                configureSerializer: c => { c.IgnoreNullValues = true; }
-            );
-            var schemaRepository = new SchemaRepository();
-
-            var schemaOrReference = subject.GenerateSchema(type, schemaRepository);
-
-            var schema = (schemaOrReference.Reference != null)
-                ? schemaRepository.Schemas[schemaOrReference.Reference.Id]
-                : schemaOrReference;
-
-            Assert.False(schema.Nullable);
-        }
-
         [Fact]
         public void GenerateSchema_HonorsSerializerOption_IgnoreReadonlyProperties()
         {
