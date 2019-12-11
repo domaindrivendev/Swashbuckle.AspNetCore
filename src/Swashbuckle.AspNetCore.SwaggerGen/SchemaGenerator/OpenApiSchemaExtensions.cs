@@ -61,6 +61,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         ? format
                         : schema.Format;
                 }
+                else if (attribute is RequiredAttribute)
+                {
+                    schema.Nullable = false;
+                }
                 else if (attribute is ObsoleteAttribute)
                 {
                     schema.Deprecated = true;

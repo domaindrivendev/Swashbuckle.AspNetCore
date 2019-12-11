@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Linq;
-using System.Text.Json;
 using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class JsonDictionaryHandler : SchemaGeneratorHandler
     {
-        private readonly JsonSerializerOptions _serializerOptions;
         private readonly ISchemaGenerator _schemaGenerator;
 
-        public JsonDictionaryHandler(JsonSerializerOptions serializerOptions, ISchemaGenerator schemaGenerator)
+        public JsonDictionaryHandler(ISchemaGenerator schemaGenerator)
         {
-            _serializerOptions = serializerOptions;
             _schemaGenerator = schemaGenerator;
         }
 
@@ -32,34 +29,28 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (!type.IsDictionary(out Type keyType, out Type valueType))
                 throw new InvalidOperationException($"Type {type} is not a dictionary");
 
-            OpenApiSchema schema;
-
             if (keyType.IsEnum)
             {
                 // This is a special case where we can include named properties based on the enum values
-                schema = new OpenApiSchema
+                return new OpenApiSchema
                 {
                     Type = "object",
                     Properties = keyType.GetEnumNames()
                         .ToDictionary(
                             name => name,
                             name => _schemaGenerator.GenerateSchema(valueType, schemaRepository)
-                        )
+                        ),
+                    Nullable = true
                 };
             }
-            else
+
+            return new OpenApiSchema
             {
-                schema = new OpenApiSchema
-                {
-                    Type = "object",
-                    AdditionalPropertiesAllowed = true,
-                    AdditionalProperties = _schemaGenerator.GenerateSchema(valueType, schemaRepository)
-                };
-            }
-
-            schema.Nullable = !_serializerOptions.IgnoreNullValues;
-
-            return schema;
+                Type = "object",
+                AdditionalPropertiesAllowed = true,
+                AdditionalProperties = _schemaGenerator.GenerateSchema(valueType, schemaRepository),
+                Nullable = true
+            };
         }
     }
 }

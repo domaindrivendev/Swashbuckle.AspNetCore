@@ -36,7 +36,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 Type = "object",
                 Properties = new Dictionary<string, OpenApiSchema>(),
                 Required = new SortedSet<string>(),
-                Nullable = !_serializerOptions.IgnoreNullValues
+                Nullable = true
             };
 
             var serializableProperties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)

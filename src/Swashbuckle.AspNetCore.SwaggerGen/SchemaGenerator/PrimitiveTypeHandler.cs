@@ -1,19 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text.Json;
 using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public class JsonPrimitiveTypeHandler : SchemaGeneratorHandler
+    public class PrimitiveTypeHandler : SchemaGeneratorHandler
     {
-        private readonly JsonSerializerOptions _serializerOptions;
-
-        public JsonPrimitiveTypeHandler(JsonSerializerOptions serializerOptions)
-        {
-            _serializerOptions = serializerOptions;
-        }
-
         public override bool CanCreateSchemaFor(Type type, out bool shouldBeReferenced)
         {
             if (PrimitiveTypeMap.ContainsKey(type) || (type.IsNullable(out Type innerType) && PrimitiveTypeMap.ContainsKey(innerType)))
@@ -33,14 +25,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 ? PrimitiveTypeMap[innerType]()
                 : PrimitiveTypeMap[type]();
 
-            if (_serializerOptions.IgnoreNullValues)
-            {
-                schema.Nullable = false;
-            }
-            else
-            {
-                schema.Nullable = (!type.IsValueType || isNullable);
-            }
+            schema.Nullable = (!type.IsValueType || isNullable);
 
             return schema;
         }

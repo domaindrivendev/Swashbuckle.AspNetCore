@@ -396,32 +396,6 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Theory]
-        [InlineData(typeof(bool?))]
-        [InlineData(typeof(byte[]))]
-        [InlineData(typeof(string))]
-        [InlineData(typeof(IntEnum?))]
-        [InlineData(typeof(IDictionary<string, int>))]
-        [InlineData(typeof(int[]))]
-        [InlineData(typeof(IEnumerable<int>))]
-        [InlineData(typeof(ComplexType))]
-        public void GenerateSchema_HonorsSerializerSetting_NullValueHandling(Type type)
-        {
-            var subject = Subject(
-                configureGenerator: c => { },
-                configureSerializer: c => { c.NullValueHandling = NullValueHandling.Ignore; }
-            );
-            var schemaRepository = new SchemaRepository();
-
-            var schemaOrReference = subject.GenerateSchema(type, schemaRepository);
-
-            var schema = (schemaOrReference.Reference != null)
-                ? schemaRepository.Schemas[schemaOrReference.Reference.Id]
-                : schemaOrReference;
-
-            Assert.False(schema.Nullable);
-        }
-
-        [Theory]
         [InlineData(false, new[] { "Value2", "Value4", "Value8" })]
         [InlineData(true, new[] { "value2", "value4", "value8" })]
         public void GenerateSchema_HonorsSerializerSetting_StringEnumConverter(

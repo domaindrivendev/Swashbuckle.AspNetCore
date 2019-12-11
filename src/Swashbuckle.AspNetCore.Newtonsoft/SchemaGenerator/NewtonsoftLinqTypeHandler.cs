@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -9,13 +8,6 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 {
     public class NewtonsoftLinqTypeHandler : SchemaGeneratorHandler
     {
-        private readonly JsonSerializerSettings _serializerSettings;
-
-        public NewtonsoftLinqTypeHandler(JsonSerializerSettings serializerSettings)
-        {
-            _serializerSettings = serializerSettings;
-        }
-
         public override bool CanCreateSchemaFor(Type type, out bool shouldBeReferenced)
         {
             if (type.IsOneOf(typeof(JToken), typeof(JObject), typeof(JArray)))
@@ -31,7 +23,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
         {
             var schema = LinqTypeMap[type]();
 
-            schema.Nullable = (_serializerSettings.NullValueHandling == NullValueHandling.Include);
+            schema.Nullable = true;
 
             return schema;
         }

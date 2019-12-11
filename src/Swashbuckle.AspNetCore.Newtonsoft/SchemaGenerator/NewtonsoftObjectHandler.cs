@@ -14,18 +14,15 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
     {
         private readonly SchemaGeneratorOptions _generatorOptions;
         private readonly IContractResolver _contractResolver;
-        private readonly JsonSerializerSettings _serializerSettings;
         private readonly ISchemaGenerator _schemaGenerator;
 
         public NewtonsoftObjectHandler(
             SchemaGeneratorOptions generatorOptions,
             IContractResolver contractResolver,
-            JsonSerializerSettings serializerSettings,
             ISchemaGenerator schemaGenerator)
         {
             _generatorOptions = generatorOptions;
             _contractResolver = contractResolver;
-            _serializerSettings = serializerSettings;
             _schemaGenerator = schemaGenerator;
         }
 
@@ -50,7 +47,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                 Type = "object",
                 Properties = new Dictionary<string, OpenApiSchema>(),
                 Required = new SortedSet<string>(),
-                Nullable = (_serializerSettings.NullValueHandling == NullValueHandling.Include)
+                Nullable = true
             };
 
             foreach (var jsonProperty in jsonObjectContract.Properties)

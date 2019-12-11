@@ -6,12 +6,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class JsonArrayHandler : SchemaGeneratorHandler
     {
-        private readonly JsonSerializerOptions _serializerOptions;
         private readonly ISchemaGenerator _schemaGenerator;
 
-        public JsonArrayHandler(JsonSerializerOptions serializerOptions, ISchemaGenerator schemaGenerator)
+        public JsonArrayHandler(ISchemaGenerator schemaGenerator)
         {
-            _serializerOptions = serializerOptions;
             _schemaGenerator = schemaGenerator;
         }
 
@@ -37,7 +35,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 Type = "array",
                 Items = _schemaGenerator.GenerateSchema(itemType, schemaRepository),
                 UniqueItems = type.IsSet() ? (bool?)true : null,
-                Nullable = !_serializerOptions.IgnoreNullValues
+                Nullable = true
             };
         }
     }
