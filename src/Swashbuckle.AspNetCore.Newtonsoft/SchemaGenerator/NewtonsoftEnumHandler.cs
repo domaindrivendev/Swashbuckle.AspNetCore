@@ -29,7 +29,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
         public override bool CanCreateSchemaFor(Type type, out bool shouldBeReferenced)
         {
-            if (type.IsEnum || (type.IsNullable(out Type innerType) && innerType.IsEnum))
+            if (type.IsEnum)
             {
                 shouldBeReferenced = true;
                 return true;
@@ -42,12 +42,6 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
         {
             var jsonContract = _contractResolver.ResolveContract(type);
 
-            var isNullable = type.IsNullable(out Type innerType);
-
-            var enumType = isNullable
-                ? innerType
-                : type;
-
             var stringEnumConverter = (jsonContract.Converter as StringEnumConverter)
                 ?? _serializerSettings.Converters.OfType<StringEnumConverter>().FirstOrDefault();
 
@@ -59,11 +53,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
             var schema = (stringEnumConverter != null)
                 ? EnumTypeMap[typeof(string)]()
-                : EnumTypeMap[enumType.GetEnumUnderlyingType()]();
+                : EnumTypeMap[type.GetEnumUnderlyingType()]();
 
             if (stringEnumConverter != null)
             {
-                schema.Enum = enumType.GetMembers(BindingFlags.Public | BindingFlags.Static)
+                schema.Enum = type.GetMembers(BindingFlags.Public | BindingFlags.Static)
                     .Select(member =>
                     {
                         var memberAttribute = member.GetCustomAttributes<EnumMemberAttribute>().FirstOrDefault();
@@ -74,13 +68,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             }
             else
             {
-                schema.Enum = enumType.GetEnumValues()
+                schema.Enum = type.GetEnumValues()
                     .Cast<object>()
                     .Select(value => OpenApiAnyFactory.CreateFor(schema, value))
                     .ToList();
             }
-
-            schema.Nullable = isNullable;
 
             return schema;
         }

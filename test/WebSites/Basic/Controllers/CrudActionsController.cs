@@ -113,5 +113,15 @@ namespace Basic.Controllers
         public ProductStatus Status { get; set; }
 
         public ProductStatus? Status2 { get; set; }
+
+        /// <summary>
+        /// Description for Foo
+        /// </summary>
+        public Foo Foo { get; set; }
+    }
+
+    public class Foo
+    {
+        public int Bar { get; set; }
     }
 }

@@ -27,6 +27,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 return _generatorOptions.CustomTypeMappings[type]();
             }
 
+            if (type.IsNullable(out Type innerType))
+                return GenerateSchema(innerType, schemaRepository);
+
             foreach (var handler in _handlers)
             {
                 if (!handler.CanCreateSchemaFor(type, out bool shouldBeReferenced)) continue;

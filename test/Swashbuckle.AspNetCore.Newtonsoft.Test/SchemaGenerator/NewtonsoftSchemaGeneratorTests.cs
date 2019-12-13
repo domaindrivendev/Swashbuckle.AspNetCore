@@ -30,52 +30,47 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Theory]
-        [InlineData(typeof(bool), "boolean", null, false)]
-        [InlineData(typeof(bool?), "boolean", null, true)]
-        [InlineData(typeof(byte), "integer", "int32", false)]
-        [InlineData(typeof(sbyte), "integer", "int32", false)]
-        [InlineData(typeof(short), "integer", "int32", false)]
-        [InlineData(typeof(ushort), "integer", "int32", false)]
-        [InlineData(typeof(int), "integer", "int32", false)]
-        [InlineData(typeof(int?), "integer", "int32", true)]
-        [InlineData(typeof(uint), "integer", "int32", false)]
-        [InlineData(typeof(long), "integer", "int64", false)]
-        [InlineData(typeof(ulong), "integer", "int64", false)]
-        [InlineData(typeof(float), "number", "float", false)]
-        [InlineData(typeof(double), "number", "double", false)]
-        [InlineData(typeof(decimal), "number", "double", false)]
-        [InlineData(typeof(string), "string", null, true)]
-        [InlineData(typeof(char), "string", null, false)]
-        [InlineData(typeof(byte[]), "string", "byte", true)]
-        [InlineData(typeof(DateTime), "string", "date-time", false)]
-        [InlineData(typeof(DateTime?), "string", "date-time", true)]
-        [InlineData(typeof(DateTimeOffset), "string", "date-time", false)]
-        [InlineData(typeof(Guid), "string", "uuid", false)]
-        [InlineData(typeof(Guid?), "string", "uuid", true)]
+        [InlineData(typeof(bool?), "boolean", null)]
+        [InlineData(typeof(byte), "integer", "int32")]
+        [InlineData(typeof(sbyte), "integer", "int32")]
+        [InlineData(typeof(short), "integer", "int32")]
+        [InlineData(typeof(ushort), "integer", "int32")]
+        [InlineData(typeof(int), "integer", "int32")]
+        [InlineData(typeof(int?), "integer", "int32")]
+        [InlineData(typeof(uint), "integer", "int32")]
+        [InlineData(typeof(long), "integer", "int64")]
+        [InlineData(typeof(ulong), "integer", "int64")]
+        [InlineData(typeof(float), "number", "float")]
+        [InlineData(typeof(double), "number", "double")]
+        [InlineData(typeof(decimal), "number", "double")]
+        [InlineData(typeof(string), "string", null)]
+        [InlineData(typeof(char), "string", null)]
+        [InlineData(typeof(byte[]), "string", "byte")]
+        [InlineData(typeof(DateTime), "string", "date-time")]
+        [InlineData(typeof(DateTime?), "string", "date-time")]
+        [InlineData(typeof(DateTimeOffset), "string", "date-time")]
+        [InlineData(typeof(Guid), "string", "uuid")]
         public void GenerateSchema_GeneratesPrimitiveSchema_IfPrimitiveOrNullablePrimitiveType(
             Type type,
             string expectedSchemaType,
-            string expectedFormat,
-            bool expectedNullable)
+            string expectedFormat)
         {
             var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
             Assert.Equal(expectedSchemaType, schema.Type);
             Assert.Equal(expectedFormat, schema.Format);
-            Assert.Equal(expectedNullable, schema.Nullable);
         }
 
         [Theory]
-        [InlineData(typeof(IntEnum), "integer", "int32", 3, false)]
-        [InlineData(typeof(IntEnum?), "integer", "int32", 3, true)]
-        [InlineData(typeof(LongEnum), "integer", "int64", 3, false)]
-        [InlineData(typeof(LongEnum?), "integer", "int64", 3, true)]
+        [InlineData(typeof(IntEnum), "integer", "int32", 3)]
+        [InlineData(typeof(IntEnum?), "integer", "int32", 3)]
+        [InlineData(typeof(LongEnum), "integer", "int64", 3)]
+        [InlineData(typeof(LongEnum?), "integer", "int64", 3)]
         public void GenerateSchema_GeneratesReferencedEnumSchema_IfEnumOrNullableEnumType(
             Type type,
             string expectedSchemaType,
             string expectedFormat,
-            int expectedEnumCount,
-            bool expectedNullable)
+            int expectedEnumCount)
         {
             var schemaRepository = new SchemaRepository();
 
@@ -87,14 +82,13 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.Equal(expectedFormat, schema.Format);
             Assert.NotNull(schema.Enum);
             Assert.Equal(expectedEnumCount, schema.Enum.Count);
-            Assert.Equal(expectedNullable, schema.Nullable);
         }
 
         [Theory]
         [InlineData(typeof(IDictionary<string, int>), "integer")]
         [InlineData(typeof(IReadOnlyDictionary<string, bool>), "boolean")]
-        [InlineData(typeof(IDictionary), null)] // ref to object
-        [InlineData(typeof(ExpandoObject), null)] // ref to object
+        [InlineData(typeof(IDictionary), "object")]
+        [InlineData(typeof(ExpandoObject), "object")]
         public void GenerateSchema_GeneratesDictionarySchema_IfDictionaryType(
             Type type,
             string expectedAdditionalPropertiesType)
@@ -105,7 +99,6 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.True(schema.AdditionalPropertiesAllowed);
             Assert.NotNull(schema.AdditionalProperties);
             Assert.Equal(expectedAdditionalPropertiesType, schema.AdditionalProperties.Type);
-            Assert.True(schema.Nullable);
         }
 
         [Fact]
@@ -137,7 +130,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [InlineData(typeof(IEnumerable<string>), "string", null)]
         [InlineData(typeof(DateTime?[]), "string", "date-time")]
         [InlineData(typeof(int[][]), "array", null)]
-        [InlineData(typeof(IList), null, null)] // ref to object
+        [InlineData(typeof(IList), "object", null)]
         public void GenerateSchema_GeneratesArraySchema_IfEnumerableType(
             Type type,
             string expectedItemsType,
@@ -149,7 +142,6 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.NotNull(schema.Items);
             Assert.Equal(expectedItemsType, schema.Items.Type);
             Assert.Equal(expectedItemsFormat, schema.Items.Format);
-            Assert.True(schema.Nullable);
         }
 
         [Theory]
@@ -176,9 +168,17 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.Equal(schema.Items.Reference.Id, referenceSchema.Reference.Id); // ref to self
         }
 
+        [Fact]
+        public void GenerateSchema_GeneratesObjectSchema_IfObjectType()
+        {
+            var schema = Subject().GenerateSchema(typeof(object), new SchemaRepository());
+
+            Assert.Equal("object", schema.Type);
+            Assert.Empty(schema.Properties);
+        }
+
         [Theory]
-        [InlineData(typeof(object), "Object", new string[] { })]
-        [InlineData(typeof(ComplexType), "ComplexType", new[] { "Field1", "Field2", "Property1", "Property2", "Property3" })]
+        [InlineData(typeof(ComplexType), "ComplexType", new[] { "Field1", "Field2", "Property1", "Property2", "Property3", "Property4" })]
         [InlineData(typeof(GenericType<bool, int>), "BooleanInt32GenericType", new[] { "Property1", "Property2" })]
         [InlineData(typeof(TypeWithNestedType.NestedType), "NestedType", new[] { "Property1" })]
         public void GenerateSchema_GeneratesReferencedObjectSchema_IfComplexType(
@@ -195,7 +195,6 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             var schema = schemaRepository.Schemas[expectedSchemaId];
             Assert.Equal("object", schema.Type);
             Assert.Equal(expectedProperties, schema.Properties.Keys);
-            Assert.True(schema.Nullable);
         }
 
         [Fact]
@@ -236,6 +235,23 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.False(schema.Properties["Property2"].WriteOnly);
             Assert.False(schema.Properties["Property3"].ReadOnly);
             Assert.True(schema.Properties["Property3"].WriteOnly);
+        }
+
+        [Theory]
+        [InlineData(typeof(ComplexType), "Property1", false)]
+        [InlineData(typeof(ComplexType), "Property4", true)]
+        [InlineData(typeof(SelfReferencingType), "Another", true)]
+        public void GenerateSchema_SetsNullableFlag_IfPropertyIsReferenceOrNullableType(
+            Type declaringType,
+            string propertyName,
+            bool expectedNullable)
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(declaringType, schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal(expectedNullable, schema.Properties[propertyName].Nullable);
         }
 
         [Fact]
@@ -365,7 +381,8 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("object", schema.Type);
-            Assert.Equal("NestedType", schema.Properties["Property1"].Reference.Id);
+            Assert.NotNull(schema.Properties["Property1"].AllOf);
+            Assert.Equal("NestedType", schema.Properties["Property1"].AllOf.First().Reference.Id);
         }
 
         [Fact]
@@ -509,9 +526,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.NotNull(schema.AdditionalProperties);
-            Assert.NotNull(schema.AdditionalProperties.Reference);
-            var additionalPropertiesSchema = schemaRepository.Schemas[schema.AdditionalProperties.Reference.Id];
-            Assert.Equal("object", additionalPropertiesSchema.Type);
+            Assert.Equal("object", schema.AdditionalProperties.Type);
         }
 
         [Fact]
@@ -531,13 +546,14 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 
         [Fact]
         public void GenerateSchema_GeneratesArraySchema_IfJArray()
+
         {
             var schema = Subject().GenerateSchema(typeof(JArray), new SchemaRepository());
 
             Assert.Equal("array", schema.Type);
             Assert.NotNull(schema.Items);
             Assert.Equal("object", schema.Items.Type);
-            Assert.True(schema.Nullable);
+            Assert.Empty(schema.Items.Properties);
         }
 
         [Theory]
@@ -548,7 +564,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
             Assert.Equal("object", schema.Type);
-            Assert.True(schema.Nullable);
+            Assert.Empty(schema.Properties);
         }
 
         private NewtonsoftSchemaGenerator Subject(

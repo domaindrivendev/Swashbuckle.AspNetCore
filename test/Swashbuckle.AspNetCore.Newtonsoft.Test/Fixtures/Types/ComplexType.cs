@@ -8,6 +8,8 @@
 
         public int Property3 { set { } }
 
+        public string Property4 { get; set; }
+
         public string Field1;
 
         public int Field2;

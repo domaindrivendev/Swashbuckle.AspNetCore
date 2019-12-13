@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Linq;
 
 namespace NetCore21
 {
@@ -15,6 +16,12 @@ namespace NetCore21
                 new Product { Id = 1, Description = "A product" },
                 new Product { Id = 2, Description = "Another product" },
             };
+        }
+
+        [HttpGet("foo")]
+        public JToken GetFoo()
+        {
+            return JToken.FromObject(new object[] { });
         }
     }
 

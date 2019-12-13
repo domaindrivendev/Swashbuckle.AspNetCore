@@ -39,8 +39,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         .ToDictionary(
                             name => name,
                             name => _schemaGenerator.GenerateSchema(valueType, schemaRepository)
-                        ),
-                    Nullable = true
+                        )
                 };
             }
 
@@ -48,8 +47,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 Type = "object",
                 AdditionalPropertiesAllowed = true,
-                AdditionalProperties = _schemaGenerator.GenerateSchema(valueType, schemaRepository),
-                Nullable = true
+                AdditionalProperties = _schemaGenerator.GenerateSchema(valueType, schemaRepository)
             };
         }
     }

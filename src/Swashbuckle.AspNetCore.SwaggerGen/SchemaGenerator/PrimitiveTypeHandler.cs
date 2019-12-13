@@ -8,7 +8,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         public override bool CanCreateSchemaFor(Type type, out bool shouldBeReferenced)
         {
-            if (PrimitiveTypeMap.ContainsKey(type) || (type.IsNullable(out Type innerType) && PrimitiveTypeMap.ContainsKey(innerType)))
+            if (PrimitiveTypeMap.ContainsKey(type))
             {
                 shouldBeReferenced = false;
                 return true;
@@ -19,15 +19,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public override OpenApiSchema CreateDefinitionSchema(Type type, SchemaRepository schemaRepository)
         {
-            var isNullable = type.IsNullable(out Type innerType);
-
-            var schema = isNullable
-                ? PrimitiveTypeMap[innerType]()
-                : PrimitiveTypeMap[type]();
-
-            schema.Nullable = (!type.IsValueType || isNullable);
-
-            return schema;
+            return PrimitiveTypeMap[type]();
         }
 
         private static readonly Dictionary<Type, Func<OpenApiSchema>> PrimitiveTypeMap = new Dictionary<Type, Func<OpenApiSchema>>

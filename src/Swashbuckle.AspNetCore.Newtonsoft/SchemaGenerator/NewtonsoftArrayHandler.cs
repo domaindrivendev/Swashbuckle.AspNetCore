@@ -38,8 +38,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             {
                 Type = "array",
                 Items = _schemaGenerator.GenerateSchema(itemType, schemaRepository),
-                UniqueItems = type.IsSet() ? (bool?)true : null,
-                Nullable = true
+                UniqueItems = type.IsSet() ? (bool?)true : null
             };
         }
     }
