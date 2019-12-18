@@ -28,11 +28,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public static IEnumerable<object> CustomAttributes(this ApiParameterDescription apiParameter)
         {
-            var parameterInfo = apiParameter.ParameterInfo();
-            if (parameterInfo != null) return parameterInfo.GetCustomAttributes(true);
-
             var propertyInfo = apiParameter.PropertyInfo();
             if (propertyInfo != null) return propertyInfo.GetCustomAttributes(true);
+
+            var parameterInfo = apiParameter.ParameterInfo();
+            if (parameterInfo != null) return parameterInfo.GetCustomAttributes(true);
 
             return Enumerable.Empty<object>();
         }
