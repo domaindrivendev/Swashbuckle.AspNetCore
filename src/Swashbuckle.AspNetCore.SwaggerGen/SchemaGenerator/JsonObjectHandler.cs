@@ -25,7 +25,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public override bool CanCreateSchemaFor(Type type, out bool shouldBeReferenced)
         {
             // It's the last handler in the chain so assume object type by process of elimination
-            shouldBeReferenced = true;
+            shouldBeReferenced = (type != typeof(object));
             return true;
         }
 
@@ -36,7 +36,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 Type = "object",
                 Properties = new Dictionary<string, OpenApiSchema>(),
                 Required = new SortedSet<string>(),
-                Nullable = true
+                AdditionalPropertiesAllowed = false
             };
 
             var serializableProperties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
@@ -75,16 +75,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private OpenApiSchema GeneratePropertySchema(PropertyInfo property, IEnumerable<object> customAttributes, SchemaRepository schemaRepository)
         {
-            var propertySchema = _schemaGenerator.GenerateSchema(property.PropertyType, schemaRepository);
+            var typeSchema = _schemaGenerator.GenerateSchema(property.PropertyType, schemaRepository);
 
-            //If it's NOT a reference schema, apply contextual metadata (i.e. from MemberInfo)
-            if (propertySchema.Reference == null)
-            {
-                propertySchema.ReadOnly = (property.IsPubliclyReadable() && !property.IsPubliclyWritable());
-                propertySchema.WriteOnly = (!property.IsPubliclyReadable() && property.IsPubliclyWritable());
+            // If it's a referenced/shared schema, "extend" it using allOf so that contextual metadata (e.g. property attributes) can be applied
+            var propertySchema = (typeSchema.Reference != null)
+                ? new OpenApiSchema { AllOf = new[] { typeSchema } }
+                : typeSchema;
 
-                propertySchema.ApplyCustomAttributes(customAttributes);
-            }
+            propertySchema.ReadOnly = (property.IsPubliclyReadable() && !property.IsPubliclyWritable());
+            propertySchema.WriteOnly = (!property.IsPubliclyReadable() && property.IsPubliclyWritable());
+            propertySchema.Nullable = property.PropertyType.IsReferenceOrNullableType();
+
+            propertySchema.ApplyCustomAttributes(customAttributes);
 
             return propertySchema;
         }

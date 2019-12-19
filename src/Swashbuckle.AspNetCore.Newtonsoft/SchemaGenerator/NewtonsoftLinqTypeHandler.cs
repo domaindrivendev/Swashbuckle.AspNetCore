@@ -10,7 +10,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
     {
         public override bool CanCreateSchemaFor(Type type, out bool shouldBeReferenced)
         {
-            if (type.IsOneOf(typeof(JToken), typeof(JObject), typeof(JArray)))
+            if (LinqTypeMap.ContainsKey(type))
             {
                 shouldBeReferenced = false;
                 return true;
@@ -21,11 +21,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
         public override OpenApiSchema CreateDefinitionSchema(Type type, SchemaRepository schemaRepository)
         {
-            var schema = LinqTypeMap[type]();
-
-            schema.Nullable = true;
-
-            return schema;
+            return LinqTypeMap[type]();
         }
 
         private static readonly Dictionary<Type, Func<OpenApiSchema>> LinqTypeMap = new Dictionary<Type, Func<OpenApiSchema>>

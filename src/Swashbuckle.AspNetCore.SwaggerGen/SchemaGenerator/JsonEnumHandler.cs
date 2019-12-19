@@ -17,7 +17,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public override bool CanCreateSchemaFor(Type type, out bool shouldBeReferenced)
         {
-            if (type.IsEnum || (type.IsNullable(out Type innerType) && innerType.IsEnum))
+            if (type.IsEnum)
             {
                 shouldBeReferenced = true;
                 return true;
@@ -28,22 +28,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public override OpenApiSchema CreateDefinitionSchema(Type type, SchemaRepository schemaRepository)
         {
-            var isNullable = type.IsNullable(out Type innerType);
-
-            var enumType = isNullable
-                ? innerType
-                : type;
-
             //Test to determine if the serializer will treat as string or not
-            var describeAsString = JsonSerializer.Serialize(enumType.GetEnumValues().GetValue(0), _serializerOptions).StartsWith("\"");
+            var describeAsString = JsonSerializer.Serialize(type.GetEnumValues().GetValue(0), _serializerOptions).StartsWith("\"");
 
             var schema = describeAsString
                 ? EnumTypeMap[typeof(string)]()
-                : EnumTypeMap[enumType.GetEnumUnderlyingType()]();
+                : EnumTypeMap[type.GetEnumUnderlyingType()]();
 
             if (describeAsString)
             {
-                schema.Enum = enumType.GetEnumValues()
+                schema.Enum = type.GetEnumValues()
                     .Cast<object>()
                     .Select(value =>
                     {
@@ -54,13 +48,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
             else
             {
-                schema.Enum = enumType.GetEnumValues()
+                schema.Enum = type.GetEnumValues()
                     .Cast<object>()
                     .Select(value => OpenApiAnyFactory.CreateFor(schema, value))
                     .ToList();
             }
-
-            schema.Nullable = isNullable;
 
             return schema;
         }

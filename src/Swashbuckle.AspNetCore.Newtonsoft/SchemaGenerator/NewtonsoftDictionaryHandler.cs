@@ -47,8 +47,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                         .ToDictionary(
                             name => name,
                             name => _schemaGenerator.GenerateSchema(valueType, schemaRepository)
-                        ),
-                    Nullable = true
+                        )
                 };
             }
 
@@ -56,8 +55,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             {
                 Type = "object",
                 AdditionalPropertiesAllowed = true,
-                AdditionalProperties = _schemaGenerator.GenerateSchema(valueType, schemaRepository),
-                Nullable = true
+                AdditionalProperties = _schemaGenerator.GenerateSchema(valueType, schemaRepository)
             };
         }
     }

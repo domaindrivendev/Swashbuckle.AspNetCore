@@ -30,7 +30,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
         {
             if (_contractResolver.ResolveContract(type) is JsonObjectContract)
             {
-                shouldBeReferenced = true;
+                shouldBeReferenced = (type != typeof(object));
                 return true;
             }
 
@@ -47,7 +47,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                 Type = "object",
                 Properties = new Dictionary<string, OpenApiSchema>(),
                 Required = new SortedSet<string>(),
-                Nullable = true
+                AdditionalPropertiesAllowed = false
             };
 
             foreach (var jsonProperty in jsonObjectContract.Properties)
@@ -59,7 +59,6 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     : Enumerable.Empty<object>();
 
                 if (_generatorOptions.IgnoreObsoleteProperties && customAttributes.OfType<ObsoleteAttribute>().Any()) continue;
-
                 var required = jsonProperty.IsRequiredSpecified()
                     ? jsonProperty.Required
                     : jsonObjectContract.ItemRequired ?? Required.Default;
@@ -87,19 +86,18 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             Required required,
             SchemaRepository schemaRepository)
         {
-            var propertySchema = _schemaGenerator.GenerateSchema(jsonProperty.PropertyType, schemaRepository);
+            var typeSchema = _schemaGenerator.GenerateSchema(jsonProperty.PropertyType, schemaRepository);
 
-            // If it's NOT a reference schema, apply contextual metadata (i.e. from MemberInfo)
-            if (propertySchema.Reference == null)
-            {
-                propertySchema.ReadOnly = jsonProperty.Readable && !jsonProperty.Writable;
-                propertySchema.WriteOnly = !jsonProperty.Readable && jsonProperty.Writable;
+            // If it's a referenced/shared schema, "extend" it using allOf so that contextual metadata (e.g. property attributes) can be applied
+            var propertySchema = (typeSchema.Reference != null)
+                ? new OpenApiSchema { AllOf = new[] { typeSchema } }
+                : typeSchema;
 
-                if (required == Required.Always || required == Required.DisallowNull)
-                    propertySchema.Nullable = false;
+            propertySchema.ReadOnly = jsonProperty.Readable && !jsonProperty.Writable;
+            propertySchema.WriteOnly = !jsonProperty.Readable && jsonProperty.Writable;
+            propertySchema.Nullable = (required == Required.Default || required == Required.AllowNull) && jsonProperty.PropertyType.IsReferenceOrNullableType();
 
-                propertySchema.ApplyCustomAttributes(customAttributes);
-            }
+            propertySchema.ApplyCustomAttributes(customAttributes);
 
             return propertySchema;
         }

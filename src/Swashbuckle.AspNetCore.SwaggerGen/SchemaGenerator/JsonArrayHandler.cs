@@ -34,8 +34,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 Type = "array",
                 Items = _schemaGenerator.GenerateSchema(itemType, schemaRepository),
-                UniqueItems = type.IsSet() ? (bool?)true : null,
-                Nullable = true
+                UniqueItems = type.IsSet() ? (bool?)true : null
             };
         }
     }
