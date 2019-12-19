@@ -46,7 +46,8 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             {
                 Type = "object",
                 Properties = new Dictionary<string, OpenApiSchema>(),
-                Required = new SortedSet<string>()
+                Required = new SortedSet<string>(),
+                AdditionalPropertiesAllowed = false
             };
 
             foreach (var jsonProperty in jsonObjectContract.Properties)
@@ -58,7 +59,6 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     : Enumerable.Empty<object>();
 
                 if (_generatorOptions.IgnoreObsoleteProperties && customAttributes.OfType<ObsoleteAttribute>().Any()) continue;
-
                 var required = jsonProperty.IsRequiredSpecified()
                     ? jsonProperty.Required
                     : jsonObjectContract.ItemRequired ?? Required.Default;

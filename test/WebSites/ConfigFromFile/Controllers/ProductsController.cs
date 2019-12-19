@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,18 +10,10 @@ namespace ConfigFromFile.Controllers
     {
         // GET api/values
         [HttpGet]
-        public IEnumerable<Product> GetProducts([FromQuery]QueryParams queryParams)
+        public IEnumerable<Product> GetProducts()
         {
             throw new NotImplementedException();
         }
-    }
-
-    public class QueryParams
-    {
-        [Required]
-        public string Foo { get; set; }
-
-        public int Bar { get; set; }
     }
 
     public class Product
