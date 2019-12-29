@@ -341,7 +341,7 @@ responses: {
 
 #### Explicit Responses ####
 
-If you need to specify a different status code and/or additional responses, or your actions return `IActionResult` instead of a response DTO, you can explcitly describe responses with the `ProducesResponseTypeAttribute` that ships with ASP.NET Core. For example ...
+If you need to specify a different status code and/or additional responses, or your actions return `IActionResult` instead of a response DTO, you can explicitly describe responses with the `ProducesResponseTypeAttribute` that ships with ASP.NET Core. For example ...
 
 ```csharp
 [HttpPost("{id}")]
