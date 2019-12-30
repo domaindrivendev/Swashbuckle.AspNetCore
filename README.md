@@ -789,7 +789,7 @@ public class AutoRestSchemaFilter : ISchemaFilter
 {
     public void Apply(OpenApiSchema schema, SchemaFilterContext context)
     {
-		var type = context.ApiModel.Type;
+        var type = context.Type;
         if (type.IsEnum)
         {
             schema.Extensions.Add(
