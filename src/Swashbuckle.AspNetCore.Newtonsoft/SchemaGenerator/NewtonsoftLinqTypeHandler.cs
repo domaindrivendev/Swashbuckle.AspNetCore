@@ -26,9 +26,9 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
         private static readonly Dictionary<Type, Func<OpenApiSchema>> LinqTypeMap = new Dictionary<Type, Func<OpenApiSchema>>
         {
-            { typeof(JToken), () => new OpenApiSchema { Type = "object" } },
-            { typeof(JObject), () => new OpenApiSchema { Type = "object" } },
-            { typeof(JArray), () => new OpenApiSchema { Type = "array", Items = new OpenApiSchema { Type = "object" } } }
+            [ typeof(JToken) ] = () => new OpenApiSchema(),
+            [ typeof(JObject) ] = () => new OpenApiSchema { Type = "object" },
+            [ typeof(JArray) ] = () => new OpenApiSchema { Type = "array", Items = new OpenApiSchema() }
         };
     }
 }

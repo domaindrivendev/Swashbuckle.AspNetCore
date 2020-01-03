@@ -98,15 +98,15 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
         private static readonly Dictionary<Type, Func<OpenApiSchema>> EnumTypeMap = new Dictionary<Type, Func<OpenApiSchema>>
         {
-            { typeof(byte), () => new OpenApiSchema { Type = "integer", Format = "int32" } },
-            { typeof(sbyte), () => new OpenApiSchema { Type = "integer", Format = "int32" } },
-            { typeof(short), () => new OpenApiSchema { Type = "integer", Format = "int32" } },
-            { typeof(ushort), () => new OpenApiSchema { Type = "integer", Format = "int32" } },
-            { typeof(int), () => new OpenApiSchema { Type = "integer", Format = "int32" } },
-            { typeof(uint), () => new OpenApiSchema { Type = "integer", Format = "int32" } },
-            { typeof(long), () => new OpenApiSchema { Type = "integer", Format = "int64" } },
-            { typeof(ulong), () => new OpenApiSchema { Type = "integer", Format = "int64" } },
-            { typeof(string), () => new OpenApiSchema { Type = "string" } }
+            [ typeof(byte) ] = () => new OpenApiSchema { Type = "integer", Format = "int32" },
+            [ typeof(sbyte) ] =  () => new OpenApiSchema { Type = "integer", Format = "int32" },
+            [ typeof(short) ] = () => new OpenApiSchema { Type = "integer", Format = "int32" },
+            [ typeof(ushort) ] = () => new OpenApiSchema { Type = "integer", Format = "int32" },
+            [ typeof(int) ] = () => new OpenApiSchema { Type = "integer", Format = "int32" },
+            [ typeof(uint) ] = () => new OpenApiSchema { Type = "integer", Format = "int32" },
+            [ typeof(long) ] = () => new OpenApiSchema { Type = "integer", Format = "int64" },
+            [ typeof(ulong) ] = () => new OpenApiSchema { Type = "integer", Format = "int64" },
+            [ typeof(string) ] = () => new OpenApiSchema { Type = "string" }
         };
     }
 }

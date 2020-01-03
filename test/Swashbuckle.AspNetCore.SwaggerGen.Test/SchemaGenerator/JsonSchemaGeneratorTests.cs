@@ -10,6 +10,7 @@ using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Xunit;
 using System.Dynamic;
+using System.Net.Http;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -49,6 +50,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(DateTimeOffset), "string", "date-time")]
         [InlineData(typeof(Guid), "string", "uuid")]
         [InlineData(typeof(Guid?), "string", "uuid")]
+        [InlineData(typeof(Uri), "string", "uri")]
         public void GenerateSchema_GeneratesPrimitiveSchema_IfPrimitiveOrNullablePrimitiveType(
             Type type,
             string expectedSchemaType,

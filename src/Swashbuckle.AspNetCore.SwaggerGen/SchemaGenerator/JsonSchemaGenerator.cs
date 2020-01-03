@@ -9,8 +9,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             AddHandler(new FileTypeHandler());
             AddHandler(new PolymorphicTypeHandler(generatorOptions, this));
-            AddHandler(new PrimitiveTypeHandler());
             AddHandler(new JsonEnumHandler(serializerOptions));
+            AddHandler(new JsonPrimitiveHandler());
             AddHandler(new JsonDictionaryHandler(this));
             AddHandler(new JsonArrayHandler(this));
             AddHandler(new JsonObjectHandler(generatorOptions, serializerOptions, this));
