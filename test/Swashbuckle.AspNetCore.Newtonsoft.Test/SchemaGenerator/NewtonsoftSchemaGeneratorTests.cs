@@ -50,6 +50,8 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [InlineData(typeof(DateTime?), "string", "date-time")]
         [InlineData(typeof(DateTimeOffset), "string", "date-time")]
         [InlineData(typeof(Guid), "string", "uuid")]
+        [InlineData(typeof(TimeSpan), "string", "date-span")]
+        [InlineData(typeof(Version), "string", null)]
         public void GenerateSchema_GeneratesPrimitiveSchema_IfPrimitiveOrNullablePrimitiveType(
             Type type,
             string expectedSchemaType,
@@ -545,6 +547,14 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
+        public void GenerateSchema_GeneratesEmptySchema_IfJToken()
+        {
+            var schema = Subject().GenerateSchema(typeof(JToken), new SchemaRepository());
+
+            Assert.Null(schema.Type);
+        }
+
+        [Fact]
         public void GenerateSchema_GeneratesArraySchema_IfJArray()
 
         {
@@ -552,16 +562,13 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 
             Assert.Equal("array", schema.Type);
             Assert.NotNull(schema.Items);
-            Assert.Equal("object", schema.Items.Type);
-            Assert.Empty(schema.Items.Properties);
+            Assert.Null(schema.Items.Type);
         }
 
-        [Theory]
-        [InlineData(typeof(JToken))]
-        [InlineData(typeof(JObject))]
-        public void GenerateSchema_GeneratesObjectSchema_IfJTokenOrJObject(Type type)
+        [Fact]
+        public void GenerateSchema_GeneratesObjectSchema_IfJObject()
         {
-            var schema = Subject().GenerateSchema(type, new SchemaRepository());
+            var schema = Subject().GenerateSchema(typeof(JObject), new SchemaRepository());
 
             Assert.Equal("object", schema.Type);
             Assert.Empty(schema.Properties);

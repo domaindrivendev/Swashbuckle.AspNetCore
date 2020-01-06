@@ -13,9 +13,9 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
             AddHandler(new FileTypeHandler());
             AddHandler(new PolymorphicTypeHandler(generatorOptions, this));
-            AddHandler(new PrimitiveTypeHandler());
             AddHandler(new NewtonsoftLinqTypeHandler());
             AddHandler(new NewtonsoftEnumHandler(generatorOptions, contractResolver, serializerSettings));
+            AddHandler(new NewtonsoftPrimitiveHandler(contractResolver));
             AddHandler(new NewtonsoftDictionaryHandler(contractResolver, this));
             AddHandler(new NewtonsoftArrayHandler(contractResolver, this));
             AddHandler(new NewtonsoftObjectHandler(generatorOptions, contractResolver, this));
