@@ -32,6 +32,7 @@ namespace NetCore21
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Test API", Version = "1" });
+                c.UseInlineDefinitionsForEnums();
             });
             services.AddSwaggerGenNewtonsoftSupport();
         }
@@ -46,7 +47,10 @@ namespace NetCore21
 
             app.UseMvc();
 
-            app.UseSwagger();
+            app.UseSwagger(c =>
+            {
+                c.SerializeAsV2 = true;
+            });
 
             app.UseSwaggerUI(c =>
             {

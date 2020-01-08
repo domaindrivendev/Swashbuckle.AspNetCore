@@ -31,7 +31,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
         {
             if (type.IsEnum)
             {
-                shouldBeReferenced = true;
+                shouldBeReferenced = !_generatorOptions.UseInlineDefinitionsForEnums;
                 return true;
             }
 

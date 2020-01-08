@@ -8,7 +8,7 @@ namespace NetCore21
     public class ProductsController
     {
         [HttpGet]
-        public IEnumerable<Product> GetProducts()
+        public IEnumerable<Product> GetProducts([FromQuery]ProductStatus status)
         {
             return new[]
             {

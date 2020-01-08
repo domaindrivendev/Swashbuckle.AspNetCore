@@ -25,6 +25,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public Func<Type, IEnumerable<Type>> SubTypesResolver { get; set; }
 
+        public bool UseInlineDefinitionsForEnums { get; set; }
+
         public IList<ISchemaFilter> SchemaFilters { get; set; }
 
         [Obsolete("If the serializer is configured for string enums (e.g. StringEnumConverter) Swashbuckle will reflect that automatically")]

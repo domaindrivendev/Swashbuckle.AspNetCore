@@ -218,6 +218,15 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
+        /// Generate inline schema definitions (as opposed to referencing a shared definition) for enum parameters and properties
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        public static void UseInlineDefinitionsForEnums(this SwaggerGenOptions swaggerGenOptions)
+        {
+            swaggerGenOptions.SchemaGeneratorOptions.UseInlineDefinitionsForEnums = true;
+        }
+
+        /// <summary>
         /// Extend the Swagger Generator with "filters" that can modify Schemas after they're initially generated
         /// </summary>
         /// <typeparam name="TFilter">A type that derives from ISchemaFilter</typeparam>

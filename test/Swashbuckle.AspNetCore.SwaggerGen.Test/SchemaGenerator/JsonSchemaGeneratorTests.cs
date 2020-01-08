@@ -385,7 +385,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GenerateSchema_SupportsOption_UseInlineDefinitionsForEnums()
+        {
+            var subject = Subject(
+                configureGenerator: c => c.UseInlineDefinitionsForEnums = true
+            );
 
+            var schema = subject.GenerateSchema(typeof(IntEnum), new SchemaRepository());
+
+            Assert.Equal("integer", schema.Type);
+            Assert.NotNull(schema.Enum);
+        }
+
+        [Fact]
         public void GenerateSchema_HandlesTypesWithNestedTypes()
         {
             var schemaRepository = new SchemaRepository();

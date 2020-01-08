@@ -8,10 +8,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class JsonEnumHandler : SchemaGeneratorHandler
     {
+        private readonly SchemaGeneratorOptions _generatorOptions;
         private readonly JsonSerializerOptions _serializerOptions;
 
-        public JsonEnumHandler(JsonSerializerOptions serializerOptions)
+        public JsonEnumHandler(SchemaGeneratorOptions generatorOptions, JsonSerializerOptions serializerOptions)
         {
+            _generatorOptions = generatorOptions;
             _serializerOptions = serializerOptions;
         }
 
@@ -19,7 +21,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             if (type.IsEnum)
             {
-                shouldBeReferenced = true;
+                shouldBeReferenced = !_generatorOptions.UseInlineDefinitionsForEnums;
                 return true;
             }
 
