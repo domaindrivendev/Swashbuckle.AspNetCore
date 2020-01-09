@@ -182,6 +182,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Theory]
         [InlineData(typeof(ComplexType), "ComplexType", new[] { "Property1", "Property2", "Property3", "Property4" })]
         [InlineData(typeof(GenericType<bool, int>), "BooleanInt32GenericType", new[] { "Property1", "Property2" })]
+        [InlineData(typeof(GenericType<bool, int[]>), "BooleanInt32ArrayGenericType", new[] { "Property1", "Property2" })]
         [InlineData(typeof(TypeWithNestedType.NestedType), "NestedType", new[] { "Property1" })]
         public void GenerateSchema_GeneratesReferencedObjectSchema_IfComplexType(
             Type type,

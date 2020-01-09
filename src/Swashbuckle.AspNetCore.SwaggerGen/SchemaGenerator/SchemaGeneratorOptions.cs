@@ -37,7 +37,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private string DefaultSchemaIdSelector(Type modelType)
         {
-            if (!modelType.IsConstructedGenericType) return modelType.Name;
+            if (!modelType.IsConstructedGenericType) return modelType.Name.Replace("[]", "Array");
 
             var prefix = modelType.GetGenericArguments()
                 .Select(genericArg => DefaultSchemaIdSelector(genericArg))
