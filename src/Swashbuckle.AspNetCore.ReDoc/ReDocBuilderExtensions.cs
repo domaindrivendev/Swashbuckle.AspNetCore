@@ -1,6 +1,4 @@
 ﻿using System;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.ReDoc;
 
 namespace Microsoft.AspNetCore.Builder
@@ -11,9 +9,19 @@ namespace Microsoft.AspNetCore.Builder
             this IApplicationBuilder app,
             Action<ReDocOptions> setupAction = null)
         {
-            var options = app.ApplicationServices.GetService<IOptions<ReDocOptions>>()?.Value ?? new ReDocOptions();
-            setupAction?.Invoke(options);
-            app.UseMiddleware<ReDocMiddleware>(options);
+            if (setupAction == null)
+            {
+                // Don't pass options so it can be configured/injected via DI container instead
+                app.UseMiddleware<ReDocMiddleware>();
+            }
+            else
+            {
+                // Configure an options instance here and pass directly to the middleware
+                var options = new ReDocOptions();
+                setupAction.Invoke(options);
+
+                app.UseMiddleware<ReDocMiddleware>(options);
+            }
 
             return app;
         }
