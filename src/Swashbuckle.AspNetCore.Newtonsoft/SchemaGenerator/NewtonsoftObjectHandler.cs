@@ -30,17 +30,42 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
         {
             if (_contractResolver.ResolveContract(type) is JsonObjectContract)
             {
-                shouldBeReferenced = (type != typeof(object));
+                var shouldBePolymorphic = _generatorOptions.GeneratePolymorphicSchemas && _generatorOptions.SubTypesResolver(type).Any();
+                shouldBeReferenced = !(type == typeof(object) || shouldBePolymorphic);
                 return true;
             }
 
             shouldBeReferenced = false; return false;
         }
 
-        public override OpenApiSchema CreateDefinitionSchema(Type type, SchemaRepository schemaRepository)
+        public override OpenApiSchema CreateSchema(Type type, SchemaRepository schemaRepository)
+        {
+            if (_generatorOptions.GeneratePolymorphicSchemas)
+            {
+                var knownSubTypes = _generatorOptions.SubTypesResolver(type);
+                if (knownSubTypes.Any())
+                {
+                    return CreatePolymorphicSchema(knownSubTypes, schemaRepository);
+                }
+            }
+
+            return CreateObjectSchema(type, schemaRepository);
+        }
+
+        private OpenApiSchema CreatePolymorphicSchema(IEnumerable<Type> knownSubTypes, SchemaRepository schemaRepository)
+        {
+            return new OpenApiSchema
+            {
+                OneOf = knownSubTypes
+                    .Select(subType => _schemaGenerator.GenerateSchema(subType, schemaRepository))
+                    .ToList()
+            };
+        }
+
+        private OpenApiSchema CreateObjectSchema(Type type, SchemaRepository schemaRepository)
         {
             if (!(_contractResolver.ResolveContract(type) is JsonObjectContract jsonObjectContract))
-               throw new InvalidOperationException($"Type {type} does not resolve to a JsonObjectContract");
+                throw new InvalidOperationException($"Type {type} does not resolve to a JsonObjectContract");
 
             var schema = new OpenApiSchema
             {
@@ -49,6 +74,15 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                 Required = new SortedSet<string>(),
                 AdditionalPropertiesAllowed = false
             };
+
+            // If it's a baseType with known subTypes, add the discriminator property
+            if (_generatorOptions.GeneratePolymorphicSchemas && _generatorOptions.SubTypesResolver(type).Any())
+            {
+                var discriminatorName = _generatorOptions.DiscriminatorSelector(type);
+                schema.Properties.Add(discriminatorName, new OpenApiSchema { Type = "string" });
+                schema.Required.Add(discriminatorName);
+                schema.Discriminator = new OpenApiDiscriminator { PropertyName = discriminatorName };
+            }
 
             foreach (var jsonProperty in jsonObjectContract.Properties)
             {
@@ -63,7 +97,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     ? jsonProperty.Required
                     : jsonObjectContract.ItemRequired ?? Required.Default;
 
-                schema.Properties.Add(jsonProperty.PropertyName, GeneratePropertySchema(jsonProperty, customAttributes, required, schemaRepository));
+                schema.Properties.Add(jsonProperty.PropertyName, CreatePropertySchema(jsonProperty, customAttributes, required, schemaRepository));
 
                 if (required == Required.Always || required == Required.AllowNull || customAttributes.OfType<RequiredAttribute>().Any())
                 {
@@ -77,10 +111,30 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                 schema.AdditionalPropertiesAllowed = true;
             }
 
+            // If it's a known subType, reference the baseType for inheritied properties
+            if (_generatorOptions.GeneratePolymorphicSchemas && type.BaseType != null && _generatorOptions.SubTypesResolver(type.BaseType).Contains(type))
+            {
+                var baseType = type.BaseType;
+
+                var baseSchemaReference = schemaRepository.GetOrAdd(
+                    type: baseType,
+                    schemaId: _generatorOptions.SchemaIdSelector(baseType),
+                    factoryMethod: () => CreateObjectSchema(baseType, schemaRepository));
+
+                var baseSchema = schemaRepository.Schemas[baseSchemaReference.Reference.Id];
+
+                schema.AllOf = new[] { baseSchemaReference };
+
+                foreach (var basePropertyName in baseSchema.Properties.Keys)
+                {
+                    schema.Properties.Remove(basePropertyName);
+                }
+            }
+
             return schema;
         }
 
-        private OpenApiSchema GeneratePropertySchema(
+        private OpenApiSchema CreatePropertySchema(
             JsonProperty jsonProperty,
             IEnumerable<object> customAttributes,
             Required required,

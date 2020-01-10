@@ -12,7 +12,6 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             var contractResolver = serializerSettings.ContractResolver ?? new DefaultContractResolver();
 
             AddHandler(new FileTypeHandler());
-            AddHandler(new PolymorphicTypeHandler(generatorOptions, this));
             AddHandler(new NewtonsoftLinqTypeHandler());
             AddHandler(new NewtonsoftEnumHandler(generatorOptions, contractResolver, serializerSettings));
             AddHandler(new NewtonsoftPrimitiveHandler(contractResolver));

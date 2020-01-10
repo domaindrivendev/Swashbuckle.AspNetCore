@@ -29,7 +29,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             shouldBeReferenced = false; return false;
         }
 
-        public override OpenApiSchema CreateDefinitionSchema(Type type, SchemaRepository schemaRepository)
+        public override OpenApiSchema CreateSchema(Type type, SchemaRepository schemaRepository)
         {
             if (!(_contractResolver.ResolveContract(type) is JsonDictionaryContract jsonDictionaryContract))
                throw new InvalidOperationException($"Type {type} does not resolve to a JsonDictionaryContract");

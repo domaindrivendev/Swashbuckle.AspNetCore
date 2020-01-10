@@ -12,6 +12,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             CustomTypeMappings = new Dictionary<Type, Func<OpenApiSchema>>();
             SchemaIdSelector = DefaultSchemaIdSelector;
             SubTypesResolver = DefaultSubTypeResolver;
+            DiscriminatorSelector = DefaultDiscriminatorSelector;
             SchemaFilters = new List<ISchemaFilter>();
         }
 
@@ -24,6 +25,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public bool GeneratePolymorphicSchemas { get; set; }
 
         public Func<Type, IEnumerable<Type>> SubTypesResolver { get; set; }
+
+        public Func<Type, string> DiscriminatorSelector { get; set; }
 
         public bool UseInlineDefinitionsForEnums { get; set; }
 
@@ -52,6 +55,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 return Enumerable.Empty<Type>();
 
             return baseType.Assembly.GetTypes().Where(type => type.IsSubclassOf(baseType));
+        }
+
+        private string DefaultDiscriminatorSelector(Type baseType)
+        {
+            return "$type";
         }
     }
 }

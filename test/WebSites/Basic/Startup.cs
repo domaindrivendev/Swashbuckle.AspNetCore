@@ -45,7 +45,7 @@ namespace Basic
 
                 c.DescribeAllParametersInCamelCase();
 
-                //c.GeneratePolymorphicSchemas();
+                c.GeneratePolymorphicSchemas();
 
                 c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Basic.xml"));
 

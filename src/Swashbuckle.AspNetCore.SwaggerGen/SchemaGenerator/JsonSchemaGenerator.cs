@@ -8,7 +8,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             : base(generatorOptions)
         {
             AddHandler(new FileTypeHandler());
-            AddHandler(new PolymorphicTypeHandler(generatorOptions, this));
             AddHandler(new JsonEnumHandler(generatorOptions, serializerOptions));
             AddHandler(new JsonPrimitiveHandler());
             AddHandler(new JsonDictionaryHandler(this));

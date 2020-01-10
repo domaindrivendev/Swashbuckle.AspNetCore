@@ -28,7 +28,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             shouldBeReferenced = false; return false;
         }
 
-        public override OpenApiSchema CreateDefinitionSchema(Type type, SchemaRepository schemaRepository)
+        public override OpenApiSchema CreateSchema(Type type, SchemaRepository schemaRepository)
         {
             //Test to determine if the serializer will treat as string or not
             var describeAsString = JsonSerializer.Serialize(type.GetEnumValues().GetValue(0), _serializerOptions).StartsWith("\"");
