@@ -21,14 +21,27 @@ namespace Microsoft.Extensions.DependencyInjection
             options.DocumentFilter<AnnotationsDocumentFilter>();
 
             if (enableSubTypeAnnotations)
-                options.GeneratePolymorphicSchemas(AnnotationsSubTypeResolver);
+                options.GeneratePolymorphicSchemas(AnnotationsSubTypeResolver, AnnotationsDiscriminatorSelector);
         }
 
         private static IEnumerable<Type> AnnotationsSubTypeResolver(Type type)
         {
-            return type.GetCustomAttributes(false)
+            var subTypes = type.GetCustomAttributes(false)
+                .OfType<SwaggerSubTypesAttribute>()
+                .FirstOrDefault()?.SubTypes ?? Enumerable.Empty<Type>();
+
+            var subTypesFromObsoleteAttribute = type.GetCustomAttributes(false)
                 .OfType<SwaggerSubTypeAttribute>()
                 .Select(attr => attr.SubType);
+
+            return subTypes.Union(subTypesFromObsoleteAttribute);
+        }
+
+        private static string AnnotationsDiscriminatorSelector(Type type)
+        {
+            return type.GetCustomAttributes(false)
+                .OfType<SwaggerSubTypesAttribute>()
+                .FirstOrDefault()?.Discriminator ?? "$type";
         }
     }
 }
