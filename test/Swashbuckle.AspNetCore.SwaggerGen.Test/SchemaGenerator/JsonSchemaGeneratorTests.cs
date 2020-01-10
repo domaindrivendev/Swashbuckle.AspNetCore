@@ -10,7 +10,6 @@ using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Xunit;
 using System.Dynamic;
-using System.Net.Http;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -375,14 +374,27 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var schema = subject.GenerateSchema(typeof(PolymorphicType), schemaRepository);
 
+            // The polymorphic schema
             Assert.NotNull(schema.OneOf);
             Assert.Equal(2, schema.OneOf.Count);
             Assert.NotNull(schema.OneOf[0].Reference);
-            Assert.Equal("SubType1", schema.OneOf[0].Reference.Id);
-            Assert.Equal(new[] { "Property1", "BaseProperty" }, schemaRepository.Schemas["SubType1"].Properties.Keys);
-            Assert.NotNull(schema.OneOf[1].Reference);
-            Assert.Equal("SubType2", schema.OneOf[1].Reference.Id);
-            Assert.Equal(new[] { "Property2", "BaseProperty" }, schemaRepository.Schemas["SubType2"].Properties.Keys);
+            // The first sub schema
+            var subSchema1 = schemaRepository.Schemas[schema.OneOf[0].Reference.Id];
+            Assert.Equal(new[] { "Property1" }, subSchema1.Properties.Keys);
+            Assert.NotNull(subSchema1.AllOf);
+            Assert.Equal(1, subSchema1.AllOf.Count);
+            Assert.NotNull(subSchema1.AllOf[0].Reference);
+            // The second sub schema
+            var subSchema2 = schemaRepository.Schemas[schema.OneOf[1].Reference.Id];
+            Assert.Equal(new[] { "Property2" }, subSchema2.Properties.Keys);
+            Assert.NotNull(subSchema2.AllOf);
+            Assert.Equal(1, subSchema2.AllOf.Count);
+            Assert.NotNull(subSchema2.AllOf[0].Reference);
+            // The base schema
+            var baseSchema = schemaRepository.Schemas[subSchema1.AllOf[0].Reference.Id];
+            Assert.Equal(new[] { "$type", "BaseProperty" }, baseSchema.Properties.Keys);
+            Assert.Equal(new[] { "$type" }, baseSchema.Required);
+            Assert.Equal("$type", baseSchema.Discriminator.PropertyName);
         }
 
         [Fact]

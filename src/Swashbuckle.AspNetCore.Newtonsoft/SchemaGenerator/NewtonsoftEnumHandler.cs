@@ -38,7 +38,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             shouldBeReferenced = false; return false;
         }
 
-        public override OpenApiSchema CreateDefinitionSchema(Type type, SchemaRepository schemaRepository)
+        public override OpenApiSchema CreateSchema(Type type, SchemaRepository schemaRepository)
         {
             var jsonContract = _contractResolver.ResolveContract(type);
 

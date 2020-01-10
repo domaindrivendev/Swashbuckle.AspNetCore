@@ -209,12 +209,19 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="swaggerGenOptions"></param>
         /// <param name="subTypesResolver"></param>
-        public static void GeneratePolymorphicSchemas(this SwaggerGenOptions swaggerGenOptions, Func<Type, IEnumerable<Type>> subTypesResolver = null)
+        /// <param name="discriminatorSelector"></param>
+        public static void GeneratePolymorphicSchemas(
+            this SwaggerGenOptions swaggerGenOptions,
+            Func<Type, IEnumerable<Type>> subTypesResolver = null,
+            Func<Type, string> discriminatorSelector = null)
         {
             swaggerGenOptions.SchemaGeneratorOptions.GeneratePolymorphicSchemas = true;
 
             if (subTypesResolver != null)
                 swaggerGenOptions.SchemaGeneratorOptions.SubTypesResolver = subTypesResolver;
+
+            if (discriminatorSelector != null)
+                swaggerGenOptions.SchemaGeneratorOptions.DiscriminatorSelector = discriminatorSelector;
         }
 
         /// <summary>
