@@ -61,7 +61,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
                 return;
             }
 
-            if (httpMethod == "GET" && Regex.IsMatch(path, $"/{_options.RoutePrefix}/?index.html"))
+            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/{_options.RoutePrefix}/?index.html$"))
             {
                 await RespondWithIndexHtml(httpContext.Response);
                 return;
