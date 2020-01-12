@@ -11,25 +11,7 @@ namespace OAuth2Integration.AuthServer
             yield return new Client
             {
                 ClientId = "test-id",
-                ClientName = "Interactive client (Code with PKCE)",
-
-                RedirectUris = new[] {
-                    "http://localhost:55202/resource-server/swagger/oauth2-redirect.html", // IIS Express
-                    "http://localhost:5000/resource-server/swagger/oauth2-redirect.html", // Kestrel
-                },
-
-                RequireClientSecret = false,
-                RequireConsent = true,
-
-                AllowedGrantTypes = GrantTypes.Code,
-                RequirePkce = true,
-                AllowedScopes = new[] { "readAccess", "writeAccess" },
-            };
-
-            yield return new Client
-            {
-                ClientId = "test-id.confidential",
-                ClientName = "Interactive client (Code with PKCE)",
+                ClientName = "Test client (Code with PKCE)",
 
                 RedirectUris = new[] {
                     "http://localhost:55202/resource-server/swagger/oauth2-redirect.html", // IIS Express

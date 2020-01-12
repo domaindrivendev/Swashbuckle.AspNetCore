@@ -129,13 +129,14 @@ namespace OAuth2Integration
                 resourceServer.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("/resource-server/swagger/v1/swagger.json", "My API V1");
+                    c.EnableDeepLinking();
+
                     // Additional OAuth settings (See https://github.com/swagger-api/swagger-ui/blob/v3.10.0/docs/usage/oauth2.md)
-                    c.OAuthClientId("test-id.confidential");
+                    c.OAuthClientId("test-id");
                     c.OAuthClientSecret("test-secret");
                     c.OAuthAppName("test-app");
                     c.OAuthScopeSeparator(" ");
                     c.OAuthUsePkce();
-                    c.ConfigObject.DeepLinking = true;
                 });
             });
         }
