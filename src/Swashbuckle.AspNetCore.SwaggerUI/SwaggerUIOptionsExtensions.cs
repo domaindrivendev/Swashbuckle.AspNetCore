@@ -257,5 +257,14 @@ namespace Microsoft.AspNetCore.Builder
         {
             options.OAuthConfigObject.UseBasicAuthenticationWithAccessCodeGrant = true;
         }
+
+        /// <summary>
+        /// Enabled to use PKCE with the Autorization Code flow.
+        /// </summary>
+        /// <param name="options"></param>
+        public static void OAuthUsePkce(this SwaggerUIOptions options)
+        {
+            options.OAuthConfigObject.UsePkceWithAuthorizationCodeGrant = true;
+        }
     }
 }
