@@ -91,7 +91,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var name = property.GetCustomAttribute<JsonPropertyNameAttribute>()?.Name
                     ?? _serializerOptions.PropertyNamingPolicy?.ConvertName(property.Name) ?? property.Name;
 
-                schema.Properties.Add(name, CreatePropertySchema(property, customAttributes, schemaRepository));
+                schema.Properties[name] = CreatePropertySchema(property, customAttributes, schemaRepository);
 
                 if (customAttributes.OfType<RequiredAttribute>().Any())
                     schema.Required.Add(name);

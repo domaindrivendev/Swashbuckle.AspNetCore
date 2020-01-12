@@ -414,6 +414,19 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
+        public void GenerateSchema_HandlesTypesWithOverriddenProperties()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(typeof(TypeWithOverriddenProperty), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal("object", schema.Type);
+            Assert.NotNull(schema.Properties["Property1"].AllOf);
+            Assert.Equal("string", schema.Properties["Property1"].Type);
+        }
+
+        [Fact]
         public void GenerateSchema_HandlesRecursion_IfCalledAgainWithinAFilter()
         {
             var subject = Subject(
@@ -426,6 +439,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("ComplexType", schema.Properties["Self"].Reference.Id);
         }
+
 
         [Fact]
         public void GenerateSchema_Errors_IfTypesHaveConflictingSchemaIds()

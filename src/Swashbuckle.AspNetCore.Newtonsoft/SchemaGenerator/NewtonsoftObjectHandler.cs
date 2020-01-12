@@ -97,7 +97,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     ? jsonProperty.Required
                     : jsonObjectContract.ItemRequired ?? Required.Default;
 
-                schema.Properties.Add(jsonProperty.PropertyName, CreatePropertySchema(jsonProperty, customAttributes, required, schemaRepository));
+                schema.Properties[jsonProperty.PropertyName] = CreatePropertySchema(jsonProperty, customAttributes, required, schemaRepository);
 
                 if (required == Required.Always || required == Required.AllowNull || customAttributes.OfType<RequiredAttribute>().Any())
                 {
