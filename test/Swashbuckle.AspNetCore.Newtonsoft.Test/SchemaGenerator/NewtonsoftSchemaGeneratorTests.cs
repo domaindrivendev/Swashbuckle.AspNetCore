@@ -568,6 +568,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.NotNull(schema.AdditionalProperties);
+            Assert.Equal(new[] { "Property1" }, schema.Properties.Keys.ToArray());
             Assert.Equal("object", schema.AdditionalProperties.Type);
         }
 

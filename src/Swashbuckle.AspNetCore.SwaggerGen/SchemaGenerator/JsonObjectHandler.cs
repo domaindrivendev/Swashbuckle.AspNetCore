@@ -84,6 +84,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             foreach (var property in serializableProperties)
             {
+                if (property.HasAttribute<JsonExtensionDataAttribute>() && property.PropertyType.IsDictionary(out Type keyType, out Type valueType))
+                {
+                    schema.AdditionalPropertiesAllowed = true;
+                    schema.AdditionalProperties = _schemaGenerator.GenerateSchema(valueType, schemaRepository);
+                    continue;
+                }
+
                 var customAttributes = property.GetInlineOrMetadataTypeAttributes();
 
                 if (_generatorOptions.IgnoreObsoleteProperties && customAttributes.OfType<ObsoleteAttribute>().Any()) continue;
@@ -95,12 +102,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 if (customAttributes.OfType<RequiredAttribute>().Any())
                     schema.Required.Add(name);
-
-                if (property.HasAttribute<JsonExtensionDataAttribute>() && property.PropertyType.IsDictionary(out Type keyType, out Type valueType))
-                {
-                    schema.AdditionalPropertiesAllowed = true;
-                    schema.AdditionalProperties = _schemaGenerator.GenerateSchema(valueType, schemaRepository);
-                }
             }
 
 
