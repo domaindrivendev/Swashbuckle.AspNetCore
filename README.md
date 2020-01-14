@@ -30,8 +30,8 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 1. Install the standard Nuget package into your ASP.NET Core application.
 
     ```
-    Package Manager : Install-Package Swashbuckle.AspNetCore -Version 5.0.0-rc5
-    CLI : dotnet add package --version 5.0.0-rc5 Swashbuckle.AspNetCore
+    Package Manager : Install-Package Swashbuckle.AspNetCore -Version 5.0.0
+    CLI : dotnet add package --version 5.0.0 Swashbuckle.AspNetCore
     ```
 
 2. In the `ConfigureServices` method of `Startup.cs`, register the Swagger generator, defining one or more Swagger documents.
@@ -95,8 +95,8 @@ If you're using **System.Text.Json (STJ)**, then the setup described above will 
 If you're using **Newtonsoft**, then you'll need to install a separate package and explicitly opt-in to ensure that *Newtonsoft* settings/attributes are automatically honored by the Swagger generator:
 
 ```
-Package Manager : Install-Package Swashbuckle.AspNetCore.Newtonsoft -Version 5.0.0-rc5
-CLI : dotnet add package --version 5.0.0-rc5 Swashbuckle.AspNetCore.Newtonsoft
+Package Manager : Install-Package Swashbuckle.AspNetCore.Newtonsoft -Version 5.0.0
+CLI : dotnet add package --version 5.0.0 Swashbuckle.AspNetCore.Newtonsoft
 ```
 
 ```csharp
@@ -1155,7 +1155,7 @@ The tool can be installed as a [.NET Core Global Tools](https://docs.microsoft.c
 Then, to install tool locally, run the following command:
 
 ```
-dotnet tool install swashbuckle.aspnetcore.cli --version 5.0.0-rc5
+dotnet tool install swashbuckle.aspnetcore.cli --version 5.0.0
 ```
 
 To restore the tool on a clean machine, run `dotnet tool restore`
