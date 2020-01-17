@@ -77,7 +77,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             return schema;
         }
 
-#if NETCOREAPP3_0
+#if NETCOREAPP3_1
         private string GetConvertedEnumName(StringEnumConverter stringEnumConverter, string enumName, bool hasSpecifiedName)
         {
             if (stringEnumConverter.NamingStrategy != null)
