@@ -37,6 +37,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         [InlineData(typeof(OAuth2Integration.Startup), "/resource-server/swagger/v1/swagger.json")]
         [InlineData(typeof(ReDocApp.Startup), "/api-docs/v1/swagger.json")]
         [InlineData(typeof(TestFirst.Startup), "/api-docs/v1-generated/openapi.json")]
+        [InlineData(typeof(NewtonsoftConfig.Startup), "/swagger/v1/swagger.json")]
         public async Task SwaggerEndpoint_ReturnsValidSwaggerJson(
             Type startupType,
             string swaggerRequestUri)

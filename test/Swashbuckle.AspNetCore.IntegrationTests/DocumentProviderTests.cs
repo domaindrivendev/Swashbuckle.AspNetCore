@@ -18,6 +18,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         [InlineData(typeof(GenericControllers.Startup), new[] { "v1" })]
         [InlineData(typeof(MultipleVersions.Startup), new[] { "1.0", "2.0" })]
         [InlineData(typeof(OAuth2Integration.Startup), new[] { "v1" })]
+        [InlineData(typeof(NewtonsoftConfig.Startup), new[] { "v1" })]
         public void DocumentProvider_ExposesAllDocumentNames(Type startupType, string[] expectedNames)
         {
             var testSite = new TestSite(startupType);
@@ -37,6 +38,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         [InlineData(typeof(GenericControllers.Startup), "v1")]
         [InlineData(typeof(MultipleVersions.Startup), "2.0")]
         [InlineData(typeof(OAuth2Integration.Startup), "v1")]
+        [InlineData(typeof(NewtonsoftConfig.Startup), "v1")]
         public async Task DocumentProvider_ExposesGeneratedSwagger(Type startupType, string documentName)
         {
             var testSite = new TestSite(startupType);

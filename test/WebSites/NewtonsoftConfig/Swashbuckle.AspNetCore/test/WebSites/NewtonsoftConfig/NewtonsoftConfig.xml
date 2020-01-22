@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>NewtonsoftConfig</name>
+    </assembly>
+    <members>
+        <member name="P:NewtonsoftConfig.Product.Id">
+            <summary>
+            Product identifier
+            </summary>
+        </member>
+        <member name="P:NewtonsoftConfig.Product.Description">
+            <summary>
+            Product description
+            </summary>
+        </member>
+        <member name="P:NewtonsoftConfig.Product.Status">
+            <summary>
+            Product status
+            </summary>
+        </member>
+        <member name="P:NewtonsoftConfig.Product.RegisteredOn">
+            <summary>
+            Product registration date
+            </summary>
+        </member>
+        <member name="P:NewtonsoftConfig.Product.Reference">
+            <summary>
+            Product reference
+            </summary>
+        </member>
+    </members>
+</doc>
