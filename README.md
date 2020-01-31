@@ -1215,7 +1215,7 @@ ReDoc ships with it's own set of configuration parameters, all described here ht
 app.UseReDoc(c =>
 {
     c.SpecUrl("/v1/swagger.json");
-    c.UntrustedSpec();
+    c.EnableUntrustedSpec();
     c.ScrollYOffset(10);
     c.HideHostname();
     c.HideDownloadButton());
