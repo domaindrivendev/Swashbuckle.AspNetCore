@@ -4,6 +4,15 @@
         <name>Swashbuckle.AspNetCore.SwaggerGen.Test</name>
     </assembly>
     <members>
+        <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeGenericControllerWithXmlComments`1.ActionWithGenericTypeParameter(`0)">
+            <summary>
+            Summary for ActionWithGenericTypeParameter
+            </summary>
+            <remarks>
+            Remarks for ActionWithGenericTypeParameter
+            </remarks>
+            <param name="param">Description for param</param>
+        </member>
         <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllerWithXmlComments">
             <summary>
             Summary for FakeControllerWithXmlComments
@@ -14,7 +23,7 @@
             <summary>Summary for ActionWithNoParameters</summary>
             <remarks>Remarks for ActionWithNoParameters</remarks>
         </member>
-        <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllerWithXmlComments.ActionWithParamTag(System.String)">
+        <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllerWithXmlComments.ActionWithParameter(System.String)">
             <param name="param">Description for param</param>
         </member>
         <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllerWithXmlComments.ActionWithMultipleParameters(System.String,System.Int32)">
@@ -60,6 +69,12 @@
             <summary>
             Summary for XmlAnnotatedType
             </summary>
+        </member>
+        <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.BoolField">
+            <summary>
+            Summary for BoolField
+            </summary>
+            <example>true</example>
         </member>
         <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.BoolProperty">
             <summary>

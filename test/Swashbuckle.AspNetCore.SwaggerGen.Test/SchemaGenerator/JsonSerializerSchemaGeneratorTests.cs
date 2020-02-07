@@ -1,19 +1,19 @@
 ﻿using System;
-using System.Text.Json;
 using System.Collections;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Xunit;
-using System.Dynamic;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
-    public class JsonSchemaGeneratorTests
+    public class JsonSerializerSchemaGeneratorTests
     {
         [Theory]
         [InlineData(typeof(IFormFile))]
@@ -548,7 +548,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("object", schema.AdditionalProperties.Type);
         }
 
-        private JsonSchemaGenerator Subject(
+        private SchemaGenerator Subject(
             Action<SchemaGeneratorOptions> configureGenerator = null,
             Action<JsonSerializerOptions> configureSerializer = null)
         {
@@ -558,7 +558,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var serializerOptions = new JsonSerializerOptions();
             configureSerializer?.Invoke(serializerOptions);
 
-            return new JsonSchemaGenerator(generatorOptions, serializerOptions);
+            return new SchemaGenerator(generatorOptions, new JsonSerializerMetadataResolver(serializerOptions));
         }
     }
 }

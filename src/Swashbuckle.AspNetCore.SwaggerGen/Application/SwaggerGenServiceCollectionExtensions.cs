@@ -25,14 +25,14 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IConfigureOptions<SchemaGeneratorOptions>, ConfigureSchemaGeneratorOptions>();
 
             // Register generator and it's dependencies
-            services.AddTransient(s => s.GetRequiredService<IOptions<SwaggerGeneratorOptions>>().Value);
             services.AddTransient<ISwaggerProvider, SwaggerGenerator>();
-            services.AddTransient<ISchemaGenerator, JsonSchemaGenerator>(s =>
+            services.AddTransient(s => s.GetRequiredService<IOptions<SwaggerGeneratorOptions>>().Value);
+            services.AddTransient<ISchemaGenerator, SchemaGenerator>();
+            services.AddTransient(s => s.GetRequiredService<IOptions<SchemaGeneratorOptions>>().Value);
+            services.AddTransient<ISerializerMetadataResolver, JsonSerializerMetadataResolver>(s =>
             {
-                var generatorOptions = s.GetService<IOptions<SchemaGeneratorOptions>>()?.Value ?? new SchemaGeneratorOptions();
                 var serializerOptions = s.GetJsonSerializerOptions() ?? new JsonSerializerOptions();
-
-                return new JsonSchemaGenerator(generatorOptions, serializerOptions);
+                return new JsonSerializerMetadataResolver(serializerOptions);
             });
 
             // Used by the <c>dotnet-getdocument</c> tool from the Microsoft.Extensions.ApiDescription.Server package.

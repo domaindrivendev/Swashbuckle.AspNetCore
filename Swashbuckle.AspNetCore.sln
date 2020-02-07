@@ -82,7 +82,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCore21", "test\WebSites\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore.Newtonsoft", "src\Swashbuckle.AspNetCore.Newtonsoft\Swashbuckle.AspNetCore.Newtonsoft.csproj", "{0783E72E-3483-43AF-AE4B-2A6CFAFD3DD3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swashbuckle.AspNetCore.Newtonsoft.Test", "test\Swashbuckle.AspNetCore.Newtonsoft.Test\Swashbuckle.AspNetCore.Newtonsoft.Test.csproj", "{605AA0D3-2AA7-46B4-811B-85DC1B1A3901}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore.Newtonsoft.Test", "test\Swashbuckle.AspNetCore.Newtonsoft.Test\Swashbuckle.AspNetCore.Newtonsoft.Test.csproj", "{605AA0D3-2AA7-46B4-811B-85DC1B1A3901}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

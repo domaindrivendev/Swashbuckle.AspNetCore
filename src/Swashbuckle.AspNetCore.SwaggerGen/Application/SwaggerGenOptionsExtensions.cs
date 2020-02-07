@@ -338,6 +338,8 @@ namespace Microsoft.Extensions.DependencyInjection
             bool includeControllerXmlComments = false)
         {
             var xmlDoc = xmlDocFactory();
+            swaggerGenOptions.ParameterFilter<XmlCommentsParameterFilter>(xmlDoc);
+            swaggerGenOptions.RequestBodyFilter<XmlCommentsRequestBodyFilter>(xmlDoc);
             swaggerGenOptions.OperationFilter<XmlCommentsOperationFilter>(xmlDoc);
             swaggerGenOptions.SchemaFilter<XmlCommentsSchemaFilter>(xmlDoc);
 

@@ -12,8 +12,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
     public static class ApiDescriptionFactory
     {
         public static ApiDescription Create(
-            Type controllerType,
-            string actionName,
+            MethodInfo methodInfo,
             string groupName,
             string httpMethod,
             string relativePath,
@@ -21,8 +20,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             IEnumerable<ApiRequestFormat> supportedRequestFormats = null,
             IEnumerable<ApiResponseType> supportedResponseTypes = null)
         {
-            var methodInfo = controllerType.GetMethod(actionName);
-
             var actionDescriptor = CreateActionDescriptor(methodInfo);
 
             var apiDescription = new ApiDescription
@@ -87,9 +84,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             IEnumerable<ApiResponseType> supportedResponseTypes = null)
             where TController : new()
         {
+            var methodInfo = typeof(TController).GetMethod(actionNameSelector(new TController()));
+
             return Create(
-                typeof(TController),
-                actionNameSelector(new TController()),
+                methodInfo,
                 groupName,
                 httpMethod,
                 relativePath,
