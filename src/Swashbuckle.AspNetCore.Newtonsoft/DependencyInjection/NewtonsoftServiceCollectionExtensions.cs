@@ -24,7 +24,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static JsonSerializerSettings GetJsonSerializerSettings(this IServiceProvider serviceProvider)
         {
-#if NETCOREAPP3_0
+#if (NETCOREAPP3_0 || NETCOREAPP3_1)
             return serviceProvider.GetRequiredService<IOptions<MvcNewtonsoftJsonOptions>>().Value?.SerializerSettings;
 #else
             return serviceProvider.GetRequiredService<IOptions<MvcJsonOptions>>().Value?.SerializerSettings;
