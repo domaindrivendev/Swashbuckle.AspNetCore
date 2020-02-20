@@ -4,7 +4,7 @@
 
   <PropertyGroup>
     <Description>Swagger Generator opt-in component to support Newtsonsoft Json serializer behaviors</Description>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.0;netcoreapp3.1</TargetFrameworks>
     <PackageId>Swashbuckle.AspNetCore.Newtonsoft</PackageId>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore;newtonsoft</PackageTags>
     <PackageProjectUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</PackageProjectUrl>
@@ -21,6 +21,10 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.0' ">
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.1' ">
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.0" />
   </ItemGroup>
 
 </Project>
