@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace OAuth2Integration
 {
@@ -52,7 +53,7 @@ namespace OAuth2Integration
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Version = "v1", Title = "Test API V1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Version = "v1", Title = "Test API V1" }, SerializeVersion.V3);
 
                 // Define the OAuth2.0 scheme that's in use (i.e. Implicit Flow)
                 c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme

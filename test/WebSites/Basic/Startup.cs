@@ -10,6 +10,7 @@ using Microsoft.OpenApi.Models;
 using Basic.Swagger;
 using Microsoft.AspNetCore.Localization;
 using System.IO;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace Basic
 {
@@ -36,7 +37,7 @@ namespace Basic
                         Version = "v1",
                         Description = "A sample API for testing Swashbuckle",
                         TermsOfService = new Uri("http://tempuri.org/terms")
-                    }
+                    }, SerializeVersion.V3
                 );
 
                 c.OperationFilter<AssignOperationVendorExtensions>();

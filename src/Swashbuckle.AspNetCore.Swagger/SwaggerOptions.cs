@@ -22,6 +22,7 @@ namespace Swashbuckle.AspNetCore.Swagger
         /// <summary>
         /// Return Swagger JSON in the V2 format rather than V3
         /// </summary>
+        [Obsolete("The format version is set when adding documents in SwaggerGen.")]
         public bool SerializeAsV2 { get; set; }
 
         /// <summary>

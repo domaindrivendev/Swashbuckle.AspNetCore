@@ -7,7 +7,7 @@ namespace Swashbuckle.AspNetCore.Swagger
 {
     public interface ISwaggerProvider
     {
-        OpenApiDocument GetSwagger(
+        Tuple<OpenApiDocument, SerializeVersion> GetSwagger(
             string documentName,
             string host = null,
             string basePath = null);

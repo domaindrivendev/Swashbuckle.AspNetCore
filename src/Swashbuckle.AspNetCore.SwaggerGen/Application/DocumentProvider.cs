@@ -45,13 +45,13 @@ namespace Microsoft.Extensions.ApiDescriptions
             // Let UnknownSwaggerDocument or other exception bubble up to caller.
             var swagger = _swaggerProvider.GetSwagger(documentName, host: null, basePath: null);
             var jsonWriter = new OpenApiJsonWriter(writer);
-            if (_options.SerializeAsV2)
+            if (swagger.Item2 == SerializeVersion.V3)
             {
-                swagger.SerializeAsV2(jsonWriter);
+                swagger.Item1.SerializeAsV3(jsonWriter);
             }
             else
             {
-                swagger.SerializeAsV3(jsonWriter);
+                swagger.Item1.SerializeAsV2(jsonWriter);
             }
 
             return Task.CompletedTask;

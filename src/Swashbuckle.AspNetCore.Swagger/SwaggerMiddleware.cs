@@ -44,10 +44,10 @@ namespace Swashbuckle.AspNetCore.Swagger
                 // One last opportunity to modify the Swagger Document - this time with request context
                 foreach (var filter in _options.PreSerializeFilters)
                 {
-                    filter(swagger, httpContext.Request);
+                    filter(swagger.Item1, httpContext.Request);
                 }
 
-                await RespondWithSwaggerJson(httpContext.Response, swagger);
+                await RespondWithSwaggerJson(httpContext.Response, swagger.Item1, swagger.Item2);
             }
             catch (UnknownSwaggerDocument)
             {
@@ -72,7 +72,7 @@ namespace Swashbuckle.AspNetCore.Swagger
             response.StatusCode = 404;
         }
 
-        private async Task RespondWithSwaggerJson(HttpResponse response, OpenApiDocument swagger)
+        private async Task RespondWithSwaggerJson(HttpResponse response, OpenApiDocument swagger, SerializeVersion serializeAs)
         {
             response.StatusCode = 200;
             response.ContentType = "application/json;charset=utf-8";
@@ -80,7 +80,7 @@ namespace Swashbuckle.AspNetCore.Swagger
             using (var textWriter = new StringWriter(CultureInfo.InvariantCulture))
             {
                 var jsonWriter = new OpenApiJsonWriter(textWriter);
-                if (_options.SerializeAsV2) swagger.SerializeAsV2(jsonWriter); else swagger.SerializeAsV3(jsonWriter);
+                if (serializeAs == SerializeVersion.V3) swagger.SerializeAsV3(jsonWriter); else swagger.SerializeAsV2(jsonWriter);
 
                 await response.WriteAsync(textWriter.ToString(), new UTF8Encoding(false));
             }

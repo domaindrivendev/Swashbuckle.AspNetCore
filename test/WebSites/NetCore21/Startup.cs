@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace NetCore21
 {
@@ -31,7 +32,7 @@ namespace NetCore21
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Test API", Version = "1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Test API", Version = "1" }, SerializeVersion.V2);
                 c.UseInlineDefinitionsForEnums();
             });
             services.AddSwaggerGenNewtonsoftSupport();

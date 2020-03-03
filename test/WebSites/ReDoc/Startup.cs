@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.ReDoc;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace ReDoc
 {
@@ -24,7 +25,7 @@ namespace ReDoc
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Test API", Version = "1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Test API", Version = "1" }, SerializeVersion.V2);
             });
         }
 

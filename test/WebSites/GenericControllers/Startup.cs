@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using GenericControllers.Swagger;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace GenericControllers
 {
@@ -25,7 +26,7 @@ namespace GenericControllers
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Test API", Version = "1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Test API", Version = "1" }, SerializeVersion.V3);
 
                 var xmlCommentsPath = Path.Combine(System.AppContext.BaseDirectory, "GenericControllers.xml");
                 c.IncludeXmlComments(xmlCommentsPath);

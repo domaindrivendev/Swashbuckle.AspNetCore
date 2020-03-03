@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -11,7 +12,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         public SwaggerGeneratorOptions()
         {
-            SwaggerDocs = new Dictionary<string, OpenApiInfo>();
+            SwaggerDocs = new Dictionary<string, Tuple<OpenApiInfo, SerializeVersion>>();
             DocInclusionPredicate = DefaultDocInclusionPredicate;
             OperationIdSelector = DefaultOperationIdSelector;
             TagsSelector = DefaultTagsSelector;
@@ -23,7 +24,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             DocumentFilters = new List<IDocumentFilter>();
         }
 
-        public IDictionary<string, OpenApiInfo> SwaggerDocs { get; set; }
+        public IDictionary<string, Tuple<OpenApiInfo, SerializeVersion>> SwaggerDocs { get; set; }
 
         public Func<string, ApiDescription, bool> DocInclusionPredicate { get; set; }
 

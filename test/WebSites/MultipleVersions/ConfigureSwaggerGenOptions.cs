@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace MultipleVersions
@@ -23,7 +24,7 @@ namespace MultipleVersions
                     {
                         Title = $"Sample API {description.ApiVersion}",
                         Version = description.ApiVersion.ToString(),
-                    });
+                    }, SerializeVersion.V3);
             }
         }
     }

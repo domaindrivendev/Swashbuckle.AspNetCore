@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace CustomUIIndex
 {
@@ -23,7 +24,7 @@ namespace CustomUIIndex
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Test API", Version = "1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Test API", Version = "1" }, SerializeVersion.V3);
             });
         }
 

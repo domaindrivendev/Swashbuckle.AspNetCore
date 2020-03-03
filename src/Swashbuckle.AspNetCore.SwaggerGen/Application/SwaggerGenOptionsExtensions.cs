@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Xml.XPath;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -20,7 +21,23 @@ namespace Microsoft.Extensions.DependencyInjection
             string name,
             OpenApiInfo info)
         {
-            swaggerGenOptions.SwaggerGeneratorOptions.SwaggerDocs.Add(name, info);
+            SwaggerDoc(swaggerGenOptions, name, info, SerializeVersion.V3);
+        }
+
+        /// <summary>
+        /// Define one or more documents to be created by the Swagger generator
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="name">A URI-friendly name that uniquely identifies the document</param>
+        /// <param name="info">Global metadata to be included in the Swagger output</param>
+        /// <param name="serializeAs">Format version to use in the JSON document</param>
+        public static void SwaggerDoc(
+            this SwaggerGenOptions swaggerGenOptions,
+            string name,
+            OpenApiInfo info,
+            SerializeVersion serializeAs)
+        {
+            swaggerGenOptions.SwaggerGeneratorOptions.SwaggerDocs.Add(name, new Tuple<OpenApiInfo, SerializeVersion>(info, serializeAs));
         }
 
         /// <summary>

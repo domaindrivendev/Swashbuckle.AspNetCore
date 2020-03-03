@@ -29,9 +29,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             _options = options ?? new SwaggerGeneratorOptions();
         }
 
-        public OpenApiDocument GetSwagger(string documentName, string host = null, string basePath = null)
+        public Tuple<OpenApiDocument, SerializeVersion> GetSwagger(string documentName, string host = null, string basePath = null)
         {
-            if (!_options.SwaggerDocs.TryGetValue(documentName, out OpenApiInfo info))
+            if (!_options.SwaggerDocs.TryGetValue(documentName, out Tuple<OpenApiInfo, SerializeVersion> info))
                 throw new UnknownSwaggerDocument(documentName, _options.SwaggerDocs.Select(d => d.Key));
 
             var applicableApiDescriptions = _apiDescriptionsProvider.ApiDescriptionGroups.Items
@@ -43,7 +43,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var swaggerDoc = new OpenApiDocument
             {
-                Info = info,
+                Info = info.Item1,
                 Servers = GenerateServers(host, basePath),
                 Paths = GeneratePaths(applicableApiDescriptions, schemaRepository),
                 Components = new OpenApiComponents
@@ -60,7 +60,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 filter.Apply(swaggerDoc, filterContext);
             }
 
-            return swaggerDoc;
+            return new Tuple<OpenApiDocument, SerializeVersion>(swaggerDoc, info.Item2);
         }
 
         private IList<OpenApiServer> GenerateServers(string host, string basePath)

@@ -91,9 +91,9 @@ namespace Swashbuckle.AspNetCore.Cli
                             writer = new OpenApiJsonWriter(streamWriter);
 
                         if (namedArgs.ContainsKey("--serializeasv2"))
-                            swagger.SerializeAsV2(writer);
+                            swagger.Item1.SerializeAsV2(writer);
                         else
-                            swagger.SerializeAsV3(writer);
+                            swagger.Item1.SerializeAsV3(writer);
 
                         if (outputPath != null)
                             Console.WriteLine($"Swagger JSON/YAML succesfully written to {outputPath}");

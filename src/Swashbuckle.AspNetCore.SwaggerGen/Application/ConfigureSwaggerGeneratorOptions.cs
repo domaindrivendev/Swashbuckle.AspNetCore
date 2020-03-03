@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -37,7 +38,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public void DeepCopy(SwaggerGeneratorOptions source, SwaggerGeneratorOptions target)
         {
-            target.SwaggerDocs = new Dictionary<string, OpenApiInfo>(source.SwaggerDocs);
+            target.SwaggerDocs = new Dictionary<string, Tuple<OpenApiInfo, SerializeVersion>>(source.SwaggerDocs);
             target.DocInclusionPredicate = source.DocInclusionPredicate;
             target.IgnoreObsoleteActions = source.IgnoreObsoleteActions;
             target.ConflictingActionsResolver = source.ConflictingActionsResolver;

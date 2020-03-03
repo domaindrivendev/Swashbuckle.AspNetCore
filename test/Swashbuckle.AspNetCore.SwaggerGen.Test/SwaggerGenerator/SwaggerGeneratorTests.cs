@@ -30,14 +30,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 },
                 options: new SwaggerGeneratorOptions
                 {
-                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    SwaggerDocs = new Dictionary<string, Tuple<OpenApiInfo, SerializeVersion>>
                     {
-                        [ "v1" ] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                        [ "v1" ] = new Tuple<OpenApiInfo, SerializeVersion>(new OpenApiInfo { Version = "V1", Title = "Test API" }, SerializeVersion.V3) 
                     }
                 }
             );
 
-            var document = subject.GetSwagger("v1");
+            var document = subject.GetSwagger("v1").Item1;
 
             Assert.Equal("V1", document.Info.Version);
             Assert.Equal("Test API", document.Info.Title);
@@ -56,7 +56,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             );
 
-            var document = subject.GetSwagger("v1");
+            var document = subject.GetSwagger("v1").Item1;
 
             Assert.Null(document.Paths["/resource"].Operations[OperationType.Post].OperationId);
         }
@@ -72,7 +72,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             );
 
-            var document = subject.GetSwagger("v1");
+            var document = subject.GetSwagger("v1").Item1;
 
             Assert.Equal("SomeRouteName", document.Paths["/resource"].Operations[OperationType.Post].OperationId);
         }
@@ -88,7 +88,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             );
 
-            var document = subject.GetSwagger("v1");
+            var document = subject.GetSwagger("v1").Item1;
 
             Assert.True(document.Paths["/resource"].Operations[OperationType.Post].Deprecated);
         }
@@ -121,7 +121,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             );
 
-            var document = subject.GetSwagger("v1");
+            var document = subject.GetSwagger("v1").Item1;
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.Equal(1, operation.Parameters.Count);
@@ -150,7 +150,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             );
 
-            var document = subject.GetSwagger("v1");
+            var document = subject.GetSwagger("v1").Item1;
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.Equal(0, operation.Parameters.Count);
@@ -178,7 +178,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             );
 
-            var document = subject.GetSwagger("v1");
+            var document = subject.GetSwagger("v1").Item1;
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.True(operation.Parameters.First().Required);
@@ -211,7 +211,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             );
 
-            var document = subject.GetSwagger("v1");
+            var document = subject.GetSwagger("v1").Item1;
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.Equal(1, operation.Parameters.Count);
@@ -240,7 +240,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             );
 
-            var document = subject.GetSwagger("v1");
+            var document = subject.GetSwagger("v1").Item1;
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.Equal(1, operation.Parameters.Count);
@@ -272,7 +272,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             );
 
-            var document = subject.GetSwagger("v1");
+            var document = subject.GetSwagger("v1").Item1;
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.Equal(1, operation.Parameters.Count);
@@ -305,7 +305,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             );
 
-            var document = subject.GetSwagger("v1");
+            var document = subject.GetSwagger("v1").Item1;
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.NotNull(operation.RequestBody);
@@ -345,7 +345,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             );
 
-            var document = subject.GetSwagger("v1");
+            var document = subject.GetSwagger("v1").Item1;
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.Equal(expectedRequired, operation.RequestBody.Required);
@@ -380,7 +380,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             );
 
-            var document = subject.GetSwagger("v1");
+            var document = subject.GetSwagger("v1").Item1;
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.NotNull(operation.RequestBody);
@@ -416,7 +416,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             );
 
-            var document = subject.GetSwagger("v1");
+            var document = subject.GetSwagger("v1").Item1;
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.Equal(new[] { "application/someMediaType" }, operation.RequestBody.Content.Keys);
@@ -456,7 +456,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             );
 
-            var document = subject.GetSwagger("v1");
+            var document = subject.GetSwagger("v1").Item1;
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.Equal(new[] { "200", "400", "default" }, operation.Responses.Keys);
@@ -493,7 +493,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             );
 
-            var document = subject.GetSwagger("v1");
+            var document = subject.GetSwagger("v1").Item1;
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.Equal(new[] { "application/someMediaType" }, operation.Responses["200"].Content.Keys);
@@ -571,15 +571,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 },
                 options: new SwaggerGeneratorOptions
                 {
-                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    SwaggerDocs = new Dictionary<string, Tuple<OpenApiInfo, SerializeVersion>>
                     {
-                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                        ["v1"] = new Tuple<OpenApiInfo, SerializeVersion>(new OpenApiInfo { Version = "V1", Title = "Test API" }, SerializeVersion.V3)
                     },
                     IgnoreObsoleteActions = true
                 }
             );
 
-            var document = subject.GetSwagger("v1");
+            var document = subject.GetSwagger("v1").Item1;
 
             Assert.Equal(new[] { "/resource" }, document.Paths.Keys.ToArray());
             Assert.Equal(new[] { OperationType.Post }, document.Paths["/resource"].Operations.Keys);
@@ -602,15 +602,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 },
                 options: new SwaggerGeneratorOptions
                 {
-                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    SwaggerDocs = new Dictionary<string, Tuple<OpenApiInfo, SerializeVersion>>
                     {
-                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                        ["v1"] = new Tuple<OpenApiInfo, SerializeVersion>(new OpenApiInfo { Version = "V1", Title = "Test API" }, SerializeVersion.V3)
                     },
                     SortKeySelector = (apiDesc) => apiDesc.RelativePath
                 }
             );
 
-            var document = subject.GetSwagger("v1");
+            var document = subject.GetSwagger("v1").Item1;
 
             Assert.Equal(new[] { "/resource1", "/resource2", "/resource3" }, document.Paths.Keys.ToArray());
         }
@@ -626,15 +626,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 },
                 options: new SwaggerGeneratorOptions
                 {
-                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    SwaggerDocs = new Dictionary<string, Tuple<OpenApiInfo, SerializeVersion>>
                     {
-                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                        ["v1"] = new Tuple<OpenApiInfo, SerializeVersion>(new OpenApiInfo { Version = "V1", Title = "Test API" }, SerializeVersion.V3)
                     },
                     TagsSelector = (apiDesc) => new[] { apiDesc.RelativePath }
                 }
             );
 
-            var document = subject.GetSwagger("v1");
+            var document = subject.GetSwagger("v1").Item1;
 
             Assert.Equal(new[] { "resource" }, document.Paths["/resource"].Operations[OperationType.Post].Tags.Select(t => t.Name));
         }
@@ -653,15 +653,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 },
                 options: new SwaggerGeneratorOptions
                 {
-                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    SwaggerDocs = new Dictionary<string, Tuple<OpenApiInfo, SerializeVersion>>
                     {
-                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                        ["v1"] = new Tuple<OpenApiInfo, SerializeVersion>(new OpenApiInfo { Version = "V1", Title = "Test API" }, SerializeVersion.V3)
                     },
                     ConflictingActionsResolver = (apiDescriptions) => apiDescriptions.First()
                 }
             );
 
-            var document = subject.GetSwagger("v1");
+            var document = subject.GetSwagger("v1").Item1;
 
             Assert.Equal(new[] { "/resource" }, document.Paths.Keys.ToArray());
             Assert.Equal(new[] { OperationType.Post }, document.Paths["/resource"].Operations.Keys);
@@ -689,15 +689,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 },
                 options: new SwaggerGeneratorOptions
                 {
-                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    SwaggerDocs = new Dictionary<string, Tuple<OpenApiInfo, SerializeVersion>>
                     {
-                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                        ["v1"] = new Tuple<OpenApiInfo, SerializeVersion>(new OpenApiInfo { Version = "V1", Title = "Test API" }, SerializeVersion.V3)
                     },
                     DescribeAllParametersInCamelCase = true
                 }
             );
 
-            var document = subject.GetSwagger("v1");
+            var document = subject.GetSwagger("v1").Item1;
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.Equal(1, operation.Parameters.Count);
@@ -711,9 +711,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 apiDescriptions: new ApiDescription[] { },
                 options: new SwaggerGeneratorOptions
                 {
-                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    SwaggerDocs = new Dictionary<string, Tuple<OpenApiInfo, SerializeVersion>>
                     {
-                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                        ["v1"] = new Tuple<OpenApiInfo, SerializeVersion>(new OpenApiInfo { Version = "V1", Title = "Test API" }, SerializeVersion.V3)
                     },
                     SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>
                     {
@@ -722,7 +722,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             );
 
-            var document = subject.GetSwagger("v1");
+            var document = subject.GetSwagger("v1").Item1;
 
             Assert.Equal(new[] { "basic" }, document.Components.SecuritySchemes.Keys);
         }
@@ -738,9 +738,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 },
                 options: new SwaggerGeneratorOptions
                 {
-                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    SwaggerDocs = new Dictionary<string, Tuple<OpenApiInfo, SerializeVersion>>
                     {
-                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                        ["v1"] = new Tuple<OpenApiInfo, SerializeVersion>(new OpenApiInfo { Version = "V1", Title = "Test API" }, SerializeVersion.V3)
                     },
                     OperationFilters = new List<IOperationFilter>
                     {
@@ -749,7 +749,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             );
 
-            var document = subject.GetSwagger("v1");
+            var document = subject.GetSwagger("v1").Item1;
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.NotEmpty(operation.Extensions);
@@ -762,9 +762,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 apiDescriptions: new ApiDescription[] { },
                 options: new SwaggerGeneratorOptions
                 {
-                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    SwaggerDocs = new Dictionary<string, Tuple<OpenApiInfo, SerializeVersion>>
                     {
-                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                        ["v1"] = new Tuple<OpenApiInfo, SerializeVersion>(new OpenApiInfo { Version = "V1", Title = "Test API" }, SerializeVersion.V3)
                     },
                     DocumentFilters = new List<IDocumentFilter>
                     {
@@ -773,7 +773,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             );
 
-            var document = subject.GetSwagger("v1");
+            var document = subject.GetSwagger("v1").Item1;
 
             Assert.NotEmpty(document.Extensions);
         }
@@ -789,10 +789,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         private static readonly SwaggerGeneratorOptions DefaultOptions = new SwaggerGeneratorOptions
         {
-            SwaggerDocs = new Dictionary<string, OpenApiInfo>
+            SwaggerDocs = new Dictionary<string, Tuple<OpenApiInfo, SerializeVersion>>
             {
-                ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
-            }
+                ["v1"] = new Tuple<OpenApiInfo, SerializeVersion>(new OpenApiInfo { Version = "V1", Title = "Test API" }, SerializeVersion.V3)
+            },
         };
     }
 }
