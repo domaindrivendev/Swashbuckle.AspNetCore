@@ -228,19 +228,45 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             ApiDescription apiDescription,
             SchemaRepository schemaRepository)
         {
+            OpenApiRequestBody requestBody = null;
+            RequestBodyFilterContext filterContext = null;
+
             var bodyParameter = apiDescription.ParameterDescriptions
                 .FirstOrDefault(paramDesc => paramDesc.IsFromBody());
-
-            if (bodyParameter != null)
-                return GenerateRequestBodyFromBodyParameter(apiDescription, schemaRepository, bodyParameter);
 
             var formParameters = apiDescription.ParameterDescriptions
                 .Where(paramDesc => paramDesc.IsFromForm());
 
-            if (formParameters.Any())
-                return GenerateRequestBodyFromFormParameters(apiDescription, schemaRepository, formParameters);
+            if (bodyParameter != null)
+            {
+                requestBody = GenerateRequestBodyFromBodyParameter(apiDescription, schemaRepository, bodyParameter);
 
-            return null;
+                filterContext = new RequestBodyFilterContext(
+                    bodyParameterDescription: bodyParameter,
+                    formParameterDescriptions: null,
+                    schemaGenerator: _schemaGenerator,
+                    schemaRepository: schemaRepository);
+            }
+            else if (formParameters.Any())
+            {
+                requestBody = GenerateRequestBodyFromFormParameters(apiDescription, schemaRepository, formParameters);
+
+                filterContext = new RequestBodyFilterContext(
+                    bodyParameterDescription: null,
+                    formParameterDescriptions: formParameters,
+                    schemaGenerator: _schemaGenerator,
+                    schemaRepository: schemaRepository);
+            }
+
+            if (requestBody != null)
+            {
+                foreach (var filter in _options.RequestBodyFilters)
+                {
+                    filter.Apply(requestBody, filterContext);
+                }
+            }
+
+            return requestBody;
         }
 
         private OpenApiRequestBody GenerateRequestBodyFromBodyParameter(

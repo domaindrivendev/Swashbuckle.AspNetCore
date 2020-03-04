@@ -270,6 +270,24 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
+        /// Extend the Swagger Generator with "filters" that can modify RequestBodys after they're initially generated
+        /// </summary>
+        /// <typeparam name="TFilter">A type that derives from IRequestBodyFilter</typeparam>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="arguments">Optionally inject parameters through filter constructors</param>
+        public static void RequestBodyFilter<TFilter>(
+            this SwaggerGenOptions swaggerGenOptions,
+            params object[] arguments)
+            where TFilter : IRequestBodyFilter
+        {
+            swaggerGenOptions.RequestBodyFilterDescriptors.Add(new FilterDescriptor
+            {
+                Type = typeof(TFilter),
+                Arguments = arguments
+            });
+        }
+
+        /// <summary>
         /// Extend the Swagger Generator with "filters" that can modify Operations after they're initially generated
         /// </summary>
         /// <typeparam name="TFilter">A type that derives from IOperationFilter</typeparam>

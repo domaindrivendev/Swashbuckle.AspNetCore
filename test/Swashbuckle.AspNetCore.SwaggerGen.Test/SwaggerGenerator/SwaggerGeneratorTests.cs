@@ -728,6 +728,76 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GetSwagger_SupportsOption_ParameterFilters()
+        {
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionWithParameter),
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions: new []
+                        {
+                            new ApiParameterDescription { Name = "param", Source = BindingSource.Query }
+                        })
+                },
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    },
+                    ParameterFilters = new List<IParameterFilter>
+                    {
+                        new VendorExtensionsParameterFilter()
+                    }
+                }
+            ); ;
+
+            var document = subject.GetSwagger("v1");
+
+            var operation = document.Paths["/resource"].Operations[OperationType.Post];
+            Assert.NotEmpty(operation.Parameters[0].Extensions);
+        }
+
+        [Fact]
+        public void GetSwagger_SupportsOption_RequestBodyFilters()
+        {
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionWithParameter),
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions: new []
+                        {
+                            new ApiParameterDescription { Name = "param", Source = BindingSource.Body }
+                        })
+                },
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    },
+                    RequestBodyFilters = new List<IRequestBodyFilter>
+                    {
+                        new VendorExtensionsRequestBodyFilter()
+                    }
+                }
+            ); ;
+
+            var document = subject.GetSwagger("v1");
+
+            var operation = document.Paths["/resource"].Operations[OperationType.Post];
+            Assert.NotEmpty(operation.RequestBody.Extensions);
+        }
+
+        [Fact]
         public void GetSwagger_SupportsOption_OperationFilters()
         {
             var subject = Subject(

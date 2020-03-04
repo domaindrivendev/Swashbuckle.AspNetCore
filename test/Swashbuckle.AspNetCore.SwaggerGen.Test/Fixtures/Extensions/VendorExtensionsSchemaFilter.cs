@@ -7,7 +7,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
     {
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
-            schema.Extensions.Add("X-property1", new OpenApiString("value"));
+            schema.Extensions.Add("X-foo", new OpenApiString("bar"));
         }
     }
 }

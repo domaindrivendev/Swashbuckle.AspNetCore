@@ -39,6 +39,8 @@ namespace Basic
                     }
                 );
 
+                c.RequestBodyFilter<AssignRequestBodyVendorExtensions>();
+
                 c.OperationFilter<AssignOperationVendorExtensions>();
 
                 c.SchemaFilter<ExamplesSchemaFilter>();

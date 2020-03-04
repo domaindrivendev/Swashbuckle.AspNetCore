@@ -7,7 +7,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
     {
         public void Apply(OpenApiOperation operation, OperationFilterContext contex)
         {
-            operation.Extensions.Add("X-property1", new OpenApiString("value"));
+            operation.Extensions.Add("X-foo", new OpenApiString("bar"));
         }
     }
 }

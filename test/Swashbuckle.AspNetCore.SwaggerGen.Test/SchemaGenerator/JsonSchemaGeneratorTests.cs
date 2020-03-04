@@ -331,9 +331,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var schema = subject.GenerateSchema(type, schemaRepository);
 
             if (schema.Reference == null)
-                Assert.Contains("X-property1", schema.Extensions.Keys);
+                Assert.Contains("X-foo", schema.Extensions.Keys);
             else
-                Assert.Contains("X-property1", schemaRepository.Schemas[schema.Reference.Id].Extensions.Keys);
+                Assert.Contains("X-foo", schemaRepository.Schemas[schema.Reference.Id].Extensions.Keys);
         }
 
         [Fact]
