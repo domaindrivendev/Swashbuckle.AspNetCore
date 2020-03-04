@@ -47,9 +47,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private OpenApiSchema GenerateSchemaForType(Type type, SchemaRepository schemaRepository)
         {
-            if (_generatorOptions.CustomTypeMappings.ContainsKey(type))
+            if (TryGetCustomTypeMapping(type, out var schemaFactory))
             {
-                return _generatorOptions.CustomTypeMappings[type]();
+                return schemaFactory.Invoke();
             }
 
             if (type.IsAssignableToOneOf(typeof(IFormFile), typeof(FileResult)))
@@ -299,6 +299,21 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 filter.Apply(schema, filterContext);
             }
+        }
+
+        private bool TryGetCustomTypeMapping(Type type, out Func<OpenApiSchema> schemaFactory)
+        {
+            if (_generatorOptions.CustomTypeMappings.TryGetValue(type, out schemaFactory))
+            {
+                return true;
+            }
+
+            if (type.IsGenericType && _generatorOptions.CustomTypeMappings.TryGetValue(type.GetGenericTypeDefinition(), out schemaFactory))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

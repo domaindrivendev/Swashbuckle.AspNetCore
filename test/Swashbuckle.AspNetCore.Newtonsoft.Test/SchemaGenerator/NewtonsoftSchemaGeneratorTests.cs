@@ -294,15 +294,17 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.Equal(new[] { "IntWithRequired", "StringWithRequired" }, schema.Required.ToArray());
         }
 
-        [Fact]
-        public void GenerateSchema_SupportsOption_CustomTypeMappings()
+        [Theory]
+        [InlineData(typeof(ComplexType), typeof(ComplexType), "string")]
+        [InlineData(typeof(GenericType<,>), typeof(GenericType<string, bool>), "string")]
+        public void GenerateSchema_SupportsOption_CustomTypeMappings(Type type, Type generateForType, string schemaType)
         {
             var subject = Subject(
-                configureGenerator: c => c.CustomTypeMappings.Add(typeof(ComplexType), () => new OpenApiSchema { Type = "string" })
+                configureGenerator: c => c.CustomTypeMappings.Add(type, () => new OpenApiSchema { Type = schemaType })
             );
-            var schema = subject.GenerateSchema(typeof(ComplexType), new SchemaRepository());
+            var schema = subject.GenerateSchema(generateForType, new SchemaRepository());
 
-            Assert.Equal("string", schema.Type);
+            Assert.Equal(schemaType, schema.Type);
             Assert.Empty(schema.Properties);
         }
 
