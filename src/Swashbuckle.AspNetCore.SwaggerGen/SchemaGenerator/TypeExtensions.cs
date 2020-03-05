@@ -7,6 +7,25 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class TypeExtensions
     {
+        public static bool IsOneOf(this Type type, params Type[] possibleTypes)
+        {
+            return possibleTypes.Any(possibleType => possibleType == type);
+        }
+
+        public static bool IsAssignableToOneOf(this Type type, params Type[] possibleTypes)
+        {
+            return possibleTypes.Any(possibleType => possibleType.IsAssignableFrom(type));
+        }
+
+        private static bool IsConstructedFrom(this Type type, Type genericType, out Type constructedType)
+        {
+            constructedType = new[] { type }
+                .Union(type.GetInterfaces())
+                .FirstOrDefault(i => i.IsConstructedGenericType && i.GetGenericTypeDefinition() == genericType);
+
+            return (constructedType != null);
+        }
+
         public static bool IsNullable(this Type type, out Type innerType)
         {
             innerType = type.IsConstructedFrom(typeof(Nullable<>), out Type constructedType)
@@ -16,9 +35,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return (innerType != null);
         }
 
-        public static bool IsNullable(this Type type)
+        public static bool IsReferenceOrNullableType(this Type type)
         {
-            return type.IsNullable(out _);
+            return (!type.IsValueType || type.IsNullable(out Type _));
         }
 
         public static bool IsDictionary(this Type type, out Type keyType, out Type valueType)
@@ -70,30 +89,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public static bool IsSet(this Type type)
         {
             return type.IsConstructedFrom(typeof(ISet<>), out Type _);
-        }
-
-        public static bool IsReferenceOrNullableType(this Type type)
-        {
-            return (!type.IsValueType || type.IsNullable());
-        }
-
-        public static bool IsOneOf(this Type type, params Type[] possibleTypes)
-        {
-            return possibleTypes.Any(possibleType => possibleType == type);
-        }
-
-        public static bool IsAssignableToOneOf(this Type type, params Type[] possibleTypes)
-        {
-            return possibleTypes.Any(possibleType => possibleType.IsAssignableFrom(type));
-        }
-
-        private static bool IsConstructedFrom(this Type type, Type genericType, out Type constructedType)
-        {
-            constructedType = new[] { type }
-                .Union(type.GetInterfaces())
-                .FirstOrDefault(i => i.IsConstructedGenericType && i.GetGenericTypeDefinition() == genericType);
-
-            return (constructedType != null);
         }
     }
 }

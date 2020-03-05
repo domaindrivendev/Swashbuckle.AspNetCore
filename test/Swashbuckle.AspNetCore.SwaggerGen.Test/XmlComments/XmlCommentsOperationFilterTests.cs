@@ -1,13 +1,9 @@
 ﻿using System.Linq;
-using System.Collections.Generic;
 using System.Xml.XPath;
-using System.Reflection;
 using System.IO;
-using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Models;
 using Xunit;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -16,15 +12,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void Apply_SetsSummaryAndDescription_FromActionSummaryAndRemarksTags()
         {
-            var operation = new OpenApiOperation
-            {
-                Responses = new OpenApiResponses()
-            };
-            var filterContext = FilterContextFor
-            (
-                ApiDescriptionFactory.Create<FakeControllerWithXmlComments>(
-                    c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "POST", relativePath: "resource")
-            );
+            var operation = new OpenApiOperation();
+            var methodInfo = typeof(FakeControllerWithXmlComments)
+                .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithNoParameters));
+            var apiDescription = ApiDescriptionFactory.Create(methodInfo: methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource");
+            var filterContext = new OperationFilterContext(apiDescription, null, null, methodInfo);
 
             Subject().Apply(operation, filterContext);
 
@@ -33,95 +25,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void Apply_SetsParameterDescriptions_FromCorrespondingActionParamTags()
+        public void Apply_SetsSummaryAndDescription_FromUnderlyingGenericTypeActionSummaryAndRemarksTags()
         {
-            var operation = new OpenApiOperation
-            {
-                Parameters = new List<OpenApiParameter>
-                {
-                    new OpenApiParameter { Name = "param1" },
-                    new OpenApiParameter { Name = "param2" },
-                },
-                Responses = new OpenApiResponses()
-            };
-            var filterContext = FilterContextFor
-            (
-                ApiDescriptionFactory.Create<FakeControllerWithXmlComments>(
-                    c => nameof(c.ActionWithMultipleParameters),
-                    groupName: "v1",
-                    httpMethod: "POST",
-                    relativePath: "resource",
-                    parameterDescriptions: new[]
-                    {
-                        new ApiParameterDescription { Name = "param1", Source = BindingSource.Query },
-                        new ApiParameterDescription { Name = "param2", Source = BindingSource.Query }
-                    })
-            );
+            var operation = new OpenApiOperation();
+            var methodInfo = typeof(FakeConstructedControllerWithXmlComments)
+                .GetMethod(nameof(FakeConstructedControllerWithXmlComments.ActionWithGenericTypeParameter));
+            var apiDescription = ApiDescriptionFactory.Create(methodInfo: methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource");
+            var filterContext = new OperationFilterContext(apiDescription, null, null, methodInfo);
 
             Subject().Apply(operation, filterContext);
 
-            Assert.Equal("Description for param1", operation.Parameters[0].Description);
-            Assert.Equal("Description for param2", operation.Parameters[1].Description);
-        }
-
-        [Fact]
-        public void Apply_SetsParameterDescriptions_FromCorrespondingPropertySummaryTags()
-        {
-            var operation = new OpenApiOperation
-            {
-                Parameters = new List<OpenApiParameter>
-                {
-                    new OpenApiParameter { Name = "BoolProperty" }
-                },
-                Responses = new OpenApiResponses()
-            };
-            var filterContext = FilterContextFor
-            (
-                ApiDescriptionFactory.Create<FakeControllerWithXmlComments>(
-                    c => nameof(c.ActionWithNoParameters),
-                    groupName: "v1",
-                    httpMethod: "POST",
-                    relativePath: "resource",
-                    parameterDescriptions: new[]
-                    {
-                        new ApiParameterDescription
-                        {
-                            Name = "BoolProperty",
-                            Source = BindingSource.Query,
-                            ModelMetadata = ModelMetadataFactory.CreateForProperty(typeof(XmlAnnotatedType), "BoolProperty")
-                        }
-                    })
-            );
-
-            Subject().Apply(operation, filterContext);
-
-            Assert.Equal("Summary for BoolProperty", operation.Parameters[0].Description);
-        }
-
-        [Fact]
-        public void Apply_SetsRequestBodyDescription_FromCorrespondingActionParamTags()
-        {
-            var operation = new OpenApiOperation
-            {
-                RequestBody = new OpenApiRequestBody(),
-                Responses = new OpenApiResponses()
-            };
-            var filterContext = FilterContextFor
-            (
-                ApiDescriptionFactory.Create<FakeControllerWithXmlComments>(
-                    c => nameof(c.ActionWithParamTag),
-                    groupName: "v1",
-                    httpMethod: "POST",
-                    relativePath: "resource",
-                    parameterDescriptions: new []
-                    {
-                        new ApiParameterDescription { Name = "param", Source = BindingSource.Body }
-                    })
-            );
-
-            Subject().Apply(operation, filterContext);
-
-            Assert.Equal("Description for param", operation.RequestBody.Description);
+            Assert.Equal("Summary for ActionWithGenericTypeParameter", operation.Summary);
+            Assert.Equal("Remarks for ActionWithGenericTypeParameter", operation.Description);
         }
 
         [Fact]
@@ -135,19 +50,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     { "400", new OpenApiResponse { Description = "Client Error" } },
                 }
             };
-            var filterContext = FilterContextFor
-            (
-                ApiDescriptionFactory.Create<FakeControllerWithXmlComments>(
-                    c => nameof(c.ActionWithResponseTags),
-                    groupName: "v1",
-                    httpMethod: "POST",
-                    relativePath: "resource",
-                    supportedResponseTypes: new []
-                    {
-                        new ApiResponseType { StatusCode = 200 },
-                        new ApiResponseType { StatusCode = 400 },
-                    })
-            );
+            var methodInfo = typeof(FakeControllerWithXmlComments)
+                .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithResponseTags));
+            var apiDescription = ApiDescriptionFactory.Create(
+                methodInfo: methodInfo,
+                groupName: "v1",
+                httpMethod: "POST",
+                relativePath: "resource",
+                supportedResponseTypes: new[]
+                {
+                    new ApiResponseType { StatusCode = 200 },
+                    new ApiResponseType { StatusCode = 400 },
+                });
+            var filterContext = new OperationFilterContext(apiDescription, null, null, methodInfo: methodInfo);
 
             Subject().Apply(operation, filterContext);
 
@@ -157,19 +72,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("Description for default response", operation.Responses["default"].Description);
         }
 
-        private OperationFilterContext FilterContextFor(ApiDescription apiDescription)
-        {
-            return new OperationFilterContext(
-                apiDescription,
-                null,
-                null,
-                (apiDescription.ActionDescriptor as ControllerActionDescriptor).MethodInfo);
-        }
-
         private XmlCommentsOperationFilter Subject()
         {
-            using (var xmlComments = File.OpenText(GetType().GetTypeInfo()
-                    .Assembly.GetName().Name + ".xml"))
+            using (var xmlComments = File.OpenText(GetType().Assembly.GetName().Name + ".xml"))
             {
                 return new XmlCommentsOperationFilter(new XPathDocument(xmlComments));
             }

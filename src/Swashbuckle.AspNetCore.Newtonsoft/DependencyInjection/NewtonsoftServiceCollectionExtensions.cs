@@ -1,10 +1,10 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.Newtonsoft;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -13,12 +13,12 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddSwaggerGenNewtonsoftSupport(this IServiceCollection services)
         {
             return services.Replace(
-                ServiceDescriptor.Transient<ISchemaGenerator>((s) =>
+                ServiceDescriptor.Transient<ISerializerMetadataResolver>((s) =>
                 {
                     var generatorOptions = s.GetRequiredService<IOptions<SchemaGeneratorOptions>>().Value;
                     var serializerSettings = s.GetJsonSerializerSettings() ?? new JsonSerializerSettings();
 
-                    return new NewtonsoftSchemaGenerator(generatorOptions, serializerSettings);
+                    return new NewtonsoftMetadataResolver(generatorOptions, serializerSettings);
                 }));
         }
 

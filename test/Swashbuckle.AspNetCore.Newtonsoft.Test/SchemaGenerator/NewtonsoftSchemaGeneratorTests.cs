@@ -615,7 +615,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.Empty(schema.Properties);
         }
 
-        private NewtonsoftSchemaGenerator Subject(
+        private SchemaGenerator Subject(
             Action<SchemaGeneratorOptions> configureGenerator = null,
             Action<JsonSerializerSettings> configureSerializer = null)
         {
@@ -625,7 +625,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             var serializerSettings = new JsonSerializerSettings();
             configureSerializer?.Invoke(serializerSettings);
 
-            return new NewtonsoftSchemaGenerator(generatorOptions, serializerSettings);
+            return new SchemaGenerator(generatorOptions, new NewtonsoftMetadataResolver(generatorOptions, serializerSettings));
         }
     }
 }

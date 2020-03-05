@@ -5,16 +5,11 @@ using System.Xml.XPath;
 using System.Reflection;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
-using System.Linq;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class XmlCommentsSchemaFilter : ISchemaFilter
     {
-        private const string NodeXPath = "/doc/members/member[@name='{0}']";
-        private const string SummaryTag = "summary";
-        private const string ExampleXPath = "example";
-
         private readonly XPathNavigator _xmlNavigator;
 
         public XmlCommentsSchemaFilter(XPathDocument xmlDoc)
@@ -24,76 +19,84 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
-            TryApplyTypeComments(schema, context.Type);
+            ApplyTypeTags(schema, context.Type);
 
-            foreach (var entry in schema.Properties)
+            if (context.MemberInfo != null)
             {
-                var propertyName = entry.Key;
-                var propertySchema = entry.Value;
-
-                if (propertySchema.Reference != null) continue; // can't add descriptions to a reference schema
-
-                // Try to find the backing member by name (i.e. best effort)
-                var memberInfo = context.Type.GetMembers()
-                    .FirstOrDefault(m => m.Name.Equals(propertyName, StringComparison.InvariantCultureIgnoreCase));
-
-                if (memberInfo == null) continue;
-
-                TryApplyMemberComments(propertySchema, memberInfo);
-            };
-        }
-
-        private void TryApplyTypeComments(OpenApiSchema schema, Type type)
-        {
-            var typeNodeName = XmlCommentsNodeNameHelper.GetMemberNameForType(type);
-            var typeNode = _xmlNavigator.SelectSingleNode(string.Format(NodeXPath, typeNodeName));
-
-            if (typeNode != null)
+                ApplyFieldOrPropertyTags(schema, context.MemberInfo);
+            }
+            else if (context.ParameterInfo != null)
             {
-                var summaryNode = typeNode.SelectSingleNode(SummaryTag);
-                if (summaryNode != null)
-                    schema.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
+                ApplyParamTags(schema, context.ParameterInfo);
             }
         }
 
-        private void TryApplyMemberComments(OpenApiSchema schema, MemberInfo memberInfo)
+        private void ApplyTypeTags(OpenApiSchema schema, Type type)
         {
-            var memberNodeName = XmlCommentsNodeNameHelper.GetNodeNameForMember(memberInfo);
-            var memberNode = _xmlNavigator.SelectSingleNode(string.Format(NodeXPath, memberNodeName));
-            if (memberNode == null) return;
+            var typeMemberName = XmlCommentsNodeNameHelper.GetMemberNameForType(type);
+            var typeSummaryNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{typeMemberName}']/summary");
 
-            var summaryNode = memberNode.SelectSingleNode(SummaryTag);
+            if (typeSummaryNode != null)
+            {
+                schema.Description = XmlCommentsTextHelper.Humanize(typeSummaryNode.InnerXml);
+            }
+        }
+
+        private void ApplyFieldOrPropertyTags(OpenApiSchema schema, MemberInfo fieldOrPropertyInfo)
+        {
+            var fieldOrPropertyMemberName = XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(fieldOrPropertyInfo);
+            var fieldOrPropertyNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{fieldOrPropertyMemberName}']");
+
+            if (fieldOrPropertyNode == null) return;
+
+            var summaryNode = fieldOrPropertyNode.SelectSingleNode("summary");
             if (summaryNode != null)
-            {
                 schema.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
-            }
 
-            var exampleNode = memberNode.SelectSingleNode(ExampleXPath);
+            var exampleNode = fieldOrPropertyNode.SelectSingleNode("example");
             if (exampleNode != null)
             {
                 var exampleString = XmlCommentsTextHelper.Humanize(exampleNode.InnerXml);
-                var memberType = (memberInfo.MemberType & MemberTypes.Field) != 0 ? ((FieldInfo) memberInfo).FieldType : ((PropertyInfo) memberInfo).PropertyType;
-                schema.Example = ConvertToOpenApiType(memberType, schema, exampleString);
+
+                if (fieldOrPropertyInfo is FieldInfo fieldInfo)
+                {
+                    schema.Example = ConvertToOpenApiType(fieldInfo.FieldType, schema, exampleString);
+                }
+                else if (fieldOrPropertyInfo is PropertyInfo propertyInfo)
+                {
+                    schema.Example = ConvertToOpenApiType(propertyInfo.PropertyType, schema, exampleString);
+                }
+            }
+        }
+
+        private void ApplyParamTags(OpenApiSchema schema, ParameterInfo parameterInfo)
+        {
+            if (!(parameterInfo.Member is MethodInfo methodInfo)) return;
+
+            var methodMemberName = XmlCommentsNodeNameHelper.GetMemberNameForMethod(methodInfo);
+            var paramNode = _xmlNavigator.SelectSingleNode(
+                $"/doc/members/member[@name='{methodMemberName}']/param[@name='{parameterInfo.Name}']");
+
+            if (paramNode != null)
+            {
+                schema.Description = XmlCommentsTextHelper.Humanize(paramNode.InnerXml);
             }
         }
 
         private static IOpenApiAny ConvertToOpenApiType(Type memberType, OpenApiSchema schema, string stringValue)
         {
             object typedValue;
-            var culture = CultureInfo.CurrentCulture;
-            CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 
             try
             {
-                typedValue = TypeDescriptor.GetConverter(memberType).ConvertFrom(stringValue);
+                typedValue = TypeDescriptor.GetConverter(memberType).ConvertFrom(
+                    context: null,
+                    culture: CultureInfo.InvariantCulture,
+                    stringValue);
             }
             catch (Exception)
             {
                 return null;
-            }
-            finally
-            {
-                CultureInfo.CurrentCulture = culture;
             }
 
             return OpenApiAnyFactory.CreateFor(schema, typedValue);

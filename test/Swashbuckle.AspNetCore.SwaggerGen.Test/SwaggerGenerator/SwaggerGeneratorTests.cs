@@ -196,7 +196,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 apiDescriptions: new[]
                 {
                     ApiDescriptionFactory.Create(
-                        typeof(FakeController), actionName,
+                        methodInfo: typeof(FakeController).GetMethod(actionName),
                         groupName: "v1",
                         httpMethod: "POST",
                         relativePath: "resource",
@@ -257,7 +257,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 apiDescriptions: new[]
                 {
                     ApiDescriptionFactory.Create(
-                        typeof(FakeController), actionName,
+                        methodInfo: typeof(FakeController).GetMethod(actionName),
                         groupName: "v1",
                         httpMethod: "POST",
                         relativePath: "resource",
@@ -326,7 +326,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 apiDescriptions: new[]
                 {
                     ApiDescriptionFactory.Create(
-                        typeof(FakeController), actionName,
+                        methodInfo: typeof(FakeController).GetMethod(actionName),
                         groupName: "v1",
                         httpMethod: "POST",
                         relativePath: "resource",
@@ -851,9 +851,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         private SwaggerGenerator Subject(IEnumerable<ApiDescription> apiDescriptions, SwaggerGeneratorOptions options = null)
         {
             return new SwaggerGenerator(
+                options ?? DefaultOptions,
                 new FakeApiDescriptionGroupCollectionProvider(apiDescriptions),
-                new JsonSchemaGenerator(new SchemaGeneratorOptions(), new JsonSerializerOptions()),
-                options ?? DefaultOptions
+                new SchemaGenerator(new SchemaGeneratorOptions(), new JsonSerializerMetadataResolver(new JsonSerializerOptions()))
             );
         }
 

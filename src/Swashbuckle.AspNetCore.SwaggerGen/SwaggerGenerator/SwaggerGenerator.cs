@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
@@ -20,13 +19,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private readonly SwaggerGeneratorOptions _options;
 
         public SwaggerGenerator(
+            SwaggerGeneratorOptions options,
             IApiDescriptionGroupCollectionProvider apiDescriptionsProvider,
-            ISchemaGenerator schemaGenerator,
-            SwaggerGeneratorOptions options)
+            ISchemaGenerator schemaGenerator)
         {
+            _options = options ?? new SwaggerGeneratorOptions();
             _apiDescriptionsProvider = apiDescriptionsProvider;
             _schemaGenerator = schemaGenerator;
-            _options = options ?? new SwaggerGeneratorOptions();
         }
 
         public OpenApiDocument GetSwagger(string documentName, string host = null, string basePath = null)
@@ -185,21 +184,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 || apiParameter.CustomAttributes().Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
 
             var schema = (apiParameter.ModelMetadata != null)
-                ? _schemaGenerator.GenerateSchema(apiParameter.ModelMetadata.ModelType, schemaRepository)
+                ? _schemaGenerator.GenerateSchema(
+                    apiParameter.ModelMetadata.ModelType,
+                    schemaRepository,
+                    apiParameter.PropertyInfo(),
+                    apiParameter.ParameterInfo())
                 : new OpenApiSchema { Type = "string" };
-
-            // If it's NOT a reference schema, apply contextual metadata (i.e. from custom attributes)
-            if (schema.Reference == null)
-            {
-                // Honor default value for optional action parameters
-                var parameterInfo = apiParameter.ParameterInfo();
-                if (parameterInfo != null && parameterInfo.HasDefaultValue)
-                {
-                    schema.Default = OpenApiAnyFactory.CreateFor(schema, parameterInfo.DefaultValue);
-                }
-
-                schema.ApplyCustomAttributes(apiParameter.CustomAttributes());
-            }
 
             var parameter = new OpenApiParameter
             {
@@ -213,8 +203,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 apiParameter,
                 _schemaGenerator,
                 schemaRepository,
-                apiParameter.ParameterInfo(),
-                apiParameter.PropertyInfo());
+                apiParameter.PropertyInfo(),
+                apiParameter.ParameterInfo());
 
             foreach (var filter in _options.ParameterFilters)
             {
@@ -278,6 +268,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var isRequired = bodyParameter.CustomAttributes().Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
 
+            var schema = _schemaGenerator.GenerateSchema(
+                bodyParameter.ModelMetadata.ModelType,
+                schemaRepository,
+                bodyParameter.PropertyInfo(),
+                bodyParameter.ParameterInfo());
+
             return new OpenApiRequestBody
             {
                 Content = contentTypes
@@ -285,7 +281,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         contentType => contentType,
                         contentType => new OpenApiMediaType
                         {
-                            Schema = _schemaGenerator.GenerateSchema(bodyParameter.ModelMetadata.ModelType, schemaRepository)
+                            Schema = schema
                         }
                     ),
                 Required = isRequired
@@ -350,17 +346,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     : formParameter.Name;
 
                 var schema = (formParameter.ModelMetadata != null)
-                    ? _schemaGenerator.GenerateSchema(formParameter.ModelMetadata.ModelType, schemaRepository)
+                    ? _schemaGenerator.GenerateSchema(
+                        formParameter.ModelMetadata.ModelType,
+                        schemaRepository,
+                        formParameter.PropertyInfo(),
+                        formParameter.ParameterInfo())
                     : new OpenApiSchema { Type = "string" };
-
-                var defaultValue = formParameter.CustomAttributes().OfType<DefaultValueAttribute>().FirstOrDefault()?.Value
-                    ?? formParameter.ParameterInfo()?.DefaultValue;
-
-                // NOTE: Oddly, ParameterInfo.DefaultValue returns DBNull if not optional, hence the additional check below
-                if (schema.Reference == null && defaultValue != null && defaultValue != DBNull.Value)
-                {
-                    schema.Default = OpenApiAnyFactory.CreateFor(schema, defaultValue);
-                }
 
                 properties.Add(name, schema);
 

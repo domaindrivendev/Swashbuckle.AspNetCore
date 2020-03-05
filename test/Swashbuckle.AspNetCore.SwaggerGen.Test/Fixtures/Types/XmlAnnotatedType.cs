@@ -9,6 +9,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
     public class XmlAnnotatedType
     {
         /// <summary>
+        /// Summary for BoolField
+        /// </summary>
+        /// <example>true</example>
+        public bool BoolField;
+
+        /// <summary>
         /// Summary for BoolProperty
         /// </summary>
         /// <example>true</example>
