@@ -36,6 +36,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             target.GeneratePolymorphicSchemas = source.GeneratePolymorphicSchemas;
             target.SubTypesResolver = source.SubTypesResolver;
             target.DiscriminatorSelector = source.DiscriminatorSelector;
+            target.UseAllOfToExtendReferenceSchemas = source.UseAllOfToExtendReferenceSchemas;
             target.UseInlineDefinitionsForEnums = source.UseInlineDefinitionsForEnums;
             target.SchemaFilters = new List<ISchemaFilter>(source.SchemaFilters);
             target.DescribeAllEnumsAsStrings = source.DescribeAllEnumsAsStrings;

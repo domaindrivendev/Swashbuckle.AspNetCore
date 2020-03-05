@@ -225,6 +225,15 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
+        /// Extend reference schemas (using the allOf construct) so that contextual metadata can be applied to all parameter and property schemas
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        public static void UseAllOfToExtendReferenceSchemas(this SwaggerGenOptions swaggerGenOptions)
+        {
+            swaggerGenOptions.SchemaGeneratorOptions.UseAllOfToExtendReferenceSchemas = true;
+        }
+
+        /// <summary>
         /// Generate inline schema definitions (as opposed to referencing a shared definition) for enum parameters and properties
         /// </summary>
         /// <param name="swaggerGenOptions"></param>

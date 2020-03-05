@@ -28,6 +28,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public Func<Type, string> DiscriminatorSelector { get; set; }
 
+        public bool UseAllOfToExtendReferenceSchemas { get; set; }
+
         public bool UseInlineDefinitionsForEnums { get; set; }
 
         public IList<ISchemaFilter> SchemaFilters { get; set; }

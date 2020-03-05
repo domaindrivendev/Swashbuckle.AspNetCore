@@ -240,7 +240,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private void ApplyMemberMetadata(OpenApiSchema schema, Type type, MemberInfo memberInfo)
         {
-            if (schema.Reference != null)
+            if (schema.Reference != null && _generatorOptions.UseAllOfToExtendReferenceSchemas)
             {
                 schema.AllOf = new[] { new OpenApiSchema { Reference = schema.Reference } };
                 schema.Reference = null;
@@ -262,7 +262,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private void ApplyParameterMetadata(OpenApiSchema schema, Type type, ParameterInfo parameterInfo)
         {
-            if (schema.Reference != null)
+            if (schema.Reference != null && _generatorOptions.UseAllOfToExtendReferenceSchemas)
             {
                 schema.AllOf = new[] { new OpenApiSchema { Reference = schema.Reference } };
                 schema.Reference = null;
