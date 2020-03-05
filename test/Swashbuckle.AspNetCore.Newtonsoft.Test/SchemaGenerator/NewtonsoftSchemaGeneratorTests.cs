@@ -243,7 +243,6 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [Theory]
         [InlineData(typeof(ComplexType), "Property1", false)]
         [InlineData(typeof(ComplexType), "Property4", true)]
-        [InlineData(typeof(SelfReferencingType), "Another", true)]
         public void GenerateSchema_SetsNullableFlag_IfPropertyIsReferenceOrNullableType(
             Type declaringType,
             string propertyName,
@@ -388,6 +387,22 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
+        public void GenerateSchema_SupportsOption_UseAllOfToExtendReferenceSchemas()
+        {
+            var subject = Subject(
+                configureGenerator: c => c.UseAllOfToExtendReferenceSchemas = true
+            );
+            var propertyInfo = typeof(SelfReferencingType).GetProperty(nameof(SelfReferencingType.Another));
+
+            var schema = subject.GenerateSchema(propertyInfo.PropertyType, new SchemaRepository(), memberInfo: propertyInfo);
+
+            Assert.Null(schema.Reference);
+            Assert.NotNull(schema.AllOf);
+            Assert.Equal(1, schema.AllOf.Count);
+            Assert.True(schema.Nullable);
+        }
+
+        [Fact]
         public void GenerateSchema_SupportsOption_UseInlineDefinitionsForEnums()
         {
             var subject = Subject(
@@ -410,7 +425,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("object", schema.Type);
             Assert.NotNull(schema.Properties["Property1"].AllOf);
-            Assert.Equal("NestedType", schema.Properties["Property1"].AllOf.First().Reference.Id);
+            Assert.Equal("NestedType", schema.Properties["Property1"].Reference.Id);
         }
 
         [Fact]
