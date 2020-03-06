@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.SwaggerGen\Swashbuckle.AspNetCore.SwaggerGen.csproj" />
+    <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.SwaggerUI\Swashbuckle.AspNetCore.SwaggerUI.csproj" />
+    <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.Swagger\Swashbuckle.AspNetCore.Swagger.csproj" />
+    <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.Cli\Swashbuckle.AspNetCore.Cli.csproj" />
+  </ItemGroup>
+
+  <!--
+    NOTE: In practice, you would install the CLI as a .NET Core Global Tool (i.e. dotnet tool install Swashbuckle.AspNetCore.Cli)
+    and incorporate it into your build process using the commented out target below
+  -->
+
+  <!--
+  <Target Name="SwaggerToFile" AfterTargets="AfterBuild">
+    <Exec Command="dotnet swagger tofile &#45;-host http://example.com &#45;-output wwwroot/api-docs/v1/swagger.json &quot;$(TargetPath)&quot; v1" />
+  </Target>
+  -->
+
+  <!--
+    HOWEVER ... This example invokes the CLI DLL directly so that its source code can be tested during the Swashbuckle build process
+  -->
+
+  <Target Name="SwaggerToFile" AfterTargets="AfterBuild">
+    <Exec Command="dotnet $(SolutionDir)/src/Swashbuckle.AspNetCore.Cli/bin/$(Configuration)/$(TargetFramework)/dotnet-swagger.dll tofile --host http://example.com --output wwwroot/api-docs/v1/swagger.json $(OutputPath)$(AssemblyName).dll v1" />
+  </Target>
+
+</Project>

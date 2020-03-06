@@ -3,8 +3,7 @@ using System.Reflection;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.Loader;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Writers;
 using Swashbuckle.AspNetCore.Swagger;
@@ -62,13 +61,13 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Option("--serializeasv2", "", true);
                 c.Option("--yaml", "", true);
                 c.OnRun((namedArgs) =>
-                {
+                {                    
                     // 1) Configure host with provided startupassembly
                     var startupAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(
                         Path.Combine(Directory.GetCurrentDirectory(), namedArgs["startupassembly"]));
-                    var host = WebHost.CreateDefaultBuilder()
-                        .UseStartup(startupAssembly.FullName)
-                        .Build();
+
+                    var hostFactory = CreateSwaggerWebHostFactory(startupAssembly);
+                    var host = hostFactory.BuildWebHost();
 
                     // 2) Retrieve Swagger via configured provider
                     var swaggerProvider = host.Services.GetRequiredService<ISwaggerProvider>();
@@ -108,12 +107,20 @@ namespace Swashbuckle.AspNetCore.Cli
 
         private static string EscapePath(string path)
         {
-            if (path.Contains(" "))
-            {
-                return "\"" + path + "\"";
-            }
+            return path.Contains(" ")
+                ? "\"" + path + "\""
+                : path;
+        }
 
-            return path;
+        private static ISwaggerWebHostFactory CreateSwaggerWebHostFactory(Assembly startupAssembly)
+        {
+            // Scan the startup assembly for custom implementations
+            var customFactoryType = startupAssembly.DefinedTypes
+                .SingleOrDefault(t => t.ImplementedInterfaces.Contains(typeof(ISwaggerWebHostFactory)));
+
+            return (customFactoryType != null)
+                ? startupAssembly.CreateInstance(customFactoryType.FullName) as ISwaggerWebHostFactory
+                : new DefaultSwaggerWebHostFactory(startupAssembly);
         }
     }
 }
