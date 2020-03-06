@@ -7,6 +7,8 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Writers;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore;
 
 namespace Swashbuckle.AspNetCore.Cli
 {
@@ -66,17 +68,17 @@ namespace Swashbuckle.AspNetCore.Cli
                     var startupAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(
                         Path.Combine(Directory.GetCurrentDirectory(), namedArgs["startupassembly"]));
 
-                    var hostFactory = CreateSwaggerWebHostFactory(startupAssembly);
-                    var host = hostFactory.BuildWebHost();
+                    // 2) Build a web host to serve the request
+                    var host = BuildWebHost(startupAssembly);
 
-                    // 2) Retrieve Swagger via configured provider
+                    // 3) Retrieve Swagger via configured provider
                     var swaggerProvider = host.Services.GetRequiredService<ISwaggerProvider>();
                     var swagger = swaggerProvider.GetSwagger(
                         namedArgs["swaggerdoc"],
                         namedArgs.ContainsKey("--host") ? namedArgs["--host"] : null,
                         namedArgs.ContainsKey("--basepath") ? namedArgs["--basepath"] : null);
 
-                    // 3) Serialize to specified output location or stdout
+                    // 4) Serialize to specified output location or stdout
                     var outputPath = namedArgs.ContainsKey("--output")
                         ? Path.Combine(Directory.GetCurrentDirectory(), namedArgs["--output"])
                         : null;
@@ -112,15 +114,32 @@ namespace Swashbuckle.AspNetCore.Cli
                 : path;
         }
 
-        private static ISwaggerWebHostFactory CreateSwaggerWebHostFactory(Assembly startupAssembly)
+        private static IWebHost BuildWebHost(Assembly startupAssembly)
         {
-            // Scan the startup assembly for custom implementations
-            var customFactoryType = startupAssembly.DefinedTypes
-                .SingleOrDefault(t => t.ImplementedInterfaces.Contains(typeof(ISwaggerWebHostFactory)));
+            // Scan the startup assembly for any types that match the naming convention
+            var factoryTypes = startupAssembly.DefinedTypes
+                .Where(t => t.Name == "SwaggerWebHostFactory");
 
-            return (customFactoryType != null)
-                ? startupAssembly.CreateInstance(customFactoryType.FullName) as ISwaggerWebHostFactory
-                : new DefaultSwaggerWebHostFactory(startupAssembly);
+            if (!factoryTypes.Any())
+            {
+                return WebHost.CreateDefaultBuilder()
+                   .UseStartup(startupAssembly.FullName)
+                   .Build();
+            }
+
+            if (factoryTypes.Count() > 1)
+                throw new InvalidOperationException("Multiple SwaggerWebHostFactory classes detected");
+
+            var factoryMethod = factoryTypes
+                .Single()
+                .GetMethod("CreateWebHost", BindingFlags.Public | BindingFlags.Static);
+
+            if (factoryMethod == null || factoryMethod.ReturnType != typeof(IWebHost))
+                throw new InvalidOperationException(
+                    "SwaggerWebHostFactory class detected but does not contain a public static method " +
+                    "called CreateWebHost with return type IWebHost");
+
+            return (IWebHost)factoryMethod.Invoke(null, null);
         }
     }
 }

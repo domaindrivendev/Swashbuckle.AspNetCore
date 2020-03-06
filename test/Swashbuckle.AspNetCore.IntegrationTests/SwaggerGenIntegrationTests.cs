@@ -3,27 +3,17 @@ using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
-using Microsoft.VisualStudio.TestPlatform.Utilities;
 using Xunit;
-using Xunit.Abstractions;
 using ReDocApp = ReDoc;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests
 {
     public class SwaggerGenIntegrationTests
     {
-        private readonly ITestOutputHelper _output;
-
-        public SwaggerGenIntegrationTests(ITestOutputHelper output)
-        {
-            _output = output;
-        }
-
         [Theory]
         [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(CliExample.Startup), "/api-docs/v1/swagger.json")]

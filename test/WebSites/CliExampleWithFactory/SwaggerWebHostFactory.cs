@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using Swashbuckle.AspNetCore.Cli;
 
 namespace CliExampleWithFactory
 {
-    public class MySwaggerWebHostFactory : ISwaggerWebHostFactory
+    public class SwaggerWebHostFactory
     {
-        public IWebHost BuildWebHost()
+        public static IWebHost CreateWebHost()
         {
             return Program.BuildWebHost(new string[0]);
         }
