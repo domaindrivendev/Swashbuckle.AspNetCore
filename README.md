@@ -21,8 +21,8 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 |Swashbuckle Version|ASP.NET Core|Swagger / OpenAPI Spec.|swagger-ui|ReDoc UI|
 |----------|----------|----------|----------|----------|
-|[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master/README.md)|>= 2.0.0|2.0, 3.0|3.24.3|2.0.0-rc.14|
-|[5.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v5.0.0)|>= 2.0.0|2.0, 3.0|3.24.3|2.0.0-rc.14|
+|[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master/README.md)|>= 2.0.0|2.0, 3.0|3.25.0|2.0.0-rc.23|
+|[5.1.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v5.1.0)|>= 2.0.0|2.0, 3.0|3.25.0|2.0.0-rc.23|
 |[4.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v4.0.0)|>= 2.0.0, < 3.0.0|2.0|3.19.5|1.22.2|
 |[3.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v3.0.0)|>= 1.0.4, < 3.0.0|2.0|3.17.1|1.20.0|
 |[2.5.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v2.5.0)|>= 1.0.4, < 3.0.0|2.0|3.16.0|1.20.0|
@@ -32,8 +32,8 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 1. Install the standard Nuget package into your ASP.NET Core application.
 
     ```
-    Package Manager : Install-Package Swashbuckle.AspNetCore -Version 5.0.0
-    CLI : dotnet add package --version 5.0.0 Swashbuckle.AspNetCore
+    Package Manager : Install-Package Swashbuckle.AspNetCore -Version 5.1.0
+    CLI : dotnet add package --version 5.1.0 Swashbuckle.AspNetCore
     ```
 
 2. In the `ConfigureServices` method of `Startup.cs`, register the Swagger generator, defining one or more Swagger documents.
@@ -97,8 +97,8 @@ If you're using **System.Text.Json (STJ)**, then the setup described above will 
 If you're using **Newtonsoft**, then you'll need to install a separate package and explicitly opt-in to ensure that *Newtonsoft* settings/attributes are automatically honored by the Swagger generator:
 
 ```
-Package Manager : Install-Package Swashbuckle.AspNetCore.Newtonsoft -Version 5.0.0
-CLI : dotnet add package --version 5.0.0 Swashbuckle.AspNetCore.Newtonsoft
+Package Manager : Install-Package Swashbuckle.AspNetCore.Newtonsoft -Version 5.1.0
+CLI : dotnet add package --version 5.1.0 Swashbuckle.AspNetCore.Newtonsoft
 ```
 
 ```csharp
@@ -221,6 +221,7 @@ The steps described above will get you up and running with minimal setup. Howeve
 
 * [Swashbuckle.AspNetCore.Cli](#swashbuckleaspnetcorecli)
     * [Retrieve Swagger Directly from a Startup Assembly](#retrieve-swagger-directly-from-a-startup-assembly)
+    * [Use the CLI Tool with a Custom IWebHost Configuration](#use-the-cli-tool-with-a-custom-iwebhost-configuration)
 
 * [Swashbuckle.AspNetCore.ReDoc](#swashbuckleaspnetcoreredoc)
     * [Change Releative Path to the UI](#redoc-change-relative-path-to-the-ui)
@@ -867,7 +868,7 @@ services.AddSwaggerGen(c =>
 };
 ```
 
-__NOTE__: In addition to defining a scheme, you also need to indicate which operations that scheme is applicable to. You can apply schemes globally (i.e. to ALL operations) through the `AddSecurityRequirement` method. The example below indicates that the scheme called "oauth2" should be applied to all operations, and that the "readAccess" and "writeAccess" scopes are required. When applying schemes of type other than "oauth2", the array of scopes MUST be empty.
+_NOTE: In addition to defining a scheme, you also need to indicate which operations that scheme is applicable to. You can apply schemes globally (i.e. to ALL operations) through the `AddSecurityRequirement` method. The example below indicates that the scheme called "oauth2" should be applied to all operations, and that the "readAccess" and "writeAccess" scopes are required. When applying schemes of type other than "oauth2", the array of scopes MUST be empty._
 
 ```csharp
 c.AddSwaggerGen(c =>
@@ -924,7 +925,7 @@ public class SecurityRequirementsOperationFilter : IOperationFilter
 }
 ```
 
-__NOTE__: If you're using the `SwaggerUI` middleware, you can enable interactive OAuth2.0 flows that are powered by the emitted security metadata. See [Enabling OAuth2.0 Flows](#enable-oauth20-flows) for more details.
+_NOTE: If you're using the `SwaggerUI` middleware, you can enable interactive OAuth2.0 flows that are powered by the emitted security metadata. See [Enabling OAuth2.0 Flows](#enable-oauth20-flows) for more details._
 
 ## Swashbuckle.AspNetCore.SwaggerUI ##
 
@@ -986,7 +987,7 @@ app.UseSwaggerUI(c =>
 });
 ```
 
-__NOTE:__ The `InjectOnCompleteJavaScript` and `InjectOnFailureJavaScript` options have been removed because the latest version of swagger-ui doesn't expose the neccessary hooks. Instead, it provides a [flexible customization system](https://github.com/swagger-api/swagger-ui/blob/master/docs/customization/overview.md) based on concepts and patterns from React and Redux. To leverage this, you'll need to provide a custom version of index.html as described [below](#customize-indexhtml).
+_NOTE: The `InjectOnCompleteJavaScript` and `InjectOnFailureJavaScript` options have been removed because the latest version of swagger-ui doesn't expose the neccessary hooks. Instead, it provides a [flexible customization system](https://github.com/swagger-api/swagger-ui/blob/master/docs/customization/overview.md) based on concepts and patterns from React and Redux. To leverage this, you'll need to provide a custom version of index.html as described [below](#customize-indexhtml)._
 
 The [custom index sample app](test/WebSites/CustomUIIndex/Swagger/index.html) demonstrates this approach, using the swagger-ui plugin system provide a custom topbar, and to hide the info component.
 
@@ -1135,51 +1136,60 @@ public class ProductsController
 }
 ```
 
-_NOTE:_ This will add the above description specifically to the tag named "Products". Therefore, you should avoid using this attribute if you're tagging Operations with something other than controller name - e.g. if you're customizing the tagging behavior with `TagActionsBy`.
+_NOTE: This will add the above description specifically to the tag named "Products". Therefore, you should avoid using this attribute if you're tagging Operations with something other than controller name - e.g. if you're customizing the tagging behavior with `TagActionsBy`._
 
 ## Swashbuckle.AspNetCore.Cli ##
 
 ### Retrieve Swagger Directly from a Startup Assembly ###
 
-The Swashbuckle CLI tool can retrieve Swagger JSON directly from your application startup assembly, and write it to file. This can be useful if you want to incorporate Swagger generation into a CI/CD process, or if you want to serve it from static file at run-time.
+Once your application has been configured to generate and expose Swagger/OpenAPI JSON (see [Getting Started](#getting-started)), the Swashbuckle CLI tool can retrieve Swagger/OpenAPI JSON directly from your application's startup assembly, and write it to file. This can be useful if you want to incorporate Swagger generation into a CI/CD process, or if you want to serve it from static file at run-time.
 
-The tool can be installed as a [.NET Core Global Tools](https://docs.microsoft.com/en-us/dotnet/core/tools/global-tools) either locally or globally by creating a `dotnet-tools.json` file next to your .sln or .csproj file:
+It can be installed as a [.NET Core Global Tool](https://docs.microsoft.com/en-us/dotnet/core/tools/global-tools). To install and use it locally (i.e. for the current directory), follow these steps:
 
-```json
+1. In your project root, create a tool manifest file:
+
+    ```
+    dotnet new tool-manifest
+    ```
+
+2. Install the Swashbuckle CLI tool and add it to the local manifest file
+
+    ```
+    dotnet tool install --version 5.1.0 Swashbuckle.AspNetCore.Cli
+    ```
+
+3. Verify that the tool was installed correctly
+
+    ```
+    dotnet swagger tofile --help
+    ```
+
+4. Generate a Swagger/OpenAPI document from your application's startup assembly
+
+	```
+	dotnet swagger tofile --output [output] [startupassembly] [swaggerdoc]
+	```
+
+	Where ...
+	* [output] is the relative path where the Swagger JSON will be output to
+	* [startupassembly] is the relative path to your application's startup assembly
+	* [swaggerdoc] is the name of the swagger document you want to retrieve, as configured in your startup class
+
+_NOTE: At this point the tool will be added to the local manifest file and installed. Once the updated manifest file is present, the tool can be automatically installed on a fresh envrionment (e.g. a CI/CD runner) by running `dotnet tool restore`._
+
+### Use the CLI Tool with a Custom IWebHost Configuration
+
+Out-of-the-box, the tool will execute in the context of a "default" web host. However, in some cases you may want to bring your own host environment, for example if you've configured a custom DI container such as Autofac. For this scenario, the Swashbuckle CLI tool exposes a convention-based hook for your application. That is, if your startup assembly contains a class named `SwaggerWebHostFactory` AND that class has a method with the signature `public static IWebHost CreateWebHost()`, then that will be used to create the host environment for the tool to execute in. For example, the following class could be used to leverage the same host configuration as your application:
+
+```csharp
+public class SwaggerWebHostFactory
 {
-  "version": 1,
-  "isRoot": true,
-  "tools": {
-  }
+    public static IWebHost CreateWebHost()
+    {
+        return Program.BuildWebHost(new string[0]);
+    }
 }
 ```
-
-Then, to install tool locally, run the following command:
-
-```
-dotnet tool install swashbuckle.aspnetcore.cli --version 5.0.0
-```
-
-To restore the tool on a clean machine, run `dotnet tool restore`
-
-Once this is done, you should be able to run the following command from your project root:
-
-```
-dotnet swagger tofile --help
-```
-
-Before you invoke the `tofile` command, you need to ensure your application is configured to expose Swagger JSON, as described in [Getting Started](#getting-started). Once this is done, you can point to your startup assembly and generate a local Swagger JSON file with the following command:
-
-```
-dotnet swagger tofile --output [output] [startupassembly] [swaggerdoc]
-```
-
-Where ...
-* [output] is the relative path where the Swagger JSON will be output to
-* [startupassembly] is the relative path to your application's startup assembly
-* [swaggerdoc] is the name of the swagger document you want to retrieve, as configured in your startup class
-
-Checkout the [CliExample app](test/WebSites/CliExample) for more inspiration. It leverages the MSBuild Exec command to generate Swagger JSON at build-time.
 
 ## Swashbuckle.AspNetCore.ReDoc ##
 
