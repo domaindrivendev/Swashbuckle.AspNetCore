@@ -226,13 +226,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var baseSerializerContract = _serializerMetadataResolver.GetSerializerMetadataForType(serializerMetadata.Type.BaseType);
                 var baseSchemaReference = GenerateReferencedSchema(baseSerializerContract, schemaRepository);
 
-                schema.AllOf = new[] { baseSchemaReference };
-
                 var baseSchema = schemaRepository.Schemas[baseSchemaReference.Reference.Id];
                 foreach (var basePropertyName in baseSchema.Properties.Keys)
                 {
                     schema.Properties.Remove(basePropertyName);
                 }
+
+                return new OpenApiSchema
+                {
+                    AllOf = new List<OpenApiSchema> { baseSchemaReference, schema }
+                };
             }
 
             return schema;

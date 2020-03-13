@@ -369,16 +369,16 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.NotNull(schema.OneOf[0].Reference);
             // The first sub schema
             var subSchema1 = schemaRepository.Schemas[schema.OneOf[0].Reference.Id];
-            Assert.Equal(new[] { "Property1" }, subSchema1.Properties.Keys);
             Assert.NotNull(subSchema1.AllOf);
-            Assert.Equal(1, subSchema1.AllOf.Count);
-            Assert.NotNull(subSchema1.AllOf[0].Reference);
+            Assert.Equal(2, subSchema1.AllOf.Count);
+            Assert.Equal("PolymorphicType", subSchema1.AllOf[0].Reference.Id);
+            Assert.Equal(new[] { "Property1" }, subSchema1.AllOf[1].Properties.Keys);
             // The second sub schema
             var subSchema2 = schemaRepository.Schemas[schema.OneOf[1].Reference.Id];
-            Assert.Equal(new[] { "Property2" }, subSchema2.Properties.Keys);
             Assert.NotNull(subSchema2.AllOf);
-            Assert.Equal(1, subSchema2.AllOf.Count);
-            Assert.NotNull(subSchema2.AllOf[0].Reference);
+            Assert.Equal(2, subSchema2.AllOf.Count);
+            Assert.Equal("PolymorphicType", subSchema2.AllOf[0].Reference.Id);
+            Assert.Equal(new[] { "Property2" }, subSchema2.AllOf[1].Properties.Keys);
             // The base schema
             var baseSchema = schemaRepository.Schemas[subSchema1.AllOf[0].Reference.Id];
             Assert.Equal(new[] { "$type", "BaseProperty" }, baseSchema.Properties.Keys);
