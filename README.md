@@ -15,7 +15,7 @@ In addition to its [Swagger 2.0 and OpenAPI 3.0](http://swagger.io/specification
 
 And that's not all ...
 
-Once you have an API that can describe itself in Swagger, you've opened the treasure chest of Swagger-based tools including a client generator that can be targeted to a wide range of popular platforms. See [swagger-codegen](https://github.com/swagger-api/swagger-codegen) for more details.
+Once you have an API that can describe itself in Swagger, you've opened the treasure chest of Swagger-based tools including a client generator that can be targeted to a wide range of popular platforms. See [OpenAPI-Generator](https://github.com/OpenAPITools/openapi-generator) for more details.
 
 # Compatibility #
 
