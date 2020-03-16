@@ -9,18 +9,18 @@ namespace Microsoft.AspNetCore.Builder
     {
         public static IApplicationBuilder UseSwaggerUI(
             this IApplicationBuilder app,
-            Action<SwaggerUIOptions> setupAction = null,
-            bool ignoreExistingOptions = false)
+            Action<SwaggerUIOptions> setupAction = null)
         {
-            SwaggerUIOptions options = new SwaggerUIOptions();
-
-            var existingSwaggerOptions = app.ApplicationServices.GetService<IOptions<SwaggerUIOptions>>();
-            if (ignoreExistingOptions == false && existingSwaggerOptions?.Value != null)
+            var options = new SwaggerUIOptions();
+            if (setupAction != null)
             {
-                options = existingSwaggerOptions.Value;
+                setupAction(options);
             }
-            
-            setupAction?.Invoke(options);
+            else
+            {
+                options = app.ApplicationServices.GetRequiredService<IOptions<SwaggerUIOptions>>().Value;
+            }
+
             app.UseMiddleware<SwaggerUIMiddleware>(options);
 
             return app;
