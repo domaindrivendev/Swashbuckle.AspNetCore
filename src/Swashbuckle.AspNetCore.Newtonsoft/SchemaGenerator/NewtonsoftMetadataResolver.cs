@@ -151,8 +151,8 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                         name: jsonProperty.PropertyName,
                         memberType: jsonProperty.PropertyType,
                         memberInfo: memberInfo,
-                        isNullable: (required == Required.AllowNull || required == Required.Default) && jsonProperty.PropertyType.IsReferenceOrNullableType(),
-                        isRequired: (required == Required.Always || required == Required.AllowNull)));
+                        isRequired: (required == Required.Always || required == Required.AllowNull),
+                        allowNull: (required == Required.AllowNull || required == Required.Default) && jsonProperty.PropertyType.IsReferenceOrNullableType()));
             }
 
             return serializerProperties;

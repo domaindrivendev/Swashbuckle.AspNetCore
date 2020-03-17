@@ -109,14 +109,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             string name,
             Type memberType,
             MemberInfo memberInfo,
-            bool isNullable = false,
-            bool isRequired = false)
+            bool isRequired = false,
+            bool allowNull = false)
         {
             Name = name;
             MemberType = memberType;
             MemberInfo = memberInfo;
-            IsNullable = isNullable;
             IsRequired = isRequired;
+            AllowNull = allowNull;
         }
 
         public string Name { get; } 
@@ -125,8 +125,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public MemberInfo MemberInfo { get; }
 
-        public bool IsNullable { get; }
-
         public bool IsRequired { get; }
+
+        public bool AllowNull { get; }
     }
 }

@@ -102,7 +102,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         name: name,
                         memberType: propertyInfo.PropertyType,
                         memberInfo: propertyInfo,
-                        isNullable: propertyInfo.PropertyType.IsReferenceOrNullableType()));
+                        allowNull: propertyInfo.PropertyType.IsReferenceOrNullableType()));
             }
 
             return serializerProperties;

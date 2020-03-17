@@ -276,6 +276,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("password", schema.Properties["StringWithDataTypePassword"].Format);
             Assert.IsType<OpenApiString>(schema.Properties["StringWithDefaultValue"].Default);
             Assert.Equal("foobar", ((OpenApiString)schema.Properties["StringWithDefaultValue"].Default).Value);
+            Assert.False(schema.Properties["StringWithRequired"].Nullable);
         }
 
         [Fact]

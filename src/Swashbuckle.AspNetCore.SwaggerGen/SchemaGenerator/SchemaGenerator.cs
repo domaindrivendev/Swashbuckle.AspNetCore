@@ -202,15 +202,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 var propertySchema = GenerateSchema(serializerPropertyMetadata.MemberType, schemaRepository, memberInfo: serializerPropertyMetadata.MemberInfo);
 
-                if (propertySchema.Reference == null)
-                {
-                    propertySchema.Nullable = serializerPropertyMetadata.IsNullable;
-                }
-
                 schema.Properties.Add(serializerPropertyMetadata.Name, propertySchema);
 
                 if (serializerPropertyMetadata.IsRequired || customAttributes.OfType<RequiredAttribute>().Any())
                     schema.Required.Add(serializerPropertyMetadata.Name);
+
+                if (propertySchema.Reference == null)
+                {
+                    propertySchema.Nullable = propertySchema.Nullable && serializerPropertyMetadata.AllowNull;
+                }
             }
 
             if (serializerMetadata.ExtensionDataValueType != null)
