@@ -195,6 +195,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             foreach (var serializerPropertyMetadata in serializerMetadata.Properties)
             {
+                if (serializerPropertyMetadata.MemberInfo==null) continue;
                 var customAttributes = serializerPropertyMetadata.MemberInfo.GetInlineOrMetadataTypeAttributes();
 
                 if (_generatorOptions.IgnoreObsoleteProperties && customAttributes.OfType<ObsoleteAttribute>().Any())
@@ -249,7 +250,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 schema.Reference = null;
             }
 
-            if (schema.Reference == null)
+            if (schema.Reference == null && memberInfo != null)
             {
                 schema.Nullable = type.IsReferenceOrNullableType();
 
