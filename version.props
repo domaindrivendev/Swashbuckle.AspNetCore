@@ -1,6 +1,5 @@
 <Project>
   <PropertyGroup>
 		<VersionPrefix>5.2.0</VersionPrefix>
-		<VersionSuffix>alpha-1</VersionSuffix>
   </PropertyGroup>
 </Project>
