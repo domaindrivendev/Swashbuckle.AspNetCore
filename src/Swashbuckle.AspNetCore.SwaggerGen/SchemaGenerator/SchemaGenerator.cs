@@ -250,7 +250,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 schema.Reference = null;
             }
 
-            if (schema.Reference == null && memberInfo != null)
+            if (schema.Reference == null)
             {
                 schema.Nullable = type.IsReferenceOrNullableType();
 
