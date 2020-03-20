@@ -195,8 +195,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             foreach (var serializerPropertyMetadata in serializerMetadata.Properties)
             {
-                if (serializerPropertyMetadata.MemberInfo==null) continue;
-                var customAttributes = serializerPropertyMetadata.MemberInfo.GetInlineOrMetadataTypeAttributes();
+                var customAttributes = serializerPropertyMetadata.MemberInfo?.GetInlineOrMetadataTypeAttributes();
 
                 if (_generatorOptions.IgnoreObsoleteProperties && customAttributes.OfType<ObsoleteAttribute>().Any())
                     continue;
