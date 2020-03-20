@@ -188,7 +188,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (_generatorOptions.GeneratePolymorphicSchemas && _generatorOptions.SubTypesResolver(serializerMetadata.Type).Any())
             {
                 var discriminatorName = _generatorOptions.DiscriminatorSelector(serializerMetadata.Type);
-                schema.Properties.Add(discriminatorName, new OpenApiSchema { Type = "string" });
+
+                if (!schema.Properties.ContainsKey(discriminatorName))
+                    schema.Properties.Add(discriminatorName, new OpenApiSchema { Type = "string" });
+
                 schema.Required.Add(discriminatorName);
                 schema.Discriminator = new OpenApiDiscriminator { PropertyName = discriminatorName };
             }
