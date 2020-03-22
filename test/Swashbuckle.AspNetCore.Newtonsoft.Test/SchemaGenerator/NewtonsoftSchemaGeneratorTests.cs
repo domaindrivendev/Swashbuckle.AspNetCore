@@ -240,6 +240,17 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.True(schema.Properties["Property3"].WriteOnly);
         }
 
+        [Fact]
+        public void GenerateSchema_DoesNotSetReadOnlyFlag_IfPropertyIsSetViaConstructor()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(typeof(ComplexTypeWithConstructor), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.False(schema.Properties["Property1"].ReadOnly);
+        }
+
         [Theory]
         [InlineData(typeof(ComplexType), "Property1", false)]
         [InlineData(typeof(ComplexType), "Property4", true)]
@@ -641,7 +652,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             var serializerSettings = new JsonSerializerSettings();
             configureSerializer?.Invoke(serializerSettings);
 
-            return new SchemaGenerator(generatorOptions, new NewtonsoftMetadataResolver(generatorOptions, serializerSettings));
+            return new SchemaGenerator(generatorOptions, new NewtonsoftSerializerContractResolver(generatorOptions, serializerSettings));
         }
     }
 }

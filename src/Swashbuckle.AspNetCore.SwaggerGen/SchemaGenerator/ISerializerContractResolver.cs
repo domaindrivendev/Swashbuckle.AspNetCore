@@ -4,20 +4,20 @@ using System.Reflection;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public interface ISerializerMetadataResolver
+    public interface ISerializerContractResolver
     {
-        SerializerMetadata GetSerializerMetadataForType(Type type);
+        SerializerContract GetSerializerContractForType(Type type);
     }
 
-    public class SerializerMetadata
+    public class SerializerContract
     {
-        public static SerializerMetadata ForPrimitive(
+        public static SerializerContract ForPrimitive(
             Type type,
             string dataType,
             string dataFormat = null,
             IEnumerable<object> enumValues = null)
         {
-            return new SerializerMetadata
+            return new SerializerContract
             {
                 IsPrimitive = true,
                 Type = type,
@@ -27,9 +27,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             };
         }
 
-        public static SerializerMetadata ForDictionary(Type type, Type keyType, Type valueType)
+        public static SerializerContract ForDictionary(Type type, Type keyType, Type valueType)
         {
-            return new SerializerMetadata
+            return new SerializerContract
             {
                 IsDictionary = true,
                 Type = type,
@@ -39,9 +39,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             };
         }
 
-        public static SerializerMetadata ForArray(Type type, Type itemType)
+        public static SerializerContract ForArray(Type type, Type itemType)
         {
-            return new SerializerMetadata
+            return new SerializerContract
             {
                 IsArray = true,
                 Type = type,
@@ -50,24 +50,24 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             };
         }
 
-        public static SerializerMetadata ForObject(
+        public static SerializerContract ForObject(
             Type type,
-            IEnumerable<SerializerPropertyMetadata> properties = null,
+            IEnumerable<SerializerMember> members = null,
             Type extensionDataValueType = null)
         {
-            return new SerializerMetadata
+            return new SerializerContract
             {
                 IsObject = true,
                 Type = type,
-                Properties = properties,
+                Members = members,
                 ExtensionDataValueType = extensionDataValueType,
                 DataType = "object",
             };
         }
 
-        public static SerializerMetadata ForDynamic(Type type)
+        public static SerializerContract ForDynamic(Type type)
         {
-            return new SerializerMetadata
+            return new SerializerContract
             {
                 IsDynamic = true,
                 Type = type
@@ -92,7 +92,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public Type ArrayItemType { get; private set; }
 
-        public IEnumerable<SerializerPropertyMetadata> Properties { get; private set; }
+        public IEnumerable<SerializerMember> Members { get; private set; }
 
         public Type ExtensionDataValueType { get; private set; }
 
@@ -103,20 +103,24 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public IEnumerable<object> EnumValues { get; set; }
     }
 
-    public class SerializerPropertyMetadata
+    public class SerializerMember
     {
-        public SerializerPropertyMetadata(
+        public SerializerMember(
             string name,
             Type memberType,
             MemberInfo memberInfo,
             bool isRequired = false,
-            bool allowNull = false)
+            bool isNullable = false,
+            bool isReadOnly = false,
+            bool isWriteOnly = false)
         {
             Name = name;
             MemberType = memberType;
             MemberInfo = memberInfo;
             IsRequired = isRequired;
-            AllowNull = allowNull;
+            IsNullable = isNullable;
+            IsReadOnly = isReadOnly;
+            IsWriteOnly = isWriteOnly;
         }
 
         public string Name { get; } 
@@ -127,6 +131,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public bool IsRequired { get; }
 
-        public bool AllowNull { get; }
+        public bool IsNullable { get; }
+
+        public bool IsReadOnly { get; }
+
+        public bool IsWriteOnly { get; }
     }
 }

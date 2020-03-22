@@ -11,20 +11,20 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Newtonsoft
 {
-    public class NewtonsoftMetadataResolver : ISerializerMetadataResolver
+    public class NewtonsoftSerializerContractResolver : ISerializerContractResolver
     {
         private readonly SchemaGeneratorOptions _generatorOptions;
         private readonly JsonSerializerSettings _serializerSettings;
         private readonly IContractResolver _contractResolver;
 
-        public NewtonsoftMetadataResolver(SchemaGeneratorOptions generatorOptions, JsonSerializerSettings serializerSettings)
+        public NewtonsoftSerializerContractResolver(SchemaGeneratorOptions generatorOptions, JsonSerializerSettings serializerSettings)
         {
             _generatorOptions = generatorOptions;
             _serializerSettings = serializerSettings;
             _contractResolver = serializerSettings.ContractResolver ?? new DefaultContractResolver();
         }
 
-        public SerializerMetadata GetSerializerMetadataForType(Type type)
+        public SerializerContract GetSerializerContractForType(Type type)
         {
             var jsonContract = _contractResolver.ResolveContract(type.IsNullable(out Type innerType) ? innerType : type);
 
@@ -34,7 +34,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     ? PrimitiveTypesAndFormats[jsonContract.UnderlyingType]
                     : Tuple.Create("string", (string)null);
 
-                return SerializerMetadata.ForPrimitive(jsonContract.UnderlyingType, primitiveTypeAndFormat.Item1, primitiveTypeAndFormat.Item2);
+                return SerializerContract.ForPrimitive(jsonContract.UnderlyingType, primitiveTypeAndFormat.Item1, primitiveTypeAndFormat.Item2);
             }
 
             if (jsonContract is JsonPrimitiveContract && jsonContract.UnderlyingType.IsEnum)
@@ -45,7 +45,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     ? PrimitiveTypesAndFormats[typeof(string)]
                     : PrimitiveTypesAndFormats[jsonContract.UnderlyingType.GetEnumUnderlyingType()];
 
-                return SerializerMetadata.ForPrimitive(jsonContract.UnderlyingType, primitiveTypeAndFormat.Item1, primitiveTypeAndFormat.Item2, enumValues);
+                return SerializerContract.ForPrimitive(jsonContract.UnderlyingType, primitiveTypeAndFormat.Item1, primitiveTypeAndFormat.Item2, enumValues);
             }
 
             if (jsonContract is JsonDictionaryContract jsonDictionaryContract)
@@ -53,33 +53,33 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                 var keyType = jsonDictionaryContract.DictionaryKeyType ?? typeof(object);
                 var valueType = jsonDictionaryContract.DictionaryValueType ?? typeof(object);
 
-                return SerializerMetadata.ForDictionary(jsonDictionaryContract.UnderlyingType, keyType, valueType);
+                return SerializerContract.ForDictionary(jsonDictionaryContract.UnderlyingType, keyType, valueType);
             }
 
             if (jsonContract is JsonArrayContract jsonArrayContract)
             {
                 var itemType = jsonArrayContract.CollectionItemType ?? typeof(object);
-                return SerializerMetadata.ForArray(jsonArrayContract.UnderlyingType, itemType);
+                return SerializerContract.ForArray(jsonArrayContract.UnderlyingType, itemType);
             }
 
             if (jsonContract is JsonObjectContract jsonObjectContract)
             {
-                return SerializerMetadata.ForObject(
+                return SerializerContract.ForObject(
                     jsonContract.UnderlyingType,
-                    GetSerializerPropertiesFor(jsonObjectContract),
+                    GetSerializerMembersFor(jsonObjectContract),
                     jsonObjectContract.ExtensionDataValueType);
             }
 
             if (jsonContract is JsonLinqContract jsonLinqContract)
             {
                 if (jsonLinqContract.UnderlyingType == typeof(JArray))
-                    return SerializerMetadata.ForArray(typeof(JArray), typeof(JToken));
+                    return SerializerContract.ForArray(typeof(JArray), typeof(JToken));
 
                 if (jsonLinqContract.UnderlyingType == typeof(JObject))
-                    return SerializerMetadata.ForObject(typeof(JObject));
+                    return SerializerContract.ForObject(typeof(JObject));
             }
 
-            return SerializerMetadata.ForDynamic(jsonContract.UnderlyingType);
+            return SerializerContract.ForDynamic(jsonContract.UnderlyingType);
         }
 
         private IEnumerable<object> GetSerializerEnumValuesFor(JsonContract jsonContract)
@@ -127,14 +127,14 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
         }
 #endif
 
-        private IEnumerable<SerializerPropertyMetadata> GetSerializerPropertiesFor(JsonObjectContract jsonObjectContract)
+        private IEnumerable<SerializerMember> GetSerializerMembersFor(JsonObjectContract jsonObjectContract)
         {
             if (jsonObjectContract.UnderlyingType == typeof(object))
             {
                 return null;
             }
 
-            var serializerProperties = new List<SerializerPropertyMetadata>();
+            var serializerMembers = new List<SerializerMember>();
 
             foreach (var jsonProperty in jsonObjectContract.Properties)
             {
@@ -146,16 +146,22 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
                 jsonProperty.TryGetMemberInfo(out MemberInfo memberInfo);
 
-                serializerProperties.Add(
-                    new SerializerPropertyMetadata(
+                var isSetViaConstructor = jsonProperty.DeclaringType.GetConstructors()
+                    .SelectMany(c => c.GetParameters())
+                    .Any(p => string.Equals(p.Name, jsonProperty.PropertyName, StringComparison.OrdinalIgnoreCase));
+
+                serializerMembers.Add(
+                    new SerializerMember(
                         name: jsonProperty.PropertyName,
                         memberType: jsonProperty.PropertyType,
                         memberInfo: memberInfo,
                         isRequired: (required == Required.Always || required == Required.AllowNull),
-                        allowNull: (required == Required.AllowNull || required == Required.Default) && jsonProperty.PropertyType.IsReferenceOrNullableType()));
+                        isNullable: (required == Required.AllowNull || required == Required.Default) && jsonProperty.PropertyType.IsReferenceOrNullableType(),
+                        isReadOnly: jsonProperty.Readable && !jsonProperty.Writable && !isSetViaConstructor,
+                        isWriteOnly: jsonProperty.Writable && !jsonProperty.Readable));
             }
 
-            return serializerProperties;
+            return serializerMembers;
         }
 
         private static readonly Dictionary<Type, Tuple<string, string>> PrimitiveTypesAndFormats = new Dictionary<Type, Tuple<string, string>>

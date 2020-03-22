@@ -13,12 +13,12 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddSwaggerGenNewtonsoftSupport(this IServiceCollection services)
         {
             return services.Replace(
-                ServiceDescriptor.Transient<ISerializerMetadataResolver>((s) =>
+                ServiceDescriptor.Transient<ISerializerContractResolver>((s) =>
                 {
                     var generatorOptions = s.GetRequiredService<IOptions<SchemaGeneratorOptions>>().Value;
                     var serializerSettings = s.GetJsonSerializerSettings() ?? new JsonSerializerSettings();
 
-                    return new NewtonsoftMetadataResolver(generatorOptions, serializerSettings);
+                    return new NewtonsoftSerializerContractResolver(generatorOptions, serializerSettings);
                 }));
         }
 

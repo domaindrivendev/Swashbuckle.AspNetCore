@@ -7,7 +7,7 @@ using System.Text.Json.Serialization;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public class JsonSerializerMetadataResolver : ISerializerMetadataResolver
+    public class JsonSerializerMetadataResolver : ISerializerContractResolver
     {
         private readonly JsonSerializerOptions _serializerOptions;
 
@@ -16,14 +16,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             _serializerOptions = serializerOptions;
         }
 
-        public SerializerMetadata GetSerializerMetadataForType(Type type)
+        public SerializerContract GetSerializerContractForType(Type type)
         {
             var underlyingType = type.IsNullable(out Type innerType) ? innerType : type;
 
             if (PrimitiveTypesAndFormats.ContainsKey(underlyingType))
             {
                 var primitiveTypeAndFormat = PrimitiveTypesAndFormats[underlyingType];
-                return SerializerMetadata.ForPrimitive(underlyingType, primitiveTypeAndFormat.Item1, primitiveTypeAndFormat.Item2);
+                return SerializerContract.ForPrimitive(underlyingType, primitiveTypeAndFormat.Item1, primitiveTypeAndFormat.Item2);
             }
 
             if (underlyingType.IsEnum)
@@ -34,20 +34,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     ? PrimitiveTypesAndFormats[typeof(string)]
                     : PrimitiveTypesAndFormats[underlyingType.GetEnumUnderlyingType()];
 
-                return SerializerMetadata.ForPrimitive(underlyingType, primitiveTypeAndFormat.Item1, primitiveTypeAndFormat.Item2, enumValues);
+                return SerializerContract.ForPrimitive(underlyingType, primitiveTypeAndFormat.Item1, primitiveTypeAndFormat.Item2, enumValues);
             }
 
             if (underlyingType.IsDictionary(out Type keyType, out Type valueType))
             {
-                return SerializerMetadata.ForDictionary(underlyingType, keyType, valueType);
+                return SerializerContract.ForDictionary(underlyingType, keyType, valueType);
             }
 
             if (underlyingType.IsEnumerable(out Type itemType))
             {
-                return SerializerMetadata.ForArray(underlyingType, itemType);
+                return SerializerContract.ForArray(underlyingType, itemType);
             }
 
-            return SerializerMetadata.ForObject(
+            return SerializerContract.ForObject(
                 underlyingType,
                 GetSerializerPropertiesFor(underlyingType, out Type extensionDataValueType),
                 extensionDataValueType);
@@ -65,7 +65,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 : underlyingValues;
         }
 
-        private IEnumerable<SerializerPropertyMetadata> GetSerializerPropertiesFor(Type objectType, out Type extensionDataValueType)
+        private IEnumerable<SerializerMember> GetSerializerPropertiesFor(Type objectType, out Type extensionDataValueType)
         {
             extensionDataValueType = null;
 
@@ -84,7 +84,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         !(_serializerOptions.IgnoreReadOnlyProperties && !property.IsPubliclyWritable());
                 });
 
-            var serializerProperties = new List<SerializerPropertyMetadata>();
+            var serializerMembers = new List<SerializerMember>();
 
             foreach (var propertyInfo in applicableProperties)
             {
@@ -97,15 +97,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var name = propertyInfo.GetCustomAttribute<JsonPropertyNameAttribute>()?.Name
                     ?? _serializerOptions.PropertyNamingPolicy?.ConvertName(propertyInfo.Name) ?? propertyInfo.Name;
 
-                serializerProperties.Add(
-                    new SerializerPropertyMetadata(
+                serializerMembers.Add(
+                    new SerializerMember(
                         name: name,
                         memberType: propertyInfo.PropertyType,
                         memberInfo: propertyInfo,
-                        allowNull: propertyInfo.PropertyType.IsReferenceOrNullableType()));
+                        isRequired: false,
+                        isNullable: propertyInfo.PropertyType.IsReferenceOrNullableType(),
+                        isReadOnly: propertyInfo.IsPubliclyReadable() && !propertyInfo.IsPubliclyWritable(),
+                        isWriteOnly: propertyInfo.IsPubliclyWritable() && !propertyInfo.IsPubliclyReadable()));
             }
 
-            return serializerProperties;
+            return serializerMembers;
         }
 
         private static readonly Dictionary<Type, Tuple<string, string>> PrimitiveTypesAndFormats = new Dictionary<Type, Tuple<string, string>>
