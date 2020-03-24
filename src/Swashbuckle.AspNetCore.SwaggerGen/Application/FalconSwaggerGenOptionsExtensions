@@ -1,0 +1,80 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
+using System.Xml.XPath;
+using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
+
+namespace Microsoft.Extensions.DependencyInjection
+{
+    /// <summary>
+    /// Define Enum description by DescriptionAttribute or summary.
+    /// </summary>
+    public class SwaggerXmlEnumFilter:IDocumentFilter
+    {
+        private readonly XPathNavigator _xmlNavigator;
+
+        public static List<Type> AllTypes { get; set; }
+
+        /// <summary>
+        /// Instance new with a xml file.
+        /// </summary>
+        /// <param name="xmlPath"></param>
+        public SwaggerXmlEnumFilter(string xmlPath) {
+            _xmlNavigator = new XPathDocument(xmlPath).CreateNavigator();
+
+            if(AllTypes == null) {
+                AllTypes = new List<Type>();
+                foreach(var ass in AppDomain.CurrentDomain.GetAssemblies()) {
+                    AllTypes.AddRange(ass.GetTypes().Where(m => m.IsEnum));
+                }
+            }
+        }
+
+        public void Apply(OpenApiDocument swaggerDoc,DocumentFilterContext context) {
+            var enumList = swaggerDoc.Components.Schemas.Where(m => m.Value.Enum != null && m.Value.Enum.Count > 0);
+            foreach(var item in enumList) {
+                var key = item.Key;
+                var property = item.Value;
+                var itemType = AllTypes.Find(m => m.Name == key);
+                var list = new List<OpenApiInteger>();
+                foreach(var val in property.Enum) {
+                    list.Add((OpenApiInteger)val);
+                }
+                property.Description += describeEnum(itemType,list);
+            }
+        }
+
+        private string describeEnum(Type type,List<OpenApiInteger> enums) {
+            var enumDescriptions = new List<string>();
+            foreach(var item in enums) {
+                if(type == null)
+                    continue;
+                var value = Enum.Parse(type,item.Value.ToString());
+                var desc = getDescription(type,value);
+
+                if(string.IsNullOrEmpty(desc))
+                    enumDescriptions.Add($"{item.Value.ToString()}:{Enum.GetName(type,value)}; ");
+                else
+                    enumDescriptions.Add($"{item.Value.ToString()}:{Enum.GetName(type,value)},{desc}; ");
+
+            }
+            return $"<br/>{Environment.NewLine}{string.Join("<br/>" + Environment.NewLine,enumDescriptions)}";
+        }
+
+        private string getDescription(Type t,object value) {
+            foreach(var member in t.GetMembers().Where(m => m.Name == t.GetEnumName(value))) {
+                foreach(var attr in member.GetCustomAttributes<DescriptionAttribute>()) {
+                    return attr.Description;
+                }
+            }
+            var fullName = $"{t.FullName}.{t.GetEnumName(value)}";
+            var desc = _xmlNavigator.SelectSingleNode($"doc/members/member[@name='F:{fullName}']/summary")?.InnerXml;
+            return desc ?? string.Empty;
+        }
+
+    }
+}
