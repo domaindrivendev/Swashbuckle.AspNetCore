@@ -205,7 +205,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 var propertySchema = GenerateSchema(serializerMember.MemberType, schemaRepository, memberInfo: serializerMember.MemberInfo);
 
-                schema.Properties.Add(serializerMember.Name, propertySchema);
+                schema.Properties[serializerMember.Name] = propertySchema;
 
                 if (serializerMember.IsRequired || customAttributes.OfType<RequiredAttribute>().Any())
                     schema.Required.Add(serializerMember.Name);
