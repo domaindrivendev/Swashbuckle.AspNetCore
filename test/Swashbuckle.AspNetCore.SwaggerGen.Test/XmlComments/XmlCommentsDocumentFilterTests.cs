@@ -45,7 +45,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         private XmlCommentsDocumentFilter Subject()
         {
-            using (var xmlComments = File.OpenText($"{GetType().GetTypeInfo().Assembly.GetName().Name}.xml"))
+            using (var xmlComments = File.OpenText($"{GetType().Assembly.GetName().Name}.xml"))
             {
                 return new XmlCommentsDocumentFilter(new XPathDocument(xmlComments));
             }

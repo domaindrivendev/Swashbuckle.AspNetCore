@@ -14,7 +14,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         { }
 
         /// <param name="param">Description for param</param>
-        public void ActionWithParamTag(string param)
+        public void ActionWithParameter(string param)
         { }
 
         /// <param name="param1">Description for param1</param>

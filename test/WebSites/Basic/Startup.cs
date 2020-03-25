@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Basic.Swagger;
 using Microsoft.AspNetCore.Localization;
+using System.IO;
 
 namespace Basic
 {
@@ -38,13 +39,17 @@ namespace Basic
                     }
                 );
 
+                c.RequestBodyFilter<AssignRequestBodyVendorExtensions>();
+
                 c.OperationFilter<AssignOperationVendorExtensions>();
 
                 c.SchemaFilter<ExamplesSchemaFilter>();
 
                 c.DescribeAllParametersInCamelCase();
 
-                //c.GeneratePolymorphicSchemas();
+                c.GeneratePolymorphicSchemas();
+
+                c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Basic.xml"));
 
                 c.EnableAnnotations();
             });

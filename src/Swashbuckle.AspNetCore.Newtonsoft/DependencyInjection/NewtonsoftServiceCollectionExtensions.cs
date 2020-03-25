@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.Newtonsoft;
@@ -11,13 +12,14 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static IServiceCollection AddSwaggerGenNewtonsoftSupport(this IServiceCollection services)
         {
-            return services.AddTransient<ISchemaGenerator>(s =>
-            {
-                var generatorOptions = s.GetRequiredService<IOptions<SchemaGeneratorOptions>>().Value;
-                var serializerSettings = s.GetJsonSerializerSettings() ?? new JsonSerializerSettings();
+            return services.Replace(
+                ServiceDescriptor.Transient<ISerializerContractResolver>((s) =>
+                {
+                    var generatorOptions = s.GetRequiredService<IOptions<SchemaGeneratorOptions>>().Value;
+                    var serializerSettings = s.GetJsonSerializerSettings() ?? new JsonSerializerSettings();
 
-                return new NewtonsoftSchemaGenerator(generatorOptions, serializerSettings);
-            });
+                    return new NewtonsoftSerializerContractResolver(generatorOptions, serializerSettings);
+                }));
         }
 
         private static JsonSerializerSettings GetJsonSerializerSettings(this IServiceProvider serviceProvider)

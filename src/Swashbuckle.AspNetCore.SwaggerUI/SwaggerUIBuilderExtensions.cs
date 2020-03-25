@@ -11,8 +11,16 @@ namespace Microsoft.AspNetCore.Builder
             this IApplicationBuilder app,
             Action<SwaggerUIOptions> setupAction = null)
         {
-            var options = app.ApplicationServices.GetService<IOptions<SwaggerUIOptions>>()?.Value ?? new SwaggerUIOptions();
-            setupAction?.Invoke(options);
+            var options = new SwaggerUIOptions();
+            if (setupAction != null)
+            {
+                setupAction(options);
+            }
+            else
+            {
+                options = app.ApplicationServices.GetRequiredService<IOptions<SwaggerUIOptions>>().Value;
+            }
+
             app.UseMiddleware<SwaggerUIMiddleware>(options);
 
             return app;

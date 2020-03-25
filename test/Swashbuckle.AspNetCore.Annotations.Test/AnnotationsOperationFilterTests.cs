@@ -107,7 +107,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
 
             return new OperationFilterContext(
                 apiDescription,
-                new JsonSchemaGenerator(generatorOptions, new JsonSerializerOptions()),
+                new SchemaGenerator(generatorOptions, new JsonSerializerMetadataResolver(new JsonSerializerOptions())),
                 new SchemaRepository(),
                 (apiDescription.ActionDescriptor as ControllerActionDescriptor).MethodInfo);
         }

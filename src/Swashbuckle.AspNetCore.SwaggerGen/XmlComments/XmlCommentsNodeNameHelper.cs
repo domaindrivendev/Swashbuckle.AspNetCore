@@ -37,11 +37,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return builder.ToString();
         }
 
-        public static string GetNodeNameForMember(MemberInfo memberInfo)
+        public static string GetMemberNameForFieldOrProperty(MemberInfo fieldOrPropertyInfo)
         {
-            var builder = new StringBuilder(((memberInfo.MemberType & MemberTypes.Field) != 0) ? "F:" : "P:");
-            builder.Append(QualifiedNameFor(memberInfo.DeclaringType));
-            builder.Append($".{memberInfo.Name}");
+            var builder = new StringBuilder(((fieldOrPropertyInfo.MemberType & MemberTypes.Field) != 0) ? "F:" : "P:");
+            builder.Append(QualifiedNameFor(fieldOrPropertyInfo.DeclaringType));
+            builder.Append($".{fieldOrPropertyInfo.Name}");
 
             return builder.ToString();
         }

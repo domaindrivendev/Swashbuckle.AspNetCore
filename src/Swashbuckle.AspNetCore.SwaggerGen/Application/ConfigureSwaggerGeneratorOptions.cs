@@ -28,6 +28,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             _swaggerGenOptions.ParameterFilterDescriptors.ForEach(
                 filterDescriptor => options.ParameterFilters.Add(CreateFilter<IParameterFilter>(filterDescriptor)));
 
+            _swaggerGenOptions.RequestBodyFilterDescriptors.ForEach(
+                filterDescriptor => options.RequestBodyFilters.Add(CreateFilter<IRequestBodyFilter>(filterDescriptor)));
+
             _swaggerGenOptions.OperationFilterDescriptors.ForEach(
                 filterDescriptor => options.OperationFilters.Add(CreateFilter<IOperationFilter>(filterDescriptor)));
 

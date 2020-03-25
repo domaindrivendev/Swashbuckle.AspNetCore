@@ -10,16 +10,20 @@ namespace OAuth2Integration.AuthServer
         {
             yield return new Client
             {
-                AllowAccessTokensViaBrowser = true,
-                AllowedGrantTypes = GrantTypes.Implicit,
-                AllowedScopes = new[] { "readAccess", "writeAccess" },
                 ClientId = "test-id",
-                ClientName = "test-app",
-                ClientSecrets = new[] { new Secret("test-secret".Sha256()) },
+                ClientName = "Test client (Code with PKCE)",
+
                 RedirectUris = new[] {
                     "http://localhost:55202/resource-server/swagger/oauth2-redirect.html", // IIS Express
                     "http://localhost:5000/resource-server/swagger/oauth2-redirect.html", // Kestrel
-                }
+                },
+
+                ClientSecrets = { new Secret("test-secret".Sha256()) },
+                RequireConsent = true,
+
+                AllowedGrantTypes = GrantTypes.Code,
+                RequirePkce = true,
+                AllowedScopes = new[] { "readAccess", "writeAccess" },
             };
         }
 

@@ -42,8 +42,8 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
                 new ApiParameterDescription(),
                 null,
                 null,
-                parameterInfo,
-                null);
+                null,
+                parameterInfo);
         }
 
         private AnnotationsParameterFilter Subject()

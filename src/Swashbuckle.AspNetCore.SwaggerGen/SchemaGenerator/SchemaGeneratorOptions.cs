@@ -12,6 +12,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             CustomTypeMappings = new Dictionary<Type, Func<OpenApiSchema>>();
             SchemaIdSelector = DefaultSchemaIdSelector;
             SubTypesResolver = DefaultSubTypeResolver;
+            DiscriminatorSelector = DefaultDiscriminatorSelector;
             SchemaFilters = new List<ISchemaFilter>();
         }
 
@@ -25,6 +26,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public Func<Type, IEnumerable<Type>> SubTypesResolver { get; set; }
 
+        public Func<Type, string> DiscriminatorSelector { get; set; }
+
+        public bool UseAllOfToExtendReferenceSchemas { get; set; }
+
+        public bool UseInlineDefinitionsForEnums { get; set; }
+
         public IList<ISchemaFilter> SchemaFilters { get; set; }
 
         [Obsolete("If the serializer is configured for string enums (e.g. StringEnumConverter) Swashbuckle will reflect that automatically")]
@@ -35,7 +42,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private string DefaultSchemaIdSelector(Type modelType)
         {
-            if (!modelType.IsConstructedGenericType) return modelType.Name;
+            if (!modelType.IsConstructedGenericType) return modelType.Name.Replace("[]", "Array");
 
             var prefix = modelType.GetGenericArguments()
                 .Select(genericArg => DefaultSchemaIdSelector(genericArg))
@@ -50,6 +57,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 return Enumerable.Empty<Type>();
 
             return baseType.Assembly.GetTypes().Where(type => type.IsSubclassOf(baseType));
+        }
+
+        private string DefaultDiscriminatorSelector(Type baseType)
+        {
+            return "$type";
         }
     }
 }

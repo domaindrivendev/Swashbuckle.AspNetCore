@@ -9,5 +9,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public int Property2 { get; } = 123;
 
         public int Property3 { set { } }
+
+        public string Property4 { get; set; }
     }
 }

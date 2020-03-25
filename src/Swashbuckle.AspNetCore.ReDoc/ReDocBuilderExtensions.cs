@@ -11,8 +11,16 @@ namespace Microsoft.AspNetCore.Builder
             this IApplicationBuilder app,
             Action<ReDocOptions> setupAction = null)
         {
-            var options = app.ApplicationServices.GetService<IOptions<ReDocOptions>>()?.Value ?? new ReDocOptions();
-            setupAction?.Invoke(options);
+            var options = new ReDocOptions();
+            if (setupAction != null)
+            {
+                setupAction(options);
+            }
+            else
+            {
+                options = app.ApplicationServices.GetRequiredService<IOptions<ReDocOptions>>().Value;
+            }
+
             app.UseMiddleware<ReDocMiddleware>(options);
 
             return app;

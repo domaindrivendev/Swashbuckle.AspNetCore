@@ -16,6 +16,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public List<FilterDescriptor> ParameterFilterDescriptors { get; set; } = new List<FilterDescriptor>();
 
+        public List<FilterDescriptor> RequestBodyFilterDescriptors { get; set; } = new List<FilterDescriptor>();
+
         public List<FilterDescriptor> OperationFilterDescriptors { get; set; } = new List<FilterDescriptor>();
 
         public List<FilterDescriptor> DocumentFilterDescriptors { get; set; } = new List<FilterDescriptor>();

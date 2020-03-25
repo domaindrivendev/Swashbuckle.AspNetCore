@@ -3,11 +3,12 @@ using System.Reflection;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.Loader;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
+using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Writers;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore;
 
 namespace Swashbuckle.AspNetCore.Cli
 {
@@ -62,22 +63,22 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Option("--serializeasv2", "", true);
                 c.Option("--yaml", "", true);
                 c.OnRun((namedArgs) =>
-                {
+                {                    
                     // 1) Configure host with provided startupassembly
                     var startupAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(
                         Path.Combine(Directory.GetCurrentDirectory(), namedArgs["startupassembly"]));
-                    var host = WebHost.CreateDefaultBuilder()
-                        .UseStartup(startupAssembly.FullName)
-                        .Build();
 
-                    // 2) Retrieve Swagger via configured provider
+                    // 2) Build a web host to serve the request
+                    var host = BuildWebHost(startupAssembly);
+
+                    // 3) Retrieve Swagger via configured provider
                     var swaggerProvider = host.Services.GetRequiredService<ISwaggerProvider>();
                     var swagger = swaggerProvider.GetSwagger(
                         namedArgs["swaggerdoc"],
                         namedArgs.ContainsKey("--host") ? namedArgs["--host"] : null,
                         namedArgs.ContainsKey("--basepath") ? namedArgs["--basepath"] : null);
 
-                    // 3) Serialize to specified output location or stdout
+                    // 4) Serialize to specified output location or stdout
                     var outputPath = namedArgs.ContainsKey("--output")
                         ? Path.Combine(Directory.GetCurrentDirectory(), namedArgs["--output"])
                         : null;
@@ -108,12 +109,37 @@ namespace Swashbuckle.AspNetCore.Cli
 
         private static string EscapePath(string path)
         {
-            if (path.Contains(" "))
+            return path.Contains(" ")
+                ? "\"" + path + "\""
+                : path;
+        }
+
+        private static IWebHost BuildWebHost(Assembly startupAssembly)
+        {
+            // Scan the startup assembly for any types that match the naming convention
+            var factoryTypes = startupAssembly.DefinedTypes
+                .Where(t => t.Name == "SwaggerWebHostFactory");
+
+            if (!factoryTypes.Any())
             {
-                return "\"" + path + "\"";
+                return WebHost.CreateDefaultBuilder()
+                   .UseStartup(startupAssembly.FullName)
+                   .Build();
             }
 
-            return path;
+            if (factoryTypes.Count() > 1)
+                throw new InvalidOperationException("Multiple SwaggerWebHostFactory classes detected");
+
+            var factoryMethod = factoryTypes
+                .Single()
+                .GetMethod("CreateWebHost", BindingFlags.Public | BindingFlags.Static);
+
+            if (factoryMethod == null || factoryMethod.ReturnType != typeof(IWebHost))
+                throw new InvalidOperationException(
+                    "SwaggerWebHostFactory class detected but does not contain a public static method " +
+                    "called CreateWebHost with return type IWebHost");
+
+            return (IWebHost)factoryMethod.Invoke(null, null);
         }
     }
 }

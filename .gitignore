@@ -11,3 +11,4 @@ artifacts/
 .DS_Store
 Thumbs.db
 test/WebSites/CliExample/wwwroot/api-docs/v1/*.json
+test/WebSites/CliExampleWithFactory/wwwroot/api-docs/v1/*.json

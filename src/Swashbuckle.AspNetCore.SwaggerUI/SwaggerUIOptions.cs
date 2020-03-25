@@ -200,5 +200,11 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// (Authorization header with Basic base64encode(client_id + client_secret))
         /// </summary>
         public bool UseBasicAuthenticationWithAccessCodeGrant { get; set; } = false;
+
+        /// <summary>
+        /// Only applies to authorizatonCode flows. Proof Key for Code Exchange brings enhanced security for OAuth public clients.
+        /// The default is false
+        /// </summary>
+        public bool UsePkceWithAuthorizationCodeGrant { get; set; } = false;
     }
 }

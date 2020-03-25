@@ -19,6 +19,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>();
             SecurityRequirements = new List<OpenApiSecurityRequirement>();
             ParameterFilters = new List<IParameterFilter>();
+            RequestBodyFilters = new List<IRequestBodyFilter>();
             OperationFilters = new List<IOperationFilter>();
             DocumentFilters = new List<IDocumentFilter>();
         }
@@ -44,6 +45,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public IList<OpenApiSecurityRequirement> SecurityRequirements { get; set; }
 
         public IList<IParameterFilter> ParameterFilters { get; set; }
+
+        public List<IRequestBodyFilter> RequestBodyFilters { get; set; }
 
         public List<IOperationFilter> OperationFilters { get; set; }
 

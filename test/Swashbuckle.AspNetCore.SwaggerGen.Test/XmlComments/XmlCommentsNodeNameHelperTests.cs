@@ -74,7 +74,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var memberInfo = declaringType.GetMember(fieldOrPropertyName)[0];
 
-            var memberName = XmlCommentsNodeNameHelper.GetNodeNameForMember(memberInfo);
+            var memberName = XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(memberInfo);
 
             _output.WriteLine(expectedMemberName);
             _output.WriteLine(memberName);
