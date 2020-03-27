@@ -1,10 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using System.Linq;
-using System.Reflection;
-using Microsoft.AspNetCore.Mvc.Controllers;
+﻿using System.Linq;
 using Microsoft.OpenApi.Models;
 using Xunit;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.TestSupport;
 
 namespace Swashbuckle.AspNetCore.Annotations.Test
 {
@@ -14,31 +12,17 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
         public void Apply_CreatesMetadataForControllerNameTag_FromSwaggerTagAttribute()
         {
             var document = new OpenApiDocument();
-            var filterContext = FilterContextFor<TestController>();
+            var apiDescription = ApiDescriptionFactory.Create<FakeControllerWithSwaggerAnnotations>(c => nameof(c.ActionWithNoAttributes));
+            var filterContext = new DocumentFilterContext(
+                apiDescriptions: new[] { apiDescription },
+                schemaGenerator: null,
+                schemaRepository: null);
 
             Subject().Apply(document, filterContext);
 
-            var tag = document.Tags.Single(t => t.Name == "TestController");
-            Assert.Equal("description for TestController", tag.Description);
+            var tag = document.Tags.Single(t => t.Name == "FakeControllerWithSwaggerAnnotations");
+            Assert.Equal("Description for FakeControllerWithSwaggerAnnotations", tag.Description);
             Assert.Equal("http://tempuri.org/", tag.ExternalDocs.Url.ToString());
-        }
-
-        private DocumentFilterContext FilterContextFor<TController>()
-        {
-            return new DocumentFilterContext(
-                new[]
-                {
-                    new ApiDescription
-                    {
-                        ActionDescriptor = new ControllerActionDescriptor
-                        {
-                            ControllerTypeInfo = typeof(TController).GetTypeInfo(),
-                            ControllerName = typeof(TController).Name
-                        }
-                    },
-                },
-                null,
-                null);
         }
 
         private AnnotationsDocumentFilter Subject()

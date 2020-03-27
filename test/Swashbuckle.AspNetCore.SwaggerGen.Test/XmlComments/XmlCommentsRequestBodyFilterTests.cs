@@ -14,8 +14,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void Apply_SetsDescription_FromActionParamTag()
         {
             var requestbody = new OpenApiRequestBody();
-            var parameterInfo = typeof(TestSupport.ControllerWithXmlComments)
-                .GetMethod(nameof(TestSupport.ControllerWithXmlComments.ActionWithParameter))
+            var parameterInfo = typeof(FakeControllerWithXmlComments)
+                .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithParamTags))
                 .GetParameters()[0];
             var bodyParameterDescription = new ApiParameterDescription
             {
@@ -25,15 +25,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Subject().Apply(requestbody, filterContext);
 
-            Assert.Equal("Description for param", requestbody.Description);
+            Assert.Equal("Description for param1", requestbody.Description);
         }
 
         [Fact]
         public void Apply_SetsDescription_FromUnderlyingGenericTypeActionParamTag()
         {
             var requestbody = new OpenApiRequestBody();
-            var parameterInfo = typeof(ConstructedControllerWithXmlComments)
-                .GetMethod(nameof(ConstructedControllerWithXmlComments.ActionWithGenericTypeParameter))
+            var parameterInfo = typeof(FakeConstructedControllerWithXmlComments)
+                .GetMethod(nameof(FakeConstructedControllerWithXmlComments.ActionWithParamTags))
                 .GetParameters()[0];
             var bodyParameterDescription = new ApiParameterDescription
             {
@@ -43,7 +43,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Subject().Apply(requestbody, filterContext);
 
-            Assert.Equal("Description for param", requestbody.Description);
+            Assert.Equal("Description for param1", requestbody.Description);
         }
 
         [Fact]
@@ -63,7 +63,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         private XmlCommentsRequestBodyFilter Subject()
         {
-            using (var xmlComments = File.OpenText(typeof(TestSupport.ControllerWithXmlComments).Assembly.GetName().Name + ".xml"))
+            using (var xmlComments = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml"))
             {
                 return new XmlCommentsRequestBodyFilter(new XPathDocument(xmlComments));
             }

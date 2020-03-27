@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Swashbuckle.AspNetCore.TestSupport
+namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     public class DescendingAlphabeticComparer : IComparer<string>
     {

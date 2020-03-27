@@ -522,7 +522,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(JsonSerializerAnnotatedEnum), schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(typeof(JsonConverterAnnotatedEnum), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("string", schema.Type);
@@ -534,10 +534,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(JsonSerializerAnnotatedType), schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(typeof(JsonIgnoreAnnotatedType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal( new[] { "StringWithNoAnnotation", /*"StringWithJsonIgnore, */ "string-with-json-property-name" }, schema.Properties.Keys.ToArray());
+            Assert.Equal( new[] { /* "StringWithJsonIgnore" */ "StringWithNoAnnotation" }, schema.Properties.Keys.ToArray());
         }
 
         [Fact]
@@ -545,10 +545,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(JsonSerializerAnnotatedType), schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(typeof(JsonPropertyNameAnnotatedType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal( new[] { "StringWithNoAnnotation", "string-with-json-property-name" }, schema.Properties.Keys.ToArray());
+            Assert.Equal( new[] { "string-with-json-property-name" }, schema.Properties.Keys.ToArray());
         }
 
         [Fact]
@@ -556,7 +556,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(JsonSerializerAnnotatedType), schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(typeof(JsonExtensionDataAnnotatedType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.NotNull(schema.AdditionalProperties);

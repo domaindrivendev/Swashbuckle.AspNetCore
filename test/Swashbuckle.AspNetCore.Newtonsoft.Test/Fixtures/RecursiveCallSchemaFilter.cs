@@ -1,7 +1,7 @@
 ﻿using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Swashbuckle.AspNetCore.TestSupport
+namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 {
     public class RecursiveCallSchemaFilter : ISchemaFilter
     {

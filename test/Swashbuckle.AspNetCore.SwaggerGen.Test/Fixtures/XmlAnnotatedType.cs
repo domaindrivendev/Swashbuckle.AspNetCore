@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Swashbuckle.AspNetCore.TestSupport;
 
-namespace Swashbuckle.AspNetCore.TestSupport
+namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     /// <summary>
     /// Summary for XmlAnnotatedType

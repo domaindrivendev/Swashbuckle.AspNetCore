@@ -60,14 +60,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void Apply_SetsDescription_FromActionParamTag()
         {
             var schema = new OpenApiSchema();
-            var parameterInfo = typeof(ControllerWithXmlComments)
-                .GetMethod(nameof(ControllerWithXmlComments.ActionWithParameter))
+            var parameterInfo = typeof(FakeControllerWithXmlComments)
+                .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithParamTags))
                 .GetParameters()[0];
             var filterContext = new SchemaFilterContext(parameterInfo.ParameterType, null, null, parameterInfo: parameterInfo);
 
             Subject().Apply(schema, filterContext);
 
-            Assert.Equal("Description for param", schema.Description);
+            Assert.Equal("Description for param1", schema.Description);
         }
 
         [Theory]

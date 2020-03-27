@@ -509,11 +509,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         {
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(JsonConvertedEnum), schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(typeof(JsonConverterAnnotatedEnum), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("string", schema.Type);
-            Assert.Equal(new[] { "Value1", "Value2", "X" }, schema.Enum.Cast<OpenApiString>().Select(i => i.Value));
+            Assert.Equal(new[] { "Value1", "Value2", "X-foo" }, schema.Enum.Cast<OpenApiString>().Select(i => i.Value));
         }
 
         [Fact]
@@ -524,7 +524,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             var referenceSchema = Subject().GenerateSchema(typeof(JsonIgnoreAnnotatedType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal(new[] { /* "StringWithJsonIgnore", */ "StringWithNoAnnotation" }, schema.Properties.Keys.ToArray());
+            Assert.Equal(new[] { /* "StringWithJsonIgnore" */ "StringWithNoAnnotation" }, schema.Properties.Keys.ToArray());
         }
 
         [Fact]
@@ -594,23 +594,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.NotNull(schema.AdditionalProperties);
-            Assert.Equal(new[] { "Property1" }, schema.Properties.Keys.ToArray());
             Assert.Equal("object", schema.AdditionalProperties.Type);
-        }
-
-        [Fact]
-        public void GenerateSchema_HonorsSerializerAttribute_EnumMember()
-        {
-            var subject = Subject(configureSerializer: c =>
-                c.Converters = new[] { new StringEnumConverter() }
-            );
-            var schemaRepository = new SchemaRepository();
-
-            var referenceSchema = subject.GenerateSchema(typeof(AnnotatedEnum), schemaRepository);
-
-            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal("string", schema.Type);
-            Assert.Equal(new[] { "AE-FOO", "AE-BAR" }, schema.Enum.Cast<OpenApiString>().Select(i => i.Value));
         }
 
         [Fact]

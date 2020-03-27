@@ -1,14 +1,27 @@
 ﻿namespace Swashbuckle.AspNetCore.Annotations.Test
 {
+    [SwaggerSchema("Description for SwaggerAnnotatedType", Required = new[] { "StringWithSwaggerSchemaAttribute" })]
     [SwaggerSchemaFilter(typeof(VendorExtensionsSchemaFilter))]
-    public class SwaggerAnnotatedClass
+    public class SwaggerAnnotatedType
     {
-        public string Property { get; set; }
+        [SwaggerSchema("Description for StringWithSwaggerSchemaAttribute", ReadOnly = true, WriteOnly = true)]
+        public string StringWithSwaggerSchemaAttribute { get; set; }
+
+        [SwaggerSchema("Description for StringWithSwaggerSchemaAttributeDescriptionOnly")]
+        public string StringWithSwaggerSchemaAttributeDescriptionOnly { get; set; }
+
+        [SwaggerParameter("Description for StringWithSwaggerParameterAttribute", Required = true)]
+        public string StringWithSwaggerParameterAttribute { get; set; }
+
+        [SwaggerRequestBody("Description for StringWithSwaggerRequestBodyAttribute", Required = true)]
+        public string StringWithSwaggerRequestBodyAttribute { get; set; }
     }
 
+    [SwaggerSchema("Description for SwaggerAnnotatedStruct", Required = new[] { "StringWithSwaggerSchemaAttribute" })]
     [SwaggerSchemaFilter(typeof(VendorExtensionsSchemaFilter))]
     public struct SwaggerAnnotatedStruct
     {
-        public string Property { get; set; }
+        [SwaggerSchema("Description for StringWithSwaggerSchemaAttribute", ReadOnly = true, WriteOnly = true)]
+        public string StringWithSwaggerSchemaAttribute { get; set; }
     }
 }

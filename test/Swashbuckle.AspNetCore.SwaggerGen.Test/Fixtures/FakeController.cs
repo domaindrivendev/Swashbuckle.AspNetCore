@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace Swashbuckle.AspNetCore.TestSupport
+namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     public class FakeController
     {

@@ -13,30 +13,30 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void Apply_SetsDescription_FromActionParamTag()
         {
             var parameter = new OpenApiParameter();
-            var parameterInfo = typeof(TestSupport.ControllerWithXmlComments)
-                .GetMethod(nameof(TestSupport.ControllerWithXmlComments.ActionWithParameter))
+            var parameterInfo = typeof(FakeControllerWithXmlComments)
+                .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithParamTags))
                 .GetParameters()[0];
             var apiParameterDescription = new ApiParameterDescription { };
             var filterContext = new ParameterFilterContext(apiParameterDescription, null, null, parameterInfo: parameterInfo);
 
             Subject().Apply(parameter, filterContext);
 
-            Assert.Equal("Description for param", parameter.Description);
+            Assert.Equal("Description for param1", parameter.Description);
         }
 
         [Fact]
         public void Apply_SetsDescription_FromUnderlyingGenericTypeActionParamTag()
         {
             var parameter = new OpenApiParameter();
-            var parameterInfo = typeof(ConstructedControllerWithXmlComments)
-                .GetMethod(nameof(ConstructedControllerWithXmlComments.ActionWithGenericTypeParameter))
+            var parameterInfo = typeof(FakeConstructedControllerWithXmlComments)
+                .GetMethod(nameof(FakeConstructedControllerWithXmlComments.ActionWithParamTags))
                 .GetParameters()[0];
             var apiParameterDescription = new ApiParameterDescription { };
             var filterContext = new ParameterFilterContext(apiParameterDescription, null, null, parameterInfo: parameterInfo);
 
             Subject().Apply(parameter, filterContext);
 
-            Assert.Equal("Description for param", parameter.Description);
+            Assert.Equal("Description for param1", parameter.Description);
         }
 
         [Fact]
@@ -54,7 +54,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         private XmlCommentsParameterFilter Subject()
         {
-            using (var xmlComments = File.OpenText(typeof(TestSupport.ControllerWithXmlComments).Assembly.GetName().Name + ".xml"))
+            using (var xmlComments = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml"))
             {
                 return new XmlCommentsParameterFilter(new XPathDocument(xmlComments));
             }

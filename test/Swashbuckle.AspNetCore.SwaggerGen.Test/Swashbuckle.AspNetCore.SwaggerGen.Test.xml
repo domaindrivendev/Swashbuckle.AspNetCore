@@ -1,0 +1,186 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Swashbuckle.AspNetCore.SwaggerGen.Test</name>
+    </assembly>
+    <members>
+        <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.GenericControllerWithXmlComments`1">
+            <summary>
+            Summary for GenericControllerWithXmlComments
+            </summary>
+        </member>
+        <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.GenericControllerWithXmlComments`1.ActionWithSummaryAndResponseTags(`0)">
+            <summary>
+            Summary for ActionWithSummaryAndRemarksTags
+            </summary>
+            <remarks>
+            Remarks for ActionWithSummaryAndRemarksTags
+            </remarks>
+        </member>
+        <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.GenericControllerWithXmlComments`1.ActionWithParamTags(`0,`0)">
+            <param name="param1">Description for param1</param>
+            <param name="param2">Description for param2</param>
+        </member>
+        <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllerWithXmlComments">
+            <summary>
+            Summary for FakeControllerWithXmlComments
+            </summary>
+            <response code="default">Description for default response</response>
+        </member>
+        <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllerWithXmlComments.ActionWithSummaryAndRemarksTags">
+            <summary>
+            Summary for ActionWithSummaryAndRemarksTags
+            </summary>
+            <remarks>
+            Remarks for ActionWithSummaryAndRemarksTags
+            </remarks>
+        </member>
+        <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllerWithXmlComments.ActionWithParamTags(System.String,System.String)">
+            <param name="param1">Description for param1</param>
+            <param name="param2">Description for param2</param>
+        </member>
+        <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllerWithXmlComments.ActionWithResponseTags">
+            <response code="200">Description for 200 response</response>
+            <response code="400">Description for 400 response</response>
+        </member>
+        <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedGenericType`2">
+            <summary>
+            Summary for XmlAnnotatedGenericType
+            </summary>
+            <typeparam name="T"></typeparam>
+            <typeparam name="K"></typeparam>
+        </member>
+        <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedGenericType`2.GenericProperty">
+            <summary>
+            Summary for GenericProperty
+            </summary>
+        </member>
+        <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedGenericType`2.AcceptsTypeParameters(System.Int32,`0,`1)">
+            <summary>
+            Summary of AcceptsTypeParameters
+            </summary>
+            <param name="param1"></param>
+            <param name="param2"></param>
+            <param name="param3"></param>
+        </member>
+        <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedGenericType`2.AcceptsConstructedOfTypeParametersType(System.Collections.Generic.IDictionary{`0,`1})">
+            <summary>
+            Summary of AcceptsConstructedOfTypeParametersType
+            </summary>
+            <param name="param1"></param>
+        </member>
+        <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedSubType">
+            <summary>
+            Summary for XmlAnnotatedSubType
+            </summary>
+        </member>
+        <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType">
+            <summary>
+            Summary for XmlAnnotatedType
+            </summary>
+        </member>
+        <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.BoolField">
+            <summary>
+            Summary for BoolField
+            </summary>
+            <example>true</example>
+        </member>
+        <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.BoolProperty">
+            <summary>
+            Summary for BoolProperty
+            </summary>
+            <example>true</example>
+        </member>
+        <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.IntProperty">
+            <summary>
+            Summary for IntProperty
+            </summary>
+            <example>10</example>
+        </member>
+        <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.LongProperty">
+            <summary>
+            Summary for LongProperty
+            </summary>
+            <example>4294967295</example>
+        </member>
+        <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.FloatProperty">
+            <summary>
+            Summary for FloatProperty
+            </summary>
+            <example>1.2</example>
+        </member>
+        <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.DoubleProperty">
+            <summary>
+            Summary for DoubleProperty
+            </summary>
+            <example>1.25</example>
+        </member>
+        <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.EnumProperty">
+            <summary>
+            Summary for EnumProperty
+            </summary>
+            <example>2</example>
+        </member>
+        <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.GuidProperty">
+            <summary>
+            Summary for GuidProperty
+            </summary>
+            <example>d3966535-2637-48fa-b911-e3c27405ee09</example>
+        </member>
+        <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.StringProperty">
+            <summary>
+            Summary for StringProperty
+            </summary>
+            <example>Example for StringProperty</example>
+        </member>
+        <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.BadExampleIntProperty">
+            <summary>
+            Summary for BadExampleIntProperty
+            </summary>
+            <example>Foobar</example>
+        </member>
+        <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.AcceptsNothing">
+            <summary>
+            Summary for AcceptsNothing
+            </summary>
+        </member>
+        <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.AcceptsNestedType(Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.NestedType)">
+            <summary>
+            Summary for AcceptsNestedType
+            </summary>
+            <param name="param"></param>
+        </member>
+        <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.AcceptsConstructedGenericType(System.Collections.Generic.KeyValuePair{System.String,System.Int32})">
+            <summary>
+            Summary for AcceptsConstructedGenericType
+            </summary>
+            <param name="param"></param>
+        </member>
+        <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.AcceptsConstructedOfConstructedGenericType(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.Int32}})">
+            <summary>
+            Summary for AcceptsConstructedOfConstructedGenericType
+            </summary>
+            <param name="param"></param>
+        </member>
+        <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.AcceptsArrayOfConstructedGenericType(System.Nullable{System.Int32}[])">
+            <summary>
+            Summary for AcceptsArrayOfConstructedGenericType
+            </summary>
+            <param name="param"></param>
+        </member>
+        <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.NestedType">
+            <summary>
+            Summary for NestedType
+            </summary>
+        </member>
+        <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.SerializerTesting">
+            <summary>
+            For ad-hoc serializer testing
+            </summary>
+        </member>
+        <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlCommentsTextHelperTests">
+            NOTE: Whitespace in these tests is significant and uses a combination of {tabs} and {spaces}
+            You should toggle "View White Space" to "on".
+        </member>
+    </members>
+</doc>
