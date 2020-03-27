@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Xunit;
 using JsonSerializer = System.Text.Json.JsonSerializer;
+using Swashbuckle.AspNetCore.TestSupport;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -12,27 +13,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         //[Fact]
         public void SystemTextJson()
         {
-            var dto = JsonSerializer.Deserialize<TestDto>("{ \"Prop1\": \"foobar\" }");
+            var dto = JsonSerializer.Deserialize<TypeWithOverriddenProperty>("{ \"Property1\": \"foobar\" }");
 
-            Assert.Equal("foobar", dto.Prop1);
+            Assert.Equal("foobar", dto.Property1);
         }
 
         //[Fact]
         public void Newtonsoft()
         {
-            var dto = JsonConvert.DeserializeObject<TestDto>("{ \"Prop1\": \"foobar\" }");
+            var dto = JsonConvert.DeserializeObject<TypeWithOverriddenProperty>("{ \"Property1\": \"foobar\" }");
 
-            Assert.Equal("foobar", dto.Prop1);
+            Assert.Equal("foobar", dto.Property1);
         } 
-    }
-
-    public class TestDto
-    {
-        public TestDto(string prop1)
-        {
-            Prop1 = prop1;
-        }
-
-        public string Prop1 { get; }
     }
 }

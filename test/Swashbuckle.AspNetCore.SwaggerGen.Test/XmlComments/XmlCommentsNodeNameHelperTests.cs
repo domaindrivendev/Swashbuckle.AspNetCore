@@ -1,6 +1,7 @@
 ﻿using System;
 using Xunit;
 using Xunit.Abstractions;
+using Swashbuckle.AspNetCore.TestSupport;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -15,15 +16,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         [Theory]
         [InlineData(typeof(XmlAnnotatedType), "AcceptsNothing",
-            "M:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.AcceptsNothing")]
+            "M:Swashbuckle.AspNetCore.TestSupport.XmlAnnotatedType.AcceptsNothing")]
         [InlineData(typeof(XmlAnnotatedType), "AcceptsNestedType",
-            "M:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.AcceptsNestedType(Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.NestedType)")]
+            "M:Swashbuckle.AspNetCore.TestSupport.XmlAnnotatedType.AcceptsNestedType(Swashbuckle.AspNetCore.TestSupport.XmlAnnotatedType.NestedType)")]
         [InlineData(typeof(XmlAnnotatedType), "AcceptsConstructedGenericType",
-            "M:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.AcceptsConstructedGenericType(System.Collections.Generic.KeyValuePair{System.String,System.Int32})")]
+            "M:Swashbuckle.AspNetCore.TestSupport.XmlAnnotatedType.AcceptsConstructedGenericType(System.Collections.Generic.KeyValuePair{System.String,System.Int32})")]
         [InlineData(typeof(XmlAnnotatedType), "AcceptsConstructedOfConstructedGenericType",
-            "M:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.AcceptsConstructedOfConstructedGenericType(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.Int32}})")]
+            "M:Swashbuckle.AspNetCore.TestSupport.XmlAnnotatedType.AcceptsConstructedOfConstructedGenericType(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.Int32}})")]
         [InlineData(typeof(XmlAnnotatedType), "AcceptsArrayOfConstructedGenericType",
-            "M:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.AcceptsArrayOfConstructedGenericType(System.Nullable{System.Int32}[])")]
+            "M:Swashbuckle.AspNetCore.TestSupport.XmlAnnotatedType.AcceptsArrayOfConstructedGenericType(System.Nullable{System.Int32}[])")]
         public void GetMemberNameForMethod_ReturnsCorrectXmlCommentsMemberName_ForGivenMethodInfo(
             Type declaringType, 
             string name,
@@ -40,11 +41,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         [Theory]
         [InlineData(typeof(XmlAnnotatedType),
-            "T:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType")]
+            "T:Swashbuckle.AspNetCore.TestSupport.XmlAnnotatedType")]
         [InlineData(typeof(XmlAnnotatedType.NestedType),
-            "T:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.NestedType")]
+            "T:Swashbuckle.AspNetCore.TestSupport.XmlAnnotatedType.NestedType")]
         [InlineData(typeof(XmlAnnotatedGenericType<int,string>),
-            "T:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedGenericType`2")]
+            "T:Swashbuckle.AspNetCore.TestSupport.XmlAnnotatedGenericType`2")]
         [InlineData(typeof(NoNamespaceType),
             "T:NoNamespaceType")]
         public void GetMemberNameForType_ReturnsCorrectXmlCommentsMemberName_ForGivenType(
@@ -61,11 +62,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         [Theory]
         [InlineData(typeof(XmlAnnotatedType), "StringProperty",
-            "P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.StringProperty")]
+            "P:Swashbuckle.AspNetCore.TestSupport.XmlAnnotatedType.StringProperty")]
         [InlineData(typeof(XmlAnnotatedType.NestedType), "Property",
-            "P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.NestedType.Property")]
+            "P:Swashbuckle.AspNetCore.TestSupport.XmlAnnotatedType.NestedType.Property")]
         [InlineData(typeof(XmlAnnotatedGenericType<int,string>), "GenericProperty",
-            "P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedGenericType`2.GenericProperty")]
+            "P:Swashbuckle.AspNetCore.TestSupport.XmlAnnotatedGenericType`2.GenericProperty")]
         public void GetMemberNameForProperty_ReturnsCorrectXmlCommentMemberName_ForGivenMemberInfo(
             Type declaringType,
             string fieldOrPropertyName,

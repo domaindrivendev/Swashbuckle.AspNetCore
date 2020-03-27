@@ -5,14 +5,10 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <DocumentationFile>$(ProjectDir)Swashbuckle.AspNetCore\test\Swashbuckle.AspNetCore.SwaggerGen.Test\Swashbuckle.AspNetCore.SwaggerGen.Test.xml</DocumentationFile>
-    <NoWarn>1701;1702;1591</NoWarn>
-  </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\src\Swashbuckle.AspNetCore.Swagger\Swashbuckle.AspNetCore.Swagger.csproj" />
     <ProjectReference Include="..\..\src\Swashbuckle.AspNetCore.SwaggerGen\Swashbuckle.AspNetCore.SwaggerGen.csproj" />
+    <ProjectReference Include="..\Swashbuckle.AspNetCore.TestSupport\Swashbuckle.AspNetCore.TestSupport.csproj" />
   </ItemGroup>
 
   <ItemGroup>

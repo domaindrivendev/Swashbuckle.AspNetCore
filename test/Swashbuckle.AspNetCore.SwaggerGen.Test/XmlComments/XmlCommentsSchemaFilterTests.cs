@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Xml.XPath;
-using System.Reflection;
 using System.IO;
-using System.Text.Json;
 using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Any;
 using Xunit;
+using Swashbuckle.AspNetCore.TestSupport;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -63,8 +60,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void Apply_SetsDescription_FromActionParamTag()
         {
             var schema = new OpenApiSchema();
-            var parameterInfo = typeof(FakeControllerWithXmlComments)
-                .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithParameter))
+            var parameterInfo = typeof(ControllerWithXmlComments)
+                .GetMethod(nameof(ControllerWithXmlComments.ActionWithParameter))
                 .GetParameters()[0];
             var filterContext = new SchemaFilterContext(parameterInfo.ParameterType, null, null, parameterInfo: parameterInfo);
 
@@ -128,40 +125,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(expectedValue, schema.Example.GetType().GetProperty("Value").GetValue(schema.Example));
         }
 
-        //[Theory]
-        //[InlineData(typeof(XmlAnnotatedType), "MissingStringProperty", "string")]
-        //[InlineData(typeof(XmlAnnotatedType), "MissingIntegerProperty", "integer")]
-        //public void Apply_IgnoresNonexistingProperty(Type type,
-        //    string propertyName,
-        //    string propertyType)
-        //{
-        //    var schema = new OpenApiSchema
-        //    {
-        //        Properties = new Dictionary<string, OpenApiSchema>()
-        //        {
-        //            { propertyName, new OpenApiSchema() { Type = propertyType } }
-        //        }
-        //    };
-        //    var filterContext = FilterContextFor(type);
-
-        //    Subject().Apply(schema, filterContext);
-
-        //    var openApiSchema = schema.Properties[propertyName];
-        //    Assert.Equal(propertyType, openApiSchema.Type);
-        //}
-
-        //private SchemaFilterContext FilterContextFor(Type type)
-        //{
-        //    return new SchemaFilterContext(
-        //        type: type,
-        //        schemaRepository: null, // NA for test
-        //        schemaGenerator: null // NA for test
-        //    );
-        //}
-
         private XmlCommentsSchemaFilter Subject()
         {
-            using (var xmlComments = File.OpenText(GetType().Assembly.GetName().Name + ".xml"))
+            using (var xmlComments = File.OpenText(typeof(XmlAnnotatedType).Assembly.GetName().Name + ".xml"))
             {
                 return new XmlCommentsSchemaFilter(new XPathDocument(xmlComments));
             }

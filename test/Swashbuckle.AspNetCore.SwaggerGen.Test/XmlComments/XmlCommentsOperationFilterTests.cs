@@ -4,6 +4,7 @@ using System.IO;
 using Microsoft.OpenApi.Models;
 using Xunit;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Swashbuckle.AspNetCore.TestSupport;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -13,8 +14,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void Apply_SetsSummaryAndDescription_FromActionSummaryAndRemarksTags()
         {
             var operation = new OpenApiOperation();
-            var methodInfo = typeof(FakeControllerWithXmlComments)
-                .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithNoParameters));
+            var methodInfo = typeof(TestSupport.ControllerWithXmlComments)
+                .GetMethod(nameof(TestSupport.ControllerWithXmlComments.ActionWithNoParameters));
             var apiDescription = ApiDescriptionFactory.Create(methodInfo: methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource");
             var filterContext = new OperationFilterContext(apiDescription, null, null, methodInfo);
 
@@ -28,8 +29,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void Apply_SetsSummaryAndDescription_FromUnderlyingGenericTypeActionSummaryAndRemarksTags()
         {
             var operation = new OpenApiOperation();
-            var methodInfo = typeof(FakeConstructedControllerWithXmlComments)
-                .GetMethod(nameof(FakeConstructedControllerWithXmlComments.ActionWithGenericTypeParameter));
+            var methodInfo = typeof(ConstructedControllerWithXmlComments)
+                .GetMethod(nameof(ConstructedControllerWithXmlComments.ActionWithGenericTypeParameter));
             var apiDescription = ApiDescriptionFactory.Create(methodInfo: methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource");
             var filterContext = new OperationFilterContext(apiDescription, null, null, methodInfo);
 
@@ -50,8 +51,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     { "400", new OpenApiResponse { Description = "Client Error" } },
                 }
             };
-            var methodInfo = typeof(FakeControllerWithXmlComments)
-                .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithResponseTags));
+            var methodInfo = typeof(TestSupport.ControllerWithXmlComments)
+                .GetMethod(nameof(TestSupport.ControllerWithXmlComments.ActionWithNoParameters));
             var apiDescription = ApiDescriptionFactory.Create(
                 methodInfo: methodInfo,
                 groupName: "v1",
@@ -74,7 +75,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         private XmlCommentsOperationFilter Subject()
         {
-            using (var xmlComments = File.OpenText(GetType().Assembly.GetName().Name + ".xml"))
+            using (var xmlComments = File.OpenText(typeof(TestSupport.ControllerWithXmlComments).Assembly.GetName().Name + ".xml"))
             {
                 return new XmlCommentsOperationFilter(new XPathDocument(xmlComments));
             }

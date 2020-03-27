@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Models;
 using Xunit;
+using Swashbuckle.AspNetCore.TestSupport;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -21,16 +22,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     {
                         ActionDescriptor = new ControllerActionDescriptor
                         {
-                            ControllerTypeInfo = typeof(FakeControllerWithXmlComments).GetTypeInfo(),
-                            ControllerName = nameof(FakeControllerWithXmlComments)
+                            ControllerTypeInfo = typeof(ControllerWithXmlComments).GetTypeInfo(),
+                            ControllerName = nameof(ControllerWithXmlComments)
                         }
                     },
                     new ApiDescription
                     {
                         ActionDescriptor = new ControllerActionDescriptor
                         {
-                            ControllerTypeInfo = typeof(FakeControllerWithXmlComments).GetTypeInfo(),
-                            ControllerName = nameof(FakeControllerWithXmlComments)
+                            ControllerTypeInfo = typeof(ControllerWithXmlComments).GetTypeInfo(),
+                            ControllerName = nameof(ControllerWithXmlComments)
                         }
                     }
                 },
@@ -40,12 +41,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Subject().Apply(document, filterContext);
 
             Assert.Equal(1, document.Tags.Count);
-            Assert.Equal("Summary for FakeControllerWithXmlComments", document.Tags[0].Description);
+            Assert.Equal("Summary for ControllerWithXmlComments", document.Tags[0].Description);
         }
 
         private XmlCommentsDocumentFilter Subject()
         {
-            using (var xmlComments = File.OpenText($"{GetType().Assembly.GetName().Name}.xml"))
+            using (var xmlComments = File.OpenText($"{typeof(ControllerWithXmlComments).Assembly.GetName().Name}.xml"))
             {
                 return new XmlCommentsDocumentFilter(new XPathDocument(xmlComments));
             }

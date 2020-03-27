@@ -11,8 +11,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using Xunit;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.TestSupport;
 
 namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 {
@@ -180,10 +181,10 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Theory]
-        [InlineData(typeof(ComplexType), "ComplexType", new[] { "Field1", "Field2", "Property1", "Property2", "Property3", "Property4" })]
+        [InlineData(typeof(ComplexType), "ComplexType", new[] { "Property1", "Property2", "Property3", "Property4" })]
         [InlineData(typeof(GenericType<bool, int>), "BooleanInt32GenericType", new[] { "Property1", "Property2" })]
         [InlineData(typeof(GenericType<bool, int[]>), "BooleanInt32ArrayGenericType", new[] { "Property1", "Property2" })]
-        [InlineData(typeof(TypeWithNestedType.NestedType), "NestedType", new[] { "Property1" })]
+        [InlineData(typeof(ContainingType.NestedType), "NestedType", new[] { "Property1" })]
         public void GenerateSchema_GeneratesReferencedObjectSchema_IfComplexType(
             Type type,
             string expectedSchemaId,
@@ -332,9 +333,9 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             var schema = subject.GenerateSchema(type, schemaRepository);
 
             if (schema.Reference == null)
-                Assert.Contains("X-property1", schema.Extensions.Keys);
+                Assert.Contains("X-foo", schema.Extensions.Keys);
             else
-                Assert.Contains("X-property1", schemaRepository.Schemas[schema.Reference.Id].Extensions.Keys);
+                Assert.Contains("X-foo", schemaRepository.Schemas[schema.Reference.Id].Extensions.Keys);
         }
 
         [Fact]
@@ -361,7 +362,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 
             var referenceSchema = subject.GenerateSchema(typeof(ComplexType), schemaRepository);
 
-            Assert.Equal("Swashbuckle.AspNetCore.Newtonsoft.Test.ComplexType", referenceSchema.Reference.Id);
+            Assert.Equal("Swashbuckle.AspNetCore.TestSupport.ComplexType", referenceSchema.Reference.Id);
             Assert.Contains(referenceSchema.Reference.Id, schemaRepository.Schemas.Keys);
         }
 
@@ -432,11 +433,10 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         {
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(TypeWithNestedType), schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(typeof(ContainingType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("object", schema.Type);
-            Assert.NotNull(schema.Properties["Property1"].AllOf);
             Assert.Equal("NestedType", schema.Properties["Property1"].Reference.Id);
         }
 
@@ -449,7 +449,6 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("object", schema.Type);
-            Assert.NotNull(schema.Properties["Property1"].AllOf);
             Assert.Equal("string", schema.Properties["Property1"].Type);
         }
 
@@ -474,10 +473,10 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             var subject = Subject();
             var schemaRepository = new SchemaRepository();
 
-            subject.GenerateSchema(typeof(Namespace1.ConflictingType), schemaRepository);
+            subject.GenerateSchema(typeof(TestSupport.Namespace1.ConflictingType), schemaRepository);
             Assert.Throws<InvalidOperationException>(() =>
             {
-                subject.GenerateSchema(typeof(Namespace2.ConflictingType), schemaRepository);
+                subject.GenerateSchema(typeof(TestSupport.Namespace2.ConflictingType), schemaRepository);
             });
         }
 

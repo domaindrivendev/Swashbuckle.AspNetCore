@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Xunit;
+using Swashbuckle.AspNetCore.TestSupport;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -182,7 +183,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(ComplexType), "ComplexType", new[] { "Property1", "Property2", "Property3", "Property4" })]
         [InlineData(typeof(GenericType<bool, int>), "BooleanInt32GenericType", new[] { "Property1", "Property2" })]
         [InlineData(typeof(GenericType<bool, int[]>), "BooleanInt32ArrayGenericType", new[] { "Property1", "Property2" })]
-        [InlineData(typeof(TypeWithNestedType.NestedType), "NestedType", new[] { "Property1" })]
+        [InlineData(typeof(ContainingType.NestedType), "NestedType", new[] { "Property1" })]
         public void GenerateSchema_GeneratesReferencedObjectSchema_IfComplexType(
             Type type,
             string expectedSchemaId,
@@ -360,7 +361,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var referenceSchema = subject.GenerateSchema(typeof(ComplexType), schemaRepository);
 
-            Assert.Equal("Swashbuckle.AspNetCore.SwaggerGen.Test.ComplexType", referenceSchema.Reference.Id);
+            Assert.Equal("Swashbuckle.AspNetCore.TestSupport.ComplexType", referenceSchema.Reference.Id);
             Assert.Contains(referenceSchema.Reference.Id, schemaRepository.Schemas.Keys);
         }
 
@@ -431,11 +432,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(TypeWithNestedType), schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(typeof(ContainingType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("object", schema.Type);
-            Assert.NotNull(schema.Properties["Property1"].AllOf);
             Assert.Equal("NestedType", schema.Properties["Property1"].Reference.Id);
         }
 
@@ -459,10 +459,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var subject = Subject();
             var schemaRepository = new SchemaRepository();
 
-            subject.GenerateSchema(typeof(Namespace1.ConflictingType), schemaRepository);
+            subject.GenerateSchema(typeof(TestSupport.Namespace1.ConflictingType), schemaRepository);
             Assert.Throws<InvalidOperationException>(() =>
             {
-                subject.GenerateSchema(typeof(Namespace2.ConflictingType), schemaRepository);
+                subject.GenerateSchema(typeof(TestSupport.Namespace2.ConflictingType), schemaRepository);
             });
         }
 
@@ -522,7 +522,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(JsonConvertedEnum), schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(typeof(JsonSerializerAnnotatedEnum), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("string", schema.Type);
@@ -534,10 +534,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(JsonIgnoreAnnotatedType), schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(typeof(JsonSerializerAnnotatedType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal( new[] { /* "StringWithJsonIgnore", */ "StringWithNoAnnotation" }, schema.Properties.Keys.ToArray());
+            Assert.Equal( new[] { "StringWithNoAnnotation", /*"StringWithJsonIgnore, */ "string-with-json-property-name" }, schema.Properties.Keys.ToArray());
         }
 
         [Fact]
@@ -545,10 +545,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(JsonPropertyNameAnnotatedType), schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(typeof(JsonSerializerAnnotatedType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal( new[] { "string-with-json-property-name", "StringWithNoAnnotation" }, schema.Properties.Keys.ToArray());
+            Assert.Equal( new[] { "StringWithNoAnnotation", "string-with-json-property-name" }, schema.Properties.Keys.ToArray());
         }
 
         [Fact]
@@ -556,11 +556,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(JsonExtensionDataAnnotatedType), schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(typeof(JsonSerializerAnnotatedType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.NotNull(schema.AdditionalProperties);
-            Assert.Equal(new[] { "Property1" }, schema.Properties.Keys.ToArray());
             Assert.Equal("object", schema.AdditionalProperties.Type);
         }
 
