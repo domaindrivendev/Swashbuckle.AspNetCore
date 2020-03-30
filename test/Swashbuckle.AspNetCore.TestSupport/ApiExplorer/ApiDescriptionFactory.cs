@@ -13,9 +13,9 @@ namespace Swashbuckle.AspNetCore.TestSupport
     {
         public static ApiDescription Create(
             MethodInfo methodInfo,
-            string groupName,
-            string httpMethod,
-            string relativePath,
+            string groupName = "v1",
+            string httpMethod = "POST",
+            string relativePath = "resoure",
             IEnumerable<ApiParameterDescription> parameterDescriptions = null,
             IEnumerable<ApiRequestFormat> supportedRequestFormats = null,
             IEnumerable<ApiResponseType> supportedResponseTypes = null)
@@ -76,9 +76,9 @@ namespace Swashbuckle.AspNetCore.TestSupport
 
         public static ApiDescription Create<TController>(
             Func<TController, string> actionNameSelector,
-            string groupName,
-            string httpMethod,
-            string relativePath,
+            string groupName = "v1",
+            string httpMethod = "POST",
+            string relativePath = "resoure",
             IEnumerable<ApiParameterDescription> parameterDescriptions = null,
             IEnumerable<ApiRequestFormat> supportedRequestFormats = null,
             IEnumerable<ApiResponseType> supportedResponseTypes = null)
@@ -117,6 +117,7 @@ namespace Swashbuckle.AspNetCore.TestSupport
             {
                 AttributeRouteInfo = attributeRouteInfo,
                 ControllerTypeInfo = methodInfo.DeclaringType.GetTypeInfo(),
+                ControllerName = methodInfo.DeclaringType.Name,
                 MethodInfo = methodInfo,
                 Parameters = parameterDescriptors,
                 RouteValues = routeValues

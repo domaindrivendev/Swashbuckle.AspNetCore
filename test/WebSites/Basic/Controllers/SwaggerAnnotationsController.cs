@@ -11,7 +11,7 @@ namespace Basic.Controllers
         [SwaggerOperation(OperationId = "CreateCart")]
         [SwaggerResponse(201, "The cart was created", typeof(Cart))]
         [SwaggerResponse(400, "The cart data is invalid")]
-        public Cart Create([FromBody]Cart cart)
+        public Cart Create([FromBody, SwaggerRequestBody(Description = "The cart request body")]Cart cart)
         {
             return new Cart { Id = 1 };
         }
@@ -19,7 +19,7 @@ namespace Basic.Controllers
         [HttpGet("/carts/{id}")]
         [SwaggerOperation(OperationId = "GetCart")]
         [SwaggerOperationFilter(typeof(AddCartsByIdGetExternalDocs))]
-        public Cart Get(int id)
+        public Cart Get([SwaggerParameter("The cart identifier")]int id)
         {
             return new Cart { Id = id };
         }
@@ -35,8 +35,10 @@ namespace Basic.Controllers
         }
     }
 
+    [SwaggerSchema(Required = new[] { "Id" })]
     public class Cart
     {
-        public int Id { get; internal set; }
+        [SwaggerSchema("The cart identifier", ReadOnly = true)]
+        public int Id { get; set; }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
@@ -17,13 +19,58 @@ namespace Swashbuckle.AspNetCore.Annotations
 
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
-            var schemaFilterAttributes = context.Type.GetCustomAttributes<SwaggerSchemaFilterAttribute>();
+            ApplyTypeAnnotations(schema, context);
 
-            foreach (var attr in schemaFilterAttributes)
+            if (context.MemberInfo != null)
             {
-                var filter = (ISchemaFilter)ActivatorUtilities.CreateInstance(_serviceProvider, attr.Type, attr.Arguments);
+                ApplyMemberAnnotations(schema, context.MemberInfo);
+            }
+        }
+
+        private void ApplyTypeAnnotations(OpenApiSchema schema, SchemaFilterContext context)
+        {
+            var schemaAttribute = context.Type.GetCustomAttributes<SwaggerSchemaAttribute>()
+                .FirstOrDefault();
+
+            if (schemaAttribute != null)
+                ApplySchemaAttribute(schema, schemaAttribute);
+
+            var schemaFilterAttribute = context.Type.GetCustomAttributes<SwaggerSchemaFilterAttribute>()
+                .FirstOrDefault();
+
+            if (schemaFilterAttribute != null)
+            {
+                var filter = (ISchemaFilter)ActivatorUtilities.CreateInstance(
+                    _serviceProvider,
+                    schemaFilterAttribute.Type,
+                    schemaFilterAttribute.Arguments);
+
                 filter.Apply(schema, context);
             }
+        }
+
+        private void ApplyMemberAnnotations(OpenApiSchema schema, MemberInfo memberInfo)
+        {
+            var schemaAttribute = memberInfo.GetCustomAttributes<SwaggerSchemaAttribute>()
+                .FirstOrDefault();
+
+            if (schemaAttribute != null)
+                ApplySchemaAttribute(schema, schemaAttribute);
+        }
+
+        private void ApplySchemaAttribute(OpenApiSchema schema, SwaggerSchemaAttribute schemaAttribute)
+        {
+            if (schemaAttribute.Description != null)
+                schema.Description = schemaAttribute.Description;
+
+            if (schemaAttribute.ReadOnlyFlag.HasValue)
+                schema.ReadOnly = schemaAttribute.ReadOnlyFlag.Value;
+
+            if (schemaAttribute.WriteOnlyFlag.HasValue)
+                schema.WriteOnly = schemaAttribute.WriteOnlyFlag.Value;
+
+            if (schemaAttribute.Required != null)
+                schema.Required = new SortedSet<string>(schemaAttribute.Required);
         }
     }
 }

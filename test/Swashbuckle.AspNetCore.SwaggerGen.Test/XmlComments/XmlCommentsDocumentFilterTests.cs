@@ -22,16 +22,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     {
                         ActionDescriptor = new ControllerActionDescriptor
                         {
-                            ControllerTypeInfo = typeof(ControllerWithXmlComments).GetTypeInfo(),
-                            ControllerName = nameof(ControllerWithXmlComments)
+                            ControllerTypeInfo = typeof(FakeControllerWithXmlComments).GetTypeInfo(),
+                            ControllerName = nameof(FakeControllerWithXmlComments)
                         }
                     },
                     new ApiDescription
                     {
                         ActionDescriptor = new ControllerActionDescriptor
                         {
-                            ControllerTypeInfo = typeof(ControllerWithXmlComments).GetTypeInfo(),
-                            ControllerName = nameof(ControllerWithXmlComments)
+                            ControllerTypeInfo = typeof(FakeControllerWithXmlComments).GetTypeInfo(),
+                            ControllerName = nameof(FakeControllerWithXmlComments)
                         }
                     }
                 },
@@ -41,12 +41,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Subject().Apply(document, filterContext);
 
             Assert.Equal(1, document.Tags.Count);
-            Assert.Equal("Summary for ControllerWithXmlComments", document.Tags[0].Description);
+            Assert.Equal("Summary for FakeControllerWithXmlComments", document.Tags[0].Description);
         }
 
         private XmlCommentsDocumentFilter Subject()
         {
-            using (var xmlComments = File.OpenText($"{typeof(ControllerWithXmlComments).Assembly.GetName().Name}.xml"))
+            using (var xmlComments = File.OpenText($"{typeof(FakeControllerWithXmlComments).Assembly.GetName().Name}.xml"))
             {
                 return new XmlCommentsDocumentFilter(new XPathDocument(xmlComments));
             }

@@ -1,0 +1,33 @@
+﻿using System;
+
+namespace Swashbuckle.AspNetCore.Annotations
+{
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Property, AllowMultiple = false)]
+    public class SwaggerSchemaAttribute : Attribute
+    {
+        public SwaggerSchemaAttribute(string description = null)
+        {
+            Description = description;
+        }
+
+        public string Description { get; set; }
+
+        public bool ReadOnly
+        {
+            get { throw new InvalidOperationException($"Use {nameof(ReadOnlyFlag)} instead"); }
+            set { ReadOnlyFlag = value; }
+        }
+
+        public bool WriteOnly
+        {
+            get { throw new InvalidOperationException($"Use {nameof(WriteOnlyFlag)} instead"); }
+            set { WriteOnlyFlag = value; }
+        }
+
+        public string[] Required { get; set; }
+
+        internal bool? ReadOnlyFlag { get; private set; }
+
+        internal bool? WriteOnlyFlag { get; private set; }
+    }
+}

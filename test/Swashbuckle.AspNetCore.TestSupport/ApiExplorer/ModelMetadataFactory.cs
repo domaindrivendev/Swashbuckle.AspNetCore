@@ -20,6 +20,5 @@ namespace Swashbuckle.AspNetCore.TestSupport
         {
             return new EmptyModelMetadataProvider().GetMetadataForParameter(parameter);
         }
-
     }
 }

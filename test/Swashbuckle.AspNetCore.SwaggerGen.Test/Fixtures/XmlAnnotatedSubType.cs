@@ -1,4 +1,4 @@
-﻿namespace Swashbuckle.AspNetCore.TestSupport
+﻿namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     /// <summary>
     /// Summary for XmlAnnotatedSubType

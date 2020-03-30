@@ -17,6 +17,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             options.SchemaFilter<AnnotationsSchemaFilter>();
             options.ParameterFilter<AnnotationsParameterFilter>();
+            options.RequestBodyFilter<AnnotationsRequestBodyFilter>();
             options.OperationFilter<AnnotationsOperationFilter>();
             options.DocumentFilter<AnnotationsDocumentFilter>();
 

@@ -203,19 +203,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 if (_generatorOptions.IgnoreObsoleteProperties && customAttributes.OfType<ObsoleteAttribute>().Any())
                     continue;
 
-                var propertySchema = GenerateSchema(serializerMember.MemberType, schemaRepository, memberInfo: serializerMember.MemberInfo);
-
-                schema.Properties[serializerMember.Name] = propertySchema;
+                schema.Properties[serializerMember.Name] = GeneratePropertySchema(serializerMember, schemaRepository);
 
                 if (serializerMember.IsRequired || customAttributes.OfType<RequiredAttribute>().Any())
                     schema.Required.Add(serializerMember.Name);
-
-                if (propertySchema.Reference == null)
-                {
-                    propertySchema.Nullable = serializerMember.IsNullable && propertySchema.Nullable;
-                    propertySchema.ReadOnly = serializerMember.IsReadOnly;
-                    propertySchema.WriteOnly = serializerMember.IsWriteOnly;
-                }
             }
 
             if (serializerContract.ExtensionDataValueType != null)
@@ -241,6 +232,27 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 {
                     AllOf = new List<OpenApiSchema> { baseSchemaReference, schema }
                 };
+            }
+
+            return schema;
+        }
+
+        private OpenApiSchema GeneratePropertySchema(SerializerMember serializerMember, SchemaRepository schemaRepository)
+        {
+            var schema = GenerateSchemaForType(serializerMember.MemberType, schemaRepository);
+
+            if (serializerMember.MemberInfo != null)
+            {
+                ApplyMemberMetadata(schema, serializerMember.MemberType, serializerMember.MemberInfo);
+            }
+
+            if (schema.Reference == null)
+            {
+                schema.Nullable = serializerMember.IsNullable && schema.Nullable;
+                schema.ReadOnly = serializerMember.IsReadOnly;
+                schema.WriteOnly = serializerMember.IsWriteOnly;
+
+                ApplyFilters(schema, serializerMember.MemberType, schemaRepository, serializerMember.MemberInfo);
             }
 
             return schema;
