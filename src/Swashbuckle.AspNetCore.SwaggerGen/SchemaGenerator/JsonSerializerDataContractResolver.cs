@@ -7,23 +7,23 @@ using System.Text.Json.Serialization;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public class JsonSerializerMetadataResolver : ISerializerContractResolver
+    public class JsonSerializerDataContractResolver : IDataContractResolver
     {
         private readonly JsonSerializerOptions _serializerOptions;
 
-        public JsonSerializerMetadataResolver(JsonSerializerOptions serializerOptions)
+        public JsonSerializerDataContractResolver(JsonSerializerOptions serializerOptions)
         {
             _serializerOptions = serializerOptions;
         }
 
-        public SerializerContract GetSerializerContractForType(Type type)
+        public DataContract GetDataContractForType(Type type)
         {
             var underlyingType = type.IsNullable(out Type innerType) ? innerType : type;
 
             if (PrimitiveTypesAndFormats.ContainsKey(underlyingType))
             {
                 var primitiveTypeAndFormat = PrimitiveTypesAndFormats[underlyingType];
-                return SerializerContract.ForPrimitive(underlyingType, primitiveTypeAndFormat.Item1, primitiveTypeAndFormat.Item2);
+                return DataContract.ForPrimitive(underlyingType, primitiveTypeAndFormat.Item1, primitiveTypeAndFormat.Item2);
             }
 
             if (underlyingType.IsEnum)
@@ -34,20 +34,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     ? PrimitiveTypesAndFormats[typeof(string)]
                     : PrimitiveTypesAndFormats[underlyingType.GetEnumUnderlyingType()];
 
-                return SerializerContract.ForPrimitive(underlyingType, primitiveTypeAndFormat.Item1, primitiveTypeAndFormat.Item2, enumValues);
+                return DataContract.ForPrimitive(underlyingType, primitiveTypeAndFormat.Item1, primitiveTypeAndFormat.Item2, enumValues);
             }
 
             if (underlyingType.IsDictionary(out Type keyType, out Type valueType))
             {
-                return SerializerContract.ForDictionary(underlyingType, keyType, valueType);
+                return DataContract.ForDictionary(underlyingType, keyType, valueType);
             }
 
             if (underlyingType.IsEnumerable(out Type itemType))
             {
-                return SerializerContract.ForArray(underlyingType, itemType);
+                return DataContract.ForArray(underlyingType, itemType);
             }
 
-            return SerializerContract.ForObject(
+            return DataContract.ForObject(
                 underlyingType,
                 GetSerializerPropertiesFor(underlyingType, out Type extensionDataValueType),
                 extensionDataValueType);
@@ -65,7 +65,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 : underlyingValues;
         }
 
-        private IEnumerable<SerializerMember> GetSerializerPropertiesFor(Type objectType, out Type extensionDataValueType)
+        private IEnumerable<DataMember> GetSerializerPropertiesFor(Type objectType, out Type extensionDataValueType)
         {
             extensionDataValueType = null;
 
@@ -84,7 +84,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         !(_serializerOptions.IgnoreReadOnlyProperties && !property.IsPubliclyWritable());
                 });
 
-            var serializerMembers = new List<SerializerMember>();
+            var serializerMembers = new List<DataMember>();
 
             foreach (var propertyInfo in applicableProperties)
             {
@@ -98,7 +98,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     ?? _serializerOptions.PropertyNamingPolicy?.ConvertName(propertyInfo.Name) ?? propertyInfo.Name;
 
                 serializerMembers.Add(
-                    new SerializerMember(
+                    new DataMember(
                         name: name,
                         memberType: propertyInfo.PropertyType,
                         memberInfo: propertyInfo,

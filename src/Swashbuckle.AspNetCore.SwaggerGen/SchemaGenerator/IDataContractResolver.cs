@@ -4,20 +4,20 @@ using System.Reflection;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public interface ISerializerContractResolver
+    public interface IDataContractResolver
     {
-        SerializerContract GetSerializerContractForType(Type type);
+        DataContract GetDataContractForType(Type type);
     }
 
-    public class SerializerContract
+    public class DataContract
     {
-        public static SerializerContract ForPrimitive(
+        public static DataContract ForPrimitive(
             Type type,
             string dataType,
             string dataFormat = null,
             IEnumerable<object> enumValues = null)
         {
-            return new SerializerContract
+            return new DataContract
             {
                 IsPrimitive = true,
                 Type = type,
@@ -27,9 +27,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             };
         }
 
-        public static SerializerContract ForDictionary(Type type, Type keyType, Type valueType)
+        public static DataContract ForDictionary(Type type, Type keyType, Type valueType)
         {
-            return new SerializerContract
+            return new DataContract
             {
                 IsDictionary = true,
                 Type = type,
@@ -39,9 +39,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             };
         }
 
-        public static SerializerContract ForArray(Type type, Type itemType)
+        public static DataContract ForArray(Type type, Type itemType)
         {
-            return new SerializerContract
+            return new DataContract
             {
                 IsArray = true,
                 Type = type,
@@ -50,12 +50,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             };
         }
 
-        public static SerializerContract ForObject(
+        public static DataContract ForObject(
             Type type,
-            IEnumerable<SerializerMember> members = null,
+            IEnumerable<DataMember> members = null,
             Type extensionDataValueType = null)
         {
-            return new SerializerContract
+            return new DataContract
             {
                 IsObject = true,
                 Type = type,
@@ -65,9 +65,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             };
         }
 
-        public static SerializerContract ForDynamic(Type type)
+        public static DataContract ForDynamic(Type type)
         {
-            return new SerializerContract
+            return new DataContract
             {
                 IsDynamic = true,
                 Type = type
@@ -92,7 +92,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public Type ArrayItemType { get; private set; }
 
-        public IEnumerable<SerializerMember> Members { get; private set; }
+        public IEnumerable<DataMember> Members { get; private set; }
 
         public Type ExtensionDataValueType { get; private set; }
 
@@ -103,9 +103,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public IEnumerable<object> EnumValues { get; set; }
     }
 
-    public class SerializerMember
+    public class DataMember
     {
-        public SerializerMember(
+        public DataMember(
             string name,
             Type memberType,
             MemberInfo memberInfo,

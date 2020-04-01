@@ -11,20 +11,20 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Newtonsoft
 {
-    public class NewtonsoftSerializerContractResolver : ISerializerContractResolver
+    public class NewtonsoftDataContractResolver : IDataContractResolver
     {
         private readonly SchemaGeneratorOptions _generatorOptions;
         private readonly JsonSerializerSettings _serializerSettings;
         private readonly IContractResolver _contractResolver;
 
-        public NewtonsoftSerializerContractResolver(SchemaGeneratorOptions generatorOptions, JsonSerializerSettings serializerSettings)
+        public NewtonsoftDataContractResolver(SchemaGeneratorOptions generatorOptions, JsonSerializerSettings serializerSettings)
         {
             _generatorOptions = generatorOptions;
             _serializerSettings = serializerSettings;
             _contractResolver = serializerSettings.ContractResolver ?? new DefaultContractResolver();
         }
 
-        public SerializerContract GetSerializerContractForType(Type type)
+        public DataContract GetDataContractForType(Type type)
         {
             var jsonContract = _contractResolver.ResolveContract(type.IsNullable(out Type innerType) ? innerType : type);
 
@@ -34,7 +34,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     ? PrimitiveTypesAndFormats[jsonContract.UnderlyingType]
                     : Tuple.Create("string", (string)null);
 
-                return SerializerContract.ForPrimitive(jsonContract.UnderlyingType, primitiveTypeAndFormat.Item1, primitiveTypeAndFormat.Item2);
+                return DataContract.ForPrimitive(jsonContract.UnderlyingType, primitiveTypeAndFormat.Item1, primitiveTypeAndFormat.Item2);
             }
 
             if (jsonContract is JsonPrimitiveContract && jsonContract.UnderlyingType.IsEnum)
@@ -45,7 +45,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     ? PrimitiveTypesAndFormats[typeof(string)]
                     : PrimitiveTypesAndFormats[jsonContract.UnderlyingType.GetEnumUnderlyingType()];
 
-                return SerializerContract.ForPrimitive(jsonContract.UnderlyingType, primitiveTypeAndFormat.Item1, primitiveTypeAndFormat.Item2, enumValues);
+                return DataContract.ForPrimitive(jsonContract.UnderlyingType, primitiveTypeAndFormat.Item1, primitiveTypeAndFormat.Item2, enumValues);
             }
 
             if (jsonContract is JsonDictionaryContract jsonDictionaryContract)
@@ -53,18 +53,18 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                 var keyType = jsonDictionaryContract.DictionaryKeyType ?? typeof(object);
                 var valueType = jsonDictionaryContract.DictionaryValueType ?? typeof(object);
 
-                return SerializerContract.ForDictionary(jsonDictionaryContract.UnderlyingType, keyType, valueType);
+                return DataContract.ForDictionary(jsonDictionaryContract.UnderlyingType, keyType, valueType);
             }
 
             if (jsonContract is JsonArrayContract jsonArrayContract)
             {
                 var itemType = jsonArrayContract.CollectionItemType ?? typeof(object);
-                return SerializerContract.ForArray(jsonArrayContract.UnderlyingType, itemType);
+                return DataContract.ForArray(jsonArrayContract.UnderlyingType, itemType);
             }
 
             if (jsonContract is JsonObjectContract jsonObjectContract)
             {
-                return SerializerContract.ForObject(
+                return DataContract.ForObject(
                     jsonContract.UnderlyingType,
                     GetSerializerMembersFor(jsonObjectContract),
                     jsonObjectContract.ExtensionDataValueType);
@@ -73,13 +73,13 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             if (jsonContract is JsonLinqContract jsonLinqContract)
             {
                 if (jsonLinqContract.UnderlyingType == typeof(JArray))
-                    return SerializerContract.ForArray(typeof(JArray), typeof(JToken));
+                    return DataContract.ForArray(typeof(JArray), typeof(JToken));
 
                 if (jsonLinqContract.UnderlyingType == typeof(JObject))
-                    return SerializerContract.ForObject(typeof(JObject));
+                    return DataContract.ForObject(typeof(JObject));
             }
 
-            return SerializerContract.ForDynamic(jsonContract.UnderlyingType);
+            return DataContract.ForDynamic(jsonContract.UnderlyingType);
         }
 
         private IEnumerable<object> GetSerializerEnumValuesFor(JsonContract jsonContract)
@@ -127,14 +127,14 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
         }
 #endif
 
-        private IEnumerable<SerializerMember> GetSerializerMembersFor(JsonObjectContract jsonObjectContract)
+        private IEnumerable<DataMember> GetSerializerMembersFor(JsonObjectContract jsonObjectContract)
         {
             if (jsonObjectContract.UnderlyingType == typeof(object))
             {
                 return null;
             }
 
-            var serializerMembers = new List<SerializerMember>();
+            var serializerMembers = new List<DataMember>();
 
             foreach (var jsonProperty in jsonObjectContract.Properties)
             {
@@ -151,7 +151,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     .Any(p => string.Equals(p.Name, jsonProperty.PropertyName, StringComparison.OrdinalIgnoreCase));
 
                 serializerMembers.Add(
-                    new SerializerMember(
+                    new DataMember(
                         name: jsonProperty.PropertyName,
                         memberType: jsonProperty.PropertyType,
                         memberInfo: memberInfo,
