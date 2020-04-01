@@ -11,7 +11,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             CustomTypeMappings = new Dictionary<Type, Func<OpenApiSchema>>();
             SchemaIdSelector = DefaultSchemaIdSelector;
-            SubTypesResolver = DefaultSubTypeResolver;
+            SubTypesResolver = DefaultSubTypesResolver;
             DiscriminatorSelector = DefaultDiscriminatorSelector;
             SchemaFilters = new List<ISchemaFilter>();
         }
@@ -51,7 +51,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return prefix + modelType.Name.Split('`').First();
         }
 
-        private IEnumerable<Type> DefaultSubTypeResolver(Type baseType)
+        private IEnumerable<Type> DefaultSubTypesResolver(Type baseType)
         {
             if (baseType == typeof(object))
                 return Enumerable.Empty<Type>();
