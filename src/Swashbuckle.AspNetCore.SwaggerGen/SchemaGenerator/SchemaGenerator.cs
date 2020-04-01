@@ -47,9 +47,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private OpenApiSchema GenerateSchemaForType(Type type, SchemaRepository schemaRepository)
         {
-            if (_generatorOptions.CustomTypeMappings.ContainsKey(type))
+            if (TryGetCustomMapping(type, out var mapping))
             {
-                return _generatorOptions.CustomTypeMappings[type]();
+                return mapping();
             }
 
             if (type.IsAssignableToOneOf(typeof(IFormFile), typeof(FileResult)))
@@ -76,6 +76,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return (shouldBeReferened)
                 ? GenerateReferencedSchema(serializerContract, schemaRepository)
                 : GenerateInlineSchema(serializerContract, schemaRepository);
+        }
+
+        private bool TryGetCustomMapping(Type type, out Func<OpenApiSchema> mapping)
+        {
+            if (_generatorOptions.CustomTypeMappings.TryGetValue(type, out mapping))
+            {
+                return true;
+            }
+
+            if (type.IsGenericType && !type.IsGenericTypeDefinition &&
+                _generatorOptions.CustomTypeMappings.TryGetValue(type.GetGenericTypeDefinition(), out mapping))
+            {
+                return true;
+            }
+
+            return false;
         }
 
         private OpenApiSchema GeneratePolymorphicSchema(IEnumerable<Type> knownSubTypes, SchemaRepository schemaRepository)
