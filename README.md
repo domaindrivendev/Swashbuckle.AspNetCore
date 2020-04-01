@@ -252,6 +252,8 @@ app.UseSwaggerUI(c =>
 })
 ```
 
+_NOTE: If you also need to update the relative path that the UI itself is available on, you'll need to follow the instructions found in [Change Relative Path to the UI](#change-relative-path-to-the-ui)._
+
 ### Modify Swagger with Request Context ###
 
 If you need to set some Swagger metadata based on the current request, you can configure a filter that's executed prior to serializing the document.
