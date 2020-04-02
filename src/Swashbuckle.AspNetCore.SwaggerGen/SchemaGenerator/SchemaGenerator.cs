@@ -68,12 +68,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var dataContract = _dataContractResolver.GetDataContractForType(type);
 
-            var shouldBeReferened = (dataContract.EnumValues != null && !_generatorOptions.UseInlineDefinitionsForEnums)
-                || (dataContract.IsDictionary && dataContract.Type == dataContract.DictionaryValueType)
-                || (dataContract.IsArray && dataContract.Type == dataContract.ArrayItemType)
-                || (dataContract.IsObject && dataContract.Members != null);
+            var shouldBeReferenced =
+                // regular object
+                (dataContract.DataType == DataType.Object && dataContract.Properties != null && !dataContract.UnderlyingType.IsDictionary()) ||
+                // dictionary-based AND self-referencing
+                (dataContract.DataType == DataType.Object && dataContract.AdditionalPropertiesType == dataContract.UnderlyingType) ||
+                // array-based AND self-referencing
+                (dataContract.DataType == DataType.Array && dataContract.ArrayItemType == dataContract.UnderlyingType) ||
+                // enum-based AND opted-out of inline
+                (dataContract.EnumValues != null && !_generatorOptions.UseInlineDefinitionsForEnums);
 
-            return (shouldBeReferened)
+            return (shouldBeReferenced)
                 ? GenerateReferencedSchema(dataContract, schemaRepository)
                 : GenerateInlineSchema(dataContract, schemaRepository);
         }
@@ -107,92 +112,33 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private OpenApiSchema GenerateReferencedSchema(DataContract dataContract, SchemaRepository schemaRepository)
         {
             return schemaRepository.GetOrAdd(
-                dataContract.Type,
-                _generatorOptions.SchemaIdSelector(dataContract.Type),
+                dataContract.UnderlyingType,
+                _generatorOptions.SchemaIdSelector(dataContract.UnderlyingType),
                 () =>
                 {
                     var schema = GenerateInlineSchema(dataContract, schemaRepository);
-                    ApplyFilters(schema, dataContract.Type, schemaRepository);
+                    ApplyFilters(schema, dataContract.UnderlyingType, schemaRepository);
                     return schema;
                 });
         }
 
         private OpenApiSchema GenerateInlineSchema(DataContract dataContract, SchemaRepository schemaRepository)
         {
-            if (dataContract.IsPrimitive)
-                return GeneratePrimitiveSchema(dataContract);
+            if (dataContract.DataType == DataType.Unknown)
+                return new OpenApiSchema();
 
-            if (dataContract.IsDictionary)
-                return GenerateDictionarySchema(dataContract, schemaRepository);
-
-            if (dataContract.IsArray)
-                return GenerateArraySchema(dataContract, schemaRepository);
-
-            if (dataContract.IsObject)
+            if (dataContract.DataType == DataType.Object)
                 return GenerateObjectSchema(dataContract, schemaRepository);
 
-            return new OpenApiSchema();
-        }
+            if (dataContract.DataType == DataType.Array)
+                return GenerateArraySchema(dataContract, schemaRepository);
 
-        private OpenApiSchema GeneratePrimitiveSchema(DataContract dataContract)
-        {
-            var schema = new OpenApiSchema
-            {
-                Type = dataContract.DataType,
-                Format = dataContract.DataFormat
-            };
-
-            if (dataContract.EnumValues != null)
-            {
-                schema.Enum = dataContract.EnumValues
-                    .Select(value => OpenApiAnyFactory.CreateFor(schema, value))
-                    .ToList();
-            }
-
-            return schema;
-        }
-
-        private OpenApiSchema GenerateDictionarySchema(DataContract dataContract, SchemaRepository schemaRepository)
-        {
-            if (dataContract.DictionaryKeyType.IsEnum)
-            {
-                // This is a special case where we can include named properties based on the enum values
-                return new OpenApiSchema
-                {
-                    Type = "object",
-                    Properties = dataContract.DictionaryKeyType.GetEnumNames()
-                        .ToDictionary(
-                            name => name,
-                            name => GenerateSchema(dataContract.DictionaryValueType, schemaRepository)
-                        )
-                };
-            }
-
-            return new OpenApiSchema
-            {
-                Type = "object",
-                AdditionalPropertiesAllowed = true,
-                AdditionalProperties = GenerateSchema(dataContract.DictionaryValueType, schemaRepository)
-            };
-        }
-
-        private OpenApiSchema GenerateArraySchema(DataContract dataContract, SchemaRepository schemaRepository)
-        {
-            return new OpenApiSchema
-            {
-                Type = "array",
-                Items = GenerateSchema(dataContract.ArrayItemType, schemaRepository),
-                UniqueItems = dataContract.Type.IsSet() ? (bool?)true : null
-            };
+            else
+                return GeneratePrimitiveSchema(dataContract);
         }
 
         private OpenApiSchema GenerateObjectSchema(DataContract dataContract, SchemaRepository schemaRepository)
         {
-            if (dataContract.Members == null)
-            {
-                return new OpenApiSchema { Type = "object" };
-            }
-
             var schema = new OpenApiSchema
             {
                 Type = "object",
@@ -201,9 +147,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             };
 
             // If it's a baseType with known subTypes, add the discriminator property
-            if (_generatorOptions.GeneratePolymorphicSchemas && _generatorOptions.SubTypesResolver(dataContract.Type).Any())
+            if (_generatorOptions.GeneratePolymorphicSchemas && _generatorOptions.SubTypesResolver(dataContract.UnderlyingType).Any())
             {
-                var discriminatorName = _generatorOptions.DiscriminatorSelector(dataContract.Type);
+                var discriminatorName = _generatorOptions.DiscriminatorSelector(dataContract.UnderlyingType);
 
                 if (!schema.Properties.ContainsKey(discriminatorName))
                     schema.Properties.Add(discriminatorName, new OpenApiSchema { Type = "string" });
@@ -212,30 +158,31 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 schema.Discriminator = new OpenApiDiscriminator { PropertyName = discriminatorName };
             }
 
-            foreach (var dataMember in dataContract.Members)
+            foreach (var dataProperty in dataContract.Properties ?? Enumerable.Empty<DataProperty>())
             {
-                var customAttributes = dataMember.MemberInfo?.GetInlineOrMetadataTypeAttributes() ?? Enumerable.Empty<object>();
+                var customAttributes = dataProperty.MemberInfo?.GetInlineOrMetadataTypeAttributes() ?? Enumerable.Empty<object>();
 
                 if (_generatorOptions.IgnoreObsoleteProperties && customAttributes.OfType<ObsoleteAttribute>().Any())
                     continue;
 
-                schema.Properties[dataMember.Name] = GeneratePropertySchema(dataMember, schemaRepository);
+                schema.Properties[dataProperty.Name] = GeneratePropertySchema(dataProperty, schemaRepository);
 
-                if (dataMember.IsRequired || customAttributes.OfType<RequiredAttribute>().Any())
-                    schema.Required.Add(dataMember.Name);
+                if (dataProperty.IsRequired || customAttributes.OfType<RequiredAttribute>().Any())
+                    schema.Required.Add(dataProperty.Name);
             }
 
-            if (dataContract.ExtensionDataValueType != null)
+            if (dataContract.AdditionalPropertiesType != null)
             {
-                schema.AdditionalProperties = GenerateSchema(dataContract.ExtensionDataValueType, schemaRepository);
+                schema.AdditionalProperties = GenerateSchema(dataContract.AdditionalPropertiesType, schemaRepository);
             }
 
             // If it's a known subType, reference the baseType for inheritied properties
-            if (_generatorOptions.GeneratePolymorphicSchemas
-                && (dataContract.Type.BaseType != null)
-                && _generatorOptions.SubTypesResolver(dataContract.Type.BaseType).Contains(dataContract.Type))
+            if (
+                _generatorOptions.GeneratePolymorphicSchemas &&
+                (dataContract.UnderlyingType.BaseType != null) &&
+                _generatorOptions.SubTypesResolver(dataContract.UnderlyingType.BaseType).Contains(dataContract.UnderlyingType))
             {
-                var basedataContract = _dataContractResolver.GetDataContractForType(dataContract.Type.BaseType);
+                var basedataContract = _dataContractResolver.GetDataContractForType(dataContract.UnderlyingType.BaseType);
                 var baseSchemaReference = GenerateReferencedSchema(basedataContract, schemaRepository);
 
                 var baseSchema = schemaRepository.Schemas[baseSchemaReference.Reference.Id];
@@ -253,7 +200,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return schema;
         }
 
-        private OpenApiSchema GeneratePropertySchema(DataMember serializerMember, SchemaRepository schemaRepository)
+        private OpenApiSchema GeneratePropertySchema(DataProperty serializerMember, SchemaRepository schemaRepository)
         {
             var schema = GenerateSchemaForType(serializerMember.MemberType, schemaRepository);
 
@@ -269,6 +216,34 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 schema.WriteOnly = serializerMember.IsWriteOnly;
 
                 ApplyFilters(schema, serializerMember.MemberType, schemaRepository, serializerMember.MemberInfo);
+            }
+
+            return schema;
+        }
+
+        private OpenApiSchema GenerateArraySchema(DataContract dataContract, SchemaRepository schemaRepository)
+        {
+            return new OpenApiSchema
+            {
+                Type = "array",
+                Items = GenerateSchema(dataContract.ArrayItemType, schemaRepository),
+                UniqueItems = dataContract.UnderlyingType.IsSet() ? (bool?)true : null
+            };
+        }
+
+        private OpenApiSchema GeneratePrimitiveSchema(DataContract dataContract)
+        {
+            var schema = new OpenApiSchema
+            {
+                Type = dataContract.DataType.ToString().ToLower(),
+                Format = dataContract.Format
+            };
+
+            if (dataContract.EnumValues != null)
+            {
+                schema.Enum = dataContract.EnumValues
+                    .Select(value => OpenApiAnyFactory.CreateFor(schema, value))
+                    .ToList();
             }
 
             return schema;

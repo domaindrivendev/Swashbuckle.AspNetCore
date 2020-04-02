@@ -32,20 +32,27 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             {
                 var primitiveTypeAndFormat = PrimitiveTypesAndFormats.ContainsKey(jsonContract.UnderlyingType)
                     ? PrimitiveTypesAndFormats[jsonContract.UnderlyingType]
-                    : Tuple.Create("string", (string)null);
+                    : Tuple.Create(DataType.String, (string)null);
 
-                return DataContract.ForPrimitive(jsonContract.UnderlyingType, primitiveTypeAndFormat.Item1, primitiveTypeAndFormat.Item2);
+                return new DataContract(
+                    dataType: primitiveTypeAndFormat.Item1,
+                    format: primitiveTypeAndFormat.Item2,
+                    underlyingType: jsonContract.UnderlyingType);
             }
 
             if (jsonContract is JsonPrimitiveContract && jsonContract.UnderlyingType.IsEnum)
             {
-                var enumValues = GetSerializerEnumValuesFor(jsonContract);
+                var enumValues = GetSerializedEnumValuesFor(jsonContract);
 
                 var primitiveTypeAndFormat = (enumValues.Any(value => value.GetType() == typeof(string)))
                     ? PrimitiveTypesAndFormats[typeof(string)]
                     : PrimitiveTypesAndFormats[jsonContract.UnderlyingType.GetEnumUnderlyingType()];
 
-                return DataContract.ForPrimitive(jsonContract.UnderlyingType, primitiveTypeAndFormat.Item1, primitiveTypeAndFormat.Item2, enumValues);
+                return new DataContract(
+                    dataType: primitiveTypeAndFormat.Item1,
+                    format: primitiveTypeAndFormat.Item2,
+                    underlyingType: jsonContract.UnderlyingType,
+                    enumValues: enumValues);
             }
 
             if (jsonContract is JsonDictionaryContract jsonDictionaryContract)
@@ -53,36 +60,65 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                 var keyType = jsonDictionaryContract.DictionaryKeyType ?? typeof(object);
                 var valueType = jsonDictionaryContract.DictionaryValueType ?? typeof(object);
 
-                return DataContract.ForDictionary(jsonDictionaryContract.UnderlyingType, keyType, valueType);
+                if (keyType.IsEnum)
+                {
+                    // This is a special case where we can include named properties based on the enum values
+                    var enumValues = GetDataContractForType(keyType).EnumValues;
+
+                    var propertyNames = enumValues.Any(value => value is string)
+                        ? enumValues.Cast<string>()
+                        : keyType.GetEnumNames();
+
+                    return new DataContract(
+                        dataType: DataType.Object,
+                        underlyingType: jsonDictionaryContract.UnderlyingType,
+                        properties: propertyNames.Select(name => new DataProperty(name, valueType)));
+                }
+
+                return new DataContract(
+                    dataType: DataType.Object,
+                    underlyingType: jsonDictionaryContract.UnderlyingType,
+                    additionalPropertiesType: valueType);
             }
 
             if (jsonContract is JsonArrayContract jsonArrayContract)
             {
-                var itemType = jsonArrayContract.CollectionItemType ?? typeof(object);
-                return DataContract.ForArray(jsonArrayContract.UnderlyingType, itemType);
+                return new DataContract(
+                    dataType: DataType.Array,
+                    underlyingType: jsonArrayContract.UnderlyingType,
+                    arrayItemType: jsonArrayContract.CollectionItemType ?? typeof(object));
             }
 
             if (jsonContract is JsonObjectContract jsonObjectContract)
             {
-                return DataContract.ForObject(
-                    jsonContract.UnderlyingType,
-                    GetSerializerMembersFor(jsonObjectContract),
-                    jsonObjectContract.ExtensionDataValueType);
+                return new DataContract(
+                    dataType: DataType.Object,
+                    underlyingType: jsonObjectContract.UnderlyingType,
+                    properties: GetDataPropertiesFor(jsonObjectContract),
+                    additionalPropertiesType: jsonObjectContract.ExtensionDataValueType);
             }
 
-            if (jsonContract is JsonLinqContract jsonLinqContract)
+            if (jsonContract.UnderlyingType == typeof(JArray))
             {
-                if (jsonLinqContract.UnderlyingType == typeof(JArray))
-                    return DataContract.ForArray(typeof(JArray), typeof(JToken));
-
-                if (jsonLinqContract.UnderlyingType == typeof(JObject))
-                    return DataContract.ForObject(typeof(JObject));
+                return new DataContract(
+                    dataType: DataType.Array,
+                    underlyingType: jsonContract.UnderlyingType,
+                    arrayItemType: typeof(JToken));
             }
 
-            return DataContract.ForDynamic(jsonContract.UnderlyingType);
+            if (jsonContract.UnderlyingType == typeof(JObject))
+            {
+                return new DataContract(
+                    dataType: DataType.Object,
+                    underlyingType: jsonContract.UnderlyingType);
+            }
+
+            return new DataContract(
+                dataType: DataType.Unknown,
+                underlyingType: jsonContract.UnderlyingType);
         }
 
-        private IEnumerable<object> GetSerializerEnumValuesFor(JsonContract jsonContract)
+        private IEnumerable<object> GetSerializedEnumValuesFor(JsonContract jsonContract)
         {
             var stringEnumConverter = (jsonContract.Converter as StringEnumConverter)
                 ?? _serializerSettings.Converters.OfType<StringEnumConverter>().FirstOrDefault();
@@ -127,14 +163,14 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
         }
 #endif
 
-        private IEnumerable<DataMember> GetSerializerMembersFor(JsonObjectContract jsonObjectContract)
+        private IEnumerable<DataProperty> GetDataPropertiesFor(JsonObjectContract jsonObjectContract)
         {
             if (jsonObjectContract.UnderlyingType == typeof(object))
             {
                 return null;
             }
 
-            var serializerMembers = new List<DataMember>();
+            var dataProperties = new List<DataProperty>();
 
             foreach (var jsonProperty in jsonObjectContract.Properties)
             {
@@ -144,48 +180,48 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     ? jsonProperty.Required
                     : jsonObjectContract.ItemRequired ?? Required.Default;
 
-                jsonProperty.TryGetMemberInfo(out MemberInfo memberInfo);
-
                 var isSetViaConstructor = jsonProperty.DeclaringType.GetConstructors()
                     .SelectMany(c => c.GetParameters())
                     .Any(p => string.Equals(p.Name, jsonProperty.PropertyName, StringComparison.OrdinalIgnoreCase));
 
-                serializerMembers.Add(
-                    new DataMember(
+                jsonProperty.TryGetMemberInfo(out MemberInfo memberInfo);
+
+                dataProperties.Add(
+                    new DataProperty(
                         name: jsonProperty.PropertyName,
-                        memberType: jsonProperty.PropertyType,
-                        memberInfo: memberInfo,
                         isRequired: (required == Required.Always || required == Required.AllowNull),
                         isNullable: (required == Required.AllowNull || required == Required.Default) && jsonProperty.PropertyType.IsReferenceOrNullableType(),
                         isReadOnly: jsonProperty.Readable && !jsonProperty.Writable && !isSetViaConstructor,
-                        isWriteOnly: jsonProperty.Writable && !jsonProperty.Readable));
+                        isWriteOnly: jsonProperty.Writable && !jsonProperty.Readable,
+                        memberType: jsonProperty.PropertyType,
+                        memberInfo: memberInfo));
             }
 
-            return serializerMembers;
+            return dataProperties;
         }
 
-        private static readonly Dictionary<Type, Tuple<string, string>> PrimitiveTypesAndFormats = new Dictionary<Type, Tuple<string, string>>
+        private static readonly Dictionary<Type, Tuple<DataType, string>> PrimitiveTypesAndFormats = new Dictionary<Type, Tuple<DataType, string>>
         {
-            [ typeof(bool) ] = Tuple.Create("boolean", (string)null),
-            [ typeof(byte) ] = Tuple.Create("integer", "int32"),
-            [ typeof(sbyte) ] = Tuple.Create("integer", "int32"),
-            [ typeof(short) ] = Tuple.Create("integer", "int32"),
-            [ typeof(ushort) ] = Tuple.Create("integer", "int32"),
-            [ typeof(int) ] = Tuple.Create("integer", "int32"),
-            [ typeof(uint) ] = Tuple.Create("integer", "int32"),
-            [ typeof(long) ] = Tuple.Create("integer", "int64"),
-            [ typeof(ulong) ] = Tuple.Create("integer", "int64"),
-            [ typeof(float) ] = Tuple.Create("number", "float"),
-            [ typeof(double) ] = Tuple.Create("number", "double"),
-            [ typeof(decimal) ] = Tuple.Create("number", "double"),
-            [ typeof(byte[]) ] = Tuple.Create("string", "byte"),
-            [ typeof(string) ] = Tuple.Create("string", (string)null),
-            [ typeof(char) ] = Tuple.Create("string", (string)null),
-            [ typeof(DateTime) ] = Tuple.Create("string", "date-time"),
-            [ typeof(DateTimeOffset) ] = Tuple.Create("string", "date-time"),
-            [ typeof(Guid) ] = Tuple.Create("string", "uuid"),
-            [ typeof(Uri) ] = Tuple.Create("string", "uri"),
-            [ typeof(TimeSpan) ] = Tuple.Create("string", "date-span")
+            [ typeof(bool) ] = Tuple.Create(DataType.Boolean, (string)null),
+            [ typeof(byte) ] = Tuple.Create(DataType.Integer, "int32"),
+            [ typeof(sbyte) ] = Tuple.Create(DataType.Integer, "int32"),
+            [ typeof(short) ] = Tuple.Create(DataType.Integer, "int32"),
+            [ typeof(ushort) ] = Tuple.Create(DataType.Integer, "int32"),
+            [ typeof(int) ] = Tuple.Create(DataType.Integer, "int32"),
+            [ typeof(uint) ] = Tuple.Create(DataType.Integer, "int32"),
+            [ typeof(long) ] = Tuple.Create(DataType.Integer, "int64"),
+            [ typeof(ulong) ] = Tuple.Create(DataType.Integer, "int64"),
+            [ typeof(float) ] = Tuple.Create(DataType.Number, "float"),
+            [ typeof(double) ] = Tuple.Create(DataType.Number, "double"),
+            [ typeof(decimal) ] = Tuple.Create(DataType.Number, "double"),
+            [ typeof(byte[]) ] = Tuple.Create(DataType.String, "byte"),
+            [ typeof(string) ] = Tuple.Create(DataType.String, (string)null),
+            [ typeof(char) ] = Tuple.Create(DataType.String, (string)null),
+            [ typeof(DateTime) ] = Tuple.Create(DataType.String, "date-time"),
+            [ typeof(DateTimeOffset) ] = Tuple.Create(DataType.String, "date-time"),
+            [ typeof(Guid) ] = Tuple.Create(DataType.String, "uuid"),
+            [ typeof(Uri) ] = Tuple.Create(DataType.String, "uri"),
+            [ typeof(TimeSpan) ] = Tuple.Create(DataType.String, "date-span")
         };
     }
 }

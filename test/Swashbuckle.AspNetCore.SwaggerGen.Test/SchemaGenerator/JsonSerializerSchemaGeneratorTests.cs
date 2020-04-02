@@ -103,15 +103,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void GenerateSchema_GeneratesObjectSchema_IfDictionaryTypeWithEnumKeys()
-        {
-            var schema = Subject().GenerateSchema(typeof(IDictionary<IntEnum, int>), new SchemaRepository());
-
-            Assert.Equal("object", schema.Type);
-            Assert.Equal(new[] { "Value2", "Value4", "Value8" }, schema.Properties.Keys);
-        }
-
-        [Fact]
         public void GenerateSchema_GeneratesReferencedDictionarySchema_IfSelfReferencingDictionaryType()
         {
             var schemaRepository = new SchemaRepository();
@@ -487,6 +478,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Throws<InvalidOperationException>(() =>
             {
                 subject.GenerateSchema(typeof(TestSupport.Namespace2.ConflictingType), schemaRepository);
+            });
+        }
+
+        [Theory]
+        [InlineData(typeof(IDictionary<IntEnum, string>))]
+        public void GenerateSchema_Errors_IfTypeIsUnsupportedBySerializer(Type type)
+        {
+            Assert.Throws<NotSupportedException>(() =>
+            {
+                Subject().GenerateSchema(type, new SchemaRepository());
             });
         }
 

@@ -11,123 +11,65 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
     public class DataContract
     {
-        public static DataContract ForPrimitive(
-            Type type,
-            string dataType,
-            string dataFormat = null,
-            IEnumerable<object> enumValues = null)
+        public DataContract(
+            DataType dataType,
+            Type underlyingType,
+            string format = null,
+            IEnumerable<object> enumValues = null,
+            IEnumerable<DataProperty> properties = null,
+            Type additionalPropertiesType = null,
+            Type arrayItemType = null)
         {
-            return new DataContract
-            {
-                IsPrimitive = true,
-                Type = type,
-                DataType = dataType,
-                DataFormat = dataFormat,
-                EnumValues = enumValues,
-            };
+            DataType = dataType;
+            Format = format;
+            EnumValues = enumValues;
+            Properties = properties;
+            UnderlyingType = underlyingType;
+            AdditionalPropertiesType = additionalPropertiesType;
+            ArrayItemType = arrayItemType;
         }
 
-        public static DataContract ForDictionary(Type type, Type keyType, Type valueType)
-        {
-            return new DataContract
-            {
-                IsDictionary = true,
-                Type = type,
-                DictionaryKeyType = keyType,
-                DictionaryValueType = valueType,
-                DataType = "object",
-            };
-        }
-
-        public static DataContract ForArray(Type type, Type itemType)
-        {
-            return new DataContract
-            {
-                IsArray = true,
-                Type = type,
-                ArrayItemType = itemType,
-                DataType = "array",
-            };
-        }
-
-        public static DataContract ForObject(
-            Type type,
-            IEnumerable<DataMember> members = null,
-            Type extensionDataValueType = null)
-        {
-            return new DataContract
-            {
-                IsObject = true,
-                Type = type,
-                Members = members,
-                ExtensionDataValueType = extensionDataValueType,
-                DataType = "object",
-            };
-        }
-
-        public static DataContract ForDynamic(Type type)
-        {
-            return new DataContract
-            {
-                IsDynamic = true,
-                Type = type
-            };
-        }
-
-        public bool IsPrimitive { get; private set; }
-
-        public bool IsDictionary { get; private set; }
-
-        public bool IsArray { get; private set; }
-
-        public bool IsObject { get; private set; }
-
-        public bool IsDynamic { get; private set; }
-
-        public Type Type { get; private set; }
-
-        public Type DictionaryKeyType { get; private set; }
-
-        public Type DictionaryValueType { get; private set; }
-
-        public Type ArrayItemType { get; private set; }
-
-        public IEnumerable<DataMember> Members { get; private set; }
-
-        public Type ExtensionDataValueType { get; private set; }
-
-        public string DataType { get; private set; }
-
-        public string DataFormat { get; private set; }
-
-        public IEnumerable<object> EnumValues { get; set; }
+        public DataType DataType { get; }
+        public string Format { get; }
+        public IEnumerable<object> EnumValues { get; }
+        public IEnumerable<DataProperty> Properties { get; }
+        public Type UnderlyingType { get; }
+        public Type AdditionalPropertiesType { get; }
+        public Type ArrayItemType { get; }
     }
 
-    public class DataMember
+    public enum DataType
     {
-        public DataMember(
+        Unknown,
+        Boolean,
+        Integer,
+        Number,
+        String,
+        Object,
+        Array
+    }
+
+    public class DataProperty
+    {
+        public DataProperty(
             string name,
             Type memberType,
-            MemberInfo memberInfo,
             bool isRequired = false,
             bool isNullable = false,
             bool isReadOnly = false,
-            bool isWriteOnly = false)
+            bool isWriteOnly = false,
+            MemberInfo memberInfo = null)
         {
             Name = name;
-            MemberType = memberType;
-            MemberInfo = memberInfo;
             IsRequired = isRequired;
             IsNullable = isNullable;
             IsReadOnly = isReadOnly;
             IsWriteOnly = isWriteOnly;
+            MemberType = memberType;
+            MemberInfo = memberInfo;
         }
 
         public string Name { get; } 
-
-        public Type MemberType { get; }
-
-        public MemberInfo MemberInfo { get; }
 
         public bool IsRequired { get; }
 
@@ -136,5 +78,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public bool IsReadOnly { get; }
 
         public bool IsWriteOnly { get; }
+
+        public Type MemberType { get; }
+
+        public MemberInfo MemberInfo { get; }
     }
 }
