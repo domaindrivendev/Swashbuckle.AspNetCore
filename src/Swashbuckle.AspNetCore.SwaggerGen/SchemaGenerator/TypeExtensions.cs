@@ -60,6 +60,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return false;
         }
 
+        public static bool IsDictionary(this Type type)
+        {
+            return type.IsDictionary(out Type _, out Type _);
+        }
+
         public static bool IsEnumerable(this Type type, out Type itemType)
         {
             if (type.IsConstructedFrom(typeof(IEnumerable<>), out Type constructedType))

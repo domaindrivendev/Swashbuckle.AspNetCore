@@ -173,7 +173,7 @@
             Summary for NestedType
             </summary>
         </member>
-        <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.SerializerTesting">
+        <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.JsonSerializerTesting">
             <summary>
             For ad-hoc serializer testing
             </summary>

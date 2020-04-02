@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.OpenApi.Models;
+using AnnotationsDataType = System.ComponentModel.DataAnnotations.DataType;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -72,23 +73,23 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
         }
 
-        private static readonly Dictionary<DataType, string> DataTypeFormatMap = new Dictionary<DataType, string>
+        private static readonly Dictionary<AnnotationsDataType, string> DataTypeFormatMap = new Dictionary<AnnotationsDataType, string>
         {
-            { DataType.Date, "date" },
-            { DataType.DateTime, "date-time" },
-            { DataType.Time, "time" },
-            { DataType.Duration, "duration" },
-            { DataType.PhoneNumber, "tel" },
-            { DataType.Currency, "currency" },
-            { DataType.Text, "string" },
-            { DataType.Html, "html" },
-            { DataType.MultilineText, "multiline" },
-            { DataType.EmailAddress, "email" },
-            { DataType.Password, "password" },
-            { DataType.Url, "uri" },
-            { DataType.ImageUrl, "uri" },
-            { DataType.CreditCard, "credit-card" },
-            { DataType.PostalCode, "postal-code" },
+            { AnnotationsDataType.Date, "date" },
+            { AnnotationsDataType.DateTime, "date-time" },
+            { AnnotationsDataType.Time, "time" },
+            { AnnotationsDataType.Duration, "duration" },
+            { AnnotationsDataType.PhoneNumber, "tel" },
+            { AnnotationsDataType.Currency, "currency" },
+            { AnnotationsDataType.Text, "string" },
+            { AnnotationsDataType.Html, "html" },
+            { AnnotationsDataType.MultilineText, "multiline" },
+            { AnnotationsDataType.EmailAddress, "email" },
+            { AnnotationsDataType.Password, "password" },
+            { AnnotationsDataType.Url, "uri" },
+            { AnnotationsDataType.ImageUrl, "uri" },
+            { AnnotationsDataType.CreditCard, "credit-card" },
+            { AnnotationsDataType.PostalCode, "postal-code" },
         };
     }
 }
