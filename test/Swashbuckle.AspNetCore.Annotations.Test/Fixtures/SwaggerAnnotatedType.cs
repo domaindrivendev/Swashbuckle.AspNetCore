@@ -4,7 +4,7 @@
     [SwaggerSchemaFilter(typeof(VendorExtensionsSchemaFilter))]
     public class SwaggerAnnotatedType
     {
-        [SwaggerSchema("Description for StringWithSwaggerSchemaAttribute", ReadOnly = true, WriteOnly = true)]
+        [SwaggerSchema("Description for StringWithSwaggerSchemaAttribute", Format = "date", ReadOnly = true, WriteOnly = true)]
         public string StringWithSwaggerSchemaAttribute { get; set; }
 
         [SwaggerSchema("Description for StringWithSwaggerSchemaAttributeDescriptionOnly")]
@@ -21,7 +21,7 @@
     [SwaggerSchemaFilter(typeof(VendorExtensionsSchemaFilter))]
     public struct SwaggerAnnotatedStruct
     {
-        [SwaggerSchema("Description for StringWithSwaggerSchemaAttribute", ReadOnly = true, WriteOnly = true)]
+        [SwaggerSchema("Description for StringWithSwaggerSchemaAttribute", Format = "date", ReadOnly = true, WriteOnly = true)]
         public string StringWithSwaggerSchemaAttribute { get; set; }
     }
 }

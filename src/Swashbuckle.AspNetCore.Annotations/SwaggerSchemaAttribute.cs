@@ -12,6 +12,8 @@ namespace Swashbuckle.AspNetCore.Annotations
 
         public string Description { get; set; }
 
+        public string Format { get; set; }
+
         public bool ReadOnly
         {
             get { throw new InvalidOperationException($"Use {nameof(ReadOnlyFlag)} instead"); }

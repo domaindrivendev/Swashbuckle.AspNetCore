@@ -63,6 +63,9 @@ namespace Swashbuckle.AspNetCore.Annotations
             if (schemaAttribute.Description != null)
                 schema.Description = schemaAttribute.Description;
 
+            if (schemaAttribute.Format != null)
+                schema.Format = schemaAttribute.Format;
+
             if (schemaAttribute.ReadOnlyFlag.HasValue)
                 schema.ReadOnly = schemaAttribute.ReadOnlyFlag.Value;
 

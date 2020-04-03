@@ -42,6 +42,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             Subject().Apply(schema, context);
 
             Assert.Equal($"Description for {propertyName}", schema.Description);
+            Assert.Equal("date", schema.Format);
             Assert.Equal(expectedReadOnly, schema.ReadOnly);
             Assert.Equal(expectedWriteOnly, schema.WriteOnly);
         }

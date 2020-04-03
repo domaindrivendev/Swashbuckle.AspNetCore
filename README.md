@@ -1122,6 +1122,9 @@ public class Product
 
 	[SwaggerSchema("The product description")]
 	public string Description { get; set; }
+
+	[SwaggerSchema("The date it was created", Format = "date")]
+	public DateTime DateCreated { get; set; }
 }
 ```
 
