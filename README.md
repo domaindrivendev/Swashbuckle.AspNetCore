@@ -1211,7 +1211,13 @@ _NOTE: At this point the tool will be added to the local manifest file and insta
 
 ### Use the CLI Tool with a Custom IWebHost Configuration
 
-Out-of-the-box, the tool will execute in the context of a "default" web host. However, in some cases you may want to bring your own host environment, for example if you've configured a custom DI container such as Autofac. For this scenario, the Swashbuckle CLI tool exposes a convention-based hook for your application. That is, if your startup assembly contains a class named `SwaggerWebHostFactory` AND that class has a method with the signature `public static IWebHost CreateWebHost()`, then that will be used to create the host environment for the tool to execute in. For example, the following class could be used to leverage the same host configuration as your application:
+Out-of-the-box, the tool will execute in the context of a "default" web host. 
+However, in some cases you may want to bring your own host environment, for example if you've configured a custom DI container such as Autofac. 
+For this scenario, the Swashbuckle CLI tool exposes a convention-based hook for your application. 
+
+That is, if your startup assembly contains a class named `SwaggerWebHostFactory` AND that class has a method with the signature `public static IWebHost CreateWebHost()`, then that will be used to create the host environment for the tool to execute in. 
+If you are using `IHost` instead of `IWebHost` the class should be named `SwaggerHostFactory` and the method's signature should be `public static IHost CreateHost()`.
+For example, the following class could be used to leverage the same host configuration as your application:
 
 ```csharp
 public class SwaggerWebHostFactory
