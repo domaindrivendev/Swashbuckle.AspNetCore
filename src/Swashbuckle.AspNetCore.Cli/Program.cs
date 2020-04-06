@@ -9,6 +9,7 @@ using Microsoft.OpenApi.Writers;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore;
+using Microsoft.Extensions.Hosting;
 
 namespace Swashbuckle.AspNetCore.Cli
 {
@@ -63,16 +64,16 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Option("--serializeasv2", "", true);
                 c.Option("--yaml", "", true);
                 c.OnRun((namedArgs) =>
-                {                    
+                {
                     // 1) Configure host with provided startupassembly
                     var startupAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(
                         Path.Combine(Directory.GetCurrentDirectory(), namedArgs["startupassembly"]));
 
                     // 2) Build a web host to serve the request
-                    var host = BuildWebHost(startupAssembly);
+                    var serviceProvider = GetServiceProvider(startupAssembly);
 
                     // 3) Retrieve Swagger via configured provider
-                    var swaggerProvider = host.Services.GetRequiredService<ISwaggerProvider>();
+                    var swaggerProvider = serviceProvider.GetRequiredService<ISwaggerProvider>();
                     var swagger = swaggerProvider.GetSwagger(
                         namedArgs["swaggerdoc"],
                         namedArgs.ContainsKey("--host") ? namedArgs["--host"] : null,
@@ -114,11 +115,25 @@ namespace Swashbuckle.AspNetCore.Cli
                 : path;
         }
 
+        private static IServiceProvider GetServiceProvider(Assembly startupAssembly)
+        {
+
+            var host = TryBuildingHost(startupAssembly);
+            if (host != null)
+            {
+                return host.Services;
+            }
+
+            var webHost = BuildWebHost(startupAssembly);
+            return webHost.Services;
+        }
+
         private static IWebHost BuildWebHost(Assembly startupAssembly)
         {
             // Scan the startup assembly for any types that match the naming convention
             var factoryTypes = startupAssembly.DefinedTypes
-                .Where(t => t.Name == "SwaggerWebHostFactory");
+                .Where(t => t.Name == "SwaggerWebHostFactory")
+                .ToList();
 
             if (!factoryTypes.Any())
             {
@@ -140,6 +155,33 @@ namespace Swashbuckle.AspNetCore.Cli
                     "called CreateWebHost with return type IWebHost");
 
             return (IWebHost)factoryMethod.Invoke(null, null);
+        }
+
+        private static IHost TryBuildingHost(Assembly startupAssembly)
+        {
+            // Scan the startup assembly for any types that match the naming convention
+            var factoryTypes = startupAssembly.DefinedTypes
+                .Where(t => t.Name == "SwaggerHostFactory")
+                .ToList();
+
+            if (!factoryTypes.Any())
+            {
+                return null;
+            }
+
+            if (factoryTypes.Count() > 1)
+                throw new InvalidOperationException("Multiple SwaggerHostFactory classes detected");
+
+            var factoryMethod = factoryTypes
+                .Single()
+                .GetMethod("CreateHost", BindingFlags.Public | BindingFlags.Static);
+
+            if (factoryMethod == null || factoryMethod.ReturnType != typeof(IHost))
+                throw new InvalidOperationException(
+                    "SwaggerHostFactory class detected but does not contain a public static method " +
+                    "called CreateHost with return type IHost");
+
+            return (IHost)factoryMethod.Invoke(null, null);
         }
     }
 }
