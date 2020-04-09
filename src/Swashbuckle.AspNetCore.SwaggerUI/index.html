@@ -1,77 +1,81 @@
 ﻿<!-- HTML for static distribution bundle build -->
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8">
     <title>%(DocumentTitle)</title>
-    <link rel="stylesheet" type="text/css" href="./swagger-ui.css" >
+    <link rel="stylesheet" type="text/css" href="./swagger-ui.css">
     <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32" />
     <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16" />
     <style>
-      html
-      {
-        box-sizing: border-box;
-        overflow: -moz-scrollbars-vertical;
-        overflow-y: scroll;
-      }
 
-      *,
-      *:before,
-      *:after
-      {
-        box-sizing: inherit;
-      }
+        html {
+            box-sizing: border-box;
+            overflow: -moz-scrollbars-vertical;
+            overflow-y: scroll;
+        }
 
-      body
-      {
-        margin:0;
-        background: #fafafa;
-      }
+        *,
+        *:before,
+        *:after {
+            box-sizing: inherit;
+        }
+
+        body {
+            margin: 0;
+            background: #fafafa;
+        }
     </style>
     %(HeadContent)
-  </head>
+</head>
 
-  <body>
+<body>
     <div id="swagger-ui"></div>
 
     <!-- Workaround for https://github.com/swagger-api/swagger-editor/issues/1371 -->
     <script>
-      if (window.navigator.userAgent.indexOf("Edge") > -1) {
-        console.log("Removing native Edge fetch in favor of swagger-ui's polyfill")
-        window.fetch = undefined;
-      }
+        if (window.navigator.userAgent.indexOf("Edge") > -1) {
+            console.log("Removing native Edge fetch in favor of swagger-ui's polyfill")
+            window.fetch = undefined;
+        }
     </script>
 
-    <script src="./swagger-ui-bundle.js"> </script>
-    <script src="./swagger-ui-standalone-preset.js"> </script>
+    <script src="./swagger-ui-bundle.js"></script>
+    <script src="./swagger-ui-standalone-preset.js"></script>
     <script>
-    window.onload = function() {
-      var configObject = JSON.parse('%(ConfigObject)');
-      var oauthConfigObject = JSON.parse('%(OAuthConfigObject)');
+        window.onload = function () {
+            var configObject = JSON.parse('%(ConfigObject)');
+            var oauthConfigObject = JSON.parse('%(OAuthConfigObject)');
 
-      // If validatorUrl is not explicitly provided, disable the feature by setting to null
-      if (!configObject.hasOwnProperty("validatorUrl"))
-        configObject.validatorUrl = null
+            // Workaround for https://github.com/swagger-api/swagger-ui/issues/5945
+            configObject.urls.forEach(function (item) {
+                if (item.url.startsWith("http") || item.url.startsWith("/")) return;
+                item.url = window.location.href.replace("index.html", item.url).split('#')[0];
+            });
 
-      // If oauth2RedirectUrl isn't specified, use the built-in default
-      if (!configObject.hasOwnProperty("oauth2RedirectUrl"))
-        configObject.oauth2RedirectUrl = window.location.href.replace("index.html", "oauth2-redirect.html").split('#')[0];
+            // If validatorUrl is not explicitly provided, disable the feature by setting to null
+            if (!configObject.hasOwnProperty("validatorUrl"))
+                configObject.validatorUrl = null
 
-      // Apply mandatory parameters
-      configObject.dom_id = "#swagger-ui";
-      configObject.presets = [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset];
-      configObject.layout = "StandaloneLayout";
+            // If oauth2RedirectUrl isn't specified, use the built-in default
+            if (!configObject.hasOwnProperty("oauth2RedirectUrl"))
+                configObject.oauth2RedirectUrl = window.location.href.replace("index.html", "oauth2-redirect.html").split('#')[0];
 
-      // Begin Swagger UI call region
+            // Apply mandatory parameters
+            configObject.dom_id = "#swagger-ui";
+            configObject.presets = [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset];
+            configObject.layout = "StandaloneLayout";
 
-      const ui = SwaggerUIBundle(configObject);
+            // Begin Swagger UI call region
 
-      ui.initOAuth(oauthConfigObject);
+            const ui = SwaggerUIBundle(configObject);
 
-      // End Swagger UI call region
+            ui.initOAuth(oauthConfigObject);
 
-      window.ui = ui
-    }
-  </script>
-  </body>
+            // End Swagger UI call region
+
+            window.ui = ui
+        }
+    </script>
+</body>
 </html>
