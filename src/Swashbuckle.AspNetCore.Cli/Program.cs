@@ -69,7 +69,7 @@ namespace Swashbuckle.AspNetCore.Cli
                     var startupAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(
                         Path.Combine(Directory.GetCurrentDirectory(), namedArgs["startupassembly"]));
 
-                    // 2) Build a web host to serve the request
+                    // 2) Build a service container that's based on the startup assembly
                     var serviceProvider = GetServiceProvider(startupAssembly);
 
                     // 3) Retrieve Swagger via configured provider
@@ -117,71 +117,53 @@ namespace Swashbuckle.AspNetCore.Cli
 
         private static IServiceProvider GetServiceProvider(Assembly startupAssembly)
         {
-
-            var host = TryBuildingHost(startupAssembly);
-            if (host != null)
+            if (TryGetCustomHost(startupAssembly, "SwaggerHostFactory", "CreateHost", out IHost host))
             {
                 return host.Services;
             }
 
-            var webHost = BuildWebHost(startupAssembly);
-            return webHost.Services;
+            if (TryGetCustomHost(startupAssembly, "SwaggerWebHostFactory", "CreateWebHost", out IWebHost webHost))
+            {
+                return webHost.Services;
+            }
+
+            return WebHost.CreateDefaultBuilder()
+               .UseStartup(startupAssembly.FullName)
+               .Build()
+               .Services;
         }
 
-        private static IWebHost BuildWebHost(Assembly startupAssembly)
+        private static bool TryGetCustomHost<THost>(
+            Assembly startupAssembly,
+            string factoryClassName,
+            string factoryMethodName,
+            out THost host)
         {
-            // Scan the startup assembly for any types that match the naming convention
+            // Scan the assembly for any types that match the provided naming convention
             var factoryTypes = startupAssembly.DefinedTypes
-                .Where(t => t.Name == "SwaggerWebHostFactory")
+                .Where(t => t.Name == factoryClassName)
                 .ToList();
 
             if (!factoryTypes.Any())
             {
-                return WebHost.CreateDefaultBuilder()
-                   .UseStartup(startupAssembly.FullName)
-                   .Build();
+                host = default;
+                return false;
             }
 
             if (factoryTypes.Count() > 1)
-                throw new InvalidOperationException("Multiple SwaggerWebHostFactory classes detected");
+                throw new InvalidOperationException($"Multiple {factoryClassName} classes detected");
 
             var factoryMethod = factoryTypes
                 .Single()
-                .GetMethod("CreateWebHost", BindingFlags.Public | BindingFlags.Static);
+                .GetMethod(factoryMethodName, BindingFlags.Public | BindingFlags.Static);
 
-            if (factoryMethod == null || factoryMethod.ReturnType != typeof(IWebHost))
+            if (factoryMethod == null || factoryMethod.ReturnType != typeof(THost))
                 throw new InvalidOperationException(
-                    "SwaggerWebHostFactory class detected but does not contain a public static method " +
-                    "called CreateWebHost with return type IWebHost");
+                    $"{factoryClassName} class detected but does not contain a public static method " +
+                    $"called {factoryMethodName} with return type {typeof(THost).Name}");
 
-            return (IWebHost)factoryMethod.Invoke(null, null);
-        }
-
-        private static IHost TryBuildingHost(Assembly startupAssembly)
-        {
-            // Scan the startup assembly for any types that match the naming convention
-            var factoryTypes = startupAssembly.DefinedTypes
-                .Where(t => t.Name == "SwaggerHostFactory")
-                .ToList();
-
-            if (!factoryTypes.Any())
-            {
-                return null;
-            }
-
-            if (factoryTypes.Count() > 1)
-                throw new InvalidOperationException("Multiple SwaggerHostFactory classes detected");
-
-            var factoryMethod = factoryTypes
-                .Single()
-                .GetMethod("CreateHost", BindingFlags.Public | BindingFlags.Static);
-
-            if (factoryMethod == null || factoryMethod.ReturnType != typeof(IHost))
-                throw new InvalidOperationException(
-                    "SwaggerHostFactory class detected but does not contain a public static method " +
-                    "called CreateHost with return type IHost");
-
-            return (IHost)factoryMethod.Invoke(null, null);
+            host = (THost)factoryMethod.Invoke(null, null);
+            return true;
         }
     }
 }

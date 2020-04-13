@@ -223,7 +223,7 @@ The steps described above will get you up and running with minimal setup. Howeve
 
 * [Swashbuckle.AspNetCore.Cli](#swashbuckleaspnetcorecli)
     * [Retrieve Swagger Directly from a Startup Assembly](#retrieve-swagger-directly-from-a-startup-assembly)
-    * [Use the CLI Tool with a Custom IWebHost Configuration](#use-the-cli-tool-with-a-custom-iwebhost-configuration)
+    * [Use the CLI Tool with a Custom Host Configuration](#use-the-cli-tool-with-a-custom-host-configuration)
 
 * [Swashbuckle.AspNetCore.ReDoc](#swashbuckleaspnetcoreredoc)
     * [Change Releative Path to the UI](#redoc-change-relative-path-to-the-ui)
@@ -1209,22 +1209,23 @@ It can be installed as a [.NET Core Global Tool](https://docs.microsoft.com/en-u
 
 _NOTE: At this point the tool will be added to the local manifest file and installed. Once the updated manifest file is present, the tool can be automatically installed on a fresh envrionment (e.g. a CI/CD runner) by running `dotnet tool restore`._
 
-### Use the CLI Tool with a Custom IWebHost Configuration
+### Use the CLI Tool with a Custom Host Configuration
 
-Out-of-the-box, the tool will execute in the context of a "default" web host. 
-However, in some cases you may want to bring your own host environment, for example if you've configured a custom DI container such as Autofac. 
-For this scenario, the Swashbuckle CLI tool exposes a convention-based hook for your application. 
+Out-of-the-box, the tool will execute in the context of a "default" web host. However, in some cases you may want to bring your own host environment, for example if you've configured a custom DI container such as Autofac. For this scenario, the Swashbuckle CLI tool exposes a convention-based hook for your application.
 
-That is, if your startup assembly contains a class named `SwaggerWebHostFactory` AND that class has a method with the signature `public static IWebHost CreateWebHost()`, then that will be used to create the host environment for the tool to execute in. 
-If you are using `IHost` instead of `IWebHost` the class should be named `SwaggerHostFactory` and the method's signature should be `public static IHost CreateHost()`.
+That is, if your application contains a class that meets either of the following naming conventions, then that class will be used to provide a host for the CLI tool to run in.
+
+- `public class SwaggerHostFactory`, containing a public static method called `CreateHost` with return type `IHost`
+- `public class SwaggerWebHostFactory`, containing a public static method called `CreateWebHost` with return type `IWebHost`
+
 For example, the following class could be used to leverage the same host configuration as your application:
 
 ```csharp
-public class SwaggerWebHostFactory
+public class SwaggerHostFactory
 {
-    public static IWebHost CreateWebHost()
+    public static IHost CreateHost()
     {
-        return Program.BuildWebHost(new string[0]);
+        return Program.CreateHostBuilder(new string[0]).Build();
     }
 }
 ```
