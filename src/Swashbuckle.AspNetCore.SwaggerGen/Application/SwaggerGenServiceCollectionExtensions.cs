@@ -25,11 +25,11 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IConfigureOptions<SchemaGeneratorOptions>, ConfigureSchemaGeneratorOptions>();
 
             // Register generator and it's dependencies
-            services.AddTransient<ISwaggerProvider, SwaggerGenerator>();
-            services.AddTransient(s => s.GetRequiredService<IOptions<SwaggerGeneratorOptions>>().Value);
-            services.AddTransient<ISchemaGenerator, SchemaGenerator>();
-            services.AddTransient(s => s.GetRequiredService<IOptions<SchemaGeneratorOptions>>().Value);
-            services.AddTransient<IDataContractResolver, JsonSerializerDataContractResolver>(s =>
+            services.TryAddTransient<ISwaggerProvider, SwaggerGenerator>();
+            services.TryAddTransient(s => s.GetRequiredService<IOptions<SwaggerGeneratorOptions>>().Value);
+            services.TryAddTransient<ISchemaGenerator, SchemaGenerator>();
+            services.TryAddTransient(s => s.GetRequiredService<IOptions<SchemaGeneratorOptions>>().Value);
+            services.TryAddTransient<IDataContractResolver>(s =>
             {
                 var serializerOptions = s.GetJsonSerializerOptions() ?? new JsonSerializerOptions();
                 return new JsonSerializerDataContractResolver(serializerOptions);
