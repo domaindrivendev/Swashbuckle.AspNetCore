@@ -168,6 +168,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.Equal("object", schema.Type);
             Assert.Empty(schema.Properties);
+            Assert.False(schema.AdditionalPropertiesAllowed);
         }
 
         [Theory]
@@ -189,6 +190,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var schema = schemaRepository.Schemas[expectedSchemaId];
             Assert.Equal("object", schema.Type);
             Assert.Equal(expectedProperties, schema.Properties.Keys);
+            Assert.False(schema.AdditionalPropertiesAllowed);
         }
 
         [Fact]

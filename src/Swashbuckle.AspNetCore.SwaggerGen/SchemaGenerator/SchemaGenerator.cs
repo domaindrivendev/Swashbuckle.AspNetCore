@@ -143,7 +143,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 Type = "object",
                 Properties = new Dictionary<string, OpenApiSchema>(),
-                Required = new SortedSet<string>()
+                Required = new SortedSet<string>(),
+                AdditionalPropertiesAllowed = false
             };
 
             // If it's a baseType with known subTypes, add the discriminator property
@@ -173,6 +174,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (dataContract.AdditionalPropertiesType != null)
             {
+                schema.AdditionalPropertiesAllowed = true;
                 schema.AdditionalProperties = GenerateSchema(dataContract.AdditionalPropertiesType, schemaRepository);
             }
 
