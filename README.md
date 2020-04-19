@@ -466,7 +466,7 @@ To enhance the generated docs with human-friendly descriptions, you can annotate
     /// <summary>
     /// Retrieves a specific product by unique id
     /// </summary>
-    /// <param name="id" example="123"></param>
+    /// <param name="id" example="123">The product id</param>
     /// <remarks>Awesomeness!</remarks>
     /// <response code="200">Product created</response>
     /// <response code="400">Product has missing/invalid values</response>

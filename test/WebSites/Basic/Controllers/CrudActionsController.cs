@@ -50,7 +50,7 @@ namespace Basic.Controllers
         /// <summary>
         /// Returns a specific product
         /// </summary>
-        /// <param name="id" example="111"></param>
+        /// <param name="id" example="111">The product id</param>
         /// <returns></returns>
         [HttpGet("{id}", Name = "GetProduct")]
         public Product Get(int id)
