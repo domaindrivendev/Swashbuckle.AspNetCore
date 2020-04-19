@@ -460,14 +460,14 @@ To enhance the generated docs with human-friendly descriptions, you can annotate
     }
     ```
 
-3. Annotate your actions with summary, param, remarks and response tags:
+3. Annotate your actions with summary, remarks, param and response tags:
 
     ```csharp
     /// <summary>
     /// Retrieves a specific product by unique id
     /// </summary>
-    /// <param name="id" example="123">The product id</param>
     /// <remarks>Awesomeness!</remarks>
+    /// <param name="id" example="123">The product id</param>
     /// <response code="200">Product created</response>
     /// <response code="400">Product has missing/invalid values</response>
     /// <response code="500">Oops! Can't create your product right now</response>
