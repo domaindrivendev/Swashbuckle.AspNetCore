@@ -4,7 +4,6 @@ using System.Xml.XPath;
 using System.IO;
 using Microsoft.OpenApi.Models;
 using Xunit;
-using Swashbuckle.AspNetCore.TestSupport;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -68,6 +67,42 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Subject().Apply(schema, filterContext);
 
             Assert.Equal("Description for param1", schema.Description);
+        }
+
+        [Theory]
+        [InlineData(0, "boolean", null, true)]
+        [InlineData(1, "integer", "int32", 27)]
+        [InlineData(2, "integer", "int64", 4294967296L)]
+        [InlineData(3, "number", "float", 1.23F)]
+        [InlineData(4, "number", "double", 1.25D)]
+        [InlineData(5, "integer", "int32", 2)]
+        [InlineData(6, "string", "uuid", "1edab3d2-311a-4782-9ec9-a70d0478b82f")]
+        [InlineData(7, "string", null, "Example for StringProperty")]
+        [InlineData(8, "integer", "int32", null)]
+        public void Apply_SetsExample_FromActionParamTag(
+            int parameterIndex,
+            string schemaType,
+            string schemaFormat,
+            object expectedValue)
+        {
+            var schema = new OpenApiSchema { Type = schemaType, Format = schemaFormat };
+
+            var parameterInfo = typeof(FakeControllerWithXmlComments)
+                .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithExampleParams))
+                .GetParameters()[parameterIndex];
+            var filterContext = new SchemaFilterContext(parameterInfo.ParameterType, null, null, parameterInfo: parameterInfo);
+
+            Subject().Apply(schema, filterContext);
+
+            if (expectedValue != null)
+            {
+                Assert.NotNull(schema.Example);
+                Assert.Equal(expectedValue, schema.Example.GetType().GetProperty("Value").GetValue(schema.Example));
+            }
+            else
+            {
+                Assert.Null(schema.Example);
+            }
         }
 
         [Theory]
