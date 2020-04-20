@@ -1,22 +1,31 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+
+#if NETCOREAPP3_0
+using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IWebHostEnvironment;
+#endif
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     internal class ConfigureSwaggerGeneratorOptions : IConfigureOptions<SwaggerGeneratorOptions>
     {
-        private readonly IServiceProvider _serviceProvider;
         private readonly SwaggerGenOptions _swaggerGenOptions;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
         public ConfigureSwaggerGeneratorOptions(
+            IOptions<SwaggerGenOptions> swaggerGenOptionsAccessor,
             IServiceProvider serviceProvider,
-            IOptions<SwaggerGenOptions> swaggerGenOptionsAccessor)
+            IHostingEnvironment hostingEnvironment)
         {
-            _serviceProvider = serviceProvider;
             _swaggerGenOptions = swaggerGenOptionsAccessor.Value;
+            _serviceProvider = serviceProvider;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         public void Configure(SwaggerGeneratorOptions options)
@@ -36,6 +45,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             _swaggerGenOptions.DocumentFilterDescriptors.ForEach(
                 filterDescriptor => options.DocumentFilters.Add(CreateFilter<IDocumentFilter>(filterDescriptor)));
+
+            if (!options.SwaggerDocs.Any())
+            {
+                options.SwaggerDocs.Add("v1", new OpenApiInfo { Title = _hostingEnvironment.ApplicationName, Version = "1.0" });
+            }
         }
 
         public void DeepCopy(SwaggerGeneratorOptions source, SwaggerGeneratorOptions target)
