@@ -43,6 +43,17 @@
             <response code="200">Description for 200 response</response>
             <response code="400">Description for 400 response</response>
         </member>
+        <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllerWithXmlComments.ActionWithExampleParams(System.Boolean,System.Int32,System.Int64,System.Single,System.Double,Swashbuckle.AspNetCore.TestSupport.IntEnum,System.Guid,System.String,System.Int32)">
+            <param name="boolParam" example="true"></param>
+            <param name="intParam" example="27"></param>
+            <param name="longParam" example="4294967296"></param>
+            <param name="floatParam" example="1.23"></param>
+            <param name="doubleParam" example="1.25"></param>
+            <param name="enumParam" example="2"></param>
+            <param name="guidParam" example="1edab3d2-311a-4782-9ec9-a70d0478b82f"></param>
+            <param name="stringParam" example="Example for StringProperty"></param>
+            <param name="badExampleIntParam" example="goodbye"></param>
+        </member>
         <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedGenericType`2">
             <summary>
             Summary for XmlAnnotatedGenericType
