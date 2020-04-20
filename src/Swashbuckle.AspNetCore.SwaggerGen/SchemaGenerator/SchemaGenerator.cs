@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Http;
@@ -237,7 +238,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var schema = new OpenApiSchema
             {
-                Type = dataContract.DataType.ToString().ToLower(),
+                Type = dataContract.DataType.ToString().ToLower(CultureInfo.InvariantCulture),
                 Format = dataContract.Format
             };
 
