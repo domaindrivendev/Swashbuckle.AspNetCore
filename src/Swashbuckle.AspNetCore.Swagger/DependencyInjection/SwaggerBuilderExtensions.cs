@@ -41,8 +41,8 @@ namespace Microsoft.AspNetCore.Builder
 #if NETCOREAPP3_0
         public static IEndpointRouteBuilder MapSwagger(
             this IEndpointRouteBuilder endpoints,
-            string pattern,
-            Action<SwaggerOptions> setupAction = null)
+            string pattern = "/swagger/{documentName}/swagger.json",
+            Action<SwaggerEndpointOptions> setupAction = null)
         {
             if (!RoutePatternFactory.Parse(pattern).Parameters.Any(x => x.Name == "documentName"))
             {
@@ -51,9 +51,13 @@ namespace Microsoft.AspNetCore.Builder
 
             Action<SwaggerOptions> endpointSetupAction = options =>
             {
-                setupAction?.Invoke(options);
+                var endpointOptions = new SwaggerEndpointOptions();
+
+                setupAction?.Invoke(endpointOptions);
 
                 options.RouteTemplate = pattern;
+                options.SerializeAsV2 = endpointOptions.SerializeAsV2;
+                options.PreSerializeFilters.AddRange(endpointOptions.PreSerializeFilters);
             };
 
             var pipeline = endpoints.CreateApplicationBuilder()
@@ -63,11 +67,6 @@ namespace Microsoft.AspNetCore.Builder
             endpoints.MapGet(pattern, pipeline);
 
             return endpoints;
-        }
-
-        public static IEndpointRouteBuilder MapSwagger(this IEndpointRouteBuilder endpoints)
-        {
-            return endpoints.MapSwagger("/swagger/{documentName}/swagger.json");
         }
 #endif
     }
