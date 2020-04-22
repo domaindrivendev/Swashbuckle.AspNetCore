@@ -21,7 +21,11 @@ namespace Swashbuckle.AspNetCore.Annotations
         {
             ApplyTypeAnnotations(schema, context);
 
-            if (context.MemberInfo != null)
+            if (context.ParameterInfo != null)
+            {
+                ApplyParamAnnotations(schema, context.ParameterInfo);
+            }
+            else if (context.MemberInfo != null)
             {
                 ApplyMemberAnnotations(schema, context.MemberInfo);
             }
@@ -47,6 +51,15 @@ namespace Swashbuckle.AspNetCore.Annotations
 
                 filter.Apply(schema, context);
             }
+        }
+
+        private void ApplyParamAnnotations(OpenApiSchema schema, ParameterInfo parameterInfo)
+        {
+            var schemaAttribute = parameterInfo.GetCustomAttributes<SwaggerSchemaAttribute>()
+                .FirstOrDefault();
+
+            if (schemaAttribute != null)
+                ApplySchemaAttribute(schema, schemaAttribute);
         }
 
         private void ApplyMemberAnnotations(OpenApiSchema schema, MemberInfo memberInfo)
