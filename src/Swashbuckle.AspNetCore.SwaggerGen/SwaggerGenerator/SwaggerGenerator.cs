@@ -48,9 +48,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 Components = new OpenApiComponents
                 {
                     Schemas = schemaRepository.Schemas,
-                    SecuritySchemes = _options.SecuritySchemes
+                    SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>(_options.SecuritySchemes)
                 },
-                SecurityRequirements = _options.SecurityRequirements
+                SecurityRequirements = new List<OpenApiSecurityRequirement>(_options.SecurityRequirements)
             };
 
             var filterContext = new DocumentFilterContext(applicableApiDescriptions, _schemaGenerator, schemaRepository);
