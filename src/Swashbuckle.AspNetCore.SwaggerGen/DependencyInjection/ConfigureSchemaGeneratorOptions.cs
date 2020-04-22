@@ -8,15 +8,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     internal class ConfigureSchemaGeneratorOptions : IConfigureOptions<SchemaGeneratorOptions>
     {
-        private readonly IServiceProvider _serviceProvider;
         private readonly SwaggerGenOptions _swaggerGenOptions;
+        private readonly IServiceProvider _serviceProvider;
 
         public ConfigureSchemaGeneratorOptions(
-            IServiceProvider serviceProvider,
-            IOptions<SwaggerGenOptions> swaggerGenOptionsAccessor)
+            IOptions<SwaggerGenOptions> swaggerGenOptionsAccessor,
+            IServiceProvider serviceProvider)
         {
-            _serviceProvider = serviceProvider;
             _swaggerGenOptions = swaggerGenOptionsAccessor.Value;
+            _serviceProvider = serviceProvider;
         }
 
         public void Configure(SchemaGeneratorOptions options)
