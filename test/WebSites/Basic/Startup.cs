@@ -68,6 +68,7 @@ namespace Basic
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapSwagger("swagger/{documentName}/swagger.json");
             });
             var supportedCultures = new[]
             {
@@ -85,13 +86,13 @@ namespace Basic
                 SupportedUICultures = supportedCultures
             });
 
-            app.UseSwagger(c =>
-            {
-                c.PreSerializeFilters.Add((swagger, httpReq) =>
-                {
-                    swagger.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" } };
-                });
-            });
+            //app.UseSwagger(c =>
+            //{
+            //    c.PreSerializeFilters.Add((swagger, httpReq) =>
+            //    {
+            //        swagger.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" } };
+            //    });
+            //});
 
             app.UseSwaggerUI(c =>
             {
