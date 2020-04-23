@@ -11,6 +11,7 @@ using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Xunit;
 using Swashbuckle.AspNetCore.TestSupport;
+using System.Net;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -83,6 +84,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(expectedFormat, schema.Format);
             Assert.NotNull(schema.Enum);
             Assert.Equal(expectedEnumCount, schema.Enum.Count);
+        }
+
+        [Fact]
+        public void GenerateSchema_DedupsEnumValues_IfEnumTypeWithDuplicateValues()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(typeof(HttpStatusCode), schemaRepository);
+
+            Assert.NotNull(referenceSchema.Reference);
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal(schema.Enum.Cast<OpenApiInteger>().Select(v => v.Value).Distinct().Count(), schema.Enum.Count);
         }
 
         [Theory]
