@@ -52,7 +52,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static JsonSerializerOptions GetJsonSerializerOptions(this IServiceProvider serviceProvider)
         {
-#if NETCOREAPP3_0
+#if NETCOREAPP
             return serviceProvider.GetService<IOptions<JsonOptions>>()?.Value?.JsonSerializerOptions;
 #else
             return null;

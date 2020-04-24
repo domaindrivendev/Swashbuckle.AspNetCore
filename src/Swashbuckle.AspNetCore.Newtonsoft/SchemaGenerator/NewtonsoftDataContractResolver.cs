@@ -144,7 +144,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                 .Cast<object>();
         }
 
-#if NETCOREAPP3_0
+#if NETCOREAPP
         private string GetConvertedEnumName(string enumName, bool hasSpecifiedName, StringEnumConverter stringEnumConverter)
         {
             if (stringEnumConverter.NamingStrategy != null)
