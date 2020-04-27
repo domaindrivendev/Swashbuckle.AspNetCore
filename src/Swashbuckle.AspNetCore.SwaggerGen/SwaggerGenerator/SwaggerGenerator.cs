@@ -64,6 +64,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private IList<OpenApiServer> GenerateServers(string host, string basePath)
         {
+            if (_options.Servers.Any())
+            {
+                return new List<OpenApiServer>(_options.Servers);
+            }
+
             return (host == null && basePath == null)
                 ? new List<OpenApiServer>()
                 : new List<OpenApiServer> { new OpenApiServer { Url = $"{host}{basePath}" } };

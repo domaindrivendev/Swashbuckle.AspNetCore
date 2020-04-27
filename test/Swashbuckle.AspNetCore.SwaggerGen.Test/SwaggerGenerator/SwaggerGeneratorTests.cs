@@ -706,6 +706,30 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GetSwagger_SupportsOption_Servers()
+        {
+            var subject = Subject(
+                apiDescriptions: new ApiDescription[] { },
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    },
+                    Servers = new List<OpenApiServer>
+                    {
+                        new OpenApiServer { Url = "http://tempuri.org/api" }
+                    }
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal(1, document.Servers.Count);
+            Assert.Equal("http://tempuri.org/api", document.Servers.First().Url);
+        }
+
+        [Fact]
         public void GetSwagger_SupportsOption_SecuritySchemes()
         {
             var subject = Subject(
