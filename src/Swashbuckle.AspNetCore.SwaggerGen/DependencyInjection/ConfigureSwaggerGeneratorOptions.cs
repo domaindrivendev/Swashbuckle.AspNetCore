@@ -62,6 +62,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             target.TagsSelector = source.TagsSelector;
             target.SortKeySelector = source.SortKeySelector;
             target.DescribeAllParametersInCamelCase = source.DescribeAllParametersInCamelCase;
+            target.Servers = new List<OpenApiServer>(source.Servers);
             target.SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>(source.SecuritySchemes);
             target.SecurityRequirements = new List<OpenApiSecurityRequirement>(source.SecurityRequirements);
             target.ParameterFilters = new List<IParameterFilter>(source.ParameterFilters);

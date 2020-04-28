@@ -33,9 +33,9 @@ namespace Swashbuckle.AspNetCore.Swagger
                 return;
             }
 
-            var basePath = string.IsNullOrEmpty(httpContext.Request.PathBase)
-                ? null
-                : httpContext.Request.PathBase.ToString();
+            var basePath = !string.IsNullOrEmpty(httpContext.Request.PathBase)
+                ? httpContext.Request.PathBase.ToString()
+                : null;
 
             try
             {

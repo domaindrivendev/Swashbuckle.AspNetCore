@@ -124,6 +124,17 @@ namespace Microsoft.Extensions.DependencyInjection
             swaggerGenOptions.SwaggerGeneratorOptions.DescribeAllParametersInCamelCase = true;
         }
 
+
+        /// <summary>
+        /// Provide specific server information to include in the generated Swagger document
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="server">A description of the server</param>
+        public static void AddServer(this SwaggerGenOptions swaggerGenOptions, OpenApiServer server)
+        {
+            swaggerGenOptions.SwaggerGeneratorOptions.Servers.Add(server);
+        }
+
         /// <summary>
         /// Add one or more "securityDefinitions", describing how your API is protected, to the generated Swagger
         /// </summary>
