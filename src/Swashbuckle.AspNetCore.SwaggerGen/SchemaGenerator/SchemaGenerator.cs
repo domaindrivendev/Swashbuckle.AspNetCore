@@ -102,11 +102,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private OpenApiSchema GeneratePolymorphicSchema(IEnumerable<Type> knownSubTypes, SchemaRepository schemaRepository)
         {
+            foreach (var knowSubType in knownSubTypes)
+            {
+                GenerateSchema(knowSubType, schemaRepository);
+            }
+
+            var baseType = knownSubTypes.First().BaseType;
+            var dataContract = _dataContractResolver.GetDataContractForType(baseType);
+
             return new OpenApiSchema
             {
-                OneOf = knownSubTypes
-                    .Select(subType => GenerateSchema(subType, schemaRepository))
-                    .ToList()
+                OneOf = new List<OpenApiSchema> { GenerateReferencedSchema(dataContract, schemaRepository) }
             };
         }
 
