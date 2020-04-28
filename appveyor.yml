@@ -19,7 +19,7 @@ deploy:
 - provider: NuGet
   server: https://www.myget.org/F/domaindrivendev/api/v2
   on:
-    branch: fix-cli-sdk-compatibility
+    branch: master
     appveyor_repo_tag: false
   api_key:
     secure: 9QrW8KWCDr8G2ufmOX4O7U4yjneFOYY+5h+auICuWYb1YPaKpQBtUVqrRExg8VXR
