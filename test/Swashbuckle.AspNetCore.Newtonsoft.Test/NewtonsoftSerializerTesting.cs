@@ -27,10 +27,20 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [Fact]
         public void Deserialize()
         {
-            var dto = JsonConvert.DeserializeObject<Dictionary<JsonConverterAnnotatedEnum, string>>(
-                "{ \"value1\": \"foo\", \"value2\": \"bar\" }");
+            var dto = JsonConvert.DeserializeObject<TestDto>(
+                "{ \"jsonRequired\": \"foo\", \"jsonProperty\": null }");
 
-            Assert.Equal(new[] { JsonConverterAnnotatedEnum.Value1, JsonConverterAnnotatedEnum.Value2 }, dto.Keys);
+            Assert.Equal("foo", dto.jsonRequired);
+            Assert.Null(dto.jsonProperty);
         }
+    }
+
+    public class TestDto
+    {
+        [JsonRequired]
+        public string jsonRequired;
+
+        [JsonProperty(Required = Required.AllowNull)]
+        public string jsonProperty;
     }
 }

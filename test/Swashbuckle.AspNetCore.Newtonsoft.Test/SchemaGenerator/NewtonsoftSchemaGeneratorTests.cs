@@ -590,6 +590,18 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
+        public void GenerateSchema_HonorsSerializerAttribute_JsonRequired()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(typeof(JsonRequiredAnnotatedType), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal(new[] { "StringWithJsonRequired" }, schema.Required.ToArray());
+            Assert.False(schema.Properties["StringWithJsonRequired"].Nullable);
+        }
+
+        [Fact]
         public void GenerateSchema_HonorsSerializerAttribute_JsonObject()
         {
             var schemaRepository = new SchemaRepository();
