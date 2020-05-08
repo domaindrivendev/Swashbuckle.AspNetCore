@@ -1,9 +1,10 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace CustomUIIndex
 {
@@ -45,9 +46,27 @@ namespace CustomUIIndex
 
             app.UseSwagger();
 
+            app.Use(async (context, next) =>
+            {
+                if(!context.Request.Path.StartsWithSegments("/swagger/index.html", StringComparison.OrdinalIgnoreCase))
+                {
+                    await next();
+                    return;
+                }
+
+                var scriptNonce = $"script+{Guid.NewGuid():N}";
+                var styleNonce = $"style+{Guid.NewGuid():N}";
+                context.Items[CspConfigObject.DefaultScriptNonceKey] = scriptNonce;
+                context.Items[CspConfigObject.DefaultStyleNonceKey] = styleNonce;
+                context.Response.Headers["Content-Security-Policy"] = $"img-src 'self' data:; script-src 'self' 'nonce-{scriptNonce}'; style-src 'self' 'nonce-{styleNonce}';";
+                await next();
+            });
+
             app.UseSwaggerUI(c =>
             {
                 c.IndexStream = () => GetType().Assembly.GetManifestResourceStream("CustomUIIndex.Swagger.index.html");
+
+                c.CspDisableHeader();
             });
         }
     }

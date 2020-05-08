@@ -41,7 +41,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             var content = await response.Content.ReadAsStringAsync();
 
             Assert.Contains("<title>CustomUIConfig</title>", content);
-            Assert.Contains("<link href='/ext/custom-stylesheet.css' rel='stylesheet' media='screen' type='text/css' />", content);
+            Assert.Matches(@"<link href='\/ext\/custom-stylesheet\.css' rel='stylesheet' media='screen' type='text\/css' nonce='(\w*)'\/>", content);
         }
 
         [Fact]

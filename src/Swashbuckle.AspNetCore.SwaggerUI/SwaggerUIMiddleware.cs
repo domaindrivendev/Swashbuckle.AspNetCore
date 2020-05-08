@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Text;
@@ -14,7 +15,6 @@ using Microsoft.AspNetCore.StaticFiles;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http.Extensions;
-
 #if NETCOREAPP3_0
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IWebHostEnvironment;
 #endif
@@ -61,14 +61,14 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
 
             if (httpMethod == "GET" && Regex.IsMatch(path, $"^/{Regex.Escape(_options.RoutePrefix)}/?index.html$",  RegexOptions.IgnoreCase))
             {
-                await RespondWithIndexHtml(httpContext.Response);
+                await RespondWithIndexHtml(httpContext);
                 return;
             }
 
             await _staticFileMiddleware.Invoke(httpContext);
         }
 
-        private StaticFileMiddleware CreateStaticFileMiddleware(
+        private static StaticFileMiddleware CreateStaticFileMiddleware(
             RequestDelegate next,
             IHostingEnvironment hostingEnv,
             ILoggerFactory loggerFactory,
@@ -83,39 +83,79 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             return new StaticFileMiddleware(next, hostingEnv, Options.Create(staticFileOptions), loggerFactory);
         }
 
-        private void RespondWithRedirect(HttpResponse response, string location)
+        private static void RespondWithRedirect(HttpResponse response, string location)
         {
             response.StatusCode = 301;
             response.Headers["Location"] = location;
         }
 
-        private async Task RespondWithIndexHtml(HttpResponse response)
+        protected virtual async Task RespondWithIndexHtml(HttpContext httpContext)
         {
+            var response = httpContext.Response;
             response.StatusCode = 200;
             response.ContentType = "text/html;charset=utf-8";
-
+            var htmlBuilder = new StringBuilder();
             using (var stream = _options.IndexStream())
+            using (var reader = new StreamReader(stream))
             {
                 // Inject arguments before writing to response
-                var htmlBuilder = new StringBuilder(new StreamReader(stream).ReadToEnd());
-                foreach (var entry in GetIndexArguments())
+                htmlBuilder.Append(await reader.ReadToEndAsync());
+
+                foreach (var entry in GetIndexArguments(httpContext))
                 {
                     htmlBuilder.Replace(entry.Key, entry.Value);
                 }
-
-                await response.WriteAsync(htmlBuilder.ToString(), Encoding.UTF8);
             }
+
+            if (_options.CspConfigObject.GenerateHeader)
+            {
+                var scriptNonce = GetNonce(httpContext, _options.CspConfigObject.ScriptNonceKey);
+                var styleNonce = GetNonce(httpContext, _options.CspConfigObject.StyleNonceKey);
+                var cspHeaderName = CspHeaderName(_options.CspConfigObject.ReportOnly);
+                response.Headers[cspHeaderName] = _options.CspConfigObject.HeaderGenerator(scriptNonce, styleNonce);
+            }
+
+            await response.WriteAsync(htmlBuilder.ToString(), Encoding.UTF8);
         }
 
-        private IDictionary<string, string> GetIndexArguments()
+        protected virtual IDictionary<string, string> GetIndexArguments(HttpContext httpContext)
         {
-            return new Dictionary<string, string>()
+            var ret = new Dictionary<string, string>
             {
                 { "%(DocumentTitle)", _options.DocumentTitle },
-                { "%(HeadContent)", _options.HeadContent },
                 { "%(ConfigObject)", JsonSerializer.Serialize(_options.ConfigObject, _jsonSerializerOptions) },
                 { "%(OAuthConfigObject)", JsonSerializer.Serialize(_options.OAuthConfigObject, _jsonSerializerOptions) }
             };
+
+            var headerContent = new StringBuilder(_options.HeadContent);
+            
+            var scriptNonce = GetNonce(httpContext, _options.CspConfigObject.ScriptNonceKey);
+            headerContent.Replace("%(ScriptNonce)", scriptNonce);
+            ret.Add("%(ScriptNonce)", scriptNonce);
+
+            var styleNonce = GetNonce(httpContext, _options.CspConfigObject.StyleNonceKey);
+            headerContent.Replace("%(StyleNonce)", styleNonce);
+            ret.Add("%(StyleNonce)", styleNonce);
+
+            ret.Add("%(HeadContent)", headerContent.ToString());
+            return ret;
         }
+
+        private static string GetNonce(HttpContext httpContext, string key)
+        {
+            if (!(httpContext.Items[key] is string nonce))
+            {
+                nonce =  GenerateNonce();
+                httpContext.Items[key] = nonce;
+            }
+
+            return nonce;
+        }
+
+        private static string GenerateNonce() =>
+            Regex.Replace(Convert.ToBase64String(Guid.NewGuid().ToByteArray()), "[/+=]", string.Empty);
+
+        private static string CspHeaderName(bool reportOnly) =>
+            reportOnly ? "Content-Security-Policy-Report-Only" : "Content-Security-Policy";
     }
 }

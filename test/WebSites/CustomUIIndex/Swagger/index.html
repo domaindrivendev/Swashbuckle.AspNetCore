@@ -7,7 +7,7 @@
     <link rel="stylesheet" type="text/css" href="./swagger-ui.css" >
     <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32" />
     <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16" />
-    <style>
+    <style nonce="%(StyleNonce)">
       html
       {
         box-sizing: border-box;
@@ -38,7 +38,7 @@
     <div id="swagger-ui"></div>
 
     <!-- Workaround for https://github.com/swagger-api/swagger-editor/issues/1371 -->
-    <script>
+    <script nonce="%(ScriptNonce)">
       if (window.navigator.userAgent.indexOf("Edge") > -1) {
         console.log("Removing native Edge fetch in favor of swagger-ui's polyfill")
         window.fetch = undefined;
@@ -47,7 +47,7 @@
 
     <script src="./swagger-ui-bundle.js"> </script>
     <script src="./swagger-ui-standalone-preset.js"> </script>
-    <script>
+    <script nonce="%(ScriptNonce)">
     window.onload = function() {
       var configObject = JSON.parse('%(ConfigObject)');
       var oauthConfigObject = JSON.parse('%(OAuthConfigObject)');

@@ -39,6 +39,8 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// Gets the JavaScript config object, represented as JSON, that will be passed to the initOAuth method
         /// </summary>
         public OAuthConfigObject OAuthConfigObject { get; set; } = new OAuthConfigObject();
+
+        public CspConfigObject CspConfigObject { get; set; } = new CspConfigObject();
     }
 
     public class ConfigObject
@@ -206,5 +208,47 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// The default is false
         /// </summary>
         public bool UsePkceWithAuthorizationCodeGrant { get; set; } = false;
+    }
+
+    public class CspConfigObject
+    {
+        public const string DefaultScriptNonceKey = "SwaggerScriptNonce";
+
+        public const string DefaultStyleNonceKey = "SwaggerStyleNonce";
+
+        public CspConfigObject()
+        {
+            HeaderGenerator = DefaultHeaderGenerator;
+        }
+
+        /// <summary>
+        /// Gets or sets csp header generator
+        /// </summary>
+        public bool GenerateHeader { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets report only header
+        /// </summary>
+        public bool ReportOnly { get; set; } = false;
+
+        /// <summary>
+        /// Gets or sets script nonce key to retrieve from HttpContext.
+        /// Use this key to generate script nonce in middleware pipeline before <see cref="SwaggerUIMiddleware"/>
+        /// </summary>
+        public string ScriptNonceKey { get; set; } = DefaultScriptNonceKey;
+
+        /// <summary>
+        /// Gets or sets style nonce key to retrieve from HttpContext.
+        /// Use this key to generate style nonce in middleware pipeline before <see cref="SwaggerUIMiddleware"/>
+        /// </summary>
+        public string StyleNonceKey { get; set; } = DefaultStyleNonceKey;
+
+        /// <summary>
+        /// Gets or sets csp header generator.
+        /// </summary>
+        public Func<string, string, string> HeaderGenerator { get; set; }
+
+        private static string DefaultHeaderGenerator(string scriptNonce, string styleNonce) =>
+            $"img-src 'self' data:; script-src 'self' 'nonce-{scriptNonce}'; style-src 'self' 'nonce-{styleNonce}';";
     }
 }

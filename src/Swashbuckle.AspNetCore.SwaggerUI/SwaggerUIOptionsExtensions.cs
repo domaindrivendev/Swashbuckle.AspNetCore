@@ -17,7 +17,7 @@ namespace Microsoft.AspNetCore.Builder
         public static void InjectStylesheet(this SwaggerUIOptions options, string path, string media = "screen")
         {
             var builder = new StringBuilder(options.HeadContent);
-            builder.AppendLine($"<link href='{path}' rel='stylesheet' media='{media}' type='text/css' />");
+            builder.AppendLine($"<link href='{path}' rel='stylesheet' media='{media}' type='text/css' nonce='%(StyleNonce)'/>");
             options.HeadContent = builder.ToString();
         }
 
@@ -30,7 +30,7 @@ namespace Microsoft.AspNetCore.Builder
         public static void InjectJavascript(this SwaggerUIOptions options, string path, string type = "text/javascript")
         {
             var builder = new StringBuilder(options.HeadContent);
-            builder.AppendLine($"<script src='{path}' type='{type}'></script>");
+            builder.AppendLine($"<script src='{path}' type='{type}' nonce='%(ScriptNonce)'></script>");
             options.HeadContent = builder.ToString();
         }
 
@@ -275,6 +275,24 @@ namespace Microsoft.AspNetCore.Builder
         public static void OAuthUsePkce(this SwaggerUIOptions options)
         {
             options.OAuthConfigObject.UsePkceWithAuthorizationCodeGrant = true;
+        }
+
+        /// <summary>
+        /// Do not generate Content Security Policy header
+        /// </summary>
+        /// <param name="options"></param>
+        public static void CspDisableHeader(this SwaggerUIOptions options)
+        {
+            options.CspConfigObject.GenerateHeader = false;
+        }
+
+        /// <summary>
+        /// Use Content-Security-Policy-Report-Only header
+        /// </summary>
+        /// <param name="options"></param>
+        public static void CspReportOnly(this SwaggerUIOptions options)
+        {
+            options.CspConfigObject.ReportOnly = true;
         }
     }
 }
