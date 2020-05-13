@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 		appveyor.yml = appveyor.yml
 		CONTRIBUTING.md = CONTRIBUTING.md
+		Directory.Build.props = Directory.Build.props
 		ISSUE_TEMPLATE.md = ISSUE_TEMPLATE.md
 		README.md = README.md
 		version.props = version.props
@@ -86,7 +87,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore.Newt
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CliExampleWithFactory", "test\WebSites\CliExampleWithFactory\CliExampleWithFactory.csproj", "{322813C4-0458-4F98-965D-568AD2C819CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swashbuckle.AspNetCore.TestSupport", "test\Swashbuckle.AspNetCore.TestSupport\Swashbuckle.AspNetCore.TestSupport.csproj", "{6E3C0128-931F-4438-AEDD-984E0E2B2C7B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore.TestSupport", "test\Swashbuckle.AspNetCore.TestSupport\Swashbuckle.AspNetCore.TestSupport.csproj", "{6E3C0128-931F-4438-AEDD-984E0E2B2C7B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
