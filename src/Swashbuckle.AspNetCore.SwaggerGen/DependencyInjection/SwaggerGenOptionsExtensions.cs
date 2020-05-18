@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Xml;
 using System.Xml.XPath;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -382,7 +383,7 @@ namespace Microsoft.Extensions.DependencyInjection
             string filePath,
             bool includeControllerXmlComments = false)
         {
-            swaggerGenOptions.IncludeXmlComments(() => new XPathDocument(filePath), includeControllerXmlComments);
+            swaggerGenOptions.IncludeXmlComments(() => new XPathDocument(filePath, XmlSpace.Preserve), includeControllerXmlComments);
         }
     }
 }

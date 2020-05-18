@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Xml.XPath;
 using System.IO;
+using System.Xml;
 using Microsoft.OpenApi.Models;
 using Xunit;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -75,9 +76,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         private XmlCommentsOperationFilter Subject()
         {
-            using (var xmlComments = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml"))
+            using (var xmlComments = new XmlTextReader(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml"))
             {
-                return new XmlCommentsOperationFilter(new XPathDocument(xmlComments), new XmlCommentsPlainDescriptionHumanizer());
+                return new XmlCommentsOperationFilter(new XPathDocument(xmlComments, XmlSpace.Preserve), new XmlCommentsPlainDescriptionHumanizer());
             }
         }
     }

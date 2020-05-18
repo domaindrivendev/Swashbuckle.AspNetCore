@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Xml;
 using System.Xml.XPath;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -63,9 +64,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         private XmlCommentsRequestBodyFilter Subject()
         {
-            using (var xmlComments = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml"))
+            using (var xmlComments = new XmlTextReader(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml"))
             {
-                return new XmlCommentsRequestBodyFilter(new XPathDocument(xmlComments), new XmlCommentsPlainDescriptionHumanizer());
+                return new XmlCommentsRequestBodyFilter(new XPathDocument(xmlComments, XmlSpace.Preserve), new XmlCommentsPlainDescriptionHumanizer());
             }
         }
     }
