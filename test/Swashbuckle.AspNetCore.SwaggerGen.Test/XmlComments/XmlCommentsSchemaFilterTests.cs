@@ -164,7 +164,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             using (var xmlComments = File.OpenText(typeof(XmlAnnotatedType).Assembly.GetName().Name + ".xml"))
             {
-                return new XmlCommentsSchemaFilter(new XPathDocument(xmlComments));
+                return new XmlCommentsSchemaFilter(new XPathDocument(xmlComments), new XmlCommentsPlainDescriptionHumanizer());
             }
         }
     }

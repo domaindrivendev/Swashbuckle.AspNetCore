@@ -7,10 +7,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     public class XmlCommentsParameterFilter : IParameterFilter
     {
         private XPathNavigator _xmlNavigator;
+        private readonly IDescriptionHumanizer _descriptionHumanizer;
 
-        public XmlCommentsParameterFilter(XPathDocument xmlDoc)
+        public XmlCommentsParameterFilter(XPathDocument xmlDoc, IDescriptionHumanizer descriptionHumanizer)
         {
             _xmlNavigator = xmlDoc.CreateNavigator();
+            _descriptionHumanizer = descriptionHumanizer;
         }
 
         public void Apply(OpenApiParameter parameter, ParameterFilterContext context)
@@ -31,7 +33,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var propertySummaryNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{propertyMemberName}']/summary");
 
             if (propertySummaryNode != null)
-                parameter.Description = XmlCommentsTextHelper.Humanize(propertySummaryNode.InnerXml);
+                parameter.Description = _descriptionHumanizer.Humanize(propertySummaryNode);
         }
 
         private void ApplyParamTags(OpenApiParameter parameter, ParameterInfo parameterInfo)
@@ -51,7 +53,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (paramNode != null)
             {
-                parameter.Description = XmlCommentsTextHelper.Humanize(paramNode.InnerXml);
+                parameter.Description = _descriptionHumanizer.Humanize(paramNode);
             }
         }
     }

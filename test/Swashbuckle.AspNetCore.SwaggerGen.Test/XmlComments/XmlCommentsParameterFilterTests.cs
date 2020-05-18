@@ -56,7 +56,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             using (var xmlComments = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml"))
             {
-                return new XmlCommentsParameterFilter(new XPathDocument(xmlComments));
+                return new XmlCommentsParameterFilter(new XPathDocument(xmlComments), new XmlCommentsPlainDescriptionHumanizer());
             }
         }
     }

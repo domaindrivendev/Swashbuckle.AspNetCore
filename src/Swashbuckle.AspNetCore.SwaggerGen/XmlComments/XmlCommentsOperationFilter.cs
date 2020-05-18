@@ -8,10 +8,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     public class XmlCommentsOperationFilter : IOperationFilter
     {
         private readonly XPathNavigator _xmlNavigator;
+        private readonly IDescriptionHumanizer _descriptionHumanizer;
 
-        public XmlCommentsOperationFilter(XPathDocument xmlDoc)
+        public XmlCommentsOperationFilter(XPathDocument xmlDoc, IDescriptionHumanizer descriptionHumanizer)
         {
             _xmlNavigator = xmlDoc.CreateNavigator();
+            _descriptionHumanizer = descriptionHumanizer;
         }
 
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
@@ -49,7 +51,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var remarksNode = methodNode.SelectSingleNode("remarks");
             if (remarksNode != null)
-                operation.Description = XmlCommentsTextHelper.Humanize(remarksNode.InnerXml);
+                operation.Description = _descriptionHumanizer.Humanize(remarksNode);
 
             var responseNodes = methodNode.Select("response");
             ApplyResponseTags(operation, responseNodes);
@@ -64,7 +66,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     ? operation.Responses[code]
                     : operation.Responses[code] = new OpenApiResponse();
 
-                response.Description = XmlCommentsTextHelper.Humanize(responseNodes.Current.InnerXml);
+                response.Description = _descriptionHumanizer.Humanize(responseNodes.Current);
             }
         }
     }

@@ -358,13 +358,14 @@ namespace Microsoft.Extensions.DependencyInjection
             bool includeControllerXmlComments = false)
         {
             var xmlDoc = xmlDocFactory();
-            swaggerGenOptions.ParameterFilter<XmlCommentsParameterFilter>(xmlDoc);
-            swaggerGenOptions.RequestBodyFilter<XmlCommentsRequestBodyFilter>(xmlDoc);
-            swaggerGenOptions.OperationFilter<XmlCommentsOperationFilter>(xmlDoc);
-            swaggerGenOptions.SchemaFilter<XmlCommentsSchemaFilter>(xmlDoc);
+            var descriptionHumanizer = new XmlCommentsPlainDescriptionHumanizer();
+            swaggerGenOptions.ParameterFilter<XmlCommentsParameterFilter>(xmlDoc, descriptionHumanizer);
+            swaggerGenOptions.RequestBodyFilter<XmlCommentsRequestBodyFilter>(xmlDoc, descriptionHumanizer);
+            swaggerGenOptions.OperationFilter<XmlCommentsOperationFilter>(xmlDoc, descriptionHumanizer);
+            swaggerGenOptions.SchemaFilter<XmlCommentsSchemaFilter>(xmlDoc, descriptionHumanizer);
 
             if (includeControllerXmlComments)
-                swaggerGenOptions.DocumentFilter<XmlCommentsDocumentFilter>(xmlDoc);
+                swaggerGenOptions.DocumentFilter<XmlCommentsDocumentFilter>(xmlDoc, descriptionHumanizer);
         }
 
         /// <summary>

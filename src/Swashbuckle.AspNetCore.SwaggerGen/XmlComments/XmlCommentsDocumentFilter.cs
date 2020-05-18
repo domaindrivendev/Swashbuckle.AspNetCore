@@ -13,10 +13,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private const string SummaryTag = "summary";
 
         private readonly XPathNavigator _xmlNavigator;
+        private readonly IDescriptionHumanizer _descriptionHumanizer;
 
-        public XmlCommentsDocumentFilter(XPathDocument xmlDoc)
+        public XmlCommentsDocumentFilter(XPathDocument xmlDoc, IDescriptionHumanizer descriptionHumanizer)
         {
             _xmlNavigator = xmlDoc.CreateNavigator();
+            _descriptionHumanizer = descriptionHumanizer;
         }
 
         public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
@@ -44,7 +46,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         swaggerDoc.Tags.Add(new OpenApiTag
                         {
                             Name = nameAndType.Key,
-                            Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml)
+                            Description = _descriptionHumanizer.Humanize(summaryNode)
                         });
                     }
                 }

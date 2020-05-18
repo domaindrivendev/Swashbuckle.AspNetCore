@@ -11,10 +11,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     public class XmlCommentsSchemaFilter : ISchemaFilter
     {
         private readonly XPathNavigator _xmlNavigator;
+        private readonly IDescriptionHumanizer _descriptionHumanizer;
 
-        public XmlCommentsSchemaFilter(XPathDocument xmlDoc)
+        public XmlCommentsSchemaFilter(XPathDocument xmlDoc, IDescriptionHumanizer descriptionHumanizer)
         {
             _xmlNavigator = xmlDoc.CreateNavigator();
+            _descriptionHumanizer = descriptionHumanizer;
         }
 
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
@@ -38,7 +40,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (typeSummaryNode != null)
             {
-                schema.Description = XmlCommentsTextHelper.Humanize(typeSummaryNode.InnerXml);
+                schema.Description = _descriptionHumanizer.Humanize(typeSummaryNode);
             }
         }
 
@@ -51,7 +53,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var summaryNode = fieldOrPropertyNode.SelectSingleNode("summary");
             if (summaryNode != null)
-                schema.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
+                schema.Description = _descriptionHumanizer.Humanize(summaryNode);
 
             var exampleNode = fieldOrPropertyNode.SelectSingleNode("example");
             if (exampleNode != null)
@@ -79,7 +81,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (paramNode != null)
             {
-                schema.Description = XmlCommentsTextHelper.Humanize(paramNode.InnerXml);
+                schema.Description = _descriptionHumanizer.Humanize(paramNode);
 
                 var example = paramNode.GetAttribute("example", "");
                 if (!string.IsNullOrEmpty(example))
