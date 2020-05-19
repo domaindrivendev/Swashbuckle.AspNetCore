@@ -54,6 +54,401 @@
             <param name="stringParam" example="Example for StringProperty"></param>
             <param name="badExampleIntParam" example="goodbye"></param>
         </member>
+        <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.TypeToConvertRemarksToMarkdown.Empty">
+            <summary>
+            </summary>
+        </member>
+        <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.TypeToConvertRemarksToMarkdown.Plaintext">
+            <summary>
+            Plaintext
+            </summary>
+        </member>
+        <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.TypeToConvertRemarksToMarkdown.SingleElement">
+            <summary>
+            <see cref="T:System.String"/>
+            </summary>
+        </member>
+        <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.TypeToConvertRemarksToMarkdown.Links">
+            <summary>
+            This <see cref="T:System.String"/> should be a code.
+            This <see langword="null"/> is also a code.
+            This <see href="http://github.com"/> is an autolink.
+            <a href="http://github.com" title="Github">This</a> is a link.
+            </summary>
+        </member>
+        <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.TypeToConvertRemarksToMarkdown.InlineCode">
+             <summary>
+             <para>
+             Inline <c>code</c> is usually doesn't contain backticks.
+             Whenever it contains backticks, <c>It should be ` quoted ``` with more backticks</c>
+             </para>
+             <para>
+             Markdown allows <c>newline
+                    characters and spaces in inline code blocks!</c>
+             Although they are joined while they are rendered.
+             </para>
+             <para>
+             newlines <c>in a code block
+            
+                 should be
+             </c> normalized
+             </para>
+             </summary>
+        </member>
+        <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.TypeToConvertRemarksToMarkdown.CodeBlock">
+             <summary>
+             <code lang="csharp">
+                for (var i=0; i&lt;10; i++)
+                {
+                  Console.WriteLine("Hello, World!");
+                }
+             </code>
+            
+             <code>
+                Lang is an optional
+             </code>
+             </summary>
+        </member>
+        <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.TypeToConvertRemarksToMarkdown.Para">
+            <summary>
+              <para> A para block makes block paragraph node.</para>
+              <para>
+                 Subsequent paragraphs make hard newlines.
+              </para>
+            </summary>
+        </member>
+        <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.TypeToConvertRemarksToMarkdown.Table">
+            <summary>
+              <list type="table">
+                <listheader>
+                  <term>Term</term>
+                  <description>Description</description>
+                </listheader>
+                <item>
+                  <term>Some term</term>
+                  <description>Some description with <c>code</c></description>
+                </item>
+              </list>
+            </summary>
+        </member>
+        <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.TypeToConvertRemarksToMarkdown.HardBlocks">
+             <summary>
+             Top level should preserve the format of the input so
+             1. Should have 2 newlines:
+             <para>hard block</para><para>hard block</para>
+             2. Should have 2 newlines:
+             <para>hard block</para> <para>hard block</para>
+             3. Should have 2 newlines:
+             <para>hard block</para>  <para>hard block</para>
+             4. Should have 2 newlines:
+             <para>hard block</para>
+             <para>hard block</para>
+             5. Should have 2 newlines:
+             <para>hard block</para>
+            
+             <para>hard block</para>
+             6. Should have 3 newlines:
+             <para>hard block</para>
+            
+            
+             <para>hard block</para>
+             </summary>
+        </member>
+        <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.TypeToConvertRemarksToMarkdown.HardBlocksInXml">
+             <summary>
+             Inside of the Xml node, nodes should be normalized to be a valid markdown.
+             <para>
+             1. Should have 2 newlines:
+             <para>hard block</para><para>hard block</para>
+             2. Should have 2 newlines:
+             <para>hard block</para> <para>hard block</para>
+             3. Should have 2 newlines:
+             <para>hard block</para>  <para>hard block</para>
+             4. Should have 2 newlines:
+             <para>hard block</para>
+             <para>hard block</para>
+             5. Should have 2 newlines:
+             <para>hard block</para>
+            
+             <para>hard block</para>
+             6. Should have 2 newlines:
+             <para>hard block</para>
+            
+            
+             <para>hard block</para>
+             </para>
+             </summary>
+        </member>
+        <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.TypeToConvertRemarksToMarkdown.SoftBlocks">
+             <summary>
+             Top level should preserve the format of the input so
+             1. Should have 1 newline:
+             <code>soft block</code><code>soft block</code>
+             2. Should have 1 newline:
+             <code>soft block</code> <code>soft block</code>
+             3. Should have 1 newline:
+             <code>soft block</code>  <code>soft block</code>
+             4. Should have 1 newline:
+             <code>soft block</code>
+             <code>soft block</code>
+             5. Should have 2 newlines:
+             <code>soft block</code>
+            
+             <code>soft block</code>
+             6. Should have 3 newlines:
+             <code>soft block</code>
+            
+            
+             <code>soft block</code>
+             </summary>
+        </member>
+        <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.TypeToConvertRemarksToMarkdown.SoftBlocksInXml">
+             <summary>
+             <para>
+             Inside of the Xml node, nodes should be normalized to be a valid markdown.
+             1. Should have 1 newline:
+             <code>soft block</code><code>soft block</code>
+             2. Should have 1 newline:
+             <code>soft block</code> <code>soft block</code>
+             3. Should have 1 newline:
+             <code>soft block</code>  <code>soft block</code>
+             4. Should have 1 newline:
+             <code>soft block</code>
+             <code>soft block</code>
+             5. Should have 1 newline:
+             <code>soft block</code>
+            
+             <code>soft block</code>
+             6. Should have 1 newline:
+             <code>soft block</code>
+            
+            
+             <code>soft block</code>
+             </para>
+             </summary>
+        </member>
+        <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.TypeToConvertRemarksToMarkdown.Inilnes">
+             <summary>
+             Top level should preserve the format of the input so
+             1. Should have 1 space:
+             <c>inline</c><c>inline</c>
+             2. Should have 1 space:
+             <c>inline</c> <c>inline</c>
+             3. Should have 1 space:
+             <c>inline</c>  <c>inline</c>
+             4. Should have 1 newline:
+             <c>inline</c>
+             <c>inline</c>
+             5. Should have 2 newlines:
+             <c>inline</c>
+            
+             <c>inline</c>
+             6. Should have 3 newlines:
+             <c>inline</c>
+            
+            
+             <c>inline</c>
+             </summary>
+        </member>
+        <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.TypeToConvertRemarksToMarkdown.InlinesInXml">
+             <summary>
+             <para>
+             Inside of the Xml node, nodes should be normalized to be a valid markdown.
+             1. Should have 1 space:
+             <c>inline</c><c>inline</c>
+             2. Should have 1 space:
+             <c>inline</c> <c>inline</c>
+             3. Should have 1 space:
+             <c>inline</c>  <c>inline</c>
+             4. Should have 1 newline:
+             <c>inline</c>
+             <c>inline</c>
+             5. Should have 1 newline:
+             <c>inline</c>
+            
+             <c>inline</c>
+             6. Should have 1 newline:
+             <c>inline</c>
+            
+            
+             <c>inline</c>
+             </para>
+             </summary>
+        </member>
+        <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.TypeToConvertRemarksToMarkdown.AdjacentBlocksAndInlines">
+             <summary>
+               <para>hard block</para><code>soft block</code>
+               <para>hard block</para><c>inline</c>
+            
+               <code>soft block</code><para>hard block</para>
+               <code>soft block</code><c>inline</c>
+            
+               <c>inline</c><para>hard block</para>
+               <c>inline</c><code>soft block</code>
+             </summary>
+        </member>
+        <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.TypeToConvertRemarksToMarkdown.AdjacentBlocksAndInlinesInXml">
+             <summary>
+             <para>
+               <para>hard block</para><code>soft block</code>
+               <para>hard block</para><c>inline</c>
+            
+               <code>soft block</code><para>hard block</para>
+               <code>soft block</code><c>inline</c>
+            
+               <c>inline</c><para>hard block</para>
+               <c>inline</c><code>soft block</code>
+             </para>
+             </summary>
+        </member>
+        <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.TypeToConvertRemarksToMarkdown.AdjacentBySpaceBlocksAndInlines">
+             <summary>
+               <para>hard block</para> <code>soft block</code>
+               <para>hard block</para> <c>inline</c>
+            
+               <code>soft block</code> <para>hard block</para>
+               <code>soft block</code> <c>inline</c>
+            
+               <c>inline</c> <para>hard block</para>
+               <c>inline</c> <code>soft block</code>
+             </summary>
+        </member>
+        <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.TypeToConvertRemarksToMarkdown.AdjacentBySpaceBlocksAndInlinesInXml">
+             <summary>
+             <para>
+               <para>hard block</para> <code>soft block</code>
+               <para>hard block</para> <c>inline</c>
+            
+               <code>soft block</code> <para>hard block</para>
+               <code>soft block</code> <c>inline</c>
+            
+               <c>inline</c> <para>hard block</para>
+               <c>inline</c> <code>soft block</code>
+             </para>
+             </summary>
+        </member>
+        <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.TypeToConvertRemarksToMarkdown.AdjacentByNewlineBlocksAndInlines">
+             <summary>
+             <para>hard block</para>
+             <code>soft block</code>
+            
+             <para>hard block</para>
+             <c>inline</c>
+            
+            
+             <code>soft block</code>
+             <para>hard block</para>
+            
+             <code>soft block</code>
+             <c>inline</c>
+            
+            
+             <c>inline</c>
+             <para>hard block</para>
+            
+             <c>inline</c>
+             <code>soft block</code>
+             </summary>
+        </member>
+        <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.TypeToConvertRemarksToMarkdown.AdjacentByNewlineBlocksAndInlinesInXml">
+             <summary>
+             <para>
+             <para>hard block</para>
+             <code>soft block</code>
+            
+             <para>hard block</para>
+             <c>inline</c>
+            
+            
+             <code>soft block</code>
+             <para>hard block</para>
+            
+             <code>soft block</code>
+             <c>inline</c>
+            
+            
+             <c>inline</c>
+             <para>hard block</para>
+            
+             <c>inline</c>
+             <code>soft block</code>
+             </para>
+             </summary>
+        </member>
+        <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.TypeToConvertRemarksToMarkdown.MixedXmlAndMarkdown">
+             <summary>
+             Markdown support within remarks!
+            
+             * OpenAPI 2 and 3 supports Markdown in `description`
+             * So you should be able to write documents in Markdown
+                 * Now you can write Markdown with NSwag!
+                 *   <list type="bullet">
+                     <item>You can mix <c>XML</c> in <c>Markdown</c>
+                     </item>
+                     <item>It's cool</item>
+                     <item>
+                        Even you can
+                        <list type="number">
+                          <item>nest</item>
+                          <item>items</item>
+                        </list>
+                        yay!
+                     </item>
+                     <item>
+                     <code>
+                       you can even
+                       put code here
+                     </code>
+                     </item>
+                   </list>
+                 * return to the markdown
+             </summary>
+        </member>
+        <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.TypeToConvertRemarksToMarkdown.Ambiguous1">
+             <summary>
+             *   <list><item>blah</item></list>text
+             * blah
+                 <list><item>blah</item></list>text
+            
+             *   <list><item>blah</item></list>
+             text
+             * blah
+                 <list><item>blah</item></list>
+             text
+             </summary>
+        </member>
+        <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.TypeToConvertRemarksToMarkdown.Ambiguous2">
+             <summary>
+             *   <para>para</para>text
+             * blah
+                 <para>para</para>text
+            
+             *   <para>para</para>
+             text
+             * blah
+                 <para>para</para>
+             text
+             </summary>
+        </member>
+        <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.TypeToConvertRemarksToMarkdown.Ambiguous3">
+             <summary>
+             *   <c>inline</c>text
+             * blah
+                 <c>inline</c>text
+            
+             *   <c>inline</c>
+             text
+             * blah
+                 <c>inline</c>
+             text
+             </summary>
+        </member>
+        <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.TypeToConvertRemarksToMarkdown.ListBullet">
+            <summary>
+            *   <list><item>list</item></list>
+                <list type="bullet"><item>bullet</item></list><list><item>list</item></list>
+            </summary>
+        </member>
         <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedGenericType`2">
             <summary>
             Summary for XmlAnnotatedGenericType

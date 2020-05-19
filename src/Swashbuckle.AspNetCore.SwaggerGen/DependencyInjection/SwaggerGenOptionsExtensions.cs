@@ -353,13 +353,26 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Flag to indicate if controller XML comments (i.e. summary) should be used to assign Tag descriptions.
         /// Don't set this flag if you're customizing the default tag for operations via TagActionsBy.
         /// </param>
+        /// <param name="humanizeToMarkdown">
+        /// Flag to indicate if controller XML remarks summary should be converted to Markdown.
+        /// </param>
         public static void IncludeXmlComments(
             this SwaggerGenOptions swaggerGenOptions,
             Func<XPathDocument> xmlDocFactory,
-            bool includeControllerXmlComments = false)
+            bool includeControllerXmlComments = false,
+            bool humanizeToMarkdown = false)
         {
             var xmlDoc = xmlDocFactory();
-            var descriptionHumanizer = new XmlCommentsPlainDescriptionHumanizer();
+            IDescriptionHumanizer descriptionHumanizer;
+            if (humanizeToMarkdown)
+            {
+                descriptionHumanizer = new XmlCommentsMarkdownDescriptionHumanizer();
+            }
+            else
+            {
+                descriptionHumanizer = new XmlCommentsPlainDescriptionHumanizer();
+            }
+
             swaggerGenOptions.ParameterFilter<XmlCommentsParameterFilter>(xmlDoc, descriptionHumanizer);
             swaggerGenOptions.RequestBodyFilter<XmlCommentsRequestBodyFilter>(xmlDoc, descriptionHumanizer);
             swaggerGenOptions.OperationFilter<XmlCommentsOperationFilter>(xmlDoc, descriptionHumanizer);
@@ -378,12 +391,16 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Flag to indicate if controller XML comments (i.e. summary) should be used to assign Tag descriptions.
         /// Don't set this flag if you're customizing the default tag for operations via TagActionsBy.
         /// </param>
+        /// <param name="humanizeToMarkdown">
+        /// Flag to indicate if controller XML remarks summary should be converted to Markdown.
+        /// </param>
         public static void IncludeXmlComments(
             this SwaggerGenOptions swaggerGenOptions,
             string filePath,
-            bool includeControllerXmlComments = false)
+            bool includeControllerXmlComments = false,
+            bool humanizeToMarkdown = false)
         {
-            swaggerGenOptions.IncludeXmlComments(() => new XPathDocument(filePath, XmlSpace.Preserve), includeControllerXmlComments);
+            swaggerGenOptions.IncludeXmlComments(() => new XPathDocument(filePath, XmlSpace.Preserve), includeControllerXmlComments, humanizeToMarkdown);
         }
     }
 }
