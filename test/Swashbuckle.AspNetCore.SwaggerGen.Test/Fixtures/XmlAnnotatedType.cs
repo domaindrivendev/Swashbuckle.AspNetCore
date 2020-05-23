@@ -64,6 +64,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public string StringProperty { get; set; }
 
         /// <summary>
+        /// Summary for ArrayOfStringsProperty
+        /// </summary>
+        /// <example>[one,two,three]</example>
+        public string ArrayOfStringsProperty { get; set; }
+
+        /// <summary>
+        /// Summary for ArrayOfCommaSeparatedStringsPropertyx
+        /// </summary>
+        /// <example>['one,two,three','four,five,six','seven,eight,nine']</example>
+        public string ArrayOfCommaSeparatedStringsProperty { get; set; }
+
+        /// <summary>
         /// Summary for BadExampleIntProperty
         /// </summary>
         /// <example>Foobar</example>

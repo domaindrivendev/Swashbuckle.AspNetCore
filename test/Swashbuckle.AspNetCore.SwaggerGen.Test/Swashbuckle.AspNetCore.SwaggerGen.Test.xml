@@ -144,6 +144,18 @@
             </summary>
             <example>Example for StringProperty</example>
         </member>
+        <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.ArrayOfStringsProperty">
+            <summary>
+            Summary for ArrayOfStringsProperty
+            </summary>
+            <example>[one,two,three]</example>
+        </member>
+        <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.ArrayOfCommaSeparatedStringsProperty">
+            <summary>
+            Summary for ArrayOfCommaSeparatedStringsPropertyx
+            </summary>
+            <example>['one,two,three','four,five,six','seven,eight,nine']</example>
+        </member>
         <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.BadExampleIntProperty">
             <summary>
             Summary for BadExampleIntProperty

@@ -4,6 +4,7 @@ using System.Xml.XPath;
 using System.IO;
 using Microsoft.OpenApi.Models;
 using Xunit;
+using Microsoft.OpenApi.Any;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -132,6 +133,45 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             {
                 Assert.NotNull(schema.Example);
                 Assert.Equal(expectedValue, schema.Example.GetType().GetProperty("Value").GetValue(schema.Example));
+            }
+            else
+            {
+                Assert.Null(schema.Example);
+            }
+        }
+
+        //IF THE DESIGN OF THE PR IS AGGREEAD UPON I'LL ADD THE REST OF THE UNITTESTS. THIS WAS JUST A PROOF OF CONCEPT.. 
+        [Theory]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.ArrayOfCommaSeparatedStringsProperty), "array", "string", "one,two,three","four,five,six","seven,eight,nine")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.ArrayOfStringsProperty), "array", "string", "one","two","three")]
+        public void Apply_SetsExample_FromPropertyExampleTagForArrays(
+            Type declaringType,
+            string propertyName,
+            string schemaType,
+            string schemaFormat,
+            object expectedValueInItem1, object expectedValueInItem2, object expectedValueInItem3)
+        {
+            var schema = new OpenApiSchema { Type = schemaType, Format = schemaFormat };
+            var propertyInfo = declaringType.GetProperty(propertyName);
+            var filterContext = new SchemaFilterContext(propertyInfo.PropertyType, null, null, memberInfo: propertyInfo);
+
+            Subject().Apply(schema, filterContext);
+
+            if (expectedValueInItem1 != null || expectedValueInItem2 != null || expectedValueInItem3 != null)
+            {
+                Assert.NotNull(schema.Example);
+
+                var example1 = ((OpenApiArray)schema.Example)[0];
+                if(example1 is OpenApiString firstValue)
+                    Assert.Equal(expectedValueInItem1, firstValue.Value);
+
+                var example2 = ((OpenApiArray)schema.Example)[1];
+                if (example2 is OpenApiString second)
+                    Assert.Equal(expectedValueInItem2, second.Value);
+
+                var example3 = ((OpenApiArray)schema.Example)[2];
+                if (example3 is OpenApiString third)
+                    Assert.Equal(expectedValueInItem3, third.Value);
             }
             else
             {
