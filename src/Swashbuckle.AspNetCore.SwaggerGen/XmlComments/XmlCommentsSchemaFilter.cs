@@ -25,10 +25,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 ApplyFieldOrPropertyTags(schema, context.MemberInfo);
             }
-            else if (context.ParameterInfo != null)
-            {
-                ApplyParamTags(schema, context.ParameterInfo);
-            }
         }
 
         private void ApplyTypeTags(OpenApiSchema schema, Type type)
@@ -65,24 +61,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 else if (fieldOrPropertyInfo is PropertyInfo propertyInfo)
                 {
                     schema.Example = ConvertToOpenApiType(propertyInfo.PropertyType, schema, exampleString);
-                }
-            }
-        }
-
-        private void ApplyParamTags(OpenApiSchema schema, ParameterInfo parameterInfo)
-        {
-            if (!(parameterInfo.Member is MethodInfo methodInfo)) return;
-
-            var methodMemberName = XmlCommentsNodeNameHelper.GetMemberNameForMethod(methodInfo);
-            var paramNode = _xmlNavigator.SelectSingleNode(
-                $"/doc/members/member[@name='{methodMemberName}']/param[@name='{parameterInfo.Name}']");
-
-            if (paramNode != null)
-            {
-                var example = paramNode.GetAttribute("example", "");
-                if (!string.IsNullOrEmpty(example))
-                {
-                    schema.Example = ConvertToOpenApiType(parameterInfo.ParameterType, schema, example);
                 }
             }
         }

@@ -52,6 +52,45 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("Summary for StringProperty", parameter.Description);
         }
 
+        [Theory]
+        [InlineData(0, "boolean", null, true)]
+        [InlineData(1, "integer", "int32", 27)]
+        [InlineData(2, "integer", "int64", 4294967296L)]
+        [InlineData(3, "number", "float", 1.23F)]
+        [InlineData(4, "number", "double", 1.25D)]
+        [InlineData(5, "integer", "int32", 2)]
+        [InlineData(6, "string", "uuid", "1edab3d2-311a-4782-9ec9-a70d0478b82f")]
+        [InlineData(7, "string", null, "Example for StringProperty")]
+        [InlineData(8, "integer", "int32", null)]
+        public void Apply_SetsExample_FromActionParamTag(
+            int parameterIndex,
+            string schemaType,
+            string schemaFormat,
+            object expectedValue)
+        {
+            var parameter = new OpenApiParameter
+            {
+                Schema = new OpenApiSchema { Type = schemaType, Format = schemaFormat }
+            };
+
+            var parameterInfo = typeof(FakeControllerWithXmlComments)
+                .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithExampleParams))
+                .GetParameters()[parameterIndex];
+            var filterContext = new ParameterFilterContext(new ApiParameterDescription(), null, null, parameterInfo: parameterInfo);
+
+            Subject().Apply(parameter, filterContext);
+
+            if (expectedValue != null)
+            {
+                Assert.NotNull(parameter.Example);
+                Assert.Equal(expectedValue, parameter.Example.GetType().GetProperty("Value").GetValue(parameter.Example));
+            }
+            else
+            {
+                Assert.Null(parameter.Example);
+            }
+        }
+
         private XmlCommentsParameterFilter Subject()
         {
             using (var xmlComments = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml"))
