@@ -79,8 +79,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (paramNode != null)
             {
-                schema.Description = XmlCommentsTextHelper.Humanize(paramNode.InnerXml);
-
                 var example = paramNode.GetAttribute("example", "");
                 if (!string.IsNullOrEmpty(example))
                 {

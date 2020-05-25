@@ -55,20 +55,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(expectedDescription, schema.Description);
         }
 
-        [Fact]
-        public void Apply_SetsDescription_FromActionParamTag()
-        {
-            var schema = new OpenApiSchema();
-            var parameterInfo = typeof(FakeControllerWithXmlComments)
-                .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithParamTags))
-                .GetParameters()[0];
-            var filterContext = new SchemaFilterContext(parameterInfo.ParameterType, null, null, parameterInfo: parameterInfo);
-
-            Subject().Apply(schema, filterContext);
-
-            Assert.Equal("Description for param1", schema.Description);
-        }
-
         [Theory]
         [InlineData(0, "boolean", null, true)]
         [InlineData(1, "integer", "int32", 27)]
