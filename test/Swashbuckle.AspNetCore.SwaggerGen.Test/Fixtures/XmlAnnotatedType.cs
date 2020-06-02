@@ -109,6 +109,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public class NestedType
         {
             public string Property { get; set; }
+
+            public class InnerNestedType
+            {
+                /// <summary>
+                /// Summary of DoubleNestedType.InnerType.Property
+                /// </summary>
+                public string InnerProperty { get; set; }
+            }
         }
     }
 }
