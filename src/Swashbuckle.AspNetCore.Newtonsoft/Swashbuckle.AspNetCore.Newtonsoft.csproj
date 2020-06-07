@@ -3,7 +3,7 @@
   <Import Project="..\..\version.props" />
 
   <PropertyGroup>
-    <Description>Swagger Generator opt-in component to support Newtsonsoft Json serializer behaviors</Description>
+    <Description>Swagger Generator opt-in component to support Newtonsoft.Json serializer behaviors</Description>
     <TargetFrameworks>netstandard2.0;netcoreapp3.0</TargetFrameworks>
     <PackageId>Swashbuckle.AspNetCore.Newtonsoft</PackageId>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore;newtonsoft</PackageTags>
