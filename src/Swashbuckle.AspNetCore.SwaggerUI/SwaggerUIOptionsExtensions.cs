@@ -148,6 +148,15 @@ namespace Microsoft.AspNetCore.Builder
         }
 
         /// <summary>
+        /// Controls the display of extensions (pattern, maxLength, minLength, maximum, minimum) fields and values for Parameters
+        /// </summary>
+        /// <param name="options"></param>
+        public static void ShowCommonExtensions(this SwaggerUIOptions options)
+        {
+            options.ConfigObject.ShowCommonExtensions = true;
+        }
+
+        /// <summary>
         /// List of HTTP methods that have the Try it out feature enabled. An empty array disables Try it out for all operations.
         /// This does not filter the operations from the display
         /// </summary>

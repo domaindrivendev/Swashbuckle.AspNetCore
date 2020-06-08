@@ -985,6 +985,7 @@ app.UseSwaggerUI(c =>
     c.EnableFilter();
     c.MaxDisplayedTags(5);
     c.ShowExtensions();
+    c.ShowCommonExtensions();
     c.EnableValidator();
     c.SupportedSubmitMethods(SubmitMethod.Get, SubmitMethod.Head);
 });
