@@ -65,6 +65,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             "P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.StringProperty")]
         [InlineData(typeof(XmlAnnotatedType.NestedType), "Property",
             "P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.NestedType.Property")]
+        [InlineData(typeof(XmlAnnotatedType.NestedType.InnerNestedType), "InnerProperty",
+            "P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.NestedType.InnerNestedType.InnerProperty")]
         [InlineData(typeof(XmlAnnotatedGenericType<int,string>), "GenericProperty",
             "P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedGenericType`2.GenericProperty")]
         public void GetMemberNameForProperty_ReturnsCorrectXmlCommentMemberName_ForGivenMemberInfo(

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -57,7 +58,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 builder.Append($"{type.Namespace}.");
 
             if (type.IsNested)
-                builder.Append($"{type.DeclaringType.Name}.");
+            {
+                builder.Append($"{string.Join(".", GetNestedTypeNames(type))}.");
+            }
 
             if (type.IsConstructedGenericType && expandGenericArgs)
             {
@@ -79,6 +82,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
 
             return builder.ToString();
+        }
+
+        private static IEnumerable<string> GetNestedTypeNames(Type type)
+        {
+            if (!type.IsNested || type.DeclaringType == null) yield break;
+
+            foreach (var nestedTypeName in GetNestedTypeNames(type.DeclaringType))
+            {
+                yield return nestedTypeName;
+            }
+
+            yield return type.DeclaringType.Name;
         }
     }
 }

@@ -184,6 +184,11 @@
             Summary for NestedType
             </summary>
         </member>
+        <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.NestedType.InnerNestedType.InnerProperty">
+            <summary>
+            Summary of DoubleNestedType.InnerType.Property
+            </summary>
+        </member>
         <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.JsonSerializerTesting">
             <summary>
             For ad-hoc serializer testing
