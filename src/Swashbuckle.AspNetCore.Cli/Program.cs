@@ -37,6 +37,9 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Option("--yaml", "exports swagger in a yaml format", true);
                 c.OnRun((namedArgs) =>
                 {
+                    if (!File.Exists(namedArgs["startupassembly"]))
+                        throw new FileNotFoundException(namedArgs["startupassembly"]);
+
                     var depsFile = namedArgs["startupassembly"].Replace(".dll", ".deps.json");
                     var runtimeConfig = namedArgs["startupassembly"].Replace(".dll", ".runtimeconfig.json");
 
