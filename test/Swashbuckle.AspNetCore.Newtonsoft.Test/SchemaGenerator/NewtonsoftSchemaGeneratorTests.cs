@@ -640,6 +640,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         {
             var schema = Subject().GenerateSchema(typeof(JToken), new SchemaRepository());
 
+            Assert.Null(schema.Reference);
             Assert.Null(schema.Type);
         }
 

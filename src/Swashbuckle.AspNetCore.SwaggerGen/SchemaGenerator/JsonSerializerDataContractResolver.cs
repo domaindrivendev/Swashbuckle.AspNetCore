@@ -65,6 +65,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     arrayItemType: itemType);
             }
 
+            if (underlyingType.IsOneOf(typeof(JsonDocument), typeof(JsonElement)))
+            {
+                return new DataContract(
+                    dataType: DataType.Unknown,
+                    underlyingType: underlyingType);
+            }
+
             return new DataContract(
                 dataType: DataType.Object,
                 underlyingType: underlyingType,
