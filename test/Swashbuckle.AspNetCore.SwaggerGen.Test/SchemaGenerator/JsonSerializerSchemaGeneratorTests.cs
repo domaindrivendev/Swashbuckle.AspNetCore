@@ -603,6 +603,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("object", schema.AdditionalProperties.Type);
         }
 
+        [Theory]
+        [InlineData(typeof(JsonDocument))]
+        [InlineData(typeof(JsonElement))]
+        public void GenerateSchema_GeneratesEmptySchema_IfDynamicJsonType(Type type)
+        {
+            var schema = Subject().GenerateSchema(type, new SchemaRepository());
+
+            Assert.Null(schema.Reference);
+            Assert.Null(schema.Type);
+        }
+
         private SchemaGenerator Subject(
             Action<SchemaGeneratorOptions> configureGenerator = null,
             Action<JsonSerializerOptions> configureSerializer = null)
