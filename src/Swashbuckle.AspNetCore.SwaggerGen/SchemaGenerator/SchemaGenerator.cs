@@ -86,11 +86,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private bool TryGetCustomMapping(Type type, out Func<OpenApiSchema> mapping)
         {
+            // Look for a mapping specific to this type
             if (_generatorOptions.CustomTypeMappings.TryGetValue(type, out mapping))
             {
                 return true;
             }
 
+            // If type is a nullable struct, look for a mapping for the underlying type
+            // (e.g. if type is Nullable<Foo>, look for a mapping for Foo)
+            if (type.IsNullable(out var underlyingType) &&
+                _generatorOptions.CustomTypeMappings.TryGetValue(underlyingType, out mapping))
+            {
+                return true;
+            }
+
+            // If type is a closed generic type, look for a mapping for the open generic type
+            // (e.g. if type is Foo<string>, look for mapping for Foo<>)
             if (type.IsGenericType && !type.IsGenericTypeDefinition &&
                 _generatorOptions.CustomTypeMappings.TryGetValue(type.GetGenericTypeDefinition(), out mapping))
             {

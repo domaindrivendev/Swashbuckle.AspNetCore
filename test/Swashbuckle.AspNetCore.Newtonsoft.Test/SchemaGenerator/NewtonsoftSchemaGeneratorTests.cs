@@ -344,6 +344,18 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.Empty(schema.Properties);
         }
 
+        [Fact]
+        public void GenerateSchema_SupportsOption_CustomTypeMappings_ValueType_AppliesToNullable()
+        {
+            var subject = Subject(
+                configureGenerator: c => c.CustomTypeMappings.Add(typeof(TestValueType), () => new OpenApiSchema { Type = "string" })
+            );
+            var schema = subject.GenerateSchema(typeof(TestValueType?), new SchemaRepository());
+
+            Assert.Equal("string", schema.Type);
+            Assert.Empty(schema.Properties);
+        }
+
         [Theory]
         [InlineData(typeof(bool))]
         [InlineData(typeof(IDictionary<string, string>))]
