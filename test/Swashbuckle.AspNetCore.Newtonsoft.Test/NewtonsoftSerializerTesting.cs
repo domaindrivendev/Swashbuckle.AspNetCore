@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.TestSupport;
 using Xunit;
@@ -13,15 +14,9 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [Fact]
         public void Serialize()
         {
-            var dto = new Dictionary<IntEnum, string>
-            {
-                [IntEnum.Value2] = "foo",
-                [IntEnum.Value4] = "bar",
-                [IntEnum.Value8] = "blah",
-            };
+            var dto = new Version(1, 1, 1);
 
             var jsonString = JsonConvert.SerializeObject(dto);
-            Assert.Equal("{\"Value2\":\"foo\",\"Value4\":\"bar\",\"Value8\":\"blah\"}", jsonString);
         }
 
         [Fact]

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Swashbuckle.AspNetCore.TestSupport
@@ -13,6 +14,8 @@ namespace Swashbuckle.AspNetCore.TestSupport
         public int IntWithRange { get; set; }
 
         public string StringWithRegularExpression { get; set; }
+
+        public string StringWithMinMaxLength { get; set; }
     }
 
     public class MetadataType
@@ -28,5 +31,8 @@ namespace Swashbuckle.AspNetCore.TestSupport
 
         [RegularExpression("^[3-6]?\\d{12,15}$")]
         public string StringWithRegularExpression { get; set; }
+
+        [MinLength(1), MaxLength(3)]
+        public string StringWithMinMaxLength { get; set; }
     }
 }

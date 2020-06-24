@@ -178,7 +178,6 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 
             Assert.Equal("object", schema.Type);
             Assert.Empty(schema.Properties);
-            Assert.False(schema.AdditionalPropertiesAllowed);
         }
 
         [Theory]
@@ -393,10 +392,10 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
-        public void GenerateSchema_SupportsOption_GeneratePolymorphicSchemas()
+        public void GenerateSchema_SupportsOption_UseOneOfForPolymorphism()
         {
             var subject = Subject(
-                configureGenerator: c => c.GeneratePolymorphicSchemas = true
+                configureGenerator: c => c.UseOneOfForPolymorphism = true
             );
             var schemaRepository = new SchemaRepository();
 
@@ -404,25 +403,94 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 
             // The polymorphic schema
             Assert.NotNull(schema.OneOf);
-            Assert.Equal(2, schema.OneOf.Count);
+            Assert.Equal(3, schema.OneOf.Count);
             Assert.NotNull(schema.OneOf[0].Reference);
-            // The first sub schema
-            var subSchema1 = schemaRepository.Schemas[schema.OneOf[0].Reference.Id];
-            Assert.NotNull(subSchema1.AllOf);
-            Assert.Equal(2, subSchema1.AllOf.Count);
-            Assert.Equal("PolymorphicType", subSchema1.AllOf[0].Reference.Id);
-            Assert.Equal(new[] { "Property1" }, subSchema1.AllOf[1].Properties.Keys);
-            // The second sub schema
-            var subSchema2 = schemaRepository.Schemas[schema.OneOf[1].Reference.Id];
-            Assert.NotNull(subSchema2.AllOf);
-            Assert.Equal(2, subSchema2.AllOf.Count);
-            Assert.Equal("PolymorphicType", subSchema2.AllOf[0].Reference.Id);
-            Assert.Equal(new[] { "Property2" }, subSchema2.AllOf[1].Properties.Keys);
-            // The base schema
-            var baseSchema = schemaRepository.Schemas[subSchema1.AllOf[0].Reference.Id];
-            Assert.Equal(new[] { "$type", "BaseProperty" }, baseSchema.Properties.Keys);
-            Assert.Equal(new[] { "$type" }, baseSchema.Required);
-            Assert.Equal("$type", baseSchema.Discriminator.PropertyName);
+            Assert.NotNull(schema.OneOf[1].Reference);
+            Assert.NotNull(schema.OneOf[2].Reference);
+            // The base type schema
+            var baseSchema = schemaRepository.Schemas[schema.OneOf[0].Reference.Id];
+            Assert.Equal("object", baseSchema.Type);
+            Assert.Equal(new[] { "BaseProperty"}, baseSchema.Properties.Keys);
+            // The first sub type schema
+            var subType1Schema = schemaRepository.Schemas[schema.OneOf[1].Reference.Id];
+            Assert.Equal("object", subType1Schema.Type);
+            Assert.Equal(new[] { "Property1", "BaseProperty" }, subType1Schema.Properties.Keys);
+            // The second sub type schema
+            var subType2Schema = schemaRepository.Schemas[schema.OneOf[2].Reference.Id];
+            Assert.Equal("object", subType2Schema.Type);
+            Assert.Equal(new[] { "Property2", "BaseProperty" }, subType2Schema.Properties.Keys);
+        }
+
+        [Fact]
+        public void GenerateSchema_SupportsOption_UseAllOfForInheritance()
+        {
+            var subject = Subject(
+                configureGenerator: c => c.UseAllOfForInheritance = true
+            );
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = subject.GenerateSchema(typeof(PolymorphicType), schemaRepository);
+
+            // The base type schema
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal("object", schema.Type);
+            Assert.Equal(new[] { "BaseProperty" }, schema.Properties.Keys);
+            // The first sub type schema
+            var subType1Schema = schemaRepository.Schemas["SubType1"];
+            Assert.Equal("object", subType1Schema.Type);
+            Assert.NotNull(subType1Schema.AllOf);
+            Assert.Equal(1, subType1Schema.AllOf.Count);
+            Assert.NotNull(subType1Schema.AllOf[0].Reference);
+            Assert.Equal(referenceSchema.Reference.Id, subType1Schema.AllOf[0].Reference.Id);
+            Assert.Equal(new[] { "Property1" }, subType1Schema.Properties.Keys);
+            // The second sub type schema
+            var subType2Schema = schemaRepository.Schemas["SubType2"];
+            Assert.Equal("object", subType2Schema.Type);
+            Assert.NotNull(subType2Schema.AllOf);
+            Assert.Equal(1, subType2Schema.AllOf.Count);
+            Assert.NotNull(subType2Schema.AllOf[0].Reference);
+            Assert.Equal(referenceSchema.Reference.Id, subType2Schema.AllOf[0].Reference.Id);
+            Assert.Equal(new[] { "Property2" }, subType2Schema.Properties.Keys);
+        }
+
+        [Fact]
+        public void GenerateSchema_SupportsOption_UseOneOfForPolymorphism_CombinedWith_UseAllOfForInheritance()
+        {
+            var subject = Subject(configureGenerator: c =>
+            {
+                c.UseOneOfForPolymorphism = true;
+                c.UseAllOfForInheritance = true;
+            });
+            var schemaRepository = new SchemaRepository();
+
+            var schema = subject.GenerateSchema(typeof(PolymorphicType), schemaRepository);
+
+            // The polymorphic schema
+            Assert.NotNull(schema.OneOf);
+            Assert.Equal(3, schema.OneOf.Count);
+            Assert.NotNull(schema.OneOf[0].Reference);
+            Assert.NotNull(schema.OneOf[1].Reference);
+            Assert.NotNull(schema.OneOf[2].Reference);
+            // The base type schema
+            var baseSchema = schemaRepository.Schemas[schema.OneOf[0].Reference.Id];
+            Assert.Equal("object", baseSchema.Type);
+            Assert.Equal(new[] { "BaseProperty"}, baseSchema.Properties.Keys);
+            // The first sub type schema
+            var subType1Schema = schemaRepository.Schemas[schema.OneOf[1].Reference.Id];
+            Assert.Equal("object", subType1Schema.Type);
+            Assert.NotNull(subType1Schema.AllOf);
+            Assert.Equal(1, subType1Schema.AllOf.Count);
+            Assert.NotNull(subType1Schema.AllOf[0].Reference);
+            Assert.Equal(schema.OneOf[0].Reference.Id, subType1Schema.AllOf[0].Reference.Id);
+            Assert.Equal(new[] { "Property1" }, subType1Schema.Properties.Keys);
+            // The second sub type schema
+            var subType2Schema = schemaRepository.Schemas[schema.OneOf[2].Reference.Id];
+            Assert.Equal("object", subType2Schema.Type);
+            Assert.NotNull(subType2Schema.AllOf);
+            Assert.Equal(1, subType2Schema.AllOf.Count);
+            Assert.NotNull(subType2Schema.AllOf[0].Reference);
+            Assert.Equal(schema.OneOf[0].Reference.Id, subType2Schema.AllOf[0].Reference.Id);
+            Assert.Equal(new[] { "Property2" }, subType2Schema.Properties.Keys);
         }
 
         [Fact]
@@ -635,33 +703,16 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.Equal("object", schema.AdditionalProperties.Type);
         }
 
-        [Fact]
-        public void GenerateSchema_GeneratesEmptySchema_IfJToken()
+        [Theory]
+        [InlineData(typeof(JToken))]
+        [InlineData(typeof(JObject))]
+        [InlineData(typeof(JArray))]
+        public void GenerateSchema_GeneratesEmptySchema_IfDynamicJsonType(Type type)
         {
-            var schema = Subject().GenerateSchema(typeof(JToken), new SchemaRepository());
+            var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
             Assert.Null(schema.Reference);
             Assert.Null(schema.Type);
-        }
-
-        [Fact]
-        public void GenerateSchema_GeneratesArraySchema_IfJArray()
-
-        {
-            var schema = Subject().GenerateSchema(typeof(JArray), new SchemaRepository());
-
-            Assert.Equal("array", schema.Type);
-            Assert.NotNull(schema.Items);
-            Assert.Null(schema.Items.Type);
-        }
-
-        [Fact]
-        public void GenerateSchema_GeneratesObjectSchema_IfJObject()
-        {
-            var schema = Subject().GenerateSchema(typeof(JObject), new SchemaRepository());
-
-            Assert.Equal("object", schema.Type);
-            Assert.Empty(schema.Properties);
         }
 
         private SchemaGenerator Subject(

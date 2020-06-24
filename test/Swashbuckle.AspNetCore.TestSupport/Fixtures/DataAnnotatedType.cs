@@ -16,6 +16,9 @@ namespace Swashbuckle.AspNetCore.TestSupport
         [Range(1, 12)]
         public int IntWithRange { get; set; }
 
+        [DefaultValue(3)]
+        public int IntWithDefaultValue { get; set; }
+
         [RegularExpression("^[3-6]?\\d{12,15}$")]
         public string StringWithRegularExpression { get; set; }
 

@@ -57,18 +57,6 @@ namespace Microsoft.Extensions.DependencyInjection
             swaggerGenOptions.SwaggerGeneratorOptions.ConflictingActionsResolver = resolver;
         }
 
-        [Obsolete("If the serializer is configured for string enums (e.g. StringEnumConverter) Swashbuckle will reflect that automatically")]
-        public static void DescribeAllEnumsAsStrings(this SwaggerGenOptions swaggerGenOptions)
-        {
-            swaggerGenOptions.SchemaGeneratorOptions.DescribeAllEnumsAsStrings = true;
-        }
-
-        [Obsolete("If the serializer is configured for (camel-cased) string enums (e.g. StringEnumConverter) Swashbuckle will reflect that automatically")]
-        public static void DescribeStringEnumsInCamelCase(this SwaggerGenOptions swaggerGenOptions)
-        {
-            swaggerGenOptions.SchemaGeneratorOptions.DescribeStringEnumsInCamelCase = true;
-        }
-
         /// <summary>
         /// Provide a custom strategy for assigning "operationId" to operations
         /// </summary>
@@ -78,6 +66,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             swaggerGenOptions.SwaggerGeneratorOptions.OperationIdSelector = operationIdSelector;
         }
+
 
         /// <summary>
         /// Provide a custom strategy for assigning a default "tag" to operations
@@ -216,23 +205,12 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Generate polymorphic schemas (i.e. "oneOf") based on discovered subtypes
+        /// Generate inline schema definitions (as opposed to referencing a shared definition) for enum parameters and properties
         /// </summary>
         /// <param name="swaggerGenOptions"></param>
-        /// <param name="subTypesResolver"></param>
-        /// <param name="discriminatorSelector"></param>
-        public static void GeneratePolymorphicSchemas(
-            this SwaggerGenOptions swaggerGenOptions,
-            Func<Type, IEnumerable<Type>> subTypesResolver = null,
-            Func<Type, string> discriminatorSelector = null)
+        public static void UseInlineDefinitionsForEnums(this SwaggerGenOptions swaggerGenOptions)
         {
-            swaggerGenOptions.SchemaGeneratorOptions.GeneratePolymorphicSchemas = true;
-
-            if (subTypesResolver != null)
-                swaggerGenOptions.SchemaGeneratorOptions.SubTypesResolver = subTypesResolver;
-
-            if (discriminatorSelector != null)
-                swaggerGenOptions.SchemaGeneratorOptions.DiscriminatorSelector = discriminatorSelector;
+            swaggerGenOptions.SchemaGeneratorOptions.UseInlineDefinitionsForEnums = true;
         }
 
         /// <summary>
@@ -245,12 +223,44 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Generate inline schema definitions (as opposed to referencing a shared definition) for enum parameters and properties
+        /// Enables polymorphic schema generation. If enabled, request and response schemas will contain the oneOf
+        /// construct to describe sub types as a set of alternative schemas.
         /// </summary>
         /// <param name="swaggerGenOptions"></param>
-        public static void UseInlineDefinitionsForEnums(this SwaggerGenOptions swaggerGenOptions)
+        /// <param name="discriminatorSelector"></param>
+        public static void UseOneOfForPolymorphism(
+            this SwaggerGenOptions swaggerGenOptions,
+            Func<Type, string> discriminatorSelector = null)
         {
-            swaggerGenOptions.SchemaGeneratorOptions.UseInlineDefinitionsForEnums = true;
+            swaggerGenOptions.SchemaGeneratorOptions.UseOneOfForPolymorphism = true;
+
+            if (discriminatorSelector != null)
+                swaggerGenOptions.SchemaGeneratorOptions.DiscriminatorSelector = discriminatorSelector;
+        }
+
+        /// <summary>
+        /// Enables composite schema generation. If enabled, sub-class schemas will contain the allOf construct to
+        /// incorporate properties from the base class instead of defining those properties inline.
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        public static void UseAllOfForInheritance(this SwaggerGenOptions swaggerGenOptions)
+        {
+            swaggerGenOptions.SchemaGeneratorOptions.UseAllOfForInheritance = true;
+        }
+
+        /// <summary>
+        /// To support polymorphism and inheritance behavior, Swashbuckle needs to detect the "known" sub types for a given base type.
+        /// That is, the sub types explicitly exposed by your API. By default, this will be any sub types in the same assembly as the base type.
+        /// To override this, you can provide a custom resolver function. This setting is only applicable when used in conjunction with
+        /// the UseOneOfForPolymorphism or UseAllOfForInheritance settings.
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="resolver"></param>
+        public static void DetectSubTypesUsing(
+            this SwaggerGenOptions swaggerGenOptions,
+            Func<Type, IEnumerable<Type>> resolver)
+        {
+            swaggerGenOptions.SchemaGeneratorOptions.SubTypesResolver = resolver;
         }
 
         /// <summary>
@@ -382,6 +392,40 @@ namespace Microsoft.Extensions.DependencyInjection
             bool includeControllerXmlComments = false)
         {
             swaggerGenOptions.IncludeXmlComments(() => new XPathDocument(filePath), includeControllerXmlComments);
+        }
+
+
+        [Obsolete("If the serializer is configured for string enums (e.g. StringEnumConverter) Swashbuckle will reflect that automatically")]
+        public static void DescribeAllEnumsAsStrings(this SwaggerGenOptions swaggerGenOptions)
+        {
+            swaggerGenOptions.SchemaGeneratorOptions.DescribeAllEnumsAsStrings = true;
+        }
+
+        [Obsolete("If the serializer is configured for (camel-cased) string enums (e.g. StringEnumConverter) Swashbuckle will reflect that automatically")]
+        public static void DescribeStringEnumsInCamelCase(this SwaggerGenOptions swaggerGenOptions)
+        {
+            swaggerGenOptions.SchemaGeneratorOptions.DescribeStringEnumsInCamelCase = true;
+        }
+
+        /// <summary>
+        /// Generate polymorphic schemas (i.e. "oneOf") based on discovered subtypes.
+        /// Deprecated: Use the \"UseOneOfForPolymorphism\" and \"UseAllOfForInheritance\" settings instead
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="subTypesResolver"></param>
+        /// <param name="discriminatorSelector"></param>
+        [Obsolete("You can use \"UseOneOfForPolymorphism\", \"UseAllOfForInheritance\" and \"DetectSubTypesUsing\" to configure equivalant behavior")]
+        public static void GeneratePolymorphicSchemas(
+            this SwaggerGenOptions swaggerGenOptions,
+            Func<Type, IEnumerable<Type>> subTypesResolver = null,
+            Func<Type, string> discriminatorSelector = null)
+        {
+            swaggerGenOptions.UseOneOfForPolymorphism(discriminatorSelector);
+
+            if (subTypesResolver != null)
+                swaggerGenOptions.DetectSubTypesUsing(subTypesResolver);
+
+            swaggerGenOptions.UseAllOfForInheritance();
         }
     }
 }

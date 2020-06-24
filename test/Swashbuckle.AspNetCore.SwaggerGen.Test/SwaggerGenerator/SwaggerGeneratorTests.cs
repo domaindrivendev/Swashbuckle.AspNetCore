@@ -248,38 +248,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("string", operation.Parameters.First().Schema.Type);
         }
 
-        [Theory]
-        [InlineData(nameof(FakeController.ActionWithOptionalParameter))]
-        [InlineData(nameof(FakeController.ActionWithParameterWithDefaultValueAttribute))]
-        public void GetSwagger_SetsParameterDefault_IfActionParameterIsOptionalOrHasDefaultValueAttribute(
-            string actionName)
-        {
-            var subject = Subject(
-                apiDescriptions: new[]
-                {
-                    ApiDescriptionFactory.Create(
-                        methodInfo: typeof(FakeController).GetMethod(actionName),
-                        groupName: "v1",
-                        httpMethod: "POST",
-                        relativePath: "resource",
-                        parameterDescriptions: new []
-                        {
-                            new ApiParameterDescription
-                            {
-                                Name = "param",
-                                Source = BindingSource.Query
-                            }
-                        })
-                }
-            );
-
-            var document = subject.GetSwagger("v1");
-
-            var operation = document.Paths["/resource"].Operations[OperationType.Post];
-            Assert.Equal(1, operation.Parameters.Count);
-            Assert.Equal("someDefaultValue", ((OpenApiString)operation.Parameters.First().Schema.Default).Value);
-        }
-
         [Fact]
         public void GetSwagger_GeneratesRequestBody_ForFirstApiParameterThatIsBoundToBody()
         {

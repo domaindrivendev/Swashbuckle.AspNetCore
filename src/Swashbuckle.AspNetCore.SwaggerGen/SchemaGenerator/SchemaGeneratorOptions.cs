@@ -18,19 +18,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public IDictionary<Type, Func<OpenApiSchema>> CustomTypeMappings { get; set; }
 
+        public bool UseInlineDefinitionsForEnums { get; set; }
+
         public Func<Type, string> SchemaIdSelector { get; set; }
 
         public bool IgnoreObsoleteProperties { get; set; }
 
-        public bool GeneratePolymorphicSchemas { get; set; }
+        public bool UseAllOfToExtendReferenceSchemas { get; set; }
+
+        public bool UseOneOfForPolymorphism { get; set; }
 
         public Func<Type, IEnumerable<Type>> SubTypesResolver { get; set; }
 
         public Func<Type, string> DiscriminatorSelector { get; set; }
 
-        public bool UseAllOfToExtendReferenceSchemas { get; set; }
+        public bool UseAllOfForInheritance { get; set; }
 
-        public bool UseInlineDefinitionsForEnums { get; set; }
 
         public IList<ISchemaFilter> SchemaFilters { get; set; }
 
@@ -61,7 +64,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private string DefaultDiscriminatorSelector(Type baseType)
         {
-            return "$type";
+            return null;
         }
     }
 }
