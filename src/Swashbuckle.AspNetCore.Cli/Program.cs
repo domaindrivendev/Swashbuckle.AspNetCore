@@ -131,7 +131,7 @@ namespace Swashbuckle.AspNetCore.Cli
             }
 
             return WebHost.CreateDefaultBuilder()
-               .UseStartup(startupAssembly.FullName)
+               .UseStartup(startupAssembly.GetName().Name)
                .Build()
                .Services;
         }
