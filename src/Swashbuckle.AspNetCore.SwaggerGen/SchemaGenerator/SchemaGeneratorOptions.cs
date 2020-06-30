@@ -30,6 +30,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public bool UseAllOfToExtendReferenceSchemas { get; set; }
 
+        public bool UseRefInsteadOfOneOfForPolymorphicSchemas { get; set; }
+
         public bool UseInlineDefinitionsForEnums { get; set; }
 
         public IList<ISchemaFilter> SchemaFilters { get; set; }

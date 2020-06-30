@@ -60,8 +60,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (_generatorOptions.GeneratePolymorphicSchemas)
             {
-                var knownSubTypes = _generatorOptions.SubTypesResolver(type);
-                if (knownSubTypes.Any())
+                var knownSubTypes = _generatorOptions.SubTypesResolver(type).ToList();
+                if (_generatorOptions.UseRefInsteadOfOneOfForPolymorphicSchemas)
+                {
+                    knownSubTypes.Select(subType => GenerateSchema(subType, schemaRepository)).ToList();
+                }
+                else if (knownSubTypes.Any())
                 {
                     return GeneratePolymorphicSchema(knownSubTypes, schemaRepository);
                 }

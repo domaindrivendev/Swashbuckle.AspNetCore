@@ -245,6 +245,15 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
+        /// User ref instead of oneOf for polymorphic schemas 
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        public static void UseRefInsteadOfOneOfForPolymorphicSchemas(this SwaggerGenOptions swaggerGenOptions)
+        {
+            swaggerGenOptions.SchemaGeneratorOptions.UseRefInsteadOfOneOfForPolymorphicSchemas = true;
+        }
+
+        /// <summary>
         /// Generate inline schema definitions (as opposed to referencing a shared definition) for enum parameters and properties
         /// </summary>
         /// <param name="swaggerGenOptions"></param>
