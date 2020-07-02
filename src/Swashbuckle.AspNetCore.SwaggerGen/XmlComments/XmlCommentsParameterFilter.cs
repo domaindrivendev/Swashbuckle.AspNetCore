@@ -1,9 +1,5 @@
-﻿using System;
-using System.ComponentModel;
-using System.Globalization;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Xml.XPath;
-using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -60,28 +56,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var example = paramNode.GetAttribute("example", string.Empty);
                 if (!string.IsNullOrEmpty(example))
                 {
-                    parameter.Example = ConvertToOpenApiType(parameterInfo.ParameterType, parameter.Schema, example);
+                    parameter.Example = OpenApiAnyHelper.ConvertToOpenApiType(parameterInfo.ParameterType, parameter.Schema, example);
                 }
             }
         }
 
-        private static IOpenApiAny ConvertToOpenApiType(Type memberType, OpenApiSchema schema, string stringValue)
-        {
-            object typedValue;
-
-            try
-            {
-                typedValue = TypeDescriptor.GetConverter(memberType).ConvertFrom(
-                    context: null,
-                    culture: CultureInfo.InvariantCulture,
-                    stringValue);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-
-            return OpenApiAnyFactory.CreateFor(schema, typedValue);
-        }
     }
 }
