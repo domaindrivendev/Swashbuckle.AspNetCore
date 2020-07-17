@@ -12,6 +12,7 @@
     <PackageTags>swagger;openapi;test-first;spec-first;testing;aspnetcore</PackageTags>
     <PackageProjectUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/domaindrivendev/Swashbuckle.AspNetCore/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore.git</RepositoryUrl>
   </PropertyGroup>
