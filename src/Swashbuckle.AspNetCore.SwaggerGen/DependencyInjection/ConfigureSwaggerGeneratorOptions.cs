@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 
-#if NETCOREAPP3_0
+#if NETCOREAPP3_1
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IWebHostEnvironment;
 #endif
 

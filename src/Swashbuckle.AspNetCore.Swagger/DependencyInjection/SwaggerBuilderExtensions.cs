@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Writers;
 using Swashbuckle.AspNetCore.Swagger;
 
-#if NETCOREAPP3_0
+#if NETCOREAPP3_1
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -38,7 +38,7 @@ namespace Microsoft.AspNetCore.Builder
 
             return app;
         }
-#if NETCOREAPP3_0
+#if NETCOREAPP3_1
         public static IEndpointRouteBuilder MapSwagger(
             this IEndpointRouteBuilder endpoints,
             string pattern = "/swagger/{documentName}/swagger.json",

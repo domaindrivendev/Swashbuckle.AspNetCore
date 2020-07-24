@@ -128,7 +128,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             {
                 stringEnumConverter = new StringEnumConverter(_generatorOptions.DescribeStringEnumsInCamelCase);
             }
- 
+
             if (stringEnumConverter != null)
             {
                 return jsonContract.UnderlyingType.GetMembers(BindingFlags.Public | BindingFlags.Static)
@@ -144,7 +144,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                 .Cast<object>();
         }
 
-#if NETCOREAPP3_0
+#if NETCOREAPP3_1
         private string GetConvertedEnumName(string enumName, bool hasSpecifiedName, StringEnumConverter stringEnumConverter)
         {
             if (stringEnumConverter.NamingStrategy != null)
