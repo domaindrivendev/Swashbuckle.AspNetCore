@@ -37,6 +37,9 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         {
             _options = options ?? new SwaggerUIOptions();
 
+            // use standard Swagger endpoint URL if no custom URLs provided
+            if (_options.ConfigObject.Urls == null) _options.ConfigObject.Urls = new[] { new UrlDescriptor { Url = "/swagger/v1/swagger.json", Name = "API Description" } };
+
             _staticFileMiddleware = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options);
 
             _jsonSerializerOptions = new JsonSerializerOptions();

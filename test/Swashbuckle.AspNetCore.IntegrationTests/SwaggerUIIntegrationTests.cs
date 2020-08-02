@@ -33,6 +33,17 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         }
 
         [Fact]
+        public async Task DefaultRoute_RedirectsToRelativeIndexUrl()
+        {
+            var client = new TestSite(typeof(DefaultRoute.Startup)).BuildClient();
+
+            var response = await client.GetAsync("/");
+
+            Assert.Equal(HttpStatusCode.MovedPermanently, response.StatusCode);
+            Assert.Equal("index.html", response.Headers.Location.ToString());
+        }
+
+        [Fact]
         public async Task IndexUrl_ReturnsCustomPageTitleAndStylesheets_IfConfigured()
         {
             var client = new TestSite(typeof(CustomUIConfig.Startup)).BuildClient();
