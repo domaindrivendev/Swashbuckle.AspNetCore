@@ -164,6 +164,8 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
 
     public class OAuthConfigObject
     {
+        private readonly List<string> _defaultScopes = new List<string>();
+
         /// <summary>
         /// Default clientId
         /// </summary>
@@ -190,6 +192,21 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         public string ScopeSeparator { get; set; } = " ";
 
         /// <summary>
+        /// Scopes to be selected by default on the authorization modal
+        /// (see <see cref="AddDefaultScopes(string[])"/> and <see cref="ClearDefaultScopes"/>).
+        /// </summary>
+        public string Scopes
+        {
+            get
+            {
+                if (_defaultScopes.Count == 0)
+                    return null;
+
+                return string.Join(ScopeSeparator, _defaultScopes.Distinct());
+            }
+        }
+
+        /// <summary>
         /// Additional query parameters added to authorizationUrl and tokenUrl
         /// </summary>
         public Dictionary<string, string> AdditionalQueryStringParams { get; set; } = null;
@@ -206,5 +223,22 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// The default is false
         /// </summary>
         public bool UsePkceWithAuthorizationCodeGrant { get; set; } = false;
+
+        /// <summary>
+        /// Adds scopes to be selected by default on the authorization modal (default is empty list).
+        /// </summary>
+        /// <param name="scopes"></param>
+        public void AddDefaultScopes(params string[] scopes)
+        {
+            _defaultScopes.AddRange(scopes ?? throw new ArgumentNullException(nameof(scopes)));
+        }
+
+        /// <summary>
+        /// Clears scopes to be selected by default on the authorization modal.
+        /// </summary>
+        public void ClearDefaultScopes()
+        {
+            _defaultScopes.Clear();
+        }
     }
 }

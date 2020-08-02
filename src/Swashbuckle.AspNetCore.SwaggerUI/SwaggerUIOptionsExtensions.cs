@@ -245,6 +245,20 @@ namespace Microsoft.AspNetCore.Builder
         }
 
         /// <summary>
+        /// Scopes to be selected by default on the authorization modal (default is empty list).
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="scopes"></param>
+        public static void OAuthScopes(this SwaggerUIOptions options, params string[] scopes)
+        {
+            if (scopes is null)
+                throw new ArgumentNullException(nameof(scopes));
+
+            options.OAuthConfigObject.ClearDefaultScopes();
+            options.OAuthConfigObject.AddDefaultScopes(scopes);
+        }
+
+        /// <summary>
         /// Additional query parameters added to authorizationUrl and tokenUrl
         /// </summary>
         /// <param name="options"></param>
