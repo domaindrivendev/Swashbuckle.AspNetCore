@@ -33,7 +33,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             target.CustomTypeMappings = new Dictionary<Type, Func<OpenApiSchema>>(source.CustomTypeMappings);
             target.SchemaIdSelector = source.SchemaIdSelector;
             target.IgnoreObsoleteProperties = source.IgnoreObsoleteProperties;
-            target.GeneratePolymorphicSchemas = source.GeneratePolymorphicSchemas;
+            target.UseOneOfForPolymorphism = source.UseOneOfForPolymorphism;
+            target.UseAllOfForInheritance = source.UseAllOfForInheritance;
             target.SubTypesResolver = source.SubTypesResolver;
             target.DiscriminatorSelector = source.DiscriminatorSelector;
             target.UseAllOfToExtendReferenceSchemas = source.UseAllOfToExtendReferenceSchemas;

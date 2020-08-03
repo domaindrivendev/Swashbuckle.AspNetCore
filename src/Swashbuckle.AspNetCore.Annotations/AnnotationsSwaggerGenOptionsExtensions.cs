@@ -22,7 +22,11 @@ namespace Microsoft.Extensions.DependencyInjection
             options.DocumentFilter<AnnotationsDocumentFilter>();
 
             if (enableSubTypeAnnotations)
-                options.GeneratePolymorphicSchemas(AnnotationsSubTypeResolver, AnnotationsDiscriminatorSelector);
+            {
+                options.UseOneOfForPolymorphism(AnnotationsDiscriminatorSelector);
+                options.DetectSubTypesUsing(AnnotationsSubTypeResolver);
+                options.UseAllOfForInheritance();
+            }
         }
 
         private static IEnumerable<Type> AnnotationsSubTypeResolver(Type type)
@@ -42,7 +46,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             return type.GetCustomAttributes(false)
                 .OfType<SwaggerSubTypesAttribute>()
-                .FirstOrDefault()?.Discriminator ?? "$type";
+                .FirstOrDefault()?.Discriminator;
         }
     }
 }

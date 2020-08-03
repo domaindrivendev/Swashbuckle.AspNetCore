@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -18,65 +19,54 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public DataContract GetDataContractForType(Type type)
         {
-            var underlyingType = type.IsNullable(out Type innerType) ? innerType : type;
-
-            if (PrimitiveTypesAndFormats.ContainsKey(underlyingType))
+            if (type.IsOneOf(typeof(JsonDocument), typeof(JsonElement)))
             {
-                var primitiveTypeAndFormat = PrimitiveTypesAndFormats[underlyingType];
-
-                return new DataContract(
-                    dataType: primitiveTypeAndFormat.Item1,
-                    format: primitiveTypeAndFormat.Item2,
-                    underlyingType: underlyingType);
+                return DataContract.ForDynamic(underlyingType: type);
             }
 
-            if (underlyingType.IsEnum)
+            if (PrimitiveTypesAndFormats.ContainsKey(type))
             {
-                var enumValues = GetSerializedEnumValuesFor(underlyingType);
+                var primitiveTypeAndFormat = PrimitiveTypesAndFormats[type];
+
+                return DataContract.ForPrimitive(
+                    underlyingType: type,
+                    dataType: primitiveTypeAndFormat.Item1,
+                    dataFormat: primitiveTypeAndFormat.Item2);
+            }
+
+            if (type.IsEnum)
+            {
+                var enumValues = GetSerializedEnumValuesFor(type);
 
                 var primitiveTypeAndFormat = (enumValues.Any(value => value is string))
                     ? PrimitiveTypesAndFormats[typeof(string)]
-                    : PrimitiveTypesAndFormats[underlyingType.GetEnumUnderlyingType()];
+                    : PrimitiveTypesAndFormats[type.GetEnumUnderlyingType()];
 
-                return new DataContract(
+                return DataContract.ForPrimitive(
+                    underlyingType: type,
                     dataType: primitiveTypeAndFormat.Item1,
-                    format: primitiveTypeAndFormat.Item2,
-                    underlyingType: underlyingType,
+                    dataFormat: primitiveTypeAndFormat.Item2,
                     enumValues: enumValues);
             }
 
-            if (underlyingType.IsDictionary(out Type keyType, out Type valueType))
+            if (IsSupportedDictionary(type, out Type keyType, out Type valueType))
             {
-                if (keyType.IsEnum)
-                    throw new NotSupportedException(
-                        $"Schema cannot be generated for type {underlyingType} as it's not supported by the System.Text.Json serializer");
-
-                return new DataContract(
-                    dataType: DataType.Object,
-                    underlyingType: underlyingType,
-                    additionalPropertiesType: valueType);
+                return DataContract.ForDictionary(
+                    underlyingType: type,
+                    valueType: valueType);
             }
 
-            if (underlyingType.IsEnumerable(out Type itemType))
+            if (IsSupportedCollection(type, out Type itemType))
             {
-                return new DataContract(
-                    dataType: DataType.Array,
-                    underlyingType: underlyingType,
-                    arrayItemType: itemType);
+                return DataContract.ForArray(
+                    underlyingType: type,
+                    itemType: itemType);
             }
 
-            if (underlyingType.IsOneOf(typeof(JsonDocument), typeof(JsonElement)))
-            {
-                return new DataContract(
-                    dataType: DataType.Unknown,
-                    underlyingType: underlyingType);
-            }
-
-            return new DataContract(
-                dataType: DataType.Object,
-                underlyingType: underlyingType,
-                properties: GetDataPropertiesFor(underlyingType, out Type extensionDataValueType),
-                additionalPropertiesType: extensionDataValueType);
+            return DataContract.ForObject(
+                underlyingType: type,
+                properties: GetDataPropertiesFor(type, out Type extensionDataType),
+                extensionDataType: extensionDataType);
         }
 
         private IEnumerable<object> GetSerializedEnumValuesFor(Type enumType)
@@ -92,14 +82,55 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 : underlyingValues;
         }
 
-        private IEnumerable<DataProperty> GetDataPropertiesFor(Type objectType, out Type extensionDataValueType)
+        public bool IsSupportedDictionary(Type type, out Type keyType, out Type valueType)
         {
-            extensionDataValueType = null;
-
-            if (objectType == typeof(object))
+            if (type.IsConstructedFrom(typeof(IDictionary<,>), out Type constructedType)
+                || type.IsConstructedFrom(typeof(IReadOnlyDictionary<,>), out constructedType))
             {
-                return null;
+                keyType = constructedType.GenericTypeArguments[0];
+                valueType = constructedType.GenericTypeArguments[1];
+                return true;
             }
+
+            if (typeof(IDictionary).IsAssignableFrom(type))
+            {
+                keyType = valueType = typeof(object);
+                return true;
+            }
+
+            keyType = valueType = null;
+            return false;
+        }
+
+        public bool IsSupportedCollection(Type type, out Type itemType)
+        {
+            if (type.IsConstructedFrom(typeof(IEnumerable<>), out Type constructedType))
+            {
+                itemType = constructedType.GenericTypeArguments[0];
+                return true;
+            }
+
+#if NETCOREAPP3_0
+            if (type.IsConstructedFrom(typeof(IAsyncEnumerable<>), out constructedType))
+            {
+                itemType = constructedType.GenericTypeArguments[0];
+                return true;
+            }
+#endif
+
+            if (typeof(IEnumerable).IsAssignableFrom(type))
+            {
+                itemType = typeof(object);
+                return true;
+            }
+
+            itemType = null;
+            return false;
+        }
+
+        private IEnumerable<DataProperty> GetDataPropertiesFor(Type objectType, out Type extensionDataType)
+        {
+            extensionDataType = null;
 
             var applicableProperties = objectType.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
                 .Where(property =>
@@ -115,9 +146,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             foreach (var propertyInfo in applicableProperties)
             {
-                if (propertyInfo.HasAttribute<JsonExtensionDataAttribute>() && propertyInfo.PropertyType.IsDictionary(out Type _, out Type valueType))
+                if (propertyInfo.HasAttribute<JsonExtensionDataAttribute>()
+                    && propertyInfo.PropertyType.IsConstructedFrom(typeof(IDictionary<,>), out Type constructedDictionary))
                 {
-                    extensionDataValueType = valueType;
+                    extensionDataType = constructedDictionary.GenericTypeArguments[1];
                     continue;
                 }
 

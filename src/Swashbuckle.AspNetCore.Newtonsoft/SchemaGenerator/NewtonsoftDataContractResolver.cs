@@ -26,7 +26,12 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
         public DataContract GetDataContractForType(Type type)
         {
-            var jsonContract = _contractResolver.ResolveContract(type.IsNullable(out Type innerType) ? innerType : type);
+            if (type.IsAssignableTo(typeof(JToken)))
+            {
+                return DataContract.ForDynamic(underlyingType: type);
+            }
+
+            var jsonContract = _contractResolver.ResolveContract(type);
 
             if (jsonContract is JsonPrimitiveContract && !jsonContract.UnderlyingType.IsEnum)
             {
@@ -34,10 +39,10 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     ? PrimitiveTypesAndFormats[jsonContract.UnderlyingType]
                     : Tuple.Create(DataType.String, (string)null);
 
-                return new DataContract(
+                return DataContract.ForPrimitive(
+                    underlyingType: jsonContract.UnderlyingType,
                     dataType: primitiveTypeAndFormat.Item1,
-                    format: primitiveTypeAndFormat.Item2,
-                    underlyingType: jsonContract.UnderlyingType);
+                    dataFormat: primitiveTypeAndFormat.Item2);
             }
 
             if (jsonContract is JsonPrimitiveContract && jsonContract.UnderlyingType.IsEnum)
@@ -48,11 +53,18 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     ? PrimitiveTypesAndFormats[typeof(string)]
                     : PrimitiveTypesAndFormats[jsonContract.UnderlyingType.GetEnumUnderlyingType()];
 
-                return new DataContract(
-                    dataType: primitiveTypeAndFormat.Item1,
-                    format: primitiveTypeAndFormat.Item2,
+                return DataContract.ForPrimitive(
                     underlyingType: jsonContract.UnderlyingType,
+                    dataType: primitiveTypeAndFormat.Item1,
+                    dataFormat: primitiveTypeAndFormat.Item2,
                     enumValues: enumValues);
+            }
+
+            if (jsonContract is JsonArrayContract jsonArrayContract)
+            {
+                return DataContract.ForArray(
+                    underlyingType: jsonArrayContract.UnderlyingType,
+                    itemType: jsonArrayContract.CollectionItemType ?? typeof(object));
             }
 
             if (jsonContract is JsonDictionaryContract jsonDictionaryContract)
@@ -60,62 +72,33 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                 var keyType = jsonDictionaryContract.DictionaryKeyType ?? typeof(object);
                 var valueType = jsonDictionaryContract.DictionaryValueType ?? typeof(object);
 
+                IEnumerable<string> keys = null;
+
                 if (keyType.IsEnum)
                 {
-                    // This is a special case where we can include named properties based on the enum values
-                    var enumValues = GetDataContractForType(keyType).EnumValues;
+                    // This is a special case where we know the possible key values
+                    var enumValues = GetSerializedEnumValuesFor(_contractResolver.ResolveContract(keyType));
 
-                    var propertyNames = enumValues.Any(value => value is string)
+                    keys = enumValues.Any(value => value is string)
                         ? enumValues.Cast<string>()
                         : keyType.GetEnumNames();
-
-                    return new DataContract(
-                        dataType: DataType.Object,
-                        underlyingType: jsonDictionaryContract.UnderlyingType,
-                        properties: propertyNames.Select(name => new DataProperty(name, valueType)));
                 }
 
-                return new DataContract(
-                    dataType: DataType.Object,
+                return DataContract.ForDictionary(
                     underlyingType: jsonDictionaryContract.UnderlyingType,
-                    additionalPropertiesType: valueType);
-            }
-
-            if (jsonContract is JsonArrayContract jsonArrayContract)
-            {
-                return new DataContract(
-                    dataType: DataType.Array,
-                    underlyingType: jsonArrayContract.UnderlyingType,
-                    arrayItemType: jsonArrayContract.CollectionItemType ?? typeof(object));
+                    valueType: valueType,
+                    keys: keys);
             }
 
             if (jsonContract is JsonObjectContract jsonObjectContract)
             {
-                return new DataContract(
-                    dataType: DataType.Object,
+                return DataContract.ForObject(
                     underlyingType: jsonObjectContract.UnderlyingType,
                     properties: GetDataPropertiesFor(jsonObjectContract),
-                    additionalPropertiesType: jsonObjectContract.ExtensionDataValueType);
+                    extensionDataType: jsonObjectContract.ExtensionDataValueType);
             }
 
-            if (jsonContract.UnderlyingType == typeof(JArray))
-            {
-                return new DataContract(
-                    dataType: DataType.Array,
-                    underlyingType: jsonContract.UnderlyingType,
-                    arrayItemType: typeof(JToken));
-            }
-
-            if (jsonContract.UnderlyingType == typeof(JObject))
-            {
-                return new DataContract(
-                    dataType: DataType.Object,
-                    underlyingType: jsonContract.UnderlyingType);
-            }
-
-            return new DataContract(
-                dataType: DataType.Unknown,
-                underlyingType: jsonContract.UnderlyingType);
+            return DataContract.ForDynamic(underlyingType: type);
         }
 
         private IEnumerable<object> GetSerializedEnumValuesFor(JsonContract jsonContract)
@@ -165,11 +148,6 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
         private IEnumerable<DataProperty> GetDataPropertiesFor(JsonObjectContract jsonObjectContract)
         {
-            if (jsonObjectContract.UnderlyingType == typeof(object))
-            {
-                return null;
-            }
-
             var dataProperties = new List<DataProperty>();
 
             foreach (var jsonProperty in jsonObjectContract.Properties)

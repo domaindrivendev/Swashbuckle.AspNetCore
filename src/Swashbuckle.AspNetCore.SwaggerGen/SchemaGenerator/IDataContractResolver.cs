@@ -11,42 +11,89 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
     public class DataContract
     {
-        public DataContract(
-            DataType dataType,
-            Type underlyingType,
-            string format = null,
-            IEnumerable<object> enumValues = null,
-            IEnumerable<DataProperty> properties = null,
-            Type additionalPropertiesType = null,
-            Type arrayItemType = null)
+        public static DataContract ForPrimitive(Type underlyingType, DataType dataType, string dataFormat, IEnumerable<object> enumValues = null)
         {
-            DataType = dataType;
-            Format = format;
-            EnumValues = enumValues;
-            Properties = properties;
-            UnderlyingType = underlyingType;
-            AdditionalPropertiesType = additionalPropertiesType;
-            ArrayItemType = arrayItemType;
+            return new DataContract(
+                underlyingType: underlyingType,
+                dataType: dataType,
+                dataFormat: dataFormat,
+                enumValues: enumValues);
         }
 
-        public DataType DataType { get; }
-        public string Format { get; }
-        public IEnumerable<object> EnumValues { get; }
-        public IEnumerable<DataProperty> Properties { get; }
+        public static DataContract ForArray(Type underlyingType, Type itemType)
+        {
+            return new DataContract(
+                underlyingType: underlyingType,
+                dataType: DataType.Array,
+                arrayItemType: itemType);
+        }
+
+        public static DataContract ForDictionary(Type underlyingType, Type valueType, IEnumerable<string> keys = null)
+        {
+            return new DataContract(
+                underlyingType: underlyingType,
+                dataType: DataType.Dictionary,
+                dictionaryValueType: valueType,
+                dictionaryKeys: keys);
+        }
+
+        public static DataContract ForObject(Type underlyingType, IEnumerable<DataProperty> properties, Type extensionDataType = null)
+        {
+            return new DataContract(
+                underlyingType: underlyingType,
+                dataType: DataType.Object,
+                objectProperties: properties,
+                objectExtensionDataType: extensionDataType);
+        }
+
+        public static DataContract ForDynamic(Type underlyingType)
+        {
+            return new DataContract(underlyingType: underlyingType, dataType: DataType.Unknown);
+        }
+
+        private DataContract(
+            Type underlyingType,
+            DataType dataType,
+            string dataFormat = null,
+            IEnumerable<object> enumValues = null,
+            Type arrayItemType = null,
+            Type dictionaryValueType = null,
+            IEnumerable<string> dictionaryKeys = null,
+            IEnumerable<DataProperty> objectProperties = null,
+            Type objectExtensionDataType = null)
+        {
+            UnderlyingType = underlyingType;
+            DataType = dataType;
+            DataFormat = dataFormat;
+            EnumValues = enumValues;
+            ArrayItemType = arrayItemType;
+            DictionaryValueType = dictionaryValueType;
+            DictionaryKeys = dictionaryKeys;
+            ObjectProperties = objectProperties;
+            ObjectExtensionDataType = objectExtensionDataType;
+        }
+
         public Type UnderlyingType { get; }
-        public Type AdditionalPropertiesType { get; }
+        public DataType DataType { get; }
+        public string DataFormat { get; }
+        public IEnumerable<object> EnumValues { get; }
         public Type ArrayItemType { get; }
+        public Type DictionaryValueType { get; }
+        public IEnumerable<string> DictionaryKeys { get; }
+        public IEnumerable<DataProperty> ObjectProperties { get; }
+        public Type ObjectExtensionDataType { get; }
     }
 
     public enum DataType
     {
-        Unknown,
         Boolean,
         Integer,
         Number,
         String,
+        Array,
+        Dictionary,
         Object,
-        Array
+        Unknown
     }
 
     public class DataProperty
@@ -70,17 +117,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         }
 
         public string Name { get; } 
-
         public bool IsRequired { get; }
-
         public bool IsNullable { get; }
-
         public bool IsReadOnly { get; }
-
         public bool IsWriteOnly { get; }
-
         public Type MemberType { get; }
-
         public MemberInfo MemberInfo { get; }
     }
 }
