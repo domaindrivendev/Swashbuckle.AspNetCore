@@ -1108,7 +1108,7 @@ You can annotate "body" bound parameters or properties (i.e. decorated with `[Fr
 ```csharp
 [HttpPost]
 public IActionResult CreateProduct(
-    [FromBody, SwaggerRequestParameter("The product payload", Required = true)]Product product)
+    [FromBody, SwaggerRequestBody("The product payload", Required = true)]Product product)
 ```
 
 ### Enrich Schema Metadata ###
