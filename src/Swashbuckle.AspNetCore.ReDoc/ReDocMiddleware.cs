@@ -56,6 +56,7 @@ namespace Swashbuckle.AspNetCore.ReDoc
                 var relativeRedirectPath = path.EndsWith("/")
                     ? "index.html"
                     : $"{path.Split('/').Last()}/index.html";
+                relativeRedirectPath = $"{httpContext.Request.PathBase.Value}/{relativeRedirectPath.TrimStart('/')}".TrimStart('/');
 
                 RespondWithRedirect(httpContext.Response, relativeRedirectPath);
                 return;

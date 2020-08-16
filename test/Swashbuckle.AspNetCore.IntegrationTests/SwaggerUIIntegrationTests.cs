@@ -21,9 +21,9 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         public async Task RoutePrefix_RedirectsSubAppRelativeIndexUrl()
         {
             var client = new TestSite(typeof(SubApp.Startup)).BuildClient();
-            var response = await client.GetAsync("/subapp/");
+            var response = await client.GetAsync("/subapp");
             Assert.Equal(HttpStatusCode.MovedPermanently, response.StatusCode);
-            Assert.Equal("/subapp/index.html", response.Headers.Location.ToString());
+            Assert.Equal("subapp/index.html", response.Headers.Location.ToString());
         }
 
 
