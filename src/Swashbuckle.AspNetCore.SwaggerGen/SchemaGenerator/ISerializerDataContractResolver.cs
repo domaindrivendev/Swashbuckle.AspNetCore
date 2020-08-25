@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public interface IDataContractResolver
+    public interface ISerializerDataContractResolver
     {
         DataContract GetDataContractForType(Type type);
     }
@@ -37,13 +37,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 dictionaryKeys: keys);
         }
 
-        public static DataContract ForObject(Type underlyingType, IEnumerable<DataProperty> properties, Type extensionDataType = null)
+        public static DataContract ForObject(
+            Type underlyingType,
+            IEnumerable<DataProperty> properties,
+            Type extensionDataType = null,
+            string typeNameProperty = null,
+            string typeNameValue = null)
         {
             return new DataContract(
                 underlyingType: underlyingType,
                 dataType: DataType.Object,
                 objectProperties: properties,
-                objectExtensionDataType: extensionDataType);
+                objectExtensionDataType: extensionDataType,
+                objectTypeNameProperty: typeNameProperty,
+                objectTypeNameValue: typeNameValue);
         }
 
         public static DataContract ForDynamic(Type underlyingType)
@@ -60,7 +67,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             Type dictionaryValueType = null,
             IEnumerable<string> dictionaryKeys = null,
             IEnumerable<DataProperty> objectProperties = null,
-            Type objectExtensionDataType = null)
+            Type objectExtensionDataType = null,
+            string objectTypeNameProperty = null,
+            string objectTypeNameValue = null)
         {
             UnderlyingType = underlyingType;
             DataType = dataType;
@@ -71,6 +80,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             DictionaryKeys = dictionaryKeys;
             ObjectProperties = objectProperties;
             ObjectExtensionDataType = objectExtensionDataType;
+            ObjectTypeNameProperty = objectTypeNameProperty;
+            ObjectTypeNameValue = objectTypeNameValue;
         }
 
         public Type UnderlyingType { get; }
@@ -82,6 +93,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public IEnumerable<string> DictionaryKeys { get; }
         public IEnumerable<DataProperty> ObjectProperties { get; }
         public Type ObjectExtensionDataType { get; }
+        public string ObjectTypeNameProperty { get; }
+        public string ObjectTypeNameValue { get; }
     }
 
     public enum DataType

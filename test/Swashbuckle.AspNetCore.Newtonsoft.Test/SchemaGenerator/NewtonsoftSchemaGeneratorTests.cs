@@ -14,6 +14,7 @@ using Newtonsoft.Json.Serialization;
 using Xunit;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.TestSupport;
+using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 
 namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 {
@@ -399,24 +400,19 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             );
             var schemaRepository = new SchemaRepository();
 
-            var schema = subject.GenerateSchema(typeof(PolymorphicType), schemaRepository);
+            var schema = subject.GenerateSchema(typeof(BaseType), schemaRepository);
 
             // The polymorphic schema
             Assert.NotNull(schema.OneOf);
-            Assert.Equal(3, schema.OneOf.Count);
+            Assert.Equal(2, schema.OneOf.Count);
             Assert.NotNull(schema.OneOf[0].Reference);
             Assert.NotNull(schema.OneOf[1].Reference);
-            Assert.NotNull(schema.OneOf[2].Reference);
-            // The base type schema
-            var baseSchema = schemaRepository.Schemas[schema.OneOf[0].Reference.Id];
-            Assert.Equal("object", baseSchema.Type);
-            Assert.Equal(new[] { "BaseProperty"}, baseSchema.Properties.Keys);
             // The first sub type schema
-            var subType1Schema = schemaRepository.Schemas[schema.OneOf[1].Reference.Id];
+            var subType1Schema = schemaRepository.Schemas[schema.OneOf[0].Reference.Id];
             Assert.Equal("object", subType1Schema.Type);
             Assert.Equal(new[] { "Property1", "BaseProperty" }, subType1Schema.Properties.Keys);
             // The second sub type schema
-            var subType2Schema = schemaRepository.Schemas[schema.OneOf[2].Reference.Id];
+            var subType2Schema = schemaRepository.Schemas[schema.OneOf[1].Reference.Id];
             Assert.Equal("object", subType2Schema.Type);
             Assert.Equal(new[] { "Property2", "BaseProperty" }, subType2Schema.Properties.Keys);
         }
@@ -429,7 +425,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             );
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = subject.GenerateSchema(typeof(PolymorphicType), schemaRepository);
+            var referenceSchema = subject.GenerateSchema(typeof(BaseType), schemaRepository);
 
             // The base type schema
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
@@ -463,34 +459,70 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             });
             var schemaRepository = new SchemaRepository();
 
-            var schema = subject.GenerateSchema(typeof(PolymorphicType), schemaRepository);
+            var schema = subject.GenerateSchema(typeof(BaseType), schemaRepository);
 
             // The polymorphic schema
             Assert.NotNull(schema.OneOf);
-            Assert.Equal(3, schema.OneOf.Count);
+            Assert.Equal(2, schema.OneOf.Count);
             Assert.NotNull(schema.OneOf[0].Reference);
             Assert.NotNull(schema.OneOf[1].Reference);
-            Assert.NotNull(schema.OneOf[2].Reference);
             // The base type schema
-            var baseSchema = schemaRepository.Schemas[schema.OneOf[0].Reference.Id];
+            var baseSchema = schemaRepository.Schemas["BaseType"];
             Assert.Equal("object", baseSchema.Type);
             Assert.Equal(new[] { "BaseProperty"}, baseSchema.Properties.Keys);
             // The first sub type schema
-            var subType1Schema = schemaRepository.Schemas[schema.OneOf[1].Reference.Id];
+            var subType1Schema = schemaRepository.Schemas[schema.OneOf[0].Reference.Id];
             Assert.Equal("object", subType1Schema.Type);
             Assert.NotNull(subType1Schema.AllOf);
             Assert.Equal(1, subType1Schema.AllOf.Count);
             Assert.NotNull(subType1Schema.AllOf[0].Reference);
-            Assert.Equal(schema.OneOf[0].Reference.Id, subType1Schema.AllOf[0].Reference.Id);
+            Assert.Equal("BaseType", subType1Schema.AllOf[0].Reference.Id);
             Assert.Equal(new[] { "Property1" }, subType1Schema.Properties.Keys);
             // The second sub type schema
-            var subType2Schema = schemaRepository.Schemas[schema.OneOf[2].Reference.Id];
+            var subType2Schema = schemaRepository.Schemas[schema.OneOf[1].Reference.Id];
             Assert.Equal("object", subType2Schema.Type);
             Assert.NotNull(subType2Schema.AllOf);
             Assert.Equal(1, subType2Schema.AllOf.Count);
             Assert.NotNull(subType2Schema.AllOf[0].Reference);
-            Assert.Equal(schema.OneOf[0].Reference.Id, subType2Schema.AllOf[0].Reference.Id);
+            Assert.Equal("BaseType", subType2Schema.AllOf[0].Reference.Id);
             Assert.Equal(new[] { "Property2" }, subType2Schema.Properties.Keys);
+        }
+
+        [Fact]
+        public void GenerateSchema_SupportsOption_SubTypesResolver()
+        {
+            var subject = Subject(configureGenerator: c =>
+            {
+                c.UseOneOfForPolymorphism = true;
+                c.SubTypesSelector = (type) => new[] { typeof(SubType1) };
+            });
+
+            var schema = subject.GenerateSchema(typeof(BaseType), new SchemaRepository());
+
+            // The polymorphic schema
+            Assert.NotNull(schema.OneOf);
+            Assert.Equal(1, schema.OneOf.Count);
+        }
+
+        [Fact]
+        public void GenerateSchema_SupportsOption_DiscriminatorNameSelector()
+        {
+            var subject = Subject(configureGenerator: c =>
+            {
+                c.UseOneOfForPolymorphism = true;
+                c.DiscriminatorNameSelector = (baseType) => "TypeName";
+                c.DiscriminatorValueSelector = (subType) => subType.Name;
+            });
+
+            var schemaRepository = new SchemaRepository();
+
+            var schema = subject.GenerateSchema(typeof(BaseType), schemaRepository);
+
+            Assert.NotNull(schema.Discriminator);
+            Assert.Equal("TypeName", schema.Discriminator.PropertyName);
+            Assert.Equal(
+                new Dictionary<string, string> { ["SubType1"] = "#/components/schemas/SubType1", ["SubType2"] = "#/components/schemas/SubType2" },
+                schema.Discriminator.Mapping);
         }
 
         [Fact]
@@ -596,6 +628,59 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("string", schema.Type);
             Assert.Equal(expectedEnumValues, schema.Enum.Cast<OpenApiString>().Select(i => i.Value));
+        }
+
+        [Theory]
+        [InlineData(TypeNameHandling.None, TypeNameAssemblyFormatHandling.Full, false,
+            null)]
+        [InlineData(TypeNameHandling.Arrays, TypeNameAssemblyFormatHandling.Full, false,
+            null)]
+        [InlineData(TypeNameHandling.Objects, TypeNameAssemblyFormatHandling.Full, true,
+            "Swashbuckle.AspNetCore.TestSupport.{0}, Swashbuckle.AspNetCore.TestSupport, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null")]
+        [InlineData(TypeNameHandling.All, TypeNameAssemblyFormatHandling.Full, true,
+            "Swashbuckle.AspNetCore.TestSupport.{0}, Swashbuckle.AspNetCore.TestSupport, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null")]
+        [InlineData(TypeNameHandling.Auto, TypeNameAssemblyFormatHandling.Simple, true,
+            "Swashbuckle.AspNetCore.TestSupport.{0}, Swashbuckle.AspNetCore.TestSupport")]
+        public void GenerateSchema_HonorsSerializeSetting_TypeNameHandling(
+            TypeNameHandling typeNameHandling,
+            TypeNameAssemblyFormatHandling typeNameAssemblyFormatHandling,
+            bool expectedDiscriminatorPresent,
+            string expectedDiscriminatorMappingKeyFormat)
+        {
+            var subject = Subject(
+                configureGenerator: c =>
+                {
+                    c.UseOneOfForPolymorphism = true;
+                },
+                configureSerializer: c =>
+                {
+                    c.TypeNameHandling = typeNameHandling;
+                    c.TypeNameAssemblyFormatHandling = typeNameAssemblyFormatHandling;
+                }
+            );
+            var schemaRepository = new SchemaRepository();
+
+            var schema = subject.GenerateSchema(typeof(BaseType), schemaRepository);
+
+            if (expectedDiscriminatorPresent)
+            {
+                Assert.NotNull(schema.Discriminator);
+                Assert.Equal("$type", schema.Discriminator.PropertyName);
+                var expectedDiscriminatorMapping = schema.OneOf
+                    .ToDictionary(
+                        possibleSchema => string.Format(expectedDiscriminatorMappingKeyFormat, possibleSchema.Reference.Id),
+                        possibleSchema => possibleSchema.Reference.ReferenceV3
+                    );
+                Assert.Equal(expectedDiscriminatorMapping, schema.Discriminator.Mapping);
+            }
+            else
+            {
+                Assert.Null(schema.Discriminator);
+                foreach (var referenceSchema in schema.OneOf)
+                {
+                    Assert.DoesNotContain("$type", schemaRepository.Schemas[referenceSchema.Reference.Id].Properties.Keys);
+                }
+            }
         }
 
         [Fact]

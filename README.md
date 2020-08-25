@@ -201,6 +201,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Override Schema for Specific Types](#override-schema-for-specific-types)
     * [Extend Generator with Operation, Schema & Document Filters](#extend-generator-with-operation-schema--document-filters)
     * [Add Security Definitions and Requirements](#add-security-definitions-and-requirements)
+    * [Inheritance and Polymorphism](#inheritance-and-polymorphism)
 
 * [Swashbuckle.AspNetCore.SwaggerUI](#swashbuckleaspnetcoreswaggerui)
     * [Change Releative Path to the UI](#change-relative-path-to-the-ui)
@@ -930,6 +931,126 @@ public class SecurityRequirementsOperationFilter : IOperationFilter
 
 _NOTE: If you're using the `SwaggerUI` middleware, you can enable interactive OAuth2.0 flows that are powered by the emitted security metadata. See [Enabling OAuth2.0 Flows](#enable-oauth20-flows) for more details._
 
+### Inheritance and Polymorphism ###
+
+Swagger / OpenAPI defines the `allOf` and `oneOf` keywords for describing [inheritance and polymorphism](https://swagger.io/docs/specification/data-models/inheritance-and-polymorphism/) relationships in schema definitions. For example, if you're using a base class for models that share common properties you can use the `allOf` keyword to describe the inheritance hierarchy. Or, if your serializer supports polymorphic serializion/deserialization, you can use the `oneOf` keyword to document all the "possible" schemas for requests/responses that vary by subtype.
+
+#### Enabling Inheritance ####
+
+By default, Swashbuckle flattens inheritance hierarchies. That is, for derived models, the inherited properties are combined and listed alongside the declared properties. This can cause a lot of duplication in the generated Swagger, particularly when there's multiple subtypes. It's also problematic if you're using a client generator (e.g. NSwag) and would like to maintain the inheritiance hierarchy in the generated client models. To work around this, you can apply the `UseAllOfForInheritance` setting, and this will leverage the `allOf` keyword to incorporate inherited properties by reference in the generated Swagger:
+
+```
+Circle: {
+  type: "object",
+  allOf: [
+    {
+      $ref: "#/components/schemas/Shape"
+    }
+  ],
+  properties: {
+    radius: {
+      type: "integer",
+      format: "int32",
+    }
+  },
+},
+Shape: {
+  type: "object",
+  properties: {
+    name: {
+      type: "string",
+      nullable: true,
+    }
+  },
+}
+```
+
+#### Enabling Polymorphism ####
+
+If your serializer supports polymorphic serialization/deserialization and you would like to list the possible subtypes for an action that accepts/returns abstract base types, you can apply the `UseOneOfForPolymorphism` setting. As a result, the generated request/response schemas will reference a collection of "possible" schemas instead of just the base class schema:
+
+```
+requestBody: {
+  content: {
+    application/json: {
+      schema: {
+      oneOf: [
+        {
+          $ref: "#/components/schemas/Rectangle"
+        },
+        {
+          $ref: "#/components/schemas/Circle"
+        },
+      ],
+    }
+  }
+}
+```
+
+#### Detecting Subtypes ####
+
+As inheritance and polymorphism relationships can often become quite complex, not just in your own models but also within the .NET class library, Swashbuckle is selective about which hierarchies it does and doesn't expose in the generated Swagger. By default, it will pick up any subtypes that are defined in the same assembly as a given base type. If you'd like to override this behavior, you can provide a custom selector function:
+
+```csharp
+services.AddSwaggerGen(c =>
+{
+    ...
+
+    c.UseAllOfForInheritance();
+
+    c.SelectSubTypesUsing(baseType =>
+    {
+        return typeof(Startup).Assembly.GetTypes().Where(type => type.IsSubclassOf(baseType));
+    })
+});
+```
+
+_NOTE: If you're using the [Swashbuckle Annotations library](#swashbuckleaspnetcoreannotations), it contains a custom selector that's based on the presence of `SwaggerSubType` attributes on base class definitions. This way, you can use simple attributes to explicitly list the inheritance and/or polymorphism relationships you want to expose. To enable this behavior, check out the [Annotations docs](#list-known-subtypes-for-inheritance-and-polymorphism)._
+
+#### Describing Discriminators ####
+
+In conjunction with the `oneOf` keyword, Swagger / OpenAPI also supports a `discriminator` field on polymorphic schema definitions. This keyword points to the property that identifies the specific type being represented by a given payload. In addition to the property name, the discriminator description MAY also include a `mapping` which maps discriminator values to specific schema definitions.
+
+For example, the Newtonsoft serializer supports polymorphic serialization/deserialization by emitting/accepting a "$type" property on JSON instances. The value of this property will be the [assembly qualified type name](https://docs.microsoft.com/en-us/dotnet/api/system.type.assemblyqualifiedname?view=netcore-3.1) of the type represented by a given JSON instance. So, to explicitly describe this behavior in Swagger, the corresponding request/respose schema could be defined as follows:
+
+```
+schema: {
+  oneOf: [
+    {
+      $ref: "#/components/schemas/Rectangle"
+    },
+    {
+      $ref: "#/components/schemas/Circle"
+    },
+  ],
+  discriminator: {
+    propertyName: "$type",
+    mapping: {
+      "MyApp.Models.Rectangle, MyApp": "#/components/schemas/Rectangle",
+      "MyApp.Models.Circle, MyApp": "#/components/schemas/Circle",
+    }
+  }
+}
+```
+
+If `UseOneOfForPolymorphism` is enabled, and your serializer supports (and has enabled) emitting/accepting a discriminator property, then Swashbuckle will automatically generate the corresponding `discriminator` metadata on polymorphic schema definitions.
+
+Alternatively, if you've customized your serializer to support polymorphic serialization/deserialization, you can provide some custom selector functions to determine the discriminator name and corresponding mapping:
+
+```csharp
+services.AddSwaggerGen(c =>
+{
+    ...
+
+    c.UseOneOfPolymorphism();
+
+    c.SelectDiscriminatorNameUsing((baseType) => "TypeName");
+    c.SelectDiscriminatorValueUsing((subType) => subType.Name);
+});
+```
+
+_NOTE: If you're using the [Swashbuckle Annotations library](#swashbuckleaspnetcoreannotations), it contains custom selector functions that are based on the presence of `SwaggerDiscriminator` and `SwaggerSubType` attributes on base class definitions. This way, you can use simple attributes to explicitly provide discriminator metadata. To enable this behavior, check out the [Annotations docs](#enrich-polymorphic-base-classes-with-discriminator-metadata)._
+
 ## Swashbuckle.AspNetCore.SwaggerUI ##
 
 ### Change Relative Path to the UI ###
@@ -1171,6 +1292,69 @@ public class ProductsController
 ```
 
 _NOTE: This will add the above description specifically to the tag named "Products". Therefore, you should avoid using this attribute if you're tagging Operations with something other than controller name - e.g. if you're customizing the tagging behavior with `TagActionsBy`._
+
+### List Known Subtypes for Inheritance and Polymorphism ###
+
+If you want to use Swashbuckle's [inheritance and/or polymorphism behavior](#inheritance-and-polymorphism), you can use annotations to _explicitly_ indicate the "known" subtypes for a given base type. This will override the default selector function, which selects _all_ subtypes in the same assembly as the base type, and therefore needs to be explicitly enabled when you enable Annotations:
+
+```csharp
+// Startup.cs
+services.AddSwaggerGen(c =>
+{
+    c.EnableAnnotations(enableAnnotationsForInheritance: true, enableAnnotationsForPolymorphism: true);
+});
+
+// Shape.cs
+[SwaggerSubType(typeof(Rectangle))]
+[SwaggerSubType(typeof(Circle))]
+public abstract class Shape
+{
+}
+```
+
+### Enrich Polymorphic Base Classes with Discriminator Metadata ###
+
+If you're using annotations to _explicitly_ indicate the "known" subtypes for a polymorphic base type, you can combine the `SwaggerDiscriminatorAttribute` with the `SwaggerSubTypeAttribute` to provide additional metadata about the "discriminator" property, which will then be incorporated into the generated schema definition:
+
+
+```csharp
+// Startup.cs
+services.AddSwaggerGen(c =>
+{
+    c.EnableAnnotations(enableAnnotationsForInheritance: true, enableAnnotationsForPolymorphism: true);
+});
+
+// Shape.cs
+[SwaggerDiscriminator("shapeType")]
+[SwaggerSubType(typeof(Rectangle), DiscriminatorValue = "rectangle")]
+[SwaggerSubType(typeof(Circle), DiscriminatorValue = "circle")]
+public abstract class Shape
+{
+    public ShapeType { get; set; }
+}
+```
+
+This indicates that the corresponding payload will have a "shapeType" property to discriminate between subtypes, and that property will have a value of "rectangle" if the payload represents a `Rectangle` type and a value of "circle" if it represents a `Circle` type. This detail will be described in the generated schema definition as follows:
+
+```
+schema: {
+  oneOf: [
+    {
+      $ref: "#/components/schemas/Rectangle"
+    },
+    {
+      $ref: "#/components/schemas/Circle"
+    },
+  ],
+  discriminator: {
+    propertyName: shapeType,
+    mapping: {
+      rectangle: "#/components/schemas/Rectangle",
+      circle: "#/components/schemas/Circle",
+    }
+  }
+}
+```
 
 ## Swashbuckle.AspNetCore.Cli ##
 

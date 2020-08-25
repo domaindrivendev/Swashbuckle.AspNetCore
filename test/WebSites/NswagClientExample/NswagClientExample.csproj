@@ -19,6 +19,10 @@
     <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.Annotations\Swashbuckle.AspNetCore.Annotations.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="NSwagClient\" />
+  </ItemGroup>
+
   <Target Name="SwaggerToFile" AfterTargets="AfterBuild">
     <Exec Command="dotnet $(SolutionDir)/src/Swashbuckle.AspNetCore.Cli/bin/$(Configuration)/$(TargetFramework)/dotnet-swagger.dll tofile --host http://example.com --output swagger.json $(OutputPath)$(AssemblyName).dll v1" />
   </Target>

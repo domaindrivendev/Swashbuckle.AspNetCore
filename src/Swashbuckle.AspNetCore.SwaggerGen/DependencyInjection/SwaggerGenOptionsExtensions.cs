@@ -223,23 +223,7 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Enables polymorphic schema generation. If enabled, request and response schemas will contain the oneOf
-        /// construct to describe sub types as a set of alternative schemas.
-        /// </summary>
-        /// <param name="swaggerGenOptions"></param>
-        /// <param name="discriminatorSelector"></param>
-        public static void UseOneOfForPolymorphism(
-            this SwaggerGenOptions swaggerGenOptions,
-            Func<Type, string> discriminatorSelector = null)
-        {
-            swaggerGenOptions.SchemaGeneratorOptions.UseOneOfForPolymorphism = true;
-
-            if (discriminatorSelector != null)
-                swaggerGenOptions.SchemaGeneratorOptions.DiscriminatorSelector = discriminatorSelector;
-        }
-
-        /// <summary>
-        /// Enables composite schema generation. If enabled, sub-class schemas will contain the allOf construct to
+        /// Enables composite schema generation. If enabled, subtype schemas will contain the allOf construct to
         /// incorporate properties from the base class instead of defining those properties inline.
         /// </summary>
         /// <param name="swaggerGenOptions"></param>
@@ -249,18 +233,58 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// To support polymorphism and inheritance behavior, Swashbuckle needs to detect the "known" sub types for a given base type.
-        /// That is, the sub types explicitly exposed by your API. By default, this will be any sub types in the same assembly as the base type.
-        /// To override this, you can provide a custom resolver function. This setting is only applicable when used in conjunction with
-        /// the UseOneOfForPolymorphism or UseAllOfForInheritance settings.
+        /// Enables polymorphic schema generation. If enabled, request and response schemas will contain the oneOf
+        /// construct to describe sub types as a set of alternative schemas.
         /// </summary>
         /// <param name="swaggerGenOptions"></param>
-        /// <param name="resolver"></param>
-        public static void DetectSubTypesUsing(
-            this SwaggerGenOptions swaggerGenOptions,
-            Func<Type, IEnumerable<Type>> resolver)
+        public static void UseOneOfForPolymorphism(this SwaggerGenOptions swaggerGenOptions)
         {
-            swaggerGenOptions.SchemaGeneratorOptions.SubTypesResolver = resolver;
+            swaggerGenOptions.SchemaGeneratorOptions.UseOneOfForPolymorphism = true;
+        }
+
+        /// <summary>
+        /// To support polymorphism and inheritance behavior, Swashbuckle needs to detect the "known" subtypes for a given base type.
+        /// That is, the subtypes exposed by your API. By default, this will be any subtypes in the same assembly as the base type.
+        /// To override this, you can provide a custom selector function. This setting is only applicable when used in conjunction with
+        /// UseOneOfForPolymorphism and/or UseAllOfForInheritance.
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="customSelector"></param>
+        public static void SelectSubTypesUsing(
+            this SwaggerGenOptions swaggerGenOptions,
+            Func<Type, IEnumerable<Type>> customSelector)
+        {
+            swaggerGenOptions.SchemaGeneratorOptions.SubTypesSelector = customSelector;
+        }
+
+        /// <summary>
+        /// If the configured serializer supports polymorphic serialization/deserialization by emitting/accepting a special "discriminator" property,
+        /// and UseOneOfForPolymorphism is enabled, then Swashbuckle will include a description for that property based on the serializer's behavior.
+        /// However, if you've customized your serializer to support polymorphism, you can provide a custom strategy to tell Swashbuckle which property,
+        /// for a given type, will be used as a discriminator. This setting is only applicable when used in conjunction with UseOneOfForPolymorphism.
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="customSelector"></param>
+        public static void SelectDiscriminatorNameUsing(
+            this SwaggerGenOptions swaggerGenOptions,
+            Func<Type, string> customSelector)
+        {
+            swaggerGenOptions.SchemaGeneratorOptions.DiscriminatorNameSelector = customSelector;
+        }
+
+        /// <summary>
+        /// If the configured serializer supports polymorphic serialization/deserialization by emitting/accepting a special "discriminator" property,
+        /// and UseOneOfForPolymorphism is enabled, then Swashbuckle will include a mapping of possible discriminator values to schema definitions.
+        /// However, if you've customized your serializer to support polymorphism, you can provide a custom mapping strategy to tell Swashbuckle what
+        /// the discriminator value should be for a given sub type. This setting is only applicable when used in conjunction with UseOneOfForPolymorphism.
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="customSelector"></param>
+        public static void SelectDiscriminatorValueUsing(
+            this SwaggerGenOptions swaggerGenOptions,
+            Func<Type, string> customSelector)
+        {
+            swaggerGenOptions.SchemaGeneratorOptions.DiscriminatorValueSelector = customSelector;
         }
 
         /// <summary>
@@ -414,18 +438,24 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="swaggerGenOptions"></param>
         /// <param name="subTypesResolver"></param>
         /// <param name="discriminatorSelector"></param>
-        [Obsolete("You can use \"UseOneOfForPolymorphism\", \"UseAllOfForInheritance\" and \"DetectSubTypesUsing\" to configure equivalant behavior")]
+        [Obsolete("You can use \"UseOneOfForPolymorphism\", \"UseAllOfForInheritance\" and \"DetectSubTypesUsing\" to configure equivalent behavior")]
         public static void GeneratePolymorphicSchemas(
             this SwaggerGenOptions swaggerGenOptions,
             Func<Type, IEnumerable<Type>> subTypesResolver = null,
             Func<Type, string> discriminatorSelector = null)
         {
-            swaggerGenOptions.UseOneOfForPolymorphism(discriminatorSelector);
+            swaggerGenOptions.UseOneOfForPolymorphism();
+            swaggerGenOptions.UseAllOfForInheritance();
 
             if (subTypesResolver != null)
-                swaggerGenOptions.DetectSubTypesUsing(subTypesResolver);
+            {
+                swaggerGenOptions.SelectSubTypesUsing(subTypesResolver);
+            }
 
-            swaggerGenOptions.UseAllOfForInheritance();
+            if (discriminatorSelector != null)
+            {
+                swaggerGenOptions.SelectDiscriminatorNameUsing(discriminatorSelector);
+            }
         }
     }
 }

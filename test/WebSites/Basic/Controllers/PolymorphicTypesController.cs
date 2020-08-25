@@ -12,12 +12,6 @@ namespace Basic.Controllers
         {
             throw new NotImplementedException();
         }
-
-        [HttpGet]
-        public IEnumerable<Shape> GetShapes()
-        {
-            throw new NotImplementedException();
-        }
     }
 
     public abstract class Shape

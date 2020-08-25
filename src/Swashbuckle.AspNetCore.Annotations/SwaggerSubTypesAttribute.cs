@@ -3,7 +3,8 @@ using System.Collections.Generic;
 
 namespace Swashbuckle.AspNetCore.Annotations
 {
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface, AllowMultiple = true)]
+    [Obsolete("Use multiple SwaggerSubType attributes instead")]
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface, AllowMultiple = false)]
     public class SwaggerSubTypesAttribute : Attribute
     {
         public SwaggerSubTypesAttribute(params Type[] subTypes)

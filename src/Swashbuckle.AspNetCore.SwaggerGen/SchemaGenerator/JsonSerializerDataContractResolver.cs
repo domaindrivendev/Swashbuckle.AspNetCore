@@ -8,7 +8,7 @@ using System.Text.Json.Serialization;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public class JsonSerializerDataContractResolver : IDataContractResolver
+    public class JsonSerializerDataContractResolver : ISerializerDataContractResolver
     {
         private readonly JsonSerializerOptions _serializerOptions;
 

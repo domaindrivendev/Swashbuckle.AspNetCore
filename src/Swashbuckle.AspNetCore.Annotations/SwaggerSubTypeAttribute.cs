@@ -2,7 +2,6 @@
 
 namespace Swashbuckle.AspNetCore.Annotations
 {
-    [Obsolete("Use SwaggerSubTypesAttribute instead")]
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface, AllowMultiple = true)]
     public class SwaggerSubTypeAttribute : Attribute
     {
@@ -11,6 +10,8 @@ namespace Swashbuckle.AspNetCore.Annotations
             SubType = subType;
         }
 
-        public Type SubType { get; }
+        public Type SubType { get; set; }
+
+        public string DiscriminatorValue { get; set; }
     }
 }

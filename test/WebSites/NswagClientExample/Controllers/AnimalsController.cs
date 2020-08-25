@@ -17,10 +17,12 @@ namespace NSwagClientExample.Controllers
         }
     }
 
-    [SwaggerSubTypes(typeof(Cat), typeof(Dog), Discriminator = "type")]
-    public abstract class Animal
+    [SwaggerDiscriminator("animalType")]
+    [SwaggerSubType(typeof(Cat), DiscriminatorValue = "Cat")]
+    [SwaggerSubType(typeof(Dog), DiscriminatorValue = "Dog")]
+    public class Animal
     {
-        public AnimalType Type { get; set; }
+        public AnimalType AnimalType { get; set; }
     }
 
     [JsonConverter(typeof(JsonStringEnumConverter))]

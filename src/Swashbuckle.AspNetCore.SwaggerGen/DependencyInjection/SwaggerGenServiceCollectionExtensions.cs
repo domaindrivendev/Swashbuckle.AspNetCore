@@ -29,7 +29,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddTransient(s => s.GetRequiredService<IOptions<SwaggerGeneratorOptions>>().Value);
             services.TryAddTransient<ISchemaGenerator, SchemaGenerator>();
             services.TryAddTransient(s => s.GetRequiredService<IOptions<SchemaGeneratorOptions>>().Value);
-            services.TryAddTransient<IDataContractResolver>(s =>
+            services.TryAddTransient<ISerializerDataContractResolver>(s =>
             {
                 var serializerOptions = s.GetJsonSerializerOptions() ?? new JsonSerializerOptions();
                 return new JsonSerializerDataContractResolver(serializerOptions);
