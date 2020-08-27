@@ -3,9 +3,10 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Models;
 using Xunit;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.TestSupport;
@@ -846,7 +847,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             return new SwaggerGenerator(
                 options ?? DefaultOptions,
                 new FakeApiDescriptionGroupCollectionProvider(apiDescriptions),
-                new SchemaGenerator(new SchemaGeneratorOptions(), new JsonSerializerDataContractResolver(new JsonSerializerOptions()))
+                new SchemaGenerator(new SchemaGeneratorOptions(), Options.Create(new SwaggerOptions()), new JsonSerializerDataContractResolver(new JsonSerializerOptions()))
             );
         }
 

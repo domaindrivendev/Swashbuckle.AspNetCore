@@ -28,7 +28,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public bool UseOneOfForPolymorphism { get; set; }
 
-        public Func<Type, IEnumerable<Type>> SubTypesResolver { get; set; }
+        public Func<Type, IDictionary<Type, string>> SubTypesResolver { get; set; }
 
         public Func<Type, string> DiscriminatorSelector { get; set; }
 
@@ -54,12 +54,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return prefix + modelType.Name.Split('`').First();
         }
 
-        private IEnumerable<Type> DefaultSubTypesResolver(Type baseType)
+        private IDictionary<Type, string> DefaultSubTypesResolver(Type baseType)
         {
             if (baseType == typeof(object))
-                return Enumerable.Empty<Type>();
+                return new Dictionary<Type, string>();
 
-            return baseType.Assembly.GetTypes().Where(type => type.IsSubclassOf(baseType));
+            return baseType.Assembly.GetTypes()
+                .Where(type => type.IsSubclassOf(baseType))
+                .ToDictionary<Type, Type, string>(type => type, type => null);
         }
 
         private string DefaultDiscriminatorSelector(Type baseType)

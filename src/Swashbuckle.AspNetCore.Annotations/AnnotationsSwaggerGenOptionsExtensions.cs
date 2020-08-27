@@ -29,17 +29,26 @@ namespace Microsoft.Extensions.DependencyInjection
             }
         }
 
-        private static IEnumerable<Type> AnnotationsSubTypeResolver(Type type)
+        private static IDictionary<Type, string> AnnotationsSubTypeResolver(Type type)
         {
+            var knownSubTypes = type.GetCustomAttributes(false)
+                .OfType<SwaggerKnownSubTypeAttribute>()
+                .ToDictionary(st => st.SubType, st => st.DiscriminatorValue);
+
             var subTypes = type.GetCustomAttributes(false)
                 .OfType<SwaggerSubTypesAttribute>()
-                .FirstOrDefault()?.SubTypes ?? Enumerable.Empty<Type>();
+                .FirstOrDefault()?.SubTypes
+                ?.ToDictionary(st => st, st => null as string)
+                ?? new Dictionary<Type, string>();
 
             var subTypesFromObsoleteAttribute = type.GetCustomAttributes(false)
                 .OfType<SwaggerSubTypeAttribute>()
-                .Select(attr => attr.SubType);
+                .ToDictionary(st => st.SubType, st => null as string);
 
-            return subTypes.Union(subTypesFromObsoleteAttribute);
+            return knownSubTypes
+                .Union(subTypes)
+                .Union(subTypesFromObsoleteAttribute)
+                .ToDictionary(x => x.Key, x => x.Value);
         }
 
         private static string AnnotationsDiscriminatorSelector(Type type)

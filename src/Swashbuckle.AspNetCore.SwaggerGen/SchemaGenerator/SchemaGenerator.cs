@@ -6,18 +6,25 @@ using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class SchemaGenerator : ISchemaGenerator
     {
         private readonly SchemaGeneratorOptions _generatorOptions;
+        private readonly SwaggerOptions _options;
         private readonly IDataContractResolver _dataContractResolver;
 
-        public SchemaGenerator(SchemaGeneratorOptions generatorOptions, IDataContractResolver dataContractResolver)
+        public SchemaGenerator(
+            SchemaGeneratorOptions generatorOptions,
+            IOptions<SwaggerOptions> options,
+            IDataContractResolver dataContractResolver)
         {
             _generatorOptions = generatorOptions;
+            _options = options.Value;
             _dataContractResolver = dataContractResolver;
         }
 
@@ -195,14 +202,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private bool IsBaseTypeWithKnownSubTypes(Type type, out IEnumerable<Type> subTypes)
         {
-            subTypes = _generatorOptions.SubTypesResolver(type);
+            subTypes = _generatorOptions.SubTypesResolver(type).Keys;
 
             return subTypes.Any();
         }
 
         private bool IsKnownSubType(Type type, out Type baseType)
         {
-            if ((type.BaseType != null) && _generatorOptions.SubTypesResolver(type.BaseType).Contains(type))
+            if ((type.BaseType != null) && _generatorOptions.SubTypesResolver(type.BaseType).ContainsKey(type))
             {
                 baseType = type.BaseType;
                 return true;
@@ -224,7 +231,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     .ToList(),
 
                 Discriminator = TryGetDiscriminatorFor(dataContract.UnderlyingType, out string discriminator)
-                    ? new OpenApiDiscriminator { PropertyName = discriminator }
+                    ? new OpenApiDiscriminator
+                    {
+                        PropertyName = discriminator,
+                        Mapping = GetDiscriminatorMapping(dataContract.UnderlyingType, schemaRepository)
+                    }
                     : null
             };
         }
@@ -233,6 +244,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             discriminator = _generatorOptions.DiscriminatorSelector(type);
             return (discriminator != null);
+        }
+
+        private Dictionary<string, string> GetDiscriminatorMapping(Type type, SchemaRepository schemaRepository)
+        {
+            var mapping = _generatorOptions.SubTypesResolver(type);
+            return mapping?.Select(st => st).Where(st => st.Value != null).ToDictionary(
+                st => st.Value,
+                st =>
+                {
+                    var referenceSchema = GenerateReferencedSchema(st.Key, schemaRepository, () => new OpenApiSchema());
+                    return _options.SerializeAsV2
+                        ? referenceSchema.Reference.ReferenceV2
+                        : referenceSchema.Reference.ReferenceV3;
+                });
         }
 
         private OpenApiSchema GenerateObjectSchema(DataContract dataContract, SchemaRepository schemaRepository)

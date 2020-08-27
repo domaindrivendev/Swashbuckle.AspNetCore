@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Xml.XPath;
 using Microsoft.OpenApi.Models;
@@ -258,9 +259,27 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="resolver"></param>
         public static void DetectSubTypesUsing(
             this SwaggerGenOptions swaggerGenOptions,
-            Func<Type, IEnumerable<Type>> resolver)
+            Func<Type, IDictionary<Type, string>> resolver)
         {
             swaggerGenOptions.SchemaGeneratorOptions.SubTypesResolver = resolver;
+        }
+
+        /// <summary>
+        /// To support polymorphism and inheritance behavior, Swashbuckle needs to detect the "known" sub types for a given base type.
+        /// That is, the sub types explicitly exposed by your API. By default, this will be any sub types in the same assembly as the base type.
+        /// To override this, you can provide a custom resolver function. This setting is only applicable when used in conjunction with
+        /// the UseOneOfForPolymorphism or UseAllOfForInheritance settings.
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="resolver"></param>
+        [Obsolete("Use new overload using IDictionary instead.")]
+        public static void DetectSubTypesUsing(
+            this SwaggerGenOptions swaggerGenOptions,
+            Func<Type, IEnumerable<Type>> resolver)
+        {
+            DetectSubTypesUsing(
+                swaggerGenOptions,
+                (Type type) => resolver(type).ToDictionary<Type, Type, string>(st => st, st => null));
         }
 
         /// <summary>

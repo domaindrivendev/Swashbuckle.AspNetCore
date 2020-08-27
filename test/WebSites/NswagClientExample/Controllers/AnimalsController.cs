@@ -17,7 +17,9 @@ namespace NSwagClientExample.Controllers
         }
     }
 
-    [SwaggerSubTypes(typeof(Cat), typeof(Dog), Discriminator = "type")]
+    [SwaggerSubTypes(Discriminator = "type")]
+    [SwaggerKnownSubType(typeof(Cat), "IsCat")]
+    [SwaggerKnownSubType(typeof(Dog), "IsDog")]
     public abstract class Animal
     {
         public AnimalType Type { get; set; }
@@ -26,8 +28,8 @@ namespace NSwagClientExample.Controllers
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum AnimalType
     {
-        Cat,
-        Dog
+        IsCat,
+        IsDog
     }
 
     public class Cat : Animal

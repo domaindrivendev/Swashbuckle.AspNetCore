@@ -5,6 +5,7 @@ using System.Dynamic;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
@@ -12,6 +13,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using Xunit;
+using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.TestSupport;
 
@@ -725,7 +727,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             var serializerSettings = new JsonSerializerSettings();
             configureSerializer?.Invoke(serializerSettings);
 
-            return new SchemaGenerator(generatorOptions, new NewtonsoftDataContractResolver(generatorOptions, serializerSettings));
+            return new SchemaGenerator(generatorOptions, Options.Create(new SwaggerOptions()), new NewtonsoftDataContractResolver(generatorOptions, serializerSettings));
         }
     }
 }

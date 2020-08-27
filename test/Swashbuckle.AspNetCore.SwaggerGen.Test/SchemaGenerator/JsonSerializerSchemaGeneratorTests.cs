@@ -8,9 +8,11 @@ using System.Text.Json.Serialization;
 using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Xunit;
+using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.TestSupport;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
@@ -429,7 +431,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var subject = Subject(configureGenerator: c =>
             {
                 c.UseOneOfForPolymorphism = true;
-                c.SubTypesResolver = (type) => new[] { typeof(SubType1) };
+                c.SubTypesResolver = (type) => new Dictionary<Type, string> { [typeof(SubType1)] = null };
             });
 
             var schema = subject.GenerateSchema(typeof(PolymorphicType), new SchemaRepository());
@@ -449,7 +451,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             });
             var schemaRepository = new SchemaRepository();
 
-            var schema = subject.GenerateSchema(typeof(PolymorphicType), schemaRepository); 
+            var schema = subject.GenerateSchema(typeof(PolymorphicType), schemaRepository);
 
             // The polymorphic schema
             Assert.NotNull(schema.OneOf);
@@ -464,6 +466,43 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             // The second sub type schema
             var subType2Schema = schemaRepository.Schemas[schema.OneOf[2].Reference.Id];
             Assert.Contains("$type", subType2Schema.Properties.Keys);
+        }
+
+        [Fact]
+        public void GenerateSchema_SupportsOption_SubTypesResolver_DiscriminatorSelector()
+        {
+            var subject = Subject(configureGenerator: c =>
+            {
+                c.UseOneOfForPolymorphism = true;
+                c.UseAllOfForInheritance = true;
+                c.SubTypesResolver = (type) => new Dictionary<Type, string>
+                {
+                    [typeof(SubType1)] = "Sub1",
+                    [typeof(SubType2)] = "Sub2"
+                };
+                c.DiscriminatorSelector = (type) => "$type";
+            });
+
+            var schema = subject.GenerateSchema(typeof(PolymorphicType), new SchemaRepository());
+
+            // The polymorphic schema
+            Assert.NotNull(schema.OneOf);
+            Assert.Equal(3, schema.OneOf.Count);
+            Assert.NotNull(schema.Discriminator);
+            Assert.Equal("$type", schema.Discriminator.PropertyName);
+            Assert.NotNull(schema.Discriminator.Mapping);
+            Assert.Collection(
+                schema.Discriminator.Mapping,
+                (map) =>
+                {
+                    Assert.Equal(map.Key, "Sub1");
+                    Assert.Equal(map.Value, "#/components/schemas/SubType1");
+                },
+                (map) =>
+                {
+                    Assert.Equal(map.Key, "Sub2");
+                    Assert.Equal(map.Value, "#/components/schemas/SubType2");
+                });
         }
 
         [Fact]
@@ -724,7 +763,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var serializerOptions = new JsonSerializerOptions();
             configureSerializer?.Invoke(serializerOptions);
 
-            return new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions));
+            return new SchemaGenerator(generatorOptions, Options.Create(new SwaggerOptions()), new JsonSerializerDataContractResolver(serializerOptions));
         }
     }
 }

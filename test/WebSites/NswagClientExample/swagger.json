@@ -31,7 +31,11 @@
                   }
                 ],
                 "discriminator": {
-                  "propertyName": "type"
+                  "propertyName": "type",
+                  "mapping": {
+                    "IsCat": "#/components/schemas/Cat",
+                    "IsDog": "#/components/schemas/Dog"
+                  }
                 }
               }
             },
@@ -49,7 +53,11 @@
                   }
                 ],
                 "discriminator": {
-                  "propertyName": "type"
+                  "propertyName": "type",
+                  "mapping": {
+                    "IsCat": "#/components/schemas/Cat",
+                    "IsDog": "#/components/schemas/Dog"
+                  }
                 }
               }
             },
@@ -67,7 +75,11 @@
                   }
                 ],
                 "discriminator": {
-                  "propertyName": "type"
+                  "propertyName": "type",
+                  "mapping": {
+                    "IsCat": "#/components/schemas/Cat",
+                    "IsDog": "#/components/schemas/Dog"
+                  }
                 }
               }
             }
@@ -116,8 +128,8 @@
       },
       "AnimalType": {
         "enum": [
-          "Cat",
-          "Dog"
+          "IsCat",
+          "IsDog"
         ],
         "type": "string"
       },
