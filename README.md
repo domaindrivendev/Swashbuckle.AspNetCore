@@ -838,7 +838,7 @@ public class TagDescriptionsDocumentFilter : IDocumentFilter
 }
 ```
 
-_NOTE: If you're using the `SwaggerUI` middleware, the `TagDescriptionsDocumentFilter` demonstratd above could be used to display additional descriptions beside each group of Operations._
+_NOTE: If you're using the `SwaggerUI` middleware, the `TagDescriptionsDocumentFilter` demonstrated above could be used to display additional descriptions beside each group of Operations._
 
 ### Add Security Definitions and Requirements ###
 
