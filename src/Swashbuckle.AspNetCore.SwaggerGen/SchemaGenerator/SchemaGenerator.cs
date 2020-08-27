@@ -13,12 +13,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     public class SchemaGenerator : ISchemaGenerator
     {
         private readonly SchemaGeneratorOptions _generatorOptions;
-        private readonly IDataContractResolver _dataContractResolver;
+        private readonly ISerializerDataContractResolver _serializerDataContractResolver;
 
-        public SchemaGenerator(SchemaGeneratorOptions generatorOptions, IDataContractResolver dataContractResolver)
+        public SchemaGenerator(SchemaGeneratorOptions generatorOptions, ISerializerDataContractResolver serializerDataContractResolver)
         {
             _generatorOptions = generatorOptions;
-            _dataContractResolver = dataContractResolver;
+            _serializerDataContractResolver = serializerDataContractResolver;
         }
 
         public OpenApiSchema GenerateSchema(
@@ -84,7 +84,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             Func<OpenApiSchema> definitionFactory;
             bool returnAsReference;
 
-            var dataContract = _dataContractResolver.GetDataContractForType(type);
+            var dataContract = _serializerDataContractResolver.GetDataContractForType(type);
 
             switch (dataContract.DataType)
             {
@@ -195,14 +195,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private bool IsBaseTypeWithKnownSubTypes(Type type, out IEnumerable<Type> subTypes)
         {
-            subTypes = _generatorOptions.SubTypesResolver(type);
+            subTypes = _generatorOptions.SubTypesSelector(type);
 
             return subTypes.Any();
         }
 
         private bool IsKnownSubType(Type type, out Type baseType)
         {
-            if ((type.BaseType != null) && _generatorOptions.SubTypesResolver(type.BaseType).Contains(type))
+            if ((type.BaseType != null) && (type.BaseType != typeof(object) && _generatorOptions.SubTypesSelector(type.BaseType).Contains(type)))
             {
                 baseType = type.BaseType;
                 return true;
@@ -214,25 +214,55 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private OpenApiSchema GeneratePolymorphicSchema(DataContract dataContract, SchemaRepository schemaRepository, IEnumerable<Type> subTypes)
         {
-            var subTypeContracts = subTypes
-                .Select(subType => _dataContractResolver.GetDataContractForType(subType));
-
-            return new OpenApiSchema
+            var schema = new OpenApiSchema
             {
-                OneOf = new[] { dataContract }.Union(subTypeContracts)
-                    .Select(dc => GenerateReferencedSchema(dc.UnderlyingType, schemaRepository, () => GenerateObjectSchema(dc, schemaRepository)))
-                    .ToList(),
-
-                Discriminator = TryGetDiscriminatorFor(dataContract.UnderlyingType, out string discriminator)
-                    ? new OpenApiDiscriminator { PropertyName = discriminator }
+                OneOf = new List<OpenApiSchema>(),
+                Discriminator = TryGetDiscriminatorName(dataContract, out string discriminatorName)
+                    ? new OpenApiDiscriminator { PropertyName = discriminatorName }
                     : null
             };
+
+            var subTypesDataContracts = subTypes
+                .Select(subType => _serializerDataContractResolver.GetDataContractForType(subType));
+
+            var allowedDataContracts = dataContract.UnderlyingType.IsAbstract
+                ? subTypesDataContracts
+                : new[] { dataContract }.Union(subTypesDataContracts);
+
+            foreach (var allowedDataContract in allowedDataContracts)
+            {
+                var allowedSchema = GenerateReferencedSchema(
+                    allowedDataContract.UnderlyingType,
+                    schemaRepository,
+                    () => GenerateObjectSchema(allowedDataContract, schemaRepository));
+
+                schema.OneOf.Add(allowedSchema);
+
+                if (schema.Discriminator != null && TryGetDiscriminatorValue(allowedDataContract, out string discriminatorValue))
+                {
+                    schema.Discriminator.Mapping.Add(discriminatorValue, allowedSchema.Reference.ReferenceV3);
+                }
+            }
+
+            return schema;
         }
 
-        private bool TryGetDiscriminatorFor(Type type, out string discriminator)
+        private bool TryGetDiscriminatorName(DataContract dataContract, out string discriminatorName)
         {
-            discriminator = _generatorOptions.DiscriminatorSelector(type);
-            return (discriminator != null);
+            discriminatorName = (_generatorOptions.DiscriminatorNameSelector != null)
+                ? _generatorOptions.DiscriminatorNameSelector(dataContract.UnderlyingType)
+                : dataContract.ObjectTypeNameProperty;
+
+            return (discriminatorName != null);
+        }
+
+        private bool TryGetDiscriminatorValue(DataContract dataContract, out string discriminatorValue)
+        {
+            discriminatorValue = (_generatorOptions.DiscriminatorValueSelector != null)
+                ? _generatorOptions.DiscriminatorValueSelector(dataContract.UnderlyingType)
+                : dataContract.ObjectTypeNameValue;
+
+            return (discriminatorValue != null);
         }
 
         private OpenApiSchema GenerateObjectSchema(DataContract dataContract, SchemaRepository schemaRepository)
@@ -251,42 +281,46 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (_generatorOptions.UseOneOfForPolymorphism || _generatorOptions.UseAllOfForInheritance)
             {
-                var isBaseType = IsBaseTypeWithKnownSubTypes(dataContract.UnderlyingType, out IEnumerable<Type> subTypes);
-                var isSubType = IsKnownSubType(dataContract.UnderlyingType, out Type baseType);
-
-                if (isBaseType && _generatorOptions.UseOneOfForPolymorphism
-                    && TryGetDiscriminatorFor(dataContract.UnderlyingType, out string discriminator))
+                if (IsBaseTypeWithKnownSubTypes(dataContract.UnderlyingType, out IEnumerable<Type> subTypes))
                 {
-                    schema.Properties.Add(discriminator, new OpenApiSchema { Type = "string" });
-                }
-
-                if (isSubType && _generatorOptions.UseOneOfForPolymorphism
-                    && !_generatorOptions.UseAllOfForInheritance && TryGetDiscriminatorFor(baseType, out discriminator))
-                {
-                    schema.Properties.Add(discriminator, new OpenApiSchema { Type = "string" });
-                }
-
-                if (isBaseType && _generatorOptions.UseAllOfForInheritance)
-                {
-                    // Ensure a schema for all known sub types is generated and added to the repository
-                    foreach (var subType in subTypes)
+                    if (_generatorOptions.UseAllOfForInheritance)
                     {
-                        var subTypeContract = _dataContractResolver.GetDataContractForType(subType);
-                        GenerateReferencedSchema(subType, schemaRepository, () => GenerateObjectSchema(subTypeContract, schemaRepository));
+                        // Ensure a schema for all known sub types is generated and added to the repository
+                        foreach (var subType in subTypes)
+                        {
+                            var subTypeContract = _serializerDataContractResolver.GetDataContractForType(subType);
+                            GenerateReferencedSchema(subType, schemaRepository, () => GenerateObjectSchema(subTypeContract, schemaRepository));
+                        }
+                    }
+
+                    if (_generatorOptions.UseOneOfForPolymorphism
+                        && TryGetDiscriminatorName(dataContract, out string discriminatorName))
+                    {
+                        schema.Properties.Add(discriminatorName, new OpenApiSchema { Type = "string" });
                     }
                 }
 
-                if (isSubType && _generatorOptions.UseAllOfForInheritance)
+                if (IsKnownSubType(dataContract.UnderlyingType, out Type baseType))
                 {
-                    var baseTypeContract = _dataContractResolver.GetDataContractForType(baseType);
-                    schema.AllOf = new List<OpenApiSchema>
-                    {
-                        GenerateReferencedSchema(baseType, schemaRepository, () => GenerateObjectSchema(baseTypeContract, schemaRepository))
-                    };
+                    var baseTypeContract = _serializerDataContractResolver.GetDataContractForType(baseType);
 
-                    // Reduce the set of properties to be defined in this schema to declared properties only
-                    applicableDataProperties = applicableDataProperties
-                        .Where(dataProperty => dataProperty.MemberInfo?.DeclaringType == dataContract.UnderlyingType);
+                    if (_generatorOptions.UseAllOfForInheritance)
+                    {
+                        schema.AllOf = new List<OpenApiSchema>
+                        {
+                            GenerateReferencedSchema(baseType, schemaRepository, () => GenerateObjectSchema(baseTypeContract, schemaRepository))
+                        };
+
+                        // Reduce the set of properties to be defined in this schema to declared properties only
+                        applicableDataProperties = applicableDataProperties
+                            .Where(dataProperty => dataProperty.MemberInfo?.DeclaringType == dataContract.UnderlyingType);
+                    }
+
+                    if (_generatorOptions.UseOneOfForPolymorphism && !_generatorOptions.UseAllOfForInheritance
+                        && TryGetDiscriminatorName(baseTypeContract, out string discriminatorName))
+                    {
+                        schema.Properties.Add(discriminatorName, new OpenApiSchema { Type = "string" });
+                    }
                 }
             }
 

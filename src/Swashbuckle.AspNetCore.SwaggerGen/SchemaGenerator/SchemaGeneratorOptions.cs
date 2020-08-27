@@ -11,8 +11,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             CustomTypeMappings = new Dictionary<Type, Func<OpenApiSchema>>();
             SchemaIdSelector = DefaultSchemaIdSelector;
-            SubTypesResolver = DefaultSubTypesResolver;
-            DiscriminatorSelector = DefaultDiscriminatorSelector;
+            SubTypesSelector = DefaultSubTypesSelector;
             SchemaFilters = new List<ISchemaFilter>();
         }
 
@@ -26,14 +25,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public bool UseAllOfToExtendReferenceSchemas { get; set; }
 
-        public bool UseOneOfForPolymorphism { get; set; }
-
-        public Func<Type, IEnumerable<Type>> SubTypesResolver { get; set; }
-
-        public Func<Type, string> DiscriminatorSelector { get; set; }
-
         public bool UseAllOfForInheritance { get; set; }
 
+        public bool UseOneOfForPolymorphism { get; set; }
+
+        public Func<Type, IEnumerable<Type>> SubTypesSelector { get; set; }
+
+        public Func<Type, string> DiscriminatorNameSelector { get; set; }
+
+        public Func<Type, string> DiscriminatorValueSelector { get; set; }
 
         public IList<ISchemaFilter> SchemaFilters { get; set; }
 
@@ -54,17 +54,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return prefix + modelType.Name.Split('`').First();
         }
 
-        private IEnumerable<Type> DefaultSubTypesResolver(Type baseType)
+        private IEnumerable<Type> DefaultSubTypesSelector(Type baseType)
         {
-            if (baseType == typeof(object))
-                return Enumerable.Empty<Type>();
-
             return baseType.Assembly.GetTypes().Where(type => type.IsSubclassOf(baseType));
-        }
-
-        private string DefaultDiscriminatorSelector(Type baseType)
-        {
-            return null;
         }
     }
 }

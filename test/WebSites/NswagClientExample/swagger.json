@@ -31,7 +31,11 @@
                   }
                 ],
                 "discriminator": {
-                  "propertyName": "type"
+                  "propertyName": "animalType",
+                  "mapping": {
+                    "Cat": "#/components/schemas/Cat",
+                    "Dog": "#/components/schemas/Dog"
+                  }
                 }
               }
             },
@@ -49,7 +53,11 @@
                   }
                 ],
                 "discriminator": {
-                  "propertyName": "type"
+                  "propertyName": "animalType",
+                  "mapping": {
+                    "Cat": "#/components/schemas/Cat",
+                    "Dog": "#/components/schemas/Dog"
+                  }
                 }
               }
             },
@@ -67,7 +75,11 @@
                   }
                 ],
                 "discriminator": {
-                  "propertyName": "type"
+                  "propertyName": "animalType",
+                  "mapping": {
+                    "Cat": "#/components/schemas/Cat",
+                    "Dog": "#/components/schemas/Dog"
+                  }
                 }
               }
             }
@@ -84,36 +96,6 @@
   },
   "components": {
     "schemas": {
-      "Cat": {
-        "type": "object",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Animal"
-          }
-        ],
-        "properties": {
-          "catSpecificProperty": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "Dog": {
-        "type": "object",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Animal"
-          }
-        ],
-        "properties": {
-          "dogSpecificProperty": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "AnimalType": {
         "enum": [
           "Cat",
@@ -124,8 +106,34 @@
       "Animal": {
         "type": "object",
         "properties": {
-          "type": {
+          "animalType": {
             "$ref": "#/components/schemas/AnimalType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Cat": {
+        "type": "object",
+        "properties": {
+          "animalType": {
+            "$ref": "#/components/schemas/AnimalType"
+          },
+          "catSpecificProperty": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Dog": {
+        "type": "object",
+        "properties": {
+          "animalType": {
+            "$ref": "#/components/schemas/AnimalType"
+          },
+          "dogSpecificProperty": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false

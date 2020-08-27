@@ -1,16 +1,16 @@
 ﻿namespace Swashbuckle.AspNetCore.TestSupport
 {
-    public abstract class PolymorphicType
+    public abstract class BaseType
     {
         public string BaseProperty { get; set; }
     }
 
-    public class SubType1 : PolymorphicType
+    public class SubType1 : BaseType
     {
         public int Property1 { get; set; }
     }
 
-    public class SubType2 : PolymorphicType
+    public class SubType2 : BaseType
     {
         public int Property2 { get; set; }
     }

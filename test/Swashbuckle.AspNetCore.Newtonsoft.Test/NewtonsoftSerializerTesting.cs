@@ -14,9 +14,17 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [Fact]
         public void Serialize()
         {
-            var dto = new Version(1, 1, 1);
+            BaseType dto = new SubType1 { BaseProperty = "foo", Property1 = 123 };
 
-            var jsonString = JsonConvert.SerializeObject(dto);
+            var jsonString = JsonConvert.SerializeObject(
+                dto,
+                new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All,
+                    TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Full
+                });
+
+            //throw new Exception(jsonString);
         }
 
         [Fact]

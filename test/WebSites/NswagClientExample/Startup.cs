@@ -22,7 +22,7 @@ namespace NSwagClientExample
 
             services.AddSwaggerGen(c =>
             {
-                c.EnableAnnotations(enableSubTypeAnnotations: true);
+                c.EnableAnnotations(enableAnnotationsForInheritance: false, enableAnnotationsForPolymorphism: true);
             });
         }
 

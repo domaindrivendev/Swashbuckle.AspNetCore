@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using Basic.Swagger;
 using Microsoft.AspNetCore.Localization;
 using System.IO;
+using System.Linq;
 
 namespace Basic
 {
@@ -47,7 +47,11 @@ namespace Basic
 
                 c.DescribeAllParametersInCamelCase();
 
-                c.GeneratePolymorphicSchemas();
+                c.UseOneOfForPolymorphism();
+                c.UseAllOfForInheritance();
+
+                c.SelectDiscriminatorNameUsing((baseType) => "TypeName");
+                c.SelectDiscriminatorValueUsing((subType) => subType.Name);
 
                 c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Basic.xml"));
 

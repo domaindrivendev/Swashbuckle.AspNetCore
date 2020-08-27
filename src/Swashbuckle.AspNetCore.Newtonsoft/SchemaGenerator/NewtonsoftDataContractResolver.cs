@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Text;
+using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
@@ -11,7 +13,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Newtonsoft
 {
-    public class NewtonsoftDataContractResolver : IDataContractResolver
+    public class NewtonsoftDataContractResolver : ISerializerDataContractResolver
     {
         private readonly SchemaGeneratorOptions _generatorOptions;
         private readonly JsonSerializerSettings _serializerSettings;
@@ -92,10 +94,26 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
             if (jsonContract is JsonObjectContract jsonObjectContract)
             {
+                string typeNameProperty = null;
+                string typeNameValue = null;
+
+                if (_serializerSettings.TypeNameHandling == TypeNameHandling.Objects
+                    || _serializerSettings.TypeNameHandling == TypeNameHandling.All
+                    || _serializerSettings.TypeNameHandling == TypeNameHandling.Auto)
+                {
+                    typeNameProperty = "$type";
+
+                    typeNameValue = (_serializerSettings.TypeNameAssemblyFormatHandling == TypeNameAssemblyFormatHandling.Full)
+                        ? jsonObjectContract.UnderlyingType.AssemblyQualifiedName
+                        : $"{jsonObjectContract.UnderlyingType.FullName}, {jsonObjectContract.UnderlyingType.Assembly.GetName().Name}";
+                }
+
                 return DataContract.ForObject(
                     underlyingType: jsonObjectContract.UnderlyingType,
                     properties: GetDataPropertiesFor(jsonObjectContract),
-                    extensionDataType: jsonObjectContract.ExtensionDataValueType);
+                    extensionDataType: jsonObjectContract.ExtensionDataValueType,
+                    typeNameProperty: typeNameProperty,
+                    typeNameValue: typeNameValue);
             }
 
             return DataContract.ForDynamic(underlyingType: type);

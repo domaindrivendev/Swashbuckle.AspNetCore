@@ -26,6 +26,7 @@ namespace NetCore21
                 {
                     c.SerializerSettings.Converters.Add(new StringEnumConverter());
                     c.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    c.SerializerSettings.TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto;
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
