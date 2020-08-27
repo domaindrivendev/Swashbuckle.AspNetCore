@@ -519,11 +519,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var schema = subject.GenerateSchema(typeof(BaseType), schemaRepository);
 
+            // The polymorphic schema
             Assert.NotNull(schema.Discriminator);
             Assert.Equal("TypeName", schema.Discriminator.PropertyName);
             Assert.Equal(
                 new Dictionary<string, string> { ["SubType1"] = "#/components/schemas/SubType1", ["SubType2"] = "#/components/schemas/SubType2" },
                 schema.Discriminator.Mapping);
+            // The first sub type schema
+            var subType1Schema = schemaRepository.Schemas[schema.OneOf[0].Reference.Id];
+            Assert.Contains("TypeName", subType1Schema.Properties.Keys);
+            Assert.Contains("TypeName", subType1Schema.Required);
+            // The second sub type schema
+            var subType2Schema = schemaRepository.Schemas[schema.OneOf[1].Reference.Id];
+            Assert.Contains("TypeName", subType2Schema.Properties.Keys);
+            Assert.Contains("TypeName", subType2Schema.Required);
         }
 
         [Fact]

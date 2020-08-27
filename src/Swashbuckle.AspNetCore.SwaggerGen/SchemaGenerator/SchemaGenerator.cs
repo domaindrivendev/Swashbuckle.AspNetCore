@@ -297,6 +297,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         && TryGetDiscriminatorName(dataContract, out string discriminatorName))
                     {
                         schema.Properties.Add(discriminatorName, new OpenApiSchema { Type = "string" });
+                        schema.Required.Add(discriminatorName);
                     }
                 }
 
@@ -320,6 +321,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         && TryGetDiscriminatorName(baseTypeContract, out string discriminatorName))
                     {
                         schema.Properties.Add(discriminatorName, new OpenApiSchema { Type = "string" });
+                        schema.Required.Add(discriminatorName);
                     }
                 }
             }
@@ -333,8 +335,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 schema.Properties[dataProperty.Name] = GeneratePropertySchema(dataProperty, schemaRepository);
 
-                if (dataProperty.IsRequired || customAttributes.OfType<RequiredAttribute>().Any())
+                if (dataProperty.IsRequired || customAttributes.OfType<RequiredAttribute>().Any()
+                    && !schema.Required.Contains(dataProperty.Name))
+                {
                     schema.Required.Add(dataProperty.Name);
+                }
             }
 
             if (dataContract.ObjectExtensionDataType != null)

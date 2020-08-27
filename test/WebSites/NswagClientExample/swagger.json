@@ -104,6 +104,9 @@
         "type": "string"
       },
       "Animal": {
+        "required": [
+          "animalType"
+        ],
         "type": "object",
         "properties": {
           "animalType": {
@@ -113,6 +116,9 @@
         "additionalProperties": false
       },
       "Cat": {
+        "required": [
+          "animalType"
+        ],
         "type": "object",
         "properties": {
           "animalType": {
@@ -126,6 +132,9 @@
         "additionalProperties": false
       },
       "Dog": {
+        "required": [
+          "animalType"
+        ],
         "type": "object",
         "properties": {
           "animalType": {
