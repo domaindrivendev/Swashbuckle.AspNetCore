@@ -9,7 +9,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
     {
         public static bool TryGetMemberInfo(this JsonProperty jsonProperty, out MemberInfo memberInfo)
         {
-            memberInfo = jsonProperty.DeclaringType.GetMember(jsonProperty.UnderlyingName)
+            memberInfo = jsonProperty.DeclaringType?.GetMember(jsonProperty.UnderlyingName)
                 .FirstOrDefault();
 
             return (memberInfo != null);

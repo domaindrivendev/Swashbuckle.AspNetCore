@@ -176,7 +176,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     ? jsonProperty.Required
                     : jsonObjectContract.ItemRequired ?? Required.Default;
 
-                var isSetViaConstructor = jsonProperty.DeclaringType.GetConstructors()
+                var isSetViaConstructor = jsonProperty.DeclaringType != null && jsonProperty.DeclaringType.GetConstructors()
                     .SelectMany(c => c.GetParameters())
                     .Any(p => string.Equals(p.Name, jsonProperty.PropertyName, StringComparison.OrdinalIgnoreCase));
 

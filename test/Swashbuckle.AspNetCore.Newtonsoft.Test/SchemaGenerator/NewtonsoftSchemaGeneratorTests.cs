@@ -693,6 +693,24 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
+        public void GenerateSchema_HonorsSerializeSetting_ContractResolver()
+        {
+            var subject = Subject(
+                configureSerializer: c =>
+                {
+                    c.ContractResolver = new AdditionalPropertyJsonContractResolver();
+                }
+            );
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = subject.GenerateSchema(typeof(BaseType), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+
+            Assert.True(schema.Properties.ContainsKey(AdditionalPropertyJsonContractResolver.AdditionalPropertyName));
+        }
+
+        [Fact]
         public void GenerateSchema_HonorsSerializerAttribute_StringEnumConverter()
         {
             var schemaRepository = new SchemaRepository();
