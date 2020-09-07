@@ -286,6 +286,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);
             Assert.Equal(12, schema.Properties["IntWithRange"].Maximum);
             Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["StringWithRegularExpression"].Pattern);
+            Assert.NotNull(schema.Properties["StringWithDefaultValue"].Default);
+            Assert.Equal("foobar", ((OpenApiString)schema.Properties["StringWithDefaultValue"].Default).Value);
             Assert.Equal(new[] { "IntWithRequired", "StringWithRequired" }, schema.Required.ToArray());
         }
 
