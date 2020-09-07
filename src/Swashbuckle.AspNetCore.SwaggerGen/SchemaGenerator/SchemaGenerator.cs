@@ -76,11 +76,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 return new OpenApiSchema { Type = "string", Format = "binary" };
             }
 
-            if (type == typeof(object))
-            {
-                return new OpenApiSchema { Type = "object" };
-            }
-
             Func<OpenApiSchema> definitionFactory;
             bool returnAsReference;
 
