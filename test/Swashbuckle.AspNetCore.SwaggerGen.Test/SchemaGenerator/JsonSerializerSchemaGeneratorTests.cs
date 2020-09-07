@@ -289,6 +289,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.NotNull(schema.Properties["StringWithDefaultValue"].Default);
             Assert.Equal("foobar", ((OpenApiString)schema.Properties["StringWithDefaultValue"].Default).Value);
             Assert.Equal(new[] { "IntWithRequired", "StringWithRequired" }, schema.Required.ToArray());
+            Assert.Equal(1, schema.Properties[nameof(DataAnnotatedViaMetadataType.IntWithTwoRanges)].Minimum);
+            Assert.Equal(20, schema.Properties[nameof(DataAnnotatedViaMetadataType.IntWithTwoRanges)].Maximum);
+            Assert.Equal(6, schema.Properties[nameof(DataAnnotatedViaMetadataType.IntWithRangeSubclass)].Minimum);
+            Assert.Equal(42, schema.Properties[nameof(DataAnnotatedViaMetadataType.IntWithRangeSubclass)].Maximum);
         }
 
         [Fact]

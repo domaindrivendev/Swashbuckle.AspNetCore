@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.TestSupport.Fixtures;
 
 namespace Swashbuckle.AspNetCore.TestSupport
 {
@@ -17,6 +18,12 @@ namespace Swashbuckle.AspNetCore.TestSupport
 
         [DefaultValue("foobar")]
         public string StringWithDefaultValue { get; set; }
+
+        [Range(1, 20)]
+        public int IntWithTwoRanges { get; set; }
+
+        [Range(6, 42)]
+        public int IntWithRangeSubclass { get; set; }
     }
 
     public class MetadataType
@@ -33,7 +40,15 @@ namespace Swashbuckle.AspNetCore.TestSupport
         [RegularExpression("^[3-6]?\\d{12,15}$")]
         public string StringWithRegularExpression { get; set; }
 
-        // NOTE: Annotation for this one is in the actual class
+        // NOTE: Annotation for this one is on the actual model
         public string StringWithDefaultValue { get; set; }
+
+        // NOTE: Redeclared, but with different values - the model's version should win over this one
+        [Range(100, 2000)]
+        public int IntWithTwoRanges { get; set; }
+
+        // NOTE: A subclass of the model's attribute - the model's version should win over this one
+        [ExtendedRange(600, 4200)]
+        public int IntWithRangeSubclass { get; set; }
     }
 }
