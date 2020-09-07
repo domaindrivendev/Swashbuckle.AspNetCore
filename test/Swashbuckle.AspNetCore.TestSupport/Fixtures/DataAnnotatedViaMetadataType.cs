@@ -15,7 +15,8 @@ namespace Swashbuckle.AspNetCore.TestSupport
 
         public string StringWithRegularExpression { get; set; }
 
-        public string StringWithMinMaxLength { get; set; }
+        [DefaultValue("foobar")]
+        public string StringWithDefaultValue { get; set; }
     }
 
     public class MetadataType
@@ -32,7 +33,7 @@ namespace Swashbuckle.AspNetCore.TestSupport
         [RegularExpression("^[3-6]?\\d{12,15}$")]
         public string StringWithRegularExpression { get; set; }
 
-        [MinLength(1), MaxLength(3)]
-        public string StringWithMinMaxLength { get; set; }
+        // NOTE: Annotation for this one is in the actual class
+        public string StringWithDefaultValue { get; set; }
     }
 }

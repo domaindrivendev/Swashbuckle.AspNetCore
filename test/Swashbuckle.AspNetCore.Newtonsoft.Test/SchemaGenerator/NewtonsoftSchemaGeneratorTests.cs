@@ -14,7 +14,7 @@ using Newtonsoft.Json.Serialization;
 using Xunit;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.TestSupport;
-using Microsoft.AspNetCore.Hosting.StaticWebAssets;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 
 namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 {
@@ -91,8 +91,8 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [Theory]
         [InlineData(typeof(IDictionary<string, int>), "integer")]
         [InlineData(typeof(IReadOnlyDictionary<string, bool>), "boolean")]
-        [InlineData(typeof(IDictionary), "object")]
-        [InlineData(typeof(ExpandoObject), "object")]
+        [InlineData(typeof(IDictionary), null)]
+        [InlineData(typeof(ExpandoObject), null)]
         public void GenerateSchema_GeneratesDictionarySchema_IfDictionaryType(
             Type type,
             string expectedAdditionalPropertiesType)
@@ -134,7 +134,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [InlineData(typeof(IEnumerable<string>), "string", null)]
         [InlineData(typeof(DateTime?[]), "string", "date-time")]
         [InlineData(typeof(int[][]), "array", null)]
-        [InlineData(typeof(IList), "object", null)]
+        [InlineData(typeof(IList), null, null)]
         public void GenerateSchema_GeneratesArraySchema_IfEnumerableType(
             Type type,
             string expectedItemsType,
@@ -170,15 +170,6 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("array", schema.Type);
             Assert.Equal(schema.Items.Reference.Id, referenceSchema.Reference.Id); // ref to self
-        }
-
-        [Fact]
-        public void GenerateSchema_GeneratesObjectSchema_IfObjectType()
-        {
-            var schema = Subject().GenerateSchema(typeof(object), new SchemaRepository());
-
-            Assert.Equal("object", schema.Type);
-            Assert.Empty(schema.Properties);
         }
 
         [Theory]
@@ -650,7 +641,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             "Swashbuckle.AspNetCore.TestSupport.{0}, Swashbuckle.AspNetCore.TestSupport, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null")]
         [InlineData(TypeNameHandling.Auto, TypeNameAssemblyFormatHandling.Simple, true,
             "Swashbuckle.AspNetCore.TestSupport.{0}, Swashbuckle.AspNetCore.TestSupport")]
-        public void GenerateSchema_HonorsSerializeSetting_TypeNameHandling(
+        public void GenerateSchema_HonorsSerializerSetting_TypeNameHandling(
             TypeNameHandling typeNameHandling,
             TypeNameAssemblyFormatHandling typeNameAssemblyFormatHandling,
             bool expectedDiscriminatorPresent,
@@ -793,15 +784,40 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             var referenceSchema = Subject().GenerateSchema(typeof(JsonExtensionDataAnnotatedType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.True(schema.AdditionalPropertiesAllowed);
             Assert.NotNull(schema.AdditionalProperties);
-            Assert.Equal("object", schema.AdditionalProperties.Type);
+            Assert.Null(schema.AdditionalProperties.Type);
         }
 
         [Theory]
+        [InlineData(typeof(ProblemDetails))]
+        [InlineData(typeof(ValidationProblemDetails))]
+        public void GenerateSchema_HonorsSerializerSetting_ProblemDetailsConverter(Type type)
+        {
+            var subject = Subject(
+                configureGenerator: c => { },
+                configureSerializer: c =>
+                {
+                    c.Converters.Add(new ProblemDetailsConverter());
+                }
+            );
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = subject.GenerateSchema(type, schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.DoesNotContain("Extensions", schema.Properties.Keys);
+            Assert.True(schema.AdditionalPropertiesAllowed);
+            Assert.NotNull(schema.AdditionalProperties);
+            Assert.Null(schema.AdditionalProperties.Type);
+        }
+
+        [Theory]
+        [InlineData(typeof(object))]
         [InlineData(typeof(JToken))]
         [InlineData(typeof(JObject))]
         [InlineData(typeof(JArray))]
-        public void GenerateSchema_GeneratesEmptySchema_IfDynamicJsonType(Type type)
+        public void GenerateSchema_GeneratesOpenSchema_IfDynamicJsonType(Type type)
         {
             var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
