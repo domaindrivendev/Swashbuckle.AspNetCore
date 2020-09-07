@@ -140,7 +140,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         !(property.GetIndexParameters().Any()) &&
                         !(property.HasAttribute<JsonIgnoreAttribute>()) &&
                         !(_serializerOptions.IgnoreReadOnlyProperties && !property.IsPubliclyWritable());
-                });
+                })
+                .OrderBy(property => property.DeclaringType.GetDepthOfInheritance());
 
             var dataProperties = new List<DataProperty>();
 

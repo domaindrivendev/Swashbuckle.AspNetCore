@@ -213,7 +213,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("object", schema.Type);
-            Assert.Equal(new[] { "Property1", "BaseProperty" }, schema.Properties.Keys);
+            Assert.Equal(new[] { "BaseProperty", "Property1" }, schema.Properties.Keys);
         }
 
         [Fact]
@@ -411,11 +411,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             // The first sub type schema
             var subType1Schema = schemaRepository.Schemas[schema.OneOf[0].Reference.Id];
             Assert.Equal("object", subType1Schema.Type);
-            Assert.Equal(new[] { "Property1", "BaseProperty" }, subType1Schema.Properties.Keys);
+            Assert.Equal(new[] { "BaseProperty", "Property1" }, subType1Schema.Properties.Keys);
             // The second sub type schema
             var subType2Schema = schemaRepository.Schemas[schema.OneOf[1].Reference.Id];
             Assert.Equal("object", subType2Schema.Type);
-            Assert.Equal(new[] { "Property2", "BaseProperty" }, subType2Schema.Properties.Keys);
+            Assert.Equal(new[] { "BaseProperty", "Property2" }, subType2Schema.Properties.Keys);
         }
 
         [Fact]
