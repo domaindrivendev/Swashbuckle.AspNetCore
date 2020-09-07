@@ -87,6 +87,9 @@ namespace Swashbuckle.AspNetCore.Annotations
 
             if (schemaAttribute.Required != null)
                 schema.Required = new SortedSet<string>(schemaAttribute.Required);
+
+            if (schemaAttribute.Title != null)
+                schema.Title = schemaAttribute.Title;
         }
     }
 }
