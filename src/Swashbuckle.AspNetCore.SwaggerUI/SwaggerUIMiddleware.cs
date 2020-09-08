@@ -54,7 +54,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             if (httpMethod == "GET" && Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$"))
             {
                 // Use relative redirect to support proxy environments
-                var relativeRedirectPath = path.EndsWith("/")
+                var relativeRedirectPath = string.IsNullOrEmpty(path) || path.EndsWith("/")
                     ? "index.html"
                     : $"{path.Split('/').Last()}/index.html";
 
