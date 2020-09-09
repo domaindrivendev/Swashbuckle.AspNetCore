@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
-using System.Text;
-using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
@@ -28,7 +26,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
         public DataContract GetDataContractForType(Type type)
         {
-            if (type.IsAssignableTo(typeof(JToken)))
+            if (type.IsOneOf(typeof(object), typeof(JToken), typeof(JObject), typeof(JArray)))
             {
                 return DataContract.ForDynamic(underlyingType: type);
             }
@@ -110,8 +108,8 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
                 return DataContract.ForObject(
                     underlyingType: jsonObjectContract.UnderlyingType,
-                    properties: GetDataPropertiesFor(jsonObjectContract),
-                    extensionDataType: jsonObjectContract.ExtensionDataValueType,
+                    properties: GetDataPropertiesFor(jsonObjectContract, out Type extensionDataType),
+                    extensionDataType: extensionDataType,
                     typeNameProperty: typeNameProperty,
                     typeNameValue: typeNameValue);
             }
@@ -164,7 +162,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
         }
 #endif
 
-        private IEnumerable<DataProperty> GetDataPropertiesFor(JsonObjectContract jsonObjectContract)
+        private IEnumerable<DataProperty> GetDataPropertiesFor(JsonObjectContract jsonObjectContract, out Type extensionDataType)
         {
             var dataProperties = new List<DataProperty>();
 
@@ -176,7 +174,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     ? jsonProperty.Required
                     : jsonObjectContract.ItemRequired ?? Required.Default;
 
-                var isSetViaConstructor = jsonProperty.DeclaringType.GetConstructors()
+                var isSetViaConstructor = jsonProperty.DeclaringType != null && jsonProperty.DeclaringType.GetConstructors()
                     .SelectMany(c => c.GetParameters())
                     .Any(p => string.Equals(p.Name, jsonProperty.PropertyName, StringComparison.OrdinalIgnoreCase));
 
@@ -192,6 +190,22 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                         memberType: jsonProperty.PropertyType,
                         memberInfo: memberInfo));
             }
+
+            extensionDataType = jsonObjectContract.ExtensionDataValueType;
+
+#if NETCOREAPP3_0
+            // If applicable, honor ProblemDetailsConverter
+            if (jsonObjectContract.UnderlyingType.IsAssignableTo(typeof(Microsoft.AspNetCore.Mvc.ProblemDetails))
+                && _serializerSettings.Converters.OfType<Microsoft.AspNetCore.Mvc.NewtonsoftJson.ProblemDetailsConverter>().Any())
+            {
+                var extensionsProperty = dataProperties.FirstOrDefault(p => p.MemberInfo.Name == "Extensions");
+                if (extensionsProperty != null)
+                {
+                    dataProperties.Remove(extensionsProperty);
+                    extensionDataType = typeof(object);
+                }
+            }
+#endif
 
             return dataProperties;
         }

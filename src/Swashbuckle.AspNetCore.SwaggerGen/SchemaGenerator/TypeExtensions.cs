@@ -55,5 +55,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 ? Activator.CreateInstance(type)
                 : null;
         }
+
+        public static int GetDepthOfInheritance(this Type type)
+        {
+            var depth = 0;
+            var current = type;
+
+            while (current.BaseType != null)
+            {
+                depth++;
+                current = current.BaseType;
+            }
+
+            return depth;
+        }
     }
 }

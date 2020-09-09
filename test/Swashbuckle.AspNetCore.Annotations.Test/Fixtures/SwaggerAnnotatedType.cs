@@ -1,6 +1,6 @@
 ﻿namespace Swashbuckle.AspNetCore.Annotations.Test
 {
-    [SwaggerSchema("Description for SwaggerAnnotatedType", Required = new[] { "StringWithSwaggerSchemaAttribute" })]
+    [SwaggerSchema("Description for SwaggerAnnotatedType", Required = new[] { "StringWithSwaggerSchemaAttribute" }, Title = "Title for SwaggerAnnotatedType")]
     [SwaggerSchemaFilter(typeof(VendorExtensionsSchemaFilter))]
     public class SwaggerAnnotatedType
     {
@@ -17,7 +17,7 @@
         public string StringWithSwaggerRequestBodyAttribute { get; set; }
     }
 
-    [SwaggerSchema("Description for SwaggerAnnotatedStruct", Required = new[] { "StringWithSwaggerSchemaAttribute" })]
+    [SwaggerSchema("Description for SwaggerAnnotatedStruct", Required = new[] { "StringWithSwaggerSchemaAttribute" }, Title = "Title for SwaggerAnnotatedStruct")]
     [SwaggerSchemaFilter(typeof(VendorExtensionsSchemaFilter))]
     public struct SwaggerAnnotatedStruct
     {

@@ -39,5 +39,8 @@ namespace Swashbuckle.AspNetCore.TestSupport
 
         [DefaultValue("foobar")]
         public string StringWithDefaultValue { get; set; }
+
+        [MinLength(1), MaxLength(3)]
+        public int[] ArrayWithMinMaxLength { get; set; }
     }
 }

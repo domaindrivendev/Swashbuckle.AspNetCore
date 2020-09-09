@@ -76,11 +76,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 return new OpenApiSchema { Type = "string", Format = "binary" };
             }
 
-            if (type == typeof(object))
-            {
-                return new OpenApiSchema { Type = "object" };
-            }
-
             Func<OpenApiSchema> definitionFactory;
             bool returnAsReference;
 
@@ -328,7 +323,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             foreach (var dataProperty in applicableDataProperties)
             {
-                var customAttributes = dataProperty.MemberInfo?.GetInlineOrMetadataTypeAttributes() ?? Enumerable.Empty<object>();
+                var customAttributes = dataProperty.MemberInfo?.GetInlineAndMetadataAttributes() ?? Enumerable.Empty<object>();
 
                 if (_generatorOptions.IgnoreObsoleteProperties && customAttributes.OfType<ObsoleteAttribute>().Any())
                     continue;
@@ -395,7 +390,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 schema.Nullable = type.IsReferenceOrNullableType();
 
-                schema.ApplyCustomAttributes(memberInfo.GetInlineOrMetadataTypeAttributes());
+                schema.ApplyCustomAttributes(memberInfo.GetInlineAndMetadataAttributes());
             }
         }
 

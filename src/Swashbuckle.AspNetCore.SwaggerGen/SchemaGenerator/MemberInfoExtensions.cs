@@ -7,18 +7,24 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class MemberInfoExtensions
     {
-        public static IEnumerable<object> GetInlineOrMetadataTypeAttributes(this MemberInfo memberInfo)
+        public static IEnumerable<object> GetInlineAndMetadataAttributes(this MemberInfo memberInfo)
         {
+            var attributes = memberInfo.GetCustomAttributes(true)
+                .ToList();
+
             var metadataTypeAttribute = memberInfo.DeclaringType.GetCustomAttributes(true)
                 .OfType<ModelMetadataTypeAttribute>()
                 .FirstOrDefault();
 
-            var metadataTypeMemberInfo = metadataTypeAttribute?.MetadataType.GetMember(memberInfo.Name)
+            var metadataMemberInfo = metadataTypeAttribute?.MetadataType.GetMember(memberInfo.Name)
                 .FirstOrDefault();
 
-            return (metadataTypeMemberInfo == null)
-                ? memberInfo.GetCustomAttributes(true)
-                : metadataTypeMemberInfo.GetCustomAttributes(true);
+            if (metadataMemberInfo != null)
+            {
+                attributes.AddRange(metadataMemberInfo.GetCustomAttributes(true));
+            }
+
+            return attributes;
         }
     }
 }

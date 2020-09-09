@@ -18,6 +18,16 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         }
 
         [Fact]
+        public async Task RoutePrefix_RedirectsSubAppRelativeIndexUrl()
+        {
+            var client = new TestSite(typeof(SubApp.Startup)).BuildClient();
+            var response = await client.GetAsync("/subapp");
+            Assert.Equal(HttpStatusCode.MovedPermanently, response.StatusCode);
+            Assert.Equal("subapp/index.html", response.Headers.Location.ToString());
+        }
+
+
+        [Fact]
         public async Task IndexUrl_ReturnsEmbeddedVersionOfTheSwaggerUI()
         {
             var client = new TestSite(typeof(Basic.Startup)).BuildClient();

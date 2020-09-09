@@ -19,7 +19,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public DataContract GetDataContractForType(Type type)
         {
-            if (type.IsOneOf(typeof(JsonDocument), typeof(JsonElement)))
+            if (type.IsOneOf(typeof(object), typeof(JsonDocument), typeof(JsonElement)))
             {
                 return DataContract.ForDynamic(underlyingType: type);
             }
@@ -140,7 +140,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         !(property.GetIndexParameters().Any()) &&
                         !(property.HasAttribute<JsonIgnoreAttribute>()) &&
                         !(_serializerOptions.IgnoreReadOnlyProperties && !property.IsPubliclyWritable());
-                });
+                })
+                .OrderBy(property => property.DeclaringType.GetDepthOfInheritance());
 
             var dataProperties = new List<DataProperty>();
 

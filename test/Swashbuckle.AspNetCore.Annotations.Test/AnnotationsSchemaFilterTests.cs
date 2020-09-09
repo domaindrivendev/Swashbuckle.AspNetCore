@@ -19,6 +19,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
 
             Assert.Equal($"Description for {type.Name}", schema.Description);
             Assert.Equal(new[] { "StringWithSwaggerSchemaAttribute" }, schema.Required);
+            Assert.Equal($"Title for {type.Name}", schema.Title);
         }
 
         [Fact]

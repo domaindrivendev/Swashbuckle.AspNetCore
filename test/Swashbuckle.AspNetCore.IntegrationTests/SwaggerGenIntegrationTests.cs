@@ -80,6 +80,48 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             Assert.Equal(System.Net.HttpStatusCode.NotFound, swaggerResponse.StatusCode);
         }
 
+
+        [Theory]
+        [InlineData(null, "tempuri.org", null, null, null, "http://tempuri.org")]
+        [InlineData(null, "tempuri.org:8080", null, null, null, "http://tempuri.org:8080")]
+        [InlineData("tempuri.org", null, "https", "443", null, "https://tempuri.org")]
+        [InlineData("tempuri.org", null, null, "8080", null, "http://tempuri.org:8080")]
+        [InlineData("tempuri.org", null, null, null, "/foo", "http://tempuri.org/foo")]
+        public async Task SwaggerEndpoint_InfersServerMetadataFromReverseProxyHeaders_IfPresent(
+            string xForwardedFor,
+            string xForwardedHost,
+            string xForwardedProto,
+            string xForwardedPort,
+            string xForwardedPrefix,
+            string expectedServerUrl)
+        {
+            var testSite = new TestSite(typeof(Basic.Startup));
+            var client = testSite.BuildClient();
+
+            if (xForwardedFor != null)
+                client.DefaultRequestHeaders.Add("X-Forwarded-For", xForwardedFor);
+
+            if (xForwardedHost != null)
+                client.DefaultRequestHeaders.Add("X-Forwarded-Host", xForwardedHost);
+
+            if (xForwardedProto != null)
+                client.DefaultRequestHeaders.Add("X-Forwarded-Proto", xForwardedProto);
+
+            if (xForwardedPort != null)
+                client.DefaultRequestHeaders.Add("X-Forwarded-Port", xForwardedPort);
+
+            if (xForwardedPrefix != null)
+                client.DefaultRequestHeaders.Add("X-Forwarded-Prefix", xForwardedPrefix);
+
+            var swaggerResponse = await client.GetAsync("/swagger/v1/swagger.json");
+
+            var contentStream = await swaggerResponse.Content.ReadAsStreamAsync();
+            var openApiDocument = new OpenApiStreamReader().Read(contentStream, out _);
+            Assert.NotNull(openApiDocument.Servers);
+            Assert.NotEmpty(openApiDocument.Servers);
+            Assert.Equal(expectedServerUrl, openApiDocument.Servers[0].Url);
+        }
+
         private async Task AssertResponseDoesNotContainByteOrderMark(HttpResponseMessage swaggerResponse)
         {
             var responseAsByteArray = await swaggerResponse.Content.ReadAsByteArrayAsync();

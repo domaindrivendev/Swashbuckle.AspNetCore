@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Basic.Controllers
@@ -17,7 +16,7 @@ namespace Basic.Controllers
         /// <response code="400">Order invalid</response>
         [HttpPost]
         [ProducesResponseType(typeof(int), 201)]
-        [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
+        [ProducesResponseType(typeof(ValidationProblemDetails), 400)]
         public IActionResult CreateOrder([FromBody, Required]Order order)
         {
             return new CreatedResult("/orders/1", 1);
