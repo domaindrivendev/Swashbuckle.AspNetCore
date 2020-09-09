@@ -13,83 +13,137 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             foreach (var attribute in customAttributes)
             {
-                if (attribute is DefaultValueAttribute defaultValue && defaultValue.Value != null)
-                {
-                    schema.Default = OpenApiAnyFactory.CreateFor(schema, defaultValue.Value);
-                }
-                else if (attribute is RegularExpressionAttribute regex)
-                {
-                    schema.Pattern = regex.Pattern;
-                }
-                else if (attribute is RangeAttribute range)
-                {
-                    schema.Maximum = decimal.TryParse(range.Maximum.ToString(), out decimal maximum)
-                        ? maximum
-                        : schema.Maximum;
+                if (attribute is CreditCardAttribute creditCardAttribute)
+                    ApplyCreditCardAttribute(schema, creditCardAttribute);
 
-                    schema.Minimum = decimal.TryParse(range.Minimum.ToString(), out decimal minimum)
-                        ? minimum
-                        : schema.Minimum;
-                }
-                else if (attribute is MinLengthAttribute minLength)
-                {
-                    schema.MinLength = minLength.Length;
-                }
-                else if (attribute is MaxLengthAttribute maxLength)
-                {
-                    schema.MaxLength = maxLength.Length;
-                }
-                else if (attribute is StringLengthAttribute stringLength)
-                {
-                    schema.MinLength = stringLength.MinimumLength;
-                    schema.MaxLength = stringLength.MaximumLength;
-                }
-                else if (attribute is EmailAddressAttribute)
-                {
-                    schema.Format = "email";
-                }
-                else if (attribute is CreditCardAttribute)
-                {
-                    schema.Format = "credit-card";
-                }
-                else if (attribute is PhoneAttribute)
-                {
-                    schema.Format = "tel";
-                }
-                else if (attribute is DataTypeAttribute dataTypeAttribute && schema.Type == "string")
-                {
-                    schema.Format = DataTypeFormatMap.TryGetValue(dataTypeAttribute.DataType, out string format)
-                        ? format
-                        : schema.Format;
-                }
-                else if (attribute is RequiredAttribute)
-                {
-                    schema.Nullable = false;
-                }
-                else if (attribute is ObsoleteAttribute)
-                {
-                    schema.Deprecated = true;
-                }
+                else if (attribute is DataTypeAttribute dataTypeAttribute)
+                    ApplyDataTypeAttribute(schema, dataTypeAttribute);
+
+                else if (attribute is DefaultValueAttribute defaultValueAttribute)
+                    ApplyDefaultValueAttribute(schema, defaultValueAttribute);
+
+                else if (attribute is EmailAddressAttribute emailAddressAttribute)
+                    ApplyEmailAddressAttribute(schema, emailAddressAttribute);
+
+                else if (attribute is MaxLengthAttribute maxLengthAttribute)
+                    ApplyMaxLengthAttribute(schema, maxLengthAttribute);
+
+                else if (attribute is MinLengthAttribute minLengthAttribute)
+                    ApplyMinLengthAttribute(schema, minLengthAttribute);
+
+                else if (attribute is ObsoleteAttribute obsoleteAttribute)
+                    ApplyObsoleteAttribute(schema, obsoleteAttribute);
+
+                else if (attribute is PhoneAttribute phoneAttribute)
+                    ApplyPhoneAttribute(schema, phoneAttribute);
+
+                else if (attribute is RangeAttribute rangeAttribute)
+                    ApplyRangeAttribute(schema, rangeAttribute);
+
+                else if (attribute is RegularExpressionAttribute regularExpressionAttribute)
+                    ApplyRegularExpressionAttribute(schema, regularExpressionAttribute);
+
+                else if (attribute is RequiredAttribute requiredAttribute)
+                    ApplyRequiredAttribute(schema, requiredAttribute);
+
+                else if (attribute is StringLengthAttribute stringLengthAttribute)
+                    ApplyStringLengthAttribute(schema, stringLengthAttribute);
             }
         }
 
-        private static readonly Dictionary<AnnotationsDataType, string> DataTypeFormatMap = new Dictionary<AnnotationsDataType, string>
+        private static void ApplyCreditCardAttribute(OpenApiSchema schema, CreditCardAttribute creditCardAttribute)
         {
-            { AnnotationsDataType.Date, "date" },
-            { AnnotationsDataType.DateTime, "date-time" },
-            { AnnotationsDataType.Time, "time" },
-            { AnnotationsDataType.Duration, "duration" },
-            { AnnotationsDataType.PhoneNumber, "tel" },
-            { AnnotationsDataType.Currency, "currency" },
-            { AnnotationsDataType.Text, "string" },
-            { AnnotationsDataType.Html, "html" },
-            { AnnotationsDataType.MultilineText, "multiline" },
-            { AnnotationsDataType.EmailAddress, "email" },
-            { AnnotationsDataType.Password, "password" },
-            { AnnotationsDataType.Url, "uri" },
-            { AnnotationsDataType.ImageUrl, "uri" },
-            { AnnotationsDataType.CreditCard, "credit-card" },
-            { AnnotationsDataType.PostalCode, "postal-code" },
-        };
+            schema.Format = "credit-card";
+        }
+
+        private static void ApplyDataTypeAttribute(OpenApiSchema schema, DataTypeAttribute dataTypeAttribute)
+        {
+            var formats = new Dictionary<AnnotationsDataType, string>
+            {
+                { AnnotationsDataType.Date, "date" },
+                { AnnotationsDataType.DateTime, "date-time" },
+                { AnnotationsDataType.Time, "time" },
+                { AnnotationsDataType.Duration, "duration" },
+                { AnnotationsDataType.PhoneNumber, "tel" },
+                { AnnotationsDataType.Currency, "currency" },
+                { AnnotationsDataType.Text, "string" },
+                { AnnotationsDataType.Html, "html" },
+                { AnnotationsDataType.MultilineText, "multiline" },
+                { AnnotationsDataType.EmailAddress, "email" },
+                { AnnotationsDataType.Password, "password" },
+                { AnnotationsDataType.Url, "uri" },
+                { AnnotationsDataType.ImageUrl, "uri" },
+                { AnnotationsDataType.CreditCard, "credit-card" },
+                { AnnotationsDataType.PostalCode, "postal-code" },
+            };
+
+            if (formats.TryGetValue(dataTypeAttribute.DataType, out string format))
+            {
+                schema.Format = format;
+            }
+        }
+
+        private static void ApplyDefaultValueAttribute(OpenApiSchema schema, DefaultValueAttribute defaultValueAttribute)
+        {
+            schema.Default = OpenApiAnyFactory.CreateFor(schema, defaultValueAttribute.Value);
+        }
+
+        private static void ApplyEmailAddressAttribute(OpenApiSchema schema, EmailAddressAttribute emailAddressAttribute)
+        {
+            schema.Format = "email";
+        }
+
+        private static void ApplyMaxLengthAttribute(OpenApiSchema schema, MaxLengthAttribute maxLengthAttribute)
+        {
+            if (schema.Type == "array")
+                schema.MaxItems = maxLengthAttribute.Length;
+            else
+                schema.MaxLength = maxLengthAttribute.Length;
+        }
+
+        private static void ApplyMinLengthAttribute(OpenApiSchema schema, MinLengthAttribute minLengthAttribute)
+        {
+            if (schema.Type == "array")
+                schema.MinItems = minLengthAttribute.Length;
+            else
+                schema.MinLength = minLengthAttribute.Length;
+        }
+
+        private static void ApplyObsoleteAttribute(OpenApiSchema schema, ObsoleteAttribute obsoleteAttribute)
+        {
+            schema.Deprecated = true;
+        }
+
+        private static void ApplyPhoneAttribute(OpenApiSchema schema, PhoneAttribute phoneAttribute)
+        {
+            schema.Format = "tel";
+        }
+
+        private static void ApplyRangeAttribute(OpenApiSchema schema, RangeAttribute rangeAttribute)
+        {
+            schema.Maximum = decimal.TryParse(rangeAttribute.Maximum.ToString(), out decimal maximum)
+                ? maximum
+                : schema.Maximum;
+
+            schema.Minimum = decimal.TryParse(rangeAttribute.Minimum.ToString(), out decimal minimum)
+                ? minimum
+                : schema.Minimum;
+        }
+
+        private static void ApplyRegularExpressionAttribute(OpenApiSchema schema, RegularExpressionAttribute regularExpressionAttribute)
+        {
+            schema.Pattern = regularExpressionAttribute.Pattern;
+        }
+
+        private static void ApplyRequiredAttribute(OpenApiSchema schema, RequiredAttribute requiredAttribute)
+        {
+            schema.Nullable = false;
+        }
+
+        private static void ApplyStringLengthAttribute(OpenApiSchema schema, StringLengthAttribute stringLengthAttribute)
+        {
+            schema.MinLength = stringLengthAttribute.MinimumLength;
+            schema.MaxLength = stringLengthAttribute.MaximumLength;
+        }
     }
 }
