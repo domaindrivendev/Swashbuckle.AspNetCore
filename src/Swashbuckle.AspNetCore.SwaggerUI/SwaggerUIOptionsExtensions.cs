@@ -276,5 +276,25 @@ namespace Microsoft.AspNetCore.Builder
         {
             options.OAuthConfigObject.UsePkceWithAuthorizationCodeGrant = true;
         }
+
+        /// <summary>
+        /// Function to intercept remote definition, "Try it out", and OAuth 2.0 requests.
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="value">MUST be a valid Javascript function: (request: SwaggerRequest) => SwaggerRequest</param>
+        public static void UseRequestInterceptor(this SwaggerUIOptions options, string value)
+        {
+            options.Interceptors.RequestInterceptorFunction = value;
+        }
+
+        /// <summary>
+        /// Function to intercept remote definition, "Try it out", and OAuth 2.0 responses.
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="value">MUST be a valid Javascript function: (response: SwaggerResponse ) => SwaggerResponse </param>
+        public static void UseResponseInterceptor(this SwaggerUIOptions options, string value)
+        {
+            options.Interceptors.ResponseInterceptorFunction = value;
+        }
     }
 }
