@@ -210,6 +210,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Inject Custom CSS](#inject-custom-css)
     * [Customize index.html](#customize-indexhtml)
     * [Enable OAuth2.0 Flows](#enable-oauth20-flows)
+    * [Use client-side request and response interceptors](#use-client-side-request-and-response-interceptors)
 
 * [Swashbuckle.AspNetCore.Annotations](#swashbuckleaspnetcoreannotations)
     * [Install and Enable Annotations](#install-and-enable-annotations)
