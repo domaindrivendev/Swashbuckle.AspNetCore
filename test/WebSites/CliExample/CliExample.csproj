@@ -8,6 +8,7 @@
     <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.SwaggerGen\Swashbuckle.AspNetCore.SwaggerGen.csproj" />
     <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.SwaggerUI\Swashbuckle.AspNetCore.SwaggerUI.csproj" />
     <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.Swagger\Swashbuckle.AspNetCore.Swagger.csproj" />
+    <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.Cli\Swashbuckle.AspNetCore.Cli.csproj" />
   </ItemGroup>
 
   <!--
@@ -26,7 +27,7 @@
   -->
 
   <Target Name="SwaggerToFile" AfterTargets="AfterBuild">
-    <Exec Command="dotnet $(SolutionDir)/src/Swashbuckle.AspNetCore.Cli/bin/$(Configuration)/$(TargetFramework)/dotnet-swagger.dll tofile --host http://example.com --output wwwroot/api-docs/v1/swagger.json $(OutputPath)$(AssemblyName).dll v1" />
+    <Exec Command="dotnet $(SolutionDir)src\Swashbuckle.AspNetCore.Cli\bin\$(Configuration)\$(TargetFramework)\dotnet-swagger.dll tofile --host http://example.com --output wwwroot/api-docs/v1/swagger.json $(OutputPath)$(AssemblyName).dll v1" />
   </Target>
 
 </Project>
