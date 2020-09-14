@@ -22,7 +22,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 |Swashbuckle Version|ASP.NET Core|Swagger / OpenAPI Spec.|swagger-ui|ReDoc UI|
 |----------|----------|----------|----------|----------|
 |[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master/README.md)|>= 2.0.0|2.0, 3.0|3.32.5|2.0.0-rc.40|
-|[5.5.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v5.5.0)|>= 2.0.0|2.0, 3.0|3.26.0|2.0.0-rc.23|
+|[5.6.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v5.6.0)|>= 2.0.0|2.0, 3.0|3.32.5|2.0.0-rc.40|
 |[4.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v4.0.0)|>= 2.0.0, < 3.0.0|2.0|3.19.5|1.22.2|
 |[3.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v3.0.0)|>= 1.0.4, < 3.0.0|2.0|3.17.1|1.20.0|
 |[2.5.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v2.5.0)|>= 1.0.4, < 3.0.0|2.0|3.16.0|1.20.0|
@@ -32,8 +32,8 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 1. Install the standard Nuget package into your ASP.NET Core application.
 
     ```
-    Package Manager : Install-Package Swashbuckle.AspNetCore -Version 5.5.0
-    CLI : dotnet add package --version 5.5.0 Swashbuckle.AspNetCore
+    Package Manager : Install-Package Swashbuckle.AspNetCore -Version 5.6.0
+    CLI : dotnet add package --version 5.6.0 Swashbuckle.AspNetCore
     ```
 
 2. In the `ConfigureServices` method of `Startup.cs`, register the Swagger generator, defining one or more Swagger documents.
@@ -97,8 +97,8 @@ If you're using **System.Text.Json (STJ)**, then the setup described above will 
 If you're using **Newtonsoft**, then you'll need to install a separate package and explicitly opt-in to ensure that *Newtonsoft* settings/attributes are automatically honored by the Swagger generator:
 
 ```
-Package Manager : Install-Package Swashbuckle.AspNetCore.Newtonsoft -Version 5.5.0
-CLI : dotnet add package --version 5.5.0 Swashbuckle.AspNetCore.Newtonsoft
+Package Manager : Install-Package Swashbuckle.AspNetCore.Newtonsoft -Version 5.6.0
+CLI : dotnet add package --version 5.6.0 Swashbuckle.AspNetCore.Newtonsoft
 ```
 
 ```csharp
@@ -1370,7 +1370,7 @@ It's packaged as a [.NET Core Tool](https://docs.microsoft.com/en-us/dotnet/core
 1. Install as a [global tool](https://docs.microsoft.com/en-us/dotnet/core/tools/global-tools#install-a-global-tool)
 
     ```
-    dotnet tool install -g --version 5.5.0 Swashbuckle.AspNetCore.Cli
+    dotnet tool install -g --version 5.6.0 Swashbuckle.AspNetCore.Cli
     ```
 
 2. Verify that the tool was installed correctly
@@ -1401,7 +1401,7 @@ It's packaged as a [.NET Core Tool](https://docs.microsoft.com/en-us/dotnet/core
 2. Install as a [local tool](https://docs.microsoft.com/en-us/dotnet/core/tools/global-tools#install-a-local-tool)
 
     ```
-    dotnet tool install --version 5.5.0 Swashbuckle.AspNetCore.Cli
+    dotnet tool install --version 5.6.0 Swashbuckle.AspNetCore.Cli
     ```
 
 3. Verify that the tool was installed correctly
