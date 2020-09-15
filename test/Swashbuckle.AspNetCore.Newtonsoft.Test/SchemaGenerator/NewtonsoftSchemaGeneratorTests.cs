@@ -602,7 +602,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             var schemaRepository = new SchemaRepository();
 
             subject.GenerateSchema(typeof(TestSupport.Namespace1.ConflictingType), schemaRepository);
-            Assert.Throws<InvalidOperationException>(() =>
+            Assert.Throws<SchemaGeneratorException>(() =>
             {
                 subject.GenerateSchema(typeof(TestSupport.Namespace2.ConflictingType), schemaRepository);
             });

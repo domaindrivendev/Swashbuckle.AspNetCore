@@ -486,7 +486,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void GetSwagger_ThrowsNotSupportedException_IfActionHasNoHttpBinding()
+        public void GetSwagger_ThrowsSwaggerGeneratorException_IfActionHasNoHttpBinding()
         {
             var subject = Subject(
                 apiDescriptions: new[]
@@ -496,7 +496,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             );
 
-            var exception = Assert.Throws<NotSupportedException>(() => subject.GetSwagger("v1"));
+            var exception = Assert.Throws<SwaggerGeneratorException>(() => subject.GetSwagger("v1"));
             Assert.Equal(
                 "Ambiguous HTTP method for action - Swashbuckle.AspNetCore.SwaggerGen.Test.FakeController.ActionWithNoParameters (Swashbuckle.AspNetCore.SwaggerGen.Test). " +
                 "Actions require an explicit HttpMethod binding for Swagger/OpenAPI 3.0",
@@ -504,7 +504,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void GetSwagger_ThrowsNotSupportedException_IfActionsHaveConflictingHttpMethodAndPath()
+        public void GetSwagger_ThrowsSwaggerGeneratorException_IfActionsHaveConflictingHttpMethodAndPath()
         {
             var subject = Subject(
                 apiDescriptions: new[]
@@ -517,7 +517,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             );
 
-            var exception = Assert.Throws<NotSupportedException>(() => subject.GetSwagger("v1"));
+            var exception = Assert.Throws<SwaggerGeneratorException>(() => subject.GetSwagger("v1"));
             Assert.Equal(
                 "Conflicting method/path combination \"POST resource\" for actions - " +
                 "Swashbuckle.AspNetCore.SwaggerGen.Test.FakeController.ActionWithNoParameters (Swashbuckle.AspNetCore.SwaggerGen.Test)," +

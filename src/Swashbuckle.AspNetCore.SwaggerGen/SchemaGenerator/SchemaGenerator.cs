@@ -27,25 +27,34 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             MemberInfo memberInfo = null,
             ParameterInfo parameterInfo = null)
         {
-            var schema = TryGetCustomTypeMapping(type, out Func<OpenApiSchema> mapping)
-                ? mapping()
-                : GenerateSchemaForType(type, schemaRepository);
-
-            if (memberInfo != null)
+            try
             {
-                ApplyMemberMetadata(schema, type, memberInfo);
-            }
-            else if (parameterInfo != null)
-            {
-                ApplyParameterMetadata(schema, type, parameterInfo);
-            }
+                var schema = TryGetCustomTypeMapping(type, out Func<OpenApiSchema> mapping)
+                    ? mapping()
+                    : GenerateSchemaForType(type, schemaRepository);
 
-            if (schema.Reference == null)
-            {
-                ApplyFilters(schema, type, schemaRepository, memberInfo, parameterInfo);
-            }
+                if (memberInfo != null)
+                {
+                    ApplyMemberMetadata(schema, type, memberInfo);
+                }
+                else if (parameterInfo != null)
+                {
+                    ApplyParameterMetadata(schema, type, parameterInfo);
+                }
 
-            return schema;
+                if (schema.Reference == null)
+                {
+                    ApplyFilters(schema, type, schemaRepository, memberInfo, parameterInfo);
+                }
+
+                return schema;
+            }
+            catch (Exception ex)
+            {
+                throw new SchemaGeneratorException(
+                    message: $"Failed to generate Schema for type - {type}. See inner exception",
+                    innerException: ex);
+            }
         }
 
         private bool TryGetCustomTypeMapping(Type type, out Func<OpenApiSchema> mapping)
