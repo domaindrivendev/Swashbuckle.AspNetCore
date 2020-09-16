@@ -4,15 +4,17 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.Primitives;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public class SwaggerGenerator : ISwaggerProvider
+    public class SwaggerGenerator : ISwaggerProvider, IAsyncSwaggerProvider
     {
         private readonly IApiDescriptionGroupCollectionProvider _apiDescriptionsProvider;
         private readonly ISchemaGenerator _schemaGenerator;
@@ -28,7 +30,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             _schemaGenerator = schemaGenerator;
         }
 
-        public OpenApiDocument GetSwagger(string documentName, string host = null, string basePath = null)
+
+        private (OpenApiDocument, DocumentFilterContext) GetOpenApiWithoutFilters(string documentName, string host, string basePath)
         {
             if (!_options.SwaggerDocs.TryGetValue(documentName, out OpenApiInfo info))
                 throw new UnknownSwaggerDocument(documentName, _options.SwaggerDocs.Select(d => d.Key));
@@ -52,11 +55,34 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 },
                 SecurityRequirements = new List<OpenApiSecurityRequirement>(_options.SecurityRequirements)
             };
-
             var filterContext = new DocumentFilterContext(applicableApiDescriptions, _schemaGenerator, schemaRepository);
+            return (swaggerDoc, filterContext);
+        }
+
+        public OpenApiDocument GetSwagger(string documentName, string host = null, string basePath = null)
+        {
+            var (swaggerDoc, filterContext) = GetOpenApiWithoutFilters(documentName, host, basePath);
             foreach (var filter in _options.DocumentFilters)
             {
                 filter.Apply(swaggerDoc, filterContext);
+            }
+
+            return swaggerDoc;
+        }
+
+        public async Task<OpenApiDocument> GetSwaggerAsync(string documentName, string host = null, string basePath = null)
+        {
+            var (swaggerDoc, filterContext) = GetOpenApiWithoutFilters(documentName, host, basePath);
+            foreach (var filter in _options.DocumentFilters)
+            {
+                if (filter is IAsyncDocumentFilter asyncFilter)
+                {
+                    await asyncFilter.ApplyAsync(swaggerDoc, filterContext);
+                }
+                else
+                {
+                    filter.Apply(swaggerDoc, filterContext);
+                }
             }
 
             return swaggerDoc;

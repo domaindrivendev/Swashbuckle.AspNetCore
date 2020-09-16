@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.Swagger
@@ -8,6 +9,14 @@ namespace Swashbuckle.AspNetCore.Swagger
     public interface ISwaggerProvider
     {
         OpenApiDocument GetSwagger(
+            string documentName,
+            string host = null,
+            string basePath = null);
+    }
+
+    public interface IAsyncSwaggerProvider
+    {
+        Task<OpenApiDocument> GetSwaggerAsync(
             string documentName,
             string host = null,
             string basePath = null);

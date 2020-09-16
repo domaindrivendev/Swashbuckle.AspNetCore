@@ -9,6 +9,7 @@ using Microsoft.OpenApi.Any;
 using Xunit;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.TestSupport;
+using System.Threading.Tasks;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -837,6 +838,29 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             );
 
             var document = subject.GetSwagger("v1");
+
+            Assert.NotEmpty(document.Extensions);
+        }
+
+        [Fact]
+        public async Task GetSwagger_SupportsOption_AsyncDocumentFilters()
+        {
+            var subject = Subject(
+                apiDescriptions: new ApiDescription[] { },
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    },
+                    DocumentFilters = new List<IDocumentFilter>
+                    {
+                        new VendorExtensionsAsyncDocumentFilter()
+                    }
+                }
+            );
+
+            var document = await subject.GetSwaggerAsync("v1");
 
             Assert.NotEmpty(document.Extensions);
         }
