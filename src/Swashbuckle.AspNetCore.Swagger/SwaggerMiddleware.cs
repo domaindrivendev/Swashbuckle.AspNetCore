@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -65,18 +66,10 @@ namespace Swashbuckle.AspNetCore.Swagger
 
         private string GetHostOrNullFromRequest(HttpRequest request)
         {
-            // Honor common reverse proxy headers if present ...
-
-            UriBuilder hostBuilder = null;
-
-            if (request.Headers.TryGetValue("X-Forwarded-For", out StringValues forwardedFor))
-                hostBuilder = new UriBuilder($"http://{forwardedFor[0]}");
-
-            if (request.Headers.TryGetValue("X-Forwarded-Host", out StringValues forwardedHost))
-                hostBuilder = new UriBuilder($"http://{forwardedHost[0]}");
-
-            if (hostBuilder == null)
+            if (!request.Headers.TryGetValue("X-Forwarded-Host", out StringValues forwardedHost))
                 return null;
+
+            var hostBuilder = new UriBuilder($"http://{forwardedHost[0]}");
 
             if (request.Headers.TryGetValue("X-Forwarded-Proto", out StringValues forwardedProto))
                 hostBuilder.Scheme = forwardedProto[0];

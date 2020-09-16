@@ -82,13 +82,12 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 
 
         [Theory]
-        [InlineData(null, "tempuri.org", null, null, null, "http://tempuri.org")]
-        [InlineData(null, "tempuri.org:8080", null, null, null, "http://tempuri.org:8080")]
-        [InlineData("tempuri.org", null, "https", "443", null, "https://tempuri.org")]
-        [InlineData("tempuri.org", null, null, "8080", null, "http://tempuri.org:8080")]
-        [InlineData("tempuri.org", null, null, null, "/foo", "http://tempuri.org/foo")]
+        [InlineData("tempuri.org", null, null, null, "http://tempuri.org")]
+        [InlineData("tempuri.org:8080", null, null, null, "http://tempuri.org:8080")]
+        [InlineData("tempuri.org", "https", "443", null, "https://tempuri.org")]
+        [InlineData("tempuri.org", null, "8080", null, "http://tempuri.org:8080")]
+        [InlineData("tempuri.org", null, null, "/foo", "http://tempuri.org/foo")]
         public async Task SwaggerEndpoint_InfersServerMetadataFromReverseProxyHeaders_IfPresent(
-            string xForwardedFor,
             string xForwardedHost,
             string xForwardedProto,
             string xForwardedPort,
@@ -97,9 +96,6 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         {
             var testSite = new TestSite(typeof(Basic.Startup));
             var client = testSite.BuildClient();
-
-            if (xForwardedFor != null)
-                client.DefaultRequestHeaders.Add("X-Forwarded-For", xForwardedFor);
 
             if (xForwardedHost != null)
                 client.DefaultRequestHeaders.Add("X-Forwarded-Host", xForwardedHost);
