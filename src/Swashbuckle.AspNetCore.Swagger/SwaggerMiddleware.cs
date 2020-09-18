@@ -49,7 +49,7 @@ namespace Swashbuckle.AspNetCore.Swagger
                     filter(swagger, httpContext.Request);
                 }
 
-                if (Path.GetExtension(httpContext.Request.Path.Value) == "yaml")
+                if (Path.GetExtension(httpContext.Request.Path.Value) == ".yaml")
                 {
                     await RespondWithSwaggerYaml(httpContext.Response, swagger);
                 }
