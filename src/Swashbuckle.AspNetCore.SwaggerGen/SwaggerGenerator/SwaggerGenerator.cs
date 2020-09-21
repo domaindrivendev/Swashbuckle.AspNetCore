@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -194,8 +195,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 ? ParameterLocationMap[apiParameter.Source]
                 : ParameterLocation.Query;
 
-            var isRequired = (apiParameter.IsFromPath())
-                || apiParameter.CustomAttributes().Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
+            var isRequired = apiParameter.IsRequired();
 
             var schema = (apiParameter.ModelMetadata != null)
                 ? _schemaGenerator.GenerateSchema(
@@ -280,7 +280,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var contentTypes = InferRequestContentTypes(apiDescription);
 
-            var isRequired = bodyParameter.CustomAttributes().Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
+            var isRequired = bodyParameter.IsRequired();
 
             var schema = _schemaGenerator.GenerateSchema(
                 bodyParameter.ModelMetadata.ModelType,
@@ -369,7 +369,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 properties.Add(name, schema);
 
-                if (formParameter.IsFromPath() || formParameter.CustomAttributes().Any(attr => RequiredAttributeTypes.Contains(attr.GetType())))
+                if (formParameter.IsRequired())
                     requiredPropertyNames.Add(name);
             }
 
@@ -464,12 +464,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             { BindingSource.Query, ParameterLocation.Query },
             { BindingSource.Header, ParameterLocation.Header },
             { BindingSource.Path, ParameterLocation.Path }
-        };
-
-        private static readonly IEnumerable<Type> RequiredAttributeTypes = new[]
-        {
-            typeof(BindRequiredAttribute),
-            typeof(RequiredAttribute)
         };
 
         private static readonly Dictionary<string, string> ResponseDescriptionMap = new Dictionary<string, string>
