@@ -38,10 +38,13 @@ namespace Swashbuckle.AspNetCore.Swagger
 
             try
             {
-                var swagger = swaggerProvider.GetSwagger(
-                    documentName: documentName,
-                    host: GetHostOrNullFromRequest(httpContext.Request),
-                    basePath: GetBasePathOrNullFromRequest(httpContext.Request));
+                var host = httpContext.Request.Host.HasValue
+                    ? $"{httpContext.Request.Scheme ?? "http"}://{httpContext.Request.Host}"
+                    : null;
+
+                var basePath = httpContext.Request.PathBase;
+
+                var swagger = swaggerProvider.GetSwagger(documentName, host, basePath);
 
                 // One last opportunity to modify the Swagger Document - this time with request context
                 foreach (var filter in _options.PreSerializeFilters)
@@ -62,37 +65,6 @@ namespace Swashbuckle.AspNetCore.Swagger
             {
                 RespondWithNotFound(httpContext.Response);
             }
-        }
-
-        private string GetHostOrNullFromRequest(HttpRequest request)
-        {
-            if (!request.Headers.TryGetValue("X-Forwarded-Host", out StringValues forwardedHost))
-                return null;
-
-            var hostBuilder = new UriBuilder($"http://{forwardedHost[0]}");
-
-            if (request.Headers.TryGetValue("X-Forwarded-Proto", out StringValues forwardedProto))
-                hostBuilder.Scheme = forwardedProto[0];
-
-            if (request.Headers.TryGetValue("X-Forwarded-Port", out StringValues forwardedPort))
-                hostBuilder.Port = int.Parse(forwardedPort[0]);
-
-            return hostBuilder.Uri.ToString().Trim('/');
-        }
-
-        private string GetBasePathOrNullFromRequest(HttpRequest request)
-        {
-            var pathBuilder = new StringBuilder();
-
-            if (request.Headers.TryGetValue("X-Forwarded-Prefix", out StringValues forwardedPrefix))
-                pathBuilder.Append(forwardedPrefix[0].TrimEnd('/'));
-
-            if (request.PathBase.HasValue)
-                pathBuilder.Append(request.PathBase.Value.TrimEnd('/'));
-
-            return (pathBuilder.Length > 0)
-                ? pathBuilder.ToString()
-                : null;
         }
 
         private bool RequestingSwaggerDocument(HttpRequest request, out string documentName)
