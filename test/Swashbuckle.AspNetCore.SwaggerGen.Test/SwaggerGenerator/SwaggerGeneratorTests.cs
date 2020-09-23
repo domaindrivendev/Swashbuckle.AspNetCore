@@ -636,8 +636,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(new[] { OperationType.Post }, document.Paths["/resource"].Operations.Keys);
         }
 
-        [Fact]
-        public void GetSwagger_SupportsOption_DescribeAllParametersInCamelCase()
+        [Theory]
+        [InlineData("SomeParam", "someParam")]
+        [InlineData("FooBar.SomeParam", "fooBar.someParam")]
+        [InlineData("A.B", "a.b")]
+        [InlineData("", "")]
+        [InlineData(null, null)]
+        public void GetSwagger_SupportsOption_DescribeAllParametersInCamelCase(
+            string parameterName,
+            string expectedOpenApiParameterName)
         {
             var subject = Subject(
                 apiDescriptions: new[]
@@ -651,7 +658,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                         {
                             new ApiParameterDescription
                             {
-                                Name = "SomeParam",
+                                Name = parameterName,
                                 Source = BindingSource.Path
                             }
                         })
@@ -670,7 +677,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.Equal(1, operation.Parameters.Count);
-            Assert.Equal("someParam", operation.Parameters.First().Name);
+            Assert.Equal(expectedOpenApiParameterName, operation.Parameters.First().Name);
         }
 
         [Fact]
