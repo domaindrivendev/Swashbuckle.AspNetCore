@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Swashbuckle.AspNetCore.Cli
 {
@@ -9,7 +10,7 @@ namespace Swashbuckle.AspNetCore.Cli
     {
         private readonly Dictionary<string, string> _argumentDescriptors;
         private readonly Dictionary<string, OptionDescriptor> _optionDescriptors;
-        private Func<IDictionary<string, string>, int> _runFunc;
+        private Func<IDictionary<string, string>, Task<int>> _runFunc;
         private readonly List<CommandRunner> _subRunners;
         private readonly TextWriter _output;
 
@@ -19,7 +20,7 @@ namespace Swashbuckle.AspNetCore.Cli
             CommandDescription = commandDescription;
             _argumentDescriptors = new Dictionary<string, string>();
             _optionDescriptors = new Dictionary<string, OptionDescriptor>();
-            _runFunc = (namedArgs) => { return 1; }; // noop
+            _runFunc = (namedArgs) => { return Task.FromResult(1); }; // noop
             _subRunners = new List<CommandRunner>();
             _output = output;
         }
@@ -39,9 +40,14 @@ namespace Swashbuckle.AspNetCore.Cli
             _optionDescriptors.Add(name, new OptionDescriptor { Description = description, IsFlag = isFlag });
         }
 
-        public void OnRun(Func<IDictionary<string, string>, int> runFunc)
+        public void OnRun(Func<IDictionary<string, string>, Task<int>> runFunc)
         {
             _runFunc = runFunc;
+        }
+
+        public void OnRun(Func<IDictionary<string, string>, int> runFunc)
+        {
+            _runFunc = (args)=> Task.FromResult(runFunc(args));
         }
 
         public void SubCommand(string name, string description, Action<CommandRunner> configAction)
@@ -51,7 +57,7 @@ namespace Swashbuckle.AspNetCore.Cli
             _subRunners.Add(runner);
         }
 
-        public int Run(IEnumerable<string> args)
+        public Task<int> Run(IEnumerable<string> args)
         {
             if (args.Any())
             {
@@ -62,7 +68,7 @@ namespace Swashbuckle.AspNetCore.Cli
             if (_subRunners.Any() || !TryParseArgs(args, out IDictionary<string, string> namedArgs))
             {
                 PrintUsage();
-                return 1;
+                return Task.FromResult(1);
             }
 
             return _runFunc(namedArgs);

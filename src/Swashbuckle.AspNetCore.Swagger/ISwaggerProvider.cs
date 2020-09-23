@@ -14,9 +14,9 @@ namespace Swashbuckle.AspNetCore.Swagger
             string basePath = null);
     }
 
-    public interface IAsyncSwaggerProvider
+    public interface IOpenApiDocumentProvider
     {
-        Task<OpenApiDocument> GetSwaggerAsync(
+        Task<OpenApiDocument> GetOpenApiDocumentAsync(
             string documentName,
             string host = null,
             string basePath = null);

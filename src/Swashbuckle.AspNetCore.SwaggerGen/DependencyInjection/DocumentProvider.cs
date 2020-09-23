@@ -23,12 +23,12 @@ namespace Microsoft.Extensions.ApiDescriptions
     {
         private readonly SwaggerGeneratorOptions _generatorOptions;
         private readonly SwaggerOptions _options;
-        private readonly IAsyncSwaggerProvider _swaggerProvider;
+        private readonly IOpenApiDocumentProvider _swaggerProvider;
 
         public DocumentProvider(
             IOptions<SwaggerGeneratorOptions> generatorOptions,
             IOptions<SwaggerOptions> options,
-            IAsyncSwaggerProvider swaggerProvider)
+            IOpenApiDocumentProvider swaggerProvider)
         {
             _generatorOptions = generatorOptions.Value;
             _options = options.Value;
@@ -43,7 +43,7 @@ namespace Microsoft.Extensions.ApiDescriptions
         public async Task GenerateAsync(string documentName, TextWriter writer)
         {
             // Let UnknownSwaggerDocument or other exception bubble up to caller.
-            var swagger = await _swaggerProvider.GetSwaggerAsync(documentName, host: null, basePath: null);
+            var swagger = await _swaggerProvider.GetOpenApiDocumentAsync(documentName, host: null, basePath: null);
             var jsonWriter = new OpenApiJsonWriter(writer);
             if (_options.SerializeAsV2)
             {

@@ -860,7 +860,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             );
 
-            var document = await subject.GetSwaggerAsync("v1");
+            var document = await subject.GetOpenApiDocumentAsync("v1");
 
             Assert.NotEmpty(document.Extensions);
         }

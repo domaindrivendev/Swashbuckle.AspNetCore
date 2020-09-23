@@ -27,7 +27,7 @@ namespace Swashbuckle.AspNetCore.Swagger
             _requestMatcher = new TemplateMatcher(TemplateParser.Parse(_options.RouteTemplate), new RouteValueDictionary());
         }
 
-        public async Task Invoke(HttpContext httpContext, IAsyncSwaggerProvider swaggerProvider)
+        public async Task Invoke(HttpContext httpContext, IOpenApiDocumentProvider swaggerProvider)
         {
             if (!RequestingSwaggerDocument(httpContext.Request, out string documentName))
             {
@@ -37,7 +37,7 @@ namespace Swashbuckle.AspNetCore.Swagger
 
             try
             {
-                var swagger = await swaggerProvider.GetSwaggerAsync(
+                var swagger = await swaggerProvider.GetOpenApiDocumentAsync(
                     documentName: documentName,
                     host: GetHostOrNullFromRequest(httpContext.Request),
                     basePath: GetBasePathOrNullFromRequest(httpContext.Request));

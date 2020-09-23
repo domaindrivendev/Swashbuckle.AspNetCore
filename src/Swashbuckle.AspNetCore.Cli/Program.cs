@@ -10,12 +10,13 @@ using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore;
 using Microsoft.Extensions.Hosting;
+using System.Threading.Tasks;
 
 namespace Swashbuckle.AspNetCore.Cli
 {
     public class Program
     {
-        static int Main(string[] args)
+        static Task<int> Main(string[] args)
         {
             // Helper to simplify command line parsing etc.
             var runner = new CommandRunner("dotnet swagger", "Swashbuckle (Swagger) Command Line Tools", Console.Out);
@@ -66,7 +67,7 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Option("--basepath", "");
                 c.Option("--serializeasv2", "", true);
                 c.Option("--yaml", "", true);
-                c.OnRun((namedArgs) =>
+                c.OnRun(async (namedArgs) =>
                 {
                     // 1) Configure host with provided startupassembly
                     var startupAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(
@@ -76,8 +77,8 @@ namespace Swashbuckle.AspNetCore.Cli
                     var serviceProvider = GetServiceProvider(startupAssembly);
 
                     // 3) Retrieve Swagger via configured provider
-                    var swaggerProvider = serviceProvider.GetRequiredService<ISwaggerProvider>();
-                    var swagger = swaggerProvider.GetSwagger(
+                    var swaggerProvider = serviceProvider.GetRequiredService<IOpenApiDocumentProvider>();
+                    var swagger = await swaggerProvider.GetOpenApiDocumentAsync(
                         namedArgs["swaggerdoc"],
                         namedArgs.ContainsKey("--host") ? namedArgs["--host"] : null,
                         namedArgs.ContainsKey("--basepath") ? namedArgs["--basepath"] : null);

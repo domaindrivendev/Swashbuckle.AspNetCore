@@ -12,7 +12,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
     }
 
-    public class VendorExtensionsAsyncDocumentFilter : IAsyncDocumentFilter
+    public class VendorExtensionsAsyncDocumentFilter : IOpenApiDocumentFilter
     {
         public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {

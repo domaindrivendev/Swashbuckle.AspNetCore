@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Swashbuckle.AspNetCore.Cli.Test
@@ -7,7 +8,7 @@ namespace Swashbuckle.AspNetCore.Cli.Test
     public class CommandRunnerTests
     {
         [Fact]
-        public void Run_ParsesArgumentsAndExecutesCommands_AccordingToConfiguredMetadata()
+        public async Task Run_ParsesArgumentsAndExecutesCommands_AccordingToConfiguredMetadata()
         {
             var receivedValues = new List<string>();
             var subject = new CommandRunner("test", "a test", new StringWriter());
@@ -36,8 +37,8 @@ namespace Swashbuckle.AspNetCore.Cli.Test
                 });
             });
 
-            var cmd1ExitCode = subject.Run(new[] { "cmd1", "--opt1", "foo", "--opt2", "bar" });
-            var cmd2ExitCode = subject.Run(new[] { "cmd2", "--opt1", "blah", "--opt2", "dblah" });
+            var cmd1ExitCode = await subject.Run(new[] { "cmd1", "--opt1", "foo", "--opt2", "bar" });
+            var cmd2ExitCode = await subject.Run(new[] { "cmd2", "--opt1", "blah", "--opt2", "dblah" });
 
             Assert.Equal(2, cmd1ExitCode);
             Assert.Equal(3, cmd2ExitCode);

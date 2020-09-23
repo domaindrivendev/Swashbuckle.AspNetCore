@@ -14,7 +14,7 @@ using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public class SwaggerGenerator : ISwaggerProvider, IAsyncSwaggerProvider
+    public class SwaggerGenerator : ISwaggerProvider, IOpenApiDocumentProvider
     {
         private readonly IApiDescriptionGroupCollectionProvider _apiDescriptionsProvider;
         private readonly ISchemaGenerator _schemaGenerator;
@@ -70,12 +70,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return swaggerDoc;
         }
 
-        public async Task<OpenApiDocument> GetSwaggerAsync(string documentName, string host = null, string basePath = null)
+        public async Task<OpenApiDocument> GetOpenApiDocumentAsync(string documentName, string host = null, string basePath = null)
         {
             var (swaggerDoc, filterContext) = GetOpenApiWithoutFilters(documentName, host, basePath);
             foreach (var filter in _options.DocumentFilters)
             {
-                if (filter is IAsyncDocumentFilter asyncFilter)
+                if (filter is IOpenApiDocumentFilter asyncFilter)
                 {
                     await asyncFilter.ApplyAsync(swaggerDoc, filterContext);
                 }
