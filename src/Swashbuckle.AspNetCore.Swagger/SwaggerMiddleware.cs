@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
@@ -66,16 +67,16 @@ namespace Swashbuckle.AspNetCore.Swagger
 
         private string GetHostOrNullFromRequest(HttpRequest request)
         {
-            if (!request.Headers.TryGetValue("X-Forwarded-Host", out StringValues forwardedHost))
+            if (!TryGetHeaderValue(request, "X-Forwarded-Host", out string forwardedHost))
                 return null;
 
-            var hostBuilder = new UriBuilder($"http://{forwardedHost[0]}");
+            var hostBuilder = new UriBuilder($"http://{forwardedHost}");
 
-            if (request.Headers.TryGetValue("X-Forwarded-Proto", out StringValues forwardedProto))
-                hostBuilder.Scheme = forwardedProto[0];
+            if (TryGetHeaderValue(request, "X-Forwarded-Proto", out string forwardedProto))
+                hostBuilder.Scheme = forwardedProto;
 
-            if (request.Headers.TryGetValue("X-Forwarded-Port", out StringValues forwardedPort))
-                hostBuilder.Port = int.Parse(forwardedPort[0]);
+            if (TryGetHeaderValue(request, "X-Forwarded-Port", out string forwardedPort))
+                hostBuilder.Port = int.Parse(forwardedPort);
 
             return hostBuilder.Uri.ToString().Trim('/');
         }
@@ -84,8 +85,8 @@ namespace Swashbuckle.AspNetCore.Swagger
         {
             var pathBuilder = new StringBuilder();
 
-            if (request.Headers.TryGetValue("X-Forwarded-Prefix", out StringValues forwardedPrefix))
-                pathBuilder.Append(forwardedPrefix[0].TrimEnd('/'));
+            if (TryGetHeaderValue(request, "X-Forwarded-Prefix", out string forwardedPrefix))
+                pathBuilder.Append(forwardedPrefix.TrimEnd('/'));
 
             if (request.PathBase.HasValue)
                 pathBuilder.Append(request.PathBase.Value.TrimEnd('/'));
@@ -93,6 +94,22 @@ namespace Swashbuckle.AspNetCore.Swagger
             return (pathBuilder.Length > 0)
                 ? pathBuilder.ToString()
                 : null;
+        }
+
+        private static bool TryGetHeaderValue(HttpRequest request, string key, out string value)
+        {
+            if (!request.Headers.TryGetValue(key, out StringValues values))
+            {
+                value = null;
+                return false;
+            }
+
+            value = values
+                .FirstOrDefault()?
+                .Split(',')
+                .FirstOrDefault();
+
+            return value != null;
         }
 
         private bool RequestingSwaggerDocument(HttpRequest request, out string documentName)

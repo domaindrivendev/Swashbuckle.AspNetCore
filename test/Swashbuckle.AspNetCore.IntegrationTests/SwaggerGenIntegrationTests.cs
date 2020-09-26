@@ -83,6 +83,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 
         [Theory]
         [InlineData("tempuri.org", null, null, null, "http://tempuri.org")]
+        [InlineData("tempuri.org, foobar-proxy.org", null, null, null, "http://tempuri.org")]
         [InlineData("tempuri.org:8080", null, null, null, "http://tempuri.org:8080")]
         [InlineData("tempuri.org", "https", "443", null, "https://tempuri.org")]
         [InlineData("tempuri.org", null, "8080", null, "http://tempuri.org:8080")]
