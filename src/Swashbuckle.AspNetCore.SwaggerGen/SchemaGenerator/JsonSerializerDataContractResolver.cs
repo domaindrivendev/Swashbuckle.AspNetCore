@@ -36,7 +36,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (type.IsEnum)
             {
-                var enumValues = GetSerializedEnumValuesFor(type);
+                var (enumConverter, enumValues) = GetSerializedEnumValuesFor(type);
 
                 var primitiveTypeAndFormat = (enumValues.Any(value => value is string))
                     ? PrimitiveTypesAndFormats[typeof(string)]
@@ -46,7 +46,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     underlyingType: type,
                     dataType: primitiveTypeAndFormat.Item1,
                     dataFormat: primitiveTypeAndFormat.Item2,
-                    enumValues: enumValues);
+                    enumValues: enumValues,
+                    enumConverter: enumConverter);
             }
 
             if (IsSupportedDictionary(type, out Type keyType, out Type valueType))
@@ -69,7 +70,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 extensionDataType: extensionDataType);
         }
 
-        private IEnumerable<object> GetSerializedEnumValuesFor(Type enumType)
+        private (Func<object, string> enumConverter, IEnumerable<object> enumValues) GetSerializedEnumValuesFor(Type enumType)
         {
             var underlyingValues = enumType.GetEnumValues().Cast<object>();
 
@@ -77,9 +78,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var serializeAsString = underlyingValues.Any()
                 && JsonSerializer.Serialize(underlyingValues.First(), _serializerOptions).StartsWith("\"");
 
-            return serializeAsString
-                ? underlyingValues.Select(value => JsonSerializer.Serialize(value, _serializerOptions).Replace("\"", string.Empty))
-                : underlyingValues;
+            if (serializeAsString)
+            {
+                Func<object, string> converterFunc = value => JsonSerializer.Serialize(value, _serializerOptions).Replace("\"", string.Empty);
+                return (converterFunc, underlyingValues.Select(converterFunc));
+            }
+            else
+            {
+                return (null, underlyingValues);
+            }
         }
 
         public bool IsSupportedDictionary(Type type, out Type keyType, out Type valueType)

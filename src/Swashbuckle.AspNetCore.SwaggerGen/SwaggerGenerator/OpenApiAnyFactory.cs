@@ -32,7 +32,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 return new OpenApiDate(dateTimeValue);
 
             else if (schema.Type == "string" && value.GetType().IsEnum)
-                return new OpenApiString(Enum.GetName(value.GetType(), value));
+            {
+                if (schema is ExtendedOpenApiSchema extendedSchema && extendedSchema.EnumConverter != null)
+                    return new OpenApiString(extendedSchema.EnumConverter(value));
+                else
+                    return new OpenApiString(Enum.GetName(value.GetType(), value));
+            }
 
             else if (schema.Type == "string")
                 return new OpenApiString(value.ToString());

@@ -47,7 +47,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
             if (jsonContract is JsonPrimitiveContract && jsonContract.UnderlyingType.IsEnum)
             {
-                var enumValues = GetSerializedEnumValuesFor(jsonContract);
+                var (enumConverter, enumValues) = GetSerializedEnumValuesFor(jsonContract);
 
                 var primitiveTypeAndFormat = (enumValues.Any(value => value.GetType() == typeof(string)))
                     ? PrimitiveTypesAndFormats[typeof(string)]
@@ -57,7 +57,8 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     underlyingType: jsonContract.UnderlyingType,
                     dataType: primitiveTypeAndFormat.Item1,
                     dataFormat: primitiveTypeAndFormat.Item2,
-                    enumValues: enumValues);
+                    enumValues: enumValues,
+                    enumConverter: enumConverter);
             }
 
             if (jsonContract is JsonArrayContract jsonArrayContract)
@@ -77,7 +78,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                 if (keyType.IsEnum)
                 {
                     // This is a special case where we know the possible key values
-                    var enumValues = GetSerializedEnumValuesFor(_contractResolver.ResolveContract(keyType));
+                    var (_, enumValues) = GetSerializedEnumValuesFor(_contractResolver.ResolveContract(keyType));
 
                     keys = enumValues.Any(value => value is string)
                         ? enumValues.Cast<string>()
@@ -117,7 +118,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             return DataContract.ForDynamic(underlyingType: type);
         }
 
-        private IEnumerable<object> GetSerializedEnumValuesFor(JsonContract jsonContract)
+        private (Func<object, string> enumConverter, IEnumerable<object> enumValues) GetSerializedEnumValuesFor(JsonContract jsonContract)
         {
             var stringEnumConverter = (jsonContract.Converter as StringEnumConverter)
                 ?? _serializerSettings.Converters.OfType<StringEnumConverter>().FirstOrDefault();
@@ -130,17 +131,21 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
  
             if (stringEnumConverter != null)
             {
-                return jsonContract.UnderlyingType.GetMembers(BindingFlags.Public | BindingFlags.Static)
-                    .Select(member =>
-                    {
-                        var memberAttribute = member.GetCustomAttributes<EnumMemberAttribute>().FirstOrDefault();
-                        return GetConvertedEnumName((memberAttribute?.Value ?? member.Name), (memberAttribute?.Value != null), stringEnumConverter);
-                    })
-                    .ToList();
+                Func<object, string> converterFunc = value =>
+                {
+                    var enumType = value.GetType();
+                    var member = enumType.GetMember(Enum.GetName(enumType, value)).FirstOrDefault();
+                    var memberAttribute = member.GetCustomAttributes<EnumMemberAttribute>().FirstOrDefault();
+                    return GetConvertedEnumName((memberAttribute?.Value ?? member.Name), (memberAttribute?.Value != null), stringEnumConverter);
+                };
+
+                return (converterFunc, jsonContract.UnderlyingType.GetEnumValues().Cast<object>()
+                    .Select(converterFunc)
+                    .ToList());
             }
 
-            return jsonContract.UnderlyingType.GetEnumValues()
-                .Cast<object>();
+            return (null, jsonContract.UnderlyingType.GetEnumValues()
+                .Cast<object>());
         }
 
 #if NETCOREAPP3_0

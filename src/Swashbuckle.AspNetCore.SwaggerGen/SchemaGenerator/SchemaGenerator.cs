@@ -147,11 +147,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private OpenApiSchema GeneratePrimitiveSchema(DataContract dataContract)
         {
-            var schema = new OpenApiSchema
-            {
-                Type = dataContract.DataType.ToString().ToLower(CultureInfo.InvariantCulture),
-                Format = dataContract.DataFormat
-            };
+            OpenApiSchema schema = dataContract.EnumConverter != null
+                ? new ExtendedOpenApiSchema { EnumConverter = dataContract.EnumConverter }
+                : new OpenApiSchema();
+
+            schema.Type = dataContract.DataType.ToString().ToLower(CultureInfo.InvariantCulture);
+            schema.Format = dataContract.DataFormat;
 
             if (dataContract.EnumValues != null)
             {

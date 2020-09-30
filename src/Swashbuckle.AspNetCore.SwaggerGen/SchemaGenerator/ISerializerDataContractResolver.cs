@@ -11,13 +11,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
     public class DataContract
     {
-        public static DataContract ForPrimitive(Type underlyingType, DataType dataType, string dataFormat, IEnumerable<object> enumValues = null)
+        public static DataContract ForPrimitive(Type underlyingType, DataType dataType, string dataFormat, IEnumerable<object> enumValues = null, Func<object, string> enumConverter = null)
         {
             return new DataContract(
                 underlyingType: underlyingType,
                 dataType: dataType,
                 dataFormat: dataFormat,
-                enumValues: enumValues);
+                enumValues: enumValues,
+                enumConverter: enumConverter);
         }
 
         public static DataContract ForArray(Type underlyingType, Type itemType)
@@ -63,6 +64,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             DataType dataType,
             string dataFormat = null,
             IEnumerable<object> enumValues = null,
+            Func<object, string> enumConverter = null,
             Type arrayItemType = null,
             Type dictionaryValueType = null,
             IEnumerable<string> dictionaryKeys = null,
@@ -75,6 +77,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             DataType = dataType;
             DataFormat = dataFormat;
             EnumValues = enumValues;
+            EnumConverter = enumConverter;
             ArrayItemType = arrayItemType;
             DictionaryValueType = dictionaryValueType;
             DictionaryKeys = dictionaryKeys;
@@ -88,6 +91,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public DataType DataType { get; }
         public string DataFormat { get; }
         public IEnumerable<object> EnumValues { get; }
+        public Func<object, string> EnumConverter { get; }
         public Type ArrayItemType { get; }
         public Type DictionaryValueType { get; }
         public IEnumerable<string> DictionaryKeys { get; }
