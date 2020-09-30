@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
-using System.Linq;
 using System.Text;
 using System.Collections.Generic;
 using System.IO;
@@ -14,6 +13,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.StaticFiles;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Http.Extensions;
 
 #if NETCOREAPP3_0
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IWebHostEnvironment;
@@ -53,12 +53,9 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             // If the RoutePrefix is requested (with or without trailing slash), redirect to index URL
             if (httpMethod == "GET" && Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$",  RegexOptions.IgnoreCase))
             {
-                // Use relative redirect to support proxy environments
-                var relativeRedirectPath = string.IsNullOrEmpty(path) || path.EndsWith("/")
-                    ? "index.html"
-                    : $"{path.Split('/').Last()}/index.html";
+                var indexUrl = httpContext.Request.GetEncodedUrl().TrimEnd('/') + "/index.html";
 
-                RespondWithRedirect(httpContext.Response, relativeRedirectPath);
+                RespondWithRedirect(httpContext.Response, indexUrl);
                 return;
             }
 
