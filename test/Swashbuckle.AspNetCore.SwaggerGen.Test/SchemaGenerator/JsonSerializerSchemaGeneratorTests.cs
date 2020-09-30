@@ -277,6 +277,28 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(3, schema.Properties["ArrayWithMinMaxLength"].MaxItems);
         }
 
+        [Theory]
+        [InlineData(false, "Value8")]
+        [InlineData(true, "value8")]
+        public void GenerateSchema_EnumDefaultValue_HonorsContractCamelCase(
+            bool camelCaseText,
+            string expectedValue)
+        {
+            var subject = Subject(
+                configureGenerator: c =>
+                {
+                    c.UseInlineDefinitionsForEnums = true;
+                },
+                configureSerializer: c => { c.Converters.Add(new JsonStringEnumConverter(namingPolicy: (camelCaseText ? JsonNamingPolicy.CamelCase : null), true)); }
+            );
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = subject.GenerateSchema(typeof(EnumDefaultValueAnnotatedType), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal(expectedValue, ((OpenApiString)schema.Properties["IntEnumWithDefaultValue"].Default).Value);
+        }
+
         [Fact]
         public void GenerateSchema_SetsValidationProperties_IfDataAnnotatedViaMetadataType()
         {
