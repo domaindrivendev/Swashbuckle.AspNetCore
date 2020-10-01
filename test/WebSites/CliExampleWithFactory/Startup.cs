@@ -39,17 +39,14 @@ namespace CliExampleWithFactory
             }
 
             app.UseStaticFiles();
-            app.UseSwaggerUI(c =>
-            {
-                c.RoutePrefix = "api-docs";
-                c.SwaggerEndpoint("v1/swagger.json", "V1 Docs");
-            });
 
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
+            app.UseSwaggerUI();
         }
     }
 }
