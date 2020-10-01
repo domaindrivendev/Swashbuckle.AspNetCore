@@ -9,7 +9,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         private readonly Dictionary<Type, string> _reservedIds = new Dictionary<Type, string>();
 
-        public Dictionary<string, OpenApiSchema> Schemas { get; private set; } = new Dictionary<string, OpenApiSchema>();
+        public IDictionary<string, OpenApiSchema> Schemas { get; private set; } = new SortedDictionary<string, OpenApiSchema>();
 
         public void RegisterType(Type type, string schemaId)
         {
