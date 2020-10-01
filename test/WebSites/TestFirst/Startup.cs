@@ -45,7 +45,6 @@ namespace TestFirst
 
             app.UseSwaggerUI(c =>
             {
-                c.RoutePrefix = "api-docs";
                 c.SwaggerEndpoint("v1-imported/openapi.json", "V1 Docs (Imported)");
                 c.SwaggerEndpoint("v1-generated/openapi.json", "V1 Docs (Generated)");
             });

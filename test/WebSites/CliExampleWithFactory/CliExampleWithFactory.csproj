@@ -31,7 +31,7 @@
   -->
 
   <Target Name="SwaggerToFile" AfterTargets="AfterBuild">
-    <Exec Command="dotnet $(SolutionDir)src\Swashbuckle.AspNetCore.Cli\bin\$(Configuration)\$(TargetFramework)\dotnet-swagger.dll tofile --host http://example.com --output wwwroot/api-docs/v1/swagger.json $(OutputPath)$(AssemblyName).dll v1" />
+    <Exec Command="dotnet $(SolutionDir)src\Swashbuckle.AspNetCore.Cli\bin\$(Configuration)\$(TargetFramework)\dotnet-swagger.dll tofile --host http://localhost:57556/ --output wwwroot/swagger/v1/swagger.json $(OutputPath)$(AssemblyName).dll v1" />
   </Target>
 
 </Project>
