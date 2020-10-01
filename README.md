@@ -113,7 +113,7 @@ services.AddSwaggerGenNewtonsoftSupport(); // explicit opt-in - needs to be plac
 
 # Swashbuckle, ApiExplorer, and Routing #
 
-Swashbuckle relies heavily on `ApiExplorer`, the API metadata layer that ships with ASP.NET Core. If you're using the `AddMvc` helper to bootstrap the MVC stack, then ApiExplorer will be automatically registered and SB will work without issue. However, if you're using `AddMvcCore` for a more paired-down MVC stack, you'll need to explicitly add the ApiExplorer service:
+Swashbuckle relies heavily on `ApiExplorer`, the API metadata layer that ships with ASP.NET Core. If you're using the `AddMvc` MVC helper to bootstrap the MVC stack, then ApiExplorer will be automatically registered and SB will work without issue. However, if you're using `AddMvcCore` for a more paired-down MVC stack, you'll need to explicitly add the ApiExplorer service:
 
 ```csharp
 services.AddMvcCore()
