@@ -1,15 +1,14 @@
 using System;
 using System.Globalization;
+using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Basic.Swagger;
 using Microsoft.AspNetCore.Localization;
-using System.IO;
-using System.Linq;
+using Basic.Swagger;
 
 namespace Basic
 {
@@ -74,6 +73,7 @@ namespace Basic
                 endpoints.MapControllers();
                 endpoints.MapSwagger("swagger/{documentName}/swagger.json");
             });
+
             var supportedCultures = new[]
             {
                 new CultureInfo("en-US"),
@@ -89,14 +89,6 @@ namespace Basic
                 // UI strings that we have localized.
                 SupportedUICultures = supportedCultures
             });
-
-            //app.UseSwagger(c =>
-            //{
-            //    c.PreSerializeFilters.Add((swagger, httpReq) =>
-            //    {
-            //        swagger.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" } };
-            //    });
-            //});
 
             app.UseSwaggerUI(c =>
             {

@@ -96,13 +96,6 @@
   },
   "components": {
     "schemas": {
-      "AnimalType": {
-        "enum": [
-          "Cat",
-          "Dog"
-        ],
-        "type": "string"
-      },
       "Animal": {
         "required": [
           "animalType"
@@ -114,6 +107,13 @@
           }
         },
         "additionalProperties": false
+      },
+      "AnimalType": {
+        "enum": [
+          "Cat",
+          "Dog"
+        ],
+        "type": "string"
       },
       "Cat": {
         "required": [
