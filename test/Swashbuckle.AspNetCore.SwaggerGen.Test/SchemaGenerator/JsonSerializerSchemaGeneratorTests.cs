@@ -582,6 +582,39 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GenerateSchema_UseAllOfToExtendReferenceSchemas_SupportsDefault()
+        {
+            var subject = Subject(
+                configureGenerator: c => c.UseAllOfToExtendReferenceSchemas = true
+            );
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = subject.GenerateSchema(typeof(EnumDefaultValueAnnotatedType), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Null(schema.Properties["IntEnumWithDefaultValue"].Type);
+            Assert.IsType<OpenApiInteger>(schema.Properties["IntEnumWithDefaultValue"].Default);
+            Assert.Equal(8, ((OpenApiInteger)schema.Properties["IntEnumWithDefaultValue"].Default).Value);
+        }
+
+        [Fact]
+        public void GenerateSchema_UseAllOfToExtendReferenceSchemas_SupportsStringEnumDefault()
+        {
+            var subject = Subject(
+                configureGenerator: c => c.UseAllOfToExtendReferenceSchemas = true,
+                configureSerializer: c => c.Converters.Add(new JsonStringEnumConverter())
+            );
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = subject.GenerateSchema(typeof(EnumDefaultValueAnnotatedType), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Null(schema.Properties["IntEnumWithDefaultValue"].Type);
+            Assert.IsType<OpenApiString>(schema.Properties["IntEnumWithDefaultValue"].Default);
+            Assert.Equal("Value8", ((OpenApiString)schema.Properties["IntEnumWithDefaultValue"].Default).Value);
+        }
+
+        [Fact]
         public void GenerateSchema_HandlesTypesWithNestedTypes()
         {
             var schemaRepository = new SchemaRepository();

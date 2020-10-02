@@ -33,6 +33,24 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     ? mapping()
                     : GenerateSchemaForType(type, schemaRepository);
 
+                var usingAllOfToExtendReferenceSchema = false;
+                if (memberInfo != null || parameterInfo != null)
+                {
+                    if (schema.Reference != null && _generatorOptions.UseAllOfToExtendReferenceSchemas)
+                    {
+                        usingAllOfToExtendReferenceSchema = true;
+
+                        // will return non-null except in self-referencing loop
+                        schemaRepository.Schemas.TryGetValue(schema.Reference.Id, out var registeredSchema);
+
+                        // temporarily set type to allow default value attributes to be processed correctly
+                        schema.Type = registeredSchema?.Type;
+
+                        schema.AllOf = new[] { new OpenApiSchema { Reference = schema.Reference } };
+                        schema.Reference = null;
+                    }
+                }
+
                 if (memberInfo != null)
                 {
                     ApplyMemberMetadata(schema, schemaRepository, type, memberInfo);
@@ -45,6 +63,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 if (schema.Reference == null)
                 {
                     ApplyFilters(schema, type, schemaRepository, memberInfo, parameterInfo);
+                }
+
+                if (usingAllOfToExtendReferenceSchema)
+                {
+                    schema.Type = null;
                 }
 
                 return schema;
@@ -394,12 +417,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private void ApplyMemberMetadata(OpenApiSchema schema, SchemaRepository schemaRepository, Type type, MemberInfo memberInfo)
         {
-            if (schema.Reference != null && _generatorOptions.UseAllOfToExtendReferenceSchemas)
-            {
-                schema.AllOf = new[] { new OpenApiSchema { Reference = schema.Reference } };
-                schema.Reference = null;
-            }
-
             if (schema.Reference == null)
             {
                 schema.Nullable = type.IsReferenceOrNullableType();
@@ -410,12 +427,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private void ApplyParameterMetadata(OpenApiSchema schema, SchemaRepository schemaRepository, Type type, ParameterInfo parameterInfo)
         {
-            if (schema.Reference != null && _generatorOptions.UseAllOfToExtendReferenceSchemas)
-            {
-                schema.AllOf = new[] { new OpenApiSchema { Reference = schema.Reference } };
-                schema.Reference = null;
-            }
-
             if (schema.Reference == null)
             {
                 schema.Nullable = type.IsReferenceOrNullableType();
