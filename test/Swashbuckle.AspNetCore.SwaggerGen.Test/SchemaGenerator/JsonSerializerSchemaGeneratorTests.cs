@@ -12,6 +12,7 @@ using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Xunit;
 using Swashbuckle.AspNetCore.TestSupport;
+using Swashbuckle.AspNetCore.TestSupport.Fixtures;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -310,6 +311,42 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(useInlineDefinitions ? 0 : 1, property.AllOf.Count);
 
             Assert.Equal(expectedValue, ((OpenApiString)property.Default).Value);
+        }
+
+        [Theory]
+        [InlineData(false, false, "Value4")]
+        [InlineData(false, true, "value4")]
+        [InlineData(true, false, "Value4")]
+        [InlineData(true, true, "value4")]
+        public void GenerateSchema_EnumDefaultValue_HonorsParameterInfoDefaults(
+            bool useInlineDefinitions,
+            bool camelCaseText,
+            string expectedValue)
+        {
+            var subject = Subject(
+                configureGenerator: c =>
+                {
+                    c.UseInlineDefinitionsForEnums = useInlineDefinitions;
+                    c.UseAllOfToExtendReferenceSchemas = !useInlineDefinitions;
+                },
+                configureSerializer: c => { c.Converters.Add(new JsonStringEnumConverter(namingPolicy: (camelCaseText ? JsonNamingPolicy.CamelCase : null), true)); }
+            );
+            var schemaRepository = new SchemaRepository();
+
+            var parameterInfo = typeof(FakeControllerWithActionWithParamDefaults)
+                .GetMethod(nameof(FakeControllerWithActionWithParamDefaults.ActionWithEnumParamDefaultValue))
+                .GetParameters()[0];
+
+            var schema = subject.GenerateSchema(typeof(IntEnum), schemaRepository, parameterInfo: parameterInfo);
+
+            Assert.Null(schema.Reference);
+
+            if (useInlineDefinitions) Assert.NotNull(schema.Type);
+            else Assert.Null(schema.Type);
+
+            Assert.Equal(useInlineDefinitions ? 0 : 1, schema.AllOf.Count);
+
+            Assert.Equal(expectedValue, ((OpenApiString)schema.Default).Value);
         }
 
         [Fact]
