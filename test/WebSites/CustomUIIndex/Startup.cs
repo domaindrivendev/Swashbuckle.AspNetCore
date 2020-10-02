@@ -48,8 +48,6 @@ namespace CustomUIIndex
             app.UseSwaggerUI(c =>
             {
                 c.IndexStream = () => GetType().Assembly.GetManifestResourceStream("CustomUIIndex.Swagger.index.html");
-
-                c.SwaggerEndpoint("v1/swagger.json", "Test API (V1)");
             });
         }
     }

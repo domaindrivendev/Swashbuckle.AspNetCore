@@ -45,10 +45,7 @@ namespace NSwagClientExample
 
             app.UseSwagger();
 
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("v1/swagger.json", "V1 Docs");
-            });
+            app.UseSwaggerUI();
         }
     }
 }

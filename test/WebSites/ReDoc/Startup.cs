@@ -46,7 +46,6 @@ namespace ReDoc
 
             app.UseSwagger(c =>
             {
-                c.RouteTemplate = "api-docs/{documentName}/swagger.json";
                 c.SerializeAsV2 = true;
             });
 
@@ -54,7 +53,6 @@ namespace ReDoc
             {
                 c.RoutePrefix = "api-docs";
 
-                c.SpecUrl = "v1/swagger.json";
                 c.ConfigObject = new ConfigObject
                 {
                     HideDownloadButton = true,

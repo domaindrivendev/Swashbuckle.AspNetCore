@@ -7,23 +7,37 @@ namespace Microsoft.AspNetCore.Builder
 {
     public static class SwaggerUIBuilderExtensions
     {
-        public static IApplicationBuilder UseSwaggerUI(
-            this IApplicationBuilder app,
-            Action<SwaggerUIOptions> setupAction = null)
+        /// <summary>
+        /// Register the SwaggerUI middleware. Use this overload for default settings or if you want to inject SwaggerUiOptions options via DI
+        /// </summary>
+        public static IApplicationBuilder UseSwaggerUI(this IApplicationBuilder app)
+        {
+            return app.UseSwaggerUI(app.ApplicationServices.GetRequiredService<IOptions<SwaggerUIOptions>>().Value);
+        }
+
+        /// <summary>
+        /// Register the SwaggerUI middleware with provided options
+        /// </summary>
+        public static IApplicationBuilder UseSwaggerUI(this IApplicationBuilder app, SwaggerUIOptions options)
+        {
+            // To simplify the common case, use a default that will work with the SwaggerMiddleware defaults
+            if (options.ConfigObject.Urls == null)
+            {
+                options.ConfigObject.Urls = new[] { new UrlDescriptor { Name = "V1 Docs", Url = "/swagger/v1/swagger.json" } };
+            }
+
+            return app.UseMiddleware<SwaggerUIMiddleware>(options);
+        }
+
+        /// <summary>
+        /// Register the SwaggerUI middleware with provided options
+        /// </summary>
+        public static IApplicationBuilder UseSwaggerUI(this IApplicationBuilder app, Action<SwaggerUIOptions> setupAction)
         {
             var options = new SwaggerUIOptions();
-            if (setupAction != null)
-            {
-                setupAction(options);
-            }
-            else
-            {
-                options = app.ApplicationServices.GetRequiredService<IOptions<SwaggerUIOptions>>().Value;
-            }
+            setupAction(options);
 
-            app.UseMiddleware<SwaggerUIMiddleware>(options);
-
-            return app;
+            return app.UseSwaggerUI(options);
         }
     }
 }

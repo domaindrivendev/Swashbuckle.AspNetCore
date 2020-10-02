@@ -32,7 +32,7 @@ namespace Swashbuckle.AspNetCore.ReDoc
         /// <summary>
         /// Gets or sets the Swagger JSON endpoint. Can be fully-qualified or relative to the redoc page
         /// </summary>
-        public string SpecUrl { get; set; } = "v1/swagger.json";
+        public string SpecUrl { get; set; } = null;
 
         public ConfigObject ConfigObject { get; set; } = new ConfigObject();
     }
