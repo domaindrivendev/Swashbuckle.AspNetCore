@@ -435,7 +435,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 if (parameterInfo.HasDefaultValue)
                 {
-                    schema.Default = OpenApiAnyFactory.CreateFor(schema, parameterInfo.DefaultValue);
+                    schema.Default = OpenApiAnyFactory.CreateFor(schema, schemaRepository, parameterInfo.DefaultValue);
                 }
             }
         }
