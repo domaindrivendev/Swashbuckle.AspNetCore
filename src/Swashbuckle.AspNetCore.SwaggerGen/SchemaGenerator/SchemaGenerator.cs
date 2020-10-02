@@ -35,11 +35,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 if (memberInfo != null)
                 {
-                    ApplyMemberMetadata(schema, type, memberInfo);
+                    ApplyMemberMetadata(schema, schemaRepository, type, memberInfo);
                 }
                 else if (parameterInfo != null)
                 {
-                    ApplyParameterMetadata(schema, type, parameterInfo);
+                    ApplyParameterMetadata(schema, schemaRepository, type, parameterInfo);
                 }
 
                 if (schema.Reference == null)
@@ -97,7 +97,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 case DataType.Number:
                 case DataType.String:
                     {
-                        definitionFactory = () => GeneratePrimitiveSchema(dataContract);
+                        definitionFactory = () => GeneratePrimitiveSchema(dataContract, schemaRepository);
                         returnAsReference = type.IsEnum && !_generatorOptions.UseInlineDefinitionsForEnums;
                         break;
                     }
@@ -145,14 +145,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 : definitionFactory();
         }
 
-        private OpenApiSchema GeneratePrimitiveSchema(DataContract dataContract)
+        private OpenApiSchema GeneratePrimitiveSchema(DataContract dataContract, SchemaRepository schemaRepository)
         {
-            OpenApiSchema schema = dataContract.EnumConverter != null
-                ? new ExtendedOpenApiSchema { EnumConverter = dataContract.EnumConverter }
-                : new OpenApiSchema();
+            if (dataContract.EnumConverter != null)
+            {
+                schemaRepository.RegisterEnumConverter(dataContract.UnderlyingType, dataContract.EnumConverter);
+            }
 
-            schema.Type = dataContract.DataType.ToString().ToLower(CultureInfo.InvariantCulture);
-            schema.Format = dataContract.DataFormat;
+            OpenApiSchema schema = new OpenApiSchema
+            {
+                Type = dataContract.DataType.ToString().ToLower(CultureInfo.InvariantCulture),
+                Format = dataContract.DataFormat
+            };
 
             if (dataContract.EnumValues != null)
             {
@@ -388,7 +392,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return schemaRepository.AddDefinition(schemaId, schema);
         }
 
-        private void ApplyMemberMetadata(OpenApiSchema schema, Type type, MemberInfo memberInfo)
+        private void ApplyMemberMetadata(OpenApiSchema schema, SchemaRepository schemaRepository, Type type, MemberInfo memberInfo)
         {
             if (schema.Reference != null && _generatorOptions.UseAllOfToExtendReferenceSchemas)
             {
@@ -400,11 +404,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 schema.Nullable = type.IsReferenceOrNullableType();
 
-                schema.ApplyCustomAttributes(memberInfo.GetInlineAndMetadataAttributes());
+                schema.ApplyCustomAttributes(schemaRepository, memberInfo.GetInlineAndMetadataAttributes());
             }
         }
 
-        private void ApplyParameterMetadata(OpenApiSchema schema, Type type, ParameterInfo parameterInfo)
+        private void ApplyParameterMetadata(OpenApiSchema schema, SchemaRepository schemaRepository, Type type, ParameterInfo parameterInfo)
         {
             if (schema.Reference != null && _generatorOptions.UseAllOfToExtendReferenceSchemas)
             {
@@ -416,7 +420,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 schema.Nullable = type.IsReferenceOrNullableType();
 
-                schema.ApplyCustomAttributes(parameterInfo.GetCustomAttributes());
+                schema.ApplyCustomAttributes(schemaRepository, parameterInfo.GetCustomAttributes());
 
                 if (parameterInfo.HasDefaultValue)
                 {
