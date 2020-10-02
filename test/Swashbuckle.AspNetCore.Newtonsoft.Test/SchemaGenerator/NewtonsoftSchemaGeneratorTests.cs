@@ -5,6 +5,7 @@ using System.Dynamic;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
@@ -14,7 +15,7 @@ using Newtonsoft.Json.Serialization;
 using Xunit;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.TestSupport;
-using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
+using Swashbuckle.AspNetCore.TestSupport.Fixtures;
 
 namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 {
@@ -311,6 +312,35 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal(expectedValue, ((OpenApiString)schema.Properties["IntEnumWithDefaultValue"].Default).Value);
+        }
+
+        [Theory]
+        [InlineData(false, "Value4")]
+        [InlineData(true, "value4")]
+        public void GenerateSchema_EnumDefaultValue_HonorsParameterInfoDefaults(
+            bool camelCaseText,
+            string expectedValue)
+        {
+            var subject = Subject(
+                configureGenerator: c =>
+                {
+                    c.UseInlineDefinitionsForEnums = true;
+                },
+                configureSerializer: c =>
+                {
+                    var stringEnumConverter = (camelCaseText) ? new StringEnumConverter(new CamelCaseNamingStrategy(), false) : new StringEnumConverter();
+                    c.Converters.Add(stringEnumConverter);
+                }
+            );
+            var schemaRepository = new SchemaRepository();
+
+            var parameterInfo = typeof(FakeControllerWithActionWithParamDefaults)
+                .GetMethod(nameof(FakeControllerWithActionWithParamDefaults.ActionWithEnumParamDefaultValue))
+                .GetParameters()[0];
+
+            var schema = subject.GenerateSchema(typeof(IntEnum), schemaRepository, parameterInfo: parameterInfo);
+
+            Assert.Equal(expectedValue, ((OpenApiString)schema.Default).Value);
         }
 
         [Theory]
