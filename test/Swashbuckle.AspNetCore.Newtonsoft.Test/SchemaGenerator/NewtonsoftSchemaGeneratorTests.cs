@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
@@ -16,7 +17,6 @@ using Xunit;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.TestSupport;
 using Swashbuckle.AspNetCore.TestSupport.Fixtures;
-using System.Net;
 
 namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 {
@@ -302,16 +302,20 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Theory]
-        [InlineData(false, "Value8")]
-        [InlineData(true, "value8")]
+        [InlineData(false, false, "Value8")]
+        [InlineData(false, true, "value8")]
+        [InlineData(true, false, "Value8")]
+        [InlineData(true, true, "value8")]
         public void GenerateSchema_EnumDefaultValue_HonorsContractCamelCase(
+            bool useInlineDefinitions,
             bool camelCaseText,
             string expectedValue)
         {
             var subject = Subject(
                 configureGenerator: c =>
                 {
-                    c.UseInlineDefinitionsForEnums = true;
+                    c.UseInlineDefinitionsForEnums = useInlineDefinitions;
+                    c.UseAllOfToExtendReferenceSchemas = !useInlineDefinitions;
                 },
                 configureSerializer: c =>
                 {
@@ -324,20 +328,33 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             var referenceSchema = subject.GenerateSchema(typeof(EnumDefaultValueAnnotatedType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal(expectedValue, ((OpenApiString)schema.Properties["IntEnumWithDefaultValue"].Default).Value);
+            var property = schema.Properties["IntEnumWithDefaultValue"];
+
+            Assert.Null(property.Reference);
+
+            if (useInlineDefinitions) Assert.NotNull(property.Type);
+            else Assert.Null(property.Type);
+
+            Assert.Equal(useInlineDefinitions ? 0 : 1, property.AllOf.Count);
+
+            Assert.Equal(expectedValue, ((OpenApiString)property.Default).Value);
         }
 
         [Theory]
-        [InlineData(false, "Value4")]
-        [InlineData(true, "value4")]
+        [InlineData(false, false, "Value4")]
+        [InlineData(false, true, "value4")]
+        [InlineData(true, false, "Value4")]
+        [InlineData(true, true, "value4")]
         public void GenerateSchema_EnumDefaultValue_HonorsParameterInfoDefaults(
+            bool useInlineDefinitions,
             bool camelCaseText,
             string expectedValue)
         {
             var subject = Subject(
                 configureGenerator: c =>
                 {
-                    c.UseInlineDefinitionsForEnums = true;
+                    c.UseInlineDefinitionsForEnums = useInlineDefinitions;
+                    c.UseAllOfToExtendReferenceSchemas = !useInlineDefinitions;
                 },
                 configureSerializer: c =>
                 {
@@ -353,20 +370,31 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 
             var schema = subject.GenerateSchema(typeof(IntEnum), schemaRepository, parameterInfo: parameterInfo);
 
+            Assert.Null(schema.Reference);
+
+            if (useInlineDefinitions) Assert.NotNull(schema.Type);
+            else Assert.Null(schema.Type);
+
+            Assert.Equal(useInlineDefinitions ? 0 : 1, schema.AllOf.Count);
+
             Assert.Equal(expectedValue, ((OpenApiString)schema.Default).Value);
         }
 
         [Theory]
-        [InlineData(false, "X-foo")]
-        [InlineData(true, "X-foo")]
+        [InlineData(false, false, "X-foo")]
+        [InlineData(false, true, "X-foo")]
+        [InlineData(true, false, "X-foo")]
+        [InlineData(true, true, "X-foo")]
         public void GenerateSchema_EnumDefaultValue_HonorsEnumMemberRename(
+            bool useInlineDefinitions,
             bool camelCaseText,
             string expectedValue)
         {
             var subject = Subject(
                 configureGenerator: c =>
                 {
-                    c.UseInlineDefinitionsForEnums = true;
+                    c.UseInlineDefinitionsForEnums = useInlineDefinitions;
+                    c.UseAllOfToExtendReferenceSchemas = !useInlineDefinitions;
                 },
                 configureSerializer: c =>
                 {
@@ -379,6 +407,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             var referenceSchema = subject.GenerateSchema(typeof(EnumDefaultValueAnnotatedType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+
             Assert.Equal(expectedValue, ((OpenApiString)schema.Properties["AnnotatedEnumWithDefaultValue"].Default).Value);
         }
 
@@ -652,23 +681,6 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.Null(schema.Properties["IntEnumWithDefaultValue"].Type);
             Assert.IsType<OpenApiInteger>(schema.Properties["IntEnumWithDefaultValue"].Default);
             Assert.Equal(8, ((OpenApiInteger)schema.Properties["IntEnumWithDefaultValue"].Default).Value);
-        }
-
-        [Fact]
-        public void GenerateSchema_UseAllOfToExtendReferenceSchemas_SupportsStringEnumDefault()
-        {
-            var subject = Subject(
-                configureGenerator: c => c.UseAllOfToExtendReferenceSchemas = true,
-                configureSerializer: c => c.Converters.Add(new StringEnumConverter())
-            );
-            var schemaRepository = new SchemaRepository();
-
-            var referenceSchema = subject.GenerateSchema(typeof(EnumDefaultValueAnnotatedType), schemaRepository);
-
-            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Null(schema.Properties["IntEnumWithDefaultValue"].Type);
-            Assert.IsType<OpenApiString>(schema.Properties["IntEnumWithDefaultValue"].Default);
-            Assert.Equal("Value8", ((OpenApiString)schema.Properties["IntEnumWithDefaultValue"].Default).Value);
         }
 
         [Fact]
