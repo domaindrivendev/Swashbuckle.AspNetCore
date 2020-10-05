@@ -18,8 +18,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void ActionWithSummaryAndRemarksTags()
         { }
 
-        /// <param name="param1">Description for param1</param>
-        /// <param name="param2">Description for param2</param>
+        /// <param name="param1" example="Example for param1">Description for param1</param>
+        /// <param name="param2" example="Example for param2">Description for param2</param>
         public void ActionWithParamTags(string param1, string param2)
         { }
 

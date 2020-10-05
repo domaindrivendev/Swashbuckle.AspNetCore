@@ -21,13 +21,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             ApplyTypeTags(schema, context.Type);
 
-            if (context.MemberInfo != null)
+            // If it's for a C# field/property and it's NOT bound to a request parameter (e.g. via [FromRoute], [FromQuery] etc.),
+            // then the field/property tags can be applied here. If it is bound to a request parameter, the field/property tags
+            // will be applied a level up on the corresponding OpenApiParameter (see XmlCommentsParameterFilter).
+
+            if (context.MemberInfo != null && context.ParameterInfo == null)
             {
                 ApplyFieldOrPropertyTags(schema, context.MemberInfo);
-            }
-            else if (context.ParameterInfo != null)
-            {
-                ApplyParamTags(schema, context.ParameterInfo);
             }
         }
 
@@ -69,33 +69,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
         }
 
-        private void ApplyParamTags(OpenApiSchema schema, ParameterInfo parameterInfo)
-        {
-            if (!(parameterInfo.Member is MethodInfo methodInfo)) return;
-
-            var methodMemberName = XmlCommentsNodeNameHelper.GetMemberNameForMethod(methodInfo);
-            var paramNode = _xmlNavigator.SelectSingleNode(
-                $"/doc/members/member[@name='{methodMemberName}']/param[@name='{parameterInfo.Name}']");
-
-            if (paramNode != null)
-            {
-                schema.Description = XmlCommentsTextHelper.Humanize(paramNode.InnerXml);
-
-                var example = paramNode.GetAttribute("example", "");
-                if (!string.IsNullOrEmpty(example))
-                {
-                    schema.Example = ConvertToOpenApiType(parameterInfo.ParameterType, schema, example);
-                }
-            }
-        }
-
-        private static IOpenApiAny ConvertToOpenApiType(Type memberType, OpenApiSchema schema, string stringValue)
+        private static IOpenApiAny ConvertToOpenApiType(Type type, OpenApiSchema schema, string stringValue)
         {
             object typedValue;
 
             try
             {
-                typedValue = TypeDescriptor.GetConverter(memberType).ConvertFrom(
+                typedValue = TypeDescriptor.GetConverter(type).ConvertFrom(
                     context: null,
                     culture: CultureInfo.InvariantCulture,
                     stringValue);
