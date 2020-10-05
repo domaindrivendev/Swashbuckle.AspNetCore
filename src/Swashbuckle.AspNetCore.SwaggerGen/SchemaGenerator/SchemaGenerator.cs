@@ -33,19 +33,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     ? mapping()
                     : GenerateSchemaForType(type, schemaRepository);
 
-                var usingAllOfToExtendReferenceSchema = false;
                 if (memberInfo != null || parameterInfo != null)
                 {
                     if (schema.Reference != null && _generatorOptions.UseAllOfToExtendReferenceSchemas)
                     {
-                        usingAllOfToExtendReferenceSchema = true;
-
-                        // will return non-null except in self-referencing loop
-                        schemaRepository.Schemas.TryGetValue(schema.Reference.Id, out var registeredSchema);
-
-                        // temporarily set type to allow default value attributes to be processed correctly
-                        schema.Type = registeredSchema?.Type;
-
                         schema.AllOf = new[] { new OpenApiSchema { Reference = schema.Reference } };
                         schema.Reference = null;
                     }
@@ -53,21 +44,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 if (memberInfo != null)
                 {
-                    ApplyMemberMetadata(schema, type, memberInfo);
+                    ApplyMemberMetadata(schema, schemaRepository, type, memberInfo);
                 }
                 else if (parameterInfo != null)
                 {
-                    ApplyParameterMetadata(schema, type, parameterInfo);
+                    ApplyParameterMetadata(schema, schemaRepository, type, parameterInfo);
                 }
 
                 if (schema.Reference == null)
                 {
                     ApplyFilters(schema, type, schemaRepository, memberInfo, parameterInfo);
-                }
-
-                if (usingAllOfToExtendReferenceSchema)
-                {
-                    schema.Type = null;
                 }
 
                 return schema;
@@ -410,23 +396,23 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return schemaRepository.AddDefinition(schemaId, schema);
         }
 
-        private void ApplyMemberMetadata(OpenApiSchema schema, Type type, MemberInfo memberInfo)
+        private void ApplyMemberMetadata(OpenApiSchema schema, SchemaRepository schemaRepository, Type type, MemberInfo memberInfo)
         {
             if (schema.Reference == null)
             {
                 schema.Nullable = type.IsReferenceOrNullableType();
 
-                schema.ApplyCustomAttributes(memberInfo.GetInlineAndMetadataAttributes());
+                schema.ApplyCustomAttributes(schemaRepository, memberInfo.GetInlineAndMetadataAttributes());
             }
         }
 
-        private void ApplyParameterMetadata(OpenApiSchema schema, Type type, ParameterInfo parameterInfo)
+        private void ApplyParameterMetadata(OpenApiSchema schema, SchemaRepository schemaRepository, Type type, ParameterInfo parameterInfo)
         {
             if (schema.Reference == null)
             {
                 schema.Nullable = type.IsReferenceOrNullableType();
 
-                schema.ApplyCustomAttributes(parameterInfo.GetCustomAttributes());
+                schema.ApplyCustomAttributes(schemaRepository, parameterInfo.GetCustomAttributes());
 
                 if (parameterInfo.HasDefaultValue)
                 {
