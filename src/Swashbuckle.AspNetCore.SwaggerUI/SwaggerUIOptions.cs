@@ -190,6 +190,11 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         public string ScopeSeparator { get; set; } = " ";
 
         /// <summary>
+        /// Scope separator (i.e. space) separated string of initially selected oauth scopes.
+        /// </summary>
+        public string Scopes { get; set; }
+
+        /// <summary>
         /// Additional query parameters added to authorizationUrl and tokenUrl
         /// </summary>
         public Dictionary<string, string> AdditionalQueryStringParams { get; set; } = null;

@@ -245,6 +245,16 @@ namespace Microsoft.AspNetCore.Builder
         }
 
         /// <summary>
+        /// Scope separator (i.e. space) separated string of initially selected oauth scopes.
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="value"></param>
+        public static void OAuthScopes(this SwaggerUIOptions options, string value)
+        {
+            options.OAuthConfigObject.Scopes = value;
+        }
+
+        /// <summary>
         /// Additional query parameters added to authorizationUrl and tokenUrl
         /// </summary>
         /// <param name="options"></param>
