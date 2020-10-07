@@ -47,9 +47,9 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
             if (jsonContract is JsonPrimitiveContract && jsonContract.UnderlyingType.IsEnum)
             {
-                var (enumConverter, enumValues) = GetSerializedEnumValuesFor(jsonContract);
+                var enumValues = GetSerializedEnumValuesFor(jsonContract);
 
-                var primitiveTypeAndFormat = (enumValues.Any(value => value.GetType() == typeof(string)))
+                var primitiveTypeAndFormat = (enumValues.Values.Any(value => value is string))
                     ? PrimitiveTypesAndFormats[typeof(string)]
                     : PrimitiveTypesAndFormats[jsonContract.UnderlyingType.GetEnumUnderlyingType()];
 
@@ -57,8 +57,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     underlyingType: jsonContract.UnderlyingType,
                     dataType: primitiveTypeAndFormat.Item1,
                     dataFormat: primitiveTypeAndFormat.Item2,
-                    enumValues: enumValues,
-                    enumConverter: enumConverter);
+                    enumValues: enumValues);
             }
 
             if (jsonContract is JsonArrayContract jsonArrayContract)
@@ -78,9 +77,9 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                 if (keyType.IsEnum)
                 {
                     // This is a special case where we know the possible key values
-                    var (_, enumValues) = GetSerializedEnumValuesFor(_contractResolver.ResolveContract(keyType));
+                    var enumValues = GetSerializedEnumValuesFor(_contractResolver.ResolveContract(keyType));
 
-                    keys = enumValues.Any(value => value is string)
+                    keys = enumValues.Values.Any(value => value is string)
                         ? enumValues.Cast<string>()
                         : keyType.GetEnumNames();
                 }
@@ -118,7 +117,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             return DataContract.ForDynamic(underlyingType: type);
         }
 
-        private (Func<object, string> enumConverter, IEnumerable<object> enumValues) GetSerializedEnumValuesFor(JsonContract jsonContract)
+        private IDictionary<object, object> GetSerializedEnumValuesFor(JsonContract jsonContract)
         {
             var stringEnumConverter = (jsonContract.Converter as StringEnumConverter)
                 ?? _serializerSettings.Converters.OfType<StringEnumConverter>().FirstOrDefault();
@@ -129,23 +128,21 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                 stringEnumConverter = new StringEnumConverter(_generatorOptions.DescribeStringEnumsInCamelCase);
             }
  
-            if (stringEnumConverter != null)
-            {
-                Func<object, string> converterFunc = value =>
-                {
-                    var enumType = value.GetType();
-                    var member = enumType.GetMember(Enum.GetName(enumType, value)).FirstOrDefault();
-                    var memberAttribute = member.GetCustomAttributes<EnumMemberAttribute>().FirstOrDefault();
-                    return GetConvertedEnumName((memberAttribute?.Value ?? member.Name), (memberAttribute?.Value != null), stringEnumConverter);
-                };
-
-                return (converterFunc, jsonContract.UnderlyingType.GetEnumValues().Cast<object>()
-                    .Select(converterFunc)
-                    .ToList());
-            }
-
-            return (null, jsonContract.UnderlyingType.GetEnumValues()
-                .Cast<object>());
+            return jsonContract.UnderlyingType.GetEnumValues().Cast<object>().Distinct()
+                .ToDictionary(
+                    value => value,
+                    value =>
+                    {
+                        if (stringEnumConverter == null)
+                            return value;
+                        else
+                        {
+                            var member = jsonContract.UnderlyingType.GetMember(value.ToString()).FirstOrDefault();
+                            var memberAttribute = member.GetCustomAttributes<EnumMemberAttribute>().FirstOrDefault();
+                            return GetConvertedEnumName((memberAttribute?.Value ?? member.Name), (memberAttribute?.Value != null), stringEnumConverter);
+                        }
+                    }
+                );
         }
 
 #if NETCOREAPP3_0

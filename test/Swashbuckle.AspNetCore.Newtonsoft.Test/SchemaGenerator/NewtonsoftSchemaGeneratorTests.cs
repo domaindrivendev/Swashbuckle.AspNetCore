@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
@@ -87,6 +88,18 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.Equal(expectedFormat, schema.Format);
             Assert.NotNull(schema.Enum);
             Assert.Equal(expectedEnumCount, schema.Enum.Count);
+        }
+
+        [Fact]
+        public void GenerateSchema_DedupsEnumValues_IfEnumTypeWithDuplicateValues()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(typeof(HttpStatusCode), schemaRepository);
+
+            Assert.NotNull(referenceSchema.Reference);
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal(schema.Enum.Cast<OpenApiInteger>().Select(v => v.Value).Distinct().Count(), schema.Enum.Count);
         }
 
         [Theory]

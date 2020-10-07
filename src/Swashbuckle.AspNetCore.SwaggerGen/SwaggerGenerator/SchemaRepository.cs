@@ -9,8 +9,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         private readonly Dictionary<Type, string> _reservedIds = new Dictionary<Type, string>();
 
-        private readonly Dictionary<Type, Func<object, string>> _enumConverters = new Dictionary<Type, Func<object, string>>();
-
         public IDictionary<string, OpenApiSchema> Schemas { get; private set; } = new SortedDictionary<string, OpenApiSchema>();
 
         public void RegisterType(Type type, string schemaId)
@@ -25,20 +23,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
 
             _reservedIds.Add(type, schemaId);
-        }
-
-        public void RegisterEnumConverter(Type type, Func<object, string> converter)
-        {
-            if (!_enumConverters.ContainsKey(type))
-            {
-                _enumConverters.Add(type, converter);
-            }
-        }
-
-        public Func<object, string> RetrieveEnumConverter(Type type)
-        {
-            _enumConverters.TryGetValue(type, out var converter);
-            return converter;
         }
 
         public bool TryLookupByType(Type type, out OpenApiSchema referenceSchema)

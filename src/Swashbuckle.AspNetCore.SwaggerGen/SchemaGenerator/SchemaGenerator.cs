@@ -29,9 +29,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             try
             {
-                var schema = TryGetCustomTypeMapping(type, out Func<OpenApiSchema> mapping)
-                    ? mapping()
-                    : GenerateSchemaForType(type, schemaRepository);
+                OpenApiSchema schema;
+                DataContract dataContract = null;
+                if (TryGetCustomTypeMapping(type, out Func<OpenApiSchema> mapping))
+                    schema = mapping();
+                else
+                    (schema, dataContract) = GenerateSchemaForType(type, schemaRepository);
 
                 if (memberInfo != null || parameterInfo != null)
                 {
@@ -44,11 +47,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 if (memberInfo != null)
                 {
-                    ApplyMemberMetadata(schema, schemaRepository, type, memberInfo);
+                    ApplyMemberMetadata(schema, schemaRepository, dataContract, type, memberInfo);
                 }
                 else if (parameterInfo != null)
                 {
-                    ApplyParameterMetadata(schema, schemaRepository, type, parameterInfo);
+                    ApplyParameterMetadata(schema, schemaRepository, dataContract, type, parameterInfo);
                 }
 
                 if (schema.Reference == null)
@@ -82,7 +85,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return false;
         }
 
-        private OpenApiSchema GenerateSchemaForType(Type type, SchemaRepository schemaRepository)
+        private (OpenApiSchema, DataContract) GenerateSchemaForType(Type type, SchemaRepository schemaRepository)
         {
             if (type.IsNullable(out Type innerType))
             {
@@ -91,7 +94,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (type.IsAssignableToOneOf(typeof(IFormFile), typeof(FileResult)))
             {
-                return new OpenApiSchema { Type = "string", Format = "binary" };
+                return (new OpenApiSchema { Type = "string", Format = "binary" }, null);
             }
 
             Func<OpenApiSchema> definitionFactory;
@@ -106,7 +109,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 case DataType.Number:
                 case DataType.String:
                     {
-                        definitionFactory = () => GeneratePrimitiveSchema(dataContract, schemaRepository);
+                        definitionFactory = () => GeneratePrimitiveSchema(dataContract);
                         returnAsReference = type.IsEnum && !_generatorOptions.UseInlineDefinitionsForEnums;
                         break;
                     }
@@ -149,19 +152,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     }
             }
 
-            return returnAsReference
+            return (returnAsReference
                 ? GenerateReferencedSchema(type, schemaRepository, definitionFactory)
-                : definitionFactory();
+                : definitionFactory(),
+                dataContract);
         }
 
-        private OpenApiSchema GeneratePrimitiveSchema(DataContract dataContract, SchemaRepository schemaRepository)
+        private OpenApiSchema GeneratePrimitiveSchema(DataContract dataContract)
         {
-            if (dataContract.EnumConverter != null)
-            {
-                schemaRepository.RegisterEnumConverter(dataContract.UnderlyingType, dataContract.EnumConverter);
-            }
-
-            OpenApiSchema schema = new OpenApiSchema
+            var schema = new OpenApiSchema
             {
                 Type = dataContract.DataType.ToString().ToLower(CultureInfo.InvariantCulture),
                 Format = dataContract.DataFormat
@@ -169,8 +168,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (dataContract.EnumValues != null)
             {
-                schema.Enum = dataContract.EnumValues
-                    .Distinct()
+                schema.Enum = dataContract.EnumValues.Values
                     .Select(value => OpenApiAnyFactory.CreateFor(schema, value))
                     .ToList();
             }
@@ -351,7 +349,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 if (_generatorOptions.IgnoreObsoleteProperties && customAttributes.OfType<ObsoleteAttribute>().Any())
                     continue;
 
-                schema.Properties[dataProperty.Name] = GeneratePropertySchema(dataProperty, schemaRepository);
+                schema.Properties[dataProperty.Name] = GeneratePropertySchema(dataProperty, schemaRepository, dataContract);
 
                 if (dataProperty.IsRequired || customAttributes.OfType<RequiredAttribute>().Any()
                     && !schema.Required.Contains(dataProperty.Name))
@@ -369,7 +367,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return schema;
         }
 
-        private OpenApiSchema GeneratePropertySchema(DataProperty dataProperty, SchemaRepository schemaRepository)
+        private OpenApiSchema GeneratePropertySchema(DataProperty dataProperty, SchemaRepository schemaRepository, DataContract dataContract)
         {
             var schema = GenerateSchema(dataProperty.MemberType, schemaRepository, memberInfo: dataProperty.MemberInfo);
 
@@ -401,27 +399,27 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return schemaRepository.AddDefinition(schemaId, schema);
         }
 
-        private void ApplyMemberMetadata(OpenApiSchema schema, SchemaRepository schemaRepository, Type type, MemberInfo memberInfo)
+        private void ApplyMemberMetadata(OpenApiSchema schema, SchemaRepository schemaRepository, DataContract dataContract, Type type, MemberInfo memberInfo)
         {
             if (schema.Reference == null)
             {
                 schema.Nullable = type.IsReferenceOrNullableType();
 
-                schema.ApplyCustomAttributes(schemaRepository, memberInfo.GetInlineAndMetadataAttributes());
+                schema.ApplyCustomAttributes(schemaRepository, dataContract, memberInfo.GetInlineAndMetadataAttributes());
             }
         }
 
-        private void ApplyParameterMetadata(OpenApiSchema schema, SchemaRepository schemaRepository, Type type, ParameterInfo parameterInfo)
+        private void ApplyParameterMetadata(OpenApiSchema schema, SchemaRepository schemaRepository, DataContract dataContract, Type type, ParameterInfo parameterInfo)
         {
             if (schema.Reference == null)
             {
                 schema.Nullable = type.IsReferenceOrNullableType();
 
-                schema.ApplyCustomAttributes(schemaRepository, parameterInfo.GetCustomAttributes());
+                schema.ApplyCustomAttributes(schemaRepository, dataContract, parameterInfo.GetCustomAttributes());
 
                 if (parameterInfo.HasDefaultValue)
                 {
-                    schema.Default = OpenApiAnyFactory.CreateFor(schema, schemaRepository, parameterInfo.DefaultValue);
+                    schema.Default = OpenApiAnyFactory.CreateFor(schema, schemaRepository, dataContract, parameterInfo.DefaultValue);
                 }
             }
         }
