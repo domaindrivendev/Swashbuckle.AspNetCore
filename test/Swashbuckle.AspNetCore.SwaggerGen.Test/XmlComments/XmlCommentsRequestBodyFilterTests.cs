@@ -46,8 +46,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("Description for param1", requestbody.Description);
         }
 
-        [Fact]
-        public void Apply_SetsDescription_FromPropertySummaryTag()
+        [Theory]
+        [InlineData("Summary for StringProperty (Remarks for StringProperty)", true)]
+        [InlineData("Summary for StringProperty", false)]
+        public void Apply_SetsDescription_FromPropertySummaryAndRemarksTag(
+            string expectedDescription,
+            bool includeRemarksFromXmlComments)
         {
             var requestBody = new OpenApiRequestBody();
             var bodyParameterDescription = new ApiParameterDescription
@@ -56,16 +60,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             };
             var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
 
-            Subject().Apply(requestBody, filterContext);
+            Subject(includeRemarksFromXmlComments).Apply(requestBody, filterContext);
 
-            Assert.Equal("Summary for StringProperty", requestBody.Description);
+            Assert.Equal(expectedDescription, requestBody.Description);
         }
 
-        private XmlCommentsRequestBodyFilter Subject()
+        private XmlCommentsRequestBodyFilter Subject(bool includeRemarksFromXmlComments = false)
         {
             using (var xmlComments = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml"))
             {
-                return new XmlCommentsRequestBodyFilter(new XPathDocument(xmlComments));
+                return new XmlCommentsRequestBodyFilter(new XPathDocument(xmlComments), includeRemarksFromXmlComments);
             }
         }
     }

@@ -11,8 +11,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     public class XmlCommentsDocumentFilterTests
     {
-        [Fact]
-        public void Apply_SetsTagDescription_FromControllerSummaryTags()
+        [Theory]
+        [InlineData("Summary for FakeControllerWithXmlComments (Remarks for FakeControllerWithXmlComments)", true)]
+        [InlineData("Summary for FakeControllerWithXmlComments", false)]
+        public void Apply_SetsTagDescription_FromControllerSummaryAndRemarksTags(
+            string expectedDescription,
+            bool includeRemarksFromXmlComments)
         {
             var document = new OpenApiDocument();
             var filterContext = new DocumentFilterContext(
@@ -38,17 +42,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 null,
                 null);
 
-            Subject().Apply(document, filterContext);
+            Subject(includeRemarksFromXmlComments).Apply(document, filterContext);
 
             Assert.Equal(1, document.Tags.Count);
-            Assert.Equal("Summary for FakeControllerWithXmlComments", document.Tags[0].Description);
+            Assert.Equal(expectedDescription, document.Tags[0].Description);
         }
 
-        private XmlCommentsDocumentFilter Subject()
+        private XmlCommentsDocumentFilter Subject(bool includeRemarksFromXmlComments = false)
         {
             using (var xmlComments = File.OpenText($"{typeof(FakeControllerWithXmlComments).Assembly.GetName().Name}.xml"))
             {
-                return new XmlCommentsDocumentFilter(new XPathDocument(xmlComments));
+                return new XmlCommentsDocumentFilter(new XPathDocument(xmlComments), includeRemarksFromXmlComments);
             }
         }
     }

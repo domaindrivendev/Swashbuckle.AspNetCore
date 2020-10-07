@@ -6,6 +6,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
     /// <summary>
     /// Summary for FakeControllerWithXmlComments
     /// </summary>
+    /// <remarks>
+    /// Remarks for FakeControllerWithXmlComments
+    /// </remarks>
     /// <response code="default">Description for default response</response>
     public class FakeControllerWithXmlComments
     {

@@ -10,11 +10,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class XmlCommentsSchemaFilter : ISchemaFilter
     {
-        private readonly XPathNavigator _xmlNavigator;
+        private const string SummaryTag = "summary";
+        private const string RemarksTag = "remarks";
+        private const string ExampleTag = "example";
 
-        public XmlCommentsSchemaFilter(XPathDocument xmlDoc)
+        private readonly XPathNavigator _xmlNavigator;
+        private readonly bool _includeRemarksFromXmlComments;
+
+        public XmlCommentsSchemaFilter(XPathDocument xmlDoc, bool includeRemarksFromXmlComments = false)
         {
             _xmlNavigator = xmlDoc.CreateNavigator();
+            _includeRemarksFromXmlComments = includeRemarksFromXmlComments;
         }
 
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
@@ -34,11 +40,21 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private void ApplyTypeTags(OpenApiSchema schema, Type type)
         {
             var typeMemberName = XmlCommentsNodeNameHelper.GetMemberNameForType(type);
-            var typeSummaryNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{typeMemberName}']/summary");
+            var typeSummaryNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{typeMemberName}']/{SummaryTag}");
 
             if (typeSummaryNode != null)
             {
                 schema.Description = XmlCommentsTextHelper.Humanize(typeSummaryNode.InnerXml);
+
+                if (_includeRemarksFromXmlComments)
+                {
+                    var typeRemarksNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{typeMemberName}']/{RemarksTag}");
+                    if (typeRemarksNode != null && !string.IsNullOrWhiteSpace(typeRemarksNode.InnerXml))
+                    {
+                        schema.Description +=
+                            $" ({XmlCommentsTextHelper.Humanize(typeRemarksNode.InnerXml)})";
+                    }
+                }
             }
         }
 
@@ -49,11 +65,23 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (fieldOrPropertyNode == null) return;
 
-            var summaryNode = fieldOrPropertyNode.SelectSingleNode("summary");
+            var summaryNode = fieldOrPropertyNode.SelectSingleNode(SummaryTag);
             if (summaryNode != null)
+            {
                 schema.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
 
-            var exampleNode = fieldOrPropertyNode.SelectSingleNode("example");
+                if (_includeRemarksFromXmlComments)
+                {
+                    var remarksNode = fieldOrPropertyNode.SelectSingleNode(RemarksTag);
+                    if (remarksNode != null && !string.IsNullOrWhiteSpace(remarksNode.InnerXml))
+                    {
+                        schema.Description +=
+                            $" ({XmlCommentsTextHelper.Humanize(remarksNode.InnerXml)})";
+                    }
+                }
+            }
+
+            var exampleNode = fieldOrPropertyNode.SelectSingleNode(ExampleTag);
             if (exampleNode != null)
             {
                 var exampleString = XmlCommentsTextHelper.Humanize(exampleNode.InnerXml);

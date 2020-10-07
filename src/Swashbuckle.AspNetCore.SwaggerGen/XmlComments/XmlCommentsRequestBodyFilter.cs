@@ -6,11 +6,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class XmlCommentsRequestBodyFilter : IRequestBodyFilter
     {
-        private readonly XPathNavigator _xmlNavigator;
+        private const string SummaryTag = "summary";
+        private const string RemarksTag = "remarks";
 
-        public XmlCommentsRequestBodyFilter(XPathDocument xmlDoc)
+        private readonly XPathNavigator _xmlNavigator;
+        private readonly bool _includeRemarksFromXmlComments;
+
+        public XmlCommentsRequestBodyFilter(XPathDocument xmlDoc, bool includeRemarksFromXmlComments = false)
         {
             _xmlNavigator = xmlDoc.CreateNavigator();
+            _includeRemarksFromXmlComments = includeRemarksFromXmlComments;
         }
 
         public void Apply(OpenApiRequestBody requestBody, RequestBodyFilterContext context)
@@ -37,10 +42,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private void ApplyPropertyTags(OpenApiRequestBody requestBody, PropertyInfo propertyInfo)
         {
             var propertyMemberName = XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(propertyInfo);
-            var propertySummaryNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{propertyMemberName}']/summary");
+            var propertySummaryNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{propertyMemberName}']/{SummaryTag}");
 
             if (propertySummaryNode != null)
+            {
                 requestBody.Description = XmlCommentsTextHelper.Humanize(propertySummaryNode.InnerXml);
+
+                if (_includeRemarksFromXmlComments)
+                {
+                    var propertyRemarksNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{propertyMemberName}']/{RemarksTag}");
+                    if (propertyRemarksNode != null && !string.IsNullOrWhiteSpace(propertyRemarksNode.InnerXml))
+                    {
+                        requestBody.Description +=
+                            $" ({XmlCommentsTextHelper.Humanize(propertyRemarksNode.InnerXml)})";
+                    }
+                }
+            }
         }
 
         private void ApplyParamTags(OpenApiRequestBody requestBody, ParameterInfo parameterInfo)

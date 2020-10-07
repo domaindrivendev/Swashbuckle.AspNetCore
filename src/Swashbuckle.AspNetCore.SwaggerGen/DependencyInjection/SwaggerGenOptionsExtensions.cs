@@ -386,19 +386,23 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Flag to indicate if controller XML comments (i.e. summary) should be used to assign Tag descriptions.
         /// Don't set this flag if you're customizing the default tag for operations via TagActionsBy.
         /// </param>
+        /// <param name="includeRemarksFromXmlComments">
+        /// Flag to indicate if remarks XML comments should be used to assign Tag descriptions.
+        /// </param>
         public static void IncludeXmlComments(
             this SwaggerGenOptions swaggerGenOptions,
             Func<XPathDocument> xmlDocFactory,
-            bool includeControllerXmlComments = false)
+            bool includeControllerXmlComments = false,
+            bool includeRemarksFromXmlComments = false)
         {
             var xmlDoc = xmlDocFactory();
-            swaggerGenOptions.ParameterFilter<XmlCommentsParameterFilter>(xmlDoc);
-            swaggerGenOptions.RequestBodyFilter<XmlCommentsRequestBodyFilter>(xmlDoc);
+            swaggerGenOptions.ParameterFilter<XmlCommentsParameterFilter>(xmlDoc, includeRemarksFromXmlComments);
+            swaggerGenOptions.RequestBodyFilter<XmlCommentsRequestBodyFilter>(xmlDoc, includeRemarksFromXmlComments);
             swaggerGenOptions.OperationFilter<XmlCommentsOperationFilter>(xmlDoc);
-            swaggerGenOptions.SchemaFilter<XmlCommentsSchemaFilter>(xmlDoc);
+            swaggerGenOptions.SchemaFilter<XmlCommentsSchemaFilter>(xmlDoc, includeRemarksFromXmlComments);
 
             if (includeControllerXmlComments)
-                swaggerGenOptions.DocumentFilter<XmlCommentsDocumentFilter>(xmlDoc);
+                swaggerGenOptions.DocumentFilter<XmlCommentsDocumentFilter>(xmlDoc, includeRemarksFromXmlComments);
         }
 
         /// <summary>
@@ -410,12 +414,16 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Flag to indicate if controller XML comments (i.e. summary) should be used to assign Tag descriptions.
         /// Don't set this flag if you're customizing the default tag for operations via TagActionsBy.
         /// </param>
+        /// <param name="includeRemarksFromXmlComments">
+        /// Flag to indicate if remarks XML comments should be used to assign Tag descriptions.
+        /// </param>
         public static void IncludeXmlComments(
             this SwaggerGenOptions swaggerGenOptions,
             string filePath,
-            bool includeControllerXmlComments = false)
+            bool includeControllerXmlComments = false,
+            bool includeRemarksFromXmlComments = false)
         {
-            swaggerGenOptions.IncludeXmlComments(() => new XPathDocument(filePath), includeControllerXmlComments);
+            swaggerGenOptions.IncludeXmlComments(() => new XPathDocument(filePath), includeControllerXmlComments, includeRemarksFromXmlComments);
         }
 
 

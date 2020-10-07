@@ -10,11 +10,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class XmlCommentsParameterFilter : IParameterFilter
     {
-        private XPathNavigator _xmlNavigator;
+        private const string SummaryTag = "summary";
+        private const string RemarksTag = "remarks";
+        private const string ExampleTag = "example";
 
-        public XmlCommentsParameterFilter(XPathDocument xmlDoc)
+        private readonly XPathNavigator _xmlNavigator;
+        private readonly bool _includeRemarksFromXmlComments;
+
+        public XmlCommentsParameterFilter(XPathDocument xmlDoc, bool includeRemarksFromXmlComments = false)
         {
             _xmlNavigator = xmlDoc.CreateNavigator();
+            _includeRemarksFromXmlComments = includeRemarksFromXmlComments;
         }
 
         public void Apply(OpenApiParameter parameter, ParameterFilterContext context)
@@ -36,11 +42,23 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (propertyNode == null) return;
 
-            var summaryNode = propertyNode.SelectSingleNode("summary");
+            var summaryNode = propertyNode.SelectSingleNode(SummaryTag);
             if (summaryNode != null)
+            {
                 parameter.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
 
-            var exampleNode = propertyNode.SelectSingleNode("example");
+                if (_includeRemarksFromXmlComments)
+                {
+                    var remarksNode = propertyNode.SelectSingleNode(RemarksTag);
+                    if (remarksNode != null && !string.IsNullOrWhiteSpace(remarksNode.InnerXml))
+                    {
+                        parameter.Description +=
+                            $" ({XmlCommentsTextHelper.Humanize(remarksNode.InnerXml)})";
+                    }
+                }
+            }
+
+            var exampleNode = propertyNode.SelectSingleNode(ExampleTag);
             if (exampleNode != null)
             {
                 var exampleString = XmlCommentsTextHelper.Humanize(exampleNode.InnerXml);

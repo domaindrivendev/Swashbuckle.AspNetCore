@@ -41,25 +41,29 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("Example for param1", ((OpenApiString)parameter.Example).Value);
         }
 
-        [Fact]
-        public void Apply_SetsDescriptionAndExample_FromPropertySummaryAndExampleTags()
+        [Theory]
+        [InlineData("Summary for StringProperty (Remarks for StringProperty)", true)]
+        [InlineData("Summary for StringProperty", false)]
+        public void Apply_SetsDescriptionAndExample_FromPropertySummaryAndRemarksAndExampleTags(
+            string expectedDescription,
+            bool includeRemarksFromXmlComments)
         {
             var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = "string" } };
             var propertyInfo = typeof(XmlAnnotatedType).GetProperty(nameof(XmlAnnotatedType.StringProperty));
             var apiParameterDescription = new ApiParameterDescription { };
             var filterContext = new ParameterFilterContext(apiParameterDescription, null, null, propertyInfo: propertyInfo);
 
-            Subject().Apply(parameter, filterContext);
+            Subject(includeRemarksFromXmlComments).Apply(parameter, filterContext);
 
-            Assert.Equal("Summary for StringProperty", parameter.Description);
+            Assert.Equal(expectedDescription, parameter.Description);
             Assert.Equal("Example for StringProperty", ((OpenApiString)parameter.Example).Value);
         }
 
-        private XmlCommentsParameterFilter Subject()
+        private XmlCommentsParameterFilter Subject(bool includeRemarksFromXmlComments = false)
         {
             using (var xmlComments = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml"))
             {
-                return new XmlCommentsParameterFilter(new XPathDocument(xmlComments));
+                return new XmlCommentsParameterFilter(new XPathDocument(xmlComments), includeRemarksFromXmlComments);
             }
         }
     }

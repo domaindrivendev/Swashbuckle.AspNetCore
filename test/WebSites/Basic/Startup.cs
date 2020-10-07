@@ -52,7 +52,7 @@ namespace Basic
                 c.SelectDiscriminatorNameUsing((baseType) => "TypeName");
                 c.SelectDiscriminatorValueUsing((subType) => subType.Name);
 
-                c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Basic.xml"));
+                c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Basic.xml"), includeControllerXmlComments: true, includeRemarksFromXmlComments: true);
 
                 c.EnableAnnotations();
             });

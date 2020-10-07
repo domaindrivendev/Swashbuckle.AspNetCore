@@ -10,47 +10,59 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
     public class XmlCommentsSchemaFilterTests
     {
         [Theory]
-        [InlineData(typeof(XmlAnnotatedType), "Summary for XmlAnnotatedType")]
-        [InlineData(typeof(XmlAnnotatedType.NestedType), "Summary for NestedType")]
-        [InlineData(typeof(XmlAnnotatedGenericType<int, string>), "Summary for XmlAnnotatedGenericType")]
-        public void Apply_SetsDescription_FromTypeSummaryTag(
+        [InlineData(typeof(XmlAnnotatedType), "Summary for XmlAnnotatedType (Remarks for XmlAnnotatedType)", true)]
+        [InlineData(typeof(XmlAnnotatedType.NestedType), "Summary for NestedType (Remarks for NestedType)", true)]
+        [InlineData(typeof(XmlAnnotatedGenericType<int, string>), "Summary for XmlAnnotatedGenericType (Remarks for XmlAnnotatedGenericType)", true)]
+        [InlineData(typeof(XmlAnnotatedType), "Summary for XmlAnnotatedType", false)]
+        [InlineData(typeof(XmlAnnotatedType.NestedType), "Summary for NestedType", false)]
+        [InlineData(typeof(XmlAnnotatedGenericType<int, string>), "Summary for XmlAnnotatedGenericType", false)]
+        public void Apply_SetsDescription_FromTypeSummaryAndRemarksTag(
             Type type,
-            string expectedDescription)
+            string expectedDescription,
+            bool includeRemarksFromXmlComments)
         {
             var schema = new OpenApiSchema { };
             var filterContext = new SchemaFilterContext(type, null, null);
 
-            Subject().Apply(schema, filterContext);
+            Subject(includeRemarksFromXmlComments).Apply(schema, filterContext);
 
             Assert.Equal(expectedDescription, schema.Description);
         }
 
-        [Fact]
-        public void Apply_SetsDescription_FromFieldSummaryTag()
+        [Theory]
+        [InlineData("Summary for BoolField (Remarks for BoolField)", true)]
+        [InlineData("Summary for BoolField", false)]
+        public void Apply_SetsDescription_FromFieldSummaryAndRemarksTag(
+            string expectedDescription,
+            bool includeRemarksFromXmlComments)
         {
             var schema = new OpenApiSchema { };
             var fieldInfo = typeof(XmlAnnotatedType).GetField(nameof(XmlAnnotatedType.BoolField));
             var filterContext = new SchemaFilterContext(fieldInfo.FieldType, null, null, memberInfo: fieldInfo);
 
-            Subject().Apply(schema, filterContext);
+            Subject(includeRemarksFromXmlComments).Apply(schema, filterContext);
 
-            Assert.Equal("Summary for BoolField", schema.Description);
+            Assert.Equal(expectedDescription, schema.Description);
         }
 
         [Theory]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringProperty), "Summary for StringProperty")]
-        [InlineData(typeof(XmlAnnotatedSubType), nameof(XmlAnnotatedType.StringProperty), "Summary for StringProperty")]
-        [InlineData(typeof(XmlAnnotatedGenericType<string, bool>), "GenericProperty", "Summary for GenericProperty")]
-        public void Apply_SetsDescription_FromPropertySummaryTag(
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringProperty), "Summary for StringProperty (Remarks for StringProperty)", true)]
+        [InlineData(typeof(XmlAnnotatedSubType), nameof(XmlAnnotatedType.StringProperty), "Summary for StringProperty (Remarks for StringProperty)", true)]
+        [InlineData(typeof(XmlAnnotatedGenericType<string, bool>), "GenericProperty", "Summary for GenericProperty (Remarks for GenericProperty)", true)]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringProperty), "Summary for StringProperty", false)]
+        [InlineData(typeof(XmlAnnotatedSubType), nameof(XmlAnnotatedType.StringProperty), "Summary for StringProperty", false)]
+        [InlineData(typeof(XmlAnnotatedGenericType<string, bool>), "GenericProperty", "Summary for GenericProperty", false)]
+        public void Apply_SetsDescription_FromPropertySummaryAndRemarksTag(
             Type declaringType,
             string propertyName,
-            string expectedDescription)
+            string expectedDescription,
+            bool includeRemarksFromXmlComments)
         {
             var schema = new OpenApiSchema();
             var propertyInfo = declaringType.GetProperty(propertyName);
             var filterContext = new SchemaFilterContext(propertyInfo.PropertyType, null, null, memberInfo: propertyInfo);
 
-            Subject().Apply(schema, filterContext);
+            Subject(includeRemarksFromXmlComments).Apply(schema, filterContext);
 
             Assert.Equal(expectedDescription, schema.Description);
         }
@@ -110,11 +122,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(expectedValue, schema.Example.GetType().GetProperty("Value").GetValue(schema.Example));
         }
 
-        private XmlCommentsSchemaFilter Subject()
+        private XmlCommentsSchemaFilter Subject(bool includeRemarksFromXmlComments = false)
         {
             using (var xmlComments = File.OpenText(typeof(XmlAnnotatedType).Assembly.GetName().Name + ".xml"))
             {
-                return new XmlCommentsSchemaFilter(new XPathDocument(xmlComments));
+                return new XmlCommentsSchemaFilter(new XPathDocument(xmlComments), includeRemarksFromXmlComments);
             }
         }
     }

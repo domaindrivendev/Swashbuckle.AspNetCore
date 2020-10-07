@@ -11,12 +11,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         private const string MemberXPath = "/doc/members/member[@name='{0}']";
         private const string SummaryTag = "summary";
+        private const string RemarksTag = "remarks";
 
         private readonly XPathNavigator _xmlNavigator;
+        private readonly bool _includeRemarksFromXmlComments;
 
-        public XmlCommentsDocumentFilter(XPathDocument xmlDoc)
+        public XmlCommentsDocumentFilter(XPathDocument xmlDoc, bool includeRemarksFromXmlComments = false)
         {
             _xmlNavigator = xmlDoc.CreateNavigator();
+            _includeRemarksFromXmlComments = includeRemarksFromXmlComments;
         }
 
         public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
@@ -46,6 +49,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                             Name = nameAndType.Key,
                             Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml)
                         });
+
+                        if (_includeRemarksFromXmlComments)
+                        {
+                            var remarksNode = typeNode.SelectSingleNode(RemarksTag);
+                            if (remarksNode != null && !string.IsNullOrWhiteSpace(remarksNode.InnerXml))
+                            {
+                                swaggerDoc.Tags.First(t => t.Name.Equals(nameAndType.Key)).Description +=
+                                    $" ({XmlCommentsTextHelper.Humanize(remarksNode.InnerXml)})";
+                            }
+                        }
                     }
                 }
             }

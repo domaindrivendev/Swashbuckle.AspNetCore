@@ -7,11 +7,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
     /// <summary>
     /// Summary for XmlAnnotatedType
     /// </summary>
+    /// <remarks>
+    /// Remarks for XmlAnnotatedType
+    /// </remarks>
     public class XmlAnnotatedType
     {
         /// <summary>
         /// Summary for BoolField
         /// </summary>
+        /// <remarks>
+        /// Remarks for BoolField
+        /// </remarks>
         /// <example>true</example>
         public bool BoolField;
 
@@ -60,6 +66,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         /// <summary>
         /// Summary for StringProperty
         /// </summary>
+        /// <remarks>
+        /// Remarks for StringProperty
+        /// </remarks>
         /// <example>Example for StringProperty</example>
         public string StringProperty { get; set; }
 
@@ -106,6 +115,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         /// <summary>
         /// Summary for NestedType
         /// </summary>
+        /// <remarks>
+        /// Remarks for NestedType
+        /// </remarks>
         public class NestedType
         {
             public string Property { get; set; }

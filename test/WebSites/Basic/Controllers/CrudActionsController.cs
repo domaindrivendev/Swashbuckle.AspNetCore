@@ -7,6 +7,9 @@ namespace Basic.Controllers
     /// <summary>
     /// Summary for CrudActionsController
     /// </summary>
+    /// <remarks>
+    /// Remarks for CrudActionsControllerI
+    /// </remarks>
     [Route("/products")]
     [Produces("application/json")]
     public class CrudActionsController
@@ -16,13 +19,13 @@ namespace Basic.Controllers
         /// </summary>
         /// <remarks>
         /// ## Heading 1
-        /// 
+        ///
         ///     POST /products
         ///     {
         ///         "id": "123",
         ///         "description": "Some product"
         ///     }
-        /// 
+        ///
         /// </remarks>
         /// <param name="product"></param>
         /// <returns></returns>
@@ -88,6 +91,12 @@ namespace Basic.Controllers
         }
     }
 
+    /// <summary>
+    /// Product status
+    /// </summary>
+    /// <remarks>
+    /// 0 = All, 1 = OutOfStock, 2 = InStock
+    /// </remarks>
     public enum ProductStatus
     {
         All = 0,
@@ -98,16 +107,25 @@ namespace Basic.Controllers
     /// <summary>
     /// Represents a product
     /// </summary>
+    /// <remarks>
+    /// Product to buy
+    /// </remarks>
     public class Product
     {
         /// <summary>
         /// Uniquely identifies the product
         /// </summary>
+        /// <remarks>
+        /// Must be unique
+        /// </remarks>
         public int Id { get; set; }
 
         /// <summary>
         /// Describes the product
         /// </summary>
+        /// <remarks>
+        /// Description
+        /// </remarks>
         public string Description { get; set; }
 
         public ProductStatus Status { get; set; }
