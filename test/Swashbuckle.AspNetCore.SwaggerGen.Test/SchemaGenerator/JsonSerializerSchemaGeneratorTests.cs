@@ -12,6 +12,7 @@ using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Xunit;
 using Swashbuckle.AspNetCore.TestSupport;
+using Swashbuckle.AspNetCore.TestSupport.Fixtures;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -275,6 +276,53 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.False(schema.Properties["StringWithRequired"].Nullable);
             Assert.Equal(1, schema.Properties["ArrayWithMinMaxLength"].MinItems);
             Assert.Equal(3, schema.Properties["ArrayWithMinMaxLength"].MaxItems);
+        }
+
+        [Theory]
+        [InlineData(false, "Value8")]
+        [InlineData(true, "value8")]
+        public void GenerateSchema_EnumDefaultValue_HonorsContractCamelCase(
+            bool camelCaseText,
+            string expectedValue)
+        {
+            var subject = Subject(
+                configureGenerator: c =>
+                {
+                    c.UseInlineDefinitionsForEnums = true;
+                },
+                configureSerializer: c => { c.Converters.Add(new JsonStringEnumConverter(namingPolicy: (camelCaseText ? JsonNamingPolicy.CamelCase : null), true)); }
+            );
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = subject.GenerateSchema(typeof(EnumDefaultValueAnnotatedType), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal(expectedValue, ((OpenApiString)schema.Properties["IntEnumWithDefaultValue"].Default).Value);
+        }
+
+        [Theory]
+        [InlineData(false, "Value4")]
+        [InlineData(true, "value4")]
+        public void GenerateSchema_EnumDefaultValue_HonorsParameterInfoDefaults(
+            bool camelCaseText,
+            string expectedValue)
+        {
+            var subject = Subject(
+                configureGenerator: c =>
+                {
+                    c.UseInlineDefinitionsForEnums = true;
+                },
+                configureSerializer: c => { c.Converters.Add(new JsonStringEnumConverter(namingPolicy: (camelCaseText ? JsonNamingPolicy.CamelCase : null), true)); }
+            );
+            var schemaRepository = new SchemaRepository();
+
+            var parameterInfo = typeof(FakeControllerWithActionWithParamDefaults)
+                .GetMethod(nameof(FakeControllerWithActionWithParamDefaults.ActionWithEnumParamDefaultValue))
+                .GetParameters()[0];
+
+            var schema = subject.GenerateSchema(typeof(IntEnum), schemaRepository, parameterInfo: parameterInfo);
+
+            Assert.Equal(expectedValue, ((OpenApiString)schema.Default).Value);
         }
 
         [Fact]

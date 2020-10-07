@@ -6,9 +6,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class OpenApiAnyFactory
     {
-        public static IOpenApiAny CreateFor(OpenApiSchema schema, object value) => CreateFor(schema, null, value);
+        public static IOpenApiAny CreateFor(OpenApiSchema schema, object value) => CreateFor(schema, null, null, value);
 
-        public static IOpenApiAny CreateFor(OpenApiSchema schema, SchemaRepository schemaRepository, object value)
+        public static IOpenApiAny CreateFor(OpenApiSchema schema, SchemaRepository schemaRepository, DataContract dataContract, object value)
         {
             if (value == null) return null;
 
@@ -43,7 +43,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 return new OpenApiDate(dateTimeValue);
 
             else if (typeSchema.Type == "string" && value.GetType().IsEnum)
-                return new OpenApiString(Enum.GetName(value.GetType(), value));
+            {
+                if (dataContract != null && dataContract.EnumValues != null)
+                    return new OpenApiString(dataContract.EnumValues[value].ToString());
+                else
+                    return new OpenApiString(Enum.GetName(value.GetType(), value));
+            }
 
             else if (typeSchema.Type == "string")
                 return new OpenApiString(value.ToString());
