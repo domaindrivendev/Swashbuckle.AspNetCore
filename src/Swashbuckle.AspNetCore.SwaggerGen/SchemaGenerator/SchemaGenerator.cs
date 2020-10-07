@@ -155,8 +155,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (dataContract.EnumValues != null)
             {
-                schema.Enum = dataContract.EnumValues
-                    .Distinct()
+                schema.Enum = dataContract.EnumValues.Values
                     .Select(value => OpenApiAnyFactory.CreateFor(schema, value))
                     .ToList();
             }
