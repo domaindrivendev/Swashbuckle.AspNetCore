@@ -36,9 +36,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (type.IsEnum)
             {
-                var (enumConverter, enumValues) = GetSerializedEnumValuesFor(type);
+                var enumValues = GetSerializedEnumValuesFor(type);
 
-                var primitiveTypeAndFormat = (enumValues.Any(value => value is string))
+                var primitiveTypeAndFormat = (enumValues.Values.Any(value => value is string))
                     ? PrimitiveTypesAndFormats[typeof(string)]
                     : PrimitiveTypesAndFormats[type.GetEnumUnderlyingType()];
 
@@ -46,8 +46,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     underlyingType: type,
                     dataType: primitiveTypeAndFormat.Item1,
                     dataFormat: primitiveTypeAndFormat.Item2,
-                    enumValues: enumValues,
-                    enumConverter: enumConverter);
+                    enumValues: enumValues);
             }
 
             if (IsSupportedDictionary(type, out Type keyType, out Type valueType))
@@ -70,23 +69,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 extensionDataType: extensionDataType);
         }
 
-        private (Func<object, string> enumConverter, IEnumerable<object> enumValues) GetSerializedEnumValuesFor(Type enumType)
+        private IDictionary<object, object> GetSerializedEnumValuesFor(Type enumType)
         {
-            var underlyingValues = enumType.GetEnumValues().Cast<object>();
+            var underlyingValues = enumType.GetEnumValues().Cast<object>().Distinct();
 
             //Test to determine if the serializer will treat as string or not
             var serializeAsString = underlyingValues.Any()
                 && JsonSerializer.Serialize(underlyingValues.First(), _serializerOptions).StartsWith("\"");
 
-            if (serializeAsString)
-            {
-                Func<object, string> converterFunc = value => JsonSerializer.Serialize(value, _serializerOptions).Replace("\"", string.Empty);
-                return (converterFunc, underlyingValues.Select(converterFunc));
-            }
-            else
-            {
-                return (null, underlyingValues);
-            }
+            return underlyingValues.ToDictionary(
+                value => value,
+                value => serializeAsString
+                    ? JsonSerializer.Serialize(value, _serializerOptions).Replace("\"", string.Empty)
+                    : value
+            );
         }
 
         public bool IsSupportedDictionary(Type type, out Type keyType, out Type valueType)

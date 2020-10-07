@@ -8,7 +8,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         public static IOpenApiAny CreateFor(OpenApiSchema schema, object value) => CreateFor(schema, null, value);
 
-        public static IOpenApiAny CreateFor(OpenApiSchema schema, SchemaRepository schemaRepository, object value)
+        public static IOpenApiAny CreateFor(OpenApiSchema schema, DataContract dataContract, object value)
         {
             if (value == null) return null;
 
@@ -35,10 +35,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             else if (schema.Type == "string" && value.GetType().IsEnum)
             {
-                var converter = schemaRepository?.RetrieveEnumConverter(value.GetType());
-
-                if (converter != null)
-                    return new OpenApiString(converter(value));
+                if (dataContract != null && dataContract.EnumValues != null)
+                    return new OpenApiString(dataContract.EnumValues[value].ToString());
                 else
                     return new OpenApiString(Enum.GetName(value.GetType(), value));
             }
