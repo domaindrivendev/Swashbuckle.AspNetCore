@@ -1041,7 +1041,7 @@ services.AddSwaggerGen(c =>
 {
     ...
 
-    c.UseOneOfPolymorphism();
+    c.UseOneOfForPolymorphism();
 
     c.SelectDiscriminatorNameUsing((baseType) => "TypeName");
     c.SelectDiscriminatorValueUsing((subType) => subType.Name);
