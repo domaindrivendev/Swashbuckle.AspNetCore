@@ -418,19 +418,6 @@ namespace Microsoft.Extensions.DependencyInjection
             swaggerGenOptions.IncludeXmlComments(() => new XPathDocument(filePath), includeControllerXmlComments);
         }
 
-
-        [Obsolete("If the serializer is configured for string enums (e.g. StringEnumConverter) Swashbuckle will reflect that automatically")]
-        public static void DescribeAllEnumsAsStrings(this SwaggerGenOptions swaggerGenOptions)
-        {
-            swaggerGenOptions.SchemaGeneratorOptions.DescribeAllEnumsAsStrings = true;
-        }
-
-        [Obsolete("If the serializer is configured for (camel-cased) string enums (e.g. StringEnumConverter) Swashbuckle will reflect that automatically")]
-        public static void DescribeStringEnumsInCamelCase(this SwaggerGenOptions swaggerGenOptions)
-        {
-            swaggerGenOptions.SchemaGeneratorOptions.DescribeStringEnumsInCamelCase = true;
-        }
-
         /// <summary>
         /// Generate polymorphic schemas (i.e. "oneOf") based on discovered subtypes.
         /// Deprecated: Use the \"UseOneOfForPolymorphism\" and \"UseAllOfForInheritance\" settings instead

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using Microsoft.AspNetCore.Mvc;
 
 namespace NetCore21
@@ -8,12 +9,12 @@ namespace NetCore21
     public class ProductsController
     {
         [HttpGet]
-        public IEnumerable<Product> GetProducts([FromQuery]ProductStatus status)
+        public IEnumerable<Product> GetProducts([FromQuery]ProductType type = ProductType.Digital)
         {
             return new[]
             {
-                new Product { Id = 1, Description = "A product" },
-                new Product { Id = 2, Description = "Another product" },
+                new Product { Id = 1, Description = "A product", Type = ProductType.Physical },
+                new Product { Id = 2, Description = "Another product", Type = ProductType.Digital },
             };
         }
     }
@@ -24,13 +25,13 @@ namespace NetCore21
 
         public string Description { get; set; }
 
-        public ProductStatus Status { get; set; }
+        [DefaultValue(ProductType.Digital)]
+        public ProductType Type { get; set; }
     }
 
-    public enum ProductStatus
+    public enum ProductType
     {
-        All = 0,
-        OutOfStock = 1,
-        InStock = 2
+        Physical = 0,
+        Digital = 1,
     }
 }

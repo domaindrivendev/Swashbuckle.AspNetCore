@@ -15,10 +15,9 @@ namespace Microsoft.Extensions.DependencyInjection
             return services.Replace(
                 ServiceDescriptor.Transient<ISerializerDataContractResolver>((s) =>
                 {
-                    var generatorOptions = s.GetRequiredService<IOptions<SchemaGeneratorOptions>>().Value;
                     var serializerSettings = s.GetJsonSerializerSettings() ?? new JsonSerializerSettings();
 
-                    return new NewtonsoftDataContractResolver(generatorOptions, serializerSettings);
+                    return new NewtonsoftDataContractResolver(serializerSettings);
                 }));
         }
 

@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -13,13 +11,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 {
     public class NewtonsoftDataContractResolver : ISerializerDataContractResolver
     {
-        private readonly SchemaGeneratorOptions _generatorOptions;
         private readonly JsonSerializerSettings _serializerSettings;
         private readonly IContractResolver _contractResolver;
 
-        public NewtonsoftDataContractResolver(SchemaGeneratorOptions generatorOptions, JsonSerializerSettings serializerSettings)
+        public NewtonsoftDataContractResolver(JsonSerializerSettings serializerSettings)
         {
-            _generatorOptions = generatorOptions;
             _serializerSettings = serializerSettings;
             _contractResolver = serializerSettings.ContractResolver ?? new DefaultContractResolver();
         }
@@ -119,50 +115,19 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
         private IDictionary<object, object> GetSerializedEnumValuesFor(JsonContract jsonContract)
         {
-            var stringEnumConverter = (jsonContract.Converter as StringEnumConverter)
-                ?? _serializerSettings.Converters.OfType<StringEnumConverter>().FirstOrDefault();
+            var underlyingValues = jsonContract.UnderlyingType.GetEnumValues().Cast<object>().Distinct();
 
-            // Temporary shim to support obsolete config options
-            if (stringEnumConverter == null && _generatorOptions.DescribeAllEnumsAsStrings)
-            {
-                stringEnumConverter = new StringEnumConverter(_generatorOptions.DescribeStringEnumsInCamelCase);
-            }
- 
-            return jsonContract.UnderlyingType.GetEnumValues().Cast<object>().Distinct()
-                .ToDictionary(
-                    value => value,
-                    value =>
-                    {
-                        if (stringEnumConverter == null)
-                            return value;
-                        else
-                        {
-                            var member = jsonContract.UnderlyingType.GetMember(value.ToString()).FirstOrDefault();
-                            var memberAttribute = member.GetCustomAttributes<EnumMemberAttribute>().FirstOrDefault();
-                            return GetConvertedEnumName((memberAttribute?.Value ?? member.Name), (memberAttribute?.Value != null), stringEnumConverter);
-                        }
-                    }
-                );
-        }
+            //Test to determine if the serializer will treat as string or not
+            var serializeAsString = underlyingValues.Any()
+                && JsonConvert.SerializeObject(underlyingValues.First(), _serializerSettings).StartsWith("\"");
 
-#if NETCOREAPP3_0
-        private string GetConvertedEnumName(string enumName, bool hasSpecifiedName, StringEnumConverter stringEnumConverter)
-        {
-            if (stringEnumConverter.NamingStrategy != null)
-                return stringEnumConverter.NamingStrategy.GetPropertyName(enumName, hasSpecifiedName);
-
-            return (stringEnumConverter.CamelCaseText)
-                ? new CamelCaseNamingStrategy().GetPropertyName(enumName, hasSpecifiedName)
-                : enumName;
+            return underlyingValues.ToDictionary(
+                value => value,
+                value => serializeAsString
+                    ? JsonConvert.SerializeObject(value, _serializerSettings).Replace("\"", string.Empty)
+                    : value
+            );
         }
-#else
-        private string GetConvertedEnumName(string enumName, bool hasSpecifiedName, StringEnumConverter stringEnumConverter)
-        {
-            return (stringEnumConverter.CamelCaseText)
-                ? new CamelCaseNamingStrategy().GetPropertyName(enumName, hasSpecifiedName)
-                : enumName;
-        }
-#endif
 
         private IEnumerable<DataProperty> GetDataPropertiesFor(JsonObjectContract jsonObjectContract, out Type extensionDataType)
         {

@@ -41,8 +41,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             target.UseAllOfToExtendReferenceSchemas = source.UseAllOfToExtendReferenceSchemas;
             target.UseInlineDefinitionsForEnums = source.UseInlineDefinitionsForEnums;
             target.SchemaFilters = new List<ISchemaFilter>(source.SchemaFilters);
-            target.DescribeAllEnumsAsStrings = source.DescribeAllEnumsAsStrings;
-            target.DescribeStringEnumsInCamelCase = source.DescribeStringEnumsInCamelCase;
         }
 
         private TFilter CreateFilter<TFilter>(FilterDescriptor filterDescriptor)

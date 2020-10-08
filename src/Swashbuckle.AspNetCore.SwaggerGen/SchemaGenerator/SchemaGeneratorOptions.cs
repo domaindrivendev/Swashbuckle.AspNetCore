@@ -37,12 +37,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public IList<ISchemaFilter> SchemaFilters { get; set; }
 
-        [Obsolete("If the serializer is configured for string enums (e.g. StringEnumConverter) Swashbuckle will reflect that automatically")]
-        public bool DescribeAllEnumsAsStrings { get; set; }
-
-        [Obsolete("If the serializer is configured for (camel-cased) string enums (e.g. StringEnumConverter) Swashbuckle will reflect that automatically")]
-        public bool DescribeStringEnumsInCamelCase { get; set; }
-
         private string DefaultSchemaIdSelector(Type modelType)
         {
             if (!modelType.IsConstructedGenericType) return modelType.Name.Replace("[]", "Array");

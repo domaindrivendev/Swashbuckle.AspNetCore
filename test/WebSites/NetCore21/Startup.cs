@@ -24,9 +24,8 @@ namespace NetCore21
             services.AddMvc()
                 .AddJsonOptions(c =>
                 {
-                    c.SerializerSettings.Converters.Add(new StringEnumConverter());
+                    c.SerializerSettings.Converters.Add(new StringEnumConverter(camelCaseText: true));
                     c.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                    c.SerializerSettings.TypeNameHandling = Newtonsoft.Json.TypeNameHandling.Auto;
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
@@ -34,7 +33,7 @@ namespace NetCore21
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Test API", Version = "1" });
 
-                c.UseInlineDefinitionsForEnums();
+                c.UseAllOfToExtendReferenceSchemas();
             });
             services.AddSwaggerGenNewtonsoftSupport();
         }

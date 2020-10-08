@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
@@ -399,28 +400,58 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return schemaRepository.AddDefinition(schemaId, schema);
         }
 
-        private void ApplyMemberMetadata(OpenApiSchema schema, SchemaRepository schemaRepository, DataContract dataContract, Type type, MemberInfo memberInfo)
+        private void ApplyMemberMetadata(
+            OpenApiSchema schema,
+            SchemaRepository schemaRepository,
+            DataContract dataContract,
+            Type type,
+            MemberInfo memberInfo)
         {
             if (schema.Reference == null)
             {
                 schema.Nullable = type.IsReferenceOrNullableType();
 
-                schema.ApplyCustomAttributes(schemaRepository, dataContract, memberInfo.GetInlineAndMetadataAttributes());
+                var customAttributes = memberInfo.GetInlineAndMetadataAttributes();
+                var defaultValueAttribute = customAttributes.OfType<DefaultValueAttribute>().FirstOrDefault();
+
+                if (defaultValueAttribute != null)
+                {
+                    var enumValues = dataContract.EnumValues;
+
+                    var defaultValue = (enumValues != null && enumValues.TryGetValue(defaultValueAttribute.Value, out object convertedEnumValue))
+                        ? convertedEnumValue
+                        : defaultValueAttribute.Value;
+
+                    schema.Default = OpenApiAnyFactory.CreateFor(schema, defaultValue, schemaRepository);
+                }
+
+                schema.ApplyCustomAttributes(customAttributes);
             }
         }
 
-        private void ApplyParameterMetadata(OpenApiSchema schema, SchemaRepository schemaRepository, DataContract dataContract, Type type, ParameterInfo parameterInfo)
+        private void ApplyParameterMetadata(
+            OpenApiSchema schema,
+            SchemaRepository schemaRepository,
+            DataContract dataContract,
+            Type type,
+            ParameterInfo parameterInfo)
         {
             if (schema.Reference == null)
             {
                 schema.Nullable = type.IsReferenceOrNullableType();
 
-                schema.ApplyCustomAttributes(schemaRepository, dataContract, parameterInfo.GetCustomAttributes());
-
                 if (parameterInfo.HasDefaultValue)
                 {
-                    schema.Default = OpenApiAnyFactory.CreateFor(schema, schemaRepository, dataContract, parameterInfo.DefaultValue);
+                    var enumValues = dataContract.EnumValues;
+
+                    var defaultValue = (enumValues != null && enumValues.TryGetValue(parameterInfo.DefaultValue, out object convertedEnumValue))
+                        ? convertedEnumValue
+                        : parameterInfo.DefaultValue;
+
+                    schema.Default = OpenApiAnyFactory.CreateFor(schema, defaultValue, schemaRepository);
                 }
+
+                schema.ApplyCustomAttributes(parameterInfo.GetCustomAttributes());
             }
         }
 

@@ -9,9 +9,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class OpenApiSchemaExtensions
     {
-        public static void ApplyCustomAttributes(this OpenApiSchema schema, IEnumerable<object> customAttributes) => ApplyCustomAttributes(schema, null, null, customAttributes);
-
-        public static void ApplyCustomAttributes(this OpenApiSchema schema, SchemaRepository schemaRepository, DataContract dataContract, IEnumerable<object> customAttributes)
+        public static void ApplyCustomAttributes(this OpenApiSchema schema, IEnumerable<object> customAttributes)
         {
             foreach (var attribute in customAttributes)
             {
@@ -20,9 +18,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 else if (attribute is DataTypeAttribute dataTypeAttribute)
                     ApplyDataTypeAttribute(schema, dataTypeAttribute);
-
-                else if (attribute is DefaultValueAttribute defaultValueAttribute)
-                    ApplyDefaultValueAttribute(schema, schemaRepository, dataContract, defaultValueAttribute);
 
                 else if (attribute is EmailAddressAttribute emailAddressAttribute)
                     ApplyEmailAddressAttribute(schema, emailAddressAttribute);
@@ -83,11 +78,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 schema.Format = format;
             }
-        }
-
-        private static void ApplyDefaultValueAttribute(OpenApiSchema schema, SchemaRepository schemaRepository, DataContract dataContract, DefaultValueAttribute defaultValueAttribute)
-        {
-            schema.Default = OpenApiAnyFactory.CreateFor(schema, schemaRepository, dataContract, defaultValueAttribute.Value);
         }
 
         private static void ApplyEmailAddressAttribute(OpenApiSchema schema, EmailAddressAttribute emailAddressAttribute)
