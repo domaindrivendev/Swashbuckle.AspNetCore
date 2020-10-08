@@ -11,7 +11,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
     public class DataContract
     {
-        public static DataContract ForPrimitive(Type underlyingType, DataType dataType, string dataFormat, IEnumerable<object> enumValues = null)
+        public static DataContract ForPrimitive(Type underlyingType, DataType dataType, string dataFormat, IDictionary<object, object> enumValues = null)
         {
             return new DataContract(
                 underlyingType: underlyingType,
@@ -62,7 +62,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             Type underlyingType,
             DataType dataType,
             string dataFormat = null,
-            IEnumerable<object> enumValues = null,
+            IDictionary<object, object> enumValues = null,
             Type arrayItemType = null,
             Type dictionaryValueType = null,
             IEnumerable<string> dictionaryKeys = null,
@@ -87,7 +87,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public Type UnderlyingType { get; }
         public DataType DataType { get; }
         public string DataFormat { get; }
-        public IEnumerable<object> EnumValues { get; }
+        public IDictionary<object, object> EnumValues { get; }
         public Type ArrayItemType { get; }
         public Type DictionaryValueType { get; }
         public IEnumerable<string> DictionaryKeys { get; }

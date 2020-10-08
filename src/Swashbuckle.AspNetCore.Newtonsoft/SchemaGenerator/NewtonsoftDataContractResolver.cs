@@ -49,7 +49,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             {
                 var enumValues = GetSerializedEnumValuesFor(jsonContract);
 
-                var primitiveTypeAndFormat = (enumValues.Any(value => value.GetType() == typeof(string)))
+                var primitiveTypeAndFormat = (enumValues.Values.Any(value => value is string))
                     ? PrimitiveTypesAndFormats[typeof(string)]
                     : PrimitiveTypesAndFormats[jsonContract.UnderlyingType.GetEnumUnderlyingType()];
 
@@ -79,7 +79,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     // This is a special case where we know the possible key values
                     var enumValues = GetSerializedEnumValuesFor(_contractResolver.ResolveContract(keyType));
 
-                    keys = enumValues.Any(value => value is string)
+                    keys = enumValues.Values.Any(value => value is string)
                         ? enumValues.Cast<string>()
                         : keyType.GetEnumNames();
                 }
@@ -117,7 +117,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             return DataContract.ForDynamic(underlyingType: type);
         }
 
-        private IEnumerable<object> GetSerializedEnumValuesFor(JsonContract jsonContract)
+        private IDictionary<object, object> GetSerializedEnumValuesFor(JsonContract jsonContract)
         {
             var stringEnumConverter = (jsonContract.Converter as StringEnumConverter)
                 ?? _serializerSettings.Converters.OfType<StringEnumConverter>().FirstOrDefault();
@@ -128,19 +128,21 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                 stringEnumConverter = new StringEnumConverter(_generatorOptions.DescribeStringEnumsInCamelCase);
             }
  
-            if (stringEnumConverter != null)
-            {
-                return jsonContract.UnderlyingType.GetMembers(BindingFlags.Public | BindingFlags.Static)
-                    .Select(member =>
+            return jsonContract.UnderlyingType.GetEnumValues().Cast<object>().Distinct()
+                .ToDictionary(
+                    value => value,
+                    value =>
                     {
-                        var memberAttribute = member.GetCustomAttributes<EnumMemberAttribute>().FirstOrDefault();
-                        return GetConvertedEnumName((memberAttribute?.Value ?? member.Name), (memberAttribute?.Value != null), stringEnumConverter);
-                    })
-                    .ToList();
-            }
-
-            return jsonContract.UnderlyingType.GetEnumValues()
-                .Cast<object>();
+                        if (stringEnumConverter == null)
+                            return value;
+                        else
+                        {
+                            var member = jsonContract.UnderlyingType.GetMember(value.ToString()).FirstOrDefault();
+                            var memberAttribute = member.GetCustomAttributes<EnumMemberAttribute>().FirstOrDefault();
+                            return GetConvertedEnumName((memberAttribute?.Value ?? member.Name), (memberAttribute?.Value != null), stringEnumConverter);
+                        }
+                    }
+                );
         }
 
 #if NETCOREAPP3_0
