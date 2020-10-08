@@ -36,13 +36,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 else
                     (schema, dataContract) = GenerateSchemaForType(type, schemaRepository);
 
+                if (memberInfo != null || parameterInfo != null)
+                {
+                    if (schema.Reference != null && _generatorOptions.UseAllOfToExtendReferenceSchemas)
+                    {
+                        schema.AllOf = new[] { new OpenApiSchema { Reference = schema.Reference } };
+                        schema.Reference = null;
+                    }
+                }
+
                 if (memberInfo != null)
                 {
-                    ApplyMemberMetadata(schema, dataContract, type, memberInfo);
+                    ApplyMemberMetadata(schema, schemaRepository, dataContract, type, memberInfo);
                 }
                 else if (parameterInfo != null)
                 {
-                    ApplyParameterMetadata(schema, dataContract, type, parameterInfo);
+                    ApplyParameterMetadata(schema, schemaRepository, dataContract, type, parameterInfo);
                 }
 
                 if (schema.Reference == null)
@@ -390,39 +399,27 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return schemaRepository.AddDefinition(schemaId, schema);
         }
 
-        private void ApplyMemberMetadata(OpenApiSchema schema, DataContract dataContract, Type type, MemberInfo memberInfo)
+        private void ApplyMemberMetadata(OpenApiSchema schema, SchemaRepository schemaRepository, DataContract dataContract, Type type, MemberInfo memberInfo)
         {
-            if (schema.Reference != null && _generatorOptions.UseAllOfToExtendReferenceSchemas)
-            {
-                schema.AllOf = new[] { new OpenApiSchema { Reference = schema.Reference } };
-                schema.Reference = null;
-            }
-
             if (schema.Reference == null)
             {
                 schema.Nullable = type.IsReferenceOrNullableType();
 
-                schema.ApplyCustomAttributes(dataContract, memberInfo.GetInlineAndMetadataAttributes());
+                schema.ApplyCustomAttributes(schemaRepository, dataContract, memberInfo.GetInlineAndMetadataAttributes());
             }
         }
 
-        private void ApplyParameterMetadata(OpenApiSchema schema, DataContract dataContract, Type type, ParameterInfo parameterInfo)
+        private void ApplyParameterMetadata(OpenApiSchema schema, SchemaRepository schemaRepository, DataContract dataContract, Type type, ParameterInfo parameterInfo)
         {
-            if (schema.Reference != null && _generatorOptions.UseAllOfToExtendReferenceSchemas)
-            {
-                schema.AllOf = new[] { new OpenApiSchema { Reference = schema.Reference } };
-                schema.Reference = null;
-            }
-
             if (schema.Reference == null)
             {
                 schema.Nullable = type.IsReferenceOrNullableType();
 
-                schema.ApplyCustomAttributes(dataContract, parameterInfo.GetCustomAttributes());
+                schema.ApplyCustomAttributes(schemaRepository, dataContract, parameterInfo.GetCustomAttributes());
 
                 if (parameterInfo.HasDefaultValue)
                 {
-                    schema.Default = OpenApiAnyFactory.CreateFor(schema, dataContract, parameterInfo.DefaultValue);
+                    schema.Default = OpenApiAnyFactory.CreateFor(schema, schemaRepository, dataContract, parameterInfo.DefaultValue);
                 }
             }
         }
