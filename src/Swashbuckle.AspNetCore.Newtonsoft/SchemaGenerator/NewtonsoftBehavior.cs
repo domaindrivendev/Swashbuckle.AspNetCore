@@ -9,12 +9,12 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Newtonsoft
 {
-    public class NewtonsoftDataContractResolver : ISerializerDataContractResolver
+    public class NewtonsoftBehavior : ISerializerBehavior
     {
         private readonly JsonSerializerSettings _serializerSettings;
         private readonly IContractResolver _contractResolver;
 
-        public NewtonsoftDataContractResolver(JsonSerializerSettings serializerSettings)
+        public NewtonsoftBehavior(JsonSerializerSettings serializerSettings)
         {
             _serializerSettings = serializerSettings;
             _contractResolver = serializerSettings.ContractResolver ?? new DefaultContractResolver();
@@ -52,8 +52,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                 return DataContract.ForPrimitive(
                     underlyingType: jsonContract.UnderlyingType,
                     dataType: primitiveTypeAndFormat.Item1,
-                    dataFormat: primitiveTypeAndFormat.Item2,
-                    enumValues: enumValues);
+                    dataFormat: primitiveTypeAndFormat.Item2);
             }
 
             if (jsonContract is JsonArrayContract jsonArrayContract)
@@ -82,8 +81,8 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
                 return DataContract.ForDictionary(
                     underlyingType: jsonDictionaryContract.UnderlyingType,
-                    valueType: valueType,
-                    keys: keys);
+                    keyType: keyType,
+                    valueType: valueType);
             }
 
             if (jsonContract is JsonObjectContract jsonObjectContract)
@@ -175,6 +174,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 #endif
 
             return dataProperties;
+        }
+
+        public string Serialize(object value)
+        {
+            return JsonConvert.SerializeObject(value, _serializerSettings);
         }
 
         private static readonly Dictionary<Type, Tuple<DataType, string>> PrimitiveTypesAndFormats = new Dictionary<Type, Tuple<DataType, string>>

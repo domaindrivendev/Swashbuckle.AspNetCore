@@ -1,8 +1,8 @@
 ﻿using System.IO;
 using System.Xml.XPath;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.TestSupport;
 using Xunit;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
@@ -22,7 +22,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Subject().Apply(parameter, filterContext);
 
             Assert.Equal("Description for param1", parameter.Description);
-            Assert.Equal("Example for param1", ((OpenApiString)parameter.Example).Value);
+            Assert.NotNull(parameter.Example);
+            Assert.Equal("\"Example for param1\"", parameter.Example.ToJson());
         }
 
         [Fact]
@@ -38,7 +39,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Subject().Apply(parameter, filterContext);
 
             Assert.Equal("Description for param1", parameter.Description);
-            Assert.Equal("Example for param1", ((OpenApiString)parameter.Example).Value);
+            Assert.NotNull(parameter.Example);
+            Assert.Equal("\"Example for param1\"", parameter.Example.ToJson());
         }
 
         [Fact]
@@ -52,7 +54,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Subject().Apply(parameter, filterContext);
 
             Assert.Equal("Summary for StringProperty", parameter.Description);
-            Assert.Equal("Example for StringProperty", ((OpenApiString)parameter.Example).Value);
+            Assert.NotNull(parameter.Example);
+            Assert.Equal("\"Example for StringProperty\"", parameter.Example.ToJson());
         }
 
         private XmlCommentsParameterFilter Subject()

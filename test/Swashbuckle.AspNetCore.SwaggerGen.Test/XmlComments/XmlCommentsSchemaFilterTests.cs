@@ -4,6 +4,7 @@ using System.Xml.XPath;
 using System.IO;
 using Microsoft.OpenApi.Models;
 using Xunit;
+using Swashbuckle.AspNetCore.TestSupport;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -56,37 +57,27 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.BoolProperty), "boolean", null, true)]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.IntProperty), "integer", "int32", 10)]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.LongProperty), "integer", "int64", 4294967295L)]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.FloatProperty), "number", "float", 1.2F)]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.DoubleProperty), "number", "double", 1.25D)]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.EnumProperty), "integer", "int32", 2)]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.GuidProperty), "string", "uuid", "d3966535-2637-48fa-b911-e3c27405ee09")]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringProperty), "string", null, "Example for StringProperty")]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.BadExampleIntProperty), "integer", "int32", null)]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.BoolProperty), "true")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.IntProperty), "10")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.LongProperty), "4294967295")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.FloatProperty), "1.2")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.DoubleProperty), "1.25")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.EnumProperty), "2")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.GuidProperty), "\"d3966535-2637-48fa-b911-e3c27405ee09\"")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringProperty), "\"Example for StringProperty\"")]
         public void Apply_SetsExample_FromPropertyExampleTag(
             Type declaringType,
             string propertyName,
-            string schemaType,
-            string schemaFormat,
-            object expectedValue)
+            string expectedExampleAsJson)
         {
-            var schema = new OpenApiSchema { Type = schemaType, Format = schemaFormat };
+            var schema = new OpenApiSchema();
             var propertyInfo = declaringType.GetProperty(propertyName);
             var filterContext = new SchemaFilterContext(propertyInfo.PropertyType, null, null, memberInfo: propertyInfo);
 
             Subject().Apply(schema, filterContext);
 
-            if (expectedValue != null)
-            {
-                Assert.NotNull(schema.Example);
-                Assert.Equal(expectedValue, schema.Example.GetType().GetProperty("Value").GetValue(schema.Example));
-            }
-            else
-            {
-                Assert.Null(schema.Example);
-            }
+            Assert.NotNull(schema.Example);
+            Assert.Equal(expectedExampleAsJson, schema.Example.ToJson());
         }
 
         [Theory]

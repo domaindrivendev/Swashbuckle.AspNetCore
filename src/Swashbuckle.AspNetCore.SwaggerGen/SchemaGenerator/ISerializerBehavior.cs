@@ -4,20 +4,21 @@ using System.Reflection;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public interface ISerializerDataContractResolver
+    public interface ISerializerBehavior
     {
         DataContract GetDataContractForType(Type type);
+
+        string Serialize(object value);
     }
 
     public class DataContract
     {
-        public static DataContract ForPrimitive(Type underlyingType, DataType dataType, string dataFormat, IDictionary<object, object> enumValues = null)
+        public static DataContract ForPrimitive(Type underlyingType, DataType dataType, string dataFormat)
         {
             return new DataContract(
                 underlyingType: underlyingType,
                 dataType: dataType,
-                dataFormat: dataFormat,
-                enumValues: enumValues);
+                dataFormat: dataFormat);
         }
 
         public static DataContract ForArray(Type underlyingType, Type itemType)
@@ -28,13 +29,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 arrayItemType: itemType);
         }
 
-        public static DataContract ForDictionary(Type underlyingType, Type valueType, IEnumerable<string> keys = null)
+        public static DataContract ForDictionary(Type underlyingType, Type keyType, Type valueType)
         {
             return new DataContract(
                 underlyingType: underlyingType,
                 dataType: DataType.Dictionary,
-                dictionaryValueType: valueType,
-                dictionaryKeys: keys);
+                dictionaryKeyType: keyType,
+                dictionaryValueType: valueType);
         }
 
         public static DataContract ForObject(
@@ -62,8 +63,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             Type underlyingType,
             DataType dataType,
             string dataFormat = null,
-            IDictionary<object, object> enumValues = null,
             Type arrayItemType = null,
+            Type dictionaryKeyType = null,
             Type dictionaryValueType = null,
             IEnumerable<string> dictionaryKeys = null,
             IEnumerable<DataProperty> objectProperties = null,
@@ -74,10 +75,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             UnderlyingType = underlyingType;
             DataType = dataType;
             DataFormat = dataFormat;
-            EnumValues = enumValues;
             ArrayItemType = arrayItemType;
+            DictionaryKeyType = dictionaryKeyType;
             DictionaryValueType = dictionaryValueType;
-            DictionaryKeys = dictionaryKeys;
             ObjectProperties = objectProperties;
             ObjectExtensionDataType = objectExtensionDataType;
             ObjectTypeNameProperty = objectTypeNameProperty;
@@ -87,10 +87,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public Type UnderlyingType { get; }
         public DataType DataType { get; }
         public string DataFormat { get; }
-        public IDictionary<object, object> EnumValues { get; }
         public Type ArrayItemType { get; }
+        public Type DictionaryKeyType { get; }
         public Type DictionaryValueType { get; }
-        public IEnumerable<string> DictionaryKeys { get; }
         public IEnumerable<DataProperty> ObjectProperties { get; }
         public Type ObjectExtensionDataType { get; }
         public string ObjectTypeNameProperty { get; }
