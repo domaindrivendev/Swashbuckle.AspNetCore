@@ -18,8 +18,8 @@
             </remarks>
         </member>
         <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.GenericControllerWithXmlComments`1.ActionWithParamTags(`0,`0)">
-            <param name="param1" example="Example for param1">Description for param1</param>
-            <param name="param2" example="Example for param2">Description for param2</param>
+            <param name="param1" example="&quot;Example for param1&quot;">Description for param1</param>
+            <param name="param2" example="&quot;Example for param2&quot;">Description for param2</param>
         </member>
         <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllerWithXmlComments">
             <summary>
@@ -36,8 +36,8 @@
             </remarks>
         </member>
         <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllerWithXmlComments.ActionWithParamTags(System.String,System.String)">
-            <param name="param1" example="Example for param1">Description for param1</param>
-            <param name="param2" example="Example for param2">Description for param2</param>
+            <param name="param1" example="&quot;Example for param1&quot;">Description for param1</param>
+            <param name="param2" example="&quot;Example for param2&quot;">Description for param2</param>
         </member>
         <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllerWithXmlComments.ActionWithResponseTags">
             <response code="200">Description for 200 response</response>
@@ -136,19 +136,13 @@
             <summary>
             Summary for GuidProperty
             </summary>
-            <example>d3966535-2637-48fa-b911-e3c27405ee09</example>
+            <example>"d3966535-2637-48fa-b911-e3c27405ee09"</example>
         </member>
         <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.StringProperty">
             <summary>
             Summary for StringProperty
             </summary>
-            <example>Example for StringProperty</example>
-        </member>
-        <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.BadExampleIntProperty">
-            <summary>
-            Summary for BadExampleIntProperty
-            </summary>
-            <example>Foobar</example>
+            <example>"Example for StringProperty"</example>
         </member>
         <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.AcceptsNothing">
             <summary>

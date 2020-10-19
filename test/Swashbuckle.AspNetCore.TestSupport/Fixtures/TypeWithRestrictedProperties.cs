@@ -1,6 +1,6 @@
 ﻿namespace Swashbuckle.AspNetCore.TestSupport
 {
-    public class ComplexTypeWithRestrictedProperties
+    public class TypeWithRestrictedProperties
     {
         public int ReadWriteProperty { get; set; }
         public int ReadOnlyProperty { get; }

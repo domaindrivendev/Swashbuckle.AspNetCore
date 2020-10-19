@@ -11,11 +11,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void Serialize()
         {
-            var dto = new TestDto();
+            var json = JsonSerializer.Serialize(float.MaxValue);
 
-            var json = JsonSerializer.Serialize(dto);
-
-            //Assert.Equal("{\"Prop1\":null}", json);
+            Assert.Equal("3.4028235E+38", json);
         }
 
         [Fact]

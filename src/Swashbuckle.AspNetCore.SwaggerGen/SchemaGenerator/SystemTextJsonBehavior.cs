@@ -8,11 +8,11 @@ using System.Text.Json.Serialization;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public class JsonSerializerDataContractResolver : ISerializerDataContractResolver
+    public class SystemTextJsonBehavior : ISerializerBehavior
     {
         private readonly JsonSerializerOptions _serializerOptions;
 
-        public JsonSerializerDataContractResolver(JsonSerializerOptions serializerOptions)
+        public SystemTextJsonBehavior(JsonSerializerOptions serializerOptions)
         {
             _serializerOptions = serializerOptions;
         }
@@ -36,23 +36,26 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (type.IsEnum)
             {
-                var enumValues = GetSerializedEnumValuesFor(type);
+                var enumValues = type.GetEnumValues();
 
-                var primitiveTypeAndFormat = (enumValues.Values.Any(value => value is string))
+                //Test to determine if the serializer will treat as string
+                var serializeAsString = (enumValues.Length > 0) && Serialize(enumValues.GetValue(0)).StartsWith("\"");
+
+                var primitiveTypeAndFormat = serializeAsString 
                     ? PrimitiveTypesAndFormats[typeof(string)]
                     : PrimitiveTypesAndFormats[type.GetEnumUnderlyingType()];
 
                 return DataContract.ForPrimitive(
                     underlyingType: type,
                     dataType: primitiveTypeAndFormat.Item1,
-                    dataFormat: primitiveTypeAndFormat.Item2,
-                    enumValues: enumValues);
+                    dataFormat: primitiveTypeAndFormat.Item2);
             }
 
             if (IsSupportedDictionary(type, out Type keyType, out Type valueType))
             {
                 return DataContract.ForDictionary(
                     underlyingType: type,
+                    keyType: keyType,
                     valueType: valueType);
             }
 
@@ -67,22 +70,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 underlyingType: type,
                 properties: GetDataPropertiesFor(type, out Type extensionDataType),
                 extensionDataType: extensionDataType);
-        }
-
-        private IDictionary<object, object> GetSerializedEnumValuesFor(Type enumType)
-        {
-            var underlyingValues = enumType.GetEnumValues().Cast<object>().Distinct();
-
-            //Test to determine if the serializer will treat as string or not
-            var serializeAsString = underlyingValues.Any()
-                && JsonSerializer.Serialize(underlyingValues.First(), _serializerOptions).StartsWith("\"");
-
-            return underlyingValues.ToDictionary(
-                value => value,
-                value => serializeAsString
-                    ? JsonSerializer.Serialize(value, _serializerOptions).Replace("\"", string.Empty)
-                    : value
-            );
         }
 
         public bool IsSupportedDictionary(Type type, out Type keyType, out Type valueType)
@@ -172,6 +159,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
 
             return dataProperties;
+        }
+
+        public string Serialize(object value)
+        {
+            return JsonSerializer.Serialize(value, _serializerOptions);
         }
 
         private static readonly Dictionary<Type, Tuple<DataType, string>> PrimitiveTypesAndFormats = new Dictionary<Type, Tuple<DataType, string>>

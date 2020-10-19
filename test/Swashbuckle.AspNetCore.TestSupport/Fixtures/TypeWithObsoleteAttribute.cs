@@ -2,10 +2,8 @@
 
 namespace Swashbuckle.AspNetCore.TestSupport
 {
-    public class ObsoletePropertiesType
+    public class TypeWithObsoleteAttribute
     {
-        public string Property1 { get; set; }
-
         [Obsolete]
         public string ObsoleteProperty { get; set; }
     }

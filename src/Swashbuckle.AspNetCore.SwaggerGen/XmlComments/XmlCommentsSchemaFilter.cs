@@ -1,9 +1,6 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Globalization;
 using System.Xml.XPath;
 using System.Reflection;
-using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -55,37 +52,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var exampleNode = fieldOrPropertyNode.SelectSingleNode("example");
             if (exampleNode != null)
-            {
-                var exampleString = XmlCommentsTextHelper.Humanize(exampleNode.InnerXml);
-
-                if (fieldOrPropertyInfo is FieldInfo fieldInfo)
-                {
-                    schema.Example = ConvertToOpenApiType(fieldInfo.FieldType, schema, exampleString);
-                }
-                else if (fieldOrPropertyInfo is PropertyInfo propertyInfo)
-                {
-                    schema.Example = ConvertToOpenApiType(propertyInfo.PropertyType, schema, exampleString);
-                }
-            }
-        }
-
-        private static IOpenApiAny ConvertToOpenApiType(Type type, OpenApiSchema schema, string stringValue)
-        {
-            object typedValue;
-
-            try
-            {
-                typedValue = TypeDescriptor.GetConverter(type).ConvertFrom(
-                    context: null,
-                    culture: CultureInfo.InvariantCulture,
-                    stringValue);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-
-            return OpenApiAnyFactory.CreateFor(schema, typedValue);
+                schema.Example = OpenApiAnyFactory.CreateFromJson(exampleNode.InnerXml);
         }
     }
 }
