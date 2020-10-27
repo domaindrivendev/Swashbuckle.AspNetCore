@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen.SchemaMappings;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -9,13 +10,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         public SchemaGeneratorOptions()
         {
-            CustomTypeMappings = new Dictionary<Type, Func<OpenApiSchema>>();
             SchemaIdSelector = DefaultSchemaIdSelector;
             SubTypesSelector = DefaultSubTypesSelector;
             SchemaFilters = new List<ISchemaFilter>();
+            SchemaMappingProviders = new List<ISchemaMappingProvider>();
+            #pragma warning disable 0612, 0618
+            CustomTypeMappings = new LegacyTypeMappingCollection(this);
+            #pragma warning restore 0612, 0618
         }
 
-        public IDictionary<Type, Func<OpenApiSchema>> CustomTypeMappings { get; set; }
+        [Obsolete("Use SchemaMappings")]
+        public LegacyTypeMappingCollection CustomTypeMappings { get; }
+
+        public IList<ISchemaMappingProvider> SchemaMappingProviders { get; set; }
 
         public bool UseInlineDefinitionsForEnums { get; set; }
 

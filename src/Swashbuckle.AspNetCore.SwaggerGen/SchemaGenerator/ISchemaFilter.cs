@@ -13,13 +13,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         public SchemaFilterContext(
             Type type,
-            ISchemaGenerator schemaGenerator,
             SchemaRepository schemaRepository,
             MemberInfo memberInfo = null,
             ParameterInfo parameterInfo = null)
         {
             Type = type;
-            SchemaGenerator = schemaGenerator;
             SchemaRepository = schemaRepository;
             MemberInfo = memberInfo;
             ParameterInfo = parameterInfo;
