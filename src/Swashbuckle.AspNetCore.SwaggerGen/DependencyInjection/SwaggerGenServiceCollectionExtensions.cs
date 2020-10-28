@@ -29,6 +29,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddTransient(s => s.GetRequiredService<IOptions<SwaggerGeneratorOptions>>().Value);
             services.TryAddTransient<ISchemaGenerator, SchemaGenerator>();
             services.TryAddTransient(s => s.GetRequiredService<IOptions<SchemaGeneratorOptions>>().Value);
+            services.TryAddTransient<SchemaRepositoryFactory, SchemaRepositoryFactory>();
             services.TryAddTransient<ISerializerBehavior>(s =>
             {
                 var serializerOptions = s.GetJsonSerializerOptions() ?? new JsonSerializerOptions();

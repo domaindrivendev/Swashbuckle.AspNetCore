@@ -4,6 +4,7 @@ using System.Xml.XPath;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.SwaggerGen.SchemaMappings;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -161,12 +162,15 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="swaggerGenOptions"></param>
         /// <param name="type">System type</param>
         /// <param name="schemaFactory">A factory method that generates Schema's for the provided type</param>
+        [Obsolete("Use MapSchema; note that the default disposition has changed to use SchemaDisposition.Reference by default.")]
         public static void MapType(
             this SwaggerGenOptions swaggerGenOptions,
             Type type,
             Func<OpenApiSchema> schemaFactory)
         {
-            swaggerGenOptions.SchemaGeneratorOptions.CustomTypeMappings.Add(type, schemaFactory);
+            #pragma warning disable 0612
+            swaggerGenOptions.AddSchemaMappingProvider(new LegacySchemaMappingProvider(type, schemaFactory));
+            #pragma warning disable 0612
         }
 
         /// <summary>
@@ -175,11 +179,68 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="T">System type</typeparam>
         /// <param name="swaggerGenOptions"></param>
         /// <param name="schemaFactory">A factory method that generates Schema's for the provided type</param>
+        [Obsolete("Use MapSchema; note that the default disposition has changed to SchemaDisposition.Reference by default.")]
         public static void MapType<T>(
             this SwaggerGenOptions swaggerGenOptions,
             Func<OpenApiSchema> schemaFactory)
         {
             swaggerGenOptions.MapType(typeof(T), schemaFactory);
+        }
+
+        /// <summary>
+        /// Adds a custom mapping for the specified type to an <see cref="OpenApiSchema"/>.
+        /// The mapping applies to the specified type or instantiations of the specified generic type definition.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="mapping"></param>
+        public static void MapSchema<T>(this SwaggerGenOptions swaggerGenOptions, Func<OpenApiSchema> mapping) {
+            swaggerGenOptions.MapSchema(typeof(T), SchemaDisposition.Reference, _ => mapping());
+        }
+
+        /// <summary>
+        /// Adds a custom mapping for the specified type to an <see cref="OpenApiSchema"/>.
+        /// The mapping applies to the specified type or instantiations of the specified generic type definition.
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="mapping"></param>
+        /// <typeparam name="T"></typeparam>
+        public static void MapSchema<T>(this SwaggerGenOptions swaggerGenOptions, Func<ISchemaMappingContext, OpenApiSchema> mapping) {
+            swaggerGenOptions.MapSchema(typeof(T), SchemaDisposition.Reference, mapping);
+        }
+
+        /// <summary>
+        /// Adds a custom mapping for the specified type to an <see cref="OpenApiSchema"/>.
+        /// The mapping applies to the specified type or instantiations of the specified generic type definition.
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="mappedType"></param>
+        /// <param name="disposition"></param>
+        /// <param name="mapping"></param>
+        public static void MapSchema(this SwaggerGenOptions swaggerGenOptions, Type mappedType, SchemaDisposition disposition, Func<OpenApiSchema> mapping) {
+            swaggerGenOptions.MapSchema(mappedType, disposition, _ => mapping());
+        }
+
+        /// <summary>
+        /// Adds a custom mapping for the specified type to an <see cref="OpenApiSchema"/>.
+        /// The mapping applies to the specified type or instantiations of the specified generic type definition.
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="mappedType"></param>
+        /// <param name="disposition"></param>
+        /// <param name="mapping"></param>
+        public static void MapSchema(this SwaggerGenOptions swaggerGenOptions, Type mappedType, SchemaDisposition disposition, Func<ISchemaMappingContext, OpenApiSchema> mapping) {
+            swaggerGenOptions.AddSchemaMappingProvider(new SimpleSchemaMappingProvider(disposition, mappedType, mapping));
+        }
+
+        /// <summary>
+        /// Adds a custom <see cref="ISchemaMappingProvider"/> mapping types to their corresponding <see cref="OpenApiSchema"/>
+        /// representations.
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="schemaMappingProvider"></param>
+        public static void AddSchemaMappingProvider(this SwaggerGenOptions swaggerGenOptions, ISchemaMappingProvider schemaMappingProvider) {
+            swaggerGenOptions.SchemaGeneratorOptions.SchemaMappingProviders.Add(schemaMappingProvider);
         }
 
         /// <summary>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen.SchemaMappings;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -30,7 +31,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private void DeepCopy(SchemaGeneratorOptions source, SchemaGeneratorOptions target)
         {
-            target.CustomTypeMappings = new Dictionary<Type, Func<OpenApiSchema>>(source.CustomTypeMappings);
+            target.SchemaMappingProviders = new List<ISchemaMappingProvider>(source.SchemaMappingProviders);
             target.SchemaIdSelector = source.SchemaIdSelector;
             target.IgnoreObsoleteProperties = source.IgnoreObsoleteProperties;
             target.UseAllOfForInheritance = source.UseAllOfForInheritance;
