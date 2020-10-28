@@ -13,19 +13,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         public OperationFilterContext(
             ApiDescription apiDescription,
-            ISchemaGenerator schemaRegistry,
             SchemaRepository schemaRepository,
             MethodInfo methodInfo)
         {
             ApiDescription = apiDescription;
-            SchemaGenerator = schemaRegistry;
             SchemaRepository = schemaRepository;
             MethodInfo = methodInfo;
         }
 
         public ApiDescription ApiDescription { get; }
-
-        public ISchemaGenerator SchemaGenerator { get; }
 
         public SchemaRepository SchemaRepository { get; }
 

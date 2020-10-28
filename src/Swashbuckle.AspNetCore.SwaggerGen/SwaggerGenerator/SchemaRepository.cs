@@ -30,6 +30,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         /// <summary>
         /// Generates a schema id for the provided type.
         /// </summary>
+        public string GetSchemaId<T>() =>
+            GetSchemaId(typeof(T));
+
+        /// <summary>
+        /// Generates a schema id for the provided type.
+        /// </summary>
         public string GetSchemaId(Type type) =>
             _generatorOptions.SchemaIdSelector(type);
 
@@ -64,7 +70,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         /// contextual restrictions and information.
         /// </summary>
         public OpenApiSchema GetMemberSchema<T>(Expression<Func<T, object>> memberExpression) {
-            return GetMemberSchema(Resolve(memberExpression));
+            return GetMemberSchema(Resolve(memberExpression.Body));
 
             MemberInfo Resolve(Expression expr) {
                 switch(expr) {
@@ -75,6 +81,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 }
             }
         }
+
+        /// <summary>
+        /// Retrieves a schema for the specified type.
+        /// For a schema incorporating contextual information such as nullability, see
+        /// <seealso cref="GetMemberSchema"/> and <seealso cref="GetParameterSchema"/>.
+        /// </summary>
+        public OpenApiSchema GetTypeSchema<T>() =>
+            GetTypeSchema(typeof(T));
 
         /// <summary>
         /// Retrieves a schema for the specified type.

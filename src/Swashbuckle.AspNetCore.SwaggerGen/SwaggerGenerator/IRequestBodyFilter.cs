@@ -14,20 +14,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public RequestBodyFilterContext(
             ApiParameterDescription bodyParameterDescription,
             IEnumerable<ApiParameterDescription> formParameterDescriptions,
-            ISchemaGenerator schemaGenerator,
             SchemaRepository schemaRepository)
         {
             BodyParameterDescription = bodyParameterDescription;
             FormParameterDescriptions = formParameterDescriptions;
-            SchemaGenerator = schemaGenerator;
             SchemaRepository = schemaRepository;
         }
 
         public ApiParameterDescription BodyParameterDescription { get; }
 
         public IEnumerable<ApiParameterDescription> FormParameterDescriptions { get; }
-
-        public ISchemaGenerator SchemaGenerator { get; }
 
         public SchemaRepository SchemaRepository { get; }
     }

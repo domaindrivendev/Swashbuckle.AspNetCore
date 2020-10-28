@@ -13,17 +13,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         public DocumentFilterContext(
             IEnumerable<ApiDescription> apiDescriptions,
-            ISchemaGenerator schemaGenerator,
             SchemaRepository schemaRepository)
         {
             ApiDescriptions = apiDescriptions;
-            SchemaGenerator = schemaGenerator;
             SchemaRepository = schemaRepository;
         }
 
         public IEnumerable<ApiDescription> ApiDescriptions { get; }
-
-        public ISchemaGenerator SchemaGenerator { get; }
 
         public SchemaRepository SchemaRepository { get; }
     }
