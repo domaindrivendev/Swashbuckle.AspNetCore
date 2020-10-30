@@ -14,6 +14,7 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using Xunit;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.SwaggerGen.SchemaMappings;
 using Swashbuckle.AspNetCore.TestSupport;
 
 namespace Swashbuckle.AspNetCore.Newtonsoft.Test
@@ -23,9 +24,9 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [Theory]
         [InlineData(typeof(IFormFile))]
         [InlineData(typeof(FileResult))]
-        public void GenerateSchema_GeneratesFileSchema_IfFormFileOrFileResultType(Type type)
+        public void GeneratesFileSchema_IfFormFileOrFileResultType(Type type)
         {
-            var schema = Subject().GenerateSchema(type, new SchemaRepository());
+            var schema = ConfiguredSchemaRepository().GetTypeSchema(type);
 
             Assert.Equal("string", schema.Type);
             Assert.Equal("binary", schema.Format);
@@ -54,12 +55,12 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [InlineData(typeof(bool?), "boolean", null)]
         [InlineData(typeof(int?), "integer", "int32")]
         [InlineData(typeof(DateTime?), "string", "date-time")]
-        public void GenerateSchema_GeneratesPrimitiveSchema_IfPrimitiveOrNullablePrimitiveType(
+        public void GeneratesPrimitiveSchema_IfPrimitiveOrNullablePrimitiveType(
             Type type,
             string expectedSchemaType,
             string expectedFormat)
         {
-            var schema = Subject().GenerateSchema(type, new SchemaRepository());
+            var schema = ConfiguredSchemaRepository().GetTypeSchema(type);
 
             Assert.Equal(expectedSchemaType, schema.Type);
             Assert.Equal(expectedFormat, schema.Format);
@@ -70,15 +71,15 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [InlineData(typeof(LongEnum), "integer", "int64", 3)]
         [InlineData(typeof(IntEnum?), "integer", "int32", 3)]
         [InlineData(typeof(LongEnum?), "integer", "int64", 3)]
-        public void GenerateSchema_GeneratesReferencedEnumSchema_IfEnumOrNullableEnumType(
+        public void GeneratesReferencedEnumSchema_IfEnumOrNullableEnumType(
             Type type,
             string expectedSchemaType,
             string expectedFormat,
             int expectedEnumCount)
         {
-            var schemaRepository = new SchemaRepository();
+            var schemaRepository = ConfiguredSchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(type, schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(type);
 
             Assert.NotNull(referenceSchema.Reference);
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
@@ -89,12 +90,12 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
-        public void GenerateSchema_DedupsEnumValues_IfEnumTypeHasDuplicateValues()
+        public void DedupsEnumValues_IfEnumTypeHasDuplicateValues()
         {
             var enumType = typeof(HttpStatusCode);
-            var schemaRepository = new SchemaRepository();
+            var schemaRepository = ConfiguredSchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(enumType, schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(enumType);
 
             Assert.NotNull(referenceSchema.Reference);
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
@@ -106,11 +107,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [InlineData(typeof(IReadOnlyDictionary<string, bool>), "boolean")]
         [InlineData(typeof(IDictionary), null)]
         [InlineData(typeof(ExpandoObject), null)]
-        public void GenerateSchema_GeneratesDictionarySchema_IfDictionaryType(
+        public void GeneratesDictionarySchema_IfDictionaryType(
             Type type,
             string expectedAdditionalPropertiesType)
         {
-            var schema = Subject().GenerateSchema(type, new SchemaRepository());
+            var schema = ConfiguredSchemaRepository().GetTypeSchema(type);
 
             Assert.Equal("object", schema.Type);
             Assert.True(schema.AdditionalPropertiesAllowed);
@@ -119,20 +120,20 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
-        public void GenerateSchema_GeneratesObjectSchema_IfDictionaryTypeHasEnumKey()
+        public void GeneratesObjectSchema_IfDictionaryTypeHasEnumKey()
         {
-            var schema = Subject().GenerateSchema(typeof(IDictionary<IntEnum, int>), new SchemaRepository());
+            var schema = ConfiguredSchemaRepository().GetTypeSchema(typeof(IDictionary<IntEnum, int>));
 
             Assert.Equal("object", schema.Type);
             Assert.Equal(new[] { "Value2", "Value4", "Value8" }, schema.Properties.Keys);
         }
 
         [Fact]
-        public void GenerateSchema_GeneratesReferencedDictionarySchema_IfDictionaryTypeIsSelfReferencing()
+        public void GeneratesReferencedDictionarySchema_IfDictionaryTypeIsSelfReferencing()
         {
-            var schemaRepository = new SchemaRepository();
+            var schemaRepository = ConfiguredSchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(DictionaryOfSelf), schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(typeof(DictionaryOfSelf));
 
             Assert.NotNull(referenceSchema.Reference);
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
@@ -148,12 +149,12 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [InlineData(typeof(DateTime?[]), "string", "date-time")]
         [InlineData(typeof(int[][]), "array", null)]
         [InlineData(typeof(IList), null, null)]
-        public void GenerateSchema_GeneratesArraySchema_IfEnumerableType(
+        public void GeneratesArraySchema_IfEnumerableType(
             Type type,
             string expectedItemsType,
             string expectedItemsFormat)
         {
-            var schema = Subject().GenerateSchema(type, new SchemaRepository());
+            var schema = ConfiguredSchemaRepository().GetTypeSchema(type);
 
             Assert.Equal("array", schema.Type);
             Assert.NotNull(schema.Items);
@@ -164,20 +165,20 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [Theory]
         [InlineData(typeof(ISet<string>))]
         [InlineData(typeof(SortedSet<string>))]
-        public void GenerateSchema_SetsUniqueItems_IfEnumerableTypeIsASet(Type type)
+        public void SetsUniqueItems_IfEnumerableTypeIsASet(Type type)
         {
-            var schema = Subject().GenerateSchema(type, new SchemaRepository());
+            var schema = ConfiguredSchemaRepository().GetTypeSchema(type);
 
             Assert.Equal("array", schema.Type);
             Assert.True(schema.UniqueItems);
         }
 
         [Fact]
-        public void GenerateSchema_GeneratesReferencedArraySchema_IfEnumerableTypeIsSelfReferencing()
+        public void GeneratesReferencedArraySchema_IfEnumerableTypeIsSelfReferencing()
         {
-            var schemaRepository = new SchemaRepository();
+            var schemaRepository = ConfiguredSchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(ListOfSelf), schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(typeof(ListOfSelf));
 
             Assert.NotNull(referenceSchema.Reference);
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
@@ -190,14 +191,14 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [InlineData(typeof(GenericType<bool, int>), "BooleanInt32GenericType", new[] { "Property1", "Property2" })]
         [InlineData(typeof(GenericType<bool, int[]>), "BooleanInt32ArrayGenericType", new[] { "Property1", "Property2" })]
         [InlineData(typeof(ContainingType.NestedType), "NestedType", new[] { "Property2" })]
-        public void GenerateSchema_GeneratesReferencedObjectSchema_IfComplexType(
+        public void GeneratesReferencedObjectSchema_IfComplexType(
             Type type,
             string expectedSchemaId,
             string[] expectedProperties)
         {
-            var schemaRepository = new SchemaRepository();
+            var schemaRepository = ConfiguredSchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(type, schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(type);
 
             Assert.NotNull(referenceSchema.Reference);
             Assert.Equal(expectedSchemaId, referenceSchema.Reference.Id);
@@ -208,11 +209,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
-        public void GenerateSchema_IncludesInheritedProperties_IfComplexTypeIsDerived()
+        public void IncludesInheritedProperties_IfComplexTypeIsDerived()
         {
-            var schemaRepository = new SchemaRepository();
+            var schemaRepository = ConfiguredSchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(SubType1), schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(typeof(SubType1));
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("object", schema.Type);
@@ -220,11 +221,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
-        public void GenerateSchema_ExcludesIndexerProperties_IfComplexTypeIsIndexed()
+        public void ExcludesIndexerProperties_IfComplexTypeIsIndexed()
         {
-            var schemaRepository = new SchemaRepository();
+            var schemaRepository = ConfiguredSchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(IndexedType), schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(typeof(IndexedType));
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("object", schema.Type);
@@ -235,14 +236,14 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [InlineData(typeof(TypeWithNullableProperties), nameof(TypeWithNullableProperties.IntProperty), false)]
         [InlineData(typeof(TypeWithNullableProperties), nameof(TypeWithNullableProperties.StringProperty), true)]
         [InlineData(typeof(TypeWithNullableProperties), nameof(TypeWithNullableProperties.NullableIntProperty), true)]
-        public void GenerateSchema_SetsNullableFlag_IfPropertyIsReferenceOrNullableType(
+        public void SetsNullableFlag_IfPropertyIsReferenceOrNullableType(
             Type declaringType,
             string propertyName,
             bool expectedNullable)
         {
-            var schemaRepository = new SchemaRepository();
+            var schemaRepository = ConfiguredSchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(declaringType, schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(declaringType);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal(expectedNullable, schema.Properties[propertyName].Nullable);
@@ -258,14 +259,14 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.IntArrayWithDefault), "[\n  1,\n  2,\n  3\n]")]
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.StringArrayWithDefault), "[\n  \"foo\",\n  \"bar\"\n]")]
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.StringWithDefaultNull), "null")]
-        public void GenerateSchema_SetsDefault_IfPropertyHasDefaultValueAttribute(
+        public void SetsDefault_IfPropertyHasDefaultValueAttribute(
             Type declaringType,
             string propertyName,
             string expectedDefaultAsJson)
         {
-            var schemaRepository = new SchemaRepository();
+            var schemaRepository = ConfiguredSchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(declaringType, schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(declaringType);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             var propertySchema = schema.Properties[propertyName];
@@ -274,11 +275,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
-        public void GenerateSchema_SetsDeprecatedFlag_IfPropertyHasObsoleteAttribute()
+        public void SetsDeprecatedFlag_IfPropertyHasObsoleteAttribute()
         {
-            var schemaRepository = new SchemaRepository();
+            var schemaRepository = ConfiguredSchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(TypeWithObsoleteAttribute), schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(typeof(TypeWithObsoleteAttribute));
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.True(schema.Properties["ObsoleteProperty"].Deprecated);
@@ -288,11 +289,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [InlineData(typeof(TypeWithValidationAttributes))]
         [InlineData(typeof(TypeWithValidationAttributesViaMetadataType))]
 
-        public void GenerateSchema_SetsValidationProperties_IfComplexTypeHasValidationAttributes(Type type)
+        public void SetsValidationProperties_IfComplexTypeHasValidationAttributes(Type type)
         {
-            var schemaRepository = new SchemaRepository();
+            var schemaRepository = ConfiguredSchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(type, schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(type);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("credit-card", schema.Properties["StringWithDataTypeCreditCard"].Format);
@@ -309,11 +310,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
-        public void GenerateSchema_SetsReadOnlyAndWriteOnlyFlags_IfPropertyIsRestricted()
+        public void SetsReadOnlyAndWriteOnlyFlags_IfPropertyIsRestricted()
         {
-            var schemaRepository = new SchemaRepository();
+            var schemaRepository = ConfiguredSchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(TypeWithRestrictedProperties), schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(typeof(TypeWithRestrictedProperties));
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.False(schema.Properties["ReadWriteProperty"].ReadOnly);
@@ -325,11 +326,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
-        public void GenerateSchema_DoesNotSetReadOnlyFlag_IfPropertyIsReadOnlyButSetViaConstructor()
+        public void DoesNotSetReadOnlyFlag_IfPropertyIsReadOnlyButSetViaConstructor()
         {
-            var schemaRepository = new SchemaRepository();
+            var schemaRepository = ConfiguredSchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(TypeWithPropertySetViaConstructor), schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(typeof(TypeWithPropertySetViaConstructor));
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.False(schema.Properties["ReadOnlyProperty"].ReadOnly);
@@ -339,15 +340,17 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [InlineData(typeof(ComplexType), typeof(ComplexType), "string")]
         [InlineData(typeof(GenericType<int, string>), typeof(GenericType<int, string>), "string")]
         [InlineData(typeof(GenericType<,>), typeof(GenericType<int, int>), "string")]
-        public void GenerateSchema_SupportsOption_CustomTypeMappings(
+        public void SupportsOption_CustomTypeMappings(
             Type mappingType,
             Type type,
             string expectedSchemaType)
         {
-            var subject = Subject(
+            var subject = ConfiguredSchemaRepository(
+                #pragma warning disable 0618
                 configureGenerator: c => c.CustomTypeMappings.Add(mappingType, () => new OpenApiSchema { Type = "string" })
+                #pragma warning restore 0618
             );
-            var schema = subject.GenerateSchema(type, new SchemaRepository());
+            var schema = subject.GetTypeSchema(type);
 
             Assert.Equal(expectedSchemaType, schema.Type);
             Assert.Empty(schema.Properties);
@@ -358,14 +361,13 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [InlineData(typeof(IDictionary<string, string>))]
         [InlineData(typeof(int[]))]
         [InlineData(typeof(ComplexType))]
-        public void GenerateSchema_SupportsOption_SchemaFilters(Type type)
+        public void SupportsOption_SchemaFilters(Type type)
         {
-            var subject = Subject(
+            var schemaRepository = ConfiguredSchemaRepository(
                 configureGenerator: (c) => c.SchemaFilters.Add(new VendorExtensionsSchemaFilter())
             );
-            var schemaRepository = new SchemaRepository();
 
-            var schema = subject.GenerateSchema(type, schemaRepository);
+            var schema = schemaRepository.GetTypeSchema(type);
 
             if (schema.Reference == null)
                 Assert.Contains("X-foo", schema.Extensions.Keys);
@@ -374,42 +376,39 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
-        public void GenerateSchema_SupportsOption_IgnoreObsoleteProperties()
+        public void SupportsOption_IgnoreObsoleteProperties()
         {
-            var subject = Subject(
+            var schemaRepository = ConfiguredSchemaRepository(
                 configureGenerator: c => c.IgnoreObsoleteProperties = true
             );
-            var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = subject.GenerateSchema(typeof(TypeWithObsoleteAttribute), schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(typeof(TypeWithObsoleteAttribute));
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.DoesNotContain("ObsoleteProperty", schema.Properties.Keys);
         }
 
         [Fact]
-        public void GenerateSchema_SupportsOption_SchemaIdSelector()
+        public void SupportsOption_SchemaIdSelector()
         {
-            var subject = Subject(
+            var schemaRepository = ConfiguredSchemaRepository(
                 configureGenerator: c => c.SchemaIdSelector = (type) => type.FullName
             );
-            var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = subject.GenerateSchema(typeof(ComplexType), schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(typeof(ComplexType));
 
             Assert.Equal("Swashbuckle.AspNetCore.TestSupport.ComplexType", referenceSchema.Reference.Id);
             Assert.Contains(referenceSchema.Reference.Id, schemaRepository.Schemas.Keys);
         }
 
         [Fact]
-        public void GenerateSchema_SupportsOption_UseAllOfForInheritance()
+        public void SupportsOption_UseAllOfForInheritance()
         {
-            var subject = Subject(
+            var schemaRepository = ConfiguredSchemaRepository(
                 configureGenerator: c => c.UseAllOfForInheritance = true
             );
-            var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = subject.GenerateSchema(typeof(BaseType), schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(typeof(BaseType));
 
             // The base type schema
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
@@ -434,14 +433,13 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
-        public void GenerateSchema_SupportsOption_UseOneOfForPolymorphism()
+        public void SupportsOption_UseOneOfForPolymorphism()
         {
-            var subject = Subject(
+            var schemaRepository = ConfiguredSchemaRepository(
                 configureGenerator: c => c.UseOneOfForPolymorphism = true
             );
-            var schemaRepository = new SchemaRepository();
 
-            var schema = subject.GenerateSchema(typeof(BaseType), schemaRepository);
+            var schema = schemaRepository.GetTypeSchema(typeof(BaseType));
 
             // The polymorphic schema
             Assert.NotNull(schema.OneOf);
@@ -464,16 +462,15 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
-        public void GenerateSchema_SupportsOption_UseOneOfForInheritance_CombinedWith_UseAllOfForPolymorphism()
+        public void SupportsOption_UseOneOfForInheritance_CombinedWith_UseAllOfForPolymorphism()
         {
-            var subject = Subject(configureGenerator: c =>
+            var schemaRepository = ConfiguredSchemaRepository(configureGenerator: c =>
             {
                 c.UseAllOfForInheritance = true;
                 c.UseOneOfForPolymorphism = true;
             });
-            var schemaRepository = new SchemaRepository();
 
-            var schema = subject.GenerateSchema(typeof(BaseType), schemaRepository);
+            var schema = schemaRepository.GetTypeSchema(typeof(BaseType));
 
             // The polymorphic schema
             Assert.NotNull(schema.OneOf);
@@ -504,15 +501,15 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
-        public void GenerateSchema_SupportsOption_SubTypesResolver()
+        public void SupportsOption_SubTypesResolver()
         {
-            var subject = Subject(configureGenerator: c =>
+            var subject = ConfiguredSchemaRepository(configureGenerator: c =>
             {
                 c.UseOneOfForPolymorphism = true;
                 c.SubTypesSelector = (type) => new[] { typeof(SubType1) };
             });
 
-            var schema = subject.GenerateSchema(typeof(BaseType), new SchemaRepository());
+            var schema = subject.GetTypeSchema(typeof(BaseType));
 
             // The polymorphic schema
             Assert.NotNull(schema.OneOf);
@@ -520,18 +517,16 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
-        public void GenerateSchema_SupportsOption_DiscriminatorNameSelector()
+        public void SupportsOption_DiscriminatorNameSelector()
         {
-            var subject = Subject(configureGenerator: c =>
+            var schemaRepository = ConfiguredSchemaRepository(configureGenerator: c =>
             {
                 c.UseOneOfForPolymorphism = true;
                 c.DiscriminatorNameSelector = (baseType) => "TypeName";
                 c.DiscriminatorValueSelector = (subType) => subType.Name;
             });
 
-            var schemaRepository = new SchemaRepository();
-
-            var schema = subject.GenerateSchema(typeof(BaseType), schemaRepository);
+            var schema = schemaRepository.GetTypeSchema(typeof(BaseType));
 
             // The polymorphic schema
             Assert.NotNull(schema.Discriminator);
@@ -559,14 +554,14 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
-        public void GenerateSchema_SupportsOption_UseAllOfToExtendReferenceSchemas()
+        public void SupportsOption_UseAllOfToExtendReferenceSchemas()
         {
-            var subject = Subject(
+            var subject = ConfiguredSchemaRepository(
                 configureGenerator: c => c.UseAllOfToExtendReferenceSchemas = true
             );
             var propertyInfo = typeof(SelfReferencingType).GetProperty(nameof(SelfReferencingType.Another));
 
-            var schema = subject.GenerateSchema(propertyInfo.PropertyType, new SchemaRepository(), memberInfo: propertyInfo);
+            var schema = subject.GetMemberSchema(propertyInfo);
 
             Assert.Null(schema.Reference);
             Assert.NotNull(schema.AllOf);
@@ -575,24 +570,24 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
-        public void GenerateSchema_SupportsOption_UseInlineDefinitionsForEnums()
+        public void SupportsOption_UseInlineDefinitionsForEnums()
         {
-            var subject = Subject(
+            var subject = ConfiguredSchemaRepository(
                 configureGenerator: c => c.UseInlineDefinitionsForEnums = true
             );
 
-            var schema = subject.GenerateSchema(typeof(IntEnum), new SchemaRepository());
+            var schema = subject.GetTypeSchema(typeof(IntEnum));
 
             Assert.Equal("integer", schema.Type);
             Assert.NotNull(schema.Enum);
         }
 
         [Fact]
-        public void GenerateSchema_HandlesTypesWithNestedTypes()
+        public void HandlesTypesWithNestedTypes()
         {
-            var schemaRepository = new SchemaRepository();
+            var schemaRepository = ConfiguredSchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(ContainingType), schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(typeof(ContainingType));
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("object", schema.Type);
@@ -600,11 +595,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
-        public void GenerateSchema_HandlesTypesWithOverriddenProperties()
+        public void HandlesTypesWithOverriddenProperties()
         {
-            var schemaRepository = new SchemaRepository();
+            var schemaRepository = ConfiguredSchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(TypeWithOverriddenProperty), schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(typeof(TypeWithOverriddenProperty));
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("object", schema.Type);
@@ -612,14 +607,13 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
-        public void GenerateSchema_HandlesRecursion_IfCalledAgainWithinAFilter()
+        public void HandlesRecursion_IfCalledAgainWithinAFilter()
         {
-            var subject = Subject(
+            var schemaRepository = ConfiguredSchemaRepository(
                 configureGenerator: c => c.SchemaFilters.Add(new RecursiveCallSchemaFilter())
             );
-            var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = subject.GenerateSchema(typeof(ComplexType), schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(typeof(ComplexType));
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("ComplexType", schema.Properties["Self"].Reference.Id);
@@ -627,27 +621,26 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 
 
         [Fact]
-        public void GenerateSchema_Errors_IfTypesHaveConflictingSchemaIds()
+        public void Errors_IfTypesHaveConflictingSchemaIds()
         {
-            var subject = Subject();
-            var schemaRepository = new SchemaRepository();
+            var subject = ConfiguredSchemaRepository();
 
-            subject.GenerateSchema(typeof(TestSupport.Namespace1.ConflictingType), schemaRepository);
-            Assert.Throws<SchemaGeneratorException>(() =>
+            subject.GetTypeSchema(typeof(TestSupport.Namespace1.ConflictingType));
+            Assert.ThrowsAny<Exception>(() =>
             {
-                subject.GenerateSchema(typeof(TestSupport.Namespace2.ConflictingType), schemaRepository);
+                subject.GetTypeSchema(typeof(TestSupport.Namespace2.ConflictingType));
             });
         }
 
         [Theory]
         [InlineData(false, new[] { "\"Value2\"", "\"Value4\"", "\"Value8\"" }, "\"Value4\"")]
         [InlineData(true, new[] { "\"value2\"", "\"value4\"", "\"value8\"" }, "\"value4\"")]
-        public void GenerateSchema_HonorsSerializerSetting_StringEnumConverter(
+        public void HonorsSerializerSetting_StringEnumConverter(
             bool camelCaseText,
             string[] expectedEnumAsJson,
             string expectedDefaultAsJson)
         {
-            var subject = Subject(
+            var schemaRepository = ConfiguredSchemaRepository(
                 configureGenerator: c => { c.UseInlineDefinitionsForEnums = true; },
                 configureSerializer: c =>
                 {
@@ -655,9 +648,8 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
                     c.Converters.Add(stringEnumConverter);
                 }
             );
-            var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = subject.GenerateSchema(typeof(TypeWithDefaultAttributeOnEnum), schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(typeof(TypeWithDefaultAttributeOnEnum));
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             var propertySchema = schema.Properties[nameof(TypeWithDefaultAttributeOnEnum.EnumWithDefault)];
@@ -677,13 +669,13 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             "Swashbuckle.AspNetCore.TestSupport.{0}, Swashbuckle.AspNetCore.TestSupport, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null")]
         [InlineData(TypeNameHandling.Auto, TypeNameAssemblyFormatHandling.Simple, true,
             "Swashbuckle.AspNetCore.TestSupport.{0}, Swashbuckle.AspNetCore.TestSupport")]
-        public void GenerateSchema_HonorsSerializerSetting_TypeNameHandling(
+        public void HonorsSerializerSetting_TypeNameHandling(
             TypeNameHandling typeNameHandling,
             TypeNameAssemblyFormatHandling typeNameAssemblyFormatHandling,
             bool expectedDiscriminatorPresent,
             string expectedDiscriminatorMappingKeyFormat)
         {
-            var subject = Subject(
+            var schemaRepository = ConfiguredSchemaRepository(
                 configureGenerator: c =>
                 {
                     c.UseOneOfForPolymorphism = true;
@@ -694,9 +686,8 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
                     c.TypeNameAssemblyFormatHandling = typeNameAssemblyFormatHandling;
                 }
             );
-            var schemaRepository = new SchemaRepository();
 
-            var schema = subject.GenerateSchema(typeof(BaseType), schemaRepository);
+            var schema = schemaRepository.GetTypeSchema(typeof(BaseType));
 
             if (expectedDiscriminatorPresent)
             {
@@ -720,17 +711,16 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
-        public void GenerateSchema_HonorsSerializeSetting_ContractResolver()
+        public void HonorsSerializeSetting_ContractResolver()
         {
-            var subject = Subject(
+            var schemaRepository = ConfiguredSchemaRepository(
                 configureSerializer: c =>
                 {
                     c.ContractResolver = new AdditionalPropertyJsonContractResolver();
                 }
             );
-            var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = subject.GenerateSchema(typeof(BaseType), schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(typeof(BaseType));
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
 
@@ -738,11 +728,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
-        public void GenerateSchema_HonorsSerializerAttribute_StringEnumConverter()
+        public void HonorsSerializerAttribute_StringEnumConverter()
         {
-            var schemaRepository = new SchemaRepository();
+            var schemaRepository = ConfiguredSchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(JsonConverterAnnotatedEnum), schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(typeof(JsonConverterAnnotatedEnum));
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("string", schema.Type);
@@ -750,22 +740,22 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
-        public void GenerateSchema_HonorsSerializerAttribute_JsonIgnore()
+        public void HonorsSerializerAttribute_JsonIgnore()
         {
-            var schemaRepository = new SchemaRepository();
+            var schemaRepository = ConfiguredSchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(JsonIgnoreAnnotatedType), schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(typeof(JsonIgnoreAnnotatedType));
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal(new[] { /* "StringWithJsonIgnore" */ "StringWithNoAnnotation" }, schema.Properties.Keys.ToArray());
         }
 
         [Fact]
-        public void GenerateSchema_HonorsSerializerAttribute_JsonProperty()
+        public void HonorsSerializerAttribute_JsonProperty()
         {
-            var schemaRepository = new SchemaRepository();
+            var schemaRepository = ConfiguredSchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(JsonPropertyAnnotatedType), schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(typeof(JsonPropertyAnnotatedType));
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal(
@@ -797,11 +787,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
-        public void GenerateSchema_HonorsSerializerAttribute_JsonRequired()
+        public void HonorsSerializerAttribute_JsonRequired()
         {
-            var schemaRepository = new SchemaRepository();
+            var schemaRepository = ConfiguredSchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(JsonRequiredAnnotatedType), schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(typeof(JsonRequiredAnnotatedType));
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal(new[] { "StringWithJsonRequired" }, schema.Required.ToArray());
@@ -809,11 +799,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
-        public void GenerateSchema_HonorsSerializerAttribute_JsonObject()
+        public void HonorsSerializerAttribute_JsonObject()
         {
-            var schemaRepository = new SchemaRepository();
+            var schemaRepository = ConfiguredSchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(JsonObjectAnnotatedType), schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(typeof(JsonObjectAnnotatedType));
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal(
@@ -831,11 +821,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
-        public void GenerateSchema_HonorsSerializerAttribute_JsonExtensionData()
+        public void HonorsSerializerAttribute_JsonExtensionData()
         {
-            var schemaRepository = new SchemaRepository();
+            var schemaRepository = ConfiguredSchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(JsonExtensionDataAnnotatedType), schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(typeof(JsonExtensionDataAnnotatedType));
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.True(schema.AdditionalPropertiesAllowed);
@@ -846,18 +836,17 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [Theory]
         [InlineData(typeof(ProblemDetails))]
         [InlineData(typeof(ValidationProblemDetails))]
-        public void GenerateSchema_HonorsSerializerSetting_ProblemDetailsConverter(Type type)
+        public void HonorsSerializerSetting_ProblemDetailsConverter(Type type)
         {
-            var subject = Subject(
+            var schemaRepository = ConfiguredSchemaRepository(
                 configureGenerator: c => { },
                 configureSerializer: c =>
                 {
                     c.Converters.Add(new ProblemDetailsConverter());
                 }
             );
-            var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = subject.GenerateSchema(type, schemaRepository);
+            var referenceSchema = schemaRepository.GetTypeSchema(type);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.DoesNotContain("Extensions", schema.Properties.Keys);
@@ -871,15 +860,15 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [InlineData(typeof(JToken))]
         [InlineData(typeof(JObject))]
         [InlineData(typeof(JArray))]
-        public void GenerateSchema_GeneratesOpenSchema_IfDynamicJsonType(Type type)
+        public void GeneratesOpenSchema_IfDynamicJsonType(Type type)
         {
-            var schema = Subject().GenerateSchema(type, new SchemaRepository());
+            var schema = ConfiguredSchemaRepository().GetTypeSchema(type);
 
             Assert.Null(schema.Reference);
             Assert.Null(schema.Type);
         }
 
-        private SchemaGenerator Subject(
+        private SchemaRepository ConfiguredSchemaRepository(
             Action<SchemaGeneratorOptions> configureGenerator = null,
             Action<JsonSerializerSettings> configureSerializer = null)
         {
@@ -889,7 +878,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             var serializerSettings = new JsonSerializerSettings();
             configureSerializer?.Invoke(serializerSettings);
 
-            return new SchemaGenerator(generatorOptions, new NewtonsoftBehavior(serializerSettings));
+            return new SchemaRepository(
+                schemaMappingProviders: Enumerable.Empty<ISchemaMappingProvider>(),
+                schemaGenerator: new SchemaGenerator(generatorOptions, new NewtonsoftBehavior(serializerSettings)),
+                generatorOptions: generatorOptions
+            );
         }
     }
 }

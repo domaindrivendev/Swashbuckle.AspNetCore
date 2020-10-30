@@ -9,7 +9,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         {
             if (model.Type == "object")
             {
-                model.Properties.Add("Self", context.SchemaGenerator.GenerateSchema(context.Type, context.SchemaRepository));
+                model.Properties.Add("Self", context.SchemaRepository.GetTypeSchema(context.Type));
             }
         }
     }

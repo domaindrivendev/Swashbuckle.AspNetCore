@@ -16,7 +16,6 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
                 .GetParameters()[0];
             var filterContext = new ParameterFilterContext(
                 apiParameterDescription: null,
-                schemaGenerator: null,
                 schemaRepository: null,
                 parameterInfo: parameterInfo);
 
@@ -33,7 +32,6 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             var propertyInfo = typeof(SwaggerAnnotatedType).GetProperty(nameof(SwaggerAnnotatedType.StringWithSwaggerParameterAttribute));
             var filterContext = new ParameterFilterContext(
                 apiParameterDescription: new ApiParameterDescription(),
-                schemaGenerator: null,
                 schemaRepository: null,
                 propertyInfo: propertyInfo);
 
@@ -52,7 +50,6 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
                 .GetParameters()[0];
             var filterContext = new ParameterFilterContext(
                 apiParameterDescription: null,
-                schemaGenerator: null,
                 schemaRepository: null,
                 parameterInfo: parameterInfo);
 

@@ -20,7 +20,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             {
                 ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = parameterInfo }
             };
-            var context = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
+            var context = new RequestBodyFilterContext(bodyParameterDescription, null, null);
 
             Subject().Apply(requestBody, context);
 
@@ -36,10 +36,10 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             {
                 ModelMetadata = ModelMetadataFactory.CreateForProperty(typeof(SwaggerAnnotatedType), nameof(SwaggerAnnotatedType.StringWithSwaggerRequestBodyAttribute))
             };
-            var context = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
+            var context = new RequestBodyFilterContext(bodyParameterDescription, null, null);
 
             Subject().Apply(requestBody, context);
-            
+
             Assert.Equal("Description for StringWithSwaggerRequestBodyAttribute", requestBody.Description);
             Assert.True(requestBody.Required);
         }
@@ -56,7 +56,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             {
                 ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = parameterInfo }
             };
-            var context = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
+            var context = new RequestBodyFilterContext(bodyParameterDescription, null, null);
 
             Subject().Apply(requestBody, context);
 

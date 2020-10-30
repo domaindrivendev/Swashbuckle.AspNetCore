@@ -15,7 +15,6 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             var apiDescription = ApiDescriptionFactory.Create<FakeControllerWithSwaggerAnnotations>(c => nameof(c.ActionWithNoAttributes));
             var filterContext = new DocumentFilterContext(
                 apiDescriptions: new[] { apiDescription },
-                schemaGenerator: null,
                 schemaRepository: null);
 
             Subject().Apply(document, filterContext);

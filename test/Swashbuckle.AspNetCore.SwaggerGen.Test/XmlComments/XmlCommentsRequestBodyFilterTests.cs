@@ -21,7 +21,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             {
                 ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = parameterInfo }
             };
-            var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
+            var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null);
 
             Subject().Apply(requestbody, filterContext);
 
@@ -39,7 +39,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             {
                 ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = parameterInfo }
             };
-            var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
+            var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null);
 
             Subject().Apply(requestbody, filterContext);
 
@@ -54,7 +54,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             {
                 ModelMetadata = ModelMetadataFactory.CreateForProperty(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringProperty))
             };
-            var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
+            var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null);
 
             Subject().Apply(requestBody, filterContext);
 

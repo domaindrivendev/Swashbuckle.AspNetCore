@@ -31,7 +31,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schema = new OpenApiSchema { };
             var fieldInfo = typeof(XmlAnnotatedType).GetField(nameof(XmlAnnotatedType.BoolField));
-            var filterContext = new SchemaFilterContext(fieldInfo.FieldType, null, null, memberInfo: fieldInfo);
+            var filterContext = new SchemaFilterContext(fieldInfo.FieldType, null, memberInfo: fieldInfo);
 
             Subject().Apply(schema, filterContext);
 
@@ -49,7 +49,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schema = new OpenApiSchema();
             var propertyInfo = declaringType.GetProperty(propertyName);
-            var filterContext = new SchemaFilterContext(propertyInfo.PropertyType, null, null, memberInfo: propertyInfo);
+            var filterContext = new SchemaFilterContext(propertyInfo.PropertyType, null, memberInfo: propertyInfo);
 
             Subject().Apply(schema, filterContext);
 
@@ -72,7 +72,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schema = new OpenApiSchema();
             var propertyInfo = declaringType.GetProperty(propertyName);
-            var filterContext = new SchemaFilterContext(propertyInfo.PropertyType, null, null, memberInfo: propertyInfo);
+            var filterContext = new SchemaFilterContext(propertyInfo.PropertyType, null, memberInfo: propertyInfo);
 
             Subject().Apply(schema, filterContext);
 
@@ -89,7 +89,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schema = new OpenApiSchema { Type = "number", Format = "float" };
             var propertyInfo = typeof(XmlAnnotatedType).GetProperty(nameof(XmlAnnotatedType.FloatProperty));
-            var filterContext = new SchemaFilterContext(propertyInfo.PropertyType, null, null, memberInfo: propertyInfo);
+            var filterContext = new SchemaFilterContext(propertyInfo.PropertyType, null, memberInfo: propertyInfo);
 
             var defaultCulture = CultureInfo.CurrentCulture;
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo(cultureName);

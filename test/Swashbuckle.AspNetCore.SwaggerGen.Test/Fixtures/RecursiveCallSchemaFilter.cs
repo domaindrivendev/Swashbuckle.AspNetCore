@@ -8,7 +8,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             if (model.Type == "object")
             {
-                model.Properties.Add("Self", context.SchemaGenerator.GenerateSchema(context.Type, context.SchemaRepository));
+                model.Properties.Add("Self", context.SchemaRepository.GetTypeSchema(context.Type));
             }
         }
     }

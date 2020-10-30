@@ -49,7 +49,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = "string" } };
             var propertyInfo = typeof(XmlAnnotatedType).GetProperty(nameof(XmlAnnotatedType.StringProperty));
             var apiParameterDescription = new ApiParameterDescription { };
-            var filterContext = new ParameterFilterContext(apiParameterDescription, null, null, propertyInfo: propertyInfo);
+            var filterContext = new ParameterFilterContext(apiParameterDescription, null, propertyInfo: propertyInfo);
 
             Subject().Apply(parameter, filterContext);
 

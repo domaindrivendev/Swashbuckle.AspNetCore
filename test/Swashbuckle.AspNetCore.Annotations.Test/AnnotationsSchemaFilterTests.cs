@@ -13,7 +13,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
         public void Apply_EnrichesSchemaMetadata_IfTypeDecoratedWithSwaggerSchemaAttribute(Type type)
         {
             var schema = new OpenApiSchema();
-            var context = new SchemaFilterContext(type: type, schemaGenerator: null, schemaRepository: null);
+            var context = new SchemaFilterContext(type: type, schemaRepository: null);
 
             Subject().Apply(schema, context);
 
@@ -31,7 +31,6 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
                 .GetParameters()[0];
             var context = new SchemaFilterContext(
                 type: parameterInfo.ParameterType,
-                schemaGenerator: null,
                 schemaRepository: null,
                 parameterInfo: parameterInfo);
 
@@ -55,7 +54,6 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
                 .GetProperty(propertyName);
             var context = new SchemaFilterContext(
                 type: propertyInfo.PropertyType,
-                schemaGenerator: null,
                 schemaRepository: null,
                 memberInfo: propertyInfo);
 
@@ -75,7 +73,6 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
                 .GetProperty(nameof(SwaggerAnnotatedType.StringWithSwaggerSchemaAttributeDescriptionOnly));
             var context = new SchemaFilterContext(
                 type: propertyInfo.PropertyType,
-                schemaGenerator: null,
                 schemaRepository: null,
                 memberInfo: propertyInfo);
 
@@ -91,7 +88,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
         public void Apply_DelegatesToSpecifiedFilter_IfTypeDecoratedWithFilterAttribute(Type type)
         {
             var schema = new OpenApiSchema();
-            var context = new SchemaFilterContext(type: type, schemaGenerator: null, schemaRepository: null);
+            var context = new SchemaFilterContext(type: type, schemaRepository: null);
 
             Subject().Apply(schema, context);
 

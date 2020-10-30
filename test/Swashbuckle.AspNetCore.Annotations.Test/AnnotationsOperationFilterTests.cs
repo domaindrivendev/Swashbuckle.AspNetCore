@@ -15,7 +15,6 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
                 .GetMethod(nameof(FakeControllerWithSwaggerAnnotations.ActionWithSwaggerOperationAttribute));
             var filterContext = new OperationFilterContext(
                 apiDescription: null,
-                schemaRegistry: null,
                 schemaRepository: null,
                 methodInfo: methodInfo);
 
@@ -42,7 +41,6 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
                 .GetMethod(nameof(FakeControllerWithSwaggerAnnotations.ActionWithSwaggerResponseAttributes));
             var filterContext = new OperationFilterContext(
                 apiDescription: null,
-                schemaRegistry: null,
                 schemaRepository: null,
                 methodInfo: methodInfo);
 
@@ -64,7 +62,6 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             var methodInfo = typeof(FakeControllerWithSwaggerAnnotations).GetMethod(nameof(FakeControllerWithSwaggerAnnotations.ActionWithNoAttributes));
             var filterContext = new OperationFilterContext(
                 apiDescription: null,
-                schemaRegistry: null,
                 schemaRepository: null,
                 methodInfo: methodInfo);
 
@@ -80,7 +77,6 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             var methodInfo = typeof(FakeControllerWithSwaggerAnnotations).GetMethod(nameof(FakeControllerWithSwaggerAnnotations.ActionWithSwaggerOperationFilterAttribute));
             var filterContext = new OperationFilterContext(
                 apiDescription: null,
-                schemaRegistry: null,
                 schemaRepository: null,
                 methodInfo: methodInfo);
 

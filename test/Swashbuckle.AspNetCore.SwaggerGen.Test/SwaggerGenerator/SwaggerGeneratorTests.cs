@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi.Any;
 using Xunit;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen.SchemaMappings;
 using Swashbuckle.AspNetCore.TestSupport;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
@@ -850,10 +851,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         private SwaggerGenerator Subject(IEnumerable<ApiDescription> apiDescriptions, SwaggerGeneratorOptions options = null)
         {
+            var schemaGeneratorOptions = new SchemaGeneratorOptions();
+
             return new SwaggerGenerator(
                 options ?? DefaultOptions,
                 new FakeApiDescriptionGroupCollectionProvider(apiDescriptions),
-                new SchemaGenerator(new SchemaGeneratorOptions(), new SystemTextJsonBehavior(new JsonSerializerOptions()))
+                new SchemaRepositoryFactory(
+                    schemaMappingProviders: Enumerable.Empty<ISchemaMappingProvider>(),
+                    schemaGenerator: new SchemaGenerator(schemaGeneratorOptions, new SystemTextJsonBehavior(new JsonSerializerOptions())),
+                    schemaGeneratorOptions: schemaGeneratorOptions
+                )
             );
         }
 

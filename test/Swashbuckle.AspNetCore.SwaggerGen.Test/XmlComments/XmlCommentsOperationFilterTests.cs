@@ -17,7 +17,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var methodInfo = typeof(FakeControllerWithXmlComments)
                 .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithSummaryAndRemarksTags));
             var apiDescription = ApiDescriptionFactory.Create(methodInfo: methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource");
-            var filterContext = new OperationFilterContext(apiDescription, null, null, methodInfo);
+            var filterContext = new OperationFilterContext(apiDescription, null, methodInfo);
 
             Subject().Apply(operation, filterContext);
 
@@ -32,7 +32,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var methodInfo = typeof(FakeConstructedControllerWithXmlComments)
                 .GetMethod(nameof(FakeConstructedControllerWithXmlComments.ActionWithSummaryAndResponseTags));
             var apiDescription = ApiDescriptionFactory.Create(methodInfo: methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource");
-            var filterContext = new OperationFilterContext(apiDescription, null, null, methodInfo);
+            var filterContext = new OperationFilterContext(apiDescription, null, methodInfo);
 
             Subject().Apply(operation, filterContext);
 
@@ -63,7 +63,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     new ApiResponseType { StatusCode = 200 },
                     new ApiResponseType { StatusCode = 400 },
                 });
-            var filterContext = new OperationFilterContext(apiDescription, null, null, methodInfo: methodInfo);
+            var filterContext = new OperationFilterContext(apiDescription, null, methodInfo: methodInfo);
 
             Subject().Apply(operation, filterContext);
 

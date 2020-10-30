@@ -7,7 +7,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
     {
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
-            schema.Extensions.Add("X-foo", new OpenApiString("bar"));
+            schema.Extensions["X-foo"] = new OpenApiString("bar");
         }
     }
 }
