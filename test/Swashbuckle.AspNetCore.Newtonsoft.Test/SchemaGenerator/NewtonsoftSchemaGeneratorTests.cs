@@ -7,6 +7,7 @@ using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -16,6 +17,7 @@ using Xunit;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerGen.SchemaMappings;
 using Swashbuckle.AspNetCore.TestSupport;
+using Swashbuckle.AspNetCore.TestSupport.Fixtures;
 
 namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 {
@@ -866,6 +868,180 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 
             Assert.Null(schema.Reference);
             Assert.Null(schema.Type);
+        }
+
+        [Fact]
+        public void Supports_Custom_Mapping_With_Inline_Disposition() {
+            var schemaRepository = ConfiguredSchemaRepository(
+                configureGenerator: options => {
+                    options.SchemaMappingProviders.Add(new SimpleSchemaMappingProvider(
+                        SchemaDisposition.Inline,
+                        typeof(DateTime),
+                        context => new OpenApiSchema { Type = "number", Format = "flurble" }
+                    ));
+                }
+            );
+
+            var schema = schemaRepository.GetTypeSchema<DateTime>();
+
+            Assert.Null(schema.Reference);
+            Assert.Equal("flurble", schema.Format);
+        }
+
+        [Fact]
+        public void Supports_Custom_Mapping_With_Reference_Disposition() {
+            var schemaRepository = ConfiguredSchemaRepository(
+                configureGenerator: options => {
+                    options.SchemaMappingProviders.Add(new SimpleSchemaMappingProvider(
+                        SchemaDisposition.Reference,
+                        typeof(DateTime),
+                        context => new OpenApiSchema { Type = "number", Format = "flurble" }
+                    ));
+                }
+            );
+
+            var reference = schemaRepository.GetTypeSchema<DateTime>();
+
+            Assert.NotNull(reference.Reference);
+            var schema = schemaRepository.Schemas[reference.Reference.Id];
+            Assert.NotNull(schema);
+            Assert.Equal("flurble", schema.Format);
+        }
+
+        [Fact]
+        public void Supports_Custom_Mapping_For_Nullable_Value() {
+            var schemaRepository = ConfiguredSchemaRepository(
+                configureGenerator: options => {
+                    options.UseAllOfToExtendReferenceSchemas = true;
+                    options.SchemaMappingProviders.Add(new SimpleSchemaMappingProvider(
+                        SchemaDisposition.Reference,
+                        typeof(DateTime),
+                        context => new OpenApiSchema { Type = "number", Format = "flurble" }
+                    ));
+                }
+            );
+
+            var nullableSchema = schemaRepository.GetTypeSchema<Nullable<DateTime>>();
+
+            Assert.True(nullableSchema.Nullable);
+            Assert.NotNull(nullableSchema.AllOf);
+            Assert.Equal(1, nullableSchema.AllOf.Count);
+            Assert.NotNull(nullableSchema.AllOf[0].Reference);
+            var dateTimeSchema = schemaRepository.Schemas[nullableSchema.AllOf[0].Reference.Id];
+            Assert.NotNull(dateTimeSchema);
+            Assert.Equal("flurble", dateTimeSchema.Format);
+        }
+
+        [Fact]
+        public void Supports_Custom_SchemaMapping_For_Array_Item() {
+            var schemaRepository = ConfiguredSchemaRepository(
+                configureGenerator: options => {
+                    options.SchemaMappingProviders.Add(new SimpleSchemaMappingProvider(
+                        SchemaDisposition.Reference,
+                        typeof(ComplexType),
+                        context => new OpenApiSchema { Type = "string", Format = "flurble" }
+                    ));
+                }
+            );
+
+            var schema = schemaRepository.GetTypeSchema(typeof(List<ComplexType>));
+
+            Assert.Equal("array", schema.Type);
+            Assert.NotNull(schema.Items);
+            Assert.NotNull(schema.Items.Reference);
+            Assert.Equal(schemaRepository.GetSchemaId(typeof(ComplexType)), schema.Items.Reference.Id);
+            Assert.Contains(schemaRepository.GetSchemaId(typeof(ComplexType)), schemaRepository.Schemas.Keys);
+            var valueSchema = schemaRepository.Schemas[schemaRepository.GetSchemaId(typeof(ComplexType))];
+            Assert.NotNull(valueSchema);
+            Assert.Equal("flurble", valueSchema.Format);
+        }
+
+        [Fact]
+        public void Supports_Custom_SchemaMapping_For_Dictionary_Value() {
+            var schemaRepository = ConfiguredSchemaRepository(
+                configureGenerator: options => {
+                    options.SchemaMappingProviders.Add(new SimpleSchemaMappingProvider(
+                        SchemaDisposition.Reference,
+                        typeof(ComplexType),
+                        context => new OpenApiSchema { Type = "string", Format = "flurble" }
+                    ));
+                }
+            );
+
+            var schema = schemaRepository.GetTypeSchema(typeof(Dictionary<string, ComplexType>));
+
+            Assert.Equal("object", schema.Type);
+            Assert.NotNull(schema.AdditionalProperties);
+            Assert.NotNull(schema.AdditionalProperties.Reference);
+            Assert.Equal(schemaRepository.GetSchemaId(typeof(ComplexType)), schema.AdditionalProperties.Reference.Id);
+            Assert.Contains(schemaRepository.GetSchemaId(typeof(ComplexType)), schemaRepository.Schemas.Keys);
+            var valueSchema = schemaRepository.Schemas[schemaRepository.GetSchemaId(typeof(ComplexType))];
+            Assert.NotNull(valueSchema);
+            Assert.Equal("flurble", valueSchema.Format);
+        }
+
+        [Fact]
+        public void Supports_Recursion_In_Custom_Mapping() {
+            var schemaRepository = ConfiguredSchemaRepository(
+                configureGenerator: options => {
+                    options.SchemaMappingProviders.Add(new SimpleSchemaMappingProvider(
+                        SchemaDisposition.Reference,
+                        typeof(SelfReferencingType),
+                        context => new OpenApiSchema {
+                            Type = "object",
+                            Properties = { { nameof(SelfReferencingType.Another), context.SchemaRepository.GetTypeSchema(context.Type) } }
+                        }
+                    ));
+                }
+            );
+
+            var schema = schemaRepository.GetTypeSchema(typeof(SelfReferencingType));
+
+            Assert.NotNull(schema.Reference);
+            Assert.Contains(nameof(SelfReferencingType), schemaRepository.Schemas);
+            var generatedSchema = schemaRepository.Schemas[nameof(SelfReferencingType)];
+            Assert.Equal("object", generatedSchema.Type);
+            Assert.NotEmpty(generatedSchema.Properties);
+            Assert.Equal(new[] { nameof(SelfReferencingType.Another) }, generatedSchema.Properties.Keys);
+            // Property schema is a reference to the generated schema
+            Assert.NotNull(generatedSchema.Properties[nameof(SelfReferencingType.Another)].Reference);
+            Assert.Equal(nameof(SelfReferencingType), generatedSchema.Properties[nameof(SelfReferencingType.Another)].Reference.Id);
+        }
+
+        [Fact]
+        public void Supports_Indirect_Recursion_In_Custom_Mapping() {
+            var schemaRepository = ConfiguredSchemaRepository(
+                configureGenerator: options => {
+                    options.SchemaMappingProviders.Add(new SimpleSchemaMappingProvider(
+                        SchemaDisposition.Reference, typeof(IndirectRecursion),
+                        context => new OpenApiSchema {
+                            Type = "object",
+                            Properties = {
+                                { nameof(IndirectRecursion.Intermediary), context.SchemaRepository.GetMemberSchema<IndirectRecursion>(x => x.Intermediary) }
+                            },
+                            Extensions = { ["flurble"] = new OpenApiBoolean(true) }
+                        }
+                    ));
+                }
+            );
+
+            var schema = schemaRepository.GetTypeSchema(typeof(IndirectRecursion));
+
+            Assert.NotNull(schema.Reference);
+            var indirectSchema = schemaRepository.Schemas[schema.Reference.Id];
+            Assert.Equal("object", indirectSchema.Type);
+            Assert.NotNull(indirectSchema.Extensions);
+            Assert.Contains("flurble", indirectSchema.Extensions.Keys);
+            Assert.Equal(new[] { nameof(IndirectRecursion.Intermediary) }, indirectSchema.Properties.Keys);
+            Assert.NotNull(indirectSchema.Properties[nameof(IndirectRecursion.Intermediary)].Reference);
+            var intermediarySchema = schemaRepository.Schemas[indirectSchema.Properties[nameof(IndirectRecursion.Intermediary)].Reference.Id];
+            Assert.NotNull(intermediarySchema);
+            Assert.NotNull(intermediarySchema?.Properties);
+            Assert.NotNull(intermediarySchema.Properties.Values.SingleOrDefault());
+            Assert.NotNull(intermediarySchema.Properties.Values.Single().Reference);
+            // Assert that the schema referenced by the property of the intermediary schema is the
+            // same as the generated schema.
+            Assert.Equal(schema.Reference.Id, intermediarySchema.Properties.Values.Single().Reference.Id);
         }
 
         private SchemaRepository ConfiguredSchemaRepository(
