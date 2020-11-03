@@ -35,7 +35,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             target.IgnoreObsoleteProperties = source.IgnoreObsoleteProperties;
             target.UseAllOfForInheritance = source.UseAllOfForInheritance;
             target.UseOneOfForPolymorphism = source.UseOneOfForPolymorphism;
-            target.SubTypesSelector = source.SubTypesSelector;
+            target.KnownTypesSelector = source.KnownTypesSelector;
             target.DiscriminatorNameSelector = source.DiscriminatorNameSelector;
             target.DiscriminatorValueSelector = source.DiscriminatorValueSelector;
             target.UseAllOfToExtendReferenceSchemas = source.UseAllOfToExtendReferenceSchemas;

@@ -7,12 +7,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class OpenApiSchemaExtensions
     {
-        public static void ApplyValidationAttributes(this OpenApiSchema schema, IEnumerable<object> customAttributes)
+        public static void ApplyValidationAttributes(this OpenApiSchema schema, IEnumerable<ValidationAttribute> validationAttributes)
         {
-            foreach (var attribute in customAttributes)
+            foreach (var attribute in validationAttributes)
             {
                 if (attribute is DataTypeAttribute dataTypeAttribute)
                     ApplyDataTypeAttribute(schema, dataTypeAttribute);
+
+                else if (attribute is StringLengthAttribute stringLengthAttribute)
+                    ApplyStringLengthAttribute(schema, stringLengthAttribute);
 
                 else if (attribute is MinLengthAttribute minLengthAttribute)
                     ApplyMinLengthAttribute(schema, minLengthAttribute);
@@ -25,9 +28,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 else if (attribute is RegularExpressionAttribute regularExpressionAttribute)
                     ApplyRegularExpressionAttribute(schema, regularExpressionAttribute);
-
-                else if (attribute is StringLengthAttribute stringLengthAttribute)
-                    ApplyStringLengthAttribute(schema, stringLengthAttribute);
 
                 else if (attribute is RequiredAttribute requiredAttribute)
                     ApplyRequiredAttribute(schema, requiredAttribute);
@@ -61,6 +61,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
         }
 
+        private static void ApplyStringLengthAttribute(OpenApiSchema schema, StringLengthAttribute stringLengthAttribute)
+        {
+            schema.MinLength = stringLengthAttribute.MinimumLength;
+            schema.MaxLength = stringLengthAttribute.MaximumLength;
+        }
+
         private static void ApplyMinLengthAttribute(OpenApiSchema schema, MinLengthAttribute minLengthAttribute)
         {
             if (schema.Type == "array")
@@ -91,12 +97,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private static void ApplyRegularExpressionAttribute(OpenApiSchema schema, RegularExpressionAttribute regularExpressionAttribute)
         {
             schema.Pattern = regularExpressionAttribute.Pattern;
-        }
-
-        private static void ApplyStringLengthAttribute(OpenApiSchema schema, StringLengthAttribute stringLengthAttribute)
-        {
-            schema.MinLength = stringLengthAttribute.MinimumLength;
-            schema.MaxLength = stringLengthAttribute.MaximumLength;
         }
 
         private static void ApplyRequiredAttribute(OpenApiSchema schema, RequiredAttribute requiredAttribute)

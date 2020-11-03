@@ -11,6 +11,23 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public IDictionary<string, OpenApiSchema> Schemas { get; private set; } = new SortedDictionary<string, OpenApiSchema>();
 
+        public OpenApiSchema GetOrAdd(Type type, Func<Type, string> schemaIdSelector, Func<OpenApiSchema> schemaFactory)
+        {
+            if (!_reservedIds.TryGetValue(type, out string schemaId))
+            {
+                schemaId = schemaIdSelector(type);
+
+                RegisterType(type, schemaId);
+
+                Schemas.Add(schemaId, schemaFactory());
+            }
+
+            return new OpenApiSchema
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.Schema, Id = schemaId }
+            };
+        }
+
         public void RegisterType(Type type, string schemaId)
         {
             if (_reservedIds.ContainsValue(schemaId))

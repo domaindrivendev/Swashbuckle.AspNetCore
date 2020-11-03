@@ -495,7 +495,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var subject = Subject(configureGenerator: c =>
             {
                 c.UseOneOfForPolymorphism = true;
-                c.SubTypesSelector = (type) => new[] { typeof(SubType1) };
+                c.KnownTypesSelector = (type) => new[] { typeof(SubType1) };
             });
 
             var schema = subject.GenerateSchema(typeof(BaseType), new SchemaRepository());

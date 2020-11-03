@@ -8,20 +8,25 @@ using System.Text.Json.Serialization;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public class SystemTextJsonBehavior : ISerializerBehavior
+    public class SystemTextJsonContractResolver : IDataContractResolver
     {
         private readonly JsonSerializerOptions _serializerOptions;
 
-        public SystemTextJsonBehavior(JsonSerializerOptions serializerOptions)
+        public SystemTextJsonContractResolver(JsonSerializerOptions serializerOptions)
         {
             _serializerOptions = serializerOptions;
         }
 
-        public DataContract GetDataContractForType(Type type)
+        public bool CanResolveContractFor(Type type)
+        {
+            return true;
+        }
+
+        public DataContract ResolveContractFor(Type type)
         {
             if (type.IsOneOf(typeof(object), typeof(JsonDocument), typeof(JsonElement)))
             {
-                return DataContract.Undefined(underlyingType: type);
+                return DataContract.Undefined(type);
             }
 
             if (PrimitiveTypesAndFormats.ContainsKey(type))
@@ -31,7 +36,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 return DataContract.Primitive(
                     underlyingType: type,
                     dataType: primitiveTypeAndFormat.Item1,
-                    dataFormat: primitiveTypeAndFormat.Item2);
+                    dataFormat: primitiveTypeAndFormat.Item2,
+                    jsonConverter: SerializeToJson);
             }
 
             if (type.IsEnum)
@@ -39,7 +45,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var enumValues = type.GetEnumValues();
 
                 //Test to determine if the serializer will treat as string
-                var serializeAsString = (enumValues.Length > 0) && Serialize(enumValues.GetValue(0)).StartsWith("\"");
+                var serializeAsString = (enumValues.Length > 0) && SerializeToJson(enumValues.GetValue(0)).StartsWith("\"");
 
                 var primitiveTypeAndFormat = serializeAsString 
                     ? PrimitiveTypesAndFormats[typeof(string)]
@@ -48,7 +54,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 return DataContract.Primitive(
                     underlyingType: type,
                     dataType: primitiveTypeAndFormat.Item1,
-                    dataFormat: primitiveTypeAndFormat.Item2);
+                    dataFormat: primitiveTypeAndFormat.Item2,
+                    jsonConverter: SerializeToJson);
             }
 
             if (IsSupportedDictionary(type, out Type keyType, out Type valueType))
@@ -56,20 +63,23 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 return DataContract.Dictionary(
                     underlyingType: type,
                     keyType: keyType,
-                    valueType: valueType);
+                    valueType: valueType,
+                    jsonConverter: SerializeToJson);
             }
 
             if (IsSupportedCollection(type, out Type itemType))
             {
                 return DataContract.Array(
                     underlyingType: type,
-                    itemType: itemType);
+                    itemType: itemType,
+                    jsonConverter: SerializeToJson);
             }
 
             return DataContract.Object(
                 underlyingType: type,
                 properties: GetDataPropertiesFor(type, out Type extensionDataType),
-                extensionDataType: extensionDataType);
+                extensionDataType: extensionDataType,
+                jsonConverter: SerializeToJson);
         }
 
         public bool IsSupportedDictionary(Type type, out Type keyType, out Type valueType)
@@ -160,7 +170,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return dataProperties;
         }
 
-        public string Serialize(object value)
+        public string SerializeToJson(object value)
         {
             return JsonSerializer.Serialize(value, _serializerOptions);
         }

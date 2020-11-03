@@ -13,50 +13,68 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
     public class DataContract
     {
-        public static DataContract ForPrimitive(Type underlyingType, DataType dataType, string dataFormat)
+        public static DataContract Primitive(
+            Type underlyingType,
+            DataType dataType,
+            string dataFormat,
+            Func<object, string> jsonConverter = null)
         {
             return new DataContract(
                 underlyingType: underlyingType,
                 dataType: dataType,
-                dataFormat: dataFormat);
+                dataFormat: dataFormat,
+                jsonConverter: jsonConverter);
         }
 
-        public static DataContract ForArray(Type underlyingType, Type itemType)
+        public static DataContract Array(
+            Type underlyingType,
+            Type itemType,
+            Func<object, string> jsonConverter = null)
         {
             return new DataContract(
                 underlyingType: underlyingType,
                 dataType: DataType.Array,
-                arrayItemType: itemType);
+                arrayItemType: itemType,
+                jsonConverter: jsonConverter);
         }
 
-        public static DataContract ForDictionary(Type underlyingType, Type keyType, Type valueType)
+        public static DataContract Dictionary(
+            Type underlyingType,
+            Type keyType,
+            Type valueType,
+            Func<object, string> jsonConverter = null)
         {
             return new DataContract(
                 underlyingType: underlyingType,
                 dataType: DataType.Dictionary,
                 dictionaryKeyType: keyType,
-                dictionaryValueType: valueType);
+                dictionaryValueType: valueType,
+                jsonConverter: jsonConverter);
         }
 
-        public static DataContract ForObject(
+        public static DataContract Object(
             Type underlyingType,
             IEnumerable<DataProperty> properties,
             Type extensionDataType = null,
-            string typeNameProperty = null,
-            string typeNameValue = null)
+            string discriminatorPropertyName = null,
+            string discriminatorPropertyValue = null,
+            Func<object, string> jsonConverter = null)
         {
             return new DataContract(
                 underlyingType: underlyingType,
                 dataType: DataType.Object,
                 objectProperties: properties,
                 objectExtensionDataType: extensionDataType,
-                objectTypeNameProperty: typeNameProperty,
-                objectTypeNameValue: typeNameValue);
+                objectDiscriminatorProperty: discriminatorPropertyName,
+                objectDiscriminatorValue: discriminatorPropertyValue,
+                jsonConverter: jsonConverter);
         }
 
-        public static DataContract ForDynamic(Type underlyingType)
+        public static DataContract Undefined(Type underlyingType)
         {
-            return new DataContract(underlyingType: underlyingType, dataType: DataType.Unknown);
+            return new DataContract(
+                underlyingType: underlyingType,
+                dataType: DataType.Unknown);
         }
 
         private DataContract(
@@ -66,11 +84,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             Type arrayItemType = null,
             Type dictionaryKeyType = null,
             Type dictionaryValueType = null,
-            IEnumerable<string> dictionaryKeys = null,
             IEnumerable<DataProperty> objectProperties = null,
             Type objectExtensionDataType = null,
-            string objectTypeNameProperty = null,
-            string objectTypeNameValue = null)
+            string objectDiscriminatorProperty = null,
+            string objectDiscriminatorValue = null,
+            Func<object, string> jsonConverter = null)
         {
             UnderlyingType = underlyingType;
             DataType = dataType;
@@ -80,8 +98,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             DictionaryValueType = dictionaryValueType;
             ObjectProperties = objectProperties;
             ObjectExtensionDataType = objectExtensionDataType;
-            ObjectTypeNameProperty = objectTypeNameProperty;
-            ObjectTypeNameValue = objectTypeNameValue;
+            ObjectDiscriminatorProperty = objectDiscriminatorProperty;
+            ObjectDiscriminatorValue = objectDiscriminatorValue;
+            JsonConverter = jsonConverter;
         }
 
         public Type UnderlyingType { get; }
@@ -92,8 +111,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public Type DictionaryValueType { get; }
         public IEnumerable<DataProperty> ObjectProperties { get; }
         public Type ObjectExtensionDataType { get; }
-        public string ObjectTypeNameProperty { get; }
-        public string ObjectTypeNameValue { get; }
+        public string ObjectDiscriminatorProperty { get; }
+        public string ObjectDiscriminatorValue { get; }
+        public Func<object, string> JsonConverter { get; }
     }
 
     public enum DataType
@@ -112,28 +132,25 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         public DataProperty(
             string name,
-            Type memberType,
+            MemberInfo memberInfo,
             bool isRequired = false,
             bool isNullable = false,
             bool isReadOnly = false,
-            bool isWriteOnly = false,
-            MemberInfo memberInfo = null)
+            bool isWriteOnly = false)
         {
             Name = name;
+            MemberInfo = memberInfo;
             IsRequired = isRequired;
             IsNullable = isNullable;
             IsReadOnly = isReadOnly;
             IsWriteOnly = isWriteOnly;
-            MemberType = memberType;
-            MemberInfo = memberInfo;
         }
 
         public string Name { get; } 
+        public MemberInfo MemberInfo { get; }
         public bool IsRequired { get; }
         public bool IsNullable { get; }
         public bool IsReadOnly { get; }
         public bool IsWriteOnly { get; }
-        public Type MemberType { get; }
-        public MemberInfo MemberInfo { get; }
     }
 }

@@ -24,7 +24,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
         {
             if (type.IsOneOf(typeof(object), typeof(JToken), typeof(JObject), typeof(JArray)))
             {
-                return DataContract.ForDynamic(underlyingType: type);
+                return DataContract.Undefined(underlyingType: type);
             }
 
             var jsonContract = _contractResolver.ResolveContract(type);
@@ -35,7 +35,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     ? PrimitiveTypesAndFormats[jsonContract.UnderlyingType]
                     : Tuple.Create(DataType.String, (string)null);
 
-                return DataContract.ForPrimitive(
+                return DataContract.Primitive(
                     underlyingType: jsonContract.UnderlyingType,
                     dataType: primitiveTypeAndFormat.Item1,
                     dataFormat: primitiveTypeAndFormat.Item2);
@@ -49,7 +49,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     ? PrimitiveTypesAndFormats[typeof(string)]
                     : PrimitiveTypesAndFormats[jsonContract.UnderlyingType.GetEnumUnderlyingType()];
 
-                return DataContract.ForPrimitive(
+                return DataContract.Primitive(
                     underlyingType: jsonContract.UnderlyingType,
                     dataType: primitiveTypeAndFormat.Item1,
                     dataFormat: primitiveTypeAndFormat.Item2);
@@ -57,7 +57,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
             if (jsonContract is JsonArrayContract jsonArrayContract)
             {
-                return DataContract.ForArray(
+                return DataContract.Array(
                     underlyingType: jsonArrayContract.UnderlyingType,
                     itemType: jsonArrayContract.CollectionItemType ?? typeof(object));
             }
@@ -79,7 +79,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                         : keyType.GetEnumNames();
                 }
 
-                return DataContract.ForDictionary(
+                return DataContract.Dictionary(
                     underlyingType: jsonDictionaryContract.UnderlyingType,
                     keyType: keyType,
                     valueType: valueType);
@@ -101,15 +101,15 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                         : $"{jsonObjectContract.UnderlyingType.FullName}, {jsonObjectContract.UnderlyingType.Assembly.GetName().Name}";
                 }
 
-                return DataContract.ForObject(
+                return DataContract.Object(
                     underlyingType: jsonObjectContract.UnderlyingType,
                     properties: GetDataPropertiesFor(jsonObjectContract, out Type extensionDataType),
                     extensionDataType: extensionDataType,
-                    typeNameProperty: typeNameProperty,
-                    typeNameValue: typeNameValue);
+                    discriminatorPropertyName: typeNameProperty,
+                    discriminatorPropertyValue: typeNameValue);
             }
 
-            return DataContract.ForDynamic(underlyingType: type);
+            return DataContract.Undefined(underlyingType: type);
         }
 
         private IDictionary<object, object> GetSerializedEnumValuesFor(JsonContract jsonContract)
@@ -134,7 +134,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
             foreach (var jsonProperty in jsonObjectContract.Properties)
             {
-                if (jsonProperty.Ignored) continue;
+                if (jsonProperty.Ignored || !jsonProperty.TryGetMemberInfo(out MemberInfo memberInfo)) continue;
 
                 var required = jsonProperty.IsRequiredSpecified()
                     ? jsonProperty.Required
@@ -144,17 +144,14 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     .SelectMany(c => c.GetParameters())
                     .Any(p => string.Equals(p.Name, jsonProperty.PropertyName, StringComparison.OrdinalIgnoreCase));
 
-                jsonProperty.TryGetMemberInfo(out MemberInfo memberInfo);
-
                 dataProperties.Add(
                     new DataProperty(
                         name: jsonProperty.PropertyName,
+                        memberInfo: memberInfo,
                         isRequired: (required == Required.Always || required == Required.AllowNull),
                         isNullable: (required == Required.AllowNull || required == Required.Default) && jsonProperty.PropertyType.IsReferenceOrNullableType(),
                         isReadOnly: jsonProperty.Readable && !jsonProperty.Writable && !isSetViaConstructor,
-                        isWriteOnly: jsonProperty.Writable && !jsonProperty.Readable,
-                        memberType: jsonProperty.PropertyType,
-                        memberInfo: memberInfo));
+                        isWriteOnly: jsonProperty.Writable && !jsonProperty.Readable));
             }
 
             extensionDataType = jsonObjectContract.ExtensionDataValueType;

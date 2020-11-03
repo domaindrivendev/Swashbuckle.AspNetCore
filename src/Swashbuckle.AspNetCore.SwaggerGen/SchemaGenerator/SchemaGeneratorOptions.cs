@@ -9,11 +9,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         public SchemaGeneratorOptions()
         {
+            DataContractResolvers = new List<IDataContractResolver>();
             CustomTypeMappings = new Dictionary<Type, Func<OpenApiSchema>>();
             SchemaIdSelector = DefaultSchemaIdSelector;
-            SubTypesSelector = DefaultSubTypesSelector;
+            KnownTypesSelector = DefaultKnownTypesSelector;
             SchemaFilters = new List<ISchemaFilter>();
         }
+
+        public IList<IDataContractResolver> DataContractResolvers { get; set; }
 
         public IDictionary<Type, Func<OpenApiSchema>> CustomTypeMappings { get; set; }
 
@@ -29,7 +32,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public bool UseOneOfForPolymorphism { get; set; }
 
-        public Func<Type, IEnumerable<Type>> SubTypesSelector { get; set; }
+        public Func<Type, IEnumerable<Type>> KnownTypesSelector { get; set; }
 
         public Func<Type, string> DiscriminatorNameSelector { get; set; }
 
@@ -48,9 +51,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return prefix + modelType.Name.Split('`').First();
         }
 
-        private IEnumerable<Type> DefaultSubTypesSelector(Type baseType)
+        private IEnumerable<Type> DefaultKnownTypesSelector(Type baseType)
         {
-            return baseType.Assembly.GetTypes().Where(type => type.IsSubclassOf(baseType));
+            return baseType.IsAbstract
+                ? baseType.Assembly.GetTypes().Where(type => type.IsSubclassOf(baseType))
+                : Enumerable.Empty<Type>();
         }
     }
 }

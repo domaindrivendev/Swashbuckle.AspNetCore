@@ -11,6 +11,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class ApiParameterDescriptionExtensions
     {
+        public static bool TryGetPropertyInfo(this ApiParameterDescription apiParameter, out PropertyInfo propertyInfo)
+        {
+            var modelMetadata = apiParameter.ModelMetadata;
+            propertyInfo = modelMetadata?.ContainerType?.GetProperty(modelMetadata.PropertyName);
+            return propertyInfo != null;
+        }
+
+        public static bool TryGetParameterInfo(this ApiParameterDescription apiParameter, out ParameterInfo parameterInfo)
+        {
+            var controllerParameterDescriptor = apiParameter.ParameterDescriptor as ControllerParameterDescriptor;
+            parameterInfo = controllerParameterDescriptor?.ParameterInfo;
+            return parameterInfo != null;
+        }
+
         public static ParameterInfo ParameterInfo(this ApiParameterDescription apiParameter)
         {
             var controllerParameterDescriptor = apiParameter.ParameterDescriptor as ControllerParameterDescriptor;

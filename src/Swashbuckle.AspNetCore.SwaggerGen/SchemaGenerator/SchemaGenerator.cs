@@ -236,7 +236,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             discriminatorName = (_generatorOptions.DiscriminatorNameSelector != null)
                 ? _generatorOptions.DiscriminatorNameSelector(dataContract.UnderlyingType)
-                : dataContract.ObjectTypeNameProperty;
+                : dataContract.ObjectDiscriminatorProperty;
 
             return (discriminatorName != null);
         }
@@ -245,7 +245,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             discriminatorValue = (_generatorOptions.DiscriminatorValueSelector != null)
                 ? _generatorOptions.DiscriminatorValueSelector(dataContract.UnderlyingType)
-                : dataContract.ObjectTypeNameValue;
+                : dataContract.ObjectDiscriminatorValue;
 
             return (discriminatorValue != null);
         }
@@ -313,7 +313,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             foreach (var dataProperty in applicableDataProperties)
             {
-                var customAttributes = dataProperty.MemberInfo?.GetInlineAndMetadataAttributes() ?? Enumerable.Empty<object>();
+                var customAttributes = dataProperty.MemberInfo?.GetCustomOrMetadataAttributes<Attribute>() ?? Enumerable.Empty<object>();
 
                 if (_generatorOptions.IgnoreObsoleteProperties && customAttributes.OfType<ObsoleteAttribute>().Any())
                     continue;
@@ -338,7 +338,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private OpenApiSchema GeneratePropertySchema(DataProperty dataProperty, SchemaRepository schemaRepository)
         {
-            var schema = GenerateSchema(dataProperty.MemberType, schemaRepository, memberInfo: dataProperty.MemberInfo);
+            var schema = GenerateSchema(null, schemaRepository, memberInfo: dataProperty.MemberInfo);
 
             if (schema.Reference == null)
             {
@@ -370,14 +370,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private bool IsBaseTypeWithKnownSubTypes(Type type, out IEnumerable<Type> subTypes)
         {
-            subTypes = _generatorOptions.SubTypesSelector(type);
+            subTypes = _generatorOptions.KnownTypesSelector(type);
 
             return subTypes.Any();
         }
 
         private bool IsKnownSubType(Type type, out Type baseType)
         {
-            if ((type.BaseType != null) && (type.BaseType != typeof(object) && _generatorOptions.SubTypesSelector(type.BaseType).Contains(type)))
+            if ((type.BaseType != null) && (type.BaseType != typeof(object) && _generatorOptions.KnownTypesSelector(type.BaseType).Contains(type)))
             {
                 baseType = type.BaseType;
                 return true;
@@ -397,7 +397,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (schema.Reference == null)
             {
-                var customAttributes = memberInfo.GetInlineAndMetadataAttributes();
+                var customAttributes = memberInfo.GetCustomOrMetadataAttributes<Attribute>();
 
                 schema.Nullable = type.IsReferenceOrNullableType();
 
@@ -414,7 +414,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     schema.Deprecated = true;
                 } 
 
-                schema.ApplyValidationAttributes(customAttributes);
+                schema.ApplyValidationAttributes(customAttributes.OfType<ValidationAttribute>());
             }
         }
 
@@ -436,7 +436,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     schema.Default = OpenApiAnyFactory.CreateFromJson(defaultAsJson);
                 }
 
-                schema.ApplyValidationAttributes(parameterInfo.GetCustomAttributes());
+                schema.ApplyValidationAttributes(parameterInfo.GetCustomAttributes<ValidationAttribute>());
             }
         }
 

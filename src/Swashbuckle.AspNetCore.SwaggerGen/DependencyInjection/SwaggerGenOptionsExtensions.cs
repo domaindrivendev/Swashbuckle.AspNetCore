@@ -156,33 +156,6 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Provide a custom mapping, for a given type, to the Swagger-flavored JSONSchema
-        /// </summary>
-        /// <param name="swaggerGenOptions"></param>
-        /// <param name="type">System type</param>
-        /// <param name="schemaFactory">A factory method that generates Schema's for the provided type</param>
-        public static void MapType(
-            this SwaggerGenOptions swaggerGenOptions,
-            Type type,
-            Func<OpenApiSchema> schemaFactory)
-        {
-            swaggerGenOptions.SchemaGeneratorOptions.CustomTypeMappings.Add(type, schemaFactory);
-        }
-
-        /// <summary>
-        /// Provide a custom mapping, for a given type, to the Swagger-flavored JSONSchema
-        /// </summary>
-        /// <typeparam name="T">System type</typeparam>
-        /// <param name="swaggerGenOptions"></param>
-        /// <param name="schemaFactory">A factory method that generates Schema's for the provided type</param>
-        public static void MapType<T>(
-            this SwaggerGenOptions swaggerGenOptions,
-            Func<OpenApiSchema> schemaFactory)
-        {
-            swaggerGenOptions.MapType(typeof(T), schemaFactory);
-        }
-
-        /// <summary>
         /// Provide a custom strategy for generating the unique Id's that are used to reference object Schema's
         /// </summary>
         /// <param name="swaggerGenOptions"></param>
@@ -254,7 +227,7 @@ namespace Microsoft.Extensions.DependencyInjection
             this SwaggerGenOptions swaggerGenOptions,
             Func<Type, IEnumerable<Type>> customSelector)
         {
-            swaggerGenOptions.SchemaGeneratorOptions.SubTypesSelector = customSelector;
+            swaggerGenOptions.SchemaGeneratorOptions.KnownTypesSelector = customSelector;
         }
 
         /// <summary>
@@ -443,6 +416,36 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 swaggerGenOptions.SelectDiscriminatorNameUsing(discriminatorSelector);
             }
+        }
+
+        /// <summary>
+        /// Provide a custom mapping, for a given type, to the Swagger-flavored JSONSchema
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="type">System type</param>
+        /// <param name="schemaFactory">A factory method that generates Schema's for the provided type</param>
+        [Obsolete("TODO")]
+        public static void MapType(
+            this SwaggerGenOptions swaggerGenOptions,
+            Type type,
+            Func<OpenApiSchema> schemaFactory)
+        {
+            throw new NotImplementedException("TODO");
+            //swaggerGenOptions.SchemaGeneratorOptions.CustomTypeMappings.Add(type, schemaFactory);
+        }
+
+        /// <summary>
+        /// Provide a custom mapping, for a given type, to the Swagger-flavored JSONSchema
+        /// </summary>
+        /// <typeparam name="T">System type</typeparam>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="schemaFactory">A factory method that generates Schema's for the provided type</param>
+        [Obsolete("TODO")]
+        public static void MapType<T>(
+            this SwaggerGenOptions swaggerGenOptions,
+            Func<OpenApiSchema> schemaFactory)
+        {
+            swaggerGenOptions.MapType(typeof(T), schemaFactory);
         }
     }
 }

@@ -20,5 +20,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             return property.SetMethod?.IsPublic == true;
         }
+
+        public static bool IsContextuallyNullable(this PropertyInfo property)
+        {
+            return property.PropertyType.IsReferenceOrNullableType();
+        }
     }
 }
