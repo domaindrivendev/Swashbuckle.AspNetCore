@@ -30,5 +30,18 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             Assert.Contains("Redoc.init", indexContent);
             Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
         }
+
+        [Fact]
+        public async Task IndexUrl_IgnoresUrlCase()
+        {
+            var client = new TestSite(typeof(ReDocApp.Startup)).BuildClient();
+
+            var indexResponse = await client.GetAsync("/Api-Docs/index.html");
+            var jsResponse = await client.GetAsync("/Api-Docs/redoc.standalone.js");
+
+            var indexContent = await indexResponse.Content.ReadAsStringAsync();
+            Assert.Contains("Redoc.init", indexContent);
+            Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
+        }
     }
 }
