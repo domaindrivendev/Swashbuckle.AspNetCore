@@ -818,6 +818,48 @@ services.AddSwaggerGen(c =>
 };
 ```
 
+The example below allows for automatic schema generation of generic `Dictionary<Enum, TValue>` objects.
+Note that this only generates the swagger; `System.Text.Json` is not able to parse dictionary enums by default,
+so you will need [a special JsonConverter, like in the .NET docs](https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-converters-how-to?pivots=dotnet-5-0#sample-factory-pattern-converter)
+
+```csharp
+// DictionaryTKeyEnumTValueSchemaFilter.cs
+public class DictionaryTKeyEnumTValueSchemaFilter : ISchemaFilter
+{
+  public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+  {
+    // Only run for fields that are a Dictionary<Enum, TValue>
+    if (!context.Type.IsGenericType || !context.Type.GetGenericTypeDefinition().IsAssignableFrom(typeof(Dictionary<,>)))
+    {
+return;
+    }
+
+    var keyType = context.Type.GetGenericArguments()[0];
+    var valueType = context.Type.GetGenericArguments()[1];
+
+    if (!keyType.IsEnum)
+    {
+return;
+    }
+
+    schema.Type = "object";
+    schema.Properties = keyType.GetEnumNames().ToDictionary(name => name,
+name => context.SchemaGenerator.GenerateSchema(valueType,
+  context.SchemaRepository));
+  }
+}
+
+// Startup.cs
+services.AddSwaggerGen(c =>
+{
+    ...
+    // These will be replaced by DictionaryTKeyEnumTValueSchemaFilter, but are needed to avoid an error.
+    // You will need one for every kind of Dictionary<,> you have.
+    c.MapType<Dictionary<MyEnum, List<string>>>(() => new OpenApiSchema());
+    c.SchemaFilter<DictionaryTKeyEnumTValueSchemaFilter>();
+};
+	
+```
 #### Document Filters ####
 
 Once an `OpenApiDocument` has been generated, it too can be passed through a set of pre-configured Document Filters. This gives full control to modify the document however you see fit. To ensure you're still returning valid Swagger JSON, you should have a read through the [specification](http://swagger.io/specification/) before using this filter type.
