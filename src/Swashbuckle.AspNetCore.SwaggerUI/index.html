@@ -61,6 +61,9 @@
             if (!configObject.hasOwnProperty("oauth2RedirectUrl"))
                 configObject.oauth2RedirectUrl = window.location.href.replace("index.html", "oauth2-redirect.html").split('#')[0];
 
+            if (configObject.ignoreOauth2RedirectUrlQueryParameters)
+                configObject.oauth2RedirectUrl = configObject.oauth2RedirectUrl.split('?')[0];
+
             // Apply mandatory parameters
             configObject.dom_id = "#swagger-ui";
             configObject.presets = [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset];
