@@ -117,7 +117,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// Setting if ignore query parameters in OAuth 2 redirect url
         /// </summary>
         [JsonPropertyName("ignoreOauth2RedirectUrlQueryParameters")]
-        public bool IgnoreOAuth2RedirectUrlQueryParameters { get; set; } = false;
+        public bool IgnoreOAuth2RedirectUrlQueryParameters { get; set; } = true;
 
         /// <summary>
         /// List of HTTP methods that have the Try it out feature enabled.
