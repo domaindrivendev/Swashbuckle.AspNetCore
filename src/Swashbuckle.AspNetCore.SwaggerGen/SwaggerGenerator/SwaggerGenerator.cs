@@ -38,13 +38,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 .Where(apiDesc => !(_options.IgnoreObsoleteActions && apiDesc.CustomAttributes().OfType<ObsoleteAttribute>().Any()))
                 .Where(apiDesc => _options.DocInclusionPredicate(documentName, apiDesc));
 
-            var schemaRepository = new SchemaRepository();
+            var schemaRepository = new SchemaRepository(documentName);
 
             var swaggerDoc = new OpenApiDocument
             {
                 Info = info,
                 Servers = GenerateServers(host, basePath),
-                Paths = GeneratePaths(applicableApiDescriptions, schemaRepository),
+                Paths = GeneratePaths(applicableApiDescriptions, schemaRepository, documentName),
                 Components = new OpenApiComponents
                 {
                     Schemas = schemaRepository.Schemas,
@@ -53,7 +53,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 SecurityRequirements = new List<OpenApiSecurityRequirement>(_options.SecurityRequirements)
             };
 
-            var filterContext = new DocumentFilterContext(applicableApiDescriptions, _schemaGenerator, schemaRepository);
+            var filterContext = new DocumentFilterContext(applicableApiDescriptions, _schemaGenerator, schemaRepository, documentName);
             foreach (var filter in _options.DocumentFilters)
             {
                 filter.Apply(swaggerDoc, filterContext);
@@ -74,7 +74,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 : new List<OpenApiServer> { new OpenApiServer { Url = $"{host}{basePath}" } };
         }
 
-        private OpenApiPaths GeneratePaths(IEnumerable<ApiDescription> apiDescriptions, SchemaRepository schemaRepository)
+        private OpenApiPaths GeneratePaths(IEnumerable<ApiDescription> apiDescriptions, SchemaRepository schemaRepository, string documentName)
         {
             var apiDescriptionsByPath = apiDescriptions
                 .OrderBy(_options.SortKeySelector)
@@ -86,7 +86,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 paths.Add($"/{group.Key}",
                     new OpenApiPathItem
                     {
-                        Operations = GenerateOperations(group, schemaRepository)
+                        Operations = GenerateOperations(group, schemaRepository, documentName)
                     });
             };
 
@@ -95,7 +95,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private IDictionary<OperationType, OpenApiOperation> GenerateOperations(
             IEnumerable<ApiDescription> apiDescriptions,
-            SchemaRepository schemaRepository)
+            SchemaRepository schemaRepository,
+            string documentName)
         {
             var apiDescriptionsByMethod = apiDescriptions
                 .OrderBy(_options.SortKeySelector)
@@ -123,13 +124,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 var apiDescription = (group.Count() > 1) ? _options.ConflictingActionsResolver(group) : group.Single();
 
-                operations.Add(OperationTypeMap[httpMethod.ToUpper()], GenerateOperation(apiDescription, schemaRepository));
+                operations.Add(OperationTypeMap[httpMethod.ToUpper()], GenerateOperation(apiDescription, schemaRepository, documentName));
             };
 
             return operations;
         }
 
-        private OpenApiOperation GenerateOperation(ApiDescription apiDescription, SchemaRepository schemaRepository)
+        private OpenApiOperation GenerateOperation(ApiDescription apiDescription, SchemaRepository schemaRepository, string documentName)
         {
             try
             {
@@ -137,14 +138,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 {
                     Tags = GenerateOperationTags(apiDescription),
                     OperationId = _options.OperationIdSelector(apiDescription),
-                    Parameters = GenerateParameters(apiDescription, schemaRepository),
-                    RequestBody = GenerateRequestBody(apiDescription, schemaRepository),
+                    Parameters = GenerateParameters(apiDescription, schemaRepository, documentName),
+                    RequestBody = GenerateRequestBody(apiDescription, schemaRepository, documentName),
                     Responses = GenerateResponses(apiDescription, schemaRepository),
                     Deprecated = apiDescription.CustomAttributes().OfType<ObsoleteAttribute>().Any()
                 };
 
                 apiDescription.TryGetMethodInfo(out MethodInfo methodInfo);
-                var filterContext = new OperationFilterContext(apiDescription, _schemaGenerator, schemaRepository, methodInfo);
+                var filterContext = new OperationFilterContext(apiDescription, _schemaGenerator, schemaRepository, methodInfo, documentName);
                 foreach (var filter in _options.OperationFilters)
                 {
                     filter.Apply(operation, filterContext);
@@ -167,7 +168,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 .ToList();
         }
 
-        private IList<OpenApiParameter> GenerateParameters(ApiDescription apiDescription, SchemaRepository schemaRespository)
+        private IList<OpenApiParameter> GenerateParameters(ApiDescription apiDescription, SchemaRepository schemaRespository, string documentName)
         {
             var applicableApiParameters = apiDescription.ParameterDescriptions
                 .Where(apiParam =>
@@ -178,13 +179,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 });
 
             return applicableApiParameters
-                .Select(apiParam => GenerateParameter(apiParam, schemaRespository))
+                .Select(apiParam => GenerateParameter(apiParam, schemaRespository, documentName))
                 .ToList();
         }
 
         private OpenApiParameter GenerateParameter(
             ApiParameterDescription apiParameter,
-            SchemaRepository schemaRepository)
+            SchemaRepository schemaRepository,
+            string documentName)
         {
             var name = _options.DescribeAllParametersInCamelCase
                 ? apiParameter.Name.ToCamelCase()
@@ -218,7 +220,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 _schemaGenerator,
                 schemaRepository,
                 apiParameter.PropertyInfo(),
-                apiParameter.ParameterInfo());
+                apiParameter.ParameterInfo(),
+                documentName);
 
             foreach (var filter in _options.ParameterFilters)
             {
@@ -230,7 +233,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private OpenApiRequestBody GenerateRequestBody(
             ApiDescription apiDescription,
-            SchemaRepository schemaRepository)
+            SchemaRepository schemaRepository,
+            string documentName)
         {
             OpenApiRequestBody requestBody = null;
             RequestBodyFilterContext filterContext = null;
@@ -249,7 +253,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     bodyParameterDescription: bodyParameter,
                     formParameterDescriptions: null,
                     schemaGenerator: _schemaGenerator,
-                    schemaRepository: schemaRepository);
+                    schemaRepository: schemaRepository,
+                    documentName: documentName);
             }
             else if (formParameters.Any())
             {
@@ -259,7 +264,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     bodyParameterDescription: null,
                     formParameterDescriptions: formParameters,
                     schemaGenerator: _schemaGenerator,
-                    schemaRepository: schemaRepository);
+                    schemaRepository: schemaRepository,
+                    documentName: documentName);
             }
 
             if (requestBody != null)

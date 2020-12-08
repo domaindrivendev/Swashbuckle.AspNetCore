@@ -14,11 +14,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public DocumentFilterContext(
             IEnumerable<ApiDescription> apiDescriptions,
             ISchemaGenerator schemaGenerator,
-            SchemaRepository schemaRepository)
+            SchemaRepository schemaRepository,
+            string documentName = null)
         {
             ApiDescriptions = apiDescriptions;
             SchemaGenerator = schemaGenerator;
             SchemaRepository = schemaRepository;
+            DocumentName = documentName;
         }
 
         public IEnumerable<ApiDescription> ApiDescriptions { get; }
@@ -26,5 +28,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public ISchemaGenerator SchemaGenerator { get; }
 
         public SchemaRepository SchemaRepository { get; }
+
+        public string DocumentName { get; }
     }
 }

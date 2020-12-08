@@ -16,13 +16,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             ISchemaGenerator schemaGenerator,
             SchemaRepository schemaRepository,
             PropertyInfo propertyInfo = null,
-            ParameterInfo parameterInfo = null)
+            ParameterInfo parameterInfo = null,
+            string documentName = null)
         {
             ApiParameterDescription = apiParameterDescription;
             SchemaGenerator = schemaGenerator;
             SchemaRepository = schemaRepository;
             PropertyInfo = propertyInfo;
             ParameterInfo = parameterInfo;
+            DocumentName = documentName;
         }
 
         public ApiParameterDescription ApiParameterDescription { get; }
@@ -34,5 +36,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public PropertyInfo PropertyInfo { get; }
 
         public ParameterInfo ParameterInfo { get; }
+
+        public string DocumentName { get; }
     }
 }
