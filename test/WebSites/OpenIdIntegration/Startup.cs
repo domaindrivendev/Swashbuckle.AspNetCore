@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using IdentityServer4.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using IdentityServer4.Models;
+using System;
 
-namespace OpenApiIntegration
+namespace OpenIdIntegration
 {
     public class Startup
     {
@@ -29,6 +28,8 @@ namespace OpenApiIntegration
                 {
                     options.Discovery.ShowGrantTypes = false;
                     options.Discovery.CustomEntries.Add("grant_types_supported", GrantTypes.Code);
+                    options.Discovery.ShowApiScopes = false;
+                    options.Discovery.CustomEntries.Add("scopes_supported", new[] { "readAccess", "writeAccess" });
                 })
                 .AddDeveloperSigningCredential()
                 .AddInMemoryClients(AuthServer.Config.Clients())
@@ -60,8 +61,7 @@ namespace OpenApiIntegration
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Version = "v1", Title = "Test API V1" });
 
-                // Define the OAuth2.0 scheme that's in use (i.e. Implicit Flow)
-                c.AddSecurityDefinition("openApi", new OpenApiSecurityScheme
+                c.AddSecurityDefinition("openId", new OpenApiSecurityScheme
                 {
                     OpenIdConnectUrl = new Uri("http://localhost:55202/auth-server/.well-known/openid-configuration"),
                     Type = SecuritySchemeType.OpenIdConnect,
@@ -72,14 +72,11 @@ namespace OpenApiIntegration
                     {
                         new OpenApiSecurityScheme
                         {
-                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "openApi" }
+                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "openId" }
                         },
                         new[] { "readAccess", "writeAccess" }
                     }
                 });
-
-                // Assign scope requirements to operations based on AuthorizeAttribute
-                //c.OperationFilter<SecurityRequirementsOperationFilter>();
             });
         }
 

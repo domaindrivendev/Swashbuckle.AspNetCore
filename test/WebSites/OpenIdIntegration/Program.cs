@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace OpenApiIntegration
+namespace OpenIdIntegration
 {
     public class Program
     {

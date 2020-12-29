@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
-namespace OpenApiIntegration.AuthServer.Controllers
+namespace OpenIdIntegration.AuthServer.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
     [Route("account")]

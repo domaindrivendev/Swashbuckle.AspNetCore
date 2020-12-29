@@ -2,7 +2,7 @@
 using IdentityServer4.Test;
 using System.Collections.Generic;
 
-namespace OpenApiIntegration.AuthServer
+namespace OpenIdIntegration.AuthServer
 {
     public static class Config
     {
@@ -15,7 +15,6 @@ namespace OpenApiIntegration.AuthServer
 
                 RedirectUris = new[] {
                     "http://localhost:55202/resource-server/swagger/oauth2-redirect.html", // IIS Express
-                    "http://localhost:5000/resource-server/swagger/oauth2-redirect.html", // Kestrel
                 },
 
                 ClientSecrets = { new Secret("test-secret".Sha256()) },
@@ -23,6 +22,7 @@ namespace OpenApiIntegration.AuthServer
 
                 AllowedGrantTypes = GrantTypes.Code,
                 AllowedScopes = new[] { "readAccess", "writeAccess" },
+                AllowOfflineAccess = false,
             };
         }
 

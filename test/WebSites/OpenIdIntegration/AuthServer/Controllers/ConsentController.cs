@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace OpenApiIntegration.AuthServer.Controllers
+namespace OpenIdIntegration.AuthServer.Controllers
 {
     [ApiExplorerSettings(IgnoreApi = true)]
     public class ConsentController : Controller

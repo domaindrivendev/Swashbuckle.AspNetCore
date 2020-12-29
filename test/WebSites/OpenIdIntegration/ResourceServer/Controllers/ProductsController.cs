@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
-namespace OpenApiIntegration.ResourceServer.Controllers
+namespace OpenIdIntegration.ResourceServer.Controllers
 {
     [Route("products")]
     [Authorize(AuthenticationSchemes = "Bearer")]
