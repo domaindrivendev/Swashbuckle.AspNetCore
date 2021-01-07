@@ -216,6 +216,24 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(new[] { "BaseProperty", "Property1" }, schema.Properties.Keys);
         }
 
+        [Theory]
+        [InlineData(typeof(IBaseInterface), new[] { "BaseProperty" })]
+        [InlineData(typeof(ISubInterface1), new[] { "BaseProperty", "Property1" })]
+        [InlineData(typeof(ISubInterface2), new[] { "BaseProperty", "Property2" })]
+        [InlineData(typeof(IMultiSubInterface), new[] { "BaseProperty", "Property1", "Property2", "Property3" })]
+        public void GenerateSchema_IncludesInheritedProperties_IfTypeIsAnInterfaceHierarchy(
+            Type type,
+            string[] expectedPropertyNames)
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(type, schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal("object", schema.Type);
+            Assert.Equal(expectedPropertyNames.OrderBy(n => n), schema.Properties.Keys.OrderBy(k => k));
+        }
+
         [Fact]
         public void GenerateSchema_ExcludesIndexerProperties_IfComplexTypeIsIndexed()
         {

@@ -122,7 +122,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             extensionDataType = null;
 
-            var applicableProperties = GetProperties(objectType)
+            const BindingFlags PublicBindingAttr = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+
+            var publicProperties = objectType.IsInterface
+                ? new[] { objectType }.Concat(objectType.GetInterfaces()).SelectMany(i => i.GetProperties(PublicBindingAttr))
+                : objectType.GetProperties(PublicBindingAttr);
+
+            var applicableProperties = publicProperties
                 .Where(property =>
                 {
                     return
@@ -159,17 +165,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
 
             return dataProperties;
-        }
-
-        private static IEnumerable<PropertyInfo> GetProperties(Type type)
-        {
-            const BindingFlags BindingAttr = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-
-            return type.IsInterface
-                ? (new Type[] { type })
-                   .Concat(type.GetInterfaces())
-                   .SelectMany(i => i.GetProperties(BindingAttr))
-                : type.GetProperties(BindingAttr);
         }
 
         public string Serialize(object value)
