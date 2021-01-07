@@ -856,6 +856,50 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("v1", ((OpenApiString)document.Extensions["X-docName"]).Value);
         }
 
+        [Fact]
+        public void GetSwagger_SupportsOption_SchemaFilters()
+        {
+            var subject = new SwaggerGenerator(
+                new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    }
+                },
+                new FakeApiDescriptionGroupCollectionProvider(new[]
+                {
+                    ApiDescriptionFactory.Create<FakeController>(
+                        c =>
+                            nameof(c.ActionWithObjectParameter),
+                            groupName: "v1",
+                            httpMethod: "POST",
+                            relativePath: "resource",
+                            parameterDescriptions: new []
+                            {
+                                new ApiParameterDescription
+                                {
+                                    Name = "param",
+                                    Source = BindingSource.Body
+                                }
+                            })
+                }),
+                new SchemaGenerator(new SchemaGeneratorOptions
+                {
+                    SchemaFilters = new List<ISchemaFilter>
+                    {
+                        new VendorExtensionsSchemaFilter()
+                    }
+                }, new SystemTextJsonBehavior(new JsonSerializerOptions()))
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal(2, document.Components.Schemas["XmlAnnotatedType"].Extensions.Count);
+            Assert.Equal("bar", ((OpenApiString)document.Components.Schemas["XmlAnnotatedType"].Extensions["X-foo"]).Value);
+            Assert.Equal("v1", ((OpenApiString)document.Components.Schemas["XmlAnnotatedType"].Extensions["X-docName"]).Value);
+        }
+
         private SwaggerGenerator Subject(IEnumerable<ApiDescription> apiDescriptions, SwaggerGeneratorOptions options = null)
         {
             return new SwaggerGenerator(
