@@ -15,14 +15,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             ApiParameterDescription bodyParameterDescription,
             IEnumerable<ApiParameterDescription> formParameterDescriptions,
             ISchemaGenerator schemaGenerator,
-            SchemaRepository schemaRepository,
-            string documentName = null)
+            SchemaRepository schemaRepository)
         {
             BodyParameterDescription = bodyParameterDescription;
             FormParameterDescriptions = formParameterDescriptions;
             SchemaGenerator = schemaGenerator;
             SchemaRepository = schemaRepository;
-            DocumentName = documentName;
         }
 
         public ApiParameterDescription BodyParameterDescription { get; }
@@ -33,6 +31,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public SchemaRepository SchemaRepository { get; }
 
-        public string DocumentName { get; }
+        public string DocumentName => SchemaRepository.DocumentName;
     }
 }

@@ -754,12 +754,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                         new VendorExtensionsParameterFilter()
                     }
                 }
-            ); ;
+            );
 
             var document = subject.GetSwagger("v1");
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
-            Assert.NotEmpty(operation.Parameters[0].Extensions);
+            Assert.Equal(2, operation.Parameters[0].Extensions.Count());
+            Assert.Equal("bar", ((OpenApiString)operation.Parameters[0].Extensions["X-foo"]).Value);
+            Assert.Equal("v1", ((OpenApiString)operation.Parameters[0].Extensions["X-docName"]).Value);
         }
 
         [Fact]
@@ -789,12 +791,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                         new VendorExtensionsRequestBodyFilter()
                     }
                 }
-            ); ;
+            );
 
             var document = subject.GetSwagger("v1");
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
-            Assert.NotEmpty(operation.RequestBody.Extensions);
+            Assert.Equal(2, operation.RequestBody.Extensions.Count);
+            Assert.Equal("bar", ((OpenApiString)operation.RequestBody.Extensions["X-foo"]).Value);
+            Assert.Equal("v1", ((OpenApiString)operation.RequestBody.Extensions["X-docName"]).Value);
         }
 
         [Fact]
@@ -822,7 +826,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var document = subject.GetSwagger("v1");
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
-            Assert.NotEmpty(operation.Extensions);
+            Assert.Equal(2, operation.Extensions.Count);
+            Assert.Equal("bar", ((OpenApiString)operation.Extensions["X-foo"]).Value);
+            Assert.Equal("v1", ((OpenApiString)operation.Extensions["X-docName"]).Value);
         }
 
         [Fact]
@@ -845,7 +851,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var document = subject.GetSwagger("v1");
 
-            Assert.NotEmpty(document.Extensions);
+            Assert.Equal(2, document.Extensions.Count);
+            Assert.Equal("bar", ((OpenApiString)document.Extensions["X-foo"]).Value);
+            Assert.Equal("v1", ((OpenApiString)document.Extensions["X-docName"]).Value);
         }
 
         private SwaggerGenerator Subject(IEnumerable<ApiDescription> apiDescriptions, SwaggerGeneratorOptions options = null)

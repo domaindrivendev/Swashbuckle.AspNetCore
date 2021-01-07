@@ -15,14 +15,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             ApiDescription apiDescription,
             ISchemaGenerator schemaRegistry,
             SchemaRepository schemaRepository,
-            MethodInfo methodInfo,
-            string documentName = null)
+            MethodInfo methodInfo)
         {
             ApiDescription = apiDescription;
             SchemaGenerator = schemaRegistry;
             SchemaRepository = schemaRepository;
             MethodInfo = methodInfo;
-            DocumentName = documentName;
         }
 
         public ApiDescription ApiDescription { get; }
@@ -33,6 +31,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public MethodInfo MethodInfo { get; }
 
-        public string DocumentName { get; }
+        public string DocumentName => SchemaRepository.DocumentName;
     }
 }

@@ -19,7 +19,6 @@
     <ProjectReference Include="..\WebSites\OAuth2Integration\OAuth2Integration.csproj" />
     <ProjectReference Include="..\WebSites\ReDoc\ReDoc.csproj" />
     <ProjectReference Include="..\WebSites\TestFirst\TestFirst.csproj" />
-    <ProjectReference Include="..\WebSites\Filters\Filters.csproj" />
   </ItemGroup>
 
   <ItemGroup>
