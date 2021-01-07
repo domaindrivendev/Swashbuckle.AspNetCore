@@ -211,6 +211,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Inject Custom CSS](#inject-custom-css)
     * [Customize index.html](#customize-indexhtml)
     * [Enable OAuth2.0 Flows](#enable-oauth20-flows)
+    * [Use client-side request and response interceptors](#use-client-side-request-and-response-interceptors)
 
 * [Swashbuckle.AspNetCore.Annotations](#swashbuckleaspnetcoreannotations)
     * [Install and Enable Annotations](#install-and-enable-annotations)
@@ -1109,6 +1110,8 @@ app.UseSwaggerUI(c =>
     c.ShowCommonExtensions();
     c.EnableValidator();
     c.SupportedSubmitMethods(SubmitMethod.Get, SubmitMethod.Head);
+    c.UseRequestInterceptor("(request) => { return request; }");
+    c.UseResponseInterceptor("(response) => { return response; }");
 });
 ```
 
@@ -1160,6 +1163,31 @@ app.UseSwaggerUI(c =>
     c.OAuthScopeSeparator(" ");
     c.OAuthAdditionalQueryStringParams(new Dictionary<string, string> { { "foo", "bar" }}); 
     c.OAuthUseBasicAuthenticationWithAccessCodeGrant();
+});
+```
+
+### Use client-side request and response interceptors ###
+
+To use custom interceptors on requests and responses going through swagger-ui you can define them as javascript functions in the configuration:
+
+```csharp
+app.UseSwaggerUI(c =>
+{
+    ...
+
+    c.UseRequestInterceptor("(req) => { req.headers['x-my-custom-header'] = 'MyCustomValue'; return req; }");
+    c.UseResponseInterceptor("(res) => { console.log('Custom interceptor intercepted response from:', res.url); return res; }");
+});
+```
+
+This can be useful in a range of scenarios where you might want to append local xsrf tokens to all requests for example:
+
+```csharp
+app.UseSwaggerUI(c =>
+{
+    ...
+
+    c.UseRequestInterceptor("(req) => { req.headers['X-XSRF-Token'] = localStorage.getItem('xsrf-token'); return req; }");
 });
 ```
 
