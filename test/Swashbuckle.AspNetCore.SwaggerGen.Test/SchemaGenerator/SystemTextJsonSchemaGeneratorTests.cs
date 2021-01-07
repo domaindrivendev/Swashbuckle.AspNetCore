@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Xunit;
 using Swashbuckle.AspNetCore.TestSupport;
+using Microsoft.OpenApi.Any;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -368,14 +369,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var subject = Subject(
                 configureGenerator: (c) => c.SchemaFilters.Add(new VendorExtensionsSchemaFilter())
             );
-            var schemaRepository = new SchemaRepository();
+            var schemaRepository = new SchemaRepository("v1");
 
             var schema = subject.GenerateSchema(type, schemaRepository);
 
-            if (schema.Reference == null)
-                Assert.Contains("X-foo", schema.Extensions.Keys);
-            else
-                Assert.Contains("X-foo", schemaRepository.Schemas[schema.Reference.Id].Extensions.Keys);
+            var definitionSchema = schema.Reference == null ? schema : schemaRepository.Schemas[schema.Reference.Id];
+            Assert.Contains("X-foo", definitionSchema.Extensions.Keys);
+            Assert.Equal("v1", ((OpenApiString)definitionSchema.Extensions["X-docName"]).Value);
         }
 
         [Fact]
