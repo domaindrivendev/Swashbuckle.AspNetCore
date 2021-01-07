@@ -65,6 +65,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.EnumProperty), "2")]
         [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.GuidProperty), "\"d3966535-2637-48fa-b911-e3c27405ee09\"")]
         [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringProperty), "\"Example for StringProperty\"")]
+        [UseInvariantCulture]
         public void Apply_SetsExample_FromPropertyExampleTag(
             Type declaringType,
             string propertyName,

@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.OpenApi" Version="1.2.3" />
+    <PackageReference Include="xunit.core" Version="2.4.1" />
   </ItemGroup>
 
 </Project>
