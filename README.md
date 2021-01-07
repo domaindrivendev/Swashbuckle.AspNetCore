@@ -170,7 +170,7 @@ These packages are provided by the open-source community.
 
 |Package|Description|
 |---------|-----------|
-|[Swashbuckle.AspNetCore.Filters](https://github.com/mattfrear/Swashbuckle.AspNetCore.Filters)| Some useful Swashbuckle filters which add additional documentation, e.g. request and response examples, a file upload button, etc. See its Readme for more details |
+|[Swashbuckle.AspNetCore.Filters](https://github.com/mattfrear/Swashbuckle.AspNetCore.Filters)| Some useful Swashbuckle filters which add additional documentation, e.g. request and response examples, authorization information, etc. See its Readme for more details |
 |[Unchase.Swashbuckle.AspNetCore.Extensions](https://github.com/unchase/Unchase.Swashbuckle.AspNetCore.Extensions)| Some useful extensions (filters), which add additional documentation, e.g. hide PathItems for unaccepted roles, fix enums for client code generation, etc. See its Readme for more details |
 |[MicroElements.Swashbuckle.FluentValidation](https://github.com/micro-elements/MicroElements.Swashbuckle.FluentValidation)| Use FluentValidation rules instead of ComponentModel attributes to augment generated Swagger Schemas |
 |[MMLib.SwaggerForOcelot](https://github.com/Burgyn/MMLib.SwaggerForOcelot)| Aggregate documentations over microservices directly on Ocelot API Gateway |
@@ -190,6 +190,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Assign Explicit OperationIds](#assign-explicit-operationids)
     * [List Operations Responses](#list-operation-responses)
     * [Flag Required Parameters and Schema Properties](#flag-required-parameters-and-schema-properties)
+    * [Handle Forms and File Uploads](#handle-forms-and-file-uploads)
     * [Include Descriptions from XML Comments](#include-descriptions-from-xml-comments)
     * [Provide Global API Metadata](#provide-global-api-metadata)
     * [Generate Multiple Swagger Documents](#generate-multiple-swagger-documents)
@@ -435,6 +436,17 @@ public class Product
     public string Description { get; set; }
 }
 ```
+
+### Handle Forms and File Uploads ###
+
+This controller will accept two form field values and one named file upload from the same form:
+
+```csharp
+[HttpPost]
+public void UploadFile([FromForm]string description, [FromForm]DateTime clientDate, [IFormFile] file)
+```
+
+> Important note: As per the [ASP.NET Core docs](https://docs.microsoft.com/en-us/aspnet/core/mvc/models/file-uploads?view=aspnetcore-3.1), you're not supposed to decorate `IFormFile` parameters with the `[FromForm]` attribute as the binding source is automatically inferred from the type. In fact, the inferred value is `BindingSource.FormFile` and if you apply the attribute it will be set to `BindingSource.Form` instead, which screws up `ApiExplorer`, the metadata component that ships with ASP.NET Core and is heavily relied on by Swashbuckle. One particular issue here is that SwaggerUI will not treat the parameter as a file and so will not display a file upload button, if you do mistakenly include this attribute.
 
 ### Include Descriptions from XML Comments ###
 
