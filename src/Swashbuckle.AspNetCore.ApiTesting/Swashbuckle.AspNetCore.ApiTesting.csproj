@@ -1,7 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\version.props" />
-
   <PropertyGroup>
     <Description>Core components for Swagger/OpenAPI-driven integration testing APIs built on ASP.NET Core</Description>
     <TargetFrameworks>netstandard2.0;netcoreapp3.0</TargetFrameworks>

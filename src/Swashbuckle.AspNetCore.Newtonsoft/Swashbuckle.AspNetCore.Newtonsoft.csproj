@@ -1,7 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\version.props" />
-
   <PropertyGroup>
     <Description>Swagger Generator opt-in component to support Newtonsoft.Json serializer behaviors</Description>
     <TargetFrameworks>netstandard2.0;netcoreapp3.0</TargetFrameworks>

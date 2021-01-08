@@ -1,6 +1,5 @@
 ﻿<Project>
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
-  <Import Project="..\..\version.props" />
 
   <PropertyGroup>
     <Description>Swagger tools for documenting APIs built on ASP.NET Core</Description>
