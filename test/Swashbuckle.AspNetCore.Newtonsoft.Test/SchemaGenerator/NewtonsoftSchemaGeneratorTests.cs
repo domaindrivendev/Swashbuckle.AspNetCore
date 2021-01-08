@@ -164,7 +164,8 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [Theory]
         [InlineData(typeof(ISet<string>))]
         [InlineData(typeof(SortedSet<string>))]
-        public void GenerateSchema_SetsUniqueItems_IfEnumerableTypeIsASet(Type type)
+        [InlineData(typeof(KeyedCollectionOfComplexType))]
+        public void GenerateSchema_SetsUniqueItems_IfEnumerableTypeIsSetOrKeyedCollection(Type type)
         {
             var schema = Subject().GenerateSchema(type, new SchemaRepository());
 

@@ -12,6 +12,7 @@ using Microsoft.OpenApi.Models;
 using Xunit;
 using Swashbuckle.AspNetCore.TestSupport;
 using Microsoft.OpenApi.Any;
+using System.Collections.ObjectModel;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -162,7 +163,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Theory]
         [InlineData(typeof(ISet<string>))]
         [InlineData(typeof(SortedSet<string>))]
-        public void GenerateSchema_SetsUniqueItems_IfEnumerableTypeIsASet(Type type)
+        [InlineData(typeof(KeyedCollectionOfComplexType))]
+        public void GenerateSchema_SetsUniqueItems_IfEnumerableTypeIsSetOrKeyedCollection(Type type)
         {
             var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
