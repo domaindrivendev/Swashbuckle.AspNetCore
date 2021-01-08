@@ -1,7 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\version.props" />
-
   <PropertyGroup>
     <Description>Swashbuckle (Swagger) Command Line Tools</Description>
     <TargetFrameworks>netcoreapp2.1;netcoreapp3.0;net5.0</TargetFrameworks>
