@@ -88,7 +88,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 # System.Text.Json (STJ) vs Newtonsoft #
 
-In versions prior to `5.0.0`, Swashbuckle will generate Schema's (descriptions of the data types exposed by an API) based on the behavior of the *Newtonsoft* serializer. This made sense because that was the serializer that shipped with ASP.NET Core at the time. However, since version `3.0.0`, ASP.NET Core introduces a new serializer *System.Text.Json (STJ)* out-of-the-box, and if you want to continue using *Newtonsoft*, you need to install a separate package and explicitly opt-in. From Swashbuckle `5.0.0` and beyond a similar pattern is used. That is, out-of-the-box Swashbuckle will assume you're using the *STJ* serializer and generate Schema's based on it's behavior. If you're using *Newtonsoft*, then you'll need to install a separate Swashbuckle package and explicitly opt-in. **This is a required step, regardless of which version of ASP.NET Core you're using**.
+In versions prior to `5.0.0`, Swashbuckle will generate Schema's (descriptions of the data types exposed by an API) based on the behavior of the *Newtonsoft* serializer. This made sense because that was the serializer that shipped with ASP.NET Core at the time. However, since version `3.0.0`, ASP.NET Core introduces a new serializer *System.Text.Json (STJ)* out-of-the-box, and if you want to continue using *Newtonsoft*, you need to install a separate package and explicitly opt-in. From Swashbuckle `5.0.0` and beyond a similar pattern is used. That is, out-of-the-box Swashbuckle will assume you're using the *STJ* serializer and generate Schema's based on its behavior. If you're using *Newtonsoft*, then you'll need to install a separate Swashbuckle package and explicitly opt-in. **This is a required step, regardless of which version of ASP.NET Core you're using**.
 
 In summary ...
 
@@ -1148,7 +1148,7 @@ app.UseSwaggerUI(c =>
 
 ### Apply swagger-ui Parameters ###
 
-The swagger-ui ships with it's own set of configuration parameters, all described here https://github.com/swagger-api/swagger-ui/blob/v3.8.1/docs/usage/configuration.md#display. In Swashbuckle, most of these are surfaced through the SwaggerUI middleware options:
+The swagger-ui ships with its own set of configuration parameters, all described here https://github.com/swagger-api/swagger-ui/blob/v3.8.1/docs/usage/configuration.md#display. In Swashbuckle, most of these are surfaced through the SwaggerUI middleware options:
 
 ```csharp
 app.UseSwaggerUI(c =>
@@ -1555,7 +1555,7 @@ app.UseReDoc(c =>
 
 ### Apply ReDoc Parameters ###
 
-ReDoc ships with it's own set of configuration parameters, all described here https://github.com/Rebilly/ReDoc/blob/master/README.md#redoc-options-object. In Swashbuckle, most of these are surfaced through the ReDoc middleware options:
+ReDoc ships with its own set of configuration parameters, all described here https://github.com/Rebilly/ReDoc/blob/master/README.md#redoc-options-object. In Swashbuckle, most of these are surfaced through the ReDoc middleware options:
 
 ```csharp
 app.UseReDoc(c =>
