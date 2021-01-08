@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
@@ -159,11 +160,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private OpenApiSchema GenerateArraySchema(DataContract dataContract, SchemaRepository schemaRepository)
         {
+            var hasUniqueItems = dataContract.UnderlyingType.IsConstructedFrom(typeof(ISet<>), out _)
+                || dataContract.UnderlyingType.IsConstructedFrom(typeof(KeyedCollection<,>), out _);
+
             return new OpenApiSchema
             {
                 Type = "array",
                 Items = GenerateSchema(dataContract.ArrayItemType, schemaRepository),
-                UniqueItems = dataContract.UnderlyingType.IsSet() ? (bool?)true : null
+                UniqueItems = hasUniqueItems ? (bool?)true : null
             };
         }
 
