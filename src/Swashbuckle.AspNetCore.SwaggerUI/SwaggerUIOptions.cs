@@ -195,6 +195,11 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         public string ScopeSeparator { get; set; } = " ";
 
         /// <summary>
+        /// String array of initially selected oauth scopes, default is empty array
+        /// </summary>
+        public IEnumerable<string> Scopes { get; set; } = new string[] { };
+
+        /// <summary>
         /// Additional query parameters added to authorizationUrl and tokenUrl
         /// </summary>
         public Dictionary<string, string> AdditionalQueryStringParams { get; set; } = null;

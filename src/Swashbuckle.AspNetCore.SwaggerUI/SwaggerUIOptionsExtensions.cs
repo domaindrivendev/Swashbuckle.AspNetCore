@@ -245,6 +245,14 @@ namespace Microsoft.AspNetCore.Builder
         }
 
         /// <summary>
+        /// String array of initially selected oauth scopes, default is empty array
+        /// </summary>
+        public static void OAuthScopes(this SwaggerUIOptions options, params string[] scopes)
+        {
+            options.OAuthConfigObject.Scopes = scopes;
+        }
+
+        /// <summary>
         /// Additional query parameters added to authorizationUrl and tokenUrl
         /// </summary>
         /// <param name="options"></param>
