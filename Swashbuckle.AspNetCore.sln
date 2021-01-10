@@ -92,7 +92,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore.Test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NSwagClientExample", "test\WebSites\NswagClientExample\NSwagClientExample.csproj", "{9840E751-5845-431C-943B-C75CAE596A45}"
 EndProject
-Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "Swashbuckle.AspNetCore.SwaggerUI", "src\Swashbuckle.AspNetCore.SwaggerUI\Swashbuckle.AspNetCore.SwaggerUI.csproj", "{7F045714-B571-45A4-A75E-D3B8386D4E33}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore.SwaggerUI", "src\Swashbuckle.AspNetCore.SwaggerUI\Swashbuckle.AspNetCore.SwaggerUI.csproj", "{7F045714-B571-45A4-A75E-D3B8386D4E33}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -512,6 +512,7 @@ Global
 		{322813C4-0458-4F98-965D-568AD2C819CE} = {245144DE-BC89-4822-B044-020458BFECC0}
 		{6E3C0128-931F-4438-AEDD-984E0E2B2C7B} = {1669F896-133C-4996-B58C-E7CDA299ADFF}
 		{9840E751-5845-431C-943B-C75CAE596A45} = {245144DE-BC89-4822-B044-020458BFECC0}
+		{7F045714-B571-45A4-A75E-D3B8386D4E33} = {15A55F4A-FC33-4D96-BAAD-FBDCDD96D5F5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {36FC6A67-247D-4149-8EDD-79FFD1A75F51}
