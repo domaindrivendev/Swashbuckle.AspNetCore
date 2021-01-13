@@ -21,7 +21,7 @@ namespace Swashbuckle.AspNetCore.Annotations
 
             ApplySwaggerOperationAttribute(operation, actionAttributes);
             ApplySwaggerOperationFilterAttributes(operation, context, controllerAndActionAttributes);
-            ApplySwaggerResponseAttributes(operation, controllerAndActionAttributes);
+            ApplySwaggerResponseAttributes(operation, context, controllerAndActionAttributes);
         }
 
         private static void ApplySwaggerOperationAttribute(
@@ -68,6 +68,7 @@ namespace Swashbuckle.AspNetCore.Annotations
 
         private void ApplySwaggerResponseAttributes(
             OpenApiOperation operation,
+            OperationFilterContext context,
             IEnumerable<object> controllerAndActionAttributes)
         {
             var swaggerResponseAttributes = controllerAndActionAttributes
@@ -91,6 +92,111 @@ namespace Swashbuckle.AspNetCore.Annotations
                     response.Description = swaggerResponseAttribute.Description;
 
                 operation.Responses[statusCode] = response;
+
+                if (swaggerResponseAttribute.ContentTypes != null && swaggerResponseAttribute.ContentTypes.Length > 0)
+                {
+                    response.Content = response.Content ?? new Dictionary<string, OpenApiMediaType>();
+
+                    var openApiMediaType = new OpenApiMediaType();
+                    var responseType = swaggerResponseAttribute.Type;
+
+                    string swaggerDataType = GetDataType(responseType);
+                    if (swaggerDataType == null)
+                    {
+                        // this is not a native type, try to register it in the repository
+                        if (context.SchemaRepository != null && !context.SchemaRepository.TryLookupByType(responseType, out var schema))
+                        {
+                            schema = context.SchemaGenerator.GenerateSchema(responseType, context.SchemaRepository);
+
+                            if (schema == null)
+                            {
+                                throw new InvalidOperationException($"Failed to register swagger schema type '{responseType.Name}'.");
+                            }
+
+                            openApiMediaType.Schema = schema;
+                        }
+                        else
+                        {
+                            throw new InvalidOperationException($"Failed to register swagger schema type '{responseType.Name}'.");
+                        }
+                    }
+                    else
+                    {
+                        openApiMediaType.Schema = new OpenApiSchema
+                        {
+                            Type = swaggerDataType
+                        };
+                    }
+
+                    foreach (string mediaType in swaggerResponseAttribute.ContentTypes)
+                    {
+                        response.Content.Add(mediaType, openApiMediaType);
+                    }
+                }
+            }
+        }
+
+        private static string GetDataType(Type type)
+        {
+            string dataType;
+            if (IsNumericType(type))
+            {
+                dataType = "number";
+            }
+            else if (IsStringType(type))
+            {
+                dataType = "string";
+            }
+            else if (IsBooleanType(type))
+            {
+                dataType = "boolean";
+            }
+            else
+            {
+                dataType = null;
+            }
+
+            return dataType;
+        }
+
+        private static bool IsNumericType(Type type)
+        {
+            switch (Type.GetTypeCode(type))
+            {
+                case TypeCode.Decimal:
+                case TypeCode.Double:
+                case TypeCode.Int16:
+                case TypeCode.Int32:
+                case TypeCode.Int64:
+                case TypeCode.Single:
+                case TypeCode.UInt16:
+                case TypeCode.UInt32:
+                case TypeCode.UInt64:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        private static bool IsStringType(Type type)
+        {
+            switch (Type.GetTypeCode(type))
+            {
+                case TypeCode.String:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        private static bool IsBooleanType(Type type)
+        {
+            switch (Type.GetTypeCode(type))
+            {
+                case TypeCode.Boolean:
+                    return true;
+                default:
+                    return false;
             }
         }
     }
