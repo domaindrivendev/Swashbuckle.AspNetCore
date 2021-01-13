@@ -34,7 +34,7 @@ namespace Microsoft.AspNetCore.Builder
         /// </summary>
         public static IApplicationBuilder UseSwaggerUI(this IApplicationBuilder app, Action<SwaggerUIOptions> setupAction)
         {
-            var options = new SwaggerUIOptions();
+            var options = app.ApplicationServices.GetRequiredService<IOptions<SwaggerUIOptions>>().Value;
             setupAction(options);
 
             return app.UseSwaggerUI(options);
