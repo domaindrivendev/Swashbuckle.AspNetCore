@@ -39,7 +39,7 @@ function dotnet-build {
 }
 
 function dotnet-pack {
-    Get-ChildItem -Path src/** | ForEach-Object {
+    Get-ChildItem -Path src/** -Directory | ForEach-Object {
         if ($VersionSuffix.Length -gt 0) {
             dotnet pack $_ -c Release --no-build -o $ArtifactsPath --version-suffix $VersionSuffix
         }

@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using Xunit;
 using Swashbuckle.AspNetCore.TestSupport;
+using Microsoft.OpenApi.Any;
+using System.Collections.ObjectModel;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -161,7 +163,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Theory]
         [InlineData(typeof(ISet<string>))]
         [InlineData(typeof(SortedSet<string>))]
-        public void GenerateSchema_SetsUniqueItems_IfEnumerableTypeIsASet(Type type)
+        [InlineData(typeof(KeyedCollectionOfComplexType))]
+        public void GenerateSchema_SetsUniqueItems_IfEnumerableTypeIsSetOrKeyedCollection(Type type)
         {
             var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
@@ -216,6 +219,24 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(new[] { "BaseProperty", "Property1" }, schema.Properties.Keys);
         }
 
+        [Theory]
+        [InlineData(typeof(IBaseInterface), new[] { "BaseProperty" })]
+        [InlineData(typeof(ISubInterface1), new[] { "BaseProperty", "Property1" })]
+        [InlineData(typeof(ISubInterface2), new[] { "BaseProperty", "Property2" })]
+        [InlineData(typeof(IMultiSubInterface), new[] { "BaseProperty", "Property1", "Property2", "Property3" })]
+        public void GenerateSchema_IncludesInheritedProperties_IfTypeIsAnInterfaceHierarchy(
+            Type type,
+            string[] expectedPropertyNames)
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(type, schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal("object", schema.Type);
+            Assert.Equal(expectedPropertyNames.OrderBy(n => n), schema.Properties.Keys.OrderBy(k => k));
+        }
+
         [Fact]
         public void GenerateSchema_ExcludesIndexerProperties_IfComplexTypeIsIndexed()
         {
@@ -255,6 +276,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.IntArrayWithDefault), "[\n  1,\n  2,\n  3\n]")]
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.StringArrayWithDefault), "[\n  \"foo\",\n  \"bar\"\n]")]
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.StringWithDefaultNull), "null")]
+        [UseInvariantCulture]
         public void GenerateSchema_SetsDefault_IfPropertyHasDefaultValueAttribute(
             Type declaringType,
             string propertyName,
@@ -349,14 +371,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var subject = Subject(
                 configureGenerator: (c) => c.SchemaFilters.Add(new VendorExtensionsSchemaFilter())
             );
-            var schemaRepository = new SchemaRepository();
+            var schemaRepository = new SchemaRepository("v1");
 
             var schema = subject.GenerateSchema(type, schemaRepository);
 
-            if (schema.Reference == null)
-                Assert.Contains("X-foo", schema.Extensions.Keys);
-            else
-                Assert.Contains("X-foo", schemaRepository.Schemas[schema.Reference.Id].Extensions.Keys);
+            var definitionSchema = schema.Reference == null ? schema : schemaRepository.Schemas[schema.Reference.Id];
+            Assert.Contains("X-foo", definitionSchema.Extensions.Keys);
+            Assert.Equal("v1", ((OpenApiString)definitionSchema.Extensions["X-docName"]).Value);
         }
 
         [Fact]

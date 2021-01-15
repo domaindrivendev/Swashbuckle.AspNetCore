@@ -136,6 +136,7 @@ namespace OAuth2Integration
                     c.OAuthClientSecret("test-secret");
                     c.OAuthAppName("test-app");
                     c.OAuthScopeSeparator(" ");
+                    c.OAuthScopes("readAccess");
                     c.OAuthUsePkce();
                 });
             });

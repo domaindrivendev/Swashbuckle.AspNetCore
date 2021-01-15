@@ -9,7 +9,7 @@ Swashbuckle.AspNetCore
 
 [![Nuget](https://img.shields.io/nuget/v/swashbuckle.aspnetcore)](https://www.nuget.org/packages/swashbuckle.aspnetcore/)
 
-[Swagger](http://swagger.io) tooling for API's built with ASP.NET Core. Generate beautiful API documentation, including a UI to explore and test operations, directly from your routes, controllers and models.
+[Swagger](http://swagger.io) tooling for APIs built with ASP.NET Core. Generate beautiful API documentation, including a UI to explore and test operations, directly from your routes, controllers and models.
 
 In addition to its [Swagger 2.0 and OpenAPI 3.0](http://swagger.io/specification/) generator, Swashbuckle also provides an embedded version of the awesome [swagger-ui](https://github.com/swagger-api/swagger-ui) that's powered by the generated Swagger JSON. This means you can complement your API with living documentation that's always in sync with the latest code. Best of all, it requires minimal coding and maintenance, allowing you to focus on building an awesome API.
 
@@ -21,7 +21,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 |Swashbuckle Version|ASP.NET Core|Swagger / OpenAPI Spec.|swagger-ui|ReDoc UI|
 |----------|----------|----------|----------|----------|
-|[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master/README.md)|>= 2.0.0|2.0, 3.0|3.32.5|2.0.0-rc.40|
+|[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master/README.md)|>= 2.0.0|2.0, 3.0|3.39.0|2.0.0-rc.40|
 |[5.6.2](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v5.6.2)|>= 2.0.0|2.0, 3.0|3.32.5|2.0.0-rc.40|
 |[4.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v4.0.0)|>= 2.0.0, < 3.0.0|2.0|3.19.5|1.22.2|
 |[3.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v3.0.0)|>= 1.0.4, < 3.0.0|2.0|3.17.1|1.20.0|
@@ -88,7 +88,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 # System.Text.Json (STJ) vs Newtonsoft #
 
-In versions prior to `5.0.0`, Swashbuckle will generate Schema's (descriptions of the data types exposed by an API) based on the behavior of the *Newtonsoft* serializer. This made sense because that was the serializer that shipped with ASP.NET Core at the time. However, since version `3.0.0`, ASP.NET Core introduces a new serializer *System.Text.Json (STJ)* out-of-the-box, and if you want to continue using *Newtonsoft*, you need to install a separate package and explicitly opt-in. From Swashbuckle `5.0.0` and beyond a similar pattern is used. That is, out-of-the-box Swashbuckle will assume you're using the *STJ* serializer and generate Schema's based on it's behavior. If you're using *Newtonsoft*, then you'll need to install a separate Swashbuckle package and explicitly opt-in. **This is a required step, regardless of which version of ASP.NET Core you're using**.
+In versions prior to `5.0.0`, Swashbuckle will generate Schema's (descriptions of the data types exposed by an API) based on the behavior of the *Newtonsoft* serializer. This made sense because that was the serializer that shipped with ASP.NET Core at the time. However, since version `3.0.0`, ASP.NET Core introduces a new serializer *System.Text.Json (STJ)* out-of-the-box, and if you want to continue using *Newtonsoft*, you need to install a separate package and explicitly opt-in. From Swashbuckle `5.0.0` and beyond a similar pattern is used. That is, out-of-the-box Swashbuckle will assume you're using the *STJ* serializer and generate Schema's based on its behavior. If you're using *Newtonsoft*, then you'll need to install a separate Swashbuckle package and explicitly opt-in. **This is a required step, regardless of which version of ASP.NET Core you're using**.
 
 In summary ...
 
@@ -170,9 +170,10 @@ These packages are provided by the open-source community.
 
 |Package|Description|
 |---------|-----------|
-|[Swashbuckle.AspNetCore.Filters](https://github.com/mattfrear/Swashbuckle.AspNetCore.Filters)| Some useful Swashbuckle filters which add additional documentation, e.g. request and response examples, a file upload button, etc. See its Readme for more details |
+|[Swashbuckle.AspNetCore.Filters](https://github.com/mattfrear/Swashbuckle.AspNetCore.Filters)| Some useful Swashbuckle filters which add additional documentation, e.g. request and response examples, authorization information, etc. See its Readme for more details |
 |[Unchase.Swashbuckle.AspNetCore.Extensions](https://github.com/unchase/Unchase.Swashbuckle.AspNetCore.Extensions)| Some useful extensions (filters), which add additional documentation, e.g. hide PathItems for unaccepted roles, fix enums for client code generation, etc. See its Readme for more details |
 |[MicroElements.Swashbuckle.FluentValidation](https://github.com/micro-elements/MicroElements.Swashbuckle.FluentValidation)| Use FluentValidation rules instead of ComponentModel attributes to augment generated Swagger Schemas |
+|[MMLib.SwaggerForOcelot](https://github.com/Burgyn/MMLib.SwaggerForOcelot)| Aggregate documentations over microservices directly on Ocelot API Gateway |
 
 # Configuration & Customization #
 
@@ -189,6 +190,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Assign Explicit OperationIds](#assign-explicit-operationids)
     * [List Operations Responses](#list-operation-responses)
     * [Flag Required Parameters and Schema Properties](#flag-required-parameters-and-schema-properties)
+    * [Handle Forms and File Uploads](#handle-forms-and-file-uploads)
     * [Include Descriptions from XML Comments](#include-descriptions-from-xml-comments)
     * [Provide Global API Metadata](#provide-global-api-metadata)
     * [Generate Multiple Swagger Documents](#generate-multiple-swagger-documents)
@@ -210,6 +212,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Inject Custom CSS](#inject-custom-css)
     * [Customize index.html](#customize-indexhtml)
     * [Enable OAuth2.0 Flows](#enable-oauth20-flows)
+    * [Use client-side request and response interceptors](#use-client-side-request-and-response-interceptors)
 
 * [Swashbuckle.AspNetCore.Annotations](#swashbuckleaspnetcoreannotations)
     * [Install and Enable Annotations](#install-and-enable-annotations)
@@ -253,6 +256,8 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/api-docs/v1/swagger.json", "My API V1");
 })
 ```
+
+_NOTE: If you also need to update the relative path that the UI itself is available on, you'll need to follow the instructions found in [Change Relative Path to the UI](#change-relative-path-to-the-ui)._
 
 ### Modify Swagger with Request Context ###
 
@@ -434,11 +439,22 @@ public class Product
 }
 ```
 
+### Handle Forms and File Uploads ###
+
+This controller will accept two form field values and one named file upload from the same form:
+
+```csharp
+[HttpPost]
+public void UploadFile([FromForm]string description, [FromForm]DateTime clientDate, [IFormFile] file)
+```
+
+> Important note: As per the [ASP.NET Core docs](https://docs.microsoft.com/en-us/aspnet/core/mvc/models/file-uploads?view=aspnetcore-3.1), you're not supposed to decorate `IFormFile` parameters with the `[FromForm]` attribute as the binding source is automatically inferred from the type. In fact, the inferred value is `BindingSource.FormFile` and if you apply the attribute it will be set to `BindingSource.Form` instead, which screws up `ApiExplorer`, the metadata component that ships with ASP.NET Core and is heavily relied on by Swashbuckle. One particular issue here is that SwaggerUI will not treat the parameter as a file and so will not display a file upload button, if you do mistakenly include this attribute.
+
 ### Include Descriptions from XML Comments ###
 
-To enhance the generated docs with human-friendly descriptions, you can annotate controller actions and models with [Xml Comments](http://msdn.microsoft.com/en-us/library/b2s063f7(v=vs.110).aspx) and configure Swashbuckle to incorporate those comments into the outputted Swagger JSON:
+To enhance the generated docs with human-friendly descriptions, you can annotate controller actions and models with [Xml Comments](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/xmldoc) and configure Swashbuckle to incorporate those comments into the outputted Swagger JSON:
 
-1. Open the Properties dialog for your project, click the "Build" tab and ensure that "XML documentation file" is checked. This will produce a file containing all XML comments at build-time.
+1. Open the Properties dialog for your project, click the "Build" tab and ensure that "XML documentation file" is checked, or add `<GenerateDocumentationFile>true</GenerateDocumentationFile>` element to the `<PropertyGroup>` section of your .csproj project file. This will produce a file containing all XML comments at build-time.
 
     _At this point, any classes or methods that are NOT annotated with XML comments will trigger a build warning. To suppress this, enter the warning code "1591" into the "Suppress warnings" field in the properties dialog._
 
@@ -818,6 +834,48 @@ services.AddSwaggerGen(c =>
 };
 ```
 
+The example below allows for automatic schema generation of generic `Dictionary<Enum, TValue>` objects.
+Note that this only generates the swagger; `System.Text.Json` is not able to parse dictionary enums by default,
+so you will need [a special JsonConverter, like in the .NET docs](https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-converters-how-to?pivots=dotnet-5-0#sample-factory-pattern-converter)
+
+```csharp
+// DictionaryTKeyEnumTValueSchemaFilter.cs
+public class DictionaryTKeyEnumTValueSchemaFilter : ISchemaFilter
+{
+  public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+  {
+    // Only run for fields that are a Dictionary<Enum, TValue>
+    if (!context.Type.IsGenericType || !context.Type.GetGenericTypeDefinition().IsAssignableFrom(typeof(Dictionary<,>)))
+    {
+return;
+    }
+
+    var keyType = context.Type.GetGenericArguments()[0];
+    var valueType = context.Type.GetGenericArguments()[1];
+
+    if (!keyType.IsEnum)
+    {
+return;
+    }
+
+    schema.Type = "object";
+    schema.Properties = keyType.GetEnumNames().ToDictionary(name => name,
+name => context.SchemaGenerator.GenerateSchema(valueType,
+  context.SchemaRepository));
+  }
+}
+
+// Startup.cs
+services.AddSwaggerGen(c =>
+{
+    ...
+    // These will be replaced by DictionaryTKeyEnumTValueSchemaFilter, but are needed to avoid an error.
+    // You will need one for every kind of Dictionary<,> you have.
+    c.MapType<Dictionary<MyEnum, List<string>>>(() => new OpenApiSchema());
+    c.SchemaFilter<DictionaryTKeyEnumTValueSchemaFilter>();
+};
+	
+```
 #### Document Filters ####
 
 Once an `OpenApiDocument` has been generated, it too can be passed through a set of pre-configured Document Filters. This gives full control to modify the document however you see fit. To ensure you're still returning valid Swagger JSON, you should have a read through the [specification](http://swagger.io/specification/) before using this filter type.
@@ -1090,7 +1148,7 @@ app.UseSwaggerUI(c =>
 
 ### Apply swagger-ui Parameters ###
 
-The swagger-ui ships with it's own set of configuration parameters, all described here https://github.com/swagger-api/swagger-ui/blob/v3.8.1/docs/usage/configuration.md#display. In Swashbuckle, most of these are surfaced through the SwaggerUI middleware options:
+The swagger-ui ships with its own set of configuration parameters, all described here https://github.com/swagger-api/swagger-ui/blob/v3.8.1/docs/usage/configuration.md#display. In Swashbuckle, most of these are surfaced through the SwaggerUI middleware options:
 
 ```csharp
 app.UseSwaggerUI(c =>
@@ -1108,6 +1166,8 @@ app.UseSwaggerUI(c =>
     c.ShowCommonExtensions();
     c.EnableValidator();
     c.SupportedSubmitMethods(SubmitMethod.Get, SubmitMethod.Head);
+    c.UseRequestInterceptor("(request) => { return request; }");
+    c.UseResponseInterceptor("(response) => { return response; }");
 });
 ```
 
@@ -1159,6 +1219,31 @@ app.UseSwaggerUI(c =>
     c.OAuthScopeSeparator(" ");
     c.OAuthAdditionalQueryStringParams(new Dictionary<string, string> { { "foo", "bar" }}); 
     c.OAuthUseBasicAuthenticationWithAccessCodeGrant();
+});
+```
+
+### Use client-side request and response interceptors ###
+
+To use custom interceptors on requests and responses going through swagger-ui you can define them as javascript functions in the configuration:
+
+```csharp
+app.UseSwaggerUI(c =>
+{
+    ...
+
+    c.UseRequestInterceptor("(req) => { req.headers['x-my-custom-header'] = 'MyCustomValue'; return req; }");
+    c.UseResponseInterceptor("(res) => { console.log('Custom interceptor intercepted response from:', res.url); return res; }");
+});
+```
+
+This can be useful in a range of scenarios where you might want to append local xsrf tokens to all requests for example:
+
+```csharp
+app.UseSwaggerUI(c =>
+{
+    ...
+
+    c.UseRequestInterceptor("(req) => { req.headers['X-XSRF-Token'] = localStorage.getItem('xsrf-token'); return req; }");
 });
 ```
 
@@ -1470,7 +1555,7 @@ app.UseReDoc(c =>
 
 ### Apply ReDoc Parameters ###
 
-ReDoc ships with it's own set of configuration parameters, all described here https://github.com/Rebilly/ReDoc/blob/master/README.md#redoc-options-object. In Swashbuckle, most of these are surfaced through the ReDoc middleware options:
+ReDoc ships with its own set of configuration parameters, all described here https://github.com/Rebilly/ReDoc/blob/master/README.md#redoc-options-object. In Swashbuckle, most of these are surfaced through the ReDoc middleware options:
 
 ```csharp
 app.UseReDoc(c =>

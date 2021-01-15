@@ -24,6 +24,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public static bool IsConstructedFrom(this Type type, Type genericType, out Type constructedType)
         {
             constructedType = new[] { type }
+                .Union(type.GetInheritanceChain())
                 .Union(type.GetInterfaces())
                 .FirstOrDefault(i => i.IsConstructedGenericType && i.GetGenericTypeDefinition() == genericType);
 
@@ -44,11 +45,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return (!type.IsValueType || type.IsNullable(out Type _));
         }
 
-        public static bool IsSet(this Type type)
-        {
-            return type.IsConstructedFrom(typeof(ISet<>), out Type _);
-        }
-
         public static object GetDefaultValue(this Type type)
         {
             return type.IsValueType
@@ -56,18 +52,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 : null;
         }
 
-        public static int GetDepthOfInheritance(this Type type)
+        public static Type[] GetInheritanceChain(this Type type)
         {
-            var depth = 0;
-            var current = type;
+            var inheritanceChain = new List<Type>();
 
+            var current = type;
             while (current.BaseType != null)
             {
-                depth++;
+                inheritanceChain.Add(current.BaseType);
                 current = current.BaseType;
             }
 
-            return depth;
+            return inheritanceChain.ToArray();
         }
     }
 }

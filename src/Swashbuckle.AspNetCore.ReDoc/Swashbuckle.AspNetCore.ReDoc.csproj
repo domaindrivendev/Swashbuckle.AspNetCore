@@ -1,7 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\version.props" />
-
   <PropertyGroup>
     <Description>Middleware to expose an embedded version of ReDoc from an ASP.NET Core application</Description>
     <TargetFrameworks>netstandard2.0;netcoreapp3.0</TargetFrameworks>
@@ -11,7 +9,6 @@
     <PackageId>Swashbuckle.AspNetCore.ReDoc</PackageId>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore;redoc</PackageTags>
     <PackageProjectUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</PackageProjectUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/domaindrivendev/Swashbuckle.AspNetCore/master/LICENSE</PackageLicenseUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore.git</RepositoryUrl>
     <SignAssembly Condition="'$(OS)'=='Windows_NT'">true</SignAssembly>
