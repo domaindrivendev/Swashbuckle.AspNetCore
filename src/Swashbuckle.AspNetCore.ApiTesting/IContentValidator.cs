@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Microsoft.OpenApi.Models;
+using System;
 using System.Net.Http;
-using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.ApiTesting
 {

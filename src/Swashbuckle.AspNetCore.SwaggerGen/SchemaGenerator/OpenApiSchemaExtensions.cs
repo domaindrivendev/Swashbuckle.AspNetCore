@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.OpenApi.Models;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.OpenApi.Models;
 using AnnotationsDataType = System.ComponentModel.DataAnnotations.DataType;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen

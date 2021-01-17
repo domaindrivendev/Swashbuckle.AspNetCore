@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.OpenApi.Models;
+using System;
+using System.Collections.Generic;
 
 namespace Swashbuckle.AspNetCore.Swagger
 {
@@ -18,7 +18,7 @@ namespace Swashbuckle.AspNetCore.Swagger
         /// </summary>
         public string RouteTemplate { get; set; } = "swagger/{documentName}/swagger.{json|yaml}";
 
-        
+
         /// <summary>
         /// Return Swagger JSON in the V2 format rather than V3
         /// </summary>

@@ -1,5 +1,5 @@
-﻿using System.Text;
-using Swashbuckle.AspNetCore.ReDoc;
+﻿using Swashbuckle.AspNetCore.ReDoc;
+using System.Text;
 
 namespace Microsoft.AspNetCore.Builder
 {

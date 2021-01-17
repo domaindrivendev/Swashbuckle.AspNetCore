@@ -8,7 +8,7 @@ namespace Swashbuckle.AspNetCore.Annotations
         public SwaggerSchemaFilterAttribute(Type type)
         {
             Type = type;
-            Arguments = new object[]{ };
+            Arguments = new object[] { };
         }
 
         public Type Type { get; private set; }

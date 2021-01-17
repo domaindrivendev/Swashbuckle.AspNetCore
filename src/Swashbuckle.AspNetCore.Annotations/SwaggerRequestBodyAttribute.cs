@@ -17,7 +17,7 @@ namespace Swashbuckle.AspNetCore.Annotations
         /// A brief description of the requestBody. This could contain examples of use.
         /// GFM syntax can be used for rich text representation
         /// </summary>
-        public string Description { get;  set; }
+        public string Description { get; set; }
 
         /// <summary>
         /// Determines whether the requestBody is mandatory. If the parameter is in "path",

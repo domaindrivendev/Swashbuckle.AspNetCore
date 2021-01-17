@@ -1,7 +1,7 @@
-using System.Linq;
-using System.Collections.Generic;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Swashbuckle.AspNetCore.ApiTesting
 {
@@ -26,7 +26,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting
 
             var anyOfArray = schema.AnyOf.ToArray();
 
-            for (int i=0;i<anyOfArray.Length;i++)
+            for (int i = 0; i < anyOfArray.Length; i++)
             {
                 if (_jsonValidator.Validate(anyOfArray[i], openApiDocument, instance, out IEnumerable<string> subErrorMessages))
                 {

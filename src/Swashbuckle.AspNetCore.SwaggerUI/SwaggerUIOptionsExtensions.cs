@@ -1,8 +1,8 @@
-﻿using System;
-using System.Text;
-using System.Linq;
+﻿using Swashbuckle.AspNetCore.SwaggerUI;
+using System;
 using System.Collections.Generic;
-using Swashbuckle.AspNetCore.SwaggerUI;
+using System.Linq;
+using System.Text;
 
 namespace Microsoft.AspNetCore.Builder
 {
@@ -43,7 +43,7 @@ namespace Microsoft.AspNetCore.Builder
         public static void SwaggerEndpoint(this SwaggerUIOptions options, string url, string name)
         {
             var urls = new List<UrlDescriptor>(options.ConfigObject.Urls ?? Enumerable.Empty<UrlDescriptor>());
-            urls.Add(new UrlDescriptor { Url = url, Name = name} );
+            urls.Add(new UrlDescriptor { Url = url, Name = name });
             options.ConfigObject.Urls = urls;
         }
 

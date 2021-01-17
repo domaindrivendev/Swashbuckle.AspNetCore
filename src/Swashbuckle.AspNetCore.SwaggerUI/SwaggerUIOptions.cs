@@ -1,8 +1,8 @@
 ﻿using System;
-using System.IO;
-using System.Reflection;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text.Json.Serialization;
 
 namespace Swashbuckle.AspNetCore.SwaggerUI
@@ -33,7 +33,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// <summary>
         /// Gets the JavaScript config object, represented as JSON, that will be passed to the SwaggerUI
         /// </summary>
-        public ConfigObject ConfigObject  { get; set; } = new ConfigObject();
+        public ConfigObject ConfigObject { get; set; } = new ConfigObject();
 
         /// <summary>
         /// Gets the JavaScript config object, represented as JSON, that will be passed to the initOAuth method

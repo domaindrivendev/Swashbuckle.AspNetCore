@@ -1,6 +1,6 @@
-﻿using System.Reflection;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
+﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {

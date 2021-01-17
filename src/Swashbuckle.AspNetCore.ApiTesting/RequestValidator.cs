@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Routing.Template;
+using Microsoft.OpenApi.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Net.Http;
 using System.Web;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.AspNetCore.Routing.Template;
-using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.ApiTesting
 {

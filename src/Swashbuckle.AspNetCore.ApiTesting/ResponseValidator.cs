@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Microsoft.OpenApi.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Net.Http;
-using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.ApiTesting
 {

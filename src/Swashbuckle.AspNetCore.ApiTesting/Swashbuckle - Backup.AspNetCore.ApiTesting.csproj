@@ -14,13 +14,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.1.0" />
-    <PackageReference Include="coverlet.collector" Version="3.0.1">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.AspNetCore.Routing" Version="2.2.2" />
-    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Microsoft.OpenApi" Version="1.2.3" />
     <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.2.3" />
@@ -32,10 +25,6 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.0' ">
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="3.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="System.Web" />
   </ItemGroup>
 
 </Project>

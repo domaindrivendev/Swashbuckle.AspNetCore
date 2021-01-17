@@ -21,7 +21,7 @@ namespace Swashbuckle.AspNetCore.Annotations
         /// <summary>
         /// A short description for the tag. GFM syntax can be used for rich text representation.
         /// </summary>
-        public string Description { get;  }
+        public string Description { get; }
 
         /// <summary>
         /// A URL for additional external documentation. Value MUST be in the format of a URL.

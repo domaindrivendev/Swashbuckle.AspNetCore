@@ -1,7 +1,7 @@
-﻿using System;
-using System.Xml.XPath;
+﻿using Microsoft.OpenApi.Models;
+using System;
 using System.Reflection;
-using Microsoft.OpenApi.Models;
+using System.Xml.XPath;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {

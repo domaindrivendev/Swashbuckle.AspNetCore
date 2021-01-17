@@ -1,10 +1,10 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.Newtonsoft;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System;
 
 namespace Microsoft.Extensions.DependencyInjection
 {

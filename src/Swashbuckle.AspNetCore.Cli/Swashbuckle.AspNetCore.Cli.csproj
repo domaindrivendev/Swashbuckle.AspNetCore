@@ -2,13 +2,23 @@
 
   <PropertyGroup>
     <Description>Swashbuckle (Swagger) Command Line Tools</Description>
-    <TargetFrameworks>netcoreapp2.1;netcoreapp3.0;net5.0</TargetFrameworks>
+    <TargetFrameworks>net461</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <AssemblyName>dotnet-swagger</AssemblyName>
     <PackageId>Swashbuckle.AspNetCore.Cli</PackageId>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>swagger</ToolCommandName>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.1.0" />
+    <PackageReference Include="coverlet.collector" Version="3.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore" Version="2.2.0" />
+    <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Swashbuckle.AspNetCore.Swagger\Swashbuckle.AspNetCore.Swagger.csproj" />

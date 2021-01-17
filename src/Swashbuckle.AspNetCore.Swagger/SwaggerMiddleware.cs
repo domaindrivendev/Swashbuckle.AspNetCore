@@ -1,15 +1,12 @@
-﻿using System;
-using System.Globalization;
-using System.IO;
-using System.Resources;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Template;
-using Microsoft.Extensions.Primitives;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Writers;
+using System.Globalization;
+using System.IO;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Swashbuckle.AspNetCore.Swagger
 {
