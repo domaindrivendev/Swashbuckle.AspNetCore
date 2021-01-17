@@ -1,6 +1,6 @@
-using System.Collections.Generic;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 
 namespace Swashbuckle.AspNetCore.ApiTesting
 {

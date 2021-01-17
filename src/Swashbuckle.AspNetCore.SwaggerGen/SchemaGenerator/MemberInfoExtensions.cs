@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Microsoft.AspNetCore.Mvc;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {

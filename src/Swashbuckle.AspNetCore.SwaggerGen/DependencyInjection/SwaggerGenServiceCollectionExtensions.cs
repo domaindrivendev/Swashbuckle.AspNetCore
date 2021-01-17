@@ -1,11 +1,11 @@
-﻿using System;
-using System.Text.Json;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.ApiDescriptions;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System;
+using System.Text.Json;
 
 namespace Microsoft.Extensions.DependencyInjection
 {

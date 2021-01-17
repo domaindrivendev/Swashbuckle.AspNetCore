@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>Swagger Generator opt-in component to support Newtonsoft.Json serializer behaviors</Description>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>net461</TargetFrameworks>
     <PackageId>Swashbuckle.AspNetCore.Newtonsoft</PackageId>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore;newtonsoft</PackageTags>
     <PackageProjectUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</PackageProjectUrl>
@@ -11,6 +11,15 @@
     <SignAssembly Condition="'$(OS)'=='Windows_NT'">true</SignAssembly>
     <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.Newtonsoft.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.1.0" />
+    <PackageReference Include="coverlet.collector" Version="3.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="2.2.0" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Swashbuckle.AspNetCore.SwaggerGen\Swashbuckle.AspNetCore.SwaggerGen.csproj" />

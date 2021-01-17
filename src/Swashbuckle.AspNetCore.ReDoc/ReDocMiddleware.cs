@@ -1,12 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -14,6 +6,14 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 #if NETCOREAPP3_0
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IWebHostEnvironment;
 #endif
@@ -50,7 +50,7 @@ namespace Swashbuckle.AspNetCore.ReDoc
             var path = httpContext.Request.Path.Value;
 
             // If the RoutePrefix is requested (with or without trailing slash), redirect to index URL
-            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$",  RegexOptions.IgnoreCase))
+            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$", RegexOptions.IgnoreCase))
             {
                 var indexUrl = httpContext.Request.GetEncodedUrl().TrimEnd('/') + "/index.html";
 
@@ -58,7 +58,7 @@ namespace Swashbuckle.AspNetCore.ReDoc
                 return;
             }
 
-            if (httpMethod == "GET" && Regex.IsMatch(path, $"/{_options.RoutePrefix}/?index.html",  RegexOptions.IgnoreCase))
+            if (httpMethod == "GET" && Regex.IsMatch(path, $"/{_options.RoutePrefix}/?index.html", RegexOptions.IgnoreCase))
             {
                 await RespondWithIndexHtml(httpContext.Response);
                 return;

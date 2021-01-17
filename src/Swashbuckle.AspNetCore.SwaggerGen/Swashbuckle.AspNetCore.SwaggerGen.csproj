@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>Swagger Generator for APIs built on ASP.NET Core</Description>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>net461</TargetFrameworks>
     <NoWarn>$(NoWarn);1591</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>Swashbuckle.AspNetCore.SwaggerGen</AssemblyName>
@@ -16,6 +16,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.1.0" />
+    <PackageReference Include="coverlet.collector" Version="3.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.ApiExplorer" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+    <PackageReference Include="System.Text.Json" Version="5.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Swashbuckle.AspNetCore.Swagger\Swashbuckle.AspNetCore.Swagger.csproj" />
   </ItemGroup>
 
@@ -27,6 +39,129 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.0' ">
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Accessibility" />
+    <Reference Include="CustomMarshalers" />
+    <Reference Include="ISymWrapper" />
+    <Reference Include="Microsoft.Activities.Build" />
+    <Reference Include="Microsoft.Build" />
+    <Reference Include="Microsoft.Build.Conversion.v4.0" />
+    <Reference Include="Microsoft.Build.Engine" />
+    <Reference Include="Microsoft.Build.Framework" />
+    <Reference Include="Microsoft.Build.Tasks.v4.0" />
+    <Reference Include="Microsoft.Build.Utilities.v4.0" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.JScript" />
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="Microsoft.VisualBasic.Compatibility" />
+    <Reference Include="Microsoft.VisualBasic.Compatibility.Data" />
+    <Reference Include="Microsoft.VisualC" />
+    <Reference Include="Microsoft.VisualC.STLCLR" />
+    <Reference Include="PresentationBuildTasks" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="PresentationFramework.Aero" />
+    <Reference Include="PresentationFramework.Aero2" />
+    <Reference Include="PresentationFramework.AeroLite" />
+    <Reference Include="PresentationFramework.Classic" />
+    <Reference Include="PresentationFramework.Luna" />
+    <Reference Include="PresentationFramework.Royale" />
+    <Reference Include="ReachFramework" />
+    <Reference Include="sysglobl" />
+    <Reference Include="System.Activities" />
+    <Reference Include="System.Activities.Core.Presentation" />
+    <Reference Include="System.Activities.DurableInstancing" />
+    <Reference Include="System.Activities.Presentation" />
+    <Reference Include="System.AddIn" />
+    <Reference Include="System.AddIn.Contract" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ComponentModel.Composition.Registration" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Data.Entity.Design" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Data.OracleClient" />
+    <Reference Include="System.Data.Services" />
+    <Reference Include="System.Data.Services.Client" />
+    <Reference Include="System.Data.Services.Design" />
+    <Reference Include="System.Data.SqlXml" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Device" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.DirectoryServices.AccountManagement" />
+    <Reference Include="System.DirectoryServices.Protocols" />
+    <Reference Include="System.Drawing.Design" />
+    <Reference Include="System.Dynamic" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.IdentityModel.Selectors" />
+    <Reference Include="System.IdentityModel.Services" />
+    <Reference Include="System.IO.Compression, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+    <Reference Include="System.IO.Log" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Management.Instrumentation" />
+    <Reference Include="System.Messaging" />
+    <Reference Include="System.Net" />
+    <Reference Include="System.Net.Http, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+    <Reference Include="System.Net.Http.WebRequest" />
+    <Reference Include="System.Numerics.Vectors" />
+    <Reference Include="System.Printing" />
+    <Reference Include="System.Reflection.Context" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Runtime.DurableInstancing" />
+    <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Runtime.Serialization.Formatters.Soap" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Activation" />
+    <Reference Include="System.ServiceModel.Activities" />
+    <Reference Include="System.ServiceModel.Channels" />
+    <Reference Include="System.ServiceModel.Discovery" />
+    <Reference Include="System.ServiceModel.Routing" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Speech" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.Web.DataVisualization" />
+    <Reference Include="System.Web.DataVisualization.Design" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.DynamicData.Design" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.Entity.Design" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Extensions.Design" />
+    <Reference Include="System.Web.Mobile" />
+    <Reference Include="System.Web.RegularExpressions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Windows.Controls.Ribbon" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+    <Reference Include="System.Windows.Forms.DataVisualization.Design" />
+    <Reference Include="System.Windows.Input.Manipulations" />
+    <Reference Include="System.Windows.Presentation" />
+    <Reference Include="System.Workflow.Activities" />
+    <Reference Include="System.Workflow.ComponentModel" />
+    <Reference Include="System.Workflow.Runtime" />
+    <Reference Include="System.WorkflowServices" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Serialization" />
+    <Reference Include="UIAutomationClient" />
+    <Reference Include="UIAutomationClientsideProviders" />
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="UIAutomationTypes" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="WindowsFormsIntegration" />
+    <Reference Include="XamlBuildTask" />
   </ItemGroup>
 
 </Project>

@@ -1,9 +1,9 @@
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System;
 using System.Collections.Generic;
 using System.Xml.XPath;
-using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Microsoft.Extensions.DependencyInjection
 {

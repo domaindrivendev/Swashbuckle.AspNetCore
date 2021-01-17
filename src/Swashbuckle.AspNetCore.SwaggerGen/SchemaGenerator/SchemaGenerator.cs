@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -6,9 +9,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -410,13 +410,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 {
                     var defaultAsJson = _serializerBehavior.Serialize(defaultValueAttribute.Value);
                     schema.Default = OpenApiAnyFactory.CreateFromJson(defaultAsJson); // TODO: address assumption that serializer returns JSON
-                } 
+                }
 
                 var obsoleteAttribute = customAttributes.OfType<ObsoleteAttribute>().FirstOrDefault();
                 if (obsoleteAttribute != null)
                 {
                     schema.Deprecated = true;
-                } 
+                }
 
                 schema.ApplyValidationAttributes(customAttributes);
             }

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.0</TargetFrameworks>
+    <TargetFrameworks>net461</TargetFrameworks>
     <AssemblyName>Swashbuckle.AspNetCore.Annotations</AssemblyName>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
@@ -14,6 +14,14 @@
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore.git</RepositoryUrl>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.1.0" />
+    <PackageReference Include="coverlet.collector" Version="3.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Swashbuckle.AspNetCore.SwaggerGen\Swashbuckle.AspNetCore.SwaggerGen.csproj" />

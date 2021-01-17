@@ -1,8 +1,17 @@
-using System;
-using System.Linq;
-using System.Collections.Generic;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+
+/* Unmerged change from project 'Swashbuckle.AspNetCore.ApiTesting (netcoreapp3.0)'
+Before:
+using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Linq;
+After:
+using System.Collections.Generic;
+using System.Linq;
+*/
+using System.Linq;
 
 namespace Swashbuckle.AspNetCore.ApiTesting
 {

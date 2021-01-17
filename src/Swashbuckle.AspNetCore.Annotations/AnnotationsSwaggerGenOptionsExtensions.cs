@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Swashbuckle.AspNetCore.Annotations;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Swashbuckle.AspNetCore.SwaggerGen;
-using Swashbuckle.AspNetCore.Annotations;
 
 namespace Microsoft.Extensions.DependencyInjection
 {

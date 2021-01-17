@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Swagger;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {

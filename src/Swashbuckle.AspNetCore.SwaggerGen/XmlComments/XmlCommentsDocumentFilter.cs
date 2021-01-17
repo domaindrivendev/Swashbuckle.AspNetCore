@@ -1,9 +1,9 @@
-﻿using System.Xml.XPath;
-using System.Linq;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc.Controllers;
+﻿using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Models;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml.XPath;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
