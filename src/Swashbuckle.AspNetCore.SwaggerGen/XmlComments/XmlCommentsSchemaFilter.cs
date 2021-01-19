@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Xml.XPath;
-using System.Reflection;
 using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -24,7 +23,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (context.MemberInfo != null && context.ParameterInfo == null)
             {
-                ApplyFieldOrPropertyTags(schema, context.MemberInfo);
+                ApplyMemberTags(schema, context);
             }
         }
 
@@ -39,9 +38,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
         }
 
-        private void ApplyFieldOrPropertyTags(OpenApiSchema schema, MemberInfo fieldOrPropertyInfo)
+        private void ApplyMemberTags(OpenApiSchema schema, SchemaFilterContext context)
         {
-            var fieldOrPropertyMemberName = XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(fieldOrPropertyInfo);
+            var fieldOrPropertyMemberName = XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(context.MemberInfo);
             var fieldOrPropertyNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{fieldOrPropertyMemberName}']");
 
             if (fieldOrPropertyNode == null) return;
@@ -52,7 +51,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var exampleNode = fieldOrPropertyNode.SelectSingleNode("example");
             if (exampleNode != null)
-                schema.Example = OpenApiAnyFactory.CreateFromJson(exampleNode.InnerXml);
+            {
+                var exampleAsJson = (schema.ResolveType(context.SchemaRepository) == "string")
+                    ? $"\"{exampleNode.InnerXml}\""
+                    : exampleNode.InnerXml;
+
+                schema.Example = OpenApiAnyFactory.CreateFromJson(exampleAsJson);
+            }
         }
     }
 }
