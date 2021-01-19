@@ -54,14 +54,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         /// <summary>
         /// Summary for GuidProperty
         /// </summary>
-        /// <example>"d3966535-2637-48fa-b911-e3c27405ee09"</example>
+        /// <example>d3966535-2637-48fa-b911-e3c27405ee09</example>
         public Guid GuidProperty { get; set; }
 
         /// <summary>
         /// Summary for StringProperty
         /// </summary>
-        /// <example>"Example for StringProperty"</example>
+        /// <example>Example for StringProperty</example>
         public string StringProperty { get; set; }
+
+        /// <summary>
+        /// Summary for ObjectProperty
+        /// </summary>
+        /// <example>{"prop1": 1, "prop2": "foobar"}</example>
+        public object ObjectProperty { get; set; }
 
         /// <summary>
         /// Summary for AcceptsNothing

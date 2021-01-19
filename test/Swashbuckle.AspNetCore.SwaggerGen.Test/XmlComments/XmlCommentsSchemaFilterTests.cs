@@ -29,8 +29,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void Apply_SetsDescription_FromFieldSummaryTag()
         {
-            var schema = new OpenApiSchema { };
             var fieldInfo = typeof(XmlAnnotatedType).GetField(nameof(XmlAnnotatedType.BoolField));
+            var schema = new OpenApiSchema { };
             var filterContext = new SchemaFilterContext(fieldInfo.FieldType, null, null, memberInfo: fieldInfo);
 
             Subject().Apply(schema, filterContext);
@@ -47,8 +47,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             string propertyName,
             string expectedDescription)
         {
-            var schema = new OpenApiSchema();
             var propertyInfo = declaringType.GetProperty(propertyName);
+            var schema = new OpenApiSchema();
             var filterContext = new SchemaFilterContext(propertyInfo.PropertyType, null, null, memberInfo: propertyInfo);
 
             Subject().Apply(schema, filterContext);
@@ -57,22 +57,24 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.BoolProperty), "true")]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.IntProperty), "10")]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.LongProperty), "4294967295")]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.FloatProperty), "1.2")]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.DoubleProperty), "1.25")]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.EnumProperty), "2")]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.GuidProperty), "\"d3966535-2637-48fa-b911-e3c27405ee09\"")]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringProperty), "\"Example for StringProperty\"")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.BoolProperty), "boolean", "true")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.IntProperty), "integer", "10")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.LongProperty), "integer", "4294967295")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.FloatProperty), "number", "1.2")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.DoubleProperty), "number", "1.25")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.EnumProperty), "integer", "2")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.GuidProperty), "string", "\"d3966535-2637-48fa-b911-e3c27405ee09\"")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringProperty), "string", "\"Example for StringProperty\"")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.ObjectProperty), "object", "{\n  \"prop1\": 1,\n  \"prop2\": \"foobar\"\n}")]
         [UseInvariantCulture]
         public void Apply_SetsExample_FromPropertyExampleTag(
             Type declaringType,
             string propertyName,
+            string schemaType,
             string expectedExampleAsJson)
         {
-            var schema = new OpenApiSchema();
             var propertyInfo = declaringType.GetProperty(propertyName);
+            var schema = new OpenApiSchema { Type = schemaType };
             var filterContext = new SchemaFilterContext(propertyInfo.PropertyType, null, null, memberInfo: propertyInfo);
 
             Subject().Apply(schema, filterContext);
@@ -88,8 +90,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             string cultureName,
             float expectedValue)
         {
-            var schema = new OpenApiSchema { Type = "number", Format = "float" };
             var propertyInfo = typeof(XmlAnnotatedType).GetProperty(nameof(XmlAnnotatedType.FloatProperty));
+            var schema = new OpenApiSchema { Type = "number", Format = "float" };
             var filterContext = new SchemaFilterContext(propertyInfo.PropertyType, null, null, memberInfo: propertyInfo);
 
             var defaultCulture = CultureInfo.CurrentCulture;

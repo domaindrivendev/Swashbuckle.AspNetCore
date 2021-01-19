@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Microsoft.OpenApi.Any;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -39,28 +36,46 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     return new OpenApiNull();
 
                 if (jsonElement.ValueKind == JsonValueKind.Array)
-                    return CreateOpenApiArray(jsonElement.EnumerateArray());
+                    return CreateOpenApiArray(jsonElement);
 
+                if (jsonElement.ValueKind == JsonValueKind.Object)
+                    return CreateOpenApiObject(jsonElement);
             }
             catch { }
 
             return null;
         }
 
-        private static IOpenApiAny CreateOpenApiArray(IEnumerable<JsonElement> jsonElements)
+        private static IOpenApiAny CreateOpenApiArray(JsonElement jsonElement)
         {
             var openApiArray = new OpenApiArray();
 
-            foreach (var jsonElement in jsonElements)
+            foreach (var item in jsonElement.EnumerateArray())
             {
-                var json = jsonElement.ValueKind == JsonValueKind.String
-                    ? $"\"{jsonElement}\""
-                    : jsonElement.ToString();
+                var json = item.ValueKind == JsonValueKind.String
+                    ? $"\"{item}\""
+                    : item.ToString();
 
                 openApiArray.Add(CreateFromJson(json));
             }
 
             return openApiArray;
+        }
+
+        private static IOpenApiAny CreateOpenApiObject(JsonElement jsonElement)
+        {
+            var openApiObject = new OpenApiObject();
+
+            foreach (var property in jsonElement.EnumerateObject())
+            {
+                var valueAsJson = (property.Value.ValueKind == JsonValueKind.String)
+                    ? $"\"{property.Value}\""
+                    : property.Value.ToString();
+
+                openApiObject.Add(property.Name, CreateFromJson(valueAsJson));
+            }
+
+            return openApiObject;
         }
     }
 }

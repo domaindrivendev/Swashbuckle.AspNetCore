@@ -18,8 +18,8 @@
             </remarks>
         </member>
         <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.GenericControllerWithXmlComments`1.ActionWithParamTags(`0,`0)">
-            <param name="param1" example="&quot;Example for param1&quot;">Description for param1</param>
-            <param name="param2" example="&quot;Example for param2&quot;">Description for param2</param>
+            <param name="param1" example="Example for param1">Description for param1</param>
+            <param name="param2" example="Example for param2">Description for param2</param>
         </member>
         <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllerWithXmlComments">
             <summary>
@@ -36,23 +36,12 @@
             </remarks>
         </member>
         <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllerWithXmlComments.ActionWithParamTags(System.String,System.String)">
-            <param name="param1" example="&quot;Example for param1&quot;">Description for param1</param>
-            <param name="param2" example="&quot;Example for param2&quot;">Description for param2</param>
+            <param name="param1" example="Example for param1">Description for param1</param>
+            <param name="param2" example="Example for param2">Description for param2</param>
         </member>
         <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllerWithXmlComments.ActionWithResponseTags">
             <response code="200">Description for 200 response</response>
             <response code="400">Description for 400 response</response>
-        </member>
-        <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllerWithXmlComments.ActionWithExampleParams(System.Boolean,System.Int32,System.Int64,System.Single,System.Double,Swashbuckle.AspNetCore.TestSupport.IntEnum,System.Guid,System.String,System.Int32)">
-            <param name="boolParam" example="true"></param>
-            <param name="intParam" example="27"></param>
-            <param name="longParam" example="4294967296"></param>
-            <param name="floatParam" example="1.23"></param>
-            <param name="doubleParam" example="1.25"></param>
-            <param name="enumParam" example="2"></param>
-            <param name="guidParam" example="1edab3d2-311a-4782-9ec9-a70d0478b82f"></param>
-            <param name="stringParam" example="Example for StringProperty"></param>
-            <param name="badExampleIntParam" example="goodbye"></param>
         </member>
         <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedGenericType`2">
             <summary>
@@ -136,13 +125,19 @@
             <summary>
             Summary for GuidProperty
             </summary>
-            <example>"d3966535-2637-48fa-b911-e3c27405ee09"</example>
+            <example>d3966535-2637-48fa-b911-e3c27405ee09</example>
         </member>
         <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.StringProperty">
             <summary>
             Summary for StringProperty
             </summary>
-            <example>"Example for StringProperty"</example>
+            <example>Example for StringProperty</example>
+        </member>
+        <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.ObjectProperty">
+            <summary>
+            Summary for ObjectProperty
+            </summary>
+            <example>{"prop1": 1, "prop2": "foobar"}</example>
         </member>
         <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.AcceptsNothing">
             <summary>
