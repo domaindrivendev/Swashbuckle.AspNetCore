@@ -1,6 +1,7 @@
-﻿using Microsoft.OpenApi.Any;
+﻿using System.Text.Json;
+using Microsoft.OpenApi.Any;
 using System.Collections.Generic;
-using System.Text.Json;
+
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
