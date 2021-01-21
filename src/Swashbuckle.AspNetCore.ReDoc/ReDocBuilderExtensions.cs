@@ -16,7 +16,7 @@ namespace Microsoft.AspNetCore.Builder
         }
 
         /// <summary>
-        /// Register the ReDoc middleware with or without additional config action
+        /// Register the ReDoc middleware with optional setup action for DI-injected options
         /// </summary>
         public static IApplicationBuilder UseReDoc(
             this IApplicationBuilder app,

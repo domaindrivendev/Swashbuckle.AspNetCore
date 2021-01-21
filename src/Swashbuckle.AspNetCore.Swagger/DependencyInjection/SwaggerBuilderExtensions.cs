@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Globalization;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Writers;
 using Swashbuckle.AspNetCore.Swagger;
 
 #if NETCOREAPP3_0
-
+using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
@@ -20,6 +14,17 @@ namespace Microsoft.AspNetCore.Builder
 {
     public static class SwaggerBuilderExtensions
     {
+        /// <summary>
+        /// Register the Swagger middleware with provided options
+        /// </summary>
+        public static IApplicationBuilder UseSwagger(this IApplicationBuilder app, SwaggerOptions options)
+        {
+            return app.UseMiddleware<SwaggerMiddleware>(options);
+        }
+
+        /// <summary>
+        /// Register the Swagger middleware with optional setup action for DI-injected options
+        /// </summary>
         public static IApplicationBuilder UseSwagger(
             this IApplicationBuilder app,
             Action<SwaggerOptions> setupAction = null)
@@ -27,10 +32,9 @@ namespace Microsoft.AspNetCore.Builder
             SwaggerOptions options = app.ApplicationServices.GetRequiredService<IOptions<SwaggerOptions>>().Value;
             setupAction?.Invoke(options);
 
-            app.UseMiddleware<SwaggerMiddleware>(options);
-
-            return app;
+            return app.UseSwagger(options);
         }
+
 #if NETCOREAPP3_0
         public static IEndpointRouteBuilder MapSwagger(
             this IEndpointRouteBuilder endpoints,

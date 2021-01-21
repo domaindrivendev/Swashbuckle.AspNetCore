@@ -16,7 +16,7 @@ namespace Microsoft.AspNetCore.Builder
         }
 
         /// <summary>
-        /// Register the SwaggerUI middleware with or without additional config action
+        /// Register the SwaggerUI middleware with optional setup action for DI-injected options
         /// </summary>
         public static IApplicationBuilder UseSwaggerUI(
             this IApplicationBuilder app,
