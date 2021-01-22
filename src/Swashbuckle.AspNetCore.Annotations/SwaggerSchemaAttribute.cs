@@ -2,7 +2,13 @@
 
 namespace Swashbuckle.AspNetCore.Annotations
 {
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Parameter | AttributeTargets.Property, AllowMultiple = false)]
+    [AttributeUsage(
+        AttributeTargets.Class |
+        AttributeTargets.Struct |
+        AttributeTargets.Parameter |
+        AttributeTargets.Property |
+        AttributeTargets.Enum,
+        AllowMultiple = false)]
     public class SwaggerSchemaAttribute : Attribute
     {
         public SwaggerSchemaAttribute(string description = null)
