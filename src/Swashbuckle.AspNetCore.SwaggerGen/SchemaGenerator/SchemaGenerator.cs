@@ -405,18 +405,23 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 schema.Nullable = type.IsReferenceOrNullableType();
 
+                if (!_generatorOptions.SuppressNonNullableReferenceTypes && memberInfo.IsNonNullable())
+                {
+                    schema.Nullable = false;
+                }
+
                 var defaultValueAttribute = customAttributes.OfType<DefaultValueAttribute>().FirstOrDefault();
                 if (defaultValueAttribute != null)
                 {
                     var defaultAsJson = _serializerBehavior.Serialize(defaultValueAttribute.Value);
                     schema.Default = OpenApiAnyFactory.CreateFromJson(defaultAsJson); // TODO: address assumption that serializer returns JSON
-                } 
+                }
 
                 var obsoleteAttribute = customAttributes.OfType<ObsoleteAttribute>().FirstOrDefault();
                 if (obsoleteAttribute != null)
                 {
                     schema.Deprecated = true;
-                } 
+                }
 
                 schema.ApplyValidationAttributes(customAttributes);
             }

@@ -593,7 +593,33 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("integer", schema.Type);
             Assert.NotNull(schema.Enum);
         }
+        [Theory]
+        [InlineData(typeof(FixedNonNullableReferenceType),
+            new[] { nameof(FixedNonNullableReferenceType.NullableStringValue) },
+            new[] { nameof(FixedNonNullableReferenceType.NonNullableStringValue) })]
+        [InlineData(typeof(AllNonNullableReferenceType),
+            new string[0],
+            new[] { nameof(AllNonNullableReferenceType.Property1) })]
+        [InlineData(typeof(AllNullableReferenceType),
+            new[] { nameof(AllNullableReferenceType.Property1) },
+            new string[0])]
+        public void GenerateSchema_SupportsOption_SuppressNonNullableReferenceTypes(Type type,
+            string[] nullables,
+            string[] requires)
+        {
+            var subject = Subject(
+                configureGenerator: c => c.SuppressNonNullableReferenceTypes = false
+                );
+            var schemaRepository = new SchemaRepository();
 
+            var referenceSchema = subject.GenerateSchema(type, schemaRepository);
+
+            Assert.NotNull(referenceSchema.Reference);
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal("object", schema.Type);
+            Assert.All(requires, property => Assert.False(schema.Properties[property].Nullable));
+            Assert.All(nullables, property => Assert.True(schema.Properties[property].Nullable));
+        }
         [Fact]
         public void GenerateSchema_HandlesTypesWithNestedTypes()
         {
