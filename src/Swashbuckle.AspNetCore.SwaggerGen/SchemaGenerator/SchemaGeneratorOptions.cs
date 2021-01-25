@@ -14,6 +14,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             SubTypesResolver = DefaultSubTypesResolver;
             DiscriminatorSelector = DefaultDiscriminatorSelector;
             SchemaFilters = new List<ISchemaFilter>();
+            SuppressNonNullableReferenceTypes = true;
         }
 
         public IDictionary<Type, Func<OpenApiSchema>> CustomTypeMappings { get; set; }
@@ -31,6 +32,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public bool UseAllOfToExtendReferenceSchemas { get; set; }
 
         public bool UseInlineDefinitionsForEnums { get; set; }
+
+        public bool SuppressNonNullableReferenceTypes { get; set; }
 
         public IList<ISchemaFilter> SchemaFilters { get; set; }
 

@@ -260,6 +260,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (schema.Reference == null)
             {
                 schema.Nullable = type.IsReferenceOrNullableType();
+                if(!_generatorOptions.SuppressNonNullableReferenceTypes && memberInfo.IsNonNullable())
+                {
+                    schema.Nullable = false;
+                }
 
                 schema.ApplyCustomAttributes(memberInfo.GetInlineOrMetadataTypeAttributes());
             }
