@@ -6,6 +6,7 @@
     <authors>$authors$</authors>
     <owners>$authors$</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">$licenseExpression$</license>
     <licenseUrl>$licenseUrl$</licenseUrl>
     <projectUrl>$projectUrl$</projectUrl>
     <description>$description$</description>

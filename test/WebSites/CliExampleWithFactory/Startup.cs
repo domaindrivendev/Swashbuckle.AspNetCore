@@ -22,10 +22,7 @@ namespace CliExampleWithFactory
         {
             services.AddControllers();
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Test API", Version = "v1" });
-            });
+            services.AddSwaggerGen();
         }
 
         public void ConfigureContainer(ContainerBuilder builder)
@@ -42,17 +39,14 @@ namespace CliExampleWithFactory
             }
 
             app.UseStaticFiles();
-            app.UseSwaggerUI(c =>
-            {
-                c.RoutePrefix = "api-docs";
-                c.SwaggerEndpoint("v1/swagger.json", "V1 Docs");
-            });
 
             app.UseRouting();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+
+            app.UseSwaggerUI();
         }
     }
 }

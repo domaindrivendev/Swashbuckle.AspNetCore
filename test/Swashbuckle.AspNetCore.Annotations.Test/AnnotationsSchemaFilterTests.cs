@@ -19,6 +19,26 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
 
             Assert.Equal($"Description for {type.Name}", schema.Description);
             Assert.Equal(new[] { "StringWithSwaggerSchemaAttribute" }, schema.Required);
+            Assert.Equal($"Title for {type.Name}", schema.Title);
+        }
+
+        [Fact]
+        public void Apply_EnrichesSchemaMetadata_IfParameterDecoratedWithSwaggerSchemaAttribute()
+        {
+            var schema = new OpenApiSchema();
+            var parameterInfo = typeof(FakeControllerWithSwaggerAnnotations)
+                .GetMethod(nameof(FakeControllerWithSwaggerAnnotations.ActionWithSwaggerSchemaAttribute))
+                .GetParameters()[0];
+            var context = new SchemaFilterContext(
+                type: parameterInfo.ParameterType,
+                schemaGenerator: null,
+                schemaRepository: null,
+                parameterInfo: parameterInfo);
+
+            Subject().Apply(schema, context);
+
+            Assert.Equal($"Description for param", schema.Description);
+            Assert.Equal("date", schema.Format);
         }
 
         [Theory]

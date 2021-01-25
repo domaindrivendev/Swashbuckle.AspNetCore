@@ -17,26 +17,39 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             if (context.PropertyInfo != null)
             {
-                ApplyPropertyTags(parameter, context.PropertyInfo);
+                ApplyPropertyTags(parameter, context);
             }
             else if (context.ParameterInfo != null)
             {
-                ApplyParamTags(parameter, context.ParameterInfo);
+                ApplyParamTags(parameter, context);
             }
         }
 
-        private void ApplyPropertyTags(OpenApiParameter parameter, PropertyInfo propertyInfo)
+        private void ApplyPropertyTags(OpenApiParameter parameter, ParameterFilterContext context)
         {
-            var propertyMemberName = XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(propertyInfo);
-            var propertySummaryNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{propertyMemberName}']/summary");
+            var propertyMemberName = XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(context.PropertyInfo);
+            var propertyNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{propertyMemberName}']");
 
-            if (propertySummaryNode != null)
-                parameter.Description = XmlCommentsTextHelper.Humanize(propertySummaryNode.InnerXml);
+            if (propertyNode == null) return;
+
+            var summaryNode = propertyNode.SelectSingleNode("summary");
+            if (summaryNode != null)
+                parameter.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
+
+            var exampleNode = propertyNode.SelectSingleNode("example");
+            if (exampleNode != null)
+            {
+                var exampleAsJson = (parameter.Schema?.ResolveType(context.SchemaRepository) == "string")
+                    ? $"\"{exampleNode.InnerXml}\""
+                    : exampleNode.InnerXml;
+
+                parameter.Example = OpenApiAnyFactory.CreateFromJson(exampleAsJson);
+            }
         }
 
-        private void ApplyParamTags(OpenApiParameter parameter, ParameterInfo parameterInfo)
+        private void ApplyParamTags(OpenApiParameter parameter, ParameterFilterContext context)
         {
-            if (!(parameterInfo.Member is MethodInfo methodInfo)) return;
+            if (!(context.ParameterInfo.Member is MethodInfo methodInfo)) return;
 
             // If method is from a constructed generic type, look for comments from the generic type method
             var targetMethod = methodInfo.DeclaringType.IsConstructedGenericType
@@ -47,11 +60,21 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var methodMemberName = XmlCommentsNodeNameHelper.GetMemberNameForMethod(targetMethod);
             var paramNode = _xmlNavigator.SelectSingleNode(
-                $"/doc/members/member[@name='{methodMemberName}']/param[@name='{parameterInfo.Name}']");
+                $"/doc/members/member[@name='{methodMemberName}']/param[@name='{context.ParameterInfo.Name}']");
 
             if (paramNode != null)
             {
                 parameter.Description = XmlCommentsTextHelper.Humanize(paramNode.InnerXml);
+
+                var example = paramNode.GetAttribute("example", "");
+                if (!string.IsNullOrEmpty(example))
+                {
+                    var exampleAsJson = (parameter.Schema?.ResolveType(context.SchemaRepository) == "string")
+                        ? $"\"{example}\""
+                        : example;
+
+                    parameter.Example = OpenApiAnyFactory.CreateFromJson(exampleAsJson);
+                }
             }
         }
     }

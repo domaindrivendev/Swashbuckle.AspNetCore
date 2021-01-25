@@ -9,46 +9,52 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         private readonly Dictionary<Type, string> _reservedIds = new Dictionary<Type, string>();
 
-        public Dictionary<string, OpenApiSchema> Schemas { get; private set; } = new Dictionary<string, OpenApiSchema>();
-
-        public OpenApiSchema GetOrAdd(Type type, string schemaId, Func<OpenApiSchema> factoryMethod)
+        public SchemaRepository(string documentName = null)
         {
-            if (!_reservedIds.TryGetValue(type, out string reservedId))
-            {
-                // First invocation of the factoryMethod for this type - reserve the provided schemaId first, and then invoke the factory method.
-                // Reserving the id first ensures that the factoryMethod will only be invoked once for a given type, even in recurrsive scenarios.
-                // If subsequent calls are made for the same type, a simple reference will be created instead.
-                ReserveIdFor(type, schemaId);
-                Schemas.Add(schemaId, factoryMethod());
-            }
-            else
-            {
-                schemaId = reservedId;
-            }
-
-            return new OpenApiSchema
-            {
-                Reference = new OpenApiReference { Id = schemaId, Type = ReferenceType.Schema }
-            };
+            DocumentName = documentName;
         }
 
-        public bool TryGetIdFor(Type type, out string schemaId)
-        {
-            return _reservedIds.TryGetValue(type, out schemaId);
-        }
-        
-        public void ReserveIdFor(Type type, string schemaId)
+        public string DocumentName { get; }
+
+        public IDictionary<string, OpenApiSchema> Schemas { get; private set; } = new SortedDictionary<string, OpenApiSchema>();
+
+        public void RegisterType(Type type, string schemaId)
         {
             if (_reservedIds.ContainsValue(schemaId))
             {
-                var reservedForType = _reservedIds.First(entry => entry.Value == schemaId).Key;
+                var conflictingType = _reservedIds.First(entry => entry.Value == schemaId).Key;
 
                 throw new InvalidOperationException(
                     $"Can't use schemaId \"${schemaId}\" for type \"${type}\". " +
-                    $"The same schemaId is already used for type \"${reservedForType}\"");
+                    $"The same schemaId is already used for type \"${conflictingType}\"");
             }
 
             _reservedIds.Add(type, schemaId);
+        }
+
+        public bool TryLookupByType(Type type, out OpenApiSchema referenceSchema)
+        {
+            if (_reservedIds.TryGetValue(type, out string schemaId))
+            {
+                referenceSchema = new OpenApiSchema
+                {
+                    Reference = new OpenApiReference { Type = ReferenceType.Schema, Id = schemaId }
+                };
+                return true;
+            }
+
+            referenceSchema = null;
+            return false;
+        }
+
+        public OpenApiSchema AddDefinition(string schemaId, OpenApiSchema schema)
+        {
+            Schemas.Add(schemaId, schema);
+
+            return new OpenApiSchema
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.Schema, Id = schemaId }
+            };
         }
     }
 }

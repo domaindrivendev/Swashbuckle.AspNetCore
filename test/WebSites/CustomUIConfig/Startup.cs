@@ -22,10 +22,7 @@ namespace CustomUIConfig
         {
             services.AddControllers();
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Test API", Version = "1" });
-            });
+            services.AddSwaggerGen();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -75,6 +72,8 @@ namespace CustomUIConfig
                 c.DocumentTitle = "CustomUIConfig";
                 c.InjectStylesheet("/ext/custom-stylesheet.css");
                 c.InjectJavascript("/ext/custom-javascript.js");
+                c.UseRequestInterceptor("(req) => { req.headers['x-my-custom-header'] = 'MyCustomValue'; return req; }");
+                c.UseResponseInterceptor("(res) => { console.log('Custom interceptor intercepted response from:', res.url); return res; }");
             });
         }
     }

@@ -35,7 +35,7 @@ namespace Basic.Controllers
         /// <summary>
         /// Searches the collection of products by description key words
         /// </summary>
-        /// <param name="keywords">A list of search terms</param>
+        /// <param name="keywords" example="hello">A list of search terms</param>
         /// <returns></returns>
         [HttpGet(Name = "SearchProducts")]
         public IEnumerable<Product> Get([FromQuery(Name = "kw")]string keywords = "foobar")
@@ -48,9 +48,9 @@ namespace Basic.Controllers
         }
 
         /// <summary>
-        /// Returns a specific product 
+        /// Returns a specific product
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id" example="111">The product id</param>
         /// <returns></returns>
         [HttpGet("{id}", Name = "GetProduct")]
         public Product Get(int id)
@@ -61,7 +61,7 @@ namespace Basic.Controllers
         /// <summary>
         /// Updates all properties of a specific product
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id" example="222"></param>
         /// <param name="product"></param>
         [HttpPut("{id}", Name = "UpdateProduct")]
         public void Update(int id, [FromBody, Required]Product product)
@@ -71,7 +71,7 @@ namespace Basic.Controllers
         /// <summary>
         /// Updates some properties of a specific product
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id" example="333"></param>
         /// <param name="updates"></param>
         [HttpPatch("{id}", Name = "PatchProduct")]
         public void Patch(int id, [FromBody, Required]IDictionary<string, object> updates)
@@ -81,7 +81,7 @@ namespace Basic.Controllers
         /// <summary>
         /// Deletes a specific product
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id" example="444"></param>
         [HttpDelete("{id}", Name = "DeleteProduct")]
         public void Delete(int id)
         {

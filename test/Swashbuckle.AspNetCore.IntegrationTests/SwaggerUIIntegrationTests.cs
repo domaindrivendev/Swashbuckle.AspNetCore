@@ -7,14 +7,14 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
     public class SwaggerUIIntegrationTests
     {
         [Fact]
-        public async Task RoutePrefix_RedirectsToRelativeIndexUrl()
+        public async Task RoutePrefix_RedirectsToIndexUrl()
         {
             var client = new TestSite(typeof(CustomUIConfig.Startup)).BuildClient();
 
             var response = await client.GetAsync("/swagger");
 
             Assert.Equal(HttpStatusCode.MovedPermanently, response.StatusCode);
-            Assert.Equal("swagger/index.html", response.Headers.Location.ToString());
+            Assert.Equal("http://localhost/swagger/index.html", response.Headers.Location.ToString());
         }
 
         [Fact]

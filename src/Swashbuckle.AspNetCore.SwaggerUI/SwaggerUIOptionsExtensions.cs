@@ -148,6 +148,15 @@ namespace Microsoft.AspNetCore.Builder
         }
 
         /// <summary>
+        /// Controls the display of extensions (pattern, maxLength, minLength, maximum, minimum) fields and values for Parameters
+        /// </summary>
+        /// <param name="options"></param>
+        public static void ShowCommonExtensions(this SwaggerUIOptions options)
+        {
+            options.ConfigObject.ShowCommonExtensions = true;
+        }
+
+        /// <summary>
         /// List of HTTP methods that have the Try it out feature enabled. An empty array disables Try it out for all operations.
         /// This does not filter the operations from the display
         /// </summary>
@@ -236,6 +245,14 @@ namespace Microsoft.AspNetCore.Builder
         }
 
         /// <summary>
+        /// String array of initially selected oauth scopes, default is empty array
+        /// </summary>
+        public static void OAuthScopes(this SwaggerUIOptions options, params string[] scopes)
+        {
+            options.OAuthConfigObject.Scopes = scopes;
+        }
+
+        /// <summary>
         /// Additional query parameters added to authorizationUrl and tokenUrl
         /// </summary>
         /// <param name="options"></param>
@@ -261,10 +278,31 @@ namespace Microsoft.AspNetCore.Builder
         /// <summary>
         /// Only applies to authorizatonCode flows. Proof Key for Code Exchange brings enhanced security for OAuth public clients.
         /// The default is false
+        /// </summary>
         /// <param name="options"></param>
         public static void OAuthUsePkce(this SwaggerUIOptions options)
         {
             options.OAuthConfigObject.UsePkceWithAuthorizationCodeGrant = true;
+        }
+
+        /// <summary>
+        /// Function to intercept remote definition, "Try it out", and OAuth 2.0 requests.
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="value">MUST be a valid Javascript function: (request: SwaggerRequest) => SwaggerRequest</param>
+        public static void UseRequestInterceptor(this SwaggerUIOptions options, string value)
+        {
+            options.Interceptors.RequestInterceptorFunction = value;
+        }
+
+        /// <summary>
+        /// Function to intercept remote definition, "Try it out", and OAuth 2.0 responses.
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="value">MUST be a valid Javascript function: (response: SwaggerResponse ) => SwaggerResponse </param>
+        public static void UseResponseInterceptor(this SwaggerUIOptions options, string value)
+        {
+            options.Interceptors.ResponseInterceptorFunction = value;
         }
     }
 }

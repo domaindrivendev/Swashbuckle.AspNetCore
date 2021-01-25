@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
-using System.Linq;
 using System.Text;
 using System.Collections.Generic;
 using System.IO;
@@ -14,6 +13,8 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.StaticFiles;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Http.Extensions;
+
 #if NETCOREAPP3_0
 using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IWebHostEnvironment;
 #endif
@@ -50,18 +51,15 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             var path = httpContext.Request.Path.Value;
 
             // If the RoutePrefix is requested (with or without trailing slash), redirect to index URL
-            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/{Regex.Escape(_options.RoutePrefix)}/?$"))
+            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$",  RegexOptions.IgnoreCase))
             {
-                // Use relative redirect to support proxy environments
-                var relativeRedirectPath = path.EndsWith("/")
-                    ? "index.html"
-                    : $"{path.Split('/').Last()}/index.html";
+                var indexUrl = httpContext.Request.GetEncodedUrl().TrimEnd('/') + "/index.html";
 
-                RespondWithRedirect(httpContext.Response, relativeRedirectPath);
+                RespondWithRedirect(httpContext.Response, indexUrl);
                 return;
             }
 
-            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/{Regex.Escape(_options.RoutePrefix)}/?index.html$"))
+            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/{Regex.Escape(_options.RoutePrefix)}/?index.html$",  RegexOptions.IgnoreCase))
             {
                 await RespondWithIndexHtml(httpContext.Response);
                 return;
@@ -116,7 +114,8 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
                 { "%(DocumentTitle)", _options.DocumentTitle },
                 { "%(HeadContent)", _options.HeadContent },
                 { "%(ConfigObject)", JsonSerializer.Serialize(_options.ConfigObject, _jsonSerializerOptions) },
-                { "%(OAuthConfigObject)", JsonSerializer.Serialize(_options.OAuthConfigObject, _jsonSerializerOptions) }
+                { "%(OAuthConfigObject)", JsonSerializer.Serialize(_options.OAuthConfigObject, _jsonSerializerOptions) },
+                { "%(Interceptors)", JsonSerializer.Serialize(_options.Interceptors) },
             };
         }
     }

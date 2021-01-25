@@ -2,7 +2,13 @@
 
 namespace Swashbuckle.AspNetCore.Annotations
 {
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Property, AllowMultiple = false)]
+    [AttributeUsage(
+        AttributeTargets.Class |
+        AttributeTargets.Struct |
+        AttributeTargets.Parameter |
+        AttributeTargets.Property |
+        AttributeTargets.Enum,
+        AllowMultiple = false)]
     public class SwaggerSchemaAttribute : Attribute
     {
         public SwaggerSchemaAttribute(string description = null)
@@ -27,6 +33,8 @@ namespace Swashbuckle.AspNetCore.Annotations
         }
 
         public string[] Required { get; set; }
+
+        public string Title { get; set; }
 
         internal bool? ReadOnlyFlag { get; private set; }
 

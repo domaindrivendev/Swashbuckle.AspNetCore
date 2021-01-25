@@ -7,23 +7,32 @@ namespace Microsoft.AspNetCore.Builder
 {
     public static class ReDocBuilderExtensions
     {
+        /// <summary>
+        /// Register the ReDoc middleware with provided options
+        /// </summary>
+        public static IApplicationBuilder UseReDoc(this IApplicationBuilder app, ReDocOptions options)
+        {
+            return app.UseMiddleware<ReDocMiddleware>(options);
+        }
+
+        /// <summary>
+        /// Register the ReDoc middleware with optional setup action for DI-injected options
+        /// </summary>
         public static IApplicationBuilder UseReDoc(
             this IApplicationBuilder app,
             Action<ReDocOptions> setupAction = null)
         {
-            var options = new ReDocOptions();
-            if (setupAction != null)
+            var options = app.ApplicationServices.GetRequiredService<IOptions<ReDocOptions>>().Value;
+
+            setupAction?.Invoke(options);
+
+            // To simplify the common case, use a default that will work with the SwaggerMiddleware defaults
+            if (options.SpecUrl == null)
             {
-                setupAction(options);
-            }
-            else
-            {
-                options = app.ApplicationServices.GetRequiredService<IOptions<ReDocOptions>>().Value;
+                options.SpecUrl = "/swagger/v1/swagger.json";
             }
 
-            app.UseMiddleware<ReDocMiddleware>(options);
-
-            return app;
+            return app.UseReDoc(options);
         }
     }
 }

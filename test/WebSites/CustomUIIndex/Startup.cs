@@ -21,10 +21,7 @@ namespace CustomUIIndex
         {
             services.AddControllers();
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Test API", Version = "1" });
-            });
+            services.AddSwaggerGen();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,8 +48,6 @@ namespace CustomUIIndex
             app.UseSwaggerUI(c =>
             {
                 c.IndexStream = () => GetType().Assembly.GetManifestResourceStream("CustomUIIndex.Swagger.index.html");
-
-                c.SwaggerEndpoint("v1/swagger.json", "Test API (V1)");
             });
         }
     }

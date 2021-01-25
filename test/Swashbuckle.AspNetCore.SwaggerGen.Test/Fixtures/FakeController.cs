@@ -34,10 +34,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void ActionWithParameterWithBindRequiredAttribute([BindRequired]string param)
         { }
 
-        public void ActionWithOptionalParameter(string param = "someDefaultValue")
+        public void ActionWithIntParameter(int param)
         { }
 
-        public void ActionWithParameterWithDefaultValueAttribute([DefaultValue("someDefaultValue")]string param)
+        public void ActionWithIntParameterWithRangeAttribute([Range(1, 12)]int param)
+        { }
+
+        public void ActionWithIntParameterWithDefaultValue(int param = 1)
+        { }
+
+        public void ActionWithIntParameterWithDefaultValueAttribute([DefaultValue(3)]int param)
+        { }
+
+        public void ActionWithIntParameterWithRequiredAttribute([Required]int param)
+        { }
+
+        public void ActionWithObjectParameter(XmlAnnotatedType param)
         { }
 
         [Consumes("application/someMediaType")]

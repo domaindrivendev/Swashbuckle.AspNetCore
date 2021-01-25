@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace NetCore21
 {
@@ -24,7 +25,7 @@ namespace NetCore21
             services.AddMvc()
                 .AddJsonOptions(c =>
                 {
-                    c.SerializerSettings.Converters.Add(new StringEnumConverter());
+                    c.SerializerSettings.Converters.Add(new StringEnumConverter(camelCaseText: true));
                     c.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                 })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
@@ -32,7 +33,8 @@ namespace NetCore21
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Test API", Version = "1" });
-                c.UseInlineDefinitionsForEnums();
+
+                c.UseAllOfToExtendReferenceSchemas();
             });
             services.AddSwaggerGenNewtonsoftSupport();
         }
@@ -47,15 +49,18 @@ namespace NetCore21
 
             app.UseMvc();
 
-            app.UseSwagger(c =>
+            // Expose v2 and v3 Swagger/OpenAPI formats
+            app.UseSwagger(new SwaggerOptions
             {
-                c.SerializeAsV2 = true;
+                RouteTemplate = "/swagger/{documentName}/swagger.json",
+                SerializeAsV2 = true
+            });
+            app.UseSwagger(new SwaggerOptions
+            {
+                RouteTemplate = "/swagger/{documentName}/openapi.json",
             });
 
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("v1/swagger.json", "Test API (V1)");
-            });
+            app.UseSwaggerUI();
         }
     }
 }

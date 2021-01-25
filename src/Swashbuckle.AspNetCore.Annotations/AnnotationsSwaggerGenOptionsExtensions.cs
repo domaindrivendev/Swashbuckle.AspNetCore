@@ -12,8 +12,12 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Enables Swagger annotations (SwaggerOperationAttribute, SwaggerParameterAttribute etc.)
         /// </summary>
         /// <param name="options"></param>
-        /// <param name="enableSubTypeAnnotations">Enables polymorphic schemas based on the presence of SwaggerSubTypeAttribute on base types</param>
-        public static void EnableAnnotations(this SwaggerGenOptions options, bool enableSubTypeAnnotations = false)
+        /// <param name="enableAnnotationsForInheritance">Enables SwaggerSubType attribute for inheritance</param>
+        /// <param name="enableAnnotationsForPolymorphism">Enables SwaggerSubType and SwaggerDiscriminator attributes for polymorphism</param>
+        public static void EnableAnnotations(
+            this SwaggerGenOptions options,
+            bool enableAnnotationsForInheritance,
+            bool enableAnnotationsForPolymorphism)
         {
             options.SchemaFilter<AnnotationsSchemaFilter>();
             options.ParameterFilter<AnnotationsParameterFilter>();
@@ -21,28 +25,108 @@ namespace Microsoft.Extensions.DependencyInjection
             options.OperationFilter<AnnotationsOperationFilter>();
             options.DocumentFilter<AnnotationsDocumentFilter>();
 
-            if (enableSubTypeAnnotations)
-                options.GeneratePolymorphicSchemas(AnnotationsSubTypeResolver, AnnotationsDiscriminatorSelector);
+            if (enableAnnotationsForInheritance || enableAnnotationsForPolymorphism)
+            {
+                options.SelectSubTypesUsing(AnnotationsSubTypesSelector);
+
+                if (enableAnnotationsForInheritance)
+                {
+                    options.UseAllOfForInheritance();
+                }
+
+                if (enableAnnotationsForPolymorphism)
+                {
+                    options.UseOneOfForPolymorphism();
+                    options.SelectDiscriminatorNameUsing(AnnotationsDiscriminatorNameSelector);
+                    options.SelectDiscriminatorValueUsing(AnnotationsDiscriminatorValueSelector);
+                }
+            }
         }
 
-        private static IEnumerable<Type> AnnotationsSubTypeResolver(Type type)
+        /// <summary>
+        /// Enables Swagger annotations (SwaggerOperationAttribute, SwaggerParameterAttribute etc.)
+        /// </summary>
+        /// <param name="options"></param>
+        public static void EnableAnnotations(this SwaggerGenOptions options)
         {
-            var subTypes = type.GetCustomAttributes(false)
-                .OfType<SwaggerSubTypesAttribute>()
-                .FirstOrDefault()?.SubTypes ?? Enumerable.Empty<Type>();
+            options.EnableAnnotations(
+                enableAnnotationsForPolymorphism: false,
+                enableAnnotationsForInheritance: false);
+        }
 
-            var subTypesFromObsoleteAttribute = type.GetCustomAttributes(false)
+        /// <summary>
+        /// Enables Swagger annotations (SwaggerOperationAttribute, SwaggerParameterAttribute etc.)
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="enableSubTypeAnnotations">Enables SwaggerSubType and SwaggerDiscriminator attributes or polymorphism and inheritance</param>
+        [Obsolete]
+        public static void EnableAnnotations(this SwaggerGenOptions options, bool enableSubTypeAnnotations)
+        {
+            options.EnableAnnotations(
+                enableAnnotationsForPolymorphism: enableSubTypeAnnotations,
+                enableAnnotationsForInheritance: enableSubTypeAnnotations);
+        }
+
+        private static IEnumerable<Type> AnnotationsSubTypesSelector(Type type)
+        {
+            var subTypeAttributes = type.GetCustomAttributes(false)
+                .OfType<SwaggerSubTypeAttribute>();
+
+            if (subTypeAttributes.Any())
+            {
+                return subTypeAttributes.Select(attr => attr.SubType);
+            }
+
+            var obsoleteAttribute = type.GetCustomAttributes(false)
+                .OfType<SwaggerSubTypesAttribute>()
+                .FirstOrDefault();
+
+            if (obsoleteAttribute != null)
+            {
+                return obsoleteAttribute.SubTypes;
+            }
+
+            return Enumerable.Empty<Type>();
+        }
+
+        private static string AnnotationsDiscriminatorNameSelector(Type baseType)
+        {
+            var discriminatorAttribute = baseType.GetCustomAttributes(false)
+                .OfType<SwaggerDiscriminatorAttribute>()
+                .FirstOrDefault();
+
+            if (discriminatorAttribute != null)
+            {
+                return discriminatorAttribute.PropertyName;
+            }
+
+            var obsoleteAttribute = baseType.GetCustomAttributes(false)
+                .OfType<SwaggerSubTypesAttribute>()
+                .FirstOrDefault();
+
+            if (obsoleteAttribute != null)
+            {
+                return obsoleteAttribute.Discriminator;
+            }
+
+            return null;
+        }
+
+        private static string AnnotationsDiscriminatorValueSelector(Type subType)
+        {
+            if (subType.BaseType == null)
+                return null;
+
+            var subTypeAttribute = subType.BaseType.GetCustomAttributes(false)
                 .OfType<SwaggerSubTypeAttribute>()
-                .Select(attr => attr.SubType);
+                .FirstOrDefault(attr => attr.SubType == subType);
 
-            return subTypes.Union(subTypesFromObsoleteAttribute);
-        }
+            if (subTypeAttribute != null)
+            {
+                return subTypeAttribute.DiscriminatorValue;
+            }
 
-        private static string AnnotationsDiscriminatorSelector(Type type)
-        {
-            return type.GetCustomAttributes(false)
-                .OfType<SwaggerSubTypesAttribute>()
-                .FirstOrDefault()?.Discriminator ?? "$type";
+            return null;
         }
     }
 }

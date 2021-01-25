@@ -64,10 +64,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public string StringProperty { get; set; }
 
         /// <summary>
-        /// Summary for BadExampleIntProperty
+        /// Summary for ObjectProperty
         /// </summary>
-        /// <example>Foobar</example>
-        public int BadExampleIntProperty { get; set; }
+        /// <example>{"prop1": 1, "prop2": "foobar"}</example>
+        public object ObjectProperty { get; set; }
 
         /// <summary>
         /// Summary for AcceptsNothing
@@ -109,6 +109,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public class NestedType
         {
             public string Property { get; set; }
+
+            public class InnerNestedType
+            {
+                /// <summary>
+                /// Summary of DoubleNestedType.InnerType.Property
+                /// </summary>
+                public string InnerProperty { get; set; }
+            }
         }
     }
 }

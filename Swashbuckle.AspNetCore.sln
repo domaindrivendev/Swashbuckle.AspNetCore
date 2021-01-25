@@ -10,9 +10,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 		appveyor.yml = appveyor.yml
 		CONTRIBUTING.md = CONTRIBUTING.md
+		Directory.Build.props = Directory.Build.props
 		ISSUE_TEMPLATE.md = ISSUE_TEMPLATE.md
 		README.md = README.md
-		version.props = version.props
 	EndProjectSection
 	ProjectSection(FolderGlobals) = preProject
 		global_1json__JSONSchema = http://json.schemastore.org/global
@@ -39,8 +39,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ci", "ci", "{65B4042A-F6DC-
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore.ReDoc", "src\Swashbuckle.AspNetCore.ReDoc\Swashbuckle.AspNetCore.ReDoc.csproj", "{B5E94C7D-B76E-4181-87E5-ACD8971A987E}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore.SwaggerUI", "src\Swashbuckle.AspNetCore.SwaggerUI\Swashbuckle.AspNetCore.SwaggerUI.csproj", "{5DE474F0-1867-400E-A14B-7A6D86543A45}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CliExample", "test\WebSites\CliExample\CliExample.csproj", "{F3575FC3-7134-4B72-B1E3-8D4CDEEF2C92}"
 EndProject
@@ -86,7 +84,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore.Newt
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CliExampleWithFactory", "test\WebSites\CliExampleWithFactory\CliExampleWithFactory.csproj", "{322813C4-0458-4F98-965D-568AD2C819CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swashbuckle.AspNetCore.TestSupport", "test\Swashbuckle.AspNetCore.TestSupport\Swashbuckle.AspNetCore.TestSupport.csproj", "{6E3C0128-931F-4438-AEDD-984E0E2B2C7B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore.TestSupport", "test\Swashbuckle.AspNetCore.TestSupport\Swashbuckle.AspNetCore.TestSupport.csproj", "{6E3C0128-931F-4438-AEDD-984E0E2B2C7B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NSwagClientExample", "test\WebSites\NswagClientExample\NSwagClientExample.csproj", "{9840E751-5845-431C-943B-C75CAE596A45}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore.SwaggerUI", "src\Swashbuckle.AspNetCore.SwaggerUI\Swashbuckle.AspNetCore.SwaggerUI.csproj", "{7F045714-B571-45A4-A75E-D3B8386D4E33}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -170,18 +172,6 @@ Global
 		{B5E94C7D-B76E-4181-87E5-ACD8971A987E}.Release|x64.Build.0 = Release|Any CPU
 		{B5E94C7D-B76E-4181-87E5-ACD8971A987E}.Release|x86.ActiveCfg = Release|Any CPU
 		{B5E94C7D-B76E-4181-87E5-ACD8971A987E}.Release|x86.Build.0 = Release|Any CPU
-		{5DE474F0-1867-400E-A14B-7A6D86543A45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5DE474F0-1867-400E-A14B-7A6D86543A45}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5DE474F0-1867-400E-A14B-7A6D86543A45}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{5DE474F0-1867-400E-A14B-7A6D86543A45}.Debug|x64.Build.0 = Debug|Any CPU
-		{5DE474F0-1867-400E-A14B-7A6D86543A45}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{5DE474F0-1867-400E-A14B-7A6D86543A45}.Debug|x86.Build.0 = Debug|Any CPU
-		{5DE474F0-1867-400E-A14B-7A6D86543A45}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5DE474F0-1867-400E-A14B-7A6D86543A45}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5DE474F0-1867-400E-A14B-7A6D86543A45}.Release|x64.ActiveCfg = Release|Any CPU
-		{5DE474F0-1867-400E-A14B-7A6D86543A45}.Release|x64.Build.0 = Release|Any CPU
-		{5DE474F0-1867-400E-A14B-7A6D86543A45}.Release|x86.ActiveCfg = Release|Any CPU
-		{5DE474F0-1867-400E-A14B-7A6D86543A45}.Release|x86.Build.0 = Release|Any CPU
 		{F3575FC3-7134-4B72-B1E3-8D4CDEEF2C92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F3575FC3-7134-4B72-B1E3-8D4CDEEF2C92}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3575FC3-7134-4B72-B1E3-8D4CDEEF2C92}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -458,6 +448,30 @@ Global
 		{6E3C0128-931F-4438-AEDD-984E0E2B2C7B}.Release|x64.Build.0 = Release|Any CPU
 		{6E3C0128-931F-4438-AEDD-984E0E2B2C7B}.Release|x86.ActiveCfg = Release|Any CPU
 		{6E3C0128-931F-4438-AEDD-984E0E2B2C7B}.Release|x86.Build.0 = Release|Any CPU
+		{9840E751-5845-431C-943B-C75CAE596A45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9840E751-5845-431C-943B-C75CAE596A45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9840E751-5845-431C-943B-C75CAE596A45}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9840E751-5845-431C-943B-C75CAE596A45}.Debug|x64.Build.0 = Debug|Any CPU
+		{9840E751-5845-431C-943B-C75CAE596A45}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9840E751-5845-431C-943B-C75CAE596A45}.Debug|x86.Build.0 = Debug|Any CPU
+		{9840E751-5845-431C-943B-C75CAE596A45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9840E751-5845-431C-943B-C75CAE596A45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9840E751-5845-431C-943B-C75CAE596A45}.Release|x64.ActiveCfg = Release|Any CPU
+		{9840E751-5845-431C-943B-C75CAE596A45}.Release|x64.Build.0 = Release|Any CPU
+		{9840E751-5845-431C-943B-C75CAE596A45}.Release|x86.ActiveCfg = Release|Any CPU
+		{9840E751-5845-431C-943B-C75CAE596A45}.Release|x86.Build.0 = Release|Any CPU
+		{7F045714-B571-45A4-A75E-D3B8386D4E33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F045714-B571-45A4-A75E-D3B8386D4E33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F045714-B571-45A4-A75E-D3B8386D4E33}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7F045714-B571-45A4-A75E-D3B8386D4E33}.Debug|x64.Build.0 = Debug|Any CPU
+		{7F045714-B571-45A4-A75E-D3B8386D4E33}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7F045714-B571-45A4-A75E-D3B8386D4E33}.Debug|x86.Build.0 = Debug|Any CPU
+		{7F045714-B571-45A4-A75E-D3B8386D4E33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F045714-B571-45A4-A75E-D3B8386D4E33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F045714-B571-45A4-A75E-D3B8386D4E33}.Release|x64.ActiveCfg = Release|Any CPU
+		{7F045714-B571-45A4-A75E-D3B8386D4E33}.Release|x64.Build.0 = Release|Any CPU
+		{7F045714-B571-45A4-A75E-D3B8386D4E33}.Release|x86.ActiveCfg = Release|Any CPU
+		{7F045714-B571-45A4-A75E-D3B8386D4E33}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -470,7 +484,6 @@ Global
 		{FAE3AE3A-E5B2-44B1-B402-FD96899C444B} = {1669F896-133C-4996-B58C-E7CDA299ADFF}
 		{7D077710-1B4A-4DEC-96E9-CE6192D4493D} = {15A55F4A-FC33-4D96-BAAD-FBDCDD96D5F5}
 		{B5E94C7D-B76E-4181-87E5-ACD8971A987E} = {15A55F4A-FC33-4D96-BAAD-FBDCDD96D5F5}
-		{5DE474F0-1867-400E-A14B-7A6D86543A45} = {15A55F4A-FC33-4D96-BAAD-FBDCDD96D5F5}
 		{F3575FC3-7134-4B72-B1E3-8D4CDEEF2C92} = {245144DE-BC89-4822-B044-020458BFECC0}
 		{5E8D6CF1-5388-4CA2-B2F8-EBCCD7233C32} = {245144DE-BC89-4822-B044-020458BFECC0}
 		{3164424E-D74A-45CD-BE17-BE33ED79C090} = {15A55F4A-FC33-4D96-BAAD-FBDCDD96D5F5}
@@ -494,6 +507,8 @@ Global
 		{605AA0D3-2AA7-46B4-811B-85DC1B1A3901} = {1669F896-133C-4996-B58C-E7CDA299ADFF}
 		{322813C4-0458-4F98-965D-568AD2C819CE} = {245144DE-BC89-4822-B044-020458BFECC0}
 		{6E3C0128-931F-4438-AEDD-984E0E2B2C7B} = {1669F896-133C-4996-B58C-E7CDA299ADFF}
+		{9840E751-5845-431C-943B-C75CAE596A45} = {245144DE-BC89-4822-B044-020458BFECC0}
+		{7F045714-B571-45A4-A75E-D3B8386D4E33} = {15A55F4A-FC33-4D96-BAAD-FBDCDD96D5F5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {36FC6A67-247D-4149-8EDD-79FFD1A75F51}

@@ -29,8 +29,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void Apply_SetsDescription_FromFieldSummaryTag()
         {
-            var schema = new OpenApiSchema { };
             var fieldInfo = typeof(XmlAnnotatedType).GetField(nameof(XmlAnnotatedType.BoolField));
+            var schema = new OpenApiSchema { };
             var filterContext = new SchemaFilterContext(fieldInfo.FieldType, null, null, memberInfo: fieldInfo);
 
             Subject().Apply(schema, filterContext);
@@ -47,8 +47,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             string propertyName,
             string expectedDescription)
         {
-            var schema = new OpenApiSchema();
             var propertyInfo = declaringType.GetProperty(propertyName);
+            var schema = new OpenApiSchema();
             var filterContext = new SchemaFilterContext(propertyInfo.PropertyType, null, null, memberInfo: propertyInfo);
 
             Subject().Apply(schema, filterContext);
@@ -56,52 +56,31 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(expectedDescription, schema.Description);
         }
 
-        [Fact]
-        public void Apply_SetsDescription_FromActionParamTag()
-        {
-            var schema = new OpenApiSchema();
-            var parameterInfo = typeof(FakeControllerWithXmlComments)
-                .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithParamTags))
-                .GetParameters()[0];
-            var filterContext = new SchemaFilterContext(parameterInfo.ParameterType, null, null, parameterInfo: parameterInfo);
-
-            Subject().Apply(schema, filterContext);
-
-            Assert.Equal("Description for param1", schema.Description);
-        }
-
         [Theory]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.BoolProperty), "boolean", null, true)]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.IntProperty), "integer", "int32", 10)]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.LongProperty), "integer", "int64", 4294967295L)]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.FloatProperty), "number", "float", 1.2F)]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.DoubleProperty), "number", "double", 1.25D)]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.EnumProperty), "integer", "int32", 2)]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.GuidProperty), "string", "uuid", "d3966535-2637-48fa-b911-e3c27405ee09")]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringProperty), "string", null, "Example for StringProperty")]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.BadExampleIntProperty), "integer", "int32", null)]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.BoolProperty), "boolean", "true")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.IntProperty), "integer", "10")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.LongProperty), "integer", "4294967295")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.FloatProperty), "number", "1.2")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.DoubleProperty), "number", "1.25")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.EnumProperty), "integer", "2")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.GuidProperty), "string", "\"d3966535-2637-48fa-b911-e3c27405ee09\"")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringProperty), "string", "\"Example for StringProperty\"")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.ObjectProperty), "object", "{\n  \"prop1\": 1,\n  \"prop2\": \"foobar\"\n}")]
+        [UseInvariantCulture]
         public void Apply_SetsExample_FromPropertyExampleTag(
             Type declaringType,
             string propertyName,
             string schemaType,
-            string schemaFormat,
-            object expectedValue)
+            string expectedExampleAsJson)
         {
-            var schema = new OpenApiSchema { Type = schemaType, Format = schemaFormat };
             var propertyInfo = declaringType.GetProperty(propertyName);
+            var schema = new OpenApiSchema { Type = schemaType };
             var filterContext = new SchemaFilterContext(propertyInfo.PropertyType, null, null, memberInfo: propertyInfo);
 
             Subject().Apply(schema, filterContext);
 
-            if (expectedValue != null)
-            {
-                Assert.NotNull(schema.Example);
-                Assert.Equal(expectedValue, schema.Example.GetType().GetProperty("Value").GetValue(schema.Example));
-            }
-            else
-            {
-                Assert.Null(schema.Example);
-            }
+            Assert.NotNull(schema.Example);
+            Assert.Equal(expectedExampleAsJson, schema.Example.ToJson());
         }
 
         [Theory]
@@ -111,8 +90,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             string cultureName,
             float expectedValue)
         {
-            var schema = new OpenApiSchema { Type = "number", Format = "float" };
             var propertyInfo = typeof(XmlAnnotatedType).GetProperty(nameof(XmlAnnotatedType.FloatProperty));
+            var schema = new OpenApiSchema { Type = "number", Format = "float" };
             var filterContext = new SchemaFilterContext(propertyInfo.PropertyType, null, null, memberInfo: propertyInfo);
 
             var defaultCulture = CultureInfo.CurrentCulture;

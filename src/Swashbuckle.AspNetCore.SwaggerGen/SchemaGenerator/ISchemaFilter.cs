@@ -34,5 +34,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public MemberInfo MemberInfo { get; }
 
         public ParameterInfo ParameterInfo { get; }
+
+        public string DocumentName => SchemaRepository.DocumentName;
     }
 }

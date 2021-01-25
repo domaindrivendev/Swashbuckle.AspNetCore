@@ -1,0 +1,152 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "NSwagClientExample",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "http://example.com"
+    }
+  ],
+  "paths": {
+    "/Animals": {
+      "post": {
+        "tags": [
+          "Animals"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Animal"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Cat"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Dog"
+                  }
+                ],
+                "discriminator": {
+                  "propertyName": "animalType",
+                  "mapping": {
+                    "Cat": "#/components/schemas/Cat",
+                    "Dog": "#/components/schemas/Dog"
+                  }
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Animal"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Cat"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Dog"
+                  }
+                ],
+                "discriminator": {
+                  "propertyName": "animalType",
+                  "mapping": {
+                    "Cat": "#/components/schemas/Cat",
+                    "Dog": "#/components/schemas/Dog"
+                  }
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Animal"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Cat"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Dog"
+                  }
+                ],
+                "discriminator": {
+                  "propertyName": "animalType",
+                  "mapping": {
+                    "Cat": "#/components/schemas/Cat",
+                    "Dog": "#/components/schemas/Dog"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Animal": {
+        "required": [
+          "animalType"
+        ],
+        "type": "object",
+        "properties": {
+          "animalType": {
+            "$ref": "#/components/schemas/AnimalType"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AnimalType": {
+        "enum": [
+          "Cat",
+          "Dog"
+        ],
+        "type": "string"
+      },
+      "Cat": {
+        "required": [
+          "animalType"
+        ],
+        "type": "object",
+        "properties": {
+          "animalType": {
+            "$ref": "#/components/schemas/AnimalType"
+          },
+          "catSpecificProperty": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Dog": {
+        "required": [
+          "animalType"
+        ],
+        "type": "object",
+        "properties": {
+          "animalType": {
+            "$ref": "#/components/schemas/AnimalType"
+          },
+          "dogSpecificProperty": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

@@ -1,10 +1,13 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.IO;
+using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Template;
+using Microsoft.Extensions.Primitives;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Writers;
 
@@ -33,13 +36,15 @@ namespace Swashbuckle.AspNetCore.Swagger
                 return;
             }
 
-            var basePath = string.IsNullOrEmpty(httpContext.Request.PathBase)
-                ? null
-                : httpContext.Request.PathBase.ToString();
-
             try
             {
-                var swagger = swaggerProvider.GetSwagger(documentName, null, basePath);
+                var host = httpContext.Request.Host.HasValue
+                    ? $"{httpContext.Request.Scheme ?? "http"}://{httpContext.Request.Host}"
+                    : null;
+
+                var basePath = httpContext.Request.PathBase;
+
+                var swagger = swaggerProvider.GetSwagger(documentName, host, basePath);
 
                 // One last opportunity to modify the Swagger Document - this time with request context
                 foreach (var filter in _options.PreSerializeFilters)
@@ -47,7 +52,14 @@ namespace Swashbuckle.AspNetCore.Swagger
                     filter(swagger, httpContext.Request);
                 }
 
-                await RespondWithSwaggerJson(httpContext.Response, swagger);
+                if (Path.GetExtension(httpContext.Request.Path.Value) == ".yaml")
+                {
+                    await RespondWithSwaggerYaml(httpContext.Response, swagger);
+                }
+                else
+                {
+                    await RespondWithSwaggerJson(httpContext.Response, swagger);
+                }
             }
             catch (UnknownSwaggerDocument)
             {
@@ -81,6 +93,20 @@ namespace Swashbuckle.AspNetCore.Swagger
             {
                 var jsonWriter = new OpenApiJsonWriter(textWriter);
                 if (_options.SerializeAsV2) swagger.SerializeAsV2(jsonWriter); else swagger.SerializeAsV3(jsonWriter);
+
+                await response.WriteAsync(textWriter.ToString(), new UTF8Encoding(false));
+            }
+        }
+
+        private async Task RespondWithSwaggerYaml(HttpResponse response, OpenApiDocument swagger)
+        {
+            response.StatusCode = 200;
+            response.ContentType = "text/yaml;charset=utf-8";
+
+            using (var textWriter = new StringWriter(CultureInfo.InvariantCulture))
+            {
+                var yamlWriter = new OpenApiYamlWriter(textWriter);
+                if (_options.SerializeAsV2) swagger.SerializeAsV2(yamlWriter); else swagger.SerializeAsV3(yamlWriter);
 
                 await response.WriteAsync(textWriter.ToString(), new UTF8Encoding(false));
             }

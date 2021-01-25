@@ -248,38 +248,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("string", operation.Parameters.First().Schema.Type);
         }
 
-        [Theory]
-        [InlineData(nameof(FakeController.ActionWithOptionalParameter))]
-        [InlineData(nameof(FakeController.ActionWithParameterWithDefaultValueAttribute))]
-        public void GetSwagger_SetsParameterDefault_IfActionParameterIsOptionalOrHasDefaultValueAttribute(
-            string actionName)
-        {
-            var subject = Subject(
-                apiDescriptions: new[]
-                {
-                    ApiDescriptionFactory.Create(
-                        methodInfo: typeof(FakeController).GetMethod(actionName),
-                        groupName: "v1",
-                        httpMethod: "POST",
-                        relativePath: "resource",
-                        parameterDescriptions: new []
-                        {
-                            new ApiParameterDescription
-                            {
-                                Name = "param",
-                                Source = BindingSource.Query
-                            }
-                        })
-                }
-            );
-
-            var document = subject.GetSwagger("v1");
-
-            var operation = document.Paths["/resource"].Operations[OperationType.Post];
-            Assert.Equal(1, operation.Parameters.Count);
-            Assert.Equal("someDefaultValue", ((OpenApiString)operation.Parameters.First().Schema.Default).Value);
-        }
-
         [Fact]
         public void GetSwagger_GeneratesRequestBody_ForFirstApiParameterThatIsBoundToBody()
         {
@@ -518,7 +486,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void GetSwagger_ThrowsNotSupportedException_IfActionHasNoHttpBinding()
+        public void GetSwagger_ThrowsSwaggerGeneratorException_IfActionHasNoHttpBinding()
         {
             var subject = Subject(
                 apiDescriptions: new[]
@@ -528,7 +496,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             );
 
-            var exception = Assert.Throws<NotSupportedException>(() => subject.GetSwagger("v1"));
+            var exception = Assert.Throws<SwaggerGeneratorException>(() => subject.GetSwagger("v1"));
             Assert.Equal(
                 "Ambiguous HTTP method for action - Swashbuckle.AspNetCore.SwaggerGen.Test.FakeController.ActionWithNoParameters (Swashbuckle.AspNetCore.SwaggerGen.Test). " +
                 "Actions require an explicit HttpMethod binding for Swagger/OpenAPI 3.0",
@@ -536,7 +504,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void GetSwagger_ThrowsNotSupportedException_IfActionsHaveConflictingHttpMethodAndPath()
+        public void GetSwagger_ThrowsSwaggerGeneratorException_IfActionsHaveConflictingHttpMethodAndPath()
         {
             var subject = Subject(
                 apiDescriptions: new[]
@@ -549,7 +517,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             );
 
-            var exception = Assert.Throws<NotSupportedException>(() => subject.GetSwagger("v1"));
+            var exception = Assert.Throws<SwaggerGeneratorException>(() => subject.GetSwagger("v1"));
             Assert.Equal(
                 "Conflicting method/path combination \"POST resource\" for actions - " +
                 "Swashbuckle.AspNetCore.SwaggerGen.Test.FakeController.ActionWithNoParameters (Swashbuckle.AspNetCore.SwaggerGen.Test)," +
@@ -668,8 +636,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(new[] { OperationType.Post }, document.Paths["/resource"].Operations.Keys);
         }
 
-        [Fact]
-        public void GetSwagger_SupportsOption_DescribeAllParametersInCamelCase()
+        [Theory]
+        [InlineData("SomeParam", "someParam")]
+        [InlineData("FooBar.SomeParam", "fooBar.someParam")]
+        [InlineData("A.B", "a.b")]
+        [InlineData("", "")]
+        [InlineData(null, null)]
+        public void GetSwagger_SupportsOption_DescribeAllParametersInCamelCase(
+            string parameterName,
+            string expectedOpenApiParameterName)
         {
             var subject = Subject(
                 apiDescriptions: new[]
@@ -683,7 +658,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                         {
                             new ApiParameterDescription
                             {
-                                Name = "SomeParam",
+                                Name = parameterName,
                                 Source = BindingSource.Path
                             }
                         })
@@ -702,7 +677,31 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.Equal(1, operation.Parameters.Count);
-            Assert.Equal("someParam", operation.Parameters.First().Name);
+            Assert.Equal(expectedOpenApiParameterName, operation.Parameters.First().Name);
+        }
+
+        [Fact]
+        public void GetSwagger_SupportsOption_Servers()
+        {
+            var subject = Subject(
+                apiDescriptions: new ApiDescription[] { },
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    },
+                    Servers = new List<OpenApiServer>
+                    {
+                        new OpenApiServer { Url = "http://tempuri.org/api" }
+                    }
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal(1, document.Servers.Count);
+            Assert.Equal("http://tempuri.org/api", document.Servers.First().Url);
         }
 
         [Fact]
@@ -755,12 +754,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                         new VendorExtensionsParameterFilter()
                     }
                 }
-            ); ;
+            );
 
             var document = subject.GetSwagger("v1");
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
-            Assert.NotEmpty(operation.Parameters[0].Extensions);
+            Assert.Equal(2, operation.Parameters[0].Extensions.Count());
+            Assert.Equal("bar", ((OpenApiString)operation.Parameters[0].Extensions["X-foo"]).Value);
+            Assert.Equal("v1", ((OpenApiString)operation.Parameters[0].Extensions["X-docName"]).Value);
         }
 
         [Fact]
@@ -790,12 +791,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                         new VendorExtensionsRequestBodyFilter()
                     }
                 }
-            ); ;
+            );
 
             var document = subject.GetSwagger("v1");
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
-            Assert.NotEmpty(operation.RequestBody.Extensions);
+            Assert.Equal(2, operation.RequestBody.Extensions.Count);
+            Assert.Equal("bar", ((OpenApiString)operation.RequestBody.Extensions["X-foo"]).Value);
+            Assert.Equal("v1", ((OpenApiString)operation.RequestBody.Extensions["X-docName"]).Value);
         }
 
         [Fact]
@@ -823,7 +826,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var document = subject.GetSwagger("v1");
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
-            Assert.NotEmpty(operation.Extensions);
+            Assert.Equal(2, operation.Extensions.Count);
+            Assert.Equal("bar", ((OpenApiString)operation.Extensions["X-foo"]).Value);
+            Assert.Equal("v1", ((OpenApiString)operation.Extensions["X-docName"]).Value);
         }
 
         [Fact]
@@ -846,7 +851,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var document = subject.GetSwagger("v1");
 
-            Assert.NotEmpty(document.Extensions);
+            Assert.Equal(2, document.Extensions.Count);
+            Assert.Equal("bar", ((OpenApiString)document.Extensions["X-foo"]).Value);
+            Assert.Equal("v1", ((OpenApiString)document.Extensions["X-docName"]).Value);
         }
 
         private SwaggerGenerator Subject(IEnumerable<ApiDescription> apiDescriptions, SwaggerGeneratorOptions options = null)
@@ -854,7 +861,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             return new SwaggerGenerator(
                 options ?? DefaultOptions,
                 new FakeApiDescriptionGroupCollectionProvider(apiDescriptions),
-                new SchemaGenerator(new SchemaGeneratorOptions(), new JsonSerializerDataContractResolver(new JsonSerializerOptions()))
+                new SchemaGenerator(new SchemaGeneratorOptions(), new SystemTextJsonBehavior(new JsonSerializerOptions()))
             );
         }
 

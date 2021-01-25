@@ -21,9 +21,16 @@ namespace Swashbuckle.AspNetCore.Annotations
         {
             ApplyTypeAnnotations(schema, context);
 
+            // NOTE: It's possible for both MemberInfo and ParameterInfo to have non-null values - i.e. when the schema is for a property
+            // within a class that is bound to a parameter. In this case, the MemberInfo should take precendence.
+
             if (context.MemberInfo != null)
             {
                 ApplyMemberAnnotations(schema, context.MemberInfo);
+            }
+            else if (context.ParameterInfo != null)
+            {
+                ApplyParamAnnotations(schema, context.ParameterInfo);
             }
         }
 
@@ -47,6 +54,15 @@ namespace Swashbuckle.AspNetCore.Annotations
 
                 filter.Apply(schema, context);
             }
+        }
+
+        private void ApplyParamAnnotations(OpenApiSchema schema, ParameterInfo parameterInfo)
+        {
+            var schemaAttribute = parameterInfo.GetCustomAttributes<SwaggerSchemaAttribute>()
+                .FirstOrDefault();
+
+            if (schemaAttribute != null)
+                ApplySchemaAttribute(schema, schemaAttribute);
         }
 
         private void ApplyMemberAnnotations(OpenApiSchema schema, MemberInfo memberInfo)
@@ -74,6 +90,9 @@ namespace Swashbuckle.AspNetCore.Annotations
 
             if (schemaAttribute.Required != null)
                 schema.Required = new SortedSet<string>(schemaAttribute.Required);
+
+            if (schemaAttribute.Title != null)
+                schema.Title = schemaAttribute.Title;
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
     {
         public static bool TryGetMemberInfo(this JsonProperty jsonProperty, out MemberInfo memberInfo)
         {
-            memberInfo = jsonProperty.DeclaringType.GetMember(jsonProperty.UnderlyingName)
+            memberInfo = jsonProperty.DeclaringType?.GetMember(jsonProperty.UnderlyingName)
                 .FirstOrDefault();
 
             return (memberInfo != null);
@@ -17,9 +17,14 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
         public static bool IsRequiredSpecified(this JsonProperty jsonProperty)
         {
-            var jsonPropertyAttributeData = jsonProperty.TryGetMemberInfo(out MemberInfo memberInfo)
-                ? memberInfo.GetCustomAttributesData().FirstOrDefault(attrData => attrData.AttributeType == typeof(JsonPropertyAttribute))
-                : null;
+            if (!jsonProperty.TryGetMemberInfo(out MemberInfo memberInfo))
+                return false;
+
+            if (memberInfo.GetCustomAttribute<JsonRequiredAttribute>() != null)
+                return true;
+
+            var jsonPropertyAttributeData = memberInfo.GetCustomAttributesData()
+                .FirstOrDefault(attrData => attrData.AttributeType == typeof(JsonPropertyAttribute));
 
             return (jsonPropertyAttributeData != null) && jsonPropertyAttributeData.NamedArguments.Any(arg => arg.MemberName == "Required");
         }

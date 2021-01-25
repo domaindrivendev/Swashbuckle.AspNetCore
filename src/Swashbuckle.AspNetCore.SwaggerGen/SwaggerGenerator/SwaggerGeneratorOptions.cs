@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
 
@@ -16,6 +15,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             OperationIdSelector = DefaultOperationIdSelector;
             TagsSelector = DefaultTagsSelector;
             SortKeySelector = DefaultSortKeySelector;
+            Servers = new List<OpenApiServer>();
             SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>();
             SecurityRequirements = new List<OpenApiSecurityRequirement>();
             ParameterFilters = new List<IParameterFilter>();
@@ -39,6 +39,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public Func<ApiDescription, string> SortKeySelector { get; set; }
 
         public bool DescribeAllParametersInCamelCase { get; set; }
+
+        public List<OpenApiServer> Servers { get; set; }
 
         public IDictionary<string, OpenApiSecurityScheme> SecuritySchemes { get; set; }
 

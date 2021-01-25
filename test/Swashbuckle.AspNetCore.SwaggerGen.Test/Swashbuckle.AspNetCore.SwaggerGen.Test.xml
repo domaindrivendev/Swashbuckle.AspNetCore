@@ -18,8 +18,8 @@
             </remarks>
         </member>
         <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.GenericControllerWithXmlComments`1.ActionWithParamTags(`0,`0)">
-            <param name="param1">Description for param1</param>
-            <param name="param2">Description for param2</param>
+            <param name="param1" example="Example for param1">Description for param1</param>
+            <param name="param2" example="Example for param2">Description for param2</param>
         </member>
         <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllerWithXmlComments">
             <summary>
@@ -36,8 +36,8 @@
             </remarks>
         </member>
         <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllerWithXmlComments.ActionWithParamTags(System.String,System.String)">
-            <param name="param1">Description for param1</param>
-            <param name="param2">Description for param2</param>
+            <param name="param1" example="Example for param1">Description for param1</param>
+            <param name="param2" example="Example for param2">Description for param2</param>
         </member>
         <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllerWithXmlComments.ActionWithResponseTags">
             <response code="200">Description for 200 response</response>
@@ -133,11 +133,11 @@
             </summary>
             <example>Example for StringProperty</example>
         </member>
-        <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.BadExampleIntProperty">
+        <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.ObjectProperty">
             <summary>
-            Summary for BadExampleIntProperty
+            Summary for ObjectProperty
             </summary>
-            <example>Foobar</example>
+            <example>{"prop1": 1, "prop2": "foobar"}</example>
         </member>
         <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.AcceptsNothing">
             <summary>
@@ -171,6 +171,11 @@
         <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.NestedType">
             <summary>
             Summary for NestedType
+            </summary>
+        </member>
+        <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.NestedType.InnerNestedType.InnerProperty">
+            <summary>
+            Summary of DoubleNestedType.InnerType.Property
             </summary>
         </member>
         <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.JsonSerializerTesting">

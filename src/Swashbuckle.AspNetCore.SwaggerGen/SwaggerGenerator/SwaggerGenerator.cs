@@ -38,7 +38,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 .Where(apiDesc => !(_options.IgnoreObsoleteActions && apiDesc.CustomAttributes().OfType<ObsoleteAttribute>().Any()))
                 .Where(apiDesc => _options.DocInclusionPredicate(documentName, apiDesc));
 
-            var schemaRepository = new SchemaRepository();
+            var schemaRepository = new SchemaRepository(documentName);
 
             var swaggerDoc = new OpenApiDocument
             {
@@ -48,9 +48,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 Components = new OpenApiComponents
                 {
                     Schemas = schemaRepository.Schemas,
-                    SecuritySchemes = _options.SecuritySchemes
+                    SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>(_options.SecuritySchemes)
                 },
-                SecurityRequirements = _options.SecurityRequirements
+                SecurityRequirements = new List<OpenApiSecurityRequirement>(_options.SecurityRequirements)
             };
 
             var filterContext = new DocumentFilterContext(applicableApiDescriptions, _schemaGenerator, schemaRepository);
@@ -64,6 +64,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private IList<OpenApiServer> GenerateServers(string host, string basePath)
         {
+            if (_options.Servers.Any())
+            {
+                return new List<OpenApiServer>(_options.Servers);
+            }
+
             return (host == null && basePath == null)
                 ? new List<OpenApiServer>()
                 : new List<OpenApiServer> { new OpenApiServer { Url = $"{host}{basePath}" } };
@@ -103,13 +108,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var httpMethod = group.Key;
 
                 if (httpMethod == null)
-                    throw new NotSupportedException(string.Format(
+                    throw new SwaggerGeneratorException(string.Format(
                         "Ambiguous HTTP method for action - {0}. " +
                         "Actions require an explicit HttpMethod binding for Swagger/OpenAPI 3.0",
                         group.First().ActionDescriptor.DisplayName));
 
                 if (group.Count() > 1 && _options.ConflictingActionsResolver == null)
-                    throw new NotSupportedException(string.Format(
+                    throw new SwaggerGeneratorException(string.Format(
                         "Conflicting method/path combination \"{0} {1}\" for actions - {2}. " +
                         "Actions require a unique method/path combination for Swagger/OpenAPI 3.0. Use ConflictingActionsResolver as a workaround",
                         httpMethod,
@@ -126,24 +131,33 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private OpenApiOperation GenerateOperation(ApiDescription apiDescription, SchemaRepository schemaRepository)
         {
-            var operation = new OpenApiOperation
+            try
             {
-                Tags = GenerateOperationTags(apiDescription),
-                OperationId = _options.OperationIdSelector(apiDescription),
-                Parameters = GenerateParameters(apiDescription, schemaRepository),
-                RequestBody = GenerateRequestBody(apiDescription, schemaRepository),
-                Responses = GenerateResponses(apiDescription, schemaRepository),
-                Deprecated = apiDescription.CustomAttributes().OfType<ObsoleteAttribute>().Any()
-            };
+                var operation = new OpenApiOperation
+                {
+                    Tags = GenerateOperationTags(apiDescription),
+                    OperationId = _options.OperationIdSelector(apiDescription),
+                    Parameters = GenerateParameters(apiDescription, schemaRepository),
+                    RequestBody = GenerateRequestBody(apiDescription, schemaRepository),
+                    Responses = GenerateResponses(apiDescription, schemaRepository),
+                    Deprecated = apiDescription.CustomAttributes().OfType<ObsoleteAttribute>().Any()
+                };
 
-            apiDescription.TryGetMethodInfo(out MethodInfo methodInfo);
-            var filterContext = new OperationFilterContext(apiDescription, _schemaGenerator, schemaRepository, methodInfo);
-            foreach (var filter in _options.OperationFilters)
-            {
-                filter.Apply(operation, filterContext);
+                apiDescription.TryGetMethodInfo(out MethodInfo methodInfo);
+                var filterContext = new OperationFilterContext(apiDescription, _schemaGenerator, schemaRepository, methodInfo);
+                foreach (var filter in _options.OperationFilters)
+                {
+                    filter.Apply(operation, filterContext);
+                }
+
+                return operation;
             }
-
-            return operation;
+            catch (Exception ex)
+            {
+                throw new SwaggerGeneratorException(
+                    message: $"Failed to generate Operation for action - {apiDescription.ActionDescriptor.DisplayName}. See inner exception",
+                    innerException: ex);
+            }
         }
 
         private IList<OpenApiTag> GenerateOperationTags(ApiDescription apiDescription)

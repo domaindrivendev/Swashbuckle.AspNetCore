@@ -4,7 +4,7 @@ init:
 - git config --global core.autocrlf true
 
 environment:
-  DOTNET_VERSION: 3.0.100
+  DOTNET_VERSION: 5.0.100
 
 build_script:
 - ps: ci\build.ps1 
@@ -31,5 +31,5 @@ deploy:
     branch: master
     appveyor_repo_tag: true
   api_key:
-    secure: S2MgK7qypxpy/OtArorFwdH1XASpkxeJu4L7JtgiEBVWe9bOUQ0D8huWmf4VGrBZ
+    secure: c+ijZg1Q/DtcWvEQgI5UPmCbf0mG68E352Q3s3wn5FakjZ8a0gTBB3WnEX5Hu1TN
   skip_symbols: true

@@ -1,54 +1,81 @@
-﻿using System;
+﻿using System.Text.Json;
 using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class OpenApiAnyFactory
     {
-        public static IOpenApiAny CreateFor(OpenApiSchema schema, object value)
+        public static IOpenApiAny CreateFromJson(string json)
         {
-            if (value == null) return null;
+            try
+            {
+                var jsonElement = JsonSerializer.Deserialize<JsonElement>(json);
 
-            if (schema.Type == "boolean" && TryCast(value, out bool boolValue))
-                return new OpenApiBoolean(boolValue);
+                if (jsonElement.ValueKind == JsonValueKind.True || jsonElement.ValueKind == JsonValueKind.False)
+                    return new OpenApiBoolean(jsonElement.GetBoolean());
 
-            else if (schema.Type == "integer" && schema.Format == "int32" && TryCast(value, out int intValue))
-                return new OpenApiInteger(intValue);
+                if (jsonElement.ValueKind == JsonValueKind.Number)
+                {
+                    if (jsonElement.TryGetInt32(out int intValue))
+                        return new OpenApiInteger(intValue);
 
-            else if (schema.Type == "integer" && schema.Format == "int64" && TryCast(value, out long longValue))
-                return new OpenApiLong(longValue);
+                    if (jsonElement.TryGetInt64(out long longValue))
+                        return new OpenApiLong(longValue);
 
-            else if (schema.Type == "number" && schema.Format == "float" && TryCast(value, out float floatValue))
-                return new OpenApiFloat(floatValue);
+                    if (jsonElement.TryGetSingle(out float floatValue) && !float.IsInfinity(floatValue))
+                        return new OpenApiFloat(floatValue);
 
-            else if (schema.Type == "number" && schema.Format == "double" && TryCast(value, out double doubleValue))
-                return new OpenApiDouble(doubleValue);
+                    if (jsonElement.TryGetDouble(out double doubleValue))
+                        return new OpenApiDouble(doubleValue);
+                }
 
-            else if (schema.Type == "string" && value.GetType().IsEnum)
-                return new OpenApiString(Enum.GetName(value.GetType(), value));
+                if (jsonElement.ValueKind == JsonValueKind.String)
+                    return new OpenApiString(jsonElement.ToString());
 
-            else if (schema.Type == "string" && schema.Format == "date-time" && TryCast(value, out DateTime dateTimeValue))
-                return new OpenApiDate(dateTimeValue);
+                if (jsonElement.ValueKind == JsonValueKind.Null)
+                    return new OpenApiNull();
 
-            else if (schema.Type == "string")
-                return new OpenApiString(value.ToString());
+                if (jsonElement.ValueKind == JsonValueKind.Array)
+                    return CreateOpenApiArray(jsonElement);
+
+                if (jsonElement.ValueKind == JsonValueKind.Object)
+                    return CreateOpenApiObject(jsonElement);
+            }
+            catch { }
 
             return null;
         }
 
-        private static bool TryCast<T>(object value, out T typedValue)
+        private static IOpenApiAny CreateOpenApiArray(JsonElement jsonElement)
         {
-            try
+            var openApiArray = new OpenApiArray();
+
+            foreach (var item in jsonElement.EnumerateArray())
             {
-                typedValue = (T)Convert.ChangeType(value, typeof(T));
-                return true;
+                var json = item.ValueKind == JsonValueKind.String
+                    ? $"\"{item}\""
+                    : item.ToString();
+
+                openApiArray.Add(CreateFromJson(json));
             }
-            catch (InvalidCastException)
+
+            return openApiArray;
+        }
+
+        private static IOpenApiAny CreateOpenApiObject(JsonElement jsonElement)
+        {
+            var openApiObject = new OpenApiObject();
+
+            foreach (var property in jsonElement.EnumerateObject())
             {
-                typedValue = default(T);
-                return false;
+                var valueAsJson = (property.Value.ValueKind == JsonValueKind.String)
+                    ? $"\"{property.Value}\""
+                    : property.Value.ToString();
+
+                openApiObject.Add(property.Name, CreateFromJson(valueAsJson));
             }
+
+            return openApiObject;
         }
     }
 }
