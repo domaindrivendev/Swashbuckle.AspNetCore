@@ -44,10 +44,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     ApplyParameterMetadata(schema, type, parameterInfo);
                 }
 
-                if (schema.Reference == null)
-                {
-                    ApplyFilters(schema, type, schemaRepository, memberInfo, parameterInfo);
-                }
+                ApplyFilters(schema, type, schemaRepository, memberInfo, parameterInfo);
 
                 return schema;
             }
