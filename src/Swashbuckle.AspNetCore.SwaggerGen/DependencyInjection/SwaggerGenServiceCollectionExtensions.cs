@@ -29,10 +29,10 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddTransient(s => s.GetRequiredService<IOptions<SwaggerGeneratorOptions>>().Value);
             services.TryAddTransient<ISchemaGenerator, SchemaGenerator>();
             services.TryAddTransient(s => s.GetRequiredService<IOptions<SchemaGeneratorOptions>>().Value);
-            services.TryAddTransient<ISerializerBehavior>(s =>
+            services.TryAddTransient<ISerializerDataContractResolver>(s =>
             {
                 var serializerOptions = s.GetJsonSerializerOptions() ?? new JsonSerializerOptions();
-                return new SystemTextJsonBehavior(serializerOptions);
+                return new SystemTextJsonDataContractResolver(serializerOptions);
             });
 
             // Used by the <c>dotnet-getdocument</c> tool from the Microsoft.Extensions.ApiDescription.Server package.

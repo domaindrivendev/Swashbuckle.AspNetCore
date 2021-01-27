@@ -22,7 +22,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 |Swashbuckle Version|ASP.NET Core|Swagger / OpenAPI Spec.|swagger-ui|ReDoc UI|
 |----------|----------|----------|----------|----------|
 |[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master/README.md)|>= 2.0.0|2.0, 3.0|3.40.0|2.0.0-rc.40|
-|[5.6.2](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v5.6.2)|>= 2.0.0|2.0, 3.0|3.32.5|2.0.0-rc.40|
+|[5.6.3](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v5.6.2)|>= 2.0.0|2.0, 3.0|3.32.5|2.0.0-rc.40|
 |[4.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v4.0.0)|>= 2.0.0, < 3.0.0|2.0|3.19.5|1.22.2|
 |[3.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v3.0.0)|>= 1.0.4, < 3.0.0|2.0|3.17.1|1.20.0|
 |[2.5.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v2.5.0)|>= 1.0.4, < 3.0.0|2.0|3.16.0|1.20.0|
@@ -1066,31 +1066,53 @@ _NOTE: If you're using the [Swashbuckle Annotations library](#swashbuckleaspnetc
 
 #### Describing Discriminators ####
 
-In conjunction with the `oneOf` keyword, Swagger / OpenAPI also supports a `discriminator` field on polymorphic schema definitions. This keyword points to the property that identifies the specific type being represented by a given payload. In addition to the property name, the discriminator description MAY also include a `mapping` which maps discriminator values to specific schema definitions.
+In conjunction with the `oneOf` and/or `allOf` keywords, Swagger / OpenAPI supports a `discriminator` field on base schema definitions. This keyword points to the property that identifies the specific type being represented by a given payload. In addition to the property name, the discriminator description MAY also include a `mapping` which maps discriminator values to specific schema definitions.
 
 For example, the Newtonsoft serializer supports polymorphic serialization/deserialization by emitting/accepting a "$type" property on JSON instances. The value of this property will be the [assembly qualified type name](https://docs.microsoft.com/en-us/dotnet/api/system.type.assemblyqualifiedname?view=netcore-3.1) of the type represented by a given JSON instance. So, to explicitly describe this behavior in Swagger, the corresponding request/respose schema could be defined as follows:
 
 ```
-schema: {
-  oneOf: [
-    {
-      $ref: "#/components/schemas/Rectangle"
+components: {
+  schemas: {
+    Shape: {
+      required: [
+        "$type"
+      ],
+      type: "object",
+      properties: {
+        $type: {
+          type": "string"
+      },
+      discriminator: {
+        propertyName: "$type",
+        mapping: {
+          Rectangle: "#/components/schemas/Rectangle",
+          Circle: "#/components/schemas/Circle"
+        }
+      }
     },
-    {
-      $ref: "#/components/schemas/Circle"
+    Rectangle: {
+      type: "object",
+      allOf: [
+        {
+          "$ref": "#/components/schemas/Shape"
+        }
+      ],
+      ...
     },
-  ],
-  discriminator: {
-    propertyName: "$type",
-    mapping: {
-      "MyApp.Models.Rectangle, MyApp": "#/components/schemas/Rectangle",
-      "MyApp.Models.Circle, MyApp": "#/components/schemas/Circle",
+    Circle: {
+      type: "object",
+      allOf: [
+        {
+          "$ref": "#/components/schemas/Shape"
+        }
+      ],
+      ...
     }
   }
 }
 ```
 
-If `UseOneOfForPolymorphism` is enabled, and your serializer supports (and has enabled) emitting/accepting a discriminator property, then Swashbuckle will automatically generate the corresponding `discriminator` metadata on polymorphic schema definitions.
+If `UseAllOfForInheritance` or `UseOneOfForPolymorphism` is enabled, and your serializer supports (and has enabled) emitting/accepting a discriminator property, then Swashbuckle will automatically generate the corresponding `discriminator` metadata on base schema definitions.
 
 Alternatively, if you've customized your serializer to support polymorphic serialization/deserialization, you can provide some custom selector functions to determine the discriminator name and corresponding mapping:
 
@@ -1099,7 +1121,7 @@ services.AddSwaggerGen(c =>
 {
     ...
 
-    c.UseOneOfForPolymorphism();
+    c.UseOneOfForInheritance();
 
     c.SelectDiscriminatorNameUsing((baseType) => "TypeName");
     c.SelectDiscriminatorValueUsing((subType) => subType.Name);

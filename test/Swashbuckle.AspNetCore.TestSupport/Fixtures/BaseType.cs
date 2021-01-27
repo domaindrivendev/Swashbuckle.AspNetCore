@@ -1,6 +1,6 @@
 ﻿namespace Swashbuckle.AspNetCore.TestSupport
 {
-    public abstract class BaseType
+    public class BaseType
     {
         public string BaseProperty { get; set; }
     }
