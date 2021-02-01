@@ -45,7 +45,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var serializeAsString = (enumValues.Length > 0)
                     && JsonConverterFunc(enumValues.GetValue(0)).StartsWith("\"");
 
-                var primitiveTypeAndFormat = serializeAsString 
+                var primitiveTypeAndFormat = serializeAsString
                     ? PrimitiveTypesAndFormats[typeof(string)]
                     : PrimitiveTypesAndFormats[type.GetEnumUnderlyingType()];
 

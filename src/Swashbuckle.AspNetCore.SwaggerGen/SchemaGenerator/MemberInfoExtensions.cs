@@ -12,6 +12,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private const string NullableFlagsFieldName = "NullableFlags";
         private const string NullableContextAttributeFullTypeName = "System.Runtime.CompilerServices.NullableContextAttribute";
         private const string FlagFieldName = "Flag";
+
         public static IEnumerable<object> GetInlineAndMetadataAttributes(this MemberInfo memberInfo)
         {
             var attributes = memberInfo.GetCustomAttributes(true)
@@ -31,6 +32,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             return attributes;
         }
+
         public static bool IsNonNullable(this MemberInfo memberInfo)
         {
             if (memberInfo == null)
