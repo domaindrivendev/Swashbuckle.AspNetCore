@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Collections.Generic;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -861,7 +860,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             return new SwaggerGenerator(
                 options ?? DefaultOptions,
                 new FakeApiDescriptionGroupCollectionProvider(apiDescriptions),
-                new SchemaGenerator(new SchemaGeneratorOptions(), new SystemTextJsonBehavior(new JsonSerializerOptions()))
+                new SchemaGenerator(new SchemaGeneratorOptions(), new SystemTextJsonDataContractResolver(new JsonSerializerOptions()))
             );
         }
 

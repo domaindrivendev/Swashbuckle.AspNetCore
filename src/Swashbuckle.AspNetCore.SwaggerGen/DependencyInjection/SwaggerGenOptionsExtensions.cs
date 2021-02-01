@@ -214,15 +214,6 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Extend reference schemas (using the allOf construct) so that contextual metadata can be applied to all parameter and property schemas
-        /// </summary>
-        /// <param name="swaggerGenOptions"></param>
-        public static void UseAllOfToExtendReferenceSchemas(this SwaggerGenOptions swaggerGenOptions)
-        {
-            swaggerGenOptions.SchemaGeneratorOptions.UseAllOfToExtendReferenceSchemas = true;
-        }
-
-        /// <summary>
         /// Enables composite schema generation. If enabled, subtype schemas will contain the allOf construct to
         /// incorporate properties from the base class instead of defining those properties inline.
         /// </summary>
@@ -230,16 +221,6 @@ namespace Microsoft.Extensions.DependencyInjection
         public static void UseAllOfForInheritance(this SwaggerGenOptions swaggerGenOptions)
         {
             swaggerGenOptions.SchemaGeneratorOptions.UseAllOfForInheritance = true;
-        }
-
-        /// <summary>
-        /// Enables polymorphic schema generation. If enabled, request and response schemas will contain the oneOf
-        /// construct to describe sub types as a set of alternative schemas.
-        /// </summary>
-        /// <param name="swaggerGenOptions"></param>
-        public static void UseOneOfForPolymorphism(this SwaggerGenOptions swaggerGenOptions)
-        {
-            swaggerGenOptions.SchemaGeneratorOptions.UseOneOfForPolymorphism = true;
         }
 
         /// <summary>
@@ -285,6 +266,25 @@ namespace Microsoft.Extensions.DependencyInjection
             Func<Type, string> customSelector)
         {
             swaggerGenOptions.SchemaGeneratorOptions.DiscriminatorValueSelector = customSelector;
+        }
+
+        /// <summary>
+        /// Enables polymorphic schema generation. If enabled, request and response schemas will contain the oneOf
+        /// construct to describe sub types as a set of alternative schemas.
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        public static void UseOneOfForPolymorphism(this SwaggerGenOptions swaggerGenOptions)
+        {
+            swaggerGenOptions.SchemaGeneratorOptions.UseOneOfForPolymorphism = true;
+        }
+
+        /// <summary>
+        /// Extend reference schemas (using the allOf construct) so that contextual metadata can be applied to all parameter and property schemas
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        public static void UseAllOfToExtendReferenceSchemas(this SwaggerGenOptions swaggerGenOptions)
+        {
+            swaggerGenOptions.SchemaGeneratorOptions.UseAllOfToExtendReferenceSchemas = true;
         }
 
         /// <summary>

@@ -19,15 +19,12 @@ namespace Microsoft.Extensions.DependencyInjection
             bool enableAnnotationsForInheritance,
             bool enableAnnotationsForPolymorphism)
         {
-            options.SchemaFilter<AnnotationsSchemaFilter>();
-            options.ParameterFilter<AnnotationsParameterFilter>();
-            options.RequestBodyFilter<AnnotationsRequestBodyFilter>();
-            options.OperationFilter<AnnotationsOperationFilter>();
-            options.DocumentFilter<AnnotationsDocumentFilter>();
 
             if (enableAnnotationsForInheritance || enableAnnotationsForPolymorphism)
             {
                 options.SelectSubTypesUsing(AnnotationsSubTypesSelector);
+                options.SelectDiscriminatorNameUsing(AnnotationsDiscriminatorNameSelector);
+                options.SelectDiscriminatorValueUsing(AnnotationsDiscriminatorValueSelector);
 
                 if (enableAnnotationsForInheritance)
                 {
@@ -37,8 +34,6 @@ namespace Microsoft.Extensions.DependencyInjection
                 if (enableAnnotationsForPolymorphism)
                 {
                     options.UseOneOfForPolymorphism();
-                    options.SelectDiscriminatorNameUsing(AnnotationsDiscriminatorNameSelector);
-                    options.SelectDiscriminatorValueUsing(AnnotationsDiscriminatorValueSelector);
                 }
             }
         }
@@ -52,19 +47,6 @@ namespace Microsoft.Extensions.DependencyInjection
             options.EnableAnnotations(
                 enableAnnotationsForPolymorphism: false,
                 enableAnnotationsForInheritance: false);
-        }
-
-        /// <summary>
-        /// Enables Swagger annotations (SwaggerOperationAttribute, SwaggerParameterAttribute etc.)
-        /// </summary>
-        /// <param name="options"></param>
-        /// <param name="enableSubTypeAnnotations">Enables SwaggerSubType and SwaggerDiscriminator attributes or polymorphism and inheritance</param>
-        [Obsolete]
-        public static void EnableAnnotations(this SwaggerGenOptions options, bool enableSubTypeAnnotations)
-        {
-            options.EnableAnnotations(
-                enableAnnotationsForPolymorphism: enableSubTypeAnnotations,
-                enableAnnotationsForInheritance: enableSubTypeAnnotations);
         }
 
         private static IEnumerable<Type> AnnotationsSubTypesSelector(Type type)

@@ -8,11 +8,11 @@ using System.Text.Json.Serialization;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public class SystemTextJsonBehavior : ISerializerBehavior
+    public class SystemTextJsonDataContractResolver : ISerializerDataContractResolver
     {
         private readonly JsonSerializerOptions _serializerOptions;
 
-        public SystemTextJsonBehavior(JsonSerializerOptions serializerOptions)
+        public SystemTextJsonDataContractResolver(JsonSerializerOptions serializerOptions)
         {
             _serializerOptions = serializerOptions;
         }
@@ -21,7 +21,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             if (type.IsOneOf(typeof(object), typeof(JsonDocument), typeof(JsonElement)))
             {
-                return DataContract.ForDynamic(underlyingType: type);
+                return DataContract.ForDynamic(
+                    underlyingType: type,
+                    jsonConverter: JsonConverterFunc);
             }
 
             if (PrimitiveTypesAndFormats.ContainsKey(type))
@@ -31,7 +33,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 return DataContract.ForPrimitive(
                     underlyingType: type,
                     dataType: primitiveTypeAndFormat.Item1,
-                    dataFormat: primitiveTypeAndFormat.Item2);
+                    dataFormat: primitiveTypeAndFormat.Item2,
+                    jsonConverter: JsonConverterFunc);
             }
 
             if (type.IsEnum)
@@ -39,37 +42,47 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var enumValues = type.GetEnumValues();
 
                 //Test to determine if the serializer will treat as string
-                var serializeAsString = (enumValues.Length > 0) && Serialize(enumValues.GetValue(0)).StartsWith("\"");
+                var serializeAsString = (enumValues.Length > 0)
+                    && JsonConverterFunc(enumValues.GetValue(0)).StartsWith("\"");
 
-                var primitiveTypeAndFormat = serializeAsString 
+                var primitiveTypeAndFormat = serializeAsString
                     ? PrimitiveTypesAndFormats[typeof(string)]
                     : PrimitiveTypesAndFormats[type.GetEnumUnderlyingType()];
 
                 return DataContract.ForPrimitive(
                     underlyingType: type,
                     dataType: primitiveTypeAndFormat.Item1,
-                    dataFormat: primitiveTypeAndFormat.Item2);
+                    dataFormat: primitiveTypeAndFormat.Item2,
+                    jsonConverter: JsonConverterFunc);
             }
 
             if (IsSupportedDictionary(type, out Type keyType, out Type valueType))
             {
                 return DataContract.ForDictionary(
                     underlyingType: type,
-                    keyType: keyType,
-                    valueType: valueType);
+                    valueType: valueType,
+                    keys: null, // STJ doesn't currently support dictionaries with enum key types
+                    jsonConverter: JsonConverterFunc);
             }
 
             if (IsSupportedCollection(type, out Type itemType))
             {
                 return DataContract.ForArray(
                     underlyingType: type,
-                    itemType: itemType);
+                    itemType: itemType,
+                    jsonConverter: JsonConverterFunc);
             }
 
             return DataContract.ForObject(
                 underlyingType: type,
                 properties: GetDataPropertiesFor(type, out Type extensionDataType),
-                extensionDataType: extensionDataType);
+                extensionDataType: extensionDataType,
+                jsonConverter: JsonConverterFunc);
+        }
+
+        private string JsonConverterFunc(object value)
+        {
+            return JsonSerializer.Serialize(value, _serializerOptions);
         }
 
         public bool IsSupportedDictionary(Type type, out Type keyType, out Type valueType)
@@ -165,11 +178,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
 
             return dataProperties;
-        }
-
-        public string Serialize(object value)
-        {
-            return JsonSerializer.Serialize(value, _serializerOptions);
         }
 
         private static readonly Dictionary<Type, Tuple<DataType, string>> PrimitiveTypesAndFormats = new Dictionary<Type, Tuple<DataType, string>>
