@@ -266,7 +266,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.StringWithDefault), "\"foobar\"")]
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.IntArrayWithDefault), "[\n  1,\n  2,\n  3\n]")]
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.StringArrayWithDefault), "[\n  \"foo\",\n  \"bar\"\n]")]
-        [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.StringWithDefaultNull), "null")]
         [UseInvariantCulture]
         public void GenerateSchema_SetsDefault_IfPropertyHasDefaultValueAttribute(
             Type declaringType,
@@ -315,6 +314,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["StringWithRegularExpression"].Pattern);
             Assert.Equal(5, schema.Properties["StringWithStringLength"].MinLength);
             Assert.Equal(10, schema.Properties["StringWithStringLength"].MaxLength);
+            Assert.False(schema.Properties["StringWithRequired"].Nullable);
             Assert.Equal(new[] { "StringWithRequired" }, schema.Required.ToArray());
         }
 
@@ -510,7 +510,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Null(schema.Reference);
             Assert.NotNull(schema.AllOf);
             Assert.Equal(1, schema.AllOf.Count);
-            Assert.True(schema.Nullable);
         }
 
         [Fact]
@@ -527,31 +526,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
-        [InlineData(typeof(FixedNonNullableReferenceType),
-            new[] { nameof(FixedNonNullableReferenceType.NullableStringValue) },
-            new[] { nameof(FixedNonNullableReferenceType.NonNullableStringValue) })]
-        [InlineData(typeof(AllNonNullableReferenceType),
-            new string[0],
-            new[] { nameof(AllNonNullableReferenceType.Property1) })]
-        [InlineData(typeof(AllNullableReferenceType),
-            new[] { nameof(AllNullableReferenceType.Property1) },
-            new string[0])]
-        public void GenerateSchema_SupportsOption_SuppressNonNullableReferenceTypes(Type type,
-            string[] nullables,
-            string[] requires)
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableString), true)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableString), false)]
+        public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypes(
+            Type declaringType,
+            string propertyName,
+            bool expectedNullable)
         {
             var subject = Subject(
-                configureGenerator: c => c.SuppressNonNullableReferenceTypes = false
-                );
+                configureGenerator: c => c.SupportNonNullableReferenceTypes = true
+            );
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = subject.GenerateSchema(type, schemaRepository);
+            var referenceSchema = subject.GenerateSchema(declaringType, schemaRepository);
 
-            Assert.NotNull(referenceSchema.Reference);
-            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal("object", schema.Type);
-            Assert.All(requires, property => Assert.False(schema.Properties[property].Nullable));
-            Assert.All(nullables, property => Assert.True(schema.Properties[property].Nullable));
+            var propertySchema = schemaRepository.Schemas[referenceSchema.Reference.Id].Properties[propertyName];
+            Assert.Equal(expectedNullable, propertySchema.Nullable);
         }
 
         [Fact]

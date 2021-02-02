@@ -31,6 +31,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private void DeepCopy(SchemaGeneratorOptions source, SchemaGeneratorOptions target)
         {
             target.CustomTypeMappings = new Dictionary<Type, Func<OpenApiSchema>>(source.CustomTypeMappings);
+            target.UseInlineDefinitionsForEnums = source.UseInlineDefinitionsForEnums;
             target.SchemaIdSelector = source.SchemaIdSelector;
             target.IgnoreObsoleteProperties = source.IgnoreObsoleteProperties;
             target.UseAllOfForInheritance = source.UseAllOfForInheritance;
@@ -39,7 +40,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             target.DiscriminatorNameSelector = source.DiscriminatorNameSelector;
             target.DiscriminatorValueSelector = source.DiscriminatorValueSelector;
             target.UseAllOfToExtendReferenceSchemas = source.UseAllOfToExtendReferenceSchemas;
-            target.UseInlineDefinitionsForEnums = source.UseInlineDefinitionsForEnums;
+            target.SupportNonNullableReferenceTypes = source.SupportNonNullableReferenceTypes;
             target.SchemaFilters = new List<ISchemaFilter>(source.SchemaFilters);
         }
 

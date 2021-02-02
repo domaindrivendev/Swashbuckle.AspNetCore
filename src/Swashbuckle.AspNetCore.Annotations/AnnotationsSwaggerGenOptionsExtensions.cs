@@ -19,6 +19,11 @@ namespace Microsoft.Extensions.DependencyInjection
             bool enableAnnotationsForInheritance,
             bool enableAnnotationsForPolymorphism)
         {
+            options.SchemaFilter<AnnotationsSchemaFilter>();
+            options.ParameterFilter<AnnotationsParameterFilter>();
+            options.RequestBodyFilter<AnnotationsRequestBodyFilter>();
+            options.OperationFilter<AnnotationsOperationFilter>();
+            options.DocumentFilter<AnnotationsDocumentFilter>();
 
             if (enableAnnotationsForInheritance || enableAnnotationsForPolymorphism)
             {

@@ -258,7 +258,6 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.StringWithDefault), "\"foobar\"")]
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.IntArrayWithDefault), "[\n  1,\n  2,\n  3\n]")]
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.StringArrayWithDefault), "[\n  \"foo\",\n  \"bar\"\n]")]
-        [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.StringWithDefaultNull), "null")]
         [UseInvariantCulture]
         public void GenerateSchema_SetsDefault_IfPropertyHasDefaultValueAttribute(
             Type declaringType,
@@ -307,6 +306,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["StringWithRegularExpression"].Pattern);
             Assert.Equal(5, schema.Properties["StringWithStringLength"].MinLength);
             Assert.Equal(10, schema.Properties["StringWithStringLength"].MaxLength);
+            Assert.False(schema.Properties["StringWithRequired"].Nullable);
             Assert.Equal(new[] { "StringWithRequired" }, schema.Required.ToArray());
         }
 
@@ -514,7 +514,6 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.Null(schema.Reference);
             Assert.NotNull(schema.AllOf);
             Assert.Equal(1, schema.AllOf.Count);
-            Assert.True(schema.Nullable);
         }
 
         [Fact]
