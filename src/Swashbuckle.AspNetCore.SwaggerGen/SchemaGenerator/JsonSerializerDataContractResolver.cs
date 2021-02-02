@@ -8,11 +8,11 @@ using System.Text.Json.Serialization;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public class SystemTextJsonDataContractResolver : ISerializerDataContractResolver
+    public class JsonSerializerDataContractResolver : ISerializerDataContractResolver
     {
         private readonly JsonSerializerOptions _serializerOptions;
 
-        public SystemTextJsonDataContractResolver(JsonSerializerOptions serializerOptions)
+        public JsonSerializerDataContractResolver(JsonSerializerOptions serializerOptions)
         {
             _serializerOptions = serializerOptions;
         }

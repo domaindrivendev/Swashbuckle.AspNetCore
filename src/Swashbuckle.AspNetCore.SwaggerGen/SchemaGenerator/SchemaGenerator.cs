@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
@@ -163,6 +164,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 Type = dataContract.DataType.ToString().ToLower(CultureInfo.InvariantCulture),
                 Format = dataContract.DataFormat
             };
+
+            // For backcompat only - EnumValues is obsolete
+            if (dataContract.EnumValues != null)
+            {
+                schema.Enum = dataContract.EnumValues
+                    .Select(value => JsonSerializer.Serialize(value))
+                    .Select(valueAsJson => OpenApiAnyFactory.CreateFromJson(valueAsJson))
+                    .ToList();
+
+                return schema;
+            }
 
             if (dataContract.UnderlyingType.IsEnum)
             {

@@ -16,7 +16,7 @@ using System.Collections.ObjectModel;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
-    public class SystemTextJsonSchemaGeneratorTests
+    public class JsonSerializerSchemaGeneratorTests
     {
         [Theory]
         [InlineData(typeof(IFormFile))]
@@ -716,7 +716,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var serializerOptions = new JsonSerializerOptions();
             configureSerializer?.Invoke(serializerOptions);
 
-            return new SchemaGenerator(generatorOptions, new SystemTextJsonDataContractResolver(serializerOptions));
+            return new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions));
         }
     }
 }
