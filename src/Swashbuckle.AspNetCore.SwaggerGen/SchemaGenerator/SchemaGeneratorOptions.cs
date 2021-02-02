@@ -15,7 +15,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             DiscriminatorNameSelector = DefaultDiscriminatorNameSelector;
             DiscriminatorValueSelector = DefaultDiscriminatorValueSelector;
             SchemaFilters = new List<ISchemaFilter>();
-            SuppressNonNullableReferenceTypes = true;
         }
 
         public IDictionary<Type, Func<OpenApiSchema>> CustomTypeMappings { get; set; }
@@ -28,19 +27,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public bool UseAllOfForInheritance { get; set; }
 
+        public bool UseOneOfForPolymorphism { get; set; }
+
         public Func<Type, IEnumerable<Type>> SubTypesSelector { get; set; }
 
         public Func<Type, string> DiscriminatorNameSelector { get; set; }
 
         public Func<Type, string> DiscriminatorValueSelector { get; set; }
 
-        public bool UseOneOfForPolymorphism { get; set; }
-
         public bool UseAllOfToExtendReferenceSchemas { get; set; }
 
-        public IList<ISchemaFilter> SchemaFilters { get; set; }
+        public bool SupportNonNullableReferenceTypes { get; set; }
 
-        public bool SuppressNonNullableReferenceTypes { get; set; }
+        public IList<ISchemaFilter> SchemaFilters { get; set; }
 
         private string DefaultSchemaIdSelector(Type modelType)
         {

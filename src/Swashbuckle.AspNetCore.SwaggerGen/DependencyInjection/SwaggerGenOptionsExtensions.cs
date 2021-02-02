@@ -183,6 +183,15 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
+        /// Generate inline schema definitions (as opposed to referencing a shared definition) for enum parameters and properties
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        public static void UseInlineDefinitionsForEnums(this SwaggerGenOptions swaggerGenOptions)
+        {
+            swaggerGenOptions.SchemaGeneratorOptions.UseInlineDefinitionsForEnums = true;
+        }
+
+        /// <summary>
         /// Provide a custom strategy for generating the unique Id's that are used to reference object Schema's
         /// </summary>
         /// <param name="swaggerGenOptions"></param>
@@ -205,15 +214,6 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Generate inline schema definitions (as opposed to referencing a shared definition) for enum parameters and properties
-        /// </summary>
-        /// <param name="swaggerGenOptions"></param>
-        public static void UseInlineDefinitionsForEnums(this SwaggerGenOptions swaggerGenOptions)
-        {
-            swaggerGenOptions.SchemaGeneratorOptions.UseInlineDefinitionsForEnums = true;
-        }
-
-        /// <summary>
         /// Enables composite schema generation. If enabled, subtype schemas will contain the allOf construct to
         /// incorporate properties from the base class instead of defining those properties inline.
         /// </summary>
@@ -221,6 +221,16 @@ namespace Microsoft.Extensions.DependencyInjection
         public static void UseAllOfForInheritance(this SwaggerGenOptions swaggerGenOptions)
         {
             swaggerGenOptions.SchemaGeneratorOptions.UseAllOfForInheritance = true;
+        }
+
+        /// <summary>
+        /// Enables polymorphic schema generation. If enabled, request and response schemas will contain the oneOf
+        /// construct to describe sub types as a set of alternative schemas.
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        public static void UseOneOfForPolymorphism(this SwaggerGenOptions swaggerGenOptions)
+        {
+            swaggerGenOptions.SchemaGeneratorOptions.UseOneOfForPolymorphism = true;
         }
 
         /// <summary>
@@ -269,22 +279,21 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Enables polymorphic schema generation. If enabled, request and response schemas will contain the oneOf
-        /// construct to describe sub types as a set of alternative schemas.
-        /// </summary>
-        /// <param name="swaggerGenOptions"></param>
-        public static void UseOneOfForPolymorphism(this SwaggerGenOptions swaggerGenOptions)
-        {
-            swaggerGenOptions.SchemaGeneratorOptions.UseOneOfForPolymorphism = true;
-        }
-
-        /// <summary>
         /// Extend reference schemas (using the allOf construct) so that contextual metadata can be applied to all parameter and property schemas
         /// </summary>
         /// <param name="swaggerGenOptions"></param>
         public static void UseAllOfToExtendReferenceSchemas(this SwaggerGenOptions swaggerGenOptions)
         {
             swaggerGenOptions.SchemaGeneratorOptions.UseAllOfToExtendReferenceSchemas = true;
+        }
+
+        /// <summary>
+        /// Enable detection of non nullable reference types to set Nullable flag accordingly on schema properties
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        public static void SupportNonNullableReferenceTypes(this SwaggerGenOptions swaggerGenOptions)
+        {
+            swaggerGenOptions.SchemaGeneratorOptions.SupportNonNullableReferenceTypes = true;
         }
 
         /// <summary>

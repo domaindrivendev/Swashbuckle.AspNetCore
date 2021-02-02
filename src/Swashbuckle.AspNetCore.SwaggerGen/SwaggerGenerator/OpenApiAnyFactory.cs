@@ -32,9 +32,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 if (jsonElement.ValueKind == JsonValueKind.String)
                     return new OpenApiString(jsonElement.ToString());
 
-                if (jsonElement.ValueKind == JsonValueKind.Null)
-                    return new OpenApiNull();
-
                 if (jsonElement.ValueKind == JsonValueKind.Array)
                     return CreateOpenApiArray(jsonElement);
 

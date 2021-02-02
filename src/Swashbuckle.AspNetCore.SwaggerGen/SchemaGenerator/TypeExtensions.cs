@@ -31,18 +31,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return (constructedType != null);
         }
 
-        public static bool IsNullable(this Type type, out Type innerType)
-        {
-            innerType = type.IsConstructedFrom(typeof(Nullable<>), out Type constructedType)
-                ? constructedType.GenericTypeArguments[0]
-                : null;
-
-            return (innerType != null);
-        }
-
         public static bool IsReferenceOrNullableType(this Type type)
         {
-            return (!type.IsValueType || type.IsNullable(out Type _));
+            return (!type.IsValueType || Nullable.GetUnderlyingType(type) != null);
         }
 
         public static object GetDefaultValue(this Type type)

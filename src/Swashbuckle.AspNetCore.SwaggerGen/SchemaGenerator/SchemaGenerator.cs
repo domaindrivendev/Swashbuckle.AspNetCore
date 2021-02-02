@@ -30,24 +30,113 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             MemberInfo memberInfo = null,
             ParameterInfo parameterInfo = null)
         {
+            if (memberInfo != null)
+                return GenerateSchemaForMember(memberInfo, schemaRepository);
+
+            if (parameterInfo != null)
+                return GenerateSchemaForParameter(parameterInfo, schemaRepository);
+
+            return GenerateSchemaForType(type, schemaRepository);
+        }
+
+        private OpenApiSchema GenerateSchemaForMember(
+            MemberInfo memberInfo,
+            SchemaRepository schemaRepository,
+            DataProperty dataProperty = null)
+        {
+            var memberType = memberInfo.MemberType == MemberTypes.Field
+                ? ((FieldInfo)memberInfo).FieldType
+                : ((PropertyInfo)memberInfo).PropertyType;
+
+            var dataContract = GetDataContractFor(memberType);
+
+            var schema = _generatorOptions.UseOneOfForPolymorphism && IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts)
+                ? GeneratePolymorphicSchema(dataContract, schemaRepository, knownTypesDataContracts)
+                : GenerateConcreteSchema(dataContract, schemaRepository);
+
+            if (_generatorOptions.UseAllOfToExtendReferenceSchemas && schema.Reference != null)
+            {
+                schema.AllOf = new[] { new OpenApiSchema { Reference = schema.Reference } };
+                schema.Reference = null;
+            }
+
+            if (schema.Reference == null)
+            {
+                var customAttributes = memberInfo.GetInlineAndMetadataAttributes();
+
+                // Nullable, ReadOnly & WriteOnly are only relevant for Schema "properties" (i.e. where dataProperty is non-null) 
+                if (dataProperty != null)
+                {
+                    schema.Nullable = _generatorOptions.SupportNonNullableReferenceTypes
+                        ? dataProperty.IsNullable && !customAttributes.OfType<RequiredAttribute>().Any() && !memberInfo.IsNonNullable()
+                        : dataProperty.IsNullable && !customAttributes.OfType<RequiredAttribute>().Any();
+
+                    schema.ReadOnly = dataProperty.IsReadOnly;
+                    schema.WriteOnly = dataProperty.IsWriteOnly;
+                }
+
+                var defaultValueAttribute = customAttributes.OfType<DefaultValueAttribute>().FirstOrDefault();
+                if (defaultValueAttribute != null)
+                {
+                    var defaultAsJson = dataContract.JsonConverter(defaultValueAttribute.Value);
+                    schema.Default = OpenApiAnyFactory.CreateFromJson(defaultAsJson);
+                }
+
+                var obsoleteAttribute = customAttributes.OfType<ObsoleteAttribute>().FirstOrDefault();
+                if (obsoleteAttribute != null)
+                {
+                    schema.Deprecated = true;
+                }
+
+                schema.ApplyValidationAttributes(customAttributes);
+
+                ApplyFilters(schema, memberType, schemaRepository, memberInfo: memberInfo);
+            }
+
+            return schema;
+        }
+
+        private OpenApiSchema GenerateSchemaForParameter(ParameterInfo parameterInfo, SchemaRepository schemaRepository)
+        {
+            var dataContract = GetDataContractFor(parameterInfo.ParameterType);
+
+            var schema = _generatorOptions.UseOneOfForPolymorphism && IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts)
+                ? GeneratePolymorphicSchema(dataContract, schemaRepository, knownTypesDataContracts)
+                : GenerateConcreteSchema(dataContract, schemaRepository);
+
+            if (_generatorOptions.UseAllOfToExtendReferenceSchemas && schema.Reference != null)
+            {
+                schema.AllOf = new[] { new OpenApiSchema { Reference = schema.Reference } };
+                schema.Reference = null;
+            }
+
+            if (schema.Reference == null)
+            {
+                if (parameterInfo.HasDefaultValue)
+                {
+                    var defaultAsJson = dataContract.JsonConverter(parameterInfo.DefaultValue);
+                    schema.Default = OpenApiAnyFactory.CreateFromJson(defaultAsJson);
+                }
+
+                schema.ApplyValidationAttributes(parameterInfo.GetCustomAttributes());
+
+                ApplyFilters(schema, parameterInfo.ParameterType, schemaRepository, parameterInfo: parameterInfo);
+            }
+
+            return schema;
+        }
+
+        private OpenApiSchema GenerateSchemaForType(Type type, SchemaRepository schemaRepository)
+        {
             var dataContract = GetDataContractFor(type);
 
             var schema = _generatorOptions.UseOneOfForPolymorphism && IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts)
                 ? GeneratePolymorphicSchema(dataContract, schemaRepository, knownTypesDataContracts)
                 : GenerateConcreteSchema(dataContract, schemaRepository);
 
-            if (memberInfo != null)
-            {
-                ApplyMemberMetadata(schema, type, memberInfo, dataContract);
-            }
-            else if (parameterInfo != null)
-            {
-                ApplyParameterMetadata(schema, type, parameterInfo, dataContract);
-            }
-
             if (schema.Reference == null)
             {
-                ApplyFilters(schema, type, schemaRepository, memberInfo, parameterInfo);
+                ApplyFilters(schema, type, schemaRepository);
             }
 
             return schema;
@@ -275,7 +364,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 if (_generatorOptions.IgnoreObsoleteProperties && customAttributes.OfType<ObsoleteAttribute>().Any())
                     continue;
 
-                schema.Properties[dataProperty.Name] = GeneratePropertySchema(dataProperty, schemaRepository);
+                schema.Properties[dataProperty.Name] = (dataProperty.MemberInfo != null)
+                    ? GenerateSchemaForMember(dataProperty.MemberInfo, schemaRepository, dataProperty)
+                    : GenerateSchemaForType(dataProperty.MemberType, schemaRepository);
 
                 if (dataProperty.IsRequired || customAttributes.OfType<RequiredAttribute>().Any()
                     && !schema.Required.Contains(dataProperty.Name))
@@ -337,20 +428,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return true;
         }
 
-        private OpenApiSchema GeneratePropertySchema(DataProperty dataProperty, SchemaRepository schemaRepository)
-        {
-            var schema = GenerateSchema(dataProperty.MemberType, schemaRepository, memberInfo: dataProperty.MemberInfo);
-
-            if (schema.Reference == null)
-            {
-                schema.Nullable = schema.Nullable && dataProperty.IsNullable;
-                schema.ReadOnly = dataProperty.IsReadOnly;
-                schema.WriteOnly = dataProperty.IsWriteOnly;
-            }
-
-            return schema;
-        }
-
         private OpenApiSchema GenerateReferencedSchema(
             DataContract dataContract,
             SchemaRepository schemaRepository,
@@ -367,68 +444,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             ApplyFilters(schema, dataContract.UnderlyingType, schemaRepository);
 
             return schemaRepository.AddDefinition(schemaId, schema);
-        }
-
-        private void ApplyMemberMetadata(
-            OpenApiSchema schema,
-            Type type,
-            MemberInfo memberInfo,
-            DataContract dataContract)
-        {
-            if (_generatorOptions.UseAllOfToExtendReferenceSchemas && schema.Reference != null)
-            {
-                schema.AllOf = new[] { new OpenApiSchema { Reference = schema.Reference } };
-                schema.Reference = null;
-            }
-
-            if (schema.Reference == null)
-            {
-                var customAttributes = memberInfo.GetInlineAndMetadataAttributes();
-
-                schema.Nullable = type.IsReferenceOrNullableType();
-
-                if (!_generatorOptions.SuppressNonNullableReferenceTypes && memberInfo.IsNonNullable())
-                {
-                    schema.Nullable = false;
-                }
-
-                var defaultValueAttribute = customAttributes.OfType<DefaultValueAttribute>().FirstOrDefault();
-                if (defaultValueAttribute != null)
-                {
-                    var defaultAsJson = dataContract.JsonConverter(defaultValueAttribute.Value);
-                    schema.Default = OpenApiAnyFactory.CreateFromJson(defaultAsJson);
-                }
-
-                var obsoleteAttribute = customAttributes.OfType<ObsoleteAttribute>().FirstOrDefault();
-                if (obsoleteAttribute != null)
-                {
-                    schema.Deprecated = true;
-                }
-
-                schema.ApplyValidationAttributes(customAttributes);
-            }
-        }
-
-        private void ApplyParameterMetadata(OpenApiSchema schema, Type type, ParameterInfo parameterInfo, DataContract dataContract)
-        {
-            if (_generatorOptions.UseAllOfToExtendReferenceSchemas && schema.Reference != null)
-            {
-                schema.AllOf = new[] { new OpenApiSchema { Reference = schema.Reference } };
-                schema.Reference = null;
-            }
-
-            if (schema.Reference == null)
-            {
-                schema.Nullable = type.IsReferenceOrNullableType();
-
-                if (parameterInfo.HasDefaultValue)
-                {
-                    var defaultAsJson = dataContract.JsonConverter(parameterInfo.DefaultValue);
-                    schema.Default = OpenApiAnyFactory.CreateFromJson(defaultAsJson);
-                }
-
-                schema.ApplyValidationAttributes(parameterInfo.GetCustomAttributes());
-            }
         }
 
         private void ApplyFilters(

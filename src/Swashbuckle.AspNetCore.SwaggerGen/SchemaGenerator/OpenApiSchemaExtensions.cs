@@ -28,9 +28,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 else if (attribute is StringLengthAttribute stringLengthAttribute)
                     ApplyStringLengthAttribute(schema, stringLengthAttribute);
-
-                else if (attribute is RequiredAttribute requiredAttribute)
-                    ApplyRequiredAttribute(schema, requiredAttribute);
             }
         }
 
@@ -111,11 +108,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             schema.MinLength = stringLengthAttribute.MinimumLength;
             schema.MaxLength = stringLengthAttribute.MaximumLength;
-        }
-
-        private static void ApplyRequiredAttribute(OpenApiSchema schema, RequiredAttribute requiredAttribute)
-        {
-            schema.Nullable = false;
         }
     }
 }
