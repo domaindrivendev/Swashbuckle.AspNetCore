@@ -49,7 +49,7 @@ function dotnet-pack {
     }
 }
 
-@( "install-dotnet-core", "install-swagger-ui", "install-redoc", "dotnet-build", "dotnet-pack" ) | ForEach-Object {
+@( "install-swagger-ui", "install-redoc", "dotnet-build", "dotnet-pack" ) | ForEach-Object {
     echo ""
     echo "***** $_ *****"
     echo ""
