@@ -7,16 +7,6 @@ if ($env:APPVEYOR -eq "True" -and $env:APPVEYOR_REPO_TAG -eq "false") {
 # Target folder for build artifacts (e.g. nugets)
 $ArtifactsPath = "$(pwd)" + "\artifacts"
 
-function install-dotnet-core {
-    if ($env:APPVEYOR -eq "True") {
-        $env:DOTNET_INSTALL_DIR = Join-Path "$(Convert-Path "$PSScriptRoot")" ".dotnetcli"
-        mkdir $env:DOTNET_INSTALL_DIR | Out-Null
-        $installScript = Join-Path $env:DOTNET_INSTALL_DIR "install.ps1"
-        Invoke-WebRequest "https://dot.net/v1/dotnet-install.ps1" -OutFile $installScript -UseBasicParsing
-        & $installScript -Version "$env:DOTNET_VERSION" -InstallDir "$env:DOTNET_INSTALL_DIR"
-    }
-}
-
 function install-swagger-ui {
     Push-Location src/Swashbuckle.AspNetCore.SwaggerUI
     npm install
@@ -49,7 +39,7 @@ function dotnet-pack {
     }
 }
 
-@( "install-dotnet-core", "install-swagger-ui", "install-redoc", "dotnet-build", "dotnet-pack" ) | ForEach-Object {
+@( "install-swagger-ui", "install-redoc", "dotnet-build", "dotnet-pack" ) | ForEach-Object {
     echo ""
     echo "***** $_ *****"
     echo ""
