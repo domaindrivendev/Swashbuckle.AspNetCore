@@ -32,6 +32,12 @@ namespace Swashbuckle.AspNetCore.Annotations
             set { WriteOnlyFlag = value; }
         }
 
+        public bool Nullable
+        {
+            get { throw new InvalidOperationException($"Use {nameof(NullableFlag)} instead"); }
+            set { NullableFlag = value; }
+        }
+
         public string[] Required { get; set; }
 
         public string Title { get; set; }
@@ -39,5 +45,7 @@ namespace Swashbuckle.AspNetCore.Annotations
         internal bool? ReadOnlyFlag { get; private set; }
 
         internal bool? WriteOnlyFlag { get; private set; }
+
+        internal bool? NullableFlag { get; private set; }
     }
 }

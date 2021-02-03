@@ -42,15 +42,16 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
         }
 
         [Theory]
-        [InlineData(typeof(SwaggerAnnotatedType), nameof(SwaggerAnnotatedType.StringWithSwaggerSchemaAttribute), true, true)]
-        [InlineData(typeof(SwaggerAnnotatedStruct), nameof(SwaggerAnnotatedStruct.StringWithSwaggerSchemaAttribute), true, true)]
+        [InlineData(typeof(SwaggerAnnotatedType), nameof(SwaggerAnnotatedType.StringWithSwaggerSchemaAttribute), true, true, false)]
+        [InlineData(typeof(SwaggerAnnotatedStruct), nameof(SwaggerAnnotatedStruct.StringWithSwaggerSchemaAttribute), true, true, false)]
         public void Apply_EnrichesSchemaMetadata_IfPropertyDecoratedWithSwaggerSchemaAttribute(
             Type declaringType,
             string propertyName,
             bool expectedReadOnly,
-            bool expectedWriteOnly)
+            bool expectedWriteOnly,
+            bool expectedNullable)
         {
-            var schema = new OpenApiSchema();
+            var schema = new OpenApiSchema { Nullable = true };
             var propertyInfo = declaringType
                 .GetProperty(propertyName);
             var context = new SchemaFilterContext(
@@ -65,12 +66,13 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             Assert.Equal("date", schema.Format);
             Assert.Equal(expectedReadOnly, schema.ReadOnly);
             Assert.Equal(expectedWriteOnly, schema.WriteOnly);
+            Assert.Equal(expectedNullable, schema.Nullable);
         }
 
         [Fact]
-        public void Apply_DoesNotModifyTheReadOnlyAndWriteOnlyFlags_IfNotSpecifiedWithSwaggerSchemaAttribute()
+        public void Apply_DoesNotModifyFlags_IfNotSpecifiedWithSwaggerSchemaAttribute()
         {
-            var schema = new OpenApiSchema { ReadOnly = true, WriteOnly = true };
+            var schema = new OpenApiSchema { ReadOnly = true, WriteOnly = true, Nullable = true };
             var propertyInfo = typeof(SwaggerAnnotatedType)
                 .GetProperty(nameof(SwaggerAnnotatedType.StringWithSwaggerSchemaAttributeDescriptionOnly));
             var context = new SchemaFilterContext(
@@ -83,6 +85,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
 
             Assert.True(schema.ReadOnly);
             Assert.True(schema.WriteOnly);
+            Assert.True(schema.Nullable);
         }
 
         [Theory]
