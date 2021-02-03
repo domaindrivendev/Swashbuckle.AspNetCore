@@ -88,6 +88,9 @@ namespace Swashbuckle.AspNetCore.Annotations
             if (schemaAttribute.WriteOnlyFlag.HasValue)
                 schema.WriteOnly = schemaAttribute.WriteOnlyFlag.Value;
 
+            if (schemaAttribute.NullableFlag.HasValue)
+                schema.Nullable = schemaAttribute.NullableFlag.Value;
+
             if (schemaAttribute.Required != null)
                 schema.Required = new SortedSet<string>(schemaAttribute.Required);
 
