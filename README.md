@@ -184,6 +184,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Change the Path for Swagger JSON Endpoints](#change-the-path-for-swagger-json-endpoints)
     * [Modify Swagger with Request Context](#modify-swagger-with-request-context)
     * [Serialize Swagger JSON in the 2.0 format](#serialize-swagger-in-the-20-format)
+    * [Working with Reverse Proxies and Load Balancers](#working-with-reverse-proxies-and-load-balancers)
 
 * [Swashbuckle.AspNetCore.SwaggerGen](#swashbuckleaspnetcoreswaggergen)
 
@@ -285,6 +286,55 @@ app.UseSwagger(c =>
     c.SerializeAsV2 = true;
 });
 ```
+
+### Working with Reverse Proxies and Load Balancers ###
+
+To ensure applications work correctly behind proxies and load balancers, Microsoft provides the [Forwarded Headers Middleware](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-5.0). This is particularly important for applications that generate links and redirects because information in the request like the original scheme (HTTP/HTTPS) and host is obscured before it reaches the app. By convention, most proxies forward this information in `X-Forwarded-*` headers, and so the Forwarded Headers Middleware can be configured to read these values and fill in the associated fields on `HttpContext`.
+
+The `Swagger` and `SwaggerUI` middleware generate links and redirects, and so to ensure they work correctly behind reverse proxies and load balancers, you'll need to insert the Forwarded Headers Middleware:
+
+```csharp
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.All
+});
+
+app.UseSwagger();
+
+app.UseSwaggerUI(c =>
+{
+	c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+});
+```
+
+_NOTE: Depending on your proxy setup, you may need to tweak the Forwarded Headers Middleware (e.g. if the proxy uses non-standard header names). You can refer to the [Microsoft docs](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-5.0) for further guidance on this._
+
+#### Dealing with Proxies that change the request path ####
+
+Some proxies trim the request path before forwarding. For example, an original path of `/foo/api/products` may be forwarded to the app as `/api/products`. Handling this case is a little more involved. Firstly, you'll need to insert custom middleware to set the `PathBase` to the appropriate path prefix (if it's known) OR to read it from a header if provided by the proxy:
+
+```csharp
+app.Use((context, next) =>
+{
+    if (context.Request.Headers.TryGetValue("X-Forwarded-Prefix", out var value))
+        context.Request.PathBase = value.First();
+
+    return next();
+});
+
+app.UseSwagger();
+```
+
+Additionally, you'll need to adjust the `SwaggerUI` configuration to use a _page-relative_ syntax (i.e. no leading `/`) for the Swagger JSON endpoint instead of a root-relative syntax.
+
+```csharp
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("v1/swagger.json", "V1 Docs");
+})
+```
+
+This way, the swagger-ui will look for the Swagger JSON at a URL that's _relative_ to itself (e.g. `<some-url>/swagger/v1/swagger.json`), and will therefore be agnostic of the host and path prefix (if any) that preceeds it.
 
 ## Swashbuckle.AspNetCore.SwaggerGen ##
 
