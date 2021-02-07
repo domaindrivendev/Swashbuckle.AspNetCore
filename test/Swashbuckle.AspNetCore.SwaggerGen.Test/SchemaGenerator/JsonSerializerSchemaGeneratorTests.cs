@@ -434,7 +434,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var schema = subject.GenerateSchema(typeof(BaseType), schemaRepository);
 
-            Assert.Equal(new[] { "BaseType", "SubType1" }, schemaRepository.Schemas.Keys);
+            Assert.Equal(new[] { "SubType1", "BaseType" }, schemaRepository.Schemas.Keys);
         }
 
         [Fact]

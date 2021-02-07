@@ -6,7 +6,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <LicenseUrl>https://licenses.nuget.org/MIT</LicenseUrl>
-    <VersionPrefix>6.0.1</VersionPrefix>
+    <VersionPrefix>6.0.2</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>

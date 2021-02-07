@@ -16,7 +16,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public string DocumentName { get; }
 
-        public IDictionary<string, OpenApiSchema> Schemas { get; private set; } = new SortedDictionary<string, OpenApiSchema>();
+        public Dictionary<string, OpenApiSchema> Schemas { get; private set; } = new Dictionary<string, OpenApiSchema>();
 
         public void RegisterType(Type type, string schemaId)
         {
