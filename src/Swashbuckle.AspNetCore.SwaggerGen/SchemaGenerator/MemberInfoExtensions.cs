@@ -33,12 +33,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return attributes;
         }
 
-        public static bool IsNonNullable(this MemberInfo memberInfo)
+        public static bool IsNonNullableReferenceType(this MemberInfo memberInfo)
         {
-            if (memberInfo == null)
-            {
-                throw new ArgumentNullException(nameof(memberInfo));
-            }
+            var memberType = memberInfo.MemberType == MemberTypes.Field
+                ? ((FieldInfo)memberInfo).FieldType
+                : ((PropertyInfo)memberInfo).PropertyType;
+
+            if (memberType.IsValueType) return false;
 
             var nullableAttribute = memberInfo.GetNullableAttribute();
 

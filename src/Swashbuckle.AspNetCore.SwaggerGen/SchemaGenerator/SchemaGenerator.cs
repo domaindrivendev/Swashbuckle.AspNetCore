@@ -68,7 +68,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 if (dataProperty != null)
                 {
                     schema.Nullable = _generatorOptions.SupportNonNullableReferenceTypes
-                        ? dataProperty.IsNullable && !customAttributes.OfType<RequiredAttribute>().Any() && !memberInfo.IsNonNullable()
+                        ? dataProperty.IsNullable && !customAttributes.OfType<RequiredAttribute>().Any() && !memberInfo.IsNonNullableReferenceType()
                         : dataProperty.IsNullable && !customAttributes.OfType<RequiredAttribute>().Any();
 
                     schema.ReadOnly = dataProperty.IsReadOnly;
