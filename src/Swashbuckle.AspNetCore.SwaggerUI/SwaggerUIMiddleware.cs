@@ -4,6 +4,8 @@ using System.Text.RegularExpressions;
 using System.Text;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -11,12 +13,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.StaticFiles;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http.Extensions;
 
-#if NETCOREAPP3_0
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IWebHostEnvironment;
+#if NETSTANDARD2_0
+using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 #endif
 
 namespace Swashbuckle.AspNetCore.SwaggerUI
@@ -31,7 +31,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
 
         public SwaggerUIMiddleware(
             RequestDelegate next,
-            IHostingEnvironment hostingEnv,
+            IWebHostEnvironment hostingEnv,
             ILoggerFactory loggerFactory,
             SwaggerUIOptions options)
         {
@@ -70,7 +70,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
 
         private StaticFileMiddleware CreateStaticFileMiddleware(
             RequestDelegate next,
-            IHostingEnvironment hostingEnv,
+            IWebHostEnvironment hostingEnv,
             ILoggerFactory loggerFactory,
             SwaggerUIOptions options)
         {

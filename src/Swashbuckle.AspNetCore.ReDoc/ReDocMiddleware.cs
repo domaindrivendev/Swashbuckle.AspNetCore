@@ -14,8 +14,9 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-#if NETCOREAPP3_0
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IWebHostEnvironment;
+
+#if (NETSTANDARD2_0)
+using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 #endif
 
 namespace Swashbuckle.AspNetCore.ReDoc
@@ -30,7 +31,7 @@ namespace Swashbuckle.AspNetCore.ReDoc
 
         public ReDocMiddleware(
             RequestDelegate next,
-            IHostingEnvironment hostingEnv,
+            IWebHostEnvironment hostingEnv,
             ILoggerFactory loggerFactory,
             ReDocOptions options)
         {
@@ -69,7 +70,7 @@ namespace Swashbuckle.AspNetCore.ReDoc
 
         private StaticFileMiddleware CreateStaticFileMiddleware(
             RequestDelegate next,
-            IHostingEnvironment hostingEnv,
+            IWebHostEnvironment hostingEnv,
             ILoggerFactory loggerFactory,
             ReDocOptions options)
         {

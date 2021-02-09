@@ -1,14 +1,14 @@
 ﻿using System;
+using System.Linq;
+using Microsoft.AspNetCore.Routing;
+
+#if (!NETSTANDARD2_0)
+using Microsoft.AspNetCore.Routing.Patterns;
+#endif
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
-
-#if NETCOREAPP3_0
-using System.Linq;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.AspNetCore.Routing.Patterns;
-#endif
 
 namespace Microsoft.AspNetCore.Builder
 {
@@ -35,7 +35,7 @@ namespace Microsoft.AspNetCore.Builder
             return app.UseSwagger(options);
         }
 
-#if NETCOREAPP3_0
+#if (!NETSTANDARD2_0)
         public static IEndpointRouteBuilder MapSwagger(
             this IEndpointRouteBuilder endpoints,
             string pattern = "/swagger/{documentName}/swagger.json",
