@@ -17,4 +17,5 @@
   <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp2.1' ">
     <PackageReference Include="Microsoft.AspNetCore" Version="2.1.0" />
   </ItemGroup>
+
 </Project>
