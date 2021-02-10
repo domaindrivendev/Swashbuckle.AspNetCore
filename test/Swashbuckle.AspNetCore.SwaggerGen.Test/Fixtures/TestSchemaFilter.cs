@@ -3,7 +3,7 @@ using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
-    public class VendorExtensionsSchemaFilter : ISchemaFilter
+    public class TestSchemaFilter : ISchemaFilter
     {
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {

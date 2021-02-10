@@ -750,7 +750,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     },
                     ParameterFilters = new List<IParameterFilter>
                     {
-                        new VendorExtensionsParameterFilter()
+                        new TestParameterFilter()
                     }
                 }
             );
@@ -787,7 +787,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     },
                     RequestBodyFilters = new List<IRequestBodyFilter>
                     {
-                        new VendorExtensionsRequestBodyFilter()
+                        new TestRequestBodyFilter()
                     }
                 }
             );
@@ -817,7 +817,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     },
                     OperationFilters = new List<IOperationFilter>
                     {
-                        new VendorExtensionsOperationFilter()
+                        new TestOperationFilter()
                     }
                 }
             );
@@ -843,7 +843,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     },
                     DocumentFilters = new List<IDocumentFilter>
                     {
-                        new VendorExtensionsDocumentFilter()
+                        new TestDocumentFilter()
                     }
                 }
             );
@@ -853,6 +853,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(2, document.Extensions.Count);
             Assert.Equal("bar", ((OpenApiString)document.Extensions["X-foo"]).Value);
             Assert.Equal("v1", ((OpenApiString)document.Extensions["X-docName"]).Value);
+            Assert.Contains("ComplexType", document.Components.Schemas.Keys);
         }
 
         private SwaggerGenerator Subject(IEnumerable<ApiDescription> apiDescriptions, SwaggerGeneratorOptions options = null)

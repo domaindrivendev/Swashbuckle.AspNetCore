@@ -360,7 +360,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void GenerateSchema_SupportsOption_SchemaFilters(Type type)
         {
             var subject = Subject(
-                configureGenerator: (c) => c.SchemaFilters.Add(new VendorExtensionsSchemaFilter())
+                configureGenerator: (c) => c.SchemaFilters.Add(new TestSchemaFilter())
             );
             var schemaRepository = new SchemaRepository("v1");
 

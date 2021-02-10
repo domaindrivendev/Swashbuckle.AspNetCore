@@ -47,7 +47,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 Paths = GeneratePaths(applicableApiDescriptions, schemaRepository),
                 Components = new OpenApiComponents
                 {
-                    Schemas = new SortedDictionary<string, OpenApiSchema>(schemaRepository.Schemas),
+                    Schemas = schemaRepository.Schemas,
                     SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>(_options.SecuritySchemes)
                 },
                 SecurityRequirements = new List<OpenApiSecurityRequirement>(_options.SecurityRequirements)
@@ -58,6 +58,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 filter.Apply(swaggerDoc, filterContext);
             }
+
+            swaggerDoc.Components.Schemas = new SortedDictionary<string, OpenApiSchema>(swaggerDoc.Components.Schemas);
 
             return swaggerDoc;
         }
