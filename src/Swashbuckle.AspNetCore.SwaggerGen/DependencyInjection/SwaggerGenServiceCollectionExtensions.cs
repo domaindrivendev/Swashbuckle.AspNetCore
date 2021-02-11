@@ -35,6 +35,9 @@ namespace Microsoft.Extensions.DependencyInjection
                 return new JsonSerializerDataContractResolver(serializerOptions);
             });
 
+            // Used for caching generated OpenApiDocument in SwaggerMiddleware and DocumentProvider.
+            services.AddMemoryCache();
+
             // Used by the <c>dotnet-getdocument</c> tool from the Microsoft.Extensions.ApiDescription.Server package.
             services.TryAddSingleton<IDocumentProvider, DocumentProvider>();
 

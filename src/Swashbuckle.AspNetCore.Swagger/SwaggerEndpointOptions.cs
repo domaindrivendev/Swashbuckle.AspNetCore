@@ -12,6 +12,7 @@ namespace Swashbuckle.AspNetCore.Swagger
         {
             PreSerializeFilters = new List<Action<OpenApiDocument, HttpRequest>>();
             SerializeAsV2 = false;
+            UseOpenApiDocumentMemoryCaching = false;
         }
 
 
@@ -19,6 +20,12 @@ namespace Swashbuckle.AspNetCore.Swagger
         /// Return Swagger JSON in the V2 format rather than V3
         /// </summary>
         public bool SerializeAsV2 { get; set; }
+
+        /// <summary>
+        /// Allows to cache generated OpenApiDocument for identical requests until
+        /// applying <see cref="PreSerializeFilters"/>.
+        /// </summary>
+        public bool UseOpenApiDocumentMemoryCaching { get; set; }
 
         /// <summary>
         /// Actions that can be applied SwaggerDocument's before they're serialized to JSON.
