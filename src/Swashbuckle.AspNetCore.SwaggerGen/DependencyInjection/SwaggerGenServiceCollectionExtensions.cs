@@ -31,7 +31,13 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddTransient(s => s.GetRequiredService<IOptions<SchemaGeneratorOptions>>().Value);
             services.TryAddTransient<ISerializerDataContractResolver>(s =>
             {
-                var serializerOptions = s.GetJsonSerializerOptions() ?? new JsonSerializerOptions();
+#if (!NETSTANDARD2_0)
+                var serializerOptions = s.GetService<IOptions<JsonOptions>>()?.Value?.JsonSerializerOptions
+                    ?? new JsonSerializerOptions();
+#else
+                var serializerOptions = new JsonSerializerOptions();
+#endif
+
                 return new JsonSerializerDataContractResolver(serializerOptions);
             });
 
@@ -48,15 +54,6 @@ namespace Microsoft.Extensions.DependencyInjection
             Action<SwaggerGenOptions> setupAction)
         {
             services.Configure(setupAction);
-        }
-
-        private static JsonSerializerOptions GetJsonSerializerOptions(this IServiceProvider serviceProvider)
-        {
-#if NETCOREAPP3_0
-            return serviceProvider.GetService<IOptions<JsonOptions>>()?.Value?.JsonSerializerOptions;
-#else
-            return null;
-#endif
         }
     }
 }

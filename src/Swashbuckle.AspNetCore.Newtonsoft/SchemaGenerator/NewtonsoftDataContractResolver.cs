@@ -163,7 +163,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
             extensionDataType = jsonObjectContract.ExtensionDataValueType;
 
-#if NETCOREAPP3_0
+#if (!NETSTANDARD2_0)
             // If applicable, honor ProblemDetailsConverter
             if (jsonObjectContract.UnderlyingType.IsAssignableTo(typeof(Microsoft.AspNetCore.Mvc.ProblemDetails))
                 && _serializerSettings.Converters.OfType<Microsoft.AspNetCore.Mvc.NewtonsoftJson.ProblemDetailsConverter>().Any())

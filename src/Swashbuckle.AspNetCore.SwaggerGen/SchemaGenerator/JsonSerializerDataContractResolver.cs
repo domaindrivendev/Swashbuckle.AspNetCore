@@ -113,7 +113,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 return true;
             }
 
-#if NETCOREAPP3_0
+#if (!NETSTANDARD2_0)
             if (type.IsConstructedFrom(typeof(IAsyncEnumerable<>), out constructedType))
             {
                 itemType = constructedType.GenericTypeArguments[0];
