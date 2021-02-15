@@ -43,5 +43,19 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             Assert.Contains("Redoc.init", indexContent);
             Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
         }
+
+        [Theory]
+        [InlineData("/redoc/1.0/index.html", "/swagger/1.0/swagger.json")]
+        [InlineData("/redoc/2.0/index.html", "/swagger/2.0/swagger.json")]
+        public async Task VersionUrls_ProperlyHandlesDifferentVersions(string redocUrl, string swaggerPath)
+        {
+            var client = new TestSite(typeof(MultipleVersions.Startup)).BuildClient();
+
+            var response = await client.GetAsync(redocUrl);
+            var content = await response.Content.ReadAsStringAsync();
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Contains(swaggerPath, content);
+        }
     }
 }

@@ -22,9 +22,12 @@ namespace Microsoft.AspNetCore.Builder
             this IApplicationBuilder app,
             Action<ReDocOptions> setupAction = null)
         {
-            var options = app.ApplicationServices.GetRequiredService<IOptions<ReDocOptions>>().Value;
-
-            setupAction?.Invoke(options);
+            ReDocOptions options;
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                options = scope.ServiceProvider.GetRequiredService<IOptionsSnapshot<ReDocOptions>>().Value;
+                setupAction?.Invoke(options);
+            }
 
             // To simplify the common case, use a default that will work with the SwaggerMiddleware defaults
             if (options.SpecUrl == null)
