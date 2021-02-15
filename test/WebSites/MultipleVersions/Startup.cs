@@ -38,6 +38,8 @@ namespace MultipleVersions
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseStaticFiles();
+
             app.UseRouting();
 
             app.UseAuthorization();
@@ -48,13 +50,31 @@ namespace MultipleVersions
             });
 
             app.UseSwagger();
+
+            // A common endpoint that contains both versions
             app.UseSwaggerUI(c =>
             {
+                c.RoutePrefix = "swagger";
                 foreach (var description in provider.ApiVersionDescriptions)
                 {
-                    c.SwaggerEndpoint($"{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant());
+                    c.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", $"Version {description.GroupName}");
                 }
             });
+
+            // Separate endpoints that contain only one version
+            foreach (var description in provider.ApiVersionDescriptions)
+            {
+                app.UseSwaggerUI(c =>
+                {
+                    c.RoutePrefix = $"swagger/{description.GroupName}";
+                    c.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", $"Version {description.GroupName}");
+                });
+                app.UseReDoc(c =>
+                {
+                    c.RoutePrefix = $"redoc/{description.GroupName}";
+                    c.SpecUrl($"/swagger/{description.GroupName}/swagger.json");
+                });
+            }
         }
     }
 }
