@@ -47,7 +47,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         [Theory]
         [InlineData("/redoc/1.0/index.html", "/swagger/1.0/swagger.json")]
         [InlineData("/redoc/2.0/index.html", "/swagger/2.0/swagger.json")]
-        public async Task VersionUrls_ProperlyHandlesDifferentVersions(string redocUrl, string swaggerPath)
+        public async Task ReDocMiddleware_CanBeConfiguredMultipleTimes(string redocUrl, string swaggerPath)
         {
             var client = new TestSite(typeof(MultipleVersions.Startup)).BuildClient();
 

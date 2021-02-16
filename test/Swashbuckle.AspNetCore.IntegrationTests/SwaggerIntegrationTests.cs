@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Readers;
@@ -10,7 +11,7 @@ using ReDocApp = ReDoc;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests
 {
-    public class SwaggerGenIntegrationTests
+    public class SwaggerIntegrationTests
     {
         [Theory]
         [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
@@ -112,6 +113,25 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             Assert.NotNull(openApiDoc.Servers);
             Assert.Equal(1, openApiDoc.Servers.Count);
             Assert.Equal(expectedServerUrl, openApiDoc.Servers[0].Url);
+        }
+
+        [Theory]
+        [InlineData("/swagger/v1/swagger.json", "openapi", "3.0.1")]
+        [InlineData("/swagger/v1/swaggerv2.json", "swagger", "2.0")]
+        public async Task SwaggerMiddleware_CanBeConfiguredMultipleTimes(
+            string swaggerUrl,
+            string expectedVersionProperty,
+            string expectedVersionValue)
+        {
+            var client = new TestSite(typeof(Basic.Startup)).BuildClient();
+
+            var response = await client.GetAsync(swaggerUrl);
+
+            response.EnsureSuccessStatusCode();
+            var contentStream = await response.Content.ReadAsStreamAsync();
+
+            var json = await JsonSerializer.DeserializeAsync<JsonElement>(contentStream);
+            Assert.Equal(expectedVersionValue, json.GetProperty(expectedVersionProperty).GetString());
         }
     }
 }

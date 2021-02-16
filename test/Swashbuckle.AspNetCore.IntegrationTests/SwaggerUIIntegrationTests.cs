@@ -59,7 +59,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         [InlineData("/swagger/index.html", new [] { "Version 1.0", "Version 2.0" })]
         [InlineData("/swagger/1.0/index.html", new [] { "Version 1.0" })]
         [InlineData("/swagger/2.0/index.html", new [] { "Version 2.0" })]
-        public async Task VersionUrls_ProperlyHandlesDifferentVersions(string swaggerUiUrl, string[] versions)
+        public async Task SwaggerUIMiddleware_CanBeConfiguredMultipleTimes(string swaggerUiUrl, string[] versions)
         {
             var client = new TestSite(typeof(MultipleVersions.Startup)).BuildClient();
 
