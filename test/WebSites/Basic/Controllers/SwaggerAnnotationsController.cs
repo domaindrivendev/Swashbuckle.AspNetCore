@@ -1,16 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using Basic.Swagger;
+using Basic.Filters;
 
 namespace Basic.Controllers
 {
     [SwaggerTag("Manipulate Carts to your heart's content", "http://www.tempuri.org")]
+    [SwaggerHeader("x-cart-label", Description = "Label of the cart, if any.")]
     public class SwaggerAnnotationsController
     {
         [HttpPost("/carts")]
         [SwaggerOperation(OperationId = "CreateCart")]
         [SwaggerResponse(201, "The cart was created", typeof(Cart))]
         [SwaggerResponse(400, "The cart data is invalid")]
+        [SwaggerHeader("x-cart-label", true, Description = "Label of the cart.")]
+        [SwaggerHeader("x-cart-label-issuer", Description = "Issuer of the cart's label.")]
         public Cart Create([FromBody, SwaggerRequestBody(Description = "The cart request body")]Cart cart)
         {
             return new Cart { Id = 1 };
@@ -32,6 +36,16 @@ namespace Basic.Controllers
         public Cart Delete([FromRoute(Name = "id"), SwaggerParameter("The cart identifier")]int cartId)
         {
             return new Cart { Id = cartId };
+        }
+
+        [HttpPut("/carts")]
+        [DisableFormValueModelBinding]
+        [SwaggerMultiPartFormData("cartData", true)]
+        [SwaggerMultiPartFormData("cartImage")]
+        [SwaggerMultiPartFormData("cartLabel", Type = "string")]
+        public Cart SaveCartData()
+        {
+            return new Cart { Id = 1 };
         }
     }
 

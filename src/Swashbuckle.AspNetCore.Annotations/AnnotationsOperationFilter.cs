@@ -22,6 +22,8 @@ namespace Swashbuckle.AspNetCore.Annotations
             ApplySwaggerOperationAttribute(operation, actionAttributes);
             ApplySwaggerOperationFilterAttributes(operation, context, controllerAndActionAttributes);
             ApplySwaggerResponseAttributes(operation, controllerAndActionAttributes);
+            ApplySwaggerHeaderAttributes(operation, controllerAndActionAttributes);
+            ApplySwaggerMultipartFormDataAttributes(operation, controllerAndActionAttributes);
         }
 
         private static void ApplySwaggerOperationAttribute(
@@ -91,6 +93,205 @@ namespace Swashbuckle.AspNetCore.Annotations
                     response.Description = swaggerResponseAttribute.Description;
 
                 operation.Responses[statusCode] = response;
+            }
+        }
+
+        private void ApplySwaggerHeaderAttributes(OpenApiOperation operation,
+            IEnumerable<object> controllerAndActionAttributes)
+        {
+            var swaggerHeaderAttributes = controllerAndActionAttributes.OfType<SwaggerHeaderAttribute>();
+
+            if (swaggerHeaderAttributes.Any())
+            {
+                Dictionary<string, OpenApiParameter> swaggerHeaderParametersToAdd = new Dictionary<string, OpenApiParameter>();
+
+                foreach (var swaggerHeaderAttribute in swaggerHeaderAttributes)
+                {
+                    if (!swaggerHeaderParametersToAdd.TryGetValue(swaggerHeaderAttribute.Name, out OpenApiParameter swaggerHeaderParameter))
+                    {
+                        swaggerHeaderParameter = new OpenApiParameter
+                        {
+                            In = ParameterLocation.Header,
+                            Schema = new OpenApiSchema
+                            {
+                                Type = "string"
+                            }
+                        };
+
+                        swaggerHeaderParametersToAdd.Add(swaggerHeaderAttribute.Name, swaggerHeaderParameter);
+                    }
+
+                    swaggerHeaderParameter.Name = swaggerHeaderAttribute.Name;
+                    swaggerHeaderParameter.Required = swaggerHeaderAttribute.Required;
+                    swaggerHeaderParameter.Description = swaggerHeaderAttribute.Description;
+                }
+
+                if (operation.Parameters is null)
+                {
+                    operation.Parameters = new List<OpenApiParameter>(swaggerHeaderParametersToAdd.Values);
+                }
+                else
+                {
+                    OpenApiParameter existingHeaderParameter;
+                    foreach (var swaggerHeaderParameterToAdd in swaggerHeaderParametersToAdd.Values)
+                    {
+                        // Honour previously defined headers, outside the scope of the attribute?
+                        // If any exist, overwrite them.
+                        existingHeaderParameter = operation.Parameters.FirstOrDefault(p => p.Name == swaggerHeaderParameterToAdd.Name && p.In == swaggerHeaderParameterToAdd.In);
+                        if (existingHeaderParameter != null)
+                        {
+                            existingHeaderParameter.Name = swaggerHeaderParameterToAdd.Name;
+                            existingHeaderParameter.Required = swaggerHeaderParameterToAdd.Required;
+                            existingHeaderParameter.Description = swaggerHeaderParameterToAdd.Description;
+                        }
+                        else
+                        {
+                            operation.Parameters.Add(swaggerHeaderParameterToAdd);
+                        }
+                    }
+                }
+
+                swaggerHeaderParametersToAdd.Clear();
+            }
+        }
+
+        private void ApplySwaggerMultipartFormDataAttributes(OpenApiOperation operation, IEnumerable<object> controllerAndActionAttributes)
+        {
+            var swaggerMultipartFormDataAttributes = controllerAndActionAttributes.OfType<SwaggerMultiPartFormDataAttribute>();
+
+            if (swaggerMultipartFormDataAttributes.Any())
+            {
+                var schemaPropertiesToAdd = new Dictionary<string, OpenApiSchema>();
+                var requiredSchemaProperties = new HashSet<string>();
+
+                foreach (var swaggerMultipartFormDataAttribute in swaggerMultipartFormDataAttributes)
+                {
+                    if (schemaPropertiesToAdd.TryGetValue(swaggerMultipartFormDataAttribute.Name, out OpenApiSchema schemaPropertyToAdd))
+                    {
+                        schemaPropertyToAdd.Type = swaggerMultipartFormDataAttribute.Type ?? "file";
+                        schemaPropertyToAdd.Format = swaggerMultipartFormDataAttribute.Type is null ? "binary" : swaggerMultipartFormDataAttribute.Type;
+                    }
+                    else
+                    {
+                        schemaPropertiesToAdd.Add(swaggerMultipartFormDataAttribute.Name, new OpenApiSchema
+                        {
+                            Type = swaggerMultipartFormDataAttribute.Type ?? "file",
+                            Format = swaggerMultipartFormDataAttribute.Type is null ? "binary" : swaggerMultipartFormDataAttribute.Type
+                        });
+                    }
+
+                    if (swaggerMultipartFormDataAttribute.Required)
+                    {
+                        requiredSchemaProperties.Add(swaggerMultipartFormDataAttribute.Name);
+                    }
+                }
+
+                if (operation.RequestBody is null)
+                {
+                    operation.RequestBody = new OpenApiRequestBody
+                    {
+                        Content =
+                        {
+                            ["multipart/form-data"] = new OpenApiMediaType()
+                            {
+                                Schema = new OpenApiSchema
+                                {
+                                    Type = "object",
+                                    Properties = schemaPropertiesToAdd,
+                                    Required = requiredSchemaProperties
+                                }
+                            }
+                        }
+                    };
+                }
+                else if (operation.RequestBody.Content is null)
+                {
+                    operation.RequestBody.Content = new Dictionary<string, OpenApiMediaType>
+                    {
+                        ["multipart/form-data"] = new OpenApiMediaType()
+                        {
+                            Schema = new OpenApiSchema
+                            {
+                                Type = "object",
+                                Properties = schemaPropertiesToAdd,
+                                Required = requiredSchemaProperties
+                            }
+                        }
+                    };
+                }
+                else
+                {
+                    if (operation.RequestBody.Content.TryGetValue("multipart/form-data", out OpenApiMediaType openApiMediaType))
+                    {
+                        if (openApiMediaType.Schema is null)
+                        {
+                            openApiMediaType.Schema = new OpenApiSchema
+                            {
+                                Type = "object",
+                                Properties = schemaPropertiesToAdd,
+                                Required = requiredSchemaProperties
+                            };
+                        }
+                        else
+                        {
+                            // Make sure the type is object
+                            openApiMediaType.Schema.Type = "object";
+
+                            // Honour previously defined properties?
+                            // If any exist, overwrite them.
+                            if (openApiMediaType.Schema.Properties != null)
+                            {
+                                foreach (var schemaPropertyToAdd in schemaPropertiesToAdd)
+                                {
+                                    if (openApiMediaType.Schema.Properties.TryGetValue(schemaPropertyToAdd.Key, out OpenApiSchema existingSchemaProperty))
+                                    {
+                                        existingSchemaProperty.Type = schemaPropertyToAdd.Value.Type;
+                                        existingSchemaProperty.Format = schemaPropertyToAdd.Value.Format;
+                                    }
+                                    else
+                                    {
+                                        openApiMediaType.Schema.Properties.Add(schemaPropertyToAdd);
+                                    }
+                                }
+
+                                schemaPropertiesToAdd.Clear();
+                            }
+                            else
+                            {
+                                openApiMediaType.Schema.Properties = schemaPropertiesToAdd;
+                            }
+
+                            if (openApiMediaType.Schema.Required != null)
+                            {
+                                foreach (var requiredSchemaProperty in requiredSchemaProperties)
+                                {
+                                    openApiMediaType.Schema.Required.Add(requiredSchemaProperty);
+                                }
+
+                                requiredSchemaProperties.Clear();
+                            }
+                            else
+                            {
+                                openApiMediaType.Schema.Required = requiredSchemaProperties;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        operation.RequestBody.Content = new Dictionary<string, OpenApiMediaType>
+                        {
+                            ["multipart/form-data"] = new OpenApiMediaType()
+                            {
+                                Schema = new OpenApiSchema
+                                {
+                                    Type = "object",
+                                    Properties = schemaPropertiesToAdd,
+                                    Required = requiredSchemaProperties
+                                }
+                            }
+                        };
+                    }
+                }
             }
         }
     }
