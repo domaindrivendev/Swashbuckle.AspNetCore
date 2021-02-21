@@ -184,6 +184,10 @@ namespace Swashbuckle.AspNetCore.Annotations
                     {
                         requiredSchemaProperties.Add(swaggerMultipartFormDataAttribute.Name);
                     }
+                    else
+                    {
+                        requiredSchemaProperties.Remove(swaggerMultipartFormDataAttribute.Name);
+                    }
                 }
 
                 if (operation.RequestBody is null)
