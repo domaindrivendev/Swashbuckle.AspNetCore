@@ -189,7 +189,7 @@ namespace Swashbuckle.AspNetCore.Annotations
 
                 foreach (var swaggerMultipartFormDataAttribute in swaggerMultipartFormDataAttributes)
                 {
-                    // Honor previously defined headers, outside the scope of the attribute?
+                    // Honor previously defined multipart/form-data properties, outside the scope of the attribute?
                     // If any exist, overwrite them.
                     if (!multiPartFormMedia.Schema.Properties.TryGetValue(swaggerMultipartFormDataAttribute.Name, out OpenApiSchema schemaProperty))
                     {
