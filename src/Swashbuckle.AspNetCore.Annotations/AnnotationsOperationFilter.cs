@@ -103,55 +103,48 @@ namespace Swashbuckle.AspNetCore.Annotations
 
             if (swaggerHeaderAttributes.Any())
             {
-                Dictionary<string, OpenApiParameter> swaggerHeaderParametersToAdd = new Dictionary<string, OpenApiParameter>();
-
-                foreach (var swaggerHeaderAttribute in swaggerHeaderAttributes)
-                {
-                    if (!swaggerHeaderParametersToAdd.TryGetValue(swaggerHeaderAttribute.Name, out OpenApiParameter swaggerHeaderParameter))
-                    {
-                        swaggerHeaderParameter = new OpenApiParameter
-                        {
-                            In = ParameterLocation.Header,
-                            Schema = new OpenApiSchema
-                            {
-                                Type = "string"
-                            }
-                        };
-
-                        swaggerHeaderParametersToAdd.Add(swaggerHeaderAttribute.Name, swaggerHeaderParameter);
-                    }
-
-                    swaggerHeaderParameter.Name = swaggerHeaderAttribute.Name;
-                    swaggerHeaderParameter.Required = swaggerHeaderAttribute.Required;
-                    swaggerHeaderParameter.Description = swaggerHeaderAttribute.Description;
-                }
-
                 if (operation.Parameters == null)
                 {
-                    operation.Parameters = new List<OpenApiParameter>(swaggerHeaderParametersToAdd.Values);
-                }
-                else
-                {
-                    OpenApiParameter existingHeaderParameter;
-                    foreach (var swaggerHeaderParameterToAdd in swaggerHeaderParametersToAdd.Values)
-                    {
-                        // Honour previously defined headers, outside the scope of the attribute?
-                        // If any exist, overwrite them.
-                        existingHeaderParameter = operation.Parameters.FirstOrDefault(p => p.Name == swaggerHeaderParameterToAdd.Name && p.In == swaggerHeaderParameterToAdd.In);
-                        if (existingHeaderParameter != null)
-                        {
-                            existingHeaderParameter.Name = swaggerHeaderParameterToAdd.Name;
-                            existingHeaderParameter.Required = swaggerHeaderParameterToAdd.Required;
-                            existingHeaderParameter.Description = swaggerHeaderParameterToAdd.Description;
-                        }
-                        else
-                        {
-                            operation.Parameters.Add(swaggerHeaderParameterToAdd);
-                        }
-                    }
+                    operation.Parameters = new List<OpenApiParameter>();
                 }
 
-                swaggerHeaderParametersToAdd.Clear();
+                OpenApiParameter existingHeaderParameter;
+                foreach (var swaggerHeaderAttribute in swaggerHeaderAttributes)
+                {
+                    // Honour previously defined headers, outside the scope of the attribute?
+                    // If any exist, overwrite them.
+                    existingHeaderParameter = operation.Parameters.FirstOrDefault(p => p.Name == swaggerHeaderAttribute.Name && p.In == ParameterLocation.Header);
+                    if (existingHeaderParameter != null)
+                    {
+                        existingHeaderParameter.Name = swaggerHeaderAttribute.Name;
+                        existingHeaderParameter.Required = swaggerHeaderAttribute.Required;
+                        existingHeaderParameter.Description = swaggerHeaderAttribute.Description;
+
+                        if (existingHeaderParameter.Schema == null)
+                        {
+                            existingHeaderParameter.Schema = new OpenApiSchema
+                            {
+                                Type = swaggerHeaderAttribute.Type ?? "string",
+                                Format = swaggerHeaderAttribute.Type is null ? null : swaggerHeaderAttribute.Format
+                            };
+                        }
+                    }
+                    else
+                    {
+                        operation.Parameters.Add(new OpenApiParameter
+                        {
+                            Name = swaggerHeaderAttribute.Name,
+                            In = ParameterLocation.Header,
+                            Required = swaggerHeaderAttribute.Required,
+                            Description = swaggerHeaderAttribute.Description,
+                            Schema = new OpenApiSchema
+                            {
+                                Type = swaggerHeaderAttribute.Type ?? "string",
+                                Format = swaggerHeaderAttribute.Type is null ? null : swaggerHeaderAttribute.Format
+                            }
+                        });
+                    }
+                }
             }
         }
 
@@ -161,13 +154,6 @@ namespace Swashbuckle.AspNetCore.Annotations
 
             if (swaggerMultipartFormDataAttributes.Any())
             {
-                var multiPartFormSchema = new OpenApiSchema
-                {
-                    Type = "object",
-                    Properties = new Dictionary<string, OpenApiSchema>(),
-                    Required = new HashSet<string>()
-                };
-
                 if (operation.RequestBody == null)
                 {
                     operation.RequestBody = new OpenApiRequestBody();
@@ -180,43 +166,43 @@ namespace Swashbuckle.AspNetCore.Annotations
 
                 if (!operation.RequestBody.Content.TryGetValue("multipart/form-data", out OpenApiMediaType multiPartFormMedia))
                 {
-                    multiPartFormMedia = new OpenApiMediaType
-                    {
-                        Schema = multiPartFormSchema
-                    };
+                    multiPartFormMedia = new OpenApiMediaType();
 
                     operation.RequestBody.Content.Add("multipart/form-data", multiPartFormMedia);
                 }
+
+                if (multiPartFormMedia.Schema == null)
+                {
+                    multiPartFormMedia.Schema = new OpenApiSchema
+                    {
+                        Type = "object",
+                        Properties = new Dictionary<string, OpenApiSchema>(),
+                        Required = new HashSet<string>()
+                    };
+                }
                 else
                 {
-                    if (multiPartFormMedia.Schema == null)
+                    // Ensure type is "object"
+                    multiPartFormMedia.Schema.Type = "object";
+
+                    if (multiPartFormMedia.Schema.Properties == null)
                     {
-                        multiPartFormMedia.Schema = multiPartFormSchema;
+                        multiPartFormMedia.Schema.Properties = new Dictionary<string, OpenApiSchema>();
                     }
-                    else
+
+                    if (multiPartFormMedia.Schema.Required == null)
                     {
-                        // Ensure type is "object"
-                        multiPartFormMedia.Schema.Type = "object";
-
-                        if (multiPartFormSchema.Properties == null)
-                        {
-                            multiPartFormSchema.Properties = new Dictionary<string, OpenApiSchema>();
-                        }
-
-                        if (multiPartFormSchema.Required == null)
-                        {
-                            multiPartFormSchema.Required = new HashSet<string>();
-                        }
+                        multiPartFormMedia.Schema.Required = new HashSet<string>();
                     }
                 }
 
                 foreach (var swaggerMultipartFormDataAttribute in swaggerMultipartFormDataAttributes)
                 {
-                    if (!multiPartFormSchema.Properties.TryGetValue(swaggerMultipartFormDataAttribute.Name, out OpenApiSchema schemaPropertyToAdd))
+                    if (!multiPartFormMedia.Schema.Properties.TryGetValue(swaggerMultipartFormDataAttribute.Name, out OpenApiSchema schemaPropertyToAdd))
                     {
                         schemaPropertyToAdd = new OpenApiSchema();
 
-                        multiPartFormSchema.Properties.Add(swaggerMultipartFormDataAttribute.Name, schemaPropertyToAdd);
+                        multiPartFormMedia.Schema.Properties.Add(swaggerMultipartFormDataAttribute.Name, schemaPropertyToAdd);
                     }
 
                     schemaPropertyToAdd.Type = swaggerMultipartFormDataAttribute.Type ?? "file";
@@ -224,11 +210,11 @@ namespace Swashbuckle.AspNetCore.Annotations
 
                     if (swaggerMultipartFormDataAttribute.Required)
                     {
-                        multiPartFormSchema.Required.Add(swaggerMultipartFormDataAttribute.Name);
+                        multiPartFormMedia.Schema.Required.Add(swaggerMultipartFormDataAttribute.Name);
                     }
                     else
                     {
-                        multiPartFormSchema.Required.Remove(swaggerMultipartFormDataAttribute.Name);
+                        multiPartFormMedia.Schema.Required.Remove(swaggerMultipartFormDataAttribute.Name);
                     }
                 }
             }

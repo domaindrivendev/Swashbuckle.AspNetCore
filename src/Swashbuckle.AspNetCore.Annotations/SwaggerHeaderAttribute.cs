@@ -35,5 +35,15 @@ namespace Swashbuckle.AspNetCore.Annotations
         /// GFM syntax can be used for rich text representation
         /// </summary>
         public string Description { get; set; }
+
+        /// <summary>
+        /// Data type of the header as defined in OpenAPI specifications: https://swagger.io/docs/specification/data-models/data-types/
+        /// </summary>
+        public string Type { get; set; }
+
+        /// <summary>
+        /// Format of header's data type as defined in OpenAPI specifications: https://swagger.io/docs/specification/data-models/data-types/
+        /// </summary>
+        public string Format { get; set; }
     }
 }
