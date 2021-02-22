@@ -126,7 +126,7 @@ namespace Swashbuckle.AspNetCore.Annotations
                     swaggerHeaderParameter.Description = swaggerHeaderAttribute.Description;
                 }
 
-                if (operation.Parameters is null)
+                if (operation.Parameters == null)
                 {
                     operation.Parameters = new List<OpenApiParameter>(swaggerHeaderParametersToAdd.Values);
                 }
@@ -161,136 +161,74 @@ namespace Swashbuckle.AspNetCore.Annotations
 
             if (swaggerMultipartFormDataAttributes.Any())
             {
-                var schemaPropertiesToAdd = new Dictionary<string, OpenApiSchema>();
-                var requiredSchemaProperties = new HashSet<string>();
-
-                foreach (var swaggerMultipartFormDataAttribute in swaggerMultipartFormDataAttributes)
+                var multiPartFormSchema = new OpenApiSchema
                 {
-                    if (schemaPropertiesToAdd.TryGetValue(swaggerMultipartFormDataAttribute.Name, out OpenApiSchema schemaPropertyToAdd))
-                    {
-                        schemaPropertyToAdd.Type = swaggerMultipartFormDataAttribute.Type ?? "file";
-                        schemaPropertyToAdd.Format = swaggerMultipartFormDataAttribute.Type is null ? "binary" : swaggerMultipartFormDataAttribute.Type;
-                    }
-                    else
-                    {
-                        schemaPropertiesToAdd.Add(swaggerMultipartFormDataAttribute.Name, new OpenApiSchema
-                        {
-                            Type = swaggerMultipartFormDataAttribute.Type ?? "file",
-                            Format = swaggerMultipartFormDataAttribute.Type is null ? "binary" : swaggerMultipartFormDataAttribute.Type
-                        });
-                    }
+                    Type = "object",
+                    Properties = new Dictionary<string, OpenApiSchema>(),
+                    Required = new HashSet<string>()
+                };
 
-                    if (swaggerMultipartFormDataAttribute.Required)
-                    {
-                        requiredSchemaProperties.Add(swaggerMultipartFormDataAttribute.Name);
-                    }
-                    else
-                    {
-                        requiredSchemaProperties.Remove(swaggerMultipartFormDataAttribute.Name);
-                    }
+                if (operation.RequestBody == null)
+                {
+                    operation.RequestBody = new OpenApiRequestBody();
                 }
 
-                if (operation.RequestBody is null)
+                if (operation.RequestBody.Content == null)
                 {
-                    operation.RequestBody = new OpenApiRequestBody
-                    {
-                        Content =
-                        {
-                            ["multipart/form-data"] = new OpenApiMediaType()
-                            {
-                                Schema = new OpenApiSchema
-                                {
-                                    Type = "object",
-                                    Properties = schemaPropertiesToAdd,
-                                    Required = requiredSchemaProperties
-                                }
-                            }
-                        }
-                    };
+                    operation.RequestBody.Content = new Dictionary<string, OpenApiMediaType>();
                 }
-                else if (operation.RequestBody.Content is null)
+
+                if (!operation.RequestBody.Content.TryGetValue("multipart/form-data", out OpenApiMediaType multiPartFormMedia))
                 {
-                    operation.RequestBody.Content = new Dictionary<string, OpenApiMediaType>
+                    multiPartFormMedia = new OpenApiMediaType
                     {
-                        ["multipart/form-data"] = new OpenApiMediaType()
-                        {
-                            Schema = new OpenApiSchema
-                            {
-                                Type = "object",
-                                Properties = schemaPropertiesToAdd,
-                                Required = requiredSchemaProperties
-                            }
-                        }
+                        Schema = multiPartFormSchema
                     };
+
+                    operation.RequestBody.Content.Add("multipart/form-data", multiPartFormMedia);
                 }
                 else
                 {
-                    if (operation.RequestBody.Content.TryGetValue("multipart/form-data", out OpenApiMediaType openApiMediaType))
+                    if (multiPartFormMedia.Schema == null)
                     {
-                        if (openApiMediaType.Schema is null)
-                        {
-                            openApiMediaType.Schema = new OpenApiSchema
-                            {
-                                Type = "object",
-                                Properties = schemaPropertiesToAdd,
-                                Required = requiredSchemaProperties
-                            };
-                        }
-                        else
-                        {
-                            // Make sure the type is object
-                            openApiMediaType.Schema.Type = "object";
-
-                            // Honour previously defined properties?
-                            // If any exist, overwrite them.
-                            if (openApiMediaType.Schema.Properties != null)
-                            {
-                                foreach (var schemaPropertyToAdd in schemaPropertiesToAdd)
-                                {
-                                    if (openApiMediaType.Schema.Properties.TryGetValue(schemaPropertyToAdd.Key, out OpenApiSchema existingSchemaProperty))
-                                    {
-                                        existingSchemaProperty.Type = schemaPropertyToAdd.Value.Type;
-                                        existingSchemaProperty.Format = schemaPropertyToAdd.Value.Format;
-                                    }
-                                    else
-                                    {
-                                        openApiMediaType.Schema.Properties.Add(schemaPropertyToAdd);
-                                    }
-                                }
-
-                                schemaPropertiesToAdd.Clear();
-                            }
-                            else
-                            {
-                                openApiMediaType.Schema.Properties = schemaPropertiesToAdd;
-                            }
-
-                            if (openApiMediaType.Schema.Required != null)
-                            {
-                                foreach (var requiredSchemaProperty in requiredSchemaProperties)
-                                {
-                                    openApiMediaType.Schema.Required.Add(requiredSchemaProperty);
-                                }
-
-                                requiredSchemaProperties.Clear();
-                            }
-                            else
-                            {
-                                openApiMediaType.Schema.Required = requiredSchemaProperties;
-                            }
-                        }
+                        multiPartFormMedia.Schema = multiPartFormSchema;
                     }
                     else
                     {
-                        operation.RequestBody.Content.Add("multipart/form-data", new OpenApiMediaType()
+                        // Ensure type is "object"
+                        multiPartFormMedia.Schema.Type = "object";
+
+                        if (multiPartFormSchema.Properties == null)
                         {
-                            Schema = new OpenApiSchema
-                            {
-                                Type = "object",
-                                Properties = schemaPropertiesToAdd,
-                                Required = requiredSchemaProperties
-                            }
-                        });
+                            multiPartFormSchema.Properties = new Dictionary<string, OpenApiSchema>();
+                        }
+
+                        if (multiPartFormSchema.Required == null)
+                        {
+                            multiPartFormSchema.Required = new HashSet<string>();
+                        }
+                    }
+                }
+
+                foreach (var swaggerMultipartFormDataAttribute in swaggerMultipartFormDataAttributes)
+                {
+                    if (!multiPartFormSchema.Properties.TryGetValue(swaggerMultipartFormDataAttribute.Name, out OpenApiSchema schemaPropertyToAdd))
+                    {
+                        schemaPropertyToAdd = new OpenApiSchema();
+
+                        multiPartFormSchema.Properties.Add(swaggerMultipartFormDataAttribute.Name, schemaPropertyToAdd);
+                    }
+
+                    schemaPropertyToAdd.Type = swaggerMultipartFormDataAttribute.Type ?? "file";
+                    schemaPropertyToAdd.Format = swaggerMultipartFormDataAttribute.Type == null ? "binary" : swaggerMultipartFormDataAttribute.Type;
+
+                    if (swaggerMultipartFormDataAttribute.Required)
+                    {
+                        multiPartFormSchema.Required.Add(swaggerMultipartFormDataAttribute.Name);
+                    }
+                    else
+                    {
+                        multiPartFormSchema.Required.Remove(swaggerMultipartFormDataAttribute.Name);
                     }
                 }
             }
