@@ -282,18 +282,15 @@ namespace Swashbuckle.AspNetCore.Annotations
                     }
                     else
                     {
-                        operation.RequestBody.Content = new Dictionary<string, OpenApiMediaType>
+                        operation.RequestBody.Content.Add("multipart/form-data", new OpenApiMediaType()
                         {
-                            ["multipart/form-data"] = new OpenApiMediaType()
+                            Schema = new OpenApiSchema
                             {
-                                Schema = new OpenApiSchema
-                                {
-                                    Type = "object",
-                                    Properties = schemaPropertiesToAdd,
-                                    Required = requiredSchemaProperties
-                                }
+                                Type = "object",
+                                Properties = schemaPropertiesToAdd,
+                                Required = requiredSchemaProperties
                             }
-                        };
+                        });
                     }
                 }
             }
