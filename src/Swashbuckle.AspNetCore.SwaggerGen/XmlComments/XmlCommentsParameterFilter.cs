@@ -34,7 +34,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var summaryNode = propertyNode.SelectSingleNode("summary");
             if (summaryNode != null)
+            {
                 parameter.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
+                parameter.Schema.Description = null; // no need to duplicate
+            }
 
             var exampleNode = propertyNode.SelectSingleNode("example");
             if (exampleNode != null)
