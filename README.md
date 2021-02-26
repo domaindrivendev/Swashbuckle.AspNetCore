@@ -1637,7 +1637,7 @@ app.UseReDoc(c =>
     c.EnableUntrustedSpec();
     c.ScrollYOffset(10);
     c.HideHostname();
-    c.HideDownloadButton());
+    c.HideDownloadButton();
     c.ExpandResponses("200,201");
     c.RequiredPropsFirst();
     c.NoAutoAuth();
