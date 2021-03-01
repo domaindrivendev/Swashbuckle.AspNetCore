@@ -154,7 +154,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (dataContract.DataType != DataType.Object) return false;
 
-            var subTypes = _generatorOptions.SubTypesSelector(dataContract.UnderlyingType);
+            var subTypes = _generatorOptions
+                .SubTypesSelector(dataContract.UnderlyingType)
+                .Where(type => !type.IsGenericTypeDefinition); ;
 
             if (!subTypes.Any()) return false;
 
@@ -390,8 +392,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var baseType = dataContract.UnderlyingType.BaseType;
 
-            if (baseType == null || baseType == typeof(object) || !_generatorOptions.SubTypesSelector(baseType).Contains(dataContract.UnderlyingType))
+            if (baseType == null ||
+                baseType == typeof(object) ||
+                !_generatorOptions.SubTypesSelector(baseType).Any(type =>
+                    type == dataContract.UnderlyingType ||
+                    (type.IsGenericTypeDefinition && dataContract.UnderlyingType.IsConstructedGenericType && type == dataContract.UnderlyingType.GetGenericTypeDefinition())
+                ))
+            {
+
                 return false;
+            }
 
             baseTypeDataContract = GetDataContractFor(baseType);
             return true;
