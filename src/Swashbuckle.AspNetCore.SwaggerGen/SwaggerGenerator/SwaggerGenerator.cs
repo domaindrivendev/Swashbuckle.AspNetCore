@@ -495,9 +495,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private static readonly Dictionary<string, string> ResponseDescriptionMap = new Dictionary<string, string>
         {
             { "1\\d{2}", "Information" },
+
+            { "201", "Created" },
+            { "202", "Accepted"  },
+            { "204", "No Content" },
             { "2\\d{2}", "Success" },
+
             { "304", "Not Modified" },
             { "3\\d{2}", "Redirect" },
+
             { "400", "Bad Request" },
             { "401", "Unauthorized" },
             { "403", "Forbidden" },
@@ -506,7 +512,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             { "406", "Not Acceptable" },
             { "408", "Request Timeout" },
             { "409", "Conflict" },
+            { "429", "Too Many Requests" },
             { "4\\d{2}", "Client Error" },
+
             { "5\\d{2}", "Server Error" },
             { "default", "Error" }
         };
