@@ -12,7 +12,6 @@ using Microsoft.OpenApi.Models;
 using Xunit;
 using Swashbuckle.AspNetCore.TestSupport;
 using Microsoft.OpenApi.Any;
-using System.Collections.ObjectModel;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -332,6 +331,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.False(schema.Properties["ReadOnlyProperty"].WriteOnly);
             Assert.False(schema.Properties["WriteOnlyProperty"].ReadOnly);
             Assert.True(schema.Properties["WriteOnlyProperty"].WriteOnly);
+        }
+
+        [Fact]
+        public void GenerateSchema_SetsDefault_IfParameterHasDefaultValueAttribute()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var parameterInfo = typeof(FakeController)
+                .GetMethod(nameof(FakeController.ActionWithIntParameterWithDefaultValueAttribute))
+                .GetParameters()
+                .First();
+
+            var schema = Subject().GenerateSchema(parameterInfo.ParameterType, schemaRepository, parameterInfo: parameterInfo);
+
+            Assert.NotNull(schema.Default);
+            Assert.Equal("3", schema.Default.ToJson());
         }
 
         [Theory]
