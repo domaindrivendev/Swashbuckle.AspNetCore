@@ -46,7 +46,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void Apply_SetsDescriptionAndExample_FromPropertySummaryAndExampleTags()
         {
-            var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = "string" } };
+            var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = "string", Description = "schema-level description" } };
             var propertyInfo = typeof(XmlAnnotatedType).GetProperty(nameof(XmlAnnotatedType.StringProperty));
             var apiParameterDescription = new ApiParameterDescription { };
             var filterContext = new ParameterFilterContext(apiParameterDescription, null, null, propertyInfo: propertyInfo);
@@ -54,6 +54,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Subject().Apply(parameter, filterContext);
 
             Assert.Equal("Summary for StringProperty", parameter.Description);
+            Assert.Null(parameter.Schema.Description);
             Assert.NotNull(parameter.Example);
             Assert.Equal("\"Example for StringProperty\"", parameter.Example.ToJson());
         }

@@ -17,11 +17,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             ApplyTypeTags(schema, context.Type);
 
-            // If it's for a C# field/property and it's NOT bound to a request parameter (e.g. via [FromRoute], [FromQuery] etc.),
-            // then the field/property tags can be applied here. If it is bound to a request parameter, the field/property tags
-            // will be applied a level up on the corresponding OpenApiParameter (see XmlCommentsParameterFilter).
-
-            if (context.MemberInfo != null && context.ParameterInfo == null)
+            if (context.MemberInfo != null)
             {
                 ApplyMemberTags(schema, context);
             }

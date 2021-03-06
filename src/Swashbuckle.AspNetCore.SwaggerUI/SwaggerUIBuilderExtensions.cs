@@ -22,14 +22,17 @@ namespace Microsoft.AspNetCore.Builder
             this IApplicationBuilder app,
             Action<SwaggerUIOptions> setupAction = null)
         {
-            var options = app.ApplicationServices.GetRequiredService<IOptions<SwaggerUIOptions>>().Value;
-
-            setupAction?.Invoke(options);
+            SwaggerUIOptions options;
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                options = scope.ServiceProvider.GetRequiredService<IOptionsSnapshot<SwaggerUIOptions>>().Value;
+                setupAction?.Invoke(options);
+            }
 
             // To simplify the common case, use a default that will work with the SwaggerMiddleware defaults
             if (options.ConfigObject.Urls == null)
             {
-                options.ConfigObject.Urls = new[] { new UrlDescriptor { Name = "V1 Docs", Url = "/swagger/v1/swagger.json" } };
+                options.ConfigObject.Urls = new[] { new UrlDescriptor { Name = "V1 Docs", Url = "v1/swagger.json" } };
             }
 
             return app.UseSwaggerUI(options);

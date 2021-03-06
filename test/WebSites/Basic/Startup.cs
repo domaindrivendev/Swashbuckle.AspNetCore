@@ -71,7 +71,13 @@ namespace Basic
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+
+                // Expose Swagger/OpenAPI JSON in new (v3) and old (v2) formats
                 endpoints.MapSwagger("swagger/{documentName}/swagger.json");
+                endpoints.MapSwagger("swagger/{documentName}/swaggerv2.json", c =>
+                {
+                    c.SerializeAsV2 = true;
+                });
             });
 
             var supportedCultures = new[]
@@ -93,6 +99,7 @@ namespace Basic
             app.UseSwaggerUI(c =>
             {
                 c.RoutePrefix = ""; // serve the UI at root
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
             });
         }
     }

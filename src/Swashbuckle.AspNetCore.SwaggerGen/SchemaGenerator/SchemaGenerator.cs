@@ -112,13 +112,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (schema.Reference == null)
             {
-                if (parameterInfo.HasDefaultValue)
+                var customAttributes = parameterInfo.GetCustomAttributes();
+
+                var defaultValue = parameterInfo.HasDefaultValue
+                    ? parameterInfo.DefaultValue
+                    : customAttributes.OfType<DefaultValueAttribute>().FirstOrDefault()?.Value;
+
+                if (defaultValue != null)
                 {
-                    var defaultAsJson = dataContract.JsonConverter(parameterInfo.DefaultValue);
+                    var defaultAsJson = dataContract.JsonConverter(defaultValue);
                     schema.Default = OpenApiAnyFactory.CreateFromJson(defaultAsJson);
                 }
 
-                schema.ApplyValidationAttributes(parameterInfo.GetCustomAttributes());
+                schema.ApplyValidationAttributes(customAttributes);
 
                 ApplyFilters(schema, parameterInfo.ParameterType, schemaRepository, parameterInfo: parameterInfo);
             }

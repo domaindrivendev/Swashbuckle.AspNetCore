@@ -434,7 +434,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="swaggerGenOptions"></param>
         /// <param name="subTypesResolver"></param>
         /// <param name="discriminatorSelector"></param>
-        [Obsolete("You can use \"UseOneOfForPolymorphism\", \"UseAllOfForInheritance\" and \"DetectSubTypesUsing\" to configure equivalent behavior")]
+        [Obsolete("You can use \"UseOneOfForPolymorphism\", \"UseAllOfForInheritance\" and \"SelectSubTypesUsing\" to configure equivalent behavior")]
         public static void GeneratePolymorphicSchemas(
             this SwaggerGenOptions swaggerGenOptions,
             Func<Type, IEnumerable<Type>> subTypesResolver = null,

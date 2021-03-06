@@ -14,7 +14,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             var response = await client.GetAsync("/swagger");
 
             Assert.Equal(HttpStatusCode.MovedPermanently, response.StatusCode);
-            Assert.Equal("http://localhost/swagger/index.html", response.Headers.Location.ToString());
+            Assert.Equal("swagger/index.html", response.Headers.Location.ToString());
         }
 
         [Fact]
@@ -53,6 +53,24 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             var content = await response.Content.ReadAsStringAsync();
 
             Assert.Contains("Example.com", content);
+        }
+
+        [Theory]
+        [InlineData("/swagger/index.html", new [] { "Version 1.0", "Version 2.0" })]
+        [InlineData("/swagger/1.0/index.html", new [] { "Version 1.0" })]
+        [InlineData("/swagger/2.0/index.html", new [] { "Version 2.0" })]
+        public async Task SwaggerUIMiddleware_CanBeConfiguredMultipleTimes(string swaggerUiUrl, string[] versions)
+        {
+            var client = new TestSite(typeof(MultipleVersions.Startup)).BuildClient();
+
+            var response = await client.GetAsync(swaggerUiUrl);
+            var content = await response.Content.ReadAsStringAsync();
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            foreach (var version in versions)
+            {
+                Assert.Contains(version, content);
+            }
         }
     }
 }

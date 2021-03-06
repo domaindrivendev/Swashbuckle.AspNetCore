@@ -29,8 +29,12 @@ namespace Microsoft.AspNetCore.Builder
             this IApplicationBuilder app,
             Action<SwaggerOptions> setupAction = null)
         {
-            SwaggerOptions options = app.ApplicationServices.GetRequiredService<IOptions<SwaggerOptions>>().Value;
-            setupAction?.Invoke(options);
+            SwaggerOptions options;
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                options = scope.ServiceProvider.GetRequiredService<IOptionsSnapshot<SwaggerOptions>>().Value;
+                setupAction?.Invoke(options);
+            }
 
             return app.UseSwagger(options);
         }
