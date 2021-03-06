@@ -15,7 +15,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             var response = await client.GetAsync("/api-docs");
 
             Assert.Equal(HttpStatusCode.MovedPermanently, response.StatusCode);
-            Assert.Equal("http://localhost/api-docs/index.html", response.Headers.Location.ToString());
+            Assert.Equal("api-docs/index.html", response.Headers.Location.ToString());
         }
 
         [Fact]

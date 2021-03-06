@@ -22,7 +22,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 |Swashbuckle Version|ASP.NET Core|Swagger / OpenAPI Spec.|swagger-ui|ReDoc UI|
 |----------|----------|----------|----------|----------|
 |[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master/README.md)|>= 2.0.0|2.0, 3.0|3.42.0|2.0.0-rc.40|
-|[6.0.7](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v6.0.7)|>= 2.0.0|2.0, 3.0|3.42.0|2.0.0-rc.40|
+|[6.1.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v6.1.0)|>= 2.0.0|2.0, 3.0|3.42.0|2.0.0-rc.40|
 |[5.6.3](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v5.6.3)|>= 2.0.0|2.0, 3.0|3.32.5|2.0.0-rc.40|
 |[4.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v4.0.0)|>= 2.0.0, < 3.0.0|2.0|3.19.5|1.22.2|
 |[3.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v3.0.0)|>= 1.0.4, < 3.0.0|2.0|3.17.1|1.20.0|
@@ -33,8 +33,8 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 1. Install the standard Nuget package into your ASP.NET Core application.
 
     ```
-    Package Manager : Install-Package Swashbuckle.AspNetCore -Version 6.0.7
-    CLI : dotnet add package --version 6.0.7 Swashbuckle.AspNetCore
+    Package Manager : Install-Package Swashbuckle.AspNetCore -Version 6.1.0
+    CLI : dotnet add package --version 6.1.0 Swashbuckle.AspNetCore
     ```
 
 2. In the `ConfigureServices` method of `Startup.cs`, register the Swagger generator, defining one or more Swagger documents.
@@ -81,7 +81,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
     ```csharp
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+        c.SwaggerEndpoint("v1/swagger.json", "My API V1");
     });
     ```
 
@@ -98,8 +98,8 @@ If you're using **System.Text.Json (STJ)**, then the setup described above will 
 If you're using **Newtonsoft**, then you'll need to install a separate package and explicitly opt-in to ensure that *Newtonsoft* settings/attributes are automatically honored by the Swagger generator:
 
 ```
-Package Manager : Install-Package Swashbuckle.AspNetCore.Newtonsoft -Version 6.0.7
-CLI : dotnet add package --version 6.0.7 Swashbuckle.AspNetCore.Newtonsoft
+Package Manager : Install-Package Swashbuckle.AspNetCore.Newtonsoft -Version 6.1.0
+CLI : dotnet add package --version 6.1.0 Swashbuckle.AspNetCore.Newtonsoft
 ```
 
 ```csharp
@@ -185,7 +185,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Change the Path for Swagger JSON Endpoints](#change-the-path-for-swagger-json-endpoints)
     * [Modify Swagger with Request Context](#modify-swagger-with-request-context)
     * [Serialize Swagger JSON in the 2.0 format](#serialize-swagger-in-the-20-format)
-    * [Working with Reverse Proxies and Load Balancers](#working-with-reverse-proxies-and-load-balancers)
+    * [Working with Virtual Directories and Reverse Proxies](#working-with-virtual-directories-and-reverse-proxies)
 
 * [Swashbuckle.AspNetCore.SwaggerGen](#swashbuckleaspnetcoreswaggergen)
 
@@ -288,54 +288,21 @@ app.UseSwagger(c =>
 });
 ```
 
-### Working with Reverse Proxies and Load Balancers ###
+### Working with Virtual Directories and Reverse Proxies ###
 
-To ensure applications work correctly behind proxies and load balancers, Microsoft provides the [Forwarded Headers Middleware](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-5.0). This is particularly important for applications that generate links and redirects because information in the request like the original scheme (HTTP/HTTPS) and host is obscured before it reaches the app. By convention, most proxies forward this information in `X-Forwarded-*` headers, and so the Forwarded Headers Middleware can be configured to read these values and fill in the associated fields on `HttpContext`.
+Virtual directories and reverse proxies can cause issues for applications that generate links and redirects, particularly if the app returns *absolute* URLs based on the `Host` header and other information from the current request. To avoid these issues, Swasbuckle uses *relative* URLs where possible, and encourages their use when configuring the SwaggerUI and ReDoc middleware.
 
-The `Swagger` and `SwaggerUI` middleware generate links and redirects, and so to ensure they work correctly behind reverse proxies and load balancers, you'll need to insert the Forwarded Headers Middleware:
-
-```csharp
-app.UseForwardedHeaders(new ForwardedHeadersOptions
-{
-    ForwardedHeaders = ForwardedHeaders.All
-});
-
-app.UseSwagger();
-
-app.UseSwaggerUI(c =>
-{
-	c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-});
-```
-
-_NOTE: Depending on your proxy setup, you may need to tweak the Forwarded Headers Middleware (e.g. if the proxy uses non-standard header names). You can refer to the [Microsoft docs](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-5.0) for further guidance on this._
-
-#### Dealing with Proxies that change the request path ####
-
-Some proxies trim the request path before forwarding. For example, an original path of `/foo/api/products` may be forwarded to the app as `/api/products`. Handling this case is a little more involved. Firstly, you'll need to insert custom middleware to set the `PathBase` to the appropriate path prefix (if it's known) OR to read it from a header if provided by the proxy:
-
-```csharp
-app.Use((context, next) =>
-{
-    if (context.Request.Headers.TryGetValue("X-Forwarded-Prefix", out var value))
-        context.Request.PathBase = value.First();
-
-    return next();
-});
-
-app.UseSwagger();
-```
-
-Additionally, you'll need to adjust the `SwaggerUI` configuration to use a _page-relative_ syntax (i.e. no leading `/`) for the Swagger JSON endpoint instead of a root-relative syntax.
+For example, to wire up the SwaggerUI middleware, you provide the URL to one or more OpenAPI/Swagger documents. This is the URL that the swagger-ui, a client-side application, will call to retrieve your API metadata. To ensure this works behind virtual directories and reverse proxies, you should express this relative to the `RoutePrefix` of the swagger-ui itself:
 
 ```csharp
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoint("v1/swagger.json", "V1 Docs");
-})
+    c.RoutePrefix = "swagger";
+    c.SwaggerEndpoint("v1/swagger.json", "My API V1");
+});
 ```
 
-This way, the swagger-ui will look for the Swagger JSON at a URL that's _relative_ to itself (e.g. `<some-url>/swagger/v1/swagger.json`), and will therefore be agnostic of the host and path prefix (if any) that preceeds it.
+_NOTE: In previous versions of the docs, you may have seen this expressed as a root-relative link (e.g. `/swagger/v1/swagger.json`). This won't work if your app is hosted on an IIS virtual directory or behind a proxy that trims the request path before forwarding. If you switch to the *page-relative* syntax shown above, it should work in all cases._
 
 ## Swashbuckle.AspNetCore.SwaggerGen ##
 
@@ -1528,7 +1495,7 @@ It's packaged as a [.NET Core Tool](https://docs.microsoft.com/en-us/dotnet/core
 1. Install as a [global tool](https://docs.microsoft.com/en-us/dotnet/core/tools/global-tools#install-a-global-tool)
 
     ```
-    dotnet tool install -g --version 6.0.7 Swashbuckle.AspNetCore.Cli
+    dotnet tool install -g --version 6.1.0 Swashbuckle.AspNetCore.Cli
     ```
 
 2. Verify that the tool was installed correctly
@@ -1559,7 +1526,7 @@ It's packaged as a [.NET Core Tool](https://docs.microsoft.com/en-us/dotnet/core
 2. Install as a [local tool](https://docs.microsoft.com/en-us/dotnet/core/tools/global-tools#install-a-local-tool)
 
     ```
-    dotnet tool install --version 6.0.7 Swashbuckle.AspNetCore.Cli
+    dotnet tool install --version 6.1.0 Swashbuckle.AspNetCore.Cli
     ```
 
 3. Verify that the tool was installed correctly

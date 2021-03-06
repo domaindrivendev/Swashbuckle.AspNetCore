@@ -14,7 +14,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             var response = await client.GetAsync("/swagger");
 
             Assert.Equal(HttpStatusCode.MovedPermanently, response.StatusCode);
-            Assert.Equal("http://localhost/swagger/index.html", response.Headers.Location.ToString());
+            Assert.Equal("swagger/index.html", response.Headers.Location.ToString());
         }
 
         [Fact]
