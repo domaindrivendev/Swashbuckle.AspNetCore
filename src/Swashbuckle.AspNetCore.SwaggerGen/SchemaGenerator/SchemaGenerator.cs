@@ -374,7 +374,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     ? GenerateSchemaForMember(dataProperty.MemberInfo, schemaRepository, dataProperty)
                     : GenerateSchemaForType(dataProperty.MemberType, schemaRepository);
 
-                if (dataProperty.IsRequired || customAttributes.OfType<RequiredAttribute>().Any()
+                if ((dataProperty.IsRequired || customAttributes.OfType<RequiredAttribute>().Any())
                     && !schema.Required.Contains(dataProperty.Name))
                 {
                     schema.Required.Add(dataProperty.Name);
