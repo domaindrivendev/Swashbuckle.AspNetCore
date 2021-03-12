@@ -547,6 +547,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableString), false)]
         [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableArray), true)]
         [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableArray), false)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableList), true)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableList), false)]
         public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypes(
             Type declaringType,
             string propertyName,
@@ -562,6 +564,27 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var propertySchema = schemaRepository.Schemas[referenceSchema.Reference.Id].Properties[propertyName];
             Assert.Equal(expectedNullable, propertySchema.Nullable);
         }
+
+        [Theory]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.SubTypeWithOneNullableContent), nameof(TypeWithNullableContext.NullableString), true)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContext.NonNullableString), false)]
+        public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypes_NullableAttribute_Compiler_Optimizations_Situations(
+            Type declaringType,
+            string subType,
+            string propertyName,
+            bool expectedNullable)
+        {
+            var subject = Subject(
+                configureGenerator: c => c.SupportNonNullableReferenceTypes = true
+            );
+            var schemaRepository = new SchemaRepository();
+
+            subject.GenerateSchema(declaringType, schemaRepository);
+
+            var propertySchema = schemaRepository.Schemas[subType].Properties[propertyName];
+            Assert.Equal(expectedNullable, propertySchema.Nullable);
+        }
+
 
         [Fact]
         public void GenerateSchema_HandlesTypesWithNestedTypes()

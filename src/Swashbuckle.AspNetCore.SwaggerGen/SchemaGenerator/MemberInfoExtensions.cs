@@ -39,7 +39,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 ? ((FieldInfo)memberInfo).FieldType
                 : ((PropertyInfo)memberInfo).PropertyType;
 
-            if (memberType.IsValueType) return false;
+            if (memberType.IsValueType)
+            {
+                return false;
+            }
 
             var nullableAttribute = memberInfo.GetNullableAttribute();
 
@@ -50,7 +53,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (nullableAttribute.GetType().GetField(NullableFlagsFieldName) is FieldInfo field &&
                 field.GetValue(nullableAttribute) is byte[] flags &&
-                flags.Length >= 0 && flags[0] == 1)
+                flags.Length >= 1 && flags[0] == 1)
             {
                 return true;
             }
@@ -61,24 +64,36 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private static object GetNullableAttribute(this MemberInfo memberInfo)
         {
             var nullableAttribute = memberInfo.GetCustomAttributes()
-                .Where(attr => string.Equals(attr.GetType().FullName, NullableAttributeFullTypeName))
-                .FirstOrDefault();
+                .FirstOrDefault(attr => string.Equals(attr.GetType().FullName, NullableAttributeFullTypeName));
 
             return nullableAttribute;
         }
 
         private static bool GetNullableFallbackValue(this MemberInfo memberInfo)
         {
-            var nullableContext = memberInfo.DeclaringType
-                .GetCustomAttributes()
-                .Where(attr => string.Equals(attr.GetType().FullName, NullableContextAttributeFullTypeName))
-                .FirstOrDefault();
+            var declaringTypes = memberInfo.DeclaringType.IsNested
+                ? new Type[] { memberInfo.DeclaringType, memberInfo.DeclaringType.DeclaringType }
+                : new Type[] { memberInfo.DeclaringType };
 
-            if (nullableContext != null && nullableContext.GetType().GetField(FlagFieldName) is FieldInfo field &&
-                field.GetValue(nullableContext) is byte flag &&
-                flag == 1)
+            foreach (var declaringType in declaringTypes)
             {
-                return true;
+                var attributes = (IEnumerable<object>)declaringType.GetCustomAttributes(false);
+
+                var nullableContext = attributes
+                .FirstOrDefault(attr => string.Equals(attr.GetType().FullName, NullableContextAttributeFullTypeName));
+
+                if (nullableContext != null)
+                {
+                    if (nullableContext.GetType().GetField(FlagFieldName) is FieldInfo field &&
+                    field.GetValue(nullableContext) is byte flag && flag == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
             }
 
             return false;
