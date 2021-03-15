@@ -134,7 +134,7 @@ namespace Swashbuckle.AspNetCore.Annotations
                     }
 
                     headerParameter.Schema.Type = swaggerHeaderAttribute.Type ?? "string";
-                    headerParameter.Schema.Format = swaggerHeaderAttribute.Type is null ? null : swaggerHeaderAttribute.Format;
+                    headerParameter.Schema.Format = swaggerHeaderAttribute.Format;
                 }
             }
         }
@@ -189,6 +189,11 @@ namespace Swashbuckle.AspNetCore.Annotations
 
                 foreach (var swaggerMultipartFormDataAttribute in swaggerMultipartFormDataAttributes)
                 {
+                    if (string.IsNullOrEmpty(swaggerMultipartFormDataAttribute.Name))
+                    {
+                        swaggerMultipartFormDataAttribute.Name = "file";
+                    }
+
                     // Honor previously defined multipart/form-data properties, outside the scope of the attribute?
                     // If any exist, overwrite them.
                     if (!multiPartFormMedia.Schema.Properties.TryGetValue(swaggerMultipartFormDataAttribute.Name, out OpenApiSchema schemaProperty))
@@ -198,8 +203,21 @@ namespace Swashbuckle.AspNetCore.Annotations
                         multiPartFormMedia.Schema.Properties.Add(swaggerMultipartFormDataAttribute.Name, schemaProperty);
                     }
 
-                    schemaProperty.Type = swaggerMultipartFormDataAttribute.Type ?? "file";
-                    schemaProperty.Format = swaggerMultipartFormDataAttribute.Type == null ? "binary" : swaggerMultipartFormDataAttribute.Format;
+                    if (string.CompareOrdinal(swaggerMultipartFormDataAttribute.Type, "array") == 0)
+                    {
+                        schemaProperty.Type = "array";
+                        schemaProperty.Items = new OpenApiSchema
+                        {
+                            Type = swaggerMultipartFormDataAttribute.CollectionType ?? "file",
+                            Format = swaggerMultipartFormDataAttribute.CollectionType == null ? "binary" : swaggerMultipartFormDataAttribute.Format
+                        };
+                    }
+                    else
+                    {
+                        schemaProperty.Type = swaggerMultipartFormDataAttribute.Type ?? "file";
+                        schemaProperty.Format = swaggerMultipartFormDataAttribute.Type == null ? "binary" : swaggerMultipartFormDataAttribute.Format;
+                        schemaProperty.Items = null;
+                    }
 
                     if (swaggerMultipartFormDataAttribute.Required)
                     {
