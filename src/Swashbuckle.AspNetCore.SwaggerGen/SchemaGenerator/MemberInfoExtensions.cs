@@ -39,10 +39,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 ? ((FieldInfo)memberInfo).FieldType
                 : ((PropertyInfo)memberInfo).PropertyType;
 
-            if (memberType.IsValueType)
-            {
-                return false;
-            }
+            if (memberType.IsValueType) return false;
 
             var nullableAttribute = memberInfo.GetNullableAttribute();
 
