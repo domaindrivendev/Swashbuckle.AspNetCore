@@ -146,7 +146,13 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
                 var isSetViaConstructor = jsonProperty.DeclaringType != null && jsonProperty.DeclaringType.GetConstructors()
                     .SelectMany(c => c.GetParameters())
-                    .Any(p => string.Equals(p.Name, jsonProperty.PropertyName, StringComparison.OrdinalIgnoreCase));
+                    .Any(p =>
+                    {
+                        // Newtonsoft supports setting via constructor if either underlying OR JSON names match
+                        return
+                            string.Equals(p.Name, jsonProperty.UnderlyingName, StringComparison.OrdinalIgnoreCase) ||
+                            string.Equals(p.Name, jsonProperty.PropertyName, StringComparison.OrdinalIgnoreCase);
+                    });
 
                 jsonProperty.TryGetMemberInfo(out MemberInfo memberInfo);
 
