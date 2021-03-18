@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Text.Json;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Xunit;
@@ -71,8 +72,8 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
                 .GetMethod(nameof(FakeControllerWithSwaggerAnnotations.ActionWithSwaggerResponseContentTypesAttributes));
             var filterContext = new OperationFilterContext(
                 apiDescription: null,
-                schemaRegistry: null,
-                schemaRepository: null,
+                schemaRegistry: new SchemaGenerator(new SchemaGeneratorOptions(), new SystemTextJsonBehavior(new JsonSerializerOptions())),
+                schemaRepository: new SchemaRepository(),
                 methodInfo: methodInfo);
 
             Subject().Apply(operation, filterContext);
