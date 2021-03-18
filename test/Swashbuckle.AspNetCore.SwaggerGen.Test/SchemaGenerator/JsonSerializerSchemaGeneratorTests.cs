@@ -699,7 +699,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var referenceSchema = Subject().GenerateSchema(typeof(JsonIgnoreAnnotatedType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal( new[] { /* "StringWithJsonIgnore" */ "StringWithNoAnnotation" }, schema.Properties.Keys.ToArray());
+
+            string[] expectedKeys =
+            {
+                nameof(JsonIgnoreAnnotatedType.StringWithJsonIgnoreConditionNever),
+                nameof(JsonIgnoreAnnotatedType.StringWithJsonIgnoreConditionWhenWritingDefault),
+                nameof(JsonIgnoreAnnotatedType.StringWithJsonIgnoreConditionWhenWritingNull),
+                nameof(JsonIgnoreAnnotatedType.StringWithNoAnnotation)
+            };
+
+            Assert.Equal(expectedKeys, schema.Properties.Keys.ToArray());
         }
 
         [Fact]

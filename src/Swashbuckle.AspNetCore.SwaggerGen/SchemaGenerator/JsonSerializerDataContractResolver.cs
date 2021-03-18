@@ -144,10 +144,28 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var applicableProperties = publicProperties
                 .Where(property =>
                 {
+                    // .Net 5 introduces JsonIgnoreAttribute.Condition which should be honored
+                    bool isIgnoredViaNet5Attribute = true;
+
+#if NET5_0
+                    JsonIgnoreAttribute jsonIgnoreAttribute = property.GetCustomAttribute<JsonIgnoreAttribute>();
+                    if (jsonIgnoreAttribute != null)
+                    {
+                        isIgnoredViaNet5Attribute = jsonIgnoreAttribute.Condition switch
+                        {
+                            JsonIgnoreCondition.Never => false,
+                            JsonIgnoreCondition.Always => true,
+                            JsonIgnoreCondition.WhenWritingDefault => false,
+                            JsonIgnoreCondition.WhenWritingNull => false,
+                            _ => true
+                        };
+                    }
+#endif
+
                     return
                         (property.IsPubliclyReadable() || property.IsPubliclyWritable()) &&
                         !(property.GetIndexParameters().Any()) &&
-                        !(property.HasAttribute<JsonIgnoreAttribute>()) &&
+                        !(property.HasAttribute<JsonIgnoreAttribute>() && isIgnoredViaNet5Attribute) &&
                         !(_serializerOptions.IgnoreReadOnlyProperties && !property.IsPubliclyWritable());
                 })
                 .OrderBy(property => property.DeclaringType.GetInheritanceChain().Length);
