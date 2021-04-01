@@ -79,7 +79,7 @@
             // Workaround for https://github.com/swagger-api/swagger-ui/issues/5945
             configObject.urls.forEach(function (item) {
                 if (item.url.startsWith("http") || item.url.startsWith("/")) return;
-                item.url = window.location.href.replace("index.html", item.url).split('#')[0];
+                item.url = (window.location.href.replace("index.html", "") + item.url).split('#')[0];
             });
 
             // If validatorUrl is not explicitly provided, disable the feature by setting to null
@@ -88,7 +88,7 @@
 
             // If oauth2RedirectUrl isn't specified, use the built-in default
             if (!configObject.hasOwnProperty("oauth2RedirectUrl"))
-                configObject.oauth2RedirectUrl = window.location.href.replace("index.html", "oauth2-redirect.html").split('#')[0];
+                configObject.oauth2RedirectUrl = (window.location.href.replace("index.html", "") + "oauth2-redirect.html").split('#')[0];
 
             // Apply mandatory parameters
             configObject.dom_id = "#swagger-ui";
