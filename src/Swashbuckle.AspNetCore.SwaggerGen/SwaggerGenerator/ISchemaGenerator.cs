@@ -7,7 +7,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     public interface ISchemaGenerator
     {
         OpenApiSchema GenerateSchema(
-            Type type,
+            Type modelType,
             SchemaRepository schemaRepository,
             MemberInfo memberInfo = null,
             ParameterInfo parameterInfo = null);
