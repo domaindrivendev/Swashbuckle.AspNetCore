@@ -464,7 +464,7 @@ This controller will accept two form field values and one named file upload from
 
 ```csharp
 [HttpPost]
-public void UploadFile([FromForm]string description, [FromForm]DateTime clientDate, [IFormFile] file)
+public void UploadFile([FromForm]string description, [FromForm]DateTime clientDate, IFormFile file)
 ```
 
 > Important note: As per the [ASP.NET Core docs](https://docs.microsoft.com/en-us/aspnet/core/mvc/models/file-uploads?view=aspnetcore-3.1), you're not supposed to decorate `IFormFile` parameters with the `[FromForm]` attribute as the binding source is automatically inferred from the type. In fact, the inferred value is `BindingSource.FormFile` and if you apply the attribute it will be set to `BindingSource.Form` instead, which screws up `ApiExplorer`, the metadata component that ships with ASP.NET Core and is heavily relied on by Swashbuckle. One particular issue here is that SwaggerUI will not treat the parameter as a file and so will not display a file upload button, if you do mistakenly include this attribute.
