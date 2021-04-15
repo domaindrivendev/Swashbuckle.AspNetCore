@@ -49,9 +49,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             foreach (var item in jsonElement.EnumerateArray())
             {
-                var json = item.ValueKind == JsonValueKind.String
-                    ? $"\"{item}\""
-                    : item.ToString();
+                string json;
+                switch (item.ValueKind)
+                {
+                    case JsonValueKind.String:
+                        json = $"\"{item}\"";
+                        break;
+                    case JsonValueKind.True:
+                        json = "true";
+                        break;
+                    case JsonValueKind.False:
+                        json = "false";
+                        break;
+                    default:
+                        json = item.ToString();
+                        break;
+                }
 
                 openApiArray.Add(CreateFromJson(json));
             }
@@ -65,9 +78,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             foreach (var property in jsonElement.EnumerateObject())
             {
-                var valueAsJson = (property.Value.ValueKind == JsonValueKind.String)
-                    ? $"\"{property.Value}\""
-                    : property.Value.ToString();
+                string valueAsJson;
+                switch (property.Value.ValueKind)
+                {
+                    case JsonValueKind.String:
+                        valueAsJson = $"\"{property.Value}\"";
+                        break;
+                    case JsonValueKind.True:
+                        valueAsJson = "true";
+                        break;
+                    case JsonValueKind.False:
+                        valueAsJson = "false";
+                        break;
+                    default:
+                        valueAsJson = property.Value.ToString();
+                        break;
+                }
 
                 openApiObject.Add(property.Name, CreateFromJson(valueAsJson));
             }
