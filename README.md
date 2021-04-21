@@ -1558,7 +1558,7 @@ That is, if your application contains a class that meets either of the following
 For example, the following class could be used to leverage the same host configuration as your application:
 
 ```csharp
-public class SwaggerHostFactory
+public static class SwaggerHostFactory
 {
     public static IHost CreateHost()
     {
