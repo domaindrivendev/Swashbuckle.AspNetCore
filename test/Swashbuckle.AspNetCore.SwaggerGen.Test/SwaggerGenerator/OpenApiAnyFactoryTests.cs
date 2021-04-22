@@ -15,15 +15,23 @@
         [InlineData("\"abc\"", typeof(OpenApiString), "abc")]
         [InlineData("true", typeof(OpenApiBoolean), true)]
         [InlineData("false", typeof(OpenApiBoolean), false)]
+        [InlineData("null", typeof(OpenApiNull), null)]
         public void CreateFromJson_SimpleType(string json, Type expectedType, object expectedValue)
         {
             var openApiAnyObject = OpenApiAnyFactory.CreateFromJson(json);
             Assert.NotNull(openApiAnyObject);
             Assert.Equal(expectedType, openApiAnyObject.GetType());
-            Assert.Equal(AnyType.Primitive, openApiAnyObject.AnyType);
-            var valueProperty = expectedType.GetProperty("Value");
-            var actualValue = valueProperty.GetValue(openApiAnyObject);
-            Assert.Equal(expectedValue, actualValue);
+            if (expectedType == typeof(OpenApiNull))
+            {
+                Assert.Equal(AnyType.Null, openApiAnyObject.AnyType);
+            }
+            else
+            {
+                Assert.Equal(AnyType.Primitive, openApiAnyObject.AnyType);
+                var valueProperty = expectedType.GetProperty("Value");
+                var actualValue = valueProperty.GetValue(openApiAnyObject);
+                Assert.Equal(expectedValue, actualValue);
+            }
         }
 
         [Theory]
@@ -35,6 +43,7 @@
         [InlineData("[true,false]", typeof(OpenApiBoolean), true, false)]
         [InlineData("[{\"a\":1,\"b\":2},{\"a\":3,\"b\":4}]", typeof(OpenApiObject))]
         [InlineData("[[1,2],[3,4]]", typeof(OpenApiArray))]
+        [InlineData("[null]", typeof(OpenApiNull))]
         public void CreateFromJson_Array(string json, Type expectedType, params object[] expectedValues)
         {
             var openApiAnyObject = OpenApiAnyFactory.CreateFromJson(json);
@@ -73,7 +82,8 @@
                 {
                     a = 1,
                     b = 2
-                }
+                },
+                null_value = (object) null
             });
 
             var openApiAnyObject = OpenApiAnyFactory.CreateFromJson(json);
@@ -124,6 +134,10 @@
             Assert.NotNull(obj["object_value"]);
             Assert.Equal(typeof(OpenApiObject), obj["object_value"].GetType());
             Assert.Equal(AnyType.Object, obj["object_value"].AnyType);
+
+            Assert.NotNull(obj["null_value"]);
+            Assert.Equal(typeof(OpenApiNull), obj["null_value"].GetType());
+            Assert.Equal(AnyType.Null, obj["null_value"].AnyType);
         }
     }
 }

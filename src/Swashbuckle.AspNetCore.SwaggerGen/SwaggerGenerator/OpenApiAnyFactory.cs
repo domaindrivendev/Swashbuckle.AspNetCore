@@ -71,6 +71,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (jsonElement.ValueKind == JsonValueKind.Object)
                 return CreateOpenApiObject(jsonElement);
 
+            if (jsonElement.ValueKind == JsonValueKind.Null || jsonElement.ValueKind == JsonValueKind.Undefined)
+                return new OpenApiNull();
+
             throw new System.ArgumentException($"Unsupported value kind {jsonElement.ValueKind}");
         }
     }
