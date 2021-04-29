@@ -125,6 +125,12 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         public IEnumerable<SubmitMethod> SupportedSubmitMethods { get; set; } = Enum.GetValues(typeof(SubmitMethod)).Cast<SubmitMethod>();
 
         /// <summary>
+        /// Controls whether the "Try it out" section should be enabled by default.
+        /// </summary>
+        [JsonPropertyName("tryItOutEnabled")]
+        public bool TryItOutEnabled { get; set; }
+
+        /// <summary>
         /// By default, Swagger-UI attempts to validate specs against swagger.io's online validator.
         /// You can use this parameter to set a different validator URL, for example for locally deployed validators (Validator Badge).
         /// Setting it to null will disable validation
