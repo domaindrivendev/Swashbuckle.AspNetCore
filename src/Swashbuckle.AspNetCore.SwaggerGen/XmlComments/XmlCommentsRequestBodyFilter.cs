@@ -22,28 +22,43 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var propertyInfo = bodyParameterDescription.PropertyInfo();
             if (propertyInfo != null)
             {
-                ApplyPropertyTags(requestBody, propertyInfo);
+                ApplyPropertyTags(requestBody, context, propertyInfo);
                 return;
             }
 
             var parameterInfo = bodyParameterDescription.ParameterInfo();
             if (parameterInfo != null)
             {
-                ApplyParamTags(requestBody, parameterInfo);
+                ApplyParamTags(requestBody, context, parameterInfo);
                 return;
             }
         }
 
-        private void ApplyPropertyTags(OpenApiRequestBody requestBody, PropertyInfo propertyInfo)
+        private void ApplyPropertyTags(OpenApiRequestBody requestBody, RequestBodyFilterContext context, PropertyInfo propertyInfo)
         {
             var propertyMemberName = XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(propertyInfo);
-            var propertySummaryNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{propertyMemberName}']/summary");
+            var propertyNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{propertyMemberName}']");
 
-            if (propertySummaryNode != null)
-                requestBody.Description = XmlCommentsTextHelper.Humanize(propertySummaryNode.InnerXml);
+            if (propertyNode == null) return;
+
+            var summaryNode = propertyNode.SelectSingleNode("summary");
+            if (summaryNode != null)
+                requestBody.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
+
+            var exampleNode = propertyNode.SelectSingleNode("example");
+            if (exampleNode == null) return;
+
+            foreach (var mediaType in requestBody.Content.Values)
+            {
+                var exampleAsJson = (mediaType.Schema?.ResolveType(context.SchemaRepository) == "string")
+                    ? $"\"{exampleNode.InnerXml}\""
+                    : exampleNode.InnerXml;
+
+                mediaType.Example = OpenApiAnyFactory.CreateFromJson(exampleAsJson);
+            }
         }
 
-        private void ApplyParamTags(OpenApiRequestBody requestBody, ParameterInfo parameterInfo)
+        private void ApplyParamTags(OpenApiRequestBody requestBody, RequestBodyFilterContext context, ParameterInfo parameterInfo)
         {
             if (!(parameterInfo.Member is MethodInfo methodInfo)) return;
 
@@ -61,6 +76,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (paramNode != null)
             {
                 requestBody.Description = XmlCommentsTextHelper.Humanize(paramNode.InnerXml);
+
+                var example = paramNode.GetAttribute("example", "");
+                if (string.IsNullOrEmpty(example)) return;
+
+                foreach (var mediaType in requestBody.Content.Values)
+                {
+                    var exampleAsJson = (mediaType.Schema?.ResolveType(context.SchemaRepository) == "string")
+                        ? $"\"{example}\""
+                        : example;
+
+                    mediaType.Example = OpenApiAnyFactory.CreateFromJson(exampleAsJson);
+                }
             }
         }
     }
