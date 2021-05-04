@@ -129,6 +129,15 @@ namespace Microsoft.AspNetCore.Builder
         }
 
         /// <summary>
+        /// Enables the "Try it out" section by default.
+        /// </summary>
+        /// <param name="options"></param>
+        public static void EnableTryItOutByDefault(this SwaggerUIOptions options)
+        {
+            options.ConfigObject.TryItOutEnabled = true;
+        }
+
+        /// <summary>
         /// Limits the number of tagged operations displayed to at most this many. The default is to show all operations
         /// </summary>
         /// <param name="options"></param>
