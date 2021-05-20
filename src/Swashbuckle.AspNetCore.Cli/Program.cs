@@ -42,14 +42,24 @@ namespace Swashbuckle.AspNetCore.Cli
 
                     var depsFile = namedArgs["startupassembly"].Replace(".dll", ".deps.json");
                     var runtimeConfig = namedArgs["startupassembly"].Replace(".dll", ".runtimeconfig.json");
+                    var commandName = args[0];
 
-                    var subProcess = Process.Start("dotnet", string.Format(
-                        "exec --depsfile {0} --runtimeconfig {1} {2} _{3}", // note the underscore
+                    var subProcessArguments = new string[args.Length - 1];
+                    if (subProcessArguments.Length > 0)
+                    {
+                        Array.Copy(args, 1, subProcessArguments, 0, subProcessArguments.Length);
+                    }
+
+                    var subProcessCommandLine = string.Format(
+                        "exec --depsfile {0} --runtimeconfig {1} {2} _{3} {4}", // note the underscore prepended to the command name
                         EscapePath(depsFile),
                         EscapePath(runtimeConfig),
                         EscapePath(typeof(Program).GetTypeInfo().Assembly.Location),
-                        string.Join(" ", args)
-                    ));
+                        commandName,
+                        string.Join(" ", subProcessArguments.Select(x => EscapePath(x)))
+                    );
+
+                    var subProcess = Process.Start("dotnet", subProcessCommandLine);
 
                     subProcess.WaitForExit();
                     return subProcess.ExitCode;
