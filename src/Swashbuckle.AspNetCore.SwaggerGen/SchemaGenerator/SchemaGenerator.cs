@@ -140,6 +140,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 ? GeneratePolymorphicSchema(dataContract, schemaRepository, knownTypesDataContracts)
                 : GenerateConcreteSchema(dataContract, schemaRepository);
 
+            if (_generatorOptions.UseAllOfToExtendReferenceSchemas && schema.Reference != null)
+            {
+                schema.AllOf = new[] { new OpenApiSchema { Reference = schema.Reference } };
+                schema.Reference = null;
+            }
+
             if (schema.Reference == null)
             {
                 ApplyFilters(schema, modelType, schemaRepository);
