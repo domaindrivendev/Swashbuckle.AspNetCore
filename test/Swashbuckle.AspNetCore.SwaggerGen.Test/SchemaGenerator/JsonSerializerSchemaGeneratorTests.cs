@@ -513,18 +513,48 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void GenerateSchema_SupportsOption_UseAllOfToExtendReferenceSchemas()
+        public void GenerateSchema_SupportsOption_UseAllOfToExtendReferenceSchemas_SelfReference()
         {
             var subject = Subject(
                 configureGenerator: c => c.UseAllOfToExtendReferenceSchemas = true
             );
-            var propertyInfo = typeof(SelfReferencingType).GetProperty(nameof(SelfReferencingType.Another));
+            var propertyInfo = typeof(TypeForAllOfScenarios).GetProperty(nameof(TypeForAllOfScenarios.SelfReferencingScenario));
 
             var schema = subject.GenerateSchema(propertyInfo.PropertyType, new SchemaRepository(), memberInfo: propertyInfo);
 
             Assert.Null(schema.Reference);
             Assert.NotNull(schema.AllOf);
             Assert.Equal(1, schema.AllOf.Count);
+        }
+
+        [Fact]
+        public void GenerateSchema_SupportsOption_UseAllOfToExtendReferenceSchemas_Dictionary()
+        {
+            var subject = Subject(
+                configureGenerator: c => c.UseAllOfToExtendReferenceSchemas = true
+            );
+            var propertyInfo = typeof(TypeForAllOfScenarios).GetProperty(nameof(TypeForAllOfScenarios.DictionaryScenario));
+
+            var schema = subject.GenerateSchema(propertyInfo.PropertyType, new SchemaRepository(), memberInfo: propertyInfo);
+
+            Assert.Null(schema.AdditionalProperties.Reference);
+            Assert.NotNull(schema.AdditionalProperties.AllOf);
+            Assert.Equal(1, schema.AdditionalProperties.AllOf.Count);
+        }
+
+        [Fact]
+        public void GenerateSchema_SupportsOption_UseAllOfToExtendReferenceSchemas_List()
+        {
+            var subject = Subject(
+                configureGenerator: c => c.UseAllOfToExtendReferenceSchemas = true
+            );
+            var propertyInfo = typeof(TypeForAllOfScenarios).GetProperty(nameof(TypeForAllOfScenarios.ListScenario));
+
+            var schema = subject.GenerateSchema(propertyInfo.PropertyType, new SchemaRepository(), memberInfo: propertyInfo);
+
+            Assert.Null(schema.Items.Reference);
+            Assert.NotNull(schema.Items.AllOf);
+            Assert.Equal(1, schema.Items.AllOf.Count);
         }
 
         [Fact]
