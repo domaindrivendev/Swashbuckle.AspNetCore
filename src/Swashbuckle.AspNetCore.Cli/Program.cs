@@ -140,10 +140,24 @@ namespace Swashbuckle.AspNetCore.Cli
                 return webHost.Services;
             }
 
-            return WebHost.CreateDefaultBuilder()
-               .UseStartup(startupAssembly.GetName().Name)
-               .Build()
-               .Services;
+            try
+            {
+                return WebHost.CreateDefaultBuilder()
+                   .UseStartup(startupAssembly.GetName().Name)
+                   .Build()
+                   .Services;
+            }
+            catch
+            {
+                var serviceProvider = HostingApplication.GetServiceProvider(startupAssembly);
+
+                if (serviceProvider != null)
+                {
+                    return serviceProvider;
+                }
+
+                throw;
+            }
         }
 
         private static bool TryGetCustomHost<THost>(
