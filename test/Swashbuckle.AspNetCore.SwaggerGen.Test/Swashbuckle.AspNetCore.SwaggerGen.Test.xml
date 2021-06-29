@@ -127,6 +127,12 @@
             </summary>
             <example>d3966535-2637-48fa-b911-e3c27405ee09</example>
         </member>
+        <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.StringPropertyWithNullExample">
+            <summary>
+            Summary for Nullable StringPropertyWithNullExample
+            </summary>
+            <example>null</example>
+        </member>
         <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.StringProperty">
             <summary>
             Summary for StringProperty

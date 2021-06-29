@@ -44,6 +44,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private static IOpenApiAny CreateFromJsonElement(JsonElement jsonElement)
         {
+            if (jsonElement.ValueKind == JsonValueKind.Null)
+                return new OpenApiNull();
+
             if (jsonElement.ValueKind == JsonValueKind.True || jsonElement.ValueKind == JsonValueKind.False)
                 return new OpenApiBoolean(jsonElement.GetBoolean());
 
