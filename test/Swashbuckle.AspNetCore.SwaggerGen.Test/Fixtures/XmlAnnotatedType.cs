@@ -58,6 +58,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public Guid GuidProperty { get; set; }
 
         /// <summary>
+        /// Summary for Nullable StringProperty
+        /// </summary>
+        /// <example>null</example>
+        public string NullableStringProperty { get; set; }
+
+        /// <summary>
         /// Summary for StringProperty
         /// </summary>
         /// <example>Example for StringProperty</example>
