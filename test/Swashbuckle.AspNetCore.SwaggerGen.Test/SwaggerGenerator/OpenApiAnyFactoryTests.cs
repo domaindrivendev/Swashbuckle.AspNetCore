@@ -27,6 +27,18 @@
         }
 
         [Theory]
+        [InlineData("null", typeof(OpenApiNull), null)]
+        public void CreateFromJson_NullType(string json, Type expectedType, object expectedValue)
+        {
+            var openApiAnyObject = OpenApiAnyFactory.CreateFromJson(json);
+            Assert.NotNull(openApiAnyObject);
+            Assert.Equal(expectedType, openApiAnyObject.GetType());
+            Assert.Equal(AnyType.Null, openApiAnyObject.AnyType);
+            var valueProperty = expectedType.GetProperty("Value");
+            Assert.Equal(expectedValue, valueProperty);
+        }
+
+        [Theory]
         [InlineData("[1,2]", typeof(OpenApiInteger), 1, 2)]
         [InlineData("[4294877294,4294877295]", typeof(OpenApiLong), 4294877294L, 4294877295L)]
         [InlineData("[1.5,-1.5]", typeof(OpenApiFloat), 1.5f, -1.5f)]
