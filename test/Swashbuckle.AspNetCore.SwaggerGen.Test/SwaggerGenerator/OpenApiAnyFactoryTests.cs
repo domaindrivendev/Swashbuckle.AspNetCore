@@ -26,16 +26,17 @@
             Assert.Equal(expectedValue, actualValue);
         }
 
-        [Theory]
-        [InlineData("null", typeof(OpenApiNull), null)]
-        public void CreateFromJson_NullType(string json, Type expectedType, object expectedValue)
+        [Fact]
+        public void CreateFromJson_NullType()
         {
-            var openApiAnyObject = OpenApiAnyFactory.CreateFromJson(json);
+            var expectedType = typeof(OpenApiNull);
+
+            var openApiAnyObject = OpenApiAnyFactory.CreateFromJson("null");
             Assert.NotNull(openApiAnyObject);
             Assert.Equal(expectedType, openApiAnyObject.GetType());
             Assert.Equal(AnyType.Null, openApiAnyObject.AnyType);
             var valueProperty = expectedType.GetProperty("Value");
-            Assert.Equal(expectedValue, valueProperty);
+            Assert.Null(valueProperty);
         }
 
         [Theory]
