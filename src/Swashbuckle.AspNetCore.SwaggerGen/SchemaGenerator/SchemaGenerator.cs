@@ -85,6 +85,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     schema.Deprecated = true;
                 }
 
+                // NullableAttribute behaves diffrently for Dictionaries
+                if (modelType.IsGenericType && modelType.GetGenericTypeDefinition() == typeof(Dictionary<,>))
+                {
+                    schema.AdditionalProperties.Nullable = !memberInfo.IsDictionaryValueNonNullable();
+                }
+
                 schema.ApplyValidationAttributes(customAttributes);
 
                 ApplyFilters(schema, modelType, schemaRepository, memberInfo: memberInfo);

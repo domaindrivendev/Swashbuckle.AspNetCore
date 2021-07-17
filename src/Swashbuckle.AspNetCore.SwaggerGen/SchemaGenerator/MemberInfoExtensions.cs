@@ -58,6 +58,31 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return false;
         }
 
+        public static bool IsDictionaryValueNonNullable(this MemberInfo memberInfo)
+        {
+            var memberType = memberInfo.MemberType == MemberTypes.Field
+                ? ((FieldInfo)memberInfo).FieldType
+                : ((PropertyInfo)memberInfo).PropertyType;
+
+            if (memberType.IsValueType) return false;
+
+            var nullableAttribute = memberInfo.GetNullableAttribute();
+
+            if (nullableAttribute == null)
+            {
+                return memberInfo.GetNullableFallbackValue();
+            }
+
+            if (nullableAttribute.GetType().GetField(NullableFlagsFieldName) is FieldInfo field &&
+                field.GetValue(nullableAttribute) is byte[] flags &&
+                flags.Length == 3 && flags[2] == 1)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         private static object GetNullableAttribute(this MemberInfo memberInfo)
         {
             var nullableAttribute = memberInfo.GetCustomAttributes()
