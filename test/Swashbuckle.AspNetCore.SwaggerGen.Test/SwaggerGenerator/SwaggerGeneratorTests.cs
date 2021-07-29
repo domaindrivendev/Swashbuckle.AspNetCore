@@ -1,9 +1,12 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.OpenApi.Any;
 using Xunit;
 using Swashbuckle.AspNetCore.Swagger;
@@ -76,6 +79,34 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.Equal("SomeRouteName", document.Paths["/resource"].Operations[OperationType.Post].OperationId);
         }
+
+        [Fact]
+        public void GetSwagger_SetsOperationIdToEndpointName_IfActionHasEndpointNameMetadata()
+        {
+            var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
+            var actionDescriptor = new ControllerActionDescriptor
+            {
+                ControllerTypeInfo = methodInfo.DeclaringType.GetTypeInfo(),
+                ControllerName = methodInfo.DeclaringType.Name,
+                MethodInfo = methodInfo,
+                EndpointMetadata = new List<object>() { new EndpointNameMetadata("SomeEndpointName") },
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+                }
+            };
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create(actionDescriptor, methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource"),
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal("SomeEndpointName", document.Paths["/resource"].Operations[OperationType.Post].OperationId);     
+        }
+
 
         [Fact]
         public void GetSwagger_SetsDeprecated_IfActionHasObsoleteAttribute()
