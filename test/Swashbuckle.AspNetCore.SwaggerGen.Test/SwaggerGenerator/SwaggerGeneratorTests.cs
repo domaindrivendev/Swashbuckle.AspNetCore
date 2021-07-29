@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Routing;
@@ -84,11 +84,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void GetSwagger_SetsOperationIdToEndpointName_IfActionHasEndpointNameMetadata()
         {
             var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
-            var actionDescriptor = new ControllerActionDescriptor
+            var actionDescriptor = new ActionDescriptor
             {
-                ControllerTypeInfo = methodInfo.DeclaringType.GetTypeInfo(),
-                ControllerName = methodInfo.DeclaringType.Name,
-                MethodInfo = methodInfo,
                 EndpointMetadata = new List<object>() { new EndpointNameMetadata("SomeEndpointName") },
                 RouteValues = new Dictionary<string, string>
                 {
