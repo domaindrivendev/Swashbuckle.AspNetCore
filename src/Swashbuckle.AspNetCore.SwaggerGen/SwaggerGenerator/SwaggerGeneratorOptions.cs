@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Routing;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -61,7 +62,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private string DefaultOperationIdSelector(ApiDescription apiDescription)
         {
-            return apiDescription.ActionDescriptor.AttributeRouteInfo?.Name;
+            var actionDescriptor = apiDescription.ActionDescriptor;
+
+            // Resolve the operation ID from the route name and fallback to the
+            // endpoint name if no route name is available. This allows us to
+            // generate operation IDs for endpoints that are defined using
+            // minimal APIs.
+#if (!NETSTANDARD2_0)
+            return
+                actionDescriptor.AttributeRouteInfo?.Name
+                ?? (actionDescriptor.EndpointMetadata.FirstOrDefault(m => m is IEndpointNameMetadata) as IEndpointNameMetadata)?.EndpointName;
+#else
+            return actionDescriptor.AttributeRouteInfo?.Name;
+#endif
         }
 
         private IList<string> DefaultTagsSelector(ApiDescription apiDescription)

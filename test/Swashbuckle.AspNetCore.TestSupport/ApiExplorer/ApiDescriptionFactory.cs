@@ -12,6 +12,7 @@ namespace Swashbuckle.AspNetCore.TestSupport
     public static class ApiDescriptionFactory
     {
         public static ApiDescription Create(
+            ActionDescriptor actionDescriptor,
             MethodInfo methodInfo,
             string groupName = "v1",
             string httpMethod = "POST",
@@ -20,8 +21,6 @@ namespace Swashbuckle.AspNetCore.TestSupport
             IEnumerable<ApiRequestFormat> supportedRequestFormats = null,
             IEnumerable<ApiResponseType> supportedResponseTypes = null)
         {
-            var actionDescriptor = CreateActionDescriptor(methodInfo);
-
             var apiDescription = new ApiDescription
             {
                 ActionDescriptor = actionDescriptor,
@@ -72,6 +71,30 @@ namespace Swashbuckle.AspNetCore.TestSupport
             }
 
             return apiDescription;
+        }
+
+        public static ApiDescription Create(
+            MethodInfo methodInfo,
+            string groupName = "v1",
+            string httpMethod = "POST",
+            string relativePath = "resoure",
+            IEnumerable<ApiParameterDescription> parameterDescriptions = null,
+            IEnumerable<ApiRequestFormat> supportedRequestFormats = null,
+            IEnumerable<ApiResponseType> supportedResponseTypes = null)
+        {
+
+            var actionDescriptor = CreateActionDescriptor(methodInfo);
+
+            return Create(
+                actionDescriptor,
+                methodInfo,
+                groupName,
+                httpMethod,
+                relativePath,
+                parameterDescriptions,
+                supportedRequestFormats,
+                supportedResponseTypes
+            );
         }
 
         public static ApiDescription Create<TController>(
