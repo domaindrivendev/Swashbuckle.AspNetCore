@@ -15,18 +15,10 @@ namespace Swashbuckle.AspNetCore.Cli
 {
     public class Program
     {
-        private CommandRunner _runner;
-
-        static int Main(string[] args)
-        {
-            var program = new Program(args);
-            return program.Run(args);
-        }
-
-        public Program(string[] args)
+        public static int Main(string[] args)
         {
             // Helper to simplify command line parsing etc.
-            _runner = new CommandRunner("dotnet swagger", "Swashbuckle (Swagger) Command Line Tools", Console.Out);
+            var runner = new CommandRunner("dotnet swagger", "Swashbuckle (Swagger) Command Line Tools", Console.Out);
 
             // NOTE: The "dotnet swagger tofile" command does not serve the request directly. Instead, it invokes a corresponding
             // command (called _tofile) via "dotnet exec" so that the runtime configuration (*.runtimeconfig & *.deps.json) of the
@@ -34,7 +26,7 @@ namespace Swashbuckle.AspNetCore.Cli
             // startupassembly and it's transitive dependencies. See https://github.com/dotnet/coreclr/issues/13277 for more.
 
             // > dotnet swagger tofile ...
-            _runner.SubCommand("tofile", "retrieves Swagger from a startup assembly, and writes to file ", c =>
+            runner.SubCommand("tofile", "retrieves Swagger from a startup assembly, and writes to file ", c =>
             {
                 c.Argument("startupassembly", "relative path to the application's startup assembly");
                 c.Argument("swaggerdoc", "name of the swagger doc you want to retrieve, as configured in your startup class");
@@ -75,7 +67,7 @@ namespace Swashbuckle.AspNetCore.Cli
             });
 
             // > dotnet swagger _tofile ... (* should only be invoked via "dotnet exec")
-            _runner.SubCommand("_tofile", "", c =>
+            runner.SubCommand("_tofile", "", c =>
             {
                 c.Argument("startupassembly", "");
                 c.Argument("swaggerdoc", "");
@@ -125,11 +117,8 @@ namespace Swashbuckle.AspNetCore.Cli
                     return 0;
                 });
             });
-        }
 
-        public int Run(string[] args)
-        {
-            return _runner.Run(args);
+            return runner.Run(args);
         }
 
         private static string EscapePath(string path)

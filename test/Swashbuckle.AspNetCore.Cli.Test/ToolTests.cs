@@ -10,8 +10,7 @@ namespace Swashbuckle.AspNetCore.Cli.Test
         public void Throws_When_Startup_Assembly_Does_Not_Exist()
         {
             var args = new string[] { "tofile", "--output", "swagger.json", "--serializeasv2", "./does_not_exist.dll", "v1" };
-            var program = new Program(args);
-            Assert.Throws<FileNotFoundException>(() => program.Run(args));
+            Assert.Throws<FileNotFoundException>(() => Program.Main(args));
         }
 
         [Fact]
@@ -21,8 +20,7 @@ namespace Swashbuckle.AspNetCore.Cli.Test
             try
             {
                 var args = new string[] { "tofile", "--output", $"{dir}/swagger.json", "--serializeasv2", $"{Directory.GetCurrentDirectory()}/basic.dll", "v1" };
-                var program = new Program(args);
-                Assert.Equal(0, program.Run(args));
+                Assert.Equal(0, Program.Main(args));
 
                 using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(dir.FullName, "swagger.json")));
 
