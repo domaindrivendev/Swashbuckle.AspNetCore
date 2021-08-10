@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Http;
@@ -11,6 +12,33 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class ApiParameterDescriptionExtensions
     {
+        private static readonly Type[] RequiredAttributeTypes = new[]
+        {
+            typeof(BindRequiredAttribute),
+            typeof(RequiredAttribute)
+        };
+
+        public static bool IsRequiredParameter(this ApiParameterDescription apiParameter)
+        {
+            // This is the default logic for IsRequired
+            bool IsRequired() => apiParameter.IsFromPath() ||
+                                 apiParameter.CustomAttributes().Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
+
+            // This is to keep compatibility with MVC controller logic that has existed in the past
+            if (apiParameter.ParameterDescriptor is ControllerParameterDescriptor)
+            {
+                return IsRequired();
+            }
+
+            // For non-controllers, prefer the IsRequired flag if we're not on netstandard 2.0, otherwise fallback to the default logic.
+            return
+#if !NETSTANDARD2_0
+            apiParameter.IsRequired;
+#else
+            IsRequired();
+#endif
+        }
+
         public static ParameterInfo ParameterInfo(this ApiParameterDescription apiParameter)
         {
             var controllerParameterDescriptor = apiParameter.ParameterDescriptor as ControllerParameterDescriptor;
