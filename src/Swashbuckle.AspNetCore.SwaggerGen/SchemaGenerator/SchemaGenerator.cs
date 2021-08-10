@@ -398,11 +398,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (dataContract.UnderlyingType.IsInterface)
             {
-                var baseTypes = dataContract.UnderlyingType.GetInterfaces()
+                var allInterfaces = dataContract.UnderlyingType.GetInterfaces();
+                var baseTypes = allInterfaces
+                    //Only respect the top most interfaces
+                    .Except(allInterfaces.SelectMany(t => t.GetInterfaces()))
                     //Do NOT exclude unlisted types, since the current behavior just doesn't work for interfaces
                     //Any better ideas here?
                     //.Where(t => _generatorOptions.SubTypesSelector(t).Contains(dataContract.UnderlyingType))
-                    ;
+                ;
 
                 if (!baseTypes.Any()) { return false; }
                 baseTypeDataContracts = baseTypes.Select(t => GetDataContractFor(t));
