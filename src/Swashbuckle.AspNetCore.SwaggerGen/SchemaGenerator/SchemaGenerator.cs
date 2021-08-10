@@ -338,9 +338,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 if (IsKnownSubType(dataContract, out var baseTypeDataContract))
                 {
-                    var baseTypeSchema = GenerateConcreteSchema(baseTypeDataContract, schemaRepository);
-
-                    schema.AllOf.Add(baseTypeSchema);
+                    foreach (var bt in baseTypeDataContract)
+                    {
+                        var baseTypeSchema = GenerateConcreteSchema(bt, schemaRepository);
+                        schema.AllOf.Add(baseTypeSchema);
+                    }
 
                     applicableDataProperties = applicableDataProperties
                         .Where(dataProperty => dataProperty.MemberInfo.DeclaringType == dataContract.UnderlyingType);
@@ -390,17 +392,32 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return schema;
         }
 
-        private bool IsKnownSubType(DataContract dataContract, out DataContract baseTypeDataContract)
+        private bool IsKnownSubType(DataContract dataContract, out IEnumerable<DataContract> baseTypeDataContracts)
         {
-            baseTypeDataContract = null;
+            baseTypeDataContracts = null;
 
-            var baseType = dataContract.UnderlyingType.BaseType;
+            if (dataContract.UnderlyingType.IsInterface)
+            {
+                var baseTypes = dataContract.UnderlyingType.GetInterfaces()
+                    //Do NOT exclude unlisted types, since the current behavior just doesn't work for interfaces
+                    //Any better ideas here?
+                    //.Where(t => _generatorOptions.SubTypesSelector(t).Contains(dataContract.UnderlyingType))
+                    ;
 
-            if (baseType == null || baseType == typeof(object) || !_generatorOptions.SubTypesSelector(baseType).Contains(dataContract.UnderlyingType))
-                return false;
+                if (!baseTypes.Any()) { return false; }
+                baseTypeDataContracts = baseTypes.Select(t => GetDataContractFor(t));
+                return true;
+            }
+            else
+            {
+                var baseType = dataContract.UnderlyingType.BaseType;
 
-            baseTypeDataContract = GetDataContractFor(baseType);
-            return true;
+                if (baseType == null || baseType == typeof(object) || !_generatorOptions.SubTypesSelector(baseType).Contains(dataContract.UnderlyingType))
+                    return false;
+
+                baseTypeDataContracts = new[] { GetDataContractFor(baseType) };
+                return true;
+            }
         }
 
         private bool TryGetDiscriminatorFor(
