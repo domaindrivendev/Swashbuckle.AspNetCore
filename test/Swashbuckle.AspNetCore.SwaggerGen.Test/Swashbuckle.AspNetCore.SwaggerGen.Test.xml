@@ -139,6 +139,12 @@
             </summary>
             <example>Example for StringProperty</example>
         </member>
+        <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.StringPropertyWithUri">
+            <summary>
+            Summary for StringPropertyWithUri
+            </summary>
+            <example><![CDATA[https://test.com/a?b=1&c=2]]></example>
+        </member>
         <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.ObjectProperty">
             <summary>
             Summary for ObjectProperty
