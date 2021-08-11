@@ -249,7 +249,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
-        public void GetSwagger_SetsParameterRequired_IfApiParameterDescriptionForPathIsRequired(bool isRequired)
+        public void GetSwagger_SetsParameterRequired_IfParameterIsPath(bool isRequired)
         {
             void Execute(int id) { }
 
@@ -274,7 +274,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var document = subject.GetSwagger("v1");
 
-            Assert.Equal(isRequired, document.Paths["/resource"].Operations[OperationType.Post].Parameters[0].Required);
+            Assert.True(document.Paths["/resource"].Operations[OperationType.Post].Parameters[0].Required);
         }
 
         [Theory]
