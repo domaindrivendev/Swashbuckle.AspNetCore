@@ -37,7 +37,7 @@
         </member>
         <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllerWithXmlComments.ActionWithParamTags(System.String,System.String)">
             <param name="param1" example="Example for param1">Description for param1</param>
-            <param name="param2" example="Example for param2">Description for param2</param>
+            <param name="param2" example="http://test.com/?param1=1&amp;param2=2">Description for param2</param>
         </member>
         <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllerWithXmlComments.ActionWithResponseTags">
             <response code="200">Description for 200 response</response>

@@ -19,9 +19,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         { }
 
         /// <param name="param1" example="Example for param1">Description for param1</param>
-        /// <param name="param2" example="Example for param2">Description for param2</param>
+        /// <param name="param2" example="http://test.com/?param1=1&amp;param2=2">Description for param2</param>
         public void ActionWithParamTags(string param1, string param2)
         { }
+
+
 
         /// <response code="200">Description for 200 response</response>
         /// <response code="400">Description for 400 response</response>
