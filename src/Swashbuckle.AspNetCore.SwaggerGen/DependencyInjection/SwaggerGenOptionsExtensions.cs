@@ -218,9 +218,11 @@ namespace Microsoft.Extensions.DependencyInjection
         /// incorporate properties from the base class instead of defining those properties inline.
         /// </summary>
         /// <param name="swaggerGenOptions"></param>
-        public static void UseAllOfForInheritance(this SwaggerGenOptions swaggerGenOptions)
+        /// <param name="ignoreAllOfSubTypesSelector">When set true, SubTypesSelector won't be used for allOf-information but just for anyOf</param>
+        public static void UseAllOfForInheritance(this SwaggerGenOptions swaggerGenOptions, bool ignoreAllOfSubTypesSelector = false)
         {
             swaggerGenOptions.SchemaGeneratorOptions.UseAllOfForInheritance = true;
+            swaggerGenOptions.SchemaGeneratorOptions.IgnoreAllOfSubTypesSelector = ignoreAllOfSubTypesSelector;
         }
 
         /// <summary>

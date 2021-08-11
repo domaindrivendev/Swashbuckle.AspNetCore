@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -7,9 +10,6 @@ using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -402,10 +402,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var baseTypes = allInterfaces
                     //Only respect the top most interfaces
                     .Except(allInterfaces.SelectMany(t => t.GetInterfaces()))
-                    //Do NOT exclude unlisted types, since the current behavior just doesn't work for interfaces
-                    //Any better ideas here?
-                    //.Where(t => _generatorOptions.SubTypesSelector(t).Contains(dataContract.UnderlyingType))
                 ;
+
+                if (!_generatorOptions.IgnoreAllOfSubTypesSelector) { baseTypes = baseTypes.Where(t => _generatorOptions.SubTypesSelector(t).Contains(dataContract.UnderlyingType)); }
 
                 if (!baseTypes.Any()) { return false; }
                 baseTypeDataContracts = baseTypes.Select(t => GetDataContractFor(t));
@@ -415,7 +414,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 var baseType = dataContract.UnderlyingType.BaseType;
 
-                if (baseType == null || baseType == typeof(object) || !_generatorOptions.SubTypesSelector(baseType).Contains(dataContract.UnderlyingType))
+                if (baseType == null || baseType == typeof(object) || (!_generatorOptions.IgnoreAllOfSubTypesSelector && !_generatorOptions.SubTypesSelector(baseType).Contains(dataContract.UnderlyingType)))
                     return false;
 
                 baseTypeDataContracts = new[] { GetDataContractFor(baseType) };

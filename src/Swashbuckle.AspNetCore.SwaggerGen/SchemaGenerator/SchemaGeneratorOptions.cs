@@ -27,6 +27,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public bool UseAllOfForInheritance { get; set; }
 
+        public bool IgnoreAllOfSubTypesSelector { get; set; }
+
         public bool UseOneOfForPolymorphism { get; set; }
 
         public Func<Type, IEnumerable<Type>> SubTypesSelector { get; set; }
@@ -54,7 +56,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private IEnumerable<Type> DefaultSubTypesSelector(Type baseType)
         {
-            return baseType.Assembly.GetTypes().Where(type => type.IsSubclassOf(baseType));
+            //This would not change to current logic - but I guess my approach is ok for every case?
+            //return baseType.Assembly.GetTypes().Where(type => type.IsInterface ? type.IsAssignableTo(baseType) : type.IsSubclassOf(baseType));
+            return baseType.Assembly.GetTypes().Where(type => type.IsAssignableTo(baseType));
         }
 
         private string DefaultDiscriminatorNameSelector(Type baseType)
