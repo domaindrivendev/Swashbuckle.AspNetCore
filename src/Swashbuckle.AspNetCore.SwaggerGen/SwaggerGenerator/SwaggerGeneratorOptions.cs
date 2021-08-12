@@ -31,6 +31,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public bool IgnoreObsoleteActions { get; set; }
 
+        public bool ResolveConflictingActionsUsingFragments { get; set; }
+
         public Func<IEnumerable<ApiDescription>, ApiDescription> ConflictingActionsResolver { get; set; }
 
         public Func<ApiDescription, string> OperationIdSelector { get; set; }

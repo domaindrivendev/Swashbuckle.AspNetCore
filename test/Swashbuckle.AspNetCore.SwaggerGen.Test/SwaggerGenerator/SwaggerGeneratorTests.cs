@@ -636,6 +636,35 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GetSwagger_SupportsOption_ResolveConflictingActionsUsingFragments()
+        {
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "POST", relativePath: "resource"),
+
+                    ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "POST", relativePath: "resource")
+                },
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    },
+                    ResolveConflictingActionsUsingFragments = true
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal(new[] { "/resource", "/resource#1" }, document.Paths.Keys.ToArray());
+            Assert.Equal(new[] { OperationType.Post }, document.Paths["/resource"].Operations.Keys);
+            Assert.Equal(new[] { OperationType.Post }, document.Paths["/resource#1"].Operations.Keys);
+        }
+
+        [Fact]
         public void GetSwagger_SupportsOption_ConflictingActionsResolver()
         {
             var subject = Subject(

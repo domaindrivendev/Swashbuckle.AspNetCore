@@ -88,8 +88,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 paths.Add($"/{group.Key}",
                     new OpenApiPathItem
                     {
-                        Operations = GenerateOperations(group, schemaRepository)
+                        Operations = GenerateOperations(group, schemaRepository, out var conflictingActions)
                     });
+                if (conflictingActions != null)
+                {
+                    for (int index = 0, count = conflictingActions.Count; index < count; index++)
+                    {
+                        paths.Add($"/{group.Key}#{index + 1}",
+                            new OpenApiPathItem
+                            {
+                                Operations = conflictingActions[index]
+                            });
+                    }
+                }
             };
 
             return paths;
@@ -97,13 +108,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private IDictionary<OperationType, OpenApiOperation> GenerateOperations(
             IEnumerable<ApiDescription> apiDescriptions,
-            SchemaRepository schemaRepository)
+            SchemaRepository schemaRepository,
+            out List<IDictionary<OperationType, OpenApiOperation>> conflictingActions)
         {
             var apiDescriptionsByMethod = apiDescriptions
                 .OrderBy(_options.SortKeySelector)
                 .GroupBy(apiDesc => apiDesc.HttpMethod);
 
             var operations = new Dictionary<OperationType, OpenApiOperation>();
+            conflictingActions = null;
 
             foreach (var group in apiDescriptionsByMethod)
             {
@@ -114,6 +127,23 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         "Ambiguous HTTP method for action - {0}. " +
                         "Actions require an explicit HttpMethod binding for Swagger/OpenAPI 3.0",
                         group.First().ActionDescriptor.DisplayName));
+
+                if (group.Count() > 1 && _options.ResolveConflictingActionsUsingFragments)
+                {
+                    if (conflictingActions == null)
+                    {
+                        conflictingActions = new List<IDictionary<OperationType, OpenApiOperation>>();
+                    }
+
+                    operations.Add(OperationTypeMap[httpMethod.ToUpper()], GenerateOperation(group.First(), schemaRepository));
+                    var conflicts = new Dictionary<OperationType, OpenApiOperation>();
+                    foreach (var conflictingOperation in group.Skip(1))
+                    {
+                        conflicts.Add(OperationTypeMap[httpMethod.ToUpper()], GenerateOperation(conflictingOperation, schemaRepository));       
+                    }
+                    conflictingActions.Add(conflicts);
+                    continue;
+                }
 
                 if (group.Count() > 1 && _options.ConflictingActionsResolver == null)
                     throw new SwaggerGeneratorException(string.Format(

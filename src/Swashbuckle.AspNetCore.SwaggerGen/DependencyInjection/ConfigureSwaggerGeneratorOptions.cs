@@ -57,6 +57,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             target.SwaggerDocs = new Dictionary<string, OpenApiInfo>(source.SwaggerDocs);
             target.DocInclusionPredicate = source.DocInclusionPredicate;
             target.IgnoreObsoleteActions = source.IgnoreObsoleteActions;
+            target.ResolveConflictingActionsUsingFragments = source.ResolveConflictingActionsUsingFragments;
             target.ConflictingActionsResolver = source.ConflictingActionsResolver;
             target.OperationIdSelector = source.OperationIdSelector;
             target.TagsSelector = source.TagsSelector;

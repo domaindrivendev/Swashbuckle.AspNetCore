@@ -46,6 +46,14 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
+        /// Resolve conflicting actions by appending incrementing fragments to the path of the actions.
+        /// </summary>
+        public static void ResolveConflictingActionsUsingFragments(this SwaggerGenOptions swaggerGenOptions)
+        {
+            swaggerGenOptions.SwaggerGeneratorOptions.ResolveConflictingActionsUsingFragments = true;
+        }
+
+        /// <summary>
         /// Merge actions that have conflicting HTTP methods and paths (must be unique for Swagger 2.0)
         /// </summary>
         /// <param name="swaggerGenOptions"></param>
