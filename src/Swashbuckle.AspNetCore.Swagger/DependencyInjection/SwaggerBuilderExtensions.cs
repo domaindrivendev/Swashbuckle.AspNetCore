@@ -42,7 +42,7 @@ namespace Microsoft.AspNetCore.Builder
 #if (!NETSTANDARD2_0)
         public static IEndpointRouteBuilder MapSwagger(
             this IEndpointRouteBuilder endpoints,
-            string pattern = "/swagger/{documentName}/swagger.json",
+            string pattern = "/swagger/{documentName}/swagger.{json|yaml}",
             Action<SwaggerEndpointOptions> setupAction = null)
         {
             if (!RoutePatternFactory.Parse(pattern).Parameters.Any(x => x.Name == "documentName"))
