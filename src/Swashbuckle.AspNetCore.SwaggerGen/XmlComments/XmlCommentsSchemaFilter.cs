@@ -27,10 +27,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var typeMemberName = XmlCommentsNodeNameHelper.GetMemberNameForType(type);
             var typeSummaryNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{typeMemberName}']/summary");
+            var typeRemarkNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{typeMemberName}']/remarks");
 
             if (typeSummaryNode != null)
             {
+                // Default to using <summary> for description for backwards compatibility
                 schema.Description = XmlCommentsTextHelper.Humanize(typeSummaryNode.InnerXml);
+
+                if (typeRemarkNode != null)
+                {
+                    schema.Title = schema.Description;
+                    schema.Description = XmlCommentsTextHelper.Humanize(typeRemarkNode.InnerXml); 
+                }
             }
         }
 
