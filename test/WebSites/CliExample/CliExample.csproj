@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <DotNetSwaggerPath>$([System.IO.Path]::Combine("..", "..", "..", "src", "Swashbuckle.AspNetCore.Cli", "bin", $(Configuration), "netcoreapp3.0", "dotnet-swagger.dll"))</DotNetSwaggerPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,7 +28,7 @@
   -->
 
   <Target Name="SwaggerToFile" AfterTargets="AfterBuild">
-    <Exec Command="dotnet $(SolutionDir)src\Swashbuckle.AspNetCore.Cli\bin\$(Configuration)\netcoreapp3.0\dotnet-swagger.dll tofile --host http://localhost:51071 --output wwwroot/swagger/v1/swagger.json $(OutputPath)$(AssemblyName).dll v1" />
+    <Exec Command="dotnet $(DotNetSwaggerPath) tofile --host http://localhost:51071 --output wwwroot/swagger/v1/swagger.json $(OutputPath)$(AssemblyName).dll v1" />
   </Target>
 
 </Project>
