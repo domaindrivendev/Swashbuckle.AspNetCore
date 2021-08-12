@@ -249,38 +249,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Theory]
         [InlineData(false)]
         [InlineData(true)]
-        public void GetSwagger_SetsParameterRequired_IfParameterIsPath(bool isRequired)
-        {
-            void Execute(int id) { }
-
-            Action<int> action = Execute;
-
-            var actionDescriptor = new ActionDescriptor
-            {
-                RouteValues = new Dictionary<string, string>
-                {
-                    ["controller"] = "Foo",
-                }
-            };
-
-            var parameter = new ApiParameterDescription { Name = "id", Source = BindingSource.Path, IsRequired = isRequired };
-
-            var subject = Subject(
-                apiDescriptions: new[]
-                {
-                    ApiDescriptionFactory.Create(actionDescriptor, action.Method, groupName: "v1", httpMethod: "POST", relativePath: "resource", parameterDescriptions: new[]{ parameter }),
-                }
-            );
-
-            var document = subject.GetSwagger("v1");
-
-            Assert.True(document.Paths["/resource"].Operations[OperationType.Post].Parameters[0].Required);
-        }
-
-        [Theory]
-        [InlineData(false)]
-        [InlineData(true)]
-        public void GetSwagger_SetsParameterRequired_IfApiParameterDescriptionForBodyIsRequired(bool isRequired)
+        public void GetSwagger_SetsParameterRequired_ForNonControllerActionDescriptor_IfApiParameterDescriptionForBodyIsRequired(bool isRequired)
         {
             void Execute(object obj) { }
 

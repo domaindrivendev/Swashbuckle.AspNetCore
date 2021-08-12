@@ -20,9 +20,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public static bool IsRequiredParameter(this ApiParameterDescription apiParameter)
         {
+            // From the OpenAPI spec:
+            // If the parameter location is "path", this property is REQUIRED and its value MUST be true.
+            if (apiParameter.IsFromPath())
+            {
+                return true;
+            }
+
             // This is the default logic for IsRequired
-            bool IsRequired() => apiParameter.IsFromPath() ||
-                                 apiParameter.CustomAttributes().Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
+            bool IsRequired() => apiParameter.CustomAttributes().Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
 
             // This is to keep compatibility with MVC controller logic that has existed in the past
             if (apiParameter.ParameterDescriptor is ControllerParameterDescriptor)
@@ -33,7 +39,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             // For non-controllers, prefer the IsRequired flag if we're not on netstandard 2.0, otherwise fallback to the default logic.
             return
 #if !NETSTANDARD2_0
-            apiParameter.IsFromPath() || apiParameter.IsRequired;
+            apiParameter.IsRequired;
 #else
             IsRequired();
 #endif
