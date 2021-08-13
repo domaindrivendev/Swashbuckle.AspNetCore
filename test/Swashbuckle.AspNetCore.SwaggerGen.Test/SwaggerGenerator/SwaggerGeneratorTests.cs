@@ -104,6 +104,29 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("SomeEndpointName", document.Paths["/resource"].Operations[OperationType.Post].OperationId);     
         }
 
+        [Fact]
+        public void GetSwagger_SetsOperationIdToNull_IfActionHasNoEndpointMetadata()
+        {
+            var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
+            var actionDescriptor = new ActionDescriptor
+            {
+                EndpointMetadata = null,
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+                }
+            };
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create(actionDescriptor, methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource"),
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Null(document.Paths["/resource"].Operations[OperationType.Post].OperationId);
+        }
 
         [Fact]
         public void GetSwagger_SetsDeprecated_IfActionHasObsoleteAttribute()
