@@ -1,16 +1,16 @@
-﻿using System.Linq;
+﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
+using System.Linq;
 using System.Text.Json;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Abstractions;
-using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.OpenApi.Any;
-using Xunit;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.TestSupport;
+using Xunit;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -35,7 +35,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 {
                     SwaggerDocs = new Dictionary<string, OpenApiInfo>
                     {
-                        [ "v1" ] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
                     }
                 }
             );
@@ -101,7 +101,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var document = subject.GetSwagger("v1");
 
-            Assert.Equal("SomeEndpointName", document.Paths["/resource"].Operations[OperationType.Post].OperationId);     
+            Assert.Equal("SomeEndpointName", document.Paths["/resource"].Operations[OperationType.Post].OperationId);
         }
 
         [Fact]
@@ -267,6 +267,44 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.Equal(1, operation.Parameters.Count);
             Assert.Equal(expectedRequired, operation.Parameters.First().Required);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void GetSwagger_SetsParameterRequired_ForNonControllerActionDescriptor_IfApiParameterDescriptionForBodyIsRequired(bool isRequired)
+        {
+            void Execute(object obj) { }
+
+            Action<object> action = Execute;
+
+            var actionDescriptor = new ActionDescriptor
+            {
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = "Foo",
+                }
+            };
+
+            var parameter = new ApiParameterDescription
+            {
+                Name = "obj",
+                Source = BindingSource.Body,
+                IsRequired = isRequired,
+                Type = typeof(object),
+                ModelMetadata = ModelMetadataFactory.CreateForParameter(action.Method.GetParameters()[0])
+            };
+
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create(actionDescriptor, action.Method, groupName: "v1", httpMethod: "POST", relativePath: "resource", parameterDescriptions: new[]{ parameter }),
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal(isRequired, document.Paths["/resource"].Operations[OperationType.Post].RequestBody.Required);
         }
 
         [Fact]
