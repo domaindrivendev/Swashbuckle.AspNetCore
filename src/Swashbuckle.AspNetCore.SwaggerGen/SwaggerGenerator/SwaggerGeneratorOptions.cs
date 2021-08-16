@@ -71,7 +71,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 #if (!NETSTANDARD2_0)
             return
                 actionDescriptor.AttributeRouteInfo?.Name
-                ?? (actionDescriptor.EndpointMetadata.FirstOrDefault(m => m is IEndpointNameMetadata) as IEndpointNameMetadata)?.EndpointName;
+                ?? (actionDescriptor.EndpointMetadata?.FirstOrDefault(m => m is IEndpointNameMetadata) as IEndpointNameMetadata)?.EndpointName;
 #else
             return actionDescriptor.AttributeRouteInfo?.Name;
 #endif
