@@ -15,7 +15,7 @@ namespace Swashbuckle.AspNetCore.Cli
 {
     public class Program
     {
-        static int Main(string[] args)
+        public static int Main(string[] args)
         {
             // Helper to simplify command line parsing etc.
             var runner = new CommandRunner("dotnet swagger", "Swashbuckle (Swagger) Command Line Tools", Console.Out);
@@ -140,10 +140,24 @@ namespace Swashbuckle.AspNetCore.Cli
                 return webHost.Services;
             }
 
-            return WebHost.CreateDefaultBuilder()
-               .UseStartup(startupAssembly.GetName().Name)
-               .Build()
-               .Services;
+            try
+            {
+                return WebHost.CreateDefaultBuilder()
+                   .UseStartup(startupAssembly.GetName().Name)
+                   .Build()
+                   .Services;
+            }
+            catch
+            {
+                var serviceProvider = HostingApplication.GetServiceProvider(startupAssembly);
+
+                if (serviceProvider != null)
+                {
+                    return serviceProvider;
+                }
+
+                throw;
+            }
         }
 
         private static bool TryGetCustomHost<THost>(
