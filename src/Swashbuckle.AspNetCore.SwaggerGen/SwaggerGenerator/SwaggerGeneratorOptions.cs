@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+#if (NET6_0)
+using Microsoft.AspNetCore.Http.Metadata;
+#endif
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Routing;
@@ -79,7 +82,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private IList<string> DefaultTagsSelector(ApiDescription apiDescription)
         {
+#if (!NET6_0)
             return new[] { apiDescription.ActionDescriptor.RouteValues["controller"] };
+#else
+            var actionDescriptor = apiDescription.ActionDescriptor;
+            var tagsMetadata = actionDescriptor.EndpointMetadata?.LastOrDefault(m => m is ITagsMetadata) as ITagsMetadata;
+            if (tagsMetadata != null)
+            {
+                return new List<string>(tagsMetadata.Tags);
+            }
+            return new[] { apiDescription.ActionDescriptor.RouteValues["controller"] };        
+#endif
         }
 
         private string DefaultSortKeySelector(ApiDescription apiDescription)

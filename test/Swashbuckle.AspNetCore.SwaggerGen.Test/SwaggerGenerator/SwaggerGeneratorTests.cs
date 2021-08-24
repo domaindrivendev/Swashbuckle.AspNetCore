@@ -5,6 +5,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
@@ -727,6 +728,30 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var document = subject.GetSwagger("v1");
 
             Assert.Equal(new[] { "resource" }, document.Paths["/resource"].Operations[OperationType.Post].Tags.Select(t => t.Name));
+        }
+
+        [Fact]
+        public void GetSwagger_CanReadTagsFromMetadata()
+        {
+            var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
+            var actionDescriptor = new ActionDescriptor
+            {
+                EndpointMetadata = new List<object>() { new TagsAttribute("Some", "Tags", "Here") },
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+                }
+            };
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create(actionDescriptor, methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource"),
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal(new[] { "Some", "Tags", "Here" }, document.Paths["/resource"].Operations[OperationType.Post].Tags.Select(t => t.Name)); 
         }
 
         [Fact]
