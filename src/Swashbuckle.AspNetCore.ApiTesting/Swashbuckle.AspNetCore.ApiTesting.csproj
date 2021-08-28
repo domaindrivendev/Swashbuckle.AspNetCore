@@ -2,15 +2,10 @@
 
   <PropertyGroup>
     <Description>Core components for Swagger/OpenAPI-driven integration testing APIs built on ASP.NET Core</Description>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.0;net5.0</TargetFrameworks>
-    <NoWarn>$(NoWarn);1591</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <AssemblyName>Swashbuckle.AspNetCore.ApiTesting</AssemblyName>
-    <PackageId>Swashbuckle.AspNetCore.ApiTesting</PackageId>
+    <NoWarn>$(NoWarn);1591</NoWarn>
     <PackageTags>swagger;openapi;test-first;spec-first;testing;aspnetcore</PackageTags>
-    <PackageProjectUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</PackageProjectUrl>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore.git</RepositoryUrl>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.0;net5.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">

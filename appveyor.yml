@@ -11,10 +11,10 @@ install:
 - ps: Update-NodeJsInstallation $env:NODEJS_VERSION
 
 build_script:
-- ps: ci\build.ps1 
+- ps: dotnet pack -c Release -o artifacts
 
 test_script:
-- ps: ci\test.ps1
+- ps: dotnet test
 
 artifacts:
 - path: artifacts\*.nupkg

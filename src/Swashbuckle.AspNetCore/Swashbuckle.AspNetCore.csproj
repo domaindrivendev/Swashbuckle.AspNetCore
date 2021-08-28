@@ -2,40 +2,35 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
-    <Description>Swagger tools for documenting APIs built on ASP.NET Core</Description>
+    <description>swagger tools for documenting apis built on asp.net core</description>
+    <generatenuspecdependson>$(generatenuspecdependson);populatenuspec</generatenuspecdependson>
+    <includebuildoutput>false</includebuildoutput>
+    <includecontentinpack>false</includecontentinpack>
+    <includesource>false</includesource>
+    <includesymbols>false</includesymbols>
+    <microsoftextensionsapidescriptionserverpackageversion>3.0.0</microsoftextensionsapidescriptionserverpackageversion>
+    <nuspecfile>$(msbuildprojectname).nuspec</nuspecfile>
+    <packageid>swashbuckle.aspnetcore</packageid>
+    <packagetags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</packagetags>
     <TargetFrameworks>netstandard2.0;netcoreapp3.0;net5.0</TargetFrameworks>
-    <PackageId>Swashbuckle.AspNetCore</PackageId>
-    <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>
-    <PackageProjectUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</PackageProjectUrl>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore.git</RepositoryUrl>
-
-    <!-- Package contains only the final .nuspec file with a few listed dependencies. -->
-    <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);PopulateNuspec</GenerateNuspecDependsOn>
-    <IncludeBuildOutput>false</IncludeBuildOutput>
-    <IncludeContentInPack>false</IncludeContentInPack>
-    <IncludeSource>false</IncludeSource>
-    <IncludeSymbols>false</IncludeSymbols>
-    <NuspecFile>$(MSBuildProjectName).nuspec</NuspecFile>
-    <MicrosoftExtensionsApiDescriptionServerPackageVersion>3.0.0</MicrosoftExtensionsApiDescriptionServerPackageVersion>
   </PropertyGroup>
 
   <Target Name="PopulateNuspec">
     <PropertyGroup>
       <NuspecProperties>
-        id=$(PackageId);
         authors=$(Authors);
         configuration=$(Configuration);
         description=$(PackageDescription);
+        id=$(PackageId);
         licenseExpression=$(PackageLicenseExpression);
         licenseUrl=$(LicenseUrl);
+        microsoftExtensionsApiDescriptionServerPackageVersion=$(MicrosoftExtensionsApiDescriptionServerPackageVersion);
         projectUrl=$(PackageProjectUrl);
         repositoryType=$(RepositoryType);
         repositoryUrl=$(RepositoryUrl);
         tags=$(PackageTags.Replace(';', ' '));
         targetPath=$(TargetPath);
         version=$(PackageVersion);
-        microsoftExtensionsApiDescriptionServerPackageVersion=$(MicrosoftExtensionsApiDescriptionServerPackageVersion);
       </NuspecProperties>
     </PropertyGroup>
   </Target>
