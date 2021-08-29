@@ -1,10 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
     <DocumentationFile>Swashbuckle.AspNetCore.SwaggerGen.Test.xml</DocumentationFile>
     <NoWarn>1701;1702;1591</NoWarn>
-    <IsPackable>false</IsPackable>
+    <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
