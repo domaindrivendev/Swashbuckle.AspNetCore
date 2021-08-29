@@ -2,16 +2,11 @@
 
   <PropertyGroup>
     <Description>Xunit add-on for Swagger/OpenAPI-driven integration testing APIs built on ASP.NET Core</Description>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.0;net5.0</TargetFrameworks>
-    <NoWarn>$(NoWarn);1591</NoWarn>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <AssemblyName>Swashbuckle.AspNetCore.ApiTesting.Xunit</AssemblyName>
-    <PackageId>Swashbuckle.AspNetCore.ApiTesting.Xunit</PackageId>
+    <IsTestProject>false</IsTestProject>
+    <NoWarn>$(NoWarn);1591</NoWarn>
     <PackageTags>swagger;openapi;test-first;spec-first;testing;aspnetcore;xunit</PackageTags>
-    <PackageProjectUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</PackageProjectUrl>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore.git</RepositoryUrl>
-    <IsPackable>true</IsPackable>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.0;net5.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.IntegrationTests.snk</AssemblyOriginatorKeyFile>
     <NoWarn>$(NoWarn);8002</NoWarn>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.IntegrationTests.snk</AssemblyOriginatorKeyFile>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
