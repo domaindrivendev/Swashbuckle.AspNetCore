@@ -474,7 +474,7 @@ To enhance the generated docs with human-friendly descriptions, you can annotate
 
 1. Open the Properties dialog for your project, click the "Build" tab and ensure that "XML documentation file" is checked, or add `<GenerateDocumentationFile>true</GenerateDocumentationFile>` element to the `<PropertyGroup>` section of your .csproj project file. This will produce a file containing all XML comments at build-time.
 
-    _At this point, any classes or methods that are NOT annotated with XML comments will trigger a build warning. To suppress this, enter the warning code "1591" into the "Suppress warnings" field in the properties dialog._
+    _At this point, any classes or methods that are NOT annotated with XML comments will trigger a build warning. To suppress this, enter the warning code "1591" into the "Suppress warnings" field in the properties dialog or add `<NoWarn>1591</NoWarn>` to the `<PropertyGroup>` section of your .csproj project file._
 
 2. Configure Swashbuckle to incorporate the XML comments on file into the generated Swagger JSON:
 
