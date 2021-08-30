@@ -72,7 +72,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
                 .GetMethod(nameof(FakeControllerWithSwaggerAnnotations.ActionWithSwaggerResponseContentTypesAttributes));
             var filterContext = new OperationFilterContext(
                 apiDescription: null,
-                schemaRegistry: new SchemaGenerator(new SchemaGeneratorOptions(), new SystemTextJsonBehavior(new JsonSerializerOptions())),
+                schemaRegistry: new SchemaGenerator(new SchemaGeneratorOptions(), new JsonSerializerDataContractResolver(new JsonSerializerOptions())),
                 schemaRepository: new SchemaRepository(),
                 methodInfo: methodInfo);
 
