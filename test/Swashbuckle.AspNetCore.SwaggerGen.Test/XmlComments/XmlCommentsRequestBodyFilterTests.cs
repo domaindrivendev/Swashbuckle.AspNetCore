@@ -86,6 +86,29 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("\"Example for StringProperty\"", requestBody.Content["application/json"].Example.ToJson());
         }
 
+
+        [Fact]
+        public void Apply_SetsDescriptionAndExample_FromUriTypePropertySummaryAndExampleTags()
+        {
+            var requestBody = new OpenApiRequestBody
+            {
+                Content = new Dictionary<string, OpenApiMediaType>
+                {
+                    ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = "string" } }
+                }
+            };
+            var bodyParameterDescription = new ApiParameterDescription
+            {
+                ModelMetadata = ModelMetadataFactory.CreateForProperty(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringPropertyWithUri))
+            };
+            var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
+
+            Subject().Apply(requestBody, filterContext);
+
+            Assert.Equal("Summary for StringPropertyWithUri", requestBody.Description);
+            Assert.NotNull(requestBody.Content["application/json"].Example);
+            Assert.Equal("\"https://test.com/a?b=1&c=2\"", requestBody.Content["application/json"].Example.ToJson());
+        }
         private XmlCommentsRequestBodyFilter Subject()
         {
             using (var xmlComments = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml"))
