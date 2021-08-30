@@ -21,7 +21,7 @@ namespace Swashbuckle.AspNetCore.Annotations
 
             ApplySwaggerOperationAttribute(operation, actionAttributes);
             ApplySwaggerOperationFilterAttributes(operation, context, controllerAndActionAttributes);
-            ApplySwaggerResponseAttributes(operation, controllerAndActionAttributes);
+            ApplySwaggerResponseAttributes(operation, context, controllerAndActionAttributes);
         }
 
         private static void ApplySwaggerOperationAttribute(
@@ -68,10 +68,10 @@ namespace Swashbuckle.AspNetCore.Annotations
 
         private void ApplySwaggerResponseAttributes(
             OpenApiOperation operation,
+            OperationFilterContext context,
             IEnumerable<object> controllerAndActionAttributes)
         {
-            var swaggerResponseAttributes = controllerAndActionAttributes
-                .OfType<SwaggerResponseAttribute>();
+            var swaggerResponseAttributes = controllerAndActionAttributes.OfType<SwaggerResponseAttribute>();
 
             foreach (var swaggerResponseAttribute in swaggerResponseAttributes)
             {
@@ -88,9 +88,25 @@ namespace Swashbuckle.AspNetCore.Annotations
                 }
 
                 if (swaggerResponseAttribute.Description != null)
+                {
                     response.Description = swaggerResponseAttribute.Description;
+                }
 
                 operation.Responses[statusCode] = response;
+
+                if (swaggerResponseAttribute.ContentTypes != null)
+                {
+                    response.Content.Clear();
+
+                    foreach (var contentType in swaggerResponseAttribute.ContentTypes)
+                    {
+                        var schema = (swaggerResponseAttribute.Type != null && swaggerResponseAttribute.Type != typeof(void))
+                            ? context.SchemaGenerator.GenerateSchema(swaggerResponseAttribute.Type, context.SchemaRepository)
+                            : null;
+
+                        response.Content.Add(contentType, new OpenApiMediaType { Schema = schema });
+                    }
+                }
             }
         }
     }
