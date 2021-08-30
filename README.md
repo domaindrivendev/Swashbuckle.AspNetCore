@@ -193,6 +193,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [List Operations Responses](#list-operation-responses)
     * [Flag Required Parameters and Schema Properties](#flag-required-parameters-and-schema-properties)
     * [Handle Forms and File Uploads](#handle-forms-and-file-uploads)
+    * [Handle File Downloads](#handle-file-downloads)
     * [Include Descriptions from XML Comments](#include-descriptions-from-xml-comments)
     * [Provide Global API Metadata](#provide-global-api-metadata)
     * [Generate Multiple Swagger Documents](#generate-multiple-swagger-documents)
@@ -463,10 +464,19 @@ This controller will accept two form field values and one named file upload from
 
 ```csharp
 [HttpPost]
-public void UploadFile([FromForm]string description, [FromForm]DateTime clientDate, [IFormFile] file)
+public void UploadFile([FromForm]string description, [FromForm]DateTime clientDate, IFormFile file)
 ```
 
 > Important note: As per the [ASP.NET Core docs](https://docs.microsoft.com/en-us/aspnet/core/mvc/models/file-uploads?view=aspnetcore-3.1), you're not supposed to decorate `IFormFile` parameters with the `[FromForm]` attribute as the binding source is automatically inferred from the type. In fact, the inferred value is `BindingSource.FormFile` and if you apply the attribute it will be set to `BindingSource.Form` instead, which screws up `ApiExplorer`, the metadata component that ships with ASP.NET Core and is heavily relied on by Swashbuckle. One particular issue here is that SwaggerUI will not treat the parameter as a file and so will not display a file upload button, if you do mistakenly include this attribute.
+
+### Handle File Downloads ###
+`ApiExplorer` (the ASP.NET Core metadata component that Swashbuckle is built on) *DOES NOT* surface the `FileResult` type by default and so you need to explicitly tell it to with the `Produces` attribute:
+```csharp
+[HttpGet("{fileName}")]
+[Produces("application/octet-stream", Type = typeof(FileResult))]
+public FileResult GetFile(string fileName)
+```
+If you want the swagger-ui to display a "Download file" link, you're operation will need to return a **Content-Type of "application/octet-stream"** or a **Content-Disposition of "attachement"**.
 
 ### Include Descriptions from XML Comments ###
 
