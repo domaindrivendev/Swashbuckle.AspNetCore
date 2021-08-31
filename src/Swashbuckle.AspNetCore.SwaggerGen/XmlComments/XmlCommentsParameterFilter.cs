@@ -43,8 +43,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (exampleNode == null) return;
 
             var exampleAsJson = (parameter.Schema?.ResolveType(context.SchemaRepository) == "string")
-                ? $"\"{exampleNode.InnerXml}\""
-                : exampleNode.InnerXml;
+                ? $"\"{exampleNode.ToString()}\""
+                : exampleNode.ToString();
 
             parameter.Example = OpenApiAnyFactory.CreateFromJson(exampleAsJson);
         }

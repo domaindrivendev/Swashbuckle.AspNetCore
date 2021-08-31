@@ -2,16 +2,16 @@
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
 
   <PropertyGroup>
-    <description>swagger tools for documenting apis built on asp.net core</description>
-    <generatenuspecdependson>$(generatenuspecdependson);populatenuspec</generatenuspecdependson>
-    <includebuildoutput>false</includebuildoutput>
-    <includecontentinpack>false</includecontentinpack>
-    <includesource>false</includesource>
-    <includesymbols>false</includesymbols>
-    <microsoftextensionsapidescriptionserverpackageversion>3.0.0</microsoftextensionsapidescriptionserverpackageversion>
-    <nuspecfile>$(msbuildprojectname).nuspec</nuspecfile>
-    <packageid>swashbuckle.aspnetcore</packageid>
-    <packagetags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</packagetags>
+    <Description>Swagger tools for documenting APIs built on ASP.NET Core</Description>
+    <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);PopulateNuspec</GenerateNuspecDependsOn>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <IncludeContentInPack>false</IncludeContentInPack>
+    <IncludeSource>false</IncludeSource>
+    <IncludeSymbols>false</IncludeSymbols>
+    <MicrosoftExtensionsApiDescriptionServerPackageVersion>3.0.0</MicrosoftExtensionsApiDescriptionServerPackageVersion>
+    <NuspecFile>$(MSBuildProjectName).nuspec</NuspecFile>
+    <PackageId>Swashbuckle.AspNetCore</PackageId>
+    <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>
     <TargetFrameworks>netstandard2.0;netcoreapp3.0;net5.0</TargetFrameworks>
   </PropertyGroup>
 

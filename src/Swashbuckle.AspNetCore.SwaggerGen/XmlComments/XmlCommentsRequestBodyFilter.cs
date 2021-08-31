@@ -51,8 +51,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             foreach (var mediaType in requestBody.Content.Values)
             {
                 var exampleAsJson = (mediaType.Schema?.ResolveType(context.SchemaRepository) == "string")
-                    ? $"\"{exampleNode.InnerXml}\""
-                    : exampleNode.InnerXml;
+                    ? $"\"{exampleNode.ToString()}\""
+                    : exampleNode.ToString();
 
                 mediaType.Example = OpenApiAnyFactory.CreateFromJson(exampleAsJson);
             }
