@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using System.Text.RegularExpressions;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -50,7 +51,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         internal static string RelativePathSansQueryString(this ApiDescription apiDescription)
         {
-            return apiDescription.RelativePath?.Split('?').First();
+            return Regex.Split(apiDescription.RelativePath, @"\?(?!\})").First();
         }
     }
 }
