@@ -55,6 +55,14 @@ namespace Microsoft.AspNetCore.Builder
         {
             options.ConfigObject.DeepLinking = true;
         }
+        /// <summary>
+        /// Enables persist authorization data
+        /// </summary>
+        /// <param name="options"></param>
+        public static void EnablePersistAuthorization(this SwaggerUIOptions options)
+        {
+            options.ConfigObject.PersistAuthorization = true;
+        }
 
         /// <summary>
         /// Controls the display of operationId in operations list
