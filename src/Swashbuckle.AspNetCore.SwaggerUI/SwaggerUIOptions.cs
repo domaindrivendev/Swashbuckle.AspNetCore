@@ -57,6 +57,10 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// If set to true, enables deep linking for tags and operations
         /// </summary>
         public bool DeepLinking { get; set; } = false;
+        /// <summary>
+        /// If set to true, it persists authorization data and it would not be lost on browser close/refresh
+        /// </summary>
+        public bool PersistAuthorization { get; set; } = false;
 
         /// <summary>
         /// Controls the display of operationId in operations list
