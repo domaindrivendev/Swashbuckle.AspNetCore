@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Text;
@@ -52,7 +53,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             var path = httpContext.Request.Path.Value;
 
             // If the RoutePrefix is requested (with or without trailing slash), redirect to index URL
-            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$",  RegexOptions.IgnoreCase))
+            if (httpMethod == "GET" && _options.RoutePrefix.Equals(path.Trim('/'), StringComparison.OrdinalIgnoreCase))
             {
                 // Use relative redirect to support proxy environments
                 var relativeIndexUrl = string.IsNullOrEmpty(path) || path.EndsWith("/")
@@ -63,7 +64,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
                 return;
             }
 
-            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/{Regex.Escape(_options.RoutePrefix)}/?index.html$",  RegexOptions.IgnoreCase))
+            if (httpMethod == "GET" && $"/{_options.RoutePrefix}/index.html".Equals(path, StringComparison.OrdinalIgnoreCase))
             {
                 await RespondWithIndexHtml(httpContext.Response);
                 return;
@@ -100,8 +101,10 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
 
             using (var stream = _options.IndexStream())
             {
+                using var reader = new StreamReader(stream);
+
                 // Inject arguments before writing to response
-                var htmlBuilder = new StringBuilder(new StreamReader(stream).ReadToEnd());
+                var htmlBuilder = new StringBuilder(await reader.ReadToEndAsync());
                 foreach (var entry in GetIndexArguments())
                 {
                     htmlBuilder.Replace(entry.Key, entry.Value);
