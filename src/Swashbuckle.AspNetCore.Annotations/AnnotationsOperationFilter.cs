@@ -10,18 +10,38 @@ namespace Swashbuckle.AspNetCore.Annotations
     {
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
-            if (context.MethodInfo == null) return;
+            IEnumerable<object> controllerAttributes = Array.Empty<object>();
+            IEnumerable<object> actionAttributes = Array.Empty<object>();
+            IEnumerable<object> metadataAttributes = Array.Empty<object>();
 
-            var controllerAttributes = context.MethodInfo.DeclaringType.GetCustomAttributes(true);
-            var actionAttributes = context.MethodInfo.GetCustomAttributes(true);
+            if (context.MethodInfo != null)
+            {
+                controllerAttributes = context.MethodInfo.DeclaringType.GetCustomAttributes(true);
+                actionAttributes = context.MethodInfo.GetCustomAttributes(true);
+            }
+
+#if NET5_0_OR_GREATER
+            if (context.ApiDescription.ActionDescriptor.EndpointMetadata != null)
+            {
+                metadataAttributes = context.ApiDescription.ActionDescriptor.EndpointMetadata;
+            }
+#endif
 
             // NOTE: When controller and action attributes are applicable, action attributes should take precendence.
-            // Hence why they're at the end of the list (i.e. last one wins)
-            var controllerAndActionAttributes = controllerAttributes.Union(actionAttributes);
+            // Hence why they're at the end of the list (i.e. last one wins).
+            // Distinct() is applied due to an ASP.NET Core issue: https://github.com/dotnet/aspnetcore/issues/34199.
+            var allAttributes = controllerAttributes
+                .Union(actionAttributes)
+                .Union(metadataAttributes)
+                .Distinct();
 
-            ApplySwaggerOperationAttribute(operation, actionAttributes);
-            ApplySwaggerOperationFilterAttributes(operation, context, controllerAndActionAttributes);
-            ApplySwaggerResponseAttributes(operation, context, controllerAndActionAttributes);
+            var actionAndEndpointAttribtues = actionAttributes
+                .Union(metadataAttributes)
+                .Distinct();
+
+            ApplySwaggerOperationAttribute(operation, actionAndEndpointAttribtues);
+            ApplySwaggerOperationFilterAttributes(operation, context, allAttributes);
+            ApplySwaggerResponseAttributes(operation, context, allAttributes);
         }
 
         private static void ApplySwaggerOperationAttribute(
