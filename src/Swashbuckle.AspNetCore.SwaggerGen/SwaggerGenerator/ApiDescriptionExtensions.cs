@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
-using System.Text.RegularExpressions;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -47,11 +46,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
 
             customAttributes = Enumerable.Empty<object>();
-        }
-
-        internal static string RelativePathSansQueryString(this ApiDescription apiDescription)
-        {
-            return Regex.Split(apiDescription.RelativePath, @"\?(?!\})").First();
         }
     }
 }

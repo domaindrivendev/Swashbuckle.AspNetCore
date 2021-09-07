@@ -59,9 +59,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
                     ApiDescriptionFactory.Create<FakeController>(
                         c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "GET", relativePath: "resource/{id?}"),
-
-                    ApiDescriptionFactory.Create<FakeController>(
-                        c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "POST", relativePath: "resource/?param1"),
                     
                     ApiDescriptionFactory.Create<FakeController>(
                         c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "POST", relativePath: "resource/foo"),
@@ -79,7 +76,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.Equal("V1", document.Info.Version);
             Assert.Equal("Test API", document.Info.Title);
-            Assert.Equal(new[] { "/resource/{id}", "/resource/{id?}", "/resource/", "/resource/foo" }, document.Paths.Keys.ToArray());
+            Assert.Equal(new[] { "/resource/{id}", "/resource/{id?}", "/resource/foo" }, document.Paths.Keys.ToArray());
         }
 
         [Fact]
