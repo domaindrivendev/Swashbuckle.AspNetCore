@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
-namespace Swashbuckle.AspNetCore.Newtonsoft.Test
+namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     public class TypeWithPropertiesSetViaConstructor
     {
@@ -12,7 +12,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 
         public int Id { get; }
 
-        [JsonProperty("Desc")]
+        [JsonPropertyName("Desc")]
         public string Description { get; }
     }
 }
