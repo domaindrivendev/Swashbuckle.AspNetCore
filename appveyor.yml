@@ -4,11 +4,7 @@ init:
 - git config --global core.autocrlf true
 
 environment:
-  NODEJS_VERSION: 16.3.0
   DOTNET_VERSION: 5.0.100
-
-install:
-- ps: Update-NodeJsInstallation $env:NODEJS_VERSION
 
 build_script:
 - ps: dotnet pack -c Release -o artifacts
