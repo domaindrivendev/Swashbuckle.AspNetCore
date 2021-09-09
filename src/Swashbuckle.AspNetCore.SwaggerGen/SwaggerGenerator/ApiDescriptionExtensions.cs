@@ -47,10 +47,5 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             customAttributes = Enumerable.Empty<object>();
         }
-
-        internal static string RelativePathSansQueryString(this ApiDescription apiDescription)
-        {
-            return apiDescription.RelativePath?.Split('?').First();
-        }
     }
 }

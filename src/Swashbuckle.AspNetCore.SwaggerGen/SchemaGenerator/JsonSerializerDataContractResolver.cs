@@ -184,12 +184,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var name = propertyInfo.GetCustomAttribute<JsonPropertyNameAttribute>()?.Name
                     ?? _serializerOptions.PropertyNamingPolicy?.ConvertName(propertyInfo.Name) ?? propertyInfo.Name;
 
+                var isSetViaConstructor = propertyInfo.DeclaringType != null && propertyInfo.DeclaringType.GetConstructors()
+                    .SelectMany(c => c.GetParameters())
+                    .Any(p =>
+                    {
+                        // STJ supports setting via constructor if either underlying OR JSON names match
+                        return
+                            string.Equals(p.Name, propertyInfo.Name, StringComparison.OrdinalIgnoreCase) ||
+                            string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase);
+                    });
+
                 dataProperties.Add(
                     new DataProperty(
                         name: name,
                         isRequired: false,
                         isNullable: propertyInfo.PropertyType.IsReferenceOrNullableType(),
-                        isReadOnly: propertyInfo.IsPubliclyReadable() && !propertyInfo.IsPubliclyWritable(),
+                        isReadOnly: propertyInfo.IsPubliclyReadable() && !propertyInfo.IsPubliclyWritable() && !isSetViaConstructor,
                         isWriteOnly: propertyInfo.IsPubliclyWritable() && !propertyInfo.IsPubliclyReadable(),
                         memberType: propertyInfo.PropertyType,
                         memberInfo: propertyInfo));
