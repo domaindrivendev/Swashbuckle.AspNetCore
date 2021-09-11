@@ -512,16 +512,16 @@ To enhance the generated docs with human-friendly descriptions, you can annotate
     /// </summary>
     /// <remarks>Awesomeness!</remarks>
     /// <param name="id" example="123">The product id</param>
-    /// <response code="200">Product created</response>
-    /// <response code="400">Product has missing/invalid values</response>
-    /// <response code="500">Oops! Can't create your product right now</response>
+    /// <response code="200">Product retrieved</response>
+    /// <response code="404">Product not found</response>
+    /// <response code="500">Oops! Can't lookup your product right now</response>
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(Product), 200)]
-    [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
+    [ProducesResponseType(404)]
     [ProducesResponseType(500)]
     public Product GetById(int id)
     ```
-
+    
 4. You can also annotate types with summary and example tags:
 
     ```csharp
@@ -538,6 +538,12 @@ To enhance the generated docs with human-friendly descriptions, you can annotate
         /// </summary>
         /// <example>10</example>
         public int AvailableStock { get; set; }
+	
+	/// <summary>
+        /// The sizes the product is available in
+        /// </summary>
+        /// <example>["Small", "Medium", "Large"]</example>
+	public List<string> Sizes { get; set; }
     }
     ```
 
