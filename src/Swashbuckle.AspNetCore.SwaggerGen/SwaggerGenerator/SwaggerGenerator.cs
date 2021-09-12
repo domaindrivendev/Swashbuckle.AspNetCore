@@ -492,31 +492,31 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             typeof(RequiredAttribute)
         };
 
-        private static readonly IReadOnlyCollection<KeyValuePair<string, string>> ResponseDescriptionMap = new[]
+        private static readonly Dictionary<string, string> ResponseDescriptionMap = new Dictionary<string, string>
         {
-           new KeyValuePair<string, string>("1\\d{2}", "Information"),
+            { "1\\d{2}", "Information" },
 
-            new KeyValuePair<string, string>("201", "Created"),
-            new KeyValuePair<string, string>("202", "Accepted"),
-            new KeyValuePair<string, string>("204", "No Content"),
-            new KeyValuePair<string, string>("2\\d{2}", "Success"),
+            { "201", "Created" },
+            { "202", "Accepted"  },
+            { "204", "No Content" },
+            { "2\\d{2}", "Success" },
 
-            new KeyValuePair<string, string>("304", "Not Modified"),
-            new KeyValuePair<string, string>("3\\d{2}", "Redirect"),
+            { "304", "Not Modified" },
+            { "3\\d{2}", "Redirect" },
 
-            new KeyValuePair<string, string>("400", "Bad Request"),
-            new KeyValuePair<string, string>("401", "Unauthorized"),
-            new KeyValuePair<string, string>("403", "Forbidden"),
-            new KeyValuePair<string, string>("404", "Not Found"),
-            new KeyValuePair<string, string>("405", "Method Not Allowed"),
-            new KeyValuePair<string, string>("406", "Not Acceptable"),
-            new KeyValuePair<string, string>("408", "Request Timeout"),
-            new KeyValuePair<string, string>("409", "Conflict"),
-            new KeyValuePair<string, string>("429", "Too Many Requests"),
-            new KeyValuePair<string, string>("4\\d{2}", "Client Error"),
+            { "400", "Bad Request" },
+            { "401", "Unauthorized" },
+            { "403", "Forbidden" },
+            { "404", "Not Found" },
+            { "405", "Method Not Allowed" },
+            { "406", "Not Acceptable" },
+            { "408", "Request Timeout" },
+            { "409", "Conflict" },
+            { "429", "Too Many Requests" },
+            { "4\\d{2}", "Client Error" },
 
-            new KeyValuePair<string, string>("5\\d{2}", "Server Error"),
-            new KeyValuePair<string, string>("default", "Error")
+            { "5\\d{2}", "Server Error" },
+            { "default", "Error" }
         };
     }
 }
