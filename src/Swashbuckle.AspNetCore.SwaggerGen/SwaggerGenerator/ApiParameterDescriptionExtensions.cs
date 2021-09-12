@@ -47,8 +47,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public static ParameterInfo ParameterInfo(this ApiParameterDescription apiParameter)
         {
-            var controllerParameterDescriptor = apiParameter.ParameterDescriptor as ControllerParameterDescriptor;
-            return controllerParameterDescriptor?.ParameterInfo;
+            var parameterDescriptor = apiParameter.ParameterDescriptor as
+#if NETCOREAPP2_2_OR_GREATER
+                Microsoft.AspNetCore.Mvc.Infrastructure.IParameterInfoParameterDescriptor;
+#else
+                ControllerParameterDescriptor;
+#endif
+
+            return parameterDescriptor?.ParameterInfo;
         }
 
         public static PropertyInfo PropertyInfo(this ApiParameterDescription apiParameter)

@@ -1,16 +1,19 @@
-﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.OpenApi.Models;
+﻿using System.Reflection;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
-using Xunit;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.TestSupport;
+using Xunit;
 
 namespace Swashbuckle.AspNetCore.Annotations.Test
 {
     public class AnnotationsRequestBodyFilterTests
     {
         [Fact]
-        public void Apply_EnrichesRequestBodyMetadata_IfParameterDecoratedWithSwaggerRequestBodyAttribute()
+        public void Apply_EnrichesRequestBodyMetadata_IfControllerParameterDecoratedWithSwaggerRequestBodyAttribute()
         {
             var requestBody = new OpenApiRequestBody();
             var parameterInfo = typeof(FakeControllerWithSwaggerAnnotations)
@@ -19,6 +22,25 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             var bodyParameterDescription = new ApiParameterDescription
             {
                 ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = parameterInfo }
+            };
+            var context = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
+
+            Subject().Apply(requestBody, context);
+
+            Assert.Equal("Description for param", requestBody.Description);
+            Assert.True(requestBody.Required);
+        }
+
+        [Fact]
+        public void Apply_EnrichesRequestBodyMetadata_IfEndpointParameterDecoratedWithSwaggerRequestBodyAttribute()
+        {
+            var requestBody = new OpenApiRequestBody();
+            var parameterInfo = typeof(FakeControllerWithSwaggerAnnotations)
+                .GetMethod(nameof(FakeControllerWithSwaggerAnnotations.ActionWithSwaggerRequestBodyAttribute))
+                .GetParameters()[0];
+            var bodyParameterDescription = new ApiParameterDescription
+            {
+                ParameterDescriptor = new CustomParameterDescriptor { ParameterInfo = parameterInfo }
             };
             var context = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
 
@@ -66,6 +88,11 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
         private AnnotationsRequestBodyFilter Subject()
         {
             return new AnnotationsRequestBodyFilter();
+        }
+
+        private sealed class CustomParameterDescriptor : ParameterDescriptor, IParameterInfoParameterDescriptor
+        {
+            public ParameterInfo ParameterInfo { get; set; }
         }
     }
 }
