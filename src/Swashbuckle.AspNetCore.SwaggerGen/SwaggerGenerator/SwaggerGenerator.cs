@@ -79,7 +79,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var apiDescriptionsByPath = apiDescriptions
                 .OrderBy(_options.SortKeySelector)
-                .GroupBy(apiDesc => apiDesc.RelativePath);
+                .GroupBy(apiDesc => apiDesc.RelativePathSansParameterConstraints());
 
             var paths = new OpenApiPaths();
             foreach (var group in apiDescriptionsByPath)
