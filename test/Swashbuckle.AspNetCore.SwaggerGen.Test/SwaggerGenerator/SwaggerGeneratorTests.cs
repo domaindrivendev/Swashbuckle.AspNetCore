@@ -56,13 +56,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData("{category:int}/product/{group:range(10, 20)?}", "/{category}/product/{group}")]
         [InlineData("{person:int}/{ssn:regex(^\\d{{3}}-\\d{{2}}-\\d{{4}}$)}", "/{person}/{ssn}")]
         [InlineData("{person:int}/{ssn:regex(^(?=.*kind)(?=.*good).*$)}", "/{person}/{ssn}")]
-        public void GetSwagger_GeneratesSwaggerDocument_ForApiDescriptionsWithConstrainedRelativePaths(string routeTemplate, string processedRouteTemplate)
+        public void GetSwagger_GeneratesSwaggerDocument_ForApiDescriptionsWithConstrainedRelativePaths(string path, string expectedPath)
         {
             var subject = Subject(
                 apiDescriptions: new[]
                 {
                     ApiDescriptionFactory.Create<FakeController>(
-                        c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "POST", relativePath: routeTemplate),
+                        c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "POST", relativePath: path),
 
                 },
                 options: new SwaggerGeneratorOptions
@@ -78,7 +78,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.Equal("V1", document.Info.Version);
             Assert.Equal("Test API", document.Info.Title);
-            Assert.Equal(new[] { processedRouteTemplate }, document.Paths.Keys.ToArray());
+            Assert.Equal(new[] { expectedPath }, document.Paths.Keys.ToArray());
         }
 
         [Fact]
