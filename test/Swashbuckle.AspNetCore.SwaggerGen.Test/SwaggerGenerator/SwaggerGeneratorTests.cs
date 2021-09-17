@@ -48,20 +48,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(new[] { OperationType.Post, OperationType.Get }, document.Paths["/resource"].Operations.Keys);
         }
 
-        [Fact]
-        public void GetSwagger_GeneratesSwaggerDocument_ForApiDescriptionsWithVariousRelativePaths()
+        [Theory]
+        [InlineData("resources/{id}", "/resources/{id}")]
+        [InlineData("{category}/{product?}/{sku}", "/{category}/{product}/{sku}")]
+        [InlineData("{area=Home}/{controller:required}/{id=0:int}", "/{area}/{controller}/{id}")]
+        [InlineData("{category}/product/{group?}", "/{category}/product/{group}")]
+        [InlineData("{category:int}/product/{group:range(10, 20)?}", "/{category}/product/{group}")]
+        [InlineData("{person:int}/{ssn:regex(^\\d{{3}}-\\d{{2}}-\\d{{4}}$)}", "/{person}/{ssn}")]
+        [InlineData("{person:int}/{ssn:regex(^(?=.*kind)(?=.*good).*$)}", "/{person}/{ssn}")]
+        public void GetSwagger_GeneratesSwaggerDocument_ForApiDescriptionsWithConstrainedRelativePaths(string path, string expectedPath)
         {
             var subject = Subject(
                 apiDescriptions: new[]
                 {
                     ApiDescriptionFactory.Create<FakeController>(
-                        c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "POST", relativePath: "resource/{id}"),
+                        c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "POST", relativePath: path),
 
-                    ApiDescriptionFactory.Create<FakeController>(
-                        c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "GET", relativePath: "resource/{id?}"),
-                    
-                    ApiDescriptionFactory.Create<FakeController>(
-                        c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "POST", relativePath: "resource/foo"),
                 },
                 options: new SwaggerGeneratorOptions
                 {
@@ -76,7 +78,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.Equal("V1", document.Info.Version);
             Assert.Equal("Test API", document.Info.Title);
-            Assert.Equal(new[] { "/resource/{id}", "/resource/{id?}", "/resource/foo" }, document.Paths.Keys.ToArray());
+            Assert.Equal(new[] { expectedPath }, document.Paths.Keys.ToArray());
         }
 
         [Fact]

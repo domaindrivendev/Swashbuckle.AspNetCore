@@ -47,5 +47,32 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             customAttributes = Enumerable.Empty<object>();
         }
+
+        internal static string RelativePathSansParameterConstraints(this ApiDescription apiDescription)
+        {
+            var routeTemplate = apiDescription.RelativePath;
+            
+            // We want to filter out qualifiers that indicate a constract (":")
+            // a default value ("=") or an optional parameter ("?")
+            while (routeTemplate.IndexOfAny(new[] { ':', '=', '?' }) != -1)
+            {
+                var startIndex = routeTemplate.IndexOfAny(new[] { ':', '=', '?' }) ;
+                var tokenStart = startIndex + 1;
+                // Only find a single instance of a '}' after our start
+                // character to avoid capturing escaped curly braces
+                // in a regular expression constraint
+                findEndBrace:
+                    var endIndex = routeTemplate.IndexOf('}', tokenStart);
+                    if (endIndex < routeTemplate.Length - 1 && routeTemplate[endIndex + 1] == '}')
+                    {
+                        tokenStart = endIndex + 2;
+                        goto findEndBrace;
+                    }
+
+                routeTemplate = routeTemplate.Remove(startIndex, endIndex - startIndex);
+            }
+            
+            return routeTemplate;
+        }
     }
 }
