@@ -24,6 +24,32 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
+        /// Add Bearer authentication.
+        /// </summary>
+        /// <param name="bearerFormat">The Bearer token format. Defaults to "JWT".</param>
+        /// <param name="swaggerGenOptions"></param>
+        public static void AddBearerAuthentication(this SwaggerGenOptions swaggerGenOptions, string bearerFormat = "JWT")
+        {
+            swaggerGenOptions.AddSecurityDefinition("bearerAuth", new OpenApiSecurityScheme
+            {
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                BearerFormat = bearerFormat,
+                Description = "Authorization header using the Bearer scheme."
+            });
+            swaggerGenOptions.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "bearerAuth" }
+                    },
+                    new string[] {}
+                }
+            });
+        }
+
+        /// <summary>
         /// Provide a custom strategy for selecting actions.
         /// </summary>
         /// <param name="swaggerGenOptions"></param>
