@@ -32,7 +32,9 @@ namespace Microsoft.AspNetCore.Builder
             // To simplify the common case, use a default that will work with the SwaggerMiddleware defaults
             if (options.ConfigObject.Urls == null)
             {
-                options.ConfigObject.Urls = new[] { new UrlDescriptor { Name = "V1 Docs", Url = "v1/swagger.json" } };
+                var hostingEnv = app.ApplicationServices.GetRequiredService<IWebHostEnvironment>();
+                
+                options.ConfigObject.Urls = new[] { new UrlDescriptor { Name = $"{hostingEnv.ApplicationName} v1", Url = "v1/swagger.json" } };
             }
 
             return app.UseSwaggerUI(options);
