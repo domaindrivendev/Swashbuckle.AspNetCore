@@ -1,7 +1,12 @@
 ﻿using System;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerUI;
+
+#if NETSTANDARD2_0
+using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+#endif
 
 namespace Microsoft.AspNetCore.Builder
 {
@@ -32,7 +37,8 @@ namespace Microsoft.AspNetCore.Builder
             // To simplify the common case, use a default that will work with the SwaggerMiddleware defaults
             if (options.ConfigObject.Urls == null)
             {
-                options.ConfigObject.Urls = new[] { new UrlDescriptor { Name = "V1 Docs", Url = "v1/swagger.json" } };
+                var hostingEnv = app.ApplicationServices.GetRequiredService<IWebHostEnvironment>();
+                options.ConfigObject.Urls = new[] { new UrlDescriptor { Name = $"{hostingEnv.ApplicationName} v1", Url = "v1/swagger.json" } };
             }
 
             return app.UseSwaggerUI(options);
