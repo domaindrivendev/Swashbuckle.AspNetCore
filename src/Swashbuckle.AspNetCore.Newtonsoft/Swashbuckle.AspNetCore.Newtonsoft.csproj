@@ -5,7 +5,7 @@
     <Description>Swagger Generator opt-in component to support Newtonsoft.Json serializer behaviors</Description>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore;newtonsoft</PackageTags>
     <SignAssembly Condition="'$(OS)'=='Windows_NT'">true</SignAssembly>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.0;net5.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.0;net5.0;net6.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,6 +22,10 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net5.0' ">
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.0-rc.1.21452.15" />
   </ItemGroup>
 
 </Project>
