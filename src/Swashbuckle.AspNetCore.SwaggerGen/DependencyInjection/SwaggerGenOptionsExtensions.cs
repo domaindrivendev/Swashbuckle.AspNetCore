@@ -33,7 +33,7 @@ namespace Microsoft.Extensions.DependencyInjection
             swaggerGenOptions.AddSecurityDefinition("bearerAuth", new OpenApiSecurityScheme
             {
                 Type = SecuritySchemeType.Http,
-                Scheme = "bearer",
+                Scheme = "Bearer",
                 BearerFormat = bearerFormat,
                 Description = "Authorization header using the Bearer scheme."
             });
