@@ -65,7 +65,7 @@ namespace Swashbuckle.AspNetCore.Cli
             try
             {
                 // Get the IServiceProvider from the host
-                var assemblyName = assembly.GetName()?.Name ?? string.Empty;
+                var assemblyName = assembly.GetName()?.FullName ?? string.Empty;
                 // We set the application name in the hosting environment to the startup assembly
                 // to avoid falling back to the entry assembly (dotnet-swagger) when configuring our
                 // application.
