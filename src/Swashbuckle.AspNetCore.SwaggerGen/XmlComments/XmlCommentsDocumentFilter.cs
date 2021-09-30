@@ -24,7 +24,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             // Collect (unique) controller names and types in a dictionary
             var controllerNamesAndTypes = context.ApiDescriptions
                 .Select(apiDesc => apiDesc.ActionDescriptor as ControllerActionDescriptor)
-                .SkipWhile(actionDesc => actionDesc == null)
+                .Where(actionDesc => actionDesc != null)
                 .GroupBy(actionDesc => actionDesc.ControllerName)
                 .Select(group => new KeyValuePair<string, Type>(group.Key, group.First().ControllerTypeInfo.AsType()));
 
