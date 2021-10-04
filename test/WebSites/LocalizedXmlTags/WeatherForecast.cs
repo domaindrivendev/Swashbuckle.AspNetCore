@@ -47,7 +47,7 @@ namespace LocalizedXmlTags
         /// Summary (на русском)
         /// </summary>
         /// <example>Some summary (eng)</example>
-        /// <example>Некоторый summary (на русском)</example>
+        /// <example xml:lang="ru">Некоторый summary (на русском)</example>
         public string Summary { get; set; }
     }
 }

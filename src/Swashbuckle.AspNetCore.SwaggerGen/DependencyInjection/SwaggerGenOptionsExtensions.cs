@@ -404,13 +404,26 @@ namespace Microsoft.Extensions.DependencyInjection
             CultureInfo culture = null)
         {
             var xmlDoc = xmlDocFactory();
-            swaggerGenOptions.ParameterFilter<XmlCommentsParameterFilter>(xmlDoc, culture);
-            swaggerGenOptions.RequestBodyFilter<XmlCommentsRequestBodyFilter>(xmlDoc, culture);
-            swaggerGenOptions.OperationFilter<XmlCommentsOperationFilter>(xmlDoc, culture);
-            swaggerGenOptions.SchemaFilter<XmlCommentsSchemaFilter>(xmlDoc, culture);
+            if (culture != null)
+            {
+                swaggerGenOptions.ParameterFilter<XmlCommentsParameterFilter>(xmlDoc, culture);
+                swaggerGenOptions.RequestBodyFilter<XmlCommentsRequestBodyFilter>(xmlDoc, culture);
+                swaggerGenOptions.OperationFilter<XmlCommentsOperationFilter>(xmlDoc, culture);
+                swaggerGenOptions.SchemaFilter<XmlCommentsSchemaFilter>(xmlDoc, culture);
 
-            if (includeControllerXmlComments)
-                swaggerGenOptions.DocumentFilter<XmlCommentsDocumentFilter>(xmlDoc, culture);
+                if (includeControllerXmlComments)
+                    swaggerGenOptions.DocumentFilter<XmlCommentsDocumentFilter>(xmlDoc, culture);
+            }
+            else
+            {
+                swaggerGenOptions.ParameterFilter<XmlCommentsParameterFilter>(xmlDoc);
+                swaggerGenOptions.RequestBodyFilter<XmlCommentsRequestBodyFilter>(xmlDoc);
+                swaggerGenOptions.OperationFilter<XmlCommentsOperationFilter>(xmlDoc);
+                swaggerGenOptions.SchemaFilter<XmlCommentsSchemaFilter>(xmlDoc);
+
+                if (includeControllerXmlComments)
+                    swaggerGenOptions.DocumentFilter<XmlCommentsDocumentFilter>(xmlDoc);
+            }
         }
 
         /// <summary>
