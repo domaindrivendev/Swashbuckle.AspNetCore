@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -80,7 +79,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var apiDescriptionsByPath = apiDescriptions
                 .OrderBy(_options.SortKeySelector)
-                .GroupBy(apiDesc => apiDesc.RelativePathSansQueryString());
+                .GroupBy(apiDesc => apiDesc.RelativePathSansParameterConstraints());
 
             var paths = new OpenApiPaths();
             foreach (var group in apiDescriptionsByPath)
@@ -120,7 +119,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         "Conflicting method/path combination \"{0} {1}\" for actions - {2}. " +
                         "Actions require a unique method/path combination for Swagger/OpenAPI 3.0. Use ConflictingActionsResolver as a workaround",
                         httpMethod,
-                        group.First().RelativePathSansQueryString(),
+                        group.First().RelativePath,
                         string.Join(",", group.Select(apiDesc => apiDesc.ActionDescriptor.DisplayName))));
 
                 var apiDescription = (group.Count() > 1) ? _options.ConflictingActionsResolver(group) : group.Single();
@@ -196,8 +195,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 ? ParameterLocationMap[apiParameter.Source]
                 : ParameterLocation.Query;
 
-            var isRequired = (apiParameter.IsFromPath())
-                || apiParameter.CustomAttributes().Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
+            var isRequired = apiParameter.IsRequiredParameter();
 
             var schema = (apiParameter.ModelMetadata != null)
                 ? GenerateSchema(
@@ -300,7 +298,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var contentTypes = InferRequestContentTypes(apiDescription);
 
-            var isRequired = bodyParameter.CustomAttributes().Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
+            var isRequired = bodyParameter.IsRequiredParameter();
 
             var schema = GenerateSchema(
                 bodyParameter.ModelMetadata.ModelType,
@@ -389,7 +387,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 properties.Add(name, schema);
 
-                if (formParameter.IsFromPath() || formParameter.CustomAttributes().Any(attr => RequiredAttributeTypes.Contains(attr.GetType())))
+                if (formParameter.IsRequiredParameter())
                     requiredPropertyNames.Add(name);
             }
 
@@ -484,12 +482,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             { BindingSource.Query, ParameterLocation.Query },
             { BindingSource.Header, ParameterLocation.Header },
             { BindingSource.Path, ParameterLocation.Path }
-        };
-
-        private static readonly IEnumerable<Type> RequiredAttributeTypes = new[]
-        {
-            typeof(BindRequiredAttribute),
-            typeof(RequiredAttribute)
         };
 
         private static readonly Dictionary<string, string> ResponseDescriptionMap = new Dictionary<string, string>

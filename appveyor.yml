@@ -7,10 +7,10 @@ environment:
   DOTNET_VERSION: 5.0.100
 
 build_script:
-- ps: ci\build.ps1 
+- ps: dotnet pack -c Release -o artifacts
 
 test_script:
-- ps: ci\test.ps1
+- ps: dotnet test
 
 artifacts:
 - path: artifacts\*.nupkg

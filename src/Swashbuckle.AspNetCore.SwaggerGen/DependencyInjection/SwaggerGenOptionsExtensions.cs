@@ -414,7 +414,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Inject human-friendly descriptions for Operations, Parameters and Schemas based on XML Comment files
         /// </summary>
         /// <param name="swaggerGenOptions"></param>
-        /// <param name="filePath">An abolsute path to the file that contains XML Comments</param>
+        /// <param name="filePath">An absolute path to the file that contains XML Comments</param>
         /// <param name="includeControllerXmlComments">
         /// Flag to indicate if controller XML comments (i.e. summary) should be used to assign Tag descriptions.
         /// Don't set this flag if you're customizing the default tag for operations via TagActionsBy.

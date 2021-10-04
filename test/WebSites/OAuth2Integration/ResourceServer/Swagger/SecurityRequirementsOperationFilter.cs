@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.Extensions.Options;
@@ -13,7 +12,7 @@ namespace OAuth2Integration.ResourceServer.Swagger
     public class SecurityRequirementsOperationFilter : IOperationFilter
     {
         private readonly AuthorizationOptions _authorizationOptions;
-        
+
         public SecurityRequirementsOperationFilter(IOptions<AuthorizationOptions> authorizationOptions)
         {
             // Beware: This might only part of the truth. If someone exchanges the IAuthorizationPolicyProvider and that loads

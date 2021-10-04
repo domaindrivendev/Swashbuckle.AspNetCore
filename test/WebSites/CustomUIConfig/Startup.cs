@@ -74,6 +74,8 @@ namespace CustomUIConfig
                 c.InjectJavascript("/ext/custom-javascript.js");
                 c.UseRequestInterceptor("(req) => { req.headers['x-my-custom-header'] = 'MyCustomValue'; return req; }");
                 c.UseResponseInterceptor("(res) => { console.log('Custom interceptor intercepted response from:', res.url); return res; }");
+                c.EnablePersistAuthorization();
+
             });
         }
     }
