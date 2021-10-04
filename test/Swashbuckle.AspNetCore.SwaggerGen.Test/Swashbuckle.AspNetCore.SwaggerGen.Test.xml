@@ -13,39 +13,64 @@
             <summary>
             Summary for ActionWithSummaryAndRemarksTags
             </summary>
+            <summary xml:lang="ru">
+            Summary для ActionWithSummaryAndRemarksTags с русской локализацией
+            </summary>
             <remarks>
             Remarks for ActionWithSummaryAndRemarksTags
+            </remarks>
+            <remarks xml:lang="ru">
+            Remarks для ActionWithSummaryAndRemarksTags с русской локализацией
             </remarks>
         </member>
         <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.GenericControllerWithXmlComments`1.ActionWithParamTags(`0,`0)">
             <param name="param1" example="Example for param1">Description for param1</param>
+            <param name="param1" example="Пример для param1" xml:lang="ru">Описание для param1</param>
             <param name="param2" example="Example for param2">Description for param2</param>
+            <param name="param2" example="Пример для param2" xml:lang="ru">Описание для param2</param>
         </member>
         <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllerWithXmlComments">
             <summary>
             Summary for FakeControllerWithXmlComments
             </summary>
+            <summary xml:lang="ru">
+            Summary для FakeControllerWithXmlComments с русской локализацией
+            </summary>
             <response code="default">Description for default response</response>
+            <response code="default" xml:lang="ru">Описание для ответа по умолчанию</response>
         </member>
         <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllerWithXmlComments.ActionWithSummaryAndRemarksTags">
             <summary>
             Summary for ActionWithSummaryAndRemarksTags
             </summary>
+            <summary xml:lang="ru">
+            Summary для ActionWithSummaryAndRemarksTags с русской локализацией
+            </summary>
             <remarks>
             Remarks for ActionWithSummaryAndRemarksTags
+            </remarks>
+            <remarks xml:lang="ru">
+            Remarks для ActionWithSummaryAndRemarksTags с русской локализацией
             </remarks>
         </member>
         <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllerWithXmlComments.ActionWithParamTags(System.String,System.String)">
             <param name="param1" example="Example for param1">Description for param1</param>
+            <param name="param1" example="Пример для param1" xml:lang="ru">Описание для param1</param>
             <param name="param2" example="http://test.com/?param1=1&amp;param2=2">Description for param2</param>
+            <param name="param2" example="http://test.com/?param1=1&amp;param2=2" xml:lang="ru">Описание для param2</param>
         </member>
         <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.FakeControllerWithXmlComments.ActionWithResponseTags">
             <response code="200">Description for 200 response</response>
+            <response code="200" xml:lang="ru">Описание для 200 ответа</response>
             <response code="400">Description for 400 response</response>
+            <response code="400" xml:lang="ru">Описание для 400 ответа</response>
         </member>
         <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedGenericType`2">
             <summary>
             Summary for XmlAnnotatedGenericType
+            </summary>
+            <summary xml:lang="ru">
+            Summary для XmlAnnotatedGenericType
             </summary>
             <typeparam name="T"></typeparam>
             <typeparam name="K"></typeparam>
@@ -53,6 +78,9 @@
         <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedGenericType`2.GenericProperty">
             <summary>
             Summary for GenericProperty
+            </summary>
+            <summary xml:lang="ru">
+            Summary для GenericProperty
             </summary>
         </member>
         <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedGenericType`2.AcceptsTypeParameters(System.Int32,`0,`1)">
@@ -78,10 +106,16 @@
             <summary>
             Summary for XmlAnnotatedType
             </summary>
+            <summary xml:lang="ru">
+            Summary для XmlAnnotatedType
+            </summary>
         </member>
         <member name="F:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.BoolField">
             <summary>
             Summary for BoolField
+            </summary>
+            <summary xml:lang="ru">
+            Summary для BoolField
             </summary>
             <example>true</example>
         </member>
@@ -137,11 +171,18 @@
             <summary>
             Summary for StringProperty
             </summary>
+            <summary xml:lang="ru">
+            Summary для StringProperty
+            </summary>
             <example>Example for StringProperty</example>
+            <example xml:lang="ru">Пример для StringProperty</example>
         </member>
         <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.StringPropertyWithUri">
             <summary>
             Summary for StringPropertyWithUri
+            </summary>
+            <summary xml:lang="ru">
+            Summary для StringPropertyWithUri
             </summary>
             <example><![CDATA[https://test.com/a?b=1&c=2]]></example>
         </member>
@@ -183,6 +224,9 @@
         <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.NestedType">
             <summary>
             Summary for NestedType
+            </summary>
+            <summary xml:lang="ru">
+            Summary для NestedType
             </summary>
         </member>
         <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlAnnotatedType.NestedType.InnerNestedType.InnerProperty">

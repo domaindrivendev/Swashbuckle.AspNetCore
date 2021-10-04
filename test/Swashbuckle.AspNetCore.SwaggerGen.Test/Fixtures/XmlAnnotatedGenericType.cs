@@ -5,12 +5,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
     /// <summary>
     /// Summary for XmlAnnotatedGenericType
     /// </summary>
+    /// <summary xml:lang="ru">
+    /// Summary для XmlAnnotatedGenericType
+    /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <typeparam name="K"></typeparam>
     public class XmlAnnotatedGenericType<T,K>
     {
         /// <summary>
         /// Summary for GenericProperty
+        /// </summary>
+        /// <summary xml:lang="ru">
+        /// Summary для GenericProperty
         /// </summary>
         public T GenericProperty { get; set; }
 

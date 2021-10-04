@@ -6,13 +6,20 @@ using Microsoft.OpenApi.Models;
 using Xunit;
 using Swashbuckle.AspNetCore.TestSupport;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     public class XmlCommentsRequestBodyFilterTests
     {
-        [Fact]
-        public void Apply_SetsDescriptionAndExample_FromActionParamTag()
+        [Theory]
+        [InlineData("Description for param1", "\"Example for param1\"", null)]
+        [InlineData("Description for param1", "\"Example for param1\"", "en-US")]
+        [InlineData("Описание для param1", "\"Пример для param1\"", "ru-RU")]
+        public void Apply_SetsDescriptionAndExample_FromActionParamTag(
+            string expectedDescription,
+            string expectedExample,
+            string cultureName)
         {
             var requestBody = new OpenApiRequestBody
             {
@@ -22,7 +29,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             };
             var parameterInfo = typeof(FakeControllerWithXmlComments)
-                .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithParamTags))
+                .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithParamTags))?
                 .GetParameters()[0];
             var bodyParameterDescription = new ApiParameterDescription
             {
@@ -30,15 +37,21 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             };
             var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
 
-            Subject().Apply(requestBody, filterContext);
+            Subject(cultureName).Apply(requestBody, filterContext);
 
-            Assert.Equal("Description for param1", requestBody.Description);
+            Assert.Equal(expectedDescription, requestBody.Description);
             Assert.NotNull(requestBody.Content["application/json"].Example);
-            Assert.Equal("\"Example for param1\"", requestBody.Content["application/json"].Example.ToJson());
+            Assert.Equal(expectedExample, requestBody.Content["application/json"].Example.ToJson());
         }
 
-        [Fact]
-        public void Apply_SetsDescriptionAndExample_FromUnderlyingGenericTypeActionParamTag()
+        [Theory]
+        [InlineData("Description for param1", "\"Example for param1\"", null)]
+        [InlineData("Description for param1", "\"Example for param1\"", "en-US")]
+        [InlineData("Описание для param1", "\"Пример для param1\"", "ru-RU")]
+        public void Apply_SetsDescriptionAndExample_FromUnderlyingGenericTypeActionParamTag(
+            string expectedDescription,
+            string expectedExample,
+            string cultureName)
         {
             var requestBody = new OpenApiRequestBody
             {
@@ -48,7 +61,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             };
             var parameterInfo = typeof(FakeConstructedControllerWithXmlComments)
-                .GetMethod(nameof(FakeConstructedControllerWithXmlComments.ActionWithParamTags))
+                .GetMethod(nameof(FakeConstructedControllerWithXmlComments.ActionWithParamTags))?
                 .GetParameters()[0];
             var bodyParameterDescription = new ApiParameterDescription
             {
@@ -56,15 +69,21 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             };
             var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
 
-            Subject().Apply(requestBody, filterContext);
+            Subject(cultureName).Apply(requestBody, filterContext);
 
-            Assert.Equal("Description for param1", requestBody.Description);
+            Assert.Equal(expectedDescription, requestBody.Description);
             Assert.NotNull(requestBody.Content["application/json"].Example);
-            Assert.Equal("\"Example for param1\"", requestBody.Content["application/json"].Example.ToJson());
+            Assert.Equal(expectedExample, requestBody.Content["application/json"].Example.ToJson());
         }
 
-        [Fact]
-        public void Apply_SetsDescriptionAndExample_FromPropertySummaryAndExampleTags()
+        [Theory]
+        [InlineData("Summary for StringProperty", "\"Example for StringProperty\"", null)]
+        [InlineData("Summary for StringProperty", "\"Example for StringProperty\"", "en-US")]
+        [InlineData("Summary для StringProperty", "\"Пример для StringProperty\"", "ru-RU")]
+        public void Apply_SetsDescriptionAndExample_FromPropertySummaryAndExampleTags(
+            string expectedDescription,
+            string expectedExample,
+            string cultureName)
         {
             var requestBody = new OpenApiRequestBody
             {
@@ -79,16 +98,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             };
             var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
 
-            Subject().Apply(requestBody, filterContext);
+            Subject(cultureName).Apply(requestBody, filterContext);
 
-            Assert.Equal("Summary for StringProperty", requestBody.Description);
+            Assert.Equal(expectedDescription, requestBody.Description);
             Assert.NotNull(requestBody.Content["application/json"].Example);
-            Assert.Equal("\"Example for StringProperty\"", requestBody.Content["application/json"].Example.ToJson());
+            Assert.Equal(expectedExample, requestBody.Content["application/json"].Example.ToJson());
         }
 
-
-        [Fact]
-        public void Apply_SetsDescriptionAndExample_FromUriTypePropertySummaryAndExampleTags()
+        [Theory]
+        [InlineData("Summary for StringPropertyWithUri", null)]
+        [InlineData("Summary for StringPropertyWithUri", "en-US")]
+        [InlineData("Summary для StringPropertyWithUri", "ru-RU")]
+        public void Apply_SetsDescriptionAndExample_FromUriTypePropertySummaryAndExampleTags(
+            string expectedDescription,
+            string cultureName)
         {
             var requestBody = new OpenApiRequestBody
             {
@@ -103,17 +126,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             };
             var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
 
-            Subject().Apply(requestBody, filterContext);
+            Subject(cultureName).Apply(requestBody, filterContext);
 
-            Assert.Equal("Summary for StringPropertyWithUri", requestBody.Description);
+            Assert.Equal(expectedDescription, requestBody.Description);
             Assert.NotNull(requestBody.Content["application/json"].Example);
             Assert.Equal("\"https://test.com/a?b=1&c=2\"", requestBody.Content["application/json"].Example.ToJson());
         }
-        private XmlCommentsRequestBodyFilter Subject()
+
+        private XmlCommentsRequestBodyFilter Subject(string cultureName = null)
         {
             using (var xmlComments = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml"))
             {
-                return new XmlCommentsRequestBodyFilter(new XPathDocument(xmlComments));
+                var culture = cultureName == null ? null : new CultureInfo(cultureName);
+                return new XmlCommentsRequestBodyFilter(new XPathDocument(xmlComments), culture);
             }
         }
     }

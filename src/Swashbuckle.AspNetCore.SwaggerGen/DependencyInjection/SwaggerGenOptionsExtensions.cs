@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Xml.XPath;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -395,19 +396,21 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Flag to indicate if controller XML comments (i.e. summary) should be used to assign Tag descriptions.
         /// Don't set this flag if you're customizing the default tag for operations via TagActionsBy.
         /// </param>
+        /// <param name="culture">Culture used to localize xml Tags.</param>
         public static void IncludeXmlComments(
             this SwaggerGenOptions swaggerGenOptions,
             Func<XPathDocument> xmlDocFactory,
-            bool includeControllerXmlComments = false)
+            bool includeControllerXmlComments = false,
+            CultureInfo culture = null)
         {
             var xmlDoc = xmlDocFactory();
-            swaggerGenOptions.ParameterFilter<XmlCommentsParameterFilter>(xmlDoc);
-            swaggerGenOptions.RequestBodyFilter<XmlCommentsRequestBodyFilter>(xmlDoc);
-            swaggerGenOptions.OperationFilter<XmlCommentsOperationFilter>(xmlDoc);
-            swaggerGenOptions.SchemaFilter<XmlCommentsSchemaFilter>(xmlDoc);
+            swaggerGenOptions.ParameterFilter<XmlCommentsParameterFilter>(xmlDoc, culture);
+            swaggerGenOptions.RequestBodyFilter<XmlCommentsRequestBodyFilter>(xmlDoc, culture);
+            swaggerGenOptions.OperationFilter<XmlCommentsOperationFilter>(xmlDoc, culture);
+            swaggerGenOptions.SchemaFilter<XmlCommentsSchemaFilter>(xmlDoc, culture);
 
             if (includeControllerXmlComments)
-                swaggerGenOptions.DocumentFilter<XmlCommentsDocumentFilter>(xmlDoc);
+                swaggerGenOptions.DocumentFilter<XmlCommentsDocumentFilter>(xmlDoc, culture);
         }
 
         /// <summary>
@@ -419,12 +422,14 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Flag to indicate if controller XML comments (i.e. summary) should be used to assign Tag descriptions.
         /// Don't set this flag if you're customizing the default tag for operations via TagActionsBy.
         /// </param>
+        /// <param name="culture">Culture used to localize xml Tags.</param>
         public static void IncludeXmlComments(
             this SwaggerGenOptions swaggerGenOptions,
             string filePath,
-            bool includeControllerXmlComments = false)
+            bool includeControllerXmlComments = false,
+            CultureInfo culture = null)
         {
-            swaggerGenOptions.IncludeXmlComments(() => new XPathDocument(filePath), includeControllerXmlComments);
+            swaggerGenOptions.IncludeXmlComments(() => new XPathDocument(filePath), includeControllerXmlComments, culture);
         }
 
         /// <summary>

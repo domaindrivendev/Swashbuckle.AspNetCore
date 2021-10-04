@@ -1,32 +1,41 @@
-﻿using Swashbuckle.AspNetCore.TestSupport;
-using System;
-
-namespace Swashbuckle.AspNetCore.SwaggerGen.Test
+﻿namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     /// <summary>
     /// Summary for FakeControllerWithXmlComments
     /// </summary>
+    /// <summary xml:lang="ru">
+    /// Summary для FakeControllerWithXmlComments с русской локализацией
+    /// </summary>
     /// <response code="default">Description for default response</response>
+    /// <response code="default" xml:lang="ru">Описание для ответа по умолчанию</response>
     public class FakeControllerWithXmlComments
     {
         /// <summary>
         /// Summary for ActionWithSummaryAndRemarksTags
         /// </summary>
+        /// <summary xml:lang="ru">
+        /// Summary для ActionWithSummaryAndRemarksTags с русской локализацией
+        /// </summary>
         /// <remarks>
         /// Remarks for ActionWithSummaryAndRemarksTags
+        /// </remarks>
+        /// <remarks xml:lang="ru">
+        /// Remarks для ActionWithSummaryAndRemarksTags с русской локализацией
         /// </remarks>
         public void ActionWithSummaryAndRemarksTags()
         { }
 
         /// <param name="param1" example="Example for param1">Description for param1</param>
+        /// <param name="param1" example="Пример для param1" xml:lang="ru">Описание для param1</param>
         /// <param name="param2" example="http://test.com/?param1=1&amp;param2=2">Description for param2</param>
+        /// <param name="param2" example="http://test.com/?param1=1&amp;param2=2" xml:lang="ru">Описание для param2</param>
         public void ActionWithParamTags(string param1, string param2)
         { }
 
-
-
         /// <response code="200">Description for 200 response</response>
+        /// <response code="200" xml:lang="ru">Описание для 200 ответа</response>
         /// <response code="400">Description for 400 response</response>
+        /// <response code="400" xml:lang="ru">Описание для 400 ответа</response>
         public void ActionWithResponseTags()
         { }
 

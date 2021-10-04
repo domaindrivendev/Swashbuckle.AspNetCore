@@ -11,47 +11,60 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
     public class XmlCommentsSchemaFilterTests
     {
         [Theory]
-        [InlineData(typeof(XmlAnnotatedType), "Summary for XmlAnnotatedType")]
-        [InlineData(typeof(XmlAnnotatedType.NestedType), "Summary for NestedType")]
-        [InlineData(typeof(XmlAnnotatedGenericType<int, string>), "Summary for XmlAnnotatedGenericType")]
+        [InlineData(typeof(XmlAnnotatedType), "Summary for XmlAnnotatedType", null)]
+        [InlineData(typeof(XmlAnnotatedType.NestedType), "Summary for NestedType", null)]
+        [InlineData(typeof(XmlAnnotatedGenericType<int, string>), "Summary for XmlAnnotatedGenericType", null)]
+        [InlineData(typeof(XmlAnnotatedType), "Summary для XmlAnnotatedType", "ru-RU")]
+        [InlineData(typeof(XmlAnnotatedType.NestedType), "Summary для NestedType", "ru-RU")]
+        [InlineData(typeof(XmlAnnotatedGenericType<int, string>), "Summary для XmlAnnotatedGenericType", "ru-RU")]
         public void Apply_SetsDescription_FromTypeSummaryTag(
             Type type,
-            string expectedDescription)
+            string expectedDescription,
+            string cultureName)
         {
             var schema = new OpenApiSchema { };
             var filterContext = new SchemaFilterContext(type, null, null);
 
-            Subject().Apply(schema, filterContext);
+            Subject(cultureName).Apply(schema, filterContext);
 
             Assert.Equal(expectedDescription, schema.Description);
         }
 
-        [Fact]
-        public void Apply_SetsDescription_FromFieldSummaryTag()
+        [Theory]
+        [InlineData("Summary for BoolField", null)]
+        [InlineData("Summary for BoolField", "en-US")]
+        [InlineData("Summary для BoolField", "ru-RU")]
+        public void Apply_SetsDescription_FromFieldSummaryTag(
+            string expectedDescription,
+            string cultureName)
         {
             var fieldInfo = typeof(XmlAnnotatedType).GetField(nameof(XmlAnnotatedType.BoolField));
             var schema = new OpenApiSchema { };
-            var filterContext = new SchemaFilterContext(fieldInfo.FieldType, null, null, memberInfo: fieldInfo);
+            var filterContext = new SchemaFilterContext(fieldInfo?.FieldType, null, null, memberInfo: fieldInfo);
 
-            Subject().Apply(schema, filterContext);
+            Subject(cultureName).Apply(schema, filterContext);
 
-            Assert.Equal("Summary for BoolField", schema.Description);
+            Assert.Equal(expectedDescription, schema.Description);
         }
 
         [Theory]
-        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringProperty), "Summary for StringProperty")]
-        [InlineData(typeof(XmlAnnotatedSubType), nameof(XmlAnnotatedType.StringProperty), "Summary for StringProperty")]
-        [InlineData(typeof(XmlAnnotatedGenericType<string, bool>), "GenericProperty", "Summary for GenericProperty")]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringProperty), "Summary for StringProperty", null)]
+        [InlineData(typeof(XmlAnnotatedSubType), nameof(XmlAnnotatedType.StringProperty), "Summary for StringProperty", null)]
+        [InlineData(typeof(XmlAnnotatedGenericType<string, bool>), "GenericProperty", "Summary for GenericProperty", null)]
+        [InlineData(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringProperty), "Summary для StringProperty", "ru-RU")]
+        [InlineData(typeof(XmlAnnotatedSubType), nameof(XmlAnnotatedType.StringProperty), "Summary для StringProperty", "ru-RU")]
+        [InlineData(typeof(XmlAnnotatedGenericType<string, bool>), "GenericProperty", "Summary для GenericProperty", "ru-RU")]
         public void Apply_SetsDescription_FromPropertySummaryTag(
             Type declaringType,
             string propertyName,
-            string expectedDescription)
+            string expectedDescription,
+            string cultureName)
         {
             var propertyInfo = declaringType.GetProperty(propertyName);
             var schema = new OpenApiSchema();
-            var filterContext = new SchemaFilterContext(propertyInfo.PropertyType, null, null, memberInfo: propertyInfo);
+            var filterContext = new SchemaFilterContext(propertyInfo?.PropertyType, null, null, memberInfo: propertyInfo);
 
-            Subject().Apply(schema, filterContext);
+            Subject(cultureName).Apply(schema, filterContext);
 
             Assert.Equal(expectedDescription, schema.Description);
         }
@@ -77,7 +90,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var propertyInfo = declaringType.GetProperty(propertyName);
             var schema = new OpenApiSchema { Type = schemaType };
-            var filterContext = new SchemaFilterContext(propertyInfo.PropertyType, null, null, memberInfo: propertyInfo);
+            var filterContext = new SchemaFilterContext(propertyInfo?.PropertyType, null, null, memberInfo: propertyInfo);
 
             Subject().Apply(schema, filterContext);
 
@@ -94,7 +107,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var propertyInfo = typeof(XmlAnnotatedType).GetProperty(nameof(XmlAnnotatedType.FloatProperty));
             var schema = new OpenApiSchema { Type = "number", Format = "float" };
-            var filterContext = new SchemaFilterContext(propertyInfo.PropertyType, null, null, memberInfo: propertyInfo);
+            var filterContext = new SchemaFilterContext(propertyInfo?.PropertyType, null, null, memberInfo: propertyInfo);
 
             var defaultCulture = CultureInfo.CurrentCulture;
             CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo(cultureName);
@@ -103,14 +116,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             CultureInfo.CurrentCulture = defaultCulture;
 
-            Assert.Equal(expectedValue, schema.Example.GetType().GetProperty("Value").GetValue(schema.Example));
+            Assert.Equal(expectedValue, schema.Example.GetType().GetProperty("Value")?.GetValue(schema.Example));
         }
 
-        private XmlCommentsSchemaFilter Subject()
+        private XmlCommentsSchemaFilter Subject(string cultureName = null)
         {
             using (var xmlComments = File.OpenText(typeof(XmlAnnotatedType).Assembly.GetName().Name + ".xml"))
             {
-                return new XmlCommentsSchemaFilter(new XPathDocument(xmlComments));
+                var culture = cultureName == null ? null : new CultureInfo(cultureName);
+                return new XmlCommentsSchemaFilter(new XPathDocument(xmlComments), culture);
             }
         }
     }

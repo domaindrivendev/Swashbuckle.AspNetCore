@@ -4,18 +4,21 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Models;
 using System;
+using System.Globalization;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class XmlCommentsDocumentFilter : IDocumentFilter
     {
+        private readonly CultureInfo _сulture;
         private const string MemberXPath = "/doc/members/member[@name='{0}']";
         private const string SummaryTag = "summary";
 
         private readonly XPathNavigator _xmlNavigator;
 
-        public XmlCommentsDocumentFilter(XPathDocument xmlDoc)
+        public XmlCommentsDocumentFilter(XPathDocument xmlDoc, CultureInfo сulture = null)
         {
+            _сulture = сulture;
             _xmlNavigator = xmlDoc.CreateNavigator();
         }
 
@@ -35,7 +38,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 if (typeNode != null)
                 {
-                    var summaryNode = typeNode.SelectSingleNode(SummaryTag);
+                    var summaryNode = typeNode.GetLocalizedNode(SummaryTag, _сulture);
                     if (summaryNode != null)
                     {
                         if (swaggerDoc.Tags == null)

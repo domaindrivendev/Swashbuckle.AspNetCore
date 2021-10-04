@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Xml.XPath;
 using Microsoft.OpenApi.Models;
 
@@ -6,10 +7,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class XmlCommentsSchemaFilter : ISchemaFilter
     {
+        private readonly CultureInfo _сulture;
         private readonly XPathNavigator _xmlNavigator;
 
-        public XmlCommentsSchemaFilter(XPathDocument xmlDoc)
+        public XmlCommentsSchemaFilter(XPathDocument xmlDoc, CultureInfo сulture = null)
         {
+            _сulture = сulture;
             _xmlNavigator = xmlDoc.CreateNavigator();
         }
 
@@ -26,7 +29,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private void ApplyTypeTags(OpenApiSchema schema, Type type)
         {
             var typeMemberName = XmlCommentsNodeNameHelper.GetMemberNameForType(type);
-            var typeSummaryNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{typeMemberName}']/summary");
+            var typeSummaryNode = _xmlNavigator.GetLocalizedNode($"/doc/members/member[@name='{typeMemberName}']/summary", _сulture);
 
             if (typeSummaryNode != null)
             {
@@ -41,11 +44,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (fieldOrPropertyNode == null) return;
 
-            var summaryNode = fieldOrPropertyNode.SelectSingleNode("summary");
+            var summaryNode = fieldOrPropertyNode.GetLocalizedNode("summary", _сulture);
             if (summaryNode != null)
                 schema.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
 
-            var exampleNode = fieldOrPropertyNode.SelectSingleNode("example");
+            var exampleNode = fieldOrPropertyNode.GetLocalizedNode("example", _сulture);
             if (exampleNode != null)
             {
                 var exampleAsJson = (schema.ResolveType(context.SchemaRepository) == "string") && !exampleNode.Value.Equals("null")

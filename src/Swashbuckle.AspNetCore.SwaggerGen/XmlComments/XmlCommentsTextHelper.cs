@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Xml.XPath;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -10,6 +12,28 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private static Regex RefTagPattern = new Regex(@"<(see|paramref) (name|cref)=""([TPF]{1}:)?(?<display>.+?)"" ?/>");
         private static Regex CodeTagPattern = new Regex(@"<c>(?<display>.+?)</c>");
         private static Regex ParaTagPattern = new Regex(@"<para>(?<display>.+?)</para>", RegexOptions.Singleline);
+
+        public static XPathNavigator GetLocalizedNode(this XPathNavigator navigator, string xpath, CultureInfo culture)
+        {
+            XPathNavigator node = null;
+            if (string.IsNullOrWhiteSpace(xpath))
+            {
+                return null;
+            }
+
+            var nodes = navigator.Select(xpath);
+            foreach (XPathNavigator selectedSummaryNode in nodes)
+            {
+                if (!string.IsNullOrWhiteSpace(selectedSummaryNode.XmlLang)
+                    && culture != null
+                    && new CultureInfo(selectedSummaryNode.XmlLang).TwoLetterISOLanguageName.Equals(culture.TwoLetterISOLanguageName))
+                {
+                    node = selectedSummaryNode;
+                }
+            }
+
+            return node ?? navigator.SelectSingleNode(xpath);
+        }
 
         public static string Humanize(string text)
         {

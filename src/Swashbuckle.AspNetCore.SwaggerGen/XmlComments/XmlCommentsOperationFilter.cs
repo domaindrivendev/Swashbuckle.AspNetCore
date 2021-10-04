@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Reflection;
 using System.Xml.XPath;
 using Microsoft.OpenApi.Models;
@@ -7,10 +8,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class XmlCommentsOperationFilter : IOperationFilter
     {
+        private readonly CultureInfo _сulture;
         private readonly XPathNavigator _xmlNavigator;
 
-        public XmlCommentsOperationFilter(XPathDocument xmlDoc)
+        public XmlCommentsOperationFilter(XPathDocument xmlDoc, CultureInfo сulture = null)
         {
+            _сulture = сulture;
             _xmlNavigator = xmlDoc.CreateNavigator();
         }
 
@@ -43,11 +46,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (methodNode == null) return;
 
-            var summaryNode = methodNode.SelectSingleNode("summary");
+            var summaryNode = methodNode.GetLocalizedNode("summary", _сulture);
             if (summaryNode != null)
                 operation.Summary = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
 
-            var remarksNode = methodNode.SelectSingleNode("remarks");
+            var remarksNode = methodNode.GetLocalizedNode("remarks", _сulture);
             if (remarksNode != null)
                 operation.Description = XmlCommentsTextHelper.Humanize(remarksNode.InnerXml);
 
@@ -57,14 +60,40 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private void ApplyResponseTags(OpenApiOperation operation, XPathNodeIterator responseNodes)
         {
-            while (responseNodes.MoveNext())
+            if (_сulture != null)
             {
-                var code = responseNodes.Current.GetAttribute("code", "");
-                var response = operation.Responses.ContainsKey(code)
-                    ? operation.Responses[code]
-                    : operation.Responses[code] = new OpenApiResponse();
+                foreach (XPathNavigator responseNode in responseNodes)
+                {
+                    var code = responseNode.GetAttribute("code", "");
+                    var response = operation.Responses.ContainsKey(code)
+                        ? operation.Responses[code]
+                        : operation.Responses[code] = new OpenApiResponse();
 
-                response.Description = XmlCommentsTextHelper.Humanize(responseNodes.Current.InnerXml);
+                    if (!string.IsNullOrWhiteSpace(responseNode.XmlLang)
+                        && new CultureInfo(responseNode.XmlLang).TwoLetterISOLanguageName.Equals(_сulture.TwoLetterISOLanguageName))
+                    {
+                        response.Description = XmlCommentsTextHelper.Humanize(responseNode.InnerXml);
+                    }
+                    else if (string.IsNullOrWhiteSpace(responseNode.XmlLang) && string.IsNullOrWhiteSpace(response.Description))
+                    {
+                        response.Description = XmlCommentsTextHelper.Humanize(responseNode.InnerXml);
+                    }
+                }
+            }
+            else
+            {
+                foreach (XPathNavigator responseNode in responseNodes)
+                {
+                    if (string.IsNullOrWhiteSpace(responseNode?.XmlLang))
+                    {
+                        var code = responseNode?.GetAttribute("code", "");
+                        var response = operation.Responses.ContainsKey(code)
+                            ? operation.Responses[code]
+                            : operation.Responses[code] = new OpenApiResponse();
+
+                        response.Description = XmlCommentsTextHelper.Humanize(responseNode?.InnerXml);
+                    }
+                }
             }
         }
     }

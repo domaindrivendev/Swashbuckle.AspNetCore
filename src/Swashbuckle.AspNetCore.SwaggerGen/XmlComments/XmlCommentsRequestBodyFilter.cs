@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Globalization;
+using System.Reflection;
 using System.Xml.XPath;
 using Microsoft.OpenApi.Models;
 
@@ -6,10 +7,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class XmlCommentsRequestBodyFilter : IRequestBodyFilter
     {
+        private readonly CultureInfo _сulture;
         private readonly XPathNavigator _xmlNavigator;
 
-        public XmlCommentsRequestBodyFilter(XPathDocument xmlDoc)
+        public XmlCommentsRequestBodyFilter(XPathDocument xmlDoc, CultureInfo сulture = null)
         {
+            _сulture = сulture;
             _xmlNavigator = xmlDoc.CreateNavigator();
         }
 
@@ -41,11 +44,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (propertyNode == null) return;
 
-            var summaryNode = propertyNode.SelectSingleNode("summary");
+            var summaryNode = propertyNode.GetLocalizedNode("summary", _сulture);
             if (summaryNode != null)
                 requestBody.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
 
-            var exampleNode = propertyNode.SelectSingleNode("example");
+            var exampleNode = propertyNode.GetLocalizedNode("example", _сulture);
             if (exampleNode == null) return;
 
             foreach (var mediaType in requestBody.Content.Values)
@@ -70,8 +73,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (targetMethod == null) return;
 
             var methodMemberName = XmlCommentsNodeNameHelper.GetMemberNameForMethod(targetMethod);
-            var paramNode = _xmlNavigator.SelectSingleNode(
-                $"/doc/members/member[@name='{methodMemberName}']/param[@name='{parameterInfo.Name}']");
+            var paramNode = _xmlNavigator.GetLocalizedNode(
+                $"/doc/members/member[@name='{methodMemberName}']/param[@name='{parameterInfo.Name}']", _сulture);
 
             if (paramNode != null)
             {
