@@ -34,14 +34,21 @@ namespace Swashbuckle.AspNetCore.TestSupport
                 foreach (var parameter in parameterDescriptions)
                 {
                     // If the provided action has a matching parameter - use it to assign ParameterDescriptor & ModelMetadata
-                    var controllerParameterDescriptor = actionDescriptor.Parameters
-                        .OfType<ControllerParameterDescriptor>()
-                        .FirstOrDefault(parameterDescriptor => parameterDescriptor.Name == parameter.Name);
+                    parameter.ParameterDescriptor = actionDescriptor.Parameters
+                        .OfType<ParameterDescriptor>()
+                        .Where(parameterDescriptor => parameterDescriptor.Name == parameter.Name)
+                        .FirstOrDefault();
 
-                    if (controllerParameterDescriptor != null)
+                    var parameterDescriptorWithParameterInfo = parameter.ParameterDescriptor as
+#if NETCOREAPP2_2_OR_GREATER
+                        Microsoft.AspNetCore.Mvc.Infrastructure.IParameterInfoParameterDescriptor;
+#else
+                        ControllerParameterDescriptor;
+#endif
+
+                    if (parameterDescriptorWithParameterInfo != null)
                     {
-                        parameter.ParameterDescriptor = controllerParameterDescriptor;
-                        parameter.ModelMetadata = ModelMetadataFactory.CreateForParameter(controllerParameterDescriptor.ParameterInfo);
+                        parameter.ModelMetadata = ModelMetadataFactory.CreateForParameter(parameterDescriptorWithParameterInfo.ParameterInfo);
                     }
 
                     apiDescription.ParameterDescriptions.Add(parameter);
