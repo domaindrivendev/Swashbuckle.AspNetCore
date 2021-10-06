@@ -21,7 +21,7 @@ namespace Swashbuckle.AspNetCore.Annotations
             }
 
 #if NET6_0_OR_GREATER
-            if (context.ApiDescription.ActionDescriptor.EndpointMetadata != null)
+            if (context.ApiDescription?.ActionDescriptor?.EndpointMetadata != null)
             {
                 metadataAttributes = context.ApiDescription.ActionDescriptor.EndpointMetadata;
             }
