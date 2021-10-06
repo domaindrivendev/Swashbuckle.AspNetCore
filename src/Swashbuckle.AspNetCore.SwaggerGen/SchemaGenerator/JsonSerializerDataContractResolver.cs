@@ -144,10 +144,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var applicableProperties = publicProperties
                 .Where(property =>
                 {
-                    // .Net 5 introduces JsonIgnoreAttribute.Condition which should be honored
+                    // .NET 5 introduces JsonIgnoreAttribute.Condition which should be honored
                     bool isIgnoredViaNet5Attribute = true;
 
-#if NET5_0
+#if NET5_0_OR_GREATER
                     JsonIgnoreAttribute jsonIgnoreAttribute = property.GetCustomAttribute<JsonIgnoreAttribute>();
                     if (jsonIgnoreAttribute != null)
                     {
