@@ -17,7 +17,7 @@ namespace Swashbuckle.AspNetCore.Annotations
             // Collect (unique) controller names and custom attributes in a dictionary
             var controllerNamesAndAttributes = context.ApiDescriptions
                 .Select(apiDesc => apiDesc.ActionDescriptor as ControllerActionDescriptor)
-                .SkipWhile(actionDesc => actionDesc == null)
+                .Where(actionDesc => actionDesc != null)
                 .GroupBy(actionDesc => actionDesc.ControllerName)
                 .Select(group => new KeyValuePair<string, IEnumerable<object>>(group.Key, group.First().ControllerTypeInfo.GetCustomAttributes(true)));
 
