@@ -1,5 +1,8 @@
 using System.Linq;
 using System.Text.Json;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Xunit;
@@ -121,6 +124,43 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             Subject().Apply(operation, filterContext);
 
             Assert.NotEmpty(operation.Extensions);
+        }
+
+        [Fact]
+        public void Apply_EnrichesOperationMetadata_IfMinimalActionDecoratedWithSwaggerOperationAttribute()
+        {
+            var operationAttribute = new SwaggerOperationAttribute("Summary for ActionWithSwaggerOperationAttribute")
+            {
+                Description = "Description for ActionWithSwaggerOperationAttribute",
+                OperationId = "actionWithSwaggerOperationAttribute",
+                Tags = new[] { "foobar" }
+            };
+
+            var action = RequestDelegateFactory.Create((string parameter) => "{}");
+
+            var operation = new OpenApiOperation();
+            var methodInfo = action.RequestDelegate.Method;
+
+            var apiDescription = new ApiDescription()
+            {
+                ActionDescriptor = new ActionDescriptor()
+                {
+                    EndpointMetadata = new[] { operationAttribute }
+                }
+            };
+
+            var filterContext = new OperationFilterContext(
+                apiDescription: apiDescription,
+                schemaRegistry: null,
+                schemaRepository: null,
+                methodInfo: methodInfo);
+
+            Subject().Apply(operation, filterContext);
+
+            Assert.Equal("Summary for ActionWithSwaggerOperationAttribute", operation.Summary);
+            Assert.Equal("Description for ActionWithSwaggerOperationAttribute", operation.Description);
+            Assert.Equal("actionWithSwaggerOperationAttribute", operation.OperationId);
+            Assert.Equal(new[] { "foobar" }, operation.Tags.Cast<OpenApiTag>().Select(t => t.Name));
         }
 
         private AnnotationsOperationFilter Subject()
