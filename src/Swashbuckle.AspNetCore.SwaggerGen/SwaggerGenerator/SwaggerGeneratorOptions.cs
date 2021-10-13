@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-#if (NET6_0)
+#if NET6_0_OR_GREATER
 using Microsoft.AspNetCore.Http.Metadata;
 #endif
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -82,7 +82,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private IList<string> DefaultTagsSelector(ApiDescription apiDescription)
         {
-#if (!NET6_0)
+#if (!NET6_0_OR_GREATER)
             return new[] { apiDescription.ActionDescriptor.RouteValues["controller"] };
 #else
             var actionDescriptor = apiDescription.ActionDescriptor;
