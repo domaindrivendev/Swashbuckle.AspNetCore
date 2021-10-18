@@ -249,7 +249,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private bool TryGetCustomTypeMapping(Type modelType, out Func<OpenApiSchema> schemaFactory)
         {
             return _generatorOptions.CustomTypeMappings.TryGetValue(modelType, out schemaFactory)
-                || (modelType.IsConstructedGenericType && _generatorOptions.CustomTypeMappings.TryGetValue(modelType.GetGenericTypeDefinition(), out schemaFactory));
+                || (modelType.IsConstructedGenericType && _generatorOptions.CustomTypeMappings.TryGetValue(modelType.GetGenericTypeDefinition(), out schemaFactory)
+                || (modelType.BaseType != null && _generatorOptions.CustomTypeMappings.TryGetValue(modelType.BaseType, out schemaFactory)));
         }
 
         private OpenApiSchema CreatePrimitiveSchema(DataContract dataContract)
