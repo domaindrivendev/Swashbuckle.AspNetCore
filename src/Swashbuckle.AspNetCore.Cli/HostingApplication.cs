@@ -65,7 +65,11 @@ namespace Swashbuckle.AspNetCore.Cli
             try
             {
                 // Get the IServiceProvider from the host
-                var services = ((IHost)factory(Array.Empty<string>())).Services;
+                var assemblyName = assembly.GetName()?.FullName ?? string.Empty;
+                // We set the application name in the hosting environment to the startup assembly
+                // to avoid falling back to the entry assembly (dotnet-swagger) when configuring our
+                // application.
+                var services = ((IHost)factory(new[] { $"--{HostDefaults.ApplicationKey}={assemblyName}" })).Services;
 
                 // Wait for the application to start so that we know it's fully configured. This is important because
                 // we need the middleware pipeline to be configured before we access the ISwaggerProvider in

@@ -334,6 +334,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GenerateSchema_DoesNotSetReadOnlyFlag_IfPropertyIsReadOnlyButCanBeSetViaConstructor()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(typeof(TypeWithPropertiesSetViaConstructor), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.False(schema.Properties["Id"].ReadOnly);
+            Assert.False(schema.Properties["Desc"].ReadOnly);
+        }
+
+        [Fact]
         public void GenerateSchema_SetsDefault_IfParameterHasDefaultValueAttribute()
         {
             var schemaRepository = new SchemaRepository();

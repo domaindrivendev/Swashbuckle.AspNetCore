@@ -42,8 +42,12 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             _staticFileMiddleware = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options);
 
             _jsonSerializerOptions = new JsonSerializerOptions();
-            _jsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+#if NET6_0
+            _jsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+#else
             _jsonSerializerOptions.IgnoreNullValues = true;
+#endif
+            _jsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             _jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, false));
         }
 

@@ -5,6 +5,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
@@ -46,6 +47,39 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("Test API", document.Info.Title);
             Assert.Equal(new[] { "/resource" }, document.Paths.Keys.ToArray());
             Assert.Equal(new[] { OperationType.Post, OperationType.Get }, document.Paths["/resource"].Operations.Keys);
+        }
+
+        [Theory]
+        [InlineData("resources/{id}", "/resources/{id}")]
+        [InlineData("{category}/{product?}/{sku}", "/{category}/{product}/{sku}")]
+        [InlineData("{area=Home}/{controller:required}/{id=0:int}", "/{area}/{controller}/{id}")]
+        [InlineData("{category}/product/{group?}", "/{category}/product/{group}")]
+        [InlineData("{category:int}/product/{group:range(10, 20)?}", "/{category}/product/{group}")]
+        [InlineData("{person:int}/{ssn:regex(^\\d{{3}}-\\d{{2}}-\\d{{4}}$)}", "/{person}/{ssn}")]
+        [InlineData("{person:int}/{ssn:regex(^(?=.*kind)(?=.*good).*$)}", "/{person}/{ssn}")]
+        public void GetSwagger_GeneratesSwaggerDocument_ForApiDescriptionsWithConstrainedRelativePaths(string path, string expectedPath)
+        {
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "POST", relativePath: path),
+
+                },
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    }
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal("V1", document.Info.Version);
+            Assert.Equal("Test API", document.Info.Title);
+            Assert.Equal(new[] { expectedPath }, document.Paths.Keys.ToArray());
         }
 
         [Fact]
@@ -694,6 +728,30 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var document = subject.GetSwagger("v1");
 
             Assert.Equal(new[] { "resource" }, document.Paths["/resource"].Operations[OperationType.Post].Tags.Select(t => t.Name));
+        }
+
+        [Fact]
+        public void GetSwagger_CanReadTagsFromMetadata()
+        {
+            var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
+            var actionDescriptor = new ActionDescriptor
+            {
+                EndpointMetadata = new List<object>() { new TagsAttribute("Some", "Tags", "Here") },
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+                }
+            };
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create(actionDescriptor, methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource"),
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal(new[] { "Some", "Tags", "Here" }, document.Paths["/resource"].Operations[OperationType.Post].Tags.Select(t => t.Name)); 
         }
 
         [Fact]
