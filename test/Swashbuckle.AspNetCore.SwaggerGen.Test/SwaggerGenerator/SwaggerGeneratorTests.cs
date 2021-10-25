@@ -60,6 +60,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData("{person:int}/{ssn:regex(^(?=.*kind)(?=.*good).*$)}", "/{person}/{ssn}")]
         [InlineData("{person:int}/{ssn:regex(^(?=.*kind)(?=.*good).*$)?}", "/{person}/{ssn}")]
         [InlineData("resources/{id}:action", "/resources/{id}:action")]
+        [InlineData("{param1:int}/{param2?}:{param3=para}", "/{param1}/{param2}:{param3}")]
         [InlineData("{id}{action}", "/{id}{action}")]
         [InlineData("{id}{action}/", "/{id}{action}/")]
         public void GetSwagger_GeneratesSwaggerDocument_ForApiDescriptionsWithConstrainedRelativePaths(string path, string expectedPath)
