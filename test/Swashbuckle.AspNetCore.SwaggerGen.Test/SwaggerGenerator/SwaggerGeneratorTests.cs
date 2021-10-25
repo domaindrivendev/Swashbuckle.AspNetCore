@@ -54,9 +54,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData("{category}/{product?}/{sku}", "/{category}/{product}/{sku}")]
         [InlineData("{area=Home}/{controller:required}/{id=0:int}", "/{area}/{controller}/{id}")]
         [InlineData("{category}/product/{group?}", "/{category}/product/{group}")]
+        [InlineData("product/{category:int?}", "/product/{category}")]
         [InlineData("{category:int}/product/{group:range(10, 20)?}", "/{category}/product/{group}")]
         [InlineData("{person:int}/{ssn:regex(^\\d{{3}}-\\d{{2}}-\\d{{4}}$)}", "/{person}/{ssn}")]
         [InlineData("{person:int}/{ssn:regex(^(?=.*kind)(?=.*good).*$)}", "/{person}/{ssn}")]
+        [InlineData("{person:int}/{ssn:regex(^(?=.*kind)(?=.*good).*$)?}", "/{person}/{ssn}")]
+        [InlineData("resources/{id}:action", "/resources/{id}:action")]
+        [InlineData("{id}{action}", "/{id}{action}")]
+        [InlineData("{id}{action}/", "/{id}{action}/")]
         public void GetSwagger_GeneratesSwaggerDocument_ForApiDescriptionsWithConstrainedRelativePaths(string path, string expectedPath)
         {
             var subject = Subject(

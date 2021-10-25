@@ -53,54 +53,85 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var routeTemplate = apiDescription.RelativePath;
 
-            // We want to filter out qualifiers that indicate a constraint (":") a default value ("=") or an optional parameter ("?").
-            // The filtering should be only done inside of curlies. Outside of them they are part of the normal defined route.
+            // We want to filter out qualifiers that indicate a constract (":")
+            // a default value ("=") or an optional parameter ("?")
 
-            var result = new StringBuilder();
-            var index = 0;
-            int nextOpenCurly;
-            while ((nextOpenCurly = routeTemplate.IndexOf('{', index)) != -1)
+            // Those qualifiers are actually ok to be part of the normal route, outside of a parameter.
+            // To handle this, we're splitting the route into parts where everything outside of a parameter
+            // is a part and the part itself as well. Then the filtering will only by executed on the parts of
+            // the parameters.
+
+            var depth = 0;
+            var lastPartStart = 0;
+            var parts = new List<string>();
+            for (int i = 0; i < routeTemplate.Length; i++)
             {
-                // append everything before the '{' to the result
-                result.Append(routeTemplate.Substring(index, nextOpenCurly - index));
-                index = nextOpenCurly;
+                if (routeTemplate[i] == '{')
+                {
+                    if (depth == 0)
+                    {
+                        if (i - lastPartStart > 0)
+                        {
+                            // if there is a non empty part, add it.
+                            parts.Add(routeTemplate.Substring(lastPartStart, i - lastPartStart));
+                        }
 
-                var nextClosingCurly = routeTemplate.IndexOf('}', index);
-                var contentFromCurly = routeTemplate.Substring(index, nextClosingCurly - index + 1);
+                        lastPartStart = i;
+                    }
 
-                int separatorIndex;
-                if ((separatorIndex = contentFromCurly.IndexOf('=')) != -1)
-                {
-                    // for a default value, take everything after the '='
-                    // e.g. "{controller=Home}/{action=Index}" => "{Home}/{Index}"
-                    result.Append('{');
-                    result.Append(contentFromCurly.Substring(separatorIndex + 1));
+                    depth++;
                 }
-                else if ((separatorIndex = contentFromCurly.IndexOf(':')) != -1)
+                else if (routeTemplate[i] == '}')
                 {
-                    // for a contraint, take everything before the constraint
-                    // e.g. "collection/{id:int}" => "collection/{id}",
-                    result.Append(contentFromCurly.Substring(0, separatorIndex));
-                    result.Append('}');
-                }
-                else if ((separatorIndex = contentFromCurly.IndexOf('?')) != -1)
-                {
-                    // for an option parameter, just leave out the '?'
-                    // e.g. "action/{id?}" => "action/{id}"
-                    result.Append(contentFromCurly.Substring(0, separatorIndex));
-                    result.Append('}');
-                }
-                else
-                {
-                    // there was no separator found, append the whole content
-                    result.Append(contentFromCurly);
-                }
+                    depth--;
 
-                index = nextClosingCurly + 1;
+                    if (depth == 0)
+                    {
+                        // add parameter part including closing curly
+                        parts.Add(routeTemplate.Substring(lastPartStart, i - lastPartStart + 1));
+
+                        // set lastPartStart to next character to not include the closing curly.
+                        lastPartStart = i + 1;
+                    }
+                }
             }
 
-            // use everything after the last curlies
-            result.Append(routeTemplate.Substring(index));
+            // add remainder if it exists
+            if (lastPartStart < routeTemplate.Length)
+            {
+                parts.Add(routeTemplate.Substring(lastPartStart));
+            }
+
+            var result = new StringBuilder();
+
+            foreach (var part in parts)
+            {
+                var filteredPart = part;
+
+                if (filteredPart.StartsWith("{"))
+                {
+                    while (filteredPart.IndexOfAny(new[] { ':', '=', '?' }) != -1)
+                    {
+                        var startIndex = filteredPart.IndexOfAny(new[] { ':', '=', '?' });
+                        var tokenStart = startIndex + 1;
+                    // Only find a single instance of a '}' after our start
+                    // character to avoid capturing escaped curly braces
+                    // in a regular expression constraint
+                    findEndBrace:
+                        var endIndex = filteredPart.IndexOf('}', tokenStart);
+                        if (endIndex < filteredPart.Length - 1 && filteredPart[endIndex + 1] == '}')
+                        {
+                            tokenStart = endIndex + 2;
+                            goto findEndBrace;
+                        }
+
+                        filteredPart = filteredPart.Remove(startIndex, endIndex - startIndex);
+
+                    }
+                }
+
+                result.Append(filteredPart);
+            }
 
             return result.ToString();
         }
