@@ -202,7 +202,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     apiParameter.ModelMetadata.ModelType,
                     schemaRepository,
                     apiParameter.PropertyInfo(),
-                    apiParameter.ParameterInfo())
+                    apiParameter.ParameterInfo(),
+                    apiParameter.RouteInfo)
                 : new OpenApiSchema { Type = "string" };
 
             var parameter = new OpenApiParameter
@@ -232,11 +233,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             Type type,
             SchemaRepository schemaRepository,
             PropertyInfo propertyInfo = null,
-            ParameterInfo parameterInfo = null)
+            ParameterInfo parameterInfo = null,
+            ApiParameterRouteInfo routeInfo = null)
         {
             try
             {
-                return _schemaGenerator.GenerateSchema(type, schemaRepository, propertyInfo, parameterInfo);
+                return _schemaGenerator.GenerateSchema(type, schemaRepository, propertyInfo, parameterInfo, routeInfo);
             }
             catch (Exception ex)
             {

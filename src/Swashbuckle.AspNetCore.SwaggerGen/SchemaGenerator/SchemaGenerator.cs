@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -28,13 +29,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             Type modelType,
             SchemaRepository schemaRepository,
             MemberInfo memberInfo = null,
-            ParameterInfo parameterInfo = null)
+            ParameterInfo parameterInfo = null,
+            ApiParameterRouteInfo routeInfo = null)
         {
             if (memberInfo != null)
                 return GenerateSchemaForMember(modelType, schemaRepository, memberInfo);
 
             if (parameterInfo != null)
-                return GenerateSchemaForParameter(modelType, schemaRepository, parameterInfo);
+                return GenerateSchemaForParameter(modelType, schemaRepository, parameterInfo, routeInfo);
 
             return GenerateSchemaForType(modelType, schemaRepository);
         }
@@ -61,7 +63,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 var customAttributes = memberInfo.GetInlineAndMetadataAttributes();
 
-                // Nullable, ReadOnly & WriteOnly are only relevant for Schema "properties" (i.e. where dataProperty is non-null) 
+                // Nullable, ReadOnly & WriteOnly are only relevant for Schema "properties" (i.e. where dataProperty is non-null)
                 if (dataProperty != null)
                 {
                     schema.Nullable = _generatorOptions.SupportNonNullableReferenceTypes
@@ -96,7 +98,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private OpenApiSchema GenerateSchemaForParameter(
             Type modelType,
             SchemaRepository schemaRepository,
-            ParameterInfo parameterInfo)
+            ParameterInfo parameterInfo,
+            ApiParameterRouteInfo routeInfo)
         {
             var dataContract = GetDataContractFor(modelType);
 
@@ -125,6 +128,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 }
 
                 schema.ApplyValidationAttributes(customAttributes);
+                if (routeInfo != null)
+                {
+                    schema.ApplyRouteConstraints(routeInfo);
+                }
 
                 ApplyFilters(schema, modelType, schemaRepository, parameterInfo: parameterInfo);
             }
