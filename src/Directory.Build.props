@@ -11,7 +11,7 @@
 		<RepositoryType>git</RepositoryType>
 		<RepositoryUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore.git</RepositoryUrl>
 		<VersionPrefix>6.2.3</VersionPrefix>
-    <LangVersion>9</LangVersion>
+		<LangVersion>9</LangVersion>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(APPVEYOR)'=='True' AND '$(APPVEYOR_REPO_TAG)'=='false'">
