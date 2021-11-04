@@ -1,11 +1,16 @@
 ﻿using System;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
 #if NETSTANDARD2_0
 using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
+#endif
+
+#if (!NETSTANDARD2_0)
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Routing;
 #endif
 
 namespace Microsoft.AspNetCore.Builder
@@ -38,10 +43,38 @@ namespace Microsoft.AspNetCore.Builder
             if (options.ConfigObject.Urls == null)
             {
                 var hostingEnv = app.ApplicationServices.GetRequiredService<IWebHostEnvironment>();
-                options.ConfigObject.Urls = new[] { new UrlDescriptor { Name = $"{hostingEnv.ApplicationName} v1", Url = "v1/swagger.json" } };
+                options.ConfigObject.Urls = new[]
+                    { new UrlDescriptor { Name = $"{hostingEnv.ApplicationName} v1", Url = "v1/swagger.json" } };
             }
 
             return app.UseSwaggerUI(options);
         }
+
+
+#if (!NETSTANDARD2_0)
+        public static IEndpointConventionBuilder MapSwaggerUI(this IEndpointRouteBuilder endpoints,
+            Action<SwaggerUIOptions> setupAction = null)
+        {
+            var options = new SwaggerUIOptions();
+            if (setupAction != null)
+            {
+                setupAction(options);
+            }
+            else
+            {
+                options = endpoints.ServiceProvider.GetRequiredService<IOptions<SwaggerUIOptions>>().Value;
+            }
+
+            var swaggerUiDelegate = endpoints.CreateApplicationBuilder()
+                .Use((context, next) =>
+                {
+                    context.SetEndpoint(null);
+                    return next();
+                }).UseSwaggerUI(options)
+                .Build();
+
+            return endpoints.MapGet(options.RoutePrefix + "/{*wildcard}", swaggerUiDelegate);
+        }
+#endif
     }
 }
