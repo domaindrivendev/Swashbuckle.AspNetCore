@@ -68,7 +68,19 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
     _NOTE: If you omit the explicit parameter bindings, the generator will describe them as "query" params by default._
 
-4. In the `Configure` method, insert middleware to expose the generated Swagger as JSON endpoint(s)
+4. In the `Configure` method,you should expose the generated Swagger as JSON endpoint(s) by one of following method:
+
+   - Add endpoints if you're using endpoint-based routing.
+   
+   ```csharp
+   app.MapEndpoints(endpoints => 
+   {
+   	// ...
+   	endpoints.MapSwagger();
+   });
+   ```
+   
+   - Insert middleware
 
     ```csharp
     app.UseSwagger();
