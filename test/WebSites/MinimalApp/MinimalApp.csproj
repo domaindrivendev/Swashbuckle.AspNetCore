@@ -14,8 +14,4 @@
     <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.Cli\Swashbuckle.AspNetCore.Cli.csproj" />
   </ItemGroup>
 
-  <Target Name="SwaggerToFile" AfterTargets="AfterBuild">
-    <Exec Command="$(DotNetSwaggerPath) tofile --host http://localhost:51071 --output swagger.json $(OutputPath)$(AssemblyName).dll v1" />
-  </Target>
-
 </Project>
