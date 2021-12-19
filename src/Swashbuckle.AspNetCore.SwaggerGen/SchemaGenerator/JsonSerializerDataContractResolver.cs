@@ -184,22 +184,35 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var name = propertyInfo.GetCustomAttribute<JsonPropertyNameAttribute>()?.Name
                     ?? _serializerOptions.PropertyNamingPolicy?.ConvertName(propertyInfo.Name) ?? propertyInfo.Name;
 
-                var isSetViaConstructor = propertyInfo.DeclaringType != null && propertyInfo.DeclaringType.GetConstructors()
-                    .SelectMany(c => c.GetParameters())
+                // .NET 5 introduces support for serializing immutable types via parameterized constructors
+                // See https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-immutability?pivots=dotnet-6-0
+                var isDeserializedViaConstructor = false;
+
+#if NET5_0_OR_GREATER
+                var deserializationConstructor = propertyInfo.DeclaringType?.GetConstructors()
+                    .OrderBy(c =>
+                    {
+                        if (c.GetCustomAttribute<System.Text.Json.Serialization.JsonConstructorAttribute>() != null) return 1;
+                        if (c.GetParameters().Length == 0) return 2;
+                        return 3;
+                    })
+                    .FirstOrDefault();
+
+                isDeserializedViaConstructor = deserializationConstructor != null && deserializationConstructor.GetParameters()
                     .Any(p =>
                     {
-                        // STJ supports setting via constructor if either underlying OR JSON names match
                         return
                             string.Equals(p.Name, propertyInfo.Name, StringComparison.OrdinalIgnoreCase) ||
                             string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase);
                     });
+#endif
 
                 dataProperties.Add(
                     new DataProperty(
                         name: name,
                         isRequired: false,
                         isNullable: propertyInfo.PropertyType.IsReferenceOrNullableType(),
-                        isReadOnly: propertyInfo.IsPubliclyReadable() && !propertyInfo.IsPubliclyWritable() && !isSetViaConstructor,
+                        isReadOnly: propertyInfo.IsPubliclyReadable() && !propertyInfo.IsPubliclyWritable() && !isDeserializedViaConstructor,
                         isWriteOnly: propertyInfo.IsPubliclyWritable() && !propertyInfo.IsPubliclyReadable(),
                         memberType: propertyInfo.PropertyType,
                         memberInfo: propertyInfo));
