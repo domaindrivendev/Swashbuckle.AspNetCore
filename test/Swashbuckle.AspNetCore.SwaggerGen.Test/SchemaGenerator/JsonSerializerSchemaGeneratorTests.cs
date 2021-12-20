@@ -333,16 +333,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.True(schema.Properties["WriteOnlyProperty"].WriteOnly);
         }
 
-        [Fact]
-        public void GenerateSchema_DoesNotSetReadOnlyFlag_IfPropertyIsReadOnlyButCanBeSetViaConstructor()
+        [Theory]
+        [InlineData(typeof(TypeWithParameterizedConstructor), nameof(TypeWithParameterizedConstructor.Id), false)]
+        [InlineData(typeof(TypeWithParameterlessAndParameterizedConstructor), nameof(TypeWithParameterlessAndParameterizedConstructor.Id), true)]
+        [InlineData(typeof(TypeWithParameterlessAndJsonAnnotatedConstructor), nameof(TypeWithParameterlessAndJsonAnnotatedConstructor.Id), false)]
+        public void GenerateSchema_DoesNotSetReadOnlyFlag_IfPropertyIsReadOnlyButCanBeSetViaConstructor(
+            Type type,
+            string propertyName,
+            bool expectedReadOnly
+        )
         {
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(TypeWithPropertiesSetViaConstructor), schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(type, schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.False(schema.Properties["Id"].ReadOnly);
-            Assert.False(schema.Properties["Desc"].ReadOnly);
+            Assert.Equal(expectedReadOnly, schema.Properties[propertyName].ReadOnly);
         }
 
         [Fact]
