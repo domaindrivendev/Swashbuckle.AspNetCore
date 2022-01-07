@@ -41,6 +41,7 @@ namespace Swashbuckle.AspNetCore.Annotations
         public string[] Required { get; set; }
 
         public string Title { get; set; }
+        public string Example { get; set; }
 
         internal bool? ReadOnlyFlag { get; private set; }
 
