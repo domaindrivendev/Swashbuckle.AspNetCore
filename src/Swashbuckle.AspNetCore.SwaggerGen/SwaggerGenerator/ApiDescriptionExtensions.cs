@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Text;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 
@@ -9,6 +10,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class ApiDescriptionExtensions
     {
+        private static readonly char[] Disallowed = { ':', '=', '?' };
+
         public static bool TryGetMethodInfo(this ApiDescription apiDescription, out MethodInfo methodInfo)
         {
             if (apiDescription.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor)
@@ -51,28 +54,55 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         internal static string RelativePathSansParameterConstraints(this ApiDescription apiDescription)
         {
             var routeTemplate = apiDescription.RelativePath;
-            
-            // We want to filter out qualifiers that indicate a constract (":")
+
+            // We want to filter out qualifiers that indicate a constraint (":")
             // a default value ("=") or an optional parameter ("?")
-            while (routeTemplate.IndexOfAny(new[] { ':', '=', '?' }) != -1)
+            if (routeTemplate.IndexOfAny(Disallowed) == -1)
             {
-                var startIndex = routeTemplate.IndexOfAny(new[] { ':', '=', '?' }) ;
-                var tokenStart = startIndex + 1;
-                // Only find a single instance of a '}' after our start
-                // character to avoid capturing escaped curly braces
-                // in a regular expression constraint
+                // Quick-exit if there's nothing to remove.
+                return routeTemplate;
+            }
+
+            var modifiedTemplate = new StringBuilder(routeTemplate.Length);
+            var index = 0;
+            var isBetweenCurlyBraces = false;
+            while (index < routeTemplate.Length)
+            {
+                var current = routeTemplate[index];
+
+                if (current == '{')
+                {
+                    isBetweenCurlyBraces = true;
+                    goto next;
+                }
+
+                if (current == '}')
+                {
+                    isBetweenCurlyBraces = false;
+                    goto next;
+                }
+
+                if (isBetweenCurlyBraces && Disallowed.Contains(current))
+                {
+                    // Only find a single instance of a '}' after our start
+                    // character to avoid capturing escaped curly braces
+                    // in a regular expression constraint
                 findEndBrace:
-                    var endIndex = routeTemplate.IndexOf('}', tokenStart);
-                    if (endIndex < routeTemplate.Length - 1 && routeTemplate[endIndex + 1] == '}')
+                    index = routeTemplate.IndexOf('}', index + 1);
+                    if (index < routeTemplate.Length - 1 && routeTemplate[index + 1] == '}')
                     {
-                        tokenStart = endIndex + 2;
+                        index += 2;
                         goto findEndBrace;
                     }
+                    continue;
+                }
 
-                routeTemplate = routeTemplate.Remove(startIndex, endIndex - startIndex);
+            next:
+                modifiedTemplate = modifiedTemplate.Append(current);
+                index += 1;
             }
-            
-            return routeTemplate;
+
+            return modifiedTemplate.ToString();
         }
     }
 }
