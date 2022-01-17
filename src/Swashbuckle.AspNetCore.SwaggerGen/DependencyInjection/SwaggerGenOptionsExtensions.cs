@@ -106,6 +106,18 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
+        /// Provide a custom comprarer to sort schemas with
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="schemaComparer"></param>
+        public static void SortSchemasWith(
+            this SwaggerGenOptions swaggerGenOptions,
+            IComparer<string> schemaComparer)
+        {
+            swaggerGenOptions.SwaggerGeneratorOptions.SchemaComparer = schemaComparer;
+        }
+
+        /// <summary>
         /// Describe all parameters, regardless of how they appear in code, in camelCase
         /// </summary>
         public static void DescribeAllParametersInCamelCase(this SwaggerGenOptions swaggerGenOptions)
