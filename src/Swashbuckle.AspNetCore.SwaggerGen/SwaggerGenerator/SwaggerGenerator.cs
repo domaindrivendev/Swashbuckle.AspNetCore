@@ -58,7 +58,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 filter.Apply(swaggerDoc, filterContext);
             }
 
-            swaggerDoc.Components.Schemas = new SortedDictionary<string, OpenApiSchema>(swaggerDoc.Components.Schemas, StringComparer.Ordinal);
+            swaggerDoc.Components.Schemas = new SortedDictionary<string, OpenApiSchema>(swaggerDoc.Components.Schemas, _options.SchemaComparer);
 
             return swaggerDoc;
         }
