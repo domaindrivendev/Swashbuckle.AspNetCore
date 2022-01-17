@@ -51,6 +51,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         [Theory]
         [InlineData("resources/{id}", "/resources/{id}")]
+        [InlineData("resources;secondary={secondary}", "/resources;secondary={secondary}")]
+        [InlineData("resources:deposit", "/resources:deposit")]
         [InlineData("{category}/{product?}/{sku}", "/{category}/{product}/{sku}")]
         [InlineData("{area=Home}/{controller:required}/{id=0:int}", "/{area}/{controller}/{id}")]
         [InlineData("{category}/product/{group?}", "/{category}/product/{group}")]
@@ -79,7 +81,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.Equal("V1", document.Info.Version);
             Assert.Equal("Test API", document.Info.Title);
-            Assert.Equal(new[] { expectedPath }, document.Paths.Keys.ToArray());
+            var (actualPath, _) = Assert.Single(document.Paths);
+            Assert.Equal(expectedPath, actualPath);
         }
 
         [Fact]
@@ -751,7 +754,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var document = subject.GetSwagger("v1");
 
-            Assert.Equal(new[] { "Some", "Tags", "Here" }, document.Paths["/resource"].Operations[OperationType.Post].Tags.Select(t => t.Name)); 
+            Assert.Equal(new[] { "Some", "Tags", "Here" }, document.Paths["/resource"].Operations[OperationType.Post].Tags.Select(t => t.Name));
         }
 
         [Fact]
