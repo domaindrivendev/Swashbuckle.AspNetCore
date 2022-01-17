@@ -40,7 +40,7 @@ namespace Microsoft.AspNetCore.Builder
         }
 
 #if (!NETSTANDARD2_0)
-        public static IEndpointRouteBuilder MapSwagger(
+        public static IEndpointConventionBuilder MapSwagger(
             this IEndpointRouteBuilder endpoints,
             string pattern = "/swagger/{documentName}/swagger.{json|yaml}",
             Action<SwaggerEndpointOptions> setupAction = null)
@@ -65,9 +65,7 @@ namespace Microsoft.AspNetCore.Builder
                 .UseSwagger(endpointSetupAction)
                 .Build();
 
-            endpoints.MapGet(pattern, pipeline);
-
-            return endpoints;
+            return endpoints.MapGet(pattern, pipeline);
         }
 #endif
     }
