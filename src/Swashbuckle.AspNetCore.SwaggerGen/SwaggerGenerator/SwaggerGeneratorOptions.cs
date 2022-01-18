@@ -19,6 +19,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             OperationIdSelector = DefaultOperationIdSelector;
             TagsSelector = DefaultTagsSelector;
             SortKeySelector = DefaultSortKeySelector;
+            SchemaComparer = StringComparer.Ordinal;
             Servers = new List<OpenApiServer>();
             SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>();
             SecurityRequirements = new List<OpenApiSecurityRequirement>();
@@ -49,6 +50,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public IDictionary<string, OpenApiSecurityScheme> SecuritySchemes { get; set; }
 
         public IList<OpenApiSecurityRequirement> SecurityRequirements { get; set; }
+
+        public IComparer<string> SchemaComparer { get; set; }
 
         public IList<IParameterFilter> ParameterFilters { get; set; }
 
@@ -91,7 +94,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 return new List<string>(tagsMetadata.Tags);
             }
-            return new[] { apiDescription.ActionDescriptor.RouteValues["controller"] };        
+            return new[] { apiDescription.ActionDescriptor.RouteValues["controller"] };
 #endif
         }
 
