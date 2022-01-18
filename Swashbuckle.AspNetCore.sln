@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28714.193
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31717.71
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{15A55F4A-FC33-4D96-BAAD-FBDCDD96D5F5}"
 EndProject
@@ -48,47 +48,49 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{0ADCB223-F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebSites", "WebSites", "{DB3F57FC-1472-4F03-B551-43394DA3C5EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Basic", "test\WebSites\Basic\Basic.csproj", "{569A93BE-931F-41F1-8D74-B1CF1399B580}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Basic", "test\WebSites\Basic\Basic.csproj", "{569A93BE-931F-41F1-8D74-B1CF1399B580}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CliExample", "test\WebSites\CliExample\CliExample.csproj", "{3DDA9029-8FF9-4477-8B14-473D741C125E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CliExample", "test\WebSites\CliExample\CliExample.csproj", "{3DDA9029-8FF9-4477-8B14-473D741C125E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CliExampleWithFactory", "test\WebSites\CliExampleWithFactory\CliExampleWithFactory.csproj", "{B0FE6E3D-21A6-4873-843B-C6B08AAC214A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CliExampleWithFactory", "test\WebSites\CliExampleWithFactory\CliExampleWithFactory.csproj", "{B0FE6E3D-21A6-4873-843B-C6B08AAC214A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConfigFromFile", "test\WebSites\ConfigFromFile\ConfigFromFile.csproj", "{29E029D8-903F-447F-B15A-EA406AD5A743}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConfigFromFile", "test\WebSites\ConfigFromFile\ConfigFromFile.csproj", "{29E029D8-903F-447F-B15A-EA406AD5A743}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomUIConfig", "test\WebSites\CustomUIConfig\CustomUIConfig.csproj", "{F3318D97-60E4-45F1-9DD8-007323C06CB8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomUIConfig", "test\WebSites\CustomUIConfig\CustomUIConfig.csproj", "{F3318D97-60E4-45F1-9DD8-007323C06CB8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomUIIndex", "test\WebSites\CustomUIIndex\CustomUIIndex.csproj", "{C6F447A4-ED99-4932-AC29-950BD794D0B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomUIIndex", "test\WebSites\CustomUIIndex\CustomUIIndex.csproj", "{C6F447A4-ED99-4932-AC29-950BD794D0B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GenericControllers", "test\WebSites\GenericControllers\GenericControllers.csproj", "{62B46064-24F0-417A-8EA0-34684720A379}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenericControllers", "test\WebSites\GenericControllers\GenericControllers.csproj", "{62B46064-24F0-417A-8EA0-34684720A379}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultipleVersions", "test\WebSites\MultipleVersions\MultipleVersions.csproj", "{1D31109C-377C-40C7-9A06-DB078FC24578}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultipleVersions", "test\WebSites\MultipleVersions\MultipleVersions.csproj", "{1D31109C-377C-40C7-9A06-DB078FC24578}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetCore21", "test\WebSites\NetCore21\NetCore21.csproj", "{E46D07EE-5EA6-4630-8FD2-B2150F35D33A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCore21", "test\WebSites\NetCore21\NetCore21.csproj", "{E46D07EE-5EA6-4630-8FD2-B2150F35D33A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NswagClientExample", "test\WebSites\NswagClientExample\NswagClientExample.csproj", "{8CA201CD-7F59-4B7D-8888-76528F2DF3C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NswagClientExample", "test\WebSites\NswagClientExample\NswagClientExample.csproj", "{8CA201CD-7F59-4B7D-8888-76528F2DF3C8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OAuth2Integration", "test\WebSites\OAuth2Integration\OAuth2Integration.csproj", "{0DA4F00E-D365-4D27-B8C4-F6D4577F2093}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OAuth2Integration", "test\WebSites\OAuth2Integration\OAuth2Integration.csproj", "{0DA4F00E-D365-4D27-B8C4-F6D4577F2093}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReDoc", "test\WebSites\ReDoc\ReDoc.csproj", "{48634D50-2680-4103-8CDA-8B6D99291AC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReDoc", "test\WebSites\ReDoc\ReDoc.csproj", "{48634D50-2680-4103-8CDA-8B6D99291AC5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestFirst.IntegrationTests", "test\WebSites\TestFirst.IntegrationTests\TestFirst.IntegrationTests.csproj", "{12430BE8-FEB2-49E1-A944-687744DC3203}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestFirst.IntegrationTests", "test\WebSites\TestFirst.IntegrationTests\TestFirst.IntegrationTests.csproj", "{12430BE8-FEB2-49E1-A944-687744DC3203}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestFirst", "test\WebSites\TestFirst\TestFirst.csproj", "{E59CDCA2-8C49-4D73-ACB1-BB4B0D03BC81}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestFirst", "test\WebSites\TestFirst\TestFirst.csproj", "{E59CDCA2-8C49-4D73-ACB1-BB4B0D03BC81}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swashbuckle.AspNetCore.Annotations.Test", "test\Swashbuckle.AspNetCore.Annotations.Test\Swashbuckle.AspNetCore.Annotations.Test.csproj", "{C856B095-5AD2-4068-AE51-2C9457B840A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore.Annotations.Test", "test\Swashbuckle.AspNetCore.Annotations.Test\Swashbuckle.AspNetCore.Annotations.Test.csproj", "{C856B095-5AD2-4068-AE51-2C9457B840A3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swashbuckle.AspNetCore.ApiTesting.Test", "test\Swashbuckle.AspNetCore.ApiTesting.Test\Swashbuckle.AspNetCore.ApiTesting.Test.csproj", "{CB95026D-03AC-4D19-B768-1C83F03B4F09}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore.ApiTesting.Test", "test\Swashbuckle.AspNetCore.ApiTesting.Test\Swashbuckle.AspNetCore.ApiTesting.Test.csproj", "{CB95026D-03AC-4D19-B768-1C83F03B4F09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swashbuckle.AspNetCore.Cli.Test", "test\Swashbuckle.AspNetCore.Cli.Test\Swashbuckle.AspNetCore.Cli.Test.csproj", "{53E3C3CF-54D6-41C0-A14E-57F0E792768A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore.Cli.Test", "test\Swashbuckle.AspNetCore.Cli.Test\Swashbuckle.AspNetCore.Cli.Test.csproj", "{53E3C3CF-54D6-41C0-A14E-57F0E792768A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swashbuckle.AspNetCore.IntegrationTests", "test\Swashbuckle.AspNetCore.IntegrationTests\Swashbuckle.AspNetCore.IntegrationTests.csproj", "{35075180-DC95-4689-9059-01B83B61495C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore.IntegrationTests", "test\Swashbuckle.AspNetCore.IntegrationTests\Swashbuckle.AspNetCore.IntegrationTests.csproj", "{35075180-DC95-4689-9059-01B83B61495C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swashbuckle.AspNetCore.Newtonsoft.Test", "test\Swashbuckle.AspNetCore.Newtonsoft.Test\Swashbuckle.AspNetCore.Newtonsoft.Test.csproj", "{820BB929-97CF-441D-B7E3-507DF4B15D09}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore.Newtonsoft.Test", "test\Swashbuckle.AspNetCore.Newtonsoft.Test\Swashbuckle.AspNetCore.Newtonsoft.Test.csproj", "{820BB929-97CF-441D-B7E3-507DF4B15D09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swashbuckle.AspNetCore.SwaggerGen.Test", "test\Swashbuckle.AspNetCore.SwaggerGen.Test\Swashbuckle.AspNetCore.SwaggerGen.Test.csproj", "{76692D68-C38C-4A7D-B3DA-DA78A393E266}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore.SwaggerGen.Test", "test\Swashbuckle.AspNetCore.SwaggerGen.Test\Swashbuckle.AspNetCore.SwaggerGen.Test.csproj", "{76692D68-C38C-4A7D-B3DA-DA78A393E266}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Swashbuckle.AspNetCore.TestSupport", "test\Swashbuckle.AspNetCore.TestSupport\Swashbuckle.AspNetCore.TestSupport.csproj", "{66590FBA-5FDD-4AC9-AF91-26ADAB33CCB8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore.TestSupport", "test\Swashbuckle.AspNetCore.TestSupport\Swashbuckle.AspNetCore.TestSupport.csproj", "{66590FBA-5FDD-4AC9-AF91-26ADAB33CCB8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinimalApp", "test\WebSites\MinimalApp\MinimalApp.csproj", "{3D0126CB-5439-483C-B2D5-4B4BE111D15C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -472,6 +474,18 @@ Global
 		{66590FBA-5FDD-4AC9-AF91-26ADAB33CCB8}.Release|x64.Build.0 = Release|Any CPU
 		{66590FBA-5FDD-4AC9-AF91-26ADAB33CCB8}.Release|x86.ActiveCfg = Release|Any CPU
 		{66590FBA-5FDD-4AC9-AF91-26ADAB33CCB8}.Release|x86.Build.0 = Release|Any CPU
+		{3D0126CB-5439-483C-B2D5-4B4BE111D15C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D0126CB-5439-483C-B2D5-4B4BE111D15C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D0126CB-5439-483C-B2D5-4B4BE111D15C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3D0126CB-5439-483C-B2D5-4B4BE111D15C}.Debug|x64.Build.0 = Debug|Any CPU
+		{3D0126CB-5439-483C-B2D5-4B4BE111D15C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3D0126CB-5439-483C-B2D5-4B4BE111D15C}.Debug|x86.Build.0 = Debug|Any CPU
+		{3D0126CB-5439-483C-B2D5-4B4BE111D15C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D0126CB-5439-483C-B2D5-4B4BE111D15C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D0126CB-5439-483C-B2D5-4B4BE111D15C}.Release|x64.ActiveCfg = Release|Any CPU
+		{3D0126CB-5439-483C-B2D5-4B4BE111D15C}.Release|x64.Build.0 = Release|Any CPU
+		{3D0126CB-5439-483C-B2D5-4B4BE111D15C}.Release|x86.ActiveCfg = Release|Any CPU
+		{3D0126CB-5439-483C-B2D5-4B4BE111D15C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -509,6 +523,7 @@ Global
 		{820BB929-97CF-441D-B7E3-507DF4B15D09} = {0ADCB223-F375-45AB-8BC4-834EC9C69554}
 		{76692D68-C38C-4A7D-B3DA-DA78A393E266} = {0ADCB223-F375-45AB-8BC4-834EC9C69554}
 		{66590FBA-5FDD-4AC9-AF91-26ADAB33CCB8} = {0ADCB223-F375-45AB-8BC4-834EC9C69554}
+		{3D0126CB-5439-483C-B2D5-4B4BE111D15C} = {DB3F57FC-1472-4F03-B551-43394DA3C5EB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {36FC6A67-247D-4149-8EDD-79FFD1A75F51}

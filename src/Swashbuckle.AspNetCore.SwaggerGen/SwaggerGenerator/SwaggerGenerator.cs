@@ -58,7 +58,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 filter.Apply(swaggerDoc, filterContext);
             }
 
-            swaggerDoc.Components.Schemas = new SortedDictionary<string, OpenApiSchema>(swaggerDoc.Components.Schemas, StringComparer.Ordinal);
+            swaggerDoc.Components.Schemas = new SortedDictionary<string, OpenApiSchema>(swaggerDoc.Components.Schemas, _options.SchemaComparer);
 
             return swaggerDoc;
         }
@@ -331,6 +331,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             // If there's content types surfaced by ApiExplorer, use them
             var apiExplorerContentTypes = apiDescription.SupportedRequestFormats
                 .Select(format => format.MediaType)
+                .Where(x => x != null)
                 .Distinct();
             if (apiExplorerContentTypes.Any()) return apiExplorerContentTypes;
 

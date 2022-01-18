@@ -9,6 +9,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         private static Regex RefTagPattern = new Regex(@"<(see|paramref) (name|cref)=""([TPF]{1}:)?(?<display>.+?)"" ?/>");
         private static Regex CodeTagPattern = new Regex(@"<c>(?<display>.+?)</c>");
+        private static Regex MultilineCodeTagPattern = new Regex(@"<code>(?<display>.+?)</code>", RegexOptions.Singleline);
         private static Regex ParaTagPattern = new Regex(@"<para>(?<display>.+?)</para>", RegexOptions.Singleline);
 
         public static string Humanize(string text)
@@ -16,12 +17,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (text == null)
                 throw new ArgumentNullException("text");
 
-            //Call DecodeXml at last to avoid entities like &lt and &gt to break valid xml          
+            //Call DecodeXml at last to avoid entities like &lt and &gt to break valid xml
 
             return text
                 .NormalizeIndentation()
                 .HumanizeRefTags()
                 .HumanizeCodeTags()
+                .HumanizeMultilineCodeTags()
                 .HumanizeParaTags()
                 .DecodeXml();
         }
@@ -92,7 +94,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private static string HumanizeCodeTags(this string text)
         {
-            return CodeTagPattern.Replace(text, (match) => "{" + match.Groups["display"].Value + "}");
+            return CodeTagPattern.Replace(text, (match) => "`" + match.Groups["display"].Value + "`");
+        }
+
+        private static string HumanizeMultilineCodeTags(this string text)
+        {
+            return MultilineCodeTagPattern.Replace(text, (match) => "```" + match.Groups["display"].Value + "```");
         }
 
         private static string HumanizeParaTags(this string text)
