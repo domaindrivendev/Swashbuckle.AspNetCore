@@ -55,6 +55,14 @@ namespace Microsoft.AspNetCore.Builder
         {
             options.ConfigObject.DeepLinking = true;
         }
+        /// <summary>
+        /// Enables persist authorization data
+        /// </summary>
+        /// <param name="options"></param>
+        public static void EnablePersistAuthorization(this SwaggerUIOptions options)
+        {
+            options.ConfigObject.PersistAuthorization = true;
+        }
 
         /// <summary>
         /// Controls the display of operationId in operations list
@@ -126,6 +134,15 @@ namespace Microsoft.AspNetCore.Builder
         public static void EnableFilter(this SwaggerUIOptions options, string expression = null)
         {
             options.ConfigObject.Filter = expression ?? "";
+        }
+
+        /// <summary>
+        /// Enables the "Try it out" section by default.
+        /// </summary>
+        /// <param name="options"></param>
+        public static void EnableTryItOutByDefault(this SwaggerUIOptions options)
+        {
+            options.ConfigObject.TryItOutEnabled = true;
         }
 
         /// <summary>

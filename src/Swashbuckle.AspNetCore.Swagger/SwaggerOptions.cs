@@ -14,18 +14,17 @@ namespace Swashbuckle.AspNetCore.Swagger
         }
 
         /// <summary>
-        /// Sets a custom route for the Swagger JSON endpoint(s). Must include the {documentName} parameter
+        /// Sets a custom route for the Swagger JSON/YAML endpoint(s). Must include the {documentName} parameter
         /// </summary>
         public string RouteTemplate { get; set; } = "swagger/{documentName}/swagger.{json|yaml}";
 
-        
         /// <summary>
-        /// Return Swagger JSON in the V2 format rather than V3
+        /// Return Swagger JSON/YAML in the V2 format rather than V3
         /// </summary>
         public bool SerializeAsV2 { get; set; }
 
         /// <summary>
-        /// Actions that can be applied SwaggerDocument's before they're serialized to JSON.
+        /// Actions that can be applied to an OpenApiDocument before it's serialized.
         /// Useful for setting metadata that's derived from the current request
         /// </summary>
         public List<Action<OpenApiDocument, HttpRequest>> PreSerializeFilters { get; private set; }

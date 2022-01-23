@@ -1,16 +1,20 @@
 image: Visual Studio 2019
 
+install:
+  - ps: Invoke-WebRequest "https://dot.net/v1/dotnet-install.ps1" -OutFile "./dotnet-install.ps1"
+  - ps: ./dotnet-install.ps1 -JsonFile global.json
+
 init:
 - git config --global core.autocrlf true
 
 environment:
-  DOTNET_VERSION: 5.0.100
+  DOTNET_VERSION: "6.0.100-rc.2.21505.57"
 
 build_script:
-- ps: ci\build.ps1 
+- ps: dotnet pack -c Release -o artifacts
 
 test_script:
-- ps: ci\test.ps1
+- ps: dotnet test
 
 artifacts:
 - path: artifacts\*.nupkg

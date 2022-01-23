@@ -1,18 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>Swagger Generator for APIs built on ASP.NET Core</Description>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.0;net5.0</TargetFrameworks>
-    <NoWarn>$(NoWarn);1591</NoWarn>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <AssemblyName>Swashbuckle.AspNetCore.SwaggerGen</AssemblyName>
     <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.SwaggerGen.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly Condition="'$(OS)'=='Windows_NT'">true</SignAssembly>
-    <PackageId>Swashbuckle.AspNetCore.SwaggerGen</PackageId>
+    <Description>Swagger Generator for APIs built on ASP.NET Core</Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>
-    <PackageProjectUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</PackageProjectUrl>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore.git</RepositoryUrl>
+    <SignAssembly Condition="'$(OS)'=='Windows_NT'">true</SignAssembly>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.0;net5.0;net6.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>

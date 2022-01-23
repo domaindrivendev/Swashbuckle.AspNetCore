@@ -3,39 +3,34 @@
 
   <PropertyGroup>
     <Description>Swagger tools for documenting APIs built on ASP.NET Core</Description>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.0;net5.0</TargetFrameworks>
-    <PackageId>Swashbuckle.AspNetCore</PackageId>
-    <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>
-    <PackageProjectUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</PackageProjectUrl>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore.git</RepositoryUrl>
-
-    <!-- Package contains only the final .nuspec file with a few listed dependencies. -->
     <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);PopulateNuspec</GenerateNuspecDependsOn>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <IncludeContentInPack>false</IncludeContentInPack>
     <IncludeSource>false</IncludeSource>
     <IncludeSymbols>false</IncludeSymbols>
-    <NuspecFile>$(MSBuildProjectName).nuspec</NuspecFile>
     <MicrosoftExtensionsApiDescriptionServerPackageVersion>3.0.0</MicrosoftExtensionsApiDescriptionServerPackageVersion>
+    <NuspecFile>$(MSBuildProjectName).nuspec</NuspecFile>
+    <PackageId>Swashbuckle.AspNetCore</PackageId>
+    <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.0;net5.0;net6.0</TargetFrameworks>
   </PropertyGroup>
 
   <Target Name="PopulateNuspec">
     <PropertyGroup>
       <NuspecProperties>
-        id=$(PackageId);
         authors=$(Authors);
         configuration=$(Configuration);
         description=$(PackageDescription);
+        id=$(PackageId);
         licenseExpression=$(PackageLicenseExpression);
         licenseUrl=$(LicenseUrl);
+        microsoftExtensionsApiDescriptionServerPackageVersion=$(MicrosoftExtensionsApiDescriptionServerPackageVersion);
         projectUrl=$(PackageProjectUrl);
         repositoryType=$(RepositoryType);
         repositoryUrl=$(RepositoryUrl);
         tags=$(PackageTags.Replace(';', ' '));
         targetPath=$(TargetPath);
         version=$(PackageVersion);
-        microsoftExtensionsApiDescriptionServerPackageVersion=$(MicrosoftExtensionsApiDescriptionServerPackageVersion);
       </NuspecProperties>
     </PropertyGroup>
   </Target>

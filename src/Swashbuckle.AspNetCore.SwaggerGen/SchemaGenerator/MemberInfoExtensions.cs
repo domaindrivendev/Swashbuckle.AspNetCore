@@ -50,7 +50,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (nullableAttribute.GetType().GetField(NullableFlagsFieldName) is FieldInfo field &&
                 field.GetValue(nullableAttribute) is byte[] flags &&
-                flags.Length >= 0 && flags[0] == 1)
+                flags.Length >= 1 && flags[0] == 1)
             {
                 return true;
             }
@@ -69,16 +69,30 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private static bool GetNullableFallbackValue(this MemberInfo memberInfo)
         {
-            var nullableContext = memberInfo.DeclaringType
-                .GetCustomAttributes()
+            var declaringTypes = memberInfo.DeclaringType.IsNested
+                ? new Type[] { memberInfo.DeclaringType, memberInfo.DeclaringType.DeclaringType }
+                : new Type[] { memberInfo.DeclaringType };
+
+            foreach (var declaringType in declaringTypes)
+            {
+                var attributes = (IEnumerable<object>)declaringType.GetCustomAttributes(false);
+
+                var nullableContext = attributes
                 .Where(attr => string.Equals(attr.GetType().FullName, NullableContextAttributeFullTypeName))
                 .FirstOrDefault();
 
-            if (nullableContext != null && nullableContext.GetType().GetField(FlagFieldName) is FieldInfo field &&
-                field.GetValue(nullableContext) is byte flag &&
-                flag == 1)
-            {
-                return true;
+                if (nullableContext != null)
+                {
+                    if (nullableContext.GetType().GetField(FlagFieldName) is FieldInfo field &&
+                    field.GetValue(nullableContext) is byte flag && flag == 1)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
             }
 
             return false;

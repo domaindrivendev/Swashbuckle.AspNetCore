@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Text;
@@ -14,6 +15,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.AspNetCore.Http.Extensions;
+using System.Linq;
 
 #if NETSTANDARD2_0
 using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
@@ -40,8 +42,12 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             _staticFileMiddleware = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options);
 
             _jsonSerializerOptions = new JsonSerializerOptions();
-            _jsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+#if NET6_0
+            _jsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+#else
             _jsonSerializerOptions.IgnoreNullValues = true;
+#endif
+            _jsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             _jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, false));
         }
 
@@ -51,15 +57,18 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             var path = httpContext.Request.Path.Value;
 
             // If the RoutePrefix is requested (with or without trailing slash), redirect to index URL
-            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$",  RegexOptions.IgnoreCase))
+            if (httpMethod == "GET" && _options.RoutePrefix.Equals(path.Trim('/'), StringComparison.OrdinalIgnoreCase))
             {
-                var indexUrl = httpContext.Request.GetEncodedUrl().TrimEnd('/') + "/index.html";
+                // Use relative redirect to support proxy environments
+                var relativeIndexUrl = string.IsNullOrEmpty(path) || path.EndsWith("/")
+                    ? "index.html"
+                    : $"{path.Split('/').Last()}/index.html";
 
-                RespondWithRedirect(httpContext.Response, indexUrl);
+                RespondWithRedirect(httpContext.Response, relativeIndexUrl);
                 return;
             }
 
-            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/{Regex.Escape(_options.RoutePrefix)}/?index.html$",  RegexOptions.IgnoreCase))
+            if (httpMethod == "GET" && $"/{_options.RoutePrefix}/index.html".Equals(path, StringComparison.OrdinalIgnoreCase))
             {
                 await RespondWithIndexHtml(httpContext.Response);
                 return;
@@ -96,8 +105,10 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
 
             using (var stream = _options.IndexStream())
             {
+                using var reader = new StreamReader(stream);
+
                 // Inject arguments before writing to response
-                var htmlBuilder = new StringBuilder(new StreamReader(stream).ReadToEnd());
+                var htmlBuilder = new StringBuilder(await reader.ReadToEndAsync());
                 foreach (var entry in GetIndexArguments())
                 {
                     htmlBuilder.Replace(entry.Key, entry.Value);

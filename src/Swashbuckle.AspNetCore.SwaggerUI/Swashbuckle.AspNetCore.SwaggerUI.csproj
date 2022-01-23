@@ -1,23 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>Middleware to expose an embedded version of the swagger-ui from an ASP.NET Core application</Description>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.0;net5.0</TargetFrameworks>
-    <NoWarn>$(NoWarn);1591</NoWarn>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <AssemblyName>Swashbuckle.AspNetCore.SwaggerUI</AssemblyName>
     <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.SwaggerUI.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly Condition="'$(OS)'=='Windows_NT'">true</SignAssembly>
-    <PackageId>Swashbuckle.AspNetCore.SwaggerUI</PackageId>
+    <Description>Middleware to expose an embedded version of the swagger-ui from an ASP.NET Core application</Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>
-    <PackageProjectUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</PackageProjectUrl>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore.git</RepositoryUrl>
-  </PropertyGroup>
-
-  <!-- Use Visual Studio npm package if it is installed. -->
-  <PropertyGroup Condition="Exists('$(VsInstallRoot)\Web\External\npm.cmd')">
-    <Path>$(Path)$(VsInstallRoot)\Web\External\;</Path>
+    <SignAssembly Condition="'$(OS)'=='Windows_NT'">true</SignAssembly>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.0;net5.0;net6.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -36,11 +26,11 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
-  <Target Name="NpmInstall" BeforeTargets="Build">
-    <Exec Command="npm install" EnvironmentVariables="PATH=$(Path.Replace(';', '%3B'))" ContinueOnError="true">
+  <Target Name="NpmInstall" BeforeTargets="DispatchToInnerBuilds">
+    <Exec Command="npm install" ContinueOnError="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
     </Exec>
-    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js/npm is required to build this project. To continue, please install Node.js from https://nodejs.org/ or Visual Studio Installer, and then restart your command prompt or IDE." />
+    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js/npm is required to build this project." />
   </Target>
 
 </Project>

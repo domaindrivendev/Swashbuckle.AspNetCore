@@ -5,15 +5,22 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Models;
 using Xunit;
 using Swashbuckle.AspNetCore.TestSupport;
+using System.Collections.Generic;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     public class XmlCommentsRequestBodyFilterTests
     {
         [Fact]
-        public void Apply_SetsDescription_FromActionParamTag()
+        public void Apply_SetsDescriptionAndExample_FromActionParamTag()
         {
-            var requestbody = new OpenApiRequestBody();
+            var requestBody = new OpenApiRequestBody
+            {
+                Content = new Dictionary<string, OpenApiMediaType>
+                {
+                    ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = "string" } }
+                }
+            };
             var parameterInfo = typeof(FakeControllerWithXmlComments)
                 .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithParamTags))
                 .GetParameters()[0];
@@ -23,15 +30,23 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             };
             var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
 
-            Subject().Apply(requestbody, filterContext);
+            Subject().Apply(requestBody, filterContext);
 
-            Assert.Equal("Description for param1", requestbody.Description);
+            Assert.Equal("Description for param1", requestBody.Description);
+            Assert.NotNull(requestBody.Content["application/json"].Example);
+            Assert.Equal("\"Example for param1\"", requestBody.Content["application/json"].Example.ToJson());
         }
 
         [Fact]
-        public void Apply_SetsDescription_FromUnderlyingGenericTypeActionParamTag()
+        public void Apply_SetsDescriptionAndExample_FromUnderlyingGenericTypeActionParamTag()
         {
-            var requestbody = new OpenApiRequestBody();
+            var requestBody = new OpenApiRequestBody
+            {
+                Content = new Dictionary<string, OpenApiMediaType>
+                {
+                    ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = "string" } }
+                }
+            };
             var parameterInfo = typeof(FakeConstructedControllerWithXmlComments)
                 .GetMethod(nameof(FakeConstructedControllerWithXmlComments.ActionWithParamTags))
                 .GetParameters()[0];
@@ -41,15 +56,23 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             };
             var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
 
-            Subject().Apply(requestbody, filterContext);
+            Subject().Apply(requestBody, filterContext);
 
-            Assert.Equal("Description for param1", requestbody.Description);
+            Assert.Equal("Description for param1", requestBody.Description);
+            Assert.NotNull(requestBody.Content["application/json"].Example);
+            Assert.Equal("\"Example for param1\"", requestBody.Content["application/json"].Example.ToJson());
         }
 
         [Fact]
-        public void Apply_SetsDescription_FromPropertySummaryTag()
+        public void Apply_SetsDescriptionAndExample_FromPropertySummaryAndExampleTags()
         {
-            var requestBody = new OpenApiRequestBody();
+            var requestBody = new OpenApiRequestBody
+            {
+                Content = new Dictionary<string, OpenApiMediaType>
+                {
+                    ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = "string" } }
+                }
+            };
             var bodyParameterDescription = new ApiParameterDescription
             {
                 ModelMetadata = ModelMetadataFactory.CreateForProperty(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringProperty))
@@ -59,8 +82,33 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Subject().Apply(requestBody, filterContext);
 
             Assert.Equal("Summary for StringProperty", requestBody.Description);
+            Assert.NotNull(requestBody.Content["application/json"].Example);
+            Assert.Equal("\"Example for StringProperty\"", requestBody.Content["application/json"].Example.ToJson());
         }
 
+
+        [Fact]
+        public void Apply_SetsDescriptionAndExample_FromUriTypePropertySummaryAndExampleTags()
+        {
+            var requestBody = new OpenApiRequestBody
+            {
+                Content = new Dictionary<string, OpenApiMediaType>
+                {
+                    ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = "string" } }
+                }
+            };
+            var bodyParameterDescription = new ApiParameterDescription
+            {
+                ModelMetadata = ModelMetadataFactory.CreateForProperty(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringPropertyWithUri))
+            };
+            var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
+
+            Subject().Apply(requestBody, filterContext);
+
+            Assert.Equal("Summary for StringPropertyWithUri", requestBody.Description);
+            Assert.NotNull(requestBody.Content["application/json"].Example);
+            Assert.Equal("\"https://test.com/a?b=1&c=2\"", requestBody.Content["application/json"].Example.ToJson());
+        }
         private XmlCommentsRequestBodyFilter Subject()
         {
             using (var xmlComments = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml"))

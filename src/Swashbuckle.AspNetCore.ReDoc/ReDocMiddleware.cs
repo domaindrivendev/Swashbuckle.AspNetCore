@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -9,7 +10,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
@@ -40,8 +40,13 @@ namespace Swashbuckle.AspNetCore.ReDoc
             _staticFileMiddleware = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options);
 
             _jsonSerializerOptions = new JsonSerializerOptions();
-            _jsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+
+#if NET6_0
+            _jsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+#else
             _jsonSerializerOptions.IgnoreNullValues = true;
+#endif
+            _jsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             _jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, false));
         }
 
@@ -53,9 +58,12 @@ namespace Swashbuckle.AspNetCore.ReDoc
             // If the RoutePrefix is requested (with or without trailing slash), redirect to index URL
             if (httpMethod == "GET" && Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$",  RegexOptions.IgnoreCase))
             {
-                var indexUrl = httpContext.Request.GetEncodedUrl().TrimEnd('/') + "/index.html";
+                // Use relative redirect to support proxy environments
+                var relativeIndexUrl = string.IsNullOrEmpty(path) || path.EndsWith("/")
+                    ? "index.html"
+                    : $"{path.Split('/').Last()}/index.html";
 
-                RespondWithRedirect(httpContext.Response, indexUrl);
+                RespondWithRedirect(httpContext.Response, relativeIndexUrl);
                 return;
             }
 

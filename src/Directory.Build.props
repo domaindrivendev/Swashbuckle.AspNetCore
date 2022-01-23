@@ -1,16 +1,25 @@
 <Project>
 
-  <PropertyGroup>
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
-    <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    <PublishRepositoryUrl>true</PublishRepositoryUrl>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <LicenseUrl>https://licenses.nuget.org/MIT</LicenseUrl>
-    <VersionPrefix>6.0.7</VersionPrefix>
-  </PropertyGroup>
+	<PropertyGroup>
+		<AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<IsPackable>true</IsPackable>
+		<LicenseUrl>https://licenses.nuget.org/MIT</LicenseUrl>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageProjectUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</PackageProjectUrl>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<RepositoryUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore.git</RepositoryUrl>
+		<VersionPrefix>6.2.3</VersionPrefix>
+		<LangVersion>9</LangVersion>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
-  </ItemGroup>
+	<PropertyGroup Condition="'$(APPVEYOR)'=='True' AND '$(APPVEYOR_REPO_TAG)'=='false'">
+		<VersionSuffix>preview-$(APPVEYOR_BUILD_NUMBER)</VersionSuffix>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+	</ItemGroup>
 
 </Project>

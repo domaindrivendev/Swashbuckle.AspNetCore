@@ -144,10 +144,28 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var applicableProperties = publicProperties
                 .Where(property =>
                 {
+                    // .NET 5 introduces JsonIgnoreAttribute.Condition which should be honored
+                    bool isIgnoredViaNet5Attribute = true;
+
+#if NET5_0_OR_GREATER
+                    JsonIgnoreAttribute jsonIgnoreAttribute = property.GetCustomAttribute<JsonIgnoreAttribute>();
+                    if (jsonIgnoreAttribute != null)
+                    {
+                        isIgnoredViaNet5Attribute = jsonIgnoreAttribute.Condition switch
+                        {
+                            JsonIgnoreCondition.Never => false,
+                            JsonIgnoreCondition.Always => true,
+                            JsonIgnoreCondition.WhenWritingDefault => false,
+                            JsonIgnoreCondition.WhenWritingNull => false,
+                            _ => true
+                        };
+                    }
+#endif
+
                     return
                         (property.IsPubliclyReadable() || property.IsPubliclyWritable()) &&
                         !(property.GetIndexParameters().Any()) &&
-                        !(property.HasAttribute<JsonIgnoreAttribute>()) &&
+                        !(property.HasAttribute<JsonIgnoreAttribute>() && isIgnoredViaNet5Attribute) &&
                         !(_serializerOptions.IgnoreReadOnlyProperties && !property.IsPubliclyWritable());
                 })
                 .OrderBy(property => property.DeclaringType.GetInheritanceChain().Length);
@@ -166,12 +184,35 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var name = propertyInfo.GetCustomAttribute<JsonPropertyNameAttribute>()?.Name
                     ?? _serializerOptions.PropertyNamingPolicy?.ConvertName(propertyInfo.Name) ?? propertyInfo.Name;
 
+                // .NET 5 introduces support for serializing immutable types via parameterized constructors
+                // See https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-immutability?pivots=dotnet-6-0
+                var isDeserializedViaConstructor = false;
+
+#if NET5_0_OR_GREATER
+                var deserializationConstructor = propertyInfo.DeclaringType?.GetConstructors()
+                    .OrderBy(c =>
+                    {
+                        if (c.GetCustomAttribute<System.Text.Json.Serialization.JsonConstructorAttribute>() != null) return 1;
+                        if (c.GetParameters().Length == 0) return 2;
+                        return 3;
+                    })
+                    .FirstOrDefault();
+
+                isDeserializedViaConstructor = deserializationConstructor != null && deserializationConstructor.GetParameters()
+                    .Any(p =>
+                    {
+                        return
+                            string.Equals(p.Name, propertyInfo.Name, StringComparison.OrdinalIgnoreCase) ||
+                            string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase);
+                    });
+#endif
+
                 dataProperties.Add(
                     new DataProperty(
                         name: name,
                         isRequired: false,
                         isNullable: propertyInfo.PropertyType.IsReferenceOrNullableType(),
-                        isReadOnly: propertyInfo.IsPubliclyReadable() && !propertyInfo.IsPubliclyWritable(),
+                        isReadOnly: propertyInfo.IsPubliclyReadable() && !propertyInfo.IsPubliclyWritable() && !isDeserializedViaConstructor,
                         isWriteOnly: propertyInfo.IsPubliclyWritable() && !propertyInfo.IsPubliclyReadable(),
                         memberType: propertyInfo.PropertyType,
                         memberInfo: propertyInfo));

@@ -1,13 +1,10 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.IO;
-using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Template;
-using Microsoft.Extensions.Primitives;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Writers;
 
@@ -38,13 +35,14 @@ namespace Swashbuckle.AspNetCore.Swagger
 
             try
             {
-                var host = httpContext.Request.Host.HasValue
-                    ? $"{httpContext.Request.Scheme ?? "http"}://{httpContext.Request.Host}"
+                var basePath = httpContext.Request.PathBase.HasValue
+                    ? httpContext.Request.PathBase.Value
                     : null;
 
-                var basePath = httpContext.Request.PathBase;
-
-                var swagger = swaggerProvider.GetSwagger(documentName, host, basePath);
+                var swagger = swaggerProvider.GetSwagger(
+                    documentName: documentName,
+                    host: null,
+                    basePath: basePath);
 
                 // One last opportunity to modify the Swagger Document - this time with request context
                 foreach (var filter in _options.PreSerializeFilters)

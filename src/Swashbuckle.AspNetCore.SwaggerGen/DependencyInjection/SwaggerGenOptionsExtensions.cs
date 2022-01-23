@@ -106,6 +106,18 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
+        /// Provide a custom comprarer to sort schemas with
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="schemaComparer"></param>
+        public static void SortSchemasWith(
+            this SwaggerGenOptions swaggerGenOptions,
+            IComparer<string> schemaComparer)
+        {
+            swaggerGenOptions.SwaggerGeneratorOptions.SchemaComparer = schemaComparer;
+        }
+
+        /// <summary>
         /// Describe all parameters, regardless of how they appear in code, in camelCase
         /// </summary>
         public static void DescribeAllParametersInCamelCase(this SwaggerGenOptions swaggerGenOptions)
@@ -414,7 +426,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Inject human-friendly descriptions for Operations, Parameters and Schemas based on XML Comment files
         /// </summary>
         /// <param name="swaggerGenOptions"></param>
-        /// <param name="filePath">An abolsute path to the file that contains XML Comments</param>
+        /// <param name="filePath">An absolute path to the file that contains XML Comments</param>
         /// <param name="includeControllerXmlComments">
         /// Flag to indicate if controller XML comments (i.e. summary) should be used to assign Tag descriptions.
         /// Don't set this flag if you're customizing the default tag for operations via TagActionsBy.
@@ -434,7 +446,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="swaggerGenOptions"></param>
         /// <param name="subTypesResolver"></param>
         /// <param name="discriminatorSelector"></param>
-        [Obsolete("You can use \"UseOneOfForPolymorphism\", \"UseAllOfForInheritance\" and \"DetectSubTypesUsing\" to configure equivalent behavior")]
+        [Obsolete("You can use \"UseOneOfForPolymorphism\", \"UseAllOfForInheritance\" and \"SelectSubTypesUsing\" to configure equivalent behavior")]
         public static void GeneratePolymorphicSchemas(
             this SwaggerGenOptions swaggerGenOptions,
             Func<Type, IEnumerable<Type>> subTypesResolver = null,

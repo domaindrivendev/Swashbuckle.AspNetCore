@@ -95,27 +95,6 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         }
 
         [Theory]
-        [InlineData("http://tempuri.org", "http://tempuri.org")]
-        [InlineData("https://tempuri.org", "https://tempuri.org")]
-        [InlineData("http://tempuri.org:8080", "http://tempuri.org:8080")]
-        public async Task SwaggerEndpoint_InfersServerMetadata_FromRequestHeaders(
-            string clientBaseAddress,
-            string expectedServerUrl)
-        {
-            var client = new TestSite(typeof(Basic.Startup)).BuildClient();
-            client.BaseAddress = new Uri(clientBaseAddress);
-
-            var swaggerResponse = await client.GetAsync($"swagger/v1/swagger.json");
-
-            swaggerResponse.EnsureSuccessStatusCode();
-            var contentStream = await swaggerResponse.Content.ReadAsStreamAsync();
-            var openApiDoc = new OpenApiStreamReader().Read(contentStream, out _);
-            Assert.NotNull(openApiDoc.Servers);
-            Assert.Equal(1, openApiDoc.Servers.Count);
-            Assert.Equal(expectedServerUrl, openApiDoc.Servers[0].Url);
-        }
-
-        [Theory]
         [InlineData("/swagger/v1/swagger.json", "openapi", "3.0.1")]
         [InlineData("/swagger/v1/swaggerv2.json", "swagger", "2.0")]
         public async Task SwaggerMiddleware_CanBeConfiguredMultipleTimes(
