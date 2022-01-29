@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Text.RegularExpressions;
 using System.Text;
 using System.Collections.Generic;
 using System.IO;
@@ -14,7 +13,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.AspNetCore.Http.Extensions;
 using System.Linq;
 
 #if NETSTANDARD2_0
@@ -68,7 +66,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
                 return;
             }
 
-            if (httpMethod == "GET" && $"/{_options.RoutePrefix}/index.html".Equals(path, StringComparison.OrdinalIgnoreCase))
+            if (httpMethod == "GET" && $"{$"/{_options.RoutePrefix}".TrimEnd('/')}/index.html".Equals(path, StringComparison.OrdinalIgnoreCase))
             {
                 await RespondWithIndexHtml(httpContext.Response);
                 return;

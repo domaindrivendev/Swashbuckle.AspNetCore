@@ -18,11 +18,24 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         }
 
         [Fact]
+        public async Task RoutePrefix_RedirectsToIndexUrl_RoutePrefixEmpty()
+        {
+            var client = new TestSite(typeof(CustomUIRoutePrefix.Startup)).BuildClient();
+
+            var response = await client.GetAsync("/");
+
+            Assert.Equal(HttpStatusCode.MovedPermanently, response.StatusCode);
+            Assert.Equal("index.html", response.Headers.Location.ToString());
+        }
+
+        [Fact]
         public async Task IndexUrl_ReturnsEmbeddedVersionOfTheSwaggerUI()
         {
             var client = new TestSite(typeof(Basic.Startup)).BuildClient();
 
             var indexResponse = await client.GetAsync("/index.html"); // Basic is configured to serve UI at root
+            Assert.Equal(HttpStatusCode.OK, indexResponse.StatusCode);
+
             var jsResponse = await client.GetAsync("/swagger-ui.js");
             var cssResponse = await client.GetAsync("/swagger-ui.css");
 
@@ -30,6 +43,15 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             Assert.Contains("SwaggerUIBundle", indexContent);
             Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
             Assert.Equal(HttpStatusCode.OK, cssResponse.StatusCode);
+        }
+
+        [Fact]
+        public async Task IndexUrl_ReturnsEmbeddedVersionOfTheSwaggerUI_RoutePrefixEmpty()
+        {
+            var client = new TestSite(typeof(CustomUIRoutePrefix.Startup)).BuildClient();
+
+            var indexResponse = await client.GetAsync("/index.html"); // Basic is configured to serve UI at root
+            Assert.Equal(HttpStatusCode.OK, indexResponse.StatusCode);
         }
 
         [Fact]
@@ -56,9 +78,9 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         }
 
         [Theory]
-        [InlineData("/swagger/index.html", new [] { "Version 1.0", "Version 2.0" })]
-        [InlineData("/swagger/1.0/index.html", new [] { "Version 1.0" })]
-        [InlineData("/swagger/2.0/index.html", new [] { "Version 2.0" })]
+        [InlineData("/swagger/index.html", new[] { "Version 1.0", "Version 2.0" })]
+        [InlineData("/swagger/1.0/index.html", new[] { "Version 1.0" })]
+        [InlineData("/swagger/2.0/index.html", new[] { "Version 2.0" })]
         public async Task SwaggerUIMiddleware_CanBeConfiguredMultipleTimes(string swaggerUiUrl, string[] versions)
         {
             var client = new TestSite(typeof(MultipleVersions.Startup)).BuildClient();
