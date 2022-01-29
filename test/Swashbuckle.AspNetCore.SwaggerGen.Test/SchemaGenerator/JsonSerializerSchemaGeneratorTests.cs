@@ -8,6 +8,9 @@ using System.Text.Json.Serialization;
 using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.OpenApi.Models;
 using Xunit;
 using Swashbuckle.AspNetCore.TestSupport;
@@ -763,6 +766,68 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.Null(schema.Reference);
             Assert.Null(schema.Type);
+        }
+
+        [Fact]
+        public void GenerateSchema_GeneratesSchema_IfParameterHasMaxLengthRouteConstraint()
+        {
+            var maxLength = 3;
+            var constraints = new List<IRouteConstraint>()
+            {
+                new MaxLengthRouteConstraint(maxLength)
+            };
+            var routeInfo = new ApiParameterRouteInfo
+            {
+                Constraints = constraints
+            };
+            var parameterInfo = typeof(FakeController)
+                .GetMethod(nameof(FakeController.ActionWithParameter))
+                .GetParameters()
+                .First();
+            var schema = Subject().GenerateSchema(typeof(string), new SchemaRepository(), parameterInfo: parameterInfo, routeInfo: routeInfo);
+            Assert.Equal(maxLength, schema.MaxLength);
+        }
+
+        [Fact]
+        public void GenerateSchema_GeneratesSchema_IfParameterHasMultipleConstraints()
+        {
+            var maxLength = 3;
+            var minLength = 1;
+            var constraints = new List<IRouteConstraint>()
+            {
+                new MaxLengthRouteConstraint(3),
+                new MinLengthRouteConstraint(minLength)
+            };
+            var routeInfo = new ApiParameterRouteInfo
+            {
+                Constraints = constraints
+            };
+            var parameterInfo = typeof(FakeController)
+                .GetMethod(nameof(FakeController.ActionWithParameter))
+                .GetParameters()
+                .First();
+            var schema = Subject().GenerateSchema(typeof(string), new SchemaRepository(), parameterInfo: parameterInfo, routeInfo: routeInfo);
+            Assert.Equal(maxLength, schema.MaxLength);
+            Assert.Equal(minLength, schema.MinLength);
+        }
+
+        [Fact]
+        public void GenerateSchema_GeneratesSchema_IfParameterHasTypeConstraints()
+        {
+            var constraints = new List<IRouteConstraint>()
+            {
+                new IntRouteConstraint(),
+            };
+            var routeInfo = new ApiParameterRouteInfo
+            {
+                Constraints = constraints
+            };
+            var parameterInfo = typeof(FakeController)
+                .GetMethod(nameof(FakeController.ActionWithParameter))
+                .GetParameters()
+                .First();
+            var schema = Subject().GenerateSchema(typeof(string), new SchemaRepository(), parameterInfo: parameterInfo, routeInfo: routeInfo);
+            Assert.Equal("integer", schema.Type);
         }
 
         private SchemaGenerator Subject(
