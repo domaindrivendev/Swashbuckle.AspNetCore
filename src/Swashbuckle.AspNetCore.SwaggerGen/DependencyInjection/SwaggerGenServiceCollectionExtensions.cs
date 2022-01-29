@@ -9,6 +9,8 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
+    using Swashbuckle.AspNetCore.SwaggerGen.SchemaValidator;
+
     public static class SwaggerGenServiceCollectionExtensions
     {
         public static IServiceCollection AddSwaggerGen(
@@ -46,6 +48,12 @@ namespace Microsoft.Extensions.DependencyInjection
 
             if (setupAction != null) services.ConfigureSwaggerGen(setupAction);
 
+            return services;
+        }
+
+        public static IServiceCollection ValidateControllersResponses(this IServiceCollection services)
+        {
+            services.TryAddTransient<ISchemaValidator, SchemaValidator>();
             return services;
         }
 
