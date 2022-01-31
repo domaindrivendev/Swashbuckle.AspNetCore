@@ -180,6 +180,11 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
     public class OAuthConfigObject
     {
         /// <summary>
+        /// Default username for OAuth2 password flow.
+        /// </summary>
+        public string Username { get; set; } = null;
+
+        /// <summary>
         /// Default clientId
         /// </summary>
         public string ClientId { get; set; } = null;

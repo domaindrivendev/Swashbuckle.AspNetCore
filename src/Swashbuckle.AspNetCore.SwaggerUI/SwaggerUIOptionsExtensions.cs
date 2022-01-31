@@ -43,7 +43,7 @@ namespace Microsoft.AspNetCore.Builder
         public static void SwaggerEndpoint(this SwaggerUIOptions options, string url, string name)
         {
             var urls = new List<UrlDescriptor>(options.ConfigObject.Urls ?? Enumerable.Empty<UrlDescriptor>());
-            urls.Add(new UrlDescriptor { Url = url, Name = name} );
+            urls.Add(new UrlDescriptor { Url = url, Name = name });
             options.ConfigObject.Urls = urls;
         }
 
@@ -219,6 +219,16 @@ namespace Microsoft.AspNetCore.Builder
         public static void OAuthClientId(this SwaggerUIOptions options, string value)
         {
             options.OAuthConfigObject.ClientId = value;
+        }
+
+        /// <summary>
+        /// Default userName
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="value"></param>
+        public static void OAuthUsername(this SwaggerUIOptions options, string value)
+        {
+            options.OAuthConfigObject.Username = value;
         }
 
         /// <summary>
