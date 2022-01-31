@@ -132,6 +132,7 @@ namespace OAuth2Integration
                     c.EnableDeepLinking();
 
                     // Additional OAuth settings (See https://github.com/swagger-api/swagger-ui/blob/v3.10.0/docs/usage/oauth2.md)
+                    c.OAuthUsername("username");
                     c.OAuthClientId("test-id");
                     c.OAuthClientSecret("test-secret");
                     c.OAuthAppName("test-app");
