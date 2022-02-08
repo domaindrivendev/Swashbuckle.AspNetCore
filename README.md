@@ -70,17 +70,17 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 4. In the `Configure` method,you should expose the generated Swagger as JSON endpoint(s) by one of following method:
 
-   - Add endpoints if you're using endpoint-based routing.
-   
-   ```csharp
-   app.MapEndpoints(endpoints => 
-   {
-   	// ...
-   	endpoints.MapSwagger();
-   });
-   ```
-   
-   - Insert middleware
+    - Add endpoints if you're using endpoint-based routing.
+
+    ```csharp
+    app.MapEndpoints(endpoints =>
+    {
+        // ...
+        endpoints.MapSwagger();
+    });
+    ```
+
+    - Insert middleware
 
     ```csharp
     app.UseSwagger();
