@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Net;
+using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -382,6 +383,37 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var subject = Subject(
                 configureGenerator: c => c.CustomTypeMappings.Add(mappingType, () => new OpenApiSchema { Type = "string" })
             );
+            var schema = subject.GenerateSchema(type, new SchemaRepository());
+
+            Assert.Equal(expectedSchemaType, schema.Type);
+            Assert.Empty(schema.Properties);
+        }
+
+        [Theory]
+        [InlineData(typeof(ComplexType), typeof(ComplexType), "ComplexType")]
+        [InlineData(typeof(GenericType<int, string>), typeof(GenericType<int, string>), "GenericType`2<Int32, String>")]
+        [InlineData(typeof(GenericType<,>), typeof(GenericType<int, int>), "GenericType`2<Int32, Int32>")]
+        public void GenerateSchema_SupportsOption_SchemaFactories(
+            Type mappingType,
+            Type type,
+            string expectedSchemaType)
+        {
+            var subject = Subject(
+                configureGenerator: c => c.SchemaFactories.Add(mappingType, new DelegatedSchemaFactory(context  =>
+                    {
+                        var className = new StringBuilder();
+
+                        className.Append(context.Type.Name);
+                        if (context.Type.IsGenericType)
+                        {
+                            className.Append("<");
+                            className.Append(string.Join(", ", context.Type.GenericTypeArguments.Select(t => t.Name)));
+                            className.Append(">");
+                        }
+
+                        return new OpenApiSchema { Type = className.ToString() };
+                    })
+            ));
             var schema = subject.GenerateSchema(type, new SchemaRepository());
 
             Assert.Equal(expectedSchemaType, schema.Type);

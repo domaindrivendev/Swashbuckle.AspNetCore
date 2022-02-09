@@ -10,6 +10,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public SchemaGeneratorOptions()
         {
             CustomTypeMappings = new Dictionary<Type, Func<OpenApiSchema>>();
+            SchemaFactories = new Dictionary<Type, ISchemaFactory>();
             SchemaIdSelector = DefaultSchemaIdSelector;
             SubTypesSelector = DefaultSubTypesSelector;
             DiscriminatorNameSelector = DefaultDiscriminatorNameSelector;
@@ -18,6 +19,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         }
 
         public IDictionary<Type, Func<OpenApiSchema>> CustomTypeMappings { get; set; }
+        public IDictionary<Type, ISchemaFactory> SchemaFactories { get; set; }
 
         public bool UseInlineDefinitionsForEnums { get; set; }
 

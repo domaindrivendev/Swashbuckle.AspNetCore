@@ -184,6 +184,34 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// Provide a custom mapping, for a given type, to the Swagger-flavored JSONSchema
         /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="type">System type</param>
+        /// <param name="schemaFactory">A factory method that generates Schema's for the provided type</param>
+        public static void MapType(
+            this SwaggerGenOptions swaggerGenOptions,
+            Type type,
+            Func<SchemaFactoryContext, OpenApiSchema> schemaFactory)
+        {
+            swaggerGenOptions.SchemaGeneratorOptions.SchemaFactories.Add(type, new DelegatedSchemaFactory(schemaFactory));
+        }
+
+        /// <summary>
+        /// Provide a custom mapping, for a given type, to the Swagger-flavored JSONSchema
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="type">System type</param>
+        /// <param name="schemaFactory">A factory method that generates Schema's for the provided type</param>
+        public static void MapType(
+            this SwaggerGenOptions swaggerGenOptions,
+            Type type,
+            ISchemaFactory schemaFactory)
+        {
+            swaggerGenOptions.SchemaGeneratorOptions.SchemaFactories.Add(type, schemaFactory);
+        }
+
+        /// <summary>
+        /// Provide a custom mapping, for a given type, to the Swagger-flavored JSONSchema
+        /// </summary>
         /// <typeparam name="T">System type</typeparam>
         /// <param name="swaggerGenOptions"></param>
         /// <param name="schemaFactory">A factory method that generates Schema's for the provided type</param>

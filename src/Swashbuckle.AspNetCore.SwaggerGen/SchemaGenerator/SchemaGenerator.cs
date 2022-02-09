@@ -194,9 +194,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private OpenApiSchema GenerateConcreteSchema(DataContract dataContract, SchemaRepository schemaRepository)
         {
-            if (TryGetCustomTypeMapping(dataContract.UnderlyingType, out Func<OpenApiSchema> customSchemaFactory))
+            if (TryGetCustomTypeMapping(dataContract.UnderlyingType, out Func<OpenApiSchema> customSchemaFactoryDelegate))
             {
-                return customSchemaFactory();
+                return customSchemaFactoryDelegate();
+            }
+
+            if (TryGetSchemaFactoryMapping(dataContract.UnderlyingType, out ISchemaFactory customSchemaFactory))
+            {
+                var context = new SchemaFactoryContext(dataContract.UnderlyingType, dataContract, this, schemaRepository);
+                return customSchemaFactory.CreateSchema(context);
             }
 
             if (dataContract.UnderlyingType.IsAssignableToOneOf(typeof(IFormFile), typeof(FileResult)))
@@ -257,6 +263,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             return _generatorOptions.CustomTypeMappings.TryGetValue(modelType, out schemaFactory)
                 || (modelType.IsConstructedGenericType && _generatorOptions.CustomTypeMappings.TryGetValue(modelType.GetGenericTypeDefinition(), out schemaFactory));
+        }
+
+        private bool TryGetSchemaFactoryMapping(Type modelType, out ISchemaFactory schemaFactory)
+        {
+            return _generatorOptions.SchemaFactories.TryGetValue(modelType, out schemaFactory)
+                || (modelType.IsConstructedGenericType && _generatorOptions.SchemaFactories.TryGetValue(modelType.GetGenericTypeDefinition(), out schemaFactory));
         }
 
         private OpenApiSchema CreatePrimitiveSchema(DataContract dataContract)
