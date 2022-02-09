@@ -7,7 +7,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class XmlCommentsTextHelper
     {
-        private static Regex RefTagPattern = new Regex(@"<(see|paramref) (name|cref)=""([TPF]{1}:)?(?<display>.+?)"" ?/>");
+        private static Regex RefTagPattern = new Regex(@"<(see|paramref) (name|cref|langword)=""([TPF]{1}:)?(?<display>.+?)"" ?/>");
         private static Regex CodeTagPattern = new Regex(@"<c>(?<display>.+?)</c>");
         private static Regex MultilineCodeTagPattern = new Regex(@"<code>(?<display>.+?)</code>", RegexOptions.Singleline);
         private static Regex ParaTagPattern = new Regex(@"<para>(?<display>.+?)</para>", RegexOptions.Singleline);
