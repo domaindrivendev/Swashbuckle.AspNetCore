@@ -11,8 +11,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="node_modules/swagger-ui-dist/**/*" Exclude="**/*/index.html;**/*/*.map;**/*/*.json;**/*/*.md" />
     <EmbeddedResource Include="index.html" />
-    <EmbeddedResource Include="node_modules/swagger-ui-dist/**/*" Exclude="**/*/*.map;**/*/*.json;**/*/*.md" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
