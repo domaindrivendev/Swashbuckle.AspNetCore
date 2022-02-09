@@ -36,7 +36,7 @@ namespace OAuth2Integration
                 .AddCookie()
                 .AddIdentityServerAuthentication(c =>
                 {
-                    c.Authority = "http://localhost:55202/auth-server/";
+                    c.Authority = "http://localhost:5000/auth-server/";
                     c.RequireHttpsMetadata = false;
                     c.ApiName = "api";
                 });
