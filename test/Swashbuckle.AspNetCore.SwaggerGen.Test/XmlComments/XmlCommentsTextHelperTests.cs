@@ -130,6 +130,7 @@ A line of text",
         [InlineData("<code>DoWork</code> is a method in <code>\nTestClass\n</code>.", "```DoWork``` is a method in ```\nTestClass\n```.")]
         [InlineData("<para>This is a paragraph</para>.", "<br>This is a paragraph.")]
         [InlineData("GET /Todo?iscomplete=true&amp;owner=mike", "GET /Todo?iscomplete=true&owner=mike")]
+        [InlineData(@"Returns a <see langword=""null""/> item.", "Returns a null item.")]
         public void Humanize_HumanizesInlineTags(
             string input,
             string expectedOutput)
