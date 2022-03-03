@@ -111,7 +111,7 @@ namespace Swashbuckle.AspNetCore.Cli
                             swagger.SerializeAsV3(writer);
 
                         if (outputPath != null)
-                            Console.WriteLine($"Swagger JSON/YAML succesfully written to {outputPath}");
+                            Console.WriteLine($"Swagger JSON/YAML successfully written to {outputPath}");
                     }
 
                     return 0;

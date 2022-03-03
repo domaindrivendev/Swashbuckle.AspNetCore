@@ -512,7 +512,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.NotNull(schema.OneOf[0].Reference);
             var baseSchema = schemaRepository.Schemas[schema.OneOf[0].Reference.Id];
             Assert.Equal("object", baseSchema.Type);
-            Assert.Equal(new[] { "BaseProperty"}, baseSchema.Properties.Keys);
+            Assert.Equal(new[] { "BaseProperty" }, baseSchema.Properties.Keys);
             // The first sub type schema
             Assert.NotNull(schema.OneOf[1].Reference);
             var subType1Schema = schemaRepository.Schemas[schema.OneOf[1].Reference.Id];
@@ -587,9 +587,33 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableDictionaryWithNonNullableContent), true, false)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableDictionaryWithNonNullableContent), false, false)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableDictionaryWithNullableContent), false, true)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableDictionaryWithNullableContent), true, true)]
+        public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypes_NullableAttribute_Compiler_Optimizations_Situations(
+            Type declaringType,
+            string propertyName,
+            bool expectedNullableProperty,
+            bool expectedNullableContent)
+        {
+            var subject = Subject(
+                configureGenerator: c => c.SupportNonNullableReferenceTypes = true
+            );
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = subject.GenerateSchema(declaringType, schemaRepository);
+
+            var propertySchema = schemaRepository.Schemas[referenceSchema.Reference.Id].Properties[propertyName];
+            var contentSchema = schemaRepository.Schemas[referenceSchema.Reference.Id].Properties[propertyName].AdditionalProperties;
+            Assert.Equal(expectedNullableProperty, propertySchema.Nullable);
+            Assert.Equal(expectedNullableContent, contentSchema.Nullable);
+        }
+
+        [Theory]
         [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.SubTypeWithOneNullableContent), nameof(TypeWithNullableContext.NullableString), true)]
         [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContext.NonNullableString), false)]
-        public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypes_NullableAttribute_Compiler_Optimizations_Situations(
+        public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypesInDictionary_NullableAttribute_Compiler_Optimizations_Situations(
             Type declaringType,
             string subType,
             string propertyName,
@@ -605,7 +629,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var propertySchema = schemaRepository.Schemas[subType].Properties[propertyName];
             Assert.Equal(expectedNullable, propertySchema.Nullable);
         }
-
 
         [Fact]
         public void GenerateSchema_HandlesTypesWithNestedTypes()
@@ -740,7 +763,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var referenceSchema = Subject().GenerateSchema(typeof(JsonPropertyNameAnnotatedType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal( new[] { "string-with-json-property-name" }, schema.Properties.Keys.ToArray());
+            Assert.Equal(new[] { "string-with-json-property-name" }, schema.Properties.Keys.ToArray());
         }
 
         [Fact]
