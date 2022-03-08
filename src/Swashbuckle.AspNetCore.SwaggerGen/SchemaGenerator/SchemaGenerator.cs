@@ -278,6 +278,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 schema.Enum = dataContract.EnumValues
                     .Select(value => JsonSerializer.Serialize(value))
+                    .Distinct()
                     .Select(valueAsJson => OpenApiAnyFactory.CreateFromJson(valueAsJson))
                     .ToList();
 
@@ -288,8 +289,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 schema.Enum = dataContract.UnderlyingType.GetEnumValues()
                     .Cast<object>()
-                    .Distinct()
                     .Select(value => dataContract.JsonConverter(value))
+                    .Distinct()
                     .Select(valueAsJson => OpenApiAnyFactory.CreateFromJson(valueAsJson))
                     .ToList();
             }
