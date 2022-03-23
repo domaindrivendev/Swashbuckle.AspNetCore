@@ -534,6 +534,19 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
+        public void GenerateSchema_SupportsOption_UseInlineDefinitionsForObjects()
+        {
+            var subject = Subject(
+                configureGenerator: c => c.UseInlineDefinitionsForObjects = true
+            );
+
+            var schema = subject.GenerateSchema(typeof(ComplexType), new SchemaRepository());
+
+            Assert.Null(schema.Reference);
+            Assert.Equal("object", schema.Type);
+        }
+
+        [Fact]
         public void GenerateSchema_HandlesTypesWithNestedTypes()
         {
             var schemaRepository = new SchemaRepository();
