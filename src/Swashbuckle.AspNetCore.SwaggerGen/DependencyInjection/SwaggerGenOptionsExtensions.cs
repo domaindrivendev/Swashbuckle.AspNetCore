@@ -205,6 +205,14 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
+        /// Generate inline schema definitions (as opposed to referencing a shared definition) for complex objects
+        /// </summary>
+        public static void UseInlineDefinitionsForObjects(this SwaggerGenOptions swaggerGenOptions)
+        {
+            swaggerGenOptions.SchemaGeneratorOptions.UseInlineDefinitionsForObjects = true;
+        }
+
+        /// <summary>
         /// Provide a custom strategy for generating the unique Id's that are used to reference object Schema's
         /// </summary>
         /// <param name="swaggerGenOptions"></param>

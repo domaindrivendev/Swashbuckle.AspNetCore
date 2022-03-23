@@ -32,6 +32,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             target.CustomTypeMappings = new Dictionary<Type, Func<OpenApiSchema>>(source.CustomTypeMappings);
             target.UseInlineDefinitionsForEnums = source.UseInlineDefinitionsForEnums;
+            target.UseInlineDefinitionsForObjects = source.UseInlineDefinitionsForObjects;
             target.SchemaIdSelector = source.SchemaIdSelector;
             target.IgnoreObsoleteProperties = source.IgnoreObsoleteProperties;
             target.UseAllOfForInheritance = source.UseAllOfForInheritance;

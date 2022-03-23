@@ -568,6 +568,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.NotNull(schema.Enum);
         }
 
+        [Fact]
+        public void GenerateSchema_SupportsOption_UseInlineDefinitionsForObjects()
+        {
+            var subject = Subject(
+                configureGenerator: c => c.UseInlineDefinitionsForObjects = true
+            );
+
+            var schema = subject.GenerateSchema(typeof(ComplexType), new SchemaRepository());
+
+            Assert.Null(schema.Reference);
+            Assert.Equal("object", schema.Type);
+        }
+
         [Theory]
         [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableInt), true)]
         [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableInt), false)]
