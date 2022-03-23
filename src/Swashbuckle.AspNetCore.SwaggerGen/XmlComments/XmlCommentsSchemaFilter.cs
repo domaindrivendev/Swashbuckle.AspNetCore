@@ -1,9 +1,5 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Globalization;
 using System.Xml.XPath;
-using System.Reflection;
-using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -23,11 +19,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (context.MemberInfo != null)
             {
-                ApplyFieldOrPropertyTags(schema, context.MemberInfo);
-            }
-            else if (context.ParameterInfo != null)
-            {
-                ApplyParamTags(schema, context.ParameterInfo);
+                ApplyMemberTags(schema, context);
             }
         }
 
@@ -42,9 +34,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
         }
 
-        private void ApplyFieldOrPropertyTags(OpenApiSchema schema, MemberInfo fieldOrPropertyInfo)
+        private void ApplyMemberTags(OpenApiSchema schema, SchemaFilterContext context)
         {
-            var fieldOrPropertyMemberName = XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(fieldOrPropertyInfo);
+            var fieldOrPropertyMemberName = XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(context.MemberInfo);
             var fieldOrPropertyNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{fieldOrPropertyMemberName}']");
 
             if (fieldOrPropertyNode == null) return;
@@ -56,56 +48,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var exampleNode = fieldOrPropertyNode.SelectSingleNode("example");
             if (exampleNode != null)
             {
-                var exampleString = XmlCommentsTextHelper.Humanize(exampleNode.InnerXml);
+                var exampleAsJson = (schema.ResolveType(context.SchemaRepository) == "string") && !exampleNode.Value.Equals("null")
+                    ? $"\"{exampleNode.ToString()}\""
+                    : exampleNode.ToString();
 
-                if (fieldOrPropertyInfo is FieldInfo fieldInfo)
-                {
-                    schema.Example = ConvertToOpenApiType(fieldInfo.FieldType, schema, exampleString);
-                }
-                else if (fieldOrPropertyInfo is PropertyInfo propertyInfo)
-                {
-                    schema.Example = ConvertToOpenApiType(propertyInfo.PropertyType, schema, exampleString);
-                }
+                schema.Example = OpenApiAnyFactory.CreateFromJson(exampleAsJson);
             }
-        }
-
-        private void ApplyParamTags(OpenApiSchema schema, ParameterInfo parameterInfo)
-        {
-            if (!(parameterInfo.Member is MethodInfo methodInfo)) return;
-
-            var methodMemberName = XmlCommentsNodeNameHelper.GetMemberNameForMethod(methodInfo);
-            var paramNode = _xmlNavigator.SelectSingleNode(
-                $"/doc/members/member[@name='{methodMemberName}']/param[@name='{parameterInfo.Name}']");
-
-            if (paramNode != null)
-            {
-                schema.Description = XmlCommentsTextHelper.Humanize(paramNode.InnerXml);
-
-                var example = paramNode.GetAttribute("example", "");
-                if (!string.IsNullOrEmpty(example))
-                {
-                    schema.Example = ConvertToOpenApiType(parameterInfo.ParameterType, schema, example);
-                }
-            }
-        }
-
-        private static IOpenApiAny ConvertToOpenApiType(Type memberType, OpenApiSchema schema, string stringValue)
-        {
-            object typedValue;
-
-            try
-            {
-                typedValue = TypeDescriptor.GetConverter(memberType).ConvertFrom(
-                    context: null,
-                    culture: CultureInfo.InvariantCulture,
-                    stringValue);
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-
-            return OpenApiAnyFactory.CreateFor(schema, typedValue);
         }
     }
 }

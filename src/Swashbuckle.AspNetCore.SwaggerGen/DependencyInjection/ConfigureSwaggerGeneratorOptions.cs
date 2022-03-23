@@ -6,8 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 
-#if NETCOREAPP3_0
-using IHostingEnvironment = Microsoft.AspNetCore.Hosting.IWebHostEnvironment;
+#if NETSTANDARD2_0
+using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 #endif
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -16,16 +16,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         private readonly SwaggerGenOptions _swaggerGenOptions;
         private readonly IServiceProvider _serviceProvider;
-        private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IWebHostEnvironment _hostingEnv;
 
         public ConfigureSwaggerGeneratorOptions(
             IOptions<SwaggerGenOptions> swaggerGenOptionsAccessor,
             IServiceProvider serviceProvider,
-            IHostingEnvironment hostingEnvironment)
+            IWebHostEnvironment hostingEnv)
         {
             _swaggerGenOptions = swaggerGenOptionsAccessor.Value;
             _serviceProvider = serviceProvider;
-            _hostingEnvironment = hostingEnvironment;
+            _hostingEnv = hostingEnv;
         }
 
         public void Configure(SwaggerGeneratorOptions options)
@@ -48,7 +48,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (!options.SwaggerDocs.Any())
             {
-                options.SwaggerDocs.Add("v1", new OpenApiInfo { Title = _hostingEnvironment.ApplicationName, Version = "1.0" });
+                options.SwaggerDocs.Add("v1", new OpenApiInfo { Title = _hostingEnv.ApplicationName, Version = "1.0" });
             }
         }
 

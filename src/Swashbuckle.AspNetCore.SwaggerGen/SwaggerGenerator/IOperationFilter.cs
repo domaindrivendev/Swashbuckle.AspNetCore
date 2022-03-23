@@ -30,5 +30,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public SchemaRepository SchemaRepository { get; }
 
         public MethodInfo MethodInfo { get; }
+
+        public string DocumentName => SchemaRepository.DocumentName;
     }
 }

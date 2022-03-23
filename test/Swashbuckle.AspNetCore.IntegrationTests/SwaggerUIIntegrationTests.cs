@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -6,39 +7,43 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 {
     public class SwaggerUIIntegrationTests
     {
-        [Fact]
-        public async Task RoutePrefix_RedirectsToRelativeIndexUrl()
+        [Theory]
+        [InlineData(typeof(Basic.Startup), "/", "index.html")]
+        [InlineData(typeof(CustomUIConfig.Startup), "/swagger", "swagger/index.html")]
+        [InlineData(typeof(CustomUIConfig.Startup), "/swagger/", "index.html")]
+        public async Task RoutePrefix_RedirectsToPathRelativeIndexUrl(
+            Type startupType,
+            string requestPath,
+            string expectedRedirectPath)
         {
-            var client = new TestSite(typeof(CustomUIConfig.Startup)).BuildClient();
+            var client = new TestSite(startupType).BuildClient();
 
-            var response = await client.GetAsync("/swagger");
+            var response = await client.GetAsync(requestPath);
 
             Assert.Equal(HttpStatusCode.MovedPermanently, response.StatusCode);
-            Assert.Equal("swagger/index.html", response.Headers.Location.ToString());
+            Assert.Equal(expectedRedirectPath, response.Headers.Location.ToString());
         }
 
-        [Fact]
-        public async Task RoutePrefix_RedirectsSubAppRelativeIndexUrl()
+        [Theory]
+        [InlineData(typeof(Basic.Startup), "/index.html", "/swagger-ui.js", "/swagger-ui.css")]
+        [InlineData(typeof(CustomUIConfig.Startup), "/swagger/index.html", "/swagger/swagger-ui.js", "/swagger/swagger-ui.css")]
+        public async Task IndexUrl_ReturnsEmbeddedVersionOfTheSwaggerUI(
+            Type startupType,
+            string indexPath,
+            string jsPath,
+            string cssPath)
         {
-            var client = new TestSite(typeof(SubApp.Startup)).BuildClient();
-            var response = await client.GetAsync("/subapp");
-            Assert.Equal(HttpStatusCode.MovedPermanently, response.StatusCode);
-            Assert.Equal("subapp/index.html", response.Headers.Location.ToString());
-        }
+            var client = new TestSite(startupType).BuildClient();
 
-
-        [Fact]
-        public async Task IndexUrl_ReturnsEmbeddedVersionOfTheSwaggerUI()
-        {
-            var client = new TestSite(typeof(Basic.Startup)).BuildClient();
-
-            var indexResponse = await client.GetAsync("/index.html"); // Basic is configured to serve UI at root
-            var jsResponse = await client.GetAsync("/swagger-ui.js");
-            var cssResponse = await client.GetAsync("/swagger-ui.css");
-
+            var indexResponse = await client.GetAsync(indexPath);
+            Assert.Equal(HttpStatusCode.OK, indexResponse.StatusCode);
             var indexContent = await indexResponse.Content.ReadAsStringAsync();
             Assert.Contains("SwaggerUIBundle", indexContent);
+
+            var jsResponse = await client.GetAsync(jsPath);
             Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
+
+            var cssResponse = await client.GetAsync(cssPath);
             Assert.Equal(HttpStatusCode.OK, cssResponse.StatusCode);
         }
 
@@ -63,6 +68,24 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             var content = await response.Content.ReadAsStringAsync();
 
             Assert.Contains("Example.com", content);
+        }
+
+        [Theory]
+        [InlineData("/swagger/index.html", new [] { "Version 1.0", "Version 2.0" })]
+        [InlineData("/swagger/1.0/index.html", new [] { "Version 1.0" })]
+        [InlineData("/swagger/2.0/index.html", new [] { "Version 2.0" })]
+        public async Task SwaggerUIMiddleware_CanBeConfiguredMultipleTimes(string swaggerUiUrl, string[] versions)
+        {
+            var client = new TestSite(typeof(MultipleVersions.Startup)).BuildClient();
+
+            var response = await client.GetAsync(swaggerUiUrl);
+            var content = await response.Content.ReadAsStringAsync();
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            foreach (var version in versions)
+            {
+                Assert.Contains(version, content);
+            }
         }
     }
 }

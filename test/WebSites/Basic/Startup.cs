@@ -1,15 +1,14 @@
 using System;
 using System.Globalization;
+using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Basic.Swagger;
 using Microsoft.AspNetCore.Localization;
-using System.IO;
-using System.Linq;
+using Basic.Swagger;
 
 namespace Basic
 {
@@ -72,8 +71,15 @@ namespace Basic
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+
+                // Expose Swagger/OpenAPI JSON in new (v3) and old (v2) formats
                 endpoints.MapSwagger("swagger/{documentName}/swagger.json");
+                endpoints.MapSwagger("swagger/{documentName}/swaggerv2.json", c =>
+                {
+                    c.SerializeAsV2 = true;
+                });
             });
+
             var supportedCultures = new[]
             {
                 new CultureInfo("en-US"),
@@ -90,18 +96,10 @@ namespace Basic
                 SupportedUICultures = supportedCultures
             });
 
-            //app.UseSwagger(c =>
-            //{
-            //    c.PreSerializeFilters.Add((swagger, httpReq) =>
-            //    {
-            //        swagger.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" } };
-            //    });
-            //});
-
             app.UseSwaggerUI(c =>
             {
                 c.RoutePrefix = ""; // serve the UI at root
-                c.SwaggerEndpoint("swagger/v1/swagger.json", "V1 Docs");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
             });
         }
     }

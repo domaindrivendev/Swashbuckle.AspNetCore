@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -39,7 +38,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 .Where(apiDesc => !(_options.IgnoreObsoleteActions && apiDesc.CustomAttributes().OfType<ObsoleteAttribute>().Any()))
                 .Where(apiDesc => _options.DocInclusionPredicate(documentName, apiDesc));
 
-            var schemaRepository = new SchemaRepository();
+            var schemaRepository = new SchemaRepository(documentName);
 
             var swaggerDoc = new OpenApiDocument
             {
@@ -60,6 +59,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 filter.Apply(swaggerDoc, filterContext);
             }
 
+            swaggerDoc.Components.Schemas = new SortedDictionary<string, OpenApiSchema>(swaggerDoc.Components.Schemas, _options.SchemaComparer);
+
             return swaggerDoc;
         }
 
@@ -79,7 +80,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var apiDescriptionsByPath = apiDescriptions
                 .OrderBy(_options.SortKeySelector)
-                .GroupBy(apiDesc => apiDesc.RelativePathSansQueryString());
+                .GroupBy(apiDesc => apiDesc.RelativePathSansParameterConstraints());
 
             var paths = new OpenApiPaths();
             foreach (var group in apiDescriptionsByPath)
@@ -119,7 +120,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         "Conflicting method/path combination \"{0} {1}\" for actions - {2}. " +
                         "Actions require a unique method/path combination for Swagger/OpenAPI 3.0. Use ConflictingActionsResolver as a workaround",
                         httpMethod,
-                        group.First().RelativePathSansQueryString(),
+                        group.First().RelativePath,
                         string.Join(",", group.Select(apiDesc => apiDesc.ActionDescriptor.DisplayName))));
 
                 var apiDescription = (group.Count() > 1) ? _options.ConflictingActionsResolver(group) : group.Single();
@@ -195,14 +196,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 ? ParameterLocationMap[apiParameter.Source]
                 : ParameterLocation.Query;
 
-            var isRequired = apiParameter.IsRequired();
+            var isRequired = apiParameter.IsRequiredParameter();
 
             var schema = (apiParameter.ModelMetadata != null)
-                ? _schemaGenerator.GenerateSchema(
+                ? GenerateSchema(
                     apiParameter.ModelMetadata.ModelType,
                     schemaRepository,
                     apiParameter.PropertyInfo(),
-                    apiParameter.ParameterInfo())
+                    apiParameter.ParameterInfo(),
+                    apiParameter.RouteInfo)
                 : new OpenApiSchema { Type = "string" };
 
             var parameter = new OpenApiParameter
@@ -226,6 +228,25 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
 
             return parameter;
+        }
+
+        private OpenApiSchema GenerateSchema(
+            Type type,
+            SchemaRepository schemaRepository,
+            PropertyInfo propertyInfo = null,
+            ParameterInfo parameterInfo = null,
+            ApiParameterRouteInfo routeInfo = null)
+        {
+            try
+            {
+                return _schemaGenerator.GenerateSchema(type, schemaRepository, propertyInfo, parameterInfo, routeInfo);
+            }
+            catch (Exception ex)
+            {
+                throw new SwaggerGeneratorException(
+                    message: $"Failed to generate schema for type - {type}. See inner exception",
+                    innerException: ex);
+            }
         }
 
         private OpenApiRequestBody GenerateRequestBody(
@@ -280,9 +301,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var contentTypes = InferRequestContentTypes(apiDescription);
 
-            var isRequired = bodyParameter.IsRequired();
+            var isRequired = bodyParameter.IsRequiredParameter();
 
-            var schema = _schemaGenerator.GenerateSchema(
+            var schema = GenerateSchema(
                 bodyParameter.ModelMetadata.ModelType,
                 schemaRepository,
                 bodyParameter.PropertyInfo(),
@@ -313,6 +334,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             // If there's content types surfaced by ApiExplorer, use them
             var apiExplorerContentTypes = apiDescription.SupportedRequestFormats
                 .Select(format => format.MediaType)
+                .Where(x => x != null)
                 .Distinct();
             if (apiExplorerContentTypes.Any()) return apiExplorerContentTypes;
 
@@ -360,7 +382,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     : formParameter.Name;
 
                 var schema = (formParameter.ModelMetadata != null)
-                    ? _schemaGenerator.GenerateSchema(
+                    ? GenerateSchema(
                         formParameter.ModelMetadata.ModelType,
                         schemaRepository,
                         formParameter.PropertyInfo(),
@@ -369,7 +391,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 properties.Add(name, schema);
 
-                if (formParameter.IsRequired())
+                if (formParameter.IsRequiredParameter())
                     requiredPropertyNames.Add(name);
             }
 
@@ -443,7 +465,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             return new OpenApiMediaType
             {
-                Schema = _schemaGenerator.GenerateSchema(modelMetadata.ModelType, schemaRespository)
+                Schema = GenerateSchema(modelMetadata.ModelType, schemaRespository)
             };
         }
 
@@ -466,23 +488,31 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             { BindingSource.Path, ParameterLocation.Path }
         };
 
-        private static readonly Dictionary<string, string> ResponseDescriptionMap = new Dictionary<string, string>
+        private static readonly IReadOnlyCollection<KeyValuePair<string, string>> ResponseDescriptionMap = new[]
         {
-            { "1\\d{2}", "Information" },
-            { "2\\d{2}", "Success" },
-            { "304", "Not Modified" },
-            { "3\\d{2}", "Redirect" },
-            { "400", "Bad Request" },
-            { "401", "Unauthorized" },
-            { "403", "Forbidden" },
-            { "404", "Not Found" },
-            { "405", "Method Not Allowed" },
-            { "406", "Not Acceptable" },
-            { "408", "Request Timeout" },
-            { "409", "Conflict" },
-            { "4\\d{2}", "Client Error" },
-            { "5\\d{2}", "Server Error" },
-            { "default", "Error" }
+           new KeyValuePair<string, string>("1\\d{2}", "Information"),
+
+            new KeyValuePair<string, string>("201", "Created"),
+            new KeyValuePair<string, string>("202", "Accepted"),
+            new KeyValuePair<string, string>("204", "No Content"),
+            new KeyValuePair<string, string>("2\\d{2}", "Success"),
+
+            new KeyValuePair<string, string>("304", "Not Modified"),
+            new KeyValuePair<string, string>("3\\d{2}", "Redirect"),
+
+            new KeyValuePair<string, string>("400", "Bad Request"),
+            new KeyValuePair<string, string>("401", "Unauthorized"),
+            new KeyValuePair<string, string>("403", "Forbidden"),
+            new KeyValuePair<string, string>("404", "Not Found"),
+            new KeyValuePair<string, string>("405", "Method Not Allowed"),
+            new KeyValuePair<string, string>("406", "Not Acceptable"),
+            new KeyValuePair<string, string>("408", "Request Timeout"),
+            new KeyValuePair<string, string>("409", "Conflict"),
+            new KeyValuePair<string, string>("429", "Too Many Requests"),
+            new KeyValuePair<string, string>("4\\d{2}", "Client Error"),
+
+            new KeyValuePair<string, string>("5\\d{2}", "Server Error"),
+            new KeyValuePair<string, string>("default", "Error")
         };
     }
 }

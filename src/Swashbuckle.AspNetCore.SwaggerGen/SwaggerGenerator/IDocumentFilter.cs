@@ -26,5 +26,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public ISchemaGenerator SchemaGenerator { get; }
 
         public SchemaRepository SchemaRepository { get; }
+
+        public string DocumentName => SchemaRepository.DocumentName;
     }
 }

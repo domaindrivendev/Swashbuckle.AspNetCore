@@ -32,7 +32,6 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         {
             var server = BuildServer();
             var client = server.CreateClient();
-            client.BaseAddress = new Uri("http://localhost");
 
             return client;
         }

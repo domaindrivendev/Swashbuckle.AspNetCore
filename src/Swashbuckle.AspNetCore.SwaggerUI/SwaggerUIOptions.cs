@@ -39,6 +39,11 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// Gets the JavaScript config object, represented as JSON, that will be passed to the initOAuth method
         /// </summary>
         public OAuthConfigObject OAuthConfigObject { get; set; } = new OAuthConfigObject();
+
+        /// <summary>
+        /// Gets the interceptor functions that define client-side request/response interceptors
+        /// </summary>
+        public InterceptorFunctions Interceptors { get; set; } = new InterceptorFunctions();
     }
 
     public class ConfigObject
@@ -52,6 +57,10 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// If set to true, enables deep linking for tags and operations
         /// </summary>
         public bool DeepLinking { get; set; } = false;
+        /// <summary>
+        /// If set to true, it persists authorization data and it would not be lost on browser close/refresh
+        /// </summary>
+        public bool PersistAuthorization { get; set; } = false;
 
         /// <summary>
         /// Controls the display of operationId in operations list
@@ -120,6 +129,12 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         public IEnumerable<SubmitMethod> SupportedSubmitMethods { get; set; } = Enum.GetValues(typeof(SubmitMethod)).Cast<SubmitMethod>();
 
         /// <summary>
+        /// Controls whether the "Try it out" section should be enabled by default.
+        /// </summary>
+        [JsonPropertyName("tryItOutEnabled")]
+        public bool TryItOutEnabled { get; set; }
+
+        /// <summary>
         /// By default, Swagger-UI attempts to validate specs against swagger.io's online validator.
         /// You can use this parameter to set a different validator URL, for example for locally deployed validators (Validator Badge).
         /// Setting it to null will disable validation
@@ -165,6 +180,11 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
     public class OAuthConfigObject
     {
         /// <summary>
+        /// Default username for OAuth2 password flow.
+        /// </summary>
+        public string Username { get; set; } = null;
+
+        /// <summary>
         /// Default clientId
         /// </summary>
         public string ClientId { get; set; } = null;
@@ -190,6 +210,11 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         public string ScopeSeparator { get; set; } = " ";
 
         /// <summary>
+        /// String array of initially selected oauth scopes, default is empty array
+        /// </summary>
+        public IEnumerable<string> Scopes { get; set; } = new string[] { };
+
+        /// <summary>
         /// Additional query parameters added to authorizationUrl and tokenUrl
         /// </summary>
         public Dictionary<string, string> AdditionalQueryStringParams { get; set; } = null;
@@ -206,5 +231,24 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// The default is false
         /// </summary>
         public bool UsePkceWithAuthorizationCodeGrant { get; set; } = false;
+    }
+
+    public class InterceptorFunctions
+    {
+        /// <summary>
+        /// MUST be a valid Javascript function.
+        /// Function to intercept remote definition, "Try it out", and OAuth 2.0 requests.
+        /// Accepts one argument requestInterceptor(request) and must return the modified request, or a Promise that resolves to the modified request.
+        /// Ex: "function (req) { req.headers['MyCustomHeader'] = 'CustomValue'; return req; }"
+        /// </summary>
+        public string RequestInterceptorFunction { get; set; }
+
+        /// <summary>
+        /// MUST be a valid Javascript function.
+        /// Function to intercept remote definition, "Try it out", and OAuth 2.0 responses.
+        /// Accepts one argument responseInterceptor(response) and must return the modified response, or a Promise that resolves to the modified response.
+        /// Ex: "function (res) { console.log(res); return res; }"
+        /// </summary>
+        public string ResponseInterceptorFunction { get; set; }
     }
 }

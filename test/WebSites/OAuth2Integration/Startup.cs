@@ -36,7 +36,7 @@ namespace OAuth2Integration
                 .AddCookie()
                 .AddIdentityServerAuthentication(c =>
                 {
-                    c.Authority = "http://localhost:55202/auth-server/";
+                    c.Authority = "http://localhost:5000/auth-server/";
                     c.RequireHttpsMetadata = false;
                     c.ApiName = "api";
                 });
@@ -132,10 +132,12 @@ namespace OAuth2Integration
                     c.EnableDeepLinking();
 
                     // Additional OAuth settings (See https://github.com/swagger-api/swagger-ui/blob/v3.10.0/docs/usage/oauth2.md)
+                    c.OAuthUsername("username");
                     c.OAuthClientId("test-id");
                     c.OAuthClientSecret("test-secret");
                     c.OAuthAppName("test-app");
                     c.OAuthScopeSeparator(" ");
+                    c.OAuthScopes("readAccess");
                     c.OAuthUsePkce();
                 });
             });

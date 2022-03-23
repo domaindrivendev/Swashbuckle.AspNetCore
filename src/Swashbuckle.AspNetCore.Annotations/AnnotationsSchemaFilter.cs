@@ -21,13 +21,16 @@ namespace Swashbuckle.AspNetCore.Annotations
         {
             ApplyTypeAnnotations(schema, context);
 
-            if (context.ParameterInfo != null)
-            {
-                ApplyParamAnnotations(schema, context.ParameterInfo);
-            }
-            else if (context.MemberInfo != null)
+            // NOTE: It's possible for both MemberInfo and ParameterInfo to have non-null values - i.e. when the schema is for a property
+            // within a class that is bound to a parameter. In this case, the MemberInfo should take precendence.
+
+            if (context.MemberInfo != null)
             {
                 ApplyMemberAnnotations(schema, context.MemberInfo);
+            }
+            else if (context.ParameterInfo != null)
+            {
+                ApplyParamAnnotations(schema, context.ParameterInfo);
             }
         }
 
@@ -84,6 +87,9 @@ namespace Swashbuckle.AspNetCore.Annotations
 
             if (schemaAttribute.WriteOnlyFlag.HasValue)
                 schema.WriteOnly = schemaAttribute.WriteOnlyFlag.Value;
+
+            if (schemaAttribute.NullableFlag.HasValue)
+                schema.Nullable = schemaAttribute.NullableFlag.Value;
 
             if (schemaAttribute.Required != null)
                 schema.Required = new SortedSet<string>(schemaAttribute.Required);

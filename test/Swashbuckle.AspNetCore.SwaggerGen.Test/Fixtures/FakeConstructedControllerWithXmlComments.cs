@@ -17,8 +17,8 @@
         public void ActionWithSummaryAndResponseTags(T param)
         { }
 
-        /// <param name="param1">Description for param1</param>
-        /// <param name="param2">Description for param2</param>
+        /// <param name="param1" example="Example for param1">Description for param1</param>
+        /// <param name="param2" example="Example for param2">Description for param2</param>
         public void ActionWithParamTags(T param1, T param2)
         { }
     }

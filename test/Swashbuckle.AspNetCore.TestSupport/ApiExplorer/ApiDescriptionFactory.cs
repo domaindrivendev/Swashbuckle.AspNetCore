@@ -12,6 +12,7 @@ namespace Swashbuckle.AspNetCore.TestSupport
     public static class ApiDescriptionFactory
     {
         public static ApiDescription Create(
+            ActionDescriptor actionDescriptor,
             MethodInfo methodInfo,
             string groupName = "v1",
             string httpMethod = "POST",
@@ -20,8 +21,6 @@ namespace Swashbuckle.AspNetCore.TestSupport
             IEnumerable<ApiRequestFormat> supportedRequestFormats = null,
             IEnumerable<ApiResponseType> supportedResponseTypes = null)
         {
-            var actionDescriptor = CreateActionDescriptor(methodInfo);
-
             var apiDescription = new ApiDescription
             {
                 ActionDescriptor = actionDescriptor,
@@ -35,14 +34,21 @@ namespace Swashbuckle.AspNetCore.TestSupport
                 foreach (var parameter in parameterDescriptions)
                 {
                     // If the provided action has a matching parameter - use it to assign ParameterDescriptor & ModelMetadata
-                    var controllerParameterDescriptor = actionDescriptor.Parameters
-                        .OfType<ControllerParameterDescriptor>()
-                        .FirstOrDefault(parameterDescriptor => parameterDescriptor.Name == parameter.Name);
+                    parameter.ParameterDescriptor = actionDescriptor.Parameters
+                        .OfType<ParameterDescriptor>()
+                        .Where(parameterDescriptor => parameterDescriptor.Name == parameter.Name)
+                        .FirstOrDefault();
 
-                    if (controllerParameterDescriptor != null)
+                    var parameterDescriptorWithParameterInfo = parameter.ParameterDescriptor as
+#if NETCOREAPP2_2_OR_GREATER
+                        Microsoft.AspNetCore.Mvc.Infrastructure.IParameterInfoParameterDescriptor;
+#else
+                        ControllerParameterDescriptor;
+#endif
+
+                    if (parameterDescriptorWithParameterInfo != null)
                     {
-                        parameter.ParameterDescriptor = controllerParameterDescriptor;
-                        parameter.ModelMetadata = ModelMetadataFactory.CreateForParameter(controllerParameterDescriptor.ParameterInfo);
+                        parameter.ModelMetadata = ModelMetadataFactory.CreateForParameter(parameterDescriptorWithParameterInfo.ParameterInfo);
                     }
 
                     apiDescription.ParameterDescriptions.Add(parameter);
@@ -72,6 +78,30 @@ namespace Swashbuckle.AspNetCore.TestSupport
             }
 
             return apiDescription;
+        }
+
+        public static ApiDescription Create(
+            MethodInfo methodInfo,
+            string groupName = "v1",
+            string httpMethod = "POST",
+            string relativePath = "resoure",
+            IEnumerable<ApiParameterDescription> parameterDescriptions = null,
+            IEnumerable<ApiRequestFormat> supportedRequestFormats = null,
+            IEnumerable<ApiResponseType> supportedResponseTypes = null)
+        {
+
+            var actionDescriptor = CreateActionDescriptor(methodInfo);
+
+            return Create(
+                actionDescriptor,
+                methodInfo,
+                groupName,
+                httpMethod,
+                relativePath,
+                parameterDescriptions,
+                supportedRequestFormats,
+                supportedResponseTypes
+            );
         }
 
         public static ApiDescription Create<TController>(

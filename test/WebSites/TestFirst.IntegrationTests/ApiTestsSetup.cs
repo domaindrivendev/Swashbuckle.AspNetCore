@@ -11,7 +11,7 @@ namespace TestFirst.IntegrationTests
         {
             Configure(c =>
             {
-                var apiDocsRoot = Path.Combine(System.AppContext.BaseDirectory, "..", "..", "..", "..", "TestFirst", "wwwroot", "api-docs");
+                var apiDocsRoot = Path.Combine(System.AppContext.BaseDirectory, "..", "..", "..", "..", "TestFirst", "wwwroot", "swagger");
             
                 // This app demonstrates the two differnt workflows that can be used with this library ...
 

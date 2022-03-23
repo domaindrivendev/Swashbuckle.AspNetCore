@@ -49,6 +49,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void ActionWithIntParameterWithRequiredAttribute([Required]int param)
         { }
 
+        public void ActionWithObjectParameter(XmlAnnotatedType param)
+        { }
+
         [Consumes("application/someMediaType")]
         public void ActionWithConsumesAttribute(string param)
         { }

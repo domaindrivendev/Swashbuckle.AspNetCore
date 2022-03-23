@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Routing.Template;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -16,6 +17,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 methodInfo = controllerActionDescriptor.MethodInfo;
                 return true;
             }
+
+#if NET6_0_OR_GREATER
+            if (apiDescription.ActionDescriptor?.EndpointMetadata != null)
+            {
+                methodInfo = apiDescription.ActionDescriptor.EndpointMetadata
+                    .OfType<MethodInfo>()
+                    .FirstOrDefault();
+
+                return methodInfo != null;
+            }
+#endif
 
             methodInfo = null;
             return false;
@@ -48,9 +60,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             customAttributes = Enumerable.Empty<object>();
         }
 
-        internal static string RelativePathSansQueryString(this ApiDescription apiDescription)
+        internal static string RelativePathSansParameterConstraints(this ApiDescription apiDescription)
         {
-            return apiDescription.RelativePath?.Split('?').First();
+            var routeTemplate = TemplateParser.Parse(apiDescription.RelativePath);
+            var sanitizedSegments = routeTemplate
+                .Segments
+                .Select(s => string.Concat(s.Parts.Select(p => p.Name != null ? $"{{{p.Name}}}" : p.Text)));
+            return string.Join("/", sanitizedSegments);
         }
     }
 }

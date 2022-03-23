@@ -24,29 +24,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public static bool IsConstructedFrom(this Type type, Type genericType, out Type constructedType)
         {
             constructedType = new[] { type }
+                .Union(type.GetInheritanceChain())
                 .Union(type.GetInterfaces())
                 .FirstOrDefault(i => i.IsConstructedGenericType && i.GetGenericTypeDefinition() == genericType);
 
             return (constructedType != null);
         }
 
-        public static bool IsNullable(this Type type, out Type innerType)
-        {
-            innerType = type.IsConstructedFrom(typeof(Nullable<>), out Type constructedType)
-                ? constructedType.GenericTypeArguments[0]
-                : null;
-
-            return (innerType != null);
-        }
-
         public static bool IsReferenceOrNullableType(this Type type)
         {
-            return (!type.IsValueType || type.IsNullable(out Type _));
-        }
-
-        public static bool IsSet(this Type type)
-        {
-            return type.IsConstructedFrom(typeof(ISet<>), out Type _);
+            return (!type.IsValueType || Nullable.GetUnderlyingType(type) != null);
         }
 
         public static object GetDefaultValue(this Type type)
@@ -56,18 +43,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 : null;
         }
 
-        public static int GetDepthOfInheritance(this Type type)
+        public static Type[] GetInheritanceChain(this Type type)
         {
-            var depth = 0;
-            var current = type;
+            var inheritanceChain = new List<Type>();
 
+            var current = type;
             while (current.BaseType != null)
             {
-                depth++;
+                inheritanceChain.Add(current.BaseType);
                 current = current.BaseType;
             }
 
-            return depth;
+            return inheritanceChain.ToArray();
         }
     }
 }

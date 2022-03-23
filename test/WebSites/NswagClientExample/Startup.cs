@@ -22,7 +22,7 @@ namespace NSwagClientExample
 
             services.AddSwaggerGen(c =>
             {
-                c.EnableAnnotations(enableAnnotationsForInheritance: false, enableAnnotationsForPolymorphism: true);
+                c.EnableAnnotations(enableAnnotationsForInheritance: true, enableAnnotationsForPolymorphism: true);
             });
         }
 
@@ -45,10 +45,7 @@ namespace NSwagClientExample
 
             app.UseSwagger();
 
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("v1/swagger.json", "V1 Docs");
-            });
+            app.UseSwaggerUI();
         }
     }
 }

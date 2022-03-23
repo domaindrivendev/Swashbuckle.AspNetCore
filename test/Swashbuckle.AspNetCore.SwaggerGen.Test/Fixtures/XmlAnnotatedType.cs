@@ -58,50 +58,68 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public Guid GuidProperty { get; set; }
 
         /// <summary>
+        /// Summary for Nullable StringPropertyWithNullExample
+        /// </summary>
+        /// <example>null</example>
+        public string StringPropertyWithNullExample { get; set; }
+
+        /// <summary>
         /// Summary for StringProperty
         /// </summary>
         /// <example>Example for StringProperty</example>
         public string StringProperty { get; set; }
 
         /// <summary>
-        /// Summary for BadExampleIntProperty
+        /// Summary for StringPropertyWithUri
         /// </summary>
-        /// <example>Foobar</example>
-        public int BadExampleIntProperty { get; set; }
+        /// <example><![CDATA[https://test.com/a?b=1&c=2]]></example>
+        public string StringPropertyWithUri { get; set; }
+
+        /// <summary>
+        /// Summary for ObjectProperty
+        /// </summary>
+        /// <example>{"prop1": 1, "prop2": "foobar"}</example>
+        public object ObjectProperty { get; set; }
 
         /// <summary>
         /// Summary for AcceptsNothing
         /// </summary>
         public void AcceptsNothing()
-        { }
+        {
+        }
 
         /// <summary>
         /// Summary for AcceptsNestedType
         /// </summary>
         /// <param name="param"></param>
         public void AcceptsNestedType(NestedType param)
-        { }
+        {
+        }
 
         /// <summary>
         /// Summary for AcceptsConstructedGenericType
         /// </summary>
         /// <param name="param"></param>
         public void AcceptsConstructedGenericType(KeyValuePair<string, int> param)
-        { }
+        {
+        }
 
         /// <summary>
         /// Summary for AcceptsConstructedOfConstructedGenericType
         /// </summary>
         /// <param name="param"></param>
-        public void AcceptsConstructedOfConstructedGenericType(IEnumerable<KeyValuePair<string, int>> param)
-        { }
+        public void AcceptsConstructedOfConstructedGenericType(
+            IEnumerable<KeyValuePair<string, int>> param)
+        {
+        }
 
         /// <summary>
         /// Summary for AcceptsArrayOfConstructedGenericType
         /// </summary>
         /// <param name="param"></param>
         public void AcceptsArrayOfConstructedGenericType(int?[] param)
-        { }
+        {
+        }
 
         /// <summary>
         /// Summary for NestedType

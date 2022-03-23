@@ -1,33 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\version.props" />
-
   <PropertyGroup>
-    <Description>Middleware to expose Swagger JSON endpoints from APIs built on ASP.NET Core</Description>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.0</TargetFrameworks>
-    <NoWarn>$(NoWarn);1591</NoWarn>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <AssemblyName>Swashbuckle.AspNetCore.Swagger</AssemblyName>
     <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.Swagger.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly Condition="'$(OS)'=='Windows_NT'">true</SignAssembly>
-    <PackageId>Swashbuckle.AspNetCore.Swagger</PackageId>
+    <Description>Middleware to expose Swagger JSON endpoints from APIs built on ASP.NET Core</Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>
-    <PackageProjectUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</PackageProjectUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/domaindrivendev/Swashbuckle.AspNetCore/master/LICENSE</PackageLicenseUrl>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore.git</RepositoryUrl>
+    <SignAssembly Condition="'$(OS)'=='Windows_NT'">true</SignAssembly>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.0;net5.0;net6.0</TargetFrameworks>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.OpenApi" Version="1.2.3" />
-  </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <PackageReference Include="Microsoft.AspNetCore.Routing" Version="2.1.0" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netcoreapp3.0' ">
+  <ItemGroup Condition=" '$(TargetFramework)' != 'netstandard2.0' ">
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.OpenApi" Version="1.2.3" />
   </ItemGroup>
 
 </Project>

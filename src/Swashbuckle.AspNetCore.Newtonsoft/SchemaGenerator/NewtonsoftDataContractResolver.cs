@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Serialization;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.SwaggerGen;
@@ -13,13 +11,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 {
     public class NewtonsoftDataContractResolver : ISerializerDataContractResolver
     {
-        private readonly SchemaGeneratorOptions _generatorOptions;
         private readonly JsonSerializerSettings _serializerSettings;
         private readonly IContractResolver _contractResolver;
 
-        public NewtonsoftDataContractResolver(SchemaGeneratorOptions generatorOptions, JsonSerializerSettings serializerSettings)
+        public NewtonsoftDataContractResolver(JsonSerializerSettings serializerSettings)
         {
-            _generatorOptions = generatorOptions;
             _serializerSettings = serializerSettings;
             _contractResolver = serializerSettings.ContractResolver ?? new DefaultContractResolver();
         }
@@ -28,7 +24,9 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
         {
             if (type.IsOneOf(typeof(object), typeof(JToken), typeof(JObject), typeof(JArray)))
             {
-                return DataContract.ForDynamic(underlyingType: type);
+                return DataContract.ForDynamic(
+                    underlyingType: type,
+                    jsonConverter: JsonConverterFunc);
             }
 
             var jsonContract = _contractResolver.ResolveContract(type);
@@ -42,14 +40,19 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                 return DataContract.ForPrimitive(
                     underlyingType: jsonContract.UnderlyingType,
                     dataType: primitiveTypeAndFormat.Item1,
-                    dataFormat: primitiveTypeAndFormat.Item2);
+                    dataFormat: primitiveTypeAndFormat.Item2,
+                    jsonConverter: JsonConverterFunc);
             }
 
             if (jsonContract is JsonPrimitiveContract && jsonContract.UnderlyingType.IsEnum)
             {
-                var enumValues = GetSerializedEnumValuesFor(jsonContract);
+                var enumValues = jsonContract.UnderlyingType.GetEnumValues();
 
-                var primitiveTypeAndFormat = (enumValues.Any(value => value.GetType() == typeof(string)))
+                //Test to determine if the serializer will treat as string
+                var serializeAsString = (enumValues.Length > 0)
+                    && JsonConverterFunc(enumValues.GetValue(0)).StartsWith("\"");
+
+                var primitiveTypeAndFormat = serializeAsString
                     ? PrimitiveTypesAndFormats[typeof(string)]
                     : PrimitiveTypesAndFormats[jsonContract.UnderlyingType.GetEnumUnderlyingType()];
 
@@ -57,14 +60,15 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     underlyingType: jsonContract.UnderlyingType,
                     dataType: primitiveTypeAndFormat.Item1,
                     dataFormat: primitiveTypeAndFormat.Item2,
-                    enumValues: enumValues);
+                    jsonConverter: JsonConverterFunc);
             }
 
             if (jsonContract is JsonArrayContract jsonArrayContract)
             {
                 return DataContract.ForArray(
                     underlyingType: jsonArrayContract.UnderlyingType,
-                    itemType: jsonArrayContract.CollectionItemType ?? typeof(object));
+                    itemType: jsonArrayContract.CollectionItemType ?? typeof(object),
+                    jsonConverter: JsonConverterFunc);
             }
 
             if (jsonContract is JsonDictionaryContract jsonDictionaryContract)
@@ -77,17 +81,20 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                 if (keyType.IsEnum)
                 {
                     // This is a special case where we know the possible key values
-                    var enumValues = GetSerializedEnumValuesFor(_contractResolver.ResolveContract(keyType));
+                    var enumValuesAsJson = keyType.GetEnumValues()
+                        .Cast<object>()
+                        .Select(value => JsonConverterFunc(value));
 
-                    keys = enumValues.Any(value => value is string)
-                        ? enumValues.Cast<string>()
+                    keys = enumValuesAsJson.Any(json => json.StartsWith("\""))
+                        ? enumValuesAsJson.Select(json => json.Replace("\"", string.Empty))
                         : keyType.GetEnumNames();
                 }
 
                 return DataContract.ForDictionary(
                     underlyingType: jsonDictionaryContract.UnderlyingType,
                     valueType: valueType,
-                    keys: keys);
+                    keys: keys,
+                    jsonConverter: JsonConverterFunc);
             }
 
             if (jsonContract is JsonObjectContract jsonObjectContract)
@@ -111,56 +118,19 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     properties: GetDataPropertiesFor(jsonObjectContract, out Type extensionDataType),
                     extensionDataType: extensionDataType,
                     typeNameProperty: typeNameProperty,
-                    typeNameValue: typeNameValue);
+                    typeNameValue: typeNameValue,
+                    jsonConverter: JsonConverterFunc);
             }
 
-            return DataContract.ForDynamic(underlyingType: type);
+            return DataContract.ForDynamic(
+                underlyingType: type,
+                jsonConverter: JsonConverterFunc);
         }
 
-        private IEnumerable<object> GetSerializedEnumValuesFor(JsonContract jsonContract)
+        private string JsonConverterFunc(object value)
         {
-            var stringEnumConverter = (jsonContract.Converter as StringEnumConverter)
-                ?? _serializerSettings.Converters.OfType<StringEnumConverter>().FirstOrDefault();
-
-            // Temporary shim to support obsolete config options
-            if (stringEnumConverter == null && _generatorOptions.DescribeAllEnumsAsStrings)
-            {
-                stringEnumConverter = new StringEnumConverter(_generatorOptions.DescribeStringEnumsInCamelCase);
-            }
- 
-            if (stringEnumConverter != null)
-            {
-                return jsonContract.UnderlyingType.GetMembers(BindingFlags.Public | BindingFlags.Static)
-                    .Select(member =>
-                    {
-                        var memberAttribute = member.GetCustomAttributes<EnumMemberAttribute>().FirstOrDefault();
-                        return GetConvertedEnumName((memberAttribute?.Value ?? member.Name), (memberAttribute?.Value != null), stringEnumConverter);
-                    })
-                    .ToList();
-            }
-
-            return jsonContract.UnderlyingType.GetEnumValues()
-                .Cast<object>();
+            return JsonConvert.SerializeObject(value, _serializerSettings);
         }
-
-#if NETCOREAPP3_0
-        private string GetConvertedEnumName(string enumName, bool hasSpecifiedName, StringEnumConverter stringEnumConverter)
-        {
-            if (stringEnumConverter.NamingStrategy != null)
-                return stringEnumConverter.NamingStrategy.GetPropertyName(enumName, hasSpecifiedName);
-
-            return (stringEnumConverter.CamelCaseText)
-                ? new CamelCaseNamingStrategy().GetPropertyName(enumName, hasSpecifiedName)
-                : enumName;
-        }
-#else
-        private string GetConvertedEnumName(string enumName, bool hasSpecifiedName, StringEnumConverter stringEnumConverter)
-        {
-            return (stringEnumConverter.CamelCaseText)
-                ? new CamelCaseNamingStrategy().GetPropertyName(enumName, hasSpecifiedName)
-                : enumName;
-        }
-#endif
 
         private IEnumerable<DataProperty> GetDataPropertiesFor(JsonObjectContract jsonObjectContract, out Type extensionDataType)
         {
@@ -176,7 +146,13 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
                 var isSetViaConstructor = jsonProperty.DeclaringType != null && jsonProperty.DeclaringType.GetConstructors()
                     .SelectMany(c => c.GetParameters())
-                    .Any(p => string.Equals(p.Name, jsonProperty.PropertyName, StringComparison.OrdinalIgnoreCase));
+                    .Any(p =>
+                    {
+                        // Newtonsoft supports setting via constructor if either underlying OR JSON names match
+                        return
+                            string.Equals(p.Name, jsonProperty.UnderlyingName, StringComparison.OrdinalIgnoreCase) ||
+                            string.Equals(p.Name, jsonProperty.PropertyName, StringComparison.OrdinalIgnoreCase);
+                    });
 
                 jsonProperty.TryGetMemberInfo(out MemberInfo memberInfo);
 
@@ -193,7 +169,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
             extensionDataType = jsonObjectContract.ExtensionDataValueType;
 
-#if NETCOREAPP3_0
+#if (!NETSTANDARD2_0)
             // If applicable, honor ProblemDetailsConverter
             if (jsonObjectContract.UnderlyingType.IsAssignableTo(typeof(Microsoft.AspNetCore.Mvc.ProblemDetails))
                 && _serializerSettings.Converters.OfType<Microsoft.AspNetCore.Mvc.NewtonsoftJson.ProblemDetailsConverter>().Any())

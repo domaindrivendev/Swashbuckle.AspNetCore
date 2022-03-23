@@ -12,6 +12,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             CustomTypeMappings = new Dictionary<Type, Func<OpenApiSchema>>();
             SchemaIdSelector = DefaultSchemaIdSelector;
             SubTypesSelector = DefaultSubTypesSelector;
+            DiscriminatorNameSelector = DefaultDiscriminatorNameSelector;
+            DiscriminatorValueSelector = DefaultDiscriminatorValueSelector;
             SchemaFilters = new List<ISchemaFilter>();
         }
 
@@ -23,8 +25,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public bool IgnoreObsoleteProperties { get; set; }
 
-        public bool UseAllOfToExtendReferenceSchemas { get; set; }
-
         public bool UseAllOfForInheritance { get; set; }
 
         public bool UseOneOfForPolymorphism { get; set; }
@@ -35,13 +35,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public Func<Type, string> DiscriminatorValueSelector { get; set; }
 
+        public bool UseAllOfToExtendReferenceSchemas { get; set; }
+
+        public bool SupportNonNullableReferenceTypes { get; set; }
+
         public IList<ISchemaFilter> SchemaFilters { get; set; }
-
-        [Obsolete("If the serializer is configured for string enums (e.g. StringEnumConverter) Swashbuckle will reflect that automatically")]
-        public bool DescribeAllEnumsAsStrings { get; set; }
-
-        [Obsolete("If the serializer is configured for (camel-cased) string enums (e.g. StringEnumConverter) Swashbuckle will reflect that automatically")]
-        public bool DescribeStringEnumsInCamelCase { get; set; }
 
         private string DefaultSchemaIdSelector(Type modelType)
         {
@@ -57,6 +55,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private IEnumerable<Type> DefaultSubTypesSelector(Type baseType)
         {
             return baseType.Assembly.GetTypes().Where(type => type.IsSubclassOf(baseType));
+        }
+
+        private string DefaultDiscriminatorNameSelector(Type baseType)
+        {
+            return null;
+        }
+
+        private string DefaultDiscriminatorValueSelector(Type subType)
+        {
+            return null;
         }
     }
 }
