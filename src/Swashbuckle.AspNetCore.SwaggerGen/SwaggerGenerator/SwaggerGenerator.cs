@@ -10,6 +10,9 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
+#if NET7_0_OR_GREATER
+using Microsoft.AspNetCore.Http.Metadata;
+#endif
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -212,7 +215,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     Parameters = GenerateParameters(apiDescription, schemaRepository),
                     RequestBody = GenerateRequestBody(apiDescription, schemaRepository),
                     Responses = GenerateResponses(apiDescription, schemaRepository),
-                    Deprecated = apiDescription.CustomAttributes().OfType<ObsoleteAttribute>().Any()
+                    Deprecated = apiDescription.CustomAttributes().OfType<ObsoleteAttribute>().Any(),
+                    Summary = GenerateSummary(apiDescription)
                 };
 
                 apiDescription.TryGetMethodInfo(out MethodInfo methodInfo);
@@ -650,5 +654,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             new KeyValuePair<string, string>("5\\d{2}", "Server Error"),
             new KeyValuePair<string, string>("default", "Error")
         };
+        private string GenerateSummary(ApiDescription apiDescription)
+        {
+#if NET7_0_OR_GREATER
+            return apiDescription
+                .ActionDescriptor
+                ?.EndpointMetadata
+                ?.OfType<IEndpointSummaryMetadata>()
+                .Select(s => s.Summary)
+                .LastOrDefault();
+#endif
+            return null;
+        }
     }
 }
