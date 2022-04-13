@@ -58,13 +58,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 else if (constraint is LengthRouteConstraint lengthRouteConstraint)
                     ApplyLengthRouteConstraint(schema, lengthRouteConstraint);
 
-                else if (constraint is LongRouteConstraint || constraint is FloatRouteConstraint || constraint is DecimalRouteConstraint)
+                else if (constraint is FloatRouteConstraint or DecimalRouteConstraint)
                     schema.Type = "number";
 
-                else if (constraint is IntRouteConstraint)
+                else if (constraint is LongRouteConstraint or IntRouteConstraint)
                     schema.Type = "integer";
 
-                else if (constraint is GuidRouteConstraint || constraint is StringRouteConstraint)
+                else if (constraint is GuidRouteConstraint or StringRouteConstraint)
                     schema.Type = "string";
 
                 else if (constraint is BoolRouteConstraint)
