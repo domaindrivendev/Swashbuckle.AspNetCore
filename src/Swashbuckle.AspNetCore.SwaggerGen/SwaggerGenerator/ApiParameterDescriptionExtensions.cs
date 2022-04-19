@@ -12,12 +12,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class ApiParameterDescriptionExtensions
     {
-        private static readonly Type[] RequiredAttributeTypes = new[]
-        {
-            typeof(BindRequiredAttribute),
-            typeof(RequiredAttribute)
-        };
-
         public static bool IsRequiredParameter(this ApiParameterDescription apiParameter)
         {
             // From the OpenAPI spec:
@@ -28,7 +22,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
 
             // This is the default logic for IsRequired
-            bool IsRequired() => apiParameter.CustomAttributes().Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
+            bool IsRequired() => apiParameter.CustomAttributes().Any(attr => attr is BindRequiredAttribute || attr is RequiredAttribute);
 
             // This is to keep compatibility with MVC controller logic that has existed in the past
             if (apiParameter.ParameterDescriptor is ControllerParameterDescriptor)
