@@ -132,6 +132,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private OpenApiOperation GenerateOperation(ApiDescription apiDescription, SchemaRepository schemaRepository)
         {
+#if NET6_0_OR_GREATER
+            var metadata = apiDescription.ActionDescriptor?.EndpointMetadata;
+            var existingOperation = metadata?.OfType<OpenApiOperation>().SingleOrDefault();
+            if (existingOperation != null)
+            {
+                return existingOperation;
+            }
+#endif
             try
             {
                 var operation = new OpenApiOperation
