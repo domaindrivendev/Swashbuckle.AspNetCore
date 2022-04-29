@@ -173,6 +173,17 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.True(schema.UniqueItems);
         }
 
+#if NET5_0_OR_GREATER
+        [Fact]
+        public void GenerateSchema_SetsUniqueItems_IfEnumerableTypeIsReadOnlySet()
+        {
+            var schema = Subject().GenerateSchema(typeof(IReadOnlySet<string>), new SchemaRepository());
+
+            Assert.Equal("array", schema.Type);
+            Assert.True(schema.UniqueItems);
+        }
+#endif
+
         [Fact]
         public void GenerateSchema_GeneratesReferencedArraySchema_IfEnumerableTypeIsSelfReferencing()
         {

@@ -303,6 +303,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var hasUniqueItems = dataContract.UnderlyingType.IsConstructedFrom(typeof(ISet<>), out _)
                 || dataContract.UnderlyingType.IsConstructedFrom(typeof(KeyedCollection<,>), out _);
 
+#if NET5_0_OR_GREATER
+            hasUniqueItems = hasUniqueItems || dataContract.UnderlyingType.IsConstructedFrom(typeof(IReadOnlySet<>), out _);
+#endif
+
             return new OpenApiSchema
             {
                 Type = "array",
