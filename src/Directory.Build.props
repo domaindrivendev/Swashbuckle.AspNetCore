@@ -10,7 +10,7 @@
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<RepositoryUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore.git</RepositoryUrl>
-		<VersionPrefix>6.3.0</VersionPrefix>
+		<VersionPrefix>6.3.1</VersionPrefix>
 		<LangVersion>9</LangVersion>
 	</PropertyGroup>
 
