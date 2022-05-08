@@ -659,7 +659,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             string operationSummary = null;
 #if NET7_0_OR_GREATER
-            apiSummary = apiDescription
+            operationSummary = apiDescription
                 .ActionDescriptor
                 ?.EndpointMetadata
                 ?.OfType<IEndpointSummaryMetadata>()
@@ -677,7 +677,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 .ActionDescriptor
                 ?.EndpointMetadata
                 ?.OfType<IEndpointDescriptionMetadata>()
-                .Select(s => s.Summary)
+                .Select(s => s.Description)
                 .LastOrDefault();
 #endif
             return operationDescription;
