@@ -656,15 +656,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         };
         private string GenerateSummary(ApiDescription apiDescription)
         {
+            string apiSummary = null;
 #if NET7_0_OR_GREATER
-            return apiDescription
+            apiSummary = apiDescription
                 .ActionDescriptor
                 ?.EndpointMetadata
                 ?.OfType<IEndpointSummaryMetadata>()
                 .Select(s => s.Summary)
                 .LastOrDefault();
 #endif
-            return null;
+            return apiSummary;
         }
     }
 }
