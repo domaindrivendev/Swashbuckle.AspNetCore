@@ -16,7 +16,7 @@ namespace Swashbuckle.AspNetCore.Swagger
         /// <summary>
         /// Sets a custom route for the Swagger JSON/YAML endpoint(s). Must include the {documentName} parameter
         /// </summary>
-        public string RouteTemplate { get; set; } = "swagger/{documentName}/swagger.{json|yaml}";
+        public string RouteTemplate { get; set; } = "swagger/{documentName}/swagger.{extension:regex(^(json|ya?ml)$)}";
 
         /// <summary>
         /// Return Swagger JSON/YAML in the V2 format rather than V3
