@@ -549,6 +549,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GenerateSchema_SupportsOption_UseInlineDefinitionsForObjects()
+        {
+            var subject = Subject(
+                configureGenerator: c => c.UseInlineDefinitionsForObjects = true
+            );
+
+            var schema = subject.GenerateSchema(typeof(ComplexType), new SchemaRepository());
+
+            Assert.Equal("object", schema.Type);
+            Assert.NotNull(schema.Properties);
+        }
+
+        [Fact]
         public void GenerateSchema_SupportsOption_UseInlineDefinitionsForEnums()
         {
             var subject = Subject(

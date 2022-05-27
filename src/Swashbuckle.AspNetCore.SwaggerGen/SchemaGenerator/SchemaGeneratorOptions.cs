@@ -19,6 +19,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public IDictionary<Type, Func<OpenApiSchema>> CustomTypeMappings { get; set; }
 
+        public bool UseInlineDefinitionsForObjects { get; set; }
+
         public bool UseInlineDefinitionsForEnums { get; set; }
 
         public Func<Type, string> SchemaIdSelector { get; set; }
