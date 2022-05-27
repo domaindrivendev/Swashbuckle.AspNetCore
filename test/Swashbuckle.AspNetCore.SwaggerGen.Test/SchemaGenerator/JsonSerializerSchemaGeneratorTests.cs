@@ -562,6 +562,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GenerateSchema_SupportsOption_UseReferenceForSelfReferenceTypesWhenUseInlineDefinitionsForObjects()
+        {
+            var subject = Subject(
+                configureGenerator: c => c.UseInlineDefinitionsForObjects = true
+            );
+
+            var schema = subject.GenerateSchema(typeof(SelfReferencingType), new SchemaRepository());
+
+            Assert.NotNull(schema.Reference);
+            Assert.Equal("SelfReferencingType", schema.Reference.Id);
+        }
+
+        [Fact]
         public void GenerateSchema_SupportsOption_UseInlineDefinitionsForEnums()
         {
             var subject = Subject(
