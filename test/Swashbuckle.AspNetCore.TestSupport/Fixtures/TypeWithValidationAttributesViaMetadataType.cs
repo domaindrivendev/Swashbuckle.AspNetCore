@@ -18,8 +18,9 @@ namespace Swashbuckle.AspNetCore.TestSupport
 
         public string StringWithStringLength { get; set; }
 
-        [Required]
         public string StringWithRequired { get; set; }
+
+        public string StringWithRequiredAllowEmptyTrue { get; set; }
     }
 
     public class MetadataType
@@ -42,7 +43,10 @@ namespace Swashbuckle.AspNetCore.TestSupport
         [StringLength(10, MinimumLength = 5)]
         public string StringWithStringLength { get; set; }
 
-        // NOTE: RequiredAttribute for this is applied in the actual type
+        [Required]
         public string StringWithRequired { get; set; }
+
+        [Required(AllowEmptyStrings = true)]
+        public string StringWithRequiredAllowEmptyTrue { get; set; }
     }
 }
