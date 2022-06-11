@@ -180,6 +180,173 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GetSwagger_GenerateProducesSchemas_ForProvidedOpenApiOperation()
+        {
+            var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithProducesAttribute));
+            var actionDescriptor = new ActionDescriptor
+            {
+                EndpointMetadata = new List<object>()
+                {
+                    new OpenApiOperation
+                    {
+                        OperationId = "OperationIdSetInMetadata",
+                        Responses = new()
+                        {
+                            ["200"] = new()
+                            {
+                                Content = new Dictionary<string, OpenApiMediaType>()
+                                {
+                                    ["application/someMediaType"] = new() 
+                                }
+                            }
+                        }
+                    }
+                },
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+                }
+            };
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create(
+                        actionDescriptor,
+                        methodInfo,
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        supportedResponseTypes: new[]
+                        {
+                            new ApiResponseType()
+                            {
+                                StatusCode = 200,
+                                Type = typeof(TestDto)
+                            }
+                        }),
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal("OperationIdSetInMetadata", document.Paths["/resource"].Operations[OperationType.Post].OperationId);
+            var content = Assert.Single(document.Paths["/resource"].Operations[OperationType.Post].Responses["200"].Content);
+            Assert.Equal("application/someMediaType", content.Key);
+            Assert.Null(content.Value.Schema.Type);
+            Assert.NotNull(content.Value.Schema.Reference);
+            Assert.Equal("TestDto", content.Value.Schema.Reference.Id);
+        }
+
+        [Fact]
+        public void GetSwagger_GenerateConsumesSchemas_ForProvidedOpenApiOperation()
+        {
+            var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithConsumesAttribute));
+            var actionDescriptor = new ActionDescriptor
+            {
+                EndpointMetadata = new List<object>()
+                {
+                    new OpenApiOperation
+                    {
+                        OperationId = "OperationIdSetInMetadata",
+                        RequestBody = new()
+                        {
+                            Content = new Dictionary<string, OpenApiMediaType>()
+                            {
+                                ["application/someMediaType"] = new()
+                            }
+                        }
+                    }
+                },
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+                }
+            };
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create(
+                        actionDescriptor,
+                        methodInfo,
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions: new[]
+                        {
+                            new ApiParameterDescription()
+                            {
+                                Name = "param",
+                                Source = BindingSource.Body,
+                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(TestDto))
+                            }
+                        }),
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal("OperationIdSetInMetadata", document.Paths["/resource"].Operations[OperationType.Post].OperationId);
+            var content = Assert.Single(document.Paths["/resource"].Operations[OperationType.Post].RequestBody.Content);
+            Assert.Equal("application/someMediaType", content.Key);
+            Assert.Null(content.Value.Schema.Type);
+            Assert.NotNull(content.Value.Schema.Reference);
+            Assert.Equal("TestDto", content.Value.Schema.Reference.Id);
+        }
+
+        [Fact]
+        public void GetSwagger_GenerateParametersSchemas_ForProvidedOpenApiOperation()
+        {
+            var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
+            var actionDescriptor = new ActionDescriptor
+            {
+                EndpointMetadata = new List<object>()
+                {
+                    new OpenApiOperation
+                    {
+                        OperationId = "OperationIdSetInMetadata",
+                        Parameters = new List<OpenApiParameter>()
+                        {
+                            new OpenApiParameter
+                            {
+                                Name = "ParameterInMetadata"
+                            }
+                        }
+                    }
+                },
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+                }
+            };
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create(
+                        actionDescriptor,
+                        methodInfo,
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions: new[]
+                        {
+                            new ApiParameterDescription
+                            {
+                                Name = "ParameterInMetadata",
+                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(string))
+                            }
+                        }),
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal("OperationIdSetInMetadata", document.Paths["/resource"].Operations[OperationType.Post].OperationId);
+            Assert.Equal("ParameterInMetadata", document.Paths["/resource"].Operations[OperationType.Post].Parameters[0].Name);
+            Assert.NotNull(document.Paths["/resource"].Operations[OperationType.Post].Parameters[0].Schema);
+            Assert.Equal("string", document.Paths["/resource"].Operations[OperationType.Post].Parameters[0].Schema.Type);
+        }
+
+        [Fact]
         public void GetSwagger_SetsOperationIdToNull_IfActionHasNoEndpointMetadata()
         {
             var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
