@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -11,11 +13,12 @@ using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public class SwaggerGenerator : ISwaggerProvider
+    public class SwaggerGenerator : ISwaggerProvider, IAsyncSwaggerProvider
     {
         private readonly IApiDescriptionGroupCollectionProvider _apiDescriptionsProvider;
         private readonly ISchemaGenerator _schemaGenerator;
         private readonly SwaggerGeneratorOptions _options;
+        private readonly IAuthenticationSchemeProvider _authenticationSchemeProvider;
 
         public SwaggerGenerator(
             SwaggerGeneratorOptions options,
@@ -27,7 +30,48 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             _schemaGenerator = schemaGenerator;
         }
 
+        public SwaggerGenerator(
+            SwaggerGeneratorOptions options,
+            IApiDescriptionGroupCollectionProvider apiDescriptionsProvider,
+            ISchemaGenerator schemaGenerator,
+            IAuthenticationSchemeProvider authentiationSchemeProvider) : this(options, apiDescriptionsProvider, schemaGenerator)
+        {
+            _authenticationSchemeProvider = authentiationSchemeProvider;
+        }
+
+        public async Task<OpenApiDocument> GetSwaggerAsync(string documentName, string host = null, string basePath = null)
+        {
+            var (applicableApiDescriptions, swaggerDoc, schemaRepository) = GetSwaggerDocumentWithoutFilters(documentName, host, basePath);
+
+            var filterContext = new DocumentFilterContext(applicableApiDescriptions, _schemaGenerator, schemaRepository);
+            foreach (var filter in _options.DocumentFilters)
+            {
+                filter.Apply(swaggerDoc, filterContext);
+            }
+
+            swaggerDoc.Components.SecuritySchemes = await GetOpenApiSecuritySchemes();
+            swaggerDoc.Components.Schemas = new SortedDictionary<string, OpenApiSchema>(swaggerDoc.Components.Schemas, _options.SchemaComparer);
+
+            return swaggerDoc;
+        }
+
         public OpenApiDocument GetSwagger(string documentName, string host = null, string basePath = null)
+        {
+            var (applicableApiDescriptions, swaggerDoc, schemaRepository) = GetSwaggerDocumentWithoutFilters(documentName, host, basePath);
+
+            var filterContext = new DocumentFilterContext(applicableApiDescriptions, _schemaGenerator, schemaRepository);
+            foreach (var filter in _options.DocumentFilters)
+            {
+                filter.Apply(swaggerDoc, filterContext);
+            }
+
+            swaggerDoc.Components.SecuritySchemes = GetOpenApiSecuritySchemes().Result;
+            swaggerDoc.Components.Schemas = new SortedDictionary<string, OpenApiSchema>(swaggerDoc.Components.Schemas, _options.SchemaComparer);
+
+            return swaggerDoc;
+        }
+
+        private (IEnumerable<ApiDescription>, OpenApiDocument, SchemaRepository) GetSwaggerDocumentWithoutFilters(string documentName, string host = null, string basePath = null)
         {
             if (!_options.SwaggerDocs.TryGetValue(documentName, out OpenApiInfo info))
                 throw new UnknownSwaggerDocument(documentName, _options.SwaggerDocs.Select(d => d.Key));
@@ -47,20 +91,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 Components = new OpenApiComponents
                 {
                     Schemas = schemaRepository.Schemas,
-                    SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>(_options.SecuritySchemes)
                 },
                 SecurityRequirements = new List<OpenApiSecurityRequirement>(_options.SecurityRequirements)
             };
 
-            var filterContext = new DocumentFilterContext(applicableApiDescriptions, _schemaGenerator, schemaRepository);
-            foreach (var filter in _options.DocumentFilters)
+            return (applicableApiDescriptions, swaggerDoc, schemaRepository);
+        }
+
+        private async Task<Dictionary<string, OpenApiSecurityScheme>> GetOpenApiSecuritySchemes()
+        {
+            var securitySchemesFromOptions = new Dictionary<string, OpenApiSecurityScheme>(_options.SecuritySchemes);
+            if (_authenticationSchemeProvider is not null)
             {
-                filter.Apply(swaggerDoc, filterContext);
+                var schemes = await _authenticationSchemeProvider.GetAllSchemesAsync();
+                return _options.SecuritySchemesSelector(schemes, securitySchemesFromOptions);
             }
-
-            swaggerDoc.Components.Schemas = new SortedDictionary<string, OpenApiSchema>(swaggerDoc.Components.Schemas, _options.SchemaComparer);
-
-            return swaggerDoc;
+            return _options.SecuritySchemesSelector(Enumerable.Empty<AuthenticationScheme>(), securitySchemesFromOptions);
         }
 
         private IList<OpenApiServer> GenerateServers(string host, string basePath)
