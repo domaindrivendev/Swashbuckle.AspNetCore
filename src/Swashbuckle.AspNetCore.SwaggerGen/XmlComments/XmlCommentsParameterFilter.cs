@@ -1,16 +1,21 @@
-﻿using System.Reflection;
+﻿using Microsoft.OpenApi.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Xml.XPath;
-using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class XmlCommentsParameterFilter : IParameterFilter
     {
-        private XPathNavigator _xmlNavigator;
+        private readonly Dictionary<string, XPathNavigator> _docMembers;
 
         public XmlCommentsParameterFilter(XPathDocument xmlDoc)
         {
-            _xmlNavigator = xmlDoc.CreateNavigator();
+            _docMembers = xmlDoc.CreateNavigator()
+                .Select("/doc/members/member")
+                .OfType<XPathNavigator>()
+                .ToDictionary(memberNode => memberNode.GetAttribute("name", ""));
         }
 
         public void Apply(OpenApiParameter parameter, ParameterFilterContext context)
@@ -28,9 +33,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private void ApplyPropertyTags(OpenApiParameter parameter, ParameterFilterContext context)
         {
             var propertyMemberName = XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(context.PropertyInfo);
-            var propertyNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{propertyMemberName}']");
 
-            if (propertyNode == null) return;
+            if (!_docMembers.TryGetValue(propertyMemberName, out var propertyNode)) return;
 
             var summaryNode = propertyNode.SelectSingleNode("summary");
             if (summaryNode != null)
@@ -61,8 +65,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (targetMethod == null) return;
 
             var methodMemberName = XmlCommentsNodeNameHelper.GetMemberNameForMethod(targetMethod);
-            var paramNode = _xmlNavigator.SelectSingleNode(
-                $"/doc/members/member[@name='{methodMemberName}']/param[@name='{context.ParameterInfo.Name}']");
+
+            if (!_docMembers.TryGetValue(methodMemberName, out var propertyNode)) return;
+
+            var paramNode = propertyNode.SelectSingleNode($"param[@name='{context.ParameterInfo.Name}']");
 
             if (paramNode != null)
             {

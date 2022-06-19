@@ -1,17 +1,22 @@
-﻿using System;
+﻿using Microsoft.OpenApi.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Xml.XPath;
-using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class XmlCommentsOperationFilter : IOperationFilter
     {
-        private readonly XPathNavigator _xmlNavigator;
+        private readonly Dictionary<string, XPathNavigator> _docMembers;
 
         public XmlCommentsOperationFilter(XPathDocument xmlDoc)
         {
-            _xmlNavigator = xmlDoc.CreateNavigator();
+            _docMembers = xmlDoc.CreateNavigator()
+                .Select("/doc/members/member")
+                .OfType<XPathNavigator>()
+                .ToDictionary(memberNode => memberNode.GetAttribute("name", ""));
         }
 
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
@@ -32,16 +37,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private void ApplyControllerTags(OpenApiOperation operation, Type controllerType)
         {
             var typeMemberName = XmlCommentsNodeNameHelper.GetMemberNameForType(controllerType);
-            var responseNodes = _xmlNavigator.Select($"/doc/members/member[@name='{typeMemberName}']/response");
+
+            if (!_docMembers.TryGetValue(typeMemberName, out var methodNode)) return;
+
+            var responseNodes = methodNode.Select("response");
             ApplyResponseTags(operation, responseNodes);
         }
 
         private void ApplyMethodTags(OpenApiOperation operation, MethodInfo methodInfo)
         {
             var methodMemberName = XmlCommentsNodeNameHelper.GetMemberNameForMethod(methodInfo);
-            var methodNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{methodMemberName}']");
 
-            if (methodNode == null) return;
+            if (!_docMembers.TryGetValue(methodMemberName, out var methodNode)) return;
 
             var summaryNode = methodNode.SelectSingleNode("summary");
             if (summaryNode != null)
@@ -60,9 +67,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             while (responseNodes.MoveNext())
             {
                 var code = responseNodes.Current.GetAttribute("code", "");
-                var response = operation.Responses.ContainsKey(code)
-                    ? operation.Responses[code]
-                    : operation.Responses[code] = new OpenApiResponse();
+                if (!operation.Responses.TryGetValue(code, out var response))
+                {
+                    response = new OpenApiResponse();
+                    operation.Responses[code] = response;
+                }
 
                 response.Description = XmlCommentsTextHelper.Humanize(responseNodes.Current.InnerXml);
             }
