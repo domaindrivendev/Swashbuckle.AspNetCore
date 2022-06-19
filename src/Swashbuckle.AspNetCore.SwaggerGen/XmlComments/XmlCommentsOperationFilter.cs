@@ -1,7 +1,6 @@
 ﻿using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Xml.XPath;
 
@@ -9,14 +8,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class XmlCommentsOperationFilter : IOperationFilter
     {
-        private readonly Dictionary<string, XPathNavigator> _docMembers;
+        private readonly IReadOnlyDictionary<string, XPathNavigator> _xmlDocMembers;
 
-        public XmlCommentsOperationFilter(XPathDocument xmlDoc)
+        public XmlCommentsOperationFilter(XPathDocument xmlDoc) : this(XmlCommentsDocumentHelper.GetMemberDictionary(xmlDoc))
         {
-            _docMembers = xmlDoc.CreateNavigator()
-                .Select("/doc/members/member")
-                .OfType<XPathNavigator>()
-                .ToDictionary(memberNode => memberNode.GetAttribute("name", ""));
+        }
+
+        public XmlCommentsOperationFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers)
+        {
+            _xmlDocMembers = xmlDocMembers;
         }
 
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
@@ -38,7 +38,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var typeMemberName = XmlCommentsNodeNameHelper.GetMemberNameForType(controllerType);
 
-            if (!_docMembers.TryGetValue(typeMemberName, out var methodNode)) return;
+            if (!_xmlDocMembers.TryGetValue(typeMemberName, out var methodNode)) return;
 
             var responseNodes = methodNode.Select("response");
             ApplyResponseTags(operation, responseNodes);
@@ -48,7 +48,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var methodMemberName = XmlCommentsNodeNameHelper.GetMemberNameForMethod(methodInfo);
 
-            if (!_docMembers.TryGetValue(methodMemberName, out var methodNode)) return;
+            if (!_xmlDocMembers.TryGetValue(methodMemberName, out var methodNode)) return;
 
             var summaryNode = methodNode.SelectSingleNode("summary");
             if (summaryNode != null)

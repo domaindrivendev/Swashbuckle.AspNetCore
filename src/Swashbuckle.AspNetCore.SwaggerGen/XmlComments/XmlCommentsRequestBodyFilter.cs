@@ -1,6 +1,5 @@
 ﻿using Microsoft.OpenApi.Models;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Xml.XPath;
 
@@ -8,14 +7,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class XmlCommentsRequestBodyFilter : IRequestBodyFilter
     {
-        private readonly Dictionary<string, XPathNavigator> _docMembers;
+        private readonly IReadOnlyDictionary<string, XPathNavigator> _xmlDocMembers;
 
-        public XmlCommentsRequestBodyFilter(XPathDocument xmlDoc)
+        public XmlCommentsRequestBodyFilter(XPathDocument xmlDoc) : this(XmlCommentsDocumentHelper.GetMemberDictionary(xmlDoc))
         {
-            _docMembers = xmlDoc.CreateNavigator()
-                .Select("/doc/members/member")
-                .OfType<XPathNavigator>()
-                .ToDictionary(memberNode => memberNode.GetAttribute("name", ""));
+        }
+
+        public XmlCommentsRequestBodyFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers)
+        {
+            _xmlDocMembers = xmlDocMembers;
         }
 
         public void Apply(OpenApiRequestBody requestBody, RequestBodyFilterContext context)
@@ -43,7 +43,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var propertyMemberName = XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(propertyInfo);
 
-            if (!_docMembers.TryGetValue(propertyMemberName, out var propertyNode)) return;
+            if (!_xmlDocMembers.TryGetValue(propertyMemberName, out var propertyNode)) return;
 
             var summaryNode = propertyNode.SelectSingleNode("summary");
             if (summaryNode != null)
@@ -75,7 +75,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var methodMemberName = XmlCommentsNodeNameHelper.GetMemberNameForMethod(targetMethod);
 
-            if (!_docMembers.TryGetValue(methodMemberName, out var propertyNode)) return;
+            if (!_xmlDocMembers.TryGetValue(methodMemberName, out var propertyNode)) return;
 
             var paramNode = propertyNode.SelectSingleNode($"param[@name='{parameterInfo.Name}']");
 

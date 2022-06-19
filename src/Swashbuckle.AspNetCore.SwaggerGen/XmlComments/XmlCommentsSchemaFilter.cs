@@ -1,21 +1,21 @@
 ﻿using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Xml.XPath;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class XmlCommentsSchemaFilter : ISchemaFilter
     {
-        private readonly Dictionary<string, XPathNavigator> _docMembers;
+        private readonly IReadOnlyDictionary<string, XPathNavigator> _xmlDocMembers;
 
-        public XmlCommentsSchemaFilter(XPathDocument xmlDoc)
+        public XmlCommentsSchemaFilter(XPathDocument xmlDoc) : this(XmlCommentsDocumentHelper.GetMemberDictionary(xmlDoc))
         {
-            _docMembers = xmlDoc.CreateNavigator()
-                .Select("/doc/members/member")
-                .OfType<XPathNavigator>()
-                .ToDictionary(memberNode => memberNode.GetAttribute("name", ""));
+        }
+
+        public XmlCommentsSchemaFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers)
+        {
+            _xmlDocMembers = xmlDocMembers;
         }
 
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
@@ -32,7 +32,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var typeMemberName = XmlCommentsNodeNameHelper.GetMemberNameForType(type);
 
-            if (!_docMembers.TryGetValue(typeMemberName, out var memberNode)) return;
+            if (!_xmlDocMembers.TryGetValue(typeMemberName, out var memberNode)) return;
 
             var typeSummaryNode = memberNode.SelectSingleNode("summary");
 
@@ -46,7 +46,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var fieldOrPropertyMemberName = XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(context.MemberInfo);
 
-            if (!_docMembers.TryGetValue(fieldOrPropertyMemberName, out var fieldOrPropertyNode)) return;
+            if (!_xmlDocMembers.TryGetValue(fieldOrPropertyMemberName, out var fieldOrPropertyNode)) return;
 
             var summaryNode = fieldOrPropertyNode.SelectSingleNode("summary");
             if (summaryNode != null)

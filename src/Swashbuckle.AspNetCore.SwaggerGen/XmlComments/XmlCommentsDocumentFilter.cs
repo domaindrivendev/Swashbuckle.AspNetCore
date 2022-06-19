@@ -9,14 +9,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class XmlCommentsDocumentFilter : IDocumentFilter
     {
-        private const string MemberXPath = "/doc/members/member[@name='{0}']";
         private const string SummaryTag = "summary";
 
-        private readonly XPathNavigator _xmlNavigator;
+        private readonly IReadOnlyDictionary<string, XPathNavigator> _xmlDocMembers;
 
-        public XmlCommentsDocumentFilter(XPathDocument xmlDoc)
+        public XmlCommentsDocumentFilter(XPathDocument xmlDoc) : this(XmlCommentsDocumentHelper.GetMemberDictionary(xmlDoc))
         {
-            _xmlNavigator = xmlDoc.CreateNavigator();
+        }
+
+        public XmlCommentsDocumentFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers)
+        {
+            _xmlDocMembers = xmlDocMembers;
         }
 
         public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
@@ -31,22 +34,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             foreach (var nameAndType in controllerNamesAndTypes)
             {
                 var memberName = XmlCommentsNodeNameHelper.GetMemberNameForType(nameAndType.Value);
-                var typeNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, memberName));
 
-                if (typeNode != null)
+                if (!_xmlDocMembers.TryGetValue(memberName, out var typeNode)) return;
+                
+                var summaryNode = typeNode.SelectSingleNode(SummaryTag);
+                if (summaryNode != null)
                 {
-                    var summaryNode = typeNode.SelectSingleNode(SummaryTag);
-                    if (summaryNode != null)
-                    {
-                        if (swaggerDoc.Tags == null)
-                            swaggerDoc.Tags = new List<OpenApiTag>();
+                    if (swaggerDoc.Tags == null)
+                        swaggerDoc.Tags = new List<OpenApiTag>();
 
-                        swaggerDoc.Tags.Add(new OpenApiTag
-                        {
-                            Name = nameAndType.Key,
-                            Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml)
-                        });
-                    }
+                    swaggerDoc.Tags.Add(new OpenApiTag
+                    {
+                        Name = nameAndType.Key,
+                        Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml)
+                    });
                 }
             }
         }
