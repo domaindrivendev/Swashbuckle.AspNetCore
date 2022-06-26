@@ -66,12 +66,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 // Nullable, ReadOnly & WriteOnly are only relevant for Schema "properties" (i.e. where dataProperty is non-null)
                 if (dataProperty != null)
                 {
+                    var requiredAttribute = customAttributes.OfType<RequiredAttribute>().FirstOrDefault();
                     schema.Nullable = _generatorOptions.SupportNonNullableReferenceTypes
-                        ? dataProperty.IsNullable && !customAttributes.OfType<RequiredAttribute>().Any() && !memberInfo.IsNonNullableReferenceType()
-                        : dataProperty.IsNullable && !customAttributes.OfType<RequiredAttribute>().Any();
+                        ? dataProperty.IsNullable && requiredAttribute==null && !memberInfo.IsNonNullableReferenceType()
+                        : dataProperty.IsNullable && requiredAttribute==null;
 
                     schema.ReadOnly = dataProperty.IsReadOnly;
                     schema.WriteOnly = dataProperty.IsWriteOnly;
+                    schema.MinLength = modelType == typeof(string) && requiredAttribute is { AllowEmptyStrings: false } ? 1 : null;
                 }
 
                 var defaultValueAttribute = customAttributes.OfType<DefaultValueAttribute>().FirstOrDefault();

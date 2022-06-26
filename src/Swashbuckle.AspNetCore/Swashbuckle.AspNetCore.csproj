@@ -8,7 +8,7 @@
     <IncludeContentInPack>false</IncludeContentInPack>
     <IncludeSource>false</IncludeSource>
     <IncludeSymbols>false</IncludeSymbols>
-    <MicrosoftExtensionsApiDescriptionServerPackageVersion>3.0.0</MicrosoftExtensionsApiDescriptionServerPackageVersion>
+    <MicrosoftExtensionsApiDescriptionServerPackageVersion>6.0.5</MicrosoftExtensionsApiDescriptionServerPackageVersion>
     <NuspecFile>$(MSBuildProjectName).nuspec</NuspecFile>
     <PackageId>Swashbuckle.AspNetCore</PackageId>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>

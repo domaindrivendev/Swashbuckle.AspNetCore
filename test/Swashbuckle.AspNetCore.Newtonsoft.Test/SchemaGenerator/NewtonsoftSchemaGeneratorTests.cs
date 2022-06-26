@@ -306,8 +306,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["StringWithRegularExpression"].Pattern);
             Assert.Equal(5, schema.Properties["StringWithStringLength"].MinLength);
             Assert.Equal(10, schema.Properties["StringWithStringLength"].MaxLength);
+            Assert.Equal(1, schema.Properties["StringWithRequired"].MinLength);
             Assert.False(schema.Properties["StringWithRequired"].Nullable);
-            Assert.Equal(new[] { "StringWithRequired" }, schema.Required.ToArray());
+            Assert.False(schema.Properties["StringWithRequiredAllowEmptyTrue"].Nullable);
+            Assert.Null(schema.Properties["StringWithRequiredAllowEmptyTrue"].MinLength);
+            Assert.Equal(new[] { "StringWithRequired", "StringWithRequiredAllowEmptyTrue" }, schema.Required.ToArray());
         }
 
         [Fact]

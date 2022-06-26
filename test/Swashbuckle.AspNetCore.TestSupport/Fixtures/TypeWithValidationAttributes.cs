@@ -24,5 +24,8 @@ namespace Swashbuckle.AspNetCore.TestSupport
 
         [Required]
         public string StringWithRequired { get; set; }
+
+        [Required(AllowEmptyStrings = true)]
+        public string StringWithRequiredAllowEmptyTrue { get; set; }
     }
 }
