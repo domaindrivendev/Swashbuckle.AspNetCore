@@ -236,8 +236,9 @@ namespace Microsoft.AspNetCore.Builder
         /// </summary>
         /// <param name="options"></param>
         /// <param name="value"></param>
+        /// <remarks>Setting this exposes the client secrets in inline javascript in the swagger-ui generated html.</remarks>
         public static void OAuthClientSecret(this SwaggerUIOptions options, string value)
-        {
+        { 
             options.OAuthConfigObject.ClientSecret = value;
         }
 
