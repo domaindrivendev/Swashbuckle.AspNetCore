@@ -63,9 +63,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public IList<IDocumentFilter> DocumentFilters { get; set; }
 
-        public Func<IEnumerable<AuthenticationScheme>,
-            Dictionary<string, OpenApiSecurityScheme>,
-            Dictionary<string, OpenApiSecurityScheme>> SecuritySchemesSelector { get; set;}
+        public Func<IEnumerable<AuthenticationScheme>, Dictionary<string, OpenApiSecurityScheme>> SecuritySchemesSelector { get; set;}
 
         private bool DefaultDocInclusionPredicate(string documentName, ApiDescription apiDescription)
         {
@@ -109,14 +107,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return TagsSelector(apiDescription).First();
         }
 
-        private Dictionary<string, OpenApiSecurityScheme> DefaultSecuritySchemeSelector(
-            IEnumerable<AuthenticationScheme> schemes,
-            Dictionary<string, OpenApiSecurityScheme> securitySchemes)
+        private Dictionary<string, OpenApiSecurityScheme> DefaultSecuritySchemeSelector(IEnumerable<AuthenticationScheme> schemes)
         {
+            Dictionary<string, OpenApiSecurityScheme> securitySchemes = new();
 #if (NET6_0_OR_GREATER)
             foreach (var scheme in schemes)
             {
-                if (scheme.Name == "Bearer" && !securitySchemes.ContainsKey("Bearer"))
+                if (scheme.Name == "Bearer")
                 {
                     securitySchemes[scheme.Name] = new OpenApiSecurityScheme
                     {
@@ -128,7 +125,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 }
             }
 #endif
-
             return securitySchemes;
         }
     }

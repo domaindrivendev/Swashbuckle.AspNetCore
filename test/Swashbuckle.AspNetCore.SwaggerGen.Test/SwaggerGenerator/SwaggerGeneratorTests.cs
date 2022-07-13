@@ -928,7 +928,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     {
                         ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
                     },
-                    SecuritySchemesSelector = (schemes, generatedSchemes) => new Dictionary<string, OpenApiSecurityScheme>
+                    SecuritySchemesSelector = (schemes) => new Dictionary<string, OpenApiSecurityScheme>
                     {
                         ["basic"] = new OpenApiSecurityScheme { Type = SecuritySchemeType.Http, Scheme = "basic" }
                     }
@@ -983,6 +983,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var securityScheme = Assert.Single(document.Components.SecuritySchemes);
             Assert.Equal("Bearer", securityScheme.Key);
             Assert.Equal(SecuritySchemeType.ApiKey, securityScheme.Value.Type);
+            Assert.Equal("someSpecialOne", securityScheme.Value.Scheme);
         }
 
         [Fact]

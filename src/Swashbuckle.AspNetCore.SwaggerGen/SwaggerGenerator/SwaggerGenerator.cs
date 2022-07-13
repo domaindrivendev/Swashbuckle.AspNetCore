@@ -41,37 +41,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public async Task<OpenApiDocument> GetSwaggerAsync(string documentName, string host = null, string basePath = null)
         {
-            var (applicableApiDescriptions, swaggerDoc, schemaRepository) = GetSwaggerDocumentWithoutFilters(documentName, host, basePath);
-
-            var filterContext = new DocumentFilterContext(applicableApiDescriptions, _schemaGenerator, schemaRepository);
-            foreach (var filter in _options.DocumentFilters)
-            {
-                filter.Apply(swaggerDoc, filterContext);
-            }
-
-            swaggerDoc.Components.SecuritySchemes = await GetOpenApiSecuritySchemes();
-            swaggerDoc.Components.Schemas = new SortedDictionary<string, OpenApiSchema>(swaggerDoc.Components.Schemas, _options.SchemaComparer);
-
+            var (applicableApiDescriptions, swaggerDoc, schemaRepository) = GetSwaggerDocument(documentName, host, basePath);
+            swaggerDoc.Components.SecuritySchemes = await GetSecuritySchemes();
             return swaggerDoc;
         }
 
         public OpenApiDocument GetSwagger(string documentName, string host = null, string basePath = null)
         {
-            var (applicableApiDescriptions, swaggerDoc, schemaRepository) = GetSwaggerDocumentWithoutFilters(documentName, host, basePath);
-
-            var filterContext = new DocumentFilterContext(applicableApiDescriptions, _schemaGenerator, schemaRepository);
-            foreach (var filter in _options.DocumentFilters)
-            {
-                filter.Apply(swaggerDoc, filterContext);
-            }
-
-            swaggerDoc.Components.SecuritySchemes = GetOpenApiSecuritySchemes().Result;
-            swaggerDoc.Components.Schemas = new SortedDictionary<string, OpenApiSchema>(swaggerDoc.Components.Schemas, _options.SchemaComparer);
-
+            var (applicableApiDescriptions, swaggerDoc, schemaRepository) = GetSwaggerDocument(documentName, host, basePath);
+            swaggerDoc.Components.SecuritySchemes = GetSecuritySchemes().Result;
             return swaggerDoc;
         }
 
-        private (IEnumerable<ApiDescription>, OpenApiDocument, SchemaRepository) GetSwaggerDocumentWithoutFilters(string documentName, string host = null, string basePath = null)
+        private (IEnumerable<ApiDescription>, OpenApiDocument, SchemaRepository) GetSwaggerDocument(string documentName, string host = null, string basePath = null)
         {
             if (!_options.SwaggerDocs.TryGetValue(documentName, out OpenApiInfo info))
                 throw new UnknownSwaggerDocument(documentName, _options.SwaggerDocs.Select(d => d.Key));
@@ -95,18 +77,38 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 SecurityRequirements = new List<OpenApiSecurityRequirement>(_options.SecurityRequirements)
             };
 
+            var filterContext = new DocumentFilterContext(applicableApiDescriptions, _schemaGenerator, schemaRepository);
+            foreach (var filter in _options.DocumentFilters)
+            {
+                filter.Apply(swaggerDoc, filterContext);
+            }
+
+            swaggerDoc.Components.Schemas = new SortedDictionary<string, OpenApiSchema>(swaggerDoc.Components.Schemas, _options.SchemaComparer);
+
             return (applicableApiDescriptions, swaggerDoc, schemaRepository);
         }
 
-        private async Task<Dictionary<string, OpenApiSecurityScheme>> GetOpenApiSecuritySchemes()
+        private async Task<Dictionary<string, OpenApiSecurityScheme>> GetSecuritySchemes()
         {
-            var securitySchemesFromOptions = new Dictionary<string, OpenApiSecurityScheme>(_options.SecuritySchemes);
+            var securitySchemes = new Dictionary<string, OpenApiSecurityScheme>(_options.SecuritySchemes);
+            var authenticationSchemes = Enumerable.Empty<AuthenticationScheme>();
             if (_authenticationSchemeProvider is not null)
             {
-                var schemes = await _authenticationSchemeProvider.GetAllSchemesAsync();
-                return _options.SecuritySchemesSelector(schemes, securitySchemesFromOptions);
+                authenticationSchemes = await _authenticationSchemeProvider.GetAllSchemesAsync();
             }
-            return _options.SecuritySchemesSelector(Enumerable.Empty<AuthenticationScheme>(), securitySchemesFromOptions);
+            var securitySchemesFromSelector = _options.SecuritySchemesSelector(authenticationSchemes);
+            // Favor security schemes set via options over those generated
+            // from the selector. For the default selector, this effectively
+            // ends up favoring `Bearer` authentication types explicitly set
+            // by the user over those derived by the selector.
+            foreach (var securityScheme in securitySchemesFromSelector)
+            {
+                if (!securitySchemes.ContainsKey(securityScheme.Key))
+                {
+                    securitySchemes.Add(securityScheme.Key, securityScheme.Value);
+                }
+            }
+            return securitySchemes;
         }
 
         private IList<OpenApiServer> GenerateServers(string host, string basePath)
