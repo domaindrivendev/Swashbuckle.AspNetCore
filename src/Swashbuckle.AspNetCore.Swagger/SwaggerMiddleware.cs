@@ -39,10 +39,17 @@ namespace Swashbuckle.AspNetCore.Swagger
                     ? httpContext.Request.PathBase.Value
                     : null;
 
-                var swagger = swaggerProvider.GetSwagger(
-                    documentName: documentName,
-                    host: null,
-                    basePath: basePath);
+                var swagger = swaggerProvider switch
+                {
+                    IAsyncSwaggerProvider asyncSwaggerProvider => await asyncSwaggerProvider.GetSwaggerAsync(
+                        documentName: documentName,
+                        host: null,
+                        basePath: basePath),
+                    _ => swaggerProvider.GetSwagger(
+                        documentName: documentName,
+                        host: null,
+                        basePath: basePath)
+                };
 
                 // One last opportunity to modify the Swagger Document - this time with request context
                 foreach (var filter in _options.PreSerializeFilters)

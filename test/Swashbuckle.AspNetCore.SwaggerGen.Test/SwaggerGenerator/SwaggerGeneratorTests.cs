@@ -12,6 +12,9 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.TestSupport;
 using Xunit;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Server.HttpSys;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -911,7 +914,76 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var document = subject.GetSwagger("v1");
 
+            Assert.Equal(new[] { "basic", "Bearer" }, document.Components.SecuritySchemes.Keys);
+        }
+
+        [Fact]
+        public async Task GetSwagger_SupportsSecuritySchemesSelector()
+        {
+            var subject = Subject(
+                apiDescriptions: new ApiDescription[] { },
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    },
+                    SecuritySchemesSelector = (schemes) => new Dictionary<string, OpenApiSecurityScheme>
+                    {
+                        ["basic"] = new OpenApiSecurityScheme { Type = SecuritySchemeType.Http, Scheme = "basic" }
+                    }
+                }
+            );
+
+            var document = await subject.GetSwaggerAsync("v1");
+
+            // Overrides the default set of [basic, bearer] with just [basic]
             Assert.Equal(new[] { "basic" }, document.Components.SecuritySchemes.Keys);
+        }
+
+        [Fact]
+        public async Task GetSwagger_DefaultSecuritySchemeSelectorAddsBearerByDefault()
+        {
+            var subject = Subject(
+                apiDescriptions: new ApiDescription[] { },
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    },
+                }
+            );
+
+            var document = await subject.GetSwaggerAsync("v1");
+
+            Assert.Equal(new[] { "Bearer" }, document.Components.SecuritySchemes.Keys);
+        }
+
+        [Fact]
+        public async Task GetSwagger_DefaultSecuritySchemesSelectorDoesNotOverrideBearer()
+        {
+            var subject = Subject(
+                apiDescriptions: new ApiDescription[] { },
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    },
+                    SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>
+                    {
+                        ["Bearer"] = new OpenApiSecurityScheme { Type = SecuritySchemeType.ApiKey, Scheme = "someSpecialOne" }
+                    }
+                }
+            );
+
+            var document = await subject.GetSwaggerAsync("v1");
+
+            var securityScheme = Assert.Single(document.Components.SecuritySchemes);
+            Assert.Equal("Bearer", securityScheme.Key);
+            Assert.Equal(SecuritySchemeType.ApiKey, securityScheme.Value.Type);
+            Assert.Equal("someSpecialOne", securityScheme.Value.Scheme);
         }
 
         [Fact]
@@ -1049,7 +1121,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             return new SwaggerGenerator(
                 options ?? DefaultOptions,
                 new FakeApiDescriptionGroupCollectionProvider(apiDescriptions),
-                new SchemaGenerator(new SchemaGeneratorOptions(), new JsonSerializerDataContractResolver(new JsonSerializerOptions()))
+                new SchemaGenerator(new SchemaGeneratorOptions(), new JsonSerializerDataContractResolver(new JsonSerializerOptions())),
+                new TestAuthenticationSchemeProvider()
             );
         }
 
@@ -1060,5 +1133,42 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
             }
         };
+    }
+
+    class TestAuthenticationSchemeProvider : IAuthenticationSchemeProvider
+    {
+        private readonly IEnumerable<AuthenticationScheme> _authenticationSchemes = new AuthenticationScheme[]
+        {
+            new AuthenticationScheme("Bearer", null, typeof(IAuthenticationHandler))
+        };
+
+        public void AddScheme(AuthenticationScheme scheme)
+            => throw new NotImplementedException();
+        public Task<IEnumerable<AuthenticationScheme>> GetAllSchemesAsync()
+            => Task.FromResult(_authenticationSchemes);
+
+        public Task<AuthenticationScheme> GetDefaultAuthenticateSchemeAsync()
+            => Task.FromResult(_authenticationSchemes.First());
+
+        public Task<AuthenticationScheme> GetDefaultChallengeSchemeAsync()
+            => Task.FromResult(_authenticationSchemes.First());
+
+        public Task<AuthenticationScheme> GetDefaultForbidSchemeAsync()
+            => Task.FromResult(_authenticationSchemes.First());
+
+        public Task<AuthenticationScheme> GetDefaultSignInSchemeAsync()
+            => Task.FromResult(_authenticationSchemes.First());
+
+        public Task<AuthenticationScheme> GetDefaultSignOutSchemeAsync()
+            => Task.FromResult(_authenticationSchemes.First());
+
+        public Task<IEnumerable<AuthenticationScheme>> GetRequestHandlerSchemesAsync()
+            => throw new NotImplementedException();
+
+        public Task<AuthenticationScheme> GetSchemeAsync(string name)
+            => Task.FromResult(_authenticationSchemes.First());
+
+        public void RemoveScheme(string name)
+            => throw new NotImplementedException();
     }
 }

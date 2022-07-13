@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -11,11 +13,12 @@ using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public class SwaggerGenerator : ISwaggerProvider
+    public class SwaggerGenerator : ISwaggerProvider, IAsyncSwaggerProvider
     {
         private readonly IApiDescriptionGroupCollectionProvider _apiDescriptionsProvider;
         private readonly ISchemaGenerator _schemaGenerator;
         private readonly SwaggerGeneratorOptions _options;
+        private readonly IAuthenticationSchemeProvider _authenticationSchemeProvider;
 
         public SwaggerGenerator(
             SwaggerGeneratorOptions options,
@@ -27,7 +30,30 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             _schemaGenerator = schemaGenerator;
         }
 
+        public SwaggerGenerator(
+            SwaggerGeneratorOptions options,
+            IApiDescriptionGroupCollectionProvider apiDescriptionsProvider,
+            ISchemaGenerator schemaGenerator,
+            IAuthenticationSchemeProvider authentiationSchemeProvider) : this(options, apiDescriptionsProvider, schemaGenerator)
+        {
+            _authenticationSchemeProvider = authentiationSchemeProvider;
+        }
+
+        public async Task<OpenApiDocument> GetSwaggerAsync(string documentName, string host = null, string basePath = null)
+        {
+            var (applicableApiDescriptions, swaggerDoc, schemaRepository) = GetSwaggerDocument(documentName, host, basePath);
+            swaggerDoc.Components.SecuritySchemes = await GetSecuritySchemes();
+            return swaggerDoc;
+        }
+
         public OpenApiDocument GetSwagger(string documentName, string host = null, string basePath = null)
+        {
+            var (applicableApiDescriptions, swaggerDoc, schemaRepository) = GetSwaggerDocument(documentName, host, basePath);
+            swaggerDoc.Components.SecuritySchemes = GetSecuritySchemes().Result;
+            return swaggerDoc;
+        }
+
+        private (IEnumerable<ApiDescription>, OpenApiDocument, SchemaRepository) GetSwaggerDocument(string documentName, string host = null, string basePath = null)
         {
             if (!_options.SwaggerDocs.TryGetValue(documentName, out OpenApiInfo info))
                 throw new UnknownSwaggerDocument(documentName, _options.SwaggerDocs.Select(d => d.Key));
@@ -47,7 +73,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 Components = new OpenApiComponents
                 {
                     Schemas = schemaRepository.Schemas,
-                    SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>(_options.SecuritySchemes)
                 },
                 SecurityRequirements = new List<OpenApiSecurityRequirement>(_options.SecurityRequirements)
             };
@@ -60,7 +85,30 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             swaggerDoc.Components.Schemas = new SortedDictionary<string, OpenApiSchema>(swaggerDoc.Components.Schemas, _options.SchemaComparer);
 
-            return swaggerDoc;
+            return (applicableApiDescriptions, swaggerDoc, schemaRepository);
+        }
+
+        private async Task<Dictionary<string, OpenApiSecurityScheme>> GetSecuritySchemes()
+        {
+            var securitySchemes = new Dictionary<string, OpenApiSecurityScheme>(_options.SecuritySchemes);
+            var authenticationSchemes = Enumerable.Empty<AuthenticationScheme>();
+            if (_authenticationSchemeProvider is not null)
+            {
+                authenticationSchemes = await _authenticationSchemeProvider.GetAllSchemesAsync();
+            }
+            var securitySchemesFromSelector = _options.SecuritySchemesSelector(authenticationSchemes);
+            // Favor security schemes set via options over those generated
+            // from the selector. For the default selector, this effectively
+            // ends up favoring `Bearer` authentication types explicitly set
+            // by the user over those derived by the selector.
+            foreach (var securityScheme in securitySchemesFromSelector)
+            {
+                if (!securitySchemes.ContainsKey(securityScheme.Key))
+                {
+                    securitySchemes.Add(securityScheme.Key, securityScheme.Value);
+                }
+            }
+            return securitySchemes;
         }
 
         private IList<OpenApiServer> GenerateServers(string host, string basePath)
