@@ -180,17 +180,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private OpenApiOperation GenerateOperation(ApiDescription apiDescription, SchemaRepository schemaRepository)
         {
-#if NET6_0_OR_GREATER
-            var metadata = apiDescription.ActionDescriptor?.EndpointMetadata;
-            var existingOperation = metadata?.OfType<OpenApiOperation>().SingleOrDefault();
-            if (existingOperation != null)
-            {
-                return existingOperation;
-            }
-#endif
+            OpenApiOperation operation = GenerateOpenApiOperationFromMetadata(apiDescription, schemaRepository);
+
             try
             {
-                var operation = new OpenApiOperation
+                operation ??= new OpenApiOperation
                 {
                     Tags = GenerateOperationTags(apiDescription),
                     OperationId = _options.OperationIdSelector(apiDescription),
@@ -215,6 +209,72 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     message: $"Failed to generate Operation for action - {apiDescription.ActionDescriptor.DisplayName}. See inner exception",
                     innerException: ex);
             }
+        }
+
+        private OpenApiOperation GenerateOpenApiOperationFromMetadata(ApiDescription apiDescription, SchemaRepository schemaRepository)
+        {
+#if NET6_0_OR_GREATER
+            var metadata = apiDescription.ActionDescriptor?.EndpointMetadata;
+            var operation = metadata?.OfType<OpenApiOperation>().SingleOrDefault();
+
+            if (operation is null)
+            {
+                return null;
+            }
+
+            // Schemas will be generated via Swashbuckle by default.
+            foreach (var parameter in operation.Parameters)
+            {
+                var apiParameter = apiDescription.ParameterDescriptions.SingleOrDefault(desc => desc.Name == parameter.Name && !desc.IsFromBody() && !desc.IsFromForm());
+                if (apiParameter is not null)
+                {
+                    parameter.Schema = GenerateSchema(
+                        apiParameter.ModelMetadata.ModelType,
+                        schemaRepository,
+                        apiParameter.PropertyInfo(),
+                        apiParameter.ParameterInfo(),
+                        apiParameter.RouteInfo);
+                }
+            }
+
+            var requestContentTypes = operation.RequestBody?.Content?.Values;
+            if (requestContentTypes is not null)
+            {
+                foreach (var content in requestContentTypes)
+                {
+                    var requestParameter = apiDescription.ParameterDescriptions.SingleOrDefault(desc => desc.IsFromBody() || desc.IsFromForm());
+                    if (requestParameter is not null)
+                    {
+                        content.Schema = GenerateSchema(
+                            requestParameter.ModelMetadata.ModelType,
+                            schemaRepository,
+                            requestParameter.PropertyInfo(),
+                            requestParameter.ParameterInfo());
+                    }
+                }
+            }
+
+            foreach (var kvp in operation.Responses)
+            {
+                var response = kvp.Value;
+                var responseModel = apiDescription.SupportedResponseTypes.SingleOrDefault(desc => desc.StatusCode.ToString() == kvp.Key);
+                if (responseModel is not null)
+                {
+                    var responseContentTypes = response?.Content?.Values;
+                    if (responseContentTypes is not null)
+                    {
+                        foreach (var content in responseContentTypes)
+                        {
+                            content.Schema = GenerateSchema(responseModel.Type, schemaRepository);
+                        }
+                    }
+                }
+            }
+
+            return operation;
+#else
+            return null;
+#endif
         }
 
         private IList<OpenApiTag> GenerateOperationTags(ApiDescription apiDescription)
