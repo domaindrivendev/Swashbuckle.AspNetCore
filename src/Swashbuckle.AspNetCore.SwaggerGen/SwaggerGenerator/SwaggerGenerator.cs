@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -11,11 +13,12 @@ using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public class SwaggerGenerator : ISwaggerProvider
+    public class SwaggerGenerator : ISwaggerProvider, IAsyncSwaggerProvider
     {
         private readonly IApiDescriptionGroupCollectionProvider _apiDescriptionsProvider;
         private readonly ISchemaGenerator _schemaGenerator;
         private readonly SwaggerGeneratorOptions _options;
+        private readonly IAuthenticationSchemeProvider _authenticationSchemeProvider;
 
         public SwaggerGenerator(
             SwaggerGeneratorOptions options,
@@ -27,7 +30,30 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             _schemaGenerator = schemaGenerator;
         }
 
+        public SwaggerGenerator(
+            SwaggerGeneratorOptions options,
+            IApiDescriptionGroupCollectionProvider apiDescriptionsProvider,
+            ISchemaGenerator schemaGenerator,
+            IAuthenticationSchemeProvider authentiationSchemeProvider) : this(options, apiDescriptionsProvider, schemaGenerator)
+        {
+            _authenticationSchemeProvider = authentiationSchemeProvider;
+        }
+
+        public async Task<OpenApiDocument> GetSwaggerAsync(string documentName, string host = null, string basePath = null)
+        {
+            var (applicableApiDescriptions, swaggerDoc, schemaRepository) = GetSwaggerDocument(documentName, host, basePath);
+            swaggerDoc.Components.SecuritySchemes = await GetSecuritySchemes();
+            return swaggerDoc;
+        }
+
         public OpenApiDocument GetSwagger(string documentName, string host = null, string basePath = null)
+        {
+            var (applicableApiDescriptions, swaggerDoc, schemaRepository) = GetSwaggerDocument(documentName, host, basePath);
+            swaggerDoc.Components.SecuritySchemes = GetSecuritySchemes().Result;
+            return swaggerDoc;
+        }
+
+        private (IEnumerable<ApiDescription>, OpenApiDocument, SchemaRepository) GetSwaggerDocument(string documentName, string host = null, string basePath = null)
         {
             if (!_options.SwaggerDocs.TryGetValue(documentName, out OpenApiInfo info))
                 throw new UnknownSwaggerDocument(documentName, _options.SwaggerDocs.Select(d => d.Key));
@@ -47,7 +73,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 Components = new OpenApiComponents
                 {
                     Schemas = schemaRepository.Schemas,
-                    SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>(_options.SecuritySchemes)
                 },
                 SecurityRequirements = new List<OpenApiSecurityRequirement>(_options.SecurityRequirements)
             };
@@ -60,7 +85,30 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             swaggerDoc.Components.Schemas = new SortedDictionary<string, OpenApiSchema>(swaggerDoc.Components.Schemas, _options.SchemaComparer);
 
-            return swaggerDoc;
+            return (applicableApiDescriptions, swaggerDoc, schemaRepository);
+        }
+
+        private async Task<Dictionary<string, OpenApiSecurityScheme>> GetSecuritySchemes()
+        {
+            var securitySchemes = new Dictionary<string, OpenApiSecurityScheme>(_options.SecuritySchemes);
+            var authenticationSchemes = Enumerable.Empty<AuthenticationScheme>();
+            if (_authenticationSchemeProvider is not null)
+            {
+                authenticationSchemes = await _authenticationSchemeProvider.GetAllSchemesAsync();
+            }
+            var securitySchemesFromSelector = _options.SecuritySchemesSelector(authenticationSchemes);
+            // Favor security schemes set via options over those generated
+            // from the selector. For the default selector, this effectively
+            // ends up favoring `Bearer` authentication types explicitly set
+            // by the user over those derived by the selector.
+            foreach (var securityScheme in securitySchemesFromSelector)
+            {
+                if (!securitySchemes.ContainsKey(securityScheme.Key))
+                {
+                    securitySchemes.Add(securityScheme.Key, securityScheme.Value);
+                }
+            }
+            return securitySchemes;
         }
 
         private IList<OpenApiServer> GenerateServers(string host, string basePath)
@@ -132,17 +180,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private OpenApiOperation GenerateOperation(ApiDescription apiDescription, SchemaRepository schemaRepository)
         {
-#if NET6_0_OR_GREATER
-            var metadata = apiDescription.ActionDescriptor?.EndpointMetadata;
-            var existingOperation = metadata?.OfType<OpenApiOperation>().SingleOrDefault();
-            if (existingOperation != null)
-            {
-                return existingOperation;
-            }
-#endif
+            OpenApiOperation operation = GenerateOpenApiOperationFromMetadata(apiDescription, schemaRepository);
+
             try
             {
-                var operation = new OpenApiOperation
+                operation ??= new OpenApiOperation
                 {
                     Tags = GenerateOperationTags(apiDescription),
                     OperationId = _options.OperationIdSelector(apiDescription),
@@ -167,6 +209,72 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     message: $"Failed to generate Operation for action - {apiDescription.ActionDescriptor.DisplayName}. See inner exception",
                     innerException: ex);
             }
+        }
+
+        private OpenApiOperation GenerateOpenApiOperationFromMetadata(ApiDescription apiDescription, SchemaRepository schemaRepository)
+        {
+#if NET6_0_OR_GREATER
+            var metadata = apiDescription.ActionDescriptor?.EndpointMetadata;
+            var operation = metadata?.OfType<OpenApiOperation>().SingleOrDefault();
+
+            if (operation is null)
+            {
+                return null;
+            }
+
+            // Schemas will be generated via Swashbuckle by default.
+            foreach (var parameter in operation.Parameters)
+            {
+                var apiParameter = apiDescription.ParameterDescriptions.SingleOrDefault(desc => desc.Name == parameter.Name && !desc.IsFromBody() && !desc.IsFromForm());
+                if (apiParameter is not null)
+                {
+                    parameter.Schema = GenerateSchema(
+                        apiParameter.ModelMetadata.ModelType,
+                        schemaRepository,
+                        apiParameter.PropertyInfo(),
+                        apiParameter.ParameterInfo(),
+                        apiParameter.RouteInfo);
+                }
+            }
+
+            var requestContentTypes = operation.RequestBody?.Content?.Values;
+            if (requestContentTypes is not null)
+            {
+                foreach (var content in requestContentTypes)
+                {
+                    var requestParameter = apiDescription.ParameterDescriptions.SingleOrDefault(desc => desc.IsFromBody() || desc.IsFromForm());
+                    if (requestParameter is not null)
+                    {
+                        content.Schema = GenerateSchema(
+                            requestParameter.ModelMetadata.ModelType,
+                            schemaRepository,
+                            requestParameter.PropertyInfo(),
+                            requestParameter.ParameterInfo());
+                    }
+                }
+            }
+
+            foreach (var kvp in operation.Responses)
+            {
+                var response = kvp.Value;
+                var responseModel = apiDescription.SupportedResponseTypes.SingleOrDefault(desc => desc.StatusCode.ToString() == kvp.Key);
+                if (responseModel is not null)
+                {
+                    var responseContentTypes = response?.Content?.Values;
+                    if (responseContentTypes is not null)
+                    {
+                        foreach (var content in responseContentTypes)
+                        {
+                            content.Schema = GenerateSchema(responseModel.Type, schemaRepository);
+                        }
+                    }
+                }
+            }
+
+            return operation;
+#else
+            return null;
+#endif
         }
 
         private IList<OpenApiTag> GenerateOperationTags(ApiDescription apiDescription)
