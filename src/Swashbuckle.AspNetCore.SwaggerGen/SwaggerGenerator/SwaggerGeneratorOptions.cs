@@ -20,7 +20,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             OperationIdSelector = DefaultOperationIdSelector;
             TagsSelector = DefaultTagsSelector;
             SortKeySelector = DefaultSortKeySelector;
-            SecuritySchemesSelector = DefaultSecuritySchemeSelector;
+            SecuritySchemesSelector = null;
             SchemaComparer = StringComparer.Ordinal;
             Servers = new List<OpenApiServer>();
             SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>();
@@ -45,6 +45,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public Func<ApiDescription, string> SortKeySelector { get; set; }
 
+        public bool InferSecuritySchemes { get; set; }
+
+        public Func<IEnumerable<AuthenticationScheme>, IDictionary<string, OpenApiSecurityScheme>> SecuritySchemesSelector { get; set;}
+
         public bool DescribeAllParametersInCamelCase { get; set; }
 
         public List<OpenApiServer> Servers { get; set; }
@@ -62,8 +66,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public List<IOperationFilter> OperationFilters { get; set; }
 
         public IList<IDocumentFilter> DocumentFilters { get; set; }
-
-        public Func<IEnumerable<AuthenticationScheme>, Dictionary<string, OpenApiSecurityScheme>> SecuritySchemesSelector { get; set;}
 
         private bool DefaultDocInclusionPredicate(string documentName, ApiDescription apiDescription)
         {
@@ -105,27 +107,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private string DefaultSortKeySelector(ApiDescription apiDescription)
         {
             return TagsSelector(apiDescription).First();
-        }
-
-        private Dictionary<string, OpenApiSecurityScheme> DefaultSecuritySchemeSelector(IEnumerable<AuthenticationScheme> schemes)
-        {
-            Dictionary<string, OpenApiSecurityScheme> securitySchemes = new();
-#if (NET6_0_OR_GREATER)
-            foreach (var scheme in schemes)
-            {
-                if (scheme.Name == "Bearer")
-                {
-                    securitySchemes[scheme.Name] = new OpenApiSecurityScheme
-                    {
-                        Type = SecuritySchemeType.Http,
-                        Scheme = "bearer", // "bearer" refers to the header name here
-                        In = ParameterLocation.Header,
-                        BearerFormat = "Json Web Token"
-                    };
-                }
-            }
-#endif
-            return securitySchemes;
         }
     }
 }
