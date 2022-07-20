@@ -4,6 +4,7 @@ using System.Xml.XPath;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -306,6 +307,22 @@ namespace Microsoft.Extensions.DependencyInjection
         public static void SupportNonNullableReferenceTypes(this SwaggerGenOptions swaggerGenOptions)
         {
             swaggerGenOptions.SchemaGeneratorOptions.SupportNonNullableReferenceTypes = true;
+        }
+
+        /// <summary>
+        /// Automatically infer security schemes from authentication/authorization state in ASP.NET Core.
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="securitySchemesSelector">
+        /// Provide alternative implementation that maps ASP.NET Core Authentication schemes to Open API security schemes
+        /// </param>
+        /// <remarks>Currently only supports JWT Bearer authentication</remarks>
+        public static void InferSecuritySchemes(
+            this SwaggerGenOptions swaggerGenOptions,
+            Func<IEnumerable<AuthenticationScheme>, IDictionary<string, OpenApiSecurityScheme>> securitySchemesSelector = null)
+        {
+            swaggerGenOptions.SwaggerGeneratorOptions.InferSecuritySchemes = true;
+            swaggerGenOptions.SwaggerGeneratorOptions.SecuritySchemesSelector = securitySchemesSelector;
         }
 
         /// <summary>
