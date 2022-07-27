@@ -1437,7 +1437,7 @@ The `SwaggerGen` package provides several extension points, including Schema Fil
 
 ```csharp
 // Product.cs
-[SwaggerSchemaFilter(typeof(ProductSchemaFilter))
+[SwaggerSchemaFilter(typeof(ProductSchemaFilter))]
 public class Product
 {
     ...
