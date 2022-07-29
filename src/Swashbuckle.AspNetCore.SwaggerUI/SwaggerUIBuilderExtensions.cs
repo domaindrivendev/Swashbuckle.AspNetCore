@@ -8,6 +8,12 @@ using Swashbuckle.AspNetCore.SwaggerUI;
 using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 #endif
 
+#if (!NETSTANDARD2_0)
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Routing;
+#endif
+
 namespace Microsoft.AspNetCore.Builder
 {
     public static class SwaggerUIBuilderExtensions
