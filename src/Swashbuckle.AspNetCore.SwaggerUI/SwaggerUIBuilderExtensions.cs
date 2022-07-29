@@ -28,7 +28,7 @@ namespace Microsoft.AspNetCore.Builder
             this IApplicationBuilder app,
             Action<SwaggerUIOptions> setupAction = null)
         {
-            SwaggerUIOptions options = FetchAndConfigureOptions(endpoints.ServiceProvider, setupAction);
+            SwaggerUIOptions options = FetchAndConfigureOptions(app.ApplicationServices, setupAction);
 
             return app.UseSwaggerUI(options);
         }
