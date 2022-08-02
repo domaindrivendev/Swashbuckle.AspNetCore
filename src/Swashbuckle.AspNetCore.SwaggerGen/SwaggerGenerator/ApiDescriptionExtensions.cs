@@ -5,6 +5,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Routing.Template;
+using System.Text;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -62,8 +63,40 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         internal static string RelativePathSansParameterConstraints(this ApiDescription apiDescription)
         {
-            var routeTemplate = TemplateParser.Parse(apiDescription.RelativePath);
-            var sanitizedSegments = routeTemplate
+            var routeTemplate = apiDescription.RelativePath;
+
+            // remove query string parameters
+            var modifiedTemplate = new StringBuilder(routeTemplate.Length);
+            var index = 0;
+            var isBetweenCurlyBraces = false;
+            while (index < routeTemplate.Length)
+            {
+                var current = routeTemplate[index];
+
+                if (current == '{')
+                {
+                    isBetweenCurlyBraces = true;
+                    goto next;
+                }
+
+                if (current == '}')
+                {
+                    isBetweenCurlyBraces = false;
+                    goto next;
+                }
+
+                if (!isBetweenCurlyBraces && (current == '?'))
+                {
+                    break;
+                }
+
+            next:
+                modifiedTemplate = modifiedTemplate.Append(current);
+                index += 1;
+            }
+
+            var parsedRouteTemplate = TemplateParser.Parse(modifiedTemplate.ToString());
+            var sanitizedSegments = parsedRouteTemplate
                 .Segments
                 .Select(s => string.Concat(s.Parts.Select(p => p.Name != null ? $"{{{p.Name}}}" : p.Text)));
             return string.Join("/", sanitizedSegments);
