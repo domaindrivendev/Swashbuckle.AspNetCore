@@ -518,7 +518,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var applicableApiParameters = apiDescription.ParameterDescriptions
                 .Where(apiParam =>
                 {
-                    return !apiParam.IsFromBody() && !apiParam.IsFromForm()
+                    if (apiParam.IsRequiredParameter()
+                        && apiParam.IsFromPath()
+                        && !string.IsNullOrWhiteSpace(apiParam.Name)
+                        && !apiDescription.RelativePath.Contains($"{{{apiParam.Name}}}"))
+                    {
+                        return false;
+                    }
+
+                    return (!apiParam.IsFromBody() && !apiParam.IsFromForm())
                         && (!apiParam.CustomAttributes().OfType<BindNeverAttribute>().Any())
                         && (!apiParam.CustomAttributes().OfType<SwaggerIgnoreAttribute>().Any())
                         && (apiParam.ModelMetadata == null || apiParam.ModelMetadata.IsBindingAllowed)

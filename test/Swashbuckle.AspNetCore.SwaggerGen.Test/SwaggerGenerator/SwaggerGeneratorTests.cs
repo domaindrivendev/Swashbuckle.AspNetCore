@@ -404,6 +404,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             string bindingSourceId,
             ParameterLocation expectedParameterLocation)
         {
+            var routePath = expectedParameterLocation == ParameterLocation.Path ? "/resource/{param}" : "/resource";
+
             var subject = Subject(
                 apiDescriptions: new[]
                 {
@@ -411,7 +413,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                         c => nameof(c.ActionWithParameter),
                         groupName: "v1",
                         httpMethod: "POST",
-                        relativePath: "resource",
+                        relativePath: routePath,
                         parameterDescriptions: new []
                         {
                             new ApiParameterDescription
@@ -425,7 +427,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var document = subject.GetSwagger("v1");
 
-            var operation = document.Paths["/resource"].Operations[OperationType.Post];
+            var operation = document.Paths[routePath].Operations[OperationType.Post];
             var parameter = Assert.Single(operation.Parameters);
             Assert.Equal(expectedParameterLocation, parameter.In);
         }
@@ -623,6 +625,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void GetSwagger_SetsParameterRequired_IfApiParameterIsBoundToPath()
         {
+            var routePath = "/resource/{param}";
             var subject = Subject(
                 apiDescriptions: new[]
                 {
@@ -630,7 +633,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                         c => nameof(c.ActionWithParameter),
                         groupName: "v1",
                         httpMethod: "POST",
-                        relativePath: "resource",
+                        relativePath: routePath,
                         parameterDescriptions: new []
                         {
                             new ApiParameterDescription
@@ -644,8 +647,37 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var document = subject.GetSwagger("v1");
 
-            var operation = document.Paths["/resource"].Operations[OperationType.Post];
+            var operation = document.Paths[routePath].Operations[OperationType.Post];
             Assert.True(operation.Parameters.First().Required);
+        }
+
+        [Fact]
+        public void GetSwagger_OmitsParameter_IfApiParameterIsBoundToPathAndIsNotInPath()
+        {
+            var routePath = "/resource";
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionWithParameter),
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: routePath,
+                        parameterDescriptions: new []
+                        {
+                            new ApiParameterDescription
+                            {
+                                Name = "param",
+                                Source = BindingSource.Path
+                            }
+                        })
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            var operation = document.Paths[routePath].Operations[OperationType.Post];
+            Assert.False(operation.Parameters.Any());
         }
 
         [Theory]
@@ -755,6 +787,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void GetSwagger_SetsParameterTypeToString_IfApiParameterHasNoCorrespondingActionParameter()
         {
+            var routePath = "/resource/{param}";
             var subject = Subject(
                 apiDescriptions: new[]
                 {
@@ -762,7 +795,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                         c => nameof(c.ActionWithNoParameters),
                         groupName: "v1",
                         httpMethod: "POST",
-                        relativePath: "resource",
+                        relativePath: routePath,
                         parameterDescriptions: new []
                         {
                             new ApiParameterDescription
@@ -776,7 +809,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var document = subject.GetSwagger("v1");
 
-            var operation = document.Paths["/resource"].Operations[OperationType.Post];
+            var operation = document.Paths[routePath].Operations[OperationType.Post];
             var parameter = Assert.Single(operation.Parameters);
             Assert.Equal("string", parameter.Schema.Type);
         }
@@ -1295,6 +1328,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             string parameterName,
             string expectedOpenApiParameterName)
         {
+            var routePath = string.IsNullOrWhiteSpace(parameterName) ? "/resource" : $"/resource/{{{parameterName}}}";
             var subject = Subject(
                 apiDescriptions: new[]
                 {
@@ -1302,7 +1336,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                         c => nameof(c.ActionWithParameter),
                         groupName: "v1",
                         httpMethod: "POST",
-                        relativePath: "resource",
+                        relativePath: routePath,
                         parameterDescriptions: new []
                         {
                             new ApiParameterDescription
@@ -1324,7 +1358,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var document = subject.GetSwagger("v1");
 
-            var operation = document.Paths["/resource"].Operations[OperationType.Post];
+            var operation = document.Paths[routePath].Operations[OperationType.Post];
             var parameter = Assert.Single(operation.Parameters);
             Assert.Equal(expectedOpenApiParameterName, parameter.Name);
         }
