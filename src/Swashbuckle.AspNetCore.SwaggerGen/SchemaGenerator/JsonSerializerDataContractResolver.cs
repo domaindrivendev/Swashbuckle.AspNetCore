@@ -243,7 +243,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             [ typeof(Guid) ] = Tuple.Create(DataType.String, "uuid"),
             [ typeof(Uri) ] = Tuple.Create(DataType.String, "uri"),
 #if NET6_0_OR_GREATER
-            [ typeof(DateOnly) ] = Tuple.Create(DataType.String, "date")
+            [ typeof(DateOnly) ] = Tuple.Create(DataType.String, "date"),
+            [ typeof(TimeOnly) ] = Tuple.Create(DataType.String, "time")
 #endif
         };
     }

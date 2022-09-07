@@ -52,11 +52,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(Guid), "string", "uuid")]
         [InlineData(typeof(Uri), "string", "uri")]
         [InlineData(typeof(DateOnly), "string", "date")]
+        [InlineData(typeof(TimeOnly), "string", "time")]
         [InlineData(typeof(bool?), "boolean", null)]
         [InlineData(typeof(int?), "integer", "int32")]
         [InlineData(typeof(DateTime?), "string", "date-time")]
         [InlineData(typeof(Guid?), "string", "uuid")]
         [InlineData(typeof(DateOnly?), "string", "date")]
+        [InlineData(typeof(TimeOnly?), "string", "time")]
         public void GenerateSchema_GeneratesPrimitiveSchema_IfPrimitiveOrNullablePrimitiveType(
             Type type,
             string expectedSchemaType,

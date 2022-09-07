@@ -209,7 +209,8 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             [ typeof(Uri) ] = Tuple.Create(DataType.String, "uri"),
             [ typeof(TimeSpan) ] = Tuple.Create(DataType.String, "date-span"),
 #if NET6_0_OR_GREATER
-            [ typeof(DateOnly) ] = Tuple.Create(DataType.String, "date")
+            [ typeof(DateOnly) ] = Tuple.Create(DataType.String, "date"),
+            [ typeof(TimeOnly) ] = Tuple.Create(DataType.String, "time")
 #endif
         };
     }
