@@ -655,6 +655,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             new KeyValuePair<string, string>("5\\d{2}", "Server Error"),
             new KeyValuePair<string, string>("default", "Error")
         };
+
         private string GenerateSummary(ApiDescription apiDescription)
         {
             string operationSummary = null;
