@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -19,6 +20,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             OperationIdSelector = DefaultOperationIdSelector;
             TagsSelector = DefaultTagsSelector;
             SortKeySelector = DefaultSortKeySelector;
+            SecuritySchemesSelector = null;
             SchemaComparer = StringComparer.Ordinal;
             Servers = new List<OpenApiServer>();
             SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>();
@@ -42,6 +44,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public Func<ApiDescription, IList<string>> TagsSelector { get; set; }
 
         public Func<ApiDescription, string> SortKeySelector { get; set; }
+
+        public bool InferSecuritySchemes { get; set; }
+
+        public Func<IEnumerable<AuthenticationScheme>, IDictionary<string, OpenApiSecurityScheme>> SecuritySchemesSelector { get; set;}
 
         public bool DescribeAllParametersInCamelCase { get; set; }
 

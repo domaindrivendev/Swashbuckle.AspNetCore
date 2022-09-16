@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -14,11 +16,12 @@ using Microsoft.AspNetCore.Http.Metadata;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public class SwaggerGenerator : ISwaggerProvider
+    public class SwaggerGenerator : ISwaggerProvider, IAsyncSwaggerProvider
     {
         private readonly IApiDescriptionGroupCollectionProvider _apiDescriptionsProvider;
         private readonly ISchemaGenerator _schemaGenerator;
         private readonly SwaggerGeneratorOptions _options;
+        private readonly IAuthenticationSchemeProvider _authenticationSchemeProvider;
 
         public SwaggerGenerator(
             SwaggerGeneratorOptions options,
@@ -30,7 +33,52 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             _schemaGenerator = schemaGenerator;
         }
 
+        public SwaggerGenerator(
+            SwaggerGeneratorOptions options,
+            IApiDescriptionGroupCollectionProvider apiDescriptionsProvider,
+            ISchemaGenerator schemaGenerator,
+            IAuthenticationSchemeProvider authenticationSchemeProvider) : this(options, apiDescriptionsProvider, schemaGenerator)
+        {
+            _authenticationSchemeProvider = authenticationSchemeProvider;
+        }
+
+        public async Task<OpenApiDocument> GetSwaggerAsync(string documentName, string host = null, string basePath = null)
+        {
+            var (applicableApiDescriptions, swaggerDoc, schemaRepository) = GetSwaggerDocumentWithoutFilters(documentName, host, basePath);
+
+            swaggerDoc.Components.SecuritySchemes = await GetSecuritySchemes();
+
+            // NOTE: Filter processing moved here so they may effect generated security schemes
+            var filterContext = new DocumentFilterContext(applicableApiDescriptions, _schemaGenerator, schemaRepository);
+            foreach (var filter in _options.DocumentFilters)
+            {
+                filter.Apply(swaggerDoc, filterContext);
+            }
+
+            swaggerDoc.Components.Schemas = new SortedDictionary<string, OpenApiSchema>(swaggerDoc.Components.Schemas, _options.SchemaComparer);
+
+            return swaggerDoc;
+        }
+
         public OpenApiDocument GetSwagger(string documentName, string host = null, string basePath = null)
+        {
+            var (applicableApiDescriptions, swaggerDoc, schemaRepository) = GetSwaggerDocumentWithoutFilters(documentName, host, basePath);
+
+            swaggerDoc.Components.SecuritySchemes = GetSecuritySchemes().Result;
+
+            // NOTE: Filter processing moved here so they may effect generated security schemes
+            var filterContext = new DocumentFilterContext(applicableApiDescriptions, _schemaGenerator, schemaRepository);
+            foreach (var filter in _options.DocumentFilters)
+            {
+                filter.Apply(swaggerDoc, filterContext);
+            }
+
+            swaggerDoc.Components.Schemas = new SortedDictionary<string, OpenApiSchema>(swaggerDoc.Components.Schemas, _options.SchemaComparer);
+
+            return swaggerDoc;
+        }
+
+        private (IEnumerable<ApiDescription>, OpenApiDocument, SchemaRepository) GetSwaggerDocumentWithoutFilters(string documentName, string host = null, string basePath = null)
         {
             if (!_options.SwaggerDocs.TryGetValue(documentName, out OpenApiInfo info))
                 throw new UnknownSwaggerDocument(documentName, _options.SwaggerDocs.Select(d => d.Key));
@@ -50,20 +98,41 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 Components = new OpenApiComponents
                 {
                     Schemas = schemaRepository.Schemas,
-                    SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>(_options.SecuritySchemes)
                 },
                 SecurityRequirements = new List<OpenApiSecurityRequirement>(_options.SecurityRequirements)
             };
 
-            var filterContext = new DocumentFilterContext(applicableApiDescriptions, _schemaGenerator, schemaRepository);
-            foreach (var filter in _options.DocumentFilters)
+            return (applicableApiDescriptions, swaggerDoc, schemaRepository);
+        }
+
+        private async Task<IDictionary<string, OpenApiSecurityScheme>> GetSecuritySchemes()
+        {
+            if (!_options.InferSecuritySchemes)
             {
-                filter.Apply(swaggerDoc, filterContext);
+                return new Dictionary<string, OpenApiSecurityScheme>(_options.SecuritySchemes);
             }
 
-            swaggerDoc.Components.Schemas = new SortedDictionary<string, OpenApiSchema>(swaggerDoc.Components.Schemas, _options.SchemaComparer);
+            var authenticationSchemes = (_authenticationSchemeProvider is not null)
+                ? await _authenticationSchemeProvider.GetAllSchemesAsync()
+                : Enumerable.Empty<AuthenticationScheme>();
 
-            return swaggerDoc;
+            if (_options.SecuritySchemesSelector != null)
+            {
+                return _options.SecuritySchemesSelector(authenticationSchemes);
+            }
+
+            // Default implementation, currently only supports JWT Bearer scheme
+            return authenticationSchemes
+                .Where(authScheme => authScheme.Name == "Bearer")
+                .ToDictionary(
+                    (authScheme) => authScheme.Name,
+                    (authScheme) => new OpenApiSecurityScheme
+                    {
+                        Type = SecuritySchemeType.Http,
+                        Scheme = "bearer", // "bearer" refers to the header name here
+                        In = ParameterLocation.Header,
+                        BearerFormat = "Json Web Token"
+                    });
         }
 
         private IList<OpenApiServer> GenerateServers(string host, string basePath)
@@ -135,17 +204,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private OpenApiOperation GenerateOperation(ApiDescription apiDescription, SchemaRepository schemaRepository)
         {
-#if NET6_0_OR_GREATER
-            var metadata = apiDescription.ActionDescriptor?.EndpointMetadata;
-            var existingOperation = metadata?.OfType<OpenApiOperation>().SingleOrDefault();
-            if (existingOperation != null)
-            {
-                return existingOperation;
-            }
-#endif
+            OpenApiOperation operation = GenerateOpenApiOperationFromMetadata(apiDescription, schemaRepository);
+
             try
             {
-                var operation = new OpenApiOperation
+                operation ??= new OpenApiOperation
                 {
                     Tags = GenerateOperationTags(apiDescription),
                     OperationId = _options.OperationIdSelector(apiDescription),
@@ -172,6 +235,72 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     message: $"Failed to generate Operation for action - {apiDescription.ActionDescriptor.DisplayName}. See inner exception",
                     innerException: ex);
             }
+        }
+
+        private OpenApiOperation GenerateOpenApiOperationFromMetadata(ApiDescription apiDescription, SchemaRepository schemaRepository)
+        {
+#if NET6_0_OR_GREATER
+            var metadata = apiDescription.ActionDescriptor?.EndpointMetadata;
+            var operation = metadata?.OfType<OpenApiOperation>().SingleOrDefault();
+
+            if (operation is null)
+            {
+                return null;
+            }
+
+            // Schemas will be generated via Swashbuckle by default.
+            foreach (var parameter in operation.Parameters)
+            {
+                var apiParameter = apiDescription.ParameterDescriptions.SingleOrDefault(desc => desc.Name == parameter.Name && !desc.IsFromBody() && !desc.IsFromForm());
+                if (apiParameter is not null)
+                {
+                    parameter.Schema = GenerateSchema(
+                        apiParameter.ModelMetadata.ModelType,
+                        schemaRepository,
+                        apiParameter.PropertyInfo(),
+                        apiParameter.ParameterInfo(),
+                        apiParameter.RouteInfo);
+                }
+            }
+
+            var requestContentTypes = operation.RequestBody?.Content?.Values;
+            if (requestContentTypes is not null)
+            {
+                foreach (var content in requestContentTypes)
+                {
+                    var requestParameter = apiDescription.ParameterDescriptions.SingleOrDefault(desc => desc.IsFromBody() || desc.IsFromForm());
+                    if (requestParameter is not null)
+                    {
+                        content.Schema = GenerateSchema(
+                            requestParameter.ModelMetadata.ModelType,
+                            schemaRepository,
+                            requestParameter.PropertyInfo(),
+                            requestParameter.ParameterInfo());
+                    }
+                }
+            }
+
+            foreach (var kvp in operation.Responses)
+            {
+                var response = kvp.Value;
+                var responseModel = apiDescription.SupportedResponseTypes.SingleOrDefault(desc => desc.StatusCode.ToString() == kvp.Key);
+                if (responseModel is not null)
+                {
+                    var responseContentTypes = response?.Content?.Values;
+                    if (responseContentTypes is not null)
+                    {
+                        foreach (var content in responseContentTypes)
+                        {
+                            content.Schema = GenerateSchema(responseModel.Type, schemaRepository);
+                        }
+                    }
+                }
+            }
+
+            return operation;
+#else
+            return null;
+#endif
         }
 
         private IList<OpenApiTag> GenerateOperationTags(ApiDescription apiDescription)

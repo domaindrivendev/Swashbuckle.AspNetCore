@@ -23,12 +23,12 @@ namespace Microsoft.Extensions.ApiDescriptions
     {
         private readonly SwaggerGeneratorOptions _generatorOptions;
         private readonly SwaggerOptions _options;
-        private readonly ISwaggerProvider _swaggerProvider;
+        private readonly IAsyncSwaggerProvider _swaggerProvider;
 
         public DocumentProvider(
             IOptions<SwaggerGeneratorOptions> generatorOptions,
             IOptions<SwaggerOptions> options,
-            ISwaggerProvider swaggerProvider)
+            IAsyncSwaggerProvider swaggerProvider)
         {
             _generatorOptions = generatorOptions.Value;
             _options = options.Value;
@@ -40,10 +40,10 @@ namespace Microsoft.Extensions.ApiDescriptions
             return _generatorOptions.SwaggerDocs.Keys;
         }
 
-        public Task GenerateAsync(string documentName, TextWriter writer)
+        public async Task GenerateAsync(string documentName, TextWriter writer)
         {
             // Let UnknownSwaggerDocument or other exception bubble up to caller.
-            var swagger = _swaggerProvider.GetSwagger(documentName, host: null, basePath: null);
+            var swagger = await _swaggerProvider.GetSwaggerAsync(documentName, host: null, basePath: null);
             var jsonWriter = new OpenApiJsonWriter(writer);
             if (_options.SerializeAsV2)
             {
@@ -53,8 +53,6 @@ namespace Microsoft.Extensions.ApiDescriptions
             {
                 swagger.SerializeAsV3(jsonWriter);
             }
-
-            return Task.CompletedTask;
         }
     }
 }

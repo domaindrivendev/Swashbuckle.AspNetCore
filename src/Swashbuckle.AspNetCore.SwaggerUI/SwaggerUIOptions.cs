@@ -192,6 +192,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// <summary>
         /// Default clientSecret
         /// </summary>
+        /// <remarks>Setting this exposes the client secrets in inline javascript in the swagger-ui generated html.</remarks>
         public string ClientSecret { get; set; } = null;
 
         /// <summary>
