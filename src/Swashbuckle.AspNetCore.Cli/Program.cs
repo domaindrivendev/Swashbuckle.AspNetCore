@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Runtime.Loader;
 using System.Linq;
@@ -97,19 +98,22 @@ namespace Swashbuckle.AspNetCore.Cli
                         ? Path.Combine(Directory.GetCurrentDirectory(), namedArgs["--output"])
                         : null;
 
-                    using (var streamWriter = (outputPath != null ? File.CreateText(outputPath) : Console.Out))
+                    using (var textWriter = new StringWriter(CultureInfo.InvariantCulture))
                     {
                         IOpenApiWriter writer;
                         if (namedArgs.ContainsKey("--yaml"))
-                            writer = new OpenApiYamlWriter(streamWriter);
+                            writer = new OpenApiYamlWriter(textWriter);
                         else
-                            writer = new OpenApiJsonWriter(streamWriter);
+                            writer = new OpenApiJsonWriter(textWriter);
 
                         if (namedArgs.ContainsKey("--serializeasv2"))
                             swagger.SerializeAsV2(writer);
                         else
                             swagger.SerializeAsV3(writer);
-
+                        using (var streamWriter = (outputPath != null ? File.CreateText(outputPath) : Console.Out))
+                        {
+                            streamWriter.Write(textWriter.ToString());
+                        }
                         if (outputPath != null)
                             Console.WriteLine($"Swagger JSON/YAML successfully written to {outputPath}");
                     }
