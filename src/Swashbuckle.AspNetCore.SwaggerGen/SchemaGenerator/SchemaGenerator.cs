@@ -50,7 +50,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var dataContract = GetDataContractFor(modelType);
 
             var schema = _generatorOptions.UseOneOfForPolymorphism && IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts)
-                ? GeneratePolymorphicSchema(dataContract, schemaRepository, knownTypesDataContracts)
+                ? GeneratePolymorphicSchema(schemaRepository, knownTypesDataContracts)
                 : GenerateConcreteSchema(dataContract, schemaRepository);
 
             if (_generatorOptions.UseAllOfToExtendReferenceSchemas && schema.Reference != null)
@@ -112,7 +112,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var dataContract = GetDataContractFor(modelType);
 
             var schema = _generatorOptions.UseOneOfForPolymorphism && IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts)
-                ? GeneratePolymorphicSchema(dataContract, schemaRepository, knownTypesDataContracts)
+                ? GeneratePolymorphicSchema(schemaRepository, knownTypesDataContracts)
                 : GenerateConcreteSchema(dataContract, schemaRepository);
 
             if (_generatorOptions.UseAllOfToExtendReferenceSchemas && schema.Reference != null)
@@ -152,7 +152,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var dataContract = GetDataContractFor(modelType);
 
             var schema = _generatorOptions.UseOneOfForPolymorphism && IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts)
-                ? GeneratePolymorphicSchema(dataContract, schemaRepository, knownTypesDataContracts)
+                ? GeneratePolymorphicSchema(schemaRepository, knownTypesDataContracts)
                 : GenerateConcreteSchema(dataContract, schemaRepository);
 
             if (schema.Reference == null)
@@ -188,7 +188,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         }
 
         private OpenApiSchema GeneratePolymorphicSchema(
-            DataContract dataContract,
             SchemaRepository schemaRepository,
             IEnumerable<DataContract> knownTypesDataContracts)
         {
