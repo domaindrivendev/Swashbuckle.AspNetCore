@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using Microsoft.OpenApi.Models;
 
@@ -7,7 +7,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class SchemaRepository
     {
-        private readonly Dictionary<Type, string> _reservedIds = new Dictionary<Type, string>();
+        private readonly ConcurrentDictionary<Type, string> _reservedIds = new();
 
         public SchemaRepository(string documentName = null)
         {
@@ -16,11 +16,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public string DocumentName { get; }
 
-        public Dictionary<string, OpenApiSchema> Schemas { get; private set; } = new Dictionary<string, OpenApiSchema>();
+        public ConcurrentDictionary<string, OpenApiSchema> Schemas { get; } = new();
 
         public void RegisterType(Type type, string schemaId)
         {
-            if (_reservedIds.ContainsValue(schemaId))
+            if (_reservedIds.Values.Contains(schemaId))
             {
                 var conflictingType = _reservedIds.First(entry => entry.Value == schemaId).Key;
 
@@ -29,7 +29,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     $"The same schemaId is already used for type \"${conflictingType}\"");
             }
 
-            _reservedIds.Add(type, schemaId);
+            _reservedIds.AddOrUpdate(type, schemaId, (_, _) => schemaId);
         }
 
         public bool TryLookupByType(Type type, out OpenApiSchema referenceSchema)
@@ -49,7 +49,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public OpenApiSchema AddDefinition(string schemaId, OpenApiSchema schema)
         {
-            Schemas.Add(schemaId, schema);
+            Schemas.AddOrUpdate(schemaId, schema, (_, _) => schema);
 
             return new OpenApiSchema
             {
