@@ -23,7 +23,8 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [Theory]
         [InlineData(typeof(IFormFile))]
         [InlineData(typeof(FileResult))]
-        public void GenerateSchema_GeneratesFileSchema_IfFormFileOrFileResultType(Type type)
+        [InlineData(typeof(System.IO.Stream))]
+        public void GenerateSchema_GeneratesFileSchema_BinaryStringResultType(Type type)
         {
             var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
