@@ -442,7 +442,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 
             var schema = subject.GenerateSchema(typeof(BaseType), schemaRepository);
 
-            Assert.Equal(new[] { "SubType1", "BaseType" }, schemaRepository.Schemas.Keys);
+            Assert.Equal(new[] { "SubType1", "BaseType" }, schemaRepository.Schemas.Keys.OrderByDescending(t=>t).ToArray());
         }
 
         [Fact]
