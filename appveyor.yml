@@ -8,7 +8,7 @@ init:
 - git config --global core.autocrlf true
 
 environment:
-  DOTNET_VERSION: "7.0.100-rc.1.22431.12"
+  DOTNET_VERSION: "7.0.100-rc.2.22477.23"
 
 build_script:
 - ps: dotnet pack -c Release -o artifacts
