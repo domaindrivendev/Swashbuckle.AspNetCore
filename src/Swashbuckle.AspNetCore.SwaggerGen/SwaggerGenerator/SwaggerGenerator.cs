@@ -250,7 +250,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 if (apiParameter is not null)
                 {
                     parameter.Schema = GenerateSchema(
-                        apiParameter.ModelMetadata.ModelType,
+                        apiParameter.Type,
                         schemaRepository,
                         apiParameter.PropertyInfo(),
                         apiParameter.ParameterInfo(),
