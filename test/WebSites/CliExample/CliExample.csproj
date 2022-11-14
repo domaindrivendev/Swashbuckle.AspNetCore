@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <DotNetSwaggerPath>$([System.IO.Path]::Combine("..", "..", "..", "src", "Swashbuckle.AspNetCore.Cli", "bin", $(Configuration), "netcoreapp3.0", "dotnet-swagger.dll"))</DotNetSwaggerPath>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks>netcoreapp3.1;net7.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
