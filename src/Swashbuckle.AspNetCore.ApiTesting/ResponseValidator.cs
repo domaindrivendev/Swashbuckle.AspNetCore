@@ -68,7 +68,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting
             OpenApiDocument openApiDocument,
             HttpContent content)
         {
-            if (content == null)
+            if (content == null || content?.Headers?.ContentLength == 0)
                 throw new RequestDoesNotMatchSpecException("Expected content is not present");
 
             if (!contentSpecs.TryGetValue(content.Headers.ContentType.MediaType, out OpenApiMediaType mediaTypeSpec))

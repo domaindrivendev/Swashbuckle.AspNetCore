@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <DotNetSwaggerPath>$([System.IO.Path]::Combine("..", "..", "..", "src", "Swashbuckle.AspNetCore.Cli", "bin", $(Configuration), "netcoreapp3.0", "dotnet-swagger.dll"))</DotNetSwaggerPath>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks>net6.0</TargetFrameworks>
+    <DotNetSwaggerPath>$([System.IO.Path]::Combine("..", "..", "..", "src", "Swashbuckle.AspNetCore.Cli", "bin", $(Configuration), $(TargetFramework), "dotnet-swagger.dll"))</DotNetSwaggerPath>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Nswag.MSbuild" Version="13.6.2">
+    <PackageReference Include="Nswag.MSbuild" Version="13.17.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -29,7 +29,7 @@
   </Target>
 
   <Target Name="NSwag" AfterTargets="SwaggerToFile">
-    <Exec Command="$(NSwagExe_Core31) openapi2csclient /input:swagger.json /namespace:NSwagClient /output:NSwagClient/Client.cs" />
+    <Exec Command="$(NSwagExe_Net60) openapi2csclient /input:swagger.json /namespace:NSwagClient /output:NSwagClient/Client.cs" />
   </Target>
 
 </Project>
