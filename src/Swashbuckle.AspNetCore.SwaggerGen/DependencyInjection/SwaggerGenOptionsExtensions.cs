@@ -422,7 +422,9 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="xmlDocFactory">A factory method that returns XML Comments as an XPathDocument</param>
         /// <param name="includeControllerXmlComments">
         /// Flag to indicate if controller XML comments (i.e. summary) should be used to assign Tag descriptions.
-        /// Don't set this flag if you're customizing the default tag for operations via TagActionsBy.
+        /// If customizing the default tag for operations via TagsAttribute, only the first Tag per controller will be
+        /// associated with the description.
+        /// However, don't set this flag if you're customizing the default tag for operations via TagActionsBy.
         /// </param>
         public static void IncludeXmlComments(
             this SwaggerGenOptions swaggerGenOptions,
@@ -446,7 +448,9 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="filePath">An absolute path to the file that contains XML Comments</param>
         /// <param name="includeControllerXmlComments">
         /// Flag to indicate if controller XML comments (i.e. summary) should be used to assign Tag descriptions.
-        /// Don't set this flag if you're customizing the default tag for operations via TagActionsBy.
+        /// If customizing the default tag for operations via TagsAttribute, only the first Tag per controller will be
+        /// associated with the description.
+        /// However, don't set this flag if you're customizing the default tag for operations via TagActionsBy.
         /// </param>
         public static void IncludeXmlComments(
             this SwaggerGenOptions swaggerGenOptions,
