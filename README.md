@@ -175,7 +175,7 @@ Additionally, there's add-on packages (CLI tools, [an alternate UI](https://gith
 |---------|-----------|
 |Swashbuckle.AspNetCore.Annotations|Includes a set of custom attributes that can be applied to controllers, actions and models to enrich the generated Swagger|
 |Swashbuckle.AspNetCore.Cli|Provides a command line interface for retrieving Swagger directly from a startup assembly, and writing to file|
-|Swashbuckle.AspNetCore.ReDoc|Exposes an embedded version of the Redoc UI (an alternative to swagger-ui)|
+|Swashbuckle.AspNetCore.Redoc|Exposes an embedded version of the Redoc UI (an alternative to swagger-ui)|
 
 ## Community Packages ##
 
@@ -244,7 +244,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Retrieve Swagger Directly from a Startup Assembly](#retrieve-swagger-directly-from-a-startup-assembly)
     * [Use the CLI Tool with a Custom Host Configuration](#use-the-cli-tool-with-a-custom-host-configuration)
 
-* [Swashbuckle.AspNetCore.ReDoc](#swashbuckleaspnetcoreredoc)
+* [Swashbuckle.AspNetCore.Redoc](#swashbuckleaspnetcoreredoc)
     * [Change Relative Path to the UI](#redoc-change-relative-path-to-the-ui)
     * [Change Document Title](#redoc-change-document-title)
     * [Apply Redoc Parameters](#apply-redoc-parameters)
@@ -1621,14 +1621,14 @@ public class SwaggerHostFactory
 }
 ```
 
-## Swashbuckle.AspNetCore.ReDoc ##
+## Swashbuckle.AspNetCore.Redoc ##
 
 <h3 id="redoc-change-relative-path-to-the-ui">Change Relative Path to the UI</h3>
 
 By default, the Redoc UI will be exposed at "/api-docs". If necessary, you can alter this when enabling the Redoc middleware:
 
 ```csharp
-app.UseReDoc(c =>
+app.UseRedoc(c =>
 {
     c.RoutePrefix = "docs"
     ...
@@ -1640,7 +1640,7 @@ app.UseReDoc(c =>
 By default, the Redoc UI will have a generic document title. You can alter this when enabling the Redoc middleware:
 
 ```csharp
-app.UseReDoc(c =>
+app.UseRedoc(c =>
 {
     c.DocumentTitle = "My API Docs";
     ...
@@ -1652,7 +1652,7 @@ app.UseReDoc(c =>
 Redoc ships with its own set of configuration parameters, all described here https://github.com/Rebilly/redoc/blob/main/README.md#redoc-options-object. In Swashbuckle, most of these are surfaced through the Redoc middleware options:
 
 ```csharp
-app.UseReDoc(c =>
+app.UseRedoc(c =>
 {
     c.SpecUrl("/v1/swagger.json");
     c.EnableUntrustedSpec();
@@ -1671,14 +1671,14 @@ app.UseReDoc(c =>
 });
 ```
 
-_Using `c.SpecUrl("/v1/swagger.json")` multiple times within the same `UseReDoc(...)` will not add multiple urls._
+_Using `c.SpecUrl("/v1/swagger.json")` multiple times within the same `UseRedoc(...)` will not add multiple urls._
 
 <h3 id="redoc-inject-custom-css">Inject Custom CSS</h3>
 
 To tweak the look and feel, you can inject additional CSS stylesheets by adding them to your `wwwroot` folder and specifying the relative paths in the middleware options:
 
 ```csharp
-app.UseReDoc(c =>
+app.UseRedoc(c =>
 {
     ...
     c.InjectStylesheet("/redoc/custom.css");
@@ -1688,7 +1688,7 @@ app.UseReDoc(c =>
 It is also possible to modify the theme by using the `AdditionalItems` property, see https://github.com/Rebilly/redoc/blob/main/README.md#redoc-options-object for more information.
 
 ```csharp
-app.UseReDoc(c =>
+app.UseRedoc(c =>
 {
     ...
     c.ConfigObject.AdditionalItems = ...
@@ -1700,11 +1700,11 @@ app.UseReDoc(c =>
 To customize the UI beyond the basic options listed above, you can provide your own version of the Redoc index.html page:
 
 ```csharp
-app.UseReDoc(c =>
+app.UseRedoc(c =>
 {
     c.IndexStream = () => GetType().Assembly
-        .GetManifestResourceStream("CustomIndex.ReDoc.index.html"); // requires file to be added as an embedded resource
+        .GetManifestResourceStream("CustomIndex.Redoc.index.html"); // requires file to be added as an embedded resource
 });
 ```
 
-_To get started, you should base your custom index.html on the [default version](src/Swashbuckle.AspNetCore.ReDoc/index.html)_
+_To get started, you should base your custom index.html on the [default version](src/Swashbuckle.AspNetCore.Redoc/index.html)_

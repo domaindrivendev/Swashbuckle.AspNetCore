@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.ReDoc.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.Redoc.snk</AssemblyOriginatorKeyFile>
     <Description>Middleware to expose an embedded version of Redoc from an ASP.NET Core application</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>

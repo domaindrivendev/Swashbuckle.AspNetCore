@@ -4,9 +4,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.ReDoc;
+using Swashbuckle.AspNetCore.Redoc;
 
-namespace ReDoc
+namespace Redoc
 {
     public class Startup
     {
@@ -49,7 +49,7 @@ namespace ReDoc
                 c.SerializeAsV2 = true;
             });
 
-            app.UseReDoc(c =>
+            app.UseRedoc(c =>
             {
                 c.RoutePrefix = "api-docs";
 

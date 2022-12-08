@@ -1,9 +1,9 @@
 ﻿using System.Text;
-using Swashbuckle.AspNetCore.ReDoc;
+using Swashbuckle.AspNetCore.Redoc;
 
 namespace Microsoft.AspNetCore.Builder
 {
-    public static class ReDocOptionsExtensions
+    public static class RedocOptionsExtensions
     {
         /// <summary>
         /// Injects additional CSS stylesheets into the index.html page
@@ -11,7 +11,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="options"></param>
         /// <param name="path">A path to the stylesheet - i.e. the link "href" attribute</param>
         /// <param name="media">The target media - i.e. the link "media" attribute</param>
-        public static void InjectStylesheet(this ReDocOptions options, string path, string media = "screen")
+        public static void InjectStylesheet(this RedocOptions options, string path, string media = "screen")
         {
             var builder = new StringBuilder(options.HeadContent);
             builder.AppendLine($"<link href='{path}' rel='stylesheet' media='{media}' type='text/css' />");
@@ -21,7 +21,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <summary>
         /// Sets the Swagger JSON endpoint. Can be fully-qualified or relative to the redoc page
         /// </summary>
-        public static void SpecUrl(this ReDocOptions options, string url)
+        public static void SpecUrl(this RedocOptions options, string url)
         {
             options.SpecUrl = url;
         }
@@ -31,7 +31,7 @@ namespace Microsoft.AspNetCore.Builder
         /// Disabled by default for performance reasons. Enable this option if you work with untrusted user data!
         /// </summary>
         /// <param name="options"></param>
-        public static void EnableUntrustedSpec(this ReDocOptions options)
+        public static void EnableUntrustedSpec(this RedocOptions options)
         {
             options.ConfigObject.UntrustedSpec = true;
         }
@@ -42,7 +42,7 @@ namespace Microsoft.AspNetCore.Builder
         /// </summary>
         /// <param name="options"></param>
         /// <param name="offset"></param>
-        public static void ScrollYOffset(this ReDocOptions options, int offset)
+        public static void ScrollYOffset(this RedocOptions options, int offset)
         {
             options.ConfigObject.ScrollYOffset = offset;
         }
@@ -50,7 +50,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <summary>
         /// Controls if the protocol and hostname is shown in the operation definition
         /// </summary>
-        public static void HideHostname(this ReDocOptions options)
+        public static void HideHostname(this RedocOptions options)
         {
             options.ConfigObject.HideHostname = true;
         }
@@ -58,7 +58,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <summary>
         /// Do not show "Download" spec button. THIS DOESN'T MAKE YOUR SPEC PRIVATE, it just hides the button
         /// </summary>
-        public static void HideDownloadButton(this ReDocOptions options)
+        public static void HideDownloadButton(this RedocOptions options)
         {
             options.ConfigObject.HideDownloadButton = true;
         }
@@ -69,7 +69,7 @@ namespace Microsoft.AspNetCore.Builder
         /// Be careful: this option can slow-down documentation rendering time.
         /// Default is "all"
         /// </summary>
-        public static void ExpandResponses(this ReDocOptions options, string responses)
+        public static void ExpandResponses(this RedocOptions options, string responses)
         {
             options.ConfigObject.ExpandResponses = responses;
         }
@@ -77,7 +77,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <summary>
         /// Show required properties first ordered in the same order as in required array
         /// </summary>
-        public static void RequiredPropsFirst(this ReDocOptions options)
+        public static void RequiredPropsFirst(this RedocOptions options)
         {
             options.ConfigObject.RequiredPropsFirst = true;
         }
@@ -85,7 +85,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <summary>
         /// Do not inject Authentication section automatically
         /// </summary>
-        public static void NoAutoAuth(this ReDocOptions options)
+        public static void NoAutoAuth(this RedocOptions options)
         {
             options.ConfigObject.NoAutoAuth = true;
         }
@@ -93,7 +93,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <summary>
         /// Show path link and HTTP verb in the middle panel instead of the right one
         /// </summary>
-        public static void PathInMiddlePanel(this ReDocOptions options)
+        public static void PathInMiddlePanel(this RedocOptions options)
         {
             options.ConfigObject.PathInMiddlePanel = true;
         }
@@ -101,7 +101,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <summary>
         /// Do not show loading animation. Useful for small docs
         /// </summary>
-        public static void HideLoading(this ReDocOptions options)
+        public static void HideLoading(this RedocOptions options)
         {
             options.ConfigObject.HideLoading = true;
         }
@@ -109,7 +109,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <summary>
         /// Use native scrollbar for sidemenu instead of perfect-scroll (scrolling performance optimization for big specs)
         /// </summary>
-        public static void NativeScrollbars(this ReDocOptions options)
+        public static void NativeScrollbars(this RedocOptions options)
         {
             options.ConfigObject.NativeScrollbars = true;
         }
@@ -117,7 +117,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <summary>
         /// Disable search indexing and search box
         /// </summary>
-        public static void DisableSearch(this ReDocOptions options)
+        public static void DisableSearch(this RedocOptions options)
         {
             options.ConfigObject.DisableSearch = true;
         }
@@ -125,7 +125,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <summary>
         /// Show only required fields in request samples
         /// </summary>
-        public static void OnlyRequiredInSamples(this ReDocOptions options)
+        public static void OnlyRequiredInSamples(this RedocOptions options)
         {
             options.ConfigObject.OnlyRequiredInSamples = true;
         }
@@ -133,7 +133,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <summary>
         /// Sort properties alphabetically
         /// </summary>
-        public static void SortPropsAlphabetically(this ReDocOptions options)
+        public static void SortPropsAlphabetically(this RedocOptions options)
         {
             options.ConfigObject.SortPropsAlphabetically = true;
         }

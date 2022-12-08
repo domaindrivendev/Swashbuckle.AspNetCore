@@ -1,31 +1,31 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Swashbuckle.AspNetCore.ReDoc;
+using Swashbuckle.AspNetCore.Redoc;
 
 namespace Microsoft.AspNetCore.Builder
 {
-    public static class ReDocBuilderExtensions
+    public static class RedocBuilderExtensions
     {
         /// <summary>
         /// Register the Redoc middleware with provided options
         /// </summary>
-        public static IApplicationBuilder UseReDoc(this IApplicationBuilder app, ReDocOptions options)
+        public static IApplicationBuilder UseRedoc(this IApplicationBuilder app, RedocOptions options)
         {
-            return app.UseMiddleware<ReDocMiddleware>(options);
+            return app.UseMiddleware<RedocMiddleware>(options);
         }
 
         /// <summary>
         /// Register the Redoc middleware with optional setup action for DI-injected options
         /// </summary>
-        public static IApplicationBuilder UseReDoc(
+        public static IApplicationBuilder UseRedoc(
             this IApplicationBuilder app,
-            Action<ReDocOptions> setupAction = null)
+            Action<RedocOptions> setupAction = null)
         {
-            ReDocOptions options;
+            RedocOptions options;
             using (var scope = app.ApplicationServices.CreateScope())
             {
-                options = scope.ServiceProvider.GetRequiredService<IOptionsSnapshot<ReDocOptions>>().Value;
+                options = scope.ServiceProvider.GetRequiredService<IOptionsSnapshot<RedocOptions>>().Value;
                 setupAction?.Invoke(options);
             }
 
@@ -35,7 +35,7 @@ namespace Microsoft.AspNetCore.Builder
                 options.SpecUrl = "../swagger/v1/swagger.json";
             }
 
-            return app.UseReDoc(options);
+            return app.UseRedoc(options);
         }
     }
 }

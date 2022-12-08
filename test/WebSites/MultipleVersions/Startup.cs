@@ -69,7 +69,7 @@ namespace MultipleVersions
                     c.RoutePrefix = $"swagger/{description.GroupName}";
                     c.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", $"Version {description.GroupName}");
                 });
-                app.UseReDoc(c =>
+                app.UseRedoc(c =>
                 {
                     c.RoutePrefix = $"redoc/{description.GroupName}";
                     c.SpecUrl($"/swagger/{description.GroupName}/swagger.json");
