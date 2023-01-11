@@ -49,6 +49,7 @@ namespace Swashbuckle.AspNetCore.TestSupport
                     if (parameterDescriptorWithParameterInfo != null)
                     {
                         parameter.ModelMetadata = ModelMetadataFactory.CreateForParameter(parameterDescriptorWithParameterInfo.ParameterInfo);
+                        parameter.Type = parameter.ModelMetadata.ModelType;
                     }
 
                     apiDescription.ParameterDescriptions.Add(parameter);
