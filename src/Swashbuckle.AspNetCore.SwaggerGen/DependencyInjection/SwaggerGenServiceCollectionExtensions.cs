@@ -9,8 +9,17 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
+    /// <summary>
+    /// Extension methods for configuring Swagger generation on <see cref="IServiceCollection" />.
+    /// </summary>
     public static class SwaggerGenServiceCollectionExtensions
     {
+        /// <summary>
+        /// Add services required by the Swagger generation middleware.
+        /// </summary>
+        /// <param name="services">The <see cref="IServiceCollection" />.</param>
+        /// <param name="setupAction">A lambda that configures Swagger generation options.</param>
+        /// <returns>The <see cref="IServiceCollection" />.</returns>
         public static IServiceCollection AddSwaggerGen(
             this IServiceCollection services,
             Action<SwaggerGenOptions> setupAction = null)
@@ -50,6 +59,12 @@ namespace Microsoft.Extensions.DependencyInjection
             return services;
         }
 
+        /// <summary>
+        /// Configure options for Swagger generation.
+        /// </summary>
+        /// <param name="services">The <see cref="IServiceCollection" />.</param>
+        /// <param name="setupAction">A lambda that configures Swagger generation options.</param>
+        /// <returns>The <see cref="IServiceCollection" />.</returns>
         public static void ConfigureSwaggerGen(
             this IServiceCollection services,
             Action<SwaggerGenOptions> setupAction)
