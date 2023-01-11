@@ -69,6 +69,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             target.ParameterFilters = new List<IParameterFilter>(source.ParameterFilters);
             target.OperationFilters = new List<IOperationFilter>(source.OperationFilters);
             target.DocumentFilters = new List<IDocumentFilter>(source.DocumentFilters);
+            target.InferSecuritySchemes = source.InferSecuritySchemes;
         }
 
         private TFilter CreateFilter<TFilter>(FilterDescriptor filterDescriptor)
