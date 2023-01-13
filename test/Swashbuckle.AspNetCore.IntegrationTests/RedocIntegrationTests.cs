@@ -1,16 +1,16 @@
 ﻿using System.Net;
 using System.Threading.Tasks;
 using Xunit;
-using ReDocApp = ReDoc;
+using RedocApp = Redoc;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests
 {
-    public class ReDocIntegrationTests
+    public class RedocIntegrationTests
     {
         [Fact]
         public async Task RoutePrefix_RedirectsToIndexUrl()
         {
-            var client = new TestSite(typeof(ReDocApp.Startup)).BuildClient();
+            var client = new TestSite(typeof(RedocApp.Startup)).BuildClient();
 
             var response = await client.GetAsync("/api-docs");
 
@@ -19,9 +19,9 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         }
 
         [Fact]
-        public async Task IndexUrl_ReturnsEmbeddedVersionOfTheReDocUI()
+        public async Task IndexUrl_ReturnsEmbeddedVersionOfTheRedocUI()
         {
-            var client = new TestSite(typeof(ReDocApp.Startup)).BuildClient();
+            var client = new TestSite(typeof(RedocApp.Startup)).BuildClient();
 
             var indexResponse = await client.GetAsync("/api-docs/index.html");
             var jsResponse = await client.GetAsync("/api-docs/redoc.standalone.js");
@@ -34,7 +34,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         [Fact]
         public async Task IndexUrl_IgnoresUrlCase()
         {
-            var client = new TestSite(typeof(ReDocApp.Startup)).BuildClient();
+            var client = new TestSite(typeof(RedocApp.Startup)).BuildClient();
 
             var indexResponse = await client.GetAsync("/Api-Docs/index.html");
             var jsResponse = await client.GetAsync("/Api-Docs/redoc.standalone.js");
@@ -47,7 +47,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         [Theory]
         [InlineData("/redoc/1.0/index.html", "/swagger/1.0/swagger.json")]
         [InlineData("/redoc/2.0/index.html", "/swagger/2.0/swagger.json")]
-        public async Task ReDocMiddleware_CanBeConfiguredMultipleTimes(string redocUrl, string swaggerPath)
+        public async Task RedocMiddleware_CanBeConfiguredMultipleTimes(string redocUrl, string swaggerPath)
         {
             var client = new TestSite(typeof(MultipleVersions.Startup)).BuildClient();
 

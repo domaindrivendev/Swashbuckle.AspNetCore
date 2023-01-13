@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ReDoc.Controllers
+namespace Redoc.Controllers
 {
     [Route("/products")]
     [Produces("application/json")]

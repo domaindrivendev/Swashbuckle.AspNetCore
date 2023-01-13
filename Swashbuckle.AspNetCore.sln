@@ -30,7 +30,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ci", "ci", "{65B4042A-F6DC-
 		ci\test.ps1 = ci\test.ps1
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore.ReDoc", "src\Swashbuckle.AspNetCore.ReDoc\Swashbuckle.AspNetCore.ReDoc.csproj", "{B5E94C7D-B76E-4181-87E5-ACD8971A987E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore.Redoc", "src\Swashbuckle.AspNetCore.Redoc\Swashbuckle.AspNetCore.Redoc.csproj", "{B5E94C7D-B76E-4181-87E5-ACD8971A987E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore.Cli", "src\Swashbuckle.AspNetCore.Cli\Swashbuckle.AspNetCore.Cli.csproj", "{3164424E-D74A-45CD-BE17-BE33ED79C090}"
 EndProject
@@ -70,7 +70,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NswagClientExample", "test\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OAuth2Integration", "test\WebSites\OAuth2Integration\OAuth2Integration.csproj", "{0DA4F00E-D365-4D27-B8C4-F6D4577F2093}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReDoc", "test\WebSites\ReDoc\ReDoc.csproj", "{48634D50-2680-4103-8CDA-8B6D99291AC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Redoc", "test\WebSites\Redoc\Redoc.csproj", "{48634D50-2680-4103-8CDA-8B6D99291AC5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestFirst.IntegrationTests", "test\WebSites\TestFirst.IntegrationTests\TestFirst.IntegrationTests.csproj", "{12430BE8-FEB2-49E1-A944-687744DC3203}"
 EndProject

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Swashbuckle.AspNetCore.ReDoc;
+using Swashbuckle.AspNetCore.Redoc;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerUI;
@@ -38,9 +38,9 @@ namespace ConfigFromFile
                 c.ConfigObject.AdditionalItems.Add("swaggerUIFoo", "bar");
             });
 
-            services.Configure<ReDocOptions>(c =>
+            services.Configure<RedocOptions>(c =>
             {
-                Configuration.Bind("ReDoc", c);
+                Configuration.Bind("Redoc", c);
 
                 c.ConfigObject.AdditionalItems.Add("redocFoo", "bar");
             });
@@ -65,7 +65,7 @@ namespace ConfigFromFile
 
             app.UseSwaggerUI();
 
-            app.UseReDoc();
+            app.UseRedoc();
         }
     }
 }

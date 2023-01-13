@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Readers;
 using Xunit;
-using ReDocApp = ReDoc;
+using RedocApp = Redoc;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests
 {
@@ -24,7 +24,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         [InlineData(typeof(MultipleVersions.Startup), "/swagger/2.0/swagger.json")]
         //[InlineData(typeof(NetCore21.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(OAuth2Integration.Startup), "/resource-server/swagger/v1/swagger.json")]
-        [InlineData(typeof(ReDocApp.Startup), "/swagger/v1/swagger.json")]
+        [InlineData(typeof(RedocApp.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(TestFirst.Startup), "/swagger/v1-generated/openapi.json")]
         public async Task SwaggerEndpoint_ReturnsValidSwaggerJson(
             Type startupType,

@@ -19,23 +19,23 @@ using Microsoft.Extensions.Options;
 using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 #endif
 
-namespace Swashbuckle.AspNetCore.ReDoc
+namespace Swashbuckle.AspNetCore.Redoc
 {
-    public class ReDocMiddleware
+    public class RedocMiddleware
     {
-        private const string EmbeddedFileNamespace = "Swashbuckle.AspNetCore.ReDoc.node_modules.redoc.bundles";
+        private const string EmbeddedFileNamespace = "Swashbuckle.AspNetCore.Redoc.node_modules.redoc.bundles";
 
-        private readonly ReDocOptions _options;
+        private readonly RedocOptions _options;
         private readonly StaticFileMiddleware _staticFileMiddleware;
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-        public ReDocMiddleware(
+        public RedocMiddleware(
             RequestDelegate next,
             IWebHostEnvironment hostingEnv,
             ILoggerFactory loggerFactory,
-            ReDocOptions options)
+            RedocOptions options)
         {
-            _options = options ?? new ReDocOptions();
+            _options = options ?? new RedocOptions();
 
             _staticFileMiddleware = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options);
 
@@ -80,12 +80,12 @@ namespace Swashbuckle.AspNetCore.ReDoc
             RequestDelegate next,
             IWebHostEnvironment hostingEnv,
             ILoggerFactory loggerFactory,
-            ReDocOptions options)
+            RedocOptions options)
         {
             var staticFileOptions = new StaticFileOptions
             {
                 RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
-                FileProvider = new EmbeddedFileProvider(typeof(ReDocMiddleware).GetTypeInfo().Assembly, EmbeddedFileNamespace),
+                FileProvider = new EmbeddedFileProvider(typeof(RedocMiddleware).GetTypeInfo().Assembly, EmbeddedFileNamespace),
             };
 
             return new StaticFileMiddleware(next, hostingEnv, Options.Create(staticFileOptions), loggerFactory);
