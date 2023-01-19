@@ -217,7 +217,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Override Schema for Specific Types](#override-schema-for-specific-types)
     * [Extend Generator with Operation, Schema & Document Filters](#extend-generator-with-operation-schema--document-filters)
     * [Add Security Definitions and Requirements](#add-security-definitions-and-requirements)
-    * [Add Security Definitions and Requirements for Bearer auth](#add-security-definitions-and-requirements-bearer)
+    * [Add Security Definitions and Requirements for Bearer auth](#add-security-definitions-and-requirements-for-bearer-auth)
     * [Inheritance and Polymorphism](#inheritance-and-polymorphism)
 
 * [Swashbuckle.AspNetCore.SwaggerUI](#swashbuckleaspnetcoreswaggerui)
