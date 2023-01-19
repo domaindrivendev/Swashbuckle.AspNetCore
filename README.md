@@ -229,6 +229,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Customize index.html](#customize-indexhtml)
     * [Enable OAuth2.0 Flows](#enable-oauth20-flows)
     * [Use client-side request and response interceptors](#use-client-side-request-and-response-interceptors)
+    * [Change Swagger UI Config](#change-swagger-ui-config)
 
 * [Swashbuckle.AspNetCore.Annotations](#swashbuckleaspnetcoreannotations)
     * [Install and Enable Annotations](#install-and-enable-annotations)
@@ -1265,7 +1266,7 @@ app.UseSwaggerUI(c =>
 });
 ```
 
-_NOTE: The `InjectOnCompleteJavaScript` and `InjectOnFailureJavaScript` options have been removed because the latest version of swagger-ui doesn't expose the necessary hooks. Instead, it provides a [flexible customization system](https://github.com/swagger-api/swagger-ui/blob/master/docs/customization/overview.md) based on concepts and patterns from React and Redux. To leverage this, you'll need to provide a custom version of index.html as described [below](#customize-indexhtml)._
+_NOTE: The `InjectOnCompleteJavaScript` and `InjectOnFailureJavaScript` options have been removed because the latest version of swagger-ui doesn't expose the necessary hooks. Instead, it provides a [flexible customization system](https://github.com/swagger-api/swagger-ui/blob/master/docs/customization/overview.md) based on concepts and patterns from React and Redux. To leverage this, adjust the [configuration initialization with plugins](#change-swagger-ui-config) or you'll need to provide a custom version of index.html as described [below](#customize-indexhtml)._
 
 The [custom index sample app](test/WebSites/CustomUIIndex/Swagger/index.html) demonstrates this approach, using the swagger-ui plugin system provide a custom topbar, and to hide the info component.
 
@@ -1340,6 +1341,78 @@ app.UseSwaggerUI(c =>
     c.UseRequestInterceptor("(req) => { req.headers['X-XSRF-Token'] = localStorage.getItem('xsrf-token'); return req; }");
 });
 ```
+
+### Change Swagger UI Config ###
+
+Swagger UI has a big variety of options and a mighty plugin API allowing customizations. 
+To customize the Swagger UI (and OAuth) configuration objects before they are passed into the Swagger UI initialization,
+inject a custom JavaScript file which defines a global function with the following signature.
+In many cases this feature allows to avoid using a custom `index.html` in your project.
+
+```js
+/**
+ * @param configObject See https://swagger.io/docs/open-source-tools/swagger-ui/usage/configuration/
+ * @param oauthConfigObject See https://swagger.io/docs/open-source-tools/swagger-ui/usage/oauth2/
+ */
+function initConfig(configObject, oauthConfigObject) { }
+```
+
+Through this mechanism any options that Swagger UI supports can be set and also plugins can be registered. 
+Swagger UI is written with React so it can be a bit tricky to write custom components. 
+Here a full example which adds a custom section to the parameters of all operations:
+
+```js
+// swagger-ui.js
+// https://swagger.io/docs/open-source-tools/swagger-ui/customization/plugin-api/
+function configInit(config) {
+    if(!config.plugins) {
+        config.plugins = [];
+    }
+    config.plugins.push(TopbarPlugin);
+}
+
+const TopbarPlugin = (system) => {
+    return {
+        // Register an own React component 
+        components: {
+            CustomOperationDetails: class CustomOperationDetails extends system.React.Component {
+                render() {
+                    const hello = this.props?.operation?.get('x-hello');
+                    if(!hello) {
+                        return '';
+                    }
+                    return system.React.createElement('div',
+                        { className: 'hello' },
+                        hello
+                    );
+                }
+            }
+        },
+        wrapComponents: {
+            // wrap the parameters component
+            parameters: Original => (props => {
+                // get the custom React component
+                const CustomOperationDetails = props.getComponent('CustomOperationDetails');
+                // Use the non JSX React API (https://reactjs.org/docs/react-without-jsx.html)
+                // to create a wrapper div holding our own component and the original parameters component
+                return system.React.createElement('div',
+                    { className: "parameters-wrap"},
+                    system.React.createElement(CustomOperationDetails, props),
+                    system.React.createElement(Original, props)
+                );
+            })
+        }
+    }  
+};
+```
+
+```csharp
+app.UseSwaggerUI(options = > 
+{
+    options.InjectJavascript("swagger-ui.js");
+});
+```
+
 
 ## Swashbuckle.AspNetCore.Annotations ##
 
