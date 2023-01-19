@@ -102,6 +102,11 @@
             if (interceptors.ResponseInterceptorFunction)
                 configObject.responseInterceptor = parseFunction(interceptors.ResponseInterceptorFunction);
 
+            // Allow adjusting config through injected JavaScript files
+            if(typeof initConfig === "function") {
+                initConfig(configObject, oauthConfigObject);
+            }
+            
             // Begin Swagger UI call region
 
             const ui = SwaggerUIBundle(configObject);
