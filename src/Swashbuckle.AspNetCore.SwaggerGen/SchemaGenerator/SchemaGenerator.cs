@@ -242,11 +242,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     }
 
                 case DataType.Object:
-                    {
-                        schemaFactory = () => CreateObjectSchema(dataContract, schemaRepository);
-                        returnAsReference = true;
-                        break;
-                    }
+                {
+                    schemaFactory = () => CreateObjectSchema(dataContract, schemaRepository);
+                    returnAsReference = !_generatorOptions.UseInlineDefinitionsForObjects ||
+                                        dataContract.ObjectProperties.Any(prop =>
+                                            prop.MemberType.IsAssignableFrom(dataContract.UnderlyingType) ||
+                                            prop.MemberType.GenericTypeArguments.Any(type =>
+                                                type.IsAssignableFrom(dataContract.UnderlyingType)));
+                    break;
+                }
 
                 default:
                     {

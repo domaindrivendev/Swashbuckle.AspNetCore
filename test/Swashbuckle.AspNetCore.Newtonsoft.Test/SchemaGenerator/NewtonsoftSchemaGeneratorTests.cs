@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Net;
+using System.Numerics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
@@ -518,6 +519,19 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.Null(schema.Reference);
             Assert.NotNull(schema.AllOf);
             Assert.Equal(1, schema.AllOf.Count);
+        }
+
+        [Fact]
+        public void GenerateSchema_SupportsOption_UseInlineDefinitionsForObjects()
+        {
+            var subject = Subject(
+                configureGenerator: c => c.UseInlineDefinitionsForObjects = true
+            );
+
+            var schema = subject.GenerateSchema(typeof(ComplexType), new SchemaRepository());
+
+            Assert.Equal("object", schema.Type);
+            Assert.NotNull(schema.Properties);
         }
 
         [Fact]
