@@ -19,6 +19,7 @@
     <ProjectReference Include="..\WebSites\OAuth2Integration\OAuth2Integration.csproj" />
     <ProjectReference Include="..\WebSites\ReDoc\ReDoc.csproj" />
     <ProjectReference Include="..\WebSites\TestFirst\TestFirst.csproj" />
+    <ProjectReference Include="..\WebSites\TopLevelSwaggerDoc\TopLevelSwaggerDoc.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,7 +30,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="coverlet.collector" Version="1.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.5" />
     <PackageReference Include="Microsoft.OpenApi.Readers" Version="1.2.3" />
   </ItemGroup>
 
