@@ -8,7 +8,7 @@ namespace Microsoft.AspNetCore.Builder
     public static class ReDocBuilderExtensions
     {
         /// <summary>
-        /// Register the ReDoc middleware with provided options
+        /// Register the Redoc middleware with provided options
         /// </summary>
         public static IApplicationBuilder UseReDoc(this IApplicationBuilder app, ReDocOptions options)
         {
@@ -16,7 +16,7 @@ namespace Microsoft.AspNetCore.Builder
         }
 
         /// <summary>
-        /// Register the ReDoc middleware with optional setup action for DI-injected options
+        /// Register the Redoc middleware with optional setup action for DI-injected options
         /// </summary>
         public static IApplicationBuilder UseReDoc(
             this IApplicationBuilder app,
