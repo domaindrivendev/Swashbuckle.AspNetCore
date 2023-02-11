@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -166,6 +167,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         (property.IsPubliclyReadable() || property.IsPubliclyWritable()) &&
                         !(property.GetIndexParameters().Any()) &&
                         !(property.HasAttribute<JsonIgnoreAttribute>() && isIgnoredViaNet5Attribute) &&
+                        !(property.HasAttribute<SwaggerIgnoreAttribute>()) &&
                         !(_serializerOptions.IgnoreReadOnlyProperties && !property.IsPubliclyWritable());
                 })
                 .OrderBy(property => property.DeclaringType.GetInheritanceChain().Length);
