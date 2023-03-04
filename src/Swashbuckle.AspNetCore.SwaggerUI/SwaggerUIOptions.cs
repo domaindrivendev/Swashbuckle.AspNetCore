@@ -10,6 +10,12 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
     public class SwaggerUIOptions
     {
         /// <summary>
+        /// Gets or sets the path base, as in app.UsePathBase()
+        /// </summary>
+        public string PathBase { get; set; } = "";
+
+
+        /// <summary>
         /// Gets or sets a route prefix for accessing the swagger-ui
         /// </summary>
         public string RoutePrefix { get; set; } = "swagger";
