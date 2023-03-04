@@ -53,11 +53,33 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
 
         public async Task Invoke(HttpContext httpContext)
         {
+            if (!string.IsNullOrWhiteSpace(_options.PathBase)
+                && (!httpContext.Request.PathBase.HasValue
+                 || !httpContext.Request.PathBase.Value.Equals(_options.PathBase, StringComparison.OrdinalIgnoreCase)))
+            {
+                await _staticFileMiddleware.Invoke(httpContext);
+                return;
+            }
+
             var httpMethod = httpContext.Request.Method;
-            var path = httpContext.Request.Path.Value;
+            string path;
+            string routePrefix;
+
+            if (!string.IsNullOrWhiteSpace(_options.PathBase)
+                && httpContext.Request.PathBase.HasValue
+                && httpContext.Request.PathBase.Value.Equals(_options.PathBase, StringComparison.OrdinalIgnoreCase))
+            {
+                path = string.Join("/", _options.PathBase.TrimEnd('/'), httpContext.Request.Path.Value.Trim('/'));
+                routePrefix = string.Join("/", _options.PathBase.Trim('/'), _options.RoutePrefix.Trim('/'));
+            }
+            else
+            {
+                path = httpContext.Request.Path.Value;
+                routePrefix = _options.RoutePrefix;
+            }
 
             // If the RoutePrefix is requested (with or without trailing slash), redirect to index URL
-            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$",  RegexOptions.IgnoreCase))
+            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/?{Regex.Escape(routePrefix)}/?$",  RegexOptions.IgnoreCase))
             {
                 // Use relative redirect to support proxy environments
                 var relativeIndexUrl = string.IsNullOrEmpty(path) || path.EndsWith("/")
@@ -68,7 +90,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
                 return;
             }
 
-            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/{Regex.Escape(_options.RoutePrefix)}/?index.html$",  RegexOptions.IgnoreCase))
+            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/{Regex.Escape(routePrefix)}/?index.html$",  RegexOptions.IgnoreCase))
             {
                 await RespondWithIndexHtml(httpContext.Response);
                 return;
