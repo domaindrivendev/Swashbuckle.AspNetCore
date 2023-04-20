@@ -416,6 +416,24 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
+        /// Extend the Swagger Generator with async "filters" that can modify SwaggerDocuments after they're initially generated
+        /// </summary>
+        /// <typeparam name="TFilter">A type that derives from IDocumentAsyncFilter</typeparam>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="arguments">Optionally inject parameters through filter constructors</param>
+        public static void DocumentAsyncFilter<TFilter>(
+            this SwaggerGenOptions swaggerGenOptions,
+            params object[] arguments)
+            where TFilter : IDocumentAsyncFilter
+        {
+            swaggerGenOptions.DocumentFilterDescriptors.Add(new FilterDescriptor
+            {
+                Type = typeof(TFilter),
+                Arguments = arguments
+            });
+        }
+
+        /// <summary>
         /// Inject human-friendly descriptions for Operations, Parameters and Schemas based on XML Comment files
         /// </summary>
         /// <param name="swaggerGenOptions"></param>

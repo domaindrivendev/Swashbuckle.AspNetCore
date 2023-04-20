@@ -29,6 +29,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             RequestBodyFilters = new List<IRequestBodyFilter>();
             OperationFilters = new List<IOperationFilter>();
             DocumentFilters = new List<IDocumentFilter>();
+            DocumentAsyncFilters = new List<IDocumentAsyncFilter>();
         }
 
         public IDictionary<string, OpenApiInfo> SwaggerDocs { get; set; }
@@ -66,6 +67,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public List<IOperationFilter> OperationFilters { get; set; }
 
         public IList<IDocumentFilter> DocumentFilters { get; set; }
+
+        public IList<IDocumentAsyncFilter> DocumentAsyncFilters { get; set; }
+        
 
         private bool DefaultDocInclusionPredicate(string documentName, ApiDescription apiDescription)
         {

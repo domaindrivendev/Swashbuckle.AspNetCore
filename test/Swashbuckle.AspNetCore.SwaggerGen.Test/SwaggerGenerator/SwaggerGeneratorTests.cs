@@ -1277,6 +1277,32 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Contains("ComplexType", document.Components.Schemas.Keys);
         }
 
+        [Fact]
+        public async Task GetSwagger_SupportsOption_AsyncDocumentFilters()
+        {
+            var subject = Subject(
+                apiDescriptions: new ApiDescription[] { },
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    },
+                    DocumentAsyncFilters = new List<IDocumentAsyncFilter>
+                    {
+                        new TestDocumentAsyncFilter()
+                    }
+                }
+            );
+
+            var document = await subject.GetSwaggerAsync("v1");
+
+            Assert.Equal(2, document.Extensions.Count);
+            Assert.Equal("bar", ((OpenApiString)document.Extensions["X-foo"]).Value);
+            Assert.Equal("v1", ((OpenApiString)document.Extensions["X-docName"]).Value);
+            Assert.Contains("ComplexType", document.Components.Schemas.Keys);
+        }
+
         private SwaggerGenerator Subject(
             IEnumerable<ApiDescription> apiDescriptions,
             SwaggerGeneratorOptions options = null,
