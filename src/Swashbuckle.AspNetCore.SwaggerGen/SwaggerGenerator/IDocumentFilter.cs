@@ -1,12 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
+
     public interface IDocumentFilter
     {
         void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context);
+    }
+
+    public interface IDocumentAsyncFilter
+    {
+        Task Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context);
     }
 
     public class DocumentFilterContext

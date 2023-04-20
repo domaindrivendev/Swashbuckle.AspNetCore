@@ -52,6 +52,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 filter.Apply(swaggerDoc, filterContext);
             }
 
+            foreach (var filter in _options.DocumentAsyncFilters)
+            {
+                await filter.Apply(swaggerDoc, filterContext);
+            }
+
             swaggerDoc.Components.Schemas = new SortedDictionary<string, OpenApiSchema>(swaggerDoc.Components.Schemas, _options.SchemaComparer);
 
             return swaggerDoc;
@@ -70,8 +75,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 filter.Apply(swaggerDoc, filterContext);
             }
 
-            swaggerDoc.Components.Schemas = new SortedDictionary<string, OpenApiSchema>(swaggerDoc.Components.Schemas, _options.SchemaComparer);
+            if (_options.DocumentAsyncFilters?.Any() ?? false)
+            {
+                throw new SwaggerGeneratorException("DocumentAsyncFilters are configured but not using GetSwaggerAsync(). " +
+                        "Use GetSwaggerAsync() instead of GetSwagger()");
+            }
 
+
+            swaggerDoc.Components.Schemas = new SortedDictionary<string, OpenApiSchema>(swaggerDoc.Components.Schemas, _options.SchemaComparer);
+            
             return swaggerDoc;
         }
 

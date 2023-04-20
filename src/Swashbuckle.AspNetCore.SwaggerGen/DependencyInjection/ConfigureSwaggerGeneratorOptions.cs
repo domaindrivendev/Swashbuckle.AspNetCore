@@ -46,6 +46,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             _swaggerGenOptions.DocumentFilterDescriptors.ForEach(
                 filterDescriptor => options.DocumentFilters.Add(CreateFilter<IDocumentFilter>(filterDescriptor)));
 
+            _swaggerGenOptions.DocumentAsyncFilterDescriptors.ForEach(
+                filterDescriptor => options.DocumentAsyncFilters.Add(CreateFilter<IDocumentAsyncFilter>(filterDescriptor)));
+
             if (!options.SwaggerDocs.Any())
             {
                 options.SwaggerDocs.Add("v1", new OpenApiInfo { Title = _hostingEnv.ApplicationName, Version = "1.0" });
@@ -69,6 +72,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             target.ParameterFilters = new List<IParameterFilter>(source.ParameterFilters);
             target.OperationFilters = new List<IOperationFilter>(source.OperationFilters);
             target.DocumentFilters = new List<IDocumentFilter>(source.DocumentFilters);
+            target.DocumentAsyncFilters = new List<IDocumentAsyncFilter>(source.DocumentAsyncFilters);
         }
 
         private TFilter CreateFilter<TFilter>(FilterDescriptor filterDescriptor)
