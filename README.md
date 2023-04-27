@@ -552,7 +552,7 @@ To enhance the generated docs with human-friendly descriptions, you can annotate
         /// <example>10</example>
         public int AvailableStock { get; set; }
 	
-	/// <summary>
+        /// <summary>
         /// The sizes the product is available in
         /// </summary>
         /// <example>["Small", "Medium", "Large"]</example>
