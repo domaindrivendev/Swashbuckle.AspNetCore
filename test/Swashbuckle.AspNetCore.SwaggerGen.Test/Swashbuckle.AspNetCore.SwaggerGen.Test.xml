@@ -190,6 +190,14 @@
             Summary of DoubleNestedType.InnerType.Property
             </summary>
         </member>
+        <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlRemarkAnnotatedType">
+            <summary>
+            Summary for XmlRemarkAnnotatedType
+            </summary>
+            <remarks>
+            Remarks for XmlRemarkAnnotatedType
+            </remarks>
+        </member>
         <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.JsonSerializerTesting">
             <summary>
             For ad-hoc serializer testing

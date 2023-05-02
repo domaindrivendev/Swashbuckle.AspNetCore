@@ -11,11 +11,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
     public class XmlCommentsSchemaFilterTests
     {
         [Theory]
-        [InlineData(typeof(XmlAnnotatedType), "Summary for XmlAnnotatedType")]
-        [InlineData(typeof(XmlAnnotatedType.NestedType), "Summary for NestedType")]
-        [InlineData(typeof(XmlAnnotatedGenericType<int, string>), "Summary for XmlAnnotatedGenericType")]
+        [InlineData(typeof(XmlAnnotatedType), null, "Summary for XmlAnnotatedType")]
+        [InlineData(typeof(XmlAnnotatedType.NestedType), null, "Summary for NestedType")]
+        [InlineData(typeof(XmlAnnotatedGenericType<int, string>), null, "Summary for XmlAnnotatedGenericType")]
+        [InlineData(typeof(XmlRemarkAnnotatedType), "Summary for XmlRemarkAnnotatedType", "Remarks for XmlRemarkAnnotatedType")]
         public void Apply_SetsDescription_FromTypeSummaryTag(
             Type type,
+            string expectedTitle,
             string expectedDescription)
         {
             var schema = new OpenApiSchema { };
@@ -23,6 +25,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Subject().Apply(schema, filterContext);
 
+            Assert.Equal(expectedTitle, schema.Title);
             Assert.Equal(expectedDescription, schema.Description);
         }
 
