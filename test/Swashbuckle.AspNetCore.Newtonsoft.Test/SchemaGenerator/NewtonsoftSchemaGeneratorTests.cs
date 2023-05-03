@@ -828,6 +828,43 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.Null(schema.AdditionalProperties.Type);
         }
 
+        [Fact]
+        public void GenerateSchema_HonorsDataMemberAttribute()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(typeof(DataMemberAnnotatedType), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+
+
+            Assert.True(schema.Properties["StringWithDataMemberRequired"].Nullable);
+            Assert.True(schema.Properties["StringWithDataMemberNonRequired"].Nullable);
+            Assert.True(schema.Properties["RequiredWithCustomNameFromDataMember"].Nullable);
+            Assert.True(schema.Properties["NonRequiredWithCustomNameFromDataMember"].Nullable);
+
+            Assert.Equal(
+                new[]
+                {
+
+                    "StringWithDataMemberRequired",
+                    "StringWithDataMemberNonRequired",
+                    "RequiredWithCustomNameFromDataMember",
+                    "NonRequiredWithCustomNameFromDataMember"
+                },
+                schema.Properties.Keys.ToArray()
+            );
+
+            Assert.Equal(
+                new[]
+                {
+                    "RequiredWithCustomNameFromDataMember",
+                    "StringWithDataMemberRequired"
+                },
+                schema.Required.ToArray()
+            );
+        }
+
         [Theory]
         [InlineData(typeof(ProblemDetails))]
         [InlineData(typeof(ValidationProblemDetails))]

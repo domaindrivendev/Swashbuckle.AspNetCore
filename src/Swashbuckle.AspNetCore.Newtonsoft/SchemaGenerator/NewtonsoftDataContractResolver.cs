@@ -152,7 +152,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             {
                 if (jsonProperty.Ignored) continue;
 
-                var required = jsonProperty.IsRequiredSpecified()
+                var required = jsonProperty.Required != Required.Default
                     ? jsonProperty.Required
                     : jsonObjectContract.ItemRequired ?? Required.Default;
 
