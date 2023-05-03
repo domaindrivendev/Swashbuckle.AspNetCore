@@ -1,7 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 {
+    [DataContract]
     public class JsonPropertyAnnotatedType
     {
         [JsonProperty("string-with-json-property-name")]
@@ -21,5 +23,13 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 
         [JsonProperty(Required = Required.AllowNull)]
         public string StringWithRequiredAllowNull { get; set; }
+
+        [DataMember(IsRequired = false)] //As the support for DataMember has been implemented later, JsonRequired should take precedence
+        [JsonProperty(Required = Required.Always)]
+        public string StringWithRequiredAlwaysButConflictingDataMember { get; set; }
+
+        [DataMember(IsRequired = true)] //As the support for DataMember has been implemented later, JsonRequired should take precedence
+        [JsonProperty(Required = Required.Default)]
+        public string StringWithRequiredDefaultButConflictingDataMember { get; set; }
     }
 }
