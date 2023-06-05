@@ -39,15 +39,19 @@ namespace Swashbuckle.AspNetCore.Swagger
                     ? httpContext.Request.PathBase.Value
                     : null;
 
+                var host = httpContext.Request.Host.HasValue
+                    ? $"{httpContext.Request.Scheme}://{httpContext.Request.Host.Value}"
+                    : null;
+
                 var swagger = swaggerProvider switch
                 {
                     IAsyncSwaggerProvider asyncSwaggerProvider => await asyncSwaggerProvider.GetSwaggerAsync(
                         documentName: documentName,
-                        host: null,
+                        host: host,
                         basePath: basePath),
                     _ => swaggerProvider.GetSwagger(
                         documentName: documentName,
-                        host: null,
+                        host: host,
                         basePath: basePath)
                 };
 
