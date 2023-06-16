@@ -2,6 +2,9 @@
 
 namespace Swashbuckle.AspNetCore.Annotations
 {
+#if NET7_0_OR_GREATER
+    [Obsolete("Use JsonDerivedType attribute instead")]
+#endif
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface, AllowMultiple = true)]
     public class SwaggerSubTypeAttribute : Attribute
     {
