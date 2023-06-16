@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -56,8 +57,20 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static IEnumerable<Type> AnnotationsSubTypesSelector(Type type)
         {
+#if NET7_0_OR_GREATER
+            var jsonDerivedTypeAttributes = type.GetCustomAttributes(false)
+                .OfType<JsonDerivedTypeAttribute>()
+                .ToArray();
+
+            if (jsonDerivedTypeAttributes.Any())
+            {
+                return jsonDerivedTypeAttributes.Select(attr => attr.DerivedType);
+            }
+#endif
+
             var subTypeAttributes = type.GetCustomAttributes(false)
-                .OfType<SwaggerSubTypeAttribute>();
+                .OfType<SwaggerSubTypeAttribute>()
+                .ToArray();
 
             if (subTypeAttributes.Any())
             {
@@ -80,6 +93,17 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static string AnnotationsDiscriminatorNameSelector(Type baseType)
         {
+#if NET7_0_OR_GREATER
+            var jsonPolymorphicAttribute = baseType.GetCustomAttributes(false)
+                .OfType<JsonPolymorphicAttribute>()
+                .FirstOrDefault();
+
+            if (jsonPolymorphicAttribute is not null)
+            {
+                return jsonPolymorphicAttribute.TypeDiscriminatorPropertyName;
+            }
+#endif
+
             var discriminatorAttribute = baseType.GetCustomAttributes(false)
                 .OfType<SwaggerDiscriminatorAttribute>()
                 .FirstOrDefault();
@@ -107,6 +131,17 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             if (subType.BaseType == null)
                 return null;
+
+#if NET7_0_OR_GREATER
+            var jsonDerivedTypeAttribute = subType.BaseType.GetCustomAttributes(false)
+                .OfType<JsonDerivedTypeAttribute>()
+                .FirstOrDefault(attr => attr.DerivedType == subType);
+
+            if (jsonDerivedTypeAttribute is not null)
+            {
+                return jsonDerivedTypeAttribute.TypeDiscriminator?.ToString();
+            }
+#endif
 
             var subTypeAttribute = subType.BaseType.GetCustomAttributes(false)
                 .OfType<SwaggerSubTypeAttribute>()
