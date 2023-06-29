@@ -87,6 +87,7 @@ namespace Swashbuckle.AspNetCore.Cli
 
                     // 3) Retrieve Swagger via configured provider
                     var swaggerProvider = serviceProvider.GetRequiredService<ISwaggerProvider>();
+                    var swaggerDocumentSerializer = serviceProvider.GetService<ISwaggerDocumentSerializer>();
                     var swagger = swaggerProvider.GetSwagger(
                         namedArgs["swaggerdoc"],
                         namedArgs.ContainsKey("--host") ? namedArgs["--host"] : null,
@@ -106,9 +107,24 @@ namespace Swashbuckle.AspNetCore.Cli
                             writer = new OpenApiJsonWriter(streamWriter);
 
                         if (namedArgs.ContainsKey("--serializeasv2"))
-                            swagger.SerializeAsV2(writer);
+                        {
+                            if (swaggerDocumentSerializer != null)
+                            {
+                                swaggerDocumentSerializer.SerializeDocument(swagger, writer, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0);
+                            }
+                            else
+                            {
+                                swagger.SerializeAsV2(writer);
+                            }
+                        }
+                        else if (swaggerDocumentSerializer != null)
+                        {
+                            swaggerDocumentSerializer.SerializeDocument(swagger, writer, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0);
+                        }
                         else
+                        {
                             swagger.SerializeAsV3(writer);
+                        }
 
                         if (outputPath != null)
                             Console.WriteLine($"Swagger JSON/YAML successfully written to {outputPath}");
