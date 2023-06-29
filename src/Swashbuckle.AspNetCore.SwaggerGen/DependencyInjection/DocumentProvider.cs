@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
@@ -24,15 +25,21 @@ namespace Microsoft.Extensions.ApiDescriptions
         private readonly SwaggerGeneratorOptions _generatorOptions;
         private readonly SwaggerOptions _options;
         private readonly IAsyncSwaggerProvider _swaggerProvider;
+        private readonly ISwaggerDocumentSerializer _swaggerDocumentSerializer;
 
         public DocumentProvider(
             IOptions<SwaggerGeneratorOptions> generatorOptions,
             IOptions<SwaggerOptions> options,
-            IAsyncSwaggerProvider swaggerProvider)
+            IAsyncSwaggerProvider swaggerProvider,
+            IServiceProvider serviceProvider
+            )
         {
             _generatorOptions = generatorOptions.Value;
             _options = options.Value;
             _swaggerProvider = swaggerProvider;
+
+            // Use IServiceProvider to retrieve the ISwaggerDocumentSerializer, because it is an optional service
+            _swaggerDocumentSerializer = serviceProvider.GetService(typeof(ISwaggerDocumentSerializer)) as ISwaggerDocumentSerializer;
         }
 
         public IEnumerable<string> GetDocumentNames()
@@ -47,11 +54,17 @@ namespace Microsoft.Extensions.ApiDescriptions
             var jsonWriter = new OpenApiJsonWriter(writer);
             if (_options.SerializeAsV2)
             {
-                swagger.SerializeAsV2(jsonWriter);
+                if (_swaggerDocumentSerializer != null)
+                    _swaggerDocumentSerializer.SerializeDocument(swagger, jsonWriter, OpenApi.OpenApiSpecVersion.OpenApi2_0);
+                else
+                    swagger.SerializeAsV2(jsonWriter);
             }
             else
             {
-                swagger.SerializeAsV3(jsonWriter);
+                if (_swaggerDocumentSerializer != null)
+                    _swaggerDocumentSerializer.SerializeDocument(swagger, jsonWriter, OpenApi.OpenApiSpecVersion.OpenApi3_0);
+                else
+                    swagger.SerializeAsV3(jsonWriter);
             }
         }
     }

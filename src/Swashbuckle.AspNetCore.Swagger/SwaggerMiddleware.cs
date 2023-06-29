@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,17 +19,22 @@ namespace Swashbuckle.AspNetCore.Swagger
         private readonly RequestDelegate _next;
         private readonly SwaggerOptions _options;
         private readonly TemplateMatcher _requestMatcher;
+        private readonly ISwaggerDocumentSerializer _swaggerDocumentSerializer;
 #if !NETSTANDARD
         private readonly TemplateBinder _templateBinder;
 #endif
 
         public SwaggerMiddleware(
             RequestDelegate next,
-            SwaggerOptions options)
+            SwaggerOptions options,
+            IServiceProvider serviceProvider)
         {
             _next = next;
             _options = options ?? new SwaggerOptions();
             _requestMatcher = new TemplateMatcher(TemplateParser.Parse(_options.RouteTemplate), new RouteValueDictionary());
+
+            // Use IServiceProvider to retrieve the ISwaggerDocumentSerializer, because it is an optional service
+            _swaggerDocumentSerializer = serviceProvider.GetService(typeof(ISwaggerDocumentSerializer)) as ISwaggerDocumentSerializer;
         }
 
 #if !NETSTANDARD
@@ -134,7 +140,20 @@ namespace Swashbuckle.AspNetCore.Swagger
             using (var textWriter = new StringWriter(CultureInfo.InvariantCulture))
             {
                 var jsonWriter = new OpenApiJsonWriter(textWriter);
-                if (_options.SerializeAsV2) swagger.SerializeAsV2(jsonWriter); else swagger.SerializeAsV3(jsonWriter);
+                if (_options.SerializeAsV2)
+                {
+                    if (_swaggerDocumentSerializer != null)
+                        _swaggerDocumentSerializer.SerializeDocument(swagger, jsonWriter, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0);
+                    else
+                        swagger.SerializeAsV2(jsonWriter);
+                }
+                else
+                {
+                    if (_swaggerDocumentSerializer != null)
+                        _swaggerDocumentSerializer.SerializeDocument(swagger, jsonWriter, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0);
+                    else
+                        swagger.SerializeAsV3(jsonWriter);
+                }
 
                 await response.WriteAsync(textWriter.ToString(), new UTF8Encoding(false));
             }
@@ -148,7 +167,20 @@ namespace Swashbuckle.AspNetCore.Swagger
             using (var textWriter = new StringWriter(CultureInfo.InvariantCulture))
             {
                 var yamlWriter = new OpenApiYamlWriter(textWriter);
-                if (_options.SerializeAsV2) swagger.SerializeAsV2(yamlWriter); else swagger.SerializeAsV3(yamlWriter);
+                if (_options.SerializeAsV2)
+                {
+                    if (_swaggerDocumentSerializer != null)
+                        _swaggerDocumentSerializer.SerializeDocument(swagger, yamlWriter, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0);
+                    else
+                        swagger.SerializeAsV2(yamlWriter);
+                }
+                else
+                {
+                    if (_swaggerDocumentSerializer != null)
+                        _swaggerDocumentSerializer.SerializeDocument(swagger, yamlWriter, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0);
+                    else
+                        swagger.SerializeAsV3(yamlWriter);
+                }
 
                 await response.WriteAsync(textWriter.ToString(), new UTF8Encoding(false));
             }
