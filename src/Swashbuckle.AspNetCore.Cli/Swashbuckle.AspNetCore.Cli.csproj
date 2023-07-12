@@ -18,4 +18,9 @@
     <PackageReference Include="Microsoft.AspNetCore" Version="2.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="Swashbuckle.AspNetCore.Cli.net6.csproj" />
+    <Content Include="Swashbuckle.AspNetCore.Cli.net7.csproj" />
+  </ItemGroup>
+
 </Project>

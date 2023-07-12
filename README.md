@@ -1621,6 +1621,64 @@ public class SwaggerHostFactory
 }
 ```
 
+### Generate Swagger / OpenAPI JSON during build ###
+
+If you're using the .NET Core 3.0 SDK or later, you can use the Swashbuckle CLI tool to generate Swagger / OpenAPI JSON during the build process. This can be useful if you want to incorporate Swagger generation into a CI/CD process, or if you want to serve it from static file at run-time.
+
+For a web API application based on .NET 6.0 SDK:
+* install `Swashbuckle.AspNetCore.Cli.net6` as a [local tool](https://docs.microsoft.com/en-us/dotnet/core/tools/global-tools#install-a-local-tool)
+* add the following to your project file:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        ...
+    </PropertyGroup>
+    
+    ...
+
+    <Target Name="GenerateSwagger" AfterTargets="PostBuildEvent">
+        <Exec Command="dotnet tool restore" />
+        <Exec Command="dotnet swagger6 tofile --output swagger.json $(OutputPath)$(AssemblyName).dll v1" />
+    </Target>
+
+</Project>
+```
+
+For a web API application based on .NET 7.0 SDK:
+* install `Swashbuckle.AspNetCore.Cli.net7` as a [local tool](https://docs.microsoft.com/en-us/dotnet/core/tools/global-tools#install-a-local-tool)
+* add the following to your project file:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        ...
+    </PropertyGroup>
+    
+    ...
+
+    <Target Name="GenerateSwagger" AfterTargets="PostBuildEvent">
+        <Exec Command="dotnet tool restore" />
+        <Exec Command="dotnet swagger7 tofile --output swagger.json $(OutputPath)$(AssemblyName).dll v1" />
+    </Target>
+
+</Project>
+```
+
+### Troubleshooting the CLI Tool TypeLoadException ###
+
+If you encounter a `TypeLoadException` when running the CLI tool, it's likely that the tool is using a different version of the `dotnet` SDK to the one that your application was built with.
+To resolve this, you may use the strict dotnet-boun version of the CLI:
+
+| NuGet Package                   | dotnet SDK     | Install via                                           |
+|---------------------------------|----------------|-------------------------------------------------------|
+| Swashbuckle.AspNetCore.Cli.net6 | dotnet SDK 6.0 | `dotnet tool install Swashbuckle.AspNetCore.Cli.net6` |
+| Swashbuckle.AspNetCore.Cli.net7 | dotnet SDK 7.0 | `dotnet tool install Swashbuckle.AspNetCore.Cli.net7` |
+
 ## Swashbuckle.AspNetCore.ReDoc ##
 
 <h3 id="redoc-change-relative-path-to-the-ui">Change Relative Path to the UI</h3>

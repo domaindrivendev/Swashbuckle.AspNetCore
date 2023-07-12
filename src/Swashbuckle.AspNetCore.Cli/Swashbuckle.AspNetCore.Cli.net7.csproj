@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyName>dotnet-swagger7</AssemblyName>
+    <Description>Swashbuckle (Swagger) Command Line Tools</Description>
+    <OutputType>Exe</OutputType>
+    <PackAsTool>true</PackAsTool>
+    <PackageId>Swashbuckle.AspNetCore.Cli.net7</PackageId>
+    <TargetFramework>net7.0</TargetFramework>
+    <ToolCommandName>swagger7</ToolCommandName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Swashbuckle.AspNetCore.Swagger\Swashbuckle.AspNetCore.Swagger.csproj" />
+  </ItemGroup>
+
+</Project>
