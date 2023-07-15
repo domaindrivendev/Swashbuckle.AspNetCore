@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -196,7 +196,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 OneOf = knownTypesDataContracts
                     .Select(allowedTypeDataContract => GenerateConcreteSchema(allowedTypeDataContract, schemaRepository))
-                    .ToList()
+                    .ToList(),
+                Discriminator = TryGetDiscriminatorFor(dataContract, schemaRepository, knownTypesDataContracts, out var discriminator)
+                    ? discriminator
+                    : null
             };
         }
 
@@ -350,9 +353,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var applicableDataProperties = dataContract.ObjectProperties;
 
-            if (_generatorOptions.UseAllOfForInheritance || _generatorOptions.UseOneOfForPolymorphism)
+            if(_generatorOptions.UseAllOfForInheritance)
             {
-                if (IsKnownSubType(dataContract, out var baseTypeDataContract))
+                if(IsKnownSubType(dataContract, out var baseTypeDataContract))
                 {
                     var baseTypeSchema = GenerateConcreteSchema(baseTypeDataContract, schemaRepository);
 
@@ -362,19 +365,36 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         .Where(dataProperty => dataProperty.MemberInfo.DeclaringType == dataContract.UnderlyingType);
                 }
 
-                if (IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts))
+                if(_generatorOptions.UseOneOfForPolymorphism)
                 {
-                    foreach (var knownTypeDataContract in knownTypesDataContracts)
+                    if(IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts))
                     {
-                        // Ensure schema is generated for all known types
-                        GenerateConcreteSchema(knownTypeDataContract, schemaRepository);
-                    }
+                        foreach(var knownTypeDataContract in knownTypesDataContracts)
+                        {
+                            // Ensure schema is generated for all known types
+                            GenerateConcreteSchema(knownTypeDataContract, schemaRepository);
+                        }
 
-                    if (TryGetDiscriminatorFor(dataContract, schemaRepository, knownTypesDataContracts, out var discriminator))
+                        if(TryGetDiscriminatorFor(dataContract, schemaRepository, knownTypesDataContracts, out var discriminator))
+                        {
+                            schema.Properties.Add(discriminator.PropertyName, new OpenApiSchema { Type = "string" });
+                            schema.Required.Add(discriminator.PropertyName);
+                            schema.Discriminator = discriminator;
+                        }
+                    }
+                }
+            }
+            else if(_generatorOptions.UseOneOfForPolymorphism)
+            {
+                if(IsKnownSubType(dataContract, out var baseTypeDataContract))
+                {
+                    if(IsBaseTypeWithKnownTypesDefined(baseTypeDataContract, out var knownTypesDataContracts))
                     {
-                        schema.Properties.Add(discriminator.PropertyName, new OpenApiSchema { Type = "string" });
-                        schema.Required.Add(discriminator.PropertyName);
-                        schema.Discriminator = discriminator;
+                        if(TryGetDiscriminatorFor(baseTypeDataContract, schemaRepository, knownTypesDataContracts, out var discriminator))
+                        {
+                            schema.Properties.Add(discriminator.PropertyName, new OpenApiSchema { Type = "string" });
+                            schema.Required.Add(discriminator.PropertyName);
+                        }
                     }
                 }
             }
