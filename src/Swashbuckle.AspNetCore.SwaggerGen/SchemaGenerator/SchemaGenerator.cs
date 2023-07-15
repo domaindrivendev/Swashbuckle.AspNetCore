@@ -379,7 +379,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         {
                             schema.Properties.Add(discriminator.PropertyName, new OpenApiSchema { Type = "string" });
                             schema.Required.Add(discriminator.PropertyName);
-                            schema.Discriminator = discriminator;
                         }
                     }
                 }
