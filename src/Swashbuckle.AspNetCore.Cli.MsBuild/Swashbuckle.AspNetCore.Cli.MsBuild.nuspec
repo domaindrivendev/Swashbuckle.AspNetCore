@@ -13,7 +13,7 @@
         <tags>$tags$</tags>
         <repository type="$repositoryType$" url="$repositoryUrl$" />
         <dependencies>
-            <group targetFramework=".NETStandard2.0">
+            <group targetFramework=".NETStandard2.1">
                 <dependency id="Swashbuckle.AspNetCore" version="$version$" exclude="Build,Analyzers" />
             </group>
         </dependencies>
