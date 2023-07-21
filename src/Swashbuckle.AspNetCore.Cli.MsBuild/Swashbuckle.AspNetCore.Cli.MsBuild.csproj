@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>Swagger MsBuild tool for documenting APIs built on ASP.NET Core</Description>
+    <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);PopulateNuspec</GenerateNuspecDependsOn>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <IncludeContentInPack>false</IncludeContentInPack>
+    <IncludeSource>false</IncludeSource>
+    <IncludeSymbols>false</IncludeSymbols>
+    <MicrosoftExtensionsApiDescriptionServerPackageVersion>6.0.5</MicrosoftExtensionsApiDescriptionServerPackageVersion>
+    <NuspecFile>$(MSBuildProjectName).nuspec</NuspecFile>
+    <PackageId>Swashbuckle.AspNetCore.Cli.MsBuild</PackageId>
+    <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore;msbuild</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <TargetFrameworks>netcoreapp2.1;netcoreapp3.0;net5.0;net6.0;net7.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\src\Swashbuckle.AspNetCore.Cli\Swashbuckle.AspNetCore.Cli.csproj" />
+  </ItemGroup>
+
+  <Target Name="PopulateNuspec">
+    <PropertyGroup>
+      <NuspecProperties>
+        authors=$(Authors);
+        configuration=$(Configuration);
+        description=$(PackageDescription);
+        id=$(PackageId);
+        licenseExpression=$(PackageLicenseExpression);
+        licenseUrl=$(LicenseUrl);
+        microsoftExtensionsApiDescriptionServerPackageVersion=$(MicrosoftExtensionsApiDescriptionServerPackageVersion);
+        projectUrl=$(PackageProjectUrl);
+        repositoryType=$(RepositoryType);
+        repositoryUrl=$(RepositoryUrl);
+        tags=$(PackageTags.Replace(';', ' '));
+        targetPath=$(TargetPath);
+        version=$(PackageVersion);
+      </NuspecProperties>
+    </PropertyGroup>
+  </Target>
+
+</Project>

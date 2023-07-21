@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>$id$</id>
+        <version>$version$</version>
+        <authors>$authors$</authors>
+        <owners>$authors$</owners>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <license type="expression">$licenseExpression$</license>
+        <licenseUrl>$licenseUrl$</licenseUrl>
+        <projectUrl>$projectUrl$</projectUrl>
+        <description>$description$</description>
+        <tags>$tags$</tags>
+        <repository type="$repositoryType$" url="$repositoryUrl$" />
+        <dependencies>
+            <group targetFramework=".NETStandard2.0">
+                <dependency id="Swashbuckle.AspNetCore.Swagger" version="$version$" exclude="Build,Analyzers" />
+                <dependency id="Swashbuckle.AspNetCore.SwaggerGen" version="$version$" exclude="Build,Analyzers" />
+                <dependency id="Microsoft.Extensions.ApiDescription.Server" version="$microsoftExtensionsApiDescriptionServerPackageVersion$" />
+            </group>
+        </dependencies>
+        <developmentDependency>true</developmentDependency>
+        <references />
+    </metadata>
+    <files>
+        <file src="Swashbuckle.AspNetCore.Cli.MsBuild.props" target="build" />
+        <file src="Swashbuckle.AspNetCore.Cli.MsBuild.props" target="buildCrossTargeting" />
+        <file src="Swashbuckle.AspNetCore.Cli.MsBuild.props" target="buildTransitive" />
+
+        <file src="bin\release\netcoreapp2.1\**" target="tools/NetCore21" />
+        <file src="bin\release\netcoreapp3.1\**" target="tools/NetCore31" />
+        <file src="bin\release\net5.0\**" target="tools/Net50" />
+        <file src="bin\release\net6.0\**" target="tools/Net60" />
+        <file src="bin\release\net7.0\**" target="tools/Net70" />
+    </files>
+</package>
