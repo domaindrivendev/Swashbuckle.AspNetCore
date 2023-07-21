@@ -27,10 +27,11 @@
         <file src="Swashbuckle.AspNetCore.Cli.MsBuild.props" target="buildCrossTargeting" />
         <file src="Swashbuckle.AspNetCore.Cli.MsBuild.props" target="buildTransitive" />
 
-        <file src="bin\release\netcoreapp2.1\**" target="tools/NetCore21" />
-        <file src="bin\release\netcoreapp3.1\**" target="tools/NetCore31" />
-        <file src="bin\release\net5.0\**" target="tools/Net50" />
-        <file src="bin\release\net6.0\**" target="tools/Net60" />
-        <file src="bin\release\net7.0\**" target="tools/Net70" />
+        <file src="bin\Release\netcoreapp2.1\**" exclude="**\Swashbuckle.AspNetCore.Cli.MsBuild.*"  target="tools/NetCore21" />
+        <file src="bin\Release\netcoreapp3.0\**" exclude="**\Swashbuckle.AspNetCore.Cli.MsBuild.*" target="tools/NetCore30" />
+        <file src="bin\Release\netcoreapp3.1\**" exclude="**\Swashbuckle.AspNetCore.Cli.MsBuild.*" target="tools/NetCore31" />
+        <file src="bin\Release\net5.0\**" exclude="**\Swashbuckle.AspNetCore.Cli.MsBuild.*" target="tools/Net50" />
+        <file src="bin\Release\net6.0\**" exclude="**\Swashbuckle.AspNetCore.Cli.MsBuild.*" target="tools/Net60" />
+        <file src="bin\Release\net7.0\**" exclude="**\Swashbuckle.AspNetCore.Cli.MsBuild.*" target="tools/Net70" />
     </files>
 </package>
