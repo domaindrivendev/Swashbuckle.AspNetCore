@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>Swashbuckle.AspNetCore.Cli.MSBuild</id>
+        <version>$version$</version>
+        <authors>$authors$</authors>
+        <owners>$authors$</owners>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <license type="expression">$licenseExpression$</license>
+        <licenseUrl>$licenseUrl$</licenseUrl>
+        <projectUrl>$projectUrl$</projectUrl>
+        <description>$description$</description>
+        <tags>$tags$</tags>
+        <developmentDependency>true</developmentDependency>
+        <dependencies />
+        <references />
+    </metadata>
+    <files>
+        <file src="Swashbuckle.AspNetCore.Cli.MsBuild.props" target="build" />
+        <file src="Swashbuckle.AspNetCore.Cli.MsBuild.props" target="buildCrossTargeting" />
+        <file src="Swashbuckle.AspNetCore.Cli.MsBuild.props" target="buildTransitive" />
+
+        <file src="..\NSwag.ConsoleCore\bin\Release\netcoreapp2.1\Publish\**" target="tools/NetCore21" />
+        <file src="..\NSwag.ConsoleCore\bin\Release\netcoreapp3.1\Publish\**" target="tools/NetCore31" />
+        <file src="..\NSwag.ConsoleCore\bin\Release\net5.0\Publish\**" target="tools/Net50" />
+        <file src="..\NSwag.ConsoleCore\bin\release\net6.0\Publish\**" target="tools/Net60" />
+        <file src="..\NSwag.ConsoleCore\bin\release\net7.0\Publish\**" target="tools/Net70" />
+    </files>
+</package>
