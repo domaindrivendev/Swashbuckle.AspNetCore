@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<PropertyGroup>
-		<SwashbuckleSwaggerCliExe_Core21>dotnet "$(MSBuildThisFileDirectory)../tools/NetCore21/dotnet-swagger.dll"</SwashbuckleSwaggerCliExe_Core21>
-		<SwashbuckleSwaggerCliExe_Core31>dotnet "$(MSBuildThisFileDirectory)../tools/NetCore31/dotnet-swagger.dll"</SwashbuckleSwaggerCliExe_Core31>
-		<SwashbuckleSwaggerCliExe_Net50>dotnet "$(MSBuildThisFileDirectory)../tools/Net50/dotnet-swagger.dll"</SwashbuckleSwaggerCliExe_Net50>
-		<SwashbuckleSwaggerCliExe_Net60>dotnet "$(MSBuildThisFileDirectory)../tools/Net60/dotnet-swagger.dll"</SwashbuckleSwaggerCliExe_Net60>
-		<SwashbuckleSwaggerCliExe_Net70>dotnet "$(MSBuildThisFileDirectory)../tools/Net70/dotnet-swagger.dll"</SwashbuckleSwaggerCliExe_Net70>
+    <PropertyGroup>
+        <SwashbuckleSwaggerCliExe_Core21>dotnet "$(MSBuildThisFileDirectory)../tools/NetCore21/dotnet-swagger.dll"</SwashbuckleSwaggerCliExe_Core21>
+        <SwashbuckleSwaggerCliExe_Core31>dotnet "$(MSBuildThisFileDirectory)../tools/NetCore31/dotnet-swagger.dll"</SwashbuckleSwaggerCliExe_Core31>
+        <SwashbuckleSwaggerCliExe_Net50>dotnet "$(MSBuildThisFileDirectory)../tools/Net50/dotnet-swagger.dll"</SwashbuckleSwaggerCliExe_Net50>
+        <SwashbuckleSwaggerCliExe_Net60>dotnet "$(MSBuildThisFileDirectory)../tools/Net60/dotnet-swagger.dll"</SwashbuckleSwaggerCliExe_Net60>
+        <SwashbuckleSwaggerCliExe_Net70>dotnet "$(MSBuildThisFileDirectory)../tools/Net70/dotnet-swagger.dll"</SwashbuckleSwaggerCliExe_Net70>
 
-		<SwashbuckleSwaggerCliDir_Core21>$(MSBuildThisFileDirectory)../tools/NetCore21/</SwashbuckleSwaggerCliDir_Core21>
-		<SwashbuckleSwaggerCliDir_Core31>$(MSBuildThisFileDirectory)../tools/NetCore31/</SwashbuckleSwaggerCliDir_Core31>
-		<SwashbuckleSwaggerCliDir_Net50>$(MSBuildThisFileDirectory)../tools/Net50/</SwashbuckleSwaggerCliDir_Net50>
-		<SwashbuckleSwaggerCliDir_Net60>$(MSBuildThisFileDirectory)../tools/Net60/</SwashbuckleSwaggerCliDir_Net60>
-		<SwashbuckleSwaggerCliDir_Net70>$(MSBuildThisFileDirectory)../tools/Net70/</SwashbuckleSwaggerCliDir_Net70>
-	</PropertyGroup>
+        <SwashbuckleSwaggerCliDir_Core21>$(MSBuildThisFileDirectory)../tools/NetCore21/</SwashbuckleSwaggerCliDir_Core21>
+        <SwashbuckleSwaggerCliDir_Core31>$(MSBuildThisFileDirectory)../tools/NetCore31/</SwashbuckleSwaggerCliDir_Core31>
+        <SwashbuckleSwaggerCliDir_Net50>$(MSBuildThisFileDirectory)../tools/Net50/</SwashbuckleSwaggerCliDir_Net50>
+        <SwashbuckleSwaggerCliDir_Net60>$(MSBuildThisFileDirectory)../tools/Net60/</SwashbuckleSwaggerCliDir_Net60>
+        <SwashbuckleSwaggerCliDir_Net70>$(MSBuildThisFileDirectory)../tools/Net70/</SwashbuckleSwaggerCliDir_Net70>
+    </PropertyGroup>
 </Project>

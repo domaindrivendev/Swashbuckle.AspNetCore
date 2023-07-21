@@ -14,9 +14,7 @@
         <repository type="$repositoryType$" url="$repositoryUrl$" />
         <dependencies>
             <group targetFramework=".NETStandard2.0">
-                <dependency id="Swashbuckle.AspNetCore.Swagger" version="$version$" exclude="Build,Analyzers" />
-                <dependency id="Swashbuckle.AspNetCore.SwaggerGen" version="$version$" exclude="Build,Analyzers" />
-                <dependency id="Microsoft.Extensions.ApiDescription.Server" version="$microsoftExtensionsApiDescriptionServerPackageVersion$" />
+                <dependency id="Swashbuckle.AspNetCore" version="$version$" exclude="Build,Analyzers" />
             </group>
         </dependencies>
         <developmentDependency>true</developmentDependency>
