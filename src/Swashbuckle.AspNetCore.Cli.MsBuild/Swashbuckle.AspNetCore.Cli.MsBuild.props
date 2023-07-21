@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
+        <OpenApiGenerateDocumentsOnBuild Condition=" '$(OpenApiGenerateDocumentsOnBuild)' == '' ">false</OpenApiGenerateDocumentsOnBuild>
+
         <SwashbuckleSwaggerCliExe_Core21>dotnet "$(MSBuildThisFileDirectory)../tools/NetCore21/dotnet-swagger.dll"</SwashbuckleSwaggerCliExe_Core21>
         <SwashbuckleSwaggerCliExe_Core31>dotnet "$(MSBuildThisFileDirectory)../tools/NetCore31/dotnet-swagger.dll"</SwashbuckleSwaggerCliExe_Core31>
         <SwashbuckleSwaggerCliExe_Net50>dotnet "$(MSBuildThisFileDirectory)../tools/Net50/dotnet-swagger.dll"</SwashbuckleSwaggerCliExe_Net50>
