@@ -1620,6 +1620,27 @@ public class SwaggerHostFactory
     }
 }
 ```
+## Swashbuckle.AspNetCore.Cli.MsBuild ##
+
+You can also use cli tools in MsBuild target. Just install it in your asp.net project as nuget package
+and add new target section:
+
+```xml
+
+<Target Name="SwaggerJson" AfterTargets="AfterBuild">
+    <Exec WorkingDirectory="$(ProjectDir)" EnvironmentVariables="ASPNETCORE_ENVIRONMENT=Develop"
+          Command="$(SwashbuckleSwaggerCliExe_Net60) tofile --output swagger.json $(ProjectDir)/bin/$(Configuration)/net6.0/$(AssemblyName).dll documentName"/>
+</Target>
+```
+
+Available props:
+* SwashbuckleSwaggerCliExe_Core21
+* SwashbuckleSwaggerCliExe_Core31
+* SwashbuckleSwaggerCliExe_Net50
+* SwashbuckleSwaggerCliExe_Net60
+* SwashbuckleSwaggerCliExe_Net70
+
+The idea of a package the same as in https://github.com/RicoSuter/NSwag/wiki/NSwag.MSBuild
 
 ## Swashbuckle.AspNetCore.ReDoc ##
 

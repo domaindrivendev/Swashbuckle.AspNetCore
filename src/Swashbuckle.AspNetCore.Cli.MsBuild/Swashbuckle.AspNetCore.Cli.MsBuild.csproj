@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>Swagger MsBuild tool for documenting APIs built on ASP.NET Core</Description>
+    <Description>Swashbuckle (Swagger) Command Line Tools for using on build</Description>
     <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);PopulateNuspec</GenerateNuspecDependsOn>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <IncludeContentInPack>false</IncludeContentInPack>
