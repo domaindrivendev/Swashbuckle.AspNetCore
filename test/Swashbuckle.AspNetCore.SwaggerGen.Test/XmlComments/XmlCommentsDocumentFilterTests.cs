@@ -1,21 +1,14 @@
-<<<<<<< HEAD
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Xml.XPath;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-=======
-﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
->>>>>>> d7d252cf (=Move the XML node selection to a new static class that can search recursively using the `inheritdoc` as a reference. Point all XPath queries to this class. Simplify some of the (if) nesting in the XML Comment Filters. Add unit tests for the new InheritDoc updates. some existing tests were converted from `Fact` to `Theory` to accomplish this.)
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
 using System;
-using System.IO;
-using System.Reflection;
-using System.Xml.XPath;
 using Xunit;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
@@ -57,11 +50,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("Summary for FakeControllerWithXmlComments", tag.Description);
         }
 
-<<<<<<< HEAD
-        private static XmlCommentsDocumentFilter Subject()
-=======
         private XmlCommentsDocumentFilter Subject(Type fakeController)
->>>>>>> d7d252cf (=Move the XML node selection to a new static class that can search recursively using the `inheritdoc` as a reference. Point all XPath queries to this class. Simplify some of the (if) nesting in the XML Comment Filters. Add unit tests for the new InheritDoc updates. some existing tests were converted from `Fact` to `Theory` to accomplish this.)
         {
             using var xmlComments = File.OpenText($"{fakeController.Assembly.GetName().Name}.xml");
             return new XmlCommentsDocumentFilter(new XPathDocument(xmlComments));
