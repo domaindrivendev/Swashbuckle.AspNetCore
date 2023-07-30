@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Xml.XPath;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -11,8 +12,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     public class XmlCommentsRequestBodyFilterTests
     {
-        [Fact]
-        public void Apply_SetsDescriptionAndExample_FromActionParamTag()
+        [Theory]
+        [InlineData(typeof(FakeControllerWithXmlComments))]
+        [InlineData(typeof(FakeControllerWithInheritDoc))]
+        public void Apply_SetsDescriptionAndExample_FromActionParamTag(Type fakeController)
         {
             var requestBody = new OpenApiRequestBody
             {
@@ -21,7 +24,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = "string" } }
                 }
             };
-            var parameterInfo = typeof(FakeControllerWithXmlComments)
+            var parameterInfo = fakeController
                 .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithParamTags))
                 .GetParameters()[0];
             var bodyParameterDescription = new ApiParameterDescription
@@ -109,12 +112,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.NotNull(requestBody.Content["application/json"].Example);
             Assert.Equal("\"https://test.com/a?b=1&c=2\"", requestBody.Content["application/json"].Example.ToJson());
         }
-        private XmlCommentsRequestBodyFilter Subject()
+
+        private XmlCommentsRequestBodyFilter Subject(Type fakeController)
         {
-            using (var xmlComments = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml"))
-            {
-                return new XmlCommentsRequestBodyFilter(new XPathDocument(xmlComments));
-            }
+            using var xmlComments = File.OpenText(fakeController.Assembly.GetName().Name + ".xml");
+            return new XmlCommentsRequestBodyFilter(new XPathDocument(xmlComments));
         }
+
+        private XmlCommentsRequestBodyFilter Subject() => Subject(typeof(FakeControllerWithXmlComments));
     }
 }

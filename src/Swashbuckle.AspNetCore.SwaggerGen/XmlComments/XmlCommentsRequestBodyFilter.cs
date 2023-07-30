@@ -6,6 +6,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class XmlCommentsRequestBodyFilter : IRequestBodyFilter
     {
+        private const string SummaryTag = "summary";
+        private const string ExampleTag = "example";
         private readonly XPathNavigator _xmlNavigator;
 
         public XmlCommentsRequestBodyFilter(XPathDocument xmlDoc)
@@ -30,31 +32,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (parameterInfo != null)
             {
                 ApplyParamTags(requestBody, context, parameterInfo);
-                return;
             }
         }
 
-        private void ApplyPropertyTags(OpenApiRequestBody requestBody, RequestBodyFilterContext context, PropertyInfo propertyInfo)
-        {
-            var propertyMemberName = XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(propertyInfo);
-            var propertyNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{propertyMemberName}']");
-
-            if (propertyNode == null) return;
-
-            var summaryNode = propertyNode.SelectSingleNode("summary");
-            if (summaryNode != null)
-                requestBody.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
-
-            var exampleNode = propertyNode.SelectSingleNode("example");
-            if (exampleNode == null) return;
-
-            foreach (var mediaType in requestBody.Content.Values)
-            {
-                mediaType.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, mediaType.Schema, exampleNode.ToString());
-            }
-        }
-
-        private void ApplyParamTags(OpenApiRequestBody requestBody, RequestBodyFilterContext context, ParameterInfo parameterInfo)
+        private void ApplyParamTags(OpenApiRequestBody requestBody, RequestBodyFilterContext context,
+            ParameterInfo parameterInfo)
         {
             if (!(parameterInfo.Member is MethodInfo methodInfo)) return;
 
@@ -66,20 +48,36 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (targetMethod == null) return;
 
             var methodMemberName = XmlCommentsNodeNameHelper.GetMemberNameForMethod(targetMethod);
-            var paramNode = _xmlNavigator.SelectSingleNode(
-                $"/doc/members/member[@name='{methodMemberName}']/param[@name='{parameterInfo.Name}']");
+            var paramNode =
+                _xmlNavigator.SelectSingleNodeRecursive(methodMemberName, $"param[@name='{parameterInfo.Name}']");
 
-            if (paramNode != null)
+            if (paramNode == null) return;
+            requestBody.Description = XmlCommentsTextHelper.Humanize(paramNode.InnerXml);
+
+            var example = paramNode.GetAttribute("example", "");
+            if (string.IsNullOrEmpty(example)) return;
+
+            foreach (var mediaType in requestBody.Content.Values)
             {
-                requestBody.Description = XmlCommentsTextHelper.Humanize(paramNode.InnerXml);
+                mediaType.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, mediaType.Schema, example);
+            }
+        }
 
-                var example = paramNode.GetAttribute("example", "");
-                if (string.IsNullOrEmpty(example)) return;
+        private void ApplyPropertyTags(OpenApiRequestBody requestBody, RequestBodyFilterContext context,
+            PropertyInfo propertyInfo)
+        {
+            var propertyMemberName = XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(propertyInfo);
 
-                foreach (var mediaType in requestBody.Content.Values)
-                {
-                    mediaType.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, mediaType.Schema, example);
-                }
+            var summaryNode = _xmlNavigator.SelectSingleNodeRecursive(propertyMemberName, SummaryTag);
+            if (summaryNode != null)
+                requestBody.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
+
+            var exampleNode = _xmlNavigator.SelectSingleNodeRecursive(propertyMemberName, ExampleTag);
+            if (exampleNode == null) return;
+
+            foreach (var mediaType in requestBody.Content.Values)
+            {
+                mediaType.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, mediaType.Schema, exampleNode.ToString());
             }
         }
     }

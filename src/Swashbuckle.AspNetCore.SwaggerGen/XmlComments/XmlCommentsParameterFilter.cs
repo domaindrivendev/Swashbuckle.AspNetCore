@@ -6,7 +6,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class XmlCommentsParameterFilter : IParameterFilter
     {
-        private XPathNavigator _xmlNavigator;
+        private const string SummaryTag = "summary";
+        private const string ExampleTag = "example";
+        private readonly XPathNavigator _xmlNavigator;
 
         public XmlCommentsParameterFilter(XPathDocument xmlDoc)
         {
@@ -32,14 +34,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (propertyNode == null) return;
 
-            var summaryNode = propertyNode.SelectSingleNode("summary");
+            var summaryNode = _xmlNavigator.SelectSingleNodeRecursive(propertyMemberName, SummaryTag);
             if (summaryNode != null)
             {
                 parameter.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
                 parameter.Schema.Description = null; // no need to duplicate
             }
 
-            var exampleNode = propertyNode.SelectSingleNode("example");
+            var exampleNode = _xmlNavigator.SelectSingleNodeRecursive(propertyMemberName, ExampleTag);
             if (exampleNode == null) return;
 
             parameter.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, parameter.Schema, exampleNode.ToString());
@@ -57,18 +59,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (targetMethod == null) return;
 
             var methodMemberName = XmlCommentsNodeNameHelper.GetMemberNameForMethod(targetMethod);
-            var paramNode = _xmlNavigator.SelectSingleNode(
-                $"/doc/members/member[@name='{methodMemberName}']/param[@name='{context.ParameterInfo.Name}']");
+            var paramNode =
+                _xmlNavigator.SelectSingleNodeRecursive(methodMemberName,
+                    $"param[@name='{context.ParameterInfo.Name}']");
 
-            if (paramNode != null)
-            {
-                parameter.Description = XmlCommentsTextHelper.Humanize(paramNode.InnerXml);
+            if (paramNode == null) return;
+            parameter.Description = XmlCommentsTextHelper.Humanize(paramNode.InnerXml);
 
-                var example = paramNode.GetAttribute("example", "");
-                if (string.IsNullOrEmpty(example)) return;
+            var example = paramNode.GetAttribute(ExampleTag, "");
+            if (string.IsNullOrEmpty(example)) return;
 
-                parameter.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, parameter.Schema, example);
-            }
+            parameter.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, parameter.Schema, example);
         }
     }
 }
