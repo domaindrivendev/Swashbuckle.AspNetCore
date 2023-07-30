@@ -1,9 +1,9 @@
-﻿using System.Xml.XPath;
-using System.Linq;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Xml.XPath;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Models;
-using System;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -31,23 +31,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             foreach (var nameAndType in controllerNamesAndTypes)
             {
                 var memberName = XmlCommentsNodeNameHelper.GetMemberNameForType(nameAndType.Value);
-                var typeNode = _xmlNavigator.SelectSingleNode(string.Format(MemberXPath, memberName));
+                var summaryNode = _xmlNavigator.SelectSingleNodeRecursive(memberName, SummaryTag);
+                if (summaryNode == null) continue;
+                swaggerDoc.Tags ??= new List<OpenApiTag>();
 
-                if (typeNode != null)
+                swaggerDoc.Tags.Add(new OpenApiTag
                 {
-                    var summaryNode = typeNode.SelectSingleNode(SummaryTag);
-                    if (summaryNode != null)
-                    {
-                        if (swaggerDoc.Tags == null)
-                            swaggerDoc.Tags = new List<OpenApiTag>();
-
-                        swaggerDoc.Tags.Add(new OpenApiTag
-                        {
-                            Name = nameAndType.Key,
-                            Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml)
-                        });
-                    }
-                }
+                    Name = nameAndType.Key,
+                    Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml)
+                });
             }
         }
     }

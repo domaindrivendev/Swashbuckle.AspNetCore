@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Xml.XPath;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
@@ -9,34 +10,38 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     public class XmlCommentsParameterFilterTests
     {
-        [Fact]
-        public void Apply_SetsDescriptionAndExample_FromActionParamTag()
+        [Theory]
+        [InlineData(typeof(FakeControllerWithXmlComments))]
+        [InlineData(typeof(FakeControllerWithInheritDoc))]
+        public void Apply_SetsDescriptionAndExample_FromActionParamTag(Type fakeController)
         {
             var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = "string" } };
-            var parameterInfo = typeof(FakeControllerWithXmlComments)
+            var parameterInfo = fakeController
                 .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithParamTags))
                 .GetParameters()[0];
             var apiParameterDescription = new ApiParameterDescription { };
             var filterContext = new ParameterFilterContext(apiParameterDescription, null, null, parameterInfo: parameterInfo);
 
-            Subject().Apply(parameter, filterContext);
+            Subject(fakeController).Apply(parameter, filterContext);
 
             Assert.Equal("Description for param1", parameter.Description);
             Assert.NotNull(parameter.Example);
             Assert.Equal("\"Example for param1\"", parameter.Example.ToJson());
         }
 
-        [Fact]
-        public void Apply_SetsDescriptionAndExample_FromUriTypeActionParamTag()
+        [Theory]
+        [InlineData(typeof(FakeControllerWithXmlComments))]
+        [InlineData(typeof(FakeControllerWithInheritDoc))]
+        public void Apply_SetsDescriptionAndExample_FromUriTypeActionParamTag(Type fakeController)
         {
             var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = "string" } };
-            var parameterInfo = typeof(FakeControllerWithXmlComments)
+            var parameterInfo = fakeController
                 .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithParamTags))
                 .GetParameters()[1];
             var apiParameterDescription = new ApiParameterDescription { };
             var filterContext = new ParameterFilterContext(apiParameterDescription, null, null, parameterInfo: parameterInfo);
 
-            Subject().Apply(parameter, filterContext);
+            Subject(fakeController).Apply(parameter, filterContext);
 
             Assert.Equal("Description for param2", parameter.Description);
             Assert.NotNull(parameter.Example);
@@ -92,12 +97,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("\"https://test.com/a?b=1&c=2\"", parameter.Example.ToJson());
         }
 
-        private XmlCommentsParameterFilter Subject()
+        private XmlCommentsParameterFilter Subject(Type fakeController)
         {
-            using (var xmlComments = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml"))
-            {
-                return new XmlCommentsParameterFilter(new XPathDocument(xmlComments));
-            }
+            using var xmlComments = File.OpenText(fakeController.Assembly.GetName().Name + ".xml");
+            return new XmlCommentsParameterFilter(new XPathDocument(xmlComments));
         }
+
+        private XmlCommentsParameterFilter Subject() => Subject(typeof(FakeControllerWithXmlComments));
     }
 }
