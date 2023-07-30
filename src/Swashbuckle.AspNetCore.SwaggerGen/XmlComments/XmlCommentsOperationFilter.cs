@@ -7,6 +7,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class XmlCommentsOperationFilter : IOperationFilter
     {
+        private const string SummaryTag = "summary";
+        private const string RemarksTag = "remarks";
+        private const string ResponseTag = "response";
         private readonly XPathNavigator _xmlNavigator;
 
         public XmlCommentsOperationFilter(XPathDocument xmlDoc)
@@ -32,27 +35,26 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private void ApplyControllerTags(OpenApiOperation operation, Type controllerType)
         {
             var typeMemberName = XmlCommentsNodeNameHelper.GetMemberNameForType(controllerType);
-            var responseNodes = _xmlNavigator.Select($"/doc/members/member[@name='{typeMemberName}']/response");
+            var responseNodes = _xmlNavigator.SelectNodeRecursive(typeMemberName, ResponseTag);
+            if (responseNodes == null) return;
             ApplyResponseTags(operation, responseNodes);
         }
 
         private void ApplyMethodTags(OpenApiOperation operation, MethodInfo methodInfo)
         {
             var methodMemberName = XmlCommentsNodeNameHelper.GetMemberNameForMethod(methodInfo);
-            var methodNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{methodMemberName}']");
 
-            if (methodNode == null) return;
-
-            var summaryNode = methodNode.SelectSingleNode("summary");
+            var summaryNode = _xmlNavigator.SelectSingleNodeRecursive(methodMemberName, SummaryTag);
             if (summaryNode != null)
                 operation.Summary = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
 
-            var remarksNode = methodNode.SelectSingleNode("remarks");
+            var remarksNode = _xmlNavigator.SelectSingleNodeRecursive(methodMemberName, RemarksTag);
             if (remarksNode != null)
                 operation.Description = XmlCommentsTextHelper.Humanize(remarksNode.InnerXml);
 
-            var responseNodes = methodNode.Select("response");
-            ApplyResponseTags(operation, responseNodes);
+            var responseNodes = _xmlNavigator.SelectNodeRecursive(methodMemberName, ResponseTag);
+            if (responseNodes != null)
+                ApplyResponseTags(operation, responseNodes);
         }
 
         private void ApplyResponseTags(OpenApiOperation operation, XPathNodeIterator responseNodes)
