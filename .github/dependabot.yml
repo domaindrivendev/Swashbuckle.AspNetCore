@@ -4,7 +4,9 @@ updates:
   directory: "/"
   schedule:
     interval: weekly
+  open-pull-requests-limit: 20
 - package-ecosystem: nuget
   directory: "/"
   schedule:
     interval: weekly
+  open-pull-requests-limit: 20
