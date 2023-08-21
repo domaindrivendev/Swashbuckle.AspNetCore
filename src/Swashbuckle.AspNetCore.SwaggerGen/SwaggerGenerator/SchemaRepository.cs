@@ -24,12 +24,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 var conflictingType = _reservedIds.First(entry => entry.Value == schemaId).Key;
 
-                throw new InvalidOperationException(
-                    $"Can't use schemaId \"${schemaId}\" for type \"${type}\". " +
-                    $"The same schemaId is already used for type \"${conflictingType}\"");
+                if(conflictingType != type)
+                { 
+                    throw new InvalidOperationException(
+                        $"Can't use schemaId \"${schemaId}\" for type \"${type}\". " +
+                        $"The same schemaId is already used for type \"${conflictingType}\"");
+                }
             }
-
-            _reservedIds.Add(type, schemaId);
+            else
+            { 
+                _reservedIds.Add(type, schemaId);
+            }
         }
 
         public bool TryLookupByType(Type type, out OpenApiSchema referenceSchema)
