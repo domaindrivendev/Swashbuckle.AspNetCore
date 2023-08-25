@@ -30,7 +30,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             SchemaRepository schemaRepository,
             MemberInfo memberInfo = null,
             ParameterInfo parameterInfo = null,
-            ApiParameterRouteInfo routeInfo = null)
+            ApiParameterRouteInfo routeInfo = null,
+            bool isEffectiveTypeNeeded = true)
         {
             if (memberInfo != null)
                 return GenerateSchemaForMember(modelType, schemaRepository, memberInfo);
@@ -38,7 +39,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (parameterInfo != null)
                 return GenerateSchemaForParameter(modelType, schemaRepository, parameterInfo, routeInfo);
 
-            return GenerateSchemaForType(modelType, schemaRepository);
+            return GenerateSchemaForType(modelType, schemaRepository, isEffectiveTypeNeeded);
         }
 
         private OpenApiSchema GenerateSchemaForMember(
@@ -147,9 +148,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return schema;
         }
 
-        private OpenApiSchema GenerateSchemaForType(Type modelType, SchemaRepository schemaRepository)
+        private OpenApiSchema GenerateSchemaForType(Type modelType, SchemaRepository schemaRepository, bool isEffectiveTypeNeeded = true)
         {
-            var dataContract = GetDataContractFor(modelType);
+            var dataContract = GetDataContractFor(modelType, isEffectiveTypeNeeded);
 
             var schema = _generatorOptions.UseOneOfForPolymorphism && IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts)
                 ? GeneratePolymorphicSchema(dataContract, schemaRepository, knownTypesDataContracts)
@@ -163,9 +164,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return schema;
         }
 
-        private DataContract GetDataContractFor(Type modelType)
+        private DataContract GetDataContractFor(Type modelType, bool isEffectiveTypeNeeded = true)
         {
-            var effectiveType = Nullable.GetUnderlyingType(modelType) ?? modelType;
+            var effectiveType = isEffectiveTypeNeeded ? Nullable.GetUnderlyingType(modelType) ?? modelType : modelType;
             return _serializerDataContractResolver.GetDataContractForType(effectiveType);
         }
 
@@ -272,8 +273,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var schema = new OpenApiSchema
             {
                 Type = dataContract.DataType.ToString().ToLower(CultureInfo.InvariantCulture),
-                Format = dataContract.DataFormat
-            };
+                Format = dataContract.DataFormat,
+                Nullable = Nullable.GetUnderlyingType(dataContract.UnderlyingType) != null
+             };
 
             // For backcompat only - EnumValues is obsolete
             if (dataContract.EnumValues != null)
@@ -308,7 +310,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return new OpenApiSchema
             {
                 Type = "array",
-                Items = GenerateSchema(dataContract.ArrayItemType, schemaRepository),
+                Items = GenerateSchema(dataContract.ArrayItemType, schemaRepository, isEffectiveTypeNeeded:false),
                 UniqueItems = hasUniqueItems ? (bool?)true : null
             };
         }
