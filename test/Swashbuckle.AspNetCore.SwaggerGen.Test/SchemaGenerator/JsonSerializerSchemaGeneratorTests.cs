@@ -141,6 +141,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Theory]
         [InlineData(typeof(int[]), "integer", "int32", false)]
         [InlineData(typeof(int?[]), "integer", "int32", true)]
+        [InlineData(typeof(List<int?>), "integer", "int32", true)]
+        [InlineData(typeof(Nullable<int>[]), "integer", "int32", true)]
         [InlineData(typeof(IEnumerable<string>), "string", null, false)]
         [InlineData(typeof(DateTime[]), "string", "date-time", false)]
         [InlineData(typeof(DateTime?[]), "string", "date-time", true)]
