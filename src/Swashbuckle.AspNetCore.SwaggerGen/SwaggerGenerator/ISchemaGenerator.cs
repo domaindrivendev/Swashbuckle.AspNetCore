@@ -12,6 +12,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             SchemaRepository schemaRepository,
             MemberInfo memberInfo = null,
             ParameterInfo parameterInfo = null,
-            ApiParameterRouteInfo routeInfo = null);
+            ApiParameterRouteInfo routeInfo = null,
+            bool isEffectiveTypeNeeded = true);
     }
 }

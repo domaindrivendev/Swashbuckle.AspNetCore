@@ -143,15 +143,18 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Theory]
-        [InlineData(typeof(int[]), "integer", "int32")]
-        [InlineData(typeof(IEnumerable<string>), "string", null)]
-        [InlineData(typeof(DateTime?[]), "string", "date-time")]
-        [InlineData(typeof(int[][]), "array", null)]
-        [InlineData(typeof(IList), null, null)]
+        [InlineData(typeof(int[]), "integer", "int32", false)]
+        [InlineData(typeof(int?[]), "integer", "int32", true)]
+        [InlineData(typeof(IEnumerable<string>), "string", null, false)]
+        [InlineData(typeof(DateTime[]), "string", "date-time", false)]
+        [InlineData(typeof(DateTime?[]), "string", "date-time", true)]
+        [InlineData(typeof(int[][]), "array", null, false)]
+        [InlineData(typeof(IList), null, null, false)]
         public void GenerateSchema_GeneratesArraySchema_IfEnumerableType(
             Type type,
             string expectedItemsType,
-            string expectedItemsFormat)
+            string expectedItemsFormat,
+            bool expectedItemsNullable)
         {
             var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
@@ -159,6 +162,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.NotNull(schema.Items);
             Assert.Equal(expectedItemsType, schema.Items.Type);
             Assert.Equal(expectedItemsFormat, schema.Items.Format);
+            Assert.Equal(expectedItemsNullable, schema.Items.Nullable);
         }
 
         [Theory]
