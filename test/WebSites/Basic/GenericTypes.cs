@@ -1,4 +1,6 @@
-﻿namespace Swashbuckle.AspNetCore.TestSupport
+﻿using System;
+
+namespace Basic
 {
     public class GenericType<T>
     {
