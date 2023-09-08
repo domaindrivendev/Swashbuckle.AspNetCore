@@ -179,7 +179,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Type type,
             Func<OpenApiSchema> schemaFactory)
         {
-            swaggerGenOptions.SchemaGeneratorOptions.CustomTypeMappings.Add(type, schemaFactory);
+            swaggerGenOptions.MapType(type, _ => schemaFactory());
         }
 
         /// <summary>
@@ -191,6 +191,33 @@ namespace Microsoft.Extensions.DependencyInjection
         public static void MapType<T>(
             this SwaggerGenOptions swaggerGenOptions,
             Func<OpenApiSchema> schemaFactory)
+        {
+            swaggerGenOptions.MapType(typeof(T), schemaFactory);
+        }
+
+        /// <summary>
+        /// Provide a custom mapping, for a given type, to the Swagger-flavored JSONSchema
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="type">System type</param>
+        /// <param name="schemaFactory">A factory method that generates Schema's for the provided type</param>
+        public static void MapType(
+            this SwaggerGenOptions swaggerGenOptions,
+            Type type,
+            Func<Type[], OpenApiSchema> schemaFactory)
+        {
+            swaggerGenOptions.SchemaGeneratorOptions.CustomTypeMappings.Add(type, schemaFactory);
+        }
+
+        /// <summary>
+        /// Provide a custom mapping, for a given type, to the Swagger-flavored JSONSchema
+        /// </summary>
+        /// <typeparam name="T">System type</typeparam>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="schemaFactory">A factory method that generates Schema's for the provided type</param>
+        public static void MapType<T>(
+            this SwaggerGenOptions swaggerGenOptions,
+            Func<Type[], OpenApiSchema> schemaFactory)
         {
             swaggerGenOptions.MapType(typeof(T), schemaFactory);
         }

@@ -212,9 +212,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private OpenApiSchema GenerateConcreteSchema(DataContract dataContract, SchemaRepository schemaRepository)
         {
-            if (TryGetCustomTypeMapping(dataContract.UnderlyingType, out Func<OpenApiSchema> customSchemaFactory))
+            if (TryGetCustomTypeMapping(dataContract.UnderlyingType, out Func<Type[], OpenApiSchema> customSchemaFactory))
             {
-                return customSchemaFactory();
+                if (dataContract.UnderlyingType.IsGenericType)
+                {
+                    return customSchemaFactory(dataContract.UnderlyingType.GenericTypeArguments);
+                }
+
+                return customSchemaFactory(null);
             }
 
             if (dataContract.UnderlyingType.IsAssignableToOneOf(BinaryStringTypes))
@@ -271,7 +276,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 : schemaFactory();
         }
 
-        private bool TryGetCustomTypeMapping(Type modelType, out Func<OpenApiSchema> schemaFactory)
+        private bool TryGetCustomTypeMapping(Type modelType, out Func<Type[], OpenApiSchema> schemaFactory)
         {
             return _generatorOptions.CustomTypeMappings.TryGetValue(modelType, out schemaFactory)
                 || (modelType.IsConstructedGenericType && _generatorOptions.CustomTypeMappings.TryGetValue(modelType.GetGenericTypeDefinition(), out schemaFactory));

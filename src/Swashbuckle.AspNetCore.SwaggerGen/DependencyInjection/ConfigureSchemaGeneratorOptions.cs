@@ -30,7 +30,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private void DeepCopy(SchemaGeneratorOptions source, SchemaGeneratorOptions target)
         {
-            target.CustomTypeMappings = new Dictionary<Type, Func<OpenApiSchema>>(source.CustomTypeMappings);
+            target.CustomTypeMappings = new Dictionary<Type, Func<Type[], OpenApiSchema>>(source.CustomTypeMappings);
             target.UseInlineDefinitionsForEnums = source.UseInlineDefinitionsForEnums;
             target.SchemaIdSelector = source.SchemaIdSelector;
             target.IgnoreObsoleteProperties = source.IgnoreObsoleteProperties;

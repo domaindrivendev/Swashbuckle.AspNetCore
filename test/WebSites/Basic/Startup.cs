@@ -55,6 +55,16 @@ namespace Basic
                 c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Basic.xml"));
 
                 c.EnableAnnotations();
+
+                c.MapType(typeof(GenericType<>), types =>
+                {
+                    var type = types[0];
+
+                    if (type == typeof(string))
+                        return new OpenApiSchema { Type = "string" };
+
+                    throw new NotImplementedException();
+                });
             });
         }
 
