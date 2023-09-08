@@ -492,9 +492,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var genericType = typeof(GenericType<string>);
 
             var subject = Subject(
-                configureGenerator: c => c.CustomTypeMappings.Add(genericType, types =>
+                configureGenerator: c => c.CustomTypeMappings.Add(genericType, mappingContext =>
                 {
-                    var type = types.First();
+                    var type = mappingContext.UnderlyingType.GenericTypeArguments.First();
 
                     if (type == typeof(string))
                         return new OpenApiSchema { Type = "string" };
