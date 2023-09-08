@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Localization;
 using Basic.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Basic
 {
@@ -56,14 +57,11 @@ namespace Basic
 
                 c.EnableAnnotations();
 
-                c.MapType(typeof(GenericType<>), types =>
+                c.MapType(typeof(GenericType<>), mappingContext =>
                 {
-                    var type = types[0];
+                    var type = mappingContext.UnderlyingType.GenericTypeArguments[0];
 
-                    if (type == typeof(string))
-                        return new OpenApiSchema { Type = "string" };
-
-                    throw new NotImplementedException();
+                    return mappingContext.SchemaGenerator.GenerateSchema(type, mappingContext.SchemaRepository);
                 });
             });
         }
