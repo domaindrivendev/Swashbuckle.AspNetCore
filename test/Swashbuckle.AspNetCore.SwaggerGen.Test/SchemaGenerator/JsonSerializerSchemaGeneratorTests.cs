@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Options;
 using Xunit;
 using Swashbuckle.AspNetCore.TestSupport;
 using Microsoft.OpenApi.Any;
@@ -637,6 +638,26 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(expectedNullable, propertySchema.Nullable);
         }
 
+        [Theory]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.SubTypeWithOneNullableContent), nameof(TypeWithNullableContext.NullableString), false)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContext.NonNullableString), true)]
+        public void GenerateSchema_SupportsOption_MarkNonNullableReferenceTypesAsRequired_RequiredAttribute_Compiler_Optimizations_Situations(
+            Type declaringType,
+            string subType,
+            string propertyName,
+            bool required)
+        {
+            var subject = Subject(
+                configureGenerator: c => c.MarkNonNullableReferenceTypesAsRequired = true
+            );
+            var schemaRepository = new SchemaRepository();
+
+            subject.GenerateSchema(declaringType, schemaRepository);
+
+            var propertyIsRequired = schemaRepository.Schemas[subType].Required.Contains(propertyName);
+            Assert.Equal(required, propertyIsRequired);
+        }
+
         [Fact]
         public void GenerateSchema_HandlesTypesWithNestedTypes()
         {
@@ -870,7 +891,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var serializerOptions = new JsonSerializerOptions();
             configureSerializer?.Invoke(serializerOptions);
 
-            return new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions));
+            return new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions), Options.Create<MvcOptions>(new MvcOptions()));
         }
     }
 }

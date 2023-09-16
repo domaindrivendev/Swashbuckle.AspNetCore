@@ -4,12 +4,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Xunit;
 
 namespace Swashbuckle.AspNetCore.Annotations.Test
 {
-    public class AnnotationsOperationFilterTests
+        public class AnnotationsOperationFilterTests
     {
         [Fact]
         public void Apply_EnrichesOperationMetadata_IfActionDecoratedWithSwaggerOperationAttribute()
@@ -75,7 +77,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
                 .GetMethod(nameof(FakeControllerWithSwaggerAnnotations.ActionWithSwaggerResponseContentTypesAttributes));
             var filterContext = new OperationFilterContext(
                 apiDescription: null,
-                schemaRegistry: new SchemaGenerator(new SchemaGeneratorOptions(), new JsonSerializerDataContractResolver(new JsonSerializerOptions())),
+                schemaRegistry: new SchemaGenerator(new SchemaGeneratorOptions(), new JsonSerializerDataContractResolver(new JsonSerializerOptions()), Options.Create<MvcOptions>(new MvcOptions())),
                 schemaRepository: new SchemaRepository(),
                 methodInfo: methodInfo);
 

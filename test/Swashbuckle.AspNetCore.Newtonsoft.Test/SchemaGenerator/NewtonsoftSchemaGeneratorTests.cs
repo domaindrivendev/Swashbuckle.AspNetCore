@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
@@ -18,7 +19,7 @@ using Swashbuckle.AspNetCore.TestSupport;
 
 namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 {
-    public class NewtonsoftSchemaGeneratorTests
+        public class NewtonsoftSchemaGeneratorTests
     {
         [Theory]
         [InlineData(typeof(IFormFile))]
@@ -837,7 +838,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             var serializerSettings = new JsonSerializerSettings();
             configureSerializer?.Invoke(serializerSettings);
 
-            return new SchemaGenerator(generatorOptions, new NewtonsoftDataContractResolver(serializerSettings));
+            return new SchemaGenerator(generatorOptions, new NewtonsoftDataContractResolver(serializerSettings), Options.Create<MvcOptions>(new MvcOptions()));
         }
     }
 }
