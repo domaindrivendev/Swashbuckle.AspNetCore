@@ -11,7 +11,7 @@ using Xunit;
 
 namespace Swashbuckle.AspNetCore.Annotations.Test
 {
-        public class AnnotationsOperationFilterTests
+    public class AnnotationsOperationFilterTests
     {
         [Fact]
         public void Apply_EnrichesOperationMetadata_IfActionDecoratedWithSwaggerOperationAttribute()
