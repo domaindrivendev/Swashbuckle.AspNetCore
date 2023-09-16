@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -9,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.TestSupport;
 using Xunit;
@@ -151,8 +153,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var actionDescriptor = new ActionDescriptor
             {
                 EndpointMetadata = new List<object>()
-                { 
-                    new OpenApiOperation 
+                {
+                    new OpenApiOperation
                     {
                         OperationId = "OperationIdSetInMetadata",
                         Parameters = new List<OpenApiParameter>()
@@ -199,7 +201,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                             {
                                 Content = new Dictionary<string, OpenApiMediaType>()
                                 {
-                                    ["application/someMediaType"] = new() 
+                                    ["application/someMediaType"] = new()
                                 }
                             }
                         }
@@ -1285,7 +1287,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             return new SwaggerGenerator(
                 options ?? DefaultOptions,
                 new FakeApiDescriptionGroupCollectionProvider(apiDescriptions),
-                new SchemaGenerator(new SchemaGeneratorOptions(), new JsonSerializerDataContractResolver(new JsonSerializerOptions())),
+                new SchemaGenerator(new SchemaGeneratorOptions(), new JsonSerializerDataContractResolver(new JsonSerializerOptions()), Options.Create<MvcOptions>(new MvcOptions())),
                 new FakeAuthenticationSchemeProvider(authenticationSchemes ?? Enumerable.Empty<AuthenticationScheme>())
             );
         }

@@ -310,6 +310,15 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
+        /// Enable detection of non nullable reference types to set Required flag accordingly on schema properties
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        public static void MarkNonNullableReferenceTypesAsRequired(this SwaggerGenOptions swaggerGenOptions)
+        {
+            swaggerGenOptions.SchemaGeneratorOptions.MarkNonNullableReferenceTypesAsRequired = true;
+        }
+
+        /// <summary>
         /// Automatically infer security schemes from authentication/authorization state in ASP.NET Core.
         /// </summary>
         /// <param name="swaggerGenOptions"></param>

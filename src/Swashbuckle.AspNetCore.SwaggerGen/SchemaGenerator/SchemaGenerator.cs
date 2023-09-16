@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Options;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -18,11 +19,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         private readonly SchemaGeneratorOptions _generatorOptions;
         private readonly ISerializerDataContractResolver _serializerDataContractResolver;
+        private readonly IOptions<MvcOptions> _mvcOptions;
 
-        public SchemaGenerator(SchemaGeneratorOptions generatorOptions, ISerializerDataContractResolver serializerDataContractResolver)
+        public SchemaGenerator(SchemaGeneratorOptions generatorOptions, ISerializerDataContractResolver serializerDataContractResolver, IOptions<MvcOptions> mvcOptions)
         {
             _generatorOptions = generatorOptions;
             _serializerDataContractResolver = serializerDataContractResolver;
+            _mvcOptions = mvcOptions;
         }
 
         public OpenApiSchema GenerateSchema(
@@ -390,7 +393,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     ? GenerateSchemaForMember(dataProperty.MemberType, schemaRepository, dataProperty.MemberInfo, dataProperty)
                     : GenerateSchemaForType(dataProperty.MemberType, schemaRepository);
 
-                if ((dataProperty.IsRequired || customAttributes.OfType<RequiredAttribute>().Any())
+                var markNonNullableTypeAsRequired = dataProperty.MemberInfo?.IsNonNullableReferenceType() ?? false
+                    && _generatorOptions.MarkNonNullableReferenceTypesAsRequired
+#if !NETSTANDARD2_0
+                    && !_mvcOptions.Value.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes
+#endif
+                    ;
+
+                if ((dataProperty.IsRequired
+                     || customAttributes.OfType<RequiredAttribute>().Any()
+                     || markNonNullableTypeAsRequired)
                     && !schema.Required.Contains(dataProperty.Name))
                 {
                     schema.Required.Add(dataProperty.Name);
