@@ -19,7 +19,7 @@ using Swashbuckle.AspNetCore.TestSupport;
 
 namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 {
-        public class NewtonsoftSchemaGeneratorTests
+    public class NewtonsoftSchemaGeneratorTests
     {
         [Theory]
         [InlineData(typeof(IFormFile))]

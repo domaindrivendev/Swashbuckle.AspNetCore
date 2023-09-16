@@ -15,7 +15,7 @@ using Microsoft.Extensions.Options;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-        public class SchemaGenerator : ISchemaGenerator
+    public class SchemaGenerator : ISchemaGenerator
     {
         private readonly SchemaGeneratorOptions _generatorOptions;
         private readonly ISerializerDataContractResolver _serializerDataContractResolver;
