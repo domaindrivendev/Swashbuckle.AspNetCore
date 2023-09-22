@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Localization;
 using Basic.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Basic
 {
@@ -55,6 +56,13 @@ namespace Basic
                 c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, "Basic.xml"));
 
                 c.EnableAnnotations();
+
+                c.MapType(typeof(GenericType<>), mappingContext =>
+                {
+                    var type = mappingContext.UnderlyingType.GenericTypeArguments[0];
+
+                    return mappingContext.SchemaGenerator.GenerateSchema(type, mappingContext.SchemaRepository);
+                });
             });
         }
 
