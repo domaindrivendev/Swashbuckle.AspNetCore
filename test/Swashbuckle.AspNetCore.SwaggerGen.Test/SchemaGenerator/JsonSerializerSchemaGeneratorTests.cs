@@ -487,7 +487,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void GenerateSchema_GeneratesTypeCorrectly_IfTypeTakenFromUnderlyingType()
+        public void GenerateSchema_GeneratesSchemaWithCorrectType_IfTypeTakenFromUnderlyingType()
         {
             var genericType = typeof(GenericType<string>);
 
