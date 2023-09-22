@@ -14,10 +14,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             UnderlyingType = underlyingType;
         }
 
-        public ISchemaGenerator SchemaGenerator { get; }
+        public readonly ISchemaGenerator SchemaGenerator;
 
-        public SchemaRepository SchemaRepository { get; }
+        public readonly SchemaRepository SchemaRepository;
 
-        public Type UnderlyingType { get; }
+        /// <summary>
+        /// Actual runtime type that's being mapped.
+        /// </summary>
+        public readonly Type UnderlyingType;
     }
 }
