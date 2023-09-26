@@ -31,6 +31,15 @@ namespace Swashbuckle.AspNetCore.Cli
                 {
                     services.AddSingleton<IServer, NoopServer>();
                     services.AddSingleton<IHostLifetime, NoopHostLifetime>();
+
+                    for (var i = services.Count - 1; i >= 0; i--)
+                    {
+                        if (typeof(IHostedService).IsAssignableFrom(services[i].ServiceType)
+                            && services[i].ImplementationType is not { FullName: "Microsoft.AspNetCore.Hosting.GenericWebHostService" })
+                        {
+                            services.RemoveAt(i);
+                        }
+                    }
                 });
             }
 
