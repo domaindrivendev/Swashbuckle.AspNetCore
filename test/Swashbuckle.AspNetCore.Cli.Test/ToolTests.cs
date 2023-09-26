@@ -57,6 +57,29 @@ namespace Swashbuckle.AspNetCore.Cli.Test
                 dir.Delete(true);
             }
         }
+
+        [Fact]
+        public void Does_Not_Run_Crashing_HostedService()
+        {
+            var dir = Directory.CreateDirectory(Path.Join(Path.GetTempPath(), Path.GetRandomFileName()));
+            try
+            {
+                var args = new string[] { "tofile", "--output", $"{dir}/swagger.json", Path.Combine(Directory.GetCurrentDirectory(), "MinimalAppWithHostedService.dll"), "v1" };
+
+                Assert.Equal(0, Program.Main(args));
+
+                using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(dir.FullName, "swagger.json")));
+
+                // verify one of the endpoints
+                var paths = document.RootElement.GetProperty("paths");
+                var path = paths.GetProperty("/ShouldContain");
+                Assert.True(path.TryGetProperty("get", out _));
+            }
+            finally
+            {
+                dir.Delete(true);
+            }
+        }
 #endif
     }
 }
