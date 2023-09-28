@@ -12,10 +12,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private const string MemberXPath = "/doc/members/member[@name='{0}']";
         private const string SummaryTag = "summary";
 
+        private readonly SwaggerGeneratorOptions _options;
         private readonly XPathNavigator _xmlNavigator;
 
-        public XmlCommentsDocumentFilter(XPathDocument xmlDoc)
+        public XmlCommentsDocumentFilter(SwaggerGeneratorOptions options, XPathDocument xmlDoc)
         {
+            _options = options;
             _xmlNavigator = xmlDoc.CreateNavigator();
         }
 
@@ -23,10 +25,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             // Collect (unique) controller names and types in a dictionary
             var controllerNamesAndTypes = context.ApiDescriptions
-                .Select(apiDesc => apiDesc.ActionDescriptor as ControllerActionDescriptor)
-                .Where(actionDesc => actionDesc != null)
-                .GroupBy(actionDesc => actionDesc.ControllerName)
-                .Select(group => new KeyValuePair<string, Type>(group.Key, group.First().ControllerTypeInfo.AsType()));
+                .Where(apiDesc => apiDesc.ActionDescriptor is ControllerActionDescriptor)
+                .GroupBy(apiDesc => _options.TagsSelector(apiDesc).First())
+                .Select(group => new KeyValuePair<string, Type>(group.Key, ((ControllerActionDescriptor)group.First().ActionDescriptor).ControllerTypeInfo.AsType()));
 
             foreach (var nameAndType in controllerNamesAndTypes)
             {
