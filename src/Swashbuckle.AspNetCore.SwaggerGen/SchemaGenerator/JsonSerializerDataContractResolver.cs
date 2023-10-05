@@ -80,7 +80,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 jsonConverter: JsonConverterFunc);
         }
 
-        private string JsonConverterFunc(object value)
+        private string JsonConverterFunc(dynamic value)
         {
             return JsonSerializer.Serialize(value, _serializerOptions);
         }
