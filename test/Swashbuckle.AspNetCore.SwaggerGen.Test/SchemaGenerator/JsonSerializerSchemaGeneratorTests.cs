@@ -15,6 +15,7 @@ using Microsoft.OpenApi.Models;
 using Xunit;
 using Swashbuckle.AspNetCore.TestSupport;
 using Microsoft.OpenApi.Any;
+using Swashbuckle.AspNetCore.SwaggerGen.Test.SchemaGenerator;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -731,6 +732,37 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GenerateSchema_HonorsSerializerOption_WorksWithJsonSerializerContext()
+        {
+
+        }
+        [Theory]
+        [InlineData(typeof(IntEnum), "integer", "int32", "2", "4", "8")]
+        [InlineData(typeof(LongEnum), "integer", "int64", "2", "4", "8")]
+        [InlineData(typeof(IntEnum?), "integer", "int32", "2", "4", "8")]
+        [InlineData(typeof(LongEnum?), "integer", "int64", "2", "4", "8")]
+        public void GenerateSchema_GeneratesReferencedEnumSchema_IfEnumOrNullableEnumType_WorksWithJsonSerializerContext(
+            Type type,
+            string expectedSchemaType,
+            string expectedFormat,
+            params string[] expectedEnumAsJson)
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject(
+                configureSerializer: c => { c.TypeInfoResolver = CustomJsonSerializerContext.Default; }
+            ).GenerateSchema(type, schemaRepository);
+
+            Assert.NotNull(referenceSchema.Reference);
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal(expectedSchemaType, schema.Type);
+            Assert.Equal(expectedFormat, schema.Format);
+            Assert.NotNull(schema.Enum);
+            Assert.Equal(expectedEnumAsJson, schema.Enum.Select(openApiAny => openApiAny.ToJson()));
+        }
+
+
+        [Fact]
         public void GenerateSchema_HonorsSerializerAttribute_StringEnumConverter()
         {
             var schemaRepository = new SchemaRepository();
@@ -860,7 +892,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("integer", schema.Type);
         }
 
-        private SchemaGenerator Subject(
+        private SwaggerGen.SchemaGenerator Subject(
             Action<SchemaGeneratorOptions> configureGenerator = null,
             Action<JsonSerializerOptions> configureSerializer = null)
         {
@@ -870,7 +902,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var serializerOptions = new JsonSerializerOptions();
             configureSerializer?.Invoke(serializerOptions);
 
-            return new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions));
+            return new SwaggerGen.SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions));
         }
     }
 }

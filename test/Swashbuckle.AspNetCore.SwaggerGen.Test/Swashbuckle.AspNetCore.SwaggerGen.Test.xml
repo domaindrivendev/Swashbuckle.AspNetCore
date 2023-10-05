@@ -195,6 +195,30 @@
             For ad-hoc serializer testing
             </summary>
         </member>
+        <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.SchemaGenerator.CustomJsonSerializerContext.String">
+            <summary>
+            Defines the source generated JSON serialization contract metadata for a given type.
+            </summary>
+        </member>
+        <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.SchemaGenerator.CustomJsonSerializerContext.Default">
+            <summary>
+            The default <see cref="T:System.Text.Json.Serialization.JsonSerializerContext"/> associated with a default <see cref="T:System.Text.Json.JsonSerializerOptions"/> instance.
+            </summary>
+        </member>
+        <member name="P:Swashbuckle.AspNetCore.SwaggerGen.Test.SchemaGenerator.CustomJsonSerializerContext.GeneratedSerializerOptions">
+            <summary>
+            The source-generated options associated with this context.
+            </summary>
+        </member>
+        <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.SchemaGenerator.CustomJsonSerializerContext.#ctor">
+            <inheritdoc/>
+        </member>
+        <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.SchemaGenerator.CustomJsonSerializerContext.#ctor(System.Text.Json.JsonSerializerOptions)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Swashbuckle.AspNetCore.SwaggerGen.Test.SchemaGenerator.CustomJsonSerializerContext.GetTypeInfo(System.Type)">
+            <inheritdoc/>
+        </member>
         <member name="T:Swashbuckle.AspNetCore.SwaggerGen.Test.XmlCommentsTextHelperTests">
             NOTE: Whitespace in these tests is significant and uses a combination of {tabs} and {spaces}
             You should toggle "View White Space" to "on".
