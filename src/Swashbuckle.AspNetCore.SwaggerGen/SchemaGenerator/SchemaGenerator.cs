@@ -165,8 +165,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private DataContract GetDataContractFor(Type modelType)
         {
-            var effectiveType = Nullable.GetUnderlyingType(modelType) ?? modelType;
-            return _serializerDataContractResolver.GetDataContractForType(effectiveType);
+            try
+            {
+                var effectiveType = Nullable.GetUnderlyingType(modelType) ?? modelType;
+                return _serializerDataContractResolver.GetDataContractForType(effectiveType);
+            }
+            catch (Exception ex)
+            {
+                throw new SwaggerGeneratorException(
+                    message: $"Failed to generate data contract for type - {modelType}. See inner exception",
+                    innerException: ex);
+            }
         }
 
         private bool IsBaseTypeWithKnownTypesDefined(DataContract dataContract, out IEnumerable<DataContract> knownTypesDataContracts)
