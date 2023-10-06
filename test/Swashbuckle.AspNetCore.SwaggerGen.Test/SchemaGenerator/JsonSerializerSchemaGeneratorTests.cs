@@ -731,11 +731,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(expectedDefaultAsJson, propertySchema.Default.ToJson());
         }
 
-        [Fact]
-        public void GenerateSchema_HonorsSerializerOption_WorksWithJsonSerializerContext()
-        {
-
-        }
         [Theory]
         [InlineData(typeof(IntEnum), "integer", "int32", "2", "4", "8")]
         [InlineData(typeof(LongEnum), "integer", "int64", "2", "4", "8")]
