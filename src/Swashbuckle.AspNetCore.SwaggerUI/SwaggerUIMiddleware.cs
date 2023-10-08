@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Text;
@@ -14,7 +13,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.AspNetCore.Http.Extensions;
 using System.Linq;
 
 #if NETSTANDARD2_0
@@ -30,6 +28,9 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         private readonly SwaggerUIOptions _options;
         private readonly StaticFileMiddleware _staticFileMiddleware;
         private readonly JsonSerializerOptions _jsonSerializerOptions;
+#if NET6_0_OR_GREATER
+        private readonly SwaggerUISerializerContext _context;
+#endif
 
         public SwaggerUIMiddleware(
             RequestDelegate next,
@@ -49,6 +50,10 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
 #endif
             _jsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             _jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, false));
+
+#if NET6_0_OR_GREATER
+            _context = new(_jsonSerializerOptions);
+#endif
         }
 
         public async Task Invoke(HttpContext httpContext)
@@ -57,7 +62,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             var path = httpContext.Request.Path.Value;
 
             // If the RoutePrefix is requested (with or without trailing slash), redirect to index URL
-            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$",  RegexOptions.IgnoreCase))
+            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$", RegexOptions.IgnoreCase))
             {
                 // Use relative redirect to support proxy environments
                 var relativeIndexUrl = string.IsNullOrEmpty(path) || path.EndsWith("/")
@@ -68,7 +73,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
                 return;
             }
 
-            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/{Regex.Escape(_options.RoutePrefix)}/?index.html$",  RegexOptions.IgnoreCase))
+            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/{Regex.Escape(_options.RoutePrefix)}/?index.html$", RegexOptions.IgnoreCase))
             {
                 await RespondWithIndexHtml(httpContext.Response);
                 return;
@@ -118,16 +123,19 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             }
         }
 
-        private IDictionary<string, string> GetIndexArguments()
+        private IDictionary<string, string> GetIndexArguments() => new Dictionary<string, string>
         {
-            return new Dictionary<string, string>()
-            {
-                { "%(DocumentTitle)", _options.DocumentTitle },
-                { "%(HeadContent)", _options.HeadContent },
-                { "%(ConfigObject)", JsonSerializer.Serialize(_options.ConfigObject, _jsonSerializerOptions) },
-                { "%(OAuthConfigObject)", JsonSerializer.Serialize(_options.OAuthConfigObject, _jsonSerializerOptions) },
-                { "%(Interceptors)", JsonSerializer.Serialize(_options.Interceptors) },
-            };
-        }
+            { "%(DocumentTitle)", _options.DocumentTitle },
+            { "%(HeadContent)", _options.HeadContent },
+#if NET6_0_OR_GREATER
+            { "%(ConfigObject)", JsonSerializer.Serialize(_options.ConfigObject, _context.ConfigObject) },
+            { "%(OAuthConfigObject)", JsonSerializer.Serialize(_options.OAuthConfigObject, _context.OAuthConfigObject) },
+            { "%(Interceptors)", JsonSerializer.Serialize(_options.Interceptors, _context.InterceptorFunctions) },
+#else
+            { "%(ConfigObject)", JsonSerializer.Serialize(_options.ConfigObject, _jsonSerializerOptions) },
+            { "%(OAuthConfigObject)", JsonSerializer.Serialize(_options.OAuthConfigObject, _jsonSerializerOptions) },
+            { "%(Interceptors)", JsonSerializer.Serialize(_options.Interceptors) },
+#endif
+        };
     }
 }
