@@ -48,11 +48,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var exampleNode = fieldOrPropertyNode.SelectSingleNode("example");
             if (exampleNode != null)
             {
-                var exampleAsJson = (schema.ResolveType(context.SchemaRepository) == "string") && !exampleNode.Value.Equals("null")
-                    ? $"\"{exampleNode.ToString()}\""
-                    : exampleNode.ToString();
-
-                schema.Example = OpenApiAnyFactory.CreateFromJson(exampleAsJson);
+                schema.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, schema, exampleNode.ToString());
             }
         }
     }
