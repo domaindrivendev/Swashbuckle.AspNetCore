@@ -50,5 +50,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.Equal(AnyType.Null, ((OpenApiNull)example).AnyType);
         }
+
+        [Fact]
+        public void Create_AllowsSchemaToBeNull()
+        {
+            OpenApiSchema schema = null;
+
+            IOpenApiAny example = XmlCommentsExampleHelper.Create(schemaRepository, schema, "[]");
+
+            Assert.Empty((OpenApiArray)example);
+        }
     }
 }

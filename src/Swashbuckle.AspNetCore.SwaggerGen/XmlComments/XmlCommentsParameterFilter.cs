@@ -67,7 +67,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var example = paramNode.GetAttribute("example", "");
                 if (string.IsNullOrEmpty(example)) return;
 
-                parameter.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, parameter.Schema, example.ToString());
+                parameter.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, parameter.Schema, example);
             }
         }
     }
