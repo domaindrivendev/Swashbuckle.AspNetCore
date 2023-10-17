@@ -34,7 +34,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.Equal("Description for param1", requestBody.Description);
             Assert.NotNull(requestBody.Content["application/json"].Example);
-            Assert.Equal("\"Example for param1\"", requestBody.Content["application/json"].Example.ToJson());
+            Assert.Equal("\"Example for \\\"param1\\\"\"", requestBody.Content["application/json"].Example.ToJson());
         }
 
         [Fact]
@@ -60,7 +60,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.Equal("Description for param1", requestBody.Description);
             Assert.NotNull(requestBody.Content["application/json"].Example);
-            Assert.Equal("\"Example for param1\"", requestBody.Content["application/json"].Example.ToJson());
+            Assert.Equal("\"Example for \\\"param1\\\"\"", requestBody.Content["application/json"].Example.ToJson());
         }
 
         [Fact]
