@@ -2,13 +2,10 @@ image: Visual Studio 2019
 
 install:
   - ps: Invoke-WebRequest "https://dot.net/v1/dotnet-install.ps1" -OutFile "./dotnet-install.ps1"
-  - ps: ./dotnet-install.ps1 -JsonFile global.json
+  - ps: ./dotnet-install.ps1 -Channel 7.0.1xx -Quality GA
 
 init:
 - git config --global core.autocrlf true
-
-environment:
-  DOTNET_VERSION: "7.0.100"
 
 build_script:
 - ps: dotnet pack -c Release -o artifacts
