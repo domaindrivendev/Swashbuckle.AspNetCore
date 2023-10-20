@@ -2,6 +2,7 @@ image: Visual Studio 2019
 
 install:
   - ps: Invoke-WebRequest "https://dot.net/v1/dotnet-install.ps1" -OutFile "./dotnet-install.ps1"
+  - ps: ./dotnet-install.ps1 -Channel 6.0.1xx -Quality GA
   - ps: ./dotnet-install.ps1 -Channel 7.0.1xx -Quality GA
 
 init:
