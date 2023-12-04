@@ -786,6 +786,8 @@ services.AddSwaggerGen(c =>
 };
 ```
 
+(See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2703 for support for nested types)
+
 ### Override Schema for Specific Types ###
 
 Out-of-the-box, Swashbuckle does a decent job at generating JSON Schemas that accurately describe your request and response payloads. However, if you're customizing serialization behavior for certain types in your API, you may need to help it out.
