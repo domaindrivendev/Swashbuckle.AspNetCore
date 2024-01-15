@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>Swashbuckle (Swagger) Command Line Tools for using on build</Description>
+    <Description>Swashbuckle (Swagger) Command Line Tools for using on build. Package made locally</Description>
     <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);PopulateNuspec</GenerateNuspecDependsOn>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <IncludeContentInPack>false</IncludeContentInPack>
