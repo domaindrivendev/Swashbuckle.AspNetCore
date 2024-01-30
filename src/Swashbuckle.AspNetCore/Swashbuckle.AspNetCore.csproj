@@ -40,4 +40,7 @@
   <!-- No need for an assembly. -->
   <Target Name="Compile" />
   <Target Name="CopyFilesToOutputDirectory" />
+  <ItemGroup>
+    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0" />
+  </ItemGroup>
 </Project>
