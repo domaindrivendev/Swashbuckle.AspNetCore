@@ -5,7 +5,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
     <PackageTags>swagger;openapi;test-first;spec-first;testing;aspnetcore</PackageTags>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.0;net5.0;net6.0;net7.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.0;net5.0;net6.0;net7.0;net8.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
@@ -24,8 +24,12 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.0-rc.1.21452.15" />
   </ItemGroup>
 
-    <ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net7.0' ">
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="7.0.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
