@@ -40,11 +40,7 @@ namespace Swashbuckle.AspNetCore.TestSupport
                         .FirstOrDefault();
 
                     var parameterDescriptorWithParameterInfo = parameter.ParameterDescriptor as
-#if NETCOREAPP2_2_OR_GREATER
                         Microsoft.AspNetCore.Mvc.Infrastructure.IParameterInfoParameterDescriptor;
-#else
-                        ControllerParameterDescriptor;
-#endif
 
                     if (parameterDescriptorWithParameterInfo != null)
                     {

@@ -22,7 +22,6 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         [InlineData(typeof(GenericControllers.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(MultipleVersions.Startup), "/swagger/1.0/swagger.json")]
         [InlineData(typeof(MultipleVersions.Startup), "/swagger/2.0/swagger.json")]
-        //[InlineData(typeof(NetCore21.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(OAuth2Integration.Startup), "/resource-server/swagger/v1/swagger.json")]
         [InlineData(typeof(ReDocApp.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(TestFirst.Startup), "/swagger/v1-generated/openapi.json")]
