@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -67,7 +68,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             var services = server.Host.Services;
 
             var documentProvider = (IDocumentProvider)services.GetService(typeof(IDocumentProvider));
-            using (var writer = new StringWriter())
+            using (var writer = new StringWriter(CultureInfo.InvariantCulture))
             {
                 await Assert.ThrowsAsync<UnknownSwaggerDocument>(
                     () => documentProvider.GenerateAsync("NotADocument", writer));

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using Xunit;
 
@@ -10,7 +11,7 @@ namespace Swashbuckle.AspNetCore.Cli.Test
         public void Run_ParsesArgumentsAndExecutesCommands_AccordingToConfiguredMetadata()
         {
             var receivedValues = new List<string>();
-            var subject = new CommandRunner("test", "a test", new StringWriter());
+            var subject = new CommandRunner("test", "a test", new StringWriter(CultureInfo.InvariantCulture));
             subject.SubCommand("cmd1", "", c => {
                 c.Option("--opt1", "");
                 c.Option("--opt2", "", true);
@@ -47,7 +48,7 @@ namespace Swashbuckle.AspNetCore.Cli.Test
         [Fact]
         public void Run_PrintsAvailableCommands_WhenUnexpectedCommandIsProvided()
         {
-            var output = new StringWriter();
+            var output = new StringWriter(CultureInfo.InvariantCulture);
             var subject = new CommandRunner("test", "a test", output);
             subject.SubCommand("cmd", "does something", c => {
             });
@@ -62,7 +63,7 @@ namespace Swashbuckle.AspNetCore.Cli.Test
         [Fact]
         public void Run_PrintsAvailableCommands_WhenHelpOptionIsProvided()
         {
-            var output = new StringWriter();
+            var output = new StringWriter(CultureInfo.InvariantCulture);
             var subject = new CommandRunner("test", "a test", output);
             subject.SubCommand("cmd", "does something", c => {
             });
@@ -89,7 +90,7 @@ namespace Swashbuckle.AspNetCore.Cli.Test
             string[] providedArgs,
             bool shouldPrintUsage)
         {
-            var output = new StringWriter();
+            var output = new StringWriter(CultureInfo.InvariantCulture);
             var subject = new CommandRunner("test", "a test", output);
             subject.SubCommand("cmd", "a command", c =>
             {
