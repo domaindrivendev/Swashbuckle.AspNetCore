@@ -2,6 +2,7 @@
 using Microsoft.OpenApi.Models;
 using Xunit;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Moq;
 
 namespace Swashbuckle.AspNetCore.Annotations.Test
 {
@@ -103,7 +104,8 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
 
         private AnnotationsSchemaFilter Subject()
         {
-            return new AnnotationsSchemaFilter(null);
+            var serviceProviderMock = new Mock<IServiceProvider>();
+            return new AnnotationsSchemaFilter(serviceProviderMock.Object);
         }
     }
 }

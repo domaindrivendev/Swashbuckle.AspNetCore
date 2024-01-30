@@ -10,6 +10,7 @@ using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore;
 using Microsoft.Extensions.Hosting;
+using System.Threading;
 
 namespace Swashbuckle.AspNetCore.Cli
 {
@@ -17,6 +18,8 @@ namespace Swashbuckle.AspNetCore.Cli
     {
         public static int Main(string[] args)
         {
+            Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+
             // Helper to simplify command line parsing etc.
             var runner = new CommandRunner("dotnet swagger", "Swashbuckle (Swagger) Command Line Tools", Console.Out);
 

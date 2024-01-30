@@ -85,7 +85,6 @@ namespace Swashbuckle.AspNetCore.Cli
             }
 
             return null;
-#endif
         }
 
         private class NoopHostLifetime : IHostLifetime

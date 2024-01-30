@@ -3,7 +3,7 @@
   <PropertyGroup>
     <DocumentationFile>Swashbuckle.AspNetCore.SwaggerGen.Test.xml</DocumentationFile>
     <NoWarn>1701;1702;1591</NoWarn>
-    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>

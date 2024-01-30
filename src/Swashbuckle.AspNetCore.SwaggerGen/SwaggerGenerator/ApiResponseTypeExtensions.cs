@@ -12,7 +12,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 return (bool)propertyInfo.GetValue(apiResponseType);
             }
 
-            // ApiExplorer < 2.1.0 does not support default response.
             return false;
         }
     }
