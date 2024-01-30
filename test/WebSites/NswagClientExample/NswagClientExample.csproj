@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <DotNetSwaggerPath>$([System.IO.Path]::Combine("..", "..", "..", "src", "Swashbuckle.AspNetCore.Cli", "bin", $(Configuration), $(TargetFramework), "dotnet-swagger.dll"))</DotNetSwaggerPath>
   </PropertyGroup>
 
@@ -29,7 +29,7 @@
   </Target>
 
   <Target Name="NSwag" AfterTargets="SwaggerToFile">
-    <Exec Command="$(NSwagExe_Net60) openapi2csclient /input:swagger.json /namespace:NSwagClient /output:NSwagClient/Client.cs" />
+    <Exec Command="$(NSwagExe_Net80) openapi2csclient /input:swagger.json /namespace:NSwagClient /output:NSwagClient/Client.cs" />
   </Target>
 
 </Project>

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <LangVersion>10</LangVersion>
+    <LangVersion>12</LangVersion>
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
 

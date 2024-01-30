@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.OpenApi.Models;
 using Xunit;
-using Swashbuckle.AspNetCore.TestSupport;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {

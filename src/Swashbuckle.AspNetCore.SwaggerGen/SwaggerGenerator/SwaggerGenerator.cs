@@ -234,7 +234,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private OpenApiOperation GenerateOpenApiOperationFromMetadata(ApiDescription apiDescription, SchemaRepository schemaRepository)
         {
-#if NET6_0_OR_GREATER
             var metadata = apiDescription.ActionDescriptor?.EndpointMetadata;
             var operation = metadata?.OfType<OpenApiOperation>().SingleOrDefault();
 
@@ -293,9 +292,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
 
             return operation;
-#else
-            return null;
-#endif
         }
 
         private IList<OpenApiTag> GenerateOperationTags(ApiDescription apiDescription)

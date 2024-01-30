@@ -18,7 +18,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 return true;
             }
 
-#if NET6_0_OR_GREATER
             if (apiDescription.ActionDescriptor?.EndpointMetadata != null)
             {
                 methodInfo = apiDescription.ActionDescriptor.EndpointMetadata
@@ -27,7 +26,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 return methodInfo != null;
             }
-#endif
 
             methodInfo = null;
             return false;

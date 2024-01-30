@@ -1,7 +1,6 @@
 ﻿using System;
 using Xunit;
 using Xunit.Abstractions;
-using Swashbuckle.AspNetCore.SwaggerGen.Test;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {

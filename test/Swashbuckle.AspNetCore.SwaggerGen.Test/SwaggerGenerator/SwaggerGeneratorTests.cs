@@ -13,7 +13,6 @@ using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.TestSupport;
 using Xunit;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Server.HttpSys;
 using Microsoft.AspNetCore.Authentication;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test

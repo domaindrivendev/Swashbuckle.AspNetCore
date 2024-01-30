@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Linq;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
-
-#if (!NETSTANDARD2_0)
 using Microsoft.AspNetCore.Routing.Patterns;
-#endif
-
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
@@ -40,7 +35,6 @@ namespace Microsoft.AspNetCore.Builder
             return app.UseSwagger(options);
         }
 
-#if (!NETSTANDARD2_0)
         public static IEndpointConventionBuilder MapSwagger(
             this IEndpointRouteBuilder endpoints,
             string pattern = "/swagger/{documentName}/swagger.{json|yaml}",
@@ -68,6 +62,5 @@ namespace Microsoft.AspNetCore.Builder
 
             return endpoints.MapGet(pattern, pipeline);
         }
-#endif
     }
 }

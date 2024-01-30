@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Text;
@@ -14,12 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.AspNetCore.Http.Extensions;
 using System.Linq;
-
-#if NETSTANDARD2_0
-using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-#endif
 
 namespace Swashbuckle.AspNetCore.SwaggerUI
 {
@@ -42,11 +36,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             _staticFileMiddleware = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options);
 
             _jsonSerializerOptions = new JsonSerializerOptions();
-#if NET6_0_OR_GREATER
             _jsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-#else
-            _jsonSerializerOptions.IgnoreNullValues = true;
-#endif
             _jsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             _jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, false));
         }

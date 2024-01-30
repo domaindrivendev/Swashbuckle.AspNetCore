@@ -20,12 +20,10 @@ namespace Swashbuckle.AspNetCore.Annotations
                 actionAttributes = context.MethodInfo.GetCustomAttributes(true);
             }
 
-#if NET6_0_OR_GREATER
             if (context.ApiDescription?.ActionDescriptor?.EndpointMetadata != null)
             {
                 metadataAttributes = context.ApiDescription.ActionDescriptor.EndpointMetadata;
             }
-#endif
 
             // NOTE: When controller and action attributes are applicable, action attributes should take precendence.
             // Hence why they're at the end of the list (i.e. last one wins).

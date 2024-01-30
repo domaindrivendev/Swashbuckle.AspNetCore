@@ -12,7 +12,7 @@
     <NuspecFile>$(MSBuildProjectName).nuspec</NuspecFile>
     <PackageId>Swashbuckle.AspNetCore</PackageId>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>
-    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net8.0</TargetFrameworks>
   </PropertyGroup>
 
   <Target Name="PopulateNuspec">
@@ -40,7 +40,4 @@
   <!-- No need for an assembly. -->
   <Target Name="Compile" />
   <Target Name="CopyFilesToOutputDirectory" />
-  <ItemGroup>
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0" />
-  </ItemGroup>
 </Project>

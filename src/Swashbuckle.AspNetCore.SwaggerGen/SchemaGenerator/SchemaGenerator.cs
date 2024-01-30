@@ -276,6 +276,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             };
 
             // For backcompat only - EnumValues is obsolete
+#pragma warning disable CS0618 // Type or member is obsolete
             if (dataContract.EnumValues != null)
             {
                 schema.Enum = dataContract.EnumValues
@@ -286,6 +287,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 return schema;
             }
+#pragma warning restore CS0618 // Type or member is obsolete
 
             if (dataContract.UnderlyingType.IsEnum)
             {

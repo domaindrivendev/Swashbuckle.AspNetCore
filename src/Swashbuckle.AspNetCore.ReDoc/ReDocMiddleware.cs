@@ -15,10 +15,6 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-#if (NETSTANDARD2_0)
-using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-#endif
-
 namespace Swashbuckle.AspNetCore.ReDoc
 {
     public class ReDocMiddleware
@@ -40,12 +36,7 @@ namespace Swashbuckle.AspNetCore.ReDoc
             _staticFileMiddleware = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options);
 
             _jsonSerializerOptions = new JsonSerializerOptions();
-
-#if NET6_0
             _jsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-#else
-            _jsonSerializerOptions.IgnoreNullValues = true;
-#endif
             _jsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
             _jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, false));
         }

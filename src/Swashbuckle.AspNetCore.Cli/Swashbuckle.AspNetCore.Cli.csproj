@@ -6,16 +6,12 @@
     <OutputType>Exe</OutputType>
     <PackAsTool>true</PackAsTool>
     <PackageId>Swashbuckle.AspNetCore.Cli</PackageId>
-    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net8.0</TargetFrameworks>
     <ToolCommandName>swagger</ToolCommandName>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Swashbuckle.AspNetCore.Swagger\Swashbuckle.AspNetCore.Swagger.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0" />
   </ItemGroup>
 
 </Project>

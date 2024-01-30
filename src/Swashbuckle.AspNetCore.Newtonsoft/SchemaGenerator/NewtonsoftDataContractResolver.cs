@@ -169,7 +169,6 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
             extensionDataType = jsonObjectContract.ExtensionDataValueType;
 
-#if (!NETSTANDARD2_0)
             // If applicable, honor ProblemDetailsConverter
             if (jsonObjectContract.UnderlyingType.IsAssignableTo(typeof(Microsoft.AspNetCore.Mvc.ProblemDetails))
                 && _serializerSettings.Converters.OfType<Microsoft.AspNetCore.Mvc.NewtonsoftJson.ProblemDetailsConverter>().Any())
@@ -181,7 +180,6 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     extensionDataType = typeof(object);
                 }
             }
-#endif
 
             return dataProperties;
         }
@@ -208,10 +206,8 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             [ typeof(Guid) ] = Tuple.Create(DataType.String, "uuid"),
             [ typeof(Uri) ] = Tuple.Create(DataType.String, "uri"),
             [ typeof(TimeSpan) ] = Tuple.Create(DataType.String, "date-span"),
-#if NET6_0_OR_GREATER
             [ typeof(DateOnly) ] = Tuple.Create(DataType.String, "date"),
             [ typeof(TimeOnly) ] = Tuple.Create(DataType.String, "time")
-#endif
         };
     }
 }

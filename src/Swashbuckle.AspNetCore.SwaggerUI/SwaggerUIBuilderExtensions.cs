@@ -4,10 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
-#if NETSTANDARD2_0
-using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-#endif
-
 namespace Microsoft.AspNetCore.Builder
 {
     public static class SwaggerUIBuilderExtensions

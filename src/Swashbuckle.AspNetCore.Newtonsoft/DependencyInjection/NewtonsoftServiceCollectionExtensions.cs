@@ -5,10 +5,6 @@ using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.Newtonsoft;
 
-#if (NETSTANDARD2_0)
-using MvcNewtonsoftJsonOptions = Microsoft.AspNetCore.Mvc.MvcJsonOptions;
-#endif
-
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static class NewtonsoftServiceCollectionExtensions

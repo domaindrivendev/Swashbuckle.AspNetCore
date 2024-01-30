@@ -32,12 +32,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddTransient(s => s.GetRequiredService<IOptions<SchemaGeneratorOptions>>().Value);
             services.TryAddTransient<ISerializerDataContractResolver>(s =>
             {
-#if (!NETSTANDARD2_0)
                 var serializerOptions = s.GetService<IOptions<JsonOptions>>()?.Value?.JsonSerializerOptions
                     ?? new JsonSerializerOptions();
-#else
-                var serializerOptions = new JsonSerializerOptions();
-#endif
 
                 return new JsonSerializerDataContractResolver(serializerOptions);
             });

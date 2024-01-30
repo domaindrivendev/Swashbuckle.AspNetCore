@@ -113,13 +113,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 return true;
             }
 
-#if (!NETSTANDARD2_0)
             if (type.IsConstructedFrom(typeof(IAsyncEnumerable<>), out constructedType))
             {
                 itemType = constructedType.GenericTypeArguments[0];
                 return true;
             }
-#endif
 
             if (typeof(IEnumerable).IsAssignableFrom(type))
             {
@@ -144,14 +142,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var applicableProperties = publicProperties
                 .Where(property =>
                 {
-                    // .NET 5 introduces JsonIgnoreAttribute.Condition which should be honored
-                    bool isIgnoredViaNet5Attribute = true;
+                    bool isIgnoredViaAttribute = true;
 
-#if NET5_0_OR_GREATER
                     JsonIgnoreAttribute jsonIgnoreAttribute = property.GetCustomAttribute<JsonIgnoreAttribute>();
                     if (jsonIgnoreAttribute != null)
                     {
-                        isIgnoredViaNet5Attribute = jsonIgnoreAttribute.Condition switch
+                        isIgnoredViaAttribute = jsonIgnoreAttribute.Condition switch
                         {
                             JsonIgnoreCondition.Never => false,
                             JsonIgnoreCondition.Always => true,
@@ -160,12 +156,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                             _ => true
                         };
                     }
-#endif
 
                     return
                         (property.IsPubliclyReadable() || property.IsPubliclyWritable()) &&
                         !(property.GetIndexParameters().Any()) &&
-                        !(property.HasAttribute<JsonIgnoreAttribute>() && isIgnoredViaNet5Attribute) &&
+                        !(property.HasAttribute<JsonIgnoreAttribute>() && isIgnoredViaAttribute) &&
                         !(_serializerOptions.IgnoreReadOnlyProperties && !property.IsPubliclyWritable());
                 })
                 .OrderBy(property => property.DeclaringType.GetInheritanceChain().Length);
@@ -188,7 +183,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 // See https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-immutability?pivots=dotnet-6-0
                 var isDeserializedViaConstructor = false;
 
-#if NET5_0_OR_GREATER
                 var deserializationConstructor = propertyInfo.DeclaringType?.GetConstructors()
                     .OrderBy(c =>
                     {
@@ -205,7 +199,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                             string.Equals(p.Name, propertyInfo.Name, StringComparison.OrdinalIgnoreCase) ||
                             string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase);
                     });
-#endif
 
                 dataProperties.Add(
                     new DataProperty(
@@ -242,10 +235,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             [ typeof(DateTimeOffset) ] = Tuple.Create(DataType.String, "date-time"),
             [ typeof(Guid) ] = Tuple.Create(DataType.String, "uuid"),
             [ typeof(Uri) ] = Tuple.Create(DataType.String, "uri"),
-#if NET6_0_OR_GREATER
             [ typeof(DateOnly) ] = Tuple.Create(DataType.String, "date"),
             [ typeof(TimeOnly) ] = Tuple.Create(DataType.String, "time")
-#endif
         };
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Dynamic;
+﻿using System.Dynamic;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Basic.Controllers
