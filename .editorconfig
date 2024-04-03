@@ -7,6 +7,7 @@ root = true
 
 [*]
 end_of_line = CRLF
+insert_final_newline = true
 
 [*.{config,cs,xml}]
 indent_style = space
