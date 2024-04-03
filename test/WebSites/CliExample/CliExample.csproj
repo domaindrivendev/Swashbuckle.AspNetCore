@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
-    <DotNetSwaggerPath>$([System.IO.Path]::Combine('$(ArtifactsPath)', 'bin', 'Swashbuckle.AspNetCore.Cli', '$(Configuration)_$(TargetFramework)'))</DotNetSwaggerPath>
+    <DotNetSwaggerPath>$([System.IO.Path]::Combine('$(ArtifactsPath)', 'bin', 'Swashbuckle.AspNetCore.Cli', '$(Configuration.ToLower())_$(TargetFramework)'))</DotNetSwaggerPath>
   </PropertyGroup>
 
   <ItemGroup>
