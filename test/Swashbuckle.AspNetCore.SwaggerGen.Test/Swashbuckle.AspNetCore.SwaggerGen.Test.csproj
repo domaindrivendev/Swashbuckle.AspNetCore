@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <DocumentationFile>Swashbuckle.AspNetCore.SwaggerGen.Test.xml</DocumentationFile>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>1701;1702;1591</NoWarn>
     <TargetFramework>net6.0</TargetFramework>
