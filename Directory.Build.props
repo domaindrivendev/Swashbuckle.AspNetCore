@@ -71,6 +71,7 @@
     <CoverletOutputFormat Condition=" '$(GITHUB_ACTIONS)' != '' ">$(CoverletOutputFormat),opencover</CoverletOutputFormat>
     <Exclude>[System.*]*,[*.Test*]*,[xunit.*]*</Exclude>
     <ExcludeByAttribute>GeneratedCodeAttribute</ExcludeByAttribute>
+    <Include>[Swashbuckle.*]*</Include>
     <Threshold></Threshold>
   </PropertyGroup>
 </Project>
