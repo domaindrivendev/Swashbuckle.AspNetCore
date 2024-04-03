@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="4.2.2" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <!--
-    NOTE: In practice, you would install the CLI as a .NET Core Global Tool (i.e. dotnet tool install Swashbuckle.AspNetCore.Cli)
+    NOTE: In practice, you would install the CLI as a .NET Global Tool (i.e. dotnet tool install Swashbuckle.AspNetCore.Cli)
     and incorporate it into your build process using the commented out target below
   -->
 

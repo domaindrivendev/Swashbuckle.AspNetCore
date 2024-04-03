@@ -14,8 +14,9 @@ indent_style = space
 indent_size = 4
 trim_trailing_whitespace = true
 
-[*.{proj,props,sln,targets}]
-indent_style = tab
+[*.{proj,props,sln,targets,yml}]
+indent_size = 2
+indent_style = space
 trim_trailing_whitespace = true
 
 [*.{kproj,csproj,json,ps1,psd1,psm1,resx,rst}]

@@ -1,0 +1,76 @@
+<Project>
+  <PropertyGroup>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <Authors>domaindrivendev</Authors>
+    <ChecksumAlgorithm>SHA256</ChecksumAlgorithm>
+    <Company>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</Company>
+    <ContinuousIntegrationBuild Condition=" '$(CI)' != '' ">true</ContinuousIntegrationBuild>
+    <Copyright>Copyright (c) 2016-$([System.DateTime]::Now.ToString(yyyy)) Richard Morris</Copyright>
+    <Deterministic>true</Deterministic>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <!--
+    TODO Go through the code and tidy up the usings
+    <ImplicitUsings>enable</ImplicitUsings>
+    -->
+    <LangVersion>latest</LangVersion>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <!--
+    TODO Remove deprecated TFMs
+    -->
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <NoWarn>$(NoWarn);NETSDK1138</NoWarn>
+    <!--
+    TODO Update packages to resolve vulnerability warnings
+    -->
+    <NoWarn>$(NoWarn);NU1902;NU1903</NoWarn>
+    <!--
+    TODO Fix warning from Swashbuckle.AspNetCore with dotnet pack
+    -->
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
+    <!--
+    TODO Go through the code and add nullable annotations
+    <Nullable>enable</Nullable>
+    -->
+    <PackageIcon></PackageIcon>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</PackageProjectUrl>
+    <!--
+    TODO Create a generic package README file for the project
+    <PackageReadmeFile>package-readme.md</PackageReadmeFile>
+    -->
+    <PackageReleaseNotes>See $(PackageProjectUrl)/releases for details.</PackageReleaseNotes>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>$(PackageProjectUrl).git</RepositoryUrl>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <UseArtifactsOutput>true</UseArtifactsOutput>
+    <VersionPrefix>6.5.0</VersionPrefix>
+    <WarnOnPackingNonPackableProject>false</WarnOnPackingNonPackableProject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(GITHUB_ACTIONS)' != '' ">
+    <VersionSuffix Condition=" '$(VersionSuffix)' == '' AND '$(GITHUB_HEAD_REF)' == '' ">preview</VersionSuffix>
+    <VersionSuffix Condition=" '$(VersionSuffix)' == '' AND '$(GITHUB_HEAD_REF)' != '' ">pr.$(GITHUB_RUN_NUMBER)</VersionSuffix>
+    <VersionSuffix Condition=" '$(GITHUB_EVENT_NAME)' == 'workflow_dispatch' AND '$(GITHUB_REF_PROTECTED)' == 'true' "></VersionSuffix>
+    <FileVersion Condition=" '$(GITHUB_RUN_NUMBER)' != '' ">$(VersionPrefix).$(GITHUB_RUN_NUMBER)</FileVersion>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(PackageIcon)' != '' ">
+    <None Include="$(MSBuildThisFileDirectory)$(PackageIcon)" Pack="True" PackagePath="" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(PackageReadmeFile)' != '' ">
+    <None Include="$(MSBuildThisFileDirectory)$(PackageReadmeFile)" Pack="True" PackagePath="" />
+  </ItemGroup>
+  <PropertyGroup Condition=" '$(SignAssembly)' == 'true' AND '$(OS)' != 'Windows_NT' ">
+    <PublicSign>true</PublicSign>
+  </PropertyGroup>
+  <PropertyGroup>
+    <CoverletOutputFormat>cobertura,json</CoverletOutputFormat>
+    <CoverletOutputFormat Condition=" '$(GITHUB_ACTIONS)' != '' ">$(CoverletOutputFormat),opencover</CoverletOutputFormat>
+    <Exclude>[System.*]*,[*.Test*]*,[xunit.*]*</Exclude>
+    <ExcludeByAttribute>GeneratedCodeAttribute</ExcludeByAttribute>
+    <Threshold></Threshold>
+  </PropertyGroup>
+</Project>
