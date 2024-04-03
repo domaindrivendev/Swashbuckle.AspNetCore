@@ -34,10 +34,10 @@ jobs:
         languages: csharp
         build-mode: manual
 
-    - name: Build, Package and Test
+    - name: Build
       shell: pwsh
       run: |
-          dotnet build --configuration Release
+        dotnet build --configuration Release
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@1b1aada464948af03b950897e5eb522f92603cc2 # v3.24.9
