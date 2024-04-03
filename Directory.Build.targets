@@ -1,5 +1,5 @@
 <Project>
-  <PropertyGroup Condition=" '$(IsTestProject)' != 'true' AND $(MSBuildProjectDirectory.EndsWith('Test')) ">
+  <PropertyGroup Condition=" '$(IsTestProject)' != 'true' AND ($(MSBuildProjectDirectory.EndsWith('Test')) OR $(MSBuildProjectDirectory.EndsWith('Tests'))) ">
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(IsTestProject)' == 'true' AND '$(BuildingInsideVisualStudio)' != 'true' ">
