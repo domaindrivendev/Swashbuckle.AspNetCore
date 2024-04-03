@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <Target Name="SwaggerToFile" AfterTargets="AfterBuild">
-    <Exec Command="dotnet $(DotNetSwaggerPath) tofile --host http://example.com --output swagger.json $(OutputPath)$(AssemblyName).dll v1" />
+    <Exec Command="dotnet %22$(DotNetSwaggerPath)%22 tofile --host http://example.com --output %22$(MSBuildThisFileDirectory)swagger.json%22 %22$(OutputPath)$(AssemblyName).dll%22 v1" />
   </Target>
 
   <Target Name="NSwag" AfterTargets="SwaggerToFile">
