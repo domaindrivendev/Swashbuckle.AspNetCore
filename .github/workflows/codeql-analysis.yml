@@ -21,11 +21,6 @@ jobs:
     permissions:
       security-events: write
 
-    strategy:
-      fail-fast: false
-      matrix:
-        language: [ 'csharp' ]
-
     steps:
     - name: Checkout repository
       uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
@@ -36,7 +31,7 @@ jobs:
     - name: Initialize CodeQL
       uses: github/codeql-action/init@1b1aada464948af03b950897e5eb522f92603cc2 # v3.24.9
       with:
-        languages: ${{ matrix.language }}
+        languages: csharp
 
     - name: Autobuild
       uses: github/codeql-action/autobuild@1b1aada464948af03b950897e5eb522f92603cc2 # v3.24.9
@@ -44,4 +39,4 @@ jobs:
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@1b1aada464948af03b950897e5eb522f92603cc2 # v3.24.9
       with:
-        category: '/language:${{ matrix.language }}'
+        category: "/language:csharp"
