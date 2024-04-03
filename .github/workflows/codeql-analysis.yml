@@ -16,7 +16,7 @@ permissions:
 jobs:
   code-ql:
 
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     permissions:
       security-events: write
@@ -32,11 +32,14 @@ jobs:
       uses: github/codeql-action/init@1b1aada464948af03b950897e5eb522f92603cc2 # v3.24.9
       with:
         languages: csharp
+        build-mode: manual
 
-    - name: Autobuild
-      uses: github/codeql-action/autobuild@1b1aada464948af03b950897e5eb522f92603cc2 # v3.24.9
+    - name: Build, Package and Test
+      shell: pwsh
+      run: |
+          dotnet build --configuration Release
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@1b1aada464948af03b950897e5eb522f92603cc2 # v3.24.9
       with:
-        category: "/language:csharp"
+        category: '/language:csharp'
