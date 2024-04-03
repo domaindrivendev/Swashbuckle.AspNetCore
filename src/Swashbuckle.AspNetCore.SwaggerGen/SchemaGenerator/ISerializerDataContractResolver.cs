@@ -109,7 +109,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             UnderlyingType = underlyingType;
             DataType = dataType;
             DataFormat = dataFormat;
+#pragma warning disable CS0618 // Type or member is obsolete
             EnumValues = enumValues;
+#pragma warning restore CS0618 // Type or member is obsolete
             ArrayItemType = arrayItemType;
             DictionaryValueType = dictionaryValueType;
             DictionaryKeys = dictionaryKeys;
