@@ -134,7 +134,7 @@ jobs:
       with:
         dotnet-version: ${{ needs.build.outputs.dotnet-sdk-version }}
 
-    - name: Push signed NuGet packages to NuGet.org
+    - name: Push NuGet packages to MyGet.org
       run: |
         dotnet nuget push "*.nupkg" --api-key ${{ secrets.MYGET_TOKEN }} --skip-duplicate --source https://www.myget.org/F/domaindrivendev/api/v2
 
@@ -161,6 +161,6 @@ jobs:
       with:
         dotnet-version: ${{ needs.build.outputs.dotnet-sdk-version }}
 
-    - name: Push signed NuGet packages to NuGet.org
+    - name: Push NuGet packages to NuGet.org
       run: |
         dotnet nuget push "*.nupkg" --api-key ${{ secrets.NUGET_TOKEN }} --skip-duplicate --source https://api.nuget.org/v3/index.json
