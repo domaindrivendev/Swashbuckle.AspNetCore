@@ -1,0 +1,36 @@
+name: update-dotnet-sdk
+
+on:
+  schedule:
+    - cron:  '0 10 * * WED'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  update-dotnet-sdk:
+    uses: martincostello/update-dotnet-sdk/.github/workflows/update-dotnet-sdk.yml@b5684309b4d6dd59ee955b150f5632c5f3a59f79 # v3.1.4
+    permissions:
+      contents: write
+      pull-requests: write
+    with:
+      labels: 'dependencies,.NET'
+      update-nuget-packages: false
+    secrets:
+      repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+  add-security-label:
+    needs: update-dotnet-sdk
+    permissions:
+      pull-requests: write
+    runs-on: ubuntu-latest
+    if : |
+      needs.update-dotnet-sdk.outputs.sdk-updated =='true' &&
+      needs.update-dotnet-sdk.outputs.security == 'true'
+    steps:
+    - name: Add security label
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: gh pr edit "${{ needs.update-dotnet-sdk.outputs.pull-request-html-url }}" --add-label security

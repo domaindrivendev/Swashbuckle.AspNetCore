@@ -1,0 +1,166 @@
+name: build
+
+on:
+  push:
+    branches: [ master ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_GENERATE_ASPNET_CERTIFICATE: false
+  DOTNET_NOLOGO: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION: 1
+  NUGET_XMLDOC_MODE: skip
+  TERM: xterm
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    outputs:
+      dotnet-sdk-version: ${{ steps.setup-dotnet.outputs.dotnet-version }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+          - windows-latest
+
+    steps:
+
+    - name: Checkout code
+      uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@4d6c8fcf3c8f7a60068d26b594648e99df24cee3 # v4.0.0
+      id: setup-dotnet
+
+    - name: Setup NuGet cache
+      uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/*.props') }}
+        restore-keys: ${{ runner.os }}-nuget-
+
+    - name: Build, Package and Test
+      shell: pwsh
+      run: |
+        ./build.ps1
+
+    - name: Upload Coverage Reports
+      if: always()
+      uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # v4.3.1
+      with:
+        name: coverage-${{ runner.os }}
+        path: ./artifacts/coverage
+        if-no-files-found: ignore
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@84508663e988701840491b86de86b666e8a86bed # v4.3.0
+      with:
+        files: ./artifacts/coverage/coverage.cobertura.xml
+        flags: ${{ runner.os }}
+        token: ${{ secrets.CODECOV_TOKEN }}
+
+    - name: Publish NuGet packages
+      uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # v4.3.1
+      with:
+        name: packages-${{ runner.os }}
+        path: ./artifacts/package/release
+        if-no-files-found: error
+
+  validate-packages:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Download packages
+      uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427 # v4.1.4
+      with:
+        name: packages-Windows
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@4d6c8fcf3c8f7a60068d26b594648e99df24cee3 # v4.0.0
+      with:
+        dotnet-version: ${{ needs.build.outputs.dotnet-sdk-version }}
+
+    - name: Validate NuGet packages
+      shell: pwsh
+      run: |
+        dotnet tool install --global dotnet-validate --version 0.0.1-preview.304
+        $packages = Get-ChildItem -Filter "*.nupkg" | ForEach-Object { $_.FullName }
+        $invalidPackages = 0
+        foreach ($package in $packages) {
+          dotnet validate package local $package
+          if ($LASTEXITCODE -ne 0) {
+            $invalidPackages++
+          }
+        }
+        if ($invalidPackages -gt 0) {
+          Write-Output "::error::$invalidPackages NuGet package(s) failed validation."
+        }
+
+  publish-myget:
+    needs: [ build, validate-packages ]
+    runs-on: ubuntu-latest
+    if: |
+      github.event.repository.fork == false &&
+      (github.ref_name == github.event.repository.default_branch ||
+       startsWith(github.ref, 'refs/tags/v'))
+
+    environment:
+      name: MyGet.org
+      url: https://www.myget.org/gallery/domaindrivendev
+
+    steps:
+
+    - name: Download packages
+      uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427 # v4.1.4
+      with:
+        name: packages-Windows
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@4d6c8fcf3c8f7a60068d26b594648e99df24cee3 # v4.0.0
+      with:
+        dotnet-version: ${{ needs.build.outputs.dotnet-sdk-version }}
+
+    - name: Push signed NuGet packages to NuGet.org
+      run: |
+        dotnet nuget push "*.nupkg" --api-key ${{ secrets.MYGET_TOKEN }} --skip-duplicate --source https://www.myget.org/F/domaindrivendev/api/v2
+
+  publish-nuget:
+    needs: [ build, validate-packages ]
+    runs-on: ubuntu-latest
+    if: |
+      github.event.repository.fork == false &&
+      startsWith(github.ref, 'refs/tags/v')
+
+    environment:
+      name: NuGet.org
+      url: https://www.nuget.org/profiles/domaindrivendev
+
+    steps:
+
+    - name: Download packages
+      uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427 # v4.1.4
+      with:
+        name: packages-Windows
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@4d6c8fcf3c8f7a60068d26b594648e99df24cee3 # v4.0.0
+      with:
+        dotnet-version: ${{ needs.build.outputs.dotnet-sdk-version }}
+
+    - name: Push signed NuGet packages to NuGet.org
+      run: |
+        dotnet nuget push "*.nupkg" --api-key ${{ secrets.NUGET_TOKEN }} --skip-duplicate --source https://api.nuget.org/v3/index.json

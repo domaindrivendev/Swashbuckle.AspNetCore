@@ -5,9 +5,9 @@
 Swashbuckle.AspNetCore
 =========
 
-[![Build status](https://ci.appveyor.com/api/projects/status/xpsk2cj1xn12c0r7/branch/master?svg=true)](https://ci.appveyor.com/project/domaindrivendev/ahoy/branch/master)
+[![Build status](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/workflows/build/badge.svg?branch=master&event=push)](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/actions?query=workflow%3Abuild+branch%3Amaster+event%3Apush) [![Code coverage](https://codecov.io/gh/domaindrivendev/Swashbuckle.AspNetCore/branch/master/graph/badge.svg)](https://codecov.io/gh/domaindrivendev/Swashbuckle.AspNetCore) [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/domaindrivendev/Swashbuckle.AspNetCore/badge)](https://securityscorecards.dev/viewer/?uri=github.com/domaindrivendev/Swashbuckle.AspNetCore)
 
-[![Nuget](https://img.shields.io/nuget/v/swashbuckle.aspnetcore)](https://www.nuget.org/packages/swashbuckle.aspnetcore/)
+[![NuGet](https://buildstats.info/nuget/Swashbuckle.AspNetCore)](https://www.nuget.org/packages/Swashbuckle.AspNetCore/ "Download Swashbuckle.AspNetCore from NuGet.org")
 
 [Swagger](http://swagger.io) tooling for APIs built with ASP.NET Core. Generate beautiful API documentation, including a UI to explore and test operations, directly from your routes, controllers and models.
 
@@ -21,8 +21,8 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 |Swashbuckle Version|ASP.NET Core|Swagger / OpenAPI Spec.|swagger-ui|Redoc UI|
 |----------|----------|----------|----------|----------|
-|[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master/README.md)|>= 2.0.0|2.0, 3.0|4.12.0|2.0.0-rc.72|
-|[6.4.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v6.4.0)|>= 2.0.0|2.0, 3.0|4.12.0|2.0.0-rc.72|
+|[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master/README.md)|>= 2.0.0|2.0, 3.0|4.15.5|2.0.0|
+|[6.5.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v6.5.0)|>= 2.0.0|2.0, 3.0|4.15.5|2.0.0|
 |[5.6.3](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v5.6.3)|>= 2.0.0|2.0, 3.0|3.32.5|2.0.0-rc.40|
 |[4.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v4.0.0)|>= 2.0.0, < 3.0.0|2.0|3.19.5|1.22.2|
 |[3.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v3.0.0)|>= 1.0.4, < 3.0.0|2.0|3.17.1|1.20.0|
@@ -33,8 +33,8 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 1. Install the standard Nuget package into your ASP.NET Core application.
 
     ```
-    Package Manager : Install-Package Swashbuckle.AspNetCore -Version 6.4.0
-    CLI : dotnet add package --version 6.4.0 Swashbuckle.AspNetCore
+    Package Manager : Install-Package Swashbuckle.AspNetCore -Version 6.5.0
+    CLI : dotnet add package --version 6.5.0 Swashbuckle.AspNetCore
     ```
 
 2. In the `ConfigureServices` method of `Startup.cs`, register the Swagger generator, defining one or more Swagger documents.
@@ -110,8 +110,8 @@ If you're using **System.Text.Json (STJ)**, then the setup described above will 
 If you're using **Newtonsoft**, then you'll need to install a separate package and explicitly opt-in to ensure that *Newtonsoft* settings/attributes are automatically honored by the Swagger generator:
 
 ```
-Package Manager : Install-Package Swashbuckle.AspNetCore.Newtonsoft -Version 6.4.0
-CLI : dotnet add package --version 6.4.0 Swashbuckle.AspNetCore.Newtonsoft
+Package Manager : Install-Package Swashbuckle.AspNetCore.Newtonsoft -Version 6.5.0
+CLI : dotnet add package --version 6.5.0 Swashbuckle.AspNetCore.Newtonsoft
 ```
 
 ```csharp
@@ -1549,7 +1549,7 @@ It's packaged as a [.NET Core Tool](https://docs.microsoft.com/en-us/dotnet/core
 1. Install as a [global tool](https://docs.microsoft.com/en-us/dotnet/core/tools/global-tools#install-a-global-tool)
 
     ```
-    dotnet tool install -g --version 6.4.0 Swashbuckle.AspNetCore.Cli
+    dotnet tool install -g --version 6.5.0 Swashbuckle.AspNetCore.Cli
     ```
 
 2. Verify that the tool was installed correctly
@@ -1580,7 +1580,7 @@ It's packaged as a [.NET Core Tool](https://docs.microsoft.com/en-us/dotnet/core
 2. Install as a [local tool](https://docs.microsoft.com/en-us/dotnet/core/tools/global-tools#install-a-local-tool)
 
     ```
-    dotnet tool install --version 6.4.0 Swashbuckle.AspNetCore.Cli
+    dotnet tool install --version 6.5.0 Swashbuckle.AspNetCore.Cli
     ```
 
 3. Verify that the tool was installed correctly
