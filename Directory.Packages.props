@@ -1,0 +1,32 @@
+<Project>
+  <ItemGroup>
+    <PackageVersion Include="Autofac.Extensions.DependencyInjection" Version="4.2.2" />
+    <PackageVersion Include="coverlet.msbuild" Version="6.0.2" />
+    <PackageVersion Include="GitHubActionsTestLogger" Version="2.3.3" />
+    <PackageVersion Include="IdentityServer4" Version="3.1.4" />
+    <PackageVersion Include="IdentityServer4.AccessTokenValidation" Version="3.0.1" />
+    <PackageVersion Include="Microsoft.AspNetCore" Version="2.1.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.ApiExplorer" Version="2.1.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.DataAnnotations" Version="2.1.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="2.1.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.3" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.28" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" />
+    <PackageVersion Include="Microsoft.AspNetCore.Routing" Version="2.1.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="6.0.28" />
+    <PackageVersion Include="Microsoft.Extensions.FileProviders.Embedded" Version="2.1.0" />
+    <PackageVersion Include="Microsoft.OpenApi" Version="1.2.3" />
+    <PackageVersion Include="Microsoft.OpenApi.Readers" Version="1.2.3" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageVersion Include="Nswag.MSbuild" Version="13.17.0" />
+    <PackageVersion Include="ReportGenerator" Version="5.2.2" />
+    <PackageVersion Include="System.Text.Json" Version="4.6.0" />
+    <PackageVersion Include="xunit" Version="2.7.0" />
+    <PackageVersion Include="xunit.core" Version="2.7.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.7" />
+  </ItemGroup>
+</Project>

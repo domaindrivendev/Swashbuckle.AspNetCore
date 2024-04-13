@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <DotNetSwaggerPath>$([System.IO.Path]::Combine("..", "..", "..", "src", "Swashbuckle.AspNetCore.Cli", "bin", $(Configuration), $(TargetFramework), "dotnet-swagger"))</DotNetSwaggerPath>
+    <DotNetSwaggerPath>$([System.IO.Path]::Combine('$(ArtifactsPath)', 'bin', 'Swashbuckle.AspNetCore.Cli', '$(Configuration)_$(TargetFramework)', 'dotnet-swagger.dll'))</DotNetSwaggerPath>
   </PropertyGroup>
 
   <ItemGroup>

@@ -23,7 +23,6 @@
         description=$(PackageDescription);
         id=$(PackageId);
         licenseExpression=$(PackageLicenseExpression);
-        licenseUrl=$(LicenseUrl);
         microsoftExtensionsApiDescriptionServerPackageVersion=$(MicrosoftExtensionsApiDescriptionServerPackageVersion);
         projectUrl=$(PackageProjectUrl);
         repositoryType=$(RepositoryType);
