@@ -50,7 +50,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     schema.Description = XmlCommentsTextHelper.Humanize(summaryNode);
 
                 var example = recordDefaultConstructorProperty.GetAttribute("example", string.Empty);
-                SetExample(schema, context, example);
+                TrySetExample(schema, context, example);
             }
 
             if (fieldOrPropertyNode != null)
@@ -60,11 +60,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     schema.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
 
                 var exampleNode = fieldOrPropertyNode.SelectSingleNode("example");
-                SetExample(schema, context, exampleNode?.Value);
+                TrySetExample(schema, context, exampleNode?.Value);
             }
         }
 
-        private static void SetExample(OpenApiSchema schema, SchemaFilterContext context, string example)
+        private static void TrySetExample(OpenApiSchema schema, SchemaFilterContext context, string example)
         {
             if (example == null)
                 return;
