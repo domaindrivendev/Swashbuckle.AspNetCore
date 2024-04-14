@@ -216,8 +216,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     RequestBody = GenerateRequestBody(apiDescription, schemaRepository),
                     Responses = GenerateResponses(apiDescription, schemaRepository),
                     Deprecated = apiDescription.CustomAttributes().OfType<ObsoleteAttribute>().Any(),
+#if NET7_0_OR_GREATER
                     Summary = GenerateSummary(apiDescription),
                     Description = GenerateDescription(apiDescription),
+#endif
                 };
 
                 apiDescription.TryGetMethodInfo(out MethodInfo methodInfo);
@@ -656,32 +658,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             new KeyValuePair<string, string>("default", "Error")
         };
 
-        private string GenerateSummary(ApiDescription apiDescription)
-        {
-            string operationSummary = null;
 #if NET7_0_OR_GREATER
-            operationSummary = apiDescription
-                .ActionDescriptor
-                ?.EndpointMetadata
+        private string GenerateSummary(ApiDescription apiDescription) =>
+            apiDescription.ActionDescriptor?.EndpointMetadata
                 ?.OfType<IEndpointSummaryMetadata>()
                 .Select(s => s.Summary)
                 .LastOrDefault();
-#endif
-            return operationSummary;
-        }
 
-        private string GenerateDescription(ApiDescription apiDescription)
-        {
-            string operationDescription = null;
-#if NET7_0_OR_GREATER
-            operationDescription = apiDescription
-                .ActionDescriptor
-                ?.EndpointMetadata
+        private string GenerateDescription(ApiDescription apiDescription) =>
+            apiDescription.ActionDescriptor?.EndpointMetadata
                 ?.OfType<IEndpointDescriptionMetadata>()
                 .Select(s => s.Description)
                 .LastOrDefault();
 #endif
-            return operationDescription;
-        }
     }
 }
