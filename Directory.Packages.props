@@ -18,8 +18,8 @@
     <PackageVersion Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.0" />
     <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="6.0.28" />
     <PackageVersion Include="Microsoft.Extensions.FileProviders.Embedded" Version="2.1.0" />
-    <PackageVersion Include="Microsoft.OpenApi" Version="1.2.3" />
-    <PackageVersion Include="Microsoft.OpenApi.Readers" Version="1.2.3" />
+    <PackageVersion Include="Microsoft.OpenApi" Version="1.6.14" />
+    <PackageVersion Include="Microsoft.OpenApi.Readers" Version="1.6.14" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="Nswag.MSbuild" Version="13.17.0" />
