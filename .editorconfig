@@ -28,3 +28,6 @@ trim_trailing_whitespace = true
 indent_style = space
 indent_size = 2
 trim_trailing_whitespace = true
+
+[*.cs]
+dotnet_sort_system_directives_first = true
