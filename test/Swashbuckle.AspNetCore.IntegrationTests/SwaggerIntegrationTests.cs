@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -34,12 +35,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             var testSite = new TestSite(startupType);
             using var client = testSite.BuildClient();
 
-            using var swaggerResponse = await client.GetAsync(swaggerRequestUri);
-
-            swaggerResponse.EnsureSuccessStatusCode();
-            using var contentStream = await swaggerResponse.Content.ReadAsStreamAsync();
-            new OpenApiStreamReader().Read(contentStream, out OpenApiDiagnostic diagnostic);
-            Assert.Empty(diagnostic.Errors);
+            await AssertValidSwaggerJson(client, swaggerRequestUri);
         }
 
         [Fact]
@@ -112,6 +108,35 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 
             var json = await JsonSerializer.DeserializeAsync<JsonElement>(contentStream);
             Assert.Equal(expectedVersionValue, json.GetProperty(expectedVersionProperty).GetString());
+        }
+
+#if NET8_0_OR_GREATER
+        [Theory]
+        [InlineData("/swagger/v1/swagger.json")]
+        public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_For_WebApi(
+            string swaggerRequestUri)
+        {
+            await SwaggerEndpointReturnsValidSwaggerJson<Program>(swaggerRequestUri);
+        }
+
+        private async Task SwaggerEndpointReturnsValidSwaggerJson<TEntryPoint>(string swaggerRequestUri)
+            where TEntryPoint : class
+        {
+            var application = new TestApplication<TEntryPoint>();
+            var client = application.CreateDefaultClient();
+
+            await AssertValidSwaggerJson(client, swaggerRequestUri);
+        }
+#endif
+
+        private async Task AssertValidSwaggerJson(HttpClient client, string swaggerRequestUri)
+        {
+            using var swaggerResponse = await client.GetAsync(swaggerRequestUri);
+
+            swaggerResponse.EnsureSuccessStatusCode();
+            using var contentStream = await swaggerResponse.Content.ReadAsStreamAsync();
+            new OpenApiStreamReader().Read(contentStream, out OpenApiDiagnostic diagnostic);
+            Assert.Empty(diagnostic.Errors);
         }
     }
 }
