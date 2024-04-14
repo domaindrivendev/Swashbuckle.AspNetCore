@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -66,5 +67,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             throw new NotImplementedException();
         }
+
+        [SwaggerIgnore]
+        public void ActionWithSwaggerIgnoreAttribute()
+        { }
     }
 }
