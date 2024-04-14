@@ -786,7 +786,7 @@ services.AddSwaggerGen(c =>
 };
 ```
 
-(See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2703 for support for nested types)
+See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2703 for support for nested types.
 
 ### Override Schema for Specific Types ###
 
