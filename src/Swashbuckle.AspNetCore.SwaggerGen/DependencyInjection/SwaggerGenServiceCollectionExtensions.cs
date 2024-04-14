@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Text.Json;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.ApiDescriptions;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
@@ -16,7 +15,7 @@ namespace Microsoft.Extensions.DependencyInjection
             Action<SwaggerGenOptions> setupAction = null)
         {
             // Add Mvc convention to ensure ApiExplorer is enabled for all actions
-            services.Configure<MvcOptions>(c =>
+            services.Configure<AspNetCore.Mvc.MvcOptions>(c =>
                 c.Conventions.Add(new SwaggerApplicationConvention()));
 
             // Register custom configurators that takes values from SwaggerGenOptions (i.e. high level config)
@@ -33,8 +32,16 @@ namespace Microsoft.Extensions.DependencyInjection
             services.TryAddTransient<ISerializerDataContractResolver>(s =>
             {
 #if (!NETSTANDARD2_0)
-                var serializerOptions = s.GetService<IOptions<JsonOptions>>()?.Value?.JsonSerializerOptions
+                var serializerOptions =
+                    s.GetService<IOptions<AspNetCore.Mvc.JsonOptions>>()?.Value?.JsonSerializerOptions
+#if NET8_0_OR_GREATER
+                    ?? s.GetService<IOptions<AspNetCore.Http.Json.JsonOptions>>()?.Value?.SerializerOptions
+#endif
+#if NET7_0_OR_GREATER
+                    ?? JsonSerializerOptions.Default;
+#else
                     ?? new JsonSerializerOptions();
+#endif
 #else
                 var serializerOptions = new JsonSerializerOptions();
 #endif
