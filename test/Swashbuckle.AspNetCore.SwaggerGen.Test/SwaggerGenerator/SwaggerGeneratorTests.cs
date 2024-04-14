@@ -2,19 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.TestSupport;
 using Xunit;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Server.HttpSys;
-using Microsoft.AspNetCore.Authentication;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -1275,6 +1274,31 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("bar", ((OpenApiString)document.Extensions["X-foo"]).Value);
             Assert.Equal("v1", ((OpenApiString)document.Extensions["X-docName"]).Value);
             Assert.Contains("ComplexType", document.Components.Schemas.Keys);
+        }
+
+        [Theory]
+        [InlineData("connect")]
+        [InlineData("CONNECT")]
+        [InlineData("FOO")]
+        public void GetSwagger_GeneratesSwaggerDocument_ThrowsIfHttpMethodNotSupported(string httpMethod)
+        {
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: httpMethod, relativePath: "resource"),
+                },
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    }
+                }
+            );
+
+            var exception = Assert.Throws<SwaggerGeneratorException>(() => subject.GetSwagger("v1"));
+            Assert.Equal($"The \"{httpMethod}\" HTTP method is not supported.", exception.Message);
         }
 
         private static SwaggerGenerator Subject(
