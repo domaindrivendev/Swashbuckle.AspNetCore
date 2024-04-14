@@ -50,6 +50,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void ActionWithIntParameterWithRequiredAttribute([Required]int param)
         { }
 
+        public void ActionWithIntParameterWithSwaggerIgnoreAttribute([SwaggerIgnore] int param)
+        { }
+
         public void ActionWithObjectParameter(XmlAnnotatedType param)
         { }
 

@@ -474,6 +474,35 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GetSwagger_IgnoresParameters_IfActionParameterHasSwaggerIgnoreAttribute()
+        {
+            var subject = Subject(
+                new[]
+                {
+                    ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionWithIntParameterWithSwaggerIgnoreAttribute),
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions: new[]
+                        {
+                            new ApiParameterDescription
+                            {
+                                Name = "param",
+                                Source = BindingSource.Query
+                            }
+                        }
+                    )
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            var operation = document.Paths["/resource"].Operations[OperationType.Post];
+            Assert.Empty(operation.Parameters);
+        }
+
+        [Fact]
         public void GetSwagger_SetsParameterRequired_IfApiParameterIsBoundToPath()
         {
             var subject = Subject(

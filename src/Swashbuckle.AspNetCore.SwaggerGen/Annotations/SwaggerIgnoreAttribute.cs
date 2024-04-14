@@ -11,6 +11,6 @@ namespace Swashbuckle.AspNetCore.Annotations
     /// Can be used in combination with <see cref="System.Text.Json.Serialization.JsonExtensionDataAttribute"/>
     /// to capture and invalidate unsupported properties.
     /// </remarks>
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property)]
+    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.Property)]
     public class SwaggerIgnoreAttribute : Attribute { }
 }

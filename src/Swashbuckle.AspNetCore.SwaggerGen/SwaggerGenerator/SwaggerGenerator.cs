@@ -321,6 +321,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 {
                     return (!apiParam.IsFromBody() && !apiParam.IsFromForm())
                         && (!apiParam.CustomAttributes().OfType<BindNeverAttribute>().Any())
+                        && (!apiParam.CustomAttributes().OfType<SwaggerIgnoreAttribute>().Any())
                         && (apiParam.ModelMetadata == null || apiParam.ModelMetadata.IsBindingAllowed);
                 });
 
