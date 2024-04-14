@@ -788,7 +788,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void GenerateSchema_HonorsAttribute_SwaggerIgnore() {
+        public void GenerateSchema_HonorsAttribute_SwaggerIgnore()
+        {
             var schemaRepository = new SchemaRepository();
 
             var referenceSchema = Subject().GenerateSchema(typeof(SwaggerIngoreAnnotatedType), schemaRepository);
