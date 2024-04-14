@@ -42,7 +42,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             _staticFileMiddleware = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options);
 
             _jsonSerializerOptions = new JsonSerializerOptions();
-#if NET6_0
+#if NET6_0_OR_GREATER
             _jsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
 #else
             _jsonSerializerOptions.IgnoreNullValues = true;

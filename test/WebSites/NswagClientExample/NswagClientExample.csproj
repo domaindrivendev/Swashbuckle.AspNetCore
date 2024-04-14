@@ -2,18 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <DotNetSwaggerPath>$([System.IO.Path]::Combine("..", "..", "..", "src", "Swashbuckle.AspNetCore.Cli", "bin", $(Configuration), $(TargetFramework), "dotnet-swagger.dll"))</DotNetSwaggerPath>
+    <DotNetSwaggerPath>$([System.IO.Path]::Combine('$(ArtifactsPath)', 'bin', 'Swashbuckle.AspNetCore.Cli', '$(Configuration.ToLower())_$(TargetFramework)'))</DotNetSwaggerPath>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="Nswag.MSbuild" Version="13.17.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="Nswag.MSbuild" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.Cli\Swashbuckle.AspNetCore.Cli.csproj" />
     <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.SwaggerGen\Swashbuckle.AspNetCore.SwaggerGen.csproj" />
     <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.SwaggerUI\Swashbuckle.AspNetCore.SwaggerUI.csproj" />
     <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.Swagger\Swashbuckle.AspNetCore.Swagger.csproj" />
@@ -25,7 +23,8 @@
   </ItemGroup>
 
   <Target Name="SwaggerToFile" AfterTargets="AfterBuild">
-    <Exec Command="dotnet $(DotNetSwaggerPath) tofile --host http://example.com --output swagger.json $(OutputPath)$(AssemblyName).dll v1" />
+    <Exec Command="dotnet dotnet-swagger.dll tofile --host http://example.com --output %22$(MSBuildThisFileDirectory)swagger.json%22 %22$(OutputPath)$(AssemblyName).dll%22 v1"
+          WorkingDirectory="$(DotNetSwaggerPath)" />
   </Target>
 
   <Target Name="NSwag" AfterTargets="SwaggerToFile">

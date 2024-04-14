@@ -118,7 +118,9 @@ namespace OAuth2Integration
 
                 resourceServer.UseAuthentication();
 
+#pragma warning disable ASP0001 // Authorization middleware is incorrectly configured
                 resourceServer.UseAuthorization();
+#pragma warning restore ASP0001 // Authorization middleware is incorrectly configured
 
                 resourceServer.UseEndpoints(endpoints =>
                 {

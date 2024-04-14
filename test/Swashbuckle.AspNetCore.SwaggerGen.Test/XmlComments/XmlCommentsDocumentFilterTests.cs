@@ -40,11 +40,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Subject().Apply(document, filterContext);
 
-            Assert.Equal(1, document.Tags.Count);
-            Assert.Equal("Summary for FakeControllerWithXmlComments", document.Tags[0].Description);
+            var tag = Assert.Single(document.Tags);
+            Assert.Equal("Summary for FakeControllerWithXmlComments", tag.Description);
         }
 
-        private XmlCommentsDocumentFilter Subject()
+        private static XmlCommentsDocumentFilter Subject()
         {
             using (var xmlComments = File.OpenText($"{typeof(FakeControllerWithXmlComments).Assembly.GetName().Name}.xml"))
             {
