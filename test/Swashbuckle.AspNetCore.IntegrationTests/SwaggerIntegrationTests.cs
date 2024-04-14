@@ -2,6 +2,9 @@
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
+#if NET8_0_OR_GREATER
+using System.Net.Http.Json;
+#endif
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -119,11 +122,43 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             await SwaggerEndpointReturnsValidSwaggerJson<Program>(swaggerRequestUri);
         }
 
+        [Fact]
+        public async Task TypesAreRenderedCorrectly()
+        {
+            using var application = new TestApplication<Program>();
+            using var client = application.CreateDefaultClient();
+
+            using var swaggerResponse = await client.GetFromJsonAsync<JsonDocument>("/swagger/v1/swagger.json");
+
+            var weatherForecase = swaggerResponse.RootElement
+                .GetProperty("components")
+                .GetProperty("schemas")
+                .GetProperty("WeatherForecast");
+
+            Assert.Equal("object", weatherForecase.GetProperty("type").GetString());
+
+            var properties = weatherForecase.GetProperty("properties");
+            Assert.Equal(4, properties.EnumerateObject().Count());
+
+            Assert.Equal("string", properties.GetProperty("date").GetProperty("type").GetString());
+            Assert.Equal("date", properties.GetProperty("date").GetProperty("format").GetString());
+
+            Assert.Equal("integer", properties.GetProperty("temperatureC").GetProperty("type").GetString());
+            Assert.Equal("int32", properties.GetProperty("temperatureC").GetProperty("format").GetString());
+
+            Assert.Equal("string", properties.GetProperty("summary").GetProperty("type").GetString());
+            Assert.True(properties.GetProperty("summary").GetProperty("nullable").GetBoolean());
+
+            Assert.Equal("integer", properties.GetProperty("temperatureF").GetProperty("type").GetString());
+            Assert.Equal("int32", properties.GetProperty("temperatureF").GetProperty("format").GetString());
+            Assert.True(properties.GetProperty("temperatureF").GetProperty("readOnly").GetBoolean());
+        }
+
         private async Task SwaggerEndpointReturnsValidSwaggerJson<TEntryPoint>(string swaggerRequestUri)
             where TEntryPoint : class
         {
-            var application = new TestApplication<TEntryPoint>();
-            var client = application.CreateDefaultClient();
+            using var application = new TestApplication<TEntryPoint>();
+            using var client = application.CreateDefaultClient();
 
             await AssertValidSwaggerJson(client, swaggerRequestUri);
         }
