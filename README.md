@@ -5,9 +5,9 @@
 Swashbuckle.AspNetCore
 =========
 
-[![Build status](https://ci.appveyor.com/api/projects/status/xpsk2cj1xn12c0r7/branch/master?svg=true)](https://ci.appveyor.com/project/domaindrivendev/ahoy/branch/master)
+[![Build status](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/workflows/build/badge.svg?branch=master&event=push)](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/actions?query=workflow%3Abuild+branch%3Amaster+event%3Apush) [![Code coverage](https://codecov.io/gh/domaindrivendev/Swashbuckle.AspNetCore/branch/master/graph/badge.svg)](https://codecov.io/gh/domaindrivendev/Swashbuckle.AspNetCore) [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/domaindrivendev/Swashbuckle.AspNetCore/badge)](https://securityscorecards.dev/viewer/?uri=github.com/domaindrivendev/Swashbuckle.AspNetCore)
 
-[![Nuget](https://img.shields.io/nuget/v/swashbuckle.aspnetcore)](https://www.nuget.org/packages/swashbuckle.aspnetcore/)
+[![NuGet](https://buildstats.info/nuget/Swashbuckle.AspNetCore)](https://www.nuget.org/packages/Swashbuckle.AspNetCore/ "Download Swashbuckle.AspNetCore from NuGet.org")
 
 [Swagger](http://swagger.io) tooling for APIs built with ASP.NET Core. Generate beautiful API documentation, including a UI to explore and test operations, directly from your routes, controllers and models.
 
@@ -19,7 +19,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 # Compatibility #
 
-|Swashbuckle Version|ASP.NET Core|Swagger / OpenAPI Spec.|swagger-ui|ReDoc UI|
+|Swashbuckle Version|ASP.NET Core|Swagger / OpenAPI Spec.|swagger-ui|Redoc UI|
 |----------|----------|----------|----------|----------|
 |[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master/README.md)|>= 2.0.0|2.0, 3.0|4.15.5|2.0.0|
 |[6.5.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v6.5.0)|>= 2.0.0|2.0, 3.0|4.15.5|2.0.0|
@@ -159,7 +159,7 @@ Refer to the [routing documentation](https://docs.microsoft.com/en-us/aspnet/cor
 
 Swashbuckle consists of multiple components that can be used together or individually depending on your needs. At its core, there's a Swagger generator, middleware to expose it as JSON endpoints, and a packaged version of the [swagger-ui](https://github.com/swagger-api/swagger-ui). These 3 packages can be installed with the `Swashbuckle.AspNetCore` "metapackage" and will work together seamlessly (see [Getting Started](#getting-started)) to provide beautiful API docs that are automatically generated from your code.
 
-Additionally, there's add-on packages (CLI tools, [an alternate UI](https://github.com/Rebilly/ReDoc) etc.) that you can optionally install and configure as needed.
+Additionally, there's add-on packages (CLI tools, [an alternate UI](https://github.com/Rebilly/redoc) etc.) that you can optionally install and configure as needed.
 
 ## "Core" Packages (i.e. installed via Swashbuckle.AspNetCore)
 
@@ -175,7 +175,7 @@ Additionally, there's add-on packages (CLI tools, [an alternate UI](https://gith
 |---------|-----------|
 |Swashbuckle.AspNetCore.Annotations|Includes a set of custom attributes that can be applied to controllers, actions and models to enrich the generated Swagger|
 |Swashbuckle.AspNetCore.Cli|Provides a command line interface for retrieving Swagger directly from a startup assembly, and writing to file|
-|Swashbuckle.AspNetCore.ReDoc|Exposes an embedded version of the ReDoc UI (an alternative to swagger-ui)|
+|Swashbuckle.AspNetCore.ReDoc|Exposes an embedded version of the Redoc UI (an alternative to swagger-ui)|
 
 ## Community Packages ##
 
@@ -247,7 +247,7 @@ The steps described above will get you up and running with minimal setup. Howeve
 * [Swashbuckle.AspNetCore.ReDoc](#swashbuckleaspnetcoreredoc)
     * [Change Relative Path to the UI](#redoc-change-relative-path-to-the-ui)
     * [Change Document Title](#redoc-change-document-title)
-    * [Apply ReDoc Parameters](#apply-redoc-parameters)
+    * [Apply Redoc Parameters](#apply-redoc-parameters)
     * [Inject Custom CSS](#redoc-inject-custom-css)
     * [Customize index.html](#redoc-customize-indexhtml)
 
@@ -304,7 +304,7 @@ app.UseSwagger(c =>
 
 ### Working with Virtual Directories and Reverse Proxies ###
 
-Virtual directories and reverse proxies can cause issues for applications that generate links and redirects, particularly if the app returns *absolute* URLs based on the `Host` header and other information from the current request. To avoid these issues, Swashbuckle uses *relative* URLs where possible, and encourages their use when configuring the SwaggerUI and ReDoc middleware.
+Virtual directories and reverse proxies can cause issues for applications that generate links and redirects, particularly if the app returns *absolute* URLs based on the `Host` header and other information from the current request. To avoid these issues, Swashbuckle uses *relative* URLs where possible, and encourages their use when configuring the SwaggerUI and Redoc middleware.
 
 For example, to wire up the SwaggerUI middleware, you provide the URL to one or more OpenAPI/Swagger documents. This is the URL that the swagger-ui, a client-side application, will call to retrieve your API metadata. To ensure this works behind virtual directories and reverse proxies, you should express this relative to the `RoutePrefix` of the swagger-ui itself:
 
@@ -1625,7 +1625,7 @@ public class SwaggerHostFactory
 
 <h3 id="redoc-change-relative-path-to-the-ui">Change Relative Path to the UI</h3>
 
-By default, the ReDoc UI will be exposed at "/api-docs". If necessary, you can alter this when enabling the ReDoc middleware:
+By default, the Redoc UI will be exposed at "/api-docs". If necessary, you can alter this when enabling the Redoc middleware:
 
 ```csharp
 app.UseReDoc(c =>
@@ -1637,7 +1637,7 @@ app.UseReDoc(c =>
 
 <h3 id="redoc-change-document-title">Change Document Title</h3>
 
-By default, the ReDoc UI will have a generic document title. You can alter this when enabling the ReDoc middleware:
+By default, the Redoc UI will have a generic document title. You can alter this when enabling the Redoc middleware:
 
 ```csharp
 app.UseReDoc(c =>
@@ -1647,9 +1647,9 @@ app.UseReDoc(c =>
 }
 ```
 
-### Apply ReDoc Parameters ###
+### Apply Redoc Parameters ###
 
-ReDoc ships with its own set of configuration parameters, all described here https://github.com/Rebilly/ReDoc/blob/master/README.md#redoc-options-object. In Swashbuckle, most of these are surfaced through the ReDoc middleware options:
+Redoc ships with its own set of configuration parameters, all described here https://github.com/Rebilly/redoc/blob/main/README.md#redoc-options-object. In Swashbuckle, most of these are surfaced through the Redoc middleware options:
 
 ```csharp
 app.UseReDoc(c =>
@@ -1685,7 +1685,7 @@ app.UseReDoc(c =>
 }
 ```
 
-It is also possible to modify the theme by using the `AdditionalItems` property, see https://github.com/Rebilly/ReDoc/blob/master/README.md#redoc-options-object for more information.
+It is also possible to modify the theme by using the `AdditionalItems` property, see https://github.com/Rebilly/redoc/blob/main/README.md#redoc-options-object for more information.
 
 ```csharp
 app.UseReDoc(c =>
@@ -1697,7 +1697,7 @@ app.UseReDoc(c =>
 
 <h3 id="redoc-customize-indexhtml">Customize index.html</h3>
 
-To customize the UI beyond the basic options listed above, you can provide your own version of the ReDoc index.html page:
+To customize the UI beyond the basic options listed above, you can provide your own version of the Redoc index.html page:
 
 ```csharp
 app.UseReDoc(c =>

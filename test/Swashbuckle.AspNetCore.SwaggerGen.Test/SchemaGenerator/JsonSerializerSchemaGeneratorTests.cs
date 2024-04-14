@@ -456,11 +456,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("object", schema.Type);
             Assert.Equal(new[] { "Property1" }, schema.Properties.Keys);
             Assert.NotNull(schema.AllOf);
-            Assert.Equal(1, schema.AllOf.Count);
-            Assert.NotNull(schema.AllOf[0].Reference);
-            Assert.Equal("BaseType", schema.AllOf[0].Reference.Id);
+            var allOf = Assert.Single(schema.AllOf);
+            Assert.NotNull(allOf.Reference);
+            Assert.Equal("BaseType", allOf.Reference.Id);
             // The base type schema
-            var baseTypeSchema = schemaRepository.Schemas[schema.AllOf[0].Reference.Id];
+            var baseTypeSchema = schemaRepository.Schemas[allOf.Reference.Id];
             Assert.Equal("object", baseTypeSchema.Type);
             Assert.Equal(new[] { "BaseProperty" }, baseTypeSchema.Properties.Keys);
         }
@@ -525,18 +525,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var subType1Schema = schemaRepository.Schemas[schema.OneOf[1].Reference.Id];
             Assert.Equal("object", subType1Schema.Type);
             Assert.NotNull(subType1Schema.AllOf);
-            Assert.Equal(1, subType1Schema.AllOf.Count);
-            Assert.NotNull(subType1Schema.AllOf[0].Reference);
-            Assert.Equal("BaseType", subType1Schema.AllOf[0].Reference.Id);
+            var allOf = Assert.Single(subType1Schema.AllOf);
+            Assert.NotNull(allOf.Reference);
+            Assert.Equal("BaseType", allOf.Reference.Id);
             Assert.Equal(new[] { "Property1" }, subType1Schema.Properties.Keys);
             // The second sub type schema
             Assert.NotNull(schema.OneOf[2].Reference);
             var subType2Schema = schemaRepository.Schemas[schema.OneOf[2].Reference.Id];
             Assert.Equal("object", subType2Schema.Type);
             Assert.NotNull(subType2Schema.AllOf);
-            Assert.Equal(1, subType2Schema.AllOf.Count);
-            Assert.NotNull(subType2Schema.AllOf[0].Reference);
-            Assert.Equal("BaseType", subType2Schema.AllOf[0].Reference.Id);
+            allOf = Assert.Single(subType2Schema.AllOf);
+            Assert.NotNull(allOf.Reference);
+            Assert.Equal("BaseType", allOf.Reference.Id);
             Assert.Equal(new[] { "Property2" }, subType2Schema.Properties.Keys);
         }
 
@@ -552,7 +552,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.Null(schema.Reference);
             Assert.NotNull(schema.AllOf);
-            Assert.Equal(1, schema.AllOf.Count);
+            Assert.Single(schema.AllOf);
         }
 
         [Fact]
@@ -860,7 +860,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("integer", schema.Type);
         }
 
-        private SchemaGenerator Subject(
+        private static SchemaGenerator Subject(
             Action<SchemaGeneratorOptions> configureGenerator = null,
             Action<JsonSerializerOptions> configureSerializer = null)
         {
