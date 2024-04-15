@@ -12,5 +12,5 @@ namespace Swashbuckle.AspNetCore.Annotations
     /// to capture and invalidate unsupported properties.
     /// </remarks>
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.Property)]
-    public class SwaggerIgnoreAttribute : Attribute { }
+    public sealed class SwaggerIgnoreAttribute : Attribute { }
 }
