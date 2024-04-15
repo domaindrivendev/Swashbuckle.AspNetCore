@@ -24,19 +24,22 @@ namespace Swashbuckle.AspNetCore.Swagger
 
         public SwaggerMiddleware(
             RequestDelegate next,
-            SwaggerOptions options
-#if !NETSTANDARD
-            ,TemplateBinderFactory templateBinderFactory
-#endif
-            )
+            SwaggerOptions options)
         {
             _next = next;
             _options = options ?? new SwaggerOptions();
             _requestMatcher = new TemplateMatcher(TemplateParser.Parse(_options.RouteTemplate), new RouteValueDictionary());
-#if !NETSTANDARD
-            _templateBinder = templateBinderFactory.Create(RoutePatternFactory.Parse(_options.RouteTemplate));
-#endif
         }
+
+#if !NETSTANDARD
+        public SwaggerMiddleware(
+            RequestDelegate next,
+            SwaggerOptions options,
+            TemplateBinderFactory templateBinderFactory) : this(next, options)
+        {
+            _templateBinder = templateBinderFactory.Create(RoutePatternFactory.Parse(_options.RouteTemplate));
+        }
+#endif
 
         public async Task Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
         {

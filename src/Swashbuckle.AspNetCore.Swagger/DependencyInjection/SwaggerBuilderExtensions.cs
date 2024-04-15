@@ -1,9 +1,10 @@
-﻿using System;
-using System.Linq;
-using Microsoft.AspNetCore.Routing;
+using System;
 
 #if (!NETSTANDARD2_0)
+using System.Linq;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
+using Microsoft.AspNetCore.Routing.Template;
 #endif
 
 using Microsoft.Extensions.DependencyInjection;
@@ -19,7 +20,11 @@ namespace Microsoft.AspNetCore.Builder
         /// </summary>
         public static IApplicationBuilder UseSwagger(this IApplicationBuilder app, SwaggerOptions options)
         {
+#if (!NETSTANDARD2_0)
+            return app.UseMiddleware<SwaggerMiddleware>(options, app.ApplicationServices.GetRequiredService<TemplateBinderFactory>());
+#else
             return app.UseMiddleware<SwaggerMiddleware>(options);
+#endif
         }
 
         /// <summary>
