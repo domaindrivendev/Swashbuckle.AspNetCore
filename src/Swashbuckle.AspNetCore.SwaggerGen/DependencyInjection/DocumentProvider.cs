@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Writers;
 using Swashbuckle.AspNetCore.Swagger;
@@ -30,6 +31,13 @@ namespace Microsoft.Extensions.ApiDescriptions
         public DocumentProvider(
             IOptions<SwaggerGeneratorOptions> generatorOptions,
             IOptions<SwaggerOptions> options,
+            IAsyncSwaggerProvider swaggerProvider
+            ) : this(generatorOptions, options, swaggerProvider, null)
+        { }
+
+        public DocumentProvider(
+            IOptions<SwaggerGeneratorOptions> generatorOptions,
+            IOptions<SwaggerOptions> options,
             IAsyncSwaggerProvider swaggerProvider,
             IServiceProvider serviceProvider
             )
@@ -39,7 +47,7 @@ namespace Microsoft.Extensions.ApiDescriptions
             _swaggerProvider = swaggerProvider;
 
             // Use IServiceProvider to retrieve the ISwaggerDocumentSerializer, because it is an optional service
-            _swaggerDocumentSerializer = serviceProvider.GetService(typeof(ISwaggerDocumentSerializer)) as ISwaggerDocumentSerializer;
+            _swaggerDocumentSerializer = serviceProvider?.GetService<ISwaggerDocumentSerializer>();
         }
 
         public IEnumerable<string> GetDocumentNames()

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
 #endif
 using Microsoft.AspNetCore.Routing.Template;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Writers;
 
@@ -26,6 +27,12 @@ namespace Swashbuckle.AspNetCore.Swagger
 
         public SwaggerMiddleware(
             RequestDelegate next,
+            SwaggerOptions options) : this (next, options, null)
+        {
+        }
+
+        public SwaggerMiddleware(
+            RequestDelegate next,
             SwaggerOptions options,
             IServiceProvider serviceProvider)
         {
@@ -34,7 +41,7 @@ namespace Swashbuckle.AspNetCore.Swagger
             _requestMatcher = new TemplateMatcher(TemplateParser.Parse(_options.RouteTemplate), new RouteValueDictionary());
 
             // Use IServiceProvider to retrieve the ISwaggerDocumentSerializer, because it is an optional service
-            _swaggerDocumentSerializer = serviceProvider.GetService(typeof(ISwaggerDocumentSerializer)) as ISwaggerDocumentSerializer;
+            _swaggerDocumentSerializer = serviceProvider?.GetService<ISwaggerDocumentSerializer>();
         }
 
 #if !NETSTANDARD
