@@ -44,7 +44,6 @@ namespace Microsoft.Extensions.ApiDescriptions
             _generatorOptions = generatorOptions.Value;
             _options = options.Value;
             _swaggerProvider = swaggerProvider;
-
             _swaggerDocumentSerializer = serviceProvider?.GetService<ISwaggerDocumentSerializer>();
         }
 

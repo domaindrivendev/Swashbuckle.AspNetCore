@@ -39,7 +39,6 @@ namespace Swashbuckle.AspNetCore.Swagger
             _next = next;
             _options = options ?? new SwaggerOptions();
             _requestMatcher = new TemplateMatcher(TemplateParser.Parse(_options.RouteTemplate), new RouteValueDictionary());
-
             _swaggerDocumentSerializer = serviceProvider?.GetService<ISwaggerDocumentSerializer>();
         }
 
