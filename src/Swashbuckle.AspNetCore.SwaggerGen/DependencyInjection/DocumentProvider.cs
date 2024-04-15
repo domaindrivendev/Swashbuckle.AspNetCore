@@ -31,22 +31,20 @@ namespace Microsoft.Extensions.ApiDescriptions
         public DocumentProvider(
             IOptions<SwaggerGeneratorOptions> generatorOptions,
             IOptions<SwaggerOptions> options,
-            IAsyncSwaggerProvider swaggerProvider
-            ) : this(generatorOptions, options, swaggerProvider, null)
+            IAsyncSwaggerProvider swaggerProvider)
+            : this(generatorOptions, options, swaggerProvider, null)
         { }
 
         public DocumentProvider(
             IOptions<SwaggerGeneratorOptions> generatorOptions,
             IOptions<SwaggerOptions> options,
             IAsyncSwaggerProvider swaggerProvider,
-            IServiceProvider serviceProvider
-            )
+            IServiceProvider serviceProvider)
         {
             _generatorOptions = generatorOptions.Value;
             _options = options.Value;
             _swaggerProvider = swaggerProvider;
 
-            // Use IServiceProvider to retrieve the ISwaggerDocumentSerializer, because it is an optional service
             _swaggerDocumentSerializer = serviceProvider?.GetService<ISwaggerDocumentSerializer>();
         }
 

@@ -27,7 +27,7 @@ namespace Swashbuckle.AspNetCore.Swagger
 
         public SwaggerMiddleware(
             RequestDelegate next,
-            SwaggerOptions options) : this (next, options, null)
+            SwaggerOptions options) : this(next, options, null)
         {
         }
 
@@ -40,7 +40,6 @@ namespace Swashbuckle.AspNetCore.Swagger
             _options = options ?? new SwaggerOptions();
             _requestMatcher = new TemplateMatcher(TemplateParser.Parse(_options.RouteTemplate), new RouteValueDictionary());
 
-            // Use IServiceProvider to retrieve the ISwaggerDocumentSerializer, because it is an optional service
             _swaggerDocumentSerializer = serviceProvider?.GetService<ISwaggerDocumentSerializer>();
         }
 
