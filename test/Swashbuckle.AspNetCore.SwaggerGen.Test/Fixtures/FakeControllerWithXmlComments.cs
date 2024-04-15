@@ -1,7 +1,4 @@
-﻿using Swashbuckle.AspNetCore.TestSupport;
-using System;
-
-namespace Swashbuckle.AspNetCore.SwaggerGen.Test
+﻿namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     /// <summary>
     /// Summary for FakeControllerWithXmlComments
