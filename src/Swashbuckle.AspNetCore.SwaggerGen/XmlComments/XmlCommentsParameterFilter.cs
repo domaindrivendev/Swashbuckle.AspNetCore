@@ -40,14 +40,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
 
             var exampleNode = propertyNode.SelectSingleNode("example");
-            if (exampleNode != null)
-            {
-                var exampleAsJson = (parameter.Schema?.ResolveType(context.SchemaRepository) == "string")
-                    ? $"\"{exampleNode.InnerXml}\""
-                    : exampleNode.InnerXml;
+            if (exampleNode == null) return;
 
-                parameter.Example = OpenApiAnyFactory.CreateFromJson(exampleAsJson);
-            }
+            var exampleAsJson = (parameter.Schema?.ResolveType(context.SchemaRepository) == "string")
+                ? $"\"{exampleNode.ToString()}\""
+                : exampleNode.ToString();
+
+            parameter.Example = OpenApiAnyFactory.CreateFromJson(exampleAsJson);
         }
 
         private void ApplyParamTags(OpenApiParameter parameter, ParameterFilterContext context)
@@ -70,14 +69,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 parameter.Description = XmlCommentsTextHelper.Humanize(paramNode.InnerXml);
 
                 var example = paramNode.GetAttribute("example", "");
-                if (!string.IsNullOrEmpty(example))
-                {
-                    var exampleAsJson = (parameter.Schema?.ResolveType(context.SchemaRepository) == "string")
-                        ? $"\"{example}\""
-                        : example;
+                if (string.IsNullOrEmpty(example)) return;
 
-                    parameter.Example = OpenApiAnyFactory.CreateFromJson(exampleAsJson);
-                }
+                var exampleAsJson = (parameter.Schema?.ResolveType(context.SchemaRepository) == "string")
+                    ? $"\"{example}\""
+                    : example;
+
+                parameter.Example = OpenApiAnyFactory.CreateFromJson(exampleAsJson);
             }
         }
     }

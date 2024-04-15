@@ -146,7 +146,13 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
                 var isSetViaConstructor = jsonProperty.DeclaringType != null && jsonProperty.DeclaringType.GetConstructors()
                     .SelectMany(c => c.GetParameters())
-                    .Any(p => string.Equals(p.Name, jsonProperty.PropertyName, StringComparison.OrdinalIgnoreCase));
+                    .Any(p =>
+                    {
+                        // Newtonsoft supports setting via constructor if either underlying OR JSON names match
+                        return
+                            string.Equals(p.Name, jsonProperty.UnderlyingName, StringComparison.OrdinalIgnoreCase) ||
+                            string.Equals(p.Name, jsonProperty.PropertyName, StringComparison.OrdinalIgnoreCase);
+                    });
 
                 jsonProperty.TryGetMemberInfo(out MemberInfo memberInfo);
 
@@ -201,7 +207,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             [ typeof(DateTimeOffset) ] = Tuple.Create(DataType.String, "date-time"),
             [ typeof(Guid) ] = Tuple.Create(DataType.String, "uuid"),
             [ typeof(Uri) ] = Tuple.Create(DataType.String, "uri"),
-            [ typeof(TimeSpan) ] = Tuple.Create(DataType.String, "date-span")
+            [ typeof(TimeSpan) ] = Tuple.Create(DataType.String, "date-span"),
+#if NET6_0_OR_GREATER
+            [ typeof(DateOnly) ] = Tuple.Create(DataType.String, "date"),
+            [ typeof(TimeOnly) ] = Tuple.Create(DataType.String, "time")
+#endif
         };
     }
 }

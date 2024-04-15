@@ -5,9 +5,9 @@
 Swashbuckle.AspNetCore
 =========
 
-[![Build status](https://ci.appveyor.com/api/projects/status/xpsk2cj1xn12c0r7/branch/master?svg=true)](https://ci.appveyor.com/project/domaindrivendev/ahoy/branch/master)
+[![Build status](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/workflows/build/badge.svg?branch=master&event=push)](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/actions?query=workflow%3Abuild+branch%3Amaster+event%3Apush) [![Code coverage](https://codecov.io/gh/domaindrivendev/Swashbuckle.AspNetCore/branch/master/graph/badge.svg)](https://codecov.io/gh/domaindrivendev/Swashbuckle.AspNetCore) [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/domaindrivendev/Swashbuckle.AspNetCore/badge)](https://securityscorecards.dev/viewer/?uri=github.com/domaindrivendev/Swashbuckle.AspNetCore)
 
-[![Nuget](https://img.shields.io/nuget/v/swashbuckle.aspnetcore)](https://www.nuget.org/packages/swashbuckle.aspnetcore/)
+[![NuGet](https://buildstats.info/nuget/Swashbuckle.AspNetCore)](https://www.nuget.org/packages/Swashbuckle.AspNetCore/ "Download Swashbuckle.AspNetCore from NuGet.org")
 
 [Swagger](http://swagger.io) tooling for APIs built with ASP.NET Core. Generate beautiful API documentation, including a UI to explore and test operations, directly from your routes, controllers and models.
 
@@ -19,10 +19,10 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 # Compatibility #
 
-|Swashbuckle Version|ASP.NET Core|Swagger / OpenAPI Spec.|swagger-ui|ReDoc UI|
+|Swashbuckle Version|ASP.NET Core|Swagger / OpenAPI Spec.|swagger-ui|Redoc UI|
 |----------|----------|----------|----------|----------|
-|[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master/README.md)|>= 2.0.0|2.0, 3.0|3.42.0|2.0.0-rc.40|
-|[6.0.7](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v6.0.7)|>= 2.0.0|2.0, 3.0|3.42.0|2.0.0-rc.40|
+|[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master/README.md)|>= 2.0.0|2.0, 3.0|4.15.5|2.0.0|
+|[6.5.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v6.5.0)|>= 2.0.0|2.0, 3.0|4.15.5|2.0.0|
 |[5.6.3](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v5.6.3)|>= 2.0.0|2.0, 3.0|3.32.5|2.0.0-rc.40|
 |[4.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v4.0.0)|>= 2.0.0, < 3.0.0|2.0|3.19.5|1.22.2|
 |[3.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v3.0.0)|>= 1.0.4, < 3.0.0|2.0|3.17.1|1.20.0|
@@ -33,8 +33,8 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 1. Install the standard Nuget package into your ASP.NET Core application.
 
     ```
-    Package Manager : Install-Package Swashbuckle.AspNetCore -Version 6.0.7
-    CLI : dotnet add package --version 6.0.7 Swashbuckle.AspNetCore
+    Package Manager : Install-Package Swashbuckle.AspNetCore -Version 6.5.0
+    CLI : dotnet add package --version 6.5.0 Swashbuckle.AspNetCore
     ```
 
 2. In the `ConfigureServices` method of `Startup.cs`, register the Swagger generator, defining one or more Swagger documents.
@@ -68,7 +68,19 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
     _NOTE: If you omit the explicit parameter bindings, the generator will describe them as "query" params by default._
 
-4. In the `Configure` method, insert middleware to expose the generated Swagger as JSON endpoint(s)
+4. In the `Configure` method,you should expose the generated Swagger as JSON endpoint(s) by one of following method:
+
+    - Add endpoints if you're using endpoint-based routing.
+
+    ```csharp
+    app.MapEndpoints(endpoints =>
+    {
+        // ...
+        endpoints.MapSwagger();
+    });
+    ```
+
+    - Insert middleware
 
     ```csharp
     app.UseSwagger();
@@ -81,7 +93,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
     ```csharp
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+        c.SwaggerEndpoint("v1/swagger.json", "My API V1");
     });
     ```
 
@@ -98,8 +110,8 @@ If you're using **System.Text.Json (STJ)**, then the setup described above will 
 If you're using **Newtonsoft**, then you'll need to install a separate package and explicitly opt-in to ensure that *Newtonsoft* settings/attributes are automatically honored by the Swagger generator:
 
 ```
-Package Manager : Install-Package Swashbuckle.AspNetCore.Newtonsoft -Version 6.0.7
-CLI : dotnet add package --version 6.0.7 Swashbuckle.AspNetCore.Newtonsoft
+Package Manager : Install-Package Swashbuckle.AspNetCore.Newtonsoft -Version 6.5.0
+CLI : dotnet add package --version 6.5.0 Swashbuckle.AspNetCore.Newtonsoft
 ```
 
 ```csharp
@@ -145,9 +157,9 @@ Refer to the [routing documentation](https://docs.microsoft.com/en-us/aspnet/cor
 
 # Components #
 
-Swashbuckle consists of multiple components that can be used together or individually dependening on your needs. At its core, there's a Swagger generator, middleware to expose it as JSON endpoints, and a packaged version of the [swagger-ui](https://github.com/swagger-api/swagger-ui). These 3 packages can be installed with the `Swashbuckle.AspNetCore` "metapackage" and will work together seamlessly (see [Getting Started](#getting-started)) to provide beautiful API docs that are automatically generated from your code.
+Swashbuckle consists of multiple components that can be used together or individually depending on your needs. At its core, there's a Swagger generator, middleware to expose it as JSON endpoints, and a packaged version of the [swagger-ui](https://github.com/swagger-api/swagger-ui). These 3 packages can be installed with the `Swashbuckle.AspNetCore` "metapackage" and will work together seamlessly (see [Getting Started](#getting-started)) to provide beautiful API docs that are automatically generated from your code.
 
-Additionally, there's add-on packages (CLI tools, [an alternate UI](https://github.com/Rebilly/ReDoc) etc.) that you can optionally install and configure as needed.
+Additionally, there's add-on packages (CLI tools, [an alternate UI](https://github.com/Rebilly/redoc) etc.) that you can optionally install and configure as needed.
 
 ## "Core" Packages (i.e. installed via Swashbuckle.AspNetCore)
 
@@ -163,7 +175,7 @@ Additionally, there's add-on packages (CLI tools, [an alternate UI](https://gith
 |---------|-----------|
 |Swashbuckle.AspNetCore.Annotations|Includes a set of custom attributes that can be applied to controllers, actions and models to enrich the generated Swagger|
 |Swashbuckle.AspNetCore.Cli|Provides a command line interface for retrieving Swagger directly from a startup assembly, and writing to file|
-|Swashbuckle.AspNetCore.ReDoc|Exposes an embedded version of the ReDoc UI (an alternative to swagger-ui)|
+|Swashbuckle.AspNetCore.ReDoc|Exposes an embedded version of the Redoc UI (an alternative to swagger-ui)|
 
 ## Community Packages ##
 
@@ -185,7 +197,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Change the Path for Swagger JSON Endpoints](#change-the-path-for-swagger-json-endpoints)
     * [Modify Swagger with Request Context](#modify-swagger-with-request-context)
     * [Serialize Swagger JSON in the 2.0 format](#serialize-swagger-in-the-20-format)
-    * [Working with Reverse Proxies and Load Balancers](#working-with-reverse-proxies-and-load-balancers)
+    * [Working with Virtual Directories and Reverse Proxies](#working-with-virtual-directories-and-reverse-proxies)
 
 * [Swashbuckle.AspNetCore.SwaggerGen](#swashbuckleaspnetcoreswaggergen)
 
@@ -193,6 +205,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [List Operations Responses](#list-operation-responses)
     * [Flag Required Parameters and Schema Properties](#flag-required-parameters-and-schema-properties)
     * [Handle Forms and File Uploads](#handle-forms-and-file-uploads)
+    * [Handle File Downloads](#handle-file-downloads)
     * [Include Descriptions from XML Comments](#include-descriptions-from-xml-comments)
     * [Provide Global API Metadata](#provide-global-api-metadata)
     * [Generate Multiple Swagger Documents](#generate-multiple-swagger-documents)
@@ -204,10 +217,11 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Override Schema for Specific Types](#override-schema-for-specific-types)
     * [Extend Generator with Operation, Schema & Document Filters](#extend-generator-with-operation-schema--document-filters)
     * [Add Security Definitions and Requirements](#add-security-definitions-and-requirements)
+    * [Add Security Definitions and Requirements for Bearer auth](#add-security-definitions-and-requirements-for-bearer-auth)
     * [Inheritance and Polymorphism](#inheritance-and-polymorphism)
 
 * [Swashbuckle.AspNetCore.SwaggerUI](#swashbuckleaspnetcoreswaggerui)
-    * [Change Releative Path to the UI](#change-relative-path-to-the-ui)
+    * [Change Relative Path to the UI](#change-relative-path-to-the-ui)
     * [Change Document Title](#change-document-title)
     * [List Multiple Swagger Documents](#list-multiple-swagger-documents)
     * [Apply swagger-ui Parameters](#apply-swagger-ui-parameters)
@@ -231,9 +245,9 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Use the CLI Tool with a Custom Host Configuration](#use-the-cli-tool-with-a-custom-host-configuration)
 
 * [Swashbuckle.AspNetCore.ReDoc](#swashbuckleaspnetcoreredoc)
-    * [Change Releative Path to the UI](#redoc-change-relative-path-to-the-ui)
+    * [Change Relative Path to the UI](#redoc-change-relative-path-to-the-ui)
     * [Change Document Title](#redoc-change-document-title)
-    * [Apply ReDoc Parameters](#apply-redoc-parameters)
+    * [Apply Redoc Parameters](#apply-redoc-parameters)
     * [Inject Custom CSS](#redoc-inject-custom-css)
     * [Customize index.html](#redoc-customize-indexhtml)
 
@@ -288,54 +302,21 @@ app.UseSwagger(c =>
 });
 ```
 
-### Working with Reverse Proxies and Load Balancers ###
+### Working with Virtual Directories and Reverse Proxies ###
 
-To ensure applications work correctly behind proxies and load balancers, Microsoft provides the [Forwarded Headers Middleware](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-5.0). This is particularly important for applications that generate links and redirects because information in the request like the original scheme (HTTP/HTTPS) and host is obscured before it reaches the app. By convention, most proxies forward this information in `X-Forwarded-*` headers, and so the Forwarded Headers Middleware can be configured to read these values and fill in the associated fields on `HttpContext`.
+Virtual directories and reverse proxies can cause issues for applications that generate links and redirects, particularly if the app returns *absolute* URLs based on the `Host` header and other information from the current request. To avoid these issues, Swashbuckle uses *relative* URLs where possible, and encourages their use when configuring the SwaggerUI and Redoc middleware.
 
-The `Swagger` and `SwaggerUI` middleware generate links and redirects, and so to ensure they work correctly behind reverse proxies and load balancers, you'll need to insert the Forwarded Headers Middleware:
-
-```csharp
-app.UseForwardedHeaders(new ForwardedHeadersOptions
-{
-    ForwardedHeaders = ForwardedHeaders.All
-});
-
-app.UseSwagger();
-
-app.UseSwaggerUI(c =>
-{
-	c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-});
-```
-
-_NOTE: Depending on your proxy setup, you may need to tweak the Forwarded Headers Middleware (e.g. if the proxy uses non-standard header names). You can refer to the [Microsoft docs](https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-5.0) for further guidance on this._
-
-#### Dealing with Proxies that change the request path ####
-
-Some proxies trim the request path before forwarding. For example, an original path of `/foo/api/products` may be forwarded to the app as `/api/products`. Handling this case is a little more involved. Firstly, you'll need to insert custom middleware to set the `PathBase` to the appropriate path prefix (if it's known) OR to read it from a header if provided by the proxy:
-
-```csharp
-app.Use((context, next) =>
-{
-    if (context.Request.Headers.TryGetValue("X-Forwarded-Prefix", out var value))
-        context.Request.PathBase = value.First();
-
-    return next();
-});
-
-app.UseSwagger();
-```
-
-Additionally, you'll need to adjust the `SwaggerUI` configuration to use a _page-relative_ syntax (i.e. no leading `/`) for the Swagger JSON endpoint instead of a root-relative syntax.
+For example, to wire up the SwaggerUI middleware, you provide the URL to one or more OpenAPI/Swagger documents. This is the URL that the swagger-ui, a client-side application, will call to retrieve your API metadata. To ensure this works behind virtual directories and reverse proxies, you should express this relative to the `RoutePrefix` of the swagger-ui itself:
 
 ```csharp
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoint("v1/swagger.json", "V1 Docs");
-})
+    c.RoutePrefix = "swagger";
+    c.SwaggerEndpoint("v1/swagger.json", "My API V1");
+});
 ```
 
-This way, the swagger-ui will look for the Swagger JSON at a URL that's _relative_ to itself (e.g. `<some-url>/swagger/v1/swagger.json`), and will therefore be agnostic of the host and path prefix (if any) that preceeds it.
+_NOTE: In previous versions of the docs, you may have seen this expressed as a root-relative link (e.g. `/swagger/v1/swagger.json`). This won't work if your app is hosted on an IIS virtual directory or behind a proxy that trims the request path before forwarding. If you switch to the *page-relative* syntax shown above, it should work in all cases._
 
 ## Swashbuckle.AspNetCore.SwaggerGen ##
 
@@ -343,7 +324,7 @@ This way, the swagger-ui will look for the Swagger JSON at a URL that's _relativ
 
 In Swagger, operations MAY be assigned an `operationId`. This ID MUST be unique among all operations described in the API. Tools and libraries (e.g. client generators) MAY use the operationId to uniquely identify an operation, therefore, it is RECOMMENDED to follow common programming naming conventions.
 
-Auto-generating an ID that matches these requirements, while also providing a name that would be meaningful in client libraries is a non-trivial task and so, Swashbuckle omits the `operationId` by default. However, if neccessary, you can assign `operationIds` by decorating individual routes OR by providing a custom strategy.
+Auto-generating an ID that matches these requirements, while also providing a name that would be meaningful in client libraries is a non-trivial task and so, Swashbuckle omits the `operationId` by default. However, if necessary, you can assign `operationIds` by decorating individual routes OR by providing a custom strategy.
 
 __Option 1) Decorate routes with a `Name` property__
 
@@ -496,10 +477,19 @@ This controller will accept two form field values and one named file upload from
 
 ```csharp
 [HttpPost]
-public void UploadFile([FromForm]string description, [FromForm]DateTime clientDate, [IFormFile] file)
+public void UploadFile([FromForm]string description, [FromForm]DateTime clientDate, IFormFile file)
 ```
 
 > Important note: As per the [ASP.NET Core docs](https://docs.microsoft.com/en-us/aspnet/core/mvc/models/file-uploads?view=aspnetcore-3.1), you're not supposed to decorate `IFormFile` parameters with the `[FromForm]` attribute as the binding source is automatically inferred from the type. In fact, the inferred value is `BindingSource.FormFile` and if you apply the attribute it will be set to `BindingSource.Form` instead, which screws up `ApiExplorer`, the metadata component that ships with ASP.NET Core and is heavily relied on by Swashbuckle. One particular issue here is that SwaggerUI will not treat the parameter as a file and so will not display a file upload button, if you do mistakenly include this attribute.
+
+### Handle File Downloads ###
+`ApiExplorer` (the ASP.NET Core metadata component that Swashbuckle is built on) *DOES NOT* surface the `FileResult` type by default and so you need to explicitly tell it to with the `Produces` attribute:
+```csharp
+[HttpGet("{fileName}")]
+[Produces("application/octet-stream", Type = typeof(FileResult))]
+public FileResult GetFile(string fileName)
+```
+If you want the swagger-ui to display a "Download file" link, you're operation will need to return a **Content-Type of "application/octet-stream"** or a **Content-Disposition of "attachement"**.
 
 ### Include Descriptions from XML Comments ###
 
@@ -507,7 +497,7 @@ To enhance the generated docs with human-friendly descriptions, you can annotate
 
 1. Open the Properties dialog for your project, click the "Build" tab and ensure that "XML documentation file" is checked, or add `<GenerateDocumentationFile>true</GenerateDocumentationFile>` element to the `<PropertyGroup>` section of your .csproj project file. This will produce a file containing all XML comments at build-time.
 
-    _At this point, any classes or methods that are NOT annotated with XML comments will trigger a build warning. To suppress this, enter the warning code "1591" into the "Suppress warnings" field in the properties dialog._
+    _At this point, any classes or methods that are NOT annotated with XML comments will trigger a build warning. To suppress this, enter the warning code "1591" into the "Suppress warnings" field in the properties dialog or add `<NoWarn>1591</NoWarn>` to the `<PropertyGroup>` section of your .csproj project file._
 
 2. Configure Swashbuckle to incorporate the XML comments on file into the generated Swagger JSON:
 
@@ -535,16 +525,16 @@ To enhance the generated docs with human-friendly descriptions, you can annotate
     /// </summary>
     /// <remarks>Awesomeness!</remarks>
     /// <param name="id" example="123">The product id</param>
-    /// <response code="200">Product created</response>
-    /// <response code="400">Product has missing/invalid values</response>
-    /// <response code="500">Oops! Can't create your product right now</response>
+    /// <response code="200">Product retrieved</response>
+    /// <response code="404">Product not found</response>
+    /// <response code="500">Oops! Can't lookup your product right now</response>
     [HttpGet("{id}")]
     [ProducesResponseType(typeof(Product), 200)]
-    [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
+    [ProducesResponseType(404)]
     [ProducesResponseType(500)]
     public Product GetById(int id)
     ```
-
+    
 4. You can also annotate types with summary and example tags:
 
     ```csharp
@@ -561,6 +551,12 @@ To enhance the generated docs with human-friendly descriptions, you can annotate
         /// </summary>
         /// <example>10</example>
         public int AvailableStock { get; set; }
+	
+	/// <summary>
+        /// The sizes the product is available in
+        /// </summary>
+        /// <example>["Small", "Medium", "Large"]</example>
+	public List<string> Sizes { get; set; }
     }
     ```
 
@@ -789,6 +785,8 @@ services.AddSwaggerGen(c =>
     c.CustomSchemaIds((type) => type.FullName);
 };
 ```
+
+See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2703 for support for nested types.
 
 ### Override Schema for Specific Types ###
 
@@ -1039,13 +1037,38 @@ public class SecurityRequirementsOperationFilter : IOperationFilter
 
 _NOTE: If you're using the `SwaggerUI` middleware, you can enable interactive OAuth2.0 flows that are powered by the emitted security metadata. See [Enabling OAuth2.0 Flows](#enable-oauth20-flows) for more details._
 
+### Add Security Definitions and Requirements for Bearer auth ###
+
+```csharp
+services.AddSwaggerGen(c =>
+{
+    c.AddSecurityDefinition("bearerAuth", new OpenApiSecurityScheme
+    {
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        Description = "JWT Authorization header using the Bearer scheme."
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "bearerAuth" }
+            },
+            new string[] {}
+        }
+    });
+});
+```
+
 ### Inheritance and Polymorphism ###
 
-Swagger / OpenAPI defines the `allOf` and `oneOf` keywords for describing [inheritance and polymorphism](https://swagger.io/docs/specification/data-models/inheritance-and-polymorphism/) relationships in schema definitions. For example, if you're using a base class for models that share common properties you can use the `allOf` keyword to describe the inheritance hierarchy. Or, if your serializer supports polymorphic serializion/deserialization, you can use the `oneOf` keyword to document all the "possible" schemas for requests/responses that vary by subtype.
+Swagger / OpenAPI defines the `allOf` and `oneOf` keywords for describing [inheritance and polymorphism](https://swagger.io/docs/specification/data-models/inheritance-and-polymorphism/) relationships in schema definitions. For example, if you're using a base class for models that share common properties you can use the `allOf` keyword to describe the inheritance hierarchy. Or, if your serializer supports polymorphic serialization/deserialization, you can use the `oneOf` keyword to document all the "possible" schemas for requests/responses that vary by subtype.
 
 #### Enabling Inheritance ####
 
-By default, Swashbuckle flattens inheritance hierarchies. That is, for derived models, the inherited properties are combined and listed alongside the declared properties. This can cause a lot of duplication in the generated Swagger, particularly when there's multiple subtypes. It's also problematic if you're using a client generator (e.g. NSwag) and would like to maintain the inheritiance hierarchy in the generated client models. To work around this, you can apply the `UseAllOfForInheritance` setting, and this will leverage the `allOf` keyword to incorporate inherited properties by reference in the generated Swagger:
+By default, Swashbuckle flattens inheritance hierarchies. That is, for derived models, the inherited properties are combined and listed alongside the declared properties. This can cause a lot of duplication in the generated Swagger, particularly when there's multiple subtypes. It's also problematic if you're using a client generator (e.g. NSwag) and would like to maintain the inheritance hierarchy in the generated client models. To work around this, you can apply the `UseAllOfForInheritance` setting, and this will leverage the `allOf` keyword to incorporate inherited properties by reference in the generated Swagger:
 
 ```
 Circle: {
@@ -1119,7 +1142,7 @@ _NOTE: If you're using the [Swashbuckle Annotations library](#swashbuckleaspnetc
 
 In conjunction with the `oneOf` and/or `allOf` keywords, Swagger / OpenAPI supports a `discriminator` field on base schema definitions. This keyword points to the property that identifies the specific type being represented by a given payload. In addition to the property name, the discriminator description MAY also include a `mapping` which maps discriminator values to specific schema definitions.
 
-For example, the Newtonsoft serializer supports polymorphic serialization/deserialization by emitting/accepting a "$type" property on JSON instances. The value of this property will be the [assembly qualified type name](https://docs.microsoft.com/en-us/dotnet/api/system.type.assemblyqualifiedname?view=netcore-3.1) of the type represented by a given JSON instance. So, to explicitly describe this behavior in Swagger, the corresponding request/respose schema could be defined as follows:
+For example, the Newtonsoft serializer supports polymorphic serialization/deserialization by emitting/accepting a "$type" property on JSON instances. The value of this property will be the [assembly qualified type name](https://docs.microsoft.com/en-us/dotnet/api/system.type.assemblyqualifiedname?view=netcore-3.1) of the type represented by a given JSON instance. So, to explicitly describe this behavior in Swagger, the corresponding request/response schema could be defined as follows:
 
 ```
 components: {
@@ -1244,7 +1267,7 @@ app.UseSwaggerUI(c =>
 });
 ```
 
-_NOTE: The `InjectOnCompleteJavaScript` and `InjectOnFailureJavaScript` options have been removed because the latest version of swagger-ui doesn't expose the neccessary hooks. Instead, it provides a [flexible customization system](https://github.com/swagger-api/swagger-ui/blob/master/docs/customization/overview.md) based on concepts and patterns from React and Redux. To leverage this, you'll need to provide a custom version of index.html as described [below](#customize-indexhtml)._
+_NOTE: The `InjectOnCompleteJavaScript` and `InjectOnFailureJavaScript` options have been removed because the latest version of swagger-ui doesn't expose the necessary hooks. Instead, it provides a [flexible customization system](https://github.com/swagger-api/swagger-ui/blob/master/docs/customization/overview.md) based on concepts and patterns from React and Redux. To leverage this, you'll need to provide a custom version of index.html as described [below](#customize-indexhtml)._
 
 The [custom index sample app](test/WebSites/CustomUIIndex/Swagger/index.html) demonstrates this approach, using the swagger-ui plugin system provide a custom topbar, and to hide the info component.
 
@@ -1278,7 +1301,7 @@ _To get started, you should base your custom index.html on the [default version]
 
 The swagger-ui has built-in support to participate in OAuth2.0 authorization flows. It interacts with authorization and/or token endpoints, as specified in the Swagger JSON, to obtain access tokens for subsequent API calls. See [Adding Security Definitions and Requirements](#add-security-definitions-and-requirements) for an example of adding OAuth2.0 metadata to the generated Swagger.
 
-If you're Swagger endpoint includes the appropriate security metadata, the UI interaction should be automatically enabled. However, you can further customize OAuth support in the UI with the following settings below. See https://github.com/swagger-api/swagger-ui/blob/v3.10.0/docs/usage/oauth2.md for more info:
+If your Swagger endpoint includes the appropriate security metadata, the UI interaction should be automatically enabled. However, you can further customize OAuth support in the UI with the following settings below. See https://github.com/swagger-api/swagger-ui/blob/v3.10.0/docs/usage/oauth2.md for more info:
 
 ```csharp
 app.UseSwaggerUI(c =>
@@ -1416,7 +1439,7 @@ The `SwaggerGen` package provides several extension points, including Schema Fil
 
 ```csharp
 // Product.cs
-[SwaggerSchemaFilter(typeof(ProductSchemaFilter))
+[SwaggerSchemaFilter(typeof(ProductSchemaFilter))]
 public class Product
 {
     ...
@@ -1521,14 +1544,14 @@ Once your application has been setup with Swashbuckle (see [Getting Started](#ge
 
 It's packaged as a [.NET Core Tool](https://docs.microsoft.com/en-us/dotnet/core/tools/global-tools) that can be installed and used via the dotnet SDK.
 
-> :warning: The tool needs to load your Startup DLL and it's dependencies at runtime. Therefore, you should use a version of the `dotnet` SDK that is compatible with your application. For example, if your app targets `netcoreapp2.1`, then you should use version 2.1 of the SDK to run the CLI tool. If it targetes `netcoreapp3.0`, then you should use version 3.0 of the SDK and so on.
+> :warning: The tool needs to load your Startup DLL and its dependencies at runtime. Therefore, you should use a version of the `dotnet` SDK that is compatible with your application. For example, if your app targets `netcoreapp2.1`, then you should use version 2.1 of the SDK to run the CLI tool. If it targets `netcoreapp3.0`, then you should use version 3.0 of the SDK and so on.
 
 #### Using the tool with the .NET Core 2.1 SDK
 
 1. Install as a [global tool](https://docs.microsoft.com/en-us/dotnet/core/tools/global-tools#install-a-global-tool)
 
     ```
-    dotnet tool install -g --version 6.0.7 Swashbuckle.AspNetCore.Cli
+    dotnet tool install -g --version 6.5.0 Swashbuckle.AspNetCore.Cli
     ```
 
 2. Verify that the tool was installed correctly
@@ -1559,7 +1582,7 @@ It's packaged as a [.NET Core Tool](https://docs.microsoft.com/en-us/dotnet/core
 2. Install as a [local tool](https://docs.microsoft.com/en-us/dotnet/core/tools/global-tools#install-a-local-tool)
 
     ```
-    dotnet tool install --version 6.0.7 Swashbuckle.AspNetCore.Cli
+    dotnet tool install --version 6.5.0 Swashbuckle.AspNetCore.Cli
     ```
 
 3. Verify that the tool was installed correctly
@@ -1604,7 +1627,7 @@ public class SwaggerHostFactory
 
 <h3 id="redoc-change-relative-path-to-the-ui">Change Relative Path to the UI</h3>
 
-By default, the ReDoc UI will be exposed at "/api-docs". If necessary, you can alter this when enabling the ReDoc middleware:
+By default, the Redoc UI will be exposed at "/api-docs". If necessary, you can alter this when enabling the Redoc middleware:
 
 ```csharp
 app.UseReDoc(c =>
@@ -1616,7 +1639,7 @@ app.UseReDoc(c =>
 
 <h3 id="redoc-change-document-title">Change Document Title</h3>
 
-By default, the ReDoc UI will have a generic document title. You can alter this when enabling the ReDoc middleware:
+By default, the Redoc UI will have a generic document title. You can alter this when enabling the Redoc middleware:
 
 ```csharp
 app.UseReDoc(c =>
@@ -1626,9 +1649,9 @@ app.UseReDoc(c =>
 }
 ```
 
-### Apply ReDoc Parameters ###
+### Apply Redoc Parameters ###
 
-ReDoc ships with its own set of configuration parameters, all described here https://github.com/Rebilly/ReDoc/blob/master/README.md#redoc-options-object. In Swashbuckle, most of these are surfaced through the ReDoc middleware options:
+Redoc ships with its own set of configuration parameters, all described here https://github.com/Rebilly/redoc/blob/main/README.md#redoc-options-object. In Swashbuckle, most of these are surfaced through the Redoc middleware options:
 
 ```csharp
 app.UseReDoc(c =>
@@ -1664,7 +1687,7 @@ app.UseReDoc(c =>
 }
 ```
 
-It is also possible to modify the theme by using the `AdditionalItems` property, see https://github.com/Rebilly/ReDoc/blob/master/README.md#redoc-options-object for more information.
+It is also possible to modify the theme by using the `AdditionalItems` property, see https://github.com/Rebilly/redoc/blob/main/README.md#redoc-options-object for more information.
 
 ```csharp
 app.UseReDoc(c =>
@@ -1676,7 +1699,7 @@ app.UseReDoc(c =>
 
 <h3 id="redoc-customize-indexhtml">Customize index.html</h3>
 
-To customize the UI beyond the basic options listed above, you can provide your own version of the ReDoc index.html page:
+To customize the UI beyond the basic options listed above, you can provide your own version of the Redoc index.html page:
 
 ```csharp
 app.UseReDoc(c =>

@@ -43,7 +43,7 @@ namespace Microsoft.AspNetCore.Builder
         public static void SwaggerEndpoint(this SwaggerUIOptions options, string url, string name)
         {
             var urls = new List<UrlDescriptor>(options.ConfigObject.Urls ?? Enumerable.Empty<UrlDescriptor>());
-            urls.Add(new UrlDescriptor { Url = url, Name = name} );
+            urls.Add(new UrlDescriptor { Url = url, Name = name });
             options.ConfigObject.Urls = urls;
         }
 
@@ -54,6 +54,14 @@ namespace Microsoft.AspNetCore.Builder
         public static void EnableDeepLinking(this SwaggerUIOptions options)
         {
             options.ConfigObject.DeepLinking = true;
+        }
+        /// <summary>
+        /// Enables persist authorization data
+        /// </summary>
+        /// <param name="options"></param>
+        public static void EnablePersistAuthorization(this SwaggerUIOptions options)
+        {
+            options.ConfigObject.PersistAuthorization = true;
         }
 
         /// <summary>
@@ -126,6 +134,15 @@ namespace Microsoft.AspNetCore.Builder
         public static void EnableFilter(this SwaggerUIOptions options, string expression = null)
         {
             options.ConfigObject.Filter = expression ?? "";
+        }
+
+        /// <summary>
+        /// Enables the "Try it out" section by default.
+        /// </summary>
+        /// <param name="options"></param>
+        public static void EnableTryItOutByDefault(this SwaggerUIOptions options)
+        {
+            options.ConfigObject.TryItOutEnabled = true;
         }
 
         /// <summary>
@@ -205,12 +222,23 @@ namespace Microsoft.AspNetCore.Builder
         }
 
         /// <summary>
+        /// Default userName
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="value"></param>
+        public static void OAuthUsername(this SwaggerUIOptions options, string value)
+        {
+            options.OAuthConfigObject.Username = value;
+        }
+
+        /// <summary>
         /// Default clientSecret
         /// </summary>
         /// <param name="options"></param>
         /// <param name="value"></param>
+        /// <remarks>Setting this exposes the client secrets in inline javascript in the swagger-ui generated html.</remarks>
         public static void OAuthClientSecret(this SwaggerUIOptions options, string value)
-        {
+        { 
             options.OAuthConfigObject.ClientSecret = value;
         }
 

@@ -8,11 +8,13 @@ using System.Text.Json.Serialization;
 using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.OpenApi.Models;
 using Xunit;
 using Swashbuckle.AspNetCore.TestSupport;
 using Microsoft.OpenApi.Any;
-using System.Collections.ObjectModel;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -49,10 +51,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(DateTimeOffset), "string", "date-time")]
         [InlineData(typeof(Guid), "string", "uuid")]
         [InlineData(typeof(Uri), "string", "uri")]
+        [InlineData(typeof(DateOnly), "string", "date")]
+        [InlineData(typeof(TimeOnly), "string", "time")]
         [InlineData(typeof(bool?), "boolean", null)]
         [InlineData(typeof(int?), "integer", "int32")]
         [InlineData(typeof(DateTime?), "string", "date-time")]
         [InlineData(typeof(Guid?), "string", "uuid")]
+        [InlineData(typeof(DateOnly?), "string", "date")]
+        [InlineData(typeof(TimeOnly?), "string", "time")]
         public void GenerateSchema_GeneratesPrimitiveSchema_IfPrimitiveOrNullablePrimitiveType(
             Type type,
             string expectedSchemaType,
@@ -338,8 +344,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["StringWithRegularExpression"].Pattern);
             Assert.Equal(5, schema.Properties["StringWithStringLength"].MinLength);
             Assert.Equal(10, schema.Properties["StringWithStringLength"].MaxLength);
+            Assert.Equal(1, schema.Properties["StringWithRequired"].MinLength);
             Assert.False(schema.Properties["StringWithRequired"].Nullable);
-            Assert.Equal(new[] { "StringWithRequired" }, schema.Required.ToArray());
+            Assert.False(schema.Properties["StringWithRequiredAllowEmptyTrue"].Nullable);
+            Assert.Null(schema.Properties["StringWithRequiredAllowEmptyTrue"].MinLength);
+            Assert.Equal(new[] { "StringWithRequired", "StringWithRequiredAllowEmptyTrue" }, schema.Required.ToArray());
         }
 
         [Fact]
@@ -356,6 +365,40 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.False(schema.Properties["ReadOnlyProperty"].WriteOnly);
             Assert.False(schema.Properties["WriteOnlyProperty"].ReadOnly);
             Assert.True(schema.Properties["WriteOnlyProperty"].WriteOnly);
+        }
+
+        [Theory]
+        [InlineData(typeof(TypeWithParameterizedConstructor), nameof(TypeWithParameterizedConstructor.Id), false)]
+        [InlineData(typeof(TypeWithParameterlessAndParameterizedConstructor), nameof(TypeWithParameterlessAndParameterizedConstructor.Id), true)]
+        [InlineData(typeof(TypeWithParameterlessAndJsonAnnotatedConstructor), nameof(TypeWithParameterlessAndJsonAnnotatedConstructor.Id), false)]
+        public void GenerateSchema_DoesNotSetReadOnlyFlag_IfPropertyIsReadOnlyButCanBeSetViaConstructor(
+            Type type,
+            string propertyName,
+            bool expectedReadOnly
+        )
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(type, schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal(expectedReadOnly, schema.Properties[propertyName].ReadOnly);
+        }
+
+        [Fact]
+        public void GenerateSchema_SetsDefault_IfParameterHasDefaultValueAttribute()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var parameterInfo = typeof(FakeController)
+                .GetMethod(nameof(FakeController.ActionWithIntParameterWithDefaultValueAttribute))
+                .GetParameters()
+                .First();
+
+            var schema = Subject().GenerateSchema(parameterInfo.ParameterType, schemaRepository, parameterInfo: parameterInfo);
+
+            Assert.NotNull(schema.Default);
+            Assert.Equal("3", schema.Default.ToJson());
         }
 
         [Theory]
@@ -437,11 +480,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("object", schema.Type);
             Assert.Equal(new[] { "Property1" }, schema.Properties.Keys);
             Assert.NotNull(schema.AllOf);
-            Assert.Equal(1, schema.AllOf.Count);
-            Assert.NotNull(schema.AllOf[0].Reference);
-            Assert.Equal("BaseType", schema.AllOf[0].Reference.Id);
+            var allOf = Assert.Single(schema.AllOf);
+            Assert.NotNull(allOf.Reference);
+            Assert.Equal("BaseType", allOf.Reference.Id);
             // The base type schema
-            var baseTypeSchema = schemaRepository.Schemas[schema.AllOf[0].Reference.Id];
+            var baseTypeSchema = schemaRepository.Schemas[allOf.Reference.Id];
             Assert.Equal("object", baseTypeSchema.Type);
             Assert.Equal(new[] { "BaseProperty" }, baseTypeSchema.Properties.Keys);
         }
@@ -500,24 +543,24 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.NotNull(schema.OneOf[0].Reference);
             var baseSchema = schemaRepository.Schemas[schema.OneOf[0].Reference.Id];
             Assert.Equal("object", baseSchema.Type);
-            Assert.Equal(new[] { "BaseProperty"}, baseSchema.Properties.Keys);
+            Assert.Equal(new[] { "BaseProperty" }, baseSchema.Properties.Keys);
             // The first sub type schema
             Assert.NotNull(schema.OneOf[1].Reference);
             var subType1Schema = schemaRepository.Schemas[schema.OneOf[1].Reference.Id];
             Assert.Equal("object", subType1Schema.Type);
             Assert.NotNull(subType1Schema.AllOf);
-            Assert.Equal(1, subType1Schema.AllOf.Count);
-            Assert.NotNull(subType1Schema.AllOf[0].Reference);
-            Assert.Equal("BaseType", subType1Schema.AllOf[0].Reference.Id);
+            var allOf = Assert.Single(subType1Schema.AllOf);
+            Assert.NotNull(allOf.Reference);
+            Assert.Equal("BaseType", allOf.Reference.Id);
             Assert.Equal(new[] { "Property1" }, subType1Schema.Properties.Keys);
             // The second sub type schema
             Assert.NotNull(schema.OneOf[2].Reference);
             var subType2Schema = schemaRepository.Schemas[schema.OneOf[2].Reference.Id];
             Assert.Equal("object", subType2Schema.Type);
             Assert.NotNull(subType2Schema.AllOf);
-            Assert.Equal(1, subType2Schema.AllOf.Count);
-            Assert.NotNull(subType2Schema.AllOf[0].Reference);
-            Assert.Equal("BaseType", subType2Schema.AllOf[0].Reference.Id);
+            allOf = Assert.Single(subType2Schema.AllOf);
+            Assert.NotNull(allOf.Reference);
+            Assert.Equal("BaseType", allOf.Reference.Id);
             Assert.Equal(new[] { "Property2" }, subType2Schema.Properties.Keys);
         }
 
@@ -533,7 +576,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.Null(schema.Reference);
             Assert.NotNull(schema.AllOf);
-            Assert.Equal(1, schema.AllOf.Count);
+            Assert.Single(schema.AllOf);
         }
 
         [Fact]
@@ -556,6 +599,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableString), false)]
         [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableArray), true)]
         [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableArray), false)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableList), true)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableList), false)]
         public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypes(
             Type declaringType,
             string propertyName,
@@ -569,6 +614,50 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var referenceSchema = subject.GenerateSchema(declaringType, schemaRepository);
 
             var propertySchema = schemaRepository.Schemas[referenceSchema.Reference.Id].Properties[propertyName];
+            Assert.Equal(expectedNullable, propertySchema.Nullable);
+        }
+
+        [Theory]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableDictionaryWithNonNullableContent), true, false)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableDictionaryWithNonNullableContent), false, false)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableDictionaryWithNullableContent), false, true)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableDictionaryWithNullableContent), true, true)]
+        public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypes_NullableAttribute_Compiler_Optimizations_Situations(
+            Type declaringType,
+            string propertyName,
+            bool expectedNullableProperty,
+            bool expectedNullableContent)
+        {
+            var subject = Subject(
+                configureGenerator: c => c.SupportNonNullableReferenceTypes = true
+            );
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = subject.GenerateSchema(declaringType, schemaRepository);
+
+            var propertySchema = schemaRepository.Schemas[referenceSchema.Reference.Id].Properties[propertyName];
+            var contentSchema = schemaRepository.Schemas[referenceSchema.Reference.Id].Properties[propertyName].AdditionalProperties;
+            Assert.Equal(expectedNullableProperty, propertySchema.Nullable);
+            Assert.Equal(expectedNullableContent, contentSchema.Nullable);
+        }
+
+        [Theory]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.SubTypeWithOneNullableContent), nameof(TypeWithNullableContext.NullableString), true)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContext.NonNullableString), false)]
+        public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypesInDictionary_NullableAttribute_Compiler_Optimizations_Situations(
+            Type declaringType,
+            string subType,
+            string propertyName,
+            bool expectedNullable)
+        {
+            var subject = Subject(
+                configureGenerator: c => c.SupportNonNullableReferenceTypes = true
+            );
+            var schemaRepository = new SchemaRepository();
+
+            subject.GenerateSchema(declaringType, schemaRepository);
+
+            var propertySchema = schemaRepository.Schemas[subType].Properties[propertyName];
             Assert.Equal(expectedNullable, propertySchema.Nullable);
         }
 
@@ -685,7 +774,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var referenceSchema = Subject().GenerateSchema(typeof(JsonIgnoreAnnotatedType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal( new[] { /* "StringWithJsonIgnore" */ "StringWithNoAnnotation" }, schema.Properties.Keys.ToArray());
+
+            string[] expectedKeys =
+            {
+                nameof(JsonIgnoreAnnotatedType.StringWithJsonIgnoreConditionNever),
+                nameof(JsonIgnoreAnnotatedType.StringWithJsonIgnoreConditionWhenWritingDefault),
+                nameof(JsonIgnoreAnnotatedType.StringWithJsonIgnoreConditionWhenWritingNull),
+                nameof(JsonIgnoreAnnotatedType.StringWithNoAnnotation)
+            };
+
+            Assert.Equal(expectedKeys, schema.Properties.Keys.ToArray());
         }
 
         [Fact]
@@ -696,7 +794,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var referenceSchema = Subject().GenerateSchema(typeof(JsonPropertyNameAnnotatedType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal( new[] { "string-with-json-property-name" }, schema.Properties.Keys.ToArray());
+            Assert.Equal(new[] { "string-with-json-property-name" }, schema.Properties.Keys.ToArray());
         }
 
         [Fact]
@@ -724,7 +822,69 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Null(schema.Type);
         }
 
-        private SchemaGenerator Subject(
+        [Fact]
+        public void GenerateSchema_GeneratesSchema_IfParameterHasMaxLengthRouteConstraint()
+        {
+            var maxLength = 3;
+            var constraints = new List<IRouteConstraint>()
+            {
+                new MaxLengthRouteConstraint(maxLength)
+            };
+            var routeInfo = new ApiParameterRouteInfo
+            {
+                Constraints = constraints
+            };
+            var parameterInfo = typeof(FakeController)
+                .GetMethod(nameof(FakeController.ActionWithParameter))
+                .GetParameters()
+                .First();
+            var schema = Subject().GenerateSchema(typeof(string), new SchemaRepository(), parameterInfo: parameterInfo, routeInfo: routeInfo);
+            Assert.Equal(maxLength, schema.MaxLength);
+        }
+
+        [Fact]
+        public void GenerateSchema_GeneratesSchema_IfParameterHasMultipleConstraints()
+        {
+            var maxLength = 3;
+            var minLength = 1;
+            var constraints = new List<IRouteConstraint>()
+            {
+                new MaxLengthRouteConstraint(3),
+                new MinLengthRouteConstraint(minLength)
+            };
+            var routeInfo = new ApiParameterRouteInfo
+            {
+                Constraints = constraints
+            };
+            var parameterInfo = typeof(FakeController)
+                .GetMethod(nameof(FakeController.ActionWithParameter))
+                .GetParameters()
+                .First();
+            var schema = Subject().GenerateSchema(typeof(string), new SchemaRepository(), parameterInfo: parameterInfo, routeInfo: routeInfo);
+            Assert.Equal(maxLength, schema.MaxLength);
+            Assert.Equal(minLength, schema.MinLength);
+        }
+
+        [Fact]
+        public void GenerateSchema_GeneratesSchema_IfParameterHasTypeConstraints()
+        {
+            var constraints = new List<IRouteConstraint>()
+            {
+                new IntRouteConstraint(),
+            };
+            var routeInfo = new ApiParameterRouteInfo
+            {
+                Constraints = constraints
+            };
+            var parameterInfo = typeof(FakeController)
+                .GetMethod(nameof(FakeController.ActionWithParameter))
+                .GetParameters()
+                .First();
+            var schema = Subject().GenerateSchema(typeof(string), new SchemaRepository(), parameterInfo: parameterInfo, routeInfo: routeInfo);
+            Assert.Equal("integer", schema.Type);
+        }
+
+        private static SchemaGenerator Subject(
             Action<SchemaGeneratorOptions> configureGenerator = null,
             Action<JsonSerializerOptions> configureSerializer = null)
         {

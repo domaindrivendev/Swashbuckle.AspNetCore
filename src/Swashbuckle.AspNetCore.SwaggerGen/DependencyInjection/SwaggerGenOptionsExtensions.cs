@@ -4,6 +4,7 @@ using System.Xml.XPath;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -103,6 +104,18 @@ namespace Microsoft.Extensions.DependencyInjection
             Func<ApiDescription, string> sortKeySelector)
         {
             swaggerGenOptions.SwaggerGeneratorOptions.SortKeySelector = sortKeySelector;
+        }
+
+        /// <summary>
+        /// Provide a custom comprarer to sort schemas with
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="schemaComparer"></param>
+        public static void SortSchemasWith(
+            this SwaggerGenOptions swaggerGenOptions,
+            IComparer<string> schemaComparer)
+        {
+            swaggerGenOptions.SwaggerGeneratorOptions.SchemaComparer = schemaComparer;
         }
 
         /// <summary>
@@ -297,6 +310,22 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
+        /// Automatically infer security schemes from authentication/authorization state in ASP.NET Core.
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="securitySchemesSelector">
+        /// Provide alternative implementation that maps ASP.NET Core Authentication schemes to Open API security schemes
+        /// </param>
+        /// <remarks>Currently only supports JWT Bearer authentication</remarks>
+        public static void InferSecuritySchemes(
+            this SwaggerGenOptions swaggerGenOptions,
+            Func<IEnumerable<AuthenticationScheme>, IDictionary<string, OpenApiSecurityScheme>> securitySchemesSelector = null)
+        {
+            swaggerGenOptions.SwaggerGeneratorOptions.InferSecuritySchemes = true;
+            swaggerGenOptions.SwaggerGeneratorOptions.SecuritySchemesSelector = securitySchemesSelector;
+        }
+
+        /// <summary>
         /// Extend the Swagger Generator with "filters" that can modify Schemas after they're initially generated
         /// </summary>
         /// <typeparam name="TFilter">A type that derives from ISchemaFilter</typeparam>
@@ -414,7 +443,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// Inject human-friendly descriptions for Operations, Parameters and Schemas based on XML Comment files
         /// </summary>
         /// <param name="swaggerGenOptions"></param>
-        /// <param name="filePath">An abolsute path to the file that contains XML Comments</param>
+        /// <param name="filePath">An absolute path to the file that contains XML Comments</param>
         /// <param name="includeControllerXmlComments">
         /// Flag to indicate if controller XML comments (i.e. summary) should be used to assign Tag descriptions.
         /// Don't set this flag if you're customizing the default tag for operations via TagActionsBy.
@@ -434,7 +463,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="swaggerGenOptions"></param>
         /// <param name="subTypesResolver"></param>
         /// <param name="discriminatorSelector"></param>
-        [Obsolete("You can use \"UseOneOfForPolymorphism\", \"UseAllOfForInheritance\" and \"DetectSubTypesUsing\" to configure equivalent behavior")]
+        [Obsolete("You can use \"UseOneOfForPolymorphism\", \"UseAllOfForInheritance\" and \"SelectSubTypesUsing\" to configure equivalent behavior")]
         public static void GeneratePolymorphicSchemas(
             this SwaggerGenOptions swaggerGenOptions,
             Func<Type, IEnumerable<Type>> subTypesResolver = null,

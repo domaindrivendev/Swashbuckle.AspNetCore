@@ -1,13 +1,20 @@
-﻿using System.Linq;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
+using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.OpenApi.Any;
-using Xunit;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.TestSupport;
+using Xunit;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Server.HttpSys;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -32,7 +39,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 {
                     SwaggerDocs = new Dictionary<string, OpenApiInfo>
                     {
-                        [ "v1" ] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
                     }
                 }
             );
@@ -43,6 +50,42 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("Test API", document.Info.Title);
             Assert.Equal(new[] { "/resource" }, document.Paths.Keys.ToArray());
             Assert.Equal(new[] { OperationType.Post, OperationType.Get }, document.Paths["/resource"].Operations.Keys);
+        }
+
+        [Theory]
+        [InlineData("resources/{id}", "/resources/{id}")]
+        [InlineData("resources;secondary={secondary}", "/resources;secondary={secondary}")]
+        [InlineData("resources:deposit", "/resources:deposit")]
+        [InlineData("{category}/{product?}/{sku}", "/{category}/{product}/{sku}")]
+        [InlineData("{area=Home}/{controller:required}/{id=0:int}", "/{area}/{controller}/{id}")]
+        [InlineData("{category}/product/{group?}", "/{category}/product/{group}")]
+        [InlineData("{category:int}/product/{group:range(10, 20)?}", "/{category}/product/{group}")]
+        [InlineData("{person:int}/{ssn:regex(^\\d{{3}}-\\d{{2}}-\\d{{4}}$)}", "/{person}/{ssn}")]
+        [InlineData("{person:int}/{ssn:regex(^(?=.*kind)(?=.*good).*$)}", "/{person}/{ssn}")]
+        public void GetSwagger_GeneratesSwaggerDocument_ForApiDescriptionsWithConstrainedRelativePaths(string path, string expectedPath)
+        {
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "POST", relativePath: path),
+
+                },
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    }
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal("V1", document.Info.Version);
+            Assert.Equal("Test API", document.Info.Title);
+            var (actualPath, _) = Assert.Single(document.Paths);
+            Assert.Equal(expectedPath, actualPath);
         }
 
         [Fact]
@@ -75,6 +118,259 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var document = subject.GetSwagger("v1");
 
             Assert.Equal("SomeRouteName", document.Paths["/resource"].Operations[OperationType.Post].OperationId);
+        }
+
+        [Fact]
+        public void GetSwagger_SetsOperationIdToEndpointName_IfActionHasEndpointNameMetadata()
+        {
+            var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
+            var actionDescriptor = new ActionDescriptor
+            {
+                EndpointMetadata = new List<object>() { new EndpointNameMetadata("SomeEndpointName") },
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+                }
+            };
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create(actionDescriptor, methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource"),
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal("SomeEndpointName", document.Paths["/resource"].Operations[OperationType.Post].OperationId);
+        }
+
+        [Fact]
+        public void GetSwagger_UseProvidedOpenApiOperation_IfExistsInMetadata()
+        {
+            var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
+            var actionDescriptor = new ActionDescriptor
+            {
+                EndpointMetadata = new List<object>()
+                {
+                    new OpenApiOperation
+                    {
+                        OperationId = "OperationIdSetInMetadata",
+                        Parameters = new List<OpenApiParameter>()
+                        {
+                            new OpenApiParameter
+                            {
+                                Name = "ParameterInMetadata"
+                            }
+                        }
+                    }
+                },
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+                }
+            };
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create(actionDescriptor, methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource"),
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal("OperationIdSetInMetadata", document.Paths["/resource"].Operations[OperationType.Post].OperationId);
+            Assert.Equal("ParameterInMetadata", document.Paths["/resource"].Operations[OperationType.Post].Parameters[0].Name);
+        }
+
+        [Fact]
+        public void GetSwagger_GenerateProducesSchemas_ForProvidedOpenApiOperation()
+        {
+            var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithProducesAttribute));
+            var actionDescriptor = new ActionDescriptor
+            {
+                EndpointMetadata = new List<object>()
+                {
+                    new OpenApiOperation
+                    {
+                        OperationId = "OperationIdSetInMetadata",
+                        Responses = new()
+                        {
+                            ["200"] = new()
+                            {
+                                Content = new Dictionary<string, OpenApiMediaType>()
+                                {
+                                    ["application/someMediaType"] = new()
+                                }
+                            }
+                        }
+                    }
+                },
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+                }
+            };
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create(
+                        actionDescriptor,
+                        methodInfo,
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        supportedResponseTypes: new[]
+                        {
+                            new ApiResponseType()
+                            {
+                                StatusCode = 200,
+                                Type = typeof(TestDto)
+                            }
+                        }),
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal("OperationIdSetInMetadata", document.Paths["/resource"].Operations[OperationType.Post].OperationId);
+            var content = Assert.Single(document.Paths["/resource"].Operations[OperationType.Post].Responses["200"].Content);
+            Assert.Equal("application/someMediaType", content.Key);
+            Assert.Null(content.Value.Schema.Type);
+            Assert.NotNull(content.Value.Schema.Reference);
+            Assert.Equal("TestDto", content.Value.Schema.Reference.Id);
+        }
+
+        [Fact]
+        public void GetSwagger_GenerateConsumesSchemas_ForProvidedOpenApiOperation()
+        {
+            var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithConsumesAttribute));
+            var actionDescriptor = new ActionDescriptor
+            {
+                EndpointMetadata = new List<object>()
+                {
+                    new OpenApiOperation
+                    {
+                        OperationId = "OperationIdSetInMetadata",
+                        RequestBody = new()
+                        {
+                            Content = new Dictionary<string, OpenApiMediaType>()
+                            {
+                                ["application/someMediaType"] = new()
+                            }
+                        }
+                    }
+                },
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+                }
+            };
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create(
+                        actionDescriptor,
+                        methodInfo,
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions: new[]
+                        {
+                            new ApiParameterDescription()
+                            {
+                                Name = "param",
+                                Source = BindingSource.Body,
+                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(TestDto))
+                            }
+                        }),
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal("OperationIdSetInMetadata", document.Paths["/resource"].Operations[OperationType.Post].OperationId);
+            var content = Assert.Single(document.Paths["/resource"].Operations[OperationType.Post].RequestBody.Content);
+            Assert.Equal("application/someMediaType", content.Key);
+            Assert.Null(content.Value.Schema.Type);
+            Assert.NotNull(content.Value.Schema.Reference);
+            Assert.Equal("TestDto", content.Value.Schema.Reference.Id);
+        }
+
+        [Fact]
+        public void GetSwagger_GenerateParametersSchemas_ForProvidedOpenApiOperation()
+        {
+            var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
+            var actionDescriptor = new ActionDescriptor
+            {
+                EndpointMetadata = new List<object>()
+                {
+                    new OpenApiOperation
+                    {
+                        OperationId = "OperationIdSetInMetadata",
+                        Parameters = new List<OpenApiParameter>()
+                        {
+                            new OpenApiParameter
+                            {
+                                Name = "ParameterInMetadata"
+                            }
+                        }
+                    }
+                },
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+                }
+            };
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create(
+                        actionDescriptor,
+                        methodInfo,
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions: new[]
+                        {
+                            new ApiParameterDescription
+                            {
+                                Name = "ParameterInMetadata",
+                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(string))
+                            }
+                        }),
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal("OperationIdSetInMetadata", document.Paths["/resource"].Operations[OperationType.Post].OperationId);
+            Assert.Equal("ParameterInMetadata", document.Paths["/resource"].Operations[OperationType.Post].Parameters[0].Name);
+            Assert.NotNull(document.Paths["/resource"].Operations[OperationType.Post].Parameters[0].Schema);
+            Assert.Equal("string", document.Paths["/resource"].Operations[OperationType.Post].Parameters[0].Schema.Type);
+        }
+
+        [Fact]
+        public void GetSwagger_SetsOperationIdToNull_IfActionHasNoEndpointMetadata()
+        {
+            var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
+            var actionDescriptor = new ActionDescriptor
+            {
+                EndpointMetadata = null,
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+                }
+            };
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create(actionDescriptor, methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource"),
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Null(document.Paths["/resource"].Operations[OperationType.Post].OperationId);
         }
 
         [Fact]
@@ -124,8 +420,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var document = subject.GetSwagger("v1");
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
-            Assert.Equal(1, operation.Parameters.Count);
-            Assert.Equal(expectedParameterLocation, operation.Parameters.First().In);
+            var parameter = Assert.Single(operation.Parameters);
+            Assert.Equal(expectedParameterLocation, parameter.In);
         }
 
         [Fact]
@@ -153,7 +449,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var document = subject.GetSwagger("v1");
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
-            Assert.Equal(0, operation.Parameters.Count);
+            Assert.Empty(operation.Parameters);
         }
 
         [Fact]
@@ -214,8 +510,46 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var document = subject.GetSwagger("v1");
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
-            Assert.Equal(1, operation.Parameters.Count);
-            Assert.Equal(expectedRequired, operation.Parameters.First().Required);
+            var parameter = Assert.Single(operation.Parameters);
+            Assert.Equal(expectedRequired, parameter.Required);
+        }
+
+        [Theory]
+        [InlineData(false)]
+        [InlineData(true)]
+        public void GetSwagger_SetsParameterRequired_ForNonControllerActionDescriptor_IfApiParameterDescriptionForBodyIsRequired(bool isRequired)
+        {
+            static void Execute(object obj) { }
+
+            Action<object> action = Execute;
+
+            var actionDescriptor = new ActionDescriptor
+            {
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = "Foo",
+                }
+            };
+
+            var parameter = new ApiParameterDescription
+            {
+                Name = "obj",
+                Source = BindingSource.Body,
+                IsRequired = isRequired,
+                Type = typeof(object),
+                ModelMetadata = ModelMetadataFactory.CreateForParameter(action.Method.GetParameters()[0])
+            };
+
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create(actionDescriptor, action.Method, groupName: "v1", httpMethod: "POST", relativePath: "resource", parameterDescriptions: new[]{ parameter }),
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal(isRequired, document.Paths["/resource"].Operations[OperationType.Post].RequestBody.Required);
         }
 
         [Fact]
@@ -243,8 +577,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var document = subject.GetSwagger("v1");
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
-            Assert.Equal(1, operation.Parameters.Count);
-            Assert.Equal("string", operation.Parameters.First().Schema.Type);
+            var parameter = Assert.Single(operation.Parameters);
+            Assert.Equal("string", parameter.Schema.Type);
         }
 
         [Fact]
@@ -608,6 +942,80 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GetSwagger_CanReadTagsFromMetadata()
+        {
+            var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
+            var actionDescriptor = new ActionDescriptor
+            {
+                EndpointMetadata = new List<object>() { new TagsAttribute("Some", "Tags", "Here") },
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+                }
+            };
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create(actionDescriptor, methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource"),
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal(new[] { "Some", "Tags", "Here" }, document.Paths["/resource"].Operations[OperationType.Post].Tags.Select(t => t.Name));
+        }
+
+#if NET7_0_OR_GREATER
+        [Fact]
+        public void GetSwagger_CanReadEndpointSummaryFromMetadata()
+        {
+            var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
+            var actionDescriptor = new ActionDescriptor
+            {
+                EndpointMetadata = new List<object>() { new EndpointSummaryAttribute("A Test Summary") },
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+                }
+            };
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create(actionDescriptor, methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource"),
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal("A Test Summary", document.Paths["/resource"].Operations[OperationType.Post].Summary);
+        }
+
+        [Fact]
+        public void GetSwagger_CanReadEndpointDescriptionFromMetadata()
+        {
+            var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
+            var actionDescriptor = new ActionDescriptor
+            {
+                EndpointMetadata = new List<object>() { new EndpointDescriptionAttribute("A Test Description") },
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+                }
+            };
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create(actionDescriptor, methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource"),
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal("A Test Description", document.Paths["/resource"].Operations[OperationType.Post].Description);
+        }
+#endif
+
+        [Fact]
         public void GetSwagger_SupportsOption_ConflictingActionsResolver()
         {
             var subject = Subject(
@@ -675,8 +1083,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var document = subject.GetSwagger("v1");
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
-            Assert.Equal(1, operation.Parameters.Count);
-            Assert.Equal(expectedOpenApiParameterName, operation.Parameters.First().Name);
+            var parameter = Assert.Single(operation.Parameters);
+            Assert.Equal(expectedOpenApiParameterName, parameter.Name);
         }
 
         [Fact]
@@ -699,8 +1107,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var document = subject.GetSwagger("v1");
 
-            Assert.Equal(1, document.Servers.Count);
-            Assert.Equal("http://tempuri.org/api", document.Servers.First().Url);
+            var server = Assert.Single(document.Servers);
+            Assert.Equal("http://tempuri.org/api", server.Url);
         }
 
         [Fact]
@@ -724,6 +1132,69 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var document = subject.GetSwagger("v1");
 
             Assert.Equal(new[] { "basic" }, document.Components.SecuritySchemes.Keys);
+        }
+
+        [Theory]
+        [InlineData(false, new string[] { })]
+        [InlineData(true, new string[] { "Bearer" })]
+        public async Task GetSwagger_SupportsOption_InferSecuritySchemes(
+            bool inferSecuritySchemes,
+            string[] expectedSecuritySchemeNames)
+
+        {
+            var subject = Subject(
+                apiDescriptions: new ApiDescription[] { },
+                authenticationSchemes: new[] {
+                    new AuthenticationScheme("Bearer", null, typeof(IAuthenticationHandler)),
+                    new AuthenticationScheme("Cookies", null, typeof(IAuthenticationHandler))
+                },
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    },
+                    InferSecuritySchemes = inferSecuritySchemes
+                }
+            );
+
+            var document = await subject.GetSwaggerAsync("v1");
+
+            Assert.Equal(expectedSecuritySchemeNames, document.Components.SecuritySchemes.Keys);
+        }
+
+        [Theory]
+        [InlineData(false, new string[] { })]
+        [InlineData(true, new string[] { "Bearer", "Cookies" })]
+        public async Task GetSwagger_SupportsOption_SecuritySchemesSelector(
+            bool inferSecuritySchemes,
+            string[] expectedSecuritySchemeNames)
+
+        {
+            var subject = Subject(
+                apiDescriptions: new ApiDescription[] { },
+                authenticationSchemes: new[] {
+                    new AuthenticationScheme("Bearer", null, typeof(IAuthenticationHandler)),
+                    new AuthenticationScheme("Cookies", null, typeof(IAuthenticationHandler))
+                },
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    },
+                    InferSecuritySchemes = inferSecuritySchemes,
+                    SecuritySchemesSelector = (authenticationSchemes) =>
+                        authenticationSchemes
+                            .ToDictionary(
+                                (authScheme) => authScheme.Name,
+                                (authScheme) => new OpenApiSecurityScheme())
+                }
+            );
+
+            var document = await subject.GetSwaggerAsync("v1");
+
+            Assert.Equal(expectedSecuritySchemeNames, document.Components.SecuritySchemes.Keys);
         }
 
         [Fact]
@@ -758,7 +1229,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var document = subject.GetSwagger("v1");
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
-            Assert.Equal(2, operation.Parameters[0].Extensions.Count());
+            Assert.Equal(2, operation.Parameters[0].Extensions.Count);
             Assert.Equal("bar", ((OpenApiString)operation.Parameters[0].Extensions["X-foo"]).Value);
             Assert.Equal("v1", ((OpenApiString)operation.Parameters[0].Extensions["X-docName"]).Value);
         }
@@ -856,12 +1327,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Contains("ComplexType", document.Components.Schemas.Keys);
         }
 
-        private SwaggerGenerator Subject(IEnumerable<ApiDescription> apiDescriptions, SwaggerGeneratorOptions options = null)
+        private static SwaggerGenerator Subject(
+            IEnumerable<ApiDescription> apiDescriptions,
+            SwaggerGeneratorOptions options = null,
+            IEnumerable<AuthenticationScheme> authenticationSchemes = null)
         {
             return new SwaggerGenerator(
                 options ?? DefaultOptions,
                 new FakeApiDescriptionGroupCollectionProvider(apiDescriptions),
-                new SchemaGenerator(new SchemaGeneratorOptions(), new JsonSerializerDataContractResolver(new JsonSerializerOptions()))
+                new SchemaGenerator(new SchemaGeneratorOptions(), new JsonSerializerDataContractResolver(new JsonSerializerOptions())),
+                new FakeAuthenticationSchemeProvider(authenticationSchemes ?? Enumerable.Empty<AuthenticationScheme>())
             );
         }
 

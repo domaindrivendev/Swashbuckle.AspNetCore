@@ -15,11 +15,11 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             var response = await client.GetAsync("/api-docs");
 
             Assert.Equal(HttpStatusCode.MovedPermanently, response.StatusCode);
-            Assert.Equal("http://localhost/api-docs/index.html", response.Headers.Location.ToString());
+            Assert.Equal("api-docs/index.html", response.Headers.Location.ToString());
         }
 
         [Fact]
-        public async Task IndexUrl_ReturnsEmbeddedVersionOfTheReDocUI()
+        public async Task IndexUrl_ReturnsEmbeddedVersionOfTheRedocUI()
         {
             var client = new TestSite(typeof(ReDocApp.Startup)).BuildClient();
 
@@ -47,7 +47,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         [Theory]
         [InlineData("/redoc/1.0/index.html", "/swagger/1.0/swagger.json")]
         [InlineData("/redoc/2.0/index.html", "/swagger/2.0/swagger.json")]
-        public async Task ReDocMiddleware_CanBeConfiguredMultipleTimes(string redocUrl, string swaggerPath)
+        public async Task RedocMiddleware_CanBeConfiguredMultipleTimes(string redocUrl, string swaggerPath)
         {
             var client = new TestSite(typeof(MultipleVersions.Startup)).BuildClient();
 

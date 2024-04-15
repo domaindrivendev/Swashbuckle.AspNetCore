@@ -1,0 +1,58 @@
+version: 2
+updates:
+- package-ecosystem: "github-actions"
+  directory: "/"
+  schedule:
+    interval: weekly
+    day: wednesday
+    time: "10:00"
+    timezone: Europe/London
+# TODO Enable npm updates
+#- package-ecosystem: npm
+#  directory: "/src/Swashbuckle.AspNetCore.ReDoc"
+#  schedule:
+#    interval: weekly
+#    day: wednesday
+#    time: "10:00"
+#    timezone: Europe/London
+#- package-ecosystem: npm
+#  directory: "/src/Swashbuckle.AspNetCore.SwaggerUI"
+#  schedule:
+#    interval: weekly
+#    day: wednesday
+#    time: "10:00"
+#    timezone: Europe/London
+- package-ecosystem: nuget
+  directory: "/"
+  groups:
+    coverlet:
+      patterns:
+        - coverlet*
+    Microsoft.OpenApi:
+      patterns:
+        - Microsoft.OpenApi*
+    xunit:
+      patterns:
+        - xunit*
+  schedule:
+    interval: weekly
+    day: wednesday
+    time: "10:00"
+    timezone: Europe/London
+  ignore:
+    # Ignore the libraries which are "pinned"
+    - dependency-name: "IdentityServer4"
+    - dependency-name: "IdentityServer4.AccessTokenValidation"
+    - dependency-name: "Microsoft.AspNetCore"
+    - dependency-name: "Microsoft.AspNetCore.App"
+    - dependency-name: "Microsoft.AspNetCore.Mvc.ApiExplorer"
+    - dependency-name: "Microsoft.AspNetCore.Mvc.DataAnnotations"
+    - dependency-name: "Microsoft.AspNetCore.Mvc.Formatters.Json"
+    - dependency-name: "Microsoft.AspNetCore.Mvc.NewtonsoftJson"
+    - dependency-name: "Microsoft.AspNetCore.Mvc.Testing"
+    - dependency-name: "Microsoft.AspNetCore.Routing"
+    - dependency-name: "Microsoft.AspNetCore.StaticFiles"
+    - dependency-name: "Microsoft.Extensions.FileProviders.Embedded"
+    - dependency-name: "Microsoft.OpenApi"
+    - dependency-name: "Microsoft.OpenApi.Readers"
+    - dependency-name: "System.Text.Json"
