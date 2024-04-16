@@ -27,8 +27,8 @@ namespace Swashbuckle.AspNetCore.Annotations
             }
 #endif
 
-            // NOTE: When controller and action attributes are applicable, action attributes should take precendence.
-            // Hence why they're at the end of the list (i.e. last one wins).
+            // NOTE: When controller and action attributes are applicable, action attributes should take priority.
+            // Hence, why they're at the end of the list (i.e. last one wins).
             // Distinct() is applied due to an ASP.NET Core issue: https://github.com/dotnet/aspnetcore/issues/34199.
             var allAttributes = controllerAttributes
                 .Union(actionAttributes)

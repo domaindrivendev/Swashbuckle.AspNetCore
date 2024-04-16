@@ -18,11 +18,12 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 
         public TestServer BuildServer()
         {
-            var siteContentRoot = GetApplicationPath(Path.Combine("..", "..", "..", "..", "WebSites"));
+            var startupAssembly = _startupType.GetTypeInfo().Assembly;
+            var applicationName = startupAssembly.GetName().Name;
 
             var builder = new WebHostBuilder()
                 .UseEnvironment("Development")
-                .UseContentRoot(siteContentRoot)
+                .UseSolutionRelativeContentRoot(Path.Combine("test", "WebSites", applicationName))
                 .UseStartup(_startupType);
 
             return new TestServer(builder);
@@ -34,14 +35,6 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             var client = server.CreateClient();
 
             return client;
-        }
-
-        private string GetApplicationPath(string relativePath)
-        {
-            var startupAssembly = _startupType.GetTypeInfo().Assembly;
-            var applicationName = startupAssembly.GetName().Name;
-            var applicationBasePath = System.AppContext.BaseDirectory;
-            return Path.GetFullPath(Path.Combine(applicationBasePath, relativePath, applicationName));
         }
     }
 }

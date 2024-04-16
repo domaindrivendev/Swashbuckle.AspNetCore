@@ -422,8 +422,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var document = subject.GetSwagger("v1");
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
-            Assert.Equal(1, operation.Parameters.Count);
-            Assert.Equal(expectedParameterLocation, operation.Parameters.First().In);
+            var parameter = Assert.Single(operation.Parameters);
+            Assert.Equal(expectedParameterLocation, parameter.In);
         }
 
         [Fact]
@@ -451,7 +451,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var document = subject.GetSwagger("v1");
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
-            Assert.Equal(0, operation.Parameters.Count);
+            Assert.Empty(operation.Parameters);
         }
 
         [Fact]
@@ -512,8 +512,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var document = subject.GetSwagger("v1");
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
-            Assert.Equal(1, operation.Parameters.Count);
-            Assert.Equal(expectedRequired, operation.Parameters.First().Required);
+            var parameter = Assert.Single(operation.Parameters);
+            Assert.Equal(expectedRequired, parameter.Required);
         }
 
         [Theory]
@@ -521,7 +521,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(true)]
         public void GetSwagger_SetsParameterRequired_ForNonControllerActionDescriptor_IfApiParameterDescriptionForBodyIsRequired(bool isRequired)
         {
-            void Execute(object obj) { }
+            static void Execute(object obj) { }
 
             Action<object> action = Execute;
 
@@ -579,8 +579,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var document = subject.GetSwagger("v1");
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
-            Assert.Equal(1, operation.Parameters.Count);
-            Assert.Equal("string", operation.Parameters.First().Schema.Type);
+            var parameter = Assert.Single(operation.Parameters);
+            Assert.Equal("string", parameter.Schema.Type);
         }
 
         [Fact]
@@ -967,6 +967,56 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(new[] { "Some", "Tags", "Here" }, document.Paths["/resource"].Operations[OperationType.Post].Tags.Select(t => t.Name));
         }
 
+#if NET7_0_OR_GREATER
+        [Fact]
+        public void GetSwagger_CanReadEndpointSummaryFromMetadata()
+        {
+            var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
+            var actionDescriptor = new ActionDescriptor
+            {
+                EndpointMetadata = new List<object>() { new EndpointSummaryAttribute("A Test Summary") },
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+                }
+            };
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create(actionDescriptor, methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource"),
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal("A Test Summary", document.Paths["/resource"].Operations[OperationType.Post].Summary);
+        }
+
+        [Fact]
+        public void GetSwagger_CanReadEndpointDescriptionFromMetadata()
+        {
+            var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
+            var actionDescriptor = new ActionDescriptor
+            {
+                EndpointMetadata = new List<object>() { new EndpointDescriptionAttribute("A Test Description") },
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+                }
+            };
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create(actionDescriptor, methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource"),
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal("A Test Description", document.Paths["/resource"].Operations[OperationType.Post].Description);
+        }
+#endif
+
         [Fact]
         public void GetSwagger_SupportsOption_ConflictingActionsResolver()
         {
@@ -1035,8 +1085,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var document = subject.GetSwagger("v1");
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
-            Assert.Equal(1, operation.Parameters.Count);
-            Assert.Equal(expectedOpenApiParameterName, operation.Parameters.First().Name);
+            var parameter = Assert.Single(operation.Parameters);
+            Assert.Equal(expectedOpenApiParameterName, parameter.Name);
         }
 
         [Fact]
@@ -1059,8 +1109,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var document = subject.GetSwagger("v1");
 
-            Assert.Equal(1, document.Servers.Count);
-            Assert.Equal("http://tempuri.org/api", document.Servers.First().Url);
+            var server = Assert.Single(document.Servers);
+            Assert.Equal("http://tempuri.org/api", server.Url);
         }
 
         [Fact]
@@ -1181,7 +1231,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var document = subject.GetSwagger("v1");
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
-            Assert.Equal(2, operation.Parameters[0].Extensions.Count());
+            Assert.Equal(2, operation.Parameters[0].Extensions.Count);
             Assert.Equal("bar", ((OpenApiString)operation.Parameters[0].Extensions["X-foo"]).Value);
             Assert.Equal("v1", ((OpenApiString)operation.Parameters[0].Extensions["X-docName"]).Value);
         }
@@ -1279,7 +1329,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Contains("ComplexType", document.Components.Schemas.Keys);
         }
 
-        private SwaggerGenerator Subject(
+        private static SwaggerGenerator Subject(
             IEnumerable<ApiDescription> apiDescriptions,
             SwaggerGeneratorOptions options = null,
             IEnumerable<AuthenticationScheme> authenticationSchemes = null)

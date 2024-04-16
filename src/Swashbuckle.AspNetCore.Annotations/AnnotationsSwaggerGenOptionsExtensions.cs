@@ -64,9 +64,11 @@ namespace Microsoft.Extensions.DependencyInjection
                 return subTypeAttributes.Select(attr => attr.SubType);
             }
 
+#pragma warning disable CS0618 // Type or member is obsolete
             var obsoleteAttribute = type.GetCustomAttributes(false)
                 .OfType<SwaggerSubTypesAttribute>()
                 .FirstOrDefault();
+#pragma warning restore CS0618 // Type or member is obsolete
 
             if (obsoleteAttribute != null)
             {
@@ -87,9 +89,11 @@ namespace Microsoft.Extensions.DependencyInjection
                 return discriminatorAttribute.PropertyName;
             }
 
+#pragma warning disable CS0618 // Type or member is obsolete
             var obsoleteAttribute = baseType.GetCustomAttributes(false)
                 .OfType<SwaggerSubTypesAttribute>()
                 .FirstOrDefault();
+#pragma warning restore CS0618 // Type or member is obsolete
 
             if (obsoleteAttribute != null)
             {

@@ -35,7 +35,7 @@ namespace Swashbuckle.AspNetCore.Cli.Test
             }
         }
 
-#if NET6_0
+#if NET6_0_OR_GREATER
         [Fact]
         public void Can_Generate_Swagger_Json_ForTopLevelApp()
         {

@@ -131,6 +131,7 @@ A line of text",
         [InlineData("<para>This is a paragraph</para>.", "<br>This is a paragraph.")]
         [InlineData("GET /Todo?iscomplete=true&amp;owner=mike", "GET /Todo?iscomplete=true&owner=mike")]
         [InlineData(@"Returns a <see langword=""null""/> item.", "Returns a null item.")]
+        [InlineData(@"<see href=""https://www.iso.org/iso-4217-currency-codes.html"">ISO currency code</see>", "[ISO currency code](https://www.iso.org/iso-4217-currency-codes.html)")]
         public void Humanize_HumanizesInlineTags(
             string input,
             string expectedOutput)

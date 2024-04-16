@@ -22,7 +22,7 @@ namespace Swashbuckle.AspNetCore.Annotations
             ApplyTypeAnnotations(schema, context);
 
             // NOTE: It's possible for both MemberInfo and ParameterInfo to have non-null values - i.e. when the schema is for a property
-            // within a class that is bound to a parameter. In this case, the MemberInfo should take precendence.
+            // within a class that is bound to a parameter. In this case, the MemberInfo should take precedence.
 
             if (context.MemberInfo != null)
             {
