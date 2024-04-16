@@ -1,4 +1,4 @@
-﻿namespace Swashbuckle.AspNetCore.TestSupport.Fixtures
+﻿namespace Swashbuckle.AspNetCore.TestSupport
 {
     public class TypeWithRequiredProperty
     {

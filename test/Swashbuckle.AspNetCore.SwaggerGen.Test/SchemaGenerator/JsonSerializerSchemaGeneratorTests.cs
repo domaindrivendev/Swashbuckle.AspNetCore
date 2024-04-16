@@ -15,7 +15,6 @@ using Microsoft.OpenApi.Models;
 using Xunit;
 using Swashbuckle.AspNetCore.TestSupport;
 using Microsoft.OpenApi.Any;
-using Swashbuckle.AspNetCore.TestSupport.Fixtures;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -346,7 +345,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
 #if NET7_0_OR_GREATER
         [Fact]
-        public void GenerateSchema_SetsRequired_IfPropertyIsRequired()
+        public void GenerateSchema_SetsRequired_IfPropertyHasRequiredKeyword()
         {
             var schemaRepository = new SchemaRepository();
 

@@ -8,7 +8,6 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
-
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -70,8 +69,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 {
                     var requiredAttribute = customAttributes.OfType<RequiredAttribute>().FirstOrDefault();
                     schema.Nullable = _generatorOptions.SupportNonNullableReferenceTypes
-                        ? dataProperty.IsNullable && requiredAttribute == null && !memberInfo.IsNonNullableReferenceType()
-                        : dataProperty.IsNullable && requiredAttribute == null;
+                        ? dataProperty.IsNullable && requiredAttribute==null && !memberInfo.IsNonNullableReferenceType()
+                        : dataProperty.IsNullable && requiredAttribute==null;
 
                     schema.ReadOnly = dataProperty.IsReadOnly;
                     schema.WriteOnly = dataProperty.IsWriteOnly;
