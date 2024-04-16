@@ -15,6 +15,7 @@ using Microsoft.OpenApi.Models;
 using Xunit;
 using Swashbuckle.AspNetCore.TestSupport;
 using Microsoft.OpenApi.Any;
+using Swashbuckle.AspNetCore.TestSupport.Fixtures;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -342,6 +343,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.False(schema.Properties["WriteOnlyProperty"].ReadOnly);
             Assert.True(schema.Properties["WriteOnlyProperty"].WriteOnly);
         }
+
+#if NET7_0_OR_GREATER
+        [Fact]
+        public void GenerateSchema_SetsRequired_IfPropertyIsRequired()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(typeof(TypeWithRequiredProperty), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal(new[] { "RequiredProperty" }, schema.Required.ToArray());
+        }
+#endif
 
         [Theory]
         [InlineData(typeof(TypeWithParameterizedConstructor), nameof(TypeWithParameterizedConstructor.Id), false)]
