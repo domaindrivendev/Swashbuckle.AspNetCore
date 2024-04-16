@@ -15,7 +15,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void Apply_SetsTagDescription_FromControllerSummaryTags()
         {
-            var options = new SwaggerGeneratorOptions();
             var document = new OpenApiDocument();
             var filterContext = new DocumentFilterContext(
                 new[]
@@ -25,8 +24,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                         ActionDescriptor = new ControllerActionDescriptor
                         {
                             ControllerTypeInfo = typeof(FakeControllerWithXmlComments).GetTypeInfo(),
-                            ControllerName = nameof(FakeControllerWithXmlComments),
-                            RouteValues = new Dictionary<string, string> { { "controller", nameof(FakeControllerWithXmlComments) } }
+                            ControllerName = nameof(FakeControllerWithXmlComments)
                         }
                     },
                     new ApiDescription
@@ -34,26 +32,33 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                         ActionDescriptor = new ControllerActionDescriptor
                         {
                             ControllerTypeInfo = typeof(FakeControllerWithXmlComments).GetTypeInfo(),
-                            ControllerName = nameof(FakeControllerWithXmlComments),
-                            RouteValues = new Dictionary<string, string> { { "controller", nameof(FakeControllerWithXmlComments) } }
+                            ControllerName = nameof(FakeControllerWithXmlComments)
                         }
                     }
                 },
                 null,
                 null);
 
-            Subject(options).Apply(document, filterContext);
+            Subject().Apply(document, filterContext);
 
             var tag = Assert.Single(document.Tags);
             Assert.Equal("Summary for FakeControllerWithXmlComments", tag.Description);
         }
 
+        private static XmlCommentsDocumentFilter Subject()
+        {
+            using (var xmlComments = File.OpenText($"{typeof(FakeControllerWithXmlComments).Assembly.GetName().Name}.xml"))
+            {
+                return new XmlCommentsDocumentFilter(new XPathDocument(xmlComments));
+            }
+        }
+
         [Fact]
         public void Uses_Proper_Tag_Name()
         {
+            var expectedTagName = "AliasControllerWithXmlComments";
             var options = new SwaggerGeneratorOptions();
             var document = new OpenApiDocument();
-            var expectedTagName = "AliasControllerWithXmlComments";
             var filterContext = new DocumentFilterContext(
                 new[]
                 {
@@ -83,14 +88,48 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var tag = Assert.Single(document.Tags);
             Assert.Equal(expectedTagName, tag.Name);
-            Assert.Equal("Summary for FakeControllerWithXmlComments", tag.Description);
+        }
+
+        [Fact]
+        public void Uses_Proper_Tag_Name_With_Custom_TagSelector()
+        {
+            var expectedTagName = "AliasControllerWithXmlComments";
+            var options = new SwaggerGeneratorOptions { TagsSelector = apiDesc => new[] { expectedTagName } };
+            var document = new OpenApiDocument();
+            var filterContext = new DocumentFilterContext(
+                new[]
+                {
+                    new ApiDescription
+                    {
+                        ActionDescriptor = new ControllerActionDescriptor
+                        {
+                            ControllerTypeInfo = typeof(FakeControllerWithXmlComments).GetTypeInfo(),
+                            ControllerName = nameof(FakeControllerWithXmlComments),
+                        }
+                    },
+                    new ApiDescription
+                    {
+                        ActionDescriptor = new ControllerActionDescriptor
+                        {
+                            ControllerTypeInfo = typeof(FakeControllerWithXmlComments).GetTypeInfo(),
+                            ControllerName = nameof(FakeControllerWithXmlComments),
+                        }
+                    }
+                },
+                null,
+                null);
+
+            Subject(options).Apply(document, filterContext);
+
+            var tag = Assert.Single(document.Tags);
+            Assert.Equal(expectedTagName, tag.Name);
         }
 
         private static XmlCommentsDocumentFilter Subject(SwaggerGeneratorOptions options)
         {
             using (var xmlComments = File.OpenText($"{typeof(FakeControllerWithXmlComments).Assembly.GetName().Name}.xml"))
             {
-                return new XmlCommentsDocumentFilter(options, new XPathDocument(xmlComments));
+                return new XmlCommentsDocumentFilter(new XPathDocument(xmlComments), options);
             }
         }
     }
