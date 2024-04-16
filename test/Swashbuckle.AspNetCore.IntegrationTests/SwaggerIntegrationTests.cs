@@ -140,18 +140,18 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             var properties = weatherForecase.GetProperty("properties");
             Assert.Equal(4, properties.EnumerateObject().Count());
 
-            Assert.Equal("string", properties.GetProperty("date").GetProperty("type").GetString());
-            Assert.Equal("date", properties.GetProperty("date").GetProperty("format").GetString());
-
-            Assert.Equal("integer", properties.GetProperty("temperatureC").GetProperty("type").GetString());
-            Assert.Equal("int32", properties.GetProperty("temperatureC").GetProperty("format").GetString());
-
-            Assert.Equal("string", properties.GetProperty("summary").GetProperty("type").GetString());
-            Assert.True(properties.GetProperty("summary").GetProperty("nullable").GetBoolean());
-
-            Assert.Equal("integer", properties.GetProperty("temperatureF").GetProperty("type").GetString());
-            Assert.Equal("int32", properties.GetProperty("temperatureF").GetProperty("format").GetString());
-            Assert.True(properties.GetProperty("temperatureF").GetProperty("readOnly").GetBoolean());
+            Assert.Multiple(
+            [
+                () => Assert.Equal("string", properties.GetProperty("date").GetProperty("type").GetString()),
+                () => Assert.Equal("date", properties.GetProperty("date").GetProperty("format").GetString()),
+                () => Assert.Equal("integer", properties.GetProperty("temperatureC").GetProperty("type").GetString()),
+                () => Assert.Equal("int32", properties.GetProperty("temperatureC").GetProperty("format").GetString()),
+                () => Assert.Equal("string", properties.GetProperty("summary").GetProperty("type").GetString()),
+                () => Assert.True(properties.GetProperty("summary").GetProperty("nullable").GetBoolean()),
+                () => Assert.Equal("integer", properties.GetProperty("temperatureF").GetProperty("type").GetString()),
+                () => Assert.Equal("int32", properties.GetProperty("temperatureF").GetProperty("format").GetString()),
+                () => Assert.True(properties.GetProperty("temperatureF").GetProperty("readOnly").GetBoolean()),
+            ]);
         }
 
         private async Task SwaggerEndpointReturnsValidSwaggerJson<TEntryPoint>(string swaggerRequestUri)
