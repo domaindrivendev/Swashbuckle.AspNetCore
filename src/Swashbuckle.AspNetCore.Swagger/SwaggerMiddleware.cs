@@ -98,7 +98,7 @@ namespace Swashbuckle.AspNetCore.Swagger
             if (_requestMatcher.TryMatch(request.Path, routeValues))
             {
 #if !NETSTANDARD
-                if (!_templateBinder.TryProcessConstraints(request.HttpContext, routeValues, out _, out _))
+                if (_templateBinder != null && !_templateBinder.TryProcessConstraints(request.HttpContext, routeValues, out _, out _))
                 {
                     return false;
                 }
