@@ -27,12 +27,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     jsonConverter: JsonConverterFunc);
             }
 
-            if (PrimitiveTypesAndFormats.TryGetValue(type, out var primitiveTypeAndFormat1))
+            if (PrimitiveTypesAndFormats.TryGetValue(type, out var primitiveTypeAndFormat))
             {
                 return DataContract.ForPrimitive(
                     underlyingType: type,
-                    dataType: primitiveTypeAndFormat1.Item1,
-                    dataFormat: primitiveTypeAndFormat1.Item2,
+                    dataType: primitiveTypeAndFormat.Item1,
+                    dataFormat: primitiveTypeAndFormat.Item2,
                     jsonConverter: JsonConverterFunc);
             }
 
@@ -44,7 +44,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var serializeAsString = (enumValues.Length > 0)
                     && JsonConverterFunc(enumValues.GetValue(0)).StartsWith("\"");
 
-                var primitiveTypeAndFormat = serializeAsString
+                primitiveTypeAndFormat = serializeAsString
                     ? PrimitiveTypesAndFormats[typeof(string)]
                     : PrimitiveTypesAndFormats[type.GetEnumUnderlyingType()];
 

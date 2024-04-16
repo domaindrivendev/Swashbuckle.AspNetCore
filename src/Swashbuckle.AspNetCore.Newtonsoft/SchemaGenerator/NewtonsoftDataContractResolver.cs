@@ -49,7 +49,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             {
                 var enumValues = jsonContract.UnderlyingType.GetEnumValues();
 
-                //Test to determine if the serializer will treat as string
+                // Test to determine if the serializer will treat as string
                 var serializeAsString = (enumValues.Length > 0)
                     && JsonConverterFunc(enumValues.GetValue(0)).StartsWith("\"");
 
@@ -84,7 +84,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     // This is a special case where we know the possible key values
                     var enumValuesAsJson = keyType.GetEnumValues()
                         .Cast<object>()
-                        .Select(value => JsonConverterFunc(value));
+                        .Select(JsonConverterFunc);
 
                     keys = enumValuesAsJson.Any(json => json.StartsWith("\""))
                         ? enumValuesAsJson.Select(json => json.Replace("\"", string.Empty))
@@ -197,7 +197,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             return dataProperties;
         }
 
-        private static readonly Dictionary<Type, Tuple<DataType, string>> PrimitiveTypesAndFormats = new Dictionary<Type, Tuple<DataType, string>>
+        private static readonly Dictionary<Type, Tuple<DataType, string>> PrimitiveTypesAndFormats = new()
         {
             [ typeof(bool) ] = Tuple.Create(DataType.Boolean, (string)null),
             [ typeof(byte) ] = Tuple.Create(DataType.Integer, "int32"),
