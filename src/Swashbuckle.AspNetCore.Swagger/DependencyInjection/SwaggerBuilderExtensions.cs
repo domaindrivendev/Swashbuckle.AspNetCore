@@ -47,7 +47,7 @@ namespace Microsoft.AspNetCore.Builder
 #if (!NETSTANDARD2_0)
         public static IEndpointConventionBuilder MapSwagger(
             this IEndpointRouteBuilder endpoints,
-            string pattern = "/swagger/{documentName}/swagger.{extension:regex(^(json|ya?ml)$)}",
+            string pattern = SwaggerOptions.DefaultRouteTemplate,
             Action<SwaggerEndpointOptions> setupAction = null)
         {
             if (!RoutePatternFactory.Parse(pattern).Parameters.Any(x => x.Name == "documentName"))
