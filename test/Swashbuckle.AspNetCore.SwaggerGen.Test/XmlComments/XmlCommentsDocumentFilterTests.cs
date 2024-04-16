@@ -4,6 +4,7 @@ using System.Reflection;
 using System.IO;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Xunit;
 using Swashbuckle.AspNetCore.TestSupport;
@@ -131,6 +132,35 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             {
                 return new XmlCommentsDocumentFilter(new XPathDocument(xmlComments), options);
             }
+        }
+
+        [Fact]
+        public void Ensure_IncludeXmlComments_Adds_Filter_To_Options()
+        {
+            var services = new ServiceCollection();
+            services.AddSingleton<Microsoft.AspNetCore.Hosting.IWebHostEnvironment, DummyHostEnvironment>();
+            services.AddSwaggerGen(c =>
+            {
+                c.IncludeXmlComments(
+                    $"{typeof(FakeControllerWithXmlComments).Assembly.GetName().Name}.xml",
+                    includeControllerXmlComments: true);
+            });
+
+            var provider = services.BuildServiceProvider();
+            var options = provider.GetService<Microsoft.Extensions.Options.IOptions<SwaggerGeneratorOptions>>().Value;
+
+            Assert.NotNull(options);
+            Assert.Contains(options.DocumentFilters, x => x is XmlCommentsDocumentFilter filter);
+        }
+
+        class DummyHostEnvironment : Microsoft.AspNetCore.Hosting.IWebHostEnvironment
+        {
+            public string WebRootPath { get; set; }
+            public Microsoft.Extensions.FileProviders.IFileProvider WebRootFileProvider { get; set; }
+            public string ApplicationName { get; set; }
+            public Microsoft.Extensions.FileProviders.IFileProvider ContentRootFileProvider { get; set; }
+            public string ContentRootPath { get; set; }
+            public string EnvironmentName { get; set; }
         }
     }
 }

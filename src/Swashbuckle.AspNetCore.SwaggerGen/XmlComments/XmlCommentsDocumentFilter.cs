@@ -30,10 +30,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             // Collect (unique) controller names and types in a dictionary
             var controllerNamesAndTypes = context.ApiDescriptions
-                .Select(apiDesc => new { apiDesc = apiDesc, actionDesc = apiDesc.ActionDescriptor as ControllerActionDescriptor })
-                .Where(x => x.actionDesc != null)
-                .GroupBy(x => _options?.TagsSelector(x.apiDesc).FirstOrDefault() ?? x.actionDesc.ControllerName)
-                .Select(group => new KeyValuePair<string, Type>(group.Key, group.First().actionDesc.ControllerTypeInfo.AsType()));
+                .Select(apiDesc => new { ApiDesc = apiDesc, ActionDesc = apiDesc.ActionDescriptor as ControllerActionDescriptor })
+                .Where(x => x.ActionDesc != null)
+                .GroupBy(x => _options?.TagsSelector(x.ApiDesc).FirstOrDefault() ?? x.ActionDesc.ControllerName)
+                .Select(group => new KeyValuePair<string, Type>(group.Key, group.First().ActionDesc.ControllerTypeInfo.AsType()));
 
             foreach (var nameAndType in controllerNamesAndTypes)
             {
