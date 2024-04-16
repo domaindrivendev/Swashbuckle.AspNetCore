@@ -132,7 +132,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         [GeneratedRegex(ParaTagPattern, RegexOptions.Singleline)]
         private static partial Regex ParaTag();
 
-        [GeneratedRegex(ParaTagPattern)]
+        [GeneratedRegex(HrefPattern)]
         private static partial Regex HrefTag();
 #else
         private static readonly Regex _refTag = new(RefTagPattern);
