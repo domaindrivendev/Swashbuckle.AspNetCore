@@ -240,11 +240,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             [ typeof(char) ] = Tuple.Create(DataType.String, (string)null),
             [ typeof(DateTime) ] = Tuple.Create(DataType.String, "date-time"),
             [ typeof(DateTimeOffset) ] = Tuple.Create(DataType.String, "date-time"),
+            [ typeof(TimeSpan) ] = Tuple.Create(DataType.String, "date-span"),
             [ typeof(Guid) ] = Tuple.Create(DataType.String, "uuid"),
             [ typeof(Uri) ] = Tuple.Create(DataType.String, "uri"),
+            [ typeof(Version) ] = Tuple.Create(DataType.String, (string)null),
 #if NET6_0_OR_GREATER
             [ typeof(DateOnly) ] = Tuple.Create(DataType.String, "date"),
-            [ typeof(TimeOnly) ] = Tuple.Create(DataType.String, "time")
+            [ typeof(TimeOnly) ] = Tuple.Create(DataType.String, "time"),
+#endif
+#if NET7_0_OR_GREATER
+            [ typeof(Int128) ] = Tuple.Create(DataType.Integer, "int128"),
+            [ typeof(UInt128) ] = Tuple.Create(DataType.Integer, "int128"),
 #endif
         };
     }

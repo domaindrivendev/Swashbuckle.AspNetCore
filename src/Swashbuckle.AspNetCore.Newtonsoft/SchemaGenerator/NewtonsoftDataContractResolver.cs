@@ -33,9 +33,10 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
             if (jsonContract is JsonPrimitiveContract && !jsonContract.UnderlyingType.IsEnum)
             {
-                var primitiveTypeAndFormat = PrimitiveTypesAndFormats.TryGetValue(jsonContract.UnderlyingType, out var format)
-                    ? format
-                    : Tuple.Create(DataType.String, (string)null);
+                if (!PrimitiveTypesAndFormats.TryGetValue(jsonContract.UnderlyingType, out var primitiveTypeAndFormat))
+                {
+                    primitiveTypeAndFormat = Tuple.Create(DataType.String, (string)null);
+                }
 
                 return DataContract.ForPrimitive(
                     underlyingType: jsonContract.UnderlyingType,
@@ -99,6 +100,16 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
             if (jsonContract is JsonObjectContract jsonObjectContract)
             {
+                // This handles DateOnly and TimeOnly
+                if (PrimitiveTypesAndFormats.TryGetValue(jsonContract.UnderlyingType, out var primitiveTypeAndFormat))
+                {
+                    return DataContract.ForPrimitive(
+                        underlyingType: jsonContract.UnderlyingType,
+                        dataType: primitiveTypeAndFormat.Item1,
+                        dataFormat: primitiveTypeAndFormat.Item2,
+                        jsonConverter: JsonConverterFunc);
+                }
+
                 string typeNameProperty = null;
                 string typeNameValue = null;
 
@@ -210,7 +221,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             [ typeof(TimeSpan) ] = Tuple.Create(DataType.String, "date-span"),
 #if NET6_0_OR_GREATER
             [ typeof(DateOnly) ] = Tuple.Create(DataType.String, "date"),
-            [ typeof(TimeOnly) ] = Tuple.Create(DataType.String, "time")
+            [ typeof(TimeOnly) ] = Tuple.Create(DataType.String, "time"),
+#endif
+#if NET7_0_OR_GREATER
+            [ typeof(Int128) ] = Tuple.Create(DataType.Integer, "int128"),
+            [ typeof(UInt128) ] = Tuple.Create(DataType.Integer, "int128"),
 #endif
         };
     }
