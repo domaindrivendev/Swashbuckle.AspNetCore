@@ -1,16 +1,16 @@
 ﻿using System;
-using System.Reflection;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
-using System.Runtime.Loader;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.Loader;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Writers;
 using Swashbuckle.AspNetCore.Swagger;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore;
-using Microsoft.Extensions.Hosting;
-using System.Globalization;
 
 namespace Swashbuckle.AspNetCore.Cli
 {
