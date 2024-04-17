@@ -6,6 +6,8 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.ApiDescriptions;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Readers;
 using Swashbuckle.AspNetCore.Swagger;
@@ -16,7 +18,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
     public class CustomDocumentSerializerTests
     {
         [Fact]
-        public async void CustomDocumentSerializer_Writes_Custom_V3_Document()
+        public async void TestSite_Writes_Custom_V3_Document()
         {
             var testSite = new TestSite(typeof(CustomDocumentSerializer.Startup));
             var client = testSite.BuildClient();
@@ -33,7 +35,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         }
 
         [Fact]
-        public async void CustomDocumentSerializer_Writes_Custom_V2_Document()
+        public async void TestSite_Writes_Custom_V2_Document()
         {
             var testSite = new TestSite(typeof(CustomDocumentSerializer.Startup));
             var client = testSite.BuildClient();
@@ -48,5 +50,61 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             var swaggerInfo = document.RootElement.GetProperty("swagger").GetString();
             Assert.Equal("DocumentSerializerTest2.0", swaggerInfo);
         }
+
+        [Fact]
+        public async Task DocumentProvider_Writes_Custom_V3_Document()
+        {
+            var testSite = new TestSite(typeof(CustomDocumentSerializer.Startup));
+            var server = testSite.BuildServer();
+            var services = server.Host.Services;
+
+            var documentProvider = services.GetService<IDocumentProvider>();
+            using (var stream = new MemoryStream())
+            {
+                using (var writer = new StreamWriter(stream, Encoding.UTF8, bufferSize: 2048, leaveOpen: true))
+                {
+                    await documentProvider.GenerateAsync("v1", writer);
+                    await writer.FlushAsync();
+                }
+
+                stream.Position = 0L;
+
+                using var document = JsonDocument.Parse(stream);
+
+                // verify that the custom serializer wrote the swagger info
+                var swaggerInfo = document.RootElement.GetProperty("swagger").GetString();
+                Assert.Equal("DocumentSerializerTest3.0", swaggerInfo);
+            }
+        }
+
+        [Fact]
+        public async Task DocumentProvider_Writes_Custom_V2_Document()
+        {
+            var testSite = new TestSite(typeof(CustomDocumentSerializer.Startup));
+            var server = testSite.BuildServer();
+            var services = server.Host.Services;
+
+            var documentProvider = services.GetService<IDocumentProvider>();
+            var options = services.GetService<IOptions<SwaggerOptions>>();
+            options.Value.SerializeAsV2 = true;
+
+            using (var stream = new MemoryStream())
+            {
+                using (var writer = new StreamWriter(stream, Encoding.UTF8, bufferSize: 2048, leaveOpen: true))
+                {
+                    await documentProvider.GenerateAsync("v1", writer);
+                    await writer.FlushAsync();
+                }
+
+                stream.Position = 0L;
+
+                using var document = JsonDocument.Parse(stream);
+
+                // verify that the custom serializer wrote the swagger info
+                var swaggerInfo = document.RootElement.GetProperty("swagger").GetString();
+                Assert.Equal("DocumentSerializerTest2.0", swaggerInfo);
+            }
+        }
+
     }
 }
