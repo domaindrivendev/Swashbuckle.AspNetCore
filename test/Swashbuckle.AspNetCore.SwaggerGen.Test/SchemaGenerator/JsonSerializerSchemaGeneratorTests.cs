@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Dynamic;
 using System.Linq;
+using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Constraints;
-using Microsoft.OpenApi.Models;
-using Xunit;
-using Swashbuckle.AspNetCore.TestSupport;
 using Microsoft.OpenApi.Any;
-using System.ComponentModel.DataAnnotations;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.TestSupport;
+using Xunit;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -375,6 +375,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var referenceSchema = Subject().GenerateSchema(typeof(TypeWithRequiredPropertyAndValidationAttribute), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal(1, schema.Properties["RequiredProperty"].MinLength);
             Assert.False(schema.Properties["RequiredProperty"].Nullable);
             Assert.Equal(new[] { "RequiredProperty" }, schema.Required.ToArray());
         }
