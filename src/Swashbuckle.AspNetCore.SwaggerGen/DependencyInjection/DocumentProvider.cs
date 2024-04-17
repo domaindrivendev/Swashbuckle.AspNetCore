@@ -40,7 +40,7 @@ namespace Microsoft.Extensions.ApiDescriptions
             _swaggerDocumentSerializer = serviceProvider?.GetService<ISwaggerDocumentSerializer>();
         }
 
-        // TODO: Remove in next major release, kept for binairy compatibility
+        // TODO: Remove in next major release, kept for binary compatibility
         public DocumentProvider(
             IOptions<SwaggerGeneratorOptions> generatorOptions,
             IOptions<SwaggerOptions> options,
