@@ -883,7 +883,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         private static SchemaGenerator Subject(
             Action<SchemaGeneratorOptions> configureGenerator = null,
-            Action<JsonSerializerOptions> configureSerializer = null)
+            Action<JsonSerializerOptions> configureSerializer = null,
+            Action<MvcOptions> configureMvcOptions = null)
         {
             var generatorOptions = new SchemaGeneratorOptions();
             configureGenerator?.Invoke(generatorOptions);
@@ -891,7 +892,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var serializerOptions = new JsonSerializerOptions();
             configureSerializer?.Invoke(serializerOptions);
 
-            return new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions), Options.Create<MvcOptions>(new MvcOptions()));
+            var mvcOptions = new MvcOptions();
+            configureMvcOptions?.Invoke(mvcOptions);
+
+            return new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions), Options.Create<MvcOptions>(mvcOptions));
         }
     }
 }
