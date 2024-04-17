@@ -21,13 +21,57 @@ namespace Swashbuckle.AspNetCore.Cli.Test
             {
                 var args = new string[] { "tofile", "--output", $"{dir}/swagger.json", "--serializeasv2", Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"), "v1" };
                 Assert.Equal(0, Program.Main(args));
-
+                var x = File.ReadAllText(Path.Combine(dir.FullName, "swagger.json"));
                 using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(dir.FullName, "swagger.json")));
 
                 // verify one of the endpoints
                 var paths = document.RootElement.GetProperty("paths");
                 var productsPath = paths.GetProperty("/products");
                 Assert.True(productsPath.TryGetProperty("post", out _));
+            }
+            finally
+            {
+                dir.Delete(true);
+            }
+        }
+
+
+        [Fact]
+        public void CustomDocumentSerializer_Writes_Custom_V2_Document()
+        {
+            var dir = Directory.CreateDirectory(Path.Join(Path.GetTempPath(), Path.GetRandomFileName()));
+            try
+            {
+                var args = new string[] { "tofile", "--output", $"{dir}/swagger.json", "--serializeasv2", Path.Combine(Directory.GetCurrentDirectory(), "CustomDocumentSerializer.dll"), "v1" };
+                Assert.Equal(0, Program.Main(args));
+
+                using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(dir.FullName, "swagger.json")));
+
+                // verify that the custom serializer wrote the swagger info
+                var swaggerInfo = document.RootElement.GetProperty("swagger").GetString();
+                Assert.Equal("DocumentSerializerTest2.0", swaggerInfo);
+            }
+            finally
+            {
+                dir.Delete(true);
+            }
+        }
+
+
+        [Fact]
+        public void CustomDocumentSerializer_Writes_Custom_V3_Document()
+        {
+            var dir = Directory.CreateDirectory(Path.Join(Path.GetTempPath(), Path.GetRandomFileName()));
+            try
+            {
+                var args = new string[] { "tofile", "--output", $"{dir}/swagger.json", Path.Combine(Directory.GetCurrentDirectory(), "CustomDocumentSerializer.dll"), "v1" };
+                Assert.Equal(0, Program.Main(args));
+
+                using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(dir.FullName, "swagger.json")));
+
+                // verify that the custom serializer wrote the swagger info
+                var swaggerInfo = document.RootElement.GetProperty("swagger").GetString();
+                Assert.Equal("DocumentSerializerTest3.0", swaggerInfo);
             }
             finally
             {

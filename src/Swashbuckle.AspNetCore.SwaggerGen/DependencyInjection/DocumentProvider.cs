@@ -31,13 +31,6 @@ namespace Microsoft.Extensions.ApiDescriptions
         public DocumentProvider(
             IOptions<SwaggerGeneratorOptions> generatorOptions,
             IOptions<SwaggerOptions> options,
-            IAsyncSwaggerProvider swaggerProvider)
-            : this(generatorOptions, options, swaggerProvider, null)
-        { }
-
-        public DocumentProvider(
-            IOptions<SwaggerGeneratorOptions> generatorOptions,
-            IOptions<SwaggerOptions> options,
             IAsyncSwaggerProvider swaggerProvider,
             IServiceProvider serviceProvider)
         {
@@ -46,6 +39,14 @@ namespace Microsoft.Extensions.ApiDescriptions
             _swaggerProvider = swaggerProvider;
             _swaggerDocumentSerializer = serviceProvider?.GetService<ISwaggerDocumentSerializer>();
         }
+
+        [Obsolete("Remove in next major release, kept for binairy compatibility")]
+        public DocumentProvider(
+            IOptions<SwaggerGeneratorOptions> generatorOptions,
+            IOptions<SwaggerOptions> options,
+            IAsyncSwaggerProvider swaggerProvider)
+            : this(generatorOptions, options, swaggerProvider, null)
+        { }
 
         public IEnumerable<string> GetDocumentNames()
         {

@@ -10,6 +10,7 @@ using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore;
 using Microsoft.Extensions.Hosting;
+using System.Globalization;
 
 namespace Swashbuckle.AspNetCore.Cli
 {
@@ -98,7 +99,8 @@ namespace Swashbuckle.AspNetCore.Cli
                         ? Path.Combine(Directory.GetCurrentDirectory(), arg1)
                         : null;
 
-                    using (var streamWriter = (outputPath != null ? File.CreateText(outputPath) : Console.Out))
+                    using (Stream stream = (outputPath != null ? File.OpenWrite(outputPath) : Console.OpenStandardOutput()))
+                    using (var streamWriter = new FormattingStreamWriter(stream, CultureInfo.InvariantCulture))
                     {
                         IOpenApiWriter writer;
                         if (namedArgs.ContainsKey("--yaml"))

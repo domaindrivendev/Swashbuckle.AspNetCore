@@ -27,12 +27,6 @@ namespace Swashbuckle.AspNetCore.Swagger
 
         public SwaggerMiddleware(
             RequestDelegate next,
-            SwaggerOptions options) : this(next, options, null)
-        {
-        }
-
-        public SwaggerMiddleware(
-            RequestDelegate next,
             SwaggerOptions options,
             IServiceProvider serviceProvider)
         {
@@ -40,6 +34,13 @@ namespace Swashbuckle.AspNetCore.Swagger
             _options = options ?? new SwaggerOptions();
             _requestMatcher = new TemplateMatcher(TemplateParser.Parse(_options.RouteTemplate), new RouteValueDictionary());
             _swaggerDocumentSerializer = serviceProvider?.GetService<ISwaggerDocumentSerializer>();
+        }
+
+        [Obsolete("Remove in next major release, kept for binairy compatibility")]
+        public SwaggerMiddleware(
+            RequestDelegate next,
+            SwaggerOptions options) : this(next, options, null)
+        {
         }
 
 #if !NETSTANDARD
