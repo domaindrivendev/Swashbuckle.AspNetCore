@@ -21,7 +21,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private readonly ISerializerDataContractResolver _serializerDataContractResolver;
         private readonly IOptions<MvcOptions> _mvcOptions;
 
-        public SchemaGenerator(SchemaGeneratorOptions generatorOptions, ISerializerDataContractResolver serializerDataContractResolver, IOptions<MvcOptions> mvcOptions)
+        public SchemaGenerator(SchemaGeneratorOptions generatorOptions, ISerializerDataContractResolver serializerDataContractResolver, IOptions<MvcOptions> mvcOptions = null)
         {
             _generatorOptions = generatorOptions;
             _serializerDataContractResolver = serializerDataContractResolver;
@@ -398,7 +398,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var markNonNullableTypeAsRequired = (dataProperty.MemberInfo?.IsNonNullableReferenceType() ?? false)
                     && _generatorOptions.NonNullableReferenceTypesAsRequired
 #if !NETSTANDARD2_0
-                    && !_mvcOptions.Value.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes
+                    && (!_mvcOptions?.Value.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes ?? true)
 #endif
                     ;
 

@@ -680,6 +680,27 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GenerateSchema_Works_IfNotProvidingMvcOptions()
+        {
+            var generatorOptions = new SchemaGeneratorOptions
+            {
+                NonNullableReferenceTypesAsRequired = true
+            };
+
+            var serializerOptions = new JsonSerializerOptions();
+
+            var subject = new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions));
+            var schemaRepository = new SchemaRepository();
+
+            subject.GenerateSchema(typeof(TypeWithNullableContext), schemaRepository);
+
+            var subType = nameof(TypeWithNullableContext.SubTypeWithOneNonNullableContent);
+            var propertyName = nameof(TypeWithNullableContext.NonNullableString);
+            var propertyIsRequired = schemaRepository.Schemas[subType].Required.Contains(propertyName);
+            Assert.True(propertyIsRequired);
+        }
+
+        [Fact]
         public void GenerateSchema_HandlesTypesWithNestedTypes()
         {
             var schemaRepository = new SchemaRepository();
