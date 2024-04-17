@@ -21,7 +21,6 @@ namespace Swashbuckle.AspNetCore.Cli.Test
             {
                 var args = new string[] { "tofile", "--output", $"{dir}/swagger.json", "--serializeasv2", Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"), "v1" };
                 Assert.Equal(0, Program.Main(args));
-                var x = File.ReadAllText(Path.Combine(dir.FullName, "swagger.json"));
                 using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(dir.FullName, "swagger.json")));
 
                 // verify one of the endpoints
