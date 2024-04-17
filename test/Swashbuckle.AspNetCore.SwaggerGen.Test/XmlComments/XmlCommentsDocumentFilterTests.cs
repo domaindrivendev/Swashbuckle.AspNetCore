@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.IO;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
 using Xunit;
 using Swashbuckle.AspNetCore.TestSupport;
@@ -138,7 +140,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void Ensure_IncludeXmlComments_Adds_Filter_To_Options()
         {
             var services = new ServiceCollection();
-            services.AddSingleton<Microsoft.AspNetCore.Hosting.IWebHostEnvironment, DummyHostEnvironment>();
+            services.AddSingleton<IWebHostEnvironment, DummyHostEnvironment>();
             services.AddSwaggerGen(c =>
             {
                 c.IncludeXmlComments(
@@ -146,19 +148,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     includeControllerXmlComments: true);
             });
 
-            var provider = services.BuildServiceProvider();
+            using var provider = services.BuildServiceProvider();
             var options = provider.GetService<Microsoft.Extensions.Options.IOptions<SwaggerGeneratorOptions>>().Value;
 
             Assert.NotNull(options);
-            Assert.Contains(options.DocumentFilters, x => x is XmlCommentsDocumentFilter filter);
+            Assert.Contains(options.DocumentFilters, x => x is XmlCommentsDocumentFilter);
         }
 
-        class DummyHostEnvironment : Microsoft.AspNetCore.Hosting.IWebHostEnvironment
+        private sealed class DummyHostEnvironment : IWebHostEnvironment
         {
             public string WebRootPath { get; set; }
-            public Microsoft.Extensions.FileProviders.IFileProvider WebRootFileProvider { get; set; }
+            public IFileProvider WebRootFileProvider { get; set; }
             public string ApplicationName { get; set; }
-            public Microsoft.Extensions.FileProviders.IFileProvider ContentRootFileProvider { get; set; }
+            public IFileProvider ContentRootFileProvider { get; set; }
             public string ContentRootPath { get; set; }
             public string EnvironmentName { get; set; }
         }
