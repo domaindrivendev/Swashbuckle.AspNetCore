@@ -310,7 +310,7 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
-        /// Enable detection of non nullable reference types to set Required flag accordingly on schema properties
+        /// Enable detection of non nullable reference types to mark the member as required in schema properties
         /// </summary>
         /// <param name="swaggerGenOptions"></param>
         public static void NonNullableReferenceTypesAsRequired(this SwaggerGenOptions swaggerGenOptions)
