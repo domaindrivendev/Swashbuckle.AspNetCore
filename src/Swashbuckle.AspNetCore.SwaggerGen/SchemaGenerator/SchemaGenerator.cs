@@ -396,7 +396,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     : GenerateSchemaForType(dataProperty.MemberType, schemaRepository);
 
                 var markNonNullableTypeAsRequired = (dataProperty.MemberInfo?.IsNonNullableReferenceType() ?? false)
-                    && _generatorOptions.MarkNonNullableReferenceTypesAsRequired
+                    && _generatorOptions.NonNullableReferenceTypesAsRequired
 #if !NETSTANDARD2_0
                     && !_mvcOptions.Value.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes
 #endif

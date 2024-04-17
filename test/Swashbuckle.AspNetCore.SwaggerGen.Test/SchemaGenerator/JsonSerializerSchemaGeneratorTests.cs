@@ -648,7 +648,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             bool required)
         {
             var subject = Subject(
-                configureGenerator: c => c.MarkNonNullableReferenceTypesAsRequired = true
+                configureGenerator: c => c.NonNullableReferenceTypesAsRequired = true
             );
             var schemaRepository = new SchemaRepository();
 
