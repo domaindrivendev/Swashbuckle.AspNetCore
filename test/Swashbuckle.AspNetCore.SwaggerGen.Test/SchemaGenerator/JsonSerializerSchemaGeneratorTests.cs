@@ -15,6 +15,7 @@ using Microsoft.OpenApi.Models;
 using Xunit;
 using Swashbuckle.AspNetCore.TestSupport;
 using Microsoft.OpenApi.Any;
+using System.ComponentModel.DataAnnotations;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -344,6 +345,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
 #if NET7_0_OR_GREATER
+        public class TypeWithRequiredProperty
+        {
+            public required string RequiredProperty { get; set; }
+        }
+
+        public class TypeWithRequiredPropertyAndValidationAttribute
+        {
+            [MinLength(1)]
+            public required string RequiredProperty { get; set; }
+        }
+
         [Fact]
         public void GenerateSchema_SetsRequired_IfPropertyHasRequiredKeyword()
         {
@@ -352,6 +364,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var referenceSchema = Subject().GenerateSchema(typeof(TypeWithRequiredProperty), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal(new[] { "RequiredProperty" }, schema.Required.ToArray());
+        }
+
+        [Fact]
+        public void GenerateSchema_SetsRequired_IfPropertyHasRequiredKeywordAndValidationAttribute()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(typeof(TypeWithRequiredPropertyAndValidationAttribute), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.False(schema.Properties["RequiredProperty"].Nullable);
             Assert.Equal(new[] { "RequiredProperty" }, schema.Required.ToArray());
         }
 #endif
