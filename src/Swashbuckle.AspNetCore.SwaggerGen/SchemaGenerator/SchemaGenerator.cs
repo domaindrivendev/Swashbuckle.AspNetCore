@@ -403,8 +403,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     ;
 
                 if ((dataProperty.IsRequired
-                     || customAttributes.OfType<RequiredAttribute>().Any()
-                     || markNonNullableTypeAsRequired)
+                     || markNonNullableTypeAsRequired
+                     || customAttributes.OfType<RequiredAttribute>().Any())
                     && !schema.Required.Contains(dataProperty.Name))
                 {
                     schema.Required.Add(dataProperty.Name);
