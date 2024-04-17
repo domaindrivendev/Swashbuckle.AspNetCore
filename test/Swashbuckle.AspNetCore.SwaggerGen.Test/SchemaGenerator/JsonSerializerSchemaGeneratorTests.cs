@@ -658,6 +658,27 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(required, propertyIsRequired);
         }
 
+        [Theory]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContext.NonNullableString), false)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContext.NonNullableString), true)]
+        public void GenerateSchema_SupportsOption_SuppressImplicitRequiredAttributeForNonNullableReferenceTypes(
+            Type declaringType,
+            string subType,
+            string propertyName,
+            bool suppress)
+        {
+            var subject = Subject(
+                configureGenerator: c => c.NonNullableReferenceTypesAsRequired = true,
+                configureMvcOptions: o => o.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = suppress
+            );
+            var schemaRepository = new SchemaRepository();
+
+            subject.GenerateSchema(declaringType, schemaRepository);
+
+            var propertyIsRequired = schemaRepository.Schemas[subType].Required.Contains(propertyName);
+            Assert.Equal(!suppress, propertyIsRequired);
+        }
+
         [Fact]
         public void GenerateSchema_HandlesTypesWithNestedTypes()
         {
