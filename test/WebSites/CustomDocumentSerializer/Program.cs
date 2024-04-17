@@ -1,10 +1,5 @@
-using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Swagger;
-using CustomDocumentSerializer;
-
 namespace CustomDocumentSerializer
 {
-
     public class Program
     {
         public static void Main(string[] args)

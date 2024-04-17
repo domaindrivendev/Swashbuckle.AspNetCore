@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.OpenApi;
+﻿using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Writers;
 using Swashbuckle.AspNetCore.Swagger;
@@ -20,7 +19,7 @@ public class DocumentSerializerTest : ISwaggerDocumentSerializer
                 writer.WriteProperty(OpenApiConstants.Swagger, "DocumentSerializerTest3.0");
                 break;
             default:
-                throw new ArgumentOutOfRangeException(nameof(specVersion), $"Unexpected value '{specVersion}'");
+                throw new NotImplementedException();
         }
         writer.WriteEndObject();
     }

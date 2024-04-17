@@ -1,15 +1,10 @@
-﻿using System;
-using System.Globalization;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.ApiDescriptions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Readers;
 using Swashbuckle.AspNetCore.Swagger;
 using Xunit;
 
@@ -105,6 +100,5 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
                 Assert.Equal("DocumentSerializerTest2.0", swaggerInfo);
             }
         }
-
     }
 }

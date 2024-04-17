@@ -36,7 +36,7 @@ namespace Swashbuckle.AspNetCore.Swagger
             _swaggerDocumentSerializer = serviceProvider?.GetService<ISwaggerDocumentSerializer>();
         }
 
-        [Obsolete("Remove in next major release, kept for binairy compatibility")]
+        // TODO: Remove in next major release, kept for binairy compatibility
         public SwaggerMiddleware(
             RequestDelegate next,
             SwaggerOptions options) : this(next, options, null)
