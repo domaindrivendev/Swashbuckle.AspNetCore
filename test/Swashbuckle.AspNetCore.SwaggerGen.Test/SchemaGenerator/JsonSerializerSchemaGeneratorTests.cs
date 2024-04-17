@@ -641,7 +641,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Theory]
         [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.SubTypeWithOneNullableContent), nameof(TypeWithNullableContext.NullableString), false)]
         [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContext.NonNullableString), true)]
-        public void GenerateSchema_SupportsOption_MarkNonNullableReferenceTypesAsRequired_RequiredAttribute_Compiler_Optimizations_Situations(
+        public void GenerateSchema_SupportsOption_NonNullableReferenceTypesAsRequired_RequiredAttribute_Compiler_Optimizations_Situations(
             Type declaringType,
             string subType,
             string propertyName,
