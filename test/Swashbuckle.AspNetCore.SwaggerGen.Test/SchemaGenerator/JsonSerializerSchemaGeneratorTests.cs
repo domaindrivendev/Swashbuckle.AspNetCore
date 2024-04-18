@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.TestSupport;
+using Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures;
 using Xunit;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
@@ -822,6 +823,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.True(schema.AdditionalPropertiesAllowed);
             Assert.NotNull(schema.AdditionalProperties);
             Assert.Null(schema.AdditionalProperties.Type);
+        }
+
+        [Fact]
+        public void GenerateSchema_HonorsAttribute_SwaggerIgnore()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(typeof(SwaggerIngoreAnnotatedType), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+
+            Assert.True(schema.Properties.ContainsKey(nameof(SwaggerIngoreAnnotatedType.NotIgnoredString)));
+            Assert.False(schema.Properties.ContainsKey(nameof(SwaggerIngoreAnnotatedType.IgnoredString)));
+            Assert.False(schema.Properties.ContainsKey(nameof(SwaggerIngoreAnnotatedType.IgnoredExtensionData)));
+            Assert.False(schema.AdditionalPropertiesAllowed);
+            Assert.Null(schema.AdditionalProperties);
         }
 
         [Theory]

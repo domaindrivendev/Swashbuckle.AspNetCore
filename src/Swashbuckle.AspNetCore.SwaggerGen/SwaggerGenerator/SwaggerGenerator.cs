@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Swagger;
 #if NET7_0_OR_GREATER
 using Microsoft.AspNetCore.Http.Metadata;
@@ -86,6 +87,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var applicableApiDescriptions = _apiDescriptionsProvider.ApiDescriptionGroups.Items
                 .SelectMany(group => group.Items)
                 .Where(apiDesc => !(_options.IgnoreObsoleteActions && apiDesc.CustomAttributes().OfType<ObsoleteAttribute>().Any()))
+                .Where(apiDesc => !apiDesc.CustomAttributes().OfType<SwaggerIgnoreAttribute>().Any())
                 .Where(apiDesc => _options.DocInclusionPredicate(documentName, apiDesc));
 
             var schemaRepository = new SchemaRepository(documentName);
@@ -319,6 +321,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 {
                     return (!apiParam.IsFromBody() && !apiParam.IsFromForm())
                         && (!apiParam.CustomAttributes().OfType<BindNeverAttribute>().Any())
+                        && (!apiParam.CustomAttributes().OfType<SwaggerIgnoreAttribute>().Any())
                         && (apiParam.ModelMetadata == null || apiParam.ModelMetadata.IsBindingAllowed);
                 });
 

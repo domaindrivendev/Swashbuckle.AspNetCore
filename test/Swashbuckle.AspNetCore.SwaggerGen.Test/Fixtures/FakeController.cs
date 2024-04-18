@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -49,6 +50,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void ActionWithIntParameterWithRequiredAttribute([Required]int param)
         { }
 
+        public void ActionWithIntParameterWithSwaggerIgnoreAttribute([SwaggerIgnore] int param)
+        { }
+
         public void ActionWithObjectParameter(XmlAnnotatedType param)
         { }
 
@@ -76,5 +80,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             throw new NotImplementedException();
         }
+
+        [SwaggerIgnore]
+        public void ActionWithSwaggerIgnoreAttribute()
+        { }
     }
 }
