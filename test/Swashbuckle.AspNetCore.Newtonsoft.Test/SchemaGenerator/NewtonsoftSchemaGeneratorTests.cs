@@ -418,14 +418,15 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             var referenceSchema = subject.GenerateSchema(typeof(SubType1), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal("object", schema.Type);
-            Assert.Equal(new[] { "Property1" }, schema.Properties.Keys);
             Assert.NotNull(schema.AllOf);
-            var allOf = Assert.Single(schema.AllOf);
-            Assert.NotNull(allOf.Reference);
-            Assert.Equal("BaseType", allOf.Reference.Id);
+            Assert.Equal(2, schema.AllOf.Count);
+            var baseSchema = schema.AllOf[0];
+            Assert.Equal("BaseType", baseSchema.Reference.Id);
+            Assert.NotNull(baseSchema.Reference);
+            var subSchema = schema.AllOf[1];
+            Assert.Equal(new[] { "Property1" }, subSchema.Properties.Keys);
             // The base type schema
-            var baseTypeSchema = schemaRepository.Schemas[allOf.Reference.Id];
+            var baseTypeSchema = schemaRepository.Schemas[baseSchema.Reference.Id];
             Assert.Equal("object", baseTypeSchema.Type);
             Assert.Equal(new[] { "BaseProperty" }, baseTypeSchema.Properties.Keys);
         }
