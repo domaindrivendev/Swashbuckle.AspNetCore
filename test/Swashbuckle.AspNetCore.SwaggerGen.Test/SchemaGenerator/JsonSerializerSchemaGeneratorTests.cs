@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Dynamic;
 using System.Linq;
+using System.Net;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Constraints;
-using Microsoft.OpenApi.Models;
-using Xunit;
-using Swashbuckle.AspNetCore.TestSupport;
 using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.TestSupport;
+using Xunit;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -342,6 +343,43 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.False(schema.Properties["WriteOnlyProperty"].ReadOnly);
             Assert.True(schema.Properties["WriteOnlyProperty"].WriteOnly);
         }
+
+#if NET7_0_OR_GREATER
+        public class TypeWithRequiredProperty
+        {
+            public required string RequiredProperty { get; set; }
+        }
+
+        public class TypeWithRequiredPropertyAndValidationAttribute
+        {
+            [MinLength(1)]
+            public required string RequiredProperty { get; set; }
+        }
+
+        [Fact]
+        public void GenerateSchema_SetsRequired_IfPropertyHasRequiredKeyword()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(typeof(TypeWithRequiredProperty), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal(new[] { "RequiredProperty" }, schema.Required.ToArray());
+        }
+
+        [Fact]
+        public void GenerateSchema_SetsRequired_IfPropertyHasRequiredKeywordAndValidationAttribute()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(typeof(TypeWithRequiredPropertyAndValidationAttribute), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal(1, schema.Properties["RequiredProperty"].MinLength);
+            Assert.False(schema.Properties["RequiredProperty"].Nullable);
+            Assert.Equal(new[] { "RequiredProperty" }, schema.Required.ToArray());
+        }
+#endif
 
         [Theory]
         [InlineData(typeof(TypeWithParameterizedConstructor), nameof(TypeWithParameterizedConstructor.Id), false)]

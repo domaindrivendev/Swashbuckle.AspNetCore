@@ -15,7 +15,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private static readonly Type[] RequiredAttributeTypes = new[]
         {
             typeof(BindRequiredAttribute),
-            typeof(RequiredAttribute)
+            typeof(RequiredAttribute),
+#if NET7_0_OR_GREATER
+            typeof(System.Runtime.CompilerServices.RequiredMemberAttribute)
+#endif
         };
 
         public static bool IsRequiredParameter(this ApiParameterDescription apiParameter)
