@@ -46,7 +46,7 @@ namespace Swashbuckle.AspNetCore.TestSupport
                         ControllerParameterDescriptor;
 #endif
 
-                    if (parameterDescriptorWithParameterInfo != null)
+                    if (parameterDescriptorWithParameterInfo != null && parameter.ModelMetadata == null)
                     {
                         parameter.ModelMetadata = ModelMetadataFactory.CreateForParameter(parameterDescriptorWithParameterInfo.ParameterInfo);
                     }

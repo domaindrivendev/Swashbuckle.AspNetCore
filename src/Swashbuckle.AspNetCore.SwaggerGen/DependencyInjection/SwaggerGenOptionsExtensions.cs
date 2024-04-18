@@ -436,7 +436,7 @@ namespace Microsoft.Extensions.DependencyInjection
             swaggerGenOptions.SchemaFilter<XmlCommentsSchemaFilter>(xmlDoc);
 
             if (includeControllerXmlComments)
-                swaggerGenOptions.DocumentFilter<XmlCommentsDocumentFilter>(xmlDoc);
+                swaggerGenOptions.DocumentFilter<XmlCommentsDocumentFilter>(xmlDoc, swaggerGenOptions.SwaggerGeneratorOptions);
         }
 
         /// <summary>

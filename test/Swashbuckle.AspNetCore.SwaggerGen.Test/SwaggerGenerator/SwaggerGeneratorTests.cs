@@ -564,6 +564,38 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(expectedRequired, parameter.Required);
         }
 
+#if NET7_0_OR_GREATER
+        [Fact]
+        public void GetSwagger_SetsParameterRequired_IfActionParameterHasRequiredMember()
+        {
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create(
+                        methodInfo: typeof(FakeController).GetMethod(nameof(FakeController.ActionWithRequiredMember)),
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions: new []
+                        {
+                            new ApiParameterDescription
+                            {
+                                Name = "param",
+                                Source = BindingSource.Query,
+                                ModelMetadata = ModelMetadataFactory.CreateForProperty(typeof(FakeController.TypeWithRequiredProperty), "RequiredProperty")
+                            }
+                        })
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            var operation = document.Paths["/resource"].Operations[OperationType.Post];
+            var parameter = Assert.Single(operation.Parameters);
+            Assert.True(parameter.Required);
+        }
+#endif
+
         [Theory]
         [InlineData(false)]
         [InlineData(true)]

@@ -56,6 +56,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void ActionWithObjectParameter(XmlAnnotatedType param)
         { }
 
+#if NET7_0_OR_GREATER
+        public class TypeWithRequiredProperty
+        {
+            public required string RequiredProperty { get; set; }
+        }
+
+        public void ActionWithRequiredMember(TypeWithRequiredProperty param)
+        { }
+#endif
+
         [Consumes("application/someMediaType")]
         public void ActionWithConsumesAttribute(string param)
         { }
