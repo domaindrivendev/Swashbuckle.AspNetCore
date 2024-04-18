@@ -4,6 +4,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+#if !NETSTANDARD
+using Microsoft.AspNetCore.Routing.Patterns;
+#endif
 using Microsoft.AspNetCore.Routing.Template;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Writers;
@@ -15,6 +18,9 @@ namespace Swashbuckle.AspNetCore.Swagger
         private readonly RequestDelegate _next;
         private readonly SwaggerOptions _options;
         private readonly TemplateMatcher _requestMatcher;
+#if !NETSTANDARD
+        private readonly TemplateBinder _templateBinder;
+#endif
 
         public SwaggerMiddleware(
             RequestDelegate next,
@@ -25,9 +31,19 @@ namespace Swashbuckle.AspNetCore.Swagger
             _requestMatcher = new TemplateMatcher(TemplateParser.Parse(_options.RouteTemplate), new RouteValueDictionary());
         }
 
+#if !NETSTANDARD
+        public SwaggerMiddleware(
+            RequestDelegate next,
+            SwaggerOptions options,
+            TemplateBinderFactory templateBinderFactory) : this(next, options)
+        {
+            _templateBinder = templateBinderFactory.Create(RoutePatternFactory.Parse(_options.RouteTemplate));
+        }
+#endif
+
         public async Task Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
         {
-            if (!RequestingSwaggerDocument(httpContext.Request, out string documentName))
+            if (!RequestingSwaggerDocument(httpContext.Request, out string documentName, out string extension))
             {
                 await _next(httpContext);
                 return;
@@ -57,7 +73,7 @@ namespace Swashbuckle.AspNetCore.Swagger
                     filter(swagger, httpContext.Request);
                 }
 
-                if (Path.GetExtension(httpContext.Request.Path.Value) == ".yaml")
+                if (extension is ".yaml" or ".yml")
                 {
                     await RespondWithSwaggerYaml(httpContext.Response, swagger);
                 }
@@ -72,16 +88,37 @@ namespace Swashbuckle.AspNetCore.Swagger
             }
         }
 
-        private bool RequestingSwaggerDocument(HttpRequest request, out string documentName)
+        private bool RequestingSwaggerDocument(HttpRequest request, out string documentName, out string extension)
         {
             documentName = null;
+            extension = null;
             if (request.Method != "GET") return false;
 
             var routeValues = new RouteValueDictionary();
-            if (!_requestMatcher.TryMatch(request.Path, routeValues) || !routeValues.ContainsKey("documentName")) return false;
+            if (_requestMatcher.TryMatch(request.Path, routeValues))
+            {
+#if !NETSTANDARD
+                if (_templateBinder != null && !_templateBinder.TryProcessConstraints(request.HttpContext, routeValues, out _, out _))
+                {
+                    return false;
+                }
+#endif
+                if (routeValues.TryGetValue("documentName", out var documentNameObject) && documentNameObject is string documentNameString)
+                {
+                    documentName = documentNameString;
+                    if (routeValues.TryGetValue("extension", out var extensionObject))
+                    {
+                        extension = $".{extensionObject}";
+                    }
+                    else
+                    {
+                        extension = Path.GetExtension(request.Path.Value);
+                    }
+                    return true;
+                }
+            }
 
-            documentName = routeValues["documentName"].ToString();
-            return true;
+            return false;
         }
 
         private void RespondWithNotFound(HttpResponse response)
