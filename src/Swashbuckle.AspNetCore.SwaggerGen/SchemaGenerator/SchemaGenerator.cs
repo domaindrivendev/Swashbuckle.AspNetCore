@@ -21,7 +21,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private readonly ISerializerDataContractResolver _serializerDataContractResolver;
         private readonly IOptions<MvcOptions> _mvcOptions;
 
-        public SchemaGenerator(SchemaGeneratorOptions generatorOptions, ISerializerDataContractResolver serializerDataContractResolver, IOptions<MvcOptions> mvcOptions = null)
+        public SchemaGenerator(SchemaGeneratorOptions generatorOptions, ISerializerDataContractResolver serializerDataContractResolver)
+            : this(generatorOptions, serializerDataContractResolver, null)
+        {
+        }
+
+        public SchemaGenerator(SchemaGeneratorOptions generatorOptions, ISerializerDataContractResolver serializerDataContractResolver, IOptions<MvcOptions> mvcOptions)
         {
             _generatorOptions = generatorOptions;
             _serializerDataContractResolver = serializerDataContractResolver;
