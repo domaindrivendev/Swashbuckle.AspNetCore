@@ -362,6 +362,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 AdditionalPropertiesAllowed = false
             };
 
+            OpenApiSchema root = schema;
             var applicableDataProperties = dataContract.ObjectProperties;
 
             if (_generatorOptions.UseAllOfForInheritance || _generatorOptions.UseOneOfForPolymorphism)
@@ -370,7 +371,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 {
                     var baseTypeSchema = GenerateConcreteSchema(baseTypeDataContract, schemaRepository);
 
-                    schema.AllOf.Add(baseTypeSchema);
+                    if (_generatorOptions.UseAllOfForInheritance)
+                    {
+                        root = new OpenApiSchema();
+                        root.AllOf.Add(baseTypeSchema);
+                    }
+                    else
+                    {
+                        schema.AllOf.Add(baseTypeSchema);
+                    }
 
                     applicableDataProperties = applicableDataProperties
                         .Where(dataProperty => dataProperty.MemberInfo.DeclaringType == dataContract.UnderlyingType);
@@ -423,7 +432,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 schema.AdditionalProperties = GenerateSchema(dataContract.ObjectExtensionDataType, schemaRepository);
             }
 
-            return schema;
+            if (root != schema)
+            {
+                root.AllOf.Add(schema);
+            }
+
+            return root;
         }
 
         private bool IsKnownSubType(DataContract dataContract, out DataContract baseTypeDataContract)
