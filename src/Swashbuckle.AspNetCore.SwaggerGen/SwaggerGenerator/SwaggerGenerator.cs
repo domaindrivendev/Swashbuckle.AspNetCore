@@ -86,9 +86,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var applicableApiDescriptions = _apiDescriptionsProvider.ApiDescriptionGroups.Items
                 .SelectMany(group => group.Items)
-                .Where(apiDesc => !(_options.IgnoreObsoleteActions && apiDesc.CustomAttributes().OfType<ObsoleteAttribute>().Any()))
-                .Where(apiDesc => !apiDesc.CustomAttributes().OfType<SwaggerIgnoreAttribute>().Any())
-                .Where(apiDesc => _options.DocInclusionPredicate(documentName, apiDesc));
+                .Where(apiDesc =>
+                {
+                    var attributes = apiDesc.CustomAttributes().ToList();
+                    return !(_options.IgnoreObsoleteActions && attributes.OfType<ObsoleteAttribute>().Any()) &&
+                           !attributes.OfType<SwaggerIgnoreAttribute>().Any() &&
+                           _options.DocInclusionPredicate(documentName, apiDesc);
+                });
 
             var schemaRepository = new SchemaRepository(documentName);
 
