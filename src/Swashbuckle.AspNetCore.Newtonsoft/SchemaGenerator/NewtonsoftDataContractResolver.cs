@@ -33,8 +33,8 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
             if (jsonContract is JsonPrimitiveContract && !jsonContract.UnderlyingType.IsEnum)
             {
-                var primitiveTypeAndFormat = PrimitiveTypesAndFormats.ContainsKey(jsonContract.UnderlyingType)
-                    ? PrimitiveTypesAndFormats[jsonContract.UnderlyingType]
+                var primitiveTypeAndFormat = PrimitiveTypesAndFormats.TryGetValue(jsonContract.UnderlyingType, out var format)
+                    ? format
                     : Tuple.Create(DataType.String, (string)null);
 
                 return DataContract.ForPrimitive(

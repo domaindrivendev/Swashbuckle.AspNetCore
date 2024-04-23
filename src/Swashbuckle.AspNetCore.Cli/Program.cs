@@ -89,12 +89,12 @@ namespace Swashbuckle.AspNetCore.Cli
                     var swaggerProvider = serviceProvider.GetRequiredService<ISwaggerProvider>();
                     var swagger = swaggerProvider.GetSwagger(
                         namedArgs["swaggerdoc"],
-                        namedArgs.ContainsKey("--host") ? namedArgs["--host"] : null,
-                        namedArgs.ContainsKey("--basepath") ? namedArgs["--basepath"] : null);
+                        namedArgs.TryGetValue("--host", out var arg) ? arg : null,
+                        namedArgs.TryGetValue("--basepath", out var namedArg) ? namedArg : null);
 
                     // 4) Serialize to specified output location or stdout
-                    var outputPath = namedArgs.ContainsKey("--output")
-                        ? Path.Combine(Directory.GetCurrentDirectory(), namedArgs["--output"])
+                    var outputPath = namedArgs.TryGetValue("--output", out var arg1)
+                        ? Path.Combine(Directory.GetCurrentDirectory(), arg1)
                         : null;
 
                     using (var streamWriter = (outputPath != null ? File.CreateText(outputPath) : Console.Out))
