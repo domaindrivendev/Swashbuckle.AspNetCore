@@ -45,6 +45,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public static Type[] GetInheritanceChain(this Type type)
         {
+            if (type.IsInterface) { return type.GetInterfaces(); }
+
             var inheritanceChain = new List<Type>();
 
             var current = type;
