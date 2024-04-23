@@ -237,6 +237,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GenerateSchema_KeepMostDerivedType_IfTypeIsAnInterface()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(typeof(INewBaseInterface), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal("integer", schema.Properties["BaseProperty"].Type);
+        }
+
+        [Fact]
         public void GenerateSchema_ExcludesIndexerProperties_IfComplexTypeIsIndexed()
         {
             var schemaRepository = new SchemaRepository();
