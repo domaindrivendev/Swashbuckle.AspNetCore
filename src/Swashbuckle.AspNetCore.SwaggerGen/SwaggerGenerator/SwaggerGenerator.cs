@@ -198,9 +198,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 {
                     // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2600 and
                     // https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2740.
-                    throw new SwaggerGeneratorException(string.Format(
-                        "The \"{0}\" HTTP method is not supported.",
-                        httpMethod));
+                    throw new SwaggerGeneratorException($"The \"{httpMethod}\" HTTP method is not supported.");
                 }
 
                 operations.Add(operationType, GenerateOperation(apiDescription, schemaRepository));
