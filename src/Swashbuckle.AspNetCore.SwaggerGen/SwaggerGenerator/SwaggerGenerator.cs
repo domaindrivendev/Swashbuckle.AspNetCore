@@ -406,7 +406,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 .FirstOrDefault(paramDesc => paramDesc.IsFromBody());
 
             var formParameters = apiDescription.ParameterDescriptions
-                .Where(paramDesc => paramDesc.IsFromForm());
+                .Where(paramDesc => paramDesc.IsFromForm())
+                .ToList();
 
             if (bodyParameter != null)
             {
@@ -418,7 +419,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     schemaGenerator: _schemaGenerator,
                     schemaRepository: schemaRepository);
             }
-            else if (formParameters.Any())
+            else if (formParameters.Count > 0)
             {
                 requestBody = GenerateRequestBodyFromFormParameters(apiDescription, schemaRepository, formParameters);
 
