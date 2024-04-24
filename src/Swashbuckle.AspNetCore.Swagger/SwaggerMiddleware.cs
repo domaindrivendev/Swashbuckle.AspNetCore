@@ -28,30 +28,31 @@ namespace Swashbuckle.AspNetCore.Swagger
         public SwaggerMiddleware(
             RequestDelegate next,
             SwaggerOptions options,
+#if !NETSTANDARD
+            TemplateBinderFactory templateBinderFactory,
+#endif
             IServiceProvider serviceProvider)
         {
             _next = next;
             _options = options ?? new SwaggerOptions();
             _requestMatcher = new TemplateMatcher(TemplateParser.Parse(_options.RouteTemplate), new RouteValueDictionary());
             _swaggerDocumentSerializer = serviceProvider?.GetService<ISwaggerDocumentSerializer>();
+#if !NETSTANDARD
+            _templateBinder = templateBinderFactory.Create(RoutePatternFactory.Parse(_options.RouteTemplate));
+#endif
         }
 
         // TODO: Remove in next major release, kept for binary compatibility
         public SwaggerMiddleware(
             RequestDelegate next,
-            SwaggerOptions options) : this(next, options, null)
-        {
-        }
-
-#if !NETSTANDARD
-        public SwaggerMiddleware(
-            RequestDelegate next,
-            SwaggerOptions options,
-            TemplateBinderFactory templateBinderFactory) : this(next, options)
-        {
-            _templateBinder = templateBinderFactory.Create(RoutePatternFactory.Parse(_options.RouteTemplate));
-        }
+            SwaggerOptions options)
+#if NETSTANDARD
+            : this(next, options, null)
+#else
+            : this(next, options, null, null)
 #endif
+        {
+        }
 
         public async Task Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
         {
