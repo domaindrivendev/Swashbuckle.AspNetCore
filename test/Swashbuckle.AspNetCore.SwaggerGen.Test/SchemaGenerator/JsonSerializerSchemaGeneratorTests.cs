@@ -779,7 +779,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         )
         {
             var subject = Subject(
-                    configureSerializer: c => { c.DictionaryKeyPolicy = camelCaseText ? JsonNamingPolicy.CamelCase : null; }
+                    configureSerializer: c => c.DictionaryKeyPolicy = camelCaseText ? JsonNamingPolicy.CamelCase : null
                 );
             var schemaRepository = new SchemaRepository();
 
