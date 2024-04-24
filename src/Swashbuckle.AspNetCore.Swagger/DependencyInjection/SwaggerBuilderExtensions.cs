@@ -21,9 +21,9 @@ namespace Microsoft.AspNetCore.Builder
         public static IApplicationBuilder UseSwagger(this IApplicationBuilder app, SwaggerOptions options)
         {
 #if (!NETSTANDARD2_0)
-            return app.UseMiddleware<SwaggerMiddleware>(options, app.ApplicationServices.GetRequiredService<TemplateBinderFactory>());
+            return app.UseMiddleware<SwaggerMiddleware>(options, app.ApplicationServices.GetRequiredService<TemplateBinderFactory>(), app.ApplicationServices.GetService<ISwaggerDocumentSerializer>());
 #else
-            return app.UseMiddleware<SwaggerMiddleware>(options);
+            return app.UseMiddleware<SwaggerMiddleware>(options, app.ApplicationServices.GetService<ISwaggerDocumentSerializer>());
 #endif
         }
 
