@@ -202,7 +202,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 var apiDescription = (group.Count() > 1) ? _options.ConflictingActionsResolver(group) : group.Single();
 
-                operations.Add(OperationTypeMap[httpMethod.ToUpper()], GenerateOperation(apiDescription, schemaRepository));
+                var normalizedMethod = httpMethod.ToUpperInvariant();
+                if (!OperationTypeMap.TryGetValue(normalizedMethod, out var operationType))
+                {
+                    // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2600 and
+                    // https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2740.
+                    throw new SwaggerGeneratorException($"The \"{httpMethod}\" HTTP method is not supported.");
+                }
+
+                operations.Add(operationType, GenerateOperation(apiDescription, schemaRepository));
             };
 
             return operations;
