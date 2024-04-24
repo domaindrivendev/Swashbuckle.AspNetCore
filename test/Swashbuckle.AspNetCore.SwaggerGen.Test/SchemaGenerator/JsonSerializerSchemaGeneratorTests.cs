@@ -773,17 +773,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void GenerateSchema_HonorsEnumDictionaryKeys_StringEnumConverter()
         {
-            var subjectWithJsonStringEnumConverter = Subject(
-                configureSerializer: c => { c.Converters.Add(new JsonStringEnumConverter()); }
-            );
             var subject = Subject();
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchemaWithJsonStringEnumConverter = subjectWithJsonStringEnumConverter.GenerateSchema(typeof(Dictionary<IntEnum, string>), schemaRepository);
             var referenceSchema = subject.GenerateSchema(typeof(Dictionary<IntEnum, string>), schemaRepository);
 
-            Assert.Equal(typeof(IntEnum).GetEnumValues().Length, referenceSchemaWithJsonStringEnumConverter.Properties.Count);
-            Assert.Empty(referenceSchema.Properties);
+            Assert.Equal(typeof(IntEnum).GetEnumValues().Length, referenceSchema.Properties.Count);
         }
 
         [Fact]
