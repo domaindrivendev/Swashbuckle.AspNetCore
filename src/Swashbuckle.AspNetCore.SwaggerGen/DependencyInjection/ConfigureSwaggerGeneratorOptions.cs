@@ -63,12 +63,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             target.SortKeySelector = source.SortKeySelector;
             target.InferSecuritySchemes = source.InferSecuritySchemes;
             target.DescribeAllParametersInCamelCase = source.DescribeAllParametersInCamelCase;
+            target.SchemaComparer = source.SchemaComparer;
             target.Servers = new List<OpenApiServer>(source.Servers);
             target.SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>(source.SecuritySchemes);
             target.SecurityRequirements = new List<OpenApiSecurityRequirement>(source.SecurityRequirements);
             target.ParameterFilters = new List<IParameterFilter>(source.ParameterFilters);
             target.OperationFilters = new List<IOperationFilter>(source.OperationFilters);
             target.DocumentFilters = new List<IDocumentFilter>(source.DocumentFilters);
+            target.InferSecuritySchemes = source.InferSecuritySchemes;
+            target.SecuritySchemesSelector = source.SecuritySchemesSelector;
         }
 
         private TFilter CreateFilter<TFilter>(FilterDescriptor filterDescriptor)
