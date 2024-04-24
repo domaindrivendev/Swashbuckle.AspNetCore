@@ -38,7 +38,7 @@ namespace Swashbuckle.AspNetCore.Swagger
             _requestMatcher = new TemplateMatcher(TemplateParser.Parse(_options.RouteTemplate), new RouteValueDictionary());
             _swaggerDocumentSerializer = serviceProvider?.GetService<ISwaggerDocumentSerializer>();
 #if !NETSTANDARD
-            _templateBinder = templateBinderFactory.Create(RoutePatternFactory.Parse(_options.RouteTemplate));
+            _templateBinder = templateBinderFactory?.Create(RoutePatternFactory.Parse(_options.RouteTemplate));
 #endif
         }
 
