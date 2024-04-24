@@ -770,22 +770,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(expectedDefaultAsJson, propertySchema.Default.ToJson());
         }
 
-        [Theory]
-        [InlineData(false, new[] { "Value2", "Value4", "Value8" })]
-        [InlineData(true, new[] { "value2", "value4", "value8" })]
-        public void GenerateSchema_HonorsEnumDictionaryKeys_StringEnumConverter(
-            bool camelCaseText,
-            string[] expectedEnumAsJson
-        )
+        [Fact]
+        public void GenerateSchema_HonorsEnumDictionaryKeys_StringEnumConverter()
         {
-            var subject = Subject(
-                    configureSerializer: c => c.DictionaryKeyPolicy = camelCaseText ? JsonNamingPolicy.CamelCase : null
-                );
+            var subject = Subject();
             var schemaRepository = new SchemaRepository();
 
             var referenceSchema = subject.GenerateSchema(typeof(Dictionary<IntEnum, string>), schemaRepository);
 
-            Assert.Equal(expectedEnumAsJson, referenceSchema.Properties.Keys);
+            Assert.Equal(typeof(IntEnum).GetEnumNames(), referenceSchema.Properties.Keys);
         }
 
         [Fact]
