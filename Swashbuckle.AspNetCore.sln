@@ -1,4 +1,3 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31717.71
@@ -91,7 +90,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Swashbuckle.AspNetCore.Test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinimalApp", "test\WebSites\MinimalApp\MinimalApp.csproj", "{3D0126CB-5439-483C-B2D5-4B4BE111D15C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TopLevelSwaggerDoc", "test\WebSites\TopLevelSwaggerDoc\TopLevelSwaggerDoc.csproj", "{6EA75DA8-9B1F-468E-9425-37F01A129B0F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TopLevelSwaggerDoc", "test\WebSites\TopLevelSwaggerDoc\TopLevelSwaggerDoc.csproj", "{6EA75DA8-9B1F-468E-9425-37F01A129B0F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{3BA087DA-788C-43D6-9D8B-1EF017014A4A}"
 	ProjectSection(SolutionItems) = preProject
@@ -110,6 +109,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CustomDocumentSerializer", "test\WebSites\CustomDocumentSerializer\CustomDocumentSerializer.csproj", "{B6037A37-4A4F-438D-B18A-0C9D1408EAB2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinimalAppWithConstructorDelay", "test\WebSites\MinimalAppWithConstructorDelay\MinimalAppWithConstructorDelay.csproj", "{46B4BE7E-DCCC-4B2F-B5B1-26CA59F99198}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -253,6 +254,10 @@ Global
 		{6EA75DA8-9B1F-468E-9425-37F01A129B0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6EA75DA8-9B1F-468E-9425-37F01A129B0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6EA75DA8-9B1F-468E-9425-37F01A129B0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46B4BE7E-DCCC-4B2F-B5B1-26CA59F99198}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46B4BE7E-DCCC-4B2F-B5B1-26CA59F99198}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46B4BE7E-DCCC-4B2F-B5B1-26CA59F99198}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46B4BE7E-DCCC-4B2F-B5B1-26CA59F99198}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -295,6 +300,7 @@ Global
 		{3BA087DA-788C-43D6-9D8B-1EF017014A4A} = {FA1B4021-0A97-4F68-B966-148191F6AAA8}
 		{A0EC16BE-C520-4FCF-BB54-2D79CD255F00} = {3BA087DA-788C-43D6-9D8B-1EF017014A4A}
 		{B6037A37-4A4F-438D-B18A-0C9D1408EAB2} = {DB3F57FC-1472-4F03-B551-43394DA3C5EB}
+		{46B4BE7E-DCCC-4B2F-B5B1-26CA59F99198} = {DB3F57FC-1472-4F03-B551-43394DA3C5EB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {36FC6A67-247D-4149-8EDD-79FFD1A75F51}

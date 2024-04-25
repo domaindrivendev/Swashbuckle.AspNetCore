@@ -25,7 +25,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             // Create and add any filters that were specified through the FilterDescriptor lists
             _swaggerGenOptions.SchemaFilterDescriptors.ForEach(
-                filterDescriptor => options.SchemaFilters.Add(CreateFilter<ISchemaFilter>(filterDescriptor)));
+                filterDescriptor => options.SchemaFilters.Add(GetOrCreateFilter<ISchemaFilter>(filterDescriptor)));
         }
 
         private void DeepCopy(SchemaGeneratorOptions source, SchemaGeneratorOptions target)
@@ -44,9 +44,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             target.SchemaFilters = new List<ISchemaFilter>(source.SchemaFilters);
         }
 
-        private TFilter CreateFilter<TFilter>(FilterDescriptor filterDescriptor)
+        private TFilter GetOrCreateFilter<TFilter>(FilterDescriptor filterDescriptor)
         {
-            return (TFilter)ActivatorUtilities
+            return (TFilter)filterDescriptor.FilterInstance ?? (TFilter)ActivatorUtilities
                 .CreateInstance(_serviceProvider, filterDescriptor.Type, filterDescriptor.Arguments);
         }
     }

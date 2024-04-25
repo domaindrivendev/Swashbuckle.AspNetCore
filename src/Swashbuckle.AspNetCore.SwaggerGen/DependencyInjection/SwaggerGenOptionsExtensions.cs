@@ -398,6 +398,23 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
+        /// Extend the Swagger Generator with "filters" that can modify Operations after they're initially generated
+        /// </summary>
+        /// <typeparam name="TFilter">A type that derives from IOperationFilter</typeparam>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="filterInstance">An instance of the filter, to enable reuse.</param>
+        public static void AddOperationFilterInstance<TFilter>(
+            this SwaggerGenOptions swaggerGenOptions,
+            TFilter filterInstance)
+            where TFilter : IOperationFilter
+        {
+            swaggerGenOptions.OperationFilterDescriptors.Add(new FilterDescriptor
+            {
+                FilterInstance = filterInstance
+            });
+        }
+
+        /// <summary>
         /// Extend the Swagger Generator with "filters" that can modify SwaggerDocuments after they're initially generated
         /// </summary>
         /// <typeparam name="TFilter">A type that derives from IDocumentFilter</typeparam>
@@ -412,6 +429,23 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 Type = typeof(TFilter),
                 Arguments = arguments
+            });
+        }
+
+        /// <summary>
+        /// Extend the Swagger Generator with "filters" that can modify SwaggerDocuments after they're initially generated
+        /// </summary>
+        /// <typeparam name="TFilter">A type that derives from IDocumentFilter</typeparam>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="filterInstance">An instance of the filter, to enable reuse.</param>
+        public static void AddDocumentFilterInstance<TFilter>(
+            this SwaggerGenOptions swaggerGenOptions,
+            TFilter filterInstance)
+            where TFilter : IDocumentFilter
+        {
+            swaggerGenOptions.DocumentFilterDescriptors.Add(new FilterDescriptor
+            {
+                FilterInstance = filterInstance
             });
         }
 
