@@ -14,12 +14,6 @@ updates:
     day: wednesday
     time: "10:00"
     timezone: Europe/London
-  directory: "/src/Swashbuckle.AspNetCore.ReDoc"
-  schedule:
-    interval: weekly
-    day: wednesday
-    time: "10:00"
-    timezone: Europe/London
 - package-ecosystem: npm
   directory: "/src/Swashbuckle.AspNetCore.SwaggerUI"
   schedule:
