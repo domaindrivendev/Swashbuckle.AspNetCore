@@ -334,7 +334,7 @@ services.ConfigureSwagger(options =>
 })
 ```
 
-When the commandline tool is not used, it can also be done on the application host:
+When the command line tool is not used, it can also be done on the application host:
 
 ```csharp
 app.UseSwagger(c =>
