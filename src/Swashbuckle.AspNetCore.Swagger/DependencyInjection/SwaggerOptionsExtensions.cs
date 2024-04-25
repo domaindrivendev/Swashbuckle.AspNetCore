@@ -4,7 +4,7 @@ using Swashbuckle.AspNetCore.Swagger;
 namespace Microsoft.Extensions.DependencyInjection;
 
 /// <summary>
-/// Extensions for helping with configuring the SwaggerOptions
+/// Extensions for helping with configuring instances of <see cref="SwaggerOptions"/>.
 /// </summary>
 public static class SwaggerOptionsExtensions
 {
