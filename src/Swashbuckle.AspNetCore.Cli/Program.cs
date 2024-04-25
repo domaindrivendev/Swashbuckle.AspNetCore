@@ -5,10 +5,12 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
+using System.Threading;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Writers;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -88,7 +90,8 @@ namespace Swashbuckle.AspNetCore.Cli
 
                     // 3) Retrieve Swagger via configured provider
                     var swaggerProvider = serviceProvider.GetRequiredService<ISwaggerProvider>();
-                    var swaggerDocumentSerializer = serviceProvider.GetService<ISwaggerDocumentSerializer>();
+                    var swaggerOptions = serviceProvider.GetService<IOptions<SwaggerOptions>>();
+                    var swaggerDocumentSerializer = swaggerOptions?.Value?.CustomDocumentSerializer;
                     var swagger = swaggerProvider.GetSwagger(
                         namedArgs["swaggerdoc"],
                         namedArgs.TryGetValue("--host", out var arg) ? arg : null,

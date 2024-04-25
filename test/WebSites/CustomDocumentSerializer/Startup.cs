@@ -14,19 +14,19 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddControllers();
-        services.AddSingleton<ISwaggerDocumentSerializer, DocumentSerializerTest>();
         services.AddSwaggerGen(c =>
         {
             c.SwaggerDoc("v1", new() { Title = "CustomDocumentSerializer", Version = "v1" });
+        });
+        services.ConfigureSwagger(c =>
+        {
+            c.SetCustomDocumentSerializer<DocumentSerializerTest>();
         });
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
-        if (env.IsDevelopment())
-        {
-            app.UseSwagger();
-        }
+        app.UseSwagger();
 
         app.UseHttpsRedirection();
 

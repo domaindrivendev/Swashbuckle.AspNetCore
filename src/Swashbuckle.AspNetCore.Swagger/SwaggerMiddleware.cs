@@ -20,32 +20,28 @@ namespace Swashbuckle.AspNetCore.Swagger
         private readonly RequestDelegate _next;
         private readonly SwaggerOptions _options;
         private readonly TemplateMatcher _requestMatcher;
-        private readonly ISwaggerDocumentSerializer _swaggerDocumentSerializer;
 #if !NETSTANDARD
         private readonly TemplateBinder _templateBinder;
 #endif
 
         public SwaggerMiddleware(
             RequestDelegate next,
-            SwaggerOptions options,
-            IServiceProvider serviceProvider)
+            SwaggerOptions options)
         {
             _next = next;
             _options = options ?? new SwaggerOptions();
             _requestMatcher = new TemplateMatcher(TemplateParser.Parse(_options.RouteTemplate), new RouteValueDictionary());
-            _swaggerDocumentSerializer = serviceProvider?.GetService<ISwaggerDocumentSerializer>();
-#if !NETSTANDARD
-            _templateBinder = serviceProvider?.GetRequiredService<TemplateBinderFactory>().Create(RoutePatternFactory.Parse(_options.RouteTemplate));
-#endif
         }
 
-        // TODO: Remove in next major release, kept for binary compatibility
+#if !NETSTANDARD
         public SwaggerMiddleware(
             RequestDelegate next,
-            SwaggerOptions options)
-            : this(next, options, null)
+            SwaggerOptions options,
+            TemplateBinderFactory templateBinderFactory) : this(next, options)
         {
+            _templateBinder = templateBinderFactory.Create(RoutePatternFactory.Parse(_options.RouteTemplate));
         }
+#endif
 
         public async Task Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
         {
@@ -104,7 +100,7 @@ namespace Swashbuckle.AspNetCore.Swagger
             if (_requestMatcher.TryMatch(request.Path, routeValues))
             {
 #if !NETSTANDARD
-                if (_templateBinder?.TryProcessConstraints(request.HttpContext, routeValues, out _, out _) != true)
+                if (_templateBinder != null && !_templateBinder.TryProcessConstraints(request.HttpContext, routeValues, out _, out _))
                 {
                     return false;
                 }
@@ -142,15 +138,15 @@ namespace Swashbuckle.AspNetCore.Swagger
                 var jsonWriter = new OpenApiJsonWriter(textWriter);
                 if (_options.SerializeAsV2)
                 {
-                    if (_swaggerDocumentSerializer != null)
-                        _swaggerDocumentSerializer.SerializeDocument(swagger, jsonWriter, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0);
+                    if (_options.CustomDocumentSerializer != null)
+                        _options.CustomDocumentSerializer.SerializeDocument(swagger, jsonWriter, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0);
                     else
                         swagger.SerializeAsV2(jsonWriter);
                 }
                 else
                 {
-                    if (_swaggerDocumentSerializer != null)
-                        _swaggerDocumentSerializer.SerializeDocument(swagger, jsonWriter, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0);
+                    if (_options.CustomDocumentSerializer != null)
+                        _options.CustomDocumentSerializer.SerializeDocument(swagger, jsonWriter, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0);
                     else
                         swagger.SerializeAsV3(jsonWriter);
                 }
@@ -169,15 +165,15 @@ namespace Swashbuckle.AspNetCore.Swagger
                 var yamlWriter = new OpenApiYamlWriter(textWriter);
                 if (_options.SerializeAsV2)
                 {
-                    if (_swaggerDocumentSerializer != null)
-                        _swaggerDocumentSerializer.SerializeDocument(swagger, yamlWriter, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0);
+                    if (_options.CustomDocumentSerializer != null)
+                        _options.CustomDocumentSerializer.SerializeDocument(swagger, yamlWriter, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0);
                     else
                         swagger.SerializeAsV2(yamlWriter);
                 }
                 else
                 {
-                    if (_swaggerDocumentSerializer != null)
-                        _swaggerDocumentSerializer.SerializeDocument(swagger, yamlWriter, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0);
+                    if (_options.CustomDocumentSerializer != null)
+                        _options.CustomDocumentSerializer.SerializeDocument(swagger, yamlWriter, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0);
                     else
                         swagger.SerializeAsV3(yamlWriter);
                 }
