@@ -28,9 +28,6 @@ namespace Swashbuckle.AspNetCore.Swagger
         public SwaggerMiddleware(
             RequestDelegate next,
             SwaggerOptions options,
-#if !NETSTANDARD
-            TemplateBinderFactory templateBinderFactory,
-#endif
             IServiceProvider serviceProvider)
         {
             _next = next;
@@ -38,7 +35,7 @@ namespace Swashbuckle.AspNetCore.Swagger
             _requestMatcher = new TemplateMatcher(TemplateParser.Parse(_options.RouteTemplate), new RouteValueDictionary());
             _swaggerDocumentSerializer = serviceProvider?.GetService<ISwaggerDocumentSerializer>();
 #if !NETSTANDARD
-            _templateBinder = templateBinderFactory?.Create(RoutePatternFactory.Parse(_options.RouteTemplate));
+            _templateBinder = serviceProvider?.GetRequiredService<TemplateBinderFactory>().Create(RoutePatternFactory.Parse(_options.RouteTemplate));
 #endif
         }
 
@@ -46,11 +43,7 @@ namespace Swashbuckle.AspNetCore.Swagger
         public SwaggerMiddleware(
             RequestDelegate next,
             SwaggerOptions options)
-#if NETSTANDARD
             : this(next, options, null)
-#else
-            : this(next, options, null, null)
-#endif
         {
         }
 
@@ -111,7 +104,7 @@ namespace Swashbuckle.AspNetCore.Swagger
             if (_requestMatcher.TryMatch(request.Path, routeValues))
             {
 #if !NETSTANDARD
-                if (_templateBinder != null && !_templateBinder.TryProcessConstraints(request.HttpContext, routeValues, out _, out _))
+                if (_templateBinder?.TryProcessConstraints(request.HttpContext, routeValues, out _, out _) != true)
                 {
                     return false;
                 }

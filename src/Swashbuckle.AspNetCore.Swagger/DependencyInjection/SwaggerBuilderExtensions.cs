@@ -20,11 +20,7 @@ namespace Microsoft.AspNetCore.Builder
         /// </summary>
         public static IApplicationBuilder UseSwagger(this IApplicationBuilder app, SwaggerOptions options)
         {
-#if (!NETSTANDARD2_0)
-            return app.UseMiddleware<SwaggerMiddleware>(options, app.ApplicationServices.GetRequiredService<TemplateBinderFactory>(), app.ApplicationServices);
-#else
             return app.UseMiddleware<SwaggerMiddleware>(options, app.ApplicationServices);
-#endif
         }
 
         /// <summary>
