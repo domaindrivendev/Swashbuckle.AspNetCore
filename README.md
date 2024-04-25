@@ -324,7 +324,8 @@ _NOTE: In previous versions of the docs, you may have seen this expressed as a r
 By default, Swagger will serialize the OpenAPI document using the Serialize methods on the OpenAPI document object. If a customized serialization is desired, 
 it is possible to create a custom document serializer that implements the `ISwaggerDocumentSerializer` interface. This can be set on the `SwaggerOptions` in the service collection using `ConfigureSwagger()`:
 
-_NOTE: If you plan on using the commandline tool to generate OpenAPI specification files, this must be done on the service collection using ConfigureSwagger()._
+> [!NOTE]
+> If you plan on using the command line tool to generate OpenAPI specification files, this must be done on the service collection using `ConfigureSwagger()`.
 
 ```csharp
 services.ConfigureSwagger(c =>
