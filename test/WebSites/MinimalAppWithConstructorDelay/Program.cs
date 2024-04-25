@@ -1,44 +1,38 @@
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
+
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+var documentFilter = new DocumentFilter();
+var operationFilter = new OperationFilter();
+for (int i = 0; i < 1; i++)
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    var x = i;
+    builder.Services.AddSwaggerGen(c =>
+    {
+        c.SwaggerDoc($"title-{x}", new OpenApiInfo { Title = $"SMARTR ({i})", Version = "1.0" });
+        c.AddDocumentFilterInstance(documentFilter);
+        c.AddOperationFilterInstance(operationFilter);
+    });
 }
 
+var app = builder.Build();
+app.UseSwagger();
+app.UseSwaggerUI();
 app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
-
+app.MapGet("/weatherforecast", () => 0).WithName("GetWeatherForecast").WithOpenApi();
 app.Run();
 
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+public class DocumentFilter : IDocumentFilter
 {
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    static int count;
+    public DocumentFilter() { Thread.Sleep(20); Console.WriteLine("DocumentFilter " + count++); }
+    public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context) { }
+}
+public class OperationFilter : IOperationFilter
+{
+    static int count;
+    public OperationFilter() { Thread.Sleep(20); Console.WriteLine("OperationFilter " + count++); }
+    public void Apply(OpenApiOperation operation, OperationFilterContext context) { }
 }
