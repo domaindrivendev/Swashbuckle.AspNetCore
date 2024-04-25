@@ -3,6 +3,9 @@ using Swashbuckle.AspNetCore.Swagger;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
+/// <summary>
+/// Extensions for helping with configuring the SwaggerOptions
+/// </summary>
 public static class SwaggerOptionsExtensions
 {
     /// <summary>

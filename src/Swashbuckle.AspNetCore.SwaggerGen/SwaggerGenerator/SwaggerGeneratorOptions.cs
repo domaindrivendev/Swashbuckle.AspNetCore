@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http.Metadata;
 #endif
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Authentication;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen

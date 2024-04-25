@@ -35,10 +35,7 @@ public class Startup
         {
             endpoints.MapControllers();
             endpoints.MapSwagger("swagger/{documentName}/swagger.json");
-            endpoints.MapSwagger("swagger/{documentName}/swaggerv2.json", c =>
-            {
-                c.SerializeAsV2 = true;
-            });
+            endpoints.MapSwagger("swagger/{documentName}/swaggerv2.json", c => c.SerializeAsV2 = true);
         });
     }
 }
