@@ -337,9 +337,9 @@ services.ConfigureSwagger(options =>
 When the command line tool is not used, it can also be done on the application host:
 
 ```csharp
-app.UseSwagger(c =>
+app.UseSwagger(options =>
 {
-    c.SetCustomDocumentSerializer<CustomDocumentSerializer>();
+    options.SetCustomDocumentSerializer<CustomDocumentSerializer>();
 })
 ```
 
