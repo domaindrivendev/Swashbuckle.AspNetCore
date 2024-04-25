@@ -6,11 +6,11 @@ namespace Microsoft.Extensions.DependencyInjection;
 public static class SwaggerOptionsExtensions
 {
     /// <summary>
-    /// Sets a custom swagger document serializer.
+    /// Sets a custom Swagger document serializer to use.
     /// </summary>
-    /// <remarks>To work for the CLI tool, this needs to be performed during ConfigureServices.</remarks>
-    /// <param name="swaggerOptions"></param>
-    /// <param name="constructorParameters">parameters to pass into the constructor of the custom swagger document serializer.</param>
+    /// <remarks>For the CLI tool to be able to use this, this needs to be configured for use in the service collection of your application.</remarks>
+    /// <param name="swaggerOptions">The options to configure for serializer for.</param>
+    /// <param name="constructorParameters">Theparameters to pass into the constructor of the custom Swagger document serializer implementation.</param>
     public static void SetCustomDocumentSerializer<TDocumentSerializer>(
         this SwaggerOptions swaggerOptions,
         params object[] constructorParameters)
