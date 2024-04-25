@@ -198,6 +198,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Modify Swagger with Request Context](#modify-swagger-with-request-context)
     * [Serialize Swagger JSON in the 2.0 format](#serialize-swagger-in-the-20-format)
     * [Working with Virtual Directories and Reverse Proxies](#working-with-virtual-directories-and-reverse-proxies)
+    * [Customizing how the OpenAPI document is serialized](#customizing-how-the-openapi-document-is-serialized)
 
 * [Swashbuckle.AspNetCore.SwaggerGen](#swashbuckleaspnetcoreswaggergen)
 
@@ -317,6 +318,29 @@ app.UseSwaggerUI(c =>
 ```
 
 _NOTE: In previous versions of the docs, you may have seen this expressed as a root-relative link (e.g. `/swagger/v1/swagger.json`). This won't work if your app is hosted on an IIS virtual directory or behind a proxy that trims the request path before forwarding. If you switch to the *page-relative* syntax shown above, it should work in all cases._
+
+### Customizing how the OpenAPI document is serialized ###
+
+By default, Swagger will serialize the OpenAPI document using the Serialize methods on the OpenAPI document object. If a customized serialization is desired, 
+it is possible to create a custom document serializer that implements the `ISwaggerDocumentSerializer` interface. This can be set on the SwaggerOptions in the service collection using ConfigureSwagger():
+
+_NOTE: If you plan on using the commandline tool to generate OpenAPI specification files, this must be done on the service collection using ConfigureSwagger()._
+
+```csharp
+services.ConfigureSwagger(c =>
+{
+    c.SetCustomDocumentSerializer<CustomDocumentSerializer>();
+})
+```
+
+When the commandline tool is not used, it can also be done on the application host:
+
+```csharp
+app.UseSwagger(c =>
+{
+    c.SetCustomDocumentSerializer<CustomDocumentSerializer>();
+})
+```
 
 ## Swashbuckle.AspNetCore.SwaggerGen ##
 
