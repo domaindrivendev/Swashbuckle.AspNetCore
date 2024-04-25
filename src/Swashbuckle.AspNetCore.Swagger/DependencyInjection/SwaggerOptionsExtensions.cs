@@ -12,7 +12,7 @@ public static class SwaggerOptionsExtensions
     /// Sets a custom Swagger document serializer to use.
     /// </summary>
     /// <remarks>For the CLI tool to be able to use this, this needs to be configured for use in the service collection of your application.</remarks>
-    /// <typeparam name="TDocumentSerializer">The custom Swagger document serializer implementation.</typeparam>
+    /// <typeparam name="TDocumentSerializer">The type of the custom Swagger document serializer implementation.</typeparam>
     /// <param name="swaggerOptions">The options to configure the serializer for.</param>
     /// <param name="constructorParameters">The parameters to pass into the constructor of the custom Swagger document serializer implementation.</param>
     public static void SetCustomDocumentSerializer<TDocumentSerializer>(
