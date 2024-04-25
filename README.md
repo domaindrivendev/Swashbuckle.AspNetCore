@@ -328,9 +328,9 @@ it is possible to create a custom document serializer that implements the `ISwag
 > If you plan on using the command line tool to generate OpenAPI specification files, this must be done on the service collection using `ConfigureSwagger()`.
 
 ```csharp
-services.ConfigureSwagger(c =>
+services.ConfigureSwagger(options =>
 {
-    c.SetCustomDocumentSerializer<CustomDocumentSerializer>();
+    option.SetCustomDocumentSerializer<CustomDocumentSerializer>();
 })
 ```
 
