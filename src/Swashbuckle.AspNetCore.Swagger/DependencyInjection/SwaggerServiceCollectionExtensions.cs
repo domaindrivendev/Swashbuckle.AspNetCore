@@ -9,10 +9,10 @@ namespace Microsoft.Extensions.DependencyInjection;
 public static class SwaggerServiceCollectionExtensions
 {
     /// <summary>
-    /// Configure swagger options in the service collection
+    /// Configure swagger options in the service collection.
     /// </summary>
-    /// <param name="services"></param>
-    /// <param name="setupAction"></param>
+    /// <param name="services">The service collection to set the swagger options on.</param>
+    /// <param name="setupAction">The setup action for swagger.</param>
     public static void ConfigureSwagger(
         this IServiceCollection services,
         Action<SwaggerOptions> setupAction)
