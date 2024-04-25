@@ -31,45 +31,39 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             string swaggerRequestUri)
         {
             var testSite = new TestSite(startupType);
-            using (var client = testSite.BuildClient())
-            {
+            using var client = testSite.BuildClient();
 
-                var swaggerResponse = await client.GetAsync(swaggerRequestUri);
+            using var swaggerResponse = await client.GetAsync(swaggerRequestUri);
 
-                swaggerResponse.EnsureSuccessStatusCode();
-                var contentStream = await swaggerResponse.Content.ReadAsStreamAsync();
-                new OpenApiStreamReader().Read(contentStream, out OpenApiDiagnostic diagnostic);
-                Assert.Empty(diagnostic.Errors);
-            }
+            swaggerResponse.EnsureSuccessStatusCode();
+            using var contentStream = await swaggerResponse.Content.ReadAsStreamAsync();
+            new OpenApiStreamReader().Read(contentStream, out OpenApiDiagnostic diagnostic);
+            Assert.Empty(diagnostic.Errors);
         }
 
         [Fact]
         public async Task SwaggerEndpoint_ReturnsNotFound_IfUnknownSwaggerDocument()
         {
             var testSite = new TestSite(typeof(Basic.Startup));
-            using (var client = testSite.BuildClient())
-            {
+            using var client = testSite.BuildClient();
 
-                var swaggerResponse = await client.GetAsync("/swagger/v2/swagger.json");
+            using var swaggerResponse = await client.GetAsync("/swagger/v2/swagger.json");
 
-                Assert.Equal(System.Net.HttpStatusCode.NotFound, swaggerResponse.StatusCode);
-            }
+            Assert.Equal(System.Net.HttpStatusCode.NotFound, swaggerResponse.StatusCode);
         }
 
         [Fact]
         public async Task SwaggerEndpoint_DoesNotReturnByteOrderMark()
         {
             var testSite = new TestSite(typeof(Basic.Startup));
-            using (var client = testSite.BuildClient())
-            {
+            using var client = testSite.BuildClient();
 
-                var swaggerResponse = await client.GetAsync("/swagger/v1/swagger.json");
+            using var swaggerResponse = await client.GetAsync("/swagger/v1/swagger.json");
 
-                swaggerResponse.EnsureSuccessStatusCode();
-                var contentBytes = await swaggerResponse.Content.ReadAsByteArrayAsync();
-                var bomBytes = Encoding.UTF8.GetPreamble();
-                Assert.NotEqual(bomBytes, contentBytes.Take(bomBytes.Length));
-            }
+            swaggerResponse.EnsureSuccessStatusCode();
+            var contentBytes = await swaggerResponse.Content.ReadAsByteArrayAsync();
+            var bomBytes = Encoding.UTF8.GetPreamble();
+            Assert.NotEqual(bomBytes, contentBytes.Take(bomBytes.Length));
         }
 
         [Theory]
@@ -78,27 +72,25 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         public async Task SwaggerEndpoint_ReturnsCorrectPriceExample_ForDifferentCultures(string culture)
         {
             var testSite = new TestSite(typeof(Basic.Startup));
-            using (var client = testSite.BuildClient())
+            using var client = testSite.BuildClient();
+
+            using var swaggerResponse = await client.GetAsync($"/swagger/v1/swagger.json?culture={culture}");
+
+            swaggerResponse.EnsureSuccessStatusCode();
+            using var contentStream = await swaggerResponse.Content.ReadAsStreamAsync();
+            var currentCulture = CultureInfo.CurrentCulture;
+            CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+            try
             {
-
-                var swaggerResponse = await client.GetAsync($"/swagger/v1/swagger.json?culture={culture}");
-
-                swaggerResponse.EnsureSuccessStatusCode();
-                var contentStream = await swaggerResponse.Content.ReadAsStreamAsync();
-                var currentCulture = CultureInfo.CurrentCulture;
-                CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
-                try
-                {
-                    var openApiDocument = new OpenApiStreamReader().Read(contentStream, out OpenApiDiagnostic diagnostic);
-                    var example = openApiDocument.Components.Schemas["Product"].Example as OpenApiObject;
-                    var price = (example["price"] as OpenApiDouble);
-                    Assert.NotNull(price);
-                    Assert.Equal(14.37, price.Value);
-                }
-                finally
-                {
-                    CultureInfo.CurrentCulture = currentCulture;
-                }
+                var openApiDocument = new OpenApiStreamReader().Read(contentStream, out OpenApiDiagnostic diagnostic);
+                var example = openApiDocument.Components.Schemas["Product"].Example as OpenApiObject;
+                var price = (example["price"] as OpenApiDouble);
+                Assert.NotNull(price);
+                Assert.Equal(14.37, price.Value);
+            }
+            finally
+            {
+                CultureInfo.CurrentCulture = currentCulture;
             }
         }
 
@@ -110,17 +102,15 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             string expectedVersionProperty,
             string expectedVersionValue)
         {
-            using (var client = new TestSite(typeof(Basic.Startup)).BuildClient())
-            {
+            using var client = new TestSite(typeof(Basic.Startup)).BuildClient();
 
-                var response = await client.GetAsync(swaggerUrl);
+            using var response = await client.GetAsync(swaggerUrl);
 
-                response.EnsureSuccessStatusCode();
-                var contentStream = await response.Content.ReadAsStreamAsync();
+            response.EnsureSuccessStatusCode();
+            using var contentStream = await response.Content.ReadAsStreamAsync();
 
-                var json = await JsonSerializer.DeserializeAsync<JsonElement>(contentStream);
-                Assert.Equal(expectedVersionValue, json.GetProperty(expectedVersionProperty).GetString());
-            }
+            var json = await JsonSerializer.DeserializeAsync<JsonElement>(contentStream);
+            Assert.Equal(expectedVersionValue, json.GetProperty(expectedVersionProperty).GetString());
         }
     }
 }
