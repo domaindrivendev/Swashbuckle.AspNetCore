@@ -14,14 +14,13 @@ updates:
     day: wednesday
     time: "10:00"
     timezone: Europe/London
-# TODO Enable npm updates
-#- package-ecosystem: npm
-#  directory: "/src/Swashbuckle.AspNetCore.SwaggerUI"
-#  schedule:
-#    interval: weekly
-#    day: wednesday
-#    time: "10:00"
-#    timezone: Europe/London
+- package-ecosystem: npm
+  directory: "/src/Swashbuckle.AspNetCore.SwaggerUI"
+  schedule:
+    interval: weekly
+    day: wednesday
+    time: "10:00"
+    timezone: Europe/London
 - package-ecosystem: nuget
   directory: "/"
   groups:
