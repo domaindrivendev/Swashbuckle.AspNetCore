@@ -22,7 +22,7 @@ public static class SwaggerOptionsExtensions
     {
         if (swaggerOptions == null)
         {
-            return;
+            throw new ArgumentNullException(nameof(swaggerOptions));
         }
         swaggerOptions.CustomDocumentSerializer = (TDocumentSerializer)Activator.CreateInstance(typeof(TDocumentSerializer), constructorParameters);
     }
