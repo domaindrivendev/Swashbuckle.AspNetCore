@@ -31,12 +31,12 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             string swaggerRequestUri)
         {
             var testSite = new TestSite(startupType);
-            var client = testSite.BuildClient();
+            using var client = testSite.BuildClient();
 
-            var swaggerResponse = await client.GetAsync(swaggerRequestUri);
+            using var swaggerResponse = await client.GetAsync(swaggerRequestUri);
 
             swaggerResponse.EnsureSuccessStatusCode();
-            var contentStream = await swaggerResponse.Content.ReadAsStreamAsync();
+            using var contentStream = await swaggerResponse.Content.ReadAsStreamAsync();
             new OpenApiStreamReader().Read(contentStream, out OpenApiDiagnostic diagnostic);
             Assert.Empty(diagnostic.Errors);
         }
@@ -45,9 +45,9 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         public async Task SwaggerEndpoint_ReturnsNotFound_IfUnknownSwaggerDocument()
         {
             var testSite = new TestSite(typeof(Basic.Startup));
-            var client = testSite.BuildClient();
+            using var client = testSite.BuildClient();
 
-            var swaggerResponse = await client.GetAsync("/swagger/v2/swagger.json");
+            using var swaggerResponse = await client.GetAsync("/swagger/v2/swagger.json");
 
             Assert.Equal(System.Net.HttpStatusCode.NotFound, swaggerResponse.StatusCode);
         }
@@ -56,9 +56,9 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         public async Task SwaggerEndpoint_DoesNotReturnByteOrderMark()
         {
             var testSite = new TestSite(typeof(Basic.Startup));
-            var client = testSite.BuildClient();
+            using var client = testSite.BuildClient();
 
-            var swaggerResponse = await client.GetAsync("/swagger/v1/swagger.json");
+            using var swaggerResponse = await client.GetAsync("/swagger/v1/swagger.json");
 
             swaggerResponse.EnsureSuccessStatusCode();
             var contentBytes = await swaggerResponse.Content.ReadAsByteArrayAsync();
@@ -72,12 +72,12 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         public async Task SwaggerEndpoint_ReturnsCorrectPriceExample_ForDifferentCultures(string culture)
         {
             var testSite = new TestSite(typeof(Basic.Startup));
-            var client = testSite.BuildClient();
+            using var client = testSite.BuildClient();
 
-            var swaggerResponse = await client.GetAsync($"/swagger/v1/swagger.json?culture={culture}");
+            using var swaggerResponse = await client.GetAsync($"/swagger/v1/swagger.json?culture={culture}");
 
             swaggerResponse.EnsureSuccessStatusCode();
-            var contentStream = await swaggerResponse.Content.ReadAsStreamAsync();
+            using var contentStream = await swaggerResponse.Content.ReadAsStreamAsync();
             var currentCulture = CultureInfo.CurrentCulture;
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
             try
@@ -102,12 +102,12 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             string expectedVersionProperty,
             string expectedVersionValue)
         {
-            var client = new TestSite(typeof(Basic.Startup)).BuildClient();
+            using var client = new TestSite(typeof(Basic.Startup)).BuildClient();
 
-            var response = await client.GetAsync(swaggerUrl);
+            using var response = await client.GetAsync(swaggerUrl);
 
             response.EnsureSuccessStatusCode();
-            var contentStream = await response.Content.ReadAsStreamAsync();
+            using var contentStream = await response.Content.ReadAsStreamAsync();
 
             var json = await JsonSerializer.DeserializeAsync<JsonElement>(contentStream);
             Assert.Equal(expectedVersionValue, json.GetProperty(expectedVersionProperty).GetString());
