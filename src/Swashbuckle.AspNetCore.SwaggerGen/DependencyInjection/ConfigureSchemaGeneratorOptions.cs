@@ -47,7 +47,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private TFilter GetOrCreateFilter<TFilter>(FilterDescriptor filterDescriptor)
         {
             return (TFilter)(filterDescriptor.FilterInstance
-                ?? ActivatorUtilities .CreateInstance(_serviceProvider, filterDescriptor.Type, filterDescriptor.Arguments));
+                ?? ActivatorUtilities.CreateInstance(_serviceProvider, filterDescriptor.Type, filterDescriptor.Arguments));
         }
     }
 }
