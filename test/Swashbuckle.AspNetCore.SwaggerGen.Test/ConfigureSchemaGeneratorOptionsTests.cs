@@ -43,7 +43,6 @@ public static class ConfigureSchemaGeneratorOptionsTests
         Assert.Same(testSchemaFilter, schemaGeneratorOptions.SchemaFilters.Last());
     }
 
-
     [Fact]
     public static void AddingSchemaFilterTypes_WhenConfiguringOptions_DifferentInstancesAreAdded()
     {

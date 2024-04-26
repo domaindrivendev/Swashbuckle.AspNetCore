@@ -46,7 +46,6 @@ public static class ConfigureSwaggerGeneratorOptionsTests
         Assert.Same(testParameterFilter, swaggerGeneratorOptions.ParameterFilters.Last());
     }
 
-
     [Fact]
     public static void AddingParameterFilterTypes_WhenConfiguringOptions_DifferentInstancesAreAdded()
     {
@@ -68,7 +67,6 @@ public static class ConfigureSwaggerGeneratorOptionsTests
         Assert.Equal(2, swaggerGeneratorOptions.ParameterFilters.Count);
         Assert.NotSame(swaggerGeneratorOptions.ParameterFilters.First(), swaggerGeneratorOptions.ParameterFilters.Last());
     }
-
 
     [Fact]
     public static void AddingRequestBodyFilterInstances_WhenConfiguringOptions_SameInstanceIsAdded()
@@ -95,7 +93,6 @@ public static class ConfigureSwaggerGeneratorOptionsTests
         Assert.Same(testRequestBodyFilter, swaggerGeneratorOptions.RequestBodyFilters.Last());
     }
 
-
     [Fact]
     public static void AddingRequestBodyFilterTypes_WhenConfiguringOptions_DifferentInstancesAreAdded()
     {
@@ -117,7 +114,6 @@ public static class ConfigureSwaggerGeneratorOptionsTests
         Assert.Equal(2, swaggerGeneratorOptions.RequestBodyFilters.Count);
         Assert.NotSame(swaggerGeneratorOptions.RequestBodyFilters.First(), swaggerGeneratorOptions.RequestBodyFilters.Last());
     }
-
 
     [Fact]
     public static void AddingOperationFilterInstances_WhenConfiguringOptions_SameInstanceIsAdded()
@@ -144,7 +140,6 @@ public static class ConfigureSwaggerGeneratorOptionsTests
         Assert.Same(testOperationFilter, swaggerGeneratorOptions.OperationFilters.Last());
     }
 
-
     [Fact]
     public static void AddingOperationFilterTypes_WhenConfiguringOptions_DifferentInstancesAreAdded()
     {
@@ -166,7 +161,6 @@ public static class ConfigureSwaggerGeneratorOptionsTests
         Assert.Equal(2, swaggerGeneratorOptions.OperationFilters.Count);
         Assert.NotSame(swaggerGeneratorOptions.OperationFilters.First(), swaggerGeneratorOptions.OperationFilters.Last());
     }
-
 
     [Fact]
     public static void AddingDocumentFilterInstances_WhenConfiguringOptions_SameInstanceIsAdded()
@@ -192,7 +186,6 @@ public static class ConfigureSwaggerGeneratorOptionsTests
         Assert.Same(testDocumentFilter, swaggerGeneratorOptions.DocumentFilters.First());
         Assert.Same(testDocumentFilter, swaggerGeneratorOptions.DocumentFilters.Last());
     }
-
 
     [Fact]
     public static void AddingDocumentFilterTypes_WhenConfiguringOptions_DifferentInstancesAreAdded()

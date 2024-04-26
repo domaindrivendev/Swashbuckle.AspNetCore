@@ -5,7 +5,7 @@
     <NoWarn>1701;1702;1591</NoWarn>
     <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
     <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.SwaggerGen.Test.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\..\src\Swashbuckle.AspNetCore.Swagger\Swashbuckle.AspNetCore.Swagger.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>
