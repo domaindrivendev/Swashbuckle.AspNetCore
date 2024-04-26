@@ -328,7 +328,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// Extend the Swagger Generator with "filters" that can modify Schemas after they're initially generated
         /// </summary>
-        /// <typeparam name="TFilter">A type that derives from ISchemaFilter</typeparam>
+        /// <typeparam name="TFilter">A type that derives from <see cref="ISchemaFilter"/></typeparam>
         /// <param name="swaggerGenOptions"></param>
         /// <param name="arguments">Optionally inject parameters through filter constructors</param>
         public static void SchemaFilter<TFilter>(
@@ -346,15 +346,15 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// Extend the Swagger Generator with "filters" that can modify Schemas after they're initially generated
         /// </summary>
-        /// <typeparam name="TFilter">A type that derives from IDocumentFilter</typeparam>
+        /// <typeparam name="TFilter">A type that derives from <see cref="ISchemaFilter"/></typeparam>
         /// <param name="swaggerGenOptions"></param>
         /// <param name="filterInstance">An instance of the filter, to enable reuse.</param>
         public static void AddSchemaFilterInstance<TFilter>(
             this SwaggerGenOptions swaggerGenOptions,
             TFilter filterInstance)
-            where TFilter : IDocumentFilter
+            where TFilter : ISchemaFilter
         {
-            swaggerGenOptions.DocumentFilterDescriptors.Add(new FilterDescriptor
+            swaggerGenOptions.SchemaFilterDescriptors.Add(new FilterDescriptor
             {
                 FilterInstance = filterInstance
             });
@@ -363,7 +363,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// Extend the Swagger Generator with "filters" that can modify Parameters after they're initially generated
         /// </summary>
-        /// <typeparam name="TFilter">A type that derives from IParameterFilter</typeparam>
+        /// <typeparam name="TFilter">A type that derives from <see cref="IParameterFilter"/></typeparam>
         /// <param name="swaggerGenOptions"></param>
         /// <param name="arguments">Optionally inject parameters through filter constructors</param>
         public static void ParameterFilter<TFilter>(
@@ -378,12 +378,27 @@ namespace Microsoft.Extensions.DependencyInjection
             });
         }
 
-        xxxxxx
+        /// <summary>
+        /// Extend the Swagger Generator with "filters" that can modify Parameters after they're initially generated
+        /// </summary>
+        /// <typeparam name="TFilter">A type that derives from <see cref="IParameterFilter"/></typeparam>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="filterInstance">An instance of the filter, to enable reuse.</param>
+        public static void AddParameterFilterInstance<TFilter>(
+            this SwaggerGenOptions swaggerGenOptions,
+            TFilter filterInstance)
+            where TFilter : IParameterFilter
+        {
+            swaggerGenOptions.ParameterFilterDescriptors.Add(new FilterDescriptor
+            {
+                FilterInstance = filterInstance
+            });
+        }
 
         /// <summary>
         /// Extend the Swagger Generator with "filters" that can modify RequestBodys after they're initially generated
         /// </summary>
-        /// <typeparam name="TFilter">A type that derives from IRequestBodyFilter</typeparam>
+        /// <typeparam name="TFilter">A type that derives from <see cref="IRequestBodyFilter"/></typeparam>
         /// <param name="swaggerGenOptions"></param>
         /// <param name="arguments">Optionally inject parameters through filter constructors</param>
         public static void RequestBodyFilter<TFilter>(
@@ -398,12 +413,27 @@ namespace Microsoft.Extensions.DependencyInjection
             });
         }
 
-        xxxxxx
+        /// <summary>
+        /// Extend the Swagger Generator with "filters" that can modify RequestBodys after they're initially generated
+        /// </summary>
+        /// <typeparam name="TFilter">A type that derives from <see cref="IRequestBodyFilter"/></typeparam>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="filterInstance">An instance of the filter, to enable reuse.</param>
+        public static void AddRequestBodyFilterInstance<TFilter>(
+            this SwaggerGenOptions swaggerGenOptions,
+            TFilter filterInstance)
+            where TFilter : IRequestBodyFilter
+        {
+            swaggerGenOptions.RequestBodyFilterDescriptors.Add(new FilterDescriptor
+            {
+                FilterInstance = filterInstance
+            });
+        }
 
         /// <summary>
         /// Extend the Swagger Generator with "filters" that can modify Operations after they're initially generated
         /// </summary>
-        /// <typeparam name="TFilter">A type that derives from IOperationFilter</typeparam>
+        /// <typeparam name="TFilter">A type that derives from <see cref="IOperationFilter"/></typeparam>
         /// <param name="swaggerGenOptions"></param>
         /// <param name="arguments">Optionally inject parameters through filter constructors</param>
         public static void OperationFilter<TFilter>(
@@ -421,7 +451,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// Extend the Swagger Generator with "filters" that can modify Operations after they're initially generated
         /// </summary>
-        /// <typeparam name="TFilter">A type that derives from IOperationFilter</typeparam>
+        /// <typeparam name="TFilter">A type that derives from <see cref="IOperationFilter"/></typeparam>
         /// <param name="swaggerGenOptions"></param>
         /// <param name="filterInstance">An instance of the filter, to enable reuse.</param>
         public static void AddOperationFilterInstance<TFilter>(
@@ -438,7 +468,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// Extend the Swagger Generator with "filters" that can modify SwaggerDocuments after they're initially generated
         /// </summary>
-        /// <typeparam name="TFilter">A type that derives from IDocumentFilter</typeparam>
+        /// <typeparam name="TFilter">A type that derives from <see cref="IDocumentFilter"/></typeparam>
         /// <param name="swaggerGenOptions"></param>
         /// <param name="arguments">Optionally inject parameters through filter constructors</param>
         public static void DocumentFilter<TFilter>(
@@ -456,7 +486,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// Extend the Swagger Generator with "filters" that can modify SwaggerDocuments after they're initially generated
         /// </summary>
-        /// <typeparam name="TFilter">A type that derives from IDocumentFilter</typeparam>
+        /// <typeparam name="TFilter">A type that derives from <see cref="IDocumentFilter"/></typeparam>
         /// <param name="swaggerGenOptions"></param>
         /// <param name="filterInstance">An instance of the filter, to enable reuse.</param>
         public static void AddDocumentFilterInstance<TFilter>(
