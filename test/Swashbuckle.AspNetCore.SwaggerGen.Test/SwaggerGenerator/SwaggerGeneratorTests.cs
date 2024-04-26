@@ -1441,7 +1441,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 .GetMethod(nameof(FakeController.ActionHavingIFormFileParamWithFromFormAtribute))
                 .GetParameters()[0];
 
-
             var subject = Subject(
                 apiDescriptions: new[]
                 {
@@ -1462,7 +1461,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             );
 
-            var exception = Assert.Throws<SwaggerGeneratorException>(() => subject.GetSwagger("v1"));
+            Assert.Throws<SwaggerGeneratorException>(() => subject.GetSwagger("v1"));
         }
 
         [Fact]
@@ -1503,7 +1502,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             );
 
             var document = subject.GetSwagger("v1");
-
             Assert.Equal("V1", document.Info.Version);
             Assert.Equal("Test API", document.Info.Title);
             Assert.Equal(new[] { "/resource" }, document.Paths.Keys.ToArray());

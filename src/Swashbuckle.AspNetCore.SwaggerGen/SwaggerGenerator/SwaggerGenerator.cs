@@ -330,7 +330,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private IList<OpenApiParameter> GenerateParameters(ApiDescription apiDescription, SchemaRepository schemaRespository)
         {
-            if (apiDescription.ParameterDescriptions.Any(apiParam => IsFromFormAttributeUsedWithIFormFile(apiParam)))
+            if (apiDescription.ParameterDescriptions.Any(IsFromFormAttributeUsedWithIFormFile))
                 throw new SwaggerGeneratorException(string.Format(
                        "Error reading parameter(s) for action {0} as [FromForm] attribute used with IFormFile. " +
                        "Please refer to https://github.com/domaindrivendev/Swashbuckle.AspNetCore#handle-forms-and-file-uploads for more information",
@@ -636,10 +636,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private static bool IsFromFormAttributeUsedWithIFormFile(ApiParameterDescription apiParameter)
         {
-            // Retrieve parameter information
             var parameterInfo = apiParameter.ParameterInfo();
-
-            // Check if Parameter has FromForm Attribute
             var fromFormAttribute = parameterInfo?.GetCustomAttribute<FromFormAttribute>();
 
             return fromFormAttribute != null && parameterInfo?.ParameterType == typeof(IFormFile);
