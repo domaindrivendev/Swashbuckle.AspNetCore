@@ -5,13 +5,13 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Swagger;
-using Microsoft.AspNetCore.Http;
 
 #if NET7_0_OR_GREATER
 using Microsoft.AspNetCore.Http.Metadata;
@@ -634,7 +634,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             };
         }
 
-        private bool IsFromFormAttributeUsedWithIFormFile(ApiParameterDescription apiParameter)
+        private static bool IsFromFormAttributeUsedWithIFormFile(ApiParameterDescription apiParameter)
         {
             // Retrieve parameter information
             var parameterInfo = apiParameter.ParameterInfo();
