@@ -336,6 +336,7 @@ namespace Microsoft.Extensions.DependencyInjection
             params object[] arguments)
             where TFilter : ISchemaFilter
         {
+            swaggerGenOptions = swaggerGenOptions ?? throw new ArgumentNullException(nameof(swaggerGenOptions));
             swaggerGenOptions.SchemaFilterDescriptors.Add(new FilterDescriptor
             {
                 Type = typeof(TFilter),
@@ -354,6 +355,8 @@ namespace Microsoft.Extensions.DependencyInjection
             TFilter filterInstance)
             where TFilter : ISchemaFilter
         {
+            swaggerGenOptions = swaggerGenOptions ?? throw new ArgumentNullException(nameof(swaggerGenOptions));
+            filterInstance = filterInstance ?? throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.SchemaFilterDescriptors.Add(new FilterDescriptor
             {
                 FilterInstance = filterInstance
@@ -371,6 +374,7 @@ namespace Microsoft.Extensions.DependencyInjection
             params object[] arguments)
             where TFilter : IParameterFilter
         {
+            swaggerGenOptions = swaggerGenOptions ?? throw new ArgumentNullException(nameof(swaggerGenOptions));
             swaggerGenOptions.ParameterFilterDescriptors.Add(new FilterDescriptor
             {
                 Type = typeof(TFilter),
@@ -389,6 +393,8 @@ namespace Microsoft.Extensions.DependencyInjection
             TFilter filterInstance)
             where TFilter : IParameterFilter
         {
+            swaggerGenOptions = swaggerGenOptions ?? throw new ArgumentNullException(nameof(swaggerGenOptions));
+            filterInstance = filterInstance ?? throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.ParameterFilterDescriptors.Add(new FilterDescriptor
             {
                 FilterInstance = filterInstance
@@ -406,6 +412,7 @@ namespace Microsoft.Extensions.DependencyInjection
             params object[] arguments)
             where TFilter : IRequestBodyFilter
         {
+            swaggerGenOptions = swaggerGenOptions ?? throw new ArgumentNullException(nameof(swaggerGenOptions));
             swaggerGenOptions.RequestBodyFilterDescriptors.Add(new FilterDescriptor
             {
                 Type = typeof(TFilter),
@@ -424,6 +431,8 @@ namespace Microsoft.Extensions.DependencyInjection
             TFilter filterInstance)
             where TFilter : IRequestBodyFilter
         {
+            swaggerGenOptions = swaggerGenOptions ?? throw new ArgumentNullException(nameof(swaggerGenOptions));
+            filterInstance = filterInstance ?? throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.RequestBodyFilterDescriptors.Add(new FilterDescriptor
             {
                 FilterInstance = filterInstance
@@ -441,6 +450,7 @@ namespace Microsoft.Extensions.DependencyInjection
             params object[] arguments)
             where TFilter : IOperationFilter
         {
+            swaggerGenOptions = swaggerGenOptions ?? throw new ArgumentNullException(nameof(swaggerGenOptions));
             swaggerGenOptions.OperationFilterDescriptors.Add(new FilterDescriptor
             {
                 Type = typeof(TFilter),
@@ -459,6 +469,8 @@ namespace Microsoft.Extensions.DependencyInjection
             TFilter filterInstance)
             where TFilter : IOperationFilter
         {
+            swaggerGenOptions = swaggerGenOptions ?? throw new ArgumentNullException(nameof(swaggerGenOptions));
+            filterInstance = filterInstance ?? throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.OperationFilterDescriptors.Add(new FilterDescriptor
             {
                 FilterInstance = filterInstance
@@ -476,6 +488,7 @@ namespace Microsoft.Extensions.DependencyInjection
             params object[] arguments)
             where TFilter : IDocumentFilter
         {
+            swaggerGenOptions = swaggerGenOptions ?? throw new ArgumentNullException(nameof(swaggerGenOptions));
             swaggerGenOptions.DocumentFilterDescriptors.Add(new FilterDescriptor
             {
                 Type = typeof(TFilter),
@@ -494,6 +507,8 @@ namespace Microsoft.Extensions.DependencyInjection
             TFilter filterInstance)
             where TFilter : IDocumentFilter
         {
+            swaggerGenOptions = swaggerGenOptions ?? throw new ArgumentNullException(nameof(swaggerGenOptions));
+            filterInstance = filterInstance ?? throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.DocumentFilterDescriptors.Add(new FilterDescriptor
             {
                 FilterInstance = filterInstance
