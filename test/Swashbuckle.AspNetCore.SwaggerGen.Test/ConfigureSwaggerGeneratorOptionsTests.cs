@@ -23,7 +23,7 @@ public static class ConfigureSwaggerGeneratorOptionsTests
     }
 
     [Fact]
-    public static void AddingDocumentFilterInstance_WhenConfiguringOption_SameInstanceIsAdded()
+    public static void AddingDocumentFilterInstances_WhenConfiguringOptions_SameInstanceIsAdded()
     {
         var webhostingEnvironment = Substitute.For<IWebHostEnvironment>();
         webhostingEnvironment.ApplicationName.Returns("Swashbuckle.AspNetCore.SwaggerGen.Test");
@@ -31,6 +31,7 @@ public static class ConfigureSwaggerGeneratorOptionsTests
         var testDocumentFilter = new TestDocumentFilter();
 
         var options = new SwaggerGenOptions();
+        options.AddDocumentFilterInstance(testDocumentFilter);
         options.AddDocumentFilterInstance(testDocumentFilter);
 
         var configureSwaggerGeneratorOptions = new ConfigureSwaggerGeneratorOptions(
@@ -41,7 +42,34 @@ public static class ConfigureSwaggerGeneratorOptionsTests
 
         configureSwaggerGeneratorOptions.Configure(swaggerGeneratorOptions);
 
-        Assert.Single(swaggerGeneratorOptions.DocumentFilters);
+        Assert.Equal(2, swaggerGeneratorOptions.DocumentFilters.Count);
         Assert.Same(testDocumentFilter, swaggerGeneratorOptions.DocumentFilters.First());
+        Assert.Same(testDocumentFilter, swaggerGeneratorOptions.DocumentFilters.Last());
+    }
+
+
+    [Fact]
+    public static void AddingDocumentFilters_WhenConfiguringOption_DifferentInstanceIsAdded()
+    {
+        var webhostingEnvironment = Substitute.For<IWebHostEnvironment>();
+        webhostingEnvironment.ApplicationName.Returns("Swashbuckle.AspNetCore.SwaggerGen.Test");
+
+        var testDocumentFilter = new TestDocumentFilter();
+
+        var options = new SwaggerGenOptions();
+        options.AddDocumentFilterInstance(testDocumentFilter);
+        options.AddDocumentFilterInstance(testDocumentFilter);
+
+        var configureSwaggerGeneratorOptions = new ConfigureSwaggerGeneratorOptions(
+            Options.Create(options),
+            null,
+            webhostingEnvironment);
+        var swaggerGeneratorOptions = new SwaggerGeneratorOptions();
+
+        configureSwaggerGeneratorOptions.Configure(swaggerGeneratorOptions);
+
+        Assert.Equal(2, swaggerGeneratorOptions.DocumentFilters.Count);
+        Assert.Same(testDocumentFilter, swaggerGeneratorOptions.DocumentFilters.First());
+        Assert.Same(testDocumentFilter, swaggerGeneratorOptions.DocumentFilters.Last());
     }
 }

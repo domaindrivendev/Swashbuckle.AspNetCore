@@ -336,7 +336,7 @@ namespace Microsoft.Extensions.DependencyInjection
             params object[] arguments)
             where TFilter : ISchemaFilter
         {
-            swaggerGenOptions = swaggerGenOptions ?? throw new ArgumentNullException(nameof(swaggerGenOptions));
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
             swaggerGenOptions.SchemaFilterDescriptors.Add(new FilterDescriptor
             {
                 Type = typeof(TFilter),
@@ -349,14 +349,14 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <typeparam name="TFilter">A type that derives from <see cref="ISchemaFilter"/></typeparam>
         /// <param name="swaggerGenOptions"></param>
-        /// <param name="filterInstance">An instance of the filter, to enable reuse.</param>
+        /// <param name="filterInstance">The filter instance to use.</param>
         public static void AddSchemaFilterInstance<TFilter>(
             this SwaggerGenOptions swaggerGenOptions,
             TFilter filterInstance)
             where TFilter : ISchemaFilter
         {
-            swaggerGenOptions = swaggerGenOptions ?? throw new ArgumentNullException(nameof(swaggerGenOptions));
-            filterInstance = filterInstance ?? throw new ArgumentNullException(nameof(filterInstance));
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+            if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.SchemaFilterDescriptors.Add(new FilterDescriptor
             {
                 FilterInstance = filterInstance
@@ -374,7 +374,7 @@ namespace Microsoft.Extensions.DependencyInjection
             params object[] arguments)
             where TFilter : IParameterFilter
         {
-            swaggerGenOptions = swaggerGenOptions ?? throw new ArgumentNullException(nameof(swaggerGenOptions));
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
             swaggerGenOptions.ParameterFilterDescriptors.Add(new FilterDescriptor
             {
                 Type = typeof(TFilter),
@@ -387,14 +387,14 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <typeparam name="TFilter">A type that derives from <see cref="IParameterFilter"/></typeparam>
         /// <param name="swaggerGenOptions"></param>
-        /// <param name="filterInstance">An instance of the filter, to enable reuse.</param>
+        /// <param name="filterInstance">The filter instance to use.</param>
         public static void AddParameterFilterInstance<TFilter>(
             this SwaggerGenOptions swaggerGenOptions,
             TFilter filterInstance)
             where TFilter : IParameterFilter
         {
-            swaggerGenOptions = swaggerGenOptions ?? throw new ArgumentNullException(nameof(swaggerGenOptions));
-            filterInstance = filterInstance ?? throw new ArgumentNullException(nameof(filterInstance));
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+            if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.ParameterFilterDescriptors.Add(new FilterDescriptor
             {
                 FilterInstance = filterInstance
@@ -412,7 +412,7 @@ namespace Microsoft.Extensions.DependencyInjection
             params object[] arguments)
             where TFilter : IRequestBodyFilter
         {
-            swaggerGenOptions = swaggerGenOptions ?? throw new ArgumentNullException(nameof(swaggerGenOptions));
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
             swaggerGenOptions.RequestBodyFilterDescriptors.Add(new FilterDescriptor
             {
                 Type = typeof(TFilter),
@@ -425,14 +425,14 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <typeparam name="TFilter">A type that derives from <see cref="IRequestBodyFilter"/></typeparam>
         /// <param name="swaggerGenOptions"></param>
-        /// <param name="filterInstance">An instance of the filter, to enable reuse.</param>
+        /// <param name="filterInstance">The filter instance to use.</param>
         public static void AddRequestBodyFilterInstance<TFilter>(
             this SwaggerGenOptions swaggerGenOptions,
             TFilter filterInstance)
             where TFilter : IRequestBodyFilter
         {
-            swaggerGenOptions = swaggerGenOptions ?? throw new ArgumentNullException(nameof(swaggerGenOptions));
-            filterInstance = filterInstance ?? throw new ArgumentNullException(nameof(filterInstance));
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+            if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.RequestBodyFilterDescriptors.Add(new FilterDescriptor
             {
                 FilterInstance = filterInstance
@@ -450,7 +450,7 @@ namespace Microsoft.Extensions.DependencyInjection
             params object[] arguments)
             where TFilter : IOperationFilter
         {
-            swaggerGenOptions = swaggerGenOptions ?? throw new ArgumentNullException(nameof(swaggerGenOptions));
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
             swaggerGenOptions.OperationFilterDescriptors.Add(new FilterDescriptor
             {
                 Type = typeof(TFilter),
@@ -463,14 +463,14 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <typeparam name="TFilter">A type that derives from <see cref="IOperationFilter"/></typeparam>
         /// <param name="swaggerGenOptions"></param>
-        /// <param name="filterInstance">An instance of the filter, to enable reuse.</param>
+        /// <param name="filterInstance">The filter instance to use.</param>
         public static void AddOperationFilterInstance<TFilter>(
             this SwaggerGenOptions swaggerGenOptions,
             TFilter filterInstance)
             where TFilter : IOperationFilter
         {
-            swaggerGenOptions = swaggerGenOptions ?? throw new ArgumentNullException(nameof(swaggerGenOptions));
-            filterInstance = filterInstance ?? throw new ArgumentNullException(nameof(filterInstance));
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+            if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.OperationFilterDescriptors.Add(new FilterDescriptor
             {
                 FilterInstance = filterInstance
@@ -488,7 +488,7 @@ namespace Microsoft.Extensions.DependencyInjection
             params object[] arguments)
             where TFilter : IDocumentFilter
         {
-            swaggerGenOptions = swaggerGenOptions ?? throw new ArgumentNullException(nameof(swaggerGenOptions));
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
             swaggerGenOptions.DocumentFilterDescriptors.Add(new FilterDescriptor
             {
                 Type = typeof(TFilter),
@@ -501,14 +501,14 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <typeparam name="TFilter">A type that derives from <see cref="IDocumentFilter"/></typeparam>
         /// <param name="swaggerGenOptions"></param>
-        /// <param name="filterInstance">An instance of the filter, to enable reuse.</param>
+        /// <param name="filterInstance">The filter instance to use.</param>
         public static void AddDocumentFilterInstance<TFilter>(
             this SwaggerGenOptions swaggerGenOptions,
             TFilter filterInstance)
             where TFilter : IDocumentFilter
         {
-            swaggerGenOptions = swaggerGenOptions ?? throw new ArgumentNullException(nameof(swaggerGenOptions));
-            filterInstance = filterInstance ?? throw new ArgumentNullException(nameof(filterInstance));
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+            if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.DocumentFilterDescriptors.Add(new FilterDescriptor
             {
                 FilterInstance = filterInstance
