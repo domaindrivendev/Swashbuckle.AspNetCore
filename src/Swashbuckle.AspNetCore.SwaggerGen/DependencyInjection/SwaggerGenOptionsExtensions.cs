@@ -344,6 +344,23 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
+        /// Extend the Swagger Generator with "filters" that can modify Schemas after they're initially generated
+        /// </summary>
+        /// <typeparam name="TFilter">A type that derives from IDocumentFilter</typeparam>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="filterInstance">An instance of the filter, to enable reuse.</param>
+        public static void AddSchemaFilterInstance<TFilter>(
+            this SwaggerGenOptions swaggerGenOptions,
+            TFilter filterInstance)
+            where TFilter : IDocumentFilter
+        {
+            swaggerGenOptions.DocumentFilterDescriptors.Add(new FilterDescriptor
+            {
+                FilterInstance = filterInstance
+            });
+        }
+
+        /// <summary>
         /// Extend the Swagger Generator with "filters" that can modify Parameters after they're initially generated
         /// </summary>
         /// <typeparam name="TFilter">A type that derives from IParameterFilter</typeparam>
@@ -360,6 +377,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 Arguments = arguments
             });
         }
+
+        xxxxxx
 
         /// <summary>
         /// Extend the Swagger Generator with "filters" that can modify RequestBodys after they're initially generated
@@ -378,6 +397,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 Arguments = arguments
             });
         }
+
+        xxxxxx
 
         /// <summary>
         /// Extend the Swagger Generator with "filters" that can modify Operations after they're initially generated
