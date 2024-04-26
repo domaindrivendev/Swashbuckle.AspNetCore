@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.AspNetCore.Http;
+
 #if NET7_0_OR_GREATER
 using Microsoft.AspNetCore.Http.Metadata;
 #endif
@@ -328,10 +330,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private IList<OpenApiParameter> GenerateParameters(ApiDescription apiDescription, SchemaRepository schemaRespository)
         {
-            if (apiDescription.ParameterDescriptions.Any(apiParam => apiParam.IsFromFormAttributeUsedWithFormFile()))
+            if (apiDescription.ParameterDescriptions.Any(apiParam => IsFromFormAttributeUsedWithIFormFile(apiParam)))
                 throw new SwaggerGeneratorException(string.Format(
                        "Error reading parameter(s) for action {0} as [FromForm] attribute used with IFormFile. " +
-                       "Please refer https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/master/README.md#handle-forms-and-file-uploads",
+                       "Please refer to https://github.com/domaindrivendev/Swashbuckle.AspNetCore#handle-forms-and-file-uploads for more information",
                        apiDescription.ActionDescriptor.DisplayName));
 
             var applicableApiParameters = apiDescription.ParameterDescriptions
@@ -630,6 +632,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 Schema = GenerateSchema(modelMetadata.ModelType, schemaRespository)
             };
+        }
+
+        private bool IsFromFormAttributeUsedWithIFormFile(ApiParameterDescription apiParameter)
+        {
+            // Retrieve parameter information
+            var parameterInfo = apiParameter.ParameterInfo();
+
+            // Check if Parameter has FromForm Attribute
+            var fromFormAttribute = parameterInfo?.GetCustomAttribute<FromFormAttribute>();
+
+            return fromFormAttribute != null && parameterInfo?.ParameterType == typeof(IFormFile);
         }
 
         private static readonly Dictionary<string, OperationType> OperationTypeMap = new Dictionary<string, OperationType>

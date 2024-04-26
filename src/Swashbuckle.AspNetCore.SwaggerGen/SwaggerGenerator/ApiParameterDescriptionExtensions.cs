@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -111,18 +110,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             return (source == BindingSource.Form || source == BindingSource.FormFile)
                 || (elementType != null && typeof(IFormFile).IsAssignableFrom(elementType));
-        }
-
-        internal static bool IsFromFormAttributeUsedWithFormFile(this ApiParameterDescription apiParameter)
-        {
-            // Retrieve parameter information
-            var parameterInfo = ParameterInfo(apiParameter);
-
-            // Retrieve attributes from the parameter
-            var fromFormAttribute = parameterInfo?.GetCustomAttribute<FromFormAttribute>();
-
-            return fromFormAttribute != null && parameterInfo?.ParameterType == typeof(IFormFile);
-
         }
     }
 }
