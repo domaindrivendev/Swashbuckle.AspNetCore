@@ -508,13 +508,12 @@ public void UploadFile([FromForm]string description, [FromForm]DateTime clientDa
 > Important note: As per the [ASP.NET Core docs](https://docs.microsoft.com/en-us/aspnet/core/mvc/models/file-uploads?view=aspnetcore-3.1), you're not supposed to decorate `IFormFile` parameters with the `[FromForm]` attribute as the binding source is automatically inferred from the type. In fact, the inferred value is `BindingSource.FormFile` and if you apply the attribute it will be set to `BindingSource.Form` instead, which screws up `ApiExplorer`, the metadata component that ships with ASP.NET Core and is heavily relied on by Swashbuckle. One particular issue here is that SwaggerUI will not treat the parameter as a file and so will not display a file upload button, if you do mistakenly include this attribute.
 
 ### Handle File Downloads ###
-`ApiExplorer` (the ASP.NET Core metadata component that Swashbuckle is built on) *DOES NOT* surface the `FileResult` type by default and so you need to explicitly tell it to with the `Produces` attribute:
+`ApiExplorer` (the ASP.NET Core metadata component that Swashbuckle is built on) *DOES NOT* surface the `FileResult` types by default and so you need to explicitly tell it to with the `ProducesResponseType` attribute (or `Produces` on .NET 5 or older):
 ```csharp
 [HttpGet("{fileName}")]
-[Produces("application/octet-stream", Type = typeof(FileResult))]
-public FileResult GetFile(string fileName)
+[ProducesResponseType(typeof(FileStreamResult), StatusCodes.Status200OK, "image/jpeg")]
+public FileStreamResult GetFile(string fileName)
 ```
-If you want the swagger-ui to display a "Download file" link, you're operation will need to return a **Content-Type of "application/octet-stream"** or a **Content-Disposition of "attachement"**.
 
 ### Include Descriptions from XML Comments ###
 

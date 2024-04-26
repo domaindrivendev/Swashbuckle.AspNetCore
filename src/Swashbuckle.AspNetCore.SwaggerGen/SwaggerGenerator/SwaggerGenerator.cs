@@ -593,15 +593,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 Description = description,
                 Content = responseContentTypes.ToDictionary(
                     contentType => contentType,
-                    contentType => CreateResponseMediaType(apiResponseType.ModelMetadata, schemaRepository)
+                    contentType => CreateResponseMediaType(apiResponseType.ModelMetadata?.ModelType ?? apiResponseType.Type, schemaRepository)
                 )
             };
         }
 
         private IEnumerable<string> InferResponseContentTypes(ApiDescription apiDescription, ApiResponseType apiResponseType)
         {
-            // If there's no associated model, return an empty list (i.e. no content)
-            if (apiResponseType.ModelMetadata == null) return Enumerable.Empty<string>();
+            // If there's no associated model type, return an empty list (i.e. no content)
+            if (apiResponseType.ModelMetadata == null && (apiResponseType.Type == null || apiResponseType.Type == typeof(void)))
+            {
+                return Enumerable.Empty<string>();
+            }
 
             // If there's content types explicitly specified via ProducesAttribute, use them
             var explicitContentTypes = apiDescription.CustomAttributes().OfType<ProducesAttribute>()
@@ -618,11 +621,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return Enumerable.Empty<string>();
         }
 
-        private OpenApiMediaType CreateResponseMediaType(ModelMetadata modelMetadata, SchemaRepository schemaRespository)
+        private OpenApiMediaType CreateResponseMediaType(Type modelType, SchemaRepository schemaRespository)
         {
             return new OpenApiMediaType
             {
-                Schema = GenerateSchema(modelMetadata.ModelType, schemaRespository)
+                Schema = GenerateSchema(modelType, schemaRespository)
             };
         }
 

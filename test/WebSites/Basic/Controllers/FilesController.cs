@@ -27,8 +27,12 @@ namespace Basic.Controllers
         }
 
         [HttpGet("{name}")]
-        [Produces("application/octet-stream", Type = typeof(FileResult))]
-        public FileResult GetFile(string name)
+#if NET6_0_OR_GREATER
+        [ProducesResponseType(typeof(FileStreamResult), StatusCodes.Status200OK, "text/plain", "application/zip")]
+#else
+        [Produces("text/plain", "application/zip", Type = typeof(FileStreamResult))]
+#endif
+        public FileStreamResult GetFile(string name)
         {
             var stream = new MemoryStream();
 
@@ -37,7 +41,9 @@ namespace Basic.Controllers
             writer.Flush();
             stream.Position = 0;
 
-            return File(stream, "application/octet-stream", name);
+            var contentType = name.EndsWith(".zip", StringComparison.InvariantCultureIgnoreCase) ? "application/zip" : "text/plain";
+
+            return File(stream, contentType, name);
         }
     }
 
