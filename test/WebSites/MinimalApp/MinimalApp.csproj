@@ -5,8 +5,6 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <DotNetSwaggerPath>$([System.IO.Path]::Combine('$(ArtifactsPath)', 'bin', 'Swashbuckle.AspNetCore.Cli', '$(Configuration)_$(TargetFramework)', 'dotnet-swagger.dll'))</DotNetSwaggerPath>
-    <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>MinimalApp.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>

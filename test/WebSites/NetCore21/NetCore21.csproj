@@ -2,8 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>NetCore21.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>

@@ -619,9 +619,9 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [InlineData(TypeNameHandling.Arrays, TypeNameAssemblyFormatHandling.Full, false,
             null)]
         [InlineData(TypeNameHandling.Objects, TypeNameAssemblyFormatHandling.Full, true,
-            "Swashbuckle.AspNetCore.TestSupport.{0}, Swashbuckle.AspNetCore.TestSupport, Version=1.0.0.0, Culture=neutral, PublicKeyToken=2b5885af12a1980d")]
+            "Swashbuckle.AspNetCore.TestSupport.{0}, Swashbuckle.AspNetCore.TestSupport, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null")]
         [InlineData(TypeNameHandling.All, TypeNameAssemblyFormatHandling.Full, true,
-            "Swashbuckle.AspNetCore.TestSupport.{0}, Swashbuckle.AspNetCore.TestSupport, Version=1.0.0.0, Culture=neutral, PublicKeyToken=2b5885af12a1980d")]
+            "Swashbuckle.AspNetCore.TestSupport.{0}, Swashbuckle.AspNetCore.TestSupport, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null")]
         [InlineData(TypeNameHandling.Auto, TypeNameAssemblyFormatHandling.Simple, true,
             "Swashbuckle.AspNetCore.TestSupport.{0}, Swashbuckle.AspNetCore.TestSupport")]
         public void GenerateSchema_HonorsSerializerSetting_TypeNameHandling(
