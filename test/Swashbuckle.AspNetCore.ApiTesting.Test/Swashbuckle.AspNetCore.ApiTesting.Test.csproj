@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Swashbuckle.AspNetCore.ApiTesting\Swashbuckle.AspNetCore.ApiTesting.csproj" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\src\Swashbuckle.AspNetCore.ApiTesting\Swashbuckle.AspNetCore.ApiTesting.csproj" />
   </ItemGroup>
 
   <ItemGroup>

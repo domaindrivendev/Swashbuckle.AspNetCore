@@ -35,16 +35,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             // Create and add any filters that were specified through the FilterDescriptor lists ...
 
             _swaggerGenOptions.ParameterFilterDescriptors.ForEach(
-                filterDescriptor => options.ParameterFilters.Add(CreateFilter<IParameterFilter>(filterDescriptor)));
+                filterDescriptor => options.ParameterFilters.Add(GetOrCreateFilter<IParameterFilter>(filterDescriptor)));
 
             _swaggerGenOptions.RequestBodyFilterDescriptors.ForEach(
-                filterDescriptor => options.RequestBodyFilters.Add(CreateFilter<IRequestBodyFilter>(filterDescriptor)));
+                filterDescriptor => options.RequestBodyFilters.Add(GetOrCreateFilter<IRequestBodyFilter>(filterDescriptor)));
 
             _swaggerGenOptions.OperationFilterDescriptors.ForEach(
-                filterDescriptor => options.OperationFilters.Add(CreateFilter<IOperationFilter>(filterDescriptor)));
+                filterDescriptor => options.OperationFilters.Add(GetOrCreateFilter<IOperationFilter>(filterDescriptor)));
 
             _swaggerGenOptions.DocumentFilterDescriptors.ForEach(
-                filterDescriptor => options.DocumentFilters.Add(CreateFilter<IDocumentFilter>(filterDescriptor)));
+                filterDescriptor => options.DocumentFilters.Add(GetOrCreateFilter<IDocumentFilter>(filterDescriptor)));
 
             if (!options.SwaggerDocs.Any())
             {
@@ -74,10 +74,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             target.SecuritySchemesSelector = source.SecuritySchemesSelector;
         }
 
-        private TFilter CreateFilter<TFilter>(FilterDescriptor filterDescriptor)
+        private TFilter GetOrCreateFilter<TFilter>(FilterDescriptor filterDescriptor)
         {
-            return (TFilter)ActivatorUtilities
-                .CreateInstance(_serviceProvider, filterDescriptor.Type, filterDescriptor.Arguments);
+            return (TFilter)(filterDescriptor.FilterInstance
+                ?? ActivatorUtilities.CreateInstance(_serviceProvider, filterDescriptor.Type, filterDescriptor.Arguments));
         }
     }
 }
