@@ -13,6 +13,8 @@
     <PackageId>Swashbuckle.AspNetCore</PackageId>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>
     <TargetFrameworks>netstandard2.0;netcoreapp3.0;net5.0;net6.0;net7.0</TargetFrameworks>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <Target Name="PopulateNuspec">

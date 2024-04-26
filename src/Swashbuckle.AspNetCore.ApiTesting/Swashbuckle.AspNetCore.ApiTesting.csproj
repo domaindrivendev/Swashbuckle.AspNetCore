@@ -6,6 +6,8 @@
     <NoWarn>$(NoWarn);1591</NoWarn>
     <PackageTags>swagger;openapi;test-first;spec-first;testing;aspnetcore</PackageTags>
     <TargetFrameworks>netstandard2.0;netcoreapp3.0;net5.0;net6.0;net7.0</TargetFrameworks>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.ApiTesting.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>

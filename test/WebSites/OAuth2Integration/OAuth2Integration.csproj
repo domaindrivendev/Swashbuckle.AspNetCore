@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>OAuth2Integration.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>

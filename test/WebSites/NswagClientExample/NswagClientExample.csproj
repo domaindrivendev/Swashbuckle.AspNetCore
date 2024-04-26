@@ -3,6 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <DotNetSwaggerPath>$([System.IO.Path]::Combine('$(ArtifactsPath)', 'bin', 'Swashbuckle.AspNetCore.Cli', '$(Configuration.ToLower())_$(TargetFramework)'))</DotNetSwaggerPath>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>NswagClientExample.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>

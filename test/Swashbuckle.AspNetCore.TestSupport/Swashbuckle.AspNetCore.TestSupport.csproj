@@ -6,6 +6,8 @@
     <IsTestProject>false</IsTestProject>
     <VersionPrefix>1.0.0</VersionPrefix>
     <VersionSuffix></VersionSuffix>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.TestSupport.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>

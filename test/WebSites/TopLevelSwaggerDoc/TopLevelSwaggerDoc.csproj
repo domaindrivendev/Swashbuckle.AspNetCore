@@ -4,6 +4,8 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>TopLevelSwaggerDoc.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>

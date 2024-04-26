@@ -8,6 +8,8 @@
     <PackageId>Swashbuckle.AspNetCore.Cli</PackageId>
     <TargetFrameworks>netcoreapp2.1;netcoreapp3.0;net5.0;net6.0;net7.0</TargetFrameworks>
     <ToolCommandName>swagger</ToolCommandName>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.Cli.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
 
   <ItemGroup>
