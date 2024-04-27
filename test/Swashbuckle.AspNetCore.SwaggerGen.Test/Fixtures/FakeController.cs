@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Swashbuckle.AspNetCore.Annotations;
@@ -83,6 +84,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         [SwaggerIgnore]
         public void ActionWithSwaggerIgnoreAttribute()
+        { }
+
+        public void ActionHavingIFormFileParamWithFromFormAtribute([FromForm] IFormFile fileUpload)
+        { }
+
+        public void ActionHavingFromFormAtributeButNotWithIFormFile([FromForm] string param1, IFormFile param2)
         { }
     }
 }

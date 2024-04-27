@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.OpenApi.Any;
@@ -1431,6 +1432,85 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var exception = Assert.Throws<SwaggerGeneratorException>(() => subject.GetSwagger("v1"));
             Assert.Equal($"The \"{httpMethod}\" HTTP method is not supported.", exception.Message);
+        }
+
+        [Fact]
+        public void GetSwagger_Throws_Exception_When_FromForm_Attribute_Used_With_IFormFile()
+        {
+            var parameterInfo = typeof(FakeController)
+                .GetMethod(nameof(FakeController.ActionHavingIFormFileParamWithFromFormAtribute))
+                .GetParameters()[0];
+
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                   ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionHavingIFormFileParamWithFromFormAtribute),
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions: new[]
+                        {
+                            new ApiParameterDescription
+                            {
+                                Name = "fileUpload", // Name of the parameter
+                                Type = typeof(IFormFile), // Type of the parameter
+                                ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = parameterInfo }
+                            }
+                        })
+                }
+            );
+
+            Assert.Throws<SwaggerGeneratorException>(() => subject.GetSwagger("v1"));
+        }
+
+        [Fact]
+        public void GetSwagger_Works_As_Expected_When_FromForm_Attribute_Not_Used_With_IFormFile()
+        {
+            var paraminfo = typeof(FakeController)
+                .GetMethod(nameof(FakeController.ActionHavingFromFormAtributeButNotWithIFormFile))
+                .GetParameters()[0];
+
+            var fileUploadParameterInfo = typeof(FakeController)
+                .GetMethod(nameof(FakeController.ActionHavingFromFormAtributeButNotWithIFormFile))
+                .GetParameters()[1];
+
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                   ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionHavingFromFormAtributeButNotWithIFormFile),
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions: new[]
+                        {
+                            new ApiParameterDescription
+                            {
+                                Name = "param1", // Name of the parameter
+                                Type = typeof(string), // Type of the parameter
+                                ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = paraminfo }
+                            },
+                            new ApiParameterDescription
+                            {
+                                Name = "param2", // Name of the parameter
+                                Type = typeof(IFormFile), // Type of the parameter
+                                ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = fileUploadParameterInfo }
+                            }
+                        })
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+            Assert.Equal("V1", document.Info.Version);
+            Assert.Equal("Test API", document.Info.Title);
+            Assert.Equal(new[] { "/resource" }, document.Paths.Keys.ToArray());
+
+            var operation = document.Paths["/resource"].Operations[OperationType.Post];
+            Assert.NotNull(operation.Parameters);
+            Assert.Equal(2, operation.Parameters.Count);
+            Assert.Equal("param1", operation.Parameters[0].Name);
+            Assert.Equal("param2", operation.Parameters[1].Name);
         }
 
         private static SwaggerGenerator Subject(

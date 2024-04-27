@@ -5,12 +5,14 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Swagger;
+
 #if NET7_0_OR_GREATER
 using Microsoft.AspNetCore.Http.Metadata;
 #endif
@@ -328,6 +330,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private IList<OpenApiParameter> GenerateParameters(ApiDescription apiDescription, SchemaRepository schemaRespository)
         {
+            if (apiDescription.ParameterDescriptions.Any(IsFromFormAttributeUsedWithIFormFile))
+                throw new SwaggerGeneratorException(string.Format(
+                       "Error reading parameter(s) for action {0} as [FromForm] attribute used with IFormFile. " +
+                       "Please refer to https://github.com/domaindrivendev/Swashbuckle.AspNetCore#handle-forms-and-file-uploads for more information",
+                       apiDescription.ActionDescriptor.DisplayName));
+
             var applicableApiParameters = apiDescription.ParameterDescriptions
                 .Where(apiParam =>
                 {
@@ -624,6 +632,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 Schema = GenerateSchema(modelMetadata.ModelType, schemaRespository)
             };
+        }
+
+        private static bool IsFromFormAttributeUsedWithIFormFile(ApiParameterDescription apiParameter)
+        {
+            var parameterInfo = apiParameter.ParameterInfo();
+            var fromFormAttribute = parameterInfo?.GetCustomAttribute<FromFormAttribute>();
+
+            return fromFormAttribute != null && parameterInfo?.ParameterType == typeof(IFormFile);
         }
 
         private static readonly Dictionary<string, OperationType> OperationTypeMap = new Dictionary<string, OperationType>
