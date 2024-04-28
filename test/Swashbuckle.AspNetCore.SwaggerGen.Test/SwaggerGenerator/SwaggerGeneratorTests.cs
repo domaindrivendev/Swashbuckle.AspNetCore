@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -14,7 +15,7 @@ using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.TestSupport;
 using Xunit;
 using System.Threading.Tasks;
-using System.Reflection.Metadata;
+using System.Reflection;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -502,16 +503,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Empty(operation.Parameters);
         }
 
-        [Fact]
-        public void GetSwagger_IgnoresParameters_IfActionParameterIsIllegalHeaderParameter()
+        [Theory]
+        [InlineData(nameof(FakeController.ActionWithAcceptFromHeaderParameter))]
+        [InlineData(nameof(FakeController.ActionWithContentTypeFromHeaderParameter))]
+        [InlineData(nameof(FakeController.ActionWithAuthorizationFromHeaderParameter))]
+        public void GetSwagger_IgnoresParameters_IfActionParameterIsIllegalHeaderParameter(string action)
         {
-            var parameter = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithAcceptFromHeaderParameter)).GetParameters()[0];
+            var parameter = typeof(FakeController).GetMethod(action).GetParameters()[0];
+            var fromHeaderAttribute = parameter.GetCustomAttribute<FromHeaderAttribute>();
 
             var subject = Subject(
                 new[]
                 {
                     ApiDescriptionFactory.Create<FakeController>(
-                        c => nameof(c.ActionWithAcceptFromHeaderParameter),
+                        c => action,
                         groupName: "v1",
                         httpMethod: "GET",
                         relativePath: "resource",
@@ -519,7 +524,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                         {
                             new ApiParameterDescription
                             {
-                                Name = parameter.Name,
+                                Name = fromHeaderAttribute?.Name ?? parameter.Name,
                                 Source = BindingSource.Header,
                                 ModelMetadata = ModelMetadataFactory.CreateForParameter(parameter)
                             }
@@ -534,11 +539,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Empty(operation.Parameters);
         }
 
-        [Fact]
-        public void GetSwagger_GenerateParametersSchemas_IfActionParameterIsIllegalHeaderParameterWithProvidedOpenApiOperation()
+        [Theory]
+        [InlineData(nameof(FakeController.ActionWithAcceptFromHeaderParameter))]
+        [InlineData(nameof(FakeController.ActionWithContentTypeFromHeaderParameter))]
+        [InlineData(nameof(FakeController.ActionWithAuthorizationFromHeaderParameter))]
+        public void GetSwagger_GenerateParametersSchemas_IfActionParameterIsIllegalHeaderParameterWithProvidedOpenApiOperation(string action)
         {
-            var parameter = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithAcceptFromHeaderParameter)).GetParameters()[0];
-            var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithAcceptFromHeaderParameter));
+            var parameter = typeof(FakeController).GetMethod(action).GetParameters()[0];
+            var fromHeaderAttribute = parameter.GetCustomAttribute<FromHeaderAttribute>();
+            var methodInfo = typeof(FakeController).GetMethod(action);
             var actionDescriptor = new ActionDescriptor
             {
                 EndpointMetadata = new List<object>()
@@ -550,7 +559,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                         {
                             new OpenApiParameter
                             {
-                                Name = parameter.Name
+                                Name = fromHeaderAttribute?.Name ?? parameter.Name,
                             }
                         }
                     }
@@ -573,7 +582,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                         {
                             new ApiParameterDescription
                             {
-                                Name = parameter.Name,
+                                Name = fromHeaderAttribute?.Name ?? parameter.Name,
                                 Source = BindingSource.Header,
                                 ModelMetadata = ModelMetadataFactory.CreateForParameter(parameter)
                             }
