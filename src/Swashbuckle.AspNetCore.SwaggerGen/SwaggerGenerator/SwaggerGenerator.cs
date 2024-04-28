@@ -255,7 +255,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             // Schemas will be generated via Swashbuckle by default.
             foreach (var parameter in operation.Parameters)
             {
-                var apiParameter = apiDescription.ParameterDescriptions.SingleOrDefault(desc => desc.Name == parameter.Name && !desc.IsFromBody() && !desc.IsFromForm());
+                var apiParameter = apiDescription.ParameterDescriptions.SingleOrDefault(desc => desc.Name == parameter.Name && !desc.IsFromBody() && !desc.IsFromForm() && !desc.IsIllegalHeaderParameter());
                 if (apiParameter is not null)
                 {
                     parameter.Schema = GenerateSchema(
@@ -322,7 +322,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     return (!apiParam.IsFromBody() && !apiParam.IsFromForm())
                         && (!apiParam.CustomAttributes().OfType<BindNeverAttribute>().Any())
                         && (!apiParam.CustomAttributes().OfType<SwaggerIgnoreAttribute>().Any())
-                        && (apiParam.ModelMetadata == null || apiParam.ModelMetadata.IsBindingAllowed);
+                        && (apiParam.ModelMetadata == null || apiParam.ModelMetadata.IsBindingAllowed)
+                        && !apiParam.IsIllegalHeaderParameter();
                 });
 
             return applicableApiParameters

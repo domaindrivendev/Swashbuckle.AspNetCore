@@ -21,6 +21,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 #endif
         };
 
+        private static readonly List<string> IllegalHeaderParameters = new List<string>
+        {
+            "accept",
+            "content-type",
+            "authorization"
+        };
+
         public static bool IsRequiredParameter(this ApiParameterDescription apiParameter)
         {
             // From the OpenAPI spec:
@@ -110,6 +117,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             return (source == BindingSource.Form || source == BindingSource.FormFile)
                 || (elementType != null && typeof(IFormFile).IsAssignableFrom(elementType));
+        }
+
+        internal static bool IsIllegalHeaderParameter(this ApiParameterDescription apiParameter)
+        {
+            return apiParameter.Source == BindingSource.Header && IllegalHeaderParameters.Contains(apiParameter.Name, StringComparer.OrdinalIgnoreCase);
         }
     }
 }

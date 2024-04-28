@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -13,8 +14,6 @@ using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.TestSupport;
 using Xunit;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Server.HttpSys;
-using Microsoft.AspNetCore.Authentication;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -500,6 +499,90 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.Empty(operation.Parameters);
+        }
+
+        [Fact]
+        public void GetSwagger_IgnoresParameters_IfActionParameterIsIllegalHeaderParameter()
+        {
+            var parameter = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithAcceptFromHeaderParameter)).GetParameters()[0];
+
+            var subject = Subject(
+                new[]
+                {
+                    ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionWithAcceptFromHeaderParameter),
+                        groupName: "v1",
+                        httpMethod: "GET",
+                        relativePath: "resource",
+                        parameterDescriptions: new[]
+                        {
+                            new ApiParameterDescription
+                            {
+                                Name = parameter.Name,
+                                Source = BindingSource.Header,
+                                ModelMetadata = ModelMetadataFactory.CreateForParameter(parameter)
+                            }
+                        }
+                    )
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            var operation = document.Paths["/resource"].Operations[OperationType.Get];
+            Assert.Empty(operation.Parameters);
+        }
+
+        [Fact]
+        public void GetSwagger_GenerateParametersSchemas_IfActionParameterIsIllegalHeaderParameterWithProvidedOpenApiOperation()
+        {
+            var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithAcceptFromHeaderParameter));
+            var actionDescriptor = new ActionDescriptor
+            {
+                EndpointMetadata = new List<object>()
+                {
+                    new OpenApiOperation
+                    {
+                        OperationId = "OperationIdSetInMetadata",
+                        Parameters = new List<OpenApiParameter>()
+                        {
+                            new OpenApiParameter
+                            {
+                                Name = "accept"
+                            }
+                        }
+                    }
+                },
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+                }
+            };
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create(
+                        actionDescriptor,
+                        methodInfo,
+                        groupName: "v1",
+                        httpMethod: "GET",
+                        relativePath: "resource",
+                        parameterDescriptions: new[]
+                        {
+                            new ApiParameterDescription
+                            {
+                                Name = "accept",
+                                Source = BindingSource.Header,
+                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(string))
+                            }
+                        }),
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            var operation = document.Paths["/resource"].Operations[OperationType.Get];
+            Assert.Null(operation.Parameters[0].Schema);
         }
 
         [Fact]
