@@ -14,6 +14,7 @@ using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.TestSupport;
 using Xunit;
 using System.Threading.Tasks;
+using System.Reflection.Metadata;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -536,6 +537,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void GetSwagger_GenerateParametersSchemas_IfActionParameterIsIllegalHeaderParameterWithProvidedOpenApiOperation()
         {
+            var parameter = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithAcceptFromHeaderParameter)).GetParameters()[0];
             var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithAcceptFromHeaderParameter));
             var actionDescriptor = new ActionDescriptor
             {
@@ -548,7 +550,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                         {
                             new OpenApiParameter
                             {
-                                Name = "accept"
+                                Name = parameter.Name
                             }
                         }
                     }
@@ -571,9 +573,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                         {
                             new ApiParameterDescription
                             {
-                                Name = "accept",
+                                Name = parameter.Name,
                                 Source = BindingSource.Header,
-                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(string))
+                                ModelMetadata = ModelMetadataFactory.CreateForParameter(parameter)
                             }
                         }),
                 }

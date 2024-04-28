@@ -53,7 +53,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void ActionWithIntParameterWithSwaggerIgnoreAttribute([SwaggerIgnore] int param)
         { }
 
-        public void ActionWithAcceptFromHeaderParameter([FromHeader(Name = "Accept")] int accept)
+        public void ActionWithAcceptFromHeaderParameter([FromHeader] string accept)
         { }
 
         public void ActionWithObjectParameter(XmlAnnotatedType param)
