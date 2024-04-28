@@ -56,12 +56,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void ActionWithAcceptFromHeaderParameter([FromHeader(Name = "Accept")] int accept)
         { }
 
-        public void ActionWithContentTypeFromHeaderParameter([FromHeader(Name = "Content-Type")] int param)
-        { }
-
-        public void ActionWithAuthorizationFromHeaderParameter([FromHeader(Name = "Authorization")] int param)
-        { }
-
         public void ActionWithObjectParameter(XmlAnnotatedType param)
         { }
 
