@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Writers;
 using Swashbuckle.AspNetCore.Swagger;
@@ -47,11 +49,17 @@ namespace Microsoft.Extensions.ApiDescriptions
             var jsonWriter = new OpenApiJsonWriter(writer);
             if (_options.SerializeAsV2)
             {
-                swagger.SerializeAsV2(jsonWriter);
+                if (_options.CustomDocumentSerializer != null)
+                    _options.CustomDocumentSerializer.SerializeDocument(swagger, jsonWriter, OpenApi.OpenApiSpecVersion.OpenApi2_0);
+                else
+                    swagger.SerializeAsV2(jsonWriter);
             }
             else
             {
-                swagger.SerializeAsV3(jsonWriter);
+                if (_options.CustomDocumentSerializer != null)
+                    _options.CustomDocumentSerializer.SerializeDocument(swagger, jsonWriter, OpenApi.OpenApiSpecVersion.OpenApi3_0);
+                else
+                    swagger.SerializeAsV3(jsonWriter);
             }
         }
     }

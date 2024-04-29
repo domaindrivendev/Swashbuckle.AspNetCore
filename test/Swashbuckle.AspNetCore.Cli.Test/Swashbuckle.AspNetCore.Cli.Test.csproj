@@ -5,7 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Swashbuckle.AspNetCore.TestSupport\Swashbuckle.AspNetCore.TestSupport.csproj" />
     <ProjectReference Include="..\WebSites\Basic\Basic.csproj" />
+    <ProjectReference Include="..\WebSites\CustomDocumentSerializer\CustomDocumentSerializer.csproj" />
     <ProjectReference Include="..\WebSites\MinimalApp\MinimalApp.csproj" />
     <ProjectReference Include="..\..\src\Swashbuckle.AspNetCore.Cli\Swashbuckle.AspNetCore.Cli.csproj" />
   </ItemGroup>

@@ -1,15 +1,18 @@
 ﻿using System;
-using System.Reflection;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
-using System.Runtime.Loader;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.Loader;
+using System.Threading;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Writers;
 using Swashbuckle.AspNetCore.Swagger;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore;
-using Microsoft.Extensions.Hosting;
 
 namespace Swashbuckle.AspNetCore.Cli
 {
@@ -87,17 +90,20 @@ namespace Swashbuckle.AspNetCore.Cli
 
                     // 3) Retrieve Swagger via configured provider
                     var swaggerProvider = serviceProvider.GetRequiredService<ISwaggerProvider>();
+                    var swaggerOptions = serviceProvider.GetService<IOptions<SwaggerOptions>>();
+                    var swaggerDocumentSerializer = swaggerOptions?.Value?.CustomDocumentSerializer;
                     var swagger = swaggerProvider.GetSwagger(
                         namedArgs["swaggerdoc"],
-                        namedArgs.ContainsKey("--host") ? namedArgs["--host"] : null,
-                        namedArgs.ContainsKey("--basepath") ? namedArgs["--basepath"] : null);
+                        namedArgs.TryGetValue("--host", out var arg) ? arg : null,
+                        namedArgs.TryGetValue("--basepath", out var namedArg) ? namedArg : null);
 
                     // 4) Serialize to specified output location or stdout
-                    var outputPath = namedArgs.ContainsKey("--output")
-                        ? Path.Combine(Directory.GetCurrentDirectory(), namedArgs["--output"])
+                    var outputPath = namedArgs.TryGetValue("--output", out var arg1)
+                        ? Path.Combine(Directory.GetCurrentDirectory(), arg1)
                         : null;
 
-                    using (var streamWriter = (outputPath != null ? File.CreateText(outputPath) : Console.Out))
+                    using (Stream stream = (outputPath != null ? File.OpenWrite(outputPath) : Console.OpenStandardOutput()))
+                    using (var streamWriter = new FormattingStreamWriter(stream, CultureInfo.InvariantCulture))
                     {
                         IOpenApiWriter writer;
                         if (namedArgs.ContainsKey("--yaml"))
@@ -106,9 +112,24 @@ namespace Swashbuckle.AspNetCore.Cli
                             writer = new OpenApiJsonWriter(streamWriter);
 
                         if (namedArgs.ContainsKey("--serializeasv2"))
-                            swagger.SerializeAsV2(writer);
+                        {
+                            if (swaggerDocumentSerializer != null)
+                            {
+                                swaggerDocumentSerializer.SerializeDocument(swagger, writer, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0);
+                            }
+                            else
+                            {
+                                swagger.SerializeAsV2(writer);
+                            }
+                        }
+                        else if (swaggerDocumentSerializer != null)
+                        {
+                            swaggerDocumentSerializer.SerializeDocument(swagger, writer, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0);
+                        }
                         else
+                        {
                             swagger.SerializeAsV3(writer);
+                        }
 
                         if (outputPath != null)
                             Console.WriteLine($"Swagger JSON/YAML successfully written to {outputPath}");

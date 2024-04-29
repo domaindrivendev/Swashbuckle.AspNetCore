@@ -26,8 +26,14 @@ namespace Swashbuckle.AspNetCore.Swagger
         public bool SerializeAsV2 { get; set; }
 
         /// <summary>
+        /// Gets or sets an optional custom <see cref="ISwaggerDocumentSerializer"/> implementation to use to serialize Swagger documents.
+        /// </summary>
+        /// <remarks>For the CLI tool to be able to use this, this needs to be configured for use in the service collection of your application.</remarks>
+        public ISwaggerDocumentSerializer CustomDocumentSerializer { get; set; }
+
+        /// <summary>
         /// Actions that can be applied to an OpenApiDocument before it's serialized.
-        /// Useful for setting metadata that's derived from the current request
+        /// Useful for setting metadata that's derived from the current request.
         /// </summary>
         public List<Action<OpenApiDocument, HttpRequest>> PreSerializeFilters { get; private set; }
     }

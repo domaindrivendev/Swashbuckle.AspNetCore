@@ -5,13 +5,13 @@
 Swashbuckle.AspNetCore
 =========
 
-[![Build status](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/workflows/build/badge.svg?branch=master&event=push)](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/actions?query=workflow%3Abuild+branch%3Amaster+event%3Apush) [![Code coverage](https://codecov.io/gh/domaindrivendev/Swashbuckle.AspNetCore/branch/master/graph/badge.svg)](https://codecov.io/gh/domaindrivendev/Swashbuckle.AspNetCore) [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/domaindrivendev/Swashbuckle.AspNetCore/badge)](https://securityscorecards.dev/viewer/?uri=github.com/domaindrivendev/Swashbuckle.AspNetCore)
+[![Build status](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/actions/workflows/build.yml/badge.svg?branch=master&event=push)](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/actions?query=workflow%3Abuild+branch%3Amaster+event%3Apush) [![Code coverage](https://codecov.io/gh/domaindrivendev/Swashbuckle.AspNetCore/branch/master/graph/badge.svg)](https://codecov.io/gh/domaindrivendev/Swashbuckle.AspNetCore) [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/domaindrivendev/Swashbuckle.AspNetCore/badge)](https://securityscorecards.dev/viewer/?uri=github.com/domaindrivendev/Swashbuckle.AspNetCore)
 
 [![NuGet](https://buildstats.info/nuget/Swashbuckle.AspNetCore)](https://www.nuget.org/packages/Swashbuckle.AspNetCore/ "Download Swashbuckle.AspNetCore from NuGet.org")
 
-[Swagger](http://swagger.io) tooling for APIs built with ASP.NET Core. Generate beautiful API documentation, including a UI to explore and test operations, directly from your routes, controllers and models.
+[Swagger](https://swagger.io) tooling for APIs built with ASP.NET Core. Generate beautiful API documentation, including a UI to explore and test operations, directly from your routes, controllers and models.
 
-In addition to its [Swagger 2.0 and OpenAPI 3.0](http://swagger.io/specification/) generator, Swashbuckle also provides an embedded version of the awesome [swagger-ui](https://github.com/swagger-api/swagger-ui) that's powered by the generated Swagger JSON. This means you can complement your API with living documentation that's always in sync with the latest code. Best of all, it requires minimal coding and maintenance, allowing you to focus on building an awesome API.
+In addition to its [Swagger 2.0 and OpenAPI 3.0](https://swagger.io/specification/) generator, Swashbuckle also provides an embedded version of the awesome [swagger-ui](https://github.com/swagger-api/swagger-ui) that's powered by the generated Swagger JSON. This means you can complement your API with living documentation that's always in sync with the latest code. Best of all, it requires minimal coding and maintenance, allowing you to focus on building an awesome API.
 
 And that's not all ...
 
@@ -198,6 +198,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Modify Swagger with Request Context](#modify-swagger-with-request-context)
     * [Serialize Swagger JSON in the 2.0 format](#serialize-swagger-in-the-20-format)
     * [Working with Virtual Directories and Reverse Proxies](#working-with-virtual-directories-and-reverse-proxies)
+    * [Customizing how the OpenAPI document is serialized](#customizing-how-the-openapi-document-is-serialized)
 
 * [Swashbuckle.AspNetCore.SwaggerGen](#swashbuckleaspnetcoreswaggergen)
 
@@ -317,6 +318,30 @@ app.UseSwaggerUI(c =>
 ```
 
 _NOTE: In previous versions of the docs, you may have seen this expressed as a root-relative link (e.g. `/swagger/v1/swagger.json`). This won't work if your app is hosted on an IIS virtual directory or behind a proxy that trims the request path before forwarding. If you switch to the *page-relative* syntax shown above, it should work in all cases._
+
+### Customizing how the OpenAPI document is serialized ###
+
+By default, Swashbuckle will serialize the OpenAPI document using the Serialize methods on the OpenAPI document object. If a customized serialization is desired, 
+it is possible to create a custom document serializer that implements the `ISwaggerDocumentSerializer` interface. This can be set on the `SwaggerOptions` in the service collection using `ConfigureSwagger()`:
+
+> [!NOTE]
+> If you plan on using the command line tool to generate OpenAPI specification files, this must be done on the service collection using `ConfigureSwagger()`.
+
+```csharp
+services.ConfigureSwagger(options =>
+{
+    option.SetCustomDocumentSerializer<CustomDocumentSerializer>();
+})
+```
+
+When the command line tool is not used, it can also be done on the application host:
+
+```csharp
+app.UseSwagger(options =>
+{
+    options.SetCustomDocumentSerializer<CustomDocumentSerializer>();
+})
+```
 
 ## Swashbuckle.AspNetCore.SwaggerGen ##
 
@@ -584,7 +609,7 @@ c.SwaggerDoc("v1",
         License = new OpenApiLicense
         {
             Name = "Apache 2.0",
-            Url = new Uri("http://www.apache.org/licenses/LICENSE-2.0.html")
+            Url = new Uri("https://www.apache.org/licenses/LICENSE-2.0.html")
         }
     }
 );
@@ -670,7 +695,7 @@ If you're using the `SwaggerUI` middleware, you'll need to specify any additiona
 
 ### Omit Obsolete Operations and/or Schema Properties ###
 
-The [Swagger spec](http://swagger.io/specification/) includes a `deprecated` flag for indicating that an operation is deprecated and should be refrained from use. The Swagger generator will automatically set this flag if the corresponding action is decorated with the `ObsoleteAttribute`. However, instead of setting a flag, you can configure the generator to ignore obsolete actions altogether:
+The [Swagger spec](https://swagger.io/specification/) includes a `deprecated` flag for indicating that an operation is deprecated and should be refrained from use. The Swagger generator will automatically set this flag if the corresponding action is decorated with the `ObsoleteAttribute`. However, instead of setting a flag, you can configure the generator to ignore obsolete actions altogether:
 
 ```csharp
 services.AddSwaggerGen(c =>
@@ -731,7 +756,7 @@ public void ConfigureServices(IServiceCollection services)
 
 ### Customize Operation Tags (e.g. for UI Grouping) ###
 
-The [Swagger spec](http://swagger.io/specification/) allows one or more "tags" to be assigned to an operation. The Swagger generator will assign the controller name as the default tag. This is important to note if you're using the `SwaggerUI` middleware as it uses this value to group operations.
+The [Swagger spec](https://swagger.io/specification/) allows one or more "tags" to be assigned to an operation. The Swagger generator will assign the controller name as the default tag. This is important to note if you're using the `SwaggerUI` middleware as it uses this value to group operations.
 
 You can override the default tag by providing a function that applies tags by convention. For example, the following configuration will tag, and therefore group operations in the UI, by HTTP method:
 
@@ -745,7 +770,7 @@ services.AddSwaggerGen(c =>
 
 ### Change Operation Sort Order (e.g. for UI Sorting) ###
 
-By default, actions are ordered by assigned tag (see above) before they're grouped into the path-centric, nested structure of the [Swagger spec](http://swagger.io/specification). But, you can change the default ordering of actions with a custom sorting strategy:
+By default, actions are ordered by assigned tag (see above) before they're grouped into the path-centric, nested structure of the [Swagger spec](https://swagger.io/specification). But, you can change the default ordering of actions with a custom sorting strategy:
 
 ```csharp
 services.AddSwaggerGen(c =>
@@ -850,7 +875,7 @@ _NOTE: Filter pipelines are DI-aware. That is, you can create filters with const
 
 #### Schema Filters ####
 
-Swashbuckle generates a Swagger-flavored [JSONSchema](http://swagger.io/specification/#schemaObject) for every parameter, response and property type that's exposed by your controller actions. Once generated, it passes the schema and type through the list of configured Schema Filters.
+Swashbuckle generates a Swagger-flavored [JSONSchema](https://swagger.io/specification/#schemaObject) for every parameter, response and property type that's exposed by your controller actions. Once generated, it passes the schema and type through the list of configured Schema Filters.
 
 The example below adds an AutoRest vendor extension (see https://github.com/Azure/autorest/blob/master/docs/extensions/readme.md#x-ms-enum) to inform the AutoRest tool how enums should be modelled when it generates the API client.
 
@@ -927,7 +952,7 @@ services.AddSwaggerGen(c =>
 ```
 #### Document Filters ####
 
-Once an `OpenApiDocument` has been generated, it too can be passed through a set of pre-configured Document Filters. This gives full control to modify the document however you see fit. To ensure you're still returning valid Swagger JSON, you should have a read through the [specification](http://swagger.io/specification/) before using this filter type.
+Once an `OpenApiDocument` has been generated, it too can be passed through a set of pre-configured Document Filters. This gives full control to modify the document however you see fit. To ensure you're still returning valid Swagger JSON, you should have a read through the [specification](https://swagger.io/specification/) before using this filter type.
 
 The example below provides a description for any tags that are assigned to operations in the document:
 

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.IntegrationTests.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)..\..\src\Swashbuckle.AspNetCore.Swagger\Swashbuckle.AspNetCore.Swagger.snk</AssemblyOriginatorKeyFile>
     <NoWarn>$(NoWarn);8002</NoWarn>
     <SignAssembly>true</SignAssembly>
     <TargetFramework>net6.0</TargetFramework>
@@ -11,6 +11,7 @@
     <ProjectReference Include="..\WebSites\Basic\Basic.csproj" />
     <ProjectReference Include="..\WebSites\CliExample\CliExample.csproj" />
     <ProjectReference Include="..\WebSites\ConfigFromFile\ConfigFromFile.csproj" />
+    <ProjectReference Include="..\WebSites\CustomDocumentSerializer\CustomDocumentSerializer.csproj" />
     <ProjectReference Include="..\WebSites\CustomUIConfig\CustomUIConfig.csproj" />
     <ProjectReference Include="..\WebSites\CustomUIIndex\CustomUIIndex.csproj" />
     <ProjectReference Include="..\WebSites\GenericControllers\GenericControllers.csproj" />

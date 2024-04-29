@@ -11,11 +11,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="Swashbuckle.AspNetCore.IntegrationTests" Key="00240000048000009400000006020000002400005253413100040000010001000b80d002f0437a94c4f6d77dfc29ce54df1040f66374cb7122ec5ddab3907a6dfe609a07ffd49b9aa6731fe3f8de4da7979ddea73e949c86effc4bec3f469cc36e788cf58c42c4be755efd1afd996ccab9f0db3455b834219f6614d00fe0410cc307c4eced320fd65fcc501f135dc537d7d09dcc1d2a572d24f8459a86469ec5" />
+    <InternalsVisibleTo Include="Swashbuckle.AspNetCore.SwaggerGen.Test" Key="00240000048000009400000006020000002400005253413100040000010001000b80d002f0437a94c4f6d77dfc29ce54df1040f66374cb7122ec5ddab3907a6dfe609a07ffd49b9aa6731fe3f8de4da7979ddea73e949c86effc4bec3f469cc36e788cf58c42c4be755efd1afd996ccab9f0db3455b834219f6614d00fe0410cc307c4eced320fd65fcc501f135dc537d7d09dcc1d2a572d24f8459a86469ec5" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Swashbuckle.AspNetCore.Swagger\Swashbuckle.AspNetCore.Swagger.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.ApiExplorer"/>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.ApiExplorer" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.DataAnnotations" />
     <PackageReference Include="System.Text.Json" />
   </ItemGroup>

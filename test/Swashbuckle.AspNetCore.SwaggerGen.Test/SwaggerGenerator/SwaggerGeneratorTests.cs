@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -1501,6 +1501,110 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("bar", ((OpenApiString)document.Extensions["X-foo"]).Value);
             Assert.Equal("v1", ((OpenApiString)document.Extensions["X-docName"]).Value);
             Assert.Contains("ComplexType", document.Components.Schemas.Keys);
+        }
+
+        [Theory]
+        [InlineData("connect")]
+        [InlineData("CONNECT")]
+        [InlineData("FOO")]
+        public void GetSwagger_GeneratesSwaggerDocument_ThrowsIfHttpMethodNotSupported(string httpMethod)
+        {
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: httpMethod, relativePath: "resource"),
+                },
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    }
+                }
+            );
+
+            var exception = Assert.Throws<SwaggerGeneratorException>(() => subject.GetSwagger("v1"));
+            Assert.Equal($"The \"{httpMethod}\" HTTP method is not supported.", exception.Message);
+        }
+
+        [Fact]
+        public void GetSwagger_Throws_Exception_When_FromForm_Attribute_Used_With_IFormFile()
+        {
+            var parameterInfo = typeof(FakeController)
+                .GetMethod(nameof(FakeController.ActionHavingIFormFileParamWithFromFormAtribute))
+                .GetParameters()[0];
+
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                   ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionHavingIFormFileParamWithFromFormAtribute),
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions: new[]
+                        {
+                            new ApiParameterDescription
+                            {
+                                Name = "fileUpload", // Name of the parameter
+                                Type = typeof(IFormFile), // Type of the parameter
+                                ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = parameterInfo }
+                            }
+                        })
+                }
+            );
+
+            Assert.Throws<SwaggerGeneratorException>(() => subject.GetSwagger("v1"));
+        }
+
+        [Fact]
+        public void GetSwagger_Works_As_Expected_When_FromForm_Attribute_Not_Used_With_IFormFile()
+        {
+            var paraminfo = typeof(FakeController)
+                .GetMethod(nameof(FakeController.ActionHavingFromFormAtributeButNotWithIFormFile))
+                .GetParameters()[0];
+
+            var fileUploadParameterInfo = typeof(FakeController)
+                .GetMethod(nameof(FakeController.ActionHavingFromFormAtributeButNotWithIFormFile))
+                .GetParameters()[1];
+
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                   ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionHavingFromFormAtributeButNotWithIFormFile),
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions: new[]
+                        {
+                            new ApiParameterDescription
+                            {
+                                Name = "param1", // Name of the parameter
+                                Type = typeof(string), // Type of the parameter
+                                ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = paraminfo }
+                            },
+                            new ApiParameterDescription
+                            {
+                                Name = "param2", // Name of the parameter
+                                Type = typeof(IFormFile), // Type of the parameter
+                                ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = fileUploadParameterInfo }
+                            }
+                        })
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+            Assert.Equal("V1", document.Info.Version);
+            Assert.Equal("Test API", document.Info.Title);
+            Assert.Equal(new[] { "/resource" }, document.Paths.Keys.ToArray());
+
+            var operation = document.Paths["/resource"].Operations[OperationType.Post];
+            Assert.NotNull(operation.Parameters);
+            Assert.Equal(2, operation.Parameters.Count);
+            Assert.Equal("param1", operation.Parameters[0].Name);
+            Assert.Equal("param2", operation.Parameters[1].Name);
         }
 
         private static SwaggerGenerator Subject(

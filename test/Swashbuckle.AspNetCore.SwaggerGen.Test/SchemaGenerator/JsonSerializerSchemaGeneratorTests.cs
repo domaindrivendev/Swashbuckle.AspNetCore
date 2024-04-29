@@ -25,7 +25,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Theory]
         [InlineData(typeof(IFormFile))]
         [InlineData(typeof(FileResult))]
-        public void GenerateSchema_GeneratesFileSchema_IfFormFileOrFileResultType(Type type)
+        [InlineData(typeof(System.IO.Stream))]
+        [InlineData(typeof(System.IO.Pipelines.PipeReader))]
+        public void GenerateSchema_GeneratesFileSchema_BinaryStringResultType(Type type)
         {
             var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
@@ -234,6 +236,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("object", schema.Type);
             Assert.Equal(expectedPropertyNames.OrderBy(n => n), schema.Properties.Keys.OrderBy(k => k));
+        }
+
+        [Fact]
+        public void GenerateSchema_KeepMostDerivedType_IfTypeIsAnInterface()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(typeof(INewBaseInterface), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal("integer", schema.Properties["BaseProperty"].Type);
         }
 
         [Fact]
@@ -768,6 +781,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("string", propertySchema.Type);
             Assert.Equal(expectedEnumAsJson, propertySchema.Enum.Select(openApiAny => openApiAny.ToJson()));
             Assert.Equal(expectedDefaultAsJson, propertySchema.Default.ToJson());
+        }
+
+        [Fact]
+        public void GenerateSchema_HonorsEnumDictionaryKeys_StringEnumConverter()
+        {
+            var subject = Subject();
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = subject.GenerateSchema(typeof(Dictionary<IntEnum, string>), schemaRepository);
+
+            Assert.Equal(typeof(IntEnum).GetEnumNames(), referenceSchema.Properties.Keys);
         }
 
         [Fact]

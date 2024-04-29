@@ -20,7 +20,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 c.Conventions.Add(new SwaggerApplicationConvention()));
 
             // Register custom configurators that takes values from SwaggerGenOptions (i.e. high level config)
-            // and applies them to SwaggerGeneratorOptions and SchemaGeneratorOptoins (i.e. lower-level config)
+            // and applies them to SwaggerGeneratorOptions and SchemaGeneratorOptions (i.e. lower-level config)
             services.AddTransient<IConfigureOptions<SwaggerGeneratorOptions>, ConfigureSwaggerGeneratorOptions>();
             services.AddTransient<IConfigureOptions<SchemaGeneratorOptions>, ConfigureSchemaGeneratorOptions>();
 

@@ -19,4 +19,9 @@
     {
         public int Property3 { get; set; }
     }
+
+    public interface INewBaseInterface : IBaseInterface
+    {
+        public new int BaseProperty { get; set; }
+    }
 }

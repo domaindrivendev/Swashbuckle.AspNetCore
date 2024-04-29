@@ -36,10 +36,7 @@
     <PackageIcon></PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</PackageProjectUrl>
-    <!--
-    TODO Create a generic package README file for the project
     <PackageReadmeFile>package-readme.md</PackageReadmeFile>
-    -->
     <PackageReleaseNotes>See $(PackageProjectUrl)/releases for details.</PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -52,7 +49,7 @@
     <WarnOnPackingNonPackableProject>false</WarnOnPackingNonPackableProject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(GITHUB_ACTIONS)' != '' ">
-    <VersionSuffix Condition=" '$(VersionSuffix)' == '' AND '$(GITHUB_HEAD_REF)' == '' ">preview</VersionSuffix>
+    <VersionSuffix Condition=" '$(VersionSuffix)' == '' AND '$(GITHUB_HEAD_REF)' == '' ">preview.$(GITHUB_RUN_NUMBER)</VersionSuffix>
     <VersionSuffix Condition=" '$(VersionSuffix)' == '' AND '$(GITHUB_HEAD_REF)' != '' ">pr.$(GITHUB_REF_NAME.Replace('/merge', '')).$(GITHUB_RUN_NUMBER)</VersionSuffix>
     <VersionSuffix Condition=" '$(GITHUB_EVENT_NAME)' == 'workflow_dispatch' AND '$(GITHUB_REF_PROTECTED)' == 'true' "></VersionSuffix>
     <FileVersion Condition=" '$(GITHUB_RUN_NUMBER)' != '' ">$(VersionPrefix).$(GITHUB_RUN_NUMBER)</FileVersion>

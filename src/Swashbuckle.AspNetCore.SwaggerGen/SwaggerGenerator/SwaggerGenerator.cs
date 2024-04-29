@@ -5,12 +5,14 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Swagger;
+
 #if NET7_0_OR_GREATER
 using Microsoft.AspNetCore.Http.Metadata;
 #endif
@@ -86,9 +88,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var applicableApiDescriptions = _apiDescriptionsProvider.ApiDescriptionGroups.Items
                 .SelectMany(group => group.Items)
-                .Where(apiDesc => !(_options.IgnoreObsoleteActions && apiDesc.CustomAttributes().OfType<ObsoleteAttribute>().Any()))
-                .Where(apiDesc => !apiDesc.CustomAttributes().OfType<SwaggerIgnoreAttribute>().Any())
-                .Where(apiDesc => _options.DocInclusionPredicate(documentName, apiDesc));
+                .Where(apiDesc =>
+                {
+                    var attributes = apiDesc.CustomAttributes().ToList();
+                    return !(_options.IgnoreObsoleteActions && attributes.OfType<ObsoleteAttribute>().Any()) &&
+                           !attributes.OfType<SwaggerIgnoreAttribute>().Any() &&
+                           _options.DocInclusionPredicate(documentName, apiDesc);
+                });
 
             var schemaRepository = new SchemaRepository(documentName);
 
@@ -198,7 +204,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 var apiDescription = (group.Count() > 1) ? _options.ConflictingActionsResolver(group) : group.Single();
 
-                operations.Add(OperationTypeMap[httpMethod.ToUpper()], GenerateOperation(apiDescription, schemaRepository));
+                var normalizedMethod = httpMethod.ToUpperInvariant();
+                if (!OperationTypeMap.TryGetValue(normalizedMethod, out var operationType))
+                {
+                    // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2600 and
+                    // https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2740.
+                    throw new SwaggerGeneratorException($"The \"{httpMethod}\" HTTP method is not supported.");
+                }
+
+                operations.Add(operationType, GenerateOperation(apiDescription, schemaRepository));
             };
 
             return operations;
@@ -316,6 +330,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private IList<OpenApiParameter> GenerateParameters(ApiDescription apiDescription, SchemaRepository schemaRespository)
         {
+            if (apiDescription.ParameterDescriptions.Any(IsFromFormAttributeUsedWithIFormFile))
+                throw new SwaggerGeneratorException(string.Format(
+                       "Error reading parameter(s) for action {0} as [FromForm] attribute used with IFormFile. " +
+                       "Please refer to https://github.com/domaindrivendev/Swashbuckle.AspNetCore#handle-forms-and-file-uploads for more information",
+                       apiDescription.ActionDescriptor.DisplayName));
+
             var applicableApiParameters = apiDescription.ParameterDescriptions
                 .Where(apiParam =>
                 {
@@ -339,8 +359,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 ? apiParameter.Name.ToCamelCase()
                 : apiParameter.Name;
 
-            var location = (apiParameter.Source != null && ParameterLocationMap.ContainsKey(apiParameter.Source))
-                ? ParameterLocationMap[apiParameter.Source]
+            var location = apiParameter.Source != null &&
+                            ParameterLocationMap.TryGetValue(apiParameter.Source, out var value)
+                ? value
                 : ParameterLocation.Query;
 
             var isRequired = apiParameter.IsRequiredParameter();
@@ -407,7 +428,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 .FirstOrDefault(paramDesc => paramDesc.IsFromBody());
 
             var formParameters = apiDescription.ParameterDescriptions
-                .Where(paramDesc => paramDesc.IsFromForm());
+                .Where(paramDesc => paramDesc.IsFromForm())
+                .ToList();
 
             if (bodyParameter != null)
             {
@@ -419,7 +441,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     schemaGenerator: _schemaGenerator,
                     schemaRepository: schemaRepository);
             }
-            else if (formParameters.Any())
+            else if (formParameters.Count > 0)
             {
                 requestBody = GenerateRequestBodyFromFormParameters(apiDescription, schemaRepository, formParameters);
 
@@ -479,13 +501,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (explicitContentTypes.Any()) return explicitContentTypes;
 
             // If there's content types surfaced by ApiExplorer, use them
-            var apiExplorerContentTypes = apiDescription.SupportedRequestFormats
+            return apiDescription.SupportedRequestFormats
                 .Select(format => format.MediaType)
                 .Where(x => x != null)
                 .Distinct();
-            if (apiExplorerContentTypes.Any()) return apiExplorerContentTypes;
-
-            return Enumerable.Empty<string>();
         }
 
         private OpenApiRequestBody GenerateRequestBodyFromFormParameters(
@@ -614,6 +633,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 Schema = GenerateSchema(modelMetadata.ModelType, schemaRespository)
             };
+        }
+
+        private static bool IsFromFormAttributeUsedWithIFormFile(ApiParameterDescription apiParameter)
+        {
+            var parameterInfo = apiParameter.ParameterInfo();
+            var fromFormAttribute = parameterInfo?.GetCustomAttribute<FromFormAttribute>();
+
+            return fromFormAttribute != null && parameterInfo?.ParameterType == typeof(IFormFile);
         }
 
         private static readonly Dictionary<string, OperationType> OperationTypeMap = new Dictionary<string, OperationType>

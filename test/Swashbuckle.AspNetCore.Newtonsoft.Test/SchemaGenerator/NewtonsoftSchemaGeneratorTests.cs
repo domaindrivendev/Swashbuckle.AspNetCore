@@ -23,7 +23,8 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [Theory]
         [InlineData(typeof(IFormFile))]
         [InlineData(typeof(FileResult))]
-        public void GenerateSchema_GeneratesFileSchema_IfFormFileOrFileResultType(Type type)
+        [InlineData(typeof(System.IO.Stream))]
+        public void GenerateSchema_GeneratesFileSchema_BinaryStringResultType(Type type)
         {
             var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
@@ -618,9 +619,9 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [InlineData(TypeNameHandling.Arrays, TypeNameAssemblyFormatHandling.Full, false,
             null)]
         [InlineData(TypeNameHandling.Objects, TypeNameAssemblyFormatHandling.Full, true,
-            "Swashbuckle.AspNetCore.TestSupport.{0}, Swashbuckle.AspNetCore.TestSupport, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null")]
+            "Swashbuckle.AspNetCore.TestSupport.{0}, Swashbuckle.AspNetCore.TestSupport, Version=1.0.0.0, Culture=neutral, PublicKeyToken=62657d7474907593")]
         [InlineData(TypeNameHandling.All, TypeNameAssemblyFormatHandling.Full, true,
-            "Swashbuckle.AspNetCore.TestSupport.{0}, Swashbuckle.AspNetCore.TestSupport, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null")]
+            "Swashbuckle.AspNetCore.TestSupport.{0}, Swashbuckle.AspNetCore.TestSupport, Version=1.0.0.0, Culture=neutral, PublicKeyToken=62657d7474907593")]
         [InlineData(TypeNameHandling.Auto, TypeNameAssemblyFormatHandling.Simple, true,
             "Swashbuckle.AspNetCore.TestSupport.{0}, Swashbuckle.AspNetCore.TestSupport")]
         public void GenerateSchema_HonorsSerializerSetting_TypeNameHandling(

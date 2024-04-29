@@ -27,14 +27,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     jsonConverter: JsonConverterFunc);
             }
 
-            if (PrimitiveTypesAndFormats.ContainsKey(type))
+            if (PrimitiveTypesAndFormats.TryGetValue(type, out var primitiveTypeAndFormat1))
             {
-                var primitiveTypeAndFormat = PrimitiveTypesAndFormats[type];
-
                 return DataContract.ForPrimitive(
                     underlyingType: type,
-                    dataType: primitiveTypeAndFormat.Item1,
-                    dataFormat: primitiveTypeAndFormat.Item2,
+                    dataType: primitiveTypeAndFormat1.Item1,
+                    dataFormat: primitiveTypeAndFormat1.Item2,
                     jsonConverter: JsonConverterFunc);
             }
 
@@ -59,10 +57,24 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (IsSupportedDictionary(type, out Type keyType, out Type valueType))
             {
+                IEnumerable<string> keys = null;
+
+                if (keyType.IsEnum)
+                {
+                    // This is a special case where we know the possible key values
+                    var enumValuesAsJson = keyType.GetEnumValues()
+                        .Cast<object>()
+                        .Select(value => JsonConverterFunc(value));
+
+                    keys = enumValuesAsJson.Any(json => json.StartsWith("\""))
+                        ? enumValuesAsJson.Select(json => json.Replace("\"", string.Empty))
+                        : keyType.GetEnumNames();
+                }
+
                 return DataContract.ForDictionary(
                     underlyingType: type,
                     valueType: valueType,
-                    keys: null, // STJ doesn't currently support dictionaries with enum key types
+                    keys: keys,
                     jsonConverter: JsonConverterFunc);
             }
 
