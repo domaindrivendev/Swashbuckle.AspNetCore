@@ -91,6 +91,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             throw new NotImplementedException();
         }
 
+        [ProducesResponseType(typeof(FileContentResult), 200, "application/zip")]
+        public FileContentResult ActionWithFileResult()
+        {
+            throw new NotImplementedException();
+        }
+
         [SwaggerIgnore]
         public void ActionWithSwaggerIgnoreAttribute()
         { }

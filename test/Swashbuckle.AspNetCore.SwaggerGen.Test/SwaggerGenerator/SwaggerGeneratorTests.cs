@@ -5,12 +5,12 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Reflection;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
@@ -966,6 +966,40 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var responseDefault = operation.Responses["default"];
             Assert.Equal("Error", responseDefault.Description);
             Assert.Empty(responseDefault.Content.Keys);
+        }
+
+        [Fact]
+        public void GetSwagger_SetsResponseContentType_WhenActionHasFileResult()
+        {
+            var apiDescription = ApiDescriptionFactory.Create<FakeController>(
+                c => nameof(c.ActionWithFileResult),
+                groupName: "v1",
+                httpMethod: "POST",
+                relativePath: "resource",
+                supportedResponseTypes: new[]
+                {
+                    new ApiResponseType
+                    {
+                        ApiResponseFormats = new [] { new ApiResponseFormat { MediaType = "application/zip" } },
+                        StatusCode = 200,
+                        Type = typeof(FileContentResult)
+                    }
+                });
+
+            // ASP.NET Core sets ModelMetadata to null for FileResults
+            apiDescription.SupportedResponseTypes[0].ModelMetadata = null;
+
+            var subject = Subject(
+                apiDescriptions: new[] { apiDescription }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            var operation = document.Paths["/resource"].Operations[OperationType.Post];
+            var content = operation.Responses["200"].Content.FirstOrDefault();
+            Assert.Equal("application/zip", content.Key);
+            Assert.Equal("binary", content.Value.Schema.Format);
+            Assert.Equal("string", content.Value.Schema.Type);
         }
 
         [Fact]
