@@ -5,12 +5,14 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Swagger;
+
 #if NET7_0_OR_GREATER
 using Microsoft.AspNetCore.Http.Metadata;
 #endif
@@ -267,7 +269,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             // Schemas will be generated via Swashbuckle by default.
             foreach (var parameter in operation.Parameters)
             {
-                var apiParameter = apiDescription.ParameterDescriptions.SingleOrDefault(desc => desc.Name == parameter.Name && !desc.IsFromBody() && !desc.IsFromForm());
+                var apiParameter = apiDescription.ParameterDescriptions.SingleOrDefault(desc => desc.Name == parameter.Name && !desc.IsFromBody() && !desc.IsFromForm() && !desc.IsIllegalHeaderParameter());
                 if (apiParameter is not null)
                 {
                     parameter.Schema = GenerateSchema(
@@ -328,13 +330,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private IList<OpenApiParameter> GenerateParameters(ApiDescription apiDescription, SchemaRepository schemaRespository)
         {
+            if (apiDescription.ParameterDescriptions.Any(IsFromFormAttributeUsedWithIFormFile))
+                throw new SwaggerGeneratorException(string.Format(
+                       "Error reading parameter(s) for action {0} as [FromForm] attribute used with IFormFile. " +
+                       "Please refer to https://github.com/domaindrivendev/Swashbuckle.AspNetCore#handle-forms-and-file-uploads for more information",
+                       apiDescription.ActionDescriptor.DisplayName));
+
             var applicableApiParameters = apiDescription.ParameterDescriptions
                 .Where(apiParam =>
                 {
                     return (!apiParam.IsFromBody() && !apiParam.IsFromForm())
                         && (!apiParam.CustomAttributes().OfType<BindNeverAttribute>().Any())
                         && (!apiParam.CustomAttributes().OfType<SwaggerIgnoreAttribute>().Any())
-                        && (apiParam.ModelMetadata == null || apiParam.ModelMetadata.IsBindingAllowed);
+                        && (apiParam.ModelMetadata == null || apiParam.ModelMetadata.IsBindingAllowed)
+                        && !apiParam.IsIllegalHeaderParameter();
                 });
 
             return applicableApiParameters
@@ -627,6 +636,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 Schema = GenerateSchema(modelType, schemaRespository)
             };
+        }
+
+        private static bool IsFromFormAttributeUsedWithIFormFile(ApiParameterDescription apiParameter)
+        {
+            var parameterInfo = apiParameter.ParameterInfo();
+            var fromFormAttribute = parameterInfo?.GetCustomAttribute<FromFormAttribute>();
+
+            return fromFormAttribute != null && parameterInfo?.ParameterType == typeof(IFormFile);
         }
 
         private static readonly Dictionary<string, OperationType> OperationTypeMap = new Dictionary<string, OperationType>
