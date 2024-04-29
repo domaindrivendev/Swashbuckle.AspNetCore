@@ -510,8 +510,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(nameof(FakeController.ActionWithAuthorizationFromHeaderParameter))]
         public void GetSwagger_IgnoresParameters_IfActionParameterIsIllegalHeaderParameter(string action)
         {
-            var parameter = typeof(FakeController).GetMethod(action).GetParameters()[0];
-            var fromHeaderAttribute = parameter.GetCustomAttribute<FromHeaderAttribute>();
+            var illegalParameter = typeof(FakeController).GetMethod(action).GetParameters()[0];
+            var fromHeaderAttribute = illegalParameter.GetCustomAttribute<FromHeaderAttribute>();
 
             var subject = Subject(
                 new[]
@@ -525,9 +525,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                         {
                             new ApiParameterDescription
                             {
-                                Name = fromHeaderAttribute?.Name ?? parameter.Name,
+                                Name = fromHeaderAttribute?.Name ?? illegalParameter.Name,
                                 Source = BindingSource.Header,
-                                ModelMetadata = ModelMetadataFactory.CreateForParameter(parameter)
+                                ModelMetadata = ModelMetadataFactory.CreateForParameter(illegalParameter)
                             }
                         }
                     )
@@ -537,7 +537,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var document = subject.GetSwagger("v1");
 
             var operation = document.Paths["/resource"].Operations[OperationType.Get];
-            Assert.Empty(operation.Parameters);
+            var parameter = Assert.Single(operation.Parameters);
+            Assert.Equal("param", parameter.Name);
         }
 
         [Theory]
@@ -546,8 +547,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(nameof(FakeController.ActionWithAuthorizationFromHeaderParameter))]
         public void GetSwagger_GenerateParametersSchemas_IfActionParameterIsIllegalHeaderParameterWithProvidedOpenApiOperation(string action)
         {
-            var parameter = typeof(FakeController).GetMethod(action).GetParameters()[0];
-            var fromHeaderAttribute = parameter.GetCustomAttribute<FromHeaderAttribute>();
+            var illegalParameter = typeof(FakeController).GetMethod(action).GetParameters()[0];
+            var fromHeaderAttribute = illegalParameter.GetCustomAttribute<FromHeaderAttribute>();
+            var illegalParameterName = fromHeaderAttribute?.Name ?? illegalParameter.Name;
             var methodInfo = typeof(FakeController).GetMethod(action);
             var actionDescriptor = new ActionDescriptor
             {
@@ -560,7 +562,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                         {
                             new OpenApiParameter
                             {
-                                Name = fromHeaderAttribute?.Name ?? parameter.Name,
+                                Name = illegalParameterName,
                             }
                         }
                     }
@@ -583,9 +585,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                         {
                             new ApiParameterDescription
                             {
-                                Name = fromHeaderAttribute?.Name ?? parameter.Name,
+                                Name = illegalParameterName,
                                 Source = BindingSource.Header,
-                                ModelMetadata = ModelMetadataFactory.CreateForParameter(parameter)
+                                ModelMetadata = ModelMetadataFactory.CreateForParameter(illegalParameter)
                             }
                         }),
                 }
@@ -594,7 +596,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var document = subject.GetSwagger("v1");
 
             var operation = document.Paths["/resource"].Operations[OperationType.Get];
-            Assert.Null(operation.Parameters[0].Schema);
+            Assert.Null(operation.Parameters.Single(p => p.Name == illegalParameterName).Schema);
+            Assert.NotNull(operation.Parameters.Single(p => p.Name == "param").Schema);
         }
 
         [Fact]
