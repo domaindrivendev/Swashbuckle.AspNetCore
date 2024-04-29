@@ -28,11 +28,11 @@ namespace Basic.Controllers
 
         [HttpGet("{name}")]
 #if NET6_0_OR_GREATER
-        [ProducesResponseType(typeof(FileStreamResult), StatusCodes.Status200OK, "text/plain", "application/zip")]
+        [ProducesResponseType(typeof(FileResult), StatusCodes.Status200OK, "text/plain", "application/zip")]
 #else
-        [Produces("text/plain", "application/zip", Type = typeof(FileStreamResult))]
+        [Produces("text/plain", "application/zip", Type = typeof(FileResult))]
 #endif
-        public FileStreamResult GetFile(string name)
+        public FileResult GetFile(string name)
         {
             var stream = new MemoryStream();
 
