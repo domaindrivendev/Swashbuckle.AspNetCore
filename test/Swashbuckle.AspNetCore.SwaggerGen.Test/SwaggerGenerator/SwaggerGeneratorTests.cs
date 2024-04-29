@@ -528,6 +528,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                                 Name = fromHeaderAttribute?.Name ?? illegalParameter.Name,
                                 Source = BindingSource.Header,
                                 ModelMetadata = ModelMetadataFactory.CreateForParameter(illegalParameter)
+                            },
+                            new ApiParameterDescription
+                            {
+                                Name = "param",
+                                Source = BindingSource.Header
                             }
                         }
                     )
@@ -563,6 +568,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                             new OpenApiParameter
                             {
                                 Name = illegalParameterName,
+                            },
+                            new OpenApiParameter
+                            {
+                                Name = "param",
                             }
                         }
                     }
@@ -588,10 +597,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                                 Name = illegalParameterName,
                                 Source = BindingSource.Header,
                                 ModelMetadata = ModelMetadataFactory.CreateForParameter(illegalParameter)
+                            },
+                            new ApiParameterDescription
+                            {
+                                Name = "param",
+                                Source = BindingSource.Header,
+                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(string))
                             }
                         }),
                 }
-            );
+            ); ;
 
             var document = subject.GetSwagger("v1");
 

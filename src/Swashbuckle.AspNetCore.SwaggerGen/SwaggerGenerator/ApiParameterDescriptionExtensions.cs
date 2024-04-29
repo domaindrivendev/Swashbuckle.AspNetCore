@@ -25,8 +25,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private static readonly HashSet<string> IllegalHeaderParameters = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             HeaderNames.Accept,
-            HeaderNames.ContentType,
-            HeaderNames.Authorization
+            HeaderNames.Authorization,
+            HeaderNames.ContentType
         };
 
         public static bool IsRequiredParameter(this ApiParameterDescription apiParameter)
@@ -122,7 +122,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         internal static bool IsIllegalHeaderParameter(this ApiParameterDescription apiParameter)
         {
-            // Certian header parameters are not allowed and should be described using the corresponding OpenAPI keywords
+            // Certain header parameters are not allowed and should be described using the corresponding OpenAPI keywords
             // https://swagger.io/docs/specification/describing-parameters/#header-parameters
             return apiParameter.Source == BindingSource.Header && IllegalHeaderParameters.Contains(apiParameter.Name);
         }
