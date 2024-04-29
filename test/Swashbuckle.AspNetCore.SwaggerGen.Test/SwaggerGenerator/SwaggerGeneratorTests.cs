@@ -873,7 +873,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     }
                 });
 
-            // ASP.NET Core sets ModelMetadata to null for FileResult's
+            // ASP.NET Core sets ModelMetadata to null for FileResults
             apiDescription.SupportedResponseTypes[0].ModelMetadata = null;
 
             var subject = Subject(
