@@ -1,14 +1,16 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Reflection;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
@@ -500,6 +502,117 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.Empty(operation.Parameters);
+        }
+
+        [Theory]
+        [InlineData(nameof(FakeController.ActionWithAcceptFromHeaderParameter))]
+        [InlineData(nameof(FakeController.ActionWithContentTypeFromHeaderParameter))]
+        [InlineData(nameof(FakeController.ActionWithAuthorizationFromHeaderParameter))]
+        public void GetSwagger_IgnoresParameters_IfActionParameterIsIllegalHeaderParameter(string action)
+        {
+            var illegalParameter = typeof(FakeController).GetMethod(action).GetParameters()[0];
+            var fromHeaderAttribute = illegalParameter.GetCustomAttribute<FromHeaderAttribute>();
+
+            var subject = Subject(
+                new[]
+                {
+                    ApiDescriptionFactory.Create<FakeController>(
+                        c => action,
+                        groupName: "v1",
+                        httpMethod: "GET",
+                        relativePath: "resource",
+                        parameterDescriptions: new[]
+                        {
+                            new ApiParameterDescription
+                            {
+                                Name = fromHeaderAttribute?.Name ?? illegalParameter.Name,
+                                Source = BindingSource.Header,
+                                ModelMetadata = ModelMetadataFactory.CreateForParameter(illegalParameter)
+                            },
+                            new ApiParameterDescription
+                            {
+                                Name = "param",
+                                Source = BindingSource.Header
+                            }
+                        }
+                    )
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            var operation = document.Paths["/resource"].Operations[OperationType.Get];
+            var parameter = Assert.Single(operation.Parameters);
+            Assert.Equal("param", parameter.Name);
+        }
+
+        [Theory]
+        [InlineData(nameof(FakeController.ActionWithAcceptFromHeaderParameter))]
+        [InlineData(nameof(FakeController.ActionWithContentTypeFromHeaderParameter))]
+        [InlineData(nameof(FakeController.ActionWithAuthorizationFromHeaderParameter))]
+        public void GetSwagger_GenerateParametersSchemas_IfActionParameterIsIllegalHeaderParameterWithProvidedOpenApiOperation(string action)
+        {
+            var illegalParameter = typeof(FakeController).GetMethod(action).GetParameters()[0];
+            var fromHeaderAttribute = illegalParameter.GetCustomAttribute<FromHeaderAttribute>();
+            var illegalParameterName = fromHeaderAttribute?.Name ?? illegalParameter.Name;
+            var methodInfo = typeof(FakeController).GetMethod(action);
+            var actionDescriptor = new ActionDescriptor
+            {
+                EndpointMetadata = new List<object>()
+                {
+                    new OpenApiOperation
+                    {
+                        OperationId = "OperationIdSetInMetadata",
+                        Parameters = new List<OpenApiParameter>()
+                        {
+                            new OpenApiParameter
+                            {
+                                Name = illegalParameterName,
+                            },
+                            new OpenApiParameter
+                            {
+                                Name = "param",
+                            }
+                        }
+                    }
+                },
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+                }
+            };
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create(
+                        actionDescriptor,
+                        methodInfo,
+                        groupName: "v1",
+                        httpMethod: "GET",
+                        relativePath: "resource",
+                        parameterDescriptions: new[]
+                        {
+                            new ApiParameterDescription
+                            {
+                                Name = illegalParameterName,
+                                Source = BindingSource.Header,
+                                ModelMetadata = ModelMetadataFactory.CreateForParameter(illegalParameter)
+                            },
+                            new ApiParameterDescription
+                            {
+                                Name = "param",
+                                Source = BindingSource.Header,
+                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(string))
+                            }
+                        }),
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            var operation = document.Paths["/resource"].Operations[OperationType.Get];
+            Assert.Null(operation.Parameters.Single(p => p.Name == illegalParameterName).Schema);
+            Assert.NotNull(operation.Parameters.Single(p => p.Name == "param").Schema);
         }
 
         [Fact]
