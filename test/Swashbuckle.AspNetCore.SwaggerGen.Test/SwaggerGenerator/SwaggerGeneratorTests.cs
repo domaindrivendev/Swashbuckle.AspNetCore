@@ -606,7 +606,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                             }
                         }),
                 }
-            ); ;
+            );
 
             var document = subject.GetSwagger("v1");
 
