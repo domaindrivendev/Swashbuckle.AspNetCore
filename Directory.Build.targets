@@ -21,6 +21,8 @@
   <Target Name="GenerateCoverageReports" AfterTargets="GenerateCoverageResultAfterTest" Condition=" '$(CollectCoverage)' == 'true' ">
     <ReportGenerator ReportFiles="@(CoverletReport)" ReportTypes="$(ReportGeneratorReportTypes)" Tag="$(Version)" TargetDirectory="$(ReportGeneratorTargetDirectory)" Title="$(AssemblyName)" VerbosityLevel="Warning" />
     <ItemGroup>
+      <_ReportGeneratorLines Include="$([System.Environment]::NewLine)" />
+      <_ReportGeneratorLines Include="$([System.Environment]::NewLine)" />
       <_ReportGeneratorLines Include="&lt;details&gt;&lt;summary&gt;:chart_with_upwards_trend: &lt;b&gt;$(AssemblyName) Code Coverage report&lt;/b&gt;&lt;/summary&gt;" />
       <_ReportGeneratorLines Include="$([System.Environment]::NewLine)" />
       <_ReportGeneratorLines Include="$([System.Environment]::NewLine)" />
