@@ -23,12 +23,14 @@
     <ItemGroup>
       <_ReportGeneratorLines Include="&lt;details&gt;&lt;summary&gt;:chart_with_upwards_trend: &lt;b&gt;$(AssemblyName) Code Coverage report&lt;/b&gt;&lt;/summary&gt;" />
       <_ReportGeneratorLines Include="$([System.Environment]::NewLine)" />
+      <_ReportGeneratorLines Include="$([System.Environment]::NewLine)" />
     </ItemGroup>
     <ReadLinesFromFile File="$([System.IO.Path]::Combine($(ReportGeneratorTargetDirectory), 'SummaryGithub.md'))" >
       <Output TaskParameter="Lines" ItemName="_CoverageGitHubSummary"/>
     </ReadLinesFromFile>
     <ItemGroup>
       <_ReportGeneratorLines Include="@(_CoverageGitHubSummary)" />
+      <_ReportGeneratorLines Include="$([System.Environment]::NewLine)" />
       <_ReportGeneratorLines Include="$([System.Environment]::NewLine)" />
       <_ReportGeneratorLines Include="&lt;/details&gt;" />
     </ItemGroup>
