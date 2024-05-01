@@ -24,6 +24,7 @@
       <_ReportGeneratorLines Include="$([System.Environment]::NewLine)" />
       <_ReportGeneratorLines Include="$([System.Environment]::NewLine)" />
       <_ReportGeneratorLines Include="&lt;details&gt;&lt;summary&gt;:chart_with_upwards_trend: &lt;b&gt;$(AssemblyName) Code Coverage report&lt;/b&gt;&lt;/summary&gt;" />
+      <_ReportGeneratorLines Include="&lt;!-- --&gt;" />
       <_ReportGeneratorLines Include="$([System.Environment]::NewLine)" />
       <_ReportGeneratorLines Include="$([System.Environment]::NewLine)" />
       <_ReportGeneratorLines Include="$([System.Environment]::NewLine)" />
