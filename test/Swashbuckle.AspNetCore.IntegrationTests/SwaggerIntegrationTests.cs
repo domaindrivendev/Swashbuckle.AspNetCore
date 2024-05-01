@@ -11,6 +11,7 @@ using ReDocApp = ReDoc;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests
 {
+    [Collection("TestSite")]
     public class SwaggerIntegrationTests
     {
         [Theory]
