@@ -40,7 +40,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 var enumValues = type.GetEnumValues();
 
-                //Test to determine if the serializer will treat as string
+                // Test to determine if the serializer will treat as string
                 var serializeAsString = (enumValues.Length > 0)
                     && JsonConverterFunc(enumValues.GetValue(0), type).StartsWith("\"");
 
@@ -64,7 +64,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     // This is a special case where we know the possible key values
                     var enumValuesAsJson = keyType.GetEnumValues()
                         .Cast<object>()
-                        .Select(value => JsonConverterFunc(value, type));
+                        .Select(value => JsonConverterFunc(value, keyType));
 
                     keys = enumValuesAsJson.Any(json => json.StartsWith("\""))
                         ? enumValuesAsJson.Select(json => json.Replace("\"", string.Empty))
