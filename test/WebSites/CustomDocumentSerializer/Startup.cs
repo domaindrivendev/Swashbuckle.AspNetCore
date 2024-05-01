@@ -1,5 +1,3 @@
-using Swashbuckle.AspNetCore.Swagger;
-
 namespace CustomDocumentSerializer;
 
 public class Startup
@@ -24,7 +22,7 @@ public class Startup
         });
     }
 
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    public void Configure(IApplicationBuilder app)
     {
         app.UseSwagger();
 

@@ -56,9 +56,11 @@ public static class ConfigureSwaggerGeneratorOptionsTests
         options.ParameterFilter<TestParameterFilter>();
         options.ParameterFilter<TestParameterFilter>();
 
+        using var serviceProvider = new ServiceCollection().BuildServiceProvider();
+
         var configureSwaggerGeneratorOptions = new ConfigureSwaggerGeneratorOptions(
             Options.Create(options),
-            null,
+            serviceProvider,
             webhostingEnvironment);
         var swaggerGeneratorOptions = new SwaggerGeneratorOptions();
 
@@ -103,9 +105,11 @@ public static class ConfigureSwaggerGeneratorOptionsTests
         options.RequestBodyFilter<TestRequestBodyFilter>();
         options.RequestBodyFilter<TestRequestBodyFilter>();
 
+        using var serviceProvider = new ServiceCollection().BuildServiceProvider();
+
         var configureSwaggerGeneratorOptions = new ConfigureSwaggerGeneratorOptions(
             Options.Create(options),
-            null,
+            serviceProvider,
             webhostingEnvironment);
         var swaggerGeneratorOptions = new SwaggerGeneratorOptions();
 
@@ -150,9 +154,11 @@ public static class ConfigureSwaggerGeneratorOptionsTests
         options.OperationFilter<TestOperationFilter>();
         options.OperationFilter<TestOperationFilter>();
 
+        using var serviceProvider = new ServiceCollection().BuildServiceProvider();
+
         var configureSwaggerGeneratorOptions = new ConfigureSwaggerGeneratorOptions(
             Options.Create(options),
-            null,
+            serviceProvider,
             webhostingEnvironment);
         var swaggerGeneratorOptions = new SwaggerGeneratorOptions();
 
@@ -197,9 +203,11 @@ public static class ConfigureSwaggerGeneratorOptionsTests
         options.DocumentFilter<TestDocumentFilter>();
         options.DocumentFilter<TestDocumentFilter>();
 
+        using var serviceProvider = new ServiceCollection().BuildServiceProvider();
+
         var configureSwaggerGeneratorOptions = new ConfigureSwaggerGeneratorOptions(
             Options.Create(options),
-            null,
+            serviceProvider,
             webhostingEnvironment);
         var swaggerGeneratorOptions = new SwaggerGeneratorOptions();
 

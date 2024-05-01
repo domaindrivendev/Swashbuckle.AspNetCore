@@ -53,7 +53,9 @@ public static class ConfigureSchemaGeneratorOptionsTests
         options.SchemaFilter<TestSchemaFilter>();
         options.SchemaFilter<TestSchemaFilter>();
 
-        var configureSchemaGeneratorOptions = new ConfigureSchemaGeneratorOptions(Options.Create(options), null);
+        using var serviceProvider = new ServiceCollection().BuildServiceProvider();
+
+        var configureSchemaGeneratorOptions = new ConfigureSchemaGeneratorOptions(Options.Create(options), serviceProvider);
         var schemaGeneratorOptions = new SchemaGeneratorOptions();
 
         configureSchemaGeneratorOptions.Configure(schemaGeneratorOptions);
