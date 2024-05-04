@@ -688,7 +688,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             new KeyValuePair<string, string>("429", "Too Many Requests"),
             new KeyValuePair<string, string>("4\\d{2}", "Client Error"),
 
+            new KeyValuePair<string, string>("501", "Not Implemented"),
+            new KeyValuePair<string, string>("502", "Bad Gateway"),
+            new KeyValuePair<string, string>("503", "Service Unavailable"),
+            new KeyValuePair<string, string>("504", "Gateway Timeout"),
             new KeyValuePair<string, string>("5\\d{2}", "Server Error"),
+
             new KeyValuePair<string, string>("default", "Error")
         };
 
