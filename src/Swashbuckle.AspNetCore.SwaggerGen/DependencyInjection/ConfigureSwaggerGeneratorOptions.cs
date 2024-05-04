@@ -70,7 +70,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             target.ParameterFilters = new List<IParameterFilter>(source.ParameterFilters);
             target.OperationFilters = new List<IOperationFilter>(source.OperationFilters);
             target.DocumentFilters = new List<IDocumentFilter>(source.DocumentFilters);
-            target.InferSecuritySchemes = source.InferSecuritySchemes;
+            target.RequestBodyFilters = new List<IRequestBodyFilter>(source.RequestBodyFilters);
             target.SecuritySchemesSelector = source.SecuritySchemesSelector;
         }
 
