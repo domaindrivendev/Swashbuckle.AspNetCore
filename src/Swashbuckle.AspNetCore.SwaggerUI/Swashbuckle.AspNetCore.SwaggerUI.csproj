@@ -11,7 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="node_modules/swagger-ui-dist/**/*" Exclude="**/*/index.html;**/*/*.map;**/*/*.json;**/*/*.md" />
+    <EmbeddedResource Include="node_modules/swagger-ui-dist/**/*" Exclude="**/*/index.html;**/*/*.map;**/*/*.json;**/*/*.md;**/*/swagger-ui-es-*" />
     <EmbeddedResource Include="index.html" />
   </ItemGroup>
 
