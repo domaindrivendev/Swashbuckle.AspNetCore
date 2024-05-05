@@ -4,7 +4,7 @@ using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public static class XmlCommentsExampleHelper
+    internal static class XmlCommentsExampleHelper
     {
         public static IOpenApiAny Create(
             SchemaRepository schemaRepository,
