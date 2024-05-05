@@ -13,7 +13,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var isStringType =
                 (schema?.ResolveType(schemaRepository) == "string") &&
-                !exampleString.Equals("null");
+                !string.Equals(exampleString, "null");
 
             var exampleAsJson = isStringType
                     ? JsonSerializer.Serialize(exampleString)

@@ -11,7 +11,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void Create_BuildsOpenApiArrayJson__When_NotStringTypeAndDataIsArray()
         {
-            OpenApiSchema schema = new OpenApiSchema();
+            var schema = new OpenApiSchema();
 
             IOpenApiAny example = XmlCommentsExampleHelper.Create(
                 schemaRepository,
@@ -19,6 +19,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 "[\"one\",\"two\",\"three\"]");
 
 
+            Assert.NotNull(example);
+            Assert.IsType<OpenApiArray>(example);
             var output = (OpenApiArray)example;
             Assert.Equal(3, output.Count);
             Assert.Equal("one",   ((OpenApiString)output[0]).Value);
@@ -36,6 +38,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             IOpenApiAny example = XmlCommentsExampleHelper.Create(
                 schemaRepository, schema, exampleString);
 
+            Assert.NotNull(example);
+            Assert.IsType<OpenApiString>(example);
             Assert.Equal(((OpenApiString)example).Value, exampleString);
         }
 
@@ -48,6 +52,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             IOpenApiAny example = XmlCommentsExampleHelper.Create(
                 schemaRepository, schema, "null");
 
+            Assert.NotNull(example);
+            Assert.IsType<OpenApiNull>(example);
             Assert.Equal(AnyType.Null, ((OpenApiNull)example).AnyType);
         }
 
@@ -58,6 +64,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             IOpenApiAny example = XmlCommentsExampleHelper.Create(schemaRepository, schema, "[]");
 
+            Assert.NotNull(example);
+            Assert.IsType<OpenApiArray>(example);
             Assert.Empty((OpenApiArray)example);
         }
     }
