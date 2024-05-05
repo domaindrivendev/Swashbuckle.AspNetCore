@@ -20,12 +20,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
 
             Assert.NotNull(example);
-            Assert.IsType<OpenApiArray>(example);
-            var output = (OpenApiArray)example;
-            Assert.Equal(3, output.Count);
-            Assert.Equal("one",   ((OpenApiString)output[0]).Value);
-            Assert.Equal("two",   ((OpenApiString)output[1]).Value);
-            Assert.Equal("three", ((OpenApiString)output[2]).Value);
+            var actual = Assert.IsType<OpenApiArray>(example);
+            Assert.Equal(3, actual.Count);
+
+            var item1 = Assert.IsType<OpenApiString>(actual[0]);
+            var item2 = Assert.IsType<OpenApiString>(actual[1]);
+            var item3 = Assert.IsType<OpenApiString>(actual[2]);
+            Assert.Equal("one",   item1.Value);
+            Assert.Equal("two",   item2.Value);
+            Assert.Equal("three", item3.Value);
         }
 
         [Fact]
@@ -39,8 +42,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 schemaRepository, schema, exampleString);
 
             Assert.NotNull(example);
-            Assert.IsType<OpenApiString>(example);
-            Assert.Equal(((OpenApiString)example).Value, exampleString);
+            var actual = Assert.IsType<OpenApiString>(example);
+            Assert.Equal(actual.Value, exampleString);
         }
 
         [Fact]
@@ -53,8 +56,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 schemaRepository, schema, "null");
 
             Assert.NotNull(example);
-            Assert.IsType<OpenApiNull>(example);
-            Assert.Equal(AnyType.Null, ((OpenApiNull)example).AnyType);
+            var actual = Assert.IsType<OpenApiNull>(example);
+            Assert.Equal(AnyType.Null, actual.AnyType);
         }
 
         [Fact]
@@ -65,8 +68,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             IOpenApiAny example = XmlCommentsExampleHelper.Create(schemaRepository, schema, "[]");
 
             Assert.NotNull(example);
-            Assert.IsType<OpenApiArray>(example);
-            Assert.Empty((OpenApiArray)example);
+            var actual = Assert.IsType<OpenApiArray>(example);
+            Assert.Empty(actual);
         }
     }
 }
