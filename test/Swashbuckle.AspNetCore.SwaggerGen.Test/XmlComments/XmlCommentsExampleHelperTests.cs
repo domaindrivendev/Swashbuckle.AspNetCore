@@ -18,7 +18,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 schema,
                 "[\"one\",\"two\",\"three\"]");
 
-
             Assert.NotNull(example);
             var actual = Assert.IsType<OpenApiArray>(example);
             Assert.Equal(3, actual.Count);
