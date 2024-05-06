@@ -50,11 +50,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             foreach (var mediaType in requestBody.Content.Values)
             {
-                var exampleAsJson = (mediaType.Schema?.ResolveType(context.SchemaRepository) == "string")
-                    ? $"\"{exampleNode.ToString()}\""
-                    : exampleNode.ToString();
-
-                mediaType.Example = OpenApiAnyFactory.CreateFromJson(exampleAsJson);
+                mediaType.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, mediaType.Schema, exampleNode.ToString());
             }
         }
 
@@ -82,11 +78,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 foreach (var mediaType in requestBody.Content.Values)
                 {
-                    var exampleAsJson = (mediaType.Schema?.ResolveType(context.SchemaRepository) == "string")
-                        ? $"\"{example}\""
-                        : example;
-
-                    mediaType.Example = OpenApiAnyFactory.CreateFromJson(exampleAsJson);
+                    mediaType.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, mediaType.Schema, example);
                 }
             }
         }
