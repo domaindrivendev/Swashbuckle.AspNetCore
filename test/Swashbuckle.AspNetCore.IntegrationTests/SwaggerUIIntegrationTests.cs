@@ -5,6 +5,7 @@ using Xunit;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests
 {
+    [Collection("TestSite")]
     public class SwaggerUIIntegrationTests
     {
         [Theory]
