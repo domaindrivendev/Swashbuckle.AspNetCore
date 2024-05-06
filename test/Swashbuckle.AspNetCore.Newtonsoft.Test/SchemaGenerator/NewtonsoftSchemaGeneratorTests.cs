@@ -33,6 +33,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Theory]
+        [InlineData(typeof(bool), "boolean", null)]
         [InlineData(typeof(byte), "integer", "int32")]
         [InlineData(typeof(sbyte), "integer", "int32")]
         [InlineData(typeof(short), "integer", "int32")]
@@ -49,12 +50,24 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [InlineData(typeof(byte[]), "string", "byte")]
         [InlineData(typeof(DateTime), "string", "date-time")]
         [InlineData(typeof(DateTimeOffset), "string", "date-time")]
-        [InlineData(typeof(Guid), "string", "uuid")]
         [InlineData(typeof(TimeSpan), "string", "date-span")]
+        [InlineData(typeof(Guid), "string", "uuid")]
+        [InlineData(typeof(Uri), "string", "uri")]
         [InlineData(typeof(Version), "string", null)]
+        [InlineData(typeof(DateOnly), "string", "date")]
+        [InlineData(typeof(TimeOnly), "string", "time")]
         [InlineData(typeof(bool?), "boolean", null)]
         [InlineData(typeof(int?), "integer", "int32")]
         [InlineData(typeof(DateTime?), "string", "date-time")]
+        [InlineData(typeof(Guid?), "string", "uuid")]
+        [InlineData(typeof(DateOnly?), "string", "date")]
+        [InlineData(typeof(TimeOnly?), "string", "time")]
+#if NET7_0_OR_GREATER
+        [InlineData(typeof(Int128), "integer", "int128")]
+        [InlineData(typeof(Int128?), "integer", "int128")]
+        [InlineData(typeof(UInt128), "integer", "int128")]
+        [InlineData(typeof(UInt128?), "integer", "int128")]
+#endif
         public void GenerateSchema_GeneratesPrimitiveSchema_IfPrimitiveOrNullablePrimitiveType(
             Type type,
             string expectedSchemaType,

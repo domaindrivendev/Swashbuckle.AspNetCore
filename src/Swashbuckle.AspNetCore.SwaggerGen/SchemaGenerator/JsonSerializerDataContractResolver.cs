@@ -27,12 +27,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     jsonConverter: JsonConverterFunc);
             }
 
-            if (PrimitiveTypesAndFormats.TryGetValue(type, out var primitiveTypeAndFormat1))
+            if (PrimitiveTypesAndFormats.TryGetValue(type, out var primitiveTypeAndFormat))
             {
                 return DataContract.ForPrimitive(
                     underlyingType: type,
-                    dataType: primitiveTypeAndFormat1.Item1,
-                    dataFormat: primitiveTypeAndFormat1.Item2,
+                    dataType: primitiveTypeAndFormat.Item1,
+                    dataFormat: primitiveTypeAndFormat.Item2,
                     jsonConverter: JsonConverterFunc);
             }
 
@@ -44,7 +44,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var serializeAsString = (enumValues.Length > 0)
                     && JsonConverterFunc(enumValues.GetValue(0)).StartsWith("\"");
 
-                var primitiveTypeAndFormat = serializeAsString
+                primitiveTypeAndFormat = serializeAsString
                     ? PrimitiveTypesAndFormats[typeof(string)]
                     : PrimitiveTypesAndFormats[type.GetEnumUnderlyingType()];
 
@@ -254,11 +254,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             [ typeof(char) ] = Tuple.Create(DataType.String, (string)null),
             [ typeof(DateTime) ] = Tuple.Create(DataType.String, "date-time"),
             [ typeof(DateTimeOffset) ] = Tuple.Create(DataType.String, "date-time"),
+            [ typeof(TimeSpan) ] = Tuple.Create(DataType.String, "date-span"),
             [ typeof(Guid) ] = Tuple.Create(DataType.String, "uuid"),
             [ typeof(Uri) ] = Tuple.Create(DataType.String, "uri"),
+            [ typeof(Version) ] = Tuple.Create(DataType.String, (string)null),
 #if NET6_0_OR_GREATER
             [ typeof(DateOnly) ] = Tuple.Create(DataType.String, "date"),
-            [ typeof(TimeOnly) ] = Tuple.Create(DataType.String, "time")
+            [ typeof(TimeOnly) ] = Tuple.Create(DataType.String, "time"),
+#endif
+#if NET7_0_OR_GREATER
+            [ typeof(Int128) ] = Tuple.Create(DataType.Integer, "int128"),
+            [ typeof(UInt128) ] = Tuple.Create(DataType.Integer, "int128"),
 #endif
         };
     }
