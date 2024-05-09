@@ -1,7 +1,8 @@
-﻿using System;
-using Microsoft.OpenApi.Models;
-using Xunit;
+﻿using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.TestSupport;
+using System;
+using Xunit;
 
 namespace Swashbuckle.AspNetCore.Annotations.Test
 {
@@ -16,10 +17,10 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             var context = new SchemaFilterContext(type: type, schemaGenerator: null, schemaRepository: null);
 
             Subject().Apply(schema, context);
-
             Assert.Equal($"Description for {type.Name}", schema.Description);
             Assert.Equal(new[] { "StringWithSwaggerSchemaAttribute" }, schema.Required);
             Assert.Equal($"Title for {type.Name}", schema.Title);
+            Assert.Equal($"\"Example for {type.Name}\"", schema.Example.ToJson());
         }
 
         [Fact]

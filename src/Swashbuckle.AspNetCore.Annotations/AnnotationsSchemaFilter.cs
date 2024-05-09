@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Annotations
 {
@@ -96,6 +96,12 @@ namespace Swashbuckle.AspNetCore.Annotations
 
             if (schemaAttribute.Title != null)
                 schema.Title = schemaAttribute.Title;
+
+            if (schemaAttribute.Example != null)
+                schema.Example = OpenApiAnyFactory.CreateFromJson(
+                    schemaAttribute.Example.All(char.IsDigit)
+                    ? schemaAttribute.Example
+                    : $"\"{schemaAttribute.Example}\"");
         }
     }
 }
