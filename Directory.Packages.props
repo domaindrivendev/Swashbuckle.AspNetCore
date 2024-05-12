@@ -27,8 +27,8 @@
     <PackageVersion Include="Nswag.MSbuild" Version="14.0.7" />
     <PackageVersion Include="ReportGenerator" Version="5.2.2" />
     <PackageVersion Include="System.Text.Json" Version="4.6.0" />
-    <PackageVersion Include="xunit" Version="2.7.0" />
-    <PackageVersion Include="xunit.core" Version="2.7.0" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.7" />
+    <PackageVersion Include="xunit" Version="2.8.0" />
+    <PackageVersion Include="xunit.core" Version="2.8.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.0" />
   </ItemGroup>
 </Project>
