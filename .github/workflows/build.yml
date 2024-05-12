@@ -28,6 +28,11 @@ jobs:
     outputs:
       dotnet-sdk-version: ${{ steps.setup-dotnet.outputs.dotnet-version }}
 
+    permissions:
+      attestations: write
+      contents: read
+      id-token: write
+
     strategy:
       fail-fast: false
       matrix:
@@ -78,6 +83,26 @@ jobs:
         files: ./artifacts/coverage/coverage.cobertura.xml
         flags: ${{ runner.os }}
         token: ${{ secrets.CODECOV_TOKEN }}
+
+    - name: Attest artifacts
+      uses: actions/attest-build-provenance@951c0c5f8e375ad4efad33405ab77f7ded2358e4 # v1.1.1
+      if: |
+        runner.os == 'Windows' &&
+        github.event.repository.fork == false &&
+        (github.ref_name == github.event.repository.default_branch || startsWith(github.ref, 'refs/tags/v'))
+      with:
+        subject-path: |
+          ./artifacts/bin/Swashbuckle.AspNetCore.Annotations/release*/Swashbuckle.AspNetCore.Annotations.dll
+          ./artifacts/bin/Swashbuckle.AspNetCore.ApiTesting/release*/Swashbuckle.AspNetCore.ApiTesting.dll
+          ./artifacts/bin/Swashbuckle.AspNetCore.ApiTesting.Xunit/release*/Swashbuckle.AspNetCore.ApiTesting.Xunit.dll
+          ./artifacts/bin/Swashbuckle.AspNetCore.Cli/release*/dotnet-swagger.dll
+          ./artifacts/bin/Swashbuckle.AspNetCore.Cli/release*/dotnet-swagger.exe
+          ./artifacts/bin/Swashbuckle.AspNetCore.Newtonsoft/release*/Swashbuckle.AspNetCore.Newtonsoft.dll
+          ./artifacts/bin/Swashbuckle.AspNetCore.ReDoc/release*/Swashbuckle.AspNetCore.ReDoc.dll
+          ./artifacts/bin/Swashbuckle.AspNetCore.Swagger/release*/Swashbuckle.AspNetCore.Swagger.dll
+          ./artifacts/bin/Swashbuckle.AspNetCore.SwaggerGen/release*/Swashbuckle.AspNetCore.SwaggerGen.dll
+          ./artifacts/bin/Swashbuckle.AspNetCore.SwaggerUI/release*/Swashbuckle.AspNetCore.SwaggerUI.dll
+          ./artifacts/package/release/*
 
     - name: Publish NuGet packages
       uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
