@@ -29,7 +29,7 @@ jobs:
       uses: actions/setup-dotnet@4d6c8fcf3c8f7a60068d26b594648e99df24cee3 # v4.0.0
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@d39d31e687223d841ef683f52467bd88e9b21c14 # v3.25.3
+      uses: github/codeql-action/init@ccf74c947955fd1cf117aef6a0e4e66191ef6f61 # v3.25.4
       with:
         languages: csharp
         build-mode: manual
@@ -40,6 +40,6 @@ jobs:
         dotnet build --configuration Release
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@d39d31e687223d841ef683f52467bd88e9b21c14 # v3.25.3
+      uses: github/codeql-action/analyze@ccf74c947955fd1cf117aef6a0e4e66191ef6f61 # v3.25.4
       with:
         category: '/language:csharp'
