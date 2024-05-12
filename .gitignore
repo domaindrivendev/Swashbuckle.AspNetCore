@@ -2,7 +2,10 @@
 [Bb]in/
 .vs/
 .idea*
+coverage
+coverage.*
 node_modules/
+*.binlog
 *.user
 *.pdb
 artifacts/
