@@ -55,22 +55,21 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             var services = server.Host.Services;
 
             var documentProvider = services.GetService<IDocumentProvider>();
-            using (var stream = new MemoryStream())
+            using var stream = new MemoryStream();
+
+            using (var writer = new StreamWriter(stream, Encoding.UTF8, bufferSize: 2048, leaveOpen: true))
             {
-                using (var writer = new StreamWriter(stream, Encoding.UTF8, bufferSize: 2048, leaveOpen: true))
-                {
-                    await documentProvider.GenerateAsync("v1", writer);
-                    await writer.FlushAsync();
-                }
-
-                stream.Position = 0L;
-
-                using var document = JsonDocument.Parse(stream);
-
-                // verify that the custom serializer wrote the swagger info
-                var swaggerInfo = document.RootElement.GetProperty("swagger").GetString();
-                Assert.Equal("DocumentSerializerTest3.0", swaggerInfo);
+                await documentProvider.GenerateAsync("v1", writer);
+                await writer.FlushAsync();
             }
+
+            stream.Position = 0L;
+
+            using var document = JsonDocument.Parse(stream);
+
+            // verify that the custom serializer wrote the swagger info
+            var swaggerInfo = document.RootElement.GetProperty("swagger").GetString();
+            Assert.Equal("DocumentSerializerTest3.0", swaggerInfo);
         }
 
         [Fact]
@@ -84,22 +83,21 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             var options = services.GetService<IOptions<SwaggerOptions>>();
             options.Value.SerializeAsV2 = true;
 
-            using (var stream = new MemoryStream())
+            using var stream = new MemoryStream();
+
+            using (var writer = new StreamWriter(stream, Encoding.UTF8, bufferSize: 2048, leaveOpen: true))
             {
-                using (var writer = new StreamWriter(stream, Encoding.UTF8, bufferSize: 2048, leaveOpen: true))
-                {
-                    await documentProvider.GenerateAsync("v1", writer);
-                    await writer.FlushAsync();
-                }
-
-                stream.Position = 0L;
-
-                using var document = JsonDocument.Parse(stream);
-
-                // verify that the custom serializer wrote the swagger info
-                var swaggerInfo = document.RootElement.GetProperty("swagger").GetString();
-                Assert.Equal("DocumentSerializerTest2.0", swaggerInfo);
+                await documentProvider.GenerateAsync("v1", writer);
+                await writer.FlushAsync();
             }
+
+            stream.Position = 0L;
+
+            using var document = JsonDocument.Parse(stream);
+
+            // verify that the custom serializer wrote the swagger info
+            var swaggerInfo = document.RootElement.GetProperty("swagger").GetString();
+            Assert.Equal("DocumentSerializerTest2.0", swaggerInfo);
         }
     }
 }
