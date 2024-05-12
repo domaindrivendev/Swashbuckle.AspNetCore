@@ -9,6 +9,10 @@
     <SignAssembly>true</SignAssembly>
     <TargetFrameworks>netstandard2.0;netcoreapp3.0;net5.0;net6.0;net7.0;net8.0</TargetFrameworks>
   </PropertyGroup>
+  <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+    <EnableAotAnalyzer>true</EnableAotAnalyzer>
+    <IsAotCompatible>true</IsAotCompatible>
+  </PropertyGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="node_modules/swagger-ui-dist/**/*" Exclude="**/*/index.html;**/*/*.map;**/*/*.json;**/*/*.md;**/*/swagger-ui-es-*" />

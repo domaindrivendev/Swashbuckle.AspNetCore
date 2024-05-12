@@ -24,7 +24,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 return DataContract.ForDynamic(
                     underlyingType: type,
-                    jsonConverter: JsonConverterFunc);
+                    jsonConverter: (value) => JsonConverterFunc(value, type));
             }
 
             if (PrimitiveTypesAndFormats.TryGetValue(type, out var primitiveTypeAndFormat))
@@ -33,16 +33,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     underlyingType: type,
                     dataType: primitiveTypeAndFormat.Item1,
                     dataFormat: primitiveTypeAndFormat.Item2,
-                    jsonConverter: JsonConverterFunc);
+                    jsonConverter: (value) => JsonConverterFunc(value, type));
             }
 
             if (type.IsEnum)
             {
                 var enumValues = type.GetEnumValues();
 
-                //Test to determine if the serializer will treat as string
+                // Test to determine if the serializer will treat as string
                 var serializeAsString = (enumValues.Length > 0)
-                    && JsonConverterFunc(enumValues.GetValue(0)).StartsWith("\"");
+                    && JsonConverterFunc(enumValues.GetValue(0), type).StartsWith("\"");
 
                 primitiveTypeAndFormat = serializeAsString
                     ? PrimitiveTypesAndFormats[typeof(string)]
@@ -52,7 +52,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     underlyingType: type,
                     dataType: primitiveTypeAndFormat.Item1,
                     dataFormat: primitiveTypeAndFormat.Item2,
-                    jsonConverter: JsonConverterFunc);
+                    jsonConverter: (value) => JsonConverterFunc(value, type));
             }
 
             if (IsSupportedDictionary(type, out Type keyType, out Type valueType))
@@ -64,7 +64,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     // This is a special case where we know the possible key values
                     var enumValuesAsJson = keyType.GetEnumValues()
                         .Cast<object>()
-                        .Select(value => JsonConverterFunc(value));
+                        .Select(value => JsonConverterFunc(value, keyType));
 
                     keys = enumValuesAsJson.Any(json => json.StartsWith("\""))
                         ? enumValuesAsJson.Select(json => json.Replace("\"", string.Empty))
@@ -75,7 +75,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     underlyingType: type,
                     valueType: valueType,
                     keys: keys,
-                    jsonConverter: JsonConverterFunc);
+                    jsonConverter: (value) => JsonConverterFunc(value, type));
             }
 
             if (IsSupportedCollection(type, out Type itemType))
@@ -83,19 +83,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 return DataContract.ForArray(
                     underlyingType: type,
                     itemType: itemType,
-                    jsonConverter: JsonConverterFunc);
+                    jsonConverter: (value) => JsonConverterFunc(value, type));
             }
 
             return DataContract.ForObject(
                 underlyingType: type,
                 properties: GetDataPropertiesFor(type, out Type extensionDataType),
                 extensionDataType: extensionDataType,
-                jsonConverter: JsonConverterFunc);
+                jsonConverter: (value) => JsonConverterFunc(value, type));
         }
 
-        private string JsonConverterFunc(object value)
+        private string JsonConverterFunc(object value, Type type)
         {
-            return JsonSerializer.Serialize(value, _serializerOptions);
+            return JsonSerializer.Serialize(value, type, _serializerOptions);
         }
 
         public bool IsSupportedDictionary(Type type, out Type keyType, out Type valueType)
@@ -235,7 +235,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return dataProperties;
         }
 
-        private static readonly Dictionary<Type, Tuple<DataType, string>> PrimitiveTypesAndFormats = new Dictionary<Type, Tuple<DataType, string>>
+        private static readonly Dictionary<Type, Tuple<DataType, string>> PrimitiveTypesAndFormats = new()
         {
             [ typeof(bool) ] = Tuple.Create(DataType.Boolean, (string)null),
             [ typeof(byte) ] = Tuple.Create(DataType.Integer, "int32"),

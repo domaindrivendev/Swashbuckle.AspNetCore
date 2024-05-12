@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace Swashbuckle.AspNetCore.SwaggerUI
 {
@@ -44,6 +45,11 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// Gets the interceptor functions that define client-side request/response interceptors
         /// </summary>
         public InterceptorFunctions Interceptors { get; set; } = new InterceptorFunctions();
+
+        /// <summary>
+        /// Gets or sets the optional JSON serialization options to use to serialize options to the HTML document.
+        /// </summary>
+        public JsonSerializerOptions JsonSerializerOptions { get; set; }
     }
 
     public class ConfigObject
@@ -81,6 +87,9 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// Controls how the model is shown when the API is first rendered.
         /// (The user can always switch the rendering for a given model by clicking the 'Model' and 'Example Value' links)
         /// </summary>
+#if NET6_0_OR_GREATER
+        [JsonConverter(typeof(JavascriptStringEnumConverter<ModelRendering>))]
+#endif
         public ModelRendering DefaultModelRendering { get; set; } = ModelRendering.Example;
 
         /// <summary>
@@ -92,6 +101,9 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// Controls the default expansion setting for the operations and tags.
         /// It can be 'list' (expands only the tags), 'full' (expands the tags and operations) or 'none' (expands nothing)
         /// </summary>
+#if NET6_0_OR_GREATER
+        [JsonConverter(typeof(JavascriptStringEnumConverter<DocExpansion>))]
+#endif
         public DocExpansion DocExpansion { get; set; } = DocExpansion.List;
 
         /// <summary>
@@ -126,7 +138,15 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// List of HTTP methods that have the Try it out feature enabled.
         /// An empty array disables Try it out for all operations. This does not filter the operations from the display
         /// </summary>
-        public IEnumerable<SubmitMethod> SupportedSubmitMethods { get; set; } = Enum.GetValues(typeof(SubmitMethod)).Cast<SubmitMethod>();
+#if NET6_0_OR_GREATER
+        [JsonConverter(typeof(JavascriptStringEnumEnumerableConverter<SubmitMethod>))]
+#endif
+        public IEnumerable<SubmitMethod> SupportedSubmitMethods { get; set; } =
+#if NET5_0_OR_GREATER
+            Enum.GetValues<SubmitMethod>();
+#else
+            Enum.GetValues(typeof(SubmitMethod)).Cast<SubmitMethod>();
+#endif
 
         /// <summary>
         /// Controls whether the "Try it out" section should be enabled by default.
