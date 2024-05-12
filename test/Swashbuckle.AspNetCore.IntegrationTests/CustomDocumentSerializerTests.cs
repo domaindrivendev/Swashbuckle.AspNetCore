@@ -14,7 +14,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
     public class CustomDocumentSerializerTests
     {
         [Fact]
-        public async void TestSite_Writes_Custom_V3_Document()
+        public async Task TestSite_Writes_Custom_V3_Document()
         {
             var testSite = new TestSite(typeof(CustomDocumentSerializer.Startup));
             var client = testSite.BuildClient();
@@ -31,7 +31,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         }
 
         [Fact]
-        public async void TestSite_Writes_Custom_V2_Document()
+        public async Task TestSite_Writes_Custom_V2_Document()
         {
             var testSite = new TestSite(typeof(CustomDocumentSerializer.Startup));
             var client = testSite.BuildClient();
