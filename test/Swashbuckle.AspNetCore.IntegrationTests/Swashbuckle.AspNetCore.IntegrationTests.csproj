@@ -39,4 +39,9 @@
     <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
 
+  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="8.0.4" />
+    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="8.0.4" />
+  </ItemGroup>
+
 </Project>
