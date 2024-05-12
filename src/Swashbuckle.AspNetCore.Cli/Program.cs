@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
-using System.Threading;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -102,7 +101,7 @@ namespace Swashbuckle.AspNetCore.Cli
                         ? Path.Combine(Directory.GetCurrentDirectory(), arg1)
                         : null;
 
-                    using (Stream stream = (outputPath != null ? File.OpenWrite(outputPath) : Console.OpenStandardOutput()))
+                    using (Stream stream = outputPath != null ? File.OpenWrite(outputPath) : Console.OpenStandardOutput())
                     using (var streamWriter = new FormattingStreamWriter(stream, CultureInfo.InvariantCulture))
                     {
                         IOpenApiWriter writer;

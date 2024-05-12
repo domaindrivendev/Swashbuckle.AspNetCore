@@ -13,6 +13,7 @@
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.28" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="8.0.4" />
     <PackageVersion Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" />
     <PackageVersion Include="Microsoft.AspNetCore.Routing" Version="2.1.0" />
     <PackageVersion Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.0" />
@@ -23,7 +24,7 @@
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="NSubstitute" Version="5.1.0" />
-    <PackageVersion Include="Nswag.MSbuild" Version="13.17.0" />
+    <PackageVersion Include="Nswag.MSbuild" Version="14.0.7" />
     <PackageVersion Include="ReportGenerator" Version="5.2.2" />
     <PackageVersion Include="System.Text.Json" Version="4.6.0" />
     <PackageVersion Include="xunit" Version="2.7.0" />

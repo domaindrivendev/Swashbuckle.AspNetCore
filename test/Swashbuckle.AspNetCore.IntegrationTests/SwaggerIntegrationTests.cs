@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Globalization;
 using System.Linq;
+using System.Net.Http;
+#if NET8_0_OR_GREATER
+using System.Net.Http.Json;
+#endif
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -34,12 +38,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             var testSite = new TestSite(startupType);
             using var client = testSite.BuildClient();
 
-            using var swaggerResponse = await client.GetAsync(swaggerRequestUri);
-
-            swaggerResponse.EnsureSuccessStatusCode();
-            using var contentStream = await swaggerResponse.Content.ReadAsStreamAsync();
-            new OpenApiStreamReader().Read(contentStream, out OpenApiDiagnostic diagnostic);
-            Assert.Empty(diagnostic.Errors);
+            await AssertValidSwaggerJson(client, swaggerRequestUri);
         }
 
         [Fact]
@@ -112,6 +111,67 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 
             var json = await JsonSerializer.DeserializeAsync<JsonElement>(contentStream);
             Assert.Equal(expectedVersionValue, json.GetProperty(expectedVersionProperty).GetString());
+        }
+
+#if NET8_0_OR_GREATER
+        [Theory]
+        [InlineData("/swagger/v1/swagger.json")]
+        public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_For_WebApi(
+            string swaggerRequestUri)
+        {
+            await SwaggerEndpointReturnsValidSwaggerJson<Program>(swaggerRequestUri);
+        }
+
+        [Fact]
+        public async Task TypesAreRenderedCorrectly()
+        {
+            using var application = new TestApplication<Program>();
+            using var client = application.CreateDefaultClient();
+
+            using var swaggerResponse = await client.GetFromJsonAsync<JsonDocument>("/swagger/v1/swagger.json");
+
+            var weatherForecase = swaggerResponse.RootElement
+                .GetProperty("components")
+                .GetProperty("schemas")
+                .GetProperty("WeatherForecast");
+
+            Assert.Equal("object", weatherForecase.GetProperty("type").GetString());
+
+            var properties = weatherForecase.GetProperty("properties");
+            Assert.Equal(4, properties.EnumerateObject().Count());
+
+            Assert.Multiple(
+            [
+                () => Assert.Equal("string", properties.GetProperty("date").GetProperty("type").GetString()),
+                () => Assert.Equal("date", properties.GetProperty("date").GetProperty("format").GetString()),
+                () => Assert.Equal("integer", properties.GetProperty("temperatureC").GetProperty("type").GetString()),
+                () => Assert.Equal("int32", properties.GetProperty("temperatureC").GetProperty("format").GetString()),
+                () => Assert.Equal("string", properties.GetProperty("summary").GetProperty("type").GetString()),
+                () => Assert.True(properties.GetProperty("summary").GetProperty("nullable").GetBoolean()),
+                () => Assert.Equal("integer", properties.GetProperty("temperatureF").GetProperty("type").GetString()),
+                () => Assert.Equal("int32", properties.GetProperty("temperatureF").GetProperty("format").GetString()),
+                () => Assert.True(properties.GetProperty("temperatureF").GetProperty("readOnly").GetBoolean()),
+            ]);
+        }
+
+        private async Task SwaggerEndpointReturnsValidSwaggerJson<TEntryPoint>(string swaggerRequestUri)
+            where TEntryPoint : class
+        {
+            using var application = new TestApplication<TEntryPoint>();
+            using var client = application.CreateDefaultClient();
+
+            await AssertValidSwaggerJson(client, swaggerRequestUri);
+        }
+#endif
+
+        private async Task AssertValidSwaggerJson(HttpClient client, string swaggerRequestUri)
+        {
+            using var swaggerResponse = await client.GetAsync(swaggerRequestUri);
+
+            swaggerResponse.EnsureSuccessStatusCode();
+            using var contentStream = await swaggerResponse.Content.ReadAsStreamAsync();
+            new OpenApiStreamReader().Read(contentStream, out OpenApiDiagnostic diagnostic);
+            Assert.Empty(diagnostic.Errors);
         }
     }
 }
