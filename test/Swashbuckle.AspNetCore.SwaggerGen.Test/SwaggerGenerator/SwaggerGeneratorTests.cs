@@ -967,6 +967,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(new[] { "application/json" }, response200.Content.Keys);
             var response400 = operation.Responses["400"];
             Assert.Equal("Bad Request", response400.Description);
+            Assert.Empty(response400.Content.Keys);
             var response422 = operation.Responses["422"];
             Assert.Equal("Unprocessable Entity", response422.Description);
             Assert.Empty(response422.Content.Keys);
