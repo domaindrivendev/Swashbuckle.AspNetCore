@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Reflection;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -945,6 +945,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                             new ApiResponseType
                             {
                                 ApiResponseFormats = new [] { new ApiResponseFormat { MediaType = "application/json" } },
+                                StatusCode = 422
+                            },
+                            new ApiResponseType
+                            {
+                                ApiResponseFormats = new [] { new ApiResponseFormat { MediaType = "application/json" } },
                                 IsDefaultResponse = true
                             }
 
@@ -956,13 +961,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var document = subject.GetSwagger("v1");
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
-            Assert.Equal(new[] { "200", "400", "default" }, operation.Responses.Keys);
+            Assert.Equal(new[] { "200", "400", "422", "default" }, operation.Responses.Keys);
             var response200 = operation.Responses["200"];
-            Assert.Equal("Success", response200.Description);
+            Assert.Equal("OK", response200.Description);
             Assert.Equal(new[] { "application/json" }, response200.Content.Keys);
             var response400 = operation.Responses["400"];
             Assert.Equal("Bad Request", response400.Description);
             Assert.Empty(response400.Content.Keys);
+            var response422 = operation.Responses["422"];
+            Assert.Equal("Unprocessable Content", response422.Description);
+            Assert.Empty(response422.Content.Keys);
             var responseDefault = operation.Responses["default"];
             Assert.Equal("Error", responseDefault.Description);
             Assert.Empty(responseDefault.Content.Keys);

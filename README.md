@@ -394,7 +394,7 @@ Will produce the following response metadata:
 ```
 responses: {
   200: {
-    description: "Success",
+    description: "OK",
     content: {
       "application/json": {
         schema: {
@@ -423,7 +423,7 @@ Will produce the following response metadata:
 ```
 responses: {
   200: {
-    description: "Success",
+    description: "OK",
     content: {
       "application/json": {
         schema: {
@@ -446,7 +446,7 @@ responses: {
     }
   },
   500: {
-    description: "Server Error",
+    description: "Internal Server Error",
     content: {}
   }
 }
@@ -788,7 +788,7 @@ If the generator encounters complex parameter or response types, it will generat
 ```
 responses: {
   200: {
-    description: "Success",
+    description: "OK",
     content: {
       "application/json": {
         schema: {
