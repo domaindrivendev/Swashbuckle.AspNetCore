@@ -709,7 +709,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             new KeyValuePair<string, string>("416", "Range Not Satisfiable"),
             new KeyValuePair<string, string>("417", "Expectation Failed"),
             new KeyValuePair<string, string>("421", "Misdirected Request"),
-            new KeyValuePair<string, string>("422", "Unprocessable Entity"),
+            new KeyValuePair<string, string>("422", "Unprocessable Content"),
             new KeyValuePair<string, string>("423", "Locked"),
             new KeyValuePair<string, string>("424", "Failed Dependency"),
             new KeyValuePair<string, string>("426", "Upgrade Required"),

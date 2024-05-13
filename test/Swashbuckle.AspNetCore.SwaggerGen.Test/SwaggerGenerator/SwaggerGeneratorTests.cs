@@ -969,7 +969,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("Bad Request", response400.Description);
             Assert.Empty(response400.Content.Keys);
             var response422 = operation.Responses["422"];
-            Assert.Equal("Unprocessable Entity", response422.Description);
+            Assert.Equal("Unprocessable Content", response422.Description);
             Assert.Empty(response422.Content.Keys);
             var responseDefault = operation.Responses["default"];
             Assert.Equal("Error", responseDefault.Description);
