@@ -703,7 +703,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             new KeyValuePair<string, string>("410", "Gone"),
             new KeyValuePair<string, string>("411", "Length Required"),
             new KeyValuePair<string, string>("412", "Precondition Failed"),
-            new KeyValuePair<string, string>("413", "Payload Too Large"),
+            new KeyValuePair<string, string>("413", "Content Too Large"),
             new KeyValuePair<string, string>("414", "URI Too Long"),
             new KeyValuePair<string, string>("415", "Unsupported Media Type"),
             new KeyValuePair<string, string>("416", "Range Not Satisfiable"),
