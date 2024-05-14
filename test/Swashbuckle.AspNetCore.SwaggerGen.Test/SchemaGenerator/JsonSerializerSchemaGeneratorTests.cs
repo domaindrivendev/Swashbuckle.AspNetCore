@@ -405,6 +405,28 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.True(schema.Properties["RequiredProperty"].Nullable);
             Assert.Equal(new[] { "RequiredProperty" }, schema.Required.ToArray());
         }
+
+#nullable enable
+        public class TypeWithNullableReferenceTypes
+        {
+            public required string? RequiredNullableString { get; set; }
+            public required string RequiredNonNullableString { get; set; }
+        }
+
+        [Fact]
+        public void GenerateSchema_SetsRequiredAndNullable_IfPropertyHasRequiredKeywordAndIsNullable()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject(configureGenerator: (c) => c.SupportNonNullableReferenceTypes = true).GenerateSchema(typeof(TypeWithNullableReferenceTypes), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.True(schema.Properties["RequiredNullableString"].Nullable);
+            Assert.Contains("RequiredNullableString", schema.Required.ToArray());
+            Assert.False(schema.Properties["RequiredNonNullableString"].Nullable);
+            Assert.Contains("RequiredNonNullableString", schema.Required.ToArray());
+        }
+#nullable disable
 #endif
 
         [Theory]
