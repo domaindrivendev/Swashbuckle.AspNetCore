@@ -367,9 +367,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
 #if NET7_0_OR_GREATER
-        public class TypeWithRequiredProperty
+        public class TypeWithRequiredProperties
         {
-            public required string RequiredProperty { get; set; }
+            public required string RequiredString { get; set; }
+            public required int RequiredInt { get; set; }
         }
 
         public class TypeWithRequiredPropertyAndValidationAttribute
@@ -383,10 +384,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(TypeWithRequiredProperty), schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(typeof(TypeWithRequiredProperties), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal(new[] { "RequiredProperty" }, schema.Required.ToArray());
+            Assert.True(schema.Properties["RequiredString"].Nullable);
+            Assert.Contains("RequiredString", schema.Required.ToArray());
+            Assert.False(schema.Properties["RequiredInt"].Nullable);
+            Assert.Contains("RequiredInt", schema.Required.ToArray());
         }
 
         [Fact]
@@ -398,9 +402,31 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal(1, schema.Properties["RequiredProperty"].MinLength);
-            Assert.False(schema.Properties["RequiredProperty"].Nullable);
+            Assert.True(schema.Properties["RequiredProperty"].Nullable);
             Assert.Equal(new[] { "RequiredProperty" }, schema.Required.ToArray());
         }
+
+#nullable enable
+        public class TypeWithNullableReferenceTypes
+        {
+            public required string? RequiredNullableString { get; set; }
+            public required string RequiredNonNullableString { get; set; }
+        }
+
+        [Fact]
+        public void GenerateSchema_SetsRequiredAndNullable_IfPropertyHasRequiredKeywordAndIsNullable()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject(configureGenerator: (c) => c.SupportNonNullableReferenceTypes = true).GenerateSchema(typeof(TypeWithNullableReferenceTypes), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.True(schema.Properties["RequiredNullableString"].Nullable);
+            Assert.Contains("RequiredNullableString", schema.Required.ToArray());
+            Assert.False(schema.Properties["RequiredNonNullableString"].Nullable);
+            Assert.Contains("RequiredNonNullableString", schema.Required.ToArray());
+        }
+#nullable disable
 #endif
 
         [Theory]
