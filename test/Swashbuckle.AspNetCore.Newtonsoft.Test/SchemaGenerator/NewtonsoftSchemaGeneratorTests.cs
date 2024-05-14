@@ -302,7 +302,6 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [Theory]
         [InlineData(typeof(TypeWithValidationAttributes))]
         [InlineData(typeof(TypeWithValidationAttributesViaMetadataType))]
-
         public void GenerateSchema_SetsValidationProperties_IfComplexTypeHasValidationAttributes(Type type)
         {
             var schemaRepository = new SchemaRepository();
@@ -315,6 +314,12 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.Equal(3, schema.Properties["StringWithMinMaxLength"].MaxLength);
             Assert.Equal(1, schema.Properties["ArrayWithMinMaxLength"].MinItems);
             Assert.Equal(3, schema.Properties["ArrayWithMinMaxLength"].MaxItems);
+#if NET8_0_OR_GREATER
+            Assert.Equal(1, schema.Properties["StringWithLength"].MinLength);
+            Assert.Equal(3, schema.Properties["StringWithLength"].MaxLength);
+            Assert.Equal(1, schema.Properties["ArrayWithLength"].MinItems);
+            Assert.Equal(3, schema.Properties["ArrayWithLength"].MaxItems);
+#endif
             Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);
             Assert.Equal(10, schema.Properties["IntWithRange"].Maximum);
             Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["StringWithRegularExpression"].Pattern);
