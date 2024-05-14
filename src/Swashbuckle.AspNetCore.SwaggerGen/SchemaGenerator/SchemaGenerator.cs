@@ -68,24 +68,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 {
                     var requiredAttribute = customAttributes.OfType<RequiredAttribute>().FirstOrDefault();
 
+                    schema.Nullable = _generatorOptions.SupportNonNullableReferenceTypes
+                        ? dataProperty.IsNullable && requiredAttribute == null && !memberInfo.IsNonNullableReferenceType()
+                        : dataProperty.IsNullable && requiredAttribute == null;
+
                     schema.ReadOnly = dataProperty.IsReadOnly;
                     schema.WriteOnly = dataProperty.IsWriteOnly;
-
-#if NET7_0_OR_GREATER
-                    var hasRequiredMemberAttribute = customAttributes.OfType<System.Runtime.CompilerServices.RequiredMemberAttribute>().Any();
-
-                    schema.Nullable = _generatorOptions.SupportNonNullableReferenceTypes
-                        ? dataProperty.IsNullable && requiredAttribute == null && !hasRequiredMemberAttribute && !memberInfo.IsNonNullableReferenceType()
-                        : dataProperty.IsNullable && requiredAttribute == null && !hasRequiredMemberAttribute;
-
-                    schema.MinLength = modelType == typeof(string) && (hasRequiredMemberAttribute || requiredAttribute is { AllowEmptyStrings: false }) ? 1 : null;
-#else
-                    schema.Nullable = _generatorOptions.SupportNonNullableReferenceTypes
-                        ? dataProperty.IsNullable && requiredAttribute==null && !memberInfo.IsNonNullableReferenceType()
-                        : dataProperty.IsNullable && requiredAttribute==null;
-
                     schema.MinLength = modelType == typeof(string) && requiredAttribute is { AllowEmptyStrings: false } ? 1 : null;
-#endif
                 }
 
                 var defaultValueAttribute = customAttributes.OfType<DefaultValueAttribute>().FirstOrDefault();
