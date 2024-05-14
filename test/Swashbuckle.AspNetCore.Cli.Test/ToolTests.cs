@@ -1,26 +1,32 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text.Json;
 using Swashbuckle.AspNetCore.TestSupport.Utilities;
 using Xunit;
 
 namespace Swashbuckle.AspNetCore.Cli.Test
 {
-    public class ToolTests
+    public static class ToolTests
     {
         [Fact]
-        public void Throws_When_Startup_Assembly_Does_Not_Exist()
+        public static void Throws_When_Startup_Assembly_Does_Not_Exist()
         {
-            var args = new string[] { "tofile", "--output", "swagger.json", "--serializeasv2", "./does_not_exist.dll", "v1" };
+            string[] args = ["tofile", "--output", "swagger.json", "--serializeasv2", "./does_not_exist.dll", "v1"];
             Assert.Throws<FileNotFoundException>(() => Program.Main(args));
         }
 
         [Fact]
-        public void Can_Generate_Swagger_Json()
+        public static void Can_Generate_Swagger_Json()
         {
-            using var temporaryDirectory = new TemporaryDirectory();
-            var args = new string[] { "tofile", "--output", $"{temporaryDirectory.Path}/swagger.json", "--serializeasv2", Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"), "v1" };
-            Assert.Equal(0, Program.Main(args));
-            using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(temporaryDirectory.Path, "swagger.json")));
+            using var document = RunApplication((outputPath) =>
+            [
+                "tofile",
+                "--output",
+                outputPath,
+                "--serializeasv2",
+                Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
+                "v1"
+            ]);
 
             // verify one of the endpoints
             var paths = document.RootElement.GetProperty("paths");
@@ -51,13 +57,17 @@ namespace Swashbuckle.AspNetCore.Cli.Test
         }
 
         [Fact]
-        public void CustomDocumentSerializer_Writes_Custom_V2_Document()
+        public static void CustomDocumentSerializer_Writes_Custom_V2_Document()
         {
-            using var temporaryDirectory = new TemporaryDirectory();
-            var args = new string[] { "tofile", "--output", $"{temporaryDirectory.Path}/swagger.json", "--serializeasv2", Path.Combine(Directory.GetCurrentDirectory(), "CustomDocumentSerializer.dll"), "v1" };
-            Assert.Equal(0, Program.Main(args));
-
-            using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(temporaryDirectory.Path, "swagger.json")));
+            using var document = RunApplication((outputPath) =>
+            [
+                "tofile",
+                "--output",
+                outputPath,
+                "--serializeasv2",
+                Path.Combine(Directory.GetCurrentDirectory(), "CustomDocumentSerializer.dll"),
+                "v1"
+            ]);
 
             // verify that the custom serializer wrote the swagger info
             var swaggerInfo = document.RootElement.GetProperty("swagger").GetString();
@@ -65,34 +75,71 @@ namespace Swashbuckle.AspNetCore.Cli.Test
         }
 
         [Fact]
-        public void CustomDocumentSerializer_Writes_Custom_V3_Document()
+        public static void CustomDocumentSerializer_Writes_Custom_V3_Document()
         {
-            using var temporaryDirectory = new TemporaryDirectory();
-            var args = new string[] { "tofile", "--output", $"{temporaryDirectory.Path}/swagger.json", Path.Combine(Directory.GetCurrentDirectory(), "CustomDocumentSerializer.dll"), "v1" };
-            Assert.Equal(0, Program.Main(args));
-
-            using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(temporaryDirectory.Path, "swagger.json")));
+            using var document = RunApplication((outputPath) =>
+            [
+                "tofile",
+                "--output",
+                outputPath,
+                Path.Combine(Directory.GetCurrentDirectory(),
+                "CustomDocumentSerializer.dll"),
+                "v1"
+            ]);
 
             // verify that the custom serializer wrote the swagger info
             var swaggerInfo = document.RootElement.GetProperty("swagger").GetString();
             Assert.Equal("DocumentSerializerTest3.0", swaggerInfo);
         }
 
-#if NET6_0_OR_GREATER
         [Fact]
-        public void Can_Generate_Swagger_Json_ForTopLevelApp()
+        public static void Can_Generate_Swagger_Json_ForTopLevelApp()
         {
-            using var temporaryDirectory = new TemporaryDirectory();
-            var args = new string[] { "tofile", "--output", $"{temporaryDirectory.Path}/swagger.json", "--serializeasv2", Path.Combine(Directory.GetCurrentDirectory(), "MinimalApp.dll"), "v1" };
-            Assert.Equal(0, Program.Main(args));
-
-            using var document = JsonDocument.Parse(File.ReadAllText(Path.Combine(temporaryDirectory.Path, "swagger.json")));
+            using var document = RunApplication((outputPath) =>
+            [
+                "tofile",
+                "--output",
+                outputPath,
+                "--serializeasv2",
+                Path.Combine(Directory.GetCurrentDirectory(), "MinimalApp.dll"),
+                "v1"
+            ]);
 
             // verify one of the endpoints
             var paths = document.RootElement.GetProperty("paths");
             var path = paths.GetProperty("/WeatherForecast");
             Assert.True(path.TryGetProperty("get", out _));
         }
-#endif
+
+        [Fact]
+        public static void Does_Not_Run_Crashing_HostedService()
+        {
+            using var document = RunApplication((outputPath) =>
+            [
+                "tofile",
+                "--output",
+                outputPath,
+                Path.Combine(Directory.GetCurrentDirectory(), "MinimalAppWithHostedServices.dll"),
+                "v1"
+            ]);
+
+            // verify one of the endpoints
+            var paths = document.RootElement.GetProperty("paths");
+            var path = paths.GetProperty("/ShouldContain");
+            Assert.True(path.TryGetProperty("get", out _));
+        }
+
+        private static JsonDocument RunApplication(Func<string, string[]> setup)
+        {
+            using var temporaryDirectory = new TemporaryDirectory();
+            string outputPath = Path.Combine(temporaryDirectory.Path, "swagger.json");
+
+            string[] args = setup(outputPath);
+
+            Assert.Equal(0, Program.Main(args));
+
+            string json = File.ReadAllText(outputPath);
+            return JsonDocument.Parse(json);
+        }
     }
 }
