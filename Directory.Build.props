@@ -51,7 +51,8 @@
   <PropertyGroup Condition=" '$(GITHUB_ACTIONS)' != '' ">
     <VersionSuffix Condition=" '$(VersionSuffix)' == '' AND '$(GITHUB_HEAD_REF)' == '' ">preview.$(GITHUB_RUN_NUMBER)</VersionSuffix>
     <VersionSuffix Condition=" '$(VersionSuffix)' == '' AND '$(GITHUB_HEAD_REF)' != '' ">pr.$(GITHUB_REF_NAME.Replace('/merge', '')).$(GITHUB_RUN_NUMBER)</VersionSuffix>
-    <VersionSuffix Condition=" '$(GITHUB_EVENT_NAME)' == 'workflow_dispatch' AND '$(GITHUB_REF_PROTECTED)' == 'true' "></VersionSuffix>
+    <VersionPrefix Condition=" $(GITHUB_REF.StartsWith(`refs/tags/v`)) ">$(GITHUB_REF.Replace('refs/tags/v', ''))</VersionPrefix>
+    <VersionSuffix Condition=" $(GITHUB_REF.StartsWith(`refs/tags/v`)) "></VersionSuffix>
     <FileVersion Condition=" '$(GITHUB_RUN_NUMBER)' != '' ">$(VersionPrefix).$(GITHUB_RUN_NUMBER)</FileVersion>
   </PropertyGroup>
   <ItemGroup Condition=" '$(PackageIcon)' != '' ">
