@@ -388,9 +388,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.True(schema.Properties["RequiredString"].Nullable);
-            Assert.Equal(new[] { "RequiredString" }, schema.Required.ToArray());
+            Assert.Contains("RequiredString", schema.Required.ToArray());
             Assert.False(schema.Properties["RequiredInt"].Nullable);
-            Assert.Equal(new[] { "RequiredInt" }, schema.Required.ToArray());
+            Assert.Contains("RequiredInt", schema.Required.ToArray());
         }
 
         [Fact]
