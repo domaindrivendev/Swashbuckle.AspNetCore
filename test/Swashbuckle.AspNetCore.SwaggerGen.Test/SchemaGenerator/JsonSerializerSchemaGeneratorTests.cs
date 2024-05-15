@@ -160,6 +160,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
+        [InlineData(typeof(List<BadHttpRequestException>), typeof(BadHttpRequestException))]
+        [InlineData(typeof(List<string>), typeof(string))]
+        [InlineData(typeof(int[]), typeof(int))]
+        public void GenerateSchema_GeneratesArraySchema_ShouldContainXMLInformation(Type type,
+            Type expectedItemsType)
+        {
+            var schema = Subject().GenerateSchema(type, new SchemaRepository());
+
+            Assert.True(schema.Xml.Wrapped);
+            Assert.Equal(expectedItemsType.Name, schema.Xml.Name);
+        }
+
+        [Theory]
         [InlineData(typeof(ISet<string>))]
         [InlineData(typeof(SortedSet<string>))]
         [InlineData(typeof(KeyedCollectionOfComplexType))]
