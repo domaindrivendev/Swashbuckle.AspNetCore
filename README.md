@@ -226,7 +226,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Change Document Title](#change-document-title)
     * [List Multiple Swagger Documents](#list-multiple-swagger-documents)
     * [Apply swagger-ui Parameters](#apply-swagger-ui-parameters)
-    * [Inject Custom ](#inject-custom-)
+    * [Inject Custom JavaScript](#inject-custom-javascript)
     * [Inject Custom CSS](#inject-custom-css)
     * [Customize index.html](#customize-indexhtml)
     * [Enable OAuth2.0 Flows](#enable-oauth20-flows)
