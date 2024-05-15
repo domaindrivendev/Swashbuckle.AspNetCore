@@ -166,7 +166,7 @@ Additionally, there's add-on packages (CLI tools, [an alternate UI](https://gith
 |Package|Description|
 |---------|-----------|
 |Swashbuckle.AspNetCore.Swagger|Exposes Swagger JSON endpoints. It expects an implementation of `ISwaggerProvider` to be registered in the DI container, which it queries to retrieve `OpenAPIDocument(s)` that are then exposed as serialized JSON|
-|Swashbuckle.AspNetCore.SwaggerGen|s an implementation of `ISwaggerProvider` that can be used by the above component. This particular implementation generates `OpenApiDocument(s)` from your routes, controllers and models|
+|Swashbuckle.AspNetCore.SwaggerGen|Injects an implementation of `ISwaggerProvider` that can be used by the above component. This particular implementation generates `OpenApiDocument(s)` from your routes, controllers and models|
 |Swashbuckle.AspNetCore.SwaggerUI|Exposes an embedded version of the swagger-ui. You specify the API endpoints where it can obtain Swagger JSON, and it uses them to power interactive docs for your API|
 
 ## Additional Packages ##
