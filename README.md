@@ -226,6 +226,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Change Document Title](#change-document-title)
     * [List Multiple Swagger Documents](#list-multiple-swagger-documents)
     * [Apply swagger-ui Parameters](#apply-swagger-ui-parameters)
+    * [Inject Custom JavaScript](#inject-custom-javascript)
     * [Inject Custom CSS](#inject-custom-css)
     * [Customize index.html](#customize-indexhtml)
     * [Enable OAuth2.0 Flows](#enable-oauth20-flows)
@@ -1239,7 +1240,6 @@ By default, the Swagger UI will be exposed at "/swagger". If necessary, you can 
 app.UseSwaggerUI(c =>
 {
     c.RoutePrefix = "api-docs"
-    ...
 }
 ```
 
@@ -1251,7 +1251,6 @@ By default, the Swagger UI will have a generic document title. When you have mul
 app.UseSwaggerUI(c =>
 {
     c.DocumentTitle = "My Swagger UI";
-    ...
 }
 ```
 
@@ -1269,7 +1268,7 @@ app.UseSwaggerUI(c =>
 
 ### Apply swagger-ui Parameters ###
 
-The swagger-ui ships with its own set of configuration parameters, all described here https://github.com/swagger-api/swagger-ui/blob/v3.8.1/docs/usage/configuration.md#display. In Swashbuckle, most of these are surfaced through the SwaggerUI middleware options:
+The swagger-ui ships with its own set of configuration parameters, all described [here](https://github.com/swagger-api/swagger-ui/blob/master/docs/usage/configuration.md#display). In Swashbuckle, most of these are surfaced through the SwaggerUI middleware options:
 
 ```csharp
 app.UseSwaggerUI(c =>
@@ -1282,6 +1281,8 @@ app.UseSwaggerUI(c =>
     c.DocExpansion(DocExpansion.None);
     c.EnableDeepLinking();
     c.EnableFilter();
+    c.EnablePersistAuthorization();
+    c.EnableTryItOutByDefault();
     c.MaxDisplayedTags(5);
     c.ShowExtensions();
     c.ShowCommonExtensions();
@@ -1290,6 +1291,17 @@ app.UseSwaggerUI(c =>
     c.UseRequestInterceptor("(request) => { return request; }");
     c.UseResponseInterceptor("(response) => { return response; }");
 });
+```
+
+### Inject Custom JavaScript ###
+
+To tweak the behavior, you can inject additional JavaScript files by adding them to your `wwwroot` folder and specifying the relative paths in the middleware options:
+
+```csharp
+app.UseSwaggerUI(c =>
+{
+    c.InjectJavascript("/swagger-ui/custom.js");
+}
 ```
 
 _NOTE: The `InjectOnCompleteJavaScript` and `InjectOnFailureJavaScript` options have been removed because the latest version of swagger-ui doesn't expose the necessary hooks. Instead, it provides a [flexible customization system](https://github.com/swagger-api/swagger-ui/blob/master/docs/customization/overview.md) based on concepts and patterns from React and Redux. To leverage this, you'll need to provide a custom version of index.html as described [below](#customize-indexhtml)._
@@ -1303,7 +1315,6 @@ To tweak the look and feel, you can inject additional CSS stylesheets by adding 
 ```csharp
 app.UseSwaggerUI(c =>
 {
-    ...
     c.InjectStylesheet("/swagger-ui/custom.css");
 }
 ```
@@ -1326,20 +1337,22 @@ _To get started, you should base your custom index.html on the [default version]
 
 The swagger-ui has built-in support to participate in OAuth2.0 authorization flows. It interacts with authorization and/or token endpoints, as specified in the Swagger JSON, to obtain access tokens for subsequent API calls. See [Adding Security Definitions and Requirements](#add-security-definitions-and-requirements) for an example of adding OAuth2.0 metadata to the generated Swagger.
 
-If your Swagger endpoint includes the appropriate security metadata, the UI interaction should be automatically enabled. However, you can further customize OAuth support in the UI with the following settings below. See [Swagger-UI v3.10.0](https://github.com/swagger-api/swagger-ui/blob/v3.10.0/docs/usage/oauth2.md) for more info:
+If your Swagger endpoint includes the appropriate security metadata, the UI interaction should be automatically enabled. However, you can further customize OAuth support in the UI with the following settings below. See [Swagger-UI documentation](https://github.com/swagger-api/swagger-ui/blob/master/docs/usage/oauth2.md) for more info:
 
 ```csharp
 app.UseSwaggerUI(c =>
 {
-    ...
-
     c.OAuthClientId("test-id");
     c.OAuthClientSecret("test-secret");
+    c.OAuthUsername("test-user");
     c.OAuthRealm("test-realm");
     c.OAuthAppName("test-app");
+    c.OAuth2RedirectUrl("url");
     c.OAuthScopeSeparator(" ");
+    c.OAuthScopes("scope1", "scope2");
     c.OAuthAdditionalQueryStringParams(new Dictionary<string, string> { { "foo", "bar" }}); 
     c.OAuthUseBasicAuthenticationWithAccessCodeGrant();
+    c.OAuthUsePkce();
 });
 ```
 
@@ -1350,8 +1363,6 @@ To use custom interceptors on requests and responses going through swagger-ui yo
 ```csharp
 app.UseSwaggerUI(c =>
 {
-    ...
-
     c.UseRequestInterceptor("(req) => { req.headers['x-my-custom-header'] = 'MyCustomValue'; return req; }");
     c.UseResponseInterceptor("(res) => { console.log('Custom interceptor intercepted response from:', res.url); return res; }");
 });
@@ -1362,8 +1373,6 @@ This can be useful in a range of scenarios where you might want to append local 
 ```csharp
 app.UseSwaggerUI(c =>
 {
-    ...
-
     c.UseRequestInterceptor("(req) => { req.headers['X-XSRF-Token'] = localStorage.getItem('xsrf-token'); return req; }");
 });
 ```
