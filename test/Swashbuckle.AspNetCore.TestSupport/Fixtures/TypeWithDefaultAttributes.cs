@@ -19,6 +19,9 @@ namespace Swashbuckle.AspNetCore.TestSupport
         [DefaultValue(double.MaxValue)]
         public double DoubleWithDefault { get; set; }
 
+        [DefaultValue(1)] // Repro for https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2885
+        public double DoubleWithDefaultOfDifferentType { get; set; }
+
         [DefaultValue("foobar")]
         public string StringWithDefault { get; set; }
 

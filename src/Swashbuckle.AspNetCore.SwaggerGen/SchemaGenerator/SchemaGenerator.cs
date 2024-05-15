@@ -80,7 +80,24 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var defaultValueAttribute = customAttributes.OfType<DefaultValueAttribute>().FirstOrDefault();
                 if (defaultValueAttribute != null)
                 {
-                    var defaultAsJson = dataContract.JsonConverter(defaultValueAttribute.Value);
+                    var defaultValue = defaultValueAttribute.Value;
+
+                    // If the types do not match (e.g. a default which is an integer is specified for a double),
+                    // attempt to coerce the default value to the correct type so that it can be serialized correctly.
+                    // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2885.
+                    if (defaultValue?.GetType() != modelType)
+                    {
+                        try
+                        {
+                            defaultValue = Convert.ChangeType(defaultValue, modelType);
+                        }
+                        catch (Exception)
+                        {
+                            // Conversion failed, use the original default value anyway
+                        }
+                    }
+
+                    var defaultAsJson = dataContract.JsonConverter(defaultValue);
                     schema.Default = OpenApiAnyFactory.CreateFromJson(defaultAsJson);
                 }
 
