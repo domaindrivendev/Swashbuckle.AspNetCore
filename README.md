@@ -166,7 +166,7 @@ Additionally, there's add-on packages (CLI tools, [an alternate UI](https://gith
 |Package|Description|
 |---------|-----------|
 |Swashbuckle.AspNetCore.Swagger|Exposes Swagger JSON endpoints. It expects an implementation of `ISwaggerProvider` to be registered in the DI container, which it queries to retrieve `OpenAPIDocument(s)` that are then exposed as serialized JSON|
-|Swashbuckle.AspNetCore.SwaggerGen|Injects an implementation of `ISwaggerProvider` that can be used by the above component. This particular implementation generates `OpenApiDocument(s)` from your routes, controllers and models|
+|Swashbuckle.AspNetCore.SwaggerGen|s an implementation of `ISwaggerProvider` that can be used by the above component. This particular implementation generates `OpenApiDocument(s)` from your routes, controllers and models|
 |Swashbuckle.AspNetCore.SwaggerUI|Exposes an embedded version of the swagger-ui. You specify the API endpoints where it can obtain Swagger JSON, and it uses them to power interactive docs for your API|
 
 ## Additional Packages ##
@@ -226,6 +226,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Change Document Title](#change-document-title)
     * [List Multiple Swagger Documents](#list-multiple-swagger-documents)
     * [Apply swagger-ui Parameters](#apply-swagger-ui-parameters)
+    * [Inject Custom JavaScript](#inject-custom-javascript)
     * [Inject Custom CSS](#inject-custom-css)
     * [Customize index.html](#customize-indexhtml)
     * [Enable OAuth2.0 Flows](#enable-oauth20-flows)
