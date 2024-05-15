@@ -28,6 +28,28 @@ namespace Swashbuckle.AspNetCore.Cli.Test
             Assert.True(productsPath.TryGetProperty("post", out _));
         }
 
+        [Fact(Skip = "Disabled because it makes CI unstable")]
+        public void Overwrites_Existing_File()
+        {
+            using var temporaryDirectory = new TemporaryDirectory();
+            var path = Path.Combine(temporaryDirectory.Path, "swagger.json");
+
+            var dummyContent = new string('x', 100_000);
+            File.WriteAllText(path, dummyContent);
+
+            var args = new string[] { "tofile", "--output", path, Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"), "v1" };
+            Assert.Equal(0, Program.Main(args));
+
+            var readContent = File.ReadAllText(path);
+            Assert.True(readContent.Length < dummyContent.Length);
+            using var document = JsonDocument.Parse(readContent);
+
+            // verify one of the endpoints
+            var paths = document.RootElement.GetProperty("paths");
+            var productsPath = paths.GetProperty("/products");
+            Assert.True(productsPath.TryGetProperty("post", out _));
+        }
+
         [Fact]
         public void CustomDocumentSerializer_Writes_Custom_V2_Document()
         {
