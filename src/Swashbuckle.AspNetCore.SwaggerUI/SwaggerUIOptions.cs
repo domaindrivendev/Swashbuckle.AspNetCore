@@ -162,7 +162,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         public string ValidatorUrl { get; set; } = null;
 
         [JsonExtensionData]
-        public Dictionary<string, object> AdditionalItems { get; set; } = new Dictionary<string, object>();
+        public Dictionary<string, object> AdditionalItems { get; set; } = [];
     }
 
     public class UrlDescriptor
@@ -233,7 +233,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// <summary>
         /// String array of initially selected oauth scopes, default is empty array
         /// </summary>
-        public IEnumerable<string> Scopes { get; set; } = new string[] { };
+        public IEnumerable<string> Scopes { get; set; } = [];
 
         /// <summary>
         /// Additional query parameters added to authorizationUrl and tokenUrl
