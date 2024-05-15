@@ -226,7 +226,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Change Document Title](#change-document-title)
     * [List Multiple Swagger Documents](#list-multiple-swagger-documents)
     * [Apply swagger-ui Parameters](#apply-swagger-ui-parameters)
-    * [Inject Custom JavaScript](#inject-custom-javascript)
+    * [Inject Custom ](#inject-custom-)
     * [Inject Custom CSS](#inject-custom-css)
     * [Customize index.html](#customize-indexhtml)
     * [Enable OAuth2.0 Flows](#enable-oauth20-flows)
@@ -1240,7 +1240,6 @@ By default, the Swagger UI will be exposed at "/swagger". If necessary, you can 
 app.UseSwaggerUI(c =>
 {
     c.RoutePrefix = "api-docs"
-    ...
 }
 ```
 
@@ -1252,7 +1251,6 @@ By default, the Swagger UI will have a generic document title. When you have mul
 app.UseSwaggerUI(c =>
 {
     c.DocumentTitle = "My Swagger UI";
-    ...
 }
 ```
 
@@ -1302,7 +1300,6 @@ To tweak the behavior, you can inject additional JavaScript files by adding them
 ```csharp
 app.UseSwaggerUI(c =>
 {
-    ...
     c.InjectJavascript("/swagger-ui/custom.js");
 }
 ```
@@ -1318,7 +1315,6 @@ To tweak the look and feel, you can inject additional CSS stylesheets by adding 
 ```csharp
 app.UseSwaggerUI(c =>
 {
-    ...
     c.InjectStylesheet("/swagger-ui/custom.css");
 }
 ```
@@ -1346,8 +1342,6 @@ If your Swagger endpoint includes the appropriate security metadata, the UI inte
 ```csharp
 app.UseSwaggerUI(c =>
 {
-    ...
-
     c.OAuthClientId("test-id");
     c.OAuthClientSecret("test-secret");
     c.OAuthUsername("test-user");
@@ -1369,8 +1363,6 @@ To use custom interceptors on requests and responses going through swagger-ui yo
 ```csharp
 app.UseSwaggerUI(c =>
 {
-    ...
-
     c.UseRequestInterceptor("(req) => { req.headers['x-my-custom-header'] = 'MyCustomValue'; return req; }");
     c.UseResponseInterceptor("(res) => { console.log('Custom interceptor intercepted response from:', res.url); return res; }");
 });
@@ -1381,8 +1373,6 @@ This can be useful in a range of scenarios where you might want to append local 
 ```csharp
 app.UseSwaggerUI(c =>
 {
-    ...
-
     c.UseRequestInterceptor("(req) => { req.headers['X-XSRF-Token'] = localStorage.getItem('xsrf-token'); return req; }");
 });
 ```
