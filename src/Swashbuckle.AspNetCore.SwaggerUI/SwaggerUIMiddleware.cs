@@ -89,7 +89,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             await _staticFileMiddleware.Invoke(httpContext);
         }
 
-        private StaticFileMiddleware CreateStaticFileMiddleware(
+        private static StaticFileMiddleware CreateStaticFileMiddleware(
             RequestDelegate next,
             IWebHostEnvironment hostingEnv,
             ILoggerFactory loggerFactory,
@@ -104,7 +104,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             return new StaticFileMiddleware(next, hostingEnv, Options.Create(staticFileOptions), loggerFactory);
         }
 
-        private void RespondWithRedirect(HttpResponse response, string location)
+        private static void RespondWithRedirect(HttpResponse response, string location)
         {
             response.StatusCode = 301;
             response.Headers["Location"] = location;
