@@ -26,6 +26,13 @@
             background: #fafafa;
         }
     </style>
+    
+    <!-- Workaround for https://github.com/swagger-api/swagger-ui/issues/9577 -->
+    <style>
+        .opblock-summary-operation-id {
+            word-break: normal !important;
+        }
+    </style>
     %(HeadContent)
 </head>
 
