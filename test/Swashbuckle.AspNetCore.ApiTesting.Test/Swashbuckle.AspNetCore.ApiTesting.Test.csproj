@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Swashbuckle.AspNetCore.ApiTesting\Swashbuckle.AspNetCore.ApiTesting.csproj" />
+    <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\src\Swashbuckle.AspNetCore.ApiTesting\Swashbuckle.AspNetCore.ApiTesting.csproj" />
   </ItemGroup>
 
   <ItemGroup>

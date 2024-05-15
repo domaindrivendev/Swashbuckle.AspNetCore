@@ -25,7 +25,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Theory]
         [InlineData(typeof(IFormFile))]
         [InlineData(typeof(FileResult))]
-        public void GenerateSchema_GeneratesFileSchema_IfFormFileOrFileResultType(Type type)
+        [InlineData(typeof(System.IO.Stream))]
+        [InlineData(typeof(System.IO.Pipelines.PipeReader))]
+        public void GenerateSchema_GeneratesFileSchema_BinaryStringResultType(Type type)
         {
             var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
@@ -51,8 +53,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(byte[]), "string", "byte")]
         [InlineData(typeof(DateTime), "string", "date-time")]
         [InlineData(typeof(DateTimeOffset), "string", "date-time")]
+        [InlineData(typeof(TimeSpan), "string", "date-span")]
         [InlineData(typeof(Guid), "string", "uuid")]
         [InlineData(typeof(Uri), "string", "uri")]
+        [InlineData(typeof(Version), "string", null)]
         [InlineData(typeof(DateOnly), "string", "date")]
         [InlineData(typeof(TimeOnly), "string", "time")]
         [InlineData(typeof(bool?), "boolean", null)]
@@ -61,6 +65,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(Guid?), "string", "uuid")]
         [InlineData(typeof(DateOnly?), "string", "date")]
         [InlineData(typeof(TimeOnly?), "string", "time")]
+#if NET7_0_OR_GREATER
+        [InlineData(typeof(Int128), "integer", "int128")]
+        [InlineData(typeof(Int128?), "integer", "int128")]
+        [InlineData(typeof(UInt128), "integer", "int128")]
+        [InlineData(typeof(UInt128?), "integer", "int128")]
+#endif
         public void GenerateSchema_GeneratesPrimitiveSchema_IfPrimitiveOrNullablePrimitiveType(
             Type type,
             string expectedSchemaType,
@@ -250,6 +260,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GenerateSchema_KeepMostDerivedType_IfTypeIsAnInterface()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(typeof(INewBaseInterface), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal("integer", schema.Properties["BaseProperty"].Type);
+        }
+
+        [Fact]
         public void GenerateSchema_ExcludesIndexerProperties_IfComplexTypeIsIndexed()
         {
             var schemaRepository = new SchemaRepository();
@@ -317,7 +338,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Theory]
         [InlineData(typeof(TypeWithValidationAttributes))]
         [InlineData(typeof(TypeWithValidationAttributesViaMetadataType))]
-
         public void GenerateSchema_SetsValidationProperties_IfComplexTypeHasValidationAttributes(Type type)
         {
             var schemaRepository = new SchemaRepository();
@@ -330,6 +350,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(3, schema.Properties["StringWithMinMaxLength"].MaxLength);
             Assert.Equal(1, schema.Properties["ArrayWithMinMaxLength"].MinItems);
             Assert.Equal(3, schema.Properties["ArrayWithMinMaxLength"].MaxItems);
+#if NET8_0_OR_GREATER
+            Assert.Equal(1, schema.Properties["StringWithLength"].MinLength);
+            Assert.Equal(3, schema.Properties["StringWithLength"].MaxLength);
+            Assert.Equal(1, schema.Properties["ArrayWithLength"].MinItems);
+            Assert.Equal(3, schema.Properties["ArrayWithLength"].MaxItems);
+#endif
             Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);
             Assert.Equal(10, schema.Properties["IntWithRange"].Maximum);
             Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["StringWithRegularExpression"].Pattern);
@@ -359,9 +385,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
 #if NET7_0_OR_GREATER
-        public class TypeWithRequiredProperty
+        public class TypeWithRequiredProperties
         {
-            public required string RequiredProperty { get; set; }
+            public required string RequiredString { get; set; }
+            public required int RequiredInt { get; set; }
         }
 
         public class TypeWithRequiredPropertyAndValidationAttribute
@@ -375,10 +402,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = Subject().GenerateSchema(typeof(TypeWithRequiredProperty), schemaRepository);
+            var referenceSchema = Subject().GenerateSchema(typeof(TypeWithRequiredProperties), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal(new[] { "RequiredProperty" }, schema.Required.ToArray());
+            Assert.True(schema.Properties["RequiredString"].Nullable);
+            Assert.Contains("RequiredString", schema.Required.ToArray());
+            Assert.False(schema.Properties["RequiredInt"].Nullable);
+            Assert.Contains("RequiredInt", schema.Required.ToArray());
         }
 
         [Fact]
@@ -390,9 +420,31 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal(1, schema.Properties["RequiredProperty"].MinLength);
-            Assert.False(schema.Properties["RequiredProperty"].Nullable);
+            Assert.True(schema.Properties["RequiredProperty"].Nullable);
             Assert.Equal(new[] { "RequiredProperty" }, schema.Required.ToArray());
         }
+
+#nullable enable
+        public class TypeWithNullableReferenceTypes
+        {
+            public required string? RequiredNullableString { get; set; }
+            public required string RequiredNonNullableString { get; set; }
+        }
+
+        [Fact]
+        public void GenerateSchema_SetsRequiredAndNullable_IfPropertyHasRequiredKeywordAndIsNullable()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject(configureGenerator: (c) => c.SupportNonNullableReferenceTypes = true).GenerateSchema(typeof(TypeWithNullableReferenceTypes), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.True(schema.Properties["RequiredNullableString"].Nullable);
+            Assert.Contains("RequiredNullableString", schema.Required.ToArray());
+            Assert.False(schema.Properties["RequiredNonNullableString"].Nullable);
+            Assert.Contains("RequiredNonNullableString", schema.Required.ToArray());
+        }
+#nullable disable
 #endif
 
         [Theory]
@@ -781,6 +833,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("string", propertySchema.Type);
             Assert.Equal(expectedEnumAsJson, propertySchema.Enum.Select(openApiAny => openApiAny.ToJson()));
             Assert.Equal(expectedDefaultAsJson, propertySchema.Default.ToJson());
+        }
+
+        [Fact]
+        public void GenerateSchema_HonorsEnumDictionaryKeys_StringEnumConverter()
+        {
+            var subject = Subject();
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = subject.GenerateSchema(typeof(Dictionary<IntEnum, string>), schemaRepository);
+
+            Assert.Equal(typeof(IntEnum).GetEnumNames(), referenceSchema.Properties.Keys);
         }
 
         [Fact]

@@ -24,29 +24,27 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 return DataContract.ForDynamic(
                     underlyingType: type,
-                    jsonConverter: JsonConverterFunc);
+                    jsonConverter: (value) => JsonConverterFunc(value, type));
             }
 
-            if (PrimitiveTypesAndFormats.ContainsKey(type))
+            if (PrimitiveTypesAndFormats.TryGetValue(type, out var primitiveTypeAndFormat))
             {
-                var primitiveTypeAndFormat = PrimitiveTypesAndFormats[type];
-
                 return DataContract.ForPrimitive(
                     underlyingType: type,
                     dataType: primitiveTypeAndFormat.Item1,
                     dataFormat: primitiveTypeAndFormat.Item2,
-                    jsonConverter: JsonConverterFunc);
+                    jsonConverter: (value) => JsonConverterFunc(value, type));
             }
 
             if (type.IsEnum)
             {
                 var enumValues = type.GetEnumValues();
 
-                //Test to determine if the serializer will treat as string
+                // Test to determine if the serializer will treat as string
                 var serializeAsString = (enumValues.Length > 0)
-                    && JsonConverterFunc(enumValues.GetValue(0)).StartsWith("\"");
+                    && JsonConverterFunc(enumValues.GetValue(0), type).StartsWith("\"");
 
-                var primitiveTypeAndFormat = serializeAsString
+                primitiveTypeAndFormat = serializeAsString
                     ? PrimitiveTypesAndFormats[typeof(string)]
                     : PrimitiveTypesAndFormats[type.GetEnumUnderlyingType()];
 
@@ -54,16 +52,30 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     underlyingType: type,
                     dataType: primitiveTypeAndFormat.Item1,
                     dataFormat: primitiveTypeAndFormat.Item2,
-                    jsonConverter: JsonConverterFunc);
+                    jsonConverter: (value) => JsonConverterFunc(value, type));
             }
 
             if (IsSupportedDictionary(type, out Type keyType, out Type valueType))
             {
+                IEnumerable<string> keys = null;
+
+                if (keyType.IsEnum)
+                {
+                    // This is a special case where we know the possible key values
+                    var enumValuesAsJson = keyType.GetEnumValues()
+                        .Cast<object>()
+                        .Select(value => JsonConverterFunc(value, keyType));
+
+                    keys = enumValuesAsJson.Any(json => json.StartsWith("\""))
+                        ? enumValuesAsJson.Select(json => json.Replace("\"", string.Empty))
+                        : keyType.GetEnumNames();
+                }
+
                 return DataContract.ForDictionary(
                     underlyingType: type,
                     valueType: valueType,
-                    keys: null, // STJ doesn't currently support dictionaries with enum key types
-                    jsonConverter: JsonConverterFunc);
+                    keys: keys,
+                    jsonConverter: (value) => JsonConverterFunc(value, type));
             }
 
             if (IsSupportedCollection(type, out Type itemType))
@@ -71,19 +83,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 return DataContract.ForArray(
                     underlyingType: type,
                     itemType: itemType,
-                    jsonConverter: JsonConverterFunc);
+                    jsonConverter: (value) => JsonConverterFunc(value, type));
             }
 
             return DataContract.ForObject(
                 underlyingType: type,
                 properties: GetDataPropertiesFor(type, out Type extensionDataType),
                 extensionDataType: extensionDataType,
-                jsonConverter: JsonConverterFunc);
+                jsonConverter: (value) => JsonConverterFunc(value, type));
         }
 
-        private string JsonConverterFunc(object value)
+        private string JsonConverterFunc(object value, Type type)
         {
-            return JsonSerializer.Serialize(value, _serializerOptions);
+            return JsonSerializer.Serialize(value, type, _serializerOptions);
         }
 
         public bool IsSupportedDictionary(Type type, out Type keyType, out Type valueType)
@@ -223,7 +235,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return dataProperties;
         }
 
-        private static readonly Dictionary<Type, Tuple<DataType, string>> PrimitiveTypesAndFormats = new Dictionary<Type, Tuple<DataType, string>>
+        private static readonly Dictionary<Type, Tuple<DataType, string>> PrimitiveTypesAndFormats = new()
         {
             [ typeof(bool) ] = Tuple.Create(DataType.Boolean, (string)null),
             [ typeof(byte) ] = Tuple.Create(DataType.Integer, "int32"),
@@ -242,11 +254,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             [ typeof(char) ] = Tuple.Create(DataType.String, (string)null),
             [ typeof(DateTime) ] = Tuple.Create(DataType.String, "date-time"),
             [ typeof(DateTimeOffset) ] = Tuple.Create(DataType.String, "date-time"),
+            [ typeof(TimeSpan) ] = Tuple.Create(DataType.String, "date-span"),
             [ typeof(Guid) ] = Tuple.Create(DataType.String, "uuid"),
             [ typeof(Uri) ] = Tuple.Create(DataType.String, "uri"),
+            [ typeof(Version) ] = Tuple.Create(DataType.String, (string)null),
 #if NET6_0_OR_GREATER
             [ typeof(DateOnly) ] = Tuple.Create(DataType.String, "date"),
-            [ typeof(TimeOnly) ] = Tuple.Create(DataType.String, "time")
+            [ typeof(TimeOnly) ] = Tuple.Create(DataType.String, "time"),
+#endif
+#if NET7_0_OR_GREATER
+            [ typeof(Int128) ] = Tuple.Create(DataType.Integer, "int128"),
+            [ typeof(UInt128) ] = Tuple.Create(DataType.Integer, "int128"),
 #endif
         };
     }

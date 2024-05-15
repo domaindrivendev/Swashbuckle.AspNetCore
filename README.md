@@ -5,13 +5,13 @@
 Swashbuckle.AspNetCore
 =========
 
-[![Build status](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/workflows/build/badge.svg?branch=master&event=push)](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/actions?query=workflow%3Abuild+branch%3Amaster+event%3Apush) [![Code coverage](https://codecov.io/gh/domaindrivendev/Swashbuckle.AspNetCore/branch/master/graph/badge.svg)](https://codecov.io/gh/domaindrivendev/Swashbuckle.AspNetCore) [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/domaindrivendev/Swashbuckle.AspNetCore/badge)](https://securityscorecards.dev/viewer/?uri=github.com/domaindrivendev/Swashbuckle.AspNetCore)
+[![Build status](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/actions/workflows/build.yml/badge.svg?branch=master&event=push)](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/actions?query=workflow%3Abuild+branch%3Amaster+event%3Apush) [![Code coverage](https://codecov.io/gh/domaindrivendev/Swashbuckle.AspNetCore/branch/master/graph/badge.svg)](https://codecov.io/gh/domaindrivendev/Swashbuckle.AspNetCore) [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/domaindrivendev/Swashbuckle.AspNetCore/badge)](https://securityscorecards.dev/viewer/?uri=github.com/domaindrivendev/Swashbuckle.AspNetCore)
 
 [![NuGet](https://buildstats.info/nuget/Swashbuckle.AspNetCore)](https://www.nuget.org/packages/Swashbuckle.AspNetCore/ "Download Swashbuckle.AspNetCore from NuGet.org")
 
-[Swagger](http://swagger.io) tooling for APIs built with ASP.NET Core. Generate beautiful API documentation, including a UI to explore and test operations, directly from your routes, controllers and models.
+[Swagger](https://swagger.io) tooling for APIs built with ASP.NET Core. Generate beautiful API documentation, including a UI to explore and test operations, directly from your routes, controllers and models.
 
-In addition to its [Swagger 2.0 and OpenAPI 3.0](http://swagger.io/specification/) generator, Swashbuckle also provides an embedded version of the awesome [swagger-ui](https://github.com/swagger-api/swagger-ui) that's powered by the generated Swagger JSON. This means you can complement your API with living documentation that's always in sync with the latest code. Best of all, it requires minimal coding and maintenance, allowing you to focus on building an awesome API.
+In addition to its [Swagger 2.0 and OpenAPI 3.0](https://swagger.io/specification/) generator, Swashbuckle also provides an embedded version of the awesome [swagger-ui](https://github.com/swagger-api/swagger-ui) that's powered by the generated Swagger JSON. This means you can complement your API with living documentation that's always in sync with the latest code. Best of all, it requires minimal coding and maintenance, allowing you to focus on building an awesome API.
 
 And that's not all ...
 
@@ -19,22 +19,22 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 
 # Compatibility #
 
-|Swashbuckle Version|ASP.NET Core|Swagger / OpenAPI Spec.|swagger-ui|Redoc UI|
+| Swashbuckle Version | ASP.NET Core | Swagger / OpenAPI Spec. | swagger-ui | Redoc UI |
 |----------|----------|----------|----------|----------|
-|[master](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master/README.md)|>= 2.0.0|2.0, 3.0|4.15.5|2.0.0|
-|[6.5.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v6.5.0)|>= 2.0.0|2.0, 3.0|4.15.5|2.0.0|
-|[5.6.3](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v5.6.3)|>= 2.0.0|2.0, 3.0|3.32.5|2.0.0-rc.40|
-|[4.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v4.0.0)|>= 2.0.0, < 3.0.0|2.0|3.19.5|1.22.2|
-|[3.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v3.0.0)|>= 1.0.4, < 3.0.0|2.0|3.17.1|1.20.0|
-|[2.5.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v2.5.0)|>= 1.0.4, < 3.0.0|2.0|3.16.0|1.20.0|
+| [CI](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/commits/master/)|>= 2.0.0 | 2.0, 3.0 | [5.x.x](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/master/src/Swashbuckle.AspNetCore.SwaggerUI/package.json#L6) | [2.x.x](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/master/src/Swashbuckle.AspNetCore.ReDoc/package.json#L6) |
+| [6.6.1](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v6.6.1)|>= 2.0.0 | 2.0, 3.0 | 5.17.9 | 2.1.4 |
+| [5.6.3](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v5.6.3)|>= 2.0.0 | 2.0, 3.0 | 3.32.5 | 2.0.0-rc.40 |
+| [4.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v4.0.0)|>= 2.0.0, < 3.0.0 | 2.0 | 3.19.5 | 1.22.2 |
+| [3.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v3.0.0)|>= 1.0.4, < 3.0.0 | 2.0 | 3.17.1 | 1.20.0 |
+| [2.5.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v2.5.0)|>= 1.0.4, < 3.0.0 | 2.0 | 3.16.0 | 1.20.0 |
 
 # Getting Started #
 
 1. Install the standard Nuget package into your ASP.NET Core application.
 
     ```
-    Package Manager : Install-Package Swashbuckle.AspNetCore -Version 6.5.0
-    CLI : dotnet add package --version 6.5.0 Swashbuckle.AspNetCore
+    Package Manager : Install-Package Swashbuckle.AspNetCore
+    CLI : dotnet add package Swashbuckle.AspNetCore
     ```
 
 2. In the `ConfigureServices` method of `Startup.cs`, register the Swagger generator, defining one or more Swagger documents.
@@ -110,8 +110,8 @@ If you're using **System.Text.Json (STJ)**, then the setup described above will 
 If you're using **Newtonsoft**, then you'll need to install a separate package and explicitly opt-in to ensure that *Newtonsoft* settings/attributes are automatically honored by the Swagger generator:
 
 ```
-Package Manager : Install-Package Swashbuckle.AspNetCore.Newtonsoft -Version 6.5.0
-CLI : dotnet add package --version 6.5.0 Swashbuckle.AspNetCore.Newtonsoft
+Package Manager : Install-Package Swashbuckle.AspNetCore.Newtonsoft
+CLI : dotnet add package Swashbuckle.AspNetCore.Newtonsoft
 ```
 
 ```csharp
@@ -133,7 +133,7 @@ services.AddMvcCore()
     .AddApiExplorer();
 ```
 
-Additionally, if you are using _[conventional routing](https://docs.microsoft.com/en-us/aspnet/core/mvc/controllers/routing#conventional-routing)_ (as opposed to attribute routing), any controllers and the actions on those controllers that use conventional routing will not be represented in ApiExplorer, which means Swashbuckle won't be able to find those controllers and generate Swagger operations from them. For instance:
+Additionally, if you are using _[conventional routing](https://learn.microsoft.com/aspnet/core/mvc/controllers/routing#conventional-routing)_ (as opposed to attribute routing), any controllers and the actions on those controllers that use conventional routing will not be represented in ApiExplorer, which means Swashbuckle won't be able to find those controllers and generate Swagger operations from them. For instance:
 
 ```csharp
 app.UseMvc(routes =>
@@ -153,7 +153,7 @@ public class ExampleController : Controller
     public IActionResult DoStuff() { /**/ }
 }
 ```
-Refer to the [routing documentation](https://docs.microsoft.com/en-us/aspnet/core/mvc/controllers/routing) for more information.
+Refer to the [routing documentation](https://learn.microsoft.com/aspnet/core/mvc/controllers/routing) for more information.
 
 # Components #
 
@@ -198,6 +198,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Modify Swagger with Request Context](#modify-swagger-with-request-context)
     * [Serialize Swagger JSON in the 2.0 format](#serialize-swagger-in-the-20-format)
     * [Working with Virtual Directories and Reverse Proxies](#working-with-virtual-directories-and-reverse-proxies)
+    * [Customizing how the OpenAPI document is serialized](#customizing-how-the-openapi-document-is-serialized)
 
 * [Swashbuckle.AspNetCore.SwaggerGen](#swashbuckleaspnetcoreswaggergen)
 
@@ -225,6 +226,7 @@ The steps described above will get you up and running with minimal setup. Howeve
     * [Change Document Title](#change-document-title)
     * [List Multiple Swagger Documents](#list-multiple-swagger-documents)
     * [Apply swagger-ui Parameters](#apply-swagger-ui-parameters)
+    * [Inject Custom JavaScript](#inject-custom-javascript)
     * [Inject Custom CSS](#inject-custom-css)
     * [Customize index.html](#customize-indexhtml)
     * [Enable OAuth2.0 Flows](#enable-oauth20-flows)
@@ -318,6 +320,30 @@ app.UseSwaggerUI(c =>
 
 _NOTE: In previous versions of the docs, you may have seen this expressed as a root-relative link (e.g. `/swagger/v1/swagger.json`). This won't work if your app is hosted on an IIS virtual directory or behind a proxy that trims the request path before forwarding. If you switch to the *page-relative* syntax shown above, it should work in all cases._
 
+### Customizing how the OpenAPI document is serialized ###
+
+By default, Swashbuckle will serialize the OpenAPI document using the Serialize methods on the OpenAPI document object. If a customized serialization is desired, 
+it is possible to create a custom document serializer that implements the `ISwaggerDocumentSerializer` interface. This can be set on the `SwaggerOptions` in the service collection using `ConfigureSwagger()`:
+
+> [!NOTE]
+> If you plan on using the command line tool to generate OpenAPI specification files, this must be done on the service collection using `ConfigureSwagger()`.
+
+```csharp
+services.ConfigureSwagger(options =>
+{
+    option.SetCustomDocumentSerializer<CustomDocumentSerializer>();
+})
+```
+
+When the command line tool is not used, it can also be done on the application host:
+
+```csharp
+app.UseSwagger(options =>
+{
+    options.SetCustomDocumentSerializer<CustomDocumentSerializer>();
+})
+```
+
 ## Swashbuckle.AspNetCore.SwaggerGen ##
 
 ### Assign Explicit OperationIds ###
@@ -369,7 +395,7 @@ Will produce the following response metadata:
 ```
 responses: {
   200: {
-    description: "Success",
+    description: "OK",
     content: {
       "application/json": {
         schema: {
@@ -398,7 +424,7 @@ Will produce the following response metadata:
 ```
 responses: {
   200: {
-    description: "Success",
+    description: "OK",
     content: {
       "application/json": {
         schema: {
@@ -421,7 +447,7 @@ responses: {
     }
   },
   500: {
-    description: "Server Error",
+    description: "Internal Server Error",
     content: {}
   }
 }
@@ -480,20 +506,20 @@ This controller will accept two form field values and one named file upload from
 public void UploadFile([FromForm]string description, [FromForm]DateTime clientDate, IFormFile file)
 ```
 
-> Important note: As per the [ASP.NET Core docs](https://docs.microsoft.com/en-us/aspnet/core/mvc/models/file-uploads?view=aspnetcore-3.1), you're not supposed to decorate `IFormFile` parameters with the `[FromForm]` attribute as the binding source is automatically inferred from the type. In fact, the inferred value is `BindingSource.FormFile` and if you apply the attribute it will be set to `BindingSource.Form` instead, which screws up `ApiExplorer`, the metadata component that ships with ASP.NET Core and is heavily relied on by Swashbuckle. One particular issue here is that SwaggerUI will not treat the parameter as a file and so will not display a file upload button, if you do mistakenly include this attribute.
+> Important note: As per the [ASP.NET Core docs](https://learn.microsoft.com/aspnet/core/mvc/models/file-uploads), you're not supposed to decorate `IFormFile` parameters with the `[FromForm]` attribute as the binding source is automatically inferred from the type. In fact, the inferred value is `BindingSource.FormFile` and if you apply the attribute it will be set to `BindingSource.Form` instead, which screws up `ApiExplorer`, the metadata component that ships with ASP.NET Core and is heavily relied on by Swashbuckle. One particular issue here is that SwaggerUI will not treat the parameter as a file and so will not display a file upload button, if you do mistakenly include this attribute.
 
 ### Handle File Downloads ###
-`ApiExplorer` (the ASP.NET Core metadata component that Swashbuckle is built on) *DOES NOT* surface the `FileResult` type by default and so you need to explicitly tell it to with the `Produces` attribute:
+
+`ApiExplorer` (the ASP.NET Core metadata component that Swashbuckle is built on) *DOES NOT* surface the `FileResult` types by default and so you need to explicitly tell it to with the `ProducesResponseType` attribute (or `Produces` on .NET 5 or older):
 ```csharp
 [HttpGet("{fileName}")]
-[Produces("application/octet-stream", Type = typeof(FileResult))]
-public FileResult GetFile(string fileName)
+[ProducesResponseType(typeof(FileStreamResult), StatusCodes.Status200OK, "image/jpeg")]
+public FileStreamResult GetFile(string fileName)
 ```
-If you want the swagger-ui to display a "Download file" link, you're operation will need to return a **Content-Type of "application/octet-stream"** or a **Content-Disposition of "attachement"**.
 
 ### Include Descriptions from XML Comments ###
 
-To enhance the generated docs with human-friendly descriptions, you can annotate controller actions and models with [Xml Comments](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/xmldoc) and configure Swashbuckle to incorporate those comments into the outputted Swagger JSON:
+To enhance the generated docs with human-friendly descriptions, you can annotate controller actions and models with [Xml Comments](https://learn.microsoft.com/dotnet/csharp/language-reference/xmldoc/) and configure Swashbuckle to incorporate those comments into the outputted Swagger JSON:
 
 1. Open the Properties dialog for your project, click the "Build" tab and ensure that "XML documentation file" is checked, or add `<GenerateDocumentationFile>true</GenerateDocumentationFile>` element to the `<PropertyGroup>` section of your .csproj project file. This will produce a file containing all XML comments at build-time.
 
@@ -584,7 +610,7 @@ c.SwaggerDoc("v1",
         License = new OpenApiLicense
         {
             Name = "Apache 2.0",
-            Url = new Uri("http://www.apache.org/licenses/LICENSE-2.0.html")
+            Url = new Uri("https://www.apache.org/licenses/LICENSE-2.0.html")
         }
     }
 );
@@ -670,7 +696,7 @@ If you're using the `SwaggerUI` middleware, you'll need to specify any additiona
 
 ### Omit Obsolete Operations and/or Schema Properties ###
 
-The [Swagger spec](http://swagger.io/specification/) includes a `deprecated` flag for indicating that an operation is deprecated and should be refrained from use. The Swagger generator will automatically set this flag if the corresponding action is decorated with the `ObsoleteAttribute`. However, instead of setting a flag, you can configure the generator to ignore obsolete actions altogether:
+The [Swagger spec](https://swagger.io/specification/) includes a `deprecated` flag for indicating that an operation is deprecated and should be refrained from use. The Swagger generator will automatically set this flag if the corresponding action is decorated with the `ObsoleteAttribute`. However, instead of setting a flag, you can configure the generator to ignore obsolete actions altogether:
 
 ```csharp
 services.AddSwaggerGen(c =>
@@ -731,7 +757,7 @@ public void ConfigureServices(IServiceCollection services)
 
 ### Customize Operation Tags (e.g. for UI Grouping) ###
 
-The [Swagger spec](http://swagger.io/specification/) allows one or more "tags" to be assigned to an operation. The Swagger generator will assign the controller name as the default tag. This is important to note if you're using the `SwaggerUI` middleware as it uses this value to group operations.
+The [Swagger spec](https://swagger.io/specification/) allows one or more "tags" to be assigned to an operation. The Swagger generator will assign the controller name as the default tag. This is important to note if you're using the `SwaggerUI` middleware as it uses this value to group operations.
 
 You can override the default tag by providing a function that applies tags by convention. For example, the following configuration will tag, and therefore group operations in the UI, by HTTP method:
 
@@ -745,7 +771,7 @@ services.AddSwaggerGen(c =>
 
 ### Change Operation Sort Order (e.g. for UI Sorting) ###
 
-By default, actions are ordered by assigned tag (see above) before they're grouped into the path-centric, nested structure of the [Swagger spec](http://swagger.io/specification). But, you can change the default ordering of actions with a custom sorting strategy:
+By default, actions are ordered by assigned tag (see above) before they're grouped into the path-centric, nested structure of the [Swagger spec](https://swagger.io/specification). But, you can change the default ordering of actions with a custom sorting strategy:
 
 ```csharp
 services.AddSwaggerGen(c =>
@@ -764,7 +790,7 @@ If the generator encounters complex parameter or response types, it will generat
 ```
 responses: {
   200: {
-    description: "Success",
+    description: "OK",
     content: {
       "application/json": {
         schema: {
@@ -850,7 +876,7 @@ _NOTE: Filter pipelines are DI-aware. That is, you can create filters with const
 
 #### Schema Filters ####
 
-Swashbuckle generates a Swagger-flavored [JSONSchema](http://swagger.io/specification/#schemaObject) for every parameter, response and property type that's exposed by your controller actions. Once generated, it passes the schema and type through the list of configured Schema Filters.
+Swashbuckle generates a Swagger-flavored [JSONSchema](https://swagger.io/specification/#schemaObject) for every parameter, response and property type that's exposed by your controller actions. Once generated, it passes the schema and type through the list of configured Schema Filters.
 
 The example below adds an AutoRest vendor extension (see https://github.com/Azure/autorest/blob/master/docs/extensions/readme.md#x-ms-enum) to inform the AutoRest tool how enums should be modelled when it generates the API client.
 
@@ -885,7 +911,7 @@ services.AddSwaggerGen(c =>
 
 The example below allows for automatic schema generation of generic `Dictionary<Enum, TValue>` objects.
 Note that this only generates the swagger; `System.Text.Json` is not able to parse dictionary enums by default,
-so you will need [a special JsonConverter, like in the .NET docs](https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-converters-how-to?pivots=dotnet-5-0#sample-factory-pattern-converter)
+so you will need [a special JsonConverter, like in the .NET docs](https://learn.microsoft.com/dotnet/standard/serialization/system-text-json/converters-how-to#sample-factory-pattern-converter)
 
 ```csharp
 // DictionaryTKeyEnumTValueSchemaFilter.cs
@@ -927,7 +953,7 @@ services.AddSwaggerGen(c =>
 ```
 #### Document Filters ####
 
-Once an `OpenApiDocument` has been generated, it too can be passed through a set of pre-configured Document Filters. This gives full control to modify the document however you see fit. To ensure you're still returning valid Swagger JSON, you should have a read through the [specification](http://swagger.io/specification/) before using this filter type.
+Once an `OpenApiDocument` has been generated, it too can be passed through a set of pre-configured Document Filters. This gives full control to modify the document however you see fit. To ensure you're still returning valid Swagger JSON, you should have a read through the [specification](https://swagger.io/specification/) before using this filter type.
 
 The example below provides a description for any tags that are assigned to operations in the document:
 
@@ -1142,7 +1168,7 @@ _NOTE: If you're using the [Swashbuckle Annotations library](#swashbuckleaspnetc
 
 In conjunction with the `oneOf` and/or `allOf` keywords, Swagger / OpenAPI supports a `discriminator` field on base schema definitions. This keyword points to the property that identifies the specific type being represented by a given payload. In addition to the property name, the discriminator description MAY also include a `mapping` which maps discriminator values to specific schema definitions.
 
-For example, the Newtonsoft serializer supports polymorphic serialization/deserialization by emitting/accepting a "$type" property on JSON instances. The value of this property will be the [assembly qualified type name](https://docs.microsoft.com/en-us/dotnet/api/system.type.assemblyqualifiedname?view=netcore-3.1) of the type represented by a given JSON instance. So, to explicitly describe this behavior in Swagger, the corresponding request/response schema could be defined as follows:
+For example, the Newtonsoft serializer supports polymorphic serialization/deserialization by emitting/accepting a "$type" property on JSON instances. The value of this property will be the [assembly qualified type name](https://learn.microsoft.com/dotnet/api/system.type.assemblyqualifiedname) of the type represented by a given JSON instance. So, to explicitly describe this behavior in Swagger, the corresponding request/response schema could be defined as follows:
 
 ```
 components: {
@@ -1214,7 +1240,6 @@ By default, the Swagger UI will be exposed at "/swagger". If necessary, you can 
 app.UseSwaggerUI(c =>
 {
     c.RoutePrefix = "api-docs"
-    ...
 }
 ```
 
@@ -1226,7 +1251,6 @@ By default, the Swagger UI will have a generic document title. When you have mul
 app.UseSwaggerUI(c =>
 {
     c.DocumentTitle = "My Swagger UI";
-    ...
 }
 ```
 
@@ -1244,7 +1268,7 @@ app.UseSwaggerUI(c =>
 
 ### Apply swagger-ui Parameters ###
 
-The swagger-ui ships with its own set of configuration parameters, all described here https://github.com/swagger-api/swagger-ui/blob/v3.8.1/docs/usage/configuration.md#display. In Swashbuckle, most of these are surfaced through the SwaggerUI middleware options:
+The swagger-ui ships with its own set of configuration parameters, all described [here](https://github.com/swagger-api/swagger-ui/blob/master/docs/usage/configuration.md#display). In Swashbuckle, most of these are surfaced through the SwaggerUI middleware options:
 
 ```csharp
 app.UseSwaggerUI(c =>
@@ -1257,6 +1281,8 @@ app.UseSwaggerUI(c =>
     c.DocExpansion(DocExpansion.None);
     c.EnableDeepLinking();
     c.EnableFilter();
+    c.EnablePersistAuthorization();
+    c.EnableTryItOutByDefault();
     c.MaxDisplayedTags(5);
     c.ShowExtensions();
     c.ShowCommonExtensions();
@@ -1265,6 +1291,17 @@ app.UseSwaggerUI(c =>
     c.UseRequestInterceptor("(request) => { return request; }");
     c.UseResponseInterceptor("(response) => { return response; }");
 });
+```
+
+### Inject Custom JavaScript ###
+
+To tweak the behavior, you can inject additional JavaScript files by adding them to your `wwwroot` folder and specifying the relative paths in the middleware options:
+
+```csharp
+app.UseSwaggerUI(c =>
+{
+    c.InjectJavascript("/swagger-ui/custom.js");
+}
 ```
 
 _NOTE: The `InjectOnCompleteJavaScript` and `InjectOnFailureJavaScript` options have been removed because the latest version of swagger-ui doesn't expose the necessary hooks. Instead, it provides a [flexible customization system](https://github.com/swagger-api/swagger-ui/blob/master/docs/customization/overview.md) based on concepts and patterns from React and Redux. To leverage this, you'll need to provide a custom version of index.html as described [below](#customize-indexhtml)._
@@ -1278,7 +1315,6 @@ To tweak the look and feel, you can inject additional CSS stylesheets by adding 
 ```csharp
 app.UseSwaggerUI(c =>
 {
-    ...
     c.InjectStylesheet("/swagger-ui/custom.css");
 }
 ```
@@ -1301,20 +1337,22 @@ _To get started, you should base your custom index.html on the [default version]
 
 The swagger-ui has built-in support to participate in OAuth2.0 authorization flows. It interacts with authorization and/or token endpoints, as specified in the Swagger JSON, to obtain access tokens for subsequent API calls. See [Adding Security Definitions and Requirements](#add-security-definitions-and-requirements) for an example of adding OAuth2.0 metadata to the generated Swagger.
 
-If your Swagger endpoint includes the appropriate security metadata, the UI interaction should be automatically enabled. However, you can further customize OAuth support in the UI with the following settings below. See https://github.com/swagger-api/swagger-ui/blob/v3.10.0/docs/usage/oauth2.md for more info:
+If your Swagger endpoint includes the appropriate security metadata, the UI interaction should be automatically enabled. However, you can further customize OAuth support in the UI with the following settings below. See [Swagger-UI documentation](https://github.com/swagger-api/swagger-ui/blob/master/docs/usage/oauth2.md) for more info:
 
 ```csharp
 app.UseSwaggerUI(c =>
 {
-    ...
-
     c.OAuthClientId("test-id");
     c.OAuthClientSecret("test-secret");
+    c.OAuthUsername("test-user");
     c.OAuthRealm("test-realm");
     c.OAuthAppName("test-app");
+    c.OAuth2RedirectUrl("url");
     c.OAuthScopeSeparator(" ");
+    c.OAuthScopes("scope1", "scope2");
     c.OAuthAdditionalQueryStringParams(new Dictionary<string, string> { { "foo", "bar" }}); 
     c.OAuthUseBasicAuthenticationWithAccessCodeGrant();
+    c.OAuthUsePkce();
 });
 ```
 
@@ -1325,8 +1363,6 @@ To use custom interceptors on requests and responses going through swagger-ui yo
 ```csharp
 app.UseSwaggerUI(c =>
 {
-    ...
-
     c.UseRequestInterceptor("(req) => { req.headers['x-my-custom-header'] = 'MyCustomValue'; return req; }");
     c.UseResponseInterceptor("(res) => { console.log('Custom interceptor intercepted response from:', res.url); return res; }");
 });
@@ -1337,8 +1373,6 @@ This can be useful in a range of scenarios where you might want to append local 
 ```csharp
 app.UseSwaggerUI(c =>
 {
-    ...
-
     c.UseRequestInterceptor("(req) => { req.headers['X-XSRF-Token'] = localStorage.getItem('xsrf-token'); return req; }");
 });
 ```
@@ -1542,16 +1576,16 @@ schema: {
 
 Once your application has been setup with Swashbuckle (see [Getting Started](#getting-started)), you can use the Swashbuckle CLI tool to retrieve Swagger / OpenAPI JSON directly from your application's startup assembly, and write it to file. This can be useful if you want to incorporate Swagger generation into a CI/CD process, or if you want to serve it from static file at run-time.
 
-It's packaged as a [.NET Core Tool](https://docs.microsoft.com/en-us/dotnet/core/tools/global-tools) that can be installed and used via the dotnet SDK.
+It's packaged as a [.NET Tool](https://learn.microsoft.com/dotnet/core/tools/global-tools) that can be installed and used via the dotnet SDK.
 
-> :warning: The tool needs to load your Startup DLL and its dependencies at runtime. Therefore, you should use a version of the `dotnet` SDK that is compatible with your application. For example, if your app targets `netcoreapp2.1`, then you should use version 2.1 of the SDK to run the CLI tool. If it targets `netcoreapp3.0`, then you should use version 3.0 of the SDK and so on.
+> :warning: The tool needs to load your Startup DLL and its dependencies at runtime. Therefore, you should use a version of the `dotnet` SDK that is compatible with your application. For example, if your app targets `net6.0`, then you should use version 6.0.xxx of the SDK to run the CLI tool. If it targets `net8.0`, then you should use version 8.0.xxx of the SDK and so on.
 
-#### Using the tool with the .NET Core 2.1 SDK
+#### Using the tool with the .NET SDK
 
-1. Install as a [global tool](https://docs.microsoft.com/en-us/dotnet/core/tools/global-tools#install-a-global-tool)
+1. Install as a [global tool](https://learn.microsoft.com/dotnet/core/tools/global-tools#install-a-global-tool)
 
     ```
-    dotnet tool install -g --version 6.5.0 Swashbuckle.AspNetCore.Cli
+    dotnet tool install -g Swashbuckle.AspNetCore.Cli
     ```
 
 2. Verify that the tool was installed correctly
@@ -1571,7 +1605,7 @@ It's packaged as a [.NET Core Tool](https://docs.microsoft.com/en-us/dotnet/core
 	* [startupassembly] is the relative path to your application's startup assembly
 	* [swaggerdoc] is the name of the swagger document you want to retrieve, as configured in your startup class
 
-#### Using the tool with the .NET Core 3.0 SDK or later
+#### Using the tool with the .NET 6.0 SDK or later
 
 1. In your project root, create a tool manifest file:
 
@@ -1579,10 +1613,10 @@ It's packaged as a [.NET Core Tool](https://docs.microsoft.com/en-us/dotnet/core
     dotnet new tool-manifest
     ```
 
-2. Install as a [local tool](https://docs.microsoft.com/en-us/dotnet/core/tools/global-tools#install-a-local-tool)
+2. Install as a [local tool](https://learn.microsoft.com/dotnet/core/tools/global-tools#install-a-local-tool)
 
     ```
-    dotnet tool install --version 6.5.0 Swashbuckle.AspNetCore.Cli
+    dotnet tool install Swashbuckle.AspNetCore.Cli
     ```
 
 3. Verify that the tool was installed correctly

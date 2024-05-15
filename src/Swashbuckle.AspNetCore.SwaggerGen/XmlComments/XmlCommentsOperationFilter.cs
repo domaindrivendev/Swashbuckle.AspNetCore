@@ -60,8 +60,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             while (responseNodes.MoveNext())
             {
                 var code = responseNodes.Current.GetAttribute("code", "");
-                var response = operation.Responses.ContainsKey(code)
-                    ? operation.Responses[code]
+                var response = operation.Responses.TryGetValue(code, out var operationResponse)
+                    ? operationResponse
                     : operation.Responses[code] = new OpenApiResponse();
 
                 response.Description = XmlCommentsTextHelper.Humanize(responseNodes.Current.InnerXml);

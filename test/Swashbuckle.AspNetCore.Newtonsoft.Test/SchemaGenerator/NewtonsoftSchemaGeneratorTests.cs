@@ -23,7 +23,8 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [Theory]
         [InlineData(typeof(IFormFile))]
         [InlineData(typeof(FileResult))]
-        public void GenerateSchema_GeneratesFileSchema_IfFormFileOrFileResultType(Type type)
+        [InlineData(typeof(System.IO.Stream))]
+        public void GenerateSchema_GeneratesFileSchema_BinaryStringResultType(Type type)
         {
             var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
@@ -32,6 +33,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Theory]
+        [InlineData(typeof(bool), "boolean", null)]
         [InlineData(typeof(byte), "integer", "int32")]
         [InlineData(typeof(sbyte), "integer", "int32")]
         [InlineData(typeof(short), "integer", "int32")]
@@ -48,12 +50,24 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [InlineData(typeof(byte[]), "string", "byte")]
         [InlineData(typeof(DateTime), "string", "date-time")]
         [InlineData(typeof(DateTimeOffset), "string", "date-time")]
-        [InlineData(typeof(Guid), "string", "uuid")]
         [InlineData(typeof(TimeSpan), "string", "date-span")]
+        [InlineData(typeof(Guid), "string", "uuid")]
+        [InlineData(typeof(Uri), "string", "uri")]
         [InlineData(typeof(Version), "string", null)]
+        [InlineData(typeof(DateOnly), "string", "date")]
+        [InlineData(typeof(TimeOnly), "string", "time")]
         [InlineData(typeof(bool?), "boolean", null)]
         [InlineData(typeof(int?), "integer", "int32")]
         [InlineData(typeof(DateTime?), "string", "date-time")]
+        [InlineData(typeof(Guid?), "string", "uuid")]
+        [InlineData(typeof(DateOnly?), "string", "date")]
+        [InlineData(typeof(TimeOnly?), "string", "time")]
+#if NET7_0_OR_GREATER
+        [InlineData(typeof(Int128), "integer", "int128")]
+        [InlineData(typeof(Int128?), "integer", "int128")]
+        [InlineData(typeof(UInt128), "integer", "int128")]
+        [InlineData(typeof(UInt128?), "integer", "int128")]
+#endif
         public void GenerateSchema_GeneratesPrimitiveSchema_IfPrimitiveOrNullablePrimitiveType(
             Type type,
             string expectedSchemaType,
@@ -288,7 +302,6 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [Theory]
         [InlineData(typeof(TypeWithValidationAttributes))]
         [InlineData(typeof(TypeWithValidationAttributesViaMetadataType))]
-
         public void GenerateSchema_SetsValidationProperties_IfComplexTypeHasValidationAttributes(Type type)
         {
             var schemaRepository = new SchemaRepository();
@@ -301,6 +314,12 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.Equal(3, schema.Properties["StringWithMinMaxLength"].MaxLength);
             Assert.Equal(1, schema.Properties["ArrayWithMinMaxLength"].MinItems);
             Assert.Equal(3, schema.Properties["ArrayWithMinMaxLength"].MaxItems);
+#if NET8_0_OR_GREATER
+            Assert.Equal(1, schema.Properties["StringWithLength"].MinLength);
+            Assert.Equal(3, schema.Properties["StringWithLength"].MaxLength);
+            Assert.Equal(1, schema.Properties["ArrayWithLength"].MinItems);
+            Assert.Equal(3, schema.Properties["ArrayWithLength"].MaxItems);
+#endif
             Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);
             Assert.Equal(10, schema.Properties["IntWithRange"].Maximum);
             Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["StringWithRegularExpression"].Pattern);
@@ -618,9 +637,9 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [InlineData(TypeNameHandling.Arrays, TypeNameAssemblyFormatHandling.Full, false,
             null)]
         [InlineData(TypeNameHandling.Objects, TypeNameAssemblyFormatHandling.Full, true,
-            "Swashbuckle.AspNetCore.TestSupport.{0}, Swashbuckle.AspNetCore.TestSupport, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null")]
+            "Swashbuckle.AspNetCore.TestSupport.{0}, Swashbuckle.AspNetCore.TestSupport, Version=1.0.0.0, Culture=neutral, PublicKeyToken=62657d7474907593")]
         [InlineData(TypeNameHandling.All, TypeNameAssemblyFormatHandling.Full, true,
-            "Swashbuckle.AspNetCore.TestSupport.{0}, Swashbuckle.AspNetCore.TestSupport, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null")]
+            "Swashbuckle.AspNetCore.TestSupport.{0}, Swashbuckle.AspNetCore.TestSupport, Version=1.0.0.0, Culture=neutral, PublicKeyToken=62657d7474907593")]
         [InlineData(TypeNameHandling.Auto, TypeNameAssemblyFormatHandling.Simple, true,
             "Swashbuckle.AspNetCore.TestSupport.{0}, Swashbuckle.AspNetCore.TestSupport")]
         public void GenerateSchema_HonorsSerializerSetting_TypeNameHandling(

@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Discussions
+    url: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/discussions
+    about: Start a discussion about Swashbuckle.
+  - name: Stack Overflow
+    url: https://stackoverflow.com/questions/tagged/swashbuckle
+    about: Ask a question about Swashbuckle on Stack Overflow.

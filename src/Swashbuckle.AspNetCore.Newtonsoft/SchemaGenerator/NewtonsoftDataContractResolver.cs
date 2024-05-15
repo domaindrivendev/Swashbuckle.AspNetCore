@@ -33,9 +33,10 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
             if (jsonContract is JsonPrimitiveContract && !jsonContract.UnderlyingType.IsEnum)
             {
-                var primitiveTypeAndFormat = PrimitiveTypesAndFormats.ContainsKey(jsonContract.UnderlyingType)
-                    ? PrimitiveTypesAndFormats[jsonContract.UnderlyingType]
-                    : Tuple.Create(DataType.String, (string)null);
+                if (!PrimitiveTypesAndFormats.TryGetValue(jsonContract.UnderlyingType, out var primitiveTypeAndFormat))
+                {
+                    primitiveTypeAndFormat = Tuple.Create(DataType.String, (string)null);
+                }
 
                 return DataContract.ForPrimitive(
                     underlyingType: jsonContract.UnderlyingType,
@@ -48,7 +49,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             {
                 var enumValues = jsonContract.UnderlyingType.GetEnumValues();
 
-                //Test to determine if the serializer will treat as string
+                // Test to determine if the serializer will treat as string
                 var serializeAsString = (enumValues.Length > 0)
                     && JsonConverterFunc(enumValues.GetValue(0)).StartsWith("\"");
 
@@ -83,7 +84,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     // This is a special case where we know the possible key values
                     var enumValuesAsJson = keyType.GetEnumValues()
                         .Cast<object>()
-                        .Select(value => JsonConverterFunc(value));
+                        .Select(JsonConverterFunc);
 
                     keys = enumValuesAsJson.Any(json => json.StartsWith("\""))
                         ? enumValuesAsJson.Select(json => json.Replace("\"", string.Empty))
@@ -99,6 +100,16 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
             if (jsonContract is JsonObjectContract jsonObjectContract)
             {
+                // This handles DateOnly and TimeOnly
+                if (PrimitiveTypesAndFormats.TryGetValue(jsonContract.UnderlyingType, out var primitiveTypeAndFormat))
+                {
+                    return DataContract.ForPrimitive(
+                        underlyingType: jsonContract.UnderlyingType,
+                        dataType: primitiveTypeAndFormat.Item1,
+                        dataFormat: primitiveTypeAndFormat.Item2,
+                        jsonConverter: JsonConverterFunc);
+                }
+
                 string typeNameProperty = null;
                 string typeNameValue = null;
 
@@ -186,7 +197,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             return dataProperties;
         }
 
-        private static readonly Dictionary<Type, Tuple<DataType, string>> PrimitiveTypesAndFormats = new Dictionary<Type, Tuple<DataType, string>>
+        private static readonly Dictionary<Type, Tuple<DataType, string>> PrimitiveTypesAndFormats = new()
         {
             [ typeof(bool) ] = Tuple.Create(DataType.Boolean, (string)null),
             [ typeof(byte) ] = Tuple.Create(DataType.Integer, "int32"),
@@ -210,7 +221,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             [ typeof(TimeSpan) ] = Tuple.Create(DataType.String, "date-span"),
 #if NET6_0_OR_GREATER
             [ typeof(DateOnly) ] = Tuple.Create(DataType.String, "date"),
-            [ typeof(TimeOnly) ] = Tuple.Create(DataType.String, "time")
+            [ typeof(TimeOnly) ] = Tuple.Create(DataType.String, "time"),
+#endif
+#if NET7_0_OR_GREATER
+            [ typeof(Int128) ] = Tuple.Create(DataType.Integer, "int128"),
+            [ typeof(UInt128) ] = Tuple.Create(DataType.Integer, "int128"),
 #endif
         };
     }

@@ -1,20 +1,22 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text.Json;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.TestSupport;
 using Xunit;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Server.HttpSys;
-using Microsoft.AspNetCore.Authentication;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -502,6 +504,117 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Empty(operation.Parameters);
         }
 
+        [Theory]
+        [InlineData(nameof(FakeController.ActionWithAcceptFromHeaderParameter))]
+        [InlineData(nameof(FakeController.ActionWithContentTypeFromHeaderParameter))]
+        [InlineData(nameof(FakeController.ActionWithAuthorizationFromHeaderParameter))]
+        public void GetSwagger_IgnoresParameters_IfActionParameterIsIllegalHeaderParameter(string action)
+        {
+            var illegalParameter = typeof(FakeController).GetMethod(action).GetParameters()[0];
+            var fromHeaderAttribute = illegalParameter.GetCustomAttribute<FromHeaderAttribute>();
+
+            var subject = Subject(
+                new[]
+                {
+                    ApiDescriptionFactory.Create<FakeController>(
+                        c => action,
+                        groupName: "v1",
+                        httpMethod: "GET",
+                        relativePath: "resource",
+                        parameterDescriptions: new[]
+                        {
+                            new ApiParameterDescription
+                            {
+                                Name = fromHeaderAttribute?.Name ?? illegalParameter.Name,
+                                Source = BindingSource.Header,
+                                ModelMetadata = ModelMetadataFactory.CreateForParameter(illegalParameter)
+                            },
+                            new ApiParameterDescription
+                            {
+                                Name = "param",
+                                Source = BindingSource.Header
+                            }
+                        }
+                    )
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            var operation = document.Paths["/resource"].Operations[OperationType.Get];
+            var parameter = Assert.Single(operation.Parameters);
+            Assert.Equal("param", parameter.Name);
+        }
+
+        [Theory]
+        [InlineData(nameof(FakeController.ActionWithAcceptFromHeaderParameter))]
+        [InlineData(nameof(FakeController.ActionWithContentTypeFromHeaderParameter))]
+        [InlineData(nameof(FakeController.ActionWithAuthorizationFromHeaderParameter))]
+        public void GetSwagger_GenerateParametersSchemas_IfActionParameterIsIllegalHeaderParameterWithProvidedOpenApiOperation(string action)
+        {
+            var illegalParameter = typeof(FakeController).GetMethod(action).GetParameters()[0];
+            var fromHeaderAttribute = illegalParameter.GetCustomAttribute<FromHeaderAttribute>();
+            var illegalParameterName = fromHeaderAttribute?.Name ?? illegalParameter.Name;
+            var methodInfo = typeof(FakeController).GetMethod(action);
+            var actionDescriptor = new ActionDescriptor
+            {
+                EndpointMetadata = new List<object>()
+                {
+                    new OpenApiOperation
+                    {
+                        OperationId = "OperationIdSetInMetadata",
+                        Parameters = new List<OpenApiParameter>()
+                        {
+                            new OpenApiParameter
+                            {
+                                Name = illegalParameterName,
+                            },
+                            new OpenApiParameter
+                            {
+                                Name = "param",
+                            }
+                        }
+                    }
+                },
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+                }
+            };
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create(
+                        actionDescriptor,
+                        methodInfo,
+                        groupName: "v1",
+                        httpMethod: "GET",
+                        relativePath: "resource",
+                        parameterDescriptions: new[]
+                        {
+                            new ApiParameterDescription
+                            {
+                                Name = illegalParameterName,
+                                Source = BindingSource.Header,
+                                ModelMetadata = ModelMetadataFactory.CreateForParameter(illegalParameter)
+                            },
+                            new ApiParameterDescription
+                            {
+                                Name = "param",
+                                Source = BindingSource.Header,
+                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(string))
+                            }
+                        }),
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            var operation = document.Paths["/resource"].Operations[OperationType.Get];
+            Assert.Null(operation.Parameters.Single(p => p.Name == illegalParameterName).Schema);
+            Assert.NotNull(operation.Parameters.Single(p => p.Name == "param").Schema);
+        }
+
         [Fact]
         public void GetSwagger_SetsParameterRequired_IfApiParameterIsBoundToPath()
         {
@@ -832,6 +945,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                             new ApiResponseType
                             {
                                 ApiResponseFormats = new [] { new ApiResponseFormat { MediaType = "application/json" } },
+                                StatusCode = 422
+                            },
+                            new ApiResponseType
+                            {
+                                ApiResponseFormats = new [] { new ApiResponseFormat { MediaType = "application/json" } },
                                 IsDefaultResponse = true
                             }
 
@@ -843,16 +961,53 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var document = subject.GetSwagger("v1");
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
-            Assert.Equal(new[] { "200", "400", "default" }, operation.Responses.Keys);
+            Assert.Equal(new[] { "200", "400", "422", "default" }, operation.Responses.Keys);
             var response200 = operation.Responses["200"];
-            Assert.Equal("Success", response200.Description);
+            Assert.Equal("OK", response200.Description);
             Assert.Equal(new[] { "application/json" }, response200.Content.Keys);
             var response400 = operation.Responses["400"];
             Assert.Equal("Bad Request", response400.Description);
             Assert.Empty(response400.Content.Keys);
+            var response422 = operation.Responses["422"];
+            Assert.Equal("Unprocessable Content", response422.Description);
+            Assert.Empty(response422.Content.Keys);
             var responseDefault = operation.Responses["default"];
             Assert.Equal("Error", responseDefault.Description);
             Assert.Empty(responseDefault.Content.Keys);
+        }
+
+        [Fact]
+        public void GetSwagger_SetsResponseContentType_WhenActionHasFileResult()
+        {
+            var apiDescription = ApiDescriptionFactory.Create<FakeController>(
+                c => nameof(c.ActionWithFileResult),
+                groupName: "v1",
+                httpMethod: "POST",
+                relativePath: "resource",
+                supportedResponseTypes: new[]
+                {
+                    new ApiResponseType
+                    {
+                        ApiResponseFormats = new [] { new ApiResponseFormat { MediaType = "application/zip" } },
+                        StatusCode = 200,
+                        Type = typeof(FileContentResult)
+                    }
+                });
+
+            // ASP.NET Core sets ModelMetadata to null for FileResults
+            apiDescription.SupportedResponseTypes[0].ModelMetadata = null;
+
+            var subject = Subject(
+                apiDescriptions: new[] { apiDescription }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            var operation = document.Paths["/resource"].Operations[OperationType.Post];
+            var content = operation.Responses["200"].Content.FirstOrDefault();
+            Assert.Equal("application/zip", content.Key);
+            Assert.Equal("binary", content.Value.Schema.Format);
+            Assert.Equal("string", content.Value.Schema.Type);
         }
 
         [Fact]
@@ -1407,6 +1562,110 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("bar", ((OpenApiString)document.Extensions["X-foo"]).Value);
             Assert.Equal("v1", ((OpenApiString)document.Extensions["X-docName"]).Value);
             Assert.Contains("ComplexType", document.Components.Schemas.Keys);
+        }
+
+        [Theory]
+        [InlineData("connect")]
+        [InlineData("CONNECT")]
+        [InlineData("FOO")]
+        public void GetSwagger_GeneratesSwaggerDocument_ThrowsIfHttpMethodNotSupported(string httpMethod)
+        {
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: httpMethod, relativePath: "resource"),
+                },
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    }
+                }
+            );
+
+            var exception = Assert.Throws<SwaggerGeneratorException>(() => subject.GetSwagger("v1"));
+            Assert.Equal($"The \"{httpMethod}\" HTTP method is not supported.", exception.Message);
+        }
+
+        [Fact]
+        public void GetSwagger_Throws_Exception_When_FromForm_Attribute_Used_With_IFormFile()
+        {
+            var parameterInfo = typeof(FakeController)
+                .GetMethod(nameof(FakeController.ActionHavingIFormFileParamWithFromFormAtribute))
+                .GetParameters()[0];
+
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                   ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionHavingIFormFileParamWithFromFormAtribute),
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions: new[]
+                        {
+                            new ApiParameterDescription
+                            {
+                                Name = "fileUpload", // Name of the parameter
+                                Type = typeof(IFormFile), // Type of the parameter
+                                ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = parameterInfo }
+                            }
+                        })
+                }
+            );
+
+            Assert.Throws<SwaggerGeneratorException>(() => subject.GetSwagger("v1"));
+        }
+
+        [Fact]
+        public void GetSwagger_Works_As_Expected_When_FromForm_Attribute_Not_Used_With_IFormFile()
+        {
+            var paraminfo = typeof(FakeController)
+                .GetMethod(nameof(FakeController.ActionHavingFromFormAtributeButNotWithIFormFile))
+                .GetParameters()[0];
+
+            var fileUploadParameterInfo = typeof(FakeController)
+                .GetMethod(nameof(FakeController.ActionHavingFromFormAtributeButNotWithIFormFile))
+                .GetParameters()[1];
+
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                   ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionHavingFromFormAtributeButNotWithIFormFile),
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions: new[]
+                        {
+                            new ApiParameterDescription
+                            {
+                                Name = "param1", // Name of the parameter
+                                Type = typeof(string), // Type of the parameter
+                                ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = paraminfo }
+                            },
+                            new ApiParameterDescription
+                            {
+                                Name = "param2", // Name of the parameter
+                                Type = typeof(IFormFile), // Type of the parameter
+                                ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = fileUploadParameterInfo }
+                            }
+                        })
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+            Assert.Equal("V1", document.Info.Version);
+            Assert.Equal("Test API", document.Info.Title);
+            Assert.Equal(new[] { "/resource" }, document.Paths.Keys.ToArray());
+
+            var operation = document.Paths["/resource"].Operations[OperationType.Post];
+            Assert.NotNull(operation.Parameters);
+            Assert.Equal(2, operation.Parameters.Count);
+            Assert.Equal("param1", operation.Parameters[0].Name);
+            Assert.Equal("param2", operation.Parameters[1].Name);
         }
 
         private static SwaggerGenerator Subject(

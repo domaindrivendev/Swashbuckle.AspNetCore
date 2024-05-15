@@ -35,16 +35,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             // Create and add any filters that were specified through the FilterDescriptor lists ...
 
             _swaggerGenOptions.ParameterFilterDescriptors.ForEach(
-                filterDescriptor => options.ParameterFilters.Add(CreateFilter<IParameterFilter>(filterDescriptor)));
+                filterDescriptor => options.ParameterFilters.Add(GetOrCreateFilter<IParameterFilter>(filterDescriptor)));
 
             _swaggerGenOptions.RequestBodyFilterDescriptors.ForEach(
-                filterDescriptor => options.RequestBodyFilters.Add(CreateFilter<IRequestBodyFilter>(filterDescriptor)));
+                filterDescriptor => options.RequestBodyFilters.Add(GetOrCreateFilter<IRequestBodyFilter>(filterDescriptor)));
 
             _swaggerGenOptions.OperationFilterDescriptors.ForEach(
-                filterDescriptor => options.OperationFilters.Add(CreateFilter<IOperationFilter>(filterDescriptor)));
+                filterDescriptor => options.OperationFilters.Add(GetOrCreateFilter<IOperationFilter>(filterDescriptor)));
 
             _swaggerGenOptions.DocumentFilterDescriptors.ForEach(
-                filterDescriptor => options.DocumentFilters.Add(CreateFilter<IDocumentFilter>(filterDescriptor)));
+                filterDescriptor => options.DocumentFilters.Add(GetOrCreateFilter<IDocumentFilter>(filterDescriptor)));
 
             if (!options.SwaggerDocs.Any())
             {
@@ -63,18 +63,21 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             target.SortKeySelector = source.SortKeySelector;
             target.InferSecuritySchemes = source.InferSecuritySchemes;
             target.DescribeAllParametersInCamelCase = source.DescribeAllParametersInCamelCase;
+            target.SchemaComparer = source.SchemaComparer;
             target.Servers = new List<OpenApiServer>(source.Servers);
             target.SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>(source.SecuritySchemes);
             target.SecurityRequirements = new List<OpenApiSecurityRequirement>(source.SecurityRequirements);
             target.ParameterFilters = new List<IParameterFilter>(source.ParameterFilters);
             target.OperationFilters = new List<IOperationFilter>(source.OperationFilters);
             target.DocumentFilters = new List<IDocumentFilter>(source.DocumentFilters);
+            target.RequestBodyFilters = new List<IRequestBodyFilter>(source.RequestBodyFilters);
+            target.SecuritySchemesSelector = source.SecuritySchemesSelector;
         }
 
-        private TFilter CreateFilter<TFilter>(FilterDescriptor filterDescriptor)
+        private TFilter GetOrCreateFilter<TFilter>(FilterDescriptor filterDescriptor)
         {
-            return (TFilter)ActivatorUtilities
-                .CreateInstance(_serviceProvider, filterDescriptor.Type, filterDescriptor.Arguments);
+            return (TFilter)(filterDescriptor.FilterInstance
+                ?? ActivatorUtilities.CreateInstance(_serviceProvider, filterDescriptor.Type, filterDescriptor.Arguments));
         }
     }
 }
