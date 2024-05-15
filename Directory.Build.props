@@ -2,6 +2,8 @@
   <PropertyGroup>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <Authors>domaindrivendev</Authors>
+    <!-- HACK See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2893 -->
+    <BuildInParallel>false</BuildInParallel>
     <ChecksumAlgorithm>SHA256</ChecksumAlgorithm>
     <Company>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</Company>
     <ContinuousIntegrationBuild Condition=" '$(CI)' != '' ">true</ContinuousIntegrationBuild>
