@@ -42,6 +42,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 else if (attribute is MaxLengthAttribute maxLengthAttribute)
                     ApplyMaxLengthAttribute(schema, maxLengthAttribute);
 
+#if NET8_0_OR_GREATER
+
+                else if (attribute is LengthAttribute lengthAttribute)
+                    ApplyLengthAttribute(schema, lengthAttribute);
+
+#endif
+
                 else if (attribute is RangeAttribute rangeAttribute)
                     ApplyRangeAttribute(schema, rangeAttribute);
 
@@ -145,6 +152,24 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             else
                 schema.MaxLength = maxLengthRouteConstraint.MaxLength;
         }
+
+#if NET8_0_OR_GREATER
+
+        private static void ApplyLengthAttribute(OpenApiSchema schema, LengthAttribute lengthAttribute)
+        {
+            if (schema.Type == "array")
+            {
+                schema.MinItems = lengthAttribute.MinimumLength;
+                schema.MaxItems = lengthAttribute.MaximumLength;
+            }
+            else
+            {
+                schema.MinLength = lengthAttribute.MinimumLength;
+                schema.MaxLength = lengthAttribute.MaximumLength;
+            }
+        }
+
+#endif
 
         private static void ApplyRangeAttribute(OpenApiSchema schema, RangeAttribute rangeAttribute)
         {
