@@ -40,7 +40,10 @@ record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
 
-public partial class Program
+namespace WebApi
 {
-    // Expose the Program class for use with WebApplicationFactory<T>
+    public partial class Program
+    {
+        // Expose the Program class for use with WebApplicationFactory<T>
+    }
 }

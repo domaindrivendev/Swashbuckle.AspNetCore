@@ -55,7 +55,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (_generatorOptions.UseAllOfToExtendReferenceSchemas && schema.Reference != null)
             {
-                schema.AllOf = new[] { new OpenApiSchema { Reference = schema.Reference } };
+                schema.AllOf = [new OpenApiSchema { Reference = schema.Reference }];
                 schema.Reference = null;
             }
 
@@ -135,7 +135,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (_generatorOptions.UseAllOfToExtendReferenceSchemas && schema.Reference != null)
             {
-                schema.AllOf = new[] { new OpenApiSchema { Reference = schema.Reference } };
+                schema.AllOf = [new OpenApiSchema { Reference = schema.Reference }];
                 schema.Reference = null;
             }
 
@@ -149,7 +149,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 if (defaultValue != null)
                 {
-                    var defaultAsJson = dataContract.JsonConverter(defaultValue);
+                    var exampleContract = dataContract;
+                    var defaultValueType = defaultValue?.GetType();
+
+                    if (defaultValueType != null && defaultValueType != modelType)
+                    {
+                        exampleContract = GetDataContractFor(defaultValueType);
+                    }
+
+                    var defaultAsJson = exampleContract.JsonConverter(defaultValue);
                     schema.Default = OpenApiAnyFactory.CreateFromJson(defaultAsJson);
                 }
 
@@ -217,15 +225,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             };
         }
 
-        private static readonly Type[] BinaryStringTypes = new[]
-        {
+        private static readonly Type[] BinaryStringTypes =
+        [
             typeof(IFormFile),
             typeof(FileResult),
             typeof(System.IO.Stream),
 #if NETCOREAPP3_0_OR_GREATER
             typeof(System.IO.Pipelines.PipeReader),
 #endif
-        };
+        ];
 
         private OpenApiSchema GenerateConcreteSchema(DataContract dataContract, SchemaRepository schemaRepository)
         {
@@ -294,7 +302,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 || (modelType.IsConstructedGenericType && _generatorOptions.CustomTypeMappings.TryGetValue(modelType.GetGenericTypeDefinition(), out schemaFactory));
         }
 
-        private OpenApiSchema CreatePrimitiveSchema(DataContract dataContract)
+        private static OpenApiSchema CreatePrimitiveSchema(DataContract dataContract)
         {
             var schema = new OpenApiSchema
             {
@@ -309,7 +317,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 schema.Enum = dataContract.EnumValues
                     .Select(value => JsonSerializer.Serialize(value))
                     .Distinct()
-                    .Select(valueAsJson => OpenApiAnyFactory.CreateFromJson(valueAsJson))
+                    .Select(OpenApiAnyFactory.CreateFromJson)
                     .ToList();
 
                 return schema;
@@ -419,7 +427,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             foreach (var dataProperty in applicableDataProperties)
             {
-                var customAttributes = dataProperty.MemberInfo?.GetInlineAndMetadataAttributes() ?? Enumerable.Empty<object>();
+                var customAttributes = dataProperty.MemberInfo?.GetInlineAndMetadataAttributes() ?? [];
 
                 if (_generatorOptions.IgnoreObsoleteProperties && customAttributes.OfType<ObsoleteAttribute>().Any())
                     continue;

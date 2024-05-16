@@ -143,7 +143,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             return JsonConvert.SerializeObject(value, _serializerSettings);
         }
 
-        private IEnumerable<DataProperty> GetDataPropertiesFor(JsonObjectContract jsonObjectContract, out Type extensionDataType)
+        private List<DataProperty> GetDataPropertiesFor(JsonObjectContract jsonObjectContract, out Type extensionDataType)
         {
             var dataProperties = new List<DataProperty>();
 

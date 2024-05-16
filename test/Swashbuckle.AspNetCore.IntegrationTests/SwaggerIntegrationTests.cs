@@ -118,13 +118,21 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_For_WebApi(
             string swaggerRequestUri)
         {
-            await SwaggerEndpointReturnsValidSwaggerJson<Program>(swaggerRequestUri);
+            await SwaggerEndpointReturnsValidSwaggerJson<WebApi.Program>(swaggerRequestUri);
+        }
+
+        [Theory]
+        [InlineData("/swagger/v1/swagger.json")]
+        public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_For_Mvc(
+            string swaggerRequestUri)
+        {
+            await SwaggerEndpointReturnsValidSwaggerJson<MvcWithNullable.Program>(swaggerRequestUri);
         }
 
         [Fact]
         public async Task TypesAreRenderedCorrectly()
         {
-            using var application = new TestApplication<Program>();
+            using var application = new TestApplication<WebApi.Program>();
             using var client = application.CreateDefaultClient();
 
             using var swaggerResponse = await client.GetFromJsonAsync<JsonDocument>("/swagger/v1/swagger.json");
@@ -153,7 +161,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             ]);
         }
 
-        private async Task SwaggerEndpointReturnsValidSwaggerJson<TEntryPoint>(string swaggerRequestUri)
+        private static async Task SwaggerEndpointReturnsValidSwaggerJson<TEntryPoint>(string swaggerRequestUri)
             where TEntryPoint : class
         {
             using var application = new TestApplication<TEntryPoint>();
@@ -163,11 +171,11 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         }
 #endif
 
-        private async Task AssertValidSwaggerJson(HttpClient client, string swaggerRequestUri)
+        private static async Task AssertValidSwaggerJson(HttpClient client, string swaggerRequestUri)
         {
             using var swaggerResponse = await client.GetAsync(swaggerRequestUri);
 
-            swaggerResponse.EnsureSuccessStatusCode();
+            Assert.True(swaggerResponse.IsSuccessStatusCode, await swaggerResponse.Content.ReadAsStringAsync());
             using var contentStream = await swaggerResponse.Content.ReadAsStreamAsync();
             new OpenApiStreamReader().Read(contentStream, out OpenApiDiagnostic diagnostic);
             Assert.Empty(diagnostic.Errors);
