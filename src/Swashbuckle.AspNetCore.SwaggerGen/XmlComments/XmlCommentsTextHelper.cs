@@ -21,6 +21,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 .HumanizeCodeTags()
                 .HumanizeMultilineCodeTags()
                 .HumanizeParaTags()
+                .HumanizeBrTags() // must be called after HumanizeParaTags() so that it replaces any additional <br> tags
                 .DecodeXml();
         }
 
@@ -108,6 +109,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return ParaTag().Replace(text, (match) => "<br>" + match.Groups["display"].Value);
         }
 
+        private static string HumanizeBrTags(this string text)
+        {
+            return BrTag().Replace(text, m => Environment.NewLine);
+        }
+
         private static string DecodeXml(this string text)
         {
             return WebUtility.HtmlDecode(text);
@@ -118,6 +124,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private const string MultilineCodeTagPattern = @"<code>(?<display>.+?)</code>";
         private const string ParaTagPattern = @"<para>(?<display>.+?)</para>";
         private const string HrefPattern = @"<see href=\""(.*)\"">(.*)<\/see>";
+        private const string BrPattern = @"(<br ?\/?>)"; // handles <br>, <br/>, <br />
 
 #if NET7_0_OR_GREATER
         [GeneratedRegex(RefTagPattern)]
@@ -134,18 +141,23 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         [GeneratedRegex(HrefPattern)]
         private static partial Regex HrefTag();
+
+        [GeneratedRegex(BrPattern)]
+        private static partial Regex BrTag();
 #else
         private static readonly Regex _refTag = new(RefTagPattern);
         private static readonly Regex _codeTag = new(CodeTagPattern);
         private static readonly Regex _multilineCodeTag = new(MultilineCodeTagPattern, RegexOptions.Singleline);
         private static readonly Regex _paraTag = new(ParaTagPattern, RegexOptions.Singleline);
         private static readonly Regex _hrefTag = new(HrefPattern);
+        private static readonly Regex _brTag = new(BrPattern);
 
         private static Regex RefTag() => _refTag;
         private static Regex CodeTag() => _codeTag;
         private static Regex MultilineCodeTag() => _multilineCodeTag;
         private static Regex ParaTag() => _paraTag;
         private static Regex HrefTag() => _hrefTag;
+        private static Regex BrTag() => _brTag;
 #endif
     }
 }
