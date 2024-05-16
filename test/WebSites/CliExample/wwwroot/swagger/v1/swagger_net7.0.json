@@ -1,12 +1,12 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "CliExampleWithFactory",
+    "title": "CliExample",
     "version": "1.0"
   },
   "servers": [
     {
-      "url": "http://localhost:57556/"
+      "url": "http://localhost:51071"
     }
   ],
   "paths": {

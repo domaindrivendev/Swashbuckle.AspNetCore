@@ -28,7 +28,7 @@
   -->
 
   <Target Name="SwaggerToFile" AfterTargets="AfterBuild">
-    <Exec Command="dotnet dotnet-swagger.dll tofile --host http://localhost:51071 --output %22$(MSBuildThisFileDirectory)wwwroot/swagger/v1/swagger.json%22 %22$(OutputPath)$(AssemblyName).dll%22 v1"
+    <Exec Command="dotnet dotnet-swagger.dll tofile --host http://localhost:51071 --output %22$(MSBuildThisFileDirectory)wwwroot/swagger/v1/swagger_$(TargetFramework).json%22 %22$(OutputPath)$(AssemblyName).dll%22 v1"
           WorkingDirectory="$(DotNetSwaggerPath)" />
   </Target>
 
