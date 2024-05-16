@@ -50,7 +50,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     schema.Description = XmlCommentsTextHelper.Humanize(summaryNode);
 
                 var example = recordDefaultConstructorProperty.GetAttribute("example", string.Empty);
-                TrySetExample(schema, context, example);
+                if (!string.IsNullOrEmpty(example))
+                {
+                    TrySetExample(schema, context, example);
+                }
             }
 
             if (fieldOrPropertyNode != null)
