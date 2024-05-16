@@ -1,10 +1,10 @@
 ﻿using System;
-using System.IO;
-using System.Reflection;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text.Json.Serialization;
+using System.Reflection;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Swashbuckle.AspNetCore.SwaggerUI
 {
@@ -262,6 +262,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// Accepts one argument requestInterceptor(request) and must return the modified request, or a Promise that resolves to the modified request.
         /// Ex: "function (req) { req.headers['MyCustomHeader'] = 'CustomValue'; return req; }"
         /// </summary>
+        [JsonPropertyName("RequestInterceptorFunction")]
         public string RequestInterceptorFunction { get; set; }
 
         /// <summary>
@@ -270,6 +271,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// Accepts one argument responseInterceptor(response) and must return the modified response, or a Promise that resolves to the modified response.
         /// Ex: "function (res) { console.log(res); return res; }"
         /// </summary>
+        [JsonPropertyName("ResponseInterceptorFunction")]
         public string ResponseInterceptorFunction { get; set; }
     }
 }
