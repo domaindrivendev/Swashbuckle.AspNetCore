@@ -71,6 +71,18 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             Assert.Contains("Example.com", content);
         }
 
+        [Fact]
+        public async Task IndexUrl_ReturnsInterceptors_IfConfigured()
+        {
+            var client = new TestSite(typeof(CustomUIConfig.Startup)).BuildClient();
+
+            var response = await client.GetAsync("/swagger/index.html");
+            var content = await response.Content.ReadAsStringAsync();
+
+            Assert.Contains("\"RequestInterceptorFunction\":", content);
+            Assert.Contains("\"ResponseInterceptorFunction\":", content);
+        }
+
         [Theory]
         [InlineData("/swagger/index.html", new [] { "Version 1.0", "Version 2.0" })]
         [InlineData("/swagger/1.0/index.html", new [] { "Version 1.0" })]
