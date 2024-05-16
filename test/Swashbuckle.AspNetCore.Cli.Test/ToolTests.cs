@@ -28,7 +28,7 @@ namespace Swashbuckle.AspNetCore.Cli.Test
             Assert.True(productsPath.TryGetProperty("post", out _));
         }
 
-        [Fact(Skip = "Disabled because it makes CI unstable")]
+        [Fact]
         public void Overwrites_Existing_File()
         {
             using var temporaryDirectory = new TemporaryDirectory();
