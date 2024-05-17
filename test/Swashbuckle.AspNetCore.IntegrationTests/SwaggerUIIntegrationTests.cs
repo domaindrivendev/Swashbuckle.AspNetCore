@@ -88,5 +88,66 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
                 Assert.Contains(version, content);
             }
         }
+
+        [Theory]
+        [InlineData(typeof(Basic.Startup), "/index.html", "/swagger-ui.js", "/swagger-ui.css", "/swagger-ui-bundle.js", "/swagger-ui-standalone-preset.js")]
+        [InlineData(typeof(CustomUIConfig.Startup), "/swagger/index.html", "/swagger/swagger-ui.js", "/ext/custom-stylesheet.css", "/ext/custom-javascript.js", "/ext/custom-javascript.js")]
+        public async Task IndexUrl_ReturnsCustomScripts(
+            Type startupType,
+            string indexPath,
+            string jsPath,
+            string cssPath,
+            string scriptBundlePath,
+            string scriptPresetsPath)
+        {
+            var client = new TestSite(startupType).BuildClient();
+
+            var indexResponse = await client.GetAsync(indexPath);
+            Assert.Equal(HttpStatusCode.OK, indexResponse.StatusCode);
+            var indexContent = await indexResponse.Content.ReadAsStringAsync();
+            Assert.Contains("SwaggerUIBundle", indexContent);
+
+            var jsResponse = await client.GetAsync(jsPath);
+            Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
+
+            var cssResponse = await client.GetAsync(cssPath);
+            Assert.Equal(HttpStatusCode.OK, cssResponse.StatusCode);
+
+            var scriptBundleResponse = await client.GetAsync(scriptBundlePath);
+            Assert.Equal(HttpStatusCode.OK, scriptBundleResponse.StatusCode);
+
+            var scriptPresetsResponse = await client.GetAsync(scriptPresetsPath);
+            Assert.Equal(HttpStatusCode.OK, scriptPresetsResponse.StatusCode);
+        }
+
+        [Theory]
+        [InlineData(typeof(CustomUIConfig.Startup), "/swagger/index.html", "/swagger/swagger-ui.js", "/ext/custom-stylesheet-2.css", "/ext/custom-javascript-2.js", "/ext/custom-javascript-2.js")]
+        public async Task IndexUrl_ReturnsCustomScripts_NotFound(
+            Type startupType,
+            string indexPath,
+            string jsPath,
+            string cssPath,
+            string scriptBundlePath,
+            string scriptPresetsPath)
+        {
+            var client = new TestSite(startupType).BuildClient();
+
+            var indexResponse = await client.GetAsync(indexPath);
+            Assert.Equal(HttpStatusCode.OK, indexResponse.StatusCode);
+            var indexContent = await indexResponse.Content.ReadAsStringAsync();
+            Assert.Contains("SwaggerUIBundle", indexContent);
+
+            var jsResponse = await client.GetAsync(jsPath);
+            Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
+
+            var cssResponse = await client.GetAsync(cssPath);
+            Assert.Equal(HttpStatusCode.NotFound, cssResponse.StatusCode);
+
+            var scriptBundleResponse = await client.GetAsync(scriptBundlePath);
+            Assert.Equal(HttpStatusCode.NotFound, scriptBundleResponse.StatusCode);
+
+            var scriptPresetsResponse = await client.GetAsync(scriptPresetsPath);
+            Assert.Equal(HttpStatusCode.NotFound, scriptPresetsResponse.StatusCode);
+        }
     }
 }
