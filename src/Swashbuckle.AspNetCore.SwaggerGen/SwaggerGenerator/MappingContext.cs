@@ -1,26 +1,25 @@
 ﻿using System;
 
-namespace Swashbuckle.AspNetCore.SwaggerGen
+namespace Swashbuckle.AspNetCore.SwaggerGen;
+
+public interface IMappingContext
 {
-    public class MappingContext
-    {
-        public MappingContext(
-            ISchemaGenerator schemaGenerator,
-            SchemaRepository schemaRepository,
-            Type underlyingType)
-        {
-            SchemaGenerator = schemaGenerator;
-            SchemaRepository = schemaRepository;
-            UnderlyingType = underlyingType;
-        }
+    ISchemaGenerator SchemaGenerator { get; }
+    SchemaRepository SchemaRepository { get; }
 
-        public readonly ISchemaGenerator SchemaGenerator;
+    /// <summary>
+    /// Actual runtime type that's being mapped.
+    /// </summary>
+    Type UnderlyingType { get;}
+}
 
-        public readonly SchemaRepository SchemaRepository;
-
-        /// <summary>
-        /// Actual runtime type that's being mapped.
-        /// </summary>
-        public readonly Type UnderlyingType;
-    }
+public class MappingContext(
+    ISchemaGenerator schemaGenerator,
+    SchemaRepository schemaRepository,
+    Type underlyingType)
+    : IMappingContext
+{
+    public ISchemaGenerator SchemaGenerator { get; } = schemaGenerator;
+    public SchemaRepository SchemaRepository { get; } = schemaRepository;
+    public Type UnderlyingType { get; } = underlyingType;
 }

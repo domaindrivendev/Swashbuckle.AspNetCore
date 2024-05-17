@@ -204,7 +204,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static void MapType(
             this SwaggerGenOptions swaggerGenOptions,
             Type type,
-            Func<MappingContext, OpenApiSchema> schemaFactory)
+            Func<IMappingContext, OpenApiSchema> schemaFactory)
         {
             swaggerGenOptions.SchemaGeneratorOptions.CustomTypeMappings.Add(type, schemaFactory);
         }
@@ -217,7 +217,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="schemaFactory">A factory method that generates Schema's for the provided type</param>
         public static void MapType<T>(
             this SwaggerGenOptions swaggerGenOptions,
-            Func<MappingContext, OpenApiSchema> schemaFactory)
+            Func<IMappingContext, OpenApiSchema> schemaFactory)
         {
             swaggerGenOptions.MapType(typeof(T), schemaFactory);
         }
