@@ -224,6 +224,7 @@ The steps described above will get you up and running with minimal setup. Howeve
 * [Swashbuckle.AspNetCore.SwaggerUI](#swashbuckleaspnetcoreswaggerui)
     * [Change Relative Path to the UI](#change-relative-path-to-the-ui)
     * [Change Document Title](#change-document-title)
+    * [Change CSS or JS Paths](#change-css-or-js-paths)
     * [List Multiple Swagger Documents](#list-multiple-swagger-documents)
     * [Apply swagger-ui Parameters](#apply-swagger-ui-parameters)
     * [Inject Custom JavaScript](#inject-custom-javascript)
@@ -1251,6 +1252,19 @@ By default, the Swagger UI will have a generic document title. When you have mul
 app.UseSwaggerUI(c =>
 {
     c.DocumentTitle = "My Swagger UI";
+}
+```
+
+### Change CSS or JS Paths ###
+
+By default, the Swagger UI inclide default CSS and JS, but if you need to change path or URL (ex CDN):
+
+```csharp
+app.UseSwaggerUI(c =>
+{
+    c.StylesPath = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.17.10/swagger-ui.min.css";
+    c.ScriptBundlePath = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.17.10/swagger-ui-bundle.min.js";
+    c.ScriptPresetsPath = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.17.10/swagger-ui-standalone-preset.min.js";
 }
 ```
 
