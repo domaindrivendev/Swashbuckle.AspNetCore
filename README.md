@@ -1257,7 +1257,7 @@ app.UseSwaggerUI(c =>
 
 ### Change CSS or JS Paths ###
 
-By default, the Swagger UI inclide default CSS and JS, but if you need to change path or URL (ex CDN):
+By default, the Swagger UI include default CSS and JS, but if you wish to change the path or URL (for example to use a CDN):
 
 ```csharp
 app.UseSwaggerUI(c =>
