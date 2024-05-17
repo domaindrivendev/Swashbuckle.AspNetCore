@@ -10,13 +10,13 @@ namespace Basic.Controllers
     [Produces("application/json")]
     public class GenericsController
     {
-        [HttpPost(Name = "CreateString")]
+        [HttpPost("CreateString")]
         public string CreateString([FromBody] GenericType<string> genericString)
         {
             throw new NotImplementedException();
         }
 
-        [HttpPost(Name = "CreateDateTime")]
+        [HttpPost("CreateDateTime")]
         public string CreateDateTime([FromBody] GenericType<DateTime> genericObject)
         {
             throw new NotImplementedException();
