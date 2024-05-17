@@ -163,6 +163,9 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             {
                 { "%(DocumentTitle)", _options.DocumentTitle },
                 { "%(HeadContent)", _options.HeadContent },
+                { "%(PathCss)", _options.PathCss },
+                { "%(PathBundleJs)", _options.PathBundleJs },
+                { "%(PathStandaloneJs)", _options.PathStandaloneJs },
                 { "%(ConfigObject)", configObject },
                 { "%(OAuthConfigObject)", oauthConfigObject },
                 { "%(Interceptors)", interceptors },

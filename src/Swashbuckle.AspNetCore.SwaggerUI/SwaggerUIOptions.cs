@@ -50,6 +50,21 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// Gets or sets the optional JSON serialization options to use to serialize options to the HTML document.
         /// </summary>
         public JsonSerializerOptions JsonSerializerOptions { get; set; }
+
+        /// <summary>
+        /// Path to bundle js file.
+        /// </summary>
+        public string PathBundleJs { get; set; } = "./swagger-ui-bundle.js";
+
+        /// <summary>
+        /// Path to standalone js file.
+        /// </summary>
+        public string PathStandaloneJs { get; set; } = "./swagger-ui-standalone-preset.js";
+
+        /// <summary>
+        /// Path to css file.
+        /// </summary>
+        public string PathCss { get; set; } = "./swagger-ui.css";
     }
 
     public class ConfigObject
