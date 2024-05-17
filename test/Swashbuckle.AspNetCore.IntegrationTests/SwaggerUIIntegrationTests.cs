@@ -92,7 +92,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         [Theory]
         [InlineData(typeof(Basic.Startup), "/index.html", "/swagger-ui.js", "/swagger-ui.css", "/swagger-ui-bundle.js", "/swagger-ui-standalone-preset.js")]
         [InlineData(typeof(CustomUIConfig.Startup), "/swagger/index.html", "/swagger/swagger-ui.js", "/ext/custom-stylesheet.css", "/ext/custom-javascript.js", "/ext/custom-javascript.js")]
-        public async Task IndexUrl_ReturnsCustomScripts(
+        public async Task IndexUrl_Returns_ExpectedAssetPaths(
             Type startupType,
             string indexPath,
             string jsPath,
