@@ -54,17 +54,17 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// <summary>
         /// Gets or sets the path or URL to the Swagger UI JavaScript bundle file.
         /// </summary>
-        public string PathBundleJs { get; set; } = "./swagger-ui-bundle.js";
+        public string ScriptBundlePath { get; set; } = "./swagger-ui-bundle.js";
 
         /// <summary>
         /// Gets or sets the path or URL to the Swagger UI JavaScript standalone presets file.
         /// </summary>
-        public string PathStandaloneJs { get; set; } = "./swagger-ui-standalone-preset.js";
+        public string ScriptPresetsPath { get; set; } = "./swagger-ui-standalone-preset.js";
 
         /// <summary>
         /// Gets or sets the path or URL to the Swagger UI CSS file.
         /// </summary>
-        public string PathCss { get; set; } = "./swagger-ui.css";
+        public string StylesPath { get; set; } = "./swagger-ui.css";
     }
 
     public class ConfigObject
