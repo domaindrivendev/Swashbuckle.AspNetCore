@@ -839,6 +839,26 @@ services.AddSwaggerGen(c =>
 };
 ```
 
+As of version v6.6.x, you can easily map generic types dynamically by accessing the underlying type at runtime. In this example, I want to treat `GenericType` as if it was the generic type `T`:
+
+```csharp
+// GenericType.cs
+public class GenericType<T>
+{
+   public T MyProperty { get; set; }
+}
+
+// Startup.cs
+c.MapType(typeof(GenericType<>), mappingContext =>
+{
+    // First, get the type of T:
+    var type = mappingContext.UnderlyingType.GenericTypeArguments[0];
+
+    // Now, autmatically generate a schema for T and return that:
+    return mappingContext.SchemaGenerator.GenerateSchema(type, mappingContext.SchemaRepository);
+});
+```
+
 ### Extend Generator with Operation, Schema & Document Filters ###
 
 Swashbuckle exposes a filter pipeline that hooks into the generation process. Once generated, individual metadata objects are passed into the pipeline where they can be modified further. You can wire up custom filters to enrich the generated "Operations", "Schemas" and "Documents".

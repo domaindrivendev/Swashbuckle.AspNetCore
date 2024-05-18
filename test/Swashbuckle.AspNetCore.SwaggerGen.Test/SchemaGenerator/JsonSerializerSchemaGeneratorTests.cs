@@ -478,7 +478,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             string expectedSchemaType)
         {
             var subject = Subject(
-                configureGenerator: c => c.CustomTypeMappings.Add(mappingType, () => new OpenApiSchema { Type = "string" })
+                configureGenerator: c => c.CustomTypeMappings.Add(mappingType, _ => new OpenApiSchema { Type = "string" })
             );
             var schema = subject.GenerateSchema(type, new SchemaRepository());
 
@@ -977,6 +977,57 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 .First();
             var schema = Subject().GenerateSchema(typeof(string), new SchemaRepository(), parameterInfo: parameterInfo, routeInfo: routeInfo);
             Assert.Equal("integer", schema.Type);
+        }
+
+        [Theory]
+        [InlineData(typeof(GenericType<string>), "string")]
+        [InlineData(typeof(GenericType<int>), "number")]
+        public void GenerateSchema_GeneratesSchemaWithCorrectType_IfTypeTakenFromUnderlyingType(Type genericType, string expectedType)
+        {
+            var subject = Subject(
+                configureGenerator: c => c.CustomTypeMappings.Add(genericType, mappingContext =>
+                {
+                    Assert.Equal(genericType, mappingContext.UnderlyingType);
+                    Assert.NotNull(mappingContext.SchemaGenerator);
+                    Assert.NotNull(mappingContext.SchemaRepository);
+
+                    var genericTypeArgument = mappingContext.UnderlyingType.GenericTypeArguments.First();
+
+                    if (genericTypeArgument == typeof(string))
+                        return new OpenApiSchema { Type = "string" };
+                    if (genericTypeArgument == typeof(int))
+                        return new OpenApiSchema { Type = "number" };
+
+                    throw new NotImplementedException();
+                })
+            );
+            var schema = subject.GenerateSchema(genericType, new SchemaRepository());
+
+            Assert.Equal(expectedType, schema.Type);
+            Assert.Empty(schema.Properties);
+        }
+
+        [Fact]
+        public void GenerateSchema_GeneratesSchemaWithCorrectReference_IfSchemaIsGeneratedForGenericTypeArgument()
+        {
+            var genericType = typeof(GenericType<ComplexType>);
+
+            var subject = Subject(
+                configureGenerator: c => c.CustomTypeMappings.Add(genericType, mappingContext =>
+                {
+                    Assert.Equal(genericType, mappingContext.UnderlyingType);
+                    Assert.NotNull(mappingContext.SchemaGenerator);
+                    Assert.NotNull(mappingContext.SchemaRepository);
+
+                    var genericTypeArgument = mappingContext.UnderlyingType.GenericTypeArguments.First();
+
+                    return mappingContext.SchemaGenerator.GenerateSchema(genericTypeArgument, mappingContext.SchemaRepository);
+                })
+            );
+            var schema = subject.GenerateSchema(genericType, new SchemaRepository());
+
+            Assert.Equal("#/components/schemas/ComplexType", schema.Reference.ReferenceV3);
+            Assert.Empty(schema.Properties);
         }
 
         private static SchemaGenerator Subject(

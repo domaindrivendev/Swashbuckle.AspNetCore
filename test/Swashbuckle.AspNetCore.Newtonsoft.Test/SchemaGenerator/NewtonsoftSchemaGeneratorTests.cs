@@ -370,7 +370,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             string expectedSchemaType)
         {
             var subject = Subject(
-                configureGenerator: c => c.CustomTypeMappings.Add(mappingType, () => new OpenApiSchema { Type = "string" })
+                configureGenerator: c => c.CustomTypeMappings.Add(mappingType, _ => new OpenApiSchema { Type = "string" })
             );
             var schema = subject.GenerateSchema(type, new SchemaRepository());
 
