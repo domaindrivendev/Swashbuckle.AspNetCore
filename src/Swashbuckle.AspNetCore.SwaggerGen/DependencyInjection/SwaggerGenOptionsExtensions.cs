@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using System.Xml.XPath;
-using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -554,6 +556,26 @@ namespace Microsoft.Extensions.DependencyInjection
             bool includeControllerXmlComments = false)
         {
             swaggerGenOptions.IncludeXmlComments(() => new XPathDocument(filePath), includeControllerXmlComments);
+        }
+
+        /// <summary>
+        /// Inject human-friendly descriptions for Operations, Parameters and Schemas based on XML comments
+        /// from specific Assembly
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="assembly">Assembly that contains XML Comments</param>
+        /// <param name="includeControllerXmlComments">
+        /// Flag to indicate if controller XML comments (i.e. summary) should be used to assign Tag descriptions.
+        /// Don't set this flag if you're customizing the default tag for operations via TagActionsBy.
+        /// </param>
+        public static void IncludeXmlComments(
+            this SwaggerGenOptions swaggerGenOptions,
+            Assembly assembly,
+            bool includeControllerXmlComments = false)
+        {
+            swaggerGenOptions.IncludeXmlComments(
+                Path.Combine(AppContext.BaseDirectory, $"{assembly.GetName().Name}.xml"),
+                includeControllerXmlComments);
         }
 
         /// <summary>
