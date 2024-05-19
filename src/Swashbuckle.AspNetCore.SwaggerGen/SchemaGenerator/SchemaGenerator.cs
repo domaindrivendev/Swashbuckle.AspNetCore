@@ -530,7 +530,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2885 and
             // https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2904.
             var defaultValueType = defaultValue?.GetType();
-            if (defaultValueType != modelType)
+            if (defaultValueType != null && defaultValueType != modelType)
             {
                 dataContract = GetDataContractFor(defaultValueType);
             }
