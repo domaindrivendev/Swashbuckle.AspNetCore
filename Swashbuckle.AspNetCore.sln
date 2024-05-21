@@ -115,6 +115,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi.Aot", "test\WebSites
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinimalAppWithHostedServices", "test\WebSites\MinimalAppWithHostedServices\MinimalAppWithHostedServices.csproj", "{D06A88E8-6F42-4F40-943A-E266C0AE6EC9}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MvcWithNullable", "test\WebSites\MvcWithNullable\MvcWithNullable.csproj", "{F88B6070-BE3C-45F9-978C-2ECBA9518C24}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -265,6 +267,10 @@ Global
 		{D06A88E8-6F42-4F40-943A-E266C0AE6EC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D06A88E8-6F42-4F40-943A-E266C0AE6EC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D06A88E8-6F42-4F40-943A-E266C0AE6EC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F88B6070-BE3C-45F9-978C-2ECBA9518C24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F88B6070-BE3C-45F9-978C-2ECBA9518C24}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F88B6070-BE3C-45F9-978C-2ECBA9518C24}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F88B6070-BE3C-45F9-978C-2ECBA9518C24}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -309,6 +315,7 @@ Global
 		{DE1D77F8-3916-4DEE-A57D-6DDC357F64C6} = {DB3F57FC-1472-4F03-B551-43394DA3C5EB}
 		{07BB09CF-6C6F-4D00-A459-93586345C921} = {DB3F57FC-1472-4F03-B551-43394DA3C5EB}
 		{D06A88E8-6F42-4F40-943A-E266C0AE6EC9} = {DB3F57FC-1472-4F03-B551-43394DA3C5EB}
+		{F88B6070-BE3C-45F9-978C-2ECBA9518C24} = {DB3F57FC-1472-4F03-B551-43394DA3C5EB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {36FC6A67-247D-4149-8EDD-79FFD1A75F51}

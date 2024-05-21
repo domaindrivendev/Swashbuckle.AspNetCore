@@ -41,12 +41,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var enumValues = type.GetEnumValues();
 
                 // Test to determine if the serializer will treat as string
-                var serializeAsString = (enumValues.Length > 0)
-                    && JsonConverterFunc(enumValues.GetValue(0), type).StartsWith("\"");
+                var serializeAsString =
+                    enumValues.Length > 0 &&
+#if NET5_0_OR_GREATER
+                    JsonConverterFunc(enumValues.GetValue(0), type).StartsWith('\"');
+#else
+                    JsonConverterFunc(enumValues.GetValue(0), type).StartsWith("\"");
+#endif
 
-                primitiveTypeAndFormat = serializeAsString
-                    ? PrimitiveTypesAndFormats[typeof(string)]
-                    : PrimitiveTypesAndFormats[type.GetEnumUnderlyingType()];
+                var exampleType = serializeAsString ?
+                    typeof(string) :
+                    type.GetEnumUnderlyingType();
+
+                primitiveTypeAndFormat = PrimitiveTypesAndFormats[exampleType];
 
                 return DataContract.ForPrimitive(
                     underlyingType: type,
@@ -144,7 +151,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return false;
         }
 
-        private IEnumerable<DataProperty> GetDataPropertiesFor(Type objectType, out Type extensionDataType)
+        private List<DataProperty> GetDataPropertiesFor(Type objectType, out Type extensionDataType)
         {
             extensionDataType = null;
 
@@ -177,7 +184,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                     return
                         (property.IsPubliclyReadable() || property.IsPubliclyWritable()) &&
-                        !(property.GetIndexParameters().Any()) &&
+                        !(property.GetIndexParameters().Length > 0) &&
                         !(property.HasAttribute<JsonIgnoreAttribute>() && isIgnoredViaNet5Attribute) &&
                         !(property.HasAttribute<SwaggerIgnoreAttribute>()) &&
                         !(_serializerOptions.IgnoreReadOnlyProperties && !property.IsPubliclyWritable());
