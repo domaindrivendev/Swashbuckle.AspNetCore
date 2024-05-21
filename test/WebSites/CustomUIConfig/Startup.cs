@@ -72,6 +72,9 @@ namespace CustomUIConfig
 
                 // Other
                 c.DocumentTitle = "CustomUIConfig";
+                c.StylesPath = "/ext/custom-stylesheet.css";
+                c.ScriptBundlePath = "/ext/custom-javascript.js";
+                c.ScriptPresetsPath = "/ext/custom-javascript.js";
                 c.InjectStylesheet("/ext/custom-stylesheet.css");
                 c.InjectJavascript("/ext/custom-javascript.js");
                 c.UseRequestInterceptor("(req) => { req.headers['x-my-custom-header'] = 'MyCustomValue'; return req; }");
