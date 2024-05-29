@@ -103,7 +103,7 @@ namespace Swashbuckle.AspNetCore.Cli
 
                     if (!string.IsNullOrEmpty(outputPath))
                     {
-                        string directoryPath = Path.GetDirectoryName(filePath);
+                        string directoryPath = Path.GetDirectoryName(outputPath);
                         if (!string.IsNullOrEmpty(directoryPath) && !Directory.Exists(directoryPath))
                         {
                             Directory.CreateDirectory(directoryPath);
