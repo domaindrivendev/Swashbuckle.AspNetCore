@@ -22,10 +22,4 @@
     <PackageReference Include="xunit.runner.visualstudio" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="SwaggerGeneratorVerifyTests\SwaggerGeneratorVerifyTests.GetSwagger_GeneratesSwaggerDocument_ForApiDescriptionsWithMatchingGroupName.verified.txt">
-      <DependentUpon>SwaggerGeneratorVerifyTests.cs</DependentUpon>
-    </None>
-  </ItemGroup>
-
 </Project>
