@@ -30,7 +30,8 @@
           ],
           Responses: {
             200: {
-              Description: OK
+              Description: OK,
+              UnresolvedReference: false
             }
           },
           Deprecated: false
