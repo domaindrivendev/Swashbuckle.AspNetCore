@@ -33,7 +33,7 @@ updates:
     xunit:
       patterns:
         - xunit*
-        - Verify.Xunit*
+        - Verify.Xunit
   schedule:
     interval: weekly
     day: wednesday
