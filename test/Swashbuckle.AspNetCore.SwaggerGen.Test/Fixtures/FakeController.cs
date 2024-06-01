@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Swashbuckle.AspNetCore.Annotations;
+using Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -27,28 +28,28 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void ActionWithObsoleteAttribute()
         { }
 
-        public void ActionWithParameterWithBindNeverAttribute([BindNever]string param)
+        public void ActionWithParameterWithBindNeverAttribute([BindNever] string param)
         { }
 
-        public void ActionWithParameterWithRequiredAttribute([Required]string param)
+        public void ActionWithParameterWithRequiredAttribute([Required] string param)
         { }
 
-        public void ActionWithParameterWithBindRequiredAttribute([BindRequired]string param)
+        public void ActionWithParameterWithBindRequiredAttribute([BindRequired] string param)
         { }
 
         public void ActionWithIntParameter(int param)
         { }
 
-        public void ActionWithIntParameterWithRangeAttribute([Range(1, 12)]int param)
+        public void ActionWithIntParameterWithRangeAttribute([Range(1, 12)] int param)
         { }
 
         public void ActionWithIntParameterWithDefaultValue(int param = 1)
         { }
 
-        public void ActionWithIntParameterWithDefaultValueAttribute([DefaultValue(3)]int param)
+        public void ActionWithIntParameterWithDefaultValueAttribute([DefaultValue(3)] int param)
         { }
 
-        public void ActionWithIntParameterWithRequiredAttribute([Required]int param)
+        public void ActionWithIntParameterWithRequiredAttribute([Required] int param)
         { }
 
         public void ActionWithIntParameterWithSwaggerIgnoreAttribute([SwaggerIgnore] int param)
@@ -101,10 +102,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void ActionWithSwaggerIgnoreAttribute()
         { }
 
-        public void ActionHavingIFormFileParamWithFromFormAtribute([FromForm] IFormFile fileUpload)
+        public void ActionHavingIFormFileParamWithFromFormAttribute([FromForm] IFormFile fileUpload)
         { }
 
-        public void ActionHavingFromFormAtributeButNotWithIFormFile([FromForm] string param1, IFormFile param2)
+        public void ActionHavingFromFormAttributeButNotWithIFormFile([FromForm] string param1, IFormFile param2)
+        { }
+        public void ActionHavingFromFormAttributeWithSwaggerIgnore([FromForm] SwaggerIngoreAnnotatedType param1)
         { }
     }
 }

@@ -547,18 +547,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     ? formParameter.Name.ToCamelCase()
                     : formParameter.Name;
 
-                var schema = (formParameter.ModelMetadata != null)
+                var propertyInfo = formParameter.PropertyInfo();
+                if (!propertyInfo?.HasAttribute<SwaggerIgnoreAttribute>() ?? true)
+                {
+                    var schema = (formParameter.ModelMetadata != null)
                     ? GenerateSchema(
                         formParameter.ModelMetadata.ModelType,
                         schemaRepository,
-                        formParameter.PropertyInfo(),
+                        propertyInfo,
                         formParameter.ParameterInfo())
                     : new OpenApiSchema { Type = "string" };
 
-                properties.Add(name, schema);
+                    properties.Add(name, schema);
 
-                if (formParameter.IsRequiredParameter())
-                    requiredPropertyNames.Add(name);
+                    if (formParameter.IsRequiredParameter())
+                        requiredPropertyNames.Add(name);
+                }
             }
 
             return new OpenApiSchema
