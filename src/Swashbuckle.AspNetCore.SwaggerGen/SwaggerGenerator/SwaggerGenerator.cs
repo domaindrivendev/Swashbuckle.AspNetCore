@@ -548,7 +548,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     : formParameter.Name;
 
                 var propertyInfo = formParameter.PropertyInfo();
-                if (formParameter.ModelMetadata != null && (!propertyInfo?.HasAttribute<SwaggerIgnoreAttribute>() ?? true))
+                if (!propertyInfo?.HasAttribute<SwaggerIgnoreAttribute>() ?? true)
                 {
                     var schema = (formParameter.ModelMetadata != null)
                     ? GenerateSchema(
