@@ -27,6 +27,7 @@ jobs:
 
     outputs:
       dotnet-sdk-version: ${{ steps.setup-dotnet.outputs.dotnet-version }}
+      dotnet-validate-version: ${{ steps.get-dotnet-tools-versions.outputs.dotnet-validate-version }}
 
     permissions:
       attestations: write
@@ -100,6 +101,14 @@ jobs:
         path: ./artifacts/package/release
         if-no-files-found: error
 
+    - name: Get .NET tools versions
+      id: get-dotnet-tools-versions
+      shell: pwsh
+      run: |
+        $manifest = (Get-Content "./.config/dotnet-tools.json" | Out-String | ConvertFrom-Json)
+        $dotnetValidateVersion = $manifest.tools.'dotnet-validate'.version
+        "dotnet-validate-version=${dotnetValidateVersion}" >> $env:GITHUB_OUTPUT
+
   validate-packages:
     needs: build
     runs-on: ubuntu-latest
@@ -117,8 +126,10 @@ jobs:
 
     - name: Validate NuGet packages
       shell: pwsh
+      env:
+        DOTNET_VALIDATE_VERSION: ${{ needs.build.outputs.dotnet-validate-version }}
       run: |
-        dotnet tool install --global dotnet-validate --version 0.0.1-preview.304
+        dotnet tool install --global dotnet-validate --version ${env:DOTNET_VALIDATE_VERSION}
         $packages = Get-ChildItem -Filter "*.nupkg" | ForEach-Object { $_.FullName }
         $invalidPackages = 0
         foreach ($package in $packages) {
