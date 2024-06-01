@@ -11,10 +11,12 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
+using Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures;
 using Swashbuckle.AspNetCore.TestSupport;
 using Xunit;
 
@@ -1593,14 +1595,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void GetSwagger_Throws_Exception_When_FromForm_Attribute_Used_With_IFormFile()
         {
             var parameterInfo = typeof(FakeController)
-                .GetMethod(nameof(FakeController.ActionHavingIFormFileParamWithFromFormAtribute))
+                .GetMethod(nameof(FakeController.ActionHavingIFormFileParamWithFromFormAttribute))
                 .GetParameters()[0];
 
             var subject = Subject(
                 apiDescriptions: new[]
                 {
                    ApiDescriptionFactory.Create<FakeController>(
-                        c => nameof(c.ActionHavingIFormFileParamWithFromFormAtribute),
+                        c => nameof(c.ActionHavingIFormFileParamWithFromFormAttribute),
                         groupName: "v1",
                         httpMethod: "POST",
                         relativePath: "resource",
@@ -1623,18 +1625,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void GetSwagger_Works_As_Expected_When_FromForm_Attribute_Not_Used_With_IFormFile()
         {
             var paraminfo = typeof(FakeController)
-                .GetMethod(nameof(FakeController.ActionHavingFromFormAtributeButNotWithIFormFile))
+                .GetMethod(nameof(FakeController.ActionHavingFromFormAttributeButNotWithIFormFile))
                 .GetParameters()[0];
 
             var fileUploadParameterInfo = typeof(FakeController)
-                .GetMethod(nameof(FakeController.ActionHavingFromFormAtributeButNotWithIFormFile))
+                .GetMethod(nameof(FakeController.ActionHavingFromFormAttributeButNotWithIFormFile))
                 .GetParameters()[1];
 
             var subject = Subject(
                 apiDescriptions: new[]
                 {
                    ApiDescriptionFactory.Create<FakeController>(
-                        c => nameof(c.ActionHavingFromFormAtributeButNotWithIFormFile),
+                        c => nameof(c.ActionHavingFromFormAttributeButNotWithIFormFile),
                         groupName: "v1",
                         httpMethod: "POST",
                         relativePath: "resource",
@@ -1666,6 +1668,59 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(2, operation.Parameters.Count);
             Assert.Equal("param1", operation.Parameters[0].Name);
             Assert.Equal("param2", operation.Parameters[1].Name);
+        }
+
+        [Fact]
+        public void GetSwagger_Works_As_Expected_When_FromForm_Attribute_With_SwaggerIgnore()
+        {
+            var propertyIgnored = typeof(SwaggerIngoreAnnotatedType).GetProperty(nameof(SwaggerIngoreAnnotatedType.IgnoredString));
+            var modelMetadataIgnored = new DefaultModelMetadata(
+                                    new DefaultModelMetadataProvider(new FakeICompositeMetadataDetailsProvider()),
+                                    new FakeICompositeMetadataDetailsProvider(),
+                                    new DefaultMetadataDetails(ModelMetadataIdentity.ForProperty(propertyIgnored, typeof(string), typeof(SwaggerIngoreAnnotatedType)), ModelAttributes.GetAttributesForProperty(typeof(SwaggerIngoreAnnotatedType), propertyIgnored)));
+
+            var propertyNotIgnored = typeof(SwaggerIngoreAnnotatedType).GetProperty(nameof(SwaggerIngoreAnnotatedType.NotIgnoredString));
+            var modelMetadataNotIgnored = new DefaultModelMetadata(
+                                    new DefaultModelMetadataProvider(new FakeICompositeMetadataDetailsProvider()),
+                                    new FakeICompositeMetadataDetailsProvider(),
+                                    new DefaultMetadataDetails(ModelMetadataIdentity.ForProperty(propertyNotIgnored, typeof(string), typeof(SwaggerIngoreAnnotatedType)), ModelAttributes.GetAttributesForProperty(typeof(SwaggerIngoreAnnotatedType), propertyNotIgnored)));
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                   ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionHavingFromFormAttributeWithSwaggerIgnore),
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions: new[]
+                        {
+                            new ApiParameterDescription
+                            {
+                                Name = nameof(SwaggerIngoreAnnotatedType.IgnoredString),
+                                Source = BindingSource.Form,
+                                Type = typeof(string),
+                                ModelMetadata = modelMetadataIgnored
+                            },
+                            new ApiParameterDescription
+                            {
+                                Name = nameof(SwaggerIngoreAnnotatedType.NotIgnoredString),
+                                Source = BindingSource.Form,
+                                Type = typeof(string),
+                                ModelMetadata = modelMetadataNotIgnored
+                            }
+                        })
+                }
+            );
+            var document = subject.GetSwagger("v1");
+
+            var operation = document.Paths["/resource"].Operations[OperationType.Post];
+            Assert.NotNull(operation.RequestBody);
+            Assert.Equal(new[] { "multipart/form-data" }, operation.RequestBody.Content.Keys);
+            var mediaType = operation.RequestBody.Content["multipart/form-data"];
+            Assert.NotNull(mediaType.Schema);
+            Assert.Equal(new[] { nameof(SwaggerIngoreAnnotatedType.NotIgnoredString) }, mediaType.Schema.Properties.Keys);
+            Assert.NotNull(mediaType.Encoding);
+            Assert.Equal(new[] { nameof(SwaggerIngoreAnnotatedType.NotIgnoredString) }, mediaType.Encoding.Keys);
         }
 
         private static SwaggerGenerator Subject(
