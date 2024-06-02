@@ -169,13 +169,12 @@ namespace Swashbuckle.AspNetCore.Cli.Test
 
         private static string GenerateRandomString(int length)
         {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            StringBuilder result = new StringBuilder(length);
-            Random random = new Random();
+            const string Choices = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var result = new StringBuilder(length);
 
             for (int i = 0; i < length; i++)
             {
-                result.Append(chars[random.Next(chars.Length)]);
+                result.Append(Choices[Random.Shared.Next(Choices.Length)]);
             }
 
             return result.ToString();
