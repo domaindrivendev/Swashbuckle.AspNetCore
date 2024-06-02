@@ -101,6 +101,15 @@ namespace Swashbuckle.AspNetCore.Cli
                         ? Path.Combine(Directory.GetCurrentDirectory(), arg1)
                         : null;
 
+                    if (!string.IsNullOrEmpty(outputPath))
+                    {
+                        string directoryPath = Path.GetDirectoryName(outputPath);
+                        if (!string.IsNullOrEmpty(directoryPath) && !Directory.Exists(directoryPath))
+                        {
+                            Directory.CreateDirectory(directoryPath);
+                        }
+                    }
+
                     using (Stream stream = outputPath != null ? File.Create(outputPath) : Console.OpenStandardOutput())
                     using (var streamWriter = new FormattingStreamWriter(stream, CultureInfo.InvariantCulture))
                     {

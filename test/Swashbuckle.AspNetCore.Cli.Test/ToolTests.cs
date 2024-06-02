@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Text.Json;
 using Swashbuckle.AspNetCore.TestSupport.Utilities;
 using Xunit;
@@ -131,10 +132,32 @@ namespace Swashbuckle.AspNetCore.Cli.Test
             Assert.True(path.TryGetProperty("get", out _));
         }
 
-        private static JsonDocument RunApplication(Func<string, string[]> setup)
+        [Fact]
+        public static void Creates_New_Folder_Path()
+        {
+            using var document = RunApplication(outputPath =>
+            [
+                "tofile",
+                "--output",
+                outputPath,
+                "--serializeasv2",
+                Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
+                "v1"
+            ], GenerateRandomString(5));
+
+            // verify one of the endpoints
+            var paths = document.RootElement.GetProperty("paths");
+            var productsPath = paths.GetProperty("/products");
+            Assert.True(productsPath.TryGetProperty("post", out _));
+        }
+
+        private static JsonDocument RunApplication(Func<string, string[]> setup, string subOutputPath = default)
         {
             using var temporaryDirectory = new TemporaryDirectory();
-            string outputPath = Path.Combine(temporaryDirectory.Path, "swagger.json");
+
+            var outputPath = !string.IsNullOrEmpty(subOutputPath)
+                ? Path.Combine(temporaryDirectory.Path, subOutputPath, "swagger.json")
+                : Path.Combine(temporaryDirectory.Path, "swagger.json");
 
             string[] args = setup(outputPath);
 
@@ -143,5 +166,19 @@ namespace Swashbuckle.AspNetCore.Cli.Test
             string json = File.ReadAllText(outputPath);
             return JsonDocument.Parse(json);
         }
+
+        private static string GenerateRandomString(int length)
+        {
+            const string Choices = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var result = new StringBuilder(length);
+
+            for (int i = 0; i < length; i++)
+            {
+                result.Append(Choices[Random.Shared.Next(Choices.Length)]);
+            }
+
+            return result.ToString();
+        }
+
     }
 }
