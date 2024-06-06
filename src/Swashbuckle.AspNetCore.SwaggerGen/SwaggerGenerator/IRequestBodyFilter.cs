@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
 
@@ -7,6 +8,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     public interface IRequestBodyFilter
     {
         void Apply(OpenApiRequestBody requestBody, RequestBodyFilterContext context);
+    }
+
+    public interface IRequestBodyAsyncFilter
+    {
+        Task Apply(OpenApiRequestBody requestBody, RequestBodyFilterContext context);
     }
 
     public class RequestBodyFilterContext
