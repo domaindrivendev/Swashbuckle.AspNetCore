@@ -48,8 +48,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public async Task<OpenApiDocument> GetSwaggerAsync(string documentName, string host = null, string basePath = null)
         {
-            var (applicableApiDescriptions, swaggerDoc, schemaRepository) = await GetSwaggerDocumentWithoutDocumentFiltersAsync(documentName, host, basePath);
+            var (applicableApiDescriptions, swaggerDoc, schemaRepository) = GetSwaggerDocumentWithoutPaths(documentName, host, basePath);
 
+            swaggerDoc.Paths = await GeneratePathsAsync(applicableApiDescriptions, schemaRepository);
             swaggerDoc.Components.SecuritySchemes = await GetSecuritySchemes();
 
             // NOTE: Filter processing moved here so they may effect generated security schemes
@@ -77,8 +78,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         "Use GetSwaggerAsync() instead of GetSwagger()");
             }
 
-            var (applicableApiDescriptions, swaggerDoc, schemaRepository) = GetSwaggerDocumentWithoutDocumentFilters(documentName, host, basePath);
+            var (applicableApiDescriptions, swaggerDoc, schemaRepository) = GetSwaggerDocumentWithoutPaths(documentName, host, basePath);
 
+            swaggerDoc.Paths = GeneratePaths(applicableApiDescriptions, schemaRepository);
             swaggerDoc.Components.SecuritySchemes = GetSecuritySchemes().Result;
 
             // NOTE: Filter processing moved here so they may effect generated security schemes
@@ -93,7 +95,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return swaggerDoc;
         }
 
-        private (IEnumerable<ApiDescription>, OpenApiDocument, SchemaRepository) GetSwaggerDocumentWithoutDocumentFilters(string documentName, string host = null, string basePath = null)
+        private (IEnumerable<ApiDescription>, OpenApiDocument, SchemaRepository) GetSwaggerDocumentWithoutPaths(string documentName, string host = null, string basePath = null)
         {
             if (!_options.SwaggerDocs.TryGetValue(documentName, out OpenApiInfo info))
                 throw new UnknownSwaggerDocument(documentName, _options.SwaggerDocs.Select(d => d.Key));
@@ -114,39 +116,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 Info = info,
                 Servers = GenerateServers(host, basePath),
-                Paths = GeneratePaths(applicableApiDescriptions, schemaRepository),
-                Components = new OpenApiComponents
-                {
-                    Schemas = schemaRepository.Schemas,
-                },
-                SecurityRequirements = new List<OpenApiSecurityRequirement>(_options.SecurityRequirements)
-            };
-
-            return (applicableApiDescriptions, swaggerDoc, schemaRepository);
-        }
-
-        private async Task<(IEnumerable<ApiDescription>, OpenApiDocument, SchemaRepository)> GetSwaggerDocumentWithoutDocumentFiltersAsync(string documentName, string host = null, string basePath = null)
-        {
-            if (!_options.SwaggerDocs.TryGetValue(documentName, out OpenApiInfo info))
-                throw new UnknownSwaggerDocument(documentName, _options.SwaggerDocs.Select(d => d.Key));
-
-            var applicableApiDescriptions = _apiDescriptionsProvider.ApiDescriptionGroups.Items
-                .SelectMany(group => group.Items)
-                .Where(apiDesc =>
-                {
-                    var attributes = apiDesc.CustomAttributes().ToList();
-                    return !(_options.IgnoreObsoleteActions && attributes.OfType<ObsoleteAttribute>().Any()) &&
-                           !attributes.OfType<SwaggerIgnoreAttribute>().Any() &&
-                           _options.DocInclusionPredicate(documentName, apiDesc);
-                });
-
-            var schemaRepository = new SchemaRepository(documentName);
-
-            var swaggerDoc = new OpenApiDocument
-            {
-                Info = info,
-                Servers = GenerateServers(host, basePath),
-                Paths = await GeneratePathsAsync(applicableApiDescriptions, schemaRepository),
                 Components = new OpenApiComponents
                 {
                     Schemas = schemaRepository.Schemas,
