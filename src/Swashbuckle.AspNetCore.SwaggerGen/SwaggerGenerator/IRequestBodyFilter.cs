@@ -12,7 +12,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
     public interface IRequestBodyAsyncFilter
     {
-        Task Apply(OpenApiRequestBody requestBody, RequestBodyFilterContext context);
+        Task ApplyAsync(OpenApiRequestBody requestBody, RequestBodyFilterContext context);
     }
 
     public class RequestBodyFilterContext

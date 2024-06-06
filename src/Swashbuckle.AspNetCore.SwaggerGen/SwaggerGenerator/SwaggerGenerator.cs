@@ -61,7 +61,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             foreach (var filter in _options.DocumentAsyncFilters)
             {
-                await filter.Apply(swaggerDoc, filterContext);
+                await filter.ApplyAsync(swaggerDoc, filterContext);
             }
 
             swaggerDoc.Components.Schemas = new SortedDictionary<string, OpenApiSchema>(swaggerDoc.Components.Schemas, _options.SchemaComparer);
@@ -360,7 +360,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 foreach (var filter in _options.OperationAsyncFilters)
                 {
-                    await filter.Apply(operation, filterContext);
+                    await filter.ApplyAsync(operation, filterContext);
                 }
 
                 return operation;
@@ -567,7 +567,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             foreach (var filter in _options.ParameterAsyncFilters)
             {
-                await filter.Apply(parameter, filterContext);
+                await filter.ApplyAsync(parameter, filterContext);
             }
 
             return parameter;
@@ -662,7 +662,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 foreach (var filter in _options.RequestBodyAsyncFilters)
                 {
-                    await filter.Apply(requestBody, filterContext);
+                    await filter.ApplyAsync(requestBody, filterContext);
                 }
             }
 

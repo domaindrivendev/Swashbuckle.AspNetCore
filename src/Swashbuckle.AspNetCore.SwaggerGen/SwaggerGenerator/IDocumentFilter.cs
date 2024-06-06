@@ -12,7 +12,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
     public interface IDocumentAsyncFilter
     {
-        Task Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context);
+        Task ApplyAsync(OpenApiDocument swaggerDoc, DocumentFilterContext context);
     }
 
     public class DocumentFilterContext

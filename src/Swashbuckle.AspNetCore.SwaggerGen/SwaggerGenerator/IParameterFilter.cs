@@ -12,7 +12,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
     public interface IParameterAsyncFilter
     {
-        Task Apply(OpenApiParameter parameter, ParameterFilterContext context);
+        Task ApplyAsync(OpenApiParameter parameter, ParameterFilterContext context);
     }
 
     public class ParameterFilterContext

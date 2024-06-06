@@ -7,7 +7,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     public class TestDocumentAsyncFilter : IDocumentAsyncFilter
     {
-        public Task Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
+        public Task ApplyAsync(OpenApiDocument swaggerDoc, DocumentFilterContext context)
         {
             swaggerDoc.Extensions.Add("X-foo", new OpenApiString("bar"));
             swaggerDoc.Extensions.Add("X-docName", new OpenApiString(context.DocumentName));

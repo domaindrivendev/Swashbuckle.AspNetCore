@@ -12,7 +12,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
     public interface IOperationAsyncFilter
     {
-        Task Apply(OpenApiOperation operation, OperationFilterContext context);
+        Task ApplyAsync(OpenApiOperation operation, OperationFilterContext context);
     }
 
     public class OperationFilterContext

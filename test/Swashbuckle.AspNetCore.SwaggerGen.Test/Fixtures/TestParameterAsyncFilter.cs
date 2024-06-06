@@ -6,7 +6,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     public class TestParameterAsyncFilter : IParameterAsyncFilter
     {
-        public Task Apply(OpenApiParameter parameter, ParameterFilterContext context)
+        public Task ApplyAsync(OpenApiParameter parameter, ParameterFilterContext context)
         {
             parameter.Extensions.Add("X-foo", new OpenApiString("bar"));
             parameter.Extensions.Add("X-docName", new OpenApiString(context.DocumentName));
