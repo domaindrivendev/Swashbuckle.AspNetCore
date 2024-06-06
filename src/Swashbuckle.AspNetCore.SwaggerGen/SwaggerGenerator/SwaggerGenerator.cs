@@ -210,26 +210,42 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             IEnumerable<ApiDescription> apiDescriptions,
             SchemaRepository schemaRepository)
         {
+            var operations = new Dictionary<OperationType, OpenApiOperation>();
+
             var apiDescriptionsByMethod = apiDescriptions
                 .OrderBy(_options.SortKeySelector)
                 .GroupBy(apiDesc => apiDesc.HttpMethod)
                 .Select(PrepareGenerateOperation)
                 .Select(v => new KeyValuePair<OperationType, OpenApiOperation>(v.OperationType, GenerateOperation(v.ApiDescription, schemaRepository)));
 
-            return new Dictionary<OperationType, OpenApiOperation>(apiDescriptionsByMethod);
+            foreach (var apiDesc in apiDescriptionsByMethod)
+            {
+                operations.Add(apiDesc.Key, apiDesc.Value);
+            }
+
+            return operations;
         }
 
         private async Task<IDictionary<OperationType, OpenApiOperation>> GenerateOperationsAsync(
             IEnumerable<ApiDescription> apiDescriptions,
             SchemaRepository schemaRepository)
         {
-            var apiDescriptionsByMethod = apiDescriptions
+            var operations = new Dictionary<OperationType, OpenApiOperation>();
+
+            var apiDescriptionsByMethodTasks = apiDescriptions
                 .OrderBy(_options.SortKeySelector)
                 .GroupBy(apiDesc => apiDesc.HttpMethod)
                 .Select(PrepareGenerateOperation)
                 .Select(async v => new KeyValuePair<OperationType, OpenApiOperation>(v.OperationType, await GenerateOperationAsync(v.ApiDescription, schemaRepository)));
 
-            return new Dictionary<OperationType, OpenApiOperation>(await Task.WhenAll(apiDescriptionsByMethod));
+            var apiDescriptionsByMethod = await Task.WhenAll(apiDescriptionsByMethodTasks);
+
+            foreach (var apiDesc in apiDescriptionsByMethod)
+            {
+                operations.Add(apiDesc.Key, apiDesc.Value);
+            }
+
+            return operations;
         }
 
         private (OperationType OperationType, ApiDescription ApiDescription) PrepareGenerateOperation(IGrouping<string, ApiDescription> group)
