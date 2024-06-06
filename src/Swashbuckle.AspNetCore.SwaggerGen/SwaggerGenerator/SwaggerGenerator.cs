@@ -72,12 +72,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public OpenApiDocument GetSwagger(string documentName, string host = null, string basePath = null)
         {
-            if (_options.HasAsyncFilters)
-            {
-                throw new SwaggerGeneratorException("Async filters are configured but not using GetSwaggerAsync(). " +
-                        "Use GetSwaggerAsync() instead of GetSwagger()");
-            }
-
             var (applicableApiDescriptions, swaggerDoc, schemaRepository) = GetSwaggerDocumentWithoutPaths(documentName, host, basePath);
 
             swaggerDoc.Paths = GeneratePaths(applicableApiDescriptions, schemaRepository);

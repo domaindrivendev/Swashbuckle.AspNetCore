@@ -79,8 +79,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public IList<IDocumentAsyncFilter> DocumentAsyncFilters { get; set; }
 
-        public bool HasAsyncFilters => (ParameterAsyncFilters?.Any() ?? false) || (RequestBodyAsyncFilters?.Any() ?? false) || (OperationAsyncFilters?.Any() ?? false) || (DocumentAsyncFilters?.Any() ?? false);
-
         private bool DefaultDocInclusionPredicate(string documentName, ApiDescription apiDescription)
         {
             return apiDescription.GroupName == null || apiDescription.GroupName == documentName;
