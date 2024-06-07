@@ -22,14 +22,15 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
         public DataContract GetDataContractForType(Type type)
         {
-            if (type.IsOneOf(typeof(object), typeof(JToken), typeof(JObject), typeof(JArray)))
+            var effectiveType = Nullable.GetUnderlyingType(type) ?? type;
+            if (effectiveType.IsOneOf(typeof(object), typeof(JToken), typeof(JObject), typeof(JArray)))
             {
                 return DataContract.ForDynamic(
-                    underlyingType: type,
+                    underlyingType: effectiveType,
                     jsonConverter: JsonConverterFunc);
             }
 
-            var jsonContract = _contractResolver.ResolveContract(type);
+            var jsonContract = _contractResolver.ResolveContract(effectiveType);
 
             if (jsonContract is JsonPrimitiveContract && !jsonContract.UnderlyingType.IsEnum)
             {
@@ -134,7 +135,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             }
 
             return DataContract.ForDynamic(
-                underlyingType: type,
+                underlyingType: effectiveType,
                 jsonConverter: JsonConverterFunc);
         }
 
@@ -199,26 +200,26 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
         private static readonly Dictionary<Type, Tuple<DataType, string>> PrimitiveTypesAndFormats = new()
         {
-            [ typeof(bool) ] = Tuple.Create(DataType.Boolean, (string)null),
-            [ typeof(byte) ] = Tuple.Create(DataType.Integer, "int32"),
-            [ typeof(sbyte) ] = Tuple.Create(DataType.Integer, "int32"),
-            [ typeof(short) ] = Tuple.Create(DataType.Integer, "int32"),
-            [ typeof(ushort) ] = Tuple.Create(DataType.Integer, "int32"),
-            [ typeof(int) ] = Tuple.Create(DataType.Integer, "int32"),
-            [ typeof(uint) ] = Tuple.Create(DataType.Integer, "int32"),
-            [ typeof(long) ] = Tuple.Create(DataType.Integer, "int64"),
-            [ typeof(ulong) ] = Tuple.Create(DataType.Integer, "int64"),
-            [ typeof(float) ] = Tuple.Create(DataType.Number, "float"),
-            [ typeof(double) ] = Tuple.Create(DataType.Number, "double"),
-            [ typeof(decimal) ] = Tuple.Create(DataType.Number, "double"),
-            [ typeof(byte[]) ] = Tuple.Create(DataType.String, "byte"),
-            [ typeof(string) ] = Tuple.Create(DataType.String, (string)null),
-            [ typeof(char) ] = Tuple.Create(DataType.String, (string)null),
-            [ typeof(DateTime) ] = Tuple.Create(DataType.String, "date-time"),
-            [ typeof(DateTimeOffset) ] = Tuple.Create(DataType.String, "date-time"),
-            [ typeof(Guid) ] = Tuple.Create(DataType.String, "uuid"),
-            [ typeof(Uri) ] = Tuple.Create(DataType.String, "uri"),
-            [ typeof(TimeSpan) ] = Tuple.Create(DataType.String, "date-span"),
+            [typeof(bool)] = Tuple.Create(DataType.Boolean, (string)null),
+            [typeof(byte)] = Tuple.Create(DataType.Integer, "int32"),
+            [typeof(sbyte)] = Tuple.Create(DataType.Integer, "int32"),
+            [typeof(short)] = Tuple.Create(DataType.Integer, "int32"),
+            [typeof(ushort)] = Tuple.Create(DataType.Integer, "int32"),
+            [typeof(int)] = Tuple.Create(DataType.Integer, "int32"),
+            [typeof(uint)] = Tuple.Create(DataType.Integer, "int32"),
+            [typeof(long)] = Tuple.Create(DataType.Integer, "int64"),
+            [typeof(ulong)] = Tuple.Create(DataType.Integer, "int64"),
+            [typeof(float)] = Tuple.Create(DataType.Number, "float"),
+            [typeof(double)] = Tuple.Create(DataType.Number, "double"),
+            [typeof(decimal)] = Tuple.Create(DataType.Number, "double"),
+            [typeof(byte[])] = Tuple.Create(DataType.String, "byte"),
+            [typeof(string)] = Tuple.Create(DataType.String, (string)null),
+            [typeof(char)] = Tuple.Create(DataType.String, (string)null),
+            [typeof(DateTime)] = Tuple.Create(DataType.String, "date-time"),
+            [typeof(DateTimeOffset)] = Tuple.Create(DataType.String, "date-time"),
+            [typeof(Guid)] = Tuple.Create(DataType.String, "uuid"),
+            [typeof(Uri)] = Tuple.Create(DataType.String, "uri"),
+            [typeof(TimeSpan)] = Tuple.Create(DataType.String, "date-span"),
 #if NET6_0_OR_GREATER
             [ typeof(DateOnly) ] = Tuple.Create(DataType.String, "date"),
             [ typeof(TimeOnly) ] = Tuple.Create(DataType.String, "time"),
