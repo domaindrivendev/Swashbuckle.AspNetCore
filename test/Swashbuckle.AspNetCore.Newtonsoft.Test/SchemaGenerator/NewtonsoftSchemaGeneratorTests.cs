@@ -12,9 +12,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
-using Xunit;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.TestSupport;
+using Xunit;
 
 namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 {
@@ -273,6 +273,8 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.StringWithDefault), "\"foobar\"")]
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.IntArrayWithDefault), "[\n  1,\n  2,\n  3\n]")]
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.StringArrayWithDefault), "[\n  \"foo\",\n  \"bar\"\n]")]
+        [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.NullableIntWithDefaultNullValue), "null")]
+        [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.NullableIntWithDefaultValue), "2147483647")]
         [UseInvariantCulture]
         public void GenerateSchema_SetsDefault_IfPropertyHasDefaultValueAttribute(
             Type declaringType,
@@ -505,7 +507,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.NotNull(schema.OneOf[0].Reference);
             var baseSchema = schemaRepository.Schemas[schema.OneOf[0].Reference.Id];
             Assert.Equal("object", baseSchema.Type);
-            Assert.Equal(new[] { "BaseProperty"}, baseSchema.Properties.Keys);
+            Assert.Equal(new[] { "BaseProperty" }, baseSchema.Properties.Keys);
             // The first sub type schema
             Assert.NotNull(schema.OneOf[1].Reference);
             var subType1Schema = schemaRepository.Schemas[schema.OneOf[1].Reference.Id];

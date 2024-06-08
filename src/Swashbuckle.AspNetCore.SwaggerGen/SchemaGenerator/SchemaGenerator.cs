@@ -166,8 +166,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private DataContract GetDataContractFor(Type modelType)
         {
-            var effectiveType = Nullable.GetUnderlyingType(modelType) ?? modelType;
-            return _serializerDataContractResolver.GetDataContractForType(effectiveType);
+            return _serializerDataContractResolver.GetDataContractForType(modelType);
         }
 
         private bool IsBaseTypeWithKnownTypesDefined(DataContract dataContract, out IEnumerable<DataContract> knownTypesDataContracts)
