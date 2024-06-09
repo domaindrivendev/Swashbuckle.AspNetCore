@@ -13,17 +13,19 @@ namespace OAuth2Integration.AuthServer
                 ClientId = "test-id",
                 ClientName = "Test client (Code with PKCE)",
 
-                RedirectUris = new[] {
+                RedirectUris =
+                [
                     "http://localhost:55202/resource-server/swagger/oauth2-redirect.html", // IIS Express
-                    "http://localhost:5000/resource-server/swagger/oauth2-redirect.html", // Kestrel
-                },
+                    "http://localhost:5000/resource-server/swagger/oauth2-redirect.html", // Kestrel (HTTP)
+                    "https://localhost:5001/resource-server/swagger/oauth2-redirect.html", // Kestrel (HTTPS)
+                ],
 
                 ClientSecrets = { new Secret("test-secret".Sha256()) },
                 RequireConsent = true,
 
                 AllowedGrantTypes = GrantTypes.Code,
                 RequirePkce = true,
-                AllowedScopes = new[] { "readAccess", "writeAccess" },
+                AllowedScopes = ["readAccess", "writeAccess"],
             };
         }
 
@@ -33,25 +35,25 @@ namespace OAuth2Integration.AuthServer
             {
                 Name = "api",
                 DisplayName = "API",
-                Scopes = new[]
-                {
+                Scopes =
+                [
                     new Scope("readAccess", "Access read operations"),
                     new Scope("writeAccess", "Access write operations")
-                }
+                ]
             };
         }
 
         internal static List<TestUser> TestUsers()
         {
-            return new List<TestUser>
-            {
+            return
+            [
                 new TestUser
                 {
                     SubjectId = "joebloggs",
                     Username = "joebloggs",
                     Password = "pass123"
                 }
-            };
+            ];
         }
     }
 }

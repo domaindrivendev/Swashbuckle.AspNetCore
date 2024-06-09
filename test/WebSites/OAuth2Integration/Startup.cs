@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using OAuth2Integration.ResourceServer.Swagger;
 
 namespace OAuth2Integration
 {
@@ -31,12 +33,12 @@ namespace OAuth2Integration
 
             // The auth setup is a little nuanced because this app provides the auth-server & the resource-server
             // Use the "Cookies" scheme by default & explicitly require "Bearer" in the resource-server controllers
-            // See https://docs.microsoft.com/en-us/aspnet/core/security/authorization/limitingidentitybyscheme?tabs=aspnetcore2x
+            // See https://learn.microsoft.com/aspnet/core/security/authorization/limitingidentitybyscheme
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie()
                 .AddIdentityServerAuthentication(c =>
                 {
-                    c.Authority = "http://localhost:5000/auth-server/";
+                    c.Authority = "https://localhost:5001/auth-server/";
                     c.RequireHttpsMetadata = false;
                     c.ApiName = "api";
                 });
@@ -80,12 +82,12 @@ namespace OAuth2Integration
                         {
                             Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
                         },
-                        new[] { "readAccess", "writeAccess" }
+                        ["readAccess", "writeAccess"]
                     }
                 });
 
                 // Assign scope requirements to operations based on AuthorizeAttribute
-                //c.OperationFilter<SecurityRequirementsOperationFilter>();
+                c.OperationFilter<SecurityRequirementsOperationFilter>();
             });
         }
 
