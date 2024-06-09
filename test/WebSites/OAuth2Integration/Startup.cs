@@ -132,7 +132,7 @@ namespace OAuth2Integration
                 resourceServer.UseSwagger();
                 resourceServer.UseSwaggerUI(c =>
                 {
-                    c.SwaggerEndpoint("/resource-server/swagger/v1/swagger.json", "My%20API%20V1");
+                    c.SwaggerEndpoint("/resource-server/swagger/v1/swagger.json", "My API V1");
                     c.EnableDeepLinking();
 
                     // Additional OAuth settings (See https://github.com/swagger-api/swagger-ui/blob/v3.10.0/docs/usage/oauth2.md)
