@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
@@ -12,7 +13,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
     public interface IParameterAsyncFilter
     {
-        Task ApplyAsync(OpenApiParameter parameter, ParameterFilterContext context);
+        Task ApplyAsync(OpenApiParameter parameter, ParameterFilterContext context, CancellationToken cancellationToken);
     }
 
     public class ParameterFilterContext

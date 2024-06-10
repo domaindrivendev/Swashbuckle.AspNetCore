@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.OpenApi.Models;
 
@@ -8,6 +9,7 @@ namespace Swashbuckle.AspNetCore.Swagger
         Task<OpenApiDocument> GetSwaggerAsync(
             string documentName,
             string host = null,
-            string basePath = null);
+            string basePath = null,
+            CancellationToken cancellationToken = default);
     }
 }

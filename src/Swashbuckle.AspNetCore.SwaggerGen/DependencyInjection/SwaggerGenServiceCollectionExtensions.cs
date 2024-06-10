@@ -23,9 +23,10 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddTransient<IConfigureOptions<SwaggerGeneratorOptions>, ConfigureSwaggerGeneratorOptions>();
             services.AddTransient<IConfigureOptions<SchemaGeneratorOptions>, ConfigureSchemaGeneratorOptions>();
 
-            // Register generator and it's dependencies
-            services.TryAddTransient<ISwaggerProvider, SwaggerGenerator>();
-            services.TryAddTransient<IAsyncSwaggerProvider, SwaggerGenerator>();
+            // Register generator and its dependencies
+            services.TryAddTransient<SwaggerGenerator>();
+            services.TryAddTransient<ISwaggerProvider>(s => s.GetRequiredService<SwaggerGenerator>());
+            services.TryAddTransient<IAsyncSwaggerProvider>(s => s.GetRequiredService<SwaggerGenerator>());
             services.TryAddTransient(s => s.GetRequiredService<IOptions<SwaggerGeneratorOptions>>().Value);
             services.TryAddTransient<ISchemaGenerator, SchemaGenerator>();
             services.TryAddTransient(s => s.GetRequiredService<IOptions<SchemaGeneratorOptions>>().Value);
@@ -53,13 +54,15 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private sealed class JsonSerializerOptionsProvider
         {
-            private readonly IServiceProvider _serviceProvider;
             private JsonSerializerOptions _options;
+#if !NETSTANDARD2_0
+            private readonly IServiceProvider _serviceProvider;
 
             public JsonSerializerOptionsProvider(IServiceProvider serviceProvider)
             {
                 _serviceProvider = serviceProvider;
             }
+#endif
 
             public JsonSerializerOptions Options => _options ??= ResolveOptions();
 

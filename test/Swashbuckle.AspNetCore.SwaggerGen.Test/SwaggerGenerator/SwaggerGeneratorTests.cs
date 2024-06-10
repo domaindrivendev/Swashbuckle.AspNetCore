@@ -1600,21 +1600,21 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public async Task GetSwaggerAsync_SupportsOption_OperationAsyncFilters()
         {
             var subject = Subject(
-                apiDescriptions: new[]
-                {
+                apiDescriptions:
+                [
                     ApiDescriptionFactory.Create<FakeController>(
                         c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "POST", relativePath: "resource")
-                },
+                ],
                 options: new SwaggerGeneratorOptions
                 {
                     SwaggerDocs = new Dictionary<string, OpenApiInfo>
                     {
                         ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
                     },
-                    OperationAsyncFilters = new List<IOperationAsyncFilter>
-                    {
-                        new TestOperationAsyncFilter()
-                    }
+                    OperationAsyncFilters =
+                    [
+                        new TestOperationFilter()
+                    ]
                 }
             );
 
@@ -1630,17 +1630,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public async Task GetSwaggerAsync_SupportsOption_DocumentAsyncFilters()
         {
             var subject = Subject(
-                apiDescriptions: new ApiDescription[] { },
+                apiDescriptions: [],
                 options: new SwaggerGeneratorOptions
                 {
                     SwaggerDocs = new Dictionary<string, OpenApiInfo>
                     {
                         ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
                     },
-                    DocumentAsyncFilters = new List<IDocumentAsyncFilter>
-                    {
-                        new TestDocumentAsyncFilter()
-                    }
+                    DocumentAsyncFilters =
+                    [
+                        new TestDocumentFilter()
+                    ]
                 }
             );
 
@@ -1656,17 +1656,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public async Task GetSwaggerAsync_SupportsOption_DocumentFilters()
         {
             var subject = Subject(
-                apiDescriptions: new ApiDescription[] { },
+                apiDescriptions: Array.Empty<ApiDescription>(),
                 options: new SwaggerGeneratorOptions
                 {
                     SwaggerDocs = new Dictionary<string, OpenApiInfo>
                     {
                         ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
                     },
-                    DocumentFilters = new List<IDocumentFilter>
-                    {
+                    DocumentFilters =
+                    [
                         new TestDocumentFilter()
-                    }
+                    ]
                 }
             );
 
@@ -1700,10 +1700,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     {
                         ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
                     },
-                    RequestBodyAsyncFilters = new List<IRequestBodyAsyncFilter>
-                    {
-                        new TestRequestBodyAsyncFilter()
-                    }
+                    RequestBodyAsyncFilters =
+                    [
+                        new TestRequestBodyFilter()
+                    ]
                 }
             );
 
@@ -1811,10 +1811,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     {
                         ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
                     },
-                    ParameterAsyncFilters = new List<IParameterAsyncFilter>
-                    {
-                        new TestParameterAsyncFilter()
-                    }
+                    ParameterAsyncFilters =
+                    [
+                        new TestParameterFilter()
+                    ]
                 }
             );
 
