@@ -7,7 +7,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures
     {
         public void CreateBindingMetadata(BindingMetadataProviderContext context)
         {
-            throw new NotImplementedException();
+            context.BindingMetadata.IsBindingAllowed = true;
         }
 
         public void CreateDisplayMetadata(DisplayMetadataProviderContext context)

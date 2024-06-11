@@ -375,12 +375,21 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     apiParameter.RouteInfo)
                 : new OpenApiSchema { Type = "string" };
 
+            var description = schema.Description;
+            if (string.IsNullOrEmpty(description)
+                && !string.IsNullOrEmpty(schema.Reference?.Id)
+                && schemaRepository.Schemas.TryGetValue(schema.Reference.Id, out var openApiSchema))
+            {
+                description = openApiSchema.Description;
+            }
+
             var parameter = new OpenApiParameter
             {
                 Name = name,
                 In = location,
                 Required = isRequired,
-                Schema = schema
+                Schema = schema,
+                Description = description
             };
 
             var filterContext = new ParameterFilterContext(
