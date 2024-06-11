@@ -377,7 +377,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var description = schema.Description;
             if (string.IsNullOrEmpty(description)
-                && !string.IsNullOrEmpty(schema.Reference?.Id)
+                && !string.IsNullOrEmpty(schema?.Reference?.Id)
                 && schemaRepository.Schemas.TryGetValue(schema.Reference.Id, out var openApiSchema))
             {
                 description = openApiSchema.Description;
