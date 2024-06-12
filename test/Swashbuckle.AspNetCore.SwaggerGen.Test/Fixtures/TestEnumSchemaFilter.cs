@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
-using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures
@@ -21,16 +20,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures
                     _ => context.Type.GetElementType()
                 };
                 StringBuilder stringBuilder = new("<p>Members:</p><ul>");
-                OpenApiArray names = [];
                 foreach (var enumValue in Enum.GetValues(enumType))
                 {
                     if (enumValue is Enum value)
                     {
-                        names.Add(new OpenApiString(value.ToString()));
                         stringBuilder.Append($"<li>{value} - {value:d}</li>");
                     }
                 }
-                schema.Extensions.Add("x-enum-varnames", names);
                 schema.Description = stringBuilder.Append("</ul>").ToString();
             }
         }
