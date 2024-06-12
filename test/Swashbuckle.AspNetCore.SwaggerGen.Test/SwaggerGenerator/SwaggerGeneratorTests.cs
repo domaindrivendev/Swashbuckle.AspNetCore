@@ -1773,7 +1773,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.NotEmpty(operation.Parameters[0].Description);
             Assert.Equal(nameof(TypeWithDefaultAttributeOnEnum.EnumArrayWithDefault), operation.Parameters[1].Name);
             Assert.NotEmpty(operation.Parameters[1].Description);
-
         }
 
         private static SwaggerGenerator Subject(
