@@ -1736,7 +1736,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var modelMetadataForEnumArray = new DefaultModelMetadata(
                                     new DefaultModelMetadataProvider(new FakeICompositeMetadataDetailsProvider()),
                                     new FakeICompositeMetadataDetailsProvider(),
-                                    new DefaultMetadataDetails(ModelMetadataIdentity.ForProperty(propertyEnum, typeof(IntEnum), typeof(TypeWithDefaultAttributeOnEnum)), ModelAttributes.GetAttributesForProperty(typeof(TypeWithDefaultAttributeOnEnum), propertyEnum)));
+                                    new DefaultMetadataDetails(ModelMetadataIdentity.ForProperty(propertyEnum, typeof(IntEnum[]), typeof(TypeWithDefaultAttributeOnEnum)), ModelAttributes.GetAttributesForProperty(typeof(TypeWithDefaultAttributeOnEnum), propertyEnum)));
             var subject = Subject(
                apiDescriptions:
                [
