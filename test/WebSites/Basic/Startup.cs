@@ -43,7 +43,6 @@ namespace Basic
                 c.OperationFilter<AssignOperationVendorExtensions>();
 
                 c.SchemaFilter<ExamplesSchemaFilter>();
-                c.SchemaFilter<EnumSchemaFilter>();
 
                 c.DescribeAllParametersInCamelCase();
 

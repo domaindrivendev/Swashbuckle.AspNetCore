@@ -1723,57 +1723,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(new[] { nameof(SwaggerIngoreAnnotatedType.NotIgnoredString) }, mediaType.Encoding.Keys);
         }
 
-        [Fact]
-        public void GetSwagger_Copies_Description_From_GeneratedSchema()
-        {
-            var propertyEnum = typeof(TypeWithDefaultAttributeOnEnum).GetProperty(nameof(TypeWithDefaultAttributeOnEnum.EnumWithDefault));
-            var modelMetadataForEnum = new DefaultModelMetadata(
-                                    new DefaultModelMetadataProvider(new FakeICompositeMetadataDetailsProvider()),
-                                    new FakeICompositeMetadataDetailsProvider(),
-                                    new DefaultMetadataDetails(ModelMetadataIdentity.ForProperty(propertyEnum, typeof(IntEnum), typeof(TypeWithDefaultAttributeOnEnum)), ModelAttributes.GetAttributesForProperty(typeof(TypeWithDefaultAttributeOnEnum), propertyEnum)));
 
-            var propertyEnumArray = typeof(TypeWithDefaultAttributeOnEnum).GetProperty(nameof(TypeWithDefaultAttributeOnEnum.EnumArrayWithDefault));
-            var modelMetadataForEnumArray = new DefaultModelMetadata(
-                                    new DefaultModelMetadataProvider(new FakeICompositeMetadataDetailsProvider()),
-                                    new FakeICompositeMetadataDetailsProvider(),
-                                    new DefaultMetadataDetails(ModelMetadataIdentity.ForProperty(propertyEnumArray, typeof(IntEnum[]), typeof(TypeWithDefaultAttributeOnEnum)), ModelAttributes.GetAttributesForProperty(typeof(TypeWithDefaultAttributeOnEnum), propertyEnumArray)));
-            var subject = Subject(
-               apiDescriptions:
-               [
-                   ApiDescriptionFactory.Create<FakeController>(
-                        c => nameof(c.ActionHavingFromFormAttributeWithSwaggerIgnore),
-                        groupName: "v1",
-                        httpMethod: "POST",
-                        relativePath: "resource",
-                        parameterDescriptions: new[]
-                        {
-                            new ApiParameterDescription
-                            {
-                                Name = nameof(TypeWithDefaultAttributeOnEnum.EnumWithDefault),
-                                Source = BindingSource.Query,
-                                Type = typeof(IntEnum),
-                                ModelMetadata = modelMetadataForEnum
-                            },
-                            new ApiParameterDescription
-                            {
-                                Name = nameof(TypeWithDefaultAttributeOnEnum.EnumArrayWithDefault),
-                                Source = BindingSource.Query,
-                                Type = typeof(IntEnum[]),
-                                ModelMetadata = modelMetadataForEnumArray
-                            }
-                        })
-               ],
-               schemaFilters: [new TestEnumSchemaFilter()]
-           );
-            var document = subject.GetSwagger("v1");
-
-            var operation = document.Paths["/resource"].Operations[OperationType.Post];
-            Assert.NotEmpty(operation.Parameters);
-            Assert.Equal(nameof(TypeWithDefaultAttributeOnEnum.EnumWithDefault), operation.Parameters[0].Name);
-            Assert.NotEmpty(operation.Parameters[0].Description);
-            Assert.Equal(nameof(TypeWithDefaultAttributeOnEnum.EnumArrayWithDefault), operation.Parameters[1].Name);
-            Assert.NotEmpty(operation.Parameters[1].Description);
-        }
 
         private static SwaggerGenerator Subject(
             IEnumerable<ApiDescription> apiDescriptions,
