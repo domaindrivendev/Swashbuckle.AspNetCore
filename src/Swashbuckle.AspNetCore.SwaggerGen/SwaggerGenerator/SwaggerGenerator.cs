@@ -49,18 +49,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public async Task<OpenApiDocument> GetSwaggerAsync(
             string documentName,
             string host = null,
-            string basePath = null,
-            CancellationToken cancellationToken = default)
+            string basePath = null)
         {
             var (filterContext, swaggerDoc) = GetSwaggerDocumentWithoutPaths(documentName, host, basePath);
 
-            swaggerDoc.Paths = await GeneratePathsAsync(filterContext.ApiDescriptions, filterContext.SchemaRepository, cancellationToken);
+            swaggerDoc.Paths = await GeneratePathsAsync(filterContext.ApiDescriptions, filterContext.SchemaRepository);
             swaggerDoc.Components.SecuritySchemes = await GetSecuritySchemesAsync();
 
             // NOTE: Filter processing moved here so they may effect generated security schemes
             foreach (var filter in _options.DocumentAsyncFilters)
             {
-                await filter.ApplyAsync(swaggerDoc, filterContext, cancellationToken);
+                await filter.ApplyAsync(swaggerDoc, filterContext, CancellationToken.None);
             }
 
             foreach (var filter in _options.DocumentFilters)
@@ -196,8 +195,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private async Task<OpenApiPaths> GeneratePathsAsync(
             IEnumerable<ApiDescription> apiDescriptions,
             SchemaRepository schemaRepository,
-            Func<IGrouping<string, ApiDescription>, SchemaRepository, CancellationToken, Task<Dictionary<OperationType, OpenApiOperation>>> operationsGenerator,
-            CancellationToken cancellationToken)
+            Func<IGrouping<string, ApiDescription>, SchemaRepository, Task<Dictionary<OperationType, OpenApiOperation>>> operationsGenerator)
         {
             var apiDescriptionsByPath = apiDescriptions
                 .OrderBy(_options.SortKeySelector)
@@ -209,7 +207,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 paths.Add($"/{group.Key}",
                     new OpenApiPathItem
                     {
-                        Operations = await operationsGenerator(group, schemaRepository, cancellationToken)
+                        Operations = await operationsGenerator(group, schemaRepository)
                     });
             };
 
@@ -221,20 +219,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return GeneratePathsAsync(
                 apiDescriptions,
                 schemaRepository,
-                (group, schemaRepository, _) => Task.FromResult(GenerateOperations(group, schemaRepository)),
-                CancellationToken.None).Result;
+                (group, schemaRepository) => Task.FromResult(GenerateOperations(group, schemaRepository))).Result;
         }
 
         private async Task<OpenApiPaths> GeneratePathsAsync(
             IEnumerable<ApiDescription> apiDescriptions,
-            SchemaRepository schemaRepository,
-            CancellationToken cancellationToken)
+            SchemaRepository schemaRepository)
         {
             return await GeneratePathsAsync(
                 apiDescriptions,
                 schemaRepository,
-                GenerateOperationsAsync,
-                cancellationToken);
+                GenerateOperationsAsync);
         }
 
         private IEnumerable<(OperationType, ApiDescription)> GetOperationsGroupedByMethod(
@@ -263,15 +258,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private async Task<Dictionary<OperationType, OpenApiOperation>> GenerateOperationsAsync(
             IEnumerable<ApiDescription> apiDescriptions,
-            SchemaRepository schemaRepository,
-            CancellationToken cancellationToken)
+            SchemaRepository schemaRepository)
         {
             var apiDescriptionsByMethod = GetOperationsGroupedByMethod(apiDescriptions);
             var operations = new Dictionary<OperationType, OpenApiOperation>();
 
             foreach ((var operationType, var description) in apiDescriptionsByMethod)
             {
-                operations.Add(operationType, await GenerateOperationAsync(description, schemaRepository, cancellationToken));
+                operations.Add(operationType, await GenerateOperationAsync(description, schemaRepository));
             }
 
             return operations;
@@ -312,10 +306,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private async Task<OpenApiOperation> GenerateOperationAsync(
             ApiDescription apiDescription,
             SchemaRepository schemaRepository,
-            Func<ApiDescription, SchemaRepository, CancellationToken, Task<List<OpenApiParameter>>> parametersGenerator,
-            Func<ApiDescription, SchemaRepository, CancellationToken, Task<OpenApiRequestBody>> bodyGenerator,
-            Func<OpenApiOperation, OperationFilterContext, CancellationToken, Task> applyFilters,
-            CancellationToken cancellationToken)
+            Func<ApiDescription, SchemaRepository, Task<List<OpenApiParameter>>> parametersGenerator,
+            Func<ApiDescription, SchemaRepository, Task<OpenApiRequestBody>> bodyGenerator,
+            Func<OpenApiOperation, OperationFilterContext, Task> applyFilters)
         {
             OpenApiOperation operation =
 #if NET6_0_OR_GREATER
@@ -330,8 +323,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 {
                     Tags = GenerateOperationTags(apiDescription),
                     OperationId = _options.OperationIdSelector(apiDescription),
-                    Parameters = await parametersGenerator(apiDescription, schemaRepository, cancellationToken),
-                    RequestBody = await bodyGenerator(apiDescription, schemaRepository, cancellationToken),
+                    Parameters = await parametersGenerator(apiDescription, schemaRepository),
+                    RequestBody = await bodyGenerator(apiDescription, schemaRepository),
                     Responses = GenerateResponses(apiDescription, schemaRepository),
                     Deprecated = apiDescription.CustomAttributes().OfType<ObsoleteAttribute>().Any(),
 #if NET7_0_OR_GREATER
@@ -343,7 +336,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 apiDescription.TryGetMethodInfo(out MethodInfo methodInfo);
                 var filterContext = new OperationFilterContext(apiDescription, _schemaGenerator, schemaRepository, methodInfo);
 
-                await applyFilters(operation, filterContext, cancellationToken);
+                await applyFilters(operation, filterContext);
 
                 return operation;
             }
@@ -360,9 +353,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return GenerateOperationAsync(
                 apiDescription,
                 schemaRepository,
-                (description, repository, _) => Task.FromResult(GenerateParameters(description, repository)),
-                (description, repository, _) => Task.FromResult(GenerateRequestBody(description, repository)),
-                (operation, filterContext, _) =>
+                (description, repository) => Task.FromResult(GenerateParameters(description, repository)),
+                (description, repository) => Task.FromResult(GenerateRequestBody(description, repository)),
+                (operation, filterContext) =>
                 {
                     foreach (var filter in _options.OperationFilters)
                     {
@@ -370,33 +363,30 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     }
 
                     return Task.CompletedTask;
-                },
-                CancellationToken.None).Result;
+                }).Result;
         }
 
         private async Task<OpenApiOperation> GenerateOperationAsync(
             ApiDescription apiDescription,
-            SchemaRepository schemaRepository,
-            CancellationToken cancellationToken)
+            SchemaRepository schemaRepository)
         {
             return await GenerateOperationAsync(
                 apiDescription,
                 schemaRepository,
                 GenerateParametersAsync,
                 GenerateRequestBodyAsync,
-                async (operation, filterContext, token) =>
+                async (operation, filterContext) =>
                 {
                     foreach (var filter in _options.OperationAsyncFilters)
                     {
-                        await filter.ApplyAsync(operation, filterContext, token);
+                        await filter.ApplyAsync(operation, filterContext, CancellationToken.None);
                     }
 
                     foreach (var filter in _options.OperationFilters)
                     {
                         filter.Apply(operation, filterContext);
                     }
-                },
-                cancellationToken);
+                });
         }
 
 #if NET6_0_OR_GREATER
@@ -473,8 +463,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private static async Task<List<OpenApiParameter>> GenerateParametersAsync(
             ApiDescription apiDescription,
             SchemaRepository schemaRespository,
-            Func<ApiParameterDescription, SchemaRepository, CancellationToken, Task<OpenApiParameter>> parameterGenerator,
-            CancellationToken cancellationToken)
+            Func<ApiParameterDescription, SchemaRepository, Task<OpenApiParameter>> parameterGenerator)
         {
             if (apiDescription.ParameterDescriptions.Any(IsFromFormAttributeUsedWithIFormFile))
             {
@@ -498,7 +487,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             foreach (var parameter in applicableApiParameters)
             {
-                parameters.Add(await parameterGenerator(parameter, schemaRespository, cancellationToken));
+                parameters.Add(await parameterGenerator(parameter, schemaRespository));
             }
 
             return parameters;
@@ -509,20 +498,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return GenerateParametersAsync(
                 apiDescription,
                 schemaRespository,
-                (parameter, schemaRespository, _) => Task.FromResult(GenerateParameter(parameter, schemaRespository)),
-                CancellationToken.None).Result;
+                (parameter, schemaRespository) => Task.FromResult(GenerateParameter(parameter, schemaRespository))).Result;
         }
 
         private async Task<List<OpenApiParameter>> GenerateParametersAsync(
             ApiDescription apiDescription,
-            SchemaRepository schemaRespository,
-            CancellationToken cancellationToken)
+            SchemaRepository schemaRespository)
         {
             return await GenerateParametersAsync(
                 apiDescription,
                 schemaRespository,
-                GenerateParameterAsync,
-                cancellationToken);
+                GenerateParameterAsync);
         }
 
         private OpenApiParameter GenerateParameterWithoutFilter(
@@ -590,14 +576,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private async Task<OpenApiParameter> GenerateParameterAsync(
             ApiParameterDescription apiParameter,
-            SchemaRepository schemaRepository,
-            CancellationToken cancellationToken)
+            SchemaRepository schemaRepository)
         {
             var (parameter, filterContext) = GenerateParameterAndContext(apiParameter, schemaRepository);
 
             foreach (var filter in _options.ParameterAsyncFilters)
             {
-                await filter.ApplyAsync(parameter, filterContext, cancellationToken);
+                await filter.ApplyAsync(parameter, filterContext, CancellationToken.None);
             }
 
             foreach (var filter in _options.ParameterFilters)
@@ -684,8 +669,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private async Task<OpenApiRequestBody> GenerateRequestBodyAsync(
             ApiDescription apiDescription,
-            SchemaRepository schemaRepository,
-            CancellationToken cancellationToken)
+            SchemaRepository schemaRepository)
         {
             var (requestBody, filterContext) = GenerateRequestBodyAndFilterContext(apiDescription, schemaRepository);
 
@@ -693,7 +677,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 foreach (var filter in _options.RequestBodyAsyncFilters)
                 {
-                    await filter.ApplyAsync(requestBody, filterContext, cancellationToken);
+                    await filter.ApplyAsync(requestBody, filterContext, CancellationToken.None);
                 }
 
                 foreach (var filter in _options.RequestBodyFilters)

@@ -9,7 +9,6 @@ namespace Swashbuckle.AspNetCore.Swagger
         Task<OpenApiDocument> GetSwaggerAsync(
             string documentName,
             string host = null,
-            string basePath = null,
-            CancellationToken cancellationToken = default);
+            string basePath = null);
     }
 }
