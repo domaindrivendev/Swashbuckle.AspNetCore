@@ -691,6 +691,143 @@ public class SwaggerGeneratorVerifyTests
         return Verifier.Verify(document);
     }
 
+    [Fact]
+    public Task ApiParametersThatAreBoundToForm()
+    {
+        var subject = Subject(
+            apiDescriptions: new[]
+            {
+                ApiDescriptionFactory.Create<FakeController>(
+                    c => nameof(c.ActionWithMultipleParameters),
+                    groupName: "v1",
+                    httpMethod: "POST",
+                    relativePath: "resource",
+                    parameterDescriptions: new []
+                    {
+                        new ApiParameterDescription
+                        {
+                            Name = "param1",
+                            Source = BindingSource.Form,
+                        },
+                        new ApiParameterDescription
+                        {
+                            Name = "param2",
+                            Source = BindingSource.Form,
+                        }
+
+                    }
+                )
+            }
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        return Verifier.Verify(document);
+    }
+
+    [Theory]
+    [InlineData("Body")]
+    [InlineData("Form")]
+    public Task ActionHasConsumesAttribute(string bindingSourceId)
+    {
+        var subject = Subject(
+            apiDescriptions: new[]
+            {
+                ApiDescriptionFactory.Create<FakeController>(
+                    c => nameof(c.ActionWithConsumesAttribute),
+                    groupName: "v1",
+                    httpMethod: "POST",
+                    relativePath: "resource",
+                    parameterDescriptions: new []
+                    {
+                        new ApiParameterDescription
+                        {
+                            Name = "param",
+                            Source = new BindingSource(bindingSourceId, null, false, true)
+                        }
+                    })
+            }
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        return Verifier.Verify(document).UseParameters(bindingSourceId);
+    }
+
+    [Fact]
+    public Task ActionWithReturnValueAndSupportedResponseTypes()
+    {
+        var subject = Subject(
+            apiDescriptions: new[]
+            {
+                ApiDescriptionFactory.Create<FakeController>(
+                    c => nameof(c.ActionWithReturnValue),
+                    groupName: "v1",
+                    httpMethod: "POST",
+                    relativePath: "resource",
+                    supportedResponseTypes: new []
+                    {
+                        new ApiResponseType
+                        {
+                            ApiResponseFormats = new [] { new ApiResponseFormat { MediaType = "application/json" } },
+                            StatusCode = 200,
+                        },
+                        new ApiResponseType
+                        {
+                            ApiResponseFormats = new [] { new ApiResponseFormat { MediaType = "application/json" } },
+                            StatusCode = 400
+                        },
+                        new ApiResponseType
+                        {
+                            ApiResponseFormats = new [] { new ApiResponseFormat { MediaType = "application/json" } },
+                            StatusCode = 422
+                        },
+                        new ApiResponseType
+                        {
+                            ApiResponseFormats = new [] { new ApiResponseFormat { MediaType = "application/json" } },
+                            IsDefaultResponse = true
+                        }
+
+                    }
+                )
+            }
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        return Verifier.Verify(document);
+    }
+
+    [Fact]
+    public Task ActionHasFileResult()
+    {
+        var apiDescription = ApiDescriptionFactory.Create<FakeController>(
+            c => nameof(c.ActionWithFileResult),
+            groupName: "v1",
+            httpMethod: "POST",
+            relativePath: "resource",
+            supportedResponseTypes: new[]
+            {
+                new ApiResponseType
+                {
+                    ApiResponseFormats = new [] { new ApiResponseFormat { MediaType = "application/zip" } },
+                    StatusCode = 200,
+                    Type = typeof(FileContentResult)
+                }
+            });
+
+        // ASP.NET Core sets ModelMetadata to null for FileResults
+        apiDescription.SupportedResponseTypes[0].ModelMetadata = null;
+
+        var subject = Subject(
+            apiDescriptions: new[] { apiDescription }
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        return Verifier.Verify(document);
+    }
+
     private static SwaggerGenerator Subject(
         IEnumerable<ApiDescription> apiDescriptions,
         SwaggerGeneratorOptions options = null,
