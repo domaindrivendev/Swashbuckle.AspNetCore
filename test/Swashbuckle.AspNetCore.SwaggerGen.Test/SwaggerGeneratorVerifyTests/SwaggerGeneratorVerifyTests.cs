@@ -9,9 +9,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures;
 using Swashbuckle.AspNetCore.TestSupport;
 using VerifyXunit;
 using Xunit;
@@ -1004,6 +1007,94 @@ public class SwaggerGeneratorVerifyTests
             }
         );
 
+        var document = subject.GetSwagger("v1");
+
+        return Verifier.Verify(document);
+    }
+
+    [Fact]
+    public Task ActionHavingFromFormAttributeButNotWithIFormFile()
+    {
+        var parameterInfo = typeof(FakeController)
+            .GetMethod(nameof(FakeController.ActionHavingFromFormAttributeButNotWithIFormFile))
+            .GetParameters()[0];
+
+        var fileUploadParameterInfo = typeof(FakeController)
+            .GetMethod(nameof(FakeController.ActionHavingFromFormAttributeButNotWithIFormFile))
+            .GetParameters()[1];
+
+        var subject = Subject(
+            apiDescriptions: new[]
+            {
+               ApiDescriptionFactory.Create<FakeController>(
+                    c => nameof(c.ActionHavingFromFormAttributeButNotWithIFormFile),
+                    groupName: "v1",
+                    httpMethod: "POST",
+                    relativePath: "resource",
+                    parameterDescriptions: new[]
+                    {
+                        new ApiParameterDescription
+                        {
+                            Name = "param1", // Name of the parameter
+                            Type = typeof(string), // Type of the parameter
+                            ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = parameterInfo }
+                        },
+                        new ApiParameterDescription
+                        {
+                            Name = "param2", // Name of the parameter
+                            Type = typeof(IFormFile), // Type of the parameter
+                            ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = fileUploadParameterInfo }
+                        }
+                    })
+            }
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        return Verifier.Verify(document);
+    }
+
+    [Fact]
+    public Task ActionHavingFromFormAttributeWithSwaggerIgnore()
+    {
+        var propertyIgnored = typeof(SwaggerIngoreAnnotatedType).GetProperty(nameof(SwaggerIngoreAnnotatedType.IgnoredString));
+        var modelMetadataIgnored = new DefaultModelMetadata(
+                                new DefaultModelMetadataProvider(new FakeICompositeMetadataDetailsProvider()),
+                                new FakeICompositeMetadataDetailsProvider(),
+                                new DefaultMetadataDetails(ModelMetadataIdentity.ForProperty(propertyIgnored, typeof(string), typeof(SwaggerIngoreAnnotatedType)), ModelAttributes.GetAttributesForProperty(typeof(SwaggerIngoreAnnotatedType), propertyIgnored)));
+
+        var propertyNotIgnored = typeof(SwaggerIngoreAnnotatedType).GetProperty(nameof(SwaggerIngoreAnnotatedType.NotIgnoredString));
+        var modelMetadataNotIgnored = new DefaultModelMetadata(
+                                new DefaultModelMetadataProvider(new FakeICompositeMetadataDetailsProvider()),
+                                new FakeICompositeMetadataDetailsProvider(),
+                                new DefaultMetadataDetails(ModelMetadataIdentity.ForProperty(propertyNotIgnored, typeof(string), typeof(SwaggerIngoreAnnotatedType)), ModelAttributes.GetAttributesForProperty(typeof(SwaggerIngoreAnnotatedType), propertyNotIgnored)));
+        var subject = Subject(
+            apiDescriptions: new[]
+            {
+               ApiDescriptionFactory.Create<FakeController>(
+                    c => nameof(c.ActionHavingFromFormAttributeWithSwaggerIgnore),
+                    groupName: "v1",
+                    httpMethod: "POST",
+                    relativePath: "resource",
+                    parameterDescriptions: new[]
+                    {
+                        new ApiParameterDescription
+                        {
+                            Name = nameof(SwaggerIngoreAnnotatedType.IgnoredString),
+                            Source = BindingSource.Form,
+                            Type = typeof(string),
+                            ModelMetadata = modelMetadataIgnored
+                        },
+                        new ApiParameterDescription
+                        {
+                            Name = nameof(SwaggerIngoreAnnotatedType.NotIgnoredString),
+                            Source = BindingSource.Form,
+                            Type = typeof(string),
+                            ModelMetadata = modelMetadataNotIgnored
+                        }
+                    })
+            }
+        );
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document);
