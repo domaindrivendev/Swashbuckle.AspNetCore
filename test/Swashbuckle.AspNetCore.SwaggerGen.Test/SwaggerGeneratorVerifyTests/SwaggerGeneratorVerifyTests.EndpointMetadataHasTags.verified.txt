@@ -1,0 +1,38 @@
+﻿{
+  Info: {
+    Title: Test API,
+    Version: V1
+  },
+  Paths: {
+    /resource: {
+      Operations: {
+        Post: {
+          Tags: [
+            {
+              Name: Some,
+              UnresolvedReference: false
+            },
+            {
+              Name: Tags,
+              UnresolvedReference: false
+            },
+            {
+              Name: Here,
+              UnresolvedReference: false
+            }
+          ],
+          Responses: {
+            200: {
+              Description: OK,
+              UnresolvedReference: false
+            }
+          },
+          Deprecated: false
+        }
+      },
+      UnresolvedReference: false
+    }
+  },
+  Components: {},
+  HashCode: 6F8975472729E3A264232F09327A9B51A158FC6D0952BFC812CA902D14346E719EDB456AC1247F9020009B8A3A813011BB9CC7E9699A064E91F4A73A32FD7A0D
+}
