@@ -588,7 +588,9 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document).UseParameters(action);
+        return Verifier.Verify(document)
+            .UseParameters(action)
+            .UseMethodName("IllegalHeaderParameterWithOpenApiOperation");
     }
 
     [Fact]
