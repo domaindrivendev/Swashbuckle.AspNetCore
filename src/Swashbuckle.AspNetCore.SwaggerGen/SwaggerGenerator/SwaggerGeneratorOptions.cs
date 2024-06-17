@@ -71,7 +71,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public IList<IRequestBodyAsyncFilter> RequestBodyAsyncFilters { get; set; }
 
-        public IList<IOperationFilter> OperationFilters { get; set; }
+        public List<IOperationFilter> OperationFilters { get; set; }
 
         public IList<IOperationAsyncFilter> OperationAsyncFilters { get; set; }
 
