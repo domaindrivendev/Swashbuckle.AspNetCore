@@ -1,0 +1,50 @@
+﻿{
+  Info: {
+    Title: Test API,
+    Version: V1
+  },
+  Paths: {
+    /resource: {
+      Operations: {
+        Get: {
+          OperationId: OperationIdSetInMetadata,
+          Parameters: [
+            {
+              UnresolvedReference: false,
+              Name: accept,
+              Required: false,
+              Deprecated: false,
+              AllowEmptyValue: false,
+              Style: Simple,
+              Explode: false,
+              AllowReserved: false
+            },
+            {
+              UnresolvedReference: false,
+              Name: param,
+              Required: false,
+              Deprecated: false,
+              AllowEmptyValue: false,
+              Style: Simple,
+              Explode: false,
+              AllowReserved: false,
+              Schema: {
+                Type: string,
+                ReadOnly: false,
+                WriteOnly: false,
+                AdditionalPropertiesAllowed: true,
+                Nullable: false,
+                Deprecated: false,
+                UnresolvedReference: false
+              }
+            }
+          ],
+          Deprecated: false
+        }
+      },
+      UnresolvedReference: false
+    }
+  },
+  Components: {},
+  HashCode: 48AB134AF00E0ED90AEA7E4E5BADDD7218AB02E7956DD5FAE3C500F4324F14066B32F2EF85E9C52A68431858FED77604C3ABE6CAED518CCB8EC46D22DF63A3DF
+}
