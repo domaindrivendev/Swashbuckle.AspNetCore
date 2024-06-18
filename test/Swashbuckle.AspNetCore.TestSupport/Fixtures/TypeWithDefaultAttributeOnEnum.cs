@@ -6,5 +6,7 @@ namespace Swashbuckle.AspNetCore.TestSupport
     {
         [DefaultValue(IntEnum.Value4)]
         public IntEnum EnumWithDefault { get; set; }
+        [DefaultValue(new IntEnum[] { IntEnum.Value4 })]
+        public IntEnum[] EnumArrayWithDefault { get; set; }
     }
 }

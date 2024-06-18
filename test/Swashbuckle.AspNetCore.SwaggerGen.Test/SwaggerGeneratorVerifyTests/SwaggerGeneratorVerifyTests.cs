@@ -1102,15 +1102,63 @@ public class SwaggerGeneratorVerifyTests
         return Verifier.Verify(document);
     }
 
+    [Fact]
+    public Task GetSwagger_Copies_Description_From_GeneratedSchema()
+    {
+        var propertyEnum = typeof(TypeWithDefaultAttributeOnEnum).GetProperty(nameof(TypeWithDefaultAttributeOnEnum.EnumWithDefault));
+        var modelMetadataForEnum = new DefaultModelMetadata(
+                                new DefaultModelMetadataProvider(new FakeICompositeMetadataDetailsProvider()),
+                                new FakeICompositeMetadataDetailsProvider(),
+                                new DefaultMetadataDetails(ModelMetadataIdentity.ForProperty(propertyEnum, typeof(IntEnum), typeof(TypeWithDefaultAttributeOnEnum)), ModelAttributes.GetAttributesForProperty(typeof(TypeWithDefaultAttributeOnEnum), propertyEnum)));
+
+        var propertyEnumArray = typeof(TypeWithDefaultAttributeOnEnum).GetProperty(nameof(TypeWithDefaultAttributeOnEnum.EnumArrayWithDefault));
+        var modelMetadataForEnumArray = new DefaultModelMetadata(
+                                new DefaultModelMetadataProvider(new FakeICompositeMetadataDetailsProvider()),
+                                new FakeICompositeMetadataDetailsProvider(),
+                                new DefaultMetadataDetails(ModelMetadataIdentity.ForProperty(propertyEnumArray, typeof(IntEnum[]), typeof(TypeWithDefaultAttributeOnEnum)), ModelAttributes.GetAttributesForProperty(typeof(TypeWithDefaultAttributeOnEnum), propertyEnumArray)));
+        var subject = Subject(
+           apiDescriptions:
+           [
+               ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionHavingFromFormAttributeWithSwaggerIgnore),
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions: new[]
+                        {
+                            new ApiParameterDescription
+                            {
+                                Name = nameof(TypeWithDefaultAttributeOnEnum.EnumWithDefault),
+                                Source = BindingSource.Query,
+                                Type = typeof(IntEnum),
+                                ModelMetadata = modelMetadataForEnum
+                            },
+                            new ApiParameterDescription
+                            {
+                                Name = nameof(TypeWithDefaultAttributeOnEnum.EnumArrayWithDefault),
+                                Source = BindingSource.Query,
+                                Type = typeof(IntEnum[]),
+                                ModelMetadata = modelMetadataForEnumArray
+                            }
+                        })
+           ],
+           schemaFilters: [new TestEnumSchemaFilter()]
+       );
+        var document = subject.GetSwagger("v1");
+
+        return Verifier.Verify(document);
+    }
+
     private static SwaggerGenerator Subject(
-        IEnumerable<ApiDescription> apiDescriptions,
-        SwaggerGeneratorOptions options = null,
-        IEnumerable<AuthenticationScheme> authenticationSchemes = null)
+            IEnumerable<ApiDescription> apiDescriptions,
+            SwaggerGeneratorOptions options = null,
+            IEnumerable<AuthenticationScheme> authenticationSchemes = null,
+            List<ISchemaFilter> schemaFilters = null)
     {
         return new SwaggerGenerator(
             options ?? DefaultOptions,
             new FakeApiDescriptionGroupCollectionProvider(apiDescriptions),
-            new SchemaGenerator(new SchemaGeneratorOptions(), new JsonSerializerDataContractResolver(new JsonSerializerOptions())),
+            new SchemaGenerator(new SchemaGeneratorOptions() { SchemaFilters = schemaFilters ?? [] }, new JsonSerializerDataContractResolver(new JsonSerializerOptions())),
             new FakeAuthenticationSchemeProvider(authenticationSchemes ?? Enumerable.Empty<AuthenticationScheme>())
         );
     }
