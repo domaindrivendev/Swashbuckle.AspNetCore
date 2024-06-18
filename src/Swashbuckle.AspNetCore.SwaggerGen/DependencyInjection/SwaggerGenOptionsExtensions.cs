@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using System.Xml.XPath;
-using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -328,7 +330,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// Extend the Swagger Generator with "filters" that can modify Schemas after they're initially generated
         /// </summary>
-        /// <typeparam name="TFilter">A type that derives from ISchemaFilter</typeparam>
+        /// <typeparam name="TFilter">A type that derives from <see cref="ISchemaFilter"/></typeparam>
         /// <param name="swaggerGenOptions"></param>
         /// <param name="arguments">Optionally inject parameters through filter constructors</param>
         public static void SchemaFilter<TFilter>(
@@ -336,7 +338,46 @@ namespace Microsoft.Extensions.DependencyInjection
             params object[] arguments)
             where TFilter : ISchemaFilter
         {
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
             swaggerGenOptions.SchemaFilterDescriptors.Add(new FilterDescriptor
+            {
+                Type = typeof(TFilter),
+                Arguments = arguments
+            });
+        }
+
+        /// <summary>
+        /// Extend the Swagger Generator with "filters" that can modify Schemas after they're initially generated
+        /// </summary>
+        /// <typeparam name="TFilter">A type that derives from <see cref="ISchemaFilter"/></typeparam>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="filterInstance">The filter instance to use.</param>
+        public static void AddSchemaFilterInstance<TFilter>(
+            this SwaggerGenOptions swaggerGenOptions,
+            TFilter filterInstance)
+            where TFilter : ISchemaFilter
+        {
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+            if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
+            swaggerGenOptions.SchemaFilterDescriptors.Add(new FilterDescriptor
+            {
+                FilterInstance = filterInstance
+            });
+        }
+
+        /// <summary>
+        /// Extend the Swagger Generator with "filters" that can modify Parameters after they're initially generated
+        /// </summary>
+        /// <typeparam name="TFilter">A type that derives from <see cref="IParameterFilter"/></typeparam>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="arguments">Optionally inject parameters through filter constructors</param>
+        public static void ParameterFilter<TFilter>(
+            this SwaggerGenOptions swaggerGenOptions,
+            params object[] arguments)
+            where TFilter : IParameterFilter
+        {
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+            swaggerGenOptions.ParameterFilterDescriptors.Add(new FilterDescriptor
             {
                 Type = typeof(TFilter),
                 Arguments = arguments
@@ -346,15 +387,35 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// Extend the Swagger Generator with "filters" that can modify Parameters after they're initially generated
         /// </summary>
-        /// <typeparam name="TFilter">A type that derives from IParameterFilter</typeparam>
+        /// <typeparam name="TFilter">A type that derives from <see cref="IParameterFilter"/></typeparam>
         /// <param name="swaggerGenOptions"></param>
-        /// <param name="arguments">Optionally inject parameters through filter constructors</param>
-        public static void ParameterFilter<TFilter>(
+        /// <param name="filterInstance">The filter instance to use.</param>
+        public static void AddParameterFilterInstance<TFilter>(
             this SwaggerGenOptions swaggerGenOptions,
-            params object[] arguments)
+            TFilter filterInstance)
             where TFilter : IParameterFilter
         {
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+            if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.ParameterFilterDescriptors.Add(new FilterDescriptor
+            {
+                FilterInstance = filterInstance
+            });
+        }
+
+        /// <summary>
+        /// Extend the Swagger Generator with "filters" that can modify RequestBodys after they're initially generated
+        /// </summary>
+        /// <typeparam name="TFilter">A type that derives from <see cref="IRequestBodyFilter"/></typeparam>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="arguments">Optionally inject parameters through filter constructors</param>
+        public static void RequestBodyFilter<TFilter>(
+            this SwaggerGenOptions swaggerGenOptions,
+            params object[] arguments)
+            where TFilter : IRequestBodyFilter
+        {
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+            swaggerGenOptions.RequestBodyFilterDescriptors.Add(new FilterDescriptor
             {
                 Type = typeof(TFilter),
                 Arguments = arguments
@@ -364,15 +425,35 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// Extend the Swagger Generator with "filters" that can modify RequestBodys after they're initially generated
         /// </summary>
-        /// <typeparam name="TFilter">A type that derives from IRequestBodyFilter</typeparam>
+        /// <typeparam name="TFilter">A type that derives from <see cref="IRequestBodyFilter"/></typeparam>
         /// <param name="swaggerGenOptions"></param>
-        /// <param name="arguments">Optionally inject parameters through filter constructors</param>
-        public static void RequestBodyFilter<TFilter>(
+        /// <param name="filterInstance">The filter instance to use.</param>
+        public static void AddRequestBodyFilterInstance<TFilter>(
             this SwaggerGenOptions swaggerGenOptions,
-            params object[] arguments)
+            TFilter filterInstance)
             where TFilter : IRequestBodyFilter
         {
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+            if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.RequestBodyFilterDescriptors.Add(new FilterDescriptor
+            {
+                FilterInstance = filterInstance
+            });
+        }
+
+        /// <summary>
+        /// Extend the Swagger Generator with "filters" that can modify Operations after they're initially generated
+        /// </summary>
+        /// <typeparam name="TFilter">A type that derives from <see cref="IOperationFilter"/></typeparam>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="arguments">Optionally inject parameters through filter constructors</param>
+        public static void OperationFilter<TFilter>(
+            this SwaggerGenOptions swaggerGenOptions,
+            params object[] arguments)
+            where TFilter : IOperationFilter
+        {
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+            swaggerGenOptions.OperationFilterDescriptors.Add(new FilterDescriptor
             {
                 Type = typeof(TFilter),
                 Arguments = arguments
@@ -382,15 +463,35 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// Extend the Swagger Generator with "filters" that can modify Operations after they're initially generated
         /// </summary>
-        /// <typeparam name="TFilter">A type that derives from IOperationFilter</typeparam>
+        /// <typeparam name="TFilter">A type that derives from <see cref="IOperationFilter"/></typeparam>
         /// <param name="swaggerGenOptions"></param>
-        /// <param name="arguments">Optionally inject parameters through filter constructors</param>
-        public static void OperationFilter<TFilter>(
+        /// <param name="filterInstance">The filter instance to use.</param>
+        public static void AddOperationFilterInstance<TFilter>(
             this SwaggerGenOptions swaggerGenOptions,
-            params object[] arguments)
+            TFilter filterInstance)
             where TFilter : IOperationFilter
         {
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+            if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.OperationFilterDescriptors.Add(new FilterDescriptor
+            {
+                FilterInstance = filterInstance
+            });
+        }
+
+        /// <summary>
+        /// Extend the Swagger Generator with "filters" that can modify SwaggerDocuments after they're initially generated
+        /// </summary>
+        /// <typeparam name="TFilter">A type that derives from <see cref="IDocumentFilter"/></typeparam>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="arguments">Optionally inject parameters through filter constructors</param>
+        public static void DocumentFilter<TFilter>(
+            this SwaggerGenOptions swaggerGenOptions,
+            params object[] arguments)
+            where TFilter : IDocumentFilter
+        {
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+            swaggerGenOptions.DocumentFilterDescriptors.Add(new FilterDescriptor
             {
                 Type = typeof(TFilter),
                 Arguments = arguments
@@ -400,18 +501,19 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <summary>
         /// Extend the Swagger Generator with "filters" that can modify SwaggerDocuments after they're initially generated
         /// </summary>
-        /// <typeparam name="TFilter">A type that derives from IDocumentFilter</typeparam>
+        /// <typeparam name="TFilter">A type that derives from <see cref="IDocumentFilter"/></typeparam>
         /// <param name="swaggerGenOptions"></param>
-        /// <param name="arguments">Optionally inject parameters through filter constructors</param>
-        public static void DocumentFilter<TFilter>(
+        /// <param name="filterInstance">The filter instance to use.</param>
+        public static void AddDocumentFilterInstance<TFilter>(
             this SwaggerGenOptions swaggerGenOptions,
-            params object[] arguments)
+            TFilter filterInstance)
             where TFilter : IDocumentFilter
         {
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+            if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.DocumentFilterDescriptors.Add(new FilterDescriptor
             {
-                Type = typeof(TFilter),
-                Arguments = arguments
+                FilterInstance = filterInstance
             });
         }
 
@@ -436,7 +538,7 @@ namespace Microsoft.Extensions.DependencyInjection
             swaggerGenOptions.SchemaFilter<XmlCommentsSchemaFilter>(xmlDoc);
 
             if (includeControllerXmlComments)
-                swaggerGenOptions.DocumentFilter<XmlCommentsDocumentFilter>(xmlDoc);
+                swaggerGenOptions.DocumentFilter<XmlCommentsDocumentFilter>(xmlDoc, swaggerGenOptions.SwaggerGeneratorOptions);
         }
 
         /// <summary>
@@ -454,6 +556,26 @@ namespace Microsoft.Extensions.DependencyInjection
             bool includeControllerXmlComments = false)
         {
             swaggerGenOptions.IncludeXmlComments(() => new XPathDocument(filePath), includeControllerXmlComments);
+        }
+
+        /// <summary>
+        /// Inject human-friendly descriptions for Operations, Parameters and Schemas based on XML comments
+        /// from specific Assembly
+        /// </summary>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="assembly">Assembly that contains XML Comments</param>
+        /// <param name="includeControllerXmlComments">
+        /// Flag to indicate if controller XML comments (i.e. summary) should be used to assign Tag descriptions.
+        /// Don't set this flag if you're customizing the default tag for operations via TagActionsBy.
+        /// </param>
+        public static void IncludeXmlComments(
+            this SwaggerGenOptions swaggerGenOptions,
+            Assembly assembly,
+            bool includeControllerXmlComments = false)
+        {
+            swaggerGenOptions.IncludeXmlComments(
+                Path.Combine(AppContext.BaseDirectory, $"{assembly.GetName().Name}.xml"),
+                includeControllerXmlComments);
         }
 
         /// <summary>

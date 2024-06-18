@@ -39,8 +39,8 @@ namespace Swashbuckle.AspNetCore.ApiTesting
         {
             if (openApiDocument.Paths.TryGetValue(pathTemplate, out pathSpec))
             {
-                if (pathSpec.Operations.ContainsKey(operationType))
-                    return pathSpec.Operations[operationType];
+                if (pathSpec.Operations.TryGetValue(operationType, out var type))
+                    return type;
             }
 
             throw new InvalidOperationException($"Operation with path '{pathTemplate}' and type '{operationType}' not found");

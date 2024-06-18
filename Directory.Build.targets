@@ -1,0 +1,34 @@
+<Project>
+  <PropertyGroup Condition=" '$(IsTestProject)' != 'true' AND ($(MSBuildProjectDirectory.EndsWith('Test')) OR $(MSBuildProjectDirectory.EndsWith('Tests'))) ">
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(IsTestProject)' == 'true' AND '$(BuildingInsideVisualStudio)' != 'true' ">
+    <CollectCoverage>true</CollectCoverage>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(IsTestProject)' == 'true' ">
+    <PackageReference Include="coverlet.msbuild" PrivateAssets="All" />
+    <PackageReference Include="GitHubActionsTestLogger" PrivateAssets="All" />
+    <PackageReference Include="ReportGenerator" PrivateAssets="All" />
+  </ItemGroup>
+  <PropertyGroup Condition=" '$(CollectCoverage)' == 'true' ">
+    <CoverletOutput>$([System.IO.Path]::Combine($(ArtifactsPath), 'coverage', 'coverage'))</CoverletOutput>
+    <ReportGeneratorOutputMarkdown Condition=" '$(ReportGeneratorOutputMarkdown)' == '' AND '$(GITHUB_SHA)' != '' ">true</ReportGeneratorOutputMarkdown>
+    <ReportGeneratorReportTypes>HTML</ReportGeneratorReportTypes>
+    <ReportGeneratorReportTypes Condition=" '$(ReportGeneratorOutputMarkdown)' == 'true' ">$(ReportGeneratorReportTypes);MarkdownSummaryGitHub</ReportGeneratorReportTypes>
+    <ReportGeneratorTargetDirectory>$([System.IO.Path]::Combine($(ArtifactsPath), 'coverage'))</ReportGeneratorTargetDirectory>
+    <MergeWith>$([System.IO.Path]::Combine($(ReportGeneratorTargetDirectory), 'coverage.json'))</MergeWith>
+  </PropertyGroup>
+  <Target Name="GenerateCoverageReports" AfterTargets="GenerateCoverageResultAfterTest" Condition=" '$(CollectCoverage)' == 'true' ">
+    <ReportGenerator ReportFiles="@(CoverletReport)" ReportTypes="$(ReportGeneratorReportTypes)" Tag="$(Version)" TargetDirectory="$(ReportGeneratorTargetDirectory)" Title="$(AssemblyName)" VerbosityLevel="Warning" />
+    <PropertyGroup Condition=" '$(ReportGeneratorOutputMarkdown)' == 'true' ">
+      <_ReportSummaryContent>&lt;details&gt;&lt;summary&gt;:chart_with_upwards_trend: &lt;b&gt;$(AssemblyName) Code Coverage report&lt;/b&gt;&lt;/summary&gt;</_ReportSummaryContent>
+      <_ReportSummaryContent>$(_ReportSummaryContent)$([System.Environment]::NewLine)</_ReportSummaryContent>
+      <_ReportSummaryContent>$(_ReportSummaryContent)$([System.Environment]::NewLine)</_ReportSummaryContent>
+      <_ReportSummaryContent>$(_ReportSummaryContent)$([System.IO.File]::ReadAllText('$([System.IO.Path]::Combine($(ReportGeneratorTargetDirectory), 'SummaryGithub.md'))'))</_ReportSummaryContent>
+      <_ReportSummaryContent>$(_ReportSummaryContent)$([System.Environment]::NewLine)</_ReportSummaryContent>
+      <_ReportSummaryContent>$(_ReportSummaryContent)$([System.Environment]::NewLine)</_ReportSummaryContent>
+      <_ReportSummaryContent>$(_ReportSummaryContent)&lt;/details&gt;</_ReportSummaryContent>
+    </PropertyGroup>
+    <WriteLinesToFile Condition=" '$(ReportGeneratorOutputMarkdown)' == 'true' " ContinueOnError="WarnAndContinue" File="$(GITHUB_STEP_SUMMARY)" Lines="$(_ReportSummaryContent)" />
+  </Target>
+</Project>

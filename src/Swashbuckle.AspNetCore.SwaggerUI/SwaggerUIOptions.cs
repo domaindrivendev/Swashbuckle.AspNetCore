@@ -1,8 +1,9 @@
 ﻿using System;
-using System.IO;
-using System.Reflection;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Swashbuckle.AspNetCore.SwaggerUI
@@ -44,6 +45,26 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// Gets the interceptor functions that define client-side request/response interceptors
         /// </summary>
         public InterceptorFunctions Interceptors { get; set; } = new InterceptorFunctions();
+
+        /// <summary>
+        /// Gets or sets the optional JSON serialization options to use to serialize options to the HTML document.
+        /// </summary>
+        public JsonSerializerOptions JsonSerializerOptions { get; set; }
+
+        /// <summary>
+        /// Gets or sets the path or URL to the Swagger UI JavaScript bundle file.
+        /// </summary>
+        public string ScriptBundlePath { get; set; } = "./swagger-ui-bundle.js";
+
+        /// <summary>
+        /// Gets or sets the path or URL to the Swagger UI JavaScript standalone presets file.
+        /// </summary>
+        public string ScriptPresetsPath { get; set; } = "./swagger-ui-standalone-preset.js";
+
+        /// <summary>
+        /// Gets or sets the path or URL to the Swagger UI CSS file.
+        /// </summary>
+        public string StylesPath { get; set; } = "./swagger-ui.css";
     }
 
     public class ConfigObject
@@ -81,6 +102,9 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// Controls how the model is shown when the API is first rendered.
         /// (The user can always switch the rendering for a given model by clicking the 'Model' and 'Example Value' links)
         /// </summary>
+#if NET6_0_OR_GREATER
+        [JsonConverter(typeof(JavascriptStringEnumConverter<ModelRendering>))]
+#endif
         public ModelRendering DefaultModelRendering { get; set; } = ModelRendering.Example;
 
         /// <summary>
@@ -92,6 +116,9 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// Controls the default expansion setting for the operations and tags.
         /// It can be 'list' (expands only the tags), 'full' (expands the tags and operations) or 'none' (expands nothing)
         /// </summary>
+#if NET6_0_OR_GREATER
+        [JsonConverter(typeof(JavascriptStringEnumConverter<DocExpansion>))]
+#endif
         public DocExpansion DocExpansion { get; set; } = DocExpansion.List;
 
         /// <summary>
@@ -126,7 +153,15 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// List of HTTP methods that have the Try it out feature enabled.
         /// An empty array disables Try it out for all operations. This does not filter the operations from the display
         /// </summary>
-        public IEnumerable<SubmitMethod> SupportedSubmitMethods { get; set; } = Enum.GetValues(typeof(SubmitMethod)).Cast<SubmitMethod>();
+#if NET6_0_OR_GREATER
+        [JsonConverter(typeof(JavascriptStringEnumEnumerableConverter<SubmitMethod>))]
+#endif
+        public IEnumerable<SubmitMethod> SupportedSubmitMethods { get; set; } =
+#if NET5_0_OR_GREATER
+            Enum.GetValues<SubmitMethod>();
+#else
+            Enum.GetValues(typeof(SubmitMethod)).Cast<SubmitMethod>();
+#endif
 
         /// <summary>
         /// Controls whether the "Try it out" section should be enabled by default.
@@ -142,7 +177,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         public string ValidatorUrl { get; set; } = null;
 
         [JsonExtensionData]
-        public Dictionary<string, object> AdditionalItems { get; set; } = new Dictionary<string, object>();
+        public Dictionary<string, object> AdditionalItems { get; set; } = [];
     }
 
     public class UrlDescriptor
@@ -213,7 +248,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// <summary>
         /// String array of initially selected oauth scopes, default is empty array
         /// </summary>
-        public IEnumerable<string> Scopes { get; set; } = new string[] { };
+        public IEnumerable<string> Scopes { get; set; } = [];
 
         /// <summary>
         /// Additional query parameters added to authorizationUrl and tokenUrl
@@ -242,6 +277,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// Accepts one argument requestInterceptor(request) and must return the modified request, or a Promise that resolves to the modified request.
         /// Ex: "function (req) { req.headers['MyCustomHeader'] = 'CustomValue'; return req; }"
         /// </summary>
+        [JsonPropertyName("RequestInterceptorFunction")]
         public string RequestInterceptorFunction { get; set; }
 
         /// <summary>
@@ -250,6 +286,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// Accepts one argument responseInterceptor(response) and must return the modified response, or a Promise that resolves to the modified response.
         /// Ex: "function (res) { console.log(res); return res; }"
         /// </summary>
+        [JsonPropertyName("ResponseInterceptorFunction")]
         public string ResponseInterceptorFunction { get; set; }
     }
 }

@@ -39,21 +39,40 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var fieldOrPropertyMemberName = XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(context.MemberInfo);
             var fieldOrPropertyNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{fieldOrPropertyMemberName}']");
 
-            if (fieldOrPropertyNode == null) return;
+            var recordTypeName = XmlCommentsNodeNameHelper.GetMemberNameForType(context.MemberInfo.DeclaringType);
+            var recordDefaultConstructorProperty =
+                _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{recordTypeName}']/param[@name='{context.MemberInfo.Name}']");
 
-            var summaryNode = fieldOrPropertyNode.SelectSingleNode("summary");
-            if (summaryNode != null)
-                schema.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
-
-            var exampleNode = fieldOrPropertyNode.SelectSingleNode("example");
-            if (exampleNode != null)
+            if (recordDefaultConstructorProperty != null)
             {
-                var exampleAsJson = (schema.ResolveType(context.SchemaRepository) == "string") && !exampleNode.Value.Equals("null")
-                    ? $"\"{exampleNode.ToString()}\""
-                    : exampleNode.ToString();
+                var summaryNode = recordDefaultConstructorProperty.Value;
+                if (summaryNode != null)
+                    schema.Description = XmlCommentsTextHelper.Humanize(summaryNode);
 
-                schema.Example = OpenApiAnyFactory.CreateFromJson(exampleAsJson);
+                var example = recordDefaultConstructorProperty.GetAttribute("example", string.Empty);
+                if (!string.IsNullOrEmpty(example))
+                {
+                    TrySetExample(schema, context, example);
+                }
             }
+
+            if (fieldOrPropertyNode != null)
+            {
+                var summaryNode = fieldOrPropertyNode.SelectSingleNode("summary");
+                if (summaryNode != null)
+                    schema.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
+
+                var exampleNode = fieldOrPropertyNode.SelectSingleNode("example");
+                TrySetExample(schema, context, exampleNode?.Value);
+            }
+        }
+
+        private static void TrySetExample(OpenApiSchema schema, SchemaFilterContext context, string example)
+        {
+            if (example == null)
+                return;
+
+            schema.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, schema, example);
         }
     }
 }

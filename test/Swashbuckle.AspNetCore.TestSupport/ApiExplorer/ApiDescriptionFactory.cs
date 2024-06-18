@@ -36,8 +36,7 @@ namespace Swashbuckle.AspNetCore.TestSupport
                     // If the provided action has a matching parameter - use it to assign ParameterDescriptor & ModelMetadata
                     parameter.ParameterDescriptor = actionDescriptor.Parameters
                         .OfType<ParameterDescriptor>()
-                        .Where(parameterDescriptor => parameterDescriptor.Name == parameter.Name)
-                        .FirstOrDefault();
+                        .FirstOrDefault(parameterDescriptor => parameterDescriptor.Name == parameter.Name);
 
                     var parameterDescriptorWithParameterInfo = parameter.ParameterDescriptor as
 #if NETCOREAPP2_2_OR_GREATER
@@ -46,7 +45,7 @@ namespace Swashbuckle.AspNetCore.TestSupport
                         ControllerParameterDescriptor;
 #endif
 
-                    if (parameterDescriptorWithParameterInfo != null)
+                    if (parameterDescriptorWithParameterInfo != null && parameter.ModelMetadata == null)
                     {
                         parameter.ModelMetadata = ModelMetadataFactory.CreateForParameter(parameterDescriptorWithParameterInfo.ParameterInfo);
                     }

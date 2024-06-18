@@ -12,9 +12,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
-using Xunit;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.TestSupport;
+using Xunit;
 
 namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 {
@@ -23,7 +23,8 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [Theory]
         [InlineData(typeof(IFormFile))]
         [InlineData(typeof(FileResult))]
-        public void GenerateSchema_GeneratesFileSchema_IfFormFileOrFileResultType(Type type)
+        [InlineData(typeof(System.IO.Stream))]
+        public void GenerateSchema_GeneratesFileSchema_BinaryStringResultType(Type type)
         {
             var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
@@ -32,6 +33,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Theory]
+        [InlineData(typeof(bool), "boolean", null)]
         [InlineData(typeof(byte), "integer", "int32")]
         [InlineData(typeof(sbyte), "integer", "int32")]
         [InlineData(typeof(short), "integer", "int32")]
@@ -48,12 +50,24 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [InlineData(typeof(byte[]), "string", "byte")]
         [InlineData(typeof(DateTime), "string", "date-time")]
         [InlineData(typeof(DateTimeOffset), "string", "date-time")]
-        [InlineData(typeof(Guid), "string", "uuid")]
         [InlineData(typeof(TimeSpan), "string", "date-span")]
+        [InlineData(typeof(Guid), "string", "uuid")]
+        [InlineData(typeof(Uri), "string", "uri")]
         [InlineData(typeof(Version), "string", null)]
+        [InlineData(typeof(DateOnly), "string", "date")]
+        [InlineData(typeof(TimeOnly), "string", "time")]
         [InlineData(typeof(bool?), "boolean", null)]
         [InlineData(typeof(int?), "integer", "int32")]
         [InlineData(typeof(DateTime?), "string", "date-time")]
+        [InlineData(typeof(Guid?), "string", "uuid")]
+        [InlineData(typeof(DateOnly?), "string", "date")]
+        [InlineData(typeof(TimeOnly?), "string", "time")]
+#if NET7_0_OR_GREATER
+        [InlineData(typeof(Int128), "integer", "int128")]
+        [InlineData(typeof(Int128?), "integer", "int128")]
+        [InlineData(typeof(UInt128), "integer", "int128")]
+        [InlineData(typeof(UInt128?), "integer", "int128")]
+#endif
         public void GenerateSchema_GeneratesPrimitiveSchema_IfPrimitiveOrNullablePrimitiveType(
             Type type,
             string expectedSchemaType,
@@ -259,9 +273,12 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.LongWithDefault), "9223372036854775807")]
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.FloatWithDefault), "3.4028235E+38")]
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.DoubleWithDefault), "1.7976931348623157E+308")]
+        [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.DoubleWithDefaultOfDifferentType), "1")]
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.StringWithDefault), "\"foobar\"")]
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.IntArrayWithDefault), "[\n  1,\n  2,\n  3\n]")]
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.StringArrayWithDefault), "[\n  \"foo\",\n  \"bar\"\n]")]
+        [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.NullableIntWithDefaultNullValue), "null")]
+        [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.NullableIntWithDefaultValue), "2147483647")]
         [UseInvariantCulture]
         public void GenerateSchema_SetsDefault_IfPropertyHasDefaultValueAttribute(
             Type declaringType,
@@ -292,7 +309,6 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [Theory]
         [InlineData(typeof(TypeWithValidationAttributes))]
         [InlineData(typeof(TypeWithValidationAttributesViaMetadataType))]
-
         public void GenerateSchema_SetsValidationProperties_IfComplexTypeHasValidationAttributes(Type type)
         {
             var schemaRepository = new SchemaRepository();
@@ -305,6 +321,12 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.Equal(3, schema.Properties["StringWithMinMaxLength"].MaxLength);
             Assert.Equal(1, schema.Properties["ArrayWithMinMaxLength"].MinItems);
             Assert.Equal(3, schema.Properties["ArrayWithMinMaxLength"].MaxItems);
+#if NET8_0_OR_GREATER
+            Assert.Equal(1, schema.Properties["StringWithLength"].MinLength);
+            Assert.Equal(3, schema.Properties["StringWithLength"].MaxLength);
+            Assert.Equal(1, schema.Properties["ArrayWithLength"].MinItems);
+            Assert.Equal(3, schema.Properties["ArrayWithLength"].MaxItems);
+#endif
             Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);
             Assert.Equal(10, schema.Properties["IntWithRange"].Maximum);
             Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["StringWithRegularExpression"].Pattern);
@@ -422,14 +444,15 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             var referenceSchema = subject.GenerateSchema(typeof(SubType1), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal("object", schema.Type);
-            Assert.Equal(new[] { "Property1" }, schema.Properties.Keys);
             Assert.NotNull(schema.AllOf);
-            Assert.Equal(1, schema.AllOf.Count);
-            Assert.NotNull(schema.AllOf[0].Reference);
-            Assert.Equal("BaseType", schema.AllOf[0].Reference.Id);
+            Assert.Equal(2, schema.AllOf.Count);
+            var baseSchema = schema.AllOf[0];
+            Assert.Equal("BaseType", baseSchema.Reference.Id);
+            Assert.NotNull(baseSchema.Reference);
+            var subSchema = schema.AllOf[1];
+            Assert.Equal(new[] { "Property1" }, subSchema.Properties.Keys);
             // The base type schema
-            var baseTypeSchema = schemaRepository.Schemas[schema.AllOf[0].Reference.Id];
+            var baseTypeSchema = schemaRepository.Schemas[baseSchema.Reference.Id];
             Assert.Equal("object", baseTypeSchema.Type);
             Assert.Equal(new[] { "BaseProperty" }, baseTypeSchema.Properties.Keys);
         }
@@ -488,24 +511,24 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.NotNull(schema.OneOf[0].Reference);
             var baseSchema = schemaRepository.Schemas[schema.OneOf[0].Reference.Id];
             Assert.Equal("object", baseSchema.Type);
-            Assert.Equal(new[] { "BaseProperty"}, baseSchema.Properties.Keys);
+            Assert.Equal(new[] { "BaseProperty" }, baseSchema.Properties.Keys);
             // The first sub type schema
             Assert.NotNull(schema.OneOf[1].Reference);
             var subType1Schema = schemaRepository.Schemas[schema.OneOf[1].Reference.Id];
             Assert.Equal("object", subType1Schema.Type);
             Assert.NotNull(subType1Schema.AllOf);
-            Assert.Equal(1, subType1Schema.AllOf.Count);
-            Assert.NotNull(subType1Schema.AllOf[0].Reference);
-            Assert.Equal("BaseType", subType1Schema.AllOf[0].Reference.Id);
+            var allOf = Assert.Single(subType1Schema.AllOf);
+            Assert.NotNull(allOf.Reference);
+            Assert.Equal("BaseType", allOf.Reference.Id);
             Assert.Equal(new[] { "Property1" }, subType1Schema.Properties.Keys);
             // The second sub type schema
             Assert.NotNull(schema.OneOf[2].Reference);
             var subType2Schema = schemaRepository.Schemas[schema.OneOf[2].Reference.Id];
             Assert.Equal("object", subType2Schema.Type);
             Assert.NotNull(subType2Schema.AllOf);
-            Assert.Equal(1, subType2Schema.AllOf.Count);
-            Assert.NotNull(subType2Schema.AllOf[0].Reference);
-            Assert.Equal("BaseType", subType2Schema.AllOf[0].Reference.Id);
+            allOf = Assert.Single(subType2Schema.AllOf);
+            Assert.NotNull(allOf.Reference);
+            Assert.Equal("BaseType", allOf.Reference.Id);
             Assert.Equal(new[] { "Property2" }, subType2Schema.Properties.Keys);
         }
 
@@ -521,7 +544,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 
             Assert.Null(schema.Reference);
             Assert.NotNull(schema.AllOf);
-            Assert.Equal(1, schema.AllOf.Count);
+            Assert.Single(schema.AllOf);
         }
 
         [Fact]
@@ -621,9 +644,9 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [InlineData(TypeNameHandling.Arrays, TypeNameAssemblyFormatHandling.Full, false,
             null)]
         [InlineData(TypeNameHandling.Objects, TypeNameAssemblyFormatHandling.Full, true,
-            "Swashbuckle.AspNetCore.TestSupport.{0}, Swashbuckle.AspNetCore.TestSupport, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null")]
+            "Swashbuckle.AspNetCore.TestSupport.{0}, Swashbuckle.AspNetCore.TestSupport, Version=1.0.0.0, Culture=neutral, PublicKeyToken=62657d7474907593")]
         [InlineData(TypeNameHandling.All, TypeNameAssemblyFormatHandling.Full, true,
-            "Swashbuckle.AspNetCore.TestSupport.{0}, Swashbuckle.AspNetCore.TestSupport, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null")]
+            "Swashbuckle.AspNetCore.TestSupport.{0}, Swashbuckle.AspNetCore.TestSupport, Version=1.0.0.0, Culture=neutral, PublicKeyToken=62657d7474907593")]
         [InlineData(TypeNameHandling.Auto, TypeNameAssemblyFormatHandling.Simple, true,
             "Swashbuckle.AspNetCore.TestSupport.{0}, Swashbuckle.AspNetCore.TestSupport")]
         public void GenerateSchema_HonorsSerializerSetting_TypeNameHandling(
@@ -831,7 +854,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.Null(schema.Type);
         }
 
-        private SchemaGenerator Subject(
+        private static SchemaGenerator Subject(
             Action<SchemaGeneratorOptions> configureGenerator = null,
             Action<JsonSerializerSettings> configureSerializer = null)
         {

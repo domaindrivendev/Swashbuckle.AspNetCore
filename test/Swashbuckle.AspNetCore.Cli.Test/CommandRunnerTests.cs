@@ -4,10 +4,10 @@ using Xunit;
 
 namespace Swashbuckle.AspNetCore.Cli.Test
 {
-    public class CommandRunnerTests
+    public static class CommandRunnerTests
     {
         [Fact]
-        public void Run_ParsesArgumentsAndExecutesCommands_AccordingToConfiguredMetadata()
+        public static void Run_ParsesArgumentsAndExecutesCommands_AccordingToConfiguredMetadata()
         {
             var receivedValues = new List<string>();
             var subject = new CommandRunner("test", "a test", new StringWriter());
@@ -36,23 +36,23 @@ namespace Swashbuckle.AspNetCore.Cli.Test
                 });
             });
 
-            var cmd1ExitCode = subject.Run(new[] { "cmd1", "--opt1", "foo", "--opt2", "bar" });
-            var cmd2ExitCode = subject.Run(new[] { "cmd2", "--opt1", "blah", "--opt2", "dblah" });
+            var cmd1ExitCode = subject.Run(["cmd1", "--opt1", "foo", "--opt2", "bar"]);
+            var cmd2ExitCode = subject.Run(["cmd2", "--opt1", "blah", "--opt2", "dblah"]);
 
             Assert.Equal(2, cmd1ExitCode);
             Assert.Equal(3, cmd2ExitCode);
-            Assert.Equal(new[] { "foo", null, "bar", "blah", null, "dblah" }, receivedValues.ToArray());
+            Assert.Equal(["foo", null, "bar", "blah", null, "dblah"], [.. receivedValues]);
         }
 
         [Fact]
-        public void Run_PrintsAvailableCommands_WhenUnexpectedCommandIsProvided()
+        public static void Run_PrintsAvailableCommands_WhenUnexpectedCommandIsProvided()
         {
             var output = new StringWriter();
             var subject = new CommandRunner("test", "a test", output);
             subject.SubCommand("cmd", "does something", c => {
             });
 
-            var exitCode = subject.Run(new[] { "foo" });
+            var exitCode = subject.Run(["foo"]);
 
             Assert.StartsWith("a test", output.ToString());
             Assert.Contains("Commands:", output.ToString());
@@ -60,14 +60,14 @@ namespace Swashbuckle.AspNetCore.Cli.Test
         }
 
         [Fact]
-        public void Run_PrintsAvailableCommands_WhenHelpOptionIsProvided()
+        public static void Run_PrintsAvailableCommands_WhenHelpOptionIsProvided()
         {
             var output = new StringWriter();
             var subject = new CommandRunner("test", "a test", output);
             subject.SubCommand("cmd", "does something", c => {
             });
 
-            var exitCode = subject.Run(new[] { "--help" });
+            var exitCode = subject.Run(["--help"]);
 
             Assert.StartsWith("a test", output.ToString());
             Assert.Contains("Commands:", output.ToString());
@@ -75,15 +75,15 @@ namespace Swashbuckle.AspNetCore.Cli.Test
         }
 
         [Theory]
-        [InlineData(new[] { "--opt1" }, new string[] { }, new[] { "cmd", "--opt2", "foo" }, true)]
-        [InlineData(new[] { "--opt1" }, new string[] { }, new[] { "cmd", "--opt1" }, true)]
-        [InlineData(new[] { "--opt1" }, new string[] { }, new[] { "cmd", "--opt1", "--opt2" }, true)]
-        [InlineData(new[] { "--opt1" }, new string[] { }, new[] { "cmd", "--opt1", "foo" }, false)]
-        [InlineData(new string[] { }, new[] { "arg1" }, new[] { "cmd" }, true)]
-        [InlineData(new string[] { }, new[] { "arg1" }, new[] { "cmd", "--opt1" }, true)]
-        [InlineData(new string[] {}, new[] { "arg1" }, new[] { "cmd", "foo", "bar" }, true)]
-        [InlineData(new string[] {}, new[] { "arg1" }, new[] { "cmd", "foo" }, false)]
-        public void Run_PrintsCommandUsage_WhenUnexpectedArgumentsAreProvided(
+        [InlineData(new[] { "--opt1" }, new string[0], new[] { "cmd", "--opt2", "foo" }, true)]
+        [InlineData(new[] { "--opt1" }, new string[0], new[] { "cmd", "--opt1" }, true)]
+        [InlineData(new[] { "--opt1" }, new string[0], new[] { "cmd", "--opt1", "--opt2" }, true)]
+        [InlineData(new[] { "--opt1" }, new string[0], new[] { "cmd", "--opt1", "foo" }, false)]
+        [InlineData(new string[0], new[] { "arg1" }, new[] { "cmd" }, true)]
+        [InlineData(new string[0], new[] { "arg1" }, new[] { "cmd", "--opt1" }, true)]
+        [InlineData(new string[0], new[] { "arg1" }, new[] { "cmd", "foo", "bar" }, true)]
+        [InlineData(new string[0], new[] { "arg1" }, new[] { "cmd", "foo" }, false)]
+        public static void Run_PrintsCommandUsage_WhenUnexpectedArgumentsAreProvided(
             string[] optionNames,
             string[] argNames,
             string[] providedArgs,

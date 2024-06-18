@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -19,70 +20,90 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public DataContract GetDataContractForType(Type type)
         {
-            if (type.IsOneOf(typeof(object), typeof(JsonDocument), typeof(JsonElement)))
+            var effectiveType = Nullable.GetUnderlyingType(type) ?? type;
+            if (effectiveType.IsOneOf(typeof(object), typeof(JsonDocument), typeof(JsonElement)))
             {
                 return DataContract.ForDynamic(
-                    underlyingType: type,
-                    jsonConverter: JsonConverterFunc);
+                    underlyingType: effectiveType,
+                    jsonConverter: (value) => JsonConverterFunc(value, effectiveType));
             }
 
-            if (PrimitiveTypesAndFormats.ContainsKey(type))
+            if (PrimitiveTypesAndFormats.TryGetValue(effectiveType, out var primitiveTypeAndFormat))
             {
-                var primitiveTypeAndFormat = PrimitiveTypesAndFormats[type];
-
                 return DataContract.ForPrimitive(
-                    underlyingType: type,
+                    underlyingType: effectiveType,
                     dataType: primitiveTypeAndFormat.Item1,
                     dataFormat: primitiveTypeAndFormat.Item2,
-                    jsonConverter: JsonConverterFunc);
+                    jsonConverter: (value) => JsonConverterFunc(value, type));
             }
 
-            if (type.IsEnum)
+            if (effectiveType.IsEnum)
             {
-                var enumValues = type.GetEnumValues();
+                var enumValues = effectiveType.GetEnumValues();
 
-                //Test to determine if the serializer will treat as string
-                var serializeAsString = (enumValues.Length > 0)
-                    && JsonConverterFunc(enumValues.GetValue(0)).StartsWith("\"");
+                // Test to determine if the serializer will treat as string
+                var serializeAsString =
+                    enumValues.Length > 0 &&
+#if NET5_0_OR_GREATER
+                    JsonConverterFunc(enumValues.GetValue(0), type).StartsWith('\"');
+#else
+                    JsonConverterFunc(enumValues.GetValue(0), type).StartsWith("\"");
+#endif
 
-                var primitiveTypeAndFormat = serializeAsString
-                    ? PrimitiveTypesAndFormats[typeof(string)]
-                    : PrimitiveTypesAndFormats[type.GetEnumUnderlyingType()];
+                var exampleType = serializeAsString ?
+                    typeof(string) :
+                    effectiveType.GetEnumUnderlyingType();
+
+                primitiveTypeAndFormat = PrimitiveTypesAndFormats[exampleType];
 
                 return DataContract.ForPrimitive(
-                    underlyingType: type,
+                    underlyingType: effectiveType,
                     dataType: primitiveTypeAndFormat.Item1,
                     dataFormat: primitiveTypeAndFormat.Item2,
-                    jsonConverter: JsonConverterFunc);
+                    jsonConverter: (value) => JsonConverterFunc(value, type));
             }
 
-            if (IsSupportedDictionary(type, out Type keyType, out Type valueType))
+            if (IsSupportedDictionary(effectiveType, out Type keyType, out Type valueType))
             {
+                IEnumerable<string> keys = null;
+
+                if (keyType.IsEnum)
+                {
+                    // This is a special case where we know the possible key values
+                    var enumValuesAsJson = keyType.GetEnumValues()
+                        .Cast<object>()
+                        .Select(value => JsonConverterFunc(value, keyType));
+
+                    keys = enumValuesAsJson.Any(json => json.StartsWith("\""))
+                        ? enumValuesAsJson.Select(json => json.Replace("\"", string.Empty))
+                        : keyType.GetEnumNames();
+                }
+
                 return DataContract.ForDictionary(
-                    underlyingType: type,
+                    underlyingType: effectiveType,
                     valueType: valueType,
-                    keys: null, // STJ doesn't currently support dictionaries with enum key types
-                    jsonConverter: JsonConverterFunc);
+                    keys: keys,
+                    jsonConverter: (value) => JsonConverterFunc(value, effectiveType));
             }
 
-            if (IsSupportedCollection(type, out Type itemType))
+            if (IsSupportedCollection(effectiveType, out Type itemType))
             {
                 return DataContract.ForArray(
-                    underlyingType: type,
+                    underlyingType: effectiveType,
                     itemType: itemType,
-                    jsonConverter: JsonConverterFunc);
+                    jsonConverter: (value) => JsonConverterFunc(value, effectiveType));
             }
 
             return DataContract.ForObject(
-                underlyingType: type,
+                underlyingType: effectiveType,
                 properties: GetDataPropertiesFor(type, out Type extensionDataType),
                 extensionDataType: extensionDataType,
-                jsonConverter: JsonConverterFunc);
+                jsonConverter: (value) => JsonConverterFunc(value, effectiveType));
         }
 
-        private string JsonConverterFunc(object value)
+        private string JsonConverterFunc(object value, Type type)
         {
-            return JsonSerializer.Serialize(value, _serializerOptions);
+            return JsonSerializer.Serialize(value, type, _serializerOptions);
         }
 
         public bool IsSupportedDictionary(Type type, out Type keyType, out Type valueType)
@@ -131,7 +152,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return false;
         }
 
-        private IEnumerable<DataProperty> GetDataPropertiesFor(Type objectType, out Type extensionDataType)
+        private List<DataProperty> GetDataPropertiesFor(Type objectType, out Type extensionDataType)
         {
             extensionDataType = null;
 
@@ -164,8 +185,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                     return
                         (property.IsPubliclyReadable() || property.IsPubliclyWritable()) &&
-                        !(property.GetIndexParameters().Any()) &&
+                        !(property.GetIndexParameters().Length > 0) &&
                         !(property.HasAttribute<JsonIgnoreAttribute>() && isIgnoredViaNet5Attribute) &&
+                        !(property.HasAttribute<SwaggerIgnoreAttribute>()) &&
                         !(_serializerOptions.IgnoreReadOnlyProperties && !property.IsPubliclyWritable());
                 })
                 .OrderBy(property => property.DeclaringType.GetInheritanceChain().Length);
@@ -221,48 +243,52 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return dataProperties;
         }
 
-        private static readonly Dictionary<Type, Tuple<DataType, string>> PrimitiveTypesAndFormats = new Dictionary<Type, Tuple<DataType, string>>
+        private static readonly Dictionary<Type, Tuple<DataType, string>> PrimitiveTypesAndFormats = new()
         {
-            [ typeof(bool) ] = Tuple.Create(DataType.Boolean, (string)null),
-            [ typeof(bool?) ] = Tuple.Create(DataType.Boolean, (string)null),
-            [ typeof(byte) ] = Tuple.Create(DataType.Integer, "int32"),
-            [ typeof(byte?) ] = Tuple.Create(DataType.Integer, "int32"),
-            [ typeof(sbyte) ] = Tuple.Create(DataType.Integer, "int32"),
-            [ typeof(sbyte?) ] = Tuple.Create(DataType.Integer, "int32"),
-            [ typeof(short) ] = Tuple.Create(DataType.Integer, "int32"),
-            [ typeof(short?) ] = Tuple.Create(DataType.Integer, "int32"),
-            [ typeof(ushort) ] = Tuple.Create(DataType.Integer, "int32"),
-            [ typeof(ushort?) ] = Tuple.Create(DataType.Integer, "int32"),
-            [ typeof(int) ] = Tuple.Create(DataType.Integer, "int32"),
-            [ typeof(int?) ] = Tuple.Create(DataType.Integer, "int32"),
-            [ typeof(uint) ] = Tuple.Create(DataType.Integer, "int32"),
-            [ typeof(uint?) ] = Tuple.Create(DataType.Integer, "int32"),
-            [ typeof(long) ] = Tuple.Create(DataType.Integer, "int64"),
-            [ typeof(long?) ] = Tuple.Create(DataType.Integer, "int64"),
-            [ typeof(ulong) ] = Tuple.Create(DataType.Integer, "int64"),
-            [ typeof(ulong?) ] = Tuple.Create(DataType.Integer, "int64"),
-            [ typeof(float) ] = Tuple.Create(DataType.Number, "float"),
-            [ typeof(float?) ] = Tuple.Create(DataType.Number, "float"),
-            [ typeof(double) ] = Tuple.Create(DataType.Number, "double"),
-            [ typeof(double?) ] = Tuple.Create(DataType.Number, "double"),
-            [ typeof(decimal) ] = Tuple.Create(DataType.Number, "double"),
-            [ typeof(decimal?) ] = Tuple.Create(DataType.Number, "double"),
-            [ typeof(byte[]) ] = Tuple.Create(DataType.String, "byte"),
-            [ typeof(string) ] = Tuple.Create(DataType.String, (string)null),
-            [ typeof(char) ] = Tuple.Create(DataType.String, (string)null),
-            [ typeof(char?) ] = Tuple.Create(DataType.String, (string)null),
-            [ typeof(DateTime) ] = Tuple.Create(DataType.String, "date-time"),
-            [ typeof(DateTime?) ] = Tuple.Create(DataType.String, "date-time"),
-            [ typeof(DateTimeOffset) ] = Tuple.Create(DataType.String, "date-time"),
-            [ typeof(DateTimeOffset?) ] = Tuple.Create(DataType.String, "date-time"),
-            [ typeof(Guid) ] = Tuple.Create(DataType.String, "uuid"),
-            [ typeof(Guid?) ] = Tuple.Create(DataType.String, "uuid"),
-            [ typeof(Uri) ] = Tuple.Create(DataType.String, "uri"),
+            [typeof(bool)] = Tuple.Create(DataType.Boolean, (string)null),
+            [typeof(bool?)] = Tuple.Create(DataType.Boolean, (string)null),
+            [typeof(byte)] = Tuple.Create(DataType.Integer, "int32"),
+            [typeof(byte?)] = Tuple.Create(DataType.Integer, "int32"),
+            [typeof(sbyte)] = Tuple.Create(DataType.Integer, "int32"),
+            [typeof(sbyte?)] = Tuple.Create(DataType.Integer, "int32"),
+            [typeof(short)] = Tuple.Create(DataType.Integer, "int32"),
+            [typeof(short?)] = Tuple.Create(DataType.Integer, "int32"),
+            [typeof(ushort)] = Tuple.Create(DataType.Integer, "int32"),
+            [typeof(ushort?)] = Tuple.Create(DataType.Integer, "int32"),
+            [typeof(int)] = Tuple.Create(DataType.Integer, "int32"),
+            [typeof(int?)] = Tuple.Create(DataType.Integer, "int32"),
+            [typeof(uint)] = Tuple.Create(DataType.Integer, "int32"),
+            [typeof(uint?)] = Tuple.Create(DataType.Integer, "int32"),
+            [typeof(long)] = Tuple.Create(DataType.Integer, "int64"),
+            [typeof(long?)] = Tuple.Create(DataType.Integer, "int64"),
+            [typeof(ulong)] = Tuple.Create(DataType.Integer, "int64"),
+            [typeof(ulong?)] = Tuple.Create(DataType.Integer, "int64"),
+            [typeof(float)] = Tuple.Create(DataType.Number, "float"),
+            [typeof(float?)] = Tuple.Create(DataType.Number, "float"),
+            [typeof(double)] = Tuple.Create(DataType.Number, "double"),
+            [typeof(double?)] = Tuple.Create(DataType.Number, "double"),
+            [typeof(decimal)] = Tuple.Create(DataType.Number, "double"),
+            [typeof(decimal?)] = Tuple.Create(DataType.Number, "double"),
+            [typeof(byte[])] = Tuple.Create(DataType.String, "byte"),
+            [typeof(string)] = Tuple.Create(DataType.String, (string)null),
+            [typeof(char)] = Tuple.Create(DataType.String, (string)null),
+            [typeof(char?)] = Tuple.Create(DataType.String, (string)null),
+            [typeof(DateTime)] = Tuple.Create(DataType.String, "date-time"),
+            [typeof(DateTime?)] = Tuple.Create(DataType.String, "date-time"),
+            [typeof(DateTimeOffset)] = Tuple.Create(DataType.String, "date-time"),
+            [typeof(DateTimeOffset?)] = Tuple.Create(DataType.String, "date-time"),
+            [typeof(TimeSpan)] = Tuple.Create(DataType.String, "date-span"),
+            [typeof(Guid)] = Tuple.Create(DataType.String, "uuid"),
+            [typeof(Guid?)] = Tuple.Create(DataType.String, "uuid"),
+            [typeof(Uri)] = Tuple.Create(DataType.String, "uri"),
 #if NET6_0_OR_GREATER
-            [ typeof(DateOnly) ] = Tuple.Create(DataType.String, "date"),
-            [ typeof(DateOnly?) ] = Tuple.Create(DataType.String, "date"),
-            [ typeof(TimeOnly) ] = Tuple.Create(DataType.String, "time"),
-            [ typeof(TimeOnly?) ] = Tuple.Create(DataType.String, "time")
+            [typeof(DateOnly)] = Tuple.Create(DataType.String, "date"),
+            [typeof(DateOnly?)] = Tuple.Create(DataType.String, "date"),
+            [typeof(TimeOnly)] = Tuple.Create(DataType.String, "time"),
+            [typeof(TimeOnly?)] = Tuple.Create(DataType.String, "time")
+#if NET7_0_OR_GREATER
+            [typeof(Int128)] = Tuple.Create(DataType.Integer, "int128"),
+            [typeof(UInt128)] = Tuple.Create(DataType.Integer, "int128"),
 #endif
         };
     }

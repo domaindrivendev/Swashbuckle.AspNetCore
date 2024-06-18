@@ -5,6 +5,7 @@ using Xunit;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests
 {
+    [Collection("TestSite")]
     public class SwaggerUIIntegrationTests
     {
         [Theory]
@@ -70,6 +71,18 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             Assert.Contains("Example.com", content);
         }
 
+        [Fact]
+        public async Task IndexUrl_ReturnsInterceptors_IfConfigured()
+        {
+            var client = new TestSite(typeof(CustomUIConfig.Startup)).BuildClient();
+
+            var response = await client.GetAsync("/swagger/index.html");
+            var content = await response.Content.ReadAsStringAsync();
+
+            Assert.Contains("\"RequestInterceptorFunction\":", content);
+            Assert.Contains("\"ResponseInterceptorFunction\":", content);
+        }
+
         [Theory]
         [InlineData("/swagger/index.html", new [] { "Version 1.0", "Version 2.0" })]
         [InlineData("/swagger/1.0/index.html", new [] { "Version 1.0" })]
@@ -86,6 +99,27 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             {
                 Assert.Contains(version, content);
             }
+        }
+
+        [Theory]
+        [InlineData(typeof(Basic.Startup), "/index.html", "./swagger-ui.css", "./swagger-ui-bundle.js", "./swagger-ui-standalone-preset.js")]
+        [InlineData(typeof(CustomUIConfig.Startup), "/swagger/index.html", "/ext/custom-stylesheet.css", "/ext/custom-javascript.js", "/ext/custom-javascript.js")]
+        public async Task IndexUrl_Returns_ExpectedAssetPaths(
+            Type startupType,
+            string indexPath,
+            string cssPath,
+            string scriptBundlePath,
+            string scriptPresetsPath)
+        {
+            var client = new TestSite(startupType).BuildClient();
+
+            var indexResponse = await client.GetAsync(indexPath);
+            Assert.Equal(HttpStatusCode.OK, indexResponse.StatusCode);
+            var content = await indexResponse.Content.ReadAsStringAsync();
+
+            Assert.Contains($"<link rel=\"stylesheet\" type=\"text/css\" href=\"{cssPath}\">", content);
+            Assert.Contains($"<script src=\"{scriptBundlePath}\">", content);
+            Assert.Contains($"<script src=\"{scriptPresetsPath}\">", content);
         }
     }
 }

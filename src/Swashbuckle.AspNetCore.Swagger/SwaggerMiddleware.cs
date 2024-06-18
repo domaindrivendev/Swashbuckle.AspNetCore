@@ -1,10 +1,15 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+#if !NETSTANDARD
+using Microsoft.AspNetCore.Routing.Patterns;
+#endif
 using Microsoft.AspNetCore.Routing.Template;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Writers;
 
@@ -15,6 +20,9 @@ namespace Swashbuckle.AspNetCore.Swagger
         private readonly RequestDelegate _next;
         private readonly SwaggerOptions _options;
         private readonly TemplateMatcher _requestMatcher;
+#if !NETSTANDARD
+        private readonly TemplateBinder _templateBinder;
+#endif
 
         public SwaggerMiddleware(
             RequestDelegate next,
@@ -22,12 +30,22 @@ namespace Swashbuckle.AspNetCore.Swagger
         {
             _next = next;
             _options = options ?? new SwaggerOptions();
-            _requestMatcher = new TemplateMatcher(TemplateParser.Parse(_options.RouteTemplate), new RouteValueDictionary());
+            _requestMatcher = new TemplateMatcher(TemplateParser.Parse(_options.RouteTemplate), []);
         }
+
+#if !NETSTANDARD
+        public SwaggerMiddleware(
+            RequestDelegate next,
+            SwaggerOptions options,
+            TemplateBinderFactory templateBinderFactory) : this(next, options)
+        {
+            _templateBinder = templateBinderFactory.Create(RoutePatternFactory.Parse(_options.RouteTemplate));
+        }
+#endif
 
         public async Task Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
         {
-            if (!RequestingSwaggerDocument(httpContext.Request, out string documentName))
+            if (!RequestingSwaggerDocument(httpContext.Request, out string documentName, out string extension))
             {
                 await _next(httpContext);
                 return;
@@ -57,7 +75,7 @@ namespace Swashbuckle.AspNetCore.Swagger
                     filter(swagger, httpContext.Request);
                 }
 
-                if (Path.GetExtension(httpContext.Request.Path.Value) == ".yaml")
+                if (extension is ".yaml" or ".yml")
                 {
                     await RespondWithSwaggerYaml(httpContext.Response, swagger);
                 }
@@ -72,16 +90,37 @@ namespace Swashbuckle.AspNetCore.Swagger
             }
         }
 
-        private bool RequestingSwaggerDocument(HttpRequest request, out string documentName)
+        private bool RequestingSwaggerDocument(HttpRequest request, out string documentName, out string extension)
         {
             documentName = null;
+            extension = null;
             if (request.Method != "GET") return false;
 
             var routeValues = new RouteValueDictionary();
-            if (!_requestMatcher.TryMatch(request.Path, routeValues) || !routeValues.ContainsKey("documentName")) return false;
+            if (_requestMatcher.TryMatch(request.Path, routeValues))
+            {
+#if !NETSTANDARD
+                if (_templateBinder != null && !_templateBinder.TryProcessConstraints(request.HttpContext, routeValues, out _, out _))
+                {
+                    return false;
+                }
+#endif
+                if (routeValues.TryGetValue("documentName", out var documentNameObject) && documentNameObject is string documentNameString)
+                {
+                    documentName = documentNameString;
+                    if (routeValues.TryGetValue("extension", out var extensionObject))
+                    {
+                        extension = $".{extensionObject}";
+                    }
+                    else
+                    {
+                        extension = Path.GetExtension(request.Path.Value);
+                    }
+                    return true;
+                }
+            }
 
-            documentName = routeValues["documentName"].ToString();
-            return true;
+            return false;
         }
 
         private void RespondWithNotFound(HttpResponse response)
@@ -97,7 +136,20 @@ namespace Swashbuckle.AspNetCore.Swagger
             using (var textWriter = new StringWriter(CultureInfo.InvariantCulture))
             {
                 var jsonWriter = new OpenApiJsonWriter(textWriter);
-                if (_options.SerializeAsV2) swagger.SerializeAsV2(jsonWriter); else swagger.SerializeAsV3(jsonWriter);
+                if (_options.SerializeAsV2)
+                {
+                    if (_options.CustomDocumentSerializer != null)
+                        _options.CustomDocumentSerializer.SerializeDocument(swagger, jsonWriter, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0);
+                    else
+                        swagger.SerializeAsV2(jsonWriter);
+                }
+                else
+                {
+                    if (_options.CustomDocumentSerializer != null)
+                        _options.CustomDocumentSerializer.SerializeDocument(swagger, jsonWriter, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0);
+                    else
+                        swagger.SerializeAsV3(jsonWriter);
+                }
 
                 await response.WriteAsync(textWriter.ToString(), new UTF8Encoding(false));
             }
@@ -111,7 +163,20 @@ namespace Swashbuckle.AspNetCore.Swagger
             using (var textWriter = new StringWriter(CultureInfo.InvariantCulture))
             {
                 var yamlWriter = new OpenApiYamlWriter(textWriter);
-                if (_options.SerializeAsV2) swagger.SerializeAsV2(yamlWriter); else swagger.SerializeAsV3(yamlWriter);
+                if (_options.SerializeAsV2)
+                {
+                    if (_options.CustomDocumentSerializer != null)
+                        _options.CustomDocumentSerializer.SerializeDocument(swagger, yamlWriter, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0);
+                    else
+                        swagger.SerializeAsV2(yamlWriter);
+                }
+                else
+                {
+                    if (_options.CustomDocumentSerializer != null)
+                        _options.CustomDocumentSerializer.SerializeDocument(swagger, yamlWriter, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0);
+                    else
+                        swagger.SerializeAsV3(yamlWriter);
+                }
 
                 await response.WriteAsync(textWriter.ToString(), new UTF8Encoding(false));
             }

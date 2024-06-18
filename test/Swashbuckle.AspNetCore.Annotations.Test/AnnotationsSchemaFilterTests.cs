@@ -1,7 +1,8 @@
 ﻿using System;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
-using Xunit;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Xunit;
 
 namespace Swashbuckle.AspNetCore.Annotations.Test
 {
@@ -101,9 +102,12 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             Assert.NotEmpty(schema.Extensions);
         }
 
-        private AnnotationsSchemaFilter Subject()
+        private static AnnotationsSchemaFilter Subject()
         {
-            return new AnnotationsSchemaFilter(null);
+            // A service provider is required from .NET 8 onwards.
+            // See https://learn.microsoft.com/dotnet/core/compatibility/extensions/8.0/activatorutilities-createinstance-null-provider.
+            var serviceProvider = new ServiceCollection().BuildServiceProvider();
+            return new AnnotationsSchemaFilter(serviceProvider);
         }
     }
 }
