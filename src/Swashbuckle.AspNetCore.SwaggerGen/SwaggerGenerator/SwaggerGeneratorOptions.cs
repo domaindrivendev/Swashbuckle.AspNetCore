@@ -65,9 +65,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public IList<IParameterFilter> ParameterFilters { get; set; }
 
-        public List<IParameterAsyncFilter> ParameterAsyncFilters { get; set; }
+        public IList<IParameterAsyncFilter> ParameterAsyncFilters { get; set; }
 
-        public IList<IRequestBodyFilter> RequestBodyFilters { get; set; }
+        public List<IRequestBodyFilter> RequestBodyFilters { get; set; }
 
         public IList<IRequestBodyAsyncFilter> RequestBodyAsyncFilters { get; set; }
 
