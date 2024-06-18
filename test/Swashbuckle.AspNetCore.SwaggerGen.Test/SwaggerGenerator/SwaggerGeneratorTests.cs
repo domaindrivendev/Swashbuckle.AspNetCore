@@ -1566,6 +1566,266 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Contains("ComplexType", document.Components.Schemas.Keys);
         }
 
+        [Fact]
+        public async Task GetSwaggerAsync_SupportsOption_OperationFilters()
+        {
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "POST", relativePath: "resource")
+                },
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    },
+                    OperationFilters = new List<IOperationFilter>
+                    {
+                        new TestOperationFilter()
+                    }
+                }
+            );
+
+            var document = await subject.GetSwaggerAsync("v1");
+
+            var operation = document.Paths["/resource"].Operations[OperationType.Post];
+            Assert.Equal(2, operation.Extensions.Count);
+            Assert.Equal("bar", ((OpenApiString)operation.Extensions["X-foo"]).Value);
+            Assert.Equal("v1", ((OpenApiString)operation.Extensions["X-docName"]).Value);
+        }
+
+        [Fact]
+        public async Task GetSwaggerAsync_SupportsOption_OperationAsyncFilters()
+        {
+            var subject = Subject(
+                apiDescriptions:
+                [
+                    ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "POST", relativePath: "resource")
+                ],
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    },
+                    OperationAsyncFilters =
+                    [
+                        new TestOperationFilter()
+                    ]
+                }
+            );
+
+            var document = await subject.GetSwaggerAsync("v1");
+
+            var operation = document.Paths["/resource"].Operations[OperationType.Post];
+            Assert.Equal(2, operation.Extensions.Count);
+            Assert.Equal("bar", ((OpenApiString)operation.Extensions["X-foo"]).Value);
+            Assert.Equal("v1", ((OpenApiString)operation.Extensions["X-docName"]).Value);
+        }
+
+        [Fact]
+        public async Task GetSwaggerAsync_SupportsOption_DocumentAsyncFilters()
+        {
+            var subject = Subject(
+                apiDescriptions: [],
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    },
+                    DocumentAsyncFilters =
+                    [
+                        new TestDocumentFilter()
+                    ]
+                }
+            );
+
+            var document = await subject.GetSwaggerAsync("v1");
+
+            Assert.Equal(2, document.Extensions.Count);
+            Assert.Equal("bar", ((OpenApiString)document.Extensions["X-foo"]).Value);
+            Assert.Equal("v1", ((OpenApiString)document.Extensions["X-docName"]).Value);
+            Assert.Contains("ComplexType", document.Components.Schemas.Keys);
+        }
+
+        [Fact]
+        public async Task GetSwaggerAsync_SupportsOption_DocumentFilters()
+        {
+            var subject = Subject(
+                apiDescriptions: Array.Empty<ApiDescription>(),
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    },
+                    DocumentFilters =
+                    [
+                        new TestDocumentFilter()
+                    ]
+                }
+            );
+
+            var document = await subject.GetSwaggerAsync("v1");
+
+            Assert.Equal(2, document.Extensions.Count);
+            Assert.Equal("bar", ((OpenApiString)document.Extensions["X-foo"]).Value);
+            Assert.Equal("v1", ((OpenApiString)document.Extensions["X-docName"]).Value);
+            Assert.Contains("ComplexType", document.Components.Schemas.Keys);
+        }
+
+        [Fact]
+        public async Task GetSwaggerAsync_SupportsOption_RequestBodyAsyncFilters()
+        {
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionWithParameter),
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions: new []
+                        {
+                            new ApiParameterDescription { Name = "param", Source = BindingSource.Body }
+                        })
+                },
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    },
+                    RequestBodyAsyncFilters =
+                    [
+                        new TestRequestBodyFilter()
+                    ]
+                }
+            );
+
+            var document = await subject.GetSwaggerAsync("v1");
+
+            var operation = document.Paths["/resource"].Operations[OperationType.Post];
+            Assert.Equal(2, operation.RequestBody.Extensions.Count);
+            Assert.Equal("bar", ((OpenApiString)operation.RequestBody.Extensions["X-foo"]).Value);
+            Assert.Equal("v1", ((OpenApiString)operation.RequestBody.Extensions["X-docName"]).Value);
+        }
+
+        [Fact]
+        public async Task GetSwaggerAsync_SupportsOption_RequestBodyFilters()
+        {
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionWithParameter),
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions: new []
+                        {
+                            new ApiParameterDescription { Name = "param", Source = BindingSource.Body }
+                        })
+                },
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    },
+                    RequestBodyFilters = new List<IRequestBodyFilter>
+                    {
+                        new TestRequestBodyFilter()
+                    }
+                }
+            );
+
+            var document = await subject.GetSwaggerAsync("v1");
+
+            var operation = document.Paths["/resource"].Operations[OperationType.Post];
+            Assert.Equal(2, operation.RequestBody.Extensions.Count);
+            Assert.Equal("bar", ((OpenApiString)operation.RequestBody.Extensions["X-foo"]).Value);
+            Assert.Equal("v1", ((OpenApiString)operation.RequestBody.Extensions["X-docName"]).Value);
+        }
+
+        [Fact]
+        public async Task GetSwaggerAsync_SupportsOption_ParameterFilters()
+        {
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionWithParameter),
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions: new []
+                        {
+                            new ApiParameterDescription { Name = "param", Source = BindingSource.Query }
+                        })
+                },
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    },
+                    ParameterFilters = new List<IParameterFilter>
+                    {
+                        new TestParameterFilter()
+                    }
+                }
+            );
+
+            var document = await subject.GetSwaggerAsync("v1");
+
+            var operation = document.Paths["/resource"].Operations[OperationType.Post];
+            Assert.Equal(2, operation.Parameters[0].Extensions.Count);
+            Assert.Equal("bar", ((OpenApiString)operation.Parameters[0].Extensions["X-foo"]).Value);
+            Assert.Equal("v1", ((OpenApiString)operation.Parameters[0].Extensions["X-docName"]).Value);
+        }
+
+        [Fact]
+        public async Task GetSwaggerAsync_SupportsOption_ParameterAsyncFilters()
+        {
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionWithParameter),
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions: new []
+                        {
+                            new ApiParameterDescription { Name = "param", Source = BindingSource.Query }
+                        })
+                },
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    },
+                    ParameterAsyncFilters =
+                    [
+                        new TestParameterFilter()
+                    ]
+                }
+            );
+
+            var document = await subject.GetSwaggerAsync("v1");
+
+            var operation = document.Paths["/resource"].Operations[OperationType.Post];
+            Assert.Equal(2, operation.Parameters[0].Extensions.Count);
+            Assert.Equal("bar", ((OpenApiString)operation.Parameters[0].Extensions["X-foo"]).Value);
+            Assert.Equal("v1", ((OpenApiString)operation.Parameters[0].Extensions["X-docName"]).Value);
+        }
+
         [Theory]
         [InlineData("connect")]
         [InlineData("CONNECT")]

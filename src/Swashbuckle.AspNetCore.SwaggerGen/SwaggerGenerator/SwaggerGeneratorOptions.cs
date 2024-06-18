@@ -26,9 +26,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>();
             SecurityRequirements = new List<OpenApiSecurityRequirement>();
             ParameterFilters = new List<IParameterFilter>();
+            ParameterAsyncFilters = new List<IParameterAsyncFilter>();
             RequestBodyFilters = new List<IRequestBodyFilter>();
+            RequestBodyAsyncFilters = new List<IRequestBodyAsyncFilter>();
             OperationFilters = new List<IOperationFilter>();
+            OperationAsyncFilters = new List<IOperationAsyncFilter>();
             DocumentFilters = new List<IDocumentFilter>();
+            DocumentAsyncFilters = new List<IDocumentAsyncFilter>();
         }
 
         public IDictionary<string, OpenApiInfo> SwaggerDocs { get; set; }
@@ -47,7 +51,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public bool InferSecuritySchemes { get; set; }
 
-        public Func<IEnumerable<AuthenticationScheme>, IDictionary<string, OpenApiSecurityScheme>> SecuritySchemesSelector { get; set;}
+        public Func<IEnumerable<AuthenticationScheme>, IDictionary<string, OpenApiSecurityScheme>> SecuritySchemesSelector { get; set; }
 
         public bool DescribeAllParametersInCamelCase { get; set; }
 
@@ -61,11 +65,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public IList<IParameterFilter> ParameterFilters { get; set; }
 
+        public IList<IParameterAsyncFilter> ParameterAsyncFilters { get; set; }
+
         public List<IRequestBodyFilter> RequestBodyFilters { get; set; }
+
+        public IList<IRequestBodyAsyncFilter> RequestBodyAsyncFilters { get; set; }
 
         public List<IOperationFilter> OperationFilters { get; set; }
 
+        public IList<IOperationAsyncFilter> OperationAsyncFilters { get; set; }
+
         public IList<IDocumentFilter> DocumentFilters { get; set; }
+
+        public IList<IDocumentAsyncFilter> DocumentAsyncFilters { get; set; }
 
         private bool DefaultDocInclusionPredicate(string documentName, ApiDescription apiDescription)
         {
