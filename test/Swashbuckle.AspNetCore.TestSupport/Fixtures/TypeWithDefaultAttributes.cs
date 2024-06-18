@@ -30,5 +30,11 @@ namespace Swashbuckle.AspNetCore.TestSupport
 
         [DefaultValue(new[] { "foo", "bar" })]
         public string[] StringArrayWithDefault { get; set; }
+
+        [DefaultValue(null)]
+        public int? NullableIntWithDefaultNullValue { get; set; }
+
+        [DefaultValue(int.MaxValue)]
+        public int? NullableIntWithDefaultValue { get; set; }
     }
 }
