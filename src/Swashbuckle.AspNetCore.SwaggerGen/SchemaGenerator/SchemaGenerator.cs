@@ -387,21 +387,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         .Where(dataProperty => dataProperty.MemberInfo.DeclaringType == dataContract.UnderlyingType);
                 }
 
-                if (_generatorOptions.UseOneOfForPolymorphism)
+                if (IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts))
                 {
-                    if (IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts))
+                    foreach (var knownTypeDataContract in knownTypesDataContracts)
                     {
-                        foreach(var knownTypeDataContract in knownTypesDataContracts)
-                        {
-                            // Ensure schema is generated for all known types
-                            GenerateConcreteSchema(knownTypeDataContract, schemaRepository);
-                        }
+                        // Ensure schema is generated for all known types
+                        GenerateConcreteSchema(knownTypeDataContract, schemaRepository);
+                    }
 
-                        if (TryGetDiscriminatorFor(dataContract, schemaRepository, knownTypesDataContracts, out var discriminator))
-                        {
-                            schema.Properties.Add(discriminator.PropertyName, new OpenApiSchema { Type = "string" });
-                            schema.Required.Add(discriminator.PropertyName);
-                        }
+                    if (TryGetDiscriminatorFor(dataContract, schemaRepository, knownTypesDataContracts, out var discriminator))
+                    {
+                        schema.Properties.Add(discriminator.PropertyName, new OpenApiSchema { Type = "string" });
+                        schema.Required.Add(discriminator.PropertyName);
                     }
                 }
             }
