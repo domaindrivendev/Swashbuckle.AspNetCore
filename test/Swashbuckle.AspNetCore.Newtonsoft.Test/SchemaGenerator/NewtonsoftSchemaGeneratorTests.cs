@@ -480,7 +480,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 
             var schemaRepository = new SchemaRepository();
 
-            var referenceSchema = subject.GenerateSchema(typeof(BaseType), schemaRepository);
+            var referenceSchema = subject.GenerateSchema(typeof(ConsumingType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Contains("TypeName", schema.Properties.Keys);

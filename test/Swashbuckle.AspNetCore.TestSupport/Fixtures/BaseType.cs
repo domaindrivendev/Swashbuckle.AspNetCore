@@ -1,5 +1,10 @@
 ﻿namespace Swashbuckle.AspNetCore.TestSupport
 {
+    public class ConsumingType
+    {
+        public BaseType ConsumingProperty { get; set; }
+    }
+
     public class BaseType
     {
         public string BaseProperty { get; set; }
