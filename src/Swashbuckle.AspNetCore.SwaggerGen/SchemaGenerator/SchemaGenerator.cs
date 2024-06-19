@@ -174,6 +174,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             knownTypesDataContracts = null;
 
             if (dataContract.DataType != DataType.Object) return false;
+            if (dataContract.UnderlyingType.IsAssignableToOneOf(BinaryStringTypes)) return false;
 
             var subTypes = _generatorOptions.SubTypesSelector(dataContract.UnderlyingType);
 
