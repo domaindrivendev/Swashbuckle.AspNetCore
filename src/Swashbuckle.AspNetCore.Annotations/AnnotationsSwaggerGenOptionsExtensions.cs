@@ -68,9 +68,11 @@ namespace Microsoft.Extensions.DependencyInjection
             }
 #endif
 
+#pragma warning disable CS0618 // Type or member is obsolete
             var subTypeAttributes = type.GetCustomAttributes(false)
                 .OfType<SwaggerSubTypeAttribute>()
                 .ToArray();
+#pragma warning restore CS0618 // Type or member is obsolete
 
             if (subTypeAttributes.Any())
             {
@@ -104,9 +106,11 @@ namespace Microsoft.Extensions.DependencyInjection
             }
 #endif
 
+#pragma warning disable CS0618 // Type or member is obsolete
             var discriminatorAttribute = baseType.GetCustomAttributes(false)
                 .OfType<SwaggerDiscriminatorAttribute>()
                 .FirstOrDefault();
+#pragma warning restore CS0618 // Type or member is obsolete
 
             if (discriminatorAttribute != null)
             {
@@ -143,9 +147,11 @@ namespace Microsoft.Extensions.DependencyInjection
             }
 #endif
 
+#pragma warning disable CS0618 // Type or member is obsolete
             var subTypeAttribute = subType.BaseType.GetCustomAttributes(false)
                 .OfType<SwaggerSubTypeAttribute>()
                 .FirstOrDefault(attr => attr.SubType == subType);
+#pragma warning restore CS0618 // Type or member is obsolete
 
             if (subTypeAttribute != null)
             {
