@@ -322,6 +322,10 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.Equal(3, schema.Properties["StringWithLength"].MaxLength);
             Assert.Equal(1, schema.Properties["ArrayWithLength"].MinItems);
             Assert.Equal(3, schema.Properties["ArrayWithLength"].MaxItems);
+            Assert.Equal(true, schema.Properties["IntWithRange"].ExclusiveMinimum);
+            Assert.Equal(true, schema.Properties["IntWithRange"].ExclusiveMaximum);
+            Assert.Equal("byte", schema.Properties["StringWithBase64"].Format);
+            Assert.Equal("string", schema.Properties["StringWithBase64"].Type);
 #endif
             Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);
             Assert.Equal(10, schema.Properties["IntWithRange"].Maximum);
