@@ -174,10 +174,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private static void ApplyBase64Attribute(OpenApiSchema schema)
         {
-            if (schema.Type == "string")
-            {
-                schema.Format = "byte";
-            }
+            schema.Format = "byte";
         }
 
 #endif
