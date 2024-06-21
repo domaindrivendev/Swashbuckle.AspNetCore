@@ -17,6 +17,7 @@ namespace Swashbuckle.AspNetCore.TestSupport
         public string StringWithLength { get; set; }
 
         public string[] ArrayWithLength { get; set; }
+
         public string StringWithBase64 { get; set; }
 
 #endif
@@ -47,18 +48,22 @@ namespace Swashbuckle.AspNetCore.TestSupport
 
         [Length(1, 3)]
         public string StringWithLength { get; set; }
+
         [Length(1, 3)]
         public string[] ArrayWithLength { get; set; }
 
         [Range(1, 10, MinimumIsExclusive = true, MaximumIsExclusive = true)]
         public int IntWithRange { get; set; }
+
         [Base64String]
         public string StringWithBase64 { get; set; }
+
 #else
+
         [Range(1, 10)]
         public int IntWithRange { get; set; }
-#endif
 
+#endif
 
         [RegularExpression("^[3-6]?\\d{12,15}$")]
         public string StringWithRegularExpression { get; set; }

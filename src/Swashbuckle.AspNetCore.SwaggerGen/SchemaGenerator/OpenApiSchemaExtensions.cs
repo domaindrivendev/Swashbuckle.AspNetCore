@@ -182,8 +182,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private static void ApplyRangeAttribute(OpenApiSchema schema, RangeAttribute rangeAttribute)
         {
 #if NET8_0_OR_GREATER
+
             schema.ExclusiveMinimum = rangeAttribute.MinimumIsExclusive;
             schema.ExclusiveMaximum = rangeAttribute.MaximumIsExclusive;
+
 #endif
 
             schema.Maximum = decimal.TryParse(rangeAttribute.Maximum.ToString(), out decimal maximum)
