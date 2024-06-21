@@ -348,6 +348,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(true, schema.Properties["IntWithRange"].ExclusiveMinimum);
             Assert.Equal(true, schema.Properties["IntWithRange"].ExclusiveMaximum);
             Assert.Equal("byte", schema.Properties["StringWithBase64"].Format);
+            Assert.Equal("string", schema.Properties["StringWithBase64"].Type);
 #endif
             Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);
             Assert.Equal(10, schema.Properties["IntWithRange"].Maximum);
