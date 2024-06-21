@@ -183,8 +183,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
 #if NET8_0_OR_GREATER
 
-            schema.ExclusiveMinimum = rangeAttribute.MinimumIsExclusive;
-            schema.ExclusiveMaximum = rangeAttribute.MaximumIsExclusive;
+            if(rangeAttribute.MinimumIsExclusive)
+            {
+                schema.ExclusiveMinimum = true;
+            }
+
+            if(rangeAttribute.MaximumIsExclusive)
+            {
+                schema.ExclusiveMaximum = true;
+            }
 
 #endif
 
