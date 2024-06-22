@@ -1,8 +1,12 @@
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
+    c.EnableAnnotations();
     c.SwaggerDoc("v1", new() { Title = "WebApi", Version = "v1" });
 });
 
@@ -20,7 +24,7 @@ var summaries = new[]
 
 app.MapGet("/weatherforecast", () =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
+    var forecast = Enumerable.Range(1, 5).Select(index =>
         new WeatherForecast
         (
             DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
@@ -33,12 +37,21 @@ app.MapGet("/weatherforecast", () =>
 .WithName("GetWeatherForecast")
 .WithOpenApi();
 
+app.MapPost("/fruit/{id}", ([AsParameters] CreateFruitModel model) =>
+{
+    return model.Fruit;
+}).WithName("CreateFruit");
+
 app.Run();
 
+record struct CreateFruitModel
+    ([FromRoute, SwaggerParameter(Description = "The id of the fruit that will be created", Required = true)] string Id,
+    [FromBody] Fruit Fruit);
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
+record Fruit(string Name);
 
 namespace WebApi
 {
