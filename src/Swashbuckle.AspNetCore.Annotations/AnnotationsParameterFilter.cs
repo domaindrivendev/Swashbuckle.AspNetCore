@@ -31,8 +31,7 @@ namespace Swashbuckle.AspNetCore.Annotations
         private void ApplyParamAnnotations(OpenApiParameter parameter, ParameterInfo parameterInfo)
         {
 
-            var swaggerParameterAttribute = parameterInfo.GetCustomAttributes<SwaggerParameterAttribute>()
-                .FirstOrDefault();
+            var swaggerParameterAttribute = parameterInfo.GetCustomAttribute<SwaggerParameterAttribute>();
 
             if (swaggerParameterAttribute != null)
                 ApplySwaggerParameterAttribute(parameter, swaggerParameterAttribute);
