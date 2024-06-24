@@ -39,8 +39,7 @@ namespace Swashbuckle.AspNetCore.Annotations
 
         private void ApplyParamAnnotations(OpenApiRequestBody requestBody, ParameterInfo parameterInfo)
         {
-            var swaggerRequestBodyAttribute = parameterInfo.GetCustomAttributes<SwaggerRequestBodyAttribute>()
-                .FirstOrDefault();
+            var swaggerRequestBodyAttribute = parameterInfo.GetCustomAttribute<SwaggerRequestBodyAttribute>();
 
             if (swaggerRequestBodyAttribute != null)
                 ApplySwaggerRequestBodyAttribute(requestBody, swaggerRequestBodyAttribute);

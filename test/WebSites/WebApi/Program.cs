@@ -40,13 +40,14 @@ app.MapGet("/weatherforecast", () =>
 app.MapPost("/fruit/{id}", ([AsParameters] CreateFruitModel model) =>
 {
     return model.Fruit;
-}).WithName("CreateFruit");
+}).WithName("CreateFruit")
+.WithSummary("Create a fruit");
 
 app.Run();
 
 record struct CreateFruitModel
     ([FromRoute, SwaggerParameter(Description = "The id of the fruit that will be created", Required = true)] string Id,
-    [FromBody] Fruit Fruit);
+    [FromBody, SwaggerRequestBody("Description for Body")] Fruit Fruit);
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
