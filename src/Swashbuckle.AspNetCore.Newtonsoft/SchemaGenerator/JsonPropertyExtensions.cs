@@ -23,10 +23,8 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
             if (memberInfo.GetCustomAttribute<JsonRequiredAttribute>() != null)
                 return true;
 
-            var jsonPropertyAttributeData = memberInfo.GetCustomAttributesData()
-                .FirstOrDefault(attrData => attrData.AttributeType == typeof(JsonPropertyAttribute));
-
-            return (jsonPropertyAttributeData != null) && jsonPropertyAttributeData.NamedArguments.Any(arg => arg.MemberName == "Required");
+            var jsonPropertyAttribute = memberInfo.GetCustomAttribute<JsonPropertyAttribute>();
+            return jsonPropertyAttribute != null && jsonPropertyAttribute.Required != Required.Default;
         }
     }
 }
