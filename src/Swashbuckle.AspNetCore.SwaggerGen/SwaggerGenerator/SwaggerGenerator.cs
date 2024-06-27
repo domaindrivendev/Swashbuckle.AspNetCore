@@ -422,9 +422,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 {
                     var requestParameters = apiDescription.ParameterDescriptions.Where(desc => desc.IsFromBody() || desc.IsFromForm());
                     var countOfParameters = requestParameters.Count();
-                    if (countOfParameters >= 1)
+                    if (countOfParameters > 0)
                     {
-                        _ = requestParameters.SingleOrDefault(desc => desc.IsFromBody());
                         if (countOfParameters == 1)
                         {
                             var requestParameter = requestParameters.First();
