@@ -1149,6 +1149,63 @@ public class SwaggerGeneratorVerifyTests
         return Verifier.Verify(document);
     }
 
+    [Fact]
+    public Task GetSwagger_GenerateConsumesSchemas_ForProvidedOpenApiOperationWithSeveralFromForms()
+    {
+        var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithConsumesAttribute));
+        var actionDescriptor = new ActionDescriptor
+        {
+            EndpointMetadata =
+                [
+                    new OpenApiOperation
+                    {
+                        OperationId = "OperationIdSetInMetadata",
+                        RequestBody = new()
+                        {
+                            Content = new Dictionary<string, OpenApiMediaType>()
+                            {
+                                ["application/someMediaType"] = new()
+                            }
+                        }
+                    }
+                ],
+            RouteValues = new Dictionary<string, string>
+            {
+                ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+            }
+        };
+        var subject = Subject(
+            apiDescriptions:
+            [
+                    ApiDescriptionFactory.Create(
+                        actionDescriptor,
+                        methodInfo,
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions:
+                        [
+                            new ApiParameterDescription()
+                            {
+                                Name = "param",
+                                Source = BindingSource.Form,
+                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(TestDto))
+                            },
+                            new ApiParameterDescription()
+                            {
+                                Name = "param2",
+                                Source = BindingSource.Form,
+                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(TypeWithDefaultAttributeOnEnum))
+                            }
+                        ]),
+            ]
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        return Verifier.Verify(document);
+    }
+
     private static SwaggerGenerator Subject(
             IEnumerable<ApiDescription> apiDescriptions,
             SwaggerGeneratorOptions options = null,

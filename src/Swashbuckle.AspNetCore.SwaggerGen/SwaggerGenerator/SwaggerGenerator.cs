@@ -420,14 +420,32 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 foreach (var content in requestContentTypes)
                 {
-                    var requestParameter = apiDescription.ParameterDescriptions.SingleOrDefault(desc => desc.IsFromBody() || desc.IsFromForm());
-                    if (requestParameter is not null)
+                    var requestParameters = apiDescription.ParameterDescriptions.Where(desc => desc.IsFromBody() || desc.IsFromForm());
+                    var countOfParameters = requestParameters.Count();
+                    if (countOfParameters > 0)
                     {
-                        content.Schema = GenerateSchema(
-                            requestParameter.ModelMetadata.ModelType,
-                            schemaRepository,
-                            requestParameter.PropertyInfo(),
-                            requestParameter.ParameterInfo());
+                        if (countOfParameters == 1)
+                        {
+                            var requestParameter = requestParameters.First();
+                            content.Schema = GenerateSchema(
+                                requestParameter.ModelMetadata.ModelType,
+                                schemaRepository,
+                                requestParameter.PropertyInfo(),
+                                requestParameter.ParameterInfo());
+                        }
+                        else
+                        {
+                            content.Schema = new OpenApiSchema()
+                            {
+                                AllOf = requestParameters.Select(s =>
+                                    GenerateSchema(
+                                    s.ModelMetadata.ModelType,
+                                    schemaRepository,
+                                    s.PropertyInfo(),
+                                    s.ParameterInfo()))
+                                .ToList()
+                            };
+                        }
                     }
                 }
             }
