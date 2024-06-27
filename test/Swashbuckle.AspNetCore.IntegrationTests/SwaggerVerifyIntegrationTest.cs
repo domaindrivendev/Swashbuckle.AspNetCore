@@ -8,6 +8,7 @@ using ReDocApp = ReDoc;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests
 {
+    [Collection("TestSite")]
     public class SwaggerVerifyIntegrationTest
     {
         [Theory]
@@ -48,8 +49,8 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_For_Mvc(
             string swaggerRequestUri)
         {
-             var swaggerResponse = await SwaggerEndpointReturnsValidSwaggerJson<MvcWithNullable.Program>(swaggerRequestUri);
-             await Verifier.Verify(swaggerResponse).UseParameters(GetVersion(swaggerRequestUri));
+            var swaggerResponse = await SwaggerEndpointReturnsValidSwaggerJson<MvcWithNullable.Program>(swaggerRequestUri);
+            await Verifier.Verify(swaggerResponse).UseParameters(GetVersion(swaggerRequestUri));
         }
 
         [Fact]
@@ -58,7 +59,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             using var application = new TestApplication<WebApi.Program>();
             using var client = application.CreateDefaultClient();
 
-            var swaggerResponse = await SwaggerResponse(client,"/swagger/v1/swagger.json");
+            var swaggerResponse = await SwaggerResponse(client, "/swagger/v1/swagger.json");
             await Verifier.Verify(swaggerResponse);
         }
 
