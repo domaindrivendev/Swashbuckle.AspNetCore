@@ -446,7 +446,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                                 .ToList()
                             };
                         }
-
                     }
                 }
             }
