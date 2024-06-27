@@ -15,7 +15,6 @@ namespace WebApi.EndPoints
             var group = app.MapGroup("/annotations").WithTags("Annotations");
 
             group.MapPost("/fruit/{id}", CreateFruit);
-            app.MapGet("/kk/{id}", (int id) => id).WithGroupName("Wathever");
 
             return app;
         }

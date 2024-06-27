@@ -15,10 +15,11 @@ builder.Services.AddSwaggerGen(c =>
     c.IncludeXmlComments(Assembly.GetExecutingAssembly());
     c.SwaggerDoc("v1", new() { Title = "WebApi", Version = "v1" });
 });
+
 var app = builder.Build();
+
 app.UseSwagger();
 app.UseSwaggerUI();
-
 
 app.UseHttpsRedirection();
 

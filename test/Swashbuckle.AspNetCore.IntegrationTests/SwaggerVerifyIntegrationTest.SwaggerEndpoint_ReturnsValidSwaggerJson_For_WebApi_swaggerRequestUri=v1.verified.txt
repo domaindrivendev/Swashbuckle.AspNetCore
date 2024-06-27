@@ -48,43 +48,6 @@
         }
       }
     },
-    "/AsParameters": {
-      "get": {
-        "tags": [
-          "WebApi"
-        ],
-        "parameters": [
-          {
-            "name": "PropertyOne",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "PropertyTwo",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/WithOpenApi/weatherforecast": {
       "get": {
         "tags": [
@@ -108,7 +71,7 @@
         }
       }
     },
-    "/WithOpenApi/api/people-minimalapi": {
+    "/WithOpenApi/multipleForms": {
       "post": {
         "tags": [
           "WithOpenApi"

@@ -15,8 +15,6 @@
 
             group.MapGet("/Car/{id}", GetProduct);
 
-            app.MapGet("/AsParameters", ([AsParameters] AsParametersArgument request) => "Hello World!");
-
             return app;
         }
         /// <summary>
@@ -24,12 +22,12 @@
         /// </summary>
         ///  <param name="id" example="111">The product id</param>
         /// <response code="200">A Product Id</response>
-        private static Product GetProduct(int id) => new Product { Id = id, Description = "A product" };
+        private static Product GetProduct(int id) => new() { Id = id, Description = "A product" };
     }
     /// <summary>
     /// Represents a product
     /// </summary>
-    public class Product
+    internal class Product
     {
         /// <summary>
         /// Uniquely identifies the product
@@ -40,17 +38,5 @@
         /// Describes the product
         /// </summary>
         public string? Description { get; set; }
-    }
-    internal struct AsParametersArgument
-    {
-        /// <summary>
-        /// This is a property with the number one - This is nowhere in SwaggerUI
-        /// </summary>
-        public string PropertyOne { get; set; }
-
-        /// <summary>
-        /// This is a property with the number two - This is nowhere in SwaggerUI
-        /// </summary>
-        public string PropertyTwo { get; set; }
     }
 }

@@ -421,8 +421,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 foreach (var content in requestContentTypes)
                 {
                     var requestParameters = apiDescription.ParameterDescriptions.Where(desc => desc.IsFromBody() || desc.IsFromForm());
-                    if (requestParameters is not null)
+                    if (requestParameters.Any())
                     {
+                        _ = requestParameters.SingleOrDefault(desc => desc.IsFromBody());
                         if (requestParameters.Count() == 1)
                         {
                             content.Schema = GenerateSchema(

@@ -33,16 +33,12 @@ namespace WebApi.EndPoints
             .WithName("GetWeatherForecast")
             .WithOpenApi();
 
-            group.MapPost("/api/people-minimalapi", ([FromForm] Person person, [FromForm] Address address) =>
+            group.MapPost("/multipleForms", ([FromForm] Person person, [FromForm] Address address) =>
             {
                 TypedResults.NoContent();
             })
             .WithOpenApi()
             .DisableAntiforgery();
-
-
-
-            //group.MapGet("DateTimeKind", (DateTimeKind d) => d);
 
             return app;
         }
