@@ -2035,6 +2035,69 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(document.Components.Schemas[nameof(IntEnum)].Description, operation.Parameters[1].Description);
         }
 
+        [Fact]
+        public void GetSwagger_GenerateConsumesSchemas_ForProvidedOpenApiOperationWithSeveralFromForms()
+        {
+            var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithConsumesAttribute));
+            var actionDescriptor = new ActionDescriptor
+            {
+                EndpointMetadata =
+                [
+                    new OpenApiOperation
+                    {
+                        OperationId = "OperationIdSetInMetadata",
+                        RequestBody = new()
+                        {
+                            Content = new Dictionary<string, OpenApiMediaType>()
+                            {
+                                ["application/someMediaType"] = new()
+                            }
+                        }
+                    }
+                ],
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+                }
+            };
+            var subject = Subject(
+                apiDescriptions:
+                [
+                    ApiDescriptionFactory.Create(
+                        actionDescriptor,
+                        methodInfo,
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions:
+                        [
+                            new ApiParameterDescription()
+                            {
+                                Name = "param",
+                                Source = BindingSource.Form,
+                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(TestDto))
+                            },
+                            new ApiParameterDescription()
+                            {
+                                Name = "param2",
+                                Source = BindingSource.Form,
+                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(TypeWithDefaultAttributeOnEnum))
+                            }
+                        ]),
+                ]
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal("OperationIdSetInMetadata", document.Paths["/resource"].Operations[OperationType.Post].OperationId);
+            var content = Assert.Single(document.Paths["/resource"].Operations[OperationType.Post].RequestBody.Content);
+            Assert.Equal("application/someMediaType", content.Key);
+            Assert.NotNull(content.Value.Schema);
+            Assert.NotNull(content.Value.Schema.AllOf);
+            Assert.Equal("TestDto", content.Value.Schema.AllOf[0].Reference.Id);
+            Assert.Equal("TypeWithDefaultAttributeOnEnum", content.Value.Schema.AllOf[1].Reference.Id);
+        }
+
         private static SwaggerGenerator Subject(
             IEnumerable<ApiDescription> apiDescriptions,
             SwaggerGeneratorOptions options = null,

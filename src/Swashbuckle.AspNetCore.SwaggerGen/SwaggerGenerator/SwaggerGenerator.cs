@@ -420,14 +420,31 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 foreach (var content in requestContentTypes)
                 {
-                    var requestParameter = apiDescription.ParameterDescriptions.SingleOrDefault(desc => desc.IsFromBody() || desc.IsFromForm());
-                    if (requestParameter is not null)
+                    var requestParameters = apiDescription.ParameterDescriptions.Where(desc => desc.IsFromBody() || desc.IsFromForm());
+                    if (requestParameters is not null)
                     {
-                        content.Schema = GenerateSchema(
-                            requestParameter.ModelMetadata.ModelType,
-                            schemaRepository,
-                            requestParameter.PropertyInfo(),
-                            requestParameter.ParameterInfo());
+                        if (requestParameters.Count() == 1)
+                        {
+                            content.Schema = GenerateSchema(
+                                requestParameters.First().ModelMetadata.ModelType,
+                                schemaRepository,
+                                requestParameters.First().PropertyInfo(),
+                                requestParameters.First().ParameterInfo());
+                        }
+                        else
+                        {
+                            content.Schema = new OpenApiSchema()
+                            {
+                                AllOf = requestParameters.Select(s =>
+                                    GenerateSchema(
+                                    s.ModelMetadata.ModelType,
+                                    schemaRepository,
+                                    s.PropertyInfo(),
+                                    s.ParameterInfo()))
+                                .ToList()
+                            };
+                        }
+
                     }
                 }
             }
