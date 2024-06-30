@@ -26,25 +26,43 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         }
 
         [Theory]
-        [InlineData(typeof(Basic.Startup), "/index.html", "/swagger-ui.js", "/swagger-ui.css")]
-        [InlineData(typeof(CustomUIConfig.Startup), "/swagger/index.html", "/swagger/swagger-ui.js", "/swagger/swagger-ui.css")]
+        [InlineData(typeof(Basic.Startup), "/index.js")]
+        [InlineData(typeof(CustomUIConfig.Startup), "/swagger/index.js")]
+        public async Task SwaggerUIMiddleware_ReturnsInitializerScript(
+            Type startupType,
+            string indexJsPath)
+        {
+            var client = new TestSite(startupType).BuildClient();
+
+            var indexResponse = await client.GetAsync(indexJsPath);
+            Assert.Equal(HttpStatusCode.OK, indexResponse.StatusCode);
+
+            var indexContent = await indexResponse.Content.ReadAsStringAsync();
+            Assert.Contains("SwaggerUIBundle", indexContent);
+        }
+
+        [Theory]
+        [InlineData(typeof(Basic.Startup), "/index.html", "/swagger-ui.js", "/index.css", "/swagger-ui.css")]
+        [InlineData(typeof(CustomUIConfig.Startup), "/swagger/index.html", "/swagger/swagger-ui.js", "swagger/index.css", "/swagger/swagger-ui.css")]
         public async Task IndexUrl_ReturnsEmbeddedVersionOfTheSwaggerUI(
             Type startupType,
             string indexPath,
-            string jsPath,
-            string cssPath)
+            string swaggerUijsPath,
+            string indexCssPath,
+            string swaggerUiCssPath)
         {
             var client = new TestSite(startupType).BuildClient();
 
             var indexResponse = await client.GetAsync(indexPath);
             Assert.Equal(HttpStatusCode.OK, indexResponse.StatusCode);
-            var indexContent = await indexResponse.Content.ReadAsStringAsync();
-            Assert.Contains("SwaggerUIBundle", indexContent);
 
-            var jsResponse = await client.GetAsync(jsPath);
+            var jsResponse = await client.GetAsync(swaggerUijsPath);
             Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
 
-            var cssResponse = await client.GetAsync(cssPath);
+            var cssResponse = await client.GetAsync(indexCssPath);
+            Assert.Equal(HttpStatusCode.OK, cssResponse.StatusCode);
+
+            cssResponse = await client.GetAsync(swaggerUiCssPath);
             Assert.Equal(HttpStatusCode.OK, cssResponse.StatusCode);
         }
 
@@ -76,7 +94,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         {
             var client = new TestSite(typeof(CustomUIConfig.Startup)).BuildClient();
 
-            var response = await client.GetAsync("/swagger/index.html");
+            var response = await client.GetAsync("/swagger/index.js");
             var content = await response.Content.ReadAsStringAsync();
 
             Assert.Contains("\"RequestInterceptorFunction\":", content);
@@ -84,9 +102,9 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         }
 
         [Theory]
-        [InlineData("/swagger/index.html", new [] { "Version 1.0", "Version 2.0" })]
-        [InlineData("/swagger/1.0/index.html", new [] { "Version 1.0" })]
-        [InlineData("/swagger/2.0/index.html", new [] { "Version 2.0" })]
+        [InlineData("/swagger/index.js", new[] { "Version 1.0", "Version 2.0" })]
+        [InlineData("/swagger/1.0/index.js", new[] { "Version 1.0" })]
+        [InlineData("/swagger/2.0/index.js", new[] { "Version 2.0" })]
         public async Task SwaggerUIMiddleware_CanBeConfiguredMultipleTimes(string swaggerUiUrl, string[] versions)
         {
             var client = new TestSite(typeof(MultipleVersions.Startup)).BuildClient();

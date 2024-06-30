@@ -68,8 +68,16 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
 
             var isGet = HttpMethods.IsGet(httpMethod);
 
+            var match = Regex.Match(path, $"^/{Regex.Escape(_options.RoutePrefix)}/?(index.html|index.js)$", RegexOptions.IgnoreCase);
+
+            if (isGet && match.Success)
+            {
+                await RespondWithFile(httpContext.Response, match.Groups[1].Value);
+                return;
+            }
+
             // If the RoutePrefix is requested (with or without trailing slash), redirect to index URL
-            if (isGet && Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$",  RegexOptions.IgnoreCase))
+            if (isGet && Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$", RegexOptions.IgnoreCase))
             {
                 // Use relative redirect to support proxy environments
                 var relativeIndexUrl = string.IsNullOrEmpty(path) || path.EndsWith("/")
@@ -77,12 +85,6 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
                     : $"{path.Split('/').Last()}/index.html";
 
                 RespondWithRedirect(httpContext.Response, relativeIndexUrl);
-                return;
-            }
-
-            if (isGet && Regex.IsMatch(path, $"^/{Regex.Escape(_options.RoutePrefix)}/?index.html$",  RegexOptions.IgnoreCase))
-            {
-                await RespondWithIndexHtml(httpContext.Response);
                 return;
             }
 
@@ -110,23 +112,36 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             response.Headers["Location"] = location;
         }
 
-        private async Task RespondWithIndexHtml(HttpResponse response)
+        private async Task RespondWithFile(HttpResponse response, string fileName)
         {
             response.StatusCode = 200;
-            response.ContentType = "text/html;charset=utf-8";
 
-            using (var stream = _options.IndexStream())
+            Stream stream;
+
+            if (fileName == "index.js")
+            {
+                response.ContentType = "application/javascript";
+                stream = typeof(SwaggerUIMiddleware).GetTypeInfo().Assembly
+                            .GetManifestResourceStream($"Swashbuckle.AspNetCore.SwaggerUI.{fileName}");
+            }
+            else
+            {
+                response.ContentType = "text/html;charset=utf-8";
+                stream = _options.IndexStream();
+            }
+
+            using (stream)
             {
                 using var reader = new StreamReader(stream);
 
                 // Inject arguments before writing to response
-                var htmlBuilder = new StringBuilder(await reader.ReadToEndAsync());
+                var content = new StringBuilder(await reader.ReadToEndAsync());
                 foreach (var entry in GetIndexArguments())
                 {
-                    htmlBuilder.Replace(entry.Key, entry.Value);
+                    content.Replace(entry.Key, entry.Value);
                 }
 
-                await response.WriteAsync(htmlBuilder.ToString(), Encoding.UTF8);
+                await response.WriteAsync(content.ToString(), Encoding.UTF8);
             }
         }
 

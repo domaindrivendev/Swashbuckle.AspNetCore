@@ -11,7 +11,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="index.css" />
+    <None Remove="index.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="index.css" />
     <EmbeddedResource Include="index.html" />
+    <EmbeddedResource Include="index.js" />
     <EmbeddedResource Include="node_modules/redoc/bundles/redoc.standalone.js" />
   </ItemGroup>
 
