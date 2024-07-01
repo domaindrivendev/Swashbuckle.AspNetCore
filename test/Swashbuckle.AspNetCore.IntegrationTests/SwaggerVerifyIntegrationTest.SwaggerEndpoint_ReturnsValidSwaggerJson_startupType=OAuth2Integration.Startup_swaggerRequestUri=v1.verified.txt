@@ -44,8 +44,21 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "readAccess"
+            ]
+          }
+        ]
       },
       "post": {
         "tags": [
@@ -73,8 +86,21 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "writeAccess"
+            ]
+          }
+        ]
       }
     },
     "/products/{id}": {
@@ -113,8 +139,21 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "readAccess"
+            ]
+          }
+        ]
       },
       "delete": {
         "tags": [
@@ -134,8 +173,21 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           }
-        }
+        },
+        "security": [
+          {
+            "oauth2": [
+              "writeAccess"
+            ]
+          }
+        ]
       }
     }
   },
