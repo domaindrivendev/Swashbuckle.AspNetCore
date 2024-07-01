@@ -29,7 +29,14 @@
                   {
                     "$ref": "#/components/schemas/Dog"
                   }
-                ]
+                ],
+                "discriminator": {
+                  "propertyName": "animalType",
+                  "mapping": {
+                    "Cat": "#/components/schemas/Cat",
+                    "Dog": "#/components/schemas/Dog"
+                  }
+                }
               }
             },
             "text/json": {
@@ -44,7 +51,14 @@
                   {
                     "$ref": "#/components/schemas/Dog"
                   }
-                ]
+                ],
+                "discriminator": {
+                  "propertyName": "animalType",
+                  "mapping": {
+                    "Cat": "#/components/schemas/Cat",
+                    "Dog": "#/components/schemas/Dog"
+                  }
+                }
               }
             },
             "application/*+json": {
@@ -59,7 +73,14 @@
                   {
                     "$ref": "#/components/schemas/Dog"
                   }
-                ]
+                ],
+                "discriminator": {
+                  "propertyName": "animalType",
+                  "mapping": {
+                    "Cat": "#/components/schemas/Cat",
+                    "Dog": "#/components/schemas/Dog"
+                  }
+                }
               }
             }
           },
@@ -85,14 +106,7 @@
             "$ref": "#/components/schemas/AnimalType"
           }
         },
-        "additionalProperties": false,
-        "discriminator": {
-          "propertyName": "animalType",
-          "mapping": {
-            "Cat": "#/components/schemas/Cat",
-            "Dog": "#/components/schemas/Dog"
-          }
-        }
+        "additionalProperties": false
       },
       "AnimalType": {
         "enum": [
