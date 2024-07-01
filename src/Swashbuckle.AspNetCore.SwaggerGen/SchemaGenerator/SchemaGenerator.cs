@@ -320,7 +320,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 Type = "array",
                 Items = GenerateSchema(dataContract.ArrayItemType, schemaRepository),
-                UniqueItems = hasUniqueItems ? (bool?)true : null
+                UniqueItems = hasUniqueItems ? (bool?)true : null,
+                Xml = new OpenApiXml()
+                {
+                    Wrapped = true,
+                    Name = dataContract.ArrayItemType.Name,
+                }
             };
         }
 
