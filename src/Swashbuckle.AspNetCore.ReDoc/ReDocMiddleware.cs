@@ -56,7 +56,7 @@ namespace Swashbuckle.AspNetCore.ReDoc
             var path = httpContext.Request.Path.Value;
 
             // If the RoutePrefix is requested (with or without trailing slash), redirect to index URL
-            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$",  RegexOptions.IgnoreCase))
+            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$", RegexOptions.IgnoreCase))
             {
                 // Use relative redirect to support proxy environments
                 var relativeIndexUrl = string.IsNullOrEmpty(path) || path.EndsWith("/")
@@ -67,9 +67,11 @@ namespace Swashbuckle.AspNetCore.ReDoc
                 return;
             }
 
-            if (httpMethod == "GET" && Regex.IsMatch(path, $"/{_options.RoutePrefix}/?index.html",  RegexOptions.IgnoreCase))
+            var match = Regex.Match(path, $"^/{Regex.Escape(_options.RoutePrefix)}/?(index.html|index.css|index.js)$", RegexOptions.IgnoreCase);
+
+            if (httpMethod == "GET" && match.Success)
             {
-                await RespondWithIndexHtml(httpContext.Response);
+                await RespondWithFile(httpContext.Response, match.Groups[1].Value);
                 return;
             }
 
@@ -97,12 +99,31 @@ namespace Swashbuckle.AspNetCore.ReDoc
             response.Headers["Location"] = location;
         }
 
-        private async Task RespondWithIndexHtml(HttpResponse response)
+        private async Task RespondWithFile(HttpResponse response, string fileName)
         {
             response.StatusCode = 200;
-            response.ContentType = "text/html";
 
-            using (var stream = _options.IndexStream())
+            Stream stream;
+
+            switch (fileName)
+            {
+                case "index.css":
+                    response.ContentType = "text/css";
+                    stream = typeof(ReDocMiddleware).GetTypeInfo().Assembly
+                                .GetManifestResourceStream($"Swashbuckle.AspNetCore.ReDoc.{fileName}");
+                    break;
+                case "index.js":
+                    response.ContentType = "application/javascript";
+                    stream = typeof(ReDocMiddleware).GetTypeInfo().Assembly
+                                .GetManifestResourceStream($"Swashbuckle.AspNetCore.ReDoc.{fileName}");
+                    break;
+                default:
+                    response.ContentType = "text/html;charset=utf-8";
+                    stream = _options.IndexStream();
+                    break;
+            }
+
+            using (stream)
             {
                 // Inject arguments before writing to response
                 var htmlBuilder = new StringBuilder(new StreamReader(stream).ReadToEnd());

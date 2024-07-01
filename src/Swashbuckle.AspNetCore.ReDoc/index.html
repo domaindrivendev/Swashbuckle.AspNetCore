@@ -10,19 +10,12 @@
     <!--
     Redoc doesn't change outer page styles
     -->
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-        }
-    </style>
+    <link href="index.css" rel="stylesheet" type="text/css">
     %(HeadContent)
 </head>
 <body>
     <div id="redoc-container"></div>
     <script src="redoc.standalone.js"></script>
-    <script type="text/javascript">
-        Redoc.init('%(SpecUrl)', JSON.parse('%(ConfigObject)'), document.getElementById('redoc-container'))
-    </script>
+    <script src="index.js"></script>
 </body>
 </html>

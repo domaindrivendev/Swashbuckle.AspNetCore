@@ -1,0 +1,1 @@
+Redoc.init('%(SpecUrl)', JSON.parse('%(ConfigObject)'), document.getElementById('redoc-container'));
