@@ -53,26 +53,30 @@ namespace Swashbuckle.AspNetCore.ReDoc
         public async Task Invoke(HttpContext httpContext)
         {
             var httpMethod = httpContext.Request.Method;
-            var path = httpContext.Request.Path.Value;
 
-            // If the RoutePrefix is requested (with or without trailing slash), redirect to index URL
-            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$", RegexOptions.IgnoreCase))
+            if (HttpMethods.IsGet(httpMethod))
             {
-                // Use relative redirect to support proxy environments
-                var relativeIndexUrl = string.IsNullOrEmpty(path) || path.EndsWith("/")
-                    ? "index.html"
-                    : $"{path.Split('/').Last()}/index.html";
+                var path = httpContext.Request.Path.Value;
 
-                RespondWithRedirect(httpContext.Response, relativeIndexUrl);
-                return;
-            }
+                // If the RoutePrefix is requested (with or without trailing slash), redirect to index URL
+                if (Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$", RegexOptions.IgnoreCase))
+                {
+                    // Use relative redirect to support proxy environments
+                    var relativeIndexUrl = string.IsNullOrEmpty(path) || path.EndsWith("/")
+                        ? "index.html"
+                        : $"{path.Split('/').Last()}/index.html";
 
-            var match = Regex.Match(path, $"^/{Regex.Escape(_options.RoutePrefix)}/?(index.html|index.css|index.js)$", RegexOptions.IgnoreCase);
+                    RespondWithRedirect(httpContext.Response, relativeIndexUrl);
+                    return;
+                }
 
-            if (httpMethod == "GET" && match.Success)
-            {
-                await RespondWithFile(httpContext.Response, match.Groups[1].Value);
-                return;
+                var match = Regex.Match(path, $"^/{Regex.Escape(_options.RoutePrefix)}/?(index.(html|css|js))$", RegexOptions.IgnoreCase);
+
+                if (match.Success)
+                {
+                    await RespondWithFile(httpContext.Response, match.Groups[1].Value);
+                    return;
+                }
             }
 
             await _staticFileMiddleware.Invoke(httpContext);
@@ -113,7 +117,7 @@ namespace Swashbuckle.AspNetCore.ReDoc
                                 .GetManifestResourceStream($"Swashbuckle.AspNetCore.ReDoc.{fileName}");
                     break;
                 case "index.js":
-                    response.ContentType = "application/javascript";
+                    response.ContentType = "application/javascript;charset=utf-8";
                     stream = typeof(ReDocMiddleware).GetTypeInfo().Assembly
                                 .GetManifestResourceStream($"Swashbuckle.AspNetCore.ReDoc.{fileName}");
                     break;
@@ -126,13 +130,13 @@ namespace Swashbuckle.AspNetCore.ReDoc
             using (stream)
             {
                 // Inject arguments before writing to response
-                var htmlBuilder = new StringBuilder(new StreamReader(stream).ReadToEnd());
+                var content = new StringBuilder(new StreamReader(stream).ReadToEnd());
                 foreach (var entry in GetIndexArguments())
                 {
-                    htmlBuilder.Replace(entry.Key, entry.Value);
+                    content.Replace(entry.Key, entry.Value);
                 }
 
-                await response.WriteAsync(htmlBuilder.ToString(), Encoding.UTF8);
+                await response.WriteAsync(content.ToString(), Encoding.UTF8);
             }
         }
 

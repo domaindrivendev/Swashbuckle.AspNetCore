@@ -6,7 +6,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>
-    <SignAssembly>true</SignAssembly>    
+    <SignAssembly>true</SignAssembly>
     <TargetFrameworks>netstandard2.0;netcoreapp3.0;net5.0;net6.0;net7.0;net8.0</TargetFrameworks>
   </PropertyGroup>
   <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
@@ -16,7 +16,6 @@
 
   <ItemGroup>
     <EmbeddedResource Include="node_modules/swagger-ui-dist/**/*" Exclude="**/*/index.html;**/*/*.map;**/*/*.json;**/*/*.md;**/*/swagger-ui-es-*" />
-    <None Remove="fix-edge-fetch.js" />
     <None Remove="index.js" />
     <EmbeddedResource Include="index.html" />
     <EmbeddedResource Include="index.js" />

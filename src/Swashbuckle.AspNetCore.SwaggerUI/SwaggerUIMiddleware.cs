@@ -64,28 +64,30 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         public async Task Invoke(HttpContext httpContext)
         {
             var httpMethod = httpContext.Request.Method;
-            var path = httpContext.Request.Path.Value;
 
-            var isGet = HttpMethods.IsGet(httpMethod);
-
-            var match = Regex.Match(path, $"^/{Regex.Escape(_options.RoutePrefix)}/?(index.html|index.js)$", RegexOptions.IgnoreCase);
-
-            if (isGet && match.Success)
+            if (HttpMethods.IsGet(httpMethod))
             {
-                await RespondWithFile(httpContext.Response, match.Groups[1].Value);
-                return;
-            }
+                var path = httpContext.Request.Path.Value;
 
-            // If the RoutePrefix is requested (with or without trailing slash), redirect to index URL
-            if (isGet && Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$", RegexOptions.IgnoreCase))
-            {
-                // Use relative redirect to support proxy environments
-                var relativeIndexUrl = string.IsNullOrEmpty(path) || path.EndsWith("/")
-                    ? "index.html"
-                    : $"{path.Split('/').Last()}/index.html";
+                // If the RoutePrefix is requested (with or without trailing slash), redirect to index URL
+                if (Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$", RegexOptions.IgnoreCase))
+                {
+                    // Use relative redirect to support proxy environments
+                    var relativeIndexUrl = string.IsNullOrEmpty(path) || path.EndsWith("/")
+                        ? "index.html"
+                        : $"{path.Split('/').Last()}/index.html";
 
-                RespondWithRedirect(httpContext.Response, relativeIndexUrl);
-                return;
+                    RespondWithRedirect(httpContext.Response, relativeIndexUrl);
+                    return;
+                }
+
+                var match = Regex.Match(path, $"^/{Regex.Escape(_options.RoutePrefix)}/?(index.(html|js))$", RegexOptions.IgnoreCase);
+
+                if (match.Success)
+                {
+                    await RespondWithFile(httpContext.Response, match.Groups[1].Value);
+                    return;
+                }
             }
 
             await _staticFileMiddleware.Invoke(httpContext);
@@ -120,7 +122,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
 
             if (fileName == "index.js")
             {
-                response.ContentType = "application/javascript";
+                response.ContentType = "application/javascript;charset=utf-8";
                 stream = typeof(SwaggerUIMiddleware).GetTypeInfo().Assembly
                             .GetManifestResourceStream($"Swashbuckle.AspNetCore.SwaggerUI.{fileName}");
             }
