@@ -16,9 +16,8 @@
 
   <ItemGroup>
     <EmbeddedResource Include="node_modules/swagger-ui-dist/**/*" Exclude="**/*/index.html;**/*/*.map;**/*/*.json;**/*/*.md;**/*/swagger-ui-es-*" />
-    <None Remove="index.js" />
-    <EmbeddedResource Include="index.html" />
-    <EmbeddedResource Include="index.js" />
+    <None Remove="index.html;index.js" />
+    <EmbeddedResource Include="index.html;index.js" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
