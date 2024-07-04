@@ -1,10 +1,4 @@
-﻿// Workaround for https://github.com/swagger-api/swagger-editor/issues/1371
-if (window.navigator.userAgent.indexOf("Edge") > -1) {
-    console.log("Removing native Edge fetch in favor of swagger-ui's polyfill")
-    window.fetch = undefined;
-}
-
-/* Source: https://gist.github.com/lamberta/3768814
+﻿/* Source: https://gist.github.com/lamberta/3768814
  * Parse a string function definition and return a function object. Does not use eval.
  * @param {string} str
  * @return {function}

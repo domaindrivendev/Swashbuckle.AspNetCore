@@ -123,8 +123,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             if (fileName == "index.js")
             {
                 response.ContentType = "application/javascript;charset=utf-8";
-                stream = typeof(SwaggerUIMiddleware).GetTypeInfo().Assembly
-                            .GetManifestResourceStream($"Swashbuckle.AspNetCore.SwaggerUI.{fileName}");
+                stream = ResourceHelper.GetEmbeddedResource(fileName);
             }
             else
             {

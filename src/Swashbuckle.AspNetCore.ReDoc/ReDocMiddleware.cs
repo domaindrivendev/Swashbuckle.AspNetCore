@@ -113,13 +113,11 @@ namespace Swashbuckle.AspNetCore.ReDoc
             {
                 case "index.css":
                     response.ContentType = "text/css";
-                    stream = typeof(ReDocMiddleware).GetTypeInfo().Assembly
-                                .GetManifestResourceStream($"Swashbuckle.AspNetCore.ReDoc.{fileName}");
+                    stream = ResourceHelper.GetEmbeddedResource(fileName);
                     break;
                 case "index.js":
                     response.ContentType = "application/javascript;charset=utf-8";
-                    stream = typeof(ReDocMiddleware).GetTypeInfo().Assembly
-                                .GetManifestResourceStream($"Swashbuckle.AspNetCore.ReDoc.{fileName}");
+                    stream = ResourceHelper.GetEmbeddedResource(fileName);
                     break;
                 default:
                     response.ContentType = "text/html;charset=utf-8";
