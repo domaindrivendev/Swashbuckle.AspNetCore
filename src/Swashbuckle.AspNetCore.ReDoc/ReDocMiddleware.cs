@@ -53,24 +53,30 @@ namespace Swashbuckle.AspNetCore.ReDoc
         public async Task Invoke(HttpContext httpContext)
         {
             var httpMethod = httpContext.Request.Method;
-            var path = httpContext.Request.Path.Value;
 
-            // If the RoutePrefix is requested (with or without trailing slash), redirect to index URL
-            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$",  RegexOptions.IgnoreCase))
+            if (HttpMethods.IsGet(httpMethod))
             {
-                // Use relative redirect to support proxy environments
-                var relativeIndexUrl = string.IsNullOrEmpty(path) || path.EndsWith("/")
-                    ? "index.html"
-                    : $"{path.Split('/').Last()}/index.html";
+                var path = httpContext.Request.Path.Value;
 
-                RespondWithRedirect(httpContext.Response, relativeIndexUrl);
-                return;
-            }
+                // If the RoutePrefix is requested (with or without trailing slash), redirect to index URL
+                if (Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$", RegexOptions.IgnoreCase))
+                {
+                    // Use relative redirect to support proxy environments
+                    var relativeIndexUrl = string.IsNullOrEmpty(path) || path.EndsWith("/")
+                        ? "index.html"
+                        : $"{path.Split('/').Last()}/index.html";
 
-            if (httpMethod == "GET" && Regex.IsMatch(path, $"/{_options.RoutePrefix}/?index.html",  RegexOptions.IgnoreCase))
-            {
-                await RespondWithIndexHtml(httpContext.Response);
-                return;
+                    RespondWithRedirect(httpContext.Response, relativeIndexUrl);
+                    return;
+                }
+
+                var match = Regex.Match(path, $"^/{Regex.Escape(_options.RoutePrefix)}/?(index.(html|css|js))$", RegexOptions.IgnoreCase);
+
+                if (match.Success)
+                {
+                    await RespondWithFile(httpContext.Response, match.Groups[1].Value);
+                    return;
+                }
             }
 
             await _staticFileMiddleware.Invoke(httpContext);
@@ -97,21 +103,38 @@ namespace Swashbuckle.AspNetCore.ReDoc
             response.Headers["Location"] = location;
         }
 
-        private async Task RespondWithIndexHtml(HttpResponse response)
+        private async Task RespondWithFile(HttpResponse response, string fileName)
         {
             response.StatusCode = 200;
-            response.ContentType = "text/html";
 
-            using (var stream = _options.IndexStream())
+            Stream stream;
+
+            switch (fileName)
+            {
+                case "index.css":
+                    response.ContentType = "text/css";
+                    stream = ResourceHelper.GetEmbeddedResource(fileName);
+                    break;
+                case "index.js":
+                    response.ContentType = "application/javascript;charset=utf-8";
+                    stream = ResourceHelper.GetEmbeddedResource(fileName);
+                    break;
+                default:
+                    response.ContentType = "text/html;charset=utf-8";
+                    stream = _options.IndexStream();
+                    break;
+            }
+
+            using (stream)
             {
                 // Inject arguments before writing to response
-                var htmlBuilder = new StringBuilder(new StreamReader(stream).ReadToEnd());
+                var content = new StringBuilder(new StreamReader(stream).ReadToEnd());
                 foreach (var entry in GetIndexArguments())
                 {
-                    htmlBuilder.Replace(entry.Key, entry.Value);
+                    content.Replace(entry.Key, entry.Value);
                 }
 
-                await response.WriteAsync(htmlBuilder.ToString(), Encoding.UTF8);
+                await response.WriteAsync(content.ToString(), Encoding.UTF8);
             }
         }
 

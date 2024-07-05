@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -18,8 +17,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// <summary>
         /// Gets or sets a Stream function for retrieving the swagger-ui page
         /// </summary>
-        public Func<Stream> IndexStream { get; set; } = () => typeof(SwaggerUIOptions).GetTypeInfo().Assembly
-            .GetManifestResourceStream("Swashbuckle.AspNetCore.SwaggerUI.index.html");
+        public Func<Stream> IndexStream { get; set; } = () => ResourceHelper.GetEmbeddedResource("index.html");
 
         /// <summary>
         /// Gets or sets a title for the swagger-ui page
@@ -34,7 +32,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// <summary>
         /// Gets the JavaScript config object, represented as JSON, that will be passed to the SwaggerUI
         /// </summary>
-        public ConfigObject ConfigObject  { get; set; } = new ConfigObject();
+        public ConfigObject ConfigObject { get; set; } = new ConfigObject();
 
         /// <summary>
         /// Gets the JavaScript config object, represented as JSON, that will be passed to the initOAuth method
