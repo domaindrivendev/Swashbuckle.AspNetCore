@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace Swashbuckle.AspNetCore.SwaggerUI;
 
-internal class ResourceHelper
+internal static class ResourceHelper
 {
     public static Stream GetEmbeddedResource(string fileName)
     {
