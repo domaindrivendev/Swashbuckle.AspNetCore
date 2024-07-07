@@ -12,9 +12,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
-using Xunit;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.TestSupport;
+using Xunit;
 
 namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 {
@@ -269,9 +269,12 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.LongWithDefault), "9223372036854775807")]
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.FloatWithDefault), "3.4028235E+38")]
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.DoubleWithDefault), "1.7976931348623157E+308")]
+        [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.DoubleWithDefaultOfDifferentType), "1")]
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.StringWithDefault), "\"foobar\"")]
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.IntArrayWithDefault), "[\n  1,\n  2,\n  3\n]")]
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.StringArrayWithDefault), "[\n  \"foo\",\n  \"bar\"\n]")]
+        [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.NullableIntWithDefaultNullValue), "null")]
+        [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.NullableIntWithDefaultValue), "2147483647")]
         [UseInvariantCulture]
         public void GenerateSchema_SetsDefault_IfPropertyHasDefaultValueAttribute(
             Type declaringType,
@@ -319,7 +322,13 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.Equal(3, schema.Properties["StringWithLength"].MaxLength);
             Assert.Equal(1, schema.Properties["ArrayWithLength"].MinItems);
             Assert.Equal(3, schema.Properties["ArrayWithLength"].MaxItems);
+            Assert.Equal(true, schema.Properties["IntWithExclusiveRange"].ExclusiveMinimum);
+            Assert.Equal(true, schema.Properties["IntWithExclusiveRange"].ExclusiveMaximum);
+            Assert.Equal("byte", schema.Properties["StringWithBase64"].Format);
+            Assert.Equal("string", schema.Properties["StringWithBase64"].Type);
 #endif
+            Assert.Null(schema.Properties["IntWithRange"].ExclusiveMinimum);
+            Assert.Null(schema.Properties["IntWithRange"].ExclusiveMaximum);
             Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);
             Assert.Equal(10, schema.Properties["IntWithRange"].Maximum);
             Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["StringWithRegularExpression"].Pattern);
@@ -504,7 +513,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.NotNull(schema.OneOf[0].Reference);
             var baseSchema = schemaRepository.Schemas[schema.OneOf[0].Reference.Id];
             Assert.Equal("object", baseSchema.Type);
-            Assert.Equal(new[] { "BaseProperty"}, baseSchema.Properties.Keys);
+            Assert.Equal(new[] { "BaseProperty" }, baseSchema.Properties.Keys);
             // The first sub type schema
             Assert.NotNull(schema.OneOf[1].Reference);
             var subType1Schema = schemaRepository.Schemas[schema.OneOf[1].Reference.Id];

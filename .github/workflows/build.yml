@@ -27,6 +27,7 @@ jobs:
 
     outputs:
       dotnet-sdk-version: ${{ steps.setup-dotnet.outputs.dotnet-version }}
+      dotnet-validate-version: ${{ steps.get-dotnet-tools-versions.outputs.dotnet-validate-version }}
 
     permissions:
       attestations: write
@@ -44,7 +45,7 @@ jobs:
     steps:
 
     - name: Checkout code
-      uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # v4.1.5
+      uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
 
     - name: Setup .NET SDKs
       uses: actions/setup-dotnet@4d6c8fcf3c8f7a60068d26b594648e99df24cee3 # v4.0.0
@@ -78,14 +79,14 @@ jobs:
         if-no-files-found: ignore
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@6d798873df2b1b8e5846dba6fb86631229fbcb17 # v4.4.0
+      uses: codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673 # v4.5.0
       with:
         files: ./artifacts/coverage/coverage.cobertura.xml
         flags: ${{ runner.os }}
         token: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Attest artifacts
-      uses: actions/attest-build-provenance@951c0c5f8e375ad4efad33405ab77f7ded2358e4 # v1.1.1
+      uses: actions/attest-build-provenance@bdd51370e0416ac948727f861e03c2f05d32d78e # v1.3.2
       if: |
         runner.os == 'Windows' &&
         github.event.repository.fork == false &&
@@ -99,6 +100,14 @@ jobs:
         name: packages-${{ runner.os }}
         path: ./artifacts/package/release
         if-no-files-found: error
+
+    - name: Get .NET tools versions
+      id: get-dotnet-tools-versions
+      shell: pwsh
+      run: |
+        $manifest = (Get-Content "./.config/dotnet-tools.json" | Out-String | ConvertFrom-Json)
+        $dotnetValidateVersion = $manifest.tools.'dotnet-validate'.version
+        "dotnet-validate-version=${dotnetValidateVersion}" >> $env:GITHUB_OUTPUT
 
   validate-packages:
     needs: build
@@ -117,8 +126,10 @@ jobs:
 
     - name: Validate NuGet packages
       shell: pwsh
+      env:
+        DOTNET_VALIDATE_VERSION: ${{ needs.build.outputs.dotnet-validate-version }}
       run: |
-        dotnet tool install --global dotnet-validate --version 0.0.1-preview.304
+        dotnet tool install --global dotnet-validate --version ${env:DOTNET_VALIDATE_VERSION}
         $packages = Get-ChildItem -Filter "*.nupkg" | ForEach-Object { $_.FullName }
         $invalidPackages = 0
         foreach ($package in $packages) {
@@ -129,6 +140,7 @@ jobs:
         }
         if ($invalidPackages -gt 0) {
           Write-Output "::error::$invalidPackages NuGet package(s) failed validation."
+          exit 1
         }
 
   publish-myget:

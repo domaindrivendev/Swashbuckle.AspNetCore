@@ -22,4 +22,8 @@
     <PackageReference Include="xunit.core" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectCapability Remove="TestContainer" />
+  </ItemGroup>
+
 </Project>

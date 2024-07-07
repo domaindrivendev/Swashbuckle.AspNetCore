@@ -17,4 +17,8 @@
     <PackageReference Include="xunit" VersionOverride="2.4.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectCapability Remove="TestContainer" />
+  </ItemGroup>
+  
 </Project>

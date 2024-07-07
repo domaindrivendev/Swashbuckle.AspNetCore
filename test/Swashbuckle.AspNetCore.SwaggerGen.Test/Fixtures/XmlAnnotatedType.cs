@@ -46,6 +46,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public double DoubleProperty { get; set; }
 
         /// <summary>
+        /// Summary for DateTimeProperty
+        /// </summary>
+        /// <example>6/22/2022 12:00:00 AM</example>
+        public DateTime DateTimeProperty { get; set; }
+
+        /// <summary>
         /// Summary for EnumProperty
         /// </summary>
         /// <example>2</example>

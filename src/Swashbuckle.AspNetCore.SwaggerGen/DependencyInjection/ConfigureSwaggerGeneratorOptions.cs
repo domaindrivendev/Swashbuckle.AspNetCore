@@ -68,9 +68,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             target.SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>(source.SecuritySchemes);
             target.SecurityRequirements = new List<OpenApiSecurityRequirement>(source.SecurityRequirements);
             target.ParameterFilters = new List<IParameterFilter>(source.ParameterFilters);
+            target.ParameterAsyncFilters = new List<IParameterAsyncFilter>(source.ParameterAsyncFilters);
             target.OperationFilters = new List<IOperationFilter>(source.OperationFilters);
+            target.OperationAsyncFilters = new List<IOperationAsyncFilter>(source.OperationAsyncFilters);
             target.DocumentFilters = new List<IDocumentFilter>(source.DocumentFilters);
+            target.DocumentAsyncFilters = new List<IDocumentAsyncFilter>(source.DocumentAsyncFilters);
             target.RequestBodyFilters = new List<IRequestBodyFilter>(source.RequestBodyFilters);
+            target.RequestBodyAsyncFilters = new List<IRequestBodyAsyncFilter>(source.RequestBodyAsyncFilters);
             target.SecuritySchemesSelector = source.SecuritySchemesSelector;
         }
 

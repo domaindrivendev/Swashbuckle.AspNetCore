@@ -18,6 +18,10 @@ namespace Swashbuckle.AspNetCore.TestSupport
 
         public string[] ArrayWithLength { get; set; }
 
+        public string StringWithBase64 { get; set; }
+
+        public double IntWithExclusiveRange { get; set; }
+
 #endif
 
         public int IntWithRange { get; set; }
@@ -49,6 +53,12 @@ namespace Swashbuckle.AspNetCore.TestSupport
 
         [Length(1, 3)]
         public string[] ArrayWithLength { get; set; }
+
+        [Range(1, 10, MinimumIsExclusive = true, MaximumIsExclusive = true)]
+        public int IntWithExclusiveRange { get; set; }
+
+        [Base64String]
+        public string StringWithBase64 { get; set; }
 
 #endif
 

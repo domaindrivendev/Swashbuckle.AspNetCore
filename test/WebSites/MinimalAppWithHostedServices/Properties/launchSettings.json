@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "MinimalAppWithHostedServices": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:57095;http://localhost:57096"
+    }
+  }
+}

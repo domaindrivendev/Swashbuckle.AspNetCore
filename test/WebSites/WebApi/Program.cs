@@ -1,8 +1,18 @@
+using System.Reflection;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Http.Json;
+using WebApi.EndPoints;
+
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.Configure<JsonOptions>(
+    opt => opt.SerializerOptions.Converters.Add(new JsonStringEnumConverter())
+);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
+    c.EnableAnnotations();
+    c.IncludeXmlComments(Assembly.GetExecutingAssembly());
     c.SwaggerDoc("v1", new() { Title = "WebApi", Version = "v1" });
 });
 
@@ -18,29 +28,19 @@ var summaries = new[]
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+app.MapAnnotationsEndpoints()
+.MapWithOpenApiEndpoints()
+.MapXmlCommentsEndpoints();
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+namespace WebApi
 {
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
-
-public partial class Program
-{
-    // Expose the Program class for use with WebApplicationFactory<T>
+    /// <summary>
+    /// Main class
+    /// </summary>
+    public partial class Program
+    {
+        // Expose the Program class for use with WebApplicationFactory<T>
+    }
 }

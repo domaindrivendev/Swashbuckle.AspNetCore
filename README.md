@@ -9,6 +9,8 @@ Swashbuckle.AspNetCore
 
 [![NuGet](https://buildstats.info/nuget/Swashbuckle.AspNetCore)](https://www.nuget.org/packages/Swashbuckle.AspNetCore/ "Download Swashbuckle.AspNetCore from NuGet.org")
 
+[![Help Wanted](https://img.shields.io/github/issues/domaindrivendev/Swashbuckle.AspNetCore/help-wanted?style=flat&color=%24EC820&label=Help%20wanted)](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/labels/help-wanted)
+
 [Swagger](https://swagger.io) tooling for APIs built with ASP.NET Core. Generate beautiful API documentation, including a UI to explore and test operations, directly from your routes, controllers and models.
 
 In addition to its [Swagger 2.0 and OpenAPI 3.0](https://swagger.io/specification/) generator, Swashbuckle also provides an embedded version of the awesome [swagger-ui](https://github.com/swagger-api/swagger-ui) that's powered by the generated Swagger JSON. This means you can complement your API with living documentation that's always in sync with the latest code. Best of all, it requires minimal coding and maintenance, allowing you to focus on building an awesome API.
@@ -22,7 +24,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 | Swashbuckle Version | ASP.NET Core | Swagger / OpenAPI Spec. | swagger-ui | Redoc UI |
 |----------|----------|----------|----------|----------|
 | [CI](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/commits/master/)|>= 2.0.0 | 2.0, 3.0 | [5.x.x](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/master/src/Swashbuckle.AspNetCore.SwaggerUI/package.json#L6) | [2.x.x](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/master/src/Swashbuckle.AspNetCore.ReDoc/package.json#L6) |
-| [6.6.1](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v6.6.1)|>= 2.0.0 | 2.0, 3.0 | 5.17.9 | 2.1.4 |
+| [6.6.2](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v6.6.2)|>= 2.0.0 | 2.0, 3.0 | 5.17.10 | 2.1.4 |
 | [5.6.3](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v5.6.3)|>= 2.0.0 | 2.0, 3.0 | 3.32.5 | 2.0.0-rc.40 |
 | [4.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v4.0.0)|>= 2.0.0, < 3.0.0 | 2.0 | 3.19.5 | 1.22.2 |
 | [3.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v3.0.0)|>= 1.0.4, < 3.0.0 | 2.0 | 3.17.1 | 1.20.0 |
@@ -224,6 +226,7 @@ The steps described above will get you up and running with minimal setup. Howeve
 * [Swashbuckle.AspNetCore.SwaggerUI](#swashbuckleaspnetcoreswaggerui)
     * [Change Relative Path to the UI](#change-relative-path-to-the-ui)
     * [Change Document Title](#change-document-title)
+    * [Change CSS or JS Paths](#change-css-or-js-paths)
     * [List Multiple Swagger Documents](#list-multiple-swagger-documents)
     * [Apply swagger-ui Parameters](#apply-swagger-ui-parameters)
     * [Inject Custom JavaScript](#inject-custom-javascript)
@@ -539,7 +542,8 @@ To enhance the generated docs with human-friendly descriptions, you can annotate
          );
 
          var filePath = Path.Combine(System.AppContext.BaseDirectory, "MyApi.xml");
-         c.IncludeXmlComments(filePath);
+         c.IncludeXmlComments(Assembly.GetExecutingAssembly());
+         // or c.IncludeXmlComments(typeof(MyController).Assembly));
     }
     ```
 
@@ -1251,6 +1255,19 @@ By default, the Swagger UI will have a generic document title. When you have mul
 app.UseSwaggerUI(c =>
 {
     c.DocumentTitle = "My Swagger UI";
+}
+```
+
+### Change CSS or JS Paths ###
+
+By default, the Swagger UI include default CSS and JS, but if you wish to change the path or URL (for example to use a CDN):
+
+```csharp
+app.UseSwaggerUI(c =>
+{
+    c.StylesPath = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.17.10/swagger-ui.min.css";
+    c.ScriptBundlePath = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.17.10/swagger-ui-bundle.min.js";
+    c.ScriptPresetsPath = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.17.10/swagger-ui-standalone-preset.min.js";
 }
 ```
 

@@ -11,7 +11,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="index.css" />
+    <None Remove="index.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="index.css" />
     <EmbeddedResource Include="index.html" />
+    <EmbeddedResource Include="index.js" />
     <EmbeddedResource Include="node_modules/redoc/bundles/redoc.standalone.js" />
   </ItemGroup>
 
@@ -26,7 +33,7 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
-  <Target Name="NpmInstall" BeforeTargets="DispatchToInnerBuilds">
+  <Target Name="NpmInstall" BeforeTargets="DispatchToInnerBuilds" Condition=" '$(CI)' != '' OR !Exists('$(MSBuildThisFileDirectory)\node_modules') ">
     <Exec Command="npm install" ContinueOnError="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
     </Exec>

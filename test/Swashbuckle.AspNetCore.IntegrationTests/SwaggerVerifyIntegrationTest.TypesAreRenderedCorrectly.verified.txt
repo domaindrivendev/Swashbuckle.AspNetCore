@@ -1,0 +1,240 @@
+﻿{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "WebApi",
+    "version": "v1"
+  },
+  "paths": {
+    "/annotations/fruit/{id}": {
+      "post": {
+        "tags": [
+          "Annotations"
+        ],
+        "summary": "CreateFruit",
+        "description": "Create a fruit",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The id of the fruit that will be created",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Description for Body",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Fruit"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Description for response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Fruit"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/WithOpenApi/weatherforecast": {
+      "get": {
+        "tags": [
+          "WithOpenApi"
+        ],
+        "operationId": "GetWeatherForecast",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WeatherForecast"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/WithOpenApi/multipleForms": {
+      "post": {
+        "tags": [
+          "WithOpenApi"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Person"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Address"
+                  }
+                ]
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Person"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Address"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/XmlComments/Car/{id}": {
+      "get": {
+        "tags": [
+          "Xml"
+        ],
+        "summary": "Returns a specific product",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The product id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 111
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A Product Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Address": {
+        "type": "object",
+        "properties": {
+          "street": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "state": {
+            "type": "string",
+            "nullable": true
+          },
+          "zipCode": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Fruit": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Description for Schema"
+      },
+      "Person": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Uniquely identifies the product",
+            "format": "int32"
+          },
+          "description": {
+            "type": "string",
+            "description": "Describes the product",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a product"
+      },
+      "WeatherForecast": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "temperatureC": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true
+          },
+          "temperatureF": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

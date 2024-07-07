@@ -47,6 +47,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 else if (attribute is LengthAttribute lengthAttribute)
                     ApplyLengthAttribute(schema, lengthAttribute);
 
+                else if (attribute is Base64StringAttribute base64Attribute)
+                    ApplyBase64Attribute(schema);
+
 #endif
 
                 else if (attribute is RangeAttribute rangeAttribute)
@@ -169,10 +172,29 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
         }
 
+        private static void ApplyBase64Attribute(OpenApiSchema schema)
+        {
+            schema.Format = "byte";
+        }
+
 #endif
 
         private static void ApplyRangeAttribute(OpenApiSchema schema, RangeAttribute rangeAttribute)
         {
+#if NET8_0_OR_GREATER
+
+            if (rangeAttribute.MinimumIsExclusive)
+            {
+                schema.ExclusiveMinimum = true;
+            }
+
+            if (rangeAttribute.MaximumIsExclusive)
+            {
+                schema.ExclusiveMaximum = true;
+            }
+
+#endif
+
             schema.Maximum = decimal.TryParse(rangeAttribute.Maximum.ToString(), out decimal maximum)
                 ? maximum
                 : schema.Maximum;

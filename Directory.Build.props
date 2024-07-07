@@ -2,6 +2,8 @@
   <PropertyGroup>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <Authors>domaindrivendev</Authors>
+    <!-- HACK See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2893 -->
+    <BuildInParallel>false</BuildInParallel>
     <ChecksumAlgorithm>SHA256</ChecksumAlgorithm>
     <Company>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</Company>
     <ContinuousIntegrationBuild Condition=" '$(CI)' != '' ">true</ContinuousIntegrationBuild>
@@ -45,7 +47,7 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <UseArtifactsOutput>true</UseArtifactsOutput>
-    <VersionPrefix>6.6.2</VersionPrefix>
+    <VersionPrefix>6.7.0</VersionPrefix>
     <WarnOnPackingNonPackableProject>false</WarnOnPackingNonPackableProject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(GITHUB_ACTIONS)' != '' ">

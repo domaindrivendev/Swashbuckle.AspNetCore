@@ -16,7 +16,8 @@
 
   <ItemGroup>
     <EmbeddedResource Include="node_modules/swagger-ui-dist/**/*" Exclude="**/*/index.html;**/*/*.map;**/*/*.json;**/*/*.md;**/*/swagger-ui-es-*" />
-    <EmbeddedResource Include="index.html" />
+    <None Remove="index.html;index.js" />
+    <EmbeddedResource Include="index.html;index.js" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
@@ -30,7 +31,7 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
-  <Target Name="NpmInstall" BeforeTargets="DispatchToInnerBuilds">
+  <Target Name="NpmInstall" BeforeTargets="DispatchToInnerBuilds" Condition=" '$(CI)' != '' OR !Exists('$(MSBuildThisFileDirectory)\node_modules') ">
     <Exec Command="npm install" ContinueOnError="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
     </Exec>
