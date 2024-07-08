@@ -99,7 +99,11 @@ namespace Swashbuckle.AspNetCore.Swagger
         {
             documentName = null;
             extension = null;
-            if (request.Method != "GET") return false;
+
+            if (!HttpMethods.IsGet(request.Method))
+            {
+                return false;
+            }
 
             var routeValues = new RouteValueDictionary();
             if (_requestMatcher.TryMatch(request.Path, routeValues))
