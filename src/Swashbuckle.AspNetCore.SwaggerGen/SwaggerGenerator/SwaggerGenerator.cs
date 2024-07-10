@@ -447,6 +447,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                             };
                         }
                     }
+
                     static OpenApiSchema GenerateSchemaIncludingFormFile(ApiParameterDescription apiParameterDescription, OpenApiSchema generatedSchema)
                     {
                         if (generatedSchema.Reference is null
@@ -457,15 +458,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                                 Type = "object",
                                 Properties = new Dictionary<string, OpenApiSchema>()
                                 {
-                                    {
-                                        apiParameterDescription.Name,
-                                        generatedSchema
-                                    }
+                                    [apiParameterDescription.Name] = generatedSchema
                                 }
                             };
                         }
                         return generatedSchema;
                     }
+
                 }
             }
 
