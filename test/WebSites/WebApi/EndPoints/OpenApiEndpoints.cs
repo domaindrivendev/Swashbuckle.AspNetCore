@@ -16,7 +16,9 @@ namespace WebApi.EndPoints
                 "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
             ];
 
-            var group = app.MapGroup("/WithOpenApi").WithTags("WithOpenApi");
+            var group = app.MapGroup("/WithOpenApi")
+                .WithTags("WithOpenApi")
+                .DisableAntiforgery();
 
             group.MapGet("weatherforecast", () =>
             {
@@ -35,22 +37,19 @@ namespace WebApi.EndPoints
 
             group.MapPost("/multipleForms", ([FromForm] Person person, [FromForm] Address address) =>
             {
-                TypedResults.NoContent();
+                return $"{person} {address}";
             })
-            .WithOpenApi()
-            .DisableAntiforgery();
+            .WithOpenApi();
 
             group.MapPost("/IFromFile", (IFormFile file) =>
             {
                 return file.FileName;
-            }).WithOpenApi()
-            .DisableAntiforgery();
+            }).WithOpenApi();
 
             group.MapPost("/IFromFileCollection", (IFormFileCollection collection) =>
             {
                 return $"{collection.Count} {string.Join(',', collection.Select(f => f.FileName))}";
-            }).WithOpenApi()
-            .DisableAntiforgery();
+            }).WithOpenApi();
 
             return app;
         }
