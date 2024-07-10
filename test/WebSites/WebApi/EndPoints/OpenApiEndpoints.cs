@@ -40,6 +40,18 @@ namespace WebApi.EndPoints
             .WithOpenApi()
             .DisableAntiforgery();
 
+            group.MapPost("/IFromFile", (IFormFile file) =>
+            {
+                return file.FileName;
+            }).WithOpenApi()
+            .DisableAntiforgery();
+
+            group.MapPost("/IFromFileCollection", (IFormFileCollection collection) =>
+            {
+                return $"{collection.Count} {string.Join(',', collection.Select(f => f.FileName))}";
+            }).WithOpenApi()
+            .DisableAntiforgery();
+
             return app;
         }
     }

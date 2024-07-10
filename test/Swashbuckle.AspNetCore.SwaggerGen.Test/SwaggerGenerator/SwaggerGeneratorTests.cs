@@ -2098,6 +2098,126 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("TypeWithDefaultAttributeOnEnum", content.Value.Schema.AllOf[1].Reference.Id);
         }
 
+        [Fact]
+        public void GetSwagger_GenerateConsumesSchemas_ForProvidedOpenApiOperationWithIFormFile()
+        {
+            var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithConsumesAttribute));
+            var actionDescriptor = new ActionDescriptor
+            {
+                EndpointMetadata =
+                [
+                    new OpenApiOperation
+                    {
+                        OperationId = "OperationIdSetInMetadata",
+                        RequestBody = new()
+                        {
+                            Content = new Dictionary<string, OpenApiMediaType>()
+                            {
+                                ["application/someMediaType"] = new()
+                            }
+                        }
+                    }
+                ],
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+                }
+            };
+            var subject = Subject(
+                apiDescriptions:
+                [
+                    ApiDescriptionFactory.Create(
+                        actionDescriptor,
+                        methodInfo,
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions:
+                        [
+                            new ApiParameterDescription()
+                            {
+                                Name = "param",
+                                Source = BindingSource.Form,
+                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(IFormFile))
+                            }
+                        ]),
+                ]
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal("OperationIdSetInMetadata", document.Paths["/resource"].Operations[OperationType.Post].OperationId);
+            var content = Assert.Single(document.Paths["/resource"].Operations[OperationType.Post].RequestBody.Content);
+            Assert.Equal("application/someMediaType", content.Key);
+            Assert.NotNull(content.Value.Schema);
+            Assert.Equal("object", content.Value.Schema.Type);
+            Assert.NotEmpty(content.Value.Schema.Properties);
+            Assert.NotNull(content.Value.Schema.Properties["param"]);
+            Assert.Equal("string", content.Value.Schema.Properties["param"].Type);
+            Assert.Equal("binary", content.Value.Schema.Properties["param"].Format);
+        }
+
+        [Fact]
+        public void GetSwagger_GenerateConsumesSchemas_ForProvidedOpenApiOperationWithIFormFileCollection()
+        {
+            var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithConsumesAttribute));
+            var actionDescriptor = new ActionDescriptor
+            {
+                EndpointMetadata =
+                [
+                    new OpenApiOperation
+                    {
+                        OperationId = "OperationIdSetInMetadata",
+                        RequestBody = new()
+                        {
+                            Content = new Dictionary<string, OpenApiMediaType>()
+                            {
+                                ["application/someMediaType"] = new()
+                            }
+                        }
+                    }
+                ],
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+                }
+            };
+            var subject = Subject(
+                apiDescriptions:
+                [
+                    ApiDescriptionFactory.Create(
+                        actionDescriptor,
+                        methodInfo,
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions:
+                        [
+                            new ApiParameterDescription()
+                            {
+                                Name = "param",
+                                Source = BindingSource.Form,
+                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(IFormFileCollection))
+                            }
+                        ]),
+                ]
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal("OperationIdSetInMetadata", document.Paths["/resource"].Operations[OperationType.Post].OperationId);
+            var content = Assert.Single(document.Paths["/resource"].Operations[OperationType.Post].RequestBody.Content);
+            Assert.Equal("application/someMediaType", content.Key);
+            Assert.NotNull(content.Value.Schema);
+            Assert.Equal("object", content.Value.Schema.Type);
+            Assert.NotEmpty(content.Value.Schema.Properties);
+            Assert.NotNull(content.Value.Schema.Properties["param"]);
+            Assert.Equal("array", content.Value.Schema.Properties["param"].Type);
+            Assert.NotNull(content.Value.Schema.Properties["param"].Items);
+            Assert.Equal("string", content.Value.Schema.Properties["param"].Items.Type);
+            Assert.Equal("binary", content.Value.Schema.Properties["param"].Items.Format);
+        }
+
         private static SwaggerGenerator Subject(
             IEnumerable<ApiDescription> apiDescriptions,
             SwaggerGeneratorOptions options = null,
