@@ -2155,6 +2155,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.NotNull(content.Value.Schema.Properties["param"]);
             Assert.Equal("string", content.Value.Schema.Properties["param"].Type);
             Assert.Equal("binary", content.Value.Schema.Properties["param"].Format);
+            Assert.NotNull(content.Value.Encoding);
+            Assert.NotNull(content.Value.Encoding["param"]);
+            Assert.Equal(ParameterStyle.Form, content.Value.Encoding["param"].Style);
         }
 
         [Fact]
@@ -2216,6 +2219,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.NotNull(content.Value.Schema.Properties["param"].Items);
             Assert.Equal("string", content.Value.Schema.Properties["param"].Items.Type);
             Assert.Equal("binary", content.Value.Schema.Properties["param"].Items.Format);
+            Assert.NotNull(content.Value.Encoding);
+            Assert.NotNull(content.Value.Encoding["param"]);
+            Assert.Equal(ParameterStyle.Form, content.Value.Encoding["param"].Style);
         }
 
         private static SwaggerGenerator Subject(

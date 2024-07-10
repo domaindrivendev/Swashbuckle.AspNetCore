@@ -128,12 +128,20 @@
           "content": {
             "multipart/form-data": {
               "schema": {
+                "required": [
+                  "file"
+                ],
                 "type": "object",
                 "properties": {
                   "file": {
                     "type": "string",
                     "format": "binary"
                   }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
                 }
               }
             }
@@ -163,6 +171,9 @@
           "content": {
             "multipart/form-data": {
               "schema": {
+                "required": [
+                  "collection"
+                ],
                 "type": "object",
                 "properties": {
                   "collection": {
@@ -172,6 +183,11 @@
                       "format": "binary"
                     }
                   }
+                }
+              },
+              "encoding": {
+                "collection": {
+                  "style": "form"
                 }
               }
             }

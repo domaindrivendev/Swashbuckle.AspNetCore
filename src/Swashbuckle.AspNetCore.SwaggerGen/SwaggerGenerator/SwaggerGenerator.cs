@@ -420,6 +420,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 foreach (var content in requestContentTypes)
                 {
+                    content.Encoding = new Dictionary<string, OpenApiEncoding>();
                     var requestParameters = apiDescription.ParameterDescriptions.Where(desc => desc.IsFromBody() || desc.IsFromForm());
                     var countOfParameters = requestParameters.Count();
                     if (countOfParameters > 0)
@@ -431,7 +432,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                                 requestParameter.ModelMetadata.ModelType,
                                 schemaRepository,
                                 requestParameter.PropertyInfo(),
-                                requestParameter.ParameterInfo()));
+                                requestParameter.ParameterInfo()), content);
                         }
                         else
                         {
@@ -442,25 +443,30 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                                     s.ModelMetadata.ModelType,
                                     schemaRepository,
                                     s.PropertyInfo(),
-                                    s.ParameterInfo())))
+                                    s.ParameterInfo()), content))
                                 .ToList()
                             };
                         }
                     }
 
-                    static OpenApiSchema GenerateSchemaIncludingFormFile(ApiParameterDescription apiParameterDescription, OpenApiSchema generatedSchema)
+                    static OpenApiSchema GenerateSchemaIncludingFormFile(ApiParameterDescription apiParameterDescription, OpenApiSchema generatedSchema, OpenApiMediaType mediaType)
                     {
-                        if (generatedSchema.Reference is null
-                            && ((generatedSchema.Type == "string" && generatedSchema.Format == "binary") || (generatedSchema.Type == "array" && generatedSchema.Items.Format == "binary")))
+                        if (generatedSchema.Reference is null && apiParameterDescription.IsFromForm())
                         {
-                            return new OpenApiSchema()
+                            mediaType.Encoding.Add(apiParameterDescription.Name, new OpenApiEncoding { Style = ParameterStyle.Form });
+                            if ((generatedSchema.Type == "string" && generatedSchema.Format == "binary")
+                                || (generatedSchema.Type == "array" && generatedSchema.Items.Type == "string" && generatedSchema.Items.Format == "binary"))
                             {
-                                Type = "object",
-                                Properties = new Dictionary<string, OpenApiSchema>()
+                                return new OpenApiSchema()
                                 {
-                                    [apiParameterDescription.Name] = generatedSchema
-                                }
-                            };
+                                    Type = "object",
+                                    Properties = new Dictionary<string, OpenApiSchema>()
+                                    {
+                                        [apiParameterDescription.Name] = generatedSchema
+                                    },
+                                    Required = apiParameterDescription.IsRequired ? new SortedSet<string>() { apiParameterDescription.Name } : null
+                                };
+                            }
                         }
                         return generatedSchema;
                     }
