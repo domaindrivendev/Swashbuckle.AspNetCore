@@ -407,7 +407,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 if (apiParameter is not null)
                 {
                     parameter.Schema = GenerateSchema(
-                        apiParameter.ModelMetadata.ModelType,
+                        apiParameter.Type,
                         schemaRepository,
                         apiParameter.PropertyInfo(),
                         apiParameter.ParameterInfo(),
@@ -568,9 +568,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var isRequired = apiParameter.IsRequiredParameter();
 
-            var schema = (apiParameter.ModelMetadata != null)
+            var type = apiParameter.Type;
+
+            if (type is not null
+                && type == typeof(string)
+                && apiParameter.ModelMetadata?.ModelType is not null
+                && apiParameter.ModelMetadata.ModelType != type)
+            {
+                type = apiParameter.ModelMetadata.ModelType;
+            }
+
+            var schema = (type != null)
                 ? GenerateSchema(
-                    apiParameter.ModelMetadata.ModelType,
+                    type,
                     schemaRepository,
                     apiParameter.PropertyInfo(),
                     apiParameter.ParameterInfo(),

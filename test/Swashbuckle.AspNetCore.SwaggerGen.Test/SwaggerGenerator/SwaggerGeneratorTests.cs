@@ -339,7 +339,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                             new ApiParameterDescription
                             {
                                 Name = "ParameterInMetadata",
-                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(string))
+                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(string)),
+                                Type = typeof(string)
                             }
                         }),
                 }
@@ -604,7 +605,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                             {
                                 Name = "param",
                                 Source = BindingSource.Header,
-                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(string))
+                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(string)),
+                                Type = typeof(string)
                             }
                         }),
                 }

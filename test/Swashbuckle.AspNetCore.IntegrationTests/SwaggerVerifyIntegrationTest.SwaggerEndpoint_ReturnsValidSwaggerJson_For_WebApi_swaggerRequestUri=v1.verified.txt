@@ -48,6 +48,128 @@
         }
       }
     },
+    "/annotations/AsParameters": {
+      "get": {
+        "tags": [
+          "Annotations"
+        ],
+        "parameters": [
+          {
+            "name": "paramOne",
+            "in": "query",
+            "description": "Description",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "paramTwo",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "paramThree",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "paramFour",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "paramFive",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "paramSix",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "paramSeven",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "time"
+            }
+          },
+          {
+            "name": "paramEight",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "time"
+            }
+          },
+          {
+            "name": "paramNine",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/DateTimeKind"
+            }
+          },
+          {
+            "name": "paramTen",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/DateTimeKind"
+            }
+          },
+          {
+            "name": "paramEleven",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          },
+          {
+            "name": "paramTwelve",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "format": "double"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AsParametersRecord"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/WithOpenApi/weatherforecast": {
       "get": {
         "tags": [
@@ -265,6 +387,72 @@
           }
         },
         "additionalProperties": false
+      },
+      "AsParametersRecord": {
+        "type": "object",
+        "properties": {
+          "paramOne": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "paramTwo": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "paramThree": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "paramFour": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "paramFive": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
+          "paramSix": {
+            "type": "string",
+            "format": "date"
+          },
+          "paramSeven": {
+            "type": "string",
+            "format": "time",
+            "nullable": true
+          },
+          "paramEight": {
+            "type": "string",
+            "format": "time"
+          },
+          "paramNine": {
+            "$ref": "#/components/schemas/DateTimeKind"
+          },
+          "paramTen": {
+            "$ref": "#/components/schemas/DateTimeKind"
+          },
+          "paramEleven": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "paramTwelve": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DateTimeKind": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
       },
       "Fruit": {
         "type": "object",

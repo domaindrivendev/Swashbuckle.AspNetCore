@@ -272,7 +272,8 @@ public class SwaggerGeneratorVerifyTests
                         new ApiParameterDescription
                         {
                             Name = "ParameterInMetadata",
-                            ModelMetadata = ModelMetadataFactory.CreateForType(typeof(string))
+                            ModelMetadata = ModelMetadataFactory.CreateForType(typeof(string)),
+                            Type = typeof(string)
                         }
                     }),
             }
@@ -580,7 +581,8 @@ public class SwaggerGeneratorVerifyTests
                         {
                             Name = "param",
                             Source = BindingSource.Header,
-                            ModelMetadata = ModelMetadataFactory.CreateForType(typeof(string))
+                            ModelMetadata = ModelMetadataFactory.CreateForType(typeof(string)),
+                            Type = typeof(string)
                         }
                     }),
             }
