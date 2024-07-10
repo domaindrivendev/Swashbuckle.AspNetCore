@@ -427,26 +427,44 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         if (countOfParameters == 1)
                         {
                             var requestParameter = requestParameters.First();
-                            content.Schema = GenerateSchema(
+                            content.Schema = GenerateSchemaIncludingFormFile(requestParameter, GenerateSchema(
                                 requestParameter.ModelMetadata.ModelType,
                                 schemaRepository,
                                 requestParameter.PropertyInfo(),
-                                requestParameter.ParameterInfo());
+                                requestParameter.ParameterInfo()));
                         }
                         else
                         {
                             content.Schema = new OpenApiSchema()
                             {
                                 AllOf = requestParameters.Select(s =>
-                                    GenerateSchema(
+                                    GenerateSchemaIncludingFormFile(s, GenerateSchema(
                                     s.ModelMetadata.ModelType,
                                     schemaRepository,
                                     s.PropertyInfo(),
-                                    s.ParameterInfo()))
+                                    s.ParameterInfo())))
                                 .ToList()
                             };
                         }
                     }
+
+                    static OpenApiSchema GenerateSchemaIncludingFormFile(ApiParameterDescription apiParameterDescription, OpenApiSchema generatedSchema)
+                    {
+                        if (generatedSchema.Reference is null
+                            && ((generatedSchema.Type == "string" && generatedSchema.Format == "binary") || (generatedSchema.Type == "array" && generatedSchema.Items.Format == "binary")))
+                        {
+                            return new OpenApiSchema()
+                            {
+                                Type = "object",
+                                Properties = new Dictionary<string, OpenApiSchema>()
+                                {
+                                    [apiParameterDescription.Name] = generatedSchema
+                                }
+                            };
+                        }
+                        return generatedSchema;
+                    }
+
                 }
             }
 

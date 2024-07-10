@@ -1,0 +1,57 @@
+﻿{
+  Info: {
+    Title: Test API,
+    Version: V1
+  },
+  Paths: {
+    /resource: {
+      Operations: {
+        Post: {
+          OperationId: OperationIdSetInMetadata,
+          RequestBody: {
+            UnresolvedReference: false,
+            Required: false,
+            Content: {
+              application/someMediaType: {
+                Schema: {
+                  Type: object,
+                  ReadOnly: false,
+                  WriteOnly: false,
+                  Properties: {
+                    param: {
+                      Type: array,
+                      ReadOnly: false,
+                      WriteOnly: false,
+                      Items: {
+                        Type: string,
+                        Format: binary,
+                        ReadOnly: false,
+                        WriteOnly: false,
+                        AdditionalPropertiesAllowed: true,
+                        Nullable: false,
+                        Deprecated: false,
+                        UnresolvedReference: false
+                      },
+                      AdditionalPropertiesAllowed: true,
+                      Nullable: false,
+                      Deprecated: false,
+                      UnresolvedReference: false
+                    }
+                  },
+                  AdditionalPropertiesAllowed: true,
+                  Nullable: false,
+                  Deprecated: false,
+                  UnresolvedReference: false
+                }
+              }
+            }
+          },
+          Deprecated: false
+        }
+      },
+      UnresolvedReference: false
+    }
+  },
+  Components: {},
+  HashCode: 64312D7E174EFA8B92E7869E39FD7367BB6A464F0C5E8A72D0B010AE96AAE157EE91BC02BEDFEC2B01CCC6BAA4E7FA79156782C09D435428AE8F732D3C9EB1B9
+}
