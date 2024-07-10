@@ -454,7 +454,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         if (generatedSchema.Reference is null && apiParameterDescription.IsFromForm())
                         {
                             mediaType.Encoding.Add(apiParameterDescription.Name, new OpenApiEncoding { Style = ParameterStyle.Form });
-                            if((generatedSchema.Type == "string" && generatedSchema.Format == "binary")
+                            if ((generatedSchema.Type == "string" && generatedSchema.Format == "binary")
                                 || (generatedSchema.Type == "array" && generatedSchema.Items.Type == "string" && generatedSchema.Items.Format == "binary"))
                             {
                                 return new OpenApiSchema()
@@ -464,7 +464,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                                     {
                                         [apiParameterDescription.Name] = generatedSchema
                                     },
-                                    Required = apiParameterDescription.IsRequired ?  new SortedSet<string>() { apiParameterDescription.Name} : null
+                                    Required = apiParameterDescription.IsRequired ? new SortedSet<string>() { apiParameterDescription.Name } : null
                                 };
                             }
                         }
