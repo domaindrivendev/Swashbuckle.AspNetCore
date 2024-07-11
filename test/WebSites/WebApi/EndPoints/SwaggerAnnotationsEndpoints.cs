@@ -35,10 +35,17 @@ namespace WebApi.EndPoints
     [SwaggerSchema("Description for Schema")]
     record Fruit(string Name);
 
-    record class AsParametersRecord([SwaggerParameter(Description = "Description")] Guid? paramOne, Guid paramTwo,
-        DateTime? paramThree, DateTime paramFour,
-        DateOnly? paramFive, DateOnly paramSix,
-        TimeOnly? paramSeven, TimeOnly paramEight,
-        DateTimeKind? paramNine, DateTimeKind paramTen,
-        decimal? paramEleven, decimal paramTwelve);
+    record class AsParametersRecord(
+        [SwaggerParameter(Description = "Description")] Guid? paramOne,
+        Guid paramTwo,
+        DateTime? paramThree,
+        DateTime paramFour,
+        DateOnly? paramFive,
+        DateOnly paramSix,
+        TimeOnly? paramSeven,
+        TimeOnly paramEight,
+        DateTimeKind? paramNine,
+        DateTimeKind paramTen,
+        decimal? paramEleven,
+        decimal paramTwelve);
 }
