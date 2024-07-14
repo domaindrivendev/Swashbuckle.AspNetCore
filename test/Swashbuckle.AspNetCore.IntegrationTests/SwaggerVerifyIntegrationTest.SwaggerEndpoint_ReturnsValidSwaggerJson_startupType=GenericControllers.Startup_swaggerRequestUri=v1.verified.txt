@@ -133,6 +133,119 @@
         }
       }
     },
+    "/{tennantId}/orders/Delete/{id}": {
+      "delete": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Delete by Id",
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "tennantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Failed"
+          }
+        }
+      }
+    },
+    "/{tennantId}/orders/Delete/List": {
+      "delete": {
+        "tags": [
+          "Orders"
+        ],
+        "summary": "Delete by Id List",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "deleting Id",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Order"
+              }
+            }
+          },
+          {
+            "name": "tennantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Failed"
+          }
+        }
+      }
+    },
     "/{tennantId}/products": {
       "post": {
         "tags": [
@@ -231,6 +344,119 @@
           },
           "required": true
         },
+        "responses": {
+          "200": {
+            "description": "Deleted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Failed"
+          }
+        }
+      }
+    },
+    "/{tennantId}/products/Delete/{id}": {
+      "delete": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Delete by Id",
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "tennantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deleted",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Failed"
+          }
+        }
+      }
+    },
+    "/{tennantId}/products/Delete/List": {
+      "delete": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Delete by Id List",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "deleting Id",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Product"
+              }
+            }
+          },
+          {
+            "name": "tennantId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Deleted",

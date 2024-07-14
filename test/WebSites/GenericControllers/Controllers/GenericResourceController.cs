@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,34 @@ namespace GenericControllers.Controllers
         [ProducesResponseType(201)]
         [Consumes("application/json")]
         public int Create([FromBody, Required] TResource resource, CancellationToken cancellationToken)
+        {
+            return 1;
+        }
+
+        /// <summary>
+        /// Delete by Id
+        /// </summary>
+        /// <param name="id">deleting Id</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <response code="200">Deleted</response>
+        /// <response code="404">Failed</response>
+        [HttpDelete($"{nameof(Delete)}/{{{nameof(id)}}}")]
+        public virtual int Delete([Required, FromRoute] TResource id, CancellationToken cancellationToken)
+        {
+            return 1;
+        }
+
+        /// <summary>
+        /// Delete by Id List
+        /// </summary>
+        /// <param name="id">deleting Id</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <response code="200">Deleted</response>
+        /// <response code="404">Failed</response>
+        [HttpDelete($"{nameof(Delete)}/List")]
+        public virtual int Delete([Required, FromRoute] List<TResource> id, CancellationToken cancellationToken)
         {
             return 1;
         }
