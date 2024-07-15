@@ -5,7 +5,7 @@
     "version": "1"
   },
   "paths": {
-    "/{tennantId}/orders": {
+    "/{tenantId}/orders": {
       "post": {
         "tags": [
           "Orders"
@@ -13,7 +13,7 @@
         "summary": "Creates a resource",
         "parameters": [
           {
-            "name": "tennantId",
+            "name": "tenantId",
             "in": "path",
             "required": true,
             "schema": {
@@ -65,7 +65,7 @@
         "summary": "Delete by Ids",
         "parameters": [
           {
-            "name": "tennantId",
+            "name": "tenantId",
             "in": "path",
             "required": true,
             "schema": {
@@ -133,7 +133,7 @@
         }
       }
     },
-    "/{tennantId}/orders/DeleteById": {
+    "/{tenantId}/orders/DeleteById": {
       "delete": {
         "tags": [
           "Orders"
@@ -141,7 +141,7 @@
         "summary": "Delete by Id",
         "parameters": [
           {
-            "name": "tennantId",
+            "name": "tenantId",
             "in": "path",
             "required": true,
             "schema": {
@@ -200,7 +200,7 @@
         }
       }
     },
-    "/{tennantId}/orders/Delete/List": {
+    "/{tenantId}/orders/Delete/List": {
       "delete": {
         "tags": [
           "Orders"
@@ -208,7 +208,7 @@
         "summary": "Delete by Id List",
         "parameters": [
           {
-            "name": "tennantId",
+            "name": "tenantId",
             "in": "path",
             "required": true,
             "schema": {
@@ -276,7 +276,7 @@
         }
       }
     },
-    "/{tennantId}/products": {
+    "/{tenantId}/products": {
       "post": {
         "tags": [
           "Products"
@@ -284,7 +284,7 @@
         "summary": "Creates a resource",
         "parameters": [
           {
-            "name": "tennantId",
+            "name": "tenantId",
             "in": "path",
             "required": true,
             "schema": {
@@ -336,7 +336,7 @@
         "summary": "Delete by Ids",
         "parameters": [
           {
-            "name": "tennantId",
+            "name": "tenantId",
             "in": "path",
             "required": true,
             "schema": {
@@ -404,7 +404,7 @@
         }
       }
     },
-    "/{tennantId}/products/DeleteById": {
+    "/{tenantId}/products/DeleteById": {
       "delete": {
         "tags": [
           "Products"
@@ -412,7 +412,7 @@
         "summary": "Delete by Id",
         "parameters": [
           {
-            "name": "tennantId",
+            "name": "tenantId",
             "in": "path",
             "required": true,
             "schema": {
@@ -471,7 +471,7 @@
         }
       }
     },
-    "/{tennantId}/products/Delete/List": {
+    "/{tenantId}/products/Delete/List": {
       "delete": {
         "tags": [
           "Products"
@@ -479,7 +479,7 @@
         "summary": "Delete by Id List",
         "parameters": [
           {
-            "name": "tennantId",
+            "name": "tenantId",
             "in": "path",
             "required": true,
             "schema": {

@@ -44,7 +44,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                                 }
                                 for (var j = 0; j < genericTypeDefinitionArguments.Length; j++)
                                 {
-
                                     if (genericTypeDefinitionArguments[j].IsGenericParameter && genericArguments.Any(p => p == constructedDefinitionArguments[j]))
                                     {
                                         continue;
