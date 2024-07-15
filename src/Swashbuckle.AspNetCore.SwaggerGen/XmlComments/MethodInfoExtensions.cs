@@ -11,12 +11,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var genericTypeDefinition = constructedType.GetGenericTypeDefinition();
             var genericArguments = constructedType.GenericTypeArguments;
 
+            var constructedTypeParameters = constructedTypeMethod.GetParameters();
+
             // Retrieve list of candidate methods that match name and parameter count
             var candidateMethods = genericTypeDefinition.GetMethods()
                 .Where(m =>
                 {
                     var genericTypeDefinitionParameters = m.GetParameters();
-                    var constructedTypeParameters = constructedTypeMethod.GetParameters();
                     if (m.Name == constructedTypeMethod.Name && genericTypeDefinitionParameters.Length == constructedTypeParameters.Length)
                     {
                         for (var i = 0; i < genericTypeDefinitionParameters.Length; i++)
