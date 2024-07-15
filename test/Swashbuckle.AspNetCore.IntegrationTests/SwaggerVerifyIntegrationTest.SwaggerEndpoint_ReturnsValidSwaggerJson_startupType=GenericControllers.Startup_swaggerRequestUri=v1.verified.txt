@@ -133,22 +133,13 @@
         }
       }
     },
-    "/{tennantId}/orders/Delete/{id}": {
+    "/{tennantId}/orders/DeleteById": {
       "delete": {
         "tags": [
           "Orders"
         ],
         "summary": "Delete by Id",
         "parameters": [
-          {
-            "name": "Id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
           {
             "name": "tennantId",
             "in": "path",
@@ -158,6 +149,27 @@
             }
           }
         ],
+        "requestBody": {
+          "description": "deleting Id",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Order"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Order"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Order"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "Deleted",
@@ -196,18 +208,6 @@
         "summary": "Delete by Id List",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "description": "deleting Id",
-            "required": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/Order"
-              }
-            }
-          },
-          {
             "name": "tennantId",
             "in": "path",
             "required": true,
@@ -216,6 +216,36 @@
             }
           }
         ],
+        "requestBody": {
+          "description": "deleting Ids",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "Deleted",
@@ -374,22 +404,13 @@
         }
       }
     },
-    "/{tennantId}/products/Delete/{id}": {
+    "/{tennantId}/products/DeleteById": {
       "delete": {
         "tags": [
           "Products"
         ],
         "summary": "Delete by Id",
         "parameters": [
-          {
-            "name": "Id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          },
           {
             "name": "tennantId",
             "in": "path",
@@ -399,6 +420,27 @@
             }
           }
         ],
+        "requestBody": {
+          "description": "deleting Id",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "Deleted",
@@ -437,18 +479,6 @@
         "summary": "Delete by Id List",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
-            "description": "deleting Id",
-            "required": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/Product"
-              }
-            }
-          },
-          {
             "name": "tennantId",
             "in": "path",
             "required": true,
@@ -457,6 +487,36 @@
             }
           }
         ],
+        "requestBody": {
+          "description": "deleting Ids",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "Deleted",

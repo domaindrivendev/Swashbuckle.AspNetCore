@@ -29,8 +29,8 @@ namespace GenericControllers.Controllers
         /// <returns></returns>
         /// <response code="200">Deleted</response>
         /// <response code="404">Failed</response>
-        [HttpDelete($"{nameof(Delete)}/{{{nameof(id)}}}")]
-        public virtual int Delete([Required, FromRoute] TResource id, CancellationToken cancellationToken)
+        [HttpDelete($"{nameof(Delete)}ById")]
+        public virtual int Delete([Required, FromBody] TResource id, CancellationToken cancellationToken)
         {
             return 1;
         }
@@ -38,13 +38,13 @@ namespace GenericControllers.Controllers
         /// <summary>
         /// Delete by Id List
         /// </summary>
-        /// <param name="id">deleting Id</param>
+        /// <param name="ids">deleting Ids</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <response code="200">Deleted</response>
         /// <response code="404">Failed</response>
         [HttpDelete($"{nameof(Delete)}/List")]
-        public virtual int Delete([Required, FromRoute] List<TResource> id, CancellationToken cancellationToken)
+        public virtual int Delete([Required, FromBody] List<TResource> ids, CancellationToken cancellationToken)
         {
             return 1;
         }
@@ -52,13 +52,13 @@ namespace GenericControllers.Controllers
         /// <summary>
         /// Delete by Ids
         /// </summary>
-        /// <param name="ids">deleting Ids</param>
+        /// <param name="resources">deleting Ids</param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
         /// <response code="200">Deleted</response>
         /// <response code="404">Failed</response>
         [HttpDelete("")]
-        public virtual int Delete([Required, FromBody] TResource[] ids, CancellationToken cancellationToken)
+        public virtual int Delete([Required, FromBody] TResource[] resources, CancellationToken cancellationToken)
         {
             return 1;
         }
