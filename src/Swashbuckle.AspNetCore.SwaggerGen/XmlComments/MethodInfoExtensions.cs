@@ -37,6 +37,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                             }
                             else if (genericTypeDefinitionParameters[i].ParameterType.IsConstructedGenericType && constructedTypeParameters[i].ParameterType.IsConstructedGenericType)
                             {
+                                if (genericTypeDefinitionParameters[i].ParameterType.GetGenericTypeDefinition() != constructedTypeParameters[i].ParameterType.GetGenericTypeDefinition())
+                                {
+                                    return false;
+                                }
                                 var genericTypeDefinitionArguments = genericTypeDefinitionParameters[i].ParameterType.GetGenericArguments();
                                 var constructedDefinitionArguments = constructedTypeParameters[i].ParameterType.GetGenericArguments();
                                 if (genericTypeDefinitionArguments.Length != constructedDefinitionArguments.Length)

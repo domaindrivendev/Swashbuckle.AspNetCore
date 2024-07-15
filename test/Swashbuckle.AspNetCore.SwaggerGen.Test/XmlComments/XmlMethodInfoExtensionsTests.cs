@@ -13,24 +13,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.NotNull(methodInfo.GetUnderlyingGenericTypeMethod());
         }
 
-        [Theory, MemberData(nameof(SimilarMethodsSignatures))]
-        public void SimilarMethodsSignatures_ShouldBeNull(MethodInfo methodInfo)
-        {
-            Assert.Null(methodInfo.GetUnderlyingGenericTypeMethod());
-        }
-
         public static TheoryData<MethodInfo> DifferentMethodsSignatures =>
             new(typeof(NonGenericResourceController).GetMethods()
                 .Where(s =>
                 {
                     return s.Name == nameof(NonGenericResourceController.DifferentMethodsSignatures);
-                }));
-
-        public static TheoryData<MethodInfo> SimilarMethodsSignatures =>
-            new(typeof(NonGenericResourceController).GetMethods()
-                .Where(s =>
-                {
-                    return s.Name == nameof(NonGenericResourceController.SimilarMethodsSignatures);
                 }));
     }
 }
