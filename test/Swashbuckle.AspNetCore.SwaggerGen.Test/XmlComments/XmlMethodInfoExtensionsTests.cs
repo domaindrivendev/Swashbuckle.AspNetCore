@@ -10,21 +10,37 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 public class XmlMethodInfoExtensionsTests
 {
     [Theory]
-    [MemberData(nameof(DifferentMethodsSignatures))]
-    public void DifferentMethodsSignatures_ShouldBeExpected((MethodInfo MethodInfo, IEnumerable<string> ExpectedParameterNames, Type ExpectedReturnParameterType) theoryData)
+    [ClassData(typeof(DifferentMethodsSignaturesData))]
+    public void DifferentMethodsSignatures_ShouldBeExpected(MethodInfo methodInfo, IEnumerable<string> expectedParameterNames, Type expectedReturnParameterType)
     {
-        var underlyingGenericMethod = theoryData.MethodInfo.GetUnderlyingGenericTypeMethod();
+        var underlyingGenericMethod = methodInfo.GetUnderlyingGenericTypeMethod();
         Assert.NotNull(underlyingGenericMethod);
         var underlyingGenericMethodParameters = underlyingGenericMethod.GetParameters();
         Assert.NotNull(underlyingGenericMethodParameters);
         Assert.NotEmpty(underlyingGenericMethodParameters);
-        Assert.Equal(theoryData.ExpectedParameterNames, underlyingGenericMethodParameters.Select(s => s.Name));
+        Assert.Equal(expectedParameterNames, underlyingGenericMethodParameters.Select(s => s.Name));
         Assert.NotNull(underlyingGenericMethod.ReturnParameter);
-        Assert.Equal(theoryData.ExpectedReturnParameterType, underlyingGenericMethod.ReturnParameter.ParameterType);
+        Assert.Equal(expectedReturnParameterType, underlyingGenericMethod.ReturnParameter.ParameterType);
+        List<(sbyte s, Type t)> values = [(1, typeof(object)), (2, typeof(object))];
+        var k = new TheoryData<sbyte, Type>();
+        foreach (var value in values)
+        {
+            k.Add(value.s, value.t);
+        }
     }
 
-    public static TheoryData<(MethodInfo MethodInfo, IEnumerable<string> ExpectedParameterNames, Type ExpectedReturnParameterType)> DifferentMethodsSignatures =>
-        new(typeof(NonGenericResourceController).GetMethods()
-            .Where(s => s.Name == nameof(NonGenericResourceController.DifferentMethodsSignatures))
-            .Select(s => (s, s.GetParameters().Select(p => p.Name), s.ReturnParameter.ParameterType)));
+    public class DifferentMethodsSignaturesData : TheoryData<MethodInfo, IEnumerable<string>, Type>
+    {
+        public DifferentMethodsSignaturesData()
+        {
+            var methods = typeof(NonGenericResourceController).GetMethods()
+            .Where(s => s.Name == nameof(NonGenericResourceController.DifferentMethodsSignatures));
+
+            foreach (var method in methods)
+            {
+                Add(method, method.GetParameters().Select(p => p.Name), method.ReturnType);
+            }
+        }
+    }
+
 }
