@@ -9,7 +9,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             try
             {
-                var jsonElement = JsonSerializer.Deserialize<JsonElement>(json);
+                var jsonElement =
+#if NET8_0_OR_GREATER
+                    JsonSerializer.Deserialize(json, CustomJsonSerializerContext.Default.JsonElement)
+#else
+                    JsonSerializer.Deserialize<JsonElement>(json)
+#endif
+                    ;
 
                 return CreateFromJsonElement(jsonElement);
             }
@@ -18,7 +24,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return null;
         }
 
-        private static IOpenApiAny CreateOpenApiArray(JsonElement jsonElement)
+        private static OpenApiArray CreateOpenApiArray(JsonElement jsonElement)
         {
             var openApiArray = new OpenApiArray();
 
@@ -30,7 +36,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return openApiArray;
         }
 
-        private static IOpenApiAny CreateOpenApiObject(JsonElement jsonElement)
+        private static OpenApiObject CreateOpenApiObject(JsonElement jsonElement)
         {
             var openApiObject = new OpenApiObject();
 

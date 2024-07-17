@@ -15,8 +15,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 (schema?.ResolveType(schemaRepository) == "string") &&
                 !string.Equals(exampleString, "null");
 
-            var exampleAsJson = isStringType
-                    ? JsonSerializer.Serialize(exampleString)
+            var exampleAsJson = isStringType ?
+#if NET8_0_OR_GREATER
+                    JsonSerializer.Serialize(exampleString, CustomJsonSerializerContext.Default.String)
+#else
+                    JsonSerializer.Serialize(exampleString)
+#endif
                     : exampleString;
 
             var example = OpenApiAnyFactory.CreateFromJson(exampleAsJson);
