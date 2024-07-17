@@ -23,8 +23,5 @@ public class XmlMethodInfoExtensionsTests
 
     public static TheoryData<MethodInfo> DifferentMethodsSignatures =>
         new(typeof(NonGenericResourceController).GetMethods()
-            .Where(s =>
-            {
-                return s.Name == nameof(NonGenericResourceController.DifferentMethodsSignatures);
-            }));
+            .Where(s => s.Name == nameof(NonGenericResourceController.DifferentMethodsSignatures)));
 }

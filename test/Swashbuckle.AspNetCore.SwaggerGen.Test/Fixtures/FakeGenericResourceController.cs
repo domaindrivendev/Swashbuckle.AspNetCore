@@ -17,4 +17,5 @@ internal class FakeGenericResourceController<T>
     public long DifferentMethodsSignatures([FromBody, Required] Dictionary<int, T> dictionaryOfTs) => default;
     public ulong DifferentMethodsSignatures([FromBody, Required] IEnumerable<T> iEnumerableOfTs) => default;
 }
+
 internal class NonGenericResourceController : FakeGenericResourceController<XmlAnnotatedRecord>;
