@@ -14,8 +14,10 @@ public class XmlMethodInfoExtensionsTests
         var underlyingGenericMethod = methodInfo.GetUnderlyingGenericTypeMethod();
         Assert.NotNull(underlyingGenericMethod);
         var underlyingGenericMethodParameters = underlyingGenericMethod.GetParameters();
+        Assert.NotNull(underlyingGenericMethodParameters);
         Assert.NotEmpty(underlyingGenericMethodParameters);
         Assert.Equal(methodInfo.GetParameters().Select(s => s.Name), underlyingGenericMethodParameters.Select(s => s.Name));
+        Assert.NotNull(underlyingGenericMethod.ReturnParameter);
         Assert.Equal(methodInfo.ReturnParameter.ParameterType, underlyingGenericMethod.ReturnParameter.ParameterType);
     }
 
