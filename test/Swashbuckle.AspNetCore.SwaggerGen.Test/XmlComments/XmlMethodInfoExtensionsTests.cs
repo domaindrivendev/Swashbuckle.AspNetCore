@@ -11,7 +11,7 @@ public class XmlMethodInfoExtensionsTests
 {
     [Theory]
     [ClassData(typeof(DifferentMethodsSignaturesData))]
-    public void DifferentMethodsSignatures_ShouldBeExpected(MethodInfo methodInfo, IEnumerable<string> expectedParameterNames, Type expectedReturnType)
+    public void DifferentMethodsSignatures_ShouldBeExpected(MethodInfo methodInfo, string[] expectedParameterNames, Type expectedReturnType)
     {
         var underlyingGenericMethod = methodInfo.GetUnderlyingGenericTypeMethod();
         Assert.NotNull(underlyingGenericMethod);
@@ -23,16 +23,17 @@ public class XmlMethodInfoExtensionsTests
         Assert.Equal(expectedReturnType, underlyingGenericMethod.ReturnType);
     }
 
-    public class DifferentMethodsSignaturesData : TheoryData<MethodInfo, IEnumerable<string>, Type>
+    public class DifferentMethodsSignaturesData : TheoryData<MethodInfo, string[], Type>
     {
         public DifferentMethodsSignaturesData()
         {
-            var methods = typeof(NonGenericResourceController).GetMethods()
-            .Where(s => s.Name == nameof(NonGenericResourceController.DifferentMethodsSignatures));
+            var methods = typeof(NonGenericResourceController)
+                .GetMethods()
+                .Where(s => s.Name == nameof(NonGenericResourceController.DifferentMethodsSignatures));
 
             foreach (var method in methods)
             {
-                Add(method, method.GetParameters().Select(p => p.Name), method.ReturnType);
+                Add(method, method.GetParameters().Select(p => p.Name).ToArray(), method.ReturnType);
             }
         }
     }
