@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Http;
+using System.Threading;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GenericControllers.Controllers
@@ -11,11 +11,54 @@ namespace GenericControllers.Controllers
         /// Creates a resource
         /// </summary>
         /// <param name="resource">The resource</param>
+        /// <param name="cancellationToken"></param>
         /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(201)]
         [Consumes("application/json")]
-        public int Create([FromBody, Required]TResource resource)
+        public int Create([FromBody, Required] TResource resource, CancellationToken cancellationToken)
+        {
+            return 1;
+        }
+
+        /// <summary>
+        /// Delete by Id
+        /// </summary>
+        /// <param name="id">deleting Id</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <response code="200">Deleted</response>
+        /// <response code="404">Failed</response>
+        [HttpDelete($"{nameof(Delete)}ById")]
+        public virtual int Delete([Required, FromBody] TResource id, CancellationToken cancellationToken)
+        {
+            return 1;
+        }
+
+        /// <summary>
+        /// Delete by Id List
+        /// </summary>
+        /// <param name="ids">deleting Ids</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <response code="200">Deleted</response>
+        /// <response code="404">Failed</response>
+        [HttpDelete($"{nameof(Delete)}/List")]
+        public virtual int Delete([Required, FromBody] List<TResource> ids, CancellationToken cancellationToken)
+        {
+            return 1;
+        }
+
+        /// <summary>
+        /// Delete by Ids
+        /// </summary>
+        /// <param name="resources">deleting Ids</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        /// <response code="200">Deleted</response>
+        /// <response code="404">Failed</response>
+        [HttpDelete("")]
+        public virtual int Delete([Required, FromBody] TResource[] resources, CancellationToken cancellationToken)
         {
             return 1;
         }
