@@ -20,13 +20,7 @@ public class XmlMethodInfoExtensionsTests
         Assert.NotEmpty(underlyingGenericMethodParameters);
         Assert.Equal(expectedParameterNames, underlyingGenericMethodParameters.Select(s => s.Name));
         Assert.NotNull(underlyingGenericMethod.ReturnParameter);
-        Assert.Equal(expectedReturnParameterType, underlyingGenericMethod.ReturnParameter.ParameterType);
-        List<(sbyte s, Type t)> values = [(1, typeof(object)), (2, typeof(object))];
-        var k = new TheoryData<sbyte, Type>();
-        foreach (var value in values)
-        {
-            k.Add(value.s, value.t);
-        }
+        Assert.Equal(expectedReturnParameterType, underlyingGenericMethod.ReturnType);
     }
 
     public class DifferentMethodsSignaturesData : TheoryData<MethodInfo, IEnumerable<string>, Type>
