@@ -477,8 +477,7 @@
       "CurrenciesRate": {
         "required": [
           "currencyFrom",
-          "currencyTo",
-          "rate"
+          "currencyTo"
         ],
         "type": "object",
         "properties": {

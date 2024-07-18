@@ -68,5 +68,5 @@ namespace WebApi.EndPoints
 
     record class Address(string Street, string City, string State, string ZipCode);
     sealed record OrganizationCustomExchangeRatesDto([property: JsonRequired] CurrenciesRate[] CurrenciesRates);
-    sealed record CurrenciesRate([property: JsonRequired] string currencyFrom, [property: JsonRequired] string currencyTo, [property: JsonRequired] double rate);
+    sealed record CurrenciesRate([property: JsonRequired] string CurrencyFrom, [property: JsonRequired] string CurrencyTo, double Rate);
 }
