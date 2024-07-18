@@ -210,11 +210,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 // See https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-immutability?pivots=dotnet-6-0
                 var isDeserializedViaConstructor = false;
 
+                var isRequired = false;
+
 #if NET5_0_OR_GREATER
                 var deserializationConstructor = propertyInfo.DeclaringType?.GetConstructors()
                     .OrderBy(c =>
                     {
-                        if (c.GetCustomAttribute<System.Text.Json.Serialization.JsonConstructorAttribute>() != null) return 1;
+                        if (c.GetCustomAttribute<JsonConstructorAttribute>() != null) return 1;
                         if (c.GetParameters().Length == 0) return 2;
                         return 3;
                     })
@@ -228,11 +230,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                             string.Equals(p.Name, name, StringComparison.OrdinalIgnoreCase);
                     });
 #endif
+#if NET7_0_OR_GREATER
+                isRequired = propertyInfo.GetCustomAttribute<JsonRequiredAttribute>() != null;
+#endif
 
                 dataProperties.Add(
                     new DataProperty(
                         name: name,
-                        isRequired: false,
+                        isRequired: isRequired,
                         isNullable: propertyInfo.PropertyType.IsReferenceOrNullableType(),
                         isReadOnly: propertyInfo.IsPubliclyReadable() && !propertyInfo.IsPubliclyWritable() && !isDeserializedViaConstructor,
                         isWriteOnly: propertyInfo.IsPubliclyWritable() && !propertyInfo.IsPubliclyReadable(),
