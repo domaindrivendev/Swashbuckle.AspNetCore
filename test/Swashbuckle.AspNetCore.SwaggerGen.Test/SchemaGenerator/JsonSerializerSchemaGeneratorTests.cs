@@ -885,6 +885,20 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(new[] { "string-with-json-property-name" }, schema.Properties.Keys.ToArray());
         }
 
+#if NET7_0_OR_GREATER
+        [Fact]
+        public void GenerateSchema_HonorsSerializerAttribute_JsonRequired()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(typeof(JsonRequiredAnnotatedType), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+            Assert.Equal(new[] { "StringWithJsonRequired" }, schema.Required.ToArray());
+            Assert.True(schema.Properties["StringWithJsonRequired"].Nullable);
+        }
+#endif
+
         [Fact]
         public void GenerateSchema_HonorsSerializerAttribute_JsonExtensionData()
         {
