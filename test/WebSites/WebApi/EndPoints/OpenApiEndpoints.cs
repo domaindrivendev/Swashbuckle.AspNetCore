@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.EndPoints
 {
@@ -51,6 +52,11 @@ namespace WebApi.EndPoints
                 return $"{collection.Count} {string.Join(',', collection.Select(f => f.FileName))}";
             }).WithOpenApi();
 
+            group.MapPost("/IFromBody", (OrganizationCustomExchangeRatesDto dto) =>
+            {
+                return $"{dto}";
+            }).WithOpenApi();
+
             return app;
         }
     }
@@ -61,4 +67,6 @@ namespace WebApi.EndPoints
     record class Person(string FirstName, string LastName);
 
     record class Address(string Street, string City, string State, string ZipCode);
+    sealed record OrganizationCustomExchangeRatesDto([property: JsonRequired] CurrenciesRate[] CurrenciesRates);
+    sealed record CurrenciesRate([property: JsonRequired] string currencyFrom, [property: JsonRequired] string currencyTo, [property: JsonRequired] double rate);
 }

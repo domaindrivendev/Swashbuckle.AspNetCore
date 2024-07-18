@@ -330,6 +330,35 @@
         }
       }
     },
+    "/WithOpenApi/IFromBody": {
+      "post": {
+        "tags": [
+          "WithOpenApi"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrganizationCustomExchangeRatesDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/XmlComments/Car/{id}": {
       "get": {
         "tags": [
@@ -445,6 +474,29 @@
         },
         "additionalProperties": false
       },
+      "CurrenciesRate": {
+        "required": [
+          "currencyFrom",
+          "currencyTo",
+          "rate"
+        ],
+        "type": "object",
+        "properties": {
+          "currencyFrom": {
+            "type": "string",
+            "nullable": true
+          },
+          "currencyTo": {
+            "type": "string",
+            "nullable": true
+          },
+          "rate": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
       "DateTimeKind": {
         "enum": [
           0,
@@ -464,6 +516,22 @@
         },
         "additionalProperties": false,
         "description": "Description for Schema"
+      },
+      "OrganizationCustomExchangeRatesDto": {
+        "required": [
+          "currenciesRates"
+        ],
+        "type": "object",
+        "properties": {
+          "currenciesRates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CurrenciesRate"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       },
       "Person": {
         "type": "object",
