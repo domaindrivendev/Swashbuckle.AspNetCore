@@ -17,10 +17,10 @@ namespace Swashbuckle.AspNetCore.Cli
         {
             CommandName = commandName;
             CommandDescription = commandDescription;
-            _argumentDescriptors = new Dictionary<string, string>();
-            _optionDescriptors = new Dictionary<string, OptionDescriptor>();
-            _runFunc = (namedArgs) => { return 1; }; // noop
-            _subRunners = new List<CommandRunner>();
+            _argumentDescriptors = [];
+            _optionDescriptors = [];
+            _runFunc = (_) => 1; // no-op
+            _subRunners = [];
             _output = output;
         }
 

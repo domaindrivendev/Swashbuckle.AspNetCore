@@ -1,11 +1,10 @@
-﻿using System.IO;
+﻿using System.Reflection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using GenericControllers.Swagger;
 
 namespace GenericControllers
 {
@@ -27,8 +26,7 @@ namespace GenericControllers
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Test API", Version = "1" });
 
-                var xmlCommentsPath = Path.Combine(System.AppContext.BaseDirectory, "GenericControllers.xml");
-                c.IncludeXmlComments(xmlCommentsPath);
+                c.IncludeXmlComments(Assembly.GetExecutingAssembly());
 
                 //c.OperationFilter<ApplySummariesOperationFilter>();
             });

@@ -2,6 +2,8 @@
   <PropertyGroup>
     <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
     <Authors>domaindrivendev</Authors>
+    <!-- HACK See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2893 -->
+    <BuildInParallel>false</BuildInParallel>
     <ChecksumAlgorithm>SHA256</ChecksumAlgorithm>
     <Company>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</Company>
     <ContinuousIntegrationBuild Condition=" '$(CI)' != '' ">true</ContinuousIntegrationBuild>
@@ -36,10 +38,7 @@
     <PackageIcon></PackageIcon>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</PackageProjectUrl>
-    <!--
-    TODO Create a generic package README file for the project
     <PackageReadmeFile>package-readme.md</PackageReadmeFile>
-    -->
     <PackageReleaseNotes>See $(PackageProjectUrl)/releases for details.</PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
@@ -48,13 +47,14 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <UseArtifactsOutput>true</UseArtifactsOutput>
-    <VersionPrefix>6.5.1</VersionPrefix>
+    <VersionPrefix>6.7.0</VersionPrefix>
     <WarnOnPackingNonPackableProject>false</WarnOnPackingNonPackableProject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(GITHUB_ACTIONS)' != '' ">
-    <VersionSuffix Condition=" '$(VersionSuffix)' == '' AND '$(GITHUB_HEAD_REF)' == '' ">preview</VersionSuffix>
+    <VersionSuffix Condition=" '$(VersionSuffix)' == '' AND '$(GITHUB_HEAD_REF)' == '' ">preview.$(GITHUB_RUN_NUMBER)</VersionSuffix>
     <VersionSuffix Condition=" '$(VersionSuffix)' == '' AND '$(GITHUB_HEAD_REF)' != '' ">pr.$(GITHUB_REF_NAME.Replace('/merge', '')).$(GITHUB_RUN_NUMBER)</VersionSuffix>
-    <VersionSuffix Condition=" '$(GITHUB_EVENT_NAME)' == 'workflow_dispatch' AND '$(GITHUB_REF_PROTECTED)' == 'true' "></VersionSuffix>
+    <VersionPrefix Condition=" $(GITHUB_REF.StartsWith(`refs/tags/v`)) ">$(GITHUB_REF.Replace('refs/tags/v', ''))</VersionPrefix>
+    <VersionSuffix Condition=" $(GITHUB_REF.StartsWith(`refs/tags/v`)) "></VersionSuffix>
     <FileVersion Condition=" '$(GITHUB_RUN_NUMBER)' != '' ">$(VersionPrefix).$(GITHUB_RUN_NUMBER)</FileVersion>
   </PropertyGroup>
   <ItemGroup Condition=" '$(PackageIcon)' != '' ">

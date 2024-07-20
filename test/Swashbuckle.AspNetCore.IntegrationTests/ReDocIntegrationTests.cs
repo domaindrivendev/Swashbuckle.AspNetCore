@@ -5,6 +5,7 @@ using ReDocApp = ReDoc;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests
 {
+    [Collection("TestSite")]
     public class ReDocIntegrationTests
     {
         [Fact]
@@ -23,12 +24,29 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         {
             var client = new TestSite(typeof(ReDocApp.Startup)).BuildClient();
 
-            var indexResponse = await client.GetAsync("/api-docs/index.html");
+            var htmlResponse = await client.GetAsync("/api-docs/index.html");
+            var cssResponse = await client.GetAsync("/api-docs/index.css");
             var jsResponse = await client.GetAsync("/api-docs/redoc.standalone.js");
 
-            var indexContent = await indexResponse.Content.ReadAsStringAsync();
-            Assert.Contains("Redoc.init", indexContent);
+            Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, cssResponse.StatusCode);
             Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
+        }
+
+        [Fact]
+        public async Task RedocMiddleware_ReturnsInitializerScript()
+        {
+            var client = new TestSite(typeof(ReDocApp.Startup)).BuildClient();
+
+            var response = await client.GetAsync("/api-docs/index.js");
+            var content = await response.Content.ReadAsStringAsync();
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Contains("Redoc.init", content);
+            Assert.DoesNotContain("%(DocumentTitle)", content);
+            Assert.DoesNotContain("%(HeadContent)", content);
+            Assert.DoesNotContain("%(SpecUrl)", content);
+            Assert.DoesNotContain("%(ConfigObject)", content);
         }
 
         [Fact]
@@ -36,25 +54,30 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         {
             var client = new TestSite(typeof(ReDocApp.Startup)).BuildClient();
 
-            var indexResponse = await client.GetAsync("/Api-Docs/index.html");
-            var jsResponse = await client.GetAsync("/Api-Docs/redoc.standalone.js");
+            var htmlResponse = await client.GetAsync("/Api-Docs/index.html");
+            var cssResponse = await client.GetAsync("/Api-Docs/index.css");
+            var jsInitResponse = await client.GetAsync("/Api-Docs/index.js");
+            var jsRedocResponse = await client.GetAsync("/Api-Docs/redoc.standalone.js");
 
-            var indexContent = await indexResponse.Content.ReadAsStringAsync();
-            Assert.Contains("Redoc.init", indexContent);
-            Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, cssResponse.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, jsInitResponse.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, jsRedocResponse.StatusCode);
         }
 
         [Theory]
-        [InlineData("/redoc/1.0/index.html", "/swagger/1.0/swagger.json")]
-        [InlineData("/redoc/2.0/index.html", "/swagger/2.0/swagger.json")]
-        public async Task RedocMiddleware_CanBeConfiguredMultipleTimes(string redocUrl, string swaggerPath)
+        [InlineData("/redoc/1.0/index.html", "/redoc/1.0/index.js", "/swagger/1.0/swagger.json")]
+        [InlineData("/redoc/2.0/index.html", "/redoc/2.0/index.js", "/swagger/2.0/swagger.json")]
+        public async Task RedocMiddleware_CanBeConfiguredMultipleTimes(string htmlUrl, string jsUrl, string swaggerPath)
         {
             var client = new TestSite(typeof(MultipleVersions.Startup)).BuildClient();
 
-            var response = await client.GetAsync(redocUrl);
-            var content = await response.Content.ReadAsStringAsync();
+            var htmlResponse = await client.GetAsync(htmlUrl);
+            var jsResponse = await client.GetAsync(jsUrl);
+            var content = await jsResponse.Content.ReadAsStringAsync();
 
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
             Assert.Contains(swaggerPath, content);
         }
     }

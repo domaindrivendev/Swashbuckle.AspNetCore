@@ -50,7 +50,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     schema.Description = XmlCommentsTextHelper.Humanize(summaryNode);
 
                 var example = recordDefaultConstructorProperty.GetAttribute("example", string.Empty);
-                TrySetExample(schema, context, example);
+                if (!string.IsNullOrEmpty(example))
+                {
+                    TrySetExample(schema, context, example);
+                }
             }
 
             if (fieldOrPropertyNode != null)
@@ -69,11 +72,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (example == null)
                 return;
 
-            var exampleAsJson = (schema.ResolveType(context.SchemaRepository) == "string") && !example.Equals("null")
-                ? $"\"{example}\""
-                : example;
-
-            schema.Example = OpenApiAnyFactory.CreateFromJson(exampleAsJson);
+            schema.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, schema, example);
         }
     }
 }

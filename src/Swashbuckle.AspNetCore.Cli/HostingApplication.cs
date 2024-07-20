@@ -4,7 +4,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Http.Features;
+#if NETCOREAPP3_0_OR_GREATER
 using Microsoft.Extensions.DependencyInjection;
+#endif
 using Microsoft.Extensions.Hosting;
 
 namespace Swashbuckle.AspNetCore.Cli
@@ -31,6 +33,19 @@ namespace Swashbuckle.AspNetCore.Cli
                 {
                     services.AddSingleton<IServer, NoopServer>();
                     services.AddSingleton<IHostLifetime, NoopHostLifetime>();
+
+                    for (var i = services.Count - 1; i >= 0; i--)
+                    {
+                        // exclude all implementations of IHostedService
+                        // except Microsoft.AspNetCore.Hosting.GenericWebHostService because that one will build/configure
+                        // the WebApplication/Middleware pipeline in the case of the GenericWebHostBuilder.
+                        var registration = services[i];
+                        if (registration.ServiceType == typeof(IHostedService)
+                            && registration.ImplementationType is not { FullName: "Microsoft.AspNetCore.Hosting.GenericWebHostService" })
+                        {
+                            services.RemoveAt(i);
+                        }
+                    }
                 });
             }
 
@@ -69,18 +84,17 @@ namespace Swashbuckle.AspNetCore.Cli
                 // We set the application name in the hosting environment to the startup assembly
                 // to avoid falling back to the entry assembly (dotnet-swagger) when configuring our
                 // application.
-                var services = ((IHost)factory(new[] { $"--{HostDefaults.ApplicationKey}={assemblyName}" })).Services;
+                var services = ((IHost)factory([$"--{HostDefaults.ApplicationKey}={assemblyName}"])).Services;
 
                 // Wait for the application to start so that we know it's fully configured. This is important because
                 // we need the middleware pipeline to be configured before we access the ISwaggerProvider in
                 // in the IServiceProvider
                 var applicationLifetime = services.GetRequiredService<IHostApplicationLifetime>();
 
-                using (var registration = applicationLifetime.ApplicationStarted.Register(() => waitForStartTcs.TrySetResult(null)))
-                {
-                    waitForStartTcs.Task.Wait();
-                    return services;
-                }
+                using var registration = applicationLifetime.ApplicationStarted.Register(() => waitForStartTcs.TrySetResult(null));
+                waitForStartTcs.Task.Wait();
+
+                return services;
             }
             catch (InvalidOperationException)
             {
@@ -103,7 +117,6 @@ namespace Swashbuckle.AspNetCore.Cli
             public void Dispose() { }
             public Task StartAsync<TContext>(IHttpApplication<TContext> application, CancellationToken cancellationToken) => Task.CompletedTask;
             public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-
         }
     }
 }

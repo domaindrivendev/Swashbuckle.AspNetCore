@@ -7,11 +7,18 @@
     <NoWarn>$(NoWarn);1591</NoWarn>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore;redoc</PackageTags>
     <SignAssembly>true</SignAssembly>
-    <TargetFrameworks>netstandard2.0;netcoreapp3.0;net5.0;net6.0;net7.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.0;net5.0;net6.0;net7.0;net8.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="index.css" />
+    <None Remove="index.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="index.css" />
     <EmbeddedResource Include="index.html" />
+    <EmbeddedResource Include="index.js" />
     <EmbeddedResource Include="node_modules/redoc/bundles/redoc.standalone.js" />
   </ItemGroup>
 
@@ -26,7 +33,7 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
-  <Target Name="NpmInstall" BeforeTargets="DispatchToInnerBuilds">
+  <Target Name="NpmInstall" BeforeTargets="DispatchToInnerBuilds" Condition=" '$(CI)' != '' OR !Exists('$(MSBuildThisFileDirectory)\node_modules') ">
     <Exec Command="npm install" ContinueOnError="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
     </Exec>

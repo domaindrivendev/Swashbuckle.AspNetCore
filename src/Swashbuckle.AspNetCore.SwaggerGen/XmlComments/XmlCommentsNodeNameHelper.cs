@@ -50,7 +50,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private static string QualifiedNameFor(Type type, bool expandGenericArgs = false)
         {
             if (type.IsArray)
-                return $"{QualifiedNameFor(type.GetElementType(), expandGenericArgs)}[]";
+            {
+                var elementType = type.GetElementType();
+                return elementType.IsGenericParameter ? $"`{elementType.GenericParameterPosition}[]" : $"{QualifiedNameFor(type.GetElementType(), expandGenericArgs)}[]";
+            }
+
 
             var builder = new StringBuilder();
 

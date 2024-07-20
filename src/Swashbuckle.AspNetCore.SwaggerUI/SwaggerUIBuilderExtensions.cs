@@ -38,7 +38,7 @@ namespace Microsoft.AspNetCore.Builder
             if (options.ConfigObject.Urls == null)
             {
                 var hostingEnv = app.ApplicationServices.GetRequiredService<IWebHostEnvironment>();
-                options.ConfigObject.Urls = new[] { new UrlDescriptor { Name = $"{hostingEnv.ApplicationName} v1", Url = "v1/swagger.json" } };
+                options.ConfigObject.Urls = [new UrlDescriptor { Name = $"{hostingEnv.ApplicationName} v1", Url = "v1/swagger.json" }];
             }
 
             return app.UseSwaggerUI(options);

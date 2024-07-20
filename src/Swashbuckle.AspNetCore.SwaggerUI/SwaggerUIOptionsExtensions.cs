@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Text;
-using System.Linq;
 using System.Collections.Generic;
+using System.Text;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace Microsoft.AspNetCore.Builder
@@ -42,8 +41,10 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="name">The description that appears in the document selector drop-down</param>
         public static void SwaggerEndpoint(this SwaggerUIOptions options, string url, string name)
         {
-            var urls = new List<UrlDescriptor>(options.ConfigObject.Urls ?? Enumerable.Empty<UrlDescriptor>());
-            urls.Add(new UrlDescriptor { Url = url, Name = name });
+            var urls = new List<UrlDescriptor>(options.ConfigObject.Urls ?? [])
+            {
+                new() { Url = url, Name = name }
+            };
             options.ConfigObject.Urls = urls;
         }
 

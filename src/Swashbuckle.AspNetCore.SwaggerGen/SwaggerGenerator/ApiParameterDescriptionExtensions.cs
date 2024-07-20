@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.Net.Http.Headers;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -15,7 +16,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private static readonly Type[] RequiredAttributeTypes = new[]
         {
             typeof(BindRequiredAttribute),
-            typeof(RequiredAttribute)
+            typeof(RequiredAttribute),
+#if NET7_0_OR_GREATER
+            typeof(System.Runtime.CompilerServices.RequiredMemberAttribute)
+#endif
+        };
+
+        private static readonly HashSet<string> IllegalHeaderParameters = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            HeaderNames.Accept,
+            HeaderNames.Authorization,
+            HeaderNames.ContentType
         };
 
         public static bool IsRequiredParameter(this ApiParameterDescription apiParameter)
@@ -107,6 +118,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             return (source == BindingSource.Form || source == BindingSource.FormFile)
                 || (elementType != null && typeof(IFormFile).IsAssignableFrom(elementType));
+        }
+
+        internal static bool IsIllegalHeaderParameter(this ApiParameterDescription apiParameter)
+        {
+            // Certain header parameters are not allowed and should be described using the corresponding OpenAPI keywords
+            // https://swagger.io/docs/specification/describing-parameters/#header-parameters
+            return apiParameter.Source == BindingSource.Header && IllegalHeaderParameters.Contains(apiParameter.Name);
         }
     }
 }

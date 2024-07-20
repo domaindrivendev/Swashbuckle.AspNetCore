@@ -36,8 +36,7 @@ namespace Swashbuckle.AspNetCore.TestSupport
                     // If the provided action has a matching parameter - use it to assign ParameterDescriptor & ModelMetadata
                     parameter.ParameterDescriptor = actionDescriptor.Parameters
                         .OfType<ParameterDescriptor>()
-                        .Where(parameterDescriptor => parameterDescriptor.Name == parameter.Name)
-                        .FirstOrDefault();
+                        .FirstOrDefault(parameterDescriptor => parameterDescriptor.Name == parameter.Name);
 
                     var parameterDescriptorWithParameterInfo = parameter.ParameterDescriptor as
 #if NETCOREAPP2_2_OR_GREATER
@@ -46,9 +45,10 @@ namespace Swashbuckle.AspNetCore.TestSupport
                         ControllerParameterDescriptor;
 #endif
 
-                    if (parameterDescriptorWithParameterInfo != null)
+                    if (parameterDescriptorWithParameterInfo != null && parameter.ModelMetadata == null)
                     {
                         parameter.ModelMetadata = ModelMetadataFactory.CreateForParameter(parameterDescriptorWithParameterInfo.ParameterInfo);
+                        parameter.Type = parameter.ModelMetadata.ModelType;
                     }
 
                     apiDescription.ParameterDescriptions.Add(parameter);
@@ -68,7 +68,7 @@ namespace Swashbuckle.AspNetCore.TestSupport
                 foreach (var responseType in supportedResponseTypes)
                 {
                     // If the provided action has a return value AND the response status is 2XX - use it to assign ModelMetadata
-                    if (methodInfo.ReturnType != null && responseType.StatusCode/100 == 2)
+                    if (methodInfo.ReturnType != null && responseType.StatusCode / 100 == 2)
                     {
                         responseType.ModelMetadata = ModelMetadataFactory.CreateForType(methodInfo.ReturnType);
                     }

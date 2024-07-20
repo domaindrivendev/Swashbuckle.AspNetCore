@@ -128,10 +128,11 @@ A line of text",
         [InlineData(@"<paramref name=""param1"" /> does something", "param1 does something")]
         [InlineData("<c>DoWork</c> is a method in <c>TestClass</c>.", "`DoWork` is a method in `TestClass`.")]
         [InlineData("<code>DoWork</code> is a method in <code>\nTestClass\n</code>.", "```DoWork``` is a method in ```\nTestClass\n```.")]
-        [InlineData("<para>This is a paragraph</para>.", "<br>This is a paragraph.")]
+        [InlineData("<para>This is a paragraph</para>.", "\r\nThis is a paragraph.")]
         [InlineData("GET /Todo?iscomplete=true&amp;owner=mike", "GET /Todo?iscomplete=true&owner=mike")]
         [InlineData(@"Returns a <see langword=""null""/> item.", "Returns a null item.")]
         [InlineData(@"<see href=""https://www.iso.org/iso-4217-currency-codes.html"">ISO currency code</see>", "[ISO currency code](https://www.iso.org/iso-4217-currency-codes.html)")]
+        [InlineData("First line.<br />Second line.<br/>Third line.<br>Fourth line.", "First line.\r\nSecond line.\r\nThird line.\r\nFourth line.")]
         public void Humanize_HumanizesInlineTags(
             string input,
             string expectedOutput)

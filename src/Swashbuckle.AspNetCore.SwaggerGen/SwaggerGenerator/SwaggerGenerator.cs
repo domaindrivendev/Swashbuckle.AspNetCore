@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Swagger;
+
 #if NET7_0_OR_GREATER
 using Microsoft.AspNetCore.Http.Metadata;
 #endif
@@ -42,51 +46,93 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             _authenticationSchemeProvider = authenticationSchemeProvider;
         }
 
-        public async Task<OpenApiDocument> GetSwaggerAsync(string documentName, string host = null, string basePath = null)
+        public async Task<OpenApiDocument> GetSwaggerAsync(
+            string documentName,
+            string host = null,
+            string basePath = null)
         {
-            var (applicableApiDescriptions, swaggerDoc, schemaRepository) = GetSwaggerDocumentWithoutFilters(documentName, host, basePath);
+            var (filterContext, swaggerDoc) = GetSwaggerDocumentWithoutPaths(documentName, host, basePath);
 
-            swaggerDoc.Components.SecuritySchemes = await GetSecuritySchemes();
+            swaggerDoc.Paths = await GeneratePathsAsync(filterContext.ApiDescriptions, filterContext.SchemaRepository);
+            swaggerDoc.Components.SecuritySchemes = await GetSecuritySchemesAsync();
 
             // NOTE: Filter processing moved here so they may effect generated security schemes
-            var filterContext = new DocumentFilterContext(applicableApiDescriptions, _schemaGenerator, schemaRepository);
+            foreach (var filter in _options.DocumentAsyncFilters)
+            {
+                await filter.ApplyAsync(swaggerDoc, filterContext, CancellationToken.None);
+            }
+
             foreach (var filter in _options.DocumentFilters)
             {
                 filter.Apply(swaggerDoc, filterContext);
             }
 
-            swaggerDoc.Components.Schemas = new SortedDictionary<string, OpenApiSchema>(swaggerDoc.Components.Schemas, _options.SchemaComparer);
+            SortSchemas(swaggerDoc);
 
             return swaggerDoc;
         }
 
         public OpenApiDocument GetSwagger(string documentName, string host = null, string basePath = null)
         {
-            var (applicableApiDescriptions, swaggerDoc, schemaRepository) = GetSwaggerDocumentWithoutFilters(documentName, host, basePath);
-
-            swaggerDoc.Components.SecuritySchemes = GetSecuritySchemes().Result;
-
-            // NOTE: Filter processing moved here so they may effect generated security schemes
-            var filterContext = new DocumentFilterContext(applicableApiDescriptions, _schemaGenerator, schemaRepository);
-            foreach (var filter in _options.DocumentFilters)
+            try
             {
-                filter.Apply(swaggerDoc, filterContext);
+                var (filterContext, swaggerDoc) = GetSwaggerDocumentWithoutPaths(documentName, host, basePath);
+
+                swaggerDoc.Paths = GeneratePaths(filterContext.ApiDescriptions, filterContext.SchemaRepository);
+                swaggerDoc.Components.SecuritySchemes = GetSecuritySchemesAsync().Result;
+
+                // NOTE: Filter processing moved here so they may effect generated security schemes
+                foreach (var filter in _options.DocumentFilters)
+                {
+                    filter.Apply(swaggerDoc, filterContext);
+                }
+
+                SortSchemas(swaggerDoc);
+
+                return swaggerDoc;
             }
+            catch (AggregateException ex)
+            {
+                // Unwrap any AggregateException from using async methods to run the synchronous filters
+                var inner = ex.InnerException;
 
-            swaggerDoc.Components.Schemas = new SortedDictionary<string, OpenApiSchema>(swaggerDoc.Components.Schemas, _options.SchemaComparer);
+                while (inner is not null)
+                {
+                    if (inner is AggregateException)
+                    {
+                        inner = inner.InnerException;
+                    }
+                    else
+                    {
+                        throw inner;
+                    }
+                }
 
-            return swaggerDoc;
+                throw;
+            }
         }
 
-        private (IEnumerable<ApiDescription>, OpenApiDocument, SchemaRepository) GetSwaggerDocumentWithoutFilters(string documentName, string host = null, string basePath = null)
+        private void SortSchemas(OpenApiDocument document)
+        {
+            document.Components.Schemas = new SortedDictionary<string, OpenApiSchema>(document.Components.Schemas, _options.SchemaComparer);
+        }
+
+        private (DocumentFilterContext, OpenApiDocument) GetSwaggerDocumentWithoutPaths(string documentName, string host = null, string basePath = null)
         {
             if (!_options.SwaggerDocs.TryGetValue(documentName, out OpenApiInfo info))
+            {
                 throw new UnknownSwaggerDocument(documentName, _options.SwaggerDocs.Select(d => d.Key));
+            }
 
             var applicableApiDescriptions = _apiDescriptionsProvider.ApiDescriptionGroups.Items
                 .SelectMany(group => group.Items)
-                .Where(apiDesc => !(_options.IgnoreObsoleteActions && apiDesc.CustomAttributes().OfType<ObsoleteAttribute>().Any()))
-                .Where(apiDesc => _options.DocInclusionPredicate(documentName, apiDesc));
+                .Where(apiDesc =>
+                {
+                    var attributes = apiDesc.CustomAttributes().ToList();
+                    return !(_options.IgnoreObsoleteActions && attributes.OfType<ObsoleteAttribute>().Any()) &&
+                           !attributes.OfType<SwaggerIgnoreAttribute>().Any() &&
+                           _options.DocInclusionPredicate(documentName, apiDesc);
+                });
 
             var schemaRepository = new SchemaRepository(documentName);
 
@@ -94,7 +140,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 Info = info,
                 Servers = GenerateServers(host, basePath),
-                Paths = GeneratePaths(applicableApiDescriptions, schemaRepository),
                 Components = new OpenApiComponents
                 {
                     Schemas = schemaRepository.Schemas,
@@ -102,10 +147,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 SecurityRequirements = new List<OpenApiSecurityRequirement>(_options.SecurityRequirements)
             };
 
-            return (applicableApiDescriptions, swaggerDoc, schemaRepository);
+            return (new DocumentFilterContext(applicableApiDescriptions, _schemaGenerator, schemaRepository), swaggerDoc);
         }
 
-        private async Task<IDictionary<string, OpenApiSecurityScheme>> GetSecuritySchemes()
+        private async Task<IDictionary<string, OpenApiSecurityScheme>> GetSecuritySchemesAsync()
         {
             if (!_options.InferSecuritySchemes)
             {
@@ -114,7 +159,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var authenticationSchemes = (_authenticationSchemeProvider is not null)
                 ? await _authenticationSchemeProvider.GetAllSchemesAsync()
-                : Enumerable.Empty<AuthenticationScheme>();
+                : [];
 
             if (_options.SecuritySchemesSelector != null)
             {
@@ -135,19 +180,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     });
         }
 
-        private IList<OpenApiServer> GenerateServers(string host, string basePath)
+        private List<OpenApiServer> GenerateServers(string host, string basePath)
         {
-            if (_options.Servers.Any())
+            if (_options.Servers.Count > 0)
             {
                 return new List<OpenApiServer>(_options.Servers);
             }
 
             return (host == null && basePath == null)
-                ? new List<OpenApiServer>()
-                : new List<OpenApiServer> { new OpenApiServer { Url = $"{host}{basePath}" } };
+                ? []
+                : [new() { Url = $"{host}{basePath}" }];
         }
 
-        private OpenApiPaths GeneratePaths(IEnumerable<ApiDescription> apiDescriptions, SchemaRepository schemaRepository)
+        private async Task<OpenApiPaths> GeneratePathsAsync(
+            IEnumerable<ApiDescription> apiDescriptions,
+            SchemaRepository schemaRepository,
+            Func<IGrouping<string, ApiDescription>, SchemaRepository, Task<Dictionary<OperationType, OpenApiOperation>>> operationsGenerator)
         {
             var apiDescriptionsByPath = apiDescriptions
                 .OrderBy(_options.SortKeySelector)
@@ -159,52 +207,115 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 paths.Add($"/{group.Key}",
                     new OpenApiPathItem
                     {
-                        Operations = GenerateOperations(group, schemaRepository)
+                        Operations = await operationsGenerator(group, schemaRepository)
                     });
             };
 
             return paths;
         }
 
-        private IDictionary<OperationType, OpenApiOperation> GenerateOperations(
+        private OpenApiPaths GeneratePaths(IEnumerable<ApiDescription> apiDescriptions, SchemaRepository schemaRepository)
+        {
+            return GeneratePathsAsync(
+                apiDescriptions,
+                schemaRepository,
+                (group, schemaRepository) => Task.FromResult(GenerateOperations(group, schemaRepository))).Result;
+        }
+
+        private async Task<OpenApiPaths> GeneratePathsAsync(
             IEnumerable<ApiDescription> apiDescriptions,
             SchemaRepository schemaRepository)
         {
-            var apiDescriptionsByMethod = apiDescriptions
-                .OrderBy(_options.SortKeySelector)
-                .GroupBy(apiDesc => apiDesc.HttpMethod);
+            return await GeneratePathsAsync(
+                apiDescriptions,
+                schemaRepository,
+                GenerateOperationsAsync);
+        }
 
+        private IEnumerable<(OperationType, ApiDescription)> GetOperationsGroupedByMethod(
+            IEnumerable<ApiDescription> apiDescriptions)
+        {
+            return apiDescriptions
+                .OrderBy(_options.SortKeySelector)
+                .GroupBy(apiDesc => apiDesc.HttpMethod)
+                .Select(PrepareGenerateOperation);
+        }
+
+        private Dictionary<OperationType, OpenApiOperation> GenerateOperations(
+            IEnumerable<ApiDescription> apiDescriptions,
+            SchemaRepository schemaRepository)
+        {
+            var apiDescriptionsByMethod = GetOperationsGroupedByMethod(apiDescriptions);
             var operations = new Dictionary<OperationType, OpenApiOperation>();
 
-            foreach (var group in apiDescriptionsByMethod)
+            foreach ((var operationType, var description) in apiDescriptionsByMethod)
             {
-                var httpMethod = group.Key;
-
-                if (httpMethod == null)
-                    throw new SwaggerGeneratorException(string.Format(
-                        "Ambiguous HTTP method for action - {0}. " +
-                        "Actions require an explicit HttpMethod binding for Swagger/OpenAPI 3.0",
-                        group.First().ActionDescriptor.DisplayName));
-
-                if (group.Count() > 1 && _options.ConflictingActionsResolver == null)
-                    throw new SwaggerGeneratorException(string.Format(
-                        "Conflicting method/path combination \"{0} {1}\" for actions - {2}. " +
-                        "Actions require a unique method/path combination for Swagger/OpenAPI 3.0. Use ConflictingActionsResolver as a workaround",
-                        httpMethod,
-                        group.First().RelativePath,
-                        string.Join(",", group.Select(apiDesc => apiDesc.ActionDescriptor.DisplayName))));
-
-                var apiDescription = (group.Count() > 1) ? _options.ConflictingActionsResolver(group) : group.Single();
-
-                operations.Add(OperationTypeMap[httpMethod.ToUpper()], GenerateOperation(apiDescription, schemaRepository));
-            };
+                operations.Add(operationType, GenerateOperation(description, schemaRepository));
+            }
 
             return operations;
         }
 
-        private OpenApiOperation GenerateOperation(ApiDescription apiDescription, SchemaRepository schemaRepository)
+        private async Task<Dictionary<OperationType, OpenApiOperation>> GenerateOperationsAsync(
+            IEnumerable<ApiDescription> apiDescriptions,
+            SchemaRepository schemaRepository)
         {
-            OpenApiOperation operation = GenerateOpenApiOperationFromMetadata(apiDescription, schemaRepository);
+            var apiDescriptionsByMethod = GetOperationsGroupedByMethod(apiDescriptions);
+            var operations = new Dictionary<OperationType, OpenApiOperation>();
+
+            foreach ((var operationType, var description) in apiDescriptionsByMethod)
+            {
+                operations.Add(operationType, await GenerateOperationAsync(description, schemaRepository));
+            }
+
+            return operations;
+        }
+
+        private (OperationType OperationType, ApiDescription ApiDescription) PrepareGenerateOperation(IGrouping<string, ApiDescription> group)
+        {
+            var httpMethod = group.Key ?? throw new SwaggerGeneratorException(string.Format(
+                "Ambiguous HTTP method for action - {0}. " +
+                "Actions require an explicit HttpMethod binding for Swagger/OpenAPI 3.0",
+                group.First().ActionDescriptor.DisplayName));
+
+            var count = group.Count();
+
+            if (count > 1 && _options.ConflictingActionsResolver == null)
+            {
+                throw new SwaggerGeneratorException(string.Format(
+                    "Conflicting method/path combination \"{0} {1}\" for actions - {2}. " +
+                    "Actions require a unique method/path combination for Swagger/OpenAPI 3.0. Use ConflictingActionsResolver as a workaround",
+                    httpMethod,
+                    group.First().RelativePath,
+                    string.Join(",", group.Select(apiDesc => apiDesc.ActionDescriptor.DisplayName))));
+            }
+
+            var apiDescription = (count > 1) ? _options.ConflictingActionsResolver(group) : group.Single();
+
+            var normalizedMethod = httpMethod.ToUpperInvariant();
+            if (!OperationTypeMap.TryGetValue(normalizedMethod, out var operationType))
+            {
+                // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2600 and
+                // https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2740.
+                throw new SwaggerGeneratorException($"The \"{httpMethod}\" HTTP method is not supported.");
+            }
+
+            return (operationType, apiDescription);
+        }
+
+        private async Task<OpenApiOperation> GenerateOperationAsync(
+            ApiDescription apiDescription,
+            SchemaRepository schemaRepository,
+            Func<ApiDescription, SchemaRepository, Task<List<OpenApiParameter>>> parametersGenerator,
+            Func<ApiDescription, SchemaRepository, Task<OpenApiRequestBody>> bodyGenerator,
+            Func<OpenApiOperation, OperationFilterContext, Task> applyFilters)
+        {
+            OpenApiOperation operation =
+#if NET6_0_OR_GREATER
+                GenerateOpenApiOperationFromMetadata(apiDescription, schemaRepository);
+#else
+                null;
+#endif
 
             try
             {
@@ -212,8 +323,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 {
                     Tags = GenerateOperationTags(apiDescription),
                     OperationId = _options.OperationIdSelector(apiDescription),
-                    Parameters = GenerateParameters(apiDescription, schemaRepository),
-                    RequestBody = GenerateRequestBody(apiDescription, schemaRepository),
+                    Parameters = await parametersGenerator(apiDescription, schemaRepository),
+                    RequestBody = await bodyGenerator(apiDescription, schemaRepository),
                     Responses = GenerateResponses(apiDescription, schemaRepository),
                     Deprecated = apiDescription.CustomAttributes().OfType<ObsoleteAttribute>().Any(),
 #if NET7_0_OR_GREATER
@@ -224,10 +335,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 apiDescription.TryGetMethodInfo(out MethodInfo methodInfo);
                 var filterContext = new OperationFilterContext(apiDescription, _schemaGenerator, schemaRepository, methodInfo);
-                foreach (var filter in _options.OperationFilters)
-                {
-                    filter.Apply(operation, filterContext);
-                }
+
+                await applyFilters(operation, filterContext);
 
                 return operation;
             }
@@ -239,9 +348,50 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
         }
 
+        private OpenApiOperation GenerateOperation(ApiDescription apiDescription, SchemaRepository schemaRepository)
+        {
+            return GenerateOperationAsync(
+                apiDescription,
+                schemaRepository,
+                (description, repository) => Task.FromResult(GenerateParameters(description, repository)),
+                (description, repository) => Task.FromResult(GenerateRequestBody(description, repository)),
+                (operation, filterContext) =>
+                {
+                    foreach (var filter in _options.OperationFilters)
+                    {
+                        filter.Apply(operation, filterContext);
+                    }
+
+                    return Task.CompletedTask;
+                }).Result;
+        }
+
+        private async Task<OpenApiOperation> GenerateOperationAsync(
+            ApiDescription apiDescription,
+            SchemaRepository schemaRepository)
+        {
+            return await GenerateOperationAsync(
+                apiDescription,
+                schemaRepository,
+                GenerateParametersAsync,
+                GenerateRequestBodyAsync,
+                async (operation, filterContext) =>
+                {
+                    foreach (var filter in _options.OperationAsyncFilters)
+                    {
+                        await filter.ApplyAsync(operation, filterContext, CancellationToken.None);
+                    }
+
+                    foreach (var filter in _options.OperationFilters)
+                    {
+                        filter.Apply(operation, filterContext);
+                    }
+                });
+        }
+
+#if NET6_0_OR_GREATER
         private OpenApiOperation GenerateOpenApiOperationFromMetadata(ApiDescription apiDescription, SchemaRepository schemaRepository)
         {
-#if NET6_0_OR_GREATER
             var metadata = apiDescription.ActionDescriptor?.EndpointMetadata;
             var operation = metadata?.OfType<OpenApiOperation>().SingleOrDefault();
 
@@ -253,11 +403,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             // Schemas will be generated via Swashbuckle by default.
             foreach (var parameter in operation.Parameters)
             {
-                var apiParameter = apiDescription.ParameterDescriptions.SingleOrDefault(desc => desc.Name == parameter.Name && !desc.IsFromBody() && !desc.IsFromForm());
+                var apiParameter = apiDescription.ParameterDescriptions.SingleOrDefault(desc => desc.Name == parameter.Name && !desc.IsFromBody() && !desc.IsFromForm() && !desc.IsIllegalHeaderParameter());
                 if (apiParameter is not null)
                 {
                     parameter.Schema = GenerateSchema(
-                        apiParameter.ModelMetadata.ModelType,
+                        apiParameter.Type,
                         schemaRepository,
                         apiParameter.PropertyInfo(),
                         apiParameter.ParameterInfo(),
@@ -270,15 +420,57 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 foreach (var content in requestContentTypes)
                 {
-                    var requestParameter = apiDescription.ParameterDescriptions.SingleOrDefault(desc => desc.IsFromBody() || desc.IsFromForm());
-                    if (requestParameter is not null)
+                    content.Encoding = new Dictionary<string, OpenApiEncoding>();
+                    var requestParameters = apiDescription.ParameterDescriptions.Where(desc => desc.IsFromBody() || desc.IsFromForm());
+                    var countOfParameters = requestParameters.Count();
+                    if (countOfParameters > 0)
                     {
-                        content.Schema = GenerateSchema(
-                            requestParameter.ModelMetadata.ModelType,
-                            schemaRepository,
-                            requestParameter.PropertyInfo(),
-                            requestParameter.ParameterInfo());
+                        if (countOfParameters == 1)
+                        {
+                            var requestParameter = requestParameters.First();
+                            content.Schema = GenerateSchemaIncludingFormFile(requestParameter, GenerateSchema(
+                                requestParameter.ModelMetadata.ModelType,
+                                schemaRepository,
+                                requestParameter.PropertyInfo(),
+                                requestParameter.ParameterInfo()), content);
+                        }
+                        else
+                        {
+                            content.Schema = new OpenApiSchema()
+                            {
+                                AllOf = requestParameters.Select(s =>
+                                    GenerateSchemaIncludingFormFile(s, GenerateSchema(
+                                    s.ModelMetadata.ModelType,
+                                    schemaRepository,
+                                    s.PropertyInfo(),
+                                    s.ParameterInfo()), content))
+                                .ToList()
+                            };
+                        }
                     }
+
+                    static OpenApiSchema GenerateSchemaIncludingFormFile(ApiParameterDescription apiParameterDescription, OpenApiSchema generatedSchema, OpenApiMediaType mediaType)
+                    {
+                        if (generatedSchema.Reference is null && apiParameterDescription.IsFromForm())
+                        {
+                            mediaType.Encoding.Add(apiParameterDescription.Name, new OpenApiEncoding { Style = ParameterStyle.Form });
+                            if ((generatedSchema.Type == "string" && generatedSchema.Format == "binary")
+                                || (generatedSchema.Type == "array" && generatedSchema.Items.Type == "string" && generatedSchema.Items.Format == "binary"))
+                            {
+                                return new OpenApiSchema()
+                                {
+                                    Type = "object",
+                                    Properties = new Dictionary<string, OpenApiSchema>()
+                                    {
+                                        [apiParameterDescription.Name] = generatedSchema
+                                    },
+                                    Required = apiParameterDescription.IsRequired ? new SortedSet<string>() { apiParameterDescription.Name } : null
+                                };
+                            }
+                        }
+                        return generatedSchema;
+                    }
+
                 }
             }
 
@@ -300,34 +492,68 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
 
             return operation;
-#else
-            return null;
-#endif
         }
+#endif
 
-        private IList<OpenApiTag> GenerateOperationTags(ApiDescription apiDescription)
+        private List<OpenApiTag> GenerateOperationTags(ApiDescription apiDescription)
         {
             return _options.TagsSelector(apiDescription)
                 .Select(tagName => new OpenApiTag { Name = tagName })
                 .ToList();
         }
 
-        private IList<OpenApiParameter> GenerateParameters(ApiDescription apiDescription, SchemaRepository schemaRespository)
+        private static async Task<List<OpenApiParameter>> GenerateParametersAsync(
+            ApiDescription apiDescription,
+            SchemaRepository schemaRespository,
+            Func<ApiParameterDescription, SchemaRepository, Task<OpenApiParameter>> parameterGenerator)
         {
+            if (apiDescription.ParameterDescriptions.Any(IsFromFormAttributeUsedWithIFormFile))
+            {
+                throw new SwaggerGeneratorException(string.Format(
+                       "Error reading parameter(s) for action {0} as [FromForm] attribute used with IFormFile. " +
+                       "Please refer to https://github.com/domaindrivendev/Swashbuckle.AspNetCore#handle-forms-and-file-uploads for more information",
+                       apiDescription.ActionDescriptor.DisplayName));
+            }
+
             var applicableApiParameters = apiDescription.ParameterDescriptions
                 .Where(apiParam =>
                 {
-                    return (!apiParam.IsFromBody() && !apiParam.IsFromForm())
+                    return !apiParam.IsFromBody() && !apiParam.IsFromForm()
                         && (!apiParam.CustomAttributes().OfType<BindNeverAttribute>().Any())
-                        && (apiParam.ModelMetadata == null || apiParam.ModelMetadata.IsBindingAllowed);
+                        && (!apiParam.CustomAttributes().OfType<SwaggerIgnoreAttribute>().Any())
+                        && (apiParam.ModelMetadata == null || apiParam.ModelMetadata.IsBindingAllowed)
+                        && !apiParam.IsIllegalHeaderParameter();
                 });
 
-            return applicableApiParameters
-                .Select(apiParam => GenerateParameter(apiParam, schemaRespository))
-                .ToList();
+            var parameters = new List<OpenApiParameter>();
+
+            foreach (var parameter in applicableApiParameters)
+            {
+                parameters.Add(await parameterGenerator(parameter, schemaRespository));
+            }
+
+            return parameters;
         }
 
-        private OpenApiParameter GenerateParameter(
+        private List<OpenApiParameter> GenerateParameters(ApiDescription apiDescription, SchemaRepository schemaRespository)
+        {
+            return GenerateParametersAsync(
+                apiDescription,
+                schemaRespository,
+                (parameter, schemaRespository) => Task.FromResult(GenerateParameter(parameter, schemaRespository))).Result;
+        }
+
+        private async Task<List<OpenApiParameter>> GenerateParametersAsync(
+            ApiDescription apiDescription,
+            SchemaRepository schemaRespository)
+        {
+            return await GenerateParametersAsync(
+                apiDescription,
+                schemaRespository,
+                GenerateParameterAsync);
+        }
+
+        private OpenApiParameter GenerateParameterWithoutFilter(
             ApiParameterDescription apiParameter,
             SchemaRepository schemaRepository)
         {
@@ -335,35 +561,90 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 ? apiParameter.Name.ToCamelCase()
                 : apiParameter.Name;
 
-            var location = (apiParameter.Source != null && ParameterLocationMap.ContainsKey(apiParameter.Source))
-                ? ParameterLocationMap[apiParameter.Source]
+            var location = apiParameter.Source != null &&
+                            ParameterLocationMap.TryGetValue(apiParameter.Source, out var value)
+                ? value
                 : ParameterLocation.Query;
 
             var isRequired = apiParameter.IsRequiredParameter();
 
-            var schema = (apiParameter.ModelMetadata != null)
+            var type = apiParameter.Type;
+
+            if (type is not null
+                && type == typeof(string)
+                && apiParameter.ModelMetadata?.ModelType is not null
+                && apiParameter.ModelMetadata.ModelType != type)
+            {
+                type = apiParameter.ModelMetadata.ModelType;
+            }
+
+            var schema = (type != null)
                 ? GenerateSchema(
-                    apiParameter.ModelMetadata.ModelType,
+                    type,
                     schemaRepository,
                     apiParameter.PropertyInfo(),
                     apiParameter.ParameterInfo(),
                     apiParameter.RouteInfo)
                 : new OpenApiSchema { Type = "string" };
 
-            var parameter = new OpenApiParameter
+            var description = schema.Description;
+            if (string.IsNullOrEmpty(description)
+                && !string.IsNullOrEmpty(schema?.Reference?.Id)
+                && schemaRepository.Schemas.TryGetValue(schema.Reference.Id, out var openApiSchema))
+            {
+                description = openApiSchema.Description;
+            }
+
+            return new OpenApiParameter
             {
                 Name = name,
                 In = location,
                 Required = isRequired,
-                Schema = schema
+                Schema = schema,
+                Description = description
             };
+        }
 
-            var filterContext = new ParameterFilterContext(
+        private (OpenApiParameter, ParameterFilterContext) GenerateParameterAndContext(
+            ApiParameterDescription apiParameter,
+            SchemaRepository schemaRepository)
+        {
+            var parameter = GenerateParameterWithoutFilter(apiParameter, schemaRepository);
+
+            var context = new ParameterFilterContext(
                 apiParameter,
                 _schemaGenerator,
                 schemaRepository,
                 apiParameter.PropertyInfo(),
                 apiParameter.ParameterInfo());
+
+            return (parameter, context);
+        }
+
+        private OpenApiParameter GenerateParameter(
+            ApiParameterDescription apiParameter,
+            SchemaRepository schemaRepository)
+        {
+            var (parameter, filterContext) = GenerateParameterAndContext(apiParameter, schemaRepository);
+
+            foreach (var filter in _options.ParameterFilters)
+            {
+                filter.Apply(parameter, filterContext);
+            }
+
+            return parameter;
+        }
+
+        private async Task<OpenApiParameter> GenerateParameterAsync(
+            ApiParameterDescription apiParameter,
+            SchemaRepository schemaRepository)
+        {
+            var (parameter, filterContext) = GenerateParameterAndContext(apiParameter, schemaRepository);
+
+            foreach (var filter in _options.ParameterAsyncFilters)
+            {
+                await filter.ApplyAsync(parameter, filterContext, CancellationToken.None);
+            }
 
             foreach (var filter in _options.ParameterFilters)
             {
@@ -392,7 +673,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
         }
 
-        private OpenApiRequestBody GenerateRequestBody(
+        private (OpenApiRequestBody RequestBody, RequestBodyFilterContext FilterContext) GenerateRequestBodyAndFilterContext(
             ApiDescription apiDescription,
             SchemaRepository schemaRepository)
         {
@@ -403,7 +684,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 .FirstOrDefault(paramDesc => paramDesc.IsFromBody());
 
             var formParameters = apiDescription.ParameterDescriptions
-                .Where(paramDesc => paramDesc.IsFromForm());
+                .Where(paramDesc => paramDesc.IsFromForm())
+                .ToList();
 
             if (bodyParameter != null)
             {
@@ -415,7 +697,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     schemaGenerator: _schemaGenerator,
                     schemaRepository: schemaRepository);
             }
-            else if (formParameters.Any())
+            else if (formParameters.Count > 0)
             {
                 requestBody = GenerateRequestBodyFromFormParameters(apiDescription, schemaRepository, formParameters);
 
@@ -426,8 +708,39 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     schemaRepository: schemaRepository);
             }
 
+            return (requestBody, filterContext);
+        }
+
+        private OpenApiRequestBody GenerateRequestBody(
+            ApiDescription apiDescription,
+            SchemaRepository schemaRepository)
+        {
+            var (requestBody, filterContext) = GenerateRequestBodyAndFilterContext(apiDescription, schemaRepository);
+
             if (requestBody != null)
             {
+                foreach (var filter in _options.RequestBodyFilters)
+                {
+                    filter.Apply(requestBody, filterContext);
+                }
+            }
+
+            return requestBody;
+        }
+
+        private async Task<OpenApiRequestBody> GenerateRequestBodyAsync(
+            ApiDescription apiDescription,
+            SchemaRepository schemaRepository)
+        {
+            var (requestBody, filterContext) = GenerateRequestBodyAndFilterContext(apiDescription, schemaRepository);
+
+            if (requestBody != null)
+            {
+                foreach (var filter in _options.RequestBodyAsyncFilters)
+                {
+                    await filter.ApplyAsync(requestBody, filterContext, CancellationToken.None);
+                }
+
                 foreach (var filter in _options.RequestBodyFilters)
                 {
                     filter.Apply(requestBody, filterContext);
@@ -466,7 +779,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             };
         }
 
-        private IEnumerable<string> InferRequestContentTypes(ApiDescription apiDescription)
+        private static IEnumerable<string> InferRequestContentTypes(ApiDescription apiDescription)
         {
             // If there's content types explicitly specified via ConsumesAttribute, use them
             var explicitContentTypes = apiDescription.CustomAttributes().OfType<ConsumesAttribute>()
@@ -475,13 +788,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (explicitContentTypes.Any()) return explicitContentTypes;
 
             // If there's content types surfaced by ApiExplorer, use them
-            var apiExplorerContentTypes = apiDescription.SupportedRequestFormats
+            return apiDescription.SupportedRequestFormats
                 .Select(format => format.MediaType)
                 .Where(x => x != null)
                 .Distinct();
-            if (apiExplorerContentTypes.Any()) return apiExplorerContentTypes;
-
-            return Enumerable.Empty<string>();
         }
 
         private OpenApiRequestBody GenerateRequestBodyFromFormParameters(
@@ -490,7 +800,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             IEnumerable<ApiParameterDescription> formParameters)
         {
             var contentTypes = InferRequestContentTypes(apiDescription);
-            contentTypes = contentTypes.Any() ? contentTypes : new[] { "multipart/form-data" };
+            contentTypes = contentTypes.Any() ? contentTypes : ["multipart/form-data"];
 
             var schema = GenerateSchemaFromFormParameters(formParameters, schemaRepository);
 
@@ -524,18 +834,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     ? formParameter.Name.ToCamelCase()
                     : formParameter.Name;
 
-                var schema = (formParameter.ModelMetadata != null)
+                var propertyInfo = formParameter.PropertyInfo();
+                if (!propertyInfo?.HasAttribute<SwaggerIgnoreAttribute>() ?? true)
+                {
+                    var schema = (formParameter.ModelMetadata != null)
                     ? GenerateSchema(
                         formParameter.ModelMetadata.ModelType,
                         schemaRepository,
-                        formParameter.PropertyInfo(),
+                        propertyInfo,
                         formParameter.ParameterInfo())
                     : new OpenApiSchema { Type = "string" };
 
-                properties.Add(name, schema);
+                    properties.Add(name, schema);
 
-                if (formParameter.IsRequiredParameter())
-                    requiredPropertyNames.Add(name);
+                    if (formParameter.IsRequiredParameter())
+                        requiredPropertyNames.Add(name);
+                }
             }
 
             return new OpenApiSchema
@@ -579,15 +893,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 Description = description,
                 Content = responseContentTypes.ToDictionary(
                     contentType => contentType,
-                    contentType => CreateResponseMediaType(apiResponseType.ModelMetadata, schemaRepository)
+                    contentType => CreateResponseMediaType(apiResponseType.ModelMetadata?.ModelType ?? apiResponseType.Type, schemaRepository)
                 )
             };
         }
 
-        private IEnumerable<string> InferResponseContentTypes(ApiDescription apiDescription, ApiResponseType apiResponseType)
+        private static IEnumerable<string> InferResponseContentTypes(ApiDescription apiDescription, ApiResponseType apiResponseType)
         {
-            // If there's no associated model, return an empty list (i.e. no content)
-            if (apiResponseType.ModelMetadata == null) return Enumerable.Empty<string>();
+            // If there's no associated model type, return an empty list (i.e. no content)
+            if (apiResponseType.ModelMetadata == null && (apiResponseType.Type == null || apiResponseType.Type == typeof(void)))
+            {
+                return [];
+            }
 
             // If there's content types explicitly specified via ProducesAttribute, use them
             var explicitContentTypes = apiDescription.CustomAttributes().OfType<ProducesAttribute>()
@@ -601,71 +918,117 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 .Distinct();
             if (apiExplorerContentTypes.Any()) return apiExplorerContentTypes;
 
-            return Enumerable.Empty<string>();
+            return [];
         }
 
-        private OpenApiMediaType CreateResponseMediaType(ModelMetadata modelMetadata, SchemaRepository schemaRespository)
+        private OpenApiMediaType CreateResponseMediaType(Type modelType, SchemaRepository schemaRespository)
         {
             return new OpenApiMediaType
             {
-                Schema = GenerateSchema(modelMetadata.ModelType, schemaRespository)
+                Schema = GenerateSchema(modelType, schemaRespository)
             };
         }
 
-        private static readonly Dictionary<string, OperationType> OperationTypeMap = new Dictionary<string, OperationType>
+        private static bool IsFromFormAttributeUsedWithIFormFile(ApiParameterDescription apiParameter)
         {
-            { "GET", OperationType.Get },
-            { "PUT", OperationType.Put },
-            { "POST", OperationType.Post },
-            { "DELETE", OperationType.Delete },
-            { "OPTIONS", OperationType.Options },
-            { "HEAD", OperationType.Head },
-            { "PATCH", OperationType.Patch },
-            { "TRACE", OperationType.Trace }
+            var parameterInfo = apiParameter.ParameterInfo();
+            var fromFormAttribute = parameterInfo?.GetCustomAttribute<FromFormAttribute>();
+
+            return fromFormAttribute != null && parameterInfo?.ParameterType == typeof(IFormFile);
+        }
+
+        private static readonly Dictionary<string, OperationType> OperationTypeMap = new()
+        {
+            ["GET"] = OperationType.Get,
+            ["PUT"] = OperationType.Put,
+            ["POST"] = OperationType.Post,
+            ["DELETE"] = OperationType.Delete,
+            ["OPTIONS"] = OperationType.Options,
+            ["HEAD"] = OperationType.Head,
+            ["PATCH"] = OperationType.Patch,
+            ["TRACE"] = OperationType.Trace,
         };
 
-        private static readonly Dictionary<BindingSource, ParameterLocation> ParameterLocationMap = new Dictionary<BindingSource, ParameterLocation>
+        private static readonly Dictionary<BindingSource, ParameterLocation> ParameterLocationMap = new()
         {
-            { BindingSource.Query, ParameterLocation.Query },
-            { BindingSource.Header, ParameterLocation.Header },
-            { BindingSource.Path, ParameterLocation.Path }
+            [BindingSource.Query] = ParameterLocation.Query,
+            [BindingSource.Header] = ParameterLocation.Header,
+            [BindingSource.Path] = ParameterLocation.Path,
         };
 
-        private static readonly IReadOnlyCollection<KeyValuePair<string, string>> ResponseDescriptionMap = new[]
-        {
-           new KeyValuePair<string, string>("1\\d{2}", "Information"),
+        private static readonly IReadOnlyCollection<KeyValuePair<string, string>> ResponseDescriptionMap =
+        [
+            new KeyValuePair<string, string>("100", "Continue"),
+            new KeyValuePair<string, string>("101", "Switching Protocols"),
+            new KeyValuePair<string, string>("1\\d{2}", "Information"),
 
+            new KeyValuePair<string, string>("200", "OK"),
             new KeyValuePair<string, string>("201", "Created"),
             new KeyValuePair<string, string>("202", "Accepted"),
+            new KeyValuePair<string, string>("203", "Non-Authoritative Information"),
             new KeyValuePair<string, string>("204", "No Content"),
+            new KeyValuePair<string, string>("205", "Reset Content"),
+            new KeyValuePair<string, string>("206", "Partial Content"),
             new KeyValuePair<string, string>("2\\d{2}", "Success"),
 
+            new KeyValuePair<string, string>("300", "Multiple Choices"),
+            new KeyValuePair<string, string>("301", "Moved Permanently"),
+            new KeyValuePair<string, string>("302", "Found"),
+            new KeyValuePair<string, string>("303", "See Other"),
             new KeyValuePair<string, string>("304", "Not Modified"),
+            new KeyValuePair<string, string>("305", "Use Proxy"),
+            new KeyValuePair<string, string>("307", "Temporary Redirect"),
+            new KeyValuePair<string, string>("308", "Permanent Redirect"),
             new KeyValuePair<string, string>("3\\d{2}", "Redirect"),
 
             new KeyValuePair<string, string>("400", "Bad Request"),
             new KeyValuePair<string, string>("401", "Unauthorized"),
+            new KeyValuePair<string, string>("402", "Payment Required"),
             new KeyValuePair<string, string>("403", "Forbidden"),
             new KeyValuePair<string, string>("404", "Not Found"),
             new KeyValuePair<string, string>("405", "Method Not Allowed"),
             new KeyValuePair<string, string>("406", "Not Acceptable"),
+            new KeyValuePair<string, string>("407", "Proxy Authentication Required"),
             new KeyValuePair<string, string>("408", "Request Timeout"),
             new KeyValuePair<string, string>("409", "Conflict"),
+            new KeyValuePair<string, string>("410", "Gone"),
+            new KeyValuePair<string, string>("411", "Length Required"),
+            new KeyValuePair<string, string>("412", "Precondition Failed"),
+            new KeyValuePair<string, string>("413", "Content Too Large"),
+            new KeyValuePair<string, string>("414", "URI Too Long"),
+            new KeyValuePair<string, string>("415", "Unsupported Media Type"),
+            new KeyValuePair<string, string>("416", "Range Not Satisfiable"),
+            new KeyValuePair<string, string>("417", "Expectation Failed"),
+            new KeyValuePair<string, string>("421", "Misdirected Request"),
+            new KeyValuePair<string, string>("422", "Unprocessable Content"),
+            new KeyValuePair<string, string>("423", "Locked"),
+            new KeyValuePair<string, string>("424", "Failed Dependency"),
+            new KeyValuePair<string, string>("426", "Upgrade Required"),
+            new KeyValuePair<string, string>("428", "Precondition Required"),
             new KeyValuePair<string, string>("429", "Too Many Requests"),
+            new KeyValuePair<string, string>("431", "Request Header Fields Too Large"),
+            new KeyValuePair<string, string>("451", "Unavailable For Legal Reasons"),
             new KeyValuePair<string, string>("4\\d{2}", "Client Error"),
 
+            new KeyValuePair<string, string>("500", "Internal Server Error"),
+            new KeyValuePair<string, string>("501", "Not Implemented"),
+            new KeyValuePair<string, string>("502", "Bad Gateway"),
+            new KeyValuePair<string, string>("503", "Service Unavailable"),
+            new KeyValuePair<string, string>("504", "Gateway Timeout"),
+            new KeyValuePair<string, string>("505", "HTTP Version Not Supported"),
             new KeyValuePair<string, string>("5\\d{2}", "Server Error"),
+
             new KeyValuePair<string, string>("default", "Error")
-        };
+        ];
 
 #if NET7_0_OR_GREATER
-        private string GenerateSummary(ApiDescription apiDescription) =>
+        private static string GenerateSummary(ApiDescription apiDescription) =>
             apiDescription.ActionDescriptor?.EndpointMetadata
                 ?.OfType<IEndpointSummaryMetadata>()
                 .Select(s => s.Summary)
                 .LastOrDefault();
 
-        private string GenerateDescription(ApiDescription apiDescription) =>
+        private static string GenerateDescription(ApiDescription apiDescription) =>
             apiDescription.ActionDescriptor?.EndpointMetadata
                 ?.OfType<IEndpointDescriptionMetadata>()
                 .Select(s => s.Description)

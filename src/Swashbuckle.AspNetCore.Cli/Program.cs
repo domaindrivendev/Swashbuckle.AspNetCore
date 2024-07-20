@@ -1,15 +1,17 @@
 ﻿using System;
-using System.Reflection;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
-using System.Runtime.Loader;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.Loader;
+using Microsoft.AspNetCore;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Writers;
 using Swashbuckle.AspNetCore.Swagger;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore;
-using Microsoft.Extensions.Hosting;
 
 namespace Swashbuckle.AspNetCore.Cli
 {
@@ -30,15 +32,19 @@ namespace Swashbuckle.AspNetCore.Cli
             {
                 c.Argument("startupassembly", "relative path to the application's startup assembly");
                 c.Argument("swaggerdoc", "name of the swagger doc you want to retrieve, as configured in your startup class");
+
                 c.Option("--output", "relative path where the Swagger will be output, defaults to stdout");
                 c.Option("--host", "a specific host to include in the Swagger output");
                 c.Option("--basepath", "a specific basePath to include in the Swagger output");
                 c.Option("--serializeasv2", "output Swagger in the V2 format rather than V3", true);
                 c.Option("--yaml", "exports swagger in a yaml format", true);
+
                 c.OnRun((namedArgs) =>
                 {
                     if (!File.Exists(namedArgs["startupassembly"]))
+                    {
                         throw new FileNotFoundException(namedArgs["startupassembly"]);
+                    }
 
                     var depsFile = namedArgs["startupassembly"].Replace(".dll", ".deps.json");
                     var runtimeConfig = namedArgs["startupassembly"].Replace(".dll", ".runtimeconfig.json");
@@ -87,31 +93,63 @@ namespace Swashbuckle.AspNetCore.Cli
 
                     // 3) Retrieve Swagger via configured provider
                     var swaggerProvider = serviceProvider.GetRequiredService<ISwaggerProvider>();
+                    var swaggerOptions = serviceProvider.GetService<IOptions<SwaggerOptions>>();
+                    var swaggerDocumentSerializer = swaggerOptions?.Value?.CustomDocumentSerializer;
                     var swagger = swaggerProvider.GetSwagger(
                         namedArgs["swaggerdoc"],
-                        namedArgs.ContainsKey("--host") ? namedArgs["--host"] : null,
-                        namedArgs.ContainsKey("--basepath") ? namedArgs["--basepath"] : null);
+                        namedArgs.TryGetValue("--host", out var arg) ? arg : null,
+                        namedArgs.TryGetValue("--basepath", out var namedArg) ? namedArg : null);
 
                     // 4) Serialize to specified output location or stdout
-                    var outputPath = namedArgs.ContainsKey("--output")
-                        ? Path.Combine(Directory.GetCurrentDirectory(), namedArgs["--output"])
+                    var outputPath = namedArgs.TryGetValue("--output", out var arg1)
+                        ? Path.Combine(Directory.GetCurrentDirectory(), arg1)
                         : null;
 
-                    using (var streamWriter = (outputPath != null ? File.CreateText(outputPath) : Console.Out))
+                    if (!string.IsNullOrEmpty(outputPath))
                     {
-                        IOpenApiWriter writer;
-                        if (namedArgs.ContainsKey("--yaml"))
-                            writer = new OpenApiYamlWriter(streamWriter);
-                        else
-                            writer = new OpenApiJsonWriter(streamWriter);
+                        string directoryPath = Path.GetDirectoryName(outputPath);
+                        if (!string.IsNullOrEmpty(directoryPath) && !Directory.Exists(directoryPath))
+                        {
+                            Directory.CreateDirectory(directoryPath);
+                        }
+                    }
 
-                        if (namedArgs.ContainsKey("--serializeasv2"))
+                    using Stream stream = outputPath != null ? File.Create(outputPath) : Console.OpenStandardOutput();
+                    using var streamWriter = new FormattingStreamWriter(stream, CultureInfo.InvariantCulture);
+
+                    IOpenApiWriter writer;
+                    if (namedArgs.ContainsKey("--yaml"))
+                    {
+                        writer = new OpenApiYamlWriter(streamWriter);
+                    }
+                    else
+                    {
+                        writer = new OpenApiJsonWriter(streamWriter);
+                    }
+
+                    if (namedArgs.ContainsKey("--serializeasv2"))
+                    {
+                        if (swaggerDocumentSerializer != null)
+                        {
+                            swaggerDocumentSerializer.SerializeDocument(swagger, writer, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0);
+                        }
+                        else
+                        {
                             swagger.SerializeAsV2(writer);
-                        else
-                            swagger.SerializeAsV3(writer);
+                        }
+                    }
+                    else if (swaggerDocumentSerializer != null)
+                    {
+                        swaggerDocumentSerializer.SerializeDocument(swagger, writer, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0);
+                    }
+                    else
+                    {
+                        swagger.SerializeAsV3(writer);
+                    }
 
-                        if (outputPath != null)
-                            Console.WriteLine($"Swagger JSON/YAML successfully written to {outputPath}");
+                    if (outputPath != null)
+                    {
+                        Console.WriteLine($"Swagger JSON/YAML successfully written to {outputPath}");
                     }
 
                     return 0;
@@ -123,7 +161,7 @@ namespace Swashbuckle.AspNetCore.Cli
 
         private static string EscapePath(string path)
         {
-            return path.Contains(" ")
+            return path.Contains(' ')
                 ? "\"" + path + "\""
                 : path;
         }
@@ -171,23 +209,26 @@ namespace Swashbuckle.AspNetCore.Cli
                 .Where(t => t.Name == factoryClassName)
                 .ToList();
 
-            if (!factoryTypes.Any())
+            if (factoryTypes.Count == 0)
             {
                 host = default;
                 return false;
             }
-
-            if (factoryTypes.Count() > 1)
+            else if (factoryTypes.Count > 1)
+            {
                 throw new InvalidOperationException($"Multiple {factoryClassName} classes detected");
+            }
 
             var factoryMethod = factoryTypes
                 .Single()
                 .GetMethod(factoryMethodName, BindingFlags.Public | BindingFlags.Static);
 
             if (factoryMethod == null || factoryMethod.ReturnType != typeof(THost))
+            {
                 throw new InvalidOperationException(
                     $"{factoryClassName} class detected but does not contain a public static method " +
                     $"called {factoryMethodName} with return type {typeof(THost).Name}");
+            }
 
             host = (THost)factoryMethod.Invoke(null, null);
             return true;

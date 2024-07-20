@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;net7.0;net8.0</TargetFrameworks>
     <DotNetSwaggerPath>$([System.IO.Path]::Combine('$(ArtifactsPath)', 'bin', 'Swashbuckle.AspNetCore.Cli', '$(Configuration.ToLower())_$(TargetFramework)'))</DotNetSwaggerPath>
   </PropertyGroup>
 
@@ -32,7 +32,7 @@
   -->
 
   <Target Name="SwaggerToFile" AfterTargets="AfterBuild">
-    <Exec Command="dotnet dotnet-swagger.dll tofile --host http://localhost:57556/ --output %22$(MSBuildThisFileDirectory)wwwroot/swagger/v1/swagger.json%22 %22$(OutputPath)$(AssemblyName).dll%22 v1"
+    <Exec Command="dotnet dotnet-swagger.dll tofile --host http://localhost:57556/ --output %22$(MSBuildThisFileDirectory)wwwroot/swagger/v1/swagger_$(TargetFramework).json%22 %22$(OutputPath)$(AssemblyName).dll%22 v1"
           WorkingDirectory="$(DotNetSwaggerPath)" />
   </Target>
 

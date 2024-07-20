@@ -1,32 +1,45 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.IntegrationTests.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)..\..\src\Swashbuckle.AspNetCore.Swagger\Swashbuckle.AspNetCore.Swagger.snk</AssemblyOriginatorKeyFile>
     <NoWarn>$(NoWarn);8002</NoWarn>
     <SignAssembly>true</SignAssembly>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\WebSites\Basic\Basic.csproj" />
     <ProjectReference Include="..\WebSites\CliExample\CliExample.csproj" />
     <ProjectReference Include="..\WebSites\ConfigFromFile\ConfigFromFile.csproj" />
+    <ProjectReference Include="..\WebSites\CustomDocumentSerializer\CustomDocumentSerializer.csproj" />
     <ProjectReference Include="..\WebSites\CustomUIConfig\CustomUIConfig.csproj" />
     <ProjectReference Include="..\WebSites\CustomUIIndex\CustomUIIndex.csproj" />
     <ProjectReference Include="..\WebSites\GenericControllers\GenericControllers.csproj" />
     <ProjectReference Include="..\WebSites\MultipleVersions\MultipleVersions.csproj" />
-    <ProjectReference Include="..\WebSites\NetCore21\NetCore21.csproj" />
     <ProjectReference Include="..\WebSites\OAuth2Integration\OAuth2Integration.csproj" />
     <ProjectReference Include="..\WebSites\ReDoc\ReDoc.csproj" />
     <ProjectReference Include="..\WebSites\TestFirst\TestFirst.csproj" />
+    <ProjectReference Include="..\WebSites\TopLevelSwaggerDoc\TopLevelSwaggerDoc.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+    <ProjectReference Include="..\WebSites\MvcWithNullable\MvcWithNullable.csproj" />
+    <ProjectReference Include="..\WebSites\WebApi\WebApi.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="Microsoft.OpenApi.Readers" />
+    <PackageReference Include="Verify.Xunit" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
+    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="8.0.4" />
+    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="8.0.4" />
   </ItemGroup>
 
 </Project>

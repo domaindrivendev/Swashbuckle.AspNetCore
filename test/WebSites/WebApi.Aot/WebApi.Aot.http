@@ -1,0 +1,9 @@
+@WebApi.Aot_HostAddress = http://localhost:5154
+
+GET {{WebApi.Aot_HostAddress}}/todos/
+Accept: application/json
+
+###
+
+GET {{WebApi.Aot_HostAddress}}/todos/1
+Accept: application/json

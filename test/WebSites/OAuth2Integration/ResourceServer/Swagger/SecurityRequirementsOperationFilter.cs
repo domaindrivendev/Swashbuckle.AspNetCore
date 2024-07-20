@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.Extensions.Options;
@@ -28,9 +27,10 @@ namespace OAuth2Integration.ResourceServer.Swagger
                 .Concat(context.MethodInfo.DeclaringType.GetCustomAttributes(true))
                 .OfType<AuthorizeAttribute>()
                 .Select(attr => attr.Policy)
+                .Where(p => p != null)
                 .Distinct();
 
-            var requiredScopes = requiredPolicies.Select(p => _authorizationOptions.GetPolicy(p))
+            var requiredScopes = requiredPolicies.Select(_authorizationOptions.GetPolicy)
                 .SelectMany(r => r.Requirements.OfType<ClaimsAuthorizationRequirement>())
                 .Where(cr => cr.ClaimType == "scope")
                 .SelectMany(r => r.AllowedValues)
@@ -47,13 +47,13 @@ namespace OAuth2Integration.ResourceServer.Swagger
                     Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
                 };
 
-                operation.Security = new List<OpenApiSecurityRequirement>
-                {
+                operation.Security =
+                [
                     new OpenApiSecurityRequirement
                     {
                         [ oAuthScheme ] = requiredScopes
                     }
-                };
+                ];
             }
         }
     }

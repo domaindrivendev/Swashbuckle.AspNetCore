@@ -9,6 +9,26 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class OpenApiSchemaExtensions
     {
+        private static readonly Dictionary<AnnotationsDataType, string> DataFormatMappings = new()
+        {
+            [AnnotationsDataType.DateTime] = "date-time",
+            [AnnotationsDataType.Date] = "date",
+            [AnnotationsDataType.Time] = "time",
+            [AnnotationsDataType.Duration] = "duration",
+            [AnnotationsDataType.PhoneNumber] = "tel",
+            [AnnotationsDataType.Currency] = "currency",
+            [AnnotationsDataType.Text] = "string",
+            [AnnotationsDataType.Html] = "html",
+            [AnnotationsDataType.MultilineText] = "multiline",
+            [AnnotationsDataType.EmailAddress] = "email",
+            [AnnotationsDataType.Password] = "password",
+            [AnnotationsDataType.Url] = "uri",
+            [AnnotationsDataType.ImageUrl] = "uri",
+            [AnnotationsDataType.CreditCard] = "credit-card",
+            [AnnotationsDataType.PostalCode] = "postal-code",
+            [AnnotationsDataType.Upload] = "binary",
+        };
+
         public static void ApplyValidationAttributes(this OpenApiSchema schema, IEnumerable<object> customAttributes)
         {
             foreach (var attribute in customAttributes)
@@ -21,6 +41,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 else if (attribute is MaxLengthAttribute maxLengthAttribute)
                     ApplyMaxLengthAttribute(schema, maxLengthAttribute);
+
+#if NET8_0_OR_GREATER
+
+                else if (attribute is LengthAttribute lengthAttribute)
+                    ApplyLengthAttribute(schema, lengthAttribute);
+
+                else if (attribute is Base64StringAttribute base64Attribute)
+                    ApplyBase64Attribute(schema);
+
+#endif
 
                 else if (attribute is RangeAttribute rangeAttribute)
                     ApplyRangeAttribute(schema, rangeAttribute);
@@ -88,26 +118,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private static void ApplyDataTypeAttribute(OpenApiSchema schema, DataTypeAttribute dataTypeAttribute)
         {
-            var formats = new Dictionary<AnnotationsDataType, string>
-            {
-                { AnnotationsDataType.DateTime, "date-time" },
-                { AnnotationsDataType.Date, "date" },
-                { AnnotationsDataType.Time, "time" },
-                { AnnotationsDataType.Duration, "duration" },
-                { AnnotationsDataType.PhoneNumber, "tel" },
-                { AnnotationsDataType.Currency, "currency" },
-                { AnnotationsDataType.Text, "string" },
-                { AnnotationsDataType.Html, "html" },
-                { AnnotationsDataType.MultilineText, "multiline" },
-                { AnnotationsDataType.EmailAddress, "email" },
-                { AnnotationsDataType.Password, "password" },
-                { AnnotationsDataType.Url, "uri" },
-                { AnnotationsDataType.ImageUrl, "uri" },
-                { AnnotationsDataType.CreditCard, "credit-card" },
-                { AnnotationsDataType.PostalCode, "postal-code" }
-            };
-
-            if (formats.TryGetValue(dataTypeAttribute.DataType, out string format))
+            if (DataFormatMappings.TryGetValue(dataTypeAttribute.DataType, out string format))
             {
                 schema.Format = format;
             }
@@ -145,8 +156,45 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 schema.MaxLength = maxLengthRouteConstraint.MaxLength;
         }
 
+#if NET8_0_OR_GREATER
+
+        private static void ApplyLengthAttribute(OpenApiSchema schema, LengthAttribute lengthAttribute)
+        {
+            if (schema.Type == "array")
+            {
+                schema.MinItems = lengthAttribute.MinimumLength;
+                schema.MaxItems = lengthAttribute.MaximumLength;
+            }
+            else
+            {
+                schema.MinLength = lengthAttribute.MinimumLength;
+                schema.MaxLength = lengthAttribute.MaximumLength;
+            }
+        }
+
+        private static void ApplyBase64Attribute(OpenApiSchema schema)
+        {
+            schema.Format = "byte";
+        }
+
+#endif
+
         private static void ApplyRangeAttribute(OpenApiSchema schema, RangeAttribute rangeAttribute)
         {
+#if NET8_0_OR_GREATER
+
+            if (rangeAttribute.MinimumIsExclusive)
+            {
+                schema.ExclusiveMinimum = true;
+            }
+
+            if (rangeAttribute.MaximumIsExclusive)
+            {
+                schema.ExclusiveMaximum = true;
+            }
+
+#endif
+
             schema.Maximum = decimal.TryParse(rangeAttribute.Maximum.ToString(), out decimal maximum)
                 ? maximum
                 : schema.Maximum;

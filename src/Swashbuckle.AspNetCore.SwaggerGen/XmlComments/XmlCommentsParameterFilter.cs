@@ -42,11 +42,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var exampleNode = propertyNode.SelectSingleNode("example");
             if (exampleNode == null) return;
 
-            var exampleAsJson = (parameter.Schema?.ResolveType(context.SchemaRepository) == "string")
-                ? $"\"{exampleNode.ToString()}\""
-                : exampleNode.ToString();
-
-            parameter.Example = OpenApiAnyFactory.CreateFromJson(exampleAsJson);
+            parameter.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, parameter.Schema, exampleNode.ToString());
         }
 
         private void ApplyParamTags(OpenApiParameter parameter, ParameterFilterContext context)
@@ -71,11 +67,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var example = paramNode.GetAttribute("example", "");
                 if (string.IsNullOrEmpty(example)) return;
 
-                var exampleAsJson = (parameter.Schema?.ResolveType(context.SchemaRepository) == "string")
-                    ? $"\"{example}\""
-                    : example;
-
-                parameter.Example = OpenApiAnyFactory.CreateFromJson(exampleAsJson);
+                parameter.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, parameter.Schema, example);
             }
         }
     }

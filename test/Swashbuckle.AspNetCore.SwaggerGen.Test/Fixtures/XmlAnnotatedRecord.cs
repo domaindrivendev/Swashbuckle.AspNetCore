@@ -4,13 +4,14 @@ using Swashbuckle.AspNetCore.TestSupport;
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     /// <summary>
-    /// Summary for XmlAnnotatedType
+    /// Summary for XmlAnnotatedRecord
     /// </summary>
     /// <param name="BoolProperty" example="true">Summary for BoolProperty</param>
     /// <param name="IntProperty" example="10">Summary for IntProperty</param>
     /// <param name="LongProperty" example="4294967295">Summary for LongProperty</param>
     /// <param name="FloatProperty" example="1.2">Summary for FloatProperty</param>
     /// <param name="DoubleProperty" example="1.25">Summary for DoubleProperty</param>
+    /// <param name="DateTimeProperty" example="6/22/2022 12:00:00 AM">Summary for DateTimeProperty</param>
     /// <param name="EnumProperty" example="2">Summary for EnumProperty</param>
     /// <param name="GuidProperty" example="d3966535-2637-48fa-b911-e3c27405ee09">Summary for GuidProperty</param>
     /// <param name="StringPropertyWithNullExample" example="null">Summary for Nullable StringPropertyWithNullExample</param>
@@ -23,6 +24,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         long LongProperty,
         float FloatProperty,
         double DoubleProperty,
+        DateTime DateTimeProperty,
         IntEnum EnumProperty,
         Guid GuidProperty,
         string StringPropertyWithNullExample,

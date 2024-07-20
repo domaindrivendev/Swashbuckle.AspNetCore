@@ -1,21 +1,20 @@
-﻿using System;
-using System.Reflection;
-using System.Threading.Tasks;
-using System.Text.RegularExpressions;
-using System.Text;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.AspNetCore.Http.Extensions;
-using System.Linq;
 
 #if NETSTANDARD2_0
 using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
@@ -23,7 +22,7 @@ using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Swashbuckle.AspNetCore.SwaggerUI
 {
-    public class SwaggerUIMiddleware
+    public partial class SwaggerUIMiddleware
     {
         private const string EmbeddedFileNamespace = "Swashbuckle.AspNetCore.SwaggerUI.node_modules.swagger_ui_dist";
 
@@ -41,43 +40,60 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
 
             _staticFileMiddleware = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options);
 
-            _jsonSerializerOptions = new JsonSerializerOptions();
-#if NET6_0_OR_GREATER
-            _jsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            if (options.JsonSerializerOptions != null)
+            {
+                _jsonSerializerOptions = options.JsonSerializerOptions;
+            }
+#if !NET6_0_OR_GREATER
+            else
+            {
+                _jsonSerializerOptions = new JsonSerializerOptions()
+                {
+#if NET5_0_OR_GREATER
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
 #else
-            _jsonSerializerOptions.IgnoreNullValues = true;
+                    IgnoreNullValues = true,
 #endif
-            _jsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-            _jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, false));
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, false) }
+                };
+            }
+#endif
         }
 
         public async Task Invoke(HttpContext httpContext)
         {
             var httpMethod = httpContext.Request.Method;
-            var path = httpContext.Request.Path.Value;
 
-            // If the RoutePrefix is requested (with or without trailing slash), redirect to index URL
-            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$",  RegexOptions.IgnoreCase))
+            if (HttpMethods.IsGet(httpMethod))
             {
-                // Use relative redirect to support proxy environments
-                var relativeIndexUrl = string.IsNullOrEmpty(path) || path.EndsWith("/")
-                    ? "index.html"
-                    : $"{path.Split('/').Last()}/index.html";
+                var path = httpContext.Request.Path.Value;
 
-                RespondWithRedirect(httpContext.Response, relativeIndexUrl);
-                return;
-            }
+                // If the RoutePrefix is requested (with or without trailing slash), redirect to index URL
+                if (Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$", RegexOptions.IgnoreCase))
+                {
+                    // Use relative redirect to support proxy environments
+                    var relativeIndexUrl = string.IsNullOrEmpty(path) || path.EndsWith("/")
+                        ? "index.html"
+                        : $"{path.Split('/').Last()}/index.html";
 
-            if (httpMethod == "GET" && Regex.IsMatch(path, $"^/{Regex.Escape(_options.RoutePrefix)}/?index.html$",  RegexOptions.IgnoreCase))
-            {
-                await RespondWithIndexHtml(httpContext.Response);
-                return;
+                    RespondWithRedirect(httpContext.Response, relativeIndexUrl);
+                    return;
+                }
+
+                var match = Regex.Match(path, $"^/{Regex.Escape(_options.RoutePrefix)}/?(index.(html|js))$", RegexOptions.IgnoreCase);
+
+                if (match.Success)
+                {
+                    await RespondWithFile(httpContext.Response, match.Groups[1].Value);
+                    return;
+                }
             }
 
             await _staticFileMiddleware.Invoke(httpContext);
         }
 
-        private StaticFileMiddleware CreateStaticFileMiddleware(
+        private static StaticFileMiddleware CreateStaticFileMiddleware(
             RequestDelegate next,
             IWebHostEnvironment hostingEnv,
             ILoggerFactory loggerFactory,
@@ -92,41 +108,83 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             return new StaticFileMiddleware(next, hostingEnv, Options.Create(staticFileOptions), loggerFactory);
         }
 
-        private void RespondWithRedirect(HttpResponse response, string location)
+        private static void RespondWithRedirect(HttpResponse response, string location)
         {
             response.StatusCode = 301;
             response.Headers["Location"] = location;
         }
 
-        private async Task RespondWithIndexHtml(HttpResponse response)
+        private async Task RespondWithFile(HttpResponse response, string fileName)
         {
             response.StatusCode = 200;
-            response.ContentType = "text/html;charset=utf-8";
 
-            using (var stream = _options.IndexStream())
+            Stream stream;
+
+            if (fileName == "index.js")
+            {
+                response.ContentType = "application/javascript;charset=utf-8";
+                stream = ResourceHelper.GetEmbeddedResource(fileName);
+            }
+            else
+            {
+                response.ContentType = "text/html;charset=utf-8";
+                stream = _options.IndexStream();
+            }
+
+            using (stream)
             {
                 using var reader = new StreamReader(stream);
 
                 // Inject arguments before writing to response
-                var htmlBuilder = new StringBuilder(await reader.ReadToEndAsync());
+                var content = new StringBuilder(await reader.ReadToEndAsync());
                 foreach (var entry in GetIndexArguments())
                 {
-                    htmlBuilder.Replace(entry.Key, entry.Value);
+                    content.Replace(entry.Key, entry.Value);
                 }
 
-                await response.WriteAsync(htmlBuilder.ToString(), Encoding.UTF8);
+                await response.WriteAsync(content.ToString(), Encoding.UTF8);
             }
         }
 
-        private IDictionary<string, string> GetIndexArguments()
+#if NET5_0_OR_GREATER
+        [UnconditionalSuppressMessage(
+            "AOT",
+            "IL2026:RequiresUnreferencedCode",
+            Justification = "Method is only called if the user provides their own custom JsonSerializerOptions.")]
+        [UnconditionalSuppressMessage(
+            "AOT",
+            "IL3050:RequiresDynamicCode",
+            Justification = "Method is only called if the user provides their own custom JsonSerializerOptions.")]
+#endif
+        private Dictionary<string, string> GetIndexArguments()
         {
+            string configObject = null;
+            string oauthConfigObject = null;
+            string interceptors = null;
+
+#if NET6_0_OR_GREATER
+            if (_jsonSerializerOptions is null)
+            {
+                configObject = JsonSerializer.Serialize(_options.ConfigObject, SwaggerUIOptionsJsonContext.Default.ConfigObject);
+                oauthConfigObject = JsonSerializer.Serialize(_options.OAuthConfigObject, SwaggerUIOptionsJsonContext.Default.OAuthConfigObject);
+                interceptors = JsonSerializer.Serialize(_options.Interceptors, SwaggerUIOptionsJsonContext.Default.InterceptorFunctions);
+            }
+#endif
+
+            configObject ??= JsonSerializer.Serialize(_options.ConfigObject, _jsonSerializerOptions);
+            oauthConfigObject ??= JsonSerializer.Serialize(_options.OAuthConfigObject, _jsonSerializerOptions);
+            interceptors ??= JsonSerializer.Serialize(_options.Interceptors, _jsonSerializerOptions);
+
             return new Dictionary<string, string>()
             {
                 { "%(DocumentTitle)", _options.DocumentTitle },
                 { "%(HeadContent)", _options.HeadContent },
-                { "%(ConfigObject)", JsonSerializer.Serialize(_options.ConfigObject, _jsonSerializerOptions) },
-                { "%(OAuthConfigObject)", JsonSerializer.Serialize(_options.OAuthConfigObject, _jsonSerializerOptions) },
-                { "%(Interceptors)", JsonSerializer.Serialize(_options.Interceptors) },
+                { "%(StylesPath)", _options.StylesPath },
+                { "%(ScriptBundlePath)", _options.ScriptBundlePath },
+                { "%(ScriptPresetsPath)", _options.ScriptPresetsPath },
+                { "%(ConfigObject)", configObject },
+                { "%(OAuthConfigObject)", oauthConfigObject },
+                { "%(Interceptors)", interceptors },
             };
         }
     }

@@ -10,6 +10,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.Options;
 
@@ -58,12 +59,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var dataContract = GetDataContractFor(modelType);
 
             var schema = _generatorOptions.UseOneOfForPolymorphism && IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts)
-                ? GeneratePolymorphicSchema(dataContract, schemaRepository, knownTypesDataContracts)
+                ? GeneratePolymorphicSchema(schemaRepository, knownTypesDataContracts)
                 : GenerateConcreteSchema(dataContract, schemaRepository);
 
             if (_generatorOptions.UseAllOfToExtendReferenceSchemas && schema.Reference != null)
             {
-                schema.AllOf = new[] { new OpenApiSchema { Reference = schema.Reference } };
+                schema.AllOf = [new OpenApiSchema { Reference = schema.Reference }];
                 schema.Reference = null;
             }
 
@@ -75,9 +76,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 if (dataProperty != null)
                 {
                     var requiredAttribute = customAttributes.OfType<RequiredAttribute>().FirstOrDefault();
+
                     schema.Nullable = _generatorOptions.SupportNonNullableReferenceTypes
-                        ? dataProperty.IsNullable && requiredAttribute==null && !memberInfo.IsNonNullableReferenceType()
-                        : dataProperty.IsNullable && requiredAttribute==null;
+                        ? dataProperty.IsNullable && requiredAttribute == null && !memberInfo.IsNonNullableReferenceType()
+                        : dataProperty.IsNullable && requiredAttribute == null;
 
                     schema.ReadOnly = dataProperty.IsReadOnly;
                     schema.WriteOnly = dataProperty.IsWriteOnly;
@@ -87,8 +89,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var defaultValueAttribute = customAttributes.OfType<DefaultValueAttribute>().FirstOrDefault();
                 if (defaultValueAttribute != null)
                 {
-                    var defaultAsJson = dataContract.JsonConverter(defaultValueAttribute.Value);
-                    schema.Default = OpenApiAnyFactory.CreateFromJson(defaultAsJson);
+                    schema.Default = GenerateDefaultValue(dataContract, modelType, defaultValueAttribute.Value);
                 }
 
                 var obsoleteAttribute = customAttributes.OfType<ObsoleteAttribute>().FirstOrDefault();
@@ -97,8 +98,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     schema.Deprecated = true;
                 }
 
-                // NullableAttribute behaves diffrently for Dictionaries
-                if (schema.AdditionalPropertiesAllowed && modelType.IsGenericType && modelType.GetGenericTypeDefinition() == typeof(Dictionary<,>))
+                // NullableAttribute behaves differently for Dictionaries
+                if (schema.AdditionalPropertiesAllowed && modelType.IsGenericType &&
+                    modelType.GetGenericTypeDefinition() == typeof(Dictionary<,>))
                 {
                     schema.AdditionalProperties.Nullable = !memberInfo.IsDictionaryValueNonNullable();
                 }
@@ -120,12 +122,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var dataContract = GetDataContractFor(modelType);
 
             var schema = _generatorOptions.UseOneOfForPolymorphism && IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts)
-                ? GeneratePolymorphicSchema(dataContract, schemaRepository, knownTypesDataContracts)
+                ? GeneratePolymorphicSchema(schemaRepository, knownTypesDataContracts)
                 : GenerateConcreteSchema(dataContract, schemaRepository);
 
             if (_generatorOptions.UseAllOfToExtendReferenceSchemas && schema.Reference != null)
             {
-                schema.AllOf = new[] { new OpenApiSchema { Reference = schema.Reference } };
+                schema.AllOf = [new OpenApiSchema { Reference = schema.Reference }];
                 schema.Reference = null;
             }
 
@@ -139,8 +141,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 if (defaultValue != null)
                 {
-                    var defaultAsJson = dataContract.JsonConverter(defaultValue);
-                    schema.Default = OpenApiAnyFactory.CreateFromJson(defaultAsJson);
+                    schema.Default = GenerateDefaultValue(dataContract, modelType, defaultValue);
                 }
 
                 schema.ApplyValidationAttributes(customAttributes);
@@ -160,7 +161,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var dataContract = GetDataContractFor(modelType);
 
             var schema = _generatorOptions.UseOneOfForPolymorphism && IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts)
-                ? GeneratePolymorphicSchema(dataContract, schemaRepository, knownTypesDataContracts)
+                ? GeneratePolymorphicSchema(schemaRepository, knownTypesDataContracts)
                 : GenerateConcreteSchema(dataContract, schemaRepository);
 
             if (schema.Reference == null)
@@ -173,8 +174,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private DataContract GetDataContractFor(Type modelType)
         {
-            var effectiveType = Nullable.GetUnderlyingType(modelType) ?? modelType;
-            return _serializerDataContractResolver.GetDataContractForType(effectiveType);
+            return _serializerDataContractResolver.GetDataContractForType(modelType);
         }
 
         private bool IsBaseTypeWithKnownTypesDefined(DataContract dataContract, out IEnumerable<DataContract> knownTypesDataContracts)
@@ -196,7 +196,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         }
 
         private OpenApiSchema GeneratePolymorphicSchema(
-            DataContract dataContract,
             SchemaRepository schemaRepository,
             IEnumerable<DataContract> knownTypesDataContracts)
         {
@@ -208,6 +207,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             };
         }
 
+        private static readonly Type[] BinaryStringTypes =
+        [
+            typeof(IFormFile),
+            typeof(FileResult),
+            typeof(System.IO.Stream),
+#if NETCOREAPP3_0_OR_GREATER
+            typeof(System.IO.Pipelines.PipeReader),
+#endif
+        ];
+
         private OpenApiSchema GenerateConcreteSchema(DataContract dataContract, SchemaRepository schemaRepository)
         {
             if (TryGetCustomTypeMapping(dataContract.UnderlyingType, out Func<OpenApiSchema> customSchemaFactory))
@@ -215,7 +224,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 return customSchemaFactory();
             }
 
-            if (dataContract.UnderlyingType.IsAssignableToOneOf(typeof(IFormFile), typeof(FileResult)))
+            if (dataContract.UnderlyingType.IsAssignableToOneOf(BinaryStringTypes))
             {
                 return new OpenApiSchema { Type = "string", Format = "binary" };
             }
@@ -275,7 +284,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 || (modelType.IsConstructedGenericType && _generatorOptions.CustomTypeMappings.TryGetValue(modelType.GetGenericTypeDefinition(), out schemaFactory));
         }
 
-        private OpenApiSchema CreatePrimitiveSchema(DataContract dataContract)
+        private static OpenApiSchema CreatePrimitiveSchema(DataContract dataContract)
         {
             var schema = new OpenApiSchema
             {
@@ -290,7 +299,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 schema.Enum = dataContract.EnumValues
                     .Select(value => JsonSerializer.Serialize(value))
                     .Distinct()
-                    .Select(valueAsJson => OpenApiAnyFactory.CreateFromJson(valueAsJson))
+                    .Select(OpenApiAnyFactory.CreateFromJson)
                     .ToList();
 
                 return schema;
@@ -358,6 +367,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 AdditionalPropertiesAllowed = false
             };
 
+            OpenApiSchema root = schema;
             var applicableDataProperties = dataContract.ObjectProperties;
 
             if (_generatorOptions.UseAllOfForInheritance || _generatorOptions.UseOneOfForPolymorphism)
@@ -366,7 +376,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 {
                     var baseTypeSchema = GenerateConcreteSchema(baseTypeDataContract, schemaRepository);
 
-                    schema.AllOf.Add(baseTypeSchema);
+                    if (_generatorOptions.UseAllOfForInheritance)
+                    {
+                        root = new OpenApiSchema();
+                        root.AllOf.Add(baseTypeSchema);
+                    }
+                    else
+                    {
+                        schema.AllOf.Add(baseTypeSchema);
+                    }
 
                     applicableDataProperties = applicableDataProperties
                         .Where(dataProperty => dataProperty.MemberInfo.DeclaringType == dataContract.UnderlyingType);
@@ -391,7 +409,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             foreach (var dataProperty in applicableDataProperties)
             {
-                var customAttributes = dataProperty.MemberInfo?.GetInlineAndMetadataAttributes() ?? Enumerable.Empty<object>();
+                var customAttributes = dataProperty.MemberInfo?.GetInlineAndMetadataAttributes() ?? [];
 
                 if (_generatorOptions.IgnoreObsoleteProperties && customAttributes.OfType<ObsoleteAttribute>().Any())
                     continue;
@@ -407,9 +425,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 #endif
                     ;
 
-                if ((dataProperty.IsRequired
-                     || markNonNullableTypeAsRequired
-                     || customAttributes.OfType<RequiredAttribute>().Any())
+                if ((
+                    dataProperty.IsRequired
+                    || markNonNullableTypeAsRequired
+                    || customAttributes.OfType<RequiredAttribute>().Any()
+#if NET7_0_OR_GREATER
+                    || customAttributes.OfType<System.Runtime.CompilerServices.RequiredMemberAttribute>().Any()
+#endif
+                    )
                     && !schema.Required.Contains(dataProperty.Name))
                 {
                     schema.Required.Add(dataProperty.Name);
@@ -422,7 +445,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 schema.AdditionalProperties = GenerateSchema(dataContract.ObjectExtensionDataType, schemaRepository);
             }
 
-            return schema;
+            if (root != schema)
+            {
+                root.AllOf.Add(schema);
+            }
+
+            return root;
         }
 
         private bool IsKnownSubType(DataContract dataContract, out DataContract baseTypeDataContract)
@@ -505,6 +533,25 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 filter.Apply(schema, filterContext);
             }
+        }
+
+        private IOpenApiAny GenerateDefaultValue(
+            DataContract dataContract,
+            Type modelType,
+            object defaultValue)
+        {
+            // If the types do not match (e.g. a default which is an integer is specified for a double),
+            // attempt to coerce the default value to the correct type so that it can be serialized correctly.
+            // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2885 and
+            // https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2904.
+            var defaultValueType = defaultValue?.GetType();
+            if (defaultValueType != null && defaultValueType != modelType)
+            {
+                dataContract = GetDataContractFor(defaultValueType);
+            }
+
+            var defaultAsJson = dataContract.JsonConverter(defaultValue);
+            return OpenApiAnyFactory.CreateFromJson(defaultAsJson);
         }
     }
 }
