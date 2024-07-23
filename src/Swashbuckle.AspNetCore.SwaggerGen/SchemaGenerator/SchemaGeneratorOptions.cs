@@ -39,6 +39,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public bool SupportNonNullableReferenceTypes { get; set; }
 
+        public bool NonNullableReferenceTypesAsRequired { get; set; }
+
         public IList<ISchemaFilter> SchemaFilters { get; set; }
 
         private string DefaultSchemaIdSelector(Type modelType)

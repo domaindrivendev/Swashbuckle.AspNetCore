@@ -18,7 +18,7 @@ public static class ConfigureSchemaGeneratorOptionsTests
 
         // If this assertion fails, it means that a new property has been added
         // to SwaggerGeneratorOptions and ConfigureSchemaGeneratorOptions.DeepCopy() needs to be updated
-        Assert.Equal(12, publicProperties.Length);
+        Assert.Equal(13, publicProperties.Length);
     }
 
     [Fact]

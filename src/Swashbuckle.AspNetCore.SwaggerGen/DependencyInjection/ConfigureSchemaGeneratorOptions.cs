@@ -41,6 +41,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             target.DiscriminatorValueSelector = source.DiscriminatorValueSelector;
             target.UseAllOfToExtendReferenceSchemas = source.UseAllOfToExtendReferenceSchemas;
             target.SupportNonNullableReferenceTypes = source.SupportNonNullableReferenceTypes;
+            target.NonNullableReferenceTypesAsRequired = source.NonNullableReferenceTypesAsRequired;
             target.SchemaFilters = new List<ISchemaFilter>(source.SchemaFilters);
         }
 
