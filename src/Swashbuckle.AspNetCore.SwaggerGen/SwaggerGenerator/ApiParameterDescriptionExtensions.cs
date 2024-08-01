@@ -49,7 +49,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             // For non-controllers, prefer the IsRequired flag if we're not on netstandard 2.0, otherwise fallback to the default logic.
             return
-#if !NETSTANDARD2_0
+#if !NETSTANDARD
             apiParameter.IsRequired;
 #else
             IsRequired();
@@ -59,7 +59,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public static ParameterInfo ParameterInfo(this ApiParameterDescription apiParameter)
         {
             var parameterDescriptor = apiParameter.ParameterDescriptor as
-#if NETCOREAPP2_2_OR_GREATER
+#if !NETSTANDARD
                 Microsoft.AspNetCore.Mvc.Infrastructure.IParameterInfoParameterDescriptor;
 #else
                 ControllerParameterDescriptor;

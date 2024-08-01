@@ -212,7 +212,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             typeof(IFormFile),
             typeof(FileResult),
             typeof(System.IO.Stream),
-#if NETCOREAPP3_0_OR_GREATER
+#if !NETSTANDARD
             typeof(System.IO.Pipelines.PipeReader),
 #endif
         ];
