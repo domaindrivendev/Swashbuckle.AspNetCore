@@ -40,16 +40,20 @@ jobs:
 
           $xml = [xml](Get-Content $properties)
           $versionPrefix = $xml.SelectSingleNode('Project/PropertyGroup/VersionPrefix')
+          $publishedVersion = $versionPrefix.InnerText;
 
           if (-Not [string]::IsNullOrEmpty(${env:NEXT_VERSION})) {
             $version = [System.Version]::new(${env:NEXT_VERSION})
           } else {
-            $version = [System.Version]::new($versionPrefix.InnerText)
+            $version = [System.Version]::new($publishedVersion)
             $version = [System.Version]::new($version.Major, $version.Minor, $version.Build + 1)
           }
 
           $updatedVersion = $version.ToString()
           $versionPrefix.InnerText = $updatedVersion
+
+          $packageValidationBaselineVersion = $xml.SelectSingleNode('Project/PropertyGroup/PackageValidationBaselineVersion')
+          $packageValidationBaselineVersion.InnerText = $publishedVersion
 
           $settings = New-Object System.Xml.XmlWriterSettings
           $settings.Encoding = New-Object System.Text.UTF8Encoding($false)

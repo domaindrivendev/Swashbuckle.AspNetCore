@@ -4,6 +4,7 @@
     <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.Swagger.snk</AssemblyOriginatorKeyFile>
     <Description>Middleware to expose Swagger JSON endpoints from APIs built on ASP.NET Core</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IsPackable>true</IsPackable>
     <NoWarn>$(NoWarn);1591</NoWarn>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>
     <SignAssembly>true</SignAssembly>
