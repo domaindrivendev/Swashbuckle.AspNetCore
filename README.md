@@ -541,7 +541,6 @@ To enhance the generated docs with human-friendly descriptions, you can annotate
             }
          );
 
-         var filePath = Path.Combine(System.AppContext.BaseDirectory, "MyApi.xml");
          c.IncludeXmlComments(Assembly.GetExecutingAssembly());
          // or c.IncludeXmlComments(typeof(MyController).Assembly));
     }
