@@ -1,0 +1,65 @@
+Microsoft.AspNetCore.Builder.ReDocBuilderExtensions
+Microsoft.AspNetCore.Builder.ReDocOptionsExtensions
+static Microsoft.AspNetCore.Builder.ReDocBuilderExtensions.UseReDoc(this Microsoft.AspNetCore.Builder.IApplicationBuilder app, Swashbuckle.AspNetCore.ReDoc.ReDocOptions options) -> Microsoft.AspNetCore.Builder.IApplicationBuilder
+static Microsoft.AspNetCore.Builder.ReDocBuilderExtensions.UseReDoc(this Microsoft.AspNetCore.Builder.IApplicationBuilder app, System.Action<Swashbuckle.AspNetCore.ReDoc.ReDocOptions> setupAction = null) -> Microsoft.AspNetCore.Builder.IApplicationBuilder
+static Microsoft.AspNetCore.Builder.ReDocOptionsExtensions.DisableSearch(this Swashbuckle.AspNetCore.ReDoc.ReDocOptions options) -> void
+static Microsoft.AspNetCore.Builder.ReDocOptionsExtensions.EnableUntrustedSpec(this Swashbuckle.AspNetCore.ReDoc.ReDocOptions options) -> void
+static Microsoft.AspNetCore.Builder.ReDocOptionsExtensions.ExpandResponses(this Swashbuckle.AspNetCore.ReDoc.ReDocOptions options, string responses) -> void
+static Microsoft.AspNetCore.Builder.ReDocOptionsExtensions.HideDownloadButton(this Swashbuckle.AspNetCore.ReDoc.ReDocOptions options) -> void
+static Microsoft.AspNetCore.Builder.ReDocOptionsExtensions.HideHostname(this Swashbuckle.AspNetCore.ReDoc.ReDocOptions options) -> void
+static Microsoft.AspNetCore.Builder.ReDocOptionsExtensions.HideLoading(this Swashbuckle.AspNetCore.ReDoc.ReDocOptions options) -> void
+static Microsoft.AspNetCore.Builder.ReDocOptionsExtensions.InjectStylesheet(this Swashbuckle.AspNetCore.ReDoc.ReDocOptions options, string path, string media = "screen") -> void
+static Microsoft.AspNetCore.Builder.ReDocOptionsExtensions.NativeScrollbars(this Swashbuckle.AspNetCore.ReDoc.ReDocOptions options) -> void
+static Microsoft.AspNetCore.Builder.ReDocOptionsExtensions.NoAutoAuth(this Swashbuckle.AspNetCore.ReDoc.ReDocOptions options) -> void
+static Microsoft.AspNetCore.Builder.ReDocOptionsExtensions.OnlyRequiredInSamples(this Swashbuckle.AspNetCore.ReDoc.ReDocOptions options) -> void
+static Microsoft.AspNetCore.Builder.ReDocOptionsExtensions.PathInMiddlePanel(this Swashbuckle.AspNetCore.ReDoc.ReDocOptions options) -> void
+static Microsoft.AspNetCore.Builder.ReDocOptionsExtensions.RequiredPropsFirst(this Swashbuckle.AspNetCore.ReDoc.ReDocOptions options) -> void
+static Microsoft.AspNetCore.Builder.ReDocOptionsExtensions.ScrollYOffset(this Swashbuckle.AspNetCore.ReDoc.ReDocOptions options, int offset) -> void
+static Microsoft.AspNetCore.Builder.ReDocOptionsExtensions.SortPropsAlphabetically(this Swashbuckle.AspNetCore.ReDoc.ReDocOptions options) -> void
+static Microsoft.AspNetCore.Builder.ReDocOptionsExtensions.SpecUrl(this Swashbuckle.AspNetCore.ReDoc.ReDocOptions options, string url) -> void
+Swashbuckle.AspNetCore.ReDoc.ConfigObject
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.AdditionalItems.get -> System.Collections.Generic.Dictionary<string, object>
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.AdditionalItems.set -> void
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.ConfigObject() -> void
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.DisableSearch.get -> bool
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.DisableSearch.set -> void
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.ExpandResponses.get -> string
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.ExpandResponses.set -> void
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.HideDownloadButton.get -> bool
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.HideDownloadButton.set -> void
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.HideHostname.get -> bool
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.HideHostname.set -> void
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.HideLoading.get -> bool
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.HideLoading.set -> void
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.NativeScrollbars.get -> bool
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.NativeScrollbars.set -> void
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.NoAutoAuth.get -> bool
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.NoAutoAuth.set -> void
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.OnlyRequiredInSamples.get -> bool
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.OnlyRequiredInSamples.set -> void
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.PathInMiddlePanel.get -> bool
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.PathInMiddlePanel.set -> void
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.RequiredPropsFirst.get -> bool
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.RequiredPropsFirst.set -> void
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.ScrollYOffset.get -> int?
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.ScrollYOffset.set -> void
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.SortPropsAlphabetically.get -> bool
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.SortPropsAlphabetically.set -> void
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.UntrustedSpec.get -> bool
+Swashbuckle.AspNetCore.ReDoc.ConfigObject.UntrustedSpec.set -> void
+Swashbuckle.AspNetCore.ReDoc.ReDocMiddleware
+Swashbuckle.AspNetCore.ReDoc.ReDocMiddleware.Invoke(Microsoft.AspNetCore.Http.HttpContext httpContext) -> System.Threading.Tasks.Task
+Swashbuckle.AspNetCore.ReDoc.ReDocOptions
+Swashbuckle.AspNetCore.ReDoc.ReDocOptions.ConfigObject.get -> Swashbuckle.AspNetCore.ReDoc.ConfigObject
+Swashbuckle.AspNetCore.ReDoc.ReDocOptions.ConfigObject.set -> void
+Swashbuckle.AspNetCore.ReDoc.ReDocOptions.DocumentTitle.get -> string
+Swashbuckle.AspNetCore.ReDoc.ReDocOptions.DocumentTitle.set -> void
+Swashbuckle.AspNetCore.ReDoc.ReDocOptions.HeadContent.get -> string
+Swashbuckle.AspNetCore.ReDoc.ReDocOptions.HeadContent.set -> void
+Swashbuckle.AspNetCore.ReDoc.ReDocOptions.IndexStream.get -> System.Func<System.IO.Stream>
+Swashbuckle.AspNetCore.ReDoc.ReDocOptions.IndexStream.set -> void
+Swashbuckle.AspNetCore.ReDoc.ReDocOptions.ReDocOptions() -> void
+Swashbuckle.AspNetCore.ReDoc.ReDocOptions.RoutePrefix.get -> string
+Swashbuckle.AspNetCore.ReDoc.ReDocOptions.RoutePrefix.set -> void
+Swashbuckle.AspNetCore.ReDoc.ReDocOptions.SpecUrl.get -> string
+Swashbuckle.AspNetCore.ReDoc.ReDocOptions.SpecUrl.set -> void

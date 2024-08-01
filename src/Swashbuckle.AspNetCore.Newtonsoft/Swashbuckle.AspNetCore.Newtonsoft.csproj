@@ -37,4 +37,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" VersionOverride="8.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="All" />
+    <AdditionalFiles Include="PublicAPI\PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI\PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+
 </Project>
