@@ -1,8 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using System.Runtime.Serialization;
+using Newtonsoft.Json;
 
 namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 {
     [JsonObject(ItemRequired = Required.Always)]
+    [DataContract]
     public class JsonObjectAnnotatedType
     {
         public string StringWithNoAnnotation { get; set; }
@@ -12,5 +14,8 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 
         [JsonProperty(Required = Required.AllowNull)]
         public string StringWithRequiredAllowNull { get; set; }
+
+        [DataMember(IsRequired = false)]
+        public string StringWithDataMemberRequiredFalse { get; set; }
     }
 }
