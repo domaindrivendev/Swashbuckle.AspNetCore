@@ -2,6 +2,7 @@
 [Bb]in/
 .vs/
 .idea*
+BenchmarkDotNet.Artifacts*/
 coverage
 coverage.*
 node_modules/
