@@ -10,6 +10,7 @@
     <Copyright>Copyright (c) 2016-$([System.DateTime]::Now.ToString(yyyy)) Richard Morris</Copyright>
     <Deterministic>true</Deterministic>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <EnablePackageValidation>$(IsPackable)</EnablePackageValidation>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <!--
     TODO Go through the code and tidy up the usings
@@ -41,6 +42,7 @@
     <PackageReadmeFile>package-readme.md</PackageReadmeFile>
     <PackageReleaseNotes>See $(PackageProjectUrl)/releases for details.</PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageValidationBaselineVersion>6.7.0</PackageValidationBaselineVersion>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>$(PackageProjectUrl).git</RepositoryUrl>

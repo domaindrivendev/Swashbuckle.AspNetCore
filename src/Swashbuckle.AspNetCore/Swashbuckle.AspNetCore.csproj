@@ -8,6 +8,7 @@
     <IncludeContentInPack>false</IncludeContentInPack>
     <IncludeSource>false</IncludeSource>
     <IncludeSymbols>false</IncludeSymbols>
+    <IsPackable>true</IsPackable>
     <MicrosoftExtensionsApiDescriptionServerPackageVersion>6.0.5</MicrosoftExtensionsApiDescriptionServerPackageVersion>
     <NuspecFile>$(MSBuildProjectName).nuspec</NuspecFile>
     <PackageId>Swashbuckle.AspNetCore</PackageId>

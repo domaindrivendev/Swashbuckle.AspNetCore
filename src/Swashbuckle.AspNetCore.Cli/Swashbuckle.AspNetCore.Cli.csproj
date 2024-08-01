@@ -3,6 +3,7 @@
   <PropertyGroup>
     <AssemblyName>dotnet-swagger</AssemblyName>
     <Description>Swashbuckle (Swagger) Command Line Tools</Description>
+    <IsPackable>true</IsPackable>
     <OutputType>Exe</OutputType>
     <PackAsTool>true</PackAsTool>
     <PackageId>Swashbuckle.AspNetCore.Cli</PackageId>

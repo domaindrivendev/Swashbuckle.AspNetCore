@@ -3,6 +3,7 @@
   <PropertyGroup>
     <Description>Xunit add-on for Swagger/OpenAPI-driven integration testing APIs built on ASP.NET Core</Description>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IsPackable>true</IsPackable>
     <IsTestProject>false</IsTestProject>
     <NoWarn>$(NoWarn);1591</NoWarn>
     <PackageTags>swagger;openapi;test-first;spec-first;testing;aspnetcore;xunit</PackageTags>
@@ -20,5 +21,5 @@
   <ItemGroup>
     <ProjectCapability Remove="TestContainer" />
   </ItemGroup>
-  
+
 </Project>
