@@ -24,11 +24,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [JsonProperty(Required = Required.AllowNull)]
         public string StringWithRequiredAllowNull { get; set; }
 
-        [DataMember(IsRequired = false)] //As the support for DataMember has been implemented later, JsonRequired should take precedence
+        [DataMember(IsRequired = false)] //As the support for DataMember has been implemented later, JsonProperty.Required should take precedence
         [JsonProperty(Required = Required.Always)]
         public string StringWithRequiredAlwaysButConflictingDataMember { get; set; }
 
-        [DataMember(IsRequired = true)] //As the support for DataMember has been implemented later, JsonRequired should take precedence
+        [DataMember(IsRequired = true)] //As the support for DataMember has been implemented later, JsonProperty.Required should take precedence
         [JsonProperty(Required = Required.Default)]
         public string StringWithRequiredDefaultButConflictingDataMember { get; set; }
     }

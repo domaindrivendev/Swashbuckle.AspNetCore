@@ -14,5 +14,10 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
             return (memberInfo != null);
         }
+
+        public static bool IsRequiredSpecified(this JsonProperty jsonProperty)
+        {
+            return jsonProperty.Required != Required.Default;
+        }
     }
 }
