@@ -32,6 +32,19 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="All" />
+    <AdditionalFiles Include="PublicAPI\PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI\PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+  <PropertyGroup>
+    <_TargetFrameworkIdentifier>$([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)'))</_TargetFrameworkIdentifier>
+  </PropertyGroup>
+  <ItemGroup Condition="Exists('PublicAPI\$(_TargetFrameworkIdentifier)')">
+    <AdditionalFiles Include="PublicAPI\$(_TargetFrameworkIdentifier)\PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI\$(_TargetFrameworkIdentifier)\PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+
   <Target Name="NpmInstall" BeforeTargets="DispatchToInnerBuilds" Condition=" '$(CI)' != '' OR !Exists('$(MSBuildThisFileDirectory)\node_modules') ">
     <Exec Command="npm install" ContinueOnError="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />

@@ -1,0 +1,91 @@
+Microsoft.Extensions.DependencyInjection.AnnotationsSwaggerGenOptionsExtensions
+static Microsoft.Extensions.DependencyInjection.AnnotationsSwaggerGenOptionsExtensions.EnableAnnotations(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions options) -> void
+static Microsoft.Extensions.DependencyInjection.AnnotationsSwaggerGenOptionsExtensions.EnableAnnotations(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions options, bool enableAnnotationsForInheritance, bool enableAnnotationsForPolymorphism) -> void
+static Swashbuckle.AspNetCore.Annotations.AnnotationsOperationFilter.ApplySwaggerOperationFilterAttributes(Microsoft.OpenApi.Models.OpenApiOperation operation, Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext context, System.Collections.Generic.IEnumerable<object> controllerAndActionAttributes) -> void
+Swashbuckle.AspNetCore.Annotations.AnnotationsDocumentFilter
+Swashbuckle.AspNetCore.Annotations.AnnotationsDocumentFilter.AnnotationsDocumentFilter() -> void
+Swashbuckle.AspNetCore.Annotations.AnnotationsDocumentFilter.Apply(Microsoft.OpenApi.Models.OpenApiDocument swaggerDoc, Swashbuckle.AspNetCore.SwaggerGen.DocumentFilterContext context) -> void
+Swashbuckle.AspNetCore.Annotations.AnnotationsOperationFilter
+Swashbuckle.AspNetCore.Annotations.AnnotationsOperationFilter.AnnotationsOperationFilter() -> void
+Swashbuckle.AspNetCore.Annotations.AnnotationsOperationFilter.Apply(Microsoft.OpenApi.Models.OpenApiOperation operation, Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext context) -> void
+Swashbuckle.AspNetCore.Annotations.AnnotationsParameterFilter
+Swashbuckle.AspNetCore.Annotations.AnnotationsParameterFilter.AnnotationsParameterFilter() -> void
+Swashbuckle.AspNetCore.Annotations.AnnotationsParameterFilter.Apply(Microsoft.OpenApi.Models.OpenApiParameter parameter, Swashbuckle.AspNetCore.SwaggerGen.ParameterFilterContext context) -> void
+Swashbuckle.AspNetCore.Annotations.AnnotationsRequestBodyFilter
+Swashbuckle.AspNetCore.Annotations.AnnotationsRequestBodyFilter.AnnotationsRequestBodyFilter() -> void
+Swashbuckle.AspNetCore.Annotations.AnnotationsRequestBodyFilter.Apply(Microsoft.OpenApi.Models.OpenApiRequestBody requestBody, Swashbuckle.AspNetCore.SwaggerGen.RequestBodyFilterContext context) -> void
+Swashbuckle.AspNetCore.Annotations.AnnotationsSchemaFilter
+Swashbuckle.AspNetCore.Annotations.AnnotationsSchemaFilter.AnnotationsSchemaFilter(System.IServiceProvider serviceProvider) -> void
+Swashbuckle.AspNetCore.Annotations.AnnotationsSchemaFilter.Apply(Microsoft.OpenApi.Models.OpenApiSchema schema, Swashbuckle.AspNetCore.SwaggerGen.SchemaFilterContext context) -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerDiscriminatorAttribute
+Swashbuckle.AspNetCore.Annotations.SwaggerDiscriminatorAttribute.PropertyName.get -> string
+Swashbuckle.AspNetCore.Annotations.SwaggerDiscriminatorAttribute.PropertyName.set -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerDiscriminatorAttribute.SwaggerDiscriminatorAttribute(string propertyName) -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerOperationAttribute
+Swashbuckle.AspNetCore.Annotations.SwaggerOperationAttribute.Description.get -> string
+Swashbuckle.AspNetCore.Annotations.SwaggerOperationAttribute.Description.set -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerOperationAttribute.OperationId.get -> string
+Swashbuckle.AspNetCore.Annotations.SwaggerOperationAttribute.OperationId.set -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerOperationAttribute.Summary.get -> string
+Swashbuckle.AspNetCore.Annotations.SwaggerOperationAttribute.Summary.set -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerOperationAttribute.SwaggerOperationAttribute(string summary = null, string description = null) -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerOperationAttribute.Tags.get -> string[]
+Swashbuckle.AspNetCore.Annotations.SwaggerOperationAttribute.Tags.set -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerOperationFilterAttribute
+Swashbuckle.AspNetCore.Annotations.SwaggerOperationFilterAttribute.FilterType.get -> System.Type
+Swashbuckle.AspNetCore.Annotations.SwaggerOperationFilterAttribute.SwaggerOperationFilterAttribute(System.Type filterType) -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerParameterAttribute
+Swashbuckle.AspNetCore.Annotations.SwaggerParameterAttribute.Description.get -> string
+Swashbuckle.AspNetCore.Annotations.SwaggerParameterAttribute.Description.set -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerParameterAttribute.Required.get -> bool
+Swashbuckle.AspNetCore.Annotations.SwaggerParameterAttribute.Required.set -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerParameterAttribute.SwaggerParameterAttribute(string description = null) -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerRequestBodyAttribute
+Swashbuckle.AspNetCore.Annotations.SwaggerRequestBodyAttribute.Description.get -> string
+Swashbuckle.AspNetCore.Annotations.SwaggerRequestBodyAttribute.Description.set -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerRequestBodyAttribute.Required.get -> bool
+Swashbuckle.AspNetCore.Annotations.SwaggerRequestBodyAttribute.Required.set -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerRequestBodyAttribute.SwaggerRequestBodyAttribute(string description = null) -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerResponseAttribute
+Swashbuckle.AspNetCore.Annotations.SwaggerResponseAttribute.ContentTypes.get -> string[]
+Swashbuckle.AspNetCore.Annotations.SwaggerResponseAttribute.ContentTypes.set -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerResponseAttribute.Description.get -> string
+Swashbuckle.AspNetCore.Annotations.SwaggerResponseAttribute.Description.set -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerResponseAttribute.SwaggerResponseAttribute(int statusCode, string description = null, System.Type type = null) -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerResponseAttribute.SwaggerResponseAttribute(int statusCode, string description = null, System.Type type = null, params string[] contentTypes) -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerSchemaAttribute
+Swashbuckle.AspNetCore.Annotations.SwaggerSchemaAttribute.Description.get -> string
+Swashbuckle.AspNetCore.Annotations.SwaggerSchemaAttribute.Description.set -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerSchemaAttribute.Format.get -> string
+Swashbuckle.AspNetCore.Annotations.SwaggerSchemaAttribute.Format.set -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerSchemaAttribute.Nullable.get -> bool
+Swashbuckle.AspNetCore.Annotations.SwaggerSchemaAttribute.Nullable.set -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerSchemaAttribute.ReadOnly.get -> bool
+Swashbuckle.AspNetCore.Annotations.SwaggerSchemaAttribute.ReadOnly.set -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerSchemaAttribute.Required.get -> string[]
+Swashbuckle.AspNetCore.Annotations.SwaggerSchemaAttribute.Required.set -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerSchemaAttribute.SwaggerSchemaAttribute(string description = null) -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerSchemaAttribute.Title.get -> string
+Swashbuckle.AspNetCore.Annotations.SwaggerSchemaAttribute.Title.set -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerSchemaAttribute.WriteOnly.get -> bool
+Swashbuckle.AspNetCore.Annotations.SwaggerSchemaAttribute.WriteOnly.set -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerSchemaFilterAttribute
+Swashbuckle.AspNetCore.Annotations.SwaggerSchemaFilterAttribute.Arguments.get -> object[]
+Swashbuckle.AspNetCore.Annotations.SwaggerSchemaFilterAttribute.Arguments.set -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerSchemaFilterAttribute.SwaggerSchemaFilterAttribute(System.Type type) -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerSchemaFilterAttribute.Type.get -> System.Type
+Swashbuckle.AspNetCore.Annotations.SwaggerSubTypeAttribute
+Swashbuckle.AspNetCore.Annotations.SwaggerSubTypeAttribute.DiscriminatorValue.get -> string
+Swashbuckle.AspNetCore.Annotations.SwaggerSubTypeAttribute.DiscriminatorValue.set -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerSubTypeAttribute.SubType.get -> System.Type
+Swashbuckle.AspNetCore.Annotations.SwaggerSubTypeAttribute.SubType.set -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerSubTypeAttribute.SwaggerSubTypeAttribute(System.Type subType) -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerSubTypesAttribute
+Swashbuckle.AspNetCore.Annotations.SwaggerSubTypesAttribute.Discriminator.get -> string
+Swashbuckle.AspNetCore.Annotations.SwaggerSubTypesAttribute.Discriminator.set -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerSubTypesAttribute.SubTypes.get -> System.Collections.Generic.IEnumerable<System.Type>
+Swashbuckle.AspNetCore.Annotations.SwaggerSubTypesAttribute.SwaggerSubTypesAttribute(params System.Type[] subTypes) -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerTagAttribute
+Swashbuckle.AspNetCore.Annotations.SwaggerTagAttribute.Description.get -> string
+Swashbuckle.AspNetCore.Annotations.SwaggerTagAttribute.ExternalDocsUrl.get -> string
+Swashbuckle.AspNetCore.Annotations.SwaggerTagAttribute.SwaggerTagAttribute(string description = null, string externalDocsUrl = null) -> void

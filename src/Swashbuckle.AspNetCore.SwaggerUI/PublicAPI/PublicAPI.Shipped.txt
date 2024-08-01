@@ -1,0 +1,150 @@
+Microsoft.AspNetCore.Builder.SwaggerUIBuilderExtensions
+Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions
+static Microsoft.AspNetCore.Builder.SwaggerUIBuilderExtensions.UseSwaggerUI(this Microsoft.AspNetCore.Builder.IApplicationBuilder app, Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options) -> Microsoft.AspNetCore.Builder.IApplicationBuilder
+static Microsoft.AspNetCore.Builder.SwaggerUIBuilderExtensions.UseSwaggerUI(this Microsoft.AspNetCore.Builder.IApplicationBuilder app, System.Action<Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions> setupAction = null) -> Microsoft.AspNetCore.Builder.IApplicationBuilder
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.DefaultModelExpandDepth(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, int depth) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.DefaultModelRendering(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, Swashbuckle.AspNetCore.SwaggerUI.ModelRendering modelRendering) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.DefaultModelsExpandDepth(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, int depth) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.DisplayOperationId(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.DisplayRequestDuration(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.DocExpansion(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, Swashbuckle.AspNetCore.SwaggerUI.DocExpansion docExpansion) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.EnableDeepLinking(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.EnableFilter(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, string expression = null) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.EnablePersistAuthorization(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.EnableTryItOutByDefault(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.EnableValidator(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, string url = "https://online.swagger.io/validator") -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.InjectJavascript(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, string path, string type = "text/javascript") -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.InjectStylesheet(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, string path, string media = "screen") -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.MaxDisplayedTags(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, int count) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.OAuth2RedirectUrl(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, string url) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.OAuthAdditionalQueryStringParams(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, System.Collections.Generic.Dictionary<string, string> value) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.OAuthAppName(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, string value) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.OAuthClientId(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, string value) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.OAuthClientSecret(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, string value) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.OAuthRealm(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, string value) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.OAuthScopes(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, params string[] scopes) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.OAuthScopeSeparator(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, string value) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.OAuthUseBasicAuthenticationWithAccessCodeGrant(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.OAuthUsePkce(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.OAuthUsername(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, string value) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.ShowCommonExtensions(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.ShowExtensions(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.SupportedSubmitMethods(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, params Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod[] submitMethods) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.SwaggerEndpoint(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, string url, string name) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.UseRequestInterceptor(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, string value) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.UseResponseInterceptor(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, string value) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.ValidatorUrl(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, string url) -> void
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.AdditionalItems.get -> System.Collections.Generic.Dictionary<string, object>
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.AdditionalItems.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.ConfigObject() -> void
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.DeepLinking.get -> bool
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.DeepLinking.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.DefaultModelExpandDepth.get -> int
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.DefaultModelExpandDepth.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.DefaultModelRendering.get -> Swashbuckle.AspNetCore.SwaggerUI.ModelRendering
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.DefaultModelRendering.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.DefaultModelsExpandDepth.get -> int
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.DefaultModelsExpandDepth.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.DisplayOperationId.get -> bool
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.DisplayOperationId.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.DisplayRequestDuration.get -> bool
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.DisplayRequestDuration.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.DocExpansion.get -> Swashbuckle.AspNetCore.SwaggerUI.DocExpansion
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.DocExpansion.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.Filter.get -> string
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.Filter.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.MaxDisplayedTags.get -> int?
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.MaxDisplayedTags.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.OAuth2RedirectUrl.get -> string
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.OAuth2RedirectUrl.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.PersistAuthorization.get -> bool
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.PersistAuthorization.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.ShowCommonExtensions.get -> bool
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.ShowCommonExtensions.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.ShowExtensions.get -> bool
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.ShowExtensions.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.SupportedSubmitMethods.get -> System.Collections.Generic.IEnumerable<Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod>
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.SupportedSubmitMethods.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.TryItOutEnabled.get -> bool
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.TryItOutEnabled.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.Urls.get -> System.Collections.Generic.IEnumerable<Swashbuckle.AspNetCore.SwaggerUI.UrlDescriptor>
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.Urls.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.ValidatorUrl.get -> string
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.ValidatorUrl.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.DocExpansion
+Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.Full = 1 -> Swashbuckle.AspNetCore.SwaggerUI.DocExpansion
+Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.List = 0 -> Swashbuckle.AspNetCore.SwaggerUI.DocExpansion
+Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None = 2 -> Swashbuckle.AspNetCore.SwaggerUI.DocExpansion
+Swashbuckle.AspNetCore.SwaggerUI.InterceptorFunctions
+Swashbuckle.AspNetCore.SwaggerUI.InterceptorFunctions.InterceptorFunctions() -> void
+Swashbuckle.AspNetCore.SwaggerUI.InterceptorFunctions.RequestInterceptorFunction.get -> string
+Swashbuckle.AspNetCore.SwaggerUI.InterceptorFunctions.RequestInterceptorFunction.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.InterceptorFunctions.ResponseInterceptorFunction.get -> string
+Swashbuckle.AspNetCore.SwaggerUI.InterceptorFunctions.ResponseInterceptorFunction.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.ModelRendering
+Swashbuckle.AspNetCore.SwaggerUI.ModelRendering.Example = 0 -> Swashbuckle.AspNetCore.SwaggerUI.ModelRendering
+Swashbuckle.AspNetCore.SwaggerUI.ModelRendering.Model = 1 -> Swashbuckle.AspNetCore.SwaggerUI.ModelRendering
+Swashbuckle.AspNetCore.SwaggerUI.OAuthConfigObject
+Swashbuckle.AspNetCore.SwaggerUI.OAuthConfigObject.AdditionalQueryStringParams.get -> System.Collections.Generic.Dictionary<string, string>
+Swashbuckle.AspNetCore.SwaggerUI.OAuthConfigObject.AdditionalQueryStringParams.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.OAuthConfigObject.AppName.get -> string
+Swashbuckle.AspNetCore.SwaggerUI.OAuthConfigObject.AppName.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.OAuthConfigObject.ClientId.get -> string
+Swashbuckle.AspNetCore.SwaggerUI.OAuthConfigObject.ClientId.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.OAuthConfigObject.ClientSecret.get -> string
+Swashbuckle.AspNetCore.SwaggerUI.OAuthConfigObject.ClientSecret.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.OAuthConfigObject.OAuthConfigObject() -> void
+Swashbuckle.AspNetCore.SwaggerUI.OAuthConfigObject.Realm.get -> string
+Swashbuckle.AspNetCore.SwaggerUI.OAuthConfigObject.Realm.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.OAuthConfigObject.Scopes.get -> System.Collections.Generic.IEnumerable<string>
+Swashbuckle.AspNetCore.SwaggerUI.OAuthConfigObject.Scopes.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.OAuthConfigObject.ScopeSeparator.get -> string
+Swashbuckle.AspNetCore.SwaggerUI.OAuthConfigObject.ScopeSeparator.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.OAuthConfigObject.UseBasicAuthenticationWithAccessCodeGrant.get -> bool
+Swashbuckle.AspNetCore.SwaggerUI.OAuthConfigObject.UseBasicAuthenticationWithAccessCodeGrant.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.OAuthConfigObject.UsePkceWithAuthorizationCodeGrant.get -> bool
+Swashbuckle.AspNetCore.SwaggerUI.OAuthConfigObject.UsePkceWithAuthorizationCodeGrant.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.OAuthConfigObject.Username.get -> string
+Swashbuckle.AspNetCore.SwaggerUI.OAuthConfigObject.Username.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod
+Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod.Delete = 3 -> Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod
+Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod.Get = 0 -> Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod
+Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod.Head = 5 -> Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod
+Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod.Options = 4 -> Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod
+Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod.Patch = 6 -> Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod
+Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod.Post = 2 -> Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod
+Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod.Put = 1 -> Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod
+Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod.Trace = 7 -> Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(Microsoft.AspNetCore.Http.HttpContext httpContext) -> System.Threading.Tasks.Task
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.ConfigObject.get -> Swashbuckle.AspNetCore.SwaggerUI.ConfigObject
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.ConfigObject.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.DocumentTitle.get -> string
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.DocumentTitle.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.HeadContent.get -> string
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.HeadContent.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.IndexStream.get -> System.Func<System.IO.Stream>
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.IndexStream.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.Interceptors.get -> Swashbuckle.AspNetCore.SwaggerUI.InterceptorFunctions
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.Interceptors.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.JsonSerializerOptions.get -> System.Text.Json.JsonSerializerOptions
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.JsonSerializerOptions.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.OAuthConfigObject.get -> Swashbuckle.AspNetCore.SwaggerUI.OAuthConfigObject
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.OAuthConfigObject.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.RoutePrefix.get -> string
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.RoutePrefix.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.ScriptBundlePath.get -> string
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.ScriptBundlePath.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.ScriptPresetsPath.get -> string
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.ScriptPresetsPath.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.StylesPath.get -> string
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.StylesPath.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.SwaggerUIOptions() -> void
+Swashbuckle.AspNetCore.SwaggerUI.UrlDescriptor
+Swashbuckle.AspNetCore.SwaggerUI.UrlDescriptor.Name.get -> string
+Swashbuckle.AspNetCore.SwaggerUI.UrlDescriptor.Name.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.UrlDescriptor.Url.get -> string
+Swashbuckle.AspNetCore.SwaggerUI.UrlDescriptor.Url.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.UrlDescriptor.UrlDescriptor() -> void

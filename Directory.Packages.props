@@ -18,6 +18,7 @@
     <PackageVersion Include="Microsoft.AspNetCore.Routing" Version="2.1.0" />
     <PackageVersion Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.0" />
     <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="6.0.29" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.4" />
     <PackageVersion Include="Microsoft.Extensions.FileProviders.Embedded" Version="2.1.0" />
     <PackageVersion Include="Microsoft.OpenApi" Version="1.6.14" />
     <PackageVersion Include="Microsoft.OpenApi.Readers" Version="1.6.14" />
