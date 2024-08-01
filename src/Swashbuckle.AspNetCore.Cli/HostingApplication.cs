@@ -4,9 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Http.Features;
-#if NETCOREAPP3_0_OR_GREATER
 using Microsoft.Extensions.DependencyInjection;
-#endif
 using Microsoft.Extensions.Hosting;
 
 namespace Swashbuckle.AspNetCore.Cli
@@ -19,9 +17,6 @@ namespace Swashbuckle.AspNetCore.Cli
     {
         internal static IServiceProvider GetServiceProvider(Assembly assembly)
         {
-#if NETCOREAPP2_1
-            return null;
-#else
             // We're disabling the default server and the console host lifetime. This will disable:
             // 1. Listening on ports
             // 2. Logging to the console from the default host.
@@ -102,7 +97,6 @@ namespace Swashbuckle.AspNetCore.Cli
             }
 
             return null;
-#endif
         }
 
         private class NoopHostLifetime : IHostLifetime
