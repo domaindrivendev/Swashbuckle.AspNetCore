@@ -726,6 +726,36 @@
         x-purpose: test
       }
     },
+    /Issue3013/Get: {
+      get: {
+        tags: [
+          Issue3013
+        ],
+        responses: {
+          200: {
+            description: OK,
+            content: {
+              text/plain: {
+                schema: {
+                  $ref: #/components/schemas/TestResponse
+                }
+              },
+              application/json: {
+                schema: {
+                  $ref: #/components/schemas/TestResponse
+                }
+              },
+              text/json: {
+                schema: {
+                  $ref: #/components/schemas/TestResponse
+                }
+              }
+            }
+          }
+        },
+        x-purpose: test
+      }
+    },
     /promotions: {
       get: {
         tags: [
@@ -1377,6 +1407,29 @@
           location: {
             type: string,
             nullable: true
+          }
+        },
+        additionalProperties: false
+      },
+      TestResponse: {
+        type: object,
+        properties: {
+          foo: {
+            $ref: #/components/schemas/TestStruct
+          }
+        },
+        additionalProperties: false
+      },
+      TestStruct: {
+        type: object,
+        properties: {
+          a: {
+            type: integer,
+            format: int32
+          },
+          b: {
+            type: integer,
+            format: int32
           }
         },
         additionalProperties: false
