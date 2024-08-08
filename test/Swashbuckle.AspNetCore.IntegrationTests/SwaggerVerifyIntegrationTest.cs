@@ -9,7 +9,7 @@ using ReDocApp = ReDoc;
 namespace Swashbuckle.AspNetCore.IntegrationTests
 {
     [Collection("TestSite")]
-    public class SwaggerVerifyIntegrationTest
+    public partial class SwaggerVerifyIntegrationTest
     {
         [Theory]
         [InlineData(typeof(CliExample.Startup), "/swagger/v1/swagger_net8.0.json")]
@@ -34,7 +34,31 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             await Verifier.Verify(swagger).UseParameters(startupType, GetVersion(swaggerRequestUri));
         }
 
+#if NET6_0
+        [Fact]
+        public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_Basic_DotNet_6()
+        {
+            var testSite = new TestSite(typeof(Basic.Startup));
+            using var client = testSite.BuildClient();
+
+            using var swaggerResponse = await client.GetAsync("/swagger/v1/swagger.json");
+            var swagger = await swaggerResponse.Content.ReadAsStringAsync();
+            await Verifier.VerifyJson(swagger);
+        }
+#endif
+
 #if NET8_0_OR_GREATER
+        [Fact]
+        public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_Basic_DotNet_8()
+        {
+            var testSite = new TestSite(typeof(Basic.Startup));
+            using var client = testSite.BuildClient();
+
+            using var swaggerResponse = await client.GetAsync("/swagger/v1/swagger.json");
+            var swagger = await swaggerResponse.Content.ReadAsStringAsync();
+            await Verifier.VerifyJson(swagger);
+        }
+
         [Theory]
         [InlineData("/swagger/v1/swagger.json")]
         public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_For_WebApi(
@@ -71,13 +95,21 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 
             return await SwaggerResponse(client, swaggerRequestUri);
         }
-#endif
         private static async Task<string> SwaggerResponse(HttpClient client, string swaggerRequestUri)
         {
             using var swaggerResponse = await client.GetAsync(swaggerRequestUri);
             var contentStream = await swaggerResponse.Content.ReadAsStringAsync();
             return contentStream;
         }
-        private static string GetVersion(string swaggerUi) => Regex.Match(swaggerUi, "/\\w+/([\\w+\\d+.-]+)/").Groups[1].Value;
+#endif
+        private static string GetVersion(string swaggerUi) =>
+#if NET6_0
+            Regex.Match(swaggerUi, "/\\w+/([\\w+\\d+.-]+)/").Groups[1].Value;
+#else
+            VersionRegex().Match(swaggerUi).Groups[1].Value;
+
+        [GeneratedRegex("/\\w+/([\\w+\\d+.-]+)/")]
+        private static partial Regex VersionRegex();
+#endif
     }
 }
