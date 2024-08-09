@@ -9,8 +9,6 @@
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore;annotations</PackageTags>
     <SignAssembly>true</SignAssembly>
     <TargetFrameworks>netstandard2.0;netcoreapp3.0;net5.0;net6.0;net7.0;net8.0</TargetFrameworks>
-    <RootNamespace>Swashbuckle.AspNetCore.Annotations</RootNamespace>
-    <AssemblyName>Swashbuckle.AspNetCore.Annotations</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>

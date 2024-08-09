@@ -14,8 +14,6 @@
     <PackageId>Swashbuckle.AspNetCore</PackageId>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>
     <TargetFrameworks>netstandard2.0;netcoreapp3.0;net5.0;net6.0;net7.0;net8.0</TargetFrameworks>
-    <RootNamespace>Swashbuckle.AspNetCore</RootNamespace>
-    <AssemblyName>Swashbuckle.AspNetCore</AssemblyName>
   </PropertyGroup>
 
   <Target Name="PopulateNuspec">
