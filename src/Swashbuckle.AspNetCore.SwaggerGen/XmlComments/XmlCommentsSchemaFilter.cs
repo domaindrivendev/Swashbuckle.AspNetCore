@@ -19,7 +19,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             ApplyTypeTags(schema, context.Type);
 
-            if (context.MemberInfo != null) ApplyMemberTags(schema, context);
+            if (context.MemberInfo != null) 
+            {
+                ApplyMemberTags(schema, context);
+            }
         }
 
         private void ApplyMemberTags(OpenApiSchema schema, SchemaFilterContext context)
