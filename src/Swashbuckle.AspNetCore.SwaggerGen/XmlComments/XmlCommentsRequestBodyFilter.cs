@@ -62,8 +62,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
         }
 
-        private void ApplyPropertyTags(OpenApiRequestBody requestBody, RequestBodyFilterContext context,
-            PropertyInfo propertyInfo)
+        private void ApplyPropertyTags(OpenApiRequestBody requestBody, RequestBodyFilterContext context, PropertyInfo propertyInfo)
         {
             var propertyMemberName = XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(propertyInfo);
 
