@@ -60,8 +60,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var methodMemberName = XmlCommentsNodeNameHelper.GetMemberNameForMethod(targetMethod);
             var paramNode =
-                _xmlNavigator.SelectSingleNodeRecursive(methodMemberName,
-                    $"param[@name='{context.ParameterInfo.Name}']");
+                _xmlNavigator.SelectSingleNodeRecursive(methodMemberName, $"param[@name='{context.ParameterInfo.Name}']");
 
             if (paramNode == null) return;
             parameter.Description = XmlCommentsTextHelper.Humanize(paramNode.InnerXml);
