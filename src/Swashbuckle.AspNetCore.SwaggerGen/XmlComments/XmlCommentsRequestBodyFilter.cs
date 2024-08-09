@@ -35,8 +35,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
         }
 
-        private void ApplyParamTags(OpenApiRequestBody requestBody, RequestBodyFilterContext context,
-            ParameterInfo parameterInfo)
+        private void ApplyParamTags(OpenApiRequestBody requestBody, RequestBodyFilterContext context, ParameterInfo parameterInfo)
         {
             if (!(parameterInfo.Member is MethodInfo methodInfo)) return;
 
