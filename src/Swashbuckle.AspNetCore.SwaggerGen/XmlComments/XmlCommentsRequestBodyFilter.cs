@@ -19,7 +19,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var bodyParameterDescription = context.BodyParameterDescription;
 
-            if (bodyParameterDescription == null) return;
+            if (bodyParameterDescription == null)
+            {
+                return;
+            }
 
             var propertyInfo = bodyParameterDescription.PropertyInfo();
             if (propertyInfo != null)
@@ -37,24 +40,36 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private void ApplyParamTags(OpenApiRequestBody requestBody, RequestBodyFilterContext context, ParameterInfo parameterInfo)
         {
-            if (!(parameterInfo.Member is MethodInfo methodInfo)) return;
+            if (!(parameterInfo.Member is MethodInfo methodInfo))
+            {
+                return;
+            }
 
             // If method is from a constructed generic type, look for comments from the generic type method
             var targetMethod = methodInfo.DeclaringType.IsConstructedGenericType
                 ? methodInfo.GetUnderlyingGenericTypeMethod()
                 : methodInfo;
 
-            if (targetMethod == null) return;
+            if (targetMethod == null)
+            {
+                return;
+            }
 
             var methodMemberName = XmlCommentsNodeNameHelper.GetMemberNameForMethod(targetMethod);
             var paramNode =
                 _xmlNavigator.SelectSingleNodeRecursive(methodMemberName, $"param[@name='{parameterInfo.Name}']");
 
-            if (paramNode == null) return;
+            if (paramNode == null)
+            {
+                return;
+            }
             requestBody.Description = XmlCommentsTextHelper.Humanize(paramNode.InnerXml);
 
             var example = paramNode.GetAttribute("example", "");
-            if (string.IsNullOrEmpty(example)) return;
+            if (string.IsNullOrEmpty(example))
+            {
+                return;
+            }
 
             foreach (var mediaType in requestBody.Content.Values)
             {
@@ -71,7 +86,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 requestBody.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
 
             var exampleNode = _xmlNavigator.SelectSingleNodeRecursive(propertyMemberName, ExampleTag);
-            if (exampleNode == null) return;
+            if (exampleNode == null)
+            {
+                return;
+            }
 
             foreach (var mediaType in requestBody.Content.Values)
             {

@@ -63,7 +63,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private static void TrySetExample(OpenApiSchema schema, SchemaFilterContext context, string example)
         {
             if (example == null)
+            {
                 return;
+            }
 
             schema.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, schema, example);
         }
@@ -73,8 +75,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var typeMemberName = XmlCommentsNodeNameHelper.GetMemberNameForType(type);
             var typeSummaryNode = _xmlNavigator.SelectSingleNodeRecursive(typeMemberName, SummaryTag);
 
-            if (typeSummaryNode == null) return;
-            schema.Description = XmlCommentsTextHelper.Humanize(typeSummaryNode.InnerXml);
+            if (typeSummaryNode is not null)
+            {
+                schema.Description = XmlCommentsTextHelper.Humanize(typeSummaryNode.InnerXml);
+            }
         }
     }
 }

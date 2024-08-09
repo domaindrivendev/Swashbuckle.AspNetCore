@@ -32,7 +32,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var propertyMemberName = XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(context.PropertyInfo);
             var propertyNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{propertyMemberName}']");
 
-            if (propertyNode == null) return;
+            if (propertyNode == null)
+            {
+                return;
+            }
 
             var summaryNode = _xmlNavigator.SelectSingleNodeRecursive(propertyMemberName, SummaryTag);
             if (summaryNode != null)
@@ -42,31 +45,46 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
 
             var exampleNode = _xmlNavigator.SelectSingleNodeRecursive(propertyMemberName, ExampleTag);
-            if (exampleNode == null) return;
+            if (exampleNode == null)
+            {
+                return;
+            }
 
             parameter.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, parameter.Schema, exampleNode.ToString());
         }
 
         private void ApplyParamTags(OpenApiParameter parameter, ParameterFilterContext context)
         {
-            if (!(context.ParameterInfo.Member is MethodInfo methodInfo)) return;
+            if (!(context.ParameterInfo.Member is MethodInfo methodInfo))
+            {
+                return;
+            }
 
             // If method is from a constructed generic type, look for comments from the generic type method
             var targetMethod = methodInfo.DeclaringType.IsConstructedGenericType
                 ? methodInfo.GetUnderlyingGenericTypeMethod()
                 : methodInfo;
 
-            if (targetMethod == null) return;
+            if (targetMethod == null)
+            {
+                return;
+            }
 
             var methodMemberName = XmlCommentsNodeNameHelper.GetMemberNameForMethod(targetMethod);
             var paramNode =
                 _xmlNavigator.SelectSingleNodeRecursive(methodMemberName, $"param[@name='{context.ParameterInfo.Name}']");
 
-            if (paramNode == null) return;
+            if (paramNode == null)
+            {
+                return;
+            }
             parameter.Description = XmlCommentsTextHelper.Humanize(paramNode.InnerXml);
 
             var example = paramNode.GetAttribute(ExampleTag, "");
-            if (string.IsNullOrEmpty(example)) return;
+            if (string.IsNullOrEmpty(example))
+            {
+                return;
+            }
 
             parameter.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, parameter.Schema, example);
         }
