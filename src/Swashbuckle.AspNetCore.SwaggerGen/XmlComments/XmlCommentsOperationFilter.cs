@@ -36,8 +36,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var typeMemberName = XmlCommentsNodeNameHelper.GetMemberNameForType(controllerType);
             var responseNodes = _xmlNavigator.SelectNodeRecursive(typeMemberName, ResponseTag);
-            if (responseNodes == null) return;
-            ApplyResponseTags(operation, responseNodes);
+            if (responseNodes is not null)
+            {
+                ApplyResponseTags(operation, responseNodes);
+            }
         }
 
         private void ApplyMethodTags(OpenApiOperation operation, MethodInfo methodInfo)
