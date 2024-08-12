@@ -67,17 +67,28 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (memberType.IsValueType) return false;
 
             var nullableAttribute = memberInfo.GetNullableAttribute();
+            var valueArgument = memberType.GetGenericArguments()[1];
+            var valueArgumentIsNullable = valueArgument.IsGenericType && valueArgument.GetGenericTypeDefinition() == typeof(Nullable<>);
 
             if (nullableAttribute == null)
             {
-                return memberInfo.GetNullableFallbackValue();
+                return !valueArgumentIsNullable && memberInfo.GetNullableFallbackValue();
             }
 
-            if (nullableAttribute.GetType().GetField(NullableFlagsFieldName) is FieldInfo field &&
-                field.GetValue(nullableAttribute) is byte[] flags &&
-                flags.Length == 3 && flags[2] == 1)
+            if (nullableAttribute.GetType().GetField(NullableFlagsFieldName) is FieldInfo field)
             {
-                return true;
+                if (field.GetValue(nullableAttribute) is byte[] flags)
+                {
+                    // Ref.: https://github.com/dotnet/roslyn/blob/main/docs/features/nullable-metadata.md
+                    if (flags.Length == 2)  // Value in the dictionary is a value type.
+                    {
+                        return !valueArgumentIsNullable;
+                    }
+                    else if (flags.Length == 3) // Value in the dictionary is a reference type.
+                    {
+                        return flags[2] == 1;   // 1 means "Not annotated".
+                    }
+                }
             }
 
             return false;
