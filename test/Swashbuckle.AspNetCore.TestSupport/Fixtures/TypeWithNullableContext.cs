@@ -20,6 +20,11 @@ namespace Swashbuckle.AspNetCore.TestSupport
         public Dictionary<string, string?> NonNullableDictionaryInNullableContent { get; set; } = default!;
         public Dictionary<string, string?>? NullableDictionaryInNullableContent { get; set; }
 
+        public IDictionary<string, string>? NullableIDictionaryInNonNullableContent { get; set; }
+        public IDictionary<string, string> NonNullableIDictionaryInNonNullableContent { get; set; } = default!;
+        public IDictionary<string, string?> NonNullableIDictionaryInNullableContent { get; set; } = default!;
+        public IDictionary<string, string?>? NullableIDictionaryInNullableContent { get; set; }
+
         public class SubTypeWithOneNullableContent
         {
             public string? NullableString { get; set; }

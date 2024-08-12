@@ -720,6 +720,30 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableIDictionaryInNonNullableContent), true, false)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableIDictionaryInNonNullableContent), false, false)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableIDictionaryInNullableContent), false, true)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableIDictionaryInNullableContent), true, true)]
+        public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypes_NullableAttribute_Compiler_Optimizations_Situations_IDictionary(
+            Type declaringType,
+            string propertyName,
+            bool expectedNullableProperty,
+            bool expectedNullableContent)
+        {
+            var subject = Subject(
+                configureGenerator: c => c.SupportNonNullableReferenceTypes = true
+            );
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = subject.GenerateSchema(declaringType, schemaRepository);
+
+            var propertySchema = schemaRepository.Schemas[referenceSchema.Reference.Id].Properties[propertyName];
+            var contentSchema = schemaRepository.Schemas[referenceSchema.Reference.Id].Properties[propertyName].AdditionalProperties;
+            Assert.Equal(expectedNullableProperty, propertySchema.Nullable);
+            Assert.Equal(expectedNullableContent, contentSchema.Nullable);
+        }
+
+        [Theory]
         [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.SubTypeWithOneNullableContent), nameof(TypeWithNullableContext.NullableString), true)]
         [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContext.NonNullableString), false)]
         public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypesInDictionary_NullableAttribute_Compiler_Optimizations_Situations(
