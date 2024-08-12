@@ -25,6 +25,11 @@ namespace Swashbuckle.AspNetCore.TestSupport
         public IDictionary<string, string?> NonNullableIDictionaryInNullableContent { get; set; } = default!;
         public IDictionary<string, string?>? NullableIDictionaryInNullableContent { get; set; }
 
+        public IReadOnlyDictionary<string, string>? NullableIReadOnlyDictionaryInNonNullableContent { get; set; }
+        public IReadOnlyDictionary<string, string> NonNullableIReadOnlyDictionaryInNonNullableContent { get; set; } = default!;
+        public IReadOnlyDictionary<string, string?> NonNullableIReadOnlyDictionaryInNullableContent { get; set; } = default!;
+        public IReadOnlyDictionary<string, string?>? NullableIReadOnlyDictionaryInNullableContent { get; set; }
+
         public class SubTypeWithOneNullableContent
         {
             public string? NullableString { get; set; }
