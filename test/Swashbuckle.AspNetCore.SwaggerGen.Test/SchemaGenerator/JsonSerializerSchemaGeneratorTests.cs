@@ -696,10 +696,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableDictionaryWithNonNullableContent), true, false)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableDictionaryWithNonNullableContent), false, false)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableDictionaryWithNullableContent), false, true)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableDictionaryWithNullableContent), true, true)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableDictionaryInNonNullableContent), true, false)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableDictionaryInNonNullableContent), false, false)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableDictionaryInNullableContent), false, true)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableDictionaryInNullableContent), true, true)]
         public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypes_NullableAttribute_Compiler_Optimizations_Situations(
             Type declaringType,
             string propertyName,
