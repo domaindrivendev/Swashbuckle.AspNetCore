@@ -30,20 +30,20 @@ namespace Swashbuckle.AspNetCore.TestSupport
         public IReadOnlyDictionary<string, string?> NonNullableIReadOnlyDictionaryInNullableContent { get; set; } = default!;
         public IReadOnlyDictionary<string, string?>? NullableIReadOnlyDictionaryInNullableContent { get; set; }
 
-        public Dictionary<string, string>? NullableDictionaryWithValueTypeInNonNullableContent { get; set; }
-        public Dictionary<string, string> NonNullableDictionaryWithValueTypeInNonNullableContent { get; set; } = default!;
-        public Dictionary<string, string?> NonNullableDictionaryWithValueTypeInNullableContent { get; set; } = default!;
-        public Dictionary<string, string?>? NullableDictionaryWithValueTypeInNullableContent { get; set; }
+        public Dictionary<string, int>? NullableDictionaryWithValueTypeInNonNullableContent { get; set; }
+        public Dictionary<string, int> NonNullableDictionaryWithValueTypeInNonNullableContent { get; set; } = default!;
+        public Dictionary<string, int?> NonNullableDictionaryWithValueTypeInNullableContent { get; set; } = default!;
+        public Dictionary<string, int?>? NullableDictionaryWithValueTypeInNullableContent { get; set; }
 
-        public IDictionary<string, string>? NullableIDictionaryWithValueTypeInNonNullableContent { get; set; }
-        public IDictionary<string, string> NonNullableIDictionaryWithValueTypeInNonNullableContent { get; set; } = default!;
-        public IDictionary<string, string?> NonNullableIDictionaryWithValueTypeInNullableContent { get; set; } = default!;
-        public IDictionary<string, string?>? NullableIDictionaryWithValueTypeInNullableContent { get; set; }
+        public IDictionary<string, int>? NullableIDictionaryWithValueTypeInNonNullableContent { get; set; }
+        public IDictionary<string, int> NonNullableIDictionaryWithValueTypeInNonNullableContent { get; set; } = default!;
+        public IDictionary<string, int?> NonNullableIDictionaryWithValueTypeInNullableContent { get; set; } = default!;
+        public IDictionary<string, int?>? NullableIDictionaryWithValueTypeInNullableContent { get; set; }
 
-        public IReadOnlyDictionary<string, string>? NullableIReadOnlyDictionaryWithValueTypeInNonNullableContent { get; set; }
-        public IReadOnlyDictionary<string, string> NonNullableIReadOnlyDictionaryWithValueTypeInNonNullableContent { get; set; } = default!;
-        public IReadOnlyDictionary<string, string?> NonNullableIReadOnlyDictionaryWithValueTypeInNullableContent { get; set; } = default!;
-        public IReadOnlyDictionary<string, string?>? NullableIReadOnlyDictionaryWithValueTypeInNullableContent { get; set; }
+        public IReadOnlyDictionary<string, int>? NullableIReadOnlyDictionaryWithValueTypeInNonNullableContent { get; set; }
+        public IReadOnlyDictionary<string, int> NonNullableIReadOnlyDictionaryWithValueTypeInNonNullableContent { get; set; } = default!;
+        public IReadOnlyDictionary<string, int?> NonNullableIReadOnlyDictionaryWithValueTypeInNullableContent { get; set; } = default!;
+        public IReadOnlyDictionary<string, int?>? NullableIReadOnlyDictionaryWithValueTypeInNullableContent { get; set; }
 
         public class SubTypeWithOneNullableContent
         {
