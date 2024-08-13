@@ -21,7 +21,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net9.0' ">
-    <MicrosoftExtensionsApiDescriptionServerPackageVersion>9.0.0-preview.6.24328.4</MicrosoftExtensionsApiDescriptionServerPackageVersion>
+    <MicrosoftExtensionsApiDescriptionServerPackageVersion>9.0.0-preview.7.24406.2</MicrosoftExtensionsApiDescriptionServerPackageVersion>
   </PropertyGroup>
 
   <Target Name="PopulateNuspec">
