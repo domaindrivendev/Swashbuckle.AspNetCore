@@ -12,6 +12,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private const string NullableFlagsFieldName = "NullableFlags";
         private const string NullableContextAttributeFullTypeName = "System.Runtime.CompilerServices.NullableContextAttribute";
         private const string FlagFieldName = "Flag";
+        private const int NotAnnotated = 1; // See https://github.com/dotnet/roslyn/blob/af7b0ebe2b0ed5c335a928626c25620566372dd1/docs/features/nullable-metadata.md?plain=1#L40
 
         public static IEnumerable<object> GetInlineAndMetadataAttributes(this MemberInfo memberInfo)
         {
@@ -50,7 +51,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (nullableAttribute.GetType().GetField(NullableFlagsFieldName) is FieldInfo field &&
                 field.GetValue(nullableAttribute) is byte[] flags &&
-                flags.Length >= 1 && flags[0] == 1)
+                flags.Length >= 1 && flags[0] == NotAnnotated)
             {
                 return true;
             }
@@ -87,13 +88,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 if (field.GetValue(nullableAttribute) is byte[] flags)
                 {
                     // See https://github.com/dotnet/roslyn/blob/af7b0ebe2b0ed5c335a928626c25620566372dd1/docs/features/nullable-metadata.md
+                    // Observations in the debugger show that the arity of the flags array is 3 only if all 3 items are reference types, i.e.
+                    // Dictionary<string, object> would have arity 3 (one for the Dictionary, one for the string key, one for the object value),
+                    // however Dictionary<string, int> would have arity 2 (one for the Dictionary, one for the string key, the value type value is skipped).
                     if (flags.Length == 2)  // Value in the dictionary is a value type.
                     {
                         return !valueArgumentIsNullable;
                     }
                     else if (flags.Length == 3) // Value in the dictionary is a reference type.
                     {
-                        return flags[2] == 1;   // 1 means "Not annotated".
+                        return flags[2] == NotAnnotated;
                     }
                 }
             }
@@ -126,7 +130,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 if (nullableContext != null)
                 {
                     if (nullableContext.GetType().GetField(FlagFieldName) is FieldInfo field &&
-                    field.GetValue(nullableContext) is byte flag && flag == 1)
+                    field.GetValue(nullableContext) is byte flag && flag == NotAnnotated)
                     {
                         return true;
                     }
