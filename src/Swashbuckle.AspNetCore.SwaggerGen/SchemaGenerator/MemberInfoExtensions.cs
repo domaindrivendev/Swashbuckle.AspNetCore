@@ -90,7 +90,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     // See https://github.com/dotnet/roslyn/blob/af7b0ebe2b0ed5c335a928626c25620566372dd1/docs/features/nullable-metadata.md
                     // Observations in the debugger show that the arity of the flags array is 3 only if all 3 items are reference types, i.e.
                     // Dictionary<string, object> would have arity 3 (one for the Dictionary, one for the string key, one for the object value),
-                    // however Dictionary<string, int> would have arity 2 (one for the Dictionary, one for the string key, the value type value is skipped).
+                    // however Dictionary<string, int> would have arity 2 (one for the Dictionary, one for the string key), the value is skipped
+                    // due it being a value type.
                     if (flags.Length == 2)  // Value in the dictionary is a value type.
                     {
                         return !valueArgumentIsNullable;
