@@ -101,13 +101,21 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 // NullableAttribute behaves differently for Dictionaries
                 if (schema.AdditionalPropertiesAllowed && modelType.IsGenericType)
                 {
-                    var genericTypes = modelType.GetInterfaces().Concat(new[] { modelType }).Where(t => t.IsGenericType);
+                    var genericTypes = modelType
+                        .GetInterfaces()
+#if NETSTANDARD2_0
+                        .Concat(new[] { modelType })
+#else
+                        .Append(modelType)
+#endif
+                        .Where(t => t.IsGenericType)
+                        .ToArray();
 
-                    var dictionaryType =
+                    var isDictionaryType =
                         genericTypes.Any(t => t.GetGenericTypeDefinition() == typeof(IDictionary<,>)) ||
                         genericTypes.Any(t => t.GetGenericTypeDefinition() == typeof(IReadOnlyDictionary<,>));
 
-                    if (dictionaryType)
+                    if (isDictionaryType)
                     {
                         schema.AdditionalProperties.Nullable = !memberInfo.IsDictionaryValueNonNullable();
                     }
