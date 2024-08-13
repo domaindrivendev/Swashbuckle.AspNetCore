@@ -67,7 +67,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (memberType.IsValueType) return false;
 
             var nullableAttribute = memberInfo.GetNullableAttribute();
-            var valueArgument = memberType.GetGenericArguments()[1];
+            var genericArguments = memberType.GetGenericArguments();
+
+            if (genericArguments.Length != 2)
+            {
+                return false;
+            }
+
+            var valueArgument = genericArguments[1];
             var valueArgumentIsNullable = valueArgument.IsGenericType && valueArgument.GetGenericTypeDefinition() == typeof(Nullable<>);
 
             if (nullableAttribute == null)
@@ -79,7 +86,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 if (field.GetValue(nullableAttribute) is byte[] flags)
                 {
-                    // Ref.: https://github.com/dotnet/roslyn/blob/main/docs/features/nullable-metadata.md
+                    // See https://github.com/dotnet/roslyn/blob/af7b0ebe2b0ed5c335a928626c25620566372dd1/docs/features/nullable-metadata.md
                     if (flags.Length == 2)  // Value in the dictionary is a value type.
                     {
                         return !valueArgumentIsNullable;
