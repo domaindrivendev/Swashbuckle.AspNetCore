@@ -696,11 +696,131 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableDictionaryWithNonNullableContent), true, false)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableDictionaryWithNonNullableContent), false, false)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableDictionaryWithNullableContent), false, true)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableDictionaryWithNullableContent), true, true)]
-        public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypes_NullableAttribute_Compiler_Optimizations_Situations(
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableDictionaryInNonNullableContent), true, false)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableDictionaryInNonNullableContent), false, false)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableDictionaryInNullableContent), false, true)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableDictionaryInNullableContent), true, true)]
+        public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypes_NullableAttribute_Compiler_Optimizations_Situations_Dictionary(
+            Type declaringType,
+            string propertyName,
+            bool expectedNullableProperty,
+            bool expectedNullableContent)
+        {
+            var subject = Subject(
+                configureGenerator: c => c.SupportNonNullableReferenceTypes = true
+            );
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = subject.GenerateSchema(declaringType, schemaRepository);
+
+            var propertySchema = schemaRepository.Schemas[referenceSchema.Reference.Id].Properties[propertyName];
+            var contentSchema = schemaRepository.Schemas[referenceSchema.Reference.Id].Properties[propertyName].AdditionalProperties;
+            Assert.Equal(expectedNullableProperty, propertySchema.Nullable);
+            Assert.Equal(expectedNullableContent, contentSchema.Nullable);
+        }
+
+        [Theory]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableIDictionaryInNonNullableContent), true, false)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableIDictionaryInNonNullableContent), false, false)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableIDictionaryInNullableContent), false, true)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableIDictionaryInNullableContent), true, true)]
+        public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypes_NullableAttribute_Compiler_Optimizations_Situations_IDictionary(
+            Type declaringType,
+            string propertyName,
+            bool expectedNullableProperty,
+            bool expectedNullableContent)
+        {
+            var subject = Subject(
+                configureGenerator: c => c.SupportNonNullableReferenceTypes = true
+            );
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = subject.GenerateSchema(declaringType, schemaRepository);
+
+            var propertySchema = schemaRepository.Schemas[referenceSchema.Reference.Id].Properties[propertyName];
+            var contentSchema = schemaRepository.Schemas[referenceSchema.Reference.Id].Properties[propertyName].AdditionalProperties;
+            Assert.Equal(expectedNullableProperty, propertySchema.Nullable);
+            Assert.Equal(expectedNullableContent, contentSchema.Nullable);
+        }
+
+        [Theory]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableIReadOnlyDictionaryInNonNullableContent), true, false)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableIReadOnlyDictionaryInNonNullableContent), false, false)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableIReadOnlyDictionaryInNullableContent), false, true)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableIReadOnlyDictionaryInNullableContent), true, true)]
+        public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypes_NullableAttribute_Compiler_Optimizations_Situations_IReadOnlyDictionary(
+            Type declaringType,
+            string propertyName,
+            bool expectedNullableProperty,
+            bool expectedNullableContent)
+        {
+            var subject = Subject(
+                configureGenerator: c => c.SupportNonNullableReferenceTypes = true
+            );
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = subject.GenerateSchema(declaringType, schemaRepository);
+
+            var propertySchema = schemaRepository.Schemas[referenceSchema.Reference.Id].Properties[propertyName];
+            var contentSchema = schemaRepository.Schemas[referenceSchema.Reference.Id].Properties[propertyName].AdditionalProperties;
+            Assert.Equal(expectedNullableProperty, propertySchema.Nullable);
+            Assert.Equal(expectedNullableContent, contentSchema.Nullable);
+        }
+
+        [Theory]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableDictionaryWithValueTypeInNonNullableContent), true, false)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableDictionaryWithValueTypeInNonNullableContent), false, false)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableDictionaryWithValueTypeInNullableContent), false, true)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableDictionaryWithValueTypeInNullableContent), true, true)]
+        public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypes_NullableAttribute_Compiler_Optimizations_Situations_DictionaryWithValueType(
+            Type declaringType,
+            string propertyName,
+            bool expectedNullableProperty,
+            bool expectedNullableContent)
+        {
+            var subject = Subject(
+                configureGenerator: c => c.SupportNonNullableReferenceTypes = true
+            );
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = subject.GenerateSchema(declaringType, schemaRepository);
+
+            var propertySchema = schemaRepository.Schemas[referenceSchema.Reference.Id].Properties[propertyName];
+            var contentSchema = schemaRepository.Schemas[referenceSchema.Reference.Id].Properties[propertyName].AdditionalProperties;
+            Assert.Equal(expectedNullableProperty, propertySchema.Nullable);
+            Assert.Equal(expectedNullableContent, contentSchema.Nullable);
+        }
+
+        [Theory]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableIDictionaryWithValueTypeInNonNullableContent), true, false)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableIDictionaryWithValueTypeInNonNullableContent), false, false)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableIDictionaryWithValueTypeInNullableContent), false, true)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableIDictionaryWithValueTypeInNullableContent), true, true)]
+        public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypes_NullableAttribute_Compiler_Optimizations_Situations_IDictionaryWithValueType(
+            Type declaringType,
+            string propertyName,
+            bool expectedNullableProperty,
+            bool expectedNullableContent)
+        {
+            var subject = Subject(
+                configureGenerator: c => c.SupportNonNullableReferenceTypes = true
+            );
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = subject.GenerateSchema(declaringType, schemaRepository);
+
+            var propertySchema = schemaRepository.Schemas[referenceSchema.Reference.Id].Properties[propertyName];
+            var contentSchema = schemaRepository.Schemas[referenceSchema.Reference.Id].Properties[propertyName].AdditionalProperties;
+            Assert.Equal(expectedNullableProperty, propertySchema.Nullable);
+            Assert.Equal(expectedNullableContent, contentSchema.Nullable);
+        }
+
+        [Theory]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableIReadOnlyDictionaryWithValueTypeInNonNullableContent), true, false)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableIReadOnlyDictionaryWithValueTypeInNonNullableContent), false, false)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableIReadOnlyDictionaryWithValueTypeInNullableContent), false, true)]
+        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableIReadOnlyDictionaryWithValueTypeInNullableContent), true, true)]
+        public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypes_NullableAttribute_Compiler_Optimizations_Situations_IReadOnlyDictionaryWithValueType(
             Type declaringType,
             string propertyName,
             bool expectedNullableProperty,
