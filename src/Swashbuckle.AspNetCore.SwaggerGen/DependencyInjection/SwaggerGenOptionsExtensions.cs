@@ -353,7 +353,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 Type = typeof(TFilter),
                 Arguments = arguments
             });
-        }
+        } 
 
         /// <summary>
         /// Extend the Swagger Generator with "filters" that can modify Schemas after they're initially generated
@@ -394,6 +394,25 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
+        /// Extend the Swagger Generator with "filters" that can modify Parameters asynchronously after they're initially generated
+        /// </summary>
+        /// <typeparam name="TFilter">A type that derives from <see cref="IParameterAsyncFilter"/></typeparam>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="arguments">Optionally inject parameters through filter constructors</param>
+        public static void ParameterAsyncFilter<TFilter>(
+            this SwaggerGenOptions swaggerGenOptions,
+            params object[] arguments)
+            where TFilter : IParameterAsyncFilter
+        {
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+            swaggerGenOptions.ParameterAsyncFilterDescriptors.Add(new FilterDescriptor
+            {
+                Type = typeof(TFilter),
+                Arguments = arguments
+            });
+        }
+
+        /// <summary>
         /// Extend the Swagger Generator with "filters" that can modify Parameters after they're initially generated
         /// </summary>
         /// <typeparam name="TFilter">A type that derives from <see cref="IParameterFilter"/></typeparam>
@@ -413,6 +432,25 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
+        /// Extend the Swagger Generator with "filters" that can modify Parameters asynchronously after they're initially generated
+        /// </summary>
+        /// <typeparam name="TFilter">A type that derives from <see cref="IParameterAsyncFilter"/></typeparam>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="filterInstance">The filter instance to use.</param>
+        public static void AddParameterAsyncFilterInstance<TFilter>(
+            this SwaggerGenOptions swaggerGenOptions,
+            TFilter filterInstance)
+            where TFilter : IParameterAsyncFilter
+        {
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+            if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
+            swaggerGenOptions.ParameterAsyncFilterDescriptors.Add(new FilterDescriptor
+            {
+                FilterInstance = filterInstance
+            });
+        }
+
+        /// <summary>
         /// Extend the Swagger Generator with "filters" that can modify RequestBodys after they're initially generated
         /// </summary>
         /// <typeparam name="TFilter">A type that derives from <see cref="IRequestBodyFilter"/></typeparam>
@@ -425,6 +463,25 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
             swaggerGenOptions.RequestBodyFilterDescriptors.Add(new FilterDescriptor
+            {
+                Type = typeof(TFilter),
+                Arguments = arguments
+            });
+        }
+
+        /// <summary>
+        /// Extend the Swagger Generator with "filters" that can modify RequestBodys asynchronously after they're initially generated
+        /// </summary>
+        /// <typeparam name="TFilter">A type that derives from <see cref="IRequestBodyAsyncFilter"/></typeparam>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="arguments">Optionally inject parameters through filter constructors</param>
+        public static void RequestBodyAsyncFilter<TFilter>(
+            this SwaggerGenOptions swaggerGenOptions,
+            params object[] arguments)
+            where TFilter : IRequestBodyAsyncFilter
+        {
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+            swaggerGenOptions.RequestBodyAsyncFilterDescriptors.Add(new FilterDescriptor
             {
                 Type = typeof(TFilter),
                 Arguments = arguments
@@ -451,6 +508,25 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
+        /// Extend the Swagger Generator with "filters" that can modify RequestBodys asynchronously after they're initially generated
+        /// </summary>
+        /// <typeparam name="TFilter">A type that derives from <see cref="IRequestBodyAsyncFilter"/></typeparam>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="filterInstance">The filter instance to use.</param>
+        public static void AddRequestBodyAsyncFilterInstance<TFilter>(
+            this SwaggerGenOptions swaggerGenOptions,
+            TFilter filterInstance)
+            where TFilter : IRequestBodyAsyncFilter
+        {
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+            if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
+            swaggerGenOptions.RequestBodyAsyncFilterDescriptors.Add(new FilterDescriptor
+            {
+                FilterInstance = filterInstance
+            });
+        }
+
+        /// <summary>
         /// Extend the Swagger Generator with "filters" that can modify Operations after they're initially generated
         /// </summary>
         /// <typeparam name="TFilter">A type that derives from <see cref="IOperationFilter"/></typeparam>
@@ -463,6 +539,25 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
             swaggerGenOptions.OperationFilterDescriptors.Add(new FilterDescriptor
+            {
+                Type = typeof(TFilter),
+                Arguments = arguments
+            });
+        }
+
+        /// <summary>
+        /// Extend the Swagger Generator with "filters" that can modify Operations asynchronously after they're initially generated
+        /// </summary>
+        /// <typeparam name="TFilter">A type that derives from <see cref="IOperationAsyncFilter"/></typeparam>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="arguments">Optionally inject parameters through filter constructors</param>
+        public static void OperationAsyncFilter<TFilter>(
+            this SwaggerGenOptions swaggerGenOptions,
+            params object[] arguments)
+            where TFilter : IOperationAsyncFilter
+        {
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+            swaggerGenOptions.OperationAsyncFilterDescriptors.Add(new FilterDescriptor
             {
                 Type = typeof(TFilter),
                 Arguments = arguments
@@ -489,6 +584,25 @@ namespace Microsoft.Extensions.DependencyInjection
         }
 
         /// <summary>
+        /// Extend the Swagger Generator with "filters" that can modify Operations asynchronously after they're initially generated
+        /// </summary>
+        /// <typeparam name="TFilter">A type that derives from <see cref="IOperationAsyncFilter"/></typeparam>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="filterInstance">The filter instance to use</param>
+        public static void AddOperationAsyncFilterInstance<TFilter>(
+            this SwaggerGenOptions swaggerGenOptions,
+            TFilter filterInstance)
+            where TFilter : IOperationAsyncFilter
+        {
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+            if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
+            swaggerGenOptions.OperationAsyncFilterDescriptors.Add(new FilterDescriptor
+            {
+                FilterInstance = filterInstance
+            });
+        }
+
+        /// <summary>
         /// Extend the Swagger Generator with "filters" that can modify SwaggerDocuments after they're initially generated
         /// </summary>
         /// <typeparam name="TFilter">A type that derives from <see cref="IDocumentFilter"/></typeparam>
@@ -501,6 +615,26 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
             swaggerGenOptions.DocumentFilterDescriptors.Add(new FilterDescriptor
+            {
+                Type = typeof(TFilter),
+                Arguments = arguments
+            });
+        }
+
+        /// <summary>
+        /// Extend the Swagger Generator with "filters" that can modify SwaggerDocuments asynchronously after they're initially generated
+        /// </summary>
+        /// <typeparam name="TFilter">A type that derives from <see cref="IDocumentAsyncFilter"/></typeparam>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="arguments">Optionally inject parameters through filter constructors</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static void DocumentAsyncFilter<TFilter>(
+            this SwaggerGenOptions swaggerGenOptions,
+            params object[] arguments)
+            where TFilter : IDocumentAsyncFilter
+        {
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+            swaggerGenOptions.DocumentAsyncFilterDescriptors.Add(new FilterDescriptor
             {
                 Type = typeof(TFilter),
                 Arguments = arguments
@@ -521,6 +655,26 @@ namespace Microsoft.Extensions.DependencyInjection
             if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
             if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.DocumentFilterDescriptors.Add(new FilterDescriptor
+            {
+                FilterInstance = filterInstance
+            });
+        }
+
+        /// <summary>
+        /// Extend the Swagger Generator with "filters" that can modify SwaggerDocuments asynchronously after they're initially generated
+        /// </summary>
+        /// <typeparam name="TFilter">A type that derives from <see cref="IDocumentAsyncFilter"/></typeparam>
+        /// <param name="swaggerGenOptions"></param>
+        /// <param name="filterInstance">The filter instance to use.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static void AddDocumentAsyncFilterInstance<TFilter>(
+            this SwaggerGenOptions swaggerGenOptions,
+            TFilter filterInstance)
+            where TFilter : IDocumentAsyncFilter
+        {
+            if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+            if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
+            swaggerGenOptions.DocumentAsyncFilterDescriptors.Add(new FilterDescriptor
             {
                 FilterInstance = filterInstance
             });

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
@@ -45,6 +46,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             _swaggerGenOptions.DocumentFilterDescriptors.ForEach(
                 filterDescriptor => options.DocumentFilters.Add(GetOrCreateFilter<IDocumentFilter>(filterDescriptor)));
+
+
+            _swaggerGenOptions.ParameterAsyncFilterDescriptors.ForEach(
+                filterDescriptor => options.ParameterAsyncFilters.Add(GetOrCreateFilter<IParameterAsyncFilter>(filterDescriptor)));
+
+            _swaggerGenOptions.RequestBodyAsyncFilterDescriptors.ForEach(
+                filterDescriptor => options.RequestBodyAsyncFilters.Add(GetOrCreateFilter<IRequestBodyAsyncFilter>(filterDescriptor)));
+
+            _swaggerGenOptions.OperationAsyncFilterDescriptors.ForEach(
+                filterDescriptor => options.OperationAsyncFilters.Add(GetOrCreateFilter<IOperationAsyncFilter>(filterDescriptor)));
+
+            _swaggerGenOptions.DocumentAsyncFilterDescriptors.ForEach(
+                filterDescriptor => options.DocumentAsyncFilters.Add(GetOrCreateFilter<IDocumentAsyncFilter>(filterDescriptor)));
 
             if (!options.SwaggerDocs.Any())
             {
