@@ -8,14 +8,17 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
+using System;
 using Xunit;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     public class XmlCommentsDocumentFilterTests
     {
-        [Fact]
-        public void Apply_SetsTagDescription_FromControllerSummaryTags()
+        [Theory]
+        [InlineData(typeof(FakeControllerWithXmlComments))]
+        [InlineData(typeof(FakeControllerWithInheritDoc))]
+        public void Apply_SetsTagDescription_FromControllerSummaryTags(Type fakeController)
         {
             var document = new OpenApiDocument();
             var filterContext = new DocumentFilterContext(
@@ -25,34 +28,32 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     {
                         ActionDescriptor = new ControllerActionDescriptor
                         {
-                            ControllerTypeInfo = typeof(FakeControllerWithXmlComments).GetTypeInfo(),
-                            ControllerName = nameof(FakeControllerWithXmlComments)
+                            ControllerTypeInfo = fakeController.GetTypeInfo(),
+                            ControllerName = nameof(fakeController)
                         }
                     },
                     new ApiDescription
                     {
                         ActionDescriptor = new ControllerActionDescriptor
                         {
-                            ControllerTypeInfo = typeof(FakeControllerWithXmlComments).GetTypeInfo(),
-                            ControllerName = nameof(FakeControllerWithXmlComments)
+                            ControllerTypeInfo = fakeController.GetTypeInfo(),
+                            ControllerName = nameof(fakeController)
                         }
                     }
                 },
                 null,
                 null);
 
-            Subject().Apply(document, filterContext);
+            Subject(fakeController).Apply(document, filterContext);
 
             var tag = Assert.Single(document.Tags);
             Assert.Equal("Summary for FakeControllerWithXmlComments", tag.Description);
         }
 
-        private static XmlCommentsDocumentFilter Subject()
+        private XmlCommentsDocumentFilter Subject(Type fakeController)
         {
-            using (var xmlComments = File.OpenText($"{typeof(FakeControllerWithXmlComments).Assembly.GetName().Name}.xml"))
-            {
-                return new XmlCommentsDocumentFilter(new XPathDocument(xmlComments));
-            }
+            using var xmlComments = File.OpenText($"{fakeController.Assembly.GetName().Name}.xml");
+            return new XmlCommentsDocumentFilter(new XPathDocument(xmlComments));
         }
 
         [Fact]

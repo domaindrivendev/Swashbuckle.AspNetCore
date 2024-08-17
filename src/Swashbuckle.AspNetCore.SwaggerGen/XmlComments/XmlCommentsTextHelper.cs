@@ -54,14 +54,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 throw new ArgumentException("lines");
 
             if (lines.Length == 0)
+            {
                 return null;
+            }
 
             string[] nonEmptyLines = lines
                 .Where(x => !string.IsNullOrWhiteSpace(x))
                 .ToArray();
 
             if (nonEmptyLines.Length < 1)
+            {
                 return null;
+            }
 
             int padLen = 0;
 
@@ -79,7 +83,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
 
             if (padLen > 0)
+            {
                 return seed.Substring(0, padLen);
+            }
 
             return null;
         }

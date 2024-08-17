@@ -6,6 +6,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class XmlCommentsSchemaFilter : ISchemaFilter
     {
+        private const string SummaryTag = "summary";
+        private const string ExampleTag = "example";
         private readonly XPathNavigator _xmlNavigator;
 
         public XmlCommentsSchemaFilter(XPathDocument xmlDoc)
@@ -17,27 +19,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             ApplyTypeTags(schema, context.Type);
 
-            if (context.MemberInfo != null)
+            if (context.MemberInfo != null) 
             {
                 ApplyMemberTags(schema, context);
             }
         }
 
-        private void ApplyTypeTags(OpenApiSchema schema, Type type)
-        {
-            var typeMemberName = XmlCommentsNodeNameHelper.GetMemberNameForType(type);
-            var typeSummaryNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{typeMemberName}']/summary");
-
-            if (typeSummaryNode != null)
-            {
-                schema.Description = XmlCommentsTextHelper.Humanize(typeSummaryNode.InnerXml);
-            }
-        }
-
         private void ApplyMemberTags(OpenApiSchema schema, SchemaFilterContext context)
         {
-            var fieldOrPropertyMemberName = XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(context.MemberInfo);
-            var fieldOrPropertyNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{fieldOrPropertyMemberName}']");
+            var fieldOrPropertyMemberName =
+                XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(context.MemberInfo);
+            var fieldOrPropertyNode =
+                _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{fieldOrPropertyMemberName}']");
 
             var recordTypeName = XmlCommentsNodeNameHelper.GetMemberNameForType(context.MemberInfo.DeclaringType);
             var recordDefaultConstructorProperty =
@@ -58,11 +51,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (fieldOrPropertyNode != null)
             {
-                var summaryNode = fieldOrPropertyNode.SelectSingleNode("summary");
+                var summaryNode = _xmlNavigator.SelectSingleNodeRecursive(fieldOrPropertyMemberName, SummaryTag);
                 if (summaryNode != null)
                     schema.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
 
-                var exampleNode = fieldOrPropertyNode.SelectSingleNode("example");
+                var exampleNode = _xmlNavigator.SelectSingleNodeRecursive(fieldOrPropertyMemberName, ExampleTag);
                 TrySetExample(schema, context, exampleNode?.Value);
             }
         }
@@ -70,9 +63,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private static void TrySetExample(OpenApiSchema schema, SchemaFilterContext context, string example)
         {
             if (example == null)
+            {
                 return;
+            }
 
             schema.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, schema, example);
+        }
+
+        private void ApplyTypeTags(OpenApiSchema schema, Type type)
+        {
+            var typeMemberName = XmlCommentsNodeNameHelper.GetMemberNameForType(type);
+            var typeSummaryNode = _xmlNavigator.SelectSingleNodeRecursive(typeMemberName, SummaryTag);
+
+            if (typeSummaryNode is not null)
+            {
+                schema.Description = XmlCommentsTextHelper.Humanize(typeSummaryNode.InnerXml);
+            }
         }
     }
 }

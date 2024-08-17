@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Xml.XPath;
 using System.IO;
 using Microsoft.OpenApi.Models;
@@ -10,16 +11,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     public class XmlCommentsOperationFilterTests
     {
-        [Fact]
-        public void Apply_SetsSummaryAndDescription_FromActionSummaryAndRemarksTags()
+        [Theory]
+        [InlineData(typeof(FakeControllerWithXmlComments))]
+        [InlineData(typeof(FakeControllerWithInheritDoc))]
+        public void Apply_SetsSummaryAndDescription_FromActionSummaryAndRemarksTags(Type fakeController)
         {
             var operation = new OpenApiOperation();
-            var methodInfo = typeof(FakeControllerWithXmlComments)
+            var methodInfo = fakeController
                 .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithSummaryAndRemarksTags));
             var apiDescription = ApiDescriptionFactory.Create(methodInfo: methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource");
             var filterContext = new OperationFilterContext(apiDescription, null, null, methodInfo);
 
-            Subject().Apply(operation, filterContext);
+            Subject(fakeController).Apply(operation, filterContext);
 
             Assert.Equal("Summary for ActionWithSummaryAndRemarksTags", operation.Summary);
             Assert.Equal("Remarks for ActionWithSummaryAndRemarksTags", operation.Description);
@@ -40,8 +43,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("Remarks for ActionWithSummaryAndRemarksTags", operation.Description);
         }
 
-        [Fact]
-        public void Apply_SetsResponseDescription_FromActionOrControllerResponseTags()
+        [Theory]
+        [InlineData(typeof(FakeControllerWithXmlComments))]
+        [InlineData(typeof(FakeControllerWithInheritDoc))]
+        public void Apply_SetsResponseDescription_FromActionOrControllerResponseTags(Type fakeController)
         {
             var operation = new OpenApiOperation
             {
@@ -51,7 +56,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     { "400", new OpenApiResponse { Description = "Client Error" } },
                 }
             };
-            var methodInfo = typeof(FakeControllerWithXmlComments)
+            var methodInfo = fakeController
                 .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithResponseTags));
             var apiDescription = ApiDescriptionFactory.Create(
                 methodInfo: methodInfo,
@@ -65,7 +70,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 });
             var filterContext = new OperationFilterContext(apiDescription, null, null, methodInfo: methodInfo);
 
-            Subject().Apply(operation, filterContext);
+            Subject(fakeController).Apply(operation, filterContext);
 
             Assert.Equal(new[] { "200", "400", "default" }, operation.Responses.Keys.ToArray());
             Assert.Equal("Description for 200 response", operation.Responses["200"].Description);
@@ -73,12 +78,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("Description for default response", operation.Responses["default"].Description);
         }
 
-        private XmlCommentsOperationFilter Subject()
+        private XmlCommentsOperationFilter Subject(Type fakeController)
         {
-            using (var xmlComments = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml"))
-            {
-                return new XmlCommentsOperationFilter(new XPathDocument(xmlComments));
-            }
+            using var xmlComments = File.OpenText(fakeController.Assembly.GetName().Name + ".xml");
+            return new XmlCommentsOperationFilter(new XPathDocument(xmlComments));
         }
+
+        private XmlCommentsOperationFilter Subject() => Subject(typeof(FakeControllerWithXmlComments));
     }
 }
