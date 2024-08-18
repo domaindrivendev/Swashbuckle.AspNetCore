@@ -47,7 +47,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             _swaggerGenOptions.DocumentFilterDescriptors.ForEach(
                 filterDescriptor => options.DocumentFilters.Add(GetOrCreateFilter<IDocumentFilter>(filterDescriptor)));
 
-
             _swaggerGenOptions.ParameterAsyncFilterDescriptors.ForEach(
                 filterDescriptor => options.ParameterAsyncFilters.Add(GetOrCreateFilter<IParameterAsyncFilter>(filterDescriptor)));
 

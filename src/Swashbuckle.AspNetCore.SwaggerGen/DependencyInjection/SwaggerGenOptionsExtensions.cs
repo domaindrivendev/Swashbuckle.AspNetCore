@@ -353,7 +353,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 Type = typeof(TFilter),
                 Arguments = arguments
             });
-        } 
+        }
 
         /// <summary>
         /// Extend the Swagger Generator with "filters" that can modify Schemas after they're initially generated

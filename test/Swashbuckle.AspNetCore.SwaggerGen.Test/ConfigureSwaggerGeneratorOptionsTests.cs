@@ -217,8 +217,6 @@ public static class ConfigureSwaggerGeneratorOptionsTests
         Assert.NotSame(swaggerGeneratorOptions.DocumentFilters.First(), swaggerGeneratorOptions.DocumentFilters.Last());
     }
 
-    //Hier async
-
     [Fact]
     public static void AddingParameterAsyncFilterInstances_WhenConfiguringOptions_SameInstanceIsAdded()
     {
