@@ -370,6 +370,7 @@ namespace Microsoft.Extensions.DependencyInjection
             if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.SchemaFilterDescriptors.Add(new FilterDescriptor
             {
+                Type = typeof(TFilter),
                 FilterInstance = filterInstance
             });
         }
@@ -405,7 +406,7 @@ namespace Microsoft.Extensions.DependencyInjection
             where TFilter : IParameterAsyncFilter
         {
             if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
-            swaggerGenOptions.ParameterAsyncFilterDescriptors.Add(new FilterDescriptor
+            swaggerGenOptions.ParameterFilterDescriptors.Add(new FilterDescriptor
             {
                 Type = typeof(TFilter),
                 Arguments = arguments
@@ -427,6 +428,7 @@ namespace Microsoft.Extensions.DependencyInjection
             if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.ParameterFilterDescriptors.Add(new FilterDescriptor
             {
+                Type = typeof(TFilter),
                 FilterInstance = filterInstance
             });
         }
@@ -444,8 +446,9 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
             if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
-            swaggerGenOptions.ParameterAsyncFilterDescriptors.Add(new FilterDescriptor
+            swaggerGenOptions.ParameterFilterDescriptors.Add(new FilterDescriptor
             {
+                Type = typeof(TFilter),
                 FilterInstance = filterInstance
             });
         }
@@ -481,7 +484,7 @@ namespace Microsoft.Extensions.DependencyInjection
             where TFilter : IRequestBodyAsyncFilter
         {
             if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
-            swaggerGenOptions.RequestBodyAsyncFilterDescriptors.Add(new FilterDescriptor
+            swaggerGenOptions.RequestBodyFilterDescriptors.Add(new FilterDescriptor
             {
                 Type = typeof(TFilter),
                 Arguments = arguments
@@ -503,6 +506,7 @@ namespace Microsoft.Extensions.DependencyInjection
             if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.RequestBodyFilterDescriptors.Add(new FilterDescriptor
             {
+                Type = typeof(TFilter),
                 FilterInstance = filterInstance
             });
         }
@@ -520,8 +524,9 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
             if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
-            swaggerGenOptions.RequestBodyAsyncFilterDescriptors.Add(new FilterDescriptor
+            swaggerGenOptions.RequestBodyFilterDescriptors.Add(new FilterDescriptor
             {
+                Type = typeof(TFilter),
                 FilterInstance = filterInstance
             });
         }
@@ -557,7 +562,7 @@ namespace Microsoft.Extensions.DependencyInjection
             where TFilter : IOperationAsyncFilter
         {
             if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
-            swaggerGenOptions.OperationAsyncFilterDescriptors.Add(new FilterDescriptor
+            swaggerGenOptions.OperationFilterDescriptors.Add(new FilterDescriptor
             {
                 Type = typeof(TFilter),
                 Arguments = arguments
@@ -579,6 +584,7 @@ namespace Microsoft.Extensions.DependencyInjection
             if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.OperationFilterDescriptors.Add(new FilterDescriptor
             {
+                Type = typeof(TFilter),
                 FilterInstance = filterInstance
             });
         }
@@ -596,8 +602,9 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
             if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
-            swaggerGenOptions.OperationAsyncFilterDescriptors.Add(new FilterDescriptor
+            swaggerGenOptions.OperationFilterDescriptors.Add(new FilterDescriptor
             {
+                Type = typeof(TFilter),
                 FilterInstance = filterInstance
             });
         }
@@ -634,7 +641,7 @@ namespace Microsoft.Extensions.DependencyInjection
             where TFilter : IDocumentAsyncFilter
         {
             if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
-            swaggerGenOptions.DocumentAsyncFilterDescriptors.Add(new FilterDescriptor
+            swaggerGenOptions.DocumentFilterDescriptors.Add(new FilterDescriptor
             {
                 Type = typeof(TFilter),
                 Arguments = arguments
@@ -656,6 +663,7 @@ namespace Microsoft.Extensions.DependencyInjection
             if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.DocumentFilterDescriptors.Add(new FilterDescriptor
             {
+                Type = typeof(TFilter),
                 FilterInstance = filterInstance
             });
         }
@@ -674,8 +682,9 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
             if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
-            swaggerGenOptions.DocumentAsyncFilterDescriptors.Add(new FilterDescriptor
+            swaggerGenOptions.DocumentFilterDescriptors.Add(new FilterDescriptor
             {
+                Type = typeof(TFilter),
                 FilterInstance = filterInstance
             });
         }

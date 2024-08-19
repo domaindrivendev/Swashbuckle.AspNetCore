@@ -35,29 +35,57 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             // Create and add any filters that were specified through the FilterDescriptor lists ...
 
-            _swaggerGenOptions.ParameterFilterDescriptors.ForEach(
-                filterDescriptor => options.ParameterFilters.Add(GetOrCreateFilter<IParameterFilter>(filterDescriptor)));
+            foreach(var filterDescriptor in _swaggerGenOptions.ParameterFilterDescriptors)
+            {
+                if (filterDescriptor.Type.IsAssignableTo(typeof(IParameterFilter)))
+                {
+                    options.ParameterFilters.Add(GetOrCreateFilter<IParameterFilter>(filterDescriptor));
+                }
 
-            _swaggerGenOptions.RequestBodyFilterDescriptors.ForEach(
-                filterDescriptor => options.RequestBodyFilters.Add(GetOrCreateFilter<IRequestBodyFilter>(filterDescriptor)));
+                if (filterDescriptor.Type.IsAssignableTo(typeof(IParameterAsyncFilter)))
+                {
+                    options.ParameterAsyncFilters.Add(GetOrCreateFilter<IParameterAsyncFilter>(filterDescriptor));
+                }
+            }
 
-            _swaggerGenOptions.OperationFilterDescriptors.ForEach(
-                filterDescriptor => options.OperationFilters.Add(GetOrCreateFilter<IOperationFilter>(filterDescriptor)));
+            foreach (var filterDescriptor in _swaggerGenOptions.RequestBodyFilterDescriptors)
+            {
+                if (filterDescriptor.Type.IsAssignableTo(typeof(IRequestBodyFilter)))
+                {
+                    options.RequestBodyFilters.Add(GetOrCreateFilter<IRequestBodyFilter>(filterDescriptor));
+                }
 
-            _swaggerGenOptions.DocumentFilterDescriptors.ForEach(
-                filterDescriptor => options.DocumentFilters.Add(GetOrCreateFilter<IDocumentFilter>(filterDescriptor)));
+                if (filterDescriptor.Type.IsAssignableTo(typeof(IRequestBodyAsyncFilter)))
+                {
+                    options.RequestBodyAsyncFilters.Add(GetOrCreateFilter<IRequestBodyAsyncFilter>(filterDescriptor));
+                }
+            }
 
-            _swaggerGenOptions.ParameterAsyncFilterDescriptors.ForEach(
-                filterDescriptor => options.ParameterAsyncFilters.Add(GetOrCreateFilter<IParameterAsyncFilter>(filterDescriptor)));
+            foreach (var filterDescriptor in _swaggerGenOptions.OperationFilterDescriptors)
+            {
+                if (filterDescriptor.Type.IsAssignableTo(typeof(IOperationFilter)))
+                {
+                    options.OperationFilters.Add(GetOrCreateFilter<IOperationFilter>(filterDescriptor));
+                }
 
-            _swaggerGenOptions.RequestBodyAsyncFilterDescriptors.ForEach(
-                filterDescriptor => options.RequestBodyAsyncFilters.Add(GetOrCreateFilter<IRequestBodyAsyncFilter>(filterDescriptor)));
+                if (filterDescriptor.Type.IsAssignableTo(typeof(IOperationAsyncFilter)))
+                {
+                    options.OperationAsyncFilters.Add(GetOrCreateFilter<IOperationAsyncFilter>(filterDescriptor));
+                }
+            }
 
-            _swaggerGenOptions.OperationAsyncFilterDescriptors.ForEach(
-                filterDescriptor => options.OperationAsyncFilters.Add(GetOrCreateFilter<IOperationAsyncFilter>(filterDescriptor)));
+            foreach (var filterDescriptor in _swaggerGenOptions.DocumentFilterDescriptors)
+            {
+                if (filterDescriptor.Type.IsAssignableTo(typeof(IDocumentFilter)))
+                {
+                    options.DocumentFilters.Add(GetOrCreateFilter<IDocumentFilter>(filterDescriptor));
+                }
 
-            _swaggerGenOptions.DocumentAsyncFilterDescriptors.ForEach(
-                filterDescriptor => options.DocumentAsyncFilters.Add(GetOrCreateFilter<IDocumentAsyncFilter>(filterDescriptor)));
+                if (filterDescriptor.Type.IsAssignableTo(typeof(IDocumentAsyncFilter)))
+                {
+                    options.DocumentAsyncFilters.Add(GetOrCreateFilter<IDocumentAsyncFilter>(filterDescriptor));
+                }
+            }
 
             if (!options.SwaggerDocs.Any())
             {

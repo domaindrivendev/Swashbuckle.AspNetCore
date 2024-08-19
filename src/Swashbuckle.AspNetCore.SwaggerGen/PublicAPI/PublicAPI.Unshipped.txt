@@ -6,11 +6,3 @@ static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.Docu
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.OperationAsyncFilter<TFilter>(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, params object[] arguments) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.ParameterAsyncFilter<TFilter>(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, params object[] arguments) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.RequestBodyAsyncFilter<TFilter>(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, params object[] arguments) -> void
-Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions.DocumentAsyncFilterDescriptors.get -> System.Collections.Generic.List<Swashbuckle.AspNetCore.SwaggerGen.FilterDescriptor>
-Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions.DocumentAsyncFilterDescriptors.set -> void
-Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions.OperationAsyncFilterDescriptors.get -> System.Collections.Generic.List<Swashbuckle.AspNetCore.SwaggerGen.FilterDescriptor>
-Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions.OperationAsyncFilterDescriptors.set -> void
-Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions.ParameterAsyncFilterDescriptors.get -> System.Collections.Generic.List<Swashbuckle.AspNetCore.SwaggerGen.FilterDescriptor>
-Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions.ParameterAsyncFilterDescriptors.set -> void
-Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions.RequestBodyAsyncFilterDescriptors.get -> System.Collections.Generic.List<Swashbuckle.AspNetCore.SwaggerGen.FilterDescriptor>
-Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions.RequestBodyAsyncFilterDescriptors.set -> void
