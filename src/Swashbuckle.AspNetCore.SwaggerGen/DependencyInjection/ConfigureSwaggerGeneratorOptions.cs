@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
@@ -35,7 +34,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             // Create and add any filters that were specified through the FilterDescriptor lists ...
 
-            foreach(var filterDescriptor in _swaggerGenOptions.ParameterFilterDescriptors)
+            foreach (var filterDescriptor in _swaggerGenOptions.ParameterFilterDescriptors)
             {
                 if (filterDescriptor.Type.IsAssignableTo(typeof(IParameterFilter)))
                 {
