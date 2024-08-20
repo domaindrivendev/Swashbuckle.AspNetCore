@@ -17,7 +17,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private readonly SwaggerGenOptions _swaggerGenOptions;
         private readonly IServiceProvider _serviceProvider;
         private readonly IWebHostEnvironment _hostingEnv;
-        private readonly Dictionary<Type, object> _filterInstances = [];
 
         public ConfigureSwaggerGeneratorOptions(
             IOptions<SwaggerGenOptions> swaggerGenOptionsAccessor,
@@ -34,7 +33,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             DeepCopy(_swaggerGenOptions.SwaggerGeneratorOptions, options);
 
             // Create and add any filters that were specified through the FilterDescriptor lists ...
-            // if a filter implements both interfaces, the same instance will be used
+
             foreach (var filterDescriptor in _swaggerGenOptions.ParameterFilterDescriptors)
             {
                 if (filterDescriptor.Type.IsAssignableTo(typeof(IParameterFilter)))
@@ -121,16 +120,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private TFilter GetOrCreateFilter<TFilter>(FilterDescriptor filterDescriptor)
         {
-            if (_filterInstances.TryGetValue(filterDescriptor.Type, out var value))
-            {
-                return (TFilter)value;
-            }
-
-            var instance =  (TFilter)(filterDescriptor.FilterInstance
+            return (TFilter)(filterDescriptor.FilterInstance
                 ?? ActivatorUtilities.CreateInstance(_serviceProvider, filterDescriptor.Type, filterDescriptor.Arguments));
-
-            _filterInstances.Add(filterDescriptor.Type, instance);
-            return instance;
         }
     }
 }
