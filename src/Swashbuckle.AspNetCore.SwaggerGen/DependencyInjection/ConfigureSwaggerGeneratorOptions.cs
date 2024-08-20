@@ -121,18 +121,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private TFilter GetOrCreateFilter<TFilter>(FilterDescriptor filterDescriptor)
         {
-            if (filterDescriptor.FilterInstance != null)
+            if (_filterInstances.TryGetValue(filterDescriptor.Type, out var value))
             {
-                if (_filterInstances.TryGetValue(filterDescriptor.Type, out var value))
-                {
-                    return (TFilter)value;
-                }
-                var instance = (TFilter)(filterDescriptor.FilterInstance);
-                _filterInstances.Add(filterDescriptor.Type, instance);
-                return instance;
+                return (TFilter)value;
             }
 
-            return (TFilter)ActivatorUtilities.CreateInstance(_serviceProvider, filterDescriptor.Type, filterDescriptor.Arguments);
+            var instance =  (TFilter)(filterDescriptor.FilterInstance
+                ?? ActivatorUtilities.CreateInstance(_serviceProvider, filterDescriptor.Type, filterDescriptor.Arguments));
+
+            _filterInstances.Add(filterDescriptor.Type, instance);
+            return instance;
         }
     }
 }
