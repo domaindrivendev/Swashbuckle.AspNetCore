@@ -90,6 +90,15 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     keys = enumValuesAsJson.Any(json => json.StartsWith("\""))
                         ? enumValuesAsJson.Select(json => json.Replace("\"", string.Empty))
                         : keyType.GetEnumNames();
+
+                    keys = keyType.GetEnumValues().Cast<object>().Select(v =>
+                    {
+                        var dic = new Dictionary<object, int>() { { v, 0 } };
+                        var serialized = JsonConvert.SerializeObject(dic, _serializerSettings);
+                        var deserialized =
+                            JsonConvert.DeserializeObject<Dictionary<string, int>>(serialized, _serializerSettings);
+                        return deserialized.Keys.Single();
+                    });
                 }
 
                 return DataContract.ForDictionary(
