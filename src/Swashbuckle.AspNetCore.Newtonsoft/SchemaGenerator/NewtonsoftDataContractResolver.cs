@@ -83,14 +83,6 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                 if (keyType.IsEnum)
                 {
                     // This is a special case where we know the possible key values
-                    var enumValuesAsJson = keyType.GetEnumValues()
-                        .Cast<object>()
-                        .Select(JsonConverterFunc);
-
-                    keys = enumValuesAsJson.Any(json => json.StartsWith("\""))
-                        ? enumValuesAsJson.Select(json => json.Replace("\"", string.Empty))
-                        : keyType.GetEnumNames();
-
                     keys = keyType.GetEnumValues().Cast<object>().Select(v =>
                     {
                         var dic = new Dictionary<object, int>() { { v, 0 } };
