@@ -61,6 +61,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public static bool IsDictionaryValueNonNullable(this MemberInfo memberInfo)
         {
+#if NET6_0_OR_GREATER
+            var context = new NullabilityInfoContext();
+            var nullableInfo = memberInfo.MemberType == MemberTypes.Field
+                ? context.Create((FieldInfo)memberInfo)
+                : context.Create((PropertyInfo)memberInfo);
+
+            if (nullableInfo.GenericTypeArguments.Length != 2)
+            {
+                throw new InvalidOperationException("Expected Dictionary to have two generic type arguments.");
+            }
+
+            return nullableInfo.GenericTypeArguments[1].ReadState == NullabilityState.NotNull;
+#else
             var memberType = memberInfo.MemberType == MemberTypes.Field
                 ? ((FieldInfo)memberInfo).FieldType
                 : ((PropertyInfo)memberInfo).PropertyType;
@@ -104,6 +117,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
 
             return false;
+#endif
         }
 
         private static object GetNullableAttribute(this MemberInfo memberInfo)
