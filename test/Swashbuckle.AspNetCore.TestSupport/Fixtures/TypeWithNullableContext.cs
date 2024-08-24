@@ -11,12 +11,13 @@ namespace Swashbuckle.AspNetCore.TestSupport
     // Remember to mirror both types and use both types in tests.
 
     /// <summary>
-    /// We expect this type to receive NullableContext(1) (NotAnnotated) from the compiler.
+    /// We expect this type to receive NullableContext(Flag=1) (NotAnnotated) from the compiler.
     /// </summary>
     public class TypeWithNullableContextNotAnnotated
     {
-        // Dummies to affect the NullableContextAttribute value.
-        // It seems to default to the most common nullable state.
+        // Dummy properties to affect the NullableContextAttribute placed on the type.
+        // It seems to default to the most common nullable state, so we overwhelm
+        // it with non-nullable properties in order to coerce it.
         public string Dummy1 { get; } = default!;
         public string Dummy2 { get; } = default!;
         public string Dummy3 { get; } = default!;
@@ -90,12 +91,13 @@ namespace Swashbuckle.AspNetCore.TestSupport
     }
 
     /// <summary>
-    /// We expect this type to receive NullableContext(2) (Annotated) from the compiler.
+    /// We expect this type to receive NullableContext(Flag=2) (Annotated) from the compiler.
     /// </summary>
     public class TypeWithNullableContextAnnotated
     {
-        // Dummies to affect the NullableContextAttribute value.
-        // It seems to default to the most common nullable state.
+        // Dummy properties to affect the NullableContextAttribute placed on the type.
+        // It seems to default to the most common nullable state, so we overwhelm
+        // it with nullable properties in order to coerce it.
         public string? Dummy1 { get; set; }
         public string? Dummy2 { get; set; }
         public string? Dummy3 { get; set; }

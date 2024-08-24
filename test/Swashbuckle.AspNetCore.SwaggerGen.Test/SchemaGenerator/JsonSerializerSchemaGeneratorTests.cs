@@ -674,6 +674,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void TypeWithNullableContextAnnotated_IsAnnotated()
         {
+            // This is a sanity check to ensure that TypeWithNullableContextAnnotated
+            // is annotated with NullableContext(Flag=2) by the compiler. If this is no
+            // longer the case, you may need to add more of the Dummy properties to
+            // coerce the compiler.
+
             const string Name = "System.Runtime.CompilerServices.NullableContextAttribute";
 
             var nullableContext = typeof(TypeWithNullableContextAnnotated)
@@ -690,6 +695,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void TypeWithNullableContextNotAnnotated_IsNotAnnotated()
         {
+            // This is a sanity check to ensure that TypeWithNullableContextNotAnnotated
+            // is annotated with NullableContext(Flag=1) by the compiler. If this is no
+            // longer the case, you may need to add more of the Dummy properties to
+            // coerce the compiler.
+
             const string Name = "System.Runtime.CompilerServices.NullableContextAttribute";
 
             var nullableContext = typeof(TypeWithNullableContextNotAnnotated)
