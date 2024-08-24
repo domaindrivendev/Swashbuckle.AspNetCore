@@ -136,7 +136,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private static bool GetNullableFallbackValue(this MemberInfo memberInfo)
         {
             var declaringTypes = memberInfo.DeclaringType.IsNested
-                ? new Type[] { memberInfo.DeclaringType, memberInfo.DeclaringType.DeclaringType }
+                ? GetDeclaringTypeChain(memberInfo)
                 : new Type[] { memberInfo.DeclaringType };
 
             foreach (var declaringType in declaringTypes)
