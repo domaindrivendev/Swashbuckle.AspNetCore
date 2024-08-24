@@ -982,6 +982,28 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithNestedSubType.Nested), nameof(TypeWithNullableContextAnnotated.SubTypeWithNestedSubType.Nested.NullableString), true)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithNestedSubType.Nested), nameof(TypeWithNullableContextAnnotated.SubTypeWithNestedSubType.Nested.NonNullableString), false)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.SubTypeWithNestedSubType.Nested), nameof(TypeWithNullableContextAnnotated.SubTypeWithNestedSubType.Nested.NullableString), true)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.SubTypeWithNestedSubType.Nested), nameof(TypeWithNullableContextAnnotated.SubTypeWithNestedSubType.Nested.NonNullableString), false)]
+        public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypes_NestedWithinNested(
+            Type declaringType,
+            string subType,
+            string propertyName,
+            bool expectedNullable)
+        {
+            var subject = Subject(
+                configureGenerator: c => c.SupportNonNullableReferenceTypes = true
+            );
+            var schemaRepository = new SchemaRepository();
+
+            subject.GenerateSchema(declaringType, schemaRepository);
+
+            var propertySchema = schemaRepository.Schemas[subType].Properties[propertyName];
+            Assert.Equal(expectedNullable, propertySchema.Nullable);
+        }
+
+        [Theory]
         [InlineData(typeof(TypeWithNullableContextAnnotated))]
         [InlineData(typeof(TypeWithNullableContextNotAnnotated))]
         public void GenerateSchema_Works_IfNotProvidingMvcOptions(Type type)

@@ -48,6 +48,7 @@ namespace Swashbuckle.AspNetCore.TestSupport
 
         public List<SubTypeWithOneNullableContent>? NullableList { get; set; }
         public List<SubTypeWithOneNonNullableContent> NonNullableList { get; set; } = default!;
+        public SubTypeWithNestedSubType NestedWithNested { get; set; } = default!;
 
         public Dictionary<string, string>? NullableDictionaryInNonNullableContent { get; set; }
         public Dictionary<string, string> NonNullableDictionaryInNonNullableContent { get; set; } = default!;
@@ -87,6 +88,17 @@ namespace Swashbuckle.AspNetCore.TestSupport
         public class SubTypeWithOneNonNullableContent
         {
             public string NonNullableString { get; set; } = default!;
+        }
+
+        public class SubTypeWithNestedSubType
+        {
+            public Nested NestedProperty { get; set; } = default!;
+
+            public class Nested
+            {
+                public string? NullableString { get; set; }
+                public string NonNullableString { get; set; } = default!;
+            }
         }
     }
 
@@ -128,6 +140,7 @@ namespace Swashbuckle.AspNetCore.TestSupport
 
         public List<SubTypeWithOneNullableContent>? NullableList { get; set; }
         public List<SubTypeWithOneNonNullableContent> NonNullableList { get; set; } = default!;
+        public SubTypeWithNestedSubType NestedWithNested { get; set; } = default!;
 
         public Dictionary<string, string>? NullableDictionaryInNonNullableContent { get; set; }
         public Dictionary<string, string> NonNullableDictionaryInNonNullableContent { get; set; } = default!;
@@ -167,6 +180,17 @@ namespace Swashbuckle.AspNetCore.TestSupport
         public class SubTypeWithOneNonNullableContent
         {
             public string NonNullableString { get; set; } = default!;
+        }
+
+        public class SubTypeWithNestedSubType
+        {
+            public Nested NestedProperty { get; set; } = default!;
+
+            public class Nested
+            {
+                public string? NullableString { get; set; }
+                public string NonNullableString { get; set; } = default!;
+            }
         }
     }
 #nullable restore
