@@ -69,7 +69,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (nullableInfo.GenericTypeArguments.Length != 2)
             {
-                throw new InvalidOperationException("Expected Dictionary to have two generic type arguments.");
+                var length = nullableInfo.GenericTypeArguments.Length;
+                var type = nullableInfo.Type.FullName;
+                var container = memberInfo.DeclaringType.FullName;
+                var member = memberInfo.Name;
+                throw new InvalidOperationException($"Expected Dictionary to have two generic type arguments but it had {length}. Member: {container}.{member} Type: {type}.");
             }
 
             return nullableInfo.GenericTypeArguments[1].ReadState == NullabilityState.NotNull;
