@@ -1,16 +1,21 @@
-﻿using System;
+﻿using Microsoft.OpenApi.Models;
+using System;
+using System.Collections.Generic;
 using System.Xml.XPath;
-using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class XmlCommentsSchemaFilter : ISchemaFilter
     {
-        private readonly XPathNavigator _xmlNavigator;
+        private readonly IReadOnlyDictionary<string, XPathNavigator> _xmlDocMembers;
 
-        public XmlCommentsSchemaFilter(XPathDocument xmlDoc)
+        public XmlCommentsSchemaFilter(XPathDocument xmlDoc) : this(XmlCommentsDocumentHelper.GetMemberDictionary(xmlDoc))
         {
-            _xmlNavigator = xmlDoc.CreateNavigator();
+        }
+
+        internal XmlCommentsSchemaFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers)
+        {
+            _xmlDocMembers = xmlDocMembers;
         }
 
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
@@ -26,7 +31,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private void ApplyTypeTags(OpenApiSchema schema, Type type)
         {
             var typeMemberName = XmlCommentsNodeNameHelper.GetMemberNameForType(type);
-            var typeSummaryNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{typeMemberName}']/summary");
+
+            if (!_xmlDocMembers.TryGetValue(typeMemberName, out var memberNode)) return;
+
+            var typeSummaryNode = memberNode.SelectFirstChild("summary");
 
             if (typeSummaryNode != null)
             {
@@ -37,32 +45,34 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private void ApplyMemberTags(OpenApiSchema schema, SchemaFilterContext context)
         {
             var fieldOrPropertyMemberName = XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(context.MemberInfo);
-            var fieldOrPropertyNode = _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{fieldOrPropertyMemberName}']");
 
             var recordTypeName = XmlCommentsNodeNameHelper.GetMemberNameForType(context.MemberInfo.DeclaringType);
-            var recordDefaultConstructorProperty =
-                _xmlNavigator.SelectSingleNode($"/doc/members/member[@name='{recordTypeName}']/param[@name='{context.MemberInfo.Name}']");
 
-            if (recordDefaultConstructorProperty != null)
+            if (_xmlDocMembers.TryGetValue(recordTypeName, out var recordTypeNode))
             {
-                var summaryNode = recordDefaultConstructorProperty.Value;
-                if (summaryNode != null)
-                    schema.Description = XmlCommentsTextHelper.Humanize(summaryNode);
+                XPathNavigator recordDefaultConstructorProperty = recordTypeNode.SelectFirstChildWithAttribute("param", "name", context.MemberInfo.Name);
 
-                var example = recordDefaultConstructorProperty.GetAttribute("example", string.Empty);
-                if (!string.IsNullOrEmpty(example))
+                if (recordDefaultConstructorProperty != null)
                 {
-                    TrySetExample(schema, context, example);
+                    var summaryNode = recordDefaultConstructorProperty.Value;
+                    if (summaryNode != null)
+                        schema.Description = XmlCommentsTextHelper.Humanize(summaryNode);
+
+                    var example = recordDefaultConstructorProperty.GetAttribute("example", string.Empty);
+                    if (!string.IsNullOrEmpty(example))
+                    {
+                        TrySetExample(schema, context, example);
+                    }
                 }
             }
 
-            if (fieldOrPropertyNode != null)
+            if (_xmlDocMembers.TryGetValue(fieldOrPropertyMemberName, out var fieldOrPropertyNode))
             {
-                var summaryNode = fieldOrPropertyNode.SelectSingleNode("summary");
+                var summaryNode = fieldOrPropertyNode.SelectFirstChild("summary");
                 if (summaryNode != null)
                     schema.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
 
-                var exampleNode = fieldOrPropertyNode.SelectSingleNode("example");
+                var exampleNode = fieldOrPropertyNode.SelectFirstChild("example");
                 TrySetExample(schema, context, exampleNode?.Value);
             }
         }

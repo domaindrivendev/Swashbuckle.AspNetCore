@@ -541,13 +541,15 @@ namespace Microsoft.Extensions.DependencyInjection
             bool includeControllerXmlComments = false)
         {
             var xmlDoc = xmlDocFactory();
-            swaggerGenOptions.ParameterFilter<XmlCommentsParameterFilter>(xmlDoc);
-            swaggerGenOptions.RequestBodyFilter<XmlCommentsRequestBodyFilter>(xmlDoc);
-            swaggerGenOptions.OperationFilter<XmlCommentsOperationFilter>(xmlDoc);
-            swaggerGenOptions.SchemaFilter<XmlCommentsSchemaFilter>(xmlDoc);
+            var xmlDocMembers = XmlCommentsDocumentHelper.GetMemberDictionary(xmlDoc);
+
+            swaggerGenOptions.AddParameterFilterInstance(new XmlCommentsParameterFilter(xmlDocMembers));
+            swaggerGenOptions.AddRequestBodyFilterInstance(new XmlCommentsRequestBodyFilter(xmlDocMembers));
+            swaggerGenOptions.AddOperationFilterInstance(new XmlCommentsOperationFilter(xmlDocMembers));
+            swaggerGenOptions.AddSchemaFilterInstance(new XmlCommentsSchemaFilter(xmlDocMembers));
 
             if (includeControllerXmlComments)
-                swaggerGenOptions.DocumentFilter<XmlCommentsDocumentFilter>(xmlDoc, swaggerGenOptions.SwaggerGeneratorOptions);
+                swaggerGenOptions.AddDocumentFilterInstance(new XmlCommentsDocumentFilter(xmlDocMembers, swaggerGenOptions.SwaggerGeneratorOptions));
         }
 
         /// <summary>
