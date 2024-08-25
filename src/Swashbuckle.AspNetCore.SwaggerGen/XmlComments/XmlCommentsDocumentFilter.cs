@@ -42,7 +42,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 var memberName = XmlCommentsNodeNameHelper.GetMemberNameForType(nameAndType.Value);
 
-                if (!_xmlDocMembers.TryGetValue(memberName, out var typeNode)) continue;
+                if (!_xmlDocMembers.TryGetValue(memberName, out var typeNode))
+                {
+                    continue;
+                }
 
                 var summaryNode = typeNode.SelectFirstChild(SummaryTag);
                 if (summaryNode != null)
