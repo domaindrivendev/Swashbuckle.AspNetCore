@@ -40,7 +40,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (!_xmlDocMembers.TryGetValue(typeMemberName, out var methodNode)) return;
 
-            var responseNodes = methodNode.SelectChildren("response", "");
+            var responseNodes = methodNode.SelectChildren("response");
             ApplyResponseTags(operation, responseNodes);
         }
 
@@ -58,7 +58,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (remarksNode != null)
                 operation.Description = XmlCommentsTextHelper.Humanize(remarksNode.InnerXml);
 
-            var responseNodes = methodNode.SelectChildren("response", "");
+            var responseNodes = methodNode.SelectChildren("response");
             ApplyResponseTags(operation, responseNodes);
         }
 
@@ -66,7 +66,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             while (responseNodes.MoveNext())
             {
-                var code = responseNodes.Current.GetAttribute("code", "");
+                var code = responseNodes.Current.GetAttribute("code");
                 if (!operation.Responses.TryGetValue(code, out var response))
                 {
                     response = new OpenApiResponse();

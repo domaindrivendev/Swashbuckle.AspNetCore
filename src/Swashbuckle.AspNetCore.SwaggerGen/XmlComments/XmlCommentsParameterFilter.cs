@@ -70,7 +70,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 parameter.Description = XmlCommentsTextHelper.Humanize(paramNode.InnerXml);
 
-                var example = paramNode.GetAttribute("example", "");
+                var example = paramNode.GetAttribute("example");
                 if (string.IsNullOrEmpty(example)) return;
 
                 parameter.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, parameter.Schema, example);

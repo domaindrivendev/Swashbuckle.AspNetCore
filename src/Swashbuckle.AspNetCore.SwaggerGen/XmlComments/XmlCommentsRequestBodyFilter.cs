@@ -97,7 +97,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 requestBody.Description = XmlCommentsTextHelper.Humanize(paramNode.InnerXml);
 
-                var example = paramNode.GetAttribute("example", "");
+                var example = paramNode.GetAttribute("example");
                 if (!string.IsNullOrEmpty(example))
                 {
                     foreach (var mediaType in requestBody.Content.Values)

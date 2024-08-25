@@ -11,7 +11,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var members = xmlDoc.CreateNavigator()
                 .SelectFirstChild("doc")
                 ?.SelectFirstChild("members")
-                ?.SelectChildren("member", "")
+                ?.SelectChildren("member")
                 ?.OfType<XPathNavigator>();
 
             if (members == null)
@@ -19,7 +19,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 return new Dictionary<string, XPathNavigator>();
             }
 
-            return members.ToDictionary(memberNode => memberNode.GetAttribute("name", ""));
+            return members.ToDictionary(memberNode => memberNode.GetAttribute("name"));
         }
     }
 }
