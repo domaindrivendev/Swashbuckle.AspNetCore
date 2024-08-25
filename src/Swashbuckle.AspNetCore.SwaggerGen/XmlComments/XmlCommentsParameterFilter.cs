@@ -9,7 +9,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         private readonly IReadOnlyDictionary<string, XPathNavigator> _xmlDocMembers;
 
-        public XmlCommentsParameterFilter(XPathDocument xmlDoc) : this(XmlCommentsDocumentHelper.GetMemberDictionary(xmlDoc))
+        public XmlCommentsParameterFilter(XPathDocument xmlDoc) : this(XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc))
         {
         }
 

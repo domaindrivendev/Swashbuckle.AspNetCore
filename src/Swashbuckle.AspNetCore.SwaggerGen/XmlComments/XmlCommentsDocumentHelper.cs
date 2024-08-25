@@ -6,7 +6,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     internal static class XmlCommentsDocumentHelper
     {
-        internal static IReadOnlyDictionary<string, XPathNavigator> GetMemberDictionary(XPathDocument xmlDoc)
+        internal static IReadOnlyDictionary<string, XPathNavigator> CreateMemberDictionary(XPathDocument xmlDoc)
         {
             var members = xmlDoc.CreateNavigator()
                 .SelectFirstChild("doc")

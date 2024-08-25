@@ -19,7 +19,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
         }
 
-        public XmlCommentsDocumentFilter(XPathDocument xmlDoc, SwaggerGeneratorOptions options) : this(XmlCommentsDocumentHelper.GetMemberDictionary(xmlDoc), options)
+        public XmlCommentsDocumentFilter(XPathDocument xmlDoc, SwaggerGeneratorOptions options) : this(XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc), options)
         {
         }
 

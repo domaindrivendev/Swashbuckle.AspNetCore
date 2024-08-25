@@ -541,7 +541,7 @@ namespace Microsoft.Extensions.DependencyInjection
             bool includeControllerXmlComments = false)
         {
             var xmlDoc = xmlDocFactory();
-            var xmlDocMembers = XmlCommentsDocumentHelper.GetMemberDictionary(xmlDoc);
+            var xmlDocMembers = XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc);
 
             swaggerGenOptions.AddParameterFilterInstance(new XmlCommentsParameterFilter(xmlDocMembers));
             swaggerGenOptions.AddRequestBodyFilterInstance(new XmlCommentsRequestBodyFilter(xmlDocMembers));
