@@ -50,8 +50,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var summaryNode = typeNode.SelectFirstChild(SummaryTag);
                 if (summaryNode != null)
                 {
-                    if (swaggerDoc.Tags == null)
-                        swaggerDoc.Tags = new List<OpenApiTag>();
+                    swaggerDoc.Tags ??= new List<OpenApiTag>();
 
                     swaggerDoc.Tags.Add(new OpenApiTag
                     {
