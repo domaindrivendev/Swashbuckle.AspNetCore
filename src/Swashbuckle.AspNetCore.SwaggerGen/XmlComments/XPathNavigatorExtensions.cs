@@ -20,14 +20,14 @@ internal static class XPathNavigatorExtensions
     internal static XPathNavigator SelectFirstChild(this XPathNavigator navigator, string name)
     {
         return navigator.SelectChildren(name, EmptyNamespace)
-                ?.Cast<XPathNavigator>()
+                ?.OfType<XPathNavigator>()
                 .FirstOrDefault();
     }
 
     internal static XPathNavigator SelectFirstChildWithAttribute(this XPathNavigator navigator, string childName, string attributeName, string attributeValue)
     {
         return navigator.SelectChildren(childName, EmptyNamespace)
-                ?.Cast<XPathNavigator>()
+                ?.OfType<XPathNavigator>()
                 .FirstOrDefault(n => n.GetAttribute(attributeName, EmptyNamespace) == attributeValue);
     }
 }
