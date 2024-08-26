@@ -8,11 +8,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public static class MemberInfoExtensions
     {
+#if !NET6_0_OR_GREATER
         private const string NullableAttributeFullTypeName = "System.Runtime.CompilerServices.NullableAttribute";
         private const string NullableFlagsFieldName = "NullableFlags";
         private const string NullableContextAttributeFullTypeName = "System.Runtime.CompilerServices.NullableContextAttribute";
         private const string FlagFieldName = "Flag";
         private const int NotAnnotated = 1; // See https://github.com/dotnet/roslyn/blob/af7b0ebe2b0ed5c335a928626c25620566372dd1/docs/features/nullable-metadata.md?plain=1#L40
+#endif
 
         public static IEnumerable<object> GetInlineAndMetadataAttributes(this MemberInfo memberInfo)
         {
@@ -34,8 +36,27 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return attributes;
         }
 
+#if NET6_0_OR_GREATER
+        private static NullabilityInfo GetNullabilityInfo(this MemberInfo memberInfo)
+        {
+            var context = new NullabilityInfoContext();
+
+            return memberInfo switch
+            {
+                FieldInfo fieldInfo => context.Create(fieldInfo),
+                PropertyInfo propertyInfo => context.Create(propertyInfo),
+                EventInfo eventInfo => context.Create(eventInfo),
+                _ => throw new InvalidOperationException($"MemberInfo type {memberInfo.MemberType} is not supported.")
+            };
+        }
+#endif
+
         public static bool IsNonNullableReferenceType(this MemberInfo memberInfo)
         {
+#if NET6_0_OR_GREATER
+            var nullableInfo = GetNullabilityInfo(memberInfo);
+            return nullableInfo.ReadState == NullabilityState.NotNull;
+#else
             var memberType = memberInfo.MemberType == MemberTypes.Field
                 ? ((FieldInfo)memberInfo).FieldType
                 : ((PropertyInfo)memberInfo).PropertyType;
@@ -57,16 +78,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
 
             return false;
+#endif
         }
 
         public static bool IsDictionaryValueNonNullable(this MemberInfo memberInfo)
         {
 #if NET6_0_OR_GREATER
-            var context = new NullabilityInfoContext();
-            var nullableInfo = memberInfo.MemberType == MemberTypes.Field
-                ? context.Create((FieldInfo)memberInfo)
-                : context.Create((PropertyInfo)memberInfo);
-
+            var nullableInfo = GetNullabilityInfo(memberInfo);
             if (nullableInfo.GenericTypeArguments.Length != 2)
             {
                 var length = nullableInfo.GenericTypeArguments.Length;
@@ -124,6 +142,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 #endif
         }
 
+
+#if !NET6_0_OR_GREATER
         private static object GetNullableAttribute(this MemberInfo memberInfo)
         {
             var nullableAttribute = memberInfo
@@ -162,5 +182,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             return false;
         }
+#endif
     }
 }
