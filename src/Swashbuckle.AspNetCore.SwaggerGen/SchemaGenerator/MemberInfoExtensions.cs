@@ -137,7 +137,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var declaringTypes = memberInfo.DeclaringType.IsNested
                 ? GetDeclaringTypeChain(memberInfo)
-                : new Type[] { memberInfo.DeclaringType };
+                : new List<Type>(1) { memberInfo.DeclaringType };
 
             foreach (var declaringType in declaringTypes)
             {
@@ -163,7 +163,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return false;
         }
 
-        private static Type[] GetDeclaringTypeChain(MemberInfo memberInfo)
+        private static List<Type> GetDeclaringTypeChain(MemberInfo memberInfo)
         {
             var chain = new List<Type>();
             var currentType = memberInfo.DeclaringType;
@@ -174,7 +174,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 currentType = currentType.DeclaringType;
             }
 
-            return chain.ToArray();
+            return chain;
         }
     }
 }
