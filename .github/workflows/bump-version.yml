@@ -18,7 +18,7 @@ jobs:
     runs-on: [ ubuntu-latest ]
 
     concurrency:
-      group: ${{ github.workflow }}
+      group: '${{ github.workflow }}-version'
       cancel-in-progress: false
 
     permissions:
@@ -173,7 +173,7 @@ jobs:
     if: github.event_name == 'release'
 
     concurrency:
-      group: ${{ github.workflow }}
+      group: '${{ github.workflow }}-milestone'
       cancel-in-progress: false
 
     permissions:
