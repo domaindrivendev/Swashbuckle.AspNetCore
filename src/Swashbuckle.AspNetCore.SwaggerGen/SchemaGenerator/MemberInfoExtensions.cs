@@ -142,7 +142,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 #endif
         }
 
-
 #if !NET6_0_OR_GREATER
         private static object GetNullableAttribute(this MemberInfo memberInfo)
         {
@@ -156,8 +155,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private static bool GetNullableFallbackValue(this MemberInfo memberInfo)
         {
             var declaringTypes = memberInfo.DeclaringType.IsNested
-                ? new Type[] { memberInfo.DeclaringType, memberInfo.DeclaringType.DeclaringType }
-                : new Type[] { memberInfo.DeclaringType };
+                ? GetDeclaringTypeChain(memberInfo)
+                : new List<Type>(1) { memberInfo.DeclaringType };
 
             foreach (var declaringType in declaringTypes)
             {
@@ -183,5 +182,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return false;
         }
 #endif
+
+        private static List<Type> GetDeclaringTypeChain(MemberInfo memberInfo)
+        {
+            var chain = new List<Type>();
+            var currentType = memberInfo.DeclaringType;
+
+            while (currentType != null)
+            {
+                chain.Add(currentType);
+                currentType = currentType.DeclaringType;
+            }
+
+            return chain;
+        }
     }
 }
