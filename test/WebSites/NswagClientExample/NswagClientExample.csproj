@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" />
-    <PackageReference Include="Nswag.MSbuild" />
+    <PackageReference Include="NSwag.MSBuild" />
   </ItemGroup>
 
   <ItemGroup>
