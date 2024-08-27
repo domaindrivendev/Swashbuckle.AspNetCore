@@ -47,6 +47,39 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("Summary for FakeControllerWithXmlComments", tag.Description);
         }
 
+        [Fact]
+        public void Apply_SetsTagDescription_FromControllerSummaryTags_OneControllerWithoutDescription()
+        {
+            var document = new OpenApiDocument();
+            var filterContext = new DocumentFilterContext(
+                new[]
+                {
+                    new ApiDescription
+                    {
+                        ActionDescriptor = new ControllerActionDescriptor
+                        {
+                            ControllerTypeInfo = typeof(FakeController).GetTypeInfo(),
+                            ControllerName = nameof(FakeController)
+                        }
+                    },
+                    new ApiDescription
+                    {
+                        ActionDescriptor = new ControllerActionDescriptor
+                        {
+                            ControllerTypeInfo = typeof(FakeControllerWithXmlComments).GetTypeInfo(),
+                            ControllerName = nameof(FakeControllerWithXmlComments)
+                        }
+                    }
+                },
+                null,
+                null);
+
+            Subject().Apply(document, filterContext);
+
+            var tag = Assert.Single(document.Tags);
+            Assert.Equal("Summary for FakeControllerWithXmlComments", tag.Description);
+        }
+
         private static XmlCommentsDocumentFilter Subject()
         {
             using (var xmlComments = File.OpenText($"{typeof(FakeControllerWithXmlComments).Assembly.GetName().Name}.xml"))
