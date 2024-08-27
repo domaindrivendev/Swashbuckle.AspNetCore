@@ -1,0 +1,8 @@
+static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.AddDocumentAsyncFilterInstance<TFilter>(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, TFilter filterInstance) -> void
+static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.AddOperationAsyncFilterInstance<TFilter>(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, TFilter filterInstance) -> void
+static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.AddParameterAsyncFilterInstance<TFilter>(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, TFilter filterInstance) -> void
+static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.AddRequestBodyAsyncFilterInstance<TFilter>(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, TFilter filterInstance) -> void
+static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.DocumentAsyncFilter<TFilter>(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, params object[] arguments) -> void
+static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.OperationAsyncFilter<TFilter>(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, params object[] arguments) -> void
+static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.ParameterAsyncFilter<TFilter>(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, params object[] arguments) -> void
+static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.RequestBodyAsyncFilter<TFilter>(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, params object[] arguments) -> void
