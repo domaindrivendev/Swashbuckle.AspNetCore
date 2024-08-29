@@ -60,6 +60,7 @@ window.onload = function () {
     if(configObject.plugins) {
         configObject.plugins = configObject.plugins.map(eval);
     }
+    
     // Begin Swagger UI call region
 
     const ui = SwaggerUIBundle(configObject);

@@ -1309,8 +1309,8 @@ app.UseSwaggerUI(c =>
     c.UseResponseInterceptor("(response) => { return response; }");
 });
 ```
-
-_NOTE: When adding custom plugins, make sure you added custom `js` file that defines the plugin function._
+ [!NOTE]
+ When adding custom plugins, make sure you added custom `js` file that defines the plugin function.
 
 ### Inject Custom JavaScript ###
 
