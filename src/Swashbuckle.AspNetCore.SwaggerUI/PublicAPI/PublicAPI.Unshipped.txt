@@ -1,0 +1,2 @@
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.Plugins.get -> string[]
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.Plugins.set -> void
