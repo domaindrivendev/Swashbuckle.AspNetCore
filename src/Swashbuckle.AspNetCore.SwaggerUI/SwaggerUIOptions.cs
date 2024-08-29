@@ -190,12 +190,11 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         [JsonPropertyName("validatorUrl")]
         public string ValidatorUrl { get; set; } = null;
 
-
         /// <summary>
-        /// Custom plugins function names.
+        /// Any custom plugins' function names.
         /// </summary>
         [JsonPropertyName("plugins")]
-        public string[] Plugins { get; set; } = null;
+        public IList<string>  Plugins { get; set; } = null;
 
         [JsonExtensionData]
         public Dictionary<string, object> AdditionalItems { get; set; } = [];

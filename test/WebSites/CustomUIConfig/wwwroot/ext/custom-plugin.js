@@ -6,6 +6,5 @@ const customPlugin = function (system) {
 
     document.body.insertBefore(elem, document.body.firstChild);
     return {
-         
     }
 }

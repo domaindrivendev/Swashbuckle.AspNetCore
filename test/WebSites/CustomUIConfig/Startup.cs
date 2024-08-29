@@ -80,7 +80,7 @@ namespace CustomUIConfig
                 c.UseResponseInterceptor("(res) => { console.log('Custom interceptor intercepted response from:', res.url); return res; }");
                 c.EnablePersistAuthorization();
 
-                c.ConfigObject.Plugins = new[] { "customPlugin" };
+                c.ConfigObject.Plugins = ["customPlugin"];
 
                 c.ConfigObject.AdditionalItems.Add("syntaxHighlight", false);
                 c.ConfigObject.AdditionalItems.Add("charProperty", 'c');
