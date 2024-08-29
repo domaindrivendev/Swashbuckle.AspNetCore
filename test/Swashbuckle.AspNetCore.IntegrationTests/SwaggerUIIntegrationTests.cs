@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Xunit;
@@ -72,6 +73,28 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             Assert.DoesNotContain("%(ConfigObject)", jsContent);
             Assert.DoesNotContain("%(OAuthConfigObject)", jsContent);
             Assert.DoesNotContain("%(Interceptors)", jsContent);
+        }
+
+        [Theory]
+        [InlineData(typeof(Basic.Startup), "/index.js", null)]
+        [InlineData(typeof(CustomUIConfig.Startup), "/swagger/index.js", "customPlugin1,customPlugin2")]
+        public async Task IndexUrl_DefinesPlugins_IfConfigured(Type startupType, string indexJsPath, string customPlugins)
+        {
+            var client = new TestSite(startupType).BuildClient();
+
+            var jsResponse = await client.GetAsync(indexJsPath);
+            Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
+
+            var jsContent = await jsResponse.Content.ReadAsStringAsync();
+            if (string.IsNullOrEmpty(customPlugins))
+            {
+                Assert.DoesNotContain("\"plugins\"", jsContent);
+            }
+            else
+            {
+                string pluginsNames = string.Join(',', customPlugins.Split(',').Select(p => $"\"{p}\""));
+                Assert.Contains($"\"plugins\":[{pluginsNames}]", jsContent);
+            }
         }
 
         [Fact]
