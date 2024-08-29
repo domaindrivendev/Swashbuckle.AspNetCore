@@ -57,7 +57,7 @@ window.onload = function () {
     if (interceptors.ResponseInterceptorFunction)
         configObject.responseInterceptor = parseFunction(interceptors.ResponseInterceptorFunction);
 
-    if(configObject.plugins) {
+    if (configObject.plugins) {
         configObject.plugins = configObject.plugins.map(eval);
     }
     

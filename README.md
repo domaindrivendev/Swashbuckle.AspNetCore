@@ -1311,7 +1311,7 @@ app.UseSwaggerUI(c =>
 ```
 
  > [!NOTE]
- > When adding custom plugins, make sure you added custom `js` file that defines the plugin function(s).
+ > When adding custom plugins, make sure you add any custom `js` files that define the plugin function(s).
 
 ### Inject Custom JavaScript ###
 
