@@ -1302,12 +1302,15 @@ app.UseSwaggerUI(c =>
     c.MaxDisplayedTags(5);
     c.ShowExtensions();
     c.ShowCommonExtensions();
+    c.Plugins = new string[]{"myCustomPlugin"}
     c.EnableValidator();
     c.SupportedSubmitMethods(SubmitMethod.Get, SubmitMethod.Head);
     c.UseRequestInterceptor("(request) => { return request; }");
     c.UseResponseInterceptor("(response) => { return response; }");
 });
 ```
+
+_NOTE: When adding custom plugins, make sure you added custom `js` file that defines the plugin function._
 
 ### Inject Custom JavaScript ###
 
