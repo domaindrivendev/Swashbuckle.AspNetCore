@@ -459,10 +459,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         }
 
                         var filterContext = new RequestBodyFilterContext(
-                        bodyParameterDescription: bodyParameterDescription,
-                        formParameterDescriptions: bodyParameterDescription is null ? requestParameters : null,
-                        schemaGenerator: _schemaGenerator,
-                        schemaRepository: schemaRepository);
+                            bodyParameterDescription: bodyParameterDescription,
+                            formParameterDescriptions: bodyParameterDescription is null ? requestParameters : null,
+                            schemaGenerator: _schemaGenerator,
+                            schemaRepository: schemaRepository);
 
                         foreach (var filter in _options.RequestBodyAsyncFilters)
                         {

@@ -263,10 +263,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                                 ["application/someMediaType"] = new()
                             }
                         },
-                        Parameters = [ new() {
-                            Name = "paramQuery",
-                            In = ParameterLocation.Query
-                        }]
+                        Parameters =
+                        [
+                            new()
+                            {
+                                Name = "paramQuery",
+                                In = ParameterLocation.Query
+                            }
+                        ]
                     }
                 ],
                 RouteValues = new Dictionary<string, string>
@@ -328,7 +332,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(2, operation.Parameters[0].Extensions.Count);
             Assert.Equal("bar", ((OpenApiString)operation.Parameters[0].Extensions["X-foo"]).Value);
             Assert.Equal("v1", ((OpenApiString)operation.Parameters[0].Extensions["X-docName"]).Value);
-
         }
 
         [Fact]
