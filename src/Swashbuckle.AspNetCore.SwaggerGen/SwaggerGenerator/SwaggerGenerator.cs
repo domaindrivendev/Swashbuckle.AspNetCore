@@ -312,7 +312,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             OpenApiOperation operation =
 #if NET6_0_OR_GREATER
-                GenerateOpenApiOperationFromMetadata(apiDescription, schemaRepository);
+                await GenerateOpenApiOperationFromMetadataAsync(apiDescription, schemaRepository);
 #else
                 null;
 #endif
@@ -390,7 +390,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         }
 
 #if NET6_0_OR_GREATER
-        private OpenApiOperation GenerateOpenApiOperationFromMetadata(ApiDescription apiDescription, SchemaRepository schemaRepository)
+        private async Task<OpenApiOperation> GenerateOpenApiOperationFromMetadataAsync(ApiDescription apiDescription, SchemaRepository schemaRepository)
         {
             var metadata = apiDescription.ActionDescriptor?.EndpointMetadata;
             var operation = metadata?.OfType<OpenApiOperation>().SingleOrDefault();
@@ -406,12 +406,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var apiParameter = apiDescription.ParameterDescriptions.SingleOrDefault(desc => desc.Name == parameter.Name && !desc.IsFromBody() && !desc.IsFromForm() && !desc.IsIllegalHeaderParameter());
                 if (apiParameter is not null)
                 {
-                    parameter.Schema = GenerateSchema(
-                        apiParameter.Type,
-                        schemaRepository,
-                        apiParameter.PropertyInfo(),
-                        apiParameter.ParameterInfo(),
-                        apiParameter.RouteInfo);
+                    var (parameterAndContext, filterContext) = GenerateParameterAndContext(apiParameter, schemaRepository);
+                    parameter.Schema = parameterAndContext.Schema;
+                    parameter.Description = parameterAndContext.Description;
+
+                    foreach (var filter in _options.ParameterAsyncFilters)
+                    {
+                        await filter.ApplyAsync(parameter, filterContext, CancellationToken.None);
+                    }
+
+                    foreach (var filter in _options.ParameterFilters)
+                    {
+                        filter.Apply(parameter, filterContext);
+                    }
                 }
             }
 
@@ -425,6 +432,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     var countOfParameters = requestParameters.Count();
                     if (countOfParameters > 0)
                     {
+                        ApiParameterDescription bodyParameterDescription = null;
                         if (countOfParameters == 1)
                         {
                             var requestParameter = requestParameters.First();
@@ -433,6 +441,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                                 schemaRepository,
                                 requestParameter.PropertyInfo(),
                                 requestParameter.ParameterInfo()), content);
+
+                            bodyParameterDescription = requestParameter.IsFromBody() ? requestParameter : null;
                         }
                         else
                         {
@@ -446,6 +456,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                                     s.ParameterInfo()), content))
                                 .ToList()
                             };
+                        }
+
+                        var filterContext = new RequestBodyFilterContext(
+                            bodyParameterDescription: bodyParameterDescription,
+                            formParameterDescriptions: bodyParameterDescription is null ? requestParameters : null,
+                            schemaGenerator: _schemaGenerator,
+                            schemaRepository: schemaRepository);
+
+                        foreach (var filter in _options.RequestBodyAsyncFilters)
+                        {
+                            await filter.ApplyAsync(operation.RequestBody, filterContext, CancellationToken.None);
+                        }
+
+                        foreach (var filter in _options.RequestBodyFilters)
+                        {
+                            filter.Apply(operation.RequestBody, filterContext);
                         }
                     }
 

@@ -14,7 +14,8 @@ namespace WebApi.EndPoints
         {
             var group = app.MapGroup("/annotations").WithTags("Annotations");
 
-            group.MapPost("/fruit/{id}", CreateFruit);
+            group.MapPost("/fruit/{id}", CreateFruit)
+                 .WithOpenApi();
 
             group.MapGet("/AsParameters", ([AsParameters] AsParametersRecord record) =>
             {
