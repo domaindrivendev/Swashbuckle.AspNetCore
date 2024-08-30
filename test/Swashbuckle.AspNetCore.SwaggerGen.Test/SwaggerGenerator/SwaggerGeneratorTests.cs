@@ -13,9 +13,9 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
-using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures;
 using Swashbuckle.AspNetCore.TestSupport;
@@ -246,13 +246,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void GetSwagger_GenerateConsumesSchemas_ForProvidedOpenApiOperation()
+        public void GetSwagger_GenerateConsumesSchemas_ForProvidedOpenApiOperationAndAppliesFilters()
         {
             var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithConsumesAttribute));
             var actionDescriptor = new ActionDescriptor
             {
-                EndpointMetadata = new List<object>()
-                {
+                EndpointMetadata =
+                [
                     new OpenApiOperation
                     {
                         OperationId = "OperationIdSetInMetadata",
@@ -262,43 +262,73 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                             {
                                 ["application/someMediaType"] = new()
                             }
-                        }
+                        },
+                        Parameters = [ new() {
+                            Name = "paramQuery",
+                            In = ParameterLocation.Query
+                        }]
                     }
-                },
+                ],
                 RouteValues = new Dictionary<string, string>
                 {
                     ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
                 }
             };
             var subject = Subject(
-                apiDescriptions: new[]
-                {
+                apiDescriptions:
+                [
                     ApiDescriptionFactory.Create(
                         actionDescriptor,
                         methodInfo,
                         groupName: "v1",
                         httpMethod: "POST",
                         relativePath: "resource",
-                        parameterDescriptions: new[]
-                        {
+                        parameterDescriptions:
+                        [
                             new ApiParameterDescription()
                             {
                                 Name = "param",
                                 Source = BindingSource.Body,
                                 ModelMetadata = ModelMetadataFactory.CreateForType(typeof(TestDto))
+                            },
+                            new ApiParameterDescription()
+                            {
+                                Name ="paramQuery",
+                                Source = BindingSource.Query,
+                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(string)),
+                                Type = typeof(string)
                             }
-                        }),
+                        ]),
+                ],
+                options: new()
+                {
+                    ParameterFilters = [new TestParameterFilter()],
+                    RequestBodyFilters = [new TestRequestBodyFilter()],
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    }
                 }
             );
 
             var document = subject.GetSwagger("v1");
 
-            Assert.Equal("OperationIdSetInMetadata", document.Paths["/resource"].Operations[OperationType.Post].OperationId);
-            var content = Assert.Single(document.Paths["/resource"].Operations[OperationType.Post].RequestBody.Content);
+            var operation = document.Paths["/resource"].Operations[OperationType.Post];
+            Assert.Equal("OperationIdSetInMetadata", operation.OperationId);
+            var content = Assert.Single(operation.RequestBody.Content);
             Assert.Equal("application/someMediaType", content.Key);
             Assert.Null(content.Value.Schema.Type);
             Assert.NotNull(content.Value.Schema.Reference);
             Assert.Equal("TestDto", content.Value.Schema.Reference.Id);
+            Assert.Equal(2, operation.RequestBody.Extensions.Count);
+            Assert.Equal("bar", ((OpenApiString)operation.RequestBody.Extensions["X-foo"]).Value);
+            Assert.Equal("v1", ((OpenApiString)operation.RequestBody.Extensions["X-docName"]).Value);
+            Assert.NotEmpty(operation.Parameters);
+            Assert.Equal("paramQuery", operation.Parameters[0].Name);
+            Assert.Equal(2, operation.Parameters[0].Extensions.Count);
+            Assert.Equal("bar", ((OpenApiString)operation.Parameters[0].Extensions["X-foo"]).Value);
+            Assert.Equal("v1", ((OpenApiString)operation.Parameters[0].Extensions["X-docName"]).Value);
+
         }
 
         [Fact]
