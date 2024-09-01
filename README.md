@@ -1590,7 +1590,7 @@ public abstract class Shape
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
-public enum AnimalType
+public enum ShapeType
 {
     Circle,
     Rectangle
