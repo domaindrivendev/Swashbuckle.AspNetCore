@@ -75,26 +75,27 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             Assert.DoesNotContain("%(Interceptors)", jsContent);
         }
 
-        [Theory]
-        [InlineData(typeof(Basic.Startup), "/index.js", null)]
-        [InlineData(typeof(CustomUIConfig.Startup), "/swagger/index.js", "customPlugin1,customPlugin2")]
-        public async Task IndexUrl_DefinesPlugins_IfConfigured(Type startupType, string indexJsPath, string customPlugins)
+        [Fact]
+        public async Task IndexUrl_DefinesPlugins()
         {
-            var client = new TestSite(startupType).BuildClient();
+            var client = new TestSite(typeof(CustomUIConfig.Startup)).BuildClient();
 
-            var jsResponse = await client.GetAsync(indexJsPath);
+            var jsResponse = await client.GetAsync("/swagger/index.js");
             Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
 
             var jsContent = await jsResponse.Content.ReadAsStringAsync();
-            if (string.IsNullOrEmpty(customPlugins))
-            {
-                Assert.DoesNotContain("\"plugins\"", jsContent);
-            }
-            else
-            {
-                string pluginsNames = string.Join(',', customPlugins.Split(',').Select(p => $"\"{p}\""));
-                Assert.Contains($"\"plugins\":[{pluginsNames}]", jsContent);
-            }
+            Assert.Contains($"\"plugins\":[\"customPlugin1\",\"customPlugin2\"]", jsContent);
+        }
+
+        [Fact]
+        public async Task IndexUrl_DoesntDefinePlugins()
+        {
+            var client = new TestSite(typeof(Basic.Startup)).BuildClient();
+
+            var jsResponse = await client.GetAsync("/index.js");
+            Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
+            var jsContent = await jsResponse.Content.ReadAsStringAsync();
+            Assert.DoesNotContain("\"plugins\"", jsContent);
         }
 
         [Fact]
