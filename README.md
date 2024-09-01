@@ -1302,7 +1302,7 @@ app.UseSwaggerUI(c =>
     c.MaxDisplayedTags(5);
     c.ShowExtensions();
     c.ShowCommonExtensions();
-    c.Plugins = new string[]{"myCustomPlugin"}
+    c.Plugins = ["myCustomPlugin"];
     c.EnableValidator();
     c.SupportedSubmitMethods(SubmitMethod.Get, SubmitMethod.Head);
     c.UseRequestInterceptor("(request) => { return request; }");

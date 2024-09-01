@@ -84,7 +84,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
 
             var jsContent = await jsResponse.Content.ReadAsStringAsync();
-            Assert.Contains($"\"plugins\":[\"customPlugin1\",\"customPlugin2\"]", jsContent);
+            Assert.Contains("\"plugins\":[\"customPlugin1\",\"customPlugin2\"]", jsContent);
         }
 
         [Fact]
