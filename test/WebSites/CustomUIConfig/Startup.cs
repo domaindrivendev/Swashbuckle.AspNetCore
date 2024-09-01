@@ -73,13 +73,17 @@ namespace CustomUIConfig
                 // Other
                 c.DocumentTitle = "CustomUIConfig";
                 c.StylesPath = "/ext/custom-stylesheet.css";
+                c.InjectStylesheet("/ext/custom-stylesheet.css");
                 c.ScriptBundlePath = "/ext/custom-javascript.js";
                 c.ScriptPresetsPath = "/ext/custom-javascript.js";
-                c.InjectStylesheet("/ext/custom-stylesheet.css");
                 c.InjectJavascript("/ext/custom-javascript.js");
+                c.InjectJavascript("/ext/custom-plugin1.js");
+                c.InjectJavascript("/ext/custom-plugin2.js");
                 c.UseRequestInterceptor("(req) => { req.headers['x-my-custom-header'] = 'MyCustomValue'; return req; }");
                 c.UseResponseInterceptor("(res) => { console.log('Custom interceptor intercepted response from:', res.url); return res; }");
                 c.EnablePersistAuthorization();
+
+                c.ConfigObject.Plugins = ["customPlugin1", "customPlugin2"];
 
                 c.ConfigObject.AdditionalItems.Add("syntaxHighlight", false);
                 c.ConfigObject.AdditionalItems.Add("charProperty", 'c');

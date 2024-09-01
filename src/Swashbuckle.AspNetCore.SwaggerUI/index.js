@@ -57,6 +57,10 @@ window.onload = function () {
     if (interceptors.ResponseInterceptorFunction)
         configObject.responseInterceptor = parseFunction(interceptors.ResponseInterceptorFunction);
 
+    if (configObject.plugins) {
+        configObject.plugins = configObject.plugins.map(eval);
+    }
+    
     // Begin Swagger UI call region
 
     const ui = SwaggerUIBundle(configObject);

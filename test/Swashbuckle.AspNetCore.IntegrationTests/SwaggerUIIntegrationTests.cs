@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Xunit;
@@ -72,6 +73,29 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             Assert.DoesNotContain("%(ConfigObject)", jsContent);
             Assert.DoesNotContain("%(OAuthConfigObject)", jsContent);
             Assert.DoesNotContain("%(Interceptors)", jsContent);
+        }
+
+        [Fact]
+        public async Task IndexUrl_DefinesPlugins()
+        {
+            var client = new TestSite(typeof(CustomUIConfig.Startup)).BuildClient();
+
+            var jsResponse = await client.GetAsync("/swagger/index.js");
+            Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
+
+            var jsContent = await jsResponse.Content.ReadAsStringAsync();
+            Assert.Contains("\"plugins\":[\"customPlugin1\",\"customPlugin2\"]", jsContent);
+        }
+
+        [Fact]
+        public async Task IndexUrl_DoesntDefinePlugins()
+        {
+            var client = new TestSite(typeof(Basic.Startup)).BuildClient();
+
+            var jsResponse = await client.GetAsync("/index.js");
+            Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
+            var jsContent = await jsResponse.Content.ReadAsStringAsync();
+            Assert.DoesNotContain("\"plugins\"", jsContent);
         }
 
         [Fact]
