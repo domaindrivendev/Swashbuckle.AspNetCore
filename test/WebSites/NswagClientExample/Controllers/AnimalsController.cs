@@ -17,15 +17,9 @@ namespace NSwagClientExample.Controllers
         }
     }
 
-#if NET7_0_OR_GREATER
-    [JsonPolymorphic(TypeDiscriminatorPropertyName = "animalType")]
-    [JsonDerivedType(typeof(Cat), "Cat")]
-    [JsonDerivedType(typeof(Dog), "Dog")]
-#else
     [SwaggerDiscriminator("animalType")]
     [SwaggerSubType(typeof(Cat), DiscriminatorValue = "Cat")]
     [SwaggerSubType(typeof(Dog), DiscriminatorValue = "Dog")]
-#endif
     public class Animal
     {
         public AnimalType AnimalType { get; set; }
