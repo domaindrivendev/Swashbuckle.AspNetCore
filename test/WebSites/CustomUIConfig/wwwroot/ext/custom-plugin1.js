@@ -1,4 +1,3 @@
-
 const customPlugin1 = function (system) {
     var elem = document.createElement("div");
     elem.innerHTML =
