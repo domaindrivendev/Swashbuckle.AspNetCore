@@ -72,7 +72,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
 
             var requestBody = new OpenApiRequestBody { Required = true };
             var parameterInfo = typeof(FakeControllerWithSwaggerAnnotations)
-                .GetMethod(nameof(FakeControllerWithSwaggerAnnotations.ActionWithSwaggerRequestbodyAttributeDescriptionOnly))
+                .GetMethod(nameof(FakeControllerWithSwaggerAnnotations.ActionWithSwaggerRequestBodyAttributeDescriptionOnly))
                 .GetParameters()[0];
             var bodyParameterDescription = new ApiParameterDescription
             {

@@ -25,6 +25,14 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             [SwaggerParameter("Description for param")] string param)
         { }
 
+        public void ActionWithSwaggerParameterAttributeExplode(
+            [SwaggerParameter("Description for param", Explode = true)] List<string> param)
+        { }
+
+        public void ActionWithSwaggerParameterAttributeExplodeWithStyle(
+            [SwaggerParameter("Description for param", Explode = true, Style = "form")] List<string> param)
+        { }
+
         public void ActionWithSwaggerSchemaAttribute(
             [SwaggerSchema("Description for param", Format = "date")] string param)
         { }
@@ -33,7 +41,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             [SwaggerRequestBody("Description for param", Required = true)] string param)
         { }
 
-        public void ActionWithSwaggerRequestbodyAttributeDescriptionOnly(
+        public void ActionWithSwaggerRequestBodyAttributeDescriptionOnly(
             [SwaggerRequestBody("Description for param")] string param)
         { }
 

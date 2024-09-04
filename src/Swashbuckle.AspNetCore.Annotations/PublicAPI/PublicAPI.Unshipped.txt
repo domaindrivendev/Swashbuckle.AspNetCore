@@ -1,0 +1,4 @@
+Swashbuckle.AspNetCore.Annotations.SwaggerParameterAttribute.Explode.get -> bool
+Swashbuckle.AspNetCore.Annotations.SwaggerParameterAttribute.Explode.set -> void
+Swashbuckle.AspNetCore.Annotations.SwaggerParameterAttribute.Style.get -> string
+Swashbuckle.AspNetCore.Annotations.SwaggerParameterAttribute.Style.set -> void

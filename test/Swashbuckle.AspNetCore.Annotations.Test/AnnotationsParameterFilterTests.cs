@@ -61,6 +61,43 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             Assert.True(parameter.Required);
         }
 
+        [Fact]
+        public void Apply_EnrichesParameterMetadata_IfPropertyDecoratedWithSwaggerParameterAttributeExplode()
+        {
+            var parameter = new OpenApiParameter { };
+            var parameterInfo = typeof(FakeControllerWithSwaggerAnnotations)
+                .GetMethod(nameof(FakeControllerWithSwaggerAnnotations.ActionWithSwaggerParameterAttributeExplode))
+                .GetParameters()[0];
+            var filterContext = new ParameterFilterContext(
+                apiParameterDescription: null,
+                schemaGenerator: null,
+                schemaRepository: null,
+                parameterInfo: parameterInfo);
+
+            Subject().Apply(parameter, filterContext);
+
+            Assert.True(parameter.Explode);
+        }
+
+        [Fact]
+        public void Apply_EnrichesParameterMetadata_IfPropertyDecoratedWithSwaggerParameterAttributeExplodeWithStyle()
+        {
+            var parameter = new OpenApiParameter { };
+            var parameterInfo = typeof(FakeControllerWithSwaggerAnnotations)
+                .GetMethod(nameof(FakeControllerWithSwaggerAnnotations.ActionWithSwaggerParameterAttributeExplodeWithStyle))
+                .GetParameters()[0];
+            var filterContext = new ParameterFilterContext(
+                apiParameterDescription: null,
+                schemaGenerator: null,
+                schemaRepository: null,
+                parameterInfo: parameterInfo);
+
+            Subject().Apply(parameter, filterContext);
+
+            Assert.True(parameter.Explode);
+            Assert.Equal(parameter.Style, ParameterStyle.Form);
+        }
+
         private AnnotationsParameterFilter Subject()
         {
             return new AnnotationsParameterFilter();
