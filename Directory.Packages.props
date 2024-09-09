@@ -20,8 +20,8 @@
     <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="6.0.32" />
     <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.4" />
     <PackageVersion Include="Microsoft.Extensions.FileProviders.Embedded" Version="2.1.0" />
-    <PackageVersion Include="Microsoft.OpenApi" Version="1.6.20" />
-    <PackageVersion Include="Microsoft.OpenApi.Readers" Version="1.6.20" />
+    <PackageVersion Include="Microsoft.OpenApi" Version="1.6.21" />
+    <PackageVersion Include="Microsoft.OpenApi.Readers" Version="1.6.21" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="NSubstitute" Version="5.1.0" />
