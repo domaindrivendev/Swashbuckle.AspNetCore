@@ -86,7 +86,7 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Attest artifacts
-      uses: actions/attest-build-provenance@6149ea5740be74af77f260b9db67e633f6b0a9a1 # v1.4.2
+      uses: actions/attest-build-provenance@1c608d11d69870c2092266b3f9a6f3abbf17002c # v1.4.3
       if: |
         runner.os == 'Windows' &&
         github.event.repository.fork == false &&
