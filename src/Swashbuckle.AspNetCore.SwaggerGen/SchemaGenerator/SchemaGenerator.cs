@@ -350,16 +350,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private OpenApiSchema CreateDictionarySchema(DataContract dataContract, SchemaRepository schemaRepository)
         {
-            if (dataContract.DictionaryKeys != null)
+            var knownKeysProperties = dataContract.DictionaryKeys?.ToDictionary(
+                name => name,
+                _ => GenerateSchema(dataContract.DictionaryValueType, schemaRepository));
+
+            if (knownKeysProperties?.Count > 0)
             {
                 // This is a special case where the set of key values is known (e.g. if the key type is an enum)
                 return new OpenApiSchema
                 {
                     Type = "object",
-                    Properties = dataContract.DictionaryKeys.ToDictionary(
-                        name => name,
-                        name => GenerateSchema(dataContract.DictionaryValueType, schemaRepository)),
-                    AdditionalPropertiesAllowed = false,
+                    Properties = knownKeysProperties,
+                    AdditionalPropertiesAllowed = false
                 };
             }
             else
