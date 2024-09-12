@@ -122,6 +122,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         [Theory]
         [InlineData(typeof(IDictionary<string, int>), "integer")]
+        [InlineData(typeof(IDictionary<EmptyIntEnum, int>), "integer")]
         [InlineData(typeof(IReadOnlyDictionary<string, bool>), "boolean")]
         [InlineData(typeof(IDictionary), null)]
         [InlineData(typeof(ExpandoObject), null)]
