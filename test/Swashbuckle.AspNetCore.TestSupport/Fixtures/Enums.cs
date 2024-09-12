@@ -14,6 +14,10 @@
         Value8 = 8,
     }
 
+    public enum EmptyIntEnum:int
+    {
+    }
+
     public enum IntEnum:int
     {
         Value2 = 2,
