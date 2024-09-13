@@ -18,6 +18,7 @@
     <ProjectReference Include="..\WebSites\MultipleVersions\MultipleVersions.csproj" />
     <ProjectReference Include="..\WebSites\OAuth2Integration\OAuth2Integration.csproj" />
     <ProjectReference Include="..\WebSites\ReDoc\ReDoc.csproj" />
+    <ProjectReference Include="..\WebSites\Scalar\Scalar.csproj" />
     <ProjectReference Include="..\WebSites\TestFirst\TestFirst.csproj" />
     <ProjectReference Include="..\WebSites\TopLevelSwaggerDoc\TopLevelSwaggerDoc.csproj" />
   </ItemGroup>

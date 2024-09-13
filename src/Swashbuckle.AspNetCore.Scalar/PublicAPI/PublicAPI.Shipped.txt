@@ -1,0 +1,29 @@
+static Swashbuckle.AspNetCore.Scalar.ScalarOptionsExtensions.InjectStylesheet(this Swashbuckle.AspNetCore.Scalar.ScalarOptions options, string path, string media = "screen") -> void
+static Swashbuckle.AspNetCore.Scalar.ScalarBuilderExtensions.UseScalar(this Microsoft.AspNetCore.Builder.IApplicationBuilder app, Swashbuckle.AspNetCore.Scalar.ScalarOptions options) -> Microsoft.AspNetCore.Builder.IApplicationBuilder
+static Swashbuckle.AspNetCore.Scalar.ScalarBuilderExtensions.UseScalar(this Microsoft.AspNetCore.Builder.IApplicationBuilder app, System.Action<Swashbuckle.AspNetCore.Scalar.ScalarOptions> setupAction = null) -> Microsoft.AspNetCore.Builder.IApplicationBuilder
+Swashbuckle.AspNetCore.Scalar.ConfigObject.AdditionalItems.set -> void
+Swashbuckle.AspNetCore.Scalar.ConfigObject.ConfigObject() -> void
+Swashbuckle.AspNetCore.Scalar.ConfigObject.IsEditable.set -> void
+Swashbuckle.AspNetCore.Scalar.ConfigObject.Theme.set -> void
+Swashbuckle.AspNetCore.Scalar.ScalarBuilderExtensions
+Swashbuckle.AspNetCore.Scalar.ScalarMiddleware
+Swashbuckle.AspNetCore.Scalar.ScalarMiddleware.Invoke(Microsoft.AspNetCore.Http.HttpContext httpContext) -> System.Threading.Tasks.Task
+Swashbuckle.AspNetCore.Scalar.ScalarOptions.Config.set -> void
+Swashbuckle.AspNetCore.Scalar.ScalarOptions.DocumentTitle.set -> void
+Swashbuckle.AspNetCore.Scalar.ScalarOptions.HeadContent.set -> void
+Swashbuckle.AspNetCore.Scalar.ScalarOptions.IndexStream.set -> void
+Swashbuckle.AspNetCore.Scalar.ScalarOptions.RoutePrefix.set -> void
+Swashbuckle.AspNetCore.Scalar.ScalarOptions.ScalarOptions() -> void
+Swashbuckle.AspNetCore.Scalar.ScalarOptions.SpecUrl.set -> void
+Swashbuckle.AspNetCore.Scalar.ConfigObject
+Swashbuckle.AspNetCore.Scalar.ConfigObject.AdditionalItems.get -> System.Collections.Generic.Dictionary<string, object>
+Swashbuckle.AspNetCore.Scalar.ConfigObject.IsEditable.get -> bool?
+Swashbuckle.AspNetCore.Scalar.ConfigObject.Theme.get -> string
+Swashbuckle.AspNetCore.Scalar.ScalarOptions
+Swashbuckle.AspNetCore.Scalar.ScalarOptions.Config.get -> Swashbuckle.AspNetCore.Scalar.ConfigObject
+Swashbuckle.AspNetCore.Scalar.ScalarOptions.DocumentTitle.get -> string
+Swashbuckle.AspNetCore.Scalar.ScalarOptions.HeadContent.get -> string
+Swashbuckle.AspNetCore.Scalar.ScalarOptions.IndexStream.get -> System.Func<System.IO.Stream>
+Swashbuckle.AspNetCore.Scalar.ScalarOptions.RoutePrefix.get -> string
+Swashbuckle.AspNetCore.Scalar.ScalarOptions.SpecUrl.get -> string
+Swashbuckle.AspNetCore.Scalar.ScalarOptionsExtensions

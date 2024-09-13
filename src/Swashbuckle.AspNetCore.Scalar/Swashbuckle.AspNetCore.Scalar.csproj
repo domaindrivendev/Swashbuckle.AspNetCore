@@ -1,0 +1,50 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.Scalar.snk</AssemblyOriginatorKeyFile>
+    <Description>Middleware to expose an embedded version of Scalar from an ASP.NET Core application</Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IsPackable>true</IsPackable>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+    <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore;scalar</PackageTags>
+    <SignAssembly>true</SignAssembly>
+    <TargetFrameworks>netstandard2.0;netcoreapp3.0;net5.0;net6.0;net7.0;net8.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="index.html" />
+    <EmbeddedResource Include="node_modules/@scalar/api-reference/dist/browser/standalone.js" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+    <PackageReference Include="Microsoft.AspNetCore.Routing" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" />
+    <PackageReference Include="System.Text.Json" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' != 'netstandard2.0' ">
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="All" />
+    <AdditionalFiles Include="PublicAPI\PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI\PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+  <PropertyGroup>
+    <_TargetFrameworkIdentifier>$([MSBuild]::GetTargetFrameworkIdentifier('$(TargetFramework)'))</_TargetFrameworkIdentifier>
+  </PropertyGroup>
+  <ItemGroup Condition="Exists('PublicAPI\$(_TargetFrameworkIdentifier)')">
+    <AdditionalFiles Include="PublicAPI\$(_TargetFrameworkIdentifier)\PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI\$(_TargetFrameworkIdentifier)\PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+
+  <Target Name="NpmInstall" BeforeTargets="DispatchToInnerBuilds" Condition=" '$(CI)' != '' OR !Exists('$(MSBuildThisFileDirectory)\node_modules') ">
+    <Exec Command="npm install" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
+    </Exec>
+    <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js/npm is required to build this project." />
+  </Target>
+
+</Project>

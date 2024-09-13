@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Swashbuckle.AspNetCore.Scalar;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace MultipleVersions
@@ -73,6 +74,11 @@ namespace MultipleVersions
                 {
                     c.RoutePrefix = $"redoc/{description.GroupName}";
                     c.SpecUrl($"/swagger/{description.GroupName}/swagger.json");
+                });
+                app.UseScalar(c =>
+                {
+                    c.RoutePrefix = $"scalar/{description.GroupName}";
+                    c.SpecUrl = $"/swagger/{description.GroupName}/swagger.json";
                 });
             }
         }
