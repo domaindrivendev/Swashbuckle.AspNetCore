@@ -3,6 +3,7 @@ using System.IO;
 using System.Xml.XPath;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.TestSupport;
 using Xunit;
@@ -137,25 +138,39 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void Apply_SetsDescription_ForParameterFromForm()
         {
+            var parameterInfo = typeof(FakeControllerWithXmlComments)
+                .GetMethod(nameof(FakeControllerWithXmlComments.PostForm))
+                .GetParameters()[0];
+
             var requestBody = new OpenApiRequestBody
             {
                 Content = new Dictionary<string, OpenApiMediaType>
                 {
-                    ["multipart/form-data"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = "string" } }
+                    ["multipart/form-data"] = new OpenApiMediaType
+                    {
+                        Schema = new OpenApiSchema
+                        {
+                            Type = "string",
+                            Properties = new Dictionary<string, OpenApiSchema>()
+                            {
+                                [parameterInfo.Name] = new()
+                            }
+                        },
+                    }
                 }
             };
-            var parameterInfo = typeof(FakeControllerWithXmlComments)
-                .GetMethod(nameof(FakeControllerWithXmlComments.PostForm))
-                .GetParameters()[0];
+
             var bodyParameterDescription = new ApiParameterDescription
             {
-                ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = parameterInfo }
+                ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = parameterInfo },
+                Name = parameterInfo.Name,
+                Source = BindingSource.Form
             };
             var filterContext = new RequestBodyFilterContext(null, [bodyParameterDescription], null, null);
 
             Subject().Apply(requestBody, filterContext);
 
-            Assert.Equal("Parameter from form body", requestBody.Description);
+            Assert.Equal("Parameter from form body", requestBody.Content["multipart/form-data"].Schema.Properties[parameterInfo.Name].Description);
         }
 
         private static XmlCommentsRequestBodyFilter Subject()

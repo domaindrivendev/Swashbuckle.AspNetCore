@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -6,9 +7,17 @@ namespace Basic.Controllers
 {
     public class FromFormParamsController
     {
+        /// <summary>
+        /// Form parameters with description
+        /// </summary>
+        /// <param name="form">Description for whole object</param>
+        /// <param name="formFile">Description for file</param>
+        /// <param name="text">Description for Text</param>
+        /// <returns></returns>
+        /// <exception cref="System.NotImplementedException"></exception>
         [HttpPost("registrations")]
         [Consumes("application/x-www-form-urlencoded")]
-        public IActionResult PostForm([FromForm] RegistrationForm form)
+        public IActionResult PostForm([FromForm] RegistrationForm form, IFormFile formFile, [FromForm] string text)
         {
             throw new System.NotImplementedException();
         }
@@ -22,7 +31,15 @@ namespace Basic.Controllers
 
     public class RegistrationForm
     {
+        /// <summary>
+        /// Summary for Name
+        /// </summary>
+        /// <example>MyName</example>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Sumary for PhoneNumbers
+        /// </summary>
 
         public IEnumerable<int> PhoneNumbers { get; set; }
     }
