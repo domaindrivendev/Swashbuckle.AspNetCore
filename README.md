@@ -7,7 +7,8 @@ Swashbuckle.AspNetCore
 
 [![Build status](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/actions/workflows/build.yml/badge.svg?branch=master&event=push)](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/actions?query=workflow%3Abuild+branch%3Amaster+event%3Apush) [![Code coverage](https://codecov.io/gh/domaindrivendev/Swashbuckle.AspNetCore/branch/master/graph/badge.svg)](https://codecov.io/gh/domaindrivendev/Swashbuckle.AspNetCore) [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/domaindrivendev/Swashbuckle.AspNetCore/badge)](https://securityscorecards.dev/viewer/?uri=github.com/domaindrivendev/Swashbuckle.AspNetCore)
 
-[![NuGet](https://img.shields.io/nuget/v/Swashbuckle.AspNetCore?logo=nuget&label=NuGet&color=blue)](https://www.nuget.org/packages/Swashbuckle.AspNetCore/ "Download Swashbuckle.AspNetCore from NuGet.org")
+[![NuGet](https://img.shields.io/nuget/v/Swashbuckle.AspNetCore?logo=nuget&label=Latest&color=blue)](https://www.nuget.org/packages/Swashbuckle.AspNetCore/ "Download Swashbuckle.AspNetCore from NuGet.org")
+[![NuGet](https://img.shields.io/nuget/dt/Swashbuckle.AspNetCore?logo=nuget&label=Downloads&color=blue)](https://www.nuget.org/packages/Swashbuckle.AspNetCore/ "Download Swashbuckle.AspNetCore from NuGet.org")
 
 [![Help Wanted](https://img.shields.io/github/issues/domaindrivendev/Swashbuckle.AspNetCore/help-wanted?style=flat&color=%24EC820&label=Help%20wanted)](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/labels/help-wanted)
 
@@ -24,7 +25,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 | Swashbuckle Version | ASP.NET Core | Swagger / OpenAPI Spec. | swagger-ui | Redoc UI |
 |----------|----------|----------|----------|----------|
 | [CI](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/commits/master/) | >= 2.0.0 | 2.0, 3.0 | [5.x.x](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/master/src/Swashbuckle.AspNetCore.SwaggerUI/package.json#L6) | [2.x.x](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/master/src/Swashbuckle.AspNetCore.ReDoc/package.json#L6) |
-| [6.7.3](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v6.7.3) | >= 2.0.0 | 2.0, 3.0 | 5.17.14 | 2.1.5 |
+| [6.8.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v6.8.0) | >= 2.0.0 | 2.0, 3.0 | 5.17.14 | 2.1.5 |
 | [5.6.3](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v5.6.3) | >= 2.0.0 | 2.0, 3.0 | 3.32.5 | 2.0.0-rc.40 |
 | [4.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v4.0.0) | >= 2.0.0, < 3.0.0 | 2.0 | 3.19.5 | 1.22.2 |
 | [3.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v3.0.0) | >= 1.0.4, < 3.0.0 | 2.0 | 3.17.1 | 1.20.0 |
