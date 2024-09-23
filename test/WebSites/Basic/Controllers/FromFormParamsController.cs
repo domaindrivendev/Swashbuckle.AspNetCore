@@ -40,7 +40,6 @@ namespace Basic.Controllers
         /// <summary>
         /// Sumary for PhoneNumbers
         /// </summary>
-
         public IEnumerable<int> PhoneNumbers { get; set; }
     }
 

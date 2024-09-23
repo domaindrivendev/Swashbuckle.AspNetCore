@@ -13,6 +13,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public XmlCommentsRequestBodyFilter(XPathDocument xmlDoc) : this(XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc))
         {
         }
+
         internal XmlCommentsRequestBodyFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers)
         {
             _xmlDocMembers = xmlDocMembers;
@@ -28,26 +29,27 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 if (propertyInfo is not null)
                 {
                     ApplyPropertyTagsForBody(requestBody, context, propertyInfo);
-                    return;
                 }
-                var parameterInfo = bodyParameterDescription.ParameterInfo();
-                if (parameterInfo is not null)
+                else
                 {
-                    ApplyParamTagsForBody(requestBody, context, parameterInfo);
-                    return;
+                    var parameterInfo = bodyParameterDescription.ParameterInfo();
+                    if (parameterInfo is not null)
+                    {
+                        ApplyParamTagsForBody(requestBody, context, parameterInfo);
+                    }
                 }
             }
             else
             {
                 var numberOfFromForm = context.FormParameterDescriptions?.Count() ?? 0;
-                if (requestBody.Content?.Count is 0 || numberOfFromForm == 0)
+                if (requestBody.Content?.Count is 0 || numberOfFromForm is 0)
                 {
                     return;
                 }
 
                 foreach (var formParameter in context.FormParameterDescriptions)
                 {
-                    if (formParameter.PropertyInfo() is not null || formParameter.Name is null)
+                    if (formParameter.Name is null || formParameter.PropertyInfo() is not null)
                     {
                         continue;
                     }
@@ -60,8 +62,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                     foreach (var item in requestBody.Content.Values)
                     {
-                        if ((item?.Schema?.Properties?.TryGetValue(formParameter.Name, out var value) ?? false)
-                            || (item?.Schema?.Properties?.TryGetValue(formParameter.Name.ToCamelCase(), out value) ?? false))
+                        if (item?.Schema?.Properties is { } properties
+                           && (properties.TryGetValue(formParameter.Name, out var value) || properties.TryGetValue(formParameter.Name.ToCamelCase(), out value)))
                         {
                             var (summary, example) = GetParamTags(parameterFromForm);
                             value.Description = summary;
@@ -89,14 +91,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 summary = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
             }
+
             var exampleNode = propertyNode.SelectFirstChild("example");
-            if (exampleNode is null)
-            {
-                return (summary, null);
-            }
 
-            return (summary, exampleNode.ToString());
-
+            return (summary, exampleNode?.ToString());
         }
 
         private void ApplyPropertyTagsForBody(OpenApiRequestBody requestBody, RequestBodyFilterContext context, PropertyInfo propertyInfo)
@@ -125,6 +123,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 return (null, null);
             }
+
             var targetMethod = methodInfo.DeclaringType.IsConstructedGenericType
                 ? methodInfo.GetUnderlyingGenericTypeMethod()
                 : methodInfo;
@@ -133,12 +132,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 return (null, null);
             }
+
             var methodMemberName = XmlCommentsNodeNameHelper.GetMemberNameForMethod(targetMethod);
 
             if (!_xmlDocMembers.TryGetValue(methodMemberName, out var propertyNode))
             {
                 return (null, null);
             }
+
             var paramNode = propertyNode.SelectFirstChildWithAttribute("param", "name", parameterInfo.Name);
 
             if (paramNode is null)
@@ -150,7 +151,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var example = paramNode.GetAttribute("example");
 
             return (summary, example);
-
         }
 
         private void ApplyParamTagsForBody(OpenApiRequestBody requestBody, RequestBodyFilterContext context, ParameterInfo parameterInfo)
@@ -162,17 +162,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 requestBody.Description = summary;
             }
 
-            if (requestBody.Content?.Count is 0)
+            if (requestBody.Content?.Count is 0 || !string.IsNullOrEmpty(example))
             {
                 return;
             }
 
-            if (!string.IsNullOrEmpty(example))
+            foreach (var mediaType in requestBody.Content.Values)
             {
-                foreach (var mediaType in requestBody.Content.Values)
-                {
-                    mediaType.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, mediaType.Schema, example);
-                }
+                mediaType.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, mediaType.Schema, example);
             }
         }
     }
