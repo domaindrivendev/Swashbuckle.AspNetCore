@@ -162,7 +162,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 requestBody.Description = summary;
             }
 
-            if (requestBody.Content?.Count is 0 || !string.IsNullOrEmpty(example))
+            if (requestBody.Content?.Count is 0 || string.IsNullOrEmpty(example))
             {
                 return;
             }
