@@ -408,7 +408,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 {
                     var (parameterAndContext, filterContext) = GenerateParameterAndContext(apiParameter, schemaRepository);
                     parameter.Schema = parameterAndContext.Schema;
-                    parameter.Description = parameterAndContext.Description;
+                    parameter.Description ??= parameterAndContext.Description;
 
                     foreach (var filter in _options.ParameterAsyncFilters)
                     {

@@ -246,6 +246,17 @@
         "tags": [
           "WithOpenApi"
         ],
+        "parameters": [
+          {
+            "name": "queryParameter",
+            "in": "query",
+            "description": "queryParameter Description",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "requestBody": {
           "content": {
             "multipart/form-data": {
