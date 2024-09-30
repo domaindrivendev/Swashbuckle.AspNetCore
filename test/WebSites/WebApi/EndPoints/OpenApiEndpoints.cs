@@ -47,7 +47,7 @@ namespace WebApi.EndPoints
                 return $"{file.FileName}{queryParameter}";
             }).WithOpenApi(o =>
             {
-                var parameter = o.Parameters.FirstOrDefault(p => p.Name.Equals("queryParameter", StringComparison.InvariantCulture));
+                var parameter = o.Parameters.FirstOrDefault(p => p.Name.Equals("queryParameter", StringComparison.OrdinalIgnoreCase));
                 if (parameter is not null)
                 {
                     parameter.Description = $"{parameter.Name} Description";
