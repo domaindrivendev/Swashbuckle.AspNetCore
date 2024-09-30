@@ -16,9 +16,6 @@ Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions.PreSerializeFilters.get ->
 Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions.SerializeAsV2.get -> bool
 Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions.SerializeAsV2.set -> void
 Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions.SwaggerEndpointOptions() -> void
-Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware
-Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(Microsoft.AspNetCore.Http.HttpContext httpContext, Swashbuckle.AspNetCore.Swagger.ISwaggerProvider swaggerProvider) -> System.Threading.Tasks.Task
-Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.SwaggerMiddleware(Microsoft.AspNetCore.Http.RequestDelegate next, Swashbuckle.AspNetCore.Swagger.SwaggerOptions options) -> void
 Swashbuckle.AspNetCore.Swagger.SwaggerOptions
 Swashbuckle.AspNetCore.Swagger.SwaggerOptions.CustomDocumentSerializer.get -> Swashbuckle.AspNetCore.Swagger.ISwaggerDocumentSerializer
 Swashbuckle.AspNetCore.Swagger.SwaggerOptions.CustomDocumentSerializer.set -> void
