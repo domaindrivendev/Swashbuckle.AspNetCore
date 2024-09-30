@@ -47,8 +47,6 @@ Swashbuckle.AspNetCore.ReDoc.ConfigObject.SortPropsAlphabetically.get -> bool
 Swashbuckle.AspNetCore.ReDoc.ConfigObject.SortPropsAlphabetically.set -> void
 Swashbuckle.AspNetCore.ReDoc.ConfigObject.UntrustedSpec.get -> bool
 Swashbuckle.AspNetCore.ReDoc.ConfigObject.UntrustedSpec.set -> void
-Swashbuckle.AspNetCore.ReDoc.ReDocMiddleware
-Swashbuckle.AspNetCore.ReDoc.ReDocMiddleware.Invoke(Microsoft.AspNetCore.Http.HttpContext httpContext) -> System.Threading.Tasks.Task
 Swashbuckle.AspNetCore.ReDoc.ReDocOptions
 Swashbuckle.AspNetCore.ReDoc.ReDocOptions.ConfigObject.get -> Swashbuckle.AspNetCore.ReDoc.ConfigObject
 Swashbuckle.AspNetCore.ReDoc.ReDocOptions.ConfigObject.set -> void

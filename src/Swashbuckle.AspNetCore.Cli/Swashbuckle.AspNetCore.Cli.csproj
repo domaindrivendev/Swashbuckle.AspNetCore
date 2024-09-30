@@ -15,4 +15,8 @@
     <ProjectReference Include="..\Swashbuckle.AspNetCore.Swagger\Swashbuckle.AspNetCore.Swagger.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Swashbuckle.AspNetCore.Cli.Test" />
+  </ItemGroup>
+
 </Project>

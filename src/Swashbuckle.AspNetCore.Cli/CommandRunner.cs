@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Swashbuckle.AspNetCore.Cli
 {
-    public class CommandRunner
+    internal class CommandRunner
     {
         private readonly Dictionary<string, string> _argumentDescriptors;
         private readonly Dictionary<string, OptionDescriptor> _optionDescriptors;

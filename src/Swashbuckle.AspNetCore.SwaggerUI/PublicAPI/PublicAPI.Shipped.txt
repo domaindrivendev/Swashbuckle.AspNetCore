@@ -116,8 +116,6 @@ Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod.Patch = 6 -> Swashbuckle.AspNetCor
 Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod.Post = 2 -> Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod
 Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod.Put = 1 -> Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod
 Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod.Trace = 7 -> Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod
-Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware
-Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(Microsoft.AspNetCore.Http.HttpContext httpContext) -> System.Threading.Tasks.Task
 Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions
 Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.ConfigObject.get -> Swashbuckle.AspNetCore.SwaggerUI.ConfigObject
 Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.ConfigObject.set -> void

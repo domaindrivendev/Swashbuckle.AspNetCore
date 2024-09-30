@@ -1,1 +1,0 @@
-Swashbuckle.AspNetCore.ReDoc.ReDocMiddleware.ReDocMiddleware(Microsoft.AspNetCore.Http.RequestDelegate next, Microsoft.AspNetCore.Hosting.IWebHostEnvironment hostingEnv, Microsoft.Extensions.Logging.ILoggerFactory loggerFactory, Swashbuckle.AspNetCore.ReDoc.ReDocOptions options) -> void
