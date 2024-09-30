@@ -42,10 +42,18 @@ namespace WebApi.EndPoints
             })
             .WithOpenApi();
 
-            group.MapPost("/IFromFile", (IFormFile file) =>
+            group.MapPost("/IFromFile", (IFormFile file, string queryParameter) =>
             {
-                return file.FileName;
-            }).WithOpenApi();
+                return $"{file.FileName}{queryParameter}";
+            }).WithOpenApi(o =>
+            {
+                var parameter = o.Parameters.FirstOrDefault(p => p.Name.Equals("queryParameter", StringComparison.InvariantCulture));
+                if (parameter is not null)
+                {
+                    parameter.Description = $"{parameter.Name} Description";
+                }
+                return o;
+            });
 
             group.MapPost("/IFromFileCollection", (IFormFileCollection collection) =>
             {
