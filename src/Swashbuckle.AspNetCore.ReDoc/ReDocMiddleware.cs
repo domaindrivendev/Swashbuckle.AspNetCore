@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -39,15 +40,25 @@ namespace Swashbuckle.AspNetCore.ReDoc
 
             _staticFileMiddleware = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options);
 
-            _jsonSerializerOptions = new JsonSerializerOptions();
-
-#if NET6_0_OR_GREATER
-            _jsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            if (options.JsonSerializerOptions != null)
+            {
+                _jsonSerializerOptions = options.JsonSerializerOptions;
+            }
+#if !NET6_0_OR_GREATER
+            else
+            {
+                _jsonSerializerOptions = new JsonSerializerOptions()
+                {
+#if NET5_0_OR_GREATER
+                    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
 #else
-            _jsonSerializerOptions.IgnoreNullValues = true;
+                    IgnoreNullValues = true,
 #endif
-            _jsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-            _jsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, false));
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, false) }
+                };
+            }
+#endif
         }
 
         public async Task Invoke(HttpContext httpContext)
@@ -82,7 +93,7 @@ namespace Swashbuckle.AspNetCore.ReDoc
             await _staticFileMiddleware.Invoke(httpContext);
         }
 
-        private StaticFileMiddleware CreateStaticFileMiddleware(
+        private static StaticFileMiddleware CreateStaticFileMiddleware(
             RequestDelegate next,
             IWebHostEnvironment hostingEnv,
             ILoggerFactory loggerFactory,
@@ -97,10 +108,14 @@ namespace Swashbuckle.AspNetCore.ReDoc
             return new StaticFileMiddleware(next, hostingEnv, Options.Create(staticFileOptions), loggerFactory);
         }
 
-        private void RespondWithRedirect(HttpResponse response, string location)
+        private static void RespondWithRedirect(HttpResponse response, string location)
         {
-            response.StatusCode = 301;
+            response.StatusCode = StatusCodes.Status301MovedPermanently;
+#if NET6_0_OR_GREATER
+            response.Headers.Location = location;
+#else
             response.Headers["Location"] = location;
+#endif
         }
 
         private async Task RespondWithFile(HttpResponse response, string fileName)
@@ -138,14 +153,35 @@ namespace Swashbuckle.AspNetCore.ReDoc
             }
         }
 
-        private IDictionary<string, string> GetIndexArguments()
+#if NET5_0_OR_GREATER
+        [UnconditionalSuppressMessage(
+            "AOT",
+            "IL2026:RequiresUnreferencedCode",
+            Justification = "Method is only called if the user provides their own custom JsonSerializerOptions.")]
+        [UnconditionalSuppressMessage(
+            "AOT",
+            "IL3050:RequiresDynamicCode",
+            Justification = "Method is only called if the user provides their own custom JsonSerializerOptions.")]
+#endif
+        private Dictionary<string, string> GetIndexArguments()
         {
+            string configObject = null;
+
+#if NET6_0_OR_GREATER
+            if (_jsonSerializerOptions is null)
+            {
+                configObject = JsonSerializer.Serialize(_options.ConfigObject, ReDocOptionsJsonContext.Default.ConfigObject);
+            }
+#endif
+
+            configObject ??= JsonSerializer.Serialize(_options.ConfigObject, _jsonSerializerOptions);
+
             return new Dictionary<string, string>()
             {
                 { "%(DocumentTitle)", _options.DocumentTitle },
                 { "%(HeadContent)", _options.HeadContent },
                 { "%(SpecUrl)", _options.SpecUrl },
-                { "%(ConfigObject)", JsonSerializer.Serialize(_options.ConfigObject, _jsonSerializerOptions) }
+                { "%(ConfigObject)", configObject },
             };
         }
     }
