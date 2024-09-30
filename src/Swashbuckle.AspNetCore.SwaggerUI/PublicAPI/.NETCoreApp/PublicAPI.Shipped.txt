@@ -1,1 +1,0 @@
-Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.SwaggerUIMiddleware(Microsoft.AspNetCore.Http.RequestDelegate next, Microsoft.AspNetCore.Hosting.IWebHostEnvironment hostingEnv, Microsoft.Extensions.Logging.ILoggerFactory loggerFactory, Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options) -> void

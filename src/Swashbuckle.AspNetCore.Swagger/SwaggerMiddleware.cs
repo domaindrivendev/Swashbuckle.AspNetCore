@@ -14,7 +14,7 @@ using Microsoft.OpenApi.Writers;
 
 namespace Swashbuckle.AspNetCore.Swagger
 {
-    public class SwaggerMiddleware
+    internal sealed class SwaggerMiddleware
     {
         private readonly RequestDelegate _next;
         private readonly SwaggerOptions _options;
