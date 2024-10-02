@@ -14,8 +14,11 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Swagger;
 
+
 #if NET7_0_OR_GREATER
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.Metadata;
+using Microsoft.AspNetCore.Mvc.Controllers;
 #endif
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -436,7 +439,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         if (countOfParameters == 1)
                         {
                             var requestParameter = requestParameters.First();
-                            content.Schema = GenerateSchemaIncludingFormFile(requestParameter, GenerateSchema(
+                            content.Schema = GenerateSchemaIncludingFromFormWithNoReference(requestParameter, GenerateSchema(
                                 requestParameter.ModelMetadata.ModelType,
                                 schemaRepository,
                                 requestParameter.PropertyInfo(),
@@ -449,7 +452,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                             content.Schema = new OpenApiSchema()
                             {
                                 AllOf = requestParameters.Select(s =>
-                                    GenerateSchemaIncludingFormFile(s, GenerateSchema(
+                                    GenerateSchemaIncludingFromFormWithNoReference(s, GenerateSchema(
                                     s.ModelMetadata.ModelType,
                                     schemaRepository,
                                     s.PropertyInfo(),
@@ -475,7 +478,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         }
                     }
 
-                    static OpenApiSchema GenerateSchemaIncludingFormFile(ApiParameterDescription apiParameterDescription, OpenApiSchema generatedSchema, OpenApiMediaType mediaType)
+                    static OpenApiSchema GenerateSchemaIncludingFromFormWithNoReference(ApiParameterDescription apiParameterDescription, OpenApiSchema generatedSchema, OpenApiMediaType mediaType)
                     {
                         if (generatedSchema.Reference is null && apiParameterDescription.IsFromForm())
                         {
@@ -881,12 +884,51 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 Required = new SortedSet<string>(requiredPropertyNames)
             };
         }
+        private static IList<ApiResponseType> GetResponseTypes(ApiDescription apiDescription)
+        {
+#if NET7_0_OR_GREATER
+            var supportedResponseTypes = new List<ApiResponseType>(apiDescription.SupportedResponseTypes);
+            if (apiDescription.ActionDescriptor is ControllerActionDescriptor controllerActionDescriptor)
+            {
+                var returnType = UnwrapTask(controllerActionDescriptor.MethodInfo.ReturnType);
+                if (typeof(IEndpointMetadataProvider).IsAssignableFrom(returnType))
+                {
+                    var populateMetadataMethod = returnType.GetMethod("Microsoft.AspNetCore.Http.Metadata.IEndpointMetadataProvider.PopulateMetadata", BindingFlags.Static | BindingFlags.NonPublic);
+                    if (populateMetadataMethod != null)
+                    {
+                        var endpointBuilder = new MetadataEndpointBuilder();
+                        populateMetadataMethod.Invoke(null, [controllerActionDescriptor.MethodInfo, endpointBuilder]);
+                        var responseTypes = endpointBuilder.Metadata.Cast<IProducesResponseTypeMetadata>().ToList();
+                        foreach (var responseType in responseTypes)
+                        {
+                            supportedResponseTypes.Add(
+                                new ApiResponseType()
+                                {
+                                    IsDefaultResponse = false,
+                                    Type = responseType.Type,
+                                    StatusCode = responseType.StatusCode,
+                                    ApiResponseFormats = responseType.ContentTypes.Select(contentType => new ApiResponseFormat { MediaType = contentType }).ToList()
+                                });
+                        }
+                    }
+                }
+            }
+
+            static Type UnwrapTask(Type type)
+            => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Task<>)
+                ? type.GetGenericArguments()[0]
+                : type;
+            return supportedResponseTypes;
+#else
+            return apiDescription.SupportedResponseTypes;
+#endif
+        }
 
         private OpenApiResponses GenerateResponses(
             ApiDescription apiDescription,
             SchemaRepository schemaRepository)
         {
-            var supportedResponseTypes = apiDescription.SupportedResponseTypes
+            var supportedResponseTypes = GetResponseTypes(apiDescription)
                 .DefaultIfEmpty(new ApiResponseType { StatusCode = 200 });
 
             var responses = new OpenApiResponses();
@@ -1055,6 +1097,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 ?.OfType<IEndpointDescriptionMetadata>()
                 .Select(s => s.Description)
                 .LastOrDefault();
+
+        private sealed class MetadataEndpointBuilder : EndpointBuilder
+        {
+            public override Endpoint Build() => null!;
+        }
 #endif
     }
 }

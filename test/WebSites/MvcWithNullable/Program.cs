@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,7 +29,7 @@ app.Run();
 public class EnumController : ControllerBase
 {
     [HttpGet]
-    public IActionResult Get(LogLevel? logLevel = LogLevel.Error) => Ok(new { logLevel });
+    public Results<Ok<LogLevel?>, NotFound> Get(LogLevel? logLevel = LogLevel.Error) => TypedResults.Ok(logLevel);
 }
 
 namespace MvcWithNullable

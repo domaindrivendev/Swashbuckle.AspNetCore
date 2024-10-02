@@ -7,6 +7,10 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures;
 
+#if NET7_0_OR_GREATER
+using Microsoft.AspNetCore.Http.HttpResults;
+#endif
+
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     public class FakeController
@@ -109,5 +113,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         { }
         public void ActionHavingFromFormAttributeWithSwaggerIgnore([FromForm] SwaggerIngoreAnnotatedType param1)
         { }
+#if NET7_0_OR_GREATER
+        public Results<Ok<int>,NotFound> ActionHavingResults() => TypedResults.Ok(1);
+#endif
     }
 }
