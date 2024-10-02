@@ -65,6 +65,11 @@ namespace WebApi.EndPoints
                 return $"{dto}";
             }).WithOpenApi();
 
+            group.MapPost("/IFromFileAndString", (IFormFile file, [FromForm] string tags) =>
+            {
+                return $"{file.FileName}{tags}";
+            }).WithOpenApi();
+
             return app;
         }
     }
