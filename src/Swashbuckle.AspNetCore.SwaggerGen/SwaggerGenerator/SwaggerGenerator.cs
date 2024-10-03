@@ -892,7 +892,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var returnType = UnwrapTask(controllerActionDescriptor.MethodInfo.ReturnType);
                 if (typeof(IEndpointMetadataProvider).IsAssignableFrom(returnType))
                 {
-                    var populateMetadataMethod = returnType.GetMethod("Microsoft.AspNetCore.Http.Metadata.IEndpointMetadataProvider.PopulateMetadata", BindingFlags.Static | BindingFlags.NonPublic);
+                    var populateMetadataMethod = returnType.GetMethod("Microsoft.AspNetCore.Http.Metadata.IEndpointMetadataProvider.PopulateMetadata", BindingFlags.Static);
                     if (populateMetadataMethod is not null)
                     {
                         var endpointBuilder = new MetadataEndpointBuilder();
