@@ -26,6 +26,104 @@
         ],
         "responses": {
           "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Enum/WithResults": {
+      "get": {
+        "tags": [
+          "Enum"
+        ],
+        "parameters": [
+          {
+            "name": "logLevel",
+            "in": "query",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/LogLevel"
+                }
+              ],
+              "default": 4
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogLevel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/Enum/WithTaskResults": {
+      "get": {
+        "tags": [
+          "Enum"
+        ],
+        "parameters": [
+          {
+            "name": "logLevel",
+            "in": "query",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/LogLevel"
+                }
+              ],
+              "default": 4
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogLevel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/Enum/WithValueTaskResults": {
+      "get": {
+        "tags": [
+          "Enum"
+        ],
+        "parameters": [
+          {
+            "name": "logLevel",
+            "in": "query",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/LogLevel"
+                }
+              ],
+              "default": 4
+            }
+          }
+        ],
+        "responses": {
+          "200": {
             "description": "OK",
             "content": {
               "application/json": {

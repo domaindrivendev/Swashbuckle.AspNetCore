@@ -2340,6 +2340,25 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("int32", responses["200"].Content.FirstOrDefault().Value.Schema.Format);
             Assert.Empty(responses["404"].Content);
         }
+
+        [Fact]
+        public void GetSwagger_SetsResponse_IfTaskActionHasHttpResult()
+        {
+            var subject = Subject(
+                apiDescriptions:
+                [
+                    ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.TaskActionHavingResults), groupName: "v1", httpMethod: "POST", relativePath: "resource"),
+                ]
+            );
+
+            var document = subject.GetSwagger("v1");
+            var responses = document.Paths["/resource"].Operations[OperationType.Post].Responses;
+            Assert.NotEmpty(responses);
+            Assert.NotEmpty(responses["200"].Content);
+            Assert.Equal("int32", responses["200"].Content.FirstOrDefault().Value.Schema.Format);
+            Assert.Empty(responses["404"].Content);
+        }
 #endif
 
         private static SwaggerGenerator Subject(

@@ -439,7 +439,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         if (countOfParameters == 1)
                         {
                             var requestParameter = requestParameters.First();
-                            content.Schema = GenerateSchemaIncludingFromFormWithNoReference(requestParameter, GenerateSchema(
+                            content.Schema = GetSchemaForForm(requestParameter, GenerateSchema(
                                 requestParameter.ModelMetadata.ModelType,
                                 schemaRepository,
                                 requestParameter.PropertyInfo(),
@@ -452,7 +452,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                             content.Schema = new OpenApiSchema()
                             {
                                 AllOf = requestParameters.Select(s =>
-                                    GenerateSchemaIncludingFromFormWithNoReference(s, GenerateSchema(
+                                    GetSchemaForForm(s, GenerateSchema(
                                     s.ModelMetadata.ModelType,
                                     schemaRepository,
                                     s.PropertyInfo(),
@@ -477,25 +477,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                             filter.Apply(operation.RequestBody, filterContext);
                         }
                     }
-
-                    static OpenApiSchema GenerateSchemaIncludingFromFormWithNoReference(ApiParameterDescription apiParameterDescription, OpenApiSchema generatedSchema, OpenApiMediaType mediaType)
-                    {
-                        if (generatedSchema.Reference is null && apiParameterDescription.IsFromForm())
-                        {
-                            mediaType.Encoding.Add(apiParameterDescription.Name, new OpenApiEncoding { Style = ParameterStyle.Form });
-                            return new OpenApiSchema()
-                            {
-                                Type = "object",
-                                Properties = new Dictionary<string, OpenApiSchema>()
-                                {
-                                    [apiParameterDescription.Name] = generatedSchema
-                                },
-                                Required = apiParameterDescription.IsRequired ? new SortedSet<string>() { apiParameterDescription.Name } : null
-                            };
-                        }
-                        return generatedSchema;
-                    }
-
                 }
             }
 
@@ -517,6 +498,24 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
 
             return operation;
+
+            static OpenApiSchema GetSchemaForForm(ApiParameterDescription apiParameterDescription, OpenApiSchema generatedSchema, OpenApiMediaType mediaType)
+            {
+                if (generatedSchema.Reference is null && apiParameterDescription.IsFromForm())
+                {
+                    mediaType.Encoding.Add(apiParameterDescription.Name, new OpenApiEncoding { Style = ParameterStyle.Form });
+                    return new OpenApiSchema()
+                    {
+                        Type = "object",
+                        Properties = new Dictionary<string, OpenApiSchema>()
+                        {
+                            [apiParameterDescription.Name] = generatedSchema
+                        },
+                        Required = apiParameterDescription.IsRequired ? new SortedSet<string>() { apiParameterDescription.Name } : null
+                    };
+                }
+                return generatedSchema;
+            }
         }
 #endif
 
@@ -894,11 +893,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 if (typeof(IEndpointMetadataProvider).IsAssignableFrom(returnType))
                 {
                     var populateMetadataMethod = returnType.GetMethod("Microsoft.AspNetCore.Http.Metadata.IEndpointMetadataProvider.PopulateMetadata", BindingFlags.Static | BindingFlags.NonPublic);
-                    if (populateMetadataMethod != null)
+                    if (populateMetadataMethod is not null)
                     {
                         var endpointBuilder = new MetadataEndpointBuilder();
                         populateMetadataMethod.Invoke(null, [controllerActionDescriptor.MethodInfo, endpointBuilder]);
-                        var responseTypes = endpointBuilder.Metadata.Cast<IProducesResponseTypeMetadata>().ToList();
+                        var responseTypes = endpointBuilder.Metadata.OfType<IProducesResponseTypeMetadata>();
                         foreach (var responseType in responseTypes)
                         {
                             supportedResponseTypes.Add(
@@ -914,11 +913,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 }
             }
 
+            return supportedResponseTypes;
+
             static Type UnwrapTask(Type type)
-            => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Task<>)
+            => type.IsGenericType && (type.GetGenericTypeDefinition() == typeof(Task<>) || type.GetGenericTypeDefinition() == typeof(ValueTask<>))
                 ? type.GetGenericArguments()[0]
                 : type;
-            return supportedResponseTypes;
 #else
             return apiDescription.SupportedResponseTypes;
 #endif

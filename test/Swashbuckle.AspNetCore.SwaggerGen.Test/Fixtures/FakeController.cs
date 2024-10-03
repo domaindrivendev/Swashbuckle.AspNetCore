@@ -9,6 +9,7 @@ using Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures;
 
 #if NET7_0_OR_GREATER
 using Microsoft.AspNetCore.Http.HttpResults;
+using System.Threading.Tasks;
 #endif
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
@@ -114,7 +115,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void ActionHavingFromFormAttributeWithSwaggerIgnore([FromForm] SwaggerIngoreAnnotatedType param1)
         { }
 #if NET7_0_OR_GREATER
-        public Results<Ok<int>,NotFound> ActionHavingResults() => TypedResults.Ok(1);
+        public Results<Ok<int>, NotFound> ActionHavingResults() => TypedResults.Ok(1);
+        public async Task<Results<Ok<int>, NotFound>> TaskActionHavingResults()
+        {
+            await Task.Delay(1);
+            return TypedResults.Ok(1);
+        }
 #endif
     }
 }

@@ -1377,6 +1377,22 @@ public class SwaggerGeneratorVerifyTests
 
             return Verifier.Verify(document);
         }
+
+        [Fact]
+        public Task GetSwagger_SetsResponse_IfTaskActionHasHttpResult()
+        {
+            var subject = Subject(
+                apiDescriptions:
+                [
+                    ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.TaskActionHavingResults), groupName: "v1", httpMethod: "POST", relativePath: "resource"),
+                ]
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            return Verifier.Verify(document);
+        }
 #endif
 
     private static SwaggerGenerator Subject(
