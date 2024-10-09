@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Swashbuckle.AspNetCore.ReDoc
@@ -32,7 +33,15 @@ namespace Swashbuckle.AspNetCore.ReDoc
         /// </summary>
         public string SpecUrl { get; set; } = null;
 
+        /// <summary>
+        /// Gets or sets the <see cref="ConfigObject"/> to use.
+        /// </summary>
         public ConfigObject ConfigObject { get; set; } = new ConfigObject();
+
+        /// <summary>
+        /// Gets or sets the optional <see cref="System.Text.Json.JsonSerializerOptions"/> to use.
+        /// </summary>
+        public JsonSerializerOptions JsonSerializerOptions { get; set; }
     }
 
     public class ConfigObject
