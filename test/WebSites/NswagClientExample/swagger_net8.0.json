@@ -71,6 +71,68 @@
           }
         }
       }
+    },
+    "/PaymentMethods": {
+      "post": {
+        "tags": [
+          "PaymentMethods"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/PaymentMethod"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreditCard"
+                  },
+                  {
+                    "$ref": "#/components/schemas/MobileWallet"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/PaymentMethod"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreditCard"
+                  },
+                  {
+                    "$ref": "#/components/schemas/MobileWallet"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/PaymentMethod"
+                  },
+                  {
+                    "$ref": "#/components/schemas/CreditCard"
+                  },
+                  {
+                    "$ref": "#/components/schemas/MobileWallet"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -118,6 +180,23 @@
           }
         ]
       },
+      "CreditCard": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PaymentMethod"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "cardNumber": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
       "Dog": {
         "allOf": [
           {
@@ -134,6 +213,42 @@
             "additionalProperties": false
           }
         ]
+      },
+      "MobileWallet": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/PaymentMethod"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "walletId": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "PaymentMethod": {
+        "required": [
+          "paymentMethod"
+        ],
+        "type": "object",
+        "properties": {
+          "paymentMethod": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "discriminator": {
+          "propertyName": "paymentMethod",
+          "mapping": {
+            "CreditCard": "#/components/schemas/CreditCard",
+            "MobileWallet": "#/components/schemas/MobileWallet"
+          }
+        }
       }
     }
   }
