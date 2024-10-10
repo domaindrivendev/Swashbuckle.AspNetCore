@@ -34,9 +34,8 @@ namespace Swashbuckle.AspNetCore.Annotations
         internal bool? RequiredFlag { get; set; }
 
         /// <summary>
-        /// Describes how the parameter value will be serialized depending on the type of
-        /// the parameter value. Default values (based on value of in): for query - form;
-        /// for path - simple; for header - simple; for cookie - form.
+        /// Describes how the parameter value will be serialized based on its type. 
+        /// If not set, default values are for: query - form; path - simple; header - simple; cookie - form.
         /// </summary>
         public string Style
         {
@@ -44,18 +43,16 @@ namespace Swashbuckle.AspNetCore.Annotations
             set
             {
                 ParameterStyle = Enum.TryParse(value, ignoreCase: true, out ParameterStyle result) ? result :
-                    throw new InvalidOperationException(
-                        message: $"Style '{value}' not defined in OpenAPI specification");
+                    throw new NotSupportedException($"'{value}' style is not supported");
             }
         }
 
         internal ParameterStyle? ParameterStyle { get; set; }
 
         /// <summary>
-        /// When this is true, parameter values of type array or object generate separate parameters for
-        /// each value of the array or key-value pair of the map. For other types of parameters this property
-        /// has no effect. When style is form, the default value is true. For all other styles,
-        /// the default value is false.
+        /// When true, array and object parameters are split into separate parameters. This has no 
+        /// effect on other parameter types. 
+        /// The default is true for form style and false for all other styles.
         /// </summary>
         public bool Explode
         {
