@@ -590,14 +590,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var isRequired = apiParameter.IsRequiredParameter();
 
-            var type = apiParameter.Type;
+            var type = apiParameter.ModelMetadata?.ModelType;
 
             if (type is not null
                 && type == typeof(string)
-                && apiParameter.ModelMetadata?.ModelType is not null
-                && apiParameter.ModelMetadata.ModelType != type)
+                && apiParameter.Type is not null
+                && (Nullable.GetUnderlyingType(apiParameter.Type) ?? apiParameter.Type).IsEnum)
             {
-                type = apiParameter.ModelMetadata.ModelType;
+                type = apiParameter.Type;
             }
 
             var schema = (type != null)

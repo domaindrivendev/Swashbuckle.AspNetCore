@@ -70,6 +70,11 @@ namespace WebApi.EndPoints
                 return $"{file.FileName}{tags}";
             }).WithOpenApi();
 
+            app.MapGet("/TypeWithTryParse/{tryParse}", (TypeWithTryParse tryParse) =>
+            {
+                return tryParse.Name;
+            }).WithOpenApi();
+
             return app;
         }
     }
@@ -82,4 +87,18 @@ namespace WebApi.EndPoints
     record class Address(string Street, string City, string State, string ZipCode);
     sealed record OrganizationCustomExchangeRatesDto([property: JsonRequired] CurrenciesRate[] CurrenciesRates);
     sealed record CurrenciesRate([property: JsonRequired] string CurrencyFrom, [property: JsonRequired] string CurrencyTo, double Rate);
+    record TypeWithTryParse(string Name)
+    {
+        public static bool TryParse(string value, out TypeWithTryParse? result)
+        {
+            if (value is null)
+            {
+                result = null;
+                return false;
+            }
+
+            result = new TypeWithTryParse(value);
+            return true;
+        }
+    }
 }

@@ -1105,6 +1105,35 @@ public class SwaggerGeneratorVerifyTests
     }
 
     [Fact]
+    public Task GetSwagger_Works_As_Expected_When_TypeIsEnum_AndModelMetadataTypeIsString()
+    {
+        var subject = Subject(
+            apiDescriptions:
+            [
+               ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionHavingEnum),
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions:
+                        [
+                            new ApiParameterDescription
+                            {
+                                Name = "param1",
+                                Source = BindingSource.Query,
+                                Type = typeof(IntEnum),
+                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(string))
+                            }
+                        ])
+            ]
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        return Verifier.Verify(document);
+    }
+
+    [Fact]
     public Task GetSwagger_Copies_Description_From_GeneratedSchema()
     {
         var propertyEnum = typeof(TypeWithDefaultAttributeOnEnum).GetProperty(nameof(TypeWithDefaultAttributeOnEnum.EnumWithDefault));
