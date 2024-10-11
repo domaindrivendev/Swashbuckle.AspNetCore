@@ -2020,6 +2020,38 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GetSwagger_Works_As_Expected_When_TypeIsEnum_AndModelMetadataTypeIsString()
+        {
+            var subject = Subject(
+                apiDescriptions:
+                [
+                   ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionHavingEnum),
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions:
+                        [
+                            new ApiParameterDescription
+                            {
+                                Name = "param1",
+                                Source = BindingSource.Query,
+                                Type = typeof(IntEnum),
+                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(string))
+                            }
+                        ])
+                ]
+            );
+            var document = subject.GetSwagger("v1");
+
+            var operation = document.Paths["/resource"].Operations[OperationType.Post];
+            Assert.Equal("param1", operation.Parameters[0].Name);
+            Assert.NotNull(operation.Parameters[0].Schema);
+            Assert.NotNull(operation.Parameters[0].Schema.Reference);
+            Assert.Equal(typeof(IntEnum).Name, operation.Parameters[0].Schema.Reference.Id);
+        }
+
+        [Fact]
         public void GetSwagger_Copies_Description_From_GeneratedSchema()
         {
             var propertyEnum = typeof(TypeWithDefaultAttributeOnEnum).GetProperty(nameof(TypeWithDefaultAttributeOnEnum.EnumWithDefault));

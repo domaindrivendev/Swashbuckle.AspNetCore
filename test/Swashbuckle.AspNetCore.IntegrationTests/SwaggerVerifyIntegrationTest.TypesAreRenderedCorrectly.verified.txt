@@ -170,6 +170,35 @@
         }
       }
     },
+    "/TypeWithTryParse/{tryParse}": {
+      "get": {
+        "tags": [
+          "WebApi"
+        ],
+        "parameters": [
+          {
+            "name": "tryParse",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/WithOpenApi/weatherforecast": {
       "get": {
         "tags": [
