@@ -22,7 +22,7 @@ using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Swashbuckle.AspNetCore.ReDoc
 {
-    public class ReDocMiddleware
+    internal sealed class ReDocMiddleware
     {
         private const string EmbeddedFileNamespace = "Swashbuckle.AspNetCore.ReDoc.node_modules.redoc.bundles";
 

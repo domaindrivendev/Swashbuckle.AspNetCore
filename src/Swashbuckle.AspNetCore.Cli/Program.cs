@@ -15,7 +15,7 @@ using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.Cli
 {
-    public class Program
+    internal class Program
     {
         public static int Main(string[] args)
         {
