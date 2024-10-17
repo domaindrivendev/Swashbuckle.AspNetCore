@@ -15,7 +15,10 @@
     <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.SwaggerUI\Swashbuckle.AspNetCore.SwaggerUI.csproj" />
   </ItemGroup>
 
-  <!-- This is just a sample for testing - updating to Duende.IdentityServer can be done at some point in the future -->
+  <!--
+    This is just a sample for testing - updating to Duende.IdentityServer can be done at some point in the future.
+    See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3008.
+  -->
   <ItemGroup>
     <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-55p7-v223-x366" />
     <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-ff4q-64jc-gx98" />
