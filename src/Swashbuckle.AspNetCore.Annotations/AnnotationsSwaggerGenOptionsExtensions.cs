@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -56,8 +57,22 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static IEnumerable<Type> AnnotationsSubTypesSelector(Type type)
         {
+#if NET7_0_OR_GREATER
+            var jsonDerivedTypeAttributes = type.GetCustomAttributes(false)
+                .OfType<JsonDerivedTypeAttribute>()
+                .ToArray();
+
+            if (jsonDerivedTypeAttributes.Any())
+            {
+                return jsonDerivedTypeAttributes.Select(attr => attr.DerivedType);
+            }
+#endif
+
+#pragma warning disable CS0618 // Type or member is obsolete
             var subTypeAttributes = type.GetCustomAttributes(false)
-                .OfType<SwaggerSubTypeAttribute>();
+                .OfType<SwaggerSubTypeAttribute>()
+                .ToArray();
+#pragma warning restore CS0618 // Type or member is obsolete
 
             if (subTypeAttributes.Any())
             {
@@ -80,9 +95,22 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static string AnnotationsDiscriminatorNameSelector(Type baseType)
         {
+#if NET7_0_OR_GREATER
+            var jsonPolymorphicAttribute = baseType.GetCustomAttributes(false)
+                .OfType<JsonPolymorphicAttribute>()
+                .FirstOrDefault();
+
+            if (jsonPolymorphicAttribute is not null)
+            {
+                return jsonPolymorphicAttribute.TypeDiscriminatorPropertyName;
+            }
+#endif
+
+#pragma warning disable CS0618 // Type or member is obsolete
             var discriminatorAttribute = baseType.GetCustomAttributes(false)
                 .OfType<SwaggerDiscriminatorAttribute>()
                 .FirstOrDefault();
+#pragma warning restore CS0618 // Type or member is obsolete
 
             if (discriminatorAttribute != null)
             {
@@ -108,9 +136,22 @@ namespace Microsoft.Extensions.DependencyInjection
             if (subType.BaseType == null)
                 return null;
 
+#if NET7_0_OR_GREATER
+            var jsonDerivedTypeAttribute = subType.BaseType.GetCustomAttributes(false)
+                .OfType<JsonDerivedTypeAttribute>()
+                .FirstOrDefault(attr => attr.DerivedType == subType);
+
+            if (jsonDerivedTypeAttribute is not null)
+            {
+                return jsonDerivedTypeAttribute.TypeDiscriminator?.ToString();
+            }
+#endif
+
+#pragma warning disable CS0618 // Type or member is obsolete
             var subTypeAttribute = subType.BaseType.GetCustomAttributes(false)
                 .OfType<SwaggerSubTypeAttribute>()
                 .FirstOrDefault(attr => attr.SubType == subType);
+#pragma warning restore CS0618 // Type or member is obsolete
 
             if (subTypeAttribute != null)
             {
