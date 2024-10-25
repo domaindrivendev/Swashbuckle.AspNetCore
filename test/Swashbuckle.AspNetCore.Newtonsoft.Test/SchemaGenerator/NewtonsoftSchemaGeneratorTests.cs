@@ -145,7 +145,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [Fact]
         public void GenerateSchema_GeneratesObjectSchema_IfDictionaryTypeHasEnumKey_CamelCasePropertyNamesContractResolver()
         {
-            JsonSerializerSettings settings = new JsonSerializerSettings()
+            var settings = new JsonSerializerSettings()
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
             };
