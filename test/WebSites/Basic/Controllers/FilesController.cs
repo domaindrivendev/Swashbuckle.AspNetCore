@@ -21,7 +21,7 @@ namespace Basic.Controllers
         }
 
         [HttpPost("form-with-file")]
-        public IActionResult PostFormWithFile([FromForm]FormWithFile formWithFile)
+        public IActionResult PostFormWithFile([FromForm] FormWithFile formWithFile)
         {
             throw new NotImplementedException();
         }
@@ -41,7 +41,7 @@ namespace Basic.Controllers
             writer.Flush();
             stream.Position = 0;
 
-            var contentType = name.EndsWith(".zip", StringComparison.InvariantCultureIgnoreCase) ? "application/zip" : "text/plain";
+            var contentType = name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase) ? "application/zip" : "text/plain";
 
             return File(stream, contentType, name);
         }

@@ -18,7 +18,7 @@ jobs:
     runs-on: [ ubuntu-latest ]
 
     concurrency:
-      group: ${{ github.workflow }}
+      group: '${{ github.workflow }}-version'
       cancel-in-progress: false
 
     permissions:
@@ -28,7 +28,7 @@ jobs:
     steps:
 
       - name: Checkout code
-        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4.2.1
 
       - name: Bump version
         id: bump-version
@@ -173,7 +173,7 @@ jobs:
     if: github.event_name == 'release'
 
     concurrency:
-      group: ${{ github.workflow }}
+      group: '${{ github.workflow }}-milestone'
       cancel-in-progress: false
 
     permissions:

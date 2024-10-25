@@ -571,6 +571,7 @@
         tags: [
           FromFormParams
         ],
+        summary: Form parameters with description,
         requestBody: {
           content: {
             application/x-www-form-urlencoded: {
@@ -578,14 +579,26 @@
                 type: object,
                 properties: {
                   name: {
-                    type: string
+                    type: string,
+                    description: Summary for Name,
+                    example: MyName
                   },
                   phoneNumbers: {
                     type: array,
                     items: {
                       type: integer,
                       format: int32
-                    }
+                    },
+                    description: Sumary for PhoneNumbers
+                  },
+                  formFile: {
+                    type: string,
+                    description: Description for file,
+                    format: binary
+                  },
+                  text: {
+                    type: string,
+                    description: Description for Text
                   }
                 }
               },
@@ -594,6 +607,12 @@
                   style: form
                 },
                 phoneNumbers: {
+                  style: form
+                },
+                formFile: {
+                  style: form
+                },
+                text: {
                   style: form
                 }
               }

@@ -35,11 +35,11 @@ namespace Swashbuckle.AspNetCore.Annotations
                 .Union(metadataAttributes)
                 .Distinct();
 
-            var actionAndEndpointAttribtues = actionAttributes
+            var actionAndEndpointAttributes = actionAttributes
                 .Union(metadataAttributes)
                 .Distinct();
 
-            ApplySwaggerOperationAttribute(operation, actionAndEndpointAttribtues);
+            ApplySwaggerOperationAttribute(operation, actionAndEndpointAttributes);
             ApplySwaggerOperationFilterAttributes(operation, context, allAttributes);
             ApplySwaggerResponseAttributes(operation, context, allAttributes);
         }

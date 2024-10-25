@@ -1105,6 +1105,35 @@ public class SwaggerGeneratorVerifyTests
     }
 
     [Fact]
+    public Task GetSwagger_Works_As_Expected_When_TypeIsEnum_AndModelMetadataTypeIsString()
+    {
+        var subject = Subject(
+            apiDescriptions:
+            [
+               ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionHavingEnum),
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions:
+                        [
+                            new ApiParameterDescription
+                            {
+                                Name = "param1",
+                                Source = BindingSource.Query,
+                                Type = typeof(IntEnum),
+                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(string))
+                            }
+                        ])
+            ]
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        return Verifier.Verify(document);
+    }
+
+    [Fact]
     public Task GetSwagger_Copies_Description_From_GeneratedSchema()
     {
         var propertyEnum = typeof(TypeWithDefaultAttributeOnEnum).GetProperty(nameof(TypeWithDefaultAttributeOnEnum.EnumWithDefault));
@@ -1300,6 +1329,57 @@ public class SwaggerGeneratorVerifyTests
                                 Name = "param",
                                 Source = BindingSource.Form,
                                 ModelMetadata = ModelMetadataFactory.CreateForType(typeof(IFormFileCollection))
+                            }
+                        ]),
+            ]
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        return Verifier.Verify(document);
+    }
+
+    [Fact]
+    public Task GetSwagger_GenerateConsumesSchemas_ForProvidedOpenApiOperationWithStringFromForm()
+    {
+        var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithConsumesAttribute));
+        var actionDescriptor = new ActionDescriptor
+        {
+            EndpointMetadata =
+            [
+                new OpenApiOperation
+                    {
+                        OperationId = "OperationIdSetInMetadata",
+                        RequestBody = new()
+                        {
+                            Content = new Dictionary<string, OpenApiMediaType>()
+                            {
+                                ["application/someMediaType"] = new()
+                            }
+                        }
+                    }
+            ],
+            RouteValues = new Dictionary<string, string>
+            {
+                ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+            }
+        };
+        var subject = Subject(
+            apiDescriptions:
+            [
+                ApiDescriptionFactory.Create(
+                        actionDescriptor,
+                        methodInfo,
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions:
+                        [
+                            new ApiParameterDescription()
+                            {
+                                Name = "param",
+                                Source = BindingSource.Form,
+                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(string))
                             }
                         ]),
             ]

@@ -22,5 +22,6 @@
   </metadata>
   <files>
     <file src="Swashbuckle.AspNetCore.props" target="build\Swashbuckle.AspNetCore.props" />
+    <file src="Swashbuckle.AspNetCore.props" target="buildMultiTargeting\Swashbuckle.AspNetCore.props" />
   </files>
 </package>

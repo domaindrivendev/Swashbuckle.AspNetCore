@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures;
+using Swashbuckle.AspNetCore.TestSupport;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -108,6 +109,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void ActionHavingFromFormAttributeButNotWithIFormFile([FromForm] string param1, IFormFile param2)
         { }
         public void ActionHavingFromFormAttributeWithSwaggerIgnore([FromForm] SwaggerIngoreAnnotatedType param1)
+        { }
+        public void ActionHavingEnum(IntEnum param1)
         { }
     }
 }

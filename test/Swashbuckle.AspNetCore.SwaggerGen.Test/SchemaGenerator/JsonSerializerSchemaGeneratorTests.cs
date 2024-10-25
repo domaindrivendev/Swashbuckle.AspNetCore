@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Dynamic;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http;
@@ -121,6 +122,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
         [Theory]
         [InlineData(typeof(IDictionary<string, int>), "integer")]
+        [InlineData(typeof(IDictionary<EmptyIntEnum, int>), "integer")]
         [InlineData(typeof(IReadOnlyDictionary<string, bool>), "boolean")]
         [InlineData(typeof(IDictionary), null)]
         [InlineData(typeof(ExpandoObject), null)]
@@ -670,15 +672,65 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.NotNull(schema.Enum);
         }
 
+        [Fact]
+        public void TypeWithNullableContextAnnotated_IsAnnotated()
+        {
+            // This is a sanity check to ensure that TypeWithNullableContextAnnotated
+            // is annotated with NullableContext(Flag=2) by the compiler. If this is no
+            // longer the case, you may need to add more of the Dummy properties to
+            // coerce the compiler.
+
+            const string Name = "System.Runtime.CompilerServices.NullableContextAttribute";
+
+            var nullableContext = typeof(TypeWithNullableContextAnnotated)
+                .GetCustomAttributes()
+                .FirstOrDefault(attr => string.Equals(attr.GetType().FullName, Name));
+
+            Assert.NotNull(nullableContext);
+
+            var flag = nullableContext?.GetType().GetField("Flag")?.GetValue(nullableContext);
+
+            Assert.Equal((byte)2, flag);
+        }
+
+        [Fact]
+        public void TypeWithNullableContextNotAnnotated_IsNotAnnotated()
+        {
+            // This is a sanity check to ensure that TypeWithNullableContextNotAnnotated
+            // is annotated with NullableContext(Flag=1) by the compiler. If this is no
+            // longer the case, you may need to add more of the Dummy properties to
+            // coerce the compiler.
+
+            const string Name = "System.Runtime.CompilerServices.NullableContextAttribute";
+
+            var nullableContext = typeof(TypeWithNullableContextNotAnnotated)
+                .GetCustomAttributes()
+                .FirstOrDefault(attr => string.Equals(attr.GetType().FullName, Name));
+
+            Assert.NotNull(nullableContext);
+
+            var flag = nullableContext?.GetType().GetField("Flag")?.GetValue(nullableContext);
+
+            Assert.Equal((byte)1, flag);
+        }
+
         [Theory]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableInt), true)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableInt), false)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableString), true)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableString), false)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableArray), true)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableArray), false)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableList), true)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableList), false)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NullableInt), true)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NonNullableInt), false)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NullableString), true)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NonNullableString), false)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NullableArray), true)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NonNullableArray), false)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NullableList), true)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NonNullableList), false)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NullableInt), true)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NonNullableInt), false)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NullableString), true)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NonNullableString), false)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NullableArray), true)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NonNullableArray), false)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NullableList), true)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NonNullableList), false)]
         public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypes(
             Type declaringType,
             string propertyName,
@@ -696,10 +748,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableDictionaryInNonNullableContent), true, false)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableDictionaryInNonNullableContent), false, false)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableDictionaryInNullableContent), false, true)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableDictionaryInNullableContent), true, true)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NullableDictionaryInNonNullableContent), true, false)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NonNullableDictionaryInNonNullableContent), false, false)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NonNullableDictionaryInNullableContent), false, true)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NullableDictionaryInNullableContent), true, true)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NullableDictionaryInNonNullableContent), true, false)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NonNullableDictionaryInNonNullableContent), false, false)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NonNullableDictionaryInNullableContent), false, true)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NullableDictionaryInNullableContent), true, true)]
         public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypes_NullableAttribute_Compiler_Optimizations_Situations_Dictionary(
             Type declaringType,
             string propertyName,
@@ -720,10 +776,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableIDictionaryInNonNullableContent), true, false)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableIDictionaryInNonNullableContent), false, false)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableIDictionaryInNullableContent), false, true)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableIDictionaryInNullableContent), true, true)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NullableIDictionaryInNonNullableContent), true, false)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NonNullableIDictionaryInNonNullableContent), false, false)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NonNullableIDictionaryInNullableContent), false, true)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NullableIDictionaryInNullableContent), true, true)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NullableIDictionaryInNonNullableContent), true, false)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NonNullableIDictionaryInNonNullableContent), false, false)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NonNullableIDictionaryInNullableContent), false, true)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NullableIDictionaryInNullableContent), true, true)]
         public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypes_NullableAttribute_Compiler_Optimizations_Situations_IDictionary(
             Type declaringType,
             string propertyName,
@@ -744,10 +804,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableIReadOnlyDictionaryInNonNullableContent), true, false)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableIReadOnlyDictionaryInNonNullableContent), false, false)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableIReadOnlyDictionaryInNullableContent), false, true)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableIReadOnlyDictionaryInNullableContent), true, true)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NullableIReadOnlyDictionaryInNonNullableContent), true, false)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NonNullableIReadOnlyDictionaryInNonNullableContent), false, false)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NonNullableIReadOnlyDictionaryInNullableContent), false, true)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NullableIReadOnlyDictionaryInNullableContent), true, true)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NullableIReadOnlyDictionaryInNonNullableContent), true, false)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NonNullableIReadOnlyDictionaryInNonNullableContent), false, false)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NonNullableIReadOnlyDictionaryInNullableContent), false, true)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NullableIReadOnlyDictionaryInNullableContent), true, true)]
         public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypes_NullableAttribute_Compiler_Optimizations_Situations_IReadOnlyDictionary(
             Type declaringType,
             string propertyName,
@@ -768,10 +832,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableDictionaryWithValueTypeInNonNullableContent), true, false)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableDictionaryWithValueTypeInNonNullableContent), false, false)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableDictionaryWithValueTypeInNullableContent), false, true)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableDictionaryWithValueTypeInNullableContent), true, true)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NullableDictionaryWithValueTypeInNonNullableContent), true, false)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NonNullableDictionaryWithValueTypeInNonNullableContent), false, false)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NonNullableDictionaryWithValueTypeInNullableContent), false, true)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NullableDictionaryWithValueTypeInNullableContent), true, true)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NullableDictionaryWithValueTypeInNonNullableContent), true, false)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NonNullableDictionaryWithValueTypeInNonNullableContent), false, false)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NonNullableDictionaryWithValueTypeInNullableContent), false, true)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NullableDictionaryWithValueTypeInNullableContent), true, true)]
         public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypes_NullableAttribute_Compiler_Optimizations_Situations_DictionaryWithValueType(
             Type declaringType,
             string propertyName,
@@ -792,10 +860,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableIDictionaryWithValueTypeInNonNullableContent), true, false)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableIDictionaryWithValueTypeInNonNullableContent), false, false)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableIDictionaryWithValueTypeInNullableContent), false, true)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableIDictionaryWithValueTypeInNullableContent), true, true)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NullableIDictionaryWithValueTypeInNonNullableContent), true, false)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NonNullableIDictionaryWithValueTypeInNonNullableContent), false, false)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NonNullableIDictionaryWithValueTypeInNullableContent), false, true)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NullableIDictionaryWithValueTypeInNullableContent), true, true)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NullableIDictionaryWithValueTypeInNonNullableContent), true, false)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NonNullableIDictionaryWithValueTypeInNonNullableContent), false, false)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NonNullableIDictionaryWithValueTypeInNullableContent), false, true)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NullableIDictionaryWithValueTypeInNullableContent), true, true)]
         public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypes_NullableAttribute_Compiler_Optimizations_Situations_IDictionaryWithValueType(
             Type declaringType,
             string propertyName,
@@ -816,10 +888,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableIReadOnlyDictionaryWithValueTypeInNonNullableContent), true, false)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableIReadOnlyDictionaryWithValueTypeInNonNullableContent), false, false)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NonNullableIReadOnlyDictionaryWithValueTypeInNullableContent), false, true)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.NullableIReadOnlyDictionaryWithValueTypeInNullableContent), true, true)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NullableIReadOnlyDictionaryWithValueTypeInNonNullableContent), true, false)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NonNullableIReadOnlyDictionaryWithValueTypeInNonNullableContent), false, false)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NonNullableIReadOnlyDictionaryWithValueTypeInNullableContent), false, true)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.NullableIReadOnlyDictionaryWithValueTypeInNullableContent), true, true)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NullableIReadOnlyDictionaryWithValueTypeInNonNullableContent), true, false)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NonNullableIReadOnlyDictionaryWithValueTypeInNonNullableContent), false, false)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NonNullableIReadOnlyDictionaryWithValueTypeInNullableContent), false, true)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.NullableIReadOnlyDictionaryWithValueTypeInNullableContent), true, true)]
         public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypes_NullableAttribute_Compiler_Optimizations_Situations_IReadOnlyDictionaryWithValueType(
             Type declaringType,
             string propertyName,
@@ -840,8 +916,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.SubTypeWithOneNullableContent), nameof(TypeWithNullableContext.NullableString), true)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContext.NonNullableString), false)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithOneNullableContent), nameof(TypeWithNullableContextAnnotated.NullableString), true)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextAnnotated.NonNullableString), false)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.SubTypeWithOneNullableContent), nameof(TypeWithNullableContextNotAnnotated.NullableString), true)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextNotAnnotated.NonNullableString), false)]
         public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypesInDictionary_NullableAttribute_Compiler_Optimizations_Situations(
             Type declaringType,
             string subType,
@@ -860,8 +938,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.SubTypeWithOneNullableContent), nameof(TypeWithNullableContext.NullableString), false)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContext.NonNullableString), true)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithOneNullableContent), nameof(TypeWithNullableContextAnnotated.NullableString), false)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextAnnotated.NonNullableString), true)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.SubTypeWithOneNullableContent), nameof(TypeWithNullableContextNotAnnotated.NullableString), false)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextNotAnnotated.NonNullableString), true)]
         public void GenerateSchema_SupportsOption_NonNullableReferenceTypesAsRequired_RequiredAttribute_Compiler_Optimizations_Situations(
             Type declaringType,
             string subType,
@@ -880,8 +960,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContext.NonNullableString), false)]
-        [InlineData(typeof(TypeWithNullableContext), nameof(TypeWithNullableContext.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContext.NonNullableString), true)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextAnnotated.NonNullableString), false)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextAnnotated.NonNullableString), true)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextNotAnnotated.NonNullableString), false)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextNotAnnotated.NonNullableString), true)]
         public void GenerateSchema_SupportsOption_SuppressImplicitRequiredAttributeForNonNullableReferenceTypes(
             Type declaringType,
             string subType,
@@ -900,8 +982,32 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(!suppress, propertyIsRequired);
         }
 
-        [Fact]
-        public void GenerateSchema_Works_IfNotProvidingMvcOptions()
+        [Theory]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithNestedSubType.Nested), nameof(TypeWithNullableContextAnnotated.SubTypeWithNestedSubType.Nested.NullableString), true)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithNestedSubType.Nested), nameof(TypeWithNullableContextAnnotated.SubTypeWithNestedSubType.Nested.NonNullableString), false)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.SubTypeWithNestedSubType.Nested), nameof(TypeWithNullableContextAnnotated.SubTypeWithNestedSubType.Nested.NullableString), true)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.SubTypeWithNestedSubType.Nested), nameof(TypeWithNullableContextAnnotated.SubTypeWithNestedSubType.Nested.NonNullableString), false)]
+        public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypes_NestedWithinNested(
+            Type declaringType,
+            string subType,
+            string propertyName,
+            bool expectedNullable)
+        {
+            var subject = Subject(
+                configureGenerator: c => c.SupportNonNullableReferenceTypes = true
+            );
+            var schemaRepository = new SchemaRepository();
+
+            subject.GenerateSchema(declaringType, schemaRepository);
+
+            var propertySchema = schemaRepository.Schemas[subType].Properties[propertyName];
+            Assert.Equal(expectedNullable, propertySchema.Nullable);
+        }
+
+        [Theory]
+        [InlineData(typeof(TypeWithNullableContextAnnotated))]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated))]
+        public void GenerateSchema_Works_IfNotProvidingMvcOptions(Type type)
         {
             var generatorOptions = new SchemaGeneratorOptions
             {
@@ -913,10 +1019,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var subject = new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions));
             var schemaRepository = new SchemaRepository();
 
-            subject.GenerateSchema(typeof(TypeWithNullableContext), schemaRepository);
+            subject.GenerateSchema(type, schemaRepository);
 
-            var subType = nameof(TypeWithNullableContext.SubTypeWithOneNonNullableContent);
-            var propertyName = nameof(TypeWithNullableContext.NonNullableString);
+            var subType = nameof(TypeWithNullableContextAnnotated.SubTypeWithOneNonNullableContent);
+            var propertyName = nameof(TypeWithNullableContextAnnotated.NonNullableString);
             var propertyIsRequired = schemaRepository.Schemas[subType].Required.Contains(propertyName);
             Assert.True(propertyIsRequired);
         }

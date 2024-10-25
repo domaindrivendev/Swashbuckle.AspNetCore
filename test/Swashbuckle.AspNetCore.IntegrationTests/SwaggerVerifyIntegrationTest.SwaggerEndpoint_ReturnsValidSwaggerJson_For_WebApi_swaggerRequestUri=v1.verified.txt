@@ -170,6 +170,35 @@
         }
       }
     },
+    "/TypeWithTryParse/{tryParse}": {
+      "get": {
+        "tags": [
+          "WebApi"
+        ],
+        "parameters": [
+          {
+            "name": "tryParse",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/WithOpenApi/weatherforecast": {
       "get": {
         "tags": [
@@ -245,6 +274,17 @@
       "post": {
         "tags": [
           "WithOpenApi"
+        ],
+        "parameters": [
+          {
+            "name": "queryParameter",
+            "in": "query",
+            "description": "queryParameter Description",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "requestBody": {
           "content": {
@@ -340,6 +380,67 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/OrganizationCustomExchangeRatesDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/WithOpenApi/IFromFileAndString": {
+      "post": {
+        "tags": [
+          "WithOpenApi"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "allOf": [
+                  {
+                    "required": [
+                      "file"
+                    ],
+                    "type": "object",
+                    "properties": {
+                      "file": {
+                        "type": "string",
+                        "format": "binary"
+                      }
+                    }
+                  },
+                  {
+                    "required": [
+                      "tags"
+                    ],
+                    "type": "object",
+                    "properties": {
+                      "tags": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                ]
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                },
+                "tags": {
+                  "style": "form"
+                }
               }
             }
           },

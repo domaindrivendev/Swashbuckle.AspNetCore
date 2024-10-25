@@ -1,7 +1,11 @@
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateSlimBuilder(args);
+
+builder.Services.Configure<RouteOptions>(
+    options => options.SetParameterPolicy<RegexInlineRouteConstraint>("regex"));
 
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
@@ -41,6 +45,8 @@ todosApi.MapGet("/{id}", (int id) =>
 
 app.UseSwagger();
 app.UseSwaggerUI();
+app.UseReDoc();
+
 app.MapSwagger();
 
 app.Run();

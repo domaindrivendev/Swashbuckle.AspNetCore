@@ -22,7 +22,7 @@ using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 
 namespace Swashbuckle.AspNetCore.SwaggerUI
 {
-    public partial class SwaggerUIMiddleware
+    public class SwaggerUIMiddleware
     {
         private const string EmbeddedFileNamespace = "Swashbuckle.AspNetCore.SwaggerUI.node_modules.swagger_ui_dist";
 
@@ -110,8 +110,12 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
 
         private static void RespondWithRedirect(HttpResponse response, string location)
         {
-            response.StatusCode = 301;
+            response.StatusCode = StatusCodes.Status301MovedPermanently;
+#if NET6_0_OR_GREATER
+            response.Headers.Location = location;
+#else
             response.Headers["Location"] = location;
+#endif
         }
 
         private async Task RespondWithFile(HttpResponse response, string fileName)
