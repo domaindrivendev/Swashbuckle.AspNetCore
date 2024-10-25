@@ -85,11 +85,10 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                     // This is a special case where we know the possible key values
                     keys = keyType.GetEnumValues().Cast<object>().Select(v =>
                     {
-                        var dic = new Dictionary<object, int>() { { v, 0 } };
-                        var serialized = JsonConvert.SerializeObject(dic, _serializerSettings);
-                        var deserialized =
-                            JsonConvert.DeserializeObject<Dictionary<string, int>>(serialized, _serializerSettings);
-                        return deserialized.Keys.Single();
+                        var dictionary = new Dictionary<object, byte>(1) { [v] = 0 };
+                        var serialized = JsonConverterFunc(dictionary);
+                        var deserialized = JsonConvert.DeserializeObject<Dictionary<string, byte>>(serialized, _serializerSettings);
+                        return deserialized.Keys.First();
                     });
                 }
 
