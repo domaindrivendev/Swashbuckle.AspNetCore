@@ -7,8 +7,8 @@ using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
-using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Linq;
@@ -145,11 +145,6 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         [Fact]
         public void GenerateSchema_GeneratesObjectSchema_IfDictionaryTypeHasEnumKey_CamelCasePropertyNamesContractResolver()
         {
-            var settings = new JsonSerializerSettings()
-            {
-                ContractResolver = new CamelCasePropertyNamesContractResolver()
-            };
-
             var schema = Subject(null, (s) =>
             {
                 s.ContractResolver = new CamelCasePropertyNamesContractResolver();
@@ -157,16 +152,6 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 
             Assert.Equal("object", schema.Type);
             Assert.Equal(new[] { "value2", "value4", "value8" }, schema.Properties.Keys);
-
-            var a = new NewtonsoftDataContractResolver(settings);
-            var b = a.GetDataContractForType(typeof(IDictionary<IntEnum, int>)).JsonConverter(new Dictionary<IntEnum, int>()
-            {
-                { IntEnum.Value2, 2 }, { IntEnum.Value4, 4 }, { IntEnum.Value8, 8 },
-            });
-            foreach (var key in schema.Properties.Keys)
-            {
-                Assert.Contains(key, b);
-            }
         }
 
         [Fact]

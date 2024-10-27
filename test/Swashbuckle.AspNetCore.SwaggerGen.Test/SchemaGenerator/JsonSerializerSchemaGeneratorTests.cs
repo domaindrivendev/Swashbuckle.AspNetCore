@@ -1132,7 +1132,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
-        public void GenerateSchema_HonorsEnumDictionaryKeys_StringEnumConverterWithCamelCase()
+        public void GenerateSchema_HonorsEnumDictionaryKeys_StringEnumConverter_CamelCase()
         {
             var subject = Subject(null, o => o.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase);
             var schemaRepository = new SchemaRepository();
