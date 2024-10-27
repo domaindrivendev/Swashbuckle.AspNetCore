@@ -1132,6 +1132,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Fact]
+        public void GenerateSchema_HonorsEnumDictionaryKeys_StringEnumConverterWithCamelCase()
+        {
+            var subject = Subject(null, o => o.DictionaryKeyPolicy = JsonNamingPolicy.CamelCase);
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = subject.GenerateSchema(typeof(Dictionary<IntEnum, string>), schemaRepository);
+
+            Assert.Equal(typeof(IntEnum).GetEnumNames().Select(n => n.ToCamelCase()), referenceSchema.Properties.Keys);
+        }
+
+        [Fact]
         public void GenerateSchema_HonorsSerializerAttribute_StringEnumConverter()
         {
             var schemaRepository = new SchemaRepository();
