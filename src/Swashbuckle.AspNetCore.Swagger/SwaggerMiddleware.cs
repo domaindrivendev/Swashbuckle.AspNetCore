@@ -33,6 +33,7 @@ namespace Swashbuckle.AspNetCore.Swagger
         }
 
 #if !NETSTANDARD
+        [ActivatorUtilitiesConstructor]
         public SwaggerMiddleware(
             RequestDelegate next,
             SwaggerOptions options,
