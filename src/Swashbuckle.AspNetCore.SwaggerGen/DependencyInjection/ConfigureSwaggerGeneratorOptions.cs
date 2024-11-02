@@ -36,12 +36,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             foreach (var filterDescriptor in _swaggerGenOptions.ParameterFilterDescriptors)
             {
-                if (filterDescriptor.Type.IsAssignableTo(typeof(IParameterFilter)))
+                if (filterDescriptor.IsAssignableTo(typeof(IParameterFilter)))
                 {
                     options.ParameterFilters.Add(GetOrCreateFilter<IParameterFilter>(filterDescriptor));
                 }
 
-                if (filterDescriptor.Type.IsAssignableTo(typeof(IParameterAsyncFilter)))
+                if (filterDescriptor.IsAssignableTo(typeof(IParameterAsyncFilter)))
                 {
                     options.ParameterAsyncFilters.Add(GetOrCreateFilter<IParameterAsyncFilter>(filterDescriptor));
                 }
@@ -49,12 +49,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             foreach (var filterDescriptor in _swaggerGenOptions.RequestBodyFilterDescriptors)
             {
-                if (filterDescriptor.Type.IsAssignableTo(typeof(IRequestBodyFilter)))
+                if (filterDescriptor.IsAssignableTo(typeof(IRequestBodyFilter)))
                 {
                     options.RequestBodyFilters.Add(GetOrCreateFilter<IRequestBodyFilter>(filterDescriptor));
                 }
 
-                if (filterDescriptor.Type.IsAssignableTo(typeof(IRequestBodyAsyncFilter)))
+                if (filterDescriptor.IsAssignableTo(typeof(IRequestBodyAsyncFilter)))
                 {
                     options.RequestBodyAsyncFilters.Add(GetOrCreateFilter<IRequestBodyAsyncFilter>(filterDescriptor));
                 }
@@ -62,12 +62,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             foreach (var filterDescriptor in _swaggerGenOptions.OperationFilterDescriptors)
             {
-                if (filterDescriptor.Type.IsAssignableTo(typeof(IOperationFilter)))
+                if (filterDescriptor.IsAssignableTo(typeof(IOperationFilter)))
                 {
                     options.OperationFilters.Add(GetOrCreateFilter<IOperationFilter>(filterDescriptor));
                 }
 
-                if (filterDescriptor.Type.IsAssignableTo(typeof(IOperationAsyncFilter)))
+                if (filterDescriptor.IsAssignableTo(typeof(IOperationAsyncFilter)))
                 {
                     options.OperationAsyncFilters.Add(GetOrCreateFilter<IOperationAsyncFilter>(filterDescriptor));
                 }
@@ -75,12 +75,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             foreach (var filterDescriptor in _swaggerGenOptions.DocumentFilterDescriptors)
             {
-                if (filterDescriptor.Type.IsAssignableTo(typeof(IDocumentFilter)))
+                if (filterDescriptor.IsAssignableTo(typeof(IDocumentFilter)))
                 {
                     options.DocumentFilters.Add(GetOrCreateFilter<IDocumentFilter>(filterDescriptor));
                 }
 
-                if (filterDescriptor.Type.IsAssignableTo(typeof(IDocumentAsyncFilter)))
+                if (filterDescriptor.IsAssignableTo(typeof(IDocumentAsyncFilter)))
                 {
                     options.DocumentAsyncFilters.Add(GetOrCreateFilter<IDocumentAsyncFilter>(filterDescriptor));
                 }
