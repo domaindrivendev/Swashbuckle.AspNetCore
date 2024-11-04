@@ -370,6 +370,7 @@ namespace Microsoft.Extensions.DependencyInjection
             if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.SchemaFilterDescriptors.Add(new FilterDescriptor
             {
+                Type = typeof(TFilter),
                 FilterInstance = filterInstance
             });
         }
@@ -427,6 +428,7 @@ namespace Microsoft.Extensions.DependencyInjection
             if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.ParameterFilterDescriptors.Add(new FilterDescriptor
             {
+                Type = typeof(TFilter),
                 FilterInstance = filterInstance
             });
         }
@@ -446,6 +448,7 @@ namespace Microsoft.Extensions.DependencyInjection
             if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.ParameterFilterDescriptors.Add(new FilterDescriptor
             {
+                Type = typeof(TFilter),
                 FilterInstance = filterInstance
             });
         }
@@ -503,6 +506,7 @@ namespace Microsoft.Extensions.DependencyInjection
             if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.RequestBodyFilterDescriptors.Add(new FilterDescriptor
             {
+                Type = typeof(TFilter),
                 FilterInstance = filterInstance
             });
         }
@@ -522,6 +526,7 @@ namespace Microsoft.Extensions.DependencyInjection
             if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.RequestBodyFilterDescriptors.Add(new FilterDescriptor
             {
+                Type = typeof(TFilter),
                 FilterInstance = filterInstance
             });
         }
@@ -579,6 +584,7 @@ namespace Microsoft.Extensions.DependencyInjection
             if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.OperationFilterDescriptors.Add(new FilterDescriptor
             {
+                Type = typeof(TFilter),
                 FilterInstance = filterInstance
             });
         }
@@ -598,6 +604,7 @@ namespace Microsoft.Extensions.DependencyInjection
             if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.OperationFilterDescriptors.Add(new FilterDescriptor
             {
+                Type = typeof(TFilter),
                 FilterInstance = filterInstance
             });
         }
@@ -656,6 +663,7 @@ namespace Microsoft.Extensions.DependencyInjection
             if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.DocumentFilterDescriptors.Add(new FilterDescriptor
             {
+                Type = typeof(TFilter),
                 FilterInstance = filterInstance
             });
         }
@@ -676,6 +684,7 @@ namespace Microsoft.Extensions.DependencyInjection
             if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
             swaggerGenOptions.DocumentFilterDescriptors.Add(new FilterDescriptor
             {
+                Type = typeof(TFilter),
                 FilterInstance = filterInstance
             });
         }
