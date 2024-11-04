@@ -412,4 +412,32 @@ public static class ConfigureSwaggerGeneratorOptionsTests
         Assert.Equal(2, swaggerGeneratorOptions.DocumentAsyncFilters.Count);
         Assert.NotSame(swaggerGeneratorOptions.DocumentAsyncFilters.First(), swaggerGeneratorOptions.DocumentAsyncFilters.Last());
     }
+
+    [Fact]
+    public static void AddingFilterDescriptorWithFilterInstance_WhenConfiguringOptions_NoExceptionIsThrown()
+    {
+        var webhostingEnvironment = Substitute.For<IWebHostEnvironment>();
+        webhostingEnvironment.ApplicationName.Returns("Swashbuckle.AspNetCore.SwaggerGen.Test");
+
+        var options = new SwaggerGenOptions();
+        options.OperationFilterDescriptors.Add(
+            new FilterDescriptor()
+            {
+                // Before this PR, leaving Type to null would cause an exception when checking for `Type.IsAssignableTo(...)`
+                // Type = null,
+                FilterInstance = new TestOperationFilter(),
+            });
+
+        using var serviceProvider = new ServiceCollection().BuildServiceProvider();
+
+        var configureSwaggerGeneratorOptions = new ConfigureSwaggerGeneratorOptions(
+            Options.Create(options),
+            serviceProvider,
+            webhostingEnvironment);
+        var swaggerGeneratorOptions = new SwaggerGeneratorOptions();
+
+        configureSwaggerGeneratorOptions.Configure(swaggerGeneratorOptions);
+
+        Assert.Single(swaggerGeneratorOptions.OperationFilters);
+    }
 }
