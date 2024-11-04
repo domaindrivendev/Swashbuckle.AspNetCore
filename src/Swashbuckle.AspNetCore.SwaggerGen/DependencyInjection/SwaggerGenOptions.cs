@@ -35,8 +35,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         internal bool IsAssignableTo(Type type)
         {
-            return FilterInstance != null && type.IsInstanceOfType(FilterInstance) ||
-                   Type != null && Type.IsAssignableTo(type);
+            return (FilterInstance != null && type.IsInstanceOfType(FilterInstance)) ||
+                   (Type != null && Type.IsAssignableTo(type));
         }
     }
 }
