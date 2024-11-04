@@ -423,8 +423,7 @@ public static class ConfigureSwaggerGeneratorOptionsTests
         options.OperationFilterDescriptors.Add(
             new FilterDescriptor()
             {
-                // Before this PR, leaving Type to null would cause an exception when checking for `Type.IsAssignableTo(...)`
-                // Type = null,
+                Type = null,
                 FilterInstance = new TestOperationFilter(),
             });
 
