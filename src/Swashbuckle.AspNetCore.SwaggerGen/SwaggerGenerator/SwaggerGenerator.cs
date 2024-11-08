@@ -434,11 +434,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     if (fromFormParametersCount > 0)
                     {
                         var generatedRequestBody = GenerateRequestBodyFromFormParameters(
-                        apiDescription,
-                        schemaRepository,
-                        fromFormParameters,
-                        [contentType])
-                        .Content[contentType];
+                            apiDescription,
+                            schemaRepository,
+                            fromFormParameters,
+                            [contentType]).Content[contentType];
 
                         contentTypeValue.Schema = generatedRequestBody.Schema;
                         contentTypeValue.Encoding = generatedRequestBody.Encoding;
