@@ -71,7 +71,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// One or more Swagger JSON endpoints (url and name) to power the UI
         /// </summary>
         [JsonPropertyName("urls")]
-        public IEnumerable<UrlDescriptor> Urls { get; set; } = null;
+        public IEnumerable<UrlDescriptor> Urls { get; set; } = Enumerable.Empty<UrlDescriptor>();
 
         /// <summary>
         /// If set to true, enables deep linking for tags and operations
