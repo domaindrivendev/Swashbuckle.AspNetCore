@@ -445,7 +445,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     }
                     else
                     {
-                        bodyParameterDescription =  apiDescription.ParameterDescriptions.Single(desc => desc.IsFromBody());
+                        bodyParameterDescription = apiDescription.ParameterDescriptions.Single(desc => desc.IsFromBody());
                         if (bodyParameterDescription is not null)
                         {
                             contentTypeValue.Schema = GenerateSchema(
@@ -458,7 +458,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                     if (fromFormParametersCount > 0 || bodyParameterDescription is not null)
                     {
-
                         var filterContext = new RequestBodyFilterContext(
                             bodyParameterDescription: bodyParameterDescription,
                             formParameterDescriptions: bodyParameterDescription is null ? fromFormParameters : null,
