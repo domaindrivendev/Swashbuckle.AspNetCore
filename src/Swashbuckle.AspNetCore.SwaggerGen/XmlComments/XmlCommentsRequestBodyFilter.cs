@@ -63,7 +63,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     foreach (var item in requestBody.Content.Values)
                     {
                         if (item?.Schema?.Properties is { } properties
-                           && (properties.TryGetValue(formParameter.Name, out var value) || properties.TryGetValue(formParameter.Name.ToCamelCase(), out value)))
+                           && (properties.TryGetValue(formParameter.Name, out var value) || properties.TryGetValue(formParameter.Name.ToCamelCase(), out value))
+                           && string.IsNullOrEmpty(value.Description))
                         {
                             var (summary, example) = GetParamTags(parameterFromForm);
                             value.Description = summary;

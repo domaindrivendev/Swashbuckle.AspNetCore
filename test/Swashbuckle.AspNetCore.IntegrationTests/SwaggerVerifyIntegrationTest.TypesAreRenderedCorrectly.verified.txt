@@ -145,6 +145,7 @@
                 "properties": {
                   "file": {
                     "type": "string",
+                    "description": "Description for File",
                     "format": "binary"
                   },
                   "tags": {
