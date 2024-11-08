@@ -170,8 +170,6 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                             string.Equals(p.Name, jsonProperty.PropertyName, StringComparison.OrdinalIgnoreCase);
                     });
 
-
-
                 dataProperties.Add(
                     new DataProperty(
                         name: jsonProperty.PropertyName,
