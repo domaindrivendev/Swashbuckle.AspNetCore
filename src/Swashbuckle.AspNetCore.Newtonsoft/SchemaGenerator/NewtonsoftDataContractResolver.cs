@@ -151,8 +151,8 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
             foreach (var jsonProperty in jsonObjectContract.Properties)
             {
-                jsonProperty.TryGetMemberInfo(out MemberInfo memberInfo);
-                if (jsonProperty.Ignored || (memberInfo?.CustomAttributes?.Any(t => t.AttributeType == typeof(SwaggerIgnoreAttribute)) ?? false))
+                bool memberInfoIsObtained = jsonProperty.TryGetMemberInfo(out MemberInfo memberInfo);
+                if (jsonProperty.Ignored || (memberInfoIsObtained && memberInfo.CustomAttributes.Any(t => t.AttributeType == typeof(SwaggerIgnoreAttribute))))
                 {
                     continue;
                 }
