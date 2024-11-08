@@ -427,7 +427,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 foreach (var contentType in requestContentTypes)
                 {
-                    var contentTypeValue = operation.RequestBody?.Content[contentType];
+                    var contentTypeValue = operation.RequestBody.Content[contentType];
                     var fromFormParameters = apiDescription.ParameterDescriptions.Where(desc => desc.IsFromForm());
                     var fromFormParametersCount = fromFormParameters.Count();
                     ApiParameterDescription bodyParameterDescription = null;
