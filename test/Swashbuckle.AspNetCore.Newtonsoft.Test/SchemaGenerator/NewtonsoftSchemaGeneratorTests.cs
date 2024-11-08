@@ -16,6 +16,7 @@ using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.TestSupport;
 using Xunit;
+using Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures;
 
 namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 {
@@ -826,6 +827,22 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.True(schema.AdditionalPropertiesAllowed);
             Assert.NotNull(schema.AdditionalProperties);
             Assert.Null(schema.AdditionalProperties.Type);
+        }
+
+        [Fact]
+        public void GenerateSchema_HonorsAttribute_SwaggerIgnore()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(typeof(SwaggerIngoreAnnotatedType), schemaRepository);
+
+            var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+
+            Assert.True(schema.Properties.ContainsKey(nameof(SwaggerIngoreAnnotatedType.NotIgnoredString)));
+            Assert.False(schema.Properties.ContainsKey(nameof(SwaggerIngoreAnnotatedType.IgnoredString)));
+            Assert.False(schema.Properties.ContainsKey(nameof(SwaggerIngoreAnnotatedType.IgnoredExtensionData)));
+            Assert.False(schema.AdditionalPropertiesAllowed);
+            Assert.Null(schema.AdditionalProperties);
         }
 
         [Fact]

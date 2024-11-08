@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Swashbuckle.AspNetCore.Newtonsoft\Swashbuckle.AspNetCore.Newtonsoft.csproj" />
+    <ProjectReference Include="..\Swashbuckle.AspNetCore.SwaggerGen.Test\Swashbuckle.AspNetCore.SwaggerGen.Test.csproj" />
     <ProjectReference Include="..\Swashbuckle.AspNetCore.TestSupport\Swashbuckle.AspNetCore.TestSupport.csproj" />
   </ItemGroup>
 
