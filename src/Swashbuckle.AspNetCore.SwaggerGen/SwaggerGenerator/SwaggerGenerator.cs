@@ -439,6 +439,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         fromFormParameters,
                         [contentType])
                         .Content[contentType];
+
                         contentTypeValue.Schema = generatedRequestBody.Schema;
                         contentTypeValue.Encoding = generatedRequestBody.Encoding;
                     }
@@ -872,7 +873,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (ownSchemas.Count > 0)
             {
-                bool isAllOf = ownSchemas.Count > 1 || (ownSchemas.Count >= 1 && properties.Count >= 1);
+                bool isAllOf = ownSchemas.Count > 1 || (ownSchemas.Count > 0 && properties.Count > 0);
                 if (isAllOf)
                 {
                     var allOfSchema = new OpenApiSchema()
