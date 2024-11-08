@@ -853,7 +853,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         formParameter.ParameterInfo())
                     : new OpenApiSchema { Type = "string" };
 
-                    if (IsFormParameterProperty(formParameter, schema))
+                    if (schema.Reference is null
+                    || (formParameter.Type is not null && (Nullable.GetUnderlyingType(formParameter.Type) ?? formParameter.Type).IsEnum))
                     {
                         var name = _options.DescribeAllParametersInCamelCase
                             ? formParameter.Name.ToCamelCase()
@@ -898,16 +899,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                      Properties = properties,
                      Required = new SortedSet<string>(requiredPropertyNames)
                  };
-        }
-
-        private static bool IsFormParameterProperty(ApiParameterDescription apiParameterDescription, OpenApiSchema generatedSchema)
-        {
-            if (generatedSchema.Reference is null
-                || (apiParameterDescription.Type is not null && (Nullable.GetUnderlyingType(apiParameterDescription.Type) ?? apiParameterDescription.Type).IsEnum))
-            {
-                return true;
-            }
-            return false;
         }
 
         private OpenApiResponses GenerateResponses(
