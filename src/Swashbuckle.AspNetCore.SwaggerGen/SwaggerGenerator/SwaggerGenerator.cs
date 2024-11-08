@@ -811,8 +811,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var schema = GenerateSchemaFromFormParameters(formParameters, schemaRepository);
 
             var totalProperties = schema.AllOf
-                    ?.FirstOrDefault(s => s.Properties.Count > 0)
-                    ?.Properties ?? schema.Properties;
+                ?.FirstOrDefault(s => s.Properties.Count > 0)
+                ?.Properties ?? schema.Properties;
 
             return new OpenApiRequestBody
             {
