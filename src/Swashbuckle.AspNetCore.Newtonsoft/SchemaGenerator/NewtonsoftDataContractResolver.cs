@@ -5,6 +5,7 @@ using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
+using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Newtonsoft
@@ -150,8 +151,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
 
             foreach (var jsonProperty in jsonObjectContract.Properties)
             {
-                if (jsonProperty.Ignored) continue;
-
+                jsonProperty.TryGetMemberInfo(out MemberInfo memberInfo);
+                if (jsonProperty.Ignored || memberInfo.CustomAttributes.Any(t => t.AttributeType == typeof(SwaggerIgnoreAttribute)))
+                {
+                    continue;
+                }
                 var required = jsonProperty.IsRequiredSpecified()
                     ? jsonProperty.Required
                     : jsonObjectContract.ItemRequired ?? Required.Default;
@@ -166,7 +170,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft
                             string.Equals(p.Name, jsonProperty.PropertyName, StringComparison.OrdinalIgnoreCase);
                     });
 
-                jsonProperty.TryGetMemberInfo(out MemberInfo memberInfo);
+
 
                 dataProperties.Add(
                     new DataProperty(
