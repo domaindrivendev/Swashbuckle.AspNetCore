@@ -428,10 +428,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 foreach (var contentType in requestContentTypes)
                 {
                     var contentTypeValue = operation.RequestBody.Content[contentType];
-                    var fromFormParameters = apiDescription.ParameterDescriptions.Where(desc => desc.IsFromForm());
-                    var fromFormParametersCount = fromFormParameters.Count();
+                    var fromFormParameters = apiDescription.ParameterDescriptions.Where(desc => desc.IsFromForm()).ToList();
                     ApiParameterDescription bodyParameterDescription = null;
-                    if (fromFormParametersCount > 0)
+                    if (fromFormParameters.Count > 0)
                     {
                         var generatedContentTypeValue = GenerateRequestBodyFromFormParameters(
                             apiDescription,
@@ -455,7 +454,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         }
                     }
 
-                    if (fromFormParametersCount > 0 || bodyParameterDescription is not null)
+                    if (fromFormParameters.Count > 0 || bodyParameterDescription is not null)
                     {
                         var filterContext = new RequestBodyFilterContext(
                             bodyParameterDescription: bodyParameterDescription,
@@ -1059,6 +1058,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             new KeyValuePair<string, string>("default", "Error")
         ];
+
 #if NET7_0_OR_GREATER
         private static string GenerateSummary(ApiDescription apiDescription) =>
             apiDescription.ActionDescriptor?.EndpointMetadata

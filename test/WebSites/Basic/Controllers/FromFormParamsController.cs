@@ -29,6 +29,7 @@ namespace Basic.Controllers
         {
             throw new System.NotImplementedException();
         }
+
         /// <summary>
         /// Form parameters with description
         /// </summary>
@@ -70,6 +71,7 @@ namespace Basic.Controllers
         /// Sumary for PhoneNumbers
         /// </summary>
         public IEnumerable<int> PhoneNumbers { get; set; }
+
         /// <summary>
         /// Summary for LogLevel
         /// </summary>
