@@ -659,31 +659,20 @@
           "content": {
             "multipart/form-data": {
               "schema": {
-                "allOf": [
-                  {
-                    "required": [
-                      "file"
-                    ],
-                    "type": "object",
-                    "properties": {
-                      "file": {
-                        "type": "string",
-                        "format": "binary"
-                      }
-                    }
+                "required": [
+                  "file",
+                  "tags"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
                   },
-                  {
-                    "required": [
-                      "tags"
-                    ],
-                    "type": "object",
-                    "properties": {
-                      "tags": {
-                        "type": "string"
-                      }
-                    }
+                  "tags": {
+                    "type": "string"
                   }
-                ]
+                }
               },
               "encoding": {
                 "file": {
@@ -720,31 +709,20 @@
           "content": {
             "multipart/form-data": {
               "schema": {
-                "allOf": [
-                  {
-                    "required": [
-                      "file"
-                    ],
-                    "type": "object",
-                    "properties": {
-                      "file": {
-                        "type": "string",
-                        "format": "binary"
-                      }
-                    }
+                "required": [
+                  "dateTimeKind",
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
                   },
-                  {
-                    "required": [
-                      "dateTimeKind"
-                    ],
-                    "type": "object",
-                    "properties": {
-                      "dateTimeKind": {
-                        "$ref": "#/components/schemas/DateTimeKind"
-                      }
-                    }
+                  "dateTimeKind": {
+                    "$ref": "#/components/schemas/DateTimeKind"
                   }
-                ]
+                }
               },
               "encoding": {
                 "file": {
