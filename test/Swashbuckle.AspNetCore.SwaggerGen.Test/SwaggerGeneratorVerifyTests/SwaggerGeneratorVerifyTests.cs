@@ -1105,6 +1105,69 @@ public class SwaggerGeneratorVerifyTests
     }
 
     [Fact]
+    public Task GetSwagger_Works_As_Expected_When_FromFormObject()
+    {
+        var subject = Subject(
+            apiDescriptions:
+            [
+               ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionHavingFromFormAttributeWithSwaggerIgnore),
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions:
+                        [
+                            new ApiParameterDescription
+                            {
+                                Name = "param1",
+                                Source = BindingSource.Form,
+                                Type = typeof(SwaggerIngoreAnnotatedType),
+                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(SwaggerIngoreAnnotatedType))
+                            }
+                        ])
+            ]
+        );
+        var document = subject.GetSwagger("v1");
+
+        return Verifier.Verify(document);
+    }
+
+    [Fact]
+    public Task GetSwagger_Works_As_Expected_When_FromFormObject_AndString()
+    {
+        var subject = Subject(
+            apiDescriptions:
+            [
+               ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionHavingFromFormObjectAndString),
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions:
+                        [
+                            new ApiParameterDescription
+                            {
+                                Name = "param1",
+                                Source = BindingSource.Form,
+                                Type = typeof(SwaggerIngoreAnnotatedType),
+                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(SwaggerIngoreAnnotatedType))
+                            },
+                            new ApiParameterDescription
+                            {
+                                Name = "param2",
+                                Source = BindingSource.Form,
+                                Type = typeof(string),
+                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(string))
+                            }
+                        ])
+            ]
+        );
+        var document = subject.GetSwagger("v1");
+
+        return Verifier.Verify(document);
+    }
+
+    [Fact]
     public Task GetSwagger_Works_As_Expected_When_TypeIsEnum_AndModelMetadataTypeIsString()
     {
         var subject = Subject(

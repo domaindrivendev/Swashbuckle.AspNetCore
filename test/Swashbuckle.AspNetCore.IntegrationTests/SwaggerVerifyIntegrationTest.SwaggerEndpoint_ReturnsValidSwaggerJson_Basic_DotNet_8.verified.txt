@@ -665,6 +665,66 @@
         x-purpose: test
       }
     },
+    /registrationsWithEnumParameter: {
+      post: {
+        tags: [
+          FromFormParams
+        ],
+        summary: Form parameters with description,
+        requestBody: {
+          content: {
+            multipart/form-data: {
+              schema: {
+                allOf: [
+                  null,
+                  null,
+                  {
+                    type: object,
+                    properties: {
+                      name: {
+                        type: string,
+                        description: Summary for Name,
+                        example: MyName
+                      },
+                      phoneNumbers: {
+                        type: array,
+                        items: {
+                          type: integer,
+                          format: int32
+                        },
+                        description: Sumary for PhoneNumbers
+                      },
+                      formFile: {
+                        type: string,
+                        format: binary
+                      }
+                    }
+                  }
+                ]
+              },
+              encoding: {
+                name: {
+                  style: form
+                },
+                phoneNumbers: {
+                  style: form
+                },
+                formFile: {
+                  style: form
+                }
+              }
+            }
+          },
+          x-purpose: test
+        },
+        responses: {
+          200: {
+            description: OK
+          }
+        },
+        x-purpose: test
+      }
+    },
     /country/validate: {
       get: {
         tags: [
@@ -1283,12 +1343,34 @@
         },
         additionalProperties: false
       },
+      DateTimeKind: {
+        enum: [
+          0,
+          1,
+          2
+        ],
+        type: integer,
+        format: int32
+      },
       DiscountType: {
         enum: [
           Percentage,
           Amount
         ],
         type: string
+      },
+      LogLevel: {
+        enum: [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        type: integer,
+        format: int32
       },
       Order: {
         type: object,

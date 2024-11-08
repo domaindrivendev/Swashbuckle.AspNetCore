@@ -112,5 +112,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         { }
         public void ActionHavingEnum(IntEnum param1)
         { }
+        public void ActionHavingFromFormObjectAndString([FromForm] SwaggerIngoreAnnotatedType param1, [FromForm] string param2)
+        { }
     }
 }

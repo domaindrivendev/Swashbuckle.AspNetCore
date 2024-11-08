@@ -436,11 +436,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         if (countOfParameters == 1)
                         {
                             var requestParameter = requestParameters.First();
-                            content.Schema = GenerateSchemaIncludingFormFile(requestParameter, GenerateSchema(
+                            content.Schema = GetSchemaForFormParameter(requestParameter, GenerateSchema(
                                 requestParameter.ModelMetadata.ModelType,
                                 schemaRepository,
                                 requestParameter.PropertyInfo(),
-                                requestParameter.ParameterInfo()), content);
+                                requestParameter.ParameterInfo()), content, true, out _);
 
                             bodyParameterDescription = requestParameter.IsFromBody() ? requestParameter : null;
                         }
@@ -449,11 +449,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                             content.Schema = new OpenApiSchema()
                             {
                                 AllOf = requestParameters.Select(s =>
-                                    GenerateSchemaIncludingFormFile(s, GenerateSchema(
+                                    GetSchemaForFormParameter(s, GenerateSchema(
                                     s.ModelMetadata.ModelType,
                                     schemaRepository,
                                     s.PropertyInfo(),
-                                    s.ParameterInfo()), content))
+                                    s.ParameterInfo()), content, true, out _))
                                 .ToList()
                             };
                         }
@@ -474,25 +474,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                             filter.Apply(operation.RequestBody, filterContext);
                         }
                     }
-
-                    static OpenApiSchema GenerateSchemaIncludingFormFile(ApiParameterDescription apiParameterDescription, OpenApiSchema generatedSchema, OpenApiMediaType mediaType)
-                    {
-                        if (generatedSchema.Reference is null && apiParameterDescription.IsFromForm())
-                        {
-                            mediaType.Encoding.Add(apiParameterDescription.Name, new OpenApiEncoding { Style = ParameterStyle.Form });
-                            return new OpenApiSchema()
-                            {
-                                Type = "object",
-                                Properties = new Dictionary<string, OpenApiSchema>()
-                                {
-                                    [apiParameterDescription.Name] = generatedSchema
-                                },
-                                Required = apiParameterDescription.IsRequired ? new SortedSet<string>() { apiParameterDescription.Name } : null
-                            };
-                        }
-                        return generatedSchema;
-                    }
-
                 }
             }
 
@@ -826,6 +807,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var schema = GenerateSchemaFromFormParameters(formParameters, schemaRepository);
 
+            var totalProperties = schema.AllOf
+                    ?.FirstOrDefault(s => s.Properties.Count > 0)
+                    ?.Properties ?? schema.Properties;
+
             return new OpenApiRequestBody
             {
                 Content = contentTypes
@@ -834,7 +819,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         contentType => new OpenApiMediaType
                         {
                             Schema = schema,
-                            Encoding = schema.Properties.ToDictionary(
+                            Encoding = totalProperties.ToDictionary(
                                 entry => entry.Key,
                                 entry => new OpenApiEncoding { Style = ParameterStyle.Form }
                             )
@@ -849,13 +834,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var properties = new Dictionary<string, OpenApiSchema>();
             var requiredPropertyNames = new List<string>();
-
+            var ownSchemas = new List<OpenApiSchema>();
             foreach (var formParameter in formParameters)
             {
-                var name = _options.DescribeAllParametersInCamelCase
-                    ? formParameter.Name.ToCamelCase()
-                    : formParameter.Name;
-
                 var propertyInfo = formParameter.PropertyInfo();
                 if (!propertyInfo?.HasAttribute<SwaggerIgnoreAttribute>() ?? true)
                 {
@@ -867,19 +848,52 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         formParameter.ParameterInfo())
                     : new OpenApiSchema { Type = "string" };
 
-                    properties.Add(name, schema);
-
-                    if (formParameter.IsRequiredParameter())
-                        requiredPropertyNames.Add(name);
+                    GetSchemaForFormParameter(formParameter, schema, null, false, out bool isParameter);
+                    if (isParameter)
+                    {
+                        var name = _options.DescribeAllParametersInCamelCase
+                            ? formParameter.Name.ToCamelCase()
+                            : formParameter.Name;
+                        properties.Add(name, schema);
+                        if (formParameter.IsRequiredParameter())
+                        {
+                            requiredPropertyNames.Add(name);
+                        }
+                    }
+                    else
+                    {
+                        ownSchemas.Add(schema);
+                    }
                 }
             }
 
-            return new OpenApiSchema
+            if (ownSchemas.Count > 0)
             {
-                Type = "object",
-                Properties = properties,
-                Required = new SortedSet<string>(requiredPropertyNames)
-            };
+                bool isAllOf = ownSchemas.Count > 1 || (ownSchemas.Count >= 1 && properties.Count >= 1);
+                if (isAllOf)
+                {
+                    var allOfSchema = new OpenApiSchema()
+                    {
+                        AllOf = ownSchemas
+                    };
+                    if (properties.Count > 0)
+                    {
+                        allOfSchema.AllOf.Add(GenerateSchemaForProperties(properties, requiredPropertyNames));
+                    }
+                    return allOfSchema;
+                }
+                return ownSchemas.First();
+            }
+
+            return GenerateSchemaForProperties(properties, requiredPropertyNames);
+
+            static OpenApiSchema GenerateSchemaForProperties(Dictionary<string, OpenApiSchema> properties, List<string> requiredPropertyNames) =>
+                 new()
+                 {
+                     Type = "object",
+                     Properties = properties,
+                     Required = new SortedSet<string>(requiredPropertyNames)
+                 };
         }
 
         private OpenApiResponses GenerateResponses(
@@ -1042,6 +1056,33 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             new KeyValuePair<string, string>("default", "Error")
         ];
+
+        private OpenApiSchema GetSchemaForFormParameter(ApiParameterDescription apiParameterDescription, OpenApiSchema generatedSchema, OpenApiMediaType mediaType, bool modifySchema, out bool isParameter)
+        {
+            isParameter = false;
+            if (apiParameterDescription.IsFromForm() && (generatedSchema.Reference is null
+                || (apiParameterDescription.Type is not null && (Nullable.GetUnderlyingType(apiParameterDescription.Type) ?? apiParameterDescription.Type).IsEnum)))
+            {
+                isParameter = true;
+                if (modifySchema)
+                {
+                    var name = _options.DescribeAllParametersInCamelCase
+                    ? apiParameterDescription.Name.ToCamelCase()
+                    : apiParameterDescription.Name;
+                    mediaType.Encoding.Add(apiParameterDescription.Name, new OpenApiEncoding { Style = ParameterStyle.Form });
+                    return new OpenApiSchema()
+                    {
+                        Type = "object",
+                        Properties = new Dictionary<string, OpenApiSchema>()
+                        {
+                            [name] = generatedSchema
+                        },
+                        Required = apiParameterDescription.IsRequiredParameter() ? new SortedSet<string>() { name } : null
+                    };
+                }
+            }
+            return generatedSchema;
+        }
 
 #if NET7_0_OR_GREATER
         private static string GenerateSummary(ApiDescription apiDescription) =>
