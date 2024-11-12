@@ -66,10 +66,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                            && (properties.TryGetValue(formParameter.Name, out var value) || properties.TryGetValue(formParameter.Name.ToCamelCase(), out value)))
                         {
                             var (summary, example) = GetParamTags(parameterFromForm);
-                            value.Description = summary;
+                            value.Description ??= summary;
                             if (!string.IsNullOrEmpty(example))
                             {
-                                value.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, value, example);
+                                value.Example ??= XmlCommentsExampleHelper.Create(context.SchemaRepository, value, example);
                             }
                         }
                     }

@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace Basic.Controllers
@@ -27,6 +29,20 @@ namespace Basic.Controllers
         {
             throw new System.NotImplementedException();
         }
+
+        /// <summary>
+        /// Form parameters with description
+        /// </summary>
+        /// <param name="form">Description for whole object</param>
+        /// <param name="formFile">Description for file</param>
+        /// <param name="dateTimeKind">Description for dateTimeKind</param>
+        /// <returns></returns>
+        /// <exception cref="System.NotImplementedException"></exception>
+        [HttpPost("registrationsWithEnumParameter")]
+        public IActionResult PostFormWithEnumParameter([FromForm] RegistrationFormWithEnum form, IFormFile formFile, [FromForm] DateTimeKind dateTimeKind)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 
     public class RegistrationForm
@@ -41,6 +57,25 @@ namespace Basic.Controllers
         /// Sumary for PhoneNumbers
         /// </summary>
         public IEnumerable<int> PhoneNumbers { get; set; }
+    }
+
+    public class RegistrationFormWithEnum
+    {
+        /// <summary>
+        /// Summary for Name
+        /// </summary>
+        /// <example>MyName</example>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Sumary for PhoneNumbers
+        /// </summary>
+        public IEnumerable<int> PhoneNumbers { get; set; }
+
+        /// <summary>
+        /// Summary for LogLevel
+        /// </summary>
+        public LogLevel LogLevel { get; set; }
     }
 
     public class RegistrationFormWithIgnoredProperties

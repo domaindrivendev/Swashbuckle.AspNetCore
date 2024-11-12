@@ -70,6 +70,16 @@ namespace WebApi.EndPoints
                 return $"{file.FileName}{tags}";
             }).WithOpenApi();
 
+            group.MapPost("/IFromFileAndEnum", (IFormFile file, [FromForm] DateTimeKind dateTimeKind) =>
+            {
+                return $"{file.FileName}{dateTimeKind}";
+            }).WithOpenApi();
+
+            group.MapPost("/IFromObjectAndString", ([FromForm] Person person, [FromForm] string tags) =>
+            {
+                return $"{person}{tags}";
+            }).WithOpenApi();
+
             app.MapGet("/TypeWithTryParse/{tryParse}", (TypeWithTryParse tryParse) =>
             {
                 return tryParse.Name;
