@@ -20,18 +20,10 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <NeutralLanguage>en-US</NeutralLanguage>
     <!--
-    TODO Remove deprecated TFMs
-    -->
-    <CheckEolTargetFramework>false</CheckEolTargetFramework>
-    <NoWarn>$(NoWarn);NETSDK1138</NoWarn>
-    <!--
-    TODO Update packages to resolve vulnerability warnings
-    -->
-    <NoWarn>$(NoWarn);NU1902;NU1903</NoWarn>
-    <!--
     TODO Fix warning from Swashbuckle.AspNetCore with dotnet pack
     -->
     <NoWarn>$(NoWarn);NU5128</NoWarn>
+    <NuGetAuditMode>direct</NuGetAuditMode>
     <!--
     TODO Go through the code and add nullable annotations
     <Nullable>enable</Nullable>
@@ -49,7 +41,7 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <UseArtifactsOutput>true</UseArtifactsOutput>
-    <VersionPrefix>6.9.1</VersionPrefix>
+    <VersionPrefix>7.0.0</VersionPrefix>
     <WarnOnPackingNonPackableProject>false</WarnOnPackingNonPackableProject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(GITHUB_ACTIONS)' != '' ">

@@ -5,7 +5,7 @@
     <NoWarn>$(NoWarn);CA1050</NoWarn>
     <Nullable>enable</Nullable>
     <RootNamespace>WebApi</RootNamespace>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +15,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))">
+    <PackageReference Update="Microsoft.AspNetCore.OpenApi" VersionOverride="9.0.0" />
   </ItemGroup>
 
 </Project>
