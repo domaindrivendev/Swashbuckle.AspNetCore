@@ -23,15 +23,15 @@
     <PackageVersion Include="Microsoft.Extensions.FileProviders.Embedded" Version="2.1.0" />
     <PackageVersion Include="Microsoft.OpenApi" Version="1.6.22" />
     <PackageVersion Include="Microsoft.OpenApi.Readers" Version="1.6.22" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.10.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageVersion Include="NSubstitute" Version="5.1.0" />
+    <PackageVersion Include="NSubstitute" Version="5.3.0" />
     <PackageVersion Include="NSwag.MSBuild" Version="14.1.0" />
-    <PackageVersion Include="ReportGenerator" Version="5.3.8" />
+    <PackageVersion Include="ReportGenerator" Version="5.4.1" />
     <PackageVersion Include="System.Text.Json" Version="4.6.0" />
-    <PackageVersion Include="Verify.Xunit" Version="26.1.6" />
-    <PackageVersion Include="xunit" Version="2.9.0" />
-    <PackageVersion Include="xunit.core" Version="2.9.0" />
+    <PackageVersion Include="Verify.Xunit" Version="28.2.1" />
+    <PackageVersion Include="xunit" Version="2.9.2" />
+    <PackageVersion Include="xunit.core" Version="2.9.2" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
   </ItemGroup>
 </Project>
