@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -998,6 +998,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         [
             new KeyValuePair<string, string>("100", "Continue"),
             new KeyValuePair<string, string>("101", "Switching Protocols"),
+            new KeyValuePair<string, string>("102", "Processing"),
+            new KeyValuePair<string, string>("103", "Early Hints"),
             new KeyValuePair<string, string>("1\\d{2}", "Information"),
 
             new KeyValuePair<string, string>("200", "OK"),
@@ -1007,6 +1009,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             new KeyValuePair<string, string>("204", "No Content"),
             new KeyValuePair<string, string>("205", "Reset Content"),
             new KeyValuePair<string, string>("206", "Partial Content"),
+            new KeyValuePair<string, string>("207", "Multi-Status "),
+            new KeyValuePair<string, string>("208", "Already Reported"),
+            new KeyValuePair<string, string>("226", "IM Used"),
             new KeyValuePair<string, string>("2\\d{2}", "Success"),
 
             new KeyValuePair<string, string>("300", "Multiple Choices"),
@@ -1037,10 +1042,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             new KeyValuePair<string, string>("415", "Unsupported Media Type"),
             new KeyValuePair<string, string>("416", "Range Not Satisfiable"),
             new KeyValuePair<string, string>("417", "Expectation Failed"),
+            new KeyValuePair<string, string>("418", "I'm a teapot"),
             new KeyValuePair<string, string>("421", "Misdirected Request"),
             new KeyValuePair<string, string>("422", "Unprocessable Content"),
             new KeyValuePair<string, string>("423", "Locked"),
             new KeyValuePair<string, string>("424", "Failed Dependency"),
+            new KeyValuePair<string, string>("425", "Too Early"),
             new KeyValuePair<string, string>("426", "Upgrade Required"),
             new KeyValuePair<string, string>("428", "Precondition Required"),
             new KeyValuePair<string, string>("429", "Too Many Requests"),
@@ -1054,6 +1061,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             new KeyValuePair<string, string>("503", "Service Unavailable"),
             new KeyValuePair<string, string>("504", "Gateway Timeout"),
             new KeyValuePair<string, string>("505", "HTTP Version Not Supported"),
+            new KeyValuePair<string, string>("506", "Variant Also Negotiates"),
+            new KeyValuePair<string, string>("507", "Insufficient Storage"),
+            new KeyValuePair<string, string>("508", "Loop Detected "),
+            new KeyValuePair<string, string>("510", "Not Extended"),
+            new KeyValuePair<string, string>("511", "Network Authentication Required"),
             new KeyValuePair<string, string>("5\\d{2}", "Server Error"),
 
             new KeyValuePair<string, string>("default", "Error")
