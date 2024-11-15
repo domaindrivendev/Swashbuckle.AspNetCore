@@ -44,7 +44,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 {
                     SwaggerDocs = new Dictionary<string, OpenApiInfo>
                     {
-                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" },
+                        ["v2"] = new OpenApiInfo { Version = "V2", Title = "Test API 2" },
                     }
                 }
             );
@@ -55,6 +56,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("Test API", document.Info.Title);
             Assert.Equal(new[] { "/resource" }, document.Paths.Keys.ToArray());
             Assert.Equal(new[] { OperationType.Post, OperationType.Get }, document.Paths["/resource"].Operations.Keys);
+            Assert.Equal(2, document.Paths["/resource"].Operations.Count);
+
+            var documentV2 = subject.GetSwagger("v2");
+            Assert.Equal("V2", documentV2.Info.Version);
+            Assert.Equal("Test API 2", documentV2.Info.Title);
+            Assert.Equal(new[] { "/resource" }, documentV2.Paths.Keys.ToArray());
+            Assert.Equal(new[] { OperationType.Post }, documentV2.Paths["/resource"].Operations.Keys);
+            Assert.Single(documentV2.Paths["/resource"].Operations);
         }
 
         [Theory]
@@ -1160,6 +1169,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.Equal(new[] { "/resource" }, document.Paths.Keys.ToArray());
             Assert.Equal(new[] { OperationType.Post }, document.Paths["/resource"].Operations.Keys);
+            Assert.Single(document.Paths["/resource"].Operations);
         }
 
         [Fact]
@@ -1190,6 +1200,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var document = subject.GetSwagger("v1");
 
             Assert.Equal(new[] { "/resource1", "/resource2", "/resource3" }, document.Paths.Keys.ToArray());
+            Assert.Single(document.Paths["/resource1"].Operations);
+            Assert.Single(document.Paths["/resource2"].Operations);
+            Assert.Single(document.Paths["/resource3"].Operations);
         }
 
         [Fact]
@@ -1316,6 +1329,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.Equal(new[] { "/resource" }, document.Paths.Keys.ToArray());
             Assert.Equal(new[] { OperationType.Post }, document.Paths["/resource"].Operations.Keys);
+            Assert.Single(document.Paths["/resource"].Operations);
         }
 
         [Theory]
@@ -2050,7 +2064,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var mediaType = operation.RequestBody.Content["multipart/form-data"];
             Assert.NotNull(mediaType.Schema);
             Assert.NotNull(mediaType.Schema.Reference);
-            Assert.Equal(typeof(SwaggerIngoreAnnotatedType).Name, mediaType.Schema.Reference.Id);
+            Assert.Equal(nameof(SwaggerIngoreAnnotatedType), mediaType.Schema.Reference.Id);
             Assert.Empty(mediaType.Encoding);
         }
 
@@ -2094,7 +2108,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.NotEmpty(mediaType.Schema.AllOf);
             Assert.Equal(2, mediaType.Schema.AllOf.Count);
             Assert.NotNull(mediaType.Schema.AllOf[0].Reference);
-            Assert.Equal(typeof(SwaggerIngoreAnnotatedType).Name, mediaType.Schema.AllOf[0].Reference.Id);
+            Assert.Equal(nameof(SwaggerIngoreAnnotatedType), mediaType.Schema.AllOf[0].Reference.Id);
             Assert.NotEmpty(mediaType.Schema.AllOf[1].Properties);
             Assert.Equal(["param2"], mediaType.Schema.AllOf[1].Properties.Keys);
             Assert.NotEmpty(mediaType.Encoding);
@@ -2130,7 +2144,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("param1", operation.Parameters[0].Name);
             Assert.NotNull(operation.Parameters[0].Schema);
             Assert.NotNull(operation.Parameters[0].Schema.Reference);
-            Assert.Equal(typeof(IntEnum).Name, operation.Parameters[0].Schema.Reference.Id);
+            Assert.Equal(nameof(IntEnum), operation.Parameters[0].Schema.Reference.Id);
         }
 
         [Fact]
