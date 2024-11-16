@@ -996,12 +996,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private static readonly IReadOnlyCollection<KeyValuePair<string, string>> ResponseDescriptionMap =
         [
+            // Informational responses
             new KeyValuePair<string, string>("100", "Continue"),
             new KeyValuePair<string, string>("101", "Switching Protocols"),
             new KeyValuePair<string, string>("102", "Processing"),
             new KeyValuePair<string, string>("103", "Early Hints"),
             new KeyValuePair<string, string>("1\\d{2}", "Information"),
 
+            // Successful responses
             new KeyValuePair<string, string>("200", "OK"),
             new KeyValuePair<string, string>("201", "Created"),
             new KeyValuePair<string, string>("202", "Accepted"),
@@ -1014,6 +1016,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             new KeyValuePair<string, string>("226", "IM Used"),
             new KeyValuePair<string, string>("2\\d{2}", "Success"),
 
+            // Redirection messages
             new KeyValuePair<string, string>("300", "Multiple Choices"),
             new KeyValuePair<string, string>("301", "Moved Permanently"),
             new KeyValuePair<string, string>("302", "Found"),
@@ -1024,6 +1027,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             new KeyValuePair<string, string>("308", "Permanent Redirect"),
             new KeyValuePair<string, string>("3\\d{2}", "Redirect"),
 
+            // Client error responses
             new KeyValuePair<string, string>("400", "Bad Request"),
             new KeyValuePair<string, string>("401", "Unauthorized"),
             new KeyValuePair<string, string>("402", "Payment Required"),
@@ -1055,6 +1059,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             new KeyValuePair<string, string>("451", "Unavailable For Legal Reasons"),
             new KeyValuePair<string, string>("4\\d{2}", "Client Error"),
 
+            // Server error responses
             new KeyValuePair<string, string>("500", "Internal Server Error"),
             new KeyValuePair<string, string>("501", "Not Implemented"),
             new KeyValuePair<string, string>("502", "Bad Gateway"),
