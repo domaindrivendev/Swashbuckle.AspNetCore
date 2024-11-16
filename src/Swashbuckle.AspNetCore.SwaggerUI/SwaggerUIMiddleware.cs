@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -69,8 +70,12 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             {
                 var path = httpContext.Request.Path.Value;
 
+                var routePrefix = _options.GetDynamicRoutePrefix is not null ?
+                                    _options.GetDynamicRoutePrefix(httpContext) :
+                                    _options.RoutePrefix;
+
                 // If the RoutePrefix is requested (with or without trailing slash), redirect to index URL
-                if (Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$", RegexOptions.IgnoreCase))
+                if (Regex.IsMatch(path, $"^/?{Regex.Escape(routePrefix)}/?$", RegexOptions.IgnoreCase))
                 {
                     // Use relative redirect to support proxy environments
                     var relativeIndexUrl = string.IsNullOrEmpty(path) || path.EndsWith("/")
@@ -81,7 +86,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
                     return;
                 }
 
-                var match = Regex.Match(path, $"^/{Regex.Escape(_options.RoutePrefix)}/?(index.(html|js))$", RegexOptions.IgnoreCase);
+                var match = Regex.Match(path, $"^/{Regex.Escape(routePrefix)}/?(index.(html|js))$", RegexOptions.IgnoreCase);
 
                 if (match.Success)
                 {
@@ -99,6 +104,8 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             ILoggerFactory loggerFactory,
             SwaggerUIOptions options)
         {
+            
+
             var staticFileOptions = new StaticFileOptions
             {
                 RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
