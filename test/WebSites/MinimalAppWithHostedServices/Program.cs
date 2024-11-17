@@ -33,7 +33,7 @@ class HostedService : IHostedService
     }
 }
 
-namespace MinimalAppWithHostedServices
+namespace MinimalAppHostedServ
 {
     /// <summary>
     /// Expose the Program class for use with <c>WebApplicationFactory</c>
