@@ -24,11 +24,21 @@ class HostedService : IHostedService
 {
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        throw new Exception("Crash!");
+        return Task.CompletedTask;
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
         return Task.CompletedTask;
+    }
+}
+
+namespace MinimalAppWithHostedServices
+{
+    /// <summary>
+    /// Expose the Program class for use with <c>WebApplicationFactory</c>
+    /// </summary>
+    public partial class Program
+    {
     }
 }

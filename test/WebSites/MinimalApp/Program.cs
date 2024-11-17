@@ -1,5 +1,3 @@
-using Microsoft.OpenApi.Models;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -25,3 +23,13 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+namespace MinimalApp
+{
+    /// <summary>
+    /// Expose the Program class for use with <c>WebApplicationFactory</c>
+    /// </summary>
+    public partial class Program
+    {
+    }
+}

@@ -37,10 +37,9 @@ app.Run();
 namespace WebApi
 {
     /// <summary>
-    /// Main class
+    /// Expose the Program class for use with <c>WebApplicationFactory</c>
     /// </summary>
     public partial class Program
     {
-        // Expose the Program class for use with WebApplicationFactory<T>
     }
 }

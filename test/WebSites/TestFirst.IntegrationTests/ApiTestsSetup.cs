@@ -14,10 +14,10 @@ namespace TestFirst.IntegrationTests
             Configure(c =>
             {
                 var apiDocsRoot = Path.Combine(GetSolutionRelativeContentRoot(Path.Combine("test", "WebSites", "TestFirst")), "wwwroot", "swagger");
-            
+
                 // This app demonstrates the two different workflows that can be used with this library ...
 
-                // 1) Import OpenAPI file(s) from elsewhere (e.g. created via http://editor.swagger.io) 
+                // 1) Import OpenAPI file(s) from elsewhere (e.g. created via http://editor.swagger.io)
                 c.AddOpenApiFile("v1-imported", $"{apiDocsRoot}/v1-imported/openapi.json");
 
                 // 2) Configure OpenApi document(s), add Operation descriptions with tests, and generate files after test run

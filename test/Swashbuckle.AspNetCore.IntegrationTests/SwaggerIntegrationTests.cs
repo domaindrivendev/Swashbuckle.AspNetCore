@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
@@ -21,6 +21,8 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         [Theory]
         [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(CliExample.Startup), "/swagger/v1/swagger_net8.0.json")]
+        // TODO: FIXME: CliExampleWithFactory project is not working
+        //[InlineData(typeof(CliExampleWithFactory.Startup), "/swagger/v1/swagger_net8.0.json")]
         [InlineData(typeof(ConfigFromFile.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(CustomUIConfig.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(CustomUIIndex.Startup), "/swagger/v1/swagger.json")]
@@ -115,19 +117,17 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 
 #if NET8_0_OR_GREATER
         [Theory]
-        [InlineData("/swagger/v1/swagger.json")]
-        public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_For_WebApi(
+        [InlineData(typeof(MinimalApp.Program), "/swagger/v1/swagger.json")]
+        [InlineData(typeof(MinimalAppWithHostedServices.Program), "/swagger/v1/swagger.json")]
+        [InlineData(typeof(MvcWithNullable.Program), "/swagger/v1/swagger.json")]
+        [InlineData(typeof(TopLevelSwaggerDoc.Program), "/swagger/v1.json")]
+        [InlineData(typeof(WebApi.Program), "/swagger/v1/swagger.json")]
+        [InlineData(typeof(WebApi.Aot.Program), "/swagger/v1/swagger.json")]
+        public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_Without_Startup(
+            Type entryPointType,
             string swaggerRequestUri)
         {
-            await SwaggerEndpointReturnsValidSwaggerJson<WebApi.Program>(swaggerRequestUri);
-        }
-
-        [Theory]
-        [InlineData("/swagger/v1/swagger.json")]
-        public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_For_Mvc(
-            string swaggerRequestUri)
-        {
-            await SwaggerEndpointReturnsValidSwaggerJson<MvcWithNullable.Program>(swaggerRequestUri);
+            await SwaggerEndpointReturnsValidSwaggerJson(entryPointType, swaggerRequestUri);
         }
 
         [Fact]
@@ -162,11 +162,11 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             ]);
         }
 
-        private static async Task SwaggerEndpointReturnsValidSwaggerJson<TEntryPoint>(string swaggerRequestUri)
-            where TEntryPoint : class
+        private static async Task SwaggerEndpointReturnsValidSwaggerJson(Type entryPointType, string swaggerRequestUri)
         {
-            using var application = new TestApplication<TEntryPoint>();
-            using var client = application.CreateDefaultClient();
+            using var application = (dynamic)Activator.CreateInstance(typeof(TestApplication<>).MakeGenericType(entryPointType));
+            Assert.NotNull(application);
+            using var client = application!.CreateDefaultClient();
 
             await AssertValidSwaggerJson(client, swaggerRequestUri);
         }
