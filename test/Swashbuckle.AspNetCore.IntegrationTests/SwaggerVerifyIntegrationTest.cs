@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -12,13 +12,18 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
     public partial class SwaggerVerifyIntegrationTest
     {
         [Theory]
+#if !NET6_0
+        [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
+#endif
         [InlineData(typeof(CliExample.Startup), "/swagger/v1/swagger_net8.0.json")]
         [InlineData(typeof(ConfigFromFile.Startup), "/swagger/v1/swagger.json")]
+        [InlineData(typeof(CustomDocumentSerializer.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(CustomUIConfig.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(CustomUIIndex.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(GenericControllers.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(MultipleVersions.Startup), "/swagger/1.0/swagger.json")]
         [InlineData(typeof(MultipleVersions.Startup), "/swagger/2.0/swagger.json")]
+        [InlineData(typeof(NSwagClientExample.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(OAuth2Integration.Startup), "/resource-server/swagger/v1/swagger.json")]
         [InlineData(typeof(ReDocApp.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(TestFirst.Startup), "/swagger/v1-generated/openapi.json")]

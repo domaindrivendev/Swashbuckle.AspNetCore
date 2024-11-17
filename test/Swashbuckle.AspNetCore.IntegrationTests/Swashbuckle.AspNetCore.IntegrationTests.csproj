@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)..\..\src\Swashbuckle.AspNetCore.Swagger\Swashbuckle.AspNetCore.Swagger.snk</AssemblyOriginatorKeyFile>
@@ -16,6 +16,7 @@
     <ProjectReference Include="..\WebSites\CustomUIIndex\CustomUIIndex.csproj" />
     <ProjectReference Include="..\WebSites\GenericControllers\GenericControllers.csproj" />
     <ProjectReference Include="..\WebSites\MultipleVersions\MultipleVersions.csproj" />
+    <ProjectReference Include="..\WebSites\NswagClientExample\NswagClientExample.csproj" />
     <ProjectReference Include="..\WebSites\OAuth2Integration\OAuth2Integration.csproj" />
     <ProjectReference Include="..\WebSites\ReDoc\ReDoc.csproj" />
     <ProjectReference Include="..\WebSites\TestFirst\TestFirst.csproj" />
