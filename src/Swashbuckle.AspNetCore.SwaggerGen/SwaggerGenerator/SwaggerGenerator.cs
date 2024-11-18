@@ -56,7 +56,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             swaggerDoc.Paths = await GeneratePathsAsync(filterContext.ApiDescriptions, filterContext.SchemaRepository);
             swaggerDoc.Components.SecuritySchemes = await GetSecuritySchemesAsync();
 
-            // NOTE: Filter processing moved here so they may effect generated security schemes
+            // NOTE: Filter processing moved here so they may affect generated security schemes
             foreach (var filter in _options.DocumentAsyncFilters)
             {
                 await filter.ApplyAsync(swaggerDoc, filterContext, CancellationToken.None);
@@ -81,7 +81,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 swaggerDoc.Paths = GeneratePaths(filterContext.ApiDescriptions, filterContext.SchemaRepository);
                 swaggerDoc.Components.SecuritySchemes = GetSecuritySchemesAsync().Result;
 
-                // NOTE: Filter processing moved here so they may effect generated security schemes
+                // NOTE: Filter processing moved here so they may affect generated security schemes
                 foreach (var filter in _options.DocumentFilters)
                 {
                     filter.Apply(swaggerDoc, filterContext);
@@ -199,7 +199,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var apiDescriptionsByPath = apiDescriptions
                 .OrderBy(_options.SortKeySelector)
-                .GroupBy(apiDesc => apiDesc.RelativePathSansParameterConstraints());
+                .GroupBy(_options.PathGroupingStrategy);
 
             var paths = new OpenApiPaths();
             foreach (var group in apiDescriptionsByPath)

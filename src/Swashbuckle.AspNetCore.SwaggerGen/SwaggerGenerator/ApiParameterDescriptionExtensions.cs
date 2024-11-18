@@ -72,9 +72,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var modelMetadata = apiParameter.ModelMetadata;
 
-            return (modelMetadata?.ContainerType != null)
-                ? modelMetadata.ContainerType.GetProperty(modelMetadata.PropertyName)
-                : null;
+            return modelMetadata?.ContainerType?.GetProperty(modelMetadata.PropertyName);
         }
 
         public static IEnumerable<object> CustomAttributes(this ApiParameterDescription apiParameter)
@@ -101,14 +99,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             parameterOrPropertyAttributes = apiParameter.CustomAttributes();
         }
 
+        internal static bool IsFromQuery(this ApiParameterDescription apiParameter)
+        {
+            return apiParameter.Source == BindingSource.Query;
+        }
+
         internal static bool IsFromPath(this ApiParameterDescription apiParameter)
         {
-            return (apiParameter.Source == BindingSource.Path);
+            return apiParameter.Source == BindingSource.Path;
         }
 
         internal static bool IsFromBody(this ApiParameterDescription apiParameter)
         {
-            return (apiParameter.Source == BindingSource.Body);
+            return apiParameter.Source == BindingSource.Body;
         }
 
         internal static bool IsFromForm(this ApiParameterDescription apiParameter)
