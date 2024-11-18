@@ -99,11 +99,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             parameterOrPropertyAttributes = apiParameter.CustomAttributes();
         }
 
-        internal static bool IsFromQuery(this ApiParameterDescription apiParameter)
-        {
-            return apiParameter.Source == BindingSource.Query;
-        }
-
         internal static bool IsFromPath(this ApiParameterDescription apiParameter)
         {
             return apiParameter.Source == BindingSource.Path;
