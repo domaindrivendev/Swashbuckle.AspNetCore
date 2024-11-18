@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
@@ -176,7 +176,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         {
             using var swaggerResponse = await client.GetAsync(swaggerRequestUri);
 
-            Assert.True(swaggerResponse.IsSuccessStatusCode, await swaggerResponse.Content.ReadAsStringAsync());
+            Assert.True(swaggerResponse.IsSuccessStatusCode, $"IsSuccessStatusCode is false. Response: '{await swaggerResponse.Content.ReadAsStringAsync()}'");
             using var contentStream = await swaggerResponse.Content.ReadAsStreamAsync();
             new OpenApiStreamReader().Read(contentStream, out OpenApiDiagnostic diagnostic);
             Assert.Empty(diagnostic.Errors);
