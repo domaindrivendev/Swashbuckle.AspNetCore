@@ -364,7 +364,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.False(schema.Properties["StringWithRequired"].Nullable);
             Assert.False(schema.Properties["StringWithRequiredAllowEmptyTrue"].Nullable);
             Assert.Null(schema.Properties["StringWithRequiredAllowEmptyTrue"].MinLength);
-            Assert.Equal(new[] { "StringWithRequired", "StringWithRequiredAllowEmptyTrue" }, schema.Required.ToArray());
+            Assert.Equal(["StringWithRequired", "StringWithRequiredAllowEmptyTrue"], schema.Required);
+            Assert.Equal("Description", schema.Properties[nameof(TypeWithValidationAttributes.StringWithDescription)].Description);
+            Assert.True(schema.Properties[nameof(TypeWithValidationAttributes.StringWithReadOnly)].ReadOnly);
         }
 
         [Fact]

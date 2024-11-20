@@ -972,6 +972,7 @@
         "properties": {
           "currencyFrom": {
             "type": "string",
+            "description": "Currency From",
             "nullable": true
           },
           "currencyTo": {
@@ -1017,6 +1018,10 @@
               "$ref": "#/components/schemas/CurrenciesRate"
             },
             "nullable": true
+          },
+          "isUpdated": {
+            "type": "boolean",
+            "readOnly": true
           }
         },
         "additionalProperties": false
