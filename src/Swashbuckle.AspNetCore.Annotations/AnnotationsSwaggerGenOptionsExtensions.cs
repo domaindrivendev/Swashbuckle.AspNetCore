@@ -105,16 +105,19 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static string AnnotationsDiscriminatorValueSelector(Type subType)
         {
-            if (subType.BaseType == null)
-                return null;
-
-            var subTypeAttribute = subType.BaseType.GetCustomAttributes(false)
-                .OfType<SwaggerSubTypeAttribute>()
-                .FirstOrDefault(attr => attr.SubType == subType);
-
-            if (subTypeAttribute != null)
+            var baseType = subType.BaseType;
+            while (baseType != null)
             {
-                return subTypeAttribute.DiscriminatorValue;
+                var subTypeAttribute = baseType.GetCustomAttributes(false)
+                    .OfType<SwaggerSubTypeAttribute>()
+                    .FirstOrDefault(attr => attr.SubType == subType);
+
+                if (subTypeAttribute != null)
+                {
+                    return subTypeAttribute.DiscriminatorValue;
+                }
+
+                baseType = baseType.BaseType;
             }
 
             return null;
