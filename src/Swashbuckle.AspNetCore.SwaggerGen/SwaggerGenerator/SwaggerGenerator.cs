@@ -851,7 +851,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     : new OpenApiSchema { Type = "string" };
 
                     if (schema.Reference is null
-                    || (formParameter.ModelMetadata.ModelType is not null && (Nullable.GetUnderlyingType(formParameter.ModelMetadata.ModelType) ?? formParameter.ModelMetadata.ModelType).IsEnum))
+                    || (formParameter.ModelMetadata?.ModelType is not null && (Nullable.GetUnderlyingType(formParameter.ModelMetadata.ModelType) ?? formParameter.ModelMetadata.ModelType).IsEnum))
                     {
                         var name = _options.DescribeAllParametersInCamelCase
                             ? formParameter.Name.ToCamelCase()
