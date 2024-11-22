@@ -738,7 +738,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             var referenceSchema = Subject().GenerateSchema(typeof(JsonIgnoreAnnotatedType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal(new[] { /* "StringWithJsonIgnore" */ "StringWithNoAnnotation" }, schema.Properties.Keys.ToArray());
+            Assert.Equal(["StringWithNoAnnotation"], schema.Properties.Keys);
         }
 
         [Fact]
@@ -750,8 +750,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal(
-                new[]
-                {
+                [
                     "string-with-json-property-name",
                     "IntWithRequiredDefault",
                     "StringWithRequiredDefault",
@@ -760,17 +759,16 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
                     "StringWithRequiredAllowNull",
                     "StringWithRequiredAlwaysButConflictingDataMember",
                     "StringWithRequiredDefaultButConflictingDataMember"
-                },
-                schema.Properties.Keys.ToArray()
+                ],
+                schema.Properties.Keys
             );
             Assert.Equal(
-                new[]
-                {
+                [
                     "StringWithRequiredAllowNull",
                     "StringWithRequiredAlways",
                     "StringWithRequiredAlwaysButConflictingDataMember"
-                },
-                schema.Required.ToArray()
+                ],
+                schema.Required
             );
             Assert.True(schema.Properties["string-with-json-property-name"].Nullable);
             Assert.False(schema.Properties["IntWithRequiredDefault"].Nullable);
@@ -803,14 +801,13 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal(
-                new[]
-                {
+                [
                     "StringWithDataMemberRequiredFalse",
                     "StringWithNoAnnotation",
                     "StringWithRequiredAllowNull",
                     "StringWithRequiredUnspecified"
-                },
-                schema.Required.ToArray()
+                ],
+                schema.Required
             );
             Assert.False(schema.Properties["StringWithNoAnnotation"].Nullable);
             Assert.False(schema.Properties["StringWithRequiredUnspecified"].Nullable);
@@ -863,24 +860,22 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.True(schema.Properties["NonRequiredWithCustomNameFromDataMember"].Nullable);
 
             Assert.Equal(
-                new[]
-                {
+                [
 
                     "StringWithDataMemberRequired",
                     "StringWithDataMemberNonRequired",
                     "RequiredWithCustomNameFromDataMember",
                     "NonRequiredWithCustomNameFromDataMember"
-                },
-                schema.Properties.Keys.ToArray()
+                ],
+                schema.Properties.Keys
             );
 
             Assert.Equal(
-                new[]
-                {
+                [
                     "RequiredWithCustomNameFromDataMember",
                     "StringWithDataMemberRequired"
-                },
-                schema.Required.ToArray()
+                ],
+                schema.Required
             );
         }
 
