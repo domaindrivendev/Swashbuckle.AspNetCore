@@ -16,6 +16,7 @@
     TODO Go through the code and tidy up the usings
     <ImplicitUsings>enable</ImplicitUsings>
     -->
+    <IncludeSymbols>true</IncludeSymbols>
     <LangVersion>latest</LangVersion>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <NeutralLanguage>en-US</NeutralLanguage>
