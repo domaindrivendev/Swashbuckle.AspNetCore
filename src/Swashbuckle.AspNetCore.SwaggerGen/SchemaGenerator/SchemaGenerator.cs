@@ -475,12 +475,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             baseTypeDataContract = null;
 
             var baseType = dataContract.UnderlyingType.BaseType;
+            while (baseType != null && baseType != typeof(object))
+            {
+                if (_generatorOptions.SubTypesSelector(baseType).Contains(dataContract.UnderlyingType))
+                {
+                    baseTypeDataContract = GetDataContractFor(baseType);
+                    return true;
+                }
 
-            if (baseType == null || baseType == typeof(object) || !_generatorOptions.SubTypesSelector(baseType).Contains(dataContract.UnderlyingType))
-                return false;
+                baseType = baseType.BaseType;
+            }
 
-            baseTypeDataContract = GetDataContractFor(baseType);
-            return true;
+            return false;
         }
 
         private bool TryGetDiscriminatorFor(

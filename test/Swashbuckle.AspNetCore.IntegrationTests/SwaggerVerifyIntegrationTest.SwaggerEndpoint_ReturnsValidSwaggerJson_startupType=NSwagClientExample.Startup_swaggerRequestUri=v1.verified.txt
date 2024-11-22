@@ -66,6 +66,69 @@
           }
         }
       }
+    },
+    "/SecondLevel": {
+      "post": {
+        "tags": [
+          "SecondLevel"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/SubSubType"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/SubSubType"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/SubSubType"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -96,6 +159,28 @@
         ],
         "type": "string"
       },
+      "BaseType": {
+        "required": [
+          "discriminator"
+        ],
+        "type": "object",
+        "properties": {
+          "discriminator": {
+            "type": "string"
+          },
+          "property": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "discriminator": {
+          "propertyName": "discriminator",
+          "mapping": {
+            "SubSubType": "#/components/schemas/SubSubType"
+          }
+        }
+      },
       "Cat": {
         "allOf": [
           {
@@ -122,6 +207,23 @@
             "type": "object",
             "properties": {
               "dogSpecificProperty": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "SubSubType": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseType"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "property2": {
                 "type": "string",
                 "nullable": true
               }

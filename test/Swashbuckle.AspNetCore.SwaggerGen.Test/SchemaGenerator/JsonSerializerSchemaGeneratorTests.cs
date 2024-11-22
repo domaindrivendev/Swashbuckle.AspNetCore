@@ -584,6 +584,29 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var schema = subject.GenerateSchema(typeof(BaseType), schemaRepository);
 
             Assert.Equal(new[] { "SubType1", "BaseType" }, schemaRepository.Schemas.Keys);
+
+            var subSchema = schemaRepository.Schemas["SubType1"];
+            Assert.NotNull(subSchema.AllOf);
+            Assert.Equal(2, subSchema.AllOf.Count);
+        }
+
+        [Fact]
+        public void GenerateSchema_SecondLevelInheritance_SubTypesSelector()
+        {
+            var subject = Subject(configureGenerator: c =>
+            {
+                c.UseAllOfForInheritance = true;
+                c.SubTypesSelector = (type) => type == typeof(BaseSecondLevelType) ? new[] { typeof(SubSubSecondLevelType) } : Array.Empty<Type>();
+            });
+            var schemaRepository = new SchemaRepository();
+
+            var schema = subject.GenerateSchema(typeof(BaseSecondLevelType), schemaRepository);
+
+            Assert.Equal(new[] { "SubSubSecondLevelType", "BaseSecondLevelType" }, schemaRepository.Schemas.Keys);
+
+            var subSchema = schemaRepository.Schemas["SubSubSecondLevelType"];
+            Assert.NotNull(subSchema.AllOf);
+            Assert.Equal(2, subSchema.AllOf.Count);
         }
 
         [Fact]
