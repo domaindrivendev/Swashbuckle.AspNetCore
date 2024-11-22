@@ -790,7 +790,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             var referenceSchema = Subject().GenerateSchema(typeof(JsonRequiredAnnotatedType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal(new[] { "StringWithConflictingRequired", "StringWithJsonRequired" }, schema.Required.ToArray());
+            Assert.Equal(["StringWithConflictingRequired", "StringWithJsonRequired"], schema.Required);
             Assert.False(schema.Properties["StringWithJsonRequired"].Nullable);
         }
 

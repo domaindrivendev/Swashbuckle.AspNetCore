@@ -245,7 +245,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private static void ApplyDescriptionAttribute(OpenApiSchema schema, DescriptionAttribute descriptionAttribute)
         {
-            schema.Description = descriptionAttribute.Description;
+            schema.Description ??= descriptionAttribute.Description;
         }
 
         private static void ApplyLengthRouteConstraint(OpenApiSchema schema, LengthRouteConstraint lengthRouteConstraint)
