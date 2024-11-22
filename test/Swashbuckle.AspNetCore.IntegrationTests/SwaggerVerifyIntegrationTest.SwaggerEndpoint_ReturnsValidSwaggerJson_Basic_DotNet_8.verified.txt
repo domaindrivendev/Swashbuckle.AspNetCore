@@ -675,32 +675,33 @@
           content: {
             multipart/form-data: {
               schema: {
-                allOf: [
-                  null,
-                  null,
-                  {
-                    type: object,
-                    properties: {
-                      name: {
-                        type: string,
-                        description: Summary for Name,
-                        example: MyName
-                      },
-                      phoneNumbers: {
-                        type: array,
-                        items: {
-                          type: integer,
-                          format: int32
-                        },
-                        description: Sumary for PhoneNumbers
-                      },
-                      formFile: {
-                        type: string,
-                        format: binary
-                      }
-                    }
+                type: object,
+                properties: {
+                  name: {
+                    type: string,
+                    description: Summary for Name,
+                    example: MyName
+                  },
+                  phoneNumbers: {
+                    type: array,
+                    items: {
+                      type: integer,
+                      format: int32
+                    },
+                    description: Sumary for PhoneNumbers
+                  },
+                  logLevel: {
+                    $ref: #/components/schemas/LogLevel
+                  },
+                  formFile: {
+                    type: string,
+                    description: Description for file,
+                    format: binary
+                  },
+                  dateTimeKind: {
+                    $ref: #/components/schemas/DateTimeKind
                   }
-                ]
+                }
               },
               encoding: {
                 name: {
@@ -709,7 +710,13 @@
                 phoneNumbers: {
                   style: form
                 },
+                logLevel: {
+                  style: form
+                },
                 formFile: {
+                  style: form
+                },
+                dateTimeKind: {
                   style: form
                 }
               }
