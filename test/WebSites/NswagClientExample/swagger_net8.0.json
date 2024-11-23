@@ -134,6 +134,38 @@
           }
         }
       }
+    },
+    "/SystemTextJsonAnimals": {
+      "post": {
+        "tags": [
+          "SystemTextJsonAnimals"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SystemTextJsonAnimal"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SystemTextJsonAnimal"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SystemTextJsonAnimal"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -180,7 +212,10 @@
         },
         "additionalProperties": false,
         "discriminator": {
-          "propertyName": "discriminator"
+          "propertyName": "discriminator",
+          "mapping": {
+            "SubSubType": "#/components/schemas/SubSubType"
+          }
         }
       },
       "Cat": {
@@ -233,6 +268,16 @@
             "additionalProperties": false
           }
         ]
+      },
+      "SystemTextJsonAnimal": {
+        "type": "object",
+        "properties": {
+          "animalType": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       }
     }
   }

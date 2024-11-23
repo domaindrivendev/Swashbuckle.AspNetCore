@@ -129,6 +129,68 @@
           }
         }
       }
+    },
+    "/SystemTextJsonAnimals": {
+      "post": {
+        "tags": [
+          "SystemTextJsonAnimals"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonAnimal"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonCat"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonDog"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonAnimal"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonCat"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonDog"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonAnimal"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonCat"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonDog"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -224,6 +286,60 @@
             "type": "object",
             "properties": {
               "property2": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "SystemTextJsonAnimal": {
+        "required": [
+          "animalType"
+        ],
+        "type": "object",
+        "properties": {
+          "animalType": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "discriminator": {
+          "propertyName": "animalType",
+          "mapping": {
+            "Cat": "#/components/schemas/SystemTextJsonCat",
+            "Dog": "#/components/schemas/SystemTextJsonDog"
+          }
+        }
+      },
+      "SystemTextJsonCat": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SystemTextJsonAnimal"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "catSpecificProperty": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "SystemTextJsonDog": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SystemTextJsonAnimal"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "dogSpecificProperty": {
                 "type": "string",
                 "nullable": true
               }
