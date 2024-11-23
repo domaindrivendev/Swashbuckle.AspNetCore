@@ -78,9 +78,10 @@ namespace Microsoft.Extensions.DependencyInjection
 
 #if NET7_0_OR_GREATER
             var jsonDerivedTypeAttributes = type.GetCustomAttributes(false)
-                .OfType<JsonDerivedTypeAttribute>().ToList();
+                .OfType<JsonDerivedTypeAttribute>()
+                .ToList();
 
-            if (jsonDerivedTypeAttributes.Any())
+            if (jsonDerivedTypeAttributes.Count > 0)
             {
                 return jsonDerivedTypeAttributes.Select(attr => attr.DerivedType);
             }
@@ -113,7 +114,8 @@ namespace Microsoft.Extensions.DependencyInjection
 
 #if NET7_0_OR_GREATER
             var jsonPolymorphicAttributes = baseType.GetCustomAttributes(false)
-                .OfType<JsonPolymorphicAttribute>().FirstOrDefault();
+                .OfType<JsonPolymorphicAttribute>()
+                .FirstOrDefault();
 
             if (jsonPolymorphicAttributes != null)
             {
