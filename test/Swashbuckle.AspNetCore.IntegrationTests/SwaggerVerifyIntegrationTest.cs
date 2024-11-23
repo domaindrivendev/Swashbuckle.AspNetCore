@@ -47,10 +47,10 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             Type startupType,
             string swaggerRequestUri)
         {
-            var testSite = new TestSite(typeof(Basic.Startup));
+            var testSite = new TestSite(startupType);
             using var client = testSite.BuildClient();
 
-            using var swaggerResponse = await client.GetAsync("/swagger/v1/swagger.json");
+            using var swaggerResponse = await client.GetAsync(swaggerRequestUri);
             var swagger = await swaggerResponse.Content.ReadAsStringAsync();
             await Verifier.Verify(swagger).UseParameters(startupType, GetVersion(swaggerRequestUri));
         }

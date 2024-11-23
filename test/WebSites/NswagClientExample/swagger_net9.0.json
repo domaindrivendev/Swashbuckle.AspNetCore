@@ -112,19 +112,7 @@
           "200": {
             "description": "OK",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
-              },
               "application/json": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
-              },
-              "text/json": {
                 "schema": {
                   "type": "integer",
                   "format": "int32"
@@ -144,17 +132,47 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SystemTextJsonAnimal"
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonAnimal"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonCat"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonDog"
+                  }
+                ]
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/SystemTextJsonAnimal"
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonAnimal"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonCat"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonDog"
+                  }
+                ]
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/SystemTextJsonAnimal"
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonAnimal"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonCat"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonDog"
+                  }
+                ]
               }
             }
           },
@@ -270,6 +288,9 @@
         ]
       },
       "SystemTextJsonAnimal": {
+        "required": [
+          "animalType"
+        ],
         "type": "object",
         "properties": {
           "animalType": {
@@ -277,7 +298,48 @@
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "discriminator": {
+          "propertyName": "animalType",
+          "mapping": {
+            "Cat": "#/components/schemas/SystemTextJsonCat",
+            "Dog": "#/components/schemas/SystemTextJsonDog"
+          }
+        }
+      },
+      "SystemTextJsonCat": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SystemTextJsonAnimal"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "catSpecificProperty": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "SystemTextJsonDog": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SystemTextJsonAnimal"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "dogSpecificProperty": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
       }
     }
   }

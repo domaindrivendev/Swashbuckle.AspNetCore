@@ -9,6 +9,7 @@ namespace NswagClientExample.Controllers
     public class SecondLevelController : ControllerBase
     {
         [HttpPost]
+        [Produces("application/json")]
         public int Create([FromBody]BaseType input)
         {
             throw new NotImplementedException();

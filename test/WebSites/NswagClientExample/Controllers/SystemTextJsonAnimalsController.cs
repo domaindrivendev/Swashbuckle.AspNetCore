@@ -11,6 +11,7 @@ namespace NSwagClientExample.Controllers
     public class SystemTextJsonAnimalsController : ControllerBase
     {
         [HttpPost]
+        [Produces("application/json")]
         public void CreateAnimal([Required]SystemTextJsonAnimal animal)
         {
             throw new NotImplementedException();
