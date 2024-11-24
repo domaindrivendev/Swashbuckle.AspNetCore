@@ -85,16 +85,19 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
 #if NET6_0_OR_GREATER
             var nullableInfo = GetNullabilityInfo(memberInfo);
-            if (nullableInfo.GenericTypeArguments.Length != 2)
-            {
-                var length = nullableInfo.GenericTypeArguments.Length;
-                var type = nullableInfo.Type.FullName;
-                var container = memberInfo.DeclaringType.FullName;
-                var member = memberInfo.Name;
-                throw new InvalidOperationException($"Expected Dictionary to have two generic type arguments but it had {length}. Member: {container}.{member} Type: {type}.");
-            }
 
-            return nullableInfo.GenericTypeArguments[1].ReadState == NullabilityState.NotNull;
+            // Assume one generic argument means TKey and TValue are the same type.
+            // Assume two generic arguments match TKey and TValue for a dictionary.
+            // A better solution would be to inspect the type declaration (base types,
+            // interfaces, etc.) to determine if the type is a dictionary, but the
+            // nullability information is not available to be able to do that.
+            // See https://stackoverflow.com/q/75786306/1064169.
+            return nullableInfo.GenericTypeArguments.Length switch
+            {
+                1 => nullableInfo.GenericTypeArguments[0].ReadState == NullabilityState.NotNull,
+                2 => nullableInfo.GenericTypeArguments[1].ReadState == NullabilityState.NotNull,
+                _ => false,
+            };
 #else
             var memberType = memberInfo.MemberType == MemberTypes.Field
                 ? ((FieldInfo)memberInfo).FieldType
@@ -156,11 +159,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var declaringTypes = memberInfo.DeclaringType.IsNested
                 ? GetDeclaringTypeChain(memberInfo)
-                : new List<Type>(1) { memberInfo.DeclaringType };
+                : [memberInfo.DeclaringType];
 
             foreach (var declaringType in declaringTypes)
             {
-                var attributes = (IEnumerable<object>)declaringType.GetCustomAttributes(false);
+                IEnumerable<object> attributes = declaringType.GetCustomAttributes(false);
 
                 var nullableContext = attributes
                     .FirstOrDefault(attr => string.Equals(attr.GetType().FullName, NullableContextAttributeFullTypeName));
@@ -168,7 +171,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 if (nullableContext != null)
                 {
                     if (nullableContext.GetType().GetField(FlagFieldName) is FieldInfo field &&
-                    field.GetValue(nullableContext) is byte flag && flag == NotAnnotated)
+                        field.GetValue(nullableContext) is byte flag && flag == NotAnnotated)
                     {
                         return true;
                     }
