@@ -1166,7 +1166,7 @@ services.AddSwaggerGen(c =>
 });
 ```
 
-_NOTE: If you're using the [Swashbuckle Annotations library](#swashbuckleaspnetcoreannotations), it contains a custom selector that's based on the presence of `SwaggerSubType` attributes on base class definitions. This way, you can use simple attributes to explicitly list the inheritance and/or polymorphism relationships you want to expose. To enable this behavior, check out the [Annotations docs](#list-known-subtypes-for-inheritance-and-polymorphism)._
+_NOTE: If you're using the [Swashbuckle Annotations library](#swashbuckleaspnetcoreannotations), it contains a custom selector that's based on the presence of `JsonDerivedType` (or `SwaggerSubType` for .NET 6 or earlier) attributes on base class definitions. This way, you can use simple attributes to explicitly list the inheritance and/or polymorphism relationships you want to expose. To enable this behavior, check out the [Annotations docs](#list-known-subtypes-for-inheritance-and-polymorphism)._
 
 #### Describing Discriminators ####
 
@@ -1232,7 +1232,7 @@ services.AddSwaggerGen(c =>
 });
 ```
 
-_NOTE: If you're using the [Swashbuckle Annotations library](#swashbuckleaspnetcoreannotations), it contains custom selector functions that are based on the presence of `SwaggerDiscriminator` and `SwaggerSubType` attributes on base class definitions. This way, you can use simple attributes to explicitly provide discriminator metadata. To enable this behavior, check out the [Annotations docs](#enrich-polymorphic-base-classes-with-discriminator-metadata)._
+_NOTE: If you're using the [Swashbuckle Annotations library](#swashbuckleaspnetcoreannotations), it contains custom selector functions that are based on the presence of `JsonPolymorphic` (or `SwaggerDiscriminator` for .NET 6 or earlier) and `JsonDerivedType` (or `SwaggerSubType` for .NET 6 or earlier) attributes on base class definitions. This way, you can use simple attributes to explicitly provide discriminator metadata. To enable this behavior, check out the [Annotations docs](#enrich-polymorphic-base-classes-with-discriminator-metadata)._
 
 ## Swashbuckle.AspNetCore.SwaggerUI ##
 
@@ -1540,6 +1540,15 @@ services.AddSwaggerGen(c =>
 });
 
 // Shape.cs
+
+// .NET 7 or later
+[JsonDerivedType(typeof(Rectangle))]
+[JsonDerivedType(typeof(Circle))]
+public abstract class Shape
+{
+}
+
+// .NET 6 or earlier
 [SwaggerSubType(typeof(Rectangle))]
 [SwaggerSubType(typeof(Circle))]
 public abstract class Shape
@@ -1549,7 +1558,7 @@ public abstract class Shape
 
 ### Enrich Polymorphic Base Classes with Discriminator Metadata ###
 
-If you're using annotations to _explicitly_ indicate the "known" subtypes for a polymorphic base type, you can combine the `SwaggerDiscriminatorAttribute` with the `SwaggerSubTypeAttribute` to provide additional metadata about the "discriminator" property, which will then be incorporated into the generated schema definition:
+If you're using annotations to _explicitly_ indicate the "known" subtypes for a polymorphic base type, you can combine the `JsonPolymorphicAttribute` with the `JsonDerivedTypeAttribute` to provide additional metadata about the "discriminator" property, which will then be incorporated into the generated schema definition:
 
 
 ```csharp
@@ -1560,12 +1569,32 @@ services.AddSwaggerGen(c =>
 });
 
 // Shape.cs
+
+// .NET 7 or later
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "shapeType")]
+[JsonDerivedType(typeof(Rectangle), "rectangle")]
+[JsonDerivedType(typeof(Circle), "circle")]
+public abstract class Shape
+{
+    // Avoid using a JsonPolymorphicAttribute.TypeDiscriminatorPropertyName
+    // that conflicts with a property in your type hierarchy.
+    // Related issue: https://github.com/dotnet/runtime/issues/72170
+}
+
+// .NET 6 or earlier
 [SwaggerDiscriminator("shapeType")]
 [SwaggerSubType(typeof(Rectangle), DiscriminatorValue = "rectangle")]
 [SwaggerSubType(typeof(Circle), DiscriminatorValue = "circle")]
 public abstract class Shape
 {
-    public ShapeType { get; set; }
+    public ShapeType ShapeType { get; set; }
+}
+
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum ShapeType
+{
+    Circle,
+    Rectangle
 }
 ```
 
