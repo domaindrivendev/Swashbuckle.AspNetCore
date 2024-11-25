@@ -197,3 +197,7 @@ jobs:
     - name: Push NuGet packages to NuGet.org
       run: |
         dotnet nuget push "*.nupkg" --api-key ${{ secrets.NUGET_TOKEN }} --skip-duplicate --source https://api.nuget.org/v3/index.json
+
+    - name: Push NuGet symbols to NuGet.org
+      run: |
+        dotnet nuget push "*.snupkg" --api-key ${{ secrets.NUGET_TOKEN }} --skip-duplicate --source https://api.nuget.org/v3/index.json
