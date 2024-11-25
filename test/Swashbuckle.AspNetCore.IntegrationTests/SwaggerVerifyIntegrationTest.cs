@@ -72,7 +72,6 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 
         [Theory]
         [InlineData(typeof(MinimalApp.Program), "/swagger/v1/swagger.json")]
-        [InlineData(typeof(MinimalAppHostedServ.Program), "/swagger/v1/swagger.json")]
         [InlineData(typeof(TopLevelSwaggerDoc.Program), "/swagger/v1.json")]
 #if NET8_0_OR_GREATER
         [InlineData(typeof(MvcWithNullable.Program), "/swagger/v1/swagger.json")]
