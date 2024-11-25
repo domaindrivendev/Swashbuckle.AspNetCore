@@ -16,8 +16,6 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
 #endif
         [InlineData(typeof(CliExample.Startup), "/swagger/v1/swagger_net8.0.json")]
-        // TODO: FIXME: CliExampleWithFactory project is not working
-        //[InlineData(typeof(CliExampleWithFactory.Startup), "/swagger/v1/swagger_net8.0.json")]
         [InlineData(typeof(ConfigFromFile.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(CustomDocumentSerializer.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(CustomUIConfig.Startup), "/swagger/v1/swagger.json")]
@@ -34,6 +32,20 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             string swaggerRequestUri)
         {
             var testSite = new TestSite(startupType);
+            using var client = testSite.BuildClient();
+
+            using var swaggerResponse = await client.GetAsync(swaggerRequestUri);
+            var swagger = await swaggerResponse.Content.ReadAsStringAsync();
+            await Verifier.Verify(swagger).UseParameters(startupType, GetVersion(swaggerRequestUri));
+        }
+
+        [Fact]
+        public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_ForAutofaq()
+        {
+            var startupType = typeof(CliExampleWithFactory.Startup);
+            const string swaggerRequestUri = "/swagger/v1/swagger_net8.0.json";
+
+            var testSite = new TestSiteAutofaq(startupType);
             using var client = testSite.BuildClient();
 
             using var swaggerResponse = await client.GetAsync(swaggerRequestUri);

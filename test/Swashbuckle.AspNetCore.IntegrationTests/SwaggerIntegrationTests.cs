@@ -21,8 +21,6 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         [Theory]
         [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(CliExample.Startup), "/swagger/v1/swagger_net8.0.json")]
-        // TODO: FIXME: CliExampleWithFactory project is not working
-        //[InlineData(typeof(CliExampleWithFactory.Startup), "/swagger/v1/swagger_net8.0.json")]
         [InlineData(typeof(ConfigFromFile.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(CustomUIConfig.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(CustomUIIndex.Startup), "/swagger/v1/swagger.json")]
@@ -41,6 +39,15 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             using var client = testSite.BuildClient();
 
             await AssertValidSwaggerJson(client, swaggerRequestUri);
+        }
+
+        [Fact]
+        public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_ForAutofaq()
+        {
+            var testSite = new TestSiteAutofaq(typeof(CliExampleWithFactory.Startup));
+            using var client = testSite.BuildClient();
+
+            await AssertValidSwaggerJson(client, "/swagger/v1/swagger_net8.0.json");
         }
 
         [Fact]

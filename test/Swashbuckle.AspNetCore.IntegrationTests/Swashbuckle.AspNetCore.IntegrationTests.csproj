@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WebSites\Basic\Basic.csproj" />
+    <ProjectReference Include="..\WebSites\CliExampleWithFactory\CliExampleWithFactory.csproj" />
     <ProjectReference Include="..\WebSites\CliExample\CliExample.csproj" />
     <ProjectReference Include="..\WebSites\ConfigFromFile\ConfigFromFile.csproj" />
     <ProjectReference Include="..\WebSites\CustomDocumentSerializer\CustomDocumentSerializer.csproj" />
