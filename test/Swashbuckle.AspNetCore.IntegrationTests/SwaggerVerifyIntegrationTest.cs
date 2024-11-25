@@ -70,14 +70,15 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         }
 #endif
 
-#if NET8_0_OR_GREATER
         [Theory]
         [InlineData(typeof(MinimalApp.Program), "/swagger/v1/swagger.json")]
         [InlineData(typeof(MinimalAppHostedServ.Program), "/swagger/v1/swagger.json")]
-        [InlineData(typeof(MvcWithNullable.Program), "/swagger/v1/swagger.json")]
         [InlineData(typeof(TopLevelSwaggerDoc.Program), "/swagger/v1.json")]
+#if NET8_0_OR_GREATER
+        [InlineData(typeof(MvcWithNullable.Program), "/swagger/v1/swagger.json")]
         [InlineData(typeof(WebApi.Program), "/swagger/v1/swagger.json")]
         [InlineData(typeof(WebApi.Aot.Program), "/swagger/v1/swagger.json")]
+#endif
         public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_Without_Startup(
             Type entryPointType,
             string swaggerRequestUri)
@@ -86,6 +87,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             await Verifier.Verify(swaggerResponse).UseParameters(entryPointType, GetVersion(swaggerRequestUri));
         }
 
+#if NET8_0_OR_GREATER
         [Fact]
         public async Task TypesAreRenderedCorrectly()
         {
@@ -95,22 +97,21 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             var swaggerResponse = await SwaggerResponse(client, "/swagger/v1/swagger.json");
             await Verifier.Verify(swaggerResponse);
         }
+#endif
 
         private static async Task<string> SwaggerEndpointReturnsValidSwaggerJson(Type entryPointType, string swaggerRequestUri)
         {
-            using var application = (dynamic)Activator.CreateInstance(typeof(TestApplication<>).MakeGenericType(entryPointType));
-            Assert.NotNull(application);
-            using var client = application!.CreateDefaultClient();
-
+            using var client = SwaggerIntegrationTests.GetHttpClientForTestApplication(entryPointType);
             return await SwaggerResponse(client, swaggerRequestUri);
         }
+
         private static async Task<string> SwaggerResponse(HttpClient client, string swaggerRequestUri)
         {
             using var swaggerResponse = await client.GetAsync(swaggerRequestUri);
             var contentStream = await swaggerResponse.Content.ReadAsStringAsync();
             return contentStream;
         }
-#endif
+
         private static string GetVersion(string swaggerUi) =>
 #if NET6_0
             Regex.Match(swaggerUi, "/\\w+/([\\w+\\d+.-]+)/").Groups[1].Value;
