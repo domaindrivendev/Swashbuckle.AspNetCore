@@ -11,6 +11,7 @@ namespace NSwagClientExample.Controllers
     public class AnimalsController : ControllerBase
     {
         [HttpPost]
+        [Produces("application/json")]
         public void CreateAnimal([Required]Animal animal)
         {
             throw new NotImplementedException();

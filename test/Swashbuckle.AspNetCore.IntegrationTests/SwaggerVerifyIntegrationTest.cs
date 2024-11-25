@@ -14,6 +14,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         [Theory]
 #if !NET6_0
         [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
+        [InlineData(typeof(NSwagClientExample.Startup), "/swagger/v1/swagger.json")]
 #endif
         [InlineData(typeof(CliExample.Startup), "/swagger/v1/swagger_net8.0.json")]
         [InlineData(typeof(ConfigFromFile.Startup), "/swagger/v1/swagger.json")]
@@ -23,7 +24,6 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         [InlineData(typeof(GenericControllers.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(MultipleVersions.Startup), "/swagger/1.0/swagger.json")]
         [InlineData(typeof(MultipleVersions.Startup), "/swagger/2.0/swagger.json")]
-        [InlineData(typeof(NSwagClientExample.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(OAuth2Integration.Startup), "/resource-server/swagger/v1/swagger.json")]
         [InlineData(typeof(ReDocApp.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(TestFirst.Startup), "/swagger/v1-generated/openapi.json")]
@@ -54,30 +54,23 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         }
 
 #if NET6_0
-        [Fact]
-        public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_Basic_DotNet_6()
+        [Theory]
+        [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
+        [InlineData(typeof(NSwagClientExample.Startup), "/swagger/v1/swagger.json")]
+        public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_DotNet6(
+            Type startupType,
+            string swaggerRequestUri)
         {
-            var testSite = new TestSite(typeof(Basic.Startup));
+            var testSite = new TestSite(startupType);
             using var client = testSite.BuildClient();
 
-            using var swaggerResponse = await client.GetAsync("/swagger/v1/swagger.json");
+            using var swaggerResponse = await client.GetAsync(swaggerRequestUri);
             var swagger = await swaggerResponse.Content.ReadAsStringAsync();
-            await Verifier.VerifyJson(swagger);
+            await Verifier.Verify(swagger).UseParameters(startupType, GetVersion(swaggerRequestUri));
         }
 #endif
 
 #if NET8_0_OR_GREATER
-        [Fact]
-        public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_Basic_DotNet_8()
-        {
-            var testSite = new TestSite(typeof(Basic.Startup));
-            using var client = testSite.BuildClient();
-
-            using var swaggerResponse = await client.GetAsync("/swagger/v1/swagger.json");
-            var swagger = await swaggerResponse.Content.ReadAsStringAsync();
-            await Verifier.VerifyJson(swagger);
-        }
-
         [Theory]
         [InlineData(typeof(MinimalApp.Program), "/swagger/v1/swagger.json")]
         [InlineData(typeof(MinimalAppHostedServ.Program), "/swagger/v1/swagger.json")]

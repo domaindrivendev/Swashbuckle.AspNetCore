@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Swashbuckle.AspNetCore.TestSupport
@@ -33,6 +34,10 @@ namespace Swashbuckle.AspNetCore.TestSupport
         public string StringWithRequired { get; set; }
 
         public string StringWithRequiredAllowEmptyTrue { get; set; }
+
+        public string StringWithDescription { get; set; }
+
+        public string StringWithReadOnly { get; set; }
     }
 
     public class MetadataType
@@ -76,5 +81,11 @@ namespace Swashbuckle.AspNetCore.TestSupport
 
         [Required(AllowEmptyStrings = true)]
         public string StringWithRequiredAllowEmptyTrue { get; set; }
+
+        [Description("Description")]
+        public string StringWithDescription { get; set; }
+
+        [ReadOnly(true)]
+        public string StringWithReadOnly { get; set; }
     }
 }

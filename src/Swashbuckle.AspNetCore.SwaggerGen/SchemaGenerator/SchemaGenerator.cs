@@ -27,7 +27,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
         }
 
-        public SchemaGenerator(SchemaGeneratorOptions generatorOptions, ISerializerDataContractResolver serializerDataContractResolver, IOptions<MvcOptions> mvcOptions)
+        public SchemaGenerator(
+            SchemaGeneratorOptions generatorOptions,
+            ISerializerDataContractResolver serializerDataContractResolver,
+            IOptions<MvcOptions> mvcOptions)
         {
             _generatorOptions = generatorOptions;
             _serializerDataContractResolver = serializerDataContractResolver;
@@ -104,7 +107,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     var genericTypes = modelType
                         .GetInterfaces()
 #if NETSTANDARD2_0
-                        .Concat(new[] { modelType })
+                        .Concat([modelType])
 #else
                         .Append(modelType)
 #endif
@@ -309,7 +312,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             };
 
 #pragma warning disable CS0618 // Type or member is obsolete
-            // For backcompat only - EnumValues is obsolete
+            // For backwards compatibility only - EnumValues is obsolete
             if (dataContract.EnumValues != null)
             {
                 schema.Enum = dataContract.EnumValues
@@ -475,12 +478,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             baseTypeDataContract = null;
 
             var baseType = dataContract.UnderlyingType.BaseType;
+            while (baseType != null && baseType != typeof(object))
+            {
+                if (_generatorOptions.SubTypesSelector(baseType).Contains(dataContract.UnderlyingType))
+                {
+                    baseTypeDataContract = GetDataContractFor(baseType);
+                    return true;
+                }
 
-            if (baseType == null || baseType == typeof(object) || !_generatorOptions.SubTypesSelector(baseType).Contains(dataContract.UnderlyingType))
-                return false;
+                baseType = baseType.BaseType;
+            }
 
-            baseTypeDataContract = GetDataContractFor(baseType);
-            return true;
+            return false;
         }
 
         private bool TryGetDiscriminatorFor(
