@@ -199,7 +199,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var apiDescriptionsByPath = apiDescriptions
                 .OrderBy(_options.SortKeySelector)
-                .GroupBy(_options.PathGroupingStrategy);
+                .GroupBy(_options.PathGroupSelector);
 
             var paths = new OpenApiPaths();
             foreach (var group in apiDescriptionsByPath)

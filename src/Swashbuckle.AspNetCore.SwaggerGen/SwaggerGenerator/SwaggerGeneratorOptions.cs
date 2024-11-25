@@ -20,7 +20,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             OperationIdSelector = DefaultOperationIdSelector;
             TagsSelector = DefaultTagsSelector;
             SortKeySelector = DefaultSortKeySelector;
-            PathGroupingStrategy = DefaultPathGroupingStrategy;
+            PathGroupSelector = DefaultPathGroupSelector;
             SecuritySchemesSelector = null;
             SchemaComparer = StringComparer.Ordinal;
             Servers = new List<OpenApiServer>();
@@ -50,7 +50,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public Func<ApiDescription, string> SortKeySelector { get; set; }
 
-        public Func<ApiDescription, string> PathGroupingStrategy { get; set; }
+        public Func<ApiDescription, string> PathGroupSelector { get; set; }
 
         public bool InferSecuritySchemes { get; set; }
 
@@ -124,7 +124,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return TagsSelector(apiDescription).First();
         }
 
-        private static string DefaultPathGroupingStrategy(ApiDescription apiDescription)
+        private static string DefaultPathGroupSelector(ApiDescription apiDescription)
         {
             return apiDescription.RelativePathSansParameterConstraints();
         }
