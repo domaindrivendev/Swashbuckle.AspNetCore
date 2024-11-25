@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Swashbuckle.AspNetCore.TestSupport
 {
@@ -43,5 +44,11 @@ namespace Swashbuckle.AspNetCore.TestSupport
 
         [Required(AllowEmptyStrings = true)]
         public string StringWithRequiredAllowEmptyTrue { get; set; }
+
+        [Description("Description")]
+        public string StringWithDescription { get; set; }
+
+        [ReadOnly(true)]
+        public string StringWithReadOnly { get; set; }
     }
 }

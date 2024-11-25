@@ -364,7 +364,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.False(schema.Properties["StringWithRequired"].Nullable);
             Assert.False(schema.Properties["StringWithRequiredAllowEmptyTrue"].Nullable);
             Assert.Null(schema.Properties["StringWithRequiredAllowEmptyTrue"].MinLength);
-            Assert.Equal(new[] { "StringWithRequired", "StringWithRequiredAllowEmptyTrue" }, schema.Required.ToArray());
+            Assert.Equal(["StringWithRequired", "StringWithRequiredAllowEmptyTrue"], schema.Required);
+            Assert.Equal("Description", schema.Properties[nameof(TypeWithValidationAttributes.StringWithDescription)].Description);
+            Assert.True(schema.Properties[nameof(TypeWithValidationAttributes.StringWithReadOnly)].ReadOnly);
         }
 
         [Fact]
@@ -420,7 +422,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal(1, schema.Properties["RequiredProperty"].MinLength);
             Assert.True(schema.Properties["RequiredProperty"].Nullable);
-            Assert.Equal(new[] { "RequiredProperty" }, schema.Required.ToArray());
+            Assert.Equal(["RequiredProperty"], schema.Required);
         }
 
 #nullable enable
@@ -582,6 +584,29 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var schema = subject.GenerateSchema(typeof(BaseType), schemaRepository);
 
             Assert.Equal(new[] { "SubType1", "BaseType" }, schemaRepository.Schemas.Keys);
+
+            var subSchema = schemaRepository.Schemas["SubType1"];
+            Assert.NotNull(subSchema.AllOf);
+            Assert.Equal(2, subSchema.AllOf.Count);
+        }
+
+        [Fact]
+        public void GenerateSchema_SecondLevelInheritance_SubTypesSelector()
+        {
+            var subject = Subject(configureGenerator: c =>
+            {
+                c.UseAllOfForInheritance = true;
+                c.SubTypesSelector = (type) => type == typeof(BaseSecondLevelType) ? new[] { typeof(SubSubSecondLevelType) } : Array.Empty<Type>();
+            });
+            var schemaRepository = new SchemaRepository();
+
+            var schema = subject.GenerateSchema(typeof(BaseSecondLevelType), schemaRepository);
+
+            Assert.Equal(new[] { "SubSubSecondLevelType", "BaseSecondLevelType" }, schemaRepository.Schemas.Keys);
+
+            var subSchema = schemaRepository.Schemas["SubSubSecondLevelType"];
+            Assert.NotNull(subSchema.AllOf);
+            Assert.Equal(2, subSchema.AllOf.Count);
         }
 
         [Fact]
@@ -1153,14 +1178,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
 
             string[] expectedKeys =
-            {
+            [
                 nameof(JsonIgnoreAnnotatedType.StringWithJsonIgnoreConditionNever),
                 nameof(JsonIgnoreAnnotatedType.StringWithJsonIgnoreConditionWhenWritingDefault),
                 nameof(JsonIgnoreAnnotatedType.StringWithJsonIgnoreConditionWhenWritingNull),
                 nameof(JsonIgnoreAnnotatedType.StringWithNoAnnotation)
-            };
+            ];
 
-            Assert.Equal(expectedKeys, schema.Properties.Keys.ToArray());
+            Assert.Equal(expectedKeys, schema.Properties.Keys);
         }
 
         [Fact]
@@ -1171,7 +1196,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var referenceSchema = Subject().GenerateSchema(typeof(JsonPropertyNameAnnotatedType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal(new[] { "string-with-json-property-name" }, schema.Properties.Keys.ToArray());
+            Assert.Equal(["string-with-json-property-name"], schema.Properties.Keys);
         }
 
 #if NET7_0_OR_GREATER
@@ -1183,7 +1208,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var referenceSchema = Subject().GenerateSchema(typeof(JsonRequiredAnnotatedType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal(new[] { "StringWithJsonRequired" }, schema.Required.ToArray());
+            Assert.Equal(["StringWithJsonRequired"], schema.Required);
             Assert.True(schema.Properties["StringWithJsonRequired"].Nullable);
         }
 #endif

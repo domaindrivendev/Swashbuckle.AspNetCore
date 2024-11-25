@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Routing.Constraints;
@@ -60,6 +61,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                 else if (attribute is StringLengthAttribute stringLengthAttribute)
                     ApplyStringLengthAttribute(schema, stringLengthAttribute);
+
+                else if (attribute is ReadOnlyAttribute readOnlyAttribute)
+                    ApplyReadOnlyAttribute(schema, readOnlyAttribute);
+
+                else if (attribute is DescriptionAttribute descriptionAttribute)
+                    ApplyDescriptionAttribute(schema, descriptionAttribute);
+
             }
         }
 
@@ -228,6 +236,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             schema.MinLength = stringLengthAttribute.MinimumLength;
             schema.MaxLength = stringLengthAttribute.MaximumLength;
+        }
+
+        private static void ApplyReadOnlyAttribute(OpenApiSchema schema, ReadOnlyAttribute readOnlyAttribute)
+        {
+            schema.ReadOnly = readOnlyAttribute.IsReadOnly;
+        }
+
+        private static void ApplyDescriptionAttribute(OpenApiSchema schema, DescriptionAttribute descriptionAttribute)
+        {
+            schema.Description ??= descriptionAttribute.Description;
         }
 
         private static void ApplyLengthRouteConstraint(OpenApiSchema schema, LengthRouteConstraint lengthRouteConstraint)

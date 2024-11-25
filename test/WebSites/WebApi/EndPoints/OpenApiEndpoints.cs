@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.EndPoints
@@ -95,8 +96,8 @@ namespace WebApi.EndPoints
     record class Person(string FirstName, string LastName);
 
     record class Address(string Street, string City, string State, string ZipCode);
-    sealed record OrganizationCustomExchangeRatesDto([property: JsonRequired] CurrenciesRate[] CurrenciesRates);
-    sealed record CurrenciesRate([property: JsonRequired] string CurrencyFrom, [property: JsonRequired] string CurrencyTo, double Rate);
+    sealed record OrganizationCustomExchangeRatesDto([property: JsonRequired] CurrenciesRate[] CurrenciesRates, [property: ReadOnly(true)] bool IsUpdated);
+    sealed record CurrenciesRate([property: JsonRequired, Description("Currency From")] string CurrencyFrom, [property: JsonRequired] string CurrencyTo, double Rate);
     record TypeWithTryParse(string Name)
     {
         public static bool TryParse(string value, out TypeWithTryParse? result)

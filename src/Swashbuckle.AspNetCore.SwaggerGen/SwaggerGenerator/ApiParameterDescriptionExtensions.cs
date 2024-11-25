@@ -111,8 +111,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         internal static bool IsFromForm(this ApiParameterDescription apiParameter)
         {
+            bool isEnhancedModelMetadataSupported = true;
+
+#if NET9_0_OR_GREATER
+            if (AppContext.TryGetSwitch("Microsoft.AspNetCore.Mvc.ApiExplorer.IsEnhancedModelMetadataSupported", out var isEnabled))
+            {
+                isEnhancedModelMetadataSupported = isEnabled;
+            }
+#endif
+
             var source = apiParameter.Source;
-            var elementType = apiParameter.ModelMetadata?.ElementType;
+            var elementType = isEnhancedModelMetadataSupported ? apiParameter.ModelMetadata?.ElementType : null;
 
             return (source == BindingSource.Form || source == BindingSource.FormFile)
                 || (elementType != null && typeof(IFormFile).IsAssignableFrom(elementType));

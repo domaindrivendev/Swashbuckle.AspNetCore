@@ -16,6 +16,7 @@
     TODO Go through the code and tidy up the usings
     <ImplicitUsings>enable</ImplicitUsings>
     -->
+    <IncludeSymbols>true</IncludeSymbols>
     <LangVersion>latest</LangVersion>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -34,14 +35,14 @@
     <PackageReadmeFile>package-readme.md</PackageReadmeFile>
     <PackageReleaseNotes>See $(PackageProjectUrl)/releases for details.</PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageValidationBaselineVersion>7.0.0</PackageValidationBaselineVersion>
+    <PackageValidationBaselineVersion>7.1.0</PackageValidationBaselineVersion>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>$(PackageProjectUrl).git</RepositoryUrl>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <UseArtifactsOutput>true</UseArtifactsOutput>
-    <VersionPrefix>7.0.1</VersionPrefix>
+    <VersionPrefix>7.1.1</VersionPrefix>
     <WarnOnPackingNonPackableProject>false</WarnOnPackingNonPackableProject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(GITHUB_ACTIONS)' != '' ">
