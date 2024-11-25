@@ -1166,7 +1166,8 @@ services.AddSwaggerGen(c =>
 });
 ```
 
-_NOTE: If you're using the [Swashbuckle Annotations library](#swashbuckleaspnetcoreannotations), it contains a custom selector that's based on the presence of `JsonDerivedType` (or `SwaggerSubType` for .NET 6 or earlier) attributes on base class definitions. This way, you can use simple attributes to explicitly list the inheritance and/or polymorphism relationships you want to expose. To enable this behavior, check out the [Annotations docs](#list-known-subtypes-for-inheritance-and-polymorphism)._
+> [!NOTE]
+> If you're using the [Swashbuckle Annotations library](#swashbuckleaspnetcoreannotations), it contains a custom selector that's based on the presence of `[JsonDerivedType]` (or `[SwaggerSubType]` for .NET 6 or earlier) attributes on base class definitions. This way, you can use simple attributes to explicitly list the inheritance and/or polymorphism relationships you want to expose. To enable this behavior, check out the [Annotations docs](#list-known-subtypes-for-inheritance-and-polymorphism).
 
 #### Describing Discriminators ####
 
@@ -1232,7 +1233,8 @@ services.AddSwaggerGen(c =>
 });
 ```
 
-_NOTE: If you're using the [Swashbuckle Annotations library](#swashbuckleaspnetcoreannotations), it contains custom selector functions that are based on the presence of `JsonPolymorphic` (or `SwaggerDiscriminator` for .NET 6 or earlier) and `JsonDerivedType` (or `SwaggerSubType` for .NET 6 or earlier) attributes on base class definitions. This way, you can use simple attributes to explicitly provide discriminator metadata. To enable this behavior, check out the [Annotations docs](#enrich-polymorphic-base-classes-with-discriminator-metadata)._
+> [!NOTE]
+> If you're using the [Swashbuckle Annotations library](#swashbuckleaspnetcoreannotations), it contains custom selector functions that are based on the presence of `[JsonPolymorphic]` (or `[SwaggerDiscriminator]` for .NET 6 or earlier) and `[JsonDerivedType]` (or `[SwaggerSubType]` for .NET 6 or earlier) attributes on base class definitions. This way, you can use simple attributes to explicitly provide discriminator metadata. To enable this behavior, check out the [Annotations docs](#enrich-polymorphic-base-classes-with-discriminator-metadata).
 
 ## Swashbuckle.AspNetCore.SwaggerUI ##
 
