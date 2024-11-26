@@ -8,6 +8,7 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <license type="expression">$licenseExpression$</license>
     <projectUrl>$projectUrl$</projectUrl>
+    <readme>docs\package-readme.md</readme>
     <description>$description$</description>
     <tags>$tags$</tags>
     <repository type="$repositoryType$" url="$repositoryUrl$" />
@@ -23,5 +24,6 @@
   <files>
     <file src="Swashbuckle.AspNetCore.props" target="build\Swashbuckle.AspNetCore.props" />
     <file src="Swashbuckle.AspNetCore.props" target="buildMultiTargeting\Swashbuckle.AspNetCore.props" />
+    <file src="..\..\package-readme.md" target="docs\" />
   </files>
 </package>
