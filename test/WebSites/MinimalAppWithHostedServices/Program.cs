@@ -24,7 +24,7 @@ class HostedService : IHostedService
 {
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        // This is intended and should be not tested in this implementation! See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/pull/3151#discussion_r1856678972
+        // This is intentional. See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/pull/3151#discussion_r1856678972
         throw new Exception("Crash!");
     }
 
