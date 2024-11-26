@@ -1139,7 +1139,37 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 "Conflicting method/path combination \"POST resource\" for actions - " +
                 "Swashbuckle.AspNetCore.SwaggerGen.Test.FakeController.ActionWithNoParameters (Swashbuckle.AspNetCore.SwaggerGen.Test)," +
                 "Swashbuckle.AspNetCore.SwaggerGen.Test.FakeController.ActionWithNoParameters (Swashbuckle.AspNetCore.SwaggerGen.Test). " +
-                "Actions require a unique method/path combination for Swagger/OpenAPI 3.0. Use ConflictingActionsResolver as a workaround",
+                "Actions require a unique method/path combination for Swagger/OpenAPI 2.0 and 3.0. Use ConflictingActionsResolver as a workaround or provide your own implementation of PathGroupSelector.",
+                exception.Message);
+        }
+
+        [Fact]
+        public void GetSwagger_ThrowsSwaggerGeneratorException_IfActionsHaveConflictingHttpMethodAndPathWithDifferentParameters()
+        {
+            var subject = Subject(
+                apiDescriptions:
+                [
+                    ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "GET", relativePath: "resource"),
+
+                    ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionWithIntFromQueryParameter), groupName: "v1", httpMethod: "GET", relativePath: "resource", new ApiParameterDescription[]
+                        {
+                            new()
+                            {
+                                Name = "id",
+                                Source = BindingSource.Query,
+                            }
+                        }),
+                ]
+            );
+
+            var exception = Assert.Throws<SwaggerGeneratorException>(() => subject.GetSwagger("v1"));
+            Assert.Equal(
+                "Conflicting method/path combination \"GET resource\" for actions - " +
+                "Swashbuckle.AspNetCore.SwaggerGen.Test.FakeController.ActionWithNoParameters (Swashbuckle.AspNetCore.SwaggerGen.Test)," +
+                "Swashbuckle.AspNetCore.SwaggerGen.Test.FakeController.ActionWithIntFromQueryParameter (Swashbuckle.AspNetCore.SwaggerGen.Test). " +
+                "Actions require a unique method/path combination for Swagger/OpenAPI 2.0 and 3.0. Use ConflictingActionsResolver as a workaround or provide your own implementation of PathGroupSelector.",
                 exception.Message);
         }
 

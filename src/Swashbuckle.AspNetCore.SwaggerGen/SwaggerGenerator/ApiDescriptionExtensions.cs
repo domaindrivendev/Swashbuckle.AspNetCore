@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
@@ -41,7 +41,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     .Union(methodInfo.DeclaringType.GetCustomAttributes(true));
             }
 
-            return Enumerable.Empty<object>();
+            return [];
         }
 
         [Obsolete("Use TryGetMethodInfo() and CustomAttributes() instead")]
@@ -57,7 +57,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 return;
             }
 
-            customAttributes = Enumerable.Empty<object>();
+            customAttributes = [];
         }
 
         internal static string RelativePathSansParameterConstraints(this ApiDescription apiDescription)

@@ -50,6 +50,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         public void ActionWithIntParameterWithDefaultValueAttribute([DefaultValue(3)] int param)
         { }
 
+        public void ActionWithIntFromQueryParameter([FromQuery] int param)
+        { }
+
         public void ActionWithIntParameterWithRequiredAttribute([Required] int param)
         { }
 
