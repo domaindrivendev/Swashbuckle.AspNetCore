@@ -9,12 +9,14 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WebSites\Basic\Basic.csproj" />
+    <ProjectReference Include="..\WebSites\CliExampleWithFactory\CliExampleWithFactory.csproj" />
     <ProjectReference Include="..\WebSites\CliExample\CliExample.csproj" />
     <ProjectReference Include="..\WebSites\ConfigFromFile\ConfigFromFile.csproj" />
     <ProjectReference Include="..\WebSites\CustomDocumentSerializer\CustomDocumentSerializer.csproj" />
     <ProjectReference Include="..\WebSites\CustomUIConfig\CustomUIConfig.csproj" />
     <ProjectReference Include="..\WebSites\CustomUIIndex\CustomUIIndex.csproj" />
     <ProjectReference Include="..\WebSites\GenericControllers\GenericControllers.csproj" />
+    <ProjectReference Include="..\WebSites\MinimalApp\MinimalApp.csproj" />
     <ProjectReference Include="..\WebSites\MultipleVersions\MultipleVersions.csproj" />
     <ProjectReference Include="..\WebSites\NswagClientExample\NswagClientExample.csproj" />
     <ProjectReference Include="..\WebSites\OAuth2Integration\OAuth2Integration.csproj" />
@@ -26,6 +28,7 @@
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
     <ProjectReference Include="..\WebSites\MvcWithNullable\MvcWithNullable.csproj" />
     <ProjectReference Include="..\WebSites\WebApi\WebApi.csproj" />
+    <ProjectReference Include="..\WebSites\WebApi.Aot\WebApi.Aot.csproj" />
   </ItemGroup>
 
   <ItemGroup>
