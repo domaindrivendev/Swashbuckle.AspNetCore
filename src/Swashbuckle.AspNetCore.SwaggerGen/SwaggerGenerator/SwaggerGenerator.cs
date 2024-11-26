@@ -287,7 +287,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     "Actions require a unique method/path combination for Swagger/OpenAPI 2.0 and 3.0. Use ConflictingActionsResolver as a workaround or provide your own implementation of PathGroupSelector.",
                     httpMethod,
                     group.First().RelativePath,
-                    string.Join(",", group.Select(apiDesc => apiDesc.ActionDescriptor.DisplayName))));
+                    string.Join(", ", group.Select(apiDesc => apiDesc.ActionDescriptor.DisplayName))));
             }
 
             var apiDescription = (count > 1) ? _options.ConflictingActionsResolver(group) : group.Single();
