@@ -33,13 +33,3 @@ class HostedService : IHostedService
         return Task.CompletedTask;
     }
 }
-
-namespace MinimalAppHostedServ
-{
-    /// <summary>
-    /// Expose the Program class for use with <c>WebApplicationFactory</c>
-    /// </summary>
-    public partial class Program
-    {
-    }
-}
