@@ -79,7 +79,7 @@ jobs:
         if-no-files-found: ignore
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@985343d70564a82044c1b7fcb84c2fa05405c1a2 # v5.0.4
+      uses: codecov/codecov-action@015f24e6818733317a2da2edd6290ab26238649a # v5.0.7
       with:
         files: ./artifacts/coverage/coverage.cobertura.xml
         flags: ${{ runner.os }}
