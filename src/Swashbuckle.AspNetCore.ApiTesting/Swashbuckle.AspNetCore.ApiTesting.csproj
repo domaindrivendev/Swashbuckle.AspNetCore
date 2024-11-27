@@ -6,7 +6,7 @@
     <IsPackable>true</IsPackable>
     <NoWarn>$(NoWarn);1591</NoWarn>
     <PackageTags>swagger;openapi;test-first;spec-first;testing;aspnetcore</PackageTags>
-    <TargetFrameworks>net9.0;net8.0;net6.0;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net9.0;net8.0;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,10 +17,6 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="2.1.3" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="6.0.0" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">

@@ -53,23 +53,6 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             await Verifier.Verify(swagger).UseParameters(startupType, GetVersion(swaggerRequestUri));
         }
 
-#if NET6_0
-        [Theory]
-        [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
-        [InlineData(typeof(NSwagClientExample.Startup), "/swagger/v1/swagger.json")]
-        public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_DotNet6(
-            Type startupType,
-            string swaggerRequestUri)
-        {
-            var testSite = new TestSite(startupType);
-            using var client = testSite.BuildClient();
-
-            using var swaggerResponse = await client.GetAsync(swaggerRequestUri);
-            var swagger = await swaggerResponse.Content.ReadAsStringAsync();
-            await Verifier.Verify(swagger).UseParameters(startupType, GetVersion(swaggerRequestUri));
-        }
-#endif
-
         [Theory]
         [InlineData(typeof(MinimalApp.Program), "/swagger/v1/swagger.json")]
         [InlineData(typeof(TopLevelSwaggerDoc.Program), "/swagger/v1.json")]
