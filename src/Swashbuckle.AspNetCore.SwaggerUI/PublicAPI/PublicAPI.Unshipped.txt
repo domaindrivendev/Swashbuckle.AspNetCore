@@ -1,2 +1,4 @@
 Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.Plugins.get -> System.Collections.Generic.IList<string>
 Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.Plugins.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.GetDynamicRoutePrefix.get -> System.Func<Microsoft.AspNetCore.Http.HttpContext, string>
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.GetDynamicRoutePrefix.set -> void

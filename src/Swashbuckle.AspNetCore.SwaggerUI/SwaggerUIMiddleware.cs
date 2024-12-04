@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -26,8 +27,11 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
     {
         private const string EmbeddedFileNamespace = "Swashbuckle.AspNetCore.SwaggerUI.node_modules.swagger_ui_dist";
 
+        private readonly RequestDelegate _next;
+        private readonly IWebHostEnvironment _hostingEnv;
         private readonly SwaggerUIOptions _options;
         private readonly StaticFileMiddleware _staticFileMiddleware;
+        private readonly ILoggerFactory _loggerFactory;
         private readonly JsonSerializerOptions _jsonSerializerOptions;
 
         public SwaggerUIMiddleware(
@@ -36,9 +40,14 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
             ILoggerFactory loggerFactory,
             SwaggerUIOptions options)
         {
+            _next = next;
+            _hostingEnv = hostingEnv;
+            _loggerFactory = loggerFactory;
             _options = options ?? new SwaggerUIOptions();
 
-            _staticFileMiddleware = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options);
+            _staticFileMiddleware = _options.GetDynamicRoutePrefix is null ?
+                CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, _options.RoutePrefix) :
+                null;
 
             if (options.JsonSerializerOptions != null)
             {
@@ -65,12 +74,16 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         {
             var httpMethod = httpContext.Request.Method;
 
+            var routePrefix = _options.GetDynamicRoutePrefix is not null ?
+                                    _options.GetDynamicRoutePrefix(httpContext) :
+                                    _options.RoutePrefix;
+
             if (HttpMethods.IsGet(httpMethod))
             {
                 var path = httpContext.Request.Path.Value;
 
                 // If the RoutePrefix is requested (with or without trailing slash), redirect to index URL
-                if (Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$", RegexOptions.IgnoreCase))
+                if (Regex.IsMatch(path, $"^/?{Regex.Escape(routePrefix)}/?$", RegexOptions.IgnoreCase))
                 {
                     // Use relative redirect to support proxy environments
                     var relativeIndexUrl = string.IsNullOrEmpty(path) || path.EndsWith("/")
@@ -81,7 +94,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
                     return;
                 }
 
-                var match = Regex.Match(path, $"^/{Regex.Escape(_options.RoutePrefix)}/?(index.(html|js))$", RegexOptions.IgnoreCase);
+                var match = Regex.Match(path, $"^/{Regex.Escape(routePrefix)}/?(index.(html|js))$", RegexOptions.IgnoreCase);
 
                 if (match.Success)
                 {
@@ -90,18 +103,19 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
                 }
             }
 
-            await _staticFileMiddleware.Invoke(httpContext);
+            var middleware = _staticFileMiddleware ?? CreateStaticFileMiddleware(_next, _hostingEnv, _loggerFactory, routePrefix);
+            await middleware.Invoke(httpContext);
         }
 
         private static StaticFileMiddleware CreateStaticFileMiddleware(
             RequestDelegate next,
             IWebHostEnvironment hostingEnv,
             ILoggerFactory loggerFactory,
-            SwaggerUIOptions options)
+            string prefix)
         {
             var staticFileOptions = new StaticFileOptions
             {
-                RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
+                RequestPath = string.IsNullOrEmpty(prefix) ? string.Empty : $"/{prefix}",
                 FileProvider = new EmbeddedFileProvider(typeof(SwaggerUIMiddleware).GetTypeInfo().Assembly, EmbeddedFileNamespace),
             };
 
