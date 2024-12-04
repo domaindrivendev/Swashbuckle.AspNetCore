@@ -1,4 +1,6 @@
 ﻿using System;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Annotations
 {
@@ -30,5 +32,34 @@ namespace Swashbuckle.AspNetCore.Annotations
         }
 
         internal bool? RequiredFlag { get; set; }
+
+        /// <summary>
+        /// Describes how the parameter value will be serialized based on its type. 
+        /// If not set, default values are for: query - form; path - simple; header - simple; cookie - form.
+        /// </summary>
+        public string Style
+        {
+            get { throw new InvalidOperationException($"Use {nameof(ParameterStyle)} instead"); }
+            set
+            {
+                ParameterStyle = Enum.TryParse(value, ignoreCase: true, out ParameterStyle result) ? result :
+                    throw new NotSupportedException($"'{value}' style is not supported");
+            }
+        }
+
+        internal ParameterStyle? ParameterStyle { get; set; }
+
+        /// <summary>
+        /// When true, array and object parameters are split into separate parameters. This has no 
+        /// effect on other parameter types. 
+        /// The default is true for form style and false for all other styles.
+        /// </summary>
+        public bool Explode
+        {
+            get { throw new InvalidOperationException($"Use {nameof(ExplodeFlag)} instead"); }
+            set { ExplodeFlag = value; }
+        }
+
+        internal bool? ExplodeFlag { get; set; }
     }
 }
