@@ -443,7 +443,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     }
                     else
                     {
-                        bodyParameterDescription = apiDescription.ParameterDescriptions.Single(desc => desc.IsFromBody());
+                        bodyParameterDescription = apiDescription.ParameterDescriptions.SingleOrDefault(desc => desc.IsFromBody());
                         if (bodyParameterDescription is not null)
                         {
                             contentTypeValue.Schema = GenerateSchema(
