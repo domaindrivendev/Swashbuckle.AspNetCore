@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using IdentityServer4.Models;
-using IdentityServer4.Test;
+using Duende.IdentityServer.Models;
+using Duende.IdentityServer.Test;
 
 namespace OAuth2Integration.AuthServer
 {
@@ -31,15 +31,12 @@ namespace OAuth2Integration.AuthServer
 
         internal static IEnumerable<ApiResource> ApiResources()
         {
-            yield return new ApiResource
+            return new List<ApiResource>
             {
-                Name = "api",
-                DisplayName = "API",
-                Scopes =
-                [
-                    new Scope("readAccess", "Access read operations"),
-                    new Scope("writeAccess", "Access write operations")
-                ]
+                new ApiResource("api", "API")
+                {
+                    Scopes = { "readAccess", "writeAccess" }
+                }
             };
         }
 

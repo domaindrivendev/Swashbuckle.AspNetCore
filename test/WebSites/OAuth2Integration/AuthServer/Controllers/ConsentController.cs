@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using IdentityServer4.Models;
-using IdentityServer4.Services;
-using IdentityServer4.Stores;
+using Duende.IdentityServer.Models;
+using Duende.IdentityServer.Services;
+using Duende.IdentityServer.Stores;
 using Microsoft.AspNetCore.Mvc;
 
 namespace OAuth2Integration.AuthServer.Controllers
@@ -12,46 +12,50 @@ namespace OAuth2Integration.AuthServer.Controllers
     public class ConsentController : Controller
     {
         private readonly IIdentityServerInteractionService _interaction;
-        private readonly IClientStore _clientStore;
-        private readonly IResourceStore _resourceStore;
 
         public ConsentController(
-            IIdentityServerInteractionService interaction,
-            IClientStore clientStore,
-            IResourceStore resourceStore)
+            IIdentityServerInteractionService interaction)
         {
             _interaction = interaction;
-            _clientStore = clientStore;
-            _resourceStore = resourceStore;
         }
 
         [HttpGet("consent")]
         public async Task<IActionResult> Consent(string returnUrl)
         {
             var request = await _interaction.GetAuthorizationContextAsync(returnUrl);
-            var client = await _clientStore.FindEnabledClientByIdAsync(request.ClientId);
-            var resource = await _resourceStore.FindApiResourceAsync("api");
 
             var viewModel = new ConsentViewModel
             {
                 ReturnUrl = returnUrl,
-                ClientName = client.ClientName,
-                ScopesRequested = resource.Scopes.Where(s => request.ScopesRequested.Contains(s.Name))
+                ClientName = request.Client.ClientName,
+                ScopesRequested = request.ValidatedResources?.Resources?.ApiScopes ?? new List<ApiScope>()
             };
 
             return View("/AuthServer/Views/Consent.cshtml", viewModel);
         }
 
         [HttpPost("consent")]
-        public async Task<IActionResult> Consent([FromForm]ConsentViewModel viewModel)
+        public async Task<IActionResult> Consent([FromForm] ConsentViewModel viewModel)
         {
             var request = await _interaction.GetAuthorizationContextAsync(viewModel.ReturnUrl);
 
-            // Communicate outcome of consent back to identityserver
-            var consentResponse = new ConsentResponse
+            ConsentResponse consentResponse;
+            if (viewModel.ScopesConsented != null && viewModel.ScopesConsented.Any())
             {
-                ScopesConsented = viewModel.ScopesConsented
-            };
+                consentResponse = new ConsentResponse
+                {
+                    RememberConsent = true,
+                    ScopesValuesConsented = viewModel.ScopesConsented.ToList()
+                };
+            }
+            else
+            {
+                consentResponse = new ConsentResponse
+                {
+                    Error = AuthorizationError.AccessDenied
+                };
+            }
+
             await _interaction.GrantConsentAsync(request, consentResponse);
 
             return Redirect(viewModel.ReturnUrl);
@@ -62,7 +66,7 @@ namespace OAuth2Integration.AuthServer.Controllers
     {
         public string ReturnUrl { get; set; }
         public string ClientName { get; set; }
-        public IEnumerable<Scope> ScopesRequested { get; set; }
+        public IEnumerable<ApiScope> ScopesRequested { get; set; }
         public string[] ScopesConsented { get; set; }
     }
 }
