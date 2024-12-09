@@ -2479,6 +2479,46 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(ParameterStyle.Form, content.Value.Encoding["param"].Style);
         }
 
+        [Fact]
+        public void GetSwagger_OpenApiOperationWithRawContent_IsHandled()
+        {
+            var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
+            var actionDescriptor = new ActionDescriptor
+            {
+                EndpointMetadata = new List<object>()
+                {
+                    new OpenApiOperation()
+                    {
+                        RequestBody = new OpenApiRequestBody()
+                        {
+                            Content = new Dictionary<string, OpenApiMediaType>()
+                            {
+                                { "text/plain", new OpenApiMediaType() }
+                            }
+                        }
+                    }
+                },
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+                }
+            };
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create(actionDescriptor, methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource"),
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal("V1", document.Info.Version);
+            Assert.Equal("Test API", document.Info.Title);
+            Assert.Equal(new[] { "/resource" }, document.Paths.Keys.ToArray());
+            Assert.Equal(new[] { OperationType.Post }, document.Paths["/resource"].Operations.Keys);
+            Assert.Single(document.Paths["/resource"].Operations);
+        }
+
         private static SwaggerGenerator Subject(
             IEnumerable<ApiDescription> apiDescriptions,
             SwaggerGeneratorOptions options = null,
