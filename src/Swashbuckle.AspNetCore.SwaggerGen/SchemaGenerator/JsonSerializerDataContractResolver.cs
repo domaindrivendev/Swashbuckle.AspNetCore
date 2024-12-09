@@ -70,13 +70,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 if (keyType.IsEnum)
                 {
                     // This is a special case where we know the possible key values
-                    var enumValuesAsJson = keyType.GetEnumValues()
-                        .Cast<object>()
-                        .Select(value => JsonConverterFunc(value, keyType));
-
-                    keys = enumValuesAsJson.Any(json => json.StartsWith("\""))
-                        ? enumValuesAsJson.Select(json => json.Replace("\"", string.Empty))
-                        : keyType.GetEnumNames();
+                    keys = keyType.GetEnumValues().Cast<object>().Select(v =>
+                    {
+                        var dictionary = new Dictionary<object, byte>(1) { [v] = 0 };
+                        var serialized = JsonConverterFunc(dictionary, dictionary.GetType());
+                        var deserialized = JsonSerializer.Deserialize<Dictionary<string, byte>>(serialized, _serializerOptions);
+                        return deserialized.Keys.Single();
+                    });
                 }
 
                 return DataContract.ForDictionary(

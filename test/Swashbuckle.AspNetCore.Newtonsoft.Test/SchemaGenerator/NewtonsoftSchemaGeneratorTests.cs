@@ -144,6 +144,18 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
+        public void GenerateSchema_GeneratesObjectSchema_IfDictionaryTypeHasEnumKey_CamelCasePropertyNamesContractResolver()
+        {
+            var schema = Subject(null, (s) =>
+            {
+                s.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            }).GenerateSchema(typeof(IDictionary<IntEnum, int>), new SchemaRepository());
+
+            Assert.Equal("object", schema.Type);
+            Assert.Equal(new[] { "value2", "value4", "value8" }, schema.Properties.Keys);
+        }
+
+        [Fact]
         public void GenerateSchema_GeneratesReferencedDictionarySchema_IfDictionaryTypeIsSelfReferencing()
         {
             var schemaRepository = new SchemaRepository();
