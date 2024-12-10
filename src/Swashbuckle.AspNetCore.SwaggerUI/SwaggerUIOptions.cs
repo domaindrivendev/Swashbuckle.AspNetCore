@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Http;
 
 namespace Swashbuckle.AspNetCore.SwaggerUI
 {
@@ -13,6 +14,8 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         /// Gets or sets a route prefix for accessing the swagger-ui
         /// </summary>
         public string RoutePrefix { get; set; } = "swagger";
+
+        public Func<HttpContext, string> GetDynamicRoutePrefix { get; set; } = null;
 
         /// <summary>
         /// Gets or sets a Stream function for retrieving the swagger-ui page
