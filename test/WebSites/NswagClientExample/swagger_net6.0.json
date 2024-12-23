@@ -112,19 +112,7 @@
           "200": {
             "description": "OK",
             "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
-              },
               "application/json": {
-                "schema": {
-                  "type": "integer",
-                  "format": "int32"
-                }
-              },
-              "text/json": {
                 "schema": {
                   "type": "integer",
                   "format": "int32"
@@ -180,7 +168,10 @@
         },
         "additionalProperties": false,
         "discriminator": {
-          "propertyName": "discriminator"
+          "propertyName": "discriminator",
+          "mapping": {
+            "SubSubType": "#/components/schemas/SubSubType"
+          }
         }
       },
       "Cat": {

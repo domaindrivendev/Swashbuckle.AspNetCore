@@ -6,3 +6,5 @@ static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.Docu
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.OperationAsyncFilter<TFilter>(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, params object[] arguments) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.ParameterAsyncFilter<TFilter>(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, params object[] arguments) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.RequestBodyAsyncFilter<TFilter>(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, params object[] arguments) -> void
+Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.PathGroupSelector.get -> System.Func<Microsoft.AspNetCore.Mvc.ApiExplorer.ApiDescription, string>
+Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.PathGroupSelector.set -> void

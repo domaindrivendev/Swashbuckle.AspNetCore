@@ -1137,9 +1137,39 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var exception = Assert.Throws<SwaggerGeneratorException>(() => subject.GetSwagger("v1"));
             Assert.Equal(
                 "Conflicting method/path combination \"POST resource\" for actions - " +
-                "Swashbuckle.AspNetCore.SwaggerGen.Test.FakeController.ActionWithNoParameters (Swashbuckle.AspNetCore.SwaggerGen.Test)," +
+                "Swashbuckle.AspNetCore.SwaggerGen.Test.FakeController.ActionWithNoParameters (Swashbuckle.AspNetCore.SwaggerGen.Test), " +
                 "Swashbuckle.AspNetCore.SwaggerGen.Test.FakeController.ActionWithNoParameters (Swashbuckle.AspNetCore.SwaggerGen.Test). " +
-                "Actions require a unique method/path combination for Swagger/OpenAPI 3.0. Use ConflictingActionsResolver as a workaround",
+                "Actions require a unique method/path combination for Swagger/OpenAPI 2.0 and 3.0. Use ConflictingActionsResolver as a workaround or provide your own implementation of PathGroupSelector.",
+                exception.Message);
+        }
+
+        [Fact]
+        public void GetSwagger_ThrowsSwaggerGeneratorException_IfActionsHaveConflictingHttpMethodAndPathWithDifferentParameters()
+        {
+            var subject = Subject(
+                apiDescriptions:
+                [
+                    ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "GET", relativePath: "resource"),
+
+                    ApiDescriptionFactory.Create<FakeController>(
+                        c => nameof(c.ActionWithIntFromQueryParameter), groupName: "v1", httpMethod: "GET", relativePath: "resource", new ApiParameterDescription[]
+                        {
+                            new()
+                            {
+                                Name = "id",
+                                Source = BindingSource.Query,
+                            }
+                        }),
+                ]
+            );
+
+            var exception = Assert.Throws<SwaggerGeneratorException>(() => subject.GetSwagger("v1"));
+            Assert.Equal(
+                "Conflicting method/path combination \"GET resource\" for actions - " +
+                "Swashbuckle.AspNetCore.SwaggerGen.Test.FakeController.ActionWithNoParameters (Swashbuckle.AspNetCore.SwaggerGen.Test), " +
+                "Swashbuckle.AspNetCore.SwaggerGen.Test.FakeController.ActionWithIntFromQueryParameter (Swashbuckle.AspNetCore.SwaggerGen.Test). " +
+                "Actions require a unique method/path combination for Swagger/OpenAPI 2.0 and 3.0. Use ConflictingActionsResolver as a workaround or provide your own implementation of PathGroupSelector.",
                 exception.Message);
         }
 
@@ -2447,6 +2477,46 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.NotNull(content.Value.Encoding);
             Assert.NotNull(content.Value.Encoding["param"]);
             Assert.Equal(ParameterStyle.Form, content.Value.Encoding["param"].Style);
+        }
+
+        [Fact]
+        public void GetSwagger_OpenApiOperationWithRawContent_IsHandled()
+        {
+            var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
+            var actionDescriptor = new ActionDescriptor
+            {
+                EndpointMetadata = new List<object>()
+                {
+                    new OpenApiOperation()
+                    {
+                        RequestBody = new OpenApiRequestBody()
+                        {
+                            Content = new Dictionary<string, OpenApiMediaType>()
+                            {
+                                { "text/plain", new OpenApiMediaType() }
+                            }
+                        }
+                    }
+                },
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+                }
+            };
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create(actionDescriptor, methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource"),
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.Equal("V1", document.Info.Version);
+            Assert.Equal("Test API", document.Info.Title);
+            Assert.Equal(new[] { "/resource" }, document.Paths.Keys.ToArray());
+            Assert.Equal(new[] { OperationType.Post }, document.Paths["/resource"].Operations.Keys);
+            Assert.Single(document.Paths["/resource"].Operations);
         }
 
         private static SwaggerGenerator Subject(

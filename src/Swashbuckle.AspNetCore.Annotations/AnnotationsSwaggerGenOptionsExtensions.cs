@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -75,6 +76,17 @@ namespace Microsoft.Extensions.DependencyInjection
                 return obsoleteAttribute.SubTypes;
             }
 
+#if NET7_0_OR_GREATER
+            var jsonDerivedTypeAttributes = type.GetCustomAttributes(false)
+                .OfType<JsonDerivedTypeAttribute>()
+                .ToList();
+
+            if (jsonDerivedTypeAttributes.Count > 0)
+            {
+                return jsonDerivedTypeAttributes.Select(attr => attr.DerivedType);
+            }
+#endif
+
             return Enumerable.Empty<Type>();
         }
 
@@ -100,6 +112,17 @@ namespace Microsoft.Extensions.DependencyInjection
                 return obsoleteAttribute.Discriminator;
             }
 
+#if NET7_0_OR_GREATER
+            var jsonPolymorphicAttributes = baseType.GetCustomAttributes(false)
+                .OfType<JsonPolymorphicAttribute>()
+                .FirstOrDefault();
+
+            if (jsonPolymorphicAttributes != null)
+            {
+                return jsonPolymorphicAttributes.TypeDiscriminatorPropertyName;
+            }
+#endif
+
             return null;
         }
 
@@ -116,6 +139,17 @@ namespace Microsoft.Extensions.DependencyInjection
                 {
                     return subTypeAttribute.DiscriminatorValue;
                 }
+
+#if NET7_0_OR_GREATER
+                var jsonDerivedTypeAttributes = baseType.GetCustomAttributes(false)
+                    .OfType<JsonDerivedTypeAttribute>()
+                    .FirstOrDefault(attr => attr.DerivedType == subType);
+
+                if (jsonDerivedTypeAttributes is { TypeDiscriminator: string discriminator })
+                {
+                    return discriminator;
+                }
+#endif
 
                 baseType = baseType.BaseType;
             }

@@ -2,6 +2,7 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 #if NET8_0_OR_GREATER
 using System.Net.Http.Json;
 #endif
@@ -39,6 +40,15 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             using var client = testSite.BuildClient();
 
             await AssertValidSwaggerJson(client, swaggerRequestUri);
+        }
+
+        [Fact]
+        public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_ForAutofaq()
+        {
+            var testSite = new TestSiteAutofaq(typeof(CliExampleWithFactory.Startup));
+            using var client = testSite.BuildClient();
+
+            await AssertValidSwaggerJson(client, "/swagger/v1/swagger_net8.0.json");
         }
 
         [Fact]
@@ -113,23 +123,22 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             Assert.Equal(expectedVersionValue, json.GetProperty(expectedVersionProperty).GetString());
         }
 
+        [Theory]
+        [InlineData(typeof(MinimalApp.Program), "/swagger/v1/swagger.json")]
+        [InlineData(typeof(TopLevelSwaggerDoc.Program), "/swagger/v1.json")]
 #if NET8_0_OR_GREATER
-        [Theory]
-        [InlineData("/swagger/v1/swagger.json")]
-        public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_For_WebApi(
+        [InlineData(typeof(MvcWithNullable.Program), "/swagger/v1/swagger.json")]
+        [InlineData(typeof(WebApi.Program), "/swagger/v1/swagger.json")]
+        [InlineData(typeof(WebApi.Aot.Program), "/swagger/v1/swagger.json")]
+#endif
+        public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_Without_Startup(
+            Type entryPointType,
             string swaggerRequestUri)
         {
-            await SwaggerEndpointReturnsValidSwaggerJson<WebApi.Program>(swaggerRequestUri);
+            await SwaggerEndpointReturnsValidSwaggerJson(entryPointType, swaggerRequestUri);
         }
 
-        [Theory]
-        [InlineData("/swagger/v1/swagger.json")]
-        public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_For_Mvc(
-            string swaggerRequestUri)
-        {
-            await SwaggerEndpointReturnsValidSwaggerJson<MvcWithNullable.Program>(swaggerRequestUri);
-        }
-
+#if NET8_0_OR_GREATER
         [Fact]
         public async Task TypesAreRenderedCorrectly()
         {
@@ -161,22 +170,45 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
                 () => Assert.True(properties.GetProperty("temperatureF").GetProperty("readOnly").GetBoolean()),
             ]);
         }
+#endif
 
-        private static async Task SwaggerEndpointReturnsValidSwaggerJson<TEntryPoint>(string swaggerRequestUri)
-            where TEntryPoint : class
+        private static async Task SwaggerEndpointReturnsValidSwaggerJson(Type entryPointType, string swaggerRequestUri)
         {
-            using var application = new TestApplication<TEntryPoint>();
-            using var client = application.CreateDefaultClient();
-
+            using var client = GetHttpClientForTestApplication(entryPointType);
             await AssertValidSwaggerJson(client, swaggerRequestUri);
         }
-#endif
+
+        internal static HttpClient GetHttpClientForTestApplication(Type entryPointType)
+        {
+            var applicationType = typeof(TestApplication<>).MakeGenericType(entryPointType);
+            var application = (IDisposable)Activator.CreateInstance(applicationType);
+            Assert.NotNull(application);
+
+            var createClientMethod = applicationType
+                .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+                .FirstOrDefault(m => m.Name == "CreateDefaultClient" && m.GetParameters().Length == 1);
+            if (createClientMethod == null)
+            {
+                throw new InvalidOperationException($"The method CreateDefaultClient was not found on TestApplication<{entryPointType.FullName}>.");
+            }
+
+            // Pass null for DelegatingHandler[]
+            var parameters = new object[] { null };
+
+            var clientObject = (IDisposable)createClientMethod.Invoke(application, parameters);
+            if (clientObject is not HttpClient client)
+            {
+                throw new InvalidOperationException($"The method CreateDefaultClient on TestApplication<{entryPointType.FullName}> did not return an HttpClient.");
+            }
+
+            return client;
+        }
 
         private static async Task AssertValidSwaggerJson(HttpClient client, string swaggerRequestUri)
         {
             using var swaggerResponse = await client.GetAsync(swaggerRequestUri);
 
-            Assert.True(swaggerResponse.IsSuccessStatusCode, await swaggerResponse.Content.ReadAsStringAsync());
+            Assert.True(swaggerResponse.IsSuccessStatusCode, $"IsSuccessStatusCode is false. Response: '{await swaggerResponse.Content.ReadAsStringAsync()}'");
             using var contentStream = await swaggerResponse.Content.ReadAsStreamAsync();
             new OpenApiStreamReader().Read(contentStream, out OpenApiDiagnostic diagnostic);
             Assert.Empty(diagnostic.Errors);

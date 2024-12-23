@@ -72,9 +72,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var modelMetadata = apiParameter.ModelMetadata;
 
-            return (modelMetadata?.ContainerType != null)
-                ? modelMetadata.ContainerType.GetProperty(modelMetadata.PropertyName)
-                : null;
+            return modelMetadata?.ContainerType?.GetProperty(modelMetadata.PropertyName);
         }
 
         public static IEnumerable<object> CustomAttributes(this ApiParameterDescription apiParameter)
@@ -103,18 +101,27 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         internal static bool IsFromPath(this ApiParameterDescription apiParameter)
         {
-            return (apiParameter.Source == BindingSource.Path);
+            return apiParameter.Source == BindingSource.Path;
         }
 
         internal static bool IsFromBody(this ApiParameterDescription apiParameter)
         {
-            return (apiParameter.Source == BindingSource.Body);
+            return apiParameter.Source == BindingSource.Body;
         }
 
         internal static bool IsFromForm(this ApiParameterDescription apiParameter)
         {
+            bool isEnhancedModelMetadataSupported = true;
+
+#if NET9_0_OR_GREATER
+            if (AppContext.TryGetSwitch("Microsoft.AspNetCore.Mvc.ApiExplorer.IsEnhancedModelMetadataSupported", out var isEnabled))
+            {
+                isEnhancedModelMetadataSupported = isEnabled;
+            }
+#endif
+
             var source = apiParameter.Source;
-            var elementType = apiParameter.ModelMetadata?.ElementType;
+            var elementType = isEnhancedModelMetadataSupported ? apiParameter.ModelMetadata?.ElementType : null;
 
             return (source == BindingSource.Form || source == BindingSource.FormFile)
                 || (elementType != null && typeof(IFormFile).IsAssignableFrom(elementType));
