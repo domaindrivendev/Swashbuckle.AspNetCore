@@ -1,0 +1,5 @@
+git put 
+git command setup .envr 
+git repo public -all 
+git fork new dev.envr -main
+git commit .envr value=1100325600001000074 -marcelmonde
