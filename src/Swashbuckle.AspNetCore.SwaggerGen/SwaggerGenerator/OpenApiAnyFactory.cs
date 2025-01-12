@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Text.Json;
 using Microsoft.OpenApi.Any;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -6,19 +7,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     public static class OpenApiAnyFactory
     {
         public static IOpenApiAny CreateFromJson(string json)
+            => CreateFromJson(json, null);
+
+        public static IOpenApiAny CreateFromJson(string json, JsonSerializerOptions options)
         {
             try
             {
-                var jsonElement = JsonSerializer.Deserialize<JsonElement>(json);
-
-                return CreateFromJsonElement(jsonElement);
+                var element = JsonSerializer.Deserialize<JsonElement>(json, options);
+                return CreateFromJsonElement(element);
             }
-            catch { }
-
-            return null;
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
-        private static IOpenApiAny CreateOpenApiArray(JsonElement jsonElement)
+        private static OpenApiArray CreateOpenApiArray(JsonElement jsonElement)
         {
             var openApiArray = new OpenApiArray();
 
@@ -30,7 +34,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return openApiArray;
         }
 
-        private static IOpenApiAny CreateOpenApiObject(JsonElement jsonElement)
+        private static OpenApiObject CreateOpenApiObject(JsonElement jsonElement)
         {
             var openApiObject = new OpenApiObject();
 

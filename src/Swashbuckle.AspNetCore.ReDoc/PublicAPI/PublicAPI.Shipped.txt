@@ -56,6 +56,8 @@ Swashbuckle.AspNetCore.ReDoc.ReDocOptions.HeadContent.get -> string
 Swashbuckle.AspNetCore.ReDoc.ReDocOptions.HeadContent.set -> void
 Swashbuckle.AspNetCore.ReDoc.ReDocOptions.IndexStream.get -> System.Func<System.IO.Stream>
 Swashbuckle.AspNetCore.ReDoc.ReDocOptions.IndexStream.set -> void
+Swashbuckle.AspNetCore.ReDoc.ReDocOptions.JsonSerializerOptions.get -> System.Text.Json.JsonSerializerOptions
+Swashbuckle.AspNetCore.ReDoc.ReDocOptions.JsonSerializerOptions.set -> void
 Swashbuckle.AspNetCore.ReDoc.ReDocOptions.ReDocOptions() -> void
 Swashbuckle.AspNetCore.ReDoc.ReDocOptions.RoutePrefix.get -> string
 Swashbuckle.AspNetCore.ReDoc.ReDocOptions.RoutePrefix.set -> void
