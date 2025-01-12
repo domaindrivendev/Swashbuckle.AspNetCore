@@ -1,2 +1,0 @@
-Swashbuckle.AspNetCore.ReDoc.ReDocOptions.JsonSerializerOptions.get -> System.Text.Json.JsonSerializerOptions
-Swashbuckle.AspNetCore.ReDoc.ReDocOptions.JsonSerializerOptions.set -> void

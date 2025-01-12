@@ -1,2 +1,0 @@
-Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.Plugins.get -> System.Collections.Generic.IList<string>
-Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.Plugins.set -> void
