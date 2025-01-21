@@ -1,13 +1,8 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="IdentityServer4" />
-    <PackageReference Include="IdentityServer4.AccessTokenValidation" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.Swagger\Swashbuckle.AspNetCore.Swagger.csproj" />
@@ -15,12 +10,20 @@
     <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.SwaggerUI\Swashbuckle.AspNetCore.SwaggerUI.csproj" />
   </ItemGroup>
 
-  <!--
-    This is just a sample for testing - updating to Duende.IdentityServer can be done at some point in the future.
-    See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3008.
-  -->
-  <ItemGroup>
-    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-55p7-v223-x366" />
-    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-ff4q-64jc-gx98" />
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" VersionOverride="6.0.36" />
+    <PackageReference Include="Duende.IdentityServer" VersionOverride="6.0.5" />
   </ItemGroup>
+  
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" VersionOverride="8.0.12" />
+    <PackageReference Include="Duende.IdentityServer" VersionOverride="7.0.8" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" VersionOverride="8.0.12" />
+    <PackageReference Include="Duende.IdentityServer" VersionOverride="7.0.8" />
+  </ItemGroup>
+
 </Project>
