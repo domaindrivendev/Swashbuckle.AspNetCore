@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" VersionOverride="8.0.12" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" VersionOverride="9.0.1" />
     <PackageReference Include="Duende.IdentityServer" VersionOverride="7.0.8" />
   </ItemGroup>
 
