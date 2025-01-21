@@ -28,7 +28,7 @@ namespace OAuth2Integration.AuthServer.Controllers
             {
                 ReturnUrl = returnUrl,
                 ClientName = request.Client.ClientName,
-                ScopesRequested = request.ValidatedResources?.Resources?.ApiScopes ?? new List<ApiScope>()
+                ScopesRequested = request.ValidatedResources?.Resources?.ApiScopes ?? []
             };
 
             return View("/AuthServer/Views/Consent.cshtml", viewModel);

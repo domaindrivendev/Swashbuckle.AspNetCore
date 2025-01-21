@@ -46,7 +46,7 @@ namespace OAuth2Integration
                         ValidateAudience = true,
                         ValidateLifetime = true,
                         ValidAudience = "api",
-                        ValidIssuer = "https://localhost:5001/auth-server/",
+                        ValidIssuer = options.Authority,
                     };
                 });
 
