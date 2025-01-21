@@ -1631,7 +1631,7 @@ Once your application has been setup with Swashbuckle (see [Getting Started](#ge
 
 It's packaged as a [.NET Tool](https://learn.microsoft.com/dotnet/core/tools/global-tools) that can be installed and used via the dotnet SDK.
 
-> :warning: The tool needs to load your Startup DLL and its dependencies at runtime. Therefore, you should use a version of the `dotnet` SDK that is compatible with your application. For example, if your app targets `net8.0`, then you should use version 8.0.xxx of the SDK to run the CLI tool. If it targets `net8.0`, then you should use version 8.0.xxx of the SDK and so on.
+> :warning: The tool needs to load your Startup DLL and its dependencies at runtime. Therefore, you should use a version of the `dotnet` SDK that is compatible with your application. For example, if your app targets `net8.0`, then you should use version 8.0.xxx of the SDK to run the CLI tool. If it targets `net9.0`, then you should use version 9.0.xxx of the SDK and so on.
 
 #### Using the tool with the .NET SDK
 
