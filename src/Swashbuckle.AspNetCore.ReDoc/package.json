@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "redoc": "2.2.0"
+    "redoc": "2.3.0"
   }
 }
