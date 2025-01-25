@@ -141,5 +141,21 @@ A line of text",
 
             Assert.Equal(expectedOutput, output, false, true);
         }
+
+        [Fact]
+        public void Humanize_ParaMultiLineTags()
+        {
+            const string input = @"
+            <para>
+             This is a paragraph.
+             MultiLined.
+            </para>
+            <para>         This is a paragraph</para>.";
+
+            var output = XmlCommentsTextHelper.Humanize(input);
+
+            const string expectedOutput = "\r\nThis is a paragraph. MultiLined.\r\nThis is a paragraph.";
+            Assert.Equal(expectedOutput, output, false, true);
+        }
     }
 }

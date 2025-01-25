@@ -106,12 +106,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private static string HumanizeParaTags(this string text)
         {
-            return ParaTag().Replace(text, (match) => "<br>" + match.Groups["display"].Value);
+            return ParaTag().Replace(text, match =>
+            {
+                var paraText = "<br>" + match.Groups["display"].Value.TrimStart();
+                return LineBreaks().Replace(paraText, _ => string.Empty);
+            }).Replace("\r\n<br>", "<br>");
         }
 
         private static string HumanizeBrTags(this string text)
         {
-            return BrTag().Replace(text, m => Environment.NewLine);
+            return BrTag().Replace(text, _ => Environment.NewLine);
         }
 
         private static string DecodeXml(this string text)
@@ -125,6 +129,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private const string ParaTagPattern = @"<para>(?<display>.+?)</para>";
         private const string HrefPattern = @"<see href=\""(.*)\"">(.*)<\/see>";
         private const string BrPattern = @"(<br ?\/?>)"; // handles <br>, <br/>, <br />
+        private const string LineBreaksPattern = @"\r\n?|\n";
 
 #if NET7_0_OR_GREATER
         [GeneratedRegex(RefTagPattern)]
@@ -144,6 +149,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         [GeneratedRegex(BrPattern)]
         private static partial Regex BrTag();
+
+        [GeneratedRegex(LineBreaksPattern)]
+        private static partial Regex LineBreaks();
 #else
         private static readonly Regex _refTag = new(RefTagPattern);
         private static readonly Regex _codeTag = new(CodeTagPattern);
@@ -151,6 +159,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private static readonly Regex _paraTag = new(ParaTagPattern, RegexOptions.Singleline);
         private static readonly Regex _hrefTag = new(HrefPattern);
         private static readonly Regex _brTag = new(BrPattern);
+        private static readonly Regex _lineBreaks = new(LineBreaksPattern);
 
         private static Regex RefTag() => _refTag;
         private static Regex CodeTag() => _codeTag;
@@ -158,6 +167,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private static Regex ParaTag() => _paraTag;
         private static Regex HrefTag() => _hrefTag;
         private static Regex BrTag() => _brTag;
+        private static Regex LineBreaks() => _lineBreaks;
 #endif
     }
 }
