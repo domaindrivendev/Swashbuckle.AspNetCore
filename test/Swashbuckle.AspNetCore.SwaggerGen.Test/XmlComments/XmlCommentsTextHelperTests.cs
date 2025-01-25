@@ -155,7 +155,7 @@ A line of text",
 
             var output = XmlCommentsTextHelper.Humanize(input);
 
-            Assert.Equal("\r\nThis is a paragraph. MultiLined.\r\nThis is a paragraph.", output, false, true);
+            Assert.Equal("\r\nThis is a paragraph. MultiLined.\r\n\r\nThis is a paragraph.", output, false, true);
         }
     }
 }
