@@ -16,13 +16,13 @@ namespace Basic.Controllers
         /// </summary>
         /// <remarks>
         /// ## Heading 1
-        ///
+        /// 
         ///     POST /products
         ///     {
         ///         "id": "123",
         ///         "description": "Some product"
         ///     }
-        ///
+        /// 
         /// </remarks>
         /// <param name="product"></param>
         /// <returns></returns>
