@@ -174,6 +174,7 @@
           "CrudActions"
         ],
         "summary": "Updates some properties of a specific product",
+        "description": "\r\nOnly provided properties will be updated,                    other remain unchanged.\r\n\r\nIdentifier must be non-default value\r\n\r\nBody must be specified",
         "operationId": "PatchProduct",
         "parameters": [
           {

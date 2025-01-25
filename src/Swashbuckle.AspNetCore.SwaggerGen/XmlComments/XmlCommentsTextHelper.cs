@@ -108,9 +108,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             return ParaTag().Replace(text, match =>
             {
-                var paraText = "<br>" + match.Groups["display"].Value.TrimStart();
+                var paraText = "<br>" + match.Groups["display"].Value.Trim();
                 return LineBreaks().Replace(paraText, _ => string.Empty);
-            }).Replace("\r\n<br>", "<br>");
+            });
         }
 
         private static string HumanizeBrTags(this string text)
