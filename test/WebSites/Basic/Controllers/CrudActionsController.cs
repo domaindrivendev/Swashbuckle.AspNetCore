@@ -73,7 +73,7 @@ namespace Basic.Controllers
         /// </summary>
         /// <remarks>
         ///     <para>
-        ///         Only provided properties will be updated (case-sensitive),
+        ///         Only provided properties will be updated,
         ///         other remain unchanged.
         ///     </para>
         ///     <para>       Identifier must be non-default value     </para>
