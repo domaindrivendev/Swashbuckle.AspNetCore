@@ -129,6 +129,7 @@ A line of text",
         [InlineData("<c>DoWork</c> is a method in <c>TestClass</c>.", "`DoWork` is a method in `TestClass`.")]
         [InlineData("<code>DoWork</code> is a method in <code>\nTestClass\n</code>.", "```DoWork``` is a method in ```\nTestClass\n```.")]
         [InlineData("<para>This is a paragraph</para>.", "\r\nThis is a paragraph.")]
+        [InlineData("<para>   This is a paragraph   </para>.", "\r\nThis is a paragraph   .")]
         [InlineData("GET /Todo?iscomplete=true&amp;owner=mike", "GET /Todo?iscomplete=true&owner=mike")]
         [InlineData(@"Returns a <see langword=""null""/> item.", "Returns a null item.")]
         [InlineData(@"<see href=""https://www.iso.org/iso-4217-currency-codes.html"">ISO currency code</see>", "[ISO currency code](https://www.iso.org/iso-4217-currency-codes.html)")]
@@ -154,8 +155,7 @@ A line of text",
 
             var output = XmlCommentsTextHelper.Humanize(input);
 
-            const string expectedOutput = "\r\nThis is a paragraph. MultiLined.\r\nThis is a paragraph.";
-            Assert.Equal(expectedOutput, output, false, true);
+            Assert.Equal("\r\nThis is a paragraph. MultiLined.\r\nThis is a paragraph.", output, false, true);
         }
     }
 }
