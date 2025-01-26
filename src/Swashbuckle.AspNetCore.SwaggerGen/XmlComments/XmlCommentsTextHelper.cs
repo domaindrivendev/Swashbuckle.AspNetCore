@@ -101,7 +101,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private static string HumanizeMultilineCodeTags(this string text)
         {
-            return MultilineCodeTag().Replace(text, (match) => "```" + match.Groups["display"].Value + "```");
+            return MultilineCodeTag().Replace(text, match =>
+            {
+                var codeText = match.Groups["display"].Value;
+                if (LineBreaks().IsMatch(codeText))
+                    return $"```{codeText.TrimEnd()}{Environment.NewLine}```";
+
+                return $"```{codeText}```";
+            });
         }
 
         private static string HumanizeParaTags(this string text)

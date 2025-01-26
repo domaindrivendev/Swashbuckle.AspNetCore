@@ -16,13 +16,13 @@ namespace Basic.Controllers
         /// </summary>
         /// <remarks>
         /// ## Heading 1
-        /// 
+        ///
         ///     POST /products
         ///     {
         ///         "id": "123",
         ///         "description": "Some product"
         ///     }
-        /// 
+        ///
         /// </remarks>
         /// <param name="product"></param>
         /// <returns></returns>
@@ -30,6 +30,22 @@ namespace Basic.Controllers
         public Product Create([FromBody, Required]Product product)
         {
             return product;
+        }
+
+        //TODO: consider removing this endpoint before opening PR
+        /// <summary>Get all products</summary>
+        /// <remarks>
+        /// <code>
+        /// {
+        ///        "Prop1":1,
+        ///        "Prop2":[]
+        /// }
+        /// </code>
+        /// </remarks>
+        [HttpGet("all")]
+        public List<Product> GetAll()
+        {
+            return [];
         }
 
         /// <summary>
