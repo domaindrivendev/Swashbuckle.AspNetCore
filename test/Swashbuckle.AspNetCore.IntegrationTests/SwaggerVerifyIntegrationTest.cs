@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Http;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using VerifyXunit;
@@ -36,9 +37,9 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 
             using var swaggerResponse = await client.GetAsync(swaggerRequestUri);
             var swagger = await swaggerResponse.Content.ReadAsStringAsync();
-            await Verifier.Verify(swagger)
-                .UseParameters(startupType, GetVersion(swaggerRequestUri))
-                .ScrubLinesWithReplace(x => x.ReplaceLineEndings("\r\n"));
+
+            await Verifier.Verify(NormalizeLineBreaks(swagger))
+                .UseParameters(startupType, GetVersion(swaggerRequestUri));
         }
 
         [Fact]
@@ -111,6 +112,25 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             using var swaggerResponse = await client.GetAsync(swaggerRequestUri);
             var contentStream = await swaggerResponse.Content.ReadAsStringAsync();
             return contentStream;
+        }
+
+        /// <summary>
+        /// Normalize '\n' strings into '\r\n' which is expected linebreak in Verify verified.txt files.
+        /// </summary>
+        private static StringBuilder NormalizeLineBreaks(string swagger)
+        {
+            var output = new StringBuilder(swagger.Length);
+            for (var i = 0; i < swagger.Length; i++)
+            {
+                if (swagger[i] == '\\' && i > 0 && i < swagger.Length - 1 && swagger[i+1] == 'n' && swagger[i - 1] != 'r')
+                {
+                    output.Append("\\r");
+                }
+
+                output.Append(swagger[i]);
+            }
+
+            return output;
         }
 
         private static string GetVersion(string swaggerUi) =>
