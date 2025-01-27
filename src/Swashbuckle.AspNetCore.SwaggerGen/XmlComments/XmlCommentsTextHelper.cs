@@ -129,7 +129,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private const string ParaTagPattern = @"<para>(?<display>.+?)</para>";
         private const string HrefPattern = @"<see href=\""(.*)\"">(.*)<\/see>";
         private const string BrPattern = @"(<br ?\/?>)"; // handles <br>, <br/>, <br />
-        private const string LineBreaksPattern = @"\r\n?|\n";
+        private const string LineBreaksPattern = @"\r?\n";
 
 #if NET7_0_OR_GREATER
         [GeneratedRegex(RefTagPattern)]
