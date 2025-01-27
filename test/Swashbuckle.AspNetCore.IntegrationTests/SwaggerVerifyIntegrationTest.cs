@@ -36,7 +36,9 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 
             using var swaggerResponse = await client.GetAsync(swaggerRequestUri);
             var swagger = await swaggerResponse.Content.ReadAsStringAsync();
-            await Verifier.Verify(swagger).UseParameters(startupType, GetVersion(swaggerRequestUri));
+            await Verifier.Verify(swagger)
+                .UseParameters(startupType, GetVersion(swaggerRequestUri))
+                .ScrubLinesWithReplace(x => x.ReplaceLineEndings());
         }
 
         [Fact]
