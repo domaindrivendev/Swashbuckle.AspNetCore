@@ -36,9 +36,9 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 
             using var swaggerResponse = await client.GetAsync(swaggerRequestUri);
             var swagger = await swaggerResponse.Content.ReadAsStringAsync();
-            await Verifier.Verify(swagger.ReplaceLineEndings())
+            await Verifier.Verify(swagger)
                 .UseParameters(startupType, GetVersion(swaggerRequestUri))
-                .ScrubLinesWithReplace(x => x.ReplaceLineEndings());
+                .ScrubLinesWithReplace(x => x.ReplaceLineEndings("\r\n"));
         }
 
         [Fact]
