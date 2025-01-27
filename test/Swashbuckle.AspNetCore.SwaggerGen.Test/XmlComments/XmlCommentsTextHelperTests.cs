@@ -134,6 +134,7 @@ A line of text",
         [InlineData(@"Returns a <see langword=""null""/> item.", "Returns a null item.")]
         [InlineData(@"<see href=""https://www.iso.org/iso-4217-currency-codes.html"">ISO currency code</see>", "[ISO currency code](https://www.iso.org/iso-4217-currency-codes.html)")]
         [InlineData("First line.<br />Second line.<br/>Third line.<br>Fourth line.", "First line.\r\nSecond line.\r\nThird line.\r\nFourth line.")]
+        [InlineData("<para> one </para><para> two </para>","\r\none\r\ntwo")]
         public void Humanize_HumanizesInlineTags(
             string input,
             string expectedOutput)
