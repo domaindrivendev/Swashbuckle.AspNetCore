@@ -129,9 +129,9 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 
         [GeneratedRegex("/\\w+/([\\w+\\d+.-]+)/")]
         private static partial Regex VersionRegex();
+#endif
 
         [GeneratedRegex(@"(?<!\\r)\\n")]
         private static partial Regex UnixNewLineRegex();
-#endif
     }
 }
