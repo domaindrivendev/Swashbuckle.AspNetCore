@@ -118,7 +118,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         /// </summary>
         private static string NormalizeLineBreaks(string swagger)
         {
-            return WindowsNewLineRegex().Replace(swagger, "\\r\\n");
+            return UnixNewLineRegex().Replace(swagger, "\\r\\n");
         }
 
         private static string GetVersion(string swaggerUi) =>
@@ -131,7 +131,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         private static partial Regex VersionRegex();
 
         [GeneratedRegex(@"(?<!\\r)\\n")]
-        private static partial Regex WindowsNewLineRegex();
+        private static partial Regex UnixNewLineRegex();
 #endif
     }
 }
