@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net.Http;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using VerifyXunit;
@@ -115,22 +114,11 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         }
 
         /// <summary>
-        /// Normalize '\n' strings into '\r\n' which is expected linebreak in Verify verified.txt files.
+        /// Normalize "\n" strings into "\r\n" which is expected linebreak in Verify verified.txt files.
         /// </summary>
-        private static StringBuilder NormalizeLineBreaks(string swagger)
+        private static string NormalizeLineBreaks(string swagger)
         {
-            var output = new StringBuilder(swagger.Length);
-            for (var i = 0; i < swagger.Length; i++)
-            {
-                if (swagger[i] == '\\' && i > 0 && i < swagger.Length - 1 && swagger[i+1] == 'n' && swagger[i - 1] != 'r')
-                {
-                    output.Append("\\r");
-                }
-
-                output.Append(swagger[i]);
-            }
-
-            return output;
+            return WindowsNewLineRegex().Replace(swagger, "\\r\\n");
         }
 
         private static string GetVersion(string swaggerUi) =>
@@ -141,6 +129,9 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 
         [GeneratedRegex("/\\w+/([\\w+\\d+.-]+)/")]
         private static partial Regex VersionRegex();
+
+        [GeneratedRegex(@"(?<!\\r)\\n")]
+        private static partial Regex WindowsNewLineRegex();
 #endif
     }
 }
