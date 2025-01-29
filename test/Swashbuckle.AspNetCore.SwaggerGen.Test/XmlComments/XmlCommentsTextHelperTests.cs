@@ -158,5 +158,54 @@ A line of text",
 
             Assert.Equal("\r\nThis is a paragraph. MultiLined.\r\n\r\nThis is a paragraph.", output, false, true);
         }
+
+        [Fact]
+        public void Humanize_CodeMultiLineTag()
+        {
+            const string input = @"
+            <code>
+               {
+                ""Prop1"":1,
+                ""Prop2"":[]
+               }
+            </code>";
+
+            var output = XmlCommentsTextHelper.Humanize(input);
+
+            var expected = string.Join("\r\n",
+            [
+                "```",
+                "   {",
+                "    \"Prop1\":1,",
+                "    \"Prop2\":[]",
+                "   }",
+                "```"
+            ]);
+            Assert.Equal(expected, output, false, true);
+        }
+
+        [Fact]
+        public void Humanize_CodeMultiLineTag_OnSameLine()
+        {
+            const string input = @"
+            <code>{
+                ""Prop1"":1,
+                ""Prop2"":[]
+               }
+            </code>";
+
+            var output = XmlCommentsTextHelper.Humanize(input);
+
+            var expected = string.Join("\r\n",
+            [
+                "```",
+                "{",
+                "    \"Prop1\":1,",
+                "    \"Prop2\":[]",
+                "   }",
+                "```"
+            ]);
+            Assert.Equal(expected, output, false, true);
+        }
     }
 }

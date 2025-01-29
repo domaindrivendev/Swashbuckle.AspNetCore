@@ -32,6 +32,23 @@ namespace Basic.Controllers
             return product;
         }
 
+        /// <summary>Get all products</summary>
+        /// <remarks>
+        /// <code>
+        /// {
+        ///   "Id":1,
+        ///   "Description":"",
+        ///   "Status": 0,
+        ///   "Status2": 1
+        /// }
+        /// </code>
+        /// </remarks>
+        [HttpGet("all")]
+        public List<Product> GetAll()
+        {
+            return [];
+        }
+
         /// <summary>
         /// Searches the collection of products by description key words
         /// </summary>
