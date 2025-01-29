@@ -104,10 +104,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return MultilineCodeTag().Replace(text, match =>
             {
                 var codeText = match.Groups["display"].Value;
-                if (LineBreaks().IsMatch(codeText))
-                    return $"```{codeText.TrimEnd()}{Environment.NewLine}```";
-
-                return $"```{codeText}```";
+                return LineBreaks().IsMatch(codeText)
+                    ? $"```{codeText.TrimEnd()}{Environment.NewLine}```"
+                    : $"```{codeText}```";
             });
         }
 

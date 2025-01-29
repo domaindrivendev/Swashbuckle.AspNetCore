@@ -87,6 +87,31 @@
         "x-purpose": "test"
       }
     },
+    "/products/all": {
+      "get": {
+        "tags": [
+          "CrudActions"
+        ],
+        "summary": "Get all products",
+        "description": "```\r\n            {\r\n              \"Id\":1,\r\n              \"Description\":\"\",\r\n              \"Status\": 0,\r\n              \"Status2\": 1\r\n            }\r\n```",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
     "/products/{id}": {
       "get": {
         "tags": [

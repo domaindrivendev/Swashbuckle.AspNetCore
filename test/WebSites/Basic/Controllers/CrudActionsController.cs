@@ -32,13 +32,14 @@ namespace Basic.Controllers
             return product;
         }
 
-        //TODO: consider removing this endpoint before opening PR
         /// <summary>Get all products</summary>
         /// <remarks>
         /// <code>
         /// {
-        ///        "Prop1":1,
-        ///        "Prop2":[]
+        ///   "Id":1,
+        ///   "Description":"",
+        ///   "Status": 0,
+        ///   "Status2": 1
         /// }
         /// </code>
         /// </remarks>
