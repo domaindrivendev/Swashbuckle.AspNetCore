@@ -71,6 +71,14 @@ namespace Basic.Controllers
         /// <summary>
         /// Updates some properties of a specific product
         /// </summary>
+        /// <remarks>
+        ///     <para>
+        ///         Only provided properties will be updated,
+        ///         other remain unchanged.
+        ///     </para>
+        ///     <para>       Identifier must be non-default value     </para>
+        ///     <para>Body must be specified</para>
+        /// </remarks>
         /// <param name="id" example="333"></param>
         /// <param name="updates"></param>
         [HttpPatch("{id}", Name = "PatchProduct")]
