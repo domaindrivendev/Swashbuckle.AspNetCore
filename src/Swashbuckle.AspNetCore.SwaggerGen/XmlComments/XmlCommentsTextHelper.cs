@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -10,7 +11,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public static string Humanize(string text)
         {
             if (text == null)
-                throw new ArgumentNullException("text");
+                throw new ArgumentNullException(nameof(text));
 
             //Call DecodeXml at last to avoid entities like &lt and &gt to break valid xml
 
@@ -106,12 +107,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var codeText = match.Groups["display"].Value;
                 if (LineBreaks().IsMatch(codeText))
                 {
-                    if (codeText.StartsWith("\r") || codeText.StartsWith("\n"))
+                    var builder = new StringBuilder().Append("```");
+                    if (!codeText.StartsWith("\r") && !codeText.StartsWith("\n"))
                     {
-                        return $"```{codeText.TrimEnd()}{Environment.NewLine}```";
+                        builder.AppendLine();
                     }
 
-                    return $"```{Environment.NewLine}{codeText.TrimEnd()}{Environment.NewLine}```";
+                    return builder.AppendLine(codeText.TrimEnd())
+                        .Append("```")
+                        .ToString();
                 }
 
                 return $"```{codeText}```";

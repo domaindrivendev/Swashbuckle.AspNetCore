@@ -172,7 +172,16 @@ A line of text",
 
             var output = XmlCommentsTextHelper.Humanize(input);
 
-            Assert.Equal("```\r\n   {\r\n    \"Prop1\":1,\r\n    \"Prop2\":[]\r\n   }\r\n```", output, false, true);
+            var expected = string.Join("\r\n",
+            [
+                "```",
+                "   {",
+                "    \"Prop1\":1,",
+                "    \"Prop2\":[]",
+                "   }",
+                "```"
+            ]);
+            Assert.Equal(expected, output, false, true);
         }
 
         [Fact]
@@ -187,7 +196,16 @@ A line of text",
 
             var output = XmlCommentsTextHelper.Humanize(input);
 
-            Assert.Equal("```\r\n{\r\n    \"Prop1\":1,\r\n    \"Prop2\":[]\r\n   }\r\n```", output, false, true);
+            var expected = string.Join("\r\n",
+            [
+                "```",
+                "{",
+                "    \"Prop1\":1,",
+                "    \"Prop2\":[]",
+                "   }",
+                "```"
+            ]);
+            Assert.Equal(expected, output, false, true);
         }
     }
 }
