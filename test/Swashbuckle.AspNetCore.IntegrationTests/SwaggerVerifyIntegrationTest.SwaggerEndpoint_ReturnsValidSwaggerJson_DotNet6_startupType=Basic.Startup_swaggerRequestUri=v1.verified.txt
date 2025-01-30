@@ -837,7 +837,19 @@
                 "type": "string"
               }
             }
-          }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": true,
+            "style": "deepObject",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+             }
+           }
         ],
         "responses": {
           "200": {

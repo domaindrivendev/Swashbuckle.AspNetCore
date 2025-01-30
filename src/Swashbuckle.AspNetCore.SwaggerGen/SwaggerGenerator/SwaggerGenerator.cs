@@ -602,9 +602,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 In = location,
                 Required = isRequired,
                 Schema = schema,
-                Description = description
+                Description = description,
+                Style = GetParameterStyle(type, apiParameter.Source)
             };
         }
+
+        private static ParameterStyle? GetParameterStyle(Type type, BindingSource source) =>
+            source == BindingSource.Query && type == typeof(Dictionary<string, string>) ? ParameterStyle.DeepObject : null;
 
         private (OpenApiParameter, ParameterFilterContext) GenerateParameterAndContext(
             ApiParameterDescription apiParameter,
