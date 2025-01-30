@@ -848,8 +848,8 @@
               "additionalProperties": {
                 "type": "string"
               }
-             }
-           }
+            }
+          }
         ],
         "responses": {
           "200": {
