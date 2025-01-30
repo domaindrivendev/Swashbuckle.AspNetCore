@@ -2528,8 +2528,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             return new SwaggerGenerator(
                 options ?? DefaultOptions,
                 new FakeApiDescriptionGroupCollectionProvider(apiDescriptions),
-                new SchemaGenerator(new SchemaGeneratorOptions() { SchemaFilters = schemaFilters ?? [] }, new JsonSerializerDataContractResolver(new JsonSerializerOptions()), Options.Create<MvcOptions>(new MvcOptions())),
-                new FakeAuthenticationSchemeProvider(authenticationSchemes ?? Enumerable.Empty<AuthenticationScheme>())
+                new SchemaGenerator(new SchemaGeneratorOptions { SchemaFilters = schemaFilters ?? [] }, new JsonSerializerDataContractResolver(new JsonSerializerOptions())),
+                new FakeAuthenticationSchemeProvider(authenticationSchemes ?? [])
             );
         }
 

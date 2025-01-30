@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
-using Microsoft.Extensions.Options;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -20,21 +19,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         private readonly SchemaGeneratorOptions _generatorOptions;
         private readonly ISerializerDataContractResolver _serializerDataContractResolver;
-        private readonly IOptions<MvcOptions> _mvcOptions;
-
-        public SchemaGenerator(SchemaGeneratorOptions generatorOptions, ISerializerDataContractResolver serializerDataContractResolver)
-            : this(generatorOptions, serializerDataContractResolver, null)
-        {
-        }
 
         public SchemaGenerator(
             SchemaGeneratorOptions generatorOptions,
-            ISerializerDataContractResolver serializerDataContractResolver,
-            IOptions<MvcOptions> mvcOptions)
+            ISerializerDataContractResolver serializerDataContractResolver)
         {
             _generatorOptions = generatorOptions;
             _serializerDataContractResolver = serializerDataContractResolver;
-            _mvcOptions = mvcOptions;
         }
 
         public OpenApiSchema GenerateSchema(
@@ -440,9 +431,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     : GenerateSchemaForType(dataProperty.MemberType, schemaRepository);
 
                 var markNonNullableTypeAsRequired = _generatorOptions.NonNullableReferenceTypesAsRequired
-#if !NETSTANDARD2_0
-                    && (!_mvcOptions?.Value.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes ?? true)
-#endif
                     && (dataProperty.MemberInfo?.IsNonNullableReferenceType() ?? false);
 
                 if ((

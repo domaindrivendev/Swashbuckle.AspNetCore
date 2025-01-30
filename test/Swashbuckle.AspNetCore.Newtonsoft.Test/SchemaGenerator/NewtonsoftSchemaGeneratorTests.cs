@@ -925,7 +925,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             var serializerSettings = new JsonSerializerSettings();
             configureSerializer?.Invoke(serializerSettings);
 
-            return new SchemaGenerator(generatorOptions, new NewtonsoftDataContractResolver(serializerSettings), Options.Create<MvcOptions>(new MvcOptions()));
+            return new SchemaGenerator(generatorOptions, new NewtonsoftDataContractResolver(serializerSettings));
         }
     }
 }
