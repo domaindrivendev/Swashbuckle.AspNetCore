@@ -367,15 +367,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     AdditionalPropertiesAllowed = false
                 };
             }
-            else
+
+            return new OpenApiSchema
             {
-                return new OpenApiSchema
-                {
-                    Type = "object",
-                    AdditionalPropertiesAllowed = true,
-                    AdditionalProperties = GenerateSchema(dataContract.DictionaryValueType, schemaRepository)
-                };
-            }
+                Type = "object",
+                AdditionalPropertiesAllowed = true,
+                AdditionalProperties = GenerateSchema(dataContract.DictionaryValueType, schemaRepository)
+            };
         }
 
         private OpenApiSchema CreateObjectSchema(DataContract dataContract, SchemaRepository schemaRepository)
