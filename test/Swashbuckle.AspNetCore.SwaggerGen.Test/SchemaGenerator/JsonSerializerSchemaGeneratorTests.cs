@@ -984,6 +984,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(required, propertyIsRequired);
         }
 
+        [Obsolete($"{nameof(IOptions<MvcOptions>)} is not used. Test method must be removed when ctor will be removed")]
         [Theory]
         [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextAnnotated.NonNullableString), false)]
         [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextAnnotated.NonNullableString), true)]
@@ -1004,7 +1005,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             subject.GenerateSchema(declaringType, schemaRepository);
 
             var propertyIsRequired = schemaRepository.Schemas[subType].Required.Contains(propertyName);
-            Assert.Equal(!suppress, propertyIsRequired);
+            Assert.True(propertyIsRequired);
         }
 
         [Theory]
@@ -1316,10 +1317,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("integer", schema.Type);
         }
 
+
         private static SchemaGenerator Subject(
             Action<SchemaGeneratorOptions> configureGenerator = null,
-            Action<JsonSerializerOptions> configureSerializer = null,
-            Action<MvcOptions> configureMvcOptions = null)
+            Action<JsonSerializerOptions> configureSerializer = null)
         {
             var generatorOptions = new SchemaGeneratorOptions();
             configureGenerator?.Invoke(generatorOptions);
@@ -1327,10 +1328,23 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var serializerOptions = new JsonSerializerOptions();
             configureSerializer?.Invoke(serializerOptions);
 
+            return new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions));
+        }
+
+        [Obsolete($"{nameof(IOptions<MvcOptions>)} is not used. Test method must be removed when ctor will be removed")]
+        private static SchemaGenerator Subject(
+            Action<SchemaGeneratorOptions> configureGenerator,
+            Action<MvcOptions> configureMvcOptions)
+        {
+            var generatorOptions = new SchemaGeneratorOptions();
+            configureGenerator?.Invoke(generatorOptions);
+
+            var serializerOptions = new JsonSerializerOptions();
+
             var mvcOptions = new MvcOptions();
             configureMvcOptions?.Invoke(mvcOptions);
 
-            return new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions), Options.Create<MvcOptions>(mvcOptions));
+            return new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions), Options.Create(mvcOptions));
         }
     }
 }
