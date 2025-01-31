@@ -984,6 +984,30 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(required, propertyIsRequired);
         }
 
+        [Obsolete($"{nameof(IOptions<MvcOptions>)} is not used. Test method must be removed when ctor will be removed")]
+        [Theory]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextAnnotated.NonNullableString), false)]
+        [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextAnnotated.NonNullableString), true)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextNotAnnotated.NonNullableString), false)]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextNotAnnotated.NonNullableString), true)]
+        public void GenerateSchema_SupportsOption_SuppressImplicitRequiredAttributeForNonNullableReferenceTypes(
+            Type declaringType,
+            string subType,
+            string propertyName,
+            bool suppress)
+        {
+            var subject = Subject(
+                configureGenerator: c => c.NonNullableReferenceTypesAsRequired = true,
+                configureMvcOptions: o => o.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = suppress
+            );
+            var schemaRepository = new SchemaRepository();
+
+            subject.GenerateSchema(declaringType, schemaRepository);
+
+            var propertyIsRequired = schemaRepository.Schemas[subType].Required.Contains(propertyName);
+            Assert.True(propertyIsRequired);
+        }
+
         [Theory]
         [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithNestedSubType.Nested), nameof(TypeWithNullableContextAnnotated.SubTypeWithNestedSubType.Nested.NullableString), true)]
         [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithNestedSubType.Nested), nameof(TypeWithNullableContextAnnotated.SubTypeWithNestedSubType.Nested.NonNullableString), false)]
@@ -1004,6 +1028,29 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var propertySchema = schemaRepository.Schemas[subType].Properties[propertyName];
             Assert.Equal(expectedNullable, propertySchema.Nullable);
+        }
+
+        [Theory]
+        [InlineData(typeof(TypeWithNullableContextAnnotated))]
+        [InlineData(typeof(TypeWithNullableContextNotAnnotated))]
+        public void GenerateSchema_Works_IfNotProvidingMvcOptions(Type type)
+        {
+            var generatorOptions = new SchemaGeneratorOptions
+            {
+                NonNullableReferenceTypesAsRequired = true
+            };
+
+            var serializerOptions = new JsonSerializerOptions();
+
+            var subject = new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions));
+            var schemaRepository = new SchemaRepository();
+
+            subject.GenerateSchema(type, schemaRepository);
+
+            var subType = nameof(TypeWithNullableContextAnnotated.SubTypeWithOneNonNullableContent);
+            var propertyName = nameof(TypeWithNullableContextAnnotated.NonNullableString);
+            var propertyIsRequired = schemaRepository.Schemas[subType].Required.Contains(propertyName);
+            Assert.True(propertyIsRequired);
         }
 
         [Fact]
@@ -1270,6 +1317,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("integer", schema.Type);
         }
 
+
         private static SchemaGenerator Subject(
             Action<SchemaGeneratorOptions> configureGenerator = null,
             Action<JsonSerializerOptions> configureSerializer = null)
@@ -1281,6 +1329,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             configureSerializer?.Invoke(serializerOptions);
 
             return new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions));
+        }
+
+        [Obsolete($"{nameof(IOptions<MvcOptions>)} is not used. Test method must be removed when ctor will be removed")]
+        private static SchemaGenerator Subject(
+            Action<SchemaGeneratorOptions> configureGenerator,
+            Action<MvcOptions> configureMvcOptions)
+        {
+            var generatorOptions = new SchemaGeneratorOptions();
+            configureGenerator?.Invoke(generatorOptions);
+
+            var serializerOptions = new JsonSerializerOptions();
+
+            var mvcOptions = new MvcOptions();
+            configureMvcOptions?.Invoke(mvcOptions);
+
+            return new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions), Options.Create(mvcOptions));
         }
     }
 }

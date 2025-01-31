@@ -10,6 +10,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 
@@ -26,6 +27,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             _generatorOptions = generatorOptions;
             _serializerDataContractResolver = serializerDataContractResolver;
+        }
+
+        [Obsolete($"{nameof(IOptions<MvcOptions>)} is not used. This constructor will be removed in future versions")]
+        public SchemaGenerator(
+            SchemaGeneratorOptions generatorOptions,
+            ISerializerDataContractResolver serializerDataContractResolver,
+            IOptions<MvcOptions> _)
+            : this(generatorOptions, serializerDataContractResolver)
+        {
         }
 
         public OpenApiSchema GenerateSchema(
