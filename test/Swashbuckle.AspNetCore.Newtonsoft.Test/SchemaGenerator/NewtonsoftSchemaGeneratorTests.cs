@@ -579,6 +579,18 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Fact]
+        public void GenerateSchema_HandlesSquareArray()
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject().GenerateSchema(typeof(string[,]), schemaRepository);
+
+            Assert.NotNull(referenceSchema.Items);
+            Assert.NotNull(referenceSchema.Items.Type);
+            Assert.Equal("string", referenceSchema.Items.Type);
+        }
+
+        [Fact]
         public void GenerateSchema_HandlesTypesWithOverriddenProperties()
         {
             var schemaRepository = new SchemaRepository();
