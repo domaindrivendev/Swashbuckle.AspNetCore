@@ -202,7 +202,7 @@ Swashbuckle.AspNetCore.SwaggerGen.SchemaFilterContext.Type.get -> System.Type
 Swashbuckle.AspNetCore.SwaggerGen.SchemaGenerator
 Swashbuckle.AspNetCore.SwaggerGen.SchemaGenerator.GenerateSchema(System.Type modelType, Swashbuckle.AspNetCore.SwaggerGen.SchemaRepository schemaRepository, System.Reflection.MemberInfo memberInfo = null, System.Reflection.ParameterInfo parameterInfo = null, Microsoft.AspNetCore.Mvc.ApiExplorer.ApiParameterRouteInfo routeInfo = null) -> Microsoft.OpenApi.Models.OpenApiSchema
 Swashbuckle.AspNetCore.SwaggerGen.SchemaGenerator.SchemaGenerator(Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions generatorOptions, Swashbuckle.AspNetCore.SwaggerGen.ISerializerDataContractResolver serializerDataContractResolver) -> void
-Swashbuckle.AspNetCore.SwaggerGen.SchemaGenerator.SchemaGenerator(Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions generatorOptions, Swashbuckle.AspNetCore.SwaggerGen.ISerializerDataContractResolver serializerDataContractResolver, Microsoft.Extensions.Options.IOptions<Microsoft.AspNetCore.Mvc.MvcOptions> _) -> void
+Swashbuckle.AspNetCore.SwaggerGen.SchemaGenerator.SchemaGenerator(Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions generatorOptions, Swashbuckle.AspNetCore.SwaggerGen.ISerializerDataContractResolver serializerDataContractResolver, Microsoft.Extensions.Options.IOptions<Microsoft.AspNetCore.Mvc.MvcOptions> mvcOptions) -> void
 Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions
 Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions.CustomTypeMappings.get -> System.Collections.Generic.IDictionary<System.Type, System.Func<Microsoft.OpenApi.Models.OpenApiSchema>>
 Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions.CustomTypeMappings.set -> void

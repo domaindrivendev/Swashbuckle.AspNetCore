@@ -33,7 +33,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public SchemaGenerator(
             SchemaGeneratorOptions generatorOptions,
             ISerializerDataContractResolver serializerDataContractResolver,
-            IOptions<MvcOptions> _)
+            IOptions<MvcOptions> mvcOptions)
             : this(generatorOptions, serializerDataContractResolver)
         {
         }
