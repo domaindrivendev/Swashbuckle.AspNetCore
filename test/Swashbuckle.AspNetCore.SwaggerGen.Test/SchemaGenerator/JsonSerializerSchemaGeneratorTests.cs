@@ -1330,7 +1330,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             return new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions));
         }
 
-        [Obsolete($"{nameof(IOptions<MvcOptions>)} is not used. Test method must be removed when ctor will be removed")]
+        [Obsolete($"{nameof(IOptions<MvcOptions>)} is not used.")]
         private static SchemaGenerator Subject(
             Action<SchemaGeneratorOptions> configureGenerator,
             Action<MvcOptions> configureMvcOptions)
