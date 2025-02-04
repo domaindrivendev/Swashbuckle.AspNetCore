@@ -142,6 +142,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
 #endif
 
+            if (type.IsArray)
+            {
+                itemType = type.GetElementType();
+                return true;
+            }
+
             if (typeof(IEnumerable).IsAssignableFrom(type))
             {
                 itemType = typeof(object);
