@@ -29,7 +29,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             _serializerDataContractResolver = serializerDataContractResolver;
         }
 
-        [Obsolete($"{nameof(IOptions<MvcOptions>)} is not used. This constructor will be removed in future versions")]
+        [Obsolete($"{nameof(IOptions<MvcOptions>)} is no longer used. This constructor will be removed in a future major release.")]
         public SchemaGenerator(
             SchemaGeneratorOptions generatorOptions,
             ISerializerDataContractResolver serializerDataContractResolver,
