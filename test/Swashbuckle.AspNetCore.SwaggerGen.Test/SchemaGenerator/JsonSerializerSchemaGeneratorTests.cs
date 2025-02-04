@@ -984,7 +984,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(required, propertyIsRequired);
         }
 
-        [Obsolete($"{nameof(IOptions<MvcOptions>)} is not used. Test method must be removed when ctor will be removed")]
+        [Obsolete($"{nameof(IOptions<MvcOptions>)} is not used.")]
         [Theory]
         [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextAnnotated.NonNullableString), false)]
         [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextAnnotated.NonNullableString), true)]
