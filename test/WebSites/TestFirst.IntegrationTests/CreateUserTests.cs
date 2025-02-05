@@ -21,7 +21,8 @@ namespace TestFirst.IntegrationTests
             Describe("/api/users", OperationType.Post, new OpenApiOperation
             {
                 OperationId = "CreateUser",
-                Tags = new List<OpenApiTag> { new OpenApiTag {  Name = "Users" } },
+                //// TODO Fix this
+                ////Tags = new List<OpenApiTagReference> { new OpenApiTag {  Name = "Users" } },
                 RequestBody = new OpenApiRequestBody
                 {
                     Content = new Dictionary<string, OpenApiMediaType>
@@ -30,11 +31,11 @@ namespace TestFirst.IntegrationTests
                         {
                             Schema = new OpenApiSchema
                             {
-                                Type = "object",
+                                Type = JsonSchemaType.Object,
                                 Properties = new Dictionary<string, OpenApiSchema>
                                 {
-                                    [ "email" ] = new OpenApiSchema {  Type = "string" },
-                                    [ "password" ] = new OpenApiSchema {  Type = "string" },
+                                    [ "email" ] = new OpenApiSchema {  Type = JsonSchemaType.String },
+                                    [ "password" ] = new OpenApiSchema {  Type = JsonSchemaType.String },
                                 },
                                 Required = new SortedSet<string> { "email", "password" }
                             }
@@ -52,7 +53,7 @@ namespace TestFirst.IntegrationTests
                             [ "Location" ] = new OpenApiHeader
                             {
                                 Required = true,
-                                Schema = new OpenApiSchema { Type = "string" }
+                                Schema = new OpenApiSchema { Type = JsonSchemaType.String }
                             }
                         }
                     },

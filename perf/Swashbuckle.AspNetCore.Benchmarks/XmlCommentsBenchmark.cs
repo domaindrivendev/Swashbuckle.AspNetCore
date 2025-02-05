@@ -101,7 +101,7 @@ public class XmlCommentsBenchmark
         {
             Schema = new()
             {
-                Type = "string",
+                Type = JsonSchemaType.String,
                 Description = "schema-level description",
             },
         };
@@ -120,7 +120,7 @@ public class XmlCommentsBenchmark
                 {
                     Schema = new()
                     {
-                        Type = "string",
+                        Type = JsonSchemaType.String,
                     },
                 },
             },

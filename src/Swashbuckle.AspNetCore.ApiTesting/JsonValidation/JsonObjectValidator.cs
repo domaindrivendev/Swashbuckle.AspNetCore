@@ -5,11 +5,11 @@ using Newtonsoft.Json.Linq;
 
 namespace Swashbuckle.AspNetCore.ApiTesting
 {
-    public class JsonObjectValidator(IJsonValidator jsonValidator) : IJsonValidator
+    public sealed class JsonObjectValidator(IJsonValidator jsonValidator) : IJsonValidator
     {
         private readonly IJsonValidator _jsonValidator = jsonValidator;
 
-        public bool CanValidate(OpenApiSchema schema) => schema.Type == "object";
+        public bool CanValidate(OpenApiSchema schema) => schema.Type is JsonSchemaType.Object;
 
         public bool Validate(
             OpenApiSchema schema,

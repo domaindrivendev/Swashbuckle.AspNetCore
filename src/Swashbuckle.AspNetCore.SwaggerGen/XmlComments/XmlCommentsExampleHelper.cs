@@ -1,18 +1,18 @@
 ﻿using System.Text.Json;
-using Microsoft.OpenApi.Any;
+using System.Text.Json.Nodes;
 using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     internal static class XmlCommentsExampleHelper
     {
-        public static IOpenApiAny Create(
+        public static JsonNode Create(
             SchemaRepository schemaRepository,
             OpenApiSchema schema,
             string exampleString)
         {
             var isStringType =
-                schema?.ResolveType(schemaRepository) == "string" &&
+                schema?.ResolveType(schemaRepository) == JsonSchemaType.String &&
                 !string.Equals(exampleString, "null");
 
             var exampleAsJson = isStringType

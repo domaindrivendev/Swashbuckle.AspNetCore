@@ -1,4 +1,4 @@
-static Swashbuckle.AspNetCore.SwaggerGen.OpenApiAnyFactory.CreateFromJson(string json, System.Text.Json.JsonSerializerOptions options) -> Microsoft.OpenApi.Any.IOpenApiAny
+static Swashbuckle.AspNetCore.SwaggerGen.OpenApiAnyFactory.CreateFromJson(string json, System.Text.Json.JsonSerializerOptions options) -> System.Text.Json.Nodes.JsonNode
 static Swashbuckle.AspNetCore.SwaggerGen.XmlCommentsTextHelper.Humanize(string text, string xmlCommentEndOfLine) -> string
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GetDocumentNames() -> System.Collections.Generic.IList<string>
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.XmlCommentEndOfLine.get -> string

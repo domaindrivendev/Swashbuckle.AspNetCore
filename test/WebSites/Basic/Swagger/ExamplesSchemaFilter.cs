@@ -1,5 +1,5 @@
 ﻿using System;
-using Microsoft.OpenApi.Any;
+using System.Text.Json.Nodes;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -12,15 +12,15 @@ namespace Basic.Swagger
             schema.Example = GetExampleOrNullFor(context.Type);
         }
 
-        private static IOpenApiAny GetExampleOrNullFor(Type type)
+        private static JsonObject GetExampleOrNullFor(Type type)
         {
             return type.Name switch
             {
-                "Product" => new OpenApiObject
+                "Product" => new JsonObject
                 {
-                    ["id"] = new OpenApiInteger(123),
-                    ["description"] = new OpenApiString("foobar"),
-                    ["price"] = new OpenApiDouble(14.37)
+                    ["id"] = 123,
+                    ["description"] = "foobar",
+                    ["price"] = 14.37d
                 },
                 _ => null,
             };

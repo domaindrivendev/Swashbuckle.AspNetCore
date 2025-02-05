@@ -4,9 +4,9 @@ using Newtonsoft.Json.Linq;
 
 namespace Swashbuckle.AspNetCore.ApiTesting
 {
-    public class JsonNullValidator : IJsonValidator
+    public sealed class JsonNullValidator : IJsonValidator
     {
-        public bool CanValidate(OpenApiSchema schema) => schema.Type == "null";
+        public bool CanValidate(OpenApiSchema schema) => schema.Type is JsonSchemaType.Null;
 
         public bool Validate(
             OpenApiSchema schema,

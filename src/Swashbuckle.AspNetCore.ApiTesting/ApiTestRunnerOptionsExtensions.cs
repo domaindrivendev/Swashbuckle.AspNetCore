@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Readers;
 
 namespace Swashbuckle.AspNetCore.ApiTesting
 {
@@ -10,9 +9,12 @@ namespace Swashbuckle.AspNetCore.ApiTesting
         public static void AddOpenApiFile(this ApiTestRunnerOptions options, string documentName, string filePath)
         {
             using var fileStream = File.OpenRead(filePath);
+            using var memoryStream = new MemoryStream();
 
-            var openApiDocument = new OpenApiStreamReader().Read(fileStream, out var diagnostic);
-            options.OpenApiDocs.Add(documentName, openApiDocument);
+            fileStream.CopyTo(memoryStream);
+
+            var result = OpenApiDocument.Load(memoryStream);
+            options.OpenApiDocs.Add(documentName, result.Document);
         }
 
         public static OpenApiDocument GetOpenApiDocument(this ApiTestRunnerOptions options, string documentName)

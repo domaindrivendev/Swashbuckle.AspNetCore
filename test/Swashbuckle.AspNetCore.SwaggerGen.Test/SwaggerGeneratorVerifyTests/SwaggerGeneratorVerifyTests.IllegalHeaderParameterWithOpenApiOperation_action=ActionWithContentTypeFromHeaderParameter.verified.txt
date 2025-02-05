@@ -1,4 +1,7 @@
 ﻿{
+  Workspace: {
+    BaseUrl: https://openapi.net/
+  },
   Info: {
     Title: Test API,
     Version: V1
@@ -29,11 +32,13 @@
               Explode: false,
               AllowReserved: false,
               Schema: {
-                Type: string,
+                UnEvaluatedProperties: false,
+                Type: String,
                 ReadOnly: false,
                 WriteOnly: false,
                 AdditionalPropertiesAllowed: true,
                 Nullable: false,
+                UnevaluatedProperties: false,
                 Deprecated: false,
                 UnresolvedReference: false
               }
@@ -45,6 +50,5 @@
       UnresolvedReference: false
     }
   },
-  Components: {},
-  HashCode: F6CB61AEE648F54EC5BBCD1801BF8194997A0D5B99DDCFC0AF71CEDF79888B58EC1798313ECD4181CBAA61F377A80199CDB82412B744E9EF115F247F8A4A18EC
+  Components: {}
 }

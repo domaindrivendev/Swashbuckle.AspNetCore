@@ -7,7 +7,7 @@ namespace Swashbuckle.AspNetCore.TestSupport
 {
     public static class IOpenApiAnyExtensions
     {
-        public static string ToJson(this IOpenApiAny openApiAny)
+        public static string ToJson(this OpenApiAny openApiAny)
         {
             var stringWriter = new StringWriter();
             var jsonWriter = new OpenApiJsonWriter(stringWriter);

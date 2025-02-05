@@ -12,8 +12,6 @@ using System.Threading.Tasks;
 using Xunit;
 using ReDocApp = ReDoc;
 using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Readers;
-using Microsoft.OpenApi.Any;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests
 {
@@ -93,11 +91,10 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
             try
             {
-                var openApiDocument = new OpenApiStreamReader().Read(contentStream, out OpenApiDiagnostic diagnostic);
-                var example = openApiDocument.Components.Schemas["Product"].Example as OpenApiObject;
-                var price = (example["price"] as OpenApiDouble);
-                Assert.NotNull(price);
-                Assert.Equal(14.37, price.Value);
+                var openApiDocument = (await OpenApiDocument.LoadAsync(contentStream)).Document;
+                var example = openApiDocument.Components.Schemas["Product"].Example;
+                var price = example["price"].GetValue<double>();
+                Assert.Equal(14.37, price);
             }
             finally
             {
@@ -106,7 +103,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         }
 
         [Theory]
-        [InlineData("/swagger/v1/swagger.json", "openapi", "3.0.1")]
+        [InlineData("/swagger/v1/swagger.json", "openapi", "3.0.4")]
         [InlineData("/swagger/v1/swaggerv2.json", "swagger", "2.0")]
         public async Task SwaggerMiddleware_CanBeConfiguredMultipleTimes(
             string swaggerUrl,
@@ -214,8 +211,9 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 
             Assert.True(swaggerResponse.IsSuccessStatusCode, $"IsSuccessStatusCode is false. Response: '{await swaggerResponse.Content.ReadAsStringAsync()}'");
             using var contentStream = await swaggerResponse.Content.ReadAsStreamAsync();
-            new OpenApiStreamReader().Read(contentStream, out OpenApiDiagnostic diagnostic);
-            Assert.Empty(diagnostic.Errors);
+            var result = await OpenApiDocument.LoadAsync(contentStream);
+            Assert.NotNull(result.Diagnostic);
+            Assert.Empty(result.Diagnostic.Errors);
         }
     }
 }

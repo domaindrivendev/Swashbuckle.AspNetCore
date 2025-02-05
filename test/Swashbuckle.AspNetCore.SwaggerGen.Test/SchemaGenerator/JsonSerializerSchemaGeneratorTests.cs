@@ -33,49 +33,49 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
-            Assert.Equal("string", schema.Type);
+            Assert.Equal(JsonSchemaType.String, schema.Type);
             Assert.Equal("binary", schema.Format);
         }
 
         [Theory]
-        [InlineData(typeof(bool), "boolean", null)]
-        [InlineData(typeof(byte), "integer", "int32")]
-        [InlineData(typeof(sbyte), "integer", "int32")]
-        [InlineData(typeof(short), "integer", "int32")]
-        [InlineData(typeof(ushort), "integer", "int32")]
-        [InlineData(typeof(int), "integer", "int32")]
-        [InlineData(typeof(uint), "integer", "int32")]
-        [InlineData(typeof(long), "integer", "int64")]
-        [InlineData(typeof(ulong), "integer", "int64")]
-        [InlineData(typeof(float), "number", "float")]
-        [InlineData(typeof(double), "number", "double")]
-        [InlineData(typeof(decimal), "number", "double")]
-        [InlineData(typeof(string), "string", null)]
-        [InlineData(typeof(char), "string", null)]
-        [InlineData(typeof(byte[]), "string", "byte")]
-        [InlineData(typeof(DateTime), "string", "date-time")]
-        [InlineData(typeof(DateTimeOffset), "string", "date-time")]
-        [InlineData(typeof(TimeSpan), "string", "date-span")]
-        [InlineData(typeof(Guid), "string", "uuid")]
-        [InlineData(typeof(Uri), "string", "uri")]
-        [InlineData(typeof(Version), "string", null)]
-        [InlineData(typeof(DateOnly), "string", "date")]
-        [InlineData(typeof(TimeOnly), "string", "time")]
-        [InlineData(typeof(bool?), "boolean", null)]
-        [InlineData(typeof(int?), "integer", "int32")]
-        [InlineData(typeof(DateTime?), "string", "date-time")]
-        [InlineData(typeof(Guid?), "string", "uuid")]
-        [InlineData(typeof(DateOnly?), "string", "date")]
-        [InlineData(typeof(TimeOnly?), "string", "time")]
+        [InlineData(typeof(bool), JsonSchemaType.Boolean, null)]
+        [InlineData(typeof(byte), JsonSchemaType.Integer, "int32")]
+        [InlineData(typeof(sbyte), JsonSchemaType.Integer, "int32")]
+        [InlineData(typeof(short), JsonSchemaType.Integer, "int32")]
+        [InlineData(typeof(ushort), JsonSchemaType.Integer, "int32")]
+        [InlineData(typeof(int), JsonSchemaType.Integer, "int32")]
+        [InlineData(typeof(uint), JsonSchemaType.Integer, "int32")]
+        [InlineData(typeof(long), JsonSchemaType.Integer, "int64")]
+        [InlineData(typeof(ulong), JsonSchemaType.Integer, "int64")]
+        [InlineData(typeof(float), JsonSchemaType.Number, "float")]
+        [InlineData(typeof(double), JsonSchemaType.Number, "double")]
+        [InlineData(typeof(decimal), JsonSchemaType.Number, "double")]
+        [InlineData(typeof(string), JsonSchemaType.String, null)]
+        [InlineData(typeof(char), JsonSchemaType.String, null)]
+        [InlineData(typeof(byte[]), JsonSchemaType.String, "byte")]
+        [InlineData(typeof(DateTime), JsonSchemaType.String, "date-time")]
+        [InlineData(typeof(DateTimeOffset), JsonSchemaType.String, "date-time")]
+        [InlineData(typeof(TimeSpan), JsonSchemaType.String, "date-span")]
+        [InlineData(typeof(Guid), JsonSchemaType.String, "uuid")]
+        [InlineData(typeof(Uri), JsonSchemaType.String, "uri")]
+        [InlineData(typeof(Version), JsonSchemaType.String, null)]
+        [InlineData(typeof(DateOnly), JsonSchemaType.String, "date")]
+        [InlineData(typeof(TimeOnly), JsonSchemaType.String, "time")]
+        [InlineData(typeof(bool?), JsonSchemaType.Boolean, null)]
+        [InlineData(typeof(int?), JsonSchemaType.Integer, "int32")]
+        [InlineData(typeof(DateTime?), JsonSchemaType.String, "date-time")]
+        [InlineData(typeof(Guid?), JsonSchemaType.String, "uuid")]
+        [InlineData(typeof(DateOnly?), JsonSchemaType.String, "date")]
+        [InlineData(typeof(TimeOnly?), JsonSchemaType.String, "time")]
 #if NET7_0_OR_GREATER
-        [InlineData(typeof(Int128), "integer", "int128")]
-        [InlineData(typeof(Int128?), "integer", "int128")]
-        [InlineData(typeof(UInt128), "integer", "int128")]
-        [InlineData(typeof(UInt128?), "integer", "int128")]
+        [InlineData(typeof(Int128), JsonSchemaType.Integer, "int128")]
+        [InlineData(typeof(Int128?), JsonSchemaType.Integer, "int128")]
+        [InlineData(typeof(UInt128), JsonSchemaType.Integer, "int128")]
+        [InlineData(typeof(UInt128?), JsonSchemaType.Integer, "int128")]
 #endif
         public void GenerateSchema_GeneratesPrimitiveSchema_IfPrimitiveOrNullablePrimitiveType(
             Type type,
-            string expectedSchemaType,
+            JsonSchemaType expectedSchemaType,
             string expectedFormat)
         {
             var schema = Subject().GenerateSchema(type, new SchemaRepository());
@@ -100,10 +100,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.NotNull(referenceSchema.Reference);
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal("integer", schema.Type);
+            Assert.Equal(JsonSchemaType.Integer, schema.Type);
             Assert.Equal(expectedFormat, schema.Format);
             Assert.NotNull(schema.Enum);
-            Assert.Equal(expectedEnumAsJson, schema.Enum.Select(openApiAny => openApiAny.ToJson()));
+            Assert.Equal(expectedEnumAsJson, schema.Enum.Select(openApiAny => openApiAny.ToJsonString()));
         }
 
         [Fact]
@@ -120,18 +120,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         }
 
         [Theory]
-        [InlineData(typeof(IDictionary<string, int>), "integer")]
-        [InlineData(typeof(IDictionary<EmptyIntEnum, int>), "integer")]
-        [InlineData(typeof(IReadOnlyDictionary<string, bool>), "boolean")]
-        [InlineData(typeof(IDictionary), null)]
-        [InlineData(typeof(ExpandoObject), null)]
+        [InlineData(typeof(IDictionary<string, int>), JsonSchemaType.Integer)]
+        [InlineData(typeof(IDictionary<EmptyIntEnum, int>), JsonSchemaType.Integer)]
+        [InlineData(typeof(IReadOnlyDictionary<string, bool>), JsonSchemaType.Boolean)]
+        [InlineData(typeof(IDictionary), JsonSchemaType.Null)]
+        [InlineData(typeof(ExpandoObject), JsonSchemaType.Null)]
         public void GenerateSchema_GeneratesDictionarySchema_IfDictionaryType(
             Type type,
-            string expectedAdditionalPropertiesType)
+            JsonSchemaType expectedAdditionalPropertiesType)
         {
             var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
-            Assert.Equal("object", schema.Type);
+            Assert.Equal(JsonSchemaType.Object, schema.Type);
             Assert.True(schema.AdditionalPropertiesAllowed);
             Assert.NotNull(schema.AdditionalProperties);
             Assert.Equal(expectedAdditionalPropertiesType, schema.AdditionalProperties.Type);
@@ -146,26 +146,26 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.NotNull(referenceSchema.Reference);
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal("object", schema.Type);
+            Assert.Equal(JsonSchemaType.Object, schema.Type);
             Assert.True(schema.AdditionalPropertiesAllowed);
             Assert.NotNull(schema.AdditionalProperties);
             Assert.Equal(schema.AdditionalProperties.Reference.Id, referenceSchema.Reference.Id); // ref to self
         }
 
         [Theory]
-        [InlineData(typeof(int[]), "integer", "int32")]
-        [InlineData(typeof(IEnumerable<string>), "string", null)]
-        [InlineData(typeof(DateTime?[]), "string", "date-time")]
-        [InlineData(typeof(int[][]), "array", null)]
-        [InlineData(typeof(IList), null, null)]
+        [InlineData(typeof(int[]), JsonSchemaType.Integer, "int32")]
+        [InlineData(typeof(IEnumerable<string>), JsonSchemaType.String, null)]
+        [InlineData(typeof(DateTime?[]), JsonSchemaType.String, "date-time")]
+        [InlineData(typeof(int[][]), JsonSchemaType.Array, null)]
+        [InlineData(typeof(IList), JsonSchemaType.Null, null)]
         public void GenerateSchema_GeneratesArraySchema_IfEnumerableType(
             Type type,
-            string expectedItemsType,
+            JsonSchemaType expectedItemsType,
             string expectedItemsFormat)
         {
             var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
-            Assert.Equal("array", schema.Type);
+            Assert.Equal(JsonSchemaType.Array, schema.Type);
             Assert.NotNull(schema.Items);
             Assert.Equal(expectedItemsType, schema.Items.Type);
             Assert.Equal(expectedItemsFormat, schema.Items.Format);
@@ -179,7 +179,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
-            Assert.Equal("array", schema.Type);
+            Assert.Equal(JsonSchemaType.Array, schema.Type);
             Assert.True(schema.UniqueItems);
         }
 
@@ -192,7 +192,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.NotNull(referenceSchema.Reference);
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal("array", schema.Type);
+            Assert.Equal(JsonSchemaType.Array, schema.Type);
             Assert.Equal(schema.Items.Reference.Id, referenceSchema.Reference.Id); // ref to self
         }
 
@@ -213,7 +213,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.NotNull(referenceSchema.Reference);
             Assert.Equal(expectedSchemaId, referenceSchema.Reference.Id);
             var schema = schemaRepository.Schemas[expectedSchemaId];
-            Assert.Equal("object", schema.Type);
+            Assert.Equal(JsonSchemaType.Object, schema.Type);
             Assert.Equal(expectedProperties, schema.Properties.Keys);
             Assert.False(schema.AdditionalPropertiesAllowed);
         }
@@ -226,7 +226,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var referenceSchema = Subject().GenerateSchema(typeof(SubType1), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal("object", schema.Type);
+            Assert.Equal(JsonSchemaType.Object, schema.Type);
             Assert.Equal(["BaseProperty", "Property1"], schema.Properties.Keys);
         }
 
@@ -244,7 +244,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var referenceSchema = Subject().GenerateSchema(type, schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal("object", schema.Type);
+            Assert.Equal(JsonSchemaType.Object, schema.Type);
             Assert.Equal(expectedPropertyNames.OrderBy(n => n), schema.Properties.Keys.OrderBy(k => k));
         }
 
@@ -256,7 +256,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var referenceSchema = Subject().GenerateSchema(typeof(INewBaseInterface), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal("integer", schema.Properties["BaseProperty"].Type);
+            Assert.Equal(JsonSchemaType.Integer, schema.Properties["BaseProperty"].Type);
         }
 
         [Fact]
@@ -267,7 +267,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var referenceSchema = Subject().GenerateSchema(typeof(IndexedType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal("object", schema.Type);
+            Assert.Equal(JsonSchemaType.Object, schema.Type);
             Assert.Equal(["Property1"], schema.Properties.Keys);
         }
 
@@ -296,8 +296,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.DoubleWithDefault), "1.7976931348623157E+308")]
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.DoubleWithDefaultOfDifferentType), "1")]
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.StringWithDefault), "\"foobar\"")]
-        [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.IntArrayWithDefault), "[\n  1,\n  2,\n  3\n]")]
-        [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.StringArrayWithDefault), "[\n  \"foo\",\n  \"bar\"\n]")]
+        [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.IntArrayWithDefault), "[1,2,3]")]
+        [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.StringArrayWithDefault), "[\"foo\",\"bar\"]")]
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.NullableIntWithDefaultNullValue), "null")]
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.NullableIntWithDefaultValue), "2147483647")]
         [UseInvariantCulture]
@@ -313,7 +313,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             var propertySchema = schema.Properties[propertyName];
             Assert.NotNull(propertySchema.Default);
-            Assert.Equal(expectedDefaultAsJson, propertySchema.Default.ToJson());
+            Assert.Equal(expectedDefaultAsJson, propertySchema.Default.ToJsonString());
         }
 
         [Fact]
@@ -350,7 +350,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(true, schema.Properties["IntWithExclusiveRange"].ExclusiveMinimum);
             Assert.Equal(true, schema.Properties["IntWithExclusiveRange"].ExclusiveMaximum);
             Assert.Equal("byte", schema.Properties["StringWithBase64"].Format);
-            Assert.Equal("string", schema.Properties["StringWithBase64"].Type);
+            Assert.Equal(JsonSchemaType.String, schema.Properties["StringWithBase64"].Type);
 #endif
             Assert.Null(schema.Properties["IntWithRange"].ExclusiveMinimum);
             Assert.Null(schema.Properties["IntWithRange"].ExclusiveMaximum);
@@ -478,7 +478,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var schema = Subject().GenerateSchema(parameterInfo.ParameterType, schemaRepository, parameterInfo: parameterInfo);
 
             Assert.NotNull(schema.Default);
-            Assert.Equal("3", schema.Default.ToJson());
+            Assert.Equal("3", schema.Default.ToJsonString());
         }
 
         [Theory]
@@ -490,11 +490,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Type type)
         {
             var subject = Subject(
-                configureGenerator: c => c.CustomTypeMappings.Add(mappingType, () => new OpenApiSchema { Type = "string" })
+                configureGenerator: c => c.CustomTypeMappings.Add(mappingType, () => new OpenApiSchema { Type = JsonSchemaType.String })
             );
             var schema = subject.GenerateSchema(type, new SchemaRepository());
 
-            Assert.Equal("string", schema.Type);
+            Assert.Equal(JsonSchemaType.String, schema.Type);
             Assert.Empty(schema.Properties);
         }
 
@@ -514,7 +514,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var definitionSchema = schema.Reference == null ? schema : schemaRepository.Schemas[schema.Reference.Id];
             Assert.Contains("X-foo", definitionSchema.Extensions.Keys);
-            Assert.Equal("v1", ((OpenApiString)definitionSchema.Extensions["X-docName"]).Value);
+            Assert.Equal("v1", ((OpenApiAny)definitionSchema.Extensions["X-docName"]).Node.GetValue<string>());
         }
 
         [Fact]
@@ -565,7 +565,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(["Property1"], subSchema.Properties.Keys);
             // The base type schema
             var baseTypeSchema = schemaRepository.Schemas[baseSchema.Reference.Id];
-            Assert.Equal("object", baseTypeSchema.Type);
+            Assert.Equal(JsonSchemaType.Object, baseTypeSchema.Type);
             Assert.Equal(["BaseProperty"], baseTypeSchema.Properties.Keys);
         }
 
@@ -645,12 +645,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             // The base type schema
             Assert.NotNull(schema.OneOf[0].Reference);
             var baseSchema = schemaRepository.Schemas[schema.OneOf[0].Reference.Id];
-            Assert.Equal("object", baseSchema.Type);
+            Assert.Equal(JsonSchemaType.Object, baseSchema.Type);
             Assert.Equal(["BaseProperty"], baseSchema.Properties.Keys);
             // The first sub type schema
             Assert.NotNull(schema.OneOf[1].Reference);
             var subType1Schema = schemaRepository.Schemas[schema.OneOf[1].Reference.Id];
-            Assert.Equal("object", subType1Schema.Type);
+            Assert.Equal(JsonSchemaType.Object, subType1Schema.Type);
             Assert.NotNull(subType1Schema.AllOf);
             var allOf = Assert.Single(subType1Schema.AllOf);
             Assert.NotNull(allOf.Reference);
@@ -659,7 +659,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             // The second sub type schema
             Assert.NotNull(schema.OneOf[2].Reference);
             var subType2Schema = schemaRepository.Schemas[schema.OneOf[2].Reference.Id];
-            Assert.Equal("object", subType2Schema.Type);
+            Assert.Equal(JsonSchemaType.Object, subType2Schema.Type);
             Assert.NotNull(subType2Schema.AllOf);
             allOf = Assert.Single(subType2Schema.AllOf);
             Assert.NotNull(allOf.Reference);
@@ -691,7 +691,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var schema = subject.GenerateSchema(typeof(IntEnum), new SchemaRepository());
 
-            Assert.Equal("integer", schema.Type);
+            Assert.Equal(JsonSchemaType.Integer, schema.Type);
             Assert.NotNull(schema.Enum);
         }
 
@@ -1059,7 +1059,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var referenceSchema = Subject().GenerateSchema(typeof(ContainingType), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal("object", schema.Type);
+            Assert.Equal(JsonSchemaType.Object, schema.Type);
             Assert.Equal("NestedType", schema.Properties["Property1"].Reference.Id);
         }
 
@@ -1072,7 +1072,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.NotNull(referenceSchema.Items);
             Assert.NotNull(referenceSchema.Items.Type);
-            Assert.Equal("string", referenceSchema.Items.Type);
+            Assert.Equal(JsonSchemaType.String, referenceSchema.Items.Type);
         }
 
         [Fact]
@@ -1151,9 +1151,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             var propertySchema = schema.Properties[nameof(TypeWithDefaultAttributeOnEnum.EnumWithDefault)];
-            Assert.Equal("string", propertySchema.Type);
-            Assert.Equal(expectedEnumAsJson, propertySchema.Enum.Select(openApiAny => openApiAny.ToJson()));
-            Assert.Equal(expectedDefaultAsJson, propertySchema.Default.ToJson());
+            Assert.Equal(JsonSchemaType.String, propertySchema.Type);
+            Assert.Equal(expectedEnumAsJson, propertySchema.Enum.Select(openApiAny => openApiAny.ToJsonString()));
+            Assert.Equal(expectedDefaultAsJson, propertySchema.Default.ToJsonString());
         }
 
         [Fact]
@@ -1175,8 +1175,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var referenceSchema = Subject().GenerateSchema(typeof(JsonConverterAnnotatedEnum), schemaRepository);
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-            Assert.Equal("string", schema.Type);
-            Assert.Equal(["\"Value1\"", "\"Value2\"", "\"X\""], schema.Enum.Select(openApiAny => openApiAny.ToJson()));
+            Assert.Equal(JsonSchemaType.String, schema.Type);
+            Assert.Equal(["\"Value1\"", "\"Value2\"", "\"X\""], schema.Enum.Select(openApiAny => openApiAny.ToJsonString()));
         }
 
         [Fact]
@@ -1324,7 +1324,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 .GetParameters()
                 .First();
             var schema = Subject().GenerateSchema(typeof(string), new SchemaRepository(), parameterInfo: parameterInfo, routeInfo: routeInfo);
-            Assert.Equal("integer", schema.Type);
+            Assert.Equal(JsonSchemaType.Integer, schema.Type);
         }
 
         private static SchemaGenerator Subject(

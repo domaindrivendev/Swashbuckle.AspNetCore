@@ -8,7 +8,7 @@ namespace Basic.Swagger
     {
         public void Apply(OpenApiRequestBody requestBody, RequestBodyFilterContext context)
         {
-            requestBody.Extensions.Add("x-purpose", new OpenApiString("test"));
+            requestBody.Extensions.Add("x-purpose", new OpenApiAny("test"));
         }
     }
 }

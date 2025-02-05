@@ -337,13 +337,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.NotNull(content.Value.Schema.Reference);
             Assert.Equal("TestDto", content.Value.Schema.Reference.Id);
             Assert.Equal(2, operation.RequestBody.Extensions.Count);
-            Assert.Equal("bar", ((OpenApiString)operation.RequestBody.Extensions["X-foo"]).Value);
-            Assert.Equal("v1", ((OpenApiString)operation.RequestBody.Extensions["X-docName"]).Value);
+            Assert.Equal("bar", ((OpenApiAny)operation.RequestBody.Extensions["X-foo"]).Node.GetValue<string>());
+            Assert.Equal("v1", ((OpenApiAny)operation.RequestBody.Extensions["X-docName"]).Node.GetValue<string>());
             Assert.NotEmpty(operation.Parameters);
             Assert.Equal("paramQuery", operation.Parameters[0].Name);
             Assert.Equal(2, operation.Parameters[0].Extensions.Count);
-            Assert.Equal("bar", ((OpenApiString)operation.Parameters[0].Extensions["X-foo"]).Value);
-            Assert.Equal("v1", ((OpenApiString)operation.Parameters[0].Extensions["X-docName"]).Value);
+            Assert.Equal("bar", ((OpenApiAny)operation.Parameters[0].Extensions["X-foo"]).Node.GetValue<string>());
+            Assert.Equal("v1", ((OpenApiAny)operation.Parameters[0].Extensions["X-docName"]).Node.GetValue<string>());
         }
 
         [Fact]
@@ -397,7 +397,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("OperationIdSetInMetadata", document.Paths["/resource"].Operations[OperationType.Post].OperationId);
             Assert.Equal("ParameterInMetadata", document.Paths["/resource"].Operations[OperationType.Post].Parameters[0].Name);
             Assert.NotNull(document.Paths["/resource"].Operations[OperationType.Post].Parameters[0].Schema);
-            Assert.Equal("string", document.Paths["/resource"].Operations[OperationType.Post].Parameters[0].Schema.Type);
+            Assert.Equal(JsonSchemaType.String, document.Paths["/resource"].Operations[OperationType.Post].Parameters[0].Schema.Type);
         }
 
         [Fact]
@@ -821,7 +821,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             var parameter = Assert.Single(operation.Parameters);
-            Assert.Equal("string", parameter.Schema.Type);
+            Assert.Equal(JsonSchemaType.String, parameter.Schema.Type);
         }
 
         [Fact]
@@ -1055,7 +1055,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var content = operation.Responses["200"].Content.FirstOrDefault();
             Assert.Equal("application/zip", content.Key);
             Assert.Equal("binary", content.Value.Schema.Format);
-            Assert.Equal("string", content.Value.Schema.Type);
+            Assert.Equal(JsonSchemaType.String, content.Value.Schema.Type);
         }
 
         [Fact]
@@ -1257,7 +1257,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var document = subject.GetSwagger("v1");
 
-            Assert.Equal(["resource"], document.Paths["/resource"].Operations[OperationType.Post].Tags.Select(t => t.Name));
+            Assert.Equal(["resource"], [.. document.Paths["/resource"].Operations[OperationType.Post].Tags?.Select(t => t.Name)]);
         }
 
         [Fact]
@@ -1281,7 +1281,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var document = subject.GetSwagger("v1");
 
-            Assert.Equal(["Some", "Tags", "Here"], document.Paths["/resource"].Operations[OperationType.Post].Tags.Select(t => t.Name));
+            Assert.Equal(["Some", "Tags", "Here"], [.. document.Paths["/resource"].Operations[OperationType.Post].Tags?.Select(t => t.Name)]);
         }
 
 #if NET7_0_OR_GREATER
@@ -1550,8 +1550,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.Equal(2, operation.Parameters[0].Extensions.Count);
-            Assert.Equal("bar", ((OpenApiString)operation.Parameters[0].Extensions["X-foo"]).Value);
-            Assert.Equal("v1", ((OpenApiString)operation.Parameters[0].Extensions["X-docName"]).Value);
+            Assert.Equal("bar", ((OpenApiAny)operation.Parameters[0].Extensions["X-foo"]).Node.GetValue<string>());
+            Assert.Equal("v1", ((OpenApiAny)operation.Parameters[0].Extensions["X-docName"]).Node.GetValue<string>());
         }
 
         [Fact]
@@ -1587,8 +1587,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.Equal(2, operation.RequestBody.Extensions.Count);
-            Assert.Equal("bar", ((OpenApiString)operation.RequestBody.Extensions["X-foo"]).Value);
-            Assert.Equal("v1", ((OpenApiString)operation.RequestBody.Extensions["X-docName"]).Value);
+            Assert.Equal("bar", ((OpenApiAny)operation.RequestBody.Extensions["X-foo"]).Node.GetValue<string>());
+            Assert.Equal("v1", ((OpenApiAny)operation.RequestBody.Extensions["X-docName"]).Node.GetValue<string>());
         }
 
         [Fact]
@@ -1617,8 +1617,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.Equal(2, operation.Extensions.Count);
-            Assert.Equal("bar", ((OpenApiString)operation.Extensions["X-foo"]).Value);
-            Assert.Equal("v1", ((OpenApiString)operation.Extensions["X-docName"]).Value);
+            Assert.Equal("bar", ((OpenApiAny)operation.Extensions["X-foo"]).Node.GetValue<string>());
+            Assert.Equal("v1", ((OpenApiAny)operation.Extensions["X-docName"]).Node.GetValue<string>());
         }
 
         [Fact]
@@ -1642,8 +1642,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var document = subject.GetSwagger("v1");
 
             Assert.Equal(2, document.Extensions.Count);
-            Assert.Equal("bar", ((OpenApiString)document.Extensions["X-foo"]).Value);
-            Assert.Equal("v1", ((OpenApiString)document.Extensions["X-docName"]).Value);
+            Assert.Equal("bar", ((OpenApiAny)document.Extensions["X-foo"]).Node.GetValue<string>());
+            Assert.Equal("v1", ((OpenApiAny)document.Extensions["X-docName"]).Node.GetValue<string>());
             Assert.Contains("ComplexType", document.Components.Schemas.Keys);
         }
 
@@ -1673,8 +1673,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.Equal(2, operation.Extensions.Count);
-            Assert.Equal("bar", ((OpenApiString)operation.Extensions["X-foo"]).Value);
-            Assert.Equal("v1", ((OpenApiString)operation.Extensions["X-docName"]).Value);
+            Assert.Equal("bar", ((OpenApiAny)operation.Extensions["X-foo"]).Node.GetValue<string>());
+            Assert.Equal("v1", ((OpenApiAny)operation.Extensions["X-docName"]).Node.GetValue<string>());
         }
 
         [Fact]
@@ -1703,8 +1703,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.Equal(2, operation.Extensions.Count);
-            Assert.Equal("bar", ((OpenApiString)operation.Extensions["X-foo"]).Value);
-            Assert.Equal("v1", ((OpenApiString)operation.Extensions["X-docName"]).Value);
+            Assert.Equal("bar", ((OpenApiAny)operation.Extensions["X-foo"]).Node.GetValue<string>());
+            Assert.Equal("v1", ((OpenApiAny)operation.Extensions["X-docName"]).Node.GetValue<string>());
         }
 
         [Fact]
@@ -1728,8 +1728,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var document = await subject.GetSwaggerAsync("v1");
 
             Assert.Equal(2, document.Extensions.Count);
-            Assert.Equal("bar", ((OpenApiString)document.Extensions["X-foo"]).Value);
-            Assert.Equal("v1", ((OpenApiString)document.Extensions["X-docName"]).Value);
+            Assert.Equal("bar", ((OpenApiAny)document.Extensions["X-foo"]).Node.GetValue<string>());
+            Assert.Equal("v1", ((OpenApiAny)document.Extensions["X-docName"]).Node.GetValue<string>());
             Assert.Contains("ComplexType", document.Components.Schemas.Keys);
         }
 
@@ -1754,8 +1754,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var document = await subject.GetSwaggerAsync("v1");
 
             Assert.Equal(2, document.Extensions.Count);
-            Assert.Equal("bar", ((OpenApiString)document.Extensions["X-foo"]).Value);
-            Assert.Equal("v1", ((OpenApiString)document.Extensions["X-docName"]).Value);
+            Assert.Equal("bar", ((OpenApiAny)document.Extensions["X-foo"]).Node.GetValue<string>());
+            Assert.Equal("v1", ((OpenApiAny)document.Extensions["X-docName"]).Node.GetValue<string>());
             Assert.Contains("ComplexType", document.Components.Schemas.Keys);
         }
 
@@ -1792,8 +1792,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.Equal(2, operation.RequestBody.Extensions.Count);
-            Assert.Equal("bar", ((OpenApiString)operation.RequestBody.Extensions["X-foo"]).Value);
-            Assert.Equal("v1", ((OpenApiString)operation.RequestBody.Extensions["X-docName"]).Value);
+            Assert.Equal("bar", ((OpenApiAny)operation.RequestBody.Extensions["X-foo"]).Node.GetValue<string>());
+            Assert.Equal("v1", ((OpenApiAny)operation.RequestBody.Extensions["X-docName"]).Node.GetValue<string>());
         }
 
         [Fact]
@@ -1829,8 +1829,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.Equal(2, operation.RequestBody.Extensions.Count);
-            Assert.Equal("bar", ((OpenApiString)operation.RequestBody.Extensions["X-foo"]).Value);
-            Assert.Equal("v1", ((OpenApiString)operation.RequestBody.Extensions["X-docName"]).Value);
+            Assert.Equal("bar", ((OpenApiAny)operation.RequestBody.Extensions["X-foo"]).Node.GetValue<string>());
+            Assert.Equal("v1", ((OpenApiAny)operation.RequestBody.Extensions["X-docName"]).Node.GetValue<string>());
         }
 
         [Fact]
@@ -1866,8 +1866,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.Equal(2, operation.Parameters[0].Extensions.Count);
-            Assert.Equal("bar", ((OpenApiString)operation.Parameters[0].Extensions["X-foo"]).Value);
-            Assert.Equal("v1", ((OpenApiString)operation.Parameters[0].Extensions["X-docName"]).Value);
+            Assert.Equal("bar", ((OpenApiAny)operation.Parameters[0].Extensions["X-foo"]).Node.GetValue<string>());
+            Assert.Equal("v1", ((OpenApiAny)operation.Parameters[0].Extensions["X-docName"]).Node.GetValue<string>());
         }
 
         [Fact]
@@ -1903,8 +1903,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var operation = document.Paths["/resource"].Operations[OperationType.Post];
             Assert.Equal(2, operation.Parameters[0].Extensions.Count);
-            Assert.Equal("bar", ((OpenApiString)operation.Parameters[0].Extensions["X-foo"]).Value);
-            Assert.Equal("v1", ((OpenApiString)operation.Parameters[0].Extensions["X-docName"]).Value);
+            Assert.Equal("bar", ((OpenApiAny)operation.Parameters[0].Extensions["X-foo"]).Node.GetValue<string>());
+            Assert.Equal("v1", ((OpenApiAny)operation.Parameters[0].Extensions["X-docName"]).Node.GetValue<string>());
         }
 
         [Theory]
@@ -2345,10 +2345,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var content = Assert.Single(document.Paths["/resource"].Operations[OperationType.Post].RequestBody.Content);
             Assert.Equal("application/someMediaType", content.Key);
             Assert.NotNull(content.Value.Schema);
-            Assert.Equal("object", content.Value.Schema.Type);
+            Assert.Equal(JsonSchemaType.Object, content.Value.Schema.Type);
             Assert.NotEmpty(content.Value.Schema.Properties);
             Assert.NotNull(content.Value.Schema.Properties["param"]);
-            Assert.Equal("string", content.Value.Schema.Properties["param"].Type);
+            Assert.Equal(JsonSchemaType.String, content.Value.Schema.Properties["param"].Type);
             Assert.Equal("binary", content.Value.Schema.Properties["param"].Format);
             Assert.NotNull(content.Value.Encoding);
             Assert.NotNull(content.Value.Encoding["param"]);
@@ -2407,12 +2407,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var content = Assert.Single(document.Paths["/resource"].Operations[OperationType.Post].RequestBody.Content);
             Assert.Equal("application/someMediaType", content.Key);
             Assert.NotNull(content.Value.Schema);
-            Assert.Equal("object", content.Value.Schema.Type);
+            Assert.Equal(JsonSchemaType.Object, content.Value.Schema.Type);
             Assert.NotEmpty(content.Value.Schema.Properties);
             Assert.NotNull(content.Value.Schema.Properties["param"]);
-            Assert.Equal("array", content.Value.Schema.Properties["param"].Type);
+            Assert.Equal(JsonSchemaType.Array, content.Value.Schema.Properties["param"].Type);
             Assert.NotNull(content.Value.Schema.Properties["param"].Items);
-            Assert.Equal("string", content.Value.Schema.Properties["param"].Items.Type);
+            Assert.Equal(JsonSchemaType.String, content.Value.Schema.Properties["param"].Items.Type);
             Assert.Equal("binary", content.Value.Schema.Properties["param"].Items.Format);
             Assert.NotNull(content.Value.Encoding);
             Assert.NotNull(content.Value.Encoding["param"]);
@@ -2471,10 +2471,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var content = Assert.Single(document.Paths["/resource"].Operations[OperationType.Post].RequestBody.Content);
             Assert.Equal("application/someMediaType", content.Key);
             Assert.NotNull(content.Value.Schema);
-            Assert.Equal("object", content.Value.Schema.Type);
+            Assert.Equal(JsonSchemaType.Object, content.Value.Schema.Type);
             Assert.NotEmpty(content.Value.Schema.Properties);
             Assert.NotNull(content.Value.Schema.Properties["param"]);
-            Assert.Equal("string", content.Value.Schema.Properties["param"].Type);
+            Assert.Equal(JsonSchemaType.String, content.Value.Schema.Properties["param"].Type);
             Assert.NotNull(content.Value.Encoding);
             Assert.NotNull(content.Value.Encoding["param"]);
             Assert.Equal(ParameterStyle.Form, content.Value.Encoding["param"].Style);

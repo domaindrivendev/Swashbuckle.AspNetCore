@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.0.4",
   "info": {
     "title": "NswagClientExample",
     "version": "1.0"
@@ -20,45 +20,27 @@
             "application/json": {
               "schema": {
                 "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/Animal"
-                  },
-                  {
-                    "$ref": "#/components/schemas/Cat"
-                  },
-                  {
-                    "$ref": "#/components/schemas/Dog"
-                  }
+                  { },
+                  { },
+                  { }
                 ]
               }
             },
             "text/json": {
               "schema": {
                 "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/Animal"
-                  },
-                  {
-                    "$ref": "#/components/schemas/Cat"
-                  },
-                  {
-                    "$ref": "#/components/schemas/Dog"
-                  }
+                  { },
+                  { },
+                  { }
                 ]
               }
             },
             "application/*+json": {
               "schema": {
                 "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/Animal"
-                  },
-                  {
-                    "$ref": "#/components/schemas/Cat"
-                  },
-                  {
-                    "$ref": "#/components/schemas/Dog"
-                  }
+                  { },
+                  { },
+                  { }
                 ]
               }
             }
@@ -82,27 +64,21 @@
             "application/json": {
               "schema": {
                 "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/SubSubType"
-                  }
+                  { }
                 ]
               }
             },
             "text/json": {
               "schema": {
                 "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/SubSubType"
-                  }
+                  { }
                 ]
               }
             },
             "application/*+json": {
               "schema": {
                 "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/SubSubType"
-                  }
+                  { }
                 ]
               }
             }
@@ -133,45 +109,27 @@
             "application/json": {
               "schema": {
                 "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/SystemTextJsonAnimal"
-                  },
-                  {
-                    "$ref": "#/components/schemas/SystemTextJsonCat"
-                  },
-                  {
-                    "$ref": "#/components/schemas/SystemTextJsonDog"
-                  }
+                  { },
+                  { },
+                  { }
                 ]
               }
             },
             "text/json": {
               "schema": {
                 "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/SystemTextJsonAnimal"
-                  },
-                  {
-                    "$ref": "#/components/schemas/SystemTextJsonCat"
-                  },
-                  {
-                    "$ref": "#/components/schemas/SystemTextJsonDog"
-                  }
+                  { },
+                  { },
+                  { }
                 ]
               }
             },
             "application/*+json": {
               "schema": {
                 "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/SystemTextJsonAnimal"
-                  },
-                  {
-                    "$ref": "#/components/schemas/SystemTextJsonCat"
-                  },
-                  {
-                    "$ref": "#/components/schemas/SystemTextJsonDog"
-                  }
+                  { },
+                  { },
+                  { }
                 ]
               }
             }
@@ -194,9 +152,7 @@
         ],
         "type": "object",
         "properties": {
-          "animalType": {
-            "$ref": "#/components/schemas/AnimalType"
-          }
+          "animalType": { }
         },
         "additionalProperties": false,
         "discriminator": {
@@ -238,9 +194,7 @@
       },
       "Cat": {
         "allOf": [
-          {
-            "$ref": "#/components/schemas/Animal"
-          },
+          { },
           {
             "type": "object",
             "properties": {
@@ -255,9 +209,7 @@
       },
       "Dog": {
         "allOf": [
-          {
-            "$ref": "#/components/schemas/Animal"
-          },
+          { },
           {
             "type": "object",
             "properties": {
@@ -272,9 +224,7 @@
       },
       "SubSubType": {
         "allOf": [
-          {
-            "$ref": "#/components/schemas/BaseType"
-          },
+          { },
           {
             "type": "object",
             "properties": {
@@ -309,9 +259,7 @@
       },
       "SystemTextJsonCat": {
         "allOf": [
-          {
-            "$ref": "#/components/schemas/SystemTextJsonAnimal"
-          },
+          { },
           {
             "type": "object",
             "properties": {
@@ -326,9 +274,7 @@
       },
       "SystemTextJsonDog": {
         "allOf": [
-          {
-            "$ref": "#/components/schemas/SystemTextJsonAnimal"
-          },
+          { },
           {
             "type": "object",
             "properties": {
