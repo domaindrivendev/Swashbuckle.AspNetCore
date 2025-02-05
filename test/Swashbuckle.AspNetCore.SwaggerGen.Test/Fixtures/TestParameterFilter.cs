@@ -9,8 +9,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
     {
         public void Apply(OpenApiParameter parameter, ParameterFilterContext context)
         {
-            parameter.Extensions.Add("X-foo", new OpenApiString("bar"));
-            parameter.Extensions.Add("X-docName", new OpenApiString(context.DocumentName));
+            parameter.Extensions.Add("X-foo", new OpenApiAny("bar"));
+            parameter.Extensions.Add("X-docName", new OpenApiAny(context.DocumentName));
         }
 
         public Task ApplyAsync(OpenApiParameter parameter, ParameterFilterContext context, CancellationToken cancellationToken)

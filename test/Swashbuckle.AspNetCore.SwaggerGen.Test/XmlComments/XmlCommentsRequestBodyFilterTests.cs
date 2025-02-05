@@ -19,7 +19,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             {
                 Content = new Dictionary<string, OpenApiMediaType>
                 {
-                    ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = "string" } }
+                    ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = JsonSchemaType.String } }
                 }
             };
             var parameterInfo = typeof(FakeControllerWithXmlComments)
@@ -35,7 +35,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.Equal("Description for param1", requestBody.Description);
             Assert.NotNull(requestBody.Content["application/json"].Example);
-            Assert.Equal("\"Example for \\\"param1\\\"\"", requestBody.Content["application/json"].Example.ToJson());
+            Assert.Equal("\"Example for \\\"param1\\\"\"", requestBody.Content["application/json"].Example.ToJsonString());
         }
 
         [Fact]
@@ -45,7 +45,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             {
                 Content = new Dictionary<string, OpenApiMediaType>
                 {
-                    ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = "string" } }
+                    ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = JsonSchemaType.String } }
                 }
             };
             var parameterInfo = typeof(FakeConstructedControllerWithXmlComments)
@@ -61,7 +61,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.Equal("Description for param1", requestBody.Description);
             Assert.NotNull(requestBody.Content["application/json"].Example);
-            Assert.Equal("\"Example for \\\"param1\\\"\"", requestBody.Content["application/json"].Example.ToJson());
+            Assert.Equal("\"Example for \\\"param1\\\"\"", requestBody.Content["application/json"].Example.ToJsonString());
         }
 
         [Fact]
@@ -71,7 +71,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             {
                 Content = new Dictionary<string, OpenApiMediaType>
                 {
-                    ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = "string" } }
+                    ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = JsonSchemaType.String } }
                 }
             };
             var bodyParameterDescription = new ApiParameterDescription
@@ -84,7 +84,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.Equal("Summary for StringProperty", requestBody.Description);
             Assert.NotNull(requestBody.Content["application/json"].Example);
-            Assert.Equal("\"Example for StringProperty\"", requestBody.Content["application/json"].Example.ToJson());
+            Assert.Equal("\"Example for StringProperty\"", requestBody.Content["application/json"].Example.ToJsonString());
         }
 
 
@@ -95,7 +95,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             {
                 Content = new Dictionary<string, OpenApiMediaType>
                 {
-                    ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = "string" } }
+                    ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = JsonSchemaType.String } }
                 }
             };
             var bodyParameterDescription = new ApiParameterDescription
@@ -108,7 +108,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.Equal("Summary for StringPropertyWithUri", requestBody.Description);
             Assert.NotNull(requestBody.Content["application/json"].Example);
-            Assert.Equal("\"https://test.com/a?b=1&c=2\"", requestBody.Content["application/json"].Example.ToJson());
+            Assert.Equal("\"https://test.com/a?b=1&c=2\"", requestBody.Content["application/json"].Example.ToJsonString());
         }
 
         [Fact]
@@ -118,7 +118,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             {
                 Content = new Dictionary<string, OpenApiMediaType>
                 {
-                    ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = "string" } }
+                    ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = JsonSchemaType.String } }
                 }
             };
             var parameterInfo = typeof(FakeControllerWithXmlComments)
@@ -150,7 +150,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     {
                         Schema = new OpenApiSchema
                         {
-                            Type = "string",
+                            Type = JsonSchemaType.String,
                             Properties = new Dictionary<string, OpenApiSchema>()
                             {
                                 [parameterInfo.Name] = new()

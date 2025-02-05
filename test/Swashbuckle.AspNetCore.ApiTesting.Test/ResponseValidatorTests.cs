@@ -75,17 +75,17 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
         }
 
         [Theory]
-        [InlineData("foo", "boolean", null, "Header 'test-header' is not of type 'boolean'")]
-        [InlineData("foo", "number", null, "Header 'test-header' is not of type 'number'")]
-        [InlineData("1,foo", "array", "number", "Header 'test-header' is not of type 'array[number]'")]
-        [InlineData("true", "boolean", null, null)]
-        [InlineData("1", "number", null, null)]
-        [InlineData("foo", "string", null, null)]
-        [InlineData("1,2", "array", "number", null)]
+        [InlineData("foo", JsonSchemaType.Boolean, null, "Header 'test-header' is not of type 'boolean'")]
+        [InlineData("foo", JsonSchemaType.Number, null, "Header 'test-header' is not of type 'number'")]
+        [InlineData("1,foo", JsonSchemaType.Array, JsonSchemaType.Number, "Header 'test-header' is not of type 'array[Number]'")]
+        [InlineData("true", JsonSchemaType.Boolean, null, null)]
+        [InlineData("1", JsonSchemaType.Number, null, null)]
+        [InlineData("foo", JsonSchemaType.String, null, null)]
+        [InlineData("1,2", JsonSchemaType.Array, JsonSchemaType.Number, null)]
         public void Validate_ThrowsException_IfHeaderIsNotOfSpecifiedType(
             string headerValue,
-            string specifiedType,
-            string specifiedItemsType,
+            JsonSchemaType specifiedType,
+            JsonSchemaType? specifiedItemsType,
             string expectedErrorMessage)
         {
             var openApiDocument = DocumentWithOperation("/api/products", OperationType.Post, new OpenApiOperation
@@ -207,7 +207,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
                             {
                                 Schema = new OpenApiSchema
                                 {
-                                    Type = "object",
+                                    Type = JsonSchemaType.Object,
                                     Required = new SortedSet<string> { "prop1", "prop2" }
                                 }
                             }

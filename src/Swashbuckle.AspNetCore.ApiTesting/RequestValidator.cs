@@ -8,10 +8,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Template;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.References;
 
 namespace Swashbuckle.AspNetCore.ApiTesting
 {
-    public class RequestValidator(IEnumerable<IContentValidator> contentValidators)
+    public sealed class RequestValidator(IEnumerable<IContentValidator> contentValidators)
     {
         private readonly IEnumerable<IContentValidator> _contentValidators = contentValidators;
 
@@ -60,7 +61,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting
                 .Select(p =>
                 {
                     return p.Reference != null
-                        ? (OpenApiParameter)openApiDocument.ResolveReference(p.Reference)
+                        ? new OpenApiParameterReference(p.Reference.Id, openApiDocument)
                         : p;
                 });
         }
@@ -113,7 +114,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting
                 }
 
                 var schema = (parameterSpec.Schema.Reference != null)
-                    ? (OpenApiSchema)openApiDocument.ResolveReference(parameterSpec.Schema.Reference)
+                    ? new OpenApiSchemaReference(parameterSpec.Schema.Reference.Id, openApiDocument)
                     : parameterSpec.Schema;
 
                 if (!schema.TryParse(value, out object typedValue))
@@ -126,7 +127,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting
         private void ValidateContent(OpenApiRequestBody requestBodySpec, OpenApiDocument openApiDocument, HttpContent content)
         {
             requestBodySpec = requestBodySpec.Reference != null
-                ? (OpenApiRequestBody)openApiDocument.ResolveReference(requestBodySpec.Reference)
+                ? new OpenApiRequestBodyReference(requestBodySpec.Reference.Id, openApiDocument)
                 : requestBodySpec;
 
             if (requestBodySpec.Required && content == null)

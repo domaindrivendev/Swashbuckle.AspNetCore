@@ -69,7 +69,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
                     {
                         Name = "param",
                         In = ParameterLocation.Query,
-                        Schema = new OpenApiSchema { Type = "string" },
+                        Schema = new OpenApiSchema { Type = JsonSchemaType.String },
                         Required = true
                     }
                 }
@@ -103,7 +103,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
                     {
                         Name = "test-header",
                         In = ParameterLocation.Header,
-                        Schema = new OpenApiSchema { Type = "string" },
+                        Schema = new OpenApiSchema { Type = JsonSchemaType.String },
                         Required = true
                     }
                 }
@@ -125,14 +125,14 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
 
 
         [Theory]
-        [InlineData("/api/products/foo", "boolean", "Parameter 'param' is not of type 'boolean'")]
-        [InlineData("/api/products/foo", "number", "Parameter 'param' is not of type 'number'")]
-        [InlineData("/api/products/true", "boolean", null)]
-        [InlineData("/api/products/1", "number", null)]
-        [InlineData("/api/products/foo", "string", null)]
+        [InlineData("/api/products/foo", JsonSchemaType.Boolean, "Parameter 'param' is not of type 'boolean'")]
+        [InlineData("/api/products/foo", JsonSchemaType.Number, "Parameter 'param' is not of type 'number'")]
+        [InlineData("/api/products/true", JsonSchemaType.Boolean, null)]
+        [InlineData("/api/products/1", JsonSchemaType.Number, null)]
+        [InlineData("/api/products/foo", JsonSchemaType.String, null)]
         public void Validate_ThrowsException_IfPathParameterIsNotOfSpecifiedType(
             string uriString,
-            string specifiedType,
+            JsonSchemaType specifiedType,
             string expectedErrorMessage)
         {
             var openApiDocument = DocumentWithOperation("/api/products/{param}", OperationType.Get, new OpenApiOperation
@@ -162,17 +162,17 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
         }
 
         [Theory]
-        [InlineData("/api/products?param=foo", "boolean", null, "Parameter 'param' is not of type 'boolean'")]
-        [InlineData("/api/products?param=foo", "number", null, "Parameter 'param' is not of type 'number'")]
-        [InlineData("/api/products?param=1&param=foo", "array", "number", "Parameter 'param' is not of type 'array[number]'")]
-        [InlineData("/api/products?param=true", "boolean", null, null)]
-        [InlineData("/api/products?param=1", "number", null, null)]
-        [InlineData("/api/products?param=foo", "string", null, null)]
-        [InlineData("/api/products?param=1&param=2", "array", "number", null)]
+        [InlineData("/api/products?param=foo", JsonSchemaType.Boolean, null, "Parameter 'param' is not of type 'boolean'")]
+        [InlineData("/api/products?param=foo", JsonSchemaType.Number, null, "Parameter 'param' is not of type 'number'")]
+        [InlineData("/api/products?param=1&param=foo", JsonSchemaType.Array, JsonSchemaType.Number, "Parameter 'param' is not of type 'array[Number]'")]
+        [InlineData("/api/products?param=true", JsonSchemaType.Boolean, null, null)]
+        [InlineData("/api/products?param=1", JsonSchemaType.Number, null, null)]
+        [InlineData("/api/products?param=foo", JsonSchemaType.String, null, null)]
+        [InlineData("/api/products?param=1&param=2", JsonSchemaType.Array, JsonSchemaType.Number, null)]
         public void Validate_ThrowsException_IfQueryParameterIsNotOfSpecifiedType(
             string path,
-            string specifiedType,
-            string specifiedItemsType,
+            JsonSchemaType specifiedType,
+            JsonSchemaType? specifiedItemsType,
             string expectedErrorMessage)
         {
             var openApiDocument = DocumentWithOperation("/api/products", OperationType.Get, new OpenApiOperation
@@ -206,17 +206,17 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
         }
 
         [Theory]
-        [InlineData("foo", "boolean", null, "Parameter 'test-header' is not of type 'boolean'")]
-        [InlineData("foo", "number", null, "Parameter 'test-header' is not of type 'number'")]
-        [InlineData("1,foo", "array", "number", "Parameter 'test-header' is not of type 'array[number]'")]
-        [InlineData("true", "boolean", null, null)]
-        [InlineData("1", "number", null, null)]
-        [InlineData("foo", "string", null, null)]
-        [InlineData("1,2", "array", "number", null)]
+        [InlineData("foo", JsonSchemaType.Boolean, null, "Parameter 'test-header' is not of type 'boolean'")]
+        [InlineData("foo", JsonSchemaType.Number, null, "Parameter 'test-header' is not of type 'number'")]
+        [InlineData("1,foo", JsonSchemaType.Array, JsonSchemaType.Number, "Parameter 'test-header' is not of type 'array[Number]'")]
+        [InlineData("true", JsonSchemaType.Boolean, null, null)]
+        [InlineData("1", JsonSchemaType.Number, null, null)]
+        [InlineData("foo", JsonSchemaType.String, null, null)]
+        [InlineData("1,2", JsonSchemaType.Array, JsonSchemaType.Number, null)]
         public void Validate_ThrowsException_IfHeaderParameterIsNotOfSpecifiedType(
             string parameterValue,
-            string specifiedType,
-            string specifiedItemsType,
+            JsonSchemaType specifiedType,
+            JsonSchemaType? specifiedItemsType,
             string expectedErrorMessage)
         {
             var openApiDocument = DocumentWithOperation("/api/products", OperationType.Get, new OpenApiOperation
@@ -332,7 +332,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
                         {
                             Schema = new OpenApiSchema
                             {
-                                Type = "object",
+                                Type = JsonSchemaType.Object,
                                 Required = new SortedSet<string> { "prop1", "prop2" }
                             }
                         }

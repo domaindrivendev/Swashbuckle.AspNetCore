@@ -49,7 +49,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -65,7 +65,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -89,7 +89,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -126,7 +126,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -179,7 +179,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -230,7 +230,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -281,7 +281,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -297,7 +297,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -327,7 +327,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -351,7 +351,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -375,7 +375,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Theory]
@@ -406,7 +406,9 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document).UseParameters(bindingSourceId);
+        return Verifier.Verify(document)
+            .UseParameters(bindingSourceId)
+            .IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -427,7 +429,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -454,7 +456,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -482,7 +484,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Theory]
@@ -522,7 +524,9 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document).UseParameters(action);
+        return Verifier.Verify(document)
+            .UseParameters(action)
+            .IgnoreMember("BaseUri");
     }
 
     [Theory]
@@ -592,7 +596,8 @@ public class SwaggerGeneratorVerifyTests
 
         return Verifier.Verify(document)
             .UseParameters(action)
-            .UseMethodName("IllegalHeaderParameterWithOpenApiOperation");
+            .UseMethodName("IllegalHeaderParameterWithOpenApiOperation")
+            .IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -619,7 +624,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Theory]
@@ -648,7 +653,9 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document).UseParameters(action);
+        return Verifier.Verify(document)
+            .UseParameters(action)
+            .IgnoreMember("BaseUri");
     }
 
     [Theory]
@@ -681,7 +688,9 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document).UseParameters(action);
+        return Verifier.Verify(document)
+            .UseParameters(action)
+            .IgnoreMember("BaseUri");
     }
 
 #if NET7_0_OR_GREATER
@@ -710,7 +719,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -734,7 +743,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -758,7 +767,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 #endif
 
@@ -795,7 +804,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -822,7 +831,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -856,7 +865,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Theory]
@@ -885,7 +894,9 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document).UseParameters(bindingSourceId);
+        return Verifier.Verify(document)
+            .UseParameters(bindingSourceId)
+            .IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -929,7 +940,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -959,7 +970,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -986,7 +997,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -1013,7 +1024,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -1055,7 +1066,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -1101,7 +1112,7 @@ public class SwaggerGeneratorVerifyTests
         );
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -1129,7 +1140,7 @@ public class SwaggerGeneratorVerifyTests
         );
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -1164,7 +1175,7 @@ public class SwaggerGeneratorVerifyTests
         );
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -1193,7 +1204,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -1240,7 +1251,7 @@ public class SwaggerGeneratorVerifyTests
        );
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -1297,7 +1308,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -1348,7 +1359,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -1399,7 +1410,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     [Fact]
@@ -1450,7 +1461,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document).IgnoreMember("BaseUri");
     }
 
     private static SwaggerGenerator Subject(

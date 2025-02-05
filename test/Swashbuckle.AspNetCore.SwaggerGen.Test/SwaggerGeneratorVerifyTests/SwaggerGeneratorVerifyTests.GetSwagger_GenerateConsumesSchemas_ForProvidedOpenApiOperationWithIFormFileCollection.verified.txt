@@ -1,4 +1,7 @@
 ﻿{
+  Workspace: {
+    BaseUrl: https://openapi.net/
+  },
   Info: {
     Title: Test API,
     Version: V1
@@ -14,32 +17,38 @@
             Content: {
               application/someMediaType: {
                 Schema: {
-                  Type: object,
+                  UnEvaluatedProperties: false,
+                  Type: Object,
                   ReadOnly: false,
                   WriteOnly: false,
                   Properties: {
                     param: {
-                      Type: array,
+                      UnEvaluatedProperties: false,
+                      Type: Array,
                       ReadOnly: false,
                       WriteOnly: false,
                       Items: {
-                        Type: string,
+                        UnEvaluatedProperties: false,
+                        Type: String,
                         Format: binary,
                         ReadOnly: false,
                         WriteOnly: false,
                         AdditionalPropertiesAllowed: true,
                         Nullable: false,
+                        UnevaluatedProperties: false,
                         Deprecated: false,
                         UnresolvedReference: false
                       },
                       AdditionalPropertiesAllowed: true,
                       Nullable: false,
+                      UnevaluatedProperties: false,
                       Deprecated: false,
                       UnresolvedReference: false
                     }
                   },
                   AdditionalPropertiesAllowed: true,
                   Nullable: false,
+                  UnevaluatedProperties: false,
                   Deprecated: false,
                   UnresolvedReference: false
                 },
@@ -57,6 +66,5 @@
       UnresolvedReference: false
     }
   },
-  Components: {},
-  HashCode: 073D8B8E67D5100DD8AF06EC69A3C02B8DBF29E46621ED6EB590DEA519F2C8941398F6B95292D891CC4E18C2F4D5D38A8F904545CFFC219E4FF4613AD605E5A5
+  Components: {}
 }

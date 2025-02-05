@@ -1,11 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.References;
 using Newtonsoft.Json.Linq;
 
 namespace Swashbuckle.AspNetCore.ApiTesting
 {
-    public class JsonValidator : IJsonValidator
+    public sealed class JsonValidator : IJsonValidator
     {
         private readonly IEnumerable<IJsonValidator> _subValidators;
 
@@ -33,11 +34,17 @@ namespace Swashbuckle.AspNetCore.ApiTesting
             JToken instance,
             out IEnumerable<string> errorMessages)
         {
+            var errorMessagesList = new List<string>();
+
             schema = schema.Reference != null
-                ? (OpenApiSchema)openApiDocument.ResolveReference(schema.Reference)
+                ? new OpenApiSchemaReference(schema.Reference.Id, openApiDocument)
                 : schema;
 
-            var errorMessagesList = new List<string>();
+            // TODO Why don't invalid references throw anymore?
+            if (schema.Reference != null && !openApiDocument.Components.Schemas.Any((p) => p.Key == schema.Reference.Id))
+            {
+                throw new System.InvalidOperationException($"Invalid Reference identifier '{schema.Reference.Id}'.");
+            }
 
             foreach (var subValidator in _subValidators)
             {

@@ -1,4 +1,4 @@
-﻿using Microsoft.OpenApi.Any;
+﻿using System.Text.Json;
 using Microsoft.OpenApi.Models;
 using Xunit;
 
@@ -19,44 +19,44 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 "[\"one\",\"two\",\"three\"]");
 
             Assert.NotNull(example);
-            var actual = Assert.IsType<OpenApiArray>(example);
+            Assert.Equal(JsonValueKind.Array, example.GetValueKind());
+            var actual = example.AsArray();
             Assert.Equal(3, actual.Count);
 
-            var item1 = Assert.IsType<OpenApiString>(actual[0]);
-            var item2 = Assert.IsType<OpenApiString>(actual[1]);
-            var item3 = Assert.IsType<OpenApiString>(actual[2]);
-            Assert.Equal("one",   item1.Value);
-            Assert.Equal("two",   item2.Value);
-            Assert.Equal("three", item3.Value);
+            Assert.Equal(JsonValueKind.String, actual[0].GetValueKind());
+            Assert.Equal(JsonValueKind.String, actual[1].GetValueKind());
+            Assert.Equal(JsonValueKind.String, actual[2].GetValueKind());
+            Assert.Equal("one",   actual[0].GetValue<string>());
+            Assert.Equal("two",   actual[1].GetValue<string>());
+            Assert.Equal("three", actual[2].GetValue<string>());
         }
 
         [Fact]
         public void Create_BuildsOpenApiString_When_TypeString()
         {
             string exampleString = "example string with special characters\"<>\r\n\"";
-            OpenApiSchema schema = new OpenApiSchema { Type = "string" };
+            var schema = new OpenApiSchema { Type = JsonSchemaType.String };
             schemaRepository.AddDefinition("test", schema);
-            
+
             var example = XmlCommentsExampleHelper.Create(
                 schemaRepository, schema, exampleString);
 
             Assert.NotNull(example);
-            var actual = Assert.IsType<OpenApiString>(example);
-            Assert.Equal(actual.Value, exampleString);
+            Assert.Equal(JsonValueKind.String, example.GetValueKind());
+            Assert.Equal(exampleString, example.GetValue<string>());
         }
 
         [Fact]
         public void Create_ReturnsNull_When_TypeString_and_ValueNull()
         {
-            var schema = new OpenApiSchema { Type = "string" };
+            var schema = new OpenApiSchema { Type = JsonSchemaType.String };
             schemaRepository.AddDefinition("test", schema);
 
             var example = XmlCommentsExampleHelper.Create(
                 schemaRepository, schema, "null");
 
             Assert.NotNull(example);
-            var actual = Assert.IsType<OpenApiNull>(example);
-            Assert.Equal(AnyType.Null, actual.AnyType);
+            Assert.Equal(JsonValueKind.Null, example.GetValueKind());
         }
 
         [Fact]
@@ -67,8 +67,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var example = XmlCommentsExampleHelper.Create(schemaRepository, schema, "[]");
 
             Assert.NotNull(example);
-            var actual = Assert.IsType<OpenApiArray>(example);
-            Assert.Empty(actual);
+            Assert.Equal(JsonValueKind.Array, example.GetValueKind());
+            Assert.Empty(example.AsArray());
         }
     }
 }

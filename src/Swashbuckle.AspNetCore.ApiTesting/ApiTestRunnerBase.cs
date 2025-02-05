@@ -3,12 +3,20 @@ using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Reader;
+using Microsoft.OpenApi.Readers;
 using Microsoft.OpenApi.Writers;
 
 namespace Swashbuckle.AspNetCore.ApiTesting
 {
     public abstract class ApiTestRunnerBase : IDisposable
     {
+        static ApiTestRunnerBase()
+        {
+            // TODO Make an assembly fixture
+            OpenApiReaderRegistry.RegisterReader(OpenApiConstants.Yaml, new OpenApiYamlReader());
+        }
+
         private readonly ApiTestRunnerOptions _options;
         private readonly RequestValidator _requestValidator;
         private readonly ResponseValidator _responseValidator;

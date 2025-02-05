@@ -5,9 +5,9 @@ using Newtonsoft.Json.Linq;
 
 namespace Swashbuckle.AspNetCore.ApiTesting
 {
-    public class JsonAnyOfValidator(JsonValidator jsonValidator) : IJsonValidator
+    public sealed class JsonAnyOfValidator(JsonValidator jsonValidator) : IJsonValidator
     {
-        private JsonValidator _jsonValidator = jsonValidator;
+        private readonly JsonValidator _jsonValidator = jsonValidator;
 
         public bool CanValidate(OpenApiSchema schema) => schema.AnyOf != null && schema.AnyOf.Any();
 
