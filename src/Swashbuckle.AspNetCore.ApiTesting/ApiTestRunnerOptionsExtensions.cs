@@ -12,6 +12,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting
             using var memoryStream = new MemoryStream();
 
             fileStream.CopyTo(memoryStream);
+            memoryStream.Seek(0, SeekOrigin.Begin);
 
             var result = OpenApiDocument.Load(memoryStream);
             options.OpenApiDocs.Add(documentName, result.Document);
