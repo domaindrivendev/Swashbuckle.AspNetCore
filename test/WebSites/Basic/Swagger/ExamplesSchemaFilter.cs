@@ -12,20 +12,18 @@ namespace Basic.Swagger
             schema.Example = GetExampleOrNullFor(context.Type);
         }
 
-        private IOpenApiAny GetExampleOrNullFor(Type type)
+        private static IOpenApiAny GetExampleOrNullFor(Type type)
         {
-            switch (type.Name)
+            return type.Name switch
             {
-                case "Product":
-                    return new OpenApiObject
-                    {
-                        [ "id" ] = new OpenApiInteger(123),
-                        [ "description" ] = new OpenApiString("foobar"),
-                        [ "price" ] = new OpenApiDouble(14.37)
-                    };
-                default:
-                    return null;
-            }
+                "Product" => new OpenApiObject
+                {
+                    ["id"] = new OpenApiInteger(123),
+                    ["description"] = new OpenApiString("foobar"),
+                    ["price"] = new OpenApiDouble(14.37)
+                },
+                _ => null,
+            };
         }
     }
 }

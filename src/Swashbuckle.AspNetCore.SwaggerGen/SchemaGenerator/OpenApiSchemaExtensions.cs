@@ -113,12 +113,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         public static string ResolveType(this OpenApiSchema schema, SchemaRepository schemaRepository)
         {
             if (schema.Reference != null && schemaRepository.Schemas.TryGetValue(schema.Reference.Id, out OpenApiSchema definitionSchema))
+            {
                 return definitionSchema.ResolveType(schemaRepository);
+            }
 
             foreach (var subSchema in schema.AllOf)
             {
                 var type = subSchema.ResolveType(schemaRepository);
-                if (type != null) return type;
+                if (type != null)
+                {
+                    return type;
+                }
             }
 
             return schema.Type;
