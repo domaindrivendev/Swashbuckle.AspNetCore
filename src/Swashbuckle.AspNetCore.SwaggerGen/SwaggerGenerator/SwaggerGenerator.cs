@@ -20,22 +20,15 @@ using Microsoft.AspNetCore.Http.Metadata;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public class SwaggerGenerator : ISwaggerProvider, IAsyncSwaggerProvider, ISwaggerDocumentMetadataProvider
+    public class SwaggerGenerator(
+        SwaggerGeneratorOptions options,
+        IApiDescriptionGroupCollectionProvider apiDescriptionsProvider,
+        ISchemaGenerator schemaGenerator) : ISwaggerProvider, IAsyncSwaggerProvider, ISwaggerDocumentMetadataProvider
     {
-        private readonly IApiDescriptionGroupCollectionProvider _apiDescriptionsProvider;
-        private readonly ISchemaGenerator _schemaGenerator;
-        private readonly SwaggerGeneratorOptions _options;
+        private readonly IApiDescriptionGroupCollectionProvider _apiDescriptionsProvider = apiDescriptionsProvider;
+        private readonly ISchemaGenerator _schemaGenerator = schemaGenerator;
+        private readonly SwaggerGeneratorOptions _options = options ?? new();
         private readonly IAuthenticationSchemeProvider _authenticationSchemeProvider;
-
-        public SwaggerGenerator(
-            SwaggerGeneratorOptions options,
-            IApiDescriptionGroupCollectionProvider apiDescriptionsProvider,
-            ISchemaGenerator schemaGenerator)
-        {
-            _options = options ?? new SwaggerGeneratorOptions();
-            _apiDescriptionsProvider = apiDescriptionsProvider;
-            _schemaGenerator = schemaGenerator;
-        }
 
         public SwaggerGenerator(
             SwaggerGeneratorOptions options,

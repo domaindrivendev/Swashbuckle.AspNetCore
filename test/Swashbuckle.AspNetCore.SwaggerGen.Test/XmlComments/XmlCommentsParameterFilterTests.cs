@@ -92,12 +92,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("\"https://test.com/a?b=1&c=2\"", parameter.Example.ToJson());
         }
 
-        private XmlCommentsParameterFilter Subject()
+        private static XmlCommentsParameterFilter Subject()
         {
-            using (var xmlComments = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml"))
-            {
-                return new XmlCommentsParameterFilter(new XPathDocument(xmlComments));
-            }
+            using var xmlComments = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml");
+            return new XmlCommentsParameterFilter(new XPathDocument(xmlComments));
         }
     }
 }
