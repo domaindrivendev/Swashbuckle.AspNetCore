@@ -10,23 +10,31 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         public static string Humanize(string text)
         {
+            return Humanize(text, null);
+        }
+
+        public static string Humanize(string text, string xmlCommentEndOfLine)
+        {
             if (text == null)
                 throw new ArgumentNullException(nameof(text));
+
+            // Using as a default behavior
+            xmlCommentEndOfLine ??= Environment.NewLine;
 
             //Call DecodeXml at last to avoid entities like &lt and &gt to break valid xml
 
             return text
-                .NormalizeIndentation()
+                .NormalizeIndentation(xmlCommentEndOfLine)
                 .HumanizeRefTags()
                 .HumanizeHrefTags()
                 .HumanizeCodeTags()
                 .HumanizeMultilineCodeTags()
                 .HumanizeParaTags()
-                .HumanizeBrTags() // must be called after HumanizeParaTags() so that it replaces any additional <br> tags
+                .HumanizeBrTags(xmlCommentEndOfLine) // must be called after HumanizeParaTags() so that it replaces any additional <br> tags
                 .DecodeXml();
         }
 
-        private static string NormalizeIndentation(this string text)
+        private static string NormalizeIndentation(this string text, string xmlCommentEndOfLine)
         {
             string[] lines = text.Split('\n');
             string padding = GetCommonLeadingWhitespace(lines);
@@ -46,7 +54,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             // remove leading empty lines, but not all leading padding
             // remove all trailing whitespace, regardless
-            return string.Join("\r\n", lines.SkipWhile(x => string.IsNullOrWhiteSpace(x))).TrimEnd();
+            return string.Join(xmlCommentEndOfLine, lines.SkipWhile(x => string.IsNullOrWhiteSpace(x))).TrimEnd();
         }
 
         private static string GetCommonLeadingWhitespace(string[] lines)
@@ -131,9 +139,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             });
         }
 
-        private static string HumanizeBrTags(this string text)
+        private static string HumanizeBrTags(this string text, string xmlCommentEndOfLine)
         {
-            return BrTag().Replace(text, _ => Environment.NewLine);
+            return BrTag().Replace(text, _ => xmlCommentEndOfLine);
         }
 
         private static string DecodeXml(this string text)

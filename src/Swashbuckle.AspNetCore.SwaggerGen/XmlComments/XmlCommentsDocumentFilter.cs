@@ -52,10 +52,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 {
                     swaggerDoc.Tags ??= new List<OpenApiTag>();
 
+                    var preferredEol = _options?.XmlCommentEndOfLine;
                     swaggerDoc.Tags.Add(new OpenApiTag
                     {
                         Name = nameAndType.Key,
-                        Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml)
+                        Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml, preferredEol)
                     });
                 }
             }

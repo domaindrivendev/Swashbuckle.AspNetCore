@@ -8,14 +8,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     public class XmlCommentsParameterFilter : IParameterFilter
     {
         private readonly IReadOnlyDictionary<string, XPathNavigator> _xmlDocMembers;
+        private readonly SwaggerGeneratorOptions _options;
 
-        public XmlCommentsParameterFilter(XPathDocument xmlDoc) : this(XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc))
+        public XmlCommentsParameterFilter(XPathDocument xmlDoc) : this(XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc), null)
         {
         }
 
-        internal XmlCommentsParameterFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers)
+        internal XmlCommentsParameterFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers, SwaggerGeneratorOptions options)
         {
             _xmlDocMembers = xmlDocMembers;
+            _options = options;
         }
 
         public void Apply(OpenApiParameter parameter, ParameterFilterContext context)
@@ -39,7 +41,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var summaryNode = propertyNode.SelectFirstChild("summary");
             if (summaryNode != null)
             {
-                parameter.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
+                var preferredEol = _options?.XmlCommentEndOfLine;
+                parameter.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml, preferredEol);
                 parameter.Schema.Description = null; // no need to duplicate
             }
 
@@ -68,7 +71,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (paramNode != null)
             {
-                parameter.Description = XmlCommentsTextHelper.Humanize(paramNode.InnerXml);
+                var preferredEol = _options?.XmlCommentEndOfLine;
+                parameter.Description = XmlCommentsTextHelper.Humanize(paramNode.InnerXml, preferredEol);
 
                 var example = paramNode.GetAttribute("example");
                 if (string.IsNullOrEmpty(example)) return;

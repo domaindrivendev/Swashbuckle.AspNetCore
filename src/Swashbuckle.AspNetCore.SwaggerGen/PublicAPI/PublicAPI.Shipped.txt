@@ -86,6 +86,7 @@ static Swashbuckle.AspNetCore.SwaggerGen.XmlCommentsNodeNameHelper.GetMemberName
 static Swashbuckle.AspNetCore.SwaggerGen.XmlCommentsNodeNameHelper.GetMemberNameForMethod(System.Reflection.MethodInfo method) -> string
 static Swashbuckle.AspNetCore.SwaggerGen.XmlCommentsNodeNameHelper.GetMemberNameForType(System.Type type) -> string
 static Swashbuckle.AspNetCore.SwaggerGen.XmlCommentsTextHelper.Humanize(string text) -> string
+static Swashbuckle.AspNetCore.SwaggerGen.XmlCommentsTextHelper.Humanize(string text, string xmlCommentEndOfLine) -> string
 Swashbuckle.AspNetCore.Annotations.SwaggerIgnoreAttribute
 Swashbuckle.AspNetCore.Annotations.SwaggerIgnoreAttribute.SwaggerIgnoreAttribute() -> void
 Swashbuckle.AspNetCore.SwaggerGen.ApiDescriptionExtensions
@@ -297,6 +298,8 @@ Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.SwaggerDocs.set -> voi
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.SwaggerGeneratorOptions() -> void
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.TagsSelector.get -> System.Func<Microsoft.AspNetCore.Mvc.ApiExplorer.ApiDescription, System.Collections.Generic.IList<string>>
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.TagsSelector.set -> void
+Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.XmlCommentEndOfLine.get -> string
+Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.XmlCommentEndOfLine.set -> void
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions.DocumentFilterDescriptors.get -> System.Collections.Generic.List<Swashbuckle.AspNetCore.SwaggerGen.FilterDescriptor>
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions.DocumentFilterDescriptors.set -> void

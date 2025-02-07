@@ -9,14 +9,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     public class XmlCommentsRequestBodyFilter : IRequestBodyFilter
     {
         private readonly IReadOnlyDictionary<string, XPathNavigator> _xmlDocMembers;
+        private readonly SwaggerGeneratorOptions _options;
 
-        public XmlCommentsRequestBodyFilter(XPathDocument xmlDoc) : this(XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc))
+        public XmlCommentsRequestBodyFilter(XPathDocument xmlDoc) : this(XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc), null)
         {
         }
 
-        internal XmlCommentsRequestBodyFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers)
+        internal XmlCommentsRequestBodyFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers, SwaggerGeneratorOptions options)
         {
             _xmlDocMembers = xmlDocMembers;
+            _options = options;
         }
 
         public void Apply(OpenApiRequestBody requestBody, RequestBodyFilterContext context)
@@ -89,7 +91,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var summaryNode = propertyNode.SelectFirstChild("summary");
             if (summaryNode is not null)
             {
-                summary = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
+                var preferredEol = _options?.XmlCommentEndOfLine;
+                summary = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml, preferredEol);
             }
 
             var exampleNode = propertyNode.SelectFirstChild("example");
@@ -147,7 +150,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 return (null, null);
             }
 
-            var summary = XmlCommentsTextHelper.Humanize(paramNode.InnerXml);
+            var preferredEol = _options?.XmlCommentEndOfLine;
+            var summary = XmlCommentsTextHelper.Humanize(paramNode.InnerXml, preferredEol);
             var example = paramNode.GetAttribute("example");
 
             return (summary, example);

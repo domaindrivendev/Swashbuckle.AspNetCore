@@ -82,6 +82,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         public IList<IDocumentAsyncFilter> DocumentAsyncFilters { get; set; }
 
+        public string XmlCommentEndOfLine { get; set; }
+
         private bool DefaultDocInclusionPredicate(string documentName, ApiDescription apiDescription)
         {
             return apiDescription.GroupName == null || apiDescription.GroupName == documentName;

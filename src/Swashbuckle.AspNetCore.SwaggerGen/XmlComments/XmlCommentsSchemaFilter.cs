@@ -8,14 +8,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     public class XmlCommentsSchemaFilter : ISchemaFilter
     {
         private readonly IReadOnlyDictionary<string, XPathNavigator> _xmlDocMembers;
+        private readonly SwaggerGeneratorOptions _options;
 
-        public XmlCommentsSchemaFilter(XPathDocument xmlDoc) : this(XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc))
+        public XmlCommentsSchemaFilter(XPathDocument xmlDoc) : this(XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc), null)
         {
         }
 
-        internal XmlCommentsSchemaFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers)
+        internal XmlCommentsSchemaFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers, SwaggerGeneratorOptions options)
         {
             _xmlDocMembers = xmlDocMembers;
+            _options = options;
         }
 
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
@@ -38,7 +40,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (typeSummaryNode != null)
             {
-                schema.Description = XmlCommentsTextHelper.Humanize(typeSummaryNode.InnerXml);
+                var preferredEol = _options?.XmlCommentEndOfLine;
+                schema.Description = XmlCommentsTextHelper.Humanize(typeSummaryNode.InnerXml, preferredEol);
             }
         }
 
@@ -56,7 +59,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 {
                     var summaryNode = recordDefaultConstructorProperty.Value;
                     if (summaryNode != null)
-                        schema.Description = XmlCommentsTextHelper.Humanize(summaryNode);
+                    {
+                        var preferredEol = _options?.XmlCommentEndOfLine;
+                        schema.Description = XmlCommentsTextHelper.Humanize(summaryNode, preferredEol);
+                    }
 
                     var example = recordDefaultConstructorProperty.GetAttribute("example");
                     if (!string.IsNullOrEmpty(example))
@@ -70,7 +76,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 var summaryNode = fieldOrPropertyNode.SelectFirstChild("summary");
                 if (summaryNode != null)
-                    schema.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
+                {
+                    var preferredEol = _options?.XmlCommentEndOfLine;
+                    schema.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml, preferredEol);
+                }
 
                 var exampleNode = fieldOrPropertyNode.SelectFirstChild("example");
                 TrySetExample(schema, context, exampleNode?.Value);
