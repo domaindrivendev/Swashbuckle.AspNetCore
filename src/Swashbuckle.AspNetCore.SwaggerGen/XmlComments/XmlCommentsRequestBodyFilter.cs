@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Xml.XPath;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -15,6 +16,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
         }
 
+        [ActivatorUtilitiesConstructor]
         internal XmlCommentsRequestBodyFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers, SwaggerGeneratorOptions options)
         {
             _xmlDocMembers = xmlDocMembers;
@@ -91,8 +93,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var summaryNode = propertyNode.SelectFirstChild("summary");
             if (summaryNode is not null)
             {
-                var preferredEol = _options?.XmlCommentEndOfLine;
-                summary = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml, preferredEol);
+                summary = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml, _options?.XmlCommentEndOfLine);
             }
 
             var exampleNode = propertyNode.SelectFirstChild("example");
@@ -150,8 +151,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 return (null, null);
             }
 
-            var preferredEol = _options?.XmlCommentEndOfLine;
-            var summary = XmlCommentsTextHelper.Humanize(paramNode.InnerXml, preferredEol);
+            var summary = XmlCommentsTextHelper.Humanize(paramNode.InnerXml, _options?.XmlCommentEndOfLine);
             var example = paramNode.GetAttribute("example");
 
             return (summary, example);

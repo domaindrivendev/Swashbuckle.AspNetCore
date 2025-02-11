@@ -155,12 +155,11 @@ A line of text",
 
             var output = XmlCommentsTextHelper.Humanize(input);
 
-            // Result view for Windows: This is a paragraph.\r\n\r\n\r\nA parameter after br tag.
-            var expected = string.Join(Environment.NewLine,
+            // Result view for Linux: This is a paragraph.\r\n\n\r\nA parameter after br tag.
+            var expected = string.Join("\r\n",
             [
                 "This is a paragraph.",
-                "",
-                "",
+                Environment.NewLine,
                 "A parameter after br tag."
             ]);
             Assert.Equal(expected, output, false, ignoreLineEndingDifferences: false);

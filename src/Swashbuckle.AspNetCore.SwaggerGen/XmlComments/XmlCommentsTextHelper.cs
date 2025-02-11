@@ -18,9 +18,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (text == null)
                 throw new ArgumentNullException(nameof(text));
 
-            // Using as a default behavior
-            xmlCommentEndOfLine ??= Environment.NewLine;
-
             //Call DecodeXml at last to avoid entities like &lt and &gt to break valid xml
 
             return text
@@ -54,7 +51,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             // remove leading empty lines, but not all leading padding
             // remove all trailing whitespace, regardless
-            return string.Join(xmlCommentEndOfLine, lines.SkipWhile(x => string.IsNullOrWhiteSpace(x))).TrimEnd();
+            return string.Join(xmlCommentEndOfLine ?? "\r\n", lines.SkipWhile(x => string.IsNullOrWhiteSpace(x))).TrimEnd();
         }
 
         private static string GetCommonLeadingWhitespace(string[] lines)
@@ -141,7 +138,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private static string HumanizeBrTags(this string text, string xmlCommentEndOfLine)
         {
-            return BrTag().Replace(text, _ => xmlCommentEndOfLine);
+            return BrTag().Replace(text, _ => xmlCommentEndOfLine ?? Environment.NewLine);
         }
 
         private static string DecodeXml(this string text)

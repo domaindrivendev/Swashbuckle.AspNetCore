@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -15,6 +16,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
         }
 
+        [ActivatorUtilitiesConstructor]
         internal XmlCommentsOperationFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers, SwaggerGeneratorOptions options)
         {
             _xmlDocMembers = xmlDocMembers;
@@ -52,14 +54,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (!_xmlDocMembers.TryGetValue(methodMemberName, out var methodNode)) return;
 
-            var preferredEol = _options?.XmlCommentEndOfLine;
             var summaryNode = methodNode.SelectFirstChild("summary");
             if (summaryNode != null)
-                operation.Summary = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml, preferredEol);
+                operation.Summary = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml, _options?.XmlCommentEndOfLine);
 
             var remarksNode = methodNode.SelectFirstChild("remarks");
             if (remarksNode != null)
-                operation.Description = XmlCommentsTextHelper.Humanize(remarksNode.InnerXml, preferredEol);
+                operation.Description = XmlCommentsTextHelper.Humanize(remarksNode.InnerXml, _options?.XmlCommentEndOfLine);
 
             var responseNodes = methodNode.SelectChildren("response");
             ApplyResponseTags(operation, responseNodes);
@@ -67,8 +68,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private void ApplyResponseTags(OpenApiOperation operation, XPathNodeIterator responseNodes)
         {
-            var preferredEol = _options?.XmlCommentEndOfLine;
-
             while (responseNodes.MoveNext())
             {
                 var code = responseNodes.Current.GetAttribute("code");
@@ -78,7 +77,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     operation.Responses[code] = response;
                 }
 
-                response.Description = XmlCommentsTextHelper.Humanize(responseNodes.Current.InnerXml, preferredEol);
+                response.Description = XmlCommentsTextHelper.Humanize(responseNodes.Current.InnerXml, _options?.XmlCommentEndOfLine);
             }
         }
     }

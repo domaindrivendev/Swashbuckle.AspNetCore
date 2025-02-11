@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Xml.XPath;
@@ -14,6 +15,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
         }
 
+        [ActivatorUtilitiesConstructor]
         internal XmlCommentsSchemaFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers, SwaggerGeneratorOptions options)
         {
             _xmlDocMembers = xmlDocMembers;
@@ -40,8 +42,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (typeSummaryNode != null)
             {
-                var preferredEol = _options?.XmlCommentEndOfLine;
-                schema.Description = XmlCommentsTextHelper.Humanize(typeSummaryNode.InnerXml, preferredEol);
+                schema.Description = XmlCommentsTextHelper.Humanize(typeSummaryNode.InnerXml, _options?.XmlCommentEndOfLine);
             }
         }
 
@@ -60,8 +61,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     var summaryNode = recordDefaultConstructorProperty.Value;
                     if (summaryNode != null)
                     {
-                        var preferredEol = _options?.XmlCommentEndOfLine;
-                        schema.Description = XmlCommentsTextHelper.Humanize(summaryNode, preferredEol);
+                        schema.Description = XmlCommentsTextHelper.Humanize(summaryNode, _options?.XmlCommentEndOfLine);
                     }
 
                     var example = recordDefaultConstructorProperty.GetAttribute("example");
@@ -77,8 +77,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 var summaryNode = fieldOrPropertyNode.SelectFirstChild("summary");
                 if (summaryNode != null)
                 {
-                    var preferredEol = _options?.XmlCommentEndOfLine;
-                    schema.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml, preferredEol);
+                    schema.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml, _options?.XmlCommentEndOfLine);
                 }
 
                 var exampleNode = fieldOrPropertyNode.SelectFirstChild("example");
