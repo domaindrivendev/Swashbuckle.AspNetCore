@@ -8,7 +8,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
     {
         public void Apply(OpenApiOperation operation, OperationFilterContext contex)
         {
-            operation.Extensions.Add("X-property1", new OpenApiString("value"));
+            operation.Extensions.Add("X-property1", new OpenApiAny("value"));
         }
     }
 }

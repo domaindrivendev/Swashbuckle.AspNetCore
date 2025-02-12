@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -246,7 +245,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (dataContract.UnderlyingType.IsAssignableToOneOf(BinaryStringTypes))
             {
-                return new OpenApiSchema { Type = "string", Format = "binary" };
+                return new OpenApiSchema { Type = JsonSchemaType.String, Format = "binary" };
             }
 
             Func<OpenApiSchema> schemaFactory;
@@ -308,7 +307,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var schema = new OpenApiSchema
             {
-                Type = dataContract.DataType.ToString().ToLower(CultureInfo.InvariantCulture),
+                Type = (JsonSchemaType)Enum.Parse(typeof(JsonSchemaType), dataContract.DataType.ToString()),
                 Format = dataContract.DataFormat
             };
 
@@ -346,7 +345,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             return new OpenApiSchema
             {
-                Type = "array",
+                Type = JsonSchemaType.Array,
                 Items = GenerateSchema(dataContract.ArrayItemType, schemaRepository),
                 UniqueItems = hasUniqueItems ? (bool?)true : null
             };
@@ -363,7 +362,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 // This is a special case where the set of key values is known (e.g. if the key type is an enum)
                 return new OpenApiSchema
                 {
-                    Type = "object",
+                    Type = JsonSchemaType.Object,
                     Properties = knownKeysProperties,
                     AdditionalPropertiesAllowed = false
                 };
@@ -371,7 +370,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             return new OpenApiSchema
             {
-                Type = "object",
+                Type = JsonSchemaType.Object,
                 AdditionalPropertiesAllowed = true,
                 AdditionalProperties = GenerateSchema(dataContract.DictionaryValueType, schemaRepository)
             };
@@ -381,7 +380,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var schema = new OpenApiSchema
             {
-                Type = "object",
+                Type = JsonSchemaType.Object,
                 Properties = new Dictionary<string, OpenApiSchema>(),
                 Required = new SortedSet<string>(),
                 AdditionalPropertiesAllowed = false
@@ -420,7 +419,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
                     if (TryGetDiscriminatorFor(dataContract, schemaRepository, knownTypesDataContracts, out var discriminator))
                     {
-                        schema.Properties.Add(discriminator.PropertyName, new OpenApiSchema { Type = "string" });
+                        schema.Properties.Add(discriminator.PropertyName, new OpenApiSchema { Type = JsonSchemaType.String });
                         schema.Required.Add(discriminator.PropertyName);
                         schema.Discriminator = discriminator;
                     }
@@ -557,7 +556,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
         }
 
-        private IOpenApiAny GenerateDefaultValue(
+        private JsonNode GenerateDefaultValue(
             DataContract dataContract,
             Type modelType,
             object defaultValue)
