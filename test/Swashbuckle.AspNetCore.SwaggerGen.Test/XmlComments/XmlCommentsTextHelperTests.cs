@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System;
+using Xunit;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -142,6 +143,48 @@ A line of text",
             var output = XmlCommentsTextHelper.Humanize(input);
 
             Assert.Equal(expectedOutput, output, false, true);
+        }
+
+        [Fact]
+        public void Humanize_MultilineBrTag_EolNotSpecified()
+        {
+            const string input = @"
+            This is a paragraph.
+            <br>
+            A parameter after br tag.";
+
+            var output = XmlCommentsTextHelper.Humanize(input);
+
+            // Result view for Linux: This is a paragraph.\r\n\n\r\nA parameter after br tag.
+            var expected = string.Join("\r\n",
+            [
+                "This is a paragraph.",
+                Environment.NewLine,
+                "A parameter after br tag."
+            ]);
+            Assert.Equal(expected, output, false, ignoreLineEndingDifferences: false);
+        }
+
+        [Theory]
+        [InlineData("\r\n")]
+        [InlineData("\n")]
+        public void Humanize_MultilineBrTag_SpecificEol(string xmlCommentEndOfLine)
+        {
+            const string input = @"
+            This is a paragraph.
+            <br>
+            A parameter after br tag.";
+
+            var output = XmlCommentsTextHelper.Humanize(input, xmlCommentEndOfLine);
+
+            var expected = string.Join(xmlCommentEndOfLine,
+            [
+                "This is a paragraph.",
+                "",
+                "",
+                "A parameter after br tag."
+            ]);
+            Assert.Equal(expected, output, false, ignoreLineEndingDifferences: false);
         }
 
         [Fact]

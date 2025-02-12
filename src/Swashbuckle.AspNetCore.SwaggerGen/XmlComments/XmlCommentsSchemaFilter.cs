@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Xml.XPath;
@@ -8,14 +9,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     public class XmlCommentsSchemaFilter : ISchemaFilter
     {
         private readonly IReadOnlyDictionary<string, XPathNavigator> _xmlDocMembers;
+        private readonly SwaggerGeneratorOptions _options;
 
-        public XmlCommentsSchemaFilter(XPathDocument xmlDoc) : this(XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc))
+        public XmlCommentsSchemaFilter(XPathDocument xmlDoc) : this(XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc), null)
         {
         }
 
-        internal XmlCommentsSchemaFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers)
+        [ActivatorUtilitiesConstructor]
+        internal XmlCommentsSchemaFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers, SwaggerGeneratorOptions options)
         {
             _xmlDocMembers = xmlDocMembers;
+            _options = options;
         }
 
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
@@ -38,7 +42,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             if (typeSummaryNode != null)
             {
-                schema.Description = XmlCommentsTextHelper.Humanize(typeSummaryNode.InnerXml);
+                schema.Description = XmlCommentsTextHelper.Humanize(typeSummaryNode.InnerXml, _options?.XmlCommentEndOfLine);
             }
         }
 
@@ -56,7 +60,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 {
                     var summaryNode = recordDefaultConstructorProperty.Value;
                     if (summaryNode != null)
-                        schema.Description = XmlCommentsTextHelper.Humanize(summaryNode);
+                    {
+                        schema.Description = XmlCommentsTextHelper.Humanize(summaryNode, _options?.XmlCommentEndOfLine);
+                    }
 
                     var example = recordDefaultConstructorProperty.GetAttribute("example");
                     if (!string.IsNullOrEmpty(example))
@@ -70,7 +76,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 var summaryNode = fieldOrPropertyNode.SelectFirstChild("summary");
                 if (summaryNode != null)
-                    schema.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
+                {
+                    schema.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml, _options?.XmlCommentEndOfLine);
+                }
 
                 var exampleNode = fieldOrPropertyNode.SelectFirstChild("example");
                 TrySetExample(schema, context, exampleNode?.Value);

@@ -706,10 +706,10 @@ namespace Microsoft.Extensions.DependencyInjection
             var xmlDoc = xmlDocFactory();
             var xmlDocMembers = XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc);
 
-            swaggerGenOptions.AddParameterFilterInstance(new XmlCommentsParameterFilter(xmlDocMembers));
-            swaggerGenOptions.AddRequestBodyFilterInstance(new XmlCommentsRequestBodyFilter(xmlDocMembers));
-            swaggerGenOptions.AddOperationFilterInstance(new XmlCommentsOperationFilter(xmlDocMembers));
-            swaggerGenOptions.AddSchemaFilterInstance(new XmlCommentsSchemaFilter(xmlDocMembers));
+            swaggerGenOptions.AddParameterFilterInstance(new XmlCommentsParameterFilter(xmlDocMembers, swaggerGenOptions.SwaggerGeneratorOptions));
+            swaggerGenOptions.AddRequestBodyFilterInstance(new XmlCommentsRequestBodyFilter(xmlDocMembers, swaggerGenOptions.SwaggerGeneratorOptions));
+            swaggerGenOptions.AddOperationFilterInstance(new XmlCommentsOperationFilter(xmlDocMembers, swaggerGenOptions.SwaggerGeneratorOptions));
+            swaggerGenOptions.AddSchemaFilterInstance(new XmlCommentsSchemaFilter(xmlDocMembers, swaggerGenOptions.SwaggerGeneratorOptions));
 
             if (includeControllerXmlComments)
                 swaggerGenOptions.AddDocumentFilterInstance(new XmlCommentsDocumentFilter(xmlDocMembers, swaggerGenOptions.SwaggerGeneratorOptions));
