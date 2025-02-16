@@ -1,2 +1,2 @@
-Swashbuckle.AspNetCore.Swagger.IAsyncSwaggerProvider.GetSwaggerDocumentNames() -> string[]
-Swashbuckle.AspNetCore.Swagger.ISwaggerProvider.GetSwaggerDocumentNames() -> string[]
+Swashbuckle.AspNetCore.Swagger.ISwaggerDocumentInformation
+Swashbuckle.AspNetCore.Swagger.ISwaggerDocumentInformation.GetDocumentNames() -> string[]

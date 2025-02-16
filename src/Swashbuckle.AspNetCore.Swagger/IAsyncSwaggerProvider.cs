@@ -9,7 +9,5 @@ namespace Swashbuckle.AspNetCore.Swagger
             string documentName,
             string host = null,
             string basePath = null);
-
-        string[] GetSwaggerDocumentNames();
     }
 }
