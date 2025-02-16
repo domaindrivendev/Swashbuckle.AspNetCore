@@ -50,6 +50,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             );
 
+            var provider = subject as ISwaggerProvider;
+            var documentNames = provider.GetSwaggerDocumentNames();
+            Assert.Equal(new[] { "v1", "v2" }, documentNames);
+
+            var asyncProvider = subject as IAsyncSwaggerProvider;
+            documentNames = provider.GetSwaggerDocumentNames();
+            Assert.Equal(new[] { "v1", "v2" }, documentNames);
+
             var document = subject.GetSwagger("v1");
 
             Assert.Equal("V1", document.Info.Version);

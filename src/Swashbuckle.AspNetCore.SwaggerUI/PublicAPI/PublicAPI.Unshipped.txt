@@ -1,0 +1,5 @@
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.EnableSwaggerDocumentUrlsRoute(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options) -> void
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.ExposeSwaggerDocumentUrlsRoute.get -> bool
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.ExposeSwaggerDocumentUrlsRoute.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.SwaggerDocumentUrlsPath.get -> string
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.SwaggerDocumentUrlsPath.set -> void

@@ -112,6 +112,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
         }
 
+        public string[] GetSwaggerDocumentNames()
+        {
+            return _options.SwaggerDocs.Keys.ToArray();
+        }
+
         private void SortSchemas(OpenApiDocument document)
         {
             document.Components.Schemas = new SortedDictionary<string, OpenApiSchema>(document.Components.Schemas, _options.SchemaComparer);

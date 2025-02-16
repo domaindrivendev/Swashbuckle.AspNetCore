@@ -59,6 +59,7 @@ namespace MultipleVersions
                 {
                     c.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json", $"Version {description.GroupName}");
                 }
+                c.EnableSwaggerDocumentUrlsRoute();
             });
 
             // Separate endpoints that contain only one version

@@ -1,5 +1,6 @@
 ﻿#if NET6_0_OR_GREATER
 using System;
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
@@ -7,6 +8,7 @@ using System.Text.Json.Serialization;
 namespace Swashbuckle.AspNetCore.SwaggerUI;
 
 [JsonSerializable(typeof(ConfigObject))]
+[JsonSerializable(typeof(List<UrlDescriptor>))]
 [JsonSerializable(typeof(InterceptorFunctions))]
 [JsonSerializable(typeof(OAuthConfigObject))]
 // These primitive types are declared for common types that may be used with ConfigObject.AdditionalItems. See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2884.

@@ -203,7 +203,7 @@ namespace Microsoft.AspNetCore.Builder
 
         /// <summary>
         /// You can use this parameter to enable the swagger-ui's built-in validator (badge) functionality
-        /// Setting it to null will disable validation 
+        /// Setting it to null will disable validation
         /// </summary>
         /// <param name="options"></param>
         /// <param name="url"></param>
@@ -239,7 +239,7 @@ namespace Microsoft.AspNetCore.Builder
         /// <param name="value"></param>
         /// <remarks>Setting this exposes the client secrets in inline javascript in the swagger-ui generated html.</remarks>
         public static void OAuthClientSecret(this SwaggerUIOptions options, string value)
-        { 
+        {
             options.OAuthConfigObject.ClientSecret = value;
         }
 
@@ -332,6 +332,11 @@ namespace Microsoft.AspNetCore.Builder
         public static void UseResponseInterceptor(this SwaggerUIOptions options, string value)
         {
             options.Interceptors.ResponseInterceptorFunction = value;
+        }
+
+        public static void EnableSwaggerDocumentUrlsRoute(this SwaggerUIOptions options)
+        {
+            options.ExposeSwaggerDocumentUrlsRoute = true;
         }
     }
 }
