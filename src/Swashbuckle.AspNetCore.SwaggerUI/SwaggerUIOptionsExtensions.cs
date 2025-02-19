@@ -334,7 +334,12 @@ namespace Microsoft.AspNetCore.Builder
             options.Interceptors.ResponseInterceptorFunction = value;
         }
 
-        public static void EnableSwaggerDocumentUrlsRoute(this SwaggerUIOptions options)
+        /// <summary>
+        /// Function to enable the <see cref="SwaggerUIOptions.ExposeSwaggerDocumentUrlsRoute"/> option to expose the available
+        /// Swagger document urls to external parties.
+        /// </summary>
+        /// <param name="options"></param>
+        public static void EnableSwaggerDocumentUrlsEndpoint(this SwaggerUIOptions options)
         {
             options.ExposeSwaggerDocumentUrlsRoute = true;
         }

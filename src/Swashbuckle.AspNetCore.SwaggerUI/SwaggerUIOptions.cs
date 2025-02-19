@@ -65,12 +65,14 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
         public string StylesPath { get; set; } = "./swagger-ui.css";
 
         /// <summary>
-        /// Expose the ConfigObject.Urls object via a new &lt;root&gt;/documentUrls
+        /// Expose the <c><see cref="SwaggerUIOptions.ConfigObject">ConfigObject</see>.Urls</c> object via a new
+        /// "&lt;<see cref="SwaggerUIOptions.RoutePrefix"/>&gt;/&lt;<see cref="SwaggerUIOptions.SwaggerDocumentUrlsPath"/>&gt;
+        /// route so that external code can auto-discover all swagger documents.
         /// </summary>
         public bool ExposeSwaggerDocumentUrlsRoute { get; set; } = false;
 
         /// <summary>
-        /// Gets or sets the relative URL path to the documentUrls route.
+        /// Gets or sets the relative URL path to the route that exposes the <c>SwaggerUIOptions.ConfigObjet.Urls</c>>.
         /// </summary>
         public string SwaggerDocumentUrlsPath { get; set; } = "documentUrls";
     }

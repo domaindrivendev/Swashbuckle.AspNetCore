@@ -1,2 +1,2 @@
-Swashbuckle.AspNetCore.Swagger.ISwaggerDocumentInformation
-Swashbuckle.AspNetCore.Swagger.ISwaggerDocumentInformation.GetDocumentNames() -> string[]
+Swashbuckle.AspNetCore.Swagger.ISwaggerDocumentMetadataProvider
+Swashbuckle.AspNetCore.Swagger.ISwaggerDocumentMetadataProvider.GetDocumentNames() -> System.Collections.Generic.IList<string>
