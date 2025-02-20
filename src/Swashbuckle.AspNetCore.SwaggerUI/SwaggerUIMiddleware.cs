@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -88,6 +90,13 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
                     await RespondWithFile(httpContext.Response, match.Groups[1].Value);
                     return;
                 }
+
+                var pattern = $"^/?{Regex.Escape(_options.RoutePrefix)}/{_options.SwaggerDocumentUrlsPath}/?$";
+                if (Regex.IsMatch(path, pattern, RegexOptions.IgnoreCase))
+                {
+                    await RespondWithDocumentUrls(httpContext.Response);
+                    return;
+                }
             }
 
             await _staticFileMiddleware.Invoke(httpContext);
@@ -148,6 +157,36 @@ namespace Swashbuckle.AspNetCore.SwaggerUI
 
                 await response.WriteAsync(content.ToString(), Encoding.UTF8);
             }
+        }
+
+#if NET5_0_OR_GREATER
+        [UnconditionalSuppressMessage(
+            "AOT",
+            "IL2026:RequiresUnreferencedCode",
+            Justification = "Method is only called if the user provides their own custom JsonSerializerOptions.")]
+        [UnconditionalSuppressMessage(
+            "AOT",
+            "IL3050:RequiresDynamicCode",
+            Justification = "Method is only called if the user provides their own custom JsonSerializerOptions.")]
+#endif
+        private async Task RespondWithDocumentUrls(HttpResponse response)
+        {
+            response.StatusCode = 200;
+
+            response.ContentType = "application/javascript;charset=utf-8";
+            string json = "[]";
+
+#if NET6_0_OR_GREATER
+            if (_jsonSerializerOptions is null)
+            {
+                var l = new List<UrlDescriptor>(_options.ConfigObject.Urls);
+                json = JsonSerializer.Serialize(l, SwaggerUIOptionsJsonContext.Default.ListUrlDescriptor);
+            }
+#endif
+
+            json ??= JsonSerializer.Serialize(_options.ConfigObject, _jsonSerializerOptions);
+
+            await response.WriteAsync(json, Encoding.UTF8);
         }
 
 #if NET5_0_OR_GREATER

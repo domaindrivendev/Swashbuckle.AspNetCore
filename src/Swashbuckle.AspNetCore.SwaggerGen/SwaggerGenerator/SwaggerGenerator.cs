@@ -20,7 +20,7 @@ using Microsoft.AspNetCore.Http.Metadata;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public class SwaggerGenerator : ISwaggerProvider, IAsyncSwaggerProvider
+    public class SwaggerGenerator : ISwaggerProvider, IAsyncSwaggerProvider, ISwaggerDocumentMetadataProvider
     {
         private readonly IApiDescriptionGroupCollectionProvider _apiDescriptionsProvider;
         private readonly ISchemaGenerator _schemaGenerator;
@@ -111,6 +111,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 throw;
             }
         }
+
+        public IList<string> GetDocumentNames() => _options.SwaggerDocs.Keys.ToList();
 
         private void SortSchemas(OpenApiDocument document)
         {
