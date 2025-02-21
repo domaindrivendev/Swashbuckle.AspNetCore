@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using Xunit;
+using System.Linq;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Linq;
-using System.Linq;
+using Xunit;
 
 namespace Swashbuckle.AspNetCore.ApiTesting.Test
 {
@@ -51,7 +51,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
         {
             var openApiSchema = new OpenApiSchema { Type = "number", MultipleOf = schemaMultipleOf };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -73,7 +73,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
         {
             var openApiSchema = new OpenApiSchema { Type = "number", Maximum = schemaMaximum };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -100,7 +100,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
                 ExclusiveMaximum = true
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -122,7 +122,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
         {
             var openApiSchema = new OpenApiSchema { Type = "number", Minimum = schemaMinimum };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -149,7 +149,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
                 ExclusiveMinimum = true
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -175,7 +175,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
                 MaxLength = schemaMaxLength
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -201,7 +201,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
                 MinLength = schemaMinLength
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -227,7 +227,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
                 Pattern = schemaPattern
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -254,7 +254,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
                 Items = new OpenApiSchema { Type = itemsSchemaType }
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -280,7 +280,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
                 MaxItems = schemaMaxItems
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -306,7 +306,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
                 MinItems = schemaMinItems
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -331,7 +331,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
                 UniqueItems = true
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -357,7 +357,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
                 MaxProperties = schemaMaxProperties
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -383,7 +383,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
                 MinProperties = schemaMinProperties
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -409,7 +409,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
                 Required = new SortedSet<string>(schemaRequired)
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -439,7 +439,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
                 }
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -466,7 +466,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
                 AdditionalProperties = new OpenApiSchema { Type = additionalPropertiesType }
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -492,7 +492,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
                 AdditionalPropertiesAllowed = additionalPropertiesAllowed
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -513,15 +513,15 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
         {
             var openApiSchema = new OpenApiSchema
             {
-                AllOf = new List<OpenApiSchema>
-                {
+                AllOf =
+                [
                     new OpenApiSchema { Type = "object", Required = new SortedSet<string> { "p1" } },
                     new OpenApiSchema { Type = "object", Required = new SortedSet<string> { "p2" } },
                     new OpenApiSchema { Type = "object", Required = new SortedSet<string> { "p3" } }
-                }
+                ]
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -542,15 +542,15 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
         {
             var openApiSchema = new OpenApiSchema
             {
-                AnyOf = new List<OpenApiSchema>
-                {
+                AnyOf =
+                [
                     new OpenApiSchema { Type = "object", Required = new SortedSet<string> { "p1" } },
                     new OpenApiSchema { Type = "object", Required = new SortedSet<string> { "p2" } },
                     new OpenApiSchema { Type = "object", Required = new SortedSet<string> { "p3" } }
-                }
+                ]
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -572,15 +572,15 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
         {
             var openApiSchema = new OpenApiSchema
             {
-                OneOf = new List<OpenApiSchema>
-                {
+                OneOf =
+                [
                     new OpenApiSchema { Type = "object", Required = new SortedSet<string> { "p1" } },
                     new OpenApiSchema { Type = "object", Required = new SortedSet<string> { "p2" } },
                     new OpenApiSchema { Type = "object", Required = new SortedSet<string> { "p3" } }
-                }
+                ]
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -628,9 +628,6 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
             Assert.Equal(expectedExceptionMessage, exception?.Message);
         }
 
-        private JsonValidator Subject()
-        {
-            return new JsonValidator();
-        }
+        private static JsonValidator Subject() => new();
     }
 }

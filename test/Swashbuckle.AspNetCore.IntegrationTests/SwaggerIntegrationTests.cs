@@ -9,10 +9,11 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Readers;
 using Xunit;
 using ReDocApp = ReDoc;
+using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Readers;
+using Microsoft.OpenApi.Any;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests
 {
@@ -145,7 +146,13 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             using var application = new TestApplication<WebApi.Program>();
             using var client = application.CreateDefaultClient();
 
-            using var swaggerResponse = await client.GetFromJsonAsync<JsonDocument>("/swagger/v1/swagger.json");
+            using var response = await client.GetAsync("/swagger/v1/swagger.json");
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            Assert.True(response.IsSuccessStatusCode, content);
+
+            using var swaggerResponse = await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync());
 
             var weatherForecase = swaggerResponse.RootElement
                 .GetProperty("components")
@@ -186,11 +193,8 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 
             var createClientMethod = applicationType
                 .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                .FirstOrDefault(m => m.Name == "CreateDefaultClient" && m.GetParameters().Length == 1);
-            if (createClientMethod == null)
-            {
-                throw new InvalidOperationException($"The method CreateDefaultClient was not found on TestApplication<{entryPointType.FullName}>.");
-            }
+                .FirstOrDefault(m => m.Name == "CreateDefaultClient" && m.GetParameters().Length == 1)
+                ?? throw new InvalidOperationException($"The method CreateDefaultClient was not found on TestApplication<{entryPointType.FullName}>.");
 
             // Pass null for DelegatingHandler[]
             var parameters = new object[] { null };

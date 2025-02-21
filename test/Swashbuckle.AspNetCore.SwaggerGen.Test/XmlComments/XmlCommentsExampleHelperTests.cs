@@ -6,14 +6,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     public class XmlCommentsExampleHelperTests
     {
-        private readonly SchemaRepository schemaRepository = new SchemaRepository();
+        private readonly SchemaRepository schemaRepository = new();
 
         [Fact]
         public void Create_BuildsOpenApiArrayJson__When_NotStringTypeAndDataIsArray()
         {
             var schema = new OpenApiSchema();
 
-            IOpenApiAny example = XmlCommentsExampleHelper.Create(
+            var example = XmlCommentsExampleHelper.Create(
                 schemaRepository,
                 schema,
                 "[\"one\",\"two\",\"three\"]");
@@ -37,7 +37,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             OpenApiSchema schema = new OpenApiSchema { Type = "string" };
             schemaRepository.AddDefinition("test", schema);
             
-            IOpenApiAny example = XmlCommentsExampleHelper.Create(
+            var example = XmlCommentsExampleHelper.Create(
                 schemaRepository, schema, exampleString);
 
             Assert.NotNull(example);
@@ -48,10 +48,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void Create_ReturnsNull_When_TypeString_and_ValueNull()
         {
-            OpenApiSchema schema = new OpenApiSchema { Type = "string" };
+            var schema = new OpenApiSchema { Type = "string" };
             schemaRepository.AddDefinition("test", schema);
 
-            IOpenApiAny example = XmlCommentsExampleHelper.Create(
+            var example = XmlCommentsExampleHelper.Create(
                 schemaRepository, schema, "null");
 
             Assert.NotNull(example);
@@ -64,7 +64,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         {
             OpenApiSchema schema = null;
 
-            IOpenApiAny example = XmlCommentsExampleHelper.Create(schemaRepository, schema, "[]");
+            var example = XmlCommentsExampleHelper.Create(schemaRepository, schema, "[]");
 
             Assert.NotNull(example);
             var actual = Assert.IsType<OpenApiArray>(example);

@@ -186,7 +186,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
                         Schema = new OpenApiSchema
                         {
                             Type = specifiedType,
-                            Items = (specifiedItemsType != null) ? new OpenApiSchema { Type = specifiedItemsType } : null
+                            Items = specifiedItemsType != null ? new OpenApiSchema { Type = specifiedItemsType } : null
                         }
                     }
                 }
@@ -348,13 +348,13 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
 
             var exception = Record.Exception(() =>
             {
-                Subject(new[] { new JsonContentValidator() }).Validate(request, openApiDocument, "/api/products", OperationType.Post);
+                Subject([new JsonContentValidator()]).Validate(request, openApiDocument, "/api/products", OperationType.Post);
             });
 
             Assert.Equal(expectedErrorMessage, exception?.Message);
         }
 
-        private OpenApiDocument DocumentWithOperation(string pathTemplate, OperationType operationType, OpenApiOperation operationSpec)
+        private static OpenApiDocument DocumentWithOperation(string pathTemplate, OperationType operationType, OpenApiOperation operationSpec)
         {
             return new OpenApiDocument
             {
@@ -375,9 +375,9 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
             };
         }
 
-        private RequestValidator Subject(IEnumerable<IContentValidator> contentValidators = null)
+        private static RequestValidator Subject(IEnumerable<IContentValidator> contentValidators = null)
         {
-            return new RequestValidator(contentValidators ?? new IContentValidator[] { });
+            return new RequestValidator(contentValidators ?? []);
         }
     }
 }

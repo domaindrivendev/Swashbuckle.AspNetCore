@@ -7,7 +7,6 @@ using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
@@ -140,7 +139,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             var schema = Subject().GenerateSchema(typeof(IDictionary<IntEnum, int>), new SchemaRepository());
 
             Assert.Equal("object", schema.Type);
-            Assert.Equal(new[] { "Value2", "Value4", "Value8" }, schema.Properties.Keys);
+            Assert.Equal(["Value2", "Value4", "Value8"], schema.Properties.Keys);
         }
 
         [Fact]
@@ -233,7 +232,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("object", schema.Type);
-            Assert.Equal(new[] { "Property1", "BaseProperty" }, schema.Properties.Keys);
+            Assert.Equal(["Property1", "BaseProperty"], schema.Properties.Keys);
         }
 
         [Fact]
@@ -245,7 +244,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("object", schema.Type);
-            Assert.Equal(new[] { "Property1" }, schema.Properties.Keys);
+            Assert.Equal(["Property1"], schema.Properties.Keys);
         }
 
         [Theory]
@@ -374,20 +373,19 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
         }
 
         [Theory]
-        [InlineData(typeof(ComplexType), typeof(ComplexType), "string")]
-        [InlineData(typeof(GenericType<int, string>), typeof(GenericType<int, string>), "string")]
-        [InlineData(typeof(GenericType<,>), typeof(GenericType<int, int>), "string")]
+        [InlineData(typeof(ComplexType), typeof(ComplexType))]
+        [InlineData(typeof(GenericType<int, string>), typeof(GenericType<int, string>))]
+        [InlineData(typeof(GenericType<,>), typeof(GenericType<int, int>))]
         public void GenerateSchema_SupportsOption_CustomTypeMappings(
             Type mappingType,
-            Type type,
-            string expectedSchemaType)
+            Type type)
         {
             var subject = Subject(
                 configureGenerator: c => c.CustomTypeMappings.Add(mappingType, () => new OpenApiSchema { Type = "string" })
             );
             var schema = subject.GenerateSchema(type, new SchemaRepository());
 
-            Assert.Equal(expectedSchemaType, schema.Type);
+            Assert.Equal("string", schema.Type);
             Assert.Empty(schema.Properties);
         }
 
@@ -456,11 +454,11 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.Equal("BaseType", baseSchema.Reference.Id);
             Assert.NotNull(baseSchema.Reference);
             var subSchema = schema.AllOf[1];
-            Assert.Equal(new[] { "Property1" }, subSchema.Properties.Keys);
+            Assert.Equal(["Property1"], subSchema.Properties.Keys);
             // The base type schema
             var baseTypeSchema = schemaRepository.Schemas[baseSchema.Reference.Id];
             Assert.Equal("object", baseTypeSchema.Type);
-            Assert.Equal(new[] { "BaseProperty" }, baseTypeSchema.Properties.Keys);
+            Assert.Equal(["BaseProperty"], baseTypeSchema.Properties.Keys);
         }
 
         [Fact]
@@ -469,13 +467,13 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             var subject = Subject(configureGenerator: c =>
             {
                 c.UseAllOfForInheritance = true;
-                c.SubTypesSelector = (type) => new[] { typeof(SubType1) };
+                c.SubTypesSelector = (type) => [typeof(SubType1)];
             });
             var schemaRepository = new SchemaRepository();
 
             var schema = subject.GenerateSchema(typeof(BaseType), schemaRepository);
 
-            Assert.Equal(new[] { "SubType1", "BaseType" }, schemaRepository.Schemas.Keys);
+            Assert.Equal(["SubType1", "BaseType"], schemaRepository.Schemas.Keys);
         }
 
         [Fact]
@@ -517,7 +515,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             Assert.NotNull(schema.OneOf[0].Reference);
             var baseSchema = schemaRepository.Schemas[schema.OneOf[0].Reference.Id];
             Assert.Equal("object", baseSchema.Type);
-            Assert.Equal(new[] { "BaseProperty" }, baseSchema.Properties.Keys);
+            Assert.Equal(["BaseProperty"], baseSchema.Properties.Keys);
             // The first sub type schema
             Assert.NotNull(schema.OneOf[1].Reference);
             var subType1Schema = schemaRepository.Schemas[schema.OneOf[1].Reference.Id];
@@ -526,7 +524,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             var allOf = Assert.Single(subType1Schema.AllOf);
             Assert.NotNull(allOf.Reference);
             Assert.Equal("BaseType", allOf.Reference.Id);
-            Assert.Equal(new[] { "Property1" }, subType1Schema.Properties.Keys);
+            Assert.Equal(["Property1"], subType1Schema.Properties.Keys);
             // The second sub type schema
             Assert.NotNull(schema.OneOf[2].Reference);
             var subType2Schema = schemaRepository.Schemas[schema.OneOf[2].Reference.Id];
@@ -535,7 +533,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
             allOf = Assert.Single(subType2Schema.AllOf);
             Assert.NotNull(allOf.Reference);
             Assert.Equal("BaseType", allOf.Reference.Id);
-            Assert.Equal(new[] { "Property2" }, subType2Schema.Properties.Keys);
+            Assert.Equal(["Property2"], subType2Schema.Properties.Keys);
         }
 
         [Fact]
@@ -739,7 +737,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             Assert.Equal("string", schema.Type);
-            Assert.Equal(new[] { "\"Value1\"", "\"Value2\"", "\"X-foo\"" }, schema.Enum.Select(openApiAny => openApiAny.ToJson()));
+            Assert.Equal(["\"Value1\"", "\"Value2\"", "\"X-foo\""], schema.Enum.Select(openApiAny => openApiAny.ToJson()));
         }
 
         [Fact]

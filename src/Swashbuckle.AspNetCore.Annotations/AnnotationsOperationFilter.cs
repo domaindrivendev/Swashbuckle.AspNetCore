@@ -10,9 +10,9 @@ namespace Swashbuckle.AspNetCore.Annotations
     {
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
-            IEnumerable<object> controllerAttributes = Array.Empty<object>();
-            IEnumerable<object> actionAttributes = Array.Empty<object>();
-            IEnumerable<object> metadataAttributes = Array.Empty<object>();
+            IEnumerable<object> controllerAttributes = [];
+            IEnumerable<object> actionAttributes = [];
+            IEnumerable<object> metadataAttributes = [];
 
             if (context.MethodInfo != null)
             {
@@ -86,7 +86,7 @@ namespace Swashbuckle.AspNetCore.Annotations
             }
         }
 
-        private void ApplySwaggerResponseAttributes(
+        private static void ApplySwaggerResponseAttributes(
             OpenApiOperation operation,
             OperationFilterContext context,
             IEnumerable<object> controllerAndActionAttributes)
@@ -97,10 +97,7 @@ namespace Swashbuckle.AspNetCore.Annotations
             {
                 var statusCode = swaggerResponseAttribute.StatusCode.ToString();
 
-                if (operation.Responses == null)
-                {
-                    operation.Responses = new OpenApiResponses();
-                }
+                operation.Responses ??= [];
 
                 if (!operation.Responses.TryGetValue(statusCode, out OpenApiResponse response))
                 {

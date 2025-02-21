@@ -222,14 +222,14 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
 
             var exception = Record.Exception(() =>
             {
-                Subject(new[] { new JsonContentValidator() }).Validate(response, openApiDocument, "/api/products/1", OperationType.Get, "200");
+                Subject([new JsonContentValidator()]).Validate(response, openApiDocument, "/api/products/1", OperationType.Get, "200");
             });
 
             Assert.Equal(expectedErrorMessage, exception?.Message);
         }
 
 
-        private OpenApiDocument DocumentWithOperation(string pathTemplate, OperationType operationType, OpenApiOperation operationSpec)
+        private static OpenApiDocument DocumentWithOperation(string pathTemplate, OperationType operationType, OpenApiOperation operationSpec)
         {
             return new OpenApiDocument
             {
@@ -250,9 +250,9 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
             };
         }
 
-        private ResponseValidator Subject(IEnumerable<IContentValidator> contentValidators = null)
+        private static ResponseValidator Subject(IEnumerable<IContentValidator> contentValidators = null)
         {
-            return new ResponseValidator(contentValidators ?? new IContentValidator[] { });
+            return new ResponseValidator(contentValidators ?? []);
         }
     }
 }
