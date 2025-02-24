@@ -10,6 +10,20 @@ namespace Swashbuckle.AspNetCore.Cli.Test
     public static class ToolTests
     {
         [Fact]
+        public static void Can_Output_Swagger_Document_Names()
+        {
+            var result = RunListCommand((outputPath) =>
+            [
+                "list",
+                "--output",
+                outputPath,
+                Path.Combine(Directory.GetCurrentDirectory(), "MultipleVersions.dll")
+            ], nameof(Can_Output_Swagger_Document_Names));
+            var expected = $"Swagger Document Names:{Environment.NewLine}\"1.0\"{Environment.NewLine}\"2.0\"{Environment.NewLine}";
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
         public static void Throws_When_Startup_Assembly_Does_Not_Exist()
         {
             string[] args = ["tofile", "--output", "swagger.json", "--serializeasv2", "./does_not_exist.dll", "v1"];
@@ -19,7 +33,7 @@ namespace Swashbuckle.AspNetCore.Cli.Test
         [Fact]
         public static void Can_Generate_Swagger_Json()
         {
-            using var document = RunApplication((outputPath) =>
+            using var document = RunToFileCommand((outputPath) =>
             [
                 "tofile",
                 "--output",
@@ -38,7 +52,7 @@ namespace Swashbuckle.AspNetCore.Cli.Test
         [Fact]
         public static void Overwrites_Existing_File()
         {
-            using var document = RunApplication((outputPath) =>
+            using var document = RunToFileCommand((outputPath) =>
             {
                 File.WriteAllText(outputPath, new string('x', 100_000));
 
@@ -62,7 +76,7 @@ namespace Swashbuckle.AspNetCore.Cli.Test
         [Fact]
         public static void CustomDocumentSerializer_Writes_Custom_V2_Document()
         {
-            using var document = RunApplication((outputPath) =>
+            using var document = RunToFileCommand((outputPath) =>
             [
                 "tofile",
                 "--output",
@@ -80,7 +94,7 @@ namespace Swashbuckle.AspNetCore.Cli.Test
         [Fact]
         public static void CustomDocumentSerializer_Writes_Custom_V3_Document()
         {
-            using var document = RunApplication((outputPath) =>
+            using var document = RunToFileCommand((outputPath) =>
             [
                 "tofile",
                 "--output",
@@ -98,7 +112,7 @@ namespace Swashbuckle.AspNetCore.Cli.Test
         [Fact]
         public static void Can_Generate_Swagger_Json_ForTopLevelApp()
         {
-            using var document = RunApplication((outputPath) =>
+            using var document = RunToFileCommand((outputPath) =>
             [
                 "tofile",
                 "--output",
@@ -117,7 +131,7 @@ namespace Swashbuckle.AspNetCore.Cli.Test
         [Fact]
         public static void Does_Not_Run_Crashing_HostedService()
         {
-            using var document = RunApplication((outputPath) =>
+            using var document = RunToFileCommand((outputPath) =>
             [
                 "tofile",
                 "--output",
@@ -135,7 +149,7 @@ namespace Swashbuckle.AspNetCore.Cli.Test
         [Fact]
         public static void Creates_New_Folder_Path()
         {
-            using var document = RunApplication(outputPath =>
+            using var document = RunToFileCommand(outputPath =>
             [
                 "tofile",
                 "--output",
@@ -151,7 +165,22 @@ namespace Swashbuckle.AspNetCore.Cli.Test
             Assert.True(productsPath.TryGetProperty("post", out _));
         }
 
-        private static JsonDocument RunApplication(Func<string, string[]> setup, string subOutputPath = default)
+        private static string RunListCommand(Func<string, string[]> setup, string subOutputPath = default)
+        {
+            using var temporaryDirectory = new TemporaryDirectory();
+
+            var outputPath = !string.IsNullOrEmpty(subOutputPath)
+                ? Path.Combine(temporaryDirectory.Path, subOutputPath, "swagger.json")
+                : Path.Combine(temporaryDirectory.Path, "swagger.json");
+
+            string[] args = setup(outputPath);
+
+            Assert.Equal(0, Program.Main(args));
+
+            return File.ReadAllText(outputPath);
+        }
+
+        private static JsonDocument RunToFileCommand(Func<string, string[]> setup, string subOutputPath = default)
         {
             using var temporaryDirectory = new TemporaryDirectory();
 

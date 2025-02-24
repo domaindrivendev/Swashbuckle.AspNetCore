@@ -11,6 +11,7 @@
     <ProjectReference Include="..\WebSites\MinimalAppWithHostedServices\MinimalAppWithHostedServices.csproj" />
     <ProjectReference Include="..\WebSites\MinimalApp\MinimalApp.csproj" />
     <ProjectReference Include="..\..\src\Swashbuckle.AspNetCore.Cli\Swashbuckle.AspNetCore.Cli.csproj" />
+    <ProjectReference Include="..\WebSites\MultipleVersions\MultipleVersions.csproj" />
   </ItemGroup>
 
   <ItemGroup>

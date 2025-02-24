@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -151,8 +152,14 @@ namespace Swashbuckle.AspNetCore.Cli
                 {
                     SetupAndRetrieveSwaggerProviderAndOptions(namedArgs, out var swaggerProvider, out var swaggerOptions);
                     var docMetaProvider = swaggerProvider as ISwaggerDocumentMetadataProvider;
-                    var docNames = docMetaProvider.GetDocumentNames();
-                    var outputPath = namedArgs.TryGetValue("--output", out var arg1)
+                    IList<string> docNames = new List<string>();
+                    string outputPath = null;
+                    if (docMetaProvider != null)
+                    {
+                        docNames = docMetaProvider.GetDocumentNames();
+                    }
+
+                    outputPath = namedArgs.TryGetValue("--output", out var arg1)
                         ? Path.Combine(Directory.GetCurrentDirectory(), arg1)
                         : null;
                     bool outputViaConsole = outputPath == null;
@@ -165,14 +172,22 @@ namespace Swashbuckle.AspNetCore.Cli
                         }
                     }
 
-
                     using Stream stream = outputViaConsole ? Console.OpenStandardOutput() : File.Create(outputPath);
-                    using StreamWriter writer = new StreamWriter(stream, outputViaConsole ? Console.OutputEncoding : Encoding.UTF8);
+                    using StreamWriter writer = new(stream, outputViaConsole ? Console.OutputEncoding : Encoding.UTF8);
 
-                    writer.WriteLine($"Swagger Document Names (Surrounded by single quotes):");
-                    foreach (var name in docNames)
+                    if (docMetaProvider == null)
                     {
-                        writer.WriteLine($"'{name}'");
+                        writer.WriteLine($"ERROR: ISwaggerProvider instance DOES NOT support ISwaggerDocumentMetadaatProvider, so this coommand "
+                            + "DOES NOT support listing out the document names. Try updating the version of Swashbuckle used by the project you are examining to a newer version.");
+                        return -1;
+                    }
+                    else
+                    {
+                        writer.WriteLine($"Swagger Document Names:");
+                        foreach (var name in docNames)
+                        {
+                            writer.WriteLine($"\"{name}\"");
+                        }
                     }
                     return 0;
                 });
