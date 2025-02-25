@@ -151,13 +151,8 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.OnRun((namedArgs) =>
                 {
                     SetupAndRetrieveSwaggerProviderAndOptions(namedArgs, out var swaggerProvider, out var swaggerOptions);
-                    var docMetaProvider = swaggerProvider as ISwaggerDocumentMetadataProvider;
                     IList<string> docNames = new List<string>();
                     string outputPath = null;
-                    if (docMetaProvider != null)
-                    {
-                        docNames = docMetaProvider.GetDocumentNames();
-                    }
 
                     outputPath = namedArgs.TryGetValue("--output", out var arg1)
                         ? Path.Combine(Directory.GetCurrentDirectory(), arg1)
@@ -175,19 +170,17 @@ namespace Swashbuckle.AspNetCore.Cli
                     using Stream stream = outputViaConsole ? Console.OpenStandardOutput() : File.Create(outputPath);
                     using StreamWriter writer = new(stream, outputViaConsole ? Console.OutputEncoding : Encoding.UTF8);
 
-                    if (docMetaProvider == null)
+                    if (swaggerProvider is not ISwaggerDocumentMetadataProvider docMetaProvider)
                     {
-                        writer.WriteLine($"ERROR: ISwaggerProvider instance DOES NOT support ISwaggerDocumentMetadaatProvider, so this coommand "
-                            + "DOES NOT support listing out the document names. Try updating the version of Swashbuckle used by the project you are examining to a newer version.");
+                        writer.WriteLine($"ERROR: The {nameof(ISwaggerProvider)} instance does not support {nameof(ISwaggerDocumentMetadataProvider)}, "
+                            + "so this coommand cannot list out the document names.");
                         return -1;
                     }
-                    else
+                    docNames = docMetaProvider.GetDocumentNames();
+
+                    foreach (var name in docNames)
                     {
-                        writer.WriteLine($"Swagger Document Names:");
-                        foreach (var name in docNames)
-                        {
-                            writer.WriteLine($"\"{name}\"");
-                        }
+                        writer.WriteLine($"\"{name}\"");
                     }
                     return 0;
                 });

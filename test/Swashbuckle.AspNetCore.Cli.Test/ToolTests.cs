@@ -19,7 +19,7 @@ namespace Swashbuckle.AspNetCore.Cli.Test
                 outputPath,
                 Path.Combine(Directory.GetCurrentDirectory(), "MultipleVersions.dll")
             ], nameof(Can_Output_Swagger_Document_Names));
-            var expected = $"Swagger Document Names:{Environment.NewLine}\"1.0\"{Environment.NewLine}\"2.0\"{Environment.NewLine}";
+            var expected = $"\"1.0\"{Environment.NewLine}\"2.0\"{Environment.NewLine}";
             Assert.Equal(expected, result);
         }
 
@@ -182,17 +182,7 @@ namespace Swashbuckle.AspNetCore.Cli.Test
 
         private static JsonDocument RunToFileCommand(Func<string, string[]> setup, string subOutputPath = default)
         {
-            using var temporaryDirectory = new TemporaryDirectory();
-
-            var outputPath = !string.IsNullOrEmpty(subOutputPath)
-                ? Path.Combine(temporaryDirectory.Path, subOutputPath, "swagger.json")
-                : Path.Combine(temporaryDirectory.Path, "swagger.json");
-
-            string[] args = setup(outputPath);
-
-            Assert.Equal(0, Program.Main(args));
-
-            string json = File.ReadAllText(outputPath);
+            string json = RunListCommand(setup, subOutputPath);
             return JsonDocument.Parse(json);
         }
 
