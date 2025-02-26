@@ -182,7 +182,7 @@ namespace Swashbuckle.AspNetCore.Cli.Test
 
         private static JsonDocument RunToJsonCommand(Func<string, string[]> setup, string subOutputPath = default)
         {
-            string json = RunListCommand(setup, subOutputPath);
+            string json = RunToStringCommand(setup, subOutputPath);
             return JsonDocument.Parse(json);
         }
 
