@@ -50,6 +50,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                 }
             );
 
+            var provider = Assert.IsAssignableFrom<ISwaggerDocumentMetadataProvider>(subject);
+            var documentNames = provider.GetDocumentNames();
+            Assert.Equal(["v1", "v2"], documentNames);
+
             var document = subject.GetSwagger("v1");
 
             Assert.Equal("V1", document.Info.Version);
