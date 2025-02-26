@@ -152,9 +152,8 @@ namespace Swashbuckle.AspNetCore.Cli
                 {
                     SetupAndRetrieveSwaggerProviderAndOptions(namedArgs, out var swaggerProvider, out var swaggerOptions);
                     IList<string> docNames = new List<string>();
-                    string outputPath = null;
 
-                    outputPath = namedArgs.TryGetValue("--output", out var arg1)
+                    string outputPath = namedArgs.TryGetValue("--output", out var arg1)
                         ? Path.Combine(Directory.GetCurrentDirectory(), arg1)
                         : null;
                     bool outputViaConsole = outputPath == null;
@@ -172,16 +171,17 @@ namespace Swashbuckle.AspNetCore.Cli
 
                     if (swaggerProvider is not ISwaggerDocumentMetadataProvider docMetaProvider)
                     {
-                        writer.WriteLine($"ERROR: The {nameof(ISwaggerProvider)} instance does not support {nameof(ISwaggerDocumentMetadataProvider)}, "
-                            + "so this coommand cannot list out the document names.");
+                        writer.WriteLine($"The registered {nameof(ISwaggerProvider)} instance does not implement {nameof(ISwaggerDocumentMetadataProvider)}; unable to list the Swagger document names.");
                         return -1;
                     }
+
                     docNames = docMetaProvider.GetDocumentNames();
 
                     foreach (var name in docNames)
                     {
                         writer.WriteLine($"\"{name}\"");
                     }
+
                     return 0;
                 });
             });
