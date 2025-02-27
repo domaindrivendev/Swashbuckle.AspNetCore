@@ -38,7 +38,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                         c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "GET", relativePath: "resource"),
 
                     ApiDescriptionFactory.Create<FakeController>(
-                        c => nameof(c.ActionWithNoParameters), groupName: "v2", httpMethod: "POST", relativePath: "resource"),
+                        c => nameof(c.ActionWithNoParameters), groupName: "v2", httpMethod: "POST", relativePath: "resource")
                 },
                 options: new SwaggerGeneratorOptions
                 {
@@ -2521,6 +2521,51 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(new[] { "/resource" }, document.Paths.Keys.ToArray());
             Assert.Equal(new[] { OperationType.Post }, document.Paths["/resource"].Operations.Keys);
             Assert.Single(document.Paths["/resource"].Operations);
+        }
+
+        [Fact]
+        public void GetSwagger_BindingSourceQueryParameter_NotThrowsException()
+        {
+            var apiDescription = new ApiDescription
+            {
+                HttpMethod = "GET",
+                ActionDescriptor = new ActionDescriptor
+                {
+                    RouteValues = new Dictionary<string, string>
+                    {
+                        ["controller"] = "Catalog"
+                    }
+                },
+                RelativePath = "api/v1/Images/{image}",
+                GroupName = "v1",
+                ParameterDescriptions =
+                {
+                    new ApiParameterDescription
+                    {
+                        Name = "width",
+                        Source = BindingSource.Query,
+                        DefaultValue = string.Empty,
+                        Type = typeof(int)
+                    }
+                }
+            };
+            var subject = Subject(
+                apiDescriptions:
+                [
+                    apiDescription
+                ],
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new() { Version = "V1", Title = "Test API" }
+                    }
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.NotNull(document);
         }
 
         private static SwaggerGenerator Subject(

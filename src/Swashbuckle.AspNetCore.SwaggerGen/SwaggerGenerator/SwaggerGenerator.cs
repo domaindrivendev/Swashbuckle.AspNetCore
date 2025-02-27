@@ -611,7 +611,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private static ParameterStyle? GetParameterStyle(Type type, BindingSource source)
         {
-            return source == BindingSource.Query && type.IsGenericType &&
+            return source == BindingSource.Query && type?.IsGenericType == true &&
                    typeof(IEnumerable<KeyValuePair<string, string>>).IsAssignableFrom(type)
                 ? ParameterStyle.DeepObject
                 : null;
