@@ -1,0 +1,54 @@
+﻿{
+  Workspace: {
+    BaseUrl: https://openapi.net/
+  },
+  Info: {
+    Title: Test API,
+    Version: V1
+  },
+  Paths: {
+    /resource: {
+      Operations: {
+        Get: {
+          OperationId: OperationIdSetInMetadata,
+          Parameters: [
+            {
+              UnresolvedReference: false,
+              Name: accept,
+              Required: false,
+              Deprecated: false,
+              AllowEmptyValue: false,
+              Style: Simple,
+              Explode: false,
+              AllowReserved: false
+            },
+            {
+              UnresolvedReference: false,
+              Name: param,
+              Required: false,
+              Deprecated: false,
+              AllowEmptyValue: false,
+              Style: Simple,
+              Explode: false,
+              AllowReserved: false,
+              Schema: {
+                UnEvaluatedProperties: false,
+                Type: String,
+                ReadOnly: false,
+                WriteOnly: false,
+                AdditionalPropertiesAllowed: true,
+                Nullable: false,
+                UnevaluatedProperties: false,
+                Deprecated: false,
+                UnresolvedReference: false
+              }
+            }
+          ],
+          Deprecated: false
+        }
+      },
+      UnresolvedReference: false
+    }
+  },
+  Components: {}
+}

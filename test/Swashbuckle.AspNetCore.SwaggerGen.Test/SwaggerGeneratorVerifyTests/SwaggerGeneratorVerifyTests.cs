@@ -50,6 +50,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -67,6 +68,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -92,6 +94,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -130,6 +133,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -184,6 +188,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -236,6 +241,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -288,6 +294,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -305,6 +312,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -336,6 +344,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -361,6 +370,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -386,6 +396,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -419,6 +430,7 @@ public class SwaggerGeneratorVerifyTests
 
         return Verifier.Verify(document)
             .UseParameters(bindingSourceId)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -441,6 +453,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -469,6 +482,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -497,6 +511,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -538,6 +553,7 @@ public class SwaggerGeneratorVerifyTests
 
         return Verifier.Verify(document)
             .UseParameters(action)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -609,6 +625,7 @@ public class SwaggerGeneratorVerifyTests
         return Verifier.Verify(document)
             .UseParameters(action)
             .UseMethodName("IllegalHeaderForOperation")
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -637,6 +654,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -668,6 +686,7 @@ public class SwaggerGeneratorVerifyTests
 
         return Verifier.Verify(document)
             .UseParameters(action)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -703,6 +722,7 @@ public class SwaggerGeneratorVerifyTests
 
         return Verifier.Verify(document)
             .UseParameters(action)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -733,6 +753,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -758,6 +779,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -783,6 +805,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 #endif
@@ -821,6 +844,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -849,6 +873,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -884,6 +909,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -915,6 +941,7 @@ public class SwaggerGeneratorVerifyTests
 
         return Verifier.Verify(document)
             .UseParameters(bindingSourceId)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -960,6 +987,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -991,6 +1019,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -1019,6 +1048,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -1047,6 +1077,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -1090,6 +1121,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -1137,6 +1169,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -1166,6 +1199,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -1202,6 +1236,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -1232,6 +1267,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -1280,6 +1316,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -1338,6 +1375,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -1390,6 +1428,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -1442,6 +1481,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 
@@ -1494,6 +1534,7 @@ public class SwaggerGeneratorVerifyTests
         var document = subject.GetSwagger("v1");
 
         return Verifier.Verify(document)
+            .IgnoreMember("BaseUri")
             .UniqueForTargetFrameworkAndVersion();
     }
 

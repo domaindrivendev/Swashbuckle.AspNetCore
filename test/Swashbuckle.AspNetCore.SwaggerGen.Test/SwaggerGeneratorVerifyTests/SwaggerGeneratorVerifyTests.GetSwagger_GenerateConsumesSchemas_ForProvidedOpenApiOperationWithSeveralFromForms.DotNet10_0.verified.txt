@@ -1,0 +1,188 @@
+﻿{
+  Workspace: {
+    BaseUrl: https://openapi.net/
+  },
+  Info: {
+    Title: Test API,
+    Version: V1
+  },
+  Paths: {
+    /resource: {
+      Operations: {
+        Post: {
+          OperationId: OperationIdSetInMetadata,
+          RequestBody: {
+            UnresolvedReference: false,
+            Required: false,
+            Content: {
+              application/someMediaType: {
+                Schema: {
+                  UnEvaluatedProperties: false,
+                  ReadOnly: false,
+                  WriteOnly: false,
+                  AllOf: [
+                    {
+                      UnEvaluatedProperties: false,
+                      ReadOnly: false,
+                      WriteOnly: false,
+                      AdditionalPropertiesAllowed: true,
+                      Nullable: false,
+                      UnevaluatedProperties: false,
+                      Deprecated: false,
+                      UnresolvedReference: false,
+                      Reference: {
+                        IsFragment: false,
+                        Type: Schema,
+                        Id: TestDto,
+                        IsExternal: false,
+                        IsLocal: true,
+                        ReferenceV3: #/components/schemas/TestDto,
+                        ReferenceV2: #/definitions/TestDto
+                      }
+                    },
+                    {
+                      UnEvaluatedProperties: false,
+                      ReadOnly: false,
+                      WriteOnly: false,
+                      AdditionalPropertiesAllowed: true,
+                      Nullable: false,
+                      UnevaluatedProperties: false,
+                      Deprecated: false,
+                      UnresolvedReference: false,
+                      Reference: {
+                        IsFragment: false,
+                        Type: Schema,
+                        Id: TypeWithDefaultAttributeOnEnum,
+                        IsExternal: false,
+                        IsLocal: true,
+                        ReferenceV3: #/components/schemas/TypeWithDefaultAttributeOnEnum,
+                        ReferenceV2: #/definitions/TypeWithDefaultAttributeOnEnum
+                      }
+                    }
+                  ],
+                  AdditionalPropertiesAllowed: true,
+                  Nullable: false,
+                  UnevaluatedProperties: false,
+                  Deprecated: false,
+                  UnresolvedReference: false
+                }
+              }
+            }
+          },
+          Deprecated: false
+        }
+      },
+      UnresolvedReference: false
+    }
+  },
+  Components: {
+    Schemas: {
+      IntEnum: {
+        UnEvaluatedProperties: false,
+        Type: Integer,
+        Format: int32,
+        ReadOnly: false,
+        WriteOnly: false,
+        AdditionalPropertiesAllowed: true,
+        Enum: [
+          {},
+          {},
+          {}
+        ],
+        Nullable: false,
+        UnevaluatedProperties: false,
+        Deprecated: false,
+        UnresolvedReference: false
+      },
+      TestDto: {
+        UnEvaluatedProperties: false,
+        Type: Object,
+        ReadOnly: false,
+        WriteOnly: false,
+        Properties: {
+          Prop1: {
+            UnEvaluatedProperties: false,
+            Type: String,
+            ReadOnly: false,
+            WriteOnly: false,
+            AdditionalPropertiesAllowed: true,
+            Nullable: true,
+            UnevaluatedProperties: false,
+            Deprecated: false,
+            UnresolvedReference: false
+          }
+        },
+        AdditionalPropertiesAllowed: false,
+        Nullable: false,
+        UnevaluatedProperties: false,
+        Deprecated: false,
+        UnresolvedReference: false
+      },
+      TypeWithDefaultAttributeOnEnum: {
+        UnEvaluatedProperties: false,
+        Type: Object,
+        ReadOnly: false,
+        WriteOnly: false,
+        Properties: {
+          EnumArrayWithDefault: {
+            UnEvaluatedProperties: false,
+            Type: Array,
+            Default: [
+              {}
+            ],
+            ReadOnly: false,
+            WriteOnly: false,
+            Items: {
+              UnEvaluatedProperties: false,
+              ReadOnly: false,
+              WriteOnly: false,
+              AdditionalPropertiesAllowed: true,
+              Nullable: false,
+              UnevaluatedProperties: false,
+              Deprecated: false,
+              UnresolvedReference: false,
+              Reference: {
+                IsFragment: false,
+                Type: Schema,
+                Id: IntEnum,
+                IsExternal: false,
+                IsLocal: true,
+                ReferenceV3: #/components/schemas/IntEnum,
+                ReferenceV2: #/definitions/IntEnum
+              }
+            },
+            AdditionalPropertiesAllowed: true,
+            Nullable: true,
+            UnevaluatedProperties: false,
+            Deprecated: false,
+            UnresolvedReference: false
+          },
+          EnumWithDefault: {
+            UnEvaluatedProperties: false,
+            ReadOnly: false,
+            WriteOnly: false,
+            AdditionalPropertiesAllowed: true,
+            Nullable: false,
+            UnevaluatedProperties: false,
+            Deprecated: false,
+            UnresolvedReference: false,
+            Reference: {
+              IsFragment: false,
+              Type: Schema,
+              Id: IntEnum,
+              IsExternal: false,
+              IsLocal: true,
+              ReferenceV3: #/components/schemas/IntEnum,
+              ReferenceV2: #/definitions/IntEnum
+            }
+          }
+        },
+        AdditionalPropertiesAllowed: false,
+        Nullable: false,
+        UnevaluatedProperties: false,
+        Deprecated: false,
+        UnresolvedReference: false
+      }
+    }
+  }
+}

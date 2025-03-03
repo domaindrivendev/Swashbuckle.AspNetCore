@@ -1,0 +1,75 @@
+﻿{
+  Workspace: {
+    BaseUrl: https://openapi.net/
+  },
+  Info: {
+    Title: Test API,
+    Version: V1
+  },
+  Paths: {
+    /resource: {
+      Operations: {
+        Post: {
+          OperationId: OperationIdSetInMetadata,
+          RequestBody: {
+            UnresolvedReference: false,
+            Required: false,
+            Content: {
+              application/someMediaType: {
+                Schema: {
+                  UnEvaluatedProperties: false,
+                  ReadOnly: false,
+                  WriteOnly: false,
+                  AdditionalPropertiesAllowed: true,
+                  Nullable: false,
+                  UnevaluatedProperties: false,
+                  Deprecated: false,
+                  UnresolvedReference: false,
+                  Reference: {
+                    IsFragment: false,
+                    Type: Schema,
+                    Id: TestDto,
+                    IsExternal: false,
+                    IsLocal: true,
+                    ReferenceV3: #/components/schemas/TestDto,
+                    ReferenceV2: #/definitions/TestDto
+                  }
+                }
+              }
+            }
+          },
+          Deprecated: false
+        }
+      },
+      UnresolvedReference: false
+    }
+  },
+  Components: {
+    Schemas: {
+      TestDto: {
+        UnEvaluatedProperties: false,
+        Type: Object,
+        ReadOnly: false,
+        WriteOnly: false,
+        Properties: {
+          Prop1: {
+            UnEvaluatedProperties: false,
+            Type: String,
+            ReadOnly: false,
+            WriteOnly: false,
+            AdditionalPropertiesAllowed: true,
+            Nullable: true,
+            UnevaluatedProperties: false,
+            Deprecated: false,
+            UnresolvedReference: false
+          }
+        },
+        AdditionalPropertiesAllowed: false,
+        Nullable: false,
+        UnevaluatedProperties: false,
+        Deprecated: false,
+        UnresolvedReference: false
+      }
+    }
+  }
+}
