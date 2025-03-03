@@ -49,7 +49,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -65,7 +66,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -89,7 +91,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -126,7 +129,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -179,7 +183,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -230,7 +235,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -281,7 +287,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -297,7 +304,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -327,7 +335,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -351,7 +360,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -375,7 +385,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Theory]
@@ -406,7 +417,9 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document).UseParameters(bindingSourceId);
+        return Verifier.Verify(document)
+            .UseParameters(bindingSourceId)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -427,7 +440,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -454,7 +468,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -482,7 +497,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Theory]
@@ -522,7 +538,9 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document).UseParameters(action);
+        return Verifier.Verify(document)
+            .UseParameters(action)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Theory]
@@ -592,7 +610,8 @@ public class SwaggerGeneratorVerifyTests
 
         return Verifier.Verify(document)
             .UseParameters(action)
-            .UseMethodName("IllegalHeaderParameterWithOpenApiOperation");
+            .UseMethodName("IllegalHeaderParameterWithOpenApiOperation")
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -619,7 +638,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Theory]
@@ -648,7 +668,9 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document).UseParameters(action);
+        return Verifier.Verify(document)
+            .UseParameters(action)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Theory]
@@ -681,7 +703,9 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document).UseParameters(action);
+        return Verifier.Verify(document)
+            .UseParameters(action)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
 #if NET7_0_OR_GREATER
@@ -710,7 +734,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -734,7 +759,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -758,7 +784,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 #endif
 
@@ -795,7 +822,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -822,7 +850,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -856,7 +885,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Theory]
@@ -885,7 +915,9 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document).UseParameters(bindingSourceId);
+        return Verifier.Verify(document)
+            .UseParameters(bindingSourceId)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -929,7 +961,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -959,7 +992,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -986,7 +1020,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -1013,7 +1048,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -1055,7 +1091,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -1101,7 +1138,8 @@ public class SwaggerGeneratorVerifyTests
         );
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -1129,7 +1167,8 @@ public class SwaggerGeneratorVerifyTests
         );
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -1164,7 +1203,8 @@ public class SwaggerGeneratorVerifyTests
         );
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -1193,7 +1233,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -1240,7 +1281,8 @@ public class SwaggerGeneratorVerifyTests
        );
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -1297,7 +1339,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -1348,7 +1391,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -1399,7 +1443,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
@@ -1450,7 +1495,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document);
+        return Verifier.Verify(document)
+            .UniqueForTargetFrameworkAndVersion();
     }
 
     private static SwaggerGenerator Subject(
