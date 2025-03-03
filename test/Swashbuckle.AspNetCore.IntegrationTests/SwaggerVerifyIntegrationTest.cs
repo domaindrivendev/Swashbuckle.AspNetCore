@@ -62,7 +62,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         [InlineData(typeof(MvcWithNullable.Program), "/swagger/v1/swagger.json")]
         [InlineData(typeof(WebApi.Program), "/swagger/v1/swagger.json")]
         [InlineData(typeof(WebApi.Aot.Program), "/swagger/v1/swagger.json")]
-        public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_Without_Startup(
+        public async Task Swagger_IsValidJson_No_Startup(
             Type entryPointType,
             string swaggerRequestUri)
         {

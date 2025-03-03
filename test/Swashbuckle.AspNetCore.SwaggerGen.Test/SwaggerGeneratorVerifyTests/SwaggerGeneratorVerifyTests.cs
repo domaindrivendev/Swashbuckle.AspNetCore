@@ -608,7 +608,7 @@ public class SwaggerGeneratorVerifyTests
 
         return Verifier.Verify(document)
             .UseParameters(action)
-            .UseMethodName("IllegalHeaderParameterWithOpenApiOperation")
+            .UseMethodName("IllegalHeaderForOperation")
             .UniqueForTargetFrameworkAndVersion();
     }
 
