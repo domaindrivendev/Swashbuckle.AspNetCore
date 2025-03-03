@@ -27,8 +27,8 @@ public class SwaggerGeneratorVerifyTests
     public Task ApiDescriptionsWithMatchingGroupName()
     {
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                 ApiDescriptionFactory.Create<FakeController>(
                     c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "POST", relativePath: "resource"),
 
@@ -37,7 +37,7 @@ public class SwaggerGeneratorVerifyTests
 
                 ApiDescriptionFactory.Create<FakeController>(
                     c => nameof(c.ActionWithNoParameters), groupName: "v2", httpMethod: "POST", relativePath: "resource"),
-            },
+            ],
             options: new SwaggerGeneratorOptions
             {
                 SwaggerDocs = new Dictionary<string, OpenApiInfo>
@@ -57,11 +57,11 @@ public class SwaggerGeneratorVerifyTests
     public Task ActionWithRouteNameMetadata()
     {
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                 ApiDescriptionFactory.Create<FakeController>(
                     c => nameof(c.ActionWithRouteNameMetadata), groupName: "v1", httpMethod: "POST", relativePath: "resource"),
-            }
+            ]
         );
 
         var document = subject.GetSwagger("v1");
@@ -76,17 +76,17 @@ public class SwaggerGeneratorVerifyTests
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
         var actionDescriptor = new ActionDescriptor
         {
-            EndpointMetadata = new List<object>() { new EndpointNameMetadata("SomeEndpointName") },
+            EndpointMetadata = [new EndpointNameMetadata("SomeEndpointName")],
             RouteValues = new Dictionary<string, string>
             {
                 ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
             }
         };
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                 ApiDescriptionFactory.Create(actionDescriptor, methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource"),
-            }
+            ]
         );
 
         var document = subject.GetSwagger("v1");
@@ -101,30 +101,30 @@ public class SwaggerGeneratorVerifyTests
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
         var actionDescriptor = new ActionDescriptor
         {
-            EndpointMetadata = new List<object>()
-            {
+            EndpointMetadata =
+            [
                 new OpenApiOperation
                 {
                     OperationId = "OperationIdSetInMetadata",
-                    Parameters = new List<OpenApiParameter>()
-                    {
+                    Parameters =
+                    [
                         new OpenApiParameter
                         {
                             Name = "ParameterInMetadata"
                         }
-                    }
+                    ]
                 }
-            },
+            ],
             RouteValues = new Dictionary<string, string>
             {
                 ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
             }
         };
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                 ApiDescriptionFactory.Create(actionDescriptor, methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource"),
-            }
+            ]
         );
 
         var document = subject.GetSwagger("v1");
@@ -139,8 +139,8 @@ public class SwaggerGeneratorVerifyTests
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithProducesAttribute));
         var actionDescriptor = new ActionDescriptor
         {
-            EndpointMetadata = new List<object>()
-            {
+            EndpointMetadata =
+            [
                 new OpenApiOperation
                 {
                     OperationId = "OperationIdSetInMetadata",
@@ -155,30 +155,30 @@ public class SwaggerGeneratorVerifyTests
                         }
                     }
                 }
-            },
+            ],
             RouteValues = new Dictionary<string, string>
             {
                 ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
             }
         };
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                 ApiDescriptionFactory.Create(
                     actionDescriptor,
                     methodInfo,
                     groupName: "v1",
                     httpMethod: "POST",
                     relativePath: "resource",
-                    supportedResponseTypes: new[]
-                    {
+                    supportedResponseTypes:
+                    [
                         new ApiResponseType()
                         {
                             StatusCode = 200,
                             Type = typeof(TestDto)
                         }
-                    }),
-            }
+                    ]),
+            ]
         );
 
         var document = subject.GetSwagger("v1");
@@ -193,8 +193,8 @@ public class SwaggerGeneratorVerifyTests
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithConsumesAttribute));
         var actionDescriptor = new ActionDescriptor
         {
-            EndpointMetadata = new List<object>()
-            {
+            EndpointMetadata =
+            [
                 new OpenApiOperation
                 {
                     OperationId = "OperationIdSetInMetadata",
@@ -206,31 +206,31 @@ public class SwaggerGeneratorVerifyTests
                         }
                     }
                 }
-            },
+            ],
             RouteValues = new Dictionary<string, string>
             {
                 ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
             }
         };
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                 ApiDescriptionFactory.Create(
                     actionDescriptor,
                     methodInfo,
                     groupName: "v1",
                     httpMethod: "POST",
                     relativePath: "resource",
-                    parameterDescriptions: new[]
-                    {
+                    parameterDescriptions:
+                    [
                         new ApiParameterDescription()
                         {
                             Name = "param",
                             Source = BindingSource.Body,
                             ModelMetadata = ModelMetadataFactory.CreateForType(typeof(TestDto))
                         }
-                    }),
-            }
+                    ]),
+            ]
         );
 
         var document = subject.GetSwagger("v1");
@@ -245,44 +245,44 @@ public class SwaggerGeneratorVerifyTests
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
         var actionDescriptor = new ActionDescriptor
         {
-            EndpointMetadata = new List<object>()
-            {
+            EndpointMetadata =
+            [
                 new OpenApiOperation
                 {
                     OperationId = "OperationIdSetInMetadata",
-                    Parameters = new List<OpenApiParameter>()
-                    {
+                    Parameters =
+                    [
                         new OpenApiParameter
                         {
                             Name = "ParameterInMetadata"
                         }
-                    }
+                    ]
                 }
-            },
+            ],
             RouteValues = new Dictionary<string, string>
             {
                 ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
             }
         };
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                 ApiDescriptionFactory.Create(
                     actionDescriptor,
                     methodInfo,
                     groupName: "v1",
                     httpMethod: "POST",
                     relativePath: "resource",
-                    parameterDescriptions: new[]
-                    {
+                    parameterDescriptions:
+                    [
                         new ApiParameterDescription
                         {
                             Name = "ParameterInMetadata",
                             ModelMetadata = ModelMetadataFactory.CreateForType(typeof(string)),
                             Type = typeof(string)
                         }
-                    }),
-            }
+                    ]),
+            ]
         );
 
         var document = subject.GetSwagger("v1");
@@ -295,11 +295,11 @@ public class SwaggerGeneratorVerifyTests
     public Task ActionHasObsoleteAttribute()
     {
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                 ApiDescriptionFactory.Create<FakeController>(
                     c => nameof(c.ActionWithObsoleteAttribute), groupName: "v1", httpMethod: "POST", relativePath: "resource"),
-            }
+            ]
         );
 
         var document = subject.GetSwagger("v1");
@@ -312,8 +312,8 @@ public class SwaggerGeneratorVerifyTests
     public Task SortKeySelectorIsSpecified()
     {
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                 ApiDescriptionFactory.Create<FakeController>(
                     c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "POST", relativePath: "resource3"),
 
@@ -322,7 +322,7 @@ public class SwaggerGeneratorVerifyTests
 
                 ApiDescriptionFactory.Create<FakeController>(
                     c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "POST", relativePath: "resource2"),
-            },
+            ],
             options: new SwaggerGeneratorOptions
             {
                 SwaggerDocs = new Dictionary<string, OpenApiInfo>
@@ -343,18 +343,18 @@ public class SwaggerGeneratorVerifyTests
     public Task TagSelectorIsSpecified()
     {
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                 ApiDescriptionFactory.Create<FakeController>(
                     c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "POST", relativePath: "resource"),
-            },
+            ],
             options: new SwaggerGeneratorOptions
             {
                 SwaggerDocs = new Dictionary<string, OpenApiInfo>
                 {
                     ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
                 },
-                TagsSelector = (apiDesc) => new[] { apiDesc.RelativePath }
+                TagsSelector = (apiDesc) => [apiDesc.RelativePath]
             }
         );
 
@@ -370,17 +370,17 @@ public class SwaggerGeneratorVerifyTests
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
         var actionDescriptor = new ActionDescriptor
         {
-            EndpointMetadata = new List<object>() { new TagsAttribute("Some", "Tags", "Here") },
+            EndpointMetadata = [new TagsAttribute("Some", "Tags", "Here")],
             RouteValues = new Dictionary<string, string>
             {
                 ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
             }
         };
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                 ApiDescriptionFactory.Create(actionDescriptor, methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource"),
-            }
+            ]
         );
 
         var document = subject.GetSwagger("v1");
@@ -397,22 +397,22 @@ public class SwaggerGeneratorVerifyTests
     public Task ApiParametersThatAreNotBoundToBodyOrForm(string bindingSourceId)
     {
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                 ApiDescriptionFactory.Create<FakeController>(
                     c => nameof(c.ActionWithParameter),
                     groupName: "v1",
                     httpMethod: "POST",
                     relativePath: "resource",
-                    parameterDescriptions: new []
-                    {
+                    parameterDescriptions:
+                    [
                         new ApiParameterDescription
                         {
                             Name = "param",
                             Source = (bindingSourceId != null) ? new BindingSource(bindingSourceId, null, false, true) : null
                         }
-                    })
-            }
+                    ])
+            ]
         );
 
         var document = subject.GetSwagger("v1");
@@ -426,16 +426,16 @@ public class SwaggerGeneratorVerifyTests
     public Task OperationHasSwaggerIgnoreAttribute()
     {
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                 ApiDescriptionFactory.Create<FakeController>(
                     c => nameof(c.ActionWithSwaggerIgnoreAttribute),
                     groupName: "v1",
                     httpMethod: "POST",
                     relativePath: "ignored",
-                    parameterDescriptions: Array.Empty<ApiParameterDescription>()
+                    parameterDescriptions: []
                 )
-            }
+            ]
         );
 
         var document = subject.GetSwagger("v1");
@@ -448,22 +448,22 @@ public class SwaggerGeneratorVerifyTests
     public Task ActionParameterHasBindNeverAttribute()
     {
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                 ApiDescriptionFactory.Create<FakeController>(
                     c => nameof(c.ActionWithParameterWithBindNeverAttribute),
                     groupName: "v1",
                     httpMethod: "POST",
                     relativePath: "resource",
-                    parameterDescriptions: new []
-                    {
+                    parameterDescriptions:
+                    [
                         new ApiParameterDescription
                         {
                             Name = "param",
                             Source = BindingSource.Query
                         }
-                    })
-            }
+                    ])
+            ]
         );
 
         var document = subject.GetSwagger("v1");
@@ -476,23 +476,22 @@ public class SwaggerGeneratorVerifyTests
     public Task ActionParameterHasSwaggerIgnoreAttribute()
     {
         var subject = Subject(
-            new[]
-            {
+            [
                 ApiDescriptionFactory.Create<FakeController>(
                     c => nameof(c.ActionWithIntParameterWithSwaggerIgnoreAttribute),
                     groupName: "v1",
                     httpMethod: "POST",
                     relativePath: "resource",
-                    parameterDescriptions: new[]
-                    {
+                    parameterDescriptions:
+                    [
                         new ApiParameterDescription
                         {
                             Name = "param",
                             Source = BindingSource.Query
                         }
-                    }
+                    ]
                 )
-            }
+            ]
         );
 
         var document = subject.GetSwagger("v1");
@@ -511,15 +510,14 @@ public class SwaggerGeneratorVerifyTests
         var fromHeaderAttribute = illegalParameter.GetCustomAttribute<FromHeaderAttribute>();
 
         var subject = Subject(
-            new[]
-            {
+            [
                 ApiDescriptionFactory.Create<FakeController>(
                     c => action,
                     groupName: "v1",
                     httpMethod: "GET",
                     relativePath: "resource",
-                    parameterDescriptions: new[]
-                    {
+                    parameterDescriptions:
+                    [
                         new ApiParameterDescription
                         {
                             Name = fromHeaderAttribute?.Name ?? illegalParameter.Name,
@@ -531,9 +529,9 @@ public class SwaggerGeneratorVerifyTests
                             Name = "param",
                             Source = BindingSource.Header
                         }
-                    }
+                    ]
                 )
-            }
+            ]
         );
 
         var document = subject.GetSwagger("v1");
@@ -555,13 +553,13 @@ public class SwaggerGeneratorVerifyTests
         var methodInfo = typeof(FakeController).GetMethod(action);
         var actionDescriptor = new ActionDescriptor
         {
-            EndpointMetadata = new List<object>()
-            {
+            EndpointMetadata =
+            [
                 new OpenApiOperation
                 {
                     OperationId = "OperationIdSetInMetadata",
-                    Parameters = new List<OpenApiParameter>()
-                    {
+                    Parameters =
+                    [
                         new OpenApiParameter
                         {
                             Name = illegalParameterName,
@@ -570,25 +568,25 @@ public class SwaggerGeneratorVerifyTests
                         {
                             Name = "param",
                         }
-                    }
+                    ]
                 }
-            },
+            ],
             RouteValues = new Dictionary<string, string>
             {
                 ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
             }
         };
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                 ApiDescriptionFactory.Create(
                     actionDescriptor,
                     methodInfo,
                     groupName: "v1",
                     httpMethod: "GET",
                     relativePath: "resource",
-                    parameterDescriptions: new[]
-                    {
+                    parameterDescriptions:
+                    [
                         new ApiParameterDescription
                         {
                             Name = illegalParameterName,
@@ -602,8 +600,8 @@ public class SwaggerGeneratorVerifyTests
                             ModelMetadata = ModelMetadataFactory.CreateForType(typeof(string)),
                             Type = typeof(string)
                         }
-                    }),
-            }
+                    ]),
+            ]
         );
 
         var document = subject.GetSwagger("v1");
@@ -618,22 +616,22 @@ public class SwaggerGeneratorVerifyTests
     public Task ApiParameterIsBoundToPath()
     {
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                 ApiDescriptionFactory.Create<FakeController>(
                     c => nameof(c.ActionWithParameter),
                     groupName: "v1",
                     httpMethod: "POST",
                     relativePath: "resource",
-                    parameterDescriptions: new []
-                    {
+                    parameterDescriptions:
+                    [
                         new ApiParameterDescription
                         {
                             Name = "param",
                             Source = BindingSource.Path
                         }
-                    })
-            }
+                    ])
+            ]
         );
 
         var document = subject.GetSwagger("v1");
@@ -648,22 +646,22 @@ public class SwaggerGeneratorVerifyTests
     public Task ActionWithRequiredQueryParameter(string action)
     {
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                 ApiDescriptionFactory.Create(
                     methodInfo: typeof(FakeController).GetMethod(action),
                     groupName: "v1",
                     httpMethod: "POST",
                     relativePath: "resource",
-                    parameterDescriptions: new []
-                    {
+                    parameterDescriptions:
+                    [
                         new ApiParameterDescription
                         {
                             Name = "param",
                             Source = BindingSource.Query
                         }
-                    })
-            }
+                    ])
+            ]
         );
 
         var document = subject.GetSwagger("v1");
@@ -679,26 +677,26 @@ public class SwaggerGeneratorVerifyTests
     public Task ActionWithRequiredBodyParameter(string action)
     {
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                 ApiDescriptionFactory.Create(
                     methodInfo: typeof(FakeController).GetMethod(action),
                     groupName: "v1",
                     httpMethod: "POST",
                     relativePath: "resource",
-                    parameterDescriptions: new []
-                    {
+                    parameterDescriptions:
+                    [
                         new ApiParameterDescription
                         {
                             Name = "param",
                             Source = BindingSource.Body,
                         }
-                    },
-                    supportedRequestFormats: new[]
-                    {
+                    ],
+                    supportedRequestFormats:
+                    [
                         new ApiRequestFormat { MediaType = "application/json" }
-                    })
-            }
+                    ])
+            ]
         );
 
         var document = subject.GetSwagger("v1");
@@ -713,23 +711,23 @@ public class SwaggerGeneratorVerifyTests
     public Task ActionWithRequiredMember()
     {
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                 ApiDescriptionFactory.Create(
                     methodInfo: typeof(FakeController).GetMethod(nameof(FakeController.ActionWithRequiredMember)),
                     groupName: "v1",
                     httpMethod: "POST",
                     relativePath: "resource",
-                    parameterDescriptions: new []
-                    {
+                    parameterDescriptions:
+                    [
                         new ApiParameterDescription
                         {
                             Name = "param",
                             Source = BindingSource.Query,
                             ModelMetadata = ModelMetadataFactory.CreateForProperty(typeof(FakeController.TypeWithRequiredProperty), "RequiredProperty")
                         }
-                    })
-            }
+                    ])
+            ]
         );
 
         var document = subject.GetSwagger("v1");
@@ -744,17 +742,17 @@ public class SwaggerGeneratorVerifyTests
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
         var actionDescriptor = new ActionDescriptor
         {
-            EndpointMetadata = new List<object>() { new EndpointSummaryAttribute("A Test Summary") },
+            EndpointMetadata = [new EndpointSummaryAttribute("A Test Summary")],
             RouteValues = new Dictionary<string, string>
             {
                 ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
             }
         };
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                 ApiDescriptionFactory.Create(actionDescriptor, methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource"),
-            }
+            ]
         );
 
         var document = subject.GetSwagger("v1");
@@ -769,17 +767,17 @@ public class SwaggerGeneratorVerifyTests
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
         var actionDescriptor = new ActionDescriptor
         {
-            EndpointMetadata = new List<object>() { new EndpointDescriptionAttribute("A Test Description") },
+            EndpointMetadata = [new EndpointDescriptionAttribute("A Test Description")],
             RouteValues = new Dictionary<string, string>
             {
                 ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
             }
         };
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                 ApiDescriptionFactory.Create(actionDescriptor, methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource"),
-            }
+            ]
         );
 
         var document = subject.GetSwagger("v1");
@@ -814,10 +812,10 @@ public class SwaggerGeneratorVerifyTests
         };
 
         var subject = Subject(
-            apiDescriptions: new[]
-            {
-                ApiDescriptionFactory.Create(actionDescriptor, action.Method, groupName: "v1", httpMethod: "POST", relativePath: "resource", parameterDescriptions: new[]{ parameter }),
-            }
+            apiDescriptions:
+            [
+                ApiDescriptionFactory.Create(actionDescriptor, action.Method, groupName: "v1", httpMethod: "POST", relativePath: "resource", parameterDescriptions: [parameter]),
+            ]
         );
 
         var document = subject.GetSwagger("v1");
@@ -830,22 +828,22 @@ public class SwaggerGeneratorVerifyTests
     public Task ApiParameterHasNoCorrespondingActionParameter()
     {
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                 ApiDescriptionFactory.Create<FakeController>(
                     c => nameof(c.ActionWithNoParameters),
                     groupName: "v1",
                     httpMethod: "POST",
                     relativePath: "resource",
-                    parameterDescriptions: new []
-                    {
+                    parameterDescriptions:
+                    [
                         new ApiParameterDescription
                         {
                             Name = "param",
                             Source = BindingSource.Path
                         }
-                    })
-            }
+                    ])
+            ]
         );
 
         var document = subject.GetSwagger("v1");
@@ -858,15 +856,15 @@ public class SwaggerGeneratorVerifyTests
     public Task ApiParametersThatAreBoundToForm()
     {
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                 ApiDescriptionFactory.Create<FakeController>(
                     c => nameof(c.ActionWithMultipleParameters),
                     groupName: "v1",
                     httpMethod: "POST",
                     relativePath: "resource",
-                    parameterDescriptions: new []
-                    {
+                    parameterDescriptions:
+                    [
                         new ApiParameterDescription
                         {
                             Name = "param1",
@@ -878,9 +876,9 @@ public class SwaggerGeneratorVerifyTests
                             Source = BindingSource.Form,
                         }
 
-                    }
+                    ]
                 )
-            }
+            ]
         );
 
         var document = subject.GetSwagger("v1");
@@ -895,22 +893,22 @@ public class SwaggerGeneratorVerifyTests
     public Task ActionHasConsumesAttribute(string bindingSourceId)
     {
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                 ApiDescriptionFactory.Create<FakeController>(
                     c => nameof(c.ActionWithConsumesAttribute),
                     groupName: "v1",
                     httpMethod: "POST",
                     relativePath: "resource",
-                    parameterDescriptions: new []
-                    {
+                    parameterDescriptions:
+                    [
                         new ApiParameterDescription
                         {
                             Name = "param",
                             Source = new BindingSource(bindingSourceId, null, false, true)
                         }
-                    })
-            }
+                    ])
+            ]
         );
 
         var document = subject.GetSwagger("v1");
@@ -924,39 +922,39 @@ public class SwaggerGeneratorVerifyTests
     public Task ActionWithReturnValueAndSupportedResponseTypes()
     {
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                 ApiDescriptionFactory.Create<FakeController>(
                     c => nameof(c.ActionWithReturnValue),
                     groupName: "v1",
                     httpMethod: "POST",
                     relativePath: "resource",
-                    supportedResponseTypes: new []
-                    {
+                    supportedResponseTypes:
+                    [
                         new ApiResponseType
                         {
-                            ApiResponseFormats = new [] { new ApiResponseFormat { MediaType = "application/json" } },
+                            ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
                             StatusCode = 200,
                         },
                         new ApiResponseType
                         {
-                            ApiResponseFormats = new [] { new ApiResponseFormat { MediaType = "application/json" } },
+                            ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
                             StatusCode = 400
                         },
                         new ApiResponseType
                         {
-                            ApiResponseFormats = new [] { new ApiResponseFormat { MediaType = "application/json" } },
+                            ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
                             StatusCode = 422
                         },
                         new ApiResponseType
                         {
-                            ApiResponseFormats = new [] { new ApiResponseFormat { MediaType = "application/json" } },
+                            ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
                             IsDefaultResponse = true
                         }
 
-                    }
+                    ]
                 )
-            }
+            ]
         );
 
         var document = subject.GetSwagger("v1");
@@ -973,21 +971,21 @@ public class SwaggerGeneratorVerifyTests
             groupName: "v1",
             httpMethod: "POST",
             relativePath: "resource",
-            supportedResponseTypes: new[]
-            {
+            supportedResponseTypes:
+            [
                 new ApiResponseType
                 {
-                    ApiResponseFormats = new [] { new ApiResponseFormat { MediaType = "application/zip" } },
+                    ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/zip" }],
                     StatusCode = 200,
                     Type = typeof(FileContentResult)
                 }
-            });
+            ]);
 
         // ASP.NET Core sets ModelMetadata to null for FileResults
         apiDescription.SupportedResponseTypes[0].ModelMetadata = null;
 
         var subject = Subject(
-            apiDescriptions: new[] { apiDescription }
+            apiDescriptions: [apiDescription]
         );
 
         var document = subject.GetSwagger("v1");
@@ -1000,22 +998,22 @@ public class SwaggerGeneratorVerifyTests
     public Task ActionHasProducesAttribute()
     {
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                 ApiDescriptionFactory.Create<FakeController>(
                     c => nameof(c.ActionWithProducesAttribute),
                     groupName: "v1",
                     httpMethod: "POST",
                     relativePath: "resource",
-                    supportedResponseTypes: new []
-                    {
+                    supportedResponseTypes:
+                    [
                         new ApiResponseType
                         {
-                            ApiResponseFormats = new [] { new ApiResponseFormat { MediaType = "application/json" } },
+                            ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
                             StatusCode = 200,
                         }
-                    })
-            }
+                    ])
+            ]
         );
 
         var document = subject.GetSwagger("v1");
@@ -1028,14 +1026,14 @@ public class SwaggerGeneratorVerifyTests
     public Task ConflictingActionsResolverIsSpecified()
     {
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                 ApiDescriptionFactory.Create<FakeController>(
                     c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "POST", relativePath: "resource"),
 
                 ApiDescriptionFactory.Create<FakeController>(
                     c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "POST", relativePath: "resource")
-            },
+            ],
             options: new SwaggerGeneratorOptions
             {
                 SwaggerDocs = new Dictionary<string, OpenApiInfo>
@@ -1064,15 +1062,15 @@ public class SwaggerGeneratorVerifyTests
             .GetParameters()[1];
 
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                ApiDescriptionFactory.Create<FakeController>(
                     c => nameof(c.ActionHavingFromFormAttributeButNotWithIFormFile),
                     groupName: "v1",
                     httpMethod: "POST",
                     relativePath: "resource",
-                    parameterDescriptions: new[]
-                    {
+                    parameterDescriptions:
+                    [
                         new ApiParameterDescription
                         {
                             Name = "param1", // Name of the parameter
@@ -1085,8 +1083,8 @@ public class SwaggerGeneratorVerifyTests
                             Type = typeof(IFormFile), // Type of the parameter
                             ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = fileUploadParameterInfo }
                         }
-                    })
-            }
+                    ])
+            ]
         );
 
         var document = subject.GetSwagger("v1");
@@ -1110,15 +1108,15 @@ public class SwaggerGeneratorVerifyTests
                                 new FakeICompositeMetadataDetailsProvider(),
                                 new DefaultMetadataDetails(ModelMetadataIdentity.ForProperty(propertyNotIgnored, typeof(string), typeof(SwaggerIngoreAnnotatedType)), ModelAttributes.GetAttributesForProperty(typeof(SwaggerIngoreAnnotatedType), propertyNotIgnored)));
         var subject = Subject(
-            apiDescriptions: new[]
-            {
+            apiDescriptions:
+            [
                ApiDescriptionFactory.Create<FakeController>(
                     c => nameof(c.ActionHavingFromFormAttributeWithSwaggerIgnore),
                     groupName: "v1",
                     httpMethod: "POST",
                     relativePath: "resource",
-                    parameterDescriptions: new[]
-                    {
+                    parameterDescriptions:
+                    [
                         new ApiParameterDescription
                         {
                             Name = nameof(SwaggerIngoreAnnotatedType.IgnoredString),
@@ -1133,8 +1131,8 @@ public class SwaggerGeneratorVerifyTests
                             Type = typeof(string),
                             ModelMetadata = modelMetadataNotIgnored
                         }
-                    })
-            }
+                    ])
+            ]
         );
         var document = subject.GetSwagger("v1");
 
@@ -1259,8 +1257,8 @@ public class SwaggerGeneratorVerifyTests
                         groupName: "v1",
                         httpMethod: "POST",
                         relativePath: "resource",
-                        parameterDescriptions: new[]
-                        {
+                        parameterDescriptions:
+                        [
                             new ApiParameterDescription
                             {
                                 Name = nameof(TypeWithDefaultAttributeOnEnum.EnumWithDefault),
@@ -1275,7 +1273,7 @@ public class SwaggerGeneratorVerifyTests
                                 Type = typeof(IntEnum[]),
                                 ModelMetadata = modelMetadataForEnumArray
                             }
-                        })
+                        ])
            ],
            schemaFilters: [new TestEnumSchemaFilter()]
        );
@@ -1509,11 +1507,11 @@ public class SwaggerGeneratorVerifyTests
             options ?? DefaultOptions,
             new FakeApiDescriptionGroupCollectionProvider(apiDescriptions),
             new SchemaGenerator(new SchemaGeneratorOptions() { SchemaFilters = schemaFilters ?? [] }, new JsonSerializerDataContractResolver(new JsonSerializerOptions())),
-            new FakeAuthenticationSchemeProvider(authenticationSchemes ?? Enumerable.Empty<AuthenticationScheme>())
+            new FakeAuthenticationSchemeProvider(authenticationSchemes ?? [])
         );
     }
 
-    private static readonly SwaggerGeneratorOptions DefaultOptions = new SwaggerGeneratorOptions
+    private static readonly SwaggerGeneratorOptions DefaultOptions = new()
     {
         SwaggerDocs = new Dictionary<string, OpenApiInfo>
         {
