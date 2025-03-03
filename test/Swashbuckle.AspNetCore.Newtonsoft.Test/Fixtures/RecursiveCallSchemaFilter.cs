@@ -7,7 +7,7 @@ namespace Swashbuckle.AspNetCore.Newtonsoft.Test
     {
         public void Apply(OpenApiSchema model, SchemaFilterContext context)
         {
-            if (model.Type == "object")
+            if (model.Type == JsonSchemaTypes.Object)
             {
                 model.Properties.Add("Self", context.SchemaGenerator.GenerateSchema(context.Type, context.SchemaRepository));
             }

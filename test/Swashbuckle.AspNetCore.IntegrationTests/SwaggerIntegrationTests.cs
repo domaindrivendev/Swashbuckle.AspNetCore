@@ -4,13 +4,11 @@ using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 #if NET8_0_OR_GREATER
-using System.Net.Http.Json;
 #endif
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Readers;
 using Xunit;
 using ReDocApp = ReDoc;
 
@@ -92,11 +90,11 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
             try
             {
-                var openApiDocument = new OpenApiStreamReader().Read(contentStream, out OpenApiDiagnostic diagnostic);
-                var example = openApiDocument.Components.Schemas["Product"].Example as OpenApiObject;
-                var price = (example["price"] as OpenApiDouble);
-                Assert.NotNull(price);
-                Assert.Equal(14.37, price.Value);
+                var openApiDocument = await OpenApiDocumentLoader.LoadAsync(contentStream);
+                var example = openApiDocument.Components.Schemas["Product"].Example;
+                var exampleObject = Assert.IsType<OpenApiObject>(example);
+                double price = Assert.IsType<OpenApiDouble>(exampleObject["price"]).Value;
+                Assert.Equal(14.37, price);
             }
             finally
             {
@@ -145,7 +143,13 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             using var application = new TestApplication<WebApi.Program>();
             using var client = application.CreateDefaultClient();
 
-            using var swaggerResponse = await client.GetFromJsonAsync<JsonDocument>("/swagger/v1/swagger.json");
+            using var response = await client.GetAsync("/swagger/v1/swagger.json");
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            Assert.True(response.IsSuccessStatusCode, content);
+
+            using var swaggerResponse = await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync());
 
             var weatherForecase = swaggerResponse.RootElement
                 .GetProperty("components")
@@ -186,11 +190,8 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 
             var createClientMethod = applicationType
                 .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-                .FirstOrDefault(m => m.Name == "CreateDefaultClient" && m.GetParameters().Length == 1);
-            if (createClientMethod == null)
-            {
-                throw new InvalidOperationException($"The method CreateDefaultClient was not found on TestApplication<{entryPointType.FullName}>.");
-            }
+                .FirstOrDefault(m => m.Name == "CreateDefaultClient" && m.GetParameters().Length == 1)
+                ?? throw new InvalidOperationException($"The method CreateDefaultClient was not found on TestApplication<{entryPointType.FullName}>.");
 
             // Pass null for DelegatingHandler[]
             var parameters = new object[] { null };
@@ -210,7 +211,8 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 
             Assert.True(swaggerResponse.IsSuccessStatusCode, $"IsSuccessStatusCode is false. Response: '{await swaggerResponse.Content.ReadAsStringAsync()}'");
             using var contentStream = await swaggerResponse.Content.ReadAsStreamAsync();
-            new OpenApiStreamReader().Read(contentStream, out OpenApiDiagnostic diagnostic);
+            var (_, diagnostic) = await OpenApiDocumentLoader.LoadWithDiagnosticsAsync(contentStream);
+            Assert.NotNull(diagnostic);
             Assert.Empty(diagnostic.Errors);
         }
     }
