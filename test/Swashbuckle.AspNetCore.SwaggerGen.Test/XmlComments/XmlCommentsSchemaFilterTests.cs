@@ -6,7 +6,11 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.TestSupport;
 using Xunit;
 
+#if NET10_0_OR_GREATER
+using JsonSchemaType = Microsoft.OpenApi.Models.JsonSchemaType;
+#else
 using JsonSchemaType = string;
+#endif
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {

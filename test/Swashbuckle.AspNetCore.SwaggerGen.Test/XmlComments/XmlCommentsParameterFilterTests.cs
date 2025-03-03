@@ -2,7 +2,9 @@
 using System.Xml.XPath;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
+#if !NET10_0_OR_GREATER
 using Swashbuckle.AspNetCore.TestSupport;
+#endif
 using Xunit;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test

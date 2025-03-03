@@ -20,7 +20,11 @@ using Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures;
 using Swashbuckle.AspNetCore.TestSupport;
 using Xunit;
 
+#if NET10_0_OR_GREATER
+using JsonSchemaType = Microsoft.OpenApi.Models.JsonSchemaType;
+#else
 using JsonSchemaType = string;
+#endif
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -126,7 +130,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(enumType.GetEnumValues().Cast<HttpStatusCode>().Distinct().Count(), schema.Enum.Count);
         }
 
-        public static TheoryData<Type, JsonSchemaType> CollectionTypeData => new()
+#nullable enable
+        public static TheoryData<Type, JsonSchemaType?> CollectionTypeData => new()
         {
             { typeof(IDictionary<string, int>), JsonSchemaTypes.Integer },
             { typeof(IDictionary<EmptyIntEnum, int>), JsonSchemaTypes.Integer },
@@ -139,7 +144,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [MemberData(nameof(CollectionTypeData))]
         public void GenerateSchema_GeneratesDictionarySchema_IfDictionaryType(
             Type type,
-            JsonSchemaType expectedAdditionalPropertiesType)
+            JsonSchemaType? expectedAdditionalPropertiesType)
         {
             var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
@@ -148,6 +153,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.NotNull(schema.AdditionalProperties);
             Assert.Equal(expectedAdditionalPropertiesType, schema.AdditionalProperties.Type);
         }
+#nullable restore
 
         [Fact]
         public void GenerateSchema_GeneratesReferencedDictionarySchema_IfDictionaryTypeIsSelfReferencing()
@@ -164,7 +170,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(schema.AdditionalProperties.Reference.Id, referenceSchema.Reference.Id); // ref to self
         }
 
-        public static TheoryData<Type, JsonSchemaType, string> EnumerableTypeData => new()
+#nullable enable
+        public static TheoryData<Type, JsonSchemaType?, string?> EnumerableTypeData => new()
         {
             { typeof(int[]), JsonSchemaTypes.Integer, "int32" },
             { typeof(IEnumerable<string>), JsonSchemaTypes.String, null },
@@ -177,8 +184,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [MemberData(nameof(EnumerableTypeData))]
         public void GenerateSchema_GeneratesArraySchema_IfEnumerableType(
             Type type,
-            JsonSchemaType expectedItemsType,
-            string expectedItemsFormat)
+            JsonSchemaType? expectedItemsType,
+            string? expectedItemsFormat)
         {
             var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
@@ -187,6 +194,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(expectedItemsType, schema.Items.Type);
             Assert.Equal(expectedItemsFormat, schema.Items.Format);
         }
+#nullable restore
 
         [Theory]
         [InlineData(typeof(ISet<string>))]
@@ -315,7 +323,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.StringWithDefault), "\"foobar\"")]
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.IntArrayWithDefault), "[\n  1,\n  2,\n  3\n]")]
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.StringArrayWithDefault), "[\n  \"foo\",\n  \"bar\"\n]")]
+#if NET10_0_OR_GREATER
+        [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.NullableIntWithDefaultNullValue), null)]
+#else
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.NullableIntWithDefaultNullValue), "null")]
+#endif
         [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.NullableIntWithDefaultValue), "2147483647")]
         [UseInvariantCulture]
         public void GenerateSchema_SetsDefault_IfPropertyHasDefaultValueAttribute(
@@ -329,8 +341,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
             var propertySchema = schema.Properties[propertyName];
-            Assert.NotNull(propertySchema.Default);
-            Assert.Equal(expectedDefaultAsJson, propertySchema.Default.ToJson());
+            Assert.Equal(expectedDefaultAsJson, propertySchema.Default?.ToJson());
         }
 
         [Fact]
@@ -532,7 +543,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             var definitionSchema = schema.Reference == null ? schema : schemaRepository.Schemas[schema.Reference.Id];
             Assert.Contains("X-foo", definitionSchema.Extensions.Keys);
 
+#if NET10_0_OR_GREATER
+            Assert.Equal("v1", ((OpenApiAny)definitionSchema.Extensions["X-docName"]).Node.GetValue<string>());
+#else
             Assert.Equal("v1", ((OpenApiString)definitionSchema.Extensions["X-docName"]).Value);
+#endif
         }
 
         [Fact]

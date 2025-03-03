@@ -5,7 +5,11 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 using Xunit;
 
+#if NET10_0_OR_GREATER
+using JsonSchemaType = Microsoft.OpenApi.Models.JsonSchemaType;
+#else
 using JsonSchemaType = string;
+#endif
 
 namespace Swashbuckle.AspNetCore.ApiTesting.Test
 {
@@ -176,7 +180,11 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
             { "/api/products?param=1", JsonSchemaTypes.Number, null, null },
             { "/api/products?param=foo", JsonSchemaTypes.String, null, null },
             { "/api/products?param=1&param=2", JsonSchemaTypes.Array, JsonSchemaTypes.Number, null },
+#if NET10_0_OR_GREATER
+            { "/api/products?param=1&param=foo", JsonSchemaTypes.Array, JsonSchemaTypes.Number, "Parameter 'param' is not of type 'array[Number]'" },
+#else
             { "/api/products?param=1&param=foo", JsonSchemaTypes.Array, JsonSchemaTypes.Number, "Parameter 'param' is not of type 'array[number]'" },
+#endif
         };
 
         [Theory]
@@ -225,7 +233,11 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
             { "1", JsonSchemaTypes.Number, null, null },
             { "foo", JsonSchemaTypes.String, null, null },
             { "1,2", JsonSchemaTypes.Array, JsonSchemaTypes.Number, null },
+#if NET10_0_OR_GREATER
+            { "1,foo", JsonSchemaTypes.Array, JsonSchemaTypes.Number, "Parameter 'test-header' is not of type 'array[Number]'" },
+#else
             { "1,foo", JsonSchemaTypes.Array, JsonSchemaTypes.Number, "Parameter 'test-header' is not of type 'array[number]'" },
+#endif
         };
 
         [Theory]

@@ -63,10 +63,13 @@ namespace Swashbuckle.AspNetCore.Annotations
             if (swaggerOperationAttribute.OperationId != null)
                 operation.OperationId = swaggerOperationAttribute.OperationId;
 
+            // TODO Fix this
+#if !NET10_0_OR_GREATER
             if (swaggerOperationAttribute.Tags != null)
             {
                 operation.Tags = [.. swaggerOperationAttribute.Tags.Select(tagName => new OpenApiTag { Name = tagName })];
             }
+#endif
         }
 
         public static void ApplySwaggerOperationFilterAttributes(

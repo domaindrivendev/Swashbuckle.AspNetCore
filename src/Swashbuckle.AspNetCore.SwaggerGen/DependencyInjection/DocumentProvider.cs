@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Writers;
 using Swashbuckle.AspNetCore.Swagger;
@@ -47,19 +45,30 @@ namespace Microsoft.Extensions.ApiDescriptions
             // Let UnknownSwaggerDocument or other exception bubble up to caller.
             var swagger = await _swaggerProvider.GetSwaggerAsync(documentName, host: null, basePath: null);
             var jsonWriter = new OpenApiJsonWriter(writer);
-            if (_options.SerializeAsV2)
+
+            if (_options.CustomDocumentSerializer != null)
             {
-                if (_options.CustomDocumentSerializer != null)
-                    _options.CustomDocumentSerializer.SerializeDocument(swagger, jsonWriter, OpenApi.OpenApiSpecVersion.OpenApi2_0);
-                else
-                    swagger.SerializeAsV2(jsonWriter);
+                _options.CustomDocumentSerializer.SerializeDocument(swagger, jsonWriter, _options.OpenApiVersion);
             }
             else
             {
-                if (_options.CustomDocumentSerializer != null)
-                    _options.CustomDocumentSerializer.SerializeDocument(swagger, jsonWriter, OpenApi.OpenApiSpecVersion.OpenApi3_0);
-                else
-                    swagger.SerializeAsV3(jsonWriter);
+                switch (_options.OpenApiVersion)
+                {
+                    case OpenApi.OpenApiSpecVersion.OpenApi2_0:
+                        swagger.SerializeAsV2(jsonWriter);
+                        break;
+
+#if NET10_0_OR_GREATER
+                    case OpenApi.OpenApiSpecVersion.OpenApi3_1:
+                        swagger.SerializeAsV31(jsonWriter);
+                        break;
+#endif
+
+                    default:
+                    case OpenApi.OpenApiSpecVersion.OpenApi3_0:
+                        swagger.SerializeAsV3(jsonWriter);
+                        break;
+                }
             }
         }
     }

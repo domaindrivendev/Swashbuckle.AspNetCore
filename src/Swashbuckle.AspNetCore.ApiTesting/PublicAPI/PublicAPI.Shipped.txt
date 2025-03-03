@@ -69,7 +69,6 @@ Swashbuckle.AspNetCore.ApiTesting.JsonValidator.CanValidate(Microsoft.OpenApi.Mo
 Swashbuckle.AspNetCore.ApiTesting.JsonValidator.JsonValidator() -> void
 Swashbuckle.AspNetCore.ApiTesting.JsonValidator.Validate(Microsoft.OpenApi.Models.OpenApiSchema schema, Microsoft.OpenApi.Models.OpenApiDocument openApiDocument, Newtonsoft.Json.Linq.JToken instance, out System.Collections.Generic.IEnumerable<string> errorMessages) -> bool
 Swashbuckle.AspNetCore.ApiTesting.OpenApiDocumentExtensions
-Swashbuckle.AspNetCore.ApiTesting.OpenApiSchemaExtensions
 Swashbuckle.AspNetCore.ApiTesting.RequestDoesNotMatchSpecException
 Swashbuckle.AspNetCore.ApiTesting.RequestDoesNotMatchSpecException.RequestDoesNotMatchSpecException(string message) -> void
 Swashbuckle.AspNetCore.ApiTesting.RequestValidator

@@ -18,7 +18,11 @@ using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.AspNetCore.Http.Metadata;
 #endif
 
+#if NET10_0
+using OpenApiTag = Microsoft.OpenApi.Models.References.OpenApiTagReference;
+#else
 using OpenApiTag = Microsoft.OpenApi.Models.OpenApiTag;
+#endif
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -1105,7 +1109,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 .LastOrDefault();
 #endif
 
+#if NET10_0_OR_GREATER
+        private static OpenApiTag CreateTag(string name, OpenApiDocument document) =>
+            new(name, document);
+#else
         private static OpenApiTag CreateTag(string name, OpenApiDocument _) =>
             new() { Name = name };
+#endif
     }
 }

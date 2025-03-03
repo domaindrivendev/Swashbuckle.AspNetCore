@@ -33,7 +33,10 @@ public class Startup
         {
             endpoints.MapControllers();
             endpoints.MapSwagger("swagger/{documentName}/swagger.json");
-            endpoints.MapSwagger("swagger/{documentName}/swaggerv2.json", c => c.SerializeAsV2 = true);
+            endpoints.MapSwagger("swagger/{documentName}/swaggerv2.json", c => c.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0);
+#if NET10_0_OR_GREATER
+            endpoints.MapSwagger("swagger/{documentName}/swaggerv3_1.json", c => c.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_1);
+#endif
         });
     }
 }

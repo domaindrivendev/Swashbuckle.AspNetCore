@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi;
 using Microsoft.OpenApi.Writers;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -38,7 +39,7 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Option("--output", "relative path where the Swagger will be output, defaults to stdout");
                 c.Option("--host", "a specific host to include in the Swagger output");
                 c.Option("--basepath", "a specific basePath to include in the Swagger output");
-                c.Option("--serializeasv2", "output Swagger in the V2 format rather than V3", true);
+                c.Option("--openapiversion", "output Swagger in the specified version, defaults to 3.0");
                 c.Option("--yaml", "exports swagger in a yaml format", true);
 
                 c.OnRun((namedArgs) =>
@@ -60,7 +61,7 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Option("--output", "");
                 c.Option("--host", "");
                 c.Option("--basepath", "");
-                c.Option("--serializeasv2", "", true);
+                c.Option("--openapiversion", "");
                 c.Option("--yaml", "", true);
                 c.OnRun((namedArgs) =>
                 {
@@ -98,24 +99,41 @@ namespace Swashbuckle.AspNetCore.Cli
                         writer = new OpenApiJsonWriter(streamWriter);
                     }
 
-                    if (namedArgs.ContainsKey("--serializeasv2"))
-                    {
-                        if (swaggerDocumentSerializer != null)
+                    var specVersion = namedArgs.TryGetValue("--openapiversion", out var versionArg)
+                        ? versionArg switch
                         {
-                            swaggerDocumentSerializer.SerializeDocument(swagger, writer, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0);
+                            "2.0" => OpenApiSpecVersion.OpenApi2_0,
+                            "3.0" => OpenApiSpecVersion.OpenApi3_0,
+#if NET10_0_OR_GREATER
+                            "3.1" => OpenApiSpecVersion.OpenApi3_1,
+#endif
+                            _ => throw new NotSupportedException($"The specified OpenAPI version \"{versionArg}\" is not supported."),
                         }
-                        else
-                        {
-                            swagger.SerializeAsV2(writer);
-                        }
-                    }
-                    else if (swaggerDocumentSerializer != null)
+                        : OpenApiSpecVersion.OpenApi3_0;
+
+                    if (swaggerDocumentSerializer != null)
                     {
-                        swaggerDocumentSerializer.SerializeDocument(swagger, writer, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0);
+                        swaggerDocumentSerializer.SerializeDocument(swagger, writer, specVersion);
                     }
                     else
                     {
-                        swagger.SerializeAsV3(writer);
+                        switch (specVersion)
+                        {
+                            case OpenApiSpecVersion.OpenApi2_0:
+                                swagger.SerializeAsV2(writer);
+                                break;
+
+#if NET10_0_OR_GREATER
+                            case OpenApiSpecVersion.OpenApi3_1:
+                                swagger.SerializeAsV31(writer);
+                                break;
+#endif
+
+                            case OpenApiSpecVersion.OpenApi3_0:
+                            default:
+                                swagger.SerializeAsV3(writer);
+                                break;
+                        }
                     }
 
                     if (outputPath != null)
@@ -151,7 +169,7 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.OnRun((namedArgs) =>
                 {
                     SetupAndRetrieveSwaggerProviderAndOptions(namedArgs, out var swaggerProvider, out var swaggerOptions);
-                    IList<string> docNames = new List<string>();
+                    IList<string> docNames = [];
 
                     string outputPath = namedArgs.TryGetValue("--output", out var arg1)
                         ? Path.Combine(Directory.GetCurrentDirectory(), arg1)
@@ -226,7 +244,7 @@ namespace Swashbuckle.AspNetCore.Cli
                 EscapePath(runtimeConfig),
                 EscapePath(typeof(Program).GetTypeInfo().Assembly.Location),
                 commandName,
-                string.Join(" ", subProcessArguments.Select(x => EscapePath(x)))
+                string.Join(" ", subProcessArguments.Select(EscapePath))
             );
             return subProcessCommandLine;
         }

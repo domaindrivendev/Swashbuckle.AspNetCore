@@ -1,0 +1,287 @@
+﻿{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "NswagClientExample",
+    "version": "1.0"
+  },
+  "paths": {
+    "/Animals": {
+      "post": {
+        "tags": [
+          "Animals"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  { },
+                  { },
+                  { }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "oneOf": [
+                  { },
+                  { },
+                  { }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "oneOf": [
+                  { },
+                  { },
+                  { }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/SecondLevel": {
+      "post": {
+        "tags": [
+          "SecondLevel"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  { }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "oneOf": [
+                  { }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "oneOf": [
+                  { }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/SystemTextJsonAnimals": {
+      "post": {
+        "tags": [
+          "SystemTextJsonAnimals"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  { },
+                  { },
+                  { }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "oneOf": [
+                  { },
+                  { },
+                  { }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "oneOf": [
+                  { },
+                  { },
+                  { }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Animal": {
+        "required": [
+          "animalType"
+        ],
+        "type": "object",
+        "properties": {
+          "animalType": { }
+        },
+        "additionalProperties": false,
+        "discriminator": {
+          "propertyName": "animalType",
+          "mapping": {
+            "Cat": "#/components/schemas/Cat",
+            "Dog": "#/components/schemas/Dog"
+          }
+        }
+      },
+      "AnimalType": {
+        "enum": [
+          "Cat",
+          "Dog"
+        ],
+        "type": "string"
+      },
+      "BaseType": {
+        "required": [
+          "discriminator"
+        ],
+        "type": "object",
+        "properties": {
+          "discriminator": {
+            "type": "string"
+          },
+          "property": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "discriminator": {
+          "propertyName": "discriminator",
+          "mapping": {
+            "SubSubType": "#/components/schemas/SubSubType"
+          }
+        }
+      },
+      "Cat": {
+        "allOf": [
+          { },
+          {
+            "type": "object",
+            "properties": {
+              "catSpecificProperty": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "Dog": {
+        "allOf": [
+          { },
+          {
+            "type": "object",
+            "properties": {
+              "dogSpecificProperty": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "SubSubType": {
+        "allOf": [
+          { },
+          {
+            "type": "object",
+            "properties": {
+              "property2": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "SystemTextJsonAnimal": {
+        "required": [
+          "animalType"
+        ],
+        "type": "object",
+        "properties": {
+          "animalType": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "discriminator": {
+          "propertyName": "animalType",
+          "mapping": {
+            "Cat": "#/components/schemas/SystemTextJsonCat",
+            "Dog": "#/components/schemas/SystemTextJsonDog"
+          }
+        }
+      },
+      "SystemTextJsonCat": {
+        "allOf": [
+          { },
+          {
+            "type": "object",
+            "properties": {
+              "catSpecificProperty": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "SystemTextJsonDog": {
+        "allOf": [
+          { },
+          {
+            "type": "object",
+            "properties": {
+              "dogSpecificProperty": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      }
+    }
+  }
+}

@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Swashbuckle.AspNetCore.ApiTesting
 {
-    public class JsonAllOfValidator(JsonValidator jsonValidator) : IJsonValidator
+    public sealed class JsonAllOfValidator(JsonValidator jsonValidator) : IJsonValidator
     {
         private readonly JsonValidator _jsonValidator = jsonValidator;
 

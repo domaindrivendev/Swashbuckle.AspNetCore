@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !NET10_0_OR_GREATER
+using System;
 using System.Text.Json;
 using Microsoft.OpenApi.Any;
 
@@ -82,3 +83,4 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         }
     }
 }
+#endif

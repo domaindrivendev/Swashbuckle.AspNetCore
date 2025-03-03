@@ -110,7 +110,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
         }
 
+#if NET10_0_OR_GREATER
+        public static JsonSchemaType? ResolveType(this OpenApiSchema schema, SchemaRepository schemaRepository)
+#else
         public static string ResolveType(this OpenApiSchema schema, SchemaRepository schemaRepository)
+#endif
         {
             if (schema.Reference != null && schemaRepository.Schemas.TryGetValue(schema.Reference.Id, out OpenApiSchema definitionSchema))
             {

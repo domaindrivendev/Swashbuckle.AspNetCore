@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Net.Http;
 using Microsoft.OpenApi.Models;
+#if NET10_0_OR_GREATER
+using Microsoft.OpenApi.Models.References;
+#endif
 
 namespace Swashbuckle.AspNetCore.ApiTesting
 {
-    public class ResponseValidator(IEnumerable<IContentValidator> contentValidators)
+    public sealed class ResponseValidator(IEnumerable<IContentValidator> contentValidators)
     {
         private readonly IEnumerable<IContentValidator> _contentValidators = contentValidators;
 
@@ -58,7 +61,11 @@ namespace Swashbuckle.AspNetCore.ApiTesting
                 }
 
                 var schema = (headerSpec.Schema.Reference != null) ?
+#if NET10_0_OR_GREATER
+                    new OpenApiSchemaReference(headerSpec.Schema.Reference.Id, openApiDocument)
+#else
                     (OpenApiSchema)openApiDocument.ResolveReference(headerSpec.Schema.Reference)
+#endif
                     : headerSpec.Schema;
 
                 if (value == null)

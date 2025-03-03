@@ -5,7 +5,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     internal static class XmlCommentsExampleHelper
     {
+#if NET10_0_OR_GREATER
+        public static System.Text.Json.Nodes.JsonNode Create(
+#else
         public static Microsoft.OpenApi.Any.IOpenApiAny Create(
+#endif
             SchemaRepository schemaRepository,
             OpenApiSchema schema,
             string exampleString)

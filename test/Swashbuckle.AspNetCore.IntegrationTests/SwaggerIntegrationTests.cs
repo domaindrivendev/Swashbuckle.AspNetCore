@@ -92,8 +92,12 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             {
                 var openApiDocument = await OpenApiDocumentLoader.LoadAsync(contentStream);
                 var example = openApiDocument.Components.Schemas["Product"].Example;
+#if NET10_0_OR_GREATER
+                double price = example["price"].GetValue<double>();
+#else
                 var exampleObject = Assert.IsType<OpenApiObject>(example);
                 double price = Assert.IsType<OpenApiDouble>(exampleObject["price"]).Value;
+#endif
                 Assert.Equal(14.37, price);
             }
             finally
@@ -103,7 +107,12 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         }
 
         [Theory]
+#if NET10_0_OR_GREATER
+        [InlineData("/swagger/v1/swaggerv3_1.json", "openapi", "3.1.1")]
+        [InlineData("/swagger/v1/swagger.json", "openapi", "3.0.4")]
+#else
         [InlineData("/swagger/v1/swagger.json", "openapi", "3.0.1")]
+#endif
         [InlineData("/swagger/v1/swaggerv2.json", "swagger", "2.0")]
         public async Task SwaggerMiddleware_CanBeConfiguredMultipleTimes(
             string swaggerUrl,

@@ -553,7 +553,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
         }
 
+#if NET10_0_OR_GREATER
+        private System.Text.Json.Nodes.JsonNode GenerateDefaultValue(
+#else
         private Microsoft.OpenApi.Any.IOpenApiAny GenerateDefaultValue(
+#endif
             DataContract dataContract,
             Type modelType,
             object defaultValue)
@@ -572,7 +576,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return JsonModelFactory.CreateFromJson(defaultAsJson);
         }
 
+#if NET10_0_OR_GREATER
+        private static JsonSchemaType FromDataType(DataType dataType)
+            => Enum.Parse<JsonSchemaType>(dataType.ToString());
+#else
         private static string FromDataType(DataType dataType)
             => dataType.ToString().ToLower(System.Globalization.CultureInfo.InvariantCulture);
+#endif
     }
 }

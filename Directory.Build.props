@@ -24,6 +24,8 @@
     TODO Fix warning from Swashbuckle.AspNetCore with dotnet pack
     -->
     <NoWarn>$(NoWarn);NU5128</NoWarn>
+    <!-- TODO Remove once .NET 10 is stable -->
+    <NoWarn>$(NoWarn);NU5104</NoWarn>
     <NuGetAuditMode>direct</NuGetAuditMode>
     <!--
     TODO Go through the code and add nullable annotations

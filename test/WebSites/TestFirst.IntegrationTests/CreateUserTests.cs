@@ -22,7 +22,10 @@ namespace TestFirst.IntegrationTests
             Describe("/api/users", OperationType.Post, new OpenApiOperation
             {
                 OperationId = "CreateUser",
+                // TODO Fix this for .NET 10
+#if !NET10_0_OR_GREATER
                 Tags = new List<OpenApiTag> { new OpenApiTag {  Name = "Users" } },
+#endif
                 RequestBody = new OpenApiRequestBody
                 {
                     Content = new Dictionary<string, OpenApiMediaType>

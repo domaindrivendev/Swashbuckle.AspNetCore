@@ -8,7 +8,11 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
     {
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
+#if NET10_0_OR_GREATER
+            schema.Extensions.Add("X-property1", new OpenApiAny("value"));
+#else
             schema.Extensions.Add("X-property1", new OpenApiString("value"));
+#endif
         }
     }
 }

@@ -22,10 +22,12 @@ namespace Swashbuckle.AspNetCore.Annotations
             ContentTypes = contentTypes;
         }
 
+#if !NET10_0_OR_GREATER
         /// <summary>
         /// A short description of the response. GFM syntax can be used for rich text representation.
         /// </summary>
         public string Description { get; set; }
+#endif
 
         /// <summary>
         /// A collection of MIME types that the response can be produced with.
