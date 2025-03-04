@@ -5,7 +5,6 @@ using Basic.Swagger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
@@ -14,14 +13,6 @@ namespace Basic
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
@@ -72,11 +63,11 @@ namespace Basic
             {
                 endpoints.MapControllers();
 
-                // Expose Swagger/OpenAPI JSON in new (v3) and old (v2) formats
+                // Expose Swagger/OpenAPI JSON in different formats
                 endpoints.MapSwagger("swagger/{documentName}/swagger.json");
                 endpoints.MapSwagger("swagger/{documentName}/swaggerv2.json", c =>
                 {
-                    c.SerializeAsV2 = true;
+                    c.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0;
                 });
             });
 

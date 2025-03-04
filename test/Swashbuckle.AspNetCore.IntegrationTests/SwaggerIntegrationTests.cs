@@ -2,10 +2,8 @@ using System;
 using System.Globalization;
 using System.Linq;
 using System.Net.Http;
-using System.Reflection;
-#if NET8_0_OR_GREATER
 using System.Net.Http.Json;
-#endif
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -126,11 +124,9 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         [Theory]
         [InlineData(typeof(MinimalApp.Program), "/swagger/v1/swagger.json")]
         [InlineData(typeof(TopLevelSwaggerDoc.Program), "/swagger/v1.json")]
-#if NET8_0_OR_GREATER
         [InlineData(typeof(MvcWithNullable.Program), "/swagger/v1/swagger.json")]
         [InlineData(typeof(WebApi.Program), "/swagger/v1/swagger.json")]
         [InlineData(typeof(WebApi.Aot.Program), "/swagger/v1/swagger.json")]
-#endif
         public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_Without_Startup(
             Type entryPointType,
             string swaggerRequestUri)
@@ -138,7 +134,6 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             await SwaggerEndpointReturnsValidSwaggerJson(entryPointType, swaggerRequestUri);
         }
 
-#if NET8_0_OR_GREATER
         [Fact]
         public async Task TypesAreRenderedCorrectly()
         {
@@ -170,7 +165,6 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
                 () => Assert.True(properties.GetProperty("temperatureF").GetProperty("readOnly").GetBoolean()),
             ]);
         }
-#endif
 
         private static async Task SwaggerEndpointReturnsValidSwaggerJson(Type entryPointType, string swaggerRequestUri)
         {
