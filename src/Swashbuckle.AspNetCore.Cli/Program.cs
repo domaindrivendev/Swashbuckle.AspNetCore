@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
+using System.Text;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,29 +43,7 @@ namespace Swashbuckle.AspNetCore.Cli
 
                 c.OnRun((namedArgs) =>
                 {
-                    if (!File.Exists(namedArgs["startupassembly"]))
-                    {
-                        throw new FileNotFoundException(namedArgs["startupassembly"]);
-                    }
-
-                    var depsFile = namedArgs["startupassembly"].Replace(".dll", ".deps.json");
-                    var runtimeConfig = namedArgs["startupassembly"].Replace(".dll", ".runtimeconfig.json");
-                    var commandName = args[0];
-
-                    var subProcessArguments = new string[args.Length - 1];
-                    if (subProcessArguments.Length > 0)
-                    {
-                        Array.Copy(args, 1, subProcessArguments, 0, subProcessArguments.Length);
-                    }
-
-                    var subProcessCommandLine = string.Format(
-                        "exec --depsfile {0} --runtimeconfig {1} {2} _{3} {4}", // note the underscore prepended to the command name
-                        EscapePath(depsFile),
-                        EscapePath(runtimeConfig),
-                        EscapePath(typeof(Program).GetTypeInfo().Assembly.Location),
-                        commandName,
-                        string.Join(" ", subProcessArguments.Select(x => EscapePath(x)))
-                    );
+                    string subProcessCommandLine = PrepareCommandLine(args, namedArgs);
 
                     var subProcess = Process.Start("dotnet", subProcessCommandLine);
 
@@ -84,16 +64,7 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Option("--yaml", "", true);
                 c.OnRun((namedArgs) =>
                 {
-                    // 1) Configure host with provided startupassembly
-                    var startupAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(
-                        Path.Combine(Directory.GetCurrentDirectory(), namedArgs["startupassembly"]));
-
-                    // 2) Build a service container that's based on the startup assembly
-                    var serviceProvider = GetServiceProvider(startupAssembly);
-
-                    // 3) Retrieve Swagger via configured provider
-                    var swaggerProvider = serviceProvider.GetRequiredService<ISwaggerProvider>();
-                    var swaggerOptions = serviceProvider.GetService<IOptions<SwaggerOptions>>();
+                    SetupAndRetrieveSwaggerProviderAndOptions(namedArgs, out var swaggerProvider, out var swaggerOptions);
                     var swaggerDocumentSerializer = swaggerOptions?.Value?.CustomDocumentSerializer;
                     var swagger = swaggerProvider.GetSwagger(
                         namedArgs["swaggerdoc"],
@@ -156,7 +127,108 @@ namespace Swashbuckle.AspNetCore.Cli
                 });
             });
 
+            // > dotnet swagger list
+            runner.SubCommand("list", "retrieves the list of Swagger document names from a startup assembly", c =>
+            {
+                c.Argument("startupassembly", "relative path to the application's startup assembly");
+                c.Option("--output", "relative path where the document names will be output, defaults to stdout");
+                c.OnRun((namedArgs) =>
+                {
+                    string subProcessCommandLine = PrepareCommandLine(args, namedArgs);
+
+                    var subProcess = Process.Start("dotnet", subProcessCommandLine);
+
+                    subProcess.WaitForExit();
+                    return subProcess.ExitCode;
+                });
+            });
+
+            // > dotnet swagger _list ... (* should only be invoked via "dotnet exec")
+            runner.SubCommand("_list", "", c =>
+            {
+                c.Argument("startupassembly", "");
+                c.Option("--output", "");
+                c.OnRun((namedArgs) =>
+                {
+                    SetupAndRetrieveSwaggerProviderAndOptions(namedArgs, out var swaggerProvider, out var swaggerOptions);
+                    IList<string> docNames = new List<string>();
+
+                    string outputPath = namedArgs.TryGetValue("--output", out var arg1)
+                        ? Path.Combine(Directory.GetCurrentDirectory(), arg1)
+                        : null;
+                    bool outputViaConsole = outputPath == null;
+                    if (!string.IsNullOrEmpty(outputPath))
+                    {
+                        string directoryPath = Path.GetDirectoryName(outputPath);
+                        if (!string.IsNullOrEmpty(directoryPath) && !Directory.Exists(directoryPath))
+                        {
+                            Directory.CreateDirectory(directoryPath);
+                        }
+                    }
+
+                    using Stream stream = outputViaConsole ? Console.OpenStandardOutput() : File.Create(outputPath);
+                    using StreamWriter writer = new(stream, outputViaConsole ? Console.OutputEncoding : Encoding.UTF8);
+
+                    if (swaggerProvider is not ISwaggerDocumentMetadataProvider docMetaProvider)
+                    {
+                        writer.WriteLine($"The registered {nameof(ISwaggerProvider)} instance does not implement {nameof(ISwaggerDocumentMetadataProvider)}; unable to list the Swagger document names.");
+                        return -1;
+                    }
+
+                    docNames = docMetaProvider.GetDocumentNames();
+
+                    foreach (var name in docNames)
+                    {
+                        writer.WriteLine($"\"{name}\"");
+                    }
+
+                    return 0;
+                });
+            });
+
             return runner.Run(args);
+        }
+
+        private static void SetupAndRetrieveSwaggerProviderAndOptions(System.Collections.Generic.IDictionary<string, string> namedArgs, out ISwaggerProvider swaggerProvider, out IOptions<SwaggerOptions> swaggerOptions)
+        {
+            // 1) Configure host with provided startupassembly
+            var startupAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(
+                Path.Combine(Directory.GetCurrentDirectory(), namedArgs["startupassembly"]));
+
+            // 2) Build a service container that's based on the startup assembly
+            var serviceProvider = GetServiceProvider(startupAssembly);
+
+            // 3) Retrieve Swagger via configured provider
+            swaggerProvider = serviceProvider.GetRequiredService<ISwaggerProvider>();
+            swaggerOptions = serviceProvider.GetService<IOptions<SwaggerOptions>>();
+        }
+
+        private static string PrepareCommandLine(string[] args, System.Collections.Generic.IDictionary<string, string> namedArgs)
+        {
+            if (!File.Exists(namedArgs["startupassembly"]))
+            {
+                throw new FileNotFoundException(namedArgs["startupassembly"]);
+            }
+
+            var depsFile = namedArgs["startupassembly"].Replace(".dll", ".deps.json");
+            var runtimeConfig = namedArgs["startupassembly"].Replace(".dll", ".runtimeconfig.json");
+            var commandName = args[0];
+
+            var subProcessArguments = new string[args.Length - 1];
+            if (subProcessArguments.Length > 0)
+            {
+                Array.Copy(args, 1, subProcessArguments, 0, subProcessArguments.Length);
+            }
+
+            var subProcessCommandLine = string.Format(
+                "exec --depsfile {0} --runtimeconfig {1} {2} _{3} {4}", // note the underscore prepended to the command name
+                EscapePath(depsFile),
+                EscapePath(runtimeConfig),
+                EscapePath(typeof(Program).GetTypeInfo().Assembly.Location),
+                commandName,
+                string.Join(" ", subProcessArguments.Select(x => EscapePath(x)))
+            );
+            return subProcessCommandLine;
         }
 
         private static string EscapePath(string path)

@@ -20,7 +20,7 @@ using Microsoft.AspNetCore.Http.Metadata;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public class SwaggerGenerator : ISwaggerProvider, IAsyncSwaggerProvider
+    public class SwaggerGenerator : ISwaggerProvider, IAsyncSwaggerProvider, ISwaggerDocumentMetadataProvider
     {
         private readonly IApiDescriptionGroupCollectionProvider _apiDescriptionsProvider;
         private readonly ISchemaGenerator _schemaGenerator;
@@ -111,6 +111,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 throw;
             }
         }
+
+        public IList<string> GetDocumentNames() => _options.SwaggerDocs.Keys.ToList();
 
         private void SortSchemas(OpenApiDocument document)
         {
@@ -602,8 +604,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 In = location,
                 Required = isRequired,
                 Schema = schema,
-                Description = description
+                Description = description,
+                Style = GetParameterStyle(type, apiParameter.Source)
             };
+        }
+
+        private static ParameterStyle? GetParameterStyle(Type type, BindingSource source)
+        {
+            return source == BindingSource.Query && type?.IsGenericType == true &&
+                   typeof(IEnumerable<KeyValuePair<string, string>>).IsAssignableFrom(type)
+                ? ParameterStyle.DeepObject
+                : null;
         }
 
         private (OpenApiParameter, ParameterFilterContext) GenerateParameterAndContext(

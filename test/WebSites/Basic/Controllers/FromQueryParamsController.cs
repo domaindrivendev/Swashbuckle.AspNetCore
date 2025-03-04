@@ -15,7 +15,7 @@ namespace Basic.Controllers
         }
 
         [HttpGet("zip-codes/validate")]
-        public IActionResult ValidateZipCodes([FromQuery]IEnumerable<string> zipCodes)
+        public IActionResult ValidateZipCodes([FromQuery]IEnumerable<string> zipCodes, [FromQuery(Name = "search")] [Required] Dictionary<string, string> parameters)
         {
             return new NoContentResult(); 
         }

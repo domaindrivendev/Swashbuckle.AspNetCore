@@ -38,7 +38,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                         c => nameof(c.ActionWithNoParameters), groupName: "v1", httpMethod: "GET", relativePath: "resource"),
 
                     ApiDescriptionFactory.Create<FakeController>(
-                        c => nameof(c.ActionWithNoParameters), groupName: "v2", httpMethod: "POST", relativePath: "resource"),
+                        c => nameof(c.ActionWithNoParameters), groupName: "v2", httpMethod: "POST", relativePath: "resource")
                 },
                 options: new SwaggerGeneratorOptions
                 {
@@ -49,6 +49,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     }
                 }
             );
+
+            var provider = Assert.IsAssignableFrom<ISwaggerDocumentMetadataProvider>(subject);
+            var documentNames = provider.GetDocumentNames();
+            Assert.Equal(["v1", "v2"], documentNames);
 
             var document = subject.GetSwagger("v1");
 
@@ -2519,6 +2523,51 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Single(document.Paths["/resource"].Operations);
         }
 
+        [Fact]
+        public void GetSwagger_BindingSourceQueryParameter_NotThrowsException()
+        {
+            var apiDescription = new ApiDescription
+            {
+                HttpMethod = "GET",
+                ActionDescriptor = new ActionDescriptor
+                {
+                    RouteValues = new Dictionary<string, string>
+                    {
+                        ["controller"] = "Catalog"
+                    }
+                },
+                RelativePath = "api/v1/Images/{image}",
+                GroupName = "v1",
+                ParameterDescriptions =
+                {
+                    new ApiParameterDescription
+                    {
+                        Name = "width",
+                        Source = BindingSource.Query,
+                        DefaultValue = string.Empty,
+                        Type = typeof(int)
+                    }
+                }
+            };
+            var subject = Subject(
+                apiDescriptions:
+                [
+                    apiDescription
+                ],
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new() { Version = "V1", Title = "Test API" }
+                    }
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            Assert.NotNull(document);
+        }
+
         private static SwaggerGenerator Subject(
             IEnumerable<ApiDescription> apiDescriptions,
             SwaggerGeneratorOptions options = null,
@@ -2528,8 +2577,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             return new SwaggerGenerator(
                 options ?? DefaultOptions,
                 new FakeApiDescriptionGroupCollectionProvider(apiDescriptions),
-                new SchemaGenerator(new SchemaGeneratorOptions() { SchemaFilters = schemaFilters ?? [] }, new JsonSerializerDataContractResolver(new JsonSerializerOptions()), Options.Create<MvcOptions>(new MvcOptions())),
-                new FakeAuthenticationSchemeProvider(authenticationSchemes ?? Enumerable.Empty<AuthenticationScheme>())
+                new SchemaGenerator(new SchemaGeneratorOptions { SchemaFilters = schemaFilters ?? [] }, new JsonSerializerDataContractResolver(new JsonSerializerOptions())),
+                new FakeAuthenticationSchemeProvider(authenticationSchemes ?? [])
             );
         }
 

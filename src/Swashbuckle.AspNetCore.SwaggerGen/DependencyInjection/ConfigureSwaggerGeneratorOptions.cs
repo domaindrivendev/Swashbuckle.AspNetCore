@@ -117,6 +117,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             target.RequestBodyAsyncFilters = new List<IRequestBodyAsyncFilter>(source.RequestBodyAsyncFilters);
             target.SecuritySchemesSelector = source.SecuritySchemesSelector;
             target.PathGroupSelector = source.PathGroupSelector;
+            target.XmlCommentEndOfLine = source.XmlCommentEndOfLine;
         }
 
         private TFilter GetOrCreateFilter<TFilter>(FilterDescriptor filterDescriptor)

@@ -35,7 +35,7 @@
     <PackageReadmeFile>package-readme.md</PackageReadmeFile>
     <PackageReleaseNotes>See $(PackageProjectUrl)/releases for details.</PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageValidationBaselineVersion>7.2.0</PackageValidationBaselineVersion>
+    <PackageValidationBaselineVersion>7.3.1</PackageValidationBaselineVersion>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>$(PackageProjectUrl).git</RepositoryUrl>
@@ -45,7 +45,7 @@
     <VersionPrefix>8.0.0</VersionPrefix>
     <WarnOnPackingNonPackableProject>false</WarnOnPackingNonPackableProject>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(GITHUB_ACTIONS)' != '' ">
+  <PropertyGroup Condition=" '$(GITHUB_ACTIONS)' != '' AND '$(DEPENDABOT_JOB_ID)' == '' ">
     <VersionSuffix Condition=" '$(VersionSuffix)' == '' AND '$(GITHUB_HEAD_REF)' == '' ">preview.$(GITHUB_RUN_NUMBER)</VersionSuffix>
     <VersionSuffix Condition=" '$(VersionSuffix)' == '' AND '$(GITHUB_HEAD_REF)' != '' ">pr.$(GITHUB_REF_NAME.Replace('/merge', '')).$(GITHUB_RUN_NUMBER)</VersionSuffix>
     <VersionPrefix Condition=" $(GITHUB_REF.StartsWith(`refs/tags/v`)) ">$(GITHUB_REF.Replace('refs/tags/v', ''))</VersionPrefix>
