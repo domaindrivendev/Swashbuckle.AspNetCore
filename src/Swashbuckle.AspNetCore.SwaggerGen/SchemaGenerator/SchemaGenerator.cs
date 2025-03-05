@@ -211,7 +211,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 ? new[] { dataContract.UnderlyingType }.Union(subTypes)
                 : subTypes;
 
-            knownTypesDataContracts = knownTypes.Select(knownType => GetDataContractFor(knownType));
+            knownTypesDataContracts = knownTypes.Select(GetDataContractFor);
             return true;
         }
 
@@ -415,7 +415,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     foreach (var knownTypeDataContract in knownTypesDataContracts)
                     {
                         // Ensure schema is generated for all known types
-                        GenerateConcreteSchema(knownTypeDataContract, schemaRepository);
+                        schema.OneOf.Add(GenerateConcreteSchema(knownTypeDataContract, schemaRepository));
                     }
 
                     if (TryGetDiscriminatorFor(dataContract, schemaRepository, knownTypesDataContracts, out var discriminator))
