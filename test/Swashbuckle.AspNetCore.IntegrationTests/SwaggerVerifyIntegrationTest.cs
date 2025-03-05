@@ -12,10 +12,8 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
     public partial class SwaggerVerifyIntegrationTest
     {
         [Theory]
-#if !NET6_0
         [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(NSwagClientExample.Startup), "/swagger/v1/swagger.json")]
-#endif
         [InlineData(typeof(CliExample.Startup), "/swagger/v1/swagger_net8.0.json")]
         [InlineData(typeof(ConfigFromFile.Startup), "/swagger/v1/swagger.json")]
         [InlineData(typeof(CustomDocumentSerializer.Startup), "/swagger/v1/swagger.json")]
@@ -38,7 +36,8 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             var swagger = await swaggerResponse.Content.ReadAsStringAsync();
 
             await Verifier.Verify(NormalizeLineBreaks(swagger))
-                .UseParameters(startupType, GetVersion(swaggerRequestUri));
+                .UseParameters(startupType, GetVersion(swaggerRequestUri))
+                .UniqueForTargetFrameworkAndVersion();
         }
 
         [Fact]
@@ -52,43 +51,27 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 
             using var swaggerResponse = await client.GetAsync(swaggerRequestUri);
             var swagger = await swaggerResponse.Content.ReadAsStringAsync();
-            await Verifier.Verify(swagger).UseParameters(startupType, GetVersion(swaggerRequestUri));
+            await Verifier.Verify(swagger)
+                .UseParameters(startupType, GetVersion(swaggerRequestUri))
+                .UniqueForTargetFrameworkAndVersion();
         }
-
-#if NET6_0
-        [Theory]
-        [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
-        [InlineData(typeof(NSwagClientExample.Startup), "/swagger/v1/swagger.json")]
-        public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_DotNet6(
-            Type startupType,
-            string swaggerRequestUri)
-        {
-            var testSite = new TestSite(startupType);
-            using var client = testSite.BuildClient();
-
-            using var swaggerResponse = await client.GetAsync(swaggerRequestUri);
-            var swagger = await swaggerResponse.Content.ReadAsStringAsync();
-            await Verifier.Verify(swagger).UseParameters(startupType, GetVersion(swaggerRequestUri));
-        }
-#endif
 
         [Theory]
         [InlineData(typeof(MinimalApp.Program), "/swagger/v1/swagger.json")]
         [InlineData(typeof(TopLevelSwaggerDoc.Program), "/swagger/v1.json")]
-#if NET8_0_OR_GREATER
         [InlineData(typeof(MvcWithNullable.Program), "/swagger/v1/swagger.json")]
         [InlineData(typeof(WebApi.Program), "/swagger/v1/swagger.json")]
         [InlineData(typeof(WebApi.Aot.Program), "/swagger/v1/swagger.json")]
-#endif
-        public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_Without_Startup(
+        public async Task Swagger_IsValidJson_No_Startup(
             Type entryPointType,
             string swaggerRequestUri)
         {
             var swaggerResponse = await SwaggerEndpointReturnsValidSwaggerJson(entryPointType, swaggerRequestUri);
-            await Verifier.Verify(swaggerResponse).UseParameters(entryPointType, GetVersion(swaggerRequestUri));
+            await Verifier.Verify(swaggerResponse)
+                .UseParameters(entryPointType, GetVersion(swaggerRequestUri))
+                .UniqueForTargetFrameworkAndVersion();
         }
 
-#if NET8_0_OR_GREATER
         [Fact]
         public async Task TypesAreRenderedCorrectly()
         {
@@ -96,9 +79,9 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             using var client = application.CreateDefaultClient();
 
             var swaggerResponse = await SwaggerResponse(client, "/swagger/v1/swagger.json");
-            await Verifier.Verify(swaggerResponse);
+            await Verifier.Verify(swaggerResponse)
+                .UniqueForTargetFrameworkAndVersion();
         }
-#endif
 
         private static async Task<string> SwaggerEndpointReturnsValidSwaggerJson(Type entryPointType, string swaggerRequestUri)
         {
@@ -122,14 +105,10 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         }
 
         private static string GetVersion(string swaggerUi) =>
-#if NET6_0
-            Regex.Match(swaggerUi, "/\\w+/([\\w+\\d+.-]+)/").Groups[1].Value;
-#else
             VersionRegex().Match(swaggerUi).Groups[1].Value;
 
         [GeneratedRegex("/\\w+/([\\w+\\d+.-]+)/")]
         private static partial Regex VersionRegex();
-#endif
 
         [GeneratedRegex(@"(?<!\\r)\\n")]
         private static partial Regex UnixNewLineRegex();

@@ -6,7 +6,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
 {
     public class VendorExtensionsOperationFilter : IOperationFilter
     {
-        public void Apply(OpenApiOperation operation, OperationFilterContext contex)
+        public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
             operation.Extensions.Add("X-property1", new OpenApiString("value"));
         }

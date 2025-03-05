@@ -58,7 +58,7 @@
   <ItemGroup Condition=" '$(PackageReadmeFile)' != '' ">
     <None Include="$(MSBuildThisFileDirectory)$(PackageReadmeFile)" Pack="True" PackagePath="" />
   </ItemGroup>
-  <PropertyGroup Condition=" '$(SignAssembly)' == 'true' AND '$(OS)' != 'Windows_NT' ">
+  <PropertyGroup Condition=" '$(SignAssembly)' == 'true' AND '$(OS)' != !$([MSBuild]::IsOSPlatform('Windows')) ">
     <PublicSign>true</PublicSign>
   </PropertyGroup>
   <PropertyGroup>

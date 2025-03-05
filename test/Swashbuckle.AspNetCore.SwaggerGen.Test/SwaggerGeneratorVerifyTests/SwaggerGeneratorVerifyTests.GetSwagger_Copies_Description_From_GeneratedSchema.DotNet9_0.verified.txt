@@ -1,0 +1,130 @@
+﻿{
+  Info: {
+    Title: Test API,
+    Version: V1
+  },
+  Paths: {
+    /resource: {
+      Operations: {
+        Post: {
+          Tags: [
+            {
+              Name: Fake,
+              UnresolvedReference: false
+            }
+          ],
+          Parameters: [
+            {
+              UnresolvedReference: false,
+              Name: EnumWithDefault,
+              In: Query,
+              Description: <p>Members:</p><ul><li>Value2 - 2</li><li>Value4 - 4</li><li>Value8 - 8</li></ul>,
+              Required: false,
+              Deprecated: false,
+              AllowEmptyValue: false,
+              Style: Form,
+              Explode: true,
+              AllowReserved: false,
+              Schema: {
+                ReadOnly: false,
+                WriteOnly: false,
+                AdditionalPropertiesAllowed: true,
+                Nullable: false,
+                Deprecated: false,
+                UnresolvedReference: false,
+                Reference: {
+                  IsFragrament: false,
+                  Type: Schema,
+                  Id: IntEnum,
+                  IsExternal: false,
+                  IsLocal: true,
+                  ReferenceV3: #/components/schemas/IntEnum,
+                  ReferenceV2: #/definitions/IntEnum
+                }
+              }
+            },
+            {
+              UnresolvedReference: false,
+              Name: EnumArrayWithDefault,
+              In: Query,
+              Description: <p>Members:</p><ul><li>Value2 - 2</li><li>Value4 - 4</li><li>Value8 - 8</li></ul>,
+              Required: false,
+              Deprecated: false,
+              AllowEmptyValue: false,
+              Style: Form,
+              Explode: true,
+              AllowReserved: false,
+              Schema: {
+                Type: array,
+                Description: <p>Members:</p><ul><li>Value2 - 2</li><li>Value4 - 4</li><li>Value8 - 8</li></ul>,
+                Default: [
+                  {
+                    Value: 4
+                  }
+                ],
+                ReadOnly: false,
+                WriteOnly: false,
+                Items: {
+                  ReadOnly: false,
+                  WriteOnly: false,
+                  AdditionalPropertiesAllowed: true,
+                  Nullable: false,
+                  Deprecated: false,
+                  UnresolvedReference: false,
+                  Reference: {
+                    IsFragrament: false,
+                    Type: Schema,
+                    Id: IntEnum,
+                    IsExternal: false,
+                    IsLocal: true,
+                    ReferenceV3: #/components/schemas/IntEnum,
+                    ReferenceV2: #/definitions/IntEnum
+                  }
+                },
+                AdditionalPropertiesAllowed: true,
+                Nullable: false,
+                Deprecated: false,
+                UnresolvedReference: false
+              }
+            }
+          ],
+          Responses: {
+            200: {
+              Description: OK,
+              UnresolvedReference: false
+            }
+          },
+          Deprecated: false
+        }
+      },
+      UnresolvedReference: false
+    }
+  },
+  Components: {
+    Schemas: {
+      IntEnum: {
+        Type: integer,
+        Format: int32,
+        Description: <p>Members:</p><ul><li>Value2 - 2</li><li>Value4 - 4</li><li>Value8 - 8</li></ul>,
+        ReadOnly: false,
+        WriteOnly: false,
+        AdditionalPropertiesAllowed: true,
+        Enum: [
+          {
+            Value: 2
+          },
+          {
+            Value: 4
+          },
+          {
+            Value: 8
+          }
+        ],
+        Nullable: false,
+        Deprecated: false,
+        UnresolvedReference: false
+      }
+    }
+  },
+  HashCode: 29A4A89ADE3B75E921A9EF9CE77F3E1517293B167A0B1513F55C57F3E84194193E8B24F875170DE0524C73CF5AB9DDCDF6556F1BDC2E6EA1F8171340F4C0F0B1
+}
