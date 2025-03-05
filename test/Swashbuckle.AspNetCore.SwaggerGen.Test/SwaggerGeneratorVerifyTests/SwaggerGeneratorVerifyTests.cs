@@ -1441,7 +1441,7 @@ public class SwaggerGeneratorVerifyTests
     }
 
     [Fact]
-    public Task GetSwagger_GenerateConsumesSchemas_ForProvidedOpenApiOperationWithIFormFileCollection()
+    public Task GetSwagger_GenerateConsumesSchemas_ForOperationWithIFormFileCollection()
     {
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithConsumesAttribute));
         var actionDescriptor = new ActionDescriptor
