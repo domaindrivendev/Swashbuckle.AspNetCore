@@ -1,5 +1,5 @@
 ﻿{
-  "openapi": "3.0.1",
+  "openapi": "3.0.4",
   "info": {
     "title": "Test API V1",
     "description": "A sample API for testing Swashbuckle",
@@ -19,19 +19,13 @@
           "description": "",
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Product"
-              }
+              "schema": { }
             },
             "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Product"
-              }
+              "schema": { }
             },
             "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/Product"
-              }
+              "schema": { }
             }
           },
           "required": true,
@@ -42,9 +36,7 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Product"
-                }
+                "schema": { }
               }
             }
           }
@@ -76,9 +68,7 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Product"
-                  }
+                  "items": { }
                 }
               }
             }
@@ -101,9 +91,7 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Product"
-                  }
+                  "items": { }
                 }
               }
             }
@@ -137,9 +125,7 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Product"
-                }
+                "schema": { }
               }
             }
           }
@@ -169,19 +155,13 @@
           "description": "",
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Product"
-              }
+              "schema": { }
             },
             "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Product"
-              }
+              "schema": { }
             },
             "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/Product"
-              }
+              "schema": { }
             }
           },
           "required": true,
@@ -281,19 +261,13 @@
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PaymentRequest"
-              }
+              "schema": { }
             },
             "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PaymentRequest"
-              }
+              "schema": { }
             },
             "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/PaymentRequest"
-              }
+              "schema": { }
             }
           },
           "required": true,
@@ -725,16 +699,14 @@
                     },
                     "description": "Sumary for PhoneNumbers"
                   },
-                  "logLevel": {
-                    "$ref": "#/components/schemas/LogLevel"
-                  },
+                  "logLevel": { },
                   "formFile": {
                     "type": "string",
                     "description": "Description for file",
                     "format": "binary"
                   },
                   "dateTimeKind": {
-                    "$ref": "#/components/schemas/DateTimeKind"
+                    "description": "Description for dateTimeKind"
                   }
                 }
               },
@@ -869,19 +841,13 @@
             "description": "OK",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/TestResponse"
-                }
+                "schema": { }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TestResponse"
-                }
+                "schema": { }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/TestResponse"
-                }
+                "schema": { }
               }
             }
           }
@@ -901,9 +867,7 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Promotion"
-                  }
+                  "items": { }
                 }
               }
             }
@@ -922,36 +886,24 @@
             "application/json": {
               "schema": {
                 "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/Rectangle"
-                  },
-                  {
-                    "$ref": "#/components/schemas/Circle"
-                  }
+                  { },
+                  { }
                 ]
               }
             },
             "text/json": {
               "schema": {
                 "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/Rectangle"
-                  },
-                  {
-                    "$ref": "#/components/schemas/Circle"
-                  }
+                  { },
+                  { }
                 ]
               }
             },
             "application/*+json": {
               "schema": {
                 "oneOf": [
-                  {
-                    "$ref": "#/components/schemas/Rectangle"
-                  },
-                  {
-                    "$ref": "#/components/schemas/Circle"
-                  }
+                  { },
+                  { }
                 ]
               }
             }
@@ -996,9 +948,7 @@
           "description": "",
           "content": {
             "application/xml": {
-              "schema": {
-                "$ref": "#/components/schemas/Order"
-              }
+              "schema": { }
             }
           },
           "required": true,
@@ -1020,9 +970,7 @@
             "description": "Order invalid",
             "content": {
               "application/xml": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationProblemDetails"
-                }
+                "schema": { }
               }
             }
           }
@@ -1040,19 +988,13 @@
           "description": "The cart request body",
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Cart"
-              }
+              "schema": { }
             },
             "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Cart"
-              }
+              "schema": { }
             },
             "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/Cart"
-              }
+              "schema": { }
             }
           },
           "x-purpose": "test"
@@ -1062,19 +1004,13 @@
             "description": "The cart was created",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Cart"
-                }
+                "schema": { }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Cart"
-                }
+                "schema": { }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Cart"
-                }
+                "schema": { }
               }
             }
           },
@@ -1112,19 +1048,13 @@
             "description": "OK",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Cart"
-                }
+                "schema": { }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Cart"
-                }
+                "schema": { }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Cart"
-                }
+                "schema": { }
               }
             }
           }
@@ -1155,19 +1085,13 @@
             "description": "OK",
             "content": {
               "text/plain": {
-                "schema": {
-                  "$ref": "#/components/schemas/Cart"
-                }
+                "schema": { }
               },
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Cart"
-                }
+                "schema": { }
               },
               "text/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Cart"
-                }
+                "schema": { }
               }
             }
           }
@@ -1235,9 +1159,7 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Store"
-                  }
+                  "items": { }
                 }
               }
             }
@@ -1267,9 +1189,7 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Store"
-                }
+                "schema": { }
               }
             }
           }
@@ -1283,8 +1203,7 @@
         "parameters": [
           {
             "name": "id",
-            "in": "path",
-            "required": true,
+            "in": "query",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -1292,7 +1211,8 @@
           },
           {
             "name": "id",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -1351,9 +1271,7 @@
             "format": "int32",
             "readOnly": true
           },
-          "cartType": {
-            "$ref": "#/components/schemas/CartType"
-          }
+          "cartType": { }
         },
         "additionalProperties": false
       },
@@ -1368,9 +1286,7 @@
       },
       "Circle": {
         "allOf": [
-          {
-            "$ref": "#/components/schemas/Shape"
-          },
+          { },
           {
             "type": "object",
             "properties": {
@@ -1465,12 +1381,8 @@
         ],
         "type": "object",
         "properties": {
-          "transaction": {
-            "$ref": "#/components/schemas/Transaction"
-          },
-          "creditCard": {
-            "$ref": "#/components/schemas/CreditCard"
-          }
+          "transaction": { },
+          "creditCard": { }
         },
         "additionalProperties": false
       },
@@ -1487,12 +1399,8 @@
             "description": "Describes the product",
             "nullable": true
           },
-          "status": {
-            "$ref": "#/components/schemas/ProductStatus"
-          },
-          "status2": {
-            "$ref": "#/components/schemas/ProductStatus"
-          }
+          "status": { },
+          "status2": { }
         },
         "additionalProperties": false,
         "description": "Represents a product",
@@ -1518,17 +1426,13 @@
             "type": "string",
             "nullable": true
           },
-          "discountType": {
-            "$ref": "#/components/schemas/DiscountType"
-          }
+          "discountType": { }
         },
         "additionalProperties": false
       },
       "Rectangle": {
         "allOf": [
-          {
-            "$ref": "#/components/schemas/Shape"
-          },
+          { },
           {
             "type": "object",
             "properties": {
@@ -1585,9 +1489,7 @@
       "TestResponse": {
         "type": "object",
         "properties": {
-          "foo": {
-            "$ref": "#/components/schemas/TestStruct"
-          }
+          "foo": { }
         },
         "additionalProperties": false
       },
@@ -1654,8 +1556,7 @@
                 "type": "string"
               }
             },
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           }
         },
         "additionalProperties": { }

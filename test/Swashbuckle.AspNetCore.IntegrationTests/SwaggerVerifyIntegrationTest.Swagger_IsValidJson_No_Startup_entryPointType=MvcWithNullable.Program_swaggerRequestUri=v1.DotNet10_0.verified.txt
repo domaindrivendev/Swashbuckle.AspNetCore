@@ -1,0 +1,50 @@
+﻿{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "MvcWithNullable",
+    "version": "1.0"
+  },
+  "paths": {
+    "/api/Enum": {
+      "get": {
+        "tags": [
+          "Enum"
+        ],
+        "parameters": [
+          {
+            "name": "logLevel",
+            "in": "query",
+            "schema": {
+              "allOf": [
+                { }
+              ],
+              "default": 4
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LogLevel": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "type": "integer",
+        "format": "int32"
+      }
+    }
+  }
+}

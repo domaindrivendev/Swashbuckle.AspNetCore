@@ -1,0 +1,81 @@
+﻿{
+  Workspace: {
+    BaseUrl: https://openapi.net/
+  },
+  Info: {
+    Title: Test API,
+    Version: V1
+  },
+  Paths: {
+    /resource: {
+      Operations: {
+        Post: {
+          Tags: [
+            null
+          ],
+          RequestBody: {
+            UnresolvedReference: false,
+            Required: false,
+            Content: {
+              multipart/form-data: {
+                Schema: {
+                  UnEvaluatedProperties: false,
+                  Type: Object,
+                  ReadOnly: false,
+                  WriteOnly: false,
+                  Properties: {
+                    param1: {
+                      UnEvaluatedProperties: false,
+                      Type: String,
+                      ReadOnly: false,
+                      WriteOnly: false,
+                      AdditionalPropertiesAllowed: true,
+                      Nullable: false,
+                      UnevaluatedProperties: false,
+                      Deprecated: false,
+                      UnresolvedReference: false
+                    },
+                    param2: {
+                      UnEvaluatedProperties: false,
+                      Type: Integer,
+                      Format: int32,
+                      ReadOnly: false,
+                      WriteOnly: false,
+                      AdditionalPropertiesAllowed: true,
+                      Nullable: false,
+                      UnevaluatedProperties: false,
+                      Deprecated: false,
+                      UnresolvedReference: false
+                    }
+                  },
+                  AdditionalPropertiesAllowed: true,
+                  Nullable: false,
+                  UnevaluatedProperties: false,
+                  Deprecated: false,
+                  UnresolvedReference: false
+                },
+                Encoding: {
+                  param1: {
+                    Style: Form
+                  },
+                  param2: {
+                    Style: Form
+                  }
+                }
+              }
+            }
+          },
+          Responses: {
+            200: {
+              Description: OK,
+              UnresolvedReference: false
+            }
+          },
+          Deprecated: false
+        }
+      },
+      UnresolvedReference: false
+    }
+  },
+  Components: {}
+}

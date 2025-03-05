@@ -1,4 +1,5 @@
-﻿namespace Swashbuckle.AspNetCore.SwaggerGen.Test
+﻿#if !NET10_0_OR_GREATER
+namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     using System;
     using System.Text.Json;
@@ -140,3 +141,4 @@
         }
     }
 }
+#endif

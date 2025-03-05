@@ -1,0 +1,1 @@
+static Swashbuckle.AspNetCore.SwaggerGen.OpenApiSchemaExtensions.ResolveType(this Microsoft.OpenApi.Models.OpenApiSchema schema, Swashbuckle.AspNetCore.SwaggerGen.SchemaRepository schemaRepository) -> Microsoft.OpenApi.Models.JsonSchemaType?

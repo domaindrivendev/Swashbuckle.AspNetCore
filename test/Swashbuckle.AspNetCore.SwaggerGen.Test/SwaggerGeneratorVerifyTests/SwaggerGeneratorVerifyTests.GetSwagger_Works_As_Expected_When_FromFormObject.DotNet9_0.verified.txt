@@ -1,0 +1,78 @@
+﻿{
+  Info: {
+    Title: Test API,
+    Version: V1
+  },
+  Paths: {
+    /resource: {
+      Operations: {
+        Post: {
+          Tags: [
+            {
+              Name: Fake,
+              UnresolvedReference: false
+            }
+          ],
+          RequestBody: {
+            UnresolvedReference: false,
+            Required: false,
+            Content: {
+              multipart/form-data: {
+                Schema: {
+                  ReadOnly: false,
+                  WriteOnly: false,
+                  AdditionalPropertiesAllowed: true,
+                  Nullable: false,
+                  Deprecated: false,
+                  UnresolvedReference: false,
+                  Reference: {
+                    IsFragrament: false,
+                    Type: Schema,
+                    Id: SwaggerIngoreAnnotatedType,
+                    IsExternal: false,
+                    IsLocal: true,
+                    ReferenceV3: #/components/schemas/SwaggerIngoreAnnotatedType,
+                    ReferenceV2: #/definitions/SwaggerIngoreAnnotatedType
+                  }
+                }
+              }
+            }
+          },
+          Responses: {
+            200: {
+              Description: OK,
+              UnresolvedReference: false
+            }
+          },
+          Deprecated: false
+        }
+      },
+      UnresolvedReference: false
+    }
+  },
+  Components: {
+    Schemas: {
+      SwaggerIngoreAnnotatedType: {
+        Type: object,
+        ReadOnly: false,
+        WriteOnly: false,
+        Properties: {
+          NotIgnoredString: {
+            Type: string,
+            ReadOnly: false,
+            WriteOnly: false,
+            AdditionalPropertiesAllowed: true,
+            Nullable: true,
+            Deprecated: false,
+            UnresolvedReference: false
+          }
+        },
+        AdditionalPropertiesAllowed: false,
+        Nullable: false,
+        Deprecated: false,
+        UnresolvedReference: false
+      }
+    }
+  },
+  HashCode: 0E2C58414C7ED713D3719C648D84DD5BD89DA32B914B93EB79C850258F556DDBB26E7B3CE9D60B6FFC5F288B4A255E3A9B947C7CD3F5ED921B2416BB9F155882
+}
