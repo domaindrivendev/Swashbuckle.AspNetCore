@@ -74,8 +74,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.GuidProperty), JsonSchemaTypes.String, "\"d3966535-2637-48fa-b911-e3c27405ee09\"" },
             { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringProperty), JsonSchemaTypes.String, "\"Example for StringProperty\"" },
             { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.ObjectProperty), JsonSchemaTypes.Object, "{\n  \"prop1\": 1,\n  \"prop2\": \"foobar\"\n}" },
-            { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringPropertyWithNullExample), JsonSchemaTypes.String, "null" },
-            { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringPropertyWithUri), JsonSchemaTypes.String, "\"https://test.com/a?b=1&c=2\"" },
             { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.BoolProperty), JsonSchemaTypes.Boolean, "true" },
             { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.IntProperty), JsonSchemaTypes.Integer, "10" },
             { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.LongProperty), JsonSchemaTypes.Integer, "4294967295" },
@@ -86,8 +84,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.GuidProperty), JsonSchemaTypes.String, "\"d3966535-2637-48fa-b911-e3c27405ee09\"" },
             { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.StringProperty), JsonSchemaTypes.String, "\"Example for StringProperty\"" },
             { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.ObjectProperty), JsonSchemaTypes.Object, "{\n  \"prop1\": 1,\n  \"prop2\": \"foobar\"\n}" },
-            { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.StringPropertyWithNullExample), JsonSchemaTypes.String, "null" },
+#if NET10_0_OR_GREATER
+            { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringPropertyWithUri), JsonSchemaTypes.String, "\"https://test.com/a?b=1\\u0026c=2\"" },
+            { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.StringPropertyWithUri), JsonSchemaTypes.String, "\"https://test.com/a?b=1\\u0026c=2\"" },
+            { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringPropertyWithNullExample), JsonSchemaTypes.String, null },
+            { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.StringPropertyWithNullExample), JsonSchemaTypes.String, null },
+#else
+            { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringPropertyWithUri), JsonSchemaTypes.String, "\"https://test.com/a?b=1&c=2\"" },
             { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.StringPropertyWithUri), JsonSchemaTypes.String, "\"https://test.com/a?b=1&c=2\"" },
+            { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringPropertyWithNullExample), JsonSchemaTypes.String, "null" },
+            { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.StringPropertyWithNullExample), JsonSchemaTypes.String, "null" },
+#endif
         };
 
         [Theory]
@@ -105,8 +112,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Subject().Apply(schema, filterContext);
 
-            Assert.NotNull(schema.Example);
-            Assert.Equal(expectedExampleAsJson, schema.Example.ToJson());
+            Assert.Equal(expectedExampleAsJson, schema.Example?.ToJson());
         }
 
         public static TheoryData<Type, string, JsonSchemaType> Apply_DoesNotSetExample_WhenPropertyExampleTagIsNotProvided_Data => new()
@@ -172,7 +178,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             CultureInfo.CurrentCulture = defaultCulture;
 
+#if NET10_0_OR_GREATER
+            Assert.NotNull(schema.Example);
+            Assert.Equal(expectedValue, schema.Example.GetValue<float>());
+#else
             Assert.Equal(expectedValue, schema.Example.GetType().GetProperty("Value").GetValue(schema.Example));
+#endif
         }
 
         private static XmlCommentsSchemaFilter Subject()
