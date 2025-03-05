@@ -348,7 +348,11 @@ public class SwaggerGeneratorVerifyTests
             .UniqueForTargetFrameworkAndVersion();
     }
 
+#if NET10_0_OR_GREATER
+    [Fact(Skip = "TODO Unskip when a newer version of Microsot.OpenApi v2 is used by ASP.NET Core 10")]
+#else
     [Fact]
+#endif
     public Task TagSelectorIsSpecified()
     {
         var subject = Subject(
@@ -374,7 +378,11 @@ public class SwaggerGeneratorVerifyTests
             .UniqueForTargetFrameworkAndVersion();
     }
 
+#if NET10_0_OR_GREATER
+    [Fact(Skip = "TODO Unskip when a newer version of Microsot.OpenApi v2 is used by ASP.NET Core 10")]
+#else
     [Fact]
+#endif
     public Task EndpointMetadataHasTags()
     {
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));

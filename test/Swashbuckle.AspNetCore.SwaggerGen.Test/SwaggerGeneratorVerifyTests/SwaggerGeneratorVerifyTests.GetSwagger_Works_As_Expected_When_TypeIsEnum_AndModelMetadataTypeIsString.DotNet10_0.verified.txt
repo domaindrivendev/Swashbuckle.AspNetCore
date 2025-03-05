@@ -1,0 +1,81 @@
+﻿{
+  Workspace: {
+    BaseUrl: https://openapi.net/
+  },
+  Info: {
+    Title: Test API,
+    Version: V1
+  },
+  Paths: {
+    /resource: {
+      Operations: {
+        Post: {
+          Tags: [
+            null
+          ],
+          Parameters: [
+            {
+              UnresolvedReference: false,
+              Name: param1,
+              In: Query,
+              Required: false,
+              Deprecated: false,
+              AllowEmptyValue: false,
+              Style: Form,
+              Explode: true,
+              AllowReserved: false,
+              Schema: {
+                UnEvaluatedProperties: false,
+                ReadOnly: false,
+                WriteOnly: false,
+                AdditionalPropertiesAllowed: true,
+                Nullable: false,
+                UnevaluatedProperties: false,
+                Deprecated: false,
+                UnresolvedReference: false,
+                Reference: {
+                  IsFragment: false,
+                  Type: Schema,
+                  Id: IntEnum,
+                  IsExternal: false,
+                  IsLocal: true,
+                  ReferenceV3: #/components/schemas/IntEnum,
+                  ReferenceV2: #/definitions/IntEnum
+                }
+              }
+            }
+          ],
+          Responses: {
+            200: {
+              Description: OK,
+              UnresolvedReference: false
+            }
+          },
+          Deprecated: false
+        }
+      },
+      UnresolvedReference: false
+    }
+  },
+  Components: {
+    Schemas: {
+      IntEnum: {
+        UnEvaluatedProperties: false,
+        Type: Integer,
+        Format: int32,
+        ReadOnly: false,
+        WriteOnly: false,
+        AdditionalPropertiesAllowed: true,
+        Enum: [
+          {},
+          {},
+          {}
+        ],
+        Nullable: false,
+        UnevaluatedProperties: false,
+        Deprecated: false,
+        UnresolvedReference: false
+      }
+    }
+  }
+}
