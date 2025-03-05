@@ -4,6 +4,12 @@ using System.Linq;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
+#if NET10_0
+using OpenApiTag = Microsoft.OpenApi.Models.References.OpenApiTagReference;
+#else
+using OpenApiTag = Microsoft.OpenApi.Models.OpenApiTag;
+#endif
+
 namespace Swashbuckle.AspNetCore.Annotations
 {
     public class AnnotationsOperationFilter : IOperationFilter
@@ -63,13 +69,15 @@ namespace Swashbuckle.AspNetCore.Annotations
             if (swaggerOperationAttribute.OperationId != null)
                 operation.OperationId = swaggerOperationAttribute.OperationId;
 
-            // TODO Fix this
-#if !NET10_0_OR_GREATER
             if (swaggerOperationAttribute.Tags != null)
             {
+#if NET10_0_OR_GREATER
+                // TODO Get the document?
+                operation.Tags = [.. swaggerOperationAttribute.Tags.Select(tagName => new OpenApiTag(tagName, null))];
+#else
                 operation.Tags = [.. swaggerOperationAttribute.Tags.Select(tagName => new OpenApiTag { Name = tagName })];
-            }
 #endif
+            }
         }
 
         public static void ApplySwaggerOperationFilterAttributes(
