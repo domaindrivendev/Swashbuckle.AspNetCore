@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi;
 using Microsoft.OpenApi.Writers;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -19,6 +20,9 @@ namespace Swashbuckle.AspNetCore.Cli
 {
     internal class Program
     {
+        private const string OpenApiVersionOption = "--openapiversion";
+        private const string SerializeAsV2Flag = "--serializeasv2";
+
         public static int Main(string[] args)
         {
             // Helper to simplify command line parsing etc.
@@ -30,7 +34,7 @@ namespace Swashbuckle.AspNetCore.Cli
             // startupassembly and it's transitive dependencies. See https://github.com/dotnet/coreclr/issues/13277 for more.
 
             // > dotnet swagger tofile ...
-            runner.SubCommand("tofile", "retrieves Swagger from a startup assembly, and writes to file ", c =>
+            runner.SubCommand("tofile", "retrieves Swagger from a startup assembly, and writes to file", c =>
             {
                 c.Argument("startupassembly", "relative path to the application's startup assembly");
                 c.Argument("swaggerdoc", "name of the swagger doc you want to retrieve, as configured in your startup class");
@@ -38,17 +42,20 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Option("--output", "relative path where the Swagger will be output, defaults to stdout");
                 c.Option("--host", "a specific host to include in the Swagger output");
                 c.Option("--basepath", "a specific basePath to include in the Swagger output");
-                c.Option("--serializeasv2", "output Swagger in the V2 format rather than V3", true);
+                c.Option(OpenApiVersionOption, "output Swagger in the specified version, defaults to 3.0");
                 c.Option("--yaml", "exports swagger in a yaml format", true);
+
+                // TODO Remove this option in the major version that adds support for OpenAPI 3.1
+                c.Option(SerializeAsV2Flag, "output Swagger in the V2 format rather than V3 [deprecated]", true);
 
                 c.OnRun((namedArgs) =>
                 {
                     string subProcessCommandLine = PrepareCommandLine(args, namedArgs);
 
-                    var subProcess = Process.Start("dotnet", subProcessCommandLine);
+                    using var child = Process.Start("dotnet", subProcessCommandLine);
 
-                    subProcess.WaitForExit();
-                    return subProcess.ExitCode;
+                    child.WaitForExit();
+                    return child.ExitCode;
                 });
             });
 
@@ -60,8 +67,12 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.Option("--output", "");
                 c.Option("--host", "");
                 c.Option("--basepath", "");
-                c.Option("--serializeasv2", "", true);
+                c.Option(OpenApiVersionOption, "");
                 c.Option("--yaml", "", true);
+
+                // TODO Remove this option in the major version that adds support for OpenAPI 3.1
+                c.Option(SerializeAsV2Flag, "", true);
+
                 c.OnRun((namedArgs) =>
                 {
                     SetupAndRetrieveSwaggerProviderAndOptions(namedArgs, out var swaggerProvider, out var swaggerOptions);
@@ -98,24 +109,40 @@ namespace Swashbuckle.AspNetCore.Cli
                         writer = new OpenApiJsonWriter(streamWriter);
                     }
 
-                    if (namedArgs.ContainsKey("--serializeasv2"))
+                    OpenApiSpecVersion specVersion = OpenApiSpecVersion.OpenApi3_0;
+
+                    if (namedArgs.TryGetValue(OpenApiVersionOption, out var versionArg))
                     {
-                        if (swaggerDocumentSerializer != null)
+                        specVersion = versionArg switch
                         {
-                            swaggerDocumentSerializer.SerializeDocument(swagger, writer, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0);
-                        }
-                        else
-                        {
-                            swagger.SerializeAsV2(writer);
-                        }
+                            "2.0" => OpenApiSpecVersion.OpenApi2_0,
+                            "3.0" => OpenApiSpecVersion.OpenApi3_0,
+                            _ => throw new NotSupportedException($"The specified OpenAPI version \"{versionArg}\" is not supported."),
+                        };
                     }
-                    else if (swaggerDocumentSerializer != null)
+                    else if (namedArgs.ContainsKey(SerializeAsV2Flag))
                     {
-                        swaggerDocumentSerializer.SerializeDocument(swagger, writer, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0);
+                        specVersion = OpenApiSpecVersion.OpenApi2_0;
+                        WriteSerializeAsV2DeprecationWarning();
+                    }
+
+                    if (swaggerDocumentSerializer != null)
+                    {
+                        swaggerDocumentSerializer.SerializeDocument(swagger, writer, specVersion);
                     }
                     else
                     {
-                        swagger.SerializeAsV3(writer);
+                        switch (specVersion)
+                        {
+                            case OpenApiSpecVersion.OpenApi2_0:
+                                swagger.SerializeAsV2(writer);
+                                break;
+
+                            case OpenApiSpecVersion.OpenApi3_0:
+                            default:
+                                swagger.SerializeAsV3(writer);
+                                break;
+                        }
                     }
 
                     if (outputPath != null)
@@ -136,10 +163,10 @@ namespace Swashbuckle.AspNetCore.Cli
                 {
                     string subProcessCommandLine = PrepareCommandLine(args, namedArgs);
 
-                    var subProcess = Process.Start("dotnet", subProcessCommandLine);
+                    using var child = Process.Start("dotnet", subProcessCommandLine);
 
-                    subProcess.WaitForExit();
-                    return subProcess.ExitCode;
+                    child.WaitForExit();
+                    return child.ExitCode;
                 });
             });
 
@@ -151,7 +178,7 @@ namespace Swashbuckle.AspNetCore.Cli
                 c.OnRun((namedArgs) =>
                 {
                     SetupAndRetrieveSwaggerProviderAndOptions(namedArgs, out var swaggerProvider, out var swaggerOptions);
-                    IList<string> docNames = new List<string>();
+                    IList<string> docNames = [];
 
                     string outputPath = namedArgs.TryGetValue("--output", out var arg1)
                         ? Path.Combine(Directory.GetCurrentDirectory(), arg1)
@@ -189,7 +216,7 @@ namespace Swashbuckle.AspNetCore.Cli
             return runner.Run(args);
         }
 
-        private static void SetupAndRetrieveSwaggerProviderAndOptions(System.Collections.Generic.IDictionary<string, string> namedArgs, out ISwaggerProvider swaggerProvider, out IOptions<SwaggerOptions> swaggerOptions)
+        private static void SetupAndRetrieveSwaggerProviderAndOptions(IDictionary<string, string> namedArgs, out ISwaggerProvider swaggerProvider, out IOptions<SwaggerOptions> swaggerOptions)
         {
             // 1) Configure host with provided startupassembly
             var startupAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(
@@ -203,7 +230,7 @@ namespace Swashbuckle.AspNetCore.Cli
             swaggerOptions = serviceProvider.GetService<IOptions<SwaggerOptions>>();
         }
 
-        private static string PrepareCommandLine(string[] args, System.Collections.Generic.IDictionary<string, string> namedArgs)
+        private static string PrepareCommandLine(string[] args, IDictionary<string, string> namedArgs)
         {
             if (!File.Exists(namedArgs["startupassembly"]))
             {
@@ -226,7 +253,7 @@ namespace Swashbuckle.AspNetCore.Cli
                 EscapePath(runtimeConfig),
                 EscapePath(typeof(Program).GetTypeInfo().Assembly.Location),
                 commandName,
-                string.Join(" ", subProcessArguments.Select(x => EscapePath(x)))
+                string.Join(" ", subProcessArguments.Select(EscapePath))
             );
             return subProcessCommandLine;
         }
@@ -304,6 +331,22 @@ namespace Swashbuckle.AspNetCore.Cli
 
             host = (THost)factoryMethod.Invoke(null, null);
             return true;
+        }
+
+        private static void WriteSerializeAsV2DeprecationWarning()
+        {
+            const string AppName = "Swashbuckle.AspNetCore.Cli";
+
+            string message = $"The {SerializeAsV2Flag} flag will be removed in a future version of {AppName}. Use the {OpenApiVersionOption} option instead.";
+
+            Console.WriteLine(message);
+
+            // See https://docs.github.com/actions/writing-workflows/choosing-what-your-workflow-does/workflow-commands-for-github-actions#setting-a-warning-message
+            // and https://docs.github.com/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables#default-environment-variables
+            if (Environment.GetEnvironmentVariable("GITHUB_ACTIONS") is "true")
+            {
+                Console.WriteLine($"::warning title={AppName}::{message}");
+            }
         }
     }
 }
