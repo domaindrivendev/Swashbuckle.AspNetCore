@@ -1,5 +1,4 @@
 ﻿#if NET10_0_OR_GREATER
-using System;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 #endif
@@ -15,15 +14,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             OpenApiSchema schema,
             string exampleString)
         {
-            if (schema is null)
-            {
-                // TODO
-            }
-
             var isStringType =
                 schema?.ResolveType(schemaRepository) == JsonSchemaTypes.String &&
                 !string.Equals(exampleString, "null");
-
 
             if (isStringType)
             {
