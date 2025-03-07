@@ -115,18 +115,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     var builder = new StringBuilder().Append("```");
                     if (!codeText.StartsWith("\r") && !codeText.StartsWith("\n"))
                     {
-                        builder.AppendLine();
+                        builder.Append(EndOfLine(xmlCommentEndOfLine));
                     }
 
                     builder.Append(RemoveCommonLeadingWhitespace(codeText));
                     if (!codeText.EndsWith("\n"))
                     {
-                        builder.AppendLine();
+                        builder.Append(EndOfLine(xmlCommentEndOfLine));
                     }
 
                     var formattedCodeText = builder.Append("```")
                         .ToString();
-                    return DoubleUpLineBreaks().Replace(formattedCodeText, xmlCommentEndOfLine ?? Environment.NewLine);
+                    return DoubleUpLineBreaks().Replace(formattedCodeText, EndOfLine(xmlCommentEndOfLine));
                 }
 
                 return $"```{codeText}```";
@@ -140,7 +140,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private static string HumanizeBrTags(this string text, string xmlCommentEndOfLine)
         {
-            return BrTag().Replace(text, _ => xmlCommentEndOfLine ?? Environment.NewLine);
+            return BrTag().Replace(text, _ => EndOfLine(xmlCommentEndOfLine));
         }
 
         private static string DecodeXml(this string text)
@@ -187,6 +187,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
 
             return builder.ToString();
+        }
+
+        private static string EndOfLine(string xmlCommentEndOfLine)
+        {
+            return xmlCommentEndOfLine ?? Environment.NewLine;
         }
 
         private const string RefTagPattern = @"<(see|paramref) (name|cref|langword)=""([TPF]{1}:)?(?<display>.+?)"" ?/>";
