@@ -25,7 +25,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 .HumanizeRefTags()
                 .HumanizeHrefTags()
                 .HumanizeCodeTags()
-                .HumanizeMultilineCodeTags()
+                .HumanizeMultilineCodeTags(xmlCommentEndOfLine)
                 .HumanizeParaTags()
                 .HumanizeBrTags(xmlCommentEndOfLine) // must be called after HumanizeParaTags() so that it replaces any additional <br> tags
                 .DecodeXml();
@@ -105,7 +105,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return CodeTag().Replace(text, (match) => "`" + match.Groups["display"].Value + "`");
         }
 
-        private static string HumanizeMultilineCodeTags(this string text)
+        private static string HumanizeMultilineCodeTags(this string text, string xmlCommentEndOfLine)
         {
             return MultilineCodeTag().Replace(text, match =>
             {
@@ -118,9 +118,15 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         builder.AppendLine();
                     }
 
-                    return builder.AppendLine(codeText.TrimEnd())
-                        .Append("```")
+                    builder.Append(RemoveCommonLeadingWhitespace(codeText));
+                    if (!codeText.EndsWith("\n"))
+                    {
+                        builder.AppendLine();
+                    }
+
+                    var formattedCodeText = builder.Append("```")
                         .ToString();
+                    return DoubleUpLineBreaks().Replace(formattedCodeText, xmlCommentEndOfLine ?? Environment.NewLine);
                 }
 
                 return $"```{codeText}```";
@@ -129,11 +135,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private static string HumanizeParaTags(this string text)
         {
-            return ParaTag().Replace(text, match =>
-            {
-                var paraText = "<br>" + match.Groups["display"].Value.Trim();
-                return LineBreaks().Replace(paraText, _ => string.Empty);
-            });
+            return ParaTag().Replace(text, match => "<br>" + match.Groups["display"].Value.Trim());
         }
 
         private static string HumanizeBrTags(this string text, string xmlCommentEndOfLine)
@@ -146,6 +148,47 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return WebUtility.HtmlDecode(text);
         }
 
+        private static string RemoveCommonLeadingWhitespace(string input)
+        {
+            var lines = input.Split(["\r\n", "\n"], StringSplitOptions.None);
+            var minLeadingSpaces = int.MaxValue;
+            foreach (var line in lines)
+            {
+                if (string.IsNullOrEmpty(line))
+                {
+                    continue;
+                }
+
+                var leadingSpaces = line.Length - line.TrimStart(' ').Length;
+                minLeadingSpaces = Math.Min(minLeadingSpaces, leadingSpaces);
+                if (minLeadingSpaces == 0)
+                {
+                    break;
+                }
+            }
+
+            if (minLeadingSpaces is int.MaxValue or 0)
+            {
+                return input;
+            }
+
+            var builder = new StringBuilder();
+            foreach (var line in lines)
+            {
+                if (string.IsNullOrWhiteSpace(line))
+                {
+                    builder.AppendLine(line);
+                }
+                else
+                {
+                    builder.AppendLine(line.Substring(Math.Min(minLeadingSpaces,
+                        line.Length - line.TrimStart(' ').Length)));
+                }
+            }
+
+            return builder.ToString();
+        }
+
         private const string RefTagPattern = @"<(see|paramref) (name|cref|langword)=""([TPF]{1}:)?(?<display>.+?)"" ?/>";
         private const string CodeTagPattern = @"<c>(?<display>.+?)</c>";
         private const string MultilineCodeTagPattern = @"<code>(?<display>.+?)</code>";
@@ -153,6 +196,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private const string HrefPattern = @"<see href=\""(.*)\"">(.*)<\/see>";
         private const string BrPattern = @"(<br ?\/?>)"; // handles <br>, <br/>, <br />
         private const string LineBreaksPattern = @"\r?\n";
+        private const string DoubleUpLineBreaksPattern = @"(\r?\n){2,}";
 
 #if NET7_0_OR_GREATER
         [GeneratedRegex(RefTagPattern)]
@@ -175,6 +219,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         [GeneratedRegex(LineBreaksPattern)]
         private static partial Regex LineBreaks();
+
+        [GeneratedRegex(DoubleUpLineBreaksPattern)]
+        private static partial Regex DoubleUpLineBreaks();
 #else
         private static readonly Regex _refTag = new(RefTagPattern);
         private static readonly Regex _codeTag = new(CodeTagPattern);
@@ -183,6 +230,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private static readonly Regex _hrefTag = new(HrefPattern);
         private static readonly Regex _brTag = new(BrPattern);
         private static readonly Regex _lineBreaks = new(LineBreaksPattern);
+        private static readonly Regex _doubleUpLineBreaks = new(DoubleUpLineBreaksPattern);
 
         private static Regex RefTag() => _refTag;
         private static Regex CodeTag() => _codeTag;
@@ -191,6 +239,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private static Regex HrefTag() => _hrefTag;
         private static Regex BrTag() => _brTag;
         private static Regex LineBreaks() => _lineBreaks;
+        private static Regex DoubleUpLineBreaks() => _doubleUpLineBreaks;
 #endif
     }
 }

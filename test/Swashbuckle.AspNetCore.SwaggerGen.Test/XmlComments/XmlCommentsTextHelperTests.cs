@@ -199,7 +199,7 @@ A line of text",
 
             var output = XmlCommentsTextHelper.Humanize(input);
 
-            Assert.Equal("\r\nThis is a paragraph. MultiLined.\r\n\r\nThis is a paragraph.", output, false, true);
+            Assert.Equal("\r\nThis is a paragraph.\r\n MultiLined.\r\n\r\nThis is a paragraph.", output, false, true);
         }
 
         [Fact]
@@ -218,10 +218,10 @@ A line of text",
             var expected = string.Join("\r\n",
             [
                 "```",
-                "   {",
-                "    \"Prop1\":1,",
-                "    \"Prop2\":[]",
-                "   }",
+                "{",
+                " \"Prop1\":1,",
+                " \"Prop2\":[]",
+                "}",
                 "```"
             ]);
             Assert.Equal(expected, output, false, true);
@@ -246,6 +246,51 @@ A line of text",
                 "    \"Prop1\":1,",
                 "    \"Prop2\":[]",
                 "   }",
+                "```"
+            ]);
+            Assert.Equal(expected, output, false, true);
+        }
+
+        [Fact]
+        public void Humanize_CodeInsideParaTag()
+        {
+            var input = string.Join("\r\n",
+            [
+                "<para>Creates a new Answer</para>",
+                "<para><code><![CDATA[",
+                "POST /api/answers",
+                "{",
+                """  "name": "OnlyYes",""",
+                """  "label": "Yes",""",
+                """  "answers": [""",
+                "                 {",
+                """                     "answer": "yes""",
+                "                 }",
+                "             ]",
+                "}",
+                "]]></code></para>",
+            ]);
+
+            var output = XmlCommentsTextHelper.Humanize(input);
+
+            var expected = string.Join("\r\n",
+            [
+                "",
+                "Creates a new Answer",
+                "",
+                "```",
+                "<![CDATA[",
+                "POST /api/answers",
+                "{",
+                """  "name": "OnlyYes",""",
+                """  "label": "Yes",""",
+                """  "answers": [""",
+                "                 {",
+                """                     "answer": "yes""",
+                "                 }",
+                "             ]",
+                "}",
+                "]]>",
                 "```"
             ]);
             Assert.Equal(expected, output, false, true);
