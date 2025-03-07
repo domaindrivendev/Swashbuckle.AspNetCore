@@ -118,15 +118,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         builder.Append(EndOfLine(xmlCommentEndOfLine));
                     }
 
-                    builder.Append(RemoveCommonLeadingWhitespace(codeText));
+                    builder.Append(RemoveCommonLeadingWhitespace(codeText, xmlCommentEndOfLine));
                     if (!codeText.EndsWith("\n"))
                     {
                         builder.Append(EndOfLine(xmlCommentEndOfLine));
                     }
 
-                    var formattedCodeText = builder.Append("```")
-                        .ToString();
-                    return DoubleUpLineBreaks().Replace(formattedCodeText, EndOfLine(xmlCommentEndOfLine));
+                    builder.Append("```");
+                    return DoubleUpLineBreaks().Replace(builder.ToString(), EndOfLine(xmlCommentEndOfLine));
                 }
 
                 return $"```{codeText}```";
@@ -148,7 +147,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return WebUtility.HtmlDecode(text);
         }
 
-        private static string RemoveCommonLeadingWhitespace(string input)
+        private static string RemoveCommonLeadingWhitespace(string input, string xmlCommentEndOfLine)
         {
             var lines = input.Split(["\r\n", "\n"], StringSplitOptions.None);
             var minLeadingSpaces = int.MaxValue;
@@ -163,11 +162,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 minLeadingSpaces = Math.Min(minLeadingSpaces, leadingSpaces);
                 if (minLeadingSpaces == 0)
                 {
-                    break;
+                    return input;
                 }
             }
 
-            if (minLeadingSpaces is int.MaxValue or 0)
+            if (minLeadingSpaces is int.MaxValue)
             {
                 return input;
             }
@@ -175,15 +174,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             var builder = new StringBuilder();
             foreach (var line in lines)
             {
-                if (string.IsNullOrWhiteSpace(line))
-                {
-                    builder.AppendLine(line);
-                }
-                else
-                {
-                    builder.AppendLine(line.Substring(Math.Min(minLeadingSpaces,
-                        line.Length - line.TrimStart(' ').Length)));
-                }
+                builder.Append(string.IsNullOrWhiteSpace(line)
+                    ? line
+                    : line.Substring(minLeadingSpaces));
+                builder.Append(EndOfLine(xmlCommentEndOfLine));
             }
 
             return builder.ToString();
