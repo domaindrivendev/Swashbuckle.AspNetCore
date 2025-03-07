@@ -16,19 +16,49 @@
     <ReportGeneratorReportTypes>HTML</ReportGeneratorReportTypes>
     <ReportGeneratorReportTypes Condition=" '$(ReportGeneratorOutputMarkdown)' == 'true' ">$(ReportGeneratorReportTypes);MarkdownSummaryGitHub</ReportGeneratorReportTypes>
     <ReportGeneratorTargetDirectory>$([System.IO.Path]::Combine($(ArtifactsPath), 'coverage'))</ReportGeneratorTargetDirectory>
+    <ReportGeneratorMarkdownSummary>$([System.IO.Path]::Combine($(ReportGeneratorTargetDirectory), 'SummaryGithub.md'))</ReportGeneratorMarkdownSummary>
     <MergeWith>$([System.IO.Path]::Combine($(ReportGeneratorTargetDirectory), 'coverage.json'))</MergeWith>
   </PropertyGroup>
+  <UsingTask TaskName="WriteLinesToFileWithRetry" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <File ParameterType="System.String" Required="true" />
+      <Lines ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Code Type="Fragment" Language="cs"><![CDATA[
+        var lines = new System.Collections.Generic.List<string>();
+        foreach (var line in Lines)
+        {
+            lines.Add(line.ItemSpec);
+        }
+        int attempt = 0;
+        while (attempt < 3)
+        {
+            try
+            {
+                System.IO.File.WriteAllLines(File, lines);
+                break;
+            }
+            catch (System.IO.IOException)
+            {
+                attempt++;
+                System.Threading.Thread.Sleep(1_000);
+            }
+        }
+   ]]></Code>
+    </Task>
+  </UsingTask>
   <Target Name="GenerateCoverageReports" AfterTargets="GenerateCoverageResultAfterTest" Condition=" '$(CollectCoverage)' == 'true' ">
     <ReportGenerator ReportFiles="@(CoverletReport)" ReportTypes="$(ReportGeneratorReportTypes)" Tag="$(Version)" TargetDirectory="$(ReportGeneratorTargetDirectory)" Title="$(AssemblyName)" VerbosityLevel="Warning" />
-    <PropertyGroup Condition=" '$(ReportGeneratorOutputMarkdown)' == 'true' ">
+    <PropertyGroup Condition=" '$(ReportGeneratorOutputMarkdown)' == 'true' AND Exists('$(ReportGeneratorMarkdownSummary)') ">
       <_ReportSummaryContent>&lt;details&gt;&lt;summary&gt;:chart_with_upwards_trend: &lt;b&gt;$(AssemblyName) Code Coverage report&lt;/b&gt;&lt;/summary&gt;</_ReportSummaryContent>
       <_ReportSummaryContent>$(_ReportSummaryContent)$([System.Environment]::NewLine)</_ReportSummaryContent>
       <_ReportSummaryContent>$(_ReportSummaryContent)$([System.Environment]::NewLine)</_ReportSummaryContent>
-      <_ReportSummaryContent>$(_ReportSummaryContent)$([System.IO.File]::ReadAllText('$([System.IO.Path]::Combine($(ReportGeneratorTargetDirectory), 'SummaryGithub.md'))'))</_ReportSummaryContent>
+      <_ReportSummaryContent>$(_ReportSummaryContent)$([System.IO.File]::ReadAllText('$(ReportGeneratorMarkdownSummary)'))</_ReportSummaryContent>
       <_ReportSummaryContent>$(_ReportSummaryContent)$([System.Environment]::NewLine)</_ReportSummaryContent>
       <_ReportSummaryContent>$(_ReportSummaryContent)$([System.Environment]::NewLine)</_ReportSummaryContent>
       <_ReportSummaryContent>$(_ReportSummaryContent)&lt;/details&gt;</_ReportSummaryContent>
     </PropertyGroup>
-    <WriteLinesToFile Condition=" '$(ReportGeneratorOutputMarkdown)' == 'true' " ContinueOnError="WarnAndContinue" File="$(GITHUB_STEP_SUMMARY)" Lines="$(_ReportSummaryContent)" />
+    <WriteLinesToFileWithRetry Condition=" '$(ReportGeneratorOutputMarkdown)' == 'true' AND Exists('$(ReportGeneratorMarkdownSummary)') " ContinueOnError="WarnAndContinue" File="$(GITHUB_STEP_SUMMARY)" Lines="$(_ReportSummaryContent)" />
   </Target>
 </Project>
