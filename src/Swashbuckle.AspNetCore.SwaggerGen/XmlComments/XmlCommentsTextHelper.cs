@@ -169,7 +169,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return builder.ToString();
         }
 
-        private static string EndOfLine(string xmlCommentEndOfLine)
+        internal static string EndOfLine(string xmlCommentEndOfLine)
         {
             return xmlCommentEndOfLine ?? Environment.NewLine;
         }

@@ -1,5 +1,4 @@
-﻿using System;
-using Xunit;
+﻿using Xunit;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -145,29 +144,10 @@ A line of text",
             Assert.Equal(expectedOutput, output, false, true);
         }
 
-        [Fact]
-        public void Humanize_MultilineBrTag_EolNotSpecified()
-        {
-            const string input = @"
-            This is a paragraph.
-            <br>
-            A parameter after br tag.";
-
-            var output = XmlCommentsTextHelper.Humanize(input);
-
-            // Result view for Linux: This is a paragraph.\r\n\n\r\nA parameter after br tag.
-            var expected = string.Join("\r\n",
-            [
-                "This is a paragraph.",
-                Environment.NewLine,
-                "A parameter after br tag."
-            ]);
-            Assert.Equal(expected, output, false, ignoreLineEndingDifferences: false);
-        }
-
         [Theory]
         [InlineData("\r\n")]
         [InlineData("\n")]
+        [InlineData(null)]
         public void Humanize_MultilineBrTag_SpecificEol(string xmlCommentEndOfLine)
         {
             const string input = @"
@@ -177,7 +157,7 @@ A line of text",
 
             var output = XmlCommentsTextHelper.Humanize(input, xmlCommentEndOfLine);
 
-            var expected = string.Join(xmlCommentEndOfLine,
+            var expected = string.Join(XmlCommentsTextHelper.EndOfLine(xmlCommentEndOfLine),
             [
                 "This is a paragraph.",
                 "",
@@ -215,7 +195,7 @@ A line of text",
 
             var output = XmlCommentsTextHelper.Humanize(input);
 
-            var expected = string.Join("\r\n",
+            var expected = string.Join(XmlCommentsTextHelper.EndOfLine(null),
             [
                 "```",
                 "{",
@@ -224,7 +204,7 @@ A line of text",
                 "}",
                 "```"
             ]);
-            Assert.Equal(expected, output, false, true);
+            Assert.Equal(expected, output);
         }
 
         [Fact]
@@ -239,7 +219,7 @@ A line of text",
 
             var output = XmlCommentsTextHelper.Humanize(input);
 
-            var expected = string.Join("\r\n",
+            var expected = string.Join(XmlCommentsTextHelper.EndOfLine(null),
             [
                 "```",
                 "{",
@@ -248,13 +228,13 @@ A line of text",
                 "   }",
                 "```"
             ]);
-            Assert.Equal(expected, output, false, true);
+            Assert.Equal(expected, output);
         }
 
         [Fact]
         public void Humanize_CodeInsideParaTag()
         {
-            var input = string.Join("\r\n",
+            var input = string.Join(XmlCommentsTextHelper.EndOfLine(null),
             [
                 "<para>Creates a new Answer</para>",
                 "<para><code><![CDATA[",
@@ -273,7 +253,7 @@ A line of text",
 
             var output = XmlCommentsTextHelper.Humanize(input);
 
-            var expected = string.Join("\r\n",
+            var expected = string.Join(XmlCommentsTextHelper.EndOfLine(null),
             [
                 "",
                 "Creates a new Answer",
@@ -293,7 +273,7 @@ A line of text",
                 "]]>",
                 "```"
             ]);
-            Assert.Equal(expected, output, false, true);
+            Assert.Equal(expected, output);
         }
     }
 }
