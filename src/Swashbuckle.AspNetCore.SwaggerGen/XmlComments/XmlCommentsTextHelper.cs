@@ -33,10 +33,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private static string NormalizeIndentation(this string text, string xmlCommentEndOfLine)
         {
-            string[] lines = text.Split('\n');
+            var lines = text.Split(["\r\n", "\n"], StringSplitOptions.None);
             string padding = GetCommonLeadingWhitespace(lines);
 
-            int padLen = padding == null ? 0 : padding.Length;
+            int padLen = padding?.Length ?? 0;
 
             // remove leading padding from each line
             for (int i = 0, l = lines.Length; i < l; ++i)
@@ -51,7 +51,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             // remove leading empty lines, but not all leading padding
             // remove all trailing whitespace, regardless
-            return string.Join(xmlCommentEndOfLine ?? "\r\n", lines.SkipWhile(x => string.IsNullOrWhiteSpace(x))).TrimEnd();
+            return string.Join(EndOfLine(xmlCommentEndOfLine), lines.SkipWhile(string.IsNullOrWhiteSpace)).TrimEnd();
         }
 
         private static string GetCommonLeadingWhitespace(string[] lines)
