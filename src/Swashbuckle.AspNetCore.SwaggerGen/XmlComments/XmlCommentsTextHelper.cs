@@ -150,27 +150,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private static string RemoveCommonLeadingWhitespace(string input, string xmlCommentEndOfLine)
         {
             var lines = input.Split(["\r\n", "\n"], StringSplitOptions.None);
-            var minLeadingSpaces = int.MaxValue;
-            foreach (var line in lines)
-            {
-                if (string.IsNullOrEmpty(line))
-                {
-                    continue;
-                }
-
-                var leadingSpaces = line.Length - line.TrimStart(' ').Length;
-                minLeadingSpaces = Math.Min(minLeadingSpaces, leadingSpaces);
-                if (minLeadingSpaces == 0)
-                {
-                    return input;
-                }
-            }
-
-            if (minLeadingSpaces is int.MaxValue)
+            var padding = GetCommonLeadingWhitespace(lines);
+            if (string.IsNullOrEmpty(padding))
             {
                 return input;
             }
 
+            var minLeadingSpaces = padding.Length;
             var builder = new StringBuilder();
             foreach (var line in lines)
             {
