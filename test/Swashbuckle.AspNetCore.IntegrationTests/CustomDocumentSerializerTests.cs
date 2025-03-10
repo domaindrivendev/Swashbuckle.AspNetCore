@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -75,13 +76,25 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         [Fact]
         public async Task DocumentProvider_Writes_Custom_V2_Document()
         {
+            await DocumentProviderWritesCustomV2Document(
+                (options) => options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0);
+        }
+
+        [Obsolete]
+        [Fact]
+        public async Task DocumentProvider_Writes_Custom_V2_Document_SerializeAsV2()
+            => await DocumentProviderWritesCustomV2Document((options) => options.SerializeAsV2 = true);
+
+        private static async Task DocumentProviderWritesCustomV2Document(Action<SwaggerOptions> configure)
+        {
             var testSite = new TestSite(typeof(CustomDocumentSerializer.Startup));
             var server = testSite.BuildServer();
             var services = server.Host.Services;
 
             var documentProvider = services.GetService<IDocumentProvider>();
             var options = services.GetService<IOptions<SwaggerOptions>>();
-            options.Value.SerializeAsV2 = true;
+
+            configure(options.Value);
 
             using var stream = new MemoryStream();
 
