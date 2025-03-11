@@ -93,7 +93,7 @@
           "CrudActions"
         ],
         "summary": "Get all products",
-        "description": "```\r\n            {\r\n              \"Id\":1,\r\n              \"Description\":\"\",\r\n              \"Status\": 0,\r\n              \"Status2\": 1\r\n            }\r\n```",
+        "description": "```\r\n{\r\n  \"Id\":1,\r\n  \"Description\":\"\",\r\n  \"Status\": 0,\r\n  \"Status2\": 1\r\n}\r\n            \r\n```",
         "responses": {
           "200": {
             "description": "OK",
@@ -199,7 +199,7 @@
           "CrudActions"
         ],
         "summary": "Updates some properties of a specific product",
-        "description": "\r\nOnly provided properties will be updated,                    other remain unchanged.\r\n\r\nIdentifier must be non-default value\r\n\r\nBody must be specified",
+        "description": "\r\nOnly provided properties will be updated,\r\n                    other remain unchanged.\r\n\r\nIdentifier must be non-default value\r\n\r\nBody must be specified",
         "operationId": "PatchProduct",
         "parameters": [
           {
