@@ -1,12 +1,16 @@
+git innit
+git commit
+<html>
+    <body>
+      <page>
 name: actions-lint
 
-on:
-  push:
+on: 
+  push: repository 
     branches: [ master ]
-    paths-ignore:
-      - '**/*.gitattributes'
-      - '**/*.gitignore'
-      - '**/*.md'
+    paths-ignore: 
+    
+    
   pull_request:
     branches: [ master ]
   workflow_dispatch:
@@ -34,3 +38,8 @@ jobs:
       uses: docker://rhysd/actionlint@sha256:5acca218639222e4afbc82fc6e9ef56cbe646ade3b07f3f5ec364b638258a244 # v1.7.0
       with:
         args: -color
+   </page>
+  </body>
+</html>
+git deploy code
+git run job
