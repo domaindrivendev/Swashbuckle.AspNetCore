@@ -1,0 +1,4 @@
+Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions.SerializeAsV2.get -> bool
+Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions.SerializeAsV2.set -> void
+Swashbuckle.AspNetCore.Swagger.SwaggerOptions.SerializeAsV2.get -> bool
+Swashbuckle.AspNetCore.Swagger.SwaggerOptions.SerializeAsV2.set -> void

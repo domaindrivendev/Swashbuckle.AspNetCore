@@ -2,13 +2,6 @@ namespace CustomDocumentSerializer;
 
 public class Startup
 {
-    public Startup(IConfiguration configuration)
-    {
-        Configuration = configuration;
-    }
-
-    public IConfiguration Configuration { get; }
-
     public void ConfigureServices(IServiceCollection services)
     {
         services.AddControllers();
@@ -33,7 +26,7 @@ public class Startup
         {
             endpoints.MapControllers();
             endpoints.MapSwagger("swagger/{documentName}/swagger.json");
-            endpoints.MapSwagger("swagger/{documentName}/swaggerv2.json", c => c.SerializeAsV2 = true);
+            endpoints.MapSwagger("swagger/{documentName}/swaggerv2.json", c => c.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0);
         });
     }
 }
