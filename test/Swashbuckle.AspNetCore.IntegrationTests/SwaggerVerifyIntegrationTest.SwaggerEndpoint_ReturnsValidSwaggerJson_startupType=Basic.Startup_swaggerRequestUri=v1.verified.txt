@@ -1550,6 +1550,14 @@
           "TypeName"
         ],
         "type": "object",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/Rectangle"
+          },
+          {
+            "$ref": "#/components/schemas/Circle"
+          }
+        ],
         "properties": {
           "TypeName": {
             "type": "string"
