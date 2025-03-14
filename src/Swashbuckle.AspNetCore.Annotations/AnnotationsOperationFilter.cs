@@ -4,15 +4,21 @@ using System.Linq;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
+#if NET10_0
+using OpenApiTag = Microsoft.OpenApi.Models.References.OpenApiTagReference;
+#else
+using OpenApiTag = Microsoft.OpenApi.Models.OpenApiTag;
+#endif
+
 namespace Swashbuckle.AspNetCore.Annotations
 {
     public class AnnotationsOperationFilter : IOperationFilter
     {
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {
-            IEnumerable<object> controllerAttributes = Array.Empty<object>();
-            IEnumerable<object> actionAttributes = Array.Empty<object>();
-            IEnumerable<object> metadataAttributes = Array.Empty<object>();
+            IEnumerable<object> controllerAttributes = [];
+            IEnumerable<object> actionAttributes = [];
+            IEnumerable<object> metadataAttributes = [];
 
             if (context.MethodInfo != null)
             {
@@ -65,9 +71,12 @@ namespace Swashbuckle.AspNetCore.Annotations
 
             if (swaggerOperationAttribute.Tags != null)
             {
-                operation.Tags = swaggerOperationAttribute.Tags
-                    .Select(tagName => new OpenApiTag { Name = tagName })
-                    .ToList();
+#if NET10_0_OR_GREATER
+                // TODO Get the document?
+                operation.Tags = [.. swaggerOperationAttribute.Tags.Select(tagName => new OpenApiTag(tagName, null))];
+#else
+                operation.Tags = [.. swaggerOperationAttribute.Tags.Select(tagName => new OpenApiTag { Name = tagName })];
+#endif
             }
         }
 
@@ -86,7 +95,7 @@ namespace Swashbuckle.AspNetCore.Annotations
             }
         }
 
-        private void ApplySwaggerResponseAttributes(
+        private static void ApplySwaggerResponseAttributes(
             OpenApiOperation operation,
             OperationFilterContext context,
             IEnumerable<object> controllerAndActionAttributes)
@@ -97,10 +106,7 @@ namespace Swashbuckle.AspNetCore.Annotations
             {
                 var statusCode = swaggerResponseAttribute.StatusCode.ToString();
 
-                if (operation.Responses == null)
-                {
-                    operation.Responses = new OpenApiResponses();
-                }
+                operation.Responses ??= [];
 
                 if (!operation.Responses.TryGetValue(statusCode, out OpenApiResponse response))
                 {

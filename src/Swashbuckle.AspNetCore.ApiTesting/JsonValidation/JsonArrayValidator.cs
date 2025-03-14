@@ -1,21 +1,15 @@
-using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Linq;
 
 namespace Swashbuckle.AspNetCore.ApiTesting
 {
-    public class JsonArrayValidator : IJsonValidator
+    public class JsonArrayValidator(IJsonValidator jsonValidator) : IJsonValidator
     {
-        private readonly IJsonValidator _jsonValidator;
+        private readonly IJsonValidator _jsonValidator = jsonValidator;
 
-        public JsonArrayValidator(IJsonValidator jsonValidator)
-        {
-            _jsonValidator = jsonValidator;
-        }
-
-        public bool CanValidate(OpenApiSchema schema) => schema.Type == "array";
+        public bool CanValidate(OpenApiSchema schema) => schema.Type == JsonSchemaTypes.Array;
 
         public bool Validate(
             OpenApiSchema schema,
@@ -25,7 +19,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting
         {
             if (instance.Type != JTokenType.Array)
             {
-                errorMessages = new[] { $"Path: {instance.Path}. Instance is not of type 'array'" };
+                errorMessages = [$"Path: {instance.Path}. Instance is not of type 'array'"];
                 return false;
             }
 
@@ -38,21 +32,29 @@ namespace Swashbuckle.AspNetCore.ApiTesting
                 foreach (var itemInstance in arrayInstance)
                 {
                     if (!_jsonValidator.Validate(schema.Items, openApiDocument, itemInstance, out IEnumerable<string> itemErrorMessages))
+                    {
                         errorMessagesList.AddRange(itemErrorMessages);
+                    }
                 }
             }
 
             // maxItems
-            if (schema.MaxItems.HasValue && (arrayInstance.Count() > schema.MaxItems.Value))
+            if (schema.MaxItems.HasValue && (arrayInstance.Count > schema.MaxItems.Value))
+            {
                 errorMessagesList.Add($"Path: {instance.Path}. Array size is greater than maxItems");
+            }
 
             // minItems
-            if (schema.MinItems.HasValue && (arrayInstance.Count() < schema.MinItems.Value))
+            if (schema.MinItems.HasValue && (arrayInstance.Count < schema.MinItems.Value))
+            {
                 errorMessagesList.Add($"Path: {instance.Path}. Array size is less than minItems");
+            }
 
             // uniqueItems
-            if (schema.UniqueItems.HasValue && (arrayInstance.Count() != arrayInstance.Distinct().Count()))
+            if (schema.UniqueItems.HasValue && (arrayInstance.Count != arrayInstance.Distinct().Count()))
+            {
                 errorMessagesList.Add($"Path: {instance.Path}. Array does not contain uniqueItems");
+            }
 
             errorMessages = errorMessagesList;
             return !errorMessages.Any();

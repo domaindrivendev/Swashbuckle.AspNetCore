@@ -1,0 +1,2 @@
+static Swashbuckle.AspNetCore.SwaggerGen.OpenApiAnyFactory.CreateFromJson(string json) -> Microsoft.OpenApi.Any.IOpenApiAny
+Swashbuckle.AspNetCore.SwaggerGen.OpenApiAnyFactory

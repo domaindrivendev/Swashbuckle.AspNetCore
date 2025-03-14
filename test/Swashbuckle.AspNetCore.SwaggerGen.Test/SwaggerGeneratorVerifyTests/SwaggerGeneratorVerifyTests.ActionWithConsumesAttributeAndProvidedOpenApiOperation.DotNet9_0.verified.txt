@@ -1,0 +1,67 @@
+﻿{
+  Info: {
+    Title: Test API,
+    Version: V1
+  },
+  Paths: {
+    /resource: {
+      Operations: {
+        Post: {
+          OperationId: OperationIdSetInMetadata,
+          RequestBody: {
+            UnresolvedReference: false,
+            Required: false,
+            Content: {
+              application/someMediaType: {
+                Schema: {
+                  ReadOnly: false,
+                  WriteOnly: false,
+                  AdditionalPropertiesAllowed: true,
+                  Nullable: false,
+                  Deprecated: false,
+                  UnresolvedReference: false,
+                  Reference: {
+                    IsFragrament: false,
+                    Type: Schema,
+                    Id: TestDto,
+                    IsExternal: false,
+                    IsLocal: true,
+                    ReferenceV3: #/components/schemas/TestDto,
+                    ReferenceV2: #/definitions/TestDto
+                  }
+                }
+              }
+            }
+          },
+          Deprecated: false
+        }
+      },
+      UnresolvedReference: false
+    }
+  },
+  Components: {
+    Schemas: {
+      TestDto: {
+        Type: object,
+        ReadOnly: false,
+        WriteOnly: false,
+        Properties: {
+          Prop1: {
+            Type: string,
+            ReadOnly: false,
+            WriteOnly: false,
+            AdditionalPropertiesAllowed: true,
+            Nullable: true,
+            Deprecated: false,
+            UnresolvedReference: false
+          }
+        },
+        AdditionalPropertiesAllowed: false,
+        Nullable: false,
+        Deprecated: false,
+        UnresolvedReference: false
+      }
+    }
+  },
+  HashCode: 59A5DD972A919CE8EF3F08E63BB492CCCA30B825146EA05B2BEF4690888EA52FB3CEC61C7F1F9A14629EDFF141CC49084DA127F3D6C5F555D8EA39F7B202C4E9
+}

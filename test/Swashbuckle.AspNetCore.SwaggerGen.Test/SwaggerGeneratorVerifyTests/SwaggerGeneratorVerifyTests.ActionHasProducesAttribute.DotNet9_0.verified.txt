@@ -1,0 +1,44 @@
+﻿{
+  Info: {
+    Title: Test API,
+    Version: V1
+  },
+  Paths: {
+    /resource: {
+      Operations: {
+        Post: {
+          Tags: [
+            {
+              Name: Fake,
+              UnresolvedReference: false
+            }
+          ],
+          Responses: {
+            200: {
+              Description: OK,
+              Content: {
+                application/someMediaType: {
+                  Schema: {
+                    Type: integer,
+                    Format: int32,
+                    ReadOnly: false,
+                    WriteOnly: false,
+                    AdditionalPropertiesAllowed: true,
+                    Nullable: false,
+                    Deprecated: false,
+                    UnresolvedReference: false
+                  }
+                }
+              },
+              UnresolvedReference: false
+            }
+          },
+          Deprecated: false
+        }
+      },
+      UnresolvedReference: false
+    }
+  },
+  Components: {},
+  HashCode: 70543EA64D7658413247389AF5490AD05BEEDF3D5FDCEC1436353732D8D2F1566EDB6CE23863A45C135B8715D60FA95B90E6D460181B1FEABD2CD061914DFE13
+}

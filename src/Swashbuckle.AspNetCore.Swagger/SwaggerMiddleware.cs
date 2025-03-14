@@ -16,6 +16,8 @@ namespace Swashbuckle.AspNetCore.Swagger
 {
     internal sealed class SwaggerMiddleware
     {
+        private static readonly Encoding UTF8WithoutBom = new UTF8Encoding(false);
+
         private readonly RequestDelegate _next;
         private readonly SwaggerOptions _options;
         private readonly TemplateMatcher _requestMatcher;
@@ -140,53 +142,71 @@ namespace Swashbuckle.AspNetCore.Swagger
 
         private async Task RespondWithSwaggerJson(HttpResponse response, OpenApiDocument swagger)
         {
+            string json;
+
+            using (var textWriter = new StringWriter(CultureInfo.InvariantCulture))
+            {
+                var openApiWriter = new OpenApiJsonWriter(textWriter);
+
+                WriteOpenApiDocumentContent(response, swagger, openApiWriter);
+
+                json = textWriter.ToString();
+            }
+
             response.StatusCode = 200;
             response.ContentType = "application/json;charset=utf-8";
 
-            using var textWriter = new StringWriter(CultureInfo.InvariantCulture);
-            var jsonWriter = new OpenApiJsonWriter(textWriter);
-
-            if (_options.SerializeAsV2)
-            {
-                if (_options.CustomDocumentSerializer != null)
-                    _options.CustomDocumentSerializer.SerializeDocument(swagger, jsonWriter, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0);
-                else
-                    swagger.SerializeAsV2(jsonWriter);
-            }
-            else
-            {
-                if (_options.CustomDocumentSerializer != null)
-                    _options.CustomDocumentSerializer.SerializeDocument(swagger, jsonWriter, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0);
-                else
-                    swagger.SerializeAsV3(jsonWriter);
-            }
-
-            await response.WriteAsync(textWriter.ToString(), new UTF8Encoding(false));
+            await response.WriteAsync(json, UTF8WithoutBom);
         }
 
         private async Task RespondWithSwaggerYaml(HttpResponse response, OpenApiDocument swagger)
         {
+            string yaml;
+
+            using (var textWriter = new StringWriter(CultureInfo.InvariantCulture))
+            {
+                var openApiWriter = new OpenApiYamlWriter(textWriter);
+
+                WriteOpenApiDocumentContent(response, swagger, openApiWriter);
+
+                yaml = textWriter.ToString();
+            }
+
             response.StatusCode = 200;
             response.ContentType = "text/yaml;charset=utf-8";
 
-            using var textWriter = new StringWriter(CultureInfo.InvariantCulture);
-            var yamlWriter = new OpenApiYamlWriter(textWriter);
-            if (_options.SerializeAsV2)
+            await response.WriteAsync(yaml, UTF8WithoutBom);
+        }
+
+        private void WriteOpenApiDocumentContent(
+            HttpResponse response,
+            OpenApiDocument swagger,
+            OpenApiWriterBase openApiWriter)
+        {
+            if (_options.CustomDocumentSerializer != null)
             {
-                if (_options.CustomDocumentSerializer != null)
-                    _options.CustomDocumentSerializer.SerializeDocument(swagger, yamlWriter, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0);
-                else
-                    swagger.SerializeAsV2(yamlWriter);
+                _options.CustomDocumentSerializer.SerializeDocument(swagger, openApiWriter, _options.OpenApiVersion);
             }
             else
             {
-                if (_options.CustomDocumentSerializer != null)
-                    _options.CustomDocumentSerializer.SerializeDocument(swagger, yamlWriter, Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0);
-                else
-                    swagger.SerializeAsV3(yamlWriter);
-            }
+                switch (_options.OpenApiVersion)
+                {
+                    case Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0:
+                        swagger.SerializeAsV2(openApiWriter);
+                        break;
 
-            await response.WriteAsync(textWriter.ToString(), new UTF8Encoding(false));
+#if NET10_0_OR_GREATER
+                    case Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_1:
+                        swagger.SerializeAsV31(openApiWriter);
+                        break;
+#endif
+
+                    case Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0:
+                    default:
+                        swagger.SerializeAsV3(openApiWriter);
+                        break;
+                }
+            }
         }
     }
 }
