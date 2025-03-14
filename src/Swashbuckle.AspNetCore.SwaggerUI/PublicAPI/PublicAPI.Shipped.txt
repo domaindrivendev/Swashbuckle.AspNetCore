@@ -60,6 +60,8 @@ Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.OAuth2RedirectUrl.get -> string
 Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.OAuth2RedirectUrl.set -> void
 Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.PersistAuthorization.get -> bool
 Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.PersistAuthorization.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.Plugins.get -> System.Collections.Generic.IList<string>
+Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.Plugins.set -> void
 Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.ShowCommonExtensions.get -> bool
 Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.ShowCommonExtensions.set -> void
 Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.ShowExtensions.get -> bool

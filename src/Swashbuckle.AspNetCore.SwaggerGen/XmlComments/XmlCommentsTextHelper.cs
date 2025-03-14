@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -9,28 +10,33 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         public static string Humanize(string text)
         {
+            return Humanize(text, null);
+        }
+
+        public static string Humanize(string text, string xmlCommentEndOfLine)
+        {
             if (text == null)
-                throw new ArgumentNullException("text");
+                throw new ArgumentNullException(nameof(text));
 
             //Call DecodeXml at last to avoid entities like &lt and &gt to break valid xml
 
             return text
-                .NormalizeIndentation()
+                .NormalizeIndentation(xmlCommentEndOfLine)
                 .HumanizeRefTags()
                 .HumanizeHrefTags()
                 .HumanizeCodeTags()
-                .HumanizeMultilineCodeTags()
+                .HumanizeMultilineCodeTags(xmlCommentEndOfLine)
                 .HumanizeParaTags()
-                .HumanizeBrTags() // must be called after HumanizeParaTags() so that it replaces any additional <br> tags
+                .HumanizeBrTags(xmlCommentEndOfLine) // must be called after HumanizeParaTags() so that it replaces any additional <br> tags
                 .DecodeXml();
         }
 
-        private static string NormalizeIndentation(this string text)
+        private static string NormalizeIndentation(this string text, string xmlCommentEndOfLine)
         {
-            string[] lines = text.Split('\n');
+            var lines = text.Split(["\r\n", "\n"], StringSplitOptions.None);
             string padding = GetCommonLeadingWhitespace(lines);
 
-            int padLen = padding == null ? 0 : padding.Length;
+            int padLen = padding?.Length ?? 0;
 
             // remove leading padding from each line
             for (int i = 0, l = lines.Length; i < l; ++i)
@@ -45,7 +51,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             // remove leading empty lines, but not all leading padding
             // remove all trailing whitespace, regardless
-            return string.Join("\r\n", lines.SkipWhile(x => string.IsNullOrWhiteSpace(x))).TrimEnd();
+            return string.Join(EndOfLine(xmlCommentEndOfLine), lines.SkipWhile(string.IsNullOrWhiteSpace)).TrimEnd();
         }
 
         private static string GetCommonLeadingWhitespace(string[] lines)
@@ -99,24 +105,73 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             return CodeTag().Replace(text, (match) => "`" + match.Groups["display"].Value + "`");
         }
 
-        private static string HumanizeMultilineCodeTags(this string text)
+        private static string HumanizeMultilineCodeTags(this string text, string xmlCommentEndOfLine)
         {
-            return MultilineCodeTag().Replace(text, (match) => "```" + match.Groups["display"].Value + "```");
+            return MultilineCodeTag().Replace(text, match =>
+            {
+                var codeText = match.Groups["display"].Value;
+                if (LineBreaks().IsMatch(codeText))
+                {
+                    var builder = new StringBuilder().Append("```");
+                    if (!codeText.StartsWith("\r") && !codeText.StartsWith("\n"))
+                    {
+                        builder.Append(EndOfLine(xmlCommentEndOfLine));
+                    }
+
+                    builder.Append(RemoveCommonLeadingWhitespace(codeText, xmlCommentEndOfLine));
+                    if (!codeText.EndsWith("\n"))
+                    {
+                        builder.Append(EndOfLine(xmlCommentEndOfLine));
+                    }
+
+                    builder.Append("```");
+                    return DoubleUpLineBreaks().Replace(builder.ToString(), EndOfLine(xmlCommentEndOfLine));
+                }
+
+                return $"```{codeText}```";
+            });
         }
 
         private static string HumanizeParaTags(this string text)
         {
-            return ParaTag().Replace(text, (match) => "<br>" + match.Groups["display"].Value);
+            return ParaTag().Replace(text, match => "<br>" + match.Groups["display"].Value.Trim());
         }
 
-        private static string HumanizeBrTags(this string text)
+        private static string HumanizeBrTags(this string text, string xmlCommentEndOfLine)
         {
-            return BrTag().Replace(text, m => Environment.NewLine);
+            return BrTag().Replace(text, _ => EndOfLine(xmlCommentEndOfLine));
         }
 
         private static string DecodeXml(this string text)
         {
             return WebUtility.HtmlDecode(text);
+        }
+
+        private static string RemoveCommonLeadingWhitespace(string input, string xmlCommentEndOfLine)
+        {
+            var lines = input.Split(["\r\n", "\n"], StringSplitOptions.None);
+            var padding = GetCommonLeadingWhitespace(lines);
+            if (string.IsNullOrEmpty(padding))
+            {
+                return input;
+            }
+
+            var minLeadingSpaces = padding.Length;
+            var builder = new StringBuilder();
+            foreach (var line in lines)
+            {
+                builder.Append(string.IsNullOrWhiteSpace(line)
+                    ? line
+                    : line.Substring(minLeadingSpaces));
+                builder.Append(EndOfLine(xmlCommentEndOfLine));
+            }
+
+            return builder.ToString();
+        }
+
+        internal static string EndOfLine(string xmlCommentEndOfLine)
+        {
+            return xmlCommentEndOfLine ?? Environment.NewLine;
         }
 
         private const string RefTagPattern = @"<(see|paramref) (name|cref|langword)=""([TPF]{1}:)?(?<display>.+?)"" ?/>";
@@ -125,6 +180,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private const string ParaTagPattern = @"<para>(?<display>.+?)</para>";
         private const string HrefPattern = @"<see href=\""(.*)\"">(.*)<\/see>";
         private const string BrPattern = @"(<br ?\/?>)"; // handles <br>, <br/>, <br />
+        private const string LineBreaksPattern = @"\r?\n";
+        private const string DoubleUpLineBreaksPattern = @"(\r?\n){2,}";
 
 #if NET7_0_OR_GREATER
         [GeneratedRegex(RefTagPattern)]
@@ -144,6 +201,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         [GeneratedRegex(BrPattern)]
         private static partial Regex BrTag();
+
+        [GeneratedRegex(LineBreaksPattern)]
+        private static partial Regex LineBreaks();
+
+        [GeneratedRegex(DoubleUpLineBreaksPattern)]
+        private static partial Regex DoubleUpLineBreaks();
 #else
         private static readonly Regex _refTag = new(RefTagPattern);
         private static readonly Regex _codeTag = new(CodeTagPattern);
@@ -151,6 +214,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private static readonly Regex _paraTag = new(ParaTagPattern, RegexOptions.Singleline);
         private static readonly Regex _hrefTag = new(HrefPattern);
         private static readonly Regex _brTag = new(BrPattern);
+        private static readonly Regex _lineBreaks = new(LineBreaksPattern);
+        private static readonly Regex _doubleUpLineBreaks = new(DoubleUpLineBreaksPattern);
 
         private static Regex RefTag() => _refTag;
         private static Regex CodeTag() => _codeTag;
@@ -158,6 +223,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         private static Regex ParaTag() => _paraTag;
         private static Regex HrefTag() => _hrefTag;
         private static Regex BrTag() => _brTag;
+        private static Regex LineBreaks() => _lineBreaks;
+        private static Regex DoubleUpLineBreaks() => _doubleUpLineBreaks;
 #endif
     }
 }

@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+using Duende.IdentityServer;
+using Duende.IdentityServer.Test;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using IdentityServer4;
-using IdentityServer4.Test;
+using Microsoft.AspNetCore.Mvc;
 
 namespace OAuth2Integration.AuthServer.Controllers
 {
@@ -22,12 +22,11 @@ namespace OAuth2Integration.AuthServer.Controllers
         public IActionResult Login(string returnUrl)
         {
             var viewModel = new LoginViewModel { Username = "joebloggs", Password = "pass123", ReturnUrl = returnUrl };
-
             return View("/AuthServer/Views/Login.cshtml", viewModel);
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromForm]LoginViewModel viewModel)
+        public async Task<IActionResult> Login([FromForm] LoginViewModel viewModel)
         {
             if (!_userStore.ValidateCredentials(viewModel.Username, viewModel.Password))
             {

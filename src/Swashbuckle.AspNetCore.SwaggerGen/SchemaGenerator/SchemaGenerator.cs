@@ -10,9 +10,9 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
-using Microsoft.Extensions.Options;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
@@ -20,21 +20,22 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     {
         private readonly SchemaGeneratorOptions _generatorOptions;
         private readonly ISerializerDataContractResolver _serializerDataContractResolver;
-        private readonly IOptions<MvcOptions> _mvcOptions;
 
-        public SchemaGenerator(SchemaGeneratorOptions generatorOptions, ISerializerDataContractResolver serializerDataContractResolver)
-            : this(generatorOptions, serializerDataContractResolver, null)
+        public SchemaGenerator(
+            SchemaGeneratorOptions generatorOptions,
+            ISerializerDataContractResolver serializerDataContractResolver)
         {
+            _generatorOptions = generatorOptions;
+            _serializerDataContractResolver = serializerDataContractResolver;
         }
 
+        [Obsolete($"{nameof(IOptions<MvcOptions>)} is no longer used. This constructor will be removed in a future major release.")]
         public SchemaGenerator(
             SchemaGeneratorOptions generatorOptions,
             ISerializerDataContractResolver serializerDataContractResolver,
             IOptions<MvcOptions> mvcOptions)
+            : this(generatorOptions, serializerDataContractResolver)
         {
-            _generatorOptions = generatorOptions;
-            _serializerDataContractResolver = serializerDataContractResolver;
-            _mvcOptions = mvcOptions;
         }
 
         public OpenApiSchema GenerateSchema(
@@ -367,15 +368,13 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     AdditionalPropertiesAllowed = false
                 };
             }
-            else
+
+            return new OpenApiSchema
             {
-                return new OpenApiSchema
-                {
-                    Type = "object",
-                    AdditionalPropertiesAllowed = true,
-                    AdditionalProperties = GenerateSchema(dataContract.DictionaryValueType, schemaRepository)
-                };
-            }
+                Type = "object",
+                AdditionalPropertiesAllowed = true,
+                AdditionalProperties = GenerateSchema(dataContract.DictionaryValueType, schemaRepository)
+            };
         }
 
         private OpenApiSchema CreateObjectSchema(DataContract dataContract, SchemaRepository schemaRepository)
@@ -440,9 +439,6 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     : GenerateSchemaForType(dataProperty.MemberType, schemaRepository);
 
                 var markNonNullableTypeAsRequired = _generatorOptions.NonNullableReferenceTypesAsRequired
-#if !NETSTANDARD2_0
-                    && (!_mvcOptions?.Value.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes ?? true)
-#endif
                     && (dataProperty.MemberInfo?.IsNonNullableReferenceType() ?? false);
 
                 if ((

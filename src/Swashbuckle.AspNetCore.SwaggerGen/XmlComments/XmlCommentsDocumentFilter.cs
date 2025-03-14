@@ -55,7 +55,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     swaggerDoc.Tags.Add(new OpenApiTag
                     {
                         Name = nameAndType.Key,
-                        Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml)
+                        Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml, _options?.XmlCommentEndOfLine)
                     });
                 }
             }

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace OAuth2Integration.ResourceServer.Controllers
 {
@@ -33,7 +33,7 @@ namespace OAuth2Integration.ResourceServer.Controllers
 
         [HttpPost]
         [Authorize("writeAccess")]
-        public void CreateProduct([FromBody]Product product)
+        public void CreateProduct([FromBody] Product product)
         {
         }
 
@@ -53,6 +53,6 @@ namespace OAuth2Integration.ResourceServer.Controllers
 
     public enum ProductStatus
     {
-        InStock, ComingSoon 
+        InStock, ComingSoon
     }
 }

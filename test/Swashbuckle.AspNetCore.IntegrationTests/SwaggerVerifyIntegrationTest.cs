@@ -36,7 +36,9 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 
             using var swaggerResponse = await client.GetAsync(swaggerRequestUri);
             var swagger = await swaggerResponse.Content.ReadAsStringAsync();
-            await Verifier.Verify(swagger).UseParameters(startupType, GetVersion(swaggerRequestUri));
+
+            await Verifier.Verify(NormalizeLineBreaks(swagger))
+                .UseParameters(startupType, GetVersion(swaggerRequestUri));
         }
 
         [Fact]
@@ -111,6 +113,14 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             return contentStream;
         }
 
+        /// <summary>
+        /// Normalize "\n" strings into "\r\n" which is expected linebreak in Verify verified.txt files.
+        /// </summary>
+        private static string NormalizeLineBreaks(string swagger)
+        {
+            return UnixNewLineRegex().Replace(swagger, "\\r\\n");
+        }
+
         private static string GetVersion(string swaggerUi) =>
 #if NET6_0
             Regex.Match(swaggerUi, "/\\w+/([\\w+\\d+.-]+)/").Groups[1].Value;
@@ -120,5 +130,8 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         [GeneratedRegex("/\\w+/([\\w+\\d+.-]+)/")]
         private static partial Regex VersionRegex();
 #endif
+
+        [GeneratedRegex(@"(?<!\\r)\\n")]
+        private static partial Regex UnixNewLineRegex();
     }
 }

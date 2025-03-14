@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,7 +23,7 @@ namespace OAuth2Integration
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // Register IdentityServer services to power OAuth2.0 flows
+            // Register Duende IdentityServer services to power OAuth2.0 flows
             services.AddIdentityServer()
                 .AddDeveloperSigningCredential()
                 .AddInMemoryClients(AuthServer.Config.Clients())
@@ -36,11 +35,19 @@ namespace OAuth2Integration
             // See https://learn.microsoft.com/aspnet/core/security/authorization/limitingidentitybyscheme
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie()
-                .AddIdentityServerAuthentication(c =>
+                .AddJwtBearer("Bearer", options =>
                 {
-                    c.Authority = "https://localhost:5001/auth-server/";
-                    c.RequireHttpsMetadata = false;
-                    c.ApiName = "api";
+                    options.Authority = "https://localhost:5001/auth-server/";
+                    options.RequireHttpsMetadata = false;
+                    options.Audience = "api";
+                    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidAudience = "api",
+                        ValidIssuer = options.Authority,
+                    };
                 });
 
             // Configure named auth policies that map directly to OAuth2.0 scopes

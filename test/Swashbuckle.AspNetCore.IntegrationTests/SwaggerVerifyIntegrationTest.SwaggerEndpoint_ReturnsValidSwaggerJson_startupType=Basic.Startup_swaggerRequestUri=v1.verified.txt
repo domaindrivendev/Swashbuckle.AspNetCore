@@ -87,6 +87,31 @@
         "x-purpose": "test"
       }
     },
+    "/products/all": {
+      "get": {
+        "tags": [
+          "CrudActions"
+        ],
+        "summary": "Get all products",
+        "description": "```\r\n{\r\n  \"Id\":1,\r\n  \"Description\":\"\",\r\n  \"Status\": 0,\r\n  \"Status2\": 1\r\n}\r\n            \r\n```",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
     "/products/{id}": {
       "get": {
         "tags": [
@@ -174,6 +199,7 @@
           "CrudActions"
         ],
         "summary": "Updates some properties of a specific product",
+        "description": "\r\nOnly provided properties will be updated,\r\n                    other remain unchanged.\r\n\r\nIdentifier must be non-default value\r\n\r\nBody must be specified",
         "operationId": "PatchProduct",
         "parameters": [
           {
@@ -808,6 +834,18 @@
             "schema": {
               "type": "array",
               "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": true,
+            "style": "deepObject",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
                 "type": "string"
               }
             }

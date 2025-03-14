@@ -25,7 +25,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 | Swashbuckle Version | ASP.NET Core | Swagger / OpenAPI Spec. | swagger-ui | Redoc UI |
 |----------|----------|----------|----------|----------|
 | [CI](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/commits/master/) | >= 2.0.0 | 2.0, 3.0 | [5.x.x](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/master/src/Swashbuckle.AspNetCore.SwaggerUI/package.json#L6) | [2.x.x](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/master/src/Swashbuckle.AspNetCore.ReDoc/package.json#L6) |
-| [7.2.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v7.2.0) | >= 2.0.0 | 2.0, 3.0 | 5.18.2 | 2.2.0 |
+| [7.3.1](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v7.2.0) | >= 2.0.0 | 2.0, 3.0 | 5.20.0 | 2.4.0 |
 | [6.9.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v6.9.0) | >= 2.0.0 | 2.0, 3.0 | 5.17.14 | 2.1.5 |
 | [5.6.3](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v5.6.3) | >= 2.0.0 | 2.0, 3.0 | 3.32.5 | 2.0.0-rc.40 |
 | [4.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v4.0.0) | >= 2.0.0, < 3.0.0 | 2.0 | 3.19.5 | 1.22.2 |
@@ -565,8 +565,8 @@ To enhance the generated docs with human-friendly descriptions, you can annotate
     [ProducesResponseType(500)]
     public Product GetById(int id)
     ```
-    
-4. You can also annotate types with summary and example tags:
+
+4. Annotate your types with summary and example tags, other tags (remarks, para, etc.) are not supported:
 
     ```csharp
     public class Product
@@ -582,12 +582,12 @@ To enhance the generated docs with human-friendly descriptions, you can annotate
         /// </summary>
         /// <example>10</example>
         public int AvailableStock { get; set; }
-	
+
         /// <summary>
         /// The sizes the product is available in
         /// </summary>
         /// <example>["Small", "Medium", "Large"]</example>
-	public List<string> Sizes { get; set; }
+        public List<string> Sizes { get; set; }
     }
     ```
 
