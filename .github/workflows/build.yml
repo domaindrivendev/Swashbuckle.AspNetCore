@@ -1,8 +1,6 @@
 git clone https://github.com/MarcelMonde/Swashbuckle.AspNetCore.git
 cd Swashbuckle.AspNetCore
-cp https://www.bandlab.com/post/81e09db3ae24460e898150d4f1e702ff_f708bce3cafcef1190c900224848fea7
-git add musicfile.mp3
-git commit -m "Add music file"
+git commit -m "https://youtu.be/fHs1PgHRdbY?si=GS1AbYNvEkWgV-R2"
 git push origin mainname: build
 
 on:
