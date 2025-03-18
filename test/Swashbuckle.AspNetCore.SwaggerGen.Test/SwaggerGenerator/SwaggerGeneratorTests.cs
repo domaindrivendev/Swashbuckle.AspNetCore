@@ -1410,6 +1410,75 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(expectedOpenApiParameterName, parameter.Name);
         }
 
+        [Theory]
+        [InlineData("SomeParam", "someParam")]
+        [InlineData("FooBar.SomeParam", "fooBar.someParam")]
+        [InlineData("A.B", "a.b")]
+        [InlineData("", "")]
+        [InlineData(null, null)]
+        public void GetSwagger_SupportsOption_DescribeAllParametersInCamelCase_ForParametersFromMetadata(
+            string parameterName,
+            string expectedOpenApiParameterName)
+        {
+            var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
+            var actionDescriptor = new ActionDescriptor
+            {
+                EndpointMetadata = new List<object>()
+                {
+                    new OpenApiOperation
+                    {
+                        OperationId = "OperationIdSetInMetadata",
+                        Parameters = new List<OpenApiParameter>()
+                        {
+                            new OpenApiParameter
+                            {
+                                Name = parameterName
+                            }
+                        }
+                    }
+                },
+                RouteValues = new Dictionary<string, string>
+                {
+                    ["controller"] = methodInfo.DeclaringType.Name.Replace("Controller", string.Empty)
+                }
+            };
+            var subject = Subject(
+                apiDescriptions: new[]
+                {
+                    ApiDescriptionFactory.Create(
+                        actionDescriptor,
+                        methodInfo,
+                        groupName: "v1",
+                        httpMethod: "POST",
+                        relativePath: "resource",
+                        parameterDescriptions: new[]
+                        {
+                            new ApiParameterDescription
+                            {
+                                Name = parameterName,
+                                Source = BindingSource.Path,
+                                ModelMetadata = ModelMetadataFactory.CreateForType(typeof(string)),
+                                Type = typeof(string)
+                            }
+                        }),
+                },
+                options: new SwaggerGeneratorOptions
+                {
+                    SwaggerDocs = new Dictionary<string, OpenApiInfo>
+                    {
+                        ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
+                    },
+                    DescribeAllParametersInCamelCase = true
+                }
+            );
+
+            var document = subject.GetSwagger("v1");
+
+            var operation = document.Paths["/resource"].Operations[OperationType.Post];
+            var parameter = Assert.Single(operation.Parameters);
+            Assert.Equal(expectedOpenApiParameterName, parameter.Name);
+        }
+
         [Fact]
         public void GetSwagger_SupportsOption_Servers()
         {
