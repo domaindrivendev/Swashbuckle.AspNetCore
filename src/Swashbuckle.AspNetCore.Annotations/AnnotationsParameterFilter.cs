@@ -30,7 +30,6 @@ namespace Swashbuckle.AspNetCore.Annotations
 
         private void ApplyParamAnnotations(OpenApiParameter parameter, ParameterInfo parameterInfo)
         {
-
             var swaggerParameterAttribute = parameterInfo.GetCustomAttribute<SwaggerParameterAttribute>();
 
             if (swaggerParameterAttribute != null)
@@ -44,6 +43,12 @@ namespace Swashbuckle.AspNetCore.Annotations
 
             if (swaggerParameterAttribute.RequiredFlag.HasValue)
                 parameter.Required = swaggerParameterAttribute.RequiredFlag.Value;
+
+            if (swaggerParameterAttribute.ExplodeFlag.HasValue)
+                parameter.Explode = swaggerParameterAttribute.ExplodeFlag.Value;
+
+            if (swaggerParameterAttribute.ParameterStyle.HasValue)
+                parameter.Style = swaggerParameterAttribute.ParameterStyle.Value;
         }
     }
 }
