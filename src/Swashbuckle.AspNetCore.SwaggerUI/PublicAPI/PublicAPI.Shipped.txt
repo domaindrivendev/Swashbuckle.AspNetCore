@@ -11,6 +11,7 @@ static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.DocExpansion(this
 static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.EnableDeepLinking(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options) -> void
 static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.EnableFilter(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, string expression = null) -> void
 static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.EnablePersistAuthorization(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options) -> void
+static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.EnableSwaggerDocumentUrlsEndpoint(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options) -> void
 static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.EnableTryItOutByDefault(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options) -> void
 static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.EnableValidator(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, string url = "https://online.swagger.io/validator") -> void
 static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.InjectJavascript(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, string path, string type = "text/javascript") -> void
@@ -123,6 +124,8 @@ Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.ConfigObject.get -> Swashbuckl
 Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.ConfigObject.set -> void
 Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.DocumentTitle.get -> string
 Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.DocumentTitle.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.ExposeSwaggerDocumentUrlsRoute.get -> bool
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.ExposeSwaggerDocumentUrlsRoute.set -> void
 Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.HeadContent.get -> string
 Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.HeadContent.set -> void
 Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.IndexStream.get -> System.Func<System.IO.Stream>
@@ -141,6 +144,8 @@ Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.ScriptPresetsPath.get -> strin
 Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.ScriptPresetsPath.set -> void
 Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.StylesPath.get -> string
 Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.StylesPath.set -> void
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.SwaggerDocumentUrlsPath.get -> string
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.SwaggerDocumentUrlsPath.set -> void
 Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.SwaggerUIOptions() -> void
 Swashbuckle.AspNetCore.SwaggerUI.UrlDescriptor
 Swashbuckle.AspNetCore.SwaggerUI.UrlDescriptor.Name.get -> string
