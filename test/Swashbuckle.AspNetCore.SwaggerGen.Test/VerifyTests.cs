@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
@@ -14,6 +16,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Writers;
 using Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures;
 using Swashbuckle.AspNetCore.TestSupport;
 using VerifyXunit;
@@ -21,7 +24,7 @@ using Xunit;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 
-public class VerifyTests
+public partial class VerifyTests
 {
     [Fact]
     public async Task ApiDescriptionsWithMatchingGroupName()
@@ -406,7 +409,7 @@ public class VerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        await Verifier.Verify(document)
+        await Verifier.Verify(ToJson(document))
             .UseDirectory("snapshots")
             .UseParameters(bindingSourceId)
             .UniqueForTargetFrameworkAndVersion();
@@ -523,7 +526,7 @@ public class VerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        await Verifier.Verify(document)
+        await Verifier.Verify(ToJson(document))
             .UseDirectory("snapshots")
             .UseParameters(action)
             .UniqueForTargetFrameworkAndVersion();
@@ -594,7 +597,7 @@ public class VerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        await Verifier.Verify(document)
+        await Verifier.Verify(ToJson(document))
             .UseDirectory("snapshots")
             .UseParameters(action)
             .UseMethodName("IllegalHeaderForOperation")
@@ -654,7 +657,7 @@ public class VerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        await Verifier.Verify(document)
+        await Verifier.Verify(ToJson(document))
             .UseDirectory("snapshots")
             .UseParameters(action)
             .UniqueForTargetFrameworkAndVersion();
@@ -690,7 +693,7 @@ public class VerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        await Verifier.Verify(document)
+        await Verifier.Verify(ToJson(document))
             .UseDirectory("snapshots")
             .UseParameters(action)
             .UniqueForTargetFrameworkAndVersion();
@@ -895,7 +898,7 @@ public class VerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        await Verifier.Verify(document)
+        await Verifier.Verify(ToJson(document))
             .UseDirectory("snapshots")
             .UseParameters(bindingSourceId)
             .UniqueForTargetFrameworkAndVersion();
@@ -1488,10 +1491,26 @@ public class VerifyTests
         }
     };
 
+    private static string ToJson(OpenApiDocument document)
+    {
+        using var stringWriter = new StringWriter();
+        var jsonWriter = new OpenApiJsonWriter(stringWriter);
+
+        document.SerializeAsV3(jsonWriter);
+
+        return NormalizeLineBreaks(stringWriter.ToString());
+    }
+
     private static async Task Verify(OpenApiDocument document)
     {
-        await Verifier.Verify(document)
+        await Verifier.Verify(ToJson(document))
             .UseDirectory("snapshots")
             .UniqueForTargetFrameworkAndVersion();
     }
+
+    private static string NormalizeLineBreaks(string swagger)
+        => UnixNewLineRegex().Replace(swagger, "\\r\\n");
+
+    [GeneratedRegex(@"(?<!\\r)\\n")]
+    private static partial Regex UnixNewLineRegex();
 }

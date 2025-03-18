@@ -1,47 +1,32 @@
 ﻿{
-  Info: {
-    Title: Test API,
-    Version: V1
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Test API",
+    "version": "V1"
   },
-  Paths: {
-    /resource: {
-      Operations: {
-        Post: {
-          Tags: [
-            {
-              Name: Fake,
-              UnresolvedReference: false
-            }
-          ],
-          RequestBody: {
-            UnresolvedReference: false,
-            Required: true,
-            Content: {
-              application/json: {
-                Schema: {
-                  Type: string,
-                  ReadOnly: false,
-                  WriteOnly: false,
-                  AdditionalPropertiesAllowed: true,
-                  Nullable: false,
-                  Deprecated: false,
-                  UnresolvedReference: false
-                }
+  "paths": {
+    "/resource": {
+      "post": {
+        "tags": [
+          "Fake"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string"
               }
             }
           },
-          Responses: {
-            200: {
-              Description: OK,
-              UnresolvedReference: false
-            }
-          },
-          Deprecated: false
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
         }
-      },
-      UnresolvedReference: false
+      }
     }
   },
-  Components: {},
-  HashCode: 804D6F0C92F4BE50ED4B40A4DD1F6D3FB0F279B348764AC01ABFD0218A5DE81B9CDA62C18D1345F64751D4FA1CA98298834D12D7AF7799F4845203B45FE40CFE
+  "components": { }
 }

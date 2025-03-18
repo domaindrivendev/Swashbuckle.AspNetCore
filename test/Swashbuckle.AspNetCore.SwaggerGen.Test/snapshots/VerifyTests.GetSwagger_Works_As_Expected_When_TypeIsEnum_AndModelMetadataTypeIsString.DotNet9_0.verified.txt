@@ -1,84 +1,43 @@
 ﻿{
-  Info: {
-    Title: Test API,
-    Version: V1
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Test API",
+    "version": "V1"
   },
-  Paths: {
-    /resource: {
-      Operations: {
-        Post: {
-          Tags: [
-            {
-              Name: Fake,
-              UnresolvedReference: false
-            }
-          ],
-          Parameters: [
-            {
-              UnresolvedReference: false,
-              Name: param1,
-              In: Query,
-              Required: false,
-              Deprecated: false,
-              AllowEmptyValue: false,
-              Style: Form,
-              Explode: true,
-              AllowReserved: false,
-              Schema: {
-                ReadOnly: false,
-                WriteOnly: false,
-                AdditionalPropertiesAllowed: true,
-                Nullable: false,
-                Deprecated: false,
-                UnresolvedReference: false,
-                Reference: {
-                  IsFragrament: false,
-                  Type: Schema,
-                  Id: IntEnum,
-                  IsExternal: false,
-                  IsLocal: true,
-                  ReferenceV3: #/components/schemas/IntEnum,
-                  ReferenceV2: #/definitions/IntEnum
-                }
-              }
-            }
-          ],
-          Responses: {
-            200: {
-              Description: OK,
-              UnresolvedReference: false
-            }
-          },
-          Deprecated: false
-        }
-      },
-      UnresolvedReference: false
-    }
-  },
-  Components: {
-    Schemas: {
-      IntEnum: {
-        Type: integer,
-        Format: int32,
-        ReadOnly: false,
-        WriteOnly: false,
-        AdditionalPropertiesAllowed: true,
-        Enum: [
+  "paths": {
+    "/resource": {
+      "post": {
+        "tags": [
+          "Fake"
+        ],
+        "parameters": [
           {
-            Value: 2
-          },
-          {
-            Value: 4
-          },
-          {
-            Value: 8
+            "name": "param1",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/IntEnum"
+            }
           }
         ],
-        Nullable: false,
-        Deprecated: false,
-        UnresolvedReference: false
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     }
   },
-  HashCode: F2B8FE01A8D273C628EBD9F65C7F1E80622E3C5CBBB8F150E247A34C4558F617F1D056F7B1113ABE978F9E433A9FBCA1C65A6387FB918AF00AFB54E6F5A47C5D
+  "components": {
+    "schemas": {
+      "IntEnum": {
+        "enum": [
+          2,
+          4,
+          8
+        ],
+        "type": "integer",
+        "format": "int32"
+      }
+    }
+  }
 }
