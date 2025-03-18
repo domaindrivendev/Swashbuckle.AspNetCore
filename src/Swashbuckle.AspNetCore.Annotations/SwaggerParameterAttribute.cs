@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Swashbuckle.AspNetCore.Annotations
+﻿namespace Swashbuckle.AspNetCore.Annotations
 {
     /// <summary>
     /// Enriches Parameter metadata for "path", "query" or "header" bound parameters or properties

@@ -1,5 +1,4 @@
-﻿using System.IO;
-using Microsoft.OpenApi;
+﻿using Microsoft.OpenApi;
 using Microsoft.OpenApi.Writers;
 
 using Any = Microsoft.OpenApi.Any.IOpenApiAny;

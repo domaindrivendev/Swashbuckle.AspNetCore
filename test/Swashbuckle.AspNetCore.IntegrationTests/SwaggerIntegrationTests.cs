@@ -1,15 +1,10 @@
-using System;
 using System.Globalization;
-using System.Linq;
-using System.Net.Http;
 using System.Reflection;
 #if NET8_0_OR_GREATER
 #endif
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using Microsoft.OpenApi.Any;
-using Xunit;
 using ReDocApp = ReDoc;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Swashbuckle.AspNetCore.Annotations
+﻿namespace Swashbuckle.AspNetCore.Annotations
 {
     [Obsolete("Use multiple SwaggerSubType attributes instead")]
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface, AllowMultiple = false)]

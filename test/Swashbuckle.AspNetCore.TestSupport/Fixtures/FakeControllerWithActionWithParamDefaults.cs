@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Swashbuckle.AspNetCore.TestSupport.Fixtures
+﻿namespace Swashbuckle.AspNetCore.TestSupport.Fixtures
 {
     public class FakeControllerWithActionWithParamDefaults
     {

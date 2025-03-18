@@ -1,8 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using Xunit;
+﻿using System.Net;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests
 {

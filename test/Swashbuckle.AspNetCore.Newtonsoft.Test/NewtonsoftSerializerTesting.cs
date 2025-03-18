@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using Newtonsoft.Json;
-using Xunit;
 
 namespace Swashbuckle.AspNetCore.Newtonsoft.Test
 {

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Xml.XPath;
+﻿using System.Xml.XPath;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 

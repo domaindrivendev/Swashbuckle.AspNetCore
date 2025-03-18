@@ -12,10 +12,7 @@
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <EnablePackageValidation>$(IsPackable)</EnablePackageValidation>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
-    <!--
-    TODO Go through the code and tidy up the usings
     <ImplicitUsings>enable</ImplicitUsings>
-    -->
     <IncludeSymbols>true</IncludeSymbols>
     <LangVersion>latest</LangVersion>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Swashbuckle.AspNetCore.TestSupport
+﻿namespace Swashbuckle.AspNetCore.TestSupport
 {
 #nullable enable
 

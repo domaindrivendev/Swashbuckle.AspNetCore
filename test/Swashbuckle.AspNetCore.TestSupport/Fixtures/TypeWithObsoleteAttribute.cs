@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Swashbuckle.AspNetCore.TestSupport
+﻿namespace Swashbuckle.AspNetCore.TestSupport
 {
     public class TypeWithObsoleteAttribute
     {

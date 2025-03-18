@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
 
 namespace Swashbuckle.AspNetCore.ApiTesting
