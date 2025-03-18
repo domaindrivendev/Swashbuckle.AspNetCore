@@ -95,15 +95,19 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{3BA087DA-788C-43D6-9D8B-1EF017014A4A}"
 	ProjectSection(SolutionItems) = preProject
 		.github\actionlint-matcher.json = .github\actionlint-matcher.json
+		.github\bump-version.ps1 = .github\bump-version.ps1
 		.github\dependabot.yml = .github\dependabot.yml
+		.github\update-baselines.ps1 = .github\update-baselines.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{A0EC16BE-C520-4FCF-BB54-2D79CD255F00}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\actions-lint.yml = .github\workflows\actions-lint.yml
 		.github\workflows\build.yml = .github\workflows\build.yml
+		.github\workflows\bump-version.yml = .github\workflows\bump-version.yml
 		.github\workflows\codeql-analysis.yml = .github\workflows\codeql-analysis.yml
 		.github\workflows\ossf-scorecard.yml = .github\workflows\ossf-scorecard.yml
+		.github\workflows\release.yml = .github\workflows\release.yml
 		.github\workflows\stale.yml = .github\workflows\stale.yml
 		.github\workflows\update-dotnet-sdk.yml = .github\workflows\update-dotnet-sdk.yml
 	EndProjectSection
