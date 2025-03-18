@@ -24,9 +24,6 @@ updates:
 - package-ecosystem: nuget
   directory: "/"
   groups:
-    coverlet:
-      patterns:
-        - coverlet*
     Microsoft.OpenApi:
       patterns:
         - Microsoft.OpenApi*
