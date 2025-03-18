@@ -1,174 +1,73 @@
 ﻿{
-  Info: {
-    Title: Test API,
-    Version: V1
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Test API",
+    "version": "V1"
   },
-  Paths: {
-    /resource: {
-      Operations: {
-        Post: {
-          OperationId: OperationIdSetInMetadata,
-          RequestBody: {
-            UnresolvedReference: false,
-            Required: false,
-            Content: {
-              application/someMediaType: {
-                Schema: {
-                  ReadOnly: false,
-                  WriteOnly: false,
-                  AllOf: [
-                    {
-                      ReadOnly: false,
-                      WriteOnly: false,
-                      AdditionalPropertiesAllowed: true,
-                      Nullable: false,
-                      Deprecated: false,
-                      UnresolvedReference: false,
-                      Reference: {
-                        IsFragrament: false,
-                        Type: Schema,
-                        Id: TestDto,
-                        IsExternal: false,
-                        IsLocal: true,
-                        ReferenceV3: #/components/schemas/TestDto,
-                        ReferenceV2: #/definitions/TestDto
-                      }
-                    },
-                    {
-                      ReadOnly: false,
-                      WriteOnly: false,
-                      AdditionalPropertiesAllowed: true,
-                      Nullable: false,
-                      Deprecated: false,
-                      UnresolvedReference: false,
-                      Reference: {
-                        IsFragrament: false,
-                        Type: Schema,
-                        Id: TypeWithDefaultAttributeOnEnum,
-                        IsExternal: false,
-                        IsLocal: true,
-                        ReferenceV3: #/components/schemas/TypeWithDefaultAttributeOnEnum,
-                        ReferenceV2: #/definitions/TypeWithDefaultAttributeOnEnum
-                      }
-                    }
-                  ],
-                  AdditionalPropertiesAllowed: true,
-                  Nullable: false,
-                  Deprecated: false,
-                  UnresolvedReference: false
-                }
+  "paths": {
+    "/resource": {
+      "post": {
+        "operationId": "OperationIdSetInMetadata",
+        "requestBody": {
+          "content": {
+            "application/someMediaType": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TestDto"
+                  },
+                  {
+                    "$ref": "#/components/schemas/TypeWithDefaultAttributeOnEnum"
+                  }
+                ]
               }
-            }
-          },
-          Deprecated: false
-        }
-      },
-      UnresolvedReference: false
-    }
-  },
-  Components: {
-    Schemas: {
-      IntEnum: {
-        Type: integer,
-        Format: int32,
-        ReadOnly: false,
-        WriteOnly: false,
-        AdditionalPropertiesAllowed: true,
-        Enum: [
-          {
-            Value: 2
-          },
-          {
-            Value: 4
-          },
-          {
-            Value: 8
-          }
-        ],
-        Nullable: false,
-        Deprecated: false,
-        UnresolvedReference: false
-      },
-      TestDto: {
-        Type: object,
-        ReadOnly: false,
-        WriteOnly: false,
-        Properties: {
-          Prop1: {
-            Type: string,
-            ReadOnly: false,
-            WriteOnly: false,
-            AdditionalPropertiesAllowed: true,
-            Nullable: true,
-            Deprecated: false,
-            UnresolvedReference: false
-          }
-        },
-        AdditionalPropertiesAllowed: false,
-        Nullable: false,
-        Deprecated: false,
-        UnresolvedReference: false
-      },
-      TypeWithDefaultAttributeOnEnum: {
-        Type: object,
-        ReadOnly: false,
-        WriteOnly: false,
-        Properties: {
-          EnumArrayWithDefault: {
-            Type: array,
-            Default: [
-              {
-                Value: 4
-              }
-            ],
-            ReadOnly: false,
-            WriteOnly: false,
-            Items: {
-              ReadOnly: false,
-              WriteOnly: false,
-              AdditionalPropertiesAllowed: true,
-              Nullable: false,
-              Deprecated: false,
-              UnresolvedReference: false,
-              Reference: {
-                IsFragrament: false,
-                Type: Schema,
-                Id: IntEnum,
-                IsExternal: false,
-                IsLocal: true,
-                ReferenceV3: #/components/schemas/IntEnum,
-                ReferenceV2: #/definitions/IntEnum
-              }
-            },
-            AdditionalPropertiesAllowed: true,
-            Nullable: true,
-            Deprecated: false,
-            UnresolvedReference: false
-          },
-          EnumWithDefault: {
-            ReadOnly: false,
-            WriteOnly: false,
-            AdditionalPropertiesAllowed: true,
-            Nullable: false,
-            Deprecated: false,
-            UnresolvedReference: false,
-            Reference: {
-              IsFragrament: false,
-              Type: Schema,
-              Id: IntEnum,
-              IsExternal: false,
-              IsLocal: true,
-              ReferenceV3: #/components/schemas/IntEnum,
-              ReferenceV2: #/definitions/IntEnum
             }
           }
         },
-        AdditionalPropertiesAllowed: false,
-        Nullable: false,
-        Deprecated: false,
-        UnresolvedReference: false
+        "responses": { }
       }
     }
   },
-  HashCode: 41D7DF10C7C0CE16E982FDA61A24E00E80C545544532DDE161A3189D46D8B3F2FD312173BC4F903FA4F3D695D66A00CEF815217B8B865479D45961D02D3B8609
+  "components": {
+    "schemas": {
+      "IntEnum": {
+        "enum": [
+          2,
+          4,
+          8
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "TestDto": {
+        "type": "object",
+        "properties": {
+          "Prop1": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TypeWithDefaultAttributeOnEnum": {
+        "type": "object",
+        "properties": {
+          "EnumWithDefault": {
+            "$ref": "#/components/schemas/IntEnum"
+          },
+          "EnumArrayWithDefault": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IntEnum"
+            },
+            "default": [
+              4
+            ],
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
 }

@@ -1,62 +1,39 @@
 ﻿{
-  Info: {
-    Title: Test API,
-    Version: V1
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Test API",
+    "version": "V1"
   },
-  Paths: {
-    /resource: {
-      Operations: {
-        Post: {
-          OperationId: OperationIdSetInMetadata,
-          RequestBody: {
-            UnresolvedReference: false,
-            Required: false,
-            Content: {
-              application/someMediaType: {
-                Schema: {
-                  Type: object,
-                  ReadOnly: false,
-                  WriteOnly: false,
-                  Properties: {
-                    param: {
-                      Type: array,
-                      ReadOnly: false,
-                      WriteOnly: false,
-                      Items: {
-                        Type: string,
-                        Format: binary,
-                        ReadOnly: false,
-                        WriteOnly: false,
-                        AdditionalPropertiesAllowed: true,
-                        Nullable: false,
-                        Deprecated: false,
-                        UnresolvedReference: false
-                      },
-                      AdditionalPropertiesAllowed: true,
-                      Nullable: false,
-                      Deprecated: false,
-                      UnresolvedReference: false
+  "paths": {
+    "/resource": {
+      "post": {
+        "operationId": "OperationIdSetInMetadata",
+        "requestBody": {
+          "content": {
+            "application/someMediaType": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "param": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
                     }
-                  },
-                  AdditionalPropertiesAllowed: true,
-                  Nullable: false,
-                  Deprecated: false,
-                  UnresolvedReference: false
-                },
-                Encoding: {
-                  param: {
-                    Style: Form
                   }
+                }
+              },
+              "encoding": {
+                "param": {
+                  "style": "form"
                 }
               }
             }
-          },
-          Deprecated: false
-        }
-      },
-      UnresolvedReference: false
+          }
+        },
+        "responses": { }
+      }
     }
   },
-  Components: {},
-  HashCode: 073D8B8E67D5100DD8AF06EC69A3C02B8DBF29E46621ED6EB590DEA519F2C8941398F6B95292D891CC4E18C2F4D5D38A8F904545CFFC219E4FF4613AD605E5A5
+  "components": { }
 }

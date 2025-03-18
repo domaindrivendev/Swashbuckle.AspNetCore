@@ -1,113 +1,61 @@
 ﻿{
-  Info: {
-    Title: Test API,
-    Version: V1
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Test API",
+    "version": "V1"
   },
-  Paths: {
-    /resource: {
-      Operations: {
-        Post: {
-          Tags: [
-            {
-              Name: Fake,
-              UnresolvedReference: false
-            }
-          ],
-          RequestBody: {
-            UnresolvedReference: false,
-            Required: false,
-            Content: {
-              multipart/form-data: {
-                Schema: {
-                  ReadOnly: false,
-                  WriteOnly: false,
-                  AllOf: [
-                    {
-                      ReadOnly: false,
-                      WriteOnly: false,
-                      AdditionalPropertiesAllowed: true,
-                      Nullable: false,
-                      Deprecated: false,
-                      UnresolvedReference: false,
-                      Reference: {
-                        IsFragrament: false,
-                        Type: Schema,
-                        Id: SwaggerIngoreAnnotatedType,
-                        IsExternal: false,
-                        IsLocal: true,
-                        ReferenceV3: #/components/schemas/SwaggerIngoreAnnotatedType,
-                        ReferenceV2: #/definitions/SwaggerIngoreAnnotatedType
+  "paths": {
+    "/resource": {
+      "post": {
+        "tags": [
+          "Fake"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/SwaggerIngoreAnnotatedType"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "param2": {
+                        "type": "string"
                       }
-                    },
-                    {
-                      Type: object,
-                      ReadOnly: false,
-                      WriteOnly: false,
-                      Properties: {
-                        param2: {
-                          Type: string,
-                          ReadOnly: false,
-                          WriteOnly: false,
-                          AdditionalPropertiesAllowed: true,
-                          Nullable: false,
-                          Deprecated: false,
-                          UnresolvedReference: false
-                        }
-                      },
-                      AdditionalPropertiesAllowed: true,
-                      Nullable: false,
-                      Deprecated: false,
-                      UnresolvedReference: false
                     }
-                  ],
-                  AdditionalPropertiesAllowed: true,
-                  Nullable: false,
-                  Deprecated: false,
-                  UnresolvedReference: false
-                },
-                Encoding: {
-                  param2: {
-                    Style: Form
                   }
+                ]
+              },
+              "encoding": {
+                "param2": {
+                  "style": "form"
                 }
               }
             }
-          },
-          Responses: {
-            200: {
-              Description: OK,
-              UnresolvedReference: false
-            }
-          },
-          Deprecated: false
-        }
-      },
-      UnresolvedReference: false
-    }
-  },
-  Components: {
-    Schemas: {
-      SwaggerIngoreAnnotatedType: {
-        Type: object,
-        ReadOnly: false,
-        WriteOnly: false,
-        Properties: {
-          NotIgnoredString: {
-            Type: string,
-            ReadOnly: false,
-            WriteOnly: false,
-            AdditionalPropertiesAllowed: true,
-            Nullable: true,
-            Deprecated: false,
-            UnresolvedReference: false
           }
         },
-        AdditionalPropertiesAllowed: false,
-        Nullable: false,
-        Deprecated: false,
-        UnresolvedReference: false
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     }
   },
-  HashCode: 7E7750D2523B09ED937BC8BD153C28310201A9806AA769317BC100C6D938DCB55AA32E2290EB9A7563A8907012DB9BA0FA3035FE63823769A229BD27AFE98FA6
+  "components": {
+    "schemas": {
+      "SwaggerIngoreAnnotatedType": {
+        "type": "object",
+        "properties": {
+          "NotIgnoredString": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
 }

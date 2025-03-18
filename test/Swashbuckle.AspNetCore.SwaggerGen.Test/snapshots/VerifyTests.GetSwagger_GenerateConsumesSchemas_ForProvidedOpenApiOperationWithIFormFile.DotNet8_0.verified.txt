@@ -1,53 +1,36 @@
 ﻿{
-  Info: {
-    Title: Test API,
-    Version: V1
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Test API",
+    "version": "V1"
   },
-  Paths: {
-    /resource: {
-      Operations: {
-        Post: {
-          OperationId: OperationIdSetInMetadata,
-          RequestBody: {
-            UnresolvedReference: false,
-            Required: false,
-            Content: {
-              application/someMediaType: {
-                Schema: {
-                  Type: object,
-                  ReadOnly: false,
-                  WriteOnly: false,
-                  Properties: {
-                    param: {
-                      Type: string,
-                      Format: binary,
-                      ReadOnly: false,
-                      WriteOnly: false,
-                      AdditionalPropertiesAllowed: true,
-                      Nullable: false,
-                      Deprecated: false,
-                      UnresolvedReference: false
-                    }
-                  },
-                  AdditionalPropertiesAllowed: true,
-                  Nullable: false,
-                  Deprecated: false,
-                  UnresolvedReference: false
-                },
-                Encoding: {
-                  param: {
-                    Style: Form
+  "paths": {
+    "/resource": {
+      "post": {
+        "operationId": "OperationIdSetInMetadata",
+        "requestBody": {
+          "content": {
+            "application/someMediaType": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "param": {
+                    "type": "string",
+                    "format": "binary"
                   }
+                }
+              },
+              "encoding": {
+                "param": {
+                  "style": "form"
                 }
               }
             }
-          },
-          Deprecated: false
-        }
-      },
-      UnresolvedReference: false
+          }
+        },
+        "responses": { }
+      }
     }
   },
-  Components: {},
-  HashCode: 7D034A2620C1D85B3AC60194DFA59693F727DE4704B2D02E124FDA37F843426C258EF2BEB84E6B8E8D315E23A4BCBE1F423B479E6CDF8AFFB8514D49B9A3CC9E
+  "components": { }
 }

@@ -1,31 +1,21 @@
 ﻿{
-  Info: {
-    Title: Test API,
-    Version: V1
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Test API",
+    "version": "V1"
   },
-  Paths: {
-    /resource: {
-      Operations: {
-        Post: {
-          OperationId: OperationIdSetInMetadata,
-          Parameters: [
-            {
-              UnresolvedReference: false,
-              Name: ParameterInMetadata,
-              Required: false,
-              Deprecated: false,
-              AllowEmptyValue: false,
-              Style: Simple,
-              Explode: false,
-              AllowReserved: false
-            }
-          ],
-          Deprecated: false
-        }
-      },
-      UnresolvedReference: false
+  "paths": {
+    "/resource": {
+      "post": {
+        "operationId": "OperationIdSetInMetadata",
+        "parameters": [
+          {
+            "name": "ParameterInMetadata"
+          }
+        ],
+        "responses": { }
+      }
     }
   },
-  Components: {},
-  HashCode: 76DE54DD44D94D07BC803E615ECB0F6D290C3B8803EFB5EADF02C6B180682B1C20BFDD4C9CD50F71D5AD7042B7B4570903F3AF1CC7970ABCA1CEE20FBF971FFD
+  "components": { }
 }

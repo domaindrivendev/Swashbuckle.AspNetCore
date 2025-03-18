@@ -1,31 +1,23 @@
 ﻿{
-  Info: {
-    Title: Test API,
-    Version: V1
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Test API",
+    "version": "V1"
   },
-  Paths: {
-    /resource: {
-      Operations: {
-        Post: {
-          Tags: [
-            {
-              Name: Fake,
-              UnresolvedReference: false
-            }
-          ],
-          OperationId: SomeRouteName,
-          Responses: {
-            200: {
-              Description: OK,
-              UnresolvedReference: false
-            }
-          },
-          Deprecated: false
+  "paths": {
+    "/resource": {
+      "post": {
+        "tags": [
+          "Fake"
+        ],
+        "operationId": "SomeRouteName",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
         }
-      },
-      UnresolvedReference: false
+      }
     }
   },
-  Components: {},
-  HashCode: 8A51577C0837548151E3938DC7033AF6AFDE7FD4E5F6F2FE20CC8931B3D18A883C1FB3FE92120D0A44EC31DDE90DDEDE4A237B3138AD45A37278F8924958D5A7
+  "components": { }
 }

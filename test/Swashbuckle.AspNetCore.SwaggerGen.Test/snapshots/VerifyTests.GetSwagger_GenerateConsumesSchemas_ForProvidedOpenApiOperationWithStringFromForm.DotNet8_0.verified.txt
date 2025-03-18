@@ -1,52 +1,35 @@
 ﻿{
-  Info: {
-    Title: Test API,
-    Version: V1
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Test API",
+    "version": "V1"
   },
-  Paths: {
-    /resource: {
-      Operations: {
-        Post: {
-          OperationId: OperationIdSetInMetadata,
-          RequestBody: {
-            UnresolvedReference: false,
-            Required: false,
-            Content: {
-              application/someMediaType: {
-                Schema: {
-                  Type: object,
-                  ReadOnly: false,
-                  WriteOnly: false,
-                  Properties: {
-                    param: {
-                      Type: string,
-                      ReadOnly: false,
-                      WriteOnly: false,
-                      AdditionalPropertiesAllowed: true,
-                      Nullable: false,
-                      Deprecated: false,
-                      UnresolvedReference: false
-                    }
-                  },
-                  AdditionalPropertiesAllowed: true,
-                  Nullable: false,
-                  Deprecated: false,
-                  UnresolvedReference: false
-                },
-                Encoding: {
-                  param: {
-                    Style: Form
+  "paths": {
+    "/resource": {
+      "post": {
+        "operationId": "OperationIdSetInMetadata",
+        "requestBody": {
+          "content": {
+            "application/someMediaType": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "param": {
+                    "type": "string"
                   }
+                }
+              },
+              "encoding": {
+                "param": {
+                  "style": "form"
                 }
               }
             }
-          },
-          Deprecated: false
-        }
-      },
-      UnresolvedReference: false
+          }
+        },
+        "responses": { }
+      }
     }
   },
-  Components: {},
-  HashCode: 7639B8A665AFC72F5C8D9ED02AA2E6416B9F82FDCC86D490FD248D3B657355F3993BD00384468E8D23DC0AC9FACECD425824F9596F6183EBDF974B9343CEDCF7
+  "components": { }
 }
