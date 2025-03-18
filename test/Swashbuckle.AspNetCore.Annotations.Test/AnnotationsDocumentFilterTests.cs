@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models;
 using Xunit;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.TestSupport;

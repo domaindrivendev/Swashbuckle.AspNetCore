@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Hosting;
-using Autofac.Extensions.DependencyInjection;
+﻿using Autofac.Extensions.DependencyInjection;
 
 namespace CliExampleWithFactory
 {

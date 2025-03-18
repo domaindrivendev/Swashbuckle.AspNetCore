@@ -8,7 +8,7 @@
     <NoWarn>$(NoWarn);1591</NoWarn>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore;annotations</PackageTags>
     <SignAssembly>true</SignAssembly>
-    <TargetFrameworks>net9.0;net8.0;net6.0;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net9.0;net8.0;netstandard2.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,6 +19,10 @@
     <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="All" />
     <AdditionalFiles Include="PublicAPI\PublicAPI.Shipped.txt" />
     <AdditionalFiles Include="PublicAPI\PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+  <ItemGroup Condition="Exists('PublicAPI\$(TargetFramework)')">
+    <AdditionalFiles Include="PublicAPI\$(TargetFramework)\PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI\$(TargetFramework)\PublicAPI.Unshipped.txt" />
   </ItemGroup>
 
 </Project>

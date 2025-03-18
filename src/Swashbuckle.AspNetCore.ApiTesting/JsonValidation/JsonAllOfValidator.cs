@@ -1,18 +1,11 @@
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Linq;
 
 namespace Swashbuckle.AspNetCore.ApiTesting
 {
-    public class JsonAllOfValidator : IJsonValidator
+    public class JsonAllOfValidator(JsonValidator jsonValidator) : IJsonValidator
     {
-        private JsonValidator _jsonValidator;
-
-        public JsonAllOfValidator(JsonValidator jsonValidator)
-        {
-            _jsonValidator = jsonValidator;
-        }
+        private readonly JsonValidator _jsonValidator = jsonValidator;
 
         public bool CanValidate(OpenApiSchema schema) => schema.AllOf != null && schema.AllOf.Any();
 
@@ -26,10 +19,12 @@ namespace Swashbuckle.AspNetCore.ApiTesting
 
             var allOfArray = schema.AllOf.ToArray();
 
-            for (int i=0;i<allOfArray.Length;i++)
+            for (int i = 0; i < allOfArray.Length; i++)
             {
                 if (!_jsonValidator.Validate(allOfArray[i], openApiDocument, instance, out IEnumerable<string> subErrorMessages))
+                {
                     errorMessagesList.AddRange(subErrorMessages.Select(msg => $"{msg} (allOf[{i}])"));
+                }
             }
 
             errorMessages = errorMessagesList;

@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.Swagger

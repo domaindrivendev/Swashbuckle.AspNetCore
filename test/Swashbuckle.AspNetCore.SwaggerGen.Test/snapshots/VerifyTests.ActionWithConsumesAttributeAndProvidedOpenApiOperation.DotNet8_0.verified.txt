@@ -1,0 +1,38 @@
+﻿{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Test API",
+    "version": "V1"
+  },
+  "paths": {
+    "/resource": {
+      "post": {
+        "operationId": "OperationIdSetInMetadata",
+        "requestBody": {
+          "content": {
+            "application/someMediaType": {
+              "schema": {
+                "$ref": "#/components/schemas/TestDto"
+              }
+            }
+          }
+        },
+        "responses": { }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "TestDto": {
+        "type": "object",
+        "properties": {
+          "Prop1": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

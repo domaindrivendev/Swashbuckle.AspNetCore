@@ -1,0 +1,61 @@
+﻿{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Test API",
+    "version": "V1"
+  },
+  "paths": {
+    "/resource": {
+      "post": {
+        "tags": [
+          "Fake"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/SwaggerIngoreAnnotatedType"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "param2": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                ]
+              },
+              "encoding": {
+                "param2": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SwaggerIngoreAnnotatedType": {
+        "type": "object",
+        "properties": {
+          "NotIgnoredString": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

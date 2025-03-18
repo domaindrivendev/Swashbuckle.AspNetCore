@@ -1,5 +1,4 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 

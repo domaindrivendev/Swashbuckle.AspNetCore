@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Swashbuckle.AspNetCore.Swagger
+﻿namespace Swashbuckle.AspNetCore.Swagger
 {
     public interface ISwaggerDocumentMetadataProvider
     {

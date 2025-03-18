@@ -1,9 +1,7 @@
-﻿using System.IO;
-using System.Xml.XPath;
+﻿using System.Xml.XPath;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.TestSupport;
-using Xunit;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -12,7 +10,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void Apply_SetsDescriptionAndExample_FromActionParamTag()
         {
-            var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = "string" } };
+            var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String } };
             var parameterInfo = typeof(FakeControllerWithXmlComments)
                 .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithParamTags))
                 .GetParameters()[0];
@@ -29,7 +27,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void Apply_SetsDescriptionAndExample_FromUriTypeActionParamTag()
         {
-            var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = "string" } };
+            var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String } };
             var parameterInfo = typeof(FakeControllerWithXmlComments)
                 .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithParamTags))
                 .GetParameters()[1];
@@ -46,7 +44,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void Apply_SetsDescriptionAndExample_FromUnderlyingGenericTypeActionParamTag()
         {
-            var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = "string" } };
+            var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String } };
             var parameterInfo = typeof(FakeConstructedControllerWithXmlComments)
                 .GetMethod(nameof(FakeConstructedControllerWithXmlComments.ActionWithParamTags))
                 .GetParameters()[0];
@@ -63,7 +61,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void Apply_SetsDescriptionAndExample_FromPropertySummaryAndExampleTags()
         {
-            var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = "string", Description = "schema-level description" } };
+            var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String, Description = "schema-level description" } };
             var propertyInfo = typeof(XmlAnnotatedType).GetProperty(nameof(XmlAnnotatedType.StringProperty));
             var apiParameterDescription = new ApiParameterDescription { };
             var filterContext = new ParameterFilterContext(apiParameterDescription, null, null, propertyInfo: propertyInfo);
@@ -79,7 +77,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void Apply_SetsDescriptionAndExample_FromUriTypePropertySummaryAndExampleTags()
         {
-            var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = "string", Description = "schema-level description" } };
+            var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String, Description = "schema-level description" } };
             var propertyInfo = typeof(XmlAnnotatedType).GetProperty(nameof(XmlAnnotatedType.StringPropertyWithUri));
             var apiParameterDescription = new ApiParameterDescription { };
             var filterContext = new ParameterFilterContext(apiParameterDescription, null, null, propertyInfo: propertyInfo);
@@ -92,12 +90,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("\"https://test.com/a?b=1&c=2\"", parameter.Example.ToJson());
         }
 
-        private XmlCommentsParameterFilter Subject()
+        private static XmlCommentsParameterFilter Subject()
         {
-            using (var xmlComments = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml"))
-            {
-                return new XmlCommentsParameterFilter(new XPathDocument(xmlComments));
-            }
+            using var xmlComments = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml");
+            return new XmlCommentsParameterFilter(new XPathDocument(xmlComments));
         }
     }
 }

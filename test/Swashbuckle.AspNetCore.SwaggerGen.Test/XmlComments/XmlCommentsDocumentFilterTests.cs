@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Xml.XPath;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -8,7 +6,6 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
-using Xunit;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {

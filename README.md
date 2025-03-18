@@ -25,7 +25,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 | Swashbuckle Version | ASP.NET Core | Swagger / OpenAPI Spec. | swagger-ui | Redoc UI |
 |----------|----------|----------|----------|----------|
 | [CI](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/commits/master/) | >= 2.0.0 | 2.0, 3.0 | [5.x.x](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/master/src/Swashbuckle.AspNetCore.SwaggerUI/package.json#L6) | [2.x.x](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/master/src/Swashbuckle.AspNetCore.ReDoc/package.json#L6) |
-| [7.3.1](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v7.2.0) | >= 2.0.0 | 2.0, 3.0 | 5.20.0 | 2.4.0 |
+| [7.3.2](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v7.3.2) | >= 2.0.0 | 2.0, 3.0 | 5.20.1 | 2.4.0 |
 | [6.9.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v6.9.0) | >= 2.0.0 | 2.0, 3.0 | 5.17.14 | 2.1.5 |
 | [5.6.3](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v5.6.3) | >= 2.0.0 | 2.0, 3.0 | 3.32.5 | 2.0.0-rc.40 |
 | [4.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v4.0.0) | >= 2.0.0, < 3.0.0 | 2.0 | 3.19.5 | 1.22.2 |
@@ -1631,7 +1631,7 @@ Once your application has been setup with Swashbuckle (see [Getting Started](#ge
 
 It's packaged as a [.NET Tool](https://learn.microsoft.com/dotnet/core/tools/global-tools) that can be installed and used via the dotnet SDK.
 
-> :warning: The tool needs to load your Startup DLL and its dependencies at runtime. Therefore, you should use a version of the `dotnet` SDK that is compatible with your application. For example, if your app targets `net6.0`, then you should use version 6.0.xxx of the SDK to run the CLI tool. If it targets `net8.0`, then you should use version 8.0.xxx of the SDK and so on.
+> :warning: The tool needs to load your Startup DLL and its dependencies at runtime. Therefore, you should use a version of the `dotnet` SDK that is compatible with your application. For example, if your app targets `net8.0`, then you should use version 8.0.xxx of the SDK to run the CLI tool. If it targets `net9.0`, then you should use version 9.0.xxx of the SDK and so on.
 
 #### Using the tool with the .NET SDK
 

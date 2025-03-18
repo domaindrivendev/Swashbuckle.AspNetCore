@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Swashbuckle.AspNetCore.SwaggerGen
+﻿namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class SwaggerGeneratorException : Exception
     {

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.ApiTesting

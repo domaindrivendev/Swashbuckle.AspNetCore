@@ -1,0 +1,73 @@
+﻿{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Test API",
+    "version": "V1"
+  },
+  "paths": {
+    "/resource": {
+      "post": {
+        "operationId": "OperationIdSetInMetadata",
+        "requestBody": {
+          "content": {
+            "application/someMediaType": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TestDto"
+                  },
+                  {
+                    "$ref": "#/components/schemas/TypeWithDefaultAttributeOnEnum"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": { }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "IntEnum": {
+        "enum": [
+          2,
+          4,
+          8
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "TestDto": {
+        "type": "object",
+        "properties": {
+          "Prop1": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TypeWithDefaultAttributeOnEnum": {
+        "type": "object",
+        "properties": {
+          "EnumWithDefault": {
+            "$ref": "#/components/schemas/IntEnum"
+          },
+          "EnumArrayWithDefault": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IntEnum"
+            },
+            "default": [
+              4
+            ],
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

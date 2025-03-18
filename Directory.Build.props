@@ -12,10 +12,7 @@
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <EnablePackageValidation>$(IsPackable)</EnablePackageValidation>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
-    <!--
-    TODO Go through the code and tidy up the usings
     <ImplicitUsings>enable</ImplicitUsings>
-    -->
     <IncludeSymbols>true</IncludeSymbols>
     <LangVersion>latest</LangVersion>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
@@ -35,14 +32,14 @@
     <PackageReadmeFile>package-readme.md</PackageReadmeFile>
     <PackageReleaseNotes>See $(PackageProjectUrl)/releases for details.</PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageValidationBaselineVersion>7.3.1</PackageValidationBaselineVersion>
+    <PackageValidationBaselineVersion>7.3.2</PackageValidationBaselineVersion>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>$(PackageProjectUrl).git</RepositoryUrl>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <UseArtifactsOutput>true</UseArtifactsOutput>
-    <VersionPrefix>7.3.2</VersionPrefix>
+    <VersionPrefix>8.0.0</VersionPrefix>
     <WarnOnPackingNonPackableProject>false</WarnOnPackingNonPackableProject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(GITHUB_ACTIONS)' != '' AND '$(DEPENDABOT_JOB_ID)' == '' ">
@@ -58,7 +55,7 @@
   <ItemGroup Condition=" '$(PackageReadmeFile)' != '' ">
     <None Include="$(MSBuildThisFileDirectory)$(PackageReadmeFile)" Pack="True" PackagePath="" />
   </ItemGroup>
-  <PropertyGroup Condition=" '$(SignAssembly)' == 'true' AND '$(OS)' != 'Windows_NT' ">
+  <PropertyGroup Condition=" '$(SignAssembly)' == 'true' AND '$(OS)' != !$([MSBuild]::IsOSPlatform('Windows')) ">
     <PublicSign>true</PublicSign>
   </PropertyGroup>
   <PropertyGroup>

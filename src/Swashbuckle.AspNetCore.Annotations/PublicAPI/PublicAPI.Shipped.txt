@@ -49,8 +49,6 @@ Swashbuckle.AspNetCore.Annotations.SwaggerRequestBodyAttribute.SwaggerRequestBod
 Swashbuckle.AspNetCore.Annotations.SwaggerResponseAttribute
 Swashbuckle.AspNetCore.Annotations.SwaggerResponseAttribute.ContentTypes.get -> string[]
 Swashbuckle.AspNetCore.Annotations.SwaggerResponseAttribute.ContentTypes.set -> void
-Swashbuckle.AspNetCore.Annotations.SwaggerResponseAttribute.Description.get -> string
-Swashbuckle.AspNetCore.Annotations.SwaggerResponseAttribute.Description.set -> void
 Swashbuckle.AspNetCore.Annotations.SwaggerResponseAttribute.SwaggerResponseAttribute(int statusCode, string description = null, System.Type type = null) -> void
 Swashbuckle.AspNetCore.Annotations.SwaggerResponseAttribute.SwaggerResponseAttribute(int statusCode, string description = null, System.Type type = null, params string[] contentTypes) -> void
 Swashbuckle.AspNetCore.Annotations.SwaggerSchemaAttribute

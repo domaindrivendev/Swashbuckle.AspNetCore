@@ -1,9 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Duende.IdentityServer.Models;
+﻿using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Services;
-using Duende.IdentityServer.Stores;
 using Microsoft.AspNetCore.Mvc;
 
 namespace OAuth2Integration.AuthServer.Controllers

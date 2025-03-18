@@ -1,5 +1,3 @@
-using System;
-
 // ReSharper disable once CheckNamespace
 namespace Swashbuckle.AspNetCore.Annotations
 {

@@ -1,5 +1,4 @@
-﻿using System;
-using Swashbuckle.AspNetCore.TestSupport;
+﻿using Swashbuckle.AspNetCore.TestSupport;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {

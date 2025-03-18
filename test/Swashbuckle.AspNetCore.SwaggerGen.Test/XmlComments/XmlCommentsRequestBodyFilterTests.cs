@@ -1,12 +1,9 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Xml.XPath;
+﻿using System.Xml.XPath;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.TestSupport;
-using Xunit;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -19,7 +16,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             {
                 Content = new Dictionary<string, OpenApiMediaType>
                 {
-                    ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = "string" } }
+                    ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String } }
                 }
             };
             var parameterInfo = typeof(FakeControllerWithXmlComments)
@@ -45,7 +42,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             {
                 Content = new Dictionary<string, OpenApiMediaType>
                 {
-                    ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = "string" } }
+                    ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String } }
                 }
             };
             var parameterInfo = typeof(FakeConstructedControllerWithXmlComments)
@@ -71,7 +68,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             {
                 Content = new Dictionary<string, OpenApiMediaType>
                 {
-                    ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = "string" } }
+                    ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String } }
                 }
             };
             var bodyParameterDescription = new ApiParameterDescription
@@ -95,7 +92,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             {
                 Content = new Dictionary<string, OpenApiMediaType>
                 {
-                    ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = "string" } }
+                    ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String } }
                 }
             };
             var bodyParameterDescription = new ApiParameterDescription
@@ -118,7 +115,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             {
                 Content = new Dictionary<string, OpenApiMediaType>
                 {
-                    ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = "string" } }
+                    ["application/json"] = new OpenApiMediaType { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String } }
                 }
             };
             var parameterInfo = typeof(FakeControllerWithXmlComments)
@@ -150,7 +147,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
                     {
                         Schema = new OpenApiSchema
                         {
-                            Type = "string",
+                            Type = JsonSchemaTypes.String,
                             Properties = new Dictionary<string, OpenApiSchema>()
                             {
                                 [parameterInfo.Name] = new()

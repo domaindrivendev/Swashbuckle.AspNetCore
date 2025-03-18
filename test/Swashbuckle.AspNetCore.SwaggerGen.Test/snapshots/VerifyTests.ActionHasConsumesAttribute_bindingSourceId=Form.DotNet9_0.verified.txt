@@ -1,0 +1,41 @@
+﻿{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Test API",
+    "version": "V1"
+  },
+  "paths": {
+    "/resource": {
+      "post": {
+        "tags": [
+          "Fake"
+        ],
+        "requestBody": {
+          "content": {
+            "application/someMediaType": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "param": {
+                    "type": "string"
+                  }
+                }
+              },
+              "encoding": {
+                "param": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": { }
+}

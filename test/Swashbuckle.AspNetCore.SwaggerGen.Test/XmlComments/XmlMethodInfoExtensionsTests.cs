@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures;
-using Xunit;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 

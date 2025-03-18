@@ -1,11 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using Microsoft.Extensions.ApiDescriptions;
-using Microsoft.OpenApi.Readers;
 using Swashbuckle.AspNetCore.Swagger;
-using Xunit;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests
 {
@@ -45,19 +40,17 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             var services = server.Host.Services;
 
             var documentProvider = (IDocumentProvider)services.GetService(typeof(IDocumentProvider));
-            using (var stream = new MemoryStream())
+            using var stream = new MemoryStream();
+            using (var writer = new StreamWriter(stream, Encoding.UTF8, bufferSize: 2048, leaveOpen: true))
             {
-                using (var writer = new StreamWriter(stream, Encoding.UTF8, bufferSize: 2048, leaveOpen: true))
-                {
-                    await documentProvider.GenerateAsync(documentName, writer);
-                    await writer.FlushAsync();
-                }
-
-                stream.Position = 0L;
-                new OpenApiStreamReader().Read(stream, out var diagnostic);
-                Assert.NotNull(diagnostic);
-                Assert.Empty(diagnostic.Errors);
+                await documentProvider.GenerateAsync(documentName, writer);
+                await writer.FlushAsync();
             }
+
+            stream.Position = 0L;
+            var (_, diagnostic) = await OpenApiDocumentLoader.LoadWithDiagnosticsAsync(stream);
+            Assert.NotNull(diagnostic);
+            Assert.Empty(diagnostic.Errors);
         }
 
         [Fact]
@@ -68,11 +61,9 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             var services = server.Host.Services;
 
             var documentProvider = (IDocumentProvider)services.GetService(typeof(IDocumentProvider));
-            using (var writer = new StringWriter())
-            {
-                await Assert.ThrowsAsync<UnknownSwaggerDocument>(
-                    () => documentProvider.GenerateAsync("NotADocument", writer));
-            }
+            using var writer = new StringWriter();
+            await Assert.ThrowsAsync<UnknownSwaggerDocument>(
+                () => documentProvider.GenerateAsync("NotADocument", writer));
         }
     }
 }
