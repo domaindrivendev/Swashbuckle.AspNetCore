@@ -24,12 +24,53 @@ namespace Swashbuckle.AspNetCore.Cli.Test
         [Fact]
         public static void Throws_When_Startup_Assembly_Does_Not_Exist()
         {
-            string[] args = ["tofile", "--output", "swagger.json", "--serializeasv2", "./does_not_exist.dll", "v1"];
+            string[] args = ["tofile", "--output", "swagger.json", "--openapiversion", "2.0", "./does_not_exist.dll", "v1"];
             Assert.Throws<FileNotFoundException>(() => Program.Main(args));
         }
 
+        [Theory]
+        [InlineData("a")]
+        [InlineData("1.9")]
+        [InlineData("3.2")]
+        public static void Error_When_OpenApiVersion_Is_Not_Supported(string version)
+        {
+            string[] args =
+            [
+                "tofile",
+                "--output",
+                "swagger.json",
+                "--openapiversion",
+                version,
+                Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
+                "v1"
+            ];
+            Assert.NotEqual(0, Program.Main(args));
+        }
+
         [Fact]
-        public static void Can_Generate_Swagger_Json()
+        public static void Can_Generate_Swagger_Json_v2_OpenApiVersion()
+        {
+            using var document = RunToJsonCommand((outputPath) =>
+            [
+                "tofile",
+                "--output",
+                outputPath,
+                "--openapiversion",
+                "2.0",
+                Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
+                "v1"
+            ]);
+
+            Assert.Equal("2.0", document.RootElement.GetProperty("swagger").GetString());
+
+            // verify one of the endpoints
+            var paths = document.RootElement.GetProperty("paths");
+            var productsPath = paths.GetProperty("/products");
+            Assert.True(productsPath.TryGetProperty("post", out _));
+        }
+
+        [Fact]
+        public static void Can_Generate_Swagger_Json_v2_SerializeAsV2()
         {
             using var document = RunToJsonCommand((outputPath) =>
             [
@@ -40,6 +81,50 @@ namespace Swashbuckle.AspNetCore.Cli.Test
                 Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
                 "v1"
             ]);
+
+            Assert.Equal("2.0", document.RootElement.GetProperty("swagger").GetString());
+
+            // verify one of the endpoints
+            var paths = document.RootElement.GetProperty("paths");
+            var productsPath = paths.GetProperty("/products");
+            Assert.True(productsPath.TryGetProperty("post", out _));
+        }
+
+        [Fact]
+        public static void Can_Generate_Swagger_Json_v3()
+        {
+            using var document = RunToJsonCommand((outputPath) =>
+            [
+                "tofile",
+                "--output",
+                outputPath,
+                Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
+                "v1"
+            ]);
+
+            Assert.StartsWith("3.0.", document.RootElement.GetProperty("openapi").GetString());
+
+            // verify one of the endpoints
+            var paths = document.RootElement.GetProperty("paths");
+            var productsPath = paths.GetProperty("/products");
+            Assert.True(productsPath.TryGetProperty("post", out _));
+        }
+
+        [Fact]
+        public static void Can_Generate_Swagger_Json_v3_OpenApiVersion()
+        {
+            using var document = RunToJsonCommand((outputPath) =>
+            [
+                "tofile",
+                "--output",
+                outputPath,
+                "--openapiversion",
+                "3.0",
+                Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
+                "v1"
+            ]);
+
+            Assert.StartsWith("3.0.", document.RootElement.GetProperty("openapi").GetString());
 
             // verify one of the endpoints
             var paths = document.RootElement.GetProperty("paths");
@@ -59,7 +144,8 @@ namespace Swashbuckle.AspNetCore.Cli.Test
                     "tofile",
                     "--output",
                     outputPath,
-                    "--serializeasv2",
+                    "--openapiversion",
+                    "2.0",
                     Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
                     "v1"
                 ];
@@ -79,7 +165,8 @@ namespace Swashbuckle.AspNetCore.Cli.Test
                 "tofile",
                 "--output",
                 outputPath,
-                "--serializeasv2",
+                "--openapiversion",
+                "2.0",
                 Path.Combine(Directory.GetCurrentDirectory(), "CustomDocumentSerializer.dll"),
                 "v1"
             ]);
@@ -115,7 +202,8 @@ namespace Swashbuckle.AspNetCore.Cli.Test
                 "tofile",
                 "--output",
                 outputPath,
-                "--serializeasv2",
+                "--openapiversion",
+                "2.0",
                 Path.Combine(Directory.GetCurrentDirectory(), "MinimalApp.dll"),
                 "v1"
             ]);
@@ -152,7 +240,8 @@ namespace Swashbuckle.AspNetCore.Cli.Test
                 "tofile",
                 "--output",
                 outputPath,
-                "--serializeasv2",
+                "--openapiversion",
+                "2.0",
                 Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
                 "v1"
             ], GenerateRandomString(5));

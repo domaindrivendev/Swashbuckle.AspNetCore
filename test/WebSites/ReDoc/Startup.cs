@@ -40,7 +40,7 @@ namespace ReDoc
 
             app.UseSwagger(c =>
             {
-                c.SerializeAsV2 = true;
+                c.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0;
             });
 
             app.UseReDoc(c =>

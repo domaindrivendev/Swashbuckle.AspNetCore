@@ -305,7 +305,7 @@ By default, Swashbuckle will generate and expose Swagger JSON in version 3.0 of 
 ```csharp
 app.UseSwagger(c =>
 {
-    c.SerializeAsV2 = true;
+    c.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0;
 });
 ```
 

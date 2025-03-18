@@ -15,8 +15,6 @@ Swashbuckle.AspNetCore.Swagger.ISwaggerDocumentMetadataProvider
 Swashbuckle.AspNetCore.Swagger.ISwaggerDocumentMetadataProvider.GetDocumentNames() -> System.Collections.Generic.IList<string>
 Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions
 Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions.PreSerializeFilters.get -> System.Collections.Generic.List<System.Action<Microsoft.OpenApi.Models.OpenApiDocument, Microsoft.AspNetCore.Http.HttpRequest>>
-Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions.SerializeAsV2.get -> bool
-Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions.SerializeAsV2.set -> void
 Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions.SwaggerEndpointOptions() -> void
 Swashbuckle.AspNetCore.Swagger.SwaggerOptions
 Swashbuckle.AspNetCore.Swagger.SwaggerOptions.CustomDocumentSerializer.get -> Swashbuckle.AspNetCore.Swagger.ISwaggerDocumentSerializer
@@ -24,8 +22,6 @@ Swashbuckle.AspNetCore.Swagger.SwaggerOptions.CustomDocumentSerializer.set -> vo
 Swashbuckle.AspNetCore.Swagger.SwaggerOptions.PreSerializeFilters.get -> System.Collections.Generic.List<System.Action<Microsoft.OpenApi.Models.OpenApiDocument, Microsoft.AspNetCore.Http.HttpRequest>>
 Swashbuckle.AspNetCore.Swagger.SwaggerOptions.RouteTemplate.get -> string
 Swashbuckle.AspNetCore.Swagger.SwaggerOptions.RouteTemplate.set -> void
-Swashbuckle.AspNetCore.Swagger.SwaggerOptions.SerializeAsV2.get -> bool
-Swashbuckle.AspNetCore.Swagger.SwaggerOptions.SerializeAsV2.set -> void
 Swashbuckle.AspNetCore.Swagger.SwaggerOptions.SwaggerOptions() -> void
 Swashbuckle.AspNetCore.Swagger.UnknownSwaggerDocument
 Swashbuckle.AspNetCore.Swagger.UnknownSwaggerDocument.UnknownSwaggerDocument(string documentName, System.Collections.Generic.IEnumerable<string> knownDocuments) -> void
