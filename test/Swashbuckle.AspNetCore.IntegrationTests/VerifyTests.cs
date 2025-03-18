@@ -107,12 +107,15 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         /// Normalize "\n" strings into "\r\n" which is expected linebreak in Verify verified.txt files.
         /// </summary>
         private static string NormalizeLineBreaks(string swagger)
-            => swagger.ReplaceLineEndings("\r\n");
+            => UnixNewLineRegex().Replace(swagger, "\\r\\n");
 
         private static string GetVersion(string swaggerUi) =>
             VersionRegex().Match(swaggerUi).Groups[1].Value;
 
         [GeneratedRegex("/\\w+/([\\w+\\d+.-]+)/")]
         private static partial Regex VersionRegex();
+
+        [GeneratedRegex(@"(?<!\\r)\\n")]
+        private static partial Regex UnixNewLineRegex();
     }
 }
