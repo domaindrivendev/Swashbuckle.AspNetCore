@@ -57,8 +57,8 @@ namespace Swashbuckle.AspNetCore.ApiTesting
                     continue;
                 }
 
-                var schema = (headerSpec.Schema.Reference != null)
-                    ? (OpenApiSchema)openApiDocument.ResolveReference(headerSpec.Schema.Reference)
+                var schema = (headerSpec.Schema.Reference != null) ?
+                    (OpenApiSchema)openApiDocument.ResolveReference(headerSpec.Schema.Reference)
                     : headerSpec.Schema;
 
                 if (value == null)

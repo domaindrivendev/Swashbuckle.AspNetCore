@@ -4,16 +4,13 @@ using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 #if NET8_0_OR_GREATER
-using System.Net.Http.Json;
 #endif
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.OpenApi.Any;
 using Xunit;
 using ReDocApp = ReDoc;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Readers;
-using Microsoft.OpenApi.Any;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests
 {
@@ -93,11 +90,11 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
             try
             {
-                var openApiDocument = new OpenApiStreamReader().Read(contentStream, out OpenApiDiagnostic diagnostic);
-                var example = openApiDocument.Components.Schemas["Product"].Example as OpenApiObject;
-                var price = (example["price"] as OpenApiDouble);
-                Assert.NotNull(price);
-                Assert.Equal(14.37, price.Value);
+                var openApiDocument = await OpenApiDocumentLoader.LoadAsync(contentStream);
+                var example = openApiDocument.Components.Schemas["Product"].Example;
+                var exampleObject = Assert.IsType<OpenApiObject>(example);
+                double price = Assert.IsType<OpenApiDouble>(exampleObject["price"]).Value;
+                Assert.Equal(14.37, price);
             }
             finally
             {
@@ -214,7 +211,8 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 
             Assert.True(swaggerResponse.IsSuccessStatusCode, $"IsSuccessStatusCode is false. Response: '{await swaggerResponse.Content.ReadAsStringAsync()}'");
             using var contentStream = await swaggerResponse.Content.ReadAsStreamAsync();
-            new OpenApiStreamReader().Read(contentStream, out OpenApiDiagnostic diagnostic);
+            var (_, diagnostic) = await OpenApiDocumentLoader.LoadWithDiagnosticsAsync(contentStream);
+            Assert.NotNull(diagnostic);
             Assert.Empty(diagnostic.Errors);
         }
     }

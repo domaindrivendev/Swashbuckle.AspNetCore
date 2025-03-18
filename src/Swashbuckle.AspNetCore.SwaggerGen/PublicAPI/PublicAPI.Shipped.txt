@@ -68,11 +68,8 @@ static Swashbuckle.AspNetCore.SwaggerGen.MemberInfoExtensions.GetInlineAndMetada
 static Swashbuckle.AspNetCore.SwaggerGen.MemberInfoExtensions.IsDictionaryValueNonNullable(this System.Reflection.MemberInfo memberInfo) -> bool
 static Swashbuckle.AspNetCore.SwaggerGen.MemberInfoExtensions.IsNonNullableReferenceType(this System.Reflection.MemberInfo memberInfo) -> bool
 static Swashbuckle.AspNetCore.SwaggerGen.MethodInfoExtensions.GetUnderlyingGenericTypeMethod(this System.Reflection.MethodInfo constructedTypeMethod) -> System.Reflection.MethodInfo
-static Swashbuckle.AspNetCore.SwaggerGen.OpenApiAnyFactory.CreateFromJson(string json) -> Microsoft.OpenApi.Any.IOpenApiAny
-static Swashbuckle.AspNetCore.SwaggerGen.OpenApiAnyFactory.CreateFromJson(string json, System.Text.Json.JsonSerializerOptions options) -> Microsoft.OpenApi.Any.IOpenApiAny
 static Swashbuckle.AspNetCore.SwaggerGen.OpenApiSchemaExtensions.ApplyRouteConstraints(this Microsoft.OpenApi.Models.OpenApiSchema schema, Microsoft.AspNetCore.Mvc.ApiExplorer.ApiParameterRouteInfo routeInfo) -> void
 static Swashbuckle.AspNetCore.SwaggerGen.OpenApiSchemaExtensions.ApplyValidationAttributes(this Microsoft.OpenApi.Models.OpenApiSchema schema, System.Collections.Generic.IEnumerable<object> customAttributes) -> void
-static Swashbuckle.AspNetCore.SwaggerGen.OpenApiSchemaExtensions.ResolveType(this Microsoft.OpenApi.Models.OpenApiSchema schema, Swashbuckle.AspNetCore.SwaggerGen.SchemaRepository schemaRepository) -> string
 static Swashbuckle.AspNetCore.SwaggerGen.PropertyInfoExtensions.HasAttribute<TAttribute>(this System.Reflection.PropertyInfo property) -> bool
 static Swashbuckle.AspNetCore.SwaggerGen.PropertyInfoExtensions.IsPubliclyReadable(this System.Reflection.PropertyInfo property) -> bool
 static Swashbuckle.AspNetCore.SwaggerGen.PropertyInfoExtensions.IsPubliclyWritable(this System.Reflection.PropertyInfo property) -> bool
@@ -168,7 +165,6 @@ Swashbuckle.AspNetCore.SwaggerGen.JsonSerializerDataContractResolver.IsSupported
 Swashbuckle.AspNetCore.SwaggerGen.JsonSerializerDataContractResolver.JsonSerializerDataContractResolver(System.Text.Json.JsonSerializerOptions serializerOptions) -> void
 Swashbuckle.AspNetCore.SwaggerGen.MemberInfoExtensions
 Swashbuckle.AspNetCore.SwaggerGen.MethodInfoExtensions
-Swashbuckle.AspNetCore.SwaggerGen.OpenApiAnyFactory
 Swashbuckle.AspNetCore.SwaggerGen.OpenApiSchemaExtensions
 Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext
 Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext.ApiDescription.get -> Microsoft.AspNetCore.Mvc.ApiExplorer.ApiDescription

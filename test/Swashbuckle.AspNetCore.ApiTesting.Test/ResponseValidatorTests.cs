@@ -5,6 +5,8 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 using Xunit;
 
+using JsonSchemaType = string;
+
 namespace Swashbuckle.AspNetCore.ApiTesting.Test
 {
     public class ResponseValidatorTests
@@ -74,19 +76,25 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
             Assert.Equal(expectedErrorMessage, exception?.Message);
         }
 
+#nullable enable
+        public static TheoryData<string, JsonSchemaType, JsonSchemaType?, string?> HeaderTypeValidationData => new()
+        {
+            { "foo", JsonSchemaTypes.Boolean, null, "Header 'test-header' is not of type 'boolean'" },
+            { "foo", JsonSchemaTypes.Number, null, "Header 'test-header' is not of type 'number'" },
+            { "true", JsonSchemaTypes.Boolean, null, null },
+            { "1", JsonSchemaTypes.Number, null, null },
+            { "foo", JsonSchemaTypes.String, null, null },
+            { "1,2", JsonSchemaTypes.Array, JsonSchemaTypes.Number, null },
+            { "1,foo", JsonSchemaTypes.Array, JsonSchemaTypes.Number, "Header 'test-header' is not of type 'array[number]'" },
+        };
+
         [Theory]
-        [InlineData("foo", "boolean", null, "Header 'test-header' is not of type 'boolean'")]
-        [InlineData("foo", "number", null, "Header 'test-header' is not of type 'number'")]
-        [InlineData("1,foo", "array", "number", "Header 'test-header' is not of type 'array[number]'")]
-        [InlineData("true", "boolean", null, null)]
-        [InlineData("1", "number", null, null)]
-        [InlineData("foo", "string", null, null)]
-        [InlineData("1,2", "array", "number", null)]
+        [MemberData(nameof(HeaderTypeValidationData))]
         public void Validate_ThrowsException_IfHeaderIsNotOfSpecifiedType(
             string headerValue,
-            string specifiedType,
-            string specifiedItemsType,
-            string expectedErrorMessage)
+            JsonSchemaType specifiedType,
+            JsonSchemaType? specifiedItemsType,
+            string? expectedErrorMessage)
         {
             var openApiDocument = DocumentWithOperation("/api/products", OperationType.Post, new OpenApiOperation
             {
@@ -101,7 +109,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
                                 Schema = new OpenApiSchema
                                 {
                                     Type = specifiedType,
-                                    Items = (specifiedItemsType != null) ? new OpenApiSchema { Type = specifiedItemsType } : null
+                                    Items = specifiedItemsType != null ? new OpenApiSchema { Type = specifiedItemsType } : null
                                 }
                             }
                         }
@@ -121,6 +129,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
 
             Assert.Equal(expectedErrorMessage, exception?.Message);
         }
+#nullable restore
 
         [Theory]
         [InlineData(null, "Expected content is not present")]
@@ -207,7 +216,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
                             {
                                 Schema = new OpenApiSchema
                                 {
-                                    Type = "object",
+                                    Type = JsonSchemaTypes.Object,
                                     Required = new SortedSet<string> { "prop1", "prop2" }
                                 }
                             }
@@ -217,7 +226,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
             });
             var response = new HttpResponseMessage
             {
-                Content = new StringContent(jsonString, Encoding.UTF8, "application/json") 
+                Content = new StringContent(jsonString, Encoding.UTF8, "application/json")
             };
 
             var exception = Record.Exception(() =>

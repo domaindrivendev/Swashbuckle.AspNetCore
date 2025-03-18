@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.ApiDescriptions;
-using Microsoft.OpenApi.Readers;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using Xunit;
 
@@ -53,7 +53,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             }
 
             stream.Position = 0L;
-            new OpenApiStreamReader().Read(stream, out var diagnostic);
+            var (_, diagnostic) = await OpenApiDocumentLoader.LoadWithDiagnosticsAsync(stream);
             Assert.NotNull(diagnostic);
             Assert.Empty(diagnostic.Errors);
         }

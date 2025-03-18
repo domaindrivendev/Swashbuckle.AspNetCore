@@ -9,7 +9,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting
     {
         private readonly IJsonValidator _jsonValidator = jsonValidator;
 
-        public bool CanValidate(OpenApiSchema schema) => schema.Type == "array";
+        public bool CanValidate(OpenApiSchema schema) => schema.Type == JsonSchemaTypes.Array;
 
         public bool Validate(
             OpenApiSchema schema,

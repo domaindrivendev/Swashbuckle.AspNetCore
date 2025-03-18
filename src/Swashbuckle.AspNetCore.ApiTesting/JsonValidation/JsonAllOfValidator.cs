@@ -7,7 +7,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting
 {
     public class JsonAllOfValidator(JsonValidator jsonValidator) : IJsonValidator
     {
-        private JsonValidator _jsonValidator = jsonValidator;
+        private readonly JsonValidator _jsonValidator = jsonValidator;
 
         public bool CanValidate(OpenApiSchema schema) => schema.AllOf != null && schema.AllOf.Any();
 

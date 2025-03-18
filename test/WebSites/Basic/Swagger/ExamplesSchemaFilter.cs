@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.OpenApi.Any;
+﻿using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -9,12 +8,7 @@ namespace Basic.Swagger
     {
         public void Apply(OpenApiSchema schema, SchemaFilterContext context)
         {
-            schema.Example = GetExampleOrNullFor(context.Type);
-        }
-
-        private static IOpenApiAny GetExampleOrNullFor(Type type)
-        {
-            return type.Name switch
+            schema.Example = context.Type.Name switch
             {
                 "Product" => new OpenApiObject
                 {

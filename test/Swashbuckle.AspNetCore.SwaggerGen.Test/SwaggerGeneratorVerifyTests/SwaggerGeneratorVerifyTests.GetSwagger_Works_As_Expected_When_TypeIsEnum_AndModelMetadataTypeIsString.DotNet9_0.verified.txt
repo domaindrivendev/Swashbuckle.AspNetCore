@@ -1,0 +1,84 @@
+﻿{
+  Info: {
+    Title: Test API,
+    Version: V1
+  },
+  Paths: {
+    /resource: {
+      Operations: {
+        Post: {
+          Tags: [
+            {
+              Name: Fake,
+              UnresolvedReference: false
+            }
+          ],
+          Parameters: [
+            {
+              UnresolvedReference: false,
+              Name: param1,
+              In: Query,
+              Required: false,
+              Deprecated: false,
+              AllowEmptyValue: false,
+              Style: Form,
+              Explode: true,
+              AllowReserved: false,
+              Schema: {
+                ReadOnly: false,
+                WriteOnly: false,
+                AdditionalPropertiesAllowed: true,
+                Nullable: false,
+                Deprecated: false,
+                UnresolvedReference: false,
+                Reference: {
+                  IsFragrament: false,
+                  Type: Schema,
+                  Id: IntEnum,
+                  IsExternal: false,
+                  IsLocal: true,
+                  ReferenceV3: #/components/schemas/IntEnum,
+                  ReferenceV2: #/definitions/IntEnum
+                }
+              }
+            }
+          ],
+          Responses: {
+            200: {
+              Description: OK,
+              UnresolvedReference: false
+            }
+          },
+          Deprecated: false
+        }
+      },
+      UnresolvedReference: false
+    }
+  },
+  Components: {
+    Schemas: {
+      IntEnum: {
+        Type: integer,
+        Format: int32,
+        ReadOnly: false,
+        WriteOnly: false,
+        AdditionalPropertiesAllowed: true,
+        Enum: [
+          {
+            Value: 2
+          },
+          {
+            Value: 4
+          },
+          {
+            Value: 8
+          }
+        ],
+        Nullable: false,
+        Deprecated: false,
+        UnresolvedReference: false
+      }
+    }
+  },
+  HashCode: F2B8FE01A8D273C628EBD9F65C7F1E80622E3C5CBBB8F150E247A34C4558F617F1D056F7B1113ABE978F9E433A9FBCA1C65A6387FB918AF00AFB54E6F5A47C5D
+}

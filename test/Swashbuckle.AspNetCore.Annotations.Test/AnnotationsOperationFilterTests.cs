@@ -89,9 +89,9 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             var jsonContent = response1.Content.First();
             var xmlContent = response1.Content.Last();
             Assert.Equal("application/json", jsonContent.Key);
-            Assert.Equal("string", jsonContent.Value.Schema.Type);
+            Assert.Equal(JsonSchemaTypes.String, jsonContent.Value.Schema.Type);
             Assert.Equal("application/xml", xmlContent.Key);
-            Assert.Equal("string", xmlContent.Value.Schema.Type);
+            Assert.Equal(JsonSchemaTypes.String, xmlContent.Value.Schema.Type);
         }
 
         [Fact]

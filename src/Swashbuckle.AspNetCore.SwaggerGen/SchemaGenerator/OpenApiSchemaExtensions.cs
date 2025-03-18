@@ -97,16 +97,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     ApplyLengthRouteConstraint(schema, lengthRouteConstraint);
 
                 else if (constraint is FloatRouteConstraint or DecimalRouteConstraint)
-                    schema.Type = "number";
+                    schema.Type = JsonSchemaTypes.Number;
 
                 else if (constraint is LongRouteConstraint or IntRouteConstraint)
-                    schema.Type = "integer";
+                    schema.Type = JsonSchemaTypes.Integer;
 
                 else if (constraint is GuidRouteConstraint or StringRouteConstraint)
-                    schema.Type = "string";
+                    schema.Type = JsonSchemaTypes.String;
 
                 else if (constraint is BoolRouteConstraint)
-                    schema.Type = "boolean";
+                    schema.Type = JsonSchemaTypes.Boolean;
             }
         }
 
@@ -139,7 +139,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private static void ApplyMinLengthAttribute(OpenApiSchema schema, MinLengthAttribute minLengthAttribute)
         {
-            if (schema.Type == "array")
+            if (schema.Type == JsonSchemaTypes.Array)
                 schema.MinItems = minLengthAttribute.Length;
             else
                 schema.MinLength = minLengthAttribute.Length;
@@ -147,7 +147,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private static void ApplyMinLengthRouteConstraint(OpenApiSchema schema, MinLengthRouteConstraint minLengthRouteConstraint)
         {
-            if (schema.Type == "array")
+            if (schema.Type == JsonSchemaTypes.Array)
                 schema.MinItems = minLengthRouteConstraint.MinLength;
             else
                 schema.MinLength = minLengthRouteConstraint.MinLength;
@@ -155,7 +155,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private static void ApplyMaxLengthAttribute(OpenApiSchema schema, MaxLengthAttribute maxLengthAttribute)
         {
-            if (schema.Type == "array")
+            if (schema.Type == JsonSchemaTypes.Array)
                 schema.MaxItems = maxLengthAttribute.Length;
             else
                 schema.MaxLength = maxLengthAttribute.Length;
@@ -163,7 +163,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private static void ApplyMaxLengthRouteConstraint(OpenApiSchema schema, MaxLengthRouteConstraint maxLengthRouteConstraint)
         {
-            if (schema.Type == "array")
+            if (schema.Type == JsonSchemaTypes.Array)
                 schema.MaxItems = maxLengthRouteConstraint.MaxLength;
             else
                 schema.MaxLength = maxLengthRouteConstraint.MaxLength;
@@ -173,7 +173,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private static void ApplyLengthAttribute(OpenApiSchema schema, LengthAttribute lengthAttribute)
         {
-            if (schema.Type == "array")
+            if (schema.Type == JsonSchemaTypes.Array)
             {
                 schema.MinItems = lengthAttribute.MinimumLength;
                 schema.MaxItems = lengthAttribute.MaximumLength;

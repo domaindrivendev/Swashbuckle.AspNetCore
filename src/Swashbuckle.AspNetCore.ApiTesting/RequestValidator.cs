@@ -59,8 +59,8 @@ namespace Swashbuckle.AspNetCore.ApiTesting
                 .Concat(operationSpec.Parameters)
                 .Select(p =>
                 {
-                    return p.Reference != null
-                        ? (OpenApiParameter)openApiDocument.ResolveReference(p.Reference)
+                    return p.Reference != null ?
+                        (OpenApiParameter)openApiDocument.ResolveReference(p.Reference)
                         : p;
                 });
         }
@@ -112,8 +112,8 @@ namespace Swashbuckle.AspNetCore.ApiTesting
                     continue;
                 }
 
-                var schema = (parameterSpec.Schema.Reference != null)
-                    ? (OpenApiSchema)openApiDocument.ResolveReference(parameterSpec.Schema.Reference)
+                var schema = (parameterSpec.Schema.Reference != null) ?
+                    (OpenApiSchema)openApiDocument.ResolveReference(parameterSpec.Schema.Reference)
                     : parameterSpec.Schema;
 
                 if (!schema.TryParse(value, out object typedValue))
@@ -125,8 +125,8 @@ namespace Swashbuckle.AspNetCore.ApiTesting
 
         private void ValidateContent(OpenApiRequestBody requestBodySpec, OpenApiDocument openApiDocument, HttpContent content)
         {
-            requestBodySpec = requestBodySpec.Reference != null
-                ? (OpenApiRequestBody)openApiDocument.ResolveReference(requestBodySpec.Reference)
+            requestBodySpec = requestBodySpec.Reference != null ?
+                (OpenApiRequestBody)openApiDocument.ResolveReference(requestBodySpec.Reference)
                 : requestBodySpec;
 
             if (requestBodySpec.Required && content == null)

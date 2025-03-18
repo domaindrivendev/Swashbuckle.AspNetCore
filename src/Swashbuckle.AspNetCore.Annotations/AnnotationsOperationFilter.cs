@@ -65,9 +65,7 @@ namespace Swashbuckle.AspNetCore.Annotations
 
             if (swaggerOperationAttribute.Tags != null)
             {
-                operation.Tags = swaggerOperationAttribute.Tags
-                    .Select(tagName => new OpenApiTag { Name = tagName })
-                    .ToList();
+                operation.Tags = [.. swaggerOperationAttribute.Tags.Select(tagName => new OpenApiTag { Name = tagName })];
             }
         }
 

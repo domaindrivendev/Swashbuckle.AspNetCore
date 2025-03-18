@@ -6,7 +6,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting
 {
     public class JsonBooleanValidator : IJsonValidator
     {
-        public bool CanValidate(OpenApiSchema schema) => schema.Type == "boolean";
+        public bool CanValidate(OpenApiSchema schema) => schema.Type == JsonSchemaTypes.Boolean;
 
         public bool Validate(
             OpenApiSchema schema,
