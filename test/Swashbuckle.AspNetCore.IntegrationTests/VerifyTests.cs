@@ -9,7 +9,7 @@ using ReDocApp = ReDoc;
 namespace Swashbuckle.AspNetCore.IntegrationTests
 {
     [Collection("TestSite")]
-    public partial class SwaggerVerifyIntegrationTest
+    public partial class VerifyTests
     {
         [Theory]
         [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
@@ -36,6 +36,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             var swagger = await swaggerResponse.Content.ReadAsStringAsync();
 
             await Verifier.Verify(NormalizeLineBreaks(swagger))
+                .UseDirectory("snapshots")
                 .UseParameters(startupType, GetVersion(swaggerRequestUri))
                 .UniqueForTargetFrameworkAndVersion();
         }
@@ -51,7 +52,9 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
 
             using var swaggerResponse = await client.GetAsync(swaggerRequestUri);
             var swagger = await swaggerResponse.Content.ReadAsStringAsync();
+
             await Verifier.Verify(swagger)
+                .UseDirectory("snapshots")
                 .UseParameters(startupType, GetVersion(swaggerRequestUri))
                 .UniqueForTargetFrameworkAndVersion();
         }
@@ -67,7 +70,9 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             string swaggerRequestUri)
         {
             var swaggerResponse = await SwaggerEndpointReturnsValidSwaggerJson(entryPointType, swaggerRequestUri);
+
             await Verifier.Verify(swaggerResponse)
+                .UseDirectory("snapshots")
                 .UseParameters(entryPointType, GetVersion(swaggerRequestUri))
                 .UniqueForTargetFrameworkAndVersion();
         }
@@ -79,7 +84,9 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
             using var client = application.CreateDefaultClient();
 
             var swaggerResponse = await SwaggerResponse(client, "/swagger/v1/swagger.json");
+
             await Verifier.Verify(swaggerResponse)
+                .UseDirectory("snapshots")
                 .UniqueForTargetFrameworkAndVersion();
         }
 
@@ -100,9 +107,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         /// Normalize "\n" strings into "\r\n" which is expected linebreak in Verify verified.txt files.
         /// </summary>
         private static string NormalizeLineBreaks(string swagger)
-        {
-            return UnixNewLineRegex().Replace(swagger, "\\r\\n");
-        }
+            => UnixNewLineRegex().Replace(swagger, "\\r\\n");
 
         private static string GetVersion(string swaggerUi) =>
             VersionRegex().Match(swaggerUi).Groups[1].Value;

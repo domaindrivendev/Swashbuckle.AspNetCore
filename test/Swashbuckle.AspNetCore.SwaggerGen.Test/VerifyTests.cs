@@ -21,10 +21,10 @@ using Xunit;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 
-public class SwaggerGeneratorVerifyTests
+public class VerifyTests
 {
     [Fact]
-    public Task ApiDescriptionsWithMatchingGroupName()
+    public async Task ApiDescriptionsWithMatchingGroupName()
     {
         var subject = Subject(
             apiDescriptions:
@@ -49,12 +49,11 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task ActionWithRouteNameMetadata()
+    public async Task ActionWithRouteNameMetadata()
     {
         var subject = Subject(
             apiDescriptions:
@@ -66,12 +65,11 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task ActionWithEndpointNameMetadata()
+    public async Task ActionWithEndpointNameMetadata()
     {
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
         var actionDescriptor = new ActionDescriptor
@@ -91,12 +89,11 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task ActionWithProvidedOpenApiMetadata()
+    public async Task ActionWithProvidedOpenApiMetadata()
     {
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
         var actionDescriptor = new ActionDescriptor
@@ -129,12 +126,11 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task ActionWithProducesAttributeAndProvidedOpenApiOperation()
+    public async Task ActionWithProducesAttributeAndProvidedOpenApiOperation()
     {
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithProducesAttribute));
         var actionDescriptor = new ActionDescriptor
@@ -183,12 +179,11 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task ActionWithConsumesAttributeAndProvidedOpenApiOperation()
+    public async Task ActionWithConsumesAttributeAndProvidedOpenApiOperation()
     {
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithConsumesAttribute));
         var actionDescriptor = new ActionDescriptor
@@ -235,12 +230,11 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task ActionWithParameterAndProvidedOpenApiOperation()
+    public async Task ActionWithParameterAndProvidedOpenApiOperation()
     {
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
         var actionDescriptor = new ActionDescriptor
@@ -287,12 +281,11 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task ActionHasObsoleteAttribute()
+    public async Task ActionHasObsoleteAttribute()
     {
         var subject = Subject(
             apiDescriptions:
@@ -304,12 +297,11 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task SortKeySelectorIsSpecified()
+    public async Task SortKeySelectorIsSpecified()
     {
         var subject = Subject(
             apiDescriptions:
@@ -335,12 +327,11 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task TagSelectorIsSpecified()
+    public async Task TagSelectorIsSpecified()
     {
         var subject = Subject(
             apiDescriptions:
@@ -360,12 +351,11 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task EndpointMetadataHasTags()
+    public async Task EndpointMetadataHasTags()
     {
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
         var actionDescriptor = new ActionDescriptor
@@ -385,8 +375,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Theory]
@@ -394,7 +383,7 @@ public class SwaggerGeneratorVerifyTests
     [InlineData(nameof(BindingSource.Header))]
     [InlineData(nameof(BindingSource.Path))]
     [InlineData(null)]
-    public Task ApiParametersThatAreNotBoundToBodyOrForm(string bindingSourceId)
+    public async Task ApiParametersThatAreNotBoundToBodyOrForm(string bindingSourceId)
     {
         var subject = Subject(
             apiDescriptions:
@@ -417,13 +406,14 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
+        await Verifier.Verify(document)
+            .UseDirectory("snapshots")
             .UseParameters(bindingSourceId)
             .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
-    public Task OperationHasSwaggerIgnoreAttribute()
+    public async Task OperationHasSwaggerIgnoreAttribute()
     {
         var subject = Subject(
             apiDescriptions:
@@ -440,12 +430,11 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task ActionParameterHasBindNeverAttribute()
+    public async Task ActionParameterHasBindNeverAttribute()
     {
         var subject = Subject(
             apiDescriptions:
@@ -468,12 +457,11 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task ActionParameterHasSwaggerIgnoreAttribute()
+    public async Task ActionParameterHasSwaggerIgnoreAttribute()
     {
         var subject = Subject(
             [
@@ -496,15 +484,14 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Theory]
     [InlineData(nameof(FakeController.ActionWithAcceptFromHeaderParameter))]
     [InlineData(nameof(FakeController.ActionWithContentTypeFromHeaderParameter))]
     [InlineData(nameof(FakeController.ActionWithAuthorizationFromHeaderParameter))]
-    public Task ActionsWithIllegalHeaderParameters(string action)
+    public async Task ActionsWithIllegalHeaderParameters(string action)
     {
         var illegalParameter = typeof(FakeController).GetMethod(action).GetParameters()[0];
         var fromHeaderAttribute = illegalParameter.GetCustomAttribute<FromHeaderAttribute>();
@@ -536,7 +523,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
+        await Verifier.Verify(document)
+            .UseDirectory("snapshots")
             .UseParameters(action)
             .UniqueForTargetFrameworkAndVersion();
     }
@@ -545,7 +533,7 @@ public class SwaggerGeneratorVerifyTests
     [InlineData(nameof(FakeController.ActionWithAcceptFromHeaderParameter))]
     [InlineData(nameof(FakeController.ActionWithContentTypeFromHeaderParameter))]
     [InlineData(nameof(FakeController.ActionWithAuthorizationFromHeaderParameter))]
-    public Task ActionParameterIsIllegalHeaderParameterWithProvidedOpenApiOperation(string action)
+    public async Task ActionParameterIsIllegalHeaderParameterWithProvidedOpenApiOperation(string action)
     {
         var illegalParameter = typeof(FakeController).GetMethod(action).GetParameters()[0];
         var fromHeaderAttribute = illegalParameter.GetCustomAttribute<FromHeaderAttribute>();
@@ -606,14 +594,15 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
+        await Verifier.Verify(document)
+            .UseDirectory("snapshots")
             .UseParameters(action)
             .UseMethodName("IllegalHeaderForOperation")
             .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
-    public Task ApiParameterIsBoundToPath()
+    public async Task ApiParameterIsBoundToPath()
     {
         var subject = Subject(
             apiDescriptions:
@@ -636,14 +625,13 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Theory]
     [InlineData(nameof(FakeController.ActionWithParameterWithRequiredAttribute))]
     [InlineData(nameof(FakeController.ActionWithParameterWithBindRequiredAttribute))]
-    public Task ActionWithRequiredQueryParameter(string action)
+    public async Task ActionWithRequiredQueryParameter(string action)
     {
         var subject = Subject(
             apiDescriptions:
@@ -666,7 +654,8 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
+        await Verifier.Verify(document)
+            .UseDirectory("snapshots")
             .UseParameters(action)
             .UniqueForTargetFrameworkAndVersion();
     }
@@ -674,7 +663,7 @@ public class SwaggerGeneratorVerifyTests
     [Theory]
     [InlineData(nameof(FakeController.ActionWithParameterWithRequiredAttribute))]
     [InlineData(nameof(FakeController.ActionWithParameterWithBindRequiredAttribute))]
-    public Task ActionWithRequiredBodyParameter(string action)
+    public async Task ActionWithRequiredBodyParameter(string action)
     {
         var subject = Subject(
             apiDescriptions:
@@ -701,14 +690,14 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
+        await Verifier.Verify(document)
+            .UseDirectory("snapshots")
             .UseParameters(action)
             .UniqueForTargetFrameworkAndVersion();
     }
 
-#if NET7_0_OR_GREATER
     [Fact]
-    public Task ActionWithRequiredMember()
+    public async Task ActionWithRequiredMember()
     {
         var subject = Subject(
             apiDescriptions:
@@ -732,12 +721,11 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task EndpointMetadataHasSummaryAttribute()
+    public async Task EndpointMetadataHasSummaryAttribute()
     {
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
         var actionDescriptor = new ActionDescriptor
@@ -757,12 +745,11 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task EndpointMetadataHasDescriptionAttribute()
+    public async Task EndpointMetadataHasDescriptionAttribute()
     {
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
         var actionDescriptor = new ActionDescriptor
@@ -782,13 +769,11 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
-#endif
 
     [Fact]
-    public Task ApiParameterDescriptionForBodyIsRequired()
+    public async Task ApiParameterDescriptionForBodyIsRequired()
     {
         static void Execute(object obj) { }
 
@@ -820,12 +805,11 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task ApiParameterHasNoCorrespondingActionParameter()
+    public async Task ApiParameterHasNoCorrespondingActionParameter()
     {
         var subject = Subject(
             apiDescriptions:
@@ -848,12 +832,11 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task ApiParametersThatAreBoundToForm()
+    public async Task ApiParametersThatAreBoundToForm()
     {
         var subject = Subject(
             apiDescriptions:
@@ -883,14 +866,13 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Theory]
     [InlineData("Body")]
     [InlineData("Form")]
-    public Task ActionHasConsumesAttribute(string bindingSourceId)
+    public async Task ActionHasConsumesAttribute(string bindingSourceId)
     {
         var subject = Subject(
             apiDescriptions:
@@ -913,13 +895,14 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
+        await Verifier.Verify(document)
+            .UseDirectory("snapshots")
             .UseParameters(bindingSourceId)
             .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
-    public Task ActionWithReturnValueAndSupportedResponseTypes()
+    public async Task ActionWithReturnValueAndSupportedResponseTypes()
     {
         var subject = Subject(
             apiDescriptions:
@@ -959,12 +942,11 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task ActionHasFileResult()
+    public async Task ActionHasFileResult()
     {
         var apiDescription = ApiDescriptionFactory.Create<FakeController>(
             c => nameof(c.ActionWithFileResult),
@@ -990,12 +972,11 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task ActionHasProducesAttribute()
+    public async Task ActionHasProducesAttribute()
     {
         var subject = Subject(
             apiDescriptions:
@@ -1018,12 +999,11 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task ConflictingActionsResolverIsSpecified()
+    public async Task ConflictingActionsResolverIsSpecified()
     {
         var subject = Subject(
             apiDescriptions:
@@ -1046,12 +1026,11 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task ActionHavingFromFormAttributeButNotWithIFormFile()
+    public async Task ActionHavingFromFormAttributeButNotWithIFormFile()
     {
         var parameterInfo = typeof(FakeController)
             .GetMethod(nameof(FakeController.ActionHavingFromFormAttributeButNotWithIFormFile))
@@ -1089,12 +1068,11 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task ActionHavingFromFormAttributeWithSwaggerIgnore()
+    public async Task ActionHavingFromFormAttributeWithSwaggerIgnore()
     {
         var propertyIgnored = typeof(SwaggerIngoreAnnotatedType).GetProperty(nameof(SwaggerIngoreAnnotatedType.IgnoredString));
         var modelMetadataIgnored = new DefaultModelMetadata(
@@ -1136,12 +1114,11 @@ public class SwaggerGeneratorVerifyTests
         );
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task GetSwagger_Works_As_Expected_When_FromFormObject()
+    public async Task GetSwagger_Works_As_Expected_When_FromFormObject()
     {
         var subject = Subject(
             apiDescriptions:
@@ -1165,12 +1142,11 @@ public class SwaggerGeneratorVerifyTests
         );
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task GetSwagger_Works_As_Expected_When_FromFormObject_AndString()
+    public async Task GetSwagger_Works_As_Expected_When_FromFormObject_AndString()
     {
         var subject = Subject(
             apiDescriptions:
@@ -1201,12 +1177,11 @@ public class SwaggerGeneratorVerifyTests
         );
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task GetSwagger_Works_As_Expected_When_TypeIsEnum_AndModelMetadataTypeIsString()
+    public async Task GetSwagger_Works_As_Expected_When_TypeIsEnum_AndModelMetadataTypeIsString()
     {
         var subject = Subject(
             apiDescriptions:
@@ -1231,12 +1206,11 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task GetSwagger_Copies_Description_From_GeneratedSchema()
+    public async Task GetSwagger_Copies_Description_From_GeneratedSchema()
     {
         var propertyEnum = typeof(TypeWithDefaultAttributeOnEnum).GetProperty(nameof(TypeWithDefaultAttributeOnEnum.EnumWithDefault));
         var modelMetadataForEnum = new DefaultModelMetadata(
@@ -1279,12 +1253,11 @@ public class SwaggerGeneratorVerifyTests
        );
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task GetSwagger_GenerateConsumesSchemas_ForProvidedOpenApiOperationWithSeveralFromForms()
+    public async Task GetSwagger_GenerateConsumesSchemas_ForProvidedOpenApiOperationWithSeveralFromForms()
     {
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithConsumesAttribute));
         var actionDescriptor = new ActionDescriptor
@@ -1337,12 +1310,11 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task GetSwagger_GenerateConsumesSchemas_ForProvidedOpenApiOperationWithIFormFile()
+    public async Task GetSwagger_GenerateConsumesSchemas_ForProvidedOpenApiOperationWithIFormFile()
     {
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithConsumesAttribute));
         var actionDescriptor = new ActionDescriptor
@@ -1389,12 +1361,11 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task GetSwagger_GenerateConsumesSchemas_ForProvidedOpenApiOperationWithIFormFileCollection()
+    public async Task GetSwagger_GenerateConsumesSchemas_ForProvidedOpenApiOperationWithIFormFileCollection()
     {
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithConsumesAttribute));
         var actionDescriptor = new ActionDescriptor
@@ -1441,12 +1412,11 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     [Fact]
-    public Task GetSwagger_GenerateConsumesSchemas_ForProvidedOpenApiOperationWithStringFromForm()
+    public async Task GetSwagger_GenerateConsumesSchemas_ForProvidedOpenApiOperationWithStringFromForm()
     {
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithConsumesAttribute));
         var actionDescriptor = new ActionDescriptor
@@ -1493,8 +1463,7 @@ public class SwaggerGeneratorVerifyTests
 
         var document = subject.GetSwagger("v1");
 
-        return Verifier.Verify(document)
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(document);
     }
 
     private static SwaggerGenerator Subject(
@@ -1518,4 +1487,11 @@ public class SwaggerGeneratorVerifyTests
             ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
         }
     };
+
+    private static async Task Verify(OpenApiDocument document)
+    {
+        await Verifier.Verify(document)
+            .UseDirectory("snapshots")
+            .UniqueForTargetFrameworkAndVersion();
+    }
 }
