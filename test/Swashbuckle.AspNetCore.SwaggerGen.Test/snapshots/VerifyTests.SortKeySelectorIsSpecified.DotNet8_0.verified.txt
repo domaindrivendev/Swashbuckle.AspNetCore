@@ -1,0 +1,46 @@
+﻿{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Test API",
+    "version": "V1"
+  },
+  "paths": {
+    "/resource1": {
+      "post": {
+        "tags": [
+          "Fake"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/resource2": {
+      "post": {
+        "tags": [
+          "Fake"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/resource3": {
+      "post": {
+        "tags": [
+          "Fake"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": { }
+}

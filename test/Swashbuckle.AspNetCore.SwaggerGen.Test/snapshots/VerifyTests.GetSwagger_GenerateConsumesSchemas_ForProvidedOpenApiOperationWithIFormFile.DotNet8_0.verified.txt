@@ -1,0 +1,36 @@
+﻿{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Test API",
+    "version": "V1"
+  },
+  "paths": {
+    "/resource": {
+      "post": {
+        "operationId": "OperationIdSetInMetadata",
+        "requestBody": {
+          "content": {
+            "application/someMediaType": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "param": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "param": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": { }
+      }
+    }
+  },
+  "components": { }
+}

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Threading;
+﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures;

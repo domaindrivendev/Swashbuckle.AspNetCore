@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using Swashbuckle.AspNetCore;
 using Swashbuckle.AspNetCore.ApiTesting.Xunit;
 using Xunit;
 
@@ -21,7 +18,7 @@ namespace TestFirst.IntegrationTests
             Describe("/api/users", OperationType.Post, new OpenApiOperation
             {
                 OperationId = "CreateUser",
-                Tags = new List<OpenApiTag> { new OpenApiTag {  Name = "Users" } },
+                Tags = [new OpenApiTag { Name = "Users" }],
                 RequestBody = new OpenApiRequestBody
                 {
                     Content = new Dictionary<string, OpenApiMediaType>
@@ -30,11 +27,11 @@ namespace TestFirst.IntegrationTests
                         {
                             Schema = new OpenApiSchema
                             {
-                                Type = "object",
+                                Type = JsonSchemaTypes.Object,
                                 Properties = new Dictionary<string, OpenApiSchema>
                                 {
-                                    [ "email" ] = new OpenApiSchema {  Type = "string" },
-                                    [ "password" ] = new OpenApiSchema {  Type = "string" },
+                                    [ "email" ] = new OpenApiSchema {  Type = JsonSchemaTypes.String },
+                                    [ "password" ] = new OpenApiSchema {  Type = JsonSchemaTypes.String },
                                 },
                                 Required = new SortedSet<string> { "email", "password" }
                             }
@@ -52,7 +49,7 @@ namespace TestFirst.IntegrationTests
                             [ "Location" ] = new OpenApiHeader
                             {
                                 Required = true,
-                                Schema = new OpenApiSchema { Type = "string" }
+                                Schema = new OpenApiSchema { Type = JsonSchemaTypes.String }
                             }
                         }
                     },

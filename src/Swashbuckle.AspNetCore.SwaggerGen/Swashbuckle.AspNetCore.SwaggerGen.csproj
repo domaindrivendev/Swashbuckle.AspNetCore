@@ -31,5 +31,13 @@
     <AdditionalFiles Include="PublicAPI\PublicAPI.Shipped.txt" />
     <AdditionalFiles Include="PublicAPI\PublicAPI.Unshipped.txt" />
   </ItemGroup>
+  <ItemGroup Condition="Exists('PublicAPI\$(TargetFramework)')">
+    <AdditionalFiles Include="PublicAPI\$(TargetFramework)\PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI\$(TargetFramework)\PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\Shared\JsonSchemaTypes.cs" Link="JsonSchemaTypes.cs" />
+  </ItemGroup>
 
 </Project>

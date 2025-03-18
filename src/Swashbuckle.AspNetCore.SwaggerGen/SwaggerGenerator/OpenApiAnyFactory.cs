@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Microsoft.OpenApi.Any;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen
@@ -78,7 +77,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             if (jsonElement.ValueKind == JsonValueKind.Object)
                 return CreateOpenApiObject(jsonElement);
 
-            throw new System.ArgumentException($"Unsupported value kind {jsonElement.ValueKind}");
+            throw new ArgumentException($"Unsupported value kind {jsonElement.ValueKind}");
         }
     }
 }

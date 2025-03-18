@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Xml;
 using System.Xml.XPath;
 using BenchmarkDotNet.Attributes;
@@ -101,7 +99,7 @@ public class XmlCommentsBenchmark
         {
             Schema = new()
             {
-                Type = "string",
+                Type = JsonSchemaTypes.String,
                 Description = "schema-level description",
             },
         };
@@ -120,7 +118,7 @@ public class XmlCommentsBenchmark
                 {
                     Schema = new()
                     {
-                        Type = "string",
+                        Type = JsonSchemaTypes.String,
                     },
                 },
             },

@@ -1,0 +1,32 @@
+﻿{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Test API",
+    "version": "V1"
+  },
+  "paths": {
+    "/resource": {
+      "post": {
+        "tags": [
+          "Fake"
+        ],
+        "parameters": [
+          {
+            "name": "param",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": { }
+}

@@ -1,11 +1,8 @@
-using System.Linq;
 using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Xunit;
 
@@ -30,7 +27,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             Assert.Equal("Summary for ActionWithSwaggerOperationAttribute", operation.Summary);
             Assert.Equal("Description for ActionWithSwaggerOperationAttribute", operation.Description);
             Assert.Equal("actionWithSwaggerOperationAttribute", operation.OperationId);
-            Assert.Equal(new[] { "foobar" }, operation.Tags.Cast<OpenApiTag>().Select(t => t.Name));
+            Assert.Equal(["foobar"], [.. operation.Tags.Select(t => t.Name)]);
         }
 
         [Fact]
@@ -54,7 +51,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
 
             Subject().Apply(operation, filterContext);
 
-            Assert.Equal(new[] { "204", "400", "500" }, operation.Responses.Keys.ToArray());
+            Assert.Equal(["204", "400", "500"], [.. operation.Responses.Keys]);
             var response1 = operation.Responses["204"];
             Assert.Equal("Description for 204 response", response1.Description);
             var response2 = operation.Responses["400"];
@@ -83,7 +80,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
 
             Subject().Apply(operation, filterContext);
 
-            Assert.Equal(new[] { "200", "500" }, operation.Responses.Keys.ToArray());
+            Assert.Equal(["200", "500"], [.. operation.Responses.Keys]);
             var response1 = operation.Responses["200"];
             Assert.Equal("Description for 200 response", response1.Description);
             Assert.NotNull(response1.Content);
@@ -91,9 +88,9 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             var jsonContent = response1.Content.First();
             var xmlContent = response1.Content.Last();
             Assert.Equal("application/json", jsonContent.Key);
-            Assert.Equal("string", jsonContent.Value.Schema.Type);
+            Assert.Equal(JsonSchemaTypes.String, jsonContent.Value.Schema.Type);
             Assert.Equal("application/xml", xmlContent.Key);
-            Assert.Equal("string", xmlContent.Value.Schema.Type);
+            Assert.Equal(JsonSchemaTypes.String, xmlContent.Value.Schema.Type);
         }
 
         [Fact]
@@ -135,7 +132,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             {
                 Description = "Description for ActionWithSwaggerOperationAttribute",
                 OperationId = "actionWithSwaggerOperationAttribute",
-                Tags = new[] { "foobar" }
+                Tags = ["foobar"]
             };
 
             var action = RequestDelegateFactory.Create((string parameter) => "{}");
@@ -147,7 +144,7 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             {
                 ActionDescriptor = new ActionDescriptor()
                 {
-                    EndpointMetadata = new[] { operationAttribute }
+                    EndpointMetadata = [operationAttribute]
                 }
             };
 
@@ -162,12 +159,12 @@ namespace Swashbuckle.AspNetCore.Annotations.Test
             Assert.Equal("Summary for ActionWithSwaggerOperationAttribute", operation.Summary);
             Assert.Equal("Description for ActionWithSwaggerOperationAttribute", operation.Description);
             Assert.Equal("actionWithSwaggerOperationAttribute", operation.OperationId);
-            Assert.Equal(new[] { "foobar" }, operation.Tags.Cast<OpenApiTag>().Select(t => t.Name));
+            Assert.Equal(["foobar"], [.. operation.Tags.Select(t => t.Name)]);
         }
 
-        private AnnotationsOperationFilter Subject()
+        private static AnnotationsOperationFilter Subject()
         {
-            return new AnnotationsOperationFilter();
+            return new();
         }
     }
 }

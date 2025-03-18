@@ -33,4 +33,8 @@
     <AdditionalFiles Include="PublicAPI\PublicAPI.Unshipped.txt" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="..\Shared\JsonSchemaTypes.cs" Link="JsonSchemaTypes.cs" />
+  </ItemGroup>
+
 </Project>

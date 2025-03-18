@@ -1,0 +1,21 @@
+﻿{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Test API",
+    "version": "V1"
+  },
+  "paths": {
+    "/resource": {
+      "post": {
+        "operationId": "OperationIdSetInMetadata",
+        "parameters": [
+          {
+            "name": "ParameterInMetadata"
+          }
+        ],
+        "responses": { }
+      }
+    }
+  },
+  "components": { }
+}

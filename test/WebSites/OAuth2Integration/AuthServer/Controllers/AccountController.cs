@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Duende.IdentityServer;
+﻿using Duende.IdentityServer;
 using Duende.IdentityServer.Test;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;

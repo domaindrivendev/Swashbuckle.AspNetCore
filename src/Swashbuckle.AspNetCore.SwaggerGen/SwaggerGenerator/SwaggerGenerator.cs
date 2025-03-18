@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,24 +13,19 @@ using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.AspNetCore.Http.Metadata;
 #endif
 
+using OpenApiTag = Microsoft.OpenApi.Models.OpenApiTag;
+
 namespace Swashbuckle.AspNetCore.SwaggerGen
 {
-    public class SwaggerGenerator : ISwaggerProvider, IAsyncSwaggerProvider, ISwaggerDocumentMetadataProvider
+    public class SwaggerGenerator(
+        SwaggerGeneratorOptions options,
+        IApiDescriptionGroupCollectionProvider apiDescriptionsProvider,
+        ISchemaGenerator schemaGenerator) : ISwaggerProvider, IAsyncSwaggerProvider, ISwaggerDocumentMetadataProvider
     {
-        private readonly IApiDescriptionGroupCollectionProvider _apiDescriptionsProvider;
-        private readonly ISchemaGenerator _schemaGenerator;
-        private readonly SwaggerGeneratorOptions _options;
+        private readonly IApiDescriptionGroupCollectionProvider _apiDescriptionsProvider = apiDescriptionsProvider;
+        private readonly ISchemaGenerator _schemaGenerator = schemaGenerator;
+        private readonly SwaggerGeneratorOptions _options = options ?? new();
         private readonly IAuthenticationSchemeProvider _authenticationSchemeProvider;
-
-        public SwaggerGenerator(
-            SwaggerGeneratorOptions options,
-            IApiDescriptionGroupCollectionProvider apiDescriptionsProvider,
-            ISchemaGenerator schemaGenerator)
-        {
-            _options = options ?? new SwaggerGeneratorOptions();
-            _apiDescriptionsProvider = apiDescriptionsProvider;
-            _schemaGenerator = schemaGenerator;
-        }
 
         public SwaggerGenerator(
             SwaggerGeneratorOptions options,
@@ -53,7 +43,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         {
             var (filterContext, swaggerDoc) = GetSwaggerDocumentWithoutPaths(documentName, host, basePath);
 
-            swaggerDoc.Paths = await GeneratePathsAsync(filterContext.ApiDescriptions, filterContext.SchemaRepository);
+            swaggerDoc.Paths = await GeneratePathsAsync(swaggerDoc, filterContext.ApiDescriptions, filterContext.SchemaRepository);
             swaggerDoc.Components.SecuritySchemes = await GetSecuritySchemesAsync();
 
             // NOTE: Filter processing moved here so they may affect generated security schemes
@@ -78,7 +68,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 var (filterContext, swaggerDoc) = GetSwaggerDocumentWithoutPaths(documentName, host, basePath);
 
-                swaggerDoc.Paths = GeneratePaths(filterContext.ApiDescriptions, filterContext.SchemaRepository);
+                swaggerDoc.Paths = GeneratePaths(swaggerDoc, filterContext.ApiDescriptions, filterContext.SchemaRepository);
                 swaggerDoc.Components.SecuritySchemes = GetSecuritySchemesAsync().Result;
 
                 // NOTE: Filter processing moved here so they may affect generated security schemes
@@ -195,9 +185,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         }
 
         private async Task<OpenApiPaths> GeneratePathsAsync(
+            OpenApiDocument document,
             IEnumerable<ApiDescription> apiDescriptions,
             SchemaRepository schemaRepository,
-            Func<IGrouping<string, ApiDescription>, SchemaRepository, Task<Dictionary<OperationType, OpenApiOperation>>> operationsGenerator)
+            Func<OpenApiDocument, IGrouping<string, ApiDescription>, SchemaRepository, Task<Dictionary<OperationType, OpenApiOperation>>> operationsGenerator)
         {
             var apiDescriptionsByPath = apiDescriptions
                 .OrderBy(_options.SortKeySelector)
@@ -209,26 +200,32 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 paths.Add($"/{group.Key}",
                     new OpenApiPathItem
                     {
-                        Operations = await operationsGenerator(group, schemaRepository)
+                        Operations = await operationsGenerator(document, group, schemaRepository)
                     });
             };
 
             return paths;
         }
 
-        private OpenApiPaths GeneratePaths(IEnumerable<ApiDescription> apiDescriptions, SchemaRepository schemaRepository)
+        private OpenApiPaths GeneratePaths(
+            OpenApiDocument document,
+            IEnumerable<ApiDescription> apiDescriptions,
+            SchemaRepository schemaRepository)
         {
             return GeneratePathsAsync(
+                document,
                 apiDescriptions,
                 schemaRepository,
-                (group, schemaRepository) => Task.FromResult(GenerateOperations(group, schemaRepository))).Result;
+                (document, group, schemaRepository) => Task.FromResult(GenerateOperations(document, group, schemaRepository))).Result;
         }
 
         private async Task<OpenApiPaths> GeneratePathsAsync(
+            OpenApiDocument document,
             IEnumerable<ApiDescription> apiDescriptions,
             SchemaRepository schemaRepository)
         {
             return await GeneratePathsAsync(
+                document,
                 apiDescriptions,
                 schemaRepository,
                 GenerateOperationsAsync);
@@ -244,6 +241,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         }
 
         private Dictionary<OperationType, OpenApiOperation> GenerateOperations(
+            OpenApiDocument document,
             IEnumerable<ApiDescription> apiDescriptions,
             SchemaRepository schemaRepository)
         {
@@ -252,13 +250,14 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             foreach ((var operationType, var description) in apiDescriptionsByMethod)
             {
-                operations.Add(operationType, GenerateOperation(description, schemaRepository));
+                operations.Add(operationType, GenerateOperation(document, description, schemaRepository));
             }
 
             return operations;
         }
 
         private async Task<Dictionary<OperationType, OpenApiOperation>> GenerateOperationsAsync(
+            OpenApiDocument document,
             IEnumerable<ApiDescription> apiDescriptions,
             SchemaRepository schemaRepository)
         {
@@ -267,7 +266,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             foreach ((var operationType, var description) in apiDescriptionsByMethod)
             {
-                operations.Add(operationType, await GenerateOperationAsync(description, schemaRepository));
+                operations.Add(operationType, await GenerateOperationAsync(document, description, schemaRepository));
             }
 
             return operations;
@@ -306,6 +305,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         }
 
         private async Task<OpenApiOperation> GenerateOperationAsync(
+            OpenApiDocument document,
             ApiDescription apiDescription,
             SchemaRepository schemaRepository,
             Func<ApiDescription, SchemaRepository, Task<List<OpenApiParameter>>> parametersGenerator,
@@ -323,7 +323,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             {
                 operation ??= new OpenApiOperation
                 {
-                    Tags = GenerateOperationTags(apiDescription),
+                    Tags = GenerateOperationTags(document, apiDescription),
                     OperationId = _options.OperationIdSelector(apiDescription),
                     Parameters = await parametersGenerator(apiDescription, schemaRepository),
                     RequestBody = await bodyGenerator(apiDescription, schemaRepository),
@@ -350,9 +350,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             }
         }
 
-        private OpenApiOperation GenerateOperation(ApiDescription apiDescription, SchemaRepository schemaRepository)
+        private OpenApiOperation GenerateOperation(OpenApiDocument document, ApiDescription apiDescription, SchemaRepository schemaRepository)
         {
             return GenerateOperationAsync(
+                document,
                 apiDescription,
                 schemaRepository,
                 (description, repository) => Task.FromResult(GenerateParameters(description, repository)),
@@ -369,10 +370,12 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         }
 
         private async Task<OpenApiOperation> GenerateOperationAsync(
+            OpenApiDocument document,
             ApiDescription apiDescription,
             SchemaRepository schemaRepository)
         {
             return await GenerateOperationAsync(
+                document,
                 apiDescription,
                 schemaRepository,
                 GenerateParametersAsync,
@@ -409,6 +412,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 if (apiParameter is not null)
                 {
                     var (parameterAndContext, filterContext) = GenerateParameterAndContext(apiParameter, schemaRepository);
+                    parameter.Name = parameterAndContext.Name;
                     parameter.Schema = parameterAndContext.Schema;
                     parameter.Description ??= parameterAndContext.Description;
 
@@ -498,12 +502,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
         }
 #endif
 
-        private List<OpenApiTag> GenerateOperationTags(ApiDescription apiDescription)
-        {
-            return _options.TagsSelector(apiDescription)
-                .Select(tagName => new OpenApiTag { Name = tagName })
-                .ToList();
-        }
+        private List<OpenApiTag> GenerateOperationTags(OpenApiDocument document, ApiDescription apiDescription)
+            => [.. _options.TagsSelector(apiDescription).Select(tagName => CreateTag(tagName, document))];
 
         private static async Task<List<OpenApiParameter>> GenerateParametersAsync(
             ApiDescription apiDescription,
@@ -588,7 +588,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     apiParameter.PropertyInfo(),
                     apiParameter.ParameterInfo(),
                     apiParameter.RouteInfo)
-                : new OpenApiSchema { Type = "string" };
+                : new OpenApiSchema { Type = JsonSchemaTypes.String };
 
             var description = schema.Description;
             if (string.IsNullOrEmpty(description)
@@ -859,7 +859,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                         schemaRepository,
                         propertyInfo,
                         formParameter.ParameterInfo())
-                    : new OpenApiSchema { Type = "string" };
+                    : new OpenApiSchema { Type = JsonSchemaTypes.String };
 
                     if (schema.Reference is null
                     || (formParameter.ModelMetadata?.ModelType is not null && (Nullable.GetUnderlyingType(formParameter.ModelMetadata.ModelType) ?? formParameter.ModelMetadata.ModelType).IsEnum))
@@ -903,7 +903,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
             static OpenApiSchema GenerateSchemaForProperties(Dictionary<string, OpenApiSchema> properties, List<string> requiredPropertyNames) =>
                  new()
                  {
-                     Type = "object",
+                     Type = JsonSchemaTypes.Object,
                      Properties = properties,
                      Required = new SortedSet<string>(requiredPropertyNames)
                  };
@@ -1100,5 +1100,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 .Select(s => s.Description)
                 .LastOrDefault();
 #endif
+
+        private static OpenApiTag CreateTag(string name, OpenApiDocument _) =>
+            new() { Name = name };
     }
 }

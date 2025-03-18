@@ -68,10 +68,8 @@ static Swashbuckle.AspNetCore.SwaggerGen.MemberInfoExtensions.GetInlineAndMetada
 static Swashbuckle.AspNetCore.SwaggerGen.MemberInfoExtensions.IsDictionaryValueNonNullable(this System.Reflection.MemberInfo memberInfo) -> bool
 static Swashbuckle.AspNetCore.SwaggerGen.MemberInfoExtensions.IsNonNullableReferenceType(this System.Reflection.MemberInfo memberInfo) -> bool
 static Swashbuckle.AspNetCore.SwaggerGen.MethodInfoExtensions.GetUnderlyingGenericTypeMethod(this System.Reflection.MethodInfo constructedTypeMethod) -> System.Reflection.MethodInfo
-static Swashbuckle.AspNetCore.SwaggerGen.OpenApiAnyFactory.CreateFromJson(string json) -> Microsoft.OpenApi.Any.IOpenApiAny
 static Swashbuckle.AspNetCore.SwaggerGen.OpenApiSchemaExtensions.ApplyRouteConstraints(this Microsoft.OpenApi.Models.OpenApiSchema schema, Microsoft.AspNetCore.Mvc.ApiExplorer.ApiParameterRouteInfo routeInfo) -> void
 static Swashbuckle.AspNetCore.SwaggerGen.OpenApiSchemaExtensions.ApplyValidationAttributes(this Microsoft.OpenApi.Models.OpenApiSchema schema, System.Collections.Generic.IEnumerable<object> customAttributes) -> void
-static Swashbuckle.AspNetCore.SwaggerGen.OpenApiSchemaExtensions.ResolveType(this Microsoft.OpenApi.Models.OpenApiSchema schema, Swashbuckle.AspNetCore.SwaggerGen.SchemaRepository schemaRepository) -> string
 static Swashbuckle.AspNetCore.SwaggerGen.PropertyInfoExtensions.HasAttribute<TAttribute>(this System.Reflection.PropertyInfo property) -> bool
 static Swashbuckle.AspNetCore.SwaggerGen.PropertyInfoExtensions.IsPubliclyReadable(this System.Reflection.PropertyInfo property) -> bool
 static Swashbuckle.AspNetCore.SwaggerGen.PropertyInfoExtensions.IsPubliclyWritable(this System.Reflection.PropertyInfo property) -> bool
@@ -86,6 +84,7 @@ static Swashbuckle.AspNetCore.SwaggerGen.XmlCommentsNodeNameHelper.GetMemberName
 static Swashbuckle.AspNetCore.SwaggerGen.XmlCommentsNodeNameHelper.GetMemberNameForMethod(System.Reflection.MethodInfo method) -> string
 static Swashbuckle.AspNetCore.SwaggerGen.XmlCommentsNodeNameHelper.GetMemberNameForType(System.Type type) -> string
 static Swashbuckle.AspNetCore.SwaggerGen.XmlCommentsTextHelper.Humanize(string text) -> string
+static Swashbuckle.AspNetCore.SwaggerGen.XmlCommentsTextHelper.Humanize(string text, string xmlCommentEndOfLine) -> string
 Swashbuckle.AspNetCore.Annotations.SwaggerIgnoreAttribute
 Swashbuckle.AspNetCore.Annotations.SwaggerIgnoreAttribute.SwaggerIgnoreAttribute() -> void
 Swashbuckle.AspNetCore.SwaggerGen.ApiDescriptionExtensions
@@ -166,7 +165,6 @@ Swashbuckle.AspNetCore.SwaggerGen.JsonSerializerDataContractResolver.IsSupported
 Swashbuckle.AspNetCore.SwaggerGen.JsonSerializerDataContractResolver.JsonSerializerDataContractResolver(System.Text.Json.JsonSerializerOptions serializerOptions) -> void
 Swashbuckle.AspNetCore.SwaggerGen.MemberInfoExtensions
 Swashbuckle.AspNetCore.SwaggerGen.MethodInfoExtensions
-Swashbuckle.AspNetCore.SwaggerGen.OpenApiAnyFactory
 Swashbuckle.AspNetCore.SwaggerGen.OpenApiSchemaExtensions
 Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext
 Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext.ApiDescription.get -> Microsoft.AspNetCore.Mvc.ApiExplorer.ApiDescription
@@ -242,6 +240,7 @@ Swashbuckle.AspNetCore.SwaggerGen.SwaggerApplicationConvention
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerApplicationConvention.Apply(Microsoft.AspNetCore.Mvc.ApplicationModels.ApplicationModel application) -> void
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerApplicationConvention.SwaggerApplicationConvention() -> void
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator
+Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GetDocumentNames() -> System.Collections.Generic.IList<string>
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GetSwagger(string documentName, string host = null, string basePath = null) -> Microsoft.OpenApi.Models.OpenApiDocument
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GetSwaggerAsync(string documentName, string host = null, string basePath = null) -> System.Threading.Tasks.Task<Microsoft.OpenApi.Models.OpenApiDocument>
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.SwaggerGenerator(Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions options, Microsoft.AspNetCore.Mvc.ApiExplorer.IApiDescriptionGroupCollectionProvider apiDescriptionsProvider, Swashbuckle.AspNetCore.SwaggerGen.ISchemaGenerator schemaGenerator) -> void
@@ -297,6 +296,8 @@ Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.SwaggerDocs.set -> voi
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.SwaggerGeneratorOptions() -> void
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.TagsSelector.get -> System.Func<Microsoft.AspNetCore.Mvc.ApiExplorer.ApiDescription, System.Collections.Generic.IList<string>>
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.TagsSelector.set -> void
+Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.XmlCommentEndOfLine.get -> string
+Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.XmlCommentEndOfLine.set -> void
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions.DocumentFilterDescriptors.get -> System.Collections.Generic.List<Swashbuckle.AspNetCore.SwaggerGen.FilterDescriptor>
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions.DocumentFilterDescriptors.set -> void

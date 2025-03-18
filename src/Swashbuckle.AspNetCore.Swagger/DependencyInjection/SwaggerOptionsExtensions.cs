@@ -1,4 +1,3 @@
-using System;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Microsoft.Extensions.DependencyInjection;

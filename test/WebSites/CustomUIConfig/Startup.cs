@@ -1,11 +1,5 @@
-using System;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace CustomUIConfig

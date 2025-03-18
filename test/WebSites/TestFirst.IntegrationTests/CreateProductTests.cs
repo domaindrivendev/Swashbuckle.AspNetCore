@@ -1,24 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.ApiTesting.Xunit;
 using Xunit;
 
 namespace TestFirst.IntegrationTests
 {
-    public class CreateProductTests : ApiTestFixture<TestFirst.Startup>
+    public class CreateProductTests(ApiTestRunner apiTestRunner, WebApplicationFactory<TestFirst.Startup> webApplicationFactory)
+        : ApiTestFixture<TestFirst.Startup>(apiTestRunner, webApplicationFactory, "v1-imported")
     {
-        public CreateProductTests(
-            ApiTestRunner apiTestRunner,
-            WebApplicationFactory<TestFirst.Startup> webApplicationFactory)
-            : base(apiTestRunner, webApplicationFactory, "v1-imported")
-        { }
-
         [Fact]
         public async Task CreateProduct_Returns201_IfContentIsValid()
         {

@@ -1,28 +1,34 @@
-using System.Collections.Generic;
-using Xunit;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Linq;
-using System.Linq;
+using Xunit;
+
+using JsonSchemaType = string;
 
 namespace Swashbuckle.AspNetCore.ApiTesting.Test
 {
     public class JsonValidatorTests
     {
+        public static TheoryData<JsonSchemaType, string, bool, string> Validate_ReturnsError_IfInstanceNotOfExpectedTypeData =>
+            new()
+            {
+                { JsonSchemaTypes.Null, "{}", false, "Path: . Instance is not of type 'null'" },
+                { JsonSchemaTypes.Null, "null", true, null },
+                { JsonSchemaTypes.Boolean, "'foobar'", false, "Path: . Instance is not of type 'boolean'" },
+                { JsonSchemaTypes.Boolean, "true", true, null },
+                { JsonSchemaTypes.Object, "'foobar'", false, "Path: . Instance is not of type 'object'" },
+                { JsonSchemaTypes.Object, "{}", true, null },
+                { JsonSchemaTypes.Array, "'foobar'", false, "Path: . Instance is not of type 'array'" },
+                { JsonSchemaTypes.Array, "[]", true, null },
+                { JsonSchemaTypes.Number, "'foobar'", false, "Path: . Instance is not of type 'number'" },
+                { JsonSchemaTypes.Number, "1", true, null },
+                { JsonSchemaTypes.String, "{}", false, "Path: . Instance is not of type 'string'" },
+                { JsonSchemaTypes.String, "'foobar'", true, null },
+            };
+
         [Theory]
-        [InlineData("null", "{}", false, "Path: . Instance is not of type 'null'")]
-        [InlineData("null", "null", true, null)]
-        [InlineData("boolean", "'foobar'", false, "Path: . Instance is not of type 'boolean'")]
-        [InlineData("boolean", "true", true, null)]
-        [InlineData("object", "'foobar'", false, "Path: . Instance is not of type 'object'")]
-        [InlineData("object", "{}", true, null)]
-        [InlineData("array", "'foobar'", false, "Path: . Instance is not of type 'array'")]
-        [InlineData("array", "[]", true, null)]
-        [InlineData("number", "'foobar'", false, "Path: . Instance is not of type 'number'")]
-        [InlineData("number", "1", true, null)]
-        [InlineData("string", "{}", false, "Path: . Instance is not of type 'string'")]
-        [InlineData("string", "'foobar'", true, null)]
+        [MemberData(nameof(Validate_ReturnsError_IfInstanceNotOfExpectedTypeData))]
         public void Validate_ReturnsError_IfInstanceNotOfExpectedType(
-            string schemaType,
+            JsonSchemaType schemaType,
             string instanceText,
             bool expectedReturnValue,
             string expectedErrorMessage)
@@ -49,9 +55,9 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
             bool expectedReturnValue,
             string expectedErrorMessage)
         {
-            var openApiSchema = new OpenApiSchema { Type = "number", MultipleOf = schemaMultipleOf };
+            var openApiSchema = new OpenApiSchema { Type = JsonSchemaTypes.Number, MultipleOf = schemaMultipleOf };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -71,9 +77,9 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
             bool expectedReturnValue,
             string expectedErrorMessage)
         {
-            var openApiSchema = new OpenApiSchema { Type = "number", Maximum = schemaMaximum };
+            var openApiSchema = new OpenApiSchema { Type = JsonSchemaTypes.Number, Maximum = schemaMaximum };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -95,12 +101,12 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
         {
             var openApiSchema = new OpenApiSchema
             {
-                Type = "number",
+                Type = JsonSchemaTypes.Number,
                 Maximum = schemaMaximum,
                 ExclusiveMaximum = true
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -120,9 +126,9 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
             bool expectedReturnValue,
             string expectedErrorMessage)
         {
-            var openApiSchema = new OpenApiSchema { Type = "number", Minimum = schemaMinimum };
+            var openApiSchema = new OpenApiSchema { Type = JsonSchemaTypes.Number, Minimum = schemaMinimum };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -144,12 +150,12 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
         {
             var openApiSchema = new OpenApiSchema
             {
-                Type = "number",
+                Type = JsonSchemaTypes.Number,
                 Minimum = schemaMinimum,
                 ExclusiveMinimum = true
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -171,11 +177,11 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
         {
             var openApiSchema = new OpenApiSchema
             {
-                Type = "string",
+                Type = JsonSchemaTypes.String,
                 MaxLength = schemaMaxLength
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -197,11 +203,11 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
         {
             var openApiSchema = new OpenApiSchema
             {
-                Type = "string",
+                Type = JsonSchemaTypes.String,
                 MinLength = schemaMinLength
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -223,11 +229,11 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
         {
             var openApiSchema = new OpenApiSchema
             {
-                Type = "string",
+                Type = JsonSchemaTypes.String,
                 Pattern = schemaPattern
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -238,23 +244,29 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
             Assert.Equal(expectedErrorMessage, errorMessages.FirstOrDefault());
         }
 
+        public static TheoryData<JsonSchemaType, string, bool, string> Validate_ReturnsError_IfArrayItemDoesNotMatchItemsSchemaData =>
+            new()
+            {
+                { JsonSchemaTypes.Boolean, "[ true, 'foo' ]", false, "Path: [1]. Instance is not of type 'boolean'" },
+                { JsonSchemaTypes.Number, "[ 123, 'foo' ]", false, "Path: [1]. Instance is not of type 'number'" },
+                { JsonSchemaTypes.Boolean, "[ true, false ]", true, null },
+            };
+
         [Theory]
-        [InlineData("boolean", "[ true, 'foo' ]", false, "Path: [1]. Instance is not of type 'boolean'")]
-        [InlineData("number", "[ 123, 'foo' ]", false, "Path: [1]. Instance is not of type 'number'")]
-        [InlineData("boolean", "[ true, false ]", true, null)]
+        [MemberData(nameof(Validate_ReturnsError_IfArrayItemDoesNotMatchItemsSchemaData))]
         public void Validate_ReturnsError_IfArrayItemDoesNotMatchItemsSchema(
-            string itemsSchemaType,
+            JsonSchemaType itemsSchemaType,
             string instanceText,
             bool expectedReturnValue,
             string expectedErrorMessage)
         {
             var openApiSchema = new OpenApiSchema
             {
-                Type = "array",
+                Type = JsonSchemaTypes.Array,
                 Items = new OpenApiSchema { Type = itemsSchemaType }
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -276,11 +288,11 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
         {
             var openApiSchema = new OpenApiSchema
             {
-                Type = "array",
+                Type = JsonSchemaTypes.Array,
                 MaxItems = schemaMaxItems
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -302,11 +314,11 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
         {
             var openApiSchema = new OpenApiSchema
             {
-                Type = "array",
+                Type = JsonSchemaTypes.Array,
                 MinItems = schemaMinItems
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -327,11 +339,11 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
         {
             var openApiSchema = new OpenApiSchema
             {
-                Type = "array",
+                Type = JsonSchemaTypes.Array,
                 UniqueItems = true
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -353,11 +365,11 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
         {
             var openApiSchema = new OpenApiSchema
             {
-                Type = "object",
+                Type = JsonSchemaTypes.Object,
                 MaxProperties = schemaMaxProperties
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -379,11 +391,11 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
         {
             var openApiSchema = new OpenApiSchema
             {
-                Type = "object",
+                Type = JsonSchemaTypes.Object,
                 MinProperties = schemaMinProperties
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -405,11 +417,11 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
         {
             var openApiSchema = new OpenApiSchema
             {
-                Type = "object",
+                Type = JsonSchemaTypes.Object,
                 Required = new SortedSet<string>(schemaRequired)
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -420,26 +432,32 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
             Assert.Equal(expectedErrorMessage, errorMessages.FirstOrDefault());
         }
 
+        public static TheoryData<JsonSchemaType, string, bool, string> Validate_ReturnsError_IfKnownPropertyDoesNotMatchPropertySchemaData =>
+            new()
+            {
+                { JsonSchemaTypes.Number, "{ \"id\": \"foo\" }", false, "Path: id. Instance is not of type 'number'" },
+                { JsonSchemaTypes.String, "{ \"id\": 123 }", false, "Path: id. Instance is not of type 'string'" },
+                { JsonSchemaTypes.Number, "{ \"id\": 123 }", true, null },
+            };
+
         [Theory]
-        [InlineData("number", "{ \"id\": \"foo\" }", false, "Path: id. Instance is not of type 'number'")]
-        [InlineData("string", "{ \"id\": 123 }", false, "Path: id. Instance is not of type 'string'")]
-        [InlineData("number", "{ \"id\": 123 }", true, null)]
+        [MemberData(nameof(Validate_ReturnsError_IfKnownPropertyDoesNotMatchPropertySchemaData))]
         public void Validate_ReturnsError_IfKnownPropertyDoesNotMatchPropertySchema(
-            string propertySchemaType,
+            JsonSchemaType propertySchemaType,
             string instanceText,
             bool expectedReturnValue,
             string expectedErrorMessage)
         {
             var openApiSchema = new OpenApiSchema
             {
-                Type = "object",
+                Type = JsonSchemaTypes.Object,
                 Properties = new Dictionary<string, OpenApiSchema>
                 {
                     [ "id" ] = new OpenApiSchema { Type = propertySchemaType }
                 }
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -450,23 +468,29 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
             Assert.Equal(expectedErrorMessage, errorMessages.FirstOrDefault());
         }
 
+        public static TheoryData<JsonSchemaType, string, bool, string> Validate_ReturnsError_IfAdditionalPropertyDoesNotMatchAdditionalPropertiesSchemaData =>
+            new()
+            {
+                { JsonSchemaTypes.Number, "{ \"id\": \"foo\" }", false, "Path: id. Instance is not of type 'number'" },
+                { JsonSchemaTypes.String, "{ \"name\": 123 }", false, "Path: name. Instance is not of type 'string'" },
+                { JsonSchemaTypes.Number, "{ \"description\": 123 }", true, null },
+            };
+
         [Theory]
-        [InlineData("number", "{ \"id\": \"foo\" }", false, "Path: id. Instance is not of type 'number'")]
-        [InlineData("string", "{ \"name\": 123 }", false, "Path: name. Instance is not of type 'string'")]
-        [InlineData("number", "{ \"description\": 123 }", true, null)]
+        [MemberData(nameof(Validate_ReturnsError_IfAdditionalPropertyDoesNotMatchAdditionalPropertiesSchemaData))]
         public void Validate_ReturnsError_IfAdditionalPropertyDoesNotMatchAdditionalPropertiesSchema(
-            string additionalPropertiesType,
+            JsonSchemaType additionalPropertiesType,
             string instanceText,
             bool expectedReturnValue,
             string expectedErrorMessage)
         {
             var openApiSchema = new OpenApiSchema
             {
-                Type = "object",
+                Type = JsonSchemaTypes.Object,
                 AdditionalProperties = new OpenApiSchema { Type = additionalPropertiesType }
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -488,11 +512,11 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
         {
             var openApiSchema = new OpenApiSchema
             {
-                Type = "object",
+                Type = JsonSchemaTypes.Object,
                 AdditionalPropertiesAllowed = additionalPropertiesAllowed
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -513,15 +537,15 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
         {
             var openApiSchema = new OpenApiSchema
             {
-                AllOf = new List<OpenApiSchema>
-                {
-                    new OpenApiSchema { Type = "object", Required = new SortedSet<string> { "p1" } },
-                    new OpenApiSchema { Type = "object", Required = new SortedSet<string> { "p2" } },
-                    new OpenApiSchema { Type = "object", Required = new SortedSet<string> { "p3" } }
-                }
+                AllOf =
+                [
+                    new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p1" } },
+                    new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p2" } },
+                    new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p3" } }
+                ]
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -542,15 +566,15 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
         {
             var openApiSchema = new OpenApiSchema
             {
-                AnyOf = new List<OpenApiSchema>
-                {
-                    new OpenApiSchema { Type = "object", Required = new SortedSet<string> { "p1" } },
-                    new OpenApiSchema { Type = "object", Required = new SortedSet<string> { "p2" } },
-                    new OpenApiSchema { Type = "object", Required = new SortedSet<string> { "p3" } }
-                }
+                AnyOf =
+                [
+                    new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p1" } },
+                    new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p2" } },
+                    new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p3" } }
+                ]
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -572,15 +596,15 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
         {
             var openApiSchema = new OpenApiSchema
             {
-                OneOf = new List<OpenApiSchema>
-                {
-                    new OpenApiSchema { Type = "object", Required = new SortedSet<string> { "p1" } },
-                    new OpenApiSchema { Type = "object", Required = new SortedSet<string> { "p2" } },
-                    new OpenApiSchema { Type = "object", Required = new SortedSet<string> { "p3" } }
-                }
+                OneOf =
+                [
+                    new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p1" } },
+                    new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p2" } },
+                    new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p3" } }
+                ]
             };
             var instance = JToken.Parse(instanceText);
-            
+
             var returnValue = Subject().Validate(
                 openApiSchema,
                 new OpenApiDocument(),
@@ -608,7 +632,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
                 {
                     Schemas = new Dictionary<string, OpenApiSchema>
                     {
-                        ["ref"] = new OpenApiSchema { Type = "number" }
+                        ["ref"] = new OpenApiSchema { Type = JsonSchemaTypes.Number }
                     }
                 }
             };
@@ -628,9 +652,6 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
             Assert.Equal(expectedExceptionMessage, exception?.Message);
         }
 
-        private JsonValidator Subject()
-        {
-            return new JsonValidator();
-        }
+        private static JsonValidator Subject() => new();
     }
 }

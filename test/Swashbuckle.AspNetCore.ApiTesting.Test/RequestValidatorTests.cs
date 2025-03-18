@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
+﻿using System.Text;
 using Microsoft.OpenApi.Models;
 using Xunit;
+
+using JsonSchemaType = string;
 
 namespace Swashbuckle.AspNetCore.ApiTesting.Test
 {
@@ -69,7 +68,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
                     {
                         Name = "param",
                         In = ParameterLocation.Query,
-                        Schema = new OpenApiSchema { Type = "string" },
+                        Schema = new OpenApiSchema { Type = JsonSchemaTypes.String },
                         Required = true
                     }
                 }
@@ -103,7 +102,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
                     {
                         Name = "test-header",
                         In = ParameterLocation.Header,
-                        Schema = new OpenApiSchema { Type = "string" },
+                        Schema = new OpenApiSchema { Type = JsonSchemaTypes.String },
                         Required = true
                     }
                 }
@@ -123,16 +122,20 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
             Assert.Equal(expectedErrorMessage, exception?.Message);
         }
 
+        public static TheoryData<string, JsonSchemaType, string> PathParameterTypeMismatchData => new()
+        {
+            { "/api/products/foo", JsonSchemaTypes.Boolean, "Parameter 'param' is not of type 'boolean'" },
+            { "/api/products/foo", JsonSchemaTypes.Number, "Parameter 'param' is not of type 'number'" },
+            { "/api/products/true", JsonSchemaTypes.Boolean, null },
+            { "/api/products/1", JsonSchemaTypes.Number, null },
+            { "/api/products/foo", JsonSchemaTypes.String, null }
+        };
 
         [Theory]
-        [InlineData("/api/products/foo", "boolean", "Parameter 'param' is not of type 'boolean'")]
-        [InlineData("/api/products/foo", "number", "Parameter 'param' is not of type 'number'")]
-        [InlineData("/api/products/true", "boolean", null)]
-        [InlineData("/api/products/1", "number", null)]
-        [InlineData("/api/products/foo", "string", null)]
+        [MemberData(nameof(PathParameterTypeMismatchData))]
         public void Validate_ThrowsException_IfPathParameterIsNotOfSpecifiedType(
             string uriString,
-            string specifiedType,
+            JsonSchemaType specifiedType,
             string expectedErrorMessage)
         {
             var openApiDocument = DocumentWithOperation("/api/products/{param}", OperationType.Get, new OpenApiOperation
@@ -161,19 +164,25 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
             Assert.Equal(expectedErrorMessage, exception?.Message);
         }
 
+#nullable enable
+        public static TheoryData<string, JsonSchemaType, JsonSchemaType?, string?> QueryParameterTypeMismatchData => new()
+        {
+            { "/api/products?param=foo", JsonSchemaTypes.Boolean, null, "Parameter 'param' is not of type 'boolean'" },
+            { "/api/products?param=foo", JsonSchemaTypes.Number, null, "Parameter 'param' is not of type 'number'" },
+            { "/api/products?param=true", JsonSchemaTypes.Boolean, null, null },
+            { "/api/products?param=1", JsonSchemaTypes.Number, null, null },
+            { "/api/products?param=foo", JsonSchemaTypes.String, null, null },
+            { "/api/products?param=1&param=2", JsonSchemaTypes.Array, JsonSchemaTypes.Number, null },
+            { "/api/products?param=1&param=foo", JsonSchemaTypes.Array, JsonSchemaTypes.Number, "Parameter 'param' is not of type 'array[number]'" },
+        };
+
         [Theory]
-        [InlineData("/api/products?param=foo", "boolean", null, "Parameter 'param' is not of type 'boolean'")]
-        [InlineData("/api/products?param=foo", "number", null, "Parameter 'param' is not of type 'number'")]
-        [InlineData("/api/products?param=1&param=foo", "array", "number", "Parameter 'param' is not of type 'array[number]'")]
-        [InlineData("/api/products?param=true", "boolean", null, null)]
-        [InlineData("/api/products?param=1", "number", null, null)]
-        [InlineData("/api/products?param=foo", "string", null, null)]
-        [InlineData("/api/products?param=1&param=2", "array", "number", null)]
+        [MemberData(nameof(QueryParameterTypeMismatchData))]
         public void Validate_ThrowsException_IfQueryParameterIsNotOfSpecifiedType(
             string path,
-            string specifiedType,
-            string specifiedItemsType,
-            string expectedErrorMessage)
+            JsonSchemaType specifiedType,
+            JsonSchemaType? specifiedItemsType,
+            string? expectedErrorMessage)
         {
             var openApiDocument = DocumentWithOperation("/api/products", OperationType.Get, new OpenApiOperation
             {
@@ -186,7 +195,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
                         Schema = new OpenApiSchema
                         {
                             Type = specifiedType,
-                            Items = (specifiedItemsType != null) ? new OpenApiSchema { Type = specifiedItemsType } : null
+                            Items = specifiedItemsType != null ? new OpenApiSchema { Type = specifiedItemsType } : null
                         }
                     }
                 }
@@ -205,19 +214,24 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
             Assert.Equal(expectedErrorMessage, exception?.Message);
         }
 
+        public static TheoryData<string, JsonSchemaType, JsonSchemaType?, string?> HeaderParameterTypeMismatchData => new()
+        {
+            { "foo", JsonSchemaTypes.Boolean, null, "Parameter 'test-header' is not of type 'boolean'" },
+            { "foo", JsonSchemaTypes.Number, null, "Parameter 'test-header' is not of type 'number'" },
+            { "true", JsonSchemaTypes.Boolean, null, null },
+            { "1", JsonSchemaTypes.Number, null, null },
+            { "foo", JsonSchemaTypes.String, null, null },
+            { "1,2", JsonSchemaTypes.Array, JsonSchemaTypes.Number, null },
+            { "1,foo", JsonSchemaTypes.Array, JsonSchemaTypes.Number, "Parameter 'test-header' is not of type 'array[number]'" },
+        };
+
         [Theory]
-        [InlineData("foo", "boolean", null, "Parameter 'test-header' is not of type 'boolean'")]
-        [InlineData("foo", "number", null, "Parameter 'test-header' is not of type 'number'")]
-        [InlineData("1,foo", "array", "number", "Parameter 'test-header' is not of type 'array[number]'")]
-        [InlineData("true", "boolean", null, null)]
-        [InlineData("1", "number", null, null)]
-        [InlineData("foo", "string", null, null)]
-        [InlineData("1,2", "array", "number", null)]
+        [MemberData(nameof(HeaderParameterTypeMismatchData))]
         public void Validate_ThrowsException_IfHeaderParameterIsNotOfSpecifiedType(
             string parameterValue,
-            string specifiedType,
-            string specifiedItemsType,
-            string expectedErrorMessage)
+            JsonSchemaType specifiedType,
+            JsonSchemaType? specifiedItemsType,
+            string? expectedErrorMessage)
         {
             var openApiDocument = DocumentWithOperation("/api/products", OperationType.Get, new OpenApiOperation
             {
@@ -249,6 +263,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
 
             Assert.Equal(expectedErrorMessage, exception?.Message);
         }
+#nullable restore
 
         [Theory]
         [InlineData(null, "Required content is not present")]
@@ -304,7 +319,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
             {
                 RequestUri = new Uri("/api/products", UriKind.Relative),
                 Method = HttpMethod.Post,
-                Content = new StringContent("{\"foo\":\"bar\"}", Encoding.UTF8, mediaType) 
+                Content = new StringContent("{\"foo\":\"bar\"}", Encoding.UTF8, mediaType)
             };
 
             var exception = Record.Exception(() =>
@@ -332,7 +347,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
                         {
                             Schema = new OpenApiSchema
                             {
-                                Type = "object",
+                                Type = JsonSchemaTypes.Object,
                                 Required = new SortedSet<string> { "prop1", "prop2" }
                             }
                         }
@@ -343,18 +358,18 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
             {
                 RequestUri = new Uri("/api/products", UriKind.Relative),
                 Method = HttpMethod.Post,
-                Content = new StringContent(jsonString, Encoding.UTF8, "application/json") 
+                Content = new StringContent(jsonString, Encoding.UTF8, "application/json")
             };
 
             var exception = Record.Exception(() =>
             {
-                Subject(new[] { new JsonContentValidator() }).Validate(request, openApiDocument, "/api/products", OperationType.Post);
+                Subject([new JsonContentValidator()]).Validate(request, openApiDocument, "/api/products", OperationType.Post);
             });
 
             Assert.Equal(expectedErrorMessage, exception?.Message);
         }
 
-        private OpenApiDocument DocumentWithOperation(string pathTemplate, OperationType operationType, OpenApiOperation operationSpec)
+        private static OpenApiDocument DocumentWithOperation(string pathTemplate, OperationType operationType, OpenApiOperation operationSpec)
         {
             return new OpenApiDocument
             {
@@ -375,9 +390,9 @@ namespace Swashbuckle.AspNetCore.ApiTesting.Test
             };
         }
 
-        private RequestValidator Subject(IEnumerable<IContentValidator> contentValidators = null)
+        private static RequestValidator Subject(IEnumerable<IContentValidator> contentValidators = null)
         {
-            return new RequestValidator(contentValidators ?? new IContentValidator[] { });
+            return new RequestValidator(contentValidators ?? []);
         }
     }
 }

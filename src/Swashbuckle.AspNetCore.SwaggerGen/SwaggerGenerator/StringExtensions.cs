@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace Swashbuckle.AspNetCore.SwaggerGen
+﻿namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     internal static class StringExtensions
     {

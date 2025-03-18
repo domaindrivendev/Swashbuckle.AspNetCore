@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Basic.Controllers
+﻿namespace Basic.Controllers
 {
     internal class DefaultValuesAttribute : Attribute
     {

@@ -1,7 +1,4 @@
-﻿using System;
-using Xunit;
-
-namespace Swashbuckle.AspNetCore.SwaggerGen.Test
+﻿namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     /// NOTE: Whitespace in these tests is significant and uses a combination of {tabs} and {spaces}
     /// You should toggle "View White Space" to "on".
@@ -145,29 +142,10 @@ A line of text",
             Assert.Equal(expectedOutput, output, false, true);
         }
 
-        [Fact]
-        public void Humanize_MultilineBrTag_EolNotSpecified()
-        {
-            const string input = @"
-            This is a paragraph.
-            <br>
-            A parameter after br tag.";
-
-            var output = XmlCommentsTextHelper.Humanize(input);
-
-            // Result view for Linux: This is a paragraph.\r\n\n\r\nA parameter after br tag.
-            var expected = string.Join("\r\n",
-            [
-                "This is a paragraph.",
-                Environment.NewLine,
-                "A parameter after br tag."
-            ]);
-            Assert.Equal(expected, output, false, ignoreLineEndingDifferences: false);
-        }
-
         [Theory]
         [InlineData("\r\n")]
         [InlineData("\n")]
+        [InlineData(null)]
         public void Humanize_MultilineBrTag_SpecificEol(string xmlCommentEndOfLine)
         {
             const string input = @"
@@ -177,7 +155,7 @@ A line of text",
 
             var output = XmlCommentsTextHelper.Humanize(input, xmlCommentEndOfLine);
 
-            var expected = string.Join(xmlCommentEndOfLine,
+            var expected = string.Join(XmlCommentsTextHelper.EndOfLine(xmlCommentEndOfLine),
             [
                 "This is a paragraph.",
                 "",
@@ -199,7 +177,7 @@ A line of text",
 
             var output = XmlCommentsTextHelper.Humanize(input);
 
-            Assert.Equal("\r\nThis is a paragraph. MultiLined.\r\n\r\nThis is a paragraph.", output, false, true);
+            Assert.Equal("\r\nThis is a paragraph.\r\n MultiLined.\r\n\r\nThis is a paragraph.", output, false, true);
         }
 
         [Fact]
@@ -215,16 +193,16 @@ A line of text",
 
             var output = XmlCommentsTextHelper.Humanize(input);
 
-            var expected = string.Join("\r\n",
+            var expected = string.Join(XmlCommentsTextHelper.EndOfLine(null),
             [
                 "```",
-                "   {",
-                "    \"Prop1\":1,",
-                "    \"Prop2\":[]",
-                "   }",
+                "{",
+                " \"Prop1\":1,",
+                " \"Prop2\":[]",
+                "}",
                 "```"
             ]);
-            Assert.Equal(expected, output, false, true);
+            Assert.Equal(expected, output);
         }
 
         [Fact]
@@ -239,7 +217,7 @@ A line of text",
 
             var output = XmlCommentsTextHelper.Humanize(input);
 
-            var expected = string.Join("\r\n",
+            var expected = string.Join(XmlCommentsTextHelper.EndOfLine(null),
             [
                 "```",
                 "{",
@@ -248,7 +226,52 @@ A line of text",
                 "   }",
                 "```"
             ]);
-            Assert.Equal(expected, output, false, true);
+            Assert.Equal(expected, output);
+        }
+
+        [Fact]
+        public void Humanize_CodeInsideParaTag()
+        {
+            var input = string.Join(XmlCommentsTextHelper.EndOfLine(null),
+            [
+                "<para>Creates a new Answer</para>",
+                "<para><code><![CDATA[",
+                "POST /api/answers",
+                "{",
+                """  "name": "OnlyYes",""",
+                """  "label": "Yes",""",
+                """  "answers": [""",
+                "                 {",
+                """                     "answer": "yes""",
+                "                 }",
+                "             ]",
+                "}",
+                "]]></code></para>",
+            ]);
+
+            var output = XmlCommentsTextHelper.Humanize(input);
+
+            var expected = string.Join(XmlCommentsTextHelper.EndOfLine(null),
+            [
+                "",
+                "Creates a new Answer",
+                "",
+                "```",
+                "<![CDATA[",
+                "POST /api/answers",
+                "{",
+                """  "name": "OnlyYes",""",
+                """  "label": "Yes",""",
+                """  "answers": [""",
+                "                 {",
+                """                     "answer": "yes""",
+                "                 }",
+                "             ]",
+                "}",
+                "]]>",
+                "```"
+            ]);
+            Assert.Equal(expected, output);
         }
     }
 }

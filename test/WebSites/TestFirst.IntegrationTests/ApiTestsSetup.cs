@@ -1,6 +1,3 @@
-using System;
-using System.IO;
-using System.Linq;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.ApiTesting;
 using Xunit;

@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Abstractions;
 using Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures;
 using Swashbuckle.AspNetCore.TestSupport;
-using System.Collections.Generic;
-using System.Linq;
-using Xunit;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test.ApiDescriptionExtensions
 {

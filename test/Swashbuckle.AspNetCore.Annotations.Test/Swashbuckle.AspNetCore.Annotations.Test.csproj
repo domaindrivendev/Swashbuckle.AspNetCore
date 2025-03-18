@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\src\Shared\JsonSchemaTypes.cs" Link="JsonSchemaTypes.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\Swashbuckle.AspNetCore.Swagger\Swashbuckle.AspNetCore.Swagger.csproj" />
     <ProjectReference Include="..\..\src\Swashbuckle.AspNetCore.SwaggerGen\Swashbuckle.AspNetCore.SwaggerGen.csproj" />
     <ProjectReference Include="..\..\src\Swashbuckle.AspNetCore.Annotations\Swashbuckle.AspNetCore.Annotations.csproj" />

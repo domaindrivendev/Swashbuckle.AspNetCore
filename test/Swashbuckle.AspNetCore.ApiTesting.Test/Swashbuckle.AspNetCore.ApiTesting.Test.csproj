@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\src\Shared\JsonSchemaTypes.cs" Link="JsonSchemaTypes.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="$(MSBuildThisFileDirectory)..\..\src\Swashbuckle.AspNetCore.ApiTesting\Swashbuckle.AspNetCore.ApiTesting.csproj" />
   </ItemGroup>
 

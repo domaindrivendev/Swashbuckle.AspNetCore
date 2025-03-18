@@ -1,6 +1,3 @@
-using System;
-using System.IO;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Basic.Controllers

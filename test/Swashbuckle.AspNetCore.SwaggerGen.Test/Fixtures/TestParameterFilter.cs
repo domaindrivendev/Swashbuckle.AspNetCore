@@ -1,6 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.OpenApi.Any;
+﻿using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test

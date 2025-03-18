@@ -1,9 +1,6 @@
-﻿using System;
-using System.Net;
-using System.Threading.Tasks;
+﻿using System.Net;
 using Microsoft.AspNetCore.Builder;
 using Swashbuckle.AspNetCore.ReDoc;
-using Xunit;
 using ReDocApp = ReDoc;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests

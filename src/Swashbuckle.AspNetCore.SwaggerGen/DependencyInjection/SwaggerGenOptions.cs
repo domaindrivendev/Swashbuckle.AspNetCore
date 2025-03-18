@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Swashbuckle.AspNetCore.SwaggerGen
+﻿namespace Swashbuckle.AspNetCore.SwaggerGen
 {
     public class SwaggerGenOptions
     {

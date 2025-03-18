@@ -1,5 +1,3 @@
-using System.Linq;
-using System.Collections.Generic;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Linq;
 
@@ -11,8 +9,8 @@ namespace Swashbuckle.AspNetCore.ApiTesting
 
         public JsonValidator()
         {
-            _subValidators = new IJsonValidator[]
-            {
+            _subValidators =
+            [
                 new JsonNullValidator(),
                 new JsonBooleanValidator(),
                 new JsonObjectValidator(this),
@@ -22,7 +20,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting
                 new JsonAllOfValidator(this),
                 new JsonAnyOfValidator(this),
                 new JsonOneOfValidator(this),
-            };
+            ];
         }
 
         public bool CanValidate(OpenApiSchema schema) => true;
@@ -33,7 +31,7 @@ namespace Swashbuckle.AspNetCore.ApiTesting
             JToken instance,
             out IEnumerable<string> errorMessages)
         {
-            schema = (schema.Reference != null)
+            schema = schema.Reference != null
                 ? (OpenApiSchema)openApiDocument.ResolveReference(schema.Reference)
                 : schema;
 
@@ -41,10 +39,15 @@ namespace Swashbuckle.AspNetCore.ApiTesting
 
             foreach (var subValidator in _subValidators)
             {
-                if (!subValidator.CanValidate(schema)) continue;
+                if (!subValidator.CanValidate(schema))
+                {
+                    continue;
+                }
 
                 if (!subValidator.Validate(schema, openApiDocument, instance, out IEnumerable<string> subErrorMessages))
+                {
                     errorMessagesList.AddRange(subErrorMessages);
+                }
             }
 
             errorMessages = errorMessagesList;
