@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-
-namespace Swashbuckle.AspNetCore.TestSupport.Utilities;
+﻿namespace Swashbuckle.AspNetCore.TestSupport.Utilities;
 
 public sealed class TemporaryDirectory : IDisposable
 {

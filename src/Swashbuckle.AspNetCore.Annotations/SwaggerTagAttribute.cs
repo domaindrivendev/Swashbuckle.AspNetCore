@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Swashbuckle.AspNetCore.Annotations
+﻿namespace Swashbuckle.AspNetCore.Annotations
 {
     /// <summary>
     /// Adds Tag metadata for a given controller (i.e. the controller name tag)

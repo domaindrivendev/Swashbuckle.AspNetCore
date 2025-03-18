@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models;
 using Xunit;
 
 namespace Swashbuckle.AspNetCore.ApiTesting.Test

@@ -1,8 +1,5 @@
-﻿using System.Linq;
-using System.Xml.XPath;
-using System.IO;
+﻿using System.Xml.XPath;
 using Microsoft.OpenApi.Models;
-using Xunit;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Swashbuckle.AspNetCore.TestSupport;
 

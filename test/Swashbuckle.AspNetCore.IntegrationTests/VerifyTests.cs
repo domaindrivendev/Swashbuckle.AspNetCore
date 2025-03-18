@@ -1,9 +1,4 @@
-﻿using System;
-using System.Net.Http;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using VerifyXunit;
-using Xunit;
+﻿using System.Text.RegularExpressions;
 using ReDocApp = ReDoc;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests

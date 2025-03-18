@@ -1,6 +1,4 @@
-﻿using Xunit;
-
-namespace Swashbuckle.AspNetCore.SwaggerGen.Test
+﻿namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
     /// NOTE: Whitespace in these tests is significant and uses a combination of {tabs} and {spaces}
     /// You should toggle "View White Space" to "on".

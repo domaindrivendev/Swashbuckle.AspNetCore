@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
@@ -22,7 +18,7 @@ namespace TestFirst.IntegrationTests
             Describe("/api/users", OperationType.Post, new OpenApiOperation
             {
                 OperationId = "CreateUser",
-                Tags = new List<OpenApiTag> { new OpenApiTag {  Name = "Users" } },
+                Tags = [new OpenApiTag { Name = "Users" }],
                 RequestBody = new OpenApiRequestBody
                 {
                     Content = new Dictionary<string, OpenApiMediaType>

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Swashbuckle.AspNetCore.Annotations
+﻿namespace Swashbuckle.AspNetCore.Annotations
 {
     [AttributeUsage(
         AttributeTargets.Class |

@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Hosting;
-
-namespace CliExampleWithFactory
+﻿namespace CliExampleWithFactory
 {
     public class SwaggerHostFactory
     {

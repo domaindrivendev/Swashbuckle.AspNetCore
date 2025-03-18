@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Duende.IdentityServer.Models;
+﻿using Duende.IdentityServer.Models;
 using Duende.IdentityServer.Test;
 
 namespace OAuth2Integration.AuthServer

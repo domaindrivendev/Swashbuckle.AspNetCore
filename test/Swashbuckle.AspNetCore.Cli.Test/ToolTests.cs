@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
 using Swashbuckle.AspNetCore.TestSupport.Utilities;
 using Xunit;

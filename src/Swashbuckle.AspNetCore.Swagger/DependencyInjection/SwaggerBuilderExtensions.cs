@@ -1,5 +1,3 @@
-using System;
-
 #if (!NETSTANDARD2_0)
 using System.Linq;
 using Microsoft.AspNetCore.Routing;

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Swashbuckle.AspNetCore.Annotations
+﻿namespace Swashbuckle.AspNetCore.Annotations
 {
     /// <summary>
     /// Enriches RequestBody metadata for "body" bound parameters or properties
