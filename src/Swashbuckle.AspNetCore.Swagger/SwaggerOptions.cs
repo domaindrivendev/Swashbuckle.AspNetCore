@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.Swagger
