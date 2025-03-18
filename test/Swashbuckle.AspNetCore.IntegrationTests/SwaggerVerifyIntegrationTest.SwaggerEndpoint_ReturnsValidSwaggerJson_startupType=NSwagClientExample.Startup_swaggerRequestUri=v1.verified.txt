@@ -188,6 +188,17 @@
           "animalType"
         ],
         "type": "object",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/Animal"
+          },
+          {
+            "$ref": "#/components/schemas/Cat"
+          },
+          {
+            "$ref": "#/components/schemas/Dog"
+          }
+        ],
         "properties": {
           "animalType": {
             "$ref": "#/components/schemas/AnimalType"
@@ -214,6 +225,11 @@
           "discriminator"
         ],
         "type": "object",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/SubSubType"
+          }
+        ],
         "properties": {
           "discriminator": {
             "type": "string"
@@ -287,6 +303,17 @@
           "animalType"
         ],
         "type": "object",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/SystemTextJsonAnimal"
+          },
+          {
+            "$ref": "#/components/schemas/SystemTextJsonCat"
+          },
+          {
+            "$ref": "#/components/schemas/SystemTextJsonDog"
+          }
+        ],
         "properties": {
           "animalType": {
             "type": "string",
