@@ -23,7 +23,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     public class SwaggerGenerator(
         SwaggerGeneratorOptions options,
         IApiDescriptionGroupCollectionProvider apiDescriptionsProvider,
-        ISchemaGenerator schemaGenerator) : ISwaggerProvider, IAsyncSwaggerProvider
+        ISchemaGenerator schemaGenerator) : ISwaggerProvider, IAsyncSwaggerProvider, ISwaggerDocumentMetadataProvider
     {
         private readonly IApiDescriptionGroupCollectionProvider _apiDescriptionsProvider = apiDescriptionsProvider;
         private readonly ISchemaGenerator _schemaGenerator = schemaGenerator;
@@ -104,6 +104,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 throw;
             }
         }
+
+        public IList<string> GetDocumentNames() => _options.SwaggerDocs.Keys.ToList();
 
         private void SortSchemas(OpenApiDocument document)
         {
@@ -400,6 +402,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 if (apiParameter is not null)
                 {
                     var (parameterAndContext, filterContext) = GenerateParameterAndContext(apiParameter, schemaRepository);
+                    parameter.Name = parameterAndContext.Name;
                     parameter.Schema = parameterAndContext.Schema;
                     parameter.Description ??= parameterAndContext.Description;
 
@@ -602,7 +605,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
         private static ParameterStyle? GetParameterStyle(Type type, BindingSource source)
         {
-            return source == BindingSource.Query && type.IsGenericType &&
+            return source == BindingSource.Query && type?.IsGenericType == true &&
                    typeof(IEnumerable<KeyValuePair<string, string>>).IsAssignableFrom(type)
                 ? ParameterStyle.DeepObject
                 : null;

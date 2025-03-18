@@ -1,1 +1,0 @@
-static Swashbuckle.AspNetCore.SwaggerGen.OpenApiAnyFactory.CreateFromJson(string json, System.Text.Json.JsonSerializerOptions options) -> Microsoft.OpenApi.Any.IOpenApiAny

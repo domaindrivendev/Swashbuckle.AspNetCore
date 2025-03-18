@@ -1,4 +1,5 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -9,14 +10,17 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
     public class XmlCommentsOperationFilter : IOperationFilter
     {
         private readonly IReadOnlyDictionary<string, XPathNavigator> _xmlDocMembers;
+        private readonly SwaggerGeneratorOptions _options;
 
-        public XmlCommentsOperationFilter(XPathDocument xmlDoc) : this(XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc))
+        public XmlCommentsOperationFilter(XPathDocument xmlDoc) : this(XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc), null)
         {
         }
 
-        internal XmlCommentsOperationFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers)
+        [ActivatorUtilitiesConstructor]
+        internal XmlCommentsOperationFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers, SwaggerGeneratorOptions options)
         {
             _xmlDocMembers = xmlDocMembers;
+            _options = options;
         }
 
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
@@ -52,11 +56,11 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
 
             var summaryNode = methodNode.SelectFirstChild("summary");
             if (summaryNode != null)
-                operation.Summary = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml);
+                operation.Summary = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml, _options?.XmlCommentEndOfLine);
 
             var remarksNode = methodNode.SelectFirstChild("remarks");
             if (remarksNode != null)
-                operation.Description = XmlCommentsTextHelper.Humanize(remarksNode.InnerXml);
+                operation.Description = XmlCommentsTextHelper.Humanize(remarksNode.InnerXml, _options?.XmlCommentEndOfLine);
 
             var responseNodes = methodNode.SelectChildren("response");
             ApplyResponseTags(operation, responseNodes);
@@ -73,7 +77,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                     operation.Responses[code] = response;
                 }
 
-                response.Description = XmlCommentsTextHelper.Humanize(responseNodes.Current.InnerXml);
+                response.Description = XmlCommentsTextHelper.Humanize(responseNodes.Current.InnerXml, _options?.XmlCommentEndOfLine);
             }
         }
     }
