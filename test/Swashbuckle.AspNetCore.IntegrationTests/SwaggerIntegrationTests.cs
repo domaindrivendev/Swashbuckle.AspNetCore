@@ -98,7 +98,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests
         }
 
         [Theory]
-        [InlineData("/swagger/v1/swagger.json", "openapi", "3.0.1")]
+        [InlineData("/swagger/v1/swagger.json", "openapi", "3.0.4")]
         [InlineData("/swagger/v1/swaggerv2.json", "swagger", "2.0")]
         public async Task SwaggerMiddleware_CanBeConfiguredMultipleTimes(
             string swaggerUrl,
