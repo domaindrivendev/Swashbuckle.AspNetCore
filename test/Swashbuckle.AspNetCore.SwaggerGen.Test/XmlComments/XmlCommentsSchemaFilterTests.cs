@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Globalization;
-using System.Xml.XPath;
 using System.IO;
+using System.Xml.XPath;
 using Microsoft.OpenApi.Models;
-using Xunit;
 using Swashbuckle.AspNetCore.TestSupport;
+using Xunit;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 {
@@ -159,12 +159,10 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal(expectedValue, schema.Example.GetType().GetProperty("Value").GetValue(schema.Example));
         }
 
-        private XmlCommentsSchemaFilter Subject()
+        private static XmlCommentsSchemaFilter Subject()
         {
-            using (var xmlComments = File.OpenText(typeof(XmlAnnotatedType).Assembly.GetName().Name + ".xml"))
-            {
-                return new XmlCommentsSchemaFilter(new XPathDocument(xmlComments));
-            }
+            using var xmlComments = File.OpenText(typeof(XmlAnnotatedType).Assembly.GetName().Name + ".xml");
+            return new XmlCommentsSchemaFilter(new XPathDocument(xmlComments));
         }
     }
 }

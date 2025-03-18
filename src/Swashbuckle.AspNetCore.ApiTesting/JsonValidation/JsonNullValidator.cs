@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Linq;
 
@@ -17,11 +16,11 @@ namespace Swashbuckle.AspNetCore.ApiTesting
         {
             if (instance.Type != JTokenType.Null)
             {
-                errorMessages = new[] { $"Path: {instance.Path}. Instance is not of type 'null'" };
+                errorMessages = [$"Path: {instance.Path}. Instance is not of type 'null'"];
                 return false;
             }
 
-            errorMessages = Enumerable.Empty<string>();
+            errorMessages = [];
             return true;
         }
     }
