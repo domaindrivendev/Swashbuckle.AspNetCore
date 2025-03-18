@@ -1,4 +1,1 @@
-Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions.OpenApiVersion.get -> Microsoft.OpenApi.OpenApiSpecVersion
-Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions.OpenApiVersion.set -> void
-Swashbuckle.AspNetCore.Swagger.SwaggerOptions.OpenApiVersion.get -> Microsoft.OpenApi.OpenApiSpecVersion
-Swashbuckle.AspNetCore.Swagger.SwaggerOptions.OpenApiVersion.set -> void
+﻿

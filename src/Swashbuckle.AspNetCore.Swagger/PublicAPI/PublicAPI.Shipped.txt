@@ -1,4 +1,4 @@
-Microsoft.AspNetCore.Builder.SwaggerBuilderExtensions
+﻿Microsoft.AspNetCore.Builder.SwaggerBuilderExtensions
 Microsoft.Extensions.DependencyInjection.SwaggerOptionsExtensions
 Microsoft.Extensions.DependencyInjection.SwaggerServiceCollectionExtensions
 static Microsoft.AspNetCore.Builder.SwaggerBuilderExtensions.UseSwagger(this Microsoft.AspNetCore.Builder.IApplicationBuilder app, Swashbuckle.AspNetCore.Swagger.SwaggerOptions options) -> Microsoft.AspNetCore.Builder.IApplicationBuilder
@@ -14,11 +14,15 @@ Swashbuckle.AspNetCore.Swagger.ISwaggerDocumentSerializer.SerializeDocument(Micr
 Swashbuckle.AspNetCore.Swagger.ISwaggerProvider
 Swashbuckle.AspNetCore.Swagger.ISwaggerProvider.GetSwagger(string documentName, string host = null, string basePath = null) -> Microsoft.OpenApi.Models.OpenApiDocument
 Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions
+Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions.OpenApiVersion.get -> Microsoft.OpenApi.OpenApiSpecVersion
+Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions.OpenApiVersion.set -> void
 Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions.PreSerializeFilters.get -> System.Collections.Generic.List<System.Action<Microsoft.OpenApi.Models.OpenApiDocument, Microsoft.AspNetCore.Http.HttpRequest>>
 Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions.SwaggerEndpointOptions() -> void
 Swashbuckle.AspNetCore.Swagger.SwaggerOptions
 Swashbuckle.AspNetCore.Swagger.SwaggerOptions.CustomDocumentSerializer.get -> Swashbuckle.AspNetCore.Swagger.ISwaggerDocumentSerializer
 Swashbuckle.AspNetCore.Swagger.SwaggerOptions.CustomDocumentSerializer.set -> void
+Swashbuckle.AspNetCore.Swagger.SwaggerOptions.OpenApiVersion.get -> Microsoft.OpenApi.OpenApiSpecVersion
+Swashbuckle.AspNetCore.Swagger.SwaggerOptions.OpenApiVersion.set -> void
 Swashbuckle.AspNetCore.Swagger.SwaggerOptions.PreSerializeFilters.get -> System.Collections.Generic.List<System.Action<Microsoft.OpenApi.Models.OpenApiDocument, Microsoft.AspNetCore.Http.HttpRequest>>
 Swashbuckle.AspNetCore.Swagger.SwaggerOptions.RouteTemplate.get -> string
 Swashbuckle.AspNetCore.Swagger.SwaggerOptions.RouteTemplate.set -> void
