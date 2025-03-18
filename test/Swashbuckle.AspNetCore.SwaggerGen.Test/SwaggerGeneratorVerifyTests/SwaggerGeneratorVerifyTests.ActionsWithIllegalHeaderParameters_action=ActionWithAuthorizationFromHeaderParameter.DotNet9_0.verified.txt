@@ -1,0 +1,52 @@
+﻿{
+  Info: {
+    Title: Test API,
+    Version: V1
+  },
+  Paths: {
+    /resource: {
+      Operations: {
+        Get: {
+          Tags: [
+            {
+              Name: Fake,
+              UnresolvedReference: false
+            }
+          ],
+          Parameters: [
+            {
+              UnresolvedReference: false,
+              Name: param,
+              In: Header,
+              Required: false,
+              Deprecated: false,
+              AllowEmptyValue: false,
+              Style: Simple,
+              Explode: false,
+              AllowReserved: false,
+              Schema: {
+                Type: string,
+                ReadOnly: false,
+                WriteOnly: false,
+                AdditionalPropertiesAllowed: true,
+                Nullable: false,
+                Deprecated: false,
+                UnresolvedReference: false
+              }
+            }
+          ],
+          Responses: {
+            200: {
+              Description: OK,
+              UnresolvedReference: false
+            }
+          },
+          Deprecated: false
+        }
+      },
+      UnresolvedReference: false
+    }
+  },
+  Components: {},
+  HashCode: E126911C7FB97665966DB7EA833EA70FDF82A779304ECD9B963D5A50C6E0AE51A3180983631720BDCD1BCDA3CAA7E79F0F0042120949EA990884D6188CE77AF1
+}

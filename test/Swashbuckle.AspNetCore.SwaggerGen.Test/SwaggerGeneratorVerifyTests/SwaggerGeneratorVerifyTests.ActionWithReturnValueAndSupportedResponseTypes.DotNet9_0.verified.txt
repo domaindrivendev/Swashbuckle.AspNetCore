@@ -1,0 +1,56 @@
+﻿{
+  Info: {
+    Title: Test API,
+    Version: V1
+  },
+  Paths: {
+    /resource: {
+      Operations: {
+        Post: {
+          Tags: [
+            {
+              Name: Fake,
+              UnresolvedReference: false
+            }
+          ],
+          Responses: {
+            200: {
+              Description: OK,
+              Content: {
+                application/json: {
+                  Schema: {
+                    Type: integer,
+                    Format: int32,
+                    ReadOnly: false,
+                    WriteOnly: false,
+                    AdditionalPropertiesAllowed: true,
+                    Nullable: false,
+                    Deprecated: false,
+                    UnresolvedReference: false
+                  }
+                }
+              },
+              UnresolvedReference: false
+            },
+            400: {
+              Description: Bad Request,
+              UnresolvedReference: false
+            },
+            422: {
+              Description: Unprocessable Content,
+              UnresolvedReference: false
+            },
+            default: {
+              Description: Error,
+              UnresolvedReference: false
+            }
+          },
+          Deprecated: false
+        }
+      },
+      UnresolvedReference: false
+    }
+  },
+  Components: {},
+  HashCode: 49491612C8548E72072C4BF9884EBB4F3B076CB8FA86B0ADA736DD5AA2A7EFBDE1E5E4E2698AD9241CCB5A6AA19E150B7B558356C9F7B4A6027DCC77657B5685
+}

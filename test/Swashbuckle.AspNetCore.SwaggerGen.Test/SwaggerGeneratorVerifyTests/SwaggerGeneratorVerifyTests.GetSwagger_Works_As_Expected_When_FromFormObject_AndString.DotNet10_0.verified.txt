@@ -1,0 +1,124 @@
+﻿{
+  Workspace: {
+    BaseUrl: https://openapi.net/
+  },
+  Info: {
+    Title: Test API,
+    Version: V1
+  },
+  Paths: {
+    /resource: {
+      Operations: {
+        Post: {
+          Tags: [
+            null
+          ],
+          RequestBody: {
+            UnresolvedReference: false,
+            Required: false,
+            Content: {
+              multipart/form-data: {
+                Schema: {
+                  UnEvaluatedProperties: false,
+                  ReadOnly: false,
+                  WriteOnly: false,
+                  AllOf: [
+                    {
+                      UnEvaluatedProperties: false,
+                      ReadOnly: false,
+                      WriteOnly: false,
+                      AdditionalPropertiesAllowed: true,
+                      Nullable: false,
+                      UnevaluatedProperties: false,
+                      Deprecated: false,
+                      UnresolvedReference: false,
+                      Reference: {
+                        IsFragment: false,
+                        Type: Schema,
+                        Id: SwaggerIngoreAnnotatedType,
+                        IsExternal: false,
+                        IsLocal: true,
+                        ReferenceV3: #/components/schemas/SwaggerIngoreAnnotatedType,
+                        ReferenceV2: #/definitions/SwaggerIngoreAnnotatedType
+                      }
+                    },
+                    {
+                      UnEvaluatedProperties: false,
+                      Type: Object,
+                      ReadOnly: false,
+                      WriteOnly: false,
+                      Properties: {
+                        param2: {
+                          UnEvaluatedProperties: false,
+                          Type: String,
+                          ReadOnly: false,
+                          WriteOnly: false,
+                          AdditionalPropertiesAllowed: true,
+                          Nullable: false,
+                          UnevaluatedProperties: false,
+                          Deprecated: false,
+                          UnresolvedReference: false
+                        }
+                      },
+                      AdditionalPropertiesAllowed: true,
+                      Nullable: false,
+                      UnevaluatedProperties: false,
+                      Deprecated: false,
+                      UnresolvedReference: false
+                    }
+                  ],
+                  AdditionalPropertiesAllowed: true,
+                  Nullable: false,
+                  UnevaluatedProperties: false,
+                  Deprecated: false,
+                  UnresolvedReference: false
+                },
+                Encoding: {
+                  param2: {
+                    Style: Form
+                  }
+                }
+              }
+            }
+          },
+          Responses: {
+            200: {
+              Description: OK,
+              UnresolvedReference: false
+            }
+          },
+          Deprecated: false
+        }
+      },
+      UnresolvedReference: false
+    }
+  },
+  Components: {
+    Schemas: {
+      SwaggerIngoreAnnotatedType: {
+        UnEvaluatedProperties: false,
+        Type: Object,
+        ReadOnly: false,
+        WriteOnly: false,
+        Properties: {
+          NotIgnoredString: {
+            UnEvaluatedProperties: false,
+            Type: String,
+            ReadOnly: false,
+            WriteOnly: false,
+            AdditionalPropertiesAllowed: true,
+            Nullable: true,
+            UnevaluatedProperties: false,
+            Deprecated: false,
+            UnresolvedReference: false
+          }
+        },
+        AdditionalPropertiesAllowed: false,
+        Nullable: false,
+        UnevaluatedProperties: false,
+        Deprecated: false,
+        UnresolvedReference: false
+      }
+    }
+  }
+}

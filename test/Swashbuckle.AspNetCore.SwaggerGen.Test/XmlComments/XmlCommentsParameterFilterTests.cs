@@ -2,7 +2,9 @@
 using System.Xml.XPath;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
+#if !NET10_0_OR_GREATER
 using Swashbuckle.AspNetCore.TestSupport;
+#endif
 using Xunit;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test
@@ -12,7 +14,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void Apply_SetsDescriptionAndExample_FromActionParamTag()
         {
-            var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = "string" } };
+            var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String } };
             var parameterInfo = typeof(FakeControllerWithXmlComments)
                 .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithParamTags))
                 .GetParameters()[0];
@@ -23,13 +25,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.Equal("Description for param1", parameter.Description);
             Assert.NotNull(parameter.Example);
+
+#if NET10_0_OR_GREATER
+            Assert.Equal("\"Example for \\u0022param1\\u0022\"", parameter.Example.ToJson());
+#else
             Assert.Equal("\"Example for \\\"param1\\\"\"", parameter.Example.ToJson());
+#endif
         }
 
         [Fact]
         public void Apply_SetsDescriptionAndExample_FromUriTypeActionParamTag()
         {
-            var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = "string" } };
+            var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String } };
             var parameterInfo = typeof(FakeControllerWithXmlComments)
                 .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithParamTags))
                 .GetParameters()[1];
@@ -40,13 +47,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.Equal("Description for param2", parameter.Description);
             Assert.NotNull(parameter.Example);
+
+#if NET10_0_OR_GREATER
+            Assert.Equal("\"http://test.com/?param1=1\\u0026param2=2\"", parameter.Example.ToJson());
+#else
             Assert.Equal("\"http://test.com/?param1=1&param2=2\"", parameter.Example.ToJson());
+#endif
         }
 
         [Fact]
         public void Apply_SetsDescriptionAndExample_FromUnderlyingGenericTypeActionParamTag()
         {
-            var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = "string" } };
+            var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String } };
             var parameterInfo = typeof(FakeConstructedControllerWithXmlComments)
                 .GetMethod(nameof(FakeConstructedControllerWithXmlComments.ActionWithParamTags))
                 .GetParameters()[0];
@@ -57,13 +69,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
 
             Assert.Equal("Description for param1", parameter.Description);
             Assert.NotNull(parameter.Example);
+
+#if NET10_0_OR_GREATER
+            Assert.Equal("\"Example for \\u0022param1\\u0022\"", parameter.Example.ToJson());
+#else
             Assert.Equal("\"Example for \\\"param1\\\"\"", parameter.Example.ToJson());
+#endif
         }
 
         [Fact]
         public void Apply_SetsDescriptionAndExample_FromPropertySummaryAndExampleTags()
         {
-            var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = "string", Description = "schema-level description" } };
+            var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String, Description = "schema-level description" } };
             var propertyInfo = typeof(XmlAnnotatedType).GetProperty(nameof(XmlAnnotatedType.StringProperty));
             var apiParameterDescription = new ApiParameterDescription { };
             var filterContext = new ParameterFilterContext(apiParameterDescription, null, null, propertyInfo: propertyInfo);
@@ -79,7 +96,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
         [Fact]
         public void Apply_SetsDescriptionAndExample_FromUriTypePropertySummaryAndExampleTags()
         {
-            var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = "string", Description = "schema-level description" } };
+            var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String, Description = "schema-level description" } };
             var propertyInfo = typeof(XmlAnnotatedType).GetProperty(nameof(XmlAnnotatedType.StringPropertyWithUri));
             var apiParameterDescription = new ApiParameterDescription { };
             var filterContext = new ParameterFilterContext(apiParameterDescription, null, null, propertyInfo: propertyInfo);
@@ -89,15 +106,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test
             Assert.Equal("Summary for StringPropertyWithUri", parameter.Description);
             Assert.Null(parameter.Schema.Description);
             Assert.NotNull(parameter.Example);
+
+#if NET10_0_OR_GREATER
+            Assert.Equal("\"https://test.com/a?b=1\\u0026c=2\"", parameter.Example.ToJson());
+#else
             Assert.Equal("\"https://test.com/a?b=1&c=2\"", parameter.Example.ToJson());
+#endif
         }
 
-        private XmlCommentsParameterFilter Subject()
+        private static XmlCommentsParameterFilter Subject()
         {
-            using (var xmlComments = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml"))
-            {
-                return new XmlCommentsParameterFilter(new XPathDocument(xmlComments));
-            }
+            using var xmlComments = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml");
+            return new XmlCommentsParameterFilter(new XPathDocument(xmlComments));
         }
     }
 }

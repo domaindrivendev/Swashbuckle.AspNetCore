@@ -1,0 +1,129 @@
+﻿{
+  Workspace: {
+    BaseUrl: https://openapi.net/
+  },
+  Info: {
+    Title: Test API,
+    Version: V1
+  },
+  Paths: {
+    /resource: {
+      Operations: {
+        Post: {
+          Tags: [
+            null
+          ],
+          Parameters: [
+            {
+              UnresolvedReference: false,
+              Name: EnumWithDefault,
+              In: Query,
+              Description: <p>Members:</p><ul><li>Value2 - 2</li><li>Value4 - 4</li><li>Value8 - 8</li></ul>,
+              Required: false,
+              Deprecated: false,
+              AllowEmptyValue: false,
+              Style: Form,
+              Explode: true,
+              AllowReserved: false,
+              Schema: {
+                UnEvaluatedProperties: false,
+                ReadOnly: false,
+                WriteOnly: false,
+                AdditionalPropertiesAllowed: true,
+                Nullable: false,
+                UnevaluatedProperties: false,
+                Deprecated: false,
+                UnresolvedReference: false,
+                Reference: {
+                  IsFragment: false,
+                  Type: Schema,
+                  Id: IntEnum,
+                  IsExternal: false,
+                  IsLocal: true,
+                  ReferenceV3: #/components/schemas/IntEnum,
+                  ReferenceV2: #/definitions/IntEnum
+                }
+              }
+            },
+            {
+              UnresolvedReference: false,
+              Name: EnumArrayWithDefault,
+              In: Query,
+              Description: <p>Members:</p><ul><li>Value2 - 2</li><li>Value4 - 4</li><li>Value8 - 8</li></ul>,
+              Required: false,
+              Deprecated: false,
+              AllowEmptyValue: false,
+              Style: Form,
+              Explode: true,
+              AllowReserved: false,
+              Schema: {
+                UnEvaluatedProperties: false,
+                Type: Array,
+                Description: <p>Members:</p><ul><li>Value2 - 2</li><li>Value4 - 4</li><li>Value8 - 8</li></ul>,
+                Default: [
+                  {}
+                ],
+                ReadOnly: false,
+                WriteOnly: false,
+                Items: {
+                  UnEvaluatedProperties: false,
+                  ReadOnly: false,
+                  WriteOnly: false,
+                  AdditionalPropertiesAllowed: true,
+                  Nullable: false,
+                  UnevaluatedProperties: false,
+                  Deprecated: false,
+                  UnresolvedReference: false,
+                  Reference: {
+                    IsFragment: false,
+                    Type: Schema,
+                    Id: IntEnum,
+                    IsExternal: false,
+                    IsLocal: true,
+                    ReferenceV3: #/components/schemas/IntEnum,
+                    ReferenceV2: #/definitions/IntEnum
+                  }
+                },
+                AdditionalPropertiesAllowed: true,
+                Nullable: false,
+                UnevaluatedProperties: false,
+                Deprecated: false,
+                UnresolvedReference: false
+              }
+            }
+          ],
+          Responses: {
+            200: {
+              Description: OK,
+              UnresolvedReference: false
+            }
+          },
+          Deprecated: false
+        }
+      },
+      UnresolvedReference: false
+    }
+  },
+  Components: {
+    Schemas: {
+      IntEnum: {
+        UnEvaluatedProperties: false,
+        Type: Integer,
+        Format: int32,
+        Description: <p>Members:</p><ul><li>Value2 - 2</li><li>Value4 - 4</li><li>Value8 - 8</li></ul>,
+        ReadOnly: false,
+        WriteOnly: false,
+        AdditionalPropertiesAllowed: true,
+        Enum: [
+          {},
+          {},
+          {}
+        ],
+        Nullable: false,
+        UnevaluatedProperties: false,
+        Deprecated: false,
+        UnresolvedReference: false
+      }
+    }
+  }
+}

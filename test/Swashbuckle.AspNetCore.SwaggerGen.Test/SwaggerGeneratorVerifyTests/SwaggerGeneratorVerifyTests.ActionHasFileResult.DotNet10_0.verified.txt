@@ -1,0 +1,45 @@
+﻿{
+  Workspace: {
+    BaseUrl: https://openapi.net/
+  },
+  Info: {
+    Title: Test API,
+    Version: V1
+  },
+  Paths: {
+    /resource: {
+      Operations: {
+        Post: {
+          Tags: [
+            null
+          ],
+          Responses: {
+            200: {
+              Description: OK,
+              Content: {
+                application/zip: {
+                  Schema: {
+                    UnEvaluatedProperties: false,
+                    Type: String,
+                    Format: binary,
+                    ReadOnly: false,
+                    WriteOnly: false,
+                    AdditionalPropertiesAllowed: true,
+                    Nullable: false,
+                    UnevaluatedProperties: false,
+                    Deprecated: false,
+                    UnresolvedReference: false
+                  }
+                }
+              },
+              UnresolvedReference: false
+            }
+          },
+          Deprecated: false
+        }
+      },
+      UnresolvedReference: false
+    }
+  },
+  Components: {}
+}
