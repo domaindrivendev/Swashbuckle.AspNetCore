@@ -16,7 +16,7 @@ namespace Basic.Swagger
                     ["description"] = new OpenApiString("foobar"),
                     ["price"] = new OpenApiDouble(14.37)
                 },
-                _ => null
+                _ => null,
             };
         }
     }

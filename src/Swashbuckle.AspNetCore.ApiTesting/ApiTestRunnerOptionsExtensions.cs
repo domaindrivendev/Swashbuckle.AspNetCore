@@ -10,7 +10,8 @@ namespace Swashbuckle.AspNetCore.ApiTesting
         public static void AddOpenApiFile(this ApiTestRunnerOptions options, string documentName, string filePath)
         {
             using var fileStream = File.OpenRead(filePath);
-            var openApiDocument = new OpenApiStreamReader().Read(fileStream, out OpenApiDiagnostic diagnostic);
+
+            var openApiDocument = new OpenApiStreamReader().Read(fileStream, out var diagnostic);
             options.OpenApiDocs.Add(documentName, openApiDocument);
         }
 

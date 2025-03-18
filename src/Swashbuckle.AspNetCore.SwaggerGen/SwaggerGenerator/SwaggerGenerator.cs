@@ -417,6 +417,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen
                 if (apiParameter is not null)
                 {
                     var (parameterAndContext, filterContext) = GenerateParameterAndContext(apiParameter, schemaRepository);
+                    parameter.Name = parameterAndContext.Name;
                     parameter.Schema = parameterAndContext.Schema;
                     parameter.Description ??= parameterAndContext.Description;
 

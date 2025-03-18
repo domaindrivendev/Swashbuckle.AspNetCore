@@ -1,4 +1,0 @@
-static Swashbuckle.AspNetCore.SwaggerGen.XmlCommentsTextHelper.Humanize(string text, string xmlCommentEndOfLine) -> string
-Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GetDocumentNames() -> System.Collections.Generic.IList<string>
-Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.XmlCommentEndOfLine.get -> string
-Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.XmlCommentEndOfLine.set -> void

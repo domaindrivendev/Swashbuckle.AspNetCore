@@ -11,6 +11,8 @@ Swashbuckle.AspNetCore.Swagger.ISwaggerDocumentSerializer
 Swashbuckle.AspNetCore.Swagger.ISwaggerDocumentSerializer.SerializeDocument(Microsoft.OpenApi.Models.OpenApiDocument document, Microsoft.OpenApi.Writers.IOpenApiWriter writer, Microsoft.OpenApi.OpenApiSpecVersion specVersion) -> void
 Swashbuckle.AspNetCore.Swagger.ISwaggerProvider
 Swashbuckle.AspNetCore.Swagger.ISwaggerProvider.GetSwagger(string documentName, string host = null, string basePath = null) -> Microsoft.OpenApi.Models.OpenApiDocument
+Swashbuckle.AspNetCore.Swagger.ISwaggerDocumentMetadataProvider
+Swashbuckle.AspNetCore.Swagger.ISwaggerDocumentMetadataProvider.GetDocumentNames() -> System.Collections.Generic.IList<string>
 Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions
 Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions.PreSerializeFilters.get -> System.Collections.Generic.List<System.Action<Microsoft.OpenApi.Models.OpenApiDocument, Microsoft.AspNetCore.Http.HttpRequest>>
 Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions.SerializeAsV2.get -> bool
