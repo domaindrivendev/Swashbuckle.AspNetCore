@@ -35,42 +35,11 @@ jobs:
         shell: pwsh
         env:
           NEXT_VERSION: ${{ inputs.version }}
-        run: |
-          $properties = Join-Path "." "Directory.Build.props"
+        run: ./.github/bump-version.ps1 ${env:NEXT_VERSION}
 
-          $xml = [xml](Get-Content $properties)
-          $versionPrefix = $xml.SelectSingleNode('Project/PropertyGroup/VersionPrefix')
-          $publishedVersion = $versionPrefix.InnerText;
-
-          if (-Not [string]::IsNullOrEmpty(${env:NEXT_VERSION})) {
-            $version = [System.Version]::new(${env:NEXT_VERSION})
-          } else {
-            $version = [System.Version]::new($publishedVersion)
-            $version = [System.Version]::new($version.Major, $version.Minor, $version.Build + 1)
-          }
-
-          $updatedVersion = $version.ToString()
-          $versionPrefix.InnerText = $updatedVersion
-
-          $packageValidationBaselineVersion = $xml.SelectSingleNode('Project/PropertyGroup/PackageValidationBaselineVersion')
-          $packageValidationBaselineVersion.InnerText = $publishedVersion
-
-          $settings = New-Object System.Xml.XmlWriterSettings
-          $settings.Encoding = New-Object System.Text.UTF8Encoding($false)
-          $settings.Indent = $true
-          $settings.OmitXmlDeclaration = $true
-
-          $writer = [System.Xml.XmlWriter]::Create($properties, $settings)
-
-          $xml.Save($writer)
-
-          $writer.Flush()
-          $writer.Close()
-          $writer = $null
-
-          "" >> $properties
-
-          "version=${updatedVersion}" >> $env:GITHUB_OUTPUT
+      - name: Update public API baselines
+        shell: pwsh
+        run: ./.github/update-baselines.ps1
 
       - name: Push changes to GitHub
         id: push-changes
