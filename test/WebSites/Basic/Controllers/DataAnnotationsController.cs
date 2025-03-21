@@ -1,54 +1,53 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Basic.Controllers
+namespace Basic.Controllers;
+
+[Produces("application/json")]
+public class DataAnnotationsController : Controller
 {
-    [Produces("application/json")]
-    public class DataAnnotationsController : Controller
+    [HttpPost("payments/authorize")]
+    [ProducesResponseType(200, Type = typeof(string))]
+    public IActionResult AuthorizePayment([FromBody, Required]PaymentRequest request)
     {
-        [HttpPost("payments/authorize")]
-        [ProducesResponseType(200, Type = typeof(string))]
-        public IActionResult AuthorizePayment([FromBody, Required]PaymentRequest request)
-        {
-            if (!ModelState.IsValid)
-                return new BadRequestObjectResult(ModelState);
+        if (!ModelState.IsValid)
+            return new BadRequestObjectResult(ModelState);
 
-            return new ObjectResult("123456");
-        }
-
-        [HttpPut("payments/{paymentId}/cancel")]
-        public IActionResult CancelPayment([MinLength(6)]string paymentId)
-        {
-            return Ok();
-        }
+        return new ObjectResult("123456");
     }
 
-    public class PaymentRequest
+    [HttpPut("payments/{paymentId}/cancel")]
+    public IActionResult CancelPayment([MinLength(6)]string paymentId)
     {
-        [Required]
-        public Transaction Transaction { get; set; }
-
-        [Required]
-        public CreditCard CreditCard { get; set; }
+        return Ok();
     }
+}
 
-    public class Transaction
-    {
-        [Required]
-        public decimal Amount { get; set; }
+public class PaymentRequest
+{
+    [Required]
+    public Transaction Transaction { get; set; }
 
-        public string Note { get; set; }
-    }
+    [Required]
+    public CreditCard CreditCard { get; set; }
+}
 
-    public class CreditCard
-    {
-        [Required, RegularExpression("^[3-6]?\\d{12,15}$")]
-        public string CardNumber { get; set; }
+public class Transaction
+{
+    [Required]
+    public decimal Amount { get; set; }
 
-        [Required, Range(1, 12)]
-        public int ExpMonth { get; set; }
+    public string Note { get; set; }
+}
 
-        [Required, Range(14, 99)]
-        public int ExpYear { get; set; }
-    }
+public class CreditCard
+{
+    [Required, RegularExpression("^[3-6]?\\d{12,15}$")]
+    public string CardNumber { get; set; }
+
+    [Required, Range(1, 12)]
+    public int ExpMonth { get; set; }
+
+    [Required, Range(14, 99)]
+    public int ExpYear { get; set; }
 }

@@ -1,57 +1,56 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace OAuth2Integration.ResourceServer.Controllers
+namespace OAuth2Integration.ResourceServer.Controllers;
+
+[Route("products")]
+[Authorize(AuthenticationSchemes = "Bearer")]
+public class ProductsController : Controller
 {
-    [Route("products")]
-    [Authorize(AuthenticationSchemes = "Bearer")]
-    public class ProductsController : Controller
+    [HttpGet]
+    [Authorize("readAccess")]
+    public IEnumerable<Product> GetProducts()
     {
-        [HttpGet]
-        [Authorize("readAccess")]
-        public IEnumerable<Product> GetProducts()
+        yield return new Product
         {
-            yield return new Product
-            {
-                Id = 1,
-                SerialNo = "ABC123",
-            };
-        }
-
-        [HttpGet("{id}")]
-        [Authorize("readAccess")]
-        public Product GetProduct(int id)
-        {
-            return new Product
-            {
-                Id = 1,
-                SerialNo = "ABC123",
-            };
-
-        }
-
-        [HttpPost]
-        [Authorize("writeAccess")]
-        public void CreateProduct([FromBody] Product product)
-        {
-        }
-
-        [HttpDelete("{id}")]
-        [Authorize("writeAccess")]
-        public void DeleteProduct(int id)
-        {
-        }
+            Id = 1,
+            SerialNo = "ABC123",
+        };
     }
 
-    public class Product
+    [HttpGet("{id}")]
+    [Authorize("readAccess")]
+    public Product GetProduct(int id)
     {
-        public int Id { get; internal set; }
-        public string SerialNo { get; set; }
-        public ProductStatus Status { get; set; }
+        return new Product
+        {
+            Id = 1,
+            SerialNo = "ABC123",
+        };
+
     }
 
-    public enum ProductStatus
+    [HttpPost]
+    [Authorize("writeAccess")]
+    public void CreateProduct([FromBody] Product product)
     {
-        InStock, ComingSoon
     }
+
+    [HttpDelete("{id}")]
+    [Authorize("writeAccess")]
+    public void DeleteProduct(int id)
+    {
+    }
+}
+
+public class Product
+{
+    public int Id { get; internal set; }
+    public string SerialNo { get; set; }
+    public ProductStatus Status { get; set; }
+}
+
+public enum ProductStatus
+{
+    InStock, ComingSoon
 }

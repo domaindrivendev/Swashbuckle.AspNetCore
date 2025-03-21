@@ -2,67 +2,66 @@
 using Duende.IdentityServer.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace OAuth2Integration.AuthServer.Controllers
+namespace OAuth2Integration.AuthServer.Controllers;
+
+[ApiExplorerSettings(IgnoreApi = true)]
+public class ConsentController : Controller
 {
-    [ApiExplorerSettings(IgnoreApi = true)]
-    public class ConsentController : Controller
+    private readonly IIdentityServerInteractionService _interaction;
+
+    public ConsentController(
+        IIdentityServerInteractionService interaction)
     {
-        private readonly IIdentityServerInteractionService _interaction;
+        _interaction = interaction;
+    }
 
-        public ConsentController(
-            IIdentityServerInteractionService interaction)
+    [HttpGet("consent")]
+    public async Task<IActionResult> Consent(string returnUrl)
+    {
+        var request = await _interaction.GetAuthorizationContextAsync(returnUrl);
+
+        var viewModel = new ConsentViewModel
         {
-            _interaction = interaction;
-        }
+            ReturnUrl = returnUrl,
+            ClientName = request.Client.ClientName,
+            ScopesRequested = request.ValidatedResources?.Resources?.ApiScopes ?? []
+        };
 
-        [HttpGet("consent")]
-        public async Task<IActionResult> Consent(string returnUrl)
+        return View("/AuthServer/Views/Consent.cshtml", viewModel);
+    }
+
+    [HttpPost("consent")]
+    public async Task<IActionResult> Consent([FromForm] ConsentViewModel viewModel)
+    {
+        var request = await _interaction.GetAuthorizationContextAsync(viewModel.ReturnUrl);
+
+        ConsentResponse consentResponse;
+        if (viewModel.ScopesConsented != null && viewModel.ScopesConsented.Any())
         {
-            var request = await _interaction.GetAuthorizationContextAsync(returnUrl);
-
-            var viewModel = new ConsentViewModel
+            consentResponse = new ConsentResponse
             {
-                ReturnUrl = returnUrl,
-                ClientName = request.Client.ClientName,
-                ScopesRequested = request.ValidatedResources?.Resources?.ApiScopes ?? []
+                RememberConsent = true,
+                ScopesValuesConsented = viewModel.ScopesConsented.ToList()
             };
-
-            return View("/AuthServer/Views/Consent.cshtml", viewModel);
         }
-
-        [HttpPost("consent")]
-        public async Task<IActionResult> Consent([FromForm] ConsentViewModel viewModel)
+        else
         {
-            var request = await _interaction.GetAuthorizationContextAsync(viewModel.ReturnUrl);
-
-            ConsentResponse consentResponse;
-            if (viewModel.ScopesConsented != null && viewModel.ScopesConsented.Any())
+            consentResponse = new ConsentResponse
             {
-                consentResponse = new ConsentResponse
-                {
-                    RememberConsent = true,
-                    ScopesValuesConsented = viewModel.ScopesConsented.ToList()
-                };
-            }
-            else
-            {
-                consentResponse = new ConsentResponse
-                {
-                    Error = AuthorizationError.AccessDenied
-                };
-            }
-
-            await _interaction.GrantConsentAsync(request, consentResponse);
-
-            return Redirect(viewModel.ReturnUrl);
+                Error = AuthorizationError.AccessDenied
+            };
         }
-    }
 
-    public class ConsentViewModel
-    {
-        public string ReturnUrl { get; set; }
-        public string ClientName { get; set; }
-        public IEnumerable<ApiScope> ScopesRequested { get; set; }
-        public string[] ScopesConsented { get; set; }
+        await _interaction.GrantConsentAsync(request, consentResponse);
+
+        return Redirect(viewModel.ReturnUrl);
     }
+}
+
+public class ConsentViewModel
+{
+    public string ReturnUrl { get; set; }
+    public string ClientName { get; set; }
+    public IEnumerable<ApiScope> ScopesRequested { get; set; }
+    public string[] ScopesConsented { get; set; }
 }

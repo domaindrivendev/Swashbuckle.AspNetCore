@@ -2,37 +2,36 @@
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace NSwagClientExample.Controllers
+namespace NSwagClientExample.Controllers;
+
+#if NET
+[ApiController]
+[Route("[controller]")]
+public class SystemTextJsonAnimalsController : ControllerBase
 {
-#if NET7_0_OR_GREATER
-    [ApiController]
-    [Route("[controller]")]
-    public class SystemTextJsonAnimalsController : ControllerBase
+    [HttpPost]
+    [Produces("application/json")]
+    public void CreateAnimal([Required]SystemTextJsonAnimal animal)
     {
-        [HttpPost]
-        [Produces("application/json")]
-        public void CreateAnimal([Required]SystemTextJsonAnimal animal)
-        {
-            throw new NotImplementedException();
-        }
+        throw new NotImplementedException();
     }
-
-    [JsonPolymorphic(TypeDiscriminatorPropertyName = "animalType")]
-    [JsonDerivedType(typeof(SystemTextJsonCat), "Cat")]
-    [JsonDerivedType(typeof(SystemTextJsonDog), "Dog")]
-    public class SystemTextJsonAnimal
-    {
-        public string AnimalType { get; set; }
-    }
-
-    public class SystemTextJsonCat : SystemTextJsonAnimal
-    {
-        public string CatSpecificProperty { get; set; }
-    }
-
-    public class SystemTextJsonDog : SystemTextJsonAnimal
-    {
-        public string DogSpecificProperty { get; set; }
-    }
-#endif
 }
+
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "animalType")]
+[JsonDerivedType(typeof(SystemTextJsonCat), "Cat")]
+[JsonDerivedType(typeof(SystemTextJsonDog), "Dog")]
+public class SystemTextJsonAnimal
+{
+    public string AnimalType { get; set; }
+}
+
+public class SystemTextJsonCat : SystemTextJsonAnimal
+{
+    public string CatSpecificProperty { get; set; }
+}
+
+public class SystemTextJsonDog : SystemTextJsonAnimal
+{
+    public string DogSpecificProperty { get; set; }
+}
+#endif

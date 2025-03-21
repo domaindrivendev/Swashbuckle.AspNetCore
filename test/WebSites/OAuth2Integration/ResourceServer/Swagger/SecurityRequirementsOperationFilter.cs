@@ -4,55 +4,54 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace OAuth2Integration.ResourceServer.Swagger
+namespace OAuth2Integration.ResourceServer.Swagger;
+
+public class SecurityRequirementsOperationFilter : IOperationFilter
 {
-    public class SecurityRequirementsOperationFilter : IOperationFilter
+    private readonly AuthorizationOptions _authorizationOptions;
+
+    public SecurityRequirementsOperationFilter(IOptions<AuthorizationOptions> authorizationOptions)
     {
-        private readonly AuthorizationOptions _authorizationOptions;
+        // Beware: This might only part of the truth. If someone exchanges the IAuthorizationPolicyProvider and that loads
+        // policies and requirements from another source than the configured options, we might not get all requirements
+        // from here. But then we would have to make asynchronous calls from this synchronous interface.
+        _authorizationOptions = authorizationOptions?.Value ?? throw new ArgumentNullException(nameof(authorizationOptions));
+    }
 
-        public SecurityRequirementsOperationFilter(IOptions<AuthorizationOptions> authorizationOptions)
+    public void Apply(OpenApiOperation operation, OperationFilterContext context)
+    {
+        var requiredPolicies = context.MethodInfo
+            .GetCustomAttributes(true)
+            .Concat(context.MethodInfo.DeclaringType.GetCustomAttributes(true))
+            .OfType<AuthorizeAttribute>()
+            .Select(attr => attr.Policy)
+            .Where(p => p != null)
+            .Distinct();
+
+        var requiredScopes = requiredPolicies.Select(_authorizationOptions.GetPolicy)
+            .SelectMany(r => r.Requirements.OfType<ClaimsAuthorizationRequirement>())
+            .Where(cr => cr.ClaimType == "scope")
+            .SelectMany(r => r.AllowedValues)
+            .Distinct()
+            .ToList();
+
+        if (requiredScopes.Any())
         {
-            // Beware: This might only part of the truth. If someone exchanges the IAuthorizationPolicyProvider and that loads
-            // policies and requirements from another source than the configured options, we might not get all requirements
-            // from here. But then we would have to make asynchronous calls from this synchronous interface.
-            _authorizationOptions = authorizationOptions?.Value ?? throw new ArgumentNullException(nameof(authorizationOptions));
-        }
+            operation.Responses.Add("401", new OpenApiResponse { Description = "Unauthorized" });
+            operation.Responses.Add("403", new OpenApiResponse { Description = "Forbidden" });
 
-        public void Apply(OpenApiOperation operation, OperationFilterContext context)
-        {
-            var requiredPolicies = context.MethodInfo
-                .GetCustomAttributes(true)
-                .Concat(context.MethodInfo.DeclaringType.GetCustomAttributes(true))
-                .OfType<AuthorizeAttribute>()
-                .Select(attr => attr.Policy)
-                .Where(p => p != null)
-                .Distinct();
-
-            var requiredScopes = requiredPolicies.Select(_authorizationOptions.GetPolicy)
-                .SelectMany(r => r.Requirements.OfType<ClaimsAuthorizationRequirement>())
-                .Where(cr => cr.ClaimType == "scope")
-                .SelectMany(r => r.AllowedValues)
-                .Distinct()
-                .ToList();
-
-            if (requiredScopes.Any())
+            var oAuthScheme = new OpenApiSecurityScheme
             {
-                operation.Responses.Add("401", new OpenApiResponse { Description = "Unauthorized" });
-                operation.Responses.Add("403", new OpenApiResponse { Description = "Forbidden" });
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
+            };
 
-                var oAuthScheme = new OpenApiSecurityScheme
+            operation.Security =
+            [
+                new OpenApiSecurityRequirement
                 {
-                    Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
-                };
-
-                operation.Security =
-                [
-                    new OpenApiSecurityRequirement
-                    {
-                        [ oAuthScheme ] = requiredScopes
-                    }
-                ];
-            }
+                    [ oAuthScheme ] = requiredScopes
+                }
+            ];
         }
     }
 }

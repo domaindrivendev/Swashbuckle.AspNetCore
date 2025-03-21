@@ -1,31 +1,30 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace Basic.Controllers
+namespace Basic.Controllers;
+
+[Route("/shapes")]
+public class PolymorphicTypesController
 {
-    [Route("/shapes")]
-    public class PolymorphicTypesController
+    [HttpPost]
+    public int CreateShape([FromBody]Shape shape)
     {
-        [HttpPost]
-        public int CreateShape([FromBody]Shape shape)
-        {
-            throw new NotImplementedException();
-        }
+        throw new NotImplementedException();
     }
+}
 
-    public abstract class Shape
-    {
-        public string Name { get; set; } 
-    }
+public abstract class Shape
+{
+    public string Name { get; set; } 
+}
 
-    public class Rectangle : Shape
-    {
-        public int Height { get; set; }
+public class Rectangle : Shape
+{
+    public int Height { get; set; }
 
-        public int Width { get; set; }
-    }
+    public int Width { get; set; }
+}
 
-    public class Circle : Shape
-    {
-        public int Radius { get; set; }
-    }
+public class Circle : Shape
+{
+    public int Radius { get; set; }
 }

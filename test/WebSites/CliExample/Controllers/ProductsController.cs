@@ -1,26 +1,25 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace CliExample.Controllers
+namespace CliExample.Controllers;
+
+[Route("/products")]
+[Produces("application/json")]
+public class ProductsController
 {
-    [Route("/products")]
-    [Produces("application/json")]
-    public class ProductsController
+    [HttpGet]
+    public IEnumerable<Product> GetProducts()
     {
-        [HttpGet]
-        public IEnumerable<Product> GetProducts()
+        return new[]
         {
-            return new[]
-            {
-                new Product { Id = 1, Description = "A product" },
-                new Product { Id = 2, Description = "Another product" },
-            };
-        }
+            new Product { Id = 1, Description = "A product" },
+            new Product { Id = 2, Description = "Another product" },
+        };
     }
+}
 
-    public class Product
-    {
-        public int Id { get; set; }
+public class Product
+{
+    public int Id { get; set; }
 
-        public string Description { get; set; }
-    }
+    public string Description { get; set; }
 }
