@@ -29,8 +29,7 @@ public abstract class ApiTestRunnerBase : IDisposable
     {
         var openApiDocument = _options.GetOpenApiDocument(documentName);
 
-        if (openApiDocument.Paths == null)
-            openApiDocument.Paths = new OpenApiPaths();
+        openApiDocument.Paths ??= [];
 
         if (!openApiDocument.Paths.TryGetValue(pathTemplate, out OpenApiPathItem pathItem))
         {
@@ -49,11 +48,20 @@ public abstract class ApiTestRunnerBase : IDisposable
         HttpClient httpClient)
     {
         var openApiDocument = _options.GetOpenApiDocument(documentName);
-        if (!openApiDocument.TryFindOperationById(operationId, out string pathTemplate, out OperationType operationType))
-            throw new InvalidOperationException($"Operation with id '{operationId}' not found in OpenAPI document '{documentName}'");
 
+        if (!openApiDocument.TryFindOperationById(operationId, out string pathTemplate, out OperationType operationType))
+        {
+            throw new InvalidOperationException($"Operation with id '{operationId}' not found in OpenAPI document '{documentName}'");
+        }
+
+#if NET
+        if (expectedStatusCode.StartsWith('2'))
+#else
         if (expectedStatusCode.StartsWith("2"))
+#endif
+        {
             _requestValidator.Validate(request, openApiDocument, pathTemplate, operationType);
+        }
 
         var response = await httpClient.SendAsync(request);
 
@@ -62,22 +70,27 @@ public abstract class ApiTestRunnerBase : IDisposable
 
     public void Dispose()
     {
-        if (!_options.GenerateOpenApiFiles) return;
+        if (!_options.GenerateOpenApiFiles)
+        {
+            return;
+        }
 
         if (_options.FileOutputRoot == null)
+        {
             throw new Exception("GenerateOpenApiFiles set but FileOutputRoot is null");
+        }
 
         foreach (var entry in _options.OpenApiDocs)
         {
             var outputDir = Path.Combine(_options.FileOutputRoot, entry.Key);
             Directory.CreateDirectory(outputDir);
 
-            using (var streamWriter = new StreamWriter(Path.Combine(outputDir, "openapi.json")))
-            {
-                var openApiJsonWriter = new OpenApiJsonWriter(streamWriter);
-                entry.Value.SerializeAsV3(openApiJsonWriter);
-                streamWriter.Close();
-            }
+            using var streamWriter = new StreamWriter(Path.Combine(outputDir, "openapi.json"));
+
+            var openApiJsonWriter = new OpenApiJsonWriter(streamWriter);
+            entry.Value.SerializeAsV3(openApiJsonWriter);
         }
+
+        GC.SuppressFinalize(this);
     }
 }

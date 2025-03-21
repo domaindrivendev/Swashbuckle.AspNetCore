@@ -84,7 +84,7 @@ public static class AnnotationsSwaggerGenOptionsExtensions
         }
 #endif
 
-        return Enumerable.Empty<Type>();
+        return [];
     }
 
     private static string AnnotationsDiscriminatorNameSelector(Type baseType)

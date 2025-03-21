@@ -108,7 +108,7 @@ public class RequestValidator(IEnumerable<IContentValidator> contentValidators)
                 continue;
             }
 
-            var schema = (parameterSpec.Schema.Reference != null) ?
+            var schema = parameterSpec.Schema.Reference != null ?
                 (OpenApiSchema)openApiDocument.ResolveReference(parameterSpec.Schema.Reference)
                 : parameterSpec.Schema;
 
@@ -156,5 +156,3 @@ public class RequestValidator(IEnumerable<IContentValidator> contentValidators)
         }
     }
 }
-
-public class RequestDoesNotMatchSpecException(string message) : Exception(message);

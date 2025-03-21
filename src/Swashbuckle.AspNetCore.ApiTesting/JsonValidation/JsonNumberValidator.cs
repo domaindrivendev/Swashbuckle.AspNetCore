@@ -20,12 +20,12 @@ public class JsonNumberValidator : IJsonValidator
         }
 
         var numberValue = instance.Value<decimal>();
-        var errorMessagesList = new List<string>();
+        var errors = new List<string>();
 
         // multipleOf
         if (schema.MultipleOf.HasValue && ((numberValue % schema.MultipleOf.Value) != 0))
         {
-            errorMessagesList.Add($"Path: {instance.Path}. Number is not evenly divisible by multipleOf");
+            errors.Add($"Path: {instance.Path}. Number is not evenly divisible by multipleOf");
         }
 
         // maximum & exclusiveMaximum
@@ -35,11 +35,11 @@ public class JsonNumberValidator : IJsonValidator
 
             if (exclusiveMaximum && (numberValue >= schema.Maximum.Value))
             {
-                errorMessagesList.Add($"Path: {instance.Path}. Number is greater than, or equal to, maximum");
+                errors.Add($"Path: {instance.Path}. Number is greater than, or equal to, maximum");
             }
             else if (numberValue > schema.Maximum.Value)
             {
-                errorMessagesList.Add($"Path: {instance.Path}. Number is greater than maximum");
+                errors.Add($"Path: {instance.Path}. Number is greater than maximum");
             }
         }
 
@@ -50,15 +50,15 @@ public class JsonNumberValidator : IJsonValidator
 
             if (exclusiveMinimum && (numberValue <= schema.Minimum.Value))
             {
-                errorMessagesList.Add($"Path: {instance.Path}. Number is less than, or equal to, minimum");
+                errors.Add($"Path: {instance.Path}. Number is less than, or equal to, minimum");
             }
             else if (numberValue < schema.Minimum.Value)
             {
-                errorMessagesList.Add($"Path: {instance.Path}. Number is less than minimum");
+                errors.Add($"Path: {instance.Path}. Number is less than minimum");
             }
         }
 
-        errorMessages = errorMessagesList;
+        errorMessages = errors;
         return !errorMessages.Any();
     }
 }

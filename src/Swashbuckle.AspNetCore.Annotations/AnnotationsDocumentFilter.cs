@@ -8,8 +8,7 @@ public class AnnotationsDocumentFilter : IDocumentFilter
 {
     public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
     {
-        if (swaggerDoc.Tags == null)
-            swaggerDoc.Tags = new List<OpenApiTag>();
+        swaggerDoc.Tags ??= [];
 
         // Collect (unique) controller names and custom attributes in a dictionary
         var controllerNamesAndAttributes = context.ApiDescriptions
@@ -24,7 +23,7 @@ public class AnnotationsDocumentFilter : IDocumentFilter
         }
     }
 
-    private void ApplySwaggerTagAttribute(
+    private static void ApplySwaggerTagAttribute(
         OpenApiDocument swaggerDoc,
         string controllerName,
         IEnumerable<object> customAttributes)
@@ -33,7 +32,10 @@ public class AnnotationsDocumentFilter : IDocumentFilter
             .OfType<SwaggerTagAttribute>()
             .FirstOrDefault();
 
-        if (swaggerTagAttribute == null) return;
+        if (swaggerTagAttribute == null)
+        {
+            return;
+        }
 
         swaggerDoc.Tags.Add(new OpenApiTag
         {

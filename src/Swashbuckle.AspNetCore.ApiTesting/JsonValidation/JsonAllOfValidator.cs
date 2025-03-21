@@ -15,19 +15,20 @@ public class JsonAllOfValidator(JsonValidator jsonValidator) : IJsonValidator
         JToken instance,
         out IEnumerable<string> errorMessages)
     {
-        var errorMessagesList = new List<string>();
+        var errors = new List<string>();
 
-        var allOfArray = schema.AllOf.ToArray();
-
-        for (int i = 0; i < allOfArray.Length; i++)
+        if (schema.AllOf is { } allOf)
         {
-            if (!_jsonValidator.Validate(allOfArray[i], openApiDocument, instance, out IEnumerable<string> subErrorMessages))
+            for (int i = 0; i < allOf.Count; i++)
             {
-                errorMessagesList.AddRange(subErrorMessages.Select(msg => $"{msg} (allOf[{i}])"));
+                if (!_jsonValidator.Validate(allOf[i], openApiDocument, instance, out IEnumerable<string> subErrorMessages))
+                {
+                    errors.AddRange(subErrorMessages.Select(msg => $"{msg} (allOf[{i}])"));
+                }
             }
         }
 
-        errorMessages = errorMessagesList;
+        errorMessages = errors;
         return !errorMessages.Any();
     }
 }

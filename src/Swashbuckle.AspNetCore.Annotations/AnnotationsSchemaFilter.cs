@@ -5,14 +5,9 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Annotations;
 
-public class AnnotationsSchemaFilter : ISchemaFilter
+public class AnnotationsSchemaFilter(IServiceProvider serviceProvider) : ISchemaFilter
 {
-    private readonly IServiceProvider _serviceProvider;
-
-    public AnnotationsSchemaFilter(IServiceProvider serviceProvider)
-    {
-        _serviceProvider = serviceProvider;
-    }
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
 
     public void Apply(OpenApiSchema schema, SchemaFilterContext context)
     {
@@ -37,7 +32,9 @@ public class AnnotationsSchemaFilter : ISchemaFilter
             .FirstOrDefault();
 
         if (schemaAttribute != null)
+        {
             ApplySchemaAttribute(schema, schemaAttribute);
+        }
 
         var schemaFilterAttribute = context.Type.GetCustomAttributes<SwaggerSchemaFilterAttribute>()
             .FirstOrDefault();
@@ -53,45 +50,63 @@ public class AnnotationsSchemaFilter : ISchemaFilter
         }
     }
 
-    private void ApplyParamAnnotations(OpenApiSchema schema, ParameterInfo parameterInfo)
+    private static void ApplyParamAnnotations(OpenApiSchema schema, ParameterInfo parameterInfo)
     {
         var schemaAttribute = parameterInfo.GetCustomAttributes<SwaggerSchemaAttribute>()
             .FirstOrDefault();
 
         if (schemaAttribute != null)
+        {
             ApplySchemaAttribute(schema, schemaAttribute);
+        }
     }
 
-    private void ApplyMemberAnnotations(OpenApiSchema schema, MemberInfo memberInfo)
+    private static void ApplyMemberAnnotations(OpenApiSchema schema, MemberInfo memberInfo)
     {
         var schemaAttribute = memberInfo.GetCustomAttributes<SwaggerSchemaAttribute>()
             .FirstOrDefault();
 
         if (schemaAttribute != null)
+        {
             ApplySchemaAttribute(schema, schemaAttribute);
+        }
     }
 
-    private void ApplySchemaAttribute(OpenApiSchema schema, SwaggerSchemaAttribute schemaAttribute)
+    private static void ApplySchemaAttribute(OpenApiSchema schema, SwaggerSchemaAttribute schemaAttribute)
     {
         if (schemaAttribute.Description != null)
+        {
             schema.Description = schemaAttribute.Description;
+        }
 
         if (schemaAttribute.Format != null)
+        {
             schema.Format = schemaAttribute.Format;
+        }
 
         if (schemaAttribute.ReadOnlyFlag.HasValue)
+        {
             schema.ReadOnly = schemaAttribute.ReadOnlyFlag.Value;
+        }
 
         if (schemaAttribute.WriteOnlyFlag.HasValue)
+        {
             schema.WriteOnly = schemaAttribute.WriteOnlyFlag.Value;
+        }
 
         if (schemaAttribute.NullableFlag.HasValue)
+        {
             schema.Nullable = schemaAttribute.NullableFlag.Value;
+        }
 
         if (schemaAttribute.Required != null)
+        {
             schema.Required = new SortedSet<string>(schemaAttribute.Required);
+        }
 
         if (schemaAttribute.Title != null)
+        {
             schema.Title = schemaAttribute.Title;
+        }
     }
 }

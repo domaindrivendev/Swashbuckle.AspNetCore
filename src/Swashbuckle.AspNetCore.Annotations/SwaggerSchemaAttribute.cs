@@ -7,14 +7,9 @@
     AttributeTargets.Property |
     AttributeTargets.Enum,
     AllowMultiple = false)]
-public class SwaggerSchemaAttribute : Attribute
+public class SwaggerSchemaAttribute(string description = null) : Attribute
 {
-    public SwaggerSchemaAttribute(string description = null)
-    {
-        Description = description;
-    }
-
-    public string Description { get; set; }
+    public string Description { get; set; } = description;
 
     public string Format { get; set; }
 

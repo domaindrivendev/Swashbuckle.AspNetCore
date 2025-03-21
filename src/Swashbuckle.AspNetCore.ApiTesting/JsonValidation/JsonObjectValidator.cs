@@ -23,24 +23,24 @@ public class JsonObjectValidator(IJsonValidator jsonValidator) : IJsonValidator
 
         var jObject = (JObject)instance;
         var properties = jObject.Properties();
-        var errorMessagesList = new List<string>();
+        var errors = new List<string>();
 
         // maxProperties
         if (schema.MaxProperties.HasValue && properties.Count() > schema.MaxProperties.Value)
         {
-            errorMessagesList.Add($"Path: {instance.Path}. Number of properties is greater than maxProperties");
+            errors.Add($"Path: {instance.Path}. Number of properties is greater than maxProperties");
         }
 
         // minProperties
         if (schema.MinProperties.HasValue && properties.Count() < schema.MinProperties.Value)
         {
-            errorMessagesList.Add($"Path: {instance.Path}. Number of properties is less than minProperties");
+            errors.Add($"Path: {instance.Path}. Number of properties is less than minProperties");
         }
 
         // required
         if (schema.Required != null && schema.Required.Except(properties.Select(p => p.Name)).Any())
         {
-            errorMessagesList.Add($"Path: {instance.Path}. Required property(s) not present");
+            errors.Add($"Path: {instance.Path}. Required property(s) not present");
         }
 
         foreach (var property in properties)
@@ -52,7 +52,7 @@ public class JsonObjectValidator(IJsonValidator jsonValidator) : IJsonValidator
             {
                 if (!_jsonValidator.Validate(propertySchema, openApiDocument, property.Value, out propertyErrorMessages))
                 {
-                    errorMessagesList.AddRange(propertyErrorMessages);
+                    errors.AddRange(propertyErrorMessages);
                 }
 
                 continue;
@@ -60,18 +60,18 @@ public class JsonObjectValidator(IJsonValidator jsonValidator) : IJsonValidator
 
             if (!schema.AdditionalPropertiesAllowed)
             {
-                errorMessagesList.Add($"Path: {instance.Path}. Additional properties not allowed");
+                errors.Add($"Path: {instance.Path}. Additional properties not allowed");
             }
 
             // additionalProperties
             if (schema.AdditionalProperties != null &&
                 !_jsonValidator.Validate(schema.AdditionalProperties, openApiDocument, property.Value, out propertyErrorMessages))
             {
-                errorMessagesList.AddRange(propertyErrorMessages);
+                errors.AddRange(propertyErrorMessages);
             }
         }
 
-        errorMessages = errorMessagesList;
+        errorMessages = errors;
         return !errorMessages.Any();
     }
 }

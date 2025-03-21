@@ -54,7 +54,7 @@ public class ResponseValidator(IEnumerable<IContentValidator> contentValidators)
                 continue;
             }
 
-            var schema = (headerSpec.Schema.Reference != null) ?
+            var schema = headerSpec.Schema.Reference != null ?
                 (OpenApiSchema)openApiDocument.ResolveReference(headerSpec.Schema.Reference)
                 : headerSpec.Schema;
 
@@ -101,5 +101,3 @@ public class ResponseValidator(IEnumerable<IContentValidator> contentValidators)
         }
     }
 }
-
-public class ResponseDoesNotMatchSpecException(string message) : Exception(message);

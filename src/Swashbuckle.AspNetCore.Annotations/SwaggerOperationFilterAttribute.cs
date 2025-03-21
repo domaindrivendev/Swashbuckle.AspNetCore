@@ -1,12 +1,7 @@
 ﻿namespace Swashbuckle.AspNetCore.Annotations;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true)]
-public class SwaggerOperationFilterAttribute : Attribute
+public class SwaggerOperationFilterAttribute(Type filterType) : Attribute
 {
-    public SwaggerOperationFilterAttribute(Type filterType)
-    {
-        FilterType = filterType;
-    }
-
-    public Type FilterType { get; private set; }
+    public Type FilterType { get; private set; } = filterType;
 }

@@ -11,16 +11,16 @@ public class AnnotationsOperationFilter : IOperationFilter
         IEnumerable<object> actionAttributes = [];
         IEnumerable<object> metadataAttributes = [];
 
-        if (context.MethodInfo != null)
+        if (context.MethodInfo is { } methodInfo)
         {
-            controllerAttributes = context.MethodInfo.DeclaringType.GetCustomAttributes(true);
-            actionAttributes = context.MethodInfo.GetCustomAttributes(true);
+            controllerAttributes = methodInfo.DeclaringType.GetCustomAttributes(true);
+            actionAttributes = methodInfo.GetCustomAttributes(true);
         }
 
 #if NET
-        if (context.ApiDescription?.ActionDescriptor?.EndpointMetadata != null)
+        if (context.ApiDescription?.ActionDescriptor?.EndpointMetadata is { } metadata)
         {
-            metadataAttributes = context.ApiDescription.ActionDescriptor.EndpointMetadata;
+            metadataAttributes = metadata;
         }
 #endif
 
@@ -49,20 +49,29 @@ public class AnnotationsOperationFilter : IOperationFilter
             .OfType<SwaggerOperationAttribute>()
             .FirstOrDefault();
 
-        if (swaggerOperationAttribute == null) return;
-
-        if (swaggerOperationAttribute.Summary != null)
-            operation.Summary = swaggerOperationAttribute.Summary;
-
-        if (swaggerOperationAttribute.Description != null)
-            operation.Description = swaggerOperationAttribute.Description;
-
-        if (swaggerOperationAttribute.OperationId != null)
-            operation.OperationId = swaggerOperationAttribute.OperationId;
-
-        if (swaggerOperationAttribute.Tags != null)
+        if (swaggerOperationAttribute == null)
         {
-            operation.Tags = [.. swaggerOperationAttribute.Tags.Select(tagName => new OpenApiTag { Name = tagName })];
+            return;
+        }
+
+        if (swaggerOperationAttribute.Summary is { } summary)
+        {
+            operation.Summary = summary;
+        }
+
+        if (swaggerOperationAttribute.Description is { } description)
+        {
+            operation.Description = description;
+        }
+
+        if (swaggerOperationAttribute.OperationId is { } operationId)
+        {
+            operation.OperationId = operationId;
+        }
+
+        if (swaggerOperationAttribute.Tags is { } tags)
+        {
+            operation.Tags = [.. tags.Select(tagName => new OpenApiTag { Name = tagName })];
         }
     }
 
@@ -99,18 +108,18 @@ public class AnnotationsOperationFilter : IOperationFilter
                 response = new OpenApiResponse();
             }
 
-            if (swaggerResponseAttribute.Description != null)
+            if (swaggerResponseAttribute.Description is { } description)
             {
-                response.Description = swaggerResponseAttribute.Description;
+                response.Description = description;
             }
 
             operation.Responses[statusCode] = response;
 
-            if (swaggerResponseAttribute.ContentTypes != null)
+            if (swaggerResponseAttribute.ContentTypes is { } contentTypes)
             {
                 response.Content.Clear();
 
-                foreach (var contentType in swaggerResponseAttribute.ContentTypes)
+                foreach (var contentType in contentTypes)
                 {
                     var schema = (swaggerResponseAttribute.Type != null && swaggerResponseAttribute.Type != typeof(void))
                         ? context.SchemaGenerator.GenerateSchema(swaggerResponseAttribute.Type, context.SchemaRepository)
