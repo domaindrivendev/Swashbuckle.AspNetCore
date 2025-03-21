@@ -2,55 +2,54 @@
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Swashbuckle.AspNetCore.Annotations
+namespace Swashbuckle.AspNetCore.Annotations;
+
+public class AnnotationsRequestBodyFilter : IRequestBodyFilter
 {
-    public class AnnotationsRequestBodyFilter : IRequestBodyFilter
+    public void Apply(OpenApiRequestBody requestBody, RequestBodyFilterContext context)
     {
-        public void Apply(OpenApiRequestBody requestBody, RequestBodyFilterContext context)
+        var bodyParameterDescription = context.BodyParameterDescription;
+
+        if (bodyParameterDescription == null) return;
+
+        var propertyInfo = bodyParameterDescription.PropertyInfo();
+        if (propertyInfo != null)
         {
-            var bodyParameterDescription = context.BodyParameterDescription;
-
-            if (bodyParameterDescription == null) return;
-
-            var propertyInfo = bodyParameterDescription.PropertyInfo();
-            if (propertyInfo != null)
-            {
-                ApplyPropertyAnnotations(requestBody, propertyInfo);
-                return;
-            }
-
-            var parameterInfo = bodyParameterDescription.ParameterInfo();
-            if (parameterInfo != null)
-            {
-                ApplyParamAnnotations(requestBody, parameterInfo);
-                return;
-            }
+            ApplyPropertyAnnotations(requestBody, propertyInfo);
+            return;
         }
 
-        private void ApplyPropertyAnnotations(OpenApiRequestBody parameter, PropertyInfo propertyInfo)
+        var parameterInfo = bodyParameterDescription.ParameterInfo();
+        if (parameterInfo != null)
         {
-            var swaggerRequestBodyAttribute = propertyInfo.GetCustomAttributes<SwaggerRequestBodyAttribute>()
-                .FirstOrDefault();
-
-            if (swaggerRequestBodyAttribute != null)
-                ApplySwaggerRequestBodyAttribute(parameter, swaggerRequestBodyAttribute);
+            ApplyParamAnnotations(requestBody, parameterInfo);
+            return;
         }
+    }
 
-        private void ApplyParamAnnotations(OpenApiRequestBody requestBody, ParameterInfo parameterInfo)
-        {
-            var swaggerRequestBodyAttribute = parameterInfo.GetCustomAttribute<SwaggerRequestBodyAttribute>();
+    private void ApplyPropertyAnnotations(OpenApiRequestBody parameter, PropertyInfo propertyInfo)
+    {
+        var swaggerRequestBodyAttribute = propertyInfo.GetCustomAttributes<SwaggerRequestBodyAttribute>()
+            .FirstOrDefault();
 
-            if (swaggerRequestBodyAttribute != null)
-                ApplySwaggerRequestBodyAttribute(requestBody, swaggerRequestBodyAttribute);
-        }
+        if (swaggerRequestBodyAttribute != null)
+            ApplySwaggerRequestBodyAttribute(parameter, swaggerRequestBodyAttribute);
+    }
 
-        private void ApplySwaggerRequestBodyAttribute(OpenApiRequestBody parameter, SwaggerRequestBodyAttribute swaggerRequestBodyAttribute)
-        {
-            if (swaggerRequestBodyAttribute.Description != null)
-                parameter.Description = swaggerRequestBodyAttribute.Description;
+    private void ApplyParamAnnotations(OpenApiRequestBody requestBody, ParameterInfo parameterInfo)
+    {
+        var swaggerRequestBodyAttribute = parameterInfo.GetCustomAttribute<SwaggerRequestBodyAttribute>();
 
-            if (swaggerRequestBodyAttribute.RequiredFlag.HasValue)
-                parameter.Required = swaggerRequestBodyAttribute.RequiredFlag.Value;
-        }
+        if (swaggerRequestBodyAttribute != null)
+            ApplySwaggerRequestBodyAttribute(requestBody, swaggerRequestBodyAttribute);
+    }
+
+    private void ApplySwaggerRequestBodyAttribute(OpenApiRequestBody parameter, SwaggerRequestBodyAttribute swaggerRequestBodyAttribute)
+    {
+        if (swaggerRequestBodyAttribute.Description != null)
+            parameter.Description = swaggerRequestBodyAttribute.Description;
+
+        if (swaggerRequestBodyAttribute.RequiredFlag.HasValue)
+            parameter.Required = swaggerRequestBodyAttribute.RequiredFlag.Value;
     }
 }
