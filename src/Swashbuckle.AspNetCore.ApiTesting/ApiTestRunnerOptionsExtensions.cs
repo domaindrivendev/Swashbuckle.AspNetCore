@@ -1,26 +1,25 @@
 ﻿using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Readers;
 
-namespace Swashbuckle.AspNetCore.ApiTesting
+namespace Swashbuckle.AspNetCore.ApiTesting;
+
+public static class ApiTestRunnerOptionsExtensions
 {
-    public static class ApiTestRunnerOptionsExtensions
+    public static void AddOpenApiFile(this ApiTestRunnerOptions options, string documentName, string filePath)
     {
-        public static void AddOpenApiFile(this ApiTestRunnerOptions options, string documentName, string filePath)
-        {
-            using var fileStream = File.OpenRead(filePath);
+        using var fileStream = File.OpenRead(filePath);
 
-            var openApiDocument = new OpenApiStreamReader().Read(fileStream, out var diagnostic);
-            options.OpenApiDocs.Add(documentName, openApiDocument);
+        var openApiDocument = new OpenApiStreamReader().Read(fileStream, out var diagnostic);
+        options.OpenApiDocs.Add(documentName, openApiDocument);
+    }
+
+    public static OpenApiDocument GetOpenApiDocument(this ApiTestRunnerOptions options, string documentName)
+    {
+        if (!options.OpenApiDocs.TryGetValue(documentName, out OpenApiDocument document))
+        {
+            throw new InvalidOperationException($"Document with name '{documentName}' not found");
         }
 
-        public static OpenApiDocument GetOpenApiDocument(this ApiTestRunnerOptions options, string documentName)
-        {
-            if (!options.OpenApiDocs.TryGetValue(documentName, out OpenApiDocument document))
-            {
-                throw new InvalidOperationException($"Document with name '{documentName}' not found");
-            }
-
-            return document;
-        }
+        return document;
     }
 }

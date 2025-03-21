@@ -1,171 +1,170 @@
 ﻿using Microsoft.OpenApi.Models;
 using Xunit;
 
-namespace Swashbuckle.AspNetCore.ApiTesting.Test
+namespace Swashbuckle.AspNetCore.ApiTesting.Test;
+
+public class ApiTestRunnerBaseTests
 {
-    public class ApiTestRunnerBaseTests
+    [Fact]
+    public async Task TestAsync_ThrowsException_IfDocumentNotFound()
     {
-        [Fact]
-        public async Task TestAsync_ThrowsException_IfDocumentNotFound()
-        {
-            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => Subject().TestAsync(
-                "v1",
-                "GetProducts",
-                "200",
-                new HttpRequestMessage(),
-                CreateHttpClient()));
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => Subject().TestAsync(
+            "v1",
+            "GetProducts",
+            "200",
+            new HttpRequestMessage(),
+            CreateHttpClient()));
 
-            Assert.Equal("Document with name 'v1' not found", exception.Message);
-        }
+        Assert.Equal("Document with name 'v1' not found", exception.Message);
+    }
 
-        [Fact]
-        public async Task TestAsync_ThrowsException_IfOperationNotFound()
+    [Fact]
+    public async Task TestAsync_ThrowsException_IfOperationNotFound()
+    {
+        var subject = new FakeApiTestRunner();
+        subject.Configure(c =>
         {
-            var subject = new FakeApiTestRunner();
-            subject.Configure(c =>
+            c.OpenApiDocs.Add("v1", new OpenApiDocument());
+        });
+            
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => subject.TestAsync(
+            "v1",
+            "GetProducts",
+            "200",
+            new HttpRequestMessage(),
+            CreateHttpClient()));
+
+        Assert.Equal("Operation with id 'GetProducts' not found in OpenAPI document 'v1'", exception.Message);
+    }
+
+    [Theory]
+    [InlineData("/api/products", "200", "Required parameter 'param' is not present")]
+    [InlineData("/api/products?param=foo", "200", null)]
+    public async Task TestAsync_ThrowsException_IfExpectedStatusCodeIs2xxAndRequestDoesNotMatchSpec(
+        string requestUri,
+        string statusCode,
+        string expectedExceptionMessage)
+    {
+        var subject = new FakeApiTestRunner();
+        subject.Configure(c =>
+        {
+            c.OpenApiDocs.Add("v1", new OpenApiDocument
             {
-                c.OpenApiDocs.Add("v1", new OpenApiDocument());
-            });
-                
-            var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => subject.TestAsync(
-                "v1",
-                "GetProducts",
-                "200",
-                new HttpRequestMessage(),
-                CreateHttpClient()));
-
-            Assert.Equal("Operation with id 'GetProducts' not found in OpenAPI document 'v1'", exception.Message);
-        }
-
-        [Theory]
-        [InlineData("/api/products", "200", "Required parameter 'param' is not present")]
-        [InlineData("/api/products?param=foo", "200", null)]
-        public async Task TestAsync_ThrowsException_IfExpectedStatusCodeIs2xxAndRequestDoesNotMatchSpec(
-            string requestUri,
-            string statusCode,
-            string expectedExceptionMessage)
-        {
-            var subject = new FakeApiTestRunner();
-            subject.Configure(c =>
-            {
-                c.OpenApiDocs.Add("v1", new OpenApiDocument
+                Paths = new OpenApiPaths
                 {
-                    Paths = new OpenApiPaths
+                    ["/api/products"] = new OpenApiPathItem
                     {
-                        ["/api/products"] = new OpenApiPathItem
+                        Operations = new Dictionary<OperationType, OpenApiOperation>
                         {
-                            Operations = new Dictionary<OperationType, OpenApiOperation>
+                            [OperationType.Get] = new OpenApiOperation
                             {
-                                [OperationType.Get] = new OpenApiOperation
+                                OperationId = "GetProducts",
+                                Parameters = new List<OpenApiParameter>
                                 {
-                                    OperationId = "GetProducts",
-                                    Parameters = new List<OpenApiParameter>
+                                    new OpenApiParameter
                                     {
-                                        new OpenApiParameter
-                                        {
-                                            Name = "param",
-                                            Required = true,
-                                            In = ParameterLocation.Query
-                                        }
-                                    },
-                                    Responses = new OpenApiResponses
-                                    {
-                                        [ "200" ] = new OpenApiResponse() 
+                                        Name = "param",
+                                        Required = true,
+                                        In = ParameterLocation.Query
                                     }
+                                },
+                                Responses = new OpenApiResponses
+                                {
+                                    [ "200" ] = new OpenApiResponse() 
                                 }
                             }
                         }
                     }
-                });
+                }
             });
+        });
 
-            var exception = await Record.ExceptionAsync(() => subject.TestAsync(
-                "v1",
-                "GetProducts",
-                statusCode,
-                new HttpRequestMessage
-                {
-                    RequestUri = new Uri(requestUri, UriKind.Relative),
-                    Method = HttpMethod.Get
-                },
-                CreateHttpClient()));
- 
-            Assert.Equal(expectedExceptionMessage, exception?.Message);
-        }
-
-        [Theory]
-        [InlineData("/api/products", "400", "Status code '200' does not match expected value '400'")]
-        [InlineData("/api/products?param=foo", "200", null)]
-        public async Task TestAsync_ThrowsException_IfResponseDoesNotMatchSpec(
-            string requestUri,
-            string statusCode,
-            string expectedExceptionMessage)
-        {
-            var subject = new FakeApiTestRunner();
-            subject.Configure(c =>
+        var exception = await Record.ExceptionAsync(() => subject.TestAsync(
+            "v1",
+            "GetProducts",
+            statusCode,
+            new HttpRequestMessage
             {
-                c.OpenApiDocs.Add("v1", new OpenApiDocument
+                RequestUri = new Uri(requestUri, UriKind.Relative),
+                Method = HttpMethod.Get
+            },
+            CreateHttpClient()));
+
+        Assert.Equal(expectedExceptionMessage, exception?.Message);
+    }
+
+    [Theory]
+    [InlineData("/api/products", "400", "Status code '200' does not match expected value '400'")]
+    [InlineData("/api/products?param=foo", "200", null)]
+    public async Task TestAsync_ThrowsException_IfResponseDoesNotMatchSpec(
+        string requestUri,
+        string statusCode,
+        string expectedExceptionMessage)
+    {
+        var subject = new FakeApiTestRunner();
+        subject.Configure(c =>
+        {
+            c.OpenApiDocs.Add("v1", new OpenApiDocument
+            {
+                Paths = new OpenApiPaths
                 {
-                    Paths = new OpenApiPaths
+                    ["/api/products"] = new OpenApiPathItem
                     {
-                        ["/api/products"] = new OpenApiPathItem
+                        Operations = new Dictionary<OperationType, OpenApiOperation>
                         {
-                            Operations = new Dictionary<OperationType, OpenApiOperation>
+                            [OperationType.Get] = new OpenApiOperation
                             {
-                                [OperationType.Get] = new OpenApiOperation
+                                OperationId = "GetProducts",
+                                Responses = new OpenApiResponses
                                 {
-                                    OperationId = "GetProducts",
-                                    Responses = new OpenApiResponses
-                                    {
-                                        [ "400" ] = new OpenApiResponse(),
-                                        [ "200" ] = new OpenApiResponse() 
-                                    }
+                                    [ "400" ] = new OpenApiResponse(),
+                                    [ "200" ] = new OpenApiResponse() 
                                 }
                             }
                         }
                     }
-                });
+                }
             });
+        });
 
-            var exception = await Record.ExceptionAsync(() => subject.TestAsync(
-                "v1",
-                "GetProducts",
-                statusCode,
-                new HttpRequestMessage
-                {
-                    RequestUri = new Uri(requestUri, UriKind.Relative),
-                    Method = HttpMethod.Get
-                },
-                CreateHttpClient()));
- 
-            Assert.Equal(expectedExceptionMessage, exception?.Message);
-        }
+        var exception = await Record.ExceptionAsync(() => subject.TestAsync(
+            "v1",
+            "GetProducts",
+            statusCode,
+            new HttpRequestMessage
+            {
+                RequestUri = new Uri(requestUri, UriKind.Relative),
+                Method = HttpMethod.Get
+            },
+            CreateHttpClient()));
 
-        private FakeApiTestRunner Subject()
-        {
-            return new FakeApiTestRunner();
-        }
-
-        private HttpClient CreateHttpClient()
-        {
-            var client = new HttpClient(new FakeHttpMessageHandler());
-            client.BaseAddress = new Uri("http://tempuri.org");
-            return client;
-        }
+        Assert.Equal(expectedExceptionMessage, exception?.Message);
     }
 
-    internal class FakeApiTestRunner : ApiTestRunnerBase
+    private FakeApiTestRunner Subject()
     {
-        public FakeApiTestRunner()
-        {
-        }
+        return new FakeApiTestRunner();
     }
 
-    internal class FakeHttpMessageHandler : HttpMessageHandler
+    private HttpClient CreateHttpClient()
     {
-        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-        {
-            return Task.FromResult(new HttpResponseMessage());
-        }
+        var client = new HttpClient(new FakeHttpMessageHandler());
+        client.BaseAddress = new Uri("http://tempuri.org");
+        return client;
+    }
+}
+
+internal class FakeApiTestRunner : ApiTestRunnerBase
+{
+    public FakeApiTestRunner()
+    {
+    }
+}
+
+internal class FakeHttpMessageHandler : HttpMessageHandler
+{
+    protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    {
+        return Task.FromResult(new HttpResponseMessage());
     }
 }

@@ -1,51 +1,50 @@
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Linq;
 
-namespace Swashbuckle.AspNetCore.ApiTesting
+namespace Swashbuckle.AspNetCore.ApiTesting;
+
+public class JsonOneOfValidator(JsonValidator jsonValidator) : IJsonValidator
 {
-    public class JsonOneOfValidator(JsonValidator jsonValidator) : IJsonValidator
+    private readonly JsonValidator _jsonValidator = jsonValidator;
+
+    public bool CanValidate(OpenApiSchema schema) => schema.OneOf != null && schema.OneOf.Any();
+
+    public bool Validate(
+        OpenApiSchema schema,
+        OpenApiDocument openApiDocument,
+        JToken instance,
+        out IEnumerable<string> errorMessages)
     {
-        private readonly JsonValidator _jsonValidator = jsonValidator;
+        var errorMessagesList = new List<string>();
 
-        public bool CanValidate(OpenApiSchema schema) => schema.OneOf != null && schema.OneOf.Any();
+        var oneOfArray = schema.OneOf.ToArray();
 
-        public bool Validate(
-            OpenApiSchema schema,
-            OpenApiDocument openApiDocument,
-            JToken instance,
-            out IEnumerable<string> errorMessages)
+        int matched = 0;
+        for (int i = 0; i < oneOfArray.Length; i++)
         {
-            var errorMessagesList = new List<string>();
-
-            var oneOfArray = schema.OneOf.ToArray();
-
-            int matched = 0;
-            for (int i = 0; i < oneOfArray.Length; i++)
+            if (_jsonValidator.Validate(oneOfArray[i], openApiDocument, instance, out IEnumerable<string> subErrorMessages))
             {
-                if (_jsonValidator.Validate(oneOfArray[i], openApiDocument, instance, out IEnumerable<string> subErrorMessages))
-                {
-                    matched++;
-                }
-                else
-                {
-                    errorMessagesList.AddRange(subErrorMessages.Select(msg => $"{msg} (oneOf[{i}])"));
-                }
+                matched++;
             }
-
-            if (matched == 0)
+            else
             {
-                errorMessages = errorMessagesList;
-                return false;
+                errorMessagesList.AddRange(subErrorMessages.Select(msg => $"{msg} (oneOf[{i}])"));
             }
-
-            if (matched > 1)
-            {
-                errorMessages = [$"Path: {instance.Path}. Instance matches multiple schemas in oneOf array"];
-                return false;
-            }
-
-            errorMessages = [];
-            return true;
         }
+
+        if (matched == 0)
+        {
+            errorMessages = errorMessagesList;
+            return false;
+        }
+
+        if (matched > 1)
+        {
+            errorMessages = [$"Path: {instance.Path}. Instance matches multiple schemas in oneOf array"];
+            return false;
+        }
+
+        errorMessages = [];
+        return true;
     }
 }
