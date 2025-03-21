@@ -1,20 +1,19 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Swashbuckle.AspNetCore.SwaggerGen.Test
+namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
+
+public class TypeWithParameterlessAndJsonAnnotatedConstructor
 {
-    public class TypeWithParameterlessAndJsonAnnotatedConstructor
+    public TypeWithParameterlessAndJsonAnnotatedConstructor()
+    {}
+
+    [JsonConstructor]
+    public TypeWithParameterlessAndJsonAnnotatedConstructor(int id, string desc)
     {
-        public TypeWithParameterlessAndJsonAnnotatedConstructor()
-        {}
-
-        [JsonConstructor]
-        public TypeWithParameterlessAndJsonAnnotatedConstructor(int id, string desc)
-        {
-            Id = id;
-            Description = desc;
-        }
-
-        public int Id { get; }
-        public string Description { get; }
+        Id = id;
+        Description = desc;
     }
+
+    public int Id { get; }
+    public string Description { get; }
 }

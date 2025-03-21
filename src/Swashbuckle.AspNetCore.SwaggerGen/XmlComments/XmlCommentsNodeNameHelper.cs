@@ -1,100 +1,99 @@
 ﻿using System.Reflection;
 using System.Text;
 
-namespace Swashbuckle.AspNetCore.SwaggerGen
+namespace Swashbuckle.AspNetCore.SwaggerGen;
+
+public class XmlCommentsNodeNameHelper
 {
-    public class XmlCommentsNodeNameHelper
+    public static string GetMemberNameForMethod(MethodInfo method)
     {
-        public static string GetMemberNameForMethod(MethodInfo method)
+        var builder = new StringBuilder("M:");
+
+        builder.Append(QualifiedNameFor(method.DeclaringType));
+        builder.Append($".{method.Name}");
+
+        var parameters = method.GetParameters();
+        if (parameters.Any())
         {
-            var builder = new StringBuilder("M:");
-
-            builder.Append(QualifiedNameFor(method.DeclaringType));
-            builder.Append($".{method.Name}");
-
-            var parameters = method.GetParameters();
-            if (parameters.Any())
+            var parametersNames = parameters.Select(p =>
             {
-                var parametersNames = parameters.Select(p =>
-                {
-                    return p.ParameterType.IsGenericParameter
-                        ? $"`{p.ParameterType.GenericParameterPosition}"
-                        : QualifiedNameFor(p.ParameterType, expandGenericArgs: true);
-                });
-                builder.Append($"({string.Join(",", parametersNames)})");
-            }
-
-            return builder.ToString();
+                return p.ParameterType.IsGenericParameter
+                    ? $"`{p.ParameterType.GenericParameterPosition}"
+                    : QualifiedNameFor(p.ParameterType, expandGenericArgs: true);
+            });
+            builder.Append($"({string.Join(",", parametersNames)})");
         }
 
-        public static string GetMemberNameForType(Type type)
-        {
-            var builder = new StringBuilder("T:");
-            builder.Append(QualifiedNameFor(type));
+        return builder.ToString();
+    }
 
-            return builder.ToString();
+    public static string GetMemberNameForType(Type type)
+    {
+        var builder = new StringBuilder("T:");
+        builder.Append(QualifiedNameFor(type));
+
+        return builder.ToString();
+    }
+
+    public static string GetMemberNameForFieldOrProperty(MemberInfo fieldOrPropertyInfo)
+    {
+        var builder = new StringBuilder(((fieldOrPropertyInfo.MemberType & MemberTypes.Field) != 0) ? "F:" : "P:");
+        builder.Append(QualifiedNameFor(fieldOrPropertyInfo.DeclaringType));
+        builder.Append($".{fieldOrPropertyInfo.Name}");
+
+        return builder.ToString();
+    }
+
+    private static string QualifiedNameFor(Type type, bool expandGenericArgs = false)
+    {
+        if (type.IsArray)
+        {
+            var elementType = type.GetElementType();
+            return elementType.IsGenericParameter ? $"`{elementType.GenericParameterPosition}[]" : $"{QualifiedNameFor(type.GetElementType(), expandGenericArgs)}[]";
         }
 
-        public static string GetMemberNameForFieldOrProperty(MemberInfo fieldOrPropertyInfo)
-        {
-            var builder = new StringBuilder(((fieldOrPropertyInfo.MemberType & MemberTypes.Field) != 0) ? "F:" : "P:");
-            builder.Append(QualifiedNameFor(fieldOrPropertyInfo.DeclaringType));
-            builder.Append($".{fieldOrPropertyInfo.Name}");
 
-            return builder.ToString();
+        var builder = new StringBuilder();
+
+        if (!string.IsNullOrEmpty(type.Namespace))
+            builder.Append($"{type.Namespace}.");
+
+        if (type.IsNested)
+        {
+            builder.Append($"{string.Join(".", GetNestedTypeNames(type))}.");
         }
 
-        private static string QualifiedNameFor(Type type, bool expandGenericArgs = false)
+        if (type.IsConstructedGenericType && expandGenericArgs)
         {
-            if (type.IsArray)
+            var nameSansGenericArgs = type.Name.Split('`').First();
+            builder.Append(nameSansGenericArgs);
+
+            var genericArgsNames = type.GetGenericArguments().Select(t =>
             {
-                var elementType = type.GetElementType();
-                return elementType.IsGenericParameter ? $"`{elementType.GenericParameterPosition}[]" : $"{QualifiedNameFor(type.GetElementType(), expandGenericArgs)}[]";
-            }
+                return t.IsGenericParameter
+                    ? $"`{t.GenericParameterPosition}"
+                    : QualifiedNameFor(t, true);
+            });
 
-
-            var builder = new StringBuilder();
-
-            if (!string.IsNullOrEmpty(type.Namespace))
-                builder.Append($"{type.Namespace}.");
-
-            if (type.IsNested)
-            {
-                builder.Append($"{string.Join(".", GetNestedTypeNames(type))}.");
-            }
-
-            if (type.IsConstructedGenericType && expandGenericArgs)
-            {
-                var nameSansGenericArgs = type.Name.Split('`').First();
-                builder.Append(nameSansGenericArgs);
-
-                var genericArgsNames = type.GetGenericArguments().Select(t =>
-                {
-                    return t.IsGenericParameter
-                        ? $"`{t.GenericParameterPosition}"
-                        : QualifiedNameFor(t, true);
-                });
-
-                builder.Append($"{{{string.Join(",", genericArgsNames)}}}");
-            }
-            else
-            {
-                builder.Append(type.Name);
-            }
-
-            return builder.ToString();
+            builder.Append($"{{{string.Join(",", genericArgsNames)}}}");
+        }
+        else
+        {
+            builder.Append(type.Name);
         }
 
-        private static IEnumerable<string> GetNestedTypeNames(Type type)
+        return builder.ToString();
+    }
+
+    private static IEnumerable<string> GetNestedTypeNames(Type type)
+    {
+        if (!type.IsNested || type.DeclaringType == null) yield break;
+
+        foreach (var nestedTypeName in GetNestedTypeNames(type.DeclaringType))
         {
-            if (!type.IsNested || type.DeclaringType == null) yield break;
-
-            foreach (var nestedTypeName in GetNestedTypeNames(type.DeclaringType))
-            {
-                yield return nestedTypeName;
-            }
-
-            yield return type.DeclaringType.Name;
+            yield return nestedTypeName;
         }
+
+        yield return type.DeclaringType.Name;
     }
 }

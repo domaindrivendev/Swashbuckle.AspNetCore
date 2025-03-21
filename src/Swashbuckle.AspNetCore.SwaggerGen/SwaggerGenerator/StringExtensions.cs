@@ -1,15 +1,14 @@
-﻿namespace Swashbuckle.AspNetCore.SwaggerGen
+﻿namespace Swashbuckle.AspNetCore.SwaggerGen;
+
+internal static class StringExtensions
 {
-    internal static class StringExtensions
+    internal static string ToCamelCase(this string value)
     {
-        internal static string ToCamelCase(this string value)
-        {
-            if (string.IsNullOrEmpty(value)) return value;
+        if (string.IsNullOrEmpty(value)) return value;
 
-            var cameCasedParts = value.Split('.')
-                .Select(part => char.ToLowerInvariant(part[0]) + part.Substring(1));
+        var cameCasedParts = value.Split('.')
+            .Select(part => char.ToLowerInvariant(part[0]) + part.Substring(1));
 
-            return string.Join(".", cameCasedParts);
-        }
+        return string.Join(".", cameCasedParts);
     }
 }
