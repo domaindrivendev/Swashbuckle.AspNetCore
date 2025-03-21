@@ -723,7 +723,7 @@ public class SwaggerGeneratorTests
         Assert.Equal(expectedRequired, parameter.Required);
     }
 
-#if NET7_0_OR_GREATER
+#if NET
     [Fact]
     public void GetSwagger_SetsParameterRequired_IfActionParameterHasRequiredMember()
     {
@@ -1282,7 +1282,7 @@ public class SwaggerGeneratorTests
         Assert.Equal(["Some", "Tags", "Here"], [.. document.Paths["/resource"].Operations[OperationType.Post].Tags?.Select(t => t.Name)]);
     }
 
-#if NET7_0_OR_GREATER
+#if NET
     [Fact]
     public void GetSwagger_CanReadEndpointSummaryFromMetadata()
     {

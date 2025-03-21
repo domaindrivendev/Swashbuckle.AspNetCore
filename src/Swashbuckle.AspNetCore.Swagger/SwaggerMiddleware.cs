@@ -2,7 +2,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-#if !NETSTANDARD
+#if NET
 using Microsoft.AspNetCore.Routing.Patterns;
 #endif
 using Microsoft.AspNetCore.Routing.Template;
@@ -19,7 +19,7 @@ internal sealed class SwaggerMiddleware
     private readonly RequestDelegate _next;
     private readonly SwaggerOptions _options;
     private readonly TemplateMatcher _requestMatcher;
-#if !NETSTANDARD
+#if NET
     private readonly TemplateBinder _templateBinder;
 #endif
 
@@ -32,7 +32,7 @@ internal sealed class SwaggerMiddleware
         _requestMatcher = new TemplateMatcher(TemplateParser.Parse(_options.RouteTemplate), []);
     }
 
-#if !NETSTANDARD
+#if NET
     [ActivatorUtilitiesConstructor]
     public SwaggerMiddleware(
         RequestDelegate next,
@@ -109,7 +109,7 @@ internal sealed class SwaggerMiddleware
         var routeValues = new RouteValueDictionary();
         if (_requestMatcher.TryMatch(request.Path, routeValues))
         {
-#if !NETSTANDARD
+#if NET
             if (_templateBinder != null && !_templateBinder.TryProcessConstraints(request.HttpContext, routeValues, out _, out _))
             {
                 return false;

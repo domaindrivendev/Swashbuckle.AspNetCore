@@ -42,7 +42,7 @@ public static class OpenApiSchemaExtensions
             else if (attribute is MaxLengthAttribute maxLengthAttribute)
                 ApplyMaxLengthAttribute(schema, maxLengthAttribute);
 
-#if NET8_0_OR_GREATER
+#if NET
 
             else if (attribute is LengthAttribute lengthAttribute)
                 ApplyLengthAttribute(schema, lengthAttribute);
@@ -168,7 +168,7 @@ public static class OpenApiSchemaExtensions
             schema.MaxLength = maxLengthRouteConstraint.MaxLength;
     }
 
-#if NET8_0_OR_GREATER
+#if NET
 
     private static void ApplyLengthAttribute(OpenApiSchema schema, LengthAttribute lengthAttribute)
     {
@@ -193,7 +193,7 @@ public static class OpenApiSchemaExtensions
 
     private static void ApplyRangeAttribute(OpenApiSchema schema, RangeAttribute rangeAttribute)
     {
-#if NET8_0_OR_GREATER
+#if NET
 
         if (rangeAttribute.MinimumIsExclusive)
         {

@@ -313,7 +313,7 @@ public class SwaggerGenerator(
         Func<OpenApiOperation, OperationFilterContext, Task> applyFilters)
     {
         OpenApiOperation operation =
-#if NET6_0_OR_GREATER
+#if NET
             await GenerateOpenApiOperationFromMetadataAsync(apiDescription, schemaRepository);
 #else
             null;
@@ -329,7 +329,7 @@ public class SwaggerGenerator(
                 RequestBody = await bodyGenerator(apiDescription, schemaRepository),
                 Responses = GenerateResponses(apiDescription, schemaRepository),
                 Deprecated = apiDescription.CustomAttributes().OfType<ObsoleteAttribute>().Any(),
-#if NET7_0_OR_GREATER
+#if NET
                 Summary = GenerateSummary(apiDescription),
                 Description = GenerateDescription(apiDescription),
 #endif
@@ -394,7 +394,7 @@ public class SwaggerGenerator(
             });
     }
 
-#if NET6_0_OR_GREATER
+#if NET
     private async Task<OpenApiOperation> GenerateOpenApiOperationFromMetadataAsync(ApiDescription apiDescription, SchemaRepository schemaRepository)
     {
         var metadata = apiDescription.ActionDescriptor?.EndpointMetadata;
@@ -1087,7 +1087,7 @@ public class SwaggerGenerator(
         new("default", "Error")
     ];
 
-#if NET7_0_OR_GREATER
+#if NET
     private static string GenerateSummary(ApiDescription apiDescription) =>
         apiDescription.ActionDescriptor?.EndpointMetadata
             ?.OfType<IEndpointSummaryMetadata>()

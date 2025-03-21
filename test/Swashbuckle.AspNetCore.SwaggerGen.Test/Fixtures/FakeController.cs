@@ -70,7 +70,7 @@ public class FakeController
     public void ActionWithObjectParameter(XmlAnnotatedType param)
     { }
 
-#if NET7_0_OR_GREATER
+#if NET
     public class TypeWithRequiredProperty
     {
         public required string RequiredProperty { get; set; }

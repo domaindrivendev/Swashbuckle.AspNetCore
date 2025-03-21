@@ -12,7 +12,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-#if NETSTANDARD
+#if !NET
 using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 #endif
 
@@ -40,16 +40,12 @@ internal sealed partial class SwaggerUIMiddleware
         {
             _jsonSerializerOptions = options.JsonSerializerOptions;
         }
-#if !NET6_0_OR_GREATER
+#if !NET
         else
         {
             _jsonSerializerOptions = new JsonSerializerOptions()
             {
-#if NET5_0_OR_GREATER
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-#else
                 IgnoreNullValues = true,
-#endif
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, false) }
             };
@@ -114,7 +110,7 @@ internal sealed partial class SwaggerUIMiddleware
     private static void RespondWithRedirect(HttpResponse response, string location)
     {
         response.StatusCode = StatusCodes.Status301MovedPermanently;
-#if NET6_0_OR_GREATER
+#if NET
         response.Headers.Location = location;
 #else
         response.Headers["Location"] = location;
@@ -153,7 +149,7 @@ internal sealed partial class SwaggerUIMiddleware
         }
     }
 
-#if NET5_0_OR_GREATER
+#if NET
     [UnconditionalSuppressMessage(
         "AOT",
         "IL2026:RequiresUnreferencedCode",
@@ -170,7 +166,7 @@ internal sealed partial class SwaggerUIMiddleware
         response.ContentType = "application/javascript;charset=utf-8";
         string json = "[]";
 
-#if NET6_0_OR_GREATER
+#if NET
         if (_jsonSerializerOptions is null)
         {
             var l = new List<UrlDescriptor>(_options.ConfigObject.Urls);
@@ -183,7 +179,7 @@ internal sealed partial class SwaggerUIMiddleware
         await response.WriteAsync(json, Encoding.UTF8);
     }
 
-#if NET5_0_OR_GREATER
+#if NET
     [UnconditionalSuppressMessage(
         "AOT",
         "IL2026:RequiresUnreferencedCode",
@@ -199,7 +195,7 @@ internal sealed partial class SwaggerUIMiddleware
         string oauthConfigObject = null;
         string interceptors = null;
 
-#if NET6_0_OR_GREATER
+#if NET
         if (_jsonSerializerOptions is null)
         {
             configObject = JsonSerializer.Serialize(_options.ConfigObject, SwaggerUIOptionsJsonContext.Default.ConfigObject);

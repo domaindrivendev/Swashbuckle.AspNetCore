@@ -5,7 +5,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen;
 
 public static class MemberInfoExtensions
 {
-#if NETSTANDARD
+#if !NET
     private const string NullableAttributeFullTypeName = "System.Runtime.CompilerServices.NullableAttribute";
     private const string NullableFlagsFieldName = "NullableFlags";
     private const string NullableContextAttributeFullTypeName = "System.Runtime.CompilerServices.NullableContextAttribute";

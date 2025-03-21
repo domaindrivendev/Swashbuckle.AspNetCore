@@ -17,7 +17,7 @@ public class AnnotationsOperationFilter : IOperationFilter
             actionAttributes = context.MethodInfo.GetCustomAttributes(true);
         }
 
-#if NET6_0_OR_GREATER
+#if NET
         if (context.ApiDescription?.ActionDescriptor?.EndpointMetadata != null)
         {
             metadataAttributes = context.ApiDescription.ActionDescriptor.EndpointMetadata;

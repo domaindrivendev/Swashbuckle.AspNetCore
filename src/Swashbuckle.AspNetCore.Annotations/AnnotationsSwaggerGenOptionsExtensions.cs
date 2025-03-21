@@ -73,7 +73,7 @@ public static class AnnotationsSwaggerGenOptionsExtensions
             return obsoleteAttribute.SubTypes;
         }
 
-#if NET7_0_OR_GREATER
+#if NET
         var jsonDerivedTypeAttributes = type.GetCustomAttributes(false)
             .OfType<JsonDerivedTypeAttribute>()
             .ToList();
@@ -109,7 +109,7 @@ public static class AnnotationsSwaggerGenOptionsExtensions
             return obsoleteAttribute.Discriminator;
         }
 
-#if NET7_0_OR_GREATER
+#if NET
         var jsonPolymorphicAttributes = baseType.GetCustomAttributes(false)
             .OfType<JsonPolymorphicAttribute>()
             .FirstOrDefault();
@@ -137,7 +137,7 @@ public static class AnnotationsSwaggerGenOptionsExtensions
                 return subTypeAttribute.DiscriminatorValue;
             }
 
-#if NET7_0_OR_GREATER
+#if NET
             var jsonDerivedTypeAttributes = baseType.GetCustomAttributes(false)
                 .OfType<JsonDerivedTypeAttribute>()
                 .FirstOrDefault(attr => attr.DerivedType == subType);

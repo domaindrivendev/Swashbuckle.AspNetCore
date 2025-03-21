@@ -102,7 +102,7 @@ public class SchemaGenerator : ISchemaGenerator
             {
                 var genericTypes = modelType
                     .GetInterfaces()
-#if NETSTANDARD2_0
+#if !NET
                     .Concat([modelType])
 #else
                     .Append(modelType)

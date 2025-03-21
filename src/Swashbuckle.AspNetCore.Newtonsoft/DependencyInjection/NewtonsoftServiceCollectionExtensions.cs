@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Newtonsoft;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-#if NETSTANDARD2_0
+#if !NET
 using MvcNewtonsoftJsonOptions = Microsoft.AspNetCore.Mvc.MvcJsonOptions;
 #endif
 

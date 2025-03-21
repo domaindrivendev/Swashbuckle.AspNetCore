@@ -180,7 +180,7 @@ public class NewtonsoftDataContractResolver : ISerializerDataContractResolver
 
         extensionDataType = jsonObjectContract.ExtensionDataValueType;
 
-#if (!NETSTANDARD2_0)
+#if NET
         // If applicable, honor ProblemDetailsConverter
         if (jsonObjectContract.UnderlyingType.IsAssignableTo(typeof(Microsoft.AspNetCore.Mvc.ProblemDetails))
             && _serializerSettings.Converters.OfType<Microsoft.AspNetCore.Mvc.NewtonsoftJson.ProblemDetailsConverter>().Any())
@@ -219,13 +219,11 @@ public class NewtonsoftDataContractResolver : ISerializerDataContractResolver
         [typeof(Guid)] = Tuple.Create(DataType.String, "uuid"),
         [typeof(Uri)] = Tuple.Create(DataType.String, "uri"),
         [typeof(TimeSpan)] = Tuple.Create(DataType.String, "date-span"),
-#if NET6_0_OR_GREATER
-        [ typeof(DateOnly) ] = Tuple.Create(DataType.String, "date"),
-        [ typeof(TimeOnly) ] = Tuple.Create(DataType.String, "time"),
-#endif
-#if NET7_0_OR_GREATER
-        [ typeof(Int128) ] = Tuple.Create(DataType.Integer, "int128"),
-        [ typeof(UInt128) ] = Tuple.Create(DataType.Integer, "int128"),
+#if NET
+        [typeof(DateOnly)] = Tuple.Create(DataType.String, "date"),
+        [typeof(TimeOnly)] = Tuple.Create(DataType.String, "time"),
+        [typeof(Int128)] = Tuple.Create(DataType.Integer, "int128"),
+        [typeof(UInt128)] = Tuple.Create(DataType.Integer, "int128"),
 #endif
     };
 }

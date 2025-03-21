@@ -12,7 +12,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-#if (NETSTANDARD2_0)
+#if !NET
 using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 #endif
 
@@ -40,16 +40,12 @@ internal sealed class ReDocMiddleware
         {
             _jsonSerializerOptions = options.JsonSerializerOptions;
         }
-#if !NET6_0_OR_GREATER
+#if !NET
         else
         {
             _jsonSerializerOptions = new JsonSerializerOptions()
             {
-#if NET5_0_OR_GREATER
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-#else
                 IgnoreNullValues = true,
-#endif
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, false) }
             };
@@ -107,7 +103,7 @@ internal sealed class ReDocMiddleware
     private static void RespondWithRedirect(HttpResponse response, string location)
     {
         response.StatusCode = StatusCodes.Status301MovedPermanently;
-#if NET6_0_OR_GREATER
+#if NET
         response.Headers.Location = location;
 #else
         response.Headers["Location"] = location;
@@ -149,7 +145,7 @@ internal sealed class ReDocMiddleware
         }
     }
 
-#if NET5_0_OR_GREATER
+#if NET
     [UnconditionalSuppressMessage(
         "AOT",
         "IL2026:RequiresUnreferencedCode",
@@ -163,7 +159,7 @@ internal sealed class ReDocMiddleware
     {
         string configObject = null;
 
-#if NET6_0_OR_GREATER
+#if NET
         if (_jsonSerializerOptions is null)
         {
             configObject = JsonSerializer.Serialize(_options.ConfigObject, ReDocOptionsJsonContext.Default.ConfigObject);

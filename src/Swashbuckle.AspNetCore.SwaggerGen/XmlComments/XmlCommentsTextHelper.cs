@@ -181,7 +181,7 @@ public static partial class XmlCommentsTextHelper
     private const string LineBreaksPattern = @"\r?\n";
     private const string DoubleUpLineBreaksPattern = @"(\r?\n){2,}";
 
-#if NET7_0_OR_GREATER
+#if NET
     [GeneratedRegex(RefTagPattern)]
     private static partial Regex RefTag();
 

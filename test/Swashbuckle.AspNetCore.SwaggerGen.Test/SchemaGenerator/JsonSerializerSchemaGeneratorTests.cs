@@ -66,7 +66,7 @@ public class JsonSerializerSchemaGeneratorTests
         { typeof(Guid?), JsonSchemaTypes.String, "uuid" },
         { typeof(DateOnly?), JsonSchemaTypes.String, "date" },
         { typeof(TimeOnly?), JsonSchemaTypes.String, "time" },
-#if NET7_0_OR_GREATER
+#if NET
         { typeof(Int128), JsonSchemaTypes.Integer, "int128" },
         { typeof(Int128?), JsonSchemaTypes.Integer, "int128" },
         { typeof(UInt128), JsonSchemaTypes.Integer, "int128" },
@@ -355,7 +355,7 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal(3, schema.Properties["StringWithMinMaxLength"].MaxLength);
         Assert.Equal(1, schema.Properties["ArrayWithMinMaxLength"].MinItems);
         Assert.Equal(3, schema.Properties["ArrayWithMinMaxLength"].MaxItems);
-#if NET8_0_OR_GREATER
+#if NET
         Assert.Equal(1, schema.Properties["StringWithLength"].MinLength);
         Assert.Equal(3, schema.Properties["StringWithLength"].MaxLength);
         Assert.Equal(1, schema.Properties["ArrayWithLength"].MinItems);
@@ -397,7 +397,7 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.True(schema.Properties["WriteOnlyProperty"].WriteOnly);
     }
 
-#if NET7_0_OR_GREATER
+#if NET
     public class TypeWithRequiredProperties
     {
         public required string RequiredString { get; set; }
@@ -1224,7 +1224,7 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal(["string-with-json-property-name"], schema.Properties.Keys);
     }
 
-#if NET7_0_OR_GREATER
+#if NET
     [Fact]
     public void GenerateSchema_HonorsSerializerAttribute_JsonRequired()
     {

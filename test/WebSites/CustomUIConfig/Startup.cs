@@ -100,7 +100,7 @@ public class Startup
             c.ConfigObject.AdditionalItems.Add("jsonObject", new JsonObject() { ["foo"] = "bar" });
             c.ConfigObject.AdditionalItems.Add("jsonDocument", JsonDocument.Parse("""{ "foo": "bar" }"""));
 
-#if NET8_0_OR_GREATER
+#if NET
             c.ConfigObject.AdditionalItems.Add("dateOnlyProperty", new DateOnly(1977, 05, 25));
             c.ConfigObject.AdditionalItems.Add("timeOnlyProperty", new TimeOnly(12, 34, 56));
             c.ConfigObject.AdditionalItems.Add("halfProperty", Half.CreateChecked(1));
