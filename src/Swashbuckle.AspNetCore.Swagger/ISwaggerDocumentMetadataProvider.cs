@@ -1,7 +1,6 @@
-﻿namespace Swashbuckle.AspNetCore.Swagger
+﻿namespace Swashbuckle.AspNetCore.Swagger;
+
+public interface ISwaggerDocumentMetadataProvider
 {
-    public interface ISwaggerDocumentMetadataProvider
-    {
-        IList<string> GetDocumentNames();
-    }
+    IList<string> GetDocumentNames();
 }
