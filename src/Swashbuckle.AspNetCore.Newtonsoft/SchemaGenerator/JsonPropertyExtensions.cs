@@ -2,21 +2,20 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Swashbuckle.AspNetCore.Newtonsoft
+namespace Swashbuckle.AspNetCore.Newtonsoft;
+
+public static class JsonPropertyExtensions
 {
-    public static class JsonPropertyExtensions
+    public static bool TryGetMemberInfo(this JsonProperty jsonProperty, out MemberInfo memberInfo)
     {
-        public static bool TryGetMemberInfo(this JsonProperty jsonProperty, out MemberInfo memberInfo)
-        {
-            memberInfo = jsonProperty.DeclaringType?.GetMember(jsonProperty.UnderlyingName)
-                .FirstOrDefault();
+        memberInfo = jsonProperty.DeclaringType?.GetMember(jsonProperty.UnderlyingName)
+            .FirstOrDefault();
 
-            return (memberInfo != null);
-        }
+        return (memberInfo != null);
+    }
 
-        public static bool IsRequiredSpecified(this JsonProperty jsonProperty)
-        {
-            return jsonProperty.Required != Required.Default;
-        }
+    public static bool IsRequiredSpecified(this JsonProperty jsonProperty)
+    {
+        return jsonProperty.Required != Required.Default;
     }
 }

@@ -1,12 +1,11 @@
 ﻿using Newtonsoft.Json;
 
-namespace Swashbuckle.AspNetCore.Newtonsoft.Test
-{
-    public class JsonExtensionDataAnnotatedType
-    {
-        public bool Property1 { get; set; }
+namespace Swashbuckle.AspNetCore.Newtonsoft.Test;
 
-        [JsonExtensionData]
-        public IDictionary<string, object> ExtensionData { get; set; }
-    }
+public class JsonExtensionDataAnnotatedType
+{
+    public bool Property1 { get; set; }
+
+    [JsonExtensionData]
+    public IDictionary<string, object> ExtensionData { get; set; }
 }

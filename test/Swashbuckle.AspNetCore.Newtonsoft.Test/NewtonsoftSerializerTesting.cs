@@ -1,43 +1,28 @@
-﻿using System.Collections.ObjectModel;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
-namespace Swashbuckle.AspNetCore.Newtonsoft.Test
+namespace Swashbuckle.AspNetCore.Newtonsoft.Test;
+
+/// <summary>
+/// For ad-hoc serializer testing
+/// </summary>
+public class NewtonsoftSerializerTesting
 {
-    /// <summary>
-    /// For ad-hoc serializer testing
-    /// </summary>
-    public class NewtonsoftSerializerTesting
+    [Fact]
+    public void Serialize()
     {
-        [Fact]
-        public void Serialize()
-        {
-            var dto = new TestKeyedCollection();
-            dto.Add(new TestDto { Prop1 = "foo" });
-            dto.Add(new TestDto { Prop1 = "bar" });
+        var dto = new TestKeyedCollection();
+        dto.Add(new TestDto { Prop1 = "foo" });
+        dto.Add(new TestDto { Prop1 = "bar" });
 
-            var json = JsonConvert.SerializeObject(dto);
+        var json = JsonConvert.SerializeObject(dto);
 
-            Assert.Equal("[{\"Prop1\":\"foo\"},{\"Prop1\":\"bar\"}]", json);
-        }
-
-        [Fact]
-        public void Deserialize()
-        {
-            var dto = JsonConvert.DeserializeObject<TestDto>(
-                "{ \"Prop1\": \"foo\" }");
-        }
+        Assert.Equal("[{\"Prop1\":\"foo\"},{\"Prop1\":\"bar\"}]", json);
     }
 
-    public class TestDto
+    [Fact]
+    public void Deserialize()
     {
-        public string Prop1 { get; set; }
-    }
-
-    public class TestKeyedCollection : KeyedCollection<string, TestDto>
-    {
-        protected override string GetKeyForItem(TestDto item)
-        {
-            return item.Prop1;
-        }
+        var dto = JsonConvert.DeserializeObject<TestDto>(
+            "{ \"Prop1\": \"foo\" }");
     }
 }

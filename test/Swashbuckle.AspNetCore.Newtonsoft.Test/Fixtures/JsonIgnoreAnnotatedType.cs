@@ -1,12 +1,11 @@
 ﻿using Newtonsoft.Json;
 
-namespace Swashbuckle.AspNetCore.Newtonsoft.Test
-{
-    public class JsonIgnoreAnnotatedType
-    {
-        [JsonIgnore]
-        public string StringWithJsonIgnore { get; set; }
+namespace Swashbuckle.AspNetCore.Newtonsoft.Test;
 
-        public string StringWithNoAnnotation { get; set; }
-    }
+public class JsonIgnoreAnnotatedType
+{
+    [JsonIgnore]
+    public string StringWithJsonIgnore { get; set; }
+
+    public string StringWithNoAnnotation { get; set; }
 }
