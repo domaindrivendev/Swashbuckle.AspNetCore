@@ -1,18 +1,19 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-#if !NET
+#if NET
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Hosting;
+#else
+using System.Text.Json.Serialization;
 using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 #endif
 
@@ -65,7 +66,12 @@ internal sealed class ReDocMiddleware
             if (Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$", RegexOptions.IgnoreCase))
             {
                 // Use relative redirect to support proxy environments
-                var relativeIndexUrl = string.IsNullOrEmpty(path) || path.EndsWith("/")
+                var relativeIndexUrl =
+#if NET
+                    string.IsNullOrEmpty(path) || path.EndsWith('/')
+#else
+                    string.IsNullOrEmpty(path) || path.EndsWith("/")
+#endif
                     ? "index.html"
                     : $"{path.Split('/').Last()}/index.html";
 

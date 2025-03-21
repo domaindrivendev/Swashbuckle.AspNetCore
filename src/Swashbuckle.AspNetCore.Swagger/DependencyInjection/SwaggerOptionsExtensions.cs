@@ -19,10 +19,14 @@ public static class SwaggerOptionsExtensions
         params object[] constructorParameters)
         where TDocumentSerializer : ISwaggerDocumentSerializer
     {
+#if NET
+        ArgumentNullException.ThrowIfNull(swaggerOptions);
+#else
         if (swaggerOptions == null)
         {
             throw new ArgumentNullException(nameof(swaggerOptions));
         }
+#endif
         swaggerOptions.CustomDocumentSerializer = (TDocumentSerializer)Activator.CreateInstance(typeof(TDocumentSerializer), constructorParameters);
     }
 }

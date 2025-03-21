@@ -65,7 +65,12 @@ internal sealed partial class SwaggerUIMiddleware
             if (Regex.IsMatch(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?$", RegexOptions.IgnoreCase))
             {
                 // Use relative redirect to support proxy environments
-                var relativeIndexUrl = string.IsNullOrEmpty(path) || path.EndsWith("/")
+                var relativeIndexUrl =
+#if NET
+                    string.IsNullOrEmpty(path) || path.EndsWith('/')
+#else
+                    string.IsNullOrEmpty(path) || path.EndsWith("/")
+#endif
                     ? "index.html"
                     : $"{path.Split('/').Last()}/index.html";
 

@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
-#if !NET
+#if NET
+using Microsoft.AspNetCore.Hosting;
+#else
 using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 #endif
 
