@@ -1,22 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 
-namespace Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures
+namespace Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures;
+
+internal class FakeICompositeMetadataDetailsProvider : ICompositeMetadataDetailsProvider
 {
-    internal class FakeICompositeMetadataDetailsProvider : ICompositeMetadataDetailsProvider
+    public void CreateBindingMetadata(BindingMetadataProviderContext context)
     {
-        public void CreateBindingMetadata(BindingMetadataProviderContext context)
-        {
-            context.BindingMetadata.IsBindingAllowed = true;
-        }
+        context.BindingMetadata.IsBindingAllowed = true;
+    }
 
-        public void CreateDisplayMetadata(DisplayMetadataProviderContext context)
-        {
-            throw new NotImplementedException();
-        }
+    public void CreateDisplayMetadata(DisplayMetadataProviderContext context)
+    {
+        throw new NotImplementedException();
+    }
 
-        public void CreateValidationMetadata(ValidationMetadataProviderContext context)
-        {
-            throw new NotImplementedException();
-        }
+    public void CreateValidationMetadata(ValidationMetadataProviderContext context)
+    {
+        throw new NotImplementedException();
     }
 }

@@ -6,129 +6,128 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Net.Http.Headers;
 
-namespace Swashbuckle.AspNetCore.SwaggerGen
+namespace Swashbuckle.AspNetCore.SwaggerGen;
+
+public static class ApiParameterDescriptionExtensions
 {
-    public static class ApiParameterDescriptionExtensions
+    private static readonly Type[] RequiredAttributeTypes = new[]
     {
-        private static readonly Type[] RequiredAttributeTypes = new[]
-        {
-            typeof(BindRequiredAttribute),
-            typeof(RequiredAttribute),
-#if NET7_0_OR_GREATER
-            typeof(System.Runtime.CompilerServices.RequiredMemberAttribute)
+        typeof(BindRequiredAttribute),
+        typeof(RequiredAttribute),
+#if NET
+        typeof(System.Runtime.CompilerServices.RequiredMemberAttribute)
 #endif
-        };
+    };
 
-        private static readonly HashSet<string> IllegalHeaderParameters = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+    private static readonly HashSet<string> IllegalHeaderParameters = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+    {
+        HeaderNames.Accept,
+        HeaderNames.Authorization,
+        HeaderNames.ContentType
+    };
+
+    public static bool IsRequiredParameter(this ApiParameterDescription apiParameter)
+    {
+        // From the OpenAPI spec:
+        // If the parameter location is "path", this property is REQUIRED and its value MUST be true.
+        if (apiParameter.IsFromPath())
         {
-            HeaderNames.Accept,
-            HeaderNames.Authorization,
-            HeaderNames.ContentType
-        };
+            return true;
+        }
 
-        public static bool IsRequiredParameter(this ApiParameterDescription apiParameter)
+        // This is the default logic for IsRequired
+        bool IsRequired() => apiParameter.CustomAttributes().Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
+
+        // This is to keep compatibility with MVC controller logic that has existed in the past
+        if (apiParameter.ParameterDescriptor is ControllerParameterDescriptor)
         {
-            // From the OpenAPI spec:
-            // If the parameter location is "path", this property is REQUIRED and its value MUST be true.
-            if (apiParameter.IsFromPath())
-            {
-                return true;
-            }
+            return IsRequired();
+        }
 
-            // This is the default logic for IsRequired
-            bool IsRequired() => apiParameter.CustomAttributes().Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
-
-            // This is to keep compatibility with MVC controller logic that has existed in the past
-            if (apiParameter.ParameterDescriptor is ControllerParameterDescriptor)
-            {
-                return IsRequired();
-            }
-
-            // For non-controllers, prefer the IsRequired flag if we're not on netstandard 2.0, otherwise fallback to the default logic.
-            return
-#if !NETSTANDARD
-            apiParameter.IsRequired;
+        // For non-controllers, prefer the IsRequired flag if we're not on netstandard 2.0, otherwise fallback to the default logic.
+        return
+#if NET
+        apiParameter.IsRequired;
 #else
-            IsRequired();
+        IsRequired();
 #endif
-        }
+    }
 
-        public static ParameterInfo ParameterInfo(this ApiParameterDescription apiParameter)
-        {
-            var parameterDescriptor = apiParameter.ParameterDescriptor as
-#if !NETSTANDARD
-                Microsoft.AspNetCore.Mvc.Infrastructure.IParameterInfoParameterDescriptor;
+    public static ParameterInfo ParameterInfo(this ApiParameterDescription apiParameter)
+    {
+        var parameterDescriptor = apiParameter.ParameterDescriptor as
+#if NET
+            Microsoft.AspNetCore.Mvc.Infrastructure.IParameterInfoParameterDescriptor;
 #else
-                ControllerParameterDescriptor;
+            ControllerParameterDescriptor;
 #endif
 
-            return parameterDescriptor?.ParameterInfo;
-        }
+        return parameterDescriptor?.ParameterInfo;
+    }
 
-        public static PropertyInfo PropertyInfo(this ApiParameterDescription apiParameter)
-        {
-            var modelMetadata = apiParameter.ModelMetadata;
+    public static PropertyInfo PropertyInfo(this ApiParameterDescription apiParameter)
+    {
+        var modelMetadata = apiParameter.ModelMetadata;
 
-            return modelMetadata?.ContainerType?.GetProperty(modelMetadata.PropertyName);
-        }
+        return modelMetadata?.ContainerType?.GetProperty(modelMetadata.PropertyName);
+    }
 
-        public static IEnumerable<object> CustomAttributes(this ApiParameterDescription apiParameter)
-        {
-            var propertyInfo = apiParameter.PropertyInfo();
-            if (propertyInfo != null) return propertyInfo.GetCustomAttributes(true);
+    public static IEnumerable<object> CustomAttributes(this ApiParameterDescription apiParameter)
+    {
+        var propertyInfo = apiParameter.PropertyInfo();
+        if (propertyInfo != null) return propertyInfo.GetCustomAttributes(true);
 
-            var parameterInfo = apiParameter.ParameterInfo();
-            if (parameterInfo != null) return parameterInfo.GetCustomAttributes(true);
+        var parameterInfo = apiParameter.ParameterInfo();
+        if (parameterInfo != null) return parameterInfo.GetCustomAttributes(true);
 
-            return Enumerable.Empty<object>();
-        }
+        return Enumerable.Empty<object>();
+    }
 
-        [Obsolete("Use ParameterInfo(), PropertyInfo() and CustomAttributes() extension methods instead")]
-        internal static void GetAdditionalMetadata(
-            this ApiParameterDescription apiParameter,
-            ApiDescription apiDescription,
-            out ParameterInfo parameterInfo,
-            out PropertyInfo propertyInfo,
-            out IEnumerable<object> parameterOrPropertyAttributes)
-        {
-            parameterInfo = apiParameter.ParameterInfo();
-            propertyInfo = apiParameter.PropertyInfo();
-            parameterOrPropertyAttributes = apiParameter.CustomAttributes();
-        }
+    [Obsolete("Use ParameterInfo(), PropertyInfo() and CustomAttributes() extension methods instead")]
+    internal static void GetAdditionalMetadata(
+        this ApiParameterDescription apiParameter,
+        ApiDescription apiDescription,
+        out ParameterInfo parameterInfo,
+        out PropertyInfo propertyInfo,
+        out IEnumerable<object> parameterOrPropertyAttributes)
+    {
+        parameterInfo = apiParameter.ParameterInfo();
+        propertyInfo = apiParameter.PropertyInfo();
+        parameterOrPropertyAttributes = apiParameter.CustomAttributes();
+    }
 
-        internal static bool IsFromPath(this ApiParameterDescription apiParameter)
-        {
-            return apiParameter.Source == BindingSource.Path;
-        }
+    internal static bool IsFromPath(this ApiParameterDescription apiParameter)
+    {
+        return apiParameter.Source == BindingSource.Path;
+    }
 
-        internal static bool IsFromBody(this ApiParameterDescription apiParameter)
-        {
-            return apiParameter.Source == BindingSource.Body;
-        }
+    internal static bool IsFromBody(this ApiParameterDescription apiParameter)
+    {
+        return apiParameter.Source == BindingSource.Body;
+    }
 
-        internal static bool IsFromForm(this ApiParameterDescription apiParameter)
-        {
-            bool isEnhancedModelMetadataSupported = true;
+    internal static bool IsFromForm(this ApiParameterDescription apiParameter)
+    {
+        bool isEnhancedModelMetadataSupported = true;
 
 #if NET9_0_OR_GREATER
-            if (AppContext.TryGetSwitch("Microsoft.AspNetCore.Mvc.ApiExplorer.IsEnhancedModelMetadataSupported", out var isEnabled))
-            {
-                isEnhancedModelMetadataSupported = isEnabled;
-            }
+        if (AppContext.TryGetSwitch("Microsoft.AspNetCore.Mvc.ApiExplorer.IsEnhancedModelMetadataSupported", out var isEnabled))
+        {
+            isEnhancedModelMetadataSupported = isEnabled;
+        }
 #endif
 
-            var source = apiParameter.Source;
-            var elementType = isEnhancedModelMetadataSupported ? apiParameter.ModelMetadata?.ElementType : null;
+        var source = apiParameter.Source;
+        var elementType = isEnhancedModelMetadataSupported ? apiParameter.ModelMetadata?.ElementType : null;
 
-            return (source == BindingSource.Form || source == BindingSource.FormFile)
-                || (elementType != null && typeof(IFormFile).IsAssignableFrom(elementType));
-        }
+        return (source == BindingSource.Form || source == BindingSource.FormFile)
+            || (elementType != null && typeof(IFormFile).IsAssignableFrom(elementType));
+    }
 
-        internal static bool IsIllegalHeaderParameter(this ApiParameterDescription apiParameter)
-        {
-            // Certain header parameters are not allowed and should be described using the corresponding OpenAPI keywords
-            // https://swagger.io/docs/specification/describing-parameters/#header-parameters
-            return apiParameter.Source == BindingSource.Header && IllegalHeaderParameters.Contains(apiParameter.Name);
-        }
+    internal static bool IsIllegalHeaderParameter(this ApiParameterDescription apiParameter)
+    {
+        // Certain header parameters are not allowed and should be described using the corresponding OpenAPI keywords
+        // https://swagger.io/docs/specification/describing-parameters/#header-parameters
+        return apiParameter.Source == BindingSource.Header && IllegalHeaderParameters.Contains(apiParameter.Name);
     }
 }

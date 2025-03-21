@@ -1,35 +1,34 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Swashbuckle.AspNetCore.Newtonsoft.Test
+namespace Swashbuckle.AspNetCore.Newtonsoft.Test;
+
+public class AdditionalPropertyJsonContractResolver : DefaultContractResolver
 {
-    public class AdditionalPropertyJsonContractResolver : DefaultContractResolver
+    public const string AdditionalPropertyName = "AdditionalPropertyFromContractResolver";
+
+    private sealed class ConstantValueProvider : IValueProvider
     {
-        public const string AdditionalPropertyName = "AdditionalPropertyFromContractResolver";
+        private readonly object _value;
+        public ConstantValueProvider(object value) => _value = value;
+        public void SetValue(object target, object value) => throw new NotImplementedException();
+        public object GetValue(object target) => _value;
+    }
 
-        private sealed class ConstantValueProvider : IValueProvider
+    /// <inheritdoc />
+    protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
+    {
+        var result = base.CreateProperties(type, memberSerialization);
+
+        result.Add(new JsonProperty
         {
-            private readonly object _value;
-            public ConstantValueProvider(object value) => _value = value;
-            public void SetValue(object target, object value) => throw new NotImplementedException();
-            public object GetValue(object target) => _value;
-        }
+            PropertyName = AdditionalPropertyName,
+            Readable = true,
+            Writable = false,
+            ValueProvider = new ConstantValueProvider("MyValue"),
+            PropertyType = typeof(string),
+        });
 
-        /// <inheritdoc />
-        protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
-        {
-            var result = base.CreateProperties(type, memberSerialization);
-
-            result.Add(new JsonProperty
-            {
-                PropertyName = AdditionalPropertyName,
-                Readable = true,
-                Writable = false,
-                ValueProvider = new ConstantValueProvider("MyValue"),
-                PropertyType = typeof(string),
-            });
-
-            return result;
-        }
+        return result;
     }
 }

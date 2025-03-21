@@ -2,13 +2,11 @@
 {
     namespace Namespace1
     {
-        public class ConflictingType
-        { }
+        public class ConflictingType;
     }
 
     namespace Namespace2
     {
-        public class ConflictingType
-        { }
+        public class ConflictingType;
     }
 }

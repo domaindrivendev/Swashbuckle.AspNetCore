@@ -1,6 +1,3 @@
-﻿namespace Swashbuckle.AspNetCore.SwaggerGen
-{
-    public interface IDictionary<T>
-    {
-    }
-}
+﻿namespace Swashbuckle.AspNetCore.SwaggerGen;
+
+public interface IDictionary<T>;

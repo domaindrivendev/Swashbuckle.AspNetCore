@@ -1,6 +1,4 @@
-﻿#if NET6_0_OR_GREATER
-using System;
-using System.Collections.Generic;
+﻿#if NET
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;

@@ -1,5 +1,4 @@
-#if (!NETSTANDARD2_0)
-using System.Linq;
+#if NET
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.AspNetCore.Routing.Template;
@@ -18,7 +17,7 @@ namespace Microsoft.AspNetCore.Builder
         /// </summary>
         public static IApplicationBuilder UseSwagger(this IApplicationBuilder app, SwaggerOptions options)
         {
-#if (!NETSTANDARD2_0)
+#if NET
             return app.UseMiddleware<SwaggerMiddleware>(options, app.ApplicationServices.GetRequiredService<TemplateBinderFactory>());
 #else
             return app.UseMiddleware<SwaggerMiddleware>(options);
@@ -42,7 +41,7 @@ namespace Microsoft.AspNetCore.Builder
             return app.UseSwagger(options);
         }
 
-#if (!NETSTANDARD2_0)
+#if NET
         public static IEndpointConventionBuilder MapSwagger(
             this IEndpointRouteBuilder endpoints,
             string pattern = SwaggerOptions.DefaultRouteTemplate,

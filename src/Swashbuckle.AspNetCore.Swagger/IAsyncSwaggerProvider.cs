@@ -1,12 +1,11 @@
 using Microsoft.OpenApi.Models;
 
-namespace Swashbuckle.AspNetCore.Swagger
+namespace Swashbuckle.AspNetCore.Swagger;
+
+public interface IAsyncSwaggerProvider
 {
-    public interface IAsyncSwaggerProvider
-    {
-        Task<OpenApiDocument> GetSwaggerAsync(
-            string documentName,
-            string host = null,
-            string basePath = null);
-    }
+    Task<OpenApiDocument> GetSwaggerAsync(
+        string documentName,
+        string host = null,
+        string basePath = null);
 }

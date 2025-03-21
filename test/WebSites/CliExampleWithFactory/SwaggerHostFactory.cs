@@ -1,10 +1,9 @@
-﻿namespace CliExampleWithFactory
+﻿namespace CliExampleWithFactory;
+
+public class SwaggerHostFactory
 {
-    public class SwaggerHostFactory
+    public static IHost CreateHost()
     {
-        public static IHost CreateHost()
-        {
-            return Program.CreateHostBuilder(new string[0]).Build();
-        }
+        return Program.CreateHostBuilder(new string[0]).Build();
     }
 }

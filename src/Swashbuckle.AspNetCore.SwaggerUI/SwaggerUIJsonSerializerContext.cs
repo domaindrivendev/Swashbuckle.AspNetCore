@@ -1,6 +1,4 @@
-﻿#if NET6_0_OR_GREATER
-using System;
-using System.Collections.Generic;
+﻿#if NET
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
@@ -32,15 +30,11 @@ namespace Swashbuckle.AspNetCore.SwaggerUI;
 [JsonSerializable(typeof(JsonArray))]
 [JsonSerializable(typeof(JsonObject))]
 [JsonSerializable(typeof(JsonDocument))]
-#if NET7_0_OR_GREATER
 [JsonSerializable(typeof(DateOnly))]
 [JsonSerializable(typeof(TimeOnly))]
-#endif
-#if NET8_0_OR_GREATER
 [JsonSerializable(typeof(Half))]
 [JsonSerializable(typeof(Int128))]
 [JsonSerializable(typeof(UInt128))]
-#endif
 [JsonSourceGenerationOptions(
     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]

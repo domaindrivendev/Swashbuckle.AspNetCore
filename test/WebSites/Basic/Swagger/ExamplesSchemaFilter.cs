@@ -2,22 +2,21 @@
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Basic.Swagger
+namespace Basic.Swagger;
+
+public class ExamplesSchemaFilter : ISchemaFilter
 {
-    public class ExamplesSchemaFilter : ISchemaFilter
+    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
     {
-        public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+        schema.Example = context.Type.Name switch
         {
-            schema.Example = context.Type.Name switch
+            "Product" => new OpenApiObject
             {
-                "Product" => new OpenApiObject
-                {
-                    ["id"] = new OpenApiInteger(123),
-                    ["description"] = new OpenApiString("foobar"),
-                    ["price"] = new OpenApiDouble(14.37)
-                },
-                _ => null,
-            };
-        }
+                ["id"] = new OpenApiInteger(123),
+                ["description"] = new OpenApiString("foobar"),
+                ["price"] = new OpenApiDouble(14.37)
+            },
+            _ => null,
+        };
     }
 }

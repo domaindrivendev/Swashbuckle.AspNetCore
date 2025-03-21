@@ -1,16 +1,15 @@
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Linq;
 
-namespace Swashbuckle.AspNetCore.ApiTesting
-{
-    public interface IJsonValidator
-    {
-        bool CanValidate(OpenApiSchema schema);
+namespace Swashbuckle.AspNetCore.ApiTesting;
 
-        bool Validate(
-            OpenApiSchema schema,
-            OpenApiDocument openApiDocument,
-            JToken instance,
-            out IEnumerable<string> errorMessages);
-    }
+public interface IJsonValidator
+{
+    bool CanValidate(OpenApiSchema schema);
+
+    bool Validate(
+        OpenApiSchema schema,
+        OpenApiDocument openApiDocument,
+        JToken instance,
+        out IEnumerable<string> errorMessages);
 }

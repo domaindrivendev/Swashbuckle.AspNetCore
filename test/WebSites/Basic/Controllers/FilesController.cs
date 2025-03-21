@@ -1,53 +1,52 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Basic.Controllers
+namespace Basic.Controllers;
+
+[Route("files")]
+public class FilesController : Controller
 {
-    [Route("files")]
-    public class FilesController : Controller
+    [HttpPost("single")]
+    public IActionResult PostFile(IFormFile file)
     {
-        [HttpPost("single")]
-        public IActionResult PostFile(IFormFile file)
-        {
-            throw new NotImplementedException();
-        }
+        throw new NotImplementedException();
+    }
 
-        [HttpPost("multiple")]
-        public IActionResult PostFiles(IFormFileCollection files)
-        {
-            throw new NotImplementedException();
-        }
+    [HttpPost("multiple")]
+    public IActionResult PostFiles(IFormFileCollection files)
+    {
+        throw new NotImplementedException();
+    }
 
-        [HttpPost("form-with-file")]
-        public IActionResult PostFormWithFile([FromForm] FormWithFile formWithFile)
-        {
-            throw new NotImplementedException();
-        }
+    [HttpPost("form-with-file")]
+    public IActionResult PostFormWithFile([FromForm] FormWithFile formWithFile)
+    {
+        throw new NotImplementedException();
+    }
 
-        [HttpGet("{name}")]
-#if NET6_0_OR_GREATER
-        [ProducesResponseType(typeof(FileResult), StatusCodes.Status200OK, "text/plain", "application/zip")]
+    [HttpGet("{name}")]
+#if NET
+    [ProducesResponseType(typeof(FileResult), StatusCodes.Status200OK, "text/plain", "application/zip")]
 #else
-        [Produces("text/plain", "application/zip", Type = typeof(FileResult))]
+    [Produces("text/plain", "application/zip", Type = typeof(FileResult))]
 #endif
-        public FileResult GetFile(string name)
-        {
-            var stream = new MemoryStream();
-
-            var writer = new StreamWriter(stream);
-            writer.WriteLine("Hello world!");
-            writer.Flush();
-            stream.Position = 0;
-
-            var contentType = name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase) ? "application/zip" : "text/plain";
-
-            return File(stream, contentType, name);
-        }
-    }
-
-    public class FormWithFile
+    public FileResult GetFile(string name)
     {
-        public string Name { get; set; }
+        var stream = new MemoryStream();
 
-        public IFormFile File { get; set; }
+        var writer = new StreamWriter(stream);
+        writer.WriteLine("Hello world!");
+        writer.Flush();
+        stream.Position = 0;
+
+        var contentType = name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase) ? "application/zip" : "text/plain";
+
+        return File(stream, contentType, name);
     }
+}
+
+public class FormWithFile
+{
+    public string Name { get; set; }
+
+    public IFormFile File { get; set; }
 }

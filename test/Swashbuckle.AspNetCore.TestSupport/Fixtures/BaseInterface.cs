@@ -1,27 +1,26 @@
-﻿namespace Swashbuckle.AspNetCore.TestSupport
+﻿namespace Swashbuckle.AspNetCore.TestSupport;
+
+public interface IBaseInterface
 {
-    public interface IBaseInterface
-    {
-        public string BaseProperty { get; set; }
-    }
+    public string BaseProperty { get; set; }
+}
 
-    public interface ISubInterface1 : IBaseInterface
-    {
-        public int Property1 { get; set; }
-    }
+public interface ISubInterface1 : IBaseInterface
+{
+    public int Property1 { get; set; }
+}
 
-    public interface ISubInterface2 : IBaseInterface
-    {
-        public int Property2 { get; set; }
-    }
+public interface ISubInterface2 : IBaseInterface
+{
+    public int Property2 { get; set; }
+}
 
-    public interface IMultiSubInterface : ISubInterface1, ISubInterface2
-    {
-        public int Property3 { get; set; }
-    }
+public interface IMultiSubInterface : ISubInterface1, ISubInterface2
+{
+    public int Property3 { get; set; }
+}
 
-    public interface INewBaseInterface : IBaseInterface
-    {
-        public new int BaseProperty { get; set; }
-    }
+public interface INewBaseInterface : IBaseInterface
+{
+    public new int BaseProperty { get; set; }
 }

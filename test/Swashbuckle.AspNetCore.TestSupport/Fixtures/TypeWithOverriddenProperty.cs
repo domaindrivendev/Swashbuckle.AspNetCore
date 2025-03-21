@@ -1,7 +1,6 @@
-﻿namespace Swashbuckle.AspNetCore.TestSupport
+﻿namespace Swashbuckle.AspNetCore.TestSupport;
+
+public class TypeWithOverriddenProperty : ComplexType
 {
-    public class TypeWithOverriddenProperty : ComplexType
-    {
-        public new string Property1 { get; set; }
-    }
+    public new string Property1 { get; set; }
 }

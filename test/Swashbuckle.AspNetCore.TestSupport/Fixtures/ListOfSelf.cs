@@ -1,6 +1,3 @@
-﻿namespace Swashbuckle.AspNetCore.TestSupport
-{
-    public class ListOfSelf : List<ListOfSelf>
-    {
-    }
-}
+﻿namespace Swashbuckle.AspNetCore.TestSupport;
+
+public class ListOfSelf : List<ListOfSelf>;

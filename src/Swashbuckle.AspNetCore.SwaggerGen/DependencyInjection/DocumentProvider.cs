@@ -3,63 +3,51 @@ using Microsoft.OpenApi.Writers;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Microsoft.Extensions.ApiDescriptions
-{
-    /// <summary>
-    /// This service will be looked up by name from the service collection when using
-    /// the <c>dotnet-getdocument</c> tool from the Microsoft.Extensions.ApiDescription.Server package.
-    /// </summary>
-    internal interface IDocumentProvider
-    {
-        IEnumerable<string> GetDocumentNames();
+namespace Microsoft.Extensions.ApiDescriptions;
 
-        Task GenerateAsync(string documentName, TextWriter writer);
+internal class DocumentProvider : IDocumentProvider
+{
+    private readonly SwaggerGeneratorOptions _generatorOptions;
+    private readonly SwaggerOptions _options;
+    private readonly IAsyncSwaggerProvider _swaggerProvider;
+
+    public DocumentProvider(
+        IOptions<SwaggerGeneratorOptions> generatorOptions,
+        IOptions<SwaggerOptions> options,
+        IAsyncSwaggerProvider swaggerProvider)
+    {
+        _generatorOptions = generatorOptions.Value;
+        _options = options.Value;
+        _swaggerProvider = swaggerProvider;
     }
 
-    internal class DocumentProvider : IDocumentProvider
+    public IEnumerable<string> GetDocumentNames()
     {
-        private readonly SwaggerGeneratorOptions _generatorOptions;
-        private readonly SwaggerOptions _options;
-        private readonly IAsyncSwaggerProvider _swaggerProvider;
+        return _generatorOptions.SwaggerDocs.Keys;
+    }
 
-        public DocumentProvider(
-            IOptions<SwaggerGeneratorOptions> generatorOptions,
-            IOptions<SwaggerOptions> options,
-            IAsyncSwaggerProvider swaggerProvider)
+    public async Task GenerateAsync(string documentName, TextWriter writer)
+    {
+        // Let UnknownSwaggerDocument or other exception bubble up to caller.
+        var swagger = await _swaggerProvider.GetSwaggerAsync(documentName, host: null, basePath: null);
+        var jsonWriter = new OpenApiJsonWriter(writer);
+
+        if (_options.CustomDocumentSerializer != null)
         {
-            _generatorOptions = generatorOptions.Value;
-            _options = options.Value;
-            _swaggerProvider = swaggerProvider;
+            _options.CustomDocumentSerializer.SerializeDocument(swagger, jsonWriter, _options.OpenApiVersion);
         }
-
-        public IEnumerable<string> GetDocumentNames()
+        else
         {
-            return _generatorOptions.SwaggerDocs.Keys;
-        }
-
-        public async Task GenerateAsync(string documentName, TextWriter writer)
-        {
-            // Let UnknownSwaggerDocument or other exception bubble up to caller.
-            var swagger = await _swaggerProvider.GetSwaggerAsync(documentName, host: null, basePath: null);
-            var jsonWriter = new OpenApiJsonWriter(writer);
-
-            if (_options.CustomDocumentSerializer != null)
+            switch (_options.OpenApiVersion)
             {
-                _options.CustomDocumentSerializer.SerializeDocument(swagger, jsonWriter, _options.OpenApiVersion);
-            }
-            else
-            {
-                switch (_options.OpenApiVersion)
-                {
-                    case OpenApi.OpenApiSpecVersion.OpenApi2_0:
-                        swagger.SerializeAsV2(jsonWriter);
-                        break;
+                case OpenApi.OpenApiSpecVersion.OpenApi2_0:
+                    swagger.SerializeAsV2(jsonWriter);
+                    break;
 
-                    default:
-                    case OpenApi.OpenApiSpecVersion.OpenApi3_0:
-                        swagger.SerializeAsV3(jsonWriter);
-                        break;
-                }
+                default:
+                case OpenApi.OpenApiSpecVersion.OpenApi3_0:
+                    swagger.SerializeAsV3(jsonWriter);
+                    break;
             }
         }
     }

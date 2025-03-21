@@ -1,10 +1,9 @@
-﻿namespace Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures
+﻿namespace Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures;
+
+public class TestMinimalApiMethod
 {
-    public class TestMinimalApiMethod
+    public static Task RequestDelegate(long id)
     {
-        public static Task RequestDelegate(long id)
-        {
-            return Task.FromResult(id);
-        }
+        return Task.FromResult(id);
     }
 }

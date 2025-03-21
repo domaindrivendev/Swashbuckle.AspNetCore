@@ -3,37 +3,36 @@ using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 
-namespace Swashbuckle.AspNetCore.IntegrationTests
+namespace Swashbuckle.AspNetCore.IntegrationTests;
+
+public class TestSiteAutofaq
 {
-    public class TestSiteAutofaq
+    private readonly Type _startupType;
+
+    public TestSiteAutofaq(Type startupType)
     {
-        private readonly Type _startupType;
+        _startupType = startupType;
+    }
 
-        public TestSiteAutofaq(Type startupType)
-        {
-            _startupType = startupType;
-        }
+    public TestServer BuildServer()
+    {
+        var startupAssembly = _startupType.GetTypeInfo().Assembly;
+        var applicationName = startupAssembly.GetName().Name;
 
-        public TestServer BuildServer()
-        {
-            var startupAssembly = _startupType.GetTypeInfo().Assembly;
-            var applicationName = startupAssembly.GetName().Name;
+        var hostBuilder = new WebHostBuilder()
+            .UseEnvironment("Development")
+            .ConfigureServices(services => services.AddAutofac())
+            .UseSolutionRelativeContentRoot(Path.Combine("test", "WebSites", applicationName))
+            .UseStartup(_startupType);
 
-            var hostBuilder = new WebHostBuilder()
-                .UseEnvironment("Development")
-                .ConfigureServices(services => services.AddAutofac())
-                .UseSolutionRelativeContentRoot(Path.Combine("test", "WebSites", applicationName))
-                .UseStartup(_startupType);
+        return new TestServer(hostBuilder);
+    }
 
-            return new TestServer(hostBuilder);
-        }
+    public HttpClient BuildClient()
+    {
+        var server = BuildServer();
+        var client = server.CreateClient();
 
-        public HttpClient BuildClient()
-        {
-            var server = BuildServer();
-            var client = server.CreateClient();
-
-            return client;
-        }
+        return client;
     }
 }

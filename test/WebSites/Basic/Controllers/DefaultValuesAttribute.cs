@@ -1,6 +1,3 @@
-﻿namespace Basic.Controllers
-{
-    internal class DefaultValuesAttribute : Attribute
-    {
-    }
-}
+﻿namespace Basic.Controllers;
+
+internal class DefaultValuesAttribute : Attribute;

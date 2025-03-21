@@ -1,15 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace GenericControllers.Controllers
+namespace GenericControllers.Controllers;
+
+[Route("{tenantId}/orders")]
+public class OrdersController : GenericResourceController<Order>;
+
+public class Order
 {
-    [Route("{tenantId}/orders")]
-    public class OrdersController : GenericResourceController<Order>
-    { }
-
-    public class Order
-    {
-        public int Id { get; set; }
-        public decimal Subtotal { get; set; }
-    }
-
+    public int Id { get; set; }
+    public decimal Subtotal { get; set; }
 }

@@ -1,12 +1,11 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Swashbuckle.AspNetCore.SwaggerGen.Test
+namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
+
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum JsonConverterAnnotatedEnum
 {
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public enum JsonConverterAnnotatedEnum
-    {
-        Value1 = 2,
-        Value2 = 4,
-        X = 8
-    }
+    Value1 = 2,
+    Value2 = 4,
+    X = 8
 }

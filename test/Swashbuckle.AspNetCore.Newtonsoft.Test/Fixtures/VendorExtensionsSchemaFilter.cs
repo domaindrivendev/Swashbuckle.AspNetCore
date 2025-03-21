@@ -2,13 +2,12 @@
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Swashbuckle.AspNetCore.Newtonsoft.Test
+namespace Swashbuckle.AspNetCore.Newtonsoft.Test;
+
+public class VendorExtensionsSchemaFilter : ISchemaFilter
 {
-    public class VendorExtensionsSchemaFilter : ISchemaFilter
+    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
     {
-        public void Apply(OpenApiSchema schema, SchemaFilterContext context)
-        {
-            schema.Extensions.Add("X-foo", new OpenApiString("bar"));
-        }
+        schema.Extensions.Add("X-foo", new OpenApiString("bar"));
     }
 }
