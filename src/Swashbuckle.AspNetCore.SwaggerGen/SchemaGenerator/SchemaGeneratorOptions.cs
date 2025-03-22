@@ -11,7 +11,7 @@ public class SchemaGeneratorOptions
         SubTypesSelector = DefaultSubTypesSelector;
         DiscriminatorNameSelector = DefaultDiscriminatorNameSelector;
         DiscriminatorValueSelector = DefaultDiscriminatorValueSelector;
-        SchemaFilters = new List<ISchemaFilter>();
+        SchemaFilters = [];
     }
 
     public IDictionary<Type, Func<OpenApiSchema>> CustomTypeMappings { get; set; }
@@ -45,24 +45,16 @@ public class SchemaGeneratorOptions
         if (!modelType.IsConstructedGenericType) return modelType.Name.Replace("[]", "Array");
 
         var prefix = modelType.GetGenericArguments()
-            .Select(genericArg => DefaultSchemaIdSelector(genericArg))
+            .Select(DefaultSchemaIdSelector)
             .Aggregate((previous, current) => previous + current);
 
         return prefix + modelType.Name.Split('`').First();
     }
 
     private IEnumerable<Type> DefaultSubTypesSelector(Type baseType)
-    {
-        return baseType.Assembly.GetTypes().Where(type => type.IsSubclassOf(baseType));
-    }
+        => baseType.Assembly.GetTypes().Where(type => type.IsSubclassOf(baseType));
 
-    private string DefaultDiscriminatorNameSelector(Type baseType)
-    {
-        return null;
-    }
+    private string DefaultDiscriminatorNameSelector(Type baseType) => null;
 
-    private string DefaultDiscriminatorValueSelector(Type subType)
-    {
-        return null;
-    }
+    private string DefaultDiscriminatorValueSelector(Type subType) => null;
 }

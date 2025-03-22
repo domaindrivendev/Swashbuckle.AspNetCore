@@ -12,11 +12,6 @@ internal static class XmlCommentsDocumentHelper
             ?.SelectChildren("member")
             ?.OfType<XPathNavigator>();
 
-        if (members == null)
-        {
-            return new Dictionary<string, XPathNavigator>();
-        }
-
-        return members.ToDictionary(memberNode => memberNode.GetAttribute("name"));
+        return members?.ToDictionary(memberNode => memberNode.GetAttribute("name")) ?? [];
     }
 }

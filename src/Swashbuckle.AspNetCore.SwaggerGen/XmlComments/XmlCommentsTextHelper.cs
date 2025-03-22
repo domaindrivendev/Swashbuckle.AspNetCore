@@ -14,9 +14,11 @@ public static partial class XmlCommentsTextHelper
     public static string Humanize(string text, string xmlCommentEndOfLine)
     {
         if (text == null)
+        {
             throw new ArgumentNullException(nameof(text));
+        }
 
-        //Call DecodeXml at last to avoid entities like &lt and &gt to break valid xml
+        // Call DecodeXml last to avoid entities like &lt; and &gt; breaking valid XML
 
         return text
             .NormalizeIndentation(xmlCommentEndOfLine)
@@ -25,7 +27,7 @@ public static partial class XmlCommentsTextHelper
             .HumanizeCodeTags()
             .HumanizeMultilineCodeTags(xmlCommentEndOfLine)
             .HumanizeParaTags()
-            .HumanizeBrTags(xmlCommentEndOfLine) // must be called after HumanizeParaTags() so that it replaces any additional <br> tags
+            .HumanizeBrTags(xmlCommentEndOfLine) // Must be called after HumanizeParaTags() so that it replaces any additional <br> tags
             .DecodeXml();
     }
 
@@ -36,54 +38,77 @@ public static partial class XmlCommentsTextHelper
 
         int padLen = padding?.Length ?? 0;
 
-        // remove leading padding from each line
+        // Remove leading padding from each line
         for (int i = 0, l = lines.Length; i < l; ++i)
         {
-            string line = lines[i].TrimEnd('\r'); // remove trailing '\r'
+            string line = lines[i].TrimEnd('\r'); // Remove trailing '\r'
 
+#if NET
+            if (padLen != 0 && line.Length >= padLen && line[..padLen] == padding)
+            {
+                line = line[padLen..];
+            }
+#else
             if (padLen != 0 && line.Length >= padLen && line.Substring(0, padLen) == padding)
+            {
                 line = line.Substring(padLen);
+            }
+#endif
 
             lines[i] = line;
         }
 
-        // remove leading empty lines, but not all leading padding
-        // remove all trailing whitespace, regardless
+        // Remove leading empty lines, but not all leading padding
+        // Remove all trailing whitespace, regardless
         return string.Join(EndOfLine(xmlCommentEndOfLine), lines.SkipWhile(string.IsNullOrWhiteSpace)).TrimEnd();
     }
 
     private static string GetCommonLeadingWhitespace(string[] lines)
     {
         if (null == lines)
+        {
             throw new ArgumentException("lines");
+        }
 
         if (lines.Length == 0)
+        {
             return null;
+        }
 
-        string[] nonEmptyLines = lines
-            .Where(x => !string.IsNullOrWhiteSpace(x))
-            .ToArray();
+        string[] nonEmptyLines = [.. lines.Where(x => !string.IsNullOrWhiteSpace(x))];
 
         if (nonEmptyLines.Length < 1)
+        {
             return null;
+        }
 
-        int padLen = 0;
+        int padLength = 0;
 
-        // use the first line as a seed, and see what is shared over all nonEmptyLines
+        // Use the first line as a seed, and see what is shared over all nonEmptyLines
         string seed = nonEmptyLines[0];
         for (int i = 0, l = seed.Length; i < l; ++i)
         {
             if (!char.IsWhiteSpace(seed, i))
+            {
                 break;
+            }
 
             if (nonEmptyLines.Any(line => line[i] != seed[i]))
+            {
                 break;
+            }
 
-            ++padLen;
+            ++padLength;
         }
 
-        if (padLen > 0)
-            return seed.Substring(0, padLen);
+        if (padLength > 0)
+        {
+#if NET
+            return seed[..padLength];
+#else
+            return seed.Substring(0, padLength);
+#endif
+        }
 
         return null;
     }
@@ -108,16 +133,27 @@ public static partial class XmlCommentsTextHelper
         return MultilineCodeTag().Replace(text, match =>
         {
             var codeText = match.Groups["display"].Value;
+
             if (LineBreaks().IsMatch(codeText))
             {
                 var builder = new StringBuilder().Append("```");
+
+#if NET
+                if (!codeText.StartsWith('\r') && !codeText.StartsWith('\n'))
+#else
                 if (!codeText.StartsWith("\r") && !codeText.StartsWith("\n"))
+#endif
                 {
                     builder.Append(EndOfLine(xmlCommentEndOfLine));
                 }
 
                 builder.Append(RemoveCommonLeadingWhitespace(codeText, xmlCommentEndOfLine));
+
+#if NET
+                if (!codeText.EndsWith('\n'))
+#else
                 if (!codeText.EndsWith("\n"))
+#endif
                 {
                     builder.Append(EndOfLine(xmlCommentEndOfLine));
                 }
@@ -149,6 +185,7 @@ public static partial class XmlCommentsTextHelper
     {
         var lines = input.Split(["\r\n", "\n"], StringSplitOptions.None);
         var padding = GetCommonLeadingWhitespace(lines);
+
         if (string.IsNullOrEmpty(padding))
         {
             return input;
@@ -156,11 +193,17 @@ public static partial class XmlCommentsTextHelper
 
         var minLeadingSpaces = padding.Length;
         var builder = new StringBuilder();
+
         foreach (var line in lines)
         {
             builder.Append(string.IsNullOrWhiteSpace(line)
                 ? line
+#if NET
+                : line[minLeadingSpaces..]);
+#else
                 : line.Substring(minLeadingSpaces));
+#endif
+
             builder.Append(EndOfLine(xmlCommentEndOfLine));
         }
 

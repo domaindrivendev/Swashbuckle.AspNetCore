@@ -78,7 +78,7 @@ public static class SwaggerGenOptionsExtensions
         this SwaggerGenOptions swaggerGenOptions,
         Func<ApiDescription, string> tagSelector)
     {
-        swaggerGenOptions.SwaggerGeneratorOptions.TagsSelector = (apiDesc) => new[] { tagSelector(apiDesc) };
+        swaggerGenOptions.SwaggerGeneratorOptions.TagsSelector = (apiDesc) => [tagSelector(apiDesc)];
     }
 
     /// <summary>
@@ -344,7 +344,11 @@ public static class SwaggerGenOptionsExtensions
         params object[] arguments)
         where TFilter : ISchemaFilter
     {
-        if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+        if (swaggerGenOptions == null)
+        {
+            throw new ArgumentNullException(nameof(swaggerGenOptions));
+        }
+
         swaggerGenOptions.SchemaFilterDescriptors.Add(new FilterDescriptor
         {
             Type = typeof(TFilter),
@@ -363,8 +367,16 @@ public static class SwaggerGenOptionsExtensions
         TFilter filterInstance)
         where TFilter : ISchemaFilter
     {
-        if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
-        if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
+        if (swaggerGenOptions == null)
+        {
+            throw new ArgumentNullException(nameof(swaggerGenOptions));
+        }
+
+        if (filterInstance == null)
+        {
+            throw new ArgumentNullException(nameof(filterInstance));
+        }
+
         swaggerGenOptions.SchemaFilterDescriptors.Add(new FilterDescriptor
         {
             Type = typeof(TFilter),
@@ -383,7 +395,11 @@ public static class SwaggerGenOptionsExtensions
         params object[] arguments)
         where TFilter : IParameterFilter
     {
-        if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+        if (swaggerGenOptions == null)
+        {
+            throw new ArgumentNullException(nameof(swaggerGenOptions));
+        }
+
         swaggerGenOptions.ParameterFilterDescriptors.Add(new FilterDescriptor
         {
             Type = typeof(TFilter),
@@ -402,7 +418,11 @@ public static class SwaggerGenOptionsExtensions
         params object[] arguments)
         where TFilter : IParameterAsyncFilter
     {
-        if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+        if (swaggerGenOptions == null)
+        {
+            throw new ArgumentNullException(nameof(swaggerGenOptions));
+        }
+
         swaggerGenOptions.ParameterFilterDescriptors.Add(new FilterDescriptor
         {
             Type = typeof(TFilter),
@@ -421,8 +441,16 @@ public static class SwaggerGenOptionsExtensions
         TFilter filterInstance)
         where TFilter : IParameterFilter
     {
-        if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
-        if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
+        if (swaggerGenOptions == null)
+        {
+            throw new ArgumentNullException(nameof(swaggerGenOptions));
+        }
+
+        if (filterInstance == null)
+        {
+            throw new ArgumentNullException(nameof(filterInstance));
+        }
+
         swaggerGenOptions.ParameterFilterDescriptors.Add(new FilterDescriptor
         {
             Type = typeof(TFilter),
@@ -441,8 +469,16 @@ public static class SwaggerGenOptionsExtensions
         TFilter filterInstance)
         where TFilter : IParameterAsyncFilter
     {
-        if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
-        if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
+        if (swaggerGenOptions == null)
+        {
+            throw new ArgumentNullException(nameof(swaggerGenOptions));
+        }
+
+        if (filterInstance == null)
+        {
+            throw new ArgumentNullException(nameof(filterInstance));
+        }
+
         swaggerGenOptions.ParameterFilterDescriptors.Add(new FilterDescriptor
         {
             Type = typeof(TFilter),
@@ -461,7 +497,11 @@ public static class SwaggerGenOptionsExtensions
         params object[] arguments)
         where TFilter : IRequestBodyFilter
     {
-        if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+        if (swaggerGenOptions == null)
+        {
+            throw new ArgumentNullException(nameof(swaggerGenOptions));
+        }
+
         swaggerGenOptions.RequestBodyFilterDescriptors.Add(new FilterDescriptor
         {
             Type = typeof(TFilter),
@@ -480,7 +520,11 @@ public static class SwaggerGenOptionsExtensions
         params object[] arguments)
         where TFilter : IRequestBodyAsyncFilter
     {
-        if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+        if (swaggerGenOptions == null)
+        {
+            throw new ArgumentNullException(nameof(swaggerGenOptions));
+        }
+
         swaggerGenOptions.RequestBodyFilterDescriptors.Add(new FilterDescriptor
         {
             Type = typeof(TFilter),
@@ -499,8 +543,16 @@ public static class SwaggerGenOptionsExtensions
         TFilter filterInstance)
         where TFilter : IRequestBodyFilter
     {
-        if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
-        if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
+        if (swaggerGenOptions == null)
+        {
+            throw new ArgumentNullException(nameof(swaggerGenOptions));
+        }
+
+        if (filterInstance == null)
+        {
+            throw new ArgumentNullException(nameof(filterInstance));
+        }
+
         swaggerGenOptions.RequestBodyFilterDescriptors.Add(new FilterDescriptor
         {
             Type = typeof(TFilter),
@@ -519,8 +571,16 @@ public static class SwaggerGenOptionsExtensions
         TFilter filterInstance)
         where TFilter : IRequestBodyAsyncFilter
     {
-        if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
-        if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
+        if (swaggerGenOptions == null)
+        {
+            throw new ArgumentNullException(nameof(swaggerGenOptions));
+        }
+
+        if (filterInstance == null)
+        {
+            throw new ArgumentNullException(nameof(filterInstance));
+        }
+
         swaggerGenOptions.RequestBodyFilterDescriptors.Add(new FilterDescriptor
         {
             Type = typeof(TFilter),
@@ -539,7 +599,11 @@ public static class SwaggerGenOptionsExtensions
         params object[] arguments)
         where TFilter : IOperationFilter
     {
-        if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+        if (swaggerGenOptions == null)
+        {
+            throw new ArgumentNullException(nameof(swaggerGenOptions));
+        }
+
         swaggerGenOptions.OperationFilterDescriptors.Add(new FilterDescriptor
         {
             Type = typeof(TFilter),
@@ -558,7 +622,11 @@ public static class SwaggerGenOptionsExtensions
         params object[] arguments)
         where TFilter : IOperationAsyncFilter
     {
-        if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+        if (swaggerGenOptions == null)
+        {
+            throw new ArgumentNullException(nameof(swaggerGenOptions));
+        }
+
         swaggerGenOptions.OperationFilterDescriptors.Add(new FilterDescriptor
         {
             Type = typeof(TFilter),
@@ -577,8 +645,16 @@ public static class SwaggerGenOptionsExtensions
         TFilter filterInstance)
         where TFilter : IOperationFilter
     {
-        if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
-        if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
+        if (swaggerGenOptions == null)
+        {
+            throw new ArgumentNullException(nameof(swaggerGenOptions));
+        }
+
+        if (filterInstance == null)
+        {
+            throw new ArgumentNullException(nameof(filterInstance));
+        }
+
         swaggerGenOptions.OperationFilterDescriptors.Add(new FilterDescriptor
         {
             Type = typeof(TFilter),
@@ -597,8 +673,16 @@ public static class SwaggerGenOptionsExtensions
         TFilter filterInstance)
         where TFilter : IOperationAsyncFilter
     {
-        if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
-        if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
+        if (swaggerGenOptions == null)
+        {
+            throw new ArgumentNullException(nameof(swaggerGenOptions));
+        }
+
+        if (filterInstance == null)
+        {
+            throw new ArgumentNullException(nameof(filterInstance));
+        }
+
         swaggerGenOptions.OperationFilterDescriptors.Add(new FilterDescriptor
         {
             Type = typeof(TFilter),
@@ -617,7 +701,11 @@ public static class SwaggerGenOptionsExtensions
         params object[] arguments)
         where TFilter : IDocumentFilter
     {
-        if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+        if (swaggerGenOptions == null)
+        {
+            throw new ArgumentNullException(nameof(swaggerGenOptions));
+        }
+
         swaggerGenOptions.DocumentFilterDescriptors.Add(new FilterDescriptor
         {
             Type = typeof(TFilter),
@@ -637,7 +725,11 @@ public static class SwaggerGenOptionsExtensions
         params object[] arguments)
         where TFilter : IDocumentAsyncFilter
     {
-        if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
+        if (swaggerGenOptions == null)
+        {
+            throw new ArgumentNullException(nameof(swaggerGenOptions));
+        }
+
         swaggerGenOptions.DocumentFilterDescriptors.Add(new FilterDescriptor
         {
             Type = typeof(TFilter),
@@ -656,8 +748,16 @@ public static class SwaggerGenOptionsExtensions
         TFilter filterInstance)
         where TFilter : IDocumentFilter
     {
-        if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
-        if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
+        if (swaggerGenOptions == null)
+        {
+            throw new ArgumentNullException(nameof(swaggerGenOptions));
+        }
+
+        if (filterInstance == null)
+        {
+            throw new ArgumentNullException(nameof(filterInstance));
+        }
+
         swaggerGenOptions.DocumentFilterDescriptors.Add(new FilterDescriptor
         {
             Type = typeof(TFilter),
@@ -677,8 +777,16 @@ public static class SwaggerGenOptionsExtensions
         TFilter filterInstance)
         where TFilter : IDocumentAsyncFilter
     {
-        if (swaggerGenOptions == null) throw new ArgumentNullException(nameof(swaggerGenOptions));
-        if (filterInstance == null) throw new ArgumentNullException(nameof(filterInstance));
+        if (swaggerGenOptions == null)
+        {
+            throw new ArgumentNullException(nameof(swaggerGenOptions));
+        }
+
+        if (filterInstance == null)
+        {
+            throw new ArgumentNullException(nameof(filterInstance));
+        }
+
         swaggerGenOptions.DocumentFilterDescriptors.Add(new FilterDescriptor
         {
             Type = typeof(TFilter),
@@ -709,7 +817,9 @@ public static class SwaggerGenOptionsExtensions
         swaggerGenOptions.AddSchemaFilterInstance(new XmlCommentsSchemaFilter(xmlDocMembers, swaggerGenOptions.SwaggerGeneratorOptions));
 
         if (includeControllerXmlComments)
+        {
             swaggerGenOptions.AddDocumentFilterInstance(new XmlCommentsDocumentFilter(xmlDocMembers, swaggerGenOptions.SwaggerGeneratorOptions));
+        }
     }
 
     /// <summary>
@@ -726,7 +836,9 @@ public static class SwaggerGenOptionsExtensions
         string filePath,
         bool includeControllerXmlComments = false)
     {
-        swaggerGenOptions.IncludeXmlComments(() => new XPathDocument(filePath), includeControllerXmlComments);
+        swaggerGenOptions.IncludeXmlComments(
+            () => new XPathDocument(filePath),
+            includeControllerXmlComments);
     }
 
     /// <summary>

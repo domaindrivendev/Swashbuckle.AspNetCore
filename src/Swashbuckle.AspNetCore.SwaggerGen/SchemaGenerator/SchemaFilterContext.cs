@@ -2,31 +2,22 @@
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
-public class SchemaFilterContext
+public class SchemaFilterContext(
+    Type type,
+    ISchemaGenerator schemaGenerator,
+    SchemaRepository schemaRepository,
+    MemberInfo memberInfo = null,
+    ParameterInfo parameterInfo = null)
 {
-    public SchemaFilterContext(
-        Type type,
-        ISchemaGenerator schemaGenerator,
-        SchemaRepository schemaRepository,
-        MemberInfo memberInfo = null,
-        ParameterInfo parameterInfo = null)
-    {
-        Type = type;
-        SchemaGenerator = schemaGenerator;
-        SchemaRepository = schemaRepository;
-        MemberInfo = memberInfo;
-        ParameterInfo = parameterInfo;
-    }
+    public Type Type { get; } = type;
 
-    public Type Type { get; }
+    public ISchemaGenerator SchemaGenerator { get; } = schemaGenerator;
 
-    public ISchemaGenerator SchemaGenerator { get; }
+    public SchemaRepository SchemaRepository { get; } = schemaRepository;
 
-    public SchemaRepository SchemaRepository { get; }
+    public MemberInfo MemberInfo { get; } = memberInfo;
 
-    public MemberInfo MemberInfo { get; }
-
-    public ParameterInfo ParameterInfo { get; }
+    public ParameterInfo ParameterInfo { get; } = parameterInfo;
 
     public string DocumentName => SchemaRepository.DocumentName;
 }

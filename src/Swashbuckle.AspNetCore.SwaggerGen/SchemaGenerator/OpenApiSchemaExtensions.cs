@@ -34,39 +34,47 @@ public static class OpenApiSchemaExtensions
         foreach (var attribute in customAttributes)
         {
             if (attribute is DataTypeAttribute dataTypeAttribute)
+            {
                 ApplyDataTypeAttribute(schema, dataTypeAttribute);
-
+            }
             else if (attribute is MinLengthAttribute minLengthAttribute)
+            {
                 ApplyMinLengthAttribute(schema, minLengthAttribute);
-
+            }
             else if (attribute is MaxLengthAttribute maxLengthAttribute)
+            {
                 ApplyMaxLengthAttribute(schema, maxLengthAttribute);
-
+            }
 #if NET
-
             else if (attribute is LengthAttribute lengthAttribute)
+            {
                 ApplyLengthAttribute(schema, lengthAttribute);
-
+            }
             else if (attribute is Base64StringAttribute base64Attribute)
+            {
                 ApplyBase64Attribute(schema);
-
+            }
 #endif
-
             else if (attribute is RangeAttribute rangeAttribute)
+            {
                 ApplyRangeAttribute(schema, rangeAttribute);
-
+            }
             else if (attribute is RegularExpressionAttribute regularExpressionAttribute)
+            {
                 ApplyRegularExpressionAttribute(schema, regularExpressionAttribute);
-
+            }
             else if (attribute is StringLengthAttribute stringLengthAttribute)
+            {
                 ApplyStringLengthAttribute(schema, stringLengthAttribute);
-
+            }
             else if (attribute is ReadOnlyAttribute readOnlyAttribute)
+            {
                 ApplyReadOnlyAttribute(schema, readOnlyAttribute);
-
+            }
             else if (attribute is DescriptionAttribute descriptionAttribute)
+            {
                 ApplyDescriptionAttribute(schema, descriptionAttribute);
-
+            }
         }
     }
 
@@ -75,37 +83,49 @@ public static class OpenApiSchemaExtensions
         foreach (var constraint in routeInfo.Constraints)
         {
             if (constraint is MinRouteConstraint minRouteConstraint)
+            {
                 ApplyMinRouteConstraint(schema, minRouteConstraint);
-
+            }
             else if (constraint is MaxRouteConstraint maxRouteConstraint)
+            {
                 ApplyMaxRouteConstraint(schema, maxRouteConstraint);
-
+            }
             else if (constraint is MinLengthRouteConstraint minLengthRouteConstraint)
+            {
                 ApplyMinLengthRouteConstraint(schema, minLengthRouteConstraint);
-
+            }
             else if (constraint is MaxLengthRouteConstraint maxLengthRouteConstraint)
+            {
                 ApplyMaxLengthRouteConstraint(schema, maxLengthRouteConstraint);
-
+            }
             else if (constraint is RangeRouteConstraint rangeRouteConstraint)
+            {
                 ApplyRangeRouteConstraint(schema, rangeRouteConstraint);
-
+            }
             else if (constraint is RegexRouteConstraint regexRouteConstraint)
+            {
                 ApplyRegexRouteConstraint(schema, regexRouteConstraint);
-
+            }
             else if (constraint is LengthRouteConstraint lengthRouteConstraint)
+            {
                 ApplyLengthRouteConstraint(schema, lengthRouteConstraint);
-
+            }
             else if (constraint is FloatRouteConstraint or DecimalRouteConstraint)
+            {
                 schema.Type = JsonSchemaTypes.Number;
-
+            }
             else if (constraint is LongRouteConstraint or IntRouteConstraint)
+            {
                 schema.Type = JsonSchemaTypes.Integer;
-
+            }
             else if (constraint is GuidRouteConstraint or StringRouteConstraint)
+            {
                 schema.Type = JsonSchemaTypes.String;
-
+            }
             else if (constraint is BoolRouteConstraint)
+            {
                 schema.Type = JsonSchemaTypes.Boolean;
+            }
         }
     }
 
@@ -139,33 +159,49 @@ public static class OpenApiSchemaExtensions
     private static void ApplyMinLengthAttribute(OpenApiSchema schema, MinLengthAttribute minLengthAttribute)
     {
         if (schema.Type == JsonSchemaTypes.Array)
+        {
             schema.MinItems = minLengthAttribute.Length;
+        }
         else
+        {
             schema.MinLength = minLengthAttribute.Length;
+        }
     }
 
     private static void ApplyMinLengthRouteConstraint(OpenApiSchema schema, MinLengthRouteConstraint minLengthRouteConstraint)
     {
         if (schema.Type == JsonSchemaTypes.Array)
+        {
             schema.MinItems = minLengthRouteConstraint.MinLength;
+        }
         else
+        {
             schema.MinLength = minLengthRouteConstraint.MinLength;
+        }
     }
 
     private static void ApplyMaxLengthAttribute(OpenApiSchema schema, MaxLengthAttribute maxLengthAttribute)
     {
         if (schema.Type == JsonSchemaTypes.Array)
+        {
             schema.MaxItems = maxLengthAttribute.Length;
+        }
         else
+        {
             schema.MaxLength = maxLengthAttribute.Length;
+        }
     }
 
     private static void ApplyMaxLengthRouteConstraint(OpenApiSchema schema, MaxLengthRouteConstraint maxLengthRouteConstraint)
     {
         if (schema.Type == JsonSchemaTypes.Array)
+        {
             schema.MaxItems = maxLengthRouteConstraint.MaxLength;
+        }
         else
+        {
             schema.MaxLength = maxLengthRouteConstraint.MaxLength;
+        }
     }
 
 #if NET

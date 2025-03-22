@@ -9,7 +9,8 @@ public class XmlCommentsSchemaFilter : ISchemaFilter
     private readonly IReadOnlyDictionary<string, XPathNavigator> _xmlDocMembers;
     private readonly SwaggerGeneratorOptions _options;
 
-    public XmlCommentsSchemaFilter(XPathDocument xmlDoc) : this(XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc), null)
+    public XmlCommentsSchemaFilter(XPathDocument xmlDoc)
+        : this(XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc), null)
     {
     }
 
@@ -85,9 +86,9 @@ public class XmlCommentsSchemaFilter : ISchemaFilter
 
     private static void TrySetExample(OpenApiSchema schema, SchemaFilterContext context, string example)
     {
-        if (example == null)
-            return;
-
-        schema.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, schema, example);
+        if (example != null)
+        {
+            schema.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, schema, example);
+        }
     }
 }

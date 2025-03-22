@@ -29,7 +29,7 @@ public static class TypeExtensions
 
     public static bool IsReferenceOrNullableType(this Type type)
     {
-        return (!type.IsValueType || Nullable.GetUnderlyingType(type) != null);
+        return !type.IsValueType || Nullable.GetUnderlyingType(type) != null;
     }
 
     public static object GetDefaultValue(this Type type)
@@ -41,7 +41,10 @@ public static class TypeExtensions
 
     public static Type[] GetInheritanceChain(this Type type)
     {
-        if (type.IsInterface) { return type.GetInterfaces(); }
+        if (type.IsInterface)
+        {
+            return type.GetInterfaces();
+        }
 
         var inheritanceChain = new List<Type>();
 
@@ -52,6 +55,6 @@ public static class TypeExtensions
             current = current.BaseType;
         }
 
-        return inheritanceChain.ToArray();
+        return [.. inheritanceChain];
     }
 }

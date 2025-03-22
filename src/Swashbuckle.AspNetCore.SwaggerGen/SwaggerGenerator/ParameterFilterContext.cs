@@ -3,31 +3,22 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
-public class ParameterFilterContext
+public class ParameterFilterContext(
+    ApiParameterDescription apiParameterDescription,
+    ISchemaGenerator schemaGenerator,
+    SchemaRepository schemaRepository,
+    PropertyInfo propertyInfo = null,
+    ParameterInfo parameterInfo = null)
 {
-    public ParameterFilterContext(
-        ApiParameterDescription apiParameterDescription,
-        ISchemaGenerator schemaGenerator,
-        SchemaRepository schemaRepository,
-        PropertyInfo propertyInfo = null,
-        ParameterInfo parameterInfo = null)
-    {
-        ApiParameterDescription = apiParameterDescription;
-        SchemaGenerator = schemaGenerator;
-        SchemaRepository = schemaRepository;
-        PropertyInfo = propertyInfo;
-        ParameterInfo = parameterInfo;
-    }
+    public ApiParameterDescription ApiParameterDescription { get; } = apiParameterDescription;
 
-    public ApiParameterDescription ApiParameterDescription { get; }
+    public ISchemaGenerator SchemaGenerator { get; } = schemaGenerator;
 
-    public ISchemaGenerator SchemaGenerator { get; }
+    public SchemaRepository SchemaRepository { get; } = schemaRepository;
 
-    public SchemaRepository SchemaRepository { get; }
+    public PropertyInfo PropertyInfo { get; } = propertyInfo;
 
-    public PropertyInfo PropertyInfo { get; }
-
-    public ParameterInfo ParameterInfo { get; }
+    public ParameterInfo ParameterInfo { get; } = parameterInfo;
 
     public string DocumentName => SchemaRepository.DocumentName;
 }

@@ -6,14 +6,9 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
-public class JsonSerializerDataContractResolver : ISerializerDataContractResolver
+public class JsonSerializerDataContractResolver(JsonSerializerOptions serializerOptions) : ISerializerDataContractResolver
 {
-    private readonly JsonSerializerOptions _serializerOptions;
-
-    public JsonSerializerDataContractResolver(JsonSerializerOptions serializerOptions)
-    {
-        _serializerOptions = serializerOptions;
-    }
+    private readonly JsonSerializerOptions _serializerOptions = serializerOptions;
 
     public DataContract GetDataContractForType(Type type)
     {
@@ -71,7 +66,12 @@ public class JsonSerializerDataContractResolver : ISerializerDataContractResolve
                     .Cast<object>()
                     .Select(value => JsonConverterFunc(value, keyType));
 
-                keys = enumValuesAsJson.Any(json => json.StartsWith("\""))
+                keys =
+#if NET
+                    enumValuesAsJson.Any(json => json.StartsWith('\"'))
+#else
+                    enumValuesAsJson.Any(json => json.StartsWith("\""))
+#endif
                     ? enumValuesAsJson.Select(json => json.Replace("\"", string.Empty))
                     : keyType.GetEnumNames();
             }
@@ -190,7 +190,7 @@ public class JsonSerializerDataContractResolver : ISerializerDataContractResolve
                     (property.IsPubliclyReadable() || property.IsPubliclyWritable()) &&
                     !(property.GetIndexParameters().Length > 0) &&
                     !(property.HasAttribute<JsonIgnoreAttribute>() && isIgnoredViaNet5Attribute) &&
-                    !(property.HasAttribute<SwaggerIgnoreAttribute>()) &&
+                    !property.HasAttribute<SwaggerIgnoreAttribute>() &&
                     !(_serializerOptions.IgnoreReadOnlyProperties && !property.IsPubliclyWritable());
             })
             .OrderBy(property => property.DeclaringType.GetInheritanceChain().Length);
@@ -219,8 +219,15 @@ public class JsonSerializerDataContractResolver : ISerializerDataContractResolve
             var deserializationConstructor = propertyInfo.DeclaringType?.GetConstructors()
                 .OrderBy(c =>
                 {
-                    if (c.GetCustomAttribute<JsonConstructorAttribute>() != null) return 1;
-                    if (c.GetParameters().Length == 0) return 2;
+                    if (c.GetCustomAttribute<JsonConstructorAttribute>() != null)
+                    {
+                        return 1;
+                    }
+                    else if (c.GetParameters().Length == 0)
+                    {
+                        return 2;
+                    }
+
                     return 3;
                 })
                 .FirstOrDefault();

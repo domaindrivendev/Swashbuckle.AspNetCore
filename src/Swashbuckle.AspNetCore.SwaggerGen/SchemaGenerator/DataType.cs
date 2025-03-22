@@ -9,5 +9,5 @@ public enum DataType
     Array,
     Dictionary,
     Object,
-    Unknown
+    Unknown,
 }

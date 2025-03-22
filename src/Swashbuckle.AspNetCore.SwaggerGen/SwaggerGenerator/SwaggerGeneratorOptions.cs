@@ -3,7 +3,9 @@ using Microsoft.AspNetCore.Http.Metadata;
 #endif
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+#if NET
 using Microsoft.AspNetCore.Routing;
+#endif
 using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
@@ -20,17 +22,17 @@ public class SwaggerGeneratorOptions
         PathGroupSelector = DefaultPathGroupSelector;
         SecuritySchemesSelector = null;
         SchemaComparer = StringComparer.Ordinal;
-        Servers = new List<OpenApiServer>();
+        Servers = [];
         SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>();
-        SecurityRequirements = new List<OpenApiSecurityRequirement>();
-        ParameterFilters = new List<IParameterFilter>();
-        ParameterAsyncFilters = new List<IParameterAsyncFilter>();
-        RequestBodyFilters = new List<IRequestBodyFilter>();
-        RequestBodyAsyncFilters = new List<IRequestBodyAsyncFilter>();
-        OperationFilters = new List<IOperationFilter>();
-        OperationAsyncFilters = new List<IOperationAsyncFilter>();
-        DocumentFilters = new List<IDocumentFilter>();
-        DocumentAsyncFilters = new List<IDocumentAsyncFilter>();
+        SecurityRequirements = [];
+        ParameterFilters = [];
+        ParameterAsyncFilters = [];
+        RequestBodyFilters = [];
+        RequestBodyAsyncFilters = [];
+        OperationFilters = [];
+        OperationAsyncFilters = [];
+        DocumentFilters = [];
+        DocumentAsyncFilters = [];
     }
 
     public IDictionary<string, OpenApiInfo> SwaggerDocs { get; set; }
@@ -106,15 +108,15 @@ public class SwaggerGeneratorOptions
     private IList<string> DefaultTagsSelector(ApiDescription apiDescription)
     {
 #if !NET
-        return new[] { apiDescription.ActionDescriptor.RouteValues["controller"] };
+        return [apiDescription.ActionDescriptor.RouteValues["controller"]];
 #else
         var actionDescriptor = apiDescription.ActionDescriptor;
-        var tagsMetadata = actionDescriptor.EndpointMetadata?.LastOrDefault(m => m is ITagsMetadata) as ITagsMetadata;
-        if (tagsMetadata != null)
+        if (actionDescriptor.EndpointMetadata?.LastOrDefault(m => m is ITagsMetadata) is ITagsMetadata metadata)
         {
-            return new List<string>(tagsMetadata.Tags);
+            return [.. metadata.Tags];
         }
-        return new[] { apiDescription.ActionDescriptor.RouteValues["controller"] };
+
+        return [apiDescription.ActionDescriptor.RouteValues["controller"]];
 #endif
     }
 
