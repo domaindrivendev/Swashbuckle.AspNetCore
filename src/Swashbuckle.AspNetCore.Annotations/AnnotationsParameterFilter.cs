@@ -18,30 +18,37 @@ public class AnnotationsParameterFilter : IParameterFilter
         }
     }
 
-    private void ApplyPropertyAnnotations(OpenApiParameter parameter, PropertyInfo propertyInfo)
+    private static void ApplyPropertyAnnotations(OpenApiParameter parameter, PropertyInfo propertyInfo)
     {
         var swaggerParameterAttribute = propertyInfo.GetCustomAttributes<SwaggerParameterAttribute>()
             .FirstOrDefault();
 
         if (swaggerParameterAttribute != null)
+        {
             ApplySwaggerParameterAttribute(parameter, swaggerParameterAttribute);
+        }
     }
 
-    private void ApplyParamAnnotations(OpenApiParameter parameter, ParameterInfo parameterInfo)
+    private static void ApplyParamAnnotations(OpenApiParameter parameter, ParameterInfo parameterInfo)
     {
-
         var swaggerParameterAttribute = parameterInfo.GetCustomAttribute<SwaggerParameterAttribute>();
 
         if (swaggerParameterAttribute != null)
+        {
             ApplySwaggerParameterAttribute(parameter, swaggerParameterAttribute);
+        }
     }
 
-    private void ApplySwaggerParameterAttribute(OpenApiParameter parameter, SwaggerParameterAttribute swaggerParameterAttribute)
+    private static void ApplySwaggerParameterAttribute(OpenApiParameter parameter, SwaggerParameterAttribute swaggerParameterAttribute)
     {
         if (swaggerParameterAttribute.Description != null)
+        {
             parameter.Description = swaggerParameterAttribute.Description;
+        }
 
         if (swaggerParameterAttribute.RequiredFlag.HasValue)
+        {
             parameter.Required = swaggerParameterAttribute.RequiredFlag.Value;
+        }
     }
 }

@@ -5,26 +5,17 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Microsoft.Extensions.ApiDescriptions;
 
-internal class DocumentProvider : IDocumentProvider
+internal class DocumentProvider(
+    IOptions<SwaggerGeneratorOptions> generatorOptions,
+    IOptions<SwaggerOptions> options,
+    IAsyncSwaggerProvider swaggerProvider) : IDocumentProvider
 {
-    private readonly SwaggerGeneratorOptions _generatorOptions;
-    private readonly SwaggerOptions _options;
-    private readonly IAsyncSwaggerProvider _swaggerProvider;
-
-    public DocumentProvider(
-        IOptions<SwaggerGeneratorOptions> generatorOptions,
-        IOptions<SwaggerOptions> options,
-        IAsyncSwaggerProvider swaggerProvider)
-    {
-        _generatorOptions = generatorOptions.Value;
-        _options = options.Value;
-        _swaggerProvider = swaggerProvider;
-    }
+    private readonly SwaggerGeneratorOptions _generatorOptions = generatorOptions.Value;
+    private readonly SwaggerOptions _options = options.Value;
+    private readonly IAsyncSwaggerProvider _swaggerProvider = swaggerProvider;
 
     public IEnumerable<string> GetDocumentNames()
-    {
-        return _generatorOptions.SwaggerDocs.Keys;
-    }
+        => _generatorOptions.SwaggerDocs.Keys;
 
     public async Task GenerateAsync(string documentName, TextWriter writer)
     {

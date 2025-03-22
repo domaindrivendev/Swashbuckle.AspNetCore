@@ -4,24 +4,18 @@
 /// Enriches Operation metadata for a given action method
 /// </summary>
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
-public class SwaggerOperationAttribute : Attribute
+public class SwaggerOperationAttribute(string summary = null, string description = null) : Attribute
 {
-    public SwaggerOperationAttribute(string summary = null, string description = null)
-    {
-        Summary = summary;
-        Description = description;
-    }
-
     /// <summary>
     /// A short summary of what the operation does. For maximum readability in the swagger-ui,
     /// this field SHOULD be less than 120 characters.
     /// </summary>
-    public string Summary { get; set; }
+    public string Summary { get; set; } = summary;
 
     /// <summary>
     /// A verbose explanation of the operation behavior. GFM syntax can be used for rich text representation.
     /// </summary>
-    public string Description { get; set; }
+    public string Description { get; set; } = description;
 
     /// <summary>
     /// Unique string used to identify the operation. The id MUST be unique among all operations described

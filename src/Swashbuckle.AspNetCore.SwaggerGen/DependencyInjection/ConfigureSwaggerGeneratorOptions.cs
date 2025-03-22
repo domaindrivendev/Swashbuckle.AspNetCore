@@ -1,29 +1,23 @@
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 
-#if !NET
+#if NET
+using Microsoft.AspNetCore.Hosting;
+#else
 using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 #endif
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
-internal class ConfigureSwaggerGeneratorOptions : IConfigureOptions<SwaggerGeneratorOptions>
+internal class ConfigureSwaggerGeneratorOptions(
+    IOptions<SwaggerGenOptions> swaggerGenOptionsAccessor,
+    IServiceProvider serviceProvider,
+    IWebHostEnvironment hostingEnv) : IConfigureOptions<SwaggerGeneratorOptions>
 {
-    private readonly SwaggerGenOptions _swaggerGenOptions;
-    private readonly IServiceProvider _serviceProvider;
-    private readonly IWebHostEnvironment _hostingEnv;
-
-    public ConfigureSwaggerGeneratorOptions(
-        IOptions<SwaggerGenOptions> swaggerGenOptionsAccessor,
-        IServiceProvider serviceProvider,
-        IWebHostEnvironment hostingEnv)
-    {
-        _swaggerGenOptions = swaggerGenOptionsAccessor.Value;
-        _serviceProvider = serviceProvider;
-        _hostingEnv = hostingEnv;
-    }
+    private readonly SwaggerGenOptions _swaggerGenOptions = swaggerGenOptionsAccessor.Value;
+    private readonly IServiceProvider _serviceProvider = serviceProvider;
+    private readonly IWebHostEnvironment _hostingEnv = hostingEnv;
 
     public void Configure(SwaggerGeneratorOptions options)
     {
@@ -89,7 +83,7 @@ internal class ConfigureSwaggerGeneratorOptions : IConfigureOptions<SwaggerGener
         }
     }
 
-    public void DeepCopy(SwaggerGeneratorOptions source, SwaggerGeneratorOptions target)
+    public static void DeepCopy(SwaggerGeneratorOptions source, SwaggerGeneratorOptions target)
     {
         target.SwaggerDocs = new Dictionary<string, OpenApiInfo>(source.SwaggerDocs);
         target.DocInclusionPredicate = source.DocInclusionPredicate;
@@ -101,17 +95,17 @@ internal class ConfigureSwaggerGeneratorOptions : IConfigureOptions<SwaggerGener
         target.InferSecuritySchemes = source.InferSecuritySchemes;
         target.DescribeAllParametersInCamelCase = source.DescribeAllParametersInCamelCase;
         target.SchemaComparer = source.SchemaComparer;
-        target.Servers = new List<OpenApiServer>(source.Servers);
+        target.Servers = [.. source.Servers];
         target.SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>(source.SecuritySchemes);
-        target.SecurityRequirements = new List<OpenApiSecurityRequirement>(source.SecurityRequirements);
-        target.ParameterFilters = new List<IParameterFilter>(source.ParameterFilters);
-        target.ParameterAsyncFilters = new List<IParameterAsyncFilter>(source.ParameterAsyncFilters);
-        target.OperationFilters = new List<IOperationFilter>(source.OperationFilters);
-        target.OperationAsyncFilters = new List<IOperationAsyncFilter>(source.OperationAsyncFilters);
-        target.DocumentFilters = new List<IDocumentFilter>(source.DocumentFilters);
-        target.DocumentAsyncFilters = new List<IDocumentAsyncFilter>(source.DocumentAsyncFilters);
-        target.RequestBodyFilters = new List<IRequestBodyFilter>(source.RequestBodyFilters);
-        target.RequestBodyAsyncFilters = new List<IRequestBodyAsyncFilter>(source.RequestBodyAsyncFilters);
+        target.SecurityRequirements = [.. source.SecurityRequirements];
+        target.ParameterFilters = [.. source.ParameterFilters];
+        target.ParameterAsyncFilters = [.. source.ParameterAsyncFilters];
+        target.OperationFilters = [.. source.OperationFilters];
+        target.OperationAsyncFilters = [.. source.OperationAsyncFilters];
+        target.DocumentFilters = [.. source.DocumentFilters];
+        target.DocumentAsyncFilters = [.. source.DocumentAsyncFilters];
+        target.RequestBodyFilters = [.. source.RequestBodyFilters];
+        target.RequestBodyAsyncFilters = [.. source.RequestBodyAsyncFilters];
         target.SecuritySchemesSelector = source.SecuritySchemesSelector;
         target.PathGroupSelector = source.PathGroupSelector;
         target.XmlCommentEndOfLine = source.XmlCommentEndOfLine;

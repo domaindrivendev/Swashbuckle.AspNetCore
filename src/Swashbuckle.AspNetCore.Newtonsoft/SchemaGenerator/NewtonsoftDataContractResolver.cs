@@ -7,16 +7,10 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Newtonsoft;
 
-public class NewtonsoftDataContractResolver : ISerializerDataContractResolver
+public class NewtonsoftDataContractResolver(JsonSerializerSettings serializerSettings) : ISerializerDataContractResolver
 {
-    private readonly JsonSerializerSettings _serializerSettings;
-    private readonly IContractResolver _contractResolver;
-
-    public NewtonsoftDataContractResolver(JsonSerializerSettings serializerSettings)
-    {
-        _serializerSettings = serializerSettings;
-        _contractResolver = serializerSettings.ContractResolver ?? new DefaultContractResolver();
-    }
+    private readonly JsonSerializerSettings _serializerSettings = serializerSettings;
+    private readonly IContractResolver _contractResolver = serializerSettings.ContractResolver ?? new DefaultContractResolver();
 
     public DataContract GetDataContractForType(Type type)
     {
@@ -49,8 +43,12 @@ public class NewtonsoftDataContractResolver : ISerializerDataContractResolver
             var enumValues = jsonContract.UnderlyingType.GetEnumValues();
 
             // Test to determine if the serializer will treat as string
-            var serializeAsString = (enumValues.Length > 0)
-                && JsonConverterFunc(enumValues.GetValue(0)).StartsWith("\"");
+            var serializeAsString = (enumValues.Length > 0) &&
+#if NET
+                JsonConverterFunc(enumValues.GetValue(0)).StartsWith('\"');
+#else
+                JsonConverterFunc(enumValues.GetValue(0)).StartsWith("\"");
+#endif
 
             var primitiveTypeAndFormat = serializeAsString
                 ? PrimitiveTypesAndFormats[typeof(string)]
@@ -85,7 +83,12 @@ public class NewtonsoftDataContractResolver : ISerializerDataContractResolver
                     .Cast<object>()
                     .Select(JsonConverterFunc);
 
-                keys = enumValuesAsJson.Any(json => json.StartsWith("\""))
+                keys =
+#if NET
+                    enumValuesAsJson.Any(json => json.StartsWith('\"'))
+#else
+                    enumValuesAsJson.Any(json => json.StartsWith("\""))
+#endif
                     ? enumValuesAsJson.Select(json => json.Replace("\"", string.Empty))
                     : keyType.GetEnumNames();
             }
@@ -112,9 +115,9 @@ public class NewtonsoftDataContractResolver : ISerializerDataContractResolver
             string typeNameProperty = null;
             string typeNameValue = null;
 
-            if (_serializerSettings.TypeNameHandling == TypeNameHandling.Objects
-                || _serializerSettings.TypeNameHandling == TypeNameHandling.All
-                || _serializerSettings.TypeNameHandling == TypeNameHandling.Auto)
+            if (_serializerSettings.TypeNameHandling == TypeNameHandling.Objects ||
+                _serializerSettings.TypeNameHandling == TypeNameHandling.All ||
+                _serializerSettings.TypeNameHandling == TypeNameHandling.Auto)
             {
                 typeNameProperty = "$type";
 
@@ -138,9 +141,7 @@ public class NewtonsoftDataContractResolver : ISerializerDataContractResolver
     }
 
     private string JsonConverterFunc(object value)
-    {
-        return JsonConvert.SerializeObject(value, _serializerSettings);
-    }
+        => JsonConvert.SerializeObject(value, _serializerSettings);
 
     private List<DataProperty> GetDataPropertiesFor(JsonObjectContract jsonObjectContract, out Type extensionDataType)
     {
@@ -170,7 +171,7 @@ public class NewtonsoftDataContractResolver : ISerializerDataContractResolver
             dataProperties.Add(
                 new DataProperty(
                     name: jsonProperty.PropertyName,
-                    isRequired: (required == Required.Always || required == Required.AllowNull),
+                    isRequired: required == Required.Always || required == Required.AllowNull,
                     isNullable: (required == Required.AllowNull || required == Required.Default) && jsonProperty.PropertyType.IsReferenceOrNullableType(),
                     isReadOnly: jsonProperty.Readable && !jsonProperty.Writable && !isSetViaConstructor,
                     isWriteOnly: jsonProperty.Writable && !jsonProperty.Readable,

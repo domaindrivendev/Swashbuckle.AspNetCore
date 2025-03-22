@@ -13,7 +13,7 @@ public class XmlCommentsNodeNameHelper
         builder.Append($".{method.Name}");
 
         var parameters = method.GetParameters();
-        if (parameters.Any())
+        if (parameters.Length != 0)
         {
             var parametersNames = parameters.Select(p =>
             {
@@ -56,7 +56,9 @@ public class XmlCommentsNodeNameHelper
         var builder = new StringBuilder();
 
         if (!string.IsNullOrEmpty(type.Namespace))
+        {
             builder.Append($"{type.Namespace}.");
+        }
 
         if (type.IsNested)
         {
@@ -87,7 +89,10 @@ public class XmlCommentsNodeNameHelper
 
     private static IEnumerable<string> GetNestedTypeNames(Type type)
     {
-        if (!type.IsNested || type.DeclaringType == null) yield break;
+        if (!type.IsNested || type.DeclaringType == null)
+        {
+            yield break;
+        }
 
         foreach (var nestedTypeName in GetNestedTypeNames(type.DeclaringType))
         {

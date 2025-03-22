@@ -8,21 +8,16 @@
 /// e.g. if you're customizing the tagging behavior with TagActionsBy.
 /// </remarks>
 [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-public class SwaggerTagAttribute : Attribute
+public class SwaggerTagAttribute(string description = null, string externalDocsUrl = null) : Attribute
 {
-    public SwaggerTagAttribute(string description = null, string externalDocsUrl = null)
-    {
-        Description = description;
-        ExternalDocsUrl = externalDocsUrl;
-    }
 
     /// <summary>
     /// A short description for the tag. GFM syntax can be used for rich text representation.
     /// </summary>
-    public string Description { get;  }
+    public string Description { get; } = description;
 
     /// <summary>
     /// A URL for additional external documentation. Value MUST be in the format of a URL.
     /// </summary>
-    public string ExternalDocsUrl { get; }
+    public string ExternalDocsUrl { get; } = externalDocsUrl;
 }

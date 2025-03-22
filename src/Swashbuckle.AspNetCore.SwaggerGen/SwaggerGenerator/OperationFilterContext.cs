@@ -3,27 +3,19 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
-public class OperationFilterContext
+public class OperationFilterContext(
+    ApiDescription apiDescription,
+    ISchemaGenerator schemaRegistry,
+    SchemaRepository schemaRepository,
+    MethodInfo methodInfo)
 {
-    public OperationFilterContext(
-        ApiDescription apiDescription,
-        ISchemaGenerator schemaRegistry,
-        SchemaRepository schemaRepository,
-        MethodInfo methodInfo)
-    {
-        ApiDescription = apiDescription;
-        SchemaGenerator = schemaRegistry;
-        SchemaRepository = schemaRepository;
-        MethodInfo = methodInfo;
-    }
+    public ApiDescription ApiDescription { get; } = apiDescription;
 
-    public ApiDescription ApiDescription { get; }
+    public ISchemaGenerator SchemaGenerator { get; } = schemaRegistry;
 
-    public ISchemaGenerator SchemaGenerator { get; }
+    public SchemaRepository SchemaRepository { get; } = schemaRepository;
 
-    public SchemaRepository SchemaRepository { get; }
-
-    public MethodInfo MethodInfo { get; }
+    public MethodInfo MethodInfo { get; } = methodInfo;
 
     public string DocumentName => SchemaRepository.DocumentName;
 }

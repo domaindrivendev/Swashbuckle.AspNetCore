@@ -10,7 +10,8 @@ public class XmlCommentsRequestBodyFilter : IRequestBodyFilter
     private readonly IReadOnlyDictionary<string, XPathNavigator> _xmlDocMembers;
     private readonly SwaggerGeneratorOptions _options;
 
-    public XmlCommentsRequestBodyFilter(XPathDocument xmlDoc) : this(XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc), null)
+    public XmlCommentsRequestBodyFilter(XPathDocument xmlDoc)
+        : this(XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc), null)
     {
     }
 
@@ -64,8 +65,8 @@ public class XmlCommentsRequestBodyFilter : IRequestBodyFilter
 
                 foreach (var item in requestBody.Content.Values)
                 {
-                    if (item?.Schema?.Properties is { } properties
-                       && (properties.TryGetValue(formParameter.Name, out var value) || properties.TryGetValue(formParameter.Name.ToCamelCase(), out value)))
+                    if (item?.Schema?.Properties is { } properties &&
+                        (properties.TryGetValue(formParameter.Name, out var value) || properties.TryGetValue(formParameter.Name.ToCamelCase(), out value)))
                     {
                         var (summary, example) = GetParamTags(parameterFromForm);
                         value.Description ??= summary;

@@ -1,27 +1,16 @@
 ﻿namespace Swashbuckle.AspNetCore.Cli;
 
-internal class CommandRunner
+internal class CommandRunner(string commandName, string commandDescription, TextWriter output)
 {
-    private readonly Dictionary<string, string> _argumentDescriptors;
-    private readonly Dictionary<string, OptionDescriptor> _optionDescriptors;
-    private Func<IDictionary<string, string>, int> _runFunc;
-    private readonly List<CommandRunner> _subRunners;
-    private readonly TextWriter _output;
+    private readonly Dictionary<string, string> _argumentDescriptors = [];
+    private readonly Dictionary<string, OptionDescriptor> _optionDescriptors = [];
+    private Func<IDictionary<string, string>, int> _runFunc = (_) => 1;
+    private readonly List<CommandRunner> _subRunners = [];
+    private readonly TextWriter _output = output;
 
-    public CommandRunner(string commandName, string commandDescription, TextWriter output)
-    {
-        CommandName = commandName;
-        CommandDescription = commandDescription;
-        _argumentDescriptors = [];
-        _optionDescriptors = [];
-        _runFunc = (_) => 1; // no-op
-        _subRunners = [];
-        _output = output;
-    }
+    public string CommandName { get; private set; } = commandName;
 
-    public string CommandName { get; private set; }
-
-    public string CommandDescription { get; private set; }
+    public string CommandDescription { get; private set; } = commandDescription;
 
     public void Argument(string name, string description)
     {
@@ -30,7 +19,11 @@ internal class CommandRunner
 
     public void Option(string name, string description, bool isFlag = false)
     {
-        if (!name.StartsWith("--")) throw new ArgumentException("name of option must begin with --");
+        if (!name.StartsWith("--"))
+        {
+            throw new ArgumentException("name of option must begin with --");
+        }
+
         _optionDescriptors.Add(name, new OptionDescriptor { Description = description, IsFlag = isFlag });
     }
 
@@ -54,7 +47,7 @@ internal class CommandRunner
             if (subRunner != null) return subRunner.Run(args.Skip(1));
         }
 
-        if (_subRunners.Any() || !TryParseArgs(args, out IDictionary<string, string> namedArgs))
+        if (_subRunners.Count != 0 || !TryParseArgs(args, out IDictionary<string, string> namedArgs))
         {
             PrintUsage();
             return 1;
@@ -69,16 +62,20 @@ internal class CommandRunner
         var argsQueue = new Queue<string>(args);
 
         // Process options first
-        while (argsQueue.Any() && argsQueue.Peek().StartsWith("--"))
+        while (argsQueue.Count != 0 && argsQueue.Peek().StartsWith("--"))
         {
             // Ensure it's a known option
             var name = argsQueue.Dequeue();
             if (!_optionDescriptors.TryGetValue(name, out OptionDescriptor optionDescriptor))
+            {
                 return false;
+            }
 
             // If it's not a flag, ensure it's followed by a corresponding value
-            if (!optionDescriptor.IsFlag && (!argsQueue.Any() || argsQueue.Peek().StartsWith("--")))
+            if (!optionDescriptor.IsFlag && (argsQueue.Count == 0 || argsQueue.Peek().StartsWith("--")))
+            {
                 return false;
+            }
 
             namedArgs.Add(name, (!optionDescriptor.IsFlag ? argsQueue.Dequeue() : null));
         }
@@ -86,16 +83,19 @@ internal class CommandRunner
         // Process required args - ensure corresponding values are provided
         foreach (var name in _argumentDescriptors.Keys)
         {
-            if (!argsQueue.Any() || argsQueue.Peek().StartsWith("--")) return false;
+            if (argsQueue.Count == 0 || argsQueue.Peek().StartsWith("--"))
+            {
+                return false;
+            }
             namedArgs.Add(name, argsQueue.Dequeue());
         }
 
-        return argsQueue.Count() == 0;
+        return argsQueue.Count == 0;
     }
 
     private void PrintUsage()
     {
-        if (_subRunners.Any())
+        if (_subRunners.Count != 0)
         {
             // List sub commands
             _output.WriteLine(CommandDescription);
@@ -103,7 +103,11 @@ internal class CommandRunner
             foreach (var runner in _subRunners)
             {
                 var shortName = runner.CommandName.Split(' ').Last();
-                if (shortName.StartsWith("_")) continue; // convention to hide commands
+                if (shortName.StartsWith('_'))
+                {
+                    continue; // convention to hide commands
+                }
+
                 _output.WriteLine($"  {shortName}:  {runner.CommandDescription}");
             }
             _output.WriteLine();
@@ -111,7 +115,7 @@ internal class CommandRunner
         else
         {
             // Usage for this command
-            var optionsPart = _optionDescriptors.Any() ? "[options] " : "";
+            var optionsPart = _optionDescriptors.Count != 0 ? "[options] " : "";
             var argParts = _argumentDescriptors.Keys.Select(name => $"[{name}]");
             _output.WriteLine($"Usage: {CommandName} {optionsPart}{string.Join(" ", argParts)}");
             _output.WriteLine();
@@ -125,7 +129,7 @@ internal class CommandRunner
             }
 
             // Options
-            if (_optionDescriptors.Any())
+            if (_optionDescriptors.Count != 0)
             {
                 _output.WriteLine("options:");
                 foreach (var entry in _optionDescriptors)

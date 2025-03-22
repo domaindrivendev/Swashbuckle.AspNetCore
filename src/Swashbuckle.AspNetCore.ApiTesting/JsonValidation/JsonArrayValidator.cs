@@ -22,7 +22,7 @@ public class JsonArrayValidator(IJsonValidator jsonValidator) : IJsonValidator
         }
 
         var arrayInstance = (JArray)instance;
-        var errorMessagesList = new List<string>();
+        var errors = new List<string>();
 
         // items
         if (schema.Items != null)
@@ -31,7 +31,7 @@ public class JsonArrayValidator(IJsonValidator jsonValidator) : IJsonValidator
             {
                 if (!_jsonValidator.Validate(schema.Items, openApiDocument, itemInstance, out IEnumerable<string> itemErrorMessages))
                 {
-                    errorMessagesList.AddRange(itemErrorMessages);
+                    errors.AddRange(itemErrorMessages);
                 }
             }
         }
@@ -39,22 +39,22 @@ public class JsonArrayValidator(IJsonValidator jsonValidator) : IJsonValidator
         // maxItems
         if (schema.MaxItems.HasValue && (arrayInstance.Count > schema.MaxItems.Value))
         {
-            errorMessagesList.Add($"Path: {instance.Path}. Array size is greater than maxItems");
+            errors.Add($"Path: {instance.Path}. Array size is greater than maxItems");
         }
 
         // minItems
         if (schema.MinItems.HasValue && (arrayInstance.Count < schema.MinItems.Value))
         {
-            errorMessagesList.Add($"Path: {instance.Path}. Array size is less than minItems");
+            errors.Add($"Path: {instance.Path}. Array size is less than minItems");
         }
 
         // uniqueItems
         if (schema.UniqueItems.HasValue && (arrayInstance.Count != arrayInstance.Distinct().Count()))
         {
-            errorMessagesList.Add($"Path: {instance.Path}. Array does not contain uniqueItems");
+            errors.Add($"Path: {instance.Path}. Array does not contain uniqueItems");
         }
 
-        errorMessages = errorMessagesList;
+        errorMessages = errors;
         return !errorMessages.Any();
     }
 }

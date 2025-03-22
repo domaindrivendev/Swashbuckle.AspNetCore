@@ -46,7 +46,6 @@ public class SwaggerGenerator(
         swaggerDoc.Paths = await GeneratePathsAsync(swaggerDoc, filterContext.ApiDescriptions, filterContext.SchemaRepository);
         swaggerDoc.Components.SecuritySchemes = await GetSecuritySchemesAsync();
 
-        // NOTE: Filter processing moved here so they may affect generated security schemes
         foreach (var filter in _options.DocumentAsyncFilters)
         {
             await filter.ApplyAsync(swaggerDoc, filterContext, CancellationToken.None);
@@ -71,7 +70,6 @@ public class SwaggerGenerator(
             swaggerDoc.Paths = GeneratePaths(swaggerDoc, filterContext.ApiDescriptions, filterContext.SchemaRepository);
             swaggerDoc.Components.SecuritySchemes = GetSecuritySchemesAsync().Result;
 
-            // NOTE: Filter processing moved here so they may affect generated security schemes
             foreach (var filter in _options.DocumentFilters)
             {
                 filter.Apply(swaggerDoc, filterContext);
@@ -102,7 +100,7 @@ public class SwaggerGenerator(
         }
     }
 
-    public IList<string> GetDocumentNames() => _options.SwaggerDocs.Keys.ToList();
+    public IList<string> GetDocumentNames() => [.. _options.SwaggerDocs.Keys];
 
     private void SortSchemas(OpenApiDocument document)
     {
@@ -136,7 +134,7 @@ public class SwaggerGenerator(
             {
                 Schemas = schemaRepository.Schemas,
             },
-            SecurityRequirements = new List<OpenApiSecurityRequirement>(_options.SecurityRequirements)
+            SecurityRequirements = [.. _options.SecurityRequirements]
         };
 
         return (new DocumentFilterContext(applicableApiDescriptions, _schemaGenerator, schemaRepository), swaggerDoc);
@@ -176,10 +174,10 @@ public class SwaggerGenerator(
     {
         if (_options.Servers.Count > 0)
         {
-            return new List<OpenApiServer>(_options.Servers);
+            return [.. _options.Servers];
         }
 
-        return (host == null && basePath == null)
+        return host == null && basePath == null
             ? []
             : [new() { Url = $"{host}{basePath}" }];
     }
@@ -197,7 +195,8 @@ public class SwaggerGenerator(
         var paths = new OpenApiPaths();
         foreach (var group in apiDescriptionsByPath)
         {
-            paths.Add($"/{group.Key}",
+            paths.Add(
+                $"/{group.Key}",
                 new OpenApiPathItem
                 {
                     Operations = await operationsGenerator(document, group, schemaRepository)
@@ -291,10 +290,12 @@ public class SwaggerGenerator(
                 string.Join(", ", group.Select(apiDesc => apiDesc.ActionDescriptor.DisplayName))));
         }
 
-        var apiDescription = (count > 1) ? _options.ConflictingActionsResolver(group) : group.Single();
+        var apiDescription =
+            count > 1 ?
+            _options.ConflictingActionsResolver(group) :
+            group.Single();
 
-        var normalizedMethod = httpMethod.ToUpperInvariant();
-        if (!OperationTypeMap.TryGetValue(normalizedMethod, out var operationType))
+        if (!OperationTypeMap.TryGetValue(httpMethod, out var operationType))
         {
             // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2600 and
             // https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2740.
@@ -522,8 +523,8 @@ public class SwaggerGenerator(
             .Where(apiParam =>
             {
                 return !apiParam.IsFromBody() && !apiParam.IsFromForm()
-                    && (!apiParam.CustomAttributes().OfType<BindNeverAttribute>().Any())
-                    && (!apiParam.CustomAttributes().OfType<SwaggerIgnoreAttribute>().Any())
+                    && !apiParam.CustomAttributes().OfType<BindNeverAttribute>().Any()
+                    && !apiParam.CustomAttributes().OfType<SwaggerIgnoreAttribute>().Any()
                     && (apiParam.ModelMetadata == null || apiParam.ModelMetadata.IsBindingAllowed)
                     && !apiParam.IsIllegalHeaderParameter();
             });
@@ -564,8 +565,9 @@ public class SwaggerGenerator(
             ? apiParameter.Name.ToCamelCase()
             : apiParameter.Name;
 
-        var location = apiParameter.Source != null &&
-                        ParameterLocationMap.TryGetValue(apiParameter.Source, out var value)
+        var location =
+            apiParameter.Source != null &&
+            ParameterLocationMap.TryGetValue(apiParameter.Source, out var value)
             ? value
             : ParameterLocation.Query;
 
@@ -573,10 +575,10 @@ public class SwaggerGenerator(
 
         var type = apiParameter.ModelMetadata?.ModelType;
 
-        if (type is not null
-            && type == typeof(string)
-            && apiParameter.Type is not null
-            && (Nullable.GetUnderlyingType(apiParameter.Type) ?? apiParameter.Type).IsEnum)
+        if (type is not null &&
+            type == typeof(string) &&
+            apiParameter.Type is not null &&
+            (Nullable.GetUnderlyingType(apiParameter.Type) ?? apiParameter.Type).IsEnum)
         {
             type = apiParameter.Type;
         }
@@ -591,9 +593,9 @@ public class SwaggerGenerator(
             : new OpenApiSchema { Type = JsonSchemaTypes.String };
 
         var description = schema.Description;
-        if (string.IsNullOrEmpty(description)
-            && !string.IsNullOrEmpty(schema?.Reference?.Id)
-            && schemaRepository.Schemas.TryGetValue(schema.Reference.Id, out var openApiSchema))
+        if (string.IsNullOrEmpty(description) &&
+            !string.IsNullOrEmpty(schema?.Reference?.Id) &&
+            schemaRepository.Schemas.TryGetValue(schema.Reference.Id, out var openApiSchema))
         {
             description = openApiSchema.Description;
         }
@@ -611,8 +613,10 @@ public class SwaggerGenerator(
 
     private static ParameterStyle? GetParameterStyle(Type type, BindingSource source)
     {
-        return source == BindingSource.Query && type?.IsGenericType == true &&
-               typeof(IEnumerable<KeyValuePair<string, string>>).IsAssignableFrom(type)
+        return
+            source == BindingSource.Query &&
+            type?.IsGenericType == true &&
+            typeof(IEnumerable<KeyValuePair<string, string>>).IsAssignableFrom(type)
             ? ParameterStyle.DeepObject
             : null;
     }
@@ -779,25 +783,29 @@ public class SwaggerGenerator(
 
         return new OpenApiRequestBody
         {
-            Content = contentTypes
-                .ToDictionary(
-                    contentType => contentType,
-                    contentType => new OpenApiMediaType
-                    {
-                        Schema = schema
-                    }
-                ),
-            Required = isRequired
+            Required = isRequired,
+            Content = contentTypes.ToDictionary(
+                contentType => contentType,
+                contentType => new OpenApiMediaType
+                {
+                    Schema = schema
+                }),
         };
     }
 
     private static IEnumerable<string> InferRequestContentTypes(ApiDescription apiDescription)
     {
         // If there's content types explicitly specified via ConsumesAttribute, use them
-        var explicitContentTypes = apiDescription.CustomAttributes().OfType<ConsumesAttribute>()
+        var explicitContentTypes = apiDescription
+            .CustomAttributes()
+            .OfType<ConsumesAttribute>()
             .SelectMany(attr => attr.ContentTypes)
             .Distinct();
-        if (explicitContentTypes.Any()) return explicitContentTypes;
+
+        if (explicitContentTypes.Any())
+        {
+            return explicitContentTypes;
+        }
 
         // If there's content types surfaced by ApiExplorer, use them
         return apiDescription.SupportedRequestFormats
@@ -826,18 +834,16 @@ public class SwaggerGenerator(
 
         return new OpenApiRequestBody
         {
-            Content = contentTypes
-                .ToDictionary(
-                    contentType => contentType,
-                    contentType => new OpenApiMediaType
-                    {
-                        Schema = schema,
-                        Encoding = totalProperties.ToDictionary(
-                            entry => entry.Key,
-                            entry => new OpenApiEncoding { Style = ParameterStyle.Form }
-                        )
-                    }
-                )
+            Content = contentTypes.ToDictionary(
+                contentType => contentType,
+                contentType => new OpenApiMediaType
+                {
+                    Schema = schema,
+                    Encoding = totalProperties.ToDictionary(
+                        entry => entry.Key,
+                        entry => new OpenApiEncoding { Style = ParameterStyle.Form }
+                    )
+                })
         };
     }
 
@@ -848,26 +854,30 @@ public class SwaggerGenerator(
         var properties = new Dictionary<string, OpenApiSchema>();
         var requiredPropertyNames = new List<string>();
         var ownSchemas = new List<OpenApiSchema>();
+
         foreach (var formParameter in formParameters)
         {
             var propertyInfo = formParameter.PropertyInfo();
             if (!propertyInfo?.HasAttribute<SwaggerIgnoreAttribute>() ?? true)
             {
-                var schema = (formParameter.ModelMetadata != null)
-                ? GenerateSchema(
-                    formParameter.ModelMetadata.ModelType,
-                    schemaRepository,
-                    propertyInfo,
-                    formParameter.ParameterInfo())
-                : new OpenApiSchema { Type = JsonSchemaTypes.String };
+                var schema =
+                    formParameter.ModelMetadata != null
+                    ? GenerateSchema(
+                        formParameter.ModelMetadata.ModelType,
+                        schemaRepository,
+                        propertyInfo,
+                        formParameter.ParameterInfo())
+                    : new OpenApiSchema { Type = JsonSchemaTypes.String };
 
-                if (schema.Reference is null
-                || (formParameter.ModelMetadata?.ModelType is not null && (Nullable.GetUnderlyingType(formParameter.ModelMetadata.ModelType) ?? formParameter.ModelMetadata.ModelType).IsEnum))
+                if (schema.Reference is null ||
+                    (formParameter.ModelMetadata?.ModelType is not null && (Nullable.GetUnderlyingType(formParameter.ModelMetadata.ModelType) ?? formParameter.ModelMetadata.ModelType).IsEnum))
                 {
                     var name = _options.DescribeAllParametersInCamelCase
                         ? formParameter.Name.ToCamelCase()
                         : formParameter.Name;
+
                     properties.Add(name, schema);
+
                     if (formParameter.IsRequiredParameter())
                     {
                         requiredPropertyNames.Add(name);
@@ -882,19 +892,25 @@ public class SwaggerGenerator(
 
         if (ownSchemas.Count > 0)
         {
-            bool isAllOf = ownSchemas.Count > 1 || (ownSchemas.Count > 0 && properties.Count > 0);
+            bool isAllOf =
+                ownSchemas.Count > 1 ||
+                (ownSchemas.Count > 0 && properties.Count > 0);
+
             if (isAllOf)
             {
                 var allOfSchema = new OpenApiSchema()
                 {
                     AllOf = ownSchemas
                 };
+
                 if (properties.Count > 0)
                 {
                     allOfSchema.AllOf.Add(GenerateSchemaForProperties(properties, requiredPropertyNames));
                 }
+
                 return allOfSchema;
             }
+
             return ownSchemas.First();
         }
 
@@ -950,7 +966,8 @@ public class SwaggerGenerator(
     private static IEnumerable<string> InferResponseContentTypes(ApiDescription apiDescription, ApiResponseType apiResponseType)
     {
         // If there's no associated model type, return an empty list (i.e. no content)
-        if (apiResponseType.ModelMetadata == null && (apiResponseType.Type == null || apiResponseType.Type == typeof(void)))
+        if (apiResponseType.ModelMetadata == null &&
+            (apiResponseType.Type == null || apiResponseType.Type == typeof(void)))
         {
             return [];
         }
@@ -959,15 +976,16 @@ public class SwaggerGenerator(
         var explicitContentTypes = apiDescription.CustomAttributes().OfType<ProducesAttribute>()
             .SelectMany(attr => attr.ContentTypes)
             .Distinct();
-        if (explicitContentTypes.Any()) return explicitContentTypes;
+
+        if (explicitContentTypes.Any())
+        {
+            return explicitContentTypes;
+        }
 
         // If there's content types surfaced by ApiExplorer, use them
-        var apiExplorerContentTypes = apiResponseType.ApiResponseFormats
+        return [.. apiResponseType.ApiResponseFormats
             .Select(responseFormat => responseFormat.MediaType)
-            .Distinct();
-        if (apiExplorerContentTypes.Any()) return apiExplorerContentTypes;
-
-        return [];
+            .Distinct()];
     }
 
     private OpenApiMediaType CreateResponseMediaType(Type modelType, SchemaRepository schemaRespository)
@@ -986,7 +1004,7 @@ public class SwaggerGenerator(
         return fromFormAttribute != null && parameterInfo?.ParameterType == typeof(IFormFile);
     }
 
-    private static readonly Dictionary<string, OperationType> OperationTypeMap = new()
+    private static readonly Dictionary<string, OperationType> OperationTypeMap = new(StringComparer.OrdinalIgnoreCase)
     {
         ["GET"] = OperationType.Get,
         ["PUT"] = OperationType.Put,

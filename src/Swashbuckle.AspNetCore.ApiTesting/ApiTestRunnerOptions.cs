@@ -6,8 +6,8 @@ public class ApiTestRunnerOptions
 {
     public ApiTestRunnerOptions()
     {
-        OpenApiDocs = new Dictionary<string, OpenApiDocument>();
-        ContentValidators = new List<IContentValidator> { new JsonContentValidator() };
+        OpenApiDocs = [];
+        ContentValidators = [new JsonContentValidator()];
         GenerateOpenApiFiles = false;
         FileOutputRoot = null;
     }

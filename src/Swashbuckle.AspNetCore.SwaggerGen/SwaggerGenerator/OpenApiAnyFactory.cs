@@ -48,34 +48,52 @@ public static class OpenApiAnyFactory
     private static IOpenApiAny CreateFromJsonElement(JsonElement jsonElement)
     {
         if (jsonElement.ValueKind == JsonValueKind.Null)
+        {
             return new OpenApiNull();
+        }
 
         if (jsonElement.ValueKind == JsonValueKind.True || jsonElement.ValueKind == JsonValueKind.False)
+        {
             return new OpenApiBoolean(jsonElement.GetBoolean());
+        }
 
         if (jsonElement.ValueKind == JsonValueKind.Number)
         {
             if (jsonElement.TryGetInt32(out int intValue))
+            {
                 return new OpenApiInteger(intValue);
+            }
 
             if (jsonElement.TryGetInt64(out long longValue))
+            {
                 return new OpenApiLong(longValue);
+            }
 
             if (jsonElement.TryGetSingle(out float floatValue) && !float.IsInfinity(floatValue))
+            {
                 return new OpenApiFloat(floatValue);
+            }
 
             if (jsonElement.TryGetDouble(out double doubleValue))
+            {
                 return new OpenApiDouble(doubleValue);
+            }
         }
 
         if (jsonElement.ValueKind == JsonValueKind.String)
+        {
             return new OpenApiString(jsonElement.ToString());
+        }
 
         if (jsonElement.ValueKind == JsonValueKind.Array)
+        {
             return CreateOpenApiArray(jsonElement);
+        }
 
         if (jsonElement.ValueKind == JsonValueKind.Object)
+        {
             return CreateOpenApiObject(jsonElement);
+        }
 
         throw new ArgumentException($"Unsupported value kind {jsonElement.ValueKind}");
     }

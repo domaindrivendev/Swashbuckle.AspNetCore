@@ -13,7 +13,8 @@ public static class MethodInfoExtensions
         var constructedTypeParameters = constructedTypeMethod.GetParameters();
 
         // Retrieve list of candidate methods that match name and parameter count
-        var candidateMethods = genericTypeDefinition.GetMethods()
+        var candidateMethods = genericTypeDefinition
+            .GetMethods()
             .Where(m =>
             {
                 var genericTypeDefinitionParameters = m.GetParameters();
@@ -75,6 +76,6 @@ public static class MethodInfoExtensions
 
 
         // If inconclusive, just return null
-        return (candidateMethods.Count() == 1) ? candidateMethods.First() : null;
+        return candidateMethods.Count() == 1 ? candidateMethods.First() : null;
     }
 }

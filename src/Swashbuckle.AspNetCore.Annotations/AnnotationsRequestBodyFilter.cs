@@ -10,7 +10,10 @@ public class AnnotationsRequestBodyFilter : IRequestBodyFilter
     {
         var bodyParameterDescription = context.BodyParameterDescription;
 
-        if (bodyParameterDescription == null) return;
+        if (bodyParameterDescription == null)
+        {
+            return;
+        }
 
         var propertyInfo = bodyParameterDescription.PropertyInfo();
         if (propertyInfo != null)
@@ -33,7 +36,9 @@ public class AnnotationsRequestBodyFilter : IRequestBodyFilter
             .FirstOrDefault();
 
         if (swaggerRequestBodyAttribute != null)
+        {
             ApplySwaggerRequestBodyAttribute(parameter, swaggerRequestBodyAttribute);
+        }
     }
 
     private void ApplyParamAnnotations(OpenApiRequestBody requestBody, ParameterInfo parameterInfo)
@@ -41,15 +46,21 @@ public class AnnotationsRequestBodyFilter : IRequestBodyFilter
         var swaggerRequestBodyAttribute = parameterInfo.GetCustomAttribute<SwaggerRequestBodyAttribute>();
 
         if (swaggerRequestBodyAttribute != null)
+        {
             ApplySwaggerRequestBodyAttribute(requestBody, swaggerRequestBodyAttribute);
+        }
     }
 
     private void ApplySwaggerRequestBodyAttribute(OpenApiRequestBody parameter, SwaggerRequestBodyAttribute swaggerRequestBodyAttribute)
     {
         if (swaggerRequestBodyAttribute.Description != null)
+        {
             parameter.Description = swaggerRequestBodyAttribute.Description;
+        }
 
         if (swaggerRequestBodyAttribute.RequiredFlag.HasValue)
+        {
             parameter.Required = swaggerRequestBodyAttribute.RequiredFlag.Value;
+        }
     }
 }

@@ -1,14 +1,9 @@
 ﻿namespace Swashbuckle.AspNetCore.Annotations;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface, AllowMultiple = true)]
-public class SwaggerSubTypeAttribute : Attribute
+public class SwaggerSubTypeAttribute(Type subType) : Attribute
 {
-    public SwaggerSubTypeAttribute(Type subType)
-    {
-        SubType = subType;
-    }
-
-    public Type SubType { get; set; }
+    public Type SubType { get; set; } = subType;
 
     public string DiscriminatorValue { get; set; }
 }

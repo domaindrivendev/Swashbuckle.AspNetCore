@@ -35,7 +35,7 @@ public class JsonValidator : IJsonValidator
             ? (OpenApiSchema)openApiDocument.ResolveReference(schema.Reference)
             : schema;
 
-        var errorMessagesList = new List<string>();
+        var errors = new List<string>();
 
         foreach (var subValidator in _subValidators)
         {
@@ -46,11 +46,11 @@ public class JsonValidator : IJsonValidator
 
             if (!subValidator.Validate(schema, openApiDocument, instance, out IEnumerable<string> subErrorMessages))
             {
-                errorMessagesList.AddRange(subErrorMessages);
+                errors.AddRange(subErrorMessages);
             }
         }
 
-        errorMessages = errorMessagesList;
+        errorMessages = errors;
         return !errorMessages.Any();
     }
 }

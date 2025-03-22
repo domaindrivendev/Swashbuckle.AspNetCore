@@ -29,10 +29,7 @@ public static class ReDocBuilderExtensions
         }
 
         // To simplify the common case, use a default that will work with the SwaggerMiddleware defaults
-        if (options.SpecUrl == null)
-        {
-            options.SpecUrl = "../swagger/v1/swagger.json";
-        }
+        options.SpecUrl ??= "../swagger/v1/swagger.json";
 
         return app.UseReDoc(options);
     }

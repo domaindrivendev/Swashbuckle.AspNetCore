@@ -1,12 +1,7 @@
 ﻿namespace Swashbuckle.AspNetCore.Annotations;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface, AllowMultiple = false)]
-public class SwaggerDiscriminatorAttribute : Attribute
+public class SwaggerDiscriminatorAttribute(string propertyName) : Attribute
 {
-    public SwaggerDiscriminatorAttribute(string propertyName)
-    {
-        PropertyName = propertyName;
-    }
-
-    public string PropertyName { get; set; }
+    public string PropertyName { get; set; } = propertyName;
 }

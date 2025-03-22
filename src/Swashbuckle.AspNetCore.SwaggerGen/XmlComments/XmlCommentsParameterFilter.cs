@@ -1,7 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Xml.XPath;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -10,7 +10,8 @@ public class XmlCommentsParameterFilter : IParameterFilter
     private readonly IReadOnlyDictionary<string, XPathNavigator> _xmlDocMembers;
     private readonly SwaggerGeneratorOptions _options;
 
-    public XmlCommentsParameterFilter(XPathDocument xmlDoc) : this(XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc), null)
+    public XmlCommentsParameterFilter(XPathDocument xmlDoc)
+        : this(XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc), null)
     {
     }
 
@@ -43,18 +44,22 @@ public class XmlCommentsParameterFilter : IParameterFilter
         if (summaryNode != null)
         {
             parameter.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml, _options?.XmlCommentEndOfLine);
-            parameter.Schema.Description = null; // no need to duplicate
+            parameter.Schema.Description = null; // No need to duplicate
         }
 
         var exampleNode = propertyNode.SelectFirstChild("example");
-        if (exampleNode == null) return;
-
-        parameter.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, parameter.Schema, exampleNode.ToString());
+        if (exampleNode != null)
+        {
+            parameter.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, parameter.Schema, exampleNode.ToString());
+        }
     }
 
     private void ApplyParamTags(OpenApiParameter parameter, ParameterFilterContext context)
     {
-        if (!(context.ParameterInfo.Member is MethodInfo methodInfo)) return;
+        if (context.ParameterInfo.Member is not MethodInfo methodInfo)
+        {
+            return;
+        }
 
         // If method is from a constructed generic type, look for comments from the generic type method
         var targetMethod = methodInfo.DeclaringType.IsConstructedGenericType
@@ -65,7 +70,10 @@ public class XmlCommentsParameterFilter : IParameterFilter
 
         var methodMemberName = XmlCommentsNodeNameHelper.GetMemberNameForMethod(targetMethod);
 
-        if (!_xmlDocMembers.TryGetValue(methodMemberName, out var propertyNode)) return;
+        if (!_xmlDocMembers.TryGetValue(methodMemberName, out var propertyNode))
+        {
+            return;
+        }
 
         XPathNavigator paramNode = propertyNode.SelectFirstChildWithAttribute("param", "name", context.ParameterInfo.Name);
 
@@ -74,9 +82,10 @@ public class XmlCommentsParameterFilter : IParameterFilter
             parameter.Description = XmlCommentsTextHelper.Humanize(paramNode.InnerXml, _options?.XmlCommentEndOfLine);
 
             var example = paramNode.GetAttribute("example");
-            if (string.IsNullOrEmpty(example)) return;
-
-            parameter.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, parameter.Schema, example);
+            if (!string.IsNullOrEmpty(example))
+            {
+                parameter.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, parameter.Schema, example);
+            }
         }
     }
 }

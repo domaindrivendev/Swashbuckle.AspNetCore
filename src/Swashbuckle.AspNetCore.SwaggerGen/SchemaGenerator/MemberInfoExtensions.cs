@@ -181,7 +181,6 @@ public static class MemberInfoExtensions
 
         return false;
     }
-#endif
 
     private static List<Type> GetDeclaringTypeChain(MemberInfo memberInfo)
     {
@@ -196,4 +195,5 @@ public static class MemberInfoExtensions
 
         return chain;
     }
+#endif
 }

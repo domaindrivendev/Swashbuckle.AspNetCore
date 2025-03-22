@@ -38,11 +38,12 @@ internal sealed class HostFactoryResolver
     // 3. Give the caller a chance to execute logic to mutate the IHostBuilder
     // 4. Resolve the instance of the applications's IHost
     // 5. Allow the caller to determine if the entry point has completed
-    public static Func<string[], object> ResolveHostFactory(Assembly assembly,
-                                                             TimeSpan? waitTimeout = null,
-                                                             bool stopApplication = true,
-                                                             Action<object> configureHostBuilder = null,
-                                                             Action<Exception> entrypointCompleted = null)
+    public static Func<string[], object> ResolveHostFactory(
+        Assembly assembly,
+        TimeSpan? waitTimeout = null,
+        bool stopApplication = true,
+        Action<object> configureHostBuilder = null,
+        Action<Exception> entrypointCompleted = null)
     {
         if (assembly.EntryPoint is null)
         {
@@ -163,34 +164,24 @@ internal sealed class HostFactoryResolver
         return (IServiceProvider)servicesProperty?.GetValue(host);
     }
 
-    private sealed class HostingListener : IObserver<DiagnosticListener>, IObserver<KeyValuePair<string, object>>
+    private sealed class HostingListener(
+        string[] args,
+        MethodInfo entryPoint,
+        TimeSpan waitTimeout,
+        bool stopApplication,
+        Action<object> configure,
+        Action<Exception> entrypointCompleted) : IObserver<DiagnosticListener>, IObserver<KeyValuePair<string, object>>
     {
-        private readonly string[] _args;
-        private readonly MethodInfo _entryPoint;
-        private readonly TimeSpan _waitTimeout;
-        private readonly bool _stopApplication;
+        private readonly string[] _args = args;
+        private readonly MethodInfo _entryPoint = entryPoint;
+        private readonly TimeSpan _waitTimeout = waitTimeout;
+        private readonly bool _stopApplication = stopApplication;
 
         private readonly TaskCompletionSource<object> _hostTcs = new();
         private IDisposable _disposable;
-        private readonly Action<object> _configure;
-        private readonly Action<Exception> _entrypointCompleted;
+        private readonly Action<object> _configure = configure;
+        private readonly Action<Exception> _entrypointCompleted = entrypointCompleted;
         private static readonly AsyncLocal<HostingListener> _currentListener = new();
-
-        public HostingListener(
-            string[] args,
-            MethodInfo entryPoint,
-            TimeSpan waitTimeout,
-            bool stopApplication,
-            Action<object> configure,
-            Action<Exception> entrypointCompleted)
-        {
-            _args = args;
-            _entryPoint = entryPoint;
-            _waitTimeout = waitTimeout;
-            _stopApplication = stopApplication;
-            _configure = configure;
-            _entrypointCompleted = entrypointCompleted;
-        }
 
         public object CreateHost()
         {

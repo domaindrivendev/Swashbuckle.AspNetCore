@@ -10,16 +10,16 @@ namespace Swashbuckle.AspNetCore.SwaggerGen;
 
 public static class ApiParameterDescriptionExtensions
 {
-    private static readonly Type[] RequiredAttributeTypes = new[]
-    {
+    private static readonly Type[] RequiredAttributeTypes =
+    [
         typeof(BindRequiredAttribute),
         typeof(RequiredAttribute),
 #if NET
         typeof(System.Runtime.CompilerServices.RequiredMemberAttribute)
 #endif
-    };
+    ];
 
-    private static readonly HashSet<string> IllegalHeaderParameters = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+    private static readonly HashSet<string> IllegalHeaderParameters = new(StringComparer.OrdinalIgnoreCase)
     {
         HeaderNames.Accept,
         HeaderNames.Authorization,
@@ -47,9 +47,9 @@ public static class ApiParameterDescriptionExtensions
         // For non-controllers, prefer the IsRequired flag if we're not on netstandard 2.0, otherwise fallback to the default logic.
         return
 #if NET
-        apiParameter.IsRequired;
+            apiParameter.IsRequired;
 #else
-        IsRequired();
+            IsRequired();
 #endif
     }
 
@@ -75,12 +75,18 @@ public static class ApiParameterDescriptionExtensions
     public static IEnumerable<object> CustomAttributes(this ApiParameterDescription apiParameter)
     {
         var propertyInfo = apiParameter.PropertyInfo();
-        if (propertyInfo != null) return propertyInfo.GetCustomAttributes(true);
+        if (propertyInfo != null)
+        {
+            return propertyInfo.GetCustomAttributes(true);
+        }
 
         var parameterInfo = apiParameter.ParameterInfo();
-        if (parameterInfo != null) return parameterInfo.GetCustomAttributes(true);
+        if (parameterInfo != null)
+        {
+            return parameterInfo.GetCustomAttributes(true);
+        }
 
-        return Enumerable.Empty<object>();
+        return [];
     }
 
     [Obsolete("Use ParameterInfo(), PropertyInfo() and CustomAttributes() extension methods instead")]
@@ -120,8 +126,10 @@ public static class ApiParameterDescriptionExtensions
         var source = apiParameter.Source;
         var elementType = isEnhancedModelMetadataSupported ? apiParameter.ModelMetadata?.ElementType : null;
 
-        return (source == BindingSource.Form || source == BindingSource.FormFile)
-            || (elementType != null && typeof(IFormFile).IsAssignableFrom(elementType));
+        return
+            source == BindingSource.Form ||
+            source == BindingSource.FormFile ||
+            (elementType != null && typeof(IFormFile).IsAssignableFrom(elementType));
     }
 
     internal static bool IsIllegalHeaderParameter(this ApiParameterDescription apiParameter)

@@ -2,23 +2,16 @@
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
-public class DocumentFilterContext
+public class DocumentFilterContext(
+    IEnumerable<ApiDescription> apiDescriptions,
+    ISchemaGenerator schemaGenerator,
+    SchemaRepository schemaRepository)
 {
-    public DocumentFilterContext(
-        IEnumerable<ApiDescription> apiDescriptions,
-        ISchemaGenerator schemaGenerator,
-        SchemaRepository schemaRepository)
-    {
-        ApiDescriptions = apiDescriptions;
-        SchemaGenerator = schemaGenerator;
-        SchemaRepository = schemaRepository;
-    }
+    public IEnumerable<ApiDescription> ApiDescriptions { get; } = apiDescriptions;
 
-    public IEnumerable<ApiDescription> ApiDescriptions { get; }
+    public ISchemaGenerator SchemaGenerator { get; } = schemaGenerator;
 
-    public ISchemaGenerator SchemaGenerator { get; }
-
-    public SchemaRepository SchemaRepository { get; }
+    public SchemaRepository SchemaRepository { get; } = schemaRepository;
 
     public string DocumentName => SchemaRepository.DocumentName;
 }

@@ -2,27 +2,19 @@
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
-public class RequestBodyFilterContext
+public class RequestBodyFilterContext(
+    ApiParameterDescription bodyParameterDescription,
+    IEnumerable<ApiParameterDescription> formParameterDescriptions,
+    ISchemaGenerator schemaGenerator,
+    SchemaRepository schemaRepository)
 {
-    public RequestBodyFilterContext(
-        ApiParameterDescription bodyParameterDescription,
-        IEnumerable<ApiParameterDescription> formParameterDescriptions,
-        ISchemaGenerator schemaGenerator,
-        SchemaRepository schemaRepository)
-    {
-        BodyParameterDescription = bodyParameterDescription;
-        FormParameterDescriptions = formParameterDescriptions;
-        SchemaGenerator = schemaGenerator;
-        SchemaRepository = schemaRepository;
-    }
+    public ApiParameterDescription BodyParameterDescription { get; } = bodyParameterDescription;
 
-    public ApiParameterDescription BodyParameterDescription { get; }
+    public IEnumerable<ApiParameterDescription> FormParameterDescriptions { get; } = formParameterDescriptions;
 
-    public IEnumerable<ApiParameterDescription> FormParameterDescriptions { get; }
+    public ISchemaGenerator SchemaGenerator { get; } = schemaGenerator;
 
-    public ISchemaGenerator SchemaGenerator { get; }
-
-    public SchemaRepository SchemaRepository { get; }
+    public SchemaRepository SchemaRepository { get; } = schemaRepository;
 
     public string DocumentName => SchemaRepository.DocumentName;
 }

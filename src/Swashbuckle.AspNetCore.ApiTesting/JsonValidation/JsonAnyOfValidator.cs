@@ -15,22 +15,23 @@ public class JsonAnyOfValidator(JsonValidator jsonValidator) : IJsonValidator
         JToken instance,
         out IEnumerable<string> errorMessages)
     {
-        var errorMessagesList = new List<string>();
+        var errors = new List<string>();
 
-        var anyOfArray = schema.AnyOf.ToArray();
-
-        for (int i = 0; i < anyOfArray.Length; i++)
+        if (schema.AnyOf is { } anyOf)
         {
-            if (_jsonValidator.Validate(anyOfArray[i], openApiDocument, instance, out IEnumerable<string> subErrorMessages))
+            for (int i = 0; i < anyOf.Count; i++)
             {
-                errorMessages = [];
-                return true;
-            }
+                if (_jsonValidator.Validate(anyOf[i], openApiDocument, instance, out IEnumerable<string> subErrorMessages))
+                {
+                    errorMessages = [];
+                    return true;
+                }
 
-            errorMessagesList.AddRange(subErrorMessages.Select(msg => $"{msg} (anyOf[{i}])"));
+                errors.AddRange(subErrorMessages.Select(msg => $"{msg} (anyOf[{i}])"));
+            }
         }
 
-        errorMessages = errorMessagesList;
+        errorMessages = errors;
         return !errorMessages.Any();
     }
 }

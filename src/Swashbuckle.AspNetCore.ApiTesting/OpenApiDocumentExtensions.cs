@@ -10,7 +10,7 @@ public static class OpenApiDocumentExtensions
         out string pathTemplate,
         out OperationType operationType)
     {
-        foreach (var pathEntry in openApiDocument.Paths ?? new OpenApiPaths())
+        foreach (var pathEntry in openApiDocument.Paths ?? [])
         {
             var pathItem = pathEntry.Value;
 
@@ -26,7 +26,7 @@ public static class OpenApiDocumentExtensions
         }
 
         pathTemplate = null;
-        operationType = default(OperationType);
+        operationType = default;
         return false;
     }
 
@@ -39,7 +39,9 @@ public static class OpenApiDocumentExtensions
         if (openApiDocument.Paths.TryGetValue(pathTemplate, out pathSpec))
         {
             if (pathSpec.Operations.TryGetValue(operationType, out var type))
+            {
                 return type;
+            }
         }
 
         throw new InvalidOperationException($"Operation with path '{pathTemplate}' and type '{operationType}' not found");

@@ -50,11 +50,11 @@ public static class ApiDescriptionExtensions
         {
             customAttributes = methodInfo.GetCustomAttributes(true)
                 .Union(methodInfo.DeclaringType.GetCustomAttributes(true));
-
-            return;
         }
-
-        customAttributes = [];
+        else
+        {
+            customAttributes = [];
+        }
     }
 
     internal static string RelativePathSansParameterConstraints(this ApiDescription apiDescription)
@@ -63,6 +63,11 @@ public static class ApiDescriptionExtensions
         var sanitizedSegments = routeTemplate
             .Segments
             .Select(s => string.Concat(s.Parts.Select(p => p.Name != null ? $"{{{p.Name}}}" : p.Text)));
+
+#if NET
+        return string.Join('/', sanitizedSegments);
+#else
         return string.Join("/", sanitizedSegments);
+#endif
     }
 }

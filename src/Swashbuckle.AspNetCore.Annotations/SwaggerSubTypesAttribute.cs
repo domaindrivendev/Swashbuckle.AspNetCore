@@ -2,14 +2,9 @@
 
 [Obsolete("Use multiple SwaggerSubType attributes instead")]
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface, AllowMultiple = false)]
-public class SwaggerSubTypesAttribute : Attribute
+public class SwaggerSubTypesAttribute(params Type[] subTypes) : Attribute
 {
-    public SwaggerSubTypesAttribute(params Type[] subTypes)
-    {
-        SubTypes = subTypes;
-    }
-
-    public IEnumerable<Type> SubTypes { get; }
+    public IEnumerable<Type> SubTypes { get; } = subTypes;
 
     public string Discriminator { get; set; }
 }

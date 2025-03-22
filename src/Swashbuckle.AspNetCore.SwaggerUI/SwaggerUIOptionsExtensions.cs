@@ -54,6 +54,7 @@ public static class SwaggerUIOptionsExtensions
     {
         options.ConfigObject.DeepLinking = true;
     }
+
     /// <summary>
     /// Enables persist authorization data
     /// </summary>

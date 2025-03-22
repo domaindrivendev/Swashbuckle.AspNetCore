@@ -16,7 +16,8 @@ public class XmlCommentsDocumentFilter : IDocumentFilter
     {
     }
 
-    public XmlCommentsDocumentFilter(XPathDocument xmlDoc, SwaggerGeneratorOptions options) : this(XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc), options)
+    public XmlCommentsDocumentFilter(XPathDocument xmlDoc, SwaggerGeneratorOptions options)
+        : this(XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc), options)
     {
     }
 
@@ -47,7 +48,7 @@ public class XmlCommentsDocumentFilter : IDocumentFilter
             var summaryNode = typeNode.SelectFirstChild(SummaryTag);
             if (summaryNode != null)
             {
-                swaggerDoc.Tags ??= new List<OpenApiTag>();
+                swaggerDoc.Tags ??= [];
 
                 swaggerDoc.Tags.Add(new OpenApiTag
                 {
