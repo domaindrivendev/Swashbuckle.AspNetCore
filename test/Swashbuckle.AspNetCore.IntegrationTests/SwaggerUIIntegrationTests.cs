@@ -14,9 +14,10 @@ public class SwaggerUIIntegrationTests
         string requestPath,
         string expectedRedirectPath)
     {
-        var client = new TestSite(startupType).BuildClient();
+        var site = new TestSite(startupType);
+        using var client = site.BuildClient();
 
-        var response = await client.GetAsync(requestPath);
+        using var response = await client.GetAsync(requestPath);
 
         Assert.Equal(HttpStatusCode.MovedPermanently, response.StatusCode);
         Assert.Equal(expectedRedirectPath, response.Headers.Location.ToString());
@@ -32,19 +33,31 @@ public class SwaggerUIIntegrationTests
         string indexCssPath,
         string swaggerUiCssPath)
     {
-        var client = new TestSite(startupType).BuildClient();
+        var site = new TestSite(startupType);
+        using var client = site.BuildClient();
 
-        var htmlResponse = await client.GetAsync(htmlPath);
-        Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
+        using var htmlResponse = await client.GetAsync(htmlPath);
+        AssertResource(htmlResponse);
 
-        var jsResponse = await client.GetAsync(swaggerUijsPath);
-        Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
+        using var jsResponse = await client.GetAsync(swaggerUijsPath);
+        AssertResource(jsResponse);
 
-        var cssResponse = await client.GetAsync(indexCssPath);
-        Assert.Equal(HttpStatusCode.OK, cssResponse.StatusCode);
+        using var indexCss = await client.GetAsync(indexCssPath);
+        AssertResource(indexCss);
 
-        cssResponse = await client.GetAsync(swaggerUiCssPath);
-        Assert.Equal(HttpStatusCode.OK, cssResponse.StatusCode);
+        using var cssResponse = await client.GetAsync(swaggerUiCssPath);
+        AssertResource(cssResponse);
+
+        static void AssertResource(HttpResponseMessage response)
+        {
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(response.Headers.ETag);
+            Assert.True(response.Headers.ETag.IsWeak);
+            Assert.NotEmpty(response.Headers.ETag.Tag);
+            Assert.NotNull(response.Headers.CacheControl);
+            Assert.True(response.Headers.CacheControl.Private);
+            Assert.Equal(TimeSpan.FromDays(7), response.Headers.CacheControl.MaxAge);
+        }
     }
 
     [Theory]
@@ -54,9 +67,10 @@ public class SwaggerUIIntegrationTests
         Type startupType,
         string indexJsPath)
     {
-        var client = new TestSite(startupType).BuildClient();
+        var site = new TestSite(startupType);
+        using var client = site.BuildClient();
 
-        var jsResponse = await client.GetAsync(indexJsPath);
+        using var jsResponse = await client.GetAsync(indexJsPath);
         Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
 
         var jsContent = await jsResponse.Content.ReadAsStringAsync();
@@ -74,9 +88,10 @@ public class SwaggerUIIntegrationTests
     [Fact]
     public async Task IndexUrl_DefinesPlugins()
     {
-        var client = new TestSite(typeof(CustomUIConfig.Startup)).BuildClient();
+        var site = new TestSite(typeof(CustomUIConfig.Startup));
+        using var client = site.BuildClient();
 
-        var jsResponse = await client.GetAsync("/swagger/index.js");
+        using var jsResponse = await client.GetAsync("/swagger/index.js");
         Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
 
         var jsContent = await jsResponse.Content.ReadAsStringAsync();
@@ -86,9 +101,10 @@ public class SwaggerUIIntegrationTests
     [Fact]
     public async Task IndexUrl_DoesntDefinePlugins()
     {
-        var client = new TestSite(typeof(Basic.Startup)).BuildClient();
+        var site = new TestSite(typeof(Basic.Startup));
+        using var client = site.BuildClient();
 
-        var jsResponse = await client.GetAsync("/index.js");
+        using var jsResponse = await client.GetAsync("/index.js");
         Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
         var jsContent = await jsResponse.Content.ReadAsStringAsync();
         Assert.DoesNotContain("\"plugins\"", jsContent);
@@ -97,9 +113,10 @@ public class SwaggerUIIntegrationTests
     [Fact]
     public async Task IndexUrl_ReturnsCustomPageTitleAndStylesheets_IfConfigured()
     {
-        var client = new TestSite(typeof(CustomUIConfig.Startup)).BuildClient();
+        var site = new TestSite(typeof(CustomUIConfig.Startup));
+        using var client = site.BuildClient();
 
-        var response = await client.GetAsync("/swagger/index.html");
+        using var response = await client.GetAsync("/swagger/index.html");
         var content = await response.Content.ReadAsStringAsync();
 
         Assert.Contains("<title>CustomUIConfig</title>", content);
@@ -109,9 +126,10 @@ public class SwaggerUIIntegrationTests
     [Fact]
     public async Task IndexUrl_ReturnsCustomIndexHtml_IfConfigured()
     {
-        var client = new TestSite(typeof(CustomUIIndex.Startup)).BuildClient();
+        var site = new TestSite(typeof(CustomUIIndex.Startup));
+        using var client = site.BuildClient();
 
-        var response = await client.GetAsync("/swagger/index.html");
+        using var response = await client.GetAsync("/swagger/index.html");
         var content = await response.Content.ReadAsStringAsync();
 
         Assert.Contains("Example.com", content);
@@ -120,9 +138,10 @@ public class SwaggerUIIntegrationTests
     [Fact]
     public async Task IndexUrl_ReturnsInterceptors_IfConfigured()
     {
-        var client = new TestSite(typeof(CustomUIConfig.Startup)).BuildClient();
+        var site = new TestSite(typeof(CustomUIConfig.Startup));
+        using var client = site.BuildClient();
 
-        var response = await client.GetAsync("/swagger/index.js");
+        using var response = await client.GetAsync("/swagger/index.js");
         var content = await response.Content.ReadAsStringAsync();
 
         Assert.Contains("\"RequestInterceptorFunction\":", content);
@@ -135,10 +154,11 @@ public class SwaggerUIIntegrationTests
     [InlineData("/swagger/2.0/index.html", "/swagger/2.0/index.js", new[] { "Version 2.0" })]
     public async Task SwaggerUIMiddleware_CanBeConfiguredMultipleTimes(string htmlUrl, string jsUrl, string[] versions)
     {
-        var client = new TestSite(typeof(MultipleVersions.Startup)).BuildClient();
+        var site = new TestSite(typeof(MultipleVersions.Startup));
+        using var client = site.BuildClient();
 
-        var htmlResponse = await client.GetAsync(htmlUrl);
-        var jsResponse = await client.GetAsync(jsUrl);
+        using var htmlResponse = await client.GetAsync(htmlUrl);
+        using var jsResponse = await client.GetAsync(jsUrl);
         var content = await jsResponse.Content.ReadAsStringAsync();
 
         Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
@@ -159,9 +179,10 @@ public class SwaggerUIIntegrationTests
         string scriptBundlePath,
         string scriptPresetsPath)
     {
-        var client = new TestSite(startupType).BuildClient();
+        var site = new TestSite(startupType);
+        using var client = site.BuildClient();
 
-        var htmlResponse = await client.GetAsync(htmlPath);
+        using var htmlResponse = await client.GetAsync(htmlPath);
         Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
 
         var content = await htmlResponse.Content.ReadAsStringAsync();

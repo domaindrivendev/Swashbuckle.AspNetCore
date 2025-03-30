@@ -38,4 +38,12 @@ public class ReDocOptions
     /// Gets or sets the optional <see cref="System.Text.Json.JsonSerializerOptions"/> to use.
     /// </summary>
     public JsonSerializerOptions JsonSerializerOptions { get; set; }
+
+    /// <summary>
+    /// Gets or sets the cache lifetime to use for the ReDoc files, if any.
+    /// </summary>
+    /// <remarks>
+    /// The default value is 7 days.
+    /// </remarks>
+    public TimeSpan? CacheLifetime { get; set; } = TimeSpan.FromDays(7);
 }

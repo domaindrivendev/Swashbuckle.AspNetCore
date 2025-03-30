@@ -58,4 +58,28 @@
     <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js/npm is required to build this project." />
   </Target>
 
+  <!-- Embed the ReDoc version into the [AssemblyMetadata] attributes -->
+  <UsingTask TaskName="GetReDocVersion" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <PackageJsonPath ParameterType="System.String" Required="true" />
+      <ReDocVersion ParameterType="System.String" Output="true" />
+    </ParameterGroup>
+    <Task>
+      <Code Type="Fragment" Language="cs"><![CDATA[
+        var packageJson = System.IO.File.ReadAllText(PackageJsonPath);
+        var pattern = @"""redoc"":\s*""([^""]+)""";
+        var match = System.Text.RegularExpressions.Regex.Match(packageJson, pattern);
+        ReDocVersion = match.Groups[1].Value;
+   ]]></Code>
+    </Task>
+  </UsingTask>
+  <Target Name="AddCustomAssemblyMetadata" BeforeTargets="GetAssemblyAttributes">
+    <GetReDocVersion PackageJsonPath="$(MSBuildThisFileDirectory)\package.json">
+      <Output TaskParameter="ReDocVersion" PropertyName="ReDocVersion" />
+    </GetReDocVersion>
+    <ItemGroup>
+      <AssemblyMetadata Include="ReDocVersion" Value="$(ReDocVersion)" />
+    </ItemGroup>
+  </Target>
+
 </Project>

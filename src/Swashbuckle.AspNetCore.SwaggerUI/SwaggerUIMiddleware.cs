@@ -1,18 +1,20 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Reflection;
+using System.Security.Cryptography;
 
-#if !NET
+#if NET
+using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Hosting;
+#else
+using System.Text.Json.Serialization;
 using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 #endif
 
@@ -21,6 +23,8 @@ namespace Swashbuckle.AspNetCore.SwaggerUI;
 internal sealed partial class SwaggerUIMiddleware
 {
     private const string EmbeddedFileNamespace = "Swashbuckle.AspNetCore.SwaggerUI.node_modules.swagger_ui_dist";
+
+    private static readonly string SwaggerUIVersion = GetSwaggerUIVersion();
 
     private readonly SwaggerUIOptions _options;
     private readonly StaticFileMiddleware _staticFileMiddleware;
@@ -106,10 +110,45 @@ internal sealed partial class SwaggerUIMiddleware
         var staticFileOptions = new StaticFileOptions
         {
             RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
-            FileProvider = new EmbeddedFileProvider(typeof(SwaggerUIMiddleware).GetTypeInfo().Assembly, EmbeddedFileNamespace),
+            FileProvider = new EmbeddedFileProvider(typeof(SwaggerUIMiddleware).Assembly, EmbeddedFileNamespace),
+            OnPrepareResponse = (context) => SetCacheHeaders(context.Context.Response, options),
         };
 
         return new StaticFileMiddleware(next, hostingEnv, Options.Create(staticFileOptions), loggerFactory);
+    }
+
+    private static string GetSwaggerUIVersion()
+    {
+        return typeof(SwaggerUIMiddleware).Assembly
+            .GetCustomAttributes<AssemblyMetadataAttribute>()
+            .Where((p) => p.Key is "SwaggerUIVersion")
+            .Select((p) => p.Value)
+            .DefaultIfEmpty(string.Empty)
+            .FirstOrDefault();
+    }
+
+    private static void SetCacheHeaders(HttpResponse response, SwaggerUIOptions options, string etag = null)
+    {
+        var headers = response.GetTypedHeaders();
+
+        if (options.CacheLifetime is { } maxAge)
+        {
+            headers.CacheControl = new()
+            {
+                MaxAge = maxAge,
+                Private = true,
+            };
+        }
+        else
+        {
+            headers.CacheControl = new()
+            {
+                NoCache = true,
+                NoStore = true,
+            };
+        }
+
+        headers.ETag = new($"\"{etag ?? SwaggerUIVersion}\"", isWeak: true);
     }
 
     private static void RespondWithRedirect(HttpResponse response, string location)
@@ -150,8 +189,27 @@ internal sealed partial class SwaggerUIMiddleware
                 content.Replace(entry.Key, entry.Value);
             }
 
-            await response.WriteAsync(content.ToString(), Encoding.UTF8);
+            var text = content.ToString();
+            var etag = HashText(text);
+
+            SetCacheHeaders(response, _options, etag);
+
+            await response.WriteAsync(text, Encoding.UTF8);
         }
+    }
+
+    private static string HashText(string text)
+    {
+        var buffer = Encoding.UTF8.GetBytes(text);
+
+#if NET
+        var hash = SHA1.HashData(buffer);
+#else
+        using var sha = SHA1.Create();
+        var hash = sha.ComputeHash(buffer);
+#endif
+
+        return Convert.ToBase64String(hash);
     }
 
 #if NET

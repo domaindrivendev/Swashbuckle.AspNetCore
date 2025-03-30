@@ -70,4 +70,12 @@ public class SwaggerUIOptions
     /// Gets or sets the relative URL path to the route that exposes the values of the configured <see cref="ConfigObject.Urls"/> values.
     /// </summary>
     public string SwaggerDocumentUrlsPath { get; set; } = "documentUrls";
+
+    /// <summary>
+    /// Gets or sets the cache lifetime to use for the SwaggerUI files, if any.
+    /// </summary>
+    /// <remarks>
+    /// The default value is 7 days.
+    /// </remarks>
+    public TimeSpan? CacheLifetime { get; set; } = TimeSpan.FromDays(7);
 }

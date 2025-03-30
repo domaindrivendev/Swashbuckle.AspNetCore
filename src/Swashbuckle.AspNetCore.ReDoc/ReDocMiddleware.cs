@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Security.Cryptography;
 
 #if NET
 using System.Diagnostics.CodeAnalysis;
@@ -22,6 +23,8 @@ namespace Swashbuckle.AspNetCore.ReDoc;
 internal sealed class ReDocMiddleware
 {
     private const string EmbeddedFileNamespace = "Swashbuckle.AspNetCore.ReDoc.node_modules.redoc.bundles";
+
+    private static readonly string ReDocVersion = GetReDocVersion();
 
     private readonly ReDocOptions _options;
     private readonly StaticFileMiddleware _staticFileMiddleware;
@@ -100,10 +103,45 @@ internal sealed class ReDocMiddleware
         var staticFileOptions = new StaticFileOptions
         {
             RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
-            FileProvider = new EmbeddedFileProvider(typeof(ReDocMiddleware).GetTypeInfo().Assembly, EmbeddedFileNamespace),
+            FileProvider = new EmbeddedFileProvider(typeof(ReDocMiddleware).Assembly, EmbeddedFileNamespace),
+            OnPrepareResponse = (context) => SetCacheHeaders(context.Context.Response, options),
         };
 
         return new StaticFileMiddleware(next, hostingEnv, Options.Create(staticFileOptions), loggerFactory);
+    }
+
+    private static string GetReDocVersion()
+    {
+        return typeof(ReDocMiddleware).Assembly
+            .GetCustomAttributes<AssemblyMetadataAttribute>()
+            .Where((p) => p.Key is "ReDocVersion")
+            .Select((p) => p.Value)
+            .DefaultIfEmpty(string.Empty)
+            .FirstOrDefault();
+    }
+
+    private static void SetCacheHeaders(HttpResponse response, ReDocOptions options, string etag = null)
+    {
+        var headers = response.GetTypedHeaders();
+
+        if (options.CacheLifetime is { } maxAge)
+        {
+            headers.CacheControl = new()
+            {
+                MaxAge = maxAge,
+                Private = true,
+            };
+        }
+        else
+        {
+            headers.CacheControl = new()
+            {
+                NoCache = true,
+                NoStore = true,
+            };
+        }
+
+        headers.ETag = new($"\"{etag ?? ReDocVersion}\"", isWeak: true);
     }
 
     private static void RespondWithRedirect(HttpResponse response, string location)
@@ -147,8 +185,27 @@ internal sealed class ReDocMiddleware
                 content.Replace(entry.Key, entry.Value);
             }
 
-            await response.WriteAsync(content.ToString(), Encoding.UTF8);
+            var text = content.ToString();
+            var etag = HashText(text);
+
+            SetCacheHeaders(response, _options, etag);
+
+            await response.WriteAsync(text, Encoding.UTF8);
         }
+    }
+
+    private static string HashText(string text)
+    {
+        var buffer = Encoding.UTF8.GetBytes(text);
+
+#if NET
+        var hash = SHA1.HashData(buffer);
+#else
+        using var sha = SHA1.Create();
+        var hash = sha.ComputeHash(buffer);
+#endif
+
+        return Convert.ToBase64String(hash);
     }
 
 #if NET

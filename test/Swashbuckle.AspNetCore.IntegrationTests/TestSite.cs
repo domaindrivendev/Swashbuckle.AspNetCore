@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests;
@@ -15,7 +14,7 @@ public class TestSite
 
     public TestServer BuildServer()
     {
-        var startupAssembly = _startupType.GetTypeInfo().Assembly;
+        var startupAssembly = _startupType.Assembly;
         var applicationName = startupAssembly.GetName().Name;
 
         var builder = new WebHostBuilder()

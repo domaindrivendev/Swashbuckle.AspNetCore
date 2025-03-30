@@ -1,12 +1,10 @@
-﻿using System.Reflection;
-
-namespace Swashbuckle.AspNetCore.ReDoc;
+﻿namespace Swashbuckle.AspNetCore.ReDoc;
 
 internal static class ResourceHelper
 {
     public static Stream GetEmbeddedResource(string fileName)
     {
-        return typeof(ResourceHelper).GetTypeInfo().Assembly
+        return typeof(ResourceHelper).Assembly
             .GetManifestResourceStream($"Swashbuckle.AspNetCore.ReDoc.{fileName}");
     }
 }
