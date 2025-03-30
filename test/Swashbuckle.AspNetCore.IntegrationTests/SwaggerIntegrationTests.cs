@@ -124,11 +124,9 @@ public class SwaggerIntegrationTests
     [Theory]
     [InlineData(typeof(MinimalApp.Program), "/swagger/v1/swagger.json")]
     [InlineData(typeof(TopLevelSwaggerDoc.Program), "/swagger/v1.json")]
-#if NET8_0_OR_GREATER
     [InlineData(typeof(MvcWithNullable.Program), "/swagger/v1/swagger.json")]
     [InlineData(typeof(WebApi.Program), "/swagger/v1/swagger.json")]
     [InlineData(typeof(WebApi.Aot.Program), "/swagger/v1/swagger.json")]
-#endif
     public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_Without_Startup(
         Type entryPointType,
         string swaggerRequestUri)
@@ -136,7 +134,6 @@ public class SwaggerIntegrationTests
         await SwaggerEndpointReturnsValidSwaggerJson(entryPointType, swaggerRequestUri);
     }
 
-#if NET8_0_OR_GREATER
     [Fact]
     public async Task TypesAreRenderedCorrectly()
     {
@@ -174,7 +171,6 @@ public class SwaggerIntegrationTests
             () => Assert.True(properties.GetProperty("temperatureF").GetProperty("readOnly").GetBoolean()),
         ]);
     }
-#endif
 
     private static async Task SwaggerEndpointReturnsValidSwaggerJson(Type entryPointType, string swaggerRequestUri)
     {

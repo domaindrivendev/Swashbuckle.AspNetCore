@@ -7,6 +7,9 @@
   "paths": {
     "/api/users": {
       "post": {
+        "tags": [
+          "Users"
+        ],
         "operationId": "CreateUser",
         "requestBody": {
           "content": {
