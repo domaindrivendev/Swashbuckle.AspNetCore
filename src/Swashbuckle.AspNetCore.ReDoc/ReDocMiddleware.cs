@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Security.Cryptography;
 
 #if NET
 using System.Diagnostics.CodeAnalysis;
@@ -119,7 +120,7 @@ internal sealed class ReDocMiddleware
             .FirstOrDefault();
     }
 
-    private static void SetCacheHeaders(HttpResponse response, ReDocOptions options)
+    private static void SetCacheHeaders(HttpResponse response, ReDocOptions options, string etag = null)
     {
         var headers = response.GetTypedHeaders();
 
@@ -132,7 +133,7 @@ internal sealed class ReDocMiddleware
             };
         }
 
-        headers.ETag = new($"\"{ReDocVersion}\"", isWeak: true);
+        headers.ETag = new($"\"{etag ?? ReDocVersion}\"", isWeak: true);
     }
 
     private static void RespondWithRedirect(HttpResponse response, string location)
@@ -148,8 +149,6 @@ internal sealed class ReDocMiddleware
     private async Task RespondWithFile(HttpResponse response, string fileName)
     {
         response.StatusCode = 200;
-
-        SetCacheHeaders(response, _options);
 
         Stream stream;
 
@@ -178,8 +177,27 @@ internal sealed class ReDocMiddleware
                 content.Replace(entry.Key, entry.Value);
             }
 
-            await response.WriteAsync(content.ToString(), Encoding.UTF8);
+            var text = content.ToString();
+            var etag = HashText(text);
+
+            SetCacheHeaders(response, _options, etag);
+
+            await response.WriteAsync(text, Encoding.UTF8);
         }
+    }
+
+    private static string HashText(string text)
+    {
+        var buffer = Encoding.UTF8.GetBytes(text);
+
+#if NET
+        var hash = SHA1.HashData(buffer);
+#else
+        using var sha = SHA1.Create();
+        var hash = sha.ComputeHash(buffer);
+#endif
+
+        return Convert.ToBase64String(hash);
     }
 
 #if NET
