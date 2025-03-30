@@ -17,7 +17,6 @@ namespace Swashbuckle.AspNetCore.Cli;
 internal class Program
 {
     private const string OpenApiVersionOption = "--openapiversion";
-    private const string SerializeAsV2Flag = "--serializeasv2";
 
     public static int Main(string[] args)
     {
@@ -41,9 +40,6 @@ internal class Program
             c.Option(OpenApiVersionOption, "output Swagger in the specified version, defaults to 3.0");
             c.Option("--yaml", "exports swagger in a yaml format", true);
 
-            // TODO Remove this option in the major version that adds support for OpenAPI 3.1
-            c.Option(SerializeAsV2Flag, "output Swagger in the V2 format rather than V3 [deprecated]", true);
-
             c.OnRun((namedArgs) =>
             {
                 string subProcessCommandLine = PrepareCommandLine(args, namedArgs);
@@ -65,9 +61,6 @@ internal class Program
             c.Option("--basepath", "");
             c.Option(OpenApiVersionOption, "");
             c.Option("--yaml", "", true);
-
-            // TODO Remove this option in the major version that adds support for OpenAPI 3.1
-            c.Option(SerializeAsV2Flag, "", true);
 
             c.OnRun((namedArgs) =>
             {
@@ -113,13 +106,11 @@ internal class Program
                     {
                         "2.0" => OpenApiSpecVersion.OpenApi2_0,
                         "3.0" => OpenApiSpecVersion.OpenApi3_0,
+#if NET10_0_OR_GREATER
+                        "3.1" => OpenApiSpecVersion.OpenApi3_1,
+#endif
                         _ => throw new NotSupportedException($"The specified OpenAPI version \"{versionArg}\" is not supported."),
                     };
-                }
-                else if (namedArgs.ContainsKey(SerializeAsV2Flag))
-                {
-                    specVersion = OpenApiSpecVersion.OpenApi2_0;
-                    WriteSerializeAsV2DeprecationWarning();
                 }
 
                 if (swaggerDocumentSerializer != null)
@@ -133,6 +124,12 @@ internal class Program
                         case OpenApiSpecVersion.OpenApi2_0:
                             swagger.SerializeAsV2(writer);
                             break;
+
+#if NET10_0_OR_GREATER
+                        case OpenApiSpecVersion.OpenApi3_1:
+                            swagger.SerializeAsV31(writer);
+                            break;
+#endif
 
                         case OpenApiSpecVersion.OpenApi3_0:
                         default:
@@ -327,21 +324,5 @@ internal class Program
 
         host = (THost)factoryMethod.Invoke(null, null);
         return true;
-    }
-
-    private static void WriteSerializeAsV2DeprecationWarning()
-    {
-        const string AppName = "Swashbuckle.AspNetCore.Cli";
-
-        string message = $"The {SerializeAsV2Flag} flag will be removed in a future version of {AppName}. Use the {OpenApiVersionOption} option instead.";
-
-        Console.WriteLine(message);
-
-        // See https://docs.github.com/actions/writing-workflows/choosing-what-your-workflow-does/workflow-commands-for-github-actions#setting-a-warning-message
-        // and https://docs.github.com/actions/writing-workflows/choosing-what-your-workflow-does/store-information-in-variables#default-environment-variables
-        if (Environment.GetEnvironmentVariable("GITHUB_ACTIONS") is "true")
-        {
-            Console.WriteLine($"::warning title={AppName}::{message}");
-        }
     }
 }

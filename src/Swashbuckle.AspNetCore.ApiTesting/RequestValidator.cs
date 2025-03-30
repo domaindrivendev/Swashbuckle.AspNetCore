@@ -4,10 +4,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Template;
 using Microsoft.OpenApi.Models;
+#if NET10_0_OR_GREATER
+using Microsoft.OpenApi.Models.References;
+#endif
 
 namespace Swashbuckle.AspNetCore.ApiTesting;
 
-public class RequestValidator(IEnumerable<IContentValidator> contentValidators)
+public sealed class RequestValidator(IEnumerable<IContentValidator> contentValidators)
 {
     private readonly IEnumerable<IContentValidator> _contentValidators = contentValidators;
 
@@ -56,7 +59,11 @@ public class RequestValidator(IEnumerable<IContentValidator> contentValidators)
             .Select(p =>
             {
                 return p.Reference != null ?
+#if NET10_0_OR_GREATER
+                    new OpenApiParameterReference(p.Reference.Id, openApiDocument)
+#else
                     (OpenApiParameter)openApiDocument.ResolveReference(p.Reference)
+#endif
                     : p;
             });
     }
@@ -109,7 +116,11 @@ public class RequestValidator(IEnumerable<IContentValidator> contentValidators)
             }
 
             var schema = parameterSpec.Schema.Reference != null ?
+#if NET10_0_OR_GREATER
+                new OpenApiSchemaReference(parameterSpec.Schema.Reference.Id, openApiDocument)
+#else
                 (OpenApiSchema)openApiDocument.ResolveReference(parameterSpec.Schema.Reference)
+#endif
                 : parameterSpec.Schema;
 
             if (!schema.TryParse(value, out object typedValue))
@@ -122,7 +133,11 @@ public class RequestValidator(IEnumerable<IContentValidator> contentValidators)
     private void ValidateContent(OpenApiRequestBody requestBodySpec, OpenApiDocument openApiDocument, HttpContent content)
     {
         requestBodySpec = requestBodySpec.Reference != null ?
+#if NET10_0_OR_GREATER
+            new OpenApiRequestBodyReference(requestBodySpec.Reference.Id, openApiDocument)
+#else
             (OpenApiRequestBody)openApiDocument.ResolveReference(requestBodySpec.Reference)
+#endif
             : requestBodySpec;
 
         if (requestBodySpec.Required && content == null)

@@ -1,0 +1,56 @@
+﻿{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Test API",
+    "version": "V1"
+  },
+  "paths": {
+    "/resource": {
+      "post": {
+        "tags": [
+          null
+        ],
+        "parameters": [
+          {
+            "name": "EnumWithDefault",
+            "in": "query",
+            "description": "<p>Members:</p><ul><li>Value2 - 2</li><li>Value4 - 4</li><li>Value8 - 8</li></ul>",
+            "schema": { }
+          },
+          {
+            "name": "EnumArrayWithDefault",
+            "in": "query",
+            "description": "<p>Members:</p><ul><li>Value2 - 2</li><li>Value4 - 4</li><li>Value8 - 8</li></ul>",
+            "schema": {
+              "type": "array",
+              "items": { },
+              "description": "<p>Members:</p><ul><li>Value2 - 2</li><li>Value4 - 4</li><li>Value8 - 8</li></ul>",
+              "default": [
+                4
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "IntEnum": {
+        "enum": [
+          2,
+          4,
+          8
+        ],
+        "type": "integer",
+        "description": "<p>Members:</p><ul><li>Value2 - 2</li><li>Value4 - 4</li><li>Value8 - 8</li></ul>",
+        "format": "int32"
+      }
+    }
+  }
+}

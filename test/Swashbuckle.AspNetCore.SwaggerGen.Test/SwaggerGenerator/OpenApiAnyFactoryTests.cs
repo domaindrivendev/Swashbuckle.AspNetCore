@@ -1,4 +1,5 @@
-﻿namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
+﻿#if !NET10_0_OR_GREATER
+namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 
 using System;
 using System.Text.Json;
@@ -139,3 +140,4 @@ public class OpenApiAnyFactoryTests
         Assert.Equal(AnyType.Object, obj["object_value"].AnyType);
     }
 }
+#endif

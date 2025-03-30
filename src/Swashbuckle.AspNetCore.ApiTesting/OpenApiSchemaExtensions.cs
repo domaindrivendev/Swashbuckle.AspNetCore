@@ -3,7 +3,7 @@ using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.ApiTesting;
 
-public static class OpenApiSchemaExtensions
+internal static class OpenApiSchemaExtensions
 {
     internal static bool TryParse(this OpenApiSchema schema, string stringValue, out object typedValue)
     {
@@ -69,7 +69,11 @@ public static class OpenApiSchemaExtensions
     {
         var idBuilder = new StringBuilder();
 
+#if NET10_0_OR_GREATER
+        idBuilder.Append(schema.Type.ToString().ToLowerInvariant());
+#else
         idBuilder.Append(schema.Type);
+#endif
 
         if (schema.Type == JsonSchemaTypes.Array && schema.Items != null)
         {

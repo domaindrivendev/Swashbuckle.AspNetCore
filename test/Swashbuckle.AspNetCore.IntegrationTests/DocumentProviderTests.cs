@@ -1,5 +1,10 @@
 ﻿using System.Text;
 using Microsoft.Extensions.ApiDescriptions;
+#if NET10_0_OR_GREATER
+using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Reader;
+using Microsoft.OpenApi.Readers;
+#endif
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests;
@@ -7,6 +12,14 @@ namespace Swashbuckle.AspNetCore.IntegrationTests;
 [Collection("TestSite")]
 public class DocumentProviderTests
 {
+#if NET10_0_OR_GREATER
+    static DocumentProviderTests()
+    {
+        // TODO Make an assembly fixture
+        OpenApiReaderRegistry.RegisterReader(OpenApiConstants.Yaml, new OpenApiYamlReader());
+    }
+#endif
+
     [Theory]
     [InlineData(typeof(Basic.Startup), new[] { "v1" })]
     [InlineData(typeof(CustomUIConfig.Startup), new[] { "v1" })]

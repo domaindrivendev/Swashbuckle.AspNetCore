@@ -181,11 +181,22 @@ internal sealed class SwaggerMiddleware
         }
         else
         {
+#if false
+            // TODO Use SerializeAs() when available
+            document.SerializeAs(writer, _options.OpenApiVersion);
+#endif
+
             switch (_options.OpenApiVersion)
             {
                 case Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0:
                     document.SerializeAsV2(writer);
                     break;
+
+#if NET10_0_OR_GREATER
+                case Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_1:
+                    document.SerializeAsV31(writer);
+                    break;
+#endif
 
                 case Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0:
                 default:

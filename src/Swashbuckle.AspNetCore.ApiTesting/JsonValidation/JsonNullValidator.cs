@@ -3,7 +3,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Swashbuckle.AspNetCore.ApiTesting;
 
-public class JsonNullValidator : IJsonValidator
+public sealed class JsonNullValidator : IJsonValidator
 {
     public bool CanValidate(OpenApiSchema schema) => schema.Type == JsonSchemaTypes.Null;
 

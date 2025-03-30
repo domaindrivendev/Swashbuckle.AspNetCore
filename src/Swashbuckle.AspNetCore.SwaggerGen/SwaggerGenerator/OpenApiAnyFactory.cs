@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿#if !NET10_0_OR_GREATER
+using System.Text.Json;
 using Microsoft.OpenApi.Any;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
@@ -98,3 +99,4 @@ public static class OpenApiAnyFactory
         throw new ArgumentException($"Unsupported value kind {jsonElement.ValueKind}");
     }
 }
+#endif

@@ -1,7 +1,5 @@
 using System.Globalization;
 using System.Reflection;
-#if NET
-#endif
 using System.Text;
 using System.Text.Json;
 using Microsoft.OpenApi.Any;
@@ -87,8 +85,12 @@ public class SwaggerIntegrationTests
         {
             var openApiDocument = await OpenApiDocumentLoader.LoadAsync(contentStream);
             var example = openApiDocument.Components.Schemas["Product"].Example;
+#if NET10_0_OR_GREATER
+            double price = example["price"].GetValue<double>();
+#else
             var exampleObject = Assert.IsType<OpenApiObject>(example);
             double price = Assert.IsType<OpenApiDouble>(exampleObject["price"]).Value;
+#endif
             Assert.Equal(14.37, price);
         }
         finally
@@ -100,6 +102,9 @@ public class SwaggerIntegrationTests
     [Theory]
     [InlineData("/swagger/v1/swagger.json", "openapi", "3.0.4")]
     [InlineData("/swagger/v1/swaggerv2.json", "swagger", "2.0")]
+#if NET10_0_OR_GREATER
+    [InlineData("/swagger/v1/swaggerv3_1.json", "openapi", "3.1.1")]
+#endif
     public async Task SwaggerMiddleware_CanBeConfiguredMultipleTimes(
         string swaggerUrl,
         string expectedVersionProperty,
@@ -119,9 +124,11 @@ public class SwaggerIntegrationTests
     [Theory]
     [InlineData(typeof(MinimalApp.Program), "/swagger/v1/swagger.json")]
     [InlineData(typeof(TopLevelSwaggerDoc.Program), "/swagger/v1.json")]
+#if NET8_0_OR_GREATER
     [InlineData(typeof(MvcWithNullable.Program), "/swagger/v1/swagger.json")]
     [InlineData(typeof(WebApi.Program), "/swagger/v1/swagger.json")]
     [InlineData(typeof(WebApi.Aot.Program), "/swagger/v1/swagger.json")]
+#endif
     public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_Without_Startup(
         Type entryPointType,
         string swaggerRequestUri)
@@ -129,6 +136,7 @@ public class SwaggerIntegrationTests
         await SwaggerEndpointReturnsValidSwaggerJson(entryPointType, swaggerRequestUri);
     }
 
+#if NET8_0_OR_GREATER
     [Fact]
     public async Task TypesAreRenderedCorrectly()
     {
@@ -166,6 +174,7 @@ public class SwaggerIntegrationTests
             () => Assert.True(properties.GetProperty("temperatureF").GetProperty("readOnly").GetBoolean()),
         ]);
     }
+#endif
 
     private static async Task SwaggerEndpointReturnsValidSwaggerJson(Type entryPointType, string swaggerRequestUri)
     {

@@ -32,7 +32,12 @@ public class XmlCommentsRequestBodyFilterTests
 
         Assert.Equal("Description for param1", requestBody.Description);
         Assert.NotNull(requestBody.Content["application/json"].Example);
+
+#if NET10_0_OR_GREATER
+        Assert.Equal("\"Example for \\u0022param1\\u0022\"", requestBody.Content["application/json"].Example.ToJson());
+#else
         Assert.Equal("\"Example for \\\"param1\\\"\"", requestBody.Content["application/json"].Example.ToJson());
+#endif
     }
 
     [Fact]
@@ -58,7 +63,12 @@ public class XmlCommentsRequestBodyFilterTests
 
         Assert.Equal("Description for param1", requestBody.Description);
         Assert.NotNull(requestBody.Content["application/json"].Example);
+
+#if NET10_0_OR_GREATER
+        Assert.Equal("\"Example for \\u0022param1\\u0022\"", requestBody.Content["application/json"].Example.ToJson());
+#else
         Assert.Equal("\"Example for \\\"param1\\\"\"", requestBody.Content["application/json"].Example.ToJson());
+#endif
     }
 
     [Fact]
@@ -105,7 +115,12 @@ public class XmlCommentsRequestBodyFilterTests
 
         Assert.Equal("Summary for StringPropertyWithUri", requestBody.Description);
         Assert.NotNull(requestBody.Content["application/json"].Example);
+
+#if NET10_0_OR_GREATER
+        Assert.Equal("\"https://test.com/a?b=1\\u0026c=2\"", requestBody.Content["application/json"].Example.ToJson());
+#else
         Assert.Equal("\"https://test.com/a?b=1&c=2\"", requestBody.Content["application/json"].Example.ToJson());
+#endif
     }
 
     [Fact]

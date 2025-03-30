@@ -1,0 +1,1575 @@
+﻿{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Test API V1",
+    "description": "A sample API for testing Swashbuckle",
+    "termsOfService": "http://tempuri.org/terms",
+    "version": "v1"
+  },
+  "paths": {
+    "/products": {
+      "post": {
+        "tags": [
+          "CrudActions"
+        ],
+        "summary": "Creates a product",
+        "description": "## Heading 1\r\n\r\n    POST /products\r\n    {\r\n        \"id\": \"123\",\r\n        \"description\": \"Some product\"\r\n    }",
+        "operationId": "CreateProduct",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": { }
+            },
+            "text/json": {
+              "schema": { }
+            },
+            "application/*+json": {
+              "schema": { }
+            }
+          },
+          "required": true,
+          "x-purpose": "test"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { }
+              }
+            }
+          }
+        },
+        "x-purpose": "test"
+      },
+      "get": {
+        "tags": [
+          "CrudActions"
+        ],
+        "summary": "Searches the collection of products by description key words",
+        "operationId": "SearchProducts",
+        "parameters": [
+          {
+            "name": "kw",
+            "in": "query",
+            "description": "A list of search terms",
+            "schema": {
+              "type": "string",
+              "default": "foobar"
+            },
+            "example": "hello"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/products/all": {
+      "get": {
+        "tags": [
+          "CrudActions"
+        ],
+        "summary": "Get all products",
+        "description": "```\r\n{\r\n  \"Id\":1,\r\n  \"Description\":\"\",\r\n  \"Status\": 0,\r\n  \"Status2\": 1\r\n}\r\n            \r\n```",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/products/{id}": {
+      "get": {
+        "tags": [
+          "CrudActions"
+        ],
+        "summary": "Returns a specific product",
+        "operationId": "GetProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The product id",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 111
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { }
+              }
+            }
+          }
+        },
+        "x-purpose": "test"
+      },
+      "put": {
+        "tags": [
+          "CrudActions"
+        ],
+        "summary": "Updates all properties of a specific product",
+        "operationId": "UpdateProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 222
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": { }
+            },
+            "text/json": {
+              "schema": { }
+            },
+            "application/*+json": {
+              "schema": { }
+            }
+          },
+          "required": true,
+          "x-purpose": "test"
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      },
+      "patch": {
+        "tags": [
+          "CrudActions"
+        ],
+        "summary": "Updates some properties of a specific product",
+        "description": "\r\nOnly provided properties will be updated,\r\n                    other remain unchanged.\r\n\r\nIdentifier must be non-default value\r\n\r\nBody must be specified",
+        "operationId": "PatchProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 333
+          }
+        ],
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": { }
+              }
+            },
+            "text/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": { }
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": { }
+              }
+            }
+          },
+          "required": true,
+          "x-purpose": "test"
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      },
+      "delete": {
+        "tags": [
+          "CrudActions"
+        ],
+        "summary": "Deletes a specific product",
+        "operationId": "DeleteProduct",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "example": 444
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/payments/authorize": {
+      "post": {
+        "tags": [
+          "DataAnnotations"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { }
+            },
+            "text/json": {
+              "schema": { }
+            },
+            "application/*+json": {
+              "schema": { }
+            }
+          },
+          "required": true,
+          "x-purpose": "test"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/payments/{paymentId}/cancel": {
+      "put": {
+        "tags": [
+          "DataAnnotations"
+        ],
+        "parameters": [
+          {
+            "name": "paymentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "minLength": 6,
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/kittens": {
+      "post": {
+        "tags": [
+          "DynamicTypes"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { }
+            },
+            "text/json": {
+              "schema": { }
+            },
+            "application/*+json": {
+              "schema": { }
+            }
+          },
+          "x-purpose": "test"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/unicorns": {
+      "get": {
+        "tags": [
+          "DynamicTypes"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": { }
+                }
+              }
+            }
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/dragons": {
+      "post": {
+        "tags": [
+          "DynamicTypes"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { }
+            },
+            "text/json": {
+              "schema": { }
+            },
+            "application/*+json": {
+              "schema": { }
+            }
+          },
+          "x-purpose": "test"
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/files/single": {
+      "post": {
+        "tags": [
+          "Files"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          },
+          "x-purpose": "test"
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/files/multiple": {
+      "post": {
+        "tags": [
+          "Files"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "files": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  }
+                }
+              },
+              "encoding": {
+                "files": {
+                  "style": "form"
+                }
+              }
+            }
+          },
+          "x-purpose": "test"
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/files/form-with-file": {
+      "post": {
+        "tags": [
+          "Files"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "name": {
+                  "style": "form"
+                },
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          },
+          "x-purpose": "test"
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/files/{name}": {
+      "get": {
+        "tags": [
+          "Files"
+        ],
+        "parameters": [
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "format": "binary"
+                    },
+                    {
+                      "type": "string",
+                      "format": "binary"
+                    },
+                    {
+                      "type": "string",
+                      "format": "binary"
+                    },
+                    {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  ]
+                }
+              },
+              "application/zip": {
+                "schema": {
+                  "oneOf": [
+                    {
+                      "type": "string",
+                      "format": "binary"
+                    },
+                    {
+                      "type": "string",
+                      "format": "binary"
+                    },
+                    {
+                      "type": "string",
+                      "format": "binary"
+                    },
+                    {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/registrations": {
+      "post": {
+        "tags": [
+          "FromFormParams"
+        ],
+        "summary": "Form parameters with description",
+        "requestBody": {
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Summary for Name",
+                    "example": "MyName"
+                  },
+                  "phoneNumbers": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "description": "Sumary for PhoneNumbers"
+                  },
+                  "formFile": {
+                    "type": "string",
+                    "description": "Description for file",
+                    "format": "binary"
+                  },
+                  "text": {
+                    "type": "string",
+                    "description": "Description for Text"
+                  }
+                }
+              },
+              "encoding": {
+                "name": {
+                  "style": "form"
+                },
+                "phoneNumbers": {
+                  "style": "form"
+                },
+                "formFile": {
+                  "style": "form"
+                },
+                "text": {
+                  "style": "form"
+                }
+              }
+            }
+          },
+          "x-purpose": "test"
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/registrationsWithIgnoreProperties": {
+      "post": {
+        "tags": [
+          "FromFormParams"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "phoneNumbers": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "format": "int32"
+                    }
+                  }
+                }
+              },
+              "encoding": {
+                "phoneNumbers": {
+                  "style": "form"
+                }
+              }
+            }
+          },
+          "x-purpose": "test"
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/registrationsWithEnumParameter": {
+      "post": {
+        "tags": [
+          "FromFormParams"
+        ],
+        "summary": "Form parameters with description",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Summary for Name",
+                    "example": "MyName"
+                  },
+                  "phoneNumbers": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "description": "Sumary for PhoneNumbers"
+                  },
+                  "logLevel": { },
+                  "formFile": {
+                    "type": "string",
+                    "description": "Description for file",
+                    "format": "binary"
+                  },
+                  "dateTimeKind": {
+                    "description": "Description for dateTimeKind"
+                  }
+                }
+              },
+              "encoding": {
+                "name": {
+                  "style": "form"
+                },
+                "phoneNumbers": {
+                  "style": "form"
+                },
+                "logLevel": {
+                  "style": "form"
+                },
+                "formFile": {
+                  "style": "form"
+                },
+                "dateTimeKind": {
+                  "style": "form"
+                }
+              }
+            }
+          },
+          "x-purpose": "test"
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/country/validate": {
+      "get": {
+        "tags": [
+          "FromHeaderParams"
+        ],
+        "parameters": [
+          {
+            "name": "country",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/addresses/validate": {
+      "get": {
+        "tags": [
+          "FromQueryParams"
+        ],
+        "parameters": [
+          {
+            "name": "country",
+            "in": "query",
+            "description": "3-letter ISO country code",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "city",
+            "in": "query",
+            "description": "Name of city",
+            "schema": {
+              "type": "string",
+              "default": "Seattle"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/zip-codes/validate": {
+      "get": {
+        "tags": [
+          "FromQueryParams"
+        ],
+        "parameters": [
+          {
+            "name": "zipCodes",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": true,
+            "style": "deepObject",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/Issue3013/Get": {
+      "get": {
+        "tags": [
+          "Issue3013"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": { }
+              },
+              "application/json": {
+                "schema": { }
+              },
+              "text/json": {
+                "schema": { }
+              }
+            }
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/promotions": {
+      "get": {
+        "tags": [
+          "JsonAnnotations"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/shapes": {
+      "post": {
+        "tags": [
+          "PolymorphicTypes"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  { },
+                  { }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "oneOf": [
+                  { },
+                  { }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "oneOf": [
+                  { },
+                  { }
+                ]
+              }
+            }
+          },
+          "x-purpose": "test"
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/orders": {
+      "post": {
+        "tags": [
+          "ResponseTypeAnnotations"
+        ],
+        "summary": "Creates an order",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/xml": {
+              "schema": { }
+            }
+          },
+          "required": true,
+          "x-purpose": "test"
+        },
+        "responses": {
+          "201": {
+            "description": "Order created",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Order invalid",
+            "content": {
+              "application/xml": {
+                "schema": { }
+              }
+            }
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/carts": {
+      "post": {
+        "tags": [
+          "SwaggerAnnotations"
+        ],
+        "operationId": "CreateCart",
+        "requestBody": {
+          "description": "The cart request body",
+          "content": {
+            "application/json": {
+              "schema": { }
+            },
+            "text/json": {
+              "schema": { }
+            },
+            "application/*+json": {
+              "schema": { }
+            }
+          },
+          "x-purpose": "test"
+        },
+        "responses": {
+          "201": {
+            "description": "The cart was created",
+            "content": {
+              "text/plain": {
+                "schema": { }
+              },
+              "application/json": {
+                "schema": { }
+              },
+              "text/json": {
+                "schema": { }
+              }
+            }
+          },
+          "400": {
+            "description": "The cart data is invalid"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/carts/{id}": {
+      "get": {
+        "tags": [
+          "SwaggerAnnotations"
+        ],
+        "externalDocs": {
+          "description": "External docs for CartsByIdGet",
+          "url": "https://tempuri.org/carts-by-id-get"
+        },
+        "operationId": "GetCart",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The cart identifier",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": { }
+              },
+              "application/json": {
+                "schema": { }
+              },
+              "text/json": {
+                "schema": { }
+              }
+            }
+          }
+        },
+        "x-purpose": "test"
+      },
+      "delete": {
+        "tags": [
+          "SwaggerAnnotations"
+        ],
+        "summary": "Deletes a specific cart",
+        "description": "Requires admin privileges",
+        "operationId": "DeleteCart",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The cart identifier",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": { }
+              },
+              "application/json": {
+                "schema": { }
+              },
+              "text/json": {
+                "schema": { }
+              }
+            }
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/stores": {
+      "post": {
+        "tags": [
+          "UnboundParams"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "location",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        },
+        "x-purpose": "test"
+      },
+      "get": {
+        "tags": [
+          "UnboundParams"
+        ],
+        "parameters": [
+          {
+            "name": "locations",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { }
+                }
+              }
+            }
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/stores/{id}": {
+      "get": {
+        "tags": [
+          "UnboundParams"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { }
+              }
+            }
+          }
+        },
+        "x-purpose": "test"
+      },
+      "put": {
+        "tags": [
+          "UnboundParams"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "location",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      },
+      "delete": {
+        "tags": [
+          "UnboundParams"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Cart": {
+        "required": [
+          "Id"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "The cart identifier",
+            "format": "int32",
+            "readOnly": true
+          },
+          "cartType": { }
+        },
+        "additionalProperties": false
+      },
+      "CartType": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "description": "The cart type",
+        "format": "int32"
+      },
+      "Circle": {
+        "allOf": [
+          { },
+          {
+            "type": "object",
+            "properties": {
+              "radius": {
+                "type": "integer",
+                "format": "int32"
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "CreditCard": {
+        "required": [
+          "cardNumber",
+          "expMonth",
+          "expYear"
+        ],
+        "type": "object",
+        "properties": {
+          "cardNumber": {
+            "minLength": 1,
+            "pattern": "^[3-6]?\\d{12,15}$",
+            "type": "string"
+          },
+          "expMonth": {
+            "maximum": 12,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "expYear": {
+            "maximum": 99,
+            "minimum": 14,
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DateTimeKind": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "DiscountType": {
+        "enum": [
+          "Percentage",
+          "Amount"
+        ],
+        "type": "string"
+      },
+      "LogLevel": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "Order": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "total": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PaymentRequest": {
+        "required": [
+          "creditCard",
+          "transaction"
+        ],
+        "type": "object",
+        "properties": {
+          "transaction": { },
+          "creditCard": { }
+        },
+        "additionalProperties": false
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Uniquely identifies the product",
+            "format": "int32"
+          },
+          "description": {
+            "type": "string",
+            "description": "Describes the product",
+            "nullable": true
+          },
+          "status": { },
+          "status2": { }
+        },
+        "additionalProperties": false,
+        "description": "Represents a product",
+        "example": {
+          "id": 123,
+          "description": "foobar",
+          "price": 14.37
+        }
+      },
+      "ProductStatus": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "Promotion": {
+        "type": "object",
+        "properties": {
+          "promo-code": {
+            "type": "string",
+            "nullable": true
+          },
+          "discountType": { }
+        },
+        "additionalProperties": false
+      },
+      "Rectangle": {
+        "allOf": [
+          { },
+          {
+            "type": "object",
+            "properties": {
+              "height": {
+                "type": "integer",
+                "format": "int32"
+              },
+              "width": {
+                "type": "integer",
+                "format": "int32"
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "Shape": {
+        "required": [
+          "TypeName"
+        ],
+        "type": "object",
+        "properties": {
+          "TypeName": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "discriminator": {
+          "propertyName": "TypeName",
+          "mapping": {
+            "Rectangle": "#/components/schemas/Rectangle",
+            "Circle": "#/components/schemas/Circle"
+          }
+        }
+      },
+      "Store": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "location": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TestResponse": {
+        "type": "object",
+        "properties": {
+          "foo": { }
+        },
+        "additionalProperties": false
+      },
+      "TestStruct": {
+        "type": "object",
+        "properties": {
+          "a": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "b": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Transaction": {
+        "required": [
+          "amount"
+        ],
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "format": "double"
+          },
+          "note": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ValidationProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          },
+          "errors": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "SwaggerAnnotations",
+      "description": "Manipulate Carts to your heart's content",
+      "externalDocs": {
+        "url": "http://www.tempuri.org"
+      }
+    }
+  ]
+}

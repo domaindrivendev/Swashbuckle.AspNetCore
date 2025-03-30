@@ -4,7 +4,7 @@
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)..\..\src\Swashbuckle.AspNetCore.Swagger\Swashbuckle.AspNetCore.Swagger.snk</AssemblyOriginatorKeyFile>
     <NoWarn>$(NoWarn);8002</NoWarn>
     <SignAssembly>true</SignAssembly>
-    <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net10.0;net9.0;net8.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -49,6 +49,11 @@
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))">
     <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="9.0.3" />
     <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="9.0.3" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net10.0'))">
+    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="10.0.0-preview.1.25120.3" />
+    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="10.0.0-preview.1.25120.3" />
   </ItemGroup>
 
 </Project>

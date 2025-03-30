@@ -8,8 +8,13 @@ public class TestDocumentFilter : IDocumentFilter, IDocumentAsyncFilter
 {
     public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
     {
+#if NET10_0_OR_GREATER
+        swaggerDoc.Extensions.Add("X-foo", new OpenApiAny("bar"));
+        swaggerDoc.Extensions.Add("X-docName", new OpenApiAny(context.DocumentName));
+#else
         swaggerDoc.Extensions.Add("X-foo", new OpenApiString("bar"));
         swaggerDoc.Extensions.Add("X-docName", new OpenApiString(context.DocumentName));
+#endif
         context.SchemaGenerator.GenerateSchema(typeof(ComplexType), context.SchemaRepository);
     }
 

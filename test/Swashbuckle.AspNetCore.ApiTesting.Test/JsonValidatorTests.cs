@@ -1,8 +1,14 @@
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
+#if NET10_0_OR_GREATER
+using JsonSchemaType = Microsoft.OpenApi.Models.JsonSchemaType;
+#else
 using JsonSchemaType = string;
+#endif
 
 namespace Swashbuckle.AspNetCore.ApiTesting.Test;
 
@@ -193,7 +199,7 @@ public class JsonValidatorTests
     }
 
     [Theory]
-    [InlineData(5, "'1234'", false, "Path: . String length is less than minLength" )]
+    [InlineData(5, "'1234'", false, "Path: . String length is less than minLength")]
     [InlineData(5, "'12345'", true, null)]
     public void Validate_ReturnsError_IfStringLengthLessThanMinLength(
         int schemaMinLength,
@@ -453,7 +459,7 @@ public class JsonValidatorTests
             Type = JsonSchemaTypes.Object,
             Properties = new Dictionary<string, OpenApiSchema>
             {
-                [ "id" ] = new OpenApiSchema { Type = propertySchemaType }
+                ["id"] = new OpenApiSchema { Type = propertySchemaType }
             }
         };
         var instance = JToken.Parse(instanceText);

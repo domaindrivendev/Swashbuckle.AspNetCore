@@ -1,0 +1,26 @@
+﻿{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Test API",
+    "version": "V1"
+  },
+  "paths": {
+    "/resource": {
+      "post": {
+        "tags": [
+          null
+        ],
+        "requestBody": {
+          "content": { },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": { }
+}

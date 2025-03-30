@@ -129,7 +129,11 @@ public static class OpenApiSchemaExtensions
         }
     }
 
-    public static string ResolveType(this OpenApiSchema schema, SchemaRepository schemaRepository)
+#if NET10_0_OR_GREATER
+    internal static JsonSchemaType? ResolveType(this OpenApiSchema schema, SchemaRepository schemaRepository)
+#else
+    internal static string ResolveType(this OpenApiSchema schema, SchemaRepository schemaRepository)
+#endif
     {
         if (schema.Reference != null && schemaRepository.Schemas.TryGetValue(schema.Reference.Id, out OpenApiSchema definitionSchema))
         {
