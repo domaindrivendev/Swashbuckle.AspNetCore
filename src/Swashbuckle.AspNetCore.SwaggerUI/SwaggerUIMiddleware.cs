@@ -136,7 +136,15 @@ internal sealed partial class SwaggerUIMiddleware
             headers.CacheControl = new()
             {
                 MaxAge = maxAge,
-                Public = true,
+                Private = true,
+            };
+        }
+        else
+        {
+            headers.CacheControl = new()
+            {
+                NoCache = true,
+                NoStore = true,
             };
         }
 

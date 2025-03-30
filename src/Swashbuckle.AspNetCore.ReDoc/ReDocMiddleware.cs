@@ -129,7 +129,15 @@ internal sealed class ReDocMiddleware
             headers.CacheControl = new()
             {
                 MaxAge = maxAge,
-                Public = true,
+                Private = true,
+            };
+        }
+        else
+        {
+            headers.CacheControl = new()
+            {
+                NoCache = true,
+                NoStore = true,
             };
         }
 

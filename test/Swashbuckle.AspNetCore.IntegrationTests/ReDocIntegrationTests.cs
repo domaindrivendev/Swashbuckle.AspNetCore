@@ -41,7 +41,7 @@ public class ReDocIntegrationTests
             Assert.True(response.Headers.ETag.IsWeak);
             Assert.NotEmpty(response.Headers.ETag.Tag);
             Assert.NotNull(response.Headers.CacheControl);
-            Assert.True(response.Headers.CacheControl.Public);
+            Assert.True(response.Headers.CacheControl.Private);
             Assert.Equal(TimeSpan.FromDays(7), response.Headers.CacheControl.MaxAge);
         }
     }
