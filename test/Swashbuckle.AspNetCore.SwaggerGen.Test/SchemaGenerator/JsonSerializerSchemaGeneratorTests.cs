@@ -1011,30 +1011,6 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal(required, propertyIsRequired);
     }
 
-    [Obsolete($"{nameof(IOptions<MvcOptions>)} is not used.")]
-    [Theory]
-    [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextAnnotated.NonNullableString), false)]
-    [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextAnnotated.NonNullableString), true)]
-    [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextNotAnnotated.NonNullableString), false)]
-    [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextNotAnnotated.NonNullableString), true)]
-    public void GenerateSchema_SupportsOption_SuppressImplicitRequiredAttributeForNonNullableReferenceTypes(
-        Type declaringType,
-        string subType,
-        string propertyName,
-        bool suppress)
-    {
-        var subject = Subject(
-            configureGenerator: c => c.NonNullableReferenceTypesAsRequired = true,
-            configureMvcOptions: o => o.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = suppress
-        );
-        var schemaRepository = new SchemaRepository();
-
-        subject.GenerateSchema(declaringType, schemaRepository);
-
-        var propertyIsRequired = schemaRepository.Schemas[subType].Required.Contains(propertyName);
-        Assert.True(propertyIsRequired);
-    }
-
     [Theory]
     [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithNestedSubType.Nested), nameof(TypeWithNullableContextAnnotated.SubTypeWithNestedSubType.Nested.NullableString), true)]
     [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithNestedSubType.Nested), nameof(TypeWithNullableContextAnnotated.SubTypeWithNestedSubType.Nested.NonNullableString), false)]
@@ -1367,21 +1343,5 @@ public class JsonSerializerSchemaGeneratorTests
         configureSerializer?.Invoke(serializerOptions);
 
         return new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions));
-    }
-
-    [Obsolete($"{nameof(IOptions<MvcOptions>)} is not used.")]
-    private static SchemaGenerator Subject(
-        Action<SchemaGeneratorOptions> configureGenerator,
-        Action<MvcOptions> configureMvcOptions)
-    {
-        var generatorOptions = new SchemaGeneratorOptions();
-        configureGenerator?.Invoke(generatorOptions);
-
-        var serializerOptions = new JsonSerializerOptions();
-
-        var mvcOptions = new MvcOptions();
-        configureMvcOptions?.Invoke(mvcOptions);
-
-        return new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions), Options.Create(mvcOptions));
     }
 }
