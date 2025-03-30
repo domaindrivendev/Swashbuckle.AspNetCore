@@ -103,7 +103,7 @@ internal sealed class ReDocMiddleware
         {
             RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
             FileProvider = new EmbeddedFileProvider(typeof(ReDocMiddleware).Assembly, EmbeddedFileNamespace),
-            OnPrepareResponse = (context) => SetCacheHeaders(context.Context.Response, options)
+            OnPrepareResponse = (context) => SetCacheHeaders(context.Context.Response, options),
         };
 
         return new StaticFileMiddleware(next, hostingEnv, Options.Create(staticFileOptions), loggerFactory);

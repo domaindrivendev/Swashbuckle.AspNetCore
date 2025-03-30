@@ -11,9 +11,10 @@ public class ReDocIntegrationTests
     [Fact]
     public async Task RoutePrefix_RedirectsToIndexUrl()
     {
-        var client = new TestSite(typeof(ReDocApp.Startup)).BuildClient();
+        var site = new TestSite(typeof(ReDocApp.Startup));
+        using var client = site.BuildClient();
 
-        var response = await client.GetAsync("/api-docs");
+        using var response = await client.GetAsync("/api-docs");
 
         Assert.Equal(HttpStatusCode.MovedPermanently, response.StatusCode);
         Assert.Equal("api-docs/index.html", response.Headers.Location.ToString());
@@ -22,47 +23,36 @@ public class ReDocIntegrationTests
     [Fact]
     public async Task IndexUrl_ReturnsEmbeddedVersionOfTheRedocUI()
     {
-        var client = new TestSite(typeof(ReDocApp.Startup)).BuildClient();
+        var site = new TestSite(typeof(ReDocApp.Startup));
+        using var client = site.BuildClient();
 
-        var htmlResponse = await client.GetAsync("/api-docs/index.html");
-        var cssResponse = await client.GetAsync("/api-docs/index.css");
-        var jsResponse = await client.GetAsync("/api-docs/redoc.standalone.js");
+        using var htmlResponse = await client.GetAsync("/api-docs/index.html");
+        using var cssResponse = await client.GetAsync("/api-docs/index.css");
+        using var jsResponse = await client.GetAsync("/api-docs/redoc.standalone.js");
 
-        Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
-        Assert.Equal(HttpStatusCode.OK, cssResponse.StatusCode);
-        Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
+        AssertResource(htmlResponse);
+        AssertResource(cssResponse);
+        AssertResource(jsResponse);
 
-        Assert.NotNull(htmlResponse.Headers.ETag);
-        Assert.NotNull(cssResponse.Headers.ETag);
-        Assert.NotNull(jsResponse.Headers.ETag);
-
-        Assert.True(htmlResponse.Headers.ETag.IsWeak);
-        Assert.True(cssResponse.Headers.ETag.IsWeak);
-        Assert.True(jsResponse.Headers.ETag.IsWeak);
-
-        Assert.NotEmpty(htmlResponse.Headers.ETag.Tag);
-        Assert.NotEmpty(cssResponse.Headers.ETag.Tag);
-        Assert.NotEmpty(jsResponse.Headers.ETag.Tag);
-
-        Assert.NotNull(htmlResponse.Headers.CacheControl);
-        Assert.NotNull(cssResponse.Headers.CacheControl);
-        Assert.NotNull(jsResponse.Headers.CacheControl);
-
-        Assert.True(htmlResponse.Headers.CacheControl.Public);
-        Assert.True(cssResponse.Headers.CacheControl.Public);
-        Assert.True(jsResponse.Headers.CacheControl.Public);
-
-        Assert.Equal(TimeSpan.FromDays(7), htmlResponse.Headers.CacheControl.MaxAge);
-        Assert.Equal(TimeSpan.FromDays(7), cssResponse.Headers.CacheControl.MaxAge);
-        Assert.Equal(TimeSpan.FromDays(7), jsResponse.Headers.CacheControl.MaxAge);
+        static void AssertResource(HttpResponseMessage response)
+        {
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.NotNull(response.Headers.ETag);
+            Assert.True(response.Headers.ETag.IsWeak);
+            Assert.NotEmpty(response.Headers.ETag.Tag);
+            Assert.NotNull(response.Headers.CacheControl);
+            Assert.True(response.Headers.CacheControl.Public);
+            Assert.Equal(TimeSpan.FromDays(7), response.Headers.CacheControl.MaxAge);
+        }
     }
 
     [Fact]
     public async Task RedocMiddleware_ReturnsInitializerScript()
     {
-        var client = new TestSite(typeof(ReDocApp.Startup)).BuildClient();
+        var site = new TestSite(typeof(ReDocApp.Startup));
+        using var client = site.BuildClient();
 
-        var response = await client.GetAsync("/api-docs/index.js");
+        using var response = await client.GetAsync("/api-docs/index.js");
         var content = await response.Content.ReadAsStringAsync();
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -76,12 +66,13 @@ public class ReDocIntegrationTests
     [Fact]
     public async Task IndexUrl_IgnoresUrlCase()
     {
-        var client = new TestSite(typeof(ReDocApp.Startup)).BuildClient();
+        var site = new TestSite(typeof(ReDocApp.Startup));
+        using var client = site.BuildClient();
 
-        var htmlResponse = await client.GetAsync("/Api-Docs/index.html");
-        var cssResponse = await client.GetAsync("/Api-Docs/index.css");
-        var jsInitResponse = await client.GetAsync("/Api-Docs/index.js");
-        var jsRedocResponse = await client.GetAsync("/Api-Docs/redoc.standalone.js");
+        using var htmlResponse = await client.GetAsync("/Api-Docs/index.html");
+        using var cssResponse = await client.GetAsync("/Api-Docs/index.css");
+        using var jsInitResponse = await client.GetAsync("/Api-Docs/index.js");
+        using var jsRedocResponse = await client.GetAsync("/Api-Docs/redoc.standalone.js");
 
         Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
         Assert.Equal(HttpStatusCode.OK, cssResponse.StatusCode);
@@ -94,10 +85,11 @@ public class ReDocIntegrationTests
     [InlineData("/redoc/2.0/index.html", "/redoc/2.0/index.js", "/swagger/2.0/swagger.json")]
     public async Task RedocMiddleware_CanBeConfiguredMultipleTimes(string htmlUrl, string jsUrl, string swaggerPath)
     {
-        var client = new TestSite(typeof(MultipleVersions.Startup)).BuildClient();
+        var site = new TestSite(typeof(MultipleVersions.Startup));
+        using var client = site.BuildClient();
 
-        var htmlResponse = await client.GetAsync(htmlUrl);
-        var jsResponse = await client.GetAsync(jsUrl);
+        using var htmlResponse = await client.GetAsync(htmlUrl);
+        using var jsResponse = await client.GetAsync(jsUrl);
         var content = await jsResponse.Content.ReadAsStringAsync();
 
         Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
