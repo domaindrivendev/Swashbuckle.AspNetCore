@@ -31,6 +31,30 @@ public class ReDocIntegrationTests
         Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
         Assert.Equal(HttpStatusCode.OK, cssResponse.StatusCode);
         Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
+
+        Assert.NotNull(htmlResponse.Headers.ETag);
+        Assert.NotNull(cssResponse.Headers.ETag);
+        Assert.NotNull(jsResponse.Headers.ETag);
+
+        Assert.True(htmlResponse.Headers.ETag.IsWeak);
+        Assert.True(cssResponse.Headers.ETag.IsWeak);
+        Assert.True(jsResponse.Headers.ETag.IsWeak);
+
+        Assert.NotEmpty(htmlResponse.Headers.ETag.Tag);
+        Assert.NotEmpty(cssResponse.Headers.ETag.Tag);
+        Assert.NotEmpty(jsResponse.Headers.ETag.Tag);
+
+        Assert.NotNull(htmlResponse.Headers.CacheControl);
+        Assert.NotNull(cssResponse.Headers.CacheControl);
+        Assert.NotNull(jsResponse.Headers.CacheControl);
+
+        Assert.True(htmlResponse.Headers.CacheControl.Public);
+        Assert.True(cssResponse.Headers.CacheControl.Public);
+        Assert.True(jsResponse.Headers.CacheControl.Public);
+
+        Assert.Equal(TimeSpan.FromDays(7), htmlResponse.Headers.CacheControl.MaxAge);
+        Assert.Equal(TimeSpan.FromDays(7), cssResponse.Headers.CacheControl.MaxAge);
+        Assert.Equal(TimeSpan.FromDays(7), jsResponse.Headers.CacheControl.MaxAge);
     }
 
     [Fact]

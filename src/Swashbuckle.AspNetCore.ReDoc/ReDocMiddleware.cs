@@ -23,6 +23,8 @@ internal sealed class ReDocMiddleware
 {
     private const string EmbeddedFileNamespace = "Swashbuckle.AspNetCore.ReDoc.node_modules.redoc.bundles";
 
+    private static readonly string ReDocVersion = GetReDocVersion();
+
     private readonly ReDocOptions _options;
     private readonly StaticFileMiddleware _staticFileMiddleware;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
@@ -101,9 +103,36 @@ internal sealed class ReDocMiddleware
         {
             RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
             FileProvider = new EmbeddedFileProvider(typeof(ReDocMiddleware).Assembly, EmbeddedFileNamespace),
+            OnPrepareResponse = (context) => SetCacheHeaders(context.Context.Response, options)
         };
 
         return new StaticFileMiddleware(next, hostingEnv, Options.Create(staticFileOptions), loggerFactory);
+    }
+
+    private static string GetReDocVersion()
+    {
+        return typeof(ReDocMiddleware).Assembly
+            .GetCustomAttributes<AssemblyMetadataAttribute>()
+            .Where((p) => p.Key is "ReDocVersion")
+            .Select((p) => p.Value)
+            .DefaultIfEmpty(string.Empty)
+            .FirstOrDefault();
+    }
+
+    private static void SetCacheHeaders(HttpResponse response, ReDocOptions options)
+    {
+        var headers = response.GetTypedHeaders();
+
+        if (options.CacheLifetime is { } maxAge)
+        {
+            headers.CacheControl = new()
+            {
+                MaxAge = maxAge,
+                Public = true,
+            };
+        }
+
+        headers.ETag = new($"\"{ReDocVersion}\"", isWeak: true);
     }
 
     private static void RespondWithRedirect(HttpResponse response, string location)
@@ -119,6 +148,8 @@ internal sealed class ReDocMiddleware
     private async Task RespondWithFile(HttpResponse response, string fileName)
     {
         response.StatusCode = 200;
+
+        SetCacheHeaders(response, _options);
 
         Stream stream;
 
