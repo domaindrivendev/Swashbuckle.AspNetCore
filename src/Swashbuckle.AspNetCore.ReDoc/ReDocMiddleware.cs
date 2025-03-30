@@ -100,7 +100,7 @@ internal sealed class ReDocMiddleware
         var staticFileOptions = new StaticFileOptions
         {
             RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
-            FileProvider = new EmbeddedFileProvider(typeof(ReDocMiddleware).GetTypeInfo().Assembly, EmbeddedFileNamespace),
+            FileProvider = new EmbeddedFileProvider(typeof(ReDocMiddleware).Assembly, EmbeddedFileNamespace),
         };
 
         return new StaticFileMiddleware(next, hostingEnv, Options.Create(staticFileOptions), loggerFactory);

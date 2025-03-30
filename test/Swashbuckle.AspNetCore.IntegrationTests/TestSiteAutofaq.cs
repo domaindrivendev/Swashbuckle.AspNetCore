@@ -16,7 +16,7 @@ public class TestSiteAutofaq
 
     public TestServer BuildServer()
     {
-        var startupAssembly = _startupType.GetTypeInfo().Assembly;
+        var startupAssembly = _startupType.Assembly;
         var applicationName = startupAssembly.GetName().Name;
 
         var hostBuilder = new WebHostBuilder()

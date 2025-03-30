@@ -247,7 +247,7 @@ internal class Program
             "exec --depsfile {0} --runtimeconfig {1} {2} _{3} {4}", // note the underscore prepended to the command name
             EscapePath(depsFile),
             EscapePath(runtimeConfig),
-            EscapePath(typeof(Program).GetTypeInfo().Assembly.Location),
+            EscapePath(typeof(Program).Assembly.Location),
             commandName,
             string.Join(" ", subProcessArguments.Select(EscapePath))
         );

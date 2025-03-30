@@ -106,7 +106,7 @@ internal sealed partial class SwaggerUIMiddleware
         var staticFileOptions = new StaticFileOptions
         {
             RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
-            FileProvider = new EmbeddedFileProvider(typeof(SwaggerUIMiddleware).GetTypeInfo().Assembly, EmbeddedFileNamespace),
+            FileProvider = new EmbeddedFileProvider(typeof(SwaggerUIMiddleware).Assembly, EmbeddedFileNamespace),
         };
 
         return new StaticFileMiddleware(next, hostingEnv, Options.Create(staticFileOptions), loggerFactory);
