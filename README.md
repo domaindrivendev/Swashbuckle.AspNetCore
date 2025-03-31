@@ -25,7 +25,7 @@ Once you have an API that can describe itself in Swagger, you've opened the trea
 | Swashbuckle Version | ASP.NET Core | Swagger / OpenAPI Spec. | swagger-ui | Redoc UI |
 |----------|----------|----------|----------|----------|
 | [CI](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/commits/master/) | >= 8.0.0, 2.3.x | 2.0, 3.0 | [5.x.x](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/master/src/Swashbuckle.AspNetCore.SwaggerUI/package.json#L6) | [2.x.x](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/master/src/Swashbuckle.AspNetCore.ReDoc/package.json#L6) |
-| [8.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v8.0.0) | >= 8.0.0, 2.3.x | 2.0, 3.0 | 5.20.1 | 2.4.0 |
+| [8.1.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v8.1.0) | >= 8.0.0, 2.3.x | 2.0, 3.0 | 5.20.2 | 2.4.0 |
 | [7.3.2](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v7.3.2) | >= 8.0.0, 6.0.x, 2.1.x | 2.0, 3.0 | 5.20.1 | 2.4.0 |
 | [6.9.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v6.9.0) | >= 6.0.0, 2.1.x | 2.0, 3.0 | 5.17.14 | 2.1.5 |
 | [5.6.3](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v5.6.3) | >= 2.0.0 | 2.0, 3.0 | 3.32.5 | 2.0.0-rc.40 |
