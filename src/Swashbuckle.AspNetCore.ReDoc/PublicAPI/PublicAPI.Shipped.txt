@@ -1,4 +1,4 @@
-Microsoft.AspNetCore.Builder.ReDocBuilderExtensions
+﻿Microsoft.AspNetCore.Builder.ReDocBuilderExtensions
 Microsoft.AspNetCore.Builder.ReDocOptionsExtensions
 static Microsoft.AspNetCore.Builder.ReDocBuilderExtensions.UseReDoc(this Microsoft.AspNetCore.Builder.IApplicationBuilder app, Swashbuckle.AspNetCore.ReDoc.ReDocOptions options) -> Microsoft.AspNetCore.Builder.IApplicationBuilder
 static Microsoft.AspNetCore.Builder.ReDocBuilderExtensions.UseReDoc(this Microsoft.AspNetCore.Builder.IApplicationBuilder app, System.Action<Swashbuckle.AspNetCore.ReDoc.ReDocOptions> setupAction = null) -> Microsoft.AspNetCore.Builder.IApplicationBuilder
@@ -48,6 +48,8 @@ Swashbuckle.AspNetCore.ReDoc.ConfigObject.SortPropsAlphabetically.set -> void
 Swashbuckle.AspNetCore.ReDoc.ConfigObject.UntrustedSpec.get -> bool
 Swashbuckle.AspNetCore.ReDoc.ConfigObject.UntrustedSpec.set -> void
 Swashbuckle.AspNetCore.ReDoc.ReDocOptions
+Swashbuckle.AspNetCore.ReDoc.ReDocOptions.CacheLifetime.get -> System.TimeSpan?
+Swashbuckle.AspNetCore.ReDoc.ReDocOptions.CacheLifetime.set -> void
 Swashbuckle.AspNetCore.ReDoc.ReDocOptions.ConfigObject.get -> Swashbuckle.AspNetCore.ReDoc.ConfigObject
 Swashbuckle.AspNetCore.ReDoc.ReDocOptions.ConfigObject.set -> void
 Swashbuckle.AspNetCore.ReDoc.ReDocOptions.DocumentTitle.get -> string
