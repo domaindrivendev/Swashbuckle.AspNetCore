@@ -1,2 +1,1 @@
-Swashbuckle.AspNetCore.ReDoc.ReDocOptions.CacheLifetime.get -> System.TimeSpan?
-Swashbuckle.AspNetCore.ReDoc.ReDocOptions.CacheLifetime.set -> void
+﻿
