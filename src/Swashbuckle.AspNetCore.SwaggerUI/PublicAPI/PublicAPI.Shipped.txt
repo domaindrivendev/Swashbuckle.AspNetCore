@@ -1,4 +1,4 @@
-Microsoft.AspNetCore.Builder.SwaggerUIBuilderExtensions
+﻿Microsoft.AspNetCore.Builder.SwaggerUIBuilderExtensions
 Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions
 static Microsoft.AspNetCore.Builder.SwaggerUIBuilderExtensions.UseSwaggerUI(this Microsoft.AspNetCore.Builder.IApplicationBuilder app, Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options) -> Microsoft.AspNetCore.Builder.IApplicationBuilder
 static Microsoft.AspNetCore.Builder.SwaggerUIBuilderExtensions.UseSwaggerUI(this Microsoft.AspNetCore.Builder.IApplicationBuilder app, System.Action<Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions> setupAction = null) -> Microsoft.AspNetCore.Builder.IApplicationBuilder
@@ -119,6 +119,8 @@ Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod.Post = 2 -> Swashbuckle.AspNetCore
 Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod.Put = 1 -> Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod
 Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod.Trace = 7 -> Swashbuckle.AspNetCore.SwaggerUI.SubmitMethod
 Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.CacheLifetime.get -> System.TimeSpan?
+Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.CacheLifetime.set -> void
 Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.ConfigObject.get -> Swashbuckle.AspNetCore.SwaggerUI.ConfigObject
 Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.ConfigObject.set -> void
 Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.DocumentTitle.get -> string

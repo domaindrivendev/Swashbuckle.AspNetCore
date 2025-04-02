@@ -1,2 +1,1 @@
-Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.CacheLifetime.get -> System.TimeSpan?
-Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions.CacheLifetime.set -> void
+﻿
