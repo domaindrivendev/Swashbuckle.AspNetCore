@@ -35,7 +35,7 @@ public class SecurityRequirementsOperationFilter : IOperationFilter
             .Distinct()
             .ToList();
 
-        if (requiredScopes.Any())
+        if (requiredScopes.Count != 0)
         {
             operation.Responses.Add("401", new OpenApiResponse { Description = "Unauthorized" });
             operation.Responses.Add("403", new OpenApiResponse { Description = "Forbidden" });
@@ -49,7 +49,7 @@ public class SecurityRequirementsOperationFilter : IOperationFilter
             [
                 new OpenApiSecurityRequirement
                 {
-                    [ oAuthScheme ] = requiredScopes
+                    [oAuthScheme] = requiredScopes
                 }
             ];
         }

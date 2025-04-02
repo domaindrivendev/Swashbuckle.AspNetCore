@@ -103,7 +103,7 @@ public class AnnotationsOperationFilter : IOperationFilter
 
             operation.Responses ??= [];
 
-            if (!operation.Responses.TryGetValue(statusCode, out OpenApiResponse response))
+            if (!operation.Responses.TryGetValue(statusCode, out var response))
             {
                 response = new OpenApiResponse();
             }

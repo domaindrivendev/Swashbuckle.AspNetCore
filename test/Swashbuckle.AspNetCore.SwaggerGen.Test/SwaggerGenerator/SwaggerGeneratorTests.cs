@@ -44,7 +44,7 @@ public class SwaggerGeneratorTests
             }
         );
 
-        var provider = Assert.IsAssignableFrom<ISwaggerDocumentMetadataProvider>(subject);
+        var provider = Assert.IsType<ISwaggerDocumentMetadataProvider>(subject, exactMatch: false);
         var documentNames = provider.GetDocumentNames();
         Assert.Equal(["v1", "v2"], documentNames);
 
@@ -207,7 +207,7 @@ public class SwaggerGeneratorTests
                     OperationId = "OperationIdSetInMetadata",
                     Responses = new()
                     {
-                        ["200"] = new()
+                        ["200"] = new OpenApiResponse()
                         {
                             Content = new Dictionary<string, OpenApiMediaType>()
                             {
@@ -263,7 +263,7 @@ public class SwaggerGeneratorTests
                 new OpenApiOperation
                 {
                     OperationId = "OperationIdSetInMetadata",
-                    RequestBody = new()
+                    RequestBody = new OpenApiRequestBody()
                     {
                         Content = new Dictionary<string, OpenApiMediaType>()
                         {
@@ -272,7 +272,7 @@ public class SwaggerGeneratorTests
                     },
                     Parameters =
                     [
-                        new()
+                        new OpenApiParameter()
                         {
                             Name = "paramQuery",
                             In = ParameterLocation.Query
@@ -2320,7 +2320,7 @@ public class SwaggerGeneratorTests
                 new OpenApiOperation
                 {
                     OperationId = "OperationIdSetInMetadata",
-                    RequestBody = new()
+                    RequestBody = new OpenApiRequestBody()
                     {
                         Content = new Dictionary<string, OpenApiMediaType>()
                         {
@@ -2383,7 +2383,7 @@ public class SwaggerGeneratorTests
                 new OpenApiOperation
                 {
                     OperationId = "OperationIdSetInMetadata",
-                    RequestBody = new()
+                    RequestBody = new OpenApiRequestBody()
                     {
                         Content = new Dictionary<string, OpenApiMediaType>()
                         {
@@ -2445,7 +2445,7 @@ public class SwaggerGeneratorTests
                 new OpenApiOperation
                 {
                     OperationId = "OperationIdSetInMetadata",
-                    RequestBody = new()
+                    RequestBody = new OpenApiRequestBody()
                     {
                         Content = new Dictionary<string, OpenApiMediaType>()
                         {
@@ -2509,7 +2509,7 @@ public class SwaggerGeneratorTests
                 new OpenApiOperation
                 {
                     OperationId = "OperationIdSetInMetadata",
-                    RequestBody = new()
+                    RequestBody = new OpenApiRequestBody()
                     {
                         Content = new Dictionary<string, OpenApiMediaType>()
                         {

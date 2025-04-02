@@ -1,7 +1,9 @@
 ﻿using System.Xml.XPath;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
+#if !NET10_0_OR_GREATER
 using Swashbuckle.AspNetCore.TestSupport;
+#endif
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 
@@ -92,7 +94,9 @@ public class XmlCommentsParameterFilterTests
 
     private static XmlCommentsParameterFilter Subject()
     {
-        using var xmlComments = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml");
-        return new XmlCommentsParameterFilter(new XPathDocument(xmlComments));
+        using var xml = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml");
+        var document = new XPathDocument(xml);
+        var members = XmlCommentsDocumentHelper.CreateMemberDictionary(document);
+        return new(members, new());
     }
 }

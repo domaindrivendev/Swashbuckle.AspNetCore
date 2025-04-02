@@ -17,8 +17,8 @@ public class RequestValidator(IEnumerable<IContentValidator> contentValidators)
         string pathTemplate,
         OperationType operationType)
     {
-        var operationSpec = openApiDocument.GetOperationByPathAndType(pathTemplate, operationType, out OpenApiPathItem pathSpec);
-        var parameterSpecs = ExpandParameterSpecs(pathSpec, operationSpec, openApiDocument);
+        var operationSpec = openApiDocument.GetOperationByPathAndType(pathTemplate, operationType, out var pathSpec);
+        OpenApiParameter[] parameterSpecs = [.. pathSpec.Parameters, .. operationSpec.Parameters];
 
         // Convert to absolute Uri as a workaround to limitation with Uri class - i.e. most of it's methods are not supported for relative Uri's.
         var requestUri = new Uri(new Uri("http://tempuri.org"), request.RequestUri);
@@ -41,32 +41,6 @@ public class RequestValidator(IEnumerable<IContentValidator> contentValidators)
         {
             ValidateContent(operationSpec.RequestBody, openApiDocument, request.Content);
         }
-    }
-
-    private static IEnumerable<OpenApiParameter> ExpandParameterSpecs(
-        OpenApiPathItem pathSpec,
-        OpenApiOperation operationSpec,
-        OpenApiDocument openApiDocument)
-    {
-        var securityParameterSpecs = DeriveSecurityParameterSpecs(operationSpec, openApiDocument);
-
-        return securityParameterSpecs
-            .Concat(pathSpec.Parameters)
-            .Concat(operationSpec.Parameters)
-            .Select(p =>
-            {
-                return p.Reference != null ?
-                    (OpenApiParameter)openApiDocument.ResolveReference(p.Reference)
-                    : p;
-            });
-    }
-
-    private static IEnumerable<OpenApiParameter> DeriveSecurityParameterSpecs(
-        OpenApiOperation operationSpec,
-        OpenApiDocument openApiDocument)
-    {
-        // TODO
-        return [];
     }
 
     private static bool TryParsePathNameValues(string pathTemplate, string requestUri, out NameValueCollection pathNameValues)

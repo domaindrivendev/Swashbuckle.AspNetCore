@@ -12,7 +12,7 @@ public class CreateUserTests : ApiTestFixture<TestFirst.Startup>
 {
     public CreateUserTests(
         ApiTestRunner apiTestRunner,
-        WebApplicationFactory<TestFirst.Startup> webApplicationFactory)
+        WebApplicationFactory<Startup> webApplicationFactory)
         : base(apiTestRunner, webApplicationFactory, "v1-generated")
     {
         Describe("/api/users", OperationType.Post, new OpenApiOperation
@@ -30,8 +30,8 @@ public class CreateUserTests : ApiTestFixture<TestFirst.Startup>
                             Type = JsonSchemaTypes.Object,
                             Properties = new Dictionary<string, OpenApiSchema>
                             {
-                                [ "email" ] = new OpenApiSchema {  Type = JsonSchemaTypes.String },
-                                [ "password" ] = new OpenApiSchema {  Type = JsonSchemaTypes.String },
+                                [ "email" ] = new OpenApiSchema { Type = JsonSchemaTypes.String },
+                                [ "password" ] = new OpenApiSchema { Type = JsonSchemaTypes.String },
                             },
                             Required = new SortedSet<string> { "email", "password" }
                         }

@@ -74,39 +74,39 @@ public class AnnotationsSchemaFilter(IServiceProvider serviceProvider) : ISchema
 
     private static void ApplySchemaAttribute(OpenApiSchema schema, SwaggerSchemaAttribute schemaAttribute)
     {
-        if (schemaAttribute.Description != null)
+        if (schemaAttribute.Description is { } description)
         {
-            schema.Description = schemaAttribute.Description;
+            schema.Description = description;
         }
 
-        if (schemaAttribute.Format != null)
+        if (schemaAttribute.Format is { } format)
         {
-            schema.Format = schemaAttribute.Format;
+            schema.Format = format;
         }
 
-        if (schemaAttribute.ReadOnlyFlag.HasValue)
+        if (schemaAttribute.ReadOnlyFlag is { } readOnly)
         {
-            schema.ReadOnly = schemaAttribute.ReadOnlyFlag.Value;
+            schema.ReadOnly = readOnly;
         }
 
-        if (schemaAttribute.WriteOnlyFlag.HasValue)
+        if (schemaAttribute.WriteOnlyFlag is { } writeOnly)
         {
-            schema.WriteOnly = schemaAttribute.WriteOnlyFlag.Value;
+            schema.WriteOnly = writeOnly;
         }
 
-        if (schemaAttribute.NullableFlag.HasValue)
+        if (schemaAttribute.NullableFlag is { } nullable)
         {
-            schema.Nullable = schemaAttribute.NullableFlag.Value;
+            schema.Nullable = nullable;
         }
 
-        if (schemaAttribute.Required != null)
+        if (schemaAttribute.Required is { } required)
         {
-            schema.Required = new SortedSet<string>(schemaAttribute.Required);
+            schema.Required = new SortedSet<string>(required);
         }
 
-        if (schemaAttribute.Title != null)
+        if (schemaAttribute.Title is { } title)
         {
-            schema.Title = schemaAttribute.Title;
+            schema.Title = title;
         }
     }
 }

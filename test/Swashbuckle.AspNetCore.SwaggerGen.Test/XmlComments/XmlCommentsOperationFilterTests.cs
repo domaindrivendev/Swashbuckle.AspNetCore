@@ -72,9 +72,9 @@ public class XmlCommentsOperationFilterTests
 
     private XmlCommentsOperationFilter Subject()
     {
-        using (var xmlComments = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml"))
-        {
-            return new XmlCommentsOperationFilter(new XPathDocument(xmlComments));
-        }
+        using var xml = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml");
+        var document = new XPathDocument(xml);
+        var members = XmlCommentsDocumentHelper.CreateMemberDictionary(document);
+        return new(members, new());
     }
 }

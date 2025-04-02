@@ -18,7 +18,7 @@ public class AnnotationsSchemaFilterTests
         Subject().Apply(schema, context);
 
         Assert.Equal($"Description for {type.Name}", schema.Description);
-        Assert.Equal(new[] { "StringWithSwaggerSchemaAttribute" }, schema.Required);
+        Assert.Equal(["StringWithSwaggerSchemaAttribute"], schema.Required);
         Assert.Equal($"Title for {type.Name}", schema.Title);
     }
 

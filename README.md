@@ -955,7 +955,7 @@ services.AddSwaggerGen(c =>
     c.MapType<Dictionary<MyEnum, List<string>>>(() => new OpenApiSchema());
     c.SchemaFilter<DictionaryTKeyEnumTValueSchemaFilter>();
 };
-	
+    
 ```
 #### Document Filters ####
 
@@ -1479,14 +1479,14 @@ You can annotate classes or properties with a `SwaggerSchemaAttribute` to enrich
 [SwaggerSchema(Required = new[] { "Description" })]
 public class Product
 {
-	[SwaggerSchema("The product identifier", ReadOnly = true)]
-	public int Id { get; set; }
+    [SwaggerSchema("The product identifier", ReadOnly = true)]
+    public int Id { get; set; }
 
-	[SwaggerSchema("The product description")]
-	public string Description { get; set; }
+    [SwaggerSchema("The product description")]
+    public string Description { get; set; }
 
-	[SwaggerSchema("The date it was created", Format = "date")]
-	public DateTime DateCreated { get; set; }
+    [SwaggerSchema("The date it was created", Format = "date")]
+    public DateTime DateCreated { get; set; }
 }
 ```
 
@@ -1507,7 +1507,7 @@ public class Product
 // ProductSchemaFilter.cs
 public class ProductSchemaFilter : ISchemaFilter
 {
-    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+    public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
     {
         schema.Example = new OpenApiObject
         {
@@ -1650,14 +1650,14 @@ It's packaged as a [.NET Tool](https://learn.microsoft.com/dotnet/core/tools/glo
 
 3. Generate a Swagger/ OpenAPI document from your application's startup assembly
 
-	```
-	swagger tofile --output [output] [startupassembly] [swaggerdoc]
-	```
+    ```
+    swagger tofile --output [output] [startupassembly] [swaggerdoc]
+    ```
 
-	Where ...
-	* [output] is the relative path where the Swagger JSON will be output to
-	* [startupassembly] is the relative path to your application's startup assembly
-	* [swaggerdoc] is the name of the swagger document you want to retrieve, as configured in your startup class
+    Where ...
+    * [output] is the relative path where the Swagger JSON will be output to
+    * [startupassembly] is the relative path to your application's startup assembly
+    * [swaggerdoc] is the name of the swagger document you want to retrieve, as configured in your startup class
 
 #### Using the tool with the .NET 6.0 SDK or later
 
@@ -1681,14 +1681,14 @@ It's packaged as a [.NET Tool](https://learn.microsoft.com/dotnet/core/tools/glo
 
 4. Generate a Swagger / OpenAPI document from your application's startup assembly
 
-	```
-	dotnet swagger tofile --output [output] [startupassembly] [swaggerdoc]
-	```
+    ```
+    dotnet swagger tofile --output [output] [startupassembly] [swaggerdoc]
+    ```
 
-	Where ...
-	* [output] is the relative path where the Swagger JSON will be output to
-	* [startupassembly] is the relative path to your application's startup assembly
-	* [swaggerdoc] is the name of the swagger document you want to retrieve, as configured in your startup class
+    Where ...
+    * [output] is the relative path where the Swagger JSON will be output to
+    * [startupassembly] is the relative path to your application's startup assembly
+    * [swaggerdoc] is the name of the swagger document you want to retrieve, as configured in your startup class
 
 ### Use the CLI Tool with a Custom Host Configuration
 
