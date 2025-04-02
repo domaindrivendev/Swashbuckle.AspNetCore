@@ -85,19 +85,19 @@ public class AnnotationsSchemaFilter(IServiceProvider serviceProvider) : ISchema
             return;
         }
 
-        if (schemaAttribute.Format != null)
+        if (schemaAttribute.Format is { } format)
         {
-            concrete.Format = schemaAttribute.Format;
+            concrete.Format = format;
         }
 
-        if (schemaAttribute.ReadOnlyFlag.HasValue)
+        if (schemaAttribute.ReadOnlyFlag is { } readOnly)
         {
-            concrete.ReadOnly = schemaAttribute.ReadOnlyFlag.Value;
+            concrete.ReadOnly = readOnly;
         }
 
-        if (schemaAttribute.WriteOnlyFlag.HasValue)
+        if (schemaAttribute.WriteOnlyFlag is { } writeOnly)
         {
-            concrete.WriteOnly = schemaAttribute.WriteOnlyFlag.Value;
+            concrete.WriteOnly = writeOnly;
         }
 
         if (schemaAttribute.NullableFlag is { } nullable)
@@ -112,14 +112,14 @@ public class AnnotationsSchemaFilter(IServiceProvider serviceProvider) : ISchema
             }
         }
 
-        if (schemaAttribute.Required != null)
+        if (schemaAttribute.Required is { } required)
         {
-            concrete.Required = new SortedSet<string>(schemaAttribute.Required);
+            concrete.Required = new SortedSet<string>(required);
         }
 
-        if (schemaAttribute.Title != null)
+        if (schemaAttribute.Title is { } title)
         {
-            concrete.Title = schemaAttribute.Title;
+            concrete.Title = title;
         }
     }
 }

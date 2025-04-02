@@ -60,9 +60,9 @@ public class AnnotationsRequestBodyFilter : IRequestBodyFilter
         }
 
         if (parameter is OpenApiRequestBody concrete &&
-            swaggerRequestBodyAttribute.RequiredFlag.HasValue)
+            swaggerRequestBodyAttribute.RequiredFlag is { } required)
         {
-            concrete.Required = swaggerRequestBodyAttribute.RequiredFlag.Value;
+            concrete.Required = required;
         }
     }
 }

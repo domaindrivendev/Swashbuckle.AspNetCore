@@ -48,9 +48,9 @@ public class AnnotationsParameterFilter : IParameterFilter
         }
 
         if (parameter is OpenApiParameter concrete &&
-            swaggerParameterAttribute.RequiredFlag.HasValue)
+            swaggerParameterAttribute.RequiredFlag is { } required)
         {
-            concrete.Required = swaggerParameterAttribute.RequiredFlag.Value;
+            concrete.Required = required;
         }
     }
 }
