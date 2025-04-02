@@ -117,6 +117,11 @@ internal class Program
                 }
                 else
                 {
+#if false
+                    // TODO Use SerializeAs() when available
+                    swagger.SerializeAs(writer, specVersion);
+#endif
+
                     switch (specVersion)
                     {
                         case OpenApiSpecVersion.OpenApi2_0:
