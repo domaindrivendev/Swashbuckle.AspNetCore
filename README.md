@@ -1507,7 +1507,7 @@ public class Product
 // ProductSchemaFilter.cs
 public class ProductSchemaFilter : ISchemaFilter
 {
-    public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
+    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
     {
         schema.Example = new OpenApiObject
         {
