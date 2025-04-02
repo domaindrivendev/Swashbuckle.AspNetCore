@@ -150,7 +150,7 @@ public class XmlCommentsRequestBodyFilterTests
                         Type = JsonSchemaTypes.String,
                         Properties = new Dictionary<string, OpenApiSchema>()
                         {
-                            [parameterInfo.Name] = new()
+                            [parameterInfo.Name] = new OpenApiSchema()
                         }
                     },
                 }
@@ -172,7 +172,9 @@ public class XmlCommentsRequestBodyFilterTests
 
     private static XmlCommentsRequestBodyFilter Subject()
     {
-        using var xmlComments = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml");
-        return new XmlCommentsRequestBodyFilter(new XPathDocument(xmlComments));
+        using var xml = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml");
+        var document = new XPathDocument(xml);
+        var members = XmlCommentsDocumentHelper.CreateMemberDictionary(document);
+        return new(members, new());
     }
 }

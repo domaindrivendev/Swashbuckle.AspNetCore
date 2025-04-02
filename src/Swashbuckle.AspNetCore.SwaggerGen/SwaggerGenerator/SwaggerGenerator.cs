@@ -13,8 +13,6 @@ using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.AspNetCore.Http.Metadata;
 #endif
 
-using OpenApiTag = Microsoft.OpenApi.Models.OpenApiTag;
-
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
 public class SwaggerGenerator(
@@ -41,43 +39,59 @@ public class SwaggerGenerator(
         string host = null,
         string basePath = null)
     {
-        var (filterContext, swaggerDoc) = GetSwaggerDocumentWithoutPaths(documentName, host, basePath);
+        var (filterContext, document) = GetSwaggerDocumentWithoutPaths(documentName, host, basePath);
 
-        swaggerDoc.Paths = await GeneratePathsAsync(swaggerDoc, filterContext.ApiDescriptions, filterContext.SchemaRepository);
-        swaggerDoc.Components.SecuritySchemes = await GetSecuritySchemesAsync();
+        document.Paths = await GeneratePathsAsync(document, filterContext.ApiDescriptions, filterContext.SchemaRepository);
+        document.Components.SecuritySchemes = await GetSecuritySchemesAsync();
+
+        if (_options.SecurityRequirements is { Count: > 0 } requirements)
+        {
+            foreach (var requirement in requirements)
+            {
+                document.SecurityRequirements.Add(requirement);
+            }
+        }
 
         foreach (var filter in _options.DocumentAsyncFilters)
         {
-            await filter.ApplyAsync(swaggerDoc, filterContext, CancellationToken.None);
+            await filter.ApplyAsync(document, filterContext, CancellationToken.None);
         }
 
         foreach (var filter in _options.DocumentFilters)
         {
-            filter.Apply(swaggerDoc, filterContext);
+            filter.Apply(document, filterContext);
         }
 
-        SortSchemas(swaggerDoc);
+        SortSchemas(document);
 
-        return swaggerDoc;
+        return document;
     }
 
     public OpenApiDocument GetSwagger(string documentName, string host = null, string basePath = null)
     {
         try
         {
-            var (filterContext, swaggerDoc) = GetSwaggerDocumentWithoutPaths(documentName, host, basePath);
+            var (filterContext, document) = GetSwaggerDocumentWithoutPaths(documentName, host, basePath);
 
-            swaggerDoc.Paths = GeneratePaths(swaggerDoc, filterContext.ApiDescriptions, filterContext.SchemaRepository);
-            swaggerDoc.Components.SecuritySchemes = GetSecuritySchemesAsync().Result;
+            document.Paths = GeneratePaths(document, filterContext.ApiDescriptions, filterContext.SchemaRepository);
+            document.Components.SecuritySchemes = GetSecuritySchemesAsync().Result;
+
+            if (_options.SecurityRequirements is { Count: > 0 } requirements)
+            {
+                foreach (var requirement in requirements)
+                {
+                    document.SecurityRequirements.Add(requirement);
+                }
+            }
 
             foreach (var filter in _options.DocumentFilters)
             {
-                filter.Apply(swaggerDoc, filterContext);
+                filter.Apply(document, filterContext);
             }
 
-            SortSchemas(swaggerDoc);
+            SortSchemas(document);
 
-            return swaggerDoc;
+            return document;
         }
         catch (AggregateException ex)
         {
@@ -134,7 +148,6 @@ public class SwaggerGenerator(
             {
                 Schemas = schemaRepository.Schemas,
             },
-            SecurityRequirements = [.. _options.SecurityRequirements]
         };
 
         return (new DocumentFilterContext(applicableApiDescriptions, _schemaGenerator, schemaRepository), swaggerDoc);
@@ -829,7 +842,7 @@ public class SwaggerGenerator(
         var schema = GenerateSchemaFromFormParameters(formParameters, schemaRepository);
 
         var totalProperties = schema.AllOf
-            ?.FirstOrDefault(s => s.Properties.Count > 0)
+            ?.FirstOrDefault(s => s.Properties?.Count > 0)
             ?.Properties ?? schema.Properties;
 
         return new OpenApiRequestBody
@@ -839,10 +852,10 @@ public class SwaggerGenerator(
                 contentType => new OpenApiMediaType
                 {
                     Schema = schema,
-                    Encoding = totalProperties.ToDictionary(
+                    Encoding = totalProperties?.ToDictionary(
                         entry => entry.Key,
                         entry => new OpenApiEncoding { Style = ParameterStyle.Form }
-                    )
+                    ) ?? []
                 })
         };
     }

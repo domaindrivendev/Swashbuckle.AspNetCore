@@ -42,7 +42,10 @@ public class SchemaGeneratorOptions
 
     private string DefaultSchemaIdSelector(Type modelType)
     {
-        if (!modelType.IsConstructedGenericType) return modelType.Name.Replace("[]", "Array");
+        if (!modelType.IsConstructedGenericType)
+        {
+            return modelType.Name.Replace("[]", "Array");
+        }
 
         var prefix = modelType.GetGenericArguments()
             .Select(DefaultSchemaIdSelector)

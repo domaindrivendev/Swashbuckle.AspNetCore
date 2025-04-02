@@ -75,9 +75,11 @@ public class SchemaGenerator(
             {
                 var requiredAttribute = customAttributes.OfType<RequiredAttribute>().FirstOrDefault();
 
-                schema.Nullable = _generatorOptions.SupportNonNullableReferenceTypes
+                var nullable = _generatorOptions.SupportNonNullableReferenceTypes
                     ? dataProperty.IsNullable && requiredAttribute == null && !memberInfo.IsNonNullableReferenceType()
                     : dataProperty.IsNullable && requiredAttribute == null;
+
+                schema.Nullable = nullable;
 
                 schema.ReadOnly = dataProperty.IsReadOnly;
                 schema.WriteOnly = dataProperty.IsWriteOnly;
@@ -346,7 +348,7 @@ public class SchemaGenerator(
         {
             Type = JsonSchemaTypes.Array,
             Items = GenerateSchema(dataContract.ArrayItemType, schemaRepository),
-            UniqueItems = hasUniqueItems ? (bool?)true : null
+            UniqueItems = hasUniqueItems ? true : null
         };
     }
 
@@ -527,7 +529,7 @@ public class SchemaGenerator(
         SchemaRepository schemaRepository,
         Func<OpenApiSchema> definitionFactory)
     {
-        if (schemaRepository.TryLookupByType(dataContract.UnderlyingType, out OpenApiSchema referenceSchema))
+        if (schemaRepository.TryLookupByType(dataContract.UnderlyingType, out var referenceSchema))
         {
             return referenceSchema;
         }

@@ -193,7 +193,7 @@ public class JsonValidatorTests
     }
 
     [Theory]
-    [InlineData(5, "'1234'", false, "Path: . String length is less than minLength" )]
+    [InlineData(5, "'1234'", false, "Path: . String length is less than minLength")]
     [InlineData(5, "'12345'", true, null)]
     public void Validate_ReturnsError_IfStringLengthLessThanMinLength(
         int schemaMinLength,
@@ -453,7 +453,7 @@ public class JsonValidatorTests
             Type = JsonSchemaTypes.Object,
             Properties = new Dictionary<string, OpenApiSchema>
             {
-                [ "id" ] = new OpenApiSchema { Type = propertySchemaType }
+                ["id"] = new OpenApiSchema { Type = propertySchemaType }
             }
         };
         var instance = JToken.Parse(instanceText);

@@ -2,11 +2,10 @@
   <PropertyGroup>
     <IsPackable>false</IsPackable>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)..\..\src\Swashbuckle.AspNetCore.Swagger\Swashbuckle.AspNetCore.Swagger.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="..\..\src\Shared\JsonSchemaTypes.cs" Link="JsonSchemaTypes.cs" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Swashbuckle.AspNetCore.Annotations\Swashbuckle.AspNetCore.Annotations.csproj" />
     <ProjectReference Include="..\..\src\Swashbuckle.AspNetCore.SwaggerGen\Swashbuckle.AspNetCore.SwaggerGen.csproj" />

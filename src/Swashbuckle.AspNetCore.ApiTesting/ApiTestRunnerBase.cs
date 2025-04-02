@@ -31,13 +31,16 @@ public abstract class ApiTestRunnerBase : IDisposable
 
         openApiDocument.Paths ??= [];
 
-        if (!openApiDocument.Paths.TryGetValue(pathTemplate, out OpenApiPathItem pathItem))
+        if (!openApiDocument.Paths.TryGetValue(pathTemplate, out var pathItem))
         {
             pathItem = new OpenApiPathItem();
             openApiDocument.Paths.Add(pathTemplate, pathItem);
         }
 
-        pathItem.AddOperation(operationType, operation);
+        if (pathItem is OpenApiPathItem item)
+        {
+            item.AddOperation(operationType, operation);
+        }
     }
 
     public async Task TestAsync(

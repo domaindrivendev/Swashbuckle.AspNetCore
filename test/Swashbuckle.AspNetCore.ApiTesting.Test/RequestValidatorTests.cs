@@ -62,8 +62,8 @@ public class RequestValidatorTests
     {
         var openApiDocument = DocumentWithOperation("/api/products", OperationType.Get, new OpenApiOperation
         {
-            Parameters = new List<OpenApiParameter>
-            {
+            Parameters =
+            [
                 new OpenApiParameter
                 {
                     Name = "param",
@@ -71,7 +71,7 @@ public class RequestValidatorTests
                     Schema = new OpenApiSchema { Type = JsonSchemaTypes.String },
                     Required = true
                 }
-            }
+            ]
         });
         var request = new HttpRequestMessage
         {
@@ -96,8 +96,8 @@ public class RequestValidatorTests
     {
         var openApiDocument = DocumentWithOperation("/api/products", OperationType.Get, new OpenApiOperation
         {
-            Parameters = new List<OpenApiParameter>
-            {
+            Parameters =
+            [
                 new OpenApiParameter
                 {
                     Name = "test-header",
@@ -105,7 +105,7 @@ public class RequestValidatorTests
                     Schema = new OpenApiSchema { Type = JsonSchemaTypes.String },
                     Required = true
                 }
-            }
+            ]
         });
         var request = new HttpRequestMessage
         {
@@ -140,15 +140,15 @@ public class RequestValidatorTests
     {
         var openApiDocument = DocumentWithOperation("/api/products/{param}", OperationType.Get, new OpenApiOperation
         {
-            Parameters = new List<OpenApiParameter>
-            {
+            Parameters =
+            [
                 new OpenApiParameter
                 {
                     Name = "param",
                     In = ParameterLocation.Path,
                     Schema = new OpenApiSchema { Type = specifiedType }
                 }
-            }
+            ]
         });
         var request = new HttpRequestMessage
         {
@@ -186,8 +186,8 @@ public class RequestValidatorTests
     {
         var openApiDocument = DocumentWithOperation("/api/products", OperationType.Get, new OpenApiOperation
         {
-            Parameters = new List<OpenApiParameter>
-            {
+            Parameters =
+            [
                 new OpenApiParameter
                 {
                     Name = "param",
@@ -198,7 +198,7 @@ public class RequestValidatorTests
                         Items = specifiedItemsType != null ? new OpenApiSchema { Type = specifiedItemsType } : null
                     }
                 }
-            }
+            ]
         });
         var request = new HttpRequestMessage
         {
@@ -235,8 +235,8 @@ public class RequestValidatorTests
     {
         var openApiDocument = DocumentWithOperation("/api/products", OperationType.Get, new OpenApiOperation
         {
-            Parameters = new List<OpenApiParameter>
-            {
+            Parameters =
+            [
                 new OpenApiParameter
                 {
                     Name = "test-header",
@@ -247,7 +247,7 @@ public class RequestValidatorTests
                         Items = (specifiedItemsType != null) ? new OpenApiSchema { Type = specifiedItemsType } : null
                     }
                 }
-            }
+            ]
         });
         var request = new HttpRequestMessage
         {

@@ -1,7 +1,5 @@
 using System.Globalization;
 using System.Reflection;
-#if NET
-#endif
 using System.Text;
 using System.Text.Json;
 using Microsoft.OpenApi.Any;

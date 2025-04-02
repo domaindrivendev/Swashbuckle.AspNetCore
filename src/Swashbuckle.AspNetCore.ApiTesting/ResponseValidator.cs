@@ -15,7 +15,7 @@ public class ResponseValidator(IEnumerable<IContentValidator> contentValidators)
         string expectedStatusCode)
     {
         var operationSpec = openApiDocument.GetOperationByPathAndType(pathTemplate, operationType, out _);
-        if (!operationSpec.Responses.TryGetValue(expectedStatusCode, out OpenApiResponse responseSpec))
+        if (!operationSpec.Responses.TryGetValue(expectedStatusCode, out var responseSpec))
         {
             throw new InvalidOperationException($"Response for status '{expectedStatusCode}' not found for operation '{operationSpec.OperationId}'");
         }

@@ -30,7 +30,7 @@ public class AnnotationsRequestBodyFilter : IRequestBodyFilter
         }
     }
 
-    private void ApplyPropertyAnnotations(OpenApiRequestBody parameter, PropertyInfo propertyInfo)
+    private static void ApplyPropertyAnnotations(OpenApiRequestBody parameter, PropertyInfo propertyInfo)
     {
         var swaggerRequestBodyAttribute = propertyInfo.GetCustomAttributes<SwaggerRequestBodyAttribute>()
             .FirstOrDefault();
@@ -41,7 +41,7 @@ public class AnnotationsRequestBodyFilter : IRequestBodyFilter
         }
     }
 
-    private void ApplyParamAnnotations(OpenApiRequestBody requestBody, ParameterInfo parameterInfo)
+    private static void ApplyParamAnnotations(OpenApiRequestBody requestBody, ParameterInfo parameterInfo)
     {
         var swaggerRequestBodyAttribute = parameterInfo.GetCustomAttribute<SwaggerRequestBodyAttribute>();
 
@@ -51,16 +51,17 @@ public class AnnotationsRequestBodyFilter : IRequestBodyFilter
         }
     }
 
-    private void ApplySwaggerRequestBodyAttribute(OpenApiRequestBody parameter, SwaggerRequestBodyAttribute swaggerRequestBodyAttribute)
+    private static void ApplySwaggerRequestBodyAttribute(OpenApiRequestBody parameter, SwaggerRequestBodyAttribute swaggerRequestBodyAttribute)
     {
-        if (swaggerRequestBodyAttribute.Description != null)
+        if (swaggerRequestBodyAttribute.Description is { } description)
         {
-            parameter.Description = swaggerRequestBodyAttribute.Description;
+            parameter.Description = description;
         }
 
-        if (swaggerRequestBodyAttribute.RequiredFlag.HasValue)
+        if (parameter is OpenApiRequestBody concrete &&
+            swaggerRequestBodyAttribute.RequiredFlag is { } required)
         {
-            parameter.Required = swaggerRequestBodyAttribute.RequiredFlag.Value;
+            concrete.Required = required;
         }
     }
 }

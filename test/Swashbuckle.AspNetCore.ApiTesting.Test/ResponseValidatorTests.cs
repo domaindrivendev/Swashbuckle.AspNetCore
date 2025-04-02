@@ -48,11 +48,11 @@ public class ResponseValidatorTests
         {
             Responses = new OpenApiResponses
             {
-                [ "201" ] = new OpenApiResponse
+                ["201"] = new OpenApiResponse
                 {
                     Headers = new Dictionary<string, OpenApiHeader>
                     {
-                        [ "test-header" ] = new OpenApiHeader
+                        ["test-header"] = new OpenApiHeader
                         {
                             Required = true
                         }
@@ -98,11 +98,11 @@ public class ResponseValidatorTests
         {
             Responses = new OpenApiResponses
             {
-                [ "201" ] = new OpenApiResponse
+                ["201"] = new OpenApiResponse
                 {
                     Headers = new Dictionary<string, OpenApiHeader>
                     {
-                        [ "test-header" ] = new OpenApiHeader
+                        ["test-header"] = new OpenApiHeader
                         {
                             Schema = new OpenApiSchema
                             {

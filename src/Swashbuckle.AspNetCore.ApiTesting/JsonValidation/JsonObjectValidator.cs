@@ -48,7 +48,7 @@ public class JsonObjectValidator(IJsonValidator jsonValidator) : IJsonValidator
             // properties
             IEnumerable<string> propertyErrorMessages;
 
-            if (schema.Properties != null && schema.Properties.TryGetValue(property.Name, out OpenApiSchema propertySchema))
+            if (schema.Properties != null && schema.Properties.TryGetValue(property.Name, out var propertySchema))
             {
                 if (!_jsonValidator.Validate(propertySchema, openApiDocument, property.Value, out propertyErrorMessages))
                 {

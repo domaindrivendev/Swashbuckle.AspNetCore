@@ -51,11 +51,15 @@ public static class OpenApiSchemaExtensions
         }
         else if (schema.Type == JsonSchemaTypes.Array)
         {
-            var arrayValue = (schema.Items == null)
+            var arrayValue = schema.Items == null
                 ? stringValue.Split(',')
                 : stringValue.Split(',').Select(itemStringValue =>
                 {
-                    schema.Items.TryParse(itemStringValue, out object itemTypedValue);
+                    object itemTypedValue = null;
+                    if (schema.Items is OpenApiSchema items)
+                    {
+                        _ = items.TryParse(itemStringValue, out itemTypedValue);
+                    }
                     return itemTypedValue;
                 });
 

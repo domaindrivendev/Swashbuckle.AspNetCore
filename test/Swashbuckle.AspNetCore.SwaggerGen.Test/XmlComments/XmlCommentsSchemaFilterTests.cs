@@ -170,7 +170,9 @@ public class XmlCommentsSchemaFilterTests
 
     private static XmlCommentsSchemaFilter Subject()
     {
-        using var xmlComments = File.OpenText(typeof(XmlAnnotatedType).Assembly.GetName().Name + ".xml");
-        return new XmlCommentsSchemaFilter(new XPathDocument(xmlComments));
+        using var xml = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml");
+        var document = new XPathDocument(xml);
+        var members = XmlCommentsDocumentHelper.CreateMemberDictionary(document);
+        return new(members, new());
     }
 }

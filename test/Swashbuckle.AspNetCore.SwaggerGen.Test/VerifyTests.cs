@@ -138,7 +138,7 @@ public partial class VerifyTests
                     OperationId = "OperationIdSetInMetadata",
                     Responses = new()
                     {
-                        ["200"] = new()
+                        ["200"] = new OpenApiResponse()
                         {
                             Content = new Dictionary<string, OpenApiMediaType>()
                             {
@@ -189,7 +189,7 @@ public partial class VerifyTests
                 new OpenApiOperation
                 {
                     OperationId = "OperationIdSetInMetadata",
-                    RequestBody = new()
+                    RequestBody = new OpenApiRequestBody()
                     {
                         Content = new Dictionary<string, OpenApiMediaType>()
                         {
@@ -1263,7 +1263,7 @@ public partial class VerifyTests
                     new OpenApiOperation
                     {
                         OperationId = "OperationIdSetInMetadata",
-                        RequestBody = new()
+                        RequestBody = new OpenApiRequestBody()
                         {
                             Content = new Dictionary<string, OpenApiMediaType>()
                             {
@@ -1320,7 +1320,7 @@ public partial class VerifyTests
                 new OpenApiOperation
                     {
                         OperationId = "OperationIdSetInMetadata",
-                        RequestBody = new()
+                        RequestBody = new OpenApiRequestBody()
                         {
                             Content = new Dictionary<string, OpenApiMediaType>()
                             {
@@ -1371,7 +1371,7 @@ public partial class VerifyTests
                 new OpenApiOperation
                     {
                         OperationId = "OperationIdSetInMetadata",
-                        RequestBody = new()
+                        RequestBody = new OpenApiRequestBody()
                         {
                             Content = new Dictionary<string, OpenApiMediaType>()
                             {
@@ -1422,7 +1422,7 @@ public partial class VerifyTests
                 new OpenApiOperation
                     {
                         OperationId = "OperationIdSetInMetadata",
-                        RequestBody = new()
+                        RequestBody = new OpenApiRequestBody()
                         {
                             Content = new Dictionary<string, OpenApiMediaType>()
                             {

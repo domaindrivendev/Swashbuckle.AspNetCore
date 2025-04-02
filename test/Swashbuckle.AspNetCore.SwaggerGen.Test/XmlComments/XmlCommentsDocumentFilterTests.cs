@@ -16,8 +16,7 @@ public class XmlCommentsDocumentFilterTests
     {
         var document = new OpenApiDocument();
         var filterContext = new DocumentFilterContext(
-            new[]
-            {
+            [
                 new ApiDescription
                 {
                     ActionDescriptor = new ControllerActionDescriptor
@@ -34,7 +33,7 @@ public class XmlCommentsDocumentFilterTests
                         ControllerName = nameof(FakeControllerWithXmlComments)
                     }
                 }
-            },
+            ],
             null,
             null);
 
@@ -49,8 +48,7 @@ public class XmlCommentsDocumentFilterTests
     {
         var document = new OpenApiDocument();
         var filterContext = new DocumentFilterContext(
-            new[]
-            {
+            [
                 new ApiDescription
                 {
                     ActionDescriptor = new ControllerActionDescriptor
@@ -67,7 +65,7 @@ public class XmlCommentsDocumentFilterTests
                         ControllerName = nameof(FakeControllerWithXmlComments)
                     }
                 }
-            },
+            ],
             null,
             null);
 
@@ -79,10 +77,10 @@ public class XmlCommentsDocumentFilterTests
 
     private static XmlCommentsDocumentFilter Subject()
     {
-        using (var xmlComments = File.OpenText($"{typeof(FakeControllerWithXmlComments).Assembly.GetName().Name}.xml"))
-        {
-            return new XmlCommentsDocumentFilter(new XPathDocument(xmlComments));
-        }
+        using var xml = File.OpenText($"{typeof(FakeControllerWithXmlComments).Assembly.GetName().Name}.xml");
+        var document = new XPathDocument(xml);
+        var members = XmlCommentsDocumentHelper.CreateMemberDictionary(document);
+        return new(members, null);
     }
 
     [Fact]
@@ -92,8 +90,7 @@ public class XmlCommentsDocumentFilterTests
         var options = new SwaggerGeneratorOptions();
         var document = new OpenApiDocument();
         var filterContext = new DocumentFilterContext(
-            new[]
-            {
+            [
                 new ApiDescription
                 {
                     ActionDescriptor = new ControllerActionDescriptor
@@ -112,7 +109,7 @@ public class XmlCommentsDocumentFilterTests
                         RouteValues = new Dictionary<string, string> { { "controller", expectedTagName } }
                     }
                 }
-            },
+            ],
             null,
             null);
 
@@ -126,11 +123,10 @@ public class XmlCommentsDocumentFilterTests
     public void Uses_Proper_Tag_Name_With_Custom_TagSelector()
     {
         var expectedTagName = "AliasControllerWithXmlComments";
-        var options = new SwaggerGeneratorOptions { TagsSelector = apiDesc => new[] { expectedTagName } };
+        var options = new SwaggerGeneratorOptions { TagsSelector = apiDesc => [expectedTagName] };
         var document = new OpenApiDocument();
         var filterContext = new DocumentFilterContext(
-            new[]
-            {
+            [
                 new ApiDescription
                 {
                     ActionDescriptor = new ControllerActionDescriptor
@@ -147,7 +143,7 @@ public class XmlCommentsDocumentFilterTests
                         ControllerName = nameof(FakeControllerWithXmlComments),
                     }
                 }
-            },
+            ],
             null,
             null);
 
@@ -159,10 +155,10 @@ public class XmlCommentsDocumentFilterTests
 
     private static XmlCommentsDocumentFilter Subject(SwaggerGeneratorOptions options)
     {
-        using (var xmlComments = File.OpenText($"{typeof(FakeControllerWithXmlComments).Assembly.GetName().Name}.xml"))
-        {
-            return new XmlCommentsDocumentFilter(new XPathDocument(xmlComments), options);
-        }
+        using var xmlComments = File.OpenText($"{typeof(FakeControllerWithXmlComments).Assembly.GetName().Name}.xml");
+        var document = new XPathDocument(xmlComments);
+        var members = XmlCommentsDocumentHelper.CreateMemberDictionary(document);
+        return new(members, options);
     }
 
     [Fact]
