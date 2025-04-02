@@ -11,6 +11,8 @@ using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.Interfaces;
+using Microsoft.OpenApi.Models.References;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures;
 using Swashbuckle.AspNetCore.TestSupport;
@@ -44,7 +46,7 @@ public class SwaggerGeneratorTests
             }
         );
 
-        var provider = Assert.IsAssignableFrom<ISwaggerDocumentMetadataProvider>(subject);
+        var provider = Assert.IsType<ISwaggerDocumentMetadataProvider>(subject, exactMatch: false);
         var documentNames = provider.GetDocumentNames();
         Assert.Equal(["v1", "v2"], documentNames);
 
@@ -207,7 +209,7 @@ public class SwaggerGeneratorTests
                     OperationId = "OperationIdSetInMetadata",
                     Responses = new()
                     {
-                        ["200"] = new()
+                        ["200"] = new OpenApiResponse()
                         {
                             Content = new Dictionary<string, OpenApiMediaType>()
                             {
@@ -248,8 +250,8 @@ public class SwaggerGeneratorTests
         var content = Assert.Single(document.Paths["/resource"].Operations[OperationType.Post].Responses["200"].Content);
         Assert.Equal("application/someMediaType", content.Key);
         Assert.Null(content.Value.Schema.Type);
-        Assert.NotNull(content.Value.Schema.Reference);
-        Assert.Equal("TestDto", content.Value.Schema.Reference.Id);
+        var reference = Assert.IsType<OpenApiSchemaReference>(content.Value.Schema);
+        Assert.Equal("TestDto", reference.Reference.Id);
     }
 
     [Fact]
@@ -263,7 +265,7 @@ public class SwaggerGeneratorTests
                 new OpenApiOperation
                 {
                     OperationId = "OperationIdSetInMetadata",
-                    RequestBody = new()
+                    RequestBody = new OpenApiRequestBody()
                     {
                         Content = new Dictionary<string, OpenApiMediaType>()
                         {
@@ -272,7 +274,7 @@ public class SwaggerGeneratorTests
                     },
                     Parameters =
                     [
-                        new()
+                        new OpenApiParameter()
                         {
                             Name = "paramQuery",
                             In = ParameterLocation.Query
@@ -329,29 +331,19 @@ public class SwaggerGeneratorTests
         var content = Assert.Single(operation.RequestBody.Content);
         Assert.Equal("application/someMediaType", content.Key);
         Assert.Null(content.Value.Schema.Type);
-        Assert.NotNull(content.Value.Schema.Reference);
-        Assert.Equal("TestDto", content.Value.Schema.Reference.Id);
+        var reference = Assert.IsType<OpenApiSchemaReference>(content.Value.Schema);
+        Assert.Equal("TestDto", reference.Reference.Id);
         Assert.Equal(2, operation.RequestBody.Extensions.Count);
 
-#if NET10_0_OR_GREATER
         Assert.Equal("bar", ((OpenApiAny)operation.RequestBody.Extensions["X-foo"]).Node.GetValue<string>());
         Assert.Equal("v1", ((OpenApiAny)operation.RequestBody.Extensions["X-docName"]).Node.GetValue<string>());
-#else
-        Assert.Equal("bar", ((OpenApiString)operation.RequestBody.Extensions["X-foo"]).Value);
-        Assert.Equal("v1", ((OpenApiString)operation.RequestBody.Extensions["X-docName"]).Value);
-#endif
 
         Assert.NotEmpty(operation.Parameters);
         Assert.Equal("paramQuery", operation.Parameters[0].Name);
         Assert.Equal(2, operation.Parameters[0].Extensions.Count);
 
-#if NET10_0_OR_GREATER
         Assert.Equal("bar", ((OpenApiAny)operation.Parameters[0].Extensions["X-foo"]).Node.GetValue<string>());
         Assert.Equal("v1", ((OpenApiAny)operation.Parameters[0].Extensions["X-docName"]).Node.GetValue<string>());
-#else
-        Assert.Equal("bar", ((OpenApiString)operation.Parameters[0].Extensions["X-foo"]).Value);
-        Assert.Equal("v1", ((OpenApiString)operation.Parameters[0].Extensions["X-docName"]).Value);
-#endif
     }
 
     [Fact]
@@ -1244,11 +1236,7 @@ public class SwaggerGeneratorTests
         Assert.Single(document.Paths["/resource3"].Operations);
     }
 
-#if NET10_0_OR_GREATER
-    [Fact(Skip = "TODO Needs fixing for .NET 10")]
-#else
     [Fact]
-#endif
     public void GetSwagger_SupportsOption_TagSelector()
     {
         var subject = Subject(
@@ -1269,14 +1257,10 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        Assert.Equal(["resource"], [.. document.Paths["/resource"].Operations[OperationType.Post].Tags?.Select(t => t.Name)]);
+        Assert.Equal(["resource"], [.. document.Paths["/resource"].Operations[OperationType.Post].Tags?.Select(t => t.Reference.Id)]);
     }
 
-#if NET10_0_OR_GREATER
-    [Fact(Skip = "TODO Needs fixing for .NET 10")]
-#else
     [Fact]
-#endif
     public void GetSwagger_CanReadTagsFromMetadata()
     {
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
@@ -1297,7 +1281,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        Assert.Equal(["Some", "Tags", "Here"], [.. document.Paths["/resource"].Operations[OperationType.Post].Tags?.Select(t => t.Name)]);
+        Assert.Equal(["Some", "Tags", "Here"], [.. document.Paths["/resource"].Operations[OperationType.Post].Tags?.Select(t => t.Reference.Id)]);
     }
 
 #if NET
@@ -1527,7 +1511,7 @@ public class SwaggerGeneratorTests
                 {
                     ["v1"] = new OpenApiInfo { Version = "V1", Title = "Test API" }
                 },
-                SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>
+                SecuritySchemes = new Dictionary<string, IOpenApiSecurityScheme>
                 {
                     ["basic"] = new OpenApiSecurityScheme { Type = SecuritySchemeType.Http, Scheme = "basic" }
                 }
@@ -1593,7 +1577,7 @@ public class SwaggerGeneratorTests
                     authenticationSchemes
                         .ToDictionary(
                             (authScheme) => authScheme.Name,
-                            (authScheme) => new OpenApiSecurityScheme())
+                            (authScheme) => new OpenApiSecurityScheme() as IOpenApiSecurityScheme)
             }
         );
 
@@ -1635,14 +1619,8 @@ public class SwaggerGeneratorTests
 
         var operation = document.Paths["/resource"].Operations[OperationType.Post];
         Assert.Equal(2, operation.Parameters[0].Extensions.Count);
-
-#if NET10_0_OR_GREATER
         Assert.Equal("bar", ((OpenApiAny)operation.Parameters[0].Extensions["X-foo"]).Node.GetValue<string>());
         Assert.Equal("v1", ((OpenApiAny)operation.Parameters[0].Extensions["X-docName"]).Node.GetValue<string>());
-#else
-        Assert.Equal("bar", ((OpenApiString)operation.Parameters[0].Extensions["X-foo"]).Value);
-        Assert.Equal("v1", ((OpenApiString)operation.Parameters[0].Extensions["X-docName"]).Value);
-#endif
     }
 
     [Fact]
@@ -1679,13 +1657,8 @@ public class SwaggerGeneratorTests
         var operation = document.Paths["/resource"].Operations[OperationType.Post];
         Assert.Equal(2, operation.RequestBody.Extensions.Count);
 
-#if NET10_0_OR_GREATER
         Assert.Equal("bar", ((OpenApiAny)operation.RequestBody.Extensions["X-foo"]).Node.GetValue<string>());
         Assert.Equal("v1", ((OpenApiAny)operation.RequestBody.Extensions["X-docName"]).Node.GetValue<string>());
-#else
-        Assert.Equal("bar", ((OpenApiString)operation.RequestBody.Extensions["X-foo"]).Value);
-        Assert.Equal("v1", ((OpenApiString)operation.RequestBody.Extensions["X-docName"]).Value);
-#endif
     }
 
     [Fact]
@@ -1715,13 +1688,8 @@ public class SwaggerGeneratorTests
         var operation = document.Paths["/resource"].Operations[OperationType.Post];
         Assert.Equal(2, operation.Extensions.Count);
 
-#if NET10_0_OR_GREATER
         Assert.Equal("bar", ((OpenApiAny)operation.Extensions["X-foo"]).Node.GetValue<string>());
         Assert.Equal("v1", ((OpenApiAny)operation.Extensions["X-docName"]).Node.GetValue<string>());
-#else
-        Assert.Equal("bar", ((OpenApiString)operation.Extensions["X-foo"]).Value);
-        Assert.Equal("v1", ((OpenApiString)operation.Extensions["X-docName"]).Value);
-#endif
     }
 
     [Fact]
@@ -1747,13 +1715,8 @@ public class SwaggerGeneratorTests
         Assert.Equal(2, document.Extensions.Count);
         Assert.Contains("ComplexType", document.Components.Schemas.Keys);
 
-#if NET10_0_OR_GREATER
         Assert.Equal("bar", ((OpenApiAny)document.Extensions["X-foo"]).Node.GetValue<string>());
         Assert.Equal("v1", ((OpenApiAny)document.Extensions["X-docName"]).Node.GetValue<string>());
-#else
-        Assert.Equal("bar", ((OpenApiString)document.Extensions["X-foo"]).Value);
-        Assert.Equal("v1", ((OpenApiString)document.Extensions["X-docName"]).Value);
-#endif
     }
 
     [Fact]
@@ -1783,13 +1746,8 @@ public class SwaggerGeneratorTests
         var operation = document.Paths["/resource"].Operations[OperationType.Post];
         Assert.Equal(2, operation.Extensions.Count);
 
-#if NET10_0_OR_GREATER
         Assert.Equal("bar", ((OpenApiAny)operation.Extensions["X-foo"]).Node.GetValue<string>());
         Assert.Equal("v1", ((OpenApiAny)operation.Extensions["X-docName"]).Node.GetValue<string>());
-#else
-        Assert.Equal("bar", ((OpenApiString)operation.Extensions["X-foo"]).Value);
-        Assert.Equal("v1", ((OpenApiString)operation.Extensions["X-docName"]).Value);
-#endif
     }
 
     [Fact]
@@ -1819,13 +1777,8 @@ public class SwaggerGeneratorTests
         var operation = document.Paths["/resource"].Operations[OperationType.Post];
         Assert.Equal(2, operation.Extensions.Count);
 
-#if NET10_0_OR_GREATER
         Assert.Equal("bar", ((OpenApiAny)operation.Extensions["X-foo"]).Node.GetValue<string>());
         Assert.Equal("v1", ((OpenApiAny)operation.Extensions["X-docName"]).Node.GetValue<string>());
-#else
-        Assert.Equal("bar", ((OpenApiString)operation.Extensions["X-foo"]).Value);
-        Assert.Equal("v1", ((OpenApiString)operation.Extensions["X-docName"]).Value);
-#endif
     }
 
     [Fact]
@@ -1851,13 +1804,8 @@ public class SwaggerGeneratorTests
         Assert.Equal(2, document.Extensions.Count);
         Assert.Contains("ComplexType", document.Components.Schemas.Keys);
 
-#if NET10_0_OR_GREATER
         Assert.Equal("bar", ((OpenApiAny)document.Extensions["X-foo"]).Node.GetValue<string>());
         Assert.Equal("v1", ((OpenApiAny)document.Extensions["X-docName"]).Node.GetValue<string>());
-#else
-        Assert.Equal("bar", ((OpenApiString)document.Extensions["X-foo"]).Value);
-        Assert.Equal("v1", ((OpenApiString)document.Extensions["X-docName"]).Value);
-#endif
     }
 
     [Fact]
@@ -1883,13 +1831,8 @@ public class SwaggerGeneratorTests
         Assert.Equal(2, document.Extensions.Count);
         Assert.Contains("ComplexType", document.Components.Schemas.Keys);
 
-#if NET10_0_OR_GREATER
         Assert.Equal("bar", ((OpenApiAny)document.Extensions["X-foo"]).Node.GetValue<string>());
         Assert.Equal("v1", ((OpenApiAny)document.Extensions["X-docName"]).Node.GetValue<string>());
-#else
-        Assert.Equal("bar", ((OpenApiString)document.Extensions["X-foo"]).Value);
-        Assert.Equal("v1", ((OpenApiString)document.Extensions["X-docName"]).Value);
-#endif
     }
 
     [Fact]
@@ -1926,13 +1869,8 @@ public class SwaggerGeneratorTests
         var operation = document.Paths["/resource"].Operations[OperationType.Post];
         Assert.Equal(2, operation.RequestBody.Extensions.Count);
 
-#if NET10_0_OR_GREATER
         Assert.Equal("bar", ((OpenApiAny)operation.RequestBody.Extensions["X-foo"]).Node.GetValue<string>());
         Assert.Equal("v1", ((OpenApiAny)operation.RequestBody.Extensions["X-docName"]).Node.GetValue<string>());
-#else
-        Assert.Equal("bar", ((OpenApiString)operation.RequestBody.Extensions["X-foo"]).Value);
-        Assert.Equal("v1", ((OpenApiString)operation.RequestBody.Extensions["X-docName"]).Value);
-#endif
     }
 
     [Fact]
@@ -1969,13 +1907,8 @@ public class SwaggerGeneratorTests
         var operation = document.Paths["/resource"].Operations[OperationType.Post];
         Assert.Equal(2, operation.RequestBody.Extensions.Count);
 
-#if NET10_0_OR_GREATER
         Assert.Equal("bar", ((OpenApiAny)operation.RequestBody.Extensions["X-foo"]).Node.GetValue<string>());
         Assert.Equal("v1", ((OpenApiAny)operation.RequestBody.Extensions["X-docName"]).Node.GetValue<string>());
-#else
-        Assert.Equal("bar", ((OpenApiString)operation.RequestBody.Extensions["X-foo"]).Value);
-        Assert.Equal("v1", ((OpenApiString)operation.RequestBody.Extensions["X-docName"]).Value);
-#endif
     }
 
     [Fact]
@@ -2012,13 +1945,8 @@ public class SwaggerGeneratorTests
         var operation = document.Paths["/resource"].Operations[OperationType.Post];
         Assert.Equal(2, operation.Parameters[0].Extensions.Count);
 
-#if NET10_0_OR_GREATER
         Assert.Equal("bar", ((OpenApiAny)operation.Parameters[0].Extensions["X-foo"]).Node.GetValue<string>());
         Assert.Equal("v1", ((OpenApiAny)operation.Parameters[0].Extensions["X-docName"]).Node.GetValue<string>());
-#else
-        Assert.Equal("bar", ((OpenApiString)operation.Parameters[0].Extensions["X-foo"]).Value);
-        Assert.Equal("v1", ((OpenApiString)operation.Parameters[0].Extensions["X-docName"]).Value);
-#endif
     }
 
     [Fact]
@@ -2055,13 +1983,8 @@ public class SwaggerGeneratorTests
         var operation = document.Paths["/resource"].Operations[OperationType.Post];
         Assert.Equal(2, operation.Parameters[0].Extensions.Count);
 
-#if NET10_0_OR_GREATER
         Assert.Equal("bar", ((OpenApiAny)operation.Parameters[0].Extensions["X-foo"]).Node.GetValue<string>());
         Assert.Equal("v1", ((OpenApiAny)operation.Parameters[0].Extensions["X-docName"]).Node.GetValue<string>());
-#else
-        Assert.Equal("bar", ((OpenApiString)operation.Parameters[0].Extensions["X-foo"]).Value);
-        Assert.Equal("v1", ((OpenApiString)operation.Parameters[0].Extensions["X-docName"]).Value);
-#endif
     }
 
     [Theory]
@@ -2251,8 +2174,8 @@ public class SwaggerGeneratorTests
         Assert.Equal(["multipart/form-data"], operation.RequestBody.Content.Keys);
         var mediaType = operation.RequestBody.Content["multipart/form-data"];
         Assert.NotNull(mediaType.Schema);
-        Assert.NotNull(mediaType.Schema.Reference);
-        Assert.Equal(nameof(SwaggerIngoreAnnotatedType), mediaType.Schema.Reference.Id);
+        var reference = Assert.IsType<OpenApiSchemaReference>(mediaType.Schema);
+        Assert.Equal(nameof(SwaggerIngoreAnnotatedType), reference.Reference.Id);
         Assert.Empty(mediaType.Encoding);
     }
 
@@ -2295,8 +2218,8 @@ public class SwaggerGeneratorTests
         Assert.NotNull(mediaType.Schema);
         Assert.NotEmpty(mediaType.Schema.AllOf);
         Assert.Equal(2, mediaType.Schema.AllOf.Count);
-        Assert.NotNull(mediaType.Schema.AllOf[0].Reference);
-        Assert.Equal(nameof(SwaggerIngoreAnnotatedType), mediaType.Schema.AllOf[0].Reference.Id);
+        var reference = Assert.IsType<OpenApiSchemaReference>(mediaType.Schema.AllOf[0]);
+        Assert.Equal(nameof(SwaggerIngoreAnnotatedType), reference.Reference.Id);
         Assert.NotEmpty(mediaType.Schema.AllOf[1].Properties);
         Assert.Equal(["param2"], mediaType.Schema.AllOf[1].Properties.Keys);
         Assert.NotEmpty(mediaType.Encoding);
@@ -2331,8 +2254,8 @@ public class SwaggerGeneratorTests
         var operation = document.Paths["/resource"].Operations[OperationType.Post];
         Assert.Equal("param1", operation.Parameters[0].Name);
         Assert.NotNull(operation.Parameters[0].Schema);
-        Assert.NotNull(operation.Parameters[0].Schema.Reference);
-        Assert.Equal(nameof(IntEnum), operation.Parameters[0].Schema.Reference.Id);
+        var reference = Assert.IsType<OpenApiSchemaReference>(operation.Parameters[0].Schema);
+        Assert.Equal(nameof(IntEnum), reference.Reference.Id);
     }
 
     [Fact]
@@ -2398,7 +2321,7 @@ public class SwaggerGeneratorTests
                 new OpenApiOperation
                 {
                     OperationId = "OperationIdSetInMetadata",
-                    RequestBody = new()
+                    RequestBody = new OpenApiRequestBody()
                     {
                         Content = new Dictionary<string, OpenApiMediaType>()
                         {
@@ -2446,8 +2369,10 @@ public class SwaggerGeneratorTests
         Assert.Equal("application/someMediaType", content.Key);
         Assert.NotNull(content.Value.Schema);
         Assert.NotNull(content.Value.Schema.AllOf);
-        Assert.Equal("TestDto", content.Value.Schema.AllOf[0].Reference.Id);
-        Assert.Equal("TypeWithDefaultAttributeOnEnum", content.Value.Schema.AllOf[1].Reference.Id);
+        var reference = Assert.IsType<OpenApiSchemaReference>(content.Value.Schema.AllOf[0]);
+        Assert.Equal("TestDto", reference.Reference.Id);
+        reference = Assert.IsType<OpenApiSchemaReference>(content.Value.Schema.AllOf[1]);
+        Assert.Equal("TypeWithDefaultAttributeOnEnum", reference.Reference.Id);
     }
 
     [Fact]
@@ -2461,7 +2386,7 @@ public class SwaggerGeneratorTests
                 new OpenApiOperation
                 {
                     OperationId = "OperationIdSetInMetadata",
-                    RequestBody = new()
+                    RequestBody = new OpenApiRequestBody()
                     {
                         Content = new Dictionary<string, OpenApiMediaType>()
                         {
@@ -2523,7 +2448,7 @@ public class SwaggerGeneratorTests
                 new OpenApiOperation
                 {
                     OperationId = "OperationIdSetInMetadata",
-                    RequestBody = new()
+                    RequestBody = new OpenApiRequestBody()
                     {
                         Content = new Dictionary<string, OpenApiMediaType>()
                         {
@@ -2587,7 +2512,7 @@ public class SwaggerGeneratorTests
                 new OpenApiOperation
                 {
                     OperationId = "OperationIdSetInMetadata",
-                    RequestBody = new()
+                    RequestBody = new OpenApiRequestBody()
                     {
                         Content = new Dictionary<string, OpenApiMediaType>()
                         {

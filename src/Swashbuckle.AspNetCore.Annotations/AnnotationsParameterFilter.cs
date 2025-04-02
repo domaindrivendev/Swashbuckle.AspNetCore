@@ -1,12 +1,13 @@
 ﻿using System.Reflection;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.Interfaces;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Annotations;
 
 public class AnnotationsParameterFilter : IParameterFilter
 {
-    public void Apply(OpenApiParameter parameter, ParameterFilterContext context)
+    public void Apply(IOpenApiParameter parameter, ParameterFilterContext context)
     {
         if (context.PropertyInfo != null)
         {
@@ -18,7 +19,7 @@ public class AnnotationsParameterFilter : IParameterFilter
         }
     }
 
-    private static void ApplyPropertyAnnotations(OpenApiParameter parameter, PropertyInfo propertyInfo)
+    private static void ApplyPropertyAnnotations(IOpenApiParameter parameter, PropertyInfo propertyInfo)
     {
         var swaggerParameterAttribute = propertyInfo.GetCustomAttributes<SwaggerParameterAttribute>()
             .FirstOrDefault();
@@ -29,7 +30,7 @@ public class AnnotationsParameterFilter : IParameterFilter
         }
     }
 
-    private static void ApplyParamAnnotations(OpenApiParameter parameter, ParameterInfo parameterInfo)
+    private static void ApplyParamAnnotations(IOpenApiParameter parameter, ParameterInfo parameterInfo)
     {
         var swaggerParameterAttribute = parameterInfo.GetCustomAttribute<SwaggerParameterAttribute>();
 
@@ -39,16 +40,17 @@ public class AnnotationsParameterFilter : IParameterFilter
         }
     }
 
-    private static void ApplySwaggerParameterAttribute(OpenApiParameter parameter, SwaggerParameterAttribute swaggerParameterAttribute)
+    private static void ApplySwaggerParameterAttribute(IOpenApiParameter parameter, SwaggerParameterAttribute swaggerParameterAttribute)
     {
-        if (swaggerParameterAttribute.Description != null)
+        if (swaggerParameterAttribute.Description is { } description)
         {
-            parameter.Description = swaggerParameterAttribute.Description;
+            parameter.Description = description;
         }
 
-        if (swaggerParameterAttribute.RequiredFlag.HasValue)
+        if (parameter is OpenApiParameter concrete &&
+            swaggerParameterAttribute.RequiredFlag.HasValue)
         {
-            parameter.Required = swaggerParameterAttribute.RequiredFlag.Value;
+            concrete.Required = swaggerParameterAttribute.RequiredFlag.Value;
         }
     }
 }

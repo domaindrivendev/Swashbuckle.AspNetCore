@@ -1,8 +1,6 @@
 ﻿using System.Collections.Specialized;
 using Microsoft.OpenApi.Models;
-#if NET10_0_OR_GREATER
-using Microsoft.OpenApi.Models.References;
-#endif
+using Microsoft.OpenApi.Models.Interfaces;
 
 namespace Swashbuckle.AspNetCore.ApiTesting;
 
@@ -18,7 +16,7 @@ public sealed class ResponseValidator(IEnumerable<IContentValidator> contentVali
         string expectedStatusCode)
     {
         var operationSpec = openApiDocument.GetOperationByPathAndType(pathTemplate, operationType, out _);
-        if (!operationSpec.Responses.TryGetValue(expectedStatusCode, out OpenApiResponse responseSpec))
+        if (!operationSpec.Responses.TryGetValue(expectedStatusCode, out var responseSpec))
         {
             throw new InvalidOperationException($"Response for status '{expectedStatusCode}' not found for operation '{operationSpec.OperationId}'");
         }
@@ -29,7 +27,7 @@ public sealed class ResponseValidator(IEnumerable<IContentValidator> contentVali
             throw new ResponseDoesNotMatchSpecException($"Status code '{statusCode}' does not match expected value '{expectedStatusCode}'");
         }
 
-        ValidateHeaders(responseSpec.Headers, openApiDocument, response.Headers.ToNameValueCollection());
+        ValidateHeaders(responseSpec.Headers, response.Headers.ToNameValueCollection());
 
         if (responseSpec.Content != null && responseSpec.Content.Keys.Count != 0)
         {
@@ -38,8 +36,7 @@ public sealed class ResponseValidator(IEnumerable<IContentValidator> contentVali
     }
 
     private static void ValidateHeaders(
-        IDictionary<string, OpenApiHeader> headerSpecs,
-        OpenApiDocument openApiDocument,
+        IDictionary<string, IOpenApiHeader> headerSpecs,
         NameValueCollection headerValues)
     {
         foreach (var entry in headerSpecs)
@@ -57,22 +54,10 @@ public sealed class ResponseValidator(IEnumerable<IContentValidator> contentVali
                 continue;
             }
 
-            var schema = headerSpec.Schema.Reference != null ?
-#if NET10_0_OR_GREATER
-                new OpenApiSchemaReference(headerSpec.Schema.Reference.Id, openApiDocument)
-#else
-                (OpenApiSchema)openApiDocument.ResolveReference(headerSpec.Schema.Reference)
-#endif
-                : headerSpec.Schema;
-
-            if (value == null)
+            if (headerSpec.Schema is OpenApiSchema schema &&
+                !schema.TryParse(value, out object typedValue))
             {
-                continue;
-            }
-
-            if (!schema.TryParse(value, out object typedValue))
-            {
-                throw new ResponseDoesNotMatchSpecException($"Header '{entry.Key}' is not of type '{headerSpec.Schema.TypeIdentifier()}'");
+                throw new ResponseDoesNotMatchSpecException($"Header '{entry.Key}' is not of type '{schema.TypeIdentifier()}'");
             }
         }
     }

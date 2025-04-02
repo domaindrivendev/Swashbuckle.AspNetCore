@@ -8,17 +8,9 @@
     "/resource": {
       "post": {
         "tags": [
-          "Fake"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "Fake"
+          "Some",
+          "Tags",
+          "Here"
         ],
         "responses": {
           "200": {

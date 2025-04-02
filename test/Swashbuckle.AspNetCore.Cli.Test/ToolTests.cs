@@ -89,7 +89,6 @@ public static class ToolTests
         Assert.True(productsPath.TryGetProperty("post", out _));
     }
 
-#if NET10_0_OR_GREATER
     [Fact]
     public static void Can_Generate_Swagger_Json_v3_1()
     {
@@ -111,7 +110,6 @@ public static class ToolTests
         var productsPath = paths.GetProperty("/products");
         Assert.True(productsPath.TryGetProperty("post", out _));
     }
-#endif
 
     [Fact]
     public static void Can_Generate_Swagger_Json_v3_OpenApiVersion()
@@ -197,7 +195,6 @@ public static class ToolTests
         Assert.Equal("DocumentSerializerTest3.0", swaggerInfo);
     }
 
-#if NET10_0_OR_GREATER
     [Fact]
     public static void CustomDocumentSerializer_Writes_Custom_V3_1_Document()
     {
@@ -217,7 +214,6 @@ public static class ToolTests
         var swaggerInfo = document.RootElement.GetProperty("swagger").GetString();
         Assert.Equal("DocumentSerializerTest3.1", swaggerInfo);
     }
-#endif
 
     [Fact]
     public static void Can_Generate_Swagger_Json_ForTopLevelApp()

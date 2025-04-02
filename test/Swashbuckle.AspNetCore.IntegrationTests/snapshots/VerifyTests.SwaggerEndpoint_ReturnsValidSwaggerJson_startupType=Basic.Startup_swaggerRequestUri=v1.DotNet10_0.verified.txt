@@ -19,13 +19,19 @@
           "description": "",
           "content": {
             "application/json": {
-              "schema": { }
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
             },
             "text/json": {
-              "schema": { }
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
             },
             "application/*+json": {
-              "schema": { }
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
             }
           },
           "required": true,
@@ -36,7 +42,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { }
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
               }
             }
           }
@@ -68,7 +76,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { }
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
+                  }
                 }
               }
             }
@@ -91,7 +101,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { }
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
+                  }
                 }
               }
             }
@@ -125,7 +137,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { }
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
               }
             }
           }
@@ -155,13 +169,19 @@
           "description": "",
           "content": {
             "application/json": {
-              "schema": { }
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
             },
             "text/json": {
-              "schema": { }
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
             },
             "application/*+json": {
-              "schema": { }
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
             }
           },
           "required": true,
@@ -261,13 +281,19 @@
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": { }
+              "schema": {
+                "$ref": "#/components/schemas/PaymentRequest"
+              }
             },
             "text/json": {
-              "schema": { }
+              "schema": {
+                "$ref": "#/components/schemas/PaymentRequest"
+              }
             },
             "application/*+json": {
-              "schema": { }
+              "schema": {
+                "$ref": "#/components/schemas/PaymentRequest"
+              }
             }
           },
           "required": true,
@@ -699,14 +725,16 @@
                     },
                     "description": "Sumary for PhoneNumbers"
                   },
-                  "logLevel": { },
+                  "logLevel": {
+                    "$ref": "#/components/schemas/LogLevel"
+                  },
                   "formFile": {
                     "type": "string",
                     "description": "Description for file",
                     "format": "binary"
                   },
                   "dateTimeKind": {
-                    "description": "Description for dateTimeKind"
+                    "$ref": "#/components/schemas/DateTimeKind"
                   }
                 }
               },
@@ -841,13 +869,19 @@
             "description": "OK",
             "content": {
               "text/plain": {
-                "schema": { }
+                "schema": {
+                  "$ref": "#/components/schemas/TestResponse"
+                }
               },
               "application/json": {
-                "schema": { }
+                "schema": {
+                  "$ref": "#/components/schemas/TestResponse"
+                }
               },
               "text/json": {
-                "schema": { }
+                "schema": {
+                  "$ref": "#/components/schemas/TestResponse"
+                }
               }
             }
           }
@@ -867,7 +901,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { }
+                  "items": {
+                    "$ref": "#/components/schemas/Promotion"
+                  }
                 }
               }
             }
@@ -886,24 +922,36 @@
             "application/json": {
               "schema": {
                 "oneOf": [
-                  { },
-                  { }
+                  {
+                    "$ref": "#/components/schemas/Rectangle"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Circle"
+                  }
                 ]
               }
             },
             "text/json": {
               "schema": {
                 "oneOf": [
-                  { },
-                  { }
+                  {
+                    "$ref": "#/components/schemas/Rectangle"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Circle"
+                  }
                 ]
               }
             },
             "application/*+json": {
               "schema": {
                 "oneOf": [
-                  { },
-                  { }
+                  {
+                    "$ref": "#/components/schemas/Rectangle"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Circle"
+                  }
                 ]
               }
             }
@@ -948,7 +996,9 @@
           "description": "",
           "content": {
             "application/xml": {
-              "schema": { }
+              "schema": {
+                "$ref": "#/components/schemas/Order"
+              }
             }
           },
           "required": true,
@@ -970,7 +1020,9 @@
             "description": "Order invalid",
             "content": {
               "application/xml": {
-                "schema": { }
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
               }
             }
           }
@@ -988,13 +1040,19 @@
           "description": "The cart request body",
           "content": {
             "application/json": {
-              "schema": { }
+              "schema": {
+                "$ref": "#/components/schemas/Cart"
+              }
             },
             "text/json": {
-              "schema": { }
+              "schema": {
+                "$ref": "#/components/schemas/Cart"
+              }
             },
             "application/*+json": {
-              "schema": { }
+              "schema": {
+                "$ref": "#/components/schemas/Cart"
+              }
             }
           },
           "x-purpose": "test"
@@ -1004,13 +1062,19 @@
             "description": "The cart was created",
             "content": {
               "text/plain": {
-                "schema": { }
+                "schema": {
+                  "$ref": "#/components/schemas/Cart"
+                }
               },
               "application/json": {
-                "schema": { }
+                "schema": {
+                  "$ref": "#/components/schemas/Cart"
+                }
               },
               "text/json": {
-                "schema": { }
+                "schema": {
+                  "$ref": "#/components/schemas/Cart"
+                }
               }
             }
           },
@@ -1048,13 +1112,19 @@
             "description": "OK",
             "content": {
               "text/plain": {
-                "schema": { }
+                "schema": {
+                  "$ref": "#/components/schemas/Cart"
+                }
               },
               "application/json": {
-                "schema": { }
+                "schema": {
+                  "$ref": "#/components/schemas/Cart"
+                }
               },
               "text/json": {
-                "schema": { }
+                "schema": {
+                  "$ref": "#/components/schemas/Cart"
+                }
               }
             }
           }
@@ -1085,13 +1155,19 @@
             "description": "OK",
             "content": {
               "text/plain": {
-                "schema": { }
+                "schema": {
+                  "$ref": "#/components/schemas/Cart"
+                }
               },
               "application/json": {
-                "schema": { }
+                "schema": {
+                  "$ref": "#/components/schemas/Cart"
+                }
               },
               "text/json": {
-                "schema": { }
+                "schema": {
+                  "$ref": "#/components/schemas/Cart"
+                }
               }
             }
           }
@@ -1159,7 +1235,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { }
+                  "items": {
+                    "$ref": "#/components/schemas/Store"
+                  }
                 }
               }
             }
@@ -1189,7 +1267,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { }
+                "schema": {
+                  "$ref": "#/components/schemas/Store"
+                }
               }
             }
           }
@@ -1271,7 +1351,9 @@
             "format": "int32",
             "readOnly": true
           },
-          "cartType": { }
+          "cartType": {
+            "$ref": "#/components/schemas/CartType"
+          }
         },
         "additionalProperties": false
       },
@@ -1286,7 +1368,9 @@
       },
       "Circle": {
         "allOf": [
-          { },
+          {
+            "$ref": "#/components/schemas/Shape"
+          },
           {
             "type": "object",
             "properties": {
@@ -1381,8 +1465,12 @@
         ],
         "type": "object",
         "properties": {
-          "transaction": { },
-          "creditCard": { }
+          "transaction": {
+            "$ref": "#/components/schemas/Transaction"
+          },
+          "creditCard": {
+            "$ref": "#/components/schemas/CreditCard"
+          }
         },
         "additionalProperties": false
       },
@@ -1396,11 +1484,15 @@
           },
           "description": {
             "type": "string",
-            "description": "Describes the product",
-            "nullable": true
+            "nullable": true,
+            "description": "Describes the product"
           },
-          "status": { },
-          "status2": { }
+          "status": {
+            "$ref": "#/components/schemas/ProductStatus"
+          },
+          "status2": {
+            "$ref": "#/components/schemas/ProductStatus"
+          }
         },
         "additionalProperties": false,
         "description": "Represents a product",
@@ -1426,13 +1518,17 @@
             "type": "string",
             "nullable": true
           },
-          "discountType": { }
+          "discountType": {
+            "$ref": "#/components/schemas/DiscountType"
+          }
         },
         "additionalProperties": false
       },
       "Rectangle": {
         "allOf": [
-          { },
+          {
+            "$ref": "#/components/schemas/Shape"
+          },
           {
             "type": "object",
             "properties": {
@@ -1489,7 +1585,9 @@
       "TestResponse": {
         "type": "object",
         "properties": {
-          "foo": { }
+          "foo": {
+            "$ref": "#/components/schemas/TestStruct"
+          }
         },
         "additionalProperties": false
       },
@@ -1537,8 +1635,8 @@
           },
           "status": {
             "type": "integer",
-            "format": "int32",
-            "nullable": true
+            "nullable": true,
+            "format": "int32"
           },
           "detail": {
             "type": "string",
@@ -1550,13 +1648,13 @@
           },
           "errors": {
             "type": "object",
+            "nullable": true,
             "additionalProperties": {
               "type": "array",
               "items": {
                 "type": "string"
               }
-            },
-            "nullable": true
+            }
           }
         },
         "additionalProperties": { }

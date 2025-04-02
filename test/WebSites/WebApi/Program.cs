@@ -29,8 +29,8 @@ var summaries = new[]
 };
 
 app.MapAnnotationsEndpoints()
-.MapWithOpenApiEndpoints()
-.MapXmlCommentsEndpoints();
+   .MapWithOpenApiEndpoints()
+   .MapXmlCommentsEndpoints();
 
 app.Run();
 

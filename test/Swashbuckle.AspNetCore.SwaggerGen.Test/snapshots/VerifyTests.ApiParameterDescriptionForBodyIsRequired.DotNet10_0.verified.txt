@@ -8,7 +8,7 @@
     "/resource": {
       "post": {
         "tags": [
-          null
+          "Foo"
         ],
         "requestBody": {
           "content": { },

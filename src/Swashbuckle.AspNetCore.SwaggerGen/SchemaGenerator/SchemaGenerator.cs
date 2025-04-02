@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.Interfaces;
+using Microsoft.OpenApi.Models.References;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -27,7 +29,7 @@ public class SchemaGenerator(
     {
     }
 
-    public OpenApiSchema GenerateSchema(
+    public IOpenApiSchema GenerateSchema(
         Type modelType,
         SchemaRepository schemaRepository,
         MemberInfo memberInfo = null,
@@ -48,7 +50,7 @@ public class SchemaGenerator(
         }
     }
 
-    private OpenApiSchema GenerateSchemaForMember(
+    private IOpenApiSchema GenerateSchemaForMember(
         Type modelType,
         SchemaRepository schemaRepository,
         MemberInfo memberInfo,
@@ -60,13 +62,15 @@ public class SchemaGenerator(
             ? GeneratePolymorphicSchema(schemaRepository, knownTypesDataContracts)
             : GenerateConcreteSchema(dataContract, schemaRepository);
 
-        if (_generatorOptions.UseAllOfToExtendReferenceSchemas && schema.Reference != null)
+        if (_generatorOptions.UseAllOfToExtendReferenceSchemas && schema is OpenApiSchemaReference reference)
         {
-            schema.AllOf = [new OpenApiSchema { Reference = schema.Reference }];
-            schema.Reference = null;
+            schema = new OpenApiSchema()
+            {
+                AllOf = [reference],
+            };
         }
 
-        if (schema.Reference == null)
+        if (schema is OpenApiSchema concrete)
         {
             var customAttributes = memberInfo.GetInlineAndMetadataAttributes();
 
@@ -75,25 +79,34 @@ public class SchemaGenerator(
             {
                 var requiredAttribute = customAttributes.OfType<RequiredAttribute>().FirstOrDefault();
 
-                schema.Nullable = _generatorOptions.SupportNonNullableReferenceTypes
+                var nullable = _generatorOptions.SupportNonNullableReferenceTypes
                     ? dataProperty.IsNullable && requiredAttribute == null && !memberInfo.IsNonNullableReferenceType()
                     : dataProperty.IsNullable && requiredAttribute == null;
 
-                schema.ReadOnly = dataProperty.IsReadOnly;
-                schema.WriteOnly = dataProperty.IsWriteOnly;
-                schema.MinLength = modelType == typeof(string) && requiredAttribute is { AllowEmptyStrings: false } ? 1 : null;
+                if (nullable)
+                {
+                    concrete.Type |= JsonSchemaType.Null;
+                }
+                else
+                {
+                    concrete.Type &= ~JsonSchemaType.Null;
+                }
+
+                concrete.ReadOnly = dataProperty.IsReadOnly;
+                concrete.WriteOnly = dataProperty.IsWriteOnly;
+                concrete.MinLength = modelType == typeof(string) && requiredAttribute is { AllowEmptyStrings: false } ? 1 : null;
             }
 
             var defaultValueAttribute = customAttributes.OfType<DefaultValueAttribute>().FirstOrDefault();
             if (defaultValueAttribute != null)
             {
-                schema.Default = GenerateDefaultValue(dataContract, modelType, defaultValueAttribute.Value);
+                concrete.Default = GenerateDefaultValue(dataContract, modelType, defaultValueAttribute.Value);
             }
 
             var obsoleteAttribute = customAttributes.OfType<ObsoleteAttribute>().FirstOrDefault();
             if (obsoleteAttribute != null)
             {
-                schema.Deprecated = true;
+                concrete.Deprecated = true;
             }
 
             // NullableAttribute behaves differently for Dictionaries
@@ -113,9 +126,16 @@ public class SchemaGenerator(
                     genericTypes.Any(t => t.GetGenericTypeDefinition() == typeof(IDictionary<,>)) ||
                     genericTypes.Any(t => t.GetGenericTypeDefinition() == typeof(IReadOnlyDictionary<,>));
 
-                if (isDictionaryType)
+                if (isDictionaryType && schema.AdditionalProperties is OpenApiSchema additionalProperties)
                 {
-                    schema.AdditionalProperties.Nullable = !memberInfo.IsDictionaryValueNonNullable();
+                    if (!memberInfo.IsDictionaryValueNonNullable())
+                    {
+                        additionalProperties.Type |= JsonSchemaType.Null;
+                    }
+                    else
+                    {
+                        additionalProperties.Type &= ~JsonSchemaType.Null;
+                    }
                 }
             }
 
@@ -127,7 +147,7 @@ public class SchemaGenerator(
         return schema;
     }
 
-    private OpenApiSchema GenerateSchemaForParameter(
+    private IOpenApiSchema GenerateSchemaForParameter(
         Type modelType,
         SchemaRepository schemaRepository,
         ParameterInfo parameterInfo,
@@ -139,13 +159,13 @@ public class SchemaGenerator(
             ? GeneratePolymorphicSchema(schemaRepository, knownTypesDataContracts)
             : GenerateConcreteSchema(dataContract, schemaRepository);
 
-        if (_generatorOptions.UseAllOfToExtendReferenceSchemas && schema.Reference != null)
+        if (_generatorOptions.UseAllOfToExtendReferenceSchemas && schema is OpenApiSchemaReference reference)
         {
-            schema.AllOf = [new OpenApiSchema { Reference = schema.Reference }];
-            schema.Reference = null;
+            // TODO Is this correct?
+            schema = new OpenApiSchema() { AllOf = [reference] };
         }
 
-        if (schema.Reference == null)
+        if (schema is OpenApiSchema concrete)
         {
             var customAttributes = parameterInfo.GetCustomAttributes();
 
@@ -155,7 +175,7 @@ public class SchemaGenerator(
 
             if (defaultValue != null)
             {
-                schema.Default = GenerateDefaultValue(dataContract, modelType, defaultValue);
+                concrete.Default = GenerateDefaultValue(dataContract, modelType, defaultValue);
             }
 
             schema.ApplyValidationAttributes(customAttributes);
@@ -170,7 +190,7 @@ public class SchemaGenerator(
         return schema;
     }
 
-    private OpenApiSchema GenerateSchemaForType(Type modelType, SchemaRepository schemaRepository)
+    private IOpenApiSchema GenerateSchemaForType(Type modelType, SchemaRepository schemaRepository)
     {
         var dataContract = GetDataContractFor(modelType);
 
@@ -178,7 +198,7 @@ public class SchemaGenerator(
             ? GeneratePolymorphicSchema(schemaRepository, knownTypesDataContracts)
             : GenerateConcreteSchema(dataContract, schemaRepository);
 
-        if (schema.Reference == null)
+        if (schema is not OpenApiSchemaReference)
         {
             ApplyFilters(schema, modelType, schemaRepository);
         }
@@ -235,9 +255,9 @@ public class SchemaGenerator(
 #endif
     ];
 
-    private OpenApiSchema GenerateConcreteSchema(DataContract dataContract, SchemaRepository schemaRepository)
+    private IOpenApiSchema GenerateConcreteSchema(DataContract dataContract, SchemaRepository schemaRepository)
     {
-        if (TryGetCustomTypeMapping(dataContract.UnderlyingType, out Func<OpenApiSchema> customSchemaFactory))
+        if (TryGetCustomTypeMapping(dataContract.UnderlyingType, out Func<IOpenApiSchema> customSchemaFactory))
         {
             return customSchemaFactory();
         }
@@ -296,7 +316,7 @@ public class SchemaGenerator(
             : schemaFactory();
     }
 
-    private bool TryGetCustomTypeMapping(Type modelType, out Func<OpenApiSchema> schemaFactory)
+    private bool TryGetCustomTypeMapping(Type modelType, out Func<IOpenApiSchema> schemaFactory)
     {
         return
             _generatorOptions.CustomTypeMappings.TryGetValue(modelType, out schemaFactory) ||
@@ -346,7 +366,7 @@ public class SchemaGenerator(
         {
             Type = JsonSchemaTypes.Array,
             Items = GenerateSchema(dataContract.ArrayItemType, schemaRepository),
-            UniqueItems = hasUniqueItems ? (bool?)true : null
+            UniqueItems = hasUniqueItems ? true : null
         };
     }
 
@@ -380,7 +400,7 @@ public class SchemaGenerator(
         var schema = new OpenApiSchema
         {
             Type = JsonSchemaTypes.Object,
-            Properties = new Dictionary<string, OpenApiSchema>(),
+            Properties = new Dictionary<string, IOpenApiSchema>(),
             Required = new SortedSet<string>(),
             AdditionalPropertiesAllowed = false
         };
@@ -515,19 +535,22 @@ public class SchemaGenerator(
 
             if (discriminatorValue != null)
             {
-                discriminator.Mapping.Add(discriminatorValue, GenerateConcreteSchema(knownTypeDataContract, schemaRepository).Reference.ReferenceV3);
+                if (GenerateConcreteSchema(knownTypeDataContract, schemaRepository) is OpenApiSchemaReference reference)
+                {
+                    discriminator.Mapping.Add(discriminatorValue, reference.Reference.ReferenceV3);
+                }
             }
         }
 
         return true;
     }
 
-    private OpenApiSchema GenerateReferencedSchema(
+    private OpenApiSchemaReference GenerateReferencedSchema(
         DataContract dataContract,
         SchemaRepository schemaRepository,
         Func<OpenApiSchema> definitionFactory)
     {
-        if (schemaRepository.TryLookupByType(dataContract.UnderlyingType, out OpenApiSchema referenceSchema))
+        if (schemaRepository.TryLookupByType(dataContract.UnderlyingType, out var referenceSchema))
         {
             return referenceSchema;
         }
@@ -544,7 +567,7 @@ public class SchemaGenerator(
     }
 
     private void ApplyFilters(
-        OpenApiSchema schema,
+        IOpenApiSchema schema,
         Type type,
         SchemaRepository schemaRepository,
         MemberInfo memberInfo = null,
@@ -563,11 +586,7 @@ public class SchemaGenerator(
         }
     }
 
-#if NET10_0_OR_GREATER
     private System.Text.Json.Nodes.JsonNode GenerateDefaultValue(
-#else
-    private Microsoft.OpenApi.Any.IOpenApiAny GenerateDefaultValue(
-#endif
         DataContract dataContract,
         Type modelType,
         object defaultValue)
@@ -587,11 +606,10 @@ public class SchemaGenerator(
         return JsonModelFactory.CreateFromJson(defaultAsJson);
     }
 
-#if NET10_0_OR_GREATER
-    private static JsonSchemaType FromDataType(DataType dataType)
-        => Enum.Parse<JsonSchemaType>(dataType.ToString());
+    private static JsonSchemaType FromDataType(DataType dataType) =>
+#if NET
+       Enum.Parse<JsonSchemaType>(dataType.ToString());
 #else
-    private static string FromDataType(DataType dataType)
-        => dataType.ToString().ToLower(System.Globalization.CultureInfo.InvariantCulture);
+       (JsonSchemaType)Enum.Parse(typeof(JsonSchemaType), dataType.ToString());
 #endif
 }

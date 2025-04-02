@@ -17,19 +17,25 @@
               "text/plain": {
                 "schema": {
                   "type": "array",
-                  "items": { }
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
+                  }
                 }
               },
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { }
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
+                  }
                 }
               },
               "text/json": {
                 "schema": {
                   "type": "array",
-                  "items": { }
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
+                  }
                 }
               }
             }
@@ -45,14 +51,14 @@
         "properties": {
           "foo": {
             "type": "array",
+            "nullable": true,
             "items": {
               "type": "array",
               "items": {
                 "type": "integer",
                 "format": "int32"
               }
-            },
-            "nullable": true
+            }
           }
         },
         "additionalProperties": false

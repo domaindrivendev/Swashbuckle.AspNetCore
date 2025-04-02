@@ -1,4 +1,5 @@
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.Interfaces;
 
 namespace Swashbuckle.AspNetCore.ApiTesting;
 
@@ -34,7 +35,7 @@ public static class OpenApiDocumentExtensions
         this OpenApiDocument openApiDocument,
         string pathTemplate,
         OperationType operationType,
-        out OpenApiPathItem pathSpec)
+        out IOpenApiPathItem pathSpec)
     {
         if (openApiDocument.Paths.TryGetValue(pathTemplate, out pathSpec))
         {

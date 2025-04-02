@@ -40,11 +40,9 @@ internal class DocumentProvider(
                     swagger.SerializeAsV2(jsonWriter);
                     break;
 
-#if NET10_0_OR_GREATER
                 case OpenApi.OpenApiSpecVersion.OpenApi3_1:
                     swagger.SerializeAsV31(jsonWriter);
                     break;
-#endif
 
                 default:
                 case OpenApi.OpenApiSpecVersion.OpenApi3_0:

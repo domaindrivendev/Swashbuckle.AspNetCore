@@ -13,7 +13,9 @@
             "description": null,
             "content": {
               "application/someMediaType": {
-                "schema": { }
+                "schema": {
+                  "$ref": "#/components/schemas/TestDto"
+                }
               }
             }
           }

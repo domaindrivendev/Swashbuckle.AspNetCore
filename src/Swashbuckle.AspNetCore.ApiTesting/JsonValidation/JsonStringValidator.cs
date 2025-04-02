@@ -1,15 +1,16 @@
 using System.Text.RegularExpressions;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.Interfaces;
 using Newtonsoft.Json.Linq;
 
 namespace Swashbuckle.AspNetCore.ApiTesting;
 
 public sealed class JsonStringValidator : IJsonValidator
 {
-    public bool CanValidate(OpenApiSchema schema) => schema.Type == JsonSchemaTypes.String;
+    public bool CanValidate(IOpenApiSchema schema) => schema.Type is { } type && type.HasFlag(JsonSchemaTypes.String);
 
     public bool Validate(
-        OpenApiSchema schema,
+        IOpenApiSchema schema,
         OpenApiDocument openApiDocument,
         JToken instance,
         out IEnumerable<string> errorMessages)

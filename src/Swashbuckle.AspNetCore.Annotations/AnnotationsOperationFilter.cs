@@ -1,11 +1,6 @@
 ﻿using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.References;
 using Swashbuckle.AspNetCore.SwaggerGen;
-
-#if NET10_0
-using OpenApiTag = Microsoft.OpenApi.Models.References.OpenApiTagReference;
-#else
-using OpenApiTag = Microsoft.OpenApi.Models.OpenApiTag;
-#endif
 
 namespace Swashbuckle.AspNetCore.Annotations;
 
@@ -77,11 +72,7 @@ public class AnnotationsOperationFilter : IOperationFilter
 
         if (swaggerOperationAttribute.Tags is { } tags)
         {
-#if NET10_0_OR_GREATER
-            operation.Tags = [.. tags.Select(tagName => new OpenApiTag(tagName, null))];
-#else
-            operation.Tags = [.. tags.Select(tagName => new OpenApiTag { Name = tagName })];
-#endif
+            operation.Tags = [.. tags.Select(tagName => new OpenApiTagReference(tagName))];
         }
     }
 
@@ -113,7 +104,7 @@ public class AnnotationsOperationFilter : IOperationFilter
 
             operation.Responses ??= [];
 
-            if (!operation.Responses.TryGetValue(statusCode, out OpenApiResponse response))
+            if (!operation.Responses.TryGetValue(statusCode, out var response))
             {
                 response = new OpenApiResponse();
             }

@@ -4,9 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Template;
 using Microsoft.OpenApi.Models;
-#if NET10_0_OR_GREATER
-using Microsoft.OpenApi.Models.References;
-#endif
+using Microsoft.OpenApi.Models.Interfaces;
 
 namespace Swashbuckle.AspNetCore.ApiTesting;
 
@@ -20,8 +18,8 @@ public sealed class RequestValidator(IEnumerable<IContentValidator> contentValid
         string pathTemplate,
         OperationType operationType)
     {
-        var operationSpec = openApiDocument.GetOperationByPathAndType(pathTemplate, operationType, out OpenApiPathItem pathSpec);
-        var parameterSpecs = ExpandParameterSpecs(pathSpec, operationSpec, openApiDocument);
+        var operationSpec = openApiDocument.GetOperationByPathAndType(pathTemplate, operationType, out var pathSpec);
+        IOpenApiParameter[] parameterSpecs = [.. pathSpec.Parameters, .. operationSpec.Parameters];
 
         // Convert to absolute Uri as a workaround to limitation with Uri class - i.e. most of it's methods are not supported for relative Uri's.
         var requestUri = new Uri(new Uri("http://tempuri.org"), request.RequestUri);
@@ -36,44 +34,14 @@ public sealed class RequestValidator(IEnumerable<IContentValidator> contentValid
             throw new RequestDoesNotMatchSpecException($"Request method '{request.Method}' does not match specified operation type '{operationType}'");
         }
 
-        ValidateParameters(parameterSpecs.Where(p => p.In == ParameterLocation.Path), openApiDocument, pathNameValues);
-        ValidateParameters(parameterSpecs.Where(p => p.In == ParameterLocation.Query), openApiDocument, HttpUtility.ParseQueryString(requestUri.Query));
-        ValidateParameters(parameterSpecs.Where(p => p.In == ParameterLocation.Header), openApiDocument, request.Headers.ToNameValueCollection());
+        ValidateParameters(parameterSpecs.Where(p => p.In == ParameterLocation.Path), pathNameValues);
+        ValidateParameters(parameterSpecs.Where(p => p.In == ParameterLocation.Query), HttpUtility.ParseQueryString(requestUri.Query));
+        ValidateParameters(parameterSpecs.Where(p => p.In == ParameterLocation.Header), request.Headers.ToNameValueCollection());
 
         if (operationSpec.RequestBody != null)
         {
             ValidateContent(operationSpec.RequestBody, openApiDocument, request.Content);
         }
-    }
-
-    private static IEnumerable<OpenApiParameter> ExpandParameterSpecs(
-        OpenApiPathItem pathSpec,
-        OpenApiOperation operationSpec,
-        OpenApiDocument openApiDocument)
-    {
-        var securityParameterSpecs = DeriveSecurityParameterSpecs(operationSpec, openApiDocument);
-
-        return securityParameterSpecs
-            .Concat(pathSpec.Parameters)
-            .Concat(operationSpec.Parameters)
-            .Select(p =>
-            {
-                return p.Reference != null ?
-#if NET10_0_OR_GREATER
-                    new OpenApiParameterReference(p.Reference.Id, openApiDocument)
-#else
-                    (OpenApiParameter)openApiDocument.ResolveReference(p.Reference)
-#endif
-                    : p;
-            });
-    }
-
-    private static IEnumerable<OpenApiParameter> DeriveSecurityParameterSpecs(
-        OpenApiOperation operationSpec,
-        OpenApiDocument openApiDocument)
-    {
-        // TODO
-        return [];
     }
 
     private static bool TryParsePathNameValues(string pathTemplate, string requestUri, out NameValueCollection pathNameValues)
@@ -97,8 +65,7 @@ public sealed class RequestValidator(IEnumerable<IContentValidator> contentValid
 
 
     private static void ValidateParameters(
-        IEnumerable<OpenApiParameter> parameterSpecs,
-        OpenApiDocument openApiDocument,
+        IEnumerable<IOpenApiParameter> parameterSpecs,
         NameValueCollection parameterNameValues)
     {
         foreach (var parameterSpec in parameterSpecs)
@@ -115,31 +82,15 @@ public sealed class RequestValidator(IEnumerable<IContentValidator> contentValid
                 continue;
             }
 
-            var schema = parameterSpec.Schema.Reference != null ?
-#if NET10_0_OR_GREATER
-                new OpenApiSchemaReference(parameterSpec.Schema.Reference.Id, openApiDocument)
-#else
-                (OpenApiSchema)openApiDocument.ResolveReference(parameterSpec.Schema.Reference)
-#endif
-                : parameterSpec.Schema;
-
-            if (!schema.TryParse(value, out object typedValue))
+            if (parameterSpec.Schema is OpenApiSchema schema && !schema.TryParse(value, out object typedValue))
             {
-                throw new RequestDoesNotMatchSpecException($"Parameter '{parameterSpec.Name}' is not of type '{parameterSpec.Schema.TypeIdentifier()}'");
+                throw new RequestDoesNotMatchSpecException($"Parameter '{parameterSpec.Name}' is not of type '{schema.TypeIdentifier()}'");
             }
         }
     }
 
-    private void ValidateContent(OpenApiRequestBody requestBodySpec, OpenApiDocument openApiDocument, HttpContent content)
+    private void ValidateContent(IOpenApiRequestBody requestBodySpec, OpenApiDocument openApiDocument, HttpContent content)
     {
-        requestBodySpec = requestBodySpec.Reference != null ?
-#if NET10_0_OR_GREATER
-            new OpenApiRequestBodyReference(requestBodySpec.Reference.Id, openApiDocument)
-#else
-            (OpenApiRequestBody)openApiDocument.ResolveReference(requestBodySpec.Reference)
-#endif
-            : requestBodySpec;
-
         if (requestBodySpec.Required && content == null)
         {
             throw new RequestDoesNotMatchSpecException("Required content is not present");

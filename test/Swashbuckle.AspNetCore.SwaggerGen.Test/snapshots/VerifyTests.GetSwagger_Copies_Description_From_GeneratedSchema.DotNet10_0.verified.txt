@@ -8,14 +8,16 @@
     "/resource": {
       "post": {
         "tags": [
-          null
+          "Fake"
         ],
         "parameters": [
           {
             "name": "EnumWithDefault",
             "in": "query",
             "description": "<p>Members:</p><ul><li>Value2 - 2</li><li>Value4 - 4</li><li>Value8 - 8</li></ul>",
-            "schema": { }
+            "schema": {
+              "$ref": "#/components/schemas/IntEnum"
+            }
           },
           {
             "name": "EnumArrayWithDefault",
@@ -23,7 +25,9 @@
             "description": "<p>Members:</p><ul><li>Value2 - 2</li><li>Value4 - 4</li><li>Value8 - 8</li></ul>",
             "schema": {
               "type": "array",
-              "items": { },
+              "items": {
+                "$ref": "#/components/schemas/IntEnum"
+              },
               "description": "<p>Members:</p><ul><li>Value2 - 2</li><li>Value4 - 4</li><li>Value8 - 8</li></ul>",
               "default": [
                 4

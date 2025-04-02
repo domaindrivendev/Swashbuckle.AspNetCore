@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.Interfaces;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Annotations;
@@ -9,7 +10,7 @@ public class AnnotationsSchemaFilter(IServiceProvider serviceProvider) : ISchema
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 
-    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+    public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
     {
         ApplyTypeAnnotations(schema, context);
 
@@ -26,7 +27,7 @@ public class AnnotationsSchemaFilter(IServiceProvider serviceProvider) : ISchema
         }
     }
 
-    private void ApplyTypeAnnotations(OpenApiSchema schema, SchemaFilterContext context)
+    private void ApplyTypeAnnotations(IOpenApiSchema schema, SchemaFilterContext context)
     {
         var schemaAttribute = context.Type.GetCustomAttributes<SwaggerSchemaAttribute>()
             .FirstOrDefault();
@@ -50,7 +51,7 @@ public class AnnotationsSchemaFilter(IServiceProvider serviceProvider) : ISchema
         }
     }
 
-    private static void ApplyParamAnnotations(OpenApiSchema schema, ParameterInfo parameterInfo)
+    private static void ApplyParamAnnotations(IOpenApiSchema schema, ParameterInfo parameterInfo)
     {
         var schemaAttribute = parameterInfo.GetCustomAttributes<SwaggerSchemaAttribute>()
             .FirstOrDefault();
@@ -61,7 +62,7 @@ public class AnnotationsSchemaFilter(IServiceProvider serviceProvider) : ISchema
         }
     }
 
-    private static void ApplyMemberAnnotations(OpenApiSchema schema, MemberInfo memberInfo)
+    private static void ApplyMemberAnnotations(IOpenApiSchema schema, MemberInfo memberInfo)
     {
         var schemaAttribute = memberInfo.GetCustomAttributes<SwaggerSchemaAttribute>()
             .FirstOrDefault();
@@ -72,41 +73,53 @@ public class AnnotationsSchemaFilter(IServiceProvider serviceProvider) : ISchema
         }
     }
 
-    private static void ApplySchemaAttribute(OpenApiSchema schema, SwaggerSchemaAttribute schemaAttribute)
+    private static void ApplySchemaAttribute(IOpenApiSchema schema, SwaggerSchemaAttribute schemaAttribute)
     {
-        if (schemaAttribute.Description != null)
+        if (schemaAttribute.Description is { } description)
         {
-            schema.Description = schemaAttribute.Description;
+            schema.Description = description;
+        }
+
+        if (schema is not OpenApiSchema concrete)
+        {
+            return;
         }
 
         if (schemaAttribute.Format != null)
         {
-            schema.Format = schemaAttribute.Format;
+            concrete.Format = schemaAttribute.Format;
         }
 
         if (schemaAttribute.ReadOnlyFlag.HasValue)
         {
-            schema.ReadOnly = schemaAttribute.ReadOnlyFlag.Value;
+            concrete.ReadOnly = schemaAttribute.ReadOnlyFlag.Value;
         }
 
         if (schemaAttribute.WriteOnlyFlag.HasValue)
         {
-            schema.WriteOnly = schemaAttribute.WriteOnlyFlag.Value;
+            concrete.WriteOnly = schemaAttribute.WriteOnlyFlag.Value;
         }
 
-        if (schemaAttribute.NullableFlag.HasValue)
+        if (schemaAttribute.NullableFlag is { } nullable)
         {
-            schema.Nullable = schemaAttribute.NullableFlag.Value;
+            if (nullable)
+            {
+                concrete.Type |= JsonSchemaType.Null;
+            }
+            else
+            {
+                concrete.Type &= ~JsonSchemaType.Null;
+            }
         }
 
         if (schemaAttribute.Required != null)
         {
-            schema.Required = new SortedSet<string>(schemaAttribute.Required);
+            concrete.Required = new SortedSet<string>(schemaAttribute.Required);
         }
 
         if (schemaAttribute.Title != null)
         {
-            schema.Title = schemaAttribute.Title;
+            concrete.Title = schemaAttribute.Title;
         }
     }
 }

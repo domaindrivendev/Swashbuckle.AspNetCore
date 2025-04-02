@@ -138,7 +138,7 @@ public partial class VerifyTests
                     OperationId = "OperationIdSetInMetadata",
                     Responses = new()
                     {
-                        ["200"] = new()
+                        ["200"] = new OpenApiResponse()
                         {
                             Content = new Dictionary<string, OpenApiMediaType>()
                             {
@@ -189,7 +189,7 @@ public partial class VerifyTests
                 new OpenApiOperation
                 {
                     OperationId = "OperationIdSetInMetadata",
-                    RequestBody = new()
+                    RequestBody = new OpenApiRequestBody()
                     {
                         Content = new Dictionary<string, OpenApiMediaType>()
                         {
@@ -326,11 +326,7 @@ public partial class VerifyTests
         await Verify(document);
     }
 
-#if NET10_0_OR_GREATER
-    [Fact(Skip = "TODO Unskip when a newer version of Microsot.OpenApi v2 is used by ASP.NET Core 10")]
-#else
     [Fact]
-#endif
     public async Task TagSelectorIsSpecified()
     {
         var subject = Subject(
@@ -354,11 +350,7 @@ public partial class VerifyTests
         await Verify(document);
     }
 
-#if NET10_0_OR_GREATER
-    [Fact(Skip = "TODO Unskip when a newer version of Microsot.OpenApi v2 is used by ASP.NET Core 10")]
-#else
     [Fact]
-#endif
     public async Task EndpointMetadataHasTags()
     {
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
@@ -1271,7 +1263,7 @@ public partial class VerifyTests
                     new OpenApiOperation
                     {
                         OperationId = "OperationIdSetInMetadata",
-                        RequestBody = new()
+                        RequestBody = new OpenApiRequestBody()
                         {
                             Content = new Dictionary<string, OpenApiMediaType>()
                             {
@@ -1328,7 +1320,7 @@ public partial class VerifyTests
                 new OpenApiOperation
                     {
                         OperationId = "OperationIdSetInMetadata",
-                        RequestBody = new()
+                        RequestBody = new OpenApiRequestBody()
                         {
                             Content = new Dictionary<string, OpenApiMediaType>()
                             {
@@ -1379,7 +1371,7 @@ public partial class VerifyTests
                 new OpenApiOperation
                     {
                         OperationId = "OperationIdSetInMetadata",
-                        RequestBody = new()
+                        RequestBody = new OpenApiRequestBody()
                         {
                             Content = new Dictionary<string, OpenApiMediaType>()
                             {
@@ -1430,7 +1422,7 @@ public partial class VerifyTests
                 new OpenApiOperation
                     {
                         OperationId = "OperationIdSetInMetadata",
-                        RequestBody = new()
+                        RequestBody = new OpenApiRequestBody()
                         {
                             Content = new Dictionary<string, OpenApiMediaType>()
                             {

@@ -25,7 +25,9 @@
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": { }
+              "schema": {
+                "$ref": "#/components/schemas/Fruit"
+              }
             }
           },
           "required": true
@@ -35,7 +37,9 @@
             "description": "Description for response",
             "content": {
               "application/json": {
-                "schema": { }
+                "schema": {
+                  "$ref": "#/components/schemas/Fruit"
+                }
               }
             }
           }
@@ -50,10 +54,14 @@
         "requestBody": {
           "content": {
             "multipart/form-data": {
-              "schema": { }
+              "schema": {
+                "$ref": "#/components/schemas/PersonAnnotated"
+              }
             },
             "application/x-www-form-urlencoded": {
-              "schema": { }
+              "schema": {
+                "$ref": "#/components/schemas/PersonAnnotated"
+              }
             }
           }
         },
@@ -81,16 +89,24 @@
             "multipart/form-data": {
               "schema": {
                 "allOf": [
-                  { },
-                  { }
+                  {
+                    "$ref": "#/components/schemas/PersonAnnotated"
+                  },
+                  {
+                    "$ref": "#/components/schemas/AddressAnnotated"
+                  }
                 ]
               }
             },
             "application/x-www-form-urlencoded": {
               "schema": {
                 "allOf": [
-                  { },
-                  { }
+                  {
+                    "$ref": "#/components/schemas/PersonAnnotated"
+                  },
+                  {
+                    "$ref": "#/components/schemas/AddressAnnotated"
+                  }
                 ]
               }
             }
@@ -179,7 +195,9 @@
                     "type": "string",
                     "format": "binary"
                   },
-                  "dateTimeKind": { }
+                  "dateTimeKind": {
+                    "$ref": "#/components/schemas/DateTimeKind"
+                  }
                 }
               },
               "encoding": {
@@ -217,7 +235,9 @@
             "multipart/form-data": {
               "schema": {
                 "allOf": [
-                  { },
+                  {
+                    "$ref": "#/components/schemas/PersonAnnotated"
+                  },
                   {
                     "required": [
                       "tags"
@@ -240,7 +260,9 @@
             "application/x-www-form-urlencoded": {
               "schema": {
                 "allOf": [
-                  { },
+                  {
+                    "$ref": "#/components/schemas/PersonAnnotated"
+                  },
                   {
                     "required": [
                       "tags"
@@ -353,13 +375,17 @@
           {
             "name": "paramNine",
             "in": "query",
-            "schema": { }
+            "schema": {
+              "$ref": "#/components/schemas/DateTimeKind"
+            }
           },
           {
             "name": "paramTen",
             "in": "query",
             "required": true,
-            "schema": { }
+            "schema": {
+              "$ref": "#/components/schemas/DateTimeKind"
+            }
           },
           {
             "name": "paramEleven",
@@ -384,7 +410,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { }
+                "schema": {
+                  "$ref": "#/components/schemas/AsParametersRecord"
+                }
               }
             }
           }
@@ -433,7 +461,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { }
+                  "items": {
+                    "$ref": "#/components/schemas/WeatherForecast"
+                  }
                 }
               }
             }
@@ -451,16 +481,24 @@
             "multipart/form-data": {
               "schema": {
                 "allOf": [
-                  { },
-                  { }
+                  {
+                    "$ref": "#/components/schemas/Person"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Address"
+                  }
                 ]
               }
             },
             "application/x-www-form-urlencoded": {
               "schema": {
                 "allOf": [
-                  { },
-                  { }
+                  {
+                    "$ref": "#/components/schemas/Person"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Address"
+                  }
                 ]
               }
             }
@@ -589,7 +627,9 @@
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": { }
+              "schema": {
+                "$ref": "#/components/schemas/OrganizationCustomExchangeRatesDto"
+              }
             }
           },
           "required": true
@@ -677,7 +717,9 @@
                     "type": "string",
                     "format": "binary"
                   },
-                  "dateTimeKind": { }
+                  "dateTimeKind": {
+                    "$ref": "#/components/schemas/DateTimeKind"
+                  }
                 }
               },
               "encoding": {
@@ -716,7 +758,9 @@
             "multipart/form-data": {
               "schema": {
                 "allOf": [
-                  { },
+                  {
+                    "$ref": "#/components/schemas/Person"
+                  },
                   {
                     "required": [
                       "tags"
@@ -739,7 +783,9 @@
             "application/x-www-form-urlencoded": {
               "schema": {
                 "allOf": [
-                  { },
+                  {
+                    "$ref": "#/components/schemas/Person"
+                  },
                   {
                     "required": [
                       "tags"
@@ -800,7 +846,9 @@
             "description": "A Product Id",
             "content": {
               "application/json": {
-                "schema": { }
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
               }
             }
           }
@@ -837,8 +885,8 @@
         "properties": {
           "street": {
             "type": "string",
-            "description": "Description for Street",
-            "nullable": true
+            "nullable": true,
+            "description": "Description for Street"
           },
           "city": {
             "type": "string",
@@ -860,8 +908,8 @@
         "properties": {
           "paramOne": {
             "type": "string",
-            "format": "uuid",
-            "nullable": true
+            "nullable": true,
+            "format": "uuid"
           },
           "paramTwo": {
             "type": "string",
@@ -869,8 +917,8 @@
           },
           "paramThree": {
             "type": "string",
-            "format": "date-time",
-            "nullable": true
+            "nullable": true,
+            "format": "date-time"
           },
           "paramFour": {
             "type": "string",
@@ -878,8 +926,8 @@
           },
           "paramFive": {
             "type": "string",
-            "format": "date",
-            "nullable": true
+            "nullable": true,
+            "format": "date"
           },
           "paramSix": {
             "type": "string",
@@ -887,19 +935,23 @@
           },
           "paramSeven": {
             "type": "string",
-            "format": "time",
-            "nullable": true
+            "nullable": true,
+            "format": "time"
           },
           "paramEight": {
             "type": "string",
             "format": "time"
           },
-          "paramNine": { },
-          "paramTen": { },
+          "paramNine": {
+            "$ref": "#/components/schemas/DateTimeKind"
+          },
+          "paramTen": {
+            "$ref": "#/components/schemas/DateTimeKind"
+          },
           "paramEleven": {
             "type": "number",
-            "format": "double",
-            "nullable": true
+            "nullable": true,
+            "format": "double"
           },
           "paramTwelve": {
             "type": "number",
@@ -917,8 +969,8 @@
         "properties": {
           "currencyFrom": {
             "type": "string",
-            "description": "Currency From",
-            "nullable": true
+            "nullable": true,
+            "description": "Currency From"
           },
           "currencyTo": {
             "type": "string",
@@ -959,8 +1011,10 @@
         "properties": {
           "currenciesRates": {
             "type": "array",
-            "items": { },
-            "nullable": true
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/CurrenciesRate"
+            }
           },
           "isUpdated": {
             "type": "boolean",
@@ -988,13 +1042,13 @@
         "properties": {
           "firstName": {
             "type": "string",
-            "description": "Description for FirstName",
-            "nullable": true
+            "nullable": true,
+            "description": "Description for FirstName"
           },
           "lastName": {
             "type": "string",
-            "description": "Description for LastName",
-            "nullable": true
+            "nullable": true,
+            "description": "Description for LastName"
           }
         },
         "additionalProperties": false
@@ -1009,8 +1063,8 @@
           },
           "description": {
             "type": "string",
-            "description": "Describes the product",
-            "nullable": true
+            "nullable": true,
+            "description": "Describes the product"
           }
         },
         "additionalProperties": false,

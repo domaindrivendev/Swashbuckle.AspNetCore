@@ -1,8 +1,8 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models.Interfaces;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
 public interface IParameterFilter
 {
-    void Apply(OpenApiParameter parameter, ParameterFilterContext context);
+    void Apply(IOpenApiParameter parameter, ParameterFilterContext context);
 }

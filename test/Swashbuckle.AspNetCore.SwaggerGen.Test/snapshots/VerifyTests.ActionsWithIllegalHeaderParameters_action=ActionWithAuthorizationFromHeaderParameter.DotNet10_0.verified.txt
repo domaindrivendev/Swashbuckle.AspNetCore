@@ -8,7 +8,7 @@
     "/resource": {
       "get": {
         "tags": [
-          null
+          "Fake"
         ],
         "parameters": [
           {

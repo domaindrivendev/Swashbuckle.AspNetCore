@@ -1,6 +1,8 @@
 ﻿using System.Text;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.Interfaces;
+using Microsoft.OpenApi.Models.References;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore;
 using Swashbuckle.AspNetCore.ApiTesting.Xunit;
@@ -12,16 +14,13 @@ public class CreateUserTests : ApiTestFixture<TestFirst.Startup>
 {
     public CreateUserTests(
         ApiTestRunner apiTestRunner,
-        WebApplicationFactory<TestFirst.Startup> webApplicationFactory)
+        WebApplicationFactory<Startup> webApplicationFactory)
         : base(apiTestRunner, webApplicationFactory, "v1-generated")
     {
         Describe("/api/users", OperationType.Post, new OpenApiOperation
         {
             OperationId = "CreateUser",
-            // TODO Fix this for .NET 10
-#if !NET10_0_OR_GREATER
-            Tags = [new OpenApiTag { Name = "Users" }],
-#endif
+            Tags = [new OpenApiTagReference("Users")],
             RequestBody = new OpenApiRequestBody
             {
                 Content = new Dictionary<string, OpenApiMediaType>
@@ -31,10 +30,10 @@ public class CreateUserTests : ApiTestFixture<TestFirst.Startup>
                         Schema = new OpenApiSchema
                         {
                             Type = JsonSchemaTypes.Object,
-                            Properties = new Dictionary<string, OpenApiSchema>
+                            Properties = new Dictionary<string, IOpenApiSchema>
                             {
-                                [ "email" ] = new OpenApiSchema {  Type = JsonSchemaTypes.String },
-                                [ "password" ] = new OpenApiSchema {  Type = JsonSchemaTypes.String },
+                                [ "email" ] = new OpenApiSchema { Type = JsonSchemaTypes.String },
+                                [ "password" ] = new OpenApiSchema { Type = JsonSchemaTypes.String },
                             },
                             Required = new SortedSet<string> { "email", "password" }
                         }
@@ -47,7 +46,7 @@ public class CreateUserTests : ApiTestFixture<TestFirst.Startup>
                 [ "201" ] = new OpenApiResponse
                 {
                     Description = "User created",
-                    Headers = new Dictionary<string, OpenApiHeader>
+                    Headers = new Dictionary<string, IOpenApiHeader>
                     {
                         [ "Location" ] = new OpenApiHeader
                         {

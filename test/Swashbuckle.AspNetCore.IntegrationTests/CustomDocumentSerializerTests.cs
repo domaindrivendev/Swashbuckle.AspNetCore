@@ -10,7 +10,6 @@ namespace Swashbuckle.AspNetCore.IntegrationTests;
 [Collection("TestSite")]
 public class CustomDocumentSerializerTests
 {
-#if NET10_0_OR_GREATER
     [Fact]
     public async Task TestSite_Writes_Custom_V3_1_Document()
     {
@@ -27,7 +26,6 @@ public class CustomDocumentSerializerTests
         var swaggerInfo = document.RootElement.GetProperty("swagger").GetString();
         Assert.Equal("DocumentSerializerTest3.1", swaggerInfo);
     }
-#endif
 
     [Fact]
     public async Task TestSite_Writes_Custom_V3_Document()
@@ -88,7 +86,6 @@ public class CustomDocumentSerializerTests
         Assert.Equal("DocumentSerializerTest3.0", swaggerInfo);
     }
 
-#if NET10_0_OR_GREATER
     [Fact]
     public async Task DocumentProvider_Writes_Custom_V3_1_Document()
     {
@@ -116,7 +113,6 @@ public class CustomDocumentSerializerTests
         var swaggerInfo = document.RootElement.GetProperty("swagger").GetString();
         Assert.Equal("DocumentSerializerTest3.1", swaggerInfo);
     }
-#endif
 
     [Fact]
     public async Task DocumentProvider_Writes_Custom_V2_Document()

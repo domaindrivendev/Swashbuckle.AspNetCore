@@ -23,7 +23,9 @@
             "in": "body",
             "name": "body",
             "required": true,
-            "schema": { }
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
           }
         ],
         "responses": {
@@ -48,7 +50,9 @@
             "description": "OK",
             "schema": {
               "type": "array",
-              "items": { }
+              "items": {
+                "$ref": "#/definitions/Product"
+              }
             }
           }
         }
@@ -74,7 +78,9 @@
         "responses": {
           "200": {
             "description": "OK",
-            "schema": { }
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
           }
         }
       },
@@ -99,7 +105,9 @@
             "in": "body",
             "name": "body",
             "required": true,
-            "schema": { }
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
           }
         ],
         "responses": {
@@ -171,7 +179,8 @@
           "format": "int32"
         },
         "description": {
-          "type": "string"
+          "type": "string",
+          "x-nullable": true
         }
       },
       "additionalProperties": false

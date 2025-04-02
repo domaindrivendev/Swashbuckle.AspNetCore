@@ -16,7 +16,9 @@
             "in": "query",
             "schema": {
               "allOf": [
-                { }
+                {
+                  "$ref": "#/components/schemas/LogLevel"
+                }
               ],
               "default": 4
             }

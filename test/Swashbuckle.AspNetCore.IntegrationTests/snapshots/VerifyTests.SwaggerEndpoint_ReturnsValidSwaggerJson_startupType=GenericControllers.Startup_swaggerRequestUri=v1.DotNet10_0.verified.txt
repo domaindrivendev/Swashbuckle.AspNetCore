@@ -25,7 +25,9 @@
           "description": "The resource",
           "content": {
             "application/json": {
-              "schema": { }
+              "schema": {
+                "$ref": "#/components/schemas/Order"
+              }
             }
           },
           "required": true
@@ -77,19 +79,25 @@
             "application/json": {
               "schema": {
                 "type": "array",
-                "items": { }
+                "items": {
+                  "$ref": "#/components/schemas/Order"
+                }
               }
             },
             "text/json": {
               "schema": {
                 "type": "array",
-                "items": { }
+                "items": {
+                  "$ref": "#/components/schemas/Order"
+                }
               }
             },
             "application/*+json": {
               "schema": {
                 "type": "array",
-                "items": { }
+                "items": {
+                  "$ref": "#/components/schemas/Order"
+                }
               }
             }
           },
@@ -145,13 +153,19 @@
           "description": "deleting Id",
           "content": {
             "application/json": {
-              "schema": { }
+              "schema": {
+                "$ref": "#/components/schemas/Order"
+              }
             },
             "text/json": {
-              "schema": { }
+              "schema": {
+                "$ref": "#/components/schemas/Order"
+              }
             },
             "application/*+json": {
-              "schema": { }
+              "schema": {
+                "$ref": "#/components/schemas/Order"
+              }
             }
           },
           "required": true
@@ -208,19 +222,25 @@
             "application/json": {
               "schema": {
                 "type": "array",
-                "items": { }
+                "items": {
+                  "$ref": "#/components/schemas/Order"
+                }
               }
             },
             "text/json": {
               "schema": {
                 "type": "array",
-                "items": { }
+                "items": {
+                  "$ref": "#/components/schemas/Order"
+                }
               }
             },
             "application/*+json": {
               "schema": {
                 "type": "array",
-                "items": { }
+                "items": {
+                  "$ref": "#/components/schemas/Order"
+                }
               }
             }
           },
@@ -276,7 +296,9 @@
           "description": "The resource",
           "content": {
             "application/json": {
-              "schema": { }
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
             }
           },
           "required": true
@@ -328,19 +350,25 @@
             "application/json": {
               "schema": {
                 "type": "array",
-                "items": { }
+                "items": {
+                  "$ref": "#/components/schemas/Product"
+                }
               }
             },
             "text/json": {
               "schema": {
                 "type": "array",
-                "items": { }
+                "items": {
+                  "$ref": "#/components/schemas/Product"
+                }
               }
             },
             "application/*+json": {
               "schema": {
                 "type": "array",
-                "items": { }
+                "items": {
+                  "$ref": "#/components/schemas/Product"
+                }
               }
             }
           },
@@ -396,13 +424,19 @@
           "description": "deleting Id",
           "content": {
             "application/json": {
-              "schema": { }
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
             },
             "text/json": {
-              "schema": { }
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
             },
             "application/*+json": {
-              "schema": { }
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
             }
           },
           "required": true
@@ -459,19 +493,25 @@
             "application/json": {
               "schema": {
                 "type": "array",
-                "items": { }
+                "items": {
+                  "$ref": "#/components/schemas/Product"
+                }
               }
             },
             "text/json": {
               "schema": {
                 "type": "array",
-                "items": { }
+                "items": {
+                  "$ref": "#/components/schemas/Product"
+                }
               }
             },
             "application/*+json": {
               "schema": {
                 "type": "array",
-                "items": { }
+                "items": {
+                  "$ref": "#/components/schemas/Product"
+                }
               }
             }
           },

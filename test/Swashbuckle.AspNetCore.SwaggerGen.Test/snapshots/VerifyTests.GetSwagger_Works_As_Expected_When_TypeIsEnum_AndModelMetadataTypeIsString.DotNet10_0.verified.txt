@@ -8,13 +8,15 @@
     "/resource": {
       "post": {
         "tags": [
-          null
+          "Fake"
         ],
         "parameters": [
           {
             "name": "param1",
             "in": "query",
-            "schema": { }
+            "schema": {
+              "$ref": "#/components/schemas/IntEnum"
+            }
           }
         ],
         "responses": {

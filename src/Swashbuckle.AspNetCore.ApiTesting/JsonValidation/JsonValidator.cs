@@ -1,7 +1,6 @@
 using Microsoft.OpenApi.Models;
-#if NET10_0_OR_GREATER
+using Microsoft.OpenApi.Models.Interfaces;
 using Microsoft.OpenApi.Models.References;
-#endif
 using Newtonsoft.Json.Linq;
 
 namespace Swashbuckle.AspNetCore.ApiTesting;
@@ -26,29 +25,18 @@ public sealed class JsonValidator : IJsonValidator
         ];
     }
 
-    public bool CanValidate(OpenApiSchema schema) => true;
+    public bool CanValidate(IOpenApiSchema schema) => true;
 
     public bool Validate(
-        OpenApiSchema schema,
+        IOpenApiSchema schema,
         OpenApiDocument openApiDocument,
         JToken instance,
         out IEnumerable<string> errorMessages)
     {
-        schema = schema.Reference != null
-#if NET10_0_OR_GREATER
-            ? new OpenApiSchemaReference(schema.Reference.Id, openApiDocument)
-#else
-            ? (OpenApiSchema)openApiDocument.ResolveReference(schema.Reference)
-#endif
-            : schema;
-
-#if NET10_0_OR_GREATER
-        // TODO Why don't invalid references throw in Microsoft.OpenApi v2 anymore?
-        if (schema.Reference != null && !openApiDocument.Components.Schemas.Any((p) => p.Key == schema.Reference.Id))
+        if (schema is OpenApiSchemaReference reference && !openApiDocument.Components.Schemas.Any((p) => p.Key == reference.Reference.Id))
         {
-            throw new InvalidOperationException($"Invalid Reference identifier '{schema.Reference.Id}'.");
+            throw new InvalidOperationException($"Invalid Reference identifier '{reference.Reference.Id}'.");
         }
-#endif
 
         var errors = new List<string>();
 

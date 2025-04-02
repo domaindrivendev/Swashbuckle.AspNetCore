@@ -19,7 +19,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { }
+                  "items": {
+                    "$ref": "#/components/schemas/Todo"
+                  }
                 }
               }
             }
@@ -66,8 +68,8 @@
           },
           "dueBy": {
             "type": "string",
-            "format": "date",
-            "nullable": true
+            "nullable": true,
+            "format": "date"
           },
           "isComplete": {
             "type": "boolean"

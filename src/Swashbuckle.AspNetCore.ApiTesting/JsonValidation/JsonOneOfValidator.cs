@@ -1,4 +1,5 @@
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.Interfaces;
 using Newtonsoft.Json.Linq;
 
 namespace Swashbuckle.AspNetCore.ApiTesting;
@@ -7,10 +8,10 @@ public sealed class JsonOneOfValidator(JsonValidator jsonValidator) : IJsonValid
 {
     private readonly JsonValidator _jsonValidator = jsonValidator;
 
-    public bool CanValidate(OpenApiSchema schema) => schema.OneOf != null && schema.OneOf.Any();
+    public bool CanValidate(IOpenApiSchema schema) => schema.OneOf != null && schema.OneOf.Any();
 
     public bool Validate(
-        OpenApiSchema schema,
+        IOpenApiSchema schema,
         OpenApiDocument openApiDocument,
         JToken instance,
         out IEnumerable<string> errorMessages)

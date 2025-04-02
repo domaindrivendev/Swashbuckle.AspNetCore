@@ -1,22 +1,22 @@
 ﻿using System.Text.Json;
-#if NET10_0_OR_GREATER
 using System.Text.Json.Nodes;
-#endif
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.Interfaces;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
 internal static class XmlCommentsExampleHelper
 {
-#if NET10_0_OR_GREATER
     public static JsonNode Create(
         SchemaRepository schemaRepository,
-        OpenApiSchema schema,
+        IOpenApiSchema schema,
         string exampleString)
     {
-        var isStringType =
-            schema?.ResolveType(schemaRepository) == JsonSchemaTypes.String &&
-            !string.Equals(exampleString, "null");
+        var type = schema?.ResolveType(schemaRepository);
+
+        var isStringType = type is { } value &&
+            value.HasFlag(JsonSchemaType.String) &&
+            !value.HasFlag(JsonSchemaType.Null);
 
         if (isStringType)
         {
@@ -30,26 +30,14 @@ internal static class XmlCommentsExampleHelper
         {
             return JsonModelFactory.CreateFromJson(exampleString);
         }
-        catch (JsonException) when (exampleString?.StartsWith('"') == false)
+        catch (JsonException)
+#if NET
+            when (exampleString?.StartsWith('"') == false)
+#else
+            when (exampleString?.StartsWith("\"") == false)
+#endif
         {
             return JsonValue.Create(exampleString);
         }
     }
-#else
-    public static Microsoft.OpenApi.Any.IOpenApiAny Create(
-        SchemaRepository schemaRepository,
-        OpenApiSchema schema,
-        string exampleString)
-    {
-        var isStringType =
-            schema?.ResolveType(schemaRepository) == JsonSchemaTypes.String &&
-            !string.Equals(exampleString, "null");
-
-        var exampleAsJson = isStringType
-            ? JsonSerializer.Serialize(exampleString)
-            : exampleString;
-
-        return JsonModelFactory.CreateFromJson(exampleAsJson);
-    }
-#endif
 }

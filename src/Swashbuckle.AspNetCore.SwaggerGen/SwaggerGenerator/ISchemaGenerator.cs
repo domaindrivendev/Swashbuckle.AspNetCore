@@ -1,12 +1,12 @@
 ﻿using System.Reflection;
-using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.OpenApi.Models.Interfaces;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
 public interface ISchemaGenerator
 {
-    OpenApiSchema GenerateSchema(
+    IOpenApiSchema GenerateSchema(
         Type modelType,
         SchemaRepository schemaRepository,
         MemberInfo memberInfo = null,

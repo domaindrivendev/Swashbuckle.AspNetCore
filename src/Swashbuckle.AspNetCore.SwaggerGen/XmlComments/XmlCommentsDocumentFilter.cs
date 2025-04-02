@@ -4,28 +4,12 @@ using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
-public class XmlCommentsDocumentFilter : IDocumentFilter
+public class XmlCommentsDocumentFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers, SwaggerGeneratorOptions options) : IDocumentFilter
 {
     private const string SummaryTag = "summary";
 
-    private readonly IReadOnlyDictionary<string, XPathNavigator> _xmlDocMembers;
-    private readonly SwaggerGeneratorOptions _options;
-
-    public XmlCommentsDocumentFilter(XPathDocument xmlDoc)
-        : this(xmlDoc, null)
-    {
-    }
-
-    public XmlCommentsDocumentFilter(XPathDocument xmlDoc, SwaggerGeneratorOptions options)
-        : this(XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc), options)
-    {
-    }
-
-    internal XmlCommentsDocumentFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers, SwaggerGeneratorOptions options)
-    {
-        _xmlDocMembers = xmlDocMembers;
-        _options = options;
-    }
+    private readonly IReadOnlyDictionary<string, XPathNavigator> _xmlDocMembers = xmlDocMembers;
+    private readonly SwaggerGeneratorOptions _options = options;
 
     public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
     {

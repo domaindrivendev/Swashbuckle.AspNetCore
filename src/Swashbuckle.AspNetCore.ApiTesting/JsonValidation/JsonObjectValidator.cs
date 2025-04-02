@@ -1,4 +1,5 @@
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.Interfaces;
 using Newtonsoft.Json.Linq;
 
 namespace Swashbuckle.AspNetCore.ApiTesting;
@@ -7,10 +8,10 @@ public sealed class JsonObjectValidator(IJsonValidator jsonValidator) : IJsonVal
 {
     private readonly IJsonValidator _jsonValidator = jsonValidator;
 
-    public bool CanValidate(OpenApiSchema schema) => schema.Type == JsonSchemaTypes.Object;
+    public bool CanValidate(IOpenApiSchema schema) => schema.Type is { } type && type.HasFlag(JsonSchemaTypes.Object);
 
     public bool Validate(
-        OpenApiSchema schema,
+        IOpenApiSchema schema,
         OpenApiDocument openApiDocument,
         JToken instance,
         out IEnumerable<string> errorMessages)
@@ -48,7 +49,7 @@ public sealed class JsonObjectValidator(IJsonValidator jsonValidator) : IJsonVal
             // properties
             IEnumerable<string> propertyErrorMessages;
 
-            if (schema.Properties != null && schema.Properties.TryGetValue(property.Name, out OpenApiSchema propertySchema))
+            if (schema.Properties != null && schema.Properties.TryGetValue(property.Name, out var propertySchema))
             {
                 if (!_jsonValidator.Validate(propertySchema, openApiDocument, property.Value, out propertyErrorMessages))
                 {

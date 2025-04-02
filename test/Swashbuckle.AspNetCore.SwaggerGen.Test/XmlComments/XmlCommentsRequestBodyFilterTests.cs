@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.Interfaces;
 using Swashbuckle.AspNetCore.TestSupport;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
@@ -33,11 +34,7 @@ public class XmlCommentsRequestBodyFilterTests
         Assert.Equal("Description for param1", requestBody.Description);
         Assert.NotNull(requestBody.Content["application/json"].Example);
 
-#if NET10_0_OR_GREATER
         Assert.Equal("\"Example for \\u0022param1\\u0022\"", requestBody.Content["application/json"].Example.ToJson());
-#else
-        Assert.Equal("\"Example for \\\"param1\\\"\"", requestBody.Content["application/json"].Example.ToJson());
-#endif
     }
 
     [Fact]
@@ -64,11 +61,7 @@ public class XmlCommentsRequestBodyFilterTests
         Assert.Equal("Description for param1", requestBody.Description);
         Assert.NotNull(requestBody.Content["application/json"].Example);
 
-#if NET10_0_OR_GREATER
         Assert.Equal("\"Example for \\u0022param1\\u0022\"", requestBody.Content["application/json"].Example.ToJson());
-#else
-        Assert.Equal("\"Example for \\\"param1\\\"\"", requestBody.Content["application/json"].Example.ToJson());
-#endif
     }
 
     [Fact]
@@ -116,11 +109,7 @@ public class XmlCommentsRequestBodyFilterTests
         Assert.Equal("Summary for StringPropertyWithUri", requestBody.Description);
         Assert.NotNull(requestBody.Content["application/json"].Example);
 
-#if NET10_0_OR_GREATER
         Assert.Equal("\"https://test.com/a?b=1\\u0026c=2\"", requestBody.Content["application/json"].Example.ToJson());
-#else
-        Assert.Equal("\"https://test.com/a?b=1&c=2\"", requestBody.Content["application/json"].Example.ToJson());
-#endif
     }
 
     [Fact]
@@ -163,9 +152,9 @@ public class XmlCommentsRequestBodyFilterTests
                     Schema = new OpenApiSchema
                     {
                         Type = JsonSchemaTypes.String,
-                        Properties = new Dictionary<string, OpenApiSchema>()
+                        Properties = new Dictionary<string, IOpenApiSchema>()
                         {
-                            [parameterInfo.Name] = new()
+                            [parameterInfo.Name] = new OpenApiSchema()
                         }
                     },
                 }
@@ -187,7 +176,9 @@ public class XmlCommentsRequestBodyFilterTests
 
     private static XmlCommentsRequestBodyFilter Subject()
     {
-        using var xmlComments = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml");
-        return new XmlCommentsRequestBodyFilter(new XPathDocument(xmlComments));
+        using var xml = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml");
+        var document = new XPathDocument(xml);
+        var members = XmlCommentsDocumentHelper.CreateMemberDictionary(document);
+        return new(members, new());
     }
 }

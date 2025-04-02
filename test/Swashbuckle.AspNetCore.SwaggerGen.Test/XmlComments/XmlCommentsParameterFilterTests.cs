@@ -24,11 +24,7 @@ public class XmlCommentsParameterFilterTests
         Assert.Equal("Description for param1", parameter.Description);
         Assert.NotNull(parameter.Example);
 
-#if NET10_0_OR_GREATER
         Assert.Equal("\"Example for \\u0022param1\\u0022\"", parameter.Example.ToJson());
-#else
-        Assert.Equal("\"Example for \\\"param1\\\"\"", parameter.Example.ToJson());
-#endif
     }
 
     [Fact]
@@ -46,11 +42,7 @@ public class XmlCommentsParameterFilterTests
         Assert.Equal("Description for param2", parameter.Description);
         Assert.NotNull(parameter.Example);
 
-#if NET10_0_OR_GREATER
         Assert.Equal("\"http://test.com/?param1=1\\u0026param2=2\"", parameter.Example.ToJson());
-#else
-        Assert.Equal("\"http://test.com/?param1=1&param2=2\"", parameter.Example.ToJson());
-#endif
     }
 
     [Fact]
@@ -68,11 +60,7 @@ public class XmlCommentsParameterFilterTests
         Assert.Equal("Description for param1", parameter.Description);
         Assert.NotNull(parameter.Example);
 
-#if NET10_0_OR_GREATER
         Assert.Equal("\"Example for \\u0022param1\\u0022\"", parameter.Example.ToJson());
-#else
-        Assert.Equal("\"Example for \\\"param1\\\"\"", parameter.Example.ToJson());
-#endif
     }
 
     [Fact]
@@ -105,16 +93,14 @@ public class XmlCommentsParameterFilterTests
         Assert.Null(parameter.Schema.Description);
         Assert.NotNull(parameter.Example);
 
-#if NET10_0_OR_GREATER
         Assert.Equal("\"https://test.com/a?b=1\\u0026c=2\"", parameter.Example.ToJson());
-#else
-        Assert.Equal("\"https://test.com/a?b=1&c=2\"", parameter.Example.ToJson());
-#endif
     }
 
     private static XmlCommentsParameterFilter Subject()
     {
-        using var xmlComments = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml");
-        return new XmlCommentsParameterFilter(new XPathDocument(xmlComments));
+        using var xml = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml");
+        var document = new XPathDocument(xml);
+        var members = XmlCommentsDocumentHelper.CreateMemberDictionary(document);
+        return new(members, new());
     }
 }

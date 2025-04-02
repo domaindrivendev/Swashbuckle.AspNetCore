@@ -13,8 +13,12 @@
             "application/someMediaType": {
               "schema": {
                 "allOf": [
-                  { },
-                  { }
+                  {
+                    "$ref": "#/components/schemas/TestDto"
+                  },
+                  {
+                    "$ref": "#/components/schemas/TypeWithDefaultAttributeOnEnum"
+                  }
                 ]
               }
             }
@@ -48,14 +52,18 @@
       "TypeWithDefaultAttributeOnEnum": {
         "type": "object",
         "properties": {
-          "EnumWithDefault": { },
+          "EnumWithDefault": {
+            "$ref": "#/components/schemas/IntEnum"
+          },
           "EnumArrayWithDefault": {
             "type": "array",
-            "items": { },
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/IntEnum"
+            },
             "default": [
               4
-            ],
-            "nullable": true
+            ]
           }
         },
         "additionalProperties": false

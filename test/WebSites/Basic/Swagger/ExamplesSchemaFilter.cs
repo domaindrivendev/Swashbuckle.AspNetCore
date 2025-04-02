@@ -1,19 +1,20 @@
-﻿#if NET10_0_OR_GREATER
-using System.Text.Json.Nodes;
-#else
-using Microsoft.OpenApi.Any;
-#endif
+﻿using System.Text.Json.Nodes;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.Interfaces;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Basic.Swagger;
 
 public class ExamplesSchemaFilter : ISchemaFilter
 {
-    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+    public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
     {
-#if NET10_0_OR_GREATER
-        schema.Example = context.Type.Name switch
+        if (schema is not OpenApiSchema concrete)
+        {
+            return;
+        }
+
+        concrete.Example = context.Type.Name switch
         {
             "Product" => new JsonObject
             {
@@ -23,17 +24,5 @@ public class ExamplesSchemaFilter : ISchemaFilter
             },
             _ => null,
         };
-#else
-        schema.Example = context.Type.Name switch
-        {
-            "Product" => new OpenApiObject
-            {
-                ["id"] = new OpenApiInteger(123),
-                ["description"] = new OpenApiString("foobar"),
-                ["price"] = new OpenApiDouble(14.37)
-            },
-            _ => null,
-        };
-#endif
     }
 }

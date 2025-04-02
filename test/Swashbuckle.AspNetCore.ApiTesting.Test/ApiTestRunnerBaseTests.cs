@@ -59,15 +59,15 @@ public class ApiTestRunnerBaseTests
                             [OperationType.Get] = new OpenApiOperation
                             {
                                 OperationId = "GetProducts",
-                                Parameters = new List<OpenApiParameter>
-                                {
+                                Parameters =
+                                [
                                     new OpenApiParameter
                                     {
                                         Name = "param",
                                         Required = true,
                                         In = ParameterLocation.Query
                                     }
-                                },
+                                ],
                                 Responses = new OpenApiResponses
                                 {
                                     [ "200" ] = new OpenApiResponse() 
@@ -117,8 +117,8 @@ public class ApiTestRunnerBaseTests
                                 OperationId = "GetProducts",
                                 Responses = new OpenApiResponses
                                 {
-                                    [ "400" ] = new OpenApiResponse(),
-                                    [ "200" ] = new OpenApiResponse() 
+                                    ["400"] = new OpenApiResponse(),
+                                    ["200"] = new OpenApiResponse() 
                                 }
                             }
                         }
@@ -141,25 +141,21 @@ public class ApiTestRunnerBaseTests
         Assert.Equal(expectedExceptionMessage, exception?.Message);
     }
 
-    private FakeApiTestRunner Subject()
+    private static FakeApiTestRunner Subject()
     {
-        return new FakeApiTestRunner();
+        return new();
     }
 
-    private HttpClient CreateHttpClient()
+    private static HttpClient CreateHttpClient()
     {
-        var client = new HttpClient(new FakeHttpMessageHandler());
-        client.BaseAddress = new Uri("http://tempuri.org");
-        return client;
+        return new(new FakeHttpMessageHandler())
+        {
+            BaseAddress = new Uri("http://tempuri.org")
+        };
     }
 }
 
-internal class FakeApiTestRunner : ApiTestRunnerBase
-{
-    public FakeApiTestRunner()
-    {
-    }
-}
+internal class FakeApiTestRunner : ApiTestRunnerBase;
 
 internal class FakeHttpMessageHandler : HttpMessageHandler
 {

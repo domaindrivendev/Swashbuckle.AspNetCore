@@ -1,21 +1,17 @@
 using Microsoft.OpenApi.Models;
-#if NET10_0_OR_GREATER
 using Microsoft.OpenApi.Reader;
 using Microsoft.OpenApi.Readers;
-#endif
 using Microsoft.OpenApi.Writers;
 
 namespace Swashbuckle.AspNetCore.ApiTesting;
 
 public abstract class ApiTestRunnerBase : IDisposable
 {
-#if NET10_0_OR_GREATER
     static ApiTestRunnerBase()
     {
         // TODO Make an assembly fixture
         OpenApiReaderRegistry.RegisterReader(OpenApiConstants.Yaml, new OpenApiYamlReader());
     }
-#endif
 
     private readonly ApiTestRunnerOptions _options;
     private readonly RequestValidator _requestValidator;
@@ -43,13 +39,16 @@ public abstract class ApiTestRunnerBase : IDisposable
 
         openApiDocument.Paths ??= [];
 
-        if (!openApiDocument.Paths.TryGetValue(pathTemplate, out OpenApiPathItem pathItem))
+        if (!openApiDocument.Paths.TryGetValue(pathTemplate, out var pathItem))
         {
             pathItem = new OpenApiPathItem();
             openApiDocument.Paths.Add(pathTemplate, pathItem);
         }
 
-        pathItem.AddOperation(operationType, operation);
+        if (pathItem is OpenApiPathItem item)
+        {
+            item.AddOperation(operationType, operation);
+        }
     }
 
     public async Task TestAsync(

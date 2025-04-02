@@ -3,12 +3,6 @@ using System.Xml.XPath;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.TestSupport;
 
-#if NET10_0_OR_GREATER
-using JsonSchemaType = Microsoft.OpenApi.Models.JsonSchemaType;
-#else
-using JsonSchemaType = string;
-#endif
-
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 
 public class XmlCommentsSchemaFilterTests
@@ -81,17 +75,10 @@ public class XmlCommentsSchemaFilterTests
         { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.GuidProperty), JsonSchemaTypes.String, "\"d3966535-2637-48fa-b911-e3c27405ee09\"" },
         { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.StringProperty), JsonSchemaTypes.String, "\"Example for StringProperty\"" },
         { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.ObjectProperty), JsonSchemaTypes.Object, "{\n  \"prop1\": 1,\n  \"prop2\": \"foobar\"\n}" },
-#if NET10_0_OR_GREATER
         { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringPropertyWithUri), JsonSchemaTypes.String, "\"https://test.com/a?b=1\\u0026c=2\"" },
         { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.StringPropertyWithUri), JsonSchemaTypes.String, "\"https://test.com/a?b=1\\u0026c=2\"" },
-        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringPropertyWithNullExample), JsonSchemaTypes.String, null },
-        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.StringPropertyWithNullExample), JsonSchemaTypes.String, null },
-#else
-        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringPropertyWithUri), JsonSchemaTypes.String, "\"https://test.com/a?b=1&c=2\"" },
-        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.StringPropertyWithUri), JsonSchemaTypes.String, "\"https://test.com/a?b=1&c=2\"" },
-        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringPropertyWithNullExample), JsonSchemaTypes.String, "null" },
-        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.StringPropertyWithNullExample), JsonSchemaTypes.String, "null" },
-#endif
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringPropertyWithNullExample), JsonSchemaTypes.String, "\"null\"" },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.StringPropertyWithNullExample), JsonSchemaTypes.String, "\"null\"" },
     };
 
     [Theory]
@@ -175,17 +162,15 @@ public class XmlCommentsSchemaFilterTests
 
         CultureInfo.CurrentCulture = defaultCulture;
 
-#if NET10_0_OR_GREATER
         Assert.NotNull(schema.Example);
         Assert.Equal(expectedValue, schema.Example.GetValue<float>());
-#else
-        Assert.Equal(expectedValue, schema.Example.GetType().GetProperty("Value").GetValue(schema.Example));
-#endif
     }
 
     private static XmlCommentsSchemaFilter Subject()
     {
-        using var xmlComments = File.OpenText(typeof(XmlAnnotatedType).Assembly.GetName().Name + ".xml");
-        return new XmlCommentsSchemaFilter(new XPathDocument(xmlComments));
+        using var xml = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml");
+        var document = new XPathDocument(xml);
+        var members = XmlCommentsDocumentHelper.CreateMemberDictionary(document);
+        return new(members, new());
     }
 }

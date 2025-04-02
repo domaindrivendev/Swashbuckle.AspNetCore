@@ -10,13 +10,13 @@ Swashbuckle.AspNetCore.Annotations.AnnotationsOperationFilter.AnnotationsOperati
 Swashbuckle.AspNetCore.Annotations.AnnotationsOperationFilter.Apply(Microsoft.OpenApi.Models.OpenApiOperation operation, Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext context) -> void
 Swashbuckle.AspNetCore.Annotations.AnnotationsParameterFilter
 Swashbuckle.AspNetCore.Annotations.AnnotationsParameterFilter.AnnotationsParameterFilter() -> void
-Swashbuckle.AspNetCore.Annotations.AnnotationsParameterFilter.Apply(Microsoft.OpenApi.Models.OpenApiParameter parameter, Swashbuckle.AspNetCore.SwaggerGen.ParameterFilterContext context) -> void
+Swashbuckle.AspNetCore.Annotations.AnnotationsParameterFilter.Apply(Microsoft.OpenApi.Models.Interfaces.IOpenApiParameter parameter, Swashbuckle.AspNetCore.SwaggerGen.ParameterFilterContext context) -> void
 Swashbuckle.AspNetCore.Annotations.AnnotationsRequestBodyFilter
 Swashbuckle.AspNetCore.Annotations.AnnotationsRequestBodyFilter.AnnotationsRequestBodyFilter() -> void
-Swashbuckle.AspNetCore.Annotations.AnnotationsRequestBodyFilter.Apply(Microsoft.OpenApi.Models.OpenApiRequestBody requestBody, Swashbuckle.AspNetCore.SwaggerGen.RequestBodyFilterContext context) -> void
+Swashbuckle.AspNetCore.Annotations.AnnotationsRequestBodyFilter.Apply(Microsoft.OpenApi.Models.Interfaces.IOpenApiRequestBody requestBody, Swashbuckle.AspNetCore.SwaggerGen.RequestBodyFilterContext context) -> void
 Swashbuckle.AspNetCore.Annotations.AnnotationsSchemaFilter
 Swashbuckle.AspNetCore.Annotations.AnnotationsSchemaFilter.AnnotationsSchemaFilter(System.IServiceProvider serviceProvider) -> void
-Swashbuckle.AspNetCore.Annotations.AnnotationsSchemaFilter.Apply(Microsoft.OpenApi.Models.OpenApiSchema schema, Swashbuckle.AspNetCore.SwaggerGen.SchemaFilterContext context) -> void
+Swashbuckle.AspNetCore.Annotations.AnnotationsSchemaFilter.Apply(Microsoft.OpenApi.Models.Interfaces.IOpenApiSchema schema, Swashbuckle.AspNetCore.SwaggerGen.SchemaFilterContext context) -> void
 Swashbuckle.AspNetCore.Annotations.SwaggerDiscriminatorAttribute
 Swashbuckle.AspNetCore.Annotations.SwaggerDiscriminatorAttribute.PropertyName.get -> string
 Swashbuckle.AspNetCore.Annotations.SwaggerDiscriminatorAttribute.PropertyName.set -> void

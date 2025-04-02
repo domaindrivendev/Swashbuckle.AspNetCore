@@ -1,13 +1,8 @@
 ﻿using System.Net;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.Interfaces;
 using Xunit;
-
-#if NET10_0_OR_GREATER
-using JsonSchemaType = Microsoft.OpenApi.Models.JsonSchemaType;
-#else
-using JsonSchemaType = string;
-#endif
 
 namespace Swashbuckle.AspNetCore.ApiTesting.Test;
 
@@ -52,11 +47,11 @@ public class ResponseValidatorTests
         {
             Responses = new OpenApiResponses
             {
-                [ "201" ] = new OpenApiResponse
+                ["201"] = new OpenApiResponse
                 {
-                    Headers = new Dictionary<string, OpenApiHeader>
+                    Headers = new Dictionary<string, IOpenApiHeader>
                     {
-                        [ "test-header" ] = new OpenApiHeader
+                        ["test-header"] = new OpenApiHeader
                         {
                             Required = true
                         }
@@ -87,11 +82,7 @@ public class ResponseValidatorTests
         { "1", JsonSchemaTypes.Number, null, null },
         { "foo", JsonSchemaTypes.String, null, null },
         { "1,2", JsonSchemaTypes.Array, JsonSchemaTypes.Number, null },
-#if NET10_0_OR_GREATER
         { "1,foo", JsonSchemaTypes.Array, JsonSchemaTypes.Number, "Header 'test-header' is not of type 'array[Number]'" },
-#else
-        { "1,foo", JsonSchemaTypes.Array, JsonSchemaTypes.Number, "Header 'test-header' is not of type 'array[number]'" },
-#endif
     };
 
     [Theory]
@@ -106,11 +97,11 @@ public class ResponseValidatorTests
         {
             Responses = new OpenApiResponses
             {
-                [ "201" ] = new OpenApiResponse
+                ["201"] = new OpenApiResponse
                 {
-                    Headers = new Dictionary<string, OpenApiHeader>
+                    Headers = new Dictionary<string, IOpenApiHeader>
                     {
-                        [ "test-header" ] = new OpenApiHeader
+                        ["test-header"] = new OpenApiHeader
                         {
                             Schema = new OpenApiSchema
                             {
@@ -260,7 +251,7 @@ public class ResponseValidatorTests
             },
             Components = new OpenApiComponents
             {
-                Schemas = new Dictionary<string, OpenApiSchema>()
+                Schemas = new Dictionary<string, IOpenApiSchema>()
             }
         };
     }

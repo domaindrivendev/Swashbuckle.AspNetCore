@@ -8,7 +8,7 @@
     "/resource": {
       "post": {
         "tags": [
-          null
+          "Fake"
         ],
         "operationId": "SomeEndpointName",
         "responses": {
