@@ -1,10 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net10.0;net9.0;net8.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\src\Shared\JsonExtensions.cs" Link="JsonExtensions.cs" />
     <Compile Include="..\..\src\Shared\JsonSchemaTypes.cs" Link="JsonSchemaTypes.cs" />
   </ItemGroup>
 

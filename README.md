@@ -890,7 +890,7 @@ The example below adds an AutoRest vendor extension (see https://github.com/Azur
 // AutoRestSchemaFilter.cs
 public class AutoRestSchemaFilter : ISchemaFilter
 {
-    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+    public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
     {
         var type = context.Type;
         if (type.IsEnum)
@@ -923,7 +923,7 @@ so you will need [a special JsonConverter, like in the .NET docs](https://learn.
 // DictionaryTKeyEnumTValueSchemaFilter.cs
 public class DictionaryTKeyEnumTValueSchemaFilter : ISchemaFilter
 {
-  public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+  public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
   {
     // Only run for fields that are a Dictionary<Enum, TValue>
     if (!context.Type.IsGenericType || !context.Type.GetGenericTypeDefinition().IsAssignableFrom(typeof(Dictionary<,>)))
@@ -1507,7 +1507,7 @@ public class Product
 // ProductSchemaFilter.cs
 public class ProductSchemaFilter : ISchemaFilter
 {
-    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+    public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
     {
         schema.Example = new OpenApiObject
         {

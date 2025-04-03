@@ -18,7 +18,10 @@ public static class SwaggerAnnotationsEndpoints
             .DisableAntiforgery();
 
         group.MapPost("/fruit/{id}", CreateFruit)
-             .WithOpenApi();
+#if NET10_0_OR_GREATER
+        .WithOpenApi()
+#endif
+        ;
 
         group.MapPost("/singleForm", ([FromForm] PersonAnnotated person) =>
         {

@@ -3,6 +3,7 @@ using System.Xml.XPath;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.Interfaces;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -147,7 +148,7 @@ public static class SwaggerGenOptionsExtensions
     public static void AddSecurityDefinition(
         this SwaggerGenOptions swaggerGenOptions,
         string name,
-        OpenApiSecurityScheme securityScheme)
+        IOpenApiSecurityScheme securityScheme)
     {
         swaggerGenOptions.SwaggerGeneratorOptions.SecuritySchemes.Add(name, securityScheme);
     }
@@ -162,7 +163,7 @@ public static class SwaggerGenOptionsExtensions
     /// </param>
     public static void AddSecurityRequirement(
         this SwaggerGenOptions swaggerGenOptions,
-        OpenApiSecurityRequirement securityRequirement)
+        Func<OpenApiDocument, OpenApiSecurityRequirement> securityRequirement)
     {
         swaggerGenOptions.SwaggerGeneratorOptions.SecurityRequirements.Add(securityRequirement);
     }
@@ -176,7 +177,7 @@ public static class SwaggerGenOptionsExtensions
     public static void MapType(
         this SwaggerGenOptions swaggerGenOptions,
         Type type,
-        Func<OpenApiSchema> schemaFactory)
+        Func<IOpenApiSchema> schemaFactory)
     {
         swaggerGenOptions.SchemaGeneratorOptions.CustomTypeMappings.Add(type, schemaFactory);
     }
@@ -189,7 +190,7 @@ public static class SwaggerGenOptionsExtensions
     /// <param name="schemaFactory">A factory method that generates Schema's for the provided type</param>
     public static void MapType<T>(
         this SwaggerGenOptions swaggerGenOptions,
-        Func<OpenApiSchema> schemaFactory)
+        Func<IOpenApiSchema> schemaFactory)
     {
         swaggerGenOptions.MapType(typeof(T), schemaFactory);
     }
@@ -327,7 +328,7 @@ public static class SwaggerGenOptionsExtensions
     /// <remarks>Currently only supports JWT Bearer authentication</remarks>
     public static void InferSecuritySchemes(
         this SwaggerGenOptions swaggerGenOptions,
-        Func<IEnumerable<AuthenticationScheme>, IDictionary<string, OpenApiSecurityScheme>> securitySchemesSelector = null)
+        Func<IEnumerable<AuthenticationScheme>, IDictionary<string, IOpenApiSecurityScheme>> securitySchemesSelector = null)
     {
         swaggerGenOptions.SwaggerGeneratorOptions.InferSecuritySchemes = true;
         swaggerGenOptions.SwaggerGeneratorOptions.SecuritySchemesSelector = securitySchemesSelector;

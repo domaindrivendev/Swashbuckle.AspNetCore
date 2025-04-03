@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Http.Metadata;
 #endif
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.OpenApi.Models.Interfaces;
+
 #if NET
 using Microsoft.AspNetCore.Routing;
 #endif
@@ -23,7 +25,7 @@ public class SwaggerGeneratorOptions
         SecuritySchemesSelector = null;
         SchemaComparer = StringComparer.Ordinal;
         Servers = [];
-        SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>();
+        SecuritySchemes = new Dictionary<string, IOpenApiSecurityScheme>();
         SecurityRequirements = [];
         ParameterFilters = [];
         ParameterAsyncFilters = [];
@@ -53,15 +55,15 @@ public class SwaggerGeneratorOptions
 
     public bool InferSecuritySchemes { get; set; }
 
-    public Func<IEnumerable<AuthenticationScheme>, IDictionary<string, OpenApiSecurityScheme>> SecuritySchemesSelector { get; set; }
+    public Func<IEnumerable<AuthenticationScheme>, IDictionary<string, IOpenApiSecurityScheme>> SecuritySchemesSelector { get; set; }
 
     public bool DescribeAllParametersInCamelCase { get; set; }
 
     public List<OpenApiServer> Servers { get; set; }
 
-    public IDictionary<string, OpenApiSecurityScheme> SecuritySchemes { get; set; }
+    public IDictionary<string, IOpenApiSecurityScheme> SecuritySchemes { get; set; }
 
-    public IList<OpenApiSecurityRequirement> SecurityRequirements { get; set; }
+    public IList<Func<OpenApiDocument, OpenApiSecurityRequirement>> SecurityRequirements { get; set; }
 
     public IComparer<string> SchemaComparer { get; set; }
 

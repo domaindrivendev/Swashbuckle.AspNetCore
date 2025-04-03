@@ -1,4 +1,5 @@
 ﻿using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.References;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Annotations;
@@ -71,7 +72,7 @@ public class AnnotationsOperationFilter : IOperationFilter
 
         if (swaggerOperationAttribute.Tags is { } tags)
         {
-            operation.Tags = [.. tags.Select(tagName => new OpenApiTag { Name = tagName })];
+            operation.Tags = [.. tags.Select(tagName => new OpenApiTagReference(tagName))];
         }
     }
 
