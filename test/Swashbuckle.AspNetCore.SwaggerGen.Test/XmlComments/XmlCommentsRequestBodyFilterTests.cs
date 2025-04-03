@@ -27,7 +27,7 @@ public class XmlCommentsRequestBodyFilterTests
         {
             ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = parameterInfo }
         };
-        var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
+        var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null, null);
 
         Subject().Apply(requestBody, filterContext);
 
@@ -54,7 +54,7 @@ public class XmlCommentsRequestBodyFilterTests
         {
             ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = parameterInfo }
         };
-        var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
+        var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null, null);
 
         Subject().Apply(requestBody, filterContext);
 
@@ -78,7 +78,7 @@ public class XmlCommentsRequestBodyFilterTests
         {
             ModelMetadata = ModelMetadataFactory.CreateForProperty(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringProperty))
         };
-        var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
+        var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null, null);
 
         Subject().Apply(requestBody, filterContext);
 
@@ -102,7 +102,7 @@ public class XmlCommentsRequestBodyFilterTests
         {
             ModelMetadata = ModelMetadataFactory.CreateForProperty(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringPropertyWithUri))
         };
-        var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
+        var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null, null);
 
         Subject().Apply(requestBody, filterContext);
 
@@ -129,7 +129,7 @@ public class XmlCommentsRequestBodyFilterTests
         {
             ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = parameterInfo }
         };
-        var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
+        var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null, null);
 
         Subject().Apply(requestBody, filterContext);
 
@@ -167,7 +167,7 @@ public class XmlCommentsRequestBodyFilterTests
             Name = parameterInfo.Name,
             Source = BindingSource.Form
         };
-        var filterContext = new RequestBodyFilterContext(null, [bodyParameterDescription], null, null);
+        var filterContext = new RequestBodyFilterContext(null, [bodyParameterDescription], null, null, null);
 
         Subject().Apply(requestBody, filterContext);
 

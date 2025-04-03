@@ -170,13 +170,11 @@ Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext
 Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext.ApiDescription.get -> Microsoft.AspNetCore.Mvc.ApiExplorer.ApiDescription
 Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext.DocumentName.get -> string
 Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext.MethodInfo.get -> System.Reflection.MethodInfo
-Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext.OperationFilterContext(Microsoft.AspNetCore.Mvc.ApiExplorer.ApiDescription apiDescription, Swashbuckle.AspNetCore.SwaggerGen.ISchemaGenerator schemaRegistry, Swashbuckle.AspNetCore.SwaggerGen.SchemaRepository schemaRepository, System.Reflection.MethodInfo methodInfo) -> void
 Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext.SchemaGenerator.get -> Swashbuckle.AspNetCore.SwaggerGen.ISchemaGenerator
 Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext.SchemaRepository.get -> Swashbuckle.AspNetCore.SwaggerGen.SchemaRepository
 Swashbuckle.AspNetCore.SwaggerGen.ParameterFilterContext
 Swashbuckle.AspNetCore.SwaggerGen.ParameterFilterContext.ApiParameterDescription.get -> Microsoft.AspNetCore.Mvc.ApiExplorer.ApiParameterDescription
 Swashbuckle.AspNetCore.SwaggerGen.ParameterFilterContext.DocumentName.get -> string
-Swashbuckle.AspNetCore.SwaggerGen.ParameterFilterContext.ParameterFilterContext(Microsoft.AspNetCore.Mvc.ApiExplorer.ApiParameterDescription apiParameterDescription, Swashbuckle.AspNetCore.SwaggerGen.ISchemaGenerator schemaGenerator, Swashbuckle.AspNetCore.SwaggerGen.SchemaRepository schemaRepository, System.Reflection.PropertyInfo propertyInfo = null, System.Reflection.ParameterInfo parameterInfo = null) -> void
 Swashbuckle.AspNetCore.SwaggerGen.ParameterFilterContext.ParameterInfo.get -> System.Reflection.ParameterInfo
 Swashbuckle.AspNetCore.SwaggerGen.ParameterFilterContext.PropertyInfo.get -> System.Reflection.PropertyInfo
 Swashbuckle.AspNetCore.SwaggerGen.ParameterFilterContext.SchemaGenerator.get -> Swashbuckle.AspNetCore.SwaggerGen.ISchemaGenerator
@@ -186,7 +184,6 @@ Swashbuckle.AspNetCore.SwaggerGen.RequestBodyFilterContext
 Swashbuckle.AspNetCore.SwaggerGen.RequestBodyFilterContext.BodyParameterDescription.get -> Microsoft.AspNetCore.Mvc.ApiExplorer.ApiParameterDescription
 Swashbuckle.AspNetCore.SwaggerGen.RequestBodyFilterContext.DocumentName.get -> string
 Swashbuckle.AspNetCore.SwaggerGen.RequestBodyFilterContext.FormParameterDescriptions.get -> System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Mvc.ApiExplorer.ApiParameterDescription>
-Swashbuckle.AspNetCore.SwaggerGen.RequestBodyFilterContext.RequestBodyFilterContext(Microsoft.AspNetCore.Mvc.ApiExplorer.ApiParameterDescription bodyParameterDescription, System.Collections.Generic.IEnumerable<Microsoft.AspNetCore.Mvc.ApiExplorer.ApiParameterDescription> formParameterDescriptions, Swashbuckle.AspNetCore.SwaggerGen.ISchemaGenerator schemaGenerator, Swashbuckle.AspNetCore.SwaggerGen.SchemaRepository schemaRepository) -> void
 Swashbuckle.AspNetCore.SwaggerGen.RequestBodyFilterContext.SchemaGenerator.get -> Swashbuckle.AspNetCore.SwaggerGen.ISchemaGenerator
 Swashbuckle.AspNetCore.SwaggerGen.RequestBodyFilterContext.SchemaRepository.get -> Swashbuckle.AspNetCore.SwaggerGen.SchemaRepository
 Swashbuckle.AspNetCore.SwaggerGen.SchemaFilterContext

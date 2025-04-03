@@ -18,6 +18,7 @@ public class AnnotationsParameterFilterTests
             apiParameterDescription: null,
             schemaGenerator: null,
             schemaRepository: null,
+            document: null,
             parameterInfo: parameterInfo);
 
         Subject().Apply(parameter, filterContext);
@@ -54,6 +55,7 @@ public class AnnotationsParameterFilterTests
             apiParameterDescription: null,
             schemaGenerator: null,
             schemaRepository: null,
+            document: null,
             parameterInfo: parameterInfo);
 
         Subject().Apply(parameter, filterContext);

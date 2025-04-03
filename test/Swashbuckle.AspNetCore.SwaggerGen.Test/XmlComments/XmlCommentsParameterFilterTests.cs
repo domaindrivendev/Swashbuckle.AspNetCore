@@ -17,7 +17,7 @@ public class XmlCommentsParameterFilterTests
             .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithParamTags))
             .GetParameters()[0];
         var apiParameterDescription = new ApiParameterDescription { };
-        var filterContext = new ParameterFilterContext(apiParameterDescription, null, null, parameterInfo: parameterInfo);
+        var filterContext = new ParameterFilterContext(apiParameterDescription, null, null, null, parameterInfo: parameterInfo);
 
         Subject().Apply(parameter, filterContext);
 
@@ -35,7 +35,7 @@ public class XmlCommentsParameterFilterTests
             .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithParamTags))
             .GetParameters()[1];
         var apiParameterDescription = new ApiParameterDescription { };
-        var filterContext = new ParameterFilterContext(apiParameterDescription, null, null, parameterInfo: parameterInfo);
+        var filterContext = new ParameterFilterContext(apiParameterDescription, null, null, null, parameterInfo: parameterInfo);
 
         Subject().Apply(parameter, filterContext);
 
@@ -53,7 +53,7 @@ public class XmlCommentsParameterFilterTests
             .GetMethod(nameof(FakeConstructedControllerWithXmlComments.ActionWithParamTags))
             .GetParameters()[0];
         var apiParameterDescription = new ApiParameterDescription { };
-        var filterContext = new ParameterFilterContext(apiParameterDescription, null, null, parameterInfo: parameterInfo);
+        var filterContext = new ParameterFilterContext(apiParameterDescription, null, null, null, parameterInfo: parameterInfo);
 
         Subject().Apply(parameter, filterContext);
 
@@ -69,7 +69,7 @@ public class XmlCommentsParameterFilterTests
         var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String, Description = "schema-level description" } };
         var propertyInfo = typeof(XmlAnnotatedType).GetProperty(nameof(XmlAnnotatedType.StringProperty));
         var apiParameterDescription = new ApiParameterDescription { };
-        var filterContext = new ParameterFilterContext(apiParameterDescription, null, null, propertyInfo: propertyInfo);
+        var filterContext = new ParameterFilterContext(apiParameterDescription, null, null, null, propertyInfo: propertyInfo);
 
         Subject().Apply(parameter, filterContext);
 
@@ -85,7 +85,7 @@ public class XmlCommentsParameterFilterTests
         var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String, Description = "schema-level description" } };
         var propertyInfo = typeof(XmlAnnotatedType).GetProperty(nameof(XmlAnnotatedType.StringPropertyWithUri));
         var apiParameterDescription = new ApiParameterDescription { };
-        var filterContext = new ParameterFilterContext(apiParameterDescription, null, null, propertyInfo: propertyInfo);
+        var filterContext = new ParameterFilterContext(apiParameterDescription, null, null, null, propertyInfo: propertyInfo);
 
         Subject().Apply(parameter, filterContext);
 

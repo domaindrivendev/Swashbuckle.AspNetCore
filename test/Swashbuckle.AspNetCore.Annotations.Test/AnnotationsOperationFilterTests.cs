@@ -20,6 +20,7 @@ public class AnnotationsOperationFilterTests
             apiDescription: null,
             schemaRegistry: null,
             schemaRepository: null,
+            document: null,
             methodInfo: methodInfo);
 
         Subject().Apply(operation, filterContext);
@@ -47,6 +48,7 @@ public class AnnotationsOperationFilterTests
             apiDescription: null,
             schemaRegistry: null,
             schemaRepository: null,
+            document: null,
             methodInfo: methodInfo);
 
         Subject().Apply(operation, filterContext);
@@ -76,6 +78,7 @@ public class AnnotationsOperationFilterTests
             apiDescription: null,
             schemaRegistry: new SchemaGenerator(new SchemaGeneratorOptions(), new JsonSerializerDataContractResolver(new JsonSerializerOptions())),
             schemaRepository: new SchemaRepository(),
+            document: null,
             methodInfo: methodInfo);
 
         Subject().Apply(operation, filterContext);
@@ -102,6 +105,7 @@ public class AnnotationsOperationFilterTests
             apiDescription: null,
             schemaRegistry: null,
             schemaRepository: null,
+            document: null,
             methodInfo: methodInfo);
 
         Subject().Apply(operation, filterContext);
@@ -118,6 +122,7 @@ public class AnnotationsOperationFilterTests
             apiDescription: null,
             schemaRegistry: null,
             schemaRepository: null,
+            document: null,
             methodInfo: methodInfo);
 
         Subject().Apply(operation, filterContext);
@@ -152,6 +157,7 @@ public class AnnotationsOperationFilterTests
             apiDescription: apiDescription,
             schemaRegistry: null,
             schemaRepository: null,
+            document: null,
             methodInfo: methodInfo);
 
         Subject().Apply(operation, filterContext);

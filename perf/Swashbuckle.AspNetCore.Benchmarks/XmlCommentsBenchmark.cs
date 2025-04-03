@@ -93,7 +93,7 @@ public class XmlCommentsBenchmark
             .GetMethod(nameof(FakeConstructedControllerWithXmlComments.ActionWithSummaryAndResponseTags));
 
         var apiDescription = ApiDescriptionFactory.Create(methodInfo: methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource");
-        _operationFilterContext = new OperationFilterContext(apiDescription, null, null, methodInfo);
+        _operationFilterContext = new OperationFilterContext(apiDescription, null, null, null, methodInfo);
         _operationFilter = new XmlCommentsOperationFilter(members, new());
 
         // Parameter
@@ -109,7 +109,7 @@ public class XmlCommentsBenchmark
         var propertyInfo = typeof(XmlAnnotatedType).GetProperty(nameof(XmlAnnotatedType.StringProperty));
         var apiParameterDescription = new ApiParameterDescription();
         var xmlDocMembers = XmlCommentsDocumentHelper.CreateMemberDictionary(xPathDocument);
-        _parameterFilterContext = new ParameterFilterContext(apiParameterDescription, null, null, propertyInfo: propertyInfo);
+        _parameterFilterContext = new ParameterFilterContext(apiParameterDescription, null, null, null, propertyInfo: propertyInfo);
         _parameterFilter = new XmlCommentsParameterFilter(xmlDocMembers, new());
 
         // Request Body
@@ -134,7 +134,7 @@ public class XmlCommentsBenchmark
         {
             ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = parameterInfo }
         };
-        _requestBodyFilterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
+        _requestBodyFilterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null, null);
         _requestBodyFilter = new XmlCommentsRequestBodyFilter(xmlDocMembers, new());
     }
 
