@@ -16,6 +16,7 @@
           {
             "name": "id",
             "in": "path",
+            "description": "The id of the fruit that will be created",
             "required": true,
             "schema": {
               "type": "string"
@@ -23,6 +24,7 @@
           }
         ],
         "requestBody": {
+          "description": "Description for Body",
           "content": {
             "application/json": {
               "schema": {
@@ -307,6 +309,7 @@
           {
             "name": "paramOne",
             "in": "query",
+            "description": "Description",
             "schema": {
               "type": "string",
               "format": "uuid"
