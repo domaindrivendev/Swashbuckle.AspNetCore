@@ -44,7 +44,12 @@ public class SwaggerGenerator(
         var (filterContext, document) = GetSwaggerDocumentWithoutPaths(documentName, host, basePath);
 
         document.Paths = await GeneratePathsAsync(document, filterContext.ApiDescriptions, filterContext.SchemaRepository);
-        document.Components.SecuritySchemes = await GetSecuritySchemesAsync();
+
+        // See https://github.com/microsoft/OpenAPI.NET/issues/2300#issuecomment-2775307399
+        foreach (var scheme in await GetSecuritySchemesAsync())
+        {
+            document.AddComponent(scheme.Key, scheme.Value);
+        }
 
         if (_options.SecurityRequirements is { Count: > 0 } requirements)
         {
@@ -76,7 +81,12 @@ public class SwaggerGenerator(
             var (filterContext, document) = GetSwaggerDocumentWithoutPaths(documentName, host, basePath);
 
             document.Paths = GeneratePaths(document, filterContext.ApiDescriptions, filterContext.SchemaRepository);
-            document.Components.SecuritySchemes = GetSecuritySchemesAsync().Result;
+
+            // See https://github.com/microsoft/OpenAPI.NET/issues/2300#issuecomment-2775307399
+            foreach (var scheme in GetSecuritySchemesAsync().Result)
+            {
+                document.AddComponent(scheme.Key, scheme.Value);
+            }
 
             if (_options.SecurityRequirements is { Count: > 0 } requirements)
             {
