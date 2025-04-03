@@ -20,14 +20,12 @@ public class AnnotationsRequestBodyFilter : IRequestBodyFilter
         if (propertyInfo != null)
         {
             ApplyPropertyAnnotations(requestBody, propertyInfo);
-            return;
         }
 
         var parameterInfo = bodyParameterDescription.ParameterInfo();
         if (parameterInfo != null)
         {
             ApplyParamAnnotations(requestBody, parameterInfo);
-            return;
         }
     }
 

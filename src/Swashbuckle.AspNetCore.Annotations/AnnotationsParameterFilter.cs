@@ -9,13 +9,14 @@ public class AnnotationsParameterFilter : IParameterFilter
 {
     public void Apply(IOpenApiParameter parameter, ParameterFilterContext context)
     {
-        if (context.PropertyInfo != null)
+        if (context.PropertyInfo is { } propertyInfo)
         {
-            ApplyPropertyAnnotations(parameter, context.PropertyInfo);
+            ApplyPropertyAnnotations(parameter, propertyInfo);
         }
-        else if (context.ParameterInfo != null)
+
+        if (context.ParameterInfo is { } parameterInfo)
         {
-            ApplyParamAnnotations(parameter, context.ParameterInfo);
+            ApplyParamAnnotations(parameter, parameterInfo);
         }
     }
 

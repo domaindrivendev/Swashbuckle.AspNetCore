@@ -63,14 +63,14 @@ public static class SwaggerAnnotationsEndpoints
 record PersonAnnotated([property: SwaggerSchema("Description for FirstName")] string FirstName, [property: SwaggerSchema("Description for LastName")] string LastName);
 record AddressAnnotated([property: SwaggerSchema("Description for Street")] string Street, string City, string State, string ZipCode);
 record struct CreateFruitModel
-([FromRoute] [property: SwaggerParameter(Description = "The id of the fruit that will be created", Required = true)] string Id,
-[FromBody] [property: SwaggerRequestBody("Description for Body")] Fruit Fruit);
+([FromRoute, SwaggerParameter(Description = "The id of the fruit that will be created", Required = true)] string Id,
+[FromBody, SwaggerRequestBody("Description for Body")] Fruit Fruit);
 
 [SwaggerSchema("Description for Schema")]
 record Fruit(string Name);
 
 record class AsParametersRecord(
-    [property: SwaggerParameter(Description = "Description")] Guid? paramOne,
+    [SwaggerParameter(Description = "Description")] Guid? paramOne,
     Guid paramTwo,
     DateTime? paramThree,
     DateTime paramFour,
