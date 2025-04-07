@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Dynamic;
+using System.Globalization;
 using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -298,16 +299,20 @@ public class NewtonsoftSchemaGeneratorTests
     [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.StringArrayWithDefault), "[\n  \"foo\",\n  \"bar\"\n]")]
     [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.NullableIntWithDefaultValue), "2147483647")]
     [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.NullableIntWithDefaultNullValue), "null")]
-    [UseInvariantCulture]
     public void GenerateSchema_SetsDefault_IfPropertyHasDefaultValueAttribute(
         Type declaringType,
         string propertyName,
         string expectedDefaultAsJson)
     {
+        // Arrange
+        CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+
         var schemaRepository = new SchemaRepository();
 
+        // Act
         var referenceSchema = Subject().GenerateSchema(declaringType, schemaRepository);
 
+        // Assert
         var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
         var propertySchema = schema.Properties[propertyName];
         Assert.Equal(expectedDefaultAsJson, propertySchema.Default?.ToJson());

@@ -14,7 +14,7 @@ public class SwaggerAndSwaggerUIIntegrationTests
     {
         var client = new WebApplicationFactory<TopLevelSwaggerDoc.Program>().CreateClient();
 
-        var response = await client.GetAsync(path);
+        var response = await client.GetAsync(path, TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Equal(mediaType, response.Content.Headers.ContentType?.MediaType);

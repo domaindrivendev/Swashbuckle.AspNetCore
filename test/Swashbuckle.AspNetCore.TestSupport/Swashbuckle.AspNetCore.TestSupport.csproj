@@ -19,11 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="xunit.core" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectCapability Remove="TestContainer" />
+    <PackageReference Include="xunit.v3.extensibility.core" />
   </ItemGroup>
 
 </Project>

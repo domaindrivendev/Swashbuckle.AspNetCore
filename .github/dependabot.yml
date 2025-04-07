@@ -29,8 +29,8 @@ updates:
         - Microsoft.OpenApi*
     xunit:
       patterns:
-        - xunit*
-        - Verify.Xunit
+        - xunit.*
+        - Verify.XunitV3
   schedule:
     interval: weekly
     day: wednesday
@@ -53,3 +53,4 @@ updates:
     - dependency-name: "Microsoft.OpenApi"
     - dependency-name: "Microsoft.OpenApi.Readers"
     - dependency-name: "System.Text.Json"
+    - dependency-name: "xunit"
