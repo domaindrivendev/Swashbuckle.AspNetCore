@@ -17,7 +17,7 @@ public class SwaggerUIIntegrationTests
         var site = new TestSite(startupType);
         using var client = site.BuildClient();
 
-        using var response = await client.GetAsync(requestPath);
+        using var response = await client.GetAsync(requestPath, TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.MovedPermanently, response.StatusCode);
         Assert.Equal(expectedRedirectPath, response.Headers.Location.ToString());
@@ -36,16 +36,16 @@ public class SwaggerUIIntegrationTests
         var site = new TestSite(startupType);
         using var client = site.BuildClient();
 
-        using var htmlResponse = await client.GetAsync(htmlPath);
+        using var htmlResponse = await client.GetAsync(htmlPath, TestContext.Current.CancellationToken);
         AssertResource(htmlResponse);
 
-        using var jsResponse = await client.GetAsync(swaggerUijsPath);
+        using var jsResponse = await client.GetAsync(swaggerUijsPath, TestContext.Current.CancellationToken);
         AssertResource(jsResponse);
 
-        using var indexCss = await client.GetAsync(indexCssPath);
+        using var indexCss = await client.GetAsync(indexCssPath, TestContext.Current.CancellationToken);
         AssertResource(indexCss);
 
-        using var cssResponse = await client.GetAsync(swaggerUiCssPath);
+        using var cssResponse = await client.GetAsync(swaggerUiCssPath, TestContext.Current.CancellationToken);
         AssertResource(cssResponse);
 
         static void AssertResource(HttpResponseMessage response)
@@ -70,10 +70,10 @@ public class SwaggerUIIntegrationTests
         var site = new TestSite(startupType);
         using var client = site.BuildClient();
 
-        using var jsResponse = await client.GetAsync(indexJsPath);
+        using var jsResponse = await client.GetAsync(indexJsPath, TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
 
-        var jsContent = await jsResponse.Content.ReadAsStringAsync();
+        var jsContent = await jsResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
         Assert.Contains("SwaggerUIBundle", jsContent);
         Assert.DoesNotContain("%(DocumentTitle)", jsContent);
         Assert.DoesNotContain("%(HeadContent)", jsContent);
@@ -91,10 +91,10 @@ public class SwaggerUIIntegrationTests
         var site = new TestSite(typeof(CustomUIConfig.Startup));
         using var client = site.BuildClient();
 
-        using var jsResponse = await client.GetAsync("/swagger/index.js");
+        using var jsResponse = await client.GetAsync("/swagger/index.js", TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
 
-        var jsContent = await jsResponse.Content.ReadAsStringAsync();
+        var jsContent = await jsResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
         Assert.Contains("\"plugins\":[\"customPlugin1\",\"customPlugin2\"]", jsContent);
     }
 
@@ -104,9 +104,9 @@ public class SwaggerUIIntegrationTests
         var site = new TestSite(typeof(Basic.Startup));
         using var client = site.BuildClient();
 
-        using var jsResponse = await client.GetAsync("/index.js");
+        using var jsResponse = await client.GetAsync("/index.js", TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
-        var jsContent = await jsResponse.Content.ReadAsStringAsync();
+        var jsContent = await jsResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
         Assert.DoesNotContain("\"plugins\"", jsContent);
     }
 
@@ -116,8 +116,8 @@ public class SwaggerUIIntegrationTests
         var site = new TestSite(typeof(CustomUIConfig.Startup));
         using var client = site.BuildClient();
 
-        using var response = await client.GetAsync("/swagger/index.html");
-        var content = await response.Content.ReadAsStringAsync();
+        using var response = await client.GetAsync("/swagger/index.html", TestContext.Current.CancellationToken);
+        var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
         Assert.Contains("<title>CustomUIConfig</title>", content);
         Assert.Contains("<link href='/ext/custom-stylesheet.css' rel='stylesheet' media='screen' type='text/css' />", content);
@@ -129,8 +129,8 @@ public class SwaggerUIIntegrationTests
         var site = new TestSite(typeof(CustomUIIndex.Startup));
         using var client = site.BuildClient();
 
-        using var response = await client.GetAsync("/swagger/index.html");
-        var content = await response.Content.ReadAsStringAsync();
+        using var response = await client.GetAsync("/swagger/index.html", TestContext.Current.CancellationToken);
+        var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
         Assert.Contains("Example.com", content);
     }
@@ -141,8 +141,8 @@ public class SwaggerUIIntegrationTests
         var site = new TestSite(typeof(CustomUIConfig.Startup));
         using var client = site.BuildClient();
 
-        using var response = await client.GetAsync("/swagger/index.js");
-        var content = await response.Content.ReadAsStringAsync();
+        using var response = await client.GetAsync("/swagger/index.js", TestContext.Current.CancellationToken);
+        var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
         Assert.Contains("\"RequestInterceptorFunction\":", content);
         Assert.Contains("\"ResponseInterceptorFunction\":", content);
@@ -157,9 +157,9 @@ public class SwaggerUIIntegrationTests
         var site = new TestSite(typeof(MultipleVersions.Startup));
         using var client = site.BuildClient();
 
-        using var htmlResponse = await client.GetAsync(htmlUrl);
-        using var jsResponse = await client.GetAsync(jsUrl);
-        var content = await jsResponse.Content.ReadAsStringAsync();
+        using var htmlResponse = await client.GetAsync(htmlUrl, TestContext.Current.CancellationToken);
+        using var jsResponse = await client.GetAsync(jsUrl, TestContext.Current.CancellationToken);
+        var content = await jsResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
         Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
@@ -182,10 +182,10 @@ public class SwaggerUIIntegrationTests
         var site = new TestSite(startupType);
         using var client = site.BuildClient();
 
-        using var htmlResponse = await client.GetAsync(htmlPath);
+        using var htmlResponse = await client.GetAsync(htmlPath, TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
 
-        var content = await htmlResponse.Content.ReadAsStringAsync();
+        var content = await htmlResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
         Assert.Contains($"<link rel=\"stylesheet\" type=\"text/css\" href=\"{cssPath}\">", content);
         Assert.Contains($"<script src=\"{scriptBundlePath}\" charset=\"utf-8\">", content);
         Assert.Contains($"<script src=\"{scriptPresetsPath}\" charset=\"utf-8\">", content);

@@ -48,7 +48,7 @@ public class SwaggerIntegrationTests
         var testSite = new TestSite(typeof(Basic.Startup));
         using var client = testSite.BuildClient();
 
-        using var swaggerResponse = await client.GetAsync("/swagger/v2/swagger.json");
+        using var swaggerResponse = await client.GetAsync("/swagger/v2/swagger.json", TestContext.Current.CancellationToken);
 
         Assert.Equal(System.Net.HttpStatusCode.NotFound, swaggerResponse.StatusCode);
     }
@@ -59,10 +59,10 @@ public class SwaggerIntegrationTests
         var testSite = new TestSite(typeof(Basic.Startup));
         using var client = testSite.BuildClient();
 
-        using var swaggerResponse = await client.GetAsync("/swagger/v1/swagger.json");
+        using var swaggerResponse = await client.GetAsync("/swagger/v1/swagger.json", TestContext.Current.CancellationToken);
 
         swaggerResponse.EnsureSuccessStatusCode();
-        var contentBytes = await swaggerResponse.Content.ReadAsByteArrayAsync();
+        var contentBytes = await swaggerResponse.Content.ReadAsByteArrayAsync(TestContext.Current.CancellationToken);
         var bomBytes = Encoding.UTF8.GetPreamble();
         Assert.NotEqual(bomBytes, contentBytes.Take(bomBytes.Length));
     }
@@ -75,10 +75,10 @@ public class SwaggerIntegrationTests
         var testSite = new TestSite(typeof(Basic.Startup));
         using var client = testSite.BuildClient();
 
-        using var swaggerResponse = await client.GetAsync($"/swagger/v1/swagger.json?culture={culture}");
+        using var swaggerResponse = await client.GetAsync($"/swagger/v1/swagger.json?culture={culture}", TestContext.Current.CancellationToken);
 
         swaggerResponse.EnsureSuccessStatusCode();
-        using var contentStream = await swaggerResponse.Content.ReadAsStreamAsync();
+        using var contentStream = await swaggerResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
         var currentCulture = CultureInfo.CurrentCulture;
         CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
         try
@@ -105,12 +105,12 @@ public class SwaggerIntegrationTests
     {
         using var client = new TestSite(typeof(Basic.Startup)).BuildClient();
 
-        using var response = await client.GetAsync(swaggerUrl);
+        using var response = await client.GetAsync(swaggerUrl, TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
-        using var contentStream = await response.Content.ReadAsStreamAsync();
+        using var contentStream = await response.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
 
-        var json = await JsonSerializer.DeserializeAsync<JsonElement>(contentStream);
+        var json = await JsonSerializer.DeserializeAsync<JsonElement>(contentStream, cancellationToken: TestContext.Current.CancellationToken);
         Assert.Equal(expectedVersionValue, json.GetProperty(expectedVersionProperty).GetString());
     }
 
@@ -133,13 +133,15 @@ public class SwaggerIntegrationTests
         using var application = new TestApplication<WebApi.Program>();
         using var client = application.CreateDefaultClient();
 
-        using var response = await client.GetAsync("/swagger/v1/swagger.json");
+        using var response = await client.GetAsync("/swagger/v1/swagger.json", TestContext.Current.CancellationToken);
 
-        var content = await response.Content.ReadAsStringAsync();
+        var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
         Assert.True(response.IsSuccessStatusCode, content);
 
-        using var swaggerResponse = await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync());
+        using var swaggerResponse = await JsonDocument.ParseAsync(
+            await response.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken),
+            cancellationToken: TestContext.Current.CancellationToken);
 
         var weatherForecase = swaggerResponse.RootElement
             .GetProperty("components")

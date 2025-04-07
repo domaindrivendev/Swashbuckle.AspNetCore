@@ -29,9 +29,10 @@
     <PackageVersion Include="NSwag.MSBuild" Version="14.3.0" />
     <PackageVersion Include="ReportGenerator" Version="5.4.4" />
     <PackageVersion Include="System.Text.Json" Version="4.6.0" />
-    <PackageVersion Include="Verify.Xunit" Version="29.1.0" />
+    <PackageVersion Include="Verify.XunitV3" Version="29.1.0" />
     <PackageVersion Include="xunit" Version="2.9.3" />
-    <PackageVersion Include="xunit.core" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.2" />
+    <PackageVersion Include="xunit.v3" Version="2.0.1" />
+    <PackageVersion Include="xunit.v3.extensibility.core" Version="2.0.1" />
   </ItemGroup>
 </Project>

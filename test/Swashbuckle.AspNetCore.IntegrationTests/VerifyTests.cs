@@ -27,8 +27,8 @@ public partial class VerifyTests
         var testSite = new TestSite(startupType);
         using var client = testSite.BuildClient();
 
-        using var swaggerResponse = await client.GetAsync(swaggerRequestUri);
-        var swagger = await swaggerResponse.Content.ReadAsStringAsync();
+        using var swaggerResponse = await client.GetAsync(swaggerRequestUri, TestContext.Current.CancellationToken);
+        var swagger = await swaggerResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
         await Verifier.Verify(NormalizeLineBreaks(swagger))
             .UseDirectory("snapshots")
@@ -45,8 +45,8 @@ public partial class VerifyTests
         var testSite = new TestSiteAutofaq(startupType);
         using var client = testSite.BuildClient();
 
-        using var swaggerResponse = await client.GetAsync(swaggerRequestUri);
-        var swagger = await swaggerResponse.Content.ReadAsStringAsync();
+        using var swaggerResponse = await client.GetAsync(swaggerRequestUri, TestContext.Current.CancellationToken);
+        var swagger = await swaggerResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
         await Verifier.Verify(swagger)
             .UseDirectory("snapshots")

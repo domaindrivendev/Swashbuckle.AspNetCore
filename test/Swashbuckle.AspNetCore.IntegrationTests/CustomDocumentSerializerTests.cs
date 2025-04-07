@@ -16,10 +16,10 @@ public class CustomDocumentSerializerTests
         var testSite = new TestSite(typeof(CustomDocumentSerializer.Startup));
         var client = testSite.BuildClient();
 
-        var swaggerResponse = await client.GetAsync($"/swagger/v1/swagger.json");
+        var swaggerResponse = await client.GetAsync($"/swagger/v1/swagger.json", TestContext.Current.CancellationToken);
 
         swaggerResponse.EnsureSuccessStatusCode();
-        var contentStream = await swaggerResponse.Content.ReadAsStreamAsync();
+        var contentStream = await swaggerResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
         using var document = JsonDocument.Parse(contentStream);
 
         // verify that the custom serializer wrote the swagger info
@@ -33,10 +33,10 @@ public class CustomDocumentSerializerTests
         var testSite = new TestSite(typeof(CustomDocumentSerializer.Startup));
         var client = testSite.BuildClient();
 
-        var swaggerResponse = await client.GetAsync($"/swagger/v1/swaggerv2.json");
+        var swaggerResponse = await client.GetAsync($"/swagger/v1/swaggerv2.json", TestContext.Current.CancellationToken);
 
         swaggerResponse.EnsureSuccessStatusCode();
-        var contentStream = await swaggerResponse.Content.ReadAsStreamAsync();
+        var contentStream = await swaggerResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
         using var document = JsonDocument.Parse(contentStream);
 
         // verify that the custom serializer wrote the swagger info
@@ -57,7 +57,7 @@ public class CustomDocumentSerializerTests
         using (var writer = new StreamWriter(stream, Encoding.UTF8, bufferSize: 2048, leaveOpen: true))
         {
             await documentProvider.GenerateAsync("v1", writer);
-            await writer.FlushAsync();
+            await writer.FlushAsync(TestContext.Current.CancellationToken);
         }
 
         stream.Position = 0L;

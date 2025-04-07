@@ -14,7 +14,7 @@ public class ReDocIntegrationTests
         var site = new TestSite(typeof(ReDocApp.Startup));
         using var client = site.BuildClient();
 
-        using var response = await client.GetAsync("/api-docs");
+        using var response = await client.GetAsync("/api-docs", TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.MovedPermanently, response.StatusCode);
         Assert.Equal("api-docs/index.html", response.Headers.Location.ToString());
@@ -26,9 +26,9 @@ public class ReDocIntegrationTests
         var site = new TestSite(typeof(ReDocApp.Startup));
         using var client = site.BuildClient();
 
-        using var htmlResponse = await client.GetAsync("/api-docs/index.html");
-        using var cssResponse = await client.GetAsync("/api-docs/index.css");
-        using var jsResponse = await client.GetAsync("/api-docs/redoc.standalone.js");
+        using var htmlResponse = await client.GetAsync("/api-docs/index.html", TestContext.Current.CancellationToken);
+        using var cssResponse = await client.GetAsync("/api-docs/index.css", TestContext.Current.CancellationToken);
+        using var jsResponse = await client.GetAsync("/api-docs/redoc.standalone.js", TestContext.Current.CancellationToken);
 
         AssertResource(htmlResponse);
         AssertResource(cssResponse);
@@ -52,8 +52,8 @@ public class ReDocIntegrationTests
         var site = new TestSite(typeof(ReDocApp.Startup));
         using var client = site.BuildClient();
 
-        using var response = await client.GetAsync("/api-docs/index.js");
-        var content = await response.Content.ReadAsStringAsync();
+        using var response = await client.GetAsync("/api-docs/index.js", TestContext.Current.CancellationToken);
+        var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Contains("Redoc.init", content);
@@ -69,10 +69,10 @@ public class ReDocIntegrationTests
         var site = new TestSite(typeof(ReDocApp.Startup));
         using var client = site.BuildClient();
 
-        using var htmlResponse = await client.GetAsync("/Api-Docs/index.html");
-        using var cssResponse = await client.GetAsync("/Api-Docs/index.css");
-        using var jsInitResponse = await client.GetAsync("/Api-Docs/index.js");
-        using var jsRedocResponse = await client.GetAsync("/Api-Docs/redoc.standalone.js");
+        using var htmlResponse = await client.GetAsync("/Api-Docs/index.html", TestContext.Current.CancellationToken);
+        using var cssResponse = await client.GetAsync("/Api-Docs/index.css", TestContext.Current.CancellationToken);
+        using var jsInitResponse = await client.GetAsync("/Api-Docs/index.js", TestContext.Current.CancellationToken);
+        using var jsRedocResponse = await client.GetAsync("/Api-Docs/redoc.standalone.js", TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
         Assert.Equal(HttpStatusCode.OK, cssResponse.StatusCode);
@@ -88,9 +88,9 @@ public class ReDocIntegrationTests
         var site = new TestSite(typeof(MultipleVersions.Startup));
         using var client = site.BuildClient();
 
-        using var htmlResponse = await client.GetAsync(htmlUrl);
-        using var jsResponse = await client.GetAsync(jsUrl);
-        var content = await jsResponse.Content.ReadAsStringAsync();
+        using var htmlResponse = await client.GetAsync(htmlUrl, TestContext.Current.CancellationToken);
+        using var jsResponse = await client.GetAsync(jsUrl, TestContext.Current.CancellationToken);
+        var content = await jsResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
         Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
