@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.Dynamic;
+using System.Globalization;
 using System.Net;
 using System.Reflection;
 using System.Text.Json;
@@ -323,16 +324,20 @@ public class JsonSerializerSchemaGeneratorTests
     [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.StringArrayWithDefault), "[\n  \"foo\",\n  \"bar\"\n]")]
     [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.NullableIntWithDefaultNullValue), null)]
     [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.NullableIntWithDefaultValue), "2147483647")]
-    [UseInvariantCulture]
     public void GenerateSchema_SetsDefault_IfPropertyHasDefaultValueAttribute(
         Type declaringType,
         string propertyName,
         string expectedDefaultAsJson)
     {
+        // Arrange
+        CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+
         var schemaRepository = new SchemaRepository();
 
+        // Act
         var referenceSchema = Subject().GenerateSchema(declaringType, schemaRepository);
 
+        // Assert
         var reference = Assert.IsType<OpenApiSchemaReference>(referenceSchema);
         var schema = schemaRepository.Schemas[reference.Reference.Id];
         var propertySchema = schema.Properties[propertyName];

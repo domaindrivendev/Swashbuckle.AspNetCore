@@ -1,6 +1,4 @@
-﻿using Xunit.Abstractions;
-
-namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
+﻿namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 
 public class XmlCommentsNodeNameHelperTests
 {

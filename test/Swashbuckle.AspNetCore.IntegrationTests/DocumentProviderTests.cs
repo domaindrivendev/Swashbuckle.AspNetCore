@@ -53,7 +53,7 @@ public class DocumentProviderTests
         using (var writer = new StreamWriter(stream, Encoding.UTF8, bufferSize: 2048, leaveOpen: true))
         {
             await documentProvider.GenerateAsync(documentName, writer);
-            await writer.FlushAsync();
+            await writer.FlushAsync(TestContext.Current.CancellationToken);
         }
 
         stream.Position = 0L;

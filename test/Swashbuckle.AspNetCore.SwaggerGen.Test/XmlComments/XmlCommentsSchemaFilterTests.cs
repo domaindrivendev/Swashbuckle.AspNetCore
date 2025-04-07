@@ -83,19 +83,23 @@ public class XmlCommentsSchemaFilterTests
 
     [Theory]
     [MemberData(nameof(Apply_SetsExample_FromPropertyExampleTag_Data))]
-    [UseInvariantCulture]
     public void Apply_SetsExample_FromPropertyExampleTag(
         Type declaringType,
         string propertyName,
         JsonSchemaType schemaType,
         string expectedExampleAsJson)
     {
+        // Arrange
+        CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+
         var propertyInfo = declaringType.GetProperty(propertyName);
         var schema = new OpenApiSchema { Type = schemaType };
         var filterContext = new SchemaFilterContext(propertyInfo.PropertyType, null, null, memberInfo: propertyInfo);
 
+        // Act
         Subject().Apply(schema, filterContext);
 
+        // Assert
         Assert.Equal(expectedExampleAsJson, schema.Example?.ToJson());
     }
 
@@ -129,18 +133,22 @@ public class XmlCommentsSchemaFilterTests
 
     [Theory]
     [MemberData(nameof(Apply_DoesNotSetExample_WhenPropertyExampleTagIsNotProvided_Data))]
-    [UseInvariantCulture]
     public void Apply_DoesNotSetExample_WhenPropertyExampleTagIsNotProvided(
         Type declaringType,
         string propertyName,
         JsonSchemaType schemaType)
     {
+        // Arrange
+        CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+
         var propertyInfo = declaringType.GetProperty(propertyName);
         var schema = new OpenApiSchema { Type = schemaType };
         var filterContext = new SchemaFilterContext(propertyInfo.PropertyType, null, null, memberInfo: propertyInfo);
 
+        // Act
         Subject().Apply(schema, filterContext);
 
+        // Assert
         Assert.Null(schema.Example);
     }
 

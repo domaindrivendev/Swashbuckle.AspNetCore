@@ -7,10 +7,17 @@
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)..\..\src\Swashbuckle.AspNetCore.Swagger\Swashbuckle.AspNetCore.Swagger.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\test\Swashbuckle.AspNetCore.SwaggerGen.Test\Fixtures\FakeConstructedControllerWithXmlComments.cs" Link="FakeConstructedControllerWithXmlComments.cs" />
+    <Compile Include="..\..\test\Swashbuckle.AspNetCore.SwaggerGen.Test\Fixtures\FakeControllerWithXmlComments.cs" Link="FakeControllerWithXmlComments.cs" />
+    <Compile Include="..\..\test\Swashbuckle.AspNetCore.SwaggerGen.Test\Fixtures\XmlAnnotatedType.cs" Link="XmlAnnotatedType.cs" />
+    <Compile Include="..\..\test\Swashbuckle.AspNetCore.TestSupport\ApiExplorer\ApiDescriptionFactory.cs" Link="ApiDescriptionFactory.cs" />
+    <Compile Include="..\..\test\Swashbuckle.AspNetCore.TestSupport\ApiExplorer\ModelMetadataFactory.cs" Link="ModelMetadataFactory.cs" />
+    <Compile Include="..\..\test\Swashbuckle.AspNetCore.TestSupport\Fixtures\Enums.cs" Link="Enums.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\src\Swashbuckle.AspNetCore.Annotations\Swashbuckle.AspNetCore.Annotations.csproj" />
     <ProjectReference Include="..\..\src\Swashbuckle.AspNetCore.SwaggerGen\Swashbuckle.AspNetCore.SwaggerGen.csproj" />
     <ProjectReference Include="..\..\src\Swashbuckle.AspNetCore.Swagger\Swashbuckle.AspNetCore.Swagger.csproj" />
-    <ProjectReference Include="..\..\test\Swashbuckle.AspNetCore.SwaggerGen.Test\Swashbuckle.AspNetCore.SwaggerGen.Test.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" />
