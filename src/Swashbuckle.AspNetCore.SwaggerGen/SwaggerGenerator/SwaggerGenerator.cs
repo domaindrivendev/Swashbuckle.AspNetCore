@@ -55,7 +55,7 @@ public class SwaggerGenerator(
         {
             foreach (var requirement in requirements)
             {
-                document.SecurityRequirements.Add(requirement(document));
+                document.Security.Add(requirement(document));
             }
         }
 
@@ -92,7 +92,7 @@ public class SwaggerGenerator(
             {
                 foreach (var requirement in requirements)
                 {
-                    document.SecurityRequirements.Add(requirement(document));
+                    document.Security.Add(requirement(document));
                 }
             }
 
@@ -537,7 +537,7 @@ public class SwaggerGenerator(
     }
 #endif
 
-    private List<OpenApiTagReference> GenerateOperationTags(OpenApiDocument document, ApiDescription apiDescription)
+    private HashSet<OpenApiTagReference> GenerateOperationTags(OpenApiDocument document, ApiDescription apiDescription)
         => [.. _options.TagsSelector(apiDescription).Select(tagName => CreateTag(tagName, document))];
 
     private static async Task<List<IOpenApiParameter>> GenerateParametersAsync(

@@ -20,7 +20,7 @@ public class CreateUserTests : ApiTestFixture<TestFirst.Startup>
         Describe("/api/users", OperationType.Post, new OpenApiOperation
         {
             OperationId = "CreateUser",
-            Tags = [new OpenApiTagReference("Users")],
+            Tags = new HashSet<OpenApiTagReference>() { new OpenApiTagReference("Users") },
             RequestBody = new OpenApiRequestBody
             {
                 Content = new Dictionary<string, OpenApiMediaType>

@@ -13,7 +13,10 @@ internal static class OpenApiDocumentLoader
 
     public static async Task<(OpenApiDocument Document, OpenApiDiagnostic Diagnostic)> LoadWithDiagnosticsAsync(Stream stream)
     {
-        var result = await OpenApiDocument.LoadAsync(stream);
+        var settings = new OpenApiReaderSettings();
+        settings.AddYamlReader();
+
+        var result = await OpenApiDocument.LoadAsync(stream, settings: settings);
         return (result.Document, result.Diagnostic);
     }
 }

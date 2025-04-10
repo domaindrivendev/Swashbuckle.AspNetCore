@@ -9,7 +9,7 @@
     <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.SwaggerGen\Swashbuckle.AspNetCore.SwaggerGen.csproj" />
     <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.SwaggerUI\Swashbuckle.AspNetCore.SwaggerUI.csproj" />
   </ItemGroup>
-  
+
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" VersionOverride="8.0.14" />
     <PackageReference Include="Duende.IdentityServer" VersionOverride="7.1.1" />
@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" VersionOverride="10.0.0-preview.2.25164.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" VersionOverride="10.0.0-preview.3.25172.1" />
     <PackageReference Include="Duende.IdentityServer" VersionOverride="7.1.1" />
   </ItemGroup>
 
