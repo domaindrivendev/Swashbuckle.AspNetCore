@@ -30,30 +30,26 @@ public sealed class JsonNumberValidator : IJsonValidator
         }
 
         // maximum & exclusiveMaximum
-        if (schema.Maximum.HasValue)
+        if (schema.Maximum is { } maximum)
         {
-            var exclusiveMaximum = schema.ExclusiveMaximum ?? false;
-
-            if (exclusiveMaximum && (numberValue >= schema.Maximum.Value))
+            if (schema.ExclusiveMaximum.HasValue && (numberValue >= maximum))
             {
                 errors.Add($"Path: {instance.Path}. Number is greater than, or equal to, maximum");
             }
-            else if (numberValue > schema.Maximum.Value)
+            else if (numberValue > maximum)
             {
                 errors.Add($"Path: {instance.Path}. Number is greater than maximum");
             }
         }
 
         // minimum & exclusiveMinimum
-        if (schema.Minimum.HasValue)
+        if (schema.Minimum is { } minimum)
         {
-            var exclusiveMinimum = schema.ExclusiveMinimum ?? false;
-
-            if (exclusiveMinimum && (numberValue <= schema.Minimum.Value))
+            if (schema.ExclusiveMinimum.HasValue && (numberValue <= minimum))
             {
                 errors.Add($"Path: {instance.Path}. Number is less than, or equal to, minimum");
             }
-            else if (numberValue < schema.Minimum.Value)
+            else if (numberValue < minimum)
             {
                 errors.Add($"Path: {instance.Path}. Number is less than minimum");
             }

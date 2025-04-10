@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net10.0'))">
-    <PackageReference Update="Microsoft.AspNetCore.OpenApi" VersionOverride="10.0.0-preview.2.25164.1" />
+    <PackageReference Update="Microsoft.AspNetCore.OpenApi" VersionOverride="10.0.0-preview.3.25172.1" />
   </ItemGroup>
 
   <!--

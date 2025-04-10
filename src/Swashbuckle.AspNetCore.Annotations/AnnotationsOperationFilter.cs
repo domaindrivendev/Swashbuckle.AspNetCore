@@ -72,7 +72,7 @@ public class AnnotationsOperationFilter : IOperationFilter
 
         if (swaggerOperationAttribute.Tags is { } tags)
         {
-            operation.Tags = [.. tags.Select(tagName => new OpenApiTagReference(tagName))];
+            operation.Tags = new HashSet<OpenApiTagReference>(tags.Select(tagName => new OpenApiTagReference(tagName)));
         }
     }
 

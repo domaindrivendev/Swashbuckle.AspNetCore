@@ -248,20 +248,6 @@ public static class OpenApiSchemaExtensions
 
     private static void ApplyRangeAttribute(OpenApiSchema schema, RangeAttribute rangeAttribute)
     {
-#if NET
-
-        if (rangeAttribute.MinimumIsExclusive)
-        {
-            schema.ExclusiveMinimum = true;
-        }
-
-        if (rangeAttribute.MaximumIsExclusive)
-        {
-            schema.ExclusiveMaximum = true;
-        }
-
-#endif
-
         schema.Maximum = decimal.TryParse(rangeAttribute.Maximum.ToString(), out decimal maximum)
             ? maximum
             : schema.Maximum;
@@ -269,6 +255,18 @@ public static class OpenApiSchemaExtensions
         schema.Minimum = decimal.TryParse(rangeAttribute.Minimum.ToString(), out decimal minimum)
             ? minimum
             : schema.Minimum;
+
+#if NET
+        if (rangeAttribute.MinimumIsExclusive)
+        {
+            schema.ExclusiveMinimum = schema.Maximum;
+        }
+
+        if (rangeAttribute.MaximumIsExclusive)
+        {
+            schema.ExclusiveMaximum = schema.Minimum;
+        }
+#endif
     }
 
     private static void ApplyRangeRouteConstraint(OpenApiSchema schema, RangeRouteConstraint rangeRouteConstraint)

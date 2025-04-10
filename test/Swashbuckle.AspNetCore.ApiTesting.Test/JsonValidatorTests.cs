@@ -103,7 +103,7 @@ public class JsonValidatorTests
         {
             Type = JsonSchemaTypes.Number,
             Maximum = schemaMaximum,
-            ExclusiveMaximum = true
+            ExclusiveMaximum = schemaMaximum
         };
         var instance = JToken.Parse(instanceText);
 
@@ -152,7 +152,7 @@ public class JsonValidatorTests
         {
             Type = JsonSchemaTypes.Number,
             Minimum = schemaMinimum,
-            ExclusiveMinimum = true
+            ExclusiveMinimum = schemaMinimum
         };
         var instance = JToken.Parse(instanceText);
 
