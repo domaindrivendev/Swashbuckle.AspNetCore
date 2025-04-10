@@ -259,12 +259,12 @@ public static class OpenApiSchemaExtensions
 #if NET
         if (rangeAttribute.MinimumIsExclusive)
         {
-            schema.ExclusiveMinimum = schema.Maximum;
+            schema.ExclusiveMinimum = schema.Minimum;
         }
 
         if (rangeAttribute.MaximumIsExclusive)
         {
-            schema.ExclusiveMaximum = schema.Minimum;
+            schema.ExclusiveMaximum = schema.Maximum;
         }
 #endif
     }
