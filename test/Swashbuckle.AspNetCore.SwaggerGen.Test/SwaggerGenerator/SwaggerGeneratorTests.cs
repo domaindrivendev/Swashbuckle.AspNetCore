@@ -1260,7 +1260,7 @@ public class SwaggerGeneratorTests
         Assert.Equal(["resource"], [.. document.Paths["/resource"].Operations[OperationType.Post].Tags?.Select(t => t.Reference.Id)]);
     }
 
-    [Fact(Skip = "TODO Need to investigate why only one tag is returned.")]
+    [Fact(Skip = "https://github.com/microsoft/OpenAPI.NET/issues/2319")]
     public void GetSwagger_CanReadTagsFromMetadata()
     {
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));
