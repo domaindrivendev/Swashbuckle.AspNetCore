@@ -8,6 +8,6 @@ public class VendorExtensionsOperationFilter : IOperationFilter
 {
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
-        operation.Extensions.Add("X-property1", new OpenApiString("value"));
+        operation.Extensions.Add("X-property1", new OpenApiAny("value"));
     }
 }

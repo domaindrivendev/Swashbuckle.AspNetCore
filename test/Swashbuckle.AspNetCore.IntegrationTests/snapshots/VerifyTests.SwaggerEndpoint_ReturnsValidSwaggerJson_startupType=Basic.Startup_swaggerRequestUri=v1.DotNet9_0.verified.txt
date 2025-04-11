@@ -1484,8 +1484,8 @@
           },
           "description": {
             "type": "string",
-            "description": "Describes the product",
-            "nullable": true
+            "nullable": true,
+            "description": "Describes the product"
           },
           "status": {
             "$ref": "#/components/schemas/ProductStatus"
@@ -1635,8 +1635,8 @@
           },
           "status": {
             "type": "integer",
-            "format": "int32",
-            "nullable": true
+            "nullable": true,
+            "format": "int32"
           },
           "detail": {
             "type": "string",
@@ -1648,13 +1648,13 @@
           },
           "errors": {
             "type": "object",
+            "nullable": true,
             "additionalProperties": {
               "type": "array",
               "items": {
                 "type": "string"
               }
-            },
-            "nullable": true
+            }
           }
         },
         "additionalProperties": { }

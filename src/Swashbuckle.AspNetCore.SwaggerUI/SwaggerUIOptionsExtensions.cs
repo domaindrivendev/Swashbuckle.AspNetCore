@@ -194,12 +194,6 @@ public static class SwaggerUIOptionsExtensions
         options.ConfigObject.OAuth2RedirectUrl = url;
     }
 
-    [Obsolete("The validator is disabled by default. Use EnableValidator to enable it")]
-    public static void ValidatorUrl(this SwaggerUIOptions options, string url)
-    {
-        options.ConfigObject.ValidatorUrl = url;
-    }
-
     /// <summary>
     /// You can use this parameter to enable the swagger-ui's built-in validator (badge) functionality
     /// Setting it to null will disable validation
