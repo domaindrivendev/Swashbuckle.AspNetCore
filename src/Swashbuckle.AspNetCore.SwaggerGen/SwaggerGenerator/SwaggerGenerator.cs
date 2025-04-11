@@ -542,7 +542,7 @@ public class SwaggerGenerator(
 
     private static async Task<List<IOpenApiParameter>> GenerateParametersAsync(
         ApiDescription apiDescription,
-        SchemaRepository schemaRespository,
+        SchemaRepository schemaRepository,
         OpenApiDocument document,
         Func<ApiParameterDescription, SchemaRepository, OpenApiDocument, Task<OpenApiParameter>> parameterGenerator)
     {
@@ -568,7 +568,7 @@ public class SwaggerGenerator(
 
         foreach (var parameter in applicableApiParameters)
         {
-            parameters.Add(await parameterGenerator(parameter, schemaRespository, document));
+            parameters.Add(await parameterGenerator(parameter, schemaRepository, document));
         }
 
         return parameters;
@@ -576,24 +576,24 @@ public class SwaggerGenerator(
 
     private List<IOpenApiParameter> GenerateParameters(
         ApiDescription apiDescription,
-        SchemaRepository schemaRespository,
+        SchemaRepository schemaRepository,
         OpenApiDocument document)
     {
         return GenerateParametersAsync(
             apiDescription,
-            schemaRespository,
+            schemaRepository,
             document,
-            (parameter, schemaRespository, document) => Task.FromResult(GenerateParameter(parameter, schemaRespository, document))).Result;
+            (parameter, schemaRepository, document) => Task.FromResult(GenerateParameter(parameter, schemaRepository, document))).Result;
     }
 
     private async Task<List<IOpenApiParameter>> GenerateParametersAsync(
         ApiDescription apiDescription,
-        SchemaRepository schemaRespository,
+        SchemaRepository schemaRepository,
         OpenApiDocument document)
     {
         return await GenerateParametersAsync(
             apiDescription,
-            schemaRespository,
+            schemaRepository,
             document,
             GenerateParameterAsync);
     }
@@ -1039,11 +1039,11 @@ public class SwaggerGenerator(
             .Distinct()];
     }
 
-    private OpenApiMediaType CreateResponseMediaType(Type modelType, SchemaRepository schemaRespository)
+    private OpenApiMediaType CreateResponseMediaType(Type modelType, SchemaRepository schemaRepository)
     {
         return new OpenApiMediaType
         {
-            Schema = GenerateSchema(modelType, schemaRespository)
+            Schema = GenerateSchema(modelType, schemaRepository)
         };
     }
 
