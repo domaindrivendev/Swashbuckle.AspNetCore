@@ -183,6 +183,8 @@ public class SchemaGenerator(
         if (schema.Reference == null)
         {
             ApplyFilters(schema, modelType, schemaRepository);
+            if (Nullable.GetUnderlyingType(modelType) != null)
+                schema.Nullable = true;
         }
 
         return schema;
