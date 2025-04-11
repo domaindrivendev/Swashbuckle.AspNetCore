@@ -161,13 +161,13 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal(schema.AdditionalProperties.Reference.Id, referenceSchema.Reference.Id); // ref to self
     }
 
-    public static TheoryData<Type, JsonSchemaType, string> EnumerableTypeData => new()
+    public static TheoryData<Type, JsonSchemaType, string, bool> EnumerableTypeData => new()
     {
-        { typeof(int[]), JsonSchemaTypes.Integer, "int32" },
-        { typeof(IEnumerable<string>), JsonSchemaTypes.String, null },
-        { typeof(DateTime?[]), JsonSchemaTypes.String, "date-time" },
-        { typeof(int[][]), JsonSchemaTypes.Array, null },
-        { typeof(IList), null, null },
+        { typeof(int[]), JsonSchemaTypes.Integer, "int32", false },
+        { typeof(IEnumerable<string>), JsonSchemaTypes.String, null, false },
+        { typeof(DateTime?[]), JsonSchemaTypes.String, "date-time", true },
+        { typeof(int[][]), JsonSchemaTypes.Array, null, false },
+        { typeof(IList), null, null, false },
     };
 
     [Theory]
@@ -175,7 +175,8 @@ public class JsonSerializerSchemaGeneratorTests
     public void GenerateSchema_GeneratesArraySchema_IfEnumerableType(
         Type type,
         JsonSchemaType expectedItemsType,
-        string expectedItemsFormat)
+        string expectedItemsFormat,
+        bool expectedItemsNullable)
     {
         var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
@@ -183,6 +184,7 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.NotNull(schema.Items);
         Assert.Equal(expectedItemsType, schema.Items.Type);
         Assert.Equal(expectedItemsFormat, schema.Items.Format);
+        Assert.Equal(expectedItemsNullable, schema.Items.Nullable);
     }
 
     [Theory]
