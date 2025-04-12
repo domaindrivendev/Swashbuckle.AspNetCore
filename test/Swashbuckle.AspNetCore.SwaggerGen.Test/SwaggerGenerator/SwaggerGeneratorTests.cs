@@ -1260,7 +1260,7 @@ public class SwaggerGeneratorTests
         Assert.Equal(["resource"], [.. document.Paths["/resource"].Operations[OperationType.Post].Tags?.Select(t => t.Reference.Id)]);
     }
 
-    [Fact(Skip = "https://github.com/microsoft/OpenAPI.NET/issues/2319")]
+    [Fact]
     public void GetSwagger_CanReadTagsFromMetadata()
     {
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));

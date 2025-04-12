@@ -34,11 +34,16 @@ public class XmlCommentsDocumentFilter(IReadOnlyDictionary<string, XPathNavigato
             {
                 swaggerDoc.Tags ??= new HashSet<OpenApiTag>();
 
-                swaggerDoc.Tags.Add(new OpenApiTag
+                var name = nameAndType.Key;
+                var tag = swaggerDoc.Tags.FirstOrDefault((p) => p?.Name == name);
+
+                if (tag is null)
                 {
-                    Name = nameAndType.Key,
-                    Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml, _options?.XmlCommentEndOfLine)
-                });
+                    tag = new() { Name = name };
+                    swaggerDoc.Tags.Add(tag);
+                }
+
+                tag.Description ??= XmlCommentsTextHelper.Humanize(summaryNode.InnerXml, _options?.XmlCommentEndOfLine);
             }
         }
     }

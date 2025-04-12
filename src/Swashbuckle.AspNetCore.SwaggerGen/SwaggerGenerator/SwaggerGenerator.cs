@@ -538,7 +538,24 @@ public class SwaggerGenerator(
 #endif
 
     private HashSet<OpenApiTagReference> GenerateOperationTags(OpenApiDocument document, ApiDescription apiDescription)
-        => [.. _options.TagsSelector(apiDescription).Select(tagName => CreateTag(tagName, document))];
+    {
+        // The tags must be present at the document level for the tag references
+        // to be serialized correctly at the operation level, so we need to add
+        // them to the document before adding the references to the operation.
+        // See https://github.com/microsoft/OpenAPI.NET/issues/2319.
+        string[] names = [.. _options.TagsSelector(apiDescription)];
+
+        if (names.Length > 0)
+        {
+            document.Tags ??= new HashSet<OpenApiTag>();
+            foreach (var name in names)
+            {
+                document.Tags.Add(new OpenApiTag { Name = name });
+            }
+        }
+
+        return [.. names.Select((name) => new OpenApiTagReference(name, document))];
+    }
 
     private static async Task<List<IOpenApiParameter>> GenerateParametersAsync(
         ApiDescription apiDescription,
@@ -1169,9 +1186,4 @@ public class SwaggerGenerator(
             .Select(s => s.Description)
             .LastOrDefault();
 #endif
-
-    private static OpenApiTagReference CreateTag(string name, OpenApiDocument document)
-    {
-        return new(name, document);
-    }
 }

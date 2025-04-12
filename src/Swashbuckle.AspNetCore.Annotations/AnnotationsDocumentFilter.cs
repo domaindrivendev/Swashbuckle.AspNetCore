@@ -24,7 +24,7 @@ public class AnnotationsDocumentFilter : IDocumentFilter
     }
 
     private static void ApplySwaggerTagAttribute(
-        OpenApiDocument swaggerDoc,
+        OpenApiDocument document,
         string controllerName,
         IEnumerable<object> customAttributes)
     {
@@ -32,18 +32,24 @@ public class AnnotationsDocumentFilter : IDocumentFilter
             .OfType<SwaggerTagAttribute>()
             .FirstOrDefault();
 
-        if (swaggerTagAttribute == null)
+        if (swaggerTagAttribute is null)
         {
             return;
         }
 
-        swaggerDoc.Tags.Add(new OpenApiTag
+        var tag = document.Tags.FirstOrDefault((p) => p?.Name == controllerName);
+
+        if (tag is null)
         {
-            Name = controllerName,
-            Description = swaggerTagAttribute.Description,
-            ExternalDocs = (swaggerTagAttribute.ExternalDocsUrl != null)
-                ? new OpenApiExternalDocs { Url = new Uri(swaggerTagAttribute.ExternalDocsUrl) }
-                : null
-        });
+            tag = new() { Name = controllerName };
+            document.Tags.Add(tag);
+        }
+
+        tag.Description ??= swaggerTagAttribute.Description;
+
+        if (swaggerTagAttribute.ExternalDocsUrl is { } url)
+        {
+            tag.ExternalDocs ??= new OpenApiExternalDocs { Url = new(url) };
+        }
     }
 }

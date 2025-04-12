@@ -1097,5 +1097,13 @@
         "additionalProperties": false
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Annotations"
+    },
+    {
+      "name": "Xml"
+    }
+  ]
 }

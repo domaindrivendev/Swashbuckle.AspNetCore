@@ -342,5 +342,16 @@
         ]
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Animals"
+    },
+    {
+      "name": "SecondLevel"
+    },
+    {
+      "name": "SystemTextJsonAnimals"
+    }
+  ]
 }

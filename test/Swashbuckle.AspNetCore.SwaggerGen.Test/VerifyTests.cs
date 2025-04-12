@@ -350,7 +350,7 @@ public partial class VerifyTests
         await Verify(document);
     }
 
-    [Fact(Skip = "https://github.com/microsoft/OpenAPI.NET/issues/2319")]
+    [Fact]
     public async Task EndpointMetadataHasTags()
     {
         var methodInfo = typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameter));

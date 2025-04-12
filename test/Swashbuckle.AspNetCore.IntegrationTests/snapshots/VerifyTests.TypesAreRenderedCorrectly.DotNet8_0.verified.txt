@@ -1090,5 +1090,19 @@
         "additionalProperties": false
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Annotations"
+    },
+    {
+      "name": "WebApi"
+    },
+    {
+      "name": "WithOpenApi"
+    },
+    {
+      "name": "Xml"
+    }
+  ]
 }
