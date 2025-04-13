@@ -184,7 +184,9 @@ public class SchemaGenerator(
         {
             ApplyFilters(schema, modelType, schemaRepository);
             if (Nullable.GetUnderlyingType(modelType) != null)
+            {
                 schema.Nullable = true;
+            }
         }
 
         return schema;
