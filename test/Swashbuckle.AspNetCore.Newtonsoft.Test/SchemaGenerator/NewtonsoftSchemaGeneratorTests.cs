@@ -56,17 +56,17 @@ public class NewtonsoftSchemaGeneratorTests
         { typeof(Version), JsonSchemaTypes.String, null },
         { typeof(DateOnly), JsonSchemaTypes.String, "date" },
         { typeof(TimeOnly), JsonSchemaTypes.String, "time" },
-        { typeof(bool?), JsonSchemaTypes.Boolean, null },
-        { typeof(int?), JsonSchemaTypes.Integer, "int32" },
-        { typeof(DateTime?), JsonSchemaTypes.String, "date-time" },
-        { typeof(Guid?), JsonSchemaTypes.String, "uuid" },
-        { typeof(DateOnly?), JsonSchemaTypes.String, "date" },
-        { typeof(TimeOnly?), JsonSchemaTypes.String, "time" },
+        { typeof(bool?), JsonSchemaTypes.Boolean | JsonSchemaType.Null, null },
+        { typeof(int?), JsonSchemaTypes.Integer | JsonSchemaType.Null, "int32" },
+        { typeof(DateTime?), JsonSchemaTypes.String | JsonSchemaType.Null, "date-time" },
+        { typeof(Guid?), JsonSchemaTypes.String | JsonSchemaType.Null, "uuid" },
+        { typeof(DateOnly?), JsonSchemaTypes.String | JsonSchemaType.Null, "date" },
+        { typeof(TimeOnly?), JsonSchemaTypes.String | JsonSchemaType.Null, "time" },
 #if NET
         { typeof(Int128), JsonSchemaTypes.Integer, "int128" },
-        { typeof(Int128?), JsonSchemaTypes.Integer, "int128" },
+        { typeof(Int128?), JsonSchemaTypes.Integer | JsonSchemaType.Null, "int128" },
         { typeof(UInt128), JsonSchemaTypes.Integer, "int128" },
-        { typeof(UInt128?), JsonSchemaTypes.Integer, "int128" },
+        { typeof(UInt128?), JsonSchemaTypes.Integer | JsonSchemaType.Null, "int128" },
 #endif
     };
 
@@ -176,10 +176,14 @@ public class NewtonsoftSchemaGeneratorTests
     public static TheoryData<Type, JsonSchemaType?, string?> EnumerableTypesData => new()
     {
         { typeof(int[]), JsonSchemaTypes.Integer, "int32" },
+        { typeof(int?[]), JsonSchemaTypes.Integer | JsonSchemaType.Null, "int32" },
+        { typeof(double[]), JsonSchemaTypes.Number, "double" },
+        { typeof(double?[]), JsonSchemaTypes.Number | JsonSchemaType.Null, "double" },
+        { typeof(DateTime[]), JsonSchemaTypes.String, "date-time" },
+        { typeof(DateTime?[]), JsonSchemaTypes.String | JsonSchemaType.Null, "date-time" },
         { typeof(IEnumerable<string>), JsonSchemaTypes.String, null },
-        { typeof(DateTime?[]), JsonSchemaTypes.String, "date-time" },
         { typeof(int[][]), JsonSchemaTypes.Array, null },
-        { typeof(IList), null, null }
+        { typeof(IList), null, null },
     };
 
     [Theory]
