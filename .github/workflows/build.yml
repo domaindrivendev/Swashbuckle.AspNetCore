@@ -164,10 +164,12 @@ jobs:
     needs: [ build, validate-packages ]
     runs-on: ubuntu-latest
     if: |
-      github.event.repository.fork == false &&
-      (github.ref_name == github.event.repository.default_branch ||
-       github.head_ref == 'dotnet-vnext' ||
-       startsWith(github.ref, 'refs/tags/v'))
+      false
+      # HACK Disabled until https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3368 is resolved
+      #github.event.repository.fork == false &&
+      #(github.ref_name == github.event.repository.default_branch ||
+      # github.head_ref == 'dotnet-vnext' ||
+      # startsWith(github.ref, 'refs/tags/v'))
 
     environment:
       name: MyGet.org
