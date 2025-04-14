@@ -19,7 +19,7 @@ public static class SwaggerAnnotationsEndpoints
 
         group.MapPost("/fruit/{id}", CreateFruit)
 #if NET10_0_OR_GREATER
-        .WithOpenApi()
+             .WithOpenApi()
 #endif
         ;
 
