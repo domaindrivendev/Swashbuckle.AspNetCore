@@ -164,8 +164,12 @@ public class JsonSerializerSchemaGeneratorTests
     public static TheoryData<Type, JsonSchemaType, string, bool> EnumerableTypeData => new()
     {
         { typeof(int[]), JsonSchemaTypes.Integer, "int32", false },
-        { typeof(IEnumerable<string>), JsonSchemaTypes.String, null, false },
+        { typeof(int?[]), JsonSchemaTypes.Integer, "int32", true },
+        { typeof(double[]), JsonSchemaTypes.Number, "double", false },
+        { typeof(double?[]), JsonSchemaTypes.Number, "double", true },
+        { typeof(DateTime[]), JsonSchemaTypes.String, "date-time", false },
         { typeof(DateTime?[]), JsonSchemaTypes.String, "date-time", true },
+        { typeof(IEnumerable<string>), JsonSchemaTypes.String, null, false },
         { typeof(int[][]), JsonSchemaTypes.Array, null, false },
         { typeof(IList), null, null, false },
     };
