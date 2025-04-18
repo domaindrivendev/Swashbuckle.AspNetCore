@@ -111,6 +111,111 @@ public static class ToolTests
     }
 
     [Fact]
+    public static void Can_Verify_Swagger_Json_v3()
+    {
+        using var temporaryDirectory = new TemporaryDirectory();
+
+        var outputPath = RunToOutputPathCommand(temporaryDirectory, (outputPath) =>
+        [
+            "tofile",
+            "--output",
+            outputPath,
+            Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
+            "v1"
+        ]);
+
+        var expectedLastModified = File.GetLastWriteTime(outputPath);
+
+        Assert.Equal(0, Program.Main([
+            "tofile",
+            "--verify-no-changes",
+            "--output",
+            outputPath,
+            Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
+            "v1"
+        ]));
+
+        var actualLastModified = File.GetLastWriteTime(outputPath);
+
+        Assert.Equal(expectedLastModified, actualLastModified);
+    }
+
+    [Fact]
+    public static void Can_Fail_Verification_When_Output_File_Is_Different()
+    {
+        using var temporaryDirectory = new TemporaryDirectory();
+
+        var outputPath = Path.Combine(temporaryDirectory.Path, "swagger.json");
+
+        File.WriteAllText(outputPath, "different-content");
+
+        Assert.Equal(2, Program.Main([
+            "tofile",
+            "--verify-no-changes",
+            "--output",
+            outputPath,
+            Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
+            "v1"
+        ]));
+    }
+
+    [Fact]
+    public static void Can_Fail_Verification_When_Output_File_Contains_Extra_Content()
+    {
+        using var temporaryDirectory = new TemporaryDirectory();
+
+        var outputPath = RunToOutputPathCommand(temporaryDirectory, (outputPath) =>
+        [
+            "tofile",
+            "--output",
+            outputPath,
+            Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
+            "v1"
+        ]);
+
+        File.AppendAllText(outputPath, "extra-content");
+
+        Assert.Equal(2, Program.Main([
+            "tofile",
+            "--verify-no-changes",
+            "--output",
+            outputPath,
+            Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
+            "v1"
+        ]));
+    }
+
+    [Fact]
+    public static void Can_Fail_Verification_When_Output_File_Does_Not_Exist()
+    {
+        string[] args =
+        [
+            "tofile",
+            "--verify-no-changes",
+            "--output",
+            "does-not-exist.json",
+            Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
+            "v1"
+        ];
+
+        Assert.Equal(2, Program.Main(args));
+    }
+
+    [Fact]
+    public static void Can_Fail_Verification_When_Output_File_Is_Not_Set()
+    {
+        string[] args =
+        [
+            "tofile",
+            "--verify-no-changes",
+            Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
+            "v1"
+        ];
+
+        Assert.Equal(1, Program.Main(args));
+    }
+
+    [Fact]
     public static void Can_Generate_Swagger_Json_v3_OpenApiVersion()
     {
         using var document = RunToJsonCommand((outputPath) =>
@@ -252,10 +357,8 @@ public static class ToolTests
         Assert.True(productsPath.TryGetProperty("post", out _));
     }
 
-    private static string RunToStringCommand(Func<string, string[]> setup, string subOutputPath = default)
+    private static string RunToOutputPathCommand(TemporaryDirectory temporaryDirectory, Func<string, string[]> setup, string subOutputPath = default)
     {
-        using var temporaryDirectory = new TemporaryDirectory();
-
         var outputPath = !string.IsNullOrEmpty(subOutputPath)
             ? Path.Combine(temporaryDirectory.Path, subOutputPath, "swagger.json")
             : Path.Combine(temporaryDirectory.Path, "swagger.json");
@@ -263,6 +366,15 @@ public static class ToolTests
         string[] args = setup(outputPath);
 
         Assert.Equal(0, Program.Main(args));
+
+        return outputPath;
+    }
+
+    private static string RunToStringCommand(Func<string, string[]> setup, string subOutputPath = default)
+    {
+        using var temporaryDirectory = new TemporaryDirectory();
+
+        var outputPath = RunToOutputPathCommand(temporaryDirectory, setup, subOutputPath);
 
         return File.ReadAllText(outputPath);
     }

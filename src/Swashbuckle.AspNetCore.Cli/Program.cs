@@ -40,6 +40,7 @@ internal class Program
             c.Option("--basepath", "a specific basePath to include in the Swagger output");
             c.Option(OpenApiVersionOption, "output Swagger in the specified version, defaults to 3.0");
             c.Option("--yaml", "exports swagger in a yaml format", true);
+            c.Option("--verify-no-changes", "verifies that the output requires no changes", true);
 
             // TODO Remove this option in the major version that adds support for OpenAPI 3.1
             c.Option(SerializeAsV2Flag, "output Swagger in the V2 format rather than V3 [deprecated]", true);
@@ -65,6 +66,7 @@ internal class Program
             c.Option("--basepath", "");
             c.Option(OpenApiVersionOption, "");
             c.Option("--yaml", "", true);
+            c.Option("--verify-no-changes", "", true);
 
             // TODO Remove this option in the major version that adds support for OpenAPI 3.1
             c.Option(SerializeAsV2Flag, "", true);
@@ -78,6 +80,8 @@ internal class Program
                     namedArgs.TryGetValue("--host", out var arg) ? arg : null,
                     namedArgs.TryGetValue("--basepath", out var namedArg) ? namedArg : null);
 
+                var verifyNoChanges = namedArgs.ContainsKey("--verify-no-changes");
+
                 // 4) Serialize to specified output location or stdout
                 var outputPath = namedArgs.TryGetValue("--output", out var arg1)
                     ? Path.Combine(Directory.GetCurrentDirectory(), arg1)
@@ -85,63 +89,83 @@ internal class Program
 
                 if (!string.IsNullOrEmpty(outputPath))
                 {
+                    if (verifyNoChanges && !File.Exists(outputPath))
+                    {
+                        Console.WriteLine($"{outputPath} does not exist.");
+                        return 2;
+                    }
+
                     string directoryPath = Path.GetDirectoryName(outputPath);
                     if (!string.IsNullOrEmpty(directoryPath) && !Directory.Exists(directoryPath))
                     {
                         Directory.CreateDirectory(directoryPath);
                     }
                 }
-
-                using Stream stream = outputPath != null ? File.Create(outputPath) : Console.OpenStandardOutput();
-                using var streamWriter = new FormattingStreamWriter(stream, CultureInfo.InvariantCulture);
-
-                IOpenApiWriter writer;
-                if (namedArgs.ContainsKey("--yaml"))
+                else if (verifyNoChanges)
                 {
-                    writer = new OpenApiYamlWriter(streamWriter);
-                }
-                else
-                {
-                    writer = new OpenApiJsonWriter(streamWriter);
+                    Console.WriteLine("--output is required when using --verify-no-changes.");
+                    return 1;
                 }
 
-                OpenApiSpecVersion specVersion = OpenApiSpecVersion.OpenApi3_0;
+                using Stream stream = CreateOutputStream(outputPath, verifyNoChanges);
 
-                if (namedArgs.TryGetValue(OpenApiVersionOption, out var versionArg))
+                try
                 {
-                    specVersion = versionArg switch
+                    using TextWriter streamWriter = verifyNoChanges ? new VerifyingWriter(File.OpenRead(outputPath)) : new FormattingStreamWriter(stream, CultureInfo.InvariantCulture);
+
+                    IOpenApiWriter writer;
+                    if (namedArgs.ContainsKey("--yaml"))
                     {
-                        "2.0" => OpenApiSpecVersion.OpenApi2_0,
-                        "3.0" => OpenApiSpecVersion.OpenApi3_0,
-                        _ => throw new NotSupportedException($"The specified OpenAPI version \"{versionArg}\" is not supported."),
-                    };
-                }
-                else if (namedArgs.ContainsKey(SerializeAsV2Flag))
-                {
-                    specVersion = OpenApiSpecVersion.OpenApi2_0;
-                    WriteSerializeAsV2DeprecationWarning();
-                }
-
-                if (swaggerDocumentSerializer != null)
-                {
-                    swaggerDocumentSerializer.SerializeDocument(swagger, writer, specVersion);
-                }
-                else
-                {
-                    switch (specVersion)
+                        writer = new OpenApiYamlWriter(streamWriter);
+                    }
+                    else
                     {
-                        case OpenApiSpecVersion.OpenApi2_0:
-                            swagger.SerializeAsV2(writer);
-                            break;
+                        writer = new OpenApiJsonWriter(streamWriter);
+                    }
 
-                        case OpenApiSpecVersion.OpenApi3_0:
-                        default:
-                            swagger.SerializeAsV3(writer);
-                            break;
+                    OpenApiSpecVersion specVersion = OpenApiSpecVersion.OpenApi3_0;
+
+                    if (namedArgs.TryGetValue(OpenApiVersionOption, out var versionArg))
+                    {
+                        specVersion = versionArg switch
+                        {
+                            "2.0" => OpenApiSpecVersion.OpenApi2_0,
+                            "3.0" => OpenApiSpecVersion.OpenApi3_0,
+                            _ => throw new NotSupportedException($"The specified OpenAPI version \"{versionArg}\" is not supported."),
+                        };
+                    }
+                    else if (namedArgs.ContainsKey(SerializeAsV2Flag))
+                    {
+                        specVersion = OpenApiSpecVersion.OpenApi2_0;
+                        WriteSerializeAsV2DeprecationWarning();
+                    }
+
+                    if (swaggerDocumentSerializer != null)
+                    {
+                        swaggerDocumentSerializer.SerializeDocument(swagger, writer, specVersion);
+                    }
+                    else
+                    {
+                        switch (specVersion)
+                        {
+                            case OpenApiSpecVersion.OpenApi2_0:
+                                swagger.SerializeAsV2(writer);
+                                break;
+
+                            case OpenApiSpecVersion.OpenApi3_0:
+                            default:
+                                swagger.SerializeAsV3(writer);
+                                break;
+                        }
                     }
                 }
+                catch (VerificationException)
+                {
+                    Console.WriteLine($"Swagger JSON/YAML for {outputPath} requires re-execution");
+                    return 2;
+                }
 
-                if (outputPath != null)
+                if (outputPath != null && !verifyNoChanges)
                 {
                     Console.WriteLine($"Swagger JSON/YAML successfully written to {outputPath}");
                 }
@@ -210,6 +234,21 @@ internal class Program
         });
 
         return runner.Run(args);
+    }
+
+    private static Stream CreateOutputStream(string outputPath, bool verifyNoChanges)
+    {
+        if (verifyNoChanges)
+        {
+            return null;
+        }
+
+        if (outputPath == null)
+        {
+            return Console.OpenStandardOutput();
+        }
+
+        return File.Create(outputPath);
     }
 
     private static void SetupAndRetrieveSwaggerProviderAndOptions(IDictionary<string, string> namedArgs, out ISwaggerProvider swaggerProvider, out IOptions<SwaggerOptions> swaggerOptions)
