@@ -8,6 +8,7 @@
   <ItemGroup Condition=" '$(IsTestProject)' == 'true' ">
     <PackageReference Include="coverlet.msbuild" PrivateAssets="All" />
     <PackageReference Include="GitHubActionsTestLogger" PrivateAssets="All" />
+    <PackageReference Include="JunitXml.TestLogger" PrivateAssets="All" />
     <PackageReference Include="ReportGenerator" PrivateAssets="All" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(CollectCoverage)' == 'true' ">
