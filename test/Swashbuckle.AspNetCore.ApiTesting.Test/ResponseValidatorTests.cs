@@ -1,9 +1,8 @@
 ﻿using System.Net;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.Interfaces;
 using Xunit;
-
-using JsonSchemaType = string;
 
 namespace Swashbuckle.AspNetCore.ApiTesting.Test;
 
@@ -50,7 +49,7 @@ public class ResponseValidatorTests
             {
                 ["201"] = new OpenApiResponse
                 {
-                    Headers = new Dictionary<string, OpenApiHeader>
+                    Headers = new Dictionary<string, IOpenApiHeader>
                     {
                         ["test-header"] = new OpenApiHeader
                         {
@@ -83,7 +82,7 @@ public class ResponseValidatorTests
         { "1", JsonSchemaTypes.Number, null, null },
         { "foo", JsonSchemaTypes.String, null, null },
         { "1,2", JsonSchemaTypes.Array, JsonSchemaTypes.Number, null },
-        { "1,foo", JsonSchemaTypes.Array, JsonSchemaTypes.Number, "Header 'test-header' is not of type 'array[number]'" },
+        { "1,foo", JsonSchemaTypes.Array, JsonSchemaTypes.Number, "Header 'test-header' is not of type 'array[Number]'" },
     };
 
     [Theory]
@@ -100,7 +99,7 @@ public class ResponseValidatorTests
             {
                 ["201"] = new OpenApiResponse
                 {
-                    Headers = new Dictionary<string, OpenApiHeader>
+                    Headers = new Dictionary<string, IOpenApiHeader>
                     {
                         ["test-header"] = new OpenApiHeader
                         {
@@ -252,7 +251,7 @@ public class ResponseValidatorTests
             },
             Components = new OpenApiComponents
             {
-                Schemas = new Dictionary<string, OpenApiSchema>()
+                Schemas = new Dictionary<string, IOpenApiSchema>()
             }
         };
     }
