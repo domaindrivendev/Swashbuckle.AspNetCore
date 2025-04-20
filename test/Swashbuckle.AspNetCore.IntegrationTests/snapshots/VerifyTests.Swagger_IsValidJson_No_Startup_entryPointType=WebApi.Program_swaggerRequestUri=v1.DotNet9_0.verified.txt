@@ -988,12 +988,11 @@
       },
       "DateTimeKind": {
         "enum": [
-          0,
-          1,
-          2
+          "Unspecified",
+          "Utc",
+          "Local"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "Fruit": {
         "type": "object",
