@@ -17,6 +17,33 @@
             "schema": {
               "allOf": [
                 {
+                  "$ref": "#/components/schemas/LogLevelNullable"
+                }
+              ],
+              "default": 4
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/RequiredEnum": {
+      "get": {
+        "tags": [
+          "RequiredEnum"
+        ],
+        "parameters": [
+          {
+            "name": "logLevel",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "allOf": [
+                {
                   "$ref": "#/components/schemas/LogLevel"
                 }
               ],
@@ -46,6 +73,21 @@
         ],
         "type": "integer",
         "format": "int32"
+      },
+      "LogLevelNullable": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          null
+        ],
+        "type": "integer",
+        "format": "int32",
+        "nullable": true
       }
     }
   }
