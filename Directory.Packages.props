@@ -12,14 +12,14 @@
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.DataAnnotations" Version="2.3.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="2.3.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.7" />
-    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.32" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.3" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="8.0.7" />
     <PackageVersion Include="Microsoft.AspNetCore.Razor.Design" Version="2.3.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Routing" Version="2.3.0" />
     <PackageVersion Include="Microsoft.AspNetCore.StaticFiles" Version="2.3.0" />
-    <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="6.0.32" />
+    <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="9.0.3" />
     <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.4" />
     <PackageVersion Include="Microsoft.Extensions.FileProviders.Embedded" Version="2.1.1" />
     <PackageVersion Include="Microsoft.OpenApi" Version="1.6.23" />
@@ -30,7 +30,7 @@
     <PackageVersion Include="NSwag.MSBuild" Version="14.3.0" />
     <PackageVersion Include="ReportGenerator" Version="5.4.4" />
     <PackageVersion Include="System.Text.Json" Version="4.6.0" />
-    <PackageVersion Include="Verify.XunitV3" Version="29.2.0" />
+    <PackageVersion Include="Verify.XunitV3" Version="29.3.0" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.2" />
     <PackageVersion Include="xunit.v3" Version="2.0.1" />
