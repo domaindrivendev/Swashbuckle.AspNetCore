@@ -5,6 +5,7 @@
 BenchmarkDotNet.Artifacts*/
 coverage
 coverage.*
+junit.xml
 node_modules/
 *.binlog
 *.user
