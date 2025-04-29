@@ -1,0 +1,3 @@
+Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerBase.ConfigureOperation(string documentName, string pathTemplate, System.Net.Http.HttpMethod operationType, Microsoft.OpenApi.Models.OpenApiOperation operation) -> void
+Swashbuckle.AspNetCore.ApiTesting.RequestValidator.Validate(System.Net.Http.HttpRequestMessage request, Microsoft.OpenApi.Models.OpenApiDocument openApiDocument, string pathTemplate, System.Net.Http.HttpMethod operationType) -> void
+Swashbuckle.AspNetCore.ApiTesting.ResponseValidator.Validate(System.Net.Http.HttpResponseMessage response, Microsoft.OpenApi.Models.OpenApiDocument openApiDocument, string pathTemplate, System.Net.Http.HttpMethod operationType, string expectedStatusCode) -> void
