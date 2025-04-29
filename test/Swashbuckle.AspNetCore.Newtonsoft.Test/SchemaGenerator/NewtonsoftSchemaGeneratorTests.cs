@@ -287,35 +287,28 @@ public class NewtonsoftSchemaGeneratorTests
         Assert.Equal(expectedNullable, schema.Properties[propertyName].Nullable);
     }
 
-    [Theory]
-    [InlineData(typeof(TypeWithNullableProperties), nameof(TypeWithNullableProperties.NullableIntEnumProperty), false)]
-    public void GenerateSchema_DoesNotSetNullableFlag_IfReferencedEnum(
-        Type declaringType,
-        string propertyName,
-        bool expectedNullable)
+    [Fact]
+    public void GenerateSchema_DoesNotSetNullableFlag_IfReferencedEnum()
     {
         var schemaRepository = new SchemaRepository();
 
-        var referenceSchema = Subject().GenerateSchema(declaringType, schemaRepository);
+        var referenceSchema = Subject().GenerateSchema(typeof(TypeWithNullableProperties), schemaRepository);
 
         var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-        Assert.Equal(expectedNullable, schema.Properties[propertyName].Nullable);
+        const string propertyName = nameof(TypeWithNullableProperties.NullableIntEnumProperty);
+        Assert.False(schema.Properties[propertyName].Nullable);
         Assert.Equal("IntEnumNullable", schema.Properties[propertyName].Reference.Id);
     }
 
-    [Theory]
-    [InlineData(typeof(TypeWithNullableProperties), nameof(TypeWithNullableProperties.NullableIntEnumProperty), true)]
-    public void GenerateSchema_SetNullableFlag_IfInlineEnum(
-        Type declaringType,
-        string propertyName,
-        bool expectedNullable)
+    [Fact]
+    public void GenerateSchema_SetNullableFlag_IfInlineEnum()
     {
         var schemaRepository = new SchemaRepository();
 
-        var referenceSchema = Subject(o => o.UseInlineDefinitionsForEnums = true).GenerateSchema(declaringType, schemaRepository);
+        var referenceSchema = Subject(o => o.UseInlineDefinitionsForEnums = true).GenerateSchema(typeof(TypeWithNullableProperties), schemaRepository);
 
         var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-        Assert.Equal(expectedNullable, schema.Properties[propertyName].Nullable);
+        Assert.True(schema.Properties[nameof(TypeWithNullableProperties.NullableIntEnumProperty)].Nullable);
     }
 
     [Theory]
