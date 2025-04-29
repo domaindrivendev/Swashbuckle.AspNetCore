@@ -3,7 +3,6 @@ static Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptionsExtensions.GetOpenA
 Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerBase
 Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerBase.ApiTestRunnerBase() -> void
 Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerBase.Configure(System.Action<Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptions> setupAction) -> void
-Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerBase.ConfigureOperation(string documentName, string pathTemplate, Microsoft.OpenApi.Models.OperationType operationType, Microsoft.OpenApi.Models.OpenApiOperation operation) -> void
 Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerBase.Dispose() -> void
 Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerBase.TestAsync(string documentName, string operationId, string expectedStatusCode, System.Net.Http.HttpRequestMessage request, System.Net.Http.HttpClient httpClient) -> System.Threading.Tasks.Task
 Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptions
@@ -73,9 +72,8 @@ Swashbuckle.AspNetCore.ApiTesting.RequestDoesNotMatchSpecException
 Swashbuckle.AspNetCore.ApiTesting.RequestDoesNotMatchSpecException.RequestDoesNotMatchSpecException(string message) -> void
 Swashbuckle.AspNetCore.ApiTesting.RequestValidator
 Swashbuckle.AspNetCore.ApiTesting.RequestValidator.RequestValidator(System.Collections.Generic.IEnumerable<Swashbuckle.AspNetCore.ApiTesting.IContentValidator> contentValidators) -> void
-Swashbuckle.AspNetCore.ApiTesting.RequestValidator.Validate(System.Net.Http.HttpRequestMessage request, Microsoft.OpenApi.Models.OpenApiDocument openApiDocument, string pathTemplate, Microsoft.OpenApi.Models.OperationType operationType) -> void
 Swashbuckle.AspNetCore.ApiTesting.ResponseDoesNotMatchSpecException
 Swashbuckle.AspNetCore.ApiTesting.ResponseDoesNotMatchSpecException.ResponseDoesNotMatchSpecException(string message) -> void
 Swashbuckle.AspNetCore.ApiTesting.ResponseValidator
 Swashbuckle.AspNetCore.ApiTesting.ResponseValidator.ResponseValidator(System.Collections.Generic.IEnumerable<Swashbuckle.AspNetCore.ApiTesting.IContentValidator> contentValidators) -> void
-Swashbuckle.AspNetCore.ApiTesting.ResponseValidator.Validate(System.Net.Http.HttpResponseMessage response, Microsoft.OpenApi.Models.OpenApiDocument openApiDocument, string pathTemplate, Microsoft.OpenApi.Models.OperationType operationType, string expectedStatusCode) -> void
+
