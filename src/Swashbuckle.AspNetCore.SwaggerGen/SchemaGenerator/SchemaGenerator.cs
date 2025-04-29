@@ -83,11 +83,13 @@ public class SchemaGenerator(
                     ? dataProperty.IsNullable && requiredAttribute == null && !memberInfo.IsNonNullableReferenceType()
                     : dataProperty.IsNullable && requiredAttribute == null;
 
+                // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3387
                 if (nullable)
                 {
+                    concrete.Type ??= JsonSchemaType.Null;
                     concrete.Type |= JsonSchemaType.Null;
                 }
-                else
+                else if (concrete.Type.HasValue)
                 {
                     concrete.Type &= ~JsonSchemaType.Null;
                 }
@@ -128,11 +130,13 @@ public class SchemaGenerator(
 
                 if (isDictionaryType && schema.AdditionalProperties is OpenApiSchema additionalProperties)
                 {
+                    // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3387
                     if (!memberInfo.IsDictionaryValueNonNullable())
                     {
+                        additionalProperties.Type ??= JsonSchemaType.Null;
                         additionalProperties.Type |= JsonSchemaType.Null;
                     }
-                    else
+                    else if (additionalProperties.Type.HasValue)
                     {
                         additionalProperties.Type &= ~JsonSchemaType.Null;
                     }
