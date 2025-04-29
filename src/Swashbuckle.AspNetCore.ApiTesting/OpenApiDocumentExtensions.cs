@@ -9,7 +9,7 @@ public static class OpenApiDocumentExtensions
         this OpenApiDocument openApiDocument,
         string operationId,
         out string pathTemplate,
-        out OperationType operationType)
+        out HttpMethod operationType)
     {
         if (openApiDocument.Paths is { Count: > 0 } paths)
         {
@@ -40,7 +40,7 @@ public static class OpenApiDocumentExtensions
     internal static OpenApiOperation GetOperationByPathAndType(
         this OpenApiDocument openApiDocument,
         string pathTemplate,
-        OperationType operationType,
+        HttpMethod operationType,
         out IOpenApiPathItem pathSpec)
     {
         if (openApiDocument.Paths.TryGetValue(pathTemplate, out pathSpec))

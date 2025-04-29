@@ -403,8 +403,8 @@ public class SchemaGenerator(
         var schema = new OpenApiSchema
         {
             Type = JsonSchemaTypes.Object,
-            Properties = new Dictionary<string, IOpenApiSchema>(),
-            Required = new SortedSet<string>(),
+            Properties = [],
+            Required = [],
             AdditionalPropertiesAllowed = false
         };
 
@@ -492,6 +492,11 @@ public class SchemaGenerator(
             root.AllOf.Add(schema);
         }
 
+        if (schema.Required?.Count > 1)
+        {
+            schema.Required = [.. new SortedSet<string>(schema.Required)];
+        }
+
         return root;
     }
 
@@ -542,7 +547,8 @@ public class SchemaGenerator(
             {
                 if (GenerateConcreteSchema(knownTypeDataContract, schemaRepository) is OpenApiSchemaReference reference)
                 {
-                    discriminator.Mapping.Add(discriminatorValue, reference.Reference.ReferenceV3);
+                    discriminator.Mapping ??= [];
+                    discriminator.Mapping.Add(discriminatorValue, reference);
                 }
             }
         }

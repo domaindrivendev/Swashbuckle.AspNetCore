@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Models.Interfaces;
 using Microsoft.OpenApi.Models.References;
@@ -77,7 +78,7 @@ public class JsonValidatorTests
         bool expectedReturnValue,
         string expectedErrorMessage)
     {
-        var openApiSchema = new OpenApiSchema { Type = JsonSchemaTypes.Number, Maximum = schemaMaximum };
+        var openApiSchema = new OpenApiSchema { Type = JsonSchemaTypes.Number, Maximum = schemaMaximum.ToString(CultureInfo.InvariantCulture) };
         var instance = JToken.Parse(instanceText);
 
         var returnValue = Subject().Validate(
@@ -102,8 +103,8 @@ public class JsonValidatorTests
         var openApiSchema = new OpenApiSchema
         {
             Type = JsonSchemaTypes.Number,
-            Maximum = schemaMaximum,
-            ExclusiveMaximum = schemaMaximum
+            Maximum = schemaMaximum.ToString(CultureInfo.InvariantCulture),
+            ExclusiveMaximum = schemaMaximum.ToString(CultureInfo.InvariantCulture),
         };
         var instance = JToken.Parse(instanceText);
 
@@ -126,7 +127,7 @@ public class JsonValidatorTests
         bool expectedReturnValue,
         string expectedErrorMessage)
     {
-        var openApiSchema = new OpenApiSchema { Type = JsonSchemaTypes.Number, Minimum = schemaMinimum };
+        var openApiSchema = new OpenApiSchema { Type = JsonSchemaTypes.Number, Minimum = schemaMinimum.ToString(CultureInfo.InvariantCulture) };
         var instance = JToken.Parse(instanceText);
 
         var returnValue = Subject().Validate(
@@ -151,8 +152,8 @@ public class JsonValidatorTests
         var openApiSchema = new OpenApiSchema
         {
             Type = JsonSchemaTypes.Number,
-            Minimum = schemaMinimum,
-            ExclusiveMinimum = schemaMinimum
+            Minimum = schemaMinimum.ToString(CultureInfo.InvariantCulture),
+            ExclusiveMinimum = schemaMinimum.ToString(CultureInfo.InvariantCulture),
         };
         var instance = JToken.Parse(instanceText);
 
@@ -418,7 +419,7 @@ public class JsonValidatorTests
         var openApiSchema = new OpenApiSchema
         {
             Type = JsonSchemaTypes.Object,
-            Required = new SortedSet<string>(schemaRequired)
+            Required = [.. schemaRequired],
         };
         var instance = JToken.Parse(instanceText);
 
@@ -539,9 +540,9 @@ public class JsonValidatorTests
         {
             AllOf =
             [
-                new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p1" } },
-                new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p2" } },
-                new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p3" } }
+                new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = [ "p1" ] },
+                new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = [ "p2" ] },
+                new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = [ "p3" ] },
             ]
         };
         var instance = JToken.Parse(instanceText);
@@ -568,9 +569,9 @@ public class JsonValidatorTests
         {
             AnyOf =
             [
-                new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p1" } },
-                new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p2" } },
-                new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p3" } }
+                new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = [ "p1" ] },
+                new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = [ "p2" ] },
+                new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = [ "p3" ] },
             ]
         };
         var instance = JToken.Parse(instanceText);
@@ -598,9 +599,9 @@ public class JsonValidatorTests
         {
             OneOf =
             [
-                new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p1" } },
-                new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p2" } },
-                new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p3" } }
+                new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = [ "p1" ] },
+                new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = [ "p2" ] },
+                new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = [ "p3" ] },
             ]
         };
         var instance = JToken.Parse(instanceText);

@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Models.Interfaces;
 using Newtonsoft.Json.Linq;
@@ -29,22 +30,30 @@ public sealed class JsonNumberValidator : IJsonValidator
             errors.Add($"Path: {instance.Path}. Number is not evenly divisible by multipleOf");
         }
 
-        if (schema.ExclusiveMaximum is { } exclusiveMaximum && (numberValue >= exclusiveMaximum))
+        if (schema.ExclusiveMaximum is { } exclusiveMaximum &&
+            decimal.TryParse(exclusiveMaximum, out var exclusiveMaximumValue) &&
+            numberValue >= exclusiveMaximumValue)
         {
             errors.Add($"Path: {instance.Path}. Number is greater than, or equal to, maximum");
         }
 
-        if (schema.Maximum is { } maximum && numberValue > maximum)
+        if (schema.Maximum is { } maximum &&
+            decimal.TryParse(maximum, out var maximumValue) &&
+            numberValue > maximumValue)
         {
             errors.Add($"Path: {instance.Path}. Number is greater than maximum");
         }
 
-        if (schema.ExclusiveMinimum is { } exclusiveMinimum && (numberValue <= exclusiveMinimum))
+        if (schema.ExclusiveMinimum is { } exclusiveMinimum &&
+            decimal.TryParse(exclusiveMinimum, out var exclusiveMinimumValue) &&
+            numberValue <= exclusiveMinimumValue)
         {
             errors.Add($"Path: {instance.Path}. Number is less than, or equal to, minimum");
         }
 
-        if (schema.Minimum is { } minimum && numberValue < minimum)
+        if (schema.Minimum is { } minimum &&
+            decimal.TryParse(minimum, out var minimumValue) &&
+            numberValue < minimumValue)
         {
             errors.Add($"Path: {instance.Path}. Number is less than minimum");
         }

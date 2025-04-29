@@ -12,7 +12,7 @@ public sealed class ResponseValidator(IEnumerable<IContentValidator> contentVali
         HttpResponseMessage response,
         OpenApiDocument openApiDocument,
         string pathTemplate,
-        OperationType operationType,
+        HttpMethod operationType,
         string expectedStatusCode)
     {
         var operationSpec = openApiDocument.GetOperationByPathAndType(pathTemplate, operationType, out _);
@@ -68,7 +68,7 @@ public sealed class ResponseValidator(IEnumerable<IContentValidator> contentVali
     }
 
     private void ValidateContent(
-        IDictionary<string, OpenApiMediaType> contentSpecs,
+        Dictionary<string, OpenApiMediaType> contentSpecs,
         OpenApiDocument openApiDocument,
         HttpContent content)
     {

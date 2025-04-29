@@ -16,7 +16,7 @@ public sealed class RequestValidator(IEnumerable<IContentValidator> contentValid
         HttpRequestMessage request,
         OpenApiDocument openApiDocument,
         string pathTemplate,
-        OperationType operationType)
+        HttpMethod operationType)
     {
         var operationSpec = openApiDocument.GetOperationByPathAndType(pathTemplate, operationType, out var pathSpec);
         IOpenApiParameter[] parameterSpecs = [];

@@ -114,7 +114,14 @@ public class AnnotationsSchemaFilter(IServiceProvider serviceProvider) : ISchema
 
         if (schemaAttribute.Required is { } required)
         {
-            concrete.Required = new SortedSet<string>(required);
+            if (required.Length < 2)
+            {
+                concrete.Required = [.. required];
+            }
+            else
+            {
+                concrete.Required = [.. new SortedSet<string>(required)];
+            }
         }
 
         if (schemaAttribute.Title is { } title)
