@@ -1,9 +1,9 @@
-﻿using System.Text.Json;
-using Microsoft.Extensions.ApiDescriptions;
+﻿using Microsoft.Extensions.ApiDescriptions;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.SwaggerGen.DependencyInjection;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -29,10 +29,10 @@ public static class SwaggerGenServiceCollectionExtensions
         services.TryAddTransient(s => s.GetRequiredService<IOptions<SwaggerGeneratorOptions>>().Value);
         services.TryAddTransient<ISchemaGenerator, SchemaGenerator>();
         services.TryAddTransient(s => s.GetRequiredService<IOptions<SchemaGeneratorOptions>>().Value);
-        services.AddSingleton<JsonSerializerOptionsProvider>();
+        services.ConfigureOptions<ConfigureSwaggerGenJsonOptions>();
         services.TryAddSingleton<ISerializerDataContractResolver>(s =>
         {
-            var serializerOptions = s.GetRequiredService<JsonSerializerOptionsProvider>().Options;
+            var serializerOptions = s.GetRequiredService<IOptions<SwaggerGenJsonOptions>>().Value.SerializerOptions;
             return new JsonSerializerDataContractResolver(serializerOptions);
         });
 
@@ -46,24 +46,12 @@ public static class SwaggerGenServiceCollectionExtensions
 
     public static IServiceCollection AddSwaggerGenMinimalApisJsonOptions(this IServiceCollection services)
     {
-        return services.Replace(
-            ServiceDescriptor.Transient<ISerializerDataContractResolver>((s) =>
-            {
-                var options = s.GetRequiredService<IOptionsSnapshot<AspNetCore.Http.Json.JsonOptions>>().Value.SerializerOptions;
-
-                return new JsonSerializerDataContractResolver(options);
-            }));
+        return services.ConfigureOptions<ConfigureMinimalApiSwaggerGenJsonOptions>();
     }
 
     public static IServiceCollection AddSwaggerGenMvcJsonOptions(this IServiceCollection services)
     {
-        return services.Replace(
-            ServiceDescriptor.Transient<ISerializerDataContractResolver>((s) =>
-            {
-                var options = s.GetRequiredService<IOptionsSnapshot<AspNetCore.Mvc.JsonOptions>>().Value.JsonSerializerOptions;
-
-                return new JsonSerializerDataContractResolver(options);
-            }));
+        return services.ConfigureOptions<ConfigureMvcSwaggerGenJsonOptions>();
     }
 
     public static void ConfigureSwaggerGen(
@@ -71,53 +59,5 @@ public static class SwaggerGenServiceCollectionExtensions
         Action<SwaggerGenOptions> setupAction)
     {
         services.Configure(setupAction);
-    }
-
-    private sealed class JsonSerializerOptionsProvider
-    {
-        private JsonSerializerOptions _options;
-        private readonly IServiceProvider _serviceProvider;
-
-        public JsonSerializerOptionsProvider(IServiceProvider serviceProvider)
-        {
-            _serviceProvider = serviceProvider;
-        }
-
-        public JsonSerializerOptions Options => _options ??= ResolveOptions();
-
-        private JsonSerializerOptions ResolveOptions()
-        {
-            JsonSerializerOptions serializerOptions;
-
-            /*
-             * There is no surefire way to do this.
-             * However, both JsonOptions are defaulted in the same way.
-             * If neither is configured it makes no difference which one is chosen.
-             * If both are configured, then we just need to make a choice.
-             * As Minimal APIs are newer if someone is configuring them
-             * it's probably more likely that is what they're using.
-             * 
-             * If either JsonOptions is null we will try to create a new instance as
-             * a last resort as this is an expensive operation.
-             */
-            serializerOptions =
-                _serviceProvider.GetService<IOptions<AspNetCore.Http.Json.JsonOptions>>()?.Value?.SerializerOptions
-                ?? JsonSerializerOptions.Default;
-
-            if (HasConfiguredMinimalApiJsonOptions())
-            {
-                serializerOptions ??= _serviceProvider.GetService<IOptions<AspNetCore.Http.Json.JsonOptions>>()?.Value?.SerializerOptions;
-            }
-
-            return serializerOptions;
-        }
-
-        private bool HasConfiguredMinimalApiJsonOptions()
-        {
-            if (_serviceProvider.GetService<IEnumerable<IConfigureOptions<AspNetCore.Http.Json.JsonOptions>>>().Any())
-                return true;
-
-            return _serviceProvider.GetService<IEnumerable<IPostConfigureOptions<AspNetCore.Http.Json.JsonOptions>>>().Any();
-        }
     }
 }
