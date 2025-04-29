@@ -420,10 +420,12 @@ public class SchemaGenerator(
                 if (_generatorOptions.UseAllOfForInheritance)
                 {
                     root = new OpenApiSchema();
+                    root.AllOf ??= [];
                     root.AllOf.Add(baseTypeSchema);
                 }
                 else
                 {
+                    schema.AllOf ??= [];
                     schema.AllOf.Add(baseTypeSchema);
                 }
 

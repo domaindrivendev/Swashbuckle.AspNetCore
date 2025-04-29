@@ -19,7 +19,17 @@ public sealed class RequestValidator(IEnumerable<IContentValidator> contentValid
         OperationType operationType)
     {
         var operationSpec = openApiDocument.GetOperationByPathAndType(pathTemplate, operationType, out var pathSpec);
-        IOpenApiParameter[] parameterSpecs = [.. pathSpec.Parameters, .. operationSpec.Parameters];
+        IOpenApiParameter[] parameterSpecs = [];
+
+        if (pathSpec.Parameters is { Count: > 0 } pathParameters)
+        {
+            parameterSpecs = [.. parameterSpecs, .. pathParameters];
+        }
+
+        if (operationSpec.Parameters is { Count: > 0 } operationParameters)
+        {
+            parameterSpecs = [.. parameterSpecs, .. operationParameters];
+        }
 
         // Convert to absolute Uri as a workaround to limitation with Uri class - i.e. most of it's methods are not supported for relative Uri's.
         var requestUri = new Uri(new Uri("http://tempuri.org"), request.RequestUri);

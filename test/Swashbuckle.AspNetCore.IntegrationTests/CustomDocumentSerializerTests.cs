@@ -8,12 +8,12 @@ using Swashbuckle.AspNetCore.Swagger;
 namespace Swashbuckle.AspNetCore.IntegrationTests;
 
 [Collection("TestSite")]
-public class CustomDocumentSerializerTests
+public class CustomDocumentSerializerTests(ITestOutputHelper outputHelper)
 {
     [Fact]
     public async Task TestSite_Writes_Custom_V3_1_Document()
     {
-        var testSite = new TestSite(typeof(CustomDocumentSerializer.Startup));
+        var testSite = new TestSite(typeof(CustomDocumentSerializer.Startup), outputHelper);
         var client = testSite.BuildClient();
 
         var swaggerResponse = await client.GetAsync($"/swagger/v1/swaggerv3_1.json", TestContext.Current.CancellationToken);
@@ -30,7 +30,7 @@ public class CustomDocumentSerializerTests
     [Fact]
     public async Task TestSite_Writes_Custom_V3_Document()
     {
-        var testSite = new TestSite(typeof(CustomDocumentSerializer.Startup));
+        var testSite = new TestSite(typeof(CustomDocumentSerializer.Startup), outputHelper);
         var client = testSite.BuildClient();
 
         var swaggerResponse = await client.GetAsync($"/swagger/v1/swagger.json", TestContext.Current.CancellationToken);
@@ -47,7 +47,7 @@ public class CustomDocumentSerializerTests
     [Fact]
     public async Task TestSite_Writes_Custom_V2_Document()
     {
-        var testSite = new TestSite(typeof(CustomDocumentSerializer.Startup));
+        var testSite = new TestSite(typeof(CustomDocumentSerializer.Startup), outputHelper);
         var client = testSite.BuildClient();
 
         var swaggerResponse = await client.GetAsync($"/swagger/v1/swaggerv2.json", TestContext.Current.CancellationToken);
@@ -64,7 +64,7 @@ public class CustomDocumentSerializerTests
     [Fact]
     public async Task DocumentProvider_Writes_Custom_V3_Document()
     {
-        var testSite = new TestSite(typeof(CustomDocumentSerializer.Startup));
+        var testSite = new TestSite(typeof(CustomDocumentSerializer.Startup), outputHelper);
         var server = testSite.BuildServer();
         var services = server.Host.Services;
 
@@ -89,7 +89,7 @@ public class CustomDocumentSerializerTests
     [Fact]
     public async Task DocumentProvider_Writes_Custom_V3_1_Document()
     {
-        var testSite = new TestSite(typeof(CustomDocumentSerializer.Startup));
+        var testSite = new TestSite(typeof(CustomDocumentSerializer.Startup), outputHelper);
         var server = testSite.BuildServer();
         var services = server.Host.Services;
 
@@ -121,9 +121,9 @@ public class CustomDocumentSerializerTests
             (options) => options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0);
     }
 
-    private static async Task DocumentProviderWritesCustomV2Document(Action<SwaggerOptions> configure)
+    private async Task DocumentProviderWritesCustomV2Document(Action<SwaggerOptions> configure)
     {
-        var testSite = new TestSite(typeof(CustomDocumentSerializer.Startup));
+        var testSite = new TestSite(typeof(CustomDocumentSerializer.Startup), outputHelper);
         var server = testSite.BuildServer();
         var services = server.Host.Services;
 

@@ -476,8 +476,15 @@ public class JsonSerializerSchemaGeneratorTests
         var referenceSchema = Subject(configureGenerator: (c) => c.SupportNonNullableReferenceTypes = true).GenerateSchema(typeof(TypeWithNullableReferenceTypes), schemaRepository);
 
         var reference = Assert.IsType<OpenApiSchemaReference>(referenceSchema);
+
+        Assert.NotNull(reference);
+        Assert.NotNull(reference.Reference);
+        Assert.NotNull(reference.Reference.Id);
+
         var schema = schemaRepository.Schemas[reference.Reference.Id];
+        Assert.NotNull(schema.Properties);
         AssertIsNullable(schema.Properties["RequiredNullableString"]);
+        Assert.NotNull(schema.Required);
         Assert.Contains("RequiredNullableString", schema.Required.ToArray());
         AssertIsNullable(schema.Properties["RequiredNonNullableString"], false);
         Assert.Contains("RequiredNonNullableString", schema.Required.ToArray());

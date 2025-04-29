@@ -56,7 +56,7 @@ public static class OpenApiEndpoints
 #if NET10_0_OR_GREATER
         .WithOpenApi(o =>
         {
-            var parameter = o.Parameters?.FirstOrDefault(p => p.Name.Equals("queryParameter", StringComparison.OrdinalIgnoreCase));
+            var parameter = o.Parameters?.FirstOrDefault(p => string.Equals(p.Name, "queryParameter", StringComparison.OrdinalIgnoreCase));
             if (parameter is not null)
             {
                 parameter.Description = $"{parameter.Name} Description";

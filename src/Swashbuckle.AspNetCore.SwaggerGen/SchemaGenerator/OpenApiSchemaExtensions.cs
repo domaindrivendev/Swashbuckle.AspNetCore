@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.OpenApi.Models;
@@ -155,12 +156,15 @@ public static class OpenApiSchemaExtensions
             return definitionSchema.ResolveType(schemaRepository);
         }
 
-        foreach (var subSchema in schema.AllOf)
+        if (schema.AllOf is { Count: > 0 } allOf)
         {
-            var type = subSchema.ResolveType(schemaRepository);
-            if (type != null)
+            foreach (var subSchema in allOf)
             {
-                return type;
+                var type = subSchema.ResolveType(schemaRepository);
+                if (type != null)
+                {
+                    return type;
+                }
             }
         }
 

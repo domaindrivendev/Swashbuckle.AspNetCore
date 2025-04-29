@@ -1,26 +1,25 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests;
 
-public class TestSite
+public class TestSite(Type startupType, ITestOutputHelper outputHelper)
 {
-    private readonly Type _startupType;
-
-    public TestSite(Type startupType)
-    {
-        _startupType = startupType;
-    }
-
     public TestServer BuildServer()
     {
-        var startupAssembly = _startupType.Assembly;
+        var startupAssembly = startupType.Assembly;
         var applicationName = startupAssembly.GetName().Name;
 
         var builder = new WebHostBuilder()
             .UseEnvironment("Development")
             .UseSolutionRelativeContentRoot(Path.Combine("test", "WebSites", applicationName))
-            .UseStartup(_startupType);
+            .UseStartup(startupType);
+
+        builder.ConfigureTestServices(
+            (services) => services.AddLogging(
+                (logging) => logging.ClearProviders().AddXUnit(outputHelper)));
 
         return new TestServer(builder);
     }
@@ -28,8 +27,6 @@ public class TestSite
     public HttpClient BuildClient()
     {
         var server = BuildServer();
-        var client = server.CreateClient();
-
-        return client;
+        return server.CreateClient();
     }
 }

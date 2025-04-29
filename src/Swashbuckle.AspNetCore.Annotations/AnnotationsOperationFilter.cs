@@ -116,9 +116,10 @@ public class AnnotationsOperationFilter : IOperationFilter
 
             operation.Responses[statusCode] = response;
 
-            if (swaggerResponseAttribute.ContentTypes is { } contentTypes)
+            if (response is OpenApiResponse concrete &&
+                swaggerResponseAttribute.ContentTypes is { } contentTypes)
             {
-                response.Content.Clear();
+                concrete.Content?.Clear();
 
                 foreach (var contentType in contentTypes)
                 {
@@ -126,7 +127,7 @@ public class AnnotationsOperationFilter : IOperationFilter
                         ? context.SchemaGenerator.GenerateSchema(swaggerResponseAttribute.Type, context.SchemaRepository)
                         : null;
 
-                    response.Content.Add(contentType, new OpenApiMediaType { Schema = schema });
+                    concrete.Content.Add(contentType, new OpenApiMediaType { Schema = schema });
                 }
             }
         }
