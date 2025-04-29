@@ -55,6 +55,7 @@ public class SwaggerGenerator(
         {
             foreach (var requirement in requirements)
             {
+                document.Security ??= [];
                 document.Security.Add(requirement(document));
             }
         }
@@ -69,7 +70,7 @@ public class SwaggerGenerator(
             filter.Apply(document, filterContext);
         }
 
-        SortSchemas(document);
+        SortDocument(document);
 
         return document;
     }
@@ -101,7 +102,7 @@ public class SwaggerGenerator(
                 filter.Apply(document, filterContext);
             }
 
-            SortSchemas(document);
+            SortDocument(document);
 
             return document;
         }
@@ -128,9 +129,38 @@ public class SwaggerGenerator(
 
     public IList<string> GetDocumentNames() => [.. _options.SwaggerDocs.Keys];
 
-    private void SortSchemas(OpenApiDocument document)
+    private void SortDocument(OpenApiDocument document)
     {
-        document.Components.Schemas = new SortedDictionary<string, IOpenApiSchema>(document.Components.Schemas, _options.SchemaComparer);
+        if (document.Components?.Schemas?.Count > 1)
+        {
+            document.Components.Schemas =
+                new SortedDictionary<string, IOpenApiSchema>(document.Components.Schemas, _options.SchemaComparer)
+                .ToDictionary((k) => k.Key, (v) => v.Value);
+        }
+
+        foreach (var schema in document.Components.Schemas.Values)
+        {
+            SortSchema(schema);
+        }
+
+        static void SortSchema(IOpenApiSchema schema)
+        {
+            if (schema is OpenApiSchema concrete)
+            {
+                if (concrete.Required is { Count: > 1 } required)
+                {
+                    concrete.Required = new SortedSet<string>(required);
+                }
+
+                if (concrete.AllOf is { Count: > 0 } allOf)
+                {
+                    foreach (var child in allOf)
+                    {
+                        SortSchema(child);
+                    }
+                }
+            }
+        }
     }
 
     private (DocumentFilterContext, OpenApiDocument) GetSwaggerDocumentWithoutPaths(string documentName, string host = null, string basePath = null)
@@ -435,29 +465,32 @@ public class SwaggerGenerator(
         }
 
         // Schemas will be generated via Swashbuckle by default.
-        foreach (var parameter in operation.Parameters)
+        if (operation.Parameters is { Count: > 0 } parameters)
         {
-            var apiParameter = apiDescription.ParameterDescriptions.SingleOrDefault(desc => desc.Name == parameter.Name && !desc.IsFromBody() && !desc.IsFromForm() && !desc.IsIllegalHeaderParameter());
-            if (apiParameter is not null)
+            foreach (var parameter in parameters)
             {
-                var (parameterAndContext, filterContext) = GenerateParameterAndContext(apiParameter, schemaRepository, document);
-
-                if (parameter is OpenApiParameter concrete)
+                var apiParameter = apiDescription.ParameterDescriptions.SingleOrDefault(desc => desc.Name == parameter.Name && !desc.IsFromBody() && !desc.IsFromForm() && !desc.IsIllegalHeaderParameter());
+                if (apiParameter is not null)
                 {
-                    concrete.Name = parameterAndContext.Name;
-                    concrete.Schema = parameterAndContext.Schema;
-                }
+                    var (parameterAndContext, filterContext) = GenerateParameterAndContext(apiParameter, schemaRepository, document);
 
-                parameter.Description ??= parameterAndContext.Description;
+                    if (parameter is OpenApiParameter concrete)
+                    {
+                        concrete.Name = parameterAndContext.Name;
+                        concrete.Schema = parameterAndContext.Schema;
+                    }
 
-                foreach (var filter in _options.ParameterAsyncFilters)
-                {
-                    await filter.ApplyAsync(parameter, filterContext, CancellationToken.None);
-                }
+                    parameter.Description ??= parameterAndContext.Description;
 
-                foreach (var filter in _options.ParameterFilters)
-                {
-                    filter.Apply(parameter, filterContext);
+                    foreach (var filter in _options.ParameterAsyncFilters)
+                    {
+                        await filter.ApplyAsync(parameter, filterContext, CancellationToken.None);
+                    }
+
+                    foreach (var filter in _options.ParameterFilters)
+                    {
+                        filter.Apply(parameter, filterContext);
+                    }
                 }
             }
         }
@@ -516,18 +549,21 @@ public class SwaggerGenerator(
             }
         }
 
-        foreach (var kvp in operation.Responses)
+        if (operation.Responses is { Count: > 0 } responses)
         {
-            var response = kvp.Value;
-            var responseModel = apiDescription.SupportedResponseTypes.SingleOrDefault(desc => desc.StatusCode.ToString() == kvp.Key);
-            if (responseModel is not null)
+            foreach (var kvp in responses)
             {
-                var responseContentTypes = response?.Content?.Values;
-                if (responseContentTypes is not null)
+                var response = kvp.Value;
+                var responseModel = apiDescription.SupportedResponseTypes.SingleOrDefault(desc => desc.StatusCode.ToString() == kvp.Key);
+                if (responseModel is not null)
                 {
-                    foreach (var content in responseContentTypes)
+                    var responseContentTypes = response?.Content?.Values;
+                    if (responseContentTypes is not null)
                     {
-                        content.Schema = GenerateSchema(responseModel.Type, schemaRepository);
+                        foreach (var content in responseContentTypes)
+                        {
+                            content.Schema = GenerateSchema(responseModel.Type, schemaRepository);
+                        }
                     }
                 }
             }

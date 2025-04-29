@@ -116,7 +116,7 @@ public class AnnotationsOperationFilter : IOperationFilter
 
             operation.Responses[statusCode] = response;
 
-            if (swaggerResponseAttribute.ContentTypes is { } contentTypes)
+            if (response is OpenApiResponse concrete &&
             {
                 response.Content.Clear();
 

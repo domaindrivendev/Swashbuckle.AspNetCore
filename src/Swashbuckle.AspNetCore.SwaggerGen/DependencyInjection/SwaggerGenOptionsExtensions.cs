@@ -126,7 +126,6 @@ public static class SwaggerGenOptionsExtensions
         swaggerGenOptions.SwaggerGeneratorOptions.DescribeAllParametersInCamelCase = true;
     }
 
-
     /// <summary>
     /// Provide specific server information to include in the generated Swagger document
     /// </summary>

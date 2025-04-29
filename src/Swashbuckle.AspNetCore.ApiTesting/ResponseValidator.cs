@@ -39,6 +39,11 @@ public sealed class ResponseValidator(IEnumerable<IContentValidator> contentVali
         IDictionary<string, IOpenApiHeader> headerSpecs,
         NameValueCollection headerValues)
     {
+        if (headerSpecs is null)
+        {
+            return;
+        }
+
         foreach (var entry in headerSpecs)
         {
             var value = headerValues[entry.Key];

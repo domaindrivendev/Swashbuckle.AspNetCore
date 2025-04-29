@@ -24,7 +24,7 @@ public sealed class JsonNumberValidator : IJsonValidator
         var errors = new List<string>();
 
         // multipleOf
-        if (schema.MultipleOf is { } multipleOf && ((numberValue % multipleOf) != 0))
+        if (schema.MultipleOf is { } multipleOf && (numberValue % multipleOf) != 0)
         {
             errors.Add($"Path: {instance.Path}. Number is not evenly divisible by multipleOf");
         }
