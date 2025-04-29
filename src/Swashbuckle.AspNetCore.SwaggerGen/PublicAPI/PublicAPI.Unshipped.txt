@@ -1,0 +1,4 @@
+Swashbuckle.AspNetCore.SwaggerGen.DependencyInjection.SwaggerGenJsonOptions
+Swashbuckle.AspNetCore.SwaggerGen.DependencyInjection.SwaggerGenJsonOptions.SerializerOptions.get -> System.Text.Json.JsonSerializerOptions
+Swashbuckle.AspNetCore.SwaggerGen.DependencyInjection.SwaggerGenJsonOptions.SerializerOptions.set -> void
+Swashbuckle.AspNetCore.SwaggerGen.DependencyInjection.SwaggerGenJsonOptions.SwaggerGenJsonOptions() -> void
