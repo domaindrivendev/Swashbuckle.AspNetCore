@@ -253,11 +253,11 @@ public static class OpenApiSchemaExtensions
     private static void ApplyRangeAttribute(OpenApiSchema schema, RangeAttribute rangeAttribute)
     {
         schema.Maximum = decimal.TryParse(rangeAttribute.Maximum.ToString(), out decimal maximum)
-            ? maximum
+            ? maximum.ToString(CultureInfo.InvariantCulture)
             : schema.Maximum;
 
         schema.Minimum = decimal.TryParse(rangeAttribute.Minimum.ToString(), out decimal minimum)
-            ? minimum
+            ? minimum.ToString()
             : schema.Minimum;
 
 #if NET
@@ -275,15 +275,15 @@ public static class OpenApiSchemaExtensions
 
     private static void ApplyRangeRouteConstraint(OpenApiSchema schema, RangeRouteConstraint rangeRouteConstraint)
     {
-        schema.Maximum = rangeRouteConstraint.Max;
-        schema.Minimum = rangeRouteConstraint.Min;
+        schema.Maximum = rangeRouteConstraint.Max.ToString(CultureInfo.InvariantCulture);
+        schema.Minimum = rangeRouteConstraint.Min.ToString(CultureInfo.InvariantCulture);
     }
 
     private static void ApplyMinRouteConstraint(OpenApiSchema schema, MinRouteConstraint minRouteConstraint)
-        => schema.Minimum = minRouteConstraint.Min;
+        => schema.Minimum = minRouteConstraint.Min.ToString(CultureInfo.InvariantCulture);
 
     private static void ApplyMaxRouteConstraint(OpenApiSchema schema, MaxRouteConstraint maxRouteConstraint)
-        => schema.Maximum = maxRouteConstraint.Max;
+        => schema.Maximum = maxRouteConstraint.Max.ToString(CultureInfo.InvariantCulture);
 
     private static void ApplyRegularExpressionAttribute(OpenApiSchema schema, RegularExpressionAttribute regularExpressionAttribute)
     {

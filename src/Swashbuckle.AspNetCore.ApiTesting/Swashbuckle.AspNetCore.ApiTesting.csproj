@@ -11,7 +11,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.OpenApi" />
-    <PackageReference Include="Microsoft.OpenApi.Readers" />
     <PackageReference Include="Newtonsoft.Json" />
   </ItemGroup>
 
@@ -28,7 +27,7 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net10.0' ">
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="10.0.0-preview.3.25172.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="10.0.0-preview.4.25227.102" />
   </ItemGroup>
 
   <ItemGroup>

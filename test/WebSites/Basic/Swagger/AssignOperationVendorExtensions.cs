@@ -8,6 +8,7 @@ public class AssignOperationVendorExtensions : IOperationFilter
 {
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
+        operation.Extensions ??= [];
         operation.Extensions.Add("x-purpose", new OpenApiAny("test"));
     }
 }

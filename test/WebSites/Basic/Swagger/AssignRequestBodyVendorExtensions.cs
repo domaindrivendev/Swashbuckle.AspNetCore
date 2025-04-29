@@ -1,4 +1,5 @@
 ﻿using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Models.Interfaces;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -8,6 +9,10 @@ public class AssignRequestBodyVendorExtensions : IRequestBodyFilter
 {
     public void Apply(IOpenApiRequestBody requestBody, RequestBodyFilterContext context)
     {
-        requestBody.Extensions.Add("x-purpose", new OpenApiAny("test"));
+        if (requestBody is OpenApiRequestBody body)
+        {
+            body.Extensions ??= [];
+            body.Extensions.Add("x-purpose", new OpenApiAny("test"));
+        }
     }
 }

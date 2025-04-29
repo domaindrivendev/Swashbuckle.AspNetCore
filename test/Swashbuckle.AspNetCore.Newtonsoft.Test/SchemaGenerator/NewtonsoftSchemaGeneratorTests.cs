@@ -389,8 +389,8 @@ public class NewtonsoftSchemaGeneratorTests
 #endif
         Assert.Null(schema.Properties["IntWithRange"].ExclusiveMinimum);
         Assert.Null(schema.Properties["IntWithRange"].ExclusiveMaximum);
-        Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);
-        Assert.Equal(10, schema.Properties["IntWithRange"].Maximum);
+        Assert.Equal("1", schema.Properties["IntWithRange"].Minimum);
+        Assert.Equal("10", schema.Properties["IntWithRange"].Maximum);
         Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["StringWithRegularExpression"].Pattern);
         Assert.Equal(5, schema.Properties["StringWithStringLength"].MinLength);
         Assert.Equal(10, schema.Properties["StringWithStringLength"].MaxLength);
@@ -449,7 +449,7 @@ public class NewtonsoftSchemaGeneratorTests
         var schema = subject.GenerateSchema(type, new SchemaRepository());
 
         Assert.Equal(JsonSchemaTypes.String, schema.Type);
-        Assert.Empty(schema.Properties);
+        Assert.Null(schema.Properties);
     }
 
     [Theory]
@@ -748,11 +748,11 @@ public class NewtonsoftSchemaGeneratorTests
             Assert.Equal(
                 expected: new Dictionary<string, string>
                 {
-                    [string.Format(expectedDiscriminatorMappingKeyFormat, "BaseType")] = "#/components/schemas/BaseType",
-                    [string.Format(expectedDiscriminatorMappingKeyFormat, "SubType1")] = "#/components/schemas/SubType1",
-                    [string.Format(expectedDiscriminatorMappingKeyFormat, "SubType2")] = "#/components/schemas/SubType2"
+                    [string.Format(expectedDiscriminatorMappingKeyFormat, "BaseType")] = "BaseType",
+                    [string.Format(expectedDiscriminatorMappingKeyFormat, "SubType1")] = "SubType1",
+                    [string.Format(expectedDiscriminatorMappingKeyFormat, "SubType2")] = "SubType2",
                 },
-                actual: schema.Discriminator.Mapping);
+                actual: schema.Discriminator.Mapping.ToDictionary((k) => k.Key, (v) => v.Value.Reference.Id));
         }
         else
         {

@@ -7,6 +7,7 @@ public class TestOperationFilter : IOperationFilter, IOperationAsyncFilter
 {
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
+        operation.Extensions ??= [];
         operation.Extensions.Add("X-foo", new OpenApiAny("bar"));
         operation.Extensions.Add("X-docName", new OpenApiAny(context.DocumentName));
     }

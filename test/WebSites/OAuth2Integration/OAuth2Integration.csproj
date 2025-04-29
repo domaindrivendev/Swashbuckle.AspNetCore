@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net10.0'">
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" VersionOverride="10.0.0-preview.3.25172.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" VersionOverride="10.0.0-preview.4.25227.102" />
     <PackageReference Include="Duende.IdentityServer" VersionOverride="7.1.1" />
   </ItemGroup>
 
