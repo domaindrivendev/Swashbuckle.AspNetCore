@@ -29,7 +29,7 @@ internal class DocumentProvider(
         }
         else
         {
-            swagger.SerializeAs(_options.OpenApiVersion, writer);
+            swagger.SerializeAs(_options.OpenApiVersion, jsonWriter);
         }
     }
 }
