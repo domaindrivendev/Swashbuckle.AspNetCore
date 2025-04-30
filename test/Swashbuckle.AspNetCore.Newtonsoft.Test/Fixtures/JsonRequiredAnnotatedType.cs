@@ -1,5 +1,6 @@
 ﻿using System.Runtime.Serialization;
 using Newtonsoft.Json;
+using Swashbuckle.AspNetCore.TestSupport;
 
 namespace Swashbuckle.AspNetCore.Newtonsoft.Test;
 
@@ -12,4 +13,10 @@ public class JsonRequiredAnnotatedType
     [DataMember(IsRequired = false)] //As the support for DataMember has been implemented later, JsonRequired should take precedence
     [JsonRequired]
     public string StringWithConflictingRequired { get; set; }
+
+    [JsonRequired]
+    public IntEnum IntEnumWithRequired { get; set; }
+
+    [JsonRequired]
+    public IntEnum? NullableIntEnumWithRequired { get; set; }
 }

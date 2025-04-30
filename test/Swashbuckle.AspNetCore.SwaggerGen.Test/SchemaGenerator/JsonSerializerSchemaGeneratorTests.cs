@@ -89,13 +89,14 @@ public class JsonSerializerSchemaGeneratorTests
     }
 
     [Theory]
-    [InlineData(typeof(IntEnum), "int32", "2", "4", "8")]
-    [InlineData(typeof(LongEnum), "int64", "2", "4", "8")]
-    [InlineData(typeof(IntEnum?), "int32", "2", "4", "8")]
-    [InlineData(typeof(LongEnum?), "int64", "2", "4", "8")]
+    [InlineData(typeof(IntEnum), "int32", false, "2", "4", "8")]
+    [InlineData(typeof(LongEnum), "int64", false, "2", "4", "8")]
+    [InlineData(typeof(IntEnum?), "int32", true, "2", "4", "8", "null")]
+    [InlineData(typeof(LongEnum?), "int64", true, "2", "4", "8", "null")]
     public void GenerateSchema_GeneratesReferencedEnumSchema_IfEnumOrNullableEnumType(
         Type type,
         string expectedFormat,
+        bool expectedNullable,
         params string[] expectedEnumAsJson)
     {
         var schemaRepository = new SchemaRepository();
@@ -106,6 +107,7 @@ public class JsonSerializerSchemaGeneratorTests
         var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
         Assert.Equal(JsonSchemaTypes.Integer, schema.Type);
         Assert.Equal(expectedFormat, schema.Format);
+        Assert.Equal(expectedNullable, schema.Nullable);
         Assert.NotNull(schema.Enum);
         Assert.Equal(expectedEnumAsJson, schema.Enum.Select(openApiAny => openApiAny.ToJson()));
     }
@@ -387,7 +389,7 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.False(schema.Properties["StringWithRequired"].Nullable);
         Assert.False(schema.Properties["StringWithRequiredAllowEmptyTrue"].Nullable);
         Assert.Null(schema.Properties["StringWithRequiredAllowEmptyTrue"].MinLength);
-        Assert.Equal(["StringWithRequired", "StringWithRequiredAllowEmptyTrue"], schema.Required);
+        Assert.Equal(["NullableIntEnumWithRequired", "StringWithRequired", "StringWithRequiredAllowEmptyTrue"], schema.Required);
         Assert.Equal("Description", schema.Properties[nameof(TypeWithValidationAttributes.StringWithDescription)].Description);
         Assert.True(schema.Properties[nameof(TypeWithValidationAttributes.StringWithReadOnly)].ReadOnly);
     }

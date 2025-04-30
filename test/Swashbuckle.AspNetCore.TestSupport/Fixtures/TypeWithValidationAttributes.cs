@@ -50,4 +50,7 @@ public class TypeWithValidationAttributes
 
     [ReadOnly(true)]
     public string StringWithReadOnly { get; set; }
+
+    [Required]
+    public IntEnum? NullableIntEnumWithRequired { get; set; }
 }

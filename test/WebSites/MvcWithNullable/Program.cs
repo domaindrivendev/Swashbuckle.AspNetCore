@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +30,14 @@ public class EnumController : ControllerBase
 {
     [HttpGet]
     public IActionResult Get(LogLevel? logLevel = LogLevel.Error) => Ok(new { logLevel });
+}
+
+[ApiController]
+[Route("api/[controller]")]
+public class RequiredEnumController : ControllerBase
+{
+    [HttpGet]
+    public IActionResult Get([Required] LogLevel? logLevel = LogLevel.Error) => Ok(new { logLevel });
 }
 
 namespace MvcWithNullable

@@ -1491,7 +1491,7 @@
             "$ref": "#/components/schemas/ProductStatus"
           },
           "status2": {
-            "$ref": "#/components/schemas/ProductStatus"
+            "$ref": "#/components/schemas/ProductStatusNullable"
           }
         },
         "additionalProperties": false,
@@ -1510,6 +1510,17 @@
         ],
         "type": "integer",
         "format": "int32"
+      },
+      "ProductStatusNullable": {
+        "enum": [
+          0,
+          1,
+          2,
+          null
+        ],
+        "type": "integer",
+        "format": "int32",
+        "nullable": true
       },
       "Promotion": {
         "type": "object",
