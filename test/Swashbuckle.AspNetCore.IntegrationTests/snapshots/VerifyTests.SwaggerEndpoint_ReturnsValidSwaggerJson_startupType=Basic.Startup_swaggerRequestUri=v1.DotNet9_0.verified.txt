@@ -1519,8 +1519,8 @@
           null
         ],
         "type": "integer",
-        "format": "int32",
-        "nullable": true
+        "nullable": true,
+        "format": "int32"
       },
       "Promotion": {
         "type": "object",

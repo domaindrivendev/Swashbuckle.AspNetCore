@@ -62,7 +62,7 @@ public class SchemaGenerator(
 
             var requiredAttribute = customAttributes.OfType<RequiredAttribute>().FirstOrDefault();
 
-            if (!IsNullable(customAttributes, requiredAttribute, dataProperty, memberInfo))
+            if (!IsNullable(requiredAttribute, dataProperty, memberInfo))
             {
                 modelType = Nullable.GetUnderlyingType(modelType) ?? modelType;
             }
@@ -91,18 +91,9 @@ public class SchemaGenerator(
             {
                 var requiredAttribute = customAttributes.OfType<RequiredAttribute>().FirstOrDefault();
 
-                var nullable = IsNullable(customAttributes, requiredAttribute, dataProperty, memberInfo);
+                var nullable = IsNullable(requiredAttribute, dataProperty, memberInfo);
 
-                // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3387
-                if (nullable)
-                {
-                    concrete.Type ??= JsonSchemaType.Null;
-                    concrete.Type |= JsonSchemaType.Null;
-                }
-                else if (concrete.Type.HasValue)
-                {
-                    concrete.Type &= ~JsonSchemaType.Null;
-                }
+                SetNullable(concrete, nullable);
 
                 concrete.ReadOnly = dataProperty.IsReadOnly;
                 concrete.WriteOnly = dataProperty.IsWriteOnly;
@@ -140,16 +131,7 @@ public class SchemaGenerator(
 
                 if (isDictionaryType && schema.AdditionalProperties is OpenApiSchema additionalProperties)
                 {
-                    // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3387
-                    if (!memberInfo.IsDictionaryValueNonNullable())
-                    {
-                        additionalProperties.Type ??= JsonSchemaType.Null;
-                        additionalProperties.Type |= JsonSchemaType.Null;
-                    }
-                    else if (additionalProperties.Type.HasValue)
-                    {
-                        additionalProperties.Type &= ~JsonSchemaType.Null;
-                    }
+                    SetNullable(additionalProperties, !memberInfo.IsDictionaryValueNonNullable());
                 }
             }
 
@@ -161,11 +143,16 @@ public class SchemaGenerator(
         return schema;
     }
 
-    private bool IsNullable(IEnumerable<object> customAttributes, RequiredAttribute requiredAttribute, DataProperty dataProperty, MemberInfo memberInfo)
+    private bool IsNullable(RequiredAttribute requiredAttribute, DataProperty dataProperty, MemberInfo memberInfo)
     {
-        return _generatorOptions.SupportNonNullableReferenceTypes
-            ? dataProperty.IsNullable && requiredAttribute == null && !memberInfo.IsNonNullableReferenceType()
-            : dataProperty.IsNullable && requiredAttribute == null;
+        var nullable = dataProperty.IsNullable && requiredAttribute == null;
+
+        if (_generatorOptions.SupportNonNullableReferenceTypes)
+        {
+            nullable &= !memberInfo.IsNonNullableReferenceType();
+        }
+
+        return nullable;
     }
 
     private IOpenApiSchema GenerateSchemaForParameter(
@@ -376,7 +363,7 @@ public class SchemaGenerator(
 
             if (dataContract.UnderlyingType != underlyingType)
             {
-                schema.Nullable = true;
+                SetNullable(schema, true);
                 enumValues = enumValues.Append(null);
             }
 
@@ -641,6 +628,20 @@ public class SchemaGenerator(
 
         var defaultAsJson = dataContract.JsonConverter(defaultValue);
         return JsonModelFactory.CreateFromJson(defaultAsJson);
+    }
+
+    private static void SetNullable(OpenApiSchema schema, bool nullable)
+    {
+        // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3387
+        if (nullable)
+        {
+            schema.Type ??= JsonSchemaType.Null;
+            schema.Type |= JsonSchemaType.Null;
+        }
+        else if (schema.Type.HasValue)
+        {
+            schema.Type &= ~JsonSchemaType.Null;
+        }
     }
 
     private static JsonSchemaType FromDataType(DataType dataType) =>

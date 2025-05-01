@@ -2,6 +2,7 @@ using System.Collections;
 using System.Dynamic;
 using System.Globalization;
 using System.Net;
+using System.Security.Cryptography.Xml;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
@@ -87,8 +88,8 @@ public class NewtonsoftSchemaGeneratorTests
     {
         { typeof(IntEnum), JsonSchemaTypes.Integer, "int32", 3 },
         { typeof(LongEnum), JsonSchemaTypes.Integer, "int64", 3 },
-        { typeof(IntEnum?), JsonSchemaTypes.Integer, "int32", 4 },
-        { typeof(LongEnum?), JsonSchemaTypes.Integer, "int64", 4 },
+        { typeof(IntEnum?), JsonSchemaTypes.Integer | JsonSchemaType.Null, "int32", 4 },
+        { typeof(LongEnum?), JsonSchemaTypes.Integer | JsonSchemaType.Null, "int64", 4 },
     };
 
     [Theory]
@@ -297,10 +298,14 @@ public class NewtonsoftSchemaGeneratorTests
 
         var referenceSchema = Subject().GenerateSchema(typeof(TypeWithNullableProperties), schemaRepository);
 
-        var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+        var reference = Assert.IsType<OpenApiSchemaReference>(referenceSchema);
+        var schema = schemaRepository.Schemas[reference.Reference.Id];
+
         const string propertyName = nameof(TypeWithNullableProperties.NullableIntEnumProperty);
-        Assert.False(schema.Properties[propertyName].Nullable);
-        Assert.Equal("IntEnumNullable", schema.Properties[propertyName].Reference.Id);
+        Assert.False(schema.Properties[propertyName].Type.HasValue);
+
+        reference = Assert.IsType<OpenApiSchemaReference>(schema.Properties[propertyName]);
+        Assert.Equal("IntEnumNullable", reference.Reference.Id);
     }
 
     [Fact]
@@ -310,8 +315,9 @@ public class NewtonsoftSchemaGeneratorTests
 
         var referenceSchema = Subject(o => o.UseInlineDefinitionsForEnums = true).GenerateSchema(typeof(TypeWithNullableProperties), schemaRepository);
 
-        var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-        Assert.True(schema.Properties[nameof(TypeWithNullableProperties.NullableIntEnumProperty)].Nullable);
+        var reference = Assert.IsType<OpenApiSchemaReference>(referenceSchema);
+        var schema = schemaRepository.Schemas[reference.Reference.Id];
+        Assert.True(schema.Properties[nameof(TypeWithNullableProperties.NullableIntEnumProperty)].Type.Value.HasFlag(JsonSchemaType.Null));
     }
 
     [Theory]
@@ -395,8 +401,10 @@ public class NewtonsoftSchemaGeneratorTests
         Assert.Equal(["NullableIntEnumWithRequired", "StringWithRequired", "StringWithRequiredAllowEmptyTrue"], schema.Required);
         Assert.Equal("Description", schema.Properties[nameof(TypeWithValidationAttributes.StringWithDescription)].Description);
         Assert.True(schema.Properties[nameof(TypeWithValidationAttributes.StringWithReadOnly)].ReadOnly);
-        Assert.False(schema.Properties[nameof(TypeWithValidationAttributes.NullableIntEnumWithRequired)].Nullable);
-        Assert.Equal(nameof(IntEnum), schema.Properties[nameof(TypeWithValidationAttributes.NullableIntEnumWithRequired)].Reference.Id);
+
+        var reference = Assert.IsType<OpenApiSchemaReference>(schema.Properties[nameof(TypeWithValidationAttributes.NullableIntEnumWithRequired)]);
+        Assert.False(reference.Type.HasValue);
+        Assert.Equal(nameof(IntEnum), reference.Reference.Id);
     }
 
     [Fact]
@@ -802,7 +810,9 @@ public class NewtonsoftSchemaGeneratorTests
 
         var referenceSchema = Assert.IsType<OpenApiSchemaReference>(Subject().GenerateSchema(typeof(JsonPropertyAnnotatedType), schemaRepository));
 
-        var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+        var reference = Assert.IsType<OpenApiSchemaReference>(referenceSchema);
+        var schema = schemaRepository.Schemas[reference.Reference.Id];
+
         Assert.Equal(
             [
                 "string-with-json-property-name",
@@ -839,10 +849,10 @@ public class NewtonsoftSchemaGeneratorTests
         Assert.True(schema.Properties["StringWithRequiredAllowNull"].Type.Value.HasFlag(JsonSchemaType.Null));
         Assert.False(schema.Properties["StringWithRequiredAlwaysButConflictingDataMember"].Type.Value.HasFlag(JsonSchemaType.Null));
         Assert.True(schema.Properties["StringWithRequiredDefaultButConflictingDataMember"].Type.Value.HasFlag(JsonSchemaType.Null));
-        Assert.False(schema.Properties["IntEnumWithRequiredDefault"].Type.Value.HasFlag(JsonSchemaType.Null));
-        Assert.False(schema.Properties["IntEnumWithRequiredAllowNull"].Type.Value.HasFlag(JsonSchemaType.Null));
-        Assert.False(schema.Properties["IntEnumWithRequiredAlways"].Type.Value.HasFlag(JsonSchemaType.Null));
-        Assert.False(schema.Properties["IntEnumWithRequiredDisallowNull"].Type.Value.HasFlag(JsonSchemaType.Null));
+        Assert.False(schema.Properties["IntEnumWithRequiredDefault"].Type.HasValue);
+        Assert.False(schema.Properties["IntEnumWithRequiredAllowNull"].Type.HasValue);
+        Assert.False(schema.Properties["IntEnumWithRequiredAlways"].Type.HasValue);
+        Assert.False(schema.Properties["IntEnumWithRequiredDisallowNull"].Type.HasValue);
     }
 
     [Fact]
@@ -852,12 +862,14 @@ public class NewtonsoftSchemaGeneratorTests
 
         var referenceSchema = Assert.IsType<OpenApiSchemaReference>(Subject().GenerateSchema(typeof(JsonRequiredAnnotatedType), schemaRepository));
 
-        var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+        var reference = Assert.IsType<OpenApiSchemaReference>(referenceSchema);
+        var schema = schemaRepository.Schemas[reference.Reference.Id];
 
         Assert.Equal(["IntEnumWithRequired", "NullableIntEnumWithRequired", "StringWithConflictingRequired", "StringWithJsonRequired"], schema.Required);
         Assert.False(schema.Properties["StringWithJsonRequired"].Type.Value.HasFlag(JsonSchemaType.Null));
-        Assert.False(schema.Properties["IntEnumWithRequired"].Type.Value.HasFlag(JsonSchemaType.Null));
-        Assert.Equal(nameof(IntEnum), schema.Properties["IntEnumWithRequired"].Reference.Id);
+        Assert.False(schema.Properties["IntEnumWithRequired"].Type.HasValue);
+        reference = Assert.IsType<OpenApiSchemaReference>(schema.Properties["IntEnumWithRequired"]);
+        Assert.Equal(nameof(IntEnum), reference.Reference.Id);
         Assert.True(schemaRepository.TryLookupByType(typeof(IntEnum), out _));
         Assert.False(schemaRepository.TryLookupByType(typeof(IntEnum?), out _));
     }

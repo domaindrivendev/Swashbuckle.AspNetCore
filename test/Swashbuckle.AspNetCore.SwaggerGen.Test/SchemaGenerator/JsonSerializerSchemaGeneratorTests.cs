@@ -88,14 +88,14 @@ public class JsonSerializerSchemaGeneratorTests
     }
 
     [Theory]
-    [InlineData(typeof(IntEnum), "int32", false, "2", "4", "8")]
-    [InlineData(typeof(LongEnum), "int64", false, "2", "4", "8")]
-    [InlineData(typeof(IntEnum?), "int32", true, "2", "4", "8", "null")]
-    [InlineData(typeof(LongEnum?), "int64", true, "2", "4", "8", "null")]
+    [InlineData(typeof(IntEnum), JsonSchemaType.Integer, "int32", "2", "4", "8")]
+    [InlineData(typeof(LongEnum), JsonSchemaType.Integer, "int64", "2", "4", "8")]
+    [InlineData(typeof(IntEnum?), JsonSchemaType.Integer | JsonSchemaType.Null, "int32", "2", "4", "8", null)]
+    [InlineData(typeof(LongEnum?), JsonSchemaType.Integer | JsonSchemaType.Null, "int64", "2", "4", "8", null)]
     public void GenerateSchema_GeneratesReferencedEnumSchema_IfEnumOrNullableEnumType(
         Type type,
+        JsonSchemaType expectedType,
         string expectedFormat,
-        bool expectedNullable,
         params string[] expectedEnumAsJson)
     {
         var schemaRepository = new SchemaRepository();
@@ -104,11 +104,10 @@ public class JsonSerializerSchemaGeneratorTests
 
         var reference = Assert.IsType<OpenApiSchemaReference>(referenceSchema);
         var schema = schemaRepository.Schemas[reference.Reference.Id];
-        Assert.Equal(JsonSchemaTypes.Integer, schema.Type);
+        Assert.Equal(expectedType, schema.Type);
         Assert.Equal(expectedFormat, schema.Format);
-        Assert.Equal(expectedNullable, schema.Nullable);
         Assert.NotNull(schema.Enum);
-        Assert.Equal(expectedEnumAsJson, schema.Enum.Select(openApiAny => openApiAny.ToJson()));
+        Assert.Equal(expectedEnumAsJson, schema.Enum.Select(openApiAny => openApiAny?.ToJson()).ToArray());
     }
 
     [Fact]
