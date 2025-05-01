@@ -60,7 +60,7 @@ public class SchemaGenerator(
 
             var requiredAttribute = customAttributes.OfType<RequiredAttribute>().FirstOrDefault();
 
-            if (!IsNullable(customAttributes, requiredAttribute, dataProperty, memberInfo))
+            if (!IsNullable(requiredAttribute, dataProperty, memberInfo))
             {
                 modelType = Nullable.GetUnderlyingType(modelType) ?? modelType;
             }
@@ -87,7 +87,7 @@ public class SchemaGenerator(
             {
                 var requiredAttribute = customAttributes.OfType<RequiredAttribute>().FirstOrDefault();
 
-                schema.Nullable = IsNullable(customAttributes, requiredAttribute, dataProperty, memberInfo);
+                schema.Nullable = IsNullable(requiredAttribute, dataProperty, memberInfo);
 
                 schema.ReadOnly = dataProperty.IsReadOnly;
                 schema.WriteOnly = dataProperty.IsWriteOnly;
@@ -137,11 +137,16 @@ public class SchemaGenerator(
         return schema;
     }
 
-    private bool IsNullable(IEnumerable<object> customAttributes, RequiredAttribute requiredAttribute, DataProperty dataProperty, MemberInfo memberInfo)
+    private bool IsNullable(RequiredAttribute requiredAttribute, DataProperty dataProperty, MemberInfo memberInfo)
     {
-        return _generatorOptions.SupportNonNullableReferenceTypes
-            ? dataProperty.IsNullable && requiredAttribute == null && !memberInfo.IsNonNullableReferenceType()
-            : dataProperty.IsNullable && requiredAttribute == null;
+        var nullable = dataProperty.IsNullable && requiredAttribute == null;
+
+        if (_generatorOptions.SupportNonNullableReferenceTypes)
+        {
+            nullable &= !memberInfo.IsNonNullableReferenceType();
+        }
+
+        return nullable;
     }
 
     private OpenApiSchema GenerateSchemaForParameter(
