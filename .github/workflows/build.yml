@@ -200,7 +200,7 @@ jobs:
       env:
         API_KEY: ${{ secrets.MYGET_TOKEN }}
         PACKAGE_VERSION: ${{ needs.build.outputs.package-version }}
-        SOURCE: "https://www.myget.org/F/domaindrivendev/api/v2"
+        SOURCE: "https://www.myget.org/F/domaindrivendev/api/v3/index.json"
       run: dotnet nuget push "*.nupkg" --api-key "${API_KEY}" --skip-duplicate --source "${SOURCE}" && echo "::notice title=myget.org::Published version ${PACKAGE_VERSION} to MyGet."
 
   publish-nuget:
