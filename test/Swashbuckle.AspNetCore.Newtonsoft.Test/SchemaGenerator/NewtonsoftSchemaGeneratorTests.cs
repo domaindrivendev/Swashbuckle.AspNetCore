@@ -87,8 +87,8 @@ public class NewtonsoftSchemaGeneratorTests
     {
         { typeof(IntEnum), JsonSchemaTypes.Integer, "int32", 3 },
         { typeof(LongEnum), JsonSchemaTypes.Integer, "int64", 3 },
-        { typeof(IntEnum?), JsonSchemaTypes.Integer, "int32", 3 },
-        { typeof(LongEnum?), JsonSchemaTypes.Integer, "int64", 3 },
+        { typeof(IntEnum?), JsonSchemaTypes.Integer, "int32", 4 },
+        { typeof(LongEnum?), JsonSchemaTypes.Integer, "int64", 4 },
     };
 
     [Theory]
@@ -290,6 +290,30 @@ public class NewtonsoftSchemaGeneratorTests
         Assert.Equal(expectedNullable, schema.Properties[propertyName].Type.Value.HasFlag(JsonSchemaType.Null));
     }
 
+    [Fact]
+    public void GenerateSchema_DoesNotSetNullableFlag_IfReferencedEnum()
+    {
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Subject().GenerateSchema(typeof(TypeWithNullableProperties), schemaRepository);
+
+        var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+        const string propertyName = nameof(TypeWithNullableProperties.NullableIntEnumProperty);
+        Assert.False(schema.Properties[propertyName].Nullable);
+        Assert.Equal("IntEnumNullable", schema.Properties[propertyName].Reference.Id);
+    }
+
+    [Fact]
+    public void GenerateSchema_SetNullableFlag_IfInlineEnum()
+    {
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Subject(o => o.UseInlineDefinitionsForEnums = true).GenerateSchema(typeof(TypeWithNullableProperties), schemaRepository);
+
+        var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+        Assert.True(schema.Properties[nameof(TypeWithNullableProperties.NullableIntEnumProperty)].Nullable);
+    }
+
     [Theory]
     [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.BoolWithDefault), "true")]
     [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.IntWithDefault), "2147483647")]
@@ -368,9 +392,11 @@ public class NewtonsoftSchemaGeneratorTests
         Assert.False(schema.Properties["StringWithRequired"].Type.Value.HasFlag(JsonSchemaType.Null));
         Assert.False(schema.Properties["StringWithRequiredAllowEmptyTrue"].Type.Value.HasFlag(JsonSchemaType.Null));
         Assert.Null(schema.Properties["StringWithRequiredAllowEmptyTrue"].MinLength);
-        Assert.Equal(["StringWithRequired", "StringWithRequiredAllowEmptyTrue"], schema.Required);
+        Assert.Equal(["NullableIntEnumWithRequired", "StringWithRequired", "StringWithRequiredAllowEmptyTrue"], schema.Required);
         Assert.Equal("Description", schema.Properties[nameof(TypeWithValidationAttributes.StringWithDescription)].Description);
         Assert.True(schema.Properties[nameof(TypeWithValidationAttributes.StringWithReadOnly)].ReadOnly);
+        Assert.False(schema.Properties[nameof(TypeWithValidationAttributes.NullableIntEnumWithRequired)].Nullable);
+        Assert.Equal(nameof(IntEnum), schema.Properties[nameof(TypeWithValidationAttributes.NullableIntEnumWithRequired)].Reference.Id);
     }
 
     [Fact]
@@ -786,18 +812,25 @@ public class NewtonsoftSchemaGeneratorTests
                 "StringWithRequiredAlways",
                 "StringWithRequiredAllowNull",
                 "StringWithRequiredAlwaysButConflictingDataMember",
-                "StringWithRequiredDefaultButConflictingDataMember"
+                "StringWithRequiredDefaultButConflictingDataMember",
+                "IntEnumWithRequiredDefault",
+                "IntEnumWithRequiredDisallowNull",
+                "IntEnumWithRequiredAlways",
+                "IntEnumWithRequiredAllowNull"
             ],
             schema.Properties.Keys
         );
         Assert.Equal(
             [
+                "IntEnumWithRequiredAllowNull",
+                "IntEnumWithRequiredAlways",
                 "StringWithRequiredAllowNull",
                 "StringWithRequiredAlways",
                 "StringWithRequiredAlwaysButConflictingDataMember"
             ],
             schema.Required
         );
+
         Assert.True(schema.Properties["string-with-json-property-name"].Type.Value.HasFlag(JsonSchemaType.Null));
         Assert.False(schema.Properties["IntWithRequiredDefault"].Type.Value.HasFlag(JsonSchemaType.Null));
         Assert.True(schema.Properties["StringWithRequiredDefault"].Type.Value.HasFlag(JsonSchemaType.Null));
@@ -806,6 +839,10 @@ public class NewtonsoftSchemaGeneratorTests
         Assert.True(schema.Properties["StringWithRequiredAllowNull"].Type.Value.HasFlag(JsonSchemaType.Null));
         Assert.False(schema.Properties["StringWithRequiredAlwaysButConflictingDataMember"].Type.Value.HasFlag(JsonSchemaType.Null));
         Assert.True(schema.Properties["StringWithRequiredDefaultButConflictingDataMember"].Type.Value.HasFlag(JsonSchemaType.Null));
+        Assert.False(schema.Properties["IntEnumWithRequiredDefault"].Type.Value.HasFlag(JsonSchemaType.Null));
+        Assert.False(schema.Properties["IntEnumWithRequiredAllowNull"].Type.Value.HasFlag(JsonSchemaType.Null));
+        Assert.False(schema.Properties["IntEnumWithRequiredAlways"].Type.Value.HasFlag(JsonSchemaType.Null));
+        Assert.False(schema.Properties["IntEnumWithRequiredDisallowNull"].Type.Value.HasFlag(JsonSchemaType.Null));
     }
 
     [Fact]
@@ -816,8 +853,13 @@ public class NewtonsoftSchemaGeneratorTests
         var referenceSchema = Assert.IsType<OpenApiSchemaReference>(Subject().GenerateSchema(typeof(JsonRequiredAnnotatedType), schemaRepository));
 
         var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-        Assert.Equal(["StringWithConflictingRequired", "StringWithJsonRequired"], schema.Required);
+
+        Assert.Equal(["IntEnumWithRequired", "NullableIntEnumWithRequired", "StringWithConflictingRequired", "StringWithJsonRequired"], schema.Required);
         Assert.False(schema.Properties["StringWithJsonRequired"].Type.Value.HasFlag(JsonSchemaType.Null));
+        Assert.False(schema.Properties["IntEnumWithRequired"].Type.Value.HasFlag(JsonSchemaType.Null));
+        Assert.Equal(nameof(IntEnum), schema.Properties["IntEnumWithRequired"].Reference.Id);
+        Assert.True(schemaRepository.TryLookupByType(typeof(IntEnum), out _));
+        Assert.False(schemaRepository.TryLookupByType(typeof(IntEnum?), out _));
     }
 
     [Fact]

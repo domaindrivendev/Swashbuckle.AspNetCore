@@ -7,4 +7,6 @@ public class TypeWithNullableProperties
     public string StringProperty { get; set; }
 
     public int? NullableIntProperty { get; set; }
+
+    public IntEnum? NullableIntEnumProperty { get; set; }
 }

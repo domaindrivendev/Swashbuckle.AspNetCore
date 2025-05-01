@@ -56,6 +56,18 @@ public class SchemaGenerator(
         MemberInfo memberInfo,
         DataProperty dataProperty = null)
     {
+        if (dataProperty != null)
+        {
+            var customAttributes = memberInfo.GetInlineAndMetadataAttributes();
+
+            var requiredAttribute = customAttributes.OfType<RequiredAttribute>().FirstOrDefault();
+
+            if (!IsNullable(customAttributes, requiredAttribute, dataProperty, memberInfo))
+            {
+                modelType = Nullable.GetUnderlyingType(modelType) ?? modelType;
+            }
+        }
+
         var dataContract = GetDataContractFor(modelType);
 
         var schema = _generatorOptions.UseOneOfForPolymorphism && IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts)
@@ -79,9 +91,7 @@ public class SchemaGenerator(
             {
                 var requiredAttribute = customAttributes.OfType<RequiredAttribute>().FirstOrDefault();
 
-                var nullable = _generatorOptions.SupportNonNullableReferenceTypes
-                    ? dataProperty.IsNullable && requiredAttribute == null && !memberInfo.IsNonNullableReferenceType()
-                    : dataProperty.IsNullable && requiredAttribute == null;
+                var nullable = IsNullable(customAttributes, requiredAttribute, dataProperty, memberInfo);
 
                 // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3387
                 if (nullable)
@@ -149,6 +159,13 @@ public class SchemaGenerator(
         }
 
         return schema;
+    }
+
+    private bool IsNullable(IEnumerable<object> customAttributes, RequiredAttribute requiredAttribute, DataProperty dataProperty, MemberInfo memberInfo)
+    {
+        return _generatorOptions.SupportNonNullableReferenceTypes
+            ? dataProperty.IsNullable && requiredAttribute == null && !memberInfo.IsNonNullableReferenceType()
+            : dataProperty.IsNullable && requiredAttribute == null;
     }
 
     private IOpenApiSchema GenerateSchemaForParameter(
@@ -285,7 +302,7 @@ public class SchemaGenerator(
             case DataType.String:
                 {
                     schemaFactory = () => CreatePrimitiveSchema(dataContract);
-                    returnAsReference = dataContract.UnderlyingType.IsEnum && !_generatorOptions.UseInlineDefinitionsForEnums;
+                    returnAsReference = (Nullable.GetUnderlyingType(dataContract.UnderlyingType) ?? dataContract.UnderlyingType).IsEnum && !_generatorOptions.UseInlineDefinitionsForEnums;
                     break;
                 }
 
@@ -351,10 +368,19 @@ public class SchemaGenerator(
         }
 #pragma warning restore CS0618 // Type or member is obsolete
 
-        if (dataContract.UnderlyingType.IsEnum)
+        var underlyingType = Nullable.GetUnderlyingType(dataContract.UnderlyingType) ?? dataContract.UnderlyingType;
+
+        if (underlyingType.IsEnum)
         {
-            schema.Enum = [.. dataContract.UnderlyingType.GetEnumValues()
-                .Cast<object>()
+            var enumValues = underlyingType.GetEnumValues().Cast<object>();
+
+            if (dataContract.UnderlyingType != underlyingType)
+            {
+                schema.Nullable = true;
+                enumValues = enumValues.Append(null);
+            }
+
+            schema.Enum = [.. enumValues
                 .Select(value => dataContract.JsonConverter(value))
                 .Distinct()
                 .Select(JsonModelFactory.CreateFromJson)];
@@ -463,9 +489,11 @@ public class SchemaGenerator(
                 continue;
             }
 
+            var memberType = dataProperty.IsNullable ? dataProperty.MemberType : (Nullable.GetUnderlyingType(dataProperty.MemberType) ?? dataProperty.MemberType);
+
             schema.Properties[dataProperty.Name] = (dataProperty.MemberInfo != null)
-                ? GenerateSchemaForMember(dataProperty.MemberType, schemaRepository, dataProperty.MemberInfo, dataProperty)
-                : GenerateSchemaForType(dataProperty.MemberType, schemaRepository);
+                ? GenerateSchemaForMember(memberType, schemaRepository, dataProperty.MemberInfo, dataProperty)
+                : GenerateSchemaForType(memberType, schemaRepository);
 
             var markNonNullableTypeAsRequired =
                 _generatorOptions.NonNullableReferenceTypesAsRequired &&
