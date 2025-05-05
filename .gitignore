@@ -1,5 +1,6 @@
-[Oo]bj/
+﻿[Oo]bj/
 [Bb]in/
+[Tt]est[Rr]esult*/
 .vs/
 .idea*
 BenchmarkDotNet.Artifacts*/

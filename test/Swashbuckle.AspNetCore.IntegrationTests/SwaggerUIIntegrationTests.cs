@@ -1,4 +1,6 @@
 ﻿using System.Net;
+using Microsoft.Extensions.FileProviders;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests;
 
@@ -21,6 +23,82 @@ public class SwaggerUIIntegrationTests
 
         Assert.Equal(HttpStatusCode.MovedPermanently, response.StatusCode);
         Assert.Equal(expectedRedirectPath, response.Headers.Location.ToString());
+    }
+
+    [Theory]
+    [InlineData("Swashbuckle.AspNetCore.SwaggerUI.node_modules")]
+    [InlineData("Swashbuckle.AspNetCore.SwaggerUI.node_modules.swagger_ui_dist")]
+    public void ResourceRead_CompressedEmbeddedFileProvider(string baseNamespace)
+    {
+        //confirm that GZipCompressedEmbeddedFileProvider is the same as EmbeddedFileProvider
+        var provider = new EmbeddedFileProvider(typeof(SwaggerUIOptions).Assembly, baseNamespace);
+        var compressedProvider = new GZipCompressedEmbeddedFileProvider(typeof(SwaggerUIOptions).Assembly, baseNamespace);
+        var checkSubpaths = new string[]
+        {
+            "/",
+            null,
+            string.Empty,
+            " ",
+            "\t",
+            "\n",
+            "/swagger_ui_dist",
+            "swagger_ui_dist",
+            "/nodir",
+            "nodir"
+        };
+
+        foreach (var subpath in checkSubpaths)
+        {
+            AssertResources(provider, compressedProvider, subpath);
+        }
+
+        var nonExistentFile = Guid.NewGuid().ToString();
+        AssertFileInfo(provider.GetFileInfo(nonExistentFile), compressedProvider.GetFileInfo(nonExistentFile));
+
+        static void AssertResources(IFileProvider expectedProvider, IFileProvider actualProvider, string subpath)
+        {
+            var expectedContents = expectedProvider.GetDirectoryContents(subpath);
+            var actualContents = actualProvider.GetDirectoryContents(subpath);
+
+            Assert.Equal(expectedContents.Exists, actualContents.Exists);
+            Assert.Equal(expectedContents.Count(), actualContents.Count());
+            var actualResourceMap = actualContents.ToDictionary(m => m.Name);
+
+            foreach (var expectedFileInfo in expectedContents)
+            {
+                Assert.True(actualResourceMap.TryGetValue(expectedFileInfo.Name, out var actualFileInfo));
+                Assert.NotNull(actualFileInfo);
+                Assert.True(actualFileInfo.Exists);
+                AssertFileInfo(expectedFileInfo, actualFileInfo);
+                AssertFileInfo(expectedProvider.GetFileInfo(expectedFileInfo.Name), actualProvider.GetFileInfo(expectedFileInfo.Name));
+            }
+        }
+
+        static void AssertFileInfo(IFileInfo expectedFileInfo, IFileInfo actualFileInfo)
+        {
+            Assert.Equal(expectedFileInfo.Exists, actualFileInfo.Exists);
+            Assert.Equal(expectedFileInfo.IsDirectory, actualFileInfo.IsDirectory);
+            Assert.Equal(expectedFileInfo.LastModified, actualFileInfo.LastModified);
+            Assert.Equal(expectedFileInfo.PhysicalPath, actualFileInfo.PhysicalPath);
+
+            if (expectedFileInfo.Exists && !expectedFileInfo.IsDirectory)
+            {
+                Assert.True(actualFileInfo.Length > 0);
+
+                using var stream = actualFileInfo.CreateReadStream();
+                Assert.NotNull(stream);
+                var buffer = new byte[256];
+                var readLength = stream.Read(buffer, 0, buffer.Length);
+                Assert.True(readLength > 0);
+                //we can check for correctness here
+            }
+            else
+            {
+                Assert.Equal(expectedFileInfo.Length, actualFileInfo.Length);
+                Assert.ThrowsAny<FileNotFoundException>(() => expectedFileInfo.CreateReadStream());
+                Assert.ThrowsAny<FileNotFoundException>(() => actualFileInfo.CreateReadStream());
+            }
+        }
     }
 
     [Theory]
