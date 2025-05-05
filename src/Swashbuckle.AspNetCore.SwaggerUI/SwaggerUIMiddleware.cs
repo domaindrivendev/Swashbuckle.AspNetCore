@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Reflection;
 using System.Security.Cryptography;
+using Microsoft.Extensions.FileProviders;
 
 #if NET
 using System.Diagnostics.CodeAnalysis;

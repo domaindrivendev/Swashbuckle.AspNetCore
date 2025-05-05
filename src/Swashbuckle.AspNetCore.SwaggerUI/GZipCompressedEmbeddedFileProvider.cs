@@ -3,11 +3,9 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.IO.Compression;
 using System.Reflection;
-
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 
-namespace Swashbuckle.AspNetCore.SwaggerUI;
+namespace Microsoft.Extensions.FileProviders;
 
 /// <summary>
 /// a <see cref="EmbeddedFileProvider"/> wrapper to provider gzip decompressed resource file info

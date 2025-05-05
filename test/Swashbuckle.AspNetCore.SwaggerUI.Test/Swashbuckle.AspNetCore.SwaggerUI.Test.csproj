@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\src\Swashbuckle.AspNetCore.SwaggerUI\GZipCompressedEmbeddedFileProvider.cs" Link="GZipCompressedEmbeddedFileProvider.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="../../src/Swashbuckle.AspNetCore.SwaggerUI/node_modules/swagger-ui-dist/**/*" Exclude="**/*/index.html;**/*/*.map;**/*/*.json;**/*/*.md;**/*/swagger-ui-es-*" Link="swagger-ui-dist/%(RecursiveDir)%(FileName)%(Extension)">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="xunit.v3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Swashbuckle.AspNetCore.SwaggerUI\Swashbuckle.AspNetCore.SwaggerUI.csproj" />
+  </ItemGroup>
+
+</Project>

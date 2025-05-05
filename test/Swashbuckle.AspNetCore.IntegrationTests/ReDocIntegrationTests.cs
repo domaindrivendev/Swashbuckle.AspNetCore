@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.Builder;
 using Swashbuckle.AspNetCore.ReDoc;
 using ReDocApp = ReDoc;
@@ -161,5 +162,23 @@ public class ReDocIntegrationTests
         Assert.True(options.ConfigObject.RequiredPropsFirst);
         Assert.True(options.ConfigObject.SortPropsAlphabetically);
         Assert.True(options.ConfigObject.UntrustedSpec);
+    }
+
+    [Fact]
+    public async Task ReDocMiddleware_Returns_ExpectedAssetContents()
+    {
+        var site = new TestSite(typeof(ReDocApp.Startup));
+        using var client = site.BuildClient();
+
+        var diskFile ="redoc/bundles/redoc.standalone.js";
+        var diskFileName = Path.GetFileName("redoc/bundles/redoc.standalone.js");
+
+        using var htmlResponse = await client.GetAsync("/Api-Docs/redoc.standalone.js", TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
+
+        using var stream = await htmlResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
+        using var diskFileStream = File.OpenRead(diskFile);
+
+        Assert.Equal(MD5.HashData(diskFileStream), MD5.HashData(stream));
     }
 }

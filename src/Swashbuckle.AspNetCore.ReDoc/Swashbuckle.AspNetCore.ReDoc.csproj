@@ -24,7 +24,7 @@
     <EmbeddedResource Include="index.css" />
     <EmbeddedResource Include="index.html" />
     <EmbeddedResource Include="index.js" />
-    <EmbeddedResource Include="node_modules/redoc/bundles/redoc.standalone.js" />
+    <CompressedEmbeddedResource Include="node_modules/redoc/bundles/redoc.standalone.js" GeneratedFileSuffix="None" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
@@ -40,6 +40,10 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="All" />
+    <PackageReference Include="ResourceCompressor">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <AdditionalFiles Include="PublicAPI\PublicAPI.Shipped.txt" />
     <AdditionalFiles Include="PublicAPI\PublicAPI.Unshipped.txt" />
   </ItemGroup>
@@ -49,6 +53,10 @@
   <ItemGroup Condition="Exists('PublicAPI\$(_TargetFrameworkIdentifier)')">
     <AdditionalFiles Include="PublicAPI\$(_TargetFrameworkIdentifier)\PublicAPI.Shipped.txt" />
     <AdditionalFiles Include="PublicAPI\$(_TargetFrameworkIdentifier)\PublicAPI.Unshipped.txt" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Include="..\Swashbuckle.AspNetCore.SwaggerUI\GZipCompressedEmbeddedFileProvider.cs" Link="GZipCompressedEmbeddedFileProvider.cs" />
   </ItemGroup>
 
   <Target Name="NpmInstall" BeforeTargets="DispatchToInnerBuilds" Condition=" '$(CI)' != '' OR !Exists('$(MSBuildThisFileDirectory)\node_modules') ">
