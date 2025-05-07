@@ -103,7 +103,7 @@ internal sealed class ReDocMiddleware
         var staticFileOptions = new StaticFileOptions
         {
             RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
-            FileProvider = new EmbeddedFileProvider(typeof(ReDocMiddleware).Assembly, EmbeddedFileNamespace),
+            FileProvider = new GZipCompressedEmbeddedFileProvider(typeof(ReDocMiddleware).Assembly, EmbeddedFileNamespace),
             OnPrepareResponse = (context) => SetCacheHeaders(context.Context.Response, options),
         };
 

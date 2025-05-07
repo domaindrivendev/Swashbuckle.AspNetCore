@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System.IO;
+using System.Net;
+using System.Security.Cryptography;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests;
 
@@ -189,5 +191,25 @@ public class SwaggerUIIntegrationTests
         Assert.Contains($"<link rel=\"stylesheet\" type=\"text/css\" href=\"{cssPath}\">", content);
         Assert.Contains($"<script src=\"{scriptBundlePath}\" charset=\"utf-8\">", content);
         Assert.Contains($"<script src=\"{scriptPresetsPath}\" charset=\"utf-8\">", content);
+    }
+
+    [Fact]
+    public async Task SwaggerUIMiddleware_Returns_ExpectedAssetContents()
+    {
+        var site = new TestSite(typeof(Basic.Startup));
+        using var client = site.BuildClient();
+
+        foreach (var diskFile in Directory.EnumerateFiles("swagger-ui-dist"))
+        {
+            var diskFileName = Path.GetFileName(diskFile);
+
+            using var htmlResponse = await client.GetAsync(diskFileName, TestContext.Current.CancellationToken);
+            Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
+
+            using var stream = await htmlResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
+            using var diskFileStream = File.OpenRead(diskFile);
+
+            Assert.Equal(MD5.HashData(diskFileStream), MD5.HashData(stream));
+        }
     }
 }
