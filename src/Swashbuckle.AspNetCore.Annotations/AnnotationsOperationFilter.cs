@@ -72,7 +72,7 @@ public class AnnotationsOperationFilter : IOperationFilter
 
         if (swaggerOperationAttribute.Tags is { } tags)
         {
-            operation.Tags = new HashSet<OpenApiTagReference>(tags.Select(tagName => new OpenApiTagReference(tagName)));
+            operation.Tags = [.. tags.Select(tagName => new OpenApiTagReference(tagName))];
         }
     }
 
@@ -120,6 +120,7 @@ public class AnnotationsOperationFilter : IOperationFilter
                 swaggerResponseAttribute.ContentTypes is { } contentTypes)
             {
                 concrete.Content?.Clear();
+                concrete.Content ??= [];
 
                 foreach (var contentType in contentTypes)
                 {

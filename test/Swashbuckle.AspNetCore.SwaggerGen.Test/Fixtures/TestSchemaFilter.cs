@@ -10,6 +10,7 @@ public class TestSchemaFilter : ISchemaFilter
     {
         if (schema is OpenApiSchema openApiSchema)
         {
+            openApiSchema.Extensions ??= [];
             openApiSchema.Extensions.Add("X-foo", new OpenApiAny("bar"));
             openApiSchema.Extensions.Add("X-docName", new OpenApiAny(context.DocumentName));
         }

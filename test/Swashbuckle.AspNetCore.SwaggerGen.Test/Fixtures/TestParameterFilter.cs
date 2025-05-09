@@ -10,6 +10,7 @@ public class TestParameterFilter : IParameterFilter, IParameterAsyncFilter
     {
         if (parameter is OpenApiParameter openApiParameter)
         {
+            openApiParameter.Extensions ??= [];
             openApiParameter.Extensions.Add("X-foo", new OpenApiAny("bar"));
             openApiParameter.Extensions.Add("X-docName", new OpenApiAny(context.DocumentName));
         }

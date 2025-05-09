@@ -149,7 +149,7 @@ public class SwaggerGenerator(
             {
                 if (concrete.Required is { Count: > 1 } required)
                 {
-                    concrete.Required = new SortedSet<string>(required);
+                    concrete.Required = [.. new SortedSet<string>(required)];
                 }
 
                 if (concrete.AllOf is { Count: > 0 } allOf)
@@ -241,7 +241,7 @@ public class SwaggerGenerator(
         OpenApiDocument document,
         IEnumerable<ApiDescription> apiDescriptions,
         SchemaRepository schemaRepository,
-        Func<OpenApiDocument, IGrouping<string, ApiDescription>, SchemaRepository, Task<Dictionary<OperationType, OpenApiOperation>>> operationsGenerator)
+        Func<OpenApiDocument, IGrouping<string, ApiDescription>, SchemaRepository, Task<Dictionary<HttpMethod, OpenApiOperation>>> operationsGenerator)
     {
         var apiDescriptionsByPath = apiDescriptions
             .OrderBy(_options.SortKeySelector)
@@ -285,7 +285,7 @@ public class SwaggerGenerator(
             GenerateOperationsAsync);
     }
 
-    private IEnumerable<(OperationType, ApiDescription)> GetOperationsGroupedByMethod(
+    private IEnumerable<(HttpMethod, ApiDescription)> GetOperationsGroupedByMethod(
         IEnumerable<ApiDescription> apiDescriptions)
     {
         return apiDescriptions
@@ -294,13 +294,13 @@ public class SwaggerGenerator(
             .Select(PrepareGenerateOperation);
     }
 
-    private Dictionary<OperationType, OpenApiOperation> GenerateOperations(
+    private Dictionary<HttpMethod, OpenApiOperation> GenerateOperations(
         OpenApiDocument document,
         IEnumerable<ApiDescription> apiDescriptions,
         SchemaRepository schemaRepository)
     {
         var apiDescriptionsByMethod = GetOperationsGroupedByMethod(apiDescriptions);
-        var operations = new Dictionary<OperationType, OpenApiOperation>();
+        var operations = new Dictionary<HttpMethod, OpenApiOperation>();
 
         foreach ((var operationType, var description) in apiDescriptionsByMethod)
         {
@@ -310,13 +310,13 @@ public class SwaggerGenerator(
         return operations;
     }
 
-    private async Task<Dictionary<OperationType, OpenApiOperation>> GenerateOperationsAsync(
+    private async Task<Dictionary<HttpMethod, OpenApiOperation>> GenerateOperationsAsync(
         OpenApiDocument document,
         IEnumerable<ApiDescription> apiDescriptions,
         SchemaRepository schemaRepository)
     {
         var apiDescriptionsByMethod = GetOperationsGroupedByMethod(apiDescriptions);
-        var operations = new Dictionary<OperationType, OpenApiOperation>();
+        var operations = new Dictionary<HttpMethod, OpenApiOperation>();
 
         foreach ((var operationType, var description) in apiDescriptionsByMethod)
         {
@@ -326,7 +326,7 @@ public class SwaggerGenerator(
         return operations;
     }
 
-    private (OperationType OperationType, ApiDescription ApiDescription) PrepareGenerateOperation(IGrouping<string, ApiDescription> group)
+    private (HttpMethod OperationType, ApiDescription ApiDescription) PrepareGenerateOperation(IGrouping<string, ApiDescription> group)
     {
         var httpMethod = group.Key ?? throw new SwaggerGeneratorException(string.Format(
             "Ambiguous HTTP method for action - {0}. " +
@@ -583,7 +583,7 @@ public class SwaggerGenerator(
 
         if (names.Length > 0)
         {
-            document.Tags ??= new HashSet<OpenApiTag>();
+            document.Tags ??= [];
             foreach (var name in names)
             {
                 document.Tags.Add(new OpenApiTag { Name = name });
@@ -1025,7 +1025,7 @@ public class SwaggerGenerator(
              {
                  Type = JsonSchemaTypes.Object,
                  Properties = properties,
-                 Required = new SortedSet<string>(requiredPropertyNames)
+                 Required = [.. new SortedSet<string>(requiredPropertyNames)],
              };
     }
 
@@ -1108,16 +1108,18 @@ public class SwaggerGenerator(
         return fromFormAttribute != null && parameterInfo?.ParameterType == typeof(IFormFile);
     }
 
-    private static readonly Dictionary<string, OperationType> OperationTypeMap = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly Dictionary<string, HttpMethod> OperationTypeMap = new(StringComparer.OrdinalIgnoreCase)
     {
-        ["GET"] = OperationType.Get,
-        ["PUT"] = OperationType.Put,
-        ["POST"] = OperationType.Post,
-        ["DELETE"] = OperationType.Delete,
-        ["OPTIONS"] = OperationType.Options,
-        ["HEAD"] = OperationType.Head,
-        ["PATCH"] = OperationType.Patch,
-        ["TRACE"] = OperationType.Trace,
+        ["GET"] = HttpMethod.Get,
+        ["PUT"] = HttpMethod.Put,
+        ["POST"] = HttpMethod.Post,
+        ["DELETE"] = HttpMethod.Delete,
+        ["OPTIONS"] = HttpMethod.Options,
+        ["HEAD"] = HttpMethod.Head,
+#if NET
+        ["PATCH"] = HttpMethod.Patch,
+#endif
+        ["TRACE"] = HttpMethod.Trace,
     };
 
     private static readonly Dictionary<BindingSource, ParameterLocation> ParameterLocationMap = new()

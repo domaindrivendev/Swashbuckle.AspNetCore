@@ -37,7 +37,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="Microsoft.OpenApi.Readers" />
+    <PackageReference Include="Microsoft.OpenApi.YamlReader" />
     <PackageReference Include="Verify.XunitV3" />
     <PackageReference Include="xunit.runner.visualstudio" />
     <PackageReference Include="xunit.v3" />
@@ -54,8 +54,8 @@
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net10.0'))">
-    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="10.0.0-preview.3.25172.1" />
-    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="10.0.0-preview.3.25172.1" />
+    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="10.0.0-preview.4.25227.102" />
+    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="10.0.0-preview.4.25227.102" />
   </ItemGroup>
 
 </Project>

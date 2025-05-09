@@ -117,26 +117,7 @@ internal class Program
                 }
                 else
                 {
-#if false
-                    // TODO Use SerializeAs() when available
-                    swagger.SerializeAs(writer, specVersion);
-#endif
-
-                    switch (specVersion)
-                    {
-                        case OpenApiSpecVersion.OpenApi2_0:
-                            swagger.SerializeAsV2(writer);
-                            break;
-
-                        case OpenApiSpecVersion.OpenApi3_1:
-                            swagger.SerializeAsV31(writer);
-                            break;
-
-                        case OpenApiSpecVersion.OpenApi3_0:
-                        default:
-                            swagger.SerializeAsV3(writer);
-                            break;
-                    }
+                    swagger.SerializeAs(specVersion, writer);
                 }
 
                 if (outputPath != null)

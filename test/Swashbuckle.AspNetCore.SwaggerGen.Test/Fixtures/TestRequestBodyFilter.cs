@@ -10,6 +10,7 @@ public class TestRequestBodyFilter : IRequestBodyFilter, IRequestBodyAsyncFilter
     {
         if (requestBody is OpenApiRequestBody body)
         {
+            body.Extensions ??= [];
             body.Extensions.Add("X-foo", new OpenApiAny("bar"));
             body.Extensions.Add("X-docName", new OpenApiAny(context.DocumentName));
         }

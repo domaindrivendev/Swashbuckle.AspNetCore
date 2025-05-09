@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net10.0;net9.0;net8.0</TargetFrameworks>
+    <!-- HACK .NET 8 and 9 aren't working with daily build of preview 4 for some reason -->
+    <TargetFrameworks>net10.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>

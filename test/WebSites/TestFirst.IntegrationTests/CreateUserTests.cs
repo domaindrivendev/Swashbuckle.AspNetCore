@@ -17,10 +17,10 @@ public class CreateUserTests : ApiTestFixture<TestFirst.Startup>
         WebApplicationFactory<Startup> webApplicationFactory)
         : base(apiTestRunner, webApplicationFactory, "v1-generated")
     {
-        Describe("/api/users", OperationType.Post, new OpenApiOperation
+        Describe("/api/users", HttpMethod.Post, new OpenApiOperation
         {
             OperationId = "CreateUser",
-            Tags = new HashSet<OpenApiTagReference>() { new OpenApiTagReference("Users") },
+            Tags = [new OpenApiTagReference("Users")],
             RequestBody = new OpenApiRequestBody
             {
                 Content = new Dictionary<string, OpenApiMediaType>
@@ -35,7 +35,7 @@ public class CreateUserTests : ApiTestFixture<TestFirst.Startup>
                                 [ "email" ] = new OpenApiSchema { Type = JsonSchemaTypes.String },
                                 [ "password" ] = new OpenApiSchema { Type = JsonSchemaTypes.String },
                             },
-                            Required = new SortedSet<string> { "email", "password" }
+                            Required = [ "email", "password" ]
                         }
                     }
                 },

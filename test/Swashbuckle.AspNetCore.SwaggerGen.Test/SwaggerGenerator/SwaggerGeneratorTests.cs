@@ -55,14 +55,14 @@ public class SwaggerGeneratorTests
         Assert.Equal("V1", document.Info.Version);
         Assert.Equal("Test API", document.Info.Title);
         Assert.Equal(["/resource"], [.. document.Paths.Keys]);
-        Assert.Equal([OperationType.Post, OperationType.Get], document.Paths["/resource"].Operations.Keys);
+        Assert.Equal([HttpMethod.Post, HttpMethod.Get], document.Paths["/resource"].Operations.Keys);
         Assert.Equal(2, document.Paths["/resource"].Operations.Count);
 
         var documentV2 = subject.GetSwagger("v2");
         Assert.Equal("V2", documentV2.Info.Version);
         Assert.Equal("Test API 2", documentV2.Info.Title);
         Assert.Equal(["/resource"], [.. documentV2.Paths.Keys]);
-        Assert.Equal([OperationType.Post], documentV2.Paths["/resource"].Operations.Keys);
+        Assert.Equal([HttpMethod.Post], documentV2.Paths["/resource"].Operations.Keys);
         Assert.Single(documentV2.Paths["/resource"].Operations);
     }
 
@@ -115,7 +115,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        Assert.Null(document.Paths["/resource"].Operations[OperationType.Post].OperationId);
+        Assert.Null(document.Paths["/resource"].Operations[HttpMethod.Post].OperationId);
     }
 
     [Fact]
@@ -131,7 +131,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        Assert.Equal("SomeRouteName", document.Paths["/resource"].Operations[OperationType.Post].OperationId);
+        Assert.Equal("SomeRouteName", document.Paths["/resource"].Operations[HttpMethod.Post].OperationId);
     }
 
     [Fact]
@@ -155,7 +155,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        Assert.Equal("SomeEndpointName", document.Paths["/resource"].Operations[OperationType.Post].OperationId);
+        Assert.Equal("SomeEndpointName", document.Paths["/resource"].Operations[HttpMethod.Post].OperationId);
     }
 
     [Fact]
@@ -192,8 +192,8 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        Assert.Equal("OperationIdSetInMetadata", document.Paths["/resource"].Operations[OperationType.Post].OperationId);
-        Assert.Equal("ParameterInMetadata", document.Paths["/resource"].Operations[OperationType.Post].Parameters[0].Name);
+        Assert.Equal("OperationIdSetInMetadata", document.Paths["/resource"].Operations[HttpMethod.Post].OperationId);
+        Assert.Equal("ParameterInMetadata", document.Paths["/resource"].Operations[HttpMethod.Post].Parameters[0].Name);
     }
 
     [Fact]
@@ -246,8 +246,8 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        Assert.Equal("OperationIdSetInMetadata", document.Paths["/resource"].Operations[OperationType.Post].OperationId);
-        var content = Assert.Single(document.Paths["/resource"].Operations[OperationType.Post].Responses["200"].Content);
+        Assert.Equal("OperationIdSetInMetadata", document.Paths["/resource"].Operations[HttpMethod.Post].OperationId);
+        var content = Assert.Single(document.Paths["/resource"].Operations[HttpMethod.Post].Responses["200"].Content);
         Assert.Equal("application/someMediaType", content.Key);
         Assert.Null(content.Value.Schema.Type);
         var reference = Assert.IsType<OpenApiSchemaReference>(content.Value.Schema);
@@ -326,7 +326,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.Equal("OperationIdSetInMetadata", operation.OperationId);
         var content = Assert.Single(operation.RequestBody.Content);
         Assert.Equal("application/someMediaType", content.Key);
@@ -394,10 +394,10 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        Assert.Equal("OperationIdSetInMetadata", document.Paths["/resource"].Operations[OperationType.Post].OperationId);
-        Assert.Equal("ParameterInMetadata", document.Paths["/resource"].Operations[OperationType.Post].Parameters[0].Name);
-        Assert.NotNull(document.Paths["/resource"].Operations[OperationType.Post].Parameters[0].Schema);
-        Assert.Equal(JsonSchemaTypes.String, document.Paths["/resource"].Operations[OperationType.Post].Parameters[0].Schema.Type);
+        Assert.Equal("OperationIdSetInMetadata", document.Paths["/resource"].Operations[HttpMethod.Post].OperationId);
+        Assert.Equal("ParameterInMetadata", document.Paths["/resource"].Operations[HttpMethod.Post].Parameters[0].Name);
+        Assert.NotNull(document.Paths["/resource"].Operations[HttpMethod.Post].Parameters[0].Schema);
+        Assert.Equal(JsonSchemaTypes.String, document.Paths["/resource"].Operations[HttpMethod.Post].Parameters[0].Schema.Type);
     }
 
     [Fact]
@@ -421,7 +421,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        Assert.Null(document.Paths["/resource"].Operations[OperationType.Post].OperationId);
+        Assert.Null(document.Paths["/resource"].Operations[HttpMethod.Post].OperationId);
     }
 
     [Fact]
@@ -437,7 +437,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        Assert.True(document.Paths["/resource"].Operations[OperationType.Post].Deprecated);
+        Assert.True(document.Paths["/resource"].Operations[HttpMethod.Post].Deprecated);
     }
 
     [Theory]
@@ -470,7 +470,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         var parameter = Assert.Single(operation.Parameters);
         Assert.Equal(expectedParameterLocation, parameter.In);
     }
@@ -520,7 +520,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.Empty(operation.Parameters);
     }
 
@@ -548,7 +548,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.Empty(operation.Parameters);
     }
 
@@ -588,7 +588,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Get];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Get];
         var parameter = Assert.Single(operation.Parameters);
         Assert.Equal("param", parameter.Name);
     }
@@ -658,7 +658,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Get];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Get];
         Assert.Null(operation.Parameters.Single(p => p.Name == illegalParameterName).Schema);
         Assert.NotNull(operation.Parameters.Single(p => p.Name == "param").Schema);
     }
@@ -687,7 +687,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.True(operation.Parameters.First().Required);
     }
 
@@ -720,7 +720,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         var parameter = Assert.Single(operation.Parameters);
         Assert.Equal(expectedRequired, parameter.Required);
     }
@@ -751,7 +751,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         var parameter = Assert.Single(operation.Parameters);
         Assert.True(parameter.Required);
     }
@@ -792,7 +792,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        Assert.Equal(isRequired, document.Paths["/resource"].Operations[OperationType.Post].RequestBody.Required);
+        Assert.Equal(isRequired, document.Paths["/resource"].Operations[HttpMethod.Post].RequestBody.Required);
     }
 
     [Fact]
@@ -819,7 +819,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         var parameter = Assert.Single(operation.Parameters);
         Assert.Equal(JsonSchemaTypes.String, parameter.Schema.Type);
     }
@@ -852,7 +852,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.NotNull(operation.RequestBody);
         Assert.Equal(["application/json"], operation.RequestBody.Content.Keys);
         var mediaType = operation.RequestBody.Content["application/json"];
@@ -892,7 +892,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.Equal(expectedRequired, operation.RequestBody.Required);
     }
 
@@ -927,7 +927,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.NotNull(operation.RequestBody);
         Assert.Equal(["multipart/form-data"], operation.RequestBody.Content.Keys);
         var mediaType = operation.RequestBody.Content["multipart/form-data"];
@@ -963,7 +963,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.Equal(["application/someMediaType"], operation.RequestBody.Content.Keys);
     }
 
@@ -1008,7 +1008,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.Equal(["200", "400", "422", "default"], operation.Responses.Keys);
         var response200 = operation.Responses["200"];
         Assert.Equal("OK", response200.Description);
@@ -1051,7 +1051,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         var content = operation.Responses["200"].Content.FirstOrDefault();
         Assert.Equal("application/zip", content.Key);
         Assert.Equal("binary", content.Value.Schema.Format);
@@ -1082,7 +1082,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.Equal(["application/someMediaType"], operation.Responses["200"].Content.Keys);
     }
 
@@ -1199,7 +1199,7 @@ public class SwaggerGeneratorTests
         var document = subject.GetSwagger("v1");
 
         Assert.Equal(["/resource"], [.. document.Paths.Keys]);
-        Assert.Equal([OperationType.Post], document.Paths["/resource"].Operations.Keys);
+        Assert.Equal([HttpMethod.Post], document.Paths["/resource"].Operations.Keys);
         Assert.Single(document.Paths["/resource"].Operations);
     }
 
@@ -1257,7 +1257,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        Assert.Equal(["resource"], [.. document.Paths["/resource"].Operations[OperationType.Post].Tags?.Select(t => t.Reference.Id)]);
+        Assert.Equal(["resource"], [.. document.Paths["/resource"].Operations[HttpMethod.Post].Tags?.Select(t => t.Reference.Id)]);
     }
 
     [Fact]
@@ -1281,7 +1281,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        Assert.Equal(["Some", "Tags", "Here"], [.. document.Paths["/resource"].Operations[OperationType.Post].Tags?.Select(t => t.Reference.Id)]);
+        Assert.Equal(["Some", "Tags", "Here"], [.. document.Paths["/resource"].Operations[HttpMethod.Post].Tags?.Select(t => t.Reference.Id)]);
     }
 
 #if NET
@@ -1306,7 +1306,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        Assert.Equal("A Test Summary", document.Paths["/resource"].Operations[OperationType.Post].Summary);
+        Assert.Equal("A Test Summary", document.Paths["/resource"].Operations[HttpMethod.Post].Summary);
     }
 
     [Fact]
@@ -1330,7 +1330,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        Assert.Equal("A Test Description", document.Paths["/resource"].Operations[OperationType.Post].Description);
+        Assert.Equal("A Test Description", document.Paths["/resource"].Operations[HttpMethod.Post].Description);
     }
 #endif
 
@@ -1359,7 +1359,7 @@ public class SwaggerGeneratorTests
         var document = subject.GetSwagger("v1");
 
         Assert.Equal(["/resource"], [.. document.Paths.Keys]);
-        Assert.Equal([OperationType.Post], document.Paths["/resource"].Operations.Keys);
+        Assert.Equal([HttpMethod.Post], document.Paths["/resource"].Operations.Keys);
         Assert.Single(document.Paths["/resource"].Operations);
     }
 
@@ -1402,7 +1402,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         var parameter = Assert.Single(operation.Parameters);
         Assert.Equal(expectedOpenApiParameterName, parameter.Name);
     }
@@ -1471,7 +1471,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         var parameter = Assert.Single(operation.Parameters);
         Assert.Equal(expectedOpenApiParameterName, parameter.Name);
     }
@@ -1524,7 +1524,7 @@ public class SwaggerGeneratorTests
     }
 
     [Theory]
-    [InlineData(false, new string[] { })]
+    [InlineData(false, null)]
     [InlineData(true, new string[] { "Bearer" })]
     public async Task GetSwagger_SupportsOption_InferSecuritySchemes(
         bool inferSecuritySchemes,
@@ -1549,11 +1549,11 @@ public class SwaggerGeneratorTests
 
         var document = await subject.GetSwaggerAsync("v1");
 
-        Assert.Equal(expectedSecuritySchemeNames, document.Components.SecuritySchemes.Keys);
+        Assert.Equal(expectedSecuritySchemeNames, document.Components.SecuritySchemes?.Keys);
     }
 
     [Theory]
-    [InlineData(false, new string[] { })]
+    [InlineData(false, null)]
     [InlineData(true, new string[] { "Bearer", "Cookies" })]
     public async Task GetSwagger_SupportsOption_SecuritySchemesSelector(
         bool inferSecuritySchemes,
@@ -1583,7 +1583,7 @@ public class SwaggerGeneratorTests
 
         var document = await subject.GetSwaggerAsync("v1");
 
-        Assert.Equal(expectedSecuritySchemeNames, document.Components.SecuritySchemes.Keys);
+        Assert.Equal(expectedSecuritySchemeNames, document.Components.SecuritySchemes?.Keys);
     }
 
     [Fact]
@@ -1617,7 +1617,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.Equal(2, operation.Parameters[0].Extensions.Count);
         Assert.Equal("bar", ((OpenApiAny)operation.Parameters[0].Extensions["X-foo"]).Node.GetValue<string>());
         Assert.Equal("v1", ((OpenApiAny)operation.Parameters[0].Extensions["X-docName"]).Node.GetValue<string>());
@@ -1654,7 +1654,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.Equal(2, operation.RequestBody.Extensions.Count);
 
         Assert.Equal("bar", ((OpenApiAny)operation.RequestBody.Extensions["X-foo"]).Node.GetValue<string>());
@@ -1685,7 +1685,7 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.Equal(2, operation.Extensions.Count);
 
         Assert.Equal("bar", ((OpenApiAny)operation.Extensions["X-foo"]).Node.GetValue<string>());
@@ -1743,7 +1743,7 @@ public class SwaggerGeneratorTests
 
         var document = await subject.GetSwaggerAsync("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.Equal(2, operation.Extensions.Count);
 
         Assert.Equal("bar", ((OpenApiAny)operation.Extensions["X-foo"]).Node.GetValue<string>());
@@ -1774,7 +1774,7 @@ public class SwaggerGeneratorTests
 
         var document = await subject.GetSwaggerAsync("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.Equal(2, operation.Extensions.Count);
 
         Assert.Equal("bar", ((OpenApiAny)operation.Extensions["X-foo"]).Node.GetValue<string>());
@@ -1866,7 +1866,7 @@ public class SwaggerGeneratorTests
 
         var document = await subject.GetSwaggerAsync("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.Equal(2, operation.RequestBody.Extensions.Count);
 
         Assert.Equal("bar", ((OpenApiAny)operation.RequestBody.Extensions["X-foo"]).Node.GetValue<string>());
@@ -1904,7 +1904,7 @@ public class SwaggerGeneratorTests
 
         var document = await subject.GetSwaggerAsync("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.Equal(2, operation.RequestBody.Extensions.Count);
 
         Assert.Equal("bar", ((OpenApiAny)operation.RequestBody.Extensions["X-foo"]).Node.GetValue<string>());
@@ -1942,7 +1942,7 @@ public class SwaggerGeneratorTests
 
         var document = await subject.GetSwaggerAsync("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.Equal(2, operation.Parameters[0].Extensions.Count);
 
         Assert.Equal("bar", ((OpenApiAny)operation.Parameters[0].Extensions["X-foo"]).Node.GetValue<string>());
@@ -1980,7 +1980,7 @@ public class SwaggerGeneratorTests
 
         var document = await subject.GetSwaggerAsync("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.Equal(2, operation.Parameters[0].Extensions.Count);
 
         Assert.Equal("bar", ((OpenApiAny)operation.Parameters[0].Extensions["X-foo"]).Node.GetValue<string>());
@@ -2084,7 +2084,7 @@ public class SwaggerGeneratorTests
         Assert.Equal("Test API", document.Info.Title);
         Assert.Equal(["/resource"], [.. document.Paths.Keys]);
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.NotNull(operation.Parameters);
         Assert.Equal(2, operation.Parameters.Count);
         Assert.Equal("param1", operation.Parameters[0].Name);
@@ -2134,7 +2134,7 @@ public class SwaggerGeneratorTests
         );
         var document = subject.GetSwagger("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.NotNull(operation.RequestBody);
         Assert.Equal(["multipart/form-data"], operation.RequestBody.Content.Keys);
         var mediaType = operation.RequestBody.Content["multipart/form-data"];
@@ -2169,7 +2169,7 @@ public class SwaggerGeneratorTests
         );
         var document = subject.GetSwagger("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.NotNull(operation.RequestBody);
         Assert.Equal(["multipart/form-data"], operation.RequestBody.Content.Keys);
         var mediaType = operation.RequestBody.Content["multipart/form-data"];
@@ -2211,7 +2211,7 @@ public class SwaggerGeneratorTests
         );
         var document = subject.GetSwagger("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.NotNull(operation.RequestBody);
         Assert.Equal(["multipart/form-data"], operation.RequestBody.Content.Keys);
         var mediaType = operation.RequestBody.Content["multipart/form-data"];
@@ -2251,7 +2251,7 @@ public class SwaggerGeneratorTests
         );
         var document = subject.GetSwagger("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.Equal("param1", operation.Parameters[0].Name);
         Assert.NotNull(operation.Parameters[0].Schema);
         var reference = Assert.IsType<OpenApiSchemaReference>(operation.Parameters[0].Schema);
@@ -2302,7 +2302,7 @@ public class SwaggerGeneratorTests
        );
         var document = subject.GetSwagger("v1");
 
-        var operation = document.Paths["/resource"].Operations[OperationType.Post];
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.NotEmpty(operation.Parameters);
         Assert.Equal(nameof(TypeWithDefaultAttributeOnEnum.EnumWithDefault), operation.Parameters[0].Name);
         Assert.Equal(document.Components.Schemas[nameof(IntEnum)].Description, operation.Parameters[0].Description);
@@ -2364,8 +2364,8 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        Assert.Equal("OperationIdSetInMetadata", document.Paths["/resource"].Operations[OperationType.Post].OperationId);
-        var content = Assert.Single(document.Paths["/resource"].Operations[OperationType.Post].RequestBody.Content);
+        Assert.Equal("OperationIdSetInMetadata", document.Paths["/resource"].Operations[HttpMethod.Post].OperationId);
+        var content = Assert.Single(document.Paths["/resource"].Operations[HttpMethod.Post].RequestBody.Content);
         Assert.Equal("application/someMediaType", content.Key);
         Assert.NotNull(content.Value.Schema);
         Assert.NotNull(content.Value.Schema.AllOf);
@@ -2423,8 +2423,8 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        Assert.Equal("OperationIdSetInMetadata", document.Paths["/resource"].Operations[OperationType.Post].OperationId);
-        var content = Assert.Single(document.Paths["/resource"].Operations[OperationType.Post].RequestBody.Content);
+        Assert.Equal("OperationIdSetInMetadata", document.Paths["/resource"].Operations[HttpMethod.Post].OperationId);
+        var content = Assert.Single(document.Paths["/resource"].Operations[HttpMethod.Post].RequestBody.Content);
         Assert.Equal("application/someMediaType", content.Key);
         Assert.NotNull(content.Value.Schema);
         Assert.Equal(JsonSchemaTypes.Object, content.Value.Schema.Type);
@@ -2485,8 +2485,8 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        Assert.Equal("OperationIdSetInMetadata", document.Paths["/resource"].Operations[OperationType.Post].OperationId);
-        var content = Assert.Single(document.Paths["/resource"].Operations[OperationType.Post].RequestBody.Content);
+        Assert.Equal("OperationIdSetInMetadata", document.Paths["/resource"].Operations[HttpMethod.Post].OperationId);
+        var content = Assert.Single(document.Paths["/resource"].Operations[HttpMethod.Post].RequestBody.Content);
         Assert.Equal("application/someMediaType", content.Key);
         Assert.NotNull(content.Value.Schema);
         Assert.Equal(JsonSchemaTypes.Object, content.Value.Schema.Type);
@@ -2549,8 +2549,8 @@ public class SwaggerGeneratorTests
 
         var document = subject.GetSwagger("v1");
 
-        Assert.Equal("OperationIdSetInMetadata", document.Paths["/resource"].Operations[OperationType.Post].OperationId);
-        var content = Assert.Single(document.Paths["/resource"].Operations[OperationType.Post].RequestBody.Content);
+        Assert.Equal("OperationIdSetInMetadata", document.Paths["/resource"].Operations[HttpMethod.Post].OperationId);
+        var content = Assert.Single(document.Paths["/resource"].Operations[HttpMethod.Post].RequestBody.Content);
         Assert.Equal("application/someMediaType", content.Key);
         Assert.NotNull(content.Value.Schema);
         Assert.Equal(JsonSchemaTypes.Object, content.Value.Schema.Type);
@@ -2598,7 +2598,7 @@ public class SwaggerGeneratorTests
         Assert.Equal("V1", document.Info.Version);
         Assert.Equal("Test API", document.Info.Title);
         Assert.Equal(["/resource"], [.. document.Paths.Keys]);
-        Assert.Equal([OperationType.Post], document.Paths["/resource"].Operations.Keys);
+        Assert.Equal([HttpMethod.Post], document.Paths["/resource"].Operations.Keys);
         Assert.Single(document.Paths["/resource"].Operations);
     }
 

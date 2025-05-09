@@ -11,6 +11,11 @@
     -->
   </PropertyGroup>
 
+  <!-- HACK Failing in 10.0-preview.4 builds -->
+  <PropertyGroup>
+    <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="NSwag.MSBuild" />

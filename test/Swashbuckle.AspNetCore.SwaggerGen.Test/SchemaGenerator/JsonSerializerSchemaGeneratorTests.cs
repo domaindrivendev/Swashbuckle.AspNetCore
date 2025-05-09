@@ -389,8 +389,8 @@ public class JsonSerializerSchemaGeneratorTests
 #endif
         Assert.Null(schema.Properties["IntWithRange"].ExclusiveMinimum);
         Assert.Null(schema.Properties["IntWithRange"].ExclusiveMaximum);
-        Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);
-        Assert.Equal(10, schema.Properties["IntWithRange"].Maximum);
+        Assert.Equal("1", schema.Properties["IntWithRange"].Minimum);
+        Assert.Equal("10", schema.Properties["IntWithRange"].Maximum);
         Assert.Equal("^[3-6]?\\d{12,15}$", schema.Properties["StringWithRegularExpression"].Pattern);
         Assert.Equal(5, schema.Properties["StringWithStringLength"].MinLength);
         Assert.Equal(10, schema.Properties["StringWithStringLength"].MaxLength);
@@ -542,7 +542,7 @@ public class JsonSerializerSchemaGeneratorTests
         var schema = subject.GenerateSchema(type, new SchemaRepository());
 
         Assert.Equal(JsonSchemaTypes.String, schema.Type);
-        Assert.Empty(schema.Properties);
+        Assert.Null(schema.Properties);
     }
 
     [Theory]

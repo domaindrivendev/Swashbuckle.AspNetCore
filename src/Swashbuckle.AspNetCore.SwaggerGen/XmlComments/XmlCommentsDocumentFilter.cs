@@ -32,7 +32,7 @@ public class XmlCommentsDocumentFilter(IReadOnlyDictionary<string, XPathNavigato
             var summaryNode = typeNode.SelectFirstChild(SummaryTag);
             if (summaryNode != null)
             {
-                swaggerDoc.Tags ??= new HashSet<OpenApiTag>();
+                swaggerDoc.Tags ??= [];
 
                 var name = nameAndType.Key;
                 var tag = swaggerDoc.Tags.FirstOrDefault((p) => p?.Name == name);
