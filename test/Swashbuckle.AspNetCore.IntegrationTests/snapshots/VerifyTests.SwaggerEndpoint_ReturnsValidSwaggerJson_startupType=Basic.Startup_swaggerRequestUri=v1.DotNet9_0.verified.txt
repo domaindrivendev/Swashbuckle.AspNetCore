@@ -1484,8 +1484,8 @@
           },
           "description": {
             "type": "string",
-            "description": "Describes the product",
-            "nullable": true
+            "nullable": true,
+            "description": "Describes the product"
           },
           "status": {
             "$ref": "#/components/schemas/ProductStatus"
@@ -1519,8 +1519,8 @@
           null
         ],
         "type": "integer",
-        "format": "int32",
-        "nullable": true
+        "nullable": true,
+        "format": "int32"
       },
       "Promotion": {
         "type": "object",
@@ -1646,8 +1646,8 @@
           },
           "status": {
             "type": "integer",
-            "format": "int32",
-            "nullable": true
+            "nullable": true,
+            "format": "int32"
           },
           "detail": {
             "type": "string",
@@ -1659,13 +1659,13 @@
           },
           "errors": {
             "type": "object",
+            "nullable": true,
             "additionalProperties": {
               "type": "array",
               "items": {
                 "type": "string"
               }
-            },
-            "nullable": true
+            }
           }
         },
         "additionalProperties": { }
@@ -1674,11 +1674,47 @@
   },
   "tags": [
     {
+      "name": "CrudActions"
+    },
+    {
+      "name": "DataAnnotations"
+    },
+    {
+      "name": "DynamicTypes"
+    },
+    {
+      "name": "Files"
+    },
+    {
+      "name": "FromFormParams"
+    },
+    {
+      "name": "FromHeaderParams"
+    },
+    {
+      "name": "FromQueryParams"
+    },
+    {
+      "name": "Issue3013"
+    },
+    {
+      "name": "JsonAnnotations"
+    },
+    {
+      "name": "PolymorphicTypes"
+    },
+    {
+      "name": "ResponseTypeAnnotations"
+    },
+    {
       "name": "SwaggerAnnotations",
       "description": "Manipulate Carts to your heart's content",
       "externalDocs": {
         "url": "http://www.tempuri.org"
       }
+    },
+    {
+      "name": "UnboundParams"
     }
   ]
 }

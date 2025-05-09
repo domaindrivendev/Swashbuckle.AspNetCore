@@ -6,8 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Models.References;
 
 #if NET
 using Microsoft.AspNetCore.Http.Metadata;
@@ -42,13 +44,19 @@ public class SwaggerGenerator(
         var (filterContext, document) = GetSwaggerDocumentWithoutPaths(documentName, host, basePath);
 
         document.Paths = await GeneratePathsAsync(document, filterContext.ApiDescriptions, filterContext.SchemaRepository);
-        document.Components.SecuritySchemes = await GetSecuritySchemesAsync();
+
+        // See https://github.com/microsoft/OpenAPI.NET/issues/2300#issuecomment-2775307399
+        foreach (var scheme in await GetSecuritySchemesAsync())
+        {
+            document.AddComponent(scheme.Key, scheme.Value);
+        }
 
         if (_options.SecurityRequirements is { Count: > 0 } requirements)
         {
             foreach (var requirement in requirements)
             {
-                document.SecurityRequirements.Add(requirement);
+                document.Security ??= [];
+                document.Security.Add(requirement(document));
             }
         }
 
@@ -62,7 +70,7 @@ public class SwaggerGenerator(
             filter.Apply(document, filterContext);
         }
 
-        SortSchemas(document);
+        SortDocument(document);
 
         return document;
     }
@@ -74,13 +82,18 @@ public class SwaggerGenerator(
             var (filterContext, document) = GetSwaggerDocumentWithoutPaths(documentName, host, basePath);
 
             document.Paths = GeneratePaths(document, filterContext.ApiDescriptions, filterContext.SchemaRepository);
-            document.Components.SecuritySchemes = GetSecuritySchemesAsync().Result;
+
+            // See https://github.com/microsoft/OpenAPI.NET/issues/2300#issuecomment-2775307399
+            foreach (var scheme in GetSecuritySchemesAsync().Result)
+            {
+                document.AddComponent(scheme.Key, scheme.Value);
+            }
 
             if (_options.SecurityRequirements is { Count: > 0 } requirements)
             {
                 foreach (var requirement in requirements)
                 {
-                    document.SecurityRequirements.Add(requirement);
+                    document.Security.Add(requirement(document));
                 }
             }
 
@@ -89,7 +102,7 @@ public class SwaggerGenerator(
                 filter.Apply(document, filterContext);
             }
 
-            SortSchemas(document);
+            SortDocument(document);
 
             return document;
         }
@@ -116,9 +129,38 @@ public class SwaggerGenerator(
 
     public IList<string> GetDocumentNames() => [.. _options.SwaggerDocs.Keys];
 
-    private void SortSchemas(OpenApiDocument document)
+    private void SortDocument(OpenApiDocument document)
     {
-        document.Components.Schemas = new SortedDictionary<string, OpenApiSchema>(document.Components.Schemas, _options.SchemaComparer);
+        if (document.Components?.Schemas?.Count > 1)
+        {
+            document.Components.Schemas =
+                new SortedDictionary<string, IOpenApiSchema>(document.Components.Schemas, _options.SchemaComparer)
+                .ToDictionary((k) => k.Key, (v) => v.Value);
+        }
+
+        foreach (var schema in document.Components.Schemas.Values)
+        {
+            SortSchema(schema);
+        }
+
+        static void SortSchema(IOpenApiSchema schema)
+        {
+            if (schema is OpenApiSchema concrete)
+            {
+                if (concrete.Required is { Count: > 1 } required)
+                {
+                    concrete.Required = new SortedSet<string>(required);
+                }
+
+                if (concrete.AllOf is { Count: > 0 } allOf)
+                {
+                    foreach (var child in allOf)
+                    {
+                        SortSchema(child);
+                    }
+                }
+            }
+        }
     }
 
     private (DocumentFilterContext, OpenApiDocument) GetSwaggerDocumentWithoutPaths(string documentName, string host = null, string basePath = null)
@@ -153,11 +195,11 @@ public class SwaggerGenerator(
         return (new DocumentFilterContext(applicableApiDescriptions, _schemaGenerator, schemaRepository), swaggerDoc);
     }
 
-    private async Task<IDictionary<string, OpenApiSecurityScheme>> GetSecuritySchemesAsync()
+    private async Task<IDictionary<string, IOpenApiSecurityScheme>> GetSecuritySchemesAsync()
     {
         if (!_options.InferSecuritySchemes)
         {
-            return new Dictionary<string, OpenApiSecurityScheme>(_options.SecuritySchemes);
+            return new Dictionary<string, IOpenApiSecurityScheme>(_options.SecuritySchemes);
         }
 
         var authenticationSchemes = (_authenticationSchemeProvider is not null)
@@ -180,7 +222,7 @@ public class SwaggerGenerator(
                     Scheme = "bearer", // "bearer" refers to the header name here
                     In = ParameterLocation.Header,
                     BearerFormat = "Json Web Token"
-                });
+                } as IOpenApiSecurityScheme);
     }
 
     private List<OpenApiServer> GenerateServers(string host, string basePath)
@@ -322,13 +364,13 @@ public class SwaggerGenerator(
         OpenApiDocument document,
         ApiDescription apiDescription,
         SchemaRepository schemaRepository,
-        Func<ApiDescription, SchemaRepository, Task<List<OpenApiParameter>>> parametersGenerator,
-        Func<ApiDescription, SchemaRepository, Task<OpenApiRequestBody>> bodyGenerator,
+        Func<ApiDescription, SchemaRepository, OpenApiDocument, Task<List<IOpenApiParameter>>> parametersGenerator,
+        Func<ApiDescription, SchemaRepository, OpenApiDocument, Task<IOpenApiRequestBody>> bodyGenerator,
         Func<OpenApiOperation, OperationFilterContext, Task> applyFilters)
     {
         OpenApiOperation operation =
 #if NET
-            await GenerateOpenApiOperationFromMetadataAsync(apiDescription, schemaRepository);
+            await GenerateOpenApiOperationFromMetadataAsync(apiDescription, schemaRepository, document);
 #else
             null;
 #endif
@@ -339,8 +381,8 @@ public class SwaggerGenerator(
             {
                 Tags = GenerateOperationTags(document, apiDescription),
                 OperationId = _options.OperationIdSelector(apiDescription),
-                Parameters = await parametersGenerator(apiDescription, schemaRepository),
-                RequestBody = await bodyGenerator(apiDescription, schemaRepository),
+                Parameters = await parametersGenerator(apiDescription, schemaRepository, document),
+                RequestBody = await bodyGenerator(apiDescription, schemaRepository, document),
                 Responses = GenerateResponses(apiDescription, schemaRepository),
                 Deprecated = apiDescription.CustomAttributes().OfType<ObsoleteAttribute>().Any(),
 #if NET
@@ -350,7 +392,7 @@ public class SwaggerGenerator(
             };
 
             apiDescription.TryGetMethodInfo(out MethodInfo methodInfo);
-            var filterContext = new OperationFilterContext(apiDescription, _schemaGenerator, schemaRepository, methodInfo);
+            var filterContext = new OperationFilterContext(apiDescription, _schemaGenerator, schemaRepository, document, methodInfo);
 
             await applyFilters(operation, filterContext);
 
@@ -370,8 +412,8 @@ public class SwaggerGenerator(
             document,
             apiDescription,
             schemaRepository,
-            (description, repository) => Task.FromResult(GenerateParameters(description, repository)),
-            (description, repository) => Task.FromResult(GenerateRequestBody(description, repository)),
+            (description, repository, document) => Task.FromResult(GenerateParameters(description, repository, document)),
+            (description, repository, document) => Task.FromResult(GenerateRequestBody(description, repository, document)),
             (operation, filterContext) =>
             {
                 foreach (var filter in _options.OperationFilters)
@@ -409,7 +451,10 @@ public class SwaggerGenerator(
     }
 
 #if NET
-    private async Task<OpenApiOperation> GenerateOpenApiOperationFromMetadataAsync(ApiDescription apiDescription, SchemaRepository schemaRepository)
+    private async Task<OpenApiOperation> GenerateOpenApiOperationFromMetadataAsync(
+        ApiDescription apiDescription,
+        SchemaRepository schemaRepository,
+        OpenApiDocument document)
     {
         var metadata = apiDescription.ActionDescriptor?.EndpointMetadata;
         var operation = metadata?.OfType<OpenApiOperation>().SingleOrDefault();
@@ -420,24 +465,32 @@ public class SwaggerGenerator(
         }
 
         // Schemas will be generated via Swashbuckle by default.
-        foreach (var parameter in operation.Parameters)
+        if (operation.Parameters is { Count: > 0 } parameters)
         {
-            var apiParameter = apiDescription.ParameterDescriptions.SingleOrDefault(desc => desc.Name == parameter.Name && !desc.IsFromBody() && !desc.IsFromForm() && !desc.IsIllegalHeaderParameter());
-            if (apiParameter is not null)
+            foreach (var parameter in parameters)
             {
-                var (parameterAndContext, filterContext) = GenerateParameterAndContext(apiParameter, schemaRepository);
-                parameter.Name = parameterAndContext.Name;
-                parameter.Schema = parameterAndContext.Schema;
-                parameter.Description ??= parameterAndContext.Description;
-
-                foreach (var filter in _options.ParameterAsyncFilters)
+                var apiParameter = apiDescription.ParameterDescriptions.SingleOrDefault(desc => desc.Name == parameter.Name && !desc.IsFromBody() && !desc.IsFromForm() && !desc.IsIllegalHeaderParameter());
+                if (apiParameter is not null)
                 {
-                    await filter.ApplyAsync(parameter, filterContext, CancellationToken.None);
-                }
+                    var (parameterAndContext, filterContext) = GenerateParameterAndContext(apiParameter, schemaRepository, document);
 
-                foreach (var filter in _options.ParameterFilters)
-                {
-                    filter.Apply(parameter, filterContext);
+                    if (parameter is OpenApiParameter concrete)
+                    {
+                        concrete.Name = parameterAndContext.Name;
+                        concrete.Schema = parameterAndContext.Schema;
+                    }
+
+                    parameter.Description ??= parameterAndContext.Description;
+
+                    foreach (var filter in _options.ParameterAsyncFilters)
+                    {
+                        await filter.ApplyAsync(parameter, filterContext, CancellationToken.None);
+                    }
+
+                    foreach (var filter in _options.ParameterFilters)
+                    {
+                        filter.Apply(parameter, filterContext);
+                    }
                 }
             }
         }
@@ -480,7 +533,8 @@ public class SwaggerGenerator(
                         bodyParameterDescription: bodyParameterDescription,
                         formParameterDescriptions: bodyParameterDescription is null ? fromFormParameters : null,
                         schemaGenerator: _schemaGenerator,
-                        schemaRepository: schemaRepository);
+                        schemaRepository: schemaRepository,
+                        document);
 
                     foreach (var filter in _options.RequestBodyAsyncFilters)
                     {
@@ -495,18 +549,21 @@ public class SwaggerGenerator(
             }
         }
 
-        foreach (var kvp in operation.Responses)
+        if (operation.Responses is { Count: > 0 } responses)
         {
-            var response = kvp.Value;
-            var responseModel = apiDescription.SupportedResponseTypes.SingleOrDefault(desc => desc.StatusCode.ToString() == kvp.Key);
-            if (responseModel is not null)
+            foreach (var kvp in responses)
             {
-                var responseContentTypes = response?.Content?.Values;
-                if (responseContentTypes is not null)
+                var response = kvp.Value;
+                var responseModel = apiDescription.SupportedResponseTypes.SingleOrDefault(desc => desc.StatusCode.ToString() == kvp.Key);
+                if (responseModel is not null)
                 {
-                    foreach (var content in responseContentTypes)
+                    var responseContentTypes = response?.Content?.Values;
+                    if (responseContentTypes is not null)
                     {
-                        content.Schema = GenerateSchema(responseModel.Type, schemaRepository);
+                        foreach (var content in responseContentTypes)
+                        {
+                            content.Schema = GenerateSchema(responseModel.Type, schemaRepository);
+                        }
                     }
                 }
             }
@@ -516,13 +573,31 @@ public class SwaggerGenerator(
     }
 #endif
 
-    private List<OpenApiTag> GenerateOperationTags(OpenApiDocument document, ApiDescription apiDescription)
-        => [.. _options.TagsSelector(apiDescription).Select(tagName => CreateTag(tagName, document))];
+    private HashSet<OpenApiTagReference> GenerateOperationTags(OpenApiDocument document, ApiDescription apiDescription)
+    {
+        // The tags must be present at the document level for the tag references
+        // to be serialized correctly at the operation level, so we need to add
+        // them to the document before adding the references to the operation.
+        // See https://github.com/microsoft/OpenAPI.NET/issues/2319.
+        string[] names = [.. _options.TagsSelector(apiDescription)];
 
-    private static async Task<List<OpenApiParameter>> GenerateParametersAsync(
+        if (names.Length > 0)
+        {
+            document.Tags ??= new HashSet<OpenApiTag>();
+            foreach (var name in names)
+            {
+                document.Tags.Add(new OpenApiTag { Name = name });
+            }
+        }
+
+        return [.. names.Select((name) => new OpenApiTagReference(name, document))];
+    }
+
+    private static async Task<List<IOpenApiParameter>> GenerateParametersAsync(
         ApiDescription apiDescription,
-        SchemaRepository schemaRespository,
-        Func<ApiParameterDescription, SchemaRepository, Task<OpenApiParameter>> parameterGenerator)
+        SchemaRepository schemaRepository,
+        OpenApiDocument document,
+        Func<ApiParameterDescription, SchemaRepository, OpenApiDocument, Task<OpenApiParameter>> parameterGenerator)
     {
         if (apiDescription.ParameterDescriptions.Any(IsFromFormAttributeUsedWithIFormFile))
         {
@@ -542,31 +617,37 @@ public class SwaggerGenerator(
                     && !apiParam.IsIllegalHeaderParameter();
             });
 
-        var parameters = new List<OpenApiParameter>();
+        var parameters = new List<IOpenApiParameter>();
 
         foreach (var parameter in applicableApiParameters)
         {
-            parameters.Add(await parameterGenerator(parameter, schemaRespository));
+            parameters.Add(await parameterGenerator(parameter, schemaRepository, document));
         }
 
         return parameters;
     }
 
-    private List<OpenApiParameter> GenerateParameters(ApiDescription apiDescription, SchemaRepository schemaRespository)
+    private List<IOpenApiParameter> GenerateParameters(
+        ApiDescription apiDescription,
+        SchemaRepository schemaRepository,
+        OpenApiDocument document)
     {
         return GenerateParametersAsync(
             apiDescription,
-            schemaRespository,
-            (parameter, schemaRespository) => Task.FromResult(GenerateParameter(parameter, schemaRespository))).Result;
+            schemaRepository,
+            document,
+            (parameter, schemaRepository, document) => Task.FromResult(GenerateParameter(parameter, schemaRepository, document))).Result;
     }
 
-    private async Task<List<OpenApiParameter>> GenerateParametersAsync(
+    private async Task<List<IOpenApiParameter>> GenerateParametersAsync(
         ApiDescription apiDescription,
-        SchemaRepository schemaRespository)
+        SchemaRepository schemaRepository,
+        OpenApiDocument document)
     {
         return await GenerateParametersAsync(
             apiDescription,
-            schemaRespository,
+            schemaRepository,
+            document,
             GenerateParameterAsync);
     }
 
@@ -607,8 +688,9 @@ public class SwaggerGenerator(
 
         var description = schema.Description;
         if (string.IsNullOrEmpty(description) &&
-            !string.IsNullOrEmpty(schema?.Reference?.Id) &&
-            schemaRepository.Schemas.TryGetValue(schema.Reference.Id, out var openApiSchema))
+            schema is OpenApiSchemaReference reference &&
+            !string.IsNullOrEmpty(reference.Reference.Id) &&
+            schemaRepository.Schemas.TryGetValue(reference.Reference.Id, out var openApiSchema))
         {
             description = openApiSchema.Description;
         }
@@ -636,7 +718,8 @@ public class SwaggerGenerator(
 
     private (OpenApiParameter, ParameterFilterContext) GenerateParameterAndContext(
         ApiParameterDescription apiParameter,
-        SchemaRepository schemaRepository)
+        SchemaRepository schemaRepository,
+        OpenApiDocument document)
     {
         var parameter = GenerateParameterWithoutFilter(apiParameter, schemaRepository);
 
@@ -644,6 +727,7 @@ public class SwaggerGenerator(
             apiParameter,
             _schemaGenerator,
             schemaRepository,
+            document,
             apiParameter.PropertyInfo(),
             apiParameter.ParameterInfo());
 
@@ -652,9 +736,10 @@ public class SwaggerGenerator(
 
     private OpenApiParameter GenerateParameter(
         ApiParameterDescription apiParameter,
-        SchemaRepository schemaRepository)
+        SchemaRepository schemaRepository,
+        OpenApiDocument document)
     {
-        var (parameter, filterContext) = GenerateParameterAndContext(apiParameter, schemaRepository);
+        var (parameter, filterContext) = GenerateParameterAndContext(apiParameter, schemaRepository, document);
 
         foreach (var filter in _options.ParameterFilters)
         {
@@ -666,9 +751,10 @@ public class SwaggerGenerator(
 
     private async Task<OpenApiParameter> GenerateParameterAsync(
         ApiParameterDescription apiParameter,
-        SchemaRepository schemaRepository)
+        SchemaRepository schemaRepository,
+        OpenApiDocument document)
     {
-        var (parameter, filterContext) = GenerateParameterAndContext(apiParameter, schemaRepository);
+        var (parameter, filterContext) = GenerateParameterAndContext(apiParameter, schemaRepository, document);
 
         foreach (var filter in _options.ParameterAsyncFilters)
         {
@@ -683,7 +769,7 @@ public class SwaggerGenerator(
         return parameter;
     }
 
-    private OpenApiSchema GenerateSchema(
+    private IOpenApiSchema GenerateSchema(
         Type type,
         SchemaRepository schemaRepository,
         PropertyInfo propertyInfo = null,
@@ -702,9 +788,10 @@ public class SwaggerGenerator(
         }
     }
 
-    private (OpenApiRequestBody RequestBody, RequestBodyFilterContext FilterContext) GenerateRequestBodyAndFilterContext(
+    private (IOpenApiRequestBody RequestBody, RequestBodyFilterContext FilterContext) GenerateRequestBodyAndFilterContext(
         ApiDescription apiDescription,
-        SchemaRepository schemaRepository)
+        SchemaRepository schemaRepository,
+        OpenApiDocument document)
     {
         OpenApiRequestBody requestBody = null;
         RequestBodyFilterContext filterContext = null;
@@ -724,7 +811,8 @@ public class SwaggerGenerator(
                 bodyParameterDescription: bodyParameter,
                 formParameterDescriptions: null,
                 schemaGenerator: _schemaGenerator,
-                schemaRepository: schemaRepository);
+                schemaRepository: schemaRepository,
+                document);
         }
         else if (formParameters.Count > 0)
         {
@@ -734,17 +822,19 @@ public class SwaggerGenerator(
                 bodyParameterDescription: null,
                 formParameterDescriptions: formParameters,
                 schemaGenerator: _schemaGenerator,
-                schemaRepository: schemaRepository);
+                schemaRepository: schemaRepository,
+                document);
         }
 
         return (requestBody, filterContext);
     }
 
-    private OpenApiRequestBody GenerateRequestBody(
+    private IOpenApiRequestBody GenerateRequestBody(
         ApiDescription apiDescription,
-        SchemaRepository schemaRepository)
+        SchemaRepository schemaRepository,
+        OpenApiDocument document)
     {
-        var (requestBody, filterContext) = GenerateRequestBodyAndFilterContext(apiDescription, schemaRepository);
+        var (requestBody, filterContext) = GenerateRequestBodyAndFilterContext(apiDescription, schemaRepository, document);
 
         if (requestBody != null)
         {
@@ -757,11 +847,12 @@ public class SwaggerGenerator(
         return requestBody;
     }
 
-    private async Task<OpenApiRequestBody> GenerateRequestBodyAsync(
+    private async Task<IOpenApiRequestBody> GenerateRequestBodyAsync(
         ApiDescription apiDescription,
-        SchemaRepository schemaRepository)
+        SchemaRepository schemaRepository,
+        OpenApiDocument document)
     {
-        var (requestBody, filterContext) = GenerateRequestBodyAndFilterContext(apiDescription, schemaRepository);
+        var (requestBody, filterContext) = GenerateRequestBodyAndFilterContext(apiDescription, schemaRepository, document);
 
         if (requestBody != null)
         {
@@ -860,13 +951,13 @@ public class SwaggerGenerator(
         };
     }
 
-    private OpenApiSchema GenerateSchemaFromFormParameters(
+    private IOpenApiSchema GenerateSchemaFromFormParameters(
         IEnumerable<ApiParameterDescription> formParameters,
         SchemaRepository schemaRepository)
     {
-        var properties = new Dictionary<string, OpenApiSchema>();
+        var properties = new Dictionary<string, IOpenApiSchema>();
         var requiredPropertyNames = new List<string>();
-        var ownSchemas = new List<OpenApiSchema>();
+        var ownSchemas = new List<IOpenApiSchema>();
 
         foreach (var formParameter in formParameters)
         {
@@ -882,7 +973,7 @@ public class SwaggerGenerator(
                         formParameter.ParameterInfo())
                     : new OpenApiSchema { Type = JsonSchemaTypes.String };
 
-                if (schema.Reference is null ||
+                if (schema is not OpenApiSchemaReference ||
                     (formParameter.ModelMetadata?.ModelType is not null && (Nullable.GetUnderlyingType(formParameter.ModelMetadata.ModelType) ?? formParameter.ModelMetadata.ModelType).IsEnum))
                 {
                     var name = _options.DescribeAllParametersInCamelCase
@@ -929,7 +1020,7 @@ public class SwaggerGenerator(
 
         return GenerateSchemaForProperties(properties, requiredPropertyNames);
 
-        static OpenApiSchema GenerateSchemaForProperties(Dictionary<string, OpenApiSchema> properties, List<string> requiredPropertyNames) =>
+        static OpenApiSchema GenerateSchemaForProperties(Dictionary<string, IOpenApiSchema> properties, List<string> requiredPropertyNames) =>
              new()
              {
                  Type = JsonSchemaTypes.Object,
@@ -1001,11 +1092,11 @@ public class SwaggerGenerator(
             .Distinct()];
     }
 
-    private OpenApiMediaType CreateResponseMediaType(Type modelType, SchemaRepository schemaRespository)
+    private OpenApiMediaType CreateResponseMediaType(Type modelType, SchemaRepository schemaRepository)
     {
         return new OpenApiMediaType
         {
-            Schema = GenerateSchema(modelType, schemaRespository)
+            Schema = GenerateSchema(modelType, schemaRepository)
         };
     }
 
@@ -1131,7 +1222,4 @@ public class SwaggerGenerator(
             .Select(s => s.Description)
             .LastOrDefault();
 #endif
-
-    private static OpenApiTag CreateTag(string name, OpenApiDocument _) =>
-        new() { Name = name };
 }

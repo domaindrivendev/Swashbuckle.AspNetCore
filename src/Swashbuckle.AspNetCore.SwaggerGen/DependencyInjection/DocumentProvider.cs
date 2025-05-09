@@ -29,10 +29,19 @@ internal class DocumentProvider(
         }
         else
         {
+#if false
+            // TODO Use SerializeAs() when available
+            swagger.SerializeAs(writer, _options.OpenApiVersion);
+#endif
+
             switch (_options.OpenApiVersion)
             {
                 case OpenApi.OpenApiSpecVersion.OpenApi2_0:
                     swagger.SerializeAsV2(jsonWriter);
+                    break;
+
+                case OpenApi.OpenApiSpecVersion.OpenApi3_1:
+                    swagger.SerializeAsV31(jsonWriter);
                     break;
 
                 default:
