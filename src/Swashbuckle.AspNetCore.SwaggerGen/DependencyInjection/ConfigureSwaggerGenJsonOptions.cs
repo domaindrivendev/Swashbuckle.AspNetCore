@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.DependencyInjection;
 
-internal class ConfigureSwaggerGenJsonOptions : IPostConfigureOptions<SwaggerGenJsonOptions>
+internal sealed class ConfigureSwaggerGenJsonOptions : IPostConfigureOptions<SwaggerGenJsonOptions>
 {
     private readonly IEnumerable<IConfigureOptions<Microsoft.AspNetCore.Http.Json.JsonOptions>> _minimalApiConfigureOptions;
     private readonly IEnumerable<IPostConfigureOptions<Microsoft.AspNetCore.Http.Json.JsonOptions>> _minimalApiPostConfigureOptions;
@@ -14,8 +14,7 @@ internal class ConfigureSwaggerGenJsonOptions : IPostConfigureOptions<SwaggerGen
         IEnumerable<IConfigureOptions<Microsoft.AspNetCore.Http.Json.JsonOptions>> minimalApiConfigureOptions,
         IEnumerable<IPostConfigureOptions<Microsoft.AspNetCore.Http.Json.JsonOptions>> minimalApiPostConfigureOptions,
         IOptions<Microsoft.AspNetCore.Http.Json.JsonOptions> minimalApiJsonOptions,
-        IOptions<Microsoft.AspNetCore.Mvc.JsonOptions> mvcJsonOptions
-    )
+        IOptions<Microsoft.AspNetCore.Mvc.JsonOptions> mvcJsonOptions)
     {
         _minimalApiConfigureOptions = minimalApiConfigureOptions;
         _minimalApiPostConfigureOptions = minimalApiPostConfigureOptions;
@@ -44,16 +43,11 @@ internal class ConfigureSwaggerGenJsonOptions : IPostConfigureOptions<SwaggerGen
 
         var serializerOptions = _mvcJsonOptions.JsonSerializerOptions ?? JsonSerializerOptions.Default;
 
-        if (HasConfiguredMinimalApiJsonOptions())
+        if (_minimalApiConfigureOptions.Any() || _minimalApiPostConfigureOptions.Any())
         {
             serializerOptions = _minimalApiJsonOptions.SerializerOptions ?? serializerOptions;
         }
 
         options.SerializerOptions = serializerOptions;
-    }
-
-    private bool HasConfiguredMinimalApiJsonOptions()
-    {
-        return _minimalApiConfigureOptions.Any() || _minimalApiPostConfigureOptions.Any();
     }
 }

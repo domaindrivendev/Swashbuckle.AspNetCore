@@ -2,9 +2,9 @@
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen.DependencyInjection;
+using Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 
@@ -78,16 +78,6 @@ public class SwaggerGenJsonOptionsTests
         var swaggerGenDummyConverter = provider.GetService<IOptions<SwaggerGenJsonOptions>>().Value.SerializerOptions.Converters.FirstOrDefault();
 
         Assert.Equal(expectedDummyConverter, swaggerGenDummyConverter);
-    }
-
-    private sealed class DummyHostEnvironment : IWebHostEnvironment
-    {
-        public string WebRootPath { get; set; }
-        public IFileProvider WebRootFileProvider { get; set; }
-        public string ApplicationName { get; set; }
-        public IFileProvider ContentRootFileProvider { get; set; }
-        public string ContentRootPath { get; set; }
-        public string EnvironmentName { get; set; }
     }
 
     private sealed class DummyConverter : JsonConverter<object>
