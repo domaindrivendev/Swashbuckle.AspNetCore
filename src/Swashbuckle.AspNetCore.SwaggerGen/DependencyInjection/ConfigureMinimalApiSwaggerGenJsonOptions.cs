@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.DependencyInjection;
 
-internal class ConfigureMinimalApiSwaggerGenJsonOptions(IOptions<JsonOptions> jsonOptions) : IConfigureOptions<SwaggerGenJsonOptions>
+internal sealed class ConfigureMinimalApiSwaggerGenJsonOptions(IOptions<JsonOptions> jsonOptions) : IConfigureOptions<SwaggerGenJsonOptions>
 {
     public void Configure(SwaggerGenJsonOptions options)
     {
