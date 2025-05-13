@@ -38,6 +38,6 @@
     <PackageVersion Include="xunit.v3.extensibility.core" Version="2.0.1" />
   </ItemGroup>
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net10.0'))">
-    <PackageVersion Update="Microsoft.AspNetCore.OpenApi" Version="10.0.0-preview.4.25227.102" />
+    <PackageVersion Update="Microsoft.AspNetCore.OpenApi" Version="10.0.0-preview.4.25258.110" />
   </ItemGroup>
 </Project>
