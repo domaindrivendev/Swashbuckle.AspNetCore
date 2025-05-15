@@ -5,11 +5,6 @@
     <DotNetSwaggerPath>$([System.IO.Path]::Combine('$(ArtifactsPath)', 'bin', 'Swashbuckle.AspNetCore.Cli', '$(Configuration.ToLower())_$(TargetFramework)'))</DotNetSwaggerPath>
   </PropertyGroup>
 
-  <!-- HACK Failing in 10.0-preview.4 builds -->
-  <PropertyGroup>
-    <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Autofac.Extensions.DependencyInjection" />
   </ItemGroup>
