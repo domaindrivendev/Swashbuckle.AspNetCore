@@ -2,20 +2,13 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System.Security.Cryptography;
 
 #if NET
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.AspNetCore.Hosting;
 #else
 using System.Text.Json.Serialization;
-using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
 #endif
 
 namespace Swashbuckle.AspNetCore.ReDoc;
@@ -26,19 +19,18 @@ internal sealed class ReDocMiddleware
 
     private static readonly string ReDocVersion = GetReDocVersion();
 
+    private readonly RequestDelegate _next;
     private readonly ReDocOptions _options;
-    private readonly StaticFileMiddleware _staticFileMiddleware;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
+
+    private readonly CompressedEmbeddedFileResponser _compressedEmbeddedFileResponser;
 
     public ReDocMiddleware(
         RequestDelegate next,
-        IWebHostEnvironment hostingEnv,
-        ILoggerFactory loggerFactory,
         ReDocOptions options)
     {
+        _next = next ?? throw new ArgumentNullException(nameof(next));
         _options = options ?? new ReDocOptions();
-
-        _staticFileMiddleware = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options);
 
         if (options.JsonSerializerOptions != null)
         {
@@ -55,6 +47,9 @@ internal sealed class ReDocMiddleware
             };
         }
 #endif
+
+        var pathPrefix = options.RoutePrefix.StartsWith("/") ? options.RoutePrefix : $"/{options.RoutePrefix}";
+        _compressedEmbeddedFileResponser = new(typeof(ReDocMiddleware).Assembly, EmbeddedFileNamespace, pathPrefix, _options.CacheLifetime);
     }
 
     public async Task Invoke(HttpContext httpContext)
@@ -91,23 +86,10 @@ internal sealed class ReDocMiddleware
             }
         }
 
-        await _staticFileMiddleware.Invoke(httpContext);
-    }
-
-    private static StaticFileMiddleware CreateStaticFileMiddleware(
-        RequestDelegate next,
-        IWebHostEnvironment hostingEnv,
-        ILoggerFactory loggerFactory,
-        ReDocOptions options)
-    {
-        var staticFileOptions = new StaticFileOptions
+        if (!await _compressedEmbeddedFileResponser.TryRespondWithFileAsync(httpContext))
         {
-            RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
-            FileProvider = new GZipCompressedEmbeddedFileProvider(typeof(ReDocMiddleware).Assembly, EmbeddedFileNamespace),
-            OnPrepareResponse = (context) => SetCacheHeaders(context.Context.Response, options),
-        };
-
-        return new StaticFileMiddleware(next, hostingEnv, Options.Create(staticFileOptions), loggerFactory);
+            await _next(httpContext);
+        }
     }
 
     private static string GetReDocVersion()

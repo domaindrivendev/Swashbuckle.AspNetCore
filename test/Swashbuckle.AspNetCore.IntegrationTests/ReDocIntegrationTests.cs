@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.IO.Compression;
+using System.Net;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Builder;
 using Swashbuckle.AspNetCore.ReDoc;
@@ -33,13 +34,13 @@ public class ReDocIntegrationTests
 
         AssertResource(htmlResponse);
         AssertResource(cssResponse);
-        AssertResource(jsResponse);
+        AssertResource(jsResponse, false);
 
-        static void AssertResource(HttpResponseMessage response)
+        static void AssertResource(HttpResponseMessage response, bool weakETag = true)
         {
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.NotNull(response.Headers.ETag);
-            Assert.True(response.Headers.ETag.IsWeak);
+            Assert.Equal(weakETag, response.Headers.ETag.IsWeak);
             Assert.NotEmpty(response.Headers.ETag.Tag);
             Assert.NotNull(response.Headers.CacheControl);
             Assert.True(response.Headers.CacheControl.Private);
@@ -170,7 +171,7 @@ public class ReDocIntegrationTests
         var site = new TestSite(typeof(ReDocApp.Startup));
         using var client = site.BuildClient();
 
-        var diskFile ="redoc/bundles/redoc.standalone.js";
+        var diskFile = "redoc/bundles/redoc.standalone.js";
         var diskFileName = Path.GetFileName("redoc/bundles/redoc.standalone.js");
 
         using var htmlResponse = await client.GetAsync("/Api-Docs/redoc.standalone.js", TestContext.Current.CancellationToken);
@@ -180,5 +181,26 @@ public class ReDocIntegrationTests
         using var diskFileStream = File.OpenRead(diskFile);
 
         Assert.Equal(MD5.HashData(diskFileStream), MD5.HashData(stream));
+    }
+
+    [Fact]
+    public async Task ReDocMiddleware_Returns_ExpectedAssetContents_GZipDirectly()
+    {
+        var site = new TestSite(typeof(ReDocApp.Startup));
+        using var client = site.BuildClient();
+
+        var diskFile = "redoc/bundles/redoc.standalone.js";
+        var diskFileName = Path.GetFileName("redoc/bundles/redoc.standalone.js");
+
+        using var requestMessage = new HttpRequestMessage(HttpMethod.Get, "/Api-Docs/redoc.standalone.js");
+        requestMessage.Headers.AcceptEncoding.Add(new("gzip"));
+        using var htmlResponse = await client.SendAsync(requestMessage, TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
+
+        using var stream = await htmlResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
+        using var gzipStream = new GZipStream(stream, CompressionMode.Decompress);
+        using var diskFileStream = File.OpenRead(diskFile);
+
+        Assert.Equal(MD5.HashData(diskFileStream), MD5.HashData(gzipStream));
     }
 }

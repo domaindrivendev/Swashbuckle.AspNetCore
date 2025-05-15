@@ -56,7 +56,8 @@
   </ItemGroup>
   
   <ItemGroup>
-    <Compile Include="..\Swashbuckle.AspNetCore.SwaggerUI\GZipCompressedEmbeddedFileProvider.cs" Link="GZipCompressedEmbeddedFileProvider.cs" />
+    <Compile Include="..\Swashbuckle.AspNetCore.SwaggerUI\CompressedEmbeddedFileResponser.cs" Link="CompressedEmbeddedFileResponser.cs" />
+    <Compile Include="..\Swashbuckle.AspNetCore.SwaggerUI\HttpContextAcceptEncodingCheckExtensions.cs" Link="HttpContextAcceptEncodingCheckExtensions.cs" />
   </ItemGroup>
 
   <Target Name="NpmInstall" BeforeTargets="DispatchToInnerBuilds" Condition=" '$(CI)' != '' OR !Exists('$(MSBuildThisFileDirectory)\node_modules') ">

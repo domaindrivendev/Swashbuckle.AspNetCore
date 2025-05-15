@@ -1,4 +1,4 @@
-﻿using System.IO;
+﻿using System.IO.Compression;
 using System.Net;
 using System.Security.Cryptography;
 
@@ -42,19 +42,19 @@ public class SwaggerUIIntegrationTests
         AssertResource(htmlResponse);
 
         using var jsResponse = await client.GetAsync(swaggerUijsPath, TestContext.Current.CancellationToken);
-        AssertResource(jsResponse);
+        AssertResource(jsResponse, false);
 
         using var indexCss = await client.GetAsync(indexCssPath, TestContext.Current.CancellationToken);
-        AssertResource(indexCss);
+        AssertResource(indexCss, false);
 
         using var cssResponse = await client.GetAsync(swaggerUiCssPath, TestContext.Current.CancellationToken);
-        AssertResource(cssResponse);
+        AssertResource(cssResponse, false);
 
-        static void AssertResource(HttpResponseMessage response)
+        static void AssertResource(HttpResponseMessage response, bool weakETag = true)
         {
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.NotNull(response.Headers.ETag);
-            Assert.True(response.Headers.ETag.IsWeak);
+            Assert.Equal(weakETag, response.Headers.ETag.IsWeak);
             Assert.NotEmpty(response.Headers.ETag.Tag);
             Assert.NotNull(response.Headers.CacheControl);
             Assert.True(response.Headers.CacheControl.Private);
@@ -210,6 +210,53 @@ public class SwaggerUIIntegrationTests
             using var diskFileStream = File.OpenRead(diskFile);
 
             Assert.Equal(MD5.HashData(diskFileStream), MD5.HashData(stream));
+        }
+    }
+
+    [Fact]
+    public async Task SwaggerUIMiddleware_Returns_ExpectedAssetContents_GZipDirectly()
+    {
+        var site = new TestSite(typeof(Basic.Startup));
+        using var client = site.BuildClient();
+
+        foreach (var diskFile in Directory.EnumerateFiles("swagger-ui-dist"))
+        {
+            var diskFileName = Path.GetFileName(diskFile);
+
+            using var requestMessage = new HttpRequestMessage(HttpMethod.Get, diskFileName);
+            requestMessage.Headers.AcceptEncoding.Add(new("gzip"));
+            using var htmlResponse = await client.SendAsync(requestMessage, TestContext.Current.CancellationToken);
+            Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
+
+            using var stream = await htmlResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
+            using var gzipStream = new GZipStream(stream, CompressionMode.Decompress);
+            using var diskFileStream = File.OpenRead(diskFile);
+
+            Assert.Equal(MD5.HashData(diskFileStream), MD5.HashData(gzipStream));
+        }
+    }
+
+    [Fact]
+    public async Task SwaggerUIMiddleware_Returns_ExpectedAssetContents_NotModified()
+    {
+        var site = new TestSite(typeof(Basic.Startup));
+        using var client = site.BuildClient();
+
+        foreach (var diskFile in Directory.EnumerateFiles("swagger-ui-dist"))
+        {
+            var diskFileName = Path.GetFileName(diskFile);
+
+            using var htmlResponse = await client.GetAsync(diskFileName, TestContext.Current.CancellationToken);
+            Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
+            Assert.NotNull(htmlResponse.Headers.ETag?.Tag);
+
+            using var requestMessage = new HttpRequestMessage(HttpMethod.Get, diskFileName);
+            requestMessage.Headers.IfNoneMatch.Add(new(htmlResponse.Headers.ETag?.Tag));
+            using var secondHtmlResponse = await client.SendAsync(requestMessage, TestContext.Current.CancellationToken);
+            Assert.Equal(HttpStatusCode.NotModified, secondHtmlResponse.StatusCode);
+
+            using var stream = await secondHtmlResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
+            Assert.Equal(0, stream.Length);
         }
     }
 }
