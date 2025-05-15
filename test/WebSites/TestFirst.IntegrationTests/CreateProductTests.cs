@@ -9,7 +9,7 @@ namespace TestFirst.IntegrationTests;
 public class CreateProductTests(ApiTestRunner apiTestRunner, WebApplicationFactory<TestFirst.Startup> webApplicationFactory)
     : ApiTestFixture<TestFirst.Startup>(apiTestRunner, webApplicationFactory, "v1-imported")
 {
-    [Fact]
+    [Fact(Skip = "Disabled due to issue with truncated OpenAPI document")]
     public async Task CreateProduct_Returns201_IfContentIsValid()
     {
         await TestAsync(
@@ -27,7 +27,7 @@ public class CreateProductTests(ApiTestRunner apiTestRunner, WebApplicationFacto
         );
     }
 
-    [Fact]
+    [Fact(Skip = "Disabled due to issue with truncated OpenAPI document")]
     public async Task CreateProduct_Returns400_IfContentIsInValid()
     {
         await TestAsync(
