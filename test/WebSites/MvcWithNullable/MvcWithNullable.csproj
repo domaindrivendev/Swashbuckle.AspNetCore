@@ -17,13 +17,4 @@
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" VersionOverride="10.0.0-preview.4.25258.110" />
   </ItemGroup>
 
-  <!--
-    HACK Workaround for issues with OpenAPI XML source generator in .NET 10 preview 2
-  -->
-  <Target Name="DisableCompileTimeOpenApiXmlGenerator" BeforeTargets="CoreCompile">
-    <ItemGroup>
-      <Analyzer Remove="$(PkgMicrosoft_AspNetCore_OpenApi)\analyzers\dotnet\cs\Microsoft.AspNetCore.OpenApi.SourceGenerators.dll" />
-    </ItemGroup>
-  </Target>
-
 </Project>
