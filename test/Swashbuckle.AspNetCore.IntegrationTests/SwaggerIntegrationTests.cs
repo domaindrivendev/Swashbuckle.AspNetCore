@@ -10,7 +10,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests;
 public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
 {
     [Theory]
-    [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json", Skip = "TODO Test failure needs investigating.")]
+    [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
     [InlineData(typeof(CliExample.Startup), "/swagger/v1/swagger_net8.0.json")]
     [InlineData(typeof(ConfigFromFile.Startup), "/swagger/v1/swagger.json")]
     [InlineData(typeof(CustomUIConfig.Startup), "/swagger/v1/swagger.json")]
@@ -116,8 +116,8 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
     [Theory]
     [InlineData(typeof(MinimalApp.Program), "/swagger/v1/swagger.json")]
     [InlineData(typeof(TopLevelSwaggerDoc.Program), "/swagger/v1.json")]
-    [InlineData(typeof(MvcWithNullable.Program), "/swagger/v1/swagger.json", Skip = "TODO Test failure needs investigating.")]
-    [InlineData(typeof(WebApi.Program), "/swagger/v1/swagger.json", Skip = "TODO Test failure needs investigating.")]
+    [InlineData(typeof(MvcWithNullable.Program), "/swagger/v1/swagger.json")]
+    [InlineData(typeof(WebApi.Program), "/swagger/v1/swagger.json")]
     [InlineData(typeof(WebApi.Aot.Program), "/swagger/v1/swagger.json")]
     public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_Without_Startup(
         Type entryPointType,
