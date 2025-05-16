@@ -18,7 +18,7 @@ if ($LASTEXITCODE -ne 0) {
 
 $additionalArgs = @(
   "--verbosity",
-  "detailed",
+  "normal",
   "--tl:off"
 )
 
