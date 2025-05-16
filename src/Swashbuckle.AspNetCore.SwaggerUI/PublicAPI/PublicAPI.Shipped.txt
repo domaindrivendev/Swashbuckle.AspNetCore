@@ -34,7 +34,6 @@ static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.SupportedSubmitMe
 static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.SwaggerEndpoint(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, string url, string name) -> void
 static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.UseRequestInterceptor(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, string value) -> void
 static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.UseResponseInterceptor(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, string value) -> void
-static Microsoft.AspNetCore.Builder.SwaggerUIOptionsExtensions.ValidatorUrl(this Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions options, string url) -> void
 Swashbuckle.AspNetCore.SwaggerUI.ConfigObject
 Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.AdditionalItems.get -> System.Collections.Generic.Dictionary<string, object>
 Swashbuckle.AspNetCore.SwaggerUI.ConfigObject.AdditionalItems.set -> void

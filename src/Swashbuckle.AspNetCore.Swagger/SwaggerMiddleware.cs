@@ -181,17 +181,7 @@ internal sealed class SwaggerMiddleware
         }
         else
         {
-            switch (_options.OpenApiVersion)
-            {
-                case Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0:
-                    document.SerializeAsV2(writer);
-                    break;
-
-                case Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0:
-                default:
-                    document.SerializeAsV3(writer);
-                    break;
-            }
+            document.SerializeAs(_options.OpenApiVersion, writer);
         }
     }
 }

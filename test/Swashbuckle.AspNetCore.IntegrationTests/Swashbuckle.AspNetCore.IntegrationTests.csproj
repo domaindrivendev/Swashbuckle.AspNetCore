@@ -5,7 +5,7 @@
     <NoWarn>$(NoWarn);8002</NoWarn>
     <OutputType>Exe</OutputType>
     <SignAssembly>true</SignAssembly>
-    <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net10.0;net9.0;net8.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,10 +33,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="MartinCostello.Logging.XUnit.v3" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="Microsoft.OpenApi.Readers" />
+    <PackageReference Include="Microsoft.OpenApi.YamlReader" />
     <PackageReference Include="Verify.XunitV3" />
     <PackageReference Include="xunit.runner.visualstudio" />
     <PackageReference Include="xunit.v3" />
@@ -50,6 +51,11 @@
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))">
     <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="9.0.3" />
     <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="9.0.3" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net10.0'))">
+    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="10.0.0-preview.4.25258.110" />
+    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="10.0.0-preview.4.25258.110" />
   </ItemGroup>
 
 </Project>

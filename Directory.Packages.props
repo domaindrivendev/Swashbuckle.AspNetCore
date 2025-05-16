@@ -7,6 +7,7 @@
     <PackageVersion Include="IdentityServer4" Version="3.1.4" />
     <PackageVersion Include="IdentityServer4.AccessTokenValidation" Version="3.0.1" />
     <PackageVersion Include="JunitXml.TestLogger" Version="6.1.0" />
+    <PackageVersion Include="MartinCostello.Logging.XUnit.v3" Version="0.5.1" />
     <PackageVersion Include="Microsoft.AspNetCore" Version="2.3.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.ApiExplorer" Version="2.3.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.DataAnnotations" Version="2.3.0" />
@@ -22,18 +23,21 @@
     <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="6.0.32" />
     <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="3.3.4" />
     <PackageVersion Include="Microsoft.Extensions.FileProviders.Embedded" Version="2.1.1" />
-    <PackageVersion Include="Microsoft.OpenApi" Version="1.6.23" />
-    <PackageVersion Include="Microsoft.OpenApi.Readers" Version="1.6.23" />
+    <PackageVersion Include="Microsoft.OpenApi" Version="2.0.0-preview.17" />
+    <PackageVersion Include="Microsoft.OpenApi.YamlReader" Version="2.0.0-preview.17" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="NSubstitute" Version="5.3.0" />
     <PackageVersion Include="NSwag.MSBuild" Version="14.4.0" />
     <PackageVersion Include="ReportGenerator" Version="5.4.4" />
-    <PackageVersion Include="System.Text.Json" Version="4.6.0" />
+    <PackageVersion Include="System.Text.Json" Version="8.0.0" />
     <PackageVersion Include="Verify.XunitV3" Version="30.0.0" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.2" />
     <PackageVersion Include="xunit.v3" Version="2.0.2" />
     <PackageVersion Include="xunit.v3.extensibility.core" Version="2.0.2" />
+  </ItemGroup>
+  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net10.0'))">
+    <PackageVersion Update="Microsoft.AspNetCore.OpenApi" Version="10.0.0-preview.4.25258.110" />
   </ItemGroup>
 </Project>

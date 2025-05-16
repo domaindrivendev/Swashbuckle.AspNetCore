@@ -5,7 +5,7 @@
     <NoWarn>$(NoWarn);CA1050</NoWarn>
     <Nullable>enable</Nullable>
     <RootNamespace>WebApi</RootNamespace>
-    <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net10.0;net9.0;net8.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,12 +13,8 @@
     <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.SwaggerUI\Swashbuckle.AspNetCore.SwaggerUI.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
-  </ItemGroup>
-
-  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))">
-    <PackageReference Update="Microsoft.AspNetCore.OpenApi" VersionOverride="9.0.3" />
+  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net10.0'))">
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" VersionOverride="10.0.0-preview.4.25258.110" />
   </ItemGroup>
 
 </Project>

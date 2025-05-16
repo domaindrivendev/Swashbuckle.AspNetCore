@@ -18,6 +18,9 @@ public class DocumentSerializerTest : ISwaggerDocumentSerializer
             case OpenApiSpecVersion.OpenApi3_0:
                 writer.WriteProperty(OpenApiConstants.Swagger, "DocumentSerializerTest3.0");
                 break;
+            case OpenApiSpecVersion.OpenApi3_1:
+                writer.WriteProperty(OpenApiConstants.Swagger, "DocumentSerializerTest3.1");
+                break;
             default:
                 throw new NotImplementedException();
         }

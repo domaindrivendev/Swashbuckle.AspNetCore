@@ -39,5 +39,10 @@
         "format": "int32"
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Fake"
+    }
+  ]
 }
