@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Models.Interfaces;
-using Microsoft.OpenApi.Models.References;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore;
 using Swashbuckle.AspNetCore.ApiTesting.Xunit;
@@ -10,7 +9,7 @@ using Xunit;
 
 namespace TestFirst.IntegrationTests;
 
-public class CreateUserTests : ApiTestFixture<TestFirst.Startup>
+public class CreateUserTests : ApiTestFixture<Startup>
 {
     public CreateUserTests(
         ApiTestRunner apiTestRunner,
@@ -20,7 +19,6 @@ public class CreateUserTests : ApiTestFixture<TestFirst.Startup>
         Describe("/api/users", HttpMethod.Post, new OpenApiOperation
         {
             OperationId = "CreateUser",
-            Tags = [new OpenApiTagReference("Users")],
             RequestBody = new OpenApiRequestBody
             {
                 Content = new Dictionary<string, OpenApiMediaType>
@@ -63,7 +61,7 @@ public class CreateUserTests : ApiTestFixture<TestFirst.Startup>
         });
     }
 
-    [Fact(Skip = "Disabled due to issue with truncated OpenAPI document")]
+    [Fact]
     public async Task CreateUser_Returns201_IfContentIsValid()
     {
         await TestAsync(
@@ -81,7 +79,7 @@ public class CreateUserTests : ApiTestFixture<TestFirst.Startup>
         );
     }
 
-    [Fact(Skip = "Disabled due to issue with truncated OpenAPI document")]
+    [Fact]
     public async Task CreateUser_Returns400_IfContentIsInValid()
     {
         await TestAsync(

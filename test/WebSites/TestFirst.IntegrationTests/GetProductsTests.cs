@@ -4,16 +4,12 @@ using Xunit;
 
 namespace TestFirst.IntegrationTests;
 
-public class GetProductsTests : ApiTestFixture<TestFirst.Startup>
+public class GetProductsTests(ApiTestRunner apiTestRunner, WebApplicationFactory<Startup> webApplicationFactory)
+    : ApiTestFixture<Startup>(apiTestRunner, webApplicationFactory, "v1-imported")
 {
-    public GetProductsTests(
-        ApiTestRunner apiTestRunner,
-        WebApplicationFactory<TestFirst.Startup> webApplicationFactory)
-        : base(apiTestRunner, webApplicationFactory, "v1-imported")
-    { }
 
-    [Fact(Skip = "Disabled due to issue with truncated OpenAPI document")]
-    public async Task GetProducsts_Returns200_IfRequiredParametersProvided()
+    [Fact]
+    public async Task GetProducts_Returns200_IfRequiredParametersProvided()
     {
         await TestAsync(
             "GetProducts",
@@ -26,7 +22,7 @@ public class GetProductsTests : ApiTestFixture<TestFirst.Startup>
         );
     }
 
-    [Fact(Skip = "Disabled due to issue with truncated OpenAPI document")]
+    [Fact]
     public async Task GetProducts_Returns400_IfRequiredParametersMissing()
     {
         await TestAsync(
