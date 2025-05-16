@@ -18,7 +18,7 @@
     <ReportGeneratorReportTypes Condition=" '$(ReportGeneratorOutputMarkdown)' == 'true' ">$(ReportGeneratorReportTypes);MarkdownSummaryGitHub</ReportGeneratorReportTypes>
     <ReportGeneratorTargetDirectory>$([System.IO.Path]::Combine($(ArtifactsPath), 'coverage'))</ReportGeneratorTargetDirectory>
     <ReportGeneratorMarkdownSummary>$([System.IO.Path]::Combine($(ReportGeneratorTargetDirectory), 'SummaryGithub.md'))</ReportGeneratorMarkdownSummary>
-    <MergeWith>$([System.IO.Path]::Combine($(ReportGeneratorTargetDirectory), 'coverage.json'))</MergeWith>
+    <MergeWith>$([System.IO.Path]::Combine($(ReportGeneratorTargetDirectory), 'coverage.$(TargetFramework).json'))</MergeWith>
   </PropertyGroup>
   <UsingTask TaskName="WriteLinesToFileWithRetry" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
     <ParameterGroup>

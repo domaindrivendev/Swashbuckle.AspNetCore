@@ -6,8 +6,8 @@ using Xunit;
 
 namespace TestFirst.IntegrationTests;
 
-public class CreateProductTests(ApiTestRunner apiTestRunner, WebApplicationFactory<TestFirst.Startup> webApplicationFactory)
-    : ApiTestFixture<TestFirst.Startup>(apiTestRunner, webApplicationFactory, "v1-imported")
+public class CreateProductTests(ApiTestRunner apiTestRunner, WebApplicationFactory<Startup> webApplicationFactory)
+    : ApiTestFixture<Startup>(apiTestRunner, webApplicationFactory, "v1-imported")
 {
     [Fact]
     public async Task CreateProduct_Returns201_IfContentIsValid()
