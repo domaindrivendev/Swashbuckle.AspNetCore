@@ -16,7 +16,11 @@ if ($LASTEXITCODE -ne 0) {
   throw "dotnet pack failed with exit code $LASTEXITCODE"
 }
 
-$additionalArgs = @()
+$additionalArgs = @(
+  "--verbosity",
+  "detailed",
+  "--tl:off"
+)
 
 if (![string]::IsNullOrEmpty($env:GITHUB_SHA)) {
     $additionalArgs += "--logger:GitHubActions;report-warnings=false"
