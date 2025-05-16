@@ -8,7 +8,7 @@ using Xunit;
 
 namespace TestFirst.IntegrationTests;
 
-public class CreateUserTests : ApiTestFixture<TestFirst.Startup>
+public class CreateUserTests : ApiTestFixture<Startup>
 {
     public CreateUserTests(
         ApiTestRunner apiTestRunner,
@@ -18,7 +18,6 @@ public class CreateUserTests : ApiTestFixture<TestFirst.Startup>
         Describe("/api/users", OperationType.Post, new OpenApiOperation
         {
             OperationId = "CreateUser",
-            Tags = [new OpenApiTag { Name = "Users" }],
             RequestBody = new OpenApiRequestBody
             {
                 Content = new Dictionary<string, OpenApiMediaType>
