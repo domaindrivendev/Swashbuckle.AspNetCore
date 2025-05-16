@@ -7,7 +7,6 @@ namespace TestFirst.IntegrationTests;
 public class GetProductsTests(ApiTestRunner apiTestRunner, WebApplicationFactory<Startup> webApplicationFactory)
     : ApiTestFixture<Startup>(apiTestRunner, webApplicationFactory, "v1-imported")
 {
-
     [Fact]
     public async Task GetProducts_Returns200_IfRequiredParametersProvided()
     {
