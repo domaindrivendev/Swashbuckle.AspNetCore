@@ -6,19 +6,12 @@ using Xunit;
 
 namespace TestFirst.IntegrationTests;
 
-public class CreateProductTests(ApiTestRunner apiTestRunner, WebApplicationFactory<TestFirst.Startup> webApplicationFactory)
-    : ApiTestFixture<TestFirst.Startup>(apiTestRunner, webApplicationFactory, "v1-imported")
+public class CreateProductTests(ApiTestRunner apiTestRunner, WebApplicationFactory<Startup> webApplicationFactory)
+    : ApiTestFixture<Startup>(apiTestRunner, webApplicationFactory, "v1-imported")
 {
     [Fact]
     public async Task CreateProduct_Returns201_IfContentIsValid()
     {
-        // HACK Disabled due to issue with truncated OpenAPI document
-        // and tests failing if all tests in a project are skipped.
-        if (Environment.GetEnvironmentVariable("CI") == "true")
-        {
-            return;
-        }
-
         await TestAsync(
             "CreateProduct",
             "201",
@@ -37,13 +30,6 @@ public class CreateProductTests(ApiTestRunner apiTestRunner, WebApplicationFacto
     [Fact]
     public async Task CreateProduct_Returns400_IfContentIsInValid()
     {
-        // HACK Disabled due to issue with truncated OpenAPI document
-        // and tests failing if all tests in a project are skipped.
-        if (Environment.GetEnvironmentVariable("CI") == "true")
-        {
-            return;
-        }
-
         await TestAsync(
             "CreateProduct",
             "400",

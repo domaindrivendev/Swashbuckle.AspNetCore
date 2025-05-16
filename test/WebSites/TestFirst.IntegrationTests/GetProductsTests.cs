@@ -4,24 +4,13 @@ using Xunit;
 
 namespace TestFirst.IntegrationTests;
 
-public class GetProductsTests : ApiTestFixture<TestFirst.Startup>
+public class GetProductsTests(ApiTestRunner apiTestRunner, WebApplicationFactory<Startup> webApplicationFactory)
+    : ApiTestFixture<Startup>(apiTestRunner, webApplicationFactory, "v1-imported")
 {
-    public GetProductsTests(
-        ApiTestRunner apiTestRunner,
-        WebApplicationFactory<TestFirst.Startup> webApplicationFactory)
-        : base(apiTestRunner, webApplicationFactory, "v1-imported")
-    { }
 
     [Fact]
     public async Task GetProducsts_Returns200_IfRequiredParametersProvided()
     {
-        // HACK Disabled due to issue with truncated OpenAPI document
-        // and tests failing if all tests in a project are skipped.
-        if (Environment.GetEnvironmentVariable("CI") == "true")
-        {
-            return;
-        }
-
         await TestAsync(
             "GetProducts",
             "200",
@@ -36,13 +25,6 @@ public class GetProductsTests : ApiTestFixture<TestFirst.Startup>
     [Fact]
     public async Task GetProducts_Returns400_IfRequiredParametersMissing()
     {
-        // HACK Disabled due to issue with truncated OpenAPI document
-        // and tests failing if all tests in a project are skipped.
-        if (Environment.GetEnvironmentVariable("CI") == "true")
-        {
-            return;
-        }
-
         await TestAsync(
             "GetProducts",
             "400",

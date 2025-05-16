@@ -123,5 +123,11 @@
         }
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Products",
+      "description": "Operations about products"
+    }
+  ]
 }
