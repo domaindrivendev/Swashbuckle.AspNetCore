@@ -14,7 +14,7 @@
     ```csharp
     services.AddSwaggerGen(options =>
     {
-        ...
+        //...
         options.EnableAnnotations();
     });
     ```
@@ -91,16 +91,16 @@ public class Product
 
 The `SwaggerGen` package provides several extension points, including Schema Filters (described [here](configure-and-customize-swaggergen.md#extend-generator-with-operation-schema--document-filter)) for customizing ALL generated Schemas. However, there may be cases where it's preferable to apply a filter to a specific Schema. For example, if you'd like to include an example for a specific type in your API. This can be done by decorating the type with a `SwaggerSchemaFilterAttribute`:
 
-Product.cs
+📝 `Product.cs`
 ```csharp
 [SwaggerSchemaFilter(typeof(ProductSchemaFilter))]
 public class Product
 {
-    ...
+    //...
 }
 ```
 
-ProductSchemaFilter.cs
+📝 `ProductSchemaFilter.cs`
 ```csharp
 public class ProductSchemaFilter : ISchemaFilter
 {
@@ -123,7 +123,7 @@ By default, the Swagger generator will tag all operations with the controller na
 [SwaggerTag("Create, read, update and delete Products")]
 public class ProductsController
 {
-    ...
+    //...
 }
 ```
 
@@ -134,7 +134,7 @@ public class ProductsController
 
 If you want to use Swashbuckle's [inheritance and/or polymorphism behavior](configure-and-customize-swaggergen.md#inheritance-and-polymorphism), you can use annotations to _explicitly_ indicate the "known" subtypes for a given base type. This will override the default selector function, which selects _all_ subtypes in the same assembly as the base type, and therefore needs to be explicitly enabled when you enable Annotations:
 
-Startup.cs
+📝 `Startup.cs`
 ```csharp
 services.AddSwaggerGen(options =>
 {
@@ -142,7 +142,7 @@ services.AddSwaggerGen(options =>
 });
 ```
 
-Shape.cs
+📝 `Shape.cs`
 ```csharp
 // .NET 7 or later
 [JsonDerivedType(typeof(Rectangle))]
@@ -163,7 +163,7 @@ public abstract class Shape
 
 If you're using annotations to _explicitly_ indicate the "known" subtypes for a polymorphic base type, you can combine the `JsonPolymorphicAttribute` with the `JsonDerivedTypeAttribute` to provide additional metadata about the "discriminator" property, which will then be incorporated into the generated schema definition:
 
-Startup.cs
+📝 `Startup.cs`
 ```csharp
 services.AddSwaggerGen(options =>
 {
@@ -171,7 +171,7 @@ services.AddSwaggerGen(options =>
 });
 ```
 
-Shape.cs
+📝 `Shape.cs`
 ```csharp
 // .NET 7 or later
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "shapeType")]
