@@ -112,6 +112,19 @@ In summary ...
 
 If you're using **System.Text.Json (STJ)**, then the setup described above will be sufficient, and *STJ* options/attributes will be automatically honored by the Swagger generator.
 
+If you find that the *STJ* options/attributes are not being honored, this may be because you are using a combination of minimal apis and mvc which have separate json options.
+To force the swagger generation to use either set of json options you can use one of the following methods.
+
+```
+services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+});
+services.AddSwaggerGenMinimalApisJsonOptions();
+// or ...
+services.AddSwaggerGenMvcJsonOptions();
+```
+
 If you're using **Newtonsoft**, then you'll need to install a separate package and explicitly opt-in to ensure that *Newtonsoft* settings/attributes are automatically honored by the Swagger generator:
 
 ```
