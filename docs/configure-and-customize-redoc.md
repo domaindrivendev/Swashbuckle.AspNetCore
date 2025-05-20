@@ -1,14 +1,13 @@
-# Configuration & Customization of `Swashbuckle.AspNetCore.ReDoc`
+# Configuration and Customization of `Swashbuckle.AspNetCore.ReDoc`
 
 ## Change Relative Path to the UI
 
-By default, the Redoc UI will be exposed at `"/api-docs"`. If necessary, you can alter this when enabling the Redoc middleware:
+By default, the Redoc UI will be exposed at `/api-docs`. If necessary, you can alter this when enabling the Redoc middleware:
 
 ```csharp
 app.UseReDoc(options =>
 {
     options.RoutePrefix = "docs"
-    //...
 });
 ```
 
@@ -20,13 +19,13 @@ By default, the Redoc UI will have a generic document title. You can alter this 
 app.UseReDoc(options =>
 {
     options.DocumentTitle = "My API Docs";
-    //...
 });
 ```
 
 ## Apply Redoc Parameters
 
-Redoc ships with its own set of configuration parameters, all described [here](https://github.com/Rebilly/redoc/blob/main/README.md#redoc-options-object). In Swashbuckle, most of these are surfaced through the Redoc middleware options:
+Redoc ships with its own set of configuration parameters, all described [in the Redoc documentation][redoc-options].
+In Swashbuckle, most of these are surfaced through the Redoc middleware options:
 
 ```csharp
 app.UseReDoc(options =>
@@ -49,27 +48,30 @@ app.UseReDoc(options =>
 ```
 
 > [!NOTE]
-> Using `options.SpecUrl("/v1/swagger.json")` multiple times within the same `UseReDoc(...)` will not add multiple URL.
+> Using `options.SpecUrl("/v1/swagger.json")` multiple times within the same `UseReDoc(...)` will not add multiple URLs.
 
 ## Inject Custom CSS
 
-To tweak the look and feel, you can inject additional CSS stylesheets by adding them to your `wwwroot` folder and specifying the relative paths in the middleware options:
+To tweak the look and feel, you can inject additional CSS stylesheets by adding them to your `wwwroot` folder and specifying
+the relative paths in the middleware options:
 
 ```csharp
 app.UseReDoc(options =>
 {
-    //...
     options.InjectStylesheet("/redoc/custom.css");
 });
 ```
 
-It is also possible to modify the theme by using the `AdditionalItems` property, more information can be found [here](https://github.com/Rebilly/redoc/blob/main/README.md#redoc-options-object).
+It is also possible to modify the theme by using the `AdditionalItems` property. More information can be found
+[in the Redoc documentation][redoc-options].
 
 ```csharp
 app.UseReDoc(options =>
 {
-    //...
-    options.ConfigObject.AdditionalItems = ...
+    options.ConfigObject.AdditionalItems = new Dictionary<string, object>
+    {
+        // Configured additional options
+    };
 });
 ```
 
@@ -81,9 +83,11 @@ To customize the UI beyond the basic options listed above, you can provide your 
 app.UseReDoc(options =>
 {
     options.IndexStream = () => GetType().Assembly
-        .GetManifestResourceStream("CustomIndex.ReDoc.index.html"); // requires file to be added as an embedded resource
+        .GetManifestResourceStream("CustomIndex.ReDoc.index.html"); // Requires file to be added as an embedded resource
 });
 ```
 
 > [!TIP]
 > To get started, you should base your custom `index.html` on the [default version](../src/Swashbuckle.AspNetCore.ReDoc/index.html).
+
+[redoc-options]: https://github.com/Redocly/redoc/blob/main/docs/deployment/html.md#the-redoc-object
