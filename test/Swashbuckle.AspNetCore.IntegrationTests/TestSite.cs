@@ -19,7 +19,7 @@ public class TestSite
 
         var builder = new WebHostBuilder()
             .UseEnvironment("Development")
-            .UseSolutionRelativeContentRoot(Path.Combine("test", "WebSites", applicationName))
+            .UseSolutionRelativeContentRoot(Path.Combine("test", "WebSites", applicationName), "*.slnx")
             .UseStartup(_startupType);
 
         return new TestServer(builder);

@@ -13,6 +13,6 @@ public class TestApplication<TEntryPoint> : WebApplicationFactory<TEntryPoint>
         var applicationName = startupAssembly.GetName().Name;
 
         builder.UseEnvironment("Development")
-               .UseSolutionRelativeContentRoot(Path.Combine("test", "WebSites", applicationName));
+               .UseSolutionRelativeContentRoot(Path.Combine("test", "WebSites", applicationName), "*.slnx");
     }
 }
