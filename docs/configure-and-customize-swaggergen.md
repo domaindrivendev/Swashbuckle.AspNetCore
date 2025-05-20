@@ -305,7 +305,7 @@ those comments into the generated Swagger document.
     }
     ```
 
-`. Rebuild your project to update the XML Comments file and navigate to the Swagger JSON endpoint. Note how the descriptions are
+1. Rebuild your project to update the XML Comments file and navigate to the Swagger JSON endpoint. Note how the descriptions are
 mapped onto corresponding Swagger fields.
 
 > [!NOTE]

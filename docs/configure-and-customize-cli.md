@@ -24,7 +24,7 @@ To install as a [global tool](https://learn.microsoft.com/dotnet/core/tools/glob
 dotnet tool install -g Swashbuckle.AspNetCore.Cli
 ```
 
-### Install as a local tool
+#### Install as a local tool
 
 1. In your solution root directory, create a tool manifest file:
 
