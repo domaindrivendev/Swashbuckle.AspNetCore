@@ -1,144 +1,157 @@
-| :mega: Important notice if you're upgrading between major versions! |
-|--------------|
-|* If you're upgrading from 4.x to 5.x, there's several breaking changes to be aware of. See the [release notes](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/releases/tag/v5.0.0) for details<br />* If you're making the jump from 3.x to 4.x first, there be dragons there too. See [those release notes here](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/releases/tag/v4.0.0)|
+# Swashbuckle.AspNetCore
 
-Swashbuckle.AspNetCore
-=========
+[![NuGet][package-badge-version]][package-download]
+[![NuGet Downloads][package-badge-downloads]][package-download]
 
-[![Build status](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/actions/workflows/build.yml/badge.svg?branch=master&event=push)](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/actions?query=workflow%3Abuild+branch%3Amaster+event%3Apush) [![Code coverage](https://codecov.io/gh/domaindrivendev/Swashbuckle.AspNetCore/branch/master/graph/badge.svg)](https://codecov.io/gh/domaindrivendev/Swashbuckle.AspNetCore) [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/domaindrivendev/Swashbuckle.AspNetCore/badge)](https://securityscorecards.dev/viewer/?uri=github.com/domaindrivendev/Swashbuckle.AspNetCore)
+[![Build status][build-badge]][build-status]
+[![Code coverage][coverage-badge]][coverage-report]
+[![OpenSSF Scorecard][scorecard-badge]][scorecard-report]
 
-[![NuGet](https://img.shields.io/nuget/v/Swashbuckle.AspNetCore?logo=nuget&label=Latest&color=blue)](https://www.nuget.org/packages/Swashbuckle.AspNetCore/ "Download Swashbuckle.AspNetCore from NuGet.org")
-[![NuGet](https://img.shields.io/nuget/dt/Swashbuckle.AspNetCore?logo=nuget&label=Downloads&color=blue)](https://www.nuget.org/packages/Swashbuckle.AspNetCore/ "Download Swashbuckle.AspNetCore from NuGet.org")
+[![Help Wanted][help-wanted-badge]][help-wanted-issues]
 
-[![Help Wanted](https://img.shields.io/github/issues/domaindrivendev/Swashbuckle.AspNetCore/help-wanted?style=flat&color=%24EC820&label=Help%20wanted)](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/labels/help-wanted)
+[Swagger][swagger] tooling for APIs built with ASP.NET Core.
 
-[Swagger](https://swagger.io) tooling for APIs built with ASP.NET Core. Generate beautiful API documentation, including a UI to explore and test operations, directly from your routes, controllers and models.
+Generate beautiful API documentation, including a UI to explore and test operations, directly from your application code.
 
-In addition to its [Swagger 2.0 and OpenAPI 3.0](https://swagger.io/specification/) generator, Swashbuckle also provides an embedded version of the awesome [swagger-ui](https://github.com/swagger-api/swagger-ui) that's powered by the generated Swagger JSON. This means you can complement your API with living documentation that's always in sync with the latest code. Best of all, it requires minimal coding and maintenance, allowing you to focus on building an awesome API.
+In addition to its [Swagger 2.0 and OpenAPI 3.0][swagger-specification] generator, Swashbuckle also provides an embedded
+version of the awesome [swagger-ui][swagger-ui] project that's powered by the generated Swagger JSON documents. This means
+you can complement your API with living documentation that's always in sync with the latest code. Best of all, it requires
+minimal coding and maintenance, allowing you to focus on building an awesome API.
 
-And that's not all ...
+But that's not all...
 
-Once you have an API that can describe itself in Swagger, you've opened the treasure chest of Swagger-based tools including a client generator that can be targeted to a wide range of popular platforms. See [swagger-codegen](https://github.com/swagger-api/swagger-codegen) for more details.
+Once you have an API that can describe itself with a Swagger document, you've opened the treasure chest of Swagger-based
+tools including a client generator that can be targeted to a wide range of popular platforms. See [swagger-codegen][swagger-codegen]
+for more details.
 
-# Compatibility #
+## Compatibility
 
-| Swashbuckle Version | ASP.NET Core | Swagger / OpenAPI Spec. | swagger-ui | Redoc UI |
+| Swashbuckle Version | ASP.NET Core | Swagger/OpenAPI Spec. | swagger-ui | Redoc |
 |----------|----------|----------|----------|----------|
 | [CI](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/commits/master/) | >= 8.0.0, 2.3.x | 2.0, 3.0 | [5.x.x](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/master/src/Swashbuckle.AspNetCore.SwaggerUI/package.json#L6) | [2.x.x](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/master/src/Swashbuckle.AspNetCore.ReDoc/package.json#L6) |
-| [8.1.1](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v8.1.1) | >= 8.0.0, 2.3.x | 2.0, 3.0 | 5.20.8 | 2.4.0 |
-| [7.3.2](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v7.3.2) | >= 8.0.0, 6.0.x, 2.1.x | 2.0, 3.0 | 5.20.1 | 2.4.0 |
-| [6.9.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v6.9.0) | >= 6.0.0, 2.1.x | 2.0, 3.0 | 5.17.14 | 2.1.5 |
-| [5.6.3](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v5.6.3) | >= 2.0.0 | 2.0, 3.0 | 3.32.5 | 2.0.0-rc.40 |
-| [4.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v4.0.0) | >= 2.0.0, < 3.0.0 | 2.0 | 3.19.5 | 1.22.2 |
-| [3.0.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v3.0.0) | >= 1.0.4, < 3.0.0 | 2.0 | 3.17.1 | 1.20.0 |
-| [2.5.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v2.5.0) | >= 1.0.4, < 3.0.0 | 2.0 | 3.16.0 | 1.20.0 |
+| [8.1.1](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v8.1.1) | >= 8.0.0, 2.3.x | 2.0, 3.0 | [5.20.8](https://github.com/swagger-api/swagger-ui/releases/tag/v5.20.8) | [2.4.0](https://github.com/Redocly/redoc/releases/tag/v2.4.0) |
+| [7.3.2](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v7.3.2) | >= 8.0.0, 6.0.x, 2.1.x | 2.0, 3.0 | [5.20.1](https://github.com/swagger-api/swagger-ui/releases/tag/v5.20.1) | [2.4.0](https://github.com/Redocly/redoc/releases/tag/v2.4.0) |
+| [6.9.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v6.9.0) | >= 6.0.0, 2.1.x | 2.0, 3.0 | [5.17.14](https://github.com/swagger-api/swagger-ui/releases/tag/v5.17.14) | [2.1.5](https://github.com/Redocly/redoc/releases/tag/v2.1.5)|
 
-# Getting Started #
+## Getting Started
 
-1. Install the standard Nuget package into your ASP.NET Core application.
+1. Install the kitchen-sink NuGet package into your ASP.NET Core application:
 
-    ```
-    Package Manager : Install-Package Swashbuckle.AspNetCore
-    CLI : dotnet add package Swashbuckle.AspNetCore
-    ```
+   ```terminal
+   dotnet add package Swashbuckle.AspNetCore
+   ```
 
-2. In the `ConfigureServices` method of `Startup.cs`, register the Swagger generator, defining one or more Swagger documents.
+2. Register the Swagger generator in your application's startup path, defining one or more Swagger documents. For example:
 
     ```csharp
     using Microsoft.OpenApi.Models;
     ```
-    
+
     ```csharp
     services.AddMvc();
 
-    services.AddSwaggerGen(c =>
+    services.AddSwaggerGen(options =>
     {
-        c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+        options.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
     });
     ```
 
-3. Ensure your API actions and parameters are decorated with explicit "Http" and "From" bindings.
+3. Ensure your API endpoints and any parameters are decorated with `[Http*]` and `[From*]` attributes, where appropriate.
 
     ```csharp
     [HttpPost]
     public void CreateProduct([FromBody]Product product)
-    ...
+    {
+        // Implementation goes here
+    }
     ```
 
     ```csharp
     [HttpGet]
     public IEnumerable<Product> SearchProducts([FromQuery]string keywords)
-    ...
+    {
+        // Implementation goes here
+    }
     ```
 
-    _NOTE: If you omit the explicit parameter bindings, the generator will describe them as "query" params by default._
+    > [!NOTE]
+    > If you omit the explicit parameter bindings, the generator will describe them as "query" parameters by default.
 
-4. In the `Configure` method,you should expose the generated Swagger as JSON endpoint(s) by one of following method:
+4. Expose the Swagger/OpenAPI JSON document endpoint(s) using one of following methods:
 
-    - Add endpoints if you're using endpoint-based routing.
+    - Add endpoints if you're using endpoint-based routing:
 
     ```csharp
     app.MapEndpoints(endpoints =>
     {
-        // ...
+        // Your own endpoints go here, and then...
         endpoints.MapSwagger();
     });
     ```
 
-    - Insert middleware
+    - Inserting the Swagger/OpenAPI middleware:
 
     ```csharp
     app.UseSwagger();
     ```
 
-    _At this point, you can spin up your application and view the generated Swagger JSON at "/swagger/v1/swagger.json."_
+    At this point, you can spin up your application and view the generated Swagger document at `/swagger/v1/swagger.json`.
 
-5. Optionally, insert the swagger-ui middleware if you want to expose interactive documentation, specifying the Swagger JSON endpoint(s) to power it from.
+5. Optionally, insert the [swagger-ui][swagger-ui] middleware if you want to expose interactive documentation, specifying the Swagger document(s) to power it from:
 
     ```csharp
-    app.UseSwaggerUI(c =>
+    app.UseSwaggerUI(options =>
     {
-        c.SwaggerEndpoint("v1/swagger.json", "My API V1");
+        options.SwaggerEndpoint("v1/swagger.json", "My API V1");
     });
     ```
 
-    _Now you can restart your application and check out the auto-generated, interactive docs at "/swagger"._
+    Now you can restart your application and check out the auto-generated, interactive documentation at `/swagger`.
 
-# System.Text.Json (STJ) vs Newtonsoft #
+## System.Text.Json (STJ) vs Newtonsoft.Json (Json.NET)
 
-In versions prior to `5.0.0`, Swashbuckle will generate Schema's (descriptions of the data types exposed by an API) based on the behavior of the *Newtonsoft* serializer. This made sense because that was the serializer that shipped with ASP.NET Core at the time. However, since version `3.0.0`, ASP.NET Core introduces a new serializer *System.Text.Json (STJ)* out-of-the-box, and if you want to continue using *Newtonsoft*, you need to install a separate package and explicitly opt-in. From Swashbuckle `5.0.0` and beyond a similar pattern is used. That is, out-of-the-box Swashbuckle will assume you're using the *STJ* serializer and generate Schema's based on its behavior. If you're using *Newtonsoft*, then you'll need to install a separate Swashbuckle package and explicitly opt-in. **This is a required step, regardless of which version of ASP.NET Core you're using**.
+In versions of Swashbuckle.AspNetCore prior to `5.0.0`, Swashbuckle would generate Schemas (descriptions of the data types exposed by an API) based
+on the behavior of the [Newtonsoft.Json serializer][newtonsoft-json]. This made sense because that was the serializer that shipped with ASP.NET Core
+at the time. However, since ASP.NET Core 3.0, ASP.NET Core introduces a new serializer, [System.Text.Json (STJ)][system-text-json] out-of-the-box.
 
-In summary ...
+If you want to use Newtonsoft.Json instead, you need to install a separate package and explicitly opt-in. By default Swashbuckle.AspNetCore will assume
+you're using the System.Text.Json serializer and generate Schemas based on its behavior. If you're using Newtonsoft.Json then you'll need to install a
+separate Swashbuckle package, [Swashbuckle.AspNetCore.Newtonsoft][swashbuckle-aspnetcore-newtonsoft] to explicitly opt-in.
 
-If you're using **System.Text.Json (STJ)**, then the setup described above will be sufficient, and *STJ* options/attributes will be automatically honored by the Swagger generator.
+Below is an example of how to do this for ASP.NET Core MVC:
 
-If you're using **Newtonsoft**, then you'll need to install a separate package and explicitly opt-in to ensure that *Newtonsoft* settings/attributes are automatically honored by the Swagger generator:
-
-```
-Package Manager : Install-Package Swashbuckle.AspNetCore.Newtonsoft
-CLI : dotnet add package Swashbuckle.AspNetCore.Newtonsoft
+```terminal
+dotnet add package Swashbuckle.AspNetCore.Newtonsoft
 ```
 
 ```csharp
 services.AddMvc();
 
-services.AddSwaggerGen(c =>
+services.AddSwaggerGen(options =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
 });
-services.AddSwaggerGenNewtonsoftSupport(); // explicit opt-in - needs to be placed after AddSwaggerGen()
+
+services.AddSwaggerGenNewtonsoftSupport();
 ```
 
-# Swashbuckle, ApiExplorer, and Routing #
+## Swashbuckle, ApiExplorer, and Routing
 
-Swashbuckle relies heavily on `ApiExplorer`, the API metadata layer that ships with ASP.NET Core. If you're using the `AddMvc` helper to bootstrap the MVC stack, then ApiExplorer will be automatically registered and SB will work without issue. However, if you're using `AddMvcCore` for a more paired-down MVC stack, you'll need to explicitly add the ApiExplorer service:
+Swashbuckle relies heavily on `ApiExplorer`, the API metadata layer that ships with ASP.NET Core. If you're using the `AddMvc(...)` helper methods to
+bootstrap the MVC stack, then API Explorer will be automatically registered and Swashbuckle will work without issue.
+
+However, if you're using `AddMvcCore(...)` for a more paired-down MVC stack, you'll need to explicitly add the API Explorer services:
 
 ```csharp
 services.AddMvcCore()
-    .AddApiExplorer();
+        .AddApiExplorer();
 ```
 
-Additionally, if you are using _[conventional routing](https://learn.microsoft.com/aspnet/core/mvc/controllers/routing#conventional-routing)_ (as opposed to attribute routing), any controllers and the actions on those controllers that use conventional routing will not be represented in ApiExplorer, which means Swashbuckle won't be able to find those controllers and generate Swagger operations from them. For instance:
+Additionally, if you are using _[conventional routing][conventional-routing]_ (as opposed to attribute routing), any controllers and the actions on those
+controllers that use conventional routing will not be represented in API Explorer, which means Swashbuckle won't be able to find those controllers and
+generate Swagger operations from them.
+
+For instance:
 
 ```csharp
 app.UseMvc(routes =>
@@ -155,52 +168,58 @@ You **must** use attribute routing for any controllers that you want represented
 public class ExampleController : Controller
 {
     [HttpGet("")]
-    public IActionResult DoStuff() { /**/ }
+    public IActionResult DoStuff() { /* Your implementation */ }
 }
 ```
-Refer to the [routing documentation](https://learn.microsoft.com/aspnet/core/mvc/controllers/routing) for more information.
 
-# Components #
+Refer to the [ASP.NET Core MVC routing documentation][mvc-routing] for more information.
 
-Swashbuckle consists of multiple components that can be used together or individually depending on your needs. At its core, there's a Swagger generator, middleware to expose it as JSON endpoints, and a packaged version of the [swagger-ui](https://github.com/swagger-api/swagger-ui). These 3 packages can be installed with the `Swashbuckle.AspNetCore` "metapackage" and will work together seamlessly (see [Getting Started](#getting-started)) to provide beautiful API docs that are automatically generated from your code.
+## Components
 
-Additionally, there's add-on packages (CLI tools, [an alternate UI](https://github.com/Rebilly/redoc) etc.) that you can optionally install and configure as needed.
+Swashbuckle consists of multiple components that can be used together or individually depending on your needs.
 
-## "Core" Packages (i.e. installed via Swashbuckle.AspNetCore)
+At its core, there's a Swagger generator, middleware to expose Swagger (OpenAPI) documentation as JSON endpoints, and a
+packaged version of the [swagger-ui][swagger-ui]. These three packages can be installed with the [`Swashbuckle.AspNetCore`][package-download]
+_"metapackage"_ and will work together seamlessly (see [Getting Started](#getting-started)) to provide beautiful API documentation
+that is automatically generated from your code.
 
-|Package|Description|
-|---------|-----------|
-|Swashbuckle.AspNetCore.Swagger|Exposes Swagger JSON endpoints. It expects an implementation of `ISwaggerProvider` to be registered in the DI container, which it queries to retrieve `OpenAPIDocument(s)` that are then exposed as serialized JSON|
-|Swashbuckle.AspNetCore.SwaggerGen|Injects an implementation of `ISwaggerProvider` that can be used by the above component. This particular implementation generates `OpenApiDocument(s)` from your routes, controllers and models|
-|Swashbuckle.AspNetCore.SwaggerUI|Exposes an embedded version of the swagger-ui. You specify the API endpoints where it can obtain Swagger JSON, and it uses them to power interactive docs for your API|
+Additionally, there's add-on packages (CLI tools, [an alternate UI using Redoc][redoc] etc.) that you can optionally install and configure as needed.
 
-## Additional Packages ##
+### "Core" Packages
 
-|Package|Description|
-|---------|-----------|
-|Swashbuckle.AspNetCore.Annotations|Includes a set of custom attributes that can be applied to controllers, actions and models to enrich the generated Swagger|
-|Swashbuckle.AspNetCore.Cli|Provides a command line interface for retrieving Swagger directly from a startup assembly, and writing to file|
-|Swashbuckle.AspNetCore.ReDoc|Exposes an embedded version of the Redoc UI (an alternative to swagger-ui)|
+| **Package** | **NuGet** | **Description** |
+|-------------|--------------------|-----------------|
+| [Swashbuckle.AspNetCore.Swagger][swashbuckle-aspnetcore-swagger] | [![NuGet](https://img.shields.io/nuget/v/Swashbuckle.AspNetCore.Swagger?logo=nuget&label=Latest&color=blue)][swashbuckle-aspnetcore-swagger] | Exposes Swagger JSON endpoints. It expects an implementation of `ISwaggerProvider` to be registered in the DI container, which it queries to retrieve `OpenApiDocument` instance(s) that are then exposed as serialized JSON. |
+| [Swashbuckle.AspNetCore.SwaggerGen][swashbuckle-aspnetcore-swaggergen] | [![NuGet](https://img.shields.io/nuget/v/Swashbuckle.AspNetCore.SwaggerGen?logo=nuget&label=Latest&color=blue)][swashbuckle-aspnetcore-swaggergen] | Injects an implementation of `ISwaggerProvider` that can be used by the above component. This particular implementation generates `OpenApiDocument` instance(s) from your application endpoints (controllers, minimal endpoints etc.). |
+| [Swashbuckle.AspNetCore.SwaggerUI][swashbuckle-aspnetcore-swaggerui] | [![NuGet](https://img.shields.io/nuget/v/Swashbuckle.AspNetCore.SwaggerUI?logo=nuget&label=Latest&color=blue)][swashbuckle-aspnetcore-swaggerui] | Exposes an embedded version of [swagger-ui][swagger-ui]. You specify the API endpoints where it can obtain Swagger documents from, and it uses them to power interactive documentation for your API. |
 
-## Community Packages ##
+### Additional Packages
 
-These packages are provided by the open-source community.
+| **Package** | **NuGet** | **Description** |
+|-------------|--------------------|-----------------|
+| [Swashbuckle.AspNetCore.Annotations][swashbuckle-aspnetcore-annotations] | [![NuGet](https://img.shields.io/nuget/v/Swashbuckle.AspNetCore.Annotations?logo=nuget&label=Latest&color=blue)][swashbuckle-aspnetcore-annotations] | Includes a set of custom attributes that can be applied to controllers/endpoints, actions and models to enrich the generated documentation. |
+| [Swashbuckle.AspNetCore.Cli][swashbuckle-aspnetcore-cli] | [![NuGet](https://img.shields.io/nuget/v/Swashbuckle.AspNetCore.Cli?logo=nuget&label=Latest&color=blue)][swashbuckle-aspnetcore-cli] | Provides a command line interface (CLI) for retrieving OpenAPI documents directly from an application start-up assembly and then writing to a file. |
+| [Swashbuckle.AspNetCore.ReDoc][swashbuckle-aspnetcore-redoc] | [![NuGet](https://img.shields.io/nuget/v/Swashbuckle.AspNetCore.ReDoc?logo=nuget&label=Latest&color=blue)][swashbuckle-aspnetcore-redoc] | Exposes an embedded version of the [Redoc UI][redoc] (an alternative to [swagger-ui][swagger-ui]). |
 
-|Package|Description|
-|---------|-----------|
-|[Swashbuckle.AspNetCore.Filters](https://github.com/mattfrear/Swashbuckle.AspNetCore.Filters)| Some useful Swashbuckle filters which add additional documentation, e.g. request and response examples, authorization information, etc. See its Readme for more details |
-|[Unchase.Swashbuckle.AspNetCore.Extensions](https://github.com/unchase/Unchase.Swashbuckle.AspNetCore.Extensions)| Some useful extensions (filters), which add additional documentation, e.g. hide PathItems for unaccepted roles, fix enums for client code generation, etc. See its Readme for more details |
-|[MicroElements.Swashbuckle.FluentValidation](https://github.com/micro-elements/MicroElements.Swashbuckle.FluentValidation)| Use FluentValidation rules instead of ComponentModel attributes to augment generated Swagger Schemas |
-|[MMLib.SwaggerForOcelot](https://github.com/Burgyn/MMLib.SwaggerForOcelot)| Aggregate documentations over microservices directly on Ocelot API Gateway |
+### Community Packages
 
-# Configuration & Customization #
+These packages are provided by the .NET open-source community.
 
-The steps described above will get you up and running with minimal setup. However, Swashbuckle offers a lot of flexibility to customize as you see fit. 
+| **Package** | **NuGet** | **Description** |
+|-------------|--------------------|-----------------|
+| [Swashbuckle.AspNetCore.Filters][swashbuckle-aspnetcore-filters] | [![NuGet](https://img.shields.io/nuget/v/Swashbuckle.AspNetCore.Filters?logo=nuget&label=Latest&color=blue)][swashbuckle-aspnetcore-filters] | Some useful Swashbuckle filters which add additional documentation, e.g. request and response examples, authorization information, etc. See its README for more details. |
+| [Unchase.Swashbuckle.AspNetCore.Extensions][unchase-swashbuckle-aspnetcore-extensions] | [![NuGet](https://img.shields.io/nuget/v/Unchase.Swashbuckle.AspNetCore.Extensions?logo=nuget&label=Latest&color=blue)][unchase-swashbuckle-aspnetcore-extensions] | Some useful extensions (filters), which add additional documentation, e.g. hide `PathItems` for unaccepted roles, fix enumerations for client code generation, etc. See its README for more details. |
+| [MicroElements.Swashbuckle.FluentValidation][microelements-swashbuckle-fluentvalidation] | [![NuGet](https://img.shields.io/nuget/v/MicroElements.Swashbuckle.FluentValidation?logo=nuget&label=Latest&color=blue)][microelements-swashbuckle-fluentvalidation] | Use [FluentValidation][fluentvalidation] rules instead of ComponentModel attributes to augment generated Swagger Schemas. |
+| [MMLib.SwaggerForOcelot][mmlib-swaggerforocelot] | [![NuGet](https://img.shields.io/nuget/v/MMLib.SwaggerForOcelot?logo=nuget&label=Latest&color=blue)][mmlib-swaggerforocelot] | Aggregate documentations over microservices directly on [Ocelot API Gateway][ocelot]. |
 
-Check out the table below for the full list of options:
+## Configuration and Customization
 
-| Component                              | Configuration and Customization                                                                                                                                   |
-| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+The steps described above will get you up and running with minimal set up. However, Swashbuckle offers a lot of flexibility to customize as you see fit.
+
+Check out the table below for the full list of possible configuration options.
+
+| **Component** | **Configuration and Customization** |
+| ------------- | ----------------------------------- |
 | **Swashbuckle.AspNetCore.Swagger**     | [Change the Path for Swagger JSON Endpoints](docs/configure-and-customize-swagger.md#change-the-path-for-swagger-json-endpoints)                                  |
 |                                        | [Modify Swagger with Request Context](docs/configure-and-customize-swagger.md#modify-swagger-with-request-context)                                                |
 |                                        | [Serialize Swagger JSON in the 2.0 format](docs/configure-and-customize-swagger.md#serialize-swagger-in-the-20-format)                                            |
@@ -250,3 +269,38 @@ Check out the table below for the full list of options:
 |                                        | [Inject Custom CSS](docs/configure-and-customize-redoc.md#inject-custom-css)                                                                                      |
 |                                        | [Customize index.html](docs/configure-and-customize-redoc.md#customize-indexhtml)                                                                                 |
 
+<!-- markdownlint-disable MD013 -->
+
+[build-badge]: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/actions/workflows/build.yml/badge.svg?branch=master&event=push
+[build-status]: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/actions?query=workflow%3Abuild+branch%3Amaster+event%3Apush "Continuous Integration for this project"
+[conventional-routing]: https://learn.microsoft.com/aspnet/core/mvc/controllers/routing#conventional-routing "Routing to controller actions in ASP.NET Core - Conventional routing"
+[coverage-badge]: https://codecov.io/gh/domaindrivendev/Swashbuckle.AspNetCore/branch/master/graph/badge.svg
+[coverage-report]: https://codecov.io/gh/domaindrivendev/Swashbuckle.AspNetCore "Code coverage report for this project"
+[fluentvalidation]: https://docs.fluentvalidation.net "FluentValidation documentation"
+[help-wanted-badge]: https://img.shields.io/github/issues/domaindrivendev/Swashbuckle.AspNetCore/help-wanted?style=flat&color=%24EC820&label=Help%20wanted
+[help-wanted-issues]: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/labels/help-wanted "Issues with help wanted for this project"
+[microelements-swashbuckle-fluentvalidation]: https://github.com/micro-elements/MicroElements.Swashbuckle.FluentValidation "MicroElements.Swashbuckle.FluentValidation on GitHub"
+[mmlib-swaggerforocelot]: MMLib.SwaggerForOcelot "MMLib.SwaggerForOcelot on GitHub"
+[mvc-routing]: https://learn.microsoft.com/aspnet/core/mvc/controllers/routing "Routing to controller actions in ASP.NET Core"
+[newtonsoft-json]: https://www.nuget.org/packages/Newtonsoft.Json/ "Newtonsoft.Json NuGet package"
+[ocelot]: https://github.com/ThreeMammals/Ocelot "Ocelot on GitHub"
+[package-badge-downloads]: https://img.shields.io/nuget/dt/Swashbuckle.AspNetCore?logo=nuget&label=Downloads&color=blue
+[package-badge-version]: https://img.shields.io/nuget/v/Swashbuckle.AspNetCore?logo=nuget&label=Latest&color=blue
+[package-download]: https://www.nuget.org/packages/Swashbuckle.AspNetCore/ "Download Swashbuckle.AspNetCore from NuGet"
+[redoc]: https://github.com/Redocly/redoc "The Redoc project in GitHub"
+[scorecard-badge]: https://api.securityscorecards.dev/projects/github.com/domaindrivendev/Swashbuckle.AspNetCore/badge
+[scorecard-report]: https://securityscorecards.dev/viewer/?uri=github.com/domaindrivendev/Swashbuckle.AspNetCore "OpenSSF Scorecard for this project"
+[swashbuckle-aspnetcore-annotations]: https://www.nuget.org/packages/Swashbuckle.AspNetCore.Annotations "Swashbuckle.AspNetCore.Annotations NuGet package"
+[swashbuckle-aspnetcore-cli]: https://www.nuget.org/packages/Swashbuckle.AspNetCore.Cli "Swashbuckle.AspNetCore.Cli NuGet package"
+[swashbuckle-aspnetcore-filters]: https://github.com/mattfrear/Swashbuckle.AspNetCore.Filters "Swashbuckle.AspNetCore.Filters in GitHub"
+[swashbuckle-aspnetcore-newtonsoft]: https://www.nuget.org/packages/Swashbuckle.AspNetCore.Newtonsoft/ "Swashbuckle.AspNetCore.Newtonsoft NuGet package"
+[swashbuckle-aspnetcore-redoc]: https://www.nuget.org/packages/Swashbuckle.AspNetCore.ReDoc "Swashbuckle.AspNetCore.ReDoc NuGet package"
+[swashbuckle-aspnetcore-swagger]: https://www.nuget.org/packages/Swashbuckle.AspNetCore.Swagger "Swashbuckle.AspNetCore.Swagger NuGet package"
+[swashbuckle-aspnetcore-swaggergen]: https://www.nuget.org/packages/Swashbuckle.AspNetCore.SwaggerGen "Swashbuckle.AspNetCore.SwaggerGen NuGet package"
+[swashbuckle-aspnetcore-swaggerui]: https://www.nuget.org/packages/Swashbuckle.AspNetCore.SwaggerUI "Swashbuckle.AspNetCore.SwaggerUI NuGet package"
+[swagger]: https://swagger.io "Swagger website"
+[swagger-codegen]: https://github.com/swagger-api/swagger-codegen "The Swagger Codegen project in GitHub"
+[swagger-specification]: https://swagger.io/specification/ "OpenAPI Specification"
+[swagger-ui]: https://github.com/swagger-api/swagger-ui "The swagger-ui project in GitHub"
+[system-text-json]: https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/overview "JSON serialization and deserialization in .NET - overview"
+[unchase-swashbuckle-aspnetcore-extensions]: https://github.com/unchase/Unchase.Swashbuckle.AspNetCore.Extensions "Unchase.Swashbuckle.AspNetCore.Extensions on GitHub"
