@@ -1,0 +1,81 @@
+<Solution>
+  <Folder Name="/perf/">
+    <Project Path="perf/Swashbuckle.AspNetCore.Benchmarks/Swashbuckle.AspNetCore.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path="benchmark.ps1" />
+    <File Path="CONTRIBUTING.md" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+    <File Path="ISSUE_TEMPLATE.md" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+    <Properties Name="FolderGlobals">
+      <Property Name="global_1json__JSONSchema" Value="http://json.schemastore.org/global" />
+    </Properties>
+  </Folder>
+  <Folder Name="/Solution Items/.github/">
+    <File Path=".github/actionlint-matcher.json" />
+    <File Path=".github/bump-version.ps1" />
+    <File Path=".github/dependabot.yml" />
+    <File Path=".github/update-baselines.ps1" />
+  </Folder>
+  <Folder Name="/Solution Items/.github/workflows/">
+    <File Path=".github/workflows/actions-lint.yml" />
+    <File Path=".github/workflows/build.yml" />
+    <File Path=".github/workflows/bump-version.yml" />
+    <File Path=".github/workflows/codeql-analysis.yml" />
+    <File Path=".github/workflows/ossf-scorecard.yml" />
+    <File Path=".github/workflows/release.yml" />
+    <File Path=".github/workflows/stale.yml" />
+    <File Path=".github/workflows/update-dotnet-sdk.yml" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Swashbuckle.AspNetCore.Annotations/Swashbuckle.AspNetCore.Annotations.csproj" />
+    <Project Path="src/Swashbuckle.AspNetCore.ApiTesting.Xunit/Swashbuckle.AspNetCore.ApiTesting.Xunit.csproj" />
+    <Project Path="src/Swashbuckle.AspNetCore.ApiTesting/Swashbuckle.AspNetCore.ApiTesting.csproj" />
+    <Project Path="src/Swashbuckle.AspNetCore.Cli/Swashbuckle.AspNetCore.Cli.csproj" />
+    <Project Path="src/Swashbuckle.AspNetCore.Newtonsoft/Swashbuckle.AspNetCore.Newtonsoft.csproj" />
+    <Project Path="src/Swashbuckle.AspNetCore.ReDoc/Swashbuckle.AspNetCore.ReDoc.csproj" />
+    <Project Path="src/Swashbuckle.AspNetCore.Swagger/Swashbuckle.AspNetCore.Swagger.csproj" />
+    <Project Path="src/Swashbuckle.AspNetCore.SwaggerGen/Swashbuckle.AspNetCore.SwaggerGen.csproj" />
+    <Project Path="src/Swashbuckle.AspNetCore.SwaggerUI/Swashbuckle.AspNetCore.SwaggerUI.csproj" />
+    <Project Path="src/Swashbuckle.AspNetCore/Swashbuckle.AspNetCore.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/Swashbuckle.AspNetCore.Annotations.Test/Swashbuckle.AspNetCore.Annotations.Test.csproj" />
+    <Project Path="test/Swashbuckle.AspNetCore.ApiTesting.Test/Swashbuckle.AspNetCore.ApiTesting.Test.csproj" />
+    <Project Path="test/Swashbuckle.AspNetCore.Cli.Test/Swashbuckle.AspNetCore.Cli.Test.csproj" />
+    <Project Path="test/Swashbuckle.AspNetCore.IntegrationTests/Swashbuckle.AspNetCore.IntegrationTests.csproj" />
+    <Project Path="test/Swashbuckle.AspNetCore.Newtonsoft.Test/Swashbuckle.AspNetCore.Newtonsoft.Test.csproj" />
+    <Project Path="test/Swashbuckle.AspNetCore.SwaggerGen.Test/Swashbuckle.AspNetCore.SwaggerGen.Test.csproj" />
+    <Project Path="test/Swashbuckle.AspNetCore.TestSupport/Swashbuckle.AspNetCore.TestSupport.csproj" />
+  </Folder>
+  <Folder Name="/test/WebSites/">
+    <Project Path="test/WebSites/Basic/Basic.csproj" />
+    <Project Path="test/WebSites/CliExample/CliExample.csproj" />
+    <Project Path="test/WebSites/CliExampleWithFactory/CliExampleWithFactory.csproj" />
+    <Project Path="test/WebSites/ConfigFromFile/ConfigFromFile.csproj" />
+    <Project Path="test/WebSites/CustomDocumentSerializer/CustomDocumentSerializer.csproj" />
+    <Project Path="test/WebSites/CustomUIConfig/CustomUIConfig.csproj" />
+    <Project Path="test/WebSites/CustomUIIndex/CustomUIIndex.csproj" />
+    <Project Path="test/WebSites/GenericControllers/GenericControllers.csproj" />
+    <Project Path="test/WebSites/MinimalApp/MinimalApp.csproj" />
+    <Project Path="test/WebSites/MinimalAppWithHostedServices/MinimalAppWithHostedServices.csproj" />
+    <Project Path="test/WebSites/MultipleVersions/MultipleVersions.csproj" />
+    <Project Path="test/WebSites/MvcWithNullable/MvcWithNullable.csproj" />
+    <Project Path="test/WebSites/NswagClientExample/NswagClientExample.csproj" />
+    <Project Path="test/WebSites/OAuth2Integration/OAuth2Integration.csproj" />
+    <Project Path="test/WebSites/ReDoc/ReDoc.csproj" />
+    <Project Path="test/WebSites/TestFirst.IntegrationTests/TestFirst.IntegrationTests.csproj" />
+    <Project Path="test/WebSites/TestFirst/TestFirst.csproj" />
+    <Project Path="test/WebSites/TopLevelSwaggerDoc/TopLevelSwaggerDoc.csproj" />
+    <Project Path="test/WebSites/WebApi.Aot/WebApi.Aot.csproj" />
+    <Project Path="test/WebSites/WebApi/WebApi.csproj" />
+  </Folder>
+</Solution>

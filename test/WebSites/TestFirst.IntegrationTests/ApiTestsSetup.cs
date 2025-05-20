@@ -34,7 +34,7 @@ public class ApiTestRunner : ApiTestRunnerBase
 
     private static string GetSolutionRelativeContentRoot(
         string solutionRelativePath,
-        string solutionName = "*.sln")
+        string solutionName = "*.slnx")
     {
         ArgumentNullException.ThrowIfNull(solutionRelativePath);
 
