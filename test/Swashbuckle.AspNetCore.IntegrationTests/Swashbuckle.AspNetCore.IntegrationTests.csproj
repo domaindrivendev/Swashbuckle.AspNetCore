@@ -43,12 +43,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="../../src/Swashbuckle.AspNetCore.SwaggerUI/node_modules/swagger-ui-dist/**/*" Exclude="**/*/index.html;**/*/index.js;**/*/*.map;**/*/*.json;**/*/*.md;**/*/swagger-ui-es-*;**/*/LICENSE;**/*/NOTICE" Link="swagger-ui-dist/%(RecursiveDir)%(FileName)%(Extension)">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="../../src/Swashbuckle.AspNetCore.ReDoc/node_modules/redoc/bundles/redoc.standalone.js" Link="redoc/bundles/redoc.standalone.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <EmbeddedResource Include="../../src/Swashbuckle.AspNetCore.SwaggerUI/node_modules/swagger-ui-dist/**/*" Exclude="**/*/index.html;**/*/index.js;**/*/*.map;**/*/*.json;**/*/*.md;**/*/swagger-ui-es-*;**/*/LICENSE;**/*/NOTICE" Link="Embedded/SwaggerUI/%(RecursiveDir)%(FileName)%(Extension)" />
+    <EmbeddedResource Include="../../src/Swashbuckle.AspNetCore.ReDoc/node_modules/redoc/bundles/redoc.standalone.js" Link="Embedded/ReDoc/%(RecursiveDir)%(FileName)%(Extension)" />
   </ItemGroup>
   
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">

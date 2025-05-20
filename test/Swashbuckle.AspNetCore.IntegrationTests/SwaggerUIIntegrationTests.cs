@@ -42,13 +42,13 @@ public class SwaggerUIIntegrationTests
         AssertResource(htmlResponse);
 
         using var jsResponse = await client.GetAsync(swaggerUijsPath, TestContext.Current.CancellationToken);
-        AssertResource(jsResponse, false);
+        AssertResource(jsResponse, weakETag: false);
 
         using var indexCss = await client.GetAsync(indexCssPath, TestContext.Current.CancellationToken);
-        AssertResource(indexCss, false);
+        AssertResource(indexCss, weakETag: false);
 
         using var cssResponse = await client.GetAsync(swaggerUiCssPath, TestContext.Current.CancellationToken);
-        AssertResource(cssResponse, false);
+        AssertResource(cssResponse, weakETag: false);
 
         static void AssertResource(HttpResponseMessage response, bool weakETag = true)
         {
@@ -209,7 +209,7 @@ public class SwaggerUIIntegrationTests
             using var stream = await htmlResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
             using var diskFileStream = File.OpenRead(diskFile);
 
-            Assert.Equal(MD5.HashData(diskFileStream), MD5.HashData(stream));
+            Assert.Equal(SHA1.HashData(diskFileStream), SHA1.HashData(stream));
         }
     }
 
@@ -219,20 +219,21 @@ public class SwaggerUIIntegrationTests
         var site = new TestSite(typeof(Basic.Startup));
         using var client = site.BuildClient();
 
-        foreach (var diskFile in Directory.EnumerateFiles("swagger-ui-dist"))
-        {
-            var diskFileName = Path.GetFileName(diskFile);
+        Assert.NotEmpty(EnumerateEmbeddedUIFiles());
 
-            using var requestMessage = new HttpRequestMessage(HttpMethod.Get, diskFileName);
+        foreach (var (resourceName, fileName) in EnumerateEmbeddedUIFiles())
+        {
+            using var requestMessage = new HttpRequestMessage(HttpMethod.Get, fileName);
             requestMessage.Headers.AcceptEncoding.Add(new("gzip"));
             using var htmlResponse = await client.SendAsync(requestMessage, TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
+            Assert.Equal("gzip", htmlResponse.Content.Headers.ContentEncoding.Single());
 
             using var stream = await htmlResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
             using var gzipStream = new GZipStream(stream, CompressionMode.Decompress);
-            using var diskFileStream = File.OpenRead(diskFile);
+            using var diskFileStream = typeof(SwaggerUIIntegrationTests).Assembly.GetManifestResourceStream(resourceName);
 
-            Assert.Equal(MD5.HashData(diskFileStream), MD5.HashData(gzipStream));
+            Assert.Equal(SHA1.HashData(diskFileStream), SHA1.HashData(gzipStream));
         }
     }
 
@@ -242,15 +243,15 @@ public class SwaggerUIIntegrationTests
         var site = new TestSite(typeof(Basic.Startup));
         using var client = site.BuildClient();
 
-        foreach (var diskFile in Directory.EnumerateFiles("swagger-ui-dist"))
-        {
-            var diskFileName = Path.GetFileName(diskFile);
+        Assert.NotEmpty(EnumerateEmbeddedUIFiles());
 
-            using var htmlResponse = await client.GetAsync(diskFileName, TestContext.Current.CancellationToken);
+        foreach (var (_, fileName) in EnumerateEmbeddedUIFiles())
+        {
+            using var htmlResponse = await client.GetAsync(fileName, TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
             Assert.NotNull(htmlResponse.Headers.ETag?.Tag);
 
-            using var requestMessage = new HttpRequestMessage(HttpMethod.Get, diskFileName);
+            using var requestMessage = new HttpRequestMessage(HttpMethod.Get, fileName);
             requestMessage.Headers.IfNoneMatch.Add(new(htmlResponse.Headers.ETag?.Tag));
             using var secondHtmlResponse = await client.SendAsync(requestMessage, TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.NotModified, secondHtmlResponse.StatusCode);
@@ -258,5 +259,13 @@ public class SwaggerUIIntegrationTests
             using var stream = await secondHtmlResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
             Assert.Equal(0, stream.Length);
         }
+    }
+
+    private IEnumerable<(string ResourceName, string FileName)> EnumerateEmbeddedUIFiles()
+    {
+        const string ResourcePrefix = "Swashbuckle.AspNetCore.IntegrationTests.Embedded.SwaggerUI.";
+        return typeof(SwaggerUIIntegrationTests).Assembly.GetManifestResourceNames()
+                                                         .Where(name => name.StartsWith(ResourcePrefix))
+                                                         .Select(name => (name, name.Substring(ResourcePrefix.Length)));
     }
 }

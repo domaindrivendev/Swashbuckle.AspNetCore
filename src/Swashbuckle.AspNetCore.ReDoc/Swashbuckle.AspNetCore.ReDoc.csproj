@@ -54,10 +54,10 @@
     <AdditionalFiles Include="PublicAPI\$(_TargetFrameworkIdentifier)\PublicAPI.Shipped.txt" />
     <AdditionalFiles Include="PublicAPI\$(_TargetFrameworkIdentifier)\PublicAPI.Unshipped.txt" />
   </ItemGroup>
-  
+
   <ItemGroup>
-    <Compile Include="..\Swashbuckle.AspNetCore.SwaggerUI\CompressedEmbeddedFileResponser.cs" Link="CompressedEmbeddedFileResponser.cs" />
-    <Compile Include="..\Swashbuckle.AspNetCore.SwaggerUI\HttpContextAcceptEncodingCheckExtensions.cs" Link="HttpContextAcceptEncodingCheckExtensions.cs" />
+    <Compile Include="..\Shared\CompressedEmbeddedFileResponder.cs" Link="CompressedEmbeddedFileResponder.cs" />
+    <Compile Include="..\Shared\HttpContextAcceptEncodingCheckExtensions.cs" Link="HttpContextAcceptEncodingCheckExtensions.cs" />
   </ItemGroup>
 
   <Target Name="NpmInstall" BeforeTargets="DispatchToInnerBuilds" Condition=" '$(CI)' != '' OR !Exists('$(MSBuildThisFileDirectory)\node_modules') ">

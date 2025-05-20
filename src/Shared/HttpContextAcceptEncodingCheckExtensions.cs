@@ -1,6 +1,5 @@
 ﻿#nullable enable
 
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
@@ -35,10 +34,8 @@ internal static partial class HttpContextAcceptEncodingCheckExtensions
 #endif
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool IsGZipAccepted(string? acceptEncoding) => !string.IsNullOrWhiteSpace(acceptEncoding) && s_gzipAcceptedCheckRegex.IsMatch(acceptEncoding);
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static bool IsGZipAccepted(in StringValues acceptEncodingValues)
     {
         return acceptEncodingValues.Count switch

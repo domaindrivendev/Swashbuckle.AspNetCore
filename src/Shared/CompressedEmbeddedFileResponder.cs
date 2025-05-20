@@ -13,7 +13,7 @@ using System.Collections.Frozen;
 
 namespace Swashbuckle.AspNetCore;
 
-internal class CompressedEmbeddedFileResponser
+internal class CompressedEmbeddedFileResponder
 {
     private readonly Assembly _assembly;
     private readonly string _cacheControlHeaderValue;
@@ -27,7 +27,7 @@ internal class CompressedEmbeddedFileResponser
     private readonly Dictionary<string, ResourceIndexCache> _resourceIndexes;
 #endif
 
-    public CompressedEmbeddedFileResponser(Assembly assembly, string resourceNamePrefix, string pathPrefix, TimeSpan? cacheLifetime)
+    public CompressedEmbeddedFileResponder(Assembly assembly, string resourceNamePrefix, string pathPrefix, TimeSpan? cacheLifetime)
     {
         _assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
         _pathPrefix = string.IsNullOrWhiteSpace(pathPrefix)
@@ -98,13 +98,13 @@ internal class CompressedEmbeddedFileResponser
             if (responseWithGZip)
             {
                 responseHeaders.ContentLength = stream.Length;
-                await stream.CopyToAsync(httpContext.Response.Body, 81320, httpContext.RequestAborted);
+                await stream.CopyToAsync(httpContext.Response.Body, 81920, httpContext.RequestAborted);
             }
             else
             {
                 responseHeaders.ContentLength = Length;
                 using var gzipStream = new GZipStream(stream, CompressionMode.Decompress);
-                await gzipStream.CopyToAsync(httpContext.Response.Body, 81320, httpContext.RequestAborted);
+                await gzipStream.CopyToAsync(httpContext.Response.Body, 81920, httpContext.RequestAborted);
             }
 
             return true;
@@ -158,8 +158,8 @@ internal class CompressedEmbeddedFileResponser
 
         resourceIndexCache.DecompressContentLength = memoryStream.Length;
 
-        using var md5 = MD5.Create();
-        var hashData = md5.ComputeHash(memoryStream);
+        using var sha1 = SHA1.Create();
+        var hashData = sha1.ComputeHash(memoryStream);
 
         resourceIndexCache.ETag = $"\"{Convert.ToBase64String(hashData)}\"";
 

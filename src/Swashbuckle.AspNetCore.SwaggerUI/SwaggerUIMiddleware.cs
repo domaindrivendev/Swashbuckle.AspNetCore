@@ -23,7 +23,7 @@ internal sealed partial class SwaggerUIMiddleware
     private readonly SwaggerUIOptions _options;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-    private readonly CompressedEmbeddedFileResponser _compressedEmbeddedFileResponser;
+    private readonly CompressedEmbeddedFileResponder _compressedEmbeddedFileResponder;
 
     public SwaggerUIMiddleware(
         RequestDelegate next,
@@ -50,7 +50,7 @@ internal sealed partial class SwaggerUIMiddleware
 #endif
 
         var pathPrefix = options.RoutePrefix.StartsWith("/") ? options.RoutePrefix : $"/{options.RoutePrefix}";
-        _compressedEmbeddedFileResponser = new(typeof(SwaggerUIMiddleware).Assembly, EmbeddedFileNamespace, pathPrefix, _options.CacheLifetime);
+        _compressedEmbeddedFileResponder = new(typeof(SwaggerUIMiddleware).Assembly, EmbeddedFileNamespace, pathPrefix, _options.CacheLifetime);
     }
 
     public async Task Invoke(HttpContext httpContext)
@@ -94,7 +94,7 @@ internal sealed partial class SwaggerUIMiddleware
             }
         }
 
-        if (!await _compressedEmbeddedFileResponser.TryRespondWithFileAsync(httpContext))
+        if (!await _compressedEmbeddedFileResponder.TryRespondWithFileAsync(httpContext))
         {
             await _next(httpContext);
         }

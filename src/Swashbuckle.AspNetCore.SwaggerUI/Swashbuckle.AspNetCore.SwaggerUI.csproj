@@ -48,6 +48,10 @@
     <AdditionalFiles Include="PublicAPI\$(_TargetFrameworkIdentifier)\PublicAPI.Shipped.txt" />
     <AdditionalFiles Include="PublicAPI\$(_TargetFrameworkIdentifier)\PublicAPI.Unshipped.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Shared\CompressedEmbeddedFileResponder.cs" Link="CompressedEmbeddedFileResponder.cs" />
+    <Compile Include="..\Shared\HttpContextAcceptEncodingCheckExtensions.cs" Link="HttpContextAcceptEncodingCheckExtensions.cs" />
+  </ItemGroup>
 
   <Target Name="NpmInstall" BeforeTargets="DispatchToInnerBuilds" Condition=" '$(CI)' != '' OR !Exists('$(MSBuildThisFileDirectory)\node_modules') ">
     <Exec Command="npm install" ContinueOnError="true">

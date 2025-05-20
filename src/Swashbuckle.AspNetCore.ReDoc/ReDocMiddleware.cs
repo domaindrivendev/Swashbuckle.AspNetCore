@@ -23,7 +23,7 @@ internal sealed class ReDocMiddleware
     private readonly ReDocOptions _options;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-    private readonly CompressedEmbeddedFileResponser _compressedEmbeddedFileResponser;
+    private readonly CompressedEmbeddedFileResponder _compressedEmbeddedFileResponder;
 
     public ReDocMiddleware(
         RequestDelegate next,
@@ -49,7 +49,7 @@ internal sealed class ReDocMiddleware
 #endif
 
         var pathPrefix = options.RoutePrefix.StartsWith("/") ? options.RoutePrefix : $"/{options.RoutePrefix}";
-        _compressedEmbeddedFileResponser = new(typeof(ReDocMiddleware).Assembly, EmbeddedFileNamespace, pathPrefix, _options.CacheLifetime);
+        _compressedEmbeddedFileResponder = new(typeof(ReDocMiddleware).Assembly, EmbeddedFileNamespace, pathPrefix, _options.CacheLifetime);
     }
 
     public async Task Invoke(HttpContext httpContext)
@@ -86,7 +86,7 @@ internal sealed class ReDocMiddleware
             }
         }
 
-        if (!await _compressedEmbeddedFileResponser.TryRespondWithFileAsync(httpContext))
+        if (!await _compressedEmbeddedFileResponder.TryRespondWithFileAsync(httpContext))
         {
             await _next(httpContext);
         }

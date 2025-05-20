@@ -34,7 +34,7 @@ public class ReDocIntegrationTests
 
         AssertResource(htmlResponse);
         AssertResource(cssResponse);
-        AssertResource(jsResponse, false);
+        AssertResource(jsResponse, weakETag: false);
 
         static void AssertResource(HttpResponseMessage response, bool weakETag = true)
         {
@@ -171,16 +171,13 @@ public class ReDocIntegrationTests
         var site = new TestSite(typeof(ReDocApp.Startup));
         using var client = site.BuildClient();
 
-        var diskFile = "redoc/bundles/redoc.standalone.js";
-        var diskFileName = Path.GetFileName("redoc/bundles/redoc.standalone.js");
-
         using var htmlResponse = await client.GetAsync("/Api-Docs/redoc.standalone.js", TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
 
         using var stream = await htmlResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
-        using var diskFileStream = File.OpenRead(diskFile);
+        using var rawFileStream = typeof(ReDocIntegrationTests).Assembly.GetManifestResourceStream("Swashbuckle.AspNetCore.IntegrationTests.Embedded.ReDoc.redoc.standalone.js");
 
-        Assert.Equal(MD5.HashData(diskFileStream), MD5.HashData(stream));
+        Assert.Equal(SHA1.HashData(rawFileStream), SHA1.HashData(stream));
     }
 
     [Fact]
@@ -189,18 +186,16 @@ public class ReDocIntegrationTests
         var site = new TestSite(typeof(ReDocApp.Startup));
         using var client = site.BuildClient();
 
-        var diskFile = "redoc/bundles/redoc.standalone.js";
-        var diskFileName = Path.GetFileName("redoc/bundles/redoc.standalone.js");
-
         using var requestMessage = new HttpRequestMessage(HttpMethod.Get, "/Api-Docs/redoc.standalone.js");
         requestMessage.Headers.AcceptEncoding.Add(new("gzip"));
         using var htmlResponse = await client.SendAsync(requestMessage, TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
+        Assert.Equal("gzip", htmlResponse.Content.Headers.ContentEncoding.Single());
 
         using var stream = await htmlResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
         using var gzipStream = new GZipStream(stream, CompressionMode.Decompress);
-        using var diskFileStream = File.OpenRead(diskFile);
+        using var rawFileStream = typeof(ReDocIntegrationTests).Assembly.GetManifestResourceStream("Swashbuckle.AspNetCore.IntegrationTests.Embedded.ReDoc.redoc.standalone.js");
 
-        Assert.Equal(MD5.HashData(diskFileStream), MD5.HashData(gzipStream));
+        Assert.Equal(SHA1.HashData(rawFileStream), SHA1.HashData(gzipStream));
     }
 }
