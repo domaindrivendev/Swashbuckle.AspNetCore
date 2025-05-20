@@ -49,7 +49,7 @@ app.UseReDoc(options =>
 ```
 
 > [!NOTE]
-> Using `options.SpecUrl("/v1/swagger.json")` multiple times within the same `UseReDoc(...)` will not add multiple urls.
+> Using `options.SpecUrl("/v1/swagger.json")` multiple times within the same `UseReDoc(...)` will not add multiple URL.
 
 ## Inject Custom CSS
 
@@ -86,4 +86,4 @@ app.UseReDoc(options =>
 ```
 
 > [!TIP]
-> To get started, you should base your custom `index.html` on the [default version](../src/Swashbuckle.AspNetCore.ReDoc/index.html)
+> To get started, you should base your custom `index.html` on the [default version](../src/Swashbuckle.AspNetCore.ReDoc/index.html).

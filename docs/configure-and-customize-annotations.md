@@ -89,7 +89,7 @@ public class Product
 
 ## Apply Schema Filters to Specific Types
 
-The `SwaggerGen` package provides several extension points, including Schema Filters (described [here](configure-and-customize-swaggergen.md#extend-generator-with-operation-schema--document-filter)) for customizing ALL generated Schemas. However, there may be cases where it's preferable to apply a filter to a specific Schema. For example, if you'd like to include an example for a specific type in your API. This can be done by decorating the type with a `SwaggerSchemaFilterAttribute`:
+The `SwaggerGen` package provides several extension points, including Schema Filters (described [here](configure-and-customize-swaggergen.md#extend-generator-with-operation-schema--document-filter)) for customizing **all** generated Schemas. However, there may be cases where it's preferable to apply a filter to a specific Schema. For example, if you'd like to include an example for a specific type in your API. This can be done by decorating the type with a `SwaggerSchemaFilterAttribute`:
 
 📝 `Product.cs`
 ```csharp

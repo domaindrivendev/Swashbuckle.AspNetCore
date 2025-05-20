@@ -5,7 +5,7 @@
 By default, Swagger JSON will be exposed at the following route - `"/swagger/{documentName}/swagger.json"`. If necessary, you can change this when enabling the Swagger middleware. 
 
 > [!IMPORTANT]
-> Custom routes MUST include the `{documentName}` parameter.
+> Custom routes **must** include the `{documentName}` parameter.
 
 ```csharp
 app.UseSwagger(options =>

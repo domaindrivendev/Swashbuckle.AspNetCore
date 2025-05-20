@@ -281,7 +281,7 @@ options.SwaggerDoc("v1",
 ```
 
 > [!TIP] 
-> Use IntelliSense to see what other fields are available.
+> Use IntelliSense to see what other members are available.
 
 ## Generate Multiple Swagger Documents
 
@@ -296,7 +296,7 @@ services.AddSwaggerGen(options =>
 ```
 
 > [!NOTE]
-> Take note of the first argument to SwaggerDoc. It MUST be a URI-friendly name that uniquely identifies the document. It's subsequently used to make up the path for requesting the corresponding Swagger JSON. For example, with the default routing, the above documents will be available at `"/swagger/v1/swagger.json"` and `"/swagger/v2/swagger.json"`.
+> Take note of the first argument to SwaggerDoc. It **must** be a URI-friendly name that uniquely identifies the document. It's subsequently used to make up the path for requesting the corresponding Swagger JSON. For example, with the default routing, the above documents will be available at `"/swagger/v1/swagger.json"` and `"/swagger/v2/swagger.json"`.
 
 Next, you'll need to inform Swashbuckle which actions to include in each document. Although this can be customized (see below), by default, the generator will use the `ApiDescription.GroupName` property, part of the built-in metadata layer that ships with ASP.NET Core, to make this distinction. You can set this by decorating individual actions OR by applying an application wide convention.
 
@@ -452,7 +452,7 @@ services.AddSwaggerGen(options =>
 ```
 
 > [!NOTE]
-> This dictates the sort order BEFORE actions are grouped and transformed into the Swagger format. So, it affects the ordering of groups (i.e. Swagger "PathItems"), AND the ordering of operations within a group, in the Swagger output.
+> This dictates the sort order BEFORE actions are grouped and transformed into the Swagger format. So, it affects the ordering of groups (i.e. Swagger "PathItems"), **and** the ordering of operations within a group, in the Swagger output.
 
 ## Customize Schema Id's
 
@@ -483,7 +483,7 @@ services.AddSwaggerGen(options =>
 });
 ```
 > [!NOTE]
-> See [this github issue](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2703) for support for nested types.
+> See [this GitHub issue](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2703) for support for nested types.
 
 ## Override Schema for Specific Types
 
@@ -655,7 +655,7 @@ public class TagDescriptionsDocumentFilter : IDocumentFilter
 
 ## Add Security Definitions and Requirements
 
-In Swagger, you can describe how your API is secured by defining one or more security schemes (e.g basic, api key, oauth2 etc.) and declaring which of those schemes are applicable globally OR for specific operations. For more details, take a look at the [Security Requirement Object in the Swagger spec](https://swagger.io/specification/#securityRequirementObject).
+In Swagger, you can describe how your API is secured by defining one or more security schemes (e.g. Basic, API key, OAuth2 etc.) and declaring which of those schemes are applicable globally OR for specific operations. For more details, take a look at the [Security Requirement Object in the Swagger spec](https://swagger.io/specification/#securityRequirementObject).
 
 In Swashbuckle, you can define schemes by invoking the `AddSecurityDefinition` method, providing a name and an instance of `OpenApiSecurityScheme`. For example you can define an [OAuth 2.0 - implicit flow](https://oauth.net/2/) as follows:
 
@@ -686,7 +686,7 @@ services.AddSwaggerGen(options =>
 ```
 
 > [!NOTE] 
-> In addition to defining a scheme, you also need to indicate which operations that scheme is applicable to. You can apply schemes globally (i.e. to ALL operations) through the `AddSecurityRequirement` method. The example below indicates that the scheme called "oauth2" should be applied to all operations, and that the `"readAccess"` and `"writeAccess"` scopes are required. When applying schemes of type other than `"oauth2"`, the array of scopes MUST be empty.
+> In addition to defining a scheme, you also need to indicate which operations that scheme is applicable to. You can apply schemes globally (i.e. to **all** operations) through the `AddSecurityRequirement` method. The example below indicates that the scheme called `"oauth2"` should be applied to all operations, and that the `"readAccess"` and `"writeAccess"` scopes are required. When applying schemes of type other than `"oauth2"`, the array of scopes **must** be empty.
 
 📝 `Startup.cs`
 ```csharp
@@ -848,7 +848,7 @@ services.AddSwaggerGen(options =>
 ```
 
 > [!NOTE]
-> If you're using the [Swashbuckle Annotations library](configure-and-customize-annotations.md#configuration--customization-of-swashbuckleaspnetcoreannotations), it contains a custom selector that's based on the presence of `[JsonDerivedType]` (or `[SwaggerSubType]` for .NET 6 or earlier) attributes on base class definitions. This way, you can use simple attributes to explicitly list the inheritance and/or polymorphism relationships you want to expose. To enable this behavior, check out the [Annotations docs](configure-and-customize-annotations.md#list-known-subtypes-for-inheritance-and-polymorphism).
+> If you're using the [Swashbuckle Annotations library](configure-and-customize-annotations.md#configuration--customization-of-swashbuckleaspnetcoreannotations), it contains a custom selector that's based on the presence of `[JsonDerivedType]` attributes on base class definitions. This way, you can use simple attributes to explicitly list the inheritance and/or polymorphism relationships you want to expose. To enable this behavior, check out the [Annotations docs](configure-and-customize-annotations.md#list-known-subtypes-for-inheritance-and-polymorphism).
 
 ### Describing Discriminators
 
@@ -916,4 +916,4 @@ services.AddSwaggerGen(options =>
 ```
 
 > [!NOTE]
-> If you're using the [Swashbuckle Annotations library](configure-and-customize-annotations.md#configuration--customization-of-swashbuckleaspnetcoreannotations), it contains custom selector functions that are based on the presence of `[JsonPolymorphic]` (or `[SwaggerDiscriminator]` for .NET 6 or earlier) and `[JsonDerivedType]` (or `[SwaggerSubType]` for .NET 6 or earlier) attributes on base class definitions. This way, you can use simple attributes to explicitly provide discriminator metadata. To enable this behavior, check out the [Annotations docs](configure-and-customize-annotations.md#enrich-polymorphic-base-classes-with-discriminator-metadata).
+> If you're using the [Swashbuckle Annotations library](configure-and-customize-annotations.md#configuration--customization-of-swashbuckleaspnetcoreannotations), it contains custom selector functions that are based on the presence of `[JsonPolymorphic]` and `[JsonDerivedType]` attributes on base class definitions. This way, you can use simple attributes to explicitly provide discriminator metadata. To enable this behavior, check out the [Annotations docs](configure-and-customize-annotations.md#enrich-polymorphic-base-classes-with-discriminator-metadata).
