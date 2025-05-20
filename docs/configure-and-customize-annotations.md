@@ -12,11 +12,10 @@
 2. In the `ConfigureServices` method of `Startup.cs`, enable annotations within in the Swagger config block:
 
     ```csharp
-    services.AddSwaggerGen(c =>
+    services.AddSwaggerGen(options =>
     {
-       ...
-
-       c.EnableAnnotations();
+        //...
+        options.EnableAnnotations();
     });
     ```
 
@@ -26,7 +25,6 @@ Once annotations have been enabled, you can enrich the generated Operation metad
 
 ```csharp
 [HttpPost]
-
 [SwaggerOperation(
     Summary = "Creates a new product",
     Description = "Requires admin privileges",
@@ -38,7 +36,7 @@ public IActionResult Create([FromBody]Product product)
 
 ## Enrich Response Metadata
 
-ASP.NET Core provides the `ProducesResponseTypeAttribute` for listing the different responses that can be returned by an action. These attributes can be combined with XML comments, as described [above](#include-descriptions-from-xml-comments), to include human friendly descriptions with each response in the generated Swagger. If you'd prefer to do all of this with a single attribute, and avoid the use of XML comments, you can use `SwaggerResponseAttribute`s instead:
+ASP.NET Core provides the `ProducesResponseTypeAttribute` for listing the different responses that can be returned by an action. These attributes can be combined with XML comments, as described [here](configure-and-customize-swaggergen.md#include-descriptions-from-xml-comments), to include human friendly descriptions with each response in the generated Swagger. If you'd prefer to do all of this with a single attribute, and avoid the use of XML comments, you can use `SwaggerResponseAttribute`s instead:
 
 ```csharp
 [HttpPost]
@@ -86,21 +84,24 @@ public class Product
 }
 ```
 
-_NOTE: In Swagger / OpenAPI, serialized objects AND contained properties are represented as `Schema` instances, hence why this annotation can be applied to both classes and properties. Also worth noting, "required" properties are specified as an array of property names on the top-level schema as opposed to a flag on each individual property._
+> [!NOTE]
+> In Swagger / OpenAPI, serialized objects AND contained properties are represented as `Schema` instances, hence why this annotation can be applied to both classes and properties. Also worth noting, "required" properties are specified as an array of property names on the top-level schema as opposed to a flag on each individual property.
 
 ## Apply Schema Filters to Specific Types
 
-The `SwaggerGen` package provides several extension points, including Schema Filters ([described here](#extend-generator-with-operation-schema--document-filter)) for customizing ALL generated Schemas. However, there may be cases where it's preferable to apply a filter to a specific Schema. For example, if you'd like to include an example for a specific type in your API. This can be done by decorating the type with a `SwaggerSchemaFilterAttribute`:
+The `SwaggerGen` package provides several extension points, including Schema Filters (described [here](configure-and-customize-swaggergen.md#extend-generator-with-operation-schema--document-filter)) for customizing **all** generated Schemas. However, there may be cases where it's preferable to apply a filter to a specific Schema. For example, if you'd like to include an example for a specific type in your API. This can be done by decorating the type with a `SwaggerSchemaFilterAttribute`:
 
+📝 `Product.cs`
 ```csharp
-// Product.cs
 [SwaggerSchemaFilter(typeof(ProductSchemaFilter))]
 public class Product
 {
-    ...
+    //...
 }
+```
 
-// ProductSchemaFilter.cs
+📝 `ProductSchemaFilter.cs`
+```csharp
 public class ProductSchemaFilter : ISchemaFilter
 {
     public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
@@ -122,25 +123,27 @@ By default, the Swagger generator will tag all operations with the controller na
 [SwaggerTag("Create, read, update and delete Products")]
 public class ProductsController
 {
-    ...
+    //...
 }
 ```
 
-_NOTE: This will add the above description specifically to the tag named "Products". Therefore, you should avoid using this attribute if you're tagging Operations with something other than controller name - e.g. if you're customizing the tagging behavior with `TagActionsBy`._
+> [!NOTE] 
+> This will add the above description specifically to the tag named "Products". Therefore, you should avoid using this attribute if you're tagging Operations with something other than controller name - e.g. if you're customizing the tagging behavior with `TagActionsBy`.
 
 ## List Known Subtypes for Inheritance and Polymorphism
 
-If you want to use Swashbuckle's [inheritance and/or polymorphism behavior](#inheritance-and-polymorphism), you can use annotations to _explicitly_ indicate the "known" subtypes for a given base type. This will override the default selector function, which selects _all_ subtypes in the same assembly as the base type, and therefore needs to be explicitly enabled when you enable Annotations:
+If you want to use Swashbuckle's [inheritance and/or polymorphism behavior](configure-and-customize-swaggergen.md#inheritance-and-polymorphism), you can use annotations to _explicitly_ indicate the "known" subtypes for a given base type. This will override the default selector function, which selects _all_ subtypes in the same assembly as the base type, and therefore needs to be explicitly enabled when you enable Annotations:
 
+📝 `Startup.cs`
 ```csharp
-// Startup.cs
-services.AddSwaggerGen(c =>
+services.AddSwaggerGen(options =>
 {
-    c.EnableAnnotations(enableAnnotationsForInheritance: true, enableAnnotationsForPolymorphism: true);
+    options.EnableAnnotations(enableAnnotationsForInheritance: true, enableAnnotationsForPolymorphism: true);
 });
+```
 
-// Shape.cs
-
+📝 `Shape.cs`
+```csharp
 // .NET 7 or later
 [JsonDerivedType(typeof(Rectangle))]
 [JsonDerivedType(typeof(Circle))]
@@ -160,16 +163,16 @@ public abstract class Shape
 
 If you're using annotations to _explicitly_ indicate the "known" subtypes for a polymorphic base type, you can combine the `JsonPolymorphicAttribute` with the `JsonDerivedTypeAttribute` to provide additional metadata about the "discriminator" property, which will then be incorporated into the generated schema definition:
 
-
+📝 `Startup.cs`
 ```csharp
-// Startup.cs
-services.AddSwaggerGen(c =>
+services.AddSwaggerGen(options =>
 {
-    c.EnableAnnotations(enableAnnotationsForInheritance: true, enableAnnotationsForPolymorphism: true);
+    options.EnableAnnotations(enableAnnotationsForInheritance: true, enableAnnotationsForPolymorphism: true);
 });
+```
 
-// Shape.cs
-
+📝 `Shape.cs`
+```csharp
 // .NET 7 or later
 [JsonPolymorphic(TypeDiscriminatorPropertyName = "shapeType")]
 [JsonDerivedType(typeof(Rectangle), "rectangle")]
@@ -200,7 +203,7 @@ public enum ShapeType
 
 This indicates that the corresponding payload will have a "shapeType" property to discriminate between subtypes, and that property will have a value of "rectangle" if the payload represents a `Rectangle` type and a value of "circle" if it represents a `Circle` type. This detail will be described in the generated schema definition as follows:
 
-```
+```yaml
 schema: {
   oneOf: [
     {

@@ -14,7 +14,7 @@ public class TestSite(Type startupType, ITestOutputHelper outputHelper)
 
         var builder = new WebHostBuilder()
             .UseEnvironment("Development")
-            .UseSolutionRelativeContentRoot(Path.Combine("test", "WebSites", applicationName))
+            .UseSolutionRelativeContentRoot(Path.Combine("test", "WebSites", applicationName), "*.slnx")
             .UseStartup(startupType);
 
         builder.ConfigureTestServices(

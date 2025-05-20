@@ -2,34 +2,38 @@
 
 ## Change the Path for Swagger JSON Endpoints
 
-By default, Swagger JSON will be exposed at the following route - "/swagger/{documentName}/swagger.json". If necessary, you can change this when enabling the Swagger middleware. Custom routes MUST include the `{documentName}` parameter.
+By default, Swagger JSON will be exposed at the following route - `"/swagger/{documentName}/swagger.json"`. If necessary, you can change this when enabling the Swagger middleware. 
+
+> [!IMPORTANT]
+> Custom routes **must** include the `{documentName}` parameter.
 
 ```csharp
-app.UseSwagger(c =>
+app.UseSwagger(options =>
 {
-    c.RouteTemplate = "api-docs/{documentName}/swagger.json";
-})
+    options.RouteTemplate = "api-docs/{documentName}/swagger.json";
+});
 ```
 
-_NOTE: If you're using the SwaggerUI middleware, you'll also need to update its configuration to reflect the new endpoints:_
-
-```csharp
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/api-docs/v1/swagger.json", "My API V1");
-})
-```
-
-_NOTE: If you also need to update the relative path that the UI itself is available on, you'll need to follow the instructions found in [Change Relative Path to the UI](#change-relative-path-to-the-ui)._
+> [!NOTE] 
+> If you're using the SwaggerUI middleware, you'll also need to update its configuration to reflect the new endpoints:
+>
+> ```csharp
+> app.UseSwaggerUI(options =>
+> {
+>     options.SwaggerEndpoint("/api-docs/v1/swagger.json", "My API V1");
+> });
+> ```
+>
+> If you also need to update the relative path that the UI itself is available on, you'll need to follow the instructions found in [Change Relative Path to the UI](configure-and-customize-swaggerui.md#change-relative-path-to-the-ui).
 
 ## Modify Swagger with Request Context
 
 If you need to set some Swagger metadata based on the current request, you can configure a filter that's executed prior to serializing the document.
 
 ```csharp
-app.UseSwagger(c =>
+app.UseSwagger(options =>
 {
-    c.PreSerializeFilters.Add((swagger, httpReq) =>
+    options.PreSerializeFilters.Add((swagger, httpReq) =>
     {
         swagger.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" } };
     });
@@ -43,9 +47,9 @@ The `OpenApiDocument` and the current `HttpRequest` are both passed to the filte
 By default, Swashbuckle will generate and expose Swagger JSON in version 3.0 of the specification, officially called the OpenAPI Specification. However, to support backwards compatibility, you can opt to continue exposing it in the 2.0 format with the following option:
 
 ```csharp
-app.UseSwagger(c =>
+app.UseSwagger(options =>
 {
-    c.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0;
+    options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0;
 });
 ```
 
@@ -56,14 +60,15 @@ Virtual directories and reverse proxies can cause issues for applications that g
 For example, to wire up the SwaggerUI middleware, you provide the URL to one or more OpenAPI/Swagger documents. This is the URL that the swagger-ui, a client-side application, will call to retrieve your API metadata. To ensure this works behind virtual directories and reverse proxies, you should express this relative to the `RoutePrefix` of the swagger-ui itself:
 
 ```csharp
-app.UseSwaggerUI(c =>
+app.UseSwaggerUI(options =>
 {
-    c.RoutePrefix = "swagger";
-    c.SwaggerEndpoint("v1/swagger.json", "My API V1");
+    options.RoutePrefix = "swagger";
+    options.SwaggerEndpoint("v1/swagger.json", "My API V1");
 });
 ```
 
-_NOTE: In previous versions of the docs, you may have seen this expressed as a root-relative link (e.g. `/swagger/v1/swagger.json`). This won't work if your app is hosted on an IIS virtual directory or behind a proxy that trims the request path before forwarding. If you switch to the *page-relative* syntax shown above, it should work in all cases._
+> [!NOTE] 
+> In previous versions of the docs, you may have seen this expressed as a root-relative link (e.g. `/swagger/v1/swagger.json`). This won't work if your app is hosted on an IIS virtual directory or behind a proxy that trims the request path before forwarding. If you switch to the *page-relative* syntax shown above, it should work in all cases.
 
 ## Customizing how the OpenAPI document is serialized
 
@@ -77,7 +82,7 @@ it is possible to create a custom document serializer that implements the `ISwag
 services.ConfigureSwagger(options =>
 {
     option.SetCustomDocumentSerializer<CustomDocumentSerializer>();
-})
+});
 ```
 
 When the command line tool is not used, it can also be done on the application host:
@@ -86,5 +91,5 @@ When the command line tool is not used, it can also be done on the application h
 app.UseSwagger(options =>
 {
     options.SetCustomDocumentSerializer<CustomDocumentSerializer>();
-})
+});
 ```
