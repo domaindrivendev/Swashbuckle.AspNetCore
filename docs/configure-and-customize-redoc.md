@@ -2,13 +2,13 @@
 
 ## Change Relative Path to the UI
 
-By default, the Redoc UI will be exposed at "/api-docs". If necessary, you can alter this when enabling the Redoc middleware:
+By default, the Redoc UI will be exposed at `"/api-docs"`. If necessary, you can alter this when enabling the Redoc middleware:
 
 ```csharp
-app.UseReDoc(c =>
+app.UseReDoc(options =>
 {
-    c.RoutePrefix = "docs"
-    ...
+    options.RoutePrefix = "docs"
+    //...
 }
 ```
 
@@ -17,71 +17,73 @@ app.UseReDoc(c =>
 By default, the Redoc UI will have a generic document title. You can alter this when enabling the Redoc middleware:
 
 ```csharp
-app.UseReDoc(c =>
+app.UseReDoc(options =>
 {
-    c.DocumentTitle = "My API Docs";
-    ...
+    options.DocumentTitle = "My API Docs";
+    //...
 }
 ```
 
 ## Apply Redoc Parameters
 
-Redoc ships with its own set of configuration parameters, all described here https://github.com/Rebilly/redoc/blob/main/README.md#redoc-options-object. In Swashbuckle, most of these are surfaced through the Redoc middleware options:
+Redoc ships with its own set of configuration parameters, all described [here](https://github.com/Rebilly/redoc/blob/main/README.md#redoc-options-object). In Swashbuckle, most of these are surfaced through the Redoc middleware options:
 
 ```csharp
-app.UseReDoc(c =>
+app.UseReDoc(options =>
 {
-    c.SpecUrl("/v1/swagger.json");
-    c.EnableUntrustedSpec();
-    c.ScrollYOffset(10);
-    c.HideHostname();
-    c.HideDownloadButton();
-    c.ExpandResponses("200,201");
-    c.RequiredPropsFirst();
-    c.NoAutoAuth();
-    c.PathInMiddlePanel();
-    c.HideLoading();
-    c.NativeScrollbars();
-    c.DisableSearch();
-    c.OnlyRequiredInSamples();
-    c.SortPropsAlphabetically();
+    options.SpecUrl("/v1/swagger.json");
+    options.EnableUntrustedSpec();
+    options.ScrollYOffset(10);
+    options.HideHostname();
+    options.HideDownloadButton();
+    options.ExpandResponses("200,201");
+    options.RequiredPropsFirst();
+    options.NoAutoAuth();
+    options.PathInMiddlePanel();
+    options.HideLoading();
+    options.NativeScrollbars();
+    options.DisableSearch();
+    options.OnlyRequiredInSamples();
+    options.SortPropsAlphabetically();
 });
 ```
 
-_Using `c.SpecUrl("/v1/swagger.json")` multiple times within the same `UseReDoc(...)` will not add multiple urls._
+> [!NOTE]
+> Using `options.SpecUrl("/v1/swagger.json")` multiple times within the same `UseReDoc(...)` will not add multiple urls.
 
 ## Inject Custom CSS
 
 To tweak the look and feel, you can inject additional CSS stylesheets by adding them to your `wwwroot` folder and specifying the relative paths in the middleware options:
 
 ```csharp
-app.UseReDoc(c =>
+app.UseReDoc(options =>
 {
-    ...
-    c.InjectStylesheet("/redoc/custom.css");
+    //...
+    options.InjectStylesheet("/redoc/custom.css");
 }
 ```
 
-It is also possible to modify the theme by using the `AdditionalItems` property, see https://github.com/Rebilly/redoc/blob/main/README.md#redoc-options-object for more information.
+It is also possible to modify the theme by using the `AdditionalItems` property, more information can be found [here](https://github.com/Rebilly/redoc/blob/main/README.md#redoc-options-object).
 
 ```csharp
-app.UseReDoc(c =>
+app.UseReDoc(options =>
 {
-    ...
-    c.ConfigObject.AdditionalItems = ...
+    //...
+    options.ConfigObject.AdditionalItems = ...
 }
 ```
 
 ## Customize index.html
 
-To customize the UI beyond the basic options listed above, you can provide your own version of the Redoc index.html page:
+To customize the UI beyond the basic options listed above, you can provide your own version of the Redoc `index.html` page:
 
 ```csharp
-app.UseReDoc(c =>
+app.UseReDoc(options =>
 {
-    c.IndexStream = () => GetType().Assembly
+    options.IndexStream = () => GetType().Assembly
         .GetManifestResourceStream("CustomIndex.ReDoc.index.html"); // requires file to be added as an embedded resource
 });
 ```
 
-_To get started, you should base your custom index.html on the [default version](src/Swashbuckle.AspNetCore.ReDoc/index.html)_
+> [!TIP]
+> To get started, you should base your custom `index.html` on the [default version](../src/Swashbuckle.AspNetCore.ReDoc/index.html)
