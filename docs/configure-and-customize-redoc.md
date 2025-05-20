@@ -9,7 +9,7 @@ app.UseReDoc(options =>
 {
     options.RoutePrefix = "docs"
     //...
-}
+});
 ```
 
 ## Change Document Title
@@ -21,7 +21,7 @@ app.UseReDoc(options =>
 {
     options.DocumentTitle = "My API Docs";
     //...
-}
+});
 ```
 
 ## Apply Redoc Parameters
@@ -60,7 +60,7 @@ app.UseReDoc(options =>
 {
     //...
     options.InjectStylesheet("/redoc/custom.css");
-}
+});
 ```
 
 It is also possible to modify the theme by using the `AdditionalItems` property, more information can be found [here](https://github.com/Rebilly/redoc/blob/main/README.md#redoc-options-object).
@@ -70,7 +70,7 @@ app.UseReDoc(options =>
 {
     //...
     options.ConfigObject.AdditionalItems = ...
-}
+});
 ```
 
 ## Customize index.html

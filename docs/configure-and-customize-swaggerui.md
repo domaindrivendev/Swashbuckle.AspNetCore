@@ -8,7 +8,7 @@ By default, the Swagger UI will be exposed at `"/swagger"`. If necessary, you ca
 app.UseSwaggerUI(options =>
 {
     options.RoutePrefix = "api-docs"
-}
+});
 ```
 
 ## Change Document Title
@@ -19,7 +19,7 @@ By default, the Swagger UI will have a generic document title. When you have mul
 app.UseSwaggerUI(options =>
 {
     options.DocumentTitle = "My Swagger UI";
-}
+});
 ```
 
 ## Change CSS or JS Paths
@@ -32,7 +32,7 @@ app.UseSwaggerUI(options =>
     options.StylesPath = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.17.10/swagger-ui.min.css";
     options.ScriptBundlePath = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.17.10/swagger-ui-bundle.min.js";
     options.ScriptPresetsPath = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.17.10/swagger-ui-standalone-preset.min.js";
-}
+});
 ```
 
 ## List Multiple Swagger Documents
@@ -44,7 +44,7 @@ app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
     options.SwaggerEndpoint("/swagger/v2/swagger.json", "V2 Docs");
-}
+});
 ```
 
 ## Apply swagger-ui Parameters
@@ -86,7 +86,7 @@ To tweak the behavior, you can inject additional JavaScript files by adding them
 app.UseSwaggerUI(options =>
 {
     options.InjectJavascript("/swagger-ui/custom.js");
-}
+});
 ```
 
 > [!NOTE] 
@@ -103,7 +103,7 @@ To tweak the look and feel, you can inject additional CSS stylesheets by adding 
 app.UseSwaggerUI(options =>
 {
     options.InjectStylesheet("/swagger-ui/custom.css");
-}
+});
 ```
 
 ## Customize index.html

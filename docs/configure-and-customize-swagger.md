@@ -11,7 +11,7 @@ By default, Swagger JSON will be exposed at the following route - `"/swagger/{do
 app.UseSwagger(options =>
 {
     options.RouteTemplate = "api-docs/{documentName}/swagger.json";
-})
+});
 ```
 
 > [!NOTE] 
@@ -21,7 +21,7 @@ app.UseSwagger(options =>
 > app.UseSwaggerUI(options =>
 > {
 >     options.SwaggerEndpoint("/api-docs/v1/swagger.json", "My API V1");
-> })
+> });
 > ```
 >
 > If you also need to update the relative path that the UI itself is available on, you'll need to follow the instructions found in [Change Relative Path to the UI](configure-and-customize-swaggerui.md#change-relative-path-to-the-ui).
@@ -82,7 +82,7 @@ it is possible to create a custom document serializer that implements the `ISwag
 services.ConfigureSwagger(options =>
 {
     option.SetCustomDocumentSerializer<CustomDocumentSerializer>();
-})
+});
 ```
 
 When the command line tool is not used, it can also be done on the application host:
@@ -91,5 +91,5 @@ When the command line tool is not used, it can also be done on the application h
 app.UseSwagger(options =>
 {
     options.SetCustomDocumentSerializer<CustomDocumentSerializer>();
-})
+});
 ```
