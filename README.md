@@ -110,7 +110,7 @@ for more details.
 
 ## System.Text.Json (STJ) vs Newtonsoft.Json (Json.NET)
 
-In versions of Swashbuckle.AspNetCore prior to `5.0.0`, Swashbuckle will generate Schemas (descriptions of the data types exposed by an API) based
+In versions of Swashbuckle.AspNetCore prior to `5.0.0`, Swashbuckle would generate Schemas (descriptions of the data types exposed by an API) based
 on the behavior of the [Newtonsoft.Json serializer][newtonsoft-json]. This made sense because that was the serializer that shipped with ASP.NET Core
 at the time. However, since ASP.NET Core 3.0, ASP.NET Core introduces a new serializer, [System.Text.Json (STJ)][system-text-json] out-of-the-box.
 
