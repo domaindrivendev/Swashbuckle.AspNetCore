@@ -60,7 +60,7 @@ for more details.
 
     ```csharp
     [HttpPost]
-    public void CreateProduct([FromBody]Product product)
+    public void CreateProduct([FromBody] Product product)
     {
         // Implementation goes here
     }
