@@ -2,11 +2,12 @@
 
 ## Retrieve Swagger Directly from a Startup Assembly 
 
-Once your application has been setup with Swashbuckle (see [Getting Started](#getting-started)), you can use the Swashbuckle CLI tool to retrieve Swagger / OpenAPI JSON directly from your application's startup assembly, and write it to file. This can be useful if you want to incorporate Swagger generation into a CI/CD process, or if you want to serve it from static file at run-time.
+Once your application has been setup with Swashbuckle (see [Getting Started](../README.md#getting-started)), you can use the Swashbuckle CLI tool to retrieve Swagger / OpenAPI JSON directly from your application's startup assembly, and write it to file. This can be useful if you want to incorporate Swagger generation into a CI/CD process, or if you want to serve it from static file at run-time.
 
 It's packaged as a [.NET Tool](https://learn.microsoft.com/dotnet/core/tools/global-tools) that can be installed and used via the dotnet SDK.
 
-> :warning: The tool needs to load your Startup DLL and its dependencies at runtime. Therefore, you should use a version of the `dotnet` SDK that is compatible with your application. For example, if your app targets `net8.0`, then you should use version 8.0.xxx of the SDK to run the CLI tool. If it targets `net9.0`, then you should use version 9.0.xxx of the SDK and so on.
+> [!WARNING] 
+> The tool needs to load your Startup DLL and its dependencies at runtime. Therefore, you should use a version of the `dotnet` SDK that is compatible with your application. For example, if your app targets `net8.0`, then you should use version 8.0.xxx of the SDK to run the CLI tool. If it targets `net9.0`, then you should use version 9.0.xxx of the SDK and so on.
 
 ### Using the tool with the .NET SDK
 
@@ -28,10 +29,10 @@ It's packaged as a [.NET Tool](https://learn.microsoft.com/dotnet/core/tools/glo
     swagger tofile --output [output] [startupassembly] [swaggerdoc]
     ```
 
-    Where ...
-    * [output] is the relative path where the Swagger JSON will be output to
-    * [startupassembly] is the relative path to your application's startup assembly
-    * [swaggerdoc] is the name of the swagger document you want to retrieve, as configured in your startup class
+    Placeholders and their meaning:
+    * `[output]`: the relative path where the Swagger JSON will be output to
+    * `[startupassembly]`: the relative path to your application's startup assembly
+    * `[swaggerdoc]`: the name of the swagger document you want to retrieve, as configured in your startup class
 
 ### Using the tool with the .NET 6.0 SDK or later
 
@@ -59,10 +60,10 @@ It's packaged as a [.NET Tool](https://learn.microsoft.com/dotnet/core/tools/glo
     dotnet swagger tofile --output [output] [startupassembly] [swaggerdoc]
     ```
 
-    Where ...
-    * [output] is the relative path where the Swagger JSON will be output to
-    * [startupassembly] is the relative path to your application's startup assembly
-    * [swaggerdoc] is the name of the swagger document you want to retrieve, as configured in your startup class
+    Placeholders and their meaning:
+    * `[output]`: the relative path where the Swagger JSON will be output to
+    * `[startupassembly]`: the relative path to your application's startup assembly
+    * `[swaggerdoc]`: the name of the swagger document you want to retrieve, as configured in your startup class
 
 ## Use the CLI Tool with a Custom Host Configuration
 
