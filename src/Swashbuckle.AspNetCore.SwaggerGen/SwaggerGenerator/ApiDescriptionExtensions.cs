@@ -39,22 +39,6 @@ public static class ApiDescriptionExtensions
         return [];
     }
 
-    [Obsolete("Use TryGetMethodInfo() and CustomAttributes() instead")]
-    public static void GetAdditionalMetadata(this ApiDescription apiDescription,
-        out MethodInfo methodInfo,
-        out IEnumerable<object> customAttributes)
-    {
-        if (apiDescription.TryGetMethodInfo(out methodInfo))
-        {
-            customAttributes = methodInfo.GetCustomAttributes(true)
-                .Union(methodInfo.DeclaringType.GetCustomAttributes(true));
-        }
-        else
-        {
-            customAttributes = [];
-        }
-    }
-
     internal static string RelativePathSansParameterConstraints(this ApiDescription apiDescription)
     {
         var routeTemplate = TemplateParser.Parse(apiDescription.RelativePath);

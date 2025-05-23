@@ -62,17 +62,6 @@ public static class AnnotationsSwaggerGenOptionsExtensions
             return subTypeAttributes.Select(attr => attr.SubType);
         }
 
-#pragma warning disable CS0618 // Type or member is obsolete
-        var obsoleteAttribute = type.GetCustomAttributes(false)
-            .OfType<SwaggerSubTypesAttribute>()
-            .FirstOrDefault();
-#pragma warning restore CS0618 // Type or member is obsolete
-
-        if (obsoleteAttribute != null)
-        {
-            return obsoleteAttribute.SubTypes;
-        }
-
         var jsonDerivedTypeAttributes = type.GetCustomAttributes(false)
             .OfType<JsonDerivedTypeAttribute>()
             .ToList();
@@ -94,17 +83,6 @@ public static class AnnotationsSwaggerGenOptionsExtensions
         if (discriminatorAttribute != null)
         {
             return discriminatorAttribute.PropertyName;
-        }
-
-#pragma warning disable CS0618 // Type or member is obsolete
-        var obsoleteAttribute = baseType.GetCustomAttributes(false)
-            .OfType<SwaggerSubTypesAttribute>()
-            .FirstOrDefault();
-#pragma warning restore CS0618 // Type or member is obsolete
-
-        if (obsoleteAttribute != null)
-        {
-            return obsoleteAttribute.Discriminator;
         }
 
         var jsonPolymorphicAttributes = baseType.GetCustomAttributes(false)

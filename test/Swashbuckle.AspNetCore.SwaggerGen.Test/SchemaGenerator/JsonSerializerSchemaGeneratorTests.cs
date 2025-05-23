@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Constraints;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures;
@@ -1003,22 +1002,15 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal(required, propertyIsRequired);
     }
 
-    [Obsolete($"{nameof(IOptions<MvcOptions>)} is not used.")]
     [Theory]
-    [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextAnnotated.NonNullableString), false)]
-    [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextAnnotated.NonNullableString), true)]
-    [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextNotAnnotated.NonNullableString), false)]
-    [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextNotAnnotated.NonNullableString), true)]
+    [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextAnnotated.NonNullableString))]
+    [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextNotAnnotated.NonNullableString))]
     public void GenerateSchema_SupportsOption_SuppressImplicitRequiredAttributeForNonNullableReferenceTypes(
         Type declaringType,
         string subType,
-        string propertyName,
-        bool suppress)
+        string propertyName)
     {
-        var subject = Subject(
-            configureGenerator: c => c.NonNullableReferenceTypesAsRequired = true,
-            configureMvcOptions: o => o.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = suppress
-        );
+        var subject = Subject(c => c.NonNullableReferenceTypesAsRequired = true);
         var schemaRepository = new SchemaRepository();
 
         subject.GenerateSchema(declaringType, schemaRepository);
@@ -1359,19 +1351,13 @@ public class JsonSerializerSchemaGeneratorTests
         return new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions));
     }
 
-    [Obsolete($"{nameof(IOptions<MvcOptions>)} is not used.")]
-    private static SchemaGenerator Subject(
-        Action<SchemaGeneratorOptions> configureGenerator,
-        Action<MvcOptions> configureMvcOptions)
+    private static SchemaGenerator Subject(Action<SchemaGeneratorOptions> configureGenerator)
     {
         var generatorOptions = new SchemaGeneratorOptions();
         configureGenerator?.Invoke(generatorOptions);
 
         var serializerOptions = new JsonSerializerOptions();
 
-        var mvcOptions = new MvcOptions();
-        configureMvcOptions?.Invoke(mvcOptions);
-
-        return new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions), Options.Create(mvcOptions));
+        return new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions));
     }
 }
