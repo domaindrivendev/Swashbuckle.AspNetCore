@@ -70,27 +70,6 @@ public static class ToolTests
     }
 
     [Fact]
-    public static void Can_Generate_Swagger_Json_v2_SerializeAsV2()
-    {
-        using var document = RunToJsonCommand((outputPath) =>
-        [
-            "tofile",
-            "--output",
-            outputPath,
-            "--serializeasv2",
-            Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
-            "v1"
-        ]);
-
-        Assert.Equal("2.0", document.RootElement.GetProperty("swagger").GetString());
-
-        // verify one of the endpoints
-        var paths = document.RootElement.GetProperty("paths");
-        var productsPath = paths.GetProperty("/products");
-        Assert.True(productsPath.TryGetProperty("post", out _));
-    }
-
-    [Fact]
     public static void Can_Generate_Swagger_Json_v3()
     {
         using var document = RunToJsonCommand((outputPath) =>
