@@ -12,13 +12,12 @@
     <PackageReference Include="ReportGenerator" PrivateAssets="All" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(CollectCoverage)' == 'true' ">
-    <CoverletOutput>$([System.IO.Path]::Combine($(ArtifactsPath), 'coverage', 'coverage'))</CoverletOutput>
+    <CoverletReportsPath>$([System.IO.Path]::Combine($(ArtifactsPath), 'coverage', '$(MSBuildProjectName)'))</CoverletReportsPath>
+    <CoverletOutput>$([System.IO.Path]::Combine('$(CoverletReportsPath)', 'coverage'))</CoverletOutput>
     <ReportGeneratorOutputMarkdown Condition=" '$(ReportGeneratorOutputMarkdown)' == '' AND '$(GITHUB_SHA)' != '' ">true</ReportGeneratorOutputMarkdown>
     <ReportGeneratorReportTypes>HTML</ReportGeneratorReportTypes>
     <ReportGeneratorReportTypes Condition=" '$(ReportGeneratorOutputMarkdown)' == 'true' ">$(ReportGeneratorReportTypes);MarkdownSummaryGitHub</ReportGeneratorReportTypes>
-    <ReportGeneratorTargetDirectory>$([System.IO.Path]::Combine($(ArtifactsPath), 'coverage'))</ReportGeneratorTargetDirectory>
-    <ReportGeneratorMarkdownSummary>$([System.IO.Path]::Combine($(ReportGeneratorTargetDirectory), 'SummaryGithub.md'))</ReportGeneratorMarkdownSummary>
-    <MergeWith>$([System.IO.Path]::Combine($(ReportGeneratorTargetDirectory), 'coverage.$(TargetFramework).json'))</MergeWith>
+    <ReportGeneratorMarkdownSummary>$([System.IO.Path]::Combine($(CoverletReportsPath), 'SummaryGithub.md'))</ReportGeneratorMarkdownSummary>
   </PropertyGroup>
   <UsingTask TaskName="WriteLinesToFileWithRetry" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
     <ParameterGroup>
@@ -50,7 +49,7 @@
     </Task>
   </UsingTask>
   <Target Name="GenerateCoverageReports" AfterTargets="GenerateCoverageResultAfterTest" Condition=" '$(CollectCoverage)' == 'true' ">
-    <ReportGenerator ReportFiles="@(CoverletReport)" ReportTypes="$(ReportGeneratorReportTypes)" Tag="$(Version)" TargetDirectory="$(ReportGeneratorTargetDirectory)" Title="$(AssemblyName)" VerbosityLevel="Warning" />
+    <ReportGenerator ReportFiles="@(CoverletReport)" ReportTypes="$(ReportGeneratorReportTypes)" Tag="$(Version)" TargetDirectory="$(CoverletReportsPath)" Title="$(AssemblyName)" VerbosityLevel="Warning" />
     <PropertyGroup Condition=" '$(ReportGeneratorOutputMarkdown)' == 'true' AND Exists('$(ReportGeneratorMarkdownSummary)') ">
       <_ReportSummaryContent>&lt;details&gt;&lt;summary&gt;:chart_with_upwards_trend: &lt;b&gt;$(AssemblyName) Code Coverage report&lt;/b&gt; %28$(TargetFramework)%29&lt;/summary&gt;</_ReportSummaryContent>
       <_ReportSummaryContent>$(_ReportSummaryContent)$([System.Environment]::NewLine)</_ReportSummaryContent>
