@@ -7,7 +7,7 @@
     <OutputType>Exe</OutputType>
     <PackAsTool>true</PackAsTool>
     <PackageId>Swashbuckle.AspNetCore.Cli</PackageId>
-    <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net10.0;net9.0;net8.0</TargetFrameworks>
     <ToolCommandName>swagger</ToolCommandName>
   </PropertyGroup>
 

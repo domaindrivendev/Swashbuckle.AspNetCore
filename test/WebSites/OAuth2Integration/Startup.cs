@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.References;
 using OAuth2Integration.ResourceServer.Swagger;
 
 namespace OAuth2Integration;
@@ -72,13 +73,10 @@ public class Startup
                 }
             });
 
-            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+            c.AddSecurityRequirement((document) => new OpenApiSecurityRequirement
             {
                 {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
-                    },
+                    new OpenApiSecuritySchemeReference("oauth2", document),
                     ["readAccess", "writeAccess"]
                 }
             });

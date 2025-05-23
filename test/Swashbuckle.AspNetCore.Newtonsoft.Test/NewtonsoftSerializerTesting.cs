@@ -10,9 +10,11 @@ public class NewtonsoftSerializerTesting
     [Fact]
     public void Serialize()
     {
-        var dto = new TestKeyedCollection();
-        dto.Add(new TestDto { Prop1 = "foo" });
-        dto.Add(new TestDto { Prop1 = "bar" });
+        var dto = new TestKeyedCollection
+        {
+            new TestDto { Prop1 = "foo" },
+            new TestDto { Prop1 = "bar" },
+        };
 
         var json = JsonConvert.SerializeObject(dto);
 
