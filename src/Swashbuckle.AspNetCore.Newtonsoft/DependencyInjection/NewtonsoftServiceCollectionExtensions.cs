@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Newtonsoft;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -19,7 +18,7 @@ public static class NewtonsoftServiceCollectionExtensions
             ServiceDescriptor.Transient<ISerializerDataContractResolver>((s) =>
             {
                 var serializerSettings = s.GetRequiredService<IOptions<MvcNewtonsoftJsonOptions>>().Value?.SerializerSettings
-                    ?? new JsonSerializerSettings();
+                    ?? new();
 
                 return new NewtonsoftDataContractResolver(serializerSettings);
             }));
