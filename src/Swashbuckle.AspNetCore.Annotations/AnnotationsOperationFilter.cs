@@ -17,12 +17,10 @@ public class AnnotationsOperationFilter : IOperationFilter
             actionAttributes = methodInfo.GetCustomAttributes(true);
         }
 
-#if NET
         if (context.ApiDescription?.ActionDescriptor?.EndpointMetadata is { } metadata)
         {
             metadataAttributes = metadata;
         }
-#endif
 
         // NOTE: When controller and action attributes are applicable, action attributes should take priority.
         // Hence, why they're at the end of the list (i.e. last one wins).

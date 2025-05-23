@@ -36,11 +36,7 @@ public class JsonSerializerDataContractResolver(JsonSerializerOptions serializer
             // Test to determine if the serializer will treat as string
             var serializeAsString =
                 enumValues.Length > 0 &&
-#if NET
                 JsonConverterFunc(enumValues.GetValue(0), type).StartsWith('\"');
-#else
-                JsonConverterFunc(enumValues.GetValue(0), type).StartsWith("\"");
-#endif
 
             var exampleType = serializeAsString ?
                 typeof(string) :
@@ -67,11 +63,7 @@ public class JsonSerializerDataContractResolver(JsonSerializerOptions serializer
                     .Select(value => JsonConverterFunc(value, keyType));
 
                 keys =
-#if NET
                     enumValuesAsJson.Any(json => json.StartsWith('\"'))
-#else
-                    enumValuesAsJson.Any(json => json.StartsWith("\""))
-#endif
                     ? enumValuesAsJson.Select(json => json.Replace("\"", string.Empty))
                     : keyType.GetEnumNames();
             }
@@ -131,13 +123,11 @@ public class JsonSerializerDataContractResolver(JsonSerializerOptions serializer
             return true;
         }
 
-#if NET
         if (type.IsConstructedFrom(typeof(IAsyncEnumerable<>), out constructedType))
         {
             itemType = constructedType.GenericTypeArguments[0];
             return true;
         }
-#endif
 
         if (type.IsArray)
         {
@@ -171,7 +161,6 @@ public class JsonSerializerDataContractResolver(JsonSerializerOptions serializer
                 // .NET 5 introduces JsonIgnoreAttribute.Condition which should be honored
                 bool isIgnoredViaNet5Attribute = true;
 
-#if NET
                 JsonIgnoreAttribute jsonIgnoreAttribute = property.GetCustomAttribute<JsonIgnoreAttribute>();
                 if (jsonIgnoreAttribute != null)
                 {
@@ -184,7 +173,6 @@ public class JsonSerializerDataContractResolver(JsonSerializerOptions serializer
                         _ => true
                     };
                 }
-#endif
 
                 return
                     (property.IsPubliclyReadable() || property.IsPubliclyWritable()) &&
@@ -215,7 +203,6 @@ public class JsonSerializerDataContractResolver(JsonSerializerOptions serializer
 
             var isRequired = false;
 
-#if NET
             var deserializationConstructor = propertyInfo.DeclaringType?.GetConstructors()
                 .OrderBy(c =>
                 {
@@ -241,7 +228,6 @@ public class JsonSerializerDataContractResolver(JsonSerializerOptions serializer
                 });
 
             isRequired = propertyInfo.GetCustomAttribute<JsonRequiredAttribute>() != null;
-#endif
 
             dataProperties.Add(
                 new DataProperty(
@@ -280,11 +266,9 @@ public class JsonSerializerDataContractResolver(JsonSerializerOptions serializer
         [typeof(Guid)] = Tuple.Create(DataType.String, "uuid"),
         [typeof(Uri)] = Tuple.Create(DataType.String, "uri"),
         [typeof(Version)] = Tuple.Create(DataType.String, (string)null),
-#if NET
         [typeof(DateOnly)] = Tuple.Create(DataType.String, "date"),
         [typeof(TimeOnly)] = Tuple.Create(DataType.String, "time"),
         [typeof(Int128)] = Tuple.Create(DataType.Integer, "int128"),
         [typeof(UInt128)] = Tuple.Create(DataType.Integer, "int128"),
-#endif
     };
 }

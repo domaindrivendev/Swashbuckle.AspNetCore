@@ -44,9 +44,7 @@ public class ConfigObject
     /// Controls how the model is shown when the API is first rendered.
     /// (The user can always switch the rendering for a given model by clicking the 'Model' and 'Example Value' links)
     /// </summary>
-#if NET
     [JsonConverter(typeof(JavascriptStringEnumConverter<ModelRendering>))]
-#endif
     [JsonPropertyName("defaultModelRendering")]
     public ModelRendering DefaultModelRendering { get; set; } = ModelRendering.Example;
 
@@ -60,9 +58,7 @@ public class ConfigObject
     /// Controls the default expansion setting for the operations and tags.
     /// It can be 'list' (expands only the tags), 'full' (expands the tags and operations) or 'none' (expands nothing)
     /// </summary>
-#if NET
     [JsonConverter(typeof(JavascriptStringEnumConverter<DocExpansion>))]
-#endif
     [JsonPropertyName("docExpansion")]
     public DocExpansion DocExpansion { get; set; } = DocExpansion.List;
 
@@ -102,16 +98,9 @@ public class ConfigObject
     /// List of HTTP methods that have the Try it out feature enabled.
     /// An empty array disables Try it out for all operations. This does not filter the operations from the display
     /// </summary>
-#if NET
     [JsonConverter(typeof(JavascriptStringEnumEnumerableConverter<SubmitMethod>))]
-#endif
     [JsonPropertyName("supportedSubmitMethods")]
-    public IEnumerable<SubmitMethod> SupportedSubmitMethods { get; set; } =
-#if NET
-        Enum.GetValues<SubmitMethod>();
-#else
-        Enum.GetValues(typeof(SubmitMethod)).Cast<SubmitMethod>();
-#endif
+    public IEnumerable<SubmitMethod> SupportedSubmitMethods { get; set; } = Enum.GetValues<SubmitMethod>();
 
     /// <summary>
     /// Controls whether the "Try it out" section should be enabled by default.

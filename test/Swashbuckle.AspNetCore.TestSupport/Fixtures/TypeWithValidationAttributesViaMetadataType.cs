@@ -13,8 +13,6 @@ public class TypeWithValidationAttributesViaMetadataType
 
     public string[] ArrayWithMinMaxLength { get; set; }
 
-#if NET
-
     public string StringWithLength { get; set; }
 
     public string[] ArrayWithLength { get; set; }
@@ -22,8 +20,6 @@ public class TypeWithValidationAttributesViaMetadataType
     public string StringWithBase64 { get; set; }
 
     public double IntWithExclusiveRange { get; set; }
-
-#endif
 
     public int IntWithRange { get; set; }
 
@@ -53,8 +49,6 @@ public class MetadataType
     [MinLength(1), MaxLength(3)]
     public string[] ArrayWithMinMaxLength { get; set; }
 
-#if NET
-
     [Length(1, 3)]
     public string StringWithLength { get; set; }
 
@@ -66,8 +60,6 @@ public class MetadataType
 
     [Base64String]
     public string StringWithBase64 { get; set; }
-
-#endif
 
     [Range(1, 10)]
     public int IntWithRange { get; set; }

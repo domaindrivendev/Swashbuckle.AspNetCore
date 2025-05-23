@@ -111,11 +111,7 @@ public class SchemaGenerator(
             {
                 var genericTypes = modelType
                     .GetInterfaces()
-#if !NET
                     .Concat([modelType])
-#else
-                    .Append(modelType)
-#endif
                     .Where(t => t.IsGenericType)
                     .ToArray();
 
@@ -256,9 +252,7 @@ public class SchemaGenerator(
         typeof(IFormFile),
         typeof(FileResult),
         typeof(Stream),
-#if NET
         typeof(System.IO.Pipelines.PipeReader),
-#endif
     ];
 
     private OpenApiSchema GenerateConcreteSchema(DataContract dataContract, SchemaRepository schemaRepository)
@@ -483,9 +477,7 @@ public class SchemaGenerator(
                 dataProperty.IsRequired
                 || markNonNullableTypeAsRequired
                 || customAttributes.OfType<RequiredAttribute>().Any()
-#if NET
                 || customAttributes.OfType<System.Runtime.CompilerServices.RequiredMemberAttribute>().Any()
-#endif
                 )
                 && !schema.Required.Contains(dataProperty.Name))
             {

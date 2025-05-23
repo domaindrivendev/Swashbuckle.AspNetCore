@@ -9,18 +9,10 @@ internal static class StringExtensions
             return value;
         }
 
-#if NET
-        var cameCasedParts = value
+        var camelCasedParts = value
             .Split('.')
             .Select(part => char.ToLowerInvariant(part[0]) + part[1..]);
 
-        return string.Join('.', cameCasedParts);
-#else
-        var cameCasedParts = value
-            .Split('.')
-            .Select(part => char.ToLowerInvariant(part[0]) + part.Substring(1));
-
-        return string.Join(".", cameCasedParts);
-#endif
+        return string.Join('.', camelCasedParts);
     }
 }

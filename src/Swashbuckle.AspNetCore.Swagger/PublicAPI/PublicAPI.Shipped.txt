@@ -1,6 +1,7 @@
 ﻿Microsoft.AspNetCore.Builder.SwaggerBuilderExtensions
 Microsoft.Extensions.DependencyInjection.SwaggerOptionsExtensions
 Microsoft.Extensions.DependencyInjection.SwaggerServiceCollectionExtensions
+static Microsoft.AspNetCore.Builder.SwaggerBuilderExtensions.MapSwagger(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder endpoints, string pattern = "/swagger/{documentName}/swagger.{extension:regex(^(json|ya?ml)$)}", System.Action<Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions> setupAction = null) -> Microsoft.AspNetCore.Builder.IEndpointConventionBuilder
 static Microsoft.AspNetCore.Builder.SwaggerBuilderExtensions.UseSwagger(this Microsoft.AspNetCore.Builder.IApplicationBuilder app, Swashbuckle.AspNetCore.Swagger.SwaggerOptions options) -> Microsoft.AspNetCore.Builder.IApplicationBuilder
 static Microsoft.AspNetCore.Builder.SwaggerBuilderExtensions.UseSwagger(this Microsoft.AspNetCore.Builder.IApplicationBuilder app, System.Action<Swashbuckle.AspNetCore.Swagger.SwaggerOptions> setupAction = null) -> Microsoft.AspNetCore.Builder.IApplicationBuilder
 static Microsoft.Extensions.DependencyInjection.SwaggerOptionsExtensions.SetCustomDocumentSerializer<TDocumentSerializer>(this Swashbuckle.AspNetCore.Swagger.SwaggerOptions swaggerOptions, params object[] constructorParameters) -> void
@@ -17,6 +18,8 @@ Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions
 Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions.OpenApiVersion.get -> Microsoft.OpenApi.OpenApiSpecVersion
 Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions.OpenApiVersion.set -> void
 Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions.PreSerializeFilters.get -> System.Collections.Generic.List<System.Action<Microsoft.OpenApi.Models.OpenApiDocument, Microsoft.AspNetCore.Http.HttpRequest>>
+Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions.SerializeAsV2.get -> bool
+Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions.SerializeAsV2.set -> void
 Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions.SwaggerEndpointOptions() -> void
 Swashbuckle.AspNetCore.Swagger.SwaggerOptions
 Swashbuckle.AspNetCore.Swagger.SwaggerOptions.CustomDocumentSerializer.get -> Swashbuckle.AspNetCore.Swagger.ISwaggerDocumentSerializer
@@ -26,6 +29,8 @@ Swashbuckle.AspNetCore.Swagger.SwaggerOptions.OpenApiVersion.set -> void
 Swashbuckle.AspNetCore.Swagger.SwaggerOptions.PreSerializeFilters.get -> System.Collections.Generic.List<System.Action<Microsoft.OpenApi.Models.OpenApiDocument, Microsoft.AspNetCore.Http.HttpRequest>>
 Swashbuckle.AspNetCore.Swagger.SwaggerOptions.RouteTemplate.get -> string
 Swashbuckle.AspNetCore.Swagger.SwaggerOptions.RouteTemplate.set -> void
+Swashbuckle.AspNetCore.Swagger.SwaggerOptions.SerializeAsV2.get -> bool
+Swashbuckle.AspNetCore.Swagger.SwaggerOptions.SerializeAsV2.set -> void
 Swashbuckle.AspNetCore.Swagger.SwaggerOptions.SwaggerOptions() -> void
 Swashbuckle.AspNetCore.Swagger.UnknownSwaggerDocument
 Swashbuckle.AspNetCore.Swagger.UnknownSwaggerDocument.UnknownSwaggerDocument(string documentName, System.Collections.Generic.IEnumerable<string> knownDocuments) -> void

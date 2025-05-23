@@ -67,12 +67,10 @@ public class JsonSerializerSchemaGeneratorTests
         { typeof(Guid?), JsonSchemaTypes.String, "uuid" },
         { typeof(DateOnly?), JsonSchemaTypes.String, "date" },
         { typeof(TimeOnly?), JsonSchemaTypes.String, "time" },
-#if NET
         { typeof(Int128), JsonSchemaTypes.Integer, "int128" },
         { typeof(Int128?), JsonSchemaTypes.Integer, "int128" },
         { typeof(UInt128), JsonSchemaTypes.Integer, "int128" },
         { typeof(UInt128?), JsonSchemaTypes.Integer, "int128" },
-#endif
     };
 
     [Theory]
@@ -368,7 +366,6 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal(3, schema.Properties["StringWithMinMaxLength"].MaxLength);
         Assert.Equal(1, schema.Properties["ArrayWithMinMaxLength"].MinItems);
         Assert.Equal(3, schema.Properties["ArrayWithMinMaxLength"].MaxItems);
-#if NET
         Assert.Equal(1, schema.Properties["StringWithLength"].MinLength);
         Assert.Equal(3, schema.Properties["StringWithLength"].MaxLength);
         Assert.Equal(1, schema.Properties["ArrayWithLength"].MinItems);
@@ -377,7 +374,6 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal(true, schema.Properties["IntWithExclusiveRange"].ExclusiveMaximum);
         Assert.Equal("byte", schema.Properties["StringWithBase64"].Format);
         Assert.Equal(JsonSchemaTypes.String, schema.Properties["StringWithBase64"].Type);
-#endif
         Assert.Null(schema.Properties["IntWithRange"].ExclusiveMinimum);
         Assert.Null(schema.Properties["IntWithRange"].ExclusiveMaximum);
         Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);
@@ -410,7 +406,6 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.True(schema.Properties["WriteOnlyProperty"].WriteOnly);
     }
 
-#if NET
     public class TypeWithRequiredProperties
     {
         public required string RequiredString { get; set; }
@@ -471,7 +466,6 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Contains("RequiredNonNullableString", schema.Required.ToArray());
     }
 #nullable disable
-#endif
 
     [Theory]
     [InlineData(typeof(TypeWithParameterizedConstructor), nameof(TypeWithParameterizedConstructor.Id), false)]
@@ -1237,7 +1231,6 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal(["string-with-json-property-name"], schema.Properties.Keys);
     }
 
-#if NET
     [Fact]
     public void GenerateSchema_HonorsSerializerAttribute_JsonRequired()
     {
@@ -1249,7 +1242,6 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal(["StringWithJsonRequired"], schema.Required);
         Assert.True(schema.Properties["StringWithJsonRequired"].Nullable);
     }
-#endif
 
     [Fact]
     public void GenerateSchema_HonorsSerializerAttribute_JsonExtensionData()
