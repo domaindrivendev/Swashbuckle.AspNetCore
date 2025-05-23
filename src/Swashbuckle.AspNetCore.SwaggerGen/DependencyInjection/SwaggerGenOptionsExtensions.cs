@@ -67,20 +67,6 @@ public static class SwaggerGenOptionsExtensions
         swaggerGenOptions.SwaggerGeneratorOptions.OperationIdSelector = operationIdSelector;
     }
 
-
-    /// <summary>
-    /// Provide a custom strategy for assigning a default "tag" to operations
-    /// </summary>
-    /// <param name="swaggerGenOptions"></param>
-    /// <param name="tagSelector"></param>
-    [Obsolete("Deprecated: Use the overload that accepts a Func that returns a list of tags")]
-    public static void TagActionsBy(
-        this SwaggerGenOptions swaggerGenOptions,
-        Func<ApiDescription, string> tagSelector)
-    {
-        swaggerGenOptions.SwaggerGeneratorOptions.TagsSelector = (apiDesc) => [tagSelector(apiDesc)];
-    }
-
     /// <summary>
     /// Provide a custom strategy for assigning "tags" to actions
     /// </summary>
@@ -859,32 +845,5 @@ public static class SwaggerGenOptionsExtensions
         swaggerGenOptions.IncludeXmlComments(
             Path.Combine(AppContext.BaseDirectory, $"{assembly.GetName().Name}.xml"),
             includeControllerXmlComments);
-    }
-
-    /// <summary>
-    /// Generate polymorphic schemas (i.e. "oneOf") based on discovered subtypes.
-    /// Deprecated: Use the \"UseOneOfForPolymorphism\" and \"UseAllOfForInheritance\" settings instead
-    /// </summary>
-    /// <param name="swaggerGenOptions"></param>
-    /// <param name="subTypesResolver"></param>
-    /// <param name="discriminatorSelector"></param>
-    [Obsolete("You can use \"UseOneOfForPolymorphism\", \"UseAllOfForInheritance\" and \"SelectSubTypesUsing\" to configure equivalent behavior")]
-    public static void GeneratePolymorphicSchemas(
-        this SwaggerGenOptions swaggerGenOptions,
-        Func<Type, IEnumerable<Type>> subTypesResolver = null,
-        Func<Type, string> discriminatorSelector = null)
-    {
-        swaggerGenOptions.UseOneOfForPolymorphism();
-        swaggerGenOptions.UseAllOfForInheritance();
-
-        if (subTypesResolver != null)
-        {
-            swaggerGenOptions.SelectSubTypesUsing(subTypesResolver);
-        }
-
-        if (discriminatorSelector != null)
-        {
-            swaggerGenOptions.SelectDiscriminatorNameUsing(discriminatorSelector);
-        }
     }
 }

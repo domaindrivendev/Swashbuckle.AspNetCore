@@ -1,5 +1,4 @@
-﻿#if NET
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 
@@ -37,4 +36,3 @@ namespace Swashbuckle.AspNetCore.ReDoc;
     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
 internal sealed partial class ReDocOptionsJsonContext : JsonSerializerContext;
-#endif

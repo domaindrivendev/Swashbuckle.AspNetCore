@@ -4,10 +4,6 @@ using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Newtonsoft;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-#if !NET
-using MvcNewtonsoftJsonOptions = Microsoft.AspNetCore.Mvc.MvcJsonOptions;
-#endif
-
 namespace Microsoft.Extensions.DependencyInjection;
 
 public static class NewtonsoftServiceCollectionExtensions

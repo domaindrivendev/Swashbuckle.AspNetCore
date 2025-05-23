@@ -7,9 +7,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen;
 public static partial class XmlCommentsTextHelper
 {
     public static string Humanize(string text)
-    {
-        return Humanize(text, null);
-    }
+        => Humanize(text, null);
 
     public static string Humanize(string text, string xmlCommentEndOfLine)
     {
@@ -43,17 +41,10 @@ public static partial class XmlCommentsTextHelper
         {
             string line = lines[i].TrimEnd('\r'); // Remove trailing '\r'
 
-#if NET
             if (padLen != 0 && line.Length >= padLen && line[..padLen] == padding)
             {
                 line = line[padLen..];
             }
-#else
-            if (padLen != 0 && line.Length >= padLen && line.Substring(0, padLen) == padding)
-            {
-                line = line.Substring(padLen);
-            }
-#endif
 
             lines[i] = line;
         }
@@ -103,11 +94,7 @@ public static partial class XmlCommentsTextHelper
 
         if (padLength > 0)
         {
-#if NET
             return seed[..padLength];
-#else
-            return seed.Substring(0, padLength);
-#endif
         }
 
         return null;
@@ -138,22 +125,14 @@ public static partial class XmlCommentsTextHelper
             {
                 var builder = new StringBuilder().Append("```");
 
-#if NET
                 if (!codeText.StartsWith('\r') && !codeText.StartsWith('\n'))
-#else
-                if (!codeText.StartsWith("\r") && !codeText.StartsWith("\n"))
-#endif
                 {
                     builder.Append(EndOfLine(xmlCommentEndOfLine));
                 }
 
                 builder.Append(RemoveCommonLeadingWhitespace(codeText, xmlCommentEndOfLine));
 
-#if NET
                 if (!codeText.EndsWith('\n'))
-#else
-                if (!codeText.EndsWith("\n"))
-#endif
                 {
                     builder.Append(EndOfLine(xmlCommentEndOfLine));
                 }
@@ -198,11 +177,7 @@ public static partial class XmlCommentsTextHelper
         {
             builder.Append(string.IsNullOrWhiteSpace(line)
                 ? line
-#if NET
                 : line[minLeadingSpaces..]);
-#else
-                : line.Substring(minLeadingSpaces));
-#endif
 
             builder.Append(EndOfLine(xmlCommentEndOfLine));
         }
@@ -215,56 +190,27 @@ public static partial class XmlCommentsTextHelper
         return xmlCommentEndOfLine ?? Environment.NewLine;
     }
 
-    private const string RefTagPattern = @"<(see|paramref) (name|cref|langword)=""([TPF]{1}:)?(?<display>.+?)"" ?/>";
-    private const string CodeTagPattern = @"<c>(?<display>.+?)</c>";
-    private const string MultilineCodeTagPattern = @"<code>(?<display>.+?)</code>";
-    private const string ParaTagPattern = @"<para>(?<display>.+?)</para>";
-    private const string HrefPattern = @"<see href=\""(.*)\"">(.*)<\/see>";
-    private const string BrPattern = @"(<br ?\/?>)"; // handles <br>, <br/>, <br />
-    private const string LineBreaksPattern = @"\r?\n";
-    private const string DoubleUpLineBreaksPattern = @"(\r?\n){2,}";
-
-#if NET
-    [GeneratedRegex(RefTagPattern)]
+    [GeneratedRegex(@"<(see|paramref) (name|cref|langword)=""([TPF]{1}:)?(?<display>.+?)"" ?/>")]
     private static partial Regex RefTag();
 
-    [GeneratedRegex(CodeTagPattern)]
+    [GeneratedRegex(@"<c>(?<display>.+?)</c>")]
     private static partial Regex CodeTag();
 
-    [GeneratedRegex(MultilineCodeTagPattern, RegexOptions.Singleline)]
+    [GeneratedRegex(@"<code>(?<display>.+?)</code>", RegexOptions.Singleline)]
     private static partial Regex MultilineCodeTag();
 
-    [GeneratedRegex(ParaTagPattern, RegexOptions.Singleline)]
+    [GeneratedRegex(@"<para>(?<display>.+?)</para>", RegexOptions.Singleline)]
     private static partial Regex ParaTag();
 
-    [GeneratedRegex(HrefPattern)]
+    [GeneratedRegex(@"<see href=\""(.*)\"">(.*)<\/see>")]
     private static partial Regex HrefTag();
 
-    [GeneratedRegex(BrPattern)]
+    [GeneratedRegex(@"(<br ?\/?>)")] // handles <br>, <br/>, <br />
     private static partial Regex BrTag();
 
-    [GeneratedRegex(LineBreaksPattern)]
+    [GeneratedRegex(@"\r?\n")]
     private static partial Regex LineBreaks();
 
-    [GeneratedRegex(DoubleUpLineBreaksPattern)]
+    [GeneratedRegex(@"(\r?\n){2,}")]
     private static partial Regex DoubleUpLineBreaks();
-#else
-    private static readonly Regex _refTag = new(RefTagPattern);
-    private static readonly Regex _codeTag = new(CodeTagPattern);
-    private static readonly Regex _multilineCodeTag = new(MultilineCodeTagPattern, RegexOptions.Singleline);
-    private static readonly Regex _paraTag = new(ParaTagPattern, RegexOptions.Singleline);
-    private static readonly Regex _hrefTag = new(HrefPattern);
-    private static readonly Regex _brTag = new(BrPattern);
-    private static readonly Regex _lineBreaks = new(LineBreaksPattern);
-    private static readonly Regex _doubleUpLineBreaks = new(DoubleUpLineBreaksPattern);
-
-    private static Regex RefTag() => _refTag;
-    private static Regex CodeTag() => _codeTag;
-    private static Regex MultilineCodeTag() => _multilineCodeTag;
-    private static Regex ParaTag() => _paraTag;
-    private static Regex HrefTag() => _hrefTag;
-    private static Regex BrTag() => _brTag;
-    private static Regex LineBreaks() => _lineBreaks;
-    private static Regex DoubleUpLineBreaks() => _doubleUpLineBreaks;
-#endif
 }

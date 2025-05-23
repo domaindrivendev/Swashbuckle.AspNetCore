@@ -69,20 +69,6 @@ public class DataContract
             jsonConverter: jsonConverter);
     }
 
-    [Obsolete("Provide jsonConverter function instead of enumValues")]
-    public static DataContract ForPrimitive(
-        Type underlyingType,
-        DataType dataType,
-        string dataFormat,
-        IEnumerable<object> enumValues)
-    {
-        return new DataContract(
-            underlyingType: underlyingType,
-            dataType: dataType,
-            dataFormat: dataFormat,
-            enumValues: enumValues);
-    }
-
     private DataContract(
         Type underlyingType,
         DataType dataType,
@@ -100,9 +86,6 @@ public class DataContract
         UnderlyingType = underlyingType;
         DataType = dataType;
         DataFormat = dataFormat;
-#pragma warning disable CS0618 // Type or member is obsolete
-        EnumValues = enumValues;
-#pragma warning restore CS0618 // Type or member is obsolete
         ArrayItemType = arrayItemType;
         DictionaryValueType = dictionaryValueType;
         DictionaryKeys = dictionaryKeys;
@@ -124,7 +107,4 @@ public class DataContract
     public string ObjectTypeNameProperty { get; }
     public string ObjectTypeNameValue { get; }
     public Func<object, string> JsonConverter { get; }
-
-    [Obsolete("Use JsonConverter")]
-    public IEnumerable<object> EnumValues { get; }
 }

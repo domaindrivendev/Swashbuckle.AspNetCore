@@ -1,9 +1,6 @@
-#if NET
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.AspNetCore.Routing.Template;
-#endif
-
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
@@ -16,13 +13,7 @@ public static class SwaggerBuilderExtensions
     /// Register the Swagger middleware with provided options
     /// </summary>
     public static IApplicationBuilder UseSwagger(this IApplicationBuilder app, SwaggerOptions options)
-    {
-#if NET
-        return app.UseMiddleware<SwaggerMiddleware>(options, app.ApplicationServices.GetRequiredService<TemplateBinderFactory>());
-#else
-        return app.UseMiddleware<SwaggerMiddleware>(options);
-#endif
-    }
+        => app.UseMiddleware<SwaggerMiddleware>(options, app.ApplicationServices.GetRequiredService<TemplateBinderFactory>());
 
     /// <summary>
     /// Register the Swagger middleware with optional setup action for DI-injected options
@@ -41,7 +32,6 @@ public static class SwaggerBuilderExtensions
         return app.UseSwagger(options);
     }
 
-#if NET
     public static IEndpointConventionBuilder MapSwagger(
         this IEndpointRouteBuilder endpoints,
         string pattern = SwaggerOptions.DefaultRouteTemplate,
@@ -69,5 +59,4 @@ public static class SwaggerBuilderExtensions
             options.PreSerializeFilters.AddRange(endpointOptions.PreSerializeFilters);
         }
     }
-#endif
 }
