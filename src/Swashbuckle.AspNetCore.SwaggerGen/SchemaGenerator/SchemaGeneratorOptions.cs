@@ -40,6 +40,11 @@ public class SchemaGeneratorOptions
 
     public IList<ISchemaFilter> SchemaFilters { get; set; }
 
+    /// <summary>
+    /// Uses oneOf for enums when the value can be null.
+    /// </summary>
+    public bool UseOneOfForNullableEnums { get; set; }
+
     private string DefaultSchemaIdSelector(Type modelType)
     {
         if (!modelType.IsConstructedGenericType)

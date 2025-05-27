@@ -155,6 +155,13 @@ public class SchemaGenerator(
         ParameterInfo parameterInfo,
         ApiParameterRouteInfo routeInfo)
     {
+        var customAttributes = parameterInfo.GetCustomAttributes();
+
+        if (customAttributes.OfType<RequiredAttribute>().Any())
+        {
+            modelType = Nullable.GetUnderlyingType(modelType) ?? modelType;
+        }
+
         var dataContract = GetDataContractFor(modelType);
 
         var schema = _generatorOptions.UseOneOfForPolymorphism && IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts)
@@ -169,8 +176,6 @@ public class SchemaGenerator(
 
         if (schema.Reference == null)
         {
-            var customAttributes = parameterInfo.GetCustomAttributes();
-
             var defaultValue = parameterInfo.HasDefaultValue
                 ? parameterInfo.DefaultValue
                 : customAttributes.OfType<DefaultValueAttribute>().FirstOrDefault()?.Value;
@@ -178,6 +183,11 @@ public class SchemaGenerator(
             if (defaultValue != null)
             {
                 schema.Default = GenerateDefaultValue(dataContract, modelType, defaultValue);
+            }
+
+            if (Nullable.GetUnderlyingType(modelType) is not null && !customAttributes.OfType<RequiredAttribute>().Any())
+            {
+                schema.Nullable = true;
             }
 
             schema.ApplyValidationAttributes(customAttributes);
@@ -283,8 +293,8 @@ public class SchemaGenerator(
             case DataType.Number:
             case DataType.String:
                 {
-                    schemaFactory = () => CreatePrimitiveSchema(dataContract);
-                    returnAsReference = (Nullable.GetUnderlyingType(dataContract.UnderlyingType) ?? dataContract.UnderlyingType).IsEnum && !_generatorOptions.UseInlineDefinitionsForEnums;
+                    schemaFactory = () => CreatePrimitiveSchema(dataContract, schemaRepository);
+                    returnAsReference = dataContract.UnderlyingType.IsEnum && !_generatorOptions.UseInlineDefinitionsForEnums;
                     break;
                 }
 
@@ -329,8 +339,31 @@ public class SchemaGenerator(
             (modelType.IsConstructedGenericType && _generatorOptions.CustomTypeMappings.TryGetValue(modelType.GetGenericTypeDefinition(), out schemaFactory));
     }
 
-    private static OpenApiSchema CreatePrimitiveSchema(DataContract dataContract)
+    private OpenApiSchema CreatePrimitiveSchema(DataContract dataContract, SchemaRepository schemaRepository)
     {
+        var underlyingType = Nullable.GetUnderlyingType(dataContract.UnderlyingType) ?? dataContract.UnderlyingType;
+
+        if (underlyingType.IsEnum && dataContract.UnderlyingType != underlyingType)
+        {
+            var enumDataContract = GetDataContractFor(underlyingType);
+
+            var enumSchema = GenerateConcreteSchema(enumDataContract, schemaRepository);
+
+            if (_generatorOptions.UseInlineDefinitionsForEnums)
+            {
+                enumSchema.Enum.Add(null);
+                return enumSchema;
+            }
+
+            if (_generatorOptions.UseOneOfForNullableEnums)
+            {
+                enumSchema.OneOf = [new OpenApiSchema { Reference = enumSchema.Reference }, new OpenApiSchema() { Enum = [null] }];
+                enumSchema.Reference = null;
+            }
+
+            return enumSchema;
+        }
+
         var schema = new OpenApiSchema
         {
             Type = FromDataType(dataContract.DataType),
@@ -350,17 +383,9 @@ public class SchemaGenerator(
         }
 #pragma warning restore CS0618 // Type or member is obsolete
 
-        var underlyingType = Nullable.GetUnderlyingType(dataContract.UnderlyingType) ?? dataContract.UnderlyingType;
-
         if (underlyingType.IsEnum)
         {
             var enumValues = underlyingType.GetEnumValues().Cast<object>();
-
-            if (dataContract.UnderlyingType != underlyingType)
-            {
-                schema.Nullable = true;
-                enumValues = enumValues.Append(null);
-            }
 
             schema.Enum = [.. enumValues
                 .Select(value => dataContract.JsonConverter(value))

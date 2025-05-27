@@ -88,8 +88,8 @@ public class NewtonsoftSchemaGeneratorTests
     {
         { typeof(IntEnum), JsonSchemaTypes.Integer, "int32", 3 },
         { typeof(LongEnum), JsonSchemaTypes.Integer, "int64", 3 },
-        { typeof(IntEnum?), JsonSchemaTypes.Integer, "int32", 4 },
-        { typeof(LongEnum?), JsonSchemaTypes.Integer, "int64", 4 },
+        { typeof(IntEnum?), JsonSchemaTypes.Integer, "int32", 3 },
+        { typeof(LongEnum?), JsonSchemaTypes.Integer, "int64", 3 },
     };
 
     [Theory]
@@ -297,7 +297,24 @@ public class NewtonsoftSchemaGeneratorTests
         var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
         const string propertyName = nameof(TypeWithNullableProperties.NullableIntEnumProperty);
         Assert.False(schema.Properties[propertyName].Nullable);
-        Assert.Equal("IntEnumNullable", schema.Properties[propertyName].Reference.Id);
+        Assert.Equal("IntEnum", schema.Properties[propertyName].Reference.Id);
+    }
+
+    [Fact]
+    public void GenerateSchema_DoesSetNullableFlag_IfReferencedEnumAndOneOfEnabled()
+    {
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Subject(o => o.UseOneOfForNullableEnums = true).GenerateSchema(typeof(TypeWithNullableProperties), schemaRepository);
+
+        var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+        const string propertyName = nameof(TypeWithNullableProperties.NullableIntEnumProperty);
+        Assert.True(schema.Properties[propertyName].Nullable);
+        Assert.Null(schema.Properties[propertyName].Reference);
+        Assert.Equal(2, schema.Properties[propertyName].OneOf.Count);
+        Assert.Equal("IntEnum", schema.Properties[propertyName].OneOf[0].Reference.Id);
+        Assert.Single(schema.Properties[propertyName].OneOf[1].Enum);
+        Assert.Null(schema.Properties[propertyName].OneOf[1].Enum[0]);
     }
 
     [Fact]
@@ -309,6 +326,17 @@ public class NewtonsoftSchemaGeneratorTests
 
         var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
         Assert.True(schema.Properties[nameof(TypeWithNullableProperties.NullableIntEnumProperty)].Nullable);
+    }
+
+    [Fact]
+    public void GenerateSchema_AddNullEnumValue_IfInlineEnum()
+    {
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Subject(o => o.UseInlineDefinitionsForEnums = true).GenerateSchema(typeof(TypeWithNullableProperties), schemaRepository);
+
+        var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+        Assert.Null(schema.Properties[nameof(TypeWithNullableProperties.NullableIntEnumProperty)].Enum.Last());
     }
 
     [Theory]
@@ -850,8 +878,8 @@ public class NewtonsoftSchemaGeneratorTests
         Assert.False(schema.Properties["IntEnumWithRequiredAllowNull"].Nullable);
         Assert.False(schema.Properties["IntEnumWithRequiredAlways"].Nullable);
         Assert.False(schema.Properties["IntEnumWithRequiredDisallowNull"].Nullable);
-        Assert.Equal("IntEnumNullable", schema.Properties["IntEnumWithRequiredDefault"].Reference.Id);
-        Assert.Equal("IntEnumNullable", schema.Properties["IntEnumWithRequiredAllowNull"].Reference.Id);
+        Assert.Equal("IntEnum", schema.Properties["IntEnumWithRequiredDefault"].Reference.Id);
+        Assert.Equal("IntEnum", schema.Properties["IntEnumWithRequiredAllowNull"].Reference.Id);
         Assert.Equal(nameof(IntEnum), schema.Properties["IntEnumWithRequiredAlways"].Reference.Id);
         Assert.Equal(nameof(IntEnum), schema.Properties["IntEnumWithRequiredDisallowNull"].Reference.Id);
     }
