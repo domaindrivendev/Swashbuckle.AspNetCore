@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.Interfaces;
 
 #if NET
 using Microsoft.AspNetCore.Hosting;
@@ -96,7 +97,7 @@ internal class ConfigureSwaggerGeneratorOptions(
         target.DescribeAllParametersInCamelCase = source.DescribeAllParametersInCamelCase;
         target.SchemaComparer = source.SchemaComparer;
         target.Servers = [.. source.Servers];
-        target.SecuritySchemes = new Dictionary<string, OpenApiSecurityScheme>(source.SecuritySchemes);
+        target.SecuritySchemes = new Dictionary<string, IOpenApiSecurityScheme>(source.SecuritySchemes);
         target.SecurityRequirements = [.. source.SecurityRequirements];
         target.ParameterFilters = [.. source.ParameterFilters];
         target.ParameterAsyncFilters = [.. source.ParameterAsyncFilters];

@@ -21,6 +21,8 @@
     TODO Fix warning from Swashbuckle.AspNetCore with dotnet pack
     -->
     <NoWarn>$(NoWarn);NU5128</NoWarn>
+    <!-- TODO Remove once .NET 10 is stable -->
+    <NoWarn>$(NoWarn);NU5104</NoWarn>
     <NuGetAuditMode>direct</NuGetAuditMode>
     <!--
     TODO Go through the code and add nullable annotations
@@ -39,7 +41,7 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <UseArtifactsOutput>true</UseArtifactsOutput>
-    <VersionPrefix>8.1.3</VersionPrefix>
+    <VersionPrefix>9.0.0</VersionPrefix>
     <WarnOnPackingNonPackableProject>false</WarnOnPackingNonPackableProject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(GITHUB_ACTIONS)' != '' AND '$(DEPENDABOT_JOB_ID)' == '' ">
@@ -66,4 +68,10 @@
     <Include>[Swashbuckle.*]*</Include>
     <Threshold></Threshold>
   </PropertyGroup>
+  <!-- HACK Workaround for https://github.com/dotnet/sdk/issues/48391 -->
+  <ItemGroup>
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-8g4q-xg66-9fp4" />
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-hh2w-p6rv-4g7w" />
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-5crp-9r3c-p9vr" />
+  </ItemGroup>
 </Project>

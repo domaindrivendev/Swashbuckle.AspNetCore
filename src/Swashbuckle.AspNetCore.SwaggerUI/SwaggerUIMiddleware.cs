@@ -49,7 +49,7 @@ internal sealed partial class SwaggerUIMiddleware
         {
             _jsonSerializerOptions = new JsonSerializerOptions()
             {
-                IgnoreNullValues = true,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, false) }
             };
