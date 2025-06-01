@@ -465,32 +465,29 @@ public class SwaggerGenerator(
         }
 
         // Schemas will be generated via Swashbuckle by default.
-        if (operation.Parameters is { Count: > 0 } parameters)
+        foreach (var parameter in operation.Parameters ?? [])
         {
-            foreach (var parameter in parameters)
+            var apiParameter = apiDescription.ParameterDescriptions.SingleOrDefault(p => p.Name == parameter.Name && !p.IsFromBody() && !p.IsFromForm() && !p.IsIllegalHeaderParameter());
+            if (apiParameter is not null)
             {
-                var apiParameter = apiDescription.ParameterDescriptions.SingleOrDefault(desc => desc.Name == parameter.Name && !desc.IsFromBody() && !desc.IsFromForm() && !desc.IsIllegalHeaderParameter());
-                if (apiParameter is not null)
+                var (parameterAndContext, filterContext) = GenerateParameterAndContext(apiParameter, schemaRepository, document);
+
+                if (parameter is OpenApiParameter concrete)
                 {
-                    var (parameterAndContext, filterContext) = GenerateParameterAndContext(apiParameter, schemaRepository, document);
+                    concrete.Name = parameterAndContext.Name;
+                    concrete.Schema = parameterAndContext.Schema;
+                }
 
-                    if (parameter is OpenApiParameter concrete)
-                    {
-                        concrete.Name = parameterAndContext.Name;
-                        concrete.Schema = parameterAndContext.Schema;
-                    }
+                parameter.Description ??= parameterAndContext.Description;
 
-                    parameter.Description ??= parameterAndContext.Description;
+                foreach (var filter in _options.ParameterAsyncFilters)
+                {
+                    await filter.ApplyAsync(parameter, filterContext, CancellationToken.None);
+                }
 
-                    foreach (var filter in _options.ParameterAsyncFilters)
-                    {
-                        await filter.ApplyAsync(parameter, filterContext, CancellationToken.None);
-                    }
-
-                    foreach (var filter in _options.ParameterFilters)
-                    {
-                        filter.Apply(parameter, filterContext);
-                    }
+                foreach (var filter in _options.ParameterFilters)
+                {
+                    filter.Apply(parameter, filterContext);
                 }
             }
         }

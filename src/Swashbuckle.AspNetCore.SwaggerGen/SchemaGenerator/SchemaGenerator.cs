@@ -210,7 +210,7 @@ public class SchemaGenerator(
             ApplyFilters(schema, modelType, schemaRepository);
             if (Nullable.GetUnderlyingType(modelType) != null && schema is OpenApiSchema concrete)
             {
-                concrete.Type |= JsonSchemaType.Null;
+                SetNullable(concrete, true);
             }
         }
 
