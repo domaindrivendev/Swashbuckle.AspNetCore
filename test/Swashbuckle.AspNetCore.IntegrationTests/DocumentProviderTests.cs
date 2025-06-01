@@ -5,7 +5,7 @@ using Swashbuckle.AspNetCore.Swagger;
 namespace Swashbuckle.AspNetCore.IntegrationTests;
 
 [Collection("TestSite")]
-public class DocumentProviderTests
+public class DocumentProviderTests(ITestOutputHelper outputHelper)
 {
     [Theory]
     [InlineData(typeof(Basic.Startup), new[] { "v1" })]
@@ -16,7 +16,7 @@ public class DocumentProviderTests
     [InlineData(typeof(OAuth2Integration.Startup), new[] { "v1" })]
     public void DocumentProvider_ExposesAllDocumentNames(Type startupType, string[] expectedNames)
     {
-        var testSite = new TestSite(startupType);
+        var testSite = new TestSite(startupType, outputHelper);
         var server = testSite.BuildServer();
         var services = server.Host.Services;
         var documentProvider = (IDocumentProvider)services.GetService(typeof(IDocumentProvider));
@@ -35,7 +35,7 @@ public class DocumentProviderTests
     [InlineData(typeof(OAuth2Integration.Startup), "v1")]
     public async Task DocumentProvider_ExposesGeneratedSwagger(Type startupType, string documentName)
     {
-        var testSite = new TestSite(startupType);
+        var testSite = new TestSite(startupType, outputHelper);
         var server = testSite.BuildServer();
         var services = server.Host.Services;
 
@@ -56,7 +56,7 @@ public class DocumentProviderTests
     [Fact]
     public async Task DocumentProvider_ThrowsUnknownDocument_IfUnknownDocumentName()
     {
-        var testSite = new TestSite(typeof(Basic.Startup));
+        var testSite = new TestSite(typeof(Basic.Startup), outputHelper);
         var server = testSite.BuildServer();
         var services = server.Host.Services;
 

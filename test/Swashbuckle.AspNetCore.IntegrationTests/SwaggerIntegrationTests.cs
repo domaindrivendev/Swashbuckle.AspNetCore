@@ -8,7 +8,7 @@ using ReDocApp = ReDoc;
 namespace Swashbuckle.AspNetCore.IntegrationTests;
 
 [Collection("TestSite")]
-public class SwaggerIntegrationTests
+public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
 {
     [Theory]
     [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
@@ -27,7 +27,7 @@ public class SwaggerIntegrationTests
         Type startupType,
         string swaggerRequestUri)
     {
-        var testSite = new TestSite(startupType);
+        var testSite = new TestSite(startupType, outputHelper);
         using var client = testSite.BuildClient();
 
         await AssertValidSwaggerJson(client, swaggerRequestUri);
@@ -45,7 +45,7 @@ public class SwaggerIntegrationTests
     [Fact]
     public async Task SwaggerEndpoint_ReturnsNotFound_IfUnknownSwaggerDocument()
     {
-        var testSite = new TestSite(typeof(Basic.Startup));
+        var testSite = new TestSite(typeof(Basic.Startup), outputHelper);
         using var client = testSite.BuildClient();
 
         using var swaggerResponse = await client.GetAsync("/swagger/v2/swagger.json", TestContext.Current.CancellationToken);
@@ -56,7 +56,7 @@ public class SwaggerIntegrationTests
     [Fact]
     public async Task SwaggerEndpoint_DoesNotReturnByteOrderMark()
     {
-        var testSite = new TestSite(typeof(Basic.Startup));
+        var testSite = new TestSite(typeof(Basic.Startup), outputHelper);
         using var client = testSite.BuildClient();
 
         using var swaggerResponse = await client.GetAsync("/swagger/v1/swagger.json", TestContext.Current.CancellationToken);
@@ -72,7 +72,7 @@ public class SwaggerIntegrationTests
     [InlineData("sv-SE")]
     public async Task SwaggerEndpoint_ReturnsCorrectPriceExample_ForDifferentCultures(string culture)
     {
-        var testSite = new TestSite(typeof(Basic.Startup));
+        var testSite = new TestSite(typeof(Basic.Startup), outputHelper);
         using var client = testSite.BuildClient();
 
         using var swaggerResponse = await client.GetAsync($"/swagger/v1/swagger.json?culture={culture}", TestContext.Current.CancellationToken);
@@ -103,7 +103,7 @@ public class SwaggerIntegrationTests
         string expectedVersionProperty,
         string expectedVersionValue)
     {
-        using var client = new TestSite(typeof(Basic.Startup)).BuildClient();
+        using var client = new TestSite(typeof(Basic.Startup), outputHelper).BuildClient();
 
         using var response = await client.GetAsync(swaggerUrl, TestContext.Current.CancellationToken);
 

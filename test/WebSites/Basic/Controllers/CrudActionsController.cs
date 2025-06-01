@@ -56,11 +56,11 @@ public class CrudActionsController
     [HttpGet(Name = "SearchProducts")]
     public IEnumerable<Product> Get([FromQuery(Name = "kw")]string keywords = "foobar")
     {
-        return new[]
-        {
+        return
+        [
             new Product { Id = 1, Description = "A product" },
             new Product { Id = 2, Description = "Another product" },
-        };
+        ];
     }
 
     /// <summary>
@@ -137,4 +137,7 @@ public class Product
     public ProductStatus Status { get; set; }
 
     public ProductStatus? Status2 { get; set; }
+
+    [Range(0.1, 122.9, MinimumIsExclusive = true, MaximumIsExclusive = true)]
+    public double? Price { get; set; }
 }

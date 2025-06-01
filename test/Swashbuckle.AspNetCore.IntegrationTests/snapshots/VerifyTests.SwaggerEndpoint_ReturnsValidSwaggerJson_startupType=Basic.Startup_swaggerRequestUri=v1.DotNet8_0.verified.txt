@@ -1492,6 +1492,15 @@
           },
           "status2": {
             "$ref": "#/components/schemas/ProductStatusNullable"
+          },
+          "price": {
+            "maximum": 122.9,
+            "exclusiveMaximum": true,
+            "minimum": 0.1,
+            "exclusiveMinimum": true,
+            "type": "number",
+            "format": "double",
+            "nullable": true
           }
         },
         "additionalProperties": false,
