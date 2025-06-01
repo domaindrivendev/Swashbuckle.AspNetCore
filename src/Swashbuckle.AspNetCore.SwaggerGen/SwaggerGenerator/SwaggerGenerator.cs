@@ -183,17 +183,17 @@ public class SwaggerGenerator(
     {
         if (!_options.SwaggerDocs.TryGetValue(documentName, out OpenApiInfo info))
         {
-            throw new UnknownSwaggerDocument(documentName, _options.SwaggerDocs.Select(d => d.Key));
+            throw new UnknownSwaggerDocument(documentName, _options.SwaggerDocs.Select((p) => p.Key));
         }
 
         var applicableApiDescriptions = _apiDescriptionsProvider.ApiDescriptionGroups.Items
-            .SelectMany(group => group.Items)
-            .Where(apiDesc =>
+            .SelectMany((p) => p.Items)
+            .Where((p) =>
             {
-                var attributes = apiDesc.CustomAttributes().ToList();
+                var attributes = p.CustomAttributes().ToList();
                 return !(_options.IgnoreObsoleteActions && attributes.OfType<ObsoleteAttribute>().Any()) &&
                        !attributes.OfType<SwaggerIgnoreAttribute>().Any() &&
-                       _options.DocInclusionPredicate(documentName, apiDesc);
+                       _options.DocInclusionPredicate(documentName, p);
             });
 
         var schemaRepository = new SchemaRepository(documentName);
@@ -229,10 +229,10 @@ public class SwaggerGenerator(
 
         // Default implementation, currently only supports JWT Bearer scheme
         return authenticationSchemes
-            .Where(authScheme => authScheme.Name == "Bearer")
+            .Where((scheme) => scheme.Name == "Bearer")
             .ToDictionary(
-                (authScheme) => authScheme.Name,
-                (authScheme) => new OpenApiSecurityScheme
+                (scheme) => scheme.Name,
+                (scheme) => new OpenApiSecurityScheme
                 {
                     Type = SecuritySchemeType.Http,
                     Scheme = "bearer", // "bearer" refers to the header name here
@@ -306,7 +306,7 @@ public class SwaggerGenerator(
     {
         return apiDescriptions
             .OrderBy(_options.SortKeySelector)
-            .GroupBy(apiDesc => apiDesc.HttpMethod)
+            .GroupBy((p) => p.HttpMethod)
             .Select(PrepareGenerateOperation);
     }
 
@@ -358,7 +358,7 @@ public class SwaggerGenerator(
                 "Actions require a unique method/path combination for Swagger/OpenAPI 2.0 and 3.0. Use ConflictingActionsResolver as a workaround or provide your own implementation of PathGroupSelector.",
                 httpMethod,
                 group.First().RelativePath,
-                string.Join(", ", group.Select(apiDesc => apiDesc.ActionDescriptor.DisplayName))));
+                string.Join(", ", group.Select((p) => p.ActionDescriptor.DisplayName))));
         }
 
         var apiDescription =
@@ -483,7 +483,7 @@ public class SwaggerGenerator(
         // Schemas will be generated via Swashbuckle by default.
         foreach (var parameter in operation.Parameters ?? [])
         {
-            var apiParameter = apiDescription.ParameterDescriptions.SingleOrDefault(p => p.Name == parameter.Name && !p.IsFromBody() && !p.IsFromForm() && !p.IsIllegalHeaderParameter());
+            var apiParameter = apiDescription.ParameterDescriptions.SingleOrDefault((p) => p.Name == parameter.Name && !p.IsFromBody() && !p.IsFromForm() && !p.IsIllegalHeaderParameter());
             if (apiParameter is not null)
             {
                 var (parameterAndContext, filterContext) = GenerateParameterAndContext(apiParameter, schemaRepository, document);
@@ -514,7 +514,7 @@ public class SwaggerGenerator(
             foreach (var contentType in requestContentTypes)
             {
                 var contentTypeValue = operation.RequestBody.Content[contentType];
-                var fromFormParameters = apiDescription.ParameterDescriptions.Where(desc => desc.IsFromForm()).ToList();
+                var fromFormParameters = apiDescription.ParameterDescriptions.Where((p) => p.IsFromForm()).ToList();
                 ApiParameterDescription bodyParameterDescription = null;
                 if (fromFormParameters.Count > 0)
                 {
@@ -529,7 +529,7 @@ public class SwaggerGenerator(
                 }
                 else
                 {
-                    bodyParameterDescription = apiDescription.ParameterDescriptions.SingleOrDefault(desc => desc.IsFromBody());
+                    bodyParameterDescription = apiDescription.ParameterDescriptions.SingleOrDefault((p) => p.IsFromBody());
                     if (bodyParameterDescription is not null)
                     {
                         contentTypeValue.Schema = GenerateSchema(
@@ -567,7 +567,7 @@ public class SwaggerGenerator(
             foreach (var kvp in responses)
             {
                 var response = kvp.Value;
-                var responseModel = apiDescription.SupportedResponseTypes.SingleOrDefault(desc => desc.StatusCode.ToString() == kvp.Key);
+                var responseModel = apiDescription.SupportedResponseTypes.SingleOrDefault((p) => p.StatusCode.ToString() == kvp.Key);
                 if (responseModel is not null)
                 {
                     var responseContentTypes = response?.Content?.Values;
@@ -616,7 +616,7 @@ public class SwaggerGenerator(
         {
             throw new SwaggerGeneratorException(string.Format(
                    "Error reading parameter(s) for action {0} as [FromForm] attribute used with IFormFile. " +
-                   "Please refer to https://github.com/domaindrivendev/Swashbuckle.AspNetCore#handle-forms-and-file-uploads for more information",
+                   "Please refer to https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master/docs/configure-and-customize-swaggergen.md#handle-forms-and-file-uploads for more information",
                    apiDescription.ActionDescriptor.DisplayName));
         }
 
@@ -810,10 +810,10 @@ public class SwaggerGenerator(
         RequestBodyFilterContext filterContext = null;
 
         var bodyParameter = apiDescription.ParameterDescriptions
-            .FirstOrDefault(paramDesc => paramDesc.IsFromBody());
+            .FirstOrDefault((p) => p.IsFromBody());
 
         var formParameters = apiDescription.ParameterDescriptions
-            .Where(paramDesc => paramDesc.IsFromForm())
+            .Where((p) => p.IsFromForm())
             .ToList();
 
         if (bodyParameter != null)
@@ -902,8 +902,8 @@ public class SwaggerGenerator(
         {
             Required = isRequired,
             Content = contentTypes.ToDictionary(
-                contentType => contentType,
-                contentType => new OpenApiMediaType
+                (contentType) => contentType,
+                (contentType) => new OpenApiMediaType
                 {
                     Schema = schema
                 }),
@@ -916,7 +916,7 @@ public class SwaggerGenerator(
         var explicitContentTypes = apiDescription
             .CustomAttributes()
             .OfType<ConsumesAttribute>()
-            .SelectMany(attr => attr.ContentTypes)
+            .SelectMany((p) => p.ContentTypes)
             .Distinct();
 
         if (explicitContentTypes.Any())
@@ -926,8 +926,8 @@ public class SwaggerGenerator(
 
         // If there's content types surfaced by ApiExplorer, use them
         return apiDescription.SupportedRequestFormats
-            .Select(format => format.MediaType)
-            .Where(x => x != null)
+            .Select((format) => format.MediaType)
+            .Where((p) => p != null)
             .Distinct();
     }
 
@@ -946,19 +946,19 @@ public class SwaggerGenerator(
         var schema = GenerateSchemaFromFormParameters(formParameters, schemaRepository);
 
         var totalProperties = schema.AllOf
-            ?.FirstOrDefault(s => s.Properties?.Count > 0)
+            ?.FirstOrDefault((p) => p.Properties?.Count > 0)
             ?.Properties ?? schema.Properties;
 
         return new OpenApiRequestBody
         {
             Content = contentTypes.ToDictionary(
-                contentType => contentType,
-                contentType => new OpenApiMediaType
+                (contentType) => contentType,
+                (contentType) => new OpenApiMediaType
                 {
                     Schema = schema,
                     Encoding = totalProperties?.ToDictionary(
-                        entry => entry.Key,
-                        entry => new OpenApiEncoding { Style = ParameterStyle.Form }
+                        (entry) => entry.Key,
+                        (entry) => new OpenApiEncoding { Style = ParameterStyle.Form }
                     ) ?? []
                 })
         };
@@ -1074,8 +1074,8 @@ public class SwaggerGenerator(
         {
             Description = description,
             Content = responseContentTypes.ToDictionary(
-                contentType => contentType,
-                contentType => CreateResponseMediaType(apiResponseType.ModelMetadata?.ModelType ?? apiResponseType.Type, schemaRepository)
+                (contentType) => contentType,
+                (contentType) => CreateResponseMediaType(apiResponseType.ModelMetadata?.ModelType ?? apiResponseType.Type, schemaRepository)
             )
         };
     }
@@ -1091,7 +1091,7 @@ public class SwaggerGenerator(
 
         // If there's content types explicitly specified via ProducesAttribute, use them
         var explicitContentTypes = apiDescription.CustomAttributes().OfType<ProducesAttribute>()
-            .SelectMany(attr => attr.ContentTypes)
+            .SelectMany((p) => p.ContentTypes)
             .Distinct();
 
         if (explicitContentTypes.Any())
@@ -1101,7 +1101,7 @@ public class SwaggerGenerator(
 
         // If there's content types surfaced by ApiExplorer, use them
         return [.. apiResponseType.ApiResponseFormats
-            .Select(responseFormat => responseFormat.MediaType)
+            .Select((responseFormat) => responseFormat.MediaType)
             .Distinct()];
     }
 
@@ -1228,13 +1228,13 @@ public class SwaggerGenerator(
     private static string GenerateSummary(ApiDescription apiDescription) =>
         apiDescription.ActionDescriptor?.EndpointMetadata
             ?.OfType<IEndpointSummaryMetadata>()
-            .Select(s => s.Summary)
+            .Select((p) => p.Summary)
             .LastOrDefault();
 
     private static string GenerateDescription(ApiDescription apiDescription) =>
         apiDescription.ActionDescriptor?.EndpointMetadata
             ?.OfType<IEndpointDescriptionMetadata>()
-            .Select(s => s.Description)
+            .Select((p) => p.Description)
             .LastOrDefault();
 #endif
 }

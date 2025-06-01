@@ -38,6 +38,7 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>$(PackageProjectUrl).git</RepositoryUrl>
+    <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <UseArtifactsOutput>true</UseArtifactsOutput>
