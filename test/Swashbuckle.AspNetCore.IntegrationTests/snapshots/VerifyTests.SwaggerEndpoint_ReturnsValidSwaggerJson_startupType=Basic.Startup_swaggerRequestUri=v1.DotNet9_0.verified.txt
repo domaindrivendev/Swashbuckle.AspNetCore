@@ -1499,8 +1499,8 @@
             "minimum": 0.1,
             "exclusiveMinimum": true,
             "type": "number",
-            "format": "double",
-            "nullable": true
+            "nullable": true,
+            "format": "double"
           }
         },
         "additionalProperties": false,
