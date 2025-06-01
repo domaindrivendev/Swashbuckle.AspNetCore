@@ -8,7 +8,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.DependencyInjection;
 public class SwaggerGenJsonOptions
 {
     /// <summary>
-    /// Gets or Sets the json serializer options used by <see cref="JsonSerializerDataContractResolver"/>. 
+    /// Gets or sets the JSON serializer options to use.
     /// </summary>
     public JsonSerializerOptions SerializerOptions { get; set; }
 }
