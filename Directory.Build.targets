@@ -77,7 +77,7 @@
     <PropertyGroup>
       <_UniquePackageNames>@(_UniquePackageNames->'%(Identity)', ',')</_UniquePackageNames>
     </PropertyGroup>
-    <WriteLinesToFileWithRetry File="$(_PackageNamesPath)" Lines="@(_UniquePackageNames)" Overwrite="true" WriteOnlyWhenDifferent="true" />
+    <WriteLinesToFile File="$(_PackageNamesPath)" Lines="@(_UniquePackageNames)" Overwrite="true" WriteOnlyWhenDifferent="true" />
     <WriteLinesToFileWithRetry File="$(GITHUB_OUTPUT)" Lines="package-names=$(_UniquePackageNames)" />
     <WriteLinesToFileWithRetry File="$(GITHUB_OUTPUT)" Lines="package-version=$(Version)" />
   </Target>
