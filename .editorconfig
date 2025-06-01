@@ -6,7 +6,7 @@
 root = true
 
 [*]
-end_of_line = CRLF
+end_of_line = crlf
 insert_final_newline = true
 
 # Visual Studio Spell Checker
