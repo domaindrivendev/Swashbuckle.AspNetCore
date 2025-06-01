@@ -528,7 +528,7 @@ public class SwaggerGenerator(
         {
             throw new SwaggerGeneratorException(string.Format(
                    "Error reading parameter(s) for action {0} as [FromForm] attribute used with IFormFile. " +
-                   "Please refer to https://github.com/domaindrivendev/Swashbuckle.AspNetCore#handle-forms-and-file-uploads for more information",
+                   "Please refer to https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/master/docs/configure-and-customize-swaggergen.md#handle-forms-and-file-uploads for more information",
                    apiDescription.ActionDescriptor.DisplayName));
         }
 
