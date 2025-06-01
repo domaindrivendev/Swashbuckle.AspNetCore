@@ -8,5 +8,6 @@ Newtonsoft
 NuGet
 Redoc
 serializer
+startup
 swashbuckle
 swagger-ui

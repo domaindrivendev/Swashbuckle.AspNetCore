@@ -11,6 +11,7 @@
     <File Path="Directory.Build.props" />
     <File Path="Directory.Build.targets" />
     <File Path="Directory.Packages.props" />
+    <File Path="exclusion.dic" />
     <File Path="global.json" />
     <File Path="ISSUE_TEMPLATE.md" />
     <File Path="LICENSE" />

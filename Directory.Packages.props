@@ -7,7 +7,7 @@
     <PackageVersion Include="IdentityServer4" Version="3.1.4" />
     <PackageVersion Include="IdentityServer4.AccessTokenValidation" Version="3.0.1" />
     <PackageVersion Include="JunitXml.TestLogger" Version="6.1.0" />
-    <PackageVersion Include="MartinCostello.Logging.XUnit.v3" Version="0.5.1" />
+    <PackageVersion Include="MartinCostello.Logging.XUnit.v3" Version="0.6.0" />
     <PackageVersion Include="Microsoft.AspNetCore" Version="2.3.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.ApiExplorer" Version="2.3.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.DataAnnotations" Version="2.3.0" />
