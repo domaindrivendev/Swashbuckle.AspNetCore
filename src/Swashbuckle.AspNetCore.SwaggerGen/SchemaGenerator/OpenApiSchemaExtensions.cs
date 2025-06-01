@@ -252,14 +252,15 @@ public static class OpenApiSchemaExtensions
 
     private static void ApplyRangeAttribute(OpenApiSchema schema, RangeAttribute rangeAttribute)
     {
-        const NumberStyles numberStyles = NumberStyles.Number | NumberStyles.Float;
+        const NumberStyles Style = NumberStyles.Number | NumberStyles.Float;
+        var provider = CultureInfo.InvariantCulture;
 
-        schema.Maximum = decimal.TryParse(rangeAttribute.Maximum.ToString(), numberStyles, CultureInfo.InvariantCulture, out decimal maximum)
-            ? maximum.ToString(CultureInfo.InvariantCulture)
+        schema.Maximum = decimal.TryParse(rangeAttribute.Maximum.ToString(), Style, provider, out decimal maximum)
+            ? maximum.ToString(provider)
             : schema.Maximum;
 
-        schema.Minimum = decimal.TryParse(rangeAttribute.Minimum.ToString(), numberStyles, CultureInfo.InvariantCulture, out decimal minimum)
-            ? minimum.ToString(CultureInfo.InvariantCulture)
+        schema.Minimum = decimal.TryParse(rangeAttribute.Minimum.ToString(), Style, provider, out decimal minimum)
+            ? minimum.ToString(provider)
             : schema.Minimum;
 
 #if NET
