@@ -6,6 +6,9 @@ using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerGen.DependencyInjection;
 using Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures;
 
+using MinimalApiJsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
+using MvcJsonOptions = Microsoft.AspNetCore.Mvc.JsonOptions;
+
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 
 public class SwaggerGenJsonOptionsTests
@@ -16,80 +19,60 @@ public class SwaggerGenJsonOptionsTests
         var services = new ServiceCollection();
         services.AddSingleton<IWebHostEnvironment, DummyHostEnvironment>();
         services.AddSwaggerGen();
-        services.AddMvcCore().AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new DummyConverter()));
+        services.AddMvcCore().AddJsonOptions(o => o.JsonSerializerOptions.AllowTrailingCommas = true);
         services.AddSwaggerGenMinimalApisJsonOptions();
 
         using var provider = services.BuildServiceProvider();
 
-        var swaggerGenConverters = provider.GetService<IOptions<SwaggerGenJsonOptions>>().Value.SerializerOptions.Converters;
-
-        Assert.Empty(swaggerGenConverters);
+        var minimalApiJsonOptions = provider.GetService<IOptions<MinimalApiJsonOptions>>().Value.SerializerOptions;
+        var swaggerGenSerializerOptions = provider.GetService<IOptions<SwaggerGenJsonOptions>>().Value.SerializerOptions;
+        Assert.Equal(minimalApiJsonOptions, swaggerGenSerializerOptions);
     }
 
     [Fact]
     public static void Ensure_SwaggerGenJsonOptions_Uses_Mvc_JsonOptions_When_Overridden()
     {
-        var expectedDummyConverter = new DummyConverter();
-
         var services = new ServiceCollection();
         services.AddSingleton<IWebHostEnvironment, DummyHostEnvironment>();
         services.AddSwaggerGen();
-        services.ConfigureHttpJsonOptions(o => o.SerializerOptions.Converters.Add(new DummyConverter()));
-        services.AddMvcCore().AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(expectedDummyConverter));
+        services.ConfigureHttpJsonOptions(o => o.SerializerOptions.AllowTrailingCommas = true);
         services.AddSwaggerGenMvcJsonOptions();
 
         using var provider = services.BuildServiceProvider();
 
-        var swaggerGenDummyConverter = provider.GetService<IOptions<SwaggerGenJsonOptions>>().Value.SerializerOptions.Converters.FirstOrDefault();
-
-        Assert.Equal(expectedDummyConverter, swaggerGenDummyConverter);
+        var mvcJsonOptions = provider.GetService<IOptions<MvcJsonOptions>>().Value.JsonSerializerOptions;
+        var swaggerGenSerializerOptions = provider.GetService<IOptions<SwaggerGenJsonOptions>>().Value.SerializerOptions;
+        Assert.Equal(mvcJsonOptions, swaggerGenSerializerOptions);
     }
 
     [Fact]
     public static void Ensure_SwaggerGenJsonOptions_Uses_Mvc_JsonOptions_When_Not_Using_Minimal_Apis()
     {
-        var expectedDummyConverter = new DummyConverter();
-
         var services = new ServiceCollection();
         services.AddSingleton<IWebHostEnvironment, DummyHostEnvironment>();
         services.AddSwaggerGen();
-        services.AddMvcCore().AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(expectedDummyConverter));
+        services.AddMvcCore().AddJsonOptions(o => o.JsonSerializerOptions.AllowTrailingCommas = true);
 
         using var provider = services.BuildServiceProvider();
 
-        var swaggerGenDummyConverter = provider.GetService<IOptions<SwaggerGenJsonOptions>>().Value.SerializerOptions.Converters.FirstOrDefault();
-
-        Assert.Equal(expectedDummyConverter, swaggerGenDummyConverter);
+        var mvcJsonOptions = provider.GetService<IOptions<MvcJsonOptions>>().Value.JsonSerializerOptions;
+        var swaggerGenSerializerOptions = provider.GetService<IOptions<SwaggerGenJsonOptions>>().Value.SerializerOptions;
+        Assert.Equal(mvcJsonOptions, swaggerGenSerializerOptions);
     }
 
     [Fact]
     public static void Ensure_SwaggerGenJsonOptions_Uses_MinimalApi_JsonOptions_When_Configured()
     {
-        var expectedDummyConverter = new DummyConverter();
-
         var services = new ServiceCollection();
         services.AddSingleton<IWebHostEnvironment, DummyHostEnvironment>();
         services.AddSwaggerGen();
-        services.ConfigureHttpJsonOptions(o => o.SerializerOptions.Converters.Add(expectedDummyConverter));
-        services.AddMvcCore().AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new DummyConverter()));
+        services.ConfigureHttpJsonOptions(o => o.SerializerOptions.AllowTrailingCommas = true);
+        services.AddMvcCore().AddJsonOptions(o => o.JsonSerializerOptions.AllowTrailingCommas = true);
 
         using var provider = services.BuildServiceProvider();
 
-        var swaggerGenDummyConverter = provider.GetService<IOptions<SwaggerGenJsonOptions>>().Value.SerializerOptions.Converters.FirstOrDefault();
-
-        Assert.Equal(expectedDummyConverter, swaggerGenDummyConverter);
-    }
-
-    private sealed class DummyConverter : JsonConverter<object>
-    {
-        public override object Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Write(Utf8JsonWriter writer, object value, JsonSerializerOptions options)
-        {
-            throw new NotImplementedException();
-        }
+        var minimalApiJsonOptions = provider.GetService<IOptions<MinimalApiJsonOptions>>().Value.SerializerOptions;
+        var swaggerGenSerializerOptions = provider.GetService<IOptions<SwaggerGenJsonOptions>>().Value.SerializerOptions;
+        Assert.Equal(minimalApiJsonOptions, swaggerGenSerializerOptions);
     }
 }

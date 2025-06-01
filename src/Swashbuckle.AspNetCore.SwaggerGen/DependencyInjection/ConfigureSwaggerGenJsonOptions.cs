@@ -31,6 +31,7 @@ internal sealed class ConfigureSwaggerGenJsonOptions : IPostConfigureOptions<Swa
             return;
         }
 
+#if NET
         /*
          * There is no surefire way to do this.
          * However, both JsonOptions are defaulted in the same way.
@@ -43,7 +44,6 @@ internal sealed class ConfigureSwaggerGenJsonOptions : IPostConfigureOptions<Swa
          * a last resort as this is an expensive operation.
          */
 
-#if NET
         var serializerOptions = _mvcJsonOptions.JsonSerializerOptions ?? JsonSerializerOptions.Default;
 
         if (_minimalApiConfigureOptions.Any() || _minimalApiPostConfigureOptions.Any())
