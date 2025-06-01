@@ -159,6 +159,22 @@ public class SwaggerGenerator(
                         SortSchema(child);
                     }
                 }
+
+                if (concrete.AnyOf is { Count: > 0 } anyOf)
+                {
+                    foreach (var child in anyOf)
+                    {
+                        SortSchema(child);
+                    }
+                }
+
+                if (concrete.OneOf is { Count: > 0 } oneOf)
+                {
+                    foreach (var child in oneOf)
+                    {
+                        SortSchema(child);
+                    }
+                }
             }
         }
     }
