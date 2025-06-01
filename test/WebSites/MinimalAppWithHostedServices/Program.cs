@@ -6,6 +6,8 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new() { Title = "MinimalApp", Version = "v1" });
 });
 
+builder.Services.AddSwaggerGenMinimalApisJsonOptions();
+
 builder.Services.AddHostedService<HostedService>();
 
 var app = builder.Build();
