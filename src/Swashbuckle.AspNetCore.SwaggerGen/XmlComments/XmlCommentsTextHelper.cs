@@ -219,7 +219,7 @@ public static partial class XmlCommentsTextHelper
     private const string CodeTagPattern = @"<c>(?<display>.+?)</c>";
     private const string MultilineCodeTagPattern = @"<code>(?<display>.+?)</code>";
     private const string ParaTagPattern = @"<para>(?<display>.+?)</para>";
-    private const string HrefPattern = @"<see href=\""(.*)\"">(.*)<\/see>";
+    private const string HrefPattern = @"<see\s+href=\""([^""]*)\"">\s*(.*?)\s*<\/see>";
     private const string BrPattern = @"(<br ?\/?>)"; // handles <br>, <br/>, <br />
     private const string LineBreaksPattern = @"\r?\n";
     private const string DoubleUpLineBreaksPattern = @"(\r?\n){2,}";
@@ -237,7 +237,7 @@ public static partial class XmlCommentsTextHelper
     [GeneratedRegex(ParaTagPattern, RegexOptions.Singleline)]
     private static partial Regex ParaTag();
 
-    [GeneratedRegex(HrefPattern)]
+    [GeneratedRegex(HrefPattern, RegexOptions.Singleline)]
     private static partial Regex HrefTag();
 
     [GeneratedRegex(BrPattern)]
