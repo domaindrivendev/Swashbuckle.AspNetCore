@@ -146,7 +146,8 @@ A line of text",
     public void Humanize_SeeMultiLineTag()
     {
         const string input = @"
-            <see href=""https://www.iso.org/iso-4217-currency-codes.html"">
+            <see
+            href=""https://www.iso.org/iso-4217-currency-codes.html"">
             ISO currency code
             </see>";
 
