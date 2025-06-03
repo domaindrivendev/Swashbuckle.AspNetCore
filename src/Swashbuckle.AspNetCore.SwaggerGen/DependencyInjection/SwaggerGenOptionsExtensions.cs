@@ -285,6 +285,15 @@ public static class SwaggerGenOptionsExtensions
     }
 
     /// <summary>
+    /// Extend enumeration schemas using the <c>oneOf</c> construct to allow <see langword="null"/> when referenced.
+    /// </summary>
+    /// <param name="swaggerGenOptions"></param>
+    public static void UseOneOfForNullableEnums(this SwaggerGenOptions swaggerGenOptions)
+    {
+        swaggerGenOptions.SchemaGeneratorOptions.UseOneOfForNullableEnums = true;
+    }
+
+    /// <summary>
     /// Enable detection of non nullable reference types to set Nullable flag accordingly on schema properties
     /// </summary>
     /// <param name="swaggerGenOptions"></param>

@@ -40,6 +40,11 @@ public class SchemaGeneratorOptions
 
     public IList<ISchemaFilter> SchemaFilters { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether to extend enumeration schemas using the <c>oneOf</c> construct to allow <see langword="null"/> when referenced.
+    /// </summary>
+    public bool UseOneOfForNullableEnums { get; set; }
+
     private string DefaultSchemaIdSelector(Type modelType)
     {
         if (!modelType.IsConstructedGenericType)

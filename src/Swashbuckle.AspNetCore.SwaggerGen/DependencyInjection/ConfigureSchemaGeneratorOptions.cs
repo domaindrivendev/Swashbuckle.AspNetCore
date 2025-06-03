@@ -32,6 +32,7 @@ internal class ConfigureSchemaGeneratorOptions(
         target.DiscriminatorNameSelector = source.DiscriminatorNameSelector;
         target.DiscriminatorValueSelector = source.DiscriminatorValueSelector;
         target.UseAllOfToExtendReferenceSchemas = source.UseAllOfToExtendReferenceSchemas;
+        target.UseOneOfForNullableEnums = source.UseOneOfForNullableEnums;
         target.SupportNonNullableReferenceTypes = source.SupportNonNullableReferenceTypes;
         target.NonNullableReferenceTypesAsRequired = source.NonNullableReferenceTypesAsRequired;
         target.SchemaFilters = [.. source.SchemaFilters];
