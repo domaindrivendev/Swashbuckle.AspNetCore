@@ -44,8 +44,8 @@
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
-    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="8.0.16" />
-    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="8.0.16" />
+    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="9.0.5" />
+    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="9.0.5" />
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))">
