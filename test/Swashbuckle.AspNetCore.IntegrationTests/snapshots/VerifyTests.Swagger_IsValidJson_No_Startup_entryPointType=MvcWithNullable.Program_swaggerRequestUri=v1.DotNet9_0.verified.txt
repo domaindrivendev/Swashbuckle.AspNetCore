@@ -5,7 +5,7 @@
     "version": "1.0"
   },
   "paths": {
-    "/api/Enum": {
+    "/api/Enum/query": {
       "get": {
         "tags": [
           "Enum"
@@ -31,15 +31,15 @@
         }
       }
     },
-    "/api/RequiredEnum": {
+    "/api/Enum/path/{logLevel}": {
       "get": {
         "tags": [
-          "RequiredEnum"
+          "Enum"
         ],
         "parameters": [
           {
             "name": "logLevel",
-            "in": "query",
+            "in": "path",
             "required": true,
             "schema": {
               "allOf": [
@@ -51,6 +51,186 @@
             }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Enum/header": {
+      "get": {
+        "tags": [
+          "Enum"
+        ],
+        "parameters": [
+          {
+            "name": "logLevel",
+            "in": "header",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/LogLevel"
+                }
+              ],
+              "default": 4
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Enum/enum-body": {
+      "get": {
+        "tags": [
+          "Enum"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/LogLevel"
+                  },
+                  {
+                    "enum": [
+                      null
+                    ]
+                  }
+                ],
+                "default": 4,
+                "nullable": true
+              }
+            },
+            "text/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/LogLevel"
+                  },
+                  {
+                    "enum": [
+                      null
+                    ]
+                  }
+                ],
+                "default": 4,
+                "nullable": true
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/LogLevel"
+                  },
+                  {
+                    "enum": [
+                      null
+                    ]
+                  }
+                ],
+                "default": 4,
+                "nullable": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Enum/type-body": {
+      "get": {
+        "tags": [
+          "Enum"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TypeWithNullable"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TypeWithNullable"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/TypeWithNullable"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/RequiredEnum": {
+      "get": {
+        "tags": [
+          "RequiredEnum"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/LogLevel"
+                  }
+                ],
+                "default": 4
+              }
+            },
+            "text/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/LogLevel"
+                  }
+                ],
+                "default": 4
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/LogLevel"
+                  }
+                ],
+                "default": 4
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -73,6 +253,49 @@
         ],
         "type": "integer",
         "format": "int32"
+      },
+      "TypeWithNullable": {
+        "required": [
+          "jsonRequiredLogLevel",
+          "requiredLogLevel"
+        ],
+        "type": "object",
+        "properties": {
+          "logLevel": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LogLevel"
+              },
+              {
+                "enum": [
+                  null
+                ]
+              }
+            ],
+            "nullable": true
+          },
+          "requiredLogLevel": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/LogLevel"
+              }
+            ]
+          },
+          "jsonRequiredLogLevel": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/LogLevel"
+              },
+              {
+                "enum": [
+                  null
+                ]
+              }
+            ],
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       }
     }
   }
