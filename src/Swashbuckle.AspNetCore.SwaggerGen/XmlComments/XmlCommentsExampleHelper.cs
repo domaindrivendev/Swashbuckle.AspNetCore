@@ -18,6 +18,9 @@ internal static class XmlCommentsExampleHelper
             ? JsonSerializer.Serialize(exampleString)
             : exampleString;
 
+        if (string.IsNullOrWhiteSpace(exampleAsJson))
+            return null;
+		
         return JsonModelFactory.CreateFromJson(exampleAsJson);
     }
 }
