@@ -379,7 +379,7 @@
             "name": "paramNine",
             "in": "query",
             "schema": {
-              "$ref": "#/components/schemas/DateTimeKindNullable"
+              "$ref": "#/components/schemas/DateTimeKind"
             }
           },
           {
@@ -946,7 +946,7 @@
             "format": "time"
           },
           "paramNine": {
-            "$ref": "#/components/schemas/DateTimeKindNullable"
+            "$ref": "#/components/schemas/DateTimeKind"
           },
           "paramTen": {
             "$ref": "#/components/schemas/DateTimeKind"
@@ -993,17 +993,6 @@
           2
         ],
         "type": "integer",
-        "format": "int32"
-      },
-      "DateTimeKindNullable": {
-        "enum": [
-          0,
-          1,
-          2,
-          null
-        ],
-        "type": "integer",
-        "nullable": true,
         "format": "int32"
       },
       "Fruit": {

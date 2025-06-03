@@ -56,18 +56,6 @@ public class SchemaGenerator(
         MemberInfo memberInfo,
         DataProperty dataProperty = null)
     {
-        if (dataProperty != null)
-        {
-            var customAttributes = memberInfo.GetInlineAndMetadataAttributes();
-
-            var requiredAttribute = customAttributes.OfType<RequiredAttribute>().FirstOrDefault();
-
-            if (!IsNullable(requiredAttribute, dataProperty, memberInfo))
-            {
-                modelType = Nullable.GetUnderlyingType(modelType) ?? modelType;
-            }
-        }
-
         var dataContract = GetDataContractFor(modelType);
 
         var schema = _generatorOptions.UseOneOfForPolymorphism && IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts)
@@ -289,7 +277,7 @@ public class SchemaGenerator(
             case DataType.String:
                 {
                     schemaFactory = () => CreatePrimitiveSchema(dataContract);
-                    returnAsReference = (Nullable.GetUnderlyingType(dataContract.UnderlyingType) ?? dataContract.UnderlyingType).IsEnum && !_generatorOptions.UseInlineDefinitionsForEnums;
+                    returnAsReference = dataContract.UnderlyingType.IsEnum && !_generatorOptions.UseInlineDefinitionsForEnums;
                     break;
                 }
 
@@ -355,17 +343,19 @@ public class SchemaGenerator(
         }
 #pragma warning restore CS0618 // Type or member is obsolete
 
-        var underlyingType = Nullable.GetUnderlyingType(dataContract.UnderlyingType) ?? dataContract.UnderlyingType;
+        var underlyingType = dataContract.UnderlyingType;
 
         if (underlyingType.IsEnum)
         {
             var enumValues = underlyingType.GetEnumValues().Cast<object>();
 
+            /*
+            See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/pull/3428
             if (dataContract.UnderlyingType != underlyingType)
             {
                 SetNullable(schema, true);
                 enumValues = enumValues.Append(null);
-            }
+            }*/
 
             schema.Enum = [.. enumValues
                 .Select(value => dataContract.JsonConverter(value))
@@ -476,7 +466,7 @@ public class SchemaGenerator(
                 continue;
             }
 
-            var memberType = dataProperty.IsNullable ? dataProperty.MemberType : (Nullable.GetUnderlyingType(dataProperty.MemberType) ?? dataProperty.MemberType);
+            var memberType = dataProperty.MemberType;
 
             schema.Properties[dataProperty.Name] = (dataProperty.MemberInfo != null)
                 ? GenerateSchemaForMember(memberType, schemaRepository, dataProperty.MemberInfo, dataProperty)

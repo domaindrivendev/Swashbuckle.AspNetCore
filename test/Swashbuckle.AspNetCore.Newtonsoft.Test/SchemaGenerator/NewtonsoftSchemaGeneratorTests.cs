@@ -88,8 +88,8 @@ public class NewtonsoftSchemaGeneratorTests
     {
         { typeof(IntEnum), JsonSchemaTypes.Integer, "int32", 3 },
         { typeof(LongEnum), JsonSchemaTypes.Integer, "int64", 3 },
-        { typeof(IntEnum?), JsonSchemaTypes.Integer | JsonSchemaType.Null, "int32", 4 },
-        { typeof(LongEnum?), JsonSchemaTypes.Integer | JsonSchemaType.Null, "int64", 4 },
+        { typeof(IntEnum?), JsonSchemaTypes.Integer, "int32", 3 },
+        { typeof(LongEnum?), JsonSchemaTypes.Integer, "int64", 3 },
     };
 
     [Theory]
@@ -305,7 +305,7 @@ public class NewtonsoftSchemaGeneratorTests
         Assert.False(schema.Properties[propertyName].Type.HasValue);
 
         reference = Assert.IsType<OpenApiSchemaReference>(schema.Properties[propertyName]);
-        Assert.Equal("IntEnumNullable", reference.Reference.Id);
+        Assert.Equal("IntEnum", reference.Reference.Id);
     }
 
     [Fact]

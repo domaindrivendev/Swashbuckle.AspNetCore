@@ -90,8 +90,8 @@ public class JsonSerializerSchemaGeneratorTests
     [Theory]
     [InlineData(typeof(IntEnum), JsonSchemaType.Integer, "int32", "2", "4", "8")]
     [InlineData(typeof(LongEnum), JsonSchemaType.Integer, "int64", "2", "4", "8")]
-    [InlineData(typeof(IntEnum?), JsonSchemaType.Integer | JsonSchemaType.Null, "int32", "2", "4", "8", null)]
-    [InlineData(typeof(LongEnum?), JsonSchemaType.Integer | JsonSchemaType.Null, "int64", "2", "4", "8", null)]
+    [InlineData(typeof(IntEnum?), JsonSchemaType.Integer, "int32", "2", "4", "8")]
+    [InlineData(typeof(LongEnum?), JsonSchemaType.Integer, "int64", "2", "4", "8")]
     public void GenerateSchema_GeneratesReferencedEnumSchema_IfEnumOrNullableEnumType(
         Type type,
         JsonSchemaType expectedType,

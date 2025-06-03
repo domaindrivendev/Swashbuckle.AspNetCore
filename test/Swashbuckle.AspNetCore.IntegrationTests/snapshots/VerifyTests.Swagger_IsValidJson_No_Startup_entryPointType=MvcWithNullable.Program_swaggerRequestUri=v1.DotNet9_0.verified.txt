@@ -17,7 +17,7 @@
             "schema": {
               "allOf": [
                 {
-                  "$ref": "#/components/schemas/LogLevelNullable"
+                  "$ref": "#/components/schemas/LogLevel"
                 }
               ],
               "default": 4
@@ -72,21 +72,6 @@
           6
         ],
         "type": "integer",
-        "format": "int32"
-      },
-      "LogLevelNullable": {
-        "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          null
-        ],
-        "type": "integer",
-        "nullable": true,
         "format": "int32"
       }
     }

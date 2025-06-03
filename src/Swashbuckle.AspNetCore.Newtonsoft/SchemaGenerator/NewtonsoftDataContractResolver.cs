@@ -22,13 +22,11 @@ public class NewtonsoftDataContractResolver(JsonSerializerSettings serializerSet
                 jsonConverter: JsonConverterFunc);
         }
 
-        var jsonContract = _contractResolver.ResolveContract(type);
+        var jsonContract = _contractResolver.ResolveContract(effectiveType);
 
-        var effectiveUnderlyingType = Nullable.GetUnderlyingType(jsonContract.UnderlyingType) ?? jsonContract.UnderlyingType;
-
-        if (jsonContract is JsonPrimitiveContract && !effectiveUnderlyingType.IsEnum)
+        if (jsonContract is JsonPrimitiveContract && !jsonContract.UnderlyingType.IsEnum)
         {
-            if (!PrimitiveTypesAndFormats.TryGetValue(effectiveUnderlyingType, out var primitiveTypeAndFormat))
+            if (!PrimitiveTypesAndFormats.TryGetValue(jsonContract.UnderlyingType, out var primitiveTypeAndFormat))
             {
                 primitiveTypeAndFormat = Tuple.Create(DataType.String, (string)null);
             }
@@ -40,9 +38,9 @@ public class NewtonsoftDataContractResolver(JsonSerializerSettings serializerSet
                 jsonConverter: JsonConverterFunc);
         }
 
-        if (jsonContract is JsonPrimitiveContract && effectiveUnderlyingType.IsEnum)
+        if (jsonContract is JsonPrimitiveContract && jsonContract.UnderlyingType.IsEnum)
         {
-            var enumValues = effectiveUnderlyingType.GetEnumValues();
+            var enumValues = jsonContract.UnderlyingType.GetEnumValues();
 
             // Test to determine if the serializer will treat as string
             var serializeAsString = (enumValues.Length > 0) &&
@@ -54,7 +52,7 @@ public class NewtonsoftDataContractResolver(JsonSerializerSettings serializerSet
 
             var primitiveTypeAndFormat = serializeAsString
                 ? PrimitiveTypesAndFormats[typeof(string)]
-                : PrimitiveTypesAndFormats[effectiveUnderlyingType.GetEnumUnderlyingType()];
+                : PrimitiveTypesAndFormats[jsonContract.UnderlyingType.GetEnumUnderlyingType()];
 
             return DataContract.ForPrimitive(
                 underlyingType: jsonContract.UnderlyingType,
