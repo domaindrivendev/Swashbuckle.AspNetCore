@@ -1491,7 +1491,7 @@
             "$ref": "#/components/schemas/ProductStatus"
           },
           "status2": {
-            "$ref": "#/components/schemas/ProductStatusNullable"
+            "$ref": "#/components/schemas/ProductStatus"
           },
           "price": {
             "maximum": 122.9,
@@ -1519,17 +1519,6 @@
         ],
         "type": "integer",
         "format": "int32"
-      },
-      "ProductStatusNullable": {
-        "enum": [
-          0,
-          1,
-          2,
-          null
-        ],
-        "type": "integer",
-        "format": "int32",
-        "nullable": true
       },
       "Promotion": {
         "type": "object",
