@@ -17,6 +17,7 @@ internal static class XmlCommentsExampleHelper
         var exampleAsJson = isStringType
             ? JsonSerializer.Serialize(exampleString)
             : exampleString;
+
         return JsonModelFactory.CreateFromJson(exampleAsJson);
     }
 }
