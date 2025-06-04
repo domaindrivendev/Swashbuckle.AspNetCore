@@ -10,6 +10,11 @@ public static class OpenApiAnyFactory
 
     public static IOpenApiAny CreateFromJson(string json, JsonSerializerOptions options)
     {
+        if (json is null)
+        {
+            return null;
+        }
+
         try
         {
             var element = JsonSerializer.Deserialize<JsonElement>(json, options);
