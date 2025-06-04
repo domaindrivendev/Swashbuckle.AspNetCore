@@ -29,7 +29,7 @@ for more details.
 | Swashbuckle Version | ASP.NET Core | Swagger/OpenAPI Spec. | swagger-ui | Redoc |
 |----------|----------|----------|----------|----------|
 | [CI](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/commits/master/) | >= 8.0.0, 2.3.x | 2.0, 3.0 | [5.x.x](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/master/src/Swashbuckle.AspNetCore.SwaggerUI/package.json#L6) | [2.x.x](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/master/src/Swashbuckle.AspNetCore.ReDoc/package.json#L6) |
-| [8.1.2](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v8.1.2) | >= 8.0.0, 2.3.x | 2.0, 3.0 | [5.22.0](https://github.com/swagger-api/swagger-ui/releases/tag/v5.22.0) | [2.5.0](https://github.com/Redocly/redoc/releases/tag/v2.5.0) |
+| [8.1.4](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v8.1.4) | >= 8.0.0, 2.3.x | 2.0, 3.0 | [5.22.0](https://github.com/swagger-api/swagger-ui/releases/tag/v5.22.0) | [2.5.0](https://github.com/Redocly/redoc/releases/tag/v2.5.0) |
 | [7.3.2](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v7.3.2) | >= 8.0.0, 6.0.x, 2.1.x | 2.0, 3.0 | [5.20.1](https://github.com/swagger-api/swagger-ui/releases/tag/v5.20.1) | [2.4.0](https://github.com/Redocly/redoc/releases/tag/v2.4.0) |
 | [6.9.0](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/tree/v6.9.0) | >= 6.0.0, 2.1.x | 2.0, 3.0 | [5.17.14](https://github.com/swagger-api/swagger-ui/releases/tag/v5.17.14) | [2.1.5](https://github.com/Redocly/redoc/releases/tag/v2.1.5)|
 
