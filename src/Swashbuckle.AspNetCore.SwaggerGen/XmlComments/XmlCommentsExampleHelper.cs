@@ -17,9 +17,6 @@ internal static class XmlCommentsExampleHelper
         var exampleAsJson = isStringType
             ? JsonSerializer.Serialize(exampleString)
             : exampleString;
-
-        if (string.IsNullOrWhiteSpace(exampleAsJson))
-            return null;
 		
         return JsonModelFactory.CreateFromJson(exampleAsJson);
     }

@@ -31,10 +31,13 @@ public class XmlCommentsExampleHelperTests
         Assert.Equal("three", item3.Value);
     }
 
-    [Fact]
-    public void Create_Builds_OpenApiString_When_Type_String()
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("foo")]
+    [InlineData("example string with special characters\"<>\r\n\"")]
+    public void Create_Builds_OpenApiString_When_Type_String(string exampleString)
     {
-        string exampleString = "example string with special characters\"<>\r\n\"";
         var schema = new OpenApiSchema { Type = JsonSchemaTypes.String };
         schemaRepository.AddDefinition("test", schema);
 
