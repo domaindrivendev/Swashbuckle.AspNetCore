@@ -252,26 +252,34 @@ public static class OpenApiSchemaExtensions
 
     private static void ApplyRangeAttribute(OpenApiSchema schema, RangeAttribute rangeAttribute)
     {
-        const NumberStyles Style = NumberStyles.Number | NumberStyles.Float;
-        var provider = rangeAttribute.ParseLimitsInInvariantCulture ? CultureInfo.InvariantCulture : CultureInfo.CurrentCulture;
+        // Use InvariantCulture if explicitly requested or if the range has been set via the
+        // RangeAttribute(double, double) or RangeAttribute(int, int) constructors.
+        var targetCulture = rangeAttribute.ParseLimitsInInvariantCulture || rangeAttribute.Minimum is double || rangeAttribute.Maximum is int
+            ? CultureInfo.InvariantCulture
+            : CultureInfo.CurrentCulture;
 
-        schema.Maximum = decimal.TryParse(rangeAttribute.Maximum.ToString(), Style, provider, out decimal maximum)
-            ? maximum.ToString(CultureInfo.InvariantCulture)
-            : schema.Maximum;
+        var maxString = Convert.ToString(rangeAttribute.Maximum, targetCulture);
+        var minString = Convert.ToString(rangeAttribute.Minimum, targetCulture);
 
-        schema.Minimum = decimal.TryParse(rangeAttribute.Minimum.ToString(), Style, provider, out decimal minimum)
-            ? minimum.ToString(CultureInfo.InvariantCulture)
-            : schema.Minimum;
-
-#if NET
-        if (rangeAttribute.MinimumIsExclusive)
+        if (decimal.TryParse(maxString, NumberStyles.Any, targetCulture, out var maximum))
         {
-            schema.ExclusiveMinimum = schema.Minimum;
+            schema.Maximum = maximum.ToString(CultureInfo.InvariantCulture);
         }
 
+        if (decimal.TryParse(minString, NumberStyles.Any, targetCulture, out var minimum))
+        {
+            schema.Minimum = minimum.ToString(CultureInfo.InvariantCulture);
+        }
+
+#if NET
         if (rangeAttribute.MaximumIsExclusive)
         {
             schema.ExclusiveMaximum = schema.Maximum;
+        }
+
+        if (rangeAttribute.MinimumIsExclusive)
+        {
+            schema.ExclusiveMinimum = schema.Minimum;
         }
 #endif
     }
