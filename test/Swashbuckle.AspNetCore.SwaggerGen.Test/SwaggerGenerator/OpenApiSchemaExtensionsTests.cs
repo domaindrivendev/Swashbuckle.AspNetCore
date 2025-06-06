@@ -56,7 +56,6 @@ public static class OpenApiSchemaExtensionsTests
             foreach (var exclusive in isExclusive)
             {
                 testCases.Add(culture, exclusive, new(1, 1234) { MaximumIsExclusive = exclusive, MinimumIsExclusive = exclusive }, "1", "1234");
-                testCases.Add(culture, exclusive, new(1, 1234) { MaximumIsExclusive = exclusive, MinimumIsExclusive = exclusive }, "1", "1234");
                 testCases.Add(culture, exclusive, new(1d, 1234d) { MaximumIsExclusive = exclusive, MinimumIsExclusive = exclusive }, "1", "1234");
                 testCases.Add(culture, exclusive, new(1.23, 4.56) { MaximumIsExclusive = exclusive, MinimumIsExclusive = exclusive }, "1.23", "4.56");
 
@@ -109,6 +108,23 @@ public static class OpenApiSchemaExtensionsTests
         Assert.Equal(isExclusive ? true : null, schema.ExclusiveMaximum);
         Assert.Equal(minimum, schema.Minimum);
         Assert.Equal(maximum, schema.Maximum);
+    }
+
+    [Fact]
+    public static void ApplyValidationAttributes_Handles_Invalid_RangeAttribute_Values()
+    {
+        // Arrange
+        var rangeAttribute = new RangeAttribute(typeof(int), "foo", "bar");
+        var schema = new OpenApiSchema();
+
+        // Act
+        schema.ApplyValidationAttributes([rangeAttribute]);
+
+        // Assert
+        Assert.Null(schema.ExclusiveMinimum);
+        Assert.Null(schema.ExclusiveMaximum);
+        Assert.Null(schema.Minimum);
+        Assert.Null(schema.Maximum);
     }
 
     private sealed class CultureSwitcher : IDisposable
