@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.OpenApi.Models;
@@ -229,8 +230,21 @@ public static class OpenApiSchemaExtensions
 
     private static void ApplyRangeAttribute(OpenApiSchema schema, RangeAttribute rangeAttribute)
     {
-#if NET
+        var culture = rangeAttribute.ParseLimitsInInvariantCulture
+            ? CultureInfo.InvariantCulture
+            : CultureInfo.CurrentCulture;
 
+        if (decimal.TryParse(rangeAttribute.Maximum.ToString(), NumberStyles.Number, culture, out decimal maximum))
+        {
+            schema.Maximum = maximum;
+        }
+
+        if (decimal.TryParse(rangeAttribute.Minimum.ToString(), NumberStyles.Number, culture, out decimal minimum))
+        {
+            schema.Minimum = minimum;
+        }
+
+#if NET
         if (rangeAttribute.MinimumIsExclusive)
         {
             schema.ExclusiveMinimum = true;
@@ -240,16 +254,7 @@ public static class OpenApiSchemaExtensions
         {
             schema.ExclusiveMaximum = true;
         }
-
 #endif
-
-        schema.Maximum = decimal.TryParse(rangeAttribute.Maximum.ToString(), out decimal maximum)
-            ? maximum
-            : schema.Maximum;
-
-        schema.Minimum = decimal.TryParse(rangeAttribute.Minimum.ToString(), out decimal minimum)
-            ? minimum
-            : schema.Minimum;
     }
 
     private static void ApplyRangeRouteConstraint(OpenApiSchema schema, RangeRouteConstraint rangeRouteConstraint)
