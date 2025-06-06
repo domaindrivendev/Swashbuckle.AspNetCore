@@ -252,24 +252,33 @@ public static class OpenApiSchemaExtensions
 
     private static void ApplyRangeAttribute(OpenApiSchema schema, RangeAttribute rangeAttribute)
     {
-        // Use InvariantCulture if explicitly requested or if the range has been set via the
-        // RangeAttribute(double, double) or RangeAttribute(int, int) constructors.
-        var targetCulture = rangeAttribute.ParseLimitsInInvariantCulture || rangeAttribute.Minimum is double || rangeAttribute.Maximum is int
-            ? CultureInfo.InvariantCulture
-            : CultureInfo.CurrentCulture;
+        object maximumValue;
+        object minimumValue;
 
-        var maxString = Convert.ToString(rangeAttribute.Maximum, targetCulture);
-        var minString = Convert.ToString(rangeAttribute.Minimum, targetCulture);
-
-        if (decimal.TryParse(maxString, NumberStyles.Any, targetCulture, out var maximum))
+        if (rangeAttribute.Maximum is double || rangeAttribute.Minimum is int)
         {
-            schema.Maximum = maximum.ToString(CultureInfo.InvariantCulture);
+            // The range was set with the RangeAttribute(double, double) or RangeAttribute(int, int)
+            // constructor so we can safely convert the values to strings using the invariant culture
+            // as we have primitive values to operate on.
+            maximumValue = rangeAttribute.Maximum;
+            minimumValue = rangeAttribute.Minimum;
+        }
+        else
+        {
+            // Parse the range from the RangeAttribute(string, string) using the appropriate culture
+            // as the user may have specified a culture-specific format for the numbers. By default
+            // RangeAttribute uses the current culture, but it can be set to use invariant culture.
+            var targetCulture = rangeAttribute.ParseLimitsInInvariantCulture
+                ? CultureInfo.InvariantCulture
+                : CultureInfo.CurrentCulture;
+
+            maximumValue = Convert.ToDouble(rangeAttribute.Maximum, targetCulture);
+            minimumValue = Convert.ToDouble(rangeAttribute.Minimum, targetCulture);
         }
 
-        if (decimal.TryParse(minString, NumberStyles.Any, targetCulture, out var minimum))
-        {
-            schema.Minimum = minimum.ToString(CultureInfo.InvariantCulture);
-        }
+        // Ensure that the conversion to string is done using the invariant culture so valid JSON is generated
+        schema.Maximum = Convert.ToString(maximumValue, CultureInfo.InvariantCulture);
+        schema.Minimum = Convert.ToString(minimumValue, CultureInfo.InvariantCulture);
 
 #if NET
         if (rangeAttribute.MaximumIsExclusive)
