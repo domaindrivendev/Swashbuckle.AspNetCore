@@ -267,7 +267,7 @@ public static class OpenApiSchemaExtensions
         {
             // Parse the range from the RangeAttribute(string, string) using the appropriate culture
             // as the user may have specified a culture-specific format for the numbers. By default
-            // RangeAttribute uses the current culture, but it can be set to use invariant culture.
+            // RangeAttribute uses the current culture, but it can be set to use the invariant culture.
             var targetCulture = rangeAttribute.ParseLimitsInInvariantCulture
                 ? CultureInfo.InvariantCulture
                 : CultureInfo.CurrentCulture;
