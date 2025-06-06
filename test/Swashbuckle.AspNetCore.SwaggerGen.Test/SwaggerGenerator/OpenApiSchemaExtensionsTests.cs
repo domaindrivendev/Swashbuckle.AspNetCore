@@ -26,6 +26,13 @@ public static class OpenApiSchemaExtensionsTests
             "sv-SE",
         ];
 
+        Type[] fractionNumberTypes =
+        [
+            typeof(float),
+            typeof(double),
+            typeof(decimal),
+        ];
+
         var testCases = new TheoryData<string, bool, RangeAttribute, string, string>();
 
         foreach (var culture in invariantOrEnglishCultures)
@@ -35,8 +42,12 @@ public static class OpenApiSchemaExtensionsTests
                 testCases.Add(culture, exclusive, new(1, 1234) { MaximumIsExclusive = exclusive, MinimumIsExclusive = exclusive }, "1", "1234");
                 testCases.Add(culture, exclusive, new(1d, 1234d) { MaximumIsExclusive = exclusive, MinimumIsExclusive = exclusive }, "1", "1234");
                 testCases.Add(culture, exclusive, new(1.23, 4.56) { MaximumIsExclusive = exclusive, MinimumIsExclusive = exclusive }, "1.23", "4.56");
-                testCases.Add(culture, exclusive, new(typeof(float), "1.23", "4.56") { MaximumIsExclusive = exclusive, MinimumIsExclusive = exclusive }, "1.23", "4.56");
-                testCases.Add(culture, exclusive, new(typeof(float), "1.23", "4.56") { MaximumIsExclusive = exclusive, MinimumIsExclusive = exclusive, ParseLimitsInInvariantCulture = true }, "1.23", "4.56");
+
+                foreach (var type in fractionNumberTypes)
+                {
+                    testCases.Add(culture, exclusive, new(type, "1.23", "4.56") { MaximumIsExclusive = exclusive, MinimumIsExclusive = exclusive }, "1.23", "4.56");
+                    testCases.Add(culture, exclusive, new(type, "1.23", "4.56") { MaximumIsExclusive = exclusive, MinimumIsExclusive = exclusive, ParseLimitsInInvariantCulture = true }, "1.23", "4.56");
+                }
             }
         }
 
@@ -48,8 +59,12 @@ public static class OpenApiSchemaExtensionsTests
                 testCases.Add(culture, exclusive, new(1, 1234) { MaximumIsExclusive = exclusive, MinimumIsExclusive = exclusive }, "1", "1234");
                 testCases.Add(culture, exclusive, new(1d, 1234d) { MaximumIsExclusive = exclusive, MinimumIsExclusive = exclusive }, "1", "1234");
                 testCases.Add(culture, exclusive, new(1.23, 4.56) { MaximumIsExclusive = exclusive, MinimumIsExclusive = exclusive }, "1.23", "4.56");
-                testCases.Add(culture, exclusive, new(typeof(float), "1,23", "4,56") { MaximumIsExclusive = exclusive, MinimumIsExclusive = exclusive }, "1.23", "4.56");
-                testCases.Add(culture, exclusive, new(typeof(float), "1.23", "4.56") { MaximumIsExclusive = exclusive, MinimumIsExclusive = exclusive, ParseLimitsInInvariantCulture = true }, "1.23", "4.56");
+
+                foreach (var type in fractionNumberTypes)
+                {
+                    testCases.Add(culture, exclusive, new(type, "1,23", "4,56") { MaximumIsExclusive = exclusive, MinimumIsExclusive = exclusive }, "1.23", "4.56");
+                    testCases.Add(culture, exclusive, new(type, "1.23", "4.56") { MaximumIsExclusive = exclusive, MinimumIsExclusive = exclusive, ParseLimitsInInvariantCulture = true }, "1.23", "4.56");
+                }
             }
         }
 
@@ -57,6 +72,13 @@ public static class OpenApiSchemaExtensionsTests
         testCases.Add("en-GB", false, new(typeof(float), "-12,445.7", "12,445.7"), "-12445.7", "12445.7");
         testCases.Add("fr-FR", false, new(typeof(float), "-12 445,7", "12 445,7"), "-12445.7", "12445.7");
         testCases.Add("sv-SE", false, new(typeof(float), "-12 445,7", "12 445,7"), "-12445.7", "12445.7");
+
+        // Decimal value that would lose precision if parsed as a float or double
+        foreach (var exclusive in isExclusive)
+        {
+            testCases.Add("en-US", exclusive, new(typeof(decimal), "12345678901234567890.123456789", "12345678901234567890.123456789") { MaximumIsExclusive = exclusive, MinimumIsExclusive = exclusive }, "12345678901234567890.123456789", "12345678901234567890.123456789");
+            testCases.Add("en-US", exclusive, new(typeof(decimal), "12345678901234567890.123456789", "12345678901234567890.123456789") { MaximumIsExclusive = exclusive, MinimumIsExclusive = exclusive, ParseLimitsInInvariantCulture = true }, "12345678901234567890.123456789", "12345678901234567890.123456789");
+        }
 
         return testCases;
     }

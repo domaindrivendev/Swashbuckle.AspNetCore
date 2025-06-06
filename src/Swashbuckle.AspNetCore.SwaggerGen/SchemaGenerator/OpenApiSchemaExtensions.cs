@@ -230,18 +230,24 @@ public static class OpenApiSchemaExtensions
 
     private static void ApplyRangeAttribute(OpenApiSchema schema, RangeAttribute rangeAttribute)
     {
-        var culture = rangeAttribute.ParseLimitsInInvariantCulture
-            ? CultureInfo.InvariantCulture
-            : CultureInfo.CurrentCulture;
-
-        if (decimal.TryParse(rangeAttribute.Maximum.ToString(), NumberStyles.Number, culture, out decimal maximum))
+        if (rangeAttribute.Maximum is int maximumInteger)
         {
-            schema.Maximum = maximum;
+            // The range was set with the RangeAttribute(int, int) constructor
+            schema.Maximum = maximumInteger;
+            schema.Minimum = (int)rangeAttribute.Minimum;
         }
-
-        if (decimal.TryParse(rangeAttribute.Minimum.ToString(), NumberStyles.Number, culture, out decimal minimum))
+        else
         {
-            schema.Minimum = minimum;
+            // Parse the range from the RangeAttribute(double, double) or RangeAttribute(string, string) constructor.
+            // Use the appropriate culture as the user may have specified a culture-specific format for the numbers
+            // if they specified the value as a string. By default RangeAttribute uses the current culture, but it
+            // can be set to use the invariant culture.
+            var targetCulture = rangeAttribute.ParseLimitsInInvariantCulture
+                ? CultureInfo.InvariantCulture
+                : CultureInfo.CurrentCulture;
+
+            schema.Maximum = Convert.ToDecimal(rangeAttribute.Maximum, targetCulture);
+            schema.Minimum = Convert.ToDecimal(rangeAttribute.Minimum, targetCulture);
         }
 
 #if NET
