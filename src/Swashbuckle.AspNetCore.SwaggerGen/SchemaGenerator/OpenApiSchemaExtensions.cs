@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.OpenApi.Models;
@@ -229,8 +230,27 @@ public static class OpenApiSchemaExtensions
 
     private static void ApplyRangeAttribute(OpenApiSchema schema, RangeAttribute rangeAttribute)
     {
-#if NET
+        if (rangeAttribute.Maximum is int maximumInteger)
+        {
+            // The range was set with the RangeAttribute(int, int) constructor
+            schema.Maximum = maximumInteger;
+            schema.Minimum = (int)rangeAttribute.Minimum;
+        }
+        else
+        {
+            // Parse the range from the RangeAttribute(double, double) or RangeAttribute(string, string) constructor.
+            // Use the appropriate culture as the user may have specified a culture-specific format for the numbers
+            // if they specified the value as a string. By default RangeAttribute uses the current culture, but it
+            // can be set to use the invariant culture.
+            var targetCulture = rangeAttribute.ParseLimitsInInvariantCulture
+                ? CultureInfo.InvariantCulture
+                : CultureInfo.CurrentCulture;
 
+            schema.Maximum = Convert.ToDecimal(rangeAttribute.Maximum, targetCulture);
+            schema.Minimum = Convert.ToDecimal(rangeAttribute.Minimum, targetCulture);
+        }
+
+#if NET
         if (rangeAttribute.MinimumIsExclusive)
         {
             schema.ExclusiveMinimum = true;
@@ -240,16 +260,7 @@ public static class OpenApiSchemaExtensions
         {
             schema.ExclusiveMaximum = true;
         }
-
 #endif
-
-        schema.Maximum = decimal.TryParse(rangeAttribute.Maximum.ToString(), out decimal maximum)
-            ? maximum
-            : schema.Maximum;
-
-        schema.Minimum = decimal.TryParse(rangeAttribute.Minimum.ToString(), out decimal minimum)
-            ? minimum
-            : schema.Minimum;
     }
 
     private static void ApplyRangeRouteConstraint(OpenApiSchema schema, RangeRouteConstraint rangeRouteConstraint)
