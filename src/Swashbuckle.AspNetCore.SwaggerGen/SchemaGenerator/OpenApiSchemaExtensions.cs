@@ -242,12 +242,22 @@ public static class OpenApiSchemaExtensions
             // Use the appropriate culture as the user may have specified a culture-specific format for the numbers
             // if they specified the value as a string. By default RangeAttribute uses the current culture, but it
             // can be set to use the invariant culture.
-            var targetCulture = rangeAttribute.ParseLimitsInInvariantCulture
+            var targetCulture = rangeAttribute.ParseLimitsInInvariantCulture || rangeAttribute.Minimum is double
                 ? CultureInfo.InvariantCulture
                 : CultureInfo.CurrentCulture;
 
-            schema.Maximum = Convert.ToDecimal(rangeAttribute.Maximum, targetCulture);
-            schema.Minimum = Convert.ToDecimal(rangeAttribute.Minimum, targetCulture);
+            var maxString = Convert.ToString(rangeAttribute.Maximum, targetCulture);
+            var minString = Convert.ToString(rangeAttribute.Minimum, targetCulture);
+
+            if (decimal.TryParse(maxString, NumberStyles.Any, targetCulture, out var value))
+            {
+                schema.Maximum = value;
+            }
+
+            if (decimal.TryParse(minString, NumberStyles.Any, targetCulture, out value))
+            {
+                schema.Minimum = value;
+            }
         }
 
 #if NET
