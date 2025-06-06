@@ -272,8 +272,8 @@ public static class OpenApiSchemaExtensions
                 ? CultureInfo.InvariantCulture
                 : CultureInfo.CurrentCulture;
 
-            maximumValue = Convert.ToDouble(rangeAttribute.Maximum, targetCulture);
-            minimumValue = Convert.ToDouble(rangeAttribute.Minimum, targetCulture);
+            maximumValue = Convert.ToDecimal(rangeAttribute.Maximum, targetCulture);
+            minimumValue = Convert.ToDecimal(rangeAttribute.Minimum, targetCulture);
         }
 
         // Ensure that the conversion to string is done using the invariant culture so valid JSON is generated
