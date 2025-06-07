@@ -20,5 +20,16 @@
       }
     }
   },
-  "components": { }
+  "components": { },
+  "tags": [
+    {
+      "name": "Some"
+    },
+    {
+      "name": "Tags"
+    },
+    {
+      "name": "Here"
+    }
+  ]
 }

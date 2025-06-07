@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.Interfaces;
 using Swashbuckle.AspNetCore.TestSupport;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
@@ -26,13 +27,14 @@ public class XmlCommentsRequestBodyFilterTests
         {
             ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = parameterInfo }
         };
-        var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
+        var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null, null);
 
         Subject().Apply(requestBody, filterContext);
 
         Assert.Equal("Description for param1", requestBody.Description);
         Assert.NotNull(requestBody.Content["application/json"].Example);
-        Assert.Equal("\"Example for \\\"param1\\\"\"", requestBody.Content["application/json"].Example.ToJson());
+
+        Assert.Equal("\"Example for \\u0022param1\\u0022\"", requestBody.Content["application/json"].Example.ToJson());
     }
 
     [Fact]
@@ -52,13 +54,14 @@ public class XmlCommentsRequestBodyFilterTests
         {
             ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = parameterInfo }
         };
-        var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
+        var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null, null);
 
         Subject().Apply(requestBody, filterContext);
 
         Assert.Equal("Description for param1", requestBody.Description);
         Assert.NotNull(requestBody.Content["application/json"].Example);
-        Assert.Equal("\"Example for \\\"param1\\\"\"", requestBody.Content["application/json"].Example.ToJson());
+
+        Assert.Equal("\"Example for \\u0022param1\\u0022\"", requestBody.Content["application/json"].Example.ToJson());
     }
 
     [Fact]
@@ -75,7 +78,7 @@ public class XmlCommentsRequestBodyFilterTests
         {
             ModelMetadata = ModelMetadataFactory.CreateForProperty(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringProperty))
         };
-        var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
+        var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null, null);
 
         Subject().Apply(requestBody, filterContext);
 
@@ -99,13 +102,14 @@ public class XmlCommentsRequestBodyFilterTests
         {
             ModelMetadata = ModelMetadataFactory.CreateForProperty(typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringPropertyWithUri))
         };
-        var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
+        var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null, null);
 
         Subject().Apply(requestBody, filterContext);
 
         Assert.Equal("Summary for StringPropertyWithUri", requestBody.Description);
         Assert.NotNull(requestBody.Content["application/json"].Example);
-        Assert.Equal("\"https://test.com/a?b=1&c=2\"", requestBody.Content["application/json"].Example.ToJson());
+
+        Assert.Equal("\"https://test.com/a?b=1\\u0026c=2\"", requestBody.Content["application/json"].Example.ToJson());
     }
 
     [Fact]
@@ -125,7 +129,7 @@ public class XmlCommentsRequestBodyFilterTests
         {
             ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = parameterInfo }
         };
-        var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
+        var filterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null, null);
 
         Subject().Apply(requestBody, filterContext);
 
@@ -148,7 +152,7 @@ public class XmlCommentsRequestBodyFilterTests
                     Schema = new OpenApiSchema
                     {
                         Type = JsonSchemaTypes.String,
-                        Properties = new Dictionary<string, OpenApiSchema>()
+                        Properties = new Dictionary<string, IOpenApiSchema>()
                         {
                             [parameterInfo.Name] = new OpenApiSchema()
                         }
@@ -163,7 +167,7 @@ public class XmlCommentsRequestBodyFilterTests
             Name = parameterInfo.Name,
             Source = BindingSource.Form
         };
-        var filterContext = new RequestBodyFilterContext(null, [bodyParameterDescription], null, null);
+        var filterContext = new RequestBodyFilterContext(null, [bodyParameterDescription], null, null, null);
 
         Subject().Apply(requestBody, filterContext);
 

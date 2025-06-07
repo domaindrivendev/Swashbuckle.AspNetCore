@@ -30,7 +30,7 @@ public partial class VerifyTests(ITestOutputHelper outputHelper)
         using var swaggerResponse = await client.GetAsync(swaggerRequestUri, TestContext.Current.CancellationToken);
         var swagger = await swaggerResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
-        await Verifier.Verify(NormalizeLineBreaks(swagger))
+        await Verify(NormalizeLineBreaks(swagger))
             .UseDirectory("snapshots")
             .UseParameters(startupType, GetVersion(swaggerRequestUri))
             .UniqueForTargetFrameworkAndVersion();
@@ -48,7 +48,7 @@ public partial class VerifyTests(ITestOutputHelper outputHelper)
         using var swaggerResponse = await client.GetAsync(swaggerRequestUri, TestContext.Current.CancellationToken);
         var swagger = await swaggerResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
-        await Verifier.Verify(swagger)
+        await Verify(swagger)
             .UseDirectory("snapshots")
             .UseParameters(startupType, GetVersion(swaggerRequestUri))
             .UniqueForTargetFrameworkAndVersion();
@@ -66,7 +66,7 @@ public partial class VerifyTests(ITestOutputHelper outputHelper)
     {
         var swaggerResponse = await SwaggerEndpointReturnsValidSwaggerJson(entryPointType, swaggerRequestUri);
 
-        await Verifier.Verify(swaggerResponse)
+        await Verify(swaggerResponse)
             .UseDirectory("snapshots")
             .UseParameters(entryPointType, GetVersion(swaggerRequestUri))
             .UniqueForTargetFrameworkAndVersion();
@@ -80,7 +80,7 @@ public partial class VerifyTests(ITestOutputHelper outputHelper)
 
         var swaggerResponse = await SwaggerResponse(client, "/swagger/v1/swagger.json");
 
-        await Verifier.Verify(swaggerResponse)
+        await Verify(swaggerResponse)
             .UseDirectory("snapshots")
             .UniqueForTargetFrameworkAndVersion();
     }

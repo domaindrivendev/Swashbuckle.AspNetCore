@@ -1,10 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net10.0;net9.0;net8.0</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.SwaggerUI\Swashbuckle.AspNetCore.SwaggerUI.csproj" />
   </ItemGroup>
+
+  <!-- HACK Workaround for https://github.com/dotnet/sdk/issues/49180 -->
+  <Target Name="RemoveCachedDuplicates" AfterTargets="ResolveProjectStaticWebAssets">
+    <ItemGroup>
+      <_UniqueAssets Include="@(StaticWebAsset->Distinct())" />
+      <StaticWebAsset Remove="@(_UniqueAssets)" />
+      <StaticWebAsset Include="@(_UniqueAssets)" />
+    </ItemGroup>
+  </Target>
+
 </Project>

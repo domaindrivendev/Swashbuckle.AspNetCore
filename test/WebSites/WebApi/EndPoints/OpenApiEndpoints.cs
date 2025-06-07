@@ -44,56 +44,90 @@ public static class OpenApiEndpoints
                 .ToArray();
         })
         .WithName("GetWeatherForecast")
-        .WithOpenApi();
+#if NET10_0_OR_GREATER
+        .WithOpenApi()
+#endif
+        ;
 
         group.MapPost("/multipleForms", ([FromForm] Person person, [FromForm] Address address) =>
         {
             return $"{person} {address}";
         })
-        .WithOpenApi();
+#if NET10_0_OR_GREATER
+        .WithOpenApi()
+#endif
+        ;
 
         group.MapPost("/IFromFile", (IFormFile file, string queryParameter) =>
         {
             return $"{file.FileName}{queryParameter}";
-        }).WithOpenApi(o =>
+        })
+#if NET10_0_OR_GREATER
+        .WithOpenApi(o =>
         {
-            var parameter = o.Parameters?.FirstOrDefault(p => p.Name.Equals("queryParameter", StringComparison.OrdinalIgnoreCase));
+            var parameter = o.Parameters?.FirstOrDefault(p => string.Equals(p.Name, "queryParameter", StringComparison.OrdinalIgnoreCase));
             if (parameter is not null)
             {
                 parameter.Description = $"{parameter.Name} Description";
             }
             return o;
-        });
+        })
+#endif
+        ;
 
         group.MapPost("/IFromFileCollection", (IFormFileCollection collection) =>
         {
             return $"{collection.Count} {string.Join(',', collection.Select(f => f.FileName))}";
-        }).WithOpenApi();
+        })
+#if NET10_0_OR_GREATER
+        .WithOpenApi()
+#endif
+        ;
 
         group.MapPost("/IFromBody", (OrganizationCustomExchangeRatesDto dto) =>
         {
             return $"{dto}";
-        }).WithOpenApi();
+        })
+#if NET10_0_OR_GREATER
+        .WithOpenApi()
+#endif
+        ;
 
         group.MapPost("/IFromFileAndString", (IFormFile file, [FromForm] string tags) =>
         {
             return $"{file.FileName}{tags}";
-        }).WithOpenApi();
+        })
+#if NET10_0_OR_GREATER
+        .WithOpenApi()
+#endif
+        ;
 
         group.MapPost("/IFromFileAndEnum", (IFormFile file, [FromForm] DateTimeKind dateTimeKind) =>
         {
             return $"{file.FileName}{dateTimeKind}";
-        }).WithOpenApi();
+        })
+#if NET10_0_OR_GREATER
+        .WithOpenApi()
+#endif
+        ;
 
         group.MapPost("/IFromObjectAndString", ([FromForm] Person person, [FromForm] string tags) =>
         {
             return $"{person}{tags}";
-        }).WithOpenApi();
+        })
+#if NET10_0_OR_GREATER
+        .WithOpenApi()
+#endif
+        ;
 
         app.MapGet("/TypeWithTryParse/{tryParse}", (TypeWithTryParse tryParse) =>
         {
             return tryParse.Name;
-        }).WithOpenApi();
+        })
+#if NET10_0_OR_GREATER
+        .WithOpenApi()
+#endif
+        ;
 
         return app;
     }

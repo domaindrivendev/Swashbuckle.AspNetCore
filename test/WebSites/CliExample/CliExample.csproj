@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <BuildInParallel>false</BuildInParallel>
-    <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net10.0;net9.0;net8.0</TargetFrameworks>
     <DotNetSwaggerPath>$([System.IO.Path]::Combine('$(ArtifactsPath)', 'bin', 'Swashbuckle.AspNetCore.Cli', '$(Configuration.ToLower())_$(TargetFramework)'))</DotNetSwaggerPath>
   </PropertyGroup>
 
@@ -31,6 +31,15 @@
   <Target Name="SwaggerToFile" AfterTargets="AfterBuild">
     <Exec Command="dotnet dotnet-swagger.dll tofile --host http://localhost:51071 --output %22$(MSBuildThisFileDirectory)wwwroot/swagger/v1/swagger_$(TargetFramework).json%22 %22$(OutputPath)$(AssemblyName).dll%22 v1"
           WorkingDirectory="$(DotNetSwaggerPath)" />
+  </Target>
+
+  <!-- HACK Workaround for https://github.com/dotnet/sdk/issues/49180 -->
+  <Target Name="RemoveCachedDuplicates" AfterTargets="ResolveProjectStaticWebAssets">
+    <ItemGroup>
+      <_UniqueAssets Include="@(StaticWebAsset->Distinct())" />
+      <StaticWebAsset Remove="@(_UniqueAssets)" />
+      <StaticWebAsset Include="@(_UniqueAssets)" />
+    </ItemGroup>
   </Target>
 
 </Project>
