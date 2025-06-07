@@ -9,9 +9,7 @@ public class ProductsController : Controller
     // GET api/values
     [HttpGet]
     public IEnumerable<Product> GetProducts()
-    {
-        throw new NotImplementedException();
-    }
+        => throw new NotImplementedException();
 }
 
 public class Product

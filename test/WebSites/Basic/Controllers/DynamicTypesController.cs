@@ -1,4 +1,5 @@
-﻿using System.Dynamic;
+﻿using System.Diagnostics;
+using System.Dynamic;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Basic.Controllers;
@@ -7,8 +8,9 @@ namespace Basic.Controllers;
 public class DynamicTypesController
 {
     [HttpPost("kittens")]
-    public int CreateKitten([FromBody]dynamic kitten)
+    public int CreateKitten([FromBody] dynamic kitten)
     {
+        Debug.Assert(kitten is not null);
         return 1;
     }
 
@@ -19,8 +21,9 @@ public class DynamicTypesController
     }
 
     [HttpPost("dragons")]
-    public IActionResult CreateDragons([FromBody]object dragon)
+    public IActionResult CreateDragons([FromBody] object dragon)
     {
+        Debug.Assert(dragon is not null);
         return new ObjectResult(1);
     }
 }

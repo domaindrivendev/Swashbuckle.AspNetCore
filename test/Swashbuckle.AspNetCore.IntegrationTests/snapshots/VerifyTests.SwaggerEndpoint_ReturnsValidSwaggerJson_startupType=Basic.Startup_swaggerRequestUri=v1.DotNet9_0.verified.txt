@@ -624,7 +624,7 @@
                       "type": "integer",
                       "format": "int32"
                     },
-                    "description": "Sumary for PhoneNumbers"
+                    "description": "Summary for PhoneNumbers"
                   },
                   "formFile": {
                     "type": "string",
@@ -723,7 +723,7 @@
                       "type": "integer",
                       "format": "int32"
                     },
-                    "description": "Sumary for PhoneNumbers"
+                    "description": "Summary for PhoneNumbers"
                   },
                   "logLevel": {
                     "$ref": "#/components/schemas/LogLevel"
