@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Basic.Controllers;
@@ -8,17 +9,22 @@ public class DataAnnotationsController : Controller
 {
     [HttpPost("payments/authorize")]
     [ProducesResponseType(200, Type = typeof(string))]
-    public IActionResult AuthorizePayment([FromBody, Required]PaymentRequest request)
+    public IActionResult AuthorizePayment([FromBody, Required] PaymentRequest request)
     {
+        Debug.Assert(request is not null);
+
         if (!ModelState.IsValid)
+        {
             return new BadRequestObjectResult(ModelState);
+        }
 
         return new ObjectResult("123456");
     }
 
     [HttpPut("payments/{paymentId}/cancel")]
-    public IActionResult CancelPayment([MinLength(6)]string paymentId)
+    public IActionResult CancelPayment([MinLength(6)] string paymentId)
     {
+        Debug.Assert(paymentId is not null);
         return Ok();
     }
 }

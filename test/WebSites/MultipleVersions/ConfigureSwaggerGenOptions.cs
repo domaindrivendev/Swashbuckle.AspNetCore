@@ -5,13 +5,8 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace MultipleVersions;
 
-public class ConfigureSwaggerOptions : IConfigureOptions<SwaggerGenOptions>
+public class ConfigureSwaggerOptions(IApiVersionDescriptionProvider provider) : IConfigureOptions<SwaggerGenOptions>
 {
-    readonly IApiVersionDescriptionProvider provider;
-
-    public ConfigureSwaggerOptions(IApiVersionDescriptionProvider provider) =>
-        this.provider = provider;
-
     public void Configure(SwaggerGenOptions options)
     {
         foreach (var description in provider.ApiVersionDescriptions)

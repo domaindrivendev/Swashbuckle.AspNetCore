@@ -45,7 +45,7 @@ public class JsonSerializerDataContractResolver(JsonSerializerOptions serializer
             primitiveTypeAndFormat = PrimitiveTypesAndFormats[exampleType];
 
             return DataContract.ForPrimitive(
-                underlyingType: type,
+                underlyingType: effectiveType,
                 dataType: primitiveTypeAndFormat.Item1,
                 dataFormat: primitiveTypeAndFormat.Item2,
                 jsonConverter: (value) => JsonConverterFunc(value, type));

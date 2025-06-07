@@ -86,8 +86,8 @@ public class NewtonsoftSchemaGeneratorTests
     {
         { typeof(IntEnum), JsonSchemaTypes.Integer, "int32", 3 },
         { typeof(LongEnum), JsonSchemaTypes.Integer, "int64", 3 },
-        { typeof(IntEnum?), JsonSchemaTypes.Integer, "int32", 4 },
-        { typeof(LongEnum?), JsonSchemaTypes.Integer, "int64", 4 },
+        { typeof(IntEnum?), JsonSchemaTypes.Integer, "int32", 3 },
+        { typeof(LongEnum?), JsonSchemaTypes.Integer, "int64", 3 },
     };
 
     [Theory]
@@ -295,7 +295,7 @@ public class NewtonsoftSchemaGeneratorTests
         var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
         const string propertyName = nameof(TypeWithNullableProperties.NullableIntEnumProperty);
         Assert.False(schema.Properties[propertyName].Nullable);
-        Assert.Equal("IntEnumNullable", schema.Properties[propertyName].Reference.Id);
+        Assert.Equal("IntEnum", schema.Properties[propertyName].Reference.Id);
     }
 
     [Fact]
@@ -846,8 +846,8 @@ public class NewtonsoftSchemaGeneratorTests
         Assert.False(schema.Properties["IntEnumWithRequiredAllowNull"].Nullable);
         Assert.False(schema.Properties["IntEnumWithRequiredAlways"].Nullable);
         Assert.False(schema.Properties["IntEnumWithRequiredDisallowNull"].Nullable);
-        Assert.Equal("IntEnumNullable", schema.Properties["IntEnumWithRequiredDefault"].Reference.Id);
-        Assert.Equal("IntEnumNullable", schema.Properties["IntEnumWithRequiredAllowNull"].Reference.Id);
+        Assert.Equal("IntEnum", schema.Properties["IntEnumWithRequiredDefault"].Reference.Id);
+        Assert.Equal("IntEnum", schema.Properties["IntEnumWithRequiredAllowNull"].Reference.Id);
         Assert.Equal(nameof(IntEnum), schema.Properties["IntEnumWithRequiredAlways"].Reference.Id);
         Assert.Equal(nameof(IntEnum), schema.Properties["IntEnumWithRequiredDisallowNull"].Reference.Id);
     }

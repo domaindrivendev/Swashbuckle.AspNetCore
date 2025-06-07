@@ -88,8 +88,6 @@ public class JsonSerializerSchemaGeneratorTests
     [Theory]
     [InlineData(typeof(IntEnum), "int32", false, "2", "4", "8")]
     [InlineData(typeof(LongEnum), "int64", false, "2", "4", "8")]
-    [InlineData(typeof(IntEnum?), "int32", true, "2", "4", "8", "null")]
-    [InlineData(typeof(LongEnum?), "int64", true, "2", "4", "8", "null")]
     public void GenerateSchema_GeneratesReferencedEnumSchema_IfEnumOrNullableEnumType(
         Type type,
         string expectedFormat,

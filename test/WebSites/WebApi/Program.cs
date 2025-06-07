@@ -6,14 +6,14 @@ using WebApi.EndPoints;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<JsonOptions>(
-    opt => opt.SerializerOptions.Converters.Add(new JsonStringEnumConverter())
+    options => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter())
 );
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
+builder.Services.AddSwaggerGen(options =>
 {
-    c.EnableAnnotations();
-    c.IncludeXmlComments(Assembly.GetExecutingAssembly());
-    c.SwaggerDoc("v1", new() { Title = "WebApi", Version = "v1" });
+    options.EnableAnnotations();
+    options.IncludeXmlComments(Assembly.GetExecutingAssembly());
+    options.SwaggerDoc("v1", new() { Title = "WebApi", Version = "v1" });
 });
 
 var app = builder.Build();
@@ -23,10 +23,19 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+string[] summaries =
+[
+    "Freezing",
+    "Bracing",
+    "Chilly",
+    "Cool",
+    "Mild",
+    "Warm",
+    "Balmy",
+    "Hot",
+    "Sweltering",
+    "Scorching",
+];
 
 app.MapAnnotationsEndpoints()
    .MapWithOpenApiEndpoints()

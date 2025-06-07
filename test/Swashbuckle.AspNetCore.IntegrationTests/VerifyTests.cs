@@ -4,7 +4,7 @@ using ReDocApp = ReDoc;
 namespace Swashbuckle.AspNetCore.IntegrationTests;
 
 [Collection("TestSite")]
-public partial class VerifyTests
+public partial class VerifyTests(ITestOutputHelper outputHelper)
 {
     [Theory]
     [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
@@ -24,7 +24,7 @@ public partial class VerifyTests
         Type startupType,
         string swaggerRequestUri)
     {
-        var testSite = new TestSite(startupType);
+        var testSite = new TestSite(startupType, outputHelper);
         using var client = testSite.BuildClient();
 
         using var swaggerResponse = await client.GetAsync(swaggerRequestUri, TestContext.Current.CancellationToken);

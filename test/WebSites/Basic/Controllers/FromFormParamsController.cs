@@ -15,15 +15,19 @@ public class FromFormParamsController
     /// <exception cref="System.NotImplementedException"></exception>
     [HttpPost("registrations")]
     [Consumes("application/x-www-form-urlencoded")]
-    public IActionResult PostForm([FromForm] RegistrationForm form, IFormFile formFile, [FromForm] string text)
+    public IActionResult PostForm(
+        [FromForm] RegistrationForm form,
+        IFormFile formFile,
+        [FromForm] string text)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
     [HttpPost("registrationsWithIgnoreProperties")]
-    public IActionResult PostFormWithIgnoredProperties([FromForm] RegistrationFormWithIgnoredProperties form)
+    public IActionResult PostFormWithIgnoredProperties(
+        [FromForm] RegistrationFormWithIgnoredProperties form)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 
     /// <summary>
@@ -35,9 +39,12 @@ public class FromFormParamsController
     /// <returns></returns>
     /// <exception cref="System.NotImplementedException"></exception>
     [HttpPost("registrationsWithEnumParameter")]
-    public IActionResult PostFormWithEnumParameter([FromForm] RegistrationFormWithEnum form, IFormFile formFile, [FromForm] DateTimeKind dateTimeKind)
+    public IActionResult PostFormWithEnumParameter(
+        [FromForm] RegistrationFormWithEnum form,
+        IFormFile formFile,
+        [FromForm] DateTimeKind dateTimeKind)
     {
-        throw new System.NotImplementedException();
+        throw new NotImplementedException();
     }
 }
 
@@ -50,7 +57,7 @@ public class RegistrationForm
     public string Name { get; set; }
 
     /// <summary>
-    /// Sumary for PhoneNumbers
+    /// Summary for PhoneNumbers
     /// </summary>
     public IEnumerable<int> PhoneNumbers { get; set; }
 }
@@ -64,7 +71,7 @@ public class RegistrationFormWithEnum
     public string Name { get; set; }
 
     /// <summary>
-    /// Sumary for PhoneNumbers
+    /// Summary for PhoneNumbers
     /// </summary>
     public IEnumerable<int> PhoneNumbers { get; set; }
 

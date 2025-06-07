@@ -624,7 +624,7 @@
                       "type": "integer",
                       "format": "int32"
                     },
-                    "description": "Sumary for PhoneNumbers"
+                    "description": "Summary for PhoneNumbers"
                   },
                   "formFile": {
                     "type": "string",
@@ -723,7 +723,7 @@
                       "type": "integer",
                       "format": "int32"
                     },
-                    "description": "Sumary for PhoneNumbers"
+                    "description": "Summary for PhoneNumbers"
                   },
                   "logLevel": {
                     "$ref": "#/components/schemas/LogLevel"
@@ -1491,7 +1491,16 @@
             "$ref": "#/components/schemas/ProductStatus"
           },
           "status2": {
-            "$ref": "#/components/schemas/ProductStatusNullable"
+            "$ref": "#/components/schemas/ProductStatus"
+          },
+          "price": {
+            "maximum": 122.9,
+            "exclusiveMaximum": true,
+            "minimum": 0.1,
+            "exclusiveMinimum": true,
+            "type": "number",
+            "format": "double",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -1510,17 +1519,6 @@
         ],
         "type": "integer",
         "format": "int32"
-      },
-      "ProductStatusNullable": {
-        "enum": [
-          0,
-          1,
-          2,
-          null
-        ],
-        "type": "integer",
-        "format": "int32",
-        "nullable": true
       },
       "Promotion": {
         "type": "object",

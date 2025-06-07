@@ -202,7 +202,7 @@ public static partial class XmlCommentsTextHelper
     [GeneratedRegex(@"<para>(?<display>.+?)</para>", RegexOptions.Singleline)]
     private static partial Regex ParaTag();
 
-    [GeneratedRegex(@"<see href=\""(.*)\"">(.*)<\/see>")]
+    [GeneratedRegex(@"<see\s+href=\""([^""]*)\"">\s*(.*?)\s*<\/see>", RegexOptions.Singleline)]
     private static partial Regex HrefTag();
 
     [GeneratedRegex(@"(<br ?\/?>)")] // handles <br>, <br/>, <br />
