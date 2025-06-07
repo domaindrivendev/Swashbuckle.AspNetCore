@@ -30,13 +30,13 @@ public static class Config
 
     internal static IEnumerable<ApiResource> ApiResources()
     {
-        return new List<ApiResource>
-        {
+        return
+        [
             new ApiResource("api", "API")
             {
                 Scopes = { "readAccess", "writeAccess" }
             }
-        };
+        ];
     }
 
     internal static List<TestUser> TestUsers()
@@ -47,7 +47,7 @@ public static class Config
             {
                 SubjectId = "joebloggs",
                 Username = "joebloggs",
-                Password = "pass123"
+                Password = "pass123",
             }
         ];
     }

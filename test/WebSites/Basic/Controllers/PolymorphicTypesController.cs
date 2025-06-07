@@ -6,7 +6,7 @@ namespace Basic.Controllers;
 public class PolymorphicTypesController
 {
     [HttpPost]
-    public int CreateShape([FromBody]Shape shape)
+    public int CreateShape([FromBody] Shape shape)
     {
         throw new NotImplementedException();
     }

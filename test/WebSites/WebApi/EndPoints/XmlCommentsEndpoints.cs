@@ -1,6 +1,5 @@
 ﻿namespace WebApi.EndPoints;
 
-
 /// <summary>
 /// Class of Extensions to add XmlEndpoints
 /// </summary>
@@ -22,8 +21,10 @@ public static class XmlCommentsEndpoints
     /// </summary>
     ///  <param name="id" example="111">The product id</param>
     /// <response code="200">A Product Id</response>
-    private static Product GetProduct(int id) => new() { Id = id, Description = "A product" };
+    private static Product GetProduct(int id)
+        => new() { Id = id, Description = "A product" };
 }
+
 /// <summary>
 /// Represents a product
 /// </summary>

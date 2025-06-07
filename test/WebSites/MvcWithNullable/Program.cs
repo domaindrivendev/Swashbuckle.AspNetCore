@@ -29,7 +29,8 @@ app.Run();
 public class EnumController : ControllerBase
 {
     [HttpGet]
-    public IActionResult Get(LogLevel? logLevel = LogLevel.Error) => Ok(new { logLevel });
+    public IActionResult Get(LogLevel? logLevel = LogLevel.Error)
+        => Ok(new { logLevel });
 }
 
 [ApiController]
@@ -37,7 +38,8 @@ public class EnumController : ControllerBase
 public class RequiredEnumController : ControllerBase
 {
     [HttpGet]
-    public IActionResult Get([Required] LogLevel? logLevel = LogLevel.Error) => Ok(new { logLevel });
+    public IActionResult Get([Required] LogLevel? logLevel = LogLevel.Error)
+        => Ok(new { logLevel });
 }
 
 namespace MvcWithNullable

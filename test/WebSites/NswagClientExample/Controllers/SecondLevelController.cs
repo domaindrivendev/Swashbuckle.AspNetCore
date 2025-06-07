@@ -9,7 +9,7 @@ public class SecondLevelController : ControllerBase
 {
     [HttpPost]
     [Produces("application/json")]
-    public int Create([FromBody]BaseType input)
+    public int Create([FromBody] BaseType input)
     {
         throw new NotImplementedException();
     }
@@ -22,11 +22,9 @@ public abstract class BaseType
     public string Property { get; set; }
 }
 
-public abstract class SubType  : BaseType
-{
-}
+public abstract class SubType : BaseType;
 
-public class SubSubType  : SubType
+public class SubSubType : SubType
 {
     public string Property2 { get; set; }
 }
