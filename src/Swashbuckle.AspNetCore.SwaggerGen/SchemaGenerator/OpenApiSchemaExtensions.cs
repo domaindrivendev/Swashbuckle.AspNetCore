@@ -46,7 +46,6 @@ public static class OpenApiSchemaExtensions
             {
                 ApplyMaxLengthAttribute(schema, maxLengthAttribute);
             }
-#if NET
             else if (attribute is LengthAttribute lengthAttribute)
             {
                 ApplyLengthAttribute(schema, lengthAttribute);
@@ -55,7 +54,6 @@ public static class OpenApiSchemaExtensions
             {
                 ApplyBase64Attribute(schema);
             }
-#endif
             else if (attribute is RangeAttribute rangeAttribute)
             {
                 ApplyRangeAttribute(schema, rangeAttribute);
@@ -205,8 +203,6 @@ public static class OpenApiSchemaExtensions
         }
     }
 
-#if NET
-
     private static void ApplyLengthAttribute(OpenApiSchema schema, LengthAttribute lengthAttribute)
     {
         if (schema.Type == JsonSchemaTypes.Array)
@@ -225,8 +221,6 @@ public static class OpenApiSchemaExtensions
     {
         schema.Format = "byte";
     }
-
-#endif
 
     private static void ApplyRangeAttribute(OpenApiSchema schema, RangeAttribute rangeAttribute)
     {
@@ -260,7 +254,6 @@ public static class OpenApiSchemaExtensions
             }
         }
 
-#if NET
         if (rangeAttribute.MinimumIsExclusive)
         {
             schema.ExclusiveMinimum = true;
@@ -270,7 +263,6 @@ public static class OpenApiSchemaExtensions
         {
             schema.ExclusiveMaximum = true;
         }
-#endif
     }
 
     private static void ApplyRangeRouteConstraint(OpenApiSchema schema, RangeRouteConstraint rangeRouteConstraint)

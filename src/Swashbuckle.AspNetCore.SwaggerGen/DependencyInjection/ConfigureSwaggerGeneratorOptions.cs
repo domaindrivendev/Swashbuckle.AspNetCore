@@ -1,12 +1,7 @@
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-
-#if NET
-using Microsoft.AspNetCore.Hosting;
-#else
-using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-#endif
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 

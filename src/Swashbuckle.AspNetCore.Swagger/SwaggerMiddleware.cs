@@ -2,9 +2,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-#if NET
 using Microsoft.AspNetCore.Routing.Patterns;
-#endif
 using Microsoft.AspNetCore.Routing.Template;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
@@ -19,9 +17,7 @@ internal sealed class SwaggerMiddleware
     private readonly RequestDelegate _next;
     private readonly SwaggerOptions _options;
     private readonly TemplateMatcher _requestMatcher;
-#if NET
     private readonly TemplateBinder _templateBinder;
-#endif
 
     public SwaggerMiddleware(
         RequestDelegate next,
@@ -32,7 +28,6 @@ internal sealed class SwaggerMiddleware
         _requestMatcher = new TemplateMatcher(TemplateParser.Parse(_options.RouteTemplate), []);
     }
 
-#if NET
     [ActivatorUtilitiesConstructor]
     public SwaggerMiddleware(
         RequestDelegate next,
@@ -41,7 +36,6 @@ internal sealed class SwaggerMiddleware
     {
         _templateBinder = templateBinderFactory.Create(RoutePatternFactory.Parse(_options.RouteTemplate));
     }
-#endif
 
     public async Task Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
     {
@@ -109,12 +103,11 @@ internal sealed class SwaggerMiddleware
         var routeValues = new RouteValueDictionary();
         if (_requestMatcher.TryMatch(request.Path, routeValues))
         {
-#if NET
             if (_templateBinder != null && !_templateBinder.TryProcessConstraints(request.HttpContext, routeValues, out _, out _))
             {
                 return false;
             }
-#endif
+
             if (routeValues.TryGetValue("documentName", out var documentNameObject) && documentNameObject is string documentNameString)
             {
                 documentName = documentNameString;

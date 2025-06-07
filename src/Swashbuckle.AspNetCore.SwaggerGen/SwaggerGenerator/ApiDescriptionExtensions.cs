@@ -15,7 +15,6 @@ public static class ApiDescriptionExtensions
             return true;
         }
 
-#if NET
         if (apiDescription.ActionDescriptor?.EndpointMetadata != null)
         {
             methodInfo = apiDescription.ActionDescriptor.EndpointMetadata
@@ -24,7 +23,6 @@ public static class ApiDescriptionExtensions
 
             return methodInfo != null;
         }
-#endif
 
         methodInfo = null;
         return false;
@@ -41,22 +39,6 @@ public static class ApiDescriptionExtensions
         return [];
     }
 
-    [Obsolete("Use TryGetMethodInfo() and CustomAttributes() instead")]
-    public static void GetAdditionalMetadata(this ApiDescription apiDescription,
-        out MethodInfo methodInfo,
-        out IEnumerable<object> customAttributes)
-    {
-        if (apiDescription.TryGetMethodInfo(out methodInfo))
-        {
-            customAttributes = methodInfo.GetCustomAttributes(true)
-                .Union(methodInfo.DeclaringType.GetCustomAttributes(true));
-        }
-        else
-        {
-            customAttributes = [];
-        }
-    }
-
     internal static string RelativePathSansParameterConstraints(this ApiDescription apiDescription)
     {
         var routeTemplate = TemplateParser.Parse(apiDescription.RelativePath);
@@ -64,10 +46,6 @@ public static class ApiDescriptionExtensions
             .Segments
             .Select(s => string.Concat(s.Parts.Select(p => p.Name != null ? $"{{{p.Name}}}" : p.Text)));
 
-#if NET
         return string.Join('/', sanitizedSegments);
-#else
-        return string.Join("/", sanitizedSegments);
-#endif
     }
 }

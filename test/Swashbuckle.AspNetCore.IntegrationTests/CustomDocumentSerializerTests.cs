@@ -76,11 +76,6 @@ public class CustomDocumentSerializerTests(ITestOutputHelper outputHelper)
             (options) => options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0);
     }
 
-    [Obsolete]
-    [Fact]
-    public async Task DocumentProvider_Writes_Custom_V2_Document_SerializeAsV2()
-        => await DocumentProviderWritesCustomV2Document((options) => options.SerializeAsV2 = true);
-
     private async Task DocumentProviderWritesCustomV2Document(Action<SwaggerOptions> configure)
     {
         var testSite = new TestSite(typeof(CustomDocumentSerializer.Startup), outputHelper);

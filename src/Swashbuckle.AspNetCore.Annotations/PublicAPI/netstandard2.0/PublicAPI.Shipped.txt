@@ -1,2 +1,0 @@
-Swashbuckle.AspNetCore.Annotations.SwaggerResponseAttribute.Description.get -> string
-Swashbuckle.AspNetCore.Annotations.SwaggerResponseAttribute.Description.set -> void

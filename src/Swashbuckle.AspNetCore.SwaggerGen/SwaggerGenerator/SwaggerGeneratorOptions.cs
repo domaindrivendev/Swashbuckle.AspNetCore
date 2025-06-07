@@ -1,11 +1,7 @@
-﻿#if NET
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http.Metadata;
-#endif
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-#if NET
 using Microsoft.AspNetCore.Routing;
-#endif
 using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
@@ -96,20 +92,13 @@ public class SwaggerGeneratorOptions
         // endpoint name if no route name is available. This allows us to
         // generate operation IDs for endpoints that are defined using
         // minimal APIs.
-#if NET
         return
-            actionDescriptor.AttributeRouteInfo?.Name
-            ?? (actionDescriptor.EndpointMetadata?.LastOrDefault(m => m is IEndpointNameMetadata) as IEndpointNameMetadata)?.EndpointName;
-#else
-        return actionDescriptor.AttributeRouteInfo?.Name;
-#endif
+            actionDescriptor.AttributeRouteInfo?.Name ??
+            (actionDescriptor.EndpointMetadata?.LastOrDefault(m => m is IEndpointNameMetadata) as IEndpointNameMetadata)?.EndpointName;
     }
 
     private IList<string> DefaultTagsSelector(ApiDescription apiDescription)
     {
-#if !NET
-        return [apiDescription.ActionDescriptor.RouteValues["controller"]];
-#else
         var actionDescriptor = apiDescription.ActionDescriptor;
         if (actionDescriptor.EndpointMetadata?.LastOrDefault(m => m is ITagsMetadata) is ITagsMetadata metadata)
         {
@@ -117,7 +106,6 @@ public class SwaggerGeneratorOptions
         }
 
         return [apiDescription.ActionDescriptor.RouteValues["controller"]];
-#endif
     }
 
     private string DefaultSortKeySelector(ApiDescription apiDescription)
