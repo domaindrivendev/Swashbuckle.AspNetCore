@@ -10,17 +10,16 @@ public class DocumentSerializerTest : ISwaggerDocumentSerializer
     public void SerializeDocument(OpenApiDocument document, IOpenApiWriter writer, OpenApiSpecVersion specVersion)
     {
         writer.WriteStartObject();
-        switch (specVersion)
+
+        var name = specVersion switch
         {
-            case OpenApiSpecVersion.OpenApi2_0:
-                writer.WriteProperty(OpenApiConstants.Swagger, "DocumentSerializerTest2.0");
-                break;
-            case OpenApiSpecVersion.OpenApi3_0:
-                writer.WriteProperty(OpenApiConstants.Swagger, "DocumentSerializerTest3.0");
-                break;
-            default:
-                throw new NotImplementedException();
-        }
+            OpenApiSpecVersion.OpenApi2_0 => "DocumentSerializerTest2.0",
+            OpenApiSpecVersion.OpenApi3_0 => "DocumentSerializerTest3.0",
+            _ => throw new NotImplementedException()
+        };
+
+        writer.WriteProperty(OpenApiConstants.Swagger, name);
+
         writer.WriteEndObject();
     }
 }

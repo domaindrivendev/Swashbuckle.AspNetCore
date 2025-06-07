@@ -8,25 +8,30 @@ namespace TestFirst.Controllers;
 public class ProductsController : Controller
 {
     [HttpPost]
-    public IActionResult CreateProduct([FromBody]Product product)
+    public IActionResult CreateProduct([FromBody] Product product)
     {
         if (!ModelState.IsValid)
+        {
             return new BadRequestObjectResult(ModelState);
+        }
 
-        return Created("api/products/1", null);
+        return Created("api/products/1", product);
     }
 
     [HttpGet]
-    public IActionResult GetProducts([FromQuery]PagingParameters parameters)
+    public IActionResult GetProducts([FromQuery] PagingParameters parameters)
     {
         if (!ModelState.IsValid)
+        {
             return new BadRequestObjectResult(ModelState);
+        }
 
         return new ObjectResult(new[]
         {
             new Product { Id = 1, Name = "foo" },
             new Product { Id = 2, Name = "bar" }
-        });
+        }.Take(parameters.PageSize)
+         .ToArray());
     }
 }
 

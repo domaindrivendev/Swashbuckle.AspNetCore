@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 
 namespace Basic.Controllers;
 
@@ -26,7 +28,7 @@ public class CrudActionsController
     /// <param name="product"></param>
     /// <returns></returns>
     [HttpPost(Name = "CreateProduct")]
-    public Product Create([FromBody, Required]Product product)
+    public Product Create([FromBody, Required] Product product)
     {
         return product;
     }
@@ -43,10 +45,7 @@ public class CrudActionsController
     /// </code>
     /// </remarks>
     [HttpGet("all")]
-    public List<Product> GetAll()
-    {
-        return [];
-    }
+    public List<Product> GetAll() => [];
 
     /// <summary>
     /// Searches the collection of products by description key words
@@ -54,8 +53,10 @@ public class CrudActionsController
     /// <param name="keywords" example="hello">A list of search terms</param>
     /// <returns></returns>
     [HttpGet(Name = "SearchProducts")]
-    public IEnumerable<Product> Get([FromQuery(Name = "kw")]string keywords = "foobar")
+    public IEnumerable<Product> Get([FromQuery(Name = "kw")] string keywords = "foobar")
     {
+        Debug.Assert(keywords is not null);
+
         return
         [
             new Product { Id = 1, Description = "A product" },
@@ -80,8 +81,10 @@ public class CrudActionsController
     /// <param name="id" example="222"></param>
     /// <param name="product"></param>
     [HttpPut("{id}", Name = "UpdateProduct")]
-    public void Update(int id, [FromBody, Required]Product product)
+    public void Update(int id, [FromBody, Required] Product product)
     {
+        Debug.Assert(id >= 0);
+        Debug.Assert(product is not null);
     }
 
     /// <summary>
@@ -98,8 +101,10 @@ public class CrudActionsController
     /// <param name="id" example="333"></param>
     /// <param name="updates"></param>
     [HttpPatch("{id}", Name = "PatchProduct")]
-    public void Patch(int id, [FromBody, Required]IDictionary<string, object> updates)
+    public void Patch(int id, [FromBody, Required] IDictionary<string, object> updates)
     {
+        Debug.Assert(id >= 0);
+        Debug.Assert(updates is not null);
     }
 
     /// <summary>
@@ -109,6 +114,7 @@ public class CrudActionsController
     [HttpDelete("{id}", Name = "DeleteProduct")]
     public void Delete(int id)
     {
+        Debug.Assert(id >= 0);
     }
 }
 
@@ -116,7 +122,7 @@ public enum ProductStatus
 {
     All = 0,
     OutOfStock = 1,
-    InStock = 2
+    InStock = 2,
 }
 
 /// <summary>

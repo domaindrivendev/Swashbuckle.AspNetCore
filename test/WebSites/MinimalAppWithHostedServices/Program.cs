@@ -29,7 +29,6 @@ class HostedService : IHostedService
     }
 
     public Task StopAsync(CancellationToken cancellationToken)
-    {
-        return Task.CompletedTask;
-    }
+        => Task.CompletedTask;
+
 }

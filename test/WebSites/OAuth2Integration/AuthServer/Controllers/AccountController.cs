@@ -10,12 +10,7 @@ namespace OAuth2Integration.AuthServer.Controllers;
 [Route("account")]
 public class AccountController : Controller
 {
-    private readonly TestUserStore _userStore;
-
-    public AccountController()
-    {
-        _userStore = new TestUserStore(Config.TestUsers());
-    }
+    private readonly TestUserStore _userStore = new(Config.TestUsers());
 
     [HttpGet("login")]
     public IActionResult Login(string returnUrl)
@@ -35,8 +30,11 @@ public class AccountController : Controller
         }
 
         // Use an IdentityServer-compatible ClaimsPrincipal
-        var identityServerUser = new IdentityServerUser(viewModel.Username);
-        identityServerUser.DisplayName = viewModel.Username;
+        var identityServerUser = new IdentityServerUser(viewModel.Username)
+        {
+            DisplayName = viewModel.Username
+        };
+
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, identityServerUser.CreatePrincipal());
 
         return Redirect(viewModel.ReturnUrl);
@@ -46,6 +44,8 @@ public class AccountController : Controller
 public class LoginViewModel
 {
     public string ReturnUrl { get; set; }
+
     public string Username { get; set; }
+
     public string Password { get; set; }
 }

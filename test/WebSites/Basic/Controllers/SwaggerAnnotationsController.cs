@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
+﻿using System.Diagnostics;
 using Basic.Swagger;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Basic.Controllers;
 
@@ -11,15 +12,17 @@ public class SwaggerAnnotationsController
     [SwaggerOperation(OperationId = "CreateCart")]
     [SwaggerResponse(201, "The cart was created", typeof(Cart))]
     [SwaggerResponse(400, "The cart data is invalid")]
-    public Cart Create([FromBody, SwaggerRequestBody(Description = "The cart request body")]Cart cart)
+    public Cart Create(
+        [FromBody, SwaggerRequestBody(Description = "The cart request body")] Cart cart)
     {
+        Debug.Assert(cart is not null);
         return new Cart { Id = 1 };
     }
 
     [HttpGet("/carts/{id}")]
     [SwaggerOperation(OperationId = "GetCart")]
     [SwaggerOperationFilter(typeof(AddCartsByIdGetExternalDocs))]
-    public Cart Get([SwaggerParameter("The cart identifier")]int id)
+    public Cart Get([SwaggerParameter("The cart identifier")] int id)
     {
         return new Cart { Id = id };
     }
@@ -29,7 +32,8 @@ public class SwaggerAnnotationsController
         OperationId = "DeleteCart",
         Summary = "Deletes a specific cart",
         Description = "Requires admin privileges")]
-    public Cart Delete([FromRoute(Name = "id"), SwaggerParameter("The cart identifier")]int cartId)
+    public Cart Delete(
+        [FromRoute(Name = "id"), SwaggerParameter("The cart identifier")] int cartId)
     {
         return new Cart { Id = cartId };
     }
@@ -48,5 +52,5 @@ public class Cart
 public enum CartType
 {
     Anonymous,
-    Authenticated
+    Authenticated,
 }
