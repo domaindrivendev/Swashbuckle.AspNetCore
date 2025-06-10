@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Models.Interfaces;
 using Microsoft.OpenApi.Models.References;
@@ -335,15 +335,15 @@ public class SwaggerGeneratorTests
         Assert.Equal("TestDto", reference.Reference.Id);
         Assert.Equal(2, operation.RequestBody.Extensions.Count);
 
-        Assert.Equal("bar", ((OpenApiAny)operation.RequestBody.Extensions["X-foo"]).Node.GetValue<string>());
-        Assert.Equal("v1", ((OpenApiAny)operation.RequestBody.Extensions["X-docName"]).Node.GetValue<string>());
+        Assert.Equal("bar", ((JsonNodeExtension)operation.RequestBody.Extensions["X-foo"]).Node.GetValue<string>());
+        Assert.Equal("v1", ((JsonNodeExtension)operation.RequestBody.Extensions["X-docName"]).Node.GetValue<string>());
 
         Assert.NotEmpty(operation.Parameters);
         Assert.Equal("paramQuery", operation.Parameters[0].Name);
         Assert.Equal(2, operation.Parameters[0].Extensions.Count);
 
-        Assert.Equal("bar", ((OpenApiAny)operation.Parameters[0].Extensions["X-foo"]).Node.GetValue<string>());
-        Assert.Equal("v1", ((OpenApiAny)operation.Parameters[0].Extensions["X-docName"]).Node.GetValue<string>());
+        Assert.Equal("bar", ((JsonNodeExtension)operation.Parameters[0].Extensions["X-foo"]).Node.GetValue<string>());
+        Assert.Equal("v1", ((JsonNodeExtension)operation.Parameters[0].Extensions["X-docName"]).Node.GetValue<string>());
     }
 
     [Fact]
@@ -1619,8 +1619,8 @@ public class SwaggerGeneratorTests
 
         var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.Equal(2, operation.Parameters[0].Extensions.Count);
-        Assert.Equal("bar", ((OpenApiAny)operation.Parameters[0].Extensions["X-foo"]).Node.GetValue<string>());
-        Assert.Equal("v1", ((OpenApiAny)operation.Parameters[0].Extensions["X-docName"]).Node.GetValue<string>());
+        Assert.Equal("bar", ((JsonNodeExtension)operation.Parameters[0].Extensions["X-foo"]).Node.GetValue<string>());
+        Assert.Equal("v1", ((JsonNodeExtension)operation.Parameters[0].Extensions["X-docName"]).Node.GetValue<string>());
     }
 
     [Fact]
@@ -1657,8 +1657,8 @@ public class SwaggerGeneratorTests
         var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.Equal(2, operation.RequestBody.Extensions.Count);
 
-        Assert.Equal("bar", ((OpenApiAny)operation.RequestBody.Extensions["X-foo"]).Node.GetValue<string>());
-        Assert.Equal("v1", ((OpenApiAny)operation.RequestBody.Extensions["X-docName"]).Node.GetValue<string>());
+        Assert.Equal("bar", ((JsonNodeExtension)operation.RequestBody.Extensions["X-foo"]).Node.GetValue<string>());
+        Assert.Equal("v1", ((JsonNodeExtension)operation.RequestBody.Extensions["X-docName"]).Node.GetValue<string>());
     }
 
     [Fact]
@@ -1688,8 +1688,8 @@ public class SwaggerGeneratorTests
         var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.Equal(2, operation.Extensions.Count);
 
-        Assert.Equal("bar", ((OpenApiAny)operation.Extensions["X-foo"]).Node.GetValue<string>());
-        Assert.Equal("v1", ((OpenApiAny)operation.Extensions["X-docName"]).Node.GetValue<string>());
+        Assert.Equal("bar", ((JsonNodeExtension)operation.Extensions["X-foo"]).Node.GetValue<string>());
+        Assert.Equal("v1", ((JsonNodeExtension)operation.Extensions["X-docName"]).Node.GetValue<string>());
     }
 
     [Fact]
@@ -1715,8 +1715,8 @@ public class SwaggerGeneratorTests
         Assert.Equal(2, document.Extensions.Count);
         Assert.Contains("ComplexType", document.Components.Schemas.Keys);
 
-        Assert.Equal("bar", ((OpenApiAny)document.Extensions["X-foo"]).Node.GetValue<string>());
-        Assert.Equal("v1", ((OpenApiAny)document.Extensions["X-docName"]).Node.GetValue<string>());
+        Assert.Equal("bar", ((JsonNodeExtension)document.Extensions["X-foo"]).Node.GetValue<string>());
+        Assert.Equal("v1", ((JsonNodeExtension)document.Extensions["X-docName"]).Node.GetValue<string>());
     }
 
     [Fact]
@@ -1746,8 +1746,8 @@ public class SwaggerGeneratorTests
         var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.Equal(2, operation.Extensions.Count);
 
-        Assert.Equal("bar", ((OpenApiAny)operation.Extensions["X-foo"]).Node.GetValue<string>());
-        Assert.Equal("v1", ((OpenApiAny)operation.Extensions["X-docName"]).Node.GetValue<string>());
+        Assert.Equal("bar", ((JsonNodeExtension)operation.Extensions["X-foo"]).Node.GetValue<string>());
+        Assert.Equal("v1", ((JsonNodeExtension)operation.Extensions["X-docName"]).Node.GetValue<string>());
     }
 
     [Fact]
@@ -1777,8 +1777,8 @@ public class SwaggerGeneratorTests
         var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.Equal(2, operation.Extensions.Count);
 
-        Assert.Equal("bar", ((OpenApiAny)operation.Extensions["X-foo"]).Node.GetValue<string>());
-        Assert.Equal("v1", ((OpenApiAny)operation.Extensions["X-docName"]).Node.GetValue<string>());
+        Assert.Equal("bar", ((JsonNodeExtension)operation.Extensions["X-foo"]).Node.GetValue<string>());
+        Assert.Equal("v1", ((JsonNodeExtension)operation.Extensions["X-docName"]).Node.GetValue<string>());
     }
 
     [Fact]
@@ -1804,8 +1804,8 @@ public class SwaggerGeneratorTests
         Assert.Equal(2, document.Extensions.Count);
         Assert.Contains("ComplexType", document.Components.Schemas.Keys);
 
-        Assert.Equal("bar", ((OpenApiAny)document.Extensions["X-foo"]).Node.GetValue<string>());
-        Assert.Equal("v1", ((OpenApiAny)document.Extensions["X-docName"]).Node.GetValue<string>());
+        Assert.Equal("bar", ((JsonNodeExtension)document.Extensions["X-foo"]).Node.GetValue<string>());
+        Assert.Equal("v1", ((JsonNodeExtension)document.Extensions["X-docName"]).Node.GetValue<string>());
     }
 
     [Fact]
@@ -1831,8 +1831,8 @@ public class SwaggerGeneratorTests
         Assert.Equal(2, document.Extensions.Count);
         Assert.Contains("ComplexType", document.Components.Schemas.Keys);
 
-        Assert.Equal("bar", ((OpenApiAny)document.Extensions["X-foo"]).Node.GetValue<string>());
-        Assert.Equal("v1", ((OpenApiAny)document.Extensions["X-docName"]).Node.GetValue<string>());
+        Assert.Equal("bar", ((JsonNodeExtension)document.Extensions["X-foo"]).Node.GetValue<string>());
+        Assert.Equal("v1", ((JsonNodeExtension)document.Extensions["X-docName"]).Node.GetValue<string>());
     }
 
     [Fact]
@@ -1869,8 +1869,8 @@ public class SwaggerGeneratorTests
         var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.Equal(2, operation.RequestBody.Extensions.Count);
 
-        Assert.Equal("bar", ((OpenApiAny)operation.RequestBody.Extensions["X-foo"]).Node.GetValue<string>());
-        Assert.Equal("v1", ((OpenApiAny)operation.RequestBody.Extensions["X-docName"]).Node.GetValue<string>());
+        Assert.Equal("bar", ((JsonNodeExtension)operation.RequestBody.Extensions["X-foo"]).Node.GetValue<string>());
+        Assert.Equal("v1", ((JsonNodeExtension)operation.RequestBody.Extensions["X-docName"]).Node.GetValue<string>());
     }
 
     [Fact]
@@ -1907,8 +1907,8 @@ public class SwaggerGeneratorTests
         var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.Equal(2, operation.RequestBody.Extensions.Count);
 
-        Assert.Equal("bar", ((OpenApiAny)operation.RequestBody.Extensions["X-foo"]).Node.GetValue<string>());
-        Assert.Equal("v1", ((OpenApiAny)operation.RequestBody.Extensions["X-docName"]).Node.GetValue<string>());
+        Assert.Equal("bar", ((JsonNodeExtension)operation.RequestBody.Extensions["X-foo"]).Node.GetValue<string>());
+        Assert.Equal("v1", ((JsonNodeExtension)operation.RequestBody.Extensions["X-docName"]).Node.GetValue<string>());
     }
 
     [Fact]
@@ -1945,8 +1945,8 @@ public class SwaggerGeneratorTests
         var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.Equal(2, operation.Parameters[0].Extensions.Count);
 
-        Assert.Equal("bar", ((OpenApiAny)operation.Parameters[0].Extensions["X-foo"]).Node.GetValue<string>());
-        Assert.Equal("v1", ((OpenApiAny)operation.Parameters[0].Extensions["X-docName"]).Node.GetValue<string>());
+        Assert.Equal("bar", ((JsonNodeExtension)operation.Parameters[0].Extensions["X-foo"]).Node.GetValue<string>());
+        Assert.Equal("v1", ((JsonNodeExtension)operation.Parameters[0].Extensions["X-docName"]).Node.GetValue<string>());
     }
 
     [Fact]
@@ -1983,8 +1983,8 @@ public class SwaggerGeneratorTests
         var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
         Assert.Equal(2, operation.Parameters[0].Extensions.Count);
 
-        Assert.Equal("bar", ((OpenApiAny)operation.Parameters[0].Extensions["X-foo"]).Node.GetValue<string>());
-        Assert.Equal("v1", ((OpenApiAny)operation.Parameters[0].Extensions["X-docName"]).Node.GetValue<string>());
+        Assert.Equal("bar", ((JsonNodeExtension)operation.Parameters[0].Extensions["X-foo"]).Node.GetValue<string>());
+        Assert.Equal("v1", ((JsonNodeExtension)operation.Parameters[0].Extensions["X-docName"]).Node.GetValue<string>());
     }
 
     [Theory]

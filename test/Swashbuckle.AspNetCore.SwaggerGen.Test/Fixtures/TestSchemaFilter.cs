@@ -1,4 +1,4 @@
-﻿using Microsoft.OpenApi.Any;
+﻿using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Models.Interfaces;
 
@@ -11,8 +11,8 @@ public class TestSchemaFilter : ISchemaFilter
         if (schema is OpenApiSchema openApiSchema)
         {
             openApiSchema.Extensions ??= [];
-            openApiSchema.Extensions.Add("X-foo", new OpenApiAny("bar"));
-            openApiSchema.Extensions.Add("X-docName", new OpenApiAny(context.DocumentName));
+            openApiSchema.Extensions.Add("X-foo", new JsonNodeExtension("bar"));
+            openApiSchema.Extensions.Add("X-docName", new JsonNodeExtension(context.DocumentName));
         }
     }
 }

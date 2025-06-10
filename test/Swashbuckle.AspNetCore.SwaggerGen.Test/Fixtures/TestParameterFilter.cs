@@ -1,4 +1,4 @@
-﻿using Microsoft.OpenApi.Any;
+﻿using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Models.Interfaces;
 
@@ -11,8 +11,8 @@ public class TestParameterFilter : IParameterFilter, IParameterAsyncFilter
         if (parameter is OpenApiParameter openApiParameter)
         {
             openApiParameter.Extensions ??= [];
-            openApiParameter.Extensions.Add("X-foo", new OpenApiAny("bar"));
-            openApiParameter.Extensions.Add("X-docName", new OpenApiAny(context.DocumentName));
+            openApiParameter.Extensions.Add("X-foo", new JsonNodeExtension("bar"));
+            openApiParameter.Extensions.Add("X-docName", new JsonNodeExtension(context.DocumentName));
         }
     }
 

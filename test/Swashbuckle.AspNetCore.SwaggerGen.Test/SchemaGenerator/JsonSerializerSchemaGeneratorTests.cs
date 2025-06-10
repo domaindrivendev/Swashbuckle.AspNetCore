@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Constraints;
-using Microsoft.OpenApi.Any;
+using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Models.Interfaces;
 using Microsoft.OpenApi.Models.References;
@@ -566,7 +566,7 @@ public class JsonSerializerSchemaGeneratorTests
 
         Assert.Contains("X-foo", schema.Extensions.Keys);
 
-        Assert.Equal("v1", ((OpenApiAny)schema.Extensions["X-docName"]).Node.GetValue<string>());
+        Assert.Equal("v1", ((JsonNodeExtension)schema.Extensions["X-docName"]).Node.GetValue<string>());
     }
 
     [Fact]

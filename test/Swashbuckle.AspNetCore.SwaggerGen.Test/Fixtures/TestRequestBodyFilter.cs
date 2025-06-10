@@ -1,4 +1,4 @@
-﻿using Microsoft.OpenApi.Any;
+﻿using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Models.Interfaces;
 
@@ -11,8 +11,8 @@ public class TestRequestBodyFilter : IRequestBodyFilter, IRequestBodyAsyncFilter
         if (requestBody is OpenApiRequestBody body)
         {
             body.Extensions ??= [];
-            body.Extensions.Add("X-foo", new OpenApiAny("bar"));
-            body.Extensions.Add("X-docName", new OpenApiAny(context.DocumentName));
+            body.Extensions.Add("X-foo", new JsonNodeExtension("bar"));
+            body.Extensions.Add("X-docName", new JsonNodeExtension(context.DocumentName));
         }
     }
 

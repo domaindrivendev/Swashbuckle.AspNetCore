@@ -1,11 +1,12 @@
 ﻿using Microsoft.OpenApi;
+using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Writers;
 
 namespace Swashbuckle.AspNetCore.TestSupport;
 
-public static class IOpenApiAnyExtensions
+public static class JsonNodeExtensionExtensions
 {
-    public static string ToJson(this Microsoft.OpenApi.Any.OpenApiAny openApiAny)
+    public static string ToJson(this JsonNodeExtension openApiAny)
     {
         var stringWriter = new StringWriter();
         var jsonWriter = new OpenApiJsonWriter(stringWriter);
