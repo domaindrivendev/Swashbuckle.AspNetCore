@@ -41,11 +41,11 @@ internal sealed class ConfigureSwaggerGenJsonOptions : IPostConfigureOptions<Swa
          * a last resort as this is an expensive operation.
          */
 
-        var serializerOptions = _mvcJsonOptions.JsonSerializerOptions ?? JsonSerializerOptions.Default;
+        var serializerOptions = _mvcJsonOptions.JsonSerializerOptions;
 
         if (_minimalApiConfigureOptions.Any() || _minimalApiPostConfigureOptions.Any())
         {
-            serializerOptions = _minimalApiJsonOptions.SerializerOptions ?? serializerOptions;
+            serializerOptions = _minimalApiJsonOptions.SerializerOptions;
         }
 
         options.SerializerOptions = serializerOptions;
