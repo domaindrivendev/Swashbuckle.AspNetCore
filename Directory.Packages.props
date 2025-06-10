@@ -16,7 +16,7 @@
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0.32" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
-    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0-preview.4.25258.110" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0-preview.5.25277.114" />
     <PackageVersion Include="Microsoft.AspNetCore.Razor.Design" Version="2.3.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Routing" Version="2.3.0" />
     <PackageVersion Include="Microsoft.AspNetCore.StaticFiles" Version="2.3.0" />
