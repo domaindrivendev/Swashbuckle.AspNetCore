@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))">
-    <PackageReference Update="Microsoft.AspNetCore.OpenApi" VersionOverride="9.0.5" />
+    <PackageReference Update="Microsoft.AspNetCore.OpenApi" VersionOverride="9.0.6" />
   </ItemGroup>
 
 </Project>
