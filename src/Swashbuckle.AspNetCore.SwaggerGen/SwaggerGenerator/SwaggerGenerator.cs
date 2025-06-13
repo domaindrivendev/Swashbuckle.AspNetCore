@@ -273,7 +273,6 @@ public class SwaggerGenerator(
                     Operations = await operationsGenerator(document, group, schemaRepository)
                 });
         }
-        ;
 
         return paths;
     }
