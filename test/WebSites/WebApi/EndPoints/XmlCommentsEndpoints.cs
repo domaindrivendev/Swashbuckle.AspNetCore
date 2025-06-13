@@ -1,6 +1,7 @@
 ﻿#if NET10_0_OR_GREATER
 using Microsoft.AspNetCore.Mvc;
 #endif
+
 namespace WebApi.EndPoints;
 
 /// <summary>
