@@ -16,6 +16,7 @@ public static class XmlCommentsEndpoints
         var group = app.MapGroup("/XmlComments").WithTags("Xml");
 
         group.MapGet("/Car/{id}", GetProduct);
+
 #if NET10_0_OR_GREATER
         group.MapGet("Car", GetProductAsParameters);
         group.MapGet("CarWithProduces",GetProductWithProduces);
