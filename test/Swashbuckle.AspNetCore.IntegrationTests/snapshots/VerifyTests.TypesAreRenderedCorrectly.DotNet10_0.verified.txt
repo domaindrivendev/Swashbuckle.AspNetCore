@@ -934,7 +934,7 @@
         "tags": [
           "Xml"
         ],
-        "summary": "Returns a specific product With Produces attribute",
+        "summary": "Returns a specific product With ProducesDefaultResponseType attribute",
         "parameters": [
           {
             "name": "id",
