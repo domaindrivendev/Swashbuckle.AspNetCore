@@ -8,6 +8,7 @@
     <Company>https://github.com/domaindrivendev/Swashbuckle.AspNetCore</Company>
     <ContinuousIntegrationBuild Condition=" '$(CI)' != '' ">true</ContinuousIntegrationBuild>
     <Copyright>Copyright (c) 2016-$([System.DateTime]::Now.ToString(yyyy)) Richard Morris</Copyright>
+    <DefaultTargetFrameworks>net9.0;net8.0</DefaultTargetFrameworks>
     <Deterministic>true</Deterministic>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <EnablePackageValidation>$(IsPackable)</EnablePackageValidation>

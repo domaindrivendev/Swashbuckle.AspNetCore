@@ -5,7 +5,7 @@
     <NoWarn>$(NoWarn);8002</NoWarn>
     <OutputType>Exe</OutputType>
     <SignAssembly>true</SignAssembly>
-    <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>$(DefaultTargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>

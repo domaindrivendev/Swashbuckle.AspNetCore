@@ -6,7 +6,7 @@
     <IsPackable>true</IsPackable>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore;newtonsoft</PackageTags>
     <SignAssembly>true</SignAssembly>
-    <TargetFrameworks>net9.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>$(DefaultTargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
