@@ -18,10 +18,6 @@
     <LangVersion>latest</LangVersion>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <!--
-    TODO Fix warning from Swashbuckle.AspNetCore with dotnet pack
-    -->
-    <NoWarn>$(NoWarn);NU5128</NoWarn>
     <NuGetAuditMode>direct</NuGetAuditMode>
     <!--
     TODO Go through the code and add nullable annotations

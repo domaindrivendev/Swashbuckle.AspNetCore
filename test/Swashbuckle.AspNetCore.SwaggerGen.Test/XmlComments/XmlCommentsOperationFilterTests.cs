@@ -1,6 +1,6 @@
 ﻿using System.Xml.XPath;
-using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.TestSupport;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
@@ -64,13 +64,13 @@ public class XmlCommentsOperationFilterTests
 
         Subject().Apply(operation, filterContext);
 
-        Assert.Equal(new[] { "200", "400", "default" }, operation.Responses.Keys.ToArray());
+        Assert.Equal(["200", "400", "default"], [.. operation.Responses.Keys]);
         Assert.Equal("Description for 200 response", operation.Responses["200"].Description);
         Assert.Equal("Description for 400 response", operation.Responses["400"].Description);
         Assert.Equal("Description for default response", operation.Responses["default"].Description);
     }
 
-    private XmlCommentsOperationFilter Subject()
+    private static XmlCommentsOperationFilter Subject()
     {
         using var xml = File.OpenText(typeof(FakeControllerWithXmlComments).Assembly.GetName().Name + ".xml");
         var document = new XPathDocument(xml);

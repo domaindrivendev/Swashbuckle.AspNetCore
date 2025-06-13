@@ -23,7 +23,7 @@ public class ApiDescriptionExtensionsTests
         var testMethodInfo = typeof(TestMinimalApiMethod).GetMethod("RequestDelegate");
 
         var actionDescriptor = new ActionDescriptor();
-        actionDescriptor.EndpointMetadata = new List<object> { testMethodInfo };
+        actionDescriptor.EndpointMetadata = [testMethodInfo];
         actionDescriptor.Parameters = testMethodInfo
             .GetParameters()
             .Select(p => new ParameterDescriptor
