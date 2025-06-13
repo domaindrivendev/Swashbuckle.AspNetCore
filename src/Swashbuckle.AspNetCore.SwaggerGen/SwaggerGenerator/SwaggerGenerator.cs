@@ -272,7 +272,8 @@ public class SwaggerGenerator(
                 {
                     Operations = await operationsGenerator(document, group, schemaRepository)
                 });
-        };
+        }
+        ;
 
         return paths;
     }
@@ -1072,7 +1073,11 @@ public class SwaggerGenerator(
 
         return new OpenApiResponse
         {
+#if NET10_0_OR_GREATER
+                        Description = apiResponseType.Description ?? description,
+#else
             Description = description,
+#endif
             Content = responseContentTypes.ToDictionary(
                 (contentType) => contentType,
                 (contentType) => CreateResponseMediaType(apiResponseType.ModelMetadata?.ModelType ?? apiResponseType.Type, schemaRepository)
