@@ -1065,14 +1065,16 @@ public class SwaggerGenerator(
         ApiResponseType apiResponseType)
     {
         string description = null;
+
 #if NET10_0_OR_GREATER
         description = apiResponseType.Description;
 #endif
+
         if (string.IsNullOrEmpty(description))
         {
             description = ResponseDescriptionMap
-            .FirstOrDefault((entry) => Regex.IsMatch(statusCode, entry.Key))
-            .Value;
+                .FirstOrDefault((entry) => Regex.IsMatch(statusCode, entry.Key))
+                .Value;
         }
 
         var responseContentTypes = InferResponseContentTypes(apiDescription, apiResponseType);

@@ -31,25 +31,26 @@ public static class XmlCommentsEndpoints
     /// <response code="200">A Product Id</response>
     private static Product GetProduct(int id)
         => new() { Id = id, Description = "A product" };
+
 #if NET10_0_OR_GREATER
     /// <summary>
     /// Returns a specific product using asParameters record
     /// </summary>
-    [ProducesResponseType(typeof(Product),200, Description="A Product")]
+    [ProducesResponseType(typeof(Product), 200, Description = "A Product")]
     private static Product GetProductAsParameters([AsParameters] Product productAsParameters)
         => productAsParameters;
 
      /// <summary>
     /// Returns a specific product With Produces attribute
     /// </summary>
-    [Produces(typeof(Product), Description="A Product")]
+    [Produces(typeof(Product), Description = "A Product")]
     private static Product GetProductWithProduces(int id)
          => new() { Id = id, Description = "A product" };
 
-     /// <summary>
+    /// <summary>
     /// Returns a specific product With ProducesDefaultResponseType attribute
     /// </summary>
-    [ProducesDefaultResponseType(typeof(Product), Description="A Product")]
+    [ProducesDefaultResponseType(typeof(Product), Description = "A Product")]
     private static Product GetProductProducesDefaultResponseType(int id)
          => new() { Id = id, Description = "A product" };
 #endif
