@@ -2,11 +2,9 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
-using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Models.Interfaces;
 using Microsoft.OpenApi.Models.References;
@@ -19,15 +17,6 @@ public class SchemaGenerator(
 {
     private readonly SchemaGeneratorOptions _generatorOptions = generatorOptions;
     private readonly ISerializerDataContractResolver _serializerDataContractResolver = serializerDataContractResolver;
-
-    [Obsolete($"{nameof(IOptions<MvcOptions>)} is no longer used. This constructor will be removed in a future major release.")]
-    public SchemaGenerator(
-        SchemaGeneratorOptions generatorOptions,
-        ISerializerDataContractResolver serializerDataContractResolver,
-        IOptions<MvcOptions> mvcOptions)
-        : this(generatorOptions, serializerDataContractResolver)
-    {
-    }
 
     public IOpenApiSchema GenerateSchema(
         Type modelType,
@@ -105,11 +94,7 @@ public class SchemaGenerator(
             {
                 var genericTypes = modelType
                     .GetInterfaces()
-#if !NET
                     .Concat([modelType])
-#else
-                    .Append(modelType)
-#endif
                     .Where(t => t.IsGenericType)
                     .ToArray();
 
@@ -249,9 +234,7 @@ public class SchemaGenerator(
         typeof(IFormFile),
         typeof(FileResult),
         typeof(Stream),
-#if NET
         typeof(System.IO.Pipelines.PipeReader),
-#endif
     ];
 
     private IOpenApiSchema GenerateConcreteSchema(DataContract dataContract, SchemaRepository schemaRepository)
@@ -329,19 +312,6 @@ public class SchemaGenerator(
             Type = FromDataType(dataContract.DataType),
             Format = dataContract.DataFormat
         };
-
-#pragma warning disable CS0618 // Type or member is obsolete
-        // For backwards compatibility only - EnumValues is obsolete
-        if (dataContract.EnumValues != null)
-        {
-            schema.Enum = [.. dataContract.EnumValues
-                .Select(value => JsonSerializer.Serialize(value))
-                .Distinct()
-                .Select(JsonModelFactory.CreateFromJson)];
-
-            return schema;
-        }
-#pragma warning restore CS0618 // Type or member is obsolete
 
         var underlyingType = dataContract.UnderlyingType;
 
@@ -480,9 +450,7 @@ public class SchemaGenerator(
                 dataProperty.IsRequired
                 || markNonNullableTypeAsRequired
                 || customAttributes.OfType<RequiredAttribute>().Any()
-#if NET
                 || customAttributes.OfType<System.Runtime.CompilerServices.RequiredMemberAttribute>().Any()
-#endif
                 )
                 && !schema.Required.Contains(dataProperty.Name))
             {
@@ -641,9 +609,5 @@ public class SchemaGenerator(
     }
 
     private static JsonSchemaType FromDataType(DataType dataType) =>
-#if NET
        Enum.Parse<JsonSchemaType>(dataType.ToString());
-#else
-       (JsonSchemaType)Enum.Parse(typeof(JsonSchemaType), dataType.ToString());
-#endif
 }

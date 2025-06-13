@@ -1,5 +1,4 @@
-﻿#if NET
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace Basic.Controllers;
 
@@ -23,4 +22,3 @@ public class Issue3013Controller : ControllerBase
 
     public record struct TestStruct(int A, int B);
 }
-#endif

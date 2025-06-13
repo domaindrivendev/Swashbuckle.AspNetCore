@@ -18,7 +18,6 @@ static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.Desc
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.DocumentAsyncFilter<TFilter>(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, params object[] arguments) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.DocInclusionPredicate(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, System.Func<string, Microsoft.AspNetCore.Mvc.ApiExplorer.ApiDescription, bool> predicate) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.DocumentFilter<TFilter>(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, params object[] arguments) -> void
-static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.GeneratePolymorphicSchemas(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, System.Func<System.Type, System.Collections.Generic.IEnumerable<System.Type>> subTypesResolver = null, System.Func<System.Type, string> discriminatorSelector = null) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.IgnoreObsoleteActions(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.IgnoreObsoleteProperties(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.IncludeXmlComments(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, string filePath, bool includeControllerXmlComments = false) -> void
@@ -43,7 +42,6 @@ static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.Sele
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.SortSchemasWith(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, System.Collections.Generic.IComparer<string> schemaComparer) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.SupportNonNullableReferenceTypes(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.SwaggerDoc(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, string name, Microsoft.OpenApi.Models.OpenApiInfo info) -> void
-static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.TagActionsBy(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, System.Func<Microsoft.AspNetCore.Mvc.ApiExplorer.ApiDescription, string> tagSelector) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.TagActionsBy(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, System.Func<Microsoft.AspNetCore.Mvc.ApiExplorer.ApiDescription, System.Collections.Generic.IList<string>> tagsSelector) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.UseAllOfForInheritance(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.UseAllOfToExtendReferenceSchemas(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions) -> void
@@ -52,7 +50,6 @@ static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.UseO
 static Microsoft.Extensions.DependencyInjection.SwaggerGenServiceCollectionExtensions.AddSwaggerGen(this Microsoft.Extensions.DependencyInjection.IServiceCollection services, System.Action<Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions> setupAction = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection
 static Microsoft.Extensions.DependencyInjection.SwaggerGenServiceCollectionExtensions.ConfigureSwaggerGen(this Microsoft.Extensions.DependencyInjection.IServiceCollection services, System.Action<Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions> setupAction) -> void
 static Swashbuckle.AspNetCore.SwaggerGen.ApiDescriptionExtensions.CustomAttributes(this Microsoft.AspNetCore.Mvc.ApiExplorer.ApiDescription apiDescription) -> System.Collections.Generic.IEnumerable<object>
-static Swashbuckle.AspNetCore.SwaggerGen.ApiDescriptionExtensions.GetAdditionalMetadata(this Microsoft.AspNetCore.Mvc.ApiExplorer.ApiDescription apiDescription, out System.Reflection.MethodInfo methodInfo, out System.Collections.Generic.IEnumerable<object> customAttributes) -> void
 static Swashbuckle.AspNetCore.SwaggerGen.ApiDescriptionExtensions.TryGetMethodInfo(this Microsoft.AspNetCore.Mvc.ApiExplorer.ApiDescription apiDescription, out System.Reflection.MethodInfo methodInfo) -> bool
 static Swashbuckle.AspNetCore.SwaggerGen.ApiParameterDescriptionExtensions.CustomAttributes(this Microsoft.AspNetCore.Mvc.ApiExplorer.ApiParameterDescription apiParameter) -> System.Collections.Generic.IEnumerable<object>
 static Swashbuckle.AspNetCore.SwaggerGen.ApiParameterDescriptionExtensions.IsRequiredParameter(this Microsoft.AspNetCore.Mvc.ApiExplorer.ApiParameterDescription apiParameter) -> bool
@@ -62,7 +59,6 @@ static Swashbuckle.AspNetCore.SwaggerGen.DataContract.ForArray(System.Type under
 static Swashbuckle.AspNetCore.SwaggerGen.DataContract.ForDictionary(System.Type underlyingType, System.Type valueType, System.Collections.Generic.IEnumerable<string> keys = null, System.Func<object, string> jsonConverter = null) -> Swashbuckle.AspNetCore.SwaggerGen.DataContract
 static Swashbuckle.AspNetCore.SwaggerGen.DataContract.ForDynamic(System.Type underlyingType, System.Func<object, string> jsonConverter = null) -> Swashbuckle.AspNetCore.SwaggerGen.DataContract
 static Swashbuckle.AspNetCore.SwaggerGen.DataContract.ForObject(System.Type underlyingType, System.Collections.Generic.IEnumerable<Swashbuckle.AspNetCore.SwaggerGen.DataProperty> properties, System.Type extensionDataType = null, string typeNameProperty = null, string typeNameValue = null, System.Func<object, string> jsonConverter = null) -> Swashbuckle.AspNetCore.SwaggerGen.DataContract
-static Swashbuckle.AspNetCore.SwaggerGen.DataContract.ForPrimitive(System.Type underlyingType, Swashbuckle.AspNetCore.SwaggerGen.DataType dataType, string dataFormat, System.Collections.Generic.IEnumerable<object> enumValues) -> Swashbuckle.AspNetCore.SwaggerGen.DataContract
 static Swashbuckle.AspNetCore.SwaggerGen.DataContract.ForPrimitive(System.Type underlyingType, Swashbuckle.AspNetCore.SwaggerGen.DataType dataType, string dataFormat, System.Func<object, string> jsonConverter = null) -> Swashbuckle.AspNetCore.SwaggerGen.DataContract
 static Swashbuckle.AspNetCore.SwaggerGen.MemberInfoExtensions.GetInlineAndMetadataAttributes(this System.Reflection.MemberInfo memberInfo) -> System.Collections.Generic.IEnumerable<object>
 static Swashbuckle.AspNetCore.SwaggerGen.MemberInfoExtensions.IsDictionaryValueNonNullable(this System.Reflection.MemberInfo memberInfo) -> bool
@@ -96,7 +92,6 @@ Swashbuckle.AspNetCore.SwaggerGen.DataContract.DataFormat.get -> string
 Swashbuckle.AspNetCore.SwaggerGen.DataContract.DataType.get -> Swashbuckle.AspNetCore.SwaggerGen.DataType
 Swashbuckle.AspNetCore.SwaggerGen.DataContract.DictionaryKeys.get -> System.Collections.Generic.IEnumerable<string>
 Swashbuckle.AspNetCore.SwaggerGen.DataContract.DictionaryValueType.get -> System.Type
-Swashbuckle.AspNetCore.SwaggerGen.DataContract.EnumValues.get -> System.Collections.Generic.IEnumerable<object>
 Swashbuckle.AspNetCore.SwaggerGen.DataContract.JsonConverter.get -> System.Func<object, string>
 Swashbuckle.AspNetCore.SwaggerGen.DataContract.ObjectExtensionDataType.get -> System.Type
 Swashbuckle.AspNetCore.SwaggerGen.DataContract.ObjectProperties.get -> System.Collections.Generic.IEnumerable<Swashbuckle.AspNetCore.SwaggerGen.DataProperty>
@@ -197,7 +192,6 @@ Swashbuckle.AspNetCore.SwaggerGen.SchemaFilterContext.Type.get -> System.Type
 Swashbuckle.AspNetCore.SwaggerGen.SchemaGenerator
 Swashbuckle.AspNetCore.SwaggerGen.SchemaGenerator.GenerateSchema(System.Type modelType, Swashbuckle.AspNetCore.SwaggerGen.SchemaRepository schemaRepository, System.Reflection.MemberInfo memberInfo = null, System.Reflection.ParameterInfo parameterInfo = null, Microsoft.AspNetCore.Mvc.ApiExplorer.ApiParameterRouteInfo routeInfo = null) -> Microsoft.OpenApi.Models.Interfaces.IOpenApiSchema
 Swashbuckle.AspNetCore.SwaggerGen.SchemaGenerator.SchemaGenerator(Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions generatorOptions, Swashbuckle.AspNetCore.SwaggerGen.ISerializerDataContractResolver serializerDataContractResolver) -> void
-Swashbuckle.AspNetCore.SwaggerGen.SchemaGenerator.SchemaGenerator(Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions generatorOptions, Swashbuckle.AspNetCore.SwaggerGen.ISerializerDataContractResolver serializerDataContractResolver, Microsoft.Extensions.Options.IOptions<Microsoft.AspNetCore.Mvc.MvcOptions> mvcOptions) -> void
 Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions
 Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions.CustomTypeMappings.get -> System.Collections.Generic.IDictionary<System.Type, System.Func<Microsoft.OpenApi.Models.Interfaces.IOpenApiSchema>>
 Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions.CustomTypeMappings.set -> void

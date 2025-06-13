@@ -14,9 +14,7 @@ public static class ApiParameterDescriptionExtensions
     [
         typeof(BindRequiredAttribute),
         typeof(RequiredAttribute),
-#if NET
         typeof(System.Runtime.CompilerServices.RequiredMemberAttribute)
-#endif
     ];
 
     private static readonly HashSet<string> IllegalHeaderParameters = new(StringComparer.OrdinalIgnoreCase)
@@ -45,23 +43,12 @@ public static class ApiParameterDescriptionExtensions
         }
 
         // For non-controllers, prefer the IsRequired flag if we're not on netstandard 2.0, otherwise fallback to the default logic.
-        return
-#if NET
-            apiParameter.IsRequired;
-#else
-            IsRequired();
-#endif
+        return apiParameter.IsRequired;
     }
 
     public static ParameterInfo ParameterInfo(this ApiParameterDescription apiParameter)
     {
-        var parameterDescriptor = apiParameter.ParameterDescriptor as
-#if NET
-            Microsoft.AspNetCore.Mvc.Infrastructure.IParameterInfoParameterDescriptor;
-#else
-            ControllerParameterDescriptor;
-#endif
-
+        var parameterDescriptor = apiParameter.ParameterDescriptor as Microsoft.AspNetCore.Mvc.Infrastructure.IParameterInfoParameterDescriptor;
         return parameterDescriptor?.ParameterInfo;
     }
 
@@ -87,19 +74,6 @@ public static class ApiParameterDescriptionExtensions
         }
 
         return [];
-    }
-
-    [Obsolete("Use ParameterInfo(), PropertyInfo() and CustomAttributes() extension methods instead")]
-    internal static void GetAdditionalMetadata(
-        this ApiParameterDescription apiParameter,
-        ApiDescription apiDescription,
-        out ParameterInfo parameterInfo,
-        out PropertyInfo propertyInfo,
-        out IEnumerable<object> parameterOrPropertyAttributes)
-    {
-        parameterInfo = apiParameter.ParameterInfo();
-        propertyInfo = apiParameter.PropertyInfo();
-        parameterOrPropertyAttributes = apiParameter.CustomAttributes();
     }
 
     internal static bool IsFromPath(this ApiParameterDescription apiParameter)

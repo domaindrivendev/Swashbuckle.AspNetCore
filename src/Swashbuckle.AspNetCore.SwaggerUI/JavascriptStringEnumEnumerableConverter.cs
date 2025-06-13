@@ -1,5 +1,4 @@
-﻿#if NET
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -62,4 +61,3 @@ internal sealed class JavascriptStringEnumEnumerableConverter<[DynamicallyAccess
         }
     }
 }
-#endif

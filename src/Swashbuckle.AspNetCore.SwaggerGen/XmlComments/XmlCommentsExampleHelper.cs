@@ -30,12 +30,7 @@ internal static class XmlCommentsExampleHelper
         {
             return JsonModelFactory.CreateFromJson(exampleString);
         }
-        catch (JsonException)
-#if NET
-            when (exampleString?.StartsWith('"') == false)
-#else
-            when (exampleString?.StartsWith("\"") == false)
-#endif
+        catch (JsonException) when (exampleString?.StartsWith('"') == false)
         {
             return JsonValue.Create(exampleString);
         }

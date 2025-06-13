@@ -1,35 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)..\..\src\Swashbuckle.AspNetCore.Swagger\Swashbuckle.AspNetCore.Swagger.snk</AssemblyOriginatorKeyFile>
     <NoWarn>$(NoWarn);8002</NoWarn>
     <OutputType>Exe</OutputType>
     <SignAssembly>true</SignAssembly>
-    <TargetFrameworks>net10.0;net9.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>$(DefaultTargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WebSites\Basic\Basic.csproj" />
-    <ProjectReference Include="..\WebSites\CliExampleWithFactory\CliExampleWithFactory.csproj" />
-    <ProjectReference Include="..\WebSites\CliExample\CliExample.csproj" />
-    <ProjectReference Include="..\WebSites\ConfigFromFile\ConfigFromFile.csproj" />
-    <ProjectReference Include="..\WebSites\CustomDocumentSerializer\CustomDocumentSerializer.csproj" />
-    <ProjectReference Include="..\WebSites\CustomUIConfig\CustomUIConfig.csproj" />
-    <ProjectReference Include="..\WebSites\CustomUIIndex\CustomUIIndex.csproj" />
-    <ProjectReference Include="..\WebSites\GenericControllers\GenericControllers.csproj" />
-    <ProjectReference Include="..\WebSites\MinimalApp\MinimalApp.csproj" />
-    <ProjectReference Include="..\WebSites\MultipleVersions\MultipleVersions.csproj" />
-    <ProjectReference Include="..\WebSites\NswagClientExample\NswagClientExample.csproj" />
-    <ProjectReference Include="..\WebSites\OAuth2Integration\OAuth2Integration.csproj" />
-    <ProjectReference Include="..\WebSites\ReDoc\ReDoc.csproj" />
-    <ProjectReference Include="..\WebSites\TestFirst\TestFirst.csproj" />
-    <ProjectReference Include="..\WebSites\TopLevelSwaggerDoc\TopLevelSwaggerDoc.csproj" />
-  </ItemGroup>
-
-  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
-    <ProjectReference Include="..\WebSites\MvcWithNullable\MvcWithNullable.csproj" />
-    <ProjectReference Include="..\WebSites\WebApi\WebApi.csproj" />
-    <ProjectReference Include="..\WebSites\WebApi.Aot\WebApi.Aot.csproj" />
+    <ProjectReference Include="..\WebSites\**\*.csproj" />
+    <ProjectReference Remove="..\WebSites\TestFirst.IntegrationTests\TestFirst.IntegrationTests.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,14 +24,9 @@
     <PackageReference Include="xunit.v3" />
   </ItemGroup>
 
-  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
-    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="8.0.16" />
-    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="8.0.16" />
-  </ItemGroup>
-
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))">
-    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="9.0.5" />
-    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="9.0.5" />
+    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="9.0.6" />
+    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="9.0.6" />
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net10.0'))">

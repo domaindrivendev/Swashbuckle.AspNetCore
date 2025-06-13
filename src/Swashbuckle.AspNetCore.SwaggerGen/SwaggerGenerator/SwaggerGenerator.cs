@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -10,10 +11,6 @@ using Microsoft.OpenApi.Models.Interfaces;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.OpenApi.Models.References;
-
-#if NET
-using Microsoft.AspNetCore.Http.Metadata;
-#endif
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -384,12 +381,7 @@ public class SwaggerGenerator(
         Func<ApiDescription, SchemaRepository, OpenApiDocument, Task<IOpenApiRequestBody>> bodyGenerator,
         Func<OpenApiOperation, OperationFilterContext, Task> applyFilters)
     {
-        OpenApiOperation operation =
-#if NET
-            await GenerateOpenApiOperationFromMetadataAsync(apiDescription, schemaRepository, document);
-#else
-            null;
-#endif
+        var operation = await GenerateOpenApiOperationFromMetadataAsync(apiDescription, schemaRepository, document);
 
         try
         {
@@ -401,10 +393,8 @@ public class SwaggerGenerator(
                 RequestBody = await bodyGenerator(apiDescription, schemaRepository, document),
                 Responses = GenerateResponses(apiDescription, schemaRepository),
                 Deprecated = apiDescription.CustomAttributes().OfType<ObsoleteAttribute>().Any(),
-#if NET
                 Summary = GenerateSummary(apiDescription),
                 Description = GenerateDescription(apiDescription),
-#endif
             };
 
             apiDescription.TryGetMethodInfo(out MethodInfo methodInfo);
@@ -466,7 +456,6 @@ public class SwaggerGenerator(
             });
     }
 
-#if NET
     private async Task<OpenApiOperation> GenerateOpenApiOperationFromMetadataAsync(
         ApiDescription apiDescription,
         SchemaRepository schemaRepository,
@@ -584,7 +573,6 @@ public class SwaggerGenerator(
 
         return operation;
     }
-#endif
 
     private HashSet<OpenApiTagReference> GenerateOperationTags(OpenApiDocument document, ApiDescription apiDescription)
     {
@@ -1138,9 +1126,7 @@ public class SwaggerGenerator(
         ["DELETE"] = HttpMethod.Delete,
         ["OPTIONS"] = HttpMethod.Options,
         ["HEAD"] = HttpMethod.Head,
-#if NET
         ["PATCH"] = HttpMethod.Patch,
-#endif
         ["TRACE"] = HttpMethod.Trace,
     };
 
@@ -1233,7 +1219,6 @@ public class SwaggerGenerator(
         new("default", "Error")
     ];
 
-#if NET
     private static string GenerateSummary(ApiDescription apiDescription) =>
         apiDescription.ActionDescriptor?.EndpointMetadata
             ?.OfType<IEndpointSummaryMetadata>()
@@ -1245,5 +1230,4 @@ public class SwaggerGenerator(
             ?.OfType<IEndpointDescriptionMetadata>()
             .Select((p) => p.Description)
             .LastOrDefault();
-#endif
 }
