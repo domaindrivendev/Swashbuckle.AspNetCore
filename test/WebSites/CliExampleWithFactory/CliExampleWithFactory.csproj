@@ -36,13 +36,4 @@
           WorkingDirectory="$(DotNetSwaggerPath)" />
   </Target>
 
-  <!-- HACK Workaround for https://github.com/dotnet/sdk/issues/49180 -->
-  <Target Name="RemoveCachedDuplicates" AfterTargets="ResolveProjectStaticWebAssets">
-    <ItemGroup>
-      <_UniqueAssets Include="@(StaticWebAsset->Distinct())" />
-      <StaticWebAsset Remove="@(_UniqueAssets)" />
-      <StaticWebAsset Include="@(_UniqueAssets)" />
-    </ItemGroup>
-  </Target>
-
 </Project>

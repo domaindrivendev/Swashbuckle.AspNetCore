@@ -18,10 +18,6 @@
     <LangVersion>latest</LangVersion>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <!--
-    TODO Fix warning from Swashbuckle.AspNetCore with dotnet pack
-    -->
-    <NoWarn>$(NoWarn);NU5128</NoWarn>
     <!-- TODO Remove once .NET 10 is stable -->
     <NoWarn>$(NoWarn);NU5104</NoWarn>
     <NuGetAuditMode>direct</NuGetAuditMode>
@@ -70,10 +66,4 @@
     <Include>[Swashbuckle.*]*</Include>
     <Threshold></Threshold>
   </PropertyGroup>
-  <!-- HACK Workaround for https://github.com/dotnet/sdk/issues/48391 -->
-  <ItemGroup>
-    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-8g4q-xg66-9fp4" />
-    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-hh2w-p6rv-4g7w" />
-    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-5crp-9r3c-p9vr" />
-  </ItemGroup>
 </Project>
