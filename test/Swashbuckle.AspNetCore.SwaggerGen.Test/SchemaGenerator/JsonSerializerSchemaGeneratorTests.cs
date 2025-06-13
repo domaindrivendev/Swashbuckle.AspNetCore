@@ -25,7 +25,7 @@ public class JsonSerializerSchemaGeneratorTests
     [Theory]
     [InlineData(typeof(IFormFile))]
     [InlineData(typeof(FileResult))]
-    [InlineData(typeof(System.IO.Stream))]
+    [InlineData(typeof(Stream))]
     [InlineData(typeof(System.IO.Pipelines.PipeReader))]
     public void GenerateSchema_GeneratesFileSchema_BinaryStringResultType(Type type)
     {
