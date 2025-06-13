@@ -857,6 +857,118 @@
           }
         }
       }
+    },
+    "/XmlComments/Car": {
+      "get": {
+        "tags": [
+          "Xml"
+        ],
+        "summary": "Returns a specific product using asParameters record",
+        "parameters": [
+          {
+            "name": "Id",
+            "in": "query",
+            "description": "Uniquely identifies the product",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Description",
+            "in": "query",
+            "description": "Describes the product",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A Product",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/XmlComments/CarWithProduces": {
+      "get": {
+        "tags": [
+          "Xml"
+        ],
+        "summary": "Returns a specific product With Produces attribute",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A Product",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/XmlComments/CarWithProducesDefaultResponseType": {
+      "get": {
+        "tags": [
+          "Xml"
+        ],
+        "summary": "Returns a specific product With ProducesDefaultResponseType attribute",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "A Product",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
