@@ -75,8 +75,8 @@ for more details.
     }
     ```
 
-    > [!NOTE]
-    > If you omit the explicit parameter bindings, the generator will describe them as "query" parameters by default.
+> [!NOTE]
+> If you omit the explicit parameter bindings, the generator will describe them as "query" parameters by default.
 
 4. Expose the Swagger/OpenAPI JSON document endpoint(s) using one of following methods:
 
