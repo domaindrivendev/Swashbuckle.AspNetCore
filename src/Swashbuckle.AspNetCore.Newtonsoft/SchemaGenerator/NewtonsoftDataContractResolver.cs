@@ -43,12 +43,7 @@ public class NewtonsoftDataContractResolver(JsonSerializerSettings serializerSet
             var enumValues = jsonContract.UnderlyingType.GetEnumValues();
 
             // Test to determine if the serializer will treat as string
-            var serializeAsString = (enumValues.Length > 0) &&
-#if NET
-                JsonConverterFunc(enumValues.GetValue(0)).StartsWith('\"');
-#else
-                JsonConverterFunc(enumValues.GetValue(0)).StartsWith("\"");
-#endif
+            var serializeAsString = (enumValues.Length > 0) && JsonConverterFunc(enumValues.GetValue(0)).StartsWith('\"');
 
             var primitiveTypeAndFormat = serializeAsString
                 ? PrimitiveTypesAndFormats[typeof(string)]
@@ -84,11 +79,7 @@ public class NewtonsoftDataContractResolver(JsonSerializerSettings serializerSet
                     .Select(JsonConverterFunc);
 
                 keys =
-#if NET
                     enumValuesAsJson.Any(json => json.StartsWith('\"'))
-#else
-                    enumValuesAsJson.Any(json => json.StartsWith("\""))
-#endif
                     ? enumValuesAsJson.Select(json => json.Replace("\"", string.Empty))
                     : keyType.GetEnumNames();
             }
@@ -181,7 +172,6 @@ public class NewtonsoftDataContractResolver(JsonSerializerSettings serializerSet
 
         extensionDataType = jsonObjectContract.ExtensionDataValueType;
 
-#if NET
         // If applicable, honor ProblemDetailsConverter
         if (jsonObjectContract.UnderlyingType.IsAssignableTo(typeof(Microsoft.AspNetCore.Mvc.ProblemDetails))
             && _serializerSettings.Converters.OfType<Microsoft.AspNetCore.Mvc.NewtonsoftJson.ProblemDetailsConverter>().Any())
@@ -193,7 +183,6 @@ public class NewtonsoftDataContractResolver(JsonSerializerSettings serializerSet
                 extensionDataType = typeof(object);
             }
         }
-#endif
 
         return dataProperties;
     }
@@ -220,11 +209,9 @@ public class NewtonsoftDataContractResolver(JsonSerializerSettings serializerSet
         [typeof(Guid)] = Tuple.Create(DataType.String, "uuid"),
         [typeof(Uri)] = Tuple.Create(DataType.String, "uri"),
         [typeof(TimeSpan)] = Tuple.Create(DataType.String, "date-span"),
-#if NET
         [typeof(DateOnly)] = Tuple.Create(DataType.String, "date"),
         [typeof(TimeOnly)] = Tuple.Create(DataType.String, "time"),
         [typeof(Int128)] = Tuple.Create(DataType.Integer, "int128"),
         [typeof(UInt128)] = Tuple.Create(DataType.Integer, "int128"),
-#endif
     };
 }

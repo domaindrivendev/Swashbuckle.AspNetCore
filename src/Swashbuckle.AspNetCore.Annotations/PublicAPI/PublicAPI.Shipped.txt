@@ -78,11 +78,6 @@ Swashbuckle.AspNetCore.Annotations.SwaggerSubTypeAttribute.DiscriminatorValue.se
 Swashbuckle.AspNetCore.Annotations.SwaggerSubTypeAttribute.SubType.get -> System.Type
 Swashbuckle.AspNetCore.Annotations.SwaggerSubTypeAttribute.SubType.set -> void
 Swashbuckle.AspNetCore.Annotations.SwaggerSubTypeAttribute.SwaggerSubTypeAttribute(System.Type subType) -> void
-Swashbuckle.AspNetCore.Annotations.SwaggerSubTypesAttribute
-Swashbuckle.AspNetCore.Annotations.SwaggerSubTypesAttribute.Discriminator.get -> string
-Swashbuckle.AspNetCore.Annotations.SwaggerSubTypesAttribute.Discriminator.set -> void
-Swashbuckle.AspNetCore.Annotations.SwaggerSubTypesAttribute.SubTypes.get -> System.Collections.Generic.IEnumerable<System.Type>
-Swashbuckle.AspNetCore.Annotations.SwaggerSubTypesAttribute.SwaggerSubTypesAttribute(params System.Type[] subTypes) -> void
 Swashbuckle.AspNetCore.Annotations.SwaggerTagAttribute
 Swashbuckle.AspNetCore.Annotations.SwaggerTagAttribute.Description.get -> string
 Swashbuckle.AspNetCore.Annotations.SwaggerTagAttribute.ExternalDocsUrl.get -> string

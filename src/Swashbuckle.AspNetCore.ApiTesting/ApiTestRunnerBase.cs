@@ -57,11 +57,7 @@ public abstract class ApiTestRunnerBase : IDisposable
             throw new InvalidOperationException($"Operation with id '{operationId}' not found in OpenAPI document '{documentName}'");
         }
 
-#if NET
         if (expectedStatusCode.StartsWith('2'))
-#else
-        if (expectedStatusCode.StartsWith("2"))
-#endif
         {
             _requestValidator.Validate(request, openApiDocument, pathTemplate, operationType);
         }

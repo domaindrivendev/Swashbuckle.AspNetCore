@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -6,17 +7,10 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Security.Cryptography;
-
-#if NET
-using System.Diagnostics.CodeAnalysis;
-using Microsoft.AspNetCore.Hosting;
-#else
-using System.Text.Json.Serialization;
-using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-#endif
 
 namespace Swashbuckle.AspNetCore.ReDoc;
 
@@ -44,17 +38,6 @@ internal sealed class ReDocMiddleware
         {
             _jsonSerializerOptions = options.JsonSerializerOptions;
         }
-#if !NET
-        else
-        {
-            _jsonSerializerOptions = new JsonSerializerOptions()
-            {
-                IgnoreNullValues = true,
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, false) }
-            };
-        }
-#endif
     }
 
     public async Task Invoke(HttpContext httpContext)
@@ -70,11 +53,7 @@ internal sealed class ReDocMiddleware
             {
                 // Use relative redirect to support proxy environments
                 var relativeIndexUrl =
-#if NET
                     string.IsNullOrEmpty(path) || path.EndsWith('/')
-#else
-                    string.IsNullOrEmpty(path) || path.EndsWith("/")
-#endif
                     ? "index.html"
                     : $"{path.Split('/').Last()}/index.html";
 
@@ -147,11 +126,7 @@ internal sealed class ReDocMiddleware
     private static void RespondWithRedirect(HttpResponse response, string location)
     {
         response.StatusCode = StatusCodes.Status301MovedPermanently;
-#if NET
         response.Headers.Location = location;
-#else
-        response.Headers["Location"] = location;
-#endif
     }
 
     private async Task RespondWithFile(HttpResponse response, string fileName)
@@ -197,18 +172,11 @@ internal sealed class ReDocMiddleware
     private static string HashText(string text)
     {
         var buffer = Encoding.UTF8.GetBytes(text);
-
-#if NET
         var hash = SHA1.HashData(buffer);
-#else
-        using var sha = SHA1.Create();
-        var hash = sha.ComputeHash(buffer);
-#endif
 
         return Convert.ToBase64String(hash);
     }
 
-#if NET
     [UnconditionalSuppressMessage(
         "AOT",
         "IL2026:RequiresUnreferencedCode",
@@ -217,17 +185,14 @@ internal sealed class ReDocMiddleware
         "AOT",
         "IL3050:RequiresDynamicCode",
         Justification = "Method is only called if the user provides their own custom JsonSerializerOptions.")]
-#endif
     private Dictionary<string, string> GetIndexArguments()
     {
         string configObject = null;
 
-#if NET
         if (_jsonSerializerOptions is null)
         {
             configObject = JsonSerializer.Serialize(_options.ConfigObject, ReDocOptionsJsonContext.Default.ConfigObject);
         }
-#endif
 
         configObject ??= JsonSerializer.Serialize(_options.ConfigObject, _jsonSerializerOptions);
 

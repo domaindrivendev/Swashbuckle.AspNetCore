@@ -723,7 +723,6 @@ public class SwaggerGeneratorTests
         Assert.Equal(expectedRequired, parameter.Required);
     }
 
-#if NET
     [Fact]
     public void GetSwagger_SetsParameterRequired_IfActionParameterHasRequiredMember()
     {
@@ -753,7 +752,6 @@ public class SwaggerGeneratorTests
         var parameter = Assert.Single(operation.Parameters);
         Assert.True(parameter.Required);
     }
-#endif
 
     [Theory]
     [InlineData(false)]
@@ -1282,7 +1280,6 @@ public class SwaggerGeneratorTests
         Assert.Equal(["Some", "Tags", "Here"], [.. document.Paths["/resource"].Operations[OperationType.Post].Tags?.Select(t => t.Name)]);
     }
 
-#if NET
     [Fact]
     public void GetSwagger_CanReadEndpointSummaryFromMetadata()
     {
@@ -1330,7 +1327,6 @@ public class SwaggerGeneratorTests
 
         Assert.Equal("A Test Description", document.Paths["/resource"].Operations[OperationType.Post].Description);
     }
-#endif
 
     [Fact]
     public void GetSwagger_SupportsOption_ConflictingActionsResolver()

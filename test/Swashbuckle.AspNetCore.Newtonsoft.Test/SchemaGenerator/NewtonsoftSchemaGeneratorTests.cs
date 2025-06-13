@@ -63,12 +63,10 @@ public class NewtonsoftSchemaGeneratorTests
         { typeof(Guid?), JsonSchemaTypes.String, "uuid" },
         { typeof(DateOnly?), JsonSchemaTypes.String, "date" },
         { typeof(TimeOnly?), JsonSchemaTypes.String, "time" },
-#if NET
         { typeof(Int128), JsonSchemaTypes.Integer, "int128" },
         { typeof(Int128?), JsonSchemaTypes.Integer, "int128" },
         { typeof(UInt128), JsonSchemaTypes.Integer, "int128" },
         { typeof(UInt128?), JsonSchemaTypes.Integer, "int128" },
-#endif
     };
 
     [Theory]
@@ -368,7 +366,6 @@ public class NewtonsoftSchemaGeneratorTests
         Assert.Equal(3, schema.Properties["StringWithMinMaxLength"].MaxLength);
         Assert.Equal(1, schema.Properties["ArrayWithMinMaxLength"].MinItems);
         Assert.Equal(3, schema.Properties["ArrayWithMinMaxLength"].MaxItems);
-#if NET
         Assert.Equal(1, schema.Properties["StringWithLength"].MinLength);
         Assert.Equal(3, schema.Properties["StringWithLength"].MaxLength);
         Assert.Equal(1, schema.Properties["ArrayWithLength"].MinItems);
@@ -377,7 +374,6 @@ public class NewtonsoftSchemaGeneratorTests
         Assert.Equal(true, schema.Properties["IntWithExclusiveRange"].ExclusiveMaximum);
         Assert.Equal("byte", schema.Properties["StringWithBase64"].Format);
         Assert.Equal(JsonSchemaTypes.String, schema.Properties["StringWithBase64"].Type);
-#endif
         Assert.Null(schema.Properties["IntWithRange"].ExclusiveMinimum);
         Assert.Null(schema.Properties["IntWithRange"].ExclusiveMaximum);
         Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);

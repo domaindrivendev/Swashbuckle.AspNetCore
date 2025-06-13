@@ -1,7 +1,9 @@
-﻿using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.FileProviders;
@@ -9,14 +11,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Reflection;
 using System.Security.Cryptography;
-
-#if NET
-using System.Diagnostics.CodeAnalysis;
-using Microsoft.AspNetCore.Hosting;
-#else
-using System.Text.Json.Serialization;
-using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-#endif
 
 namespace Swashbuckle.AspNetCore.SwaggerUI;
 
@@ -44,17 +38,6 @@ internal sealed partial class SwaggerUIMiddleware
         {
             _jsonSerializerOptions = options.JsonSerializerOptions;
         }
-#if !NET
-        else
-        {
-            _jsonSerializerOptions = new JsonSerializerOptions()
-            {
-                IgnoreNullValues = true,
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, false) }
-            };
-        }
-#endif
     }
 
     public async Task Invoke(HttpContext httpContext)
@@ -70,11 +53,7 @@ internal sealed partial class SwaggerUIMiddleware
             {
                 // Use relative redirect to support proxy environments
                 var relativeIndexUrl =
-#if NET
                     string.IsNullOrEmpty(path) || path.EndsWith('/')
-#else
-                    string.IsNullOrEmpty(path) || path.EndsWith("/")
-#endif
                     ? "index.html"
                     : $"{path.Split('/').Last()}/index.html";
 
@@ -154,11 +133,7 @@ internal sealed partial class SwaggerUIMiddleware
     private static void RespondWithRedirect(HttpResponse response, string location)
     {
         response.StatusCode = StatusCodes.Status301MovedPermanently;
-#if NET
         response.Headers.Location = location;
-#else
-        response.Headers["Location"] = location;
-#endif
     }
 
     private async Task RespondWithFile(HttpResponse response, string fileName)
@@ -201,18 +176,11 @@ internal sealed partial class SwaggerUIMiddleware
     private static string HashText(string text)
     {
         var buffer = Encoding.UTF8.GetBytes(text);
-
-#if NET
         var hash = SHA1.HashData(buffer);
-#else
-        using var sha = SHA1.Create();
-        var hash = sha.ComputeHash(buffer);
-#endif
 
         return Convert.ToBase64String(hash);
     }
 
-#if NET
     [UnconditionalSuppressMessage(
         "AOT",
         "IL2026:RequiresUnreferencedCode",
@@ -221,7 +189,6 @@ internal sealed partial class SwaggerUIMiddleware
         "AOT",
         "IL3050:RequiresDynamicCode",
         Justification = "Method is only called if the user provides their own custom JsonSerializerOptions.")]
-#endif
     private async Task RespondWithDocumentUrls(HttpResponse response)
     {
         response.StatusCode = 200;
@@ -229,20 +196,17 @@ internal sealed partial class SwaggerUIMiddleware
         response.ContentType = "application/javascript;charset=utf-8";
         string json = "[]";
 
-#if NET
         if (_jsonSerializerOptions is null)
         {
             var l = new List<UrlDescriptor>(_options.ConfigObject.Urls);
             json = JsonSerializer.Serialize(l, SwaggerUIOptionsJsonContext.Default.ListUrlDescriptor);
         }
-#endif
 
         json ??= JsonSerializer.Serialize(_options.ConfigObject, _jsonSerializerOptions);
 
         await response.WriteAsync(json, Encoding.UTF8);
     }
 
-#if NET
     [UnconditionalSuppressMessage(
         "AOT",
         "IL2026:RequiresUnreferencedCode",
@@ -251,21 +215,18 @@ internal sealed partial class SwaggerUIMiddleware
         "AOT",
         "IL3050:RequiresDynamicCode",
         Justification = "Method is only called if the user provides their own custom JsonSerializerOptions.")]
-#endif
     private Dictionary<string, string> GetIndexArguments()
     {
         string configObject = null;
         string oauthConfigObject = null;
         string interceptors = null;
 
-#if NET
         if (_jsonSerializerOptions is null)
         {
             configObject = JsonSerializer.Serialize(_options.ConfigObject, SwaggerUIOptionsJsonContext.Default.ConfigObject);
             oauthConfigObject = JsonSerializer.Serialize(_options.OAuthConfigObject, SwaggerUIOptionsJsonContext.Default.OAuthConfigObject);
             interceptors = JsonSerializer.Serialize(_options.Interceptors, SwaggerUIOptionsJsonContext.Default.InterceptorFunctions);
         }
-#endif
 
         configObject ??= JsonSerializer.Serialize(_options.ConfigObject, _jsonSerializerOptions);
         oauthConfigObject ??= JsonSerializer.Serialize(_options.OAuthConfigObject, _jsonSerializerOptions);
