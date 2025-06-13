@@ -17,19 +17,19 @@
         <dependency id="Swashbuckle.AspNetCore.Swagger" version="$version$" exclude="Build,Analyzers" />
         <dependency id="Swashbuckle.AspNetCore.SwaggerGen" version="$version$" exclude="Build,Analyzers" />
         <dependency id="Swashbuckle.AspNetCore.SwaggerUI" version="$version$" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Extensions.ApiDescription.Server" version="$microsoftExtensionsApiDescriptionServerPackageVersion$" />
+        <dependency id="Microsoft.Extensions.ApiDescription.Server" version="8.0.0" />
       </group>
       <group targetFramework=".NETCoreApp,Version=v9.0">
         <dependency id="Swashbuckle.AspNetCore.Swagger" version="$version$" exclude="Build,Analyzers" />
         <dependency id="Swashbuckle.AspNetCore.SwaggerGen" version="$version$" exclude="Build,Analyzers" />
         <dependency id="Swashbuckle.AspNetCore.SwaggerUI" version="$version$" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Extensions.ApiDescription.Server" version="$microsoftExtensionsApiDescriptionServerPackageVersion$" />
+        <dependency id="Microsoft.Extensions.ApiDescription.Server" version="9.0.0" />
       </group>
       <group targetFramework=".NETCoreApp,Version=v10.0">
         <dependency id="Swashbuckle.AspNetCore.Swagger" version="$version$" exclude="Build,Analyzers" />
         <dependency id="Swashbuckle.AspNetCore.SwaggerGen" version="$version$" exclude="Build,Analyzers" />
         <dependency id="Swashbuckle.AspNetCore.SwaggerUI" version="$version$" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Extensions.ApiDescription.Server" version="$microsoftExtensionsApiDescriptionServerPackageVersion$" />
+        <dependency id="Microsoft.Extensions.ApiDescription.Server" version="10.0.0-preview.5.25277.114" />
       </group>
     </dependencies>
   </metadata>
