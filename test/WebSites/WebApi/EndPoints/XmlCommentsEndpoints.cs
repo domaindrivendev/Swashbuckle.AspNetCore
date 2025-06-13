@@ -47,7 +47,7 @@ public static class XmlCommentsEndpoints
          => new() { Id = id, Description = "A product" };
 
      /// <summary>
-    /// Returns a specific product With Produces attribute
+    /// Returns a specific product With ProducesDefaultResponseType attribute
     /// </summary>
     [ProducesDefaultResponseType(typeof(Product), Description="A Product")]
     private static Product GetProductProducesDefaultResponseType(int id)
