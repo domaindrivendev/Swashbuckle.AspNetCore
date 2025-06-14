@@ -106,6 +106,7 @@ internal class Program
                     {
                         "2.0" => OpenApiSpecVersion.OpenApi2_0,
                         "3.0" => OpenApiSpecVersion.OpenApi3_0,
+                        "3.1" => OpenApiSpecVersion.OpenApi3_1,
                         _ => throw new NotSupportedException($"The specified OpenAPI version \"{versionArg}\" is not supported."),
                     };
                 }
@@ -116,17 +117,7 @@ internal class Program
                 }
                 else
                 {
-                    switch (specVersion)
-                    {
-                        case OpenApiSpecVersion.OpenApi2_0:
-                            swagger.SerializeAsV2(writer);
-                            break;
-
-                        case OpenApiSpecVersion.OpenApi3_0:
-                        default:
-                            swagger.SerializeAsV3(writer);
-                            break;
-                    }
+                    swagger.SerializeAs(specVersion, writer);
                 }
 
                 if (outputPath != null)
