@@ -199,15 +199,14 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
         var site = new TestSite(typeof(Basic.Startup), outputHelper);
         using var client = site.BuildClient();
 
-        foreach (var diskFile in Directory.EnumerateFiles("swagger-ui-dist"))
+        foreach (var (resourceName, fileName) in EnumerateEmbeddedUIFiles())
         {
-            var diskFileName = Path.GetFileName(diskFile);
-
-            using var htmlResponse = await client.GetAsync(diskFileName, TestContext.Current.CancellationToken);
+            using var requestMessage = new HttpRequestMessage(HttpMethod.Get, fileName);
+            using var htmlResponse = await client.SendAsync(requestMessage, TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
 
             using var stream = await htmlResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
-            using var diskFileStream = File.OpenRead(diskFile);
+            using var diskFileStream = typeof(SwaggerUIIntegrationTests).Assembly.GetManifestResourceStream(resourceName);
 
             Assert.Equal(SHA1.HashData(diskFileStream), SHA1.HashData(stream));
         }
