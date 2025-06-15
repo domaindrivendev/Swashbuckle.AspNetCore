@@ -9,11 +9,11 @@ public class ProductsController
     [HttpGet]
     public IEnumerable<Product> GetAll()
     {
-        return new[]
-        {
+        return
+        [
             new Product { Id = 1, Description = "A product" },
             new Product { Id = 2, Description = "Another product" },
-        };
+        ];
     }
 }
 

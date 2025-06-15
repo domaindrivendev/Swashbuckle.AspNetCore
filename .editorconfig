@@ -6,8 +6,12 @@
 root = true
 
 [*]
-end_of_line = CRLF
+end_of_line = crlf
 insert_final_newline = true
+
+# Visual Studio Spell Checker
+spelling_exclusion_path = .\exclusion.dic
+spelling_languages = en-us
 
 [*.{config,cs,xml}]
 indent_style = space

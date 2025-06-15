@@ -9,11 +9,11 @@ public class JsonAnnotationsController
     [HttpGet("/promotions")]
     public IEnumerable<Promotion> GetPromotions()
     {
-        return new[]
-        {
+        return
+        [
             new Promotion { Code = "A", DiscountType = DiscountType.Amount, Discount = 30 },
-            new Promotion { Code = "B", DiscountType = DiscountType.Percentage, Discount = 10 }
-        };
+            new Promotion { Code = "B", DiscountType = DiscountType.Percentage, Discount = 10 },
+        ];
     }
 }
 
@@ -32,5 +32,5 @@ public class Promotion
 public enum DiscountType
 {
     Percentage,
-    Amount
+    Amount,
 }

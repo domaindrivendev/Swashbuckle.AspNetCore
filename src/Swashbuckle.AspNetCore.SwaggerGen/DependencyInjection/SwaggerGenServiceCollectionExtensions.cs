@@ -54,14 +54,12 @@ public static class SwaggerGenServiceCollectionExtensions
     private sealed class JsonSerializerOptionsProvider
     {
         private JsonSerializerOptions _options;
-#if NET
         private readonly IServiceProvider _serviceProvider;
 
         public JsonSerializerOptionsProvider(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }
-#endif
 
         public JsonSerializerOptions Options => _options ??= ResolveOptions();
 
@@ -75,14 +73,10 @@ public static class SwaggerGenServiceCollectionExtensions
              * then try the default JsonSerializerOptions if available,
              * otherwise create a new instance as a last resort as this is an expensive operation.
              */
-#if NET
             serializerOptions =
                 _serviceProvider.GetService<IOptions<AspNetCore.Mvc.JsonOptions>>()?.Value?.JsonSerializerOptions
                 ?? _serviceProvider.GetService<IOptions<AspNetCore.Http.Json.JsonOptions>>()?.Value?.SerializerOptions
                 ?? JsonSerializerOptions.Default;
-#else
-            serializerOptions = new JsonSerializerOptions();
-#endif
 
             return serializerOptions;
         }

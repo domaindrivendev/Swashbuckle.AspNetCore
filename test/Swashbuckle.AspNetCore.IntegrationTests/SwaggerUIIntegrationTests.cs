@@ -5,7 +5,7 @@ using System.Security.Cryptography;
 namespace Swashbuckle.AspNetCore.IntegrationTests;
 
 [Collection("TestSite")]
-public class SwaggerUIIntegrationTests
+public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
 {
     [Theory]
     [InlineData(typeof(Basic.Startup), "/", "index.html")]
@@ -16,7 +16,7 @@ public class SwaggerUIIntegrationTests
         string requestPath,
         string expectedRedirectPath)
     {
-        var site = new TestSite(startupType);
+        var site = new TestSite(startupType, outputHelper);
         using var client = site.BuildClient();
 
         using var response = await client.GetAsync(requestPath, TestContext.Current.CancellationToken);
@@ -35,7 +35,7 @@ public class SwaggerUIIntegrationTests
         string indexCssPath,
         string swaggerUiCssPath)
     {
-        var site = new TestSite(startupType);
+        var site = new TestSite(startupType, outputHelper);
         using var client = site.BuildClient();
 
         using var htmlResponse = await client.GetAsync(htmlPath, TestContext.Current.CancellationToken);
@@ -69,7 +69,7 @@ public class SwaggerUIIntegrationTests
         Type startupType,
         string indexJsPath)
     {
-        var site = new TestSite(startupType);
+        var site = new TestSite(startupType, outputHelper);
         using var client = site.BuildClient();
 
         using var jsResponse = await client.GetAsync(indexJsPath, TestContext.Current.CancellationToken);
@@ -90,7 +90,7 @@ public class SwaggerUIIntegrationTests
     [Fact]
     public async Task IndexUrl_DefinesPlugins()
     {
-        var site = new TestSite(typeof(CustomUIConfig.Startup));
+        var site = new TestSite(typeof(CustomUIConfig.Startup), outputHelper);
         using var client = site.BuildClient();
 
         using var jsResponse = await client.GetAsync("/swagger/index.js", TestContext.Current.CancellationToken);
@@ -103,7 +103,7 @@ public class SwaggerUIIntegrationTests
     [Fact]
     public async Task IndexUrl_DoesntDefinePlugins()
     {
-        var site = new TestSite(typeof(Basic.Startup));
+        var site = new TestSite(typeof(Basic.Startup), outputHelper);
         using var client = site.BuildClient();
 
         using var jsResponse = await client.GetAsync("/index.js", TestContext.Current.CancellationToken);
@@ -115,7 +115,7 @@ public class SwaggerUIIntegrationTests
     [Fact]
     public async Task IndexUrl_ReturnsCustomPageTitleAndStylesheets_IfConfigured()
     {
-        var site = new TestSite(typeof(CustomUIConfig.Startup));
+        var site = new TestSite(typeof(CustomUIConfig.Startup), outputHelper);
         using var client = site.BuildClient();
 
         using var response = await client.GetAsync("/swagger/index.html", TestContext.Current.CancellationToken);
@@ -128,7 +128,7 @@ public class SwaggerUIIntegrationTests
     [Fact]
     public async Task IndexUrl_ReturnsCustomIndexHtml_IfConfigured()
     {
-        var site = new TestSite(typeof(CustomUIIndex.Startup));
+        var site = new TestSite(typeof(CustomUIIndex.Startup), outputHelper);
         using var client = site.BuildClient();
 
         using var response = await client.GetAsync("/swagger/index.html", TestContext.Current.CancellationToken);
@@ -140,7 +140,7 @@ public class SwaggerUIIntegrationTests
     [Fact]
     public async Task IndexUrl_ReturnsInterceptors_IfConfigured()
     {
-        var site = new TestSite(typeof(CustomUIConfig.Startup));
+        var site = new TestSite(typeof(CustomUIConfig.Startup), outputHelper);
         using var client = site.BuildClient();
 
         using var response = await client.GetAsync("/swagger/index.js", TestContext.Current.CancellationToken);
@@ -156,7 +156,7 @@ public class SwaggerUIIntegrationTests
     [InlineData("/swagger/2.0/index.html", "/swagger/2.0/index.js", new[] { "Version 2.0" })]
     public async Task SwaggerUIMiddleware_CanBeConfiguredMultipleTimes(string htmlUrl, string jsUrl, string[] versions)
     {
-        var site = new TestSite(typeof(MultipleVersions.Startup));
+        var site = new TestSite(typeof(MultipleVersions.Startup), outputHelper);
         using var client = site.BuildClient();
 
         using var htmlResponse = await client.GetAsync(htmlUrl, TestContext.Current.CancellationToken);
@@ -181,7 +181,7 @@ public class SwaggerUIIntegrationTests
         string scriptBundlePath,
         string scriptPresetsPath)
     {
-        var site = new TestSite(startupType);
+        var site = new TestSite(startupType, outputHelper);
         using var client = site.BuildClient();
 
         using var htmlResponse = await client.GetAsync(htmlPath, TestContext.Current.CancellationToken);

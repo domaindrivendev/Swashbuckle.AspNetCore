@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Constraints;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures;
@@ -26,7 +25,7 @@ public class JsonSerializerSchemaGeneratorTests
     [Theory]
     [InlineData(typeof(IFormFile))]
     [InlineData(typeof(FileResult))]
-    [InlineData(typeof(System.IO.Stream))]
+    [InlineData(typeof(Stream))]
     [InlineData(typeof(System.IO.Pipelines.PipeReader))]
     public void GenerateSchema_GeneratesFileSchema_BinaryStringResultType(Type type)
     {
@@ -67,12 +66,10 @@ public class JsonSerializerSchemaGeneratorTests
         { typeof(Guid?), JsonSchemaTypes.String, "uuid" },
         { typeof(DateOnly?), JsonSchemaTypes.String, "date" },
         { typeof(TimeOnly?), JsonSchemaTypes.String, "time" },
-#if NET
         { typeof(Int128), JsonSchemaTypes.Integer, "int128" },
         { typeof(Int128?), JsonSchemaTypes.Integer, "int128" },
         { typeof(UInt128), JsonSchemaTypes.Integer, "int128" },
         { typeof(UInt128?), JsonSchemaTypes.Integer, "int128" },
-#endif
     };
 
     [Theory]
@@ -91,8 +88,6 @@ public class JsonSerializerSchemaGeneratorTests
     [Theory]
     [InlineData(typeof(IntEnum), "int32", false, "2", "4", "8")]
     [InlineData(typeof(LongEnum), "int64", false, "2", "4", "8")]
-    [InlineData(typeof(IntEnum?), "int32", true, "2", "4", "8", "null")]
-    [InlineData(typeof(LongEnum?), "int64", true, "2", "4", "8", "null")]
     public void GenerateSchema_GeneratesReferencedEnumSchema_IfEnumOrNullableEnumType(
         Type type,
         string expectedFormat,
@@ -368,7 +363,6 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal(3, schema.Properties["StringWithMinMaxLength"].MaxLength);
         Assert.Equal(1, schema.Properties["ArrayWithMinMaxLength"].MinItems);
         Assert.Equal(3, schema.Properties["ArrayWithMinMaxLength"].MaxItems);
-#if NET
         Assert.Equal(1, schema.Properties["StringWithLength"].MinLength);
         Assert.Equal(3, schema.Properties["StringWithLength"].MaxLength);
         Assert.Equal(1, schema.Properties["ArrayWithLength"].MinItems);
@@ -377,7 +371,6 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal(true, schema.Properties["IntWithExclusiveRange"].ExclusiveMaximum);
         Assert.Equal("byte", schema.Properties["StringWithBase64"].Format);
         Assert.Equal(JsonSchemaTypes.String, schema.Properties["StringWithBase64"].Type);
-#endif
         Assert.Null(schema.Properties["IntWithRange"].ExclusiveMinimum);
         Assert.Null(schema.Properties["IntWithRange"].ExclusiveMaximum);
         Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);
@@ -410,7 +403,6 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.True(schema.Properties["WriteOnlyProperty"].WriteOnly);
     }
 
-#if NET
     public class TypeWithRequiredProperties
     {
         public required string RequiredString { get; set; }
@@ -471,7 +463,6 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Contains("RequiredNonNullableString", schema.Required.ToArray());
     }
 #nullable disable
-#endif
 
     [Theory]
     [InlineData(typeof(TypeWithParameterizedConstructor), nameof(TypeWithParameterizedConstructor.Id), false)]
@@ -1009,22 +1000,15 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal(required, propertyIsRequired);
     }
 
-    [Obsolete($"{nameof(IOptions<MvcOptions>)} is not used.")]
     [Theory]
-    [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextAnnotated.NonNullableString), false)]
-    [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextAnnotated.NonNullableString), true)]
-    [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextNotAnnotated.NonNullableString), false)]
-    [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextNotAnnotated.NonNullableString), true)]
+    [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextAnnotated.NonNullableString))]
+    [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextNotAnnotated.NonNullableString))]
     public void GenerateSchema_SupportsOption_SuppressImplicitRequiredAttributeForNonNullableReferenceTypes(
         Type declaringType,
         string subType,
-        string propertyName,
-        bool suppress)
+        string propertyName)
     {
-        var subject = Subject(
-            configureGenerator: c => c.NonNullableReferenceTypesAsRequired = true,
-            configureMvcOptions: o => o.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = suppress
-        );
+        var subject = Subject(c => c.NonNullableReferenceTypesAsRequired = true);
         var schemaRepository = new SchemaRepository();
 
         subject.GenerateSchema(declaringType, schemaRepository);
@@ -1237,7 +1221,6 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal(["string-with-json-property-name"], schema.Properties.Keys);
     }
 
-#if NET
     [Fact]
     public void GenerateSchema_HonorsSerializerAttribute_JsonRequired()
     {
@@ -1249,7 +1232,6 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal(["StringWithJsonRequired"], schema.Required);
         Assert.True(schema.Properties["StringWithJsonRequired"].Nullable);
     }
-#endif
 
     [Fact]
     public void GenerateSchema_HonorsSerializerAttribute_JsonExtensionData()
@@ -1367,19 +1349,13 @@ public class JsonSerializerSchemaGeneratorTests
         return new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions));
     }
 
-    [Obsolete($"{nameof(IOptions<MvcOptions>)} is not used.")]
-    private static SchemaGenerator Subject(
-        Action<SchemaGeneratorOptions> configureGenerator,
-        Action<MvcOptions> configureMvcOptions)
+    private static SchemaGenerator Subject(Action<SchemaGeneratorOptions> configureGenerator)
     {
         var generatorOptions = new SchemaGeneratorOptions();
         configureGenerator?.Invoke(generatorOptions);
 
         var serializerOptions = new JsonSerializerOptions();
 
-        var mvcOptions = new MvcOptions();
-        configureMvcOptions?.Invoke(mvcOptions);
-
-        return new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions), Options.Create(mvcOptions));
+        return new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions));
     }
 }

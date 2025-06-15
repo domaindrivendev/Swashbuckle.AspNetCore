@@ -52,16 +52,12 @@ public abstract class ApiTestRunnerBase : IDisposable
     {
         var openApiDocument = _options.GetOpenApiDocument(documentName);
 
-        if (!openApiDocument.TryFindOperationById(operationId, out string pathTemplate, out OperationType operationType))
+        if (!openApiDocument.TryFindOperationById(operationId, out string pathTemplate, out var operationType))
         {
             throw new InvalidOperationException($"Operation with id '{operationId}' not found in OpenAPI document '{documentName}'");
         }
 
-#if NET
         if (expectedStatusCode.StartsWith('2'))
-#else
-        if (expectedStatusCode.StartsWith("2"))
-#endif
         {
             _requestValidator.Validate(request, openApiDocument, pathTemplate, operationType);
         }

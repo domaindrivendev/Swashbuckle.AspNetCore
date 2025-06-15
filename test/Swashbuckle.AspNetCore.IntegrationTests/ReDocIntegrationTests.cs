@@ -8,12 +8,12 @@ using ReDocApp = ReDoc;
 namespace Swashbuckle.AspNetCore.IntegrationTests;
 
 [Collection("TestSite")]
-public class ReDocIntegrationTests
+public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
 {
     [Fact]
     public async Task RoutePrefix_RedirectsToIndexUrl()
     {
-        var site = new TestSite(typeof(ReDocApp.Startup));
+        var site = new TestSite(typeof(ReDocApp.Startup), outputHelper);
         using var client = site.BuildClient();
 
         using var response = await client.GetAsync("/api-docs", TestContext.Current.CancellationToken);
@@ -25,7 +25,7 @@ public class ReDocIntegrationTests
     [Fact]
     public async Task IndexUrl_ReturnsEmbeddedVersionOfTheRedocUI()
     {
-        var site = new TestSite(typeof(ReDocApp.Startup));
+        var site = new TestSite(typeof(ReDocApp.Startup), outputHelper);
         using var client = site.BuildClient();
 
         using var htmlResponse = await client.GetAsync("/api-docs/index.html", TestContext.Current.CancellationToken);
@@ -51,7 +51,7 @@ public class ReDocIntegrationTests
     [Fact]
     public async Task RedocMiddleware_ReturnsInitializerScript()
     {
-        var site = new TestSite(typeof(ReDocApp.Startup));
+        var site = new TestSite(typeof(ReDocApp.Startup), outputHelper);
         using var client = site.BuildClient();
 
         using var response = await client.GetAsync("/api-docs/index.js", TestContext.Current.CancellationToken);
@@ -68,7 +68,7 @@ public class ReDocIntegrationTests
     [Fact]
     public async Task IndexUrl_IgnoresUrlCase()
     {
-        var site = new TestSite(typeof(ReDocApp.Startup));
+        var site = new TestSite(typeof(ReDocApp.Startup), outputHelper);
         using var client = site.BuildClient();
 
         using var htmlResponse = await client.GetAsync("/Api-Docs/index.html", TestContext.Current.CancellationToken);
@@ -87,7 +87,7 @@ public class ReDocIntegrationTests
     [InlineData("/redoc/2.0/index.html", "/redoc/2.0/index.js", "/swagger/2.0/swagger.json")]
     public async Task RedocMiddleware_CanBeConfiguredMultipleTimes(string htmlUrl, string jsUrl, string swaggerPath)
     {
-        var site = new TestSite(typeof(MultipleVersions.Startup));
+        var site = new TestSite(typeof(MultipleVersions.Startup), outputHelper);
         using var client = site.BuildClient();
 
         using var htmlResponse = await client.GetAsync(htmlUrl, TestContext.Current.CancellationToken);

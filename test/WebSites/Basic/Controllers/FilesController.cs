@@ -24,11 +24,7 @@ public class FilesController : Controller
     }
 
     [HttpGet("{name}")]
-#if NET
     [ProducesResponseType(typeof(FileResult), StatusCodes.Status200OK, "text/plain", "application/zip")]
-#else
-    [Produces("text/plain", "application/zip", Type = typeof(FileResult))]
-#endif
     public FileResult GetFile(string name)
     {
         var stream = new MemoryStream();

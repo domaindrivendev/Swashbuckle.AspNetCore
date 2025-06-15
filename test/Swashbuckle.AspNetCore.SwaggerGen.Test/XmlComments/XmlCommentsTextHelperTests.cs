@@ -142,6 +142,19 @@ A line of text",
         Assert.Equal(expectedOutput, output, false, true);
     }
 
+    [Fact]
+    public void Humanize_SeeMultiLineTag()
+    {
+        const string input = @"
+            <see href=""https://www.iso.org/iso-4217-currency-codes.html"">
+            ISO currency code
+            </see>";
+
+        var output = XmlCommentsTextHelper.Humanize(input);
+
+        Assert.Equal("[ISO currency code](https://www.iso.org/iso-4217-currency-codes.html)", output, false, true);
+    }
+
     [Theory]
     [InlineData("\r\n")]
     [InlineData("\n")]

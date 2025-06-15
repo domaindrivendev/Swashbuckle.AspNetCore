@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace NSwagClientExample.Controllers;
 
-#if NET
 [ApiController]
 [Route("[controller]")]
 public class SystemTextJsonAnimalsController : ControllerBase
@@ -34,4 +33,3 @@ public class SystemTextJsonDog : SystemTextJsonAnimal
 {
     public string DogSpecificProperty { get; set; }
 }
-#endif

@@ -9,19 +9,11 @@
     <IncludeSource>false</IncludeSource>
     <IncludeSymbols>false</IncludeSymbols>
     <IsPackable>true</IsPackable>
-    <MicrosoftExtensionsApiDescriptionServerPackageVersion>6.0.5</MicrosoftExtensionsApiDescriptionServerPackageVersion>
+    <NoWarn>$(NoWarn);NU5128</NoWarn>
     <NuspecFile>$(MSBuildProjectName).nuspec</NuspecFile>
     <PackageId>Swashbuckle.AspNetCore</PackageId>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>
-    <TargetFrameworks>net9.0;net8.0;netstandard2.0</TargetFrameworks>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
-    <MicrosoftExtensionsApiDescriptionServerPackageVersion>8.0.0</MicrosoftExtensionsApiDescriptionServerPackageVersion>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'net9.0' ">
-    <MicrosoftExtensionsApiDescriptionServerPackageVersion>9.0.0</MicrosoftExtensionsApiDescriptionServerPackageVersion>
+    <TargetFrameworks>$(DefaultTargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
 
   <Target Name="PopulateNuspec">
@@ -32,7 +24,6 @@
         description=$(PackageDescription);
         id=$(PackageId);
         licenseExpression=$(PackageLicenseExpression);
-        microsoftExtensionsApiDescriptionServerPackageVersion=$(MicrosoftExtensionsApiDescriptionServerPackageVersion);
         projectUrl=$(PackageProjectUrl);
         repositoryType=$(RepositoryType);
         repositoryUrl=$(RepositoryUrl);

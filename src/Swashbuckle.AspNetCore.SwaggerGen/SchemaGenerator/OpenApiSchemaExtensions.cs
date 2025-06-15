@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.OpenApi.Models;
@@ -45,7 +46,6 @@ public static class OpenApiSchemaExtensions
             {
                 ApplyMaxLengthAttribute(schema, maxLengthAttribute);
             }
-#if NET
             else if (attribute is LengthAttribute lengthAttribute)
             {
                 ApplyLengthAttribute(schema, lengthAttribute);
@@ -54,7 +54,6 @@ public static class OpenApiSchemaExtensions
             {
                 ApplyBase64Attribute(schema);
             }
-#endif
             else if (attribute is RangeAttribute rangeAttribute)
             {
                 ApplyRangeAttribute(schema, rangeAttribute);
@@ -204,8 +203,6 @@ public static class OpenApiSchemaExtensions
         }
     }
 
-#if NET
-
     private static void ApplyLengthAttribute(OpenApiSchema schema, LengthAttribute lengthAttribute)
     {
         if (schema.Type == JsonSchemaTypes.Array)
@@ -225,11 +222,37 @@ public static class OpenApiSchemaExtensions
         schema.Format = "byte";
     }
 
-#endif
-
     private static void ApplyRangeAttribute(OpenApiSchema schema, RangeAttribute rangeAttribute)
     {
-#if NET
+        if (rangeAttribute.Maximum is int maximumInteger)
+        {
+            // The range was set with the RangeAttribute(int, int) constructor
+            schema.Maximum = maximumInteger;
+            schema.Minimum = (int)rangeAttribute.Minimum;
+        }
+        else
+        {
+            // Parse the range from the RangeAttribute(double, double) or RangeAttribute(string, string) constructor.
+            // Use the appropriate culture as the user may have specified a culture-specific format for the numbers
+            // if they specified the value as a string. By default RangeAttribute uses the current culture, but it
+            // can be set to use the invariant culture.
+            var targetCulture = rangeAttribute.ParseLimitsInInvariantCulture || rangeAttribute.Minimum is double
+                ? CultureInfo.InvariantCulture
+                : CultureInfo.CurrentCulture;
+
+            var maxString = Convert.ToString(rangeAttribute.Maximum, targetCulture);
+            var minString = Convert.ToString(rangeAttribute.Minimum, targetCulture);
+
+            if (decimal.TryParse(maxString, NumberStyles.Any, targetCulture, out var value))
+            {
+                schema.Maximum = value;
+            }
+
+            if (decimal.TryParse(minString, NumberStyles.Any, targetCulture, out value))
+            {
+                schema.Minimum = value;
+            }
+        }
 
         if (rangeAttribute.MinimumIsExclusive)
         {
@@ -240,16 +263,6 @@ public static class OpenApiSchemaExtensions
         {
             schema.ExclusiveMaximum = true;
         }
-
-#endif
-
-        schema.Maximum = decimal.TryParse(rangeAttribute.Maximum.ToString(), out decimal maximum)
-            ? maximum
-            : schema.Maximum;
-
-        schema.Minimum = decimal.TryParse(rangeAttribute.Minimum.ToString(), out decimal minimum)
-            ? minimum
-            : schema.Minimum;
     }
 
     private static void ApplyRangeRouteConstraint(OpenApiSchema schema, RangeRouteConstraint rangeRouteConstraint)

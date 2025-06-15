@@ -13,16 +13,6 @@ public class SwaggerEndpointOptions
     }
 
     /// <summary>
-    /// Return Swagger JSON/YAML in the V2.0 format rather than V3.0.
-    /// </summary>
-    [Obsolete($"This property will be removed in a future version of Swashbuckle.AspNetCore. Use the {nameof(OpenApiVersion)} property instead.")]
-    public bool SerializeAsV2
-    {
-        get => OpenApiVersion == OpenApiSpecVersion.OpenApi2_0;
-        set => OpenApiVersion = value ? OpenApiSpecVersion.OpenApi2_0 : OpenApiSpecVersion.OpenApi3_0;
-    }
-
-    /// <summary>
     /// Gets or sets the OpenAPI (Swagger) document version to use.
     /// </summary>
     /// <remarks>

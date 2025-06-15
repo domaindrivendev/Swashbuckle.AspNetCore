@@ -5,7 +5,7 @@ on:
     branches: [ master ]
     tags: [ 'v*' ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, dotnet-vnext ]
   workflow_dispatch:
 
 env:
@@ -99,20 +99,20 @@ jobs:
         if-no-files-found: ignore
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@ad3126e916f78f00edff4ed0317cf185271ccc2d # v5.4.2
+      uses: codecov/codecov-action@18283e04ce6e62d37312384ff67231eb8fd56d24 # v5.4.3
       with:
         flags: ${{ runner.os }}
         token: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Upload test results to Codecov
-      uses: codecov/test-results-action@f2dba722c67b86c6caa034178c6e4d35335f6706 # v1.1.0
+      uses: codecov/test-results-action@47f89e9acb64b76debcd5ea40642d25a4adced9f # v1.1.1
       if: ${{ !cancelled() }}
       with:
         flags: ${{ runner.os }}
         token: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Attest artifacts
-      uses: actions/attest-build-provenance@db473fddc028af60658334401dc6fa3ffd8669fd # v2.3.0
+      uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2.4.0
       if: |
         runner.os == 'Windows' &&
         github.event.repository.fork == false &&
@@ -122,6 +122,7 @@ jobs:
 
     - name: Publish NuGet packages
       uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+      if: ${{ !cancelled() }}
       with:
         name: packages-${{ runner.os }}
         path: ./artifacts/package/release
@@ -172,13 +173,11 @@ jobs:
   publish-myget:
     needs: [ build, validate-packages ]
     runs-on: ubuntu-latest
-    if: false
-    # HACK Disabled until https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3368 is resolved
-    #if: |
-    #  github.event.repository.fork == false &&
-    #  (github.ref_name == github.event.repository.default_branch ||
-    #   github.head_ref == 'dotnet-vnext' ||
-    #   startsWith(github.ref, 'refs/tags/v'))
+    if: |
+      github.event.repository.fork == false &&
+      (github.ref_name == github.event.repository.default_branch ||
+       github.head_ref == 'dotnet-vnext' ||
+       startsWith(github.ref, 'refs/tags/v'))
 
     environment:
       name: MyGet.org
@@ -200,7 +199,7 @@ jobs:
       env:
         API_KEY: ${{ secrets.MYGET_TOKEN }}
         PACKAGE_VERSION: ${{ needs.build.outputs.package-version }}
-        SOURCE: "https://www.myget.org/F/domaindrivendev/api/v2"
+        SOURCE: "https://www.myget.org/F/domaindrivendev/api/v3/index.json"
       run: dotnet nuget push "*.nupkg" --api-key "${API_KEY}" --skip-duplicate --source "${SOURCE}" && echo "::notice title=myget.org::Published version ${PACKAGE_VERSION} to MyGet."
 
   publish-nuget:

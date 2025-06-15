@@ -1,6 +1,7 @@
 ﻿Microsoft.AspNetCore.Builder.SwaggerBuilderExtensions
 Microsoft.Extensions.DependencyInjection.SwaggerOptionsExtensions
 Microsoft.Extensions.DependencyInjection.SwaggerServiceCollectionExtensions
+static Microsoft.AspNetCore.Builder.SwaggerBuilderExtensions.MapSwagger(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder endpoints, string pattern = "/swagger/{documentName}/swagger.{extension:regex(^(json|ya?ml)$)}", System.Action<Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions> setupAction = null) -> Microsoft.AspNetCore.Builder.IEndpointConventionBuilder
 static Microsoft.AspNetCore.Builder.SwaggerBuilderExtensions.UseSwagger(this Microsoft.AspNetCore.Builder.IApplicationBuilder app, Swashbuckle.AspNetCore.Swagger.SwaggerOptions options) -> Microsoft.AspNetCore.Builder.IApplicationBuilder
 static Microsoft.AspNetCore.Builder.SwaggerBuilderExtensions.UseSwagger(this Microsoft.AspNetCore.Builder.IApplicationBuilder app, System.Action<Swashbuckle.AspNetCore.Swagger.SwaggerOptions> setupAction = null) -> Microsoft.AspNetCore.Builder.IApplicationBuilder
 static Microsoft.Extensions.DependencyInjection.SwaggerOptionsExtensions.SetCustomDocumentSerializer<TDocumentSerializer>(this Swashbuckle.AspNetCore.Swagger.SwaggerOptions swaggerOptions, params object[] constructorParameters) -> void

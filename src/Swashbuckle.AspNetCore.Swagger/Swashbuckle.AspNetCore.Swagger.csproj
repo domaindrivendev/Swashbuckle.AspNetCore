@@ -3,22 +3,16 @@
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.Swagger.snk</AssemblyOriginatorKeyFile>
     <Description>Middleware to expose Swagger JSON endpoints from APIs built on ASP.NET Core</Description>
+    <EnableAotAnalyzer>true</EnableAotAnalyzer>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <IsPackable>true</IsPackable>
     <NoWarn>$(NoWarn);1591</NoWarn>
     <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>
     <SignAssembly>true</SignAssembly>
-    <TargetFrameworks>net9.0;net8.0;netstandard2.0</TargetFrameworks>
-  </PropertyGroup>
-  <PropertyGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
-    <EnableAotAnalyzer>true</EnableAotAnalyzer>
+    <TargetFrameworks>$(DefaultTargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="Microsoft.AspNetCore.Routing" />
-  </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' != 'netstandard2.0' ">
+  <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 

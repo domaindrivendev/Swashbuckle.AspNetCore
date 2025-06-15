@@ -1,12 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.SwaggerUI;
-
-#if NET
-using Microsoft.AspNetCore.Hosting;
-#else
-using IWebHostEnvironment = Microsoft.AspNetCore.Hosting.IHostingEnvironment;
-#endif
 
 namespace Microsoft.AspNetCore.Builder;
 
@@ -16,9 +11,7 @@ public static class SwaggerUIBuilderExtensions
     /// Register the SwaggerUI middleware with provided options
     /// </summary>
     public static IApplicationBuilder UseSwaggerUI(this IApplicationBuilder app, SwaggerUIOptions options)
-    {
-        return app.UseMiddleware<SwaggerUIMiddleware>(options);
-    }
+        => app.UseMiddleware<SwaggerUIMiddleware>(options);
 
     /// <summary>
     /// Register the SwaggerUI middleware with optional setup action for DI-injected options

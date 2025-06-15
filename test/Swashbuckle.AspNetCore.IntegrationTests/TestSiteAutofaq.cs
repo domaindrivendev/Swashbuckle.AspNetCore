@@ -22,7 +22,7 @@ public class TestSiteAutofaq
         var hostBuilder = new WebHostBuilder()
             .UseEnvironment("Development")
             .ConfigureServices(services => services.AddAutofac())
-            .UseSolutionRelativeContentRoot(Path.Combine("test", "WebSites", applicationName))
+            .UseSolutionRelativeContentRoot(Path.Combine("test", "WebSites", applicationName), "*.slnx")
             .UseStartup(_startupType);
 
         return new TestServer(hostBuilder);

@@ -4,7 +4,7 @@ using ReDocApp = ReDoc;
 namespace Swashbuckle.AspNetCore.IntegrationTests;
 
 [Collection("TestSite")]
-public partial class VerifyTests
+public partial class VerifyTests(ITestOutputHelper outputHelper)
 {
     [Theory]
     [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
@@ -24,13 +24,13 @@ public partial class VerifyTests
         Type startupType,
         string swaggerRequestUri)
     {
-        var testSite = new TestSite(startupType);
+        var testSite = new TestSite(startupType, outputHelper);
         using var client = testSite.BuildClient();
 
         using var swaggerResponse = await client.GetAsync(swaggerRequestUri, TestContext.Current.CancellationToken);
         var swagger = await swaggerResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
-        await Verifier.Verify(NormalizeLineBreaks(swagger))
+        await Verify(NormalizeLineBreaks(swagger))
             .UseDirectory("snapshots")
             .UseParameters(startupType, GetVersion(swaggerRequestUri))
             .UniqueForTargetFrameworkAndVersion();
@@ -48,7 +48,7 @@ public partial class VerifyTests
         using var swaggerResponse = await client.GetAsync(swaggerRequestUri, TestContext.Current.CancellationToken);
         var swagger = await swaggerResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
-        await Verifier.Verify(swagger)
+        await Verify(swagger)
             .UseDirectory("snapshots")
             .UseParameters(startupType, GetVersion(swaggerRequestUri))
             .UniqueForTargetFrameworkAndVersion();
@@ -66,7 +66,7 @@ public partial class VerifyTests
     {
         var swaggerResponse = await SwaggerEndpointReturnsValidSwaggerJson(entryPointType, swaggerRequestUri);
 
-        await Verifier.Verify(swaggerResponse)
+        await Verify(swaggerResponse)
             .UseDirectory("snapshots")
             .UseParameters(entryPointType, GetVersion(swaggerRequestUri))
             .UniqueForTargetFrameworkAndVersion();
@@ -80,7 +80,7 @@ public partial class VerifyTests
 
         var swaggerResponse = await SwaggerResponse(client, "/swagger/v1/swagger.json");
 
-        await Verifier.Verify(swaggerResponse)
+        await Verify(swaggerResponse)
             .UseDirectory("snapshots")
             .UniqueForTargetFrameworkAndVersion();
     }

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Basic.Controllers;
@@ -17,8 +18,9 @@ public class ResponseTypeAnnotationsController
     [HttpPost]
     [ProducesResponseType(typeof(int), 201)]
     [ProducesResponseType(typeof(ValidationProblemDetails), 400)]
-    public IActionResult CreateOrder([FromBody, Required]Order order)
+    public IActionResult CreateOrder([FromBody, Required] Order order)
     {
+        Debug.Assert(order is not null);
         return new CreatedResult("/orders/1", 1);
     }
 }

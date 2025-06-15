@@ -70,7 +70,6 @@ public class FakeController
     public void ActionWithObjectParameter(XmlAnnotatedType param)
     { }
 
-#if NET
     public class TypeWithRequiredProperty
     {
         public required string RequiredProperty { get; set; }
@@ -78,7 +77,6 @@ public class FakeController
 
     public void ActionWithRequiredMember(TypeWithRequiredProperty param)
     { }
-#endif
 
     [Consumes("application/someMediaType")]
     public void ActionWithConsumesAttribute(string param)

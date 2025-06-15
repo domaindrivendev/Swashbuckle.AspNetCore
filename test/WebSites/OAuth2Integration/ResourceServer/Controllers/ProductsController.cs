@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace OAuth2Integration.ResourceServer.Controllers;
@@ -22,6 +23,7 @@ public class ProductsController : Controller
     [Authorize("readAccess")]
     public Product GetProduct(int id)
     {
+        Debug.Assert(id >= 0);
         return new Product
         {
             Id = 1,
@@ -34,23 +36,28 @@ public class ProductsController : Controller
     [Authorize("writeAccess")]
     public void CreateProduct([FromBody] Product product)
     {
+        Debug.Assert(product is not null);
     }
 
     [HttpDelete("{id}")]
     [Authorize("writeAccess")]
     public void DeleteProduct(int id)
     {
+        Debug.Assert(id >= 0);
     }
 }
 
 public class Product
 {
     public int Id { get; internal set; }
+
     public string SerialNo { get; set; }
+
     public ProductStatus Status { get; set; }
 }
 
 public enum ProductStatus
 {
-    InStock, ComingSoon
+    InStock,
+    ComingSoon,
 }

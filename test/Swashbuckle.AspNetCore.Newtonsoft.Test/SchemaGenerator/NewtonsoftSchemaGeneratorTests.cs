@@ -63,12 +63,10 @@ public class NewtonsoftSchemaGeneratorTests
         { typeof(Guid?), JsonSchemaTypes.String, "uuid" },
         { typeof(DateOnly?), JsonSchemaTypes.String, "date" },
         { typeof(TimeOnly?), JsonSchemaTypes.String, "time" },
-#if NET
         { typeof(Int128), JsonSchemaTypes.Integer, "int128" },
         { typeof(Int128?), JsonSchemaTypes.Integer, "int128" },
         { typeof(UInt128), JsonSchemaTypes.Integer, "int128" },
         { typeof(UInt128?), JsonSchemaTypes.Integer, "int128" },
-#endif
     };
 
     [Theory]
@@ -88,8 +86,8 @@ public class NewtonsoftSchemaGeneratorTests
     {
         { typeof(IntEnum), JsonSchemaTypes.Integer, "int32", 3 },
         { typeof(LongEnum), JsonSchemaTypes.Integer, "int64", 3 },
-        { typeof(IntEnum?), JsonSchemaTypes.Integer, "int32", 4 },
-        { typeof(LongEnum?), JsonSchemaTypes.Integer, "int64", 4 },
+        { typeof(IntEnum?), JsonSchemaTypes.Integer, "int32", 3 },
+        { typeof(LongEnum?), JsonSchemaTypes.Integer, "int64", 3 },
     };
 
     [Theory]
@@ -297,7 +295,7 @@ public class NewtonsoftSchemaGeneratorTests
         var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
         const string propertyName = nameof(TypeWithNullableProperties.NullableIntEnumProperty);
         Assert.False(schema.Properties[propertyName].Nullable);
-        Assert.Equal("IntEnumNullable", schema.Properties[propertyName].Reference.Id);
+        Assert.Equal("IntEnum", schema.Properties[propertyName].Reference.Id);
     }
 
     [Fact]
@@ -368,7 +366,6 @@ public class NewtonsoftSchemaGeneratorTests
         Assert.Equal(3, schema.Properties["StringWithMinMaxLength"].MaxLength);
         Assert.Equal(1, schema.Properties["ArrayWithMinMaxLength"].MinItems);
         Assert.Equal(3, schema.Properties["ArrayWithMinMaxLength"].MaxItems);
-#if NET
         Assert.Equal(1, schema.Properties["StringWithLength"].MinLength);
         Assert.Equal(3, schema.Properties["StringWithLength"].MaxLength);
         Assert.Equal(1, schema.Properties["ArrayWithLength"].MinItems);
@@ -377,7 +374,6 @@ public class NewtonsoftSchemaGeneratorTests
         Assert.Equal(true, schema.Properties["IntWithExclusiveRange"].ExclusiveMaximum);
         Assert.Equal("byte", schema.Properties["StringWithBase64"].Format);
         Assert.Equal(JsonSchemaTypes.String, schema.Properties["StringWithBase64"].Type);
-#endif
         Assert.Null(schema.Properties["IntWithRange"].ExclusiveMinimum);
         Assert.Null(schema.Properties["IntWithRange"].ExclusiveMaximum);
         Assert.Equal(1, schema.Properties["IntWithRange"].Minimum);
@@ -850,8 +846,8 @@ public class NewtonsoftSchemaGeneratorTests
         Assert.False(schema.Properties["IntEnumWithRequiredAllowNull"].Nullable);
         Assert.False(schema.Properties["IntEnumWithRequiredAlways"].Nullable);
         Assert.False(schema.Properties["IntEnumWithRequiredDisallowNull"].Nullable);
-        Assert.Equal("IntEnumNullable", schema.Properties["IntEnumWithRequiredDefault"].Reference.Id);
-        Assert.Equal("IntEnumNullable", schema.Properties["IntEnumWithRequiredAllowNull"].Reference.Id);
+        Assert.Equal("IntEnum", schema.Properties["IntEnumWithRequiredDefault"].Reference.Id);
+        Assert.Equal("IntEnum", schema.Properties["IntEnumWithRequiredAllowNull"].Reference.Id);
         Assert.Equal(nameof(IntEnum), schema.Properties["IntEnumWithRequiredAlways"].Reference.Id);
         Assert.Equal(nameof(IntEnum), schema.Properties["IntEnumWithRequiredDisallowNull"].Reference.Id);
     }

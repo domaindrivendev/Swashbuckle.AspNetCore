@@ -25,7 +25,7 @@ public class ApiTestRunner : ApiTestRunnerBase
                     Version = "v1",
                     Title = "Test-first Example API (Generated)",
                 },
-                Paths = new OpenApiPaths()
+                Paths = []
             });
             c.GenerateOpenApiFiles = true;
             c.FileOutputRoot = apiDocsRoot;
@@ -34,7 +34,7 @@ public class ApiTestRunner : ApiTestRunnerBase
 
     private static string GetSolutionRelativeContentRoot(
         string solutionRelativePath,
-        string solutionName = "*.sln")
+        string solutionName = "*.slnx")
     {
         ArgumentNullException.ThrowIfNull(solutionRelativePath);
 
@@ -56,5 +56,4 @@ public class ApiTestRunner : ApiTestRunnerBase
 }
 
 [CollectionDefinition("ApiTests")]
-public class ApiTestsCollection : ICollectionFixture<ApiTestRunner>
-{}
+public class ApiTestsCollection : ICollectionFixture<ApiTestRunner>;
