@@ -196,7 +196,7 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
     [Fact]
     public async Task SwaggerUIMiddleware_Returns_ExpectedAssetContents()
     {
-        var site = new TestSite(typeof(Basic.Startup));
+        var site = new TestSite(typeof(Basic.Startup), outputHelper);
         using var client = site.BuildClient();
 
         foreach (var diskFile in Directory.EnumerateFiles("swagger-ui-dist"))
@@ -216,7 +216,7 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
     [Fact]
     public async Task SwaggerUIMiddleware_Returns_ExpectedAssetContents_GZipDirectly()
     {
-        var site = new TestSite(typeof(Basic.Startup));
+        var site = new TestSite(typeof(Basic.Startup), outputHelper);
         using var client = site.BuildClient();
 
         Assert.NotEmpty(EnumerateEmbeddedUIFiles());
@@ -240,7 +240,7 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
     [Fact]
     public async Task SwaggerUIMiddleware_Returns_ExpectedAssetContents_NotModified()
     {
-        var site = new TestSite(typeof(Basic.Startup));
+        var site = new TestSite(typeof(Basic.Startup), outputHelper);
         using var client = site.BuildClient();
 
         Assert.NotEmpty(EnumerateEmbeddedUIFiles());

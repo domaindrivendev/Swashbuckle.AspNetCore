@@ -168,7 +168,7 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
     [Fact]
     public async Task ReDocMiddleware_Returns_ExpectedAssetContents()
     {
-        var site = new TestSite(typeof(ReDocApp.Startup));
+        var site = new TestSite(typeof(ReDocApp.Startup), outputHelper);
         using var client = site.BuildClient();
 
         using var htmlResponse = await client.GetAsync("/Api-Docs/redoc.standalone.js", TestContext.Current.CancellationToken);
@@ -183,7 +183,7 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
     [Fact]
     public async Task ReDocMiddleware_Returns_ExpectedAssetContents_GZipDirectly()
     {
-        var site = new TestSite(typeof(ReDocApp.Startup));
+        var site = new TestSite(typeof(ReDocApp.Startup), outputHelper);
         using var client = site.BuildClient();
 
         using var requestMessage = new HttpRequestMessage(HttpMethod.Get, "/Api-Docs/redoc.standalone.js");

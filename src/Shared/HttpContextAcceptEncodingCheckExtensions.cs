@@ -11,14 +11,11 @@ namespace Swashbuckle.AspNetCore;
 /// </summary>
 internal static partial class HttpContextAcceptEncodingCheckExtensions
 {
-#if NET
     private static readonly Regex s_gzipAcceptedCheckRegex = GetGZipAcceptedCheckRegex();
 
     [GeneratedRegex(@"(^|,)\s*gzip\s*(;|,|$)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
     private static partial Regex GetGZipAcceptedCheckRegex();
-#else
-    private static readonly Regex s_gzipAcceptedCheckRegex = new(@"(^|,)\s*gzip\s*(;|,|$)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-#endif
+
 
     /// <summary>
     /// Check is the <paramref name="httpContext"/> support gzip response
@@ -27,11 +24,7 @@ internal static partial class HttpContextAcceptEncodingCheckExtensions
     /// <returns>is gzip response accepted</returns>
     public static bool IsGZipAccepted(this HttpContext httpContext)
     {
-#if NET
         return IsGZipAccepted(httpContext.Request.Headers.AcceptEncoding);
-#else
-        return IsGZipAccepted(httpContext.Request.Headers["Accept-Encoding"]);
-#endif
     }
 
     private static bool IsGZipAccepted(string? acceptEncoding) => !string.IsNullOrWhiteSpace(acceptEncoding) && s_gzipAcceptedCheckRegex.IsMatch(acceptEncoding);

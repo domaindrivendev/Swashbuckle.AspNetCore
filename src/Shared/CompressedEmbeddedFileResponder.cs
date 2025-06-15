@@ -6,10 +6,7 @@ using Microsoft.AspNetCore.StaticFiles;
 using System.IO.Compression;
 using System.Security.Cryptography;
 using Microsoft.Net.Http.Headers;
-
-#if NET
 using System.Collections.Frozen;
-#endif
 
 namespace Swashbuckle.AspNetCore;
 
@@ -19,13 +16,7 @@ internal class CompressedEmbeddedFileResponder
     private readonly string _cacheControlHeaderValue;
     private readonly string _pathPrefix;
     private readonly FileExtensionContentTypeProvider _contentTypeProvider = new();
-
-#if NET
-
     private readonly FrozenDictionary<string, ResourceIndexCache> _resourceIndexes;
-#else
-    private readonly Dictionary<string, ResourceIndexCache> _resourceIndexes;
-#endif
 
     public CompressedEmbeddedFileResponder(Assembly assembly, string resourceNamePrefix, string pathPrefix, TimeSpan? cacheLifetime)
     {
@@ -41,11 +32,7 @@ internal class CompressedEmbeddedFileResponder
                                       .Where(name => name.StartsWith(resourceNamePrefix, StringComparison.Ordinal))
                                       .ToDictionary(name => name.Substring(resourceNamePrefix.Length), name => new ResourceIndexCache(name), StringComparer.Ordinal);
 
-#if NET
         _resourceIndexes = resourceIndexes.ToFrozenDictionary();
-#else
-        _resourceIndexes = resourceIndexes;
-#endif
     }
 
     public async Task<bool> TryRespondWithFileAsync(HttpContext httpContext)
@@ -64,11 +51,7 @@ internal class CompressedEmbeddedFileResponder
             var (etag, Length) = GetDecompressContentETag(resourceIndexCache);
 
             var responseHeaders = httpContext.Response.Headers;
-#if NET
             var ifNoneMatch = httpContext.Request.Headers.IfNoneMatch.ToString();
-#else
-            var ifNoneMatch = httpContext.Request.Headers["If-None-Match"].ToString();
-#endif
             if (ifNoneMatch == etag)
             {
                 httpContext.Response.StatusCode = StatusCodes.Status304NotModified;
@@ -78,22 +61,13 @@ internal class CompressedEmbeddedFileResponder
             var responseWithGZip = httpContext.IsGZipAccepted();
             if (responseWithGZip)
             {
-#if NET
                 responseHeaders.ContentEncoding = "gzip";
-#else
-                responseHeaders["Content-Encoding"] = "gzip";
-#endif
             }
 
-#if NET
             responseHeaders.ContentType = contentType;
             responseHeaders.ETag = etag;
             responseHeaders.CacheControl = _cacheControlHeaderValue;
-#else
-            responseHeaders["Content-Type"] = contentType;
-            responseHeaders["ETag"] = etag;
-            responseHeaders["Cache-Control"] = _cacheControlHeaderValue;
-#endif
+
             using var stream = OpenResourceStream(resourceIndexCache);
             if (responseWithGZip)
             {

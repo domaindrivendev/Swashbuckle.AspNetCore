@@ -1,13 +1,10 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using System.Reflection;
-using System.Security.Cryptography;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Swashbuckle.AspNetCore.SwaggerUI;
 
