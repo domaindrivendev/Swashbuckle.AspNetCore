@@ -129,6 +129,7 @@ jobs:
       with:
         subject-path: |
           ./artifacts/Swashbuckle.AspNetCore.spdx.json
+          ./artifacts/bin/Swashbuckle.AspNetCore*/release_*/**/Swashbuckle.AspNetCore*.dll
           ./artifacts/package/release/*
 
     - name: Publish NuGet packages
