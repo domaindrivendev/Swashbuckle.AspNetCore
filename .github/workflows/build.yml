@@ -111,6 +111,14 @@ jobs:
         flags: ${{ runner.os }}
         token: ${{ secrets.CODECOV_TOKEN }}
 
+    - name: Generate SBOM
+      uses: anchore/sbom-action@e11c554f704a0b820cbf8c51673f6945e0731532 # v0.20.0
+      with:
+        artifact-name: build-${{ matrix.os_name }}.spdx.json
+        output-file: ./artifacts/build.spdx.json
+        path: ./artifacts/bin
+        upload-release-assets: ${{ runner.os == 'Windows' }}
+
     - name: Attest artifacts
       uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2.4.0
       if: |
@@ -118,7 +126,9 @@ jobs:
         github.event.repository.fork == false &&
         (github.ref_name == github.event.repository.default_branch || startsWith(github.ref, 'refs/tags/v'))
       with:
-        subject-path: ./artifacts/package/release/*
+        subject-path: |
+          ./artifacts/build.spdx.json
+          ./artifacts/package/release/*
 
     - name: Publish NuGet packages
       uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
