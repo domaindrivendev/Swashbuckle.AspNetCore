@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "swagger-ui-dist": "5.24.1"
+    "swagger-ui-dist": "5.24.2"
   },
   "scripts": {
     "postinstall": "node scripts/remove-source-map-links.js"
