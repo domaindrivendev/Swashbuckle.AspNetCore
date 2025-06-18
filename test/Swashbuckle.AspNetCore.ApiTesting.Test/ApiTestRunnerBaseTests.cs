@@ -54,9 +54,9 @@ public class ApiTestRunnerBaseTests
                 {
                     ["/api/products"] = new OpenApiPathItem
                     {
-                        Operations = new Dictionary<OperationType, OpenApiOperation>
+                        Operations = new Dictionary<HttpMethod, OpenApiOperation>
                         {
-                            [OperationType.Get] = new OpenApiOperation
+                            [HttpMethod.Get] = new OpenApiOperation
                             {
                                 OperationId = "GetProducts",
                                 Parameters =
@@ -110,9 +110,9 @@ public class ApiTestRunnerBaseTests
                 {
                     ["/api/products"] = new OpenApiPathItem
                     {
-                        Operations = new Dictionary<OperationType, OpenApiOperation>
+                        Operations = new Dictionary<HttpMethod, OpenApiOperation>
                         {
-                            [OperationType.Get] = new OpenApiOperation
+                            [HttpMethod.Get] = new OpenApiOperation
                             {
                                 OperationId = "GetProducts",
                                 Responses = new OpenApiResponses
