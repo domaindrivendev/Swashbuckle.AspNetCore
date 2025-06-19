@@ -86,12 +86,13 @@ public class JsonSerializerSchemaGeneratorTests
     }
 
     [Theory]
-    [InlineData(typeof(IntEnum), "int32", false, "2", "4", "8")]
-    [InlineData(typeof(LongEnum), "int64", false, "2", "4", "8")]
+    [InlineData(typeof(IntEnum), "int32", "2", "4", "8")]
+    [InlineData(typeof(LongEnum), "int64", "2", "4", "8")]
+    [InlineData(typeof(IntEnum?), "int32", "2", "4", "8")]
+    [InlineData(typeof(LongEnum?), "int64", "2", "4", "8")]
     public void GenerateSchema_GeneratesReferencedEnumSchema_IfEnumOrNullableEnumType(
         Type type,
         string expectedFormat,
-        bool expectedNullable,
         params string[] expectedEnumAsJson)
     {
         var schemaRepository = new SchemaRepository();
@@ -102,7 +103,35 @@ public class JsonSerializerSchemaGeneratorTests
         var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
         Assert.Equal(JsonSchemaTypes.Integer, schema.Type);
         Assert.Equal(expectedFormat, schema.Format);
-        Assert.Equal(expectedNullable, schema.Nullable);
+        Assert.False(schema.Nullable);
+        Assert.NotNull(schema.Enum);
+        Assert.Equal(expectedEnumAsJson, schema.Enum.Select(openApiAny => openApiAny.ToJson()));
+    }
+
+    [Theory]
+    [InlineData(typeof(IntEnum?), "int32", "2", "4", "8")]
+    [InlineData(typeof(LongEnum?), "int64", "2", "4", "8")]
+    public void GenerateSchema_GeneratesReferencedEnumSchemaWithOneOf_IfEnumOrNullableEnumTypeAndOneOfEnabled(
+        Type type,
+        string expectedFormat,
+        params string[] expectedEnumAsJson)
+    {
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Subject(o => o.UseOneOfForNullableEnums = true).GenerateSchema(type, schemaRepository);
+
+        Assert.Null(referenceSchema.Reference);
+        Assert.True(referenceSchema.Nullable);
+        Assert.NotNull(referenceSchema.OneOf);
+        Assert.Equal(2, referenceSchema.OneOf.Count);
+        Assert.NotNull(referenceSchema.OneOf[1].Enum);
+        Assert.Single(referenceSchema.OneOf[1].Enum);
+        Assert.Null(referenceSchema.OneOf[1].Enum[0]);
+
+        var schema = schemaRepository.Schemas[referenceSchema.OneOf[0].Reference.Id];
+        Assert.Equal(JsonSchemaTypes.Integer, schema.Type);
+        Assert.Equal(expectedFormat, schema.Format);
+        Assert.False(schema.Nullable);
         Assert.NotNull(schema.Enum);
         Assert.Equal(expectedEnumAsJson, schema.Enum.Select(openApiAny => openApiAny.ToJson()));
     }

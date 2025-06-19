@@ -299,6 +299,26 @@ public class NewtonsoftSchemaGeneratorTests
     }
 
     [Fact]
+    public void GenerateSchema_DoesSetNullableFlag_IfReferencedEnumAndOneOfEnabled()
+    {
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Subject(o => o.UseOneOfForNullableEnums = true).GenerateSchema(typeof(TypeWithNullableProperties), schemaRepository);
+
+        var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+        const string propertyName = nameof(TypeWithNullableProperties.NullableIntEnumProperty);
+        Assert.True(schema.Properties[propertyName].Nullable);
+        Assert.Null(schema.Properties[propertyName].Reference);
+        Assert.NotNull(schema.Properties[propertyName].OneOf);
+        Assert.Equal(2, schema.Properties[propertyName].OneOf.Count);
+        Assert.NotNull(schema.Properties[propertyName].OneOf[0].Reference);
+        Assert.Equal("IntEnum", schema.Properties[propertyName].OneOf[0].Reference.Id);
+        Assert.NotNull(schema.Properties[propertyName].OneOf[1].Enum);
+        Assert.Single(schema.Properties[propertyName].OneOf[1].Enum);
+        Assert.Null(schema.Properties[propertyName].OneOf[1].Enum[0]);
+    }
+
+    [Fact]
     public void GenerateSchema_SetNullableFlag_IfInlineEnum()
     {
         var schemaRepository = new SchemaRepository();
@@ -307,6 +327,23 @@ public class NewtonsoftSchemaGeneratorTests
 
         var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
         Assert.True(schema.Properties[nameof(TypeWithNullableProperties.NullableIntEnumProperty)].Nullable);
+    }
+
+    [Fact]
+    public void GenerateSchema_AddNullEnumValue_IfInlineEnum()
+    {
+        var expectedEnumAsJson = new string[] { "2", "4", "8", null };
+
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Subject(o => o.UseInlineDefinitionsForEnums = true).GenerateSchema(typeof(TypeWithNullableProperties), schemaRepository);
+
+        Assert.Contains(referenceSchema.Reference.Id, schemaRepository.Schemas);
+        var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+        Assert.Contains(nameof(TypeWithNullableProperties.NullableIntEnumProperty), schema.Properties);
+        Assert.NotNull(schema.Properties[nameof(TypeWithNullableProperties.NullableIntEnumProperty)].Enum);
+        Assert.Equal(expectedEnumAsJson, schema.Properties[nameof(TypeWithNullableProperties.NullableIntEnumProperty)].Enum.Select(openApiAny => openApiAny?.ToJson()));
+
     }
 
     [Theory]
