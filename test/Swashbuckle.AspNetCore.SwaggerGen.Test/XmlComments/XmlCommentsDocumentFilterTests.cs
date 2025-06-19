@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 
@@ -178,15 +178,5 @@ public class XmlCommentsDocumentFilterTests
 
         Assert.NotNull(options);
         Assert.Contains(options.DocumentFilters, x => x is XmlCommentsDocumentFilter);
-    }
-
-    private sealed class DummyHostEnvironment : IWebHostEnvironment
-    {
-        public string WebRootPath { get; set; }
-        public IFileProvider WebRootFileProvider { get; set; }
-        public string ApplicationName { get; set; }
-        public IFileProvider ContentRootFileProvider { get; set; }
-        public string ContentRootPath { get; set; }
-        public string EnvironmentName { get; set; }
     }
 }
