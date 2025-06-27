@@ -18,5 +18,10 @@
       }
     }
   },
-  "components": { }
+  "components": { },
+  "tags": [
+    {
+      "name": "Fake"
+    }
+  ]
 }

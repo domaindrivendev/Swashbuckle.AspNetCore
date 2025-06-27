@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.OpenApi.Models;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -6,7 +7,8 @@ public class RequestBodyFilterContext(
     ApiParameterDescription bodyParameterDescription,
     IEnumerable<ApiParameterDescription> formParameterDescriptions,
     ISchemaGenerator schemaGenerator,
-    SchemaRepository schemaRepository)
+    SchemaRepository schemaRepository,
+    OpenApiDocument document)
 {
     public ApiParameterDescription BodyParameterDescription { get; } = bodyParameterDescription;
 
@@ -15,6 +17,8 @@ public class RequestBodyFilterContext(
     public ISchemaGenerator SchemaGenerator { get; } = schemaGenerator;
 
     public SchemaRepository SchemaRepository { get; } = schemaRepository;
+
+    public OpenApiDocument Document { get; } = document;
 
     public string DocumentName => SchemaRepository.DocumentName;
 }

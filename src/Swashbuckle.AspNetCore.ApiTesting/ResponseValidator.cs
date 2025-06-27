@@ -1,9 +1,10 @@
 ﻿using System.Collections.Specialized;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.Interfaces;
 
 namespace Swashbuckle.AspNetCore.ApiTesting;
 
-public class ResponseValidator(IEnumerable<IContentValidator> contentValidators)
+public sealed class ResponseValidator(IEnumerable<IContentValidator> contentValidators)
 {
     private readonly IEnumerable<IContentValidator> _contentValidators = contentValidators;
 
@@ -11,7 +12,7 @@ public class ResponseValidator(IEnumerable<IContentValidator> contentValidators)
         HttpResponseMessage response,
         OpenApiDocument openApiDocument,
         string pathTemplate,
-        OperationType operationType,
+        HttpMethod operationType,
         string expectedStatusCode)
     {
         var operationSpec = openApiDocument.GetOperationByPathAndType(pathTemplate, operationType, out _);
@@ -26,7 +27,7 @@ public class ResponseValidator(IEnumerable<IContentValidator> contentValidators)
             throw new ResponseDoesNotMatchSpecException($"Status code '{statusCode}' does not match expected value '{expectedStatusCode}'");
         }
 
-        ValidateHeaders(responseSpec.Headers, openApiDocument, response.Headers.ToNameValueCollection());
+        ValidateHeaders(responseSpec.Headers, response.Headers.ToNameValueCollection());
 
         if (responseSpec.Content != null && responseSpec.Content.Keys.Count != 0)
         {
@@ -35,10 +36,14 @@ public class ResponseValidator(IEnumerable<IContentValidator> contentValidators)
     }
 
     private static void ValidateHeaders(
-        IDictionary<string, OpenApiHeader> headerSpecs,
-        OpenApiDocument openApiDocument,
+        IDictionary<string, IOpenApiHeader> headerSpecs,
         NameValueCollection headerValues)
     {
+        if (headerSpecs is null)
+        {
+            return;
+        }
+
         foreach (var entry in headerSpecs)
         {
             var value = headerValues[entry.Key];
@@ -54,24 +59,16 @@ public class ResponseValidator(IEnumerable<IContentValidator> contentValidators)
                 continue;
             }
 
-            var schema = headerSpec.Schema.Reference != null ?
-                (OpenApiSchema)openApiDocument.ResolveReference(headerSpec.Schema.Reference)
-                : headerSpec.Schema;
-
-            if (value == null)
+            if (headerSpec.Schema is OpenApiSchema schema &&
+                !schema.TryParse(value, out object typedValue))
             {
-                continue;
-            }
-
-            if (!schema.TryParse(value, out object typedValue))
-            {
-                throw new ResponseDoesNotMatchSpecException($"Header '{entry.Key}' is not of type '{headerSpec.Schema.TypeIdentifier()}'");
+                throw new ResponseDoesNotMatchSpecException($"Header '{entry.Key}' is not of type '{schema.TypeIdentifier()}'");
             }
         }
     }
 
     private void ValidateContent(
-        IDictionary<string, OpenApiMediaType> contentSpecs,
+        Dictionary<string, OpenApiMediaType> contentSpecs,
         OpenApiDocument openApiDocument,
         HttpContent content)
     {

@@ -1,11 +1,11 @@
 ﻿using System.Text;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.Interfaces;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures;
 
 internal class TestEnumSchemaFilter : ISchemaFilter
 {
-    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+    public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
     {
         bool isEnumArgument = (context.Type?.GenericTypeArguments?.Length ?? 0) == 1 && context.Type.GenericTypeArguments.All(b => b.IsEnum);
         var isEnumArray = context.Type.IsArray && context.Type.GetElementType().IsEnum;
