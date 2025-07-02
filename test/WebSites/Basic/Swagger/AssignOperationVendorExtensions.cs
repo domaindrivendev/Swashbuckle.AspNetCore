@@ -1,4 +1,4 @@
-﻿using Microsoft.OpenApi.Any;
+﻿using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -8,6 +8,7 @@ public class AssignOperationVendorExtensions : IOperationFilter
 {
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
-        operation.Extensions.Add("x-purpose", new OpenApiString("test"));
+        operation.Extensions ??= [];
+        operation.Extensions.Add("x-purpose", new JsonNodeExtension("test"));
     }
 }

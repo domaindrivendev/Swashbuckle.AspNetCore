@@ -1,8 +1,8 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models.Interfaces;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
 public interface IRequestBodyFilter
 {
-    void Apply(OpenApiRequestBody requestBody, RequestBodyFilterContext context);
+    void Apply(IOpenApiRequestBody requestBody, RequestBodyFilterContext context);
 }

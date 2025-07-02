@@ -672,11 +672,12 @@ to inform the AutoRest tool how enums should be modelled when it generates the A
 ```csharp
 public class AutoRestSchemaFilter : ISchemaFilter
 {
-    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+    public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
     {
         var type = context.Type;
         if (type.IsEnum)
         {
+            schema.Extensions ??= [];
             schema.Extensions.Add(
                 "x-ms-enum",
                 new OpenApiObject
@@ -708,7 +709,7 @@ so you will need [a special JsonConverter, as shown in the .NET documentation](h
 ```csharp
 public class DictionaryTKeyEnumTValueSchemaFilter : ISchemaFilter
 {
-  public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+  public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
   {
     // Only run for fields that are a Dictionary<Enum, TValue>
     if (!context.Type.IsGenericType || !context.Type.GetGenericTypeDefinition().IsAssignableFrom(typeof(Dictionary<,>)))
