@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 

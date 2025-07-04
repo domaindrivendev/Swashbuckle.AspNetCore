@@ -1,7 +1,6 @@
 ﻿using System.Net;
 using System.Text;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Models.Interfaces;
+using Microsoft.OpenApi;
 using Xunit;
 
 namespace Swashbuckle.AspNetCore.ApiTesting.Test;
@@ -214,7 +213,7 @@ public class ResponseValidatorTests
                             Schema = new OpenApiSchema
                             {
                                 Type = JsonSchemaTypes.Object,
-                                Required = [ "prop1", "prop2" ],
+                                Required = new SortedSet<string> { "prop1", "prop2" },
                             }
                         }
                     }
@@ -251,13 +250,13 @@ public class ResponseValidatorTests
             },
             Components = new OpenApiComponents
             {
-                Schemas = []
+                Schemas = new Dictionary<string, IOpenApiSchema>(),
             }
         };
     }
 
     private static ResponseValidator Subject(IEnumerable<IContentValidator> contentValidators = null)
     {
-        return new ResponseValidator(contentValidators ?? []);
+        return new(contentValidators ?? []);
     }
 }

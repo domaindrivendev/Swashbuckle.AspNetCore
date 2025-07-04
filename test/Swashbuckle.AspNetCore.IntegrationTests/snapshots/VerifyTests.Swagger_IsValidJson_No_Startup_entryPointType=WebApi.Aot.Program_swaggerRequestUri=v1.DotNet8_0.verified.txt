@@ -68,8 +68,8 @@
           },
           "dueBy": {
             "type": "string",
-            "nullable": true,
-            "format": "date"
+            "format": "date",
+            "nullable": true
           },
           "isComplete": {
             "type": "boolean"

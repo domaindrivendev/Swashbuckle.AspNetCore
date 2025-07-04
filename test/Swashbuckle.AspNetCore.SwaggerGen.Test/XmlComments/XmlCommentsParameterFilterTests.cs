@@ -1,6 +1,6 @@
 ﻿using System.Xml.XPath;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 #if !NET10_0_OR_GREATER
 using Swashbuckle.AspNetCore.TestSupport;
 #endif

@@ -1000,8 +1000,8 @@
         "properties": {
           "street": {
             "type": "string",
-            "nullable": true,
-            "description": "Description for Street"
+            "description": "Description for Street",
+            "nullable": true
           },
           "city": {
             "type": "string",
@@ -1023,8 +1023,8 @@
         "properties": {
           "paramOne": {
             "type": "string",
-            "nullable": true,
-            "format": "uuid"
+            "format": "uuid",
+            "nullable": true
           },
           "paramTwo": {
             "type": "string",
@@ -1032,8 +1032,8 @@
           },
           "paramThree": {
             "type": "string",
-            "nullable": true,
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "paramFour": {
             "type": "string",
@@ -1041,8 +1041,8 @@
           },
           "paramFive": {
             "type": "string",
-            "nullable": true,
-            "format": "date"
+            "format": "date",
+            "nullable": true
           },
           "paramSix": {
             "type": "string",
@@ -1050,8 +1050,8 @@
           },
           "paramSeven": {
             "type": "string",
-            "nullable": true,
-            "format": "time"
+            "format": "time",
+            "nullable": true
           },
           "paramEight": {
             "type": "string",
@@ -1065,8 +1065,8 @@
           },
           "paramEleven": {
             "type": "number",
-            "nullable": true,
-            "format": "double"
+            "format": "double",
+            "nullable": true
           },
           "paramTwelve": {
             "type": "number",
@@ -1084,8 +1084,8 @@
         "properties": {
           "currencyFrom": {
             "type": "string",
-            "nullable": true,
-            "description": "Currency From"
+            "description": "Currency From",
+            "nullable": true
           },
           "currencyTo": {
             "type": "string",
@@ -1126,10 +1126,10 @@
         "properties": {
           "currenciesRates": {
             "type": "array",
-            "nullable": true,
             "items": {
               "$ref": "#/components/schemas/CurrenciesRate"
-            }
+            },
+            "nullable": true
           },
           "isUpdated": {
             "type": "boolean",
@@ -1157,13 +1157,13 @@
         "properties": {
           "firstName": {
             "type": "string",
-            "nullable": true,
-            "description": "Description for FirstName"
+            "description": "Description for FirstName",
+            "nullable": true
           },
           "lastName": {
             "type": "string",
-            "nullable": true,
-            "description": "Description for LastName"
+            "description": "Description for LastName",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1178,8 +1178,8 @@
           },
           "description": {
             "type": "string",
-            "nullable": true,
-            "description": "Describes the product"
+            "description": "Describes the product",
+            "nullable": true
           }
         },
         "additionalProperties": false,

@@ -1,6 +1,4 @@
-﻿using Microsoft.OpenApi.Extensions;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Models.Interfaces;
+﻿using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Newtonsoft.Test;
@@ -11,7 +9,7 @@ public class VendorExtensionsSchemaFilter : ISchemaFilter
     {
         if (schema is OpenApiSchema openApiSchema)
         {
-            openApiSchema.Extensions ??= [];
+            openApiSchema.Extensions ??= new Dictionary<string, IOpenApiExtension>();
             openApiSchema.Extensions.Add("X-foo", new JsonNodeExtension("bar"));
         }
     }

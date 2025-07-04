@@ -1,7 +1,6 @@
 ﻿using System.Globalization;
 using System.Xml.XPath;
-using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.TestSupport;
+using Microsoft.OpenApi;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 

@@ -1,1 +1,5 @@
-﻿
+﻿Swashbuckle.AspNetCore.Swagger.IAsyncSwaggerProvider.GetSwaggerAsync(string documentName, string host = null, string basePath = null) -> System.Threading.Tasks.Task<Microsoft.OpenApi.OpenApiDocument>
+Swashbuckle.AspNetCore.Swagger.ISwaggerDocumentSerializer.SerializeDocument(Microsoft.OpenApi.OpenApiDocument document, Microsoft.OpenApi.IOpenApiWriter writer, Microsoft.OpenApi.OpenApiSpecVersion specVersion) -> void
+Swashbuckle.AspNetCore.Swagger.ISwaggerProvider.GetSwagger(string documentName, string host = null, string basePath = null) -> Microsoft.OpenApi.OpenApiDocument
+Swashbuckle.AspNetCore.Swagger.SwaggerEndpointOptions.PreSerializeFilters.get -> System.Collections.Generic.List<System.Action<Microsoft.OpenApi.OpenApiDocument, Microsoft.AspNetCore.Http.HttpRequest>>
+Swashbuckle.AspNetCore.Swagger.SwaggerOptions.PreSerializeFilters.get -> System.Collections.Generic.List<System.Action<Microsoft.OpenApi.OpenApiDocument, Microsoft.AspNetCore.Http.HttpRequest>>
