@@ -1,4 +1,4 @@
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Microsoft.OpenApi.Reader;
 
 namespace Swashbuckle.AspNetCore;

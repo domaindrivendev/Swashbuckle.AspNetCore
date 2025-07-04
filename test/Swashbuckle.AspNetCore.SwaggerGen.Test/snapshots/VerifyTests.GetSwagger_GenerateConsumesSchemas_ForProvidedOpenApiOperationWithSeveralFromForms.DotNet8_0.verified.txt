@@ -57,13 +57,13 @@
           },
           "EnumArrayWithDefault": {
             "type": "array",
-            "nullable": true,
             "items": {
               "$ref": "#/components/schemas/IntEnum"
             },
             "default": [
               4
-            ]
+            ],
+            "nullable": true
           }
         },
         "additionalProperties": false

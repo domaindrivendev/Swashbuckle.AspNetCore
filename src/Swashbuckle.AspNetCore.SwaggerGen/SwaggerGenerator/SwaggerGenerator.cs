@@ -6,11 +6,9 @@ using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Models.Interfaces;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Swagger;
-using Microsoft.OpenApi.Models.References;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -128,52 +126,7 @@ public class SwaggerGenerator(
 
     private void SortDocument(OpenApiDocument document)
     {
-        if (document.Components?.Schemas?.Count > 1)
-        {
-            document.Components.Schemas =
-                new SortedDictionary<string, IOpenApiSchema>(document.Components.Schemas, _options.SchemaComparer)
-                .ToDictionary((k) => k.Key, (v) => v.Value);
-        }
-
-        foreach (var schema in document.Components.Schemas.Values)
-        {
-            SortSchema(schema);
-        }
-
-        static void SortSchema(IOpenApiSchema schema)
-        {
-            if (schema is OpenApiSchema concrete)
-            {
-                if (concrete.Required is { Count: > 1 } required)
-                {
-                    concrete.Required = [.. new SortedSet<string>(required)];
-                }
-
-                if (concrete.AllOf is { Count: > 0 } allOf)
-                {
-                    foreach (var child in allOf)
-                    {
-                        SortSchema(child);
-                    }
-                }
-
-                if (concrete.AnyOf is { Count: > 0 } anyOf)
-                {
-                    foreach (var child in anyOf)
-                    {
-                        SortSchema(child);
-                    }
-                }
-
-                if (concrete.OneOf is { Count: > 0 } oneOf)
-                {
-                    foreach (var child in oneOf)
-                    {
-                        SortSchema(child);
-                    }
-                }
-            }
-        }
+        document.Components.Schemas = new SortedDictionary<string, IOpenApiSchema>(document.Components.Schemas, _options.SchemaComparer);
     }
 
     private (DocumentFilterContext, OpenApiDocument) GetSwaggerDocumentWithoutPaths(string documentName, string host = null, string basePath = null)
@@ -584,7 +537,7 @@ public class SwaggerGenerator(
 
         if (names.Length > 0)
         {
-            document.Tags ??= [];
+            document.Tags ??= new HashSet<OpenApiTag>();
             foreach (var name in names)
             {
                 document.Tags.Add(new OpenApiTag { Name = name });
@@ -1026,7 +979,7 @@ public class SwaggerGenerator(
              {
                  Type = JsonSchemaTypes.Object,
                  Properties = properties,
-                 Required = [.. new SortedSet<string>(requiredPropertyNames)],
+                 Required = new SortedSet<string>(requiredPropertyNames),
              };
     }
 

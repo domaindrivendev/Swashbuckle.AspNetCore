@@ -1,6 +1,5 @@
 ﻿using System.Text.Json.Nodes;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Models.Interfaces;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Basic.Swagger;

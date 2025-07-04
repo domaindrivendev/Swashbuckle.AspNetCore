@@ -9,7 +9,6 @@ static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.AddP
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.AddRequestBodyAsyncFilterInstance<TFilter>(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, TFilter filterInstance) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.AddRequestBodyFilterInstance<TFilter>(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, TFilter filterInstance) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.AddSchemaFilterInstance<TFilter>(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, TFilter filterInstance) -> void
-static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.AddServer(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, Microsoft.OpenApi.Models.OpenApiServer server) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.CustomOperationIds(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, System.Func<Microsoft.AspNetCore.Mvc.ApiExplorer.ApiDescription, string> operationIdSelector) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.CustomSchemaIds(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, System.Func<System.Type, string> schemaIdSelector) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.DescribeAllParametersInCamelCase(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions) -> void
@@ -36,7 +35,6 @@ static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.Sele
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.SelectSubTypesUsing(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, System.Func<System.Type, System.Collections.Generic.IEnumerable<System.Type>> customSelector) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.SortSchemasWith(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, System.Collections.Generic.IComparer<string> schemaComparer) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.SupportNonNullableReferenceTypes(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions) -> void
-static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.SwaggerDoc(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, string name, Microsoft.OpenApi.Models.OpenApiInfo info) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.TagActionsBy(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, System.Func<Microsoft.AspNetCore.Mvc.ApiExplorer.ApiDescription, System.Collections.Generic.IList<string>> tagsSelector) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.UseAllOfForInheritance(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions) -> void
 static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.UseAllOfToExtendReferenceSchemas(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions) -> void
@@ -125,13 +123,9 @@ Swashbuckle.AspNetCore.SwaggerGen.FilterDescriptor.Type.get -> System.Type
 Swashbuckle.AspNetCore.SwaggerGen.FilterDescriptor.Type.set -> void
 Swashbuckle.AspNetCore.SwaggerGen.IDictionary<T>
 Swashbuckle.AspNetCore.SwaggerGen.IDocumentAsyncFilter
-Swashbuckle.AspNetCore.SwaggerGen.IDocumentAsyncFilter.ApplyAsync(Microsoft.OpenApi.Models.OpenApiDocument swaggerDoc, Swashbuckle.AspNetCore.SwaggerGen.DocumentFilterContext context, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
 Swashbuckle.AspNetCore.SwaggerGen.IDocumentFilter
-Swashbuckle.AspNetCore.SwaggerGen.IDocumentFilter.Apply(Microsoft.OpenApi.Models.OpenApiDocument swaggerDoc, Swashbuckle.AspNetCore.SwaggerGen.DocumentFilterContext context) -> void
 Swashbuckle.AspNetCore.SwaggerGen.IOperationAsyncFilter
-Swashbuckle.AspNetCore.SwaggerGen.IOperationAsyncFilter.ApplyAsync(Microsoft.OpenApi.Models.OpenApiOperation operation, Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext context, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task
 Swashbuckle.AspNetCore.SwaggerGen.IOperationFilter
-Swashbuckle.AspNetCore.SwaggerGen.IOperationFilter.Apply(Microsoft.OpenApi.Models.OpenApiOperation operation, Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext context) -> void
 Swashbuckle.AspNetCore.SwaggerGen.IParameterAsyncFilter
 Swashbuckle.AspNetCore.SwaggerGen.IParameterFilter
 Swashbuckle.AspNetCore.SwaggerGen.IRequestBodyAsyncFilter
@@ -214,8 +208,6 @@ Swashbuckle.AspNetCore.SwaggerGen.SwaggerApplicationConvention.Apply(Microsoft.A
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerApplicationConvention.SwaggerApplicationConvention() -> void
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GetDocumentNames() -> System.Collections.Generic.IList<string>
-Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GetSwagger(string documentName, string host = null, string basePath = null) -> Microsoft.OpenApi.Models.OpenApiDocument
-Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.GetSwaggerAsync(string documentName, string host = null, string basePath = null) -> System.Threading.Tasks.Task<Microsoft.OpenApi.Models.OpenApiDocument>
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.SwaggerGenerator(Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions options, Microsoft.AspNetCore.Mvc.ApiExplorer.IApiDescriptionGroupCollectionProvider apiDescriptionsProvider, Swashbuckle.AspNetCore.SwaggerGen.ISchemaGenerator schemaGenerator) -> void
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenerator.SwaggerGenerator(Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions options, Microsoft.AspNetCore.Mvc.ApiExplorer.IApiDescriptionGroupCollectionProvider apiDescriptionsProvider, Swashbuckle.AspNetCore.SwaggerGen.ISchemaGenerator schemaGenerator, Microsoft.AspNetCore.Authentication.IAuthenticationSchemeProvider authenticationSchemeProvider) -> void
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorException
@@ -257,11 +249,9 @@ Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.SchemaComparer.set -> 
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.SecurityRequirements.set -> void
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.SecuritySchemes.set -> void
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.SecuritySchemesSelector.set -> void
-Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.Servers.get -> System.Collections.Generic.List<Microsoft.OpenApi.Models.OpenApiServer>
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.Servers.set -> void
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.SortKeySelector.get -> System.Func<Microsoft.AspNetCore.Mvc.ApiExplorer.ApiDescription, string>
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.SortKeySelector.set -> void
-Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.SwaggerDocs.get -> System.Collections.Generic.IDictionary<string, Microsoft.OpenApi.Models.OpenApiInfo>
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.SwaggerDocs.set -> void
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.SwaggerGeneratorOptions() -> void
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGeneratorOptions.TagsSelector.get -> System.Func<Microsoft.AspNetCore.Mvc.ApiExplorer.ApiDescription, System.Collections.Generic.IList<string>>
@@ -286,11 +276,9 @@ Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions.SwaggerGeneratorOptions.set 
 Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions.SwaggerGenOptions() -> void
 Swashbuckle.AspNetCore.SwaggerGen.TypeExtensions
 Swashbuckle.AspNetCore.SwaggerGen.XmlCommentsDocumentFilter
-Swashbuckle.AspNetCore.SwaggerGen.XmlCommentsDocumentFilter.Apply(Microsoft.OpenApi.Models.OpenApiDocument swaggerDoc, Swashbuckle.AspNetCore.SwaggerGen.DocumentFilterContext context) -> void
 Swashbuckle.AspNetCore.SwaggerGen.XmlCommentsNodeNameHelper
 Swashbuckle.AspNetCore.SwaggerGen.XmlCommentsNodeNameHelper.XmlCommentsNodeNameHelper() -> void
 Swashbuckle.AspNetCore.SwaggerGen.XmlCommentsOperationFilter
-Swashbuckle.AspNetCore.SwaggerGen.XmlCommentsOperationFilter.Apply(Microsoft.OpenApi.Models.OpenApiOperation operation, Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext context) -> void
 Swashbuckle.AspNetCore.SwaggerGen.XmlCommentsParameterFilter
 Swashbuckle.AspNetCore.SwaggerGen.XmlCommentsRequestBodyFilter
 Swashbuckle.AspNetCore.SwaggerGen.XmlCommentsSchemaFilter

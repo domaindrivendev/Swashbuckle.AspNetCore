@@ -5,9 +5,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Models.Interfaces;
-using Microsoft.OpenApi.Models.References;
+using Microsoft.OpenApi;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -380,8 +378,8 @@ public class SchemaGenerator(
         var schema = new OpenApiSchema
         {
             Type = JsonSchemaTypes.Object,
-            Properties = [],
-            Required = [],
+            Properties = new Dictionary<string, IOpenApiSchema>(),
+            Required = new SortedSet<string>(),
             AdditionalPropertiesAllowed = false
         };
 
@@ -471,7 +469,7 @@ public class SchemaGenerator(
 
         if (schema.Required?.Count > 1)
         {
-            schema.Required = [.. new SortedSet<string>(schema.Required)];
+            schema.Required = new SortedSet<string>(schema.Required);
         }
 
         return root;
@@ -524,7 +522,7 @@ public class SchemaGenerator(
             {
                 if (GenerateConcreteSchema(knownTypeDataContract, schemaRepository) is OpenApiSchemaReference reference)
                 {
-                    discriminator.Mapping ??= [];
+                    discriminator.Mapping ??= new Dictionary<string, OpenApiSchemaReference>();
                     discriminator.Mapping.Add(discriminatorValue, reference);
                 }
             }

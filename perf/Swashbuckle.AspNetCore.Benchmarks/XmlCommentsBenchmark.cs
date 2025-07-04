@@ -4,7 +4,7 @@ using System.Xml.XPath;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerGen.Test;
 using Swashbuckle.AspNetCore.TestSupport;

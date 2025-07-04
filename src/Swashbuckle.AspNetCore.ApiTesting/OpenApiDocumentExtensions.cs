@@ -1,5 +1,4 @@
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Models.Interfaces;
+using Microsoft.OpenApi;
 
 namespace Swashbuckle.AspNetCore.ApiTesting;
 
