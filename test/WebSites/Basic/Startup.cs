@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Reflection;
 using Basic.Swagger;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace Basic;
 

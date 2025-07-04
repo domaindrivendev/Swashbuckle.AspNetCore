@@ -1,5 +1,4 @@
 static Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptionsExtensions.AddOpenApiFile(this Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptions options, string documentName, string filePath) -> void
-static Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptionsExtensions.GetOpenApiDocument(this Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptions options, string documentName) -> Microsoft.OpenApi.Models.OpenApiDocument
 Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerBase
 Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerBase.ApiTestRunnerBase() -> void
 Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerBase.Configure(System.Action<Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptions> setupAction) -> void
@@ -11,14 +10,12 @@ Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptions.FileOutputRoot.get -> str
 Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptions.FileOutputRoot.set -> void
 Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptions.GenerateOpenApiFiles.get -> bool
 Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptions.GenerateOpenApiFiles.set -> void
-Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptions.OpenApiDocs.get -> System.Collections.Generic.Dictionary<string, Microsoft.OpenApi.Models.OpenApiDocument>
 Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptionsExtensions
 Swashbuckle.AspNetCore.ApiTesting.ContentDoesNotMatchSpecException
 Swashbuckle.AspNetCore.ApiTesting.ContentDoesNotMatchSpecException.ContentDoesNotMatchSpecException(string message) -> void
 Swashbuckle.AspNetCore.ApiTesting.HttpHeadersExtensions
 Swashbuckle.AspNetCore.ApiTesting.IContentValidator
 Swashbuckle.AspNetCore.ApiTesting.IContentValidator.CanValidate(string mediaType) -> bool
-Swashbuckle.AspNetCore.ApiTesting.IContentValidator.Validate(Microsoft.OpenApi.Models.OpenApiMediaType mediaTypeSpec, Microsoft.OpenApi.Models.OpenApiDocument openApiDocument, System.Net.Http.HttpContent content) -> void
 Swashbuckle.AspNetCore.ApiTesting.IJsonValidator
 Swashbuckle.AspNetCore.ApiTesting.JsonAllOfValidator
 Swashbuckle.AspNetCore.ApiTesting.JsonAllOfValidator.JsonAllOfValidator(Swashbuckle.AspNetCore.ApiTesting.JsonValidator jsonValidator) -> void
@@ -31,7 +28,6 @@ Swashbuckle.AspNetCore.ApiTesting.JsonBooleanValidator.JsonBooleanValidator() ->
 Swashbuckle.AspNetCore.ApiTesting.JsonContentValidator
 Swashbuckle.AspNetCore.ApiTesting.JsonContentValidator.CanValidate(string mediaType) -> bool
 Swashbuckle.AspNetCore.ApiTesting.JsonContentValidator.JsonContentValidator() -> void
-Swashbuckle.AspNetCore.ApiTesting.JsonContentValidator.Validate(Microsoft.OpenApi.Models.OpenApiMediaType mediaTypeSpec, Microsoft.OpenApi.Models.OpenApiDocument openApiDocument, System.Net.Http.HttpContent content) -> void
 Swashbuckle.AspNetCore.ApiTesting.JsonNullValidator
 Swashbuckle.AspNetCore.ApiTesting.JsonNullValidator.JsonNullValidator() -> void
 Swashbuckle.AspNetCore.ApiTesting.JsonNumberValidator

@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Models.Interfaces;
+using Microsoft.OpenApi;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore;
 using Swashbuckle.AspNetCore.ApiTesting.Xunit;
@@ -33,7 +32,7 @@ public class CreateUserTests : ApiTestFixture<Startup>
                                 [ "email" ] = new OpenApiSchema { Type = JsonSchemaTypes.String },
                                 [ "password" ] = new OpenApiSchema { Type = JsonSchemaTypes.String },
                             },
-                            Required = [ "email", "password" ]
+                            Required = new SortedSet<string> { "email", "password" },
                         }
                     }
                 },

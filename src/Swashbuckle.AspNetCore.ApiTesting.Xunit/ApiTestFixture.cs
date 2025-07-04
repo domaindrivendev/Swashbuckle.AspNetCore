@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Xunit;
 
 namespace Swashbuckle.AspNetCore.ApiTesting.Xunit;

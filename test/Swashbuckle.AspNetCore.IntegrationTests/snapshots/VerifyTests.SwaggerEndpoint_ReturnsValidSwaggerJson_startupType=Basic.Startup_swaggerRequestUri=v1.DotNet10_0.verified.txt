@@ -1484,8 +1484,8 @@
           },
           "description": {
             "type": "string",
-            "nullable": true,
-            "description": "Describes the product"
+            "description": "Describes the product",
+            "nullable": true
           },
           "status": {
             "$ref": "#/components/schemas/ProductStatus"
@@ -1499,8 +1499,8 @@
             "minimum": 0.1,
             "exclusiveMinimum": true,
             "type": "number",
-            "nullable": true,
-            "format": "double"
+            "format": "double",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -1644,8 +1644,8 @@
           },
           "status": {
             "type": "integer",
-            "nullable": true,
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "detail": {
             "type": "string",
@@ -1657,13 +1657,13 @@
           },
           "errors": {
             "type": "object",
-            "nullable": true,
             "additionalProperties": {
               "type": "array",
               "items": {
                 "type": "string"
               }
-            }
+            },
+            "nullable": true
           }
         },
         "additionalProperties": { }

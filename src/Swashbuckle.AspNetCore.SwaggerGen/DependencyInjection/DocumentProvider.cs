@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Writers;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 

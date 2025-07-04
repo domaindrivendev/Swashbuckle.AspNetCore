@@ -1,6 +1,5 @@
 ﻿using System.Collections.Specialized;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Models.Interfaces;
+using Microsoft.OpenApi;
 
 namespace Swashbuckle.AspNetCore.ApiTesting;
 
@@ -68,7 +67,7 @@ public sealed class ResponseValidator(IEnumerable<IContentValidator> contentVali
     }
 
     private void ValidateContent(
-        Dictionary<string, OpenApiMediaType> contentSpecs,
+        IDictionary<string, OpenApiMediaType> contentSpecs,
         OpenApiDocument openApiDocument,
         HttpContent content)
     {
