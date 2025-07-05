@@ -6,9 +6,6 @@ using Microsoft.Extensions.Primitives;
 
 namespace Swashbuckle.AspNetCore;
 
-/// <summary>
-/// <see cref="HttpContext"/> Accept-Encoding check extensions
-/// </summary>
 internal static partial class HttpContextAcceptEncodingCheckExtensions
 {
     private static readonly Regex s_gzipAcceptedCheckRegex = GetGZipAcceptedCheckRegex();
