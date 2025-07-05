@@ -260,11 +260,13 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
         }
     }
 
-    private IEnumerable<(string ResourceName, string FileName)> EnumerateEmbeddedUIFiles()
+    private static List<(string ResourceName, string FileName)> GetEmbeddedUIFiles()
     {
         const string ResourcePrefix = "Swashbuckle.AspNetCore.IntegrationTests.Embedded.SwaggerUI.";
-        return typeof(SwaggerUIIntegrationTests).Assembly.GetManifestResourceNames()
-                                                         .Where(name => name.StartsWith(ResourcePrefix))
-                                                         .Select(name => (name, name.Substring(ResourcePrefix.Length)));
+        return typeof(SwaggerUIIntegrationTests).Assembly
+            .GetManifestResourceNames()
+            .Where(name => name.StartsWith(ResourcePrefix))
+            .Select(name => (name, name.Substring(ResourcePrefix.Length)))
+            .ToList();
     }
 }
