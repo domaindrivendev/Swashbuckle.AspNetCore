@@ -177,6 +177,7 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
         using var stream = await htmlResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
         using var rawFileStream = typeof(ReDocIntegrationTests).Assembly.GetManifestResourceStream("Swashbuckle.AspNetCore.IntegrationTests.Embedded.ReDoc.redoc.standalone.js");
 
+        Assert.NotNull(rawFileStream);
         Assert.Equal(SHA1.HashData(rawFileStream), SHA1.HashData(stream));
     }
 
@@ -188,6 +189,7 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
 
         using var requestMessage = new HttpRequestMessage(HttpMethod.Get, "/Api-Docs/redoc.standalone.js");
         requestMessage.Headers.AcceptEncoding.Add(new("gzip"));
+
         using var htmlResponse = await client.SendAsync(requestMessage, TestContext.Current.CancellationToken);
         Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
         Assert.Equal("gzip", htmlResponse.Content.Headers.ContentEncoding.Single());
@@ -196,6 +198,7 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
         using var gzipStream = new GZipStream(stream, CompressionMode.Decompress);
         using var rawFileStream = typeof(ReDocIntegrationTests).Assembly.GetManifestResourceStream("Swashbuckle.AspNetCore.IntegrationTests.Embedded.ReDoc.redoc.standalone.js");
 
+        Assert.NotNull(rawFileStream);
         Assert.Equal(SHA1.HashData(rawFileStream), SHA1.HashData(gzipStream));
     }
 }

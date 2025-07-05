@@ -1,38 +1,39 @@
 ﻿#nullable enable
 
-using Microsoft.AspNetCore.Http;
-using System.Reflection;
-using Microsoft.AspNetCore.StaticFiles;
-using System.IO.Compression;
-using System.Security.Cryptography;
-using Microsoft.Net.Http.Headers;
 using System.Collections.Frozen;
+using System.IO.Compression;
+using System.Reflection;
+using System.Security.Cryptography;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.Primitives;
+using Microsoft.Net.Http.Headers;
 
 namespace Swashbuckle.AspNetCore;
 
 internal class CompressedEmbeddedFileResponder
 {
     private readonly Assembly _assembly;
-    private readonly string _cacheControlHeaderValue;
-    private readonly string _pathPrefix;
+
+    private readonly StringValues _cacheControlHeaderValue;
+
     private readonly FileExtensionContentTypeProvider _contentTypeProvider = new();
-    private readonly FrozenDictionary<string, ResourceIndexCache> _resourceIndexes;
+
+    private readonly string _pathPrefix;
+
+    private readonly FrozenDictionary<string, ResourceIndexCache> _resourceMap;
 
     public CompressedEmbeddedFileResponder(Assembly assembly, string resourceNamePrefix, string pathPrefix, TimeSpan? cacheLifetime)
     {
         _assembly = assembly ?? throw new ArgumentNullException(nameof(assembly));
-        _pathPrefix = string.IsNullOrWhiteSpace(pathPrefix)
-                      ? string.Empty
-                      : pathPrefix == "/"
-                        ? string.Empty
-                        : pathPrefix.TrimEnd('/');
+        _pathPrefix = pathPrefix.TrimEnd('/');
         _cacheControlHeaderValue = GetCacheControlHeaderValue(cacheLifetime);
 
-        var resourceIndexes = assembly.GetManifestResourceNames()
-                                      .Where(name => name.StartsWith(resourceNamePrefix, StringComparison.Ordinal))
-                                      .ToDictionary(name => name.Substring(resourceNamePrefix.Length), name => new ResourceIndexCache(name), StringComparer.Ordinal);
+        var resourceMap = assembly.GetManifestResourceNames()
+                                  .Where(name => name.StartsWith(resourceNamePrefix, StringComparison.Ordinal))
+                                  .ToDictionary(name => name.Substring(resourceNamePrefix.Length), name => new ResourceIndexCache(name), StringComparer.Ordinal);
 
-        _resourceIndexes = resourceIndexes.ToFrozenDictionary();
+        _resourceMap = resourceMap.ToFrozenDictionary();
     }
 
     public async Task<bool> TryRespondWithFileAsync(HttpContext httpContext)
@@ -45,45 +46,46 @@ internal class CompressedEmbeddedFileResponder
 
         path = path.Substring(_pathPrefix.Length).Replace('/', '.');
 
-        if (_resourceIndexes.TryGetValue(path, out var resourceIndexCache))
+        if (!_resourceMap.TryGetValue(path, out var resourceIndexCache))
         {
-            var contentType = GetContentType(resourceIndexCache);
-            var (etag, Length) = GetDecompressContentETag(resourceIndexCache);
+            return false;
+        }
 
-            var responseHeaders = httpContext.Response.Headers;
-            var ifNoneMatch = httpContext.Request.Headers.IfNoneMatch.ToString();
-            if (ifNoneMatch == etag)
-            {
-                httpContext.Response.StatusCode = StatusCodes.Status304NotModified;
-                return true;
-            }
+        var contentType = GetContentType(resourceIndexCache);
+        var (etag, Length) = GetDecompressContentETag(resourceIndexCache);
 
-            var responseWithGZip = httpContext.IsGZipAccepted();
-            if (responseWithGZip)
-            {
-                responseHeaders.ContentEncoding = "gzip";
-            }
-
-            responseHeaders.ContentType = contentType;
-            responseHeaders.ETag = etag;
-            responseHeaders.CacheControl = _cacheControlHeaderValue;
-
-            using var stream = OpenResourceStream(resourceIndexCache);
-            if (responseWithGZip)
-            {
-                responseHeaders.ContentLength = stream.Length;
-                await stream.CopyToAsync(httpContext.Response.Body, 81920, httpContext.RequestAborted);
-            }
-            else
-            {
-                responseHeaders.ContentLength = Length;
-                using var gzipStream = new GZipStream(stream, CompressionMode.Decompress);
-                await gzipStream.CopyToAsync(httpContext.Response.Body, 81920, httpContext.RequestAborted);
-            }
-
+        var responseHeaders = httpContext.Response.Headers;
+        var ifNoneMatch = httpContext.Request.Headers.IfNoneMatch.ToString();
+        if (ifNoneMatch == etag)
+        {
+            httpContext.Response.StatusCode = StatusCodes.Status304NotModified;
             return true;
         }
-        return false;
+
+        var responseWithGZip = httpContext.IsGZipAccepted();
+        if (responseWithGZip)
+        {
+            responseHeaders.ContentEncoding = "gzip";
+        }
+
+        responseHeaders.ContentType = contentType;
+        responseHeaders.ETag = etag;
+        responseHeaders.CacheControl = _cacheControlHeaderValue;
+
+        using var stream = OpenResourceStream(resourceIndexCache);
+        if (responseWithGZip)
+        {
+            responseHeaders.ContentLength = stream.Length;
+            await stream.CopyToAsync(httpContext.Response.Body, httpContext.RequestAborted);
+        }
+        else
+        {
+            responseHeaders.ContentLength = Length;
+            using var gzipStream = new GZipStream(stream, CompressionMode.Decompress);
+            await gzipStream.CopyToAsync(httpContext.Response.Body, httpContext.RequestAborted);
+        }
+
+        return true;
     }
 
     private static string GetCacheControlHeaderValue(TimeSpan? cacheLifetime)
@@ -116,7 +118,6 @@ internal class CompressedEmbeddedFileResponder
 
     private (string ETag, long DecompressContentLength) GetDecompressContentETag(ResourceIndexCache resourceIndexCache)
     {
-        //Get decompress content and hash
         if (resourceIndexCache.ETag != null
             && resourceIndexCache.DecompressContentLength != null)
         {
@@ -132,8 +133,7 @@ internal class CompressedEmbeddedFileResponder
 
         resourceIndexCache.DecompressContentLength = memoryStream.Length;
 
-        using var sha1 = SHA1.Create();
-        var hashData = sha1.ComputeHash(memoryStream);
+        var hashData = SHA1.HashData(memoryStream);
 
         resourceIndexCache.ETag = $"\"{Convert.ToBase64String(hashData)}\"";
 
@@ -143,18 +143,17 @@ internal class CompressedEmbeddedFileResponder
     private Stream OpenResourceStream(ResourceIndexCache resourceIndexCache)
     {
         // Actually, since the name comes from GetManifestResourceNames(), the content can definitely be obtained
-        return _assembly.GetManifestResourceStream(resourceIndexCache.ResourceName)
-               ?? throw new InvalidOperationException($"Can not read resource \"{resourceIndexCache.ResourceName}\" in {_assembly}");
+        return _assembly.GetManifestResourceStream(resourceIndexCache.ResourceName)!;
     }
 
-    private class ResourceIndexCache(string resourceName)
+    private sealed class ResourceIndexCache(string resourceName)
     {
-        public string? ETag { get; set; }
-
         public string? ContentType { get; set; }
 
         public long? DecompressContentLength { get; set; }
 
-        public string ResourceName { get; } = resourceName ?? throw new ArgumentNullException(nameof(resourceName));
+        public string? ETag { get; set; }
+
+        public string ResourceName { get; } = resourceName;
     }
 }

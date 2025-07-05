@@ -32,7 +32,7 @@ internal sealed class ReDocMiddleware
             _jsonSerializerOptions = options.JsonSerializerOptions;
         }
 
-        var pathPrefix = options.RoutePrefix.StartsWith("/") ? options.RoutePrefix : $"/{options.RoutePrefix}";
+        var pathPrefix = options.RoutePrefix.StartsWith('/') ? options.RoutePrefix : $"/{options.RoutePrefix}";
         _compressedEmbeddedFileResponder = new(typeof(ReDocMiddleware).Assembly, EmbeddedFileNamespace, pathPrefix, _options.CacheLifetime);
     }
 

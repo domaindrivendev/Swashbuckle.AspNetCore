@@ -32,7 +32,7 @@ internal sealed partial class SwaggerUIMiddleware
             _jsonSerializerOptions = options.JsonSerializerOptions;
         }
 
-        var pathPrefix = options.RoutePrefix.StartsWith("/") ? options.RoutePrefix : $"/{options.RoutePrefix}";
+        var pathPrefix = options.RoutePrefix.StartsWith('/') ? options.RoutePrefix : $"/{options.RoutePrefix}";
         _compressedEmbeddedFileResponder = new(typeof(SwaggerUIMiddleware).Assembly, EmbeddedFileNamespace, pathPrefix, _options.CacheLifetime);
     }
 
