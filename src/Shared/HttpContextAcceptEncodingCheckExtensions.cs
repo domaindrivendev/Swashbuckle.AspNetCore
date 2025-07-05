@@ -16,11 +16,6 @@ internal static partial class HttpContextAcceptEncodingCheckExtensions
     [GeneratedRegex(@"(^|,)\s*gzip\s*(;|,|$)", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant)]
     private static partial Regex GetGZipAcceptedCheckRegex();
 
-    /// <summary>
-    /// Check is the <paramref name="httpContext"/> support gzip response
-    /// </summary>
-    /// <param name="httpContext"></param>
-    /// <returns>is gzip response accepted</returns>
     public static bool IsGZipAccepted(this HttpContext httpContext)
     {
         return IsGZipAccepted(httpContext.Request.Headers.AcceptEncoding);
