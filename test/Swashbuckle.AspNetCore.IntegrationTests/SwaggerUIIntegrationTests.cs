@@ -224,7 +224,9 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
         {
             using var requestMessage = new HttpRequestMessage(HttpMethod.Get, fileName);
             requestMessage.Headers.AcceptEncoding.Add(new("gzip"));
+
             using var htmlResponse = await client.SendAsync(requestMessage, TestContext.Current.CancellationToken);
+
             Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
             Assert.Equal("gzip", htmlResponse.Content.Headers.ContentEncoding.Single());
 
