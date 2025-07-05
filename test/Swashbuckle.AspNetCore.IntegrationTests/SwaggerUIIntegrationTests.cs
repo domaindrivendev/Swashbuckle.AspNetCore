@@ -252,6 +252,7 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
 
             using var requestMessage = new HttpRequestMessage(HttpMethod.Get, fileName);
             requestMessage.Headers.IfNoneMatch.Add(new(htmlResponse.Headers.ETag?.Tag));
+
             using var secondHtmlResponse = await client.SendAsync(requestMessage, TestContext.Current.CancellationToken);
             Assert.Equal(HttpStatusCode.NotModified, secondHtmlResponse.StatusCode);
 
