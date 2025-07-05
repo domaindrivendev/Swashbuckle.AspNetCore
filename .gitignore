@@ -1,5 +1,4 @@
-[Tt]est[Rr]esult*/
-.dotnet/
+﻿.dotnet/
 .DS_Store
 .vs/
 .idea*
