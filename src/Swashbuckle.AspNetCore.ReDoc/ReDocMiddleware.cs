@@ -1,50 +1,43 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using System.Security.Cryptography;
 
 namespace Swashbuckle.AspNetCore.ReDoc;
 
 internal sealed class ReDocMiddleware
 {
-    private const string EmbeddedFileNamespace = "Swashbuckle.AspNetCore.ReDoc.node_modules.redoc.bundles";
-
     private static readonly string ReDocVersion = GetReDocVersion();
 
+    private readonly RequestDelegate _next;
     private readonly ReDocOptions _options;
-    private readonly StaticFileMiddleware _staticFileMiddleware;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
+    private readonly EmbeddedResourceProvider _resourceProvider;
 
-    public ReDocMiddleware(
-        RequestDelegate next,
-        IWebHostEnvironment hostingEnv,
-        ILoggerFactory loggerFactory,
-        ReDocOptions options)
+    public ReDocMiddleware(RequestDelegate next, ReDocOptions options)
     {
+        _next = next;
         _options = options ?? new ReDocOptions();
-
-        _staticFileMiddleware = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options);
 
         if (options.JsonSerializerOptions != null)
         {
             _jsonSerializerOptions = options.JsonSerializerOptions;
         }
+
+        var pathPrefix = options.RoutePrefix.StartsWith('/') ? options.RoutePrefix : $"/{options.RoutePrefix}";
+        _resourceProvider = new(
+            typeof(ReDocMiddleware).Assembly,
+            "Swashbuckle.AspNetCore.ReDoc.node_modules.redoc.bundles",
+            pathPrefix,
+            _options.CacheLifetime);
     }
 
     public async Task Invoke(HttpContext httpContext)
     {
-        var httpMethod = httpContext.Request.Method;
-
-        if (HttpMethods.IsGet(httpMethod))
+        if (HttpMethods.IsGet(httpContext.Request.Method))
         {
             var path = httpContext.Request.Path.Value;
 
@@ -65,39 +58,24 @@ internal sealed class ReDocMiddleware
 
             if (match.Success)
             {
-                await RespondWithFile(httpContext.Response, match.Groups[1].Value);
+                await RespondWithFile(httpContext.Response, match.Groups[1].Value, httpContext.RequestAborted);
                 return;
             }
         }
 
-        await _staticFileMiddleware.Invoke(httpContext);
-    }
-
-    private static StaticFileMiddleware CreateStaticFileMiddleware(
-        RequestDelegate next,
-        IWebHostEnvironment hostingEnv,
-        ILoggerFactory loggerFactory,
-        ReDocOptions options)
-    {
-        var staticFileOptions = new StaticFileOptions
+        if (!await _resourceProvider.TryRespondWithFileAsync(httpContext))
         {
-            RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
-            FileProvider = new EmbeddedFileProvider(typeof(ReDocMiddleware).Assembly, EmbeddedFileNamespace),
-            OnPrepareResponse = (context) => SetCacheHeaders(context.Context.Response, options),
-        };
-
-        return new StaticFileMiddleware(next, hostingEnv, Options.Create(staticFileOptions), loggerFactory);
+            await _next(httpContext);
+        }
     }
 
     private static string GetReDocVersion()
-    {
-        return typeof(ReDocMiddleware).Assembly
-            .GetCustomAttributes<AssemblyMetadataAttribute>()
-            .Where((p) => p.Key is "ReDocVersion")
-            .Select((p) => p.Value)
-            .DefaultIfEmpty(string.Empty)
-            .FirstOrDefault();
-    }
+        => typeof(ReDocMiddleware).Assembly
+               .GetCustomAttributes<AssemblyMetadataAttribute>()
+               .Where((p) => p.Key is "ReDocVersion")
+               .Select((p) => p.Value)
+               .DefaultIfEmpty(string.Empty)
+               .FirstOrDefault();
 
     private static void SetCacheHeaders(HttpResponse response, ReDocOptions options, string etag = null)
     {
@@ -129,9 +107,12 @@ internal sealed class ReDocMiddleware
         response.Headers.Location = location;
     }
 
-    private async Task RespondWithFile(HttpResponse response, string fileName)
+    private async Task RespondWithFile(
+        HttpResponse response,
+        string fileName,
+        CancellationToken cancellationToken)
     {
-        response.StatusCode = 200;
+        response.StatusCode = StatusCodes.Status200OK;
 
         Stream stream;
 
@@ -141,10 +122,12 @@ internal sealed class ReDocMiddleware
                 response.ContentType = "text/css";
                 stream = ResourceHelper.GetEmbeddedResource(fileName);
                 break;
+
             case "index.js":
                 response.ContentType = "application/javascript;charset=utf-8";
                 stream = ResourceHelper.GetEmbeddedResource(fileName);
                 break;
+
             default:
                 response.ContentType = "text/html;charset=utf-8";
                 stream = _options.IndexStream();
@@ -154,7 +137,15 @@ internal sealed class ReDocMiddleware
         using (stream)
         {
             // Inject arguments before writing to response
-            var content = new StringBuilder(new StreamReader(stream).ReadToEnd());
+            string template;
+
+            using (var reader = new StreamReader(stream))
+            {
+                template = await reader.ReadToEndAsync(cancellationToken);
+            }
+
+            var content = new StringBuilder(template);
+
             foreach (var entry in GetIndexArguments())
             {
                 content.Replace(entry.Key, entry.Value);
@@ -165,16 +156,16 @@ internal sealed class ReDocMiddleware
 
             SetCacheHeaders(response, _options, etag);
 
-            await response.WriteAsync(text, Encoding.UTF8);
+            await response.WriteAsync(text, Encoding.UTF8, cancellationToken);
         }
-    }
 
-    private static string HashText(string text)
-    {
-        var buffer = Encoding.UTF8.GetBytes(text);
-        var hash = SHA1.HashData(buffer);
+        static string HashText(string text)
+        {
+            var buffer = Encoding.UTF8.GetBytes(text);
+            var hash = SHA1.HashData(buffer);
 
-        return Convert.ToBase64String(hash);
+            return Convert.ToBase64String(hash);
+        }
     }
 
     [UnconditionalSuppressMessage(

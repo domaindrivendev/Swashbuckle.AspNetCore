@@ -1,50 +1,43 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using System.Reflection;
-using System.Security.Cryptography;
 
 namespace Swashbuckle.AspNetCore.SwaggerUI;
 
 internal sealed partial class SwaggerUIMiddleware
 {
-    private const string EmbeddedFileNamespace = "Swashbuckle.AspNetCore.SwaggerUI.node_modules.swagger_ui_dist";
-
     private static readonly string SwaggerUIVersion = GetSwaggerUIVersion();
 
+    private readonly RequestDelegate _next;
     private readonly SwaggerUIOptions _options;
-    private readonly StaticFileMiddleware _staticFileMiddleware;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
+    private readonly EmbeddedResourceProvider _resourceProvider;
 
-    public SwaggerUIMiddleware(
-        RequestDelegate next,
-        IWebHostEnvironment hostingEnv,
-        ILoggerFactory loggerFactory,
-        SwaggerUIOptions options)
+    public SwaggerUIMiddleware(RequestDelegate next, SwaggerUIOptions options)
     {
-        _options = options ?? new SwaggerUIOptions();
-
-        _staticFileMiddleware = CreateStaticFileMiddleware(next, hostingEnv, loggerFactory, options);
+        _next = next;
+        _options = options ?? new();
 
         if (options.JsonSerializerOptions != null)
         {
             _jsonSerializerOptions = options.JsonSerializerOptions;
         }
+
+        var pathPrefix = options.RoutePrefix.StartsWith('/') ? options.RoutePrefix : $"/{options.RoutePrefix}";
+        _resourceProvider = new(
+            typeof(SwaggerUIMiddleware).Assembly,
+            "Swashbuckle.AspNetCore.SwaggerUI.node_modules.swagger_ui_dist",
+            pathPrefix,
+            _options.CacheLifetime);
     }
 
     public async Task Invoke(HttpContext httpContext)
     {
-        var httpMethod = httpContext.Request.Method;
-
-        if (HttpMethods.IsGet(httpMethod))
+        if (HttpMethods.IsGet(httpContext.Request.Method))
         {
             var path = httpContext.Request.Path.Value;
 
@@ -65,7 +58,7 @@ internal sealed partial class SwaggerUIMiddleware
 
             if (match.Success)
             {
-                await RespondWithFile(httpContext.Response, match.Groups[1].Value);
+                await RespondWithFile(httpContext.Response, match.Groups[1].Value, httpContext.RequestAborted);
                 return;
             }
 
@@ -77,34 +70,19 @@ internal sealed partial class SwaggerUIMiddleware
             }
         }
 
-        await _staticFileMiddleware.Invoke(httpContext);
-    }
-
-    private static StaticFileMiddleware CreateStaticFileMiddleware(
-        RequestDelegate next,
-        IWebHostEnvironment hostingEnv,
-        ILoggerFactory loggerFactory,
-        SwaggerUIOptions options)
-    {
-        var staticFileOptions = new StaticFileOptions
+        if (!await _resourceProvider.TryRespondWithFileAsync(httpContext))
         {
-            RequestPath = string.IsNullOrEmpty(options.RoutePrefix) ? string.Empty : $"/{options.RoutePrefix}",
-            FileProvider = new EmbeddedFileProvider(typeof(SwaggerUIMiddleware).Assembly, EmbeddedFileNamespace),
-            OnPrepareResponse = (context) => SetCacheHeaders(context.Context.Response, options),
-        };
-
-        return new StaticFileMiddleware(next, hostingEnv, Options.Create(staticFileOptions), loggerFactory);
+            await _next(httpContext);
+        }
     }
 
     private static string GetSwaggerUIVersion()
-    {
-        return typeof(SwaggerUIMiddleware).Assembly
-            .GetCustomAttributes<AssemblyMetadataAttribute>()
-            .Where((p) => p.Key is "SwaggerUIVersion")
-            .Select((p) => p.Value)
-            .DefaultIfEmpty(string.Empty)
-            .FirstOrDefault();
-    }
+        => typeof(SwaggerUIMiddleware).Assembly
+               .GetCustomAttributes<AssemblyMetadataAttribute>()
+               .Where((p) => p.Key is "SwaggerUIVersion")
+               .Select((p) => p.Value)
+               .DefaultIfEmpty(string.Empty)
+               .FirstOrDefault();
 
     private static void SetCacheHeaders(HttpResponse response, SwaggerUIOptions options, string etag = null)
     {
@@ -136,9 +114,12 @@ internal sealed partial class SwaggerUIMiddleware
         response.Headers.Location = location;
     }
 
-    private async Task RespondWithFile(HttpResponse response, string fileName)
+    private async Task RespondWithFile(
+        HttpResponse response,
+        string fileName,
+        CancellationToken cancellationToken)
     {
-        response.StatusCode = 200;
+        response.StatusCode = StatusCodes.Status200OK;
 
         Stream stream;
 
@@ -155,10 +136,16 @@ internal sealed partial class SwaggerUIMiddleware
 
         using (stream)
         {
-            using var reader = new StreamReader(stream);
-
             // Inject arguments before writing to response
-            var content = new StringBuilder(await reader.ReadToEndAsync());
+            string template;
+
+            using (var reader = new StreamReader(stream))
+            {
+                template = await reader.ReadToEndAsync(cancellationToken);
+            }
+
+            var content = new StringBuilder(template);
+
             foreach (var entry in GetIndexArguments())
             {
                 content.Replace(entry.Key, entry.Value);
@@ -169,16 +156,16 @@ internal sealed partial class SwaggerUIMiddleware
 
             SetCacheHeaders(response, _options, etag);
 
-            await response.WriteAsync(text, Encoding.UTF8);
+            await response.WriteAsync(text, Encoding.UTF8, cancellationToken);
         }
-    }
 
-    private static string HashText(string text)
-    {
-        var buffer = Encoding.UTF8.GetBytes(text);
-        var hash = SHA1.HashData(buffer);
+        static string HashText(string text)
+        {
+            var buffer = Encoding.UTF8.GetBytes(text);
+            var hash = SHA1.HashData(buffer);
 
-        return Convert.ToBase64String(hash);
+            return Convert.ToBase64String(hash);
+        }
     }
 
     [UnconditionalSuppressMessage(

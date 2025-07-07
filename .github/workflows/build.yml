@@ -111,6 +111,15 @@ jobs:
         flags: ${{ runner.os }}
         token: ${{ secrets.CODECOV_TOKEN }}
 
+    - name: Generate SBOM
+      uses: anchore/sbom-action@9246b90769f852b3a8921f330c59e0b3f439d6e9 # v0.20.1
+      if: runner.os == 'Windows'
+      with:
+        artifact-name: Swashbuckle.AspNetCore.spdx.json
+        output-file: ./artifacts/Swashbuckle.AspNetCore.spdx.json
+        path: ./artifacts/bin
+        upload-release-assets: true
+
     - name: Attest artifacts
       uses: actions/attest-build-provenance@e8998f949152b193b063cb0ec769d69d929409be # v2.4.0
       if: |
@@ -118,7 +127,10 @@ jobs:
         github.event.repository.fork == false &&
         (github.ref_name == github.event.repository.default_branch || startsWith(github.ref, 'refs/tags/v'))
       with:
-        subject-path: ./artifacts/package/release/*
+        subject-path: |
+          ./artifacts/Swashbuckle.AspNetCore.spdx.json
+          ./artifacts/bin/Swashbuckle.AspNetCore*/release_*/**/Swashbuckle.AspNetCore*.dll
+          ./artifacts/package/release/*
 
     - name: Publish NuGet packages
       uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
