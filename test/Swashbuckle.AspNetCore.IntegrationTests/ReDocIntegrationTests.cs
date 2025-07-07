@@ -25,12 +25,14 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
     [Fact]
     public async Task IndexUrl_ReturnsEmbeddedVersionOfTheRedocUI()
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
+
         var site = new TestSite(typeof(ReDocApp.Startup), outputHelper);
         using var client = site.BuildClient();
 
-        using var htmlResponse = await client.GetAsync("/api-docs/index.html", TestContext.Current.CancellationToken);
-        using var cssResponse = await client.GetAsync("/api-docs/index.css", TestContext.Current.CancellationToken);
-        using var jsResponse = await client.GetAsync("/api-docs/redoc.standalone.js", TestContext.Current.CancellationToken);
+        using var htmlResponse = await client.GetAsync("/api-docs/index.html", cancellationToken);
+        using var cssResponse = await client.GetAsync("/api-docs/index.css", cancellationToken);
+        using var jsResponse = await client.GetAsync("/api-docs/redoc.standalone.js", cancellationToken);
 
         AssertResource(htmlResponse);
         AssertResource(cssResponse);
@@ -51,11 +53,13 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
     [Fact]
     public async Task RedocMiddleware_ReturnsInitializerScript()
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
+
         var site = new TestSite(typeof(ReDocApp.Startup), outputHelper);
         using var client = site.BuildClient();
 
-        using var response = await client.GetAsync("/api-docs/index.js", TestContext.Current.CancellationToken);
-        var content = await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+        using var response = await client.GetAsync("/api-docs/index.js", cancellationToken);
+        var content = await response.Content.ReadAsStringAsync(cancellationToken);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Contains("Redoc.init", content);
@@ -68,13 +72,15 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
     [Fact]
     public async Task IndexUrl_IgnoresUrlCase()
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
+
         var site = new TestSite(typeof(ReDocApp.Startup), outputHelper);
         using var client = site.BuildClient();
 
-        using var htmlResponse = await client.GetAsync("/Api-Docs/index.html", TestContext.Current.CancellationToken);
-        using var cssResponse = await client.GetAsync("/Api-Docs/index.css", TestContext.Current.CancellationToken);
-        using var jsInitResponse = await client.GetAsync("/Api-Docs/index.js", TestContext.Current.CancellationToken);
-        using var jsRedocResponse = await client.GetAsync("/Api-Docs/redoc.standalone.js", TestContext.Current.CancellationToken);
+        using var htmlResponse = await client.GetAsync("/Api-Docs/index.html", cancellationToken);
+        using var cssResponse = await client.GetAsync("/Api-Docs/index.css", cancellationToken);
+        using var jsInitResponse = await client.GetAsync("/Api-Docs/index.js", cancellationToken);
+        using var jsRedocResponse = await client.GetAsync("/Api-Docs/redoc.standalone.js", cancellationToken);
 
         Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
         Assert.Equal(HttpStatusCode.OK, cssResponse.StatusCode);
@@ -87,12 +93,14 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
     [InlineData("/redoc/2.0/index.html", "/redoc/2.0/index.js", "/swagger/2.0/swagger.json")]
     public async Task RedocMiddleware_CanBeConfiguredMultipleTimes(string htmlUrl, string jsUrl, string swaggerPath)
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
+
         var site = new TestSite(typeof(MultipleVersions.Startup), outputHelper);
         using var client = site.BuildClient();
 
-        using var htmlResponse = await client.GetAsync(htmlUrl, TestContext.Current.CancellationToken);
-        using var jsResponse = await client.GetAsync(jsUrl, TestContext.Current.CancellationToken);
-        var content = await jsResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+        using var htmlResponse = await client.GetAsync(htmlUrl, cancellationToken);
+        using var jsResponse = await client.GetAsync(jsUrl, cancellationToken);
+        var content = await jsResponse.Content.ReadAsStringAsync(cancellationToken);
 
         Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
         Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
@@ -180,7 +188,7 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Equal("text/javascript", response.Content.Headers.ContentType?.MediaType);
-        Assert.Equal([], response.Content.Headers.ContentEncoding);
+        Assert.Empty(response.Content.Headers.ContentEncoding);
 
         using var actual = await response.Content.ReadAsStreamAsync(cancellationToken);
         using var expected = typeof(ReDocIntegrationTests).Assembly.GetManifestResourceStream("Swashbuckle.AspNetCore.IntegrationTests.Embedded.ReDoc.redoc.standalone.js");
