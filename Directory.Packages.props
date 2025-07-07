@@ -1,4 +1,4 @@
-<Project>
+﻿<Project>
   <ItemGroup>
     <PackageVersion Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
     <PackageVersion Include="BenchmarkDotNet" Version="0.15.1" />

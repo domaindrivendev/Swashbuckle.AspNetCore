@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System.IO.Compression;
+using System.Net;
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.Builder;
 using Swashbuckle.AspNetCore.ReDoc;
 using ReDocApp = ReDoc;
@@ -32,13 +34,13 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
 
         AssertResource(htmlResponse);
         AssertResource(cssResponse);
-        AssertResource(jsResponse);
+        AssertResource(jsResponse, weakETag: false);
 
-        static void AssertResource(HttpResponseMessage response)
+        static void AssertResource(HttpResponseMessage response, bool weakETag = true)
         {
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.NotNull(response.Headers.ETag);
-            Assert.True(response.Headers.ETag.IsWeak);
+            Assert.Equal(weakETag, response.Headers.ETag.IsWeak);
             Assert.NotEmpty(response.Headers.ETag.Tag);
             Assert.NotNull(response.Headers.CacheControl);
             Assert.True(response.Headers.CacheControl.Private);
@@ -161,5 +163,42 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
         Assert.True(options.ConfigObject.RequiredPropsFirst);
         Assert.True(options.ConfigObject.SortPropsAlphabetically);
         Assert.True(options.ConfigObject.UntrustedSpec);
+    }
+
+    [Fact]
+    public async Task ReDocMiddleware_Returns_ExpectedAssetContents()
+    {
+        var site = new TestSite(typeof(ReDocApp.Startup), outputHelper);
+        using var client = site.BuildClient();
+
+        using var htmlResponse = await client.GetAsync("/Api-Docs/redoc.standalone.js", TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
+
+        using var stream = await htmlResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
+        using var rawFileStream = typeof(ReDocIntegrationTests).Assembly.GetManifestResourceStream("Swashbuckle.AspNetCore.IntegrationTests.Embedded.ReDoc.redoc.standalone.js");
+
+        Assert.NotNull(rawFileStream);
+        Assert.Equal(SHA1.HashData(rawFileStream), SHA1.HashData(stream));
+    }
+
+    [Fact]
+    public async Task ReDocMiddleware_Returns_ExpectedAssetContents_GZipDirectly()
+    {
+        var site = new TestSite(typeof(ReDocApp.Startup), outputHelper);
+        using var client = site.BuildClient();
+
+        using var requestMessage = new HttpRequestMessage(HttpMethod.Get, "/Api-Docs/redoc.standalone.js");
+        requestMessage.Headers.AcceptEncoding.Add(new("gzip"));
+
+        using var htmlResponse = await client.SendAsync(requestMessage, TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
+        Assert.Equal("gzip", htmlResponse.Content.Headers.ContentEncoding.Single());
+
+        using var stream = await htmlResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
+        using var gzipStream = new GZipStream(stream, CompressionMode.Decompress);
+        using var rawFileStream = typeof(ReDocIntegrationTests).Assembly.GetManifestResourceStream("Swashbuckle.AspNetCore.IntegrationTests.Embedded.ReDoc.redoc.standalone.js");
+
+        Assert.NotNull(rawFileStream);
+        Assert.Equal(SHA1.HashData(rawFileStream), SHA1.HashData(gzipStream));
     }
 }

@@ -1,4 +1,4 @@
-.dotnet/
+﻿.dotnet/
 .DS_Store
 .vs/
 .idea*
