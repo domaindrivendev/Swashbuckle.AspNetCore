@@ -19,7 +19,7 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
 
         var testCases = new TheoryData<string, string>();
 
-        foreach (var (resourceName, fileName) in resources)
+        foreach (var (resourceName, fileName) in resources.Where((p) => Path.GetExtension(p.Item2) is not ".txt"))
         {
             testCases.Add(resourceName, fileName);
         }
