@@ -42,8 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\Shared\CompressedEmbeddedFileResponder.cs" Link="CompressedEmbeddedFileResponder.cs" />
-    <Compile Include="..\Shared\HttpContextAcceptEncodingCheckExtensions.cs" Link="HttpContextAcceptEncodingCheckExtensions.cs" />
+    <Compile Include="..\Shared\EmbeddedResourceProvider.cs" Link="EmbeddedResourceProvider.cs" />
   </ItemGroup>
 
   <Target Name="NpmInstall" BeforeTargets="DispatchToInnerBuilds" Condition=" '$(CI)' != '' OR !Exists('$(MSBuildThisFileDirectory)\node_modules') ">
@@ -77,27 +76,22 @@
     </ItemGroup>
   </Target>
 
-  <!--embed compressed file using sdk task-->
+  <!-- Embed compressed file using SDK task-->
   <PropertyGroup>
     <_SdkTasksTFM Condition=" '$(MSBuildRuntimeType)' == 'Core'">net9.0</_SdkTasksTFM>
     <_SdkTasksTFM Condition=" '$(MSBuildRuntimeType)' != 'Core'">net472</_SdkTasksTFM>
   </PropertyGroup>
-
-  <UsingTask TaskName="Microsoft.NET.Sdk.BlazorWebAssembly.GzipCompress"
-             AssemblyFile="$(MicrosoftNETBuildTasksDirectoryRoot)../../Microsoft.NET.Sdk.BlazorWebAssembly/tools/$(_SdkTasksTFM)/Microsoft.NET.Sdk.BlazorWebAssembly.Tasks.dll" />
-
+  <UsingTask TaskName="Microsoft.NET.Sdk.BlazorWebAssembly.GzipCompress" AssemblyFile="$(MicrosoftNETBuildTasksDirectoryRoot)../../Microsoft.NET.Sdk.BlazorWebAssembly/tools/$(_SdkTasksTFM)/Microsoft.NET.Sdk.BlazorWebAssembly.Tasks.dll" />
   <ItemGroup>
     <CompressFiles Include="node_modules/redoc/bundles/redoc.standalone.js" />
   </ItemGroup>
-
   <Target Name="_CompressAssets" BeforeTargets="CheckForDuplicateItems">
     <GZipCompress FilesToCompress="@(CompressFiles)" OutputDirectory="$(IntermediateOutputPath)CompressedAssets">
       <Output TaskParameter="CompressedFiles" ItemName="_CompressedAssetsFile" />
     </GZipCompress>
-
     <ItemGroup>
       <EmbeddedResource Include="@(_CompressedAssetsFile)" />
-      <EmbeddedResource Condition="'%(EmbeddedResource.OriginalItemSpec)' != ''" Link="%(EmbeddedResource.OriginalItemSpec)" />
+      <EmbeddedResource Condition=" '%(EmbeddedResource.OriginalItemSpec)' != '' " Link="%(EmbeddedResource.OriginalItemSpec)" />
     </ItemGroup>
   </Target>
 </Project>

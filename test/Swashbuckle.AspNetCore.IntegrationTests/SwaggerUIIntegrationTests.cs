@@ -7,6 +7,28 @@ namespace Swashbuckle.AspNetCore.IntegrationTests;
 [Collection("TestSite")]
 public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
 {
+    public static TheoryData<string, string> SwaggerUIFiles()
+    {
+        const string Prefix = "Swashbuckle.AspNetCore.IntegrationTests.Embedded.SwaggerUI.";
+
+        var resources = typeof(SwaggerUIIntegrationTests).Assembly
+            .GetManifestResourceNames()
+            .Where((p) => p.StartsWith(Prefix))
+            .Select((p) => (p, p[Prefix.Length..]))
+            .ToList();
+
+        var testCases = new TheoryData<string, string>();
+
+        foreach (var (resourceName, fileName) in resources.Where((p) => Path.GetExtension(p.Item2) is not ".txt"))
+        {
+            testCases.Add(resourceName, fileName);
+        }
+
+        Assert.NotEmpty(testCases);
+
+        return testCases;
+    }
+
     [Theory]
     [InlineData(typeof(Basic.Startup), "/", "index.html")]
     [InlineData(typeof(CustomUIConfig.Startup), "/swagger", "swagger/index.html")]
@@ -193,90 +215,137 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
         Assert.Contains($"<script src=\"{scriptPresetsPath}\" charset=\"utf-8\">", content);
     }
 
-    [Fact]
-    public async Task SwaggerUIMiddleware_Returns_ExpectedAssetContents()
+    [Theory]
+    [MemberData(nameof(SwaggerUIFiles))]
+    public async Task SwaggerUIMiddleware_Returns_ExpectedAssetContents_Decompressed(string resourceName, string fileName)
     {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+
         var site = new TestSite(typeof(Basic.Startup), outputHelper);
         using var client = site.BuildClient();
 
-        var embeddedUIFiles = GetEmbeddedUIFiles();
-        Assert.NotEmpty(embeddedUIFiles);
+        // Act
+        using var response = await client.GetAsync(fileName, cancellationToken);
 
-        foreach (var (resourceName, fileName) in embeddedUIFiles)
-        {
-            using var requestMessage = new HttpRequestMessage(HttpMethod.Get, fileName);
-            using var htmlResponse = await client.SendAsync(requestMessage, TestContext.Current.CancellationToken);
-            Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(response.Content.Headers.ContentType?.MediaType);
+        Assert.Equal([], response.Content.Headers.ContentEncoding);
 
-            using var stream = await htmlResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
-            using var diskFileStream = typeof(SwaggerUIIntegrationTests).Assembly.GetManifestResourceStream(resourceName);
+        using var actual = await response.Content.ReadAsStreamAsync(cancellationToken);
+        using var expected = typeof(SwaggerUIIntegrationTests).Assembly.GetManifestResourceStream(resourceName);
 
-            Assert.NotNull(diskFileStream);
-            Assert.Equal(SHA1.HashData(diskFileStream), SHA1.HashData(stream));
-        }
+        Assert.NotNull(actual);
+        Assert.NotNull(expected);
+
+        Assert.NotEqual(0, actual.Length);
+        Assert.NotEqual(0, expected.Length);
+
+        var actualHash = SHA1.HashData(actual);
+        var expectedHash = SHA1.HashData(expected);
+
+        Assert.NotEqual("2jmj7l5rSw0yVb/vlWAYkK/YBwk=", Convert.ToBase64String(actualHash));
+        Assert.Equal(expectedHash, actualHash);
+
+        Assert.NotNull(response.Headers.ETag);
+        Assert.False(response.Headers.ETag.IsWeak);
+        Assert.NotEmpty(response.Headers.ETag.Tag);
+
+        Assert.NotNull(response.Headers.CacheControl);
+        Assert.True(response.Headers.CacheControl.Private);
+        Assert.Equal(TimeSpan.FromDays(7), response.Headers.CacheControl.MaxAge);
     }
 
-    [Fact]
-    public async Task SwaggerUIMiddleware_Returns_ExpectedAssetContents_GZipDirectly()
+    [Theory]
+    [MemberData(nameof(SwaggerUIFiles))]
+    public async Task SwaggerUIMiddleware_Returns_ExpectedAssetContents_GZip_Compressed(string resourceName, string fileName)
     {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+
         var site = new TestSite(typeof(Basic.Startup), outputHelper);
         using var client = site.BuildClient();
 
-        var embeddedUIFiles = GetEmbeddedUIFiles();
-        Assert.NotEmpty(embeddedUIFiles);
+        using var request = new HttpRequestMessage(HttpMethod.Get, fileName);
+        request.Headers.AcceptEncoding.Add(new("gzip"));
 
-        foreach (var (resourceName, fileName) in embeddedUIFiles)
+        // Act
+        using var response = await client.SendAsync(request, cancellationToken);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(response.Content.Headers.ContentType?.MediaType);
+
+        if (Path.GetExtension(fileName) is not ".png")
         {
-            using var requestMessage = new HttpRequestMessage(HttpMethod.Get, fileName);
-            requestMessage.Headers.AcceptEncoding.Add(new("gzip"));
-
-            using var htmlResponse = await client.SendAsync(requestMessage, TestContext.Current.CancellationToken);
-
-            Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
-            Assert.Equal("gzip", htmlResponse.Content.Headers.ContentEncoding.Single());
-
-            using var stream = await htmlResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
-            using var gzipStream = new GZipStream(stream, CompressionMode.Decompress);
-            using var diskFileStream = typeof(SwaggerUIIntegrationTests).Assembly.GetManifestResourceStream(resourceName);
-
-            Assert.NotNull(diskFileStream);
-            Assert.Equal(SHA1.HashData(diskFileStream), SHA1.HashData(gzipStream));
+            Assert.Equal(["gzip"], [.. response.Content.Headers.ContentEncoding]);
         }
+
+        using var actual = await response.Content.ReadAsStreamAsync(cancellationToken);
+        using var expected = typeof(SwaggerUIIntegrationTests).Assembly.GetManifestResourceStream(resourceName);
+
+        Assert.NotNull(actual);
+        Assert.NotNull(expected);
+
+        Assert.NotEqual(0, actual.Length);
+        Assert.NotEqual(0, expected.Length);
+
+        bool wasCompressed = response.Content.Headers.ContentEncoding.SequenceEqual(["gzip"]);
+        using var decompressed = wasCompressed ? new GZipStream(actual, CompressionMode.Decompress) : actual;
+
+        Assert.True(
+            actual.Length <= expected.Length,
+            $"The compressed length ({actual.Length}) was not less or equal to the decompressed length ({expected.Length}).");
+
+        var actualHash = SHA1.HashData(decompressed);
+        var expectedHash = SHA1.HashData(expected);
+
+        Assert.NotEqual("2jmj7l5rSw0yVb/vlWAYkK/YBwk=", Convert.ToBase64String(actualHash));
+        Assert.Equal(expectedHash, actualHash);
+
+        Assert.NotNull(response.Headers.ETag);
+        Assert.False(response.Headers.ETag.IsWeak);
+        Assert.NotEmpty(response.Headers.ETag.Tag);
+
+        Assert.NotNull(response.Headers.CacheControl);
+        Assert.True(response.Headers.CacheControl.Private);
+        Assert.Equal(TimeSpan.FromDays(7), response.Headers.CacheControl.MaxAge);
     }
 
-    [Fact]
-    public async Task SwaggerUIMiddleware_Returns_ExpectedAssetContents_NotModified()
+    [Theory]
+    [MemberData(nameof(SwaggerUIFiles))]
+    public async Task SwaggerUIMiddleware_Returns_ExpectedAssetContents_NotModified(string resourceName, string fileName)
     {
+        // Arrange
+        Assert.NotNull(resourceName);
+
+        var cancellationToken = TestContext.Current.CancellationToken;
+
         var site = new TestSite(typeof(Basic.Startup), outputHelper);
         using var client = site.BuildClient();
 
-        var embeddedUIFiles = GetEmbeddedUIFiles();
-        Assert.NotEmpty(embeddedUIFiles);
+        // Act
+        using var uncached = await client.GetAsync(fileName, cancellationToken);
 
-        foreach (var (_, fileName) in embeddedUIFiles)
-        {
-            using var htmlResponse = await client.GetAsync(fileName, TestContext.Current.CancellationToken);
-            Assert.Equal(HttpStatusCode.OK, htmlResponse.StatusCode);
-            Assert.NotNull(htmlResponse.Headers.ETag?.Tag);
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, uncached.StatusCode);
 
-            using var requestMessage = new HttpRequestMessage(HttpMethod.Get, fileName);
-            requestMessage.Headers.IfNoneMatch.Add(new(htmlResponse.Headers.ETag?.Tag));
+        Assert.NotNull(uncached.Headers.ETag);
+        Assert.False(uncached.Headers.ETag.IsWeak);
+        Assert.NotEmpty(uncached.Headers.ETag.Tag);
 
-            using var secondHtmlResponse = await client.SendAsync(requestMessage, TestContext.Current.CancellationToken);
-            Assert.Equal(HttpStatusCode.NotModified, secondHtmlResponse.StatusCode);
+        // Arrange
+        using var request = new HttpRequestMessage(HttpMethod.Get, fileName);
+        request.Headers.IfNoneMatch.Add(new(uncached.Headers.ETag.Tag));
 
-            using var stream = await secondHtmlResponse.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken);
-            Assert.Equal(0, stream.Length);
-        }
-    }
+        // Act
+        using var cached = await client.SendAsync(request, cancellationToken);
 
-    private static List<(string ResourceName, string FileName)> GetEmbeddedUIFiles()
-    {
-        const string ResourcePrefix = "Swashbuckle.AspNetCore.IntegrationTests.Embedded.SwaggerUI.";
-        return typeof(SwaggerUIIntegrationTests).Assembly
-            .GetManifestResourceNames()
-            .Where(name => name.StartsWith(ResourcePrefix))
-            .Select(name => (name, name.Substring(ResourcePrefix.Length)))
-            .ToList();
+        // Assert
+        Assert.Equal(HttpStatusCode.NotModified, cached.StatusCode);
+
+        using var stream = await cached.Content.ReadAsStreamAsync(cancellationToken);
+        Assert.Equal(0, stream.Length);
     }
 }
