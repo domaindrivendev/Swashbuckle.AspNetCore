@@ -11,7 +11,7 @@ using Microsoft.Net.Http.Headers;
 
 namespace Swashbuckle.AspNetCore;
 
-internal sealed class CompressedEmbeddedFileResponder(
+internal sealed class EmbeddedResourceProvider(
     Assembly assembly,
     string resourceNamePrefix,
     string pathPrefix,

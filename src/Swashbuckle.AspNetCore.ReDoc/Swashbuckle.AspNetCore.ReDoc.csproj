@@ -42,7 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\Shared\CompressedEmbeddedFileResponder.cs" Link="CompressedEmbeddedFileResponder.cs" />
+    <Compile Include="..\Shared\EmbeddedResourceProvider.cs" Link="EmbeddedResourceProvider.cs" />
   </ItemGroup>
 
   <Target Name="NpmInstall" BeforeTargets="DispatchToInnerBuilds" Condition=" '$(CI)' != '' OR !Exists('$(MSBuildThisFileDirectory)\node_modules') ">

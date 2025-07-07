@@ -15,7 +15,7 @@ internal sealed partial class SwaggerUIMiddleware
     private readonly RequestDelegate _next;
     private readonly SwaggerUIOptions _options;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
-    private readonly CompressedEmbeddedFileResponder _resourceProvider;
+    private readonly EmbeddedResourceProvider _resourceProvider;
 
     public SwaggerUIMiddleware(RequestDelegate next, SwaggerUIOptions options)
     {

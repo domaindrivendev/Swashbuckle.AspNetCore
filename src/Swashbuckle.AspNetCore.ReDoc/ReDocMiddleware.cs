@@ -15,7 +15,7 @@ internal sealed class ReDocMiddleware
     private readonly RequestDelegate _next;
     private readonly ReDocOptions _options;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
-    private readonly CompressedEmbeddedFileResponder _resourceProvider;
+    private readonly EmbeddedResourceProvider _resourceProvider;
 
     public ReDocMiddleware(RequestDelegate next, ReDocOptions options)
     {
