@@ -151,7 +151,7 @@ internal sealed class EmbeddedResourceProvider(
             var hash = SHA1.HashData(content);
 
             entry.CompressedLength = compressed.Length;
-            entry.DecompressedLength = content.Length;
+            entry.DecompressedLength = decompressed.Length;
             entry.ETag = $"\"{Convert.ToBase64String(hash)}\"";
         }
 
