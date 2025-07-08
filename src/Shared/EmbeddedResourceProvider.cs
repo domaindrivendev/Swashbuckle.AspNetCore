@@ -87,11 +87,14 @@ internal sealed class EmbeddedResourceProvider(
 
     private static bool IsGZipAccepted(HttpRequest httpRequest)
     {
-        var acceptEncoding = httpRequest.Headers.AcceptEncoding;
+        if (httpRequest.GetTypedHeaders().AcceptEncoding is not { Count: > 0 } acceptEncoding)
+        {
+            return false;
+        }
 
         for (int i = 0; i < acceptEncoding.Count; i++)
         {
-            if (string.Equals(acceptEncoding[i], GZipEncodingValue, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(acceptEncoding[i]?.Value.Value, GZipEncodingValue, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
