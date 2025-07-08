@@ -586,7 +586,7 @@ public class SwaggerGenerator(
 
         var schema = (type != null)
             ? GenerateSchema(
-                type,
+                Nullable.GetUnderlyingType(type) ?? type,
                 schemaRepository,
                 apiParameter.PropertyInfo(),
                 apiParameter.ParameterInfo(),
