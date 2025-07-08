@@ -139,6 +139,8 @@ internal sealed class EmbeddedResourceProvider(
             using var gzip = new GZipStream(compressed, CompressionMode.Decompress);
 
             gzip.CopyTo(decompressed);
+
+            compressed.Seek(0, SeekOrigin.Begin);
             decompressed.Seek(0, SeekOrigin.Begin);
 
             // Some embedded resources may already be compressed or compress worse than the original

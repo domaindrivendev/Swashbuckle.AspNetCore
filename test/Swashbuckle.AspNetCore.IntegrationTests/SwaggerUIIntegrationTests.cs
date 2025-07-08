@@ -7,6 +7,8 @@ namespace Swashbuckle.AspNetCore.IntegrationTests;
 [Collection("TestSite")]
 public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
 {
+    private const string EmptyStringSha256Hash = "2jmj7l5rSw0yVb/vlWAYkK/YBwk=";
+
     public static TheoryData<string, string> SwaggerUIFiles()
     {
         const string Prefix = "Swashbuckle.AspNetCore.IntegrationTests.Embedded.SwaggerUI.";
@@ -266,12 +268,13 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
         var actualHash = SHA1.HashData(actual);
         var expectedHash = SHA1.HashData(expected);
 
-        Assert.NotEqual("2jmj7l5rSw0yVb/vlWAYkK/YBwk=", Convert.ToBase64String(actualHash));
+        Assert.NotEqual(EmptyStringSha256Hash, Convert.ToBase64String(actualHash));
         Assert.Equal(expectedHash, actualHash);
 
         Assert.NotNull(response.Headers.ETag);
         Assert.False(response.Headers.ETag.IsWeak);
         Assert.NotEmpty(response.Headers.ETag.Tag);
+        Assert.DoesNotContain(EmptyStringSha256Hash, response.Headers.ETag.Tag);
 
         Assert.NotNull(response.Headers.CacheControl);
         Assert.True(response.Headers.CacheControl.Private);
@@ -324,12 +327,13 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
         var actualHash = SHA1.HashData(decompressed);
         var expectedHash = SHA1.HashData(expected);
 
-        Assert.NotEqual("2jmj7l5rSw0yVb/vlWAYkK/YBwk=", Convert.ToBase64String(actualHash));
+        Assert.NotEqual(EmptyStringSha256Hash, Convert.ToBase64String(actualHash));
         Assert.Equal(expectedHash, actualHash);
 
         Assert.NotNull(response.Headers.ETag);
         Assert.False(response.Headers.ETag.IsWeak);
         Assert.NotEmpty(response.Headers.ETag.Tag);
+        Assert.DoesNotContain(EmptyStringSha256Hash, response.Headers.ETag.Tag);
 
         Assert.NotNull(response.Headers.CacheControl);
         Assert.True(response.Headers.CacheControl.Private);
