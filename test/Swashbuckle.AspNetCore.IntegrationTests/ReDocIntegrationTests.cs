@@ -212,6 +212,8 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
         Assert.NotNull(response.Headers.CacheControl);
         Assert.True(response.Headers.CacheControl.Private);
         Assert.Equal(TimeSpan.FromDays(7), response.Headers.CacheControl.MaxAge);
+
+        Assert.Equal(response.Content.Headers.ContentLength, actual.Length);
     }
 
     [Fact]
@@ -262,5 +264,7 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
         Assert.NotNull(response.Headers.CacheControl);
         Assert.True(response.Headers.CacheControl.Private);
         Assert.Equal(TimeSpan.FromDays(7), response.Headers.CacheControl.MaxAge);
+
+        Assert.Equal(response.Content.Headers.ContentLength, actual.Length);
     }
 }
