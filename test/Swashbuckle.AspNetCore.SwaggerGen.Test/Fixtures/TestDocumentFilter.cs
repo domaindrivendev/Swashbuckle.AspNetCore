@@ -1,4 +1,4 @@
-﻿using Microsoft.OpenApi.Any;
+﻿using Microsoft.OpenApi.Extensions;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.TestSupport;
 
@@ -8,8 +8,9 @@ public class TestDocumentFilter : IDocumentFilter, IDocumentAsyncFilter
 {
     public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
     {
-        swaggerDoc.Extensions.Add("X-foo", new OpenApiString("bar"));
-        swaggerDoc.Extensions.Add("X-docName", new OpenApiString(context.DocumentName));
+        swaggerDoc.Extensions ??= [];
+        swaggerDoc.Extensions.Add("X-foo", new JsonNodeExtension("bar"));
+        swaggerDoc.Extensions.Add("X-docName", new JsonNodeExtension(context.DocumentName));
         context.SchemaGenerator.GenerateSchema(typeof(ComplexType), context.SchemaRepository);
     }
 

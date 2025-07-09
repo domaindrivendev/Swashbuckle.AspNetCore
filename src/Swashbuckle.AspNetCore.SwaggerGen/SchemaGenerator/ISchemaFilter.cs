@@ -1,8 +1,8 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi.Models.Interfaces;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
 public interface ISchemaFilter
 {
-    void Apply(OpenApiSchema schema, SchemaFilterContext context);
+    void Apply(IOpenApiSchema schema, SchemaFilterContext context);
 }

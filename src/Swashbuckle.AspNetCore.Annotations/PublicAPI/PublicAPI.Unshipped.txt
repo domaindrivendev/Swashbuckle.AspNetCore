@@ -1,0 +1,3 @@
+Swashbuckle.AspNetCore.Annotations.AnnotationsParameterFilter.Apply(Microsoft.OpenApi.Models.Interfaces.IOpenApiParameter parameter, Swashbuckle.AspNetCore.SwaggerGen.ParameterFilterContext context) -> void
+Swashbuckle.AspNetCore.Annotations.AnnotationsRequestBodyFilter.Apply(Microsoft.OpenApi.Models.Interfaces.IOpenApiRequestBody requestBody, Swashbuckle.AspNetCore.SwaggerGen.RequestBodyFilterContext context) -> void
+Swashbuckle.AspNetCore.Annotations.AnnotationsSchemaFilter.Apply(Microsoft.OpenApi.Models.Interfaces.IOpenApiSchema schema, Swashbuckle.AspNetCore.SwaggerGen.SchemaFilterContext context) -> void

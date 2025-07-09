@@ -1,4 +1,5 @@
 ﻿using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models.References;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Annotations;
@@ -69,7 +70,7 @@ public class AnnotationsOperationFilter : IOperationFilter
 
         if (swaggerOperationAttribute.Tags is { } tags)
         {
-            operation.Tags = [.. tags.Select(tagName => new OpenApiTag { Name = tagName })];
+            operation.Tags = [.. tags.Select(tagName => new OpenApiTagReference(tagName))];
         }
     }
 
@@ -113,9 +114,11 @@ public class AnnotationsOperationFilter : IOperationFilter
 
             operation.Responses[statusCode] = response;
 
-            if (swaggerResponseAttribute.ContentTypes is { } contentTypes)
+            if (response is OpenApiResponse concrete &&
+                swaggerResponseAttribute.ContentTypes is { } contentTypes)
             {
-                response.Content.Clear();
+                concrete.Content?.Clear();
+                concrete.Content ??= [];
 
                 foreach (var contentType in contentTypes)
                 {
@@ -123,7 +126,7 @@ public class AnnotationsOperationFilter : IOperationFilter
                         ? context.SchemaGenerator.GenerateSchema(swaggerResponseAttribute.Type, context.SchemaRepository)
                         : null;
 
-                    response.Content.Add(contentType, new OpenApiMediaType { Schema = schema });
+                    concrete.Content.Add(contentType, new OpenApiMediaType { Schema = schema });
                 }
             }
         }
