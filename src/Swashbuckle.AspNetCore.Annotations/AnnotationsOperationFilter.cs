@@ -1,5 +1,4 @@
-﻿using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Models.References;
+﻿using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Annotations;
@@ -70,7 +69,7 @@ public class AnnotationsOperationFilter : IOperationFilter
 
         if (swaggerOperationAttribute.Tags is { } tags)
         {
-            operation.Tags = [.. tags.Select(tagName => new OpenApiTagReference(tagName))];
+            operation.Tags = new SortedSet<OpenApiTagReference>(tags.Select(tagName => new OpenApiTagReference(tagName)));
         }
     }
 
@@ -118,7 +117,7 @@ public class AnnotationsOperationFilter : IOperationFilter
                 swaggerResponseAttribute.ContentTypes is { } contentTypes)
             {
                 concrete.Content?.Clear();
-                concrete.Content ??= [];
+                concrete.Content ??= new Dictionary<string, OpenApiMediaType>();
 
                 foreach (var contentType in contentTypes)
                 {

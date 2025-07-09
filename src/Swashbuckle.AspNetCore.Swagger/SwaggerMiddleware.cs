@@ -5,8 +5,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.AspNetCore.Routing.Template;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Writers;
+using Microsoft.OpenApi;
 
 namespace Swashbuckle.AspNetCore.Swagger;
 

@@ -11,10 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Constraints;
-using Microsoft.OpenApi.Extensions;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Models.Interfaces;
-using Microsoft.OpenApi.Models.References;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures;
 using Swashbuckle.AspNetCore.TestSupport;
 
