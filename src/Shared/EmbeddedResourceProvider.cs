@@ -94,7 +94,10 @@ internal sealed class EmbeddedResourceProvider(
 
         for (int i = 0; i < acceptEncoding.Count; i++)
         {
-            if (string.Equals(acceptEncoding[i]?.Value.Value, GZipEncodingValue, StringComparison.OrdinalIgnoreCase))
+            var encoding = acceptEncoding[i];
+
+            if (encoding.Quality is not 0 &&
+                string.Equals(encoding.Value.Value, GZipEncodingValue, StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
