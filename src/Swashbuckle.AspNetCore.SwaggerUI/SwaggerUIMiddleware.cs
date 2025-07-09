@@ -84,9 +84,10 @@ internal sealed partial class SwaggerUIMiddleware
                .DefaultIfEmpty(string.Empty)
                .FirstOrDefault();
 
-    private static void SetCacheHeaders(HttpResponse response, SwaggerUIOptions options, string etag = null)
+    private static void SetHeaders(HttpResponse response, SwaggerUIOptions options, string etag)
     {
         var headers = response.GetTypedHeaders();
+        headers.Append("x-swagger-ui-version", SwaggerUIVersion);
 
         if (options.CacheLifetime is { } maxAge)
         {
@@ -105,7 +106,7 @@ internal sealed partial class SwaggerUIMiddleware
             };
         }
 
-        headers.ETag = new($"\"{etag ?? SwaggerUIVersion}\"", isWeak: true);
+        headers.ETag = new($"\"{etag}\"", isWeak: true);
     }
 
     private static void RespondWithRedirect(HttpResponse response, string location)
@@ -154,7 +155,7 @@ internal sealed partial class SwaggerUIMiddleware
             var text = content.ToString();
             var etag = HashText(text);
 
-            SetCacheHeaders(response, _options, etag);
+            SetHeaders(response, _options, etag);
 
             await response.WriteAsync(text, Encoding.UTF8, cancellationToken);
         }
