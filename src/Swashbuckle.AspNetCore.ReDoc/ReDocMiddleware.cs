@@ -77,9 +77,10 @@ internal sealed class ReDocMiddleware
                .DefaultIfEmpty(string.Empty)
                .FirstOrDefault();
 
-    private static void SetCacheHeaders(HttpResponse response, ReDocOptions options, string etag = null)
+    private static void SetHeaders(HttpResponse response, ReDocOptions options, string etag)
     {
         var headers = response.GetTypedHeaders();
+        headers.Append("x-redoc-version", ReDocVersion);
 
         if (options.CacheLifetime is { } maxAge)
         {
@@ -98,7 +99,7 @@ internal sealed class ReDocMiddleware
             };
         }
 
-        headers.ETag = new($"\"{etag ?? ReDocVersion}\"", isWeak: true);
+        headers.ETag = new($"\"{etag}\"", isWeak: true);
     }
 
     private static void RespondWithRedirect(HttpResponse response, string location)
@@ -154,7 +155,7 @@ internal sealed class ReDocMiddleware
             var text = content.ToString();
             var etag = HashText(text);
 
-            SetCacheHeaders(response, _options, etag);
+            SetHeaders(response, _options, etag);
 
             await response.WriteAsync(text, Encoding.UTF8, cancellationToken);
         }

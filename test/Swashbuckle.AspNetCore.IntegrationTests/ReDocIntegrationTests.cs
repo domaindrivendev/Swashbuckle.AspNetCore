@@ -1,5 +1,6 @@
 ﻿using System.IO.Compression;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Builder;
 using Swashbuckle.AspNetCore.ReDoc;
@@ -175,8 +176,11 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
         Assert.True(options.ConfigObject.UntrustedSpec);
     }
 
-    [Fact]
-    public async Task ReDocMiddleware_Returns_ExpectedAssetContents_Decompressed()
+    [Theory]
+    [InlineData(null)]
+    [InlineData("gzip;q=0, identity; q=0.5, *;q=0")]
+    [InlineData("deflate, br, zstd")]
+    public async Task ReDocMiddleware_Returns_ExpectedAssetContents_Decompressed(string acceptEncoding)
     {
         // Arrange
         var cancellationToken = TestContext.Current.CancellationToken;
@@ -184,8 +188,19 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
         var site = new TestSite(typeof(ReDocApp.Startup), outputHelper);
         using var client = site.BuildClient();
 
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/Api-Docs/redoc.standalone.js");
+
+        var encodings = acceptEncoding?.Split(',')
+            .Select((p) => p.Trim())
+            .ToList();
+
+        foreach (var encoding in encodings ?? [])
+        {
+            request.Headers.AcceptEncoding.Add(StringWithQualityHeaderValue.Parse(encoding));
+        }
+
         // Act
-        using var response = await client.GetAsync("/Api-Docs/redoc.standalone.js", cancellationToken);
+        using var response = await client.SendAsync(request, cancellationToken);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -219,8 +234,11 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
         Assert.Equal(response.Content.Headers.ContentLength, actual.Length);
     }
 
-    [Fact]
-    public async Task ReDocMiddleware_Returns_ExpectedAssetContents_GZip_Compressed()
+    [Theory]
+    [InlineData("gzip")]
+    [InlineData("gzip;q=1.0, identity; q=0.5, *;q=0")]
+    [InlineData("gzip, deflate, br, zstd")]
+    public async Task ReDocMiddleware_Returns_ExpectedAssetContents_GZip_Compressed(string acceptEncoding)
     {
         // Arrange
         var cancellationToken = TestContext.Current.CancellationToken;
@@ -229,7 +247,15 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
         using var client = site.BuildClient();
 
         using var request = new HttpRequestMessage(HttpMethod.Get, "/Api-Docs/redoc.standalone.js");
-        request.Headers.AcceptEncoding.Add(new("gzip"));
+
+        var encodings = acceptEncoding.Split(',')
+            .Select((p) => p.Trim())
+            .ToList();
+
+        foreach (var encoding in encodings)
+        {
+            request.Headers.AcceptEncoding.Add(StringWithQualityHeaderValue.Parse(encoding));
+        }
 
         // Act
         using var response = await client.SendAsync(request, cancellationToken);
