@@ -91,7 +91,7 @@ public static class AnnotationsSwaggerGenOptionsExtensions
 
         if (jsonPolymorphicAttributes != null)
         {
-            return jsonPolymorphicAttributes.TypeDiscriminatorPropertyName;
+            return jsonPolymorphicAttributes.TypeDiscriminatorPropertyName ?? "$type";
         }
 
         return null;
