@@ -45,7 +45,7 @@ for more details.
 2. Register the Swagger generator in your application's startup path, defining one or more Swagger documents. For example:
 
     ```csharp
-    using Microsoft.OpenApi.Models;
+    using Microsoft.OpenApi;
     ```
 
     ```csharp

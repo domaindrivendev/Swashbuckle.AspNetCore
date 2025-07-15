@@ -1,6 +1,4 @@
 ﻿using Microsoft.OpenApi;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Writers;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace CustomDocumentSerializer;

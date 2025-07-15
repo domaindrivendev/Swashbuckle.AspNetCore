@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.TestSupport;
 using Xunit;
@@ -61,7 +61,7 @@ public class AnnotationsRequestBodyFilterTests
         var context = new RequestBodyFilterContext(bodyParameterDescription, null, null, null, null);
 
         Subject().Apply(requestBody, context);
-        
+
         Assert.Equal("Description for StringWithSwaggerRequestBodyAttribute", requestBody.Description);
         Assert.True(requestBody.Required);
     }

@@ -3,9 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Routing.Constraints;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Models.Interfaces;
-using Microsoft.OpenApi.Models.References;
+using Microsoft.OpenApi;
 using AnnotationsDataType = System.ComponentModel.DataAnnotations.DataType;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;

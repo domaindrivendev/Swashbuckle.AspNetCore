@@ -1,13 +1,10 @@
 Microsoft.Extensions.DependencyInjection.AnnotationsSwaggerGenOptionsExtensions
 static Microsoft.Extensions.DependencyInjection.AnnotationsSwaggerGenOptionsExtensions.EnableAnnotations(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions options) -> void
 static Microsoft.Extensions.DependencyInjection.AnnotationsSwaggerGenOptionsExtensions.EnableAnnotations(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions options, bool enableAnnotationsForInheritance, bool enableAnnotationsForPolymorphism) -> void
-static Swashbuckle.AspNetCore.Annotations.AnnotationsOperationFilter.ApplySwaggerOperationFilterAttributes(Microsoft.OpenApi.Models.OpenApiOperation operation, Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext context, System.Collections.Generic.IEnumerable<object> controllerAndActionAttributes) -> void
 Swashbuckle.AspNetCore.Annotations.AnnotationsDocumentFilter
 Swashbuckle.AspNetCore.Annotations.AnnotationsDocumentFilter.AnnotationsDocumentFilter() -> void
-Swashbuckle.AspNetCore.Annotations.AnnotationsDocumentFilter.Apply(Microsoft.OpenApi.Models.OpenApiDocument swaggerDoc, Swashbuckle.AspNetCore.SwaggerGen.DocumentFilterContext context) -> void
 Swashbuckle.AspNetCore.Annotations.AnnotationsOperationFilter
 Swashbuckle.AspNetCore.Annotations.AnnotationsOperationFilter.AnnotationsOperationFilter() -> void
-Swashbuckle.AspNetCore.Annotations.AnnotationsOperationFilter.Apply(Microsoft.OpenApi.Models.OpenApiOperation operation, Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext context) -> void
 Swashbuckle.AspNetCore.Annotations.AnnotationsParameterFilter
 Swashbuckle.AspNetCore.Annotations.AnnotationsParameterFilter.AnnotationsParameterFilter() -> void
 Swashbuckle.AspNetCore.Annotations.AnnotationsRequestBodyFilter

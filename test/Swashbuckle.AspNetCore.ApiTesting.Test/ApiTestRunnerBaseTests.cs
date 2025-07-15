@@ -1,4 +1,4 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi;
 using Xunit;
 
 namespace Swashbuckle.AspNetCore.ApiTesting.Test;
@@ -26,7 +26,7 @@ public class ApiTestRunnerBaseTests
         {
             c.OpenApiDocs.Add("v1", new OpenApiDocument());
         });
-            
+
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => subject.TestAsync(
             "v1",
             "GetProducts",
@@ -70,7 +70,7 @@ public class ApiTestRunnerBaseTests
                                 ],
                                 Responses = new OpenApiResponses
                                 {
-                                    [ "200" ] = new OpenApiResponse() 
+                                    [ "200" ] = new OpenApiResponse()
                                 }
                             }
                         }
@@ -118,7 +118,7 @@ public class ApiTestRunnerBaseTests
                                 Responses = new OpenApiResponses
                                 {
                                     ["400"] = new OpenApiResponse(),
-                                    ["200"] = new OpenApiResponse() 
+                                    ["200"] = new OpenApiResponse()
                                 }
                             }
                         }

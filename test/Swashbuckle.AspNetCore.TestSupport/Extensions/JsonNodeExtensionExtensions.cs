@@ -1,6 +1,4 @@
 ﻿using Microsoft.OpenApi;
-using Microsoft.OpenApi.Extensions;
-using Microsoft.OpenApi.Writers;
 
 namespace Swashbuckle.AspNetCore.TestSupport;
 

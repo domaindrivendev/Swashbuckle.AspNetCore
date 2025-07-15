@@ -1,6 +1,4 @@
-﻿using Microsoft.OpenApi.Extensions;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Models.Interfaces;
+﻿using Microsoft.OpenApi;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 
@@ -10,7 +8,7 @@ public class TestParameterFilter : IParameterFilter, IParameterAsyncFilter
     {
         if (parameter is OpenApiParameter openApiParameter)
         {
-            openApiParameter.Extensions ??= [];
+            openApiParameter.Extensions ??= new Dictionary<string, IOpenApiExtension>();
             openApiParameter.Extensions.Add("X-foo", new JsonNodeExtension("bar"));
             openApiParameter.Extensions.Add("X-docName", new JsonNodeExtension(context.DocumentName));
         }

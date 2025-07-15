@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Models.Interfaces;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Annotations;
@@ -116,14 +115,7 @@ public class AnnotationsSchemaFilter(IServiceProvider serviceProvider) : ISchema
 
         if (schemaAttribute.Required is { } required)
         {
-            if (required.Length < 2)
-            {
-                concrete.Required = [.. required];
-            }
-            else
-            {
-                concrete.Required = [.. new SortedSet<string>(required)];
-            }
+            concrete.Required = new SortedSet<string>(required);
         }
 
         if (schemaAttribute.Title is { } title)

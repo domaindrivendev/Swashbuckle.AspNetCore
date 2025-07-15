@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Annotations;
@@ -8,7 +8,7 @@ public class AnnotationsDocumentFilter : IDocumentFilter
 {
     public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
     {
-        swaggerDoc.Tags ??= [];
+        swaggerDoc.Tags ??= new SortedSet<OpenApiTag>();
 
         // Collect (unique) controller names and custom attributes in a dictionary
         var controllerNamesAndAttributes = context.ApiDescriptions

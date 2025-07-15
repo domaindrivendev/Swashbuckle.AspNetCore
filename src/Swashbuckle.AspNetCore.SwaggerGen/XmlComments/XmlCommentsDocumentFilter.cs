@@ -1,6 +1,6 @@
 ﻿using System.Xml.XPath;
 using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -32,7 +32,7 @@ public class XmlCommentsDocumentFilter(IReadOnlyDictionary<string, XPathNavigato
             var summaryNode = typeNode.SelectFirstChild(SummaryTag);
             if (summaryNode != null)
             {
-                swaggerDoc.Tags ??= [];
+                swaggerDoc.Tags ??= new HashSet<OpenApiTag>();
 
                 var name = nameAndType.Key;
                 var tag = swaggerDoc.Tags.FirstOrDefault((p) => p?.Name == name);

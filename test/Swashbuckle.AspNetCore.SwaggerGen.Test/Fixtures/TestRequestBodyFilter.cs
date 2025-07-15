@@ -1,6 +1,4 @@
-﻿using Microsoft.OpenApi.Extensions;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Models.Interfaces;
+﻿using Microsoft.OpenApi;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 
@@ -10,7 +8,7 @@ public class TestRequestBodyFilter : IRequestBodyFilter, IRequestBodyAsyncFilter
     {
         if (requestBody is OpenApiRequestBody body)
         {
-            body.Extensions ??= [];
+            body.Extensions ??= new Dictionary<string, IOpenApiExtension>();
             body.Extensions.Add("X-foo", new JsonNodeExtension("bar"));
             body.Extensions.Add("X-docName", new JsonNodeExtension(context.DocumentName));
         }
