@@ -129,7 +129,7 @@ public class Product
 ```csharp
 public class ProductSchemaFilter : ISchemaFilter
 {
-    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+    public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
     {
         schema.Example = new OpenApiObject
         {
