@@ -43,95 +43,52 @@ public static class OpenApiEndpoints
                 ))
                 .ToArray();
         })
-        .WithName("GetWeatherForecast")
-#if NET10_0_OR_GREATER
-        .WithOpenApi()
-#endif
-        ;
+        .WithName("GetWeatherForecast");
 
         group.MapPost("/multipleForms", ([FromForm] Person person, [FromForm] Address address) =>
         {
             return $"{person} {address}";
-        })
-#if NET10_0_OR_GREATER
-        .WithOpenApi()
-#endif
-        ;
+        });
 
         group.MapPost("/IFromFile", (IFormFile file, string queryParameter) =>
         {
             return $"{file.FileName}{queryParameter}";
-        })
-#if NET10_0_OR_GREATER
-        .WithOpenApi(o =>
-        {
-            var parameter = o.Parameters?.FirstOrDefault(p => string.Equals(p.Name, "queryParameter", StringComparison.OrdinalIgnoreCase));
-            if (parameter is not null)
-            {
-                parameter.Description = $"{parameter.Name} Description";
-            }
-            return o;
-        })
-#endif
-        ;
+        });
 
         group.MapPost("/IFromFileCollection", (IFormFileCollection collection) =>
         {
             return $"{collection.Count} {string.Join(',', collection.Select(f => f.FileName))}";
-        })
-#if NET10_0_OR_GREATER
-        .WithOpenApi()
-#endif
-        ;
+        });
 
         group.MapPost("/IFromBody", (OrganizationCustomExchangeRatesDto dto) =>
         {
             return $"{dto}";
-        })
-#if NET10_0_OR_GREATER
-        .WithOpenApi()
-#endif
-        ;
+        });
 
         group.MapPost("/IFromFileAndString", (IFormFile file, [FromForm] string tags) =>
         {
             return $"{file.FileName}{tags}";
-        })
-#if NET10_0_OR_GREATER
-        .WithOpenApi()
-#endif
-        ;
+        });
 
         group.MapPost("/IFromFileAndEnum", (IFormFile file, [FromForm] DateTimeKind dateTimeKind) =>
         {
             return $"{file.FileName}{dateTimeKind}";
-        })
-#if NET10_0_OR_GREATER
-        .WithOpenApi()
-#endif
-        ;
+        });
 
         group.MapPost("/IFromObjectAndString", ([FromForm] Person person, [FromForm] string tags) =>
         {
             return $"{person}{tags}";
-        })
-#if NET10_0_OR_GREATER
-        .WithOpenApi()
-#endif
-        ;
+        });
 
         app.MapGet("/TypeWithTryParse/{tryParse}", (TypeWithTryParse tryParse) =>
         {
             return tryParse.Name;
-        })
-#if NET10_0_OR_GREATER
-        .WithOpenApi()
-#endif
-        ;
+        });
 
         return app;
     }
 }
+
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
