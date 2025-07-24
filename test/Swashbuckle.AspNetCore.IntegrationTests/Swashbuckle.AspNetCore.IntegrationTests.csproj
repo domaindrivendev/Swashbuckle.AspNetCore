@@ -28,15 +28,15 @@
     <EmbeddedResource Include="../../src/Swashbuckle.AspNetCore.SwaggerUI/node_modules/swagger-ui-dist/**/*" Exclude="**/*/index.html;**/*/index.js;**/*/*.map;**/*/*.json;**/*/*.md;**/*/swagger-ui-es-*;**/*/LICENSE;**/*/NOTICE" Link="Embedded/SwaggerUI/%(RecursiveDir)%(FileName)%(Extension)" />
     <EmbeddedResource Include="../../src/Swashbuckle.AspNetCore.ReDoc/node_modules/redoc/bundles/redoc.standalone.js" Link="Embedded/ReDoc/%(RecursiveDir)%(FileName)%(Extension)" />
   </ItemGroup>
-  
+
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
-    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="8.0.17" />
-    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="8.0.17" />
+    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="8.0.18" />
+    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="8.0.18" />
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))">
-    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="9.0.6" />
-    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="9.0.6" />
+    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="9.0.7" />
+    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="9.0.7" />
   </ItemGroup>
 
 </Project>
