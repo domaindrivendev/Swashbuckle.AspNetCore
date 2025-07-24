@@ -30,6 +30,8 @@
   </ItemGroup>
 
   <ItemGroup>
+
+    <PackageReference Include="System.Text.Json" />
     <Compile Include="..\Shared\JsonSchemaTypes.cs" Link="JsonSchemaTypes.cs" />
   </ItemGroup>
 
