@@ -115,6 +115,20 @@ In versions of Swashbuckle.AspNetCore prior to `5.0.0`, Swashbuckle would genera
 on the behavior of the [Newtonsoft.Json serializer][newtonsoft-json]. This made sense because that was the serializer that shipped with ASP.NET Core
 at the time. However, since ASP.NET Core 3.0, ASP.NET Core introduces a new serializer, [System.Text.Json (STJ)][system-text-json] out-of-the-box.
 
+If you find that the *STJ* options/attributes are not being honored, this may be because you are using a combination of Minimal APIs and MVC, which have separate JSON options.
+To force the OpenAPI document generation to use either set of JSON options you can use one of the following methods:
+
+```csharp
+services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+});
+// Then either:
+services.AddSwaggerGenMinimalApisJsonOptions();
+// or ...
+services.AddSwaggerGenMvcJsonOptions();
+```
+
 If you want to use Newtonsoft.Json instead, you need to install a separate package and explicitly opt-in. By default Swashbuckle.AspNetCore will assume
 you're using the System.Text.Json serializer and generate Schemas based on its behavior. If you're using Newtonsoft.Json then you'll need to install a
 separate Swashbuckle package, [Swashbuckle.AspNetCore.Newtonsoft][swashbuckle-aspnetcore-newtonsoft] to explicitly opt-in.
