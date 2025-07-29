@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Reflection;
 using System.Runtime.Loader;
 using System.Text;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -263,8 +262,8 @@ internal class Program
 
         try
         {
-            return WebHost.CreateDefaultBuilder()
-               .UseStartup(startupAssembly.GetName().Name)
+            return Host.CreateDefaultBuilder()
+               .ConfigureWebHostDefaults(builder => builder.UseStartup(startupAssembly.GetName().Name))
                .Build()
                .Services;
         }
