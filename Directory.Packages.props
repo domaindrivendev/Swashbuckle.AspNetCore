@@ -16,6 +16,7 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="4.14.0" />
     <PackageVersion Include="Microsoft.OpenApi" Version="2.0.0" />
     <PackageVersion Include="Microsoft.OpenApi.YamlReader" Version="2.0.0" />
+    <PackageVersion Include="Microsoft.Playwright" Version="1.54.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="NSubstitute" Version="5.3.0" />
