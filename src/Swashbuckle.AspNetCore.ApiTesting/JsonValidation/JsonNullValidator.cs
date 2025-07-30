@@ -1,14 +1,14 @@
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Newtonsoft.Json.Linq;
 
 namespace Swashbuckle.AspNetCore.ApiTesting;
 
-public class JsonNullValidator : IJsonValidator
+public sealed class JsonNullValidator : IJsonValidator
 {
-    public bool CanValidate(OpenApiSchema schema) => schema.Type == JsonSchemaTypes.Null;
+    public bool CanValidate(IOpenApiSchema schema) => schema.Type == JsonSchemaTypes.Null;
 
     public bool Validate(
-        OpenApiSchema schema,
+        IOpenApiSchema schema,
         OpenApiDocument openApiDocument,
         JToken instance,
         out IEnumerable<string> errorMessages)
