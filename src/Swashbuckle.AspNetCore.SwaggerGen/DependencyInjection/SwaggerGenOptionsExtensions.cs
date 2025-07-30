@@ -189,7 +189,7 @@ public static class SwaggerGenOptionsExtensions
     }
 
     /// <summary>
-    /// Provide a custom strategy for generating the unique Id's that are used to reference object Schema's
+    /// Provide a custom strategy for generating the unique Ids that are used to reference object Schema's
     /// </summary>
     /// <param name="swaggerGenOptions"></param>
     /// <param name="schemaIdSelector">
