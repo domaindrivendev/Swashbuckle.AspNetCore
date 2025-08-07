@@ -238,7 +238,7 @@ Check out the table below for the full list of possible configuration options.
 |                                        | [Omit Arbitrary Operations](docs/configure-and-customize-swaggergen.md#omit-arbitrary-operations)                                                                 |
 |                                        | [Customize Operation Tags (e.g. for UI Grouping)](docs/configure-and-customize-swaggergen.md#customize-operation-tags-eg-for-ui-grouping)                         |
 |                                        | [Change Operation Sort Order (e.g. for UI Sorting)](docs/configure-and-customize-swaggergen.md#change-operation-sort-order-eg-for-ui-sorting)                     |
-|                                        | [Customize Schema Id's](docs/configure-and-customize-swaggergen.md#customize-schema-ids)                                                                          |
+|                                        | [Customize Schema Ids](docs/configure-and-customize-swaggergen.md#customize-schema-ids)                                                                          |
 |                                        | [Override Schema for Specific Types](docs/configure-and-customize-swaggergen.md#override-schema-for-specific-types)                                               |
 |                                        | [Extend Generator with Operation, Schema & Document Filters](docs/configure-and-customize-swaggergen.md#extend-generator-with-operation-schema--document-filters) |
 |                                        | [Add Security Definitions and Requirements](docs/configure-and-customize-swaggergen.md#add-security-definitions-and-requirements)                                 |
