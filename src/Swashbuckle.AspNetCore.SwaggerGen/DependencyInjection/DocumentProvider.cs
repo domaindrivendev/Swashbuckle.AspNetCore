@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Writers;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -29,17 +29,7 @@ internal class DocumentProvider(
         }
         else
         {
-            switch (_options.OpenApiVersion)
-            {
-                case OpenApi.OpenApiSpecVersion.OpenApi2_0:
-                    swagger.SerializeAsV2(jsonWriter);
-                    break;
-
-                default:
-                case OpenApi.OpenApiSpecVersion.OpenApi3_0:
-                    swagger.SerializeAsV3(jsonWriter);
-                    break;
-            }
+            swagger.SerializeAs(_options.OpenApiVersion, jsonWriter);
         }
     }
 }

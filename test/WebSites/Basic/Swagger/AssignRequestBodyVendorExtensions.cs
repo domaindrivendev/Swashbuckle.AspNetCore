@@ -1,13 +1,16 @@
-﻿using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Basic.Swagger;
 
 public class AssignRequestBodyVendorExtensions : IRequestBodyFilter
 {
-    public void Apply(OpenApiRequestBody requestBody, RequestBodyFilterContext context)
+    public void Apply(IOpenApiRequestBody requestBody, RequestBodyFilterContext context)
     {
-        requestBody.Extensions.Add("x-purpose", new OpenApiString("test"));
+        if (requestBody is OpenApiRequestBody body)
+        {
+            body.Extensions ??= new Dictionary<string, IOpenApiExtension>();
+            body.Extensions.Add("x-purpose", new JsonNodeExtension("test"));
+        }
     }
 }

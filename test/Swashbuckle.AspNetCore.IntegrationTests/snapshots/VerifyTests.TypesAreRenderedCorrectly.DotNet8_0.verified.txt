@@ -505,8 +505,7 @@
                 ]
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -531,7 +530,6 @@
           {
             "name": "queryParameter",
             "in": "query",
-            "description": "queryParameter Description",
             "required": true,
             "schema": {
               "type": "string"
@@ -559,8 +557,7 @@
                 }
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -605,8 +602,7 @@
                 }
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -684,8 +680,7 @@
                 }
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -734,8 +729,7 @@
                 }
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -808,8 +802,7 @@
                 }
               }
             }
-          },
-          "required": true
+          }
         },
         "responses": {
           "200": {
@@ -1097,5 +1090,19 @@
         "additionalProperties": false
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Annotations"
+    },
+    {
+      "name": "WebApi"
+    },
+    {
+      "name": "WithOpenApi"
+    },
+    {
+      "name": "Xml"
+    }
+  ]
 }

@@ -1,28 +1,15 @@
 using System.Reflection;
 using System.Xml.XPath;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
-public class XmlCommentsRequestBodyFilter : IRequestBodyFilter
+public class XmlCommentsRequestBodyFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers, SwaggerGeneratorOptions options) : IRequestBodyFilter
 {
-    private readonly IReadOnlyDictionary<string, XPathNavigator> _xmlDocMembers;
-    private readonly SwaggerGeneratorOptions _options;
+    private readonly IReadOnlyDictionary<string, XPathNavigator> _xmlDocMembers = xmlDocMembers;
+    private readonly SwaggerGeneratorOptions _options = options;
 
-    public XmlCommentsRequestBodyFilter(XPathDocument xmlDoc)
-        : this(XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc), null)
-    {
-    }
-
-    [ActivatorUtilitiesConstructor]
-    internal XmlCommentsRequestBodyFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers, SwaggerGeneratorOptions options)
-    {
-        _xmlDocMembers = xmlDocMembers;
-        _options = options;
-    }
-
-    public void Apply(OpenApiRequestBody requestBody, RequestBodyFilterContext context)
+    public void Apply(IOpenApiRequestBody requestBody, RequestBodyFilterContext context)
     {
         var bodyParameterDescription = context.BodyParameterDescription;
 
@@ -70,9 +57,10 @@ public class XmlCommentsRequestBodyFilter : IRequestBodyFilter
                     {
                         var (summary, example) = GetParamTags(parameterFromForm);
                         value.Description ??= summary;
-                        if (!string.IsNullOrEmpty(example))
+
+                        if (value is OpenApiSchema concrete && !string.IsNullOrEmpty(example))
                         {
-                            value.Example ??= XmlCommentsExampleHelper.Create(context.SchemaRepository, value, example);
+                            concrete.Example ??= XmlCommentsExampleHelper.Create(context.SchemaRepository, value, example);
                         }
                     }
                 }
@@ -100,7 +88,7 @@ public class XmlCommentsRequestBodyFilter : IRequestBodyFilter
         return (summary, exampleNode?.ToString());
     }
 
-    private void ApplyPropertyTagsForBody(OpenApiRequestBody requestBody, RequestBodyFilterContext context, PropertyInfo propertyInfo)
+    private void ApplyPropertyTagsForBody(IOpenApiRequestBody requestBody, RequestBodyFilterContext context, PropertyInfo propertyInfo)
     {
         var (summary, example) = GetPropertyTags(propertyInfo);
 
@@ -156,7 +144,7 @@ public class XmlCommentsRequestBodyFilter : IRequestBodyFilter
         return (summary, example);
     }
 
-    private void ApplyParamTagsForBody(OpenApiRequestBody requestBody, RequestBodyFilterContext context, ParameterInfo parameterInfo)
+    private void ApplyParamTagsForBody(IOpenApiRequestBody requestBody, RequestBodyFilterContext context, ParameterInfo parameterInfo)
     {
         var (summary, example) = GetParamTags(parameterInfo);
 

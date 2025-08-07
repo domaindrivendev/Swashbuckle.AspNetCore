@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Xunit;
 
@@ -51,7 +51,7 @@ public class AnnotationsSchemaFilterTests
         bool expectedWriteOnly,
         bool expectedNullable)
     {
-        var schema = new OpenApiSchema { Nullable = true };
+        var schema = new OpenApiSchema { Type = JsonSchemaType.Null };
         var propertyInfo = declaringType
             .GetProperty(propertyName);
         var context = new SchemaFilterContext(
@@ -66,13 +66,13 @@ public class AnnotationsSchemaFilterTests
         Assert.Equal("date", schema.Format);
         Assert.Equal(expectedReadOnly, schema.ReadOnly);
         Assert.Equal(expectedWriteOnly, schema.WriteOnly);
-        Assert.Equal(expectedNullable, schema.Nullable);
+        Assert.Equal(expectedNullable, schema.Type.Value.HasFlag(JsonSchemaType.Null));
     }
 
     [Fact]
     public void Apply_DoesNotModifyFlags_IfNotSpecifiedWithSwaggerSchemaAttribute()
     {
-        var schema = new OpenApiSchema { ReadOnly = true, WriteOnly = true, Nullable = true };
+        var schema = new OpenApiSchema { ReadOnly = true, WriteOnly = true, Type = JsonSchemaType.Null };
         var propertyInfo = typeof(SwaggerAnnotatedType)
             .GetProperty(nameof(SwaggerAnnotatedType.StringWithSwaggerSchemaAttributeDescriptionOnly));
         var context = new SchemaFilterContext(
@@ -85,7 +85,7 @@ public class AnnotationsSchemaFilterTests
 
         Assert.True(schema.ReadOnly);
         Assert.True(schema.WriteOnly);
-        Assert.True(schema.Nullable);
+        Assert.True(schema.Type.Value.HasFlag(JsonSchemaType.Null));
     }
 
     [Theory]
