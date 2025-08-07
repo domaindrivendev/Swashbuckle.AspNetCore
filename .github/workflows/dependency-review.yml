@@ -21,4 +21,4 @@ jobs:
       - name: Review dependencies
         uses: actions/dependency-review-action@da24556b548a50705dd671f47852072ea4c105d9 # v4.7.1
         with:
-          allow-licenses: '(MPL-2.0 OR Apache-2.0),0BSD,Apache-2.0,BSD-2-Clause,BSD-3-Clause,ISC,MIT,Python-2.0'
+          allow-licenses: '(MPL-2.0 OR Apache-2.0),0BSD,Apache-2.0,BSD-2-Clause,BSD-3-Clause,ISC,MIT,Python-2.0,LicenseRef-scancode-generic-cla AND MIT'
