@@ -72,7 +72,7 @@ jobs:
 
           git checkout -b $branchName
           git add .
-          git commit -m "Bump version`n`nBump version to ${env:NEXT_VERSION} for the next release."
+          git commit -m "Bump version`n`nBump version to ${env:NEXT_VERSION} for the next release." -s
           git push -u origin $branchName
 
           "branch-name=${branchName}" >> $env:GITHUB_OUTPUT
