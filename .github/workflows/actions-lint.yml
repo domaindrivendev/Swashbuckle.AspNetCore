@@ -11,8 +11,7 @@ on:
     branches: [ master ]
   workflow_dispatch:
 
-permissions:
-  contents: read
+permissions: {}
 
 env:
   FORCE_COLOR: 3
@@ -22,6 +21,11 @@ env:
 jobs:
   lint:
     runs-on: ubuntu-latest
+
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
 
     steps:
 
