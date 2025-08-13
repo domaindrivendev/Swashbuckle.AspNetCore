@@ -55,13 +55,3 @@ internal record Todo(int Id, string? Title, DateOnly? DueBy = null, bool IsCompl
 
 [JsonSerializable(typeof(Todo[]))]
 internal partial class AppJsonSerializerContext : JsonSerializerContext;
-
-namespace WebApi.Aot
-{
-    /// <summary>
-    /// Expose the Program class for use with <c>WebApplicationFactory</c>
-    /// </summary>
-    public partial class Program
-    {
-    }
-}

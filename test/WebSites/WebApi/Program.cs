@@ -42,13 +42,3 @@ app.MapAnnotationsEndpoints()
    .MapXmlCommentsEndpoints();
 
 app.Run();
-
-namespace WebApi
-{
-    /// <summary>
-    /// Expose the Program class for use with <c>WebApplicationFactory</c>
-    /// </summary>
-    public partial class Program
-    {
-    }
-}

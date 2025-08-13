@@ -41,13 +41,3 @@ public class RequiredEnumController : ControllerBase
     public IActionResult Get([Required] LogLevel? logLevel = LogLevel.Error)
         => Ok(new { logLevel });
 }
-
-namespace MvcWithNullable
-{
-    /// <summary>
-    /// Expose the Program class for use with <c>WebApplicationFactory</c>
-    /// </summary>
-    public partial class Program
-    {
-    }
-}
