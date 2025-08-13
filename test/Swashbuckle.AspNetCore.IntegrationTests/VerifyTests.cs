@@ -55,28 +55,27 @@ public partial class VerifyTests(ITestOutputHelper outputHelper)
     }
 
     [Theory]
-    [InlineData(typeof(MinimalApp.Program), "/swagger/v1/swagger.json")]
-    [InlineData(typeof(TopLevelSwaggerDoc.Program), "/swagger/v1.json")]
-    [InlineData(typeof(MvcWithNullable.Program), "/swagger/v1/swagger.json")]
-    [InlineData(typeof(WebApi.Program), "/swagger/v1/swagger.json")]
-    [InlineData(typeof(WebApi.Aot.Program), "/swagger/v1/swagger.json")]
+    [InlineData("MinimalApp", "/swagger/v1/swagger.json")]
+    [InlineData("TopLevelSwaggerDoc", "/swagger/v1.json")]
+    [InlineData("MvcWithNullable", "/swagger/v1/swagger.json")]
+    [InlineData("WebApi", "/swagger/v1/swagger.json")]
+    [InlineData("WebApi.Aot", "/swagger/v1/swagger.json")]
     public async Task Swagger_IsValidJson_No_Startup(
-        Type entryPointType,
+        string assemblyName,
         string swaggerRequestUri)
     {
-        var swaggerResponse = await SwaggerEndpointReturnsValidSwaggerJson(entryPointType, swaggerRequestUri);
+        var swaggerResponse = await SwaggerEndpointReturnsValidSwaggerJson(assemblyName, swaggerRequestUri);
 
         await Verify(swaggerResponse)
             .UseDirectory("snapshots")
-            .UseParameters(entryPointType, GetVersion(swaggerRequestUri))
+            .UseParameters(assemblyName, GetVersion(swaggerRequestUri))
             .UniqueForTargetFrameworkAndVersion();
     }
 
     [Fact]
     public async Task TypesAreRenderedCorrectly()
     {
-        using var application = new TestApplication<WebApi.Program>();
-        using var client = application.CreateDefaultClient();
+        using var client = SwaggerIntegrationTests.GetHttpClientForTestApplication("WebApi");
 
         var swaggerResponse = await SwaggerResponse(client, "/swagger/v1/swagger.json");
 
@@ -85,9 +84,9 @@ public partial class VerifyTests(ITestOutputHelper outputHelper)
             .UniqueForTargetFrameworkAndVersion();
     }
 
-    private static async Task<string> SwaggerEndpointReturnsValidSwaggerJson(Type entryPointType, string swaggerRequestUri)
+    private static async Task<string> SwaggerEndpointReturnsValidSwaggerJson(string assemblyName, string swaggerRequestUri)
     {
-        using var client = SwaggerIntegrationTests.GetHttpClientForTestApplication(entryPointType);
+        using var client = SwaggerIntegrationTests.GetHttpClientForTestApplication(assemblyName);
         return await SwaggerResponse(client, swaggerRequestUri);
     }
 

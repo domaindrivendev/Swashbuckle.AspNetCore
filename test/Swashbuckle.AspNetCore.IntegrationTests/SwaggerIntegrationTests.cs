@@ -114,23 +114,22 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
     }
 
     [Theory]
-    [InlineData(typeof(MinimalApp.Program), "/swagger/v1/swagger.json")]
-    [InlineData(typeof(TopLevelSwaggerDoc.Program), "/swagger/v1.json")]
-    [InlineData(typeof(MvcWithNullable.Program), "/swagger/v1/swagger.json")]
-    [InlineData(typeof(WebApi.Program), "/swagger/v1/swagger.json")]
-    [InlineData(typeof(WebApi.Aot.Program), "/swagger/v1/swagger.json")]
+    [InlineData("MinimalApp", "/swagger/v1/swagger.json")]
+    [InlineData("TopLevelSwaggerDoc", "/swagger/v1.json")]
+    [InlineData("MvcWithNullable", "/swagger/v1/swagger.json")]
+    [InlineData("WebApi", "/swagger/v1/swagger.json")]
+    [InlineData("WebApi.Aot", "/swagger/v1/swagger.json")]
     public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_Without_Startup(
-        Type entryPointType,
+        string assemblyName,
         string swaggerRequestUri)
     {
-        await SwaggerEndpointReturnsValidSwaggerJson(entryPointType, swaggerRequestUri);
+        await SwaggerEndpointReturnsValidSwaggerJson(assemblyName, swaggerRequestUri);
     }
 
     [Fact]
     public async Task TypesAreRenderedCorrectly()
     {
-        using var application = new TestApplication<WebApi.Program>();
-        using var client = application.CreateDefaultClient();
+        using var client = GetHttpClientForTestApplication("WebApi");
 
         using var response = await client.GetAsync("/swagger/v1/swagger.json", TestContext.Current.CancellationToken);
 
@@ -166,14 +165,19 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
         ]);
     }
 
-    private static async Task SwaggerEndpointReturnsValidSwaggerJson(Type entryPointType, string swaggerRequestUri)
+    private static async Task SwaggerEndpointReturnsValidSwaggerJson(string assemblyName, string swaggerRequestUri)
     {
-        using var client = GetHttpClientForTestApplication(entryPointType);
+        using var client = GetHttpClientForTestApplication(assemblyName);
         await AssertValidSwaggerJson(client, swaggerRequestUri);
     }
 
-    internal static HttpClient GetHttpClientForTestApplication(Type entryPointType)
+    internal static HttpClient GetHttpClientForTestApplication(string assemblyName)
     {
+        var assembly = Assembly.Load(assemblyName);
+        var entryPointType = assembly
+            .GetTypes().FirstOrDefault(x => x.Name == "Program")
+            ?? throw new InvalidOperationException($"Could not find the Program entry point type on assembly {assemblyName}.");
+
         var applicationType = typeof(TestApplication<>).MakeGenericType(entryPointType);
         var application = (IDisposable)Activator.CreateInstance(applicationType);
         Assert.NotNull(application);
@@ -181,7 +185,7 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
         var createClientMethod = applicationType
             .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
             .FirstOrDefault(m => m.Name == "CreateDefaultClient" && m.GetParameters().Length == 1)
-            ?? throw new InvalidOperationException($"The method CreateDefaultClient was not found on TestApplication<{entryPointType.FullName}>.");
+            ?? throw new InvalidOperationException($"The method CreateDefaultClient was not found on TestApplication<{assemblyName}.Program>.");
 
         // Pass null for DelegatingHandler[]
         var parameters = new object[] { null };
@@ -189,7 +193,7 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
         var clientObject = (IDisposable)createClientMethod.Invoke(application, parameters);
         if (clientObject is not HttpClient client)
         {
-            throw new InvalidOperationException($"The method CreateDefaultClient on TestApplication<{entryPointType.FullName}> did not return an HttpClient.");
+            throw new InvalidOperationException($"The method CreateDefaultClient on TestApplication<{assemblyName}.Program> did not return an HttpClient.");
         }
 
         return client;
