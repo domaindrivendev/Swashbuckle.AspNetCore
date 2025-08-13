@@ -142,14 +142,14 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
             await response.Content.ReadAsStreamAsync(TestContext.Current.CancellationToken),
             cancellationToken: TestContext.Current.CancellationToken);
 
-        var weatherForecase = swaggerResponse.RootElement
+        var weatherForecast = swaggerResponse.RootElement
             .GetProperty("components")
             .GetProperty("schemas")
             .GetProperty("WeatherForecast");
 
-        Assert.Equal("object", weatherForecase.GetProperty("type").GetString());
+        Assert.Equal("object", weatherForecast.GetProperty("type").GetString());
 
-        var properties = weatherForecase.GetProperty("properties");
+        var properties = weatherForecast.GetProperty("properties");
         Assert.Equal(4, properties.EnumerateObject().Count());
 
         Assert.Multiple(
