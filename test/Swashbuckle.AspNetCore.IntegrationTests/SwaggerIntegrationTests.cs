@@ -176,7 +176,7 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
         var assembly = Assembly.Load(assemblyName);
         var entryPointType = assembly
             .GetTypes().FirstOrDefault(x => x.Name == "Program")
-            ?? throw new InvalidOperationException($"Could not find the Program entry point type on assembly {assemblyName}.");
+            ?? throw new InvalidOperationException($"The Program entry point was not found on assembly {assemblyName}.");
 
         var applicationType = typeof(TestApplication<>).MakeGenericType(entryPointType);
         var application = (IDisposable)Activator.CreateInstance(applicationType);
@@ -193,7 +193,7 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
         var clientObject = (IDisposable)createClientMethod.Invoke(application, parameters);
         if (clientObject is not HttpClient client)
         {
-            throw new InvalidOperationException($"The method CreateDefaultClient on TestApplication<{assemblyName}.Program> did not return an HttpClient.");
+            throw new InvalidOperationException($"The method CreateDefaultClient on TestApplication<{assemblyName}.Program> did not return a HttpClient.");
         }
 
         return client;
