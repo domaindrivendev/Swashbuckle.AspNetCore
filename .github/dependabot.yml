@@ -43,5 +43,5 @@ updates:
     - dependency-name: "Microsoft.AspNetCore.Mvc.NewtonsoftJson"
     - dependency-name: "Microsoft.AspNetCore.Mvc.Testing"
     - dependency-name: "Microsoft.OpenApi"
-    - dependency-name: "Microsoft.OpenApi.Readers"
+    - dependency-name: "Microsoft.OpenApi.YamlReader"
     - dependency-name: "xunit"
