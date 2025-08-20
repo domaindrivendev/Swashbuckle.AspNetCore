@@ -10,7 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.OpenApi" />
+    <PackageReference Include="Microsoft.OpenApi" VersionOverride="2.0.0" />
     <PackageReference Include="Newtonsoft.Json" />
   </ItemGroup>
 
