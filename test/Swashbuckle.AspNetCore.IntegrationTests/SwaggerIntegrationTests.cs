@@ -204,5 +204,6 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
         var (_, diagnostic) = await OpenApiDocumentLoader.LoadWithDiagnosticsAsync(contentStream);
         Assert.NotNull(diagnostic);
         Assert.Empty(diagnostic.Errors);
+        Assert.Empty(diagnostic.Warnings);
     }
 }

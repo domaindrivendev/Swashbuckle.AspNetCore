@@ -51,6 +51,7 @@ public class DocumentProviderTests(ITestOutputHelper outputHelper)
         var (_, diagnostic) = await OpenApiDocumentLoader.LoadWithDiagnosticsAsync(stream);
         Assert.NotNull(diagnostic);
         Assert.Empty(diagnostic.Errors);
+        Assert.Empty(diagnostic.Warnings);
     }
 
     [Fact]
