@@ -1,0 +1,3 @@
+static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.UseOneOfForNullableEnums(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions) -> void
+Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions.UseOneOfForNullableEnums.get -> bool
+Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions.UseOneOfForNullableEnums.set -> void
