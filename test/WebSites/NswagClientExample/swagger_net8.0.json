@@ -123,10 +123,10 @@
         }
       }
     },
-    "/SystemTextJsonAnimals": {
+    "/SystemTextJsonCustomDiscriminatorAnimals": {
       "post": {
         "tags": [
-          "SystemTextJsonAnimals"
+          "SystemTextJsonCustomDiscriminatorAnimals"
         ],
         "requestBody": {
           "content": {
@@ -134,13 +134,13 @@
               "schema": {
                 "oneOf": [
                   {
-                    "$ref": "#/components/schemas/SystemTextJsonAnimal"
+                    "$ref": "#/components/schemas/SystemTextJsonCustomDiscriminatorAnimal"
                   },
                   {
-                    "$ref": "#/components/schemas/SystemTextJsonCat"
+                    "$ref": "#/components/schemas/SystemTextJsonCustomDiscriminatorCat"
                   },
                   {
-                    "$ref": "#/components/schemas/SystemTextJsonDog"
+                    "$ref": "#/components/schemas/SystemTextJsonCustomDiscriminatorDog"
                   }
                 ]
               }
@@ -149,13 +149,13 @@
               "schema": {
                 "oneOf": [
                   {
-                    "$ref": "#/components/schemas/SystemTextJsonAnimal"
+                    "$ref": "#/components/schemas/SystemTextJsonCustomDiscriminatorAnimal"
                   },
                   {
-                    "$ref": "#/components/schemas/SystemTextJsonCat"
+                    "$ref": "#/components/schemas/SystemTextJsonCustomDiscriminatorCat"
                   },
                   {
-                    "$ref": "#/components/schemas/SystemTextJsonDog"
+                    "$ref": "#/components/schemas/SystemTextJsonCustomDiscriminatorDog"
                   }
                 ]
               }
@@ -164,13 +164,75 @@
               "schema": {
                 "oneOf": [
                   {
-                    "$ref": "#/components/schemas/SystemTextJsonAnimal"
+                    "$ref": "#/components/schemas/SystemTextJsonCustomDiscriminatorAnimal"
                   },
                   {
-                    "$ref": "#/components/schemas/SystemTextJsonCat"
+                    "$ref": "#/components/schemas/SystemTextJsonCustomDiscriminatorCat"
                   },
                   {
-                    "$ref": "#/components/schemas/SystemTextJsonDog"
+                    "$ref": "#/components/schemas/SystemTextJsonCustomDiscriminatorDog"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/SystemTextJsonDefaultDiscriminatorAnimals": {
+      "post": {
+        "tags": [
+          "SystemTextJsonDefaultDiscriminatorAnimals"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonDefaultDiscriminatorAnimal"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonDefaultDiscriminatorCat"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonDefaultDiscriminatorDog"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonDefaultDiscriminatorAnimal"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonDefaultDiscriminatorCat"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonDefaultDiscriminatorDog"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonDefaultDiscriminatorAnimal"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonDefaultDiscriminatorCat"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonDefaultDiscriminatorDog"
                   }
                 ]
               }
@@ -287,7 +349,7 @@
           }
         ]
       },
-      "SystemTextJsonAnimal": {
+      "SystemTextJsonCustomDiscriminatorAnimal": {
         "required": [
           "animalType"
         ],
@@ -302,15 +364,15 @@
         "discriminator": {
           "propertyName": "animalType",
           "mapping": {
-            "Cat": "#/components/schemas/SystemTextJsonCat",
-            "Dog": "#/components/schemas/SystemTextJsonDog"
+            "Cat": "#/components/schemas/SystemTextJsonCustomDiscriminatorCat",
+            "Dog": "#/components/schemas/SystemTextJsonCustomDiscriminatorDog"
           }
         }
       },
-      "SystemTextJsonCat": {
+      "SystemTextJsonCustomDiscriminatorCat": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/SystemTextJsonAnimal"
+            "$ref": "#/components/schemas/SystemTextJsonCustomDiscriminatorAnimal"
           },
           {
             "type": "object",
@@ -324,10 +386,67 @@
           }
         ]
       },
-      "SystemTextJsonDog": {
+      "SystemTextJsonCustomDiscriminatorDog": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/SystemTextJsonAnimal"
+            "$ref": "#/components/schemas/SystemTextJsonCustomDiscriminatorAnimal"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "dogSpecificProperty": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "SystemTextJsonDefaultDiscriminatorAnimal": {
+        "required": [
+          "$type"
+        ],
+        "type": "object",
+        "properties": {
+          "$type": {
+            "type": "string"
+          },
+          "animalType": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "discriminator": {
+          "propertyName": "$type",
+          "mapping": {
+            "Cat": "#/components/schemas/SystemTextJsonDefaultDiscriminatorCat",
+            "Dog": "#/components/schemas/SystemTextJsonDefaultDiscriminatorDog"
+          }
+        }
+      },
+      "SystemTextJsonDefaultDiscriminatorCat": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SystemTextJsonDefaultDiscriminatorAnimal"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "catSpecificProperty": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "SystemTextJsonDefaultDiscriminatorDog": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SystemTextJsonDefaultDiscriminatorAnimal"
           },
           {
             "type": "object",
