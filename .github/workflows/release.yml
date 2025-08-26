@@ -26,7 +26,11 @@ jobs:
     steps:
 
       - name: Checkout code
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          filter: 'tree:0'
+          persist-credentials: false
+          show-progress: false
 
       - name: Get version
         id: get-version
@@ -49,28 +53,17 @@ jobs:
             const draft = process.env.DRAFT === 'true';
             const version = process.env.VERSION;
             const tag_name = `v${version}`;
+            const target_commitish = process.env.DEFAULT_BRANCH;
             const name = tag_name;
-
-            const { data: notes } = await github.rest.repos.generateReleaseNotes({
-              owner,
-              repo,
-              tag_name,
-              target_commitish: process.env.DEFAULT_BRANCH,
-            });
-
-            const body = notes.body
-              .split('\n')
-              .filter((line) => !line.includes(' @dependabot '))
-              .filter((line) => !line.includes(' @github-actions '))
-              .join('\n');
 
             const { data: release } = await github.rest.repos.createRelease({
               owner,
               repo,
               tag_name,
+              target_commitish,
               name,
-              body,
               draft,
+              generate_release_notes: true,
             });
 
             core.notice(`Created release ${release.name}: ${release.html_url}`);

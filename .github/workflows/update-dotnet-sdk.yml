@@ -33,4 +33,5 @@ jobs:
     - name: Add security label
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: gh pr edit "${{ needs.update-dotnet-sdk.outputs.pull-request-html-url }}" --add-label security
+        PR_URL: ${{ needs.update-dotnet-sdk.outputs.pull-request-html-url }}
+      run: gh pr edit "${PR_URL}" --add-label security

@@ -11,26 +11,42 @@ on:
     branches: [ master ]
   workflow_dispatch:
 
-permissions:
-  contents: read
+permissions: {}
 
 env:
   FORCE_COLOR: 3
   TERM: xterm
+  ZIZMOR_VERSION: '1.12.0'
 
 jobs:
   lint:
     runs-on: ubuntu-latest
 
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
     steps:
 
     - name: Checkout code
-      uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      with:
+        filter: 'tree:0'
+        persist-credentials: false
+        show-progress: false
 
     - name: Add actionlint problem matcher
       run: echo "::add-matcher::.github/actionlint-matcher.json"
 
     - name: Lint workflows
-      uses: docker://rhysd/actionlint@sha256:5acca218639222e4afbc82fc6e9ef56cbe646ade3b07f3f5ec364b638258a244 # v1.7.0
+      uses: docker://rhysd/actionlint:1.7.7@sha256:887a259a5a534f3c4f36cb02dca341673c6089431057242cdc931e9f133147e9
       with:
         args: -color
+
+    - name: Lint workflows with zizmor
+      uses: zizmorcore/zizmor-action@5ca5fc7a4779c5263a3ffa0e1f693009994446d1 # v0.1.2
+      with:
+        persona: pedantic
+        version: ${{ env.ZIZMOR_VERSION }}
+

@@ -1,0 +1,5 @@
+changelog:
+  exclude:
+    authors:
+      - dependabot[bot]
+      - github-actions[bot]
