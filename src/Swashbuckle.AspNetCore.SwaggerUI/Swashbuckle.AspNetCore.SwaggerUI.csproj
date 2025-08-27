@@ -71,7 +71,7 @@
 
   <!-- Embed compressed files using SDK task -->
   <PropertyGroup>
-    <_SdkTasksTFM Condition=" '$(MSBuildRuntimeType)' == 'Core'">net9.0</_SdkTasksTFM>
+    <_SdkTasksTFM Condition=" '$(MSBuildRuntimeType)' == 'Core'">net10.0</_SdkTasksTFM>
     <_SdkTasksTFM Condition=" '$(MSBuildRuntimeType)' != 'Core'">net472</_SdkTasksTFM>
   </PropertyGroup>
 
