@@ -118,10 +118,10 @@
         }
       }
     },
-    "/SystemTextJsonCustomDiscriminatorAnimals": {
+    "/SystemTextJsonAnimals": {
       "post": {
         "tags": [
-          "SystemTextJsonCustomDiscriminatorAnimals"
+          "SystemTextJsonAnimals"
         ],
         "requestBody": {
           "content": {
@@ -129,13 +129,13 @@
               "schema": {
                 "oneOf": [
                   {
-                    "$ref": "#/components/schemas/SystemTextJsonCustomDiscriminatorAnimal"
+                    "$ref": "#/components/schemas/SystemTextJsonAnimal"
                   },
                   {
-                    "$ref": "#/components/schemas/SystemTextJsonCustomDiscriminatorCat"
+                    "$ref": "#/components/schemas/SystemTextJsonCat"
                   },
                   {
-                    "$ref": "#/components/schemas/SystemTextJsonCustomDiscriminatorDog"
+                    "$ref": "#/components/schemas/SystemTextJsonDog"
                   }
                 ]
               }
@@ -144,13 +144,13 @@
               "schema": {
                 "oneOf": [
                   {
-                    "$ref": "#/components/schemas/SystemTextJsonCustomDiscriminatorAnimal"
+                    "$ref": "#/components/schemas/SystemTextJsonAnimal"
                   },
                   {
-                    "$ref": "#/components/schemas/SystemTextJsonCustomDiscriminatorCat"
+                    "$ref": "#/components/schemas/SystemTextJsonCat"
                   },
                   {
-                    "$ref": "#/components/schemas/SystemTextJsonCustomDiscriminatorDog"
+                    "$ref": "#/components/schemas/SystemTextJsonDog"
                   }
                 ]
               }
@@ -159,13 +159,13 @@
               "schema": {
                 "oneOf": [
                   {
-                    "$ref": "#/components/schemas/SystemTextJsonCustomDiscriminatorAnimal"
+                    "$ref": "#/components/schemas/SystemTextJsonAnimal"
                   },
                   {
-                    "$ref": "#/components/schemas/SystemTextJsonCustomDiscriminatorCat"
+                    "$ref": "#/components/schemas/SystemTextJsonCat"
                   },
                   {
-                    "$ref": "#/components/schemas/SystemTextJsonCustomDiscriminatorDog"
+                    "$ref": "#/components/schemas/SystemTextJsonDog"
                   }
                 ]
               }
@@ -344,7 +344,7 @@
           }
         ]
       },
-      "SystemTextJsonCustomDiscriminatorAnimal": {
+      "SystemTextJsonAnimal": {
         "required": [
           "animalType"
         ],
@@ -359,37 +359,20 @@
         "discriminator": {
           "propertyName": "animalType",
           "mapping": {
-            "Cat": "#/components/schemas/SystemTextJsonCustomDiscriminatorCat",
-            "Dog": "#/components/schemas/SystemTextJsonCustomDiscriminatorDog"
+            "Cat": "#/components/schemas/SystemTextJsonCat",
+            "Dog": "#/components/schemas/SystemTextJsonDog"
           }
         }
       },
-      "SystemTextJsonCustomDiscriminatorCat": {
+      "SystemTextJsonCat": {
         "allOf": [
           {
-            "$ref": "#/components/schemas/SystemTextJsonCustomDiscriminatorAnimal"
+            "$ref": "#/components/schemas/SystemTextJsonAnimal"
           },
           {
             "type": "object",
             "properties": {
               "catSpecificProperty": {
-                "type": "string",
-                "nullable": true
-              }
-            },
-            "additionalProperties": false
-          }
-        ]
-      },
-      "SystemTextJsonCustomDiscriminatorDog": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/SystemTextJsonCustomDiscriminatorAnimal"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "dogSpecificProperty": {
                 "type": "string",
                 "nullable": true
               }
@@ -442,6 +425,23 @@
         "allOf": [
           {
             "$ref": "#/components/schemas/SystemTextJsonDefaultDiscriminatorAnimal"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "dogSpecificProperty": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "SystemTextJsonDog": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SystemTextJsonAnimal"
           },
           {
             "type": "object",

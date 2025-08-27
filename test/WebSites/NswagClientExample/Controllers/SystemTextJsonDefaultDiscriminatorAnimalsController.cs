@@ -16,7 +16,7 @@ public class SystemTextJsonDefaultDiscriminatorAnimalsController : ControllerBas
     }
 }
 
-[JsonPolymorphic()]
+[JsonPolymorphic]
 [JsonDerivedType(typeof(SystemTextJsonDefaultDiscriminatorCat), "Cat")]
 [JsonDerivedType(typeof(SystemTextJsonDefaultDiscriminatorDog), "Dog")]
 public class SystemTextJsonDefaultDiscriminatorAnimal
