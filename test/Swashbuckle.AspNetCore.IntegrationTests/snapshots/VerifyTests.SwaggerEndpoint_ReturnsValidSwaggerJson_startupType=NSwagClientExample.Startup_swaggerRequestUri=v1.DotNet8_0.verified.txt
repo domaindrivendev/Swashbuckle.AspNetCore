@@ -179,6 +179,68 @@
           }
         }
       }
+    },
+    "/SystemTextJsonDefaultDiscriminatorAnimals": {
+      "post": {
+        "tags": [
+          "SystemTextJsonDefaultDiscriminatorAnimals"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonDefaultDiscriminatorAnimal"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonDefaultDiscriminatorCat"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonDefaultDiscriminatorDog"
+                  }
+                ]
+              }
+            },
+            "text/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonDefaultDiscriminatorAnimal"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonDefaultDiscriminatorCat"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonDefaultDiscriminatorDog"
+                  }
+                ]
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonDefaultDiscriminatorAnimal"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonDefaultDiscriminatorCat"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SystemTextJsonDefaultDiscriminatorDog"
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -311,6 +373,63 @@
             "type": "object",
             "properties": {
               "catSpecificProperty": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "SystemTextJsonDefaultDiscriminatorAnimal": {
+        "required": [
+          "$type"
+        ],
+        "type": "object",
+        "properties": {
+          "$type": {
+            "type": "string"
+          },
+          "animalType": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "discriminator": {
+          "propertyName": "$type",
+          "mapping": {
+            "Cat": "#/components/schemas/SystemTextJsonDefaultDiscriminatorCat",
+            "Dog": "#/components/schemas/SystemTextJsonDefaultDiscriminatorDog"
+          }
+        }
+      },
+      "SystemTextJsonDefaultDiscriminatorCat": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SystemTextJsonDefaultDiscriminatorAnimal"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "catSpecificProperty": {
+                "type": "string",
+                "nullable": true
+              }
+            },
+            "additionalProperties": false
+          }
+        ]
+      },
+      "SystemTextJsonDefaultDiscriminatorDog": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SystemTextJsonDefaultDiscriminatorAnimal"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "dogSpecificProperty": {
                 "type": "string",
                 "nullable": true
               }
