@@ -471,6 +471,9 @@
     },
     {
       "name": "SystemTextJsonAnimals"
+    },
+    {
+      "name": "SystemTextJsonDefaultDiscriminatorAnimals"
     }
   ]
 }
