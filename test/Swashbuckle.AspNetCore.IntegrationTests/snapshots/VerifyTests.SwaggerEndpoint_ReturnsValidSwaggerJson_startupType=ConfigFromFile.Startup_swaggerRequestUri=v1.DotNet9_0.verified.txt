@@ -64,5 +64,10 @@
         "additionalProperties": false
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Products"
+    }
+  ]
 }

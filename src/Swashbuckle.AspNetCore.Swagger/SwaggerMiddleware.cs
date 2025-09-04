@@ -5,8 +5,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.AspNetCore.Routing.Template;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Writers;
+using Microsoft.OpenApi;
 
 namespace Swashbuckle.AspNetCore.Swagger;
 
@@ -174,17 +173,7 @@ internal sealed class SwaggerMiddleware
         }
         else
         {
-            switch (_options.OpenApiVersion)
-            {
-                case Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0:
-                    document.SerializeAsV2(writer);
-                    break;
-
-                case Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0:
-                default:
-                    document.SerializeAsV3(writer);
-                    break;
-            }
+            document.SerializeAs(_options.OpenApiVersion, writer);
         }
     }
 }
