@@ -19,6 +19,8 @@ public class TestSiteAutofaq
         var startupAssembly = _startupType.Assembly;
         var applicationName = startupAssembly.GetName().Name;
 
+#pragma warning disable ASPDEPR004, ASPDEPR008
+        // TODO Use WebApplicationFactory
         var hostBuilder = new WebHostBuilder()
             .UseEnvironment("Development")
             .ConfigureServices(services => services.AddAutofac())
@@ -26,6 +28,7 @@ public class TestSiteAutofaq
             .UseStartup(_startupType);
 
         return new TestServer(hostBuilder);
+#pragma warning restore ASPDEPR004, ASPDEPR008
     }
 
     public HttpClient BuildClient()
