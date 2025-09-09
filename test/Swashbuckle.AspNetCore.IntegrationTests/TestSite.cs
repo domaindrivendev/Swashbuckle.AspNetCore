@@ -15,6 +15,8 @@ public class TestSite(Type startupType, ITestOutputHelper outputHelper)
         var startupAssembly = startupType.Assembly;
         var applicationName = startupAssembly.GetName().Name;
 
+#pragma warning disable ASPDEPR004, ASPDEPR008
+        // TODO Use WebApplicationFactory
         var builder = new WebHostBuilder()
             .UseEnvironment("Development")
             .UseSolutionRelativeContentRoot(Path.Combine("test", "WebSites", applicationName), "*.slnx")
@@ -27,6 +29,7 @@ public class TestSite(Type startupType, ITestOutputHelper outputHelper)
         });
 
         return new(builder);
+#pragma warning restore ASPDEPR004, ASPDEPR008
     }
 
     public HttpClient BuildClient()

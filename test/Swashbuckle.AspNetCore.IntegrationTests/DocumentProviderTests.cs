@@ -18,7 +18,7 @@ public class DocumentProviderTests(ITestOutputHelper outputHelper)
     {
         var testSite = new TestSite(startupType, outputHelper);
         var server = testSite.BuildServer();
-        var services = server.Host.Services;
+        var services = server.Services;
         var documentProvider = (IDocumentProvider)services.GetService(typeof(IDocumentProvider));
 
         var documentNames = documentProvider.GetDocumentNames();
@@ -37,7 +37,7 @@ public class DocumentProviderTests(ITestOutputHelper outputHelper)
     {
         var testSite = new TestSite(startupType, outputHelper);
         var server = testSite.BuildServer();
-        var services = server.Host.Services;
+        var services = server.Services;
 
         var documentProvider = (IDocumentProvider)services.GetService(typeof(IDocumentProvider));
         using var stream = new MemoryStream();
@@ -59,7 +59,7 @@ public class DocumentProviderTests(ITestOutputHelper outputHelper)
     {
         var testSite = new TestSite(typeof(Basic.Startup), outputHelper);
         var server = testSite.BuildServer();
-        var services = server.Host.Services;
+        var services = server.Services;
 
         var documentProvider = (IDocumentProvider)services.GetService(typeof(IDocumentProvider));
         using var writer = new StringWriter();
