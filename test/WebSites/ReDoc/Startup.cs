@@ -28,6 +28,7 @@ public class Startup(IConfiguration configuration)
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
+            endpoints.MapGet("/", () => Results.Redirect("api-docs"));
         });
 
         app.UseSwagger(c =>

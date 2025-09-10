@@ -42,7 +42,7 @@ public partial class VerifyTests(ITestOutputHelper outputHelper)
         var startupType = typeof(CliExampleWithFactory.Startup);
         const string swaggerRequestUri = "/swagger/v1/swagger_net8.0.json";
 
-        var testSite = new TestSiteAutofaq(startupType);
+        var testSite = new TestSiteAutofaq(startupType, outputHelper);
         using var client = testSite.BuildClient();
 
         using var swaggerResponse = await client.GetAsync(swaggerRequestUri, TestContext.Current.CancellationToken);

@@ -392,6 +392,6 @@ public class RequestValidatorTests
 
     private static RequestValidator Subject(IEnumerable<IContentValidator> contentValidators = null)
     {
-        return new RequestValidator(contentValidators ?? []);
+        return new(contentValidators ?? []);
     }
 }

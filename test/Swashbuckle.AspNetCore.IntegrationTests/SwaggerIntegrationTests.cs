@@ -36,7 +36,7 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
     [Fact]
     public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_ForAutofaq()
     {
-        var testSite = new TestSiteAutofaq(typeof(CliExampleWithFactory.Startup));
+        var testSite = new TestSiteAutofaq(typeof(CliExampleWithFactory.Startup), outputHelper);
         using var client = testSite.BuildClient();
 
         await AssertValidSwaggerJson(client, "/swagger/v1/swagger_net8.0.json");
@@ -205,5 +205,6 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
         var (_, diagnostic) = await OpenApiDocumentLoader.LoadWithDiagnosticsAsync(contentStream);
         Assert.NotNull(diagnostic);
         Assert.Empty(diagnostic.Errors);
+        Assert.Empty(diagnostic.Warnings);
     }
 }

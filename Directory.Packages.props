@@ -12,8 +12,8 @@
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.19" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
-    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="8.0.19" />
-    <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="8.0.19" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="8.0.20" />
+    <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="8.0.20" />
     <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="4.14.0" />
     <PackageVersion Include="Microsoft.OpenApi" Version="1.6.25" />
     <PackageVersion Include="Microsoft.OpenApi.Readers" Version="1.6.25" />

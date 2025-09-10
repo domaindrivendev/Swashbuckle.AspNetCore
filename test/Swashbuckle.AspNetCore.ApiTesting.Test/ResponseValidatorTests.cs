@@ -215,7 +215,7 @@ public class ResponseValidatorTests
                             Schema = new OpenApiSchema
                             {
                                 Type = JsonSchemaTypes.Object,
-                                Required = new SortedSet<string> { "prop1", "prop2" }
+                                Required = new SortedSet<string> { "prop1", "prop2" },
                             }
                         }
                     }
@@ -259,6 +259,6 @@ public class ResponseValidatorTests
 
     private static ResponseValidator Subject(IEnumerable<IContentValidator> contentValidators = null)
     {
-        return new ResponseValidator(contentValidators ?? []);
+        return new(contentValidators ?? []);
     }
 }
