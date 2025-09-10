@@ -61,7 +61,7 @@ public class AnnotationsRequestBodyFilterTests
         var context = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
 
         Subject().Apply(requestBody, context);
-        
+
         Assert.Equal("Description for StringWithSwaggerRequestBodyAttribute", requestBody.Description);
         Assert.True(requestBody.Required);
     }

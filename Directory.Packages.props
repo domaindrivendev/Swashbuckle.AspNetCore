@@ -8,12 +8,12 @@
     <PackageVersion Include="IdentityServer4.AccessTokenValidation" Version="3.0.1" />
     <PackageVersion Include="JunitXml.TestLogger" Version="6.1.0" />
     <PackageVersion Include="MartinCostello.Logging.XUnit.v3" Version="0.6.0" />
-    <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.19" />
-    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.19" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.20" />
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.20" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.1.0" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
-    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="8.0.19" />
-    <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="8.0.19" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="8.0.20" />
+    <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="8.0.20" />
     <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="4.14.0" />
     <PackageVersion Include="Microsoft.OpenApi" Version="1.6.25" />
     <PackageVersion Include="Microsoft.OpenApi.Readers" Version="1.6.25" />

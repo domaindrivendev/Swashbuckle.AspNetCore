@@ -255,10 +255,12 @@ internal class Program
             return host.Services;
         }
 
+#pragma warning disable ASPDEPR008
         if (TryGetCustomHost(startupAssembly, "SwaggerWebHostFactory", "CreateWebHost", out IWebHost webHost))
         {
             return webHost.Services;
         }
+#pragma warning restore ASPDEPR008
 
         try
         {

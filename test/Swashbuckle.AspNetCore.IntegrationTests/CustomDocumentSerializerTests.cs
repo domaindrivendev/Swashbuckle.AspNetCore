@@ -49,7 +49,7 @@ public class CustomDocumentSerializerTests(ITestOutputHelper outputHelper)
     {
         var testSite = new TestSite(typeof(CustomDocumentSerializer.Startup), outputHelper);
         var server = testSite.BuildServer();
-        var services = server.Host.Services;
+        var services = server.Services;
 
         var documentProvider = services.GetService<IDocumentProvider>();
         using var stream = new MemoryStream();
@@ -80,7 +80,7 @@ public class CustomDocumentSerializerTests(ITestOutputHelper outputHelper)
     {
         var testSite = new TestSite(typeof(CustomDocumentSerializer.Startup), outputHelper);
         var server = testSite.BuildServer();
-        var services = server.Host.Services;
+        var services = server.Services;
 
         var documentProvider = services.GetService<IDocumentProvider>();
         var options = services.GetService<IOptions<SwaggerOptions>>();

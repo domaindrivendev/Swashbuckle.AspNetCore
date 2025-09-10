@@ -1,38 +1,21 @@
-﻿using System.Reflection;
-using Autofac.Extensions.DependencyInjection;
+﻿using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Hosting;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests;
 
-public class TestSiteAutofaq
+public class TestSiteAutofaq(Type startupType, ITestOutputHelper outputHelper)
+    : TestSite(startupType, outputHelper)
 {
-    private readonly Type _startupType;
-
-    public TestSiteAutofaq(Type startupType)
+    protected override void Configure(IHostBuilder builder)
     {
-        _startupType = startupType;
+        base.Configure(builder);
+        builder.UseServiceProviderFactory(new AutofacServiceProviderFactory());
     }
 
-    public TestServer BuildServer()
+    protected override void Configure(IWebHostBuilder builder)
     {
-        var startupAssembly = _startupType.Assembly;
-        var applicationName = startupAssembly.GetName().Name;
-
-        var hostBuilder = new WebHostBuilder()
-            .UseEnvironment("Development")
-            .ConfigureServices(services => services.AddAutofac())
-            .UseSolutionRelativeContentRoot(Path.Combine("test", "WebSites", applicationName), "*.slnx")
-            .UseStartup(_startupType);
-
-        return new TestServer(hostBuilder);
-    }
-
-    public HttpClient BuildClient()
-    {
-        var server = BuildServer();
-        var client = server.CreateClient();
-
-        return client;
+        builder.ConfigureServices((services) => services.AddAutofac());
+        base.Configure(builder);
     }
 }

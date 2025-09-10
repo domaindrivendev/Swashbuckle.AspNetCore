@@ -418,7 +418,7 @@ public class JsonValidatorTests
         var openApiSchema = new OpenApiSchema
         {
             Type = JsonSchemaTypes.Object,
-            Required = new SortedSet<string>(schemaRequired)
+            Required = new SortedSet<string>(schemaRequired),
         };
         var instance = JToken.Parse(instanceText);
 
@@ -541,7 +541,7 @@ public class JsonValidatorTests
             [
                 new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p1" } },
                 new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p2" } },
-                new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p3" } }
+                new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p3" } },
             ]
         };
         var instance = JToken.Parse(instanceText);
@@ -570,7 +570,7 @@ public class JsonValidatorTests
             [
                 new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p1" } },
                 new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p2" } },
-                new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p3" } }
+                new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p3" } },
             ]
         };
         var instance = JToken.Parse(instanceText);
@@ -600,7 +600,7 @@ public class JsonValidatorTests
             [
                 new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p1" } },
                 new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p2" } },
-                new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p3" } }
+                new OpenApiSchema { Type = JsonSchemaTypes.Object, Required = new SortedSet<string> { "p3" } },
             ]
         };
         var instance = JToken.Parse(instanceText);

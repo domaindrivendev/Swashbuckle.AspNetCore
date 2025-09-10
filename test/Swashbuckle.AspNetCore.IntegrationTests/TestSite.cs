@@ -4,35 +4,58 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests;
 
 public class TestSite(Type startupType, ITestOutputHelper outputHelper)
 {
-    public TestServer BuildServer()
+    private IHost _host;
+    private TestServer _server;
+
+    public virtual TestServer BuildServer()
     {
-        var startupAssembly = startupType.Assembly;
-        var applicationName = startupAssembly.GetName().Name;
-
-        var builder = new WebHostBuilder()
-            .UseEnvironment("Development")
-            .UseSolutionRelativeContentRoot(Path.Combine("test", "WebSites", applicationName), "*.slnx")
-            .UseStartup(startupType);
-
-        builder.ConfigureTestServices((services) =>
+        if (_server is null)
         {
-            services.AddLogging((logging) => logging.ClearProviders().AddXUnit(outputHelper));
-            services.AddTransient<IStartupFilter, LocalizationStartupFilter>();
-        });
+            var builder = new HostBuilder();
 
-        return new(builder);
+            Configure(builder);
+
+            builder.ConfigureWebHost(Configure);
+
+            _host = builder.Build();
+            _host.Start();
+
+            _server = _host.GetTestServer();
+        }
+
+        return _server;
     }
 
     public HttpClient BuildClient()
     {
         var server = BuildServer();
         return server.CreateClient();
+    }
+
+    protected virtual void Configure(IHostBuilder builder)
+    {
+        builder.ConfigureServices((services) =>
+        {
+            services.AddLogging((logging) => logging.ClearProviders().AddXUnit(outputHelper));
+            services.AddTransient<IStartupFilter, LocalizationStartupFilter>();
+        });
+    }
+
+    protected virtual void Configure(IWebHostBuilder builder)
+    {
+        var applicationName = startupType.Assembly.GetName().Name;
+
+        builder.UseEnvironment("Development")
+               .UseSolutionRelativeContentRoot(Path.Combine("test", "WebSites", applicationName), "*.slnx")
+               .UseStartup(startupType)
+               .UseTestServer();
     }
 
     private sealed class LocalizationStartupFilter : IStartupFilter

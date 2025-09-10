@@ -61,8 +61,5 @@ public class AnnotationsParameterFilterTests
         Assert.True(parameter.Required);
     }
 
-    private AnnotationsParameterFilter Subject()
-    {
-        return new AnnotationsParameterFilter();
-    }
+    private static AnnotationsParameterFilter Subject() => new();
 }

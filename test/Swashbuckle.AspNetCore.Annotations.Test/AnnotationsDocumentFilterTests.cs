@@ -1,7 +1,7 @@
 ﻿using Microsoft.OpenApi.Models;
-using Xunit;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.TestSupport;
+using Xunit;
 
 namespace Swashbuckle.AspNetCore.Annotations.Test;
 
@@ -13,7 +13,7 @@ public class AnnotationsDocumentFilterTests
         var document = new OpenApiDocument();
         var apiDescription = ApiDescriptionFactory.Create<FakeControllerWithSwaggerAnnotations>(c => nameof(c.ActionWithNoAttributes));
         var filterContext = new DocumentFilterContext(
-            apiDescriptions: new[] { apiDescription },
+            apiDescriptions: [apiDescription],
             schemaGenerator: null,
             schemaRepository: null);
 
@@ -24,8 +24,6 @@ public class AnnotationsDocumentFilterTests
         Assert.Equal("http://tempuri.org/", tag.ExternalDocs.Url.ToString());
     }
 
-    private AnnotationsDocumentFilter Subject()
-    {
-        return new AnnotationsDocumentFilter();
-    }
+    private static AnnotationsDocumentFilter Subject()
+        => new();
 }
