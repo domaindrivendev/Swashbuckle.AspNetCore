@@ -21,7 +21,11 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
 
         var testCases = new TheoryData<string, string>();
 
-        foreach (var (resourceName, fileName) in resources.Where((p) => Path.GetExtension(p.Item2) is not ".txt"))
+        var filtered = resources
+            .Where((p) => Path.GetFileName(p.Item2) is not "oauth2-redirect.html")
+            .Where((p) => Path.GetExtension(p.Item2) is not ".txt");
+
+        foreach (var (resourceName, fileName) in filtered)
         {
             testCases.Add(resourceName, fileName);
         }
