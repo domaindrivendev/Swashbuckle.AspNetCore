@@ -39,7 +39,7 @@ window.onload = function () {
 
     // If validatorUrl is not explicitly provided, disable the feature by setting to null
     if (!configObject.hasOwnProperty("validatorUrl"))
-        configObject.validatorUrl = null
+        configObject.validatorUrl = null;
 
     // If oauth2RedirectUrl isn't specified, use the built-in default
     if (!configObject.hasOwnProperty("oauth2RedirectUrl"))
@@ -69,5 +69,5 @@ window.onload = function () {
 
     // End Swagger UI call region
 
-    window.ui = ui
+    window.ui = ui;
 }
