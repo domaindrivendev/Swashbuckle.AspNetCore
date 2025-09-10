@@ -31,13 +31,13 @@
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
-    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="8.0.19" />
-    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="8.0.19" />
+    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="8.0.20" />
+    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="8.0.20" />
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))">
-    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="9.0.8" />
-    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="9.0.8" />
+    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="9.0.9" />
+    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="9.0.9" />
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net10.0'))">
