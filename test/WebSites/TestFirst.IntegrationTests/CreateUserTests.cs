@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore;
 using Swashbuckle.AspNetCore.ApiTesting.Xunit;
@@ -15,7 +15,7 @@ public class CreateUserTests : ApiTestFixture<Startup>
         WebApplicationFactory<Startup> webApplicationFactory)
         : base(apiTestRunner, webApplicationFactory, "v1-generated")
     {
-        Describe("/api/users", OperationType.Post, new OpenApiOperation
+        Describe("/api/users", HttpMethod.Post, new OpenApiOperation
         {
             OperationId = "CreateUser",
             RequestBody = new OpenApiRequestBody
@@ -27,12 +27,12 @@ public class CreateUserTests : ApiTestFixture<Startup>
                         Schema = new OpenApiSchema
                         {
                             Type = JsonSchemaTypes.Object,
-                            Properties = new Dictionary<string, OpenApiSchema>
+                            Properties = new Dictionary<string, IOpenApiSchema>
                             {
                                 [ "email" ] = new OpenApiSchema { Type = JsonSchemaTypes.String },
                                 [ "password" ] = new OpenApiSchema { Type = JsonSchemaTypes.String },
                             },
-                            Required = new SortedSet<string> { "email", "password" }
+                            Required = new SortedSet<string> { "email", "password" },
                         }
                     }
                 },
@@ -43,7 +43,7 @@ public class CreateUserTests : ApiTestFixture<Startup>
                 [ "201" ] = new OpenApiResponse
                 {
                     Description = "User created",
-                    Headers = new Dictionary<string, OpenApiHeader>
+                    Headers = new Dictionary<string, IOpenApiHeader>
                     {
                         [ "Location" ] = new OpenApiHeader
                         {

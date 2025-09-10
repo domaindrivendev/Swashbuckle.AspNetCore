@@ -1,0 +1,1 @@
+Swashbuckle.AspNetCore.ApiTesting.Xunit.ApiTestFixture<TEntryPoint>.Describe(string pathTemplate, System.Net.Http.HttpMethod operationType, Microsoft.OpenApi.OpenApiOperation operationSpec) -> void
