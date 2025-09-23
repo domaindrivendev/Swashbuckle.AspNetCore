@@ -33,6 +33,9 @@ public class SwaggerSchemaAttribute(string description = null) : Attribute
 
     public string[] Required { get; set; }
 
+    // To populate a default value for the model property wherever assigned.
+    public string? SeedValue {get; set;}
+
     public string Title { get; set; }
 
     internal bool? ReadOnlyFlag { get; private set; }
