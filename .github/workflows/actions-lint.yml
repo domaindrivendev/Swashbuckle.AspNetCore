@@ -16,7 +16,7 @@ permissions: {}
 env:
   FORCE_COLOR: 3
   TERM: xterm
-  ZIZMOR_VERSION: '1.13.0'
+  ZIZMOR_VERSION: '1.14.1'
 
 jobs:
   lint:
@@ -49,4 +49,3 @@ jobs:
       with:
         persona: pedantic
         version: ${{ env.ZIZMOR_VERSION }}
-
