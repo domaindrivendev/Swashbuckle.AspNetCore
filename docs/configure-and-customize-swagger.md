@@ -136,7 +136,7 @@ services.ConfigureSwagger(options =>
     options.SetCustomDocumentSerializer<CustomDocumentSerializer>();
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L41-L46' title='Snippet source file'>snippet source</a> | <a href='#snippet-Swagger-CustomSerializerServices' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L42-L47' title='Snippet source file'>snippet source</a> | <a href='#snippet-Swagger-CustomSerializerServices' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 

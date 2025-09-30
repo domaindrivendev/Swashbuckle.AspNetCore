@@ -20,7 +20,7 @@ services.AddSwaggerGen(options =>
     options.EnableAnnotations();
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L26-L32' title='Snippet source file'>snippet source</a> | <a href='#snippet-Annotations-Enable' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L27-L33' title='Snippet source file'>snippet source</a> | <a href='#snippet-Annotations-Enable' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -45,7 +45,7 @@ public IActionResult Create([FromBody] Product product)
     return Ok();
 }
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/ProductsController.cs#L23-L36' title='Snippet source file'>snippet source</a> | <a href='#snippet-Annotations-SwaggerOperation' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/ProductsController.cs#L24-L37' title='Snippet source file'>snippet source</a> | <a href='#snippet-Annotations-SwaggerOperation' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -70,7 +70,7 @@ public IActionResult Post([FromBody] Product product)
     return Created();
 }
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/ProductsController.cs#L38-L47' title='Snippet source file'>snippet source</a> | <a href='#snippet-Annotations-SwaggerResponse' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/ProductsController.cs#L39-L48' title='Snippet source file'>snippet source</a> | <a href='#snippet-Annotations-SwaggerResponse' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -91,7 +91,7 @@ public IActionResult GetProducts(
     return Ok();
 }
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/ProductsController.cs#L49-L57' title='Snippet source file'>snippet source</a> | <a href='#snippet-Annotations-SwaggerParameter' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/ProductsController.cs#L50-L58' title='Snippet source file'>snippet source</a> | <a href='#snippet-Annotations-SwaggerParameter' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -112,7 +112,7 @@ public IActionResult SubmitProduct(
     return Created();
 }
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/ProductsController.cs#L59-L67' title='Snippet source file'>snippet source</a> | <a href='#snippet-Annotations-SwaggerRequestBody' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/ProductsController.cs#L60-L68' title='Snippet source file'>snippet source</a> | <a href='#snippet-Annotations-SwaggerRequestBody' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -236,7 +236,7 @@ services.AddSwaggerGen(options =>
     options.EnableAnnotations(enableAnnotationsForInheritance: true, enableAnnotationsForPolymorphism: true);
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L34-L39' title='Snippet source file'>snippet source</a> | <a href='#snippet-Annotations-EnablePolymorphism' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L35-L40' title='Snippet source file'>snippet source</a> | <a href='#snippet-Annotations-EnablePolymorphism' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -273,7 +273,7 @@ services.AddSwaggerGen(options =>
     options.EnableAnnotations(enableAnnotationsForInheritance: true, enableAnnotationsForPolymorphism: true);
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L34-L39' title='Snippet source file'>snippet source</a> | <a href='#snippet-Annotations-EnablePolymorphism' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L35-L40' title='Snippet source file'>snippet source</a> | <a href='#snippet-Annotations-EnablePolymorphism' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 

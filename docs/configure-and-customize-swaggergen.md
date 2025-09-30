@@ -12,24 +12,34 @@ is a non-trivial task and thus Swashbuckle.AspNetCore omits the `operationId` by
 
 ### Option 1: Decorate routes with a `Name` property
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-NamedRoute -->
+<a id='snippet-SwaggerGen-NamedRoute'></a>
+```cs
 // operationId = "GetProductById"
 [HttpGet("{id}", Name = "GetProductById")]
 public IActionResult Get(int id)
 {
     // ...
+    return Ok();
 }
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/ProductsController.cs#L70-L78' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-NamedRoute' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 ### Option 2: Provide a custom strategy
 
 📝 `Startup.cs`
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-CustomNamingStrategyConfiguration -->
+<a id='snippet-SwaggerGen-CustomNamingStrategyConfiguration'></a>
+```cs
 services.AddSwaggerGen(options =>
 {
     // Other configuration...
-    
+
     // Use method name as operationId
     options.CustomOperationIds(apiDescription =>
     {
@@ -37,17 +47,27 @@ services.AddSwaggerGen(options =>
     });
 });
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L49-L60' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-CustomNamingStrategyConfiguration' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 📝 `ProductsController.cs`
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-CustomNamingStrategyEndpoint -->
+<a id='snippet-SwaggerGen-CustomNamingStrategyEndpoint'></a>
+```cs
 // operationId = "GetProductById"
-[HttpGet("{id}")]
+[HttpGet("/product/{id}")]
 public IActionResult GetProductById(int id)
 {
     // ...
+    return Ok();
 }
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/ProductsController.cs#L80-L88' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-CustomNamingStrategyEndpoint' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 > [!NOTE]
 > With either approach, API authors are responsible for ensuring the uniqueness of `operationIds` across all operations.
@@ -57,13 +77,20 @@ public IActionResult GetProductById(int id)
 By default, Swashbuckle.AspNetCore will generate an HTTP `"200"` response for each operation. If the endpoint returns a
 response object, then this will be used to generate a schema for the response body. For example:
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-ImplicitResponse -->
+<a id='snippet-SwaggerGen-ImplicitResponse'></a>
+```cs
 [HttpPost("{id}")]
 public Product GetById(int id)
 {
     // ...
+    return new Product();
 }
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/ProductsController.cs#L90-L97' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-ImplicitResponse' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 This endpoint will produce the following response metadata:
 
@@ -87,16 +114,23 @@ responses: {
 If you need to specify a different status code and/or additional responses, or your MVC actions return `IActionResult` instead
 of a response object, you can explicitly describe responses with `[ProducesResponseType]` which is part of ASP.NET Core. For example:
 
-```csharp
-[HttpPost("{id}")]
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-ExplicitReponses -->
+<a id='snippet-SwaggerGen-ExplicitReponses'></a>
+```cs
+[HttpPost("product/{id}")]
 [ProducesResponseType(typeof(Product), 200)]
 [ProducesResponseType(typeof(IDictionary<string, string>), 400)]
 [ProducesResponseType(500)]
-public IActionResult GetById(int id)
+public IActionResult GetProductInfoById(int id)
 {
     // ...
+    return Ok();
 }
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/ProductsController.cs#L99-L109' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-ExplicitReponses' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 This endpoint will produce the following response metadata:
 
@@ -140,7 +174,10 @@ flag it as a `required` parameter in the generated OpenAPI document:
 
 📝 `ProductsController.cs`
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-RequiredParametersEndpoint -->
+<a id='snippet-SwaggerGen-RequiredParametersEndpoint'></a>
+```cs
 public IActionResult Search([FromQuery, BindRequired] string keywords, [FromQuery] PagingOptions paging)
 {
     if (!ModelState.IsValid)
@@ -149,12 +186,19 @@ public IActionResult Search([FromQuery, BindRequired] string keywords, [FromQuer
     }
 
     // ...
+    return Ok();
 }
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/ProductsController.cs#L111-L122' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-RequiredParametersEndpoint' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 📝 `PagingOptions.cs`
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-RequiredParametersModel -->
+<a id='snippet-SwaggerGen-RequiredParametersModel'></a>
+```cs
 public class PagingOptions
 {
     [Required]
@@ -163,14 +207,20 @@ public class PagingOptions
     public int PageSize { get; set; }
 }
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/PagingOptions.cs#L5-L13' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-RequiredParametersModel' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 In addition to parameters, Swashbuckle.AspNetCore will also honor `[Required]` when used in a model that's bound to the request body.
 In this case, the decorated properties will be flagged as `required` properties in the body description:
 
 📝 `ProductsController.cs`
 
-```csharp
-public IActionResult Create([FromBody] Product product)
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-RequiredParametersFromBody -->
+<a id='snippet-SwaggerGen-RequiredParametersFromBody'></a>
+```cs
+public IActionResult CreateNewProduct([FromBody] NewProduct product)
 {
     if (!ModelState.IsValid)
     {
@@ -178,32 +228,48 @@ public IActionResult Create([FromBody] Product product)
     }
 
     // ...
+    return Created();
 }
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/ProductsController.cs#L124-L135' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-RequiredParametersFromBody' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
-📝 `Product.cs`
+📝 `NewProduct.cs`
 
-```csharp
-public class Product
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-NewProduct -->
+<a id='snippet-SwaggerGen-NewProduct'></a>
+```cs
+public class NewProduct
 {
     [Required]
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
-    public string Description { get; set; }
+    public string Description { get; set; } = string.Empty;
 }
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/NewProduct.cs#L5-L13' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-NewProduct' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 ## Handle Forms and File Uploads
 
 This MVC controller will accept two form field values and one named file upload from the same form:
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-UploadFile -->
+<a id='snippet-SwaggerGen-UploadFile'></a>
+```cs
 [HttpPost]
 public void UploadFile([FromForm] string description, [FromForm] DateTime clientDate, IFormFile file)
 {
     // ...
 }
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/ProductsController.cs#L137-L143' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-UploadFile' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 > [!IMPORTANT]
 > As per the [ASP.NET Core documentation](https://learn.microsoft.com/aspnet/core/mvc/models/file-uploads), you're not supposed to
@@ -218,14 +284,21 @@ public void UploadFile([FromForm] string description, [FromForm] DateTime client
 > `ApiExplorer` (the ASP.NET Core metadata component that Swashbuckle.AspNetCore is built on) **does not** surface the `FileResult` types by
 > default and so you need to explicitly configure it to do so with `[ProducesResponseType]`:
 
-```csharp
-[HttpGet("{fileName}")]
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-DownloadFile -->
+<a id='snippet-SwaggerGen-DownloadFile'></a>
+```cs
+[HttpGet("download/{fileName}")]
 [ProducesResponseType(typeof(FileStreamResult), StatusCodes.Status200OK, "image/jpeg")]
 public FileStreamResult GetImage(string fileName)
 {
     // ...
+    return new FileStreamResult(Stream.Null, "image/jpeg");
 }
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/ProductsController.cs#L145-L153' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-DownloadFile' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 ## Include Descriptions from XML Comments
 
@@ -233,80 +306,99 @@ To enhance the generated docs with human-friendly descriptions, you can annotate
 [XML Comments](https://learn.microsoft.com/dotnet/csharp/language-reference/xmldoc/) and configure Swashbuckle.AspNetCore
 to include those comments into the generated OpenAPI document.
 
-1. Open the Properties dialog for your project, click the "Build" tab and ensure that "XML documentation file" is checked, or add an
-   `<GenerateDocumentationFile>true</GenerateDocumentationFile>` element to a `<PropertyGroup>` in your `.csproj` file. This
-   will produce a file containing all XML comments at build-time.
+First open the Properties dialog for your project, click the "Build" tab and ensure that "XML documentation file" is checked, or add an
+`<GenerateDocumentationFile>true</GenerateDocumentationFile>` element to a `<PropertyGroup>` in your `.csproj` file. This
+will produce a file containing all XML comments at build-time.
 
-  > At this point, any classes or methods that are **not** annotated with XML comments will trigger a build warning. To suppress this,
-  > enter the warning code `1591` into the _"Suppress warnings"_ field in the Properties dialog or add `<NoWarn>$(NoWarn);1591</NoWarn>` to a
-  > `<PropertyGroup>` of your `.csproj` project file.
+> At this point, any classes or methods that are **not** annotated with XML comments will trigger a build warning. To suppress this,
+> enter the warning code `1591` into the _"Suppress warnings"_ field in the Properties dialog or add `<NoWarn>$(NoWarn);1591</NoWarn>` to a
+> `<PropertyGroup>` of your `.csproj` project file.
 
-1. Configure Swashbuckle.AspNetCore to incorporate the XML comments on file into the generated OpenAPI JSON:
+Next configure Swashbuckle.AspNetCore to incorporate the XML comments on file into the generated OpenAPI JSON:
 
-   ```csharp
-   services.AddSwaggerGen(options =>
-   {
-       options.SwaggerDoc(
-           "v1",
-           new OpenApiInfo
-           {
-               Title = "My API - V1",
-               Version = "v1"
-           }
-        );
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-ConfigureXmlDocumentation -->
+<a id='snippet-SwaggerGen-ConfigureXmlDocumentation'></a>
+```cs
+services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc(
+        "v1",
+        new OpenApiInfo
+        {
+            Title = "My API - V1",
+            Version = "v1"
+        }
+    );
 
-        options.IncludeXmlComments(Assembly.GetExecutingAssembly());
-        // or options.IncludeXmlComments(typeof(MyController).Assembly));
-   });
-   ```
+    options.IncludeXmlComments(Assembly.GetExecutingAssembly());
+    // or options.IncludeXmlComments(typeof(MyController).Assembly));
+});
+```
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L62-L77' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-ConfigureXmlDocumentation' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
-2. Annotate your endpoints with `summary`, `remarks`, `param` and/or `response` tags as desired:
+Next annotate your endpoints with `summary`, `remarks`, `param` and/or `response` tags as desired:
 
-   ```csharp
-   /// <summary>
-   /// Retrieves a specific product by unique id
-   /// </summary>
-   /// <remarks>Awesomeness!</remarks>
-   /// <param name="id" example="123">The product id</param>
-   /// <response code="200">Product retrieved</response>
-   /// <response code="404">Product not found</response>
-   /// <response code="500">Oops! Can't lookup your product right now</response>
-   [HttpGet("{id}")]
-   [ProducesResponseType(typeof(Product), 200)]
-   [ProducesResponseType(404)]
-   [ProducesResponseType(500)]
-   public Product GetById(int id)
-   {
-       // ...
-   }
-   ```
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-EndpointWithXmlComments -->
+<a id='snippet-SwaggerGen-EndpointWithXmlComments'></a>
+```cs
+/// <summary>
+/// Retrieves a specific product line by unique id
+/// </summary>
+/// <remarks>Awesomeness!</remarks>
+/// <param name="id" example="123">The product line id</param>
+/// <response code="200">Product line retrieved</response>
+/// <response code="404">Product line not found</response>
+/// <response code="500">Oops! Can't lookup your product line right now</response>
+[HttpGet("product/{id}")]
+[ProducesResponseType(typeof(ProductLine), 200)]
+[ProducesResponseType(404)]
+[ProducesResponseType(500)]
+public ProductLine GetProductBySystemId(int id)
+{
+    // ...
+    return new ProductLine();
+}
+```
+<sup><a href='/test/WebSites/DocumentationSnippets/ProductsController.cs#L155-L173' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-EndpointWithXmlComments' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
-3. Annotate your types with `summary` and `example` tags, other tags (`remarks`, `para`, etc.) are not supported:
+Then annotate your types with `summary` and `example` tags, other tags (`remarks`, `para`, etc.) are not supported:
 
-    ```csharp
-    public class Product
-    {
-        /// <summary>
-        /// The name of the product
-        /// </summary>
-        /// <example>Men's basketball shoes</example>
-        public string Name { get; set; }
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-ClassWithXmlComments -->
+<a id='snippet-SwaggerGen-ClassWithXmlComments'></a>
+```cs
+public class ProductLine
+{
+    /// <summary>
+    /// The name of the product
+    /// </summary>
+    /// <example>Men's basketball shoes</example>
+    public string Name { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Quantity left in stock
-        /// </summary>
-        /// <example>10</example>
-        public int AvailableStock { get; set; }
+    /// <summary>
+    /// Quantity left in stock
+    /// </summary>
+    /// <example>10</example>
+    public int AvailableStock { get; set; }
 
-        /// <summary>
-        /// The sizes the product is available in
-        /// </summary>
-        /// <example>["Small", "Medium", "Large"]</example>
-        public List<string> Sizes { get; set; }
-    }
-    ```
+    /// <summary>
+    /// The sizes the product is available in
+    /// </summary>
+    /// <example>["Small", "Medium", "Large"]</example>
+    public List<string> Sizes { get; set; } = [];
+}
+```
+<sup><a href='/test/WebSites/DocumentationSnippets/ProductLine.cs#L3-L24' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-ClassWithXmlComments' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
-4. Rebuild your project to update the XML Comments file and navigate to the OpenAPI JSON endpoint. Note how the descriptions are
+Finally, rebuild your project to update the XML Comments file and navigate to the OpenAPI JSON endpoint. Note how the descriptions are
 mapped onto corresponding OpenAPI properties.
 
 > [!NOTE]
@@ -320,7 +412,10 @@ In addition to `"PathItems"`, `"Operations"` and `"Responses"`, which Swashbuckl
 [global metadata](https://swagger.io/specification/#openapi-object). For example, you can provide a full description for your API, terms
 of service or even contact and licensing information:
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-GlobalMetadata -->
+<a id='snippet-SwaggerGen-GlobalMetadata'></a>
+```cs
 services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1",
@@ -344,6 +439,9 @@ services.AddSwaggerGen(options =>
     );
 });
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L79-L102' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-GlobalMetadata' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 > [!TIP]
 > Use IntelliSense to see what other members are available.
@@ -354,13 +452,19 @@ With the setup described above, the generator will include all API operations in
 create multiple documents if necessary. For example, you may want a separate document for each version of your API. To do this, start
 by defining multiple Swagger documents in your application startup code:
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-MultipleDocuments -->
+<a id='snippet-SwaggerGen-MultipleDocuments'></a>
+```cs
 services.AddSwaggerGen(options =>
 {
     options.SwaggerDoc("v1", new OpenApiInfo { Title = "My API - V1", Version = "v1" });
     options.SwaggerDoc("v2", new OpenApiInfo { Title = "My API - V2", Version = "v2" });
 });
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L104-L110' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-MultipleDocuments' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 > [!NOTE]
 > Take note of the first argument to SwaggerDoc. It **must** be a URI-friendly name that uniquely identifies the document.
@@ -376,14 +480,20 @@ ASP.NET Core, to make this distinction. You can set this by decorating individua
 To include an action in a specific Swagger document, decorate it with `[ApiExplorerSettings]` and set `GroupName` to the corresponding
 document name (case sensitive):
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-EndpointGroupName -->
+<a id='snippet-SwaggerGen-EndpointGroupName'></a>
+```cs
 [HttpPost]
 [ApiExplorerSettings(GroupName = "v2")]
-public void Post([FromBody]Product product)
+public void PostLine([FromBody] ProductLine product)
 {
     // ...
 }
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/ProductsController.cs#L175-L182' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-EndpointGroupName' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 ### Assign Actions to Documents by Convention
 
@@ -392,31 +502,38 @@ could wire up the following convention to assign actions to documents based on t
 
 📝 `ApiExplorerGroupPerVersionConvention.cs`
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-ControllerModelConvention -->
+<a id='snippet-SwaggerGen-ControllerModelConvention'></a>
+```cs
 public class ApiExplorerGroupPerVersionConvention : IControllerModelConvention
 {
     public void Apply(ControllerModel controller)
     {
         var controllerNamespace = controller.ControllerType.Namespace; // e.g. "Controllers.V1"
-        var apiVersion = controllerNamespace.Split('.').Last().ToLower();
+        var apiVersion = controllerNamespace?.Split('.').Last().ToLower();
 
         controller.ApiExplorer.GroupName = apiVersion;
     }
 }
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/ApiExplorerGroupPerVersionConvention.cs#L5-L16' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-ControllerModelConvention' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 📝 `Startup.cs`
 
-```csharp
-public void ConfigureServices(IServiceCollection services)
-{
-    services.AddMvc(options =>
-        options.Conventions.Add(new ApiExplorerGroupPerVersionConvention())
-    );
-
-    //...
-}
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-ConfigureControllerModelConvention -->
+<a id='snippet-SwaggerGen-ConfigureControllerModelConvention'></a>
+```cs
+services.AddMvc(options =>
+    options.Conventions.Add(new ApiExplorerGroupPerVersionConvention())
+);
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L112-L116' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-ConfigureControllerModelConvention' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 ### Customize the Action Selection Process
 
@@ -425,7 +542,10 @@ that's surfaced by the framework. The default implementation inspects `ApiDescri
 or equal to the requested document name. However, you can also provide a custom inclusion predicate. For example, if you're using an
 attribute-based approach to implement API versioning (e.g. `Microsoft.AspNetCore.Mvc.Versioning`), you could configure a custom predicate that leverages the versioning attributes instead:
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-DocInclusionPredicate -->
+<a id='snippet-SwaggerGen-DocInclusionPredicate'></a>
+```cs
 options.DocInclusionPredicate((docName, apiDesc) =>
 {
     if (!apiDesc.TryGetMethodInfo(out MethodInfo methodInfo))
@@ -433,14 +553,17 @@ options.DocInclusionPredicate((docName, apiDesc) =>
         return false;
     }
 
-    var versions = methodInfo.DeclaringType
+    var versions = methodInfo.DeclaringType?
         .GetCustomAttributes(true)
         .OfType<ApiVersionAttribute>()
-        .SelectMany(attribute => attribute.Versions);
+        .SelectMany(attribute => attribute.Versions) ?? [];
 
-    return versions.Any(v => $"v{v.ToString()}" == docName);
+    return versions.Any(version => $"v{version}" == docName);
 });
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/SwaggerGenOptionsExtensions.cs#L10-L25' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-DocInclusionPredicate' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 ### Exposing Multiple Documents through the UI
 
@@ -453,22 +576,34 @@ The [OpenAPI specification][swagger-specification] includes a `deprecated` flag 
 (obsolete) and should be refrained from being used. The OpenAPI generator will automatically set this flag if the corresponding action is
 decorated with the `[Obsolete]` attribute. However, instead of setting a flag, you can configure the generator to ignore obsolete actions altogether:
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-IgnoreObsoleteActions -->
+<a id='snippet-SwaggerGen-IgnoreObsoleteActions'></a>
+```cs
 services.AddSwaggerGen(options =>
 {
     options.IgnoreObsoleteActions();
 });
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L118-L123' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-IgnoreObsoleteActions' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 A similar approach can also be used to omit obsolete properties from `Schemas` in the OpenAPI document. That is, you can decorate
 model properties with `[Obsolete]` and configure Swashbuckle.AspNetCore to omit those properties when generating JSON schemas:
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-IgnoreObsoleteProperties -->
+<a id='snippet-SwaggerGen-IgnoreObsoleteProperties'></a>
+```cs
 services.AddSwaggerGen(options =>
 {
     options.IgnoreObsoleteProperties();
 });
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L125-L130' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-IgnoreObsoleteProperties' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 ## Omit Arbitrary Operations
 
@@ -478,14 +613,20 @@ You can omit operations from the OpenAPI output by decorating individual actions
 
 To omit a specific action, decorate it with `[ApiExplorerSettings]` and set the `IgnoreApi` property to `true`:
 
-```csharp
-[HttpGet("{id}")]
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-HiddenByAttribute -->
+<a id='snippet-SwaggerGen-HiddenByAttribute'></a>
+```cs
+[HttpDelete("{id}")]
 [ApiExplorerSettings(IgnoreApi = true)]
-public Product GetById(int id)
+public void Delete(int id)
 {
     // ...
 }
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/ProductsController.cs#L184-L191' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-HiddenByAttribute' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 ### Omit Actions by Convention
 
@@ -494,28 +635,34 @@ could wire up the following convention to only document `GET` operations:
 
 📝 `ApiExplorerGetsOnlyConvention.cs`
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-IActionModelConvention -->
+<a id='snippet-SwaggerGen-IActionModelConvention'></a>
+```cs
 public class ApiExplorerGetsOnlyConvention : IActionModelConvention
 {
     public void Apply(ActionModel action)
     {
         action.ApiExplorer.IsVisible = action.Attributes.OfType<HttpGetAttribute>().Any();
     }
-}
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/ApiExplorerGetsOnlyConvention.cs#L6-L13' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-IActionModelConvention' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 📝 `Startup.cs`
 
-```csharp
-public void ConfigureServices(IServiceCollection services)
-{
-    services.AddMvc(options =>
-        options.Conventions.Add(new ApiExplorerGetsOnlyConvention())
-    );
-
-    //...
-}
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-HiddenByConventionConfiguration -->
+<a id='snippet-SwaggerGen-HiddenByConventionConfiguration'></a>
+```cs
+services.AddMvc(options =>
+    options.Conventions.Add(new ApiExplorerGetsOnlyConvention())
+);
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L132-L136' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-HiddenByConventionConfiguration' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 ## Customize Operation Tags (e.g. for UI Grouping)
 
@@ -526,24 +673,36 @@ value to group operations.
 You can override the default tag by providing a function that applies tags by convention. For example, the following configuration will
 tag, and therefore group operations in the UI, by HTTP method:
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-CustomTags -->
+<a id='snippet-SwaggerGen-CustomTags'></a>
+```cs
 services.AddSwaggerGen(options =>
 {
     options.TagActionsBy(api => [api.HttpMethod]);
 });
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L138-L143' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-CustomTags' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 ## Change Operation Sort Order (e.g. for UI Sorting)
 
 By default, actions are ordered by assigned tag (see above) before they're grouped into the path-centric, nested structure of the
 [OpenAPI specification][swagger-specification]. However, you can change the default ordering of actions with a custom sorting strategy:
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-CustomSorting -->
+<a id='snippet-SwaggerGen-CustomSorting'></a>
+```cs
 services.AddSwaggerGen(options =>
 {
     options.OrderActionsBy((apiDesc) => $"{apiDesc.ActionDescriptor.RouteValues["controller"]}_{apiDesc.HttpMethod}");
 });
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L145-L150' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-CustomSorting' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 > [!NOTE]
 > This dictates the sort order **before** actions are grouped and transformed into the OpenAPI format. Therefore it affects the ordering
@@ -574,12 +733,18 @@ However, if it encounters multiple types with the same name but different namesp
 then Swashbuckle.AspNetCore will raise an exception due to _"Conflicting schemaIds"_. In this case, you'll need to provide a custom Id strategy that
 further qualifies the name:
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-CustomSchemaIds -->
+<a id='snippet-SwaggerGen-CustomSchemaIds'></a>
+```cs
 services.AddSwaggerGen(options =>
 {
     options.CustomSchemaIds((type) => type.FullName);
 });
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L152-L157' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-CustomSchemaIds' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 > [!NOTE]
 > See [this GitHub issue](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2703) for support for nested types.
@@ -595,25 +760,37 @@ need to provide it with a schema that accurately describes the type:
 
 📝 `PhoneNumber.cs`
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-PhoneNumber -->
+<a id='snippet-SwaggerGen-PhoneNumber'></a>
+```cs
 public class PhoneNumber
 {
-    public string CountryCode { get; set; }
+    public string CountryCode { get; set; } = string.Empty;
 
-    public string AreaCode { get; set; }
+    public string AreaCode { get; set; } = string.Empty;
 
-    public string SubscriberId { get; set; }
+    public string SubscriberId { get; set; } = string.Empty;
 }
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/PhoneNumber.cs#L3-L12' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-PhoneNumber' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 📝 `Startup.cs`
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-CustomSchemaMapping -->
+<a id='snippet-SwaggerGen-CustomSchemaMapping'></a>
+```cs
 services.AddSwaggerGen(options =>
 {
     options.MapType<PhoneNumber>(() => new OpenApiSchema { Type = JsonSchemaType.String });
 });
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L159-L164' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-CustomSchemaMapping' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 ## Extend Generator with Operation, Schema and Document Filters
 
@@ -632,7 +809,10 @@ are decorated with `[Authorize]`:
 
 📝 `AuthResponsesOperationFilter.cs`
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-AuthResponsesOperationFilter -->
+<a id='snippet-SwaggerGen-AuthResponsesOperationFilter'></a>
+```cs
 public class AuthResponsesOperationFilter : IOperationFilter
 {
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
@@ -650,15 +830,24 @@ public class AuthResponsesOperationFilter : IOperationFilter
     }
 }
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/AuthResponsesOperationFilter.cs#L7-L24' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-AuthResponsesOperationFilter' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 📝 `Startup.cs`
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-ConfigureOperationFilter -->
+<a id='snippet-SwaggerGen-ConfigureOperationFilter'></a>
+```cs
 services.AddSwaggerGen(options =>
 {
     options.OperationFilter<AuthResponsesOperationFilter>();
 });
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L166-L171' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-ConfigureOperationFilter' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 > [!NOTE]
 > Filter pipelines are DI-aware. That is, you can create filters with constructor parameters and if the parameter types
@@ -675,7 +864,10 @@ to inform the AutoRest tool how enums should be modelled when it generates the A
 
 📝 `AutoRestSchemaFilter.cs`
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-AutoRestSchemaFilter -->
+<a id='snippet-SwaggerGen-AutoRestSchemaFilter'></a>
+```cs
 public class AutoRestSchemaFilter : ISchemaFilter
 {
     public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
@@ -698,15 +890,24 @@ public class AutoRestSchemaFilter : ISchemaFilter
     }
 }
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/AutoRestSchemaFilter.cs#L7-L29' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-AutoRestSchemaFilter' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 📝 `Startup.cs`
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-ConfigureSchemaFilter -->
+<a id='snippet-SwaggerGen-ConfigureSchemaFilter'></a>
+```cs
 services.AddSwaggerGen(options =>
 {
     options.SchemaFilter<AutoRestSchemaFilter>();
 });
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L173-L178' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-ConfigureSchemaFilter' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 The example below allows for automatic schema generation of generic `Dictionary<Enum, TValue>` objects.
 Note that this only generates the OpenAPI document; `System.Text.Json` is not able to parse dictionary enums by default,
@@ -714,7 +915,10 @@ so you will need [a special JsonConverter, as shown in the .NET documentation](h
 
 📝 `DictionaryTKeyEnumTValueSchemaFilter.cs`
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-DictionaryTKeyEnumTValueSchemaFilter -->
+<a id='snippet-SwaggerGen-DictionaryTKeyEnumTValueSchemaFilter'></a>
+```cs
 public class DictionaryTKeyEnumTValueSchemaFilter : ISchemaFilter
 {
     public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
@@ -746,10 +950,16 @@ public class DictionaryTKeyEnumTValueSchemaFilter : ISchemaFilter
     }
 }
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/DictionaryTKeyEnumTValueSchemaFilter.cs#L6-L37' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-DictionaryTKeyEnumTValueSchemaFilter' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 📝 `Startup.cs`
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-ConfigureSchemaFilterForEnumDictionaryEnum -->
+<a id='snippet-SwaggerGen-ConfigureSchemaFilterForEnumDictionaryEnum'></a>
+```cs
 services.AddSwaggerGen(options =>
 {
     // These will be replaced by DictionaryTKeyEnumTValueSchemaFilter, but are needed to avoid
@@ -758,6 +968,9 @@ services.AddSwaggerGen(options =>
     options.SchemaFilter<DictionaryTKeyEnumTValueSchemaFilter>();
 });
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L180-L188' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-ConfigureSchemaFilterForEnumDictionaryEnum' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 ### Document Filters
 
@@ -767,7 +980,10 @@ should have a read through the [specification][swagger-specification] before usi
 
 The example below provides a description for any tags that are assigned to operations in the document:
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-TagDescriptionsDocumentFilter -->
+<a id='snippet-SwaggerGen-TagDescriptionsDocumentFilter'></a>
+```cs
 public class TagDescriptionsDocumentFilter : IDocumentFilter
 {
     public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
@@ -780,6 +996,9 @@ public class TagDescriptionsDocumentFilter : IDocumentFilter
     }
 }
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/TagDescriptionsDocumentFilter.cs#L6-L18' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-TagDescriptionsDocumentFilter' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 > [!NOTE]
 > If you're using the `SwaggerUI` middleware, the `TagDescriptionsDocumentFilter` demonstrated above
@@ -796,7 +1015,10 @@ In Swashbuckle.AspNetCore, you can define schemes by invoking the `AddSecurityDe
 
 📝 `Startup.cs`
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-AddSecurityDefinition -->
+<a id='snippet-SwaggerGen-AddSecurityDefinition'></a>
+```cs
 services.AddSwaggerGen(options =>
 {
     // Define the OAuth2.0 scheme that's in use (i.e. Implicit Flow)
@@ -818,6 +1040,9 @@ services.AddSwaggerGen(options =>
     });
 });
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L190-L211' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-AddSecurityDefinition' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 > [!NOTE]
 > In addition to defining a scheme, you also need to indicate which operations that scheme is applicable to. You can apply schemes
@@ -827,7 +1052,10 @@ services.AddSwaggerGen(options =>
 
 📝 `Startup.cs`
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-AddSecurityRequirement -->
+<a id='snippet-SwaggerGen-AddSecurityRequirement'></a>
+```cs
 services.AddSwaggerGen(options =>
 {
     options.AddSecurityRequirement((document) => new OpenApiSecurityRequirement()
@@ -836,13 +1064,19 @@ services.AddSwaggerGen(options =>
     });
 });
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L213-L221' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-AddSecurityRequirement' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 If you have schemes that are only applicable for certain operations, you can apply them through an Operation filter. For
 example, the following filter adds OAuth2 requirements based on the presence of the `AuthorizeAttribute`:
 
 📝 `SecurityRequirementsOperationFilter.cs`
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-SecurityRequirementsOperationFilter -->
+<a id='snippet-SwaggerGen-SecurityRequirementsOperationFilter'></a>
+```cs
 public class SecurityRequirementsOperationFilter : IOperationFilter
 {
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
@@ -874,6 +1108,9 @@ public class SecurityRequirementsOperationFilter : IOperationFilter
     }
 }
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/SecurityRequirementsOperationFilter.cs#L7-L38' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-SecurityRequirementsOperationFilter' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 > [!NOTE]
 > If you're using the `SwaggerUI` middleware, you can enable interactive OAuth2.0 flows that are powered by the emitted
@@ -881,7 +1118,10 @@ public class SecurityRequirementsOperationFilter : IOperationFilter
 
 ## Add Security Definitions and Requirements for Bearer authentication
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-BearerAuthentication -->
+<a id='snippet-SwaggerGen-BearerAuthentication'></a>
+```cs
 services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
@@ -897,6 +1137,9 @@ services.AddSwaggerGen(options =>
     });
 });
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L223-L238' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-BearerAuthentication' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 ## Inheritance and Polymorphism
 
@@ -972,7 +1215,10 @@ library, Swashbuckle.AspNetCore is selective about which hierarchies it does and
 pick up any subtypes that are defined in the same assembly as a given base type. If you'd like to override this behavior, you can provide a
 custom selector method:
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-DetectSubtypes -->
+<a id='snippet-SwaggerGen-DetectSubtypes'></a>
+```cs
 services.AddSwaggerGen(options =>
 {
     options.UseAllOfForInheritance();
@@ -980,9 +1226,12 @@ services.AddSwaggerGen(options =>
     options.SelectSubTypesUsing(baseType =>
     {
         return typeof(Program).Assembly.GetTypes().Where(type => type.IsSubclassOf(baseType));
-    })
+    });
 });
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L240-L250' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-DetectSubtypes' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 > [!NOTE]
 > If you're using the [Swashbuckle Annotations library](configure-and-customize-annotations.md#configuration--customization-of-swashbuckleaspnetcoreannotations), it
@@ -1050,7 +1299,10 @@ a discriminator property, then Swashbuckle will automatically generate the corre
 Alternatively, if you've customized your serializer to support polymorphic serialization/deserialization, you can provide some custom
 selector functions to determine the discriminator name and corresponding mapping:
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerGen-UseAllOfForInheritance -->
+<a id='snippet-SwaggerGen-UseAllOfForInheritance'></a>
+```cs
 services.AddSwaggerGen(options =>
 {
     options.UseAllOfForInheritance();
@@ -1059,6 +1311,9 @@ services.AddSwaggerGen(options =>
     options.SelectDiscriminatorValueUsing((subType) => subType.Name);
 });
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L252-L260' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-UseAllOfForInheritance' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 > [!NOTE]
 > If you're using the [Swashbuckle Annotations library](configure-and-customize-annotations.md#configuration--customization-of-swashbuckleaspnetcoreannotations), it

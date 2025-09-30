@@ -94,7 +94,7 @@ public IEnumerable<Product> SearchProducts([FromQuery] string keywords)
     return [];
 }
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/ProductsController.cs#L8-L21' title='Snippet source file'>snippet source</a> | <a href='#snippet-README-endpoints' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/ProductsController.cs#L9-L22' title='Snippet source file'>snippet source</a> | <a href='#snippet-README-endpoints' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -176,7 +176,7 @@ services.AddSwaggerGen(options =>
 
 services.AddSwaggerGenNewtonsoftSupport();
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L10-L19' title='Snippet source file'>snippet source</a> | <a href='#snippet-README-Newtonsoft.Json' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L11-L20' title='Snippet source file'>snippet source</a> | <a href='#snippet-README-Newtonsoft.Json' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -194,7 +194,7 @@ However, if you're using `AddMvcCore(...)` for a more paired-down MVC stack, you
 services.AddMvcCore()
         .AddApiExplorer();
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L21-L24' title='Snippet source file'>snippet source</a> | <a href='#snippet-README-MvcCore' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L22-L25' title='Snippet source file'>snippet source</a> | <a href='#snippet-README-MvcCore' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
