@@ -137,5 +137,64 @@ public static class WebApplicationExtensions
             options.UseRequestInterceptor("(req) => { req.headers['X-XSRF-Token'] = localStorage.getItem('xsrf-token'); return req; }");
         });
         // end-snippet
+
+        // begin-snippet: Redoc-RoutePrefix
+        app.UseReDoc(options =>
+        {
+            options.RoutePrefix = "docs";
+        });
+        // end-snippet
+
+        // begin-snippet: Redoc-DocumentTitle
+        app.UseReDoc(options =>
+        {
+            options.DocumentTitle = "My API Docs";
+        });
+        // end-snippet
+
+        // begin-snippet: Redoc-CustomOptions
+        app.UseReDoc(options =>
+        {
+            options.SpecUrl("/v1/swagger.json");
+            options.EnableUntrustedSpec();
+            options.ScrollYOffset(10);
+            options.HideHostname();
+            options.HideDownloadButton();
+            options.ExpandResponses("200,201");
+            options.RequiredPropsFirst();
+            options.NoAutoAuth();
+            options.PathInMiddlePanel();
+            options.HideLoading();
+            options.NativeScrollbars();
+            options.DisableSearch();
+            options.OnlyRequiredInSamples();
+            options.SortPropsAlphabetically();
+        });
+        // end-snippet
+
+        // begin-snippet: Redoc-CustomCSS
+        app.UseReDoc(options =>
+        {
+            options.InjectStylesheet("/redoc/custom.css");
+        });
+        // end-snippet
+
+        // begin-snippet: Redoc-ModifyTheme
+        app.UseReDoc(options =>
+        {
+            options.ConfigObject.AdditionalItems = new Dictionary<string, object>
+            {
+                // Configured additional options
+            };
+        });
+        // end-snippet
+
+        // begin-snippet: Redoc-CustomIndexHtml
+        app.UseReDoc(options =>
+        {
+            options.IndexStream = () => typeof(Program).Assembly
+                .GetManifestResourceStream("CustomIndex.ReDoc.index.html"); // Requires file to be added as an embedded resource
+        });
+        // end-snippet
     }
 }
