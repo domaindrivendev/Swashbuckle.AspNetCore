@@ -7,7 +7,7 @@ By default, the Redoc UI will be exposed at `/api-docs`. If necessary, you can a
 ```csharp
 app.UseReDoc(options =>
 {
-    options.RoutePrefix = "docs"
+    options.RoutePrefix = "docs";
 });
 ```
 
@@ -25,7 +25,7 @@ app.UseReDoc(options =>
 ## Apply Redoc Parameters
 
 Redoc ships with its own set of configuration parameters, all described [in the Redoc documentation][redoc-options].
-In Swashbuckle, most of these are surfaced through the Redoc middleware options:
+In Swashbuckle.AspNetCore, most of these are surfaced through the Redoc middleware options:
 
 ```csharp
 app.UseReDoc(options =>
@@ -82,9 +82,17 @@ To customize the UI beyond the basic options listed above, you can provide your 
 ```csharp
 app.UseReDoc(options =>
 {
-    options.IndexStream = () => GetType().Assembly
+    options.IndexStream = () => typeof(Program).Assembly
         .GetManifestResourceStream("CustomIndex.ReDoc.index.html"); // Requires file to be added as an embedded resource
 });
+```
+
+```xml
+<Project>
+  <ItemGroup>
+    <EmbeddedResource Include="CustomIndex.ReDoc.index.html" />
+  </ItemGroup>
+</Project>
 ```
 
 > [!TIP]
