@@ -20,7 +20,7 @@ services.AddSwaggerGen(options =>
     options.EnableAnnotations();
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L25-L31' title='Snippet source file'>snippet source</a> | <a href='#snippet-Annotations-Enable' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L26-L32' title='Snippet source file'>snippet source</a> | <a href='#snippet-Annotations-Enable' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -236,7 +236,7 @@ services.AddSwaggerGen(options =>
     options.EnableAnnotations(enableAnnotationsForInheritance: true, enableAnnotationsForPolymorphism: true);
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L33-L38' title='Snippet source file'>snippet source</a> | <a href='#snippet-Annotations-EnablePolymorphism' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L34-L39' title='Snippet source file'>snippet source</a> | <a href='#snippet-Annotations-EnablePolymorphism' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -273,7 +273,7 @@ services.AddSwaggerGen(options =>
     options.EnableAnnotations(enableAnnotationsForInheritance: true, enableAnnotationsForPolymorphism: true);
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L33-L38' title='Snippet source file'>snippet source</a> | <a href='#snippet-Annotations-EnablePolymorphism' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L34-L39' title='Snippet source file'>snippet source</a> | <a href='#snippet-Annotations-EnablePolymorphism' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 

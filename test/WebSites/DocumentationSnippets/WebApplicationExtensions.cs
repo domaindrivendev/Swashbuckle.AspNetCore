@@ -1,4 +1,5 @@
-﻿using Swashbuckle.AspNetCore.SwaggerUI;
+﻿using Microsoft.OpenApi;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace DocumentationSnippets;
 
@@ -194,6 +195,52 @@ public static class WebApplicationExtensions
         {
             options.IndexStream = () => typeof(Program).Assembly
                 .GetManifestResourceStream("CustomIndex.ReDoc.index.html"); // Requires file to be added as an embedded resource
+        });
+        // end-snippet
+
+        // begin-snippet: Swagger-RouteTemplate
+        app.UseSwagger(options =>
+        {
+            options.RouteTemplate = "api-docs/{documentName}/swagger.json";
+        });
+        // end-snippet
+
+        // begin-snippet: Swagger-ModifyWithHttpRequest
+        app.UseSwagger(options =>
+        {
+            options.PreSerializeFilters.Add((document, request) =>
+            {
+                document.Servers = [new OpenApiServer { Url = $"{request.Scheme}://{request.Host.Value}" }];
+            });
+        });
+        // end-snippet
+
+        // begin-snippet: Swagger-OpenAPI3.1
+        app.UseSwagger(options =>
+        {
+            options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_1;
+        });
+        // end-snippet
+
+        // begin-snippet: Swagger-Swagger2.0
+        app.UseSwagger(options =>
+        {
+            options.OpenApiVersion = OpenApiSpecVersion.OpenApi2_0;
+        });
+        // end-snippet
+
+        // begin-snippet: Swagger-ReverseProxy
+        app.UseSwaggerUI(options =>
+        {
+            options.RoutePrefix = "swagger";
+            options.SwaggerEndpoint("v1/swagger.json", "My API V1");
+        });
+        // end-snippet
+
+        // begin-snippet: Swagger-CustomSerializerMiddleware
+        app.UseSwagger(options =>
+        {
+            options.SetCustomDocumentSerializer<CustomDocumentSerializer>();
         });
         // end-snippet
     }

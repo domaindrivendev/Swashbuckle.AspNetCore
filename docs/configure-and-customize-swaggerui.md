@@ -13,7 +13,7 @@ app.UseSwaggerUI(options =>
     options.RoutePrefix = "api-docs";
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L33-L38' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-CustomPath' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L34-L39' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-CustomPath' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -31,7 +31,7 @@ app.UseSwaggerUI(options =>
     options.DocumentTitle = "My Swagger UI";
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L40-L45' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-CustomDocumentTitle' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L41-L46' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-CustomDocumentTitle' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -51,7 +51,7 @@ app.UseSwaggerUI(options =>
     options.ScriptPresetsPath = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.29.1/swagger-ui-standalone-preset.min.js";
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L47-L54' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-CustomAssets' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L48-L55' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-CustomAssets' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -71,7 +71,7 @@ app.UseSwaggerUI(options =>
     options.SwaggerEndpoint("/swagger/v2/swagger.json", "V2 Docs");
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L56-L62' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-MultipleDocuments' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L57-L63' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-MultipleDocuments' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -106,7 +106,7 @@ app.UseSwaggerUI(options =>
     options.UseResponseInterceptor("(response) => { return response; }");
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L64-L85' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-CustomOptions' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L65-L86' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-CustomOptions' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -124,7 +124,7 @@ app.UseSwaggerUI(options =>
     options.InjectJavascript("/swagger-ui/custom.js");
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L87-L92' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-JavaScript' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L88-L93' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-JavaScript' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -142,7 +142,7 @@ app.UseSwaggerUI(options =>
     options.InjectStylesheet("/swagger-ui/custom.css");
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L94-L99' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-CSS' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L95-L100' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-CSS' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -160,7 +160,7 @@ app.UseSwaggerUI(options =>
         .GetManifestResourceStream("CustomUIIndex.Swagger.index.html"); // Requires file to be added as an embedded resource
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L101-L107' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-CustomIndexHtml' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L102-L108' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-CustomIndexHtml' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -205,7 +205,7 @@ app.UseSwaggerUI(options =>
     options.OAuthUsePkce();
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L109-L124' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-OAuth2' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L110-L125' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-OAuth2' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -224,7 +224,7 @@ app.UseSwaggerUI(options =>
     options.UseResponseInterceptor("(res) => { console.log('Custom interceptor intercepted response from:', res.url); return res; }");
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L126-L132' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-Interceptors' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L127-L133' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-Interceptors' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -239,7 +239,7 @@ app.UseSwaggerUI(options =>
     options.UseRequestInterceptor("(req) => { req.headers['X-XSRF-Token'] = localStorage.getItem('xsrf-token'); return req; }");
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L134-L139' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-Interceptor-XSRF' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L135-L140' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-Interceptor-XSRF' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 

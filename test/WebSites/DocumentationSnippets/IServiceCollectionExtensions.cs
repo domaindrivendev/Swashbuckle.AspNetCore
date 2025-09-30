@@ -1,4 +1,5 @@
 ﻿using Microsoft.OpenApi;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace DocumentationSnippets;
 
@@ -34,6 +35,13 @@ public static class IServiceCollectionExtensions
         services.AddSwaggerGen(options =>
         {
             options.EnableAnnotations(enableAnnotationsForInheritance: true, enableAnnotationsForPolymorphism: true);
+        });
+        // end-snippet
+
+        // begin-snippet: Swagger-CustomSerializerServices
+        services.ConfigureSwagger(options =>
+        {
+            options.SetCustomDocumentSerializer<CustomDocumentSerializer>();
         });
         // end-snippet
     }
