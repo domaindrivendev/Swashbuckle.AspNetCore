@@ -46,9 +46,22 @@ The `OpenApiDocument` and the current `HttpRequest` are both passed to the filte
 For example, you can add an explicit API server based on the `Host` header (as shown), or you could inspect session
 information or an `Authorization` header and remove operations from the document based on user permissions.
 
+## Serialize OpenAPI in the 3.1 format
+
+By default, Swashbuckle.AspNetCore will generate and expose OpenAPI JSON in version 3.0 of the specification.
+However, if you wish to use the latest version of the OpenAPI specification, you can opt into version 3.1
+format with the following option:
+
+```csharp
+app.UseSwagger(options =>
+{
+    options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_1;
+});
+```
+
 ## Serialize Swagger in the 2.0 format
 
-By default, Swashbuckle will generate and expose Swagger JSON in version 3.0 of the specification, officially called the
+By default, Swashbuckle will generate and expose OpenAPI JSON in version 3.0 of the specification, officially called the
 OpenAPI Specification. However, to support backwards compatibility, you can opt to continue exposing it in the Swagger 2.0
 format with the following option:
 
