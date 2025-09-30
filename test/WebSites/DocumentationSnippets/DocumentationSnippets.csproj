@@ -4,10 +4,12 @@
     <TargetFrameworks>$(DefaultTargetFrameworks)</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <NoWarn>$(NoWarn);IDE0060</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.Annotations\Swashbuckle.AspNetCore.Annotations.csproj" />
+    <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.Newtonsoft\Swashbuckle.AspNetCore.Newtonsoft.csproj" />
     <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.ReDoc\Swashbuckle.AspNetCore.ReDoc.csproj" />
     <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.SwaggerGen\Swashbuckle.AspNetCore.SwaggerGen.csproj" />
     <ProjectReference Include="..\..\..\src\Swashbuckle.AspNetCore.SwaggerUI\Swashbuckle.AspNetCore.SwaggerUI.csproj" />

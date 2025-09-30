@@ -50,7 +50,6 @@ dotnet add package Swashbuckle.AspNetCore
 Next, register the OpenAPI (Swagger) generator in your application's startup path, defining one or more OpenAPI documents. For example:
 
 <!-- markdownlint-disable MD031 MD033 -->
-
 <!-- snippet: README-configure -->
 <a id='snippet-README-configure'></a>
 ```cs
@@ -78,21 +77,26 @@ app.Run();
 
 Ensure your API endpoints and any parameters are decorated with `[Http*]` and `[From*]` attributes, where appropriate.
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: README-endpoints -->
+<a id='snippet-README-endpoints'></a>
+```cs
 [HttpPost]
 public void CreateProduct([FromBody] Product product)
 {
     // Implementation goes here
 }
-```
 
-```csharp
 [HttpGet]
 public IEnumerable<Product> SearchProducts([FromQuery] string keywords)
 {
     // Implementation goes here
+    return [];
 }
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/ProductsController.cs#L7-L20' title='Snippet source file'>snippet source</a> | <a href='#snippet-README-endpoints' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 > [!NOTE]
 > If you omit the explicit parameter bindings, the generator will describe them as "query" parameters by default.
@@ -101,30 +105,45 @@ Then, expose the OpenAPI JSON document endpoint(s) using one of following method
 
 - Add endpoints if you're using endpoint-based routing:
 
-```csharp
-app.MapEndpoints(endpoints =>
-{
-    // Your own endpoints go here, and then...
-    endpoints.MapSwagger();
-});
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: README-MapSwagger -->
+<a id='snippet-README-MapSwagger'></a>
+```cs
+// Your own endpoints go here, and then...
+app.MapSwagger();
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L7-L10' title='Snippet source file'>snippet source</a> | <a href='#snippet-README-MapSwagger' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 - Adding the OpenAPI middleware:
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: README-UseSwagger -->
+<a id='snippet-README-UseSwagger'></a>
+```cs
 app.UseSwagger();
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L12-L14' title='Snippet source file'>snippet source</a> | <a href='#snippet-README-UseSwagger' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 At this point, you can launch your application and view the generated OpenAPI document at `/swagger/v1/swagger.json`.
 
 Finally, you can optionally add the [swagger-ui][swagger-ui] middleware to expose interactive documentation, specifying the OpenAPI document(s) to power it from:
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: README-UseSwaggerUI -->
+<a id='snippet-README-UseSwaggerUI'></a>
+```cs
 app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint("v1/swagger.json", "My API V1");
 });
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L16-L21' title='Snippet source file'>snippet source</a> | <a href='#snippet-README-UseSwaggerUI' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 Now you can restart your application and view the auto-generated, interactive documentation at `/swagger`.
 
@@ -144,7 +163,10 @@ Below is an example of how to do this for ASP.NET Core MVC:
 dotnet add package Swashbuckle.AspNetCore.Newtonsoft
 ```
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: README-Newtonsoft.Json -->
+<a id='snippet-README-Newtonsoft.Json'></a>
+```cs
 services.AddMvc();
 
 services.AddSwaggerGen(options =>
@@ -154,6 +176,9 @@ services.AddSwaggerGen(options =>
 
 services.AddSwaggerGenNewtonsoftSupport();
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L9-L18' title='Snippet source file'>snippet source</a> | <a href='#snippet-README-Newtonsoft.Json' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 ## Swashbuckle, ApiExplorer, and Routing
 
@@ -162,10 +187,16 @@ helper methods to bootstrap the MVC stack, then API Explorer will be automatical
 
 However, if you're using `AddMvcCore(...)` for a more paired-down MVC stack, you'll need to explicitly add the API Explorer services:
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: README-MvcCore -->
+<a id='snippet-README-MvcCore'></a>
+```cs
 services.AddMvcCore()
         .AddApiExplorer();
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L20-L23' title='Snippet source file'>snippet source</a> | <a href='#snippet-README-MvcCore' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 Additionally, if you are using _[conventional routing][conventional-routing]_ (as opposed to attribute routing), any controllers and the actions on those
 controllers that use conventional routing will not be represented in API Explorer, which means Swashbuckle won't be able to find those controllers and
@@ -173,24 +204,40 @@ generate OpenAPI operations for them.
 
 For instance:
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: README-MvcConventionalRouting -->
+<a id='snippet-README-MvcConventionalRouting'></a>
+```cs
 app.UseMvc(routes =>
 {
-   // SwaggerGen won't find controllers that are routed via this technique.
-   routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
+    // SwaggerGen won't find controllers that are routed via this technique.
+    routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
 });
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L23-L29' title='Snippet source file'>snippet source</a> | <a href='#snippet-README-MvcConventionalRouting' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 You **must** use attribute routing for any controllers that you want represented in your OpenAPI document(s):
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: README-AttributeRouting -->
+<a id='snippet-README-AttributeRouting'></a>
+```cs
 [Route("example")]
 public class ExampleController : Controller
 {
     [HttpGet("")]
-    public IActionResult DoStuff() { /* Your implementation */ }
+    public IActionResult DoStuff()
+    {
+        // Your implementation
+        return Empty;
+    }
 }
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/ExampleController.cs#L5-L16' title='Snippet source file'>snippet source</a> | <a href='#snippet-README-AttributeRouting' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 Refer to the [ASP.NET Core MVC routing documentation][mvc-routing] for more information.
 
