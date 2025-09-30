@@ -112,7 +112,7 @@ Then, expose the OpenAPI JSON document endpoint(s) using one of following method
 // Your own endpoints go here, and then...
 app.MapSwagger();
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L7-L10' title='Snippet source file'>snippet source</a> | <a href='#snippet-README-MapSwagger' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L9-L12' title='Snippet source file'>snippet source</a> | <a href='#snippet-README-MapSwagger' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -124,7 +124,7 @@ app.MapSwagger();
 ```cs
 app.UseSwagger();
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L12-L14' title='Snippet source file'>snippet source</a> | <a href='#snippet-README-UseSwagger' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L14-L16' title='Snippet source file'>snippet source</a> | <a href='#snippet-README-UseSwagger' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -141,7 +141,7 @@ app.UseSwaggerUI(options =>
     options.SwaggerEndpoint("v1/swagger.json", "My API V1");
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L16-L21' title='Snippet source file'>snippet source</a> | <a href='#snippet-README-UseSwaggerUI' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L18-L23' title='Snippet source file'>snippet source</a> | <a href='#snippet-README-UseSwaggerUI' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -214,7 +214,7 @@ app.UseMvc(routes =>
     routes.MapRoute("default", "{controller=Home}/{action=Index}/{id?}");
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L23-L29' title='Snippet source file'>snippet source</a> | <a href='#snippet-README-MvcConventionalRouting' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L25-L31' title='Snippet source file'>snippet source</a> | <a href='#snippet-README-MvcConventionalRouting' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
