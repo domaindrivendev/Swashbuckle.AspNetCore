@@ -7,13 +7,13 @@ By default, the Swagger UI will be exposed at `/swagger`. If necessary, you can 
 ```csharp
 app.UseSwaggerUI(options =>
 {
-    options.RoutePrefix = "api-docs"
+    options.RoutePrefix = "api-docs";
 });
 ```
 
 ## Change Document Title
 
-By default, the Swagger UI will have a generic document title. When you have multiple Swagger pages open, it can be difficult to
+By default, the Swagger UI will have a generic document title. When you have multiple OpenAPI documents open, it can be difficult to
 tell them apart. You can alter this when enabling the SwaggerUI middleware:
 
 ```csharp
@@ -25,20 +25,21 @@ app.UseSwaggerUI(options =>
 
 ## Change CSS or JS Paths
 
-By default, the Swagger UI include default CSS and JavaScript, but if you wish to change the path or URL (for example to use a CDN):
+By default, the Swagger UI includes default CSS and JavaScript, but if you wish to change the path or URL (for example to use a CDN)
+you can override the defaults as shown below:
 
 ```csharp
 app.UseSwaggerUI(options =>
 {
-    options.StylesPath = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.21.0/swagger-ui.min.css";
-    options.ScriptBundlePath = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.21.0/swagger-ui-bundle.min.js";
-    options.ScriptPresetsPath = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.21.0/swagger-ui-standalone-preset.min.js";
+    options.StylesPath = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.29.1/swagger-ui.min.css";
+    options.ScriptBundlePath = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.29.1/swagger-ui-bundle.min.js";
+    options.ScriptPresetsPath = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.29.1/swagger-ui-standalone-preset.min.js";
 });
 ```
 
-## List Multiple Swagger Documents
+## List Multiple OpenAPI Documents
 
-When enabling the middleware, you're required to specify one or more Swagger endpoints (fully qualified or relative to the UI page) to
+When enabling the middleware, you're required to specify one or more OpenAPI endpoints (fully qualified or relative to the UI page) to
 power the UI. If you provide multiple endpoints, they'll be listed in the top right corner of the page, allowing users to toggle between
 the different documents. For example, the following configuration could be used to document different versions of an API.
 
@@ -52,9 +53,9 @@ app.UseSwaggerUI(options =>
 
 ## Apply swagger-ui Parameters
 
-swagger-ui ships with its own set of configuration parameters, all described
-[by the swagger-ui Configuration](https://github.com/swagger-api/swagger-ui/blob/master/docs/usage/configuration.md#display).
-In Swashbuckle, most of these are surfaced through the SwaggerUI middleware options:
+[swagger-ui][swagger-ui] ships with its own set of configuration parameters, all described
+[by the swagger-ui Configuration](https://github.com/swagger-api/swagger-ui/blob/HEAD/docs/usage/configuration.md#display).
+In Swashbuckle.AspNetCore, most of these are surfaced through the SwaggerUI middleware options:
 
 ```csharp
 app.UseSwaggerUI(options =>
@@ -72,16 +73,12 @@ app.UseSwaggerUI(options =>
     options.MaxDisplayedTags(5);
     options.ShowExtensions();
     options.ShowCommonExtensions();
-    options.Plugins = ["myCustomPlugin"];
     options.EnableValidator();
     options.SupportedSubmitMethods(SubmitMethod.Get, SubmitMethod.Head);
     options.UseRequestInterceptor("(request) => { return request; }");
     options.UseResponseInterceptor("(response) => { return response; }");
 });
 ```
-
- > [!NOTE]
- > When adding custom plugins, make sure you add any custom `js` files that define any plugin function(s).
 
 ## Inject Custom JavaScript
 
@@ -94,15 +91,6 @@ app.UseSwaggerUI(options =>
     options.InjectJavascript("/swagger-ui/custom.js");
 });
 ```
-
-> [!NOTE]
-> The `InjectOnCompleteJavaScript` and `InjectOnFailureJavaScript` options have been removed because the latest version of swagger-ui
-> doesn't expose the necessary hooks. Instead, it provides a [flexible customization system](https://github.com/swagger-api/swagger-ui/blob/master/docs/customization/overview.md)
-> based on concepts and patterns from React and Redux. To leverage this, you'll need to provide a custom version of `index.html` as
-> described [below](#customize-indexhtml).
->
-> The [custom index sample app](../test/WebSites/CustomUIIndex/Swagger/index.html) demonstrates this approach, using the swagger-ui plugin
-> system provide a custom topbar and to hide the info component.
 
 ## Inject Custom CSS
 
@@ -123,24 +111,32 @@ To customize the UI beyond the basic options listed above, you can provide your 
 ```csharp
 app.UseSwaggerUI(options =>
 {
-    options.IndexStream = () => GetType().Assembly
+    options.IndexStream = () => typeof(Program).Assembly
         .GetManifestResourceStream("CustomUIIndex.Swagger.index.html"); // Requires file to be added as an embedded resource
 });
 ```
 
+```xml
+<Project>
+  <ItemGroup>
+    <EmbeddedResource Include="CustomUIIndex.Swagger.index.html" />
+  </ItemGroup>
+</Project>
+```
+
 > [!TIP]
-> To get started, you should base your custom `index.html` on the [default version](../src/Swashbuckle.AspNetCore.SwaggerUI/index.html)
+> To get started, you should base your custom `index.html` on the [built-in version](../src/Swashbuckle.AspNetCore.SwaggerUI/index.html).
 
 ## Enable OAuth2.0 Flows
 
-swagger-ui has built-in support to participate in OAuth2.0 authorization flows. It interacts with authorization and/or token
-endpoints, as specified in the Swagger JSON, to obtain access tokens for subsequent API calls. See
+[swagger-ui][swagger-ui] has built-in support to participate in OAuth2.0 authorization flows. It interacts with authorization and/or token
+endpoints, as specified in the OpenAPI JSON, to obtain access tokens for subsequent API calls. See
 [Adding Security Definitions and Requirements](configure-and-customize-swaggergen.md#add-security-definitions-and-requirements) for
 an example of adding OAuth2.0 metadata to the generated Swagger.
 
-If your Swagger endpoint includes the appropriate security metadata, the UI interaction should be automatically enabled. However, you
+If your OpenAPI endpoint includes the appropriate security metadata, the UI interaction should be automatically enabled. However, you
 can further customize OAuth support in the UI with the following settings below. See the
-[Swagger-UI documentation](https://github.com/swagger-api/swagger-ui/blob/master/docs/usage/oauth2.md) for more information.
+[Swagger-UI documentation](https://github.com/swagger-api/swagger-ui/blob/HEAD/docs/usage/oauth2.md) for more information.
 
 ```csharp
 app.UseSwaggerUI(options =>
@@ -153,7 +149,7 @@ app.UseSwaggerUI(options =>
     options.OAuth2RedirectUrl("url");
     options.OAuthScopeSeparator(" ");
     options.OAuthScopes("scope1", "scope2");
-    options.OAuthAdditionalQueryStringParams(new Dictionary<string, string> { { "foo", "bar" }}); 
+    options.OAuthAdditionalQueryStringParams(new Dictionary<string, string> { ["foo"] = "bar" });
     options.OAuthUseBasicAuthenticationWithAccessCodeGrant();
     options.OAuthUsePkce();
 });
@@ -180,3 +176,5 @@ app.UseSwaggerUI(options =>
     options.UseRequestInterceptor("(req) => { req.headers['X-XSRF-Token'] = localStorage.getItem('xsrf-token'); return req; }");
 });
 ```
+
+[swagger-ui]: https://github.com/swagger-api/swagger-ui
