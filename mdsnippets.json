@@ -1,0 +1,5 @@
+{
+  "$schema": "https://raw.githubusercontent.com/SimonCropp/MarkdownSnippets/refs/tags/27.0.0/schema.json",
+  "Convention": "InPlaceOverwrite",
+  "ExcludeDirectories": ["artifacts", ".github"]
+}

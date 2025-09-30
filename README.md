@@ -41,84 +41,92 @@ for more details.
 
 ## Getting Started
 
-1. Install the kitchen-sink NuGet package into your ASP.NET Core application:
+First install the kitchen-sink NuGet package into your ASP.NET Core application:
 
-   ```terminal
-   dotnet add package Swashbuckle.AspNetCore
-   ```
+```terminal
+dotnet add package Swashbuckle.AspNetCore
+```
 
-2. Register the OpenAPI (Swagger) generator in your application's startup path, defining one or more OpenAPI documents. For example:
+Next, register the OpenAPI (Swagger) generator in your application's startup path, defining one or more OpenAPI documents. For example:
 
-    ```csharp
-    using Microsoft.OpenApi;
+<!-- markdownlint-disable MD031 MD033 -->
 
-    var builder = WebApplication.CreateBuilder(args);
+<!-- snippet: README-configure -->
+<a id='snippet-README-configure'></a>
+```cs
+using Microsoft.OpenApi;
 
-    builder.Services.AddMvc();
+var builder = WebApplication.CreateBuilder(args);
 
-    builder.Services.AddSwaggerGen(options =>
-    {
-        options.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-    });
+builder.Services.AddMvc();
 
-    var app = builder.Build();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+});
 
-    app.UseSwagger();
+var app = builder.Build();
 
-    app.Run();
-    ```
+app.UseSwagger();
 
-3. Ensure your API endpoints and any parameters are decorated with `[Http*]` and `[From*]` attributes, where appropriate.
+app.Run();
+```
+<sup><a href='/test/WebSites/DocumentationSnippets/Program.cs#L1-L18' title='Snippet source file'>snippet source</a> | <a href='#snippet-README-configure' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
 
-    ```csharp
-    [HttpPost]
-    public void CreateProduct([FromBody] Product product)
-    {
-        // Implementation goes here
-    }
-    ```
+<!-- markdownlint-enable MD031 MD033 -->
 
-    ```csharp
-    [HttpGet]
-    public IEnumerable<Product> SearchProducts([FromQuery] string keywords)
-    {
-        // Implementation goes here
-    }
-    ```
+Ensure your API endpoints and any parameters are decorated with `[Http*]` and `[From*]` attributes, where appropriate.
+
+```csharp
+[HttpPost]
+public void CreateProduct([FromBody] Product product)
+{
+    // Implementation goes here
+}
+```
+
+```csharp
+[HttpGet]
+public IEnumerable<Product> SearchProducts([FromQuery] string keywords)
+{
+    // Implementation goes here
+}
+```
 
 > [!NOTE]
 > If you omit the explicit parameter bindings, the generator will describe them as "query" parameters by default.
 
-4. Expose the OpenAPI JSON document endpoint(s) using one of following methods:
+Then, expose the OpenAPI JSON document endpoint(s) using one of following methods:
 
-    - Add endpoints if you're using endpoint-based routing:
+- Add endpoints if you're using endpoint-based routing:
 
-    ```csharp
-    app.MapEndpoints(endpoints =>
-    {
-        // Your own endpoints go here, and then...
-        endpoints.MapSwagger();
-    });
-    ```
+```csharp
+app.MapEndpoints(endpoints =>
+{
+    // Your own endpoints go here, and then...
+    endpoints.MapSwagger();
+});
+```
 
-    - Adding the OpenAPI middleware:
+- Adding the OpenAPI middleware:
 
-    ```csharp
-    app.UseSwagger();
-    ```
+```csharp
+app.UseSwagger();
+```
 
-    At this point, you can launch your application and view the generated OpenAPI document at `/swagger/v1/swagger.json`.
+At this point, you can launch your application and view the generated OpenAPI document at `/swagger/v1/swagger.json`.
 
-5. Optionally, add the [swagger-ui][swagger-ui] middleware to expose interactive documentation, specifying the OpenAPI document(s) to power it from:
+Finally, you can optionally add the [swagger-ui][swagger-ui] middleware to expose interactive documentation, specifying the OpenAPI document(s) to power it from:
 
-    ```csharp
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("v1/swagger.json", "My API V1");
-    });
-    ```
+```csharp
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("v1/swagger.json", "My API V1");
+});
+```
 
-    Now you can restart your application and view the auto-generated, interactive documentation at `/swagger`.
+Now you can restart your application and view the auto-generated, interactive documentation at `/swagger`.
 
 ## System.Text.Json (STJ) vs Newtonsoft.Json (Json.NET)
 
