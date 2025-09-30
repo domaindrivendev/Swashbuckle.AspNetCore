@@ -94,7 +94,7 @@ public IEnumerable<Product> SearchProducts([FromQuery] string keywords)
     return [];
 }
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/ProductsController.cs#L7-L20' title='Snippet source file'>snippet source</a> | <a href='#snippet-README-endpoints' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/ProductsController.cs#L8-L21' title='Snippet source file'>snippet source</a> | <a href='#snippet-README-endpoints' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 

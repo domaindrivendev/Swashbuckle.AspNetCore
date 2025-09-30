@@ -21,5 +21,20 @@ public static class IServiceCollectionExtensions
         services.AddMvcCore()
                 .AddApiExplorer();
         // end-snippet
+
+        // begin-snippet: Annotations-Enable
+        services.AddSwaggerGen(options =>
+        {
+            // Other setup, then...
+            options.EnableAnnotations();
+        });
+        // end-snippet
+
+        // begin-snippet: Annotations-EnablePolymorphism
+        services.AddSwaggerGen(options =>
+        {
+            options.EnableAnnotations(enableAnnotationsForInheritance: true, enableAnnotationsForPolymorphism: true);
+        });
+        // end-snippet
     }
 }
