@@ -71,10 +71,16 @@ will be used to provide a host for the CLI tool to run in.
 
 For example, the following class could be used to leverage the same host configuration as your application:
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerHostFactory -->
+<a id='snippet-SwaggerHostFactory'></a>
+```cs
 public class SwaggerHostFactory
 {
     public static IHost CreateHost()
-        => Program.CreateHostBuilder([]).Build();
+        => MyApplication.CreateHostBuilder([]).Build();
 }
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/SwaggerHostFactory.cs#L3-L9' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerHostFactory' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
