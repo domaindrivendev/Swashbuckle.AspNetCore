@@ -1,8 +1,8 @@
 # Configuration and Customization of `Swashbuckle.AspNetCore.Swagger`
 
-## Change the Path for Swagger JSON Endpoints
+## Change the Path for OpenAPI JSON Endpoints
 
-By default, Swagger JSON will be exposed at the following route - `/swagger/{documentName}/swagger.json`.
+By default, OpenAPI (Swagger) JSON will be exposed at the following route - `/swagger/{documentName}/swagger.json`.
 If necessary, you can change this when enabling the Swagger middleware.
 
 > [!IMPORTANT]
@@ -28,21 +28,21 @@ app.UseSwagger(options =>
 > If you also need to update the relative path that the UI itself is available on, you'll need to follow the instructions
 > found in [Change Relative Path to the UI](configure-and-customize-swaggerui.md#change-relative-path-to-the-ui).
 
-## Modify Swagger with Request Context
+## Modify OpenAPI with Request Context
 
-If you need to set some Swagger metadata based on the current request, you can configure a filter that's executed prior to serializing the document.
+If you need to set some OpenAPI metadata based on the current request, you can configure a filter that's executed prior to serializing the document.
 
 ```csharp
 app.UseSwagger(options =>
 {
-    options.PreSerializeFilters.Add((swagger, httpReq) =>
+    options.PreSerializeFilters.Add((document, request) =>
     {
-        swagger.Servers = [new OpenApiServer { Url = $"{httpReq.Scheme}://{httpReq.Host.Value}" }];
+        document.Servers = [new OpenApiServer { Url = $"{request.Scheme}://{request.Host.Value}" }];
     });
 });
 ```
 
-The `OpenApiDocument` and the current `HttpRequest` are both passed to the filter. This provides a lot of flexibility.
+The `OpenApiDocument` and the current `HttpRequest` are both passed to the filter, which provides a lot of flexibility.
 For example, you can add an explicit API server based on the `Host` header (as shown), or you could inspect session
 information or an `Authorization` header and remove operations from the document based on user permissions.
 
@@ -55,7 +55,7 @@ format with the following option:
 ```csharp
 app.UseSwagger(options =>
 {
-    options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_1;
+    options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_1;
 });
 ```
 
@@ -68,7 +68,7 @@ format with the following option:
 ```csharp
 app.UseSwagger(options =>
 {
-    options.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0;
+    options.OpenApiVersion = OpenApiSpecVersion.OpenApi2_0;
 });
 ```
 
@@ -76,11 +76,12 @@ app.UseSwagger(options =>
 
 Virtual directories and reverse proxies can cause issues for applications that generate links and redirects, particularly
 if the app returns *absolute* URLs based on the `Host` header and other information from the current request. To avoid these
-issues, Swashbuckle uses *relative* URLs where possible, and encourages their use when configuring the SwaggerUI and ReDoc middleware.
+issues, Swashbuckle.AspNetCore uses *relative* URLs where possible, and encourages their use when configuring the SwaggerUI
+and ReDoc middleware.
 
-For example, to wire up the SwaggerUI middleware, you provide the URL to one or more OpenAPI/Swagger documents. This is the URL
-that swagger-ui, a client-side application, will call to retrieve your API metadata. To ensure this works behind virtual directories
-and reverse proxies, you should express this relative to the `RoutePrefix` of swagger-ui itself:
+For example, to wire up the SwaggerUI middleware, you provide the URL to one or more OpenAPI documents. This is the URL
+that [swagger-ui](https://github.com/swagger-api/swagger-ui), a client-side application, will call to retrieve your API metadata. To ensure this works behind
+virtual directories and reverse proxies, you should express this relative to the `RoutePrefix` of swagger-ui itself:
 
 ```csharp
 app.UseSwaggerUI(options =>
@@ -90,20 +91,16 @@ app.UseSwaggerUI(options =>
 });
 ```
 
-> [!NOTE]
-> In previous versions of the documentation, you may have seen this expressed as a root-relative link (e.g. `/swagger/v1/swagger.json`).
-> This won't work if your app is hosted on an IIS virtual directory or behind a proxy that trims the request path before forwarding.
-> If you switch to the *page-relative* syntax shown above, it should work in all cases.
-
 ## Customizing how the OpenAPI document is serialized
 
-By default, Swashbuckle will serialize the OpenAPI document using the `Serialize*` methods on the OpenAPI document object. If a
-customized serialization is desired,  it is possible to create a custom document serializer that implements the `ISwaggerDocumentSerializer` interface. This can be set on the `SwaggerOptions` in the service collection using `ConfigureSwagger()`:
+By default, Swashbuckle.AspNetCore will serialize the OpenAPI document using the `Serialize*` methods on the OpenAPI document object. If a
+customized serialization is desired,  it is possible to create a custom document serializer that implements the `ISwaggerDocumentSerializer` interface.
+This can be set on the `SwaggerOptions` in the service collection using `ConfigureSwagger()`:
 
 ```csharp
 services.ConfigureSwagger(options =>
 {
-    option.SetCustomDocumentSerializer<CustomDocumentSerializer>();
+    options.SetCustomDocumentSerializer<CustomDocumentSerializer>();
 });
 ```
 
