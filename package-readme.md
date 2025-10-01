@@ -1,8 +1,8 @@
 # Swashbuckle.AspNetCore
 
-[Swagger](https://swagger.io) (OpenAPI) tooling for APIs built with ASP.NET Core.
+[OpenAPI](https://swagger.io) (Swagger) tooling for APIs built with ASP.NET Core.
 
-Generate beautiful API documentation, including a UI to explore and test operations, directly from your routes, controllers and models.
+Generate beautiful API documentation, including a UI to explore and test operations, directly from your endpoints, routes, controllers and models.
 
 [![Build status](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/actions/workflows/build.yml/badge.svg?branch=master&event=push)](https://github.com/domaindrivendev/Swashbuckle.AspNetCore/actions?query=workflow%3Abuild+branch%3Amaster+event%3Apush) [![Code coverage](https://codecov.io/gh/domaindrivendev/Swashbuckle.AspNetCore/branch/master/graph/badge.svg)](https://codecov.io/gh/domaindrivendev/Swashbuckle.AspNetCore)
 
