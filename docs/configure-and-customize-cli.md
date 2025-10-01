@@ -1,18 +1,18 @@
 # Configuration and Customization of `Swashbuckle.AspNetCore.Cli`
 
-## Retrieve Swagger Directly from a Startup Assembly
+## Retrieve OpenAPI Directly from a Startup Assembly
 
-Once your application has been set up with Swashbuckle (see [Getting Started](../README.md#getting-started)), you can
-use the Swashbuckle CLI tool to retrieve Swagger/OpenAPI JSON directly from your application's startup assembly, and write
-it to a file. This can be useful if you want to incorporate Swagger generation into a CI/CD process, or if you want to serve
+Once your application has been set up with Swashbuckle.AspNetCore (see [Getting Started](../README.md#getting-started)), you can
+use the Swashbuckle.OpenAPI CLI tool to retrieve OpenAPI JSON documents directly from your application's startup assembly, and write
+it to a file. This can be useful if you want to incorporate OpenAPI generation into a CI/CD process, or if you want to serve
 it from static file at run-time.
 
 It's packaged as a [.NET Tool](https://learn.microsoft.com/dotnet/core/tools/global-tools) that can be installed and used via the .NET SDK.
 
 > [!WARNING]
-> The tool needs to load your Startup DLL and its dependencies at runtime. Therefore, you should use a version of the `dotnet` SDK
-> that is compatible with your application. For example, if your app targets `net8.0`, then you should use version 8.0.xxx of the SDK
-> to run the CLI tool.
+> The tool needs to load your Startup DLL and its dependencies at runtime. Therefore, you should use a version of the `dotnet` CLI
+> that is compatible with your application. For example, if your app targets `net10.0`, then you should use version 10.0.xxx of the
+> .NET SDK to run the CLI tool.
 
 ### Using the tool with the .NET SDK
 
@@ -46,16 +46,16 @@ dotnet tool install -g Swashbuckle.AspNetCore.Cli
     swagger tofile --help
     ```
 
-2. Generate a Swagger/OpenAPI document from your application's startup assembly
+2. Generate an OpenAPI document from your application's startup assembly
 
     ```terminal
     swagger tofile --output [output] [startupassembly] [swaggerdoc]
     ```
 
     Placeholders and their meaning:
-    * `[output]`: the relative path where the Swagger JSON document will be output to;
+    * `[output]`: the relative path where the OpenAPI JSON document will be output to;
     * `[startupassembly]`: the relative path to your application's startup assembly;
-    * `[swaggerdoc]`: the name of the Swagger document you want to generate, as configured in your application.
+    * `[swaggerdoc]`: the name of the OpenAPI document you want to generate, as configured in your application.
 
 ## Use the CLI Tool with a Custom Host Configuration
 
@@ -71,10 +71,16 @@ will be used to provide a host for the CLI tool to run in.
 
 For example, the following class could be used to leverage the same host configuration as your application:
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerHostFactory -->
+<a id='snippet-SwaggerHostFactory'></a>
+```cs
 public class SwaggerHostFactory
 {
     public static IHost CreateHost()
-        => Program.CreateHostBuilder([]).Build();
+        => MyApplication.CreateHostBuilder([]).Build();
 }
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/SwaggerHostFactory.cs#L3-L9' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerHostFactory' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
