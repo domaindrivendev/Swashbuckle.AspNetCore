@@ -65,6 +65,7 @@
     <Project Path="test/WebSites/CustomDocumentSerializer/CustomDocumentSerializer.csproj" />
     <Project Path="test/WebSites/CustomUIConfig/CustomUIConfig.csproj" />
     <Project Path="test/WebSites/CustomUIIndex/CustomUIIndex.csproj" />
+    <Project Path="test/WebSites/DocumentationSnippets/DocumentationSnippets.csproj" />
     <Project Path="test/WebSites/GenericControllers/GenericControllers.csproj" />
     <Project Path="test/WebSites/MinimalApp/MinimalApp.csproj" />
     <Project Path="test/WebSites/MinimalAppWithHostedServices/MinimalAppWithHostedServices.csproj" />
