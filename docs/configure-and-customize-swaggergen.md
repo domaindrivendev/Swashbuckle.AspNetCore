@@ -645,6 +645,7 @@ public class ApiExplorerGetsOnlyConvention : IActionModelConvention
     {
         action.ApiExplorer.IsVisible = action.Attributes.OfType<HttpGetAttribute>().Any();
     }
+}
 ```
 <sup><a href='/test/WebSites/DocumentationSnippets/ApiExplorerGetsOnlyConvention.cs#L6-L13' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-IActionModelConvention' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
@@ -1137,7 +1138,7 @@ services.AddSwaggerGen(options =>
         {
             new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "bearerAuth" }
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "bearer" }
             },
             []
         }

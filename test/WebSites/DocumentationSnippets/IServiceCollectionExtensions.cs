@@ -241,7 +241,7 @@ public static class IServiceCollectionExtensions
                 {
                     new OpenApiSecurityScheme
                     {
-                        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "bearerAuth" }
+                        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "bearer" }
                     },
                     []
                 }

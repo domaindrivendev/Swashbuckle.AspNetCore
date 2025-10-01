@@ -10,5 +10,5 @@ public class ApiExplorerGetsOnlyConvention : IActionModelConvention
     {
         action.ApiExplorer.IsVisible = action.Attributes.OfType<HttpGetAttribute>().Any();
     }
-    // end-snippet
 }
+// end-snippet
