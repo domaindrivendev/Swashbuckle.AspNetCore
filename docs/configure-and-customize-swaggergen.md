@@ -645,8 +645,9 @@ public class ApiExplorerGetsOnlyConvention : IActionModelConvention
     {
         action.ApiExplorer.IsVisible = action.Attributes.OfType<HttpGetAttribute>().Any();
     }
+}
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/ApiExplorerGetsOnlyConvention.cs#L6-L13' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-IActionModelConvention' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/ApiExplorerGetsOnlyConvention.cs#L6-L14' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-IActionModelConvention' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
