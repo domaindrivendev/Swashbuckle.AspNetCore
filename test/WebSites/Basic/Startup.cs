@@ -42,6 +42,8 @@ public class Startup
 
             c.EnableAnnotations();
         });
+
+        services.AddSwaggerGenMinimalApisJsonOptions();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

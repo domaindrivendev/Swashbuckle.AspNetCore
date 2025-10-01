@@ -1,9 +1,9 @@
-﻿using System.Text.Json;
-using Microsoft.Extensions.ApiDescriptions;
+﻿using Microsoft.Extensions.ApiDescriptions;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using Swashbuckle.AspNetCore.SwaggerGen.DependencyInjection;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -29,10 +29,10 @@ public static class SwaggerGenServiceCollectionExtensions
         services.TryAddTransient(s => s.GetRequiredService<IOptions<SwaggerGeneratorOptions>>().Value);
         services.TryAddTransient<ISchemaGenerator, SchemaGenerator>();
         services.TryAddTransient(s => s.GetRequiredService<IOptions<SchemaGeneratorOptions>>().Value);
-        services.AddSingleton<JsonSerializerOptionsProvider>();
+        services.ConfigureOptions<ConfigureSwaggerGenJsonOptions>();
         services.TryAddSingleton<ISerializerDataContractResolver>(s =>
         {
-            var serializerOptions = s.GetRequiredService<JsonSerializerOptionsProvider>().Options;
+            var serializerOptions = s.GetRequiredService<IOptions<SwaggerGenJsonOptions>>().Value.SerializerOptions;
             return new JsonSerializerDataContractResolver(serializerOptions);
         });
 
@@ -44,41 +44,20 @@ public static class SwaggerGenServiceCollectionExtensions
         return services;
     }
 
+    public static IServiceCollection AddSwaggerGenMinimalApisJsonOptions(this IServiceCollection services)
+    {
+        return services.ConfigureOptions<ConfigureMinimalApiSwaggerGenJsonOptions>();
+    }
+
+    public static IServiceCollection AddSwaggerGenMvcJsonOptions(this IServiceCollection services)
+    {
+        return services.ConfigureOptions<ConfigureMvcSwaggerGenJsonOptions>();
+    }
+
     public static void ConfigureSwaggerGen(
         this IServiceCollection services,
         Action<SwaggerGenOptions> setupAction)
     {
         services.Configure(setupAction);
-    }
-
-    private sealed class JsonSerializerOptionsProvider
-    {
-        private JsonSerializerOptions _options;
-        private readonly IServiceProvider _serviceProvider;
-
-        public JsonSerializerOptionsProvider(IServiceProvider serviceProvider)
-        {
-            _serviceProvider = serviceProvider;
-        }
-
-        public JsonSerializerOptions Options => _options ??= ResolveOptions();
-
-        private JsonSerializerOptions ResolveOptions()
-        {
-            JsonSerializerOptions serializerOptions;
-
-            /*
-             * First try to get the options configured for MVC,
-             * then try to get the options configured for Minimal APIs if available,
-             * then try the default JsonSerializerOptions if available,
-             * otherwise create a new instance as a last resort as this is an expensive operation.
-             */
-            serializerOptions =
-                _serviceProvider.GetService<IOptions<AspNetCore.Mvc.JsonOptions>>()?.Value?.JsonSerializerOptions
-                ?? _serviceProvider.GetService<IOptions<AspNetCore.Http.Json.JsonOptions>>()?.Value?.SerializerOptions
-                ?? JsonSerializerOptions.Default;
-
-            return serializerOptions;
-        }
     }
 }
