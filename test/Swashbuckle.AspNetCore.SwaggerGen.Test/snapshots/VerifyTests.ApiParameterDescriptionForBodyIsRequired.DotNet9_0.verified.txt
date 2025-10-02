@@ -22,5 +22,10 @@
       }
     }
   },
-  "components": { }
+  "components": { },
+  "tags": [
+    {
+      "name": "Foo"
+    }
+  ]
 }

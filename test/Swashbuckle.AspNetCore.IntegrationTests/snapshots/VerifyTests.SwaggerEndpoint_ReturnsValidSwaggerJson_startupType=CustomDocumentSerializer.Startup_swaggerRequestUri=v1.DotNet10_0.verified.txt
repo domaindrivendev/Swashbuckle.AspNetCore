@@ -1,0 +1,3 @@
+﻿{
+  "swagger": "DocumentSerializerTest3.0"
+}

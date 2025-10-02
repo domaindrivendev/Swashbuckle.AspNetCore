@@ -57,5 +57,10 @@
         "additionalProperties": false
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Fake"
+    }
+  ]
 }

@@ -1,12 +1,12 @@
 ﻿using System.Reflection;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Annotations;
 
 public class AnnotationsRequestBodyFilter : IRequestBodyFilter
 {
-    public void Apply(OpenApiRequestBody requestBody, RequestBodyFilterContext context)
+    public void Apply(IOpenApiRequestBody requestBody, RequestBodyFilterContext context)
     {
         var bodyParameterDescription = context.BodyParameterDescription;
 
@@ -19,18 +19,16 @@ public class AnnotationsRequestBodyFilter : IRequestBodyFilter
         if (propertyInfo != null)
         {
             ApplyPropertyAnnotations(requestBody, propertyInfo);
-            return;
         }
 
         var parameterInfo = bodyParameterDescription.ParameterInfo();
         if (parameterInfo != null)
         {
             ApplyParamAnnotations(requestBody, parameterInfo);
-            return;
         }
     }
 
-    private static void ApplyPropertyAnnotations(OpenApiRequestBody parameter, PropertyInfo propertyInfo)
+    private static void ApplyPropertyAnnotations(IOpenApiRequestBody parameter, PropertyInfo propertyInfo)
     {
         var swaggerRequestBodyAttribute = propertyInfo.GetCustomAttributes<SwaggerRequestBodyAttribute>()
             .FirstOrDefault();
@@ -41,7 +39,7 @@ public class AnnotationsRequestBodyFilter : IRequestBodyFilter
         }
     }
 
-    private static void ApplyParamAnnotations(OpenApiRequestBody requestBody, ParameterInfo parameterInfo)
+    private static void ApplyParamAnnotations(IOpenApiRequestBody requestBody, ParameterInfo parameterInfo)
     {
         var swaggerRequestBodyAttribute = parameterInfo.GetCustomAttribute<SwaggerRequestBodyAttribute>();
 
@@ -51,7 +49,7 @@ public class AnnotationsRequestBodyFilter : IRequestBodyFilter
         }
     }
 
-    private static void ApplySwaggerRequestBodyAttribute(OpenApiRequestBody parameter, SwaggerRequestBodyAttribute swaggerRequestBodyAttribute)
+    private static void ApplySwaggerRequestBodyAttribute(IOpenApiRequestBody parameter, SwaggerRequestBodyAttribute swaggerRequestBodyAttribute)
     {
         if (swaggerRequestBodyAttribute.Description is { } description)
         {
