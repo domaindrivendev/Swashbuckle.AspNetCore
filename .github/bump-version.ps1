@@ -48,7 +48,7 @@ try {
     $writer = $null
 }
 
-$githubOutput = $env:GITHUB_OUTPUT
+$githubOutput = ${env:GITHUB_OUTPUT}
 
 if (($null -ne $githubOutput) -and (Test-Path $githubOutput)) {
   "version=${updatedVersion}" >> $githubOutput
