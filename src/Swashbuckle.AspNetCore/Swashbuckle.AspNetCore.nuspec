@@ -11,7 +11,7 @@
     <readme>docs\package-readme.md</readme>
     <description>$description$</description>
     <tags>$tags$</tags>
-    <repository type="$repositoryType$" url="$repositoryUrl$" />
+    <repository type="$repositoryType$" url="$repositoryUrl$" commit="$repositoryCommit$" />
     <dependencies>
       <group targetFramework=".NETCoreApp,Version=v8.0">
         <dependency id="Swashbuckle.AspNetCore.Swagger" version="$version$" exclude="Build,Analyzers" />
