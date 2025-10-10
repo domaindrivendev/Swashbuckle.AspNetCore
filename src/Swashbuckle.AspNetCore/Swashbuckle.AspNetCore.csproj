@@ -25,6 +25,7 @@
         id=$(PackageId);
         licenseExpression=$(PackageLicenseExpression);
         projectUrl=$(PackageProjectUrl);
+        repositoryCommit=$(GITHUB_SHA);
         repositoryType=$(RepositoryType);
         repositoryUrl=$(RepositoryUrl);
         tags=$(PackageTags.Replace(';', ' '));
