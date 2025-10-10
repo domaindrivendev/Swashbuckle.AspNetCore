@@ -6,7 +6,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <IsPackable>true</IsPackable>
     <NoWarn>$(NoWarn);1591</NoWarn>
-    <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>
+    <PackageTags>swagger;openapi;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>
     <SignAssembly>true</SignAssembly>
     <TargetFrameworks>$(DefaultTargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
