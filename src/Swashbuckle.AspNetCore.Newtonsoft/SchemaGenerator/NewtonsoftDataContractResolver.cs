@@ -7,11 +7,16 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Newtonsoft;
 
+/// <summary>
+/// A class representing an <see cref="ISerializerDataContractResolver"/> implementation that uses Newtonsoft.Json.
+/// </summary>
+/// <param name="serializerSettings">The <see cref="JsonSerializerSettings"/> to use.</param>
 public class NewtonsoftDataContractResolver(JsonSerializerSettings serializerSettings) : ISerializerDataContractResolver
 {
     private readonly JsonSerializerSettings _serializerSettings = serializerSettings;
     private readonly IContractResolver _contractResolver = serializerSettings.ContractResolver ?? new DefaultContractResolver();
 
+    /// <inheritdoc/>
     public DataContract GetDataContractForType(Type type)
     {
         var effectiveType = Nullable.GetUnderlyingType(type) ?? type;

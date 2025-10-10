@@ -3,6 +3,7 @@
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>Swashbuckle.AspNetCore.Newtonsoft.snk</AssemblyOriginatorKeyFile>
     <Description>Swagger Generator opt-in component to support Newtonsoft.Json serializer behaviors</Description>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <IsPackable>true</IsPackable>
     <PackageTags>swagger;openapi;documentation;discovery;help;webapi;aspnet;aspnetcore;newtonsoft</PackageTags>
     <SignAssembly>true</SignAssembly>
