@@ -18,7 +18,7 @@ if ($LASTEXITCODE -ne 0) {
 
 $additionalArgs = @()
 
-if (![string]::IsNullOrEmpty($env:GITHUB_SHA)) {
+if (![string]::IsNullOrEmpty(${env:GITHUB_SHA})) {
     $additionalArgs += "--logger:GitHubActions;report-warnings=false"
     $additionalArgs += "--logger:junit;LogFilePath=junit.xml"
 }
