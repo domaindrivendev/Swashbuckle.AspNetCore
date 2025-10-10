@@ -1,4 +1,4 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -8,7 +8,7 @@ public class SchemaRepository(string documentName = null)
 
     public string DocumentName { get; } = documentName;
 
-    public Dictionary<string, OpenApiSchema> Schemas { get; private set; } = [];
+    public Dictionary<string, IOpenApiSchema> Schemas { get; private set; } = [];
 
     public void RegisterType(Type type, string schemaId)
     {
@@ -24,14 +24,11 @@ public class SchemaRepository(string documentName = null)
         _reservedIds.Add(type, schemaId);
     }
 
-    public bool TryLookupByType(Type type, out OpenApiSchema referenceSchema)
+    public bool TryLookupByType(Type type, out OpenApiSchemaReference referenceSchema)
     {
         if (_reservedIds.TryGetValue(type, out string schemaId))
         {
-            referenceSchema = new OpenApiSchema
-            {
-                Reference = new OpenApiReference { Type = ReferenceType.Schema, Id = schemaId }
-            };
+            referenceSchema = new OpenApiSchemaReference(schemaId);
             return true;
         }
 
@@ -39,13 +36,10 @@ public class SchemaRepository(string documentName = null)
         return false;
     }
 
-    public OpenApiSchema AddDefinition(string schemaId, OpenApiSchema schema)
+    public OpenApiSchemaReference AddDefinition(string schemaId, OpenApiSchema schema)
     {
         Schemas.Add(schemaId, schema);
 
-        return new OpenApiSchema
-        {
-            Reference = new OpenApiReference { Type = ReferenceType.Schema, Id = schemaId }
-        };
+        return new OpenApiSchemaReference(schemaId);
     }
 }
