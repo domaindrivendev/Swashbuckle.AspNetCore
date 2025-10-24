@@ -14,8 +14,8 @@
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.1.0" />
     <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="8.0.21" />
     <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="4.14.0" />
-    <PackageVersion Include="Microsoft.OpenApi" Version="2.3.6" />
-    <PackageVersion Include="Microsoft.OpenApi.YamlReader" Version="2.3.6" />
+    <PackageVersion Include="Microsoft.OpenApi" Version="2.3.7" />
+    <PackageVersion Include="Microsoft.OpenApi.YamlReader" Version="2.3.7" />
     <PackageVersion Include="Microsoft.Playwright" Version="1.55.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
