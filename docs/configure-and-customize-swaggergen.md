@@ -786,7 +786,7 @@ public class PhoneNumber
 ```cs
 services.AddSwaggerGen(options =>
 {
-    options.MapType<PhoneNumber>(() => new OpenApiSchema { Type = "string" });
+    options.MapType<PhoneNumber>(() => new OpenApiSchema { Type = JsonSchemaType.String });
 });
 ```
 <sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L159-L164' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-CustomSchemaMapping' title='Start of snippet'>anchor</a></sup>
@@ -871,24 +871,27 @@ to inform the AutoRest tool how enums should be modelled when it generates the A
 ```cs
 public class AutoRestSchemaFilter : ISchemaFilter
 {
-    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+    public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
     {
         var type = context.Type;
-        if (type.IsEnum)
+        if (type.IsEnum && schema is OpenApiSchema concrete)
         {
-            schema.Extensions.Add(
+            concrete.Extensions ??= new Dictionary<string, IOpenApiExtension>();
+            concrete.Extensions.Add(
                 "x-ms-enum",
-                new OpenApiObject
-                {
-                    ["name"] = new OpenApiString(type.Name),
-                    ["modelAsString"] = new OpenApiBoolean(true)
-                }
+                new JsonNodeExtension(
+                    new JsonObject
+                    {
+                        ["name"] = type.Name,
+                        ["modelAsString"] = true
+                    }
+                )
             );
         }
     }
 }
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/AutoRestSchemaFilter.cs#L7-L26' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-AutoRestSchemaFilter' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/AutoRestSchemaFilter.cs#L7-L29' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-AutoRestSchemaFilter' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -919,8 +922,13 @@ so you will need [a special JsonConverter, as shown in the .NET documentation](h
 ```cs
 public class DictionaryTKeyEnumTValueSchemaFilter : ISchemaFilter
 {
-    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+    public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
     {
+        if (schema is not OpenApiSchema concrete)
+        {
+            return;
+        }
+
         // Only run for fields that are a Dictionary<Enum, TValue>
         if (!context.Type.IsGenericType || !context.Type.GetGenericTypeDefinition().IsAssignableFrom(typeof(Dictionary<,>)))
         {
@@ -936,14 +944,14 @@ public class DictionaryTKeyEnumTValueSchemaFilter : ISchemaFilter
             return;
         }
 
-        schema.Type = "object";
-        schema.Properties = keyType.GetEnumNames().ToDictionary(
+        concrete.Type = JsonSchemaType.Object;
+        concrete.Properties = keyType.GetEnumNames().ToDictionary(
             name => name,
             name => context.SchemaGenerator.GenerateSchema(valueType, context.SchemaRepository));
     }
 }
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/DictionaryTKeyEnumTValueSchemaFilter.cs#L6-L32' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-DictionaryTKeyEnumTValueSchemaFilter' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/DictionaryTKeyEnumTValueSchemaFilter.cs#L6-L37' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-DictionaryTKeyEnumTValueSchemaFilter' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -981,11 +989,11 @@ public class TagDescriptionsDocumentFilter : IDocumentFilter
 {
     public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
     {
-        swaggerDoc.Tags =
-        [
-            new OpenApiTag { Name = "Products", Description = "Browse/manage the product catalog" },
-            new OpenApiTag { Name = "Orders", Description = "Submit orders" }
-        ];
+        swaggerDoc.Tags = new HashSet<OpenApiTag>()
+        {
+            new() { Name = "Products", Description = "Browse/manage the product catalog" },
+            new() { Name = "Orders", Description = "Submit orders" }
+        };
     }
 }
 ```
@@ -1051,19 +1059,13 @@ services.AddSwaggerGen(options =>
 ```cs
 services.AddSwaggerGen(options =>
 {
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    options.AddSecurityRequirement((document) => new OpenApiSecurityRequirement()
     {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
-            },
-            ["readAccess", "writeAccess"]
-        }
+        [new OpenApiSecuritySchemeReference("oauth2", document)] = ["readAccess", "writeAccess"]
     });
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L213-L227' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-AddSecurityRequirement' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L213-L221' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-AddSecurityRequirement' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -1094,10 +1096,7 @@ public class SecurityRequirementsOperationFilter : IOperationFilter
             operation.Responses.Add("401", new OpenApiResponse { Description = "Unauthorized" });
             operation.Responses.Add("403", new OpenApiResponse { Description = "Forbidden" });
 
-            var scheme = new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
-            };
+            var scheme = new OpenApiSecuritySchemeReference("oauth2", context.Document);
 
             operation.Security =
             [
@@ -1110,7 +1109,7 @@ public class SecurityRequirementsOperationFilter : IOperationFilter
     }
 }
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/SecurityRequirementsOperationFilter.cs#L7-L41' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-SecurityRequirementsOperationFilter' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/SecurityRequirementsOperationFilter.cs#L7-L38' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-SecurityRequirementsOperationFilter' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -1133,19 +1132,13 @@ services.AddSwaggerGen(options =>
         BearerFormat = "JWT",
         Description = "JWT Authorization header using the Bearer scheme."
     });
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
     {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "bearer" }
-            },
-            []
-        }
+        [new OpenApiSecuritySchemeReference("bearer", document)] = []
     });
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L229-L250' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-BearerAuthentication' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L223-L238' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-BearerAuthentication' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -1237,7 +1230,7 @@ services.AddSwaggerGen(options =>
     });
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L252-L262' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-DetectSubtypes' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L240-L250' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-DetectSubtypes' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -1319,7 +1312,7 @@ services.AddSwaggerGen(options =>
     options.SelectDiscriminatorValueUsing((subType) => subType.Name);
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L264-L272' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-UseAllOfForInheritance' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/IServiceCollectionExtensions.cs#L252-L260' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerGen-UseAllOfForInheritance' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 

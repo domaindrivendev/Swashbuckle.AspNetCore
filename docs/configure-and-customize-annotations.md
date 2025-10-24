@@ -178,17 +178,20 @@ public class Item
 ```cs
 public class ItemSchemaFilter : ISchemaFilter
 {
-    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+    public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
     {
-        schema.Example = new OpenApiObject
+        if (schema is OpenApiSchema concrete)
         {
-            ["Id"] = new OpenApiInteger(1),
-            ["Description"] = new OpenApiString("An awesome item")
-        };
+            concrete.Example = new JsonObject
+            {
+                ["Id"] = 1,
+                ["Description"] = "An awesome item"
+            };
+        }
     }
 }
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/ItemSchemaFilter.cs#L7-L19' title='Snippet source file'>snippet source</a> | <a href='#snippet-Annotations-SchemaFilter' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/ItemSchemaFilter.cs#L7-L22' title='Snippet source file'>snippet source</a> | <a href='#snippet-Annotations-SchemaFilter' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 

@@ -1,4 +1,4 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace DocumentationSnippets;
@@ -8,11 +8,11 @@ public class TagDescriptionsDocumentFilter : IDocumentFilter
 {
     public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
     {
-        swaggerDoc.Tags =
-        [
-            new OpenApiTag { Name = "Products", Description = "Browse/manage the product catalog" },
-            new OpenApiTag { Name = "Orders", Description = "Submit orders" }
-        ];
+        swaggerDoc.Tags = new HashSet<OpenApiTag>()
+        {
+            new() { Name = "Products", Description = "Browse/manage the product catalog" },
+            new() { Name = "Orders", Description = "Submit orders" }
+        };
     }
 }
 // end-snippet

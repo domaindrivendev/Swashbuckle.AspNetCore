@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace OAuth2Integration.ResourceServer.Swagger;
@@ -40,16 +40,13 @@ public class SecurityRequirementsOperationFilter : IOperationFilter
             operation.Responses.Add("401", new OpenApiResponse { Description = "Unauthorized" });
             operation.Responses.Add("403", new OpenApiResponse { Description = "Forbidden" });
 
-            var oAuthScheme = new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
-            };
+            var scheme = new OpenApiSecuritySchemeReference("oauth2", context.Document);
 
             operation.Security =
             [
                 new OpenApiSecurityRequirement
                 {
-                    [oAuthScheme] = requiredScopes
+                    [scheme] = requiredScopes
                 }
             ];
         }

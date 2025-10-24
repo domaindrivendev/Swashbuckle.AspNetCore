@@ -43,57 +43,47 @@ public static class OpenApiEndpoints
                 ))
                 .ToArray();
         })
-        .WithName("GetWeatherForecast")
-        .WithOpenApi();
+        .WithName("GetWeatherForecast");
 
         group.MapPost("/multipleForms", ([FromForm] Person person, [FromForm] Address address) =>
         {
             return $"{person} {address}";
-        })
-        .WithOpenApi();
+        });
 
         group.MapPost("/IFromFile", (IFormFile file, string queryParameter) =>
         {
             return $"{file.FileName}{queryParameter}";
-        }).WithOpenApi(o =>
-        {
-            var parameter = o.Parameters?.FirstOrDefault(p => string.Equals(p.Name, "queryParameter", StringComparison.OrdinalIgnoreCase));
-            if (parameter is not null)
-            {
-                parameter.Description = $"{parameter.Name} Description";
-            }
-            return o;
         });
 
         group.MapPost("/IFromFileCollection", (IFormFileCollection collection) =>
         {
             return $"{collection.Count} {string.Join(',', collection.Select(f => f.FileName))}";
-        }).WithOpenApi();
+        });
 
         group.MapPost("/IFromBody", (OrganizationCustomExchangeRatesDto dto) =>
         {
             return $"{dto}";
-        }).WithOpenApi();
+        });
 
         group.MapPost("/IFromFileAndString", (IFormFile file, [FromForm] string tags) =>
         {
             return $"{file.FileName}{tags}";
-        }).WithOpenApi();
+        });
 
         group.MapPost("/IFromFileAndEnum", (IFormFile file, [FromForm] DateTimeKind dateTimeKind) =>
         {
             return $"{file.FileName}{dateTimeKind}";
-        }).WithOpenApi();
+        });
 
         group.MapPost("/IFromObjectAndString", ([FromForm] Person person, [FromForm] string tags) =>
         {
             return $"{person}{tags}";
-        }).WithOpenApi();
+        });
 
         app.MapGet("/TypeWithTryParse/{tryParse}", (TypeWithTryParse tryParse) =>
         {
             return tryParse.Name;
-        }).WithOpenApi();
+        });
 
         return app;
     }
