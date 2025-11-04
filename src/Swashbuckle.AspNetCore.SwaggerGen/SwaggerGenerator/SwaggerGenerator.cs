@@ -88,6 +88,7 @@ public class SwaggerGenerator(
             {
                 foreach (var requirement in requirements)
                 {
+                    document.Security ??= [];
                     document.Security.Add(requirement(document));
                 }
             }
