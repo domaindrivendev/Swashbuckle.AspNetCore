@@ -18,8 +18,6 @@
     <LangVersion>latest</LangVersion>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <NeutralLanguage>en-US</NeutralLanguage>
-    <!-- TODO Remove once .NET 10 is stable -->
-    <NoWarn>$(NoWarn);NU5104</NoWarn>
     <NuGetAuditMode>direct</NuGetAuditMode>
     <!--
     TODO Go through the code and add nullable annotations
