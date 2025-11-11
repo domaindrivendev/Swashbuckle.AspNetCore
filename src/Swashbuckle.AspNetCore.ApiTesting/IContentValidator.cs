@@ -6,5 +6,5 @@ public interface IContentValidator
 {
     bool CanValidate(string mediaType);
 
-    void Validate(OpenApiMediaType mediaTypeSpec, OpenApiDocument openApiDocument, HttpContent content);
+    void Validate(IOpenApiMediaType mediaTypeSpec, OpenApiDocument openApiDocument, HttpContent content);
 }

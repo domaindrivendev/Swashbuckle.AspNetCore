@@ -115,7 +115,7 @@ public class XmlCommentsBenchmark
         // Request Body
         _requestBody = new OpenApiRequestBody
         {
-            Content = new Dictionary<string, OpenApiMediaType>()
+            Content = new Dictionary<string, IOpenApiMediaType>()
             {
                 ["application/json"] = new OpenApiMediaType()
                 {

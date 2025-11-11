@@ -96,7 +96,7 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
     [Theory]
     [InlineData("/swagger/v1/swagger.json", "openapi", "3.0.4")]
     [InlineData("/swagger/v1/swaggerv2.json", "swagger", "2.0")]
-    [InlineData("/swagger/v1/swaggerv3_1.json", "openapi", "3.1.1")]
+    [InlineData("/swagger/v1/swaggerv3_1.json", "openapi", "3.1.2")]
     public async Task SwaggerMiddleware_CanBeConfiguredMultipleTimes(
         string swaggerUrl,
         string expectedVersionProperty,

@@ -855,7 +855,7 @@ public class SwaggerGenerator(
                 (contentType) => new OpenApiMediaType
                 {
                     Schema = schema
-                }),
+                } as IOpenApiMediaType),
         };
     }
 
@@ -909,7 +909,7 @@ public class SwaggerGenerator(
                         (entry) => entry.Key,
                         (entry) => new OpenApiEncoding { Style = ParameterStyle.Form }
                     ) ?? []
-                })
+                } as IOpenApiMediaType),
         };
     }
 
@@ -1033,7 +1033,7 @@ public class SwaggerGenerator(
             Description = description,
             Content = responseContentTypes.ToDictionary(
                 (contentType) => contentType,
-                (contentType) => CreateResponseMediaType(apiResponseType.ModelMetadata?.ModelType ?? apiResponseType.Type, schemaRepository)
+                (contentType) => CreateResponseMediaType(apiResponseType.ModelMetadata?.ModelType ?? apiResponseType.Type, schemaRepository) as IOpenApiMediaType
             )
         };
     }
