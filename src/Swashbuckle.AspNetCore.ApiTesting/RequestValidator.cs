@@ -110,7 +110,7 @@ public sealed class RequestValidator(IEnumerable<IContentValidator> contentValid
             return;
         }
 
-        if (!requestBodySpec.Content.TryGetValue(content.Headers.ContentType.MediaType, out OpenApiMediaType mediaTypeSpec))
+        if (!requestBodySpec.Content.TryGetValue(content.Headers.ContentType.MediaType, out var mediaTypeSpec))
         {
             throw new RequestDoesNotMatchSpecException($"Content media type '{content.Headers.ContentType.MediaType}' is not specified");
         }

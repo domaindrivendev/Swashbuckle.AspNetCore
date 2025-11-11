@@ -141,7 +141,7 @@ public partial class VerifyTests
                         {
                             Content = new Dictionary<string, OpenApiMediaType>()
                             {
-                                ["application/someMediaType"] = new()
+                                ["application/someMediaType"] = new OpenApiMediaType()
                             }
                         }
                     }
@@ -192,7 +192,7 @@ public partial class VerifyTests
                     {
                         Content = new Dictionary<string, OpenApiMediaType>()
                         {
-                            ["application/someMediaType"] = new()
+                            ["application/someMediaType"] = new OpenApiMediaType()
                         }
                     }
                 }
@@ -1266,7 +1266,7 @@ public partial class VerifyTests
                         {
                             Content = new Dictionary<string, OpenApiMediaType>()
                             {
-                                ["application/someMediaType"] = new()
+                                ["application/someMediaType"] = new OpenApiMediaType()
                             }
                         }
                     }
@@ -1323,7 +1323,7 @@ public partial class VerifyTests
                         {
                             Content = new Dictionary<string, OpenApiMediaType>()
                             {
-                                ["application/someMediaType"] = new()
+                                ["application/someMediaType"] = new OpenApiMediaType()
                             }
                         }
                     }
@@ -1374,7 +1374,7 @@ public partial class VerifyTests
                         {
                             Content = new Dictionary<string, OpenApiMediaType>()
                             {
-                                ["application/someMediaType"] = new()
+                                ["application/someMediaType"] = new OpenApiMediaType()
                             }
                         }
                     }
@@ -1425,7 +1425,7 @@ public partial class VerifyTests
                         {
                             Content = new Dictionary<string, OpenApiMediaType>()
                             {
-                                ["application/someMediaType"] = new()
+                                ["application/someMediaType"] = new OpenApiMediaType()
                             }
                         }
                     }
