@@ -13,7 +13,7 @@
 
 Generate beautiful API documentation, including a UI to explore and test operations, directly from your application code.
 
-In addition to its [Swagger 2.0 and OpenAPI 3.0/3.1][swagger-specification] generator, Swashbuckle.AspNetCore also provides
+In addition to its [Swagger 2.0 and OpenAPI 3.0/3.1/3.2][swagger-specification] generator, Swashbuckle.AspNetCore also provides
 an embedded version of the awesome [swagger-ui][swagger-ui] project that's powered by the generated OpenAPI JSON documents.
 This means you can complement your API with living documentation that's always in sync with the latest code. Best of all, it
 requires minimal coding and maintenance, allowing you to focus on building an awesome API.
@@ -27,6 +27,10 @@ for more details.
 > [!IMPORTANT]  
 > Version 10.0 of Swashbuckle.AspNetCore introduces breaking changes due to upgrading our dependency on [Microsoft.OpenApi][microsoft-openapi]
 > to version 2.x.x to add support for generating OpenAPI 3.1 documents. Please see _[Migrating to Swashbuckle.AspNetCore v10][v10-migration]_ for more details.
+
+> [!IMPORTANT]  
+> Version 11.0 of Swashbuckle.AspNetCore introduces breaking changes due to upgrading our dependency on [Microsoft.OpenApi][microsoft-openapi]
+> to version 3.x.x to add support for generating OpenAPI 3.2 documents. Please see _[Migrating to Swashbuckle.AspNetCore v11][v11-migration]_ for more details.
 
 ## Compatibility
 
@@ -289,7 +293,7 @@ Check out the table below for the full list of possible configuration options.
 | ------------- | ----------------------------------- |
 | **Swashbuckle.AspNetCore.Swagger**     | [Change the Path for OpenAPI JSON Endpoints](docs/configure-and-customize-swagger.md#change-the-path-for-openapi-json-endpoints)                                            |
 |                                        | [Modify OpenAPI with Request Context](docs/configure-and-customize-swagger.md#modify-openapi-with-request-context)                                                          |
-|                                        | [Serialize OpenAPI JSON in the 3.1 format](docs/configure-and-customize-swagger.md#serialize-openapi-in-the-31-format)                                                      |
+|                                        | [Serialize OpenAPI JSON in the 3.1 or 3.2 formats](docs/configure-and-customize-swagger.md#serialize-openapi-in-the-31-or-32-formats)                                                      |
 |                                        | [Serialize Swagger JSON in the 2.0 format](docs/configure-and-customize-swagger.md#serialize-swagger-in-the-20-format)                                                      |
 |                                        | [Working with Virtual Directories and Reverse Proxies](docs/configure-and-customize-swagger.md#working-with-virtual-directories-and-reverse-proxies)                        |
 |                                        | [Customizing how the OpenAPI document is serialized](docs/configure-and-customize-swagger.md#customizing-how-the-openapi-document-is-serialized)                            |
@@ -375,3 +379,4 @@ Check out the table below for the full list of possible configuration options.
 [system-text-json]: https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/overview "JSON serialization and deserialization in .NET - overview"
 [unchase-swashbuckle-aspnetcore-extensions]: https://github.com/unchase/Unchase.Swashbuckle.AspNetCore.Extensions "Unchase.Swashbuckle.AspNetCore.Extensions on GitHub"
 [v10-migration]: docs/migrating-to-v10.md "Migrating to Swashbuckle.AspNetCore v10"
+[v11-migration]: docs/migrating-to-v11.md "Migrating to Swashbuckle.AspNetCore v11"
