@@ -46,6 +46,9 @@ app.UseSwagger(options =>
 
 ## How do I migrate to Swashbuckle.AspNetCore v10+?
 
+> [!TIP]
+> It is strongly recommended that you upgrade to [Swashbuckle.AspNetCore v9.0.6][swashbuckle-aspnetcore-906] **before** upgrading to v10.
+
 The majority of the breaking changes you may encounter when migrating to Swashbuckle.AspNetCore v10+ are due to the underlying
 changes in Microsoft.OpenApi v2.0.0+. The [v2 migration guide for Microsoft.OpenApi][microsoft-openapi-v2-migration-guide] provides a
 detailed overview of the breaking changes and how to migrate your code from Microsoft.OpenApi v1.x to v2.x. The Microsoft.OpenApi
@@ -86,3 +89,4 @@ Migrating to Swashbuckle.AspNetCore v10+ will likely involve changes in the foll
 [openapi-specification]: https://swagger.io/specification/ "OpenAPI Specification"
 [swashbuckle-aspnetcore-10]: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/pull/3283 "Support .NET 10"
 [withopenapi-deprecation]: https://github.com/aspnet/Announcements/issues/519 "[Breaking change]: Deprecation of WithOpenApi extension method"
+[swashbuckle-aspnetcore-906]: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/releases/tag/v9.0.6 "Swashbuckle.AspNetCore v9.0.6"
