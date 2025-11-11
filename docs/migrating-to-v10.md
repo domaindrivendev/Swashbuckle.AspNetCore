@@ -68,16 +68,19 @@ issues in your code. For example the signature for `IRequestBodyAsyncFilter.Appl
 
 Migrating to Swashbuckle.AspNetCore v10+ will likely involve changes in the following areas:
 
-- Update any NuGet package references for Swashbuckle.AspNetCore and Microsoft.OpenApi to v10+ and v2.x.x respectively.
+- Update any NuGet package references for Swashbuckle.AspNetCore and Microsoft.OpenApi to v10.0.0+ and v2.3.0+ respectively.
 - Update any `using` directives that reference types from the `Microsoft.OpenApi.Models` namespace to use the new namespace `Microsoft.OpenApi`.
 - Update model references (e.g. `OpenApiSchema`) to use the new interfaces (e.g. `IOpenApiSchema`) and the relevant concrete types to mutate them (e.g. `OpenApiSchema`).
 - Update any use of `.Reference` properties (e.g. `OpenApiSchema.ReferenceV3`) to use the new `*Reference` class instead (e.g. `OpenApiSchemaReference`).
 - Replace usage of the `OpenApiSchema.Type` property using a string (e.g. `"string"` or `"boolean"`) with the `JsonSchemaType` flags enumeration.
 - Replace usage of the `OpenApiSchema.Nullable` property by OR-ing the `JsonSchemaType.Null` value to `OpenApiSchema.Type` (e.g. `schema.Type |= JsonSchemaType.Null;`).
-- Remove any use of the [now-deprecated `WithOpenApi()` extension method][withopenapi-deprecation] in Microsoft.AspNetCore.OpenApi.
+- Remove any use of the [now-deprecated `WithOpenApi()` extension method][withopenapi-deprecation] in [Microsoft.AspNetCore.OpenApi][microsoft-aspnetcore-openapi-package].
+- Updating any use of `AddSecurityRequirement()` to use a `Func<OpenApiDocument, OpenApiSecurityRequirement>`.
+- Updating some collections to use specific concrete types instead of interfaces if collection expressions were used, for example using `HashSet<OpenApiTag>` with `OpenApiDocument.Tags` which is now an `ISet<OpenApiTag>`.
 
 [breaking-changes-aspnetcore]: https://learn.microsoft.com/aspnet/core/release-notes/aspnetcore-10.0?#openapi-31-breaking-changes "OpenAPI 3.1 breaking changes"
 [feature-request]: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2349 "Plans on official support for OpenApi 3.1.0"
+[microsoft-aspnetcore-openapi-package]: https://www.nuget.org/packages/Microsoft.AspNetCore.OpenApi/ "Microsoft.AspNetCore.OpenApi NuGet package"
 [microsoft-openapi-package]: https://www.nuget.org/packages/Microsoft.OpenApi/ "Microsoft.OpenApi NuGet package"
 [microsoft-openapi-v2-migration-guide]: https://github.com/microsoft/OpenAPI.NET/blob/main/docs/upgrade-guide-2.md "Microsoft OpenAPI.NET v2 migration guide"
 [openapi-specification]: https://swagger.io/specification/ "OpenAPI Specification"
