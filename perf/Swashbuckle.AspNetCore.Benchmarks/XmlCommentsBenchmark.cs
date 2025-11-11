@@ -117,7 +117,7 @@ public class XmlCommentsBenchmark
         {
             Content = new Dictionary<string, OpenApiMediaType>()
             {
-                ["application/json"] = new()
+                ["application/json"] = new OpenApiMediaType()
                 {
                     Schema = new OpenApiSchema()
                     {

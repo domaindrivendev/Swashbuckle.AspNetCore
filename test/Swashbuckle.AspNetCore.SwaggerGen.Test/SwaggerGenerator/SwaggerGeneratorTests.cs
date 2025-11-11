@@ -210,7 +210,7 @@ public class SwaggerGeneratorTests
                         {
                             Content = new Dictionary<string, OpenApiMediaType>()
                             {
-                                ["application/someMediaType"] = new()
+                                ["application/someMediaType"] = new OpenApiMediaType()
                             }
                         }
                     }
@@ -266,7 +266,7 @@ public class SwaggerGeneratorTests
                     {
                         Content = new Dictionary<string, OpenApiMediaType>()
                         {
-                            ["application/someMediaType"] = new()
+                            ["application/someMediaType"] = new OpenApiMediaType()
                         }
                     },
                     Parameters =
@@ -2318,7 +2318,7 @@ public class SwaggerGeneratorTests
                     {
                         Content = new Dictionary<string, OpenApiMediaType>()
                         {
-                            ["application/someMediaType"] = new()
+                            ["application/someMediaType"] = new OpenApiMediaType()
                         }
                     }
                 }
@@ -2383,7 +2383,7 @@ public class SwaggerGeneratorTests
                     {
                         Content = new Dictionary<string, OpenApiMediaType>()
                         {
-                            ["application/someMediaType"] = new()
+                            ["application/someMediaType"] = new OpenApiMediaType()
                         }
                     }
                 }
@@ -2445,7 +2445,7 @@ public class SwaggerGeneratorTests
                     {
                         Content = new Dictionary<string, OpenApiMediaType>()
                         {
-                            ["application/someMediaType"] = new()
+                            ["application/someMediaType"] = new OpenApiMediaType()
                         }
                     }
                 }
@@ -2509,7 +2509,7 @@ public class SwaggerGeneratorTests
                     {
                         Content = new Dictionary<string, OpenApiMediaType>()
                         {
-                            ["application/someMediaType"] = new()
+                            ["application/someMediaType"] = new OpenApiMediaType()
                         }
                     }
                 }

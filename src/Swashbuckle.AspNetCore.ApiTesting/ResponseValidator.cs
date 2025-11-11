@@ -76,7 +76,7 @@ public sealed class ResponseValidator(IEnumerable<IContentValidator> contentVali
             throw new RequestDoesNotMatchSpecException("Expected content is not present");
         }
 
-        if (!contentSpecs.TryGetValue(content.Headers.ContentType.MediaType, out OpenApiMediaType mediaTypeSpec))
+        if (!contentSpecs.TryGetValue(content.Headers.ContentType.MediaType, out var mediaTypeSpec))
         {
             throw new ResponseDoesNotMatchSpecException($"Content media type '{content.Headers.ContentType.MediaType}' is not specified");
         }

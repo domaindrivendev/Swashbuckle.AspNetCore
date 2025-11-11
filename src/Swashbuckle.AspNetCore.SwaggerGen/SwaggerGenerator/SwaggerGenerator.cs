@@ -456,7 +456,11 @@ public class SwaggerGenerator(
         {
             foreach (var contentType in requestContentTypes)
             {
-                var contentTypeValue = operation.RequestBody.Content[contentType];
+                if (operation.RequestBody.Content[contentType] is not OpenApiMediaType contentTypeValue)
+                {
+                    continue;
+                }
+
                 var fromFormParameters = apiDescription.ParameterDescriptions.Where((p) => p.IsFromForm()).ToList();
                 ApiParameterDescription bodyParameterDescription = null;
                 if (fromFormParameters.Count > 0)
@@ -518,7 +522,10 @@ public class SwaggerGenerator(
                     {
                         foreach (var content in responseContentTypes)
                         {
-                            content.Schema = GenerateSchema(responseModel.Type, schemaRepository);
+                            if (content is OpenApiMediaType mediaType)
+                            {
+                                mediaType.Schema = GenerateSchema(responseModel.Type, schemaRepository);
+                            }
                         }
                     }
                 }

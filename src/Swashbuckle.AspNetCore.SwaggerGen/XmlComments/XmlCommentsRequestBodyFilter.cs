@@ -104,7 +104,10 @@ public class XmlCommentsRequestBodyFilter(IReadOnlyDictionary<string, XPathNavig
 
         foreach (var mediaType in requestBody.Content.Values)
         {
-            mediaType.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, mediaType.Schema, example);
+            if (mediaType is OpenApiMediaType concrete)
+            {
+                concrete.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, concrete.Schema, example);
+            }
         }
     }
 
@@ -160,7 +163,10 @@ public class XmlCommentsRequestBodyFilter(IReadOnlyDictionary<string, XPathNavig
 
         foreach (var mediaType in requestBody.Content.Values)
         {
-            mediaType.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, mediaType.Schema, example);
+            if (mediaType is OpenApiMediaType concrete)
+            {
+                concrete.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, concrete.Schema, example);
+            }
         }
     }
 }
