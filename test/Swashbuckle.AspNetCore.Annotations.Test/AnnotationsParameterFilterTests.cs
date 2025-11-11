@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Xunit;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -18,6 +18,7 @@ public class AnnotationsParameterFilterTests
             apiParameterDescription: null,
             schemaGenerator: null,
             schemaRepository: null,
+            document: null,
             parameterInfo: parameterInfo);
 
         Subject().Apply(parameter, filterContext);
@@ -35,6 +36,7 @@ public class AnnotationsParameterFilterTests
             apiParameterDescription: new ApiParameterDescription(),
             schemaGenerator: null,
             schemaRepository: null,
+            null,
             propertyInfo: propertyInfo);
 
         Subject().Apply(parameter, filterContext);
@@ -54,6 +56,7 @@ public class AnnotationsParameterFilterTests
             apiParameterDescription: null,
             schemaGenerator: null,
             schemaRepository: null,
+            document: null,
             parameterInfo: parameterInfo);
 
         Subject().Apply(parameter, filterContext);

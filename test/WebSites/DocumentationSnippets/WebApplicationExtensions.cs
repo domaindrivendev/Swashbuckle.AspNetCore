@@ -1,5 +1,4 @@
 ﻿using Microsoft.OpenApi;
-using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace DocumentationSnippets;
@@ -213,6 +212,13 @@ public static class WebApplicationExtensions
             {
                 document.Servers = [new OpenApiServer { Url = $"{request.Scheme}://{request.Host.Value}" }];
             });
+        });
+        // end-snippet
+
+        // begin-snippet: Swagger-OpenAPI3.1
+        app.UseSwagger(options =>
+        {
+            options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_1;
         });
         // end-snippet
 

@@ -1,9 +1,9 @@
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Newtonsoft.Json.Linq;
 
 namespace Swashbuckle.AspNetCore.ApiTesting;
 
-public class JsonValidator : IJsonValidator
+public sealed class JsonValidator : IJsonValidator
 {
     private readonly IEnumerable<IJsonValidator> _subValidators;
 
@@ -23,17 +23,18 @@ public class JsonValidator : IJsonValidator
         ];
     }
 
-    public bool CanValidate(OpenApiSchema schema) => true;
+    public bool CanValidate(IOpenApiSchema schema) => true;
 
     public bool Validate(
-        OpenApiSchema schema,
+        IOpenApiSchema schema,
         OpenApiDocument openApiDocument,
         JToken instance,
         out IEnumerable<string> errorMessages)
     {
-        schema = schema.Reference != null
-            ? (OpenApiSchema)openApiDocument.ResolveReference(schema.Reference)
-            : schema;
+        if (schema is OpenApiSchemaReference reference && !openApiDocument.Components.Schemas.Any((p) => p.Key == reference.Reference.Id))
+        {
+            throw new InvalidOperationException($"Invalid Reference identifier '{reference.Reference.Id}'.");
+        }
 
         var errors = new List<string>();
 

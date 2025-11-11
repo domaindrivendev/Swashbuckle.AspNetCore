@@ -1,4 +1,8 @@
-﻿namespace WebApi.EndPoints;
+﻿#if NET10_0_OR_GREATER
+using Microsoft.AspNetCore.Mvc;
+#endif
+
+namespace WebApi.EndPoints;
 
 /// <summary>
 /// Class of Extensions to add XmlEndpoints
@@ -14,6 +18,12 @@ public static class XmlCommentsEndpoints
 
         group.MapGet("/Car/{id}", GetProduct);
 
+#if NET10_0_OR_GREATER
+        group.MapGet("Car", GetProductAsParameters);
+        group.MapGet("CarWithProduces",GetProductWithProduces);
+        group.MapGet("CarWithProducesDefaultResponseType",GetProductProducesDefaultResponseType);
+#endif
+
         return app;
     }
     /// <summary>
@@ -23,6 +33,29 @@ public static class XmlCommentsEndpoints
     /// <response code="200">A Product Id</response>
     private static Product GetProduct(int id)
         => new() { Id = id, Description = "A product" };
+
+#if NET10_0_OR_GREATER
+    /// <summary>
+    /// Returns a specific product using asParameters record
+    /// </summary>
+    [ProducesResponseType(typeof(Product), 200, Description = "A Product")]
+    private static Product GetProductAsParameters([AsParameters] Product productAsParameters)
+        => productAsParameters;
+
+     /// <summary>
+    /// Returns a specific product With Produces attribute
+    /// </summary>
+    [Produces(typeof(Product), Description = "A Product")]
+    private static Product GetProductWithProduces(int id)
+         => new() { Id = id, Description = "A product" };
+
+    /// <summary>
+    /// Returns a specific product With ProducesDefaultResponseType attribute
+    /// </summary>
+    [ProducesDefaultResponseType(typeof(Product), Description = "A Product")]
+    private static Product GetProductProducesDefaultResponseType(int id)
+         => new() { Id = id, Description = "A product" };
+#endif
 }
 
 /// <summary>

@@ -1,8 +1,7 @@
-using Microsoft.OpenApi.Models;
+using System.Globalization;
+using Microsoft.OpenApi;
 using Newtonsoft.Json.Linq;
 using Xunit;
-
-using JsonSchemaType = string;
 
 namespace Swashbuckle.AspNetCore.ApiTesting.Test;
 
@@ -77,7 +76,7 @@ public class JsonValidatorTests
         bool expectedReturnValue,
         string expectedErrorMessage)
     {
-        var openApiSchema = new OpenApiSchema { Type = JsonSchemaTypes.Number, Maximum = schemaMaximum };
+        var openApiSchema = new OpenApiSchema { Type = JsonSchemaTypes.Number, Maximum = schemaMaximum.ToString(CultureInfo.InvariantCulture) };
         var instance = JToken.Parse(instanceText);
 
         var returnValue = Subject().Validate(
@@ -102,8 +101,8 @@ public class JsonValidatorTests
         var openApiSchema = new OpenApiSchema
         {
             Type = JsonSchemaTypes.Number,
-            Maximum = schemaMaximum,
-            ExclusiveMaximum = true
+            Maximum = schemaMaximum.ToString(CultureInfo.InvariantCulture),
+            ExclusiveMaximum = schemaMaximum.ToString(CultureInfo.InvariantCulture),
         };
         var instance = JToken.Parse(instanceText);
 
@@ -126,7 +125,7 @@ public class JsonValidatorTests
         bool expectedReturnValue,
         string expectedErrorMessage)
     {
-        var openApiSchema = new OpenApiSchema { Type = JsonSchemaTypes.Number, Minimum = schemaMinimum };
+        var openApiSchema = new OpenApiSchema { Type = JsonSchemaTypes.Number, Minimum = schemaMinimum.ToString(CultureInfo.InvariantCulture) };
         var instance = JToken.Parse(instanceText);
 
         var returnValue = Subject().Validate(
@@ -151,8 +150,8 @@ public class JsonValidatorTests
         var openApiSchema = new OpenApiSchema
         {
             Type = JsonSchemaTypes.Number,
-            Minimum = schemaMinimum,
-            ExclusiveMinimum = true
+            Minimum = schemaMinimum.ToString(CultureInfo.InvariantCulture),
+            ExclusiveMinimum = schemaMinimum.ToString(CultureInfo.InvariantCulture),
         };
         var instance = JToken.Parse(instanceText);
 
@@ -451,7 +450,7 @@ public class JsonValidatorTests
         var openApiSchema = new OpenApiSchema
         {
             Type = JsonSchemaTypes.Object,
-            Properties = new Dictionary<string, OpenApiSchema>
+            Properties = new Dictionary<string, IOpenApiSchema>
             {
                 ["id"] = new OpenApiSchema { Type = propertySchemaType }
             }
@@ -622,15 +621,12 @@ public class JsonValidatorTests
         string referenceId,
         string expectedExceptionMessage)
     {
-        var openApiSchema = new OpenApiSchema
-        {
-            Reference = new OpenApiReference { Type = ReferenceType.Schema, Id = referenceId }
-        };
+        var openApiSchema = new OpenApiSchemaReference(referenceId);
         var openApiDocument = new OpenApiDocument
         {
             Components = new OpenApiComponents
             {
-                Schemas = new Dictionary<string, OpenApiSchema>
+                Schemas = new Dictionary<string, IOpenApiSchema>
                 {
                     ["ref"] = new OpenApiSchema { Type = JsonSchemaTypes.Number }
                 }

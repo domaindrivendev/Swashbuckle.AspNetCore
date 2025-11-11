@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="..\..\src\Shared\JsonExtensions.cs" Link="JsonExtensions.cs" />
     <Compile Include="..\..\src\Shared\JsonSchemaTypes.cs" Link="JsonSchemaTypes.cs" />
   </ItemGroup>
 

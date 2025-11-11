@@ -13,7 +13,7 @@ app.UseReDoc(options =>
     options.RoutePrefix = "docs";
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L143-L148' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-RoutePrefix' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L142-L147' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-RoutePrefix' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -30,7 +30,7 @@ app.UseReDoc(options =>
     options.DocumentTitle = "My API Docs";
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L150-L155' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-DocumentTitle' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L149-L154' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-DocumentTitle' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -61,7 +61,7 @@ app.UseReDoc(options =>
     options.SortPropsAlphabetically();
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L157-L175' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-CustomOptions' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L156-L174' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-CustomOptions' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -82,7 +82,7 @@ app.UseReDoc(options =>
     options.InjectStylesheet("/redoc/custom.css");
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L177-L182' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-CustomCSS' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L176-L181' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-CustomCSS' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -101,7 +101,7 @@ app.UseReDoc(options =>
     };
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L184-L192' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-ModifyTheme' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L183-L191' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-ModifyTheme' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -119,7 +119,7 @@ app.UseReDoc(options =>
         .GetManifestResourceStream("CustomIndex.ReDoc.index.html"); // Requires file to be added as an embedded resource
 });
 ```
-<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L194-L200' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-CustomIndexHtml' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L193-L199' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-CustomIndexHtml' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 

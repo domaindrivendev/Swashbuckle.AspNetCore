@@ -1672,11 +1672,47 @@
   },
   "tags": [
     {
+      "name": "CrudActions"
+    },
+    {
+      "name": "DataAnnotations"
+    },
+    {
+      "name": "DynamicTypes"
+    },
+    {
+      "name": "Files"
+    },
+    {
+      "name": "FromFormParams"
+    },
+    {
+      "name": "FromHeaderParams"
+    },
+    {
+      "name": "FromQueryParams"
+    },
+    {
+      "name": "Issue3013"
+    },
+    {
+      "name": "JsonAnnotations"
+    },
+    {
+      "name": "PolymorphicTypes"
+    },
+    {
+      "name": "ResponseTypeAnnotations"
+    },
+    {
       "name": "SwaggerAnnotations",
       "description": "Manipulate Carts to your heart's content",
       "externalDocs": {
         "url": "http://www.tempuri.org"
       }
+    },
+    {
+      "name": "UnboundParams"
     }
   ]
 }

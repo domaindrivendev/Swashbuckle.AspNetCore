@@ -1,4 +1,4 @@
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace Swashbuckle.AspNetCore.ApiTesting;
 
@@ -8,19 +8,25 @@ public static class OpenApiDocumentExtensions
         this OpenApiDocument openApiDocument,
         string operationId,
         out string pathTemplate,
-        out OperationType operationType)
+        out HttpMethod operationType)
     {
-        foreach (var pathEntry in openApiDocument.Paths ?? [])
+        if (openApiDocument.Paths is { Count: > 0 } paths)
         {
-            var pathItem = pathEntry.Value;
-
-            foreach (var operationEntry in pathItem.Operations)
+            foreach (var pathEntry in paths)
             {
-                if (operationEntry.Value.OperationId == operationId)
+                var pathItem = pathEntry.Value;
+
+                if (pathItem.Operations is { Count: > 0 } operations)
                 {
-                    pathTemplate = pathEntry.Key;
-                    operationType = operationEntry.Key;
-                    return true;
+                    foreach (var operation in operations)
+                    {
+                        if (operation.Value.OperationId == operationId)
+                        {
+                            pathTemplate = pathEntry.Key;
+                            operationType = operation.Key;
+                            return true;
+                        }
+                    }
                 }
             }
         }
@@ -33,8 +39,8 @@ public static class OpenApiDocumentExtensions
     internal static OpenApiOperation GetOperationByPathAndType(
         this OpenApiDocument openApiDocument,
         string pathTemplate,
-        OperationType operationType,
-        out OpenApiPathItem pathSpec)
+        HttpMethod operationType,
+        out IOpenApiPathItem pathSpec)
     {
         if (openApiDocument.Paths.TryGetValue(pathTemplate, out pathSpec))
         {

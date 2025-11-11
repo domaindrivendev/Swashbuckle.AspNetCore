@@ -78,5 +78,10 @@
         "additionalProperties": false
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "WebApi.Aot"
+    }
+  ]
 }

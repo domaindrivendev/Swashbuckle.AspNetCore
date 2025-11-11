@@ -1,0 +1,30 @@
+static Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptionsExtensions.GetOpenApiDocument(this Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptions options, string documentName) -> Microsoft.OpenApi.OpenApiDocument
+Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerBase.ConfigureOperation(string documentName, string pathTemplate, System.Net.Http.HttpMethod operationType, Microsoft.OpenApi.OpenApiOperation operation) -> void
+Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerBase.Dispose() -> void
+Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerOptions.OpenApiDocs.get -> System.Collections.Generic.Dictionary<string, Microsoft.OpenApi.OpenApiDocument>
+Swashbuckle.AspNetCore.ApiTesting.IContentValidator.Validate(Microsoft.OpenApi.OpenApiMediaType mediaTypeSpec, Microsoft.OpenApi.OpenApiDocument openApiDocument, System.Net.Http.HttpContent content) -> void
+Swashbuckle.AspNetCore.ApiTesting.IJsonValidator.CanValidate(Microsoft.OpenApi.IOpenApiSchema schema) -> bool
+Swashbuckle.AspNetCore.ApiTesting.IJsonValidator.Validate(Microsoft.OpenApi.IOpenApiSchema schema, Microsoft.OpenApi.OpenApiDocument openApiDocument, Newtonsoft.Json.Linq.JToken instance, out System.Collections.Generic.IEnumerable<string> errorMessages) -> bool
+Swashbuckle.AspNetCore.ApiTesting.JsonAllOfValidator.CanValidate(Microsoft.OpenApi.IOpenApiSchema schema) -> bool
+Swashbuckle.AspNetCore.ApiTesting.JsonAllOfValidator.Validate(Microsoft.OpenApi.IOpenApiSchema schema, Microsoft.OpenApi.OpenApiDocument openApiDocument, Newtonsoft.Json.Linq.JToken instance, out System.Collections.Generic.IEnumerable<string> errorMessages) -> bool
+Swashbuckle.AspNetCore.ApiTesting.JsonAnyOfValidator.CanValidate(Microsoft.OpenApi.IOpenApiSchema schema) -> bool
+Swashbuckle.AspNetCore.ApiTesting.JsonAnyOfValidator.Validate(Microsoft.OpenApi.IOpenApiSchema schema, Microsoft.OpenApi.OpenApiDocument openApiDocument, Newtonsoft.Json.Linq.JToken instance, out System.Collections.Generic.IEnumerable<string> errorMessages) -> bool
+Swashbuckle.AspNetCore.ApiTesting.JsonArrayValidator.CanValidate(Microsoft.OpenApi.IOpenApiSchema schema) -> bool
+Swashbuckle.AspNetCore.ApiTesting.JsonArrayValidator.Validate(Microsoft.OpenApi.IOpenApiSchema schema, Microsoft.OpenApi.OpenApiDocument openApiDocument, Newtonsoft.Json.Linq.JToken instance, out System.Collections.Generic.IEnumerable<string> errorMessages) -> bool
+Swashbuckle.AspNetCore.ApiTesting.JsonBooleanValidator.CanValidate(Microsoft.OpenApi.IOpenApiSchema schema) -> bool
+Swashbuckle.AspNetCore.ApiTesting.JsonBooleanValidator.Validate(Microsoft.OpenApi.IOpenApiSchema schema, Microsoft.OpenApi.OpenApiDocument openApiDocument, Newtonsoft.Json.Linq.JToken instance, out System.Collections.Generic.IEnumerable<string> errorMessages) -> bool
+Swashbuckle.AspNetCore.ApiTesting.JsonContentValidator.Validate(Microsoft.OpenApi.OpenApiMediaType mediaTypeSpec, Microsoft.OpenApi.OpenApiDocument openApiDocument, System.Net.Http.HttpContent content) -> void
+Swashbuckle.AspNetCore.ApiTesting.JsonNullValidator.CanValidate(Microsoft.OpenApi.IOpenApiSchema schema) -> bool
+Swashbuckle.AspNetCore.ApiTesting.JsonNullValidator.Validate(Microsoft.OpenApi.IOpenApiSchema schema, Microsoft.OpenApi.OpenApiDocument openApiDocument, Newtonsoft.Json.Linq.JToken instance, out System.Collections.Generic.IEnumerable<string> errorMessages) -> bool
+Swashbuckle.AspNetCore.ApiTesting.JsonNumberValidator.CanValidate(Microsoft.OpenApi.IOpenApiSchema schema) -> bool
+Swashbuckle.AspNetCore.ApiTesting.JsonNumberValidator.Validate(Microsoft.OpenApi.IOpenApiSchema schema, Microsoft.OpenApi.OpenApiDocument openApiDocument, Newtonsoft.Json.Linq.JToken instance, out System.Collections.Generic.IEnumerable<string> errorMessages) -> bool
+Swashbuckle.AspNetCore.ApiTesting.JsonObjectValidator.CanValidate(Microsoft.OpenApi.IOpenApiSchema schema) -> bool
+Swashbuckle.AspNetCore.ApiTesting.JsonObjectValidator.Validate(Microsoft.OpenApi.IOpenApiSchema schema, Microsoft.OpenApi.OpenApiDocument openApiDocument, Newtonsoft.Json.Linq.JToken instance, out System.Collections.Generic.IEnumerable<string> errorMessages) -> bool
+Swashbuckle.AspNetCore.ApiTesting.JsonOneOfValidator.CanValidate(Microsoft.OpenApi.IOpenApiSchema schema) -> bool
+Swashbuckle.AspNetCore.ApiTesting.JsonOneOfValidator.Validate(Microsoft.OpenApi.IOpenApiSchema schema, Microsoft.OpenApi.OpenApiDocument openApiDocument, Newtonsoft.Json.Linq.JToken instance, out System.Collections.Generic.IEnumerable<string> errorMessages) -> bool
+Swashbuckle.AspNetCore.ApiTesting.JsonStringValidator.CanValidate(Microsoft.OpenApi.IOpenApiSchema schema) -> bool
+Swashbuckle.AspNetCore.ApiTesting.JsonStringValidator.Validate(Microsoft.OpenApi.IOpenApiSchema schema, Microsoft.OpenApi.OpenApiDocument openApiDocument, Newtonsoft.Json.Linq.JToken instance, out System.Collections.Generic.IEnumerable<string> errorMessages) -> bool
+Swashbuckle.AspNetCore.ApiTesting.JsonValidator.CanValidate(Microsoft.OpenApi.IOpenApiSchema schema) -> bool
+Swashbuckle.AspNetCore.ApiTesting.JsonValidator.Validate(Microsoft.OpenApi.IOpenApiSchema schema, Microsoft.OpenApi.OpenApiDocument openApiDocument, Newtonsoft.Json.Linq.JToken instance, out System.Collections.Generic.IEnumerable<string> errorMessages) -> bool
+Swashbuckle.AspNetCore.ApiTesting.RequestValidator.Validate(System.Net.Http.HttpRequestMessage request, Microsoft.OpenApi.OpenApiDocument openApiDocument, string pathTemplate, System.Net.Http.HttpMethod operationType) -> void
+Swashbuckle.AspNetCore.ApiTesting.ResponseValidator.Validate(System.Net.Http.HttpResponseMessage response, Microsoft.OpenApi.OpenApiDocument openApiDocument, string pathTemplate, System.Net.Http.HttpMethod operationType, string expectedStatusCode) -> void

@@ -1,0 +1,6 @@
+static Swashbuckle.AspNetCore.Annotations.AnnotationsOperationFilter.ApplySwaggerOperationFilterAttributes(Microsoft.OpenApi.OpenApiOperation operation, Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext context, System.Collections.Generic.IEnumerable<object> controllerAndActionAttributes) -> void
+Swashbuckle.AspNetCore.Annotations.AnnotationsDocumentFilter.Apply(Microsoft.OpenApi.OpenApiDocument swaggerDoc, Swashbuckle.AspNetCore.SwaggerGen.DocumentFilterContext context) -> void
+Swashbuckle.AspNetCore.Annotations.AnnotationsOperationFilter.Apply(Microsoft.OpenApi.OpenApiOperation operation, Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext context) -> void
+Swashbuckle.AspNetCore.Annotations.AnnotationsParameterFilter.Apply(Microsoft.OpenApi.IOpenApiParameter parameter, Swashbuckle.AspNetCore.SwaggerGen.ParameterFilterContext context) -> void
+Swashbuckle.AspNetCore.Annotations.AnnotationsRequestBodyFilter.Apply(Microsoft.OpenApi.IOpenApiRequestBody requestBody, Swashbuckle.AspNetCore.SwaggerGen.RequestBodyFilterContext context) -> void
+Swashbuckle.AspNetCore.Annotations.AnnotationsSchemaFilter.Apply(Microsoft.OpenApi.IOpenApiSchema schema, Swashbuckle.AspNetCore.SwaggerGen.SchemaFilterContext context) -> void

@@ -1,24 +1,25 @@
 ﻿using System.Reflection;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Annotations;
 
 public class AnnotationsParameterFilter : IParameterFilter
 {
-    public void Apply(OpenApiParameter parameter, ParameterFilterContext context)
+    public void Apply(IOpenApiParameter parameter, ParameterFilterContext context)
     {
-        if (context.PropertyInfo != null)
+        if (context.PropertyInfo is { } propertyInfo)
         {
-            ApplyPropertyAnnotations(parameter, context.PropertyInfo);
+            ApplyPropertyAnnotations(parameter, propertyInfo);
         }
-        else if (context.ParameterInfo != null)
+
+        if (context.ParameterInfo is { } parameterInfo)
         {
-            ApplyParamAnnotations(parameter, context.ParameterInfo);
+            ApplyParamAnnotations(parameter, parameterInfo);
         }
     }
 
-    private static void ApplyPropertyAnnotations(OpenApiParameter parameter, PropertyInfo propertyInfo)
+    private static void ApplyPropertyAnnotations(IOpenApiParameter parameter, PropertyInfo propertyInfo)
     {
         var swaggerParameterAttribute = propertyInfo.GetCustomAttributes<SwaggerParameterAttribute>()
             .FirstOrDefault();
@@ -29,7 +30,7 @@ public class AnnotationsParameterFilter : IParameterFilter
         }
     }
 
-    private static void ApplyParamAnnotations(OpenApiParameter parameter, ParameterInfo parameterInfo)
+    private static void ApplyParamAnnotations(IOpenApiParameter parameter, ParameterInfo parameterInfo)
     {
         var swaggerParameterAttribute = parameterInfo.GetCustomAttribute<SwaggerParameterAttribute>();
 
@@ -39,7 +40,7 @@ public class AnnotationsParameterFilter : IParameterFilter
         }
     }
 
-    private static void ApplySwaggerParameterAttribute(OpenApiParameter parameter, SwaggerParameterAttribute swaggerParameterAttribute)
+    private static void ApplySwaggerParameterAttribute(IOpenApiParameter parameter, SwaggerParameterAttribute swaggerParameterAttribute)
     {
         if (swaggerParameterAttribute.Description is { } description)
         {

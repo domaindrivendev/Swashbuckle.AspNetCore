@@ -1,22 +1,16 @@
 Microsoft.Extensions.DependencyInjection.AnnotationsSwaggerGenOptionsExtensions
 static Microsoft.Extensions.DependencyInjection.AnnotationsSwaggerGenOptionsExtensions.EnableAnnotations(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions options) -> void
 static Microsoft.Extensions.DependencyInjection.AnnotationsSwaggerGenOptionsExtensions.EnableAnnotations(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions options, bool enableAnnotationsForInheritance, bool enableAnnotationsForPolymorphism) -> void
-static Swashbuckle.AspNetCore.Annotations.AnnotationsOperationFilter.ApplySwaggerOperationFilterAttributes(Microsoft.OpenApi.Models.OpenApiOperation operation, Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext context, System.Collections.Generic.IEnumerable<object> controllerAndActionAttributes) -> void
 Swashbuckle.AspNetCore.Annotations.AnnotationsDocumentFilter
 Swashbuckle.AspNetCore.Annotations.AnnotationsDocumentFilter.AnnotationsDocumentFilter() -> void
-Swashbuckle.AspNetCore.Annotations.AnnotationsDocumentFilter.Apply(Microsoft.OpenApi.Models.OpenApiDocument swaggerDoc, Swashbuckle.AspNetCore.SwaggerGen.DocumentFilterContext context) -> void
 Swashbuckle.AspNetCore.Annotations.AnnotationsOperationFilter
 Swashbuckle.AspNetCore.Annotations.AnnotationsOperationFilter.AnnotationsOperationFilter() -> void
-Swashbuckle.AspNetCore.Annotations.AnnotationsOperationFilter.Apply(Microsoft.OpenApi.Models.OpenApiOperation operation, Swashbuckle.AspNetCore.SwaggerGen.OperationFilterContext context) -> void
 Swashbuckle.AspNetCore.Annotations.AnnotationsParameterFilter
 Swashbuckle.AspNetCore.Annotations.AnnotationsParameterFilter.AnnotationsParameterFilter() -> void
-Swashbuckle.AspNetCore.Annotations.AnnotationsParameterFilter.Apply(Microsoft.OpenApi.Models.OpenApiParameter parameter, Swashbuckle.AspNetCore.SwaggerGen.ParameterFilterContext context) -> void
 Swashbuckle.AspNetCore.Annotations.AnnotationsRequestBodyFilter
 Swashbuckle.AspNetCore.Annotations.AnnotationsRequestBodyFilter.AnnotationsRequestBodyFilter() -> void
-Swashbuckle.AspNetCore.Annotations.AnnotationsRequestBodyFilter.Apply(Microsoft.OpenApi.Models.OpenApiRequestBody requestBody, Swashbuckle.AspNetCore.SwaggerGen.RequestBodyFilterContext context) -> void
 Swashbuckle.AspNetCore.Annotations.AnnotationsSchemaFilter
 Swashbuckle.AspNetCore.Annotations.AnnotationsSchemaFilter.AnnotationsSchemaFilter(System.IServiceProvider serviceProvider) -> void
-Swashbuckle.AspNetCore.Annotations.AnnotationsSchemaFilter.Apply(Microsoft.OpenApi.Models.OpenApiSchema schema, Swashbuckle.AspNetCore.SwaggerGen.SchemaFilterContext context) -> void
 Swashbuckle.AspNetCore.Annotations.SwaggerDiscriminatorAttribute
 Swashbuckle.AspNetCore.Annotations.SwaggerDiscriminatorAttribute.PropertyName.get -> string
 Swashbuckle.AspNetCore.Annotations.SwaggerDiscriminatorAttribute.PropertyName.set -> void

@@ -1,4 +1,4 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace DocumentationSnippets;
@@ -6,8 +6,13 @@ namespace DocumentationSnippets;
 // begin-snippet: SwaggerGen-DictionaryTKeyEnumTValueSchemaFilter
 public class DictionaryTKeyEnumTValueSchemaFilter : ISchemaFilter
 {
-    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+    public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
     {
+        if (schema is not OpenApiSchema concrete)
+        {
+            return;
+        }
+
         // Only run for fields that are a Dictionary<Enum, TValue>
         if (!context.Type.IsGenericType || !context.Type.GetGenericTypeDefinition().IsAssignableFrom(typeof(Dictionary<,>)))
         {
@@ -23,8 +28,8 @@ public class DictionaryTKeyEnumTValueSchemaFilter : ISchemaFilter
             return;
         }
 
-        schema.Type = "object";
-        schema.Properties = keyType.GetEnumNames().ToDictionary(
+        concrete.Type = JsonSchemaType.Object;
+        concrete.Properties = keyType.GetEnumNames().ToDictionary(
             name => name,
             name => context.SchemaGenerator.GenerateSchema(valueType, context.SchemaRepository));
     }

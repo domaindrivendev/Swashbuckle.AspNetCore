@@ -1,14 +1,14 @@
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Newtonsoft.Json.Linq;
 
 namespace Swashbuckle.AspNetCore.ApiTesting;
 
-public class JsonNumberValidator : IJsonValidator
+public sealed class JsonNumberValidator : IJsonValidator
 {
-    public bool CanValidate(OpenApiSchema schema) => schema.Type == JsonSchemaTypes.Number;
+    public bool CanValidate(IOpenApiSchema schema) => schema.Type is { } type && type.HasFlag(JsonSchemaTypes.Number);
 
     public bool Validate(
-        OpenApiSchema schema,
+        IOpenApiSchema schema,
         OpenApiDocument openApiDocument,
         JToken instance,
         out IEnumerable<string> errorMessages)
@@ -23,39 +23,37 @@ public class JsonNumberValidator : IJsonValidator
         var errors = new List<string>();
 
         // multipleOf
-        if (schema.MultipleOf.HasValue && ((numberValue % schema.MultipleOf.Value) != 0))
+        if (schema.MultipleOf is { } multipleOf && (numberValue % multipleOf) != 0)
         {
             errors.Add($"Path: {instance.Path}. Number is not evenly divisible by multipleOf");
         }
 
-        // maximum & exclusiveMaximum
-        if (schema.Maximum.HasValue)
+        if (schema.ExclusiveMaximum is { } exclusiveMaximum &&
+            decimal.TryParse(exclusiveMaximum, out var exclusiveMaximumValue) &&
+            numberValue >= exclusiveMaximumValue)
         {
-            var exclusiveMaximum = schema.ExclusiveMaximum ?? false;
-
-            if (exclusiveMaximum && (numberValue >= schema.Maximum.Value))
-            {
-                errors.Add($"Path: {instance.Path}. Number is greater than, or equal to, maximum");
-            }
-            else if (numberValue > schema.Maximum.Value)
-            {
-                errors.Add($"Path: {instance.Path}. Number is greater than maximum");
-            }
+            errors.Add($"Path: {instance.Path}. Number is greater than, or equal to, maximum");
         }
 
-        // minimum & exclusiveMinimum
-        if (schema.Minimum.HasValue)
+        if (schema.Maximum is { } maximum &&
+            decimal.TryParse(maximum, out var maximumValue) &&
+            numberValue > maximumValue)
         {
-            var exclusiveMinimum = schema.ExclusiveMinimum ?? false;
+            errors.Add($"Path: {instance.Path}. Number is greater than maximum");
+        }
 
-            if (exclusiveMinimum && (numberValue <= schema.Minimum.Value))
-            {
-                errors.Add($"Path: {instance.Path}. Number is less than, or equal to, minimum");
-            }
-            else if (numberValue < schema.Minimum.Value)
-            {
-                errors.Add($"Path: {instance.Path}. Number is less than minimum");
-            }
+        if (schema.ExclusiveMinimum is { } exclusiveMinimum &&
+            decimal.TryParse(exclusiveMinimum, out var exclusiveMinimumValue) &&
+            numberValue <= exclusiveMinimumValue)
+        {
+            errors.Add($"Path: {instance.Path}. Number is less than, or equal to, minimum");
+        }
+
+        if (schema.Minimum is { } minimum &&
+            decimal.TryParse(minimum, out var minimumValue) &&
+            numberValue < minimumValue)
+        {
+            errors.Add($"Path: {instance.Path}. Number is less than minimum");
         }
 
         errorMessages = errors;

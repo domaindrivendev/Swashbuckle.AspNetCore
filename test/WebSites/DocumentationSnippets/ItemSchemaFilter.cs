@@ -1,5 +1,5 @@
-﻿using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Models;
+﻿using System.Text.Json.Nodes;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace DocumentationSnippets;
@@ -7,13 +7,16 @@ namespace DocumentationSnippets;
 // begin-snippet: Annotations-SchemaFilter
 public class ItemSchemaFilter : ISchemaFilter
 {
-    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+    public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
     {
-        schema.Example = new OpenApiObject
+        if (schema is OpenApiSchema concrete)
         {
-            ["Id"] = new OpenApiInteger(1),
-            ["Description"] = new OpenApiString("An awesome item")
-        };
+            concrete.Example = new JsonObject
+            {
+                ["Id"] = 1,
+                ["Description"] = "An awesome item"
+            };
+        }
     }
 }
 // end-snippet

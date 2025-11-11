@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -22,7 +22,7 @@ internal class ConfigureSchemaGeneratorOptions(
 
     private static void DeepCopy(SchemaGeneratorOptions source, SchemaGeneratorOptions target)
     {
-        target.CustomTypeMappings = new Dictionary<Type, Func<OpenApiSchema>>(source.CustomTypeMappings);
+        target.CustomTypeMappings = new Dictionary<Type, Func<IOpenApiSchema>>(source.CustomTypeMappings);
         target.UseInlineDefinitionsForEnums = source.UseInlineDefinitionsForEnums;
         target.SchemaIdSelector = source.SchemaIdSelector;
         target.IgnoreObsoleteProperties = source.IgnoreObsoleteProperties;

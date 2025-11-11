@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace DocumentationSnippets;
@@ -159,7 +159,7 @@ public static class IServiceCollectionExtensions
         // begin-snippet: SwaggerGen-CustomSchemaMapping
         services.AddSwaggerGen(options =>
         {
-            options.MapType<PhoneNumber>(() => new OpenApiSchema { Type = "string" });
+            options.MapType<PhoneNumber>(() => new OpenApiSchema { Type = JsonSchemaType.String });
         });
         // end-snippet
 
@@ -213,15 +213,9 @@ public static class IServiceCollectionExtensions
         // begin-snippet: SwaggerGen-AddSecurityRequirement
         services.AddSwaggerGen(options =>
         {
-            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+            options.AddSecurityRequirement((document) => new OpenApiSecurityRequirement()
             {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
-                    },
-                    ["readAccess", "writeAccess"]
-                }
+                [new OpenApiSecuritySchemeReference("oauth2", document)] = ["readAccess", "writeAccess"]
             });
         });
         // end-snippet
@@ -236,15 +230,9 @@ public static class IServiceCollectionExtensions
                 BearerFormat = "JWT",
                 Description = "JWT Authorization header using the Bearer scheme."
             });
-            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+            options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
             {
-                {
-                    new OpenApiSecurityScheme
-                    {
-                        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "bearer" }
-                    },
-                    []
-                }
+                [new OpenApiSecuritySchemeReference("bearer", document)] = []
             });
         });
         // end-snippet
