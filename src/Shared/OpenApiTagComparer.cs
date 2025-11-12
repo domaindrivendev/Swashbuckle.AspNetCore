@@ -117,7 +117,7 @@ internal sealed class OpenApiTagComparer :
     /// <inheritdoc/>
     public int GetHashCode(OpenApiTagReference obj)
     {
-        string value = obj?.Name ?? obj.Reference.Id;
+        string value = obj?.Name ?? obj?.Reference?.Id;
 
         return string.IsNullOrEmpty(value) ? 0 : StringComparer.GetHashCode(value);
     }
