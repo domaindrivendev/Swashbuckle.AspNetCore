@@ -52,11 +52,6 @@ internal sealed class OpenApiTagComparer :
 
     public int Compare(IOpenApiTag x, IOpenApiTag y)
     {
-        if (ReferenceEquals(x, y))
-        {
-            return 0;
-        }
-
         if (x is null)
         {
             return -1;
@@ -82,11 +77,6 @@ internal sealed class OpenApiTagComparer :
 
     public int Compare(OpenApiTagReference x, OpenApiTagReference y)
     {
-        if (ReferenceEquals(x, y))
-        {
-            return 0;
-        }
-
         if (x is null)
         {
             return -1;
