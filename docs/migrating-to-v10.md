@@ -78,7 +78,7 @@ Migrating to Swashbuckle.AspNetCore v10+ will likely involve changes in the foll
 - Replace usage of the `OpenApiSchema.Type` property using a string (e.g. `"string"` or `"boolean"`) with the `JsonSchemaType` flags enumeration.
 - Replace usage of the `OpenApiSchema.Nullable` property by OR-ing the `JsonSchemaType.Null` value to `OpenApiSchema.Type` (e.g. `schema.Type |= JsonSchemaType.Null;`).
 - Remove any use of the [now-deprecated `WithOpenApi()` extension method][withopenapi-deprecation] in [Microsoft.AspNetCore.OpenApi][microsoft-aspnetcore-openapi-package].
-- Updating any use of `AddSecurityRequirement()` to use a `Func<OpenApiDocument, OpenApiSecurityRequirement>`.
+- Updating any use of `AddSecurityRequirement()` to use a `Func<OpenApiDocument, OpenApiSecurityRequirement>` ([documentation][security]).
 - Updating some collections to use specific concrete types instead of interfaces if collection expressions were used, for example using `HashSet<OpenApiTag>` with `OpenApiDocument.Tags` which is now an `ISet<OpenApiTag>`.
 
 [breaking-changes-aspnetcore]: https://learn.microsoft.com/aspnet/core/release-notes/aspnetcore-10.0?#openapi-31-breaking-changes "OpenAPI 3.1 breaking changes"
@@ -87,6 +87,7 @@ Migrating to Swashbuckle.AspNetCore v10+ will likely involve changes in the foll
 [microsoft-openapi-package]: https://www.nuget.org/packages/Microsoft.OpenApi/ "Microsoft.OpenApi NuGet package"
 [microsoft-openapi-v2-migration-guide]: https://github.com/microsoft/OpenAPI.NET/blob/main/docs/upgrade-guide-2.md "Microsoft OpenAPI.NET v2 migration guide"
 [openapi-specification]: https://swagger.io/specification/ "OpenAPI Specification"
+[security]: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/v10.0.0/docs/configure-and-customize-swaggergen.md#add-security-definitions-and-requirements "Add Security Definitions and Requirements"
+[swashbuckle-aspnetcore-906]: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/releases/tag/v9.0.6 "Swashbuckle.AspNetCore v9.0.6"
 [swashbuckle-aspnetcore-10]: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/pull/3283 "Support .NET 10"
 [withopenapi-deprecation]: https://github.com/aspnet/Announcements/issues/519 "[Breaking change]: Deprecation of WithOpenApi extension method"
-[swashbuckle-aspnetcore-906]: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/releases/tag/v9.0.6 "Swashbuckle.AspNetCore v9.0.6"
