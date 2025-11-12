@@ -208,7 +208,7 @@ public class SwaggerGeneratorTests
                     {
                         ["200"] = new OpenApiResponse()
                         {
-                            Content = new Dictionary<string, OpenApiMediaType>()
+                            Content = new Dictionary<string, IOpenApiMediaType>()
                             {
                                 ["application/someMediaType"] = new OpenApiMediaType()
                             }
@@ -264,7 +264,7 @@ public class SwaggerGeneratorTests
                     OperationId = "OperationIdSetInMetadata",
                     RequestBody = new OpenApiRequestBody()
                     {
-                        Content = new Dictionary<string, OpenApiMediaType>()
+                        Content = new Dictionary<string, IOpenApiMediaType>()
                         {
                             ["application/someMediaType"] = new OpenApiMediaType()
                         }
@@ -2316,7 +2316,7 @@ public class SwaggerGeneratorTests
                     OperationId = "OperationIdSetInMetadata",
                     RequestBody = new OpenApiRequestBody()
                     {
-                        Content = new Dictionary<string, OpenApiMediaType>()
+                        Content = new Dictionary<string, IOpenApiMediaType>()
                         {
                             ["application/someMediaType"] = new OpenApiMediaType()
                         }
@@ -2381,7 +2381,7 @@ public class SwaggerGeneratorTests
                     OperationId = "OperationIdSetInMetadata",
                     RequestBody = new OpenApiRequestBody()
                     {
-                        Content = new Dictionary<string, OpenApiMediaType>()
+                        Content = new Dictionary<string, IOpenApiMediaType>()
                         {
                             ["application/someMediaType"] = new OpenApiMediaType()
                         }
@@ -2443,7 +2443,7 @@ public class SwaggerGeneratorTests
                     OperationId = "OperationIdSetInMetadata",
                     RequestBody = new OpenApiRequestBody()
                     {
-                        Content = new Dictionary<string, OpenApiMediaType>()
+                        Content = new Dictionary<string, IOpenApiMediaType>()
                         {
                             ["application/someMediaType"] = new OpenApiMediaType()
                         }
@@ -2507,7 +2507,7 @@ public class SwaggerGeneratorTests
                     OperationId = "OperationIdSetInMetadata",
                     RequestBody = new OpenApiRequestBody()
                     {
-                        Content = new Dictionary<string, OpenApiMediaType>()
+                        Content = new Dictionary<string, IOpenApiMediaType>()
                         {
                             ["application/someMediaType"] = new OpenApiMediaType()
                         }
@@ -2567,7 +2567,7 @@ public class SwaggerGeneratorTests
                 {
                     RequestBody = new OpenApiRequestBody()
                     {
-                        Content = new Dictionary<string, OpenApiMediaType>()
+                        Content = new Dictionary<string, IOpenApiMediaType>()
                         {
                             { "text/plain", new OpenApiMediaType() }
                         }

@@ -222,6 +222,13 @@ public static class WebApplicationExtensions
         });
         // end-snippet
 
+        // begin-snippet: Swagger-OpenAPI3.2
+        app.UseSwagger(options =>
+        {
+            options.OpenApiVersion = OpenApiSpecVersion.OpenApi3_2;
+        });
+        // end-snippet
+
         // begin-snippet: Swagger-Swagger2.0
         app.UseSwagger(options =>
         {
