@@ -69,7 +69,7 @@ public class AnnotationsOperationFilter : IOperationFilter
 
         if (swaggerOperationAttribute.Tags is { } tags)
         {
-            operation.Tags = new SortedSet<OpenApiTagReference>(tags.Select(tagName => new OpenApiTagReference(tagName)));
+            operation.Tags = new SortedSet<OpenApiTagReference>(tags.Select(tagName => new OpenApiTagReference(tagName)), OpenApiTagComparer.Instance);
         }
     }
 

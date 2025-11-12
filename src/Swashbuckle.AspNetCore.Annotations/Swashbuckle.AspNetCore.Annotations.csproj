@@ -24,5 +24,9 @@
     <AdditionalFiles Include="PublicAPI\$(TargetFramework)\PublicAPI.Shipped.txt" />
     <AdditionalFiles Include="PublicAPI\$(TargetFramework)\PublicAPI.Unshipped.txt" />
   </ItemGroup>
+  
+  <ItemGroup>
+    <Compile Include="..\Shared\OpenApiTagComparer.cs" Link="OpenApiTagComparer.cs" />
+  </ItemGroup>
 
 </Project>

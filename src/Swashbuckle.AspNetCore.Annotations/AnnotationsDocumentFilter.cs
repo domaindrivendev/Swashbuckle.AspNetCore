@@ -8,7 +8,7 @@ public class AnnotationsDocumentFilter : IDocumentFilter
 {
     public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
     {
-        swaggerDoc.Tags ??= new SortedSet<OpenApiTag>();
+        swaggerDoc.Tags ??= new SortedSet<OpenApiTag>(OpenApiTagComparer.Instance);
 
         // Collect (unique) controller names and custom attributes in a dictionary
         var controllerNamesAndAttributes = context.ApiDescriptions
