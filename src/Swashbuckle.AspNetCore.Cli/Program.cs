@@ -23,7 +23,7 @@ internal class Program
 
         // NOTE: The "dotnet swagger tofile" command does not serve the request directly. Instead, it invokes a corresponding
         // command (called _tofile) via "dotnet exec" so that the runtime configuration (*.runtimeconfig & *.deps.json) of the
-        // provided startupassembly can be used instead of the tool's. This is neccessary to successfully load the
+        // provided startupassembly can be used instead of the tool's. This is necessary to successfully load the
         // startupassembly and it's transitive dependencies. See https://github.com/dotnet/coreclr/issues/13277 for more.
 
         // > dotnet swagger tofile ...
