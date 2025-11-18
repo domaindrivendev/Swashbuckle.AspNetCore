@@ -1,4 +1,6 @@
-﻿using Microsoft.OpenApi;
+﻿using System.Diagnostics.CodeAnalysis;
+
+using Microsoft.OpenApi;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -24,7 +26,7 @@ public class SchemaRepository(string documentName = null)
         _reservedIds.Add(type, schemaId);
     }
 
-    public bool TryLookupByType(Type type, out OpenApiSchemaReference referenceSchema)
+    public bool TryLookupByType(Type type, [NotNullWhen(true)] out OpenApiSchemaReference referenceSchema)
     {
         if (_reservedIds.TryGetValue(type, out string schemaId))
         {
