@@ -28,7 +28,7 @@ public class AnnotationsOperationFilterTests
         Assert.Equal("Summary for ActionWithSwaggerOperationAttribute", operation.Summary);
         Assert.Equal("Description for ActionWithSwaggerOperationAttribute", operation.Description);
         Assert.Equal("actionWithSwaggerOperationAttribute", operation.OperationId);
-        Assert.Equal(["foobar"], [.. operation.Tags.Select(t => t.Reference.Id)]);
+        Assert.Equal(["bar", "foo"], [.. operation.Tags.Select(t => t.Reference.Id)]);
     }
 
     [Fact]

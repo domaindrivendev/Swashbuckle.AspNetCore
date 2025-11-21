@@ -10,7 +10,7 @@ internal class FakeControllerWithSwaggerAnnotations
     [SwaggerOperation("Summary for ActionWithSwaggerOperationAttribute",
         Description = "Description for ActionWithSwaggerOperationAttribute",
         OperationId = "actionWithSwaggerOperationAttribute",
-        Tags = new[] { "foobar" }
+        Tags = ["foo", "bar"]
     )]
     public void ActionWithSwaggerOperationAttribute()
     { }
