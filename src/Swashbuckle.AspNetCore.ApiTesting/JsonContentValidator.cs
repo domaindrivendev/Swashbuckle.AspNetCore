@@ -9,7 +9,7 @@ public sealed class JsonContentValidator : IContentValidator
 
     public bool CanValidate(string mediaType) => mediaType.Contains("json");
 
-    public void Validate(OpenApiMediaType mediaTypeSpec, OpenApiDocument openApiDocument, HttpContent content)
+    public void Validate(IOpenApiMediaType mediaTypeSpec, OpenApiDocument openApiDocument, HttpContent content)
     {
         if (mediaTypeSpec?.Schema == null)
         {

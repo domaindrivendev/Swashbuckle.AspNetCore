@@ -31,7 +31,7 @@ public static class ToolTests
     [Theory]
     [InlineData("a")]
     [InlineData("1.9")]
-    [InlineData("3.2")]
+    [InlineData("3.3")]
     public static void Error_When_OpenApiVersion_Is_Not_Supported(string version)
     {
         string[] args =
@@ -104,6 +104,28 @@ public static class ToolTests
         ]);
 
         Assert.StartsWith("3.1.", document.RootElement.GetProperty("openapi").GetString());
+
+        // verify one of the endpoints
+        var paths = document.RootElement.GetProperty("paths");
+        var productsPath = paths.GetProperty("/products");
+        Assert.True(productsPath.TryGetProperty("post", out _));
+    }
+
+    [Fact]
+    public static void Can_Generate_Swagger_Json_v3_2()
+    {
+        using var document = RunToJsonCommand((outputPath) =>
+        [
+            "tofile",
+            "--output",
+            outputPath,
+            "--openapiversion",
+            "3.2",
+            Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
+            "v1"
+        ]);
+
+        Assert.StartsWith("3.2.", document.RootElement.GetProperty("openapi").GetString());
 
         // verify one of the endpoints
         var paths = document.RootElement.GetProperty("paths");
@@ -213,6 +235,26 @@ public static class ToolTests
         // verify that the custom serializer wrote the swagger info
         var swaggerInfo = document.RootElement.GetProperty("swagger").GetString();
         Assert.Equal("DocumentSerializerTest3.1", swaggerInfo);
+    }
+
+    [Fact]
+    public static void CustomDocumentSerializer_Writes_Custom_V3_2_Document()
+    {
+        using var document = RunToJsonCommand((outputPath) =>
+        [
+            "tofile",
+            "--output",
+            outputPath,
+            "--openapiversion",
+            "3.2",
+            Path.Combine(Directory.GetCurrentDirectory(),
+            "CustomDocumentSerializer.dll"),
+            "v1"
+        ]);
+
+        // verify that the custom serializer wrote the swagger info
+        var swaggerInfo = document.RootElement.GetProperty("swagger").GetString();
+        Assert.Equal("DocumentSerializerTest3.2", swaggerInfo);
     }
 
     [Fact]

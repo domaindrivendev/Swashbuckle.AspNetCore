@@ -1,1 +1,2 @@
-﻿
+﻿Swashbuckle.AspNetCore.ApiTesting.IContentValidator.Validate(Microsoft.OpenApi.IOpenApiMediaType mediaTypeSpec, Microsoft.OpenApi.OpenApiDocument openApiDocument, System.Net.Http.HttpContent content) -> void
+Swashbuckle.AspNetCore.ApiTesting.JsonContentValidator.Validate(Microsoft.OpenApi.IOpenApiMediaType mediaTypeSpec, Microsoft.OpenApi.OpenApiDocument openApiDocument, System.Net.Http.HttpContent content) -> void
