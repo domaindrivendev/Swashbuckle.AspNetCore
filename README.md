@@ -82,6 +82,8 @@ for more details.
 [redoc-version-v7-badge]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv7.3.2%2Fsrc%2FSwashbuckle.AspNetCore.ReDoc%2Fpackage.json&query=%24.dependencies.redoc&style=flat&label=Redoc
 [redoc-version-v7-release]: https://github.com/Redocly/redoc/releases/tag/v2.4.0
 
+## Getting Started
+
 First install the kitchen-sink NuGet package into your ASP.NET Core application:
 
 ```terminal
@@ -295,7 +297,7 @@ Additionally, there are add-on packages (CLI tools, [an alternate UI using Redoc
 ### "Core" Packages
 
 | **Package** | **NuGet** | **Description** |
-|-------------|--------------------|-----------------|
+| ----------- | --------- | --------------- |
 | [Swashbuckle.AspNetCore.Swagger][swashbuckle-aspnetcore-swagger] | [![NuGet](https://img.shields.io/nuget/v/Swashbuckle.AspNetCore.Swagger?logo=nuget&label=Latest&color=blue)][swashbuckle-aspnetcore-swagger] | Exposes OpenAPI JSON endpoints. It expects an implementation of `ISwaggerProvider` to be registered in the DI container, which it queries to retrieve `OpenApiDocument` instance(s) that are then exposed as serialized JSON. |
 | [Swashbuckle.AspNetCore.SwaggerGen][swashbuckle-aspnetcore-swaggergen] | [![NuGet](https://img.shields.io/nuget/v/Swashbuckle.AspNetCore.SwaggerGen?logo=nuget&label=Latest&color=blue)][swashbuckle-aspnetcore-swaggergen] | Injects an implementation of `ISwaggerProvider` that can be used by the above component. This particular implementation generates `OpenApiDocument` instance(s) from your application endpoints (controllers, minimal endpoints etc.). |
 | [Swashbuckle.AspNetCore.SwaggerUI][swashbuckle-aspnetcore-swaggerui] | [![NuGet](https://img.shields.io/nuget/v/Swashbuckle.AspNetCore.SwaggerUI?logo=nuget&label=Latest&color=blue)][swashbuckle-aspnetcore-swaggerui] | Exposes an embedded version of [swagger-ui][swagger-ui]. You specify the API endpoints where it can obtain OpenAPI documents from, and it uses them to power interactive documentation for your API. |
@@ -303,7 +305,7 @@ Additionally, there are add-on packages (CLI tools, [an alternate UI using Redoc
 ### Additional Packages
 
 | **Package** | **NuGet** | **Description** |
-|-------------|--------------------|-----------------|
+| ----------- | --------- | --------------- |
 | [Swashbuckle.AspNetCore.Annotations][swashbuckle-aspnetcore-annotations] | [![NuGet](https://img.shields.io/nuget/v/Swashbuckle.AspNetCore.Annotations?logo=nuget&label=Latest&color=blue)][swashbuckle-aspnetcore-annotations] | Includes a set of custom attributes that can be applied to controllers/endpoints, actions and models to enrich the generated documentation. |
 | [Swashbuckle.AspNetCore.Cli][swashbuckle-aspnetcore-cli] | [![NuGet](https://img.shields.io/nuget/v/Swashbuckle.AspNetCore.Cli?logo=nuget&label=Latest&color=blue)][swashbuckle-aspnetcore-cli] | Provides a command line interface (CLI) for retrieving OpenAPI documents directly from an application start-up assembly and then writing to a file. |
 | [Swashbuckle.AspNetCore.ReDoc][swashbuckle-aspnetcore-redoc] | [![NuGet](https://img.shields.io/nuget/v/Swashbuckle.AspNetCore.ReDoc?logo=nuget&label=Latest&color=blue)][swashbuckle-aspnetcore-redoc] | Exposes an embedded version of the [Redoc UI][redoc] (an alternative to [swagger-ui][swagger-ui]). |
@@ -313,7 +315,7 @@ Additionally, there are add-on packages (CLI tools, [an alternate UI using Redoc
 These packages are provided by the .NET open-source community.
 
 | **Package** | **NuGet** | **Description** |
-|-------------|--------------------|-----------------|
+| ----------- | --------- | --------------- |
 | [Swashbuckle.AspNetCore.Filters][swashbuckle-aspnetcore-filters] | [![NuGet](https://img.shields.io/nuget/v/Swashbuckle.AspNetCore.Filters?logo=nuget&label=Latest&color=blue)][swashbuckle-aspnetcore-filters] | Some useful Swashbuckle.AspNetCore filters which add additional documentation, e.g. request and response examples, authorization information, etc. See its README for more details. |
 | [Unchase.Swashbuckle.AspNetCore.Extensions][unchase-swashbuckle-aspnetcore-extensions] | [![NuGet](https://img.shields.io/nuget/v/Unchase.Swashbuckle.AspNetCore.Extensions?logo=nuget&label=Latest&color=blue)][unchase-swashbuckle-aspnetcore-extensions] | Some useful extensions (filters), which add additional documentation, e.g. hide `PathItems` for unaccepted roles, fix enumerations for client code generation, etc. See its README for more details. |
 | [MicroElements.Swashbuckle.FluentValidation][microelements-swashbuckle-fluentvalidation] | [![NuGet](https://img.shields.io/nuget/v/MicroElements.Swashbuckle.FluentValidation?logo=nuget&label=Latest&color=blue)][microelements-swashbuckle-fluentvalidation] | Use [FluentValidation][fluentvalidation] rules instead of ComponentModel attributes to augment generated OpenAPI schemas. |
@@ -325,8 +327,8 @@ The steps described above will get you up and running with minimal set up. Howev
 
 Check out the table below for the full list of possible configuration options.
 
-| **Component** | **Configuration and Customization** |
-| ------------- | ----------------------------------- |
+| **Component**                          | **Configuration and Customization**                                                                                                                                         |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Swashbuckle.AspNetCore.Swagger**     | [Change the Path for OpenAPI JSON Endpoints](docs/configure-and-customize-swagger.md#change-the-path-for-openapi-json-endpoints)                                            |
 |                                        | [Modify OpenAPI with Request Context](docs/configure-and-customize-swagger.md#modify-openapi-with-request-context)                                                          |
 |                                        | [Serialize OpenAPI JSON in the 3.1 format](docs/configure-and-customize-swagger.md#serialize-openapi-in-the-31-format)                                                      |

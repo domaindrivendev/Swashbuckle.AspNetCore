@@ -85,6 +85,7 @@ Migrating to Swashbuckle.AspNetCore v10+ will likely involve changes in the foll
        }
    }     
    ```
+
 - Update any use of `.Reference` properties (e.g. `OpenApiSchema.ReferenceV3`) to use the new `*Reference` class instead (e.g. `OpenApiSchemaReference`).
 - Replace usage of the `OpenApiSchema.Type` property using a string (e.g. `"string"` or `"boolean"`) with the `JsonSchemaType` flags enumeration.
 - Replace usage of the `OpenApiSchema.Nullable` property by OR-ing the `JsonSchemaType.Null` value to `OpenApiSchema.Type` (e.g. `schema.Type |= JsonSchemaType.Null;`).
