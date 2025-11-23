@@ -73,7 +73,19 @@ Migrating to Swashbuckle.AspNetCore v10+ will likely involve changes in the foll
 
 - Update any NuGet package references for Swashbuckle.AspNetCore and Microsoft.OpenApi to v10.0.0+ and v2.3.0+ respectively.
 - Update any `using` directives that reference types from the `Microsoft.OpenApi.Models` namespace to use the new namespace `Microsoft.OpenApi`.
-- Update model references (e.g. `OpenApiSchema`) to use the new interfaces (e.g. `IOpenApiSchema`) and the relevant concrete types to mutate them (e.g. `OpenApiSchema`).
+- Update model references (e.g. `OpenApiSchema`) to use the new interfaces (e.g. `IOpenApiSchema`) and cast to the relevant concrete types to mutate them (e.g. `OpenApiSchema`), for example like this in a `ISchemaFilter`:
+
+   ```
+  public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
+  {
+     if (schema is not OpenApiSchema openApiSchema)
+     {
+        return;
+     }
+
+     // the properties are mutable only on the concrete type
+     openApiSchema.Type = JsonSchemaType.String;
+   ```
 - Update any use of `.Reference` properties (e.g. `OpenApiSchema.ReferenceV3`) to use the new `*Reference` class instead (e.g. `OpenApiSchemaReference`).
 - Replace usage of the `OpenApiSchema.Type` property using a string (e.g. `"string"` or `"boolean"`) with the `JsonSchemaType` flags enumeration.
 - Replace usage of the `OpenApiSchema.Nullable` property by OR-ing the `JsonSchemaType.Null` value to `OpenApiSchema.Type` (e.g. `schema.Type |= JsonSchemaType.Null;`).
