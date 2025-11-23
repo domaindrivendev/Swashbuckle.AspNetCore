@@ -1,4 +1,4 @@
-name: actions-lint
+name: lint
 
 on:
   push:
