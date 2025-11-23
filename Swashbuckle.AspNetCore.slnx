@@ -27,10 +27,10 @@
     <File Path=".github/update-baselines.ps1" />
   </Folder>
   <Folder Name="/Solution Items/.github/workflows/">
-    <File Path=".github/workflows/actions-lint.yml" />
     <File Path=".github/workflows/build.yml" />
     <File Path=".github/workflows/bump-version.yml" />
     <File Path=".github/workflows/codeql-analysis.yml" />
+    <File Path=".github/workflows/lint.yml" />
     <File Path=".github/workflows/ossf-scorecard.yml" />
     <File Path=".github/workflows/release.yml" />
     <File Path=".github/workflows/stale.yml" />
