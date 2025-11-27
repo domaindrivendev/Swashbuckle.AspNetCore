@@ -69,6 +69,7 @@
     <Project Path="test/WebSites/GenericControllers/GenericControllers.csproj" />
     <Project Path="test/WebSites/MinimalApp/MinimalApp.csproj" />
     <Project Path="test/WebSites/MinimalAppWithHostedServices/MinimalAppWithHostedServices.csproj" />
+    <Project Path="test/WebSites/MinimalAppWithNullableEnums/MinimalAppWithNullableEnums.csproj" />
     <Project Path="test/WebSites/MultipleVersions/MultipleVersions.csproj" />
     <Project Path="test/WebSites/MvcWithNullable/MvcWithNullable.csproj" />
     <Project Path="test/WebSites/NswagClientExample/NswagClientExample.csproj" />
