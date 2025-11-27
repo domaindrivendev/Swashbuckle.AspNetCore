@@ -48,10 +48,12 @@
         "type": "object",
         "properties": {
           "child": {
-            "type": "null",
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/Child"
+              },
+              {
+                "type": "null"
               }
             ]
           },
