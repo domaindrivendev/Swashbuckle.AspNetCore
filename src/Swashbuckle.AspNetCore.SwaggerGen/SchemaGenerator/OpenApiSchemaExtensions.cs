@@ -58,7 +58,7 @@ public static class OpenApiSchemaExtensions
             {
                 ApplyLengthAttribute(schema, lengthAttribute);
             }
-            else if (attribute is Base64StringAttribute base64Attribute)
+            else if (attribute is Base64StringAttribute)
             {
                 ApplyBase64Attribute(schema);
             }
