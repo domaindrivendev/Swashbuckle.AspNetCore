@@ -1,5 +1,4 @@
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Writers;
+using Microsoft.OpenApi;
 
 namespace Swashbuckle.AspNetCore.ApiTesting;
 
@@ -24,7 +23,7 @@ public abstract class ApiTestRunnerBase : IDisposable
     public void ConfigureOperation(
         string documentName,
         string pathTemplate,
-        OperationType operationType,
+        HttpMethod operationType,
         OpenApiOperation operation)
     {
         var openApiDocument = _options.GetOpenApiDocument(documentName);

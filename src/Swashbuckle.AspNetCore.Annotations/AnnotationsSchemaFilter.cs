@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Swashbuckle.AspNetCore.Annotations;
@@ -9,7 +9,7 @@ public class AnnotationsSchemaFilter(IServiceProvider serviceProvider) : ISchema
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 
-    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+    public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
     {
         ApplyTypeAnnotations(schema, context);
 
@@ -26,7 +26,7 @@ public class AnnotationsSchemaFilter(IServiceProvider serviceProvider) : ISchema
         }
     }
 
-    private void ApplyTypeAnnotations(OpenApiSchema schema, SchemaFilterContext context)
+    private void ApplyTypeAnnotations(IOpenApiSchema schema, SchemaFilterContext context)
     {
         var schemaAttribute = context.Type.GetCustomAttributes<SwaggerSchemaAttribute>()
             .FirstOrDefault();
@@ -50,7 +50,7 @@ public class AnnotationsSchemaFilter(IServiceProvider serviceProvider) : ISchema
         }
     }
 
-    private static void ApplyParamAnnotations(OpenApiSchema schema, ParameterInfo parameterInfo)
+    private static void ApplyParamAnnotations(IOpenApiSchema schema, ParameterInfo parameterInfo)
     {
         var schemaAttribute = parameterInfo.GetCustomAttributes<SwaggerSchemaAttribute>()
             .FirstOrDefault();
@@ -61,7 +61,7 @@ public class AnnotationsSchemaFilter(IServiceProvider serviceProvider) : ISchema
         }
     }
 
-    private static void ApplyMemberAnnotations(OpenApiSchema schema, MemberInfo memberInfo)
+    private static void ApplyMemberAnnotations(IOpenApiSchema schema, MemberInfo memberInfo)
     {
         var schemaAttribute = memberInfo.GetCustomAttributes<SwaggerSchemaAttribute>()
             .FirstOrDefault();
@@ -72,41 +72,55 @@ public class AnnotationsSchemaFilter(IServiceProvider serviceProvider) : ISchema
         }
     }
 
-    private static void ApplySchemaAttribute(OpenApiSchema schema, SwaggerSchemaAttribute schemaAttribute)
+    private static void ApplySchemaAttribute(IOpenApiSchema schema, SwaggerSchemaAttribute schemaAttribute)
     {
         if (schemaAttribute.Description is { } description)
         {
             schema.Description = description;
         }
 
+        if (schema is not OpenApiSchema concrete)
+        {
+            return;
+        }
+
         if (schemaAttribute.Format is { } format)
         {
-            schema.Format = format;
+            concrete.Format = format;
         }
 
         if (schemaAttribute.ReadOnlyFlag is { } readOnly)
         {
-            schema.ReadOnly = readOnly;
+            concrete.ReadOnly = readOnly;
         }
 
         if (schemaAttribute.WriteOnlyFlag is { } writeOnly)
         {
-            schema.WriteOnly = writeOnly;
+            concrete.WriteOnly = writeOnly;
         }
 
         if (schemaAttribute.NullableFlag is { } nullable)
         {
-            schema.Nullable = nullable;
+            // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3387
+            if (nullable)
+            {
+                concrete.Type ??= JsonSchemaType.Null;
+                concrete.Type |= JsonSchemaType.Null;
+            }
+            else if (concrete.Type.HasValue)
+            {
+                concrete.Type &= ~JsonSchemaType.Null;
+            }
         }
 
         if (schemaAttribute.Required is { } required)
         {
-            schema.Required = new SortedSet<string>(required);
+            concrete.Required = new SortedSet<string>(required);
         }
 
         if (schemaAttribute.Title is { } title)
         {
-            schema.Title = title;
+            concrete.Title = title;
         }
     }
 }

@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Reflection;
 using Basic.Swagger;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace Basic;
 
@@ -61,7 +61,11 @@ public class Startup
             endpoints.MapSwagger("swagger/{documentName}/swagger.json");
             endpoints.MapSwagger("swagger/{documentName}/swaggerv2.json", c =>
             {
-                c.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi2_0;
+                c.OpenApiVersion = OpenApiSpecVersion.OpenApi2_0;
+            });
+            endpoints.MapSwagger("swagger/{documentName}/swaggerv3_1.json", c =>
+            {
+                c.OpenApiVersion = OpenApiSpecVersion.OpenApi3_1;
             });
         });
 

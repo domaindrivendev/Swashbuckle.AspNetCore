@@ -28,7 +28,7 @@ jobs:
     steps:
 
       - name: Checkout code
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
           filter: 'tree:0'
           persist-credentials: true # zizmor: ignore[artipacked] Needed to push commits
@@ -79,9 +79,9 @@ jobs:
           git commit -m "Bump version`n`nBump version to ${env:NEXT_VERSION} for the next release." -s
           git push -u origin $branchName
 
-          "branch-name=${branchName}" >> $env:GITHUB_OUTPUT
-          "updated-version=true" >> $env:GITHUB_OUTPUT
-          "version=${env:NEXT_VERSION}" >> $env:GITHUB_OUTPUT
+          "branch-name=${branchName}" >> ${env:GITHUB_OUTPUT}
+          "updated-version=true" >> ${env:GITHUB_OUTPUT}
+          "version=${env:NEXT_VERSION}" >> ${env:GITHUB_OUTPUT}
 
       - name: Create pull request
         if: steps.push-changes.outputs.updated-version == 'true'

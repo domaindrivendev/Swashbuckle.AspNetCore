@@ -1,4 +1,4 @@
-Swashbuckle.AspNetCore.ApiTesting.Xunit.ApiTestFixture<TEntryPoint>
+﻿Swashbuckle.AspNetCore.ApiTesting.Xunit.ApiTestFixture<TEntryPoint>
 Swashbuckle.AspNetCore.ApiTesting.Xunit.ApiTestFixture<TEntryPoint>.ApiTestFixture(Swashbuckle.AspNetCore.ApiTesting.ApiTestRunnerBase apiTestRunner, Microsoft.AspNetCore.Mvc.Testing.WebApplicationFactory<TEntryPoint> webAppFactory, string documentName) -> void
-Swashbuckle.AspNetCore.ApiTesting.Xunit.ApiTestFixture<TEntryPoint>.Describe(string pathTemplate, Microsoft.OpenApi.Models.OperationType operationType, Microsoft.OpenApi.Models.OpenApiOperation operationSpec) -> void
+Swashbuckle.AspNetCore.ApiTesting.Xunit.ApiTestFixture<TEntryPoint>.Describe(string pathTemplate, System.Net.Http.HttpMethod operationType, Microsoft.OpenApi.OpenApiOperation operationSpec) -> void
 Swashbuckle.AspNetCore.ApiTesting.Xunit.ApiTestFixture<TEntryPoint>.TestAsync(string operationId, string expectedStatusCode, System.Net.Http.HttpRequestMessage request) -> System.Threading.Tasks.Task

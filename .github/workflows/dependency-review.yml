@@ -16,13 +16,13 @@ jobs:
     steps:
 
       - name: Checkout code
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
         with:
           filter: 'tree:0'
           persist-credentials: false
           show-progress: false
 
       - name: Review dependencies
-        uses: actions/dependency-review-action@595b5aeba73380359d98a5e087f648dbb0edce1b # v4.7.3
+        uses: actions/dependency-review-action@3c4e3dcb1aa7874d2c16be7d79418e9b7efd6261 # v4.8.2
         with:
           allow-licenses: '(MPL-2.0 OR Apache-2.0),0BSD,Apache-2.0,BSD-2-Clause,BSD-3-Clause,ISC,MIT,Python-2.0,LicenseRef-scancode-generic-cla AND MIT'

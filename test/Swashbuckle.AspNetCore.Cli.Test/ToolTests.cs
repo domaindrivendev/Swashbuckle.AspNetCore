@@ -90,6 +90,28 @@ public static class ToolTests
     }
 
     [Fact]
+    public static void Can_Generate_Swagger_Json_v3_1()
+    {
+        using var document = RunToJsonCommand((outputPath) =>
+        [
+            "tofile",
+            "--output",
+            outputPath,
+            "--openapiversion",
+            "3.1",
+            Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
+            "v1"
+        ]);
+
+        Assert.StartsWith("3.1.", document.RootElement.GetProperty("openapi").GetString());
+
+        // verify one of the endpoints
+        var paths = document.RootElement.GetProperty("paths");
+        var productsPath = paths.GetProperty("/products");
+        Assert.True(productsPath.TryGetProperty("post", out _));
+    }
+
+    [Fact]
     public static void Can_Generate_Swagger_Json_v3_OpenApiVersion()
     {
         using var document = RunToJsonCommand((outputPath) =>
@@ -171,6 +193,26 @@ public static class ToolTests
         // verify that the custom serializer wrote the swagger info
         var swaggerInfo = document.RootElement.GetProperty("swagger").GetString();
         Assert.Equal("DocumentSerializerTest3.0", swaggerInfo);
+    }
+
+    [Fact]
+    public static void CustomDocumentSerializer_Writes_Custom_V3_1_Document()
+    {
+        using var document = RunToJsonCommand((outputPath) =>
+        [
+            "tofile",
+            "--output",
+            outputPath,
+            "--openapiversion",
+            "3.1",
+            Path.Combine(Directory.GetCurrentDirectory(),
+            "CustomDocumentSerializer.dll"),
+            "v1"
+        ]);
+
+        // verify that the custom serializer wrote the swagger info
+        var swaggerInfo = document.RootElement.GetProperty("swagger").GetString();
+        Assert.Equal("DocumentSerializerTest3.1", swaggerInfo);
     }
 
     [Fact]

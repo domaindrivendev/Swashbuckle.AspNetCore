@@ -2,7 +2,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Xunit;
 
@@ -20,6 +20,7 @@ public class AnnotationsOperationFilterTests
             apiDescription: null,
             schemaRegistry: null,
             schemaRepository: null,
+            document: null,
             methodInfo: methodInfo);
 
         Subject().Apply(operation, filterContext);
@@ -27,7 +28,7 @@ public class AnnotationsOperationFilterTests
         Assert.Equal("Summary for ActionWithSwaggerOperationAttribute", operation.Summary);
         Assert.Equal("Description for ActionWithSwaggerOperationAttribute", operation.Description);
         Assert.Equal("actionWithSwaggerOperationAttribute", operation.OperationId);
-        Assert.Equal(["foobar"], [.. operation.Tags.Select(t => t.Name)]);
+        Assert.Equal(["bar", "foo"], [.. operation.Tags.Select(t => t.Reference.Id)]);
     }
 
     [Fact]
@@ -47,6 +48,7 @@ public class AnnotationsOperationFilterTests
             apiDescription: null,
             schemaRegistry: null,
             schemaRepository: null,
+            document: null,
             methodInfo: methodInfo);
 
         Subject().Apply(operation, filterContext);
@@ -76,6 +78,7 @@ public class AnnotationsOperationFilterTests
             apiDescription: null,
             schemaRegistry: new SchemaGenerator(new SchemaGeneratorOptions(), new JsonSerializerDataContractResolver(new JsonSerializerOptions())),
             schemaRepository: new SchemaRepository(),
+            document: null,
             methodInfo: methodInfo);
 
         Subject().Apply(operation, filterContext);
@@ -102,6 +105,7 @@ public class AnnotationsOperationFilterTests
             apiDescription: null,
             schemaRegistry: null,
             schemaRepository: null,
+            document: null,
             methodInfo: methodInfo);
 
         Subject().Apply(operation, filterContext);
@@ -118,6 +122,7 @@ public class AnnotationsOperationFilterTests
             apiDescription: null,
             schemaRegistry: null,
             schemaRepository: null,
+            document: null,
             methodInfo: methodInfo);
 
         Subject().Apply(operation, filterContext);
@@ -152,6 +157,7 @@ public class AnnotationsOperationFilterTests
             apiDescription: apiDescription,
             schemaRegistry: null,
             schemaRepository: null,
+            document: null,
             methodInfo: methodInfo);
 
         Subject().Apply(operation, filterContext);
@@ -159,7 +165,7 @@ public class AnnotationsOperationFilterTests
         Assert.Equal("Summary for ActionWithSwaggerOperationAttribute", operation.Summary);
         Assert.Equal("Description for ActionWithSwaggerOperationAttribute", operation.Description);
         Assert.Equal("actionWithSwaggerOperationAttribute", operation.OperationId);
-        Assert.Equal(["foobar"], [.. operation.Tags.Select(t => t.Name)]);
+        Assert.Equal(["foobar"], [.. operation.Tags.Select(t => t.Reference.Id)]);
     }
 
     private static AnnotationsOperationFilter Subject()

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Globalization;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 
@@ -92,9 +92,6 @@ public static class OpenApiSchemaExtensionsTests
         string expectedMaximum)
     {
         // Arrange
-        var minimum = decimal.Parse(expectedMinimum, CultureInfo.InvariantCulture);
-        var maximum = decimal.Parse(expectedMaximum, CultureInfo.InvariantCulture);
-
         var schema = new OpenApiSchema();
 
         // Act
@@ -104,10 +101,20 @@ public static class OpenApiSchemaExtensionsTests
         }
 
         // Assert
-        Assert.Equal(isExclusive ? true : null, schema.ExclusiveMinimum);
-        Assert.Equal(isExclusive ? true : null, schema.ExclusiveMaximum);
-        Assert.Equal(minimum, schema.Minimum);
-        Assert.Equal(maximum, schema.Maximum);
+        if (isExclusive)
+        {
+            Assert.Equal(expectedMinimum, schema.ExclusiveMinimum);
+            Assert.Equal(expectedMaximum, schema.ExclusiveMaximum);
+            Assert.Null(schema.Minimum);
+            Assert.Null(schema.Maximum);
+        }
+        else
+        {
+            Assert.Equal(expectedMinimum, schema.Minimum);
+            Assert.Equal(expectedMaximum, schema.Maximum);
+            Assert.Null(schema.ExclusiveMinimum);
+            Assert.Null(schema.ExclusiveMaximum);
+        }
     }
 
     [Fact]

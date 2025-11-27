@@ -27,10 +27,10 @@
     <File Path=".github/update-baselines.ps1" />
   </Folder>
   <Folder Name="/Solution Items/.github/workflows/">
-    <File Path=".github/workflows/actions-lint.yml" />
     <File Path=".github/workflows/build.yml" />
     <File Path=".github/workflows/bump-version.yml" />
     <File Path=".github/workflows/codeql-analysis.yml" />
+    <File Path=".github/workflows/lint.yml" />
     <File Path=".github/workflows/ossf-scorecard.yml" />
     <File Path=".github/workflows/release.yml" />
     <File Path=".github/workflows/stale.yml" />
@@ -65,9 +65,11 @@
     <Project Path="test/WebSites/CustomDocumentSerializer/CustomDocumentSerializer.csproj" />
     <Project Path="test/WebSites/CustomUIConfig/CustomUIConfig.csproj" />
     <Project Path="test/WebSites/CustomUIIndex/CustomUIIndex.csproj" />
+    <Project Path="test/WebSites/DocumentationSnippets/DocumentationSnippets.csproj" />
     <Project Path="test/WebSites/GenericControllers/GenericControllers.csproj" />
     <Project Path="test/WebSites/MinimalApp/MinimalApp.csproj" />
     <Project Path="test/WebSites/MinimalAppWithHostedServices/MinimalAppWithHostedServices.csproj" />
+    <Project Path="test/WebSites/MinimalAppWithNullableEnums/MinimalAppWithNullableEnums.csproj" />
     <Project Path="test/WebSites/MultipleVersions/MultipleVersions.csproj" />
     <Project Path="test/WebSites/MvcWithNullable/MvcWithNullable.csproj" />
     <Project Path="test/WebSites/NswagClientExample/NswagClientExample.csproj" />

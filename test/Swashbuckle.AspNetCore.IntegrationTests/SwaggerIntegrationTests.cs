@@ -2,7 +2,6 @@ using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
-using Microsoft.OpenApi.Any;
 using ReDocApp = ReDoc;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests;
@@ -85,8 +84,7 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
         {
             var openApiDocument = await OpenApiDocumentLoader.LoadAsync(contentStream);
             var example = openApiDocument.Components.Schemas["Product"].Example;
-            var exampleObject = Assert.IsType<OpenApiObject>(example);
-            double price = Assert.IsType<OpenApiDouble>(exampleObject["price"]).Value;
+            double price = example["price"].GetValue<double>();
             Assert.Equal(14.37, price);
         }
         finally
@@ -98,6 +96,7 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
     [Theory]
     [InlineData("/swagger/v1/swagger.json", "openapi", "3.0.4")]
     [InlineData("/swagger/v1/swaggerv2.json", "swagger", "2.0")]
+    [InlineData("/swagger/v1/swaggerv3_1.json", "openapi", "3.1.1")]
     public async Task SwaggerMiddleware_CanBeConfiguredMultipleTimes(
         string swaggerUrl,
         string expectedVersionProperty,
@@ -116,8 +115,9 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
 
     [Theory]
     [InlineData(typeof(MinimalApp.Program), "/swagger/v1/swagger.json")]
-    [InlineData(typeof(TopLevelSwaggerDoc.Program), "/swagger/v1.json")]
+    [InlineData(typeof(MinimalAppWithNullableEnums.Program), "/swagger/v1/swagger.json")]
     [InlineData(typeof(MvcWithNullable.Program), "/swagger/v1/swagger.json")]
+    [InlineData(typeof(TopLevelSwaggerDoc.Program), "/swagger/v1.json")]
     [InlineData(typeof(WebApi.Program), "/swagger/v1/swagger.json")]
     [InlineData(typeof(WebApi.Aot.Program), "/swagger/v1/swagger.json")]
     public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_Without_Startup(

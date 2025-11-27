@@ -1,27 +1,14 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
-using System.Xml.XPath;
+﻿using System.Xml.XPath;
+using Microsoft.OpenApi;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
-public class XmlCommentsSchemaFilter : ISchemaFilter
+public class XmlCommentsSchemaFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers, SwaggerGeneratorOptions options) : ISchemaFilter
 {
-    private readonly IReadOnlyDictionary<string, XPathNavigator> _xmlDocMembers;
-    private readonly SwaggerGeneratorOptions _options;
+    private readonly IReadOnlyDictionary<string, XPathNavigator> _xmlDocMembers = xmlDocMembers;
+    private readonly SwaggerGeneratorOptions _options = options;
 
-    public XmlCommentsSchemaFilter(XPathDocument xmlDoc)
-        : this(XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc), null)
-    {
-    }
-
-    [ActivatorUtilitiesConstructor]
-    internal XmlCommentsSchemaFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers, SwaggerGeneratorOptions options)
-    {
-        _xmlDocMembers = xmlDocMembers;
-        _options = options;
-    }
-
-    public void Apply(OpenApiSchema schema, SchemaFilterContext context)
+    public void Apply(IOpenApiSchema schema, SchemaFilterContext context)
     {
         ApplyTypeTags(schema, context.Type);
 
@@ -31,7 +18,7 @@ public class XmlCommentsSchemaFilter : ISchemaFilter
         }
     }
 
-    private void ApplyTypeTags(OpenApiSchema schema, Type type)
+    private void ApplyTypeTags(IOpenApiSchema schema, Type type)
     {
         var typeMemberName = XmlCommentsNodeNameHelper.GetMemberNameForType(type);
 
@@ -45,7 +32,7 @@ public class XmlCommentsSchemaFilter : ISchemaFilter
         }
     }
 
-    private void ApplyMemberTags(OpenApiSchema schema, SchemaFilterContext context)
+    private void ApplyMemberTags(IOpenApiSchema schema, SchemaFilterContext context)
     {
         var fieldOrPropertyMemberName = XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(context.MemberInfo);
 
@@ -63,10 +50,13 @@ public class XmlCommentsSchemaFilter : ISchemaFilter
                     schema.Description = XmlCommentsTextHelper.Humanize(summaryNode, _options?.XmlCommentEndOfLine);
                 }
 
-                var example = recordDefaultConstructorProperty.GetAttribute("example");
-                if (!string.IsNullOrEmpty(example))
+                if (schema is OpenApiSchema concrete)
                 {
-                    TrySetExample(schema, context, example);
+                    var example = recordDefaultConstructorProperty.GetAttribute("example");
+                    if (!string.IsNullOrEmpty(example))
+                    {
+                        TrySetExample(concrete, context, example);
+                    }
                 }
             }
         }
@@ -79,8 +69,11 @@ public class XmlCommentsSchemaFilter : ISchemaFilter
                 schema.Description = XmlCommentsTextHelper.Humanize(summaryNode.InnerXml, _options?.XmlCommentEndOfLine);
             }
 
-            var exampleNode = fieldOrPropertyNode.SelectFirstChild("example");
-            TrySetExample(schema, context, exampleNode?.Value);
+            if (schema is OpenApiSchema concrete)
+            {
+                var exampleNode = fieldOrPropertyNode.SelectFirstChild("example");
+                TrySetExample(concrete, context, exampleNode?.Value);
+            }
         }
     }
 

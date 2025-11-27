@@ -1,5 +1,4 @@
-﻿using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 
@@ -7,8 +6,9 @@ public class TestOperationFilter : IOperationFilter, IOperationAsyncFilter
 {
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {
-        operation.Extensions.Add("X-foo", new OpenApiString("bar"));
-        operation.Extensions.Add("X-docName", new OpenApiString(context.DocumentName));
+        operation.Extensions ??= new Dictionary<string, IOpenApiExtension>();
+        operation.Extensions.Add("X-foo", new JsonNodeExtension("bar"));
+        operation.Extensions.Add("X-docName", new JsonNodeExtension(context.DocumentName));
     }
 
     public Task ApplyAsync(OpenApiOperation operation, OperationFilterContext context, CancellationToken cancellationToken)

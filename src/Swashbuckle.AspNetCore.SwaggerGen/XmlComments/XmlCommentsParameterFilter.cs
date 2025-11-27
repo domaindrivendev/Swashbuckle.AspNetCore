@@ -1,28 +1,15 @@
 ﻿using System.Reflection;
 using System.Xml.XPath;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
-public class XmlCommentsParameterFilter : IParameterFilter
+public class XmlCommentsParameterFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers, SwaggerGeneratorOptions options) : IParameterFilter
 {
-    private readonly IReadOnlyDictionary<string, XPathNavigator> _xmlDocMembers;
-    private readonly SwaggerGeneratorOptions _options;
+    private readonly IReadOnlyDictionary<string, XPathNavigator> _xmlDocMembers = xmlDocMembers;
+    private readonly SwaggerGeneratorOptions _options = options;
 
-    public XmlCommentsParameterFilter(XPathDocument xmlDoc)
-        : this(XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc), null)
-    {
-    }
-
-    [ActivatorUtilitiesConstructor]
-    internal XmlCommentsParameterFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers, SwaggerGeneratorOptions options)
-    {
-        _xmlDocMembers = xmlDocMembers;
-        _options = options;
-    }
-
-    public void Apply(OpenApiParameter parameter, ParameterFilterContext context)
+    public void Apply(IOpenApiParameter parameter, ParameterFilterContext context)
     {
         if (context.PropertyInfo != null)
         {
@@ -34,7 +21,7 @@ public class XmlCommentsParameterFilter : IParameterFilter
         }
     }
 
-    private void ApplyPropertyTags(OpenApiParameter parameter, ParameterFilterContext context)
+    private void ApplyPropertyTags(IOpenApiParameter parameter, ParameterFilterContext context)
     {
         var propertyMemberName = XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(context.PropertyInfo);
 
@@ -47,14 +34,17 @@ public class XmlCommentsParameterFilter : IParameterFilter
             parameter.Schema.Description = null; // No need to duplicate
         }
 
-        var exampleNode = propertyNode.SelectFirstChild("example");
-        if (exampleNode != null)
+        if (parameter is OpenApiParameter concrete)
         {
-            parameter.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, parameter.Schema, exampleNode.ToString());
+            var exampleNode = propertyNode.SelectFirstChild("example");
+            if (exampleNode != null)
+            {
+                concrete.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, parameter.Schema, exampleNode.ToString());
+            }
         }
     }
 
-    private void ApplyParamTags(OpenApiParameter parameter, ParameterFilterContext context)
+    private void ApplyParamTags(IOpenApiParameter parameter, ParameterFilterContext context)
     {
         if (context.ParameterInfo.Member is not MethodInfo methodInfo)
         {
@@ -81,10 +71,13 @@ public class XmlCommentsParameterFilter : IParameterFilter
         {
             parameter.Description = XmlCommentsTextHelper.Humanize(paramNode.InnerXml, _options?.XmlCommentEndOfLine);
 
-            var example = paramNode.GetAttribute("example");
-            if (!string.IsNullOrEmpty(example))
+            if (parameter is OpenApiParameter concrete)
             {
-                parameter.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, parameter.Schema, example);
+                var example = paramNode.GetAttribute("example");
+                if (!string.IsNullOrEmpty(example))
+                {
+                    concrete.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, parameter.Schema, example);
+                }
             }
         }
     }

@@ -8,7 +8,7 @@
     <IsAotCompatible>true</IsAotCompatible>
     <IsPackable>true</IsPackable>
     <NoWarn>$(NoWarn);1591</NoWarn>
-    <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore</PackageTags>
+    <PackageTags>swagger;openapi;documentation;discovery;help;webapi;aspnet;aspnetcore;swaggerui;swagger-ui</PackageTags>
     <SignAssembly>true</SignAssembly>
     <TargetFrameworks>$(DefaultTargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
@@ -71,7 +71,7 @@
 
   <!-- Embed compressed files using SDK task -->
   <PropertyGroup>
-    <_SdkTasksTFM Condition=" '$(MSBuildRuntimeType)' == 'Core'">net9.0</_SdkTasksTFM>
+    <_SdkTasksTFM Condition=" '$(MSBuildRuntimeType)' == 'Core'">net10.0</_SdkTasksTFM>
     <_SdkTasksTFM Condition=" '$(MSBuildRuntimeType)' != 'Core'">net472</_SdkTasksTFM>
   </PropertyGroup>
 

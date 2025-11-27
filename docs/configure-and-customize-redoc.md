@@ -4,30 +4,45 @@
 
 By default, the Redoc UI will be exposed at `/api-docs`. If necessary, you can alter this when enabling the Redoc middleware:
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: Redoc-RoutePrefix -->
+<a id='snippet-Redoc-RoutePrefix'></a>
+```cs
 app.UseReDoc(options =>
 {
-    options.RoutePrefix = "docs"
+    options.RoutePrefix = "docs";
 });
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L142-L147' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-RoutePrefix' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 ## Change Document Title
 
 By default, the Redoc UI will have a generic document title. You can alter this when enabling the Redoc middleware:
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: Redoc-DocumentTitle -->
+<a id='snippet-Redoc-DocumentTitle'></a>
+```cs
 app.UseReDoc(options =>
 {
     options.DocumentTitle = "My API Docs";
 });
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L149-L154' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-DocumentTitle' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 ## Apply Redoc Parameters
 
 Redoc ships with its own set of configuration parameters, all described [in the Redoc documentation][redoc-options].
-In Swashbuckle, most of these are surfaced through the Redoc middleware options:
+In Swashbuckle.AspNetCore, most of these are surfaced through the Redoc middleware options:
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: Redoc-CustomOptions -->
+<a id='snippet-Redoc-CustomOptions'></a>
+```cs
 app.UseReDoc(options =>
 {
     options.SpecUrl("/v1/swagger.json");
@@ -46,6 +61,9 @@ app.UseReDoc(options =>
     options.SortPropsAlphabetically();
 });
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L156-L174' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-CustomOptions' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 > [!NOTE]
 > Using `options.SpecUrl("/v1/swagger.json")` multiple times within the same `UseReDoc(...)` will not add multiple URLs.
@@ -55,17 +73,26 @@ app.UseReDoc(options =>
 To tweak the look and feel, you can inject additional CSS stylesheets by adding them to your `wwwroot` folder and specifying
 the relative paths in the middleware options:
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: Redoc-CustomCSS -->
+<a id='snippet-Redoc-CustomCSS'></a>
+```cs
 app.UseReDoc(options =>
 {
     options.InjectStylesheet("/redoc/custom.css");
 });
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L176-L181' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-CustomCSS' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 It is also possible to modify the theme by using the `AdditionalItems` property. More information can be found
 [in the Redoc documentation][redoc-options].
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: Redoc-ModifyTheme -->
+<a id='snippet-Redoc-ModifyTheme'></a>
+```cs
 app.UseReDoc(options =>
 {
     options.ConfigObject.AdditionalItems = new Dictionary<string, object>
@@ -74,17 +101,34 @@ app.UseReDoc(options =>
     };
 });
 ```
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L183-L191' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-ModifyTheme' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 ## Customize index.html
 
 To customize the UI beyond the basic options listed above, you can provide your own version of the Redoc `index.html` page:
 
-```csharp
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: Redoc-CustomIndexHtml -->
+<a id='snippet-Redoc-CustomIndexHtml'></a>
+```cs
 app.UseReDoc(options =>
 {
-    options.IndexStream = () => GetType().Assembly
+    options.IndexStream = () => typeof(Program).Assembly
         .GetManifestResourceStream("CustomIndex.ReDoc.index.html"); // Requires file to be added as an embedded resource
 });
+```
+<sup><a href='/test/WebSites/DocumentationSnippets/WebApplicationExtensions.cs#L193-L199' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-CustomIndexHtml' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
+
+```xml
+<Project>
+  <ItemGroup>
+    <EmbeddedResource Include="CustomIndex.ReDoc.index.html" />
+  </ItemGroup>
+</Project>
 ```
 
 > [!TIP]

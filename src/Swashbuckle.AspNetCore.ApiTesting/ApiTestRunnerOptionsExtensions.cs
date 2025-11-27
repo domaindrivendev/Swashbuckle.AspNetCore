@@ -1,5 +1,4 @@
-﻿using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Readers;
+﻿using Microsoft.OpenApi;
 
 namespace Swashbuckle.AspNetCore.ApiTesting;
 
@@ -8,9 +7,13 @@ public static class ApiTestRunnerOptionsExtensions
     public static void AddOpenApiFile(this ApiTestRunnerOptions options, string documentName, string filePath)
     {
         using var fileStream = File.OpenRead(filePath);
+        using var memoryStream = new MemoryStream();
 
-        var openApiDocument = new OpenApiStreamReader().Read(fileStream, out var diagnostic);
-        options.OpenApiDocs.Add(documentName, openApiDocument);
+        fileStream.CopyTo(memoryStream);
+        memoryStream.Seek(0, SeekOrigin.Begin);
+
+        var result = OpenApiDocument.Load(memoryStream);
+        options.OpenApiDocs.Add(documentName, result.Document);
     }
 
     public static OpenApiDocument GetOpenApiDocument(this ApiTestRunnerOptions options, string documentName)

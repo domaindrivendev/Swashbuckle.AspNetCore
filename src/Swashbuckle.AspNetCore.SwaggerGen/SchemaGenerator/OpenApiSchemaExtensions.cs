@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Routing.Constraints;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using AnnotationsDataType = System.ComponentModel.DataAnnotations.DataType;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
@@ -30,7 +30,15 @@ public static class OpenApiSchemaExtensions
         [AnnotationsDataType.Upload] = "binary",
     };
 
-    public static void ApplyValidationAttributes(this OpenApiSchema schema, IEnumerable<object> customAttributes)
+    public static void ApplyValidationAttributes(this IOpenApiSchema schema, IEnumerable<object> customAttributes)
+    {
+        if (schema is OpenApiSchema concrete)
+        {
+            ApplyValidationAttributes(concrete, customAttributes);
+        }
+    }
+
+    private static void ApplyValidationAttributes(OpenApiSchema schema, IEnumerable<object> customAttributes)
     {
         foreach (var attribute in customAttributes)
         {
@@ -50,7 +58,7 @@ public static class OpenApiSchemaExtensions
             {
                 ApplyLengthAttribute(schema, lengthAttribute);
             }
-            else if (attribute is Base64StringAttribute base64Attribute)
+            else if (attribute is Base64StringAttribute)
             {
                 ApplyBase64Attribute(schema);
             }
@@ -77,7 +85,15 @@ public static class OpenApiSchemaExtensions
         }
     }
 
-    public static void ApplyRouteConstraints(this OpenApiSchema schema, ApiParameterRouteInfo routeInfo)
+    public static void ApplyRouteConstraints(this IOpenApiSchema schema, ApiParameterRouteInfo routeInfo)
+    {
+        if (schema is OpenApiSchema concrete)
+        {
+            ApplyRouteConstraints(concrete, routeInfo);
+        }
+    }
+
+    private static void ApplyRouteConstraints(OpenApiSchema schema, ApiParameterRouteInfo routeInfo)
     {
         foreach (var constraint in routeInfo.Constraints)
         {
@@ -128,19 +144,23 @@ public static class OpenApiSchemaExtensions
         }
     }
 
-    public static string ResolveType(this OpenApiSchema schema, SchemaRepository schemaRepository)
+    internal static JsonSchemaType? ResolveType(this IOpenApiSchema schema, SchemaRepository schemaRepository)
     {
-        if (schema.Reference != null && schemaRepository.Schemas.TryGetValue(schema.Reference.Id, out OpenApiSchema definitionSchema))
+        if (schema is OpenApiSchemaReference reference &&
+            schemaRepository.Schemas.TryGetValue(reference.Reference.Id, out var definitionSchema))
         {
             return definitionSchema.ResolveType(schemaRepository);
         }
 
-        foreach (var subSchema in schema.AllOf)
+        if (schema.AllOf is { Count: > 0 } allOf)
         {
-            var type = subSchema.ResolveType(schemaRepository);
-            if (type != null)
+            foreach (var subSchema in allOf)
             {
-                return type;
+                var type = subSchema.ResolveType(schemaRepository);
+                if (type != null)
+                {
+                    return type;
+                }
             }
         }
 
@@ -157,7 +177,7 @@ public static class OpenApiSchemaExtensions
 
     private static void ApplyMinLengthAttribute(OpenApiSchema schema, MinLengthAttribute minLengthAttribute)
     {
-        if (schema.Type == JsonSchemaTypes.Array)
+        if (schema.Type is { } type && type.HasFlag(JsonSchemaTypes.Array))
         {
             schema.MinItems = minLengthAttribute.Length;
         }
@@ -169,7 +189,7 @@ public static class OpenApiSchemaExtensions
 
     private static void ApplyMinLengthRouteConstraint(OpenApiSchema schema, MinLengthRouteConstraint minLengthRouteConstraint)
     {
-        if (schema.Type == JsonSchemaTypes.Array)
+        if (schema.Type is { } type && type.HasFlag(JsonSchemaTypes.Array))
         {
             schema.MinItems = minLengthRouteConstraint.MinLength;
         }
@@ -181,7 +201,7 @@ public static class OpenApiSchemaExtensions
 
     private static void ApplyMaxLengthAttribute(OpenApiSchema schema, MaxLengthAttribute maxLengthAttribute)
     {
-        if (schema.Type == JsonSchemaTypes.Array)
+        if (schema.Type is { } type && type.HasFlag(JsonSchemaTypes.Array))
         {
             schema.MaxItems = maxLengthAttribute.Length;
         }
@@ -193,7 +213,7 @@ public static class OpenApiSchemaExtensions
 
     private static void ApplyMaxLengthRouteConstraint(OpenApiSchema schema, MaxLengthRouteConstraint maxLengthRouteConstraint)
     {
-        if (schema.Type == JsonSchemaTypes.Array)
+        if (schema.Type is { } type && type.HasFlag(JsonSchemaTypes.Array))
         {
             schema.MaxItems = maxLengthRouteConstraint.MaxLength;
         }
@@ -205,7 +225,7 @@ public static class OpenApiSchemaExtensions
 
     private static void ApplyLengthAttribute(OpenApiSchema schema, LengthAttribute lengthAttribute)
     {
-        if (schema.Type == JsonSchemaTypes.Array)
+        if (schema.Type is { } type && type.HasFlag(JsonSchemaTypes.Array))
         {
             schema.MinItems = lengthAttribute.MinimumLength;
             schema.MaxItems = lengthAttribute.MaximumLength;
@@ -224,11 +244,16 @@ public static class OpenApiSchemaExtensions
 
     private static void ApplyRangeAttribute(OpenApiSchema schema, RangeAttribute rangeAttribute)
     {
-        if (rangeAttribute.Maximum is int maximumInteger)
+        object maximumValue = null;
+        object minimumValue = null;
+
+        if (rangeAttribute.Maximum is double || rangeAttribute.Minimum is int)
         {
-            // The range was set with the RangeAttribute(int, int) constructor
-            schema.Maximum = maximumInteger;
-            schema.Minimum = (int)rangeAttribute.Minimum;
+            // The range was set with the RangeAttribute(double, double) or RangeAttribute(int, int)
+            // constructor so we can safely convert the values to strings using the invariant culture
+            // as we have primitive values to operate on.
+            maximumValue = rangeAttribute.Maximum;
+            minimumValue = rangeAttribute.Minimum;
         }
         else
         {
@@ -245,37 +270,48 @@ public static class OpenApiSchemaExtensions
 
             if (decimal.TryParse(maxString, NumberStyles.Any, targetCulture, out var value))
             {
-                schema.Maximum = value;
+                maximumValue = value;
             }
 
             if (decimal.TryParse(minString, NumberStyles.Any, targetCulture, out value))
             {
-                schema.Minimum = value;
+                minimumValue = value;
             }
         }
 
-        if (rangeAttribute.MinimumIsExclusive)
+        // Ensure that the conversion to string is done using the invariant culture so valid JSON is generated
+        if (maximumValue is not null)
         {
-            schema.ExclusiveMinimum = true;
+            schema.Maximum = Convert.ToString(maximumValue, CultureInfo.InvariantCulture);
+        }
+
+        if (minimumValue is not null)
+        {
+            schema.Minimum = Convert.ToString(minimumValue, CultureInfo.InvariantCulture);
         }
 
         if (rangeAttribute.MaximumIsExclusive)
         {
-            schema.ExclusiveMaximum = true;
+            schema.ExclusiveMaximum = schema.Maximum;
+        }
+
+        if (rangeAttribute.MinimumIsExclusive)
+        {
+            schema.ExclusiveMinimum = schema.Minimum;
         }
     }
 
     private static void ApplyRangeRouteConstraint(OpenApiSchema schema, RangeRouteConstraint rangeRouteConstraint)
     {
-        schema.Maximum = rangeRouteConstraint.Max;
-        schema.Minimum = rangeRouteConstraint.Min;
+        schema.Maximum = rangeRouteConstraint.Max.ToString(CultureInfo.InvariantCulture);
+        schema.Minimum = rangeRouteConstraint.Min.ToString(CultureInfo.InvariantCulture);
     }
 
     private static void ApplyMinRouteConstraint(OpenApiSchema schema, MinRouteConstraint minRouteConstraint)
-        => schema.Minimum = minRouteConstraint.Min;
+        => schema.Minimum = minRouteConstraint.Min.ToString(CultureInfo.InvariantCulture);
 
     private static void ApplyMaxRouteConstraint(OpenApiSchema schema, MaxRouteConstraint maxRouteConstraint)
-        => schema.Maximum = maxRouteConstraint.Max;
+        => schema.Maximum = maxRouteConstraint.Max.ToString(CultureInfo.InvariantCulture);
 
     private static void ApplyRegularExpressionAttribute(OpenApiSchema schema, RegularExpressionAttribute regularExpressionAttribute)
     {

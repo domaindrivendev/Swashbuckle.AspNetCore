@@ -1,4 +1,0 @@
-﻿static Swashbuckle.AspNetCore.SwaggerGen.OpenApiAnyFactory.CreateFromJson(string json) -> Microsoft.OpenApi.Any.IOpenApiAny
-static Swashbuckle.AspNetCore.SwaggerGen.OpenApiAnyFactory.CreateFromJson(string json, System.Text.Json.JsonSerializerOptions options) -> Microsoft.OpenApi.Any.IOpenApiAny
-static Swashbuckle.AspNetCore.SwaggerGen.OpenApiSchemaExtensions.ResolveType(this Microsoft.OpenApi.Models.OpenApiSchema schema, Swashbuckle.AspNetCore.SwaggerGen.SchemaRepository schemaRepository) -> string
-Swashbuckle.AspNetCore.SwaggerGen.OpenApiAnyFactory

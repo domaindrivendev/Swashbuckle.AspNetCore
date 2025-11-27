@@ -1,26 +1,13 @@
 ﻿using System.Reflection;
 using System.Xml.XPath;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
-public class XmlCommentsOperationFilter : IOperationFilter
+public class XmlCommentsOperationFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers, SwaggerGeneratorOptions options) : IOperationFilter
 {
-    private readonly IReadOnlyDictionary<string, XPathNavigator> _xmlDocMembers;
-    private readonly SwaggerGeneratorOptions _options;
-
-    public XmlCommentsOperationFilter(XPathDocument xmlDoc)
-        : this(XmlCommentsDocumentHelper.CreateMemberDictionary(xmlDoc), null)
-    {
-    }
-
-    [ActivatorUtilitiesConstructor]
-    internal XmlCommentsOperationFilter(IReadOnlyDictionary<string, XPathNavigator> xmlDocMembers, SwaggerGeneratorOptions options)
-    {
-        _xmlDocMembers = xmlDocMembers;
-        _options = options;
-    }
+    private readonly IReadOnlyDictionary<string, XPathNavigator> _xmlDocMembers = xmlDocMembers;
+    private readonly SwaggerGeneratorOptions _options = options;
 
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {

@@ -10,8 +10,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Metadata;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.OpenApi.Models;
-using Microsoft.OpenApi.Writers;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen.Test.Fixtures;
 using Swashbuckle.AspNetCore.TestSupport;
 
@@ -142,7 +141,7 @@ public partial class VerifyTests
                         {
                             Content = new Dictionary<string, OpenApiMediaType>()
                             {
-                                ["application/someMediaType"] = new()
+                                ["application/someMediaType"] = new OpenApiMediaType()
                             }
                         }
                     }
@@ -193,7 +192,7 @@ public partial class VerifyTests
                     {
                         Content = new Dictionary<string, OpenApiMediaType>()
                         {
-                            ["application/someMediaType"] = new()
+                            ["application/someMediaType"] = new OpenApiMediaType()
                         }
                     }
                 }
@@ -1267,7 +1266,7 @@ public partial class VerifyTests
                         {
                             Content = new Dictionary<string, OpenApiMediaType>()
                             {
-                                ["application/someMediaType"] = new()
+                                ["application/someMediaType"] = new OpenApiMediaType()
                             }
                         }
                     }
@@ -1324,7 +1323,7 @@ public partial class VerifyTests
                         {
                             Content = new Dictionary<string, OpenApiMediaType>()
                             {
-                                ["application/someMediaType"] = new()
+                                ["application/someMediaType"] = new OpenApiMediaType()
                             }
                         }
                     }
@@ -1375,7 +1374,7 @@ public partial class VerifyTests
                         {
                             Content = new Dictionary<string, OpenApiMediaType>()
                             {
-                                ["application/someMediaType"] = new()
+                                ["application/someMediaType"] = new OpenApiMediaType()
                             }
                         }
                     }
@@ -1426,7 +1425,7 @@ public partial class VerifyTests
                         {
                             Content = new Dictionary<string, OpenApiMediaType>()
                             {
-                                ["application/someMediaType"] = new()
+                                ["application/someMediaType"] = new OpenApiMediaType()
                             }
                         }
                     }

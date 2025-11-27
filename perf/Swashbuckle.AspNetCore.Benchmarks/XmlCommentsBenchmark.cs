@@ -4,7 +4,7 @@ using System.Xml.XPath;
 using BenchmarkDotNet.Attributes;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.Controllers;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using Swashbuckle.AspNetCore.SwaggerGen.Test;
 using Swashbuckle.AspNetCore.TestSupport;
@@ -57,7 +57,9 @@ public class XmlCommentsBenchmark
         using var xmlStream = new MemoryStream();
         xmlDocument.Save(xmlStream);
         xmlStream.Seek(0, SeekOrigin.Begin);
+
         var xPathDocument = new XPathDocument(xmlStream);
+        var members = XmlCommentsDocumentHelper.CreateMemberDictionary(xPathDocument);
 
         // Document
         _document = new OpenApiDocument();
@@ -83,7 +85,7 @@ public class XmlCommentsBenchmark
             null,
             null);
 
-        _documentFilter = new XmlCommentsDocumentFilter(xPathDocument);
+        _documentFilter = new XmlCommentsDocumentFilter(members, new());
 
         // Operation
         _operation = new OpenApiOperation();
@@ -91,13 +93,13 @@ public class XmlCommentsBenchmark
             .GetMethod(nameof(FakeConstructedControllerWithXmlComments.ActionWithSummaryAndResponseTags));
 
         var apiDescription = ApiDescriptionFactory.Create(methodInfo: methodInfo, groupName: "v1", httpMethod: "POST", relativePath: "resource");
-        _operationFilterContext = new OperationFilterContext(apiDescription, null, null, methodInfo);
-        _operationFilter = new XmlCommentsOperationFilter(xPathDocument);
+        _operationFilterContext = new OperationFilterContext(apiDescription, null, null, null, methodInfo);
+        _operationFilter = new XmlCommentsOperationFilter(members, new());
 
         // Parameter
         _parameter = new()
         {
-            Schema = new()
+            Schema = new OpenApiSchema()
             {
                 Type = JsonSchemaTypes.String,
                 Description = "schema-level description",
@@ -106,17 +108,18 @@ public class XmlCommentsBenchmark
 
         var propertyInfo = typeof(XmlAnnotatedType).GetProperty(nameof(XmlAnnotatedType.StringProperty));
         var apiParameterDescription = new ApiParameterDescription();
-        _parameterFilterContext = new ParameterFilterContext(apiParameterDescription, null, null, propertyInfo: propertyInfo);
-        _parameterFilter = new XmlCommentsParameterFilter(xPathDocument);
+        var xmlDocMembers = XmlCommentsDocumentHelper.CreateMemberDictionary(xPathDocument);
+        _parameterFilterContext = new ParameterFilterContext(apiParameterDescription, null, null, null, propertyInfo: propertyInfo);
+        _parameterFilter = new XmlCommentsParameterFilter(xmlDocMembers, new());
 
         // Request Body
         _requestBody = new OpenApiRequestBody
         {
             Content = new Dictionary<string, OpenApiMediaType>()
             {
-                ["application/json"] = new()
+                ["application/json"] = new OpenApiMediaType()
                 {
-                    Schema = new()
+                    Schema = new OpenApiSchema()
                     {
                         Type = JsonSchemaTypes.String,
                     },
@@ -131,8 +134,8 @@ public class XmlCommentsBenchmark
         {
             ParameterDescriptor = new ControllerParameterDescriptor { ParameterInfo = parameterInfo }
         };
-        _requestBodyFilterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null);
-        _requestBodyFilter = new XmlCommentsRequestBodyFilter(xPathDocument);
+        _requestBodyFilterContext = new RequestBodyFilterContext(bodyParameterDescription, null, null, null, null);
+        _requestBodyFilter = new XmlCommentsRequestBodyFilter(xmlDocMembers, new());
     }
 
     [Benchmark]

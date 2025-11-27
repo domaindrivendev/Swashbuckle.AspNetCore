@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Xunit;
 
 namespace Swashbuckle.AspNetCore.ApiTesting.Xunit;
@@ -15,7 +15,7 @@ public class ApiTestFixture<TEntryPoint>(
     private readonly WebApplicationFactory<TEntryPoint> _webAppFactory = webAppFactory;
     private readonly string _documentName = documentName;
 
-    public void Describe(string pathTemplate, OperationType operationType, OpenApiOperation operationSpec)
+    public void Describe(string pathTemplate, HttpMethod operationType, OpenApiOperation operationSpec)
     {
         _apiTestRunner.ConfigureOperation(_documentName, pathTemplate, operationType, operationSpec);
     }

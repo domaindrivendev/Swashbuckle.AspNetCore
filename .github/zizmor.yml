@@ -1,5 +1,9 @@
 rules:
   anonymous-definition:
     disable: true
+  concurrency-limits:
+    disable: true
+  dependabot-cooldown:
+    disable: true
   undocumented-permissions:
     disable: true

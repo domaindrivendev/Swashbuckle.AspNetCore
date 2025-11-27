@@ -1,4 +1,4 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Microsoft.OpenApi;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -6,7 +6,7 @@ public class SchemaGeneratorOptions
 {
     public SchemaGeneratorOptions()
     {
-        CustomTypeMappings = new Dictionary<Type, Func<OpenApiSchema>>();
+        CustomTypeMappings = new Dictionary<Type, Func<IOpenApiSchema>>();
         SchemaIdSelector = DefaultSchemaIdSelector;
         SubTypesSelector = DefaultSubTypesSelector;
         DiscriminatorNameSelector = DefaultDiscriminatorNameSelector;
@@ -14,7 +14,7 @@ public class SchemaGeneratorOptions
         SchemaFilters = [];
     }
 
-    public IDictionary<Type, Func<OpenApiSchema>> CustomTypeMappings { get; set; }
+    public IDictionary<Type, Func<IOpenApiSchema>> CustomTypeMappings { get; set; }
 
     public bool UseInlineDefinitionsForEnums { get; set; }
 

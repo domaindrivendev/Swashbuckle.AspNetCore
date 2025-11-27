@@ -8,7 +8,7 @@
     <IsAotCompatible>true</IsAotCompatible>
     <IsPackable>true</IsPackable>
     <NoWarn>$(NoWarn);1591</NoWarn>
-    <PackageTags>swagger;documentation;discovery;help;webapi;aspnet;aspnetcore;redoc</PackageTags>
+    <PackageTags>swagger;openapi;documentation;discovery;help;webapi;aspnet;aspnetcore;redoc</PackageTags>
     <SignAssembly>true</SignAssembly>
     <TargetFrameworks>$(DefaultTargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
@@ -78,7 +78,7 @@
 
   <!-- Embed compressed file using SDK task-->
   <PropertyGroup>
-    <_SdkTasksTFM Condition=" '$(MSBuildRuntimeType)' == 'Core'">net9.0</_SdkTasksTFM>
+    <_SdkTasksTFM Condition=" '$(MSBuildRuntimeType)' == 'Core'">net10.0</_SdkTasksTFM>
     <_SdkTasksTFM Condition=" '$(MSBuildRuntimeType)' != 'Core'">net472</_SdkTasksTFM>
   </PropertyGroup>
   <UsingTask TaskName="Microsoft.NET.Sdk.BlazorWebAssembly.GzipCompress" AssemblyFile="$(MicrosoftNETBuildTasksDirectoryRoot)../../Microsoft.NET.Sdk.BlazorWebAssembly/tools/$(_SdkTasksTFM)/Microsoft.NET.Sdk.BlazorWebAssembly.Tasks.dll" />

@@ -1,8 +1,6 @@
 ﻿using System.Text;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Xunit;
-
-using JsonSchemaType = string;
 
 namespace Swashbuckle.AspNetCore.ApiTesting.Test;
 
@@ -16,7 +14,7 @@ public class RequestValidatorTests
         string pathTemplate,
         string expectedErrorMessage)
     {
-        var openApiDocument = DocumentWithOperation(pathTemplate, OperationType.Get, new OpenApiOperation());
+        var openApiDocument = DocumentWithOperation(pathTemplate, HttpMethod.Get, new OpenApiOperation());
         var request = new HttpRequestMessage
         {
             RequestUri = new Uri(uriString, UriKind.Relative),
@@ -24,21 +22,21 @@ public class RequestValidatorTests
 
         var exception = Record.Exception(() =>
         {
-            Subject().Validate(request, openApiDocument, pathTemplate, OperationType.Get);
+            Subject().Validate(request, openApiDocument, pathTemplate, HttpMethod.Get);
         });
 
         Assert.Equal(expectedErrorMessage, exception?.Message);
     }
 
     [Theory]
-    [InlineData("POST", OperationType.Get, "Request method 'POST' does not match specified operation type 'Get'")]
-    [InlineData("GET", OperationType.Get, null)]
+    [InlineData("POST", "GET", "Request method 'POST' does not match specified operation type 'GET'")]
+    [InlineData("GET", "GET", null)]
     public void Validate_ThrowsException_IfMethodDoesNotMatchOperationType(
         string methodString,
-        OperationType operationType,
+        string operationType,
         string expectedErrorMessage)
     {
-        var openApiDocument = DocumentWithOperation("/api/products", operationType, new OpenApiOperation());
+        var openApiDocument = DocumentWithOperation("/api/products", new(operationType), new OpenApiOperation());
         var request = new HttpRequestMessage
         {
             RequestUri = new Uri("/api/products", UriKind.Relative),
@@ -47,7 +45,7 @@ public class RequestValidatorTests
 
         var exception = Record.Exception(() =>
         {
-            Subject().Validate(request, openApiDocument, "/api/products", operationType);
+            Subject().Validate(request, openApiDocument, "/api/products", new(operationType));
         });
 
         Assert.Equal(expectedErrorMessage, exception?.Message);
@@ -60,7 +58,7 @@ public class RequestValidatorTests
         string uriString,
         string expectedErrorMessage)
     {
-        var openApiDocument = DocumentWithOperation("/api/products", OperationType.Get, new OpenApiOperation
+        var openApiDocument = DocumentWithOperation("/api/products", HttpMethod.Get, new OpenApiOperation
         {
             Parameters =
             [
@@ -81,7 +79,7 @@ public class RequestValidatorTests
 
         var exception = Record.Exception(() =>
         {
-            Subject().Validate(request, openApiDocument, "/api/products", OperationType.Get);
+            Subject().Validate(request, openApiDocument, "/api/products", HttpMethod.Get);
         });
 
         Assert.Equal(expectedErrorMessage, exception?.Message);
@@ -94,7 +92,7 @@ public class RequestValidatorTests
         string parameterValue,
         string expectedErrorMessage)
     {
-        var openApiDocument = DocumentWithOperation("/api/products", OperationType.Get, new OpenApiOperation
+        var openApiDocument = DocumentWithOperation("/api/products", HttpMethod.Get, new OpenApiOperation
         {
             Parameters =
             [
@@ -116,7 +114,7 @@ public class RequestValidatorTests
 
         var exception = Record.Exception(() =>
         {
-            Subject().Validate(request, openApiDocument, "/api/products", OperationType.Get);
+            Subject().Validate(request, openApiDocument, "/api/products", HttpMethod.Get);
         });
 
         Assert.Equal(expectedErrorMessage, exception?.Message);
@@ -138,7 +136,7 @@ public class RequestValidatorTests
         JsonSchemaType specifiedType,
         string expectedErrorMessage)
     {
-        var openApiDocument = DocumentWithOperation("/api/products/{param}", OperationType.Get, new OpenApiOperation
+        var openApiDocument = DocumentWithOperation("/api/products/{param}", HttpMethod.Get, new OpenApiOperation
         {
             Parameters =
             [
@@ -158,7 +156,7 @@ public class RequestValidatorTests
 
         var exception = Record.Exception(() =>
         {
-            Subject().Validate(request, openApiDocument, "/api/products/{param}", OperationType.Get);
+            Subject().Validate(request, openApiDocument, "/api/products/{param}", HttpMethod.Get);
         });
 
         Assert.Equal(expectedErrorMessage, exception?.Message);
@@ -173,7 +171,7 @@ public class RequestValidatorTests
         { "/api/products?param=1", JsonSchemaTypes.Number, null, null },
         { "/api/products?param=foo", JsonSchemaTypes.String, null, null },
         { "/api/products?param=1&param=2", JsonSchemaTypes.Array, JsonSchemaTypes.Number, null },
-        { "/api/products?param=1&param=foo", JsonSchemaTypes.Array, JsonSchemaTypes.Number, "Parameter 'param' is not of type 'array[number]'" },
+        { "/api/products?param=1&param=foo", JsonSchemaTypes.Array, JsonSchemaTypes.Number, "Parameter 'param' is not of type 'array[Number]'" },
     };
 
     [Theory]
@@ -184,7 +182,7 @@ public class RequestValidatorTests
         JsonSchemaType? specifiedItemsType,
         string? expectedErrorMessage)
     {
-        var openApiDocument = DocumentWithOperation("/api/products", OperationType.Get, new OpenApiOperation
+        var openApiDocument = DocumentWithOperation("/api/products", HttpMethod.Get, new OpenApiOperation
         {
             Parameters =
             [
@@ -208,7 +206,7 @@ public class RequestValidatorTests
 
         var exception = Record.Exception(() =>
         {
-            Subject().Validate(request, openApiDocument, "/api/products", OperationType.Get);
+            Subject().Validate(request, openApiDocument, "/api/products", HttpMethod.Get);
         });
 
         Assert.Equal(expectedErrorMessage, exception?.Message);
@@ -222,7 +220,7 @@ public class RequestValidatorTests
         { "1", JsonSchemaTypes.Number, null, null },
         { "foo", JsonSchemaTypes.String, null, null },
         { "1,2", JsonSchemaTypes.Array, JsonSchemaTypes.Number, null },
-        { "1,foo", JsonSchemaTypes.Array, JsonSchemaTypes.Number, "Parameter 'test-header' is not of type 'array[number]'" },
+        { "1,foo", JsonSchemaTypes.Array, JsonSchemaTypes.Number, "Parameter 'test-header' is not of type 'array[Number]'" },
     };
 
     [Theory]
@@ -233,7 +231,7 @@ public class RequestValidatorTests
         JsonSchemaType? specifiedItemsType,
         string? expectedErrorMessage)
     {
-        var openApiDocument = DocumentWithOperation("/api/products", OperationType.Get, new OpenApiOperation
+        var openApiDocument = DocumentWithOperation("/api/products", HttpMethod.Get, new OpenApiOperation
         {
             Parameters =
             [
@@ -258,7 +256,7 @@ public class RequestValidatorTests
 
         var exception = Record.Exception(() =>
         {
-            Subject().Validate(request, openApiDocument, "/api/products", OperationType.Get);
+            Subject().Validate(request, openApiDocument, "/api/products", HttpMethod.Get);
         });
 
         Assert.Equal(expectedErrorMessage, exception?.Message);
@@ -272,7 +270,7 @@ public class RequestValidatorTests
         string contentString,
         string expectedErrorMessage)
     {
-        var openApiDocument = DocumentWithOperation("/api/products", OperationType.Post, new OpenApiOperation
+        var openApiDocument = DocumentWithOperation("/api/products", HttpMethod.Post, new OpenApiOperation
         {
             RequestBody = new OpenApiRequestBody
             {
@@ -292,7 +290,7 @@ public class RequestValidatorTests
 
         var exception = Record.Exception(() =>
         {
-            Subject().Validate(request, openApiDocument, "/api/products", OperationType.Post);
+            Subject().Validate(request, openApiDocument, "/api/products", HttpMethod.Post);
         });
 
         Assert.Equal(expectedErrorMessage, exception?.Message);
@@ -305,7 +303,7 @@ public class RequestValidatorTests
         string mediaType,
         string expectedErrorMessage)
     {
-        var openApiDocument = DocumentWithOperation("/api/products", OperationType.Post, new OpenApiOperation
+        var openApiDocument = DocumentWithOperation("/api/products", HttpMethod.Post, new OpenApiOperation
         {
             RequestBody = new OpenApiRequestBody
             {
@@ -324,7 +322,7 @@ public class RequestValidatorTests
 
         var exception = Record.Exception(() =>
         {
-            Subject().Validate(request, openApiDocument, "/api/products", OperationType.Post);
+            Subject().Validate(request, openApiDocument, "/api/products", HttpMethod.Post);
         });
 
         Assert.Equal(expectedErrorMessage, exception?.Message);
@@ -337,7 +335,7 @@ public class RequestValidatorTests
         string jsonString,
         string expectedErrorMessage)
     {
-        var openApiDocument = DocumentWithOperation("/api/products", OperationType.Post, new OpenApiOperation
+        var openApiDocument = DocumentWithOperation("/api/products", HttpMethod.Post, new OpenApiOperation
         {
             RequestBody = new OpenApiRequestBody
             {
@@ -363,13 +361,13 @@ public class RequestValidatorTests
 
         var exception = Record.Exception(() =>
         {
-            Subject([new JsonContentValidator()]).Validate(request, openApiDocument, "/api/products", OperationType.Post);
+            Subject([new JsonContentValidator()]).Validate(request, openApiDocument, "/api/products", HttpMethod.Post);
         });
 
         Assert.Equal(expectedErrorMessage, exception?.Message);
     }
 
-    private static OpenApiDocument DocumentWithOperation(string pathTemplate, OperationType operationType, OpenApiOperation operationSpec)
+    private static OpenApiDocument DocumentWithOperation(string pathTemplate, HttpMethod operationType, OpenApiOperation operationSpec)
     {
         return new OpenApiDocument
         {
@@ -377,7 +375,7 @@ public class RequestValidatorTests
             {
                 [pathTemplate] = new OpenApiPathItem
                 {
-                    Operations = new Dictionary<OperationType, OpenApiOperation>
+                    Operations = new Dictionary<HttpMethod, OpenApiOperation>
                     {
                         [operationType] = operationSpec
                     }
@@ -385,7 +383,7 @@ public class RequestValidatorTests
             },
             Components = new OpenApiComponents
             {
-                Schemas = new Dictionary<string, OpenApiSchema>()
+                Schemas = new Dictionary<string, IOpenApiSchema>(),
             }
         };
     }
