@@ -67,7 +67,7 @@ public sealed class ResponseValidator(IEnumerable<IContentValidator> contentVali
     }
 
     private void ValidateContent(
-        IDictionary<string, OpenApiMediaType> contentSpecs,
+        IDictionary<string, IOpenApiMediaType> contentSpecs,
         OpenApiDocument openApiDocument,
         HttpContent content)
     {

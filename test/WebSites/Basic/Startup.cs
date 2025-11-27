@@ -67,6 +67,10 @@ public class Startup
             {
                 c.OpenApiVersion = OpenApiSpecVersion.OpenApi3_1;
             });
+            endpoints.MapSwagger("swagger/{documentName}/swaggerv3_2.json", c =>
+            {
+                c.OpenApiVersion = OpenApiSpecVersion.OpenApi3_2;
+            });
         });
 
         var supportedCultures = new[]

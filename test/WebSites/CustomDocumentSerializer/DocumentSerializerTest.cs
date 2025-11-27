@@ -14,6 +14,7 @@ public class DocumentSerializerTest : ISwaggerDocumentSerializer
             OpenApiSpecVersion.OpenApi2_0 => "DocumentSerializerTest2.0",
             OpenApiSpecVersion.OpenApi3_0 => "DocumentSerializerTest3.0",
             OpenApiSpecVersion.OpenApi3_1 => "DocumentSerializerTest3.1",
+            OpenApiSpecVersion.OpenApi3_2 => "DocumentSerializerTest3.2",
             _ => throw new NotImplementedException()
         };
 

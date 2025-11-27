@@ -139,7 +139,7 @@ public partial class VerifyTests
                     {
                         ["200"] = new OpenApiResponse()
                         {
-                            Content = new Dictionary<string, OpenApiMediaType>()
+                            Content = new Dictionary<string, IOpenApiMediaType>()
                             {
                                 ["application/someMediaType"] = new OpenApiMediaType()
                             }
@@ -190,7 +190,7 @@ public partial class VerifyTests
                     OperationId = "OperationIdSetInMetadata",
                     RequestBody = new OpenApiRequestBody()
                     {
-                        Content = new Dictionary<string, OpenApiMediaType>()
+                        Content = new Dictionary<string, IOpenApiMediaType>()
                         {
                             ["application/someMediaType"] = new OpenApiMediaType()
                         }
@@ -1264,7 +1264,7 @@ public partial class VerifyTests
                         OperationId = "OperationIdSetInMetadata",
                         RequestBody = new OpenApiRequestBody()
                         {
-                            Content = new Dictionary<string, OpenApiMediaType>()
+                            Content = new Dictionary<string, IOpenApiMediaType>()
                             {
                                 ["application/someMediaType"] = new OpenApiMediaType()
                             }
@@ -1321,7 +1321,7 @@ public partial class VerifyTests
                         OperationId = "OperationIdSetInMetadata",
                         RequestBody = new OpenApiRequestBody()
                         {
-                            Content = new Dictionary<string, OpenApiMediaType>()
+                            Content = new Dictionary<string, IOpenApiMediaType>()
                             {
                                 ["application/someMediaType"] = new OpenApiMediaType()
                             }
@@ -1372,7 +1372,7 @@ public partial class VerifyTests
                         OperationId = "OperationIdSetInMetadata",
                         RequestBody = new OpenApiRequestBody()
                         {
-                            Content = new Dictionary<string, OpenApiMediaType>()
+                            Content = new Dictionary<string, IOpenApiMediaType>()
                             {
                                 ["application/someMediaType"] = new OpenApiMediaType()
                             }
@@ -1423,7 +1423,7 @@ public partial class VerifyTests
                         OperationId = "OperationIdSetInMetadata",
                         RequestBody = new OpenApiRequestBody()
                         {
-                            Content = new Dictionary<string, OpenApiMediaType>()
+                            Content = new Dictionary<string, IOpenApiMediaType>()
                             {
                                 ["application/someMediaType"] = new OpenApiMediaType()
                             }
