@@ -52,7 +52,7 @@ internal sealed class ClientGenerator(ITestOutputHelper outputHelper)
         Assert.Equal(0, process.ExitCode);
     }
 
-    public async Task<TemporaryDirectory> GenerateFromUrlAsync(ClientGeneratorTool generator, string openApiDocumentUrl)
+    public async Task<TemporaryDirectory> GenerateFromStringAsync(ClientGeneratorTool generator, string openApiDocument)
     {
         TemporaryDirectory project;
 
@@ -60,12 +60,12 @@ internal sealed class ClientGenerator(ITestOutputHelper outputHelper)
         {
             case ClientGeneratorTool.Kiota:
                 project = await GenerateProjectAsync(["Microsoft.Kiota.Bundle"]);
-                await GenerateClientWithKiotaAsync(project.Path, openApiDocumentUrl, outputHelper);
+                await GenerateClientFromStringWithKiotaAsync(project.Path, openApiDocument, outputHelper);
                 break;
 
             case ClientGeneratorTool.NSwag:
                 project = await GenerateProjectAsync(["Newtonsoft.Json"]);
-                await GenerateClientWithNSwagAsync(project.Path, openApiDocumentUrl);
+                await GenerateClientFromStringWithNSwagAsync(project.Path, openApiDocument);
                 break;
 
             default:
@@ -75,7 +75,52 @@ internal sealed class ClientGenerator(ITestOutputHelper outputHelper)
         return project;
     }
 
-    private static async Task GenerateClientWithKiotaAsync(string outputPath, string url, ITestOutputHelper outputHelper)
+    public async Task<TemporaryDirectory> GenerateFromUrlAsync(ClientGeneratorTool generator, string openApiDocumentUrl)
+    {
+        TemporaryDirectory project;
+
+        switch (generator)
+        {
+            case ClientGeneratorTool.Kiota:
+                project = await GenerateProjectAsync(["Microsoft.Kiota.Bundle"]);
+                await GenerateClientFromUrlWithKiotaAsync(project.Path, openApiDocumentUrl, outputHelper);
+                break;
+
+            case ClientGeneratorTool.NSwag:
+                project = await GenerateProjectAsync(["Newtonsoft.Json"]);
+                await GenerateClientFromUrlWithNSwagAsync(project.Path, openApiDocumentUrl);
+                break;
+
+            default:
+                throw new ArgumentOutOfRangeException(nameof(generator), generator, $"The client generator tool '{generator}' is not supported.");
+        }
+
+        return project;
+    }
+
+    private static async Task GenerateClientFromStringWithKiotaAsync(string outputPath, string content, ITestOutputHelper outputHelper)
+    {
+        string tempFile = Path.GetTempFileName();
+        await File.WriteAllTextAsync(tempFile, content);
+
+        try
+        {
+            await GenerateClientFromUrlWithKiotaAsync(outputPath, tempFile, outputHelper);
+        }
+        finally
+        {
+            try
+            {
+                File.Delete(tempFile);
+            }
+            catch (Exception)
+            {
+                // Ignore
+            }
+        }
+    }
+
+    private static async Task GenerateClientFromUrlWithKiotaAsync(string outputPath, string url, ITestOutputHelper outputHelper)
     {
         // https://learn.microsoft.com/openapi/kiota/using#client-generation
         var startInfo = new ProcessStartInfo(
@@ -113,11 +158,21 @@ internal sealed class ClientGenerator(ITestOutputHelper outputHelper)
         Assert.Equal(0, process.ExitCode);
     }
 
-    private static async Task GenerateClientWithNSwagAsync(string outputPath, string url)
+    private static async Task GenerateClientFromStringWithNSwagAsync(string outputPath, string content)
+    {
+        var document = await NSwag.OpenApiDocument.FromJsonAsync(content);
+        await GenerateClientFromUrlWithNSwagAsync(outputPath, document);
+    }
+
+    private static async Task GenerateClientFromUrlWithNSwagAsync(string outputPath, string url)
+    {
+        var document = await NSwag.OpenApiDocument.FromUrlAsync(url);
+        await GenerateClientFromUrlWithNSwagAsync(outputPath, document);
+    }
+
+    private static async Task GenerateClientFromUrlWithNSwagAsync(string outputPath, NSwag.OpenApiDocument document)
     {
         // https://github.com/RicoSuter/NSwag/wiki/CSharpClientGenerator
-        var document = await NSwag.OpenApiDocument.FromUrlAsync(url);
-
         var settings = new CSharpClientGeneratorSettings
         {
             ClassName = "NSwagOpenApiClient",

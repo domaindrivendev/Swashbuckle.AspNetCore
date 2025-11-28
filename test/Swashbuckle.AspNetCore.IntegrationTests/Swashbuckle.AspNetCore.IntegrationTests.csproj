@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net10.0'))">
+    <AssemblyMetadata Include="ProjectRoot" Value="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))" />
     <AssemblyMetadata Include="SolutionRoot" Value="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..'))" />
     <ProjectReference Include="..\Swashbuckle.AspNetCore.TestSupport\Swashbuckle.AspNetCore.TestSupport.csproj" />
     <PackageReference Include="Microsoft.Build" />
