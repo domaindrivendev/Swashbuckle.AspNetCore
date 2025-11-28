@@ -8,6 +8,7 @@ using System.Text.Json.Nodes;
 using System.Text.Json.Serialization.Metadata;
 using System.Xml.Linq;
 using Microsoft.Build.Utilities.ProjectCreation;
+using Microsoft.OpenApi;
 using NSwag.CodeGeneration.CSharp;
 using Swashbuckle.AspNetCore.TestSupport.Utilities;
 
@@ -15,6 +16,13 @@ namespace Swashbuckle.AspNetCore.IntegrationTests;
 
 internal sealed class ClientGenerator(ITestOutputHelper outputHelper)
 {
+    public static bool IsSupported(ClientGeneratorTool generator, string format, OpenApiSpecVersion version) => generator switch
+    {
+        ClientGeneratorTool.Kiota => (format is "json" or "yaml") && (version is OpenApiSpecVersion.OpenApi2_0 or OpenApiSpecVersion.OpenApi3_0 or OpenApiSpecVersion.OpenApi3_1),
+        ClientGeneratorTool.NSwag => format is "json" && version is OpenApiSpecVersion.OpenApi2_0 or OpenApiSpecVersion.OpenApi3_0,
+        _ => false,
+    };
+
     public async Task CompileAsync(string location)
     {
         var startInfo = new ProcessStartInfo(
