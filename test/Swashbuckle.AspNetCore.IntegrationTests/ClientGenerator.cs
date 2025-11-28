@@ -18,8 +18,27 @@ internal sealed class ClientGenerator(ITestOutputHelper outputHelper)
 {
     public static bool IsSupported(ClientGeneratorTool generator, string format, OpenApiSpecVersion version) => generator switch
     {
-        ClientGeneratorTool.Kiota => (format is "json" or "yaml") && (version is OpenApiSpecVersion.OpenApi2_0 or OpenApiSpecVersion.OpenApi3_0 or OpenApiSpecVersion.OpenApi3_1),
-        ClientGeneratorTool.NSwag => format is "json" && version is OpenApiSpecVersion.OpenApi2_0 or OpenApiSpecVersion.OpenApi3_0,
+        ClientGeneratorTool.Kiota => format switch
+        {
+            "json" or "yaml" => version switch
+            {
+                OpenApiSpecVersion.OpenApi2_0 => true,
+                OpenApiSpecVersion.OpenApi3_0 => true,
+                OpenApiSpecVersion.OpenApi3_1 => true,
+                _ => false,
+            },
+            _ => false,
+        },
+        ClientGeneratorTool.NSwag => format switch
+        {
+            "json" => version switch
+            {
+                OpenApiSpecVersion.OpenApi2_0 => true,
+                OpenApiSpecVersion.OpenApi3_0 => true,
+                _ => false,
+            },
+            _ => false,
+        },
         _ => false,
     };
 
