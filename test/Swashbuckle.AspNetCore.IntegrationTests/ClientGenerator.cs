@@ -196,6 +196,7 @@ internal sealed class ClientGenerator(ITestOutputHelper outputHelper)
             .Property("GenerateDocumentationFile", "false")
             .Property("LangVersion", "latest")
             .Property("NoWarn", "$(NoWarn)")
+            .Property("Nullable", "enable")
             .Property("OutputType", "Library")
             .Property("TargetFramework", "net10.0")
             .Property("TreatWarningsAsErrors", "false");
