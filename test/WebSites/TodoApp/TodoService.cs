@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using TodoApp.Data;
+﻿using TodoApp.Data;
 using TodoApp.Models;
 
 namespace TodoApp;
@@ -65,7 +64,7 @@ public class TodoService(TodoRepository repository)
             Id = item.Id.ToString(),
             CompletedAt = item.CompletedAt,
             CreatedAt = item.CreatedAt,
-            LastUpdated = (item.CompletedAt ?? item.CreatedAt).ToString("u", CultureInfo.InvariantCulture),
+            LastUpdated = item.CompletedAt ?? item.CreatedAt,
             Text = item.Text,
         };
     }
