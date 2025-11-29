@@ -88,6 +88,11 @@ jobs:
       uses: actions/setup-dotnet@2016bd2012dba4e32de620c46fe006a3ac9f0602 # v5.0.1
       id: setup-dotnet
 
+    - name: Install .NET tools
+      shell: pwsh
+      run: |
+        dotnet tool restore
+
     - name: Build, Package and Test
       id: build
       shell: pwsh

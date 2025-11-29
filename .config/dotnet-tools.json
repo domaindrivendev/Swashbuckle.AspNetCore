@@ -22,6 +22,13 @@
         "meziantou.validate-nuget-package"
       ],
       "rollForward": false
+    },
+    "microsoft.openapi.kiota": {
+      "version": "1.29.0",
+      "commands": [
+        "kiota"
+      ],
+      "rollForward": false
     }
   }
 }
