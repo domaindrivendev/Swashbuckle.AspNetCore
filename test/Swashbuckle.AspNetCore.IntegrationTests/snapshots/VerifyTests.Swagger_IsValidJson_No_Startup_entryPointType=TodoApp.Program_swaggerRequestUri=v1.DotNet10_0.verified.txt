@@ -343,7 +343,8 @@
           },
           "lastUpdated": {
             "type": "string",
-            "description": "Gets or sets the date and time the Todo item was last updated."
+            "description": "Gets or sets the date and time the Todo item was last updated.",
+            "format": "date-time"
           }
         },
         "additionalProperties": false,

@@ -26,13 +26,7 @@ namespace TodoApp.Client.Models
         public string Id { get; set; }
 #endif
         /// <summary>Gets or sets the date and time the Todo item was last updated.</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? LastUpdated { get; set; }
-#nullable restore
-#else
-        public string LastUpdated { get; set; }
-#endif
+        public DateTimeOffset? LastUpdated { get; set; }
         /// <summary>Gets or sets the text of the Todo item.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -62,7 +56,7 @@ namespace TodoApp.Client.Models
                 { "completedAt", n => { CompletedAt = n.GetDateTimeOffsetValue(); } },
                 { "createdAt", n => { CreatedAt = n.GetDateTimeOffsetValue(); } },
                 { "id", n => { Id = n.GetStringValue(); } },
-                { "lastUpdated", n => { LastUpdated = n.GetStringValue(); } },
+                { "lastUpdated", n => { LastUpdated = n.GetDateTimeOffsetValue(); } },
                 { "text", n => { Text = n.GetStringValue(); } },
             };
         }
@@ -76,7 +70,7 @@ namespace TodoApp.Client.Models
             writer.WriteDateTimeOffsetValue("completedAt", CompletedAt);
             writer.WriteDateTimeOffsetValue("createdAt", CreatedAt);
             writer.WriteStringValue("id", Id);
-            writer.WriteStringValue("lastUpdated", LastUpdated);
+            writer.WriteDateTimeOffsetValue("lastUpdated", LastUpdated);
             writer.WriteStringValue("text", Text);
         }
     }
