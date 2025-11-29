@@ -288,6 +288,15 @@ public class CodeGenerationTests(ITestOutputHelper outputHelper)
         });
     }
 
+    [Fact]
+    public async Task VerifyKiotaTodoAppClient()
+    {
+        await VerifyDirectory(
+            Path.Combine(GetProjectRoot(), "TodoClient"),
+            pattern: "*.cs",
+            options: new() { RecurseSubdirectories = true }).UseDirectory("snapshots");
+    }
+
     private static string GetProjectRoot() =>
         typeof(CodeGenerationTests).Assembly
             .GetCustomAttributes<AssemblyMetadataAttribute>()
