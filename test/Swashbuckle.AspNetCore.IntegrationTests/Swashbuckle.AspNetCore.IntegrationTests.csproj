@@ -26,6 +26,10 @@
     <PackageReference Include="xunit.v3.mtp-off" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="snapshots\**\*.cs" />
+  </ItemGroup>
+
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net10.0'))">
     <AssemblyMetadata Include="ProjectRoot" Value="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))" />
     <AssemblyMetadata Include="SolutionRoot" Value="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..'))" />
