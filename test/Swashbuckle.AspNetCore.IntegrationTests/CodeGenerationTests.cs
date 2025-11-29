@@ -4,8 +4,11 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Reflection;
 using System.Text.Json;
+using DocumentationSnippets;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Kiota.Abstractions.Authentication;
+using Microsoft.Kiota.Http.HttpClientLibrary;
 using Microsoft.OpenApi;
 using TodoApp.Models;
 using Xunit;
@@ -87,230 +90,202 @@ public class CodeGenerationTests(ITestOutputHelper outputHelper)
     public async Task Can_Manage_Todo_Items_With_Api()
     {
         // Arrange
-        var cancellationToken = TestContext.Current.CancellationToken;
-        using var client = SwaggerIntegrationTests.GetHttpClientForTestApplication(typeof(TodoApp.Program));
+        await WithTodoAppClientAsync(async (client) =>
+        {
+            var cancellationToken = TestContext.Current.CancellationToken;
 
-        // Act - Get all the items
-        var items = await client.GetFromJsonAsync<TodoListViewModel>("/api/items", cancellationToken);
+            // Act - Get all the items
+            var items = await client.Api.Items.GetAsync(cancellationToken: cancellationToken);
 
-        // Assert - There should be no items
-        Assert.NotNull(items);
-        Assert.NotNull(items.Items);
-        Assert.Empty(items.Items);
+            // Assert - There should be no items
+            Assert.NotNull(items);
+            Assert.NotNull(items.Items);
+            Assert.Empty(items.Items);
 
-        var beforeCount = items.Items.Count;
+            var beforeCount = items.Items.Count;
 
-        // Arrange
-        var text = "Buy eggs";
-        var newItem = new CreateTodoItemModel { Text = text };
+            // Arrange
+            var text = "Buy eggs";
+            var newItem = new TodoApp.Client.Models.CreateTodoItemModel { Text = text };
 
-        // Act - Add a new item
-        using var createdResponse = await client.PostAsJsonAsync("/api/items", newItem, cancellationToken);
+            // Act - Add a new item
+            var createdItem = await client.Api.Items.PostAsync(newItem, cancellationToken: cancellationToken);
 
-        // Assert - An item was created
-        Assert.Equal(HttpStatusCode.Created, createdResponse.StatusCode);
-        Assert.NotNull(createdResponse.Headers.Location);
+            // Assert - An item was created
+            Assert.NotNull(createdItem);
+            Assert.NotEqual(default, createdItem.Id);
 
-        using var createdJson = await createdResponse.Content.ReadFromJsonAsync<JsonDocument>(cancellationToken);
+            // Arrange - Get the new item's URL and Id
+            var itemId = createdItem.Id;
 
-        // Arrange - Get the new item's URL and Id
-        var itemUri = createdResponse.Headers.Location;
-        var itemId = createdJson!.RootElement.GetProperty("id").GetString();
+            // Act - Get the item
+            var item = await client.Api.Items[new(itemId)].GetAsync(cancellationToken: cancellationToken);
 
-        // Act - Get the item
-        var item = await client.GetFromJsonAsync<TodoItemModel>(itemUri, cancellationToken);
+            // Assert - Verify the item was created correctly
+            Assert.NotNull(item);
+            Assert.Equal(itemId, item.Id);
+            Assert.Null(item.CompletedAt);
+            Assert.NotEqual(default, item.CreatedAt);
+            Assert.Equal(item.CreatedAt.Value, item.LastUpdated);
+            Assert.Equal(text, item.Text);
 
-        // Assert - Verify the item was created correctly
-        Assert.NotNull(item);
-        Assert.Equal(itemId, item.Id);
-        Assert.Null(item.CompletedAt);
-        Assert.NotEqual(default, item.CreatedAt);
-        Assert.Equal(item.CreatedAt, item.LastUpdated);
-        Assert.Equal(text, item.Text);
+            // Act - Mark the item as being completed
+            await client.Api.Items[new(itemId)].Complete.PostAsync(cancellationToken: cancellationToken);
 
-        // Act - Mark the item as being completed
-        using var completedResponse = await client.PostAsJsonAsync(itemUri + "/complete", new { }, cancellationToken);
+            item = await client.Api.Items[new(itemId)].GetAsync(cancellationToken: cancellationToken);
 
-        // Assert - The item was completed
-        Assert.Equal(HttpStatusCode.NoContent, completedResponse.StatusCode);
+            Assert.NotNull(item);
+            Assert.Equal(itemId, item.Id);
+            Assert.Equal(text, item.Text);
+            Assert.NotNull(item.CompletedAt);
+            Assert.Equal(item.CompletedAt.Value, item.LastUpdated);
+            Assert.True(item.CompletedAt.Value > item.CreatedAt);
 
-        item = await client.GetFromJsonAsync<TodoItemModel>(itemUri, cancellationToken);
+            // Act - Get all the items
+            items = await client.Api.Items.GetAsync(cancellationToken: cancellationToken);
 
-        Assert.NotNull(item);
-        Assert.Equal(itemId, item.Id);
-        Assert.Equal(text, item.Text);
-        Assert.NotNull(item.CompletedAt);
-        Assert.Equal(item.CompletedAt.Value, item.LastUpdated);
-        Assert.True(item.CompletedAt.Value > item.CreatedAt);
+            // Assert - The item was completed
+            Assert.NotNull(items);
+            Assert.NotNull(items.Items);
+            Assert.Equal(beforeCount + 1, items.Items.Count);
+            Assert.Contains(items.Items, (x) => x.Id == itemId);
 
-        // Act - Get all the items
-        items = await client.GetFromJsonAsync<TodoListViewModel>("/api/items", cancellationToken);
+            item = items.Items.Last();
 
-        // Assert - The item was completed
-        Assert.NotNull(items);
-        Assert.NotNull(items.Items);
-        Assert.Equal(beforeCount + 1, items.Items.Count);
-        Assert.Contains(items.Items, (x) => x.Id == itemId);
+            Assert.NotNull(item);
+            Assert.Equal(itemId, item.Id);
+            Assert.Equal(text, item.Text);
+            Assert.NotNull(item.CompletedAt);
+            Assert.Equal(item.CompletedAt.Value, item.LastUpdated);
+            Assert.True(item.CompletedAt.Value > item.CreatedAt);
 
-        item = items.Items.Last();
+            // Act - Delete the item
+            await client.Api.Items[new(itemId)].DeleteAsync(cancellationToken: cancellationToken);
 
-        Assert.NotNull(item);
-        Assert.Equal(itemId, item.Id);
-        Assert.Equal(text, item.Text);
-        Assert.NotNull(item.CompletedAt);
-        Assert.Equal(item.CompletedAt.Value, item.LastUpdated);
-        Assert.True(item.CompletedAt.Value > item.CreatedAt);
+            // Assert - The item no longer exists
+            items = await client.Api.Items.GetAsync(cancellationToken: cancellationToken);
 
-        // Act - Delete the item
-        using var deletedResponse = await client.DeleteAsync(itemUri, cancellationToken);
+            Assert.NotNull(items);
+            Assert.NotNull(items.Items);
+            Assert.Equal(beforeCount, items.Items.Count);
+            Assert.DoesNotContain(items.Items, (x) => x.Id == itemId);
 
-        // Assert - The item no longer exists
-        Assert.Equal(HttpStatusCode.NoContent, deletedResponse.StatusCode);
+            // Act
+            var problem = await Assert.ThrowsAsync<TodoApp.Client.Models.ProblemDetails>(
+                () => client.Api.Items[new(itemId)].GetAsync(cancellationToken: cancellationToken));
 
-        items = await client.GetFromJsonAsync<TodoListViewModel>("/api/items", cancellationToken);
-
-        Assert.NotNull(items);
-        Assert.NotNull(items.Items);
-        Assert.Equal(beforeCount, items.Items.Count);
-        Assert.DoesNotContain(items.Items, (x) => x.Id == itemId);
-
-        // Act
-        using var getResponse = await client.GetAsync(itemUri, cancellationToken);
-
-        // Assert
-        Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
-
-        var problem = await getResponse.Content.ReadFromJsonAsync<ProblemDetails>(cancellationToken);
-
-        Assert.NotNull(problem);
-        Assert.Equal(StatusCodes.Status404NotFound, problem.Status);
-        Assert.Equal("Not Found", problem.Title);
-        Assert.Equal("Item not found.", problem.Detail);
-        Assert.Equal("https://tools.ietf.org/html/rfc9110#section-15.5.5", problem.Type);
-        Assert.Null(problem.Instance);
+            // Assert
+            Assert.NotNull(problem);
+            Assert.Equal(StatusCodes.Status404NotFound, problem.Status);
+            Assert.Equal("Not Found", problem.Title);
+            Assert.Equal("Item not found.", problem.Detail);
+            Assert.Equal("https://tools.ietf.org/html/rfc9110#section-15.5.5", problem.Type);
+            Assert.Null(problem.Instance);
+        });
     }
 
     [Fact]
     public async Task Cannot_Create_Todo_Item_With_No_Text()
     {
         // Arrange
-        var cancellationToken = TestContext.Current.CancellationToken;
-        using var client = SwaggerIntegrationTests.GetHttpClientForTestApplication(typeof(TodoApp.Program));
-        var item = new CreateTodoItemModel { Text = string.Empty };
+        await WithTodoAppClientAsync(async (client) =>
+        {
+            var cancellationToken = TestContext.Current.CancellationToken;
+            var item = new TodoApp.Client.Models.CreateTodoItemModel { Text = string.Empty };
 
-        // Act
-        var response = await client.PostAsJsonAsync("/api/items", item, cancellationToken);
+            // Act
+            var problem = await Assert.ThrowsAsync<TodoApp.Client.Models.ProblemDetails>(
+                () => client.Api.Items.PostAsync(item, cancellationToken: cancellationToken));
 
-        // Assert
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-
-        var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>(cancellationToken);
-
-        Assert.NotNull(problem);
-        Assert.Equal(StatusCodes.Status400BadRequest, problem.Status);
-        Assert.Equal("Bad Request", problem.Title);
-        Assert.Equal("No item text specified.", problem.Detail);
-        Assert.Equal("https://tools.ietf.org/html/rfc9110#section-15.5.1", problem.Type);
-        Assert.Null(problem.Instance);
+            // Assert
+            Assert.NotNull(problem);
+            Assert.Equal(StatusCodes.Status400BadRequest, problem.Status);
+            Assert.Equal("Bad Request", problem.Title);
+            Assert.Equal("No item text specified.", problem.Detail);
+            Assert.Equal("https://tools.ietf.org/html/rfc9110#section-15.5.1", problem.Type);
+            Assert.Null(problem.Instance);
+        });
     }
 
     [Fact]
     public async Task Cannot_Complete_Todo_Item_Multiple_Times()
     {
         // Arrange
-        var cancellationToken = TestContext.Current.CancellationToken;
-        using var client = SwaggerIntegrationTests.GetHttpClientForTestApplication(typeof(TodoApp.Program));
-        var item = new CreateTodoItemModel { Text = "Something" };
+        await WithTodoAppClientAsync(async (client) =>
+        {
+            var cancellationToken = TestContext.Current.CancellationToken;
+            var item = new TodoApp.Client.Models.CreateTodoItemModel { Text = "Something" };
 
-        using var createdResponse = await client.PostAsJsonAsync("/api/items", item, cancellationToken);
-        Assert.Equal(HttpStatusCode.Created, createdResponse.StatusCode);
-        Assert.NotNull(createdResponse.Headers.Location);
+            var createdItem = await client.Api.Items.PostAsync(item, cancellationToken: cancellationToken);
 
-        var itemUri = createdResponse.Headers.Location;
+            await client.Api.Items[new(createdItem.Id)].Complete.PostAsync(cancellationToken: cancellationToken);
 
-        using var completedResponse = await client.PostAsJsonAsync(itemUri + "/complete", new { }, cancellationToken);
-        Assert.Equal(HttpStatusCode.NoContent, completedResponse.StatusCode);
+            // Act
+            var problem = await Assert.ThrowsAsync<TodoApp.Client.Models.ProblemDetails>(
+                () => client.Api.Items[new(createdItem.Id)].Complete.PostAsync(cancellationToken: cancellationToken));
 
-        // Act
-        using var response = await client.PostAsJsonAsync(itemUri + "/complete", new { }, cancellationToken);
-
-        // Assert
-        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-
-        var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>(cancellationToken);
-
-        Assert.NotNull(problem);
-        Assert.Equal(StatusCodes.Status400BadRequest, problem.Status);
-        Assert.Equal("Bad Request", problem.Title);
-        Assert.Equal("Item already completed.", problem.Detail);
-        Assert.Equal("https://tools.ietf.org/html/rfc9110#section-15.5.1", problem.Type);
-        Assert.Null(problem.Instance);
+            // Assert
+            Assert.NotNull(problem);
+            Assert.Equal(StatusCodes.Status400BadRequest, problem.Status);
+            Assert.Equal("Bad Request", problem.Title);
+            Assert.Equal("Item already completed.", problem.Detail);
+            Assert.Equal("https://tools.ietf.org/html/rfc9110#section-15.5.1", problem.Type);
+            Assert.Null(problem.Instance);
+        });
     }
 
     [Fact]
     public async Task Cannot_Complete_Deleted_Todo_Item()
     {
         // Arrange
-        var cancellationToken = TestContext.Current.CancellationToken;
-        using var client = SwaggerIntegrationTests.GetHttpClientForTestApplication(typeof(TodoApp.Program));
-        var item = new CreateTodoItemModel { Text = "Something" };
+        await WithTodoAppClientAsync(async (client) =>
+        {
+            var cancellationToken = TestContext.Current.CancellationToken;
+            var item = new TodoApp.Client.Models.CreateTodoItemModel { Text = "Something" };
 
-        using var createdResponse = await client.PostAsJsonAsync("/api/items", item, cancellationToken);
-        Assert.Equal(HttpStatusCode.Created, createdResponse.StatusCode);
-        Assert.NotNull(createdResponse.Headers.Location);
+            var createdItem = await client.Api.Items.PostAsync(item, cancellationToken: cancellationToken);
 
-        var itemUri = createdResponse.Headers.Location;
+            await client.Api.Items[new(createdItem.Id)].DeleteAsync(cancellationToken: cancellationToken);
 
-        using var deletedResponse = await client.DeleteAsync(itemUri, cancellationToken);
-        Assert.Equal(HttpStatusCode.NoContent, deletedResponse.StatusCode);
+            // Act
+            var problem = await Assert.ThrowsAsync<TodoApp.Client.Models.ProblemDetails>(
+                () => client.Api.Items[new(createdItem.Id)].Complete.PostAsync(cancellationToken: cancellationToken));
 
-        // Act
-        using var response = await client.PostAsJsonAsync(itemUri + "/complete", new { }, cancellationToken);
-
-        // Assert
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-
-        var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>(cancellationToken);
-
-        Assert.NotNull(problem);
-        Assert.Equal(StatusCodes.Status404NotFound, problem.Status);
-        Assert.Equal("Not Found", problem.Title);
-        Assert.Equal("Item not found.", problem.Detail);
-        Assert.Equal("https://tools.ietf.org/html/rfc9110#section-15.5.5", problem.Type);
-        Assert.Null(problem.Instance);
+            // Assert
+            Assert.NotNull(problem);
+            Assert.Equal(StatusCodes.Status404NotFound, problem.Status);
+            Assert.Equal("Not Found", problem.Title);
+            Assert.Equal("Item not found.", problem.Detail);
+            Assert.Equal("https://tools.ietf.org/html/rfc9110#section-15.5.5", problem.Type);
+            Assert.Null(problem.Instance);
+        });
     }
 
     [Fact]
     public async Task Cannot_Delete_Todo_Item_Multiple_Times()
     {
         // Arrange
-        var cancellationToken = TestContext.Current.CancellationToken;
-        using var client = SwaggerIntegrationTests.GetHttpClientForTestApplication(typeof(TodoApp.Program));
-        var item = new CreateTodoItemModel { Text = "Something" };
+        await WithTodoAppClientAsync(async (client) =>
+        {
+            var cancellationToken = TestContext.Current.CancellationToken;
+            var item = new TodoApp.Client.Models.CreateTodoItemModel { Text = "Something" };
 
-        using var createdResponse = await client.PostAsJsonAsync("/api/items", item, cancellationToken);
-        Assert.Equal(HttpStatusCode.Created, createdResponse.StatusCode);
-        Assert.NotNull(createdResponse.Headers.Location);
+            var createdItem = await client.Api.Items.PostAsync(item, cancellationToken: cancellationToken);
 
-        var itemUri = createdResponse.Headers.Location;
+            await client.Api.Items[new(createdItem.Id)].DeleteAsync(cancellationToken: cancellationToken);
 
-        using var deletedResponse = await client.DeleteAsync(itemUri, cancellationToken);
-        Assert.Equal(HttpStatusCode.NoContent, deletedResponse.StatusCode);
+            // Act
+            var problem = await Assert.ThrowsAsync<TodoApp.Client.Models.ProblemDetails>(
+                () => client.Api.Items[new(createdItem.Id)].DeleteAsync(cancellationToken: cancellationToken));
 
-        // Act
-        using var response = await client.DeleteAsync(itemUri, cancellationToken);
-
-        // Assert
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-
-        var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>(cancellationToken);
-
-        Assert.NotNull(problem);
-        Assert.Equal(StatusCodes.Status404NotFound, problem.Status);
-        Assert.Equal("Not Found", problem.Title);
-        Assert.Equal("Item not found.", problem.Detail);
-        Assert.Equal("https://tools.ietf.org/html/rfc9110#section-15.5.5", problem.Type);
-        Assert.Null(problem.Instance);
+            // Assert
+            Assert.NotNull(problem);
+            Assert.Equal(StatusCodes.Status404NotFound, problem.Status);
+            Assert.Equal("Not Found", problem.Title);
+            Assert.Equal("Item not found.", problem.Detail);
+            Assert.Equal("https://tools.ietf.org/html/rfc9110#section-15.5.5", problem.Type);
+            Assert.Null(problem.Instance);
+        });
     }
 
     private static string GetProjectRoot() =>
@@ -318,6 +293,18 @@ public class CodeGenerationTests(ITestOutputHelper outputHelper)
             .GetCustomAttributes<AssemblyMetadataAttribute>()
             .First((p) => p.Key is "ProjectRoot")
             .Value!;
+
+    private static async Task WithTodoAppClientAsync(Func<TodoApp.Client.TodoApiClient, Task> callback)
+    {
+        using var httpClient = SwaggerIntegrationTests.GetHttpClientForTestApplication(typeof(TodoApp.Program));
+
+        var provider = new AnonymousAuthenticationProvider();
+        using var request = new HttpClientRequestAdapter(provider, httpClient: httpClient);
+
+        var client = new TodoApp.Client.TodoApiClient(request);
+
+        await callback(client);
+    }
 }
 
 #endif
