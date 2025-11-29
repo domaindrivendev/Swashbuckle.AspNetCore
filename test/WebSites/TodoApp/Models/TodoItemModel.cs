@@ -28,5 +28,5 @@ public class TodoItemModel
     /// <summary>
     /// Gets or sets the date and time the Todo item was last updated.
     /// </summary>
-    public string LastUpdated { get; set; } = default!;
+    public DateTimeOffset LastUpdated { get; set; } = default!;
 }
