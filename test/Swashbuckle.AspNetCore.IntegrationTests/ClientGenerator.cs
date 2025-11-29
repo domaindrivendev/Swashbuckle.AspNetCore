@@ -73,22 +73,30 @@ internal sealed class ClientGenerator(ITestOutputHelper outputHelper)
 
     public async Task<TemporaryDirectory> GenerateFromStringAsync(ClientGeneratorTool generator, string openApiDocument)
     {
-        TemporaryDirectory project;
+        TemporaryDirectory project = null;
 
-        switch (generator)
+        try
         {
-            case ClientGeneratorTool.Kiota:
-                project = await GenerateProjectAsync(["Microsoft.Kiota.Bundle"]);
-                await GenerateClientFromStringWithKiotaAsync(project.Path, openApiDocument, outputHelper);
-                break;
+            switch (generator)
+            {
+                case ClientGeneratorTool.Kiota:
+                    project = await GenerateProjectAsync(["Microsoft.Kiota.Bundle"]);
+                    await GenerateClientFromStringWithKiotaAsync(project.Path, openApiDocument, outputHelper);
+                    break;
 
-            case ClientGeneratorTool.NSwag:
-                project = await GenerateProjectAsync(["Newtonsoft.Json"]);
-                await GenerateClientFromStringWithNSwagAsync(project.Path, openApiDocument);
-                break;
+                case ClientGeneratorTool.NSwag:
+                    project = await GenerateProjectAsync(["Newtonsoft.Json"]);
+                    await GenerateClientFromStringWithNSwagAsync(project.Path, openApiDocument);
+                    break;
 
-            default:
-                throw new ArgumentOutOfRangeException(nameof(generator), generator, $"The client generator tool '{generator}' is not supported.");
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(generator), generator, $"The client generator tool '{generator}' is not supported.");
+            }
+        }
+        catch (Exception)
+        {
+            project?.Dispose();
+            throw;
         }
 
         return project;
@@ -96,22 +104,30 @@ internal sealed class ClientGenerator(ITestOutputHelper outputHelper)
 
     public async Task<TemporaryDirectory> GenerateFromUrlAsync(ClientGeneratorTool generator, string openApiDocumentUrl)
     {
-        TemporaryDirectory project;
+        TemporaryDirectory project = null;
 
-        switch (generator)
+        try
         {
-            case ClientGeneratorTool.Kiota:
-                project = await GenerateProjectAsync(["Microsoft.Kiota.Bundle"]);
-                await GenerateClientFromUrlWithKiotaAsync(project.Path, openApiDocumentUrl, outputHelper);
-                break;
+            switch (generator)
+            {
+                case ClientGeneratorTool.Kiota:
+                    project = await GenerateProjectAsync(["Microsoft.Kiota.Bundle"]);
+                    await GenerateClientFromUrlWithKiotaAsync(project.Path, openApiDocumentUrl, outputHelper);
+                    break;
 
-            case ClientGeneratorTool.NSwag:
-                project = await GenerateProjectAsync(["Newtonsoft.Json"]);
-                await GenerateClientFromUrlWithNSwagAsync(project.Path, openApiDocumentUrl);
-                break;
+                case ClientGeneratorTool.NSwag:
+                    project = await GenerateProjectAsync(["Newtonsoft.Json"]);
+                    await GenerateClientFromUrlWithNSwagAsync(project.Path, openApiDocumentUrl);
+                    break;
 
-            default:
-                throw new ArgumentOutOfRangeException(nameof(generator), generator, $"The client generator tool '{generator}' is not supported.");
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(generator), generator, $"The client generator tool '{generator}' is not supported.");
+            }
+        }
+        catch (Exception)
+        {
+            project?.Dispose();
+            throw;
         }
 
         return project;
@@ -283,7 +299,7 @@ internal sealed class ClientGenerator(ITestOutputHelper outputHelper)
         var ns = project.Root.GetDefaultNamespace();
 
         var version = project
-            .Root?
+            .Root
             .Elements(ns + "ItemGroup")
             .Elements(ns + "PackageVersion")
             .Select((p) =>
