@@ -48,7 +48,7 @@ public static class TodoAppBuilder
 
         app.MapTodoApiRoutes();
 
-        app.UseSwagger();
+        app.UseSwagger((p) => p.OpenApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_0);
         app.UseSwaggerUI();
 
         return app;
