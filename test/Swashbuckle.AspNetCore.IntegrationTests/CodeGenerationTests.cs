@@ -1,7 +1,6 @@
 ﻿#if NET10_0_OR_GREATER
 
 using System.Reflection;
-using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Http.HttpClientLibrary;
@@ -20,24 +19,13 @@ public class CodeGenerationTests(ITestOutputHelper outputHelper)
     {
         var testCases = new TheoryData<ClientGeneratorTool, string>();
         
-        foreach (var path in Directory.EnumerateFiles(Path.Combine(GetProjectRoot(), "snapshots"), "*.txt", SearchOption.AllDirectories))
+        foreach (var testCase in SnapshotTestData.Snapshots())
         {
+            var path = testCase.Data.Item1;
+            var documentVersion = testCase.Data.Item2;
+
             // Deduplicate by ignoring snapshots for other TFMs
             if (!path.EndsWith(".DotNet10_0.verified.txt", StringComparison.Ordinal))
-            {
-                continue;
-            }
-
-            using var snapshot = File.OpenRead(path);
-            using var document = JsonDocument.Parse(snapshot);
-
-            if (!document.RootElement.TryGetProperty("openapi", out var property) &&
-                !document.RootElement.TryGetProperty("swagger", out property))
-            {
-                continue;
-            }
-
-            if (!Version.TryParse(property.GetString(), out var documentVersion))
             {
                 continue;
             }
@@ -70,11 +58,13 @@ public class CodeGenerationTests(ITestOutputHelper outputHelper)
 
     [Theory]
     [MemberData(nameof(SnapshotTestCases))]
-    public async Task OpenApiDocument_Generates_Valid_Client_Code_From_Snapshot(ClientGeneratorTool tool, string path)
+    public async Task OpenApiDocument_Generates_Valid_Client_Code_From_Snapshot(ClientGeneratorTool tool, string snapshot)
     {
         // Arrange
         var generator = new ClientGenerator(outputHelper);
-        var document = await File.ReadAllTextAsync(path, TestContext.Current.CancellationToken);
+        var snapshotPath = Path.Combine(SnapshotTestData.SnapshotsPath(), snapshot);
+
+        var document = await File.ReadAllTextAsync(snapshotPath, TestContext.Current.CancellationToken);
 
         using var project = await generator.GenerateFromStringAsync(tool, document);
 
