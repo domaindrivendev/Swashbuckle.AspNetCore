@@ -49,9 +49,12 @@ public class SchemaGenerator(
             ? GeneratePolymorphicSchema(schemaRepository, knownTypesDataContracts)
             : GenerateConcreteSchema(dataContract, schemaRepository);
 
+        bool usingAllOf = false;
+
         if (_generatorOptions.UseAllOfToExtendReferenceSchemas && schema is OpenApiSchemaReference reference)
         {
             schema = new OpenApiSchema() { AllOf = [reference] };
+            usingAllOf = true;
         }
 
         if (schema is OpenApiSchema concrete)
@@ -63,9 +66,12 @@ public class SchemaGenerator(
             {
                 var requiredAttribute = customAttributes.OfType<RequiredAttribute>().FirstOrDefault();
 
-                var nullable = IsNullable(requiredAttribute, dataProperty, memberInfo);
-
-                SetNullable(concrete, nullable);
+                // "nullable" cannot be used without "type"
+                if (!usingAllOf)
+                {
+                    var nullable = IsNullable(requiredAttribute, dataProperty, memberInfo);
+                    SetNullable(concrete, nullable);
+                }
 
                 concrete.ReadOnly = dataProperty.IsReadOnly;
                 concrete.WriteOnly = dataProperty.IsWriteOnly;
