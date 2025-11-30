@@ -37,7 +37,12 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateTodoItemModel"
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateTodoItemModel"
+                  }
+                ],
+                "description": "Represents the model for creating a new Todo item."
               }
             }
           },
@@ -221,7 +226,12 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateTodoItemPriorityModel"
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateTodoItemPriorityModel"
+                  }
+                ],
+                "description": "Represents the model for updating the priority of a Todo item."
               }
             }
           },
@@ -405,7 +415,13 @@
             "format": "date-time"
           },
           "priority": {
-            "$ref": "#/components/schemas/TodoPriority"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TodoPriority"
+              }
+            ],
+            "description": "Gets or sets the optional priority of the Todo item.",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -438,7 +454,12 @@
         "type": "object",
         "properties": {
           "priority": {
-            "$ref": "#/components/schemas/TodoPriority"
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TodoPriority"
+              }
+            ],
+            "description": "Gets or sets the new priority of the Todo item."
           }
         },
         "additionalProperties": false,
