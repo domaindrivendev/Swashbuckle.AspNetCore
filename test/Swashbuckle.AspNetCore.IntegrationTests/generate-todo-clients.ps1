@@ -1,7 +1,7 @@
 #! /usr/bin/env pwsh
 
 param(
-    [Parameter(Mandatory = $false)][string] $OpenApiUrl = "./snapshots/VerifyTests.Swagger_IsValidJson_No_Startup_entryPointType=TodoApp.Program_swaggerRequestUri=v1.DotNet10_0.verified.txt",
+    [Parameter(Mandatory = $false)][string] $OpenApiDocument = "./snapshots/VerifyTests.Swagger_IsValidJson_No_Startup_entryPointType=TodoApp.Program_swaggerRequestUri=v1.DotNet10_0.verified.txt",
     [Parameter(Mandatory = $false)][switch] $Regenerate
 )
 
@@ -10,8 +10,6 @@ $ProgressPreference = "SilentlyContinue"
 
 $env:KIOTA_TUTORIAL_ENABLED = "false"
 
-$OutputPath = "./KiotaTodoClient"
-
 dotnet kiota generate `
     --additional-data false `
     --class-name KiotaTodoApiClient `
@@ -19,10 +17,20 @@ dotnet kiota generate `
     --exclude-backward-compatible `
     --language csharp `
     --namespace-name TodoApp.KiotaClient `
-    --openapi $OpenApiUrl `
-    --output $OutputPath `
+    --openapi $OpenApiDocument `
+    --output "./KiotaTodoClient" `
     --structured-mime-types "application/json"
 
 if ($LASTEXITCODE -ne 0) {
-    throw "Kiota generation failed with exit code ${LASTEXITCODE}"
+    throw "Kiota client generation failed with exit code ${LASTEXITCODE}"
+}
+
+dotnet nswag openapi2csclient `
+    "/input:${OpenApiDocument}" `
+    /classname:NSwagTodoApiClient `
+    /namespace:TodoApp.NSwagClient `
+    /output:./NSwagTodoClient/NSwagTodoClient.cs
+
+if ($LASTEXITCODE -ne 0) {
+    throw "NSwag client generation failed with exit code ${LASTEXITCODE}"
 }

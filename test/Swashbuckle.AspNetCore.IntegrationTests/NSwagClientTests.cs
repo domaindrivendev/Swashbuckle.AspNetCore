@@ -1,14 +1,11 @@
 ﻿#if NET10_0_OR_GREATER
 
 using Microsoft.AspNetCore.Http;
-using Microsoft.Kiota.Abstractions.Authentication;
-using Microsoft.Kiota.Http.HttpClientLibrary;
-using TodoApp.KiotaClient;
-using TodoApp.KiotaClient.Models;
+using TodoApp.NSwagClient;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests;
 
-public class KiotaClientTests
+public class NSwagClientTests
 {
     [Fact]
     public async Task Can_Manage_Todo_Items_With_Api()
@@ -19,9 +16,9 @@ public class KiotaClientTests
             var cancellationToken = TestContext.Current.CancellationToken;
 
             // Act - Get all the items
-            var items = await client.Api.Items.GetAsync(cancellationToken: cancellationToken);
+            var items = await client.ListTodosAsync(cancellationToken);
 
-            // Assert - There should be no items
+            // Assert
             Assert.NotNull(items);
             Assert.NotNull(items.Items);
 
@@ -29,9 +26,9 @@ public class KiotaClientTests
             var text = "Buy eggs";
 
             // Act - Add a new item
-            var createdItem = await client.Api.Items.PostAsync(
+            var createdItem = await client.CreateTodoAsync(
                 new() { Text = text },
-                cancellationToken: cancellationToken);
+                cancellationToken);
 
             // Assert - An item was created
             Assert.NotNull(createdItem);
@@ -41,36 +38,37 @@ public class KiotaClientTests
             var itemId = createdItem.Id;
 
             // Act - Get the item
-            var item = await client.Api.Items[new(itemId)].GetAsync(cancellationToken: cancellationToken);
+            var item = await client.GetTodoAsync(new(itemId), cancellationToken);
 
             // Assert - Verify the item was created correctly
             Assert.NotNull(item);
             Assert.Equal(itemId, item.Id);
             Assert.Null(item.CompletedAt);
             Assert.NotEqual(default, item.CreatedAt);
-            Assert.Equal(item.CreatedAt.Value, item.LastUpdated);
-            Assert.Null(item.Priority);
+            Assert.Equal(item.CreatedAt, item.LastUpdated);
+            Assert.Equal(TodoPriority.Normal, item.Priority);
             Assert.Equal(text, item.Text);
 
             // Act - Update the item to be high priority
-            await client.Api.Items[new(itemId)].Priority.PatchAsync(
+            await client.UpdateTodoPriorityAsync(
+                new(itemId),
                 new() { Priority = TodoPriority.High },
-                cancellationToken: cancellationToken);
+                cancellationToken);
 
-            item = await client.Api.Items[new(itemId)].GetAsync(cancellationToken: cancellationToken);
+            item = await client.GetTodoAsync(new(itemId), cancellationToken);
 
             Assert.NotNull(item);
             Assert.Equal(itemId, item.Id);
             Assert.Null(item.CompletedAt);
             Assert.NotEqual(default, item.CreatedAt);
-            Assert.Equal(item.CreatedAt.Value, item.LastUpdated);
+            Assert.Equal(item.CreatedAt, item.LastUpdated);
             Assert.Equal(TodoPriority.High, item.Priority);
             Assert.Equal(text, item.Text);
 
             // Act - Mark the item as being completed
-            await client.Api.Items[new(itemId)].Complete.PostAsync(cancellationToken: cancellationToken);
+            await client.CompleteTodoAsync(new(itemId), cancellationToken);
 
-            item = await client.Api.Items[new(itemId)].GetAsync(cancellationToken: cancellationToken);
+            item = await client.GetTodoAsync(new(itemId), cancellationToken);
 
             Assert.NotNull(item);
             Assert.Equal(itemId, item.Id);
@@ -80,7 +78,7 @@ public class KiotaClientTests
             Assert.True(item.CompletedAt.Value > item.CreatedAt);
 
             // Act - Get all the items
-            items = await client.Api.Items.GetAsync(cancellationToken: cancellationToken);
+            items = await client.ListTodosAsync(cancellationToken);
 
             // Assert - The item was completed
             Assert.NotNull(items);
@@ -97,18 +95,20 @@ public class KiotaClientTests
             Assert.True(item.CompletedAt.Value > item.CreatedAt);
 
             // Act - Delete the item
-            await client.Api.Items[new(itemId)].DeleteAsync(cancellationToken: cancellationToken);
+            await client.DeleteTodoAsync(new(itemId), cancellationToken);
 
             // Assert - The item no longer exists
-            items = await client.Api.Items.GetAsync(cancellationToken: cancellationToken);
+            items = await client.ListTodosAsync(cancellationToken);
 
             Assert.NotNull(items);
             Assert.NotNull(items.Items);
             Assert.DoesNotContain(items.Items, (x) => x.Id == itemId);
 
             // Act
-            var problem = await Assert.ThrowsAsync<ProblemDetails>(
-                () => client.Api.Items[new(itemId)].GetAsync(cancellationToken: cancellationToken));
+            var error = await Assert.ThrowsAsync<ApiException<ProblemDetails>>(
+                () => client.GetTodoAsync(new(itemId), cancellationToken));
+
+            var problem = error.Result;
 
             // Assert
             Assert.NotNull(problem);
@@ -119,8 +119,10 @@ public class KiotaClientTests
             Assert.Null(problem.Instance);
 
             // Act
-            problem = await Assert.ThrowsAsync<ProblemDetails>(
-                () => client.Api.Items[new(itemId)].Complete.PostAsync(cancellationToken: cancellationToken));
+            error = await Assert.ThrowsAsync<ApiException<ProblemDetails>>(
+                () => client.CompleteTodoAsync(new(itemId), cancellationToken));
+
+            problem = error.Result;
 
             // Assert
             Assert.NotNull(problem);
@@ -131,8 +133,10 @@ public class KiotaClientTests
             Assert.Null(problem.Instance);
 
             // Act
-            problem = await Assert.ThrowsAsync<ProblemDetails>(
-                () => client.Api.Items[new(itemId)].Priority.PatchAsync(new() { Priority = TodoPriority.Low }, cancellationToken: cancellationToken));
+            error = await Assert.ThrowsAsync<ApiException<ProblemDetails>>(
+                () => client.UpdateTodoPriorityAsync(new(itemId), new() { Priority = TodoPriority.Low }, cancellationToken));
+
+            problem = error.Result;
 
             // Assert
             Assert.NotNull(problem);
@@ -153,8 +157,10 @@ public class KiotaClientTests
             var cancellationToken = TestContext.Current.CancellationToken;
 
             // Act
-            var problem = await Assert.ThrowsAsync<ProblemDetails>(
-                () => client.Api.Items.PostAsync(new() { Text = string.Empty }, cancellationToken: cancellationToken));
+            var error = await Assert.ThrowsAsync<ApiException<ProblemDetails>>(
+                () => client.CreateTodoAsync(new() { Text = string.Empty }, cancellationToken));
+
+            var problem = error.Result;
 
             // Assert
             Assert.NotNull(problem);
@@ -174,15 +180,17 @@ public class KiotaClientTests
         {
             var cancellationToken = TestContext.Current.CancellationToken;
 
-            var createdItem = await client.Api.Items.PostAsync(
+            var createdItem = await client.CreateTodoAsync(
                 new() { Text = "Something" },
-                cancellationToken: cancellationToken);
+                cancellationToken);
 
-            await client.Api.Items[new(createdItem.Id)].Complete.PostAsync(cancellationToken: cancellationToken);
+            await client.CompleteTodoAsync(new(createdItem.Id), cancellationToken);
 
             // Act
-            var problem = await Assert.ThrowsAsync<ProblemDetails>(
-                () => client.Api.Items[new(createdItem.Id)].Complete.PostAsync(cancellationToken: cancellationToken));
+            var error = await Assert.ThrowsAsync<ApiException<ProblemDetails>>(
+                () => client.CompleteTodoAsync(new(createdItem.Id), cancellationToken));
+
+            var problem = error.Result;
 
             // Assert
             Assert.NotNull(problem);
@@ -202,15 +210,17 @@ public class KiotaClientTests
         {
             var cancellationToken = TestContext.Current.CancellationToken;
 
-            var createdItem = await client.Api.Items.PostAsync(
+            var createdItem = await client.CreateTodoAsync(
                 new() { Text = "Something" },
-                cancellationToken: cancellationToken);
+                cancellationToken);
 
-            await client.Api.Items[new(createdItem.Id)].DeleteAsync(cancellationToken: cancellationToken);
+            await client.DeleteTodoAsync(new(createdItem.Id), cancellationToken);
 
             // Act
-            var problem = await Assert.ThrowsAsync<ProblemDetails>(
-                () => client.Api.Items[new(createdItem.Id)].Complete.PostAsync(cancellationToken: cancellationToken));
+            var error = await Assert.ThrowsAsync<ApiException<ProblemDetails>>(
+                () => client.CompleteTodoAsync(new(createdItem.Id), cancellationToken));
+
+            var problem = error.Result;
 
             // Assert
             Assert.NotNull(problem);
@@ -230,15 +240,17 @@ public class KiotaClientTests
         {
             var cancellationToken = TestContext.Current.CancellationToken;
 
-            var createdItem = await client.Api.Items.PostAsync(
+            var createdItem = await client.CreateTodoAsync(
                 new() { Text = "Something" },
-                cancellationToken: cancellationToken);
+                cancellationToken);
 
-            await client.Api.Items[new(createdItem.Id)].DeleteAsync(cancellationToken: cancellationToken);
+            await client.DeleteTodoAsync(new(createdItem.Id), cancellationToken);
 
             // Act
-            var problem = await Assert.ThrowsAsync<ProblemDetails>(
-                () => client.Api.Items[new(createdItem.Id)].DeleteAsync(cancellationToken: cancellationToken));
+            var error = await Assert.ThrowsAsync<ApiException<ProblemDetails>>(
+                () => client.DeleteTodoAsync(new(createdItem.Id), cancellationToken));
+
+            var problem = error.Result;
 
             // Assert
             Assert.NotNull(problem);
@@ -250,14 +262,11 @@ public class KiotaClientTests
         });
     }
 
-    private static async Task WithTodoAppClientAsync(Func<KiotaTodoApiClient, Task> callback)
+    private static async Task WithTodoAppClientAsync(Func<NSwagTodoApiClient, Task> callback)
     {
         using var httpClient = SwaggerIntegrationTests.GetHttpClientForTestApplication(typeof(TodoApp.Program));
 
-        var provider = new AnonymousAuthenticationProvider();
-        using var request = new HttpClientRequestAdapter(provider, httpClient: httpClient);
-
-        var client = new KiotaTodoApiClient(request);
+        var client = new NSwagTodoApiClient(httpClient.BaseAddress.ToString(), httpClient);
 
         await callback(client);
     }

@@ -91,6 +91,15 @@ public class CodeGenerationTests(ITestOutputHelper outputHelper)
             options: new() { RecurseSubdirectories = true }).UseDirectory("snapshots");
     }
 
+    [Fact]
+    public async Task VerifyNSwagTodoAppClient()
+    {
+        await VerifyDirectory(
+            Path.Combine(GetProjectRoot(), "NSwagTodoClient"),
+            pattern: "*.cs",
+            options: new() { RecurseSubdirectories = true }).UseDirectory("snapshots");
+    }
+
     private static string GetProjectRoot() =>
         typeof(CodeGenerationTests).Assembly
             .GetCustomAttributes<AssemblyMetadataAttribute>()
