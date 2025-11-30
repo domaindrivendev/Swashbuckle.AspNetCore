@@ -196,6 +196,64 @@
         }
       }
     },
+    "/api/items/{id}/priority": {
+      "patch": {
+        "tags": [
+          "TodoApp"
+        ],
+        "summary": "Updates the priority of a Todo item",
+        "description": "Updates the priority of the todo item with the specified ID to the specified priority.",
+        "operationId": "UpdateTodoPriority",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The Todo item's ID.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The Todo item's ID.",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTodoItemPriorityModel"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/items/find": {
       "get": {
         "tags": [
@@ -288,7 +346,7 @@
           }
         },
         "additionalProperties": false,
-        "description": "Represents the model for a created Todo item. This class cannot be inherited."
+        "description": "Represents the model for a created Todo item."
       },
       "ProblemDetails": {
         "type": "object",
@@ -343,6 +401,9 @@
             "type": "string",
             "description": "Gets or sets the date and time the Todo item was last updated.",
             "format": "date-time"
+          },
+          "priority": {
+            "$ref": "#/components/schemas/TodoPriority"
           }
         },
         "additionalProperties": false,
@@ -361,6 +422,25 @@
         },
         "additionalProperties": false,
         "description": "Represents a collection of Todo items."
+      },
+      "TodoPriority": {
+        "enum": [
+          "Normal",
+          "Low",
+          "High"
+        ],
+        "type": "string",
+        "description": "The priority levels for a Todo item."
+      },
+      "UpdateTodoItemPriorityModel": {
+        "type": "object",
+        "properties": {
+          "priority": {
+            "$ref": "#/components/schemas/TodoPriority"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents the model for updating the priority of a Todo item."
       }
     }
   },

@@ -14,9 +14,12 @@ namespace TodoApp;
 [JsonSerializable(typeof(TodoItemFilterModel))]
 [JsonSerializable(typeof(TodoItemModel))]
 [JsonSerializable(typeof(TodoListViewModel))]
+[JsonSerializable(typeof(TodoPriority))]
+[JsonSerializable(typeof(UpdateTodoItemPriorityModel))]
 [JsonSourceGenerationOptions(
     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
     NumberHandling = JsonNumberHandling.Strict,
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
+    UseStringEnumConverter = true,
     WriteIndented = true)]
 public sealed partial class TodoJsonSerializerContext : JsonSerializerContext;

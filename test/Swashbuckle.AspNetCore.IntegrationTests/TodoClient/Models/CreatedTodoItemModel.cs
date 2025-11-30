@@ -8,7 +8,7 @@ using System;
 namespace TodoApp.Client.Models
 {
     /// <summary>
-    /// Represents the model for a created Todo item. This class cannot be inherited.
+    /// Represents the model for a created Todo item.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class CreatedTodoItemModel : IParsable

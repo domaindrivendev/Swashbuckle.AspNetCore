@@ -99,6 +99,24 @@ public class TodoRepository(TimeProvider timeProvider, TodoContext context)
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<bool> SetPriorityAsync(Guid itemId, int priority, CancellationToken cancellationToken = default)
+    {
+        var item = await GetItemAsync(itemId, cancellationToken);
+
+        if (item is null)
+        {
+            return false;
+        }
+
+        item.Priority = priority;
+
+        context.Items.Update(item);
+
+        await context.SaveChangesAsync(cancellationToken);
+
+        return true;
+    }
+
     private async Task EnsureDatabaseAsync(CancellationToken cancellationToken)
         => await context.Database.EnsureCreatedAsync(cancellationToken);
 

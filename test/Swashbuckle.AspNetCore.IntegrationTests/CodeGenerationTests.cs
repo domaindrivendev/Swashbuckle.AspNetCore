@@ -1,17 +1,13 @@
 ﻿#if NET10_0_OR_GREATER
 
-using System.Net;
-using System.Net.Http.Json;
 using System.Reflection;
 using System.Text.Json;
-using DocumentationSnippets;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Http.HttpClientLibrary;
 using Microsoft.OpenApi;
-using TodoApp.Models;
-using Xunit;
+using TodoApp.Client;
+using TodoApp.Client.Models;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests;
 
@@ -105,10 +101,11 @@ public class CodeGenerationTests(ITestOutputHelper outputHelper)
 
             // Arrange
             var text = "Buy eggs";
-            var newItem = new TodoApp.Client.Models.CreateTodoItemModel { Text = text };
 
             // Act - Add a new item
-            var createdItem = await client.Api.Items.PostAsync(newItem, cancellationToken: cancellationToken);
+            var createdItem = await client.Api.Items.PostAsync(
+                new() { Text = text },
+                cancellationToken: cancellationToken);
 
             // Assert - An item was created
             Assert.NotNull(createdItem);
@@ -126,6 +123,22 @@ public class CodeGenerationTests(ITestOutputHelper outputHelper)
             Assert.Null(item.CompletedAt);
             Assert.NotEqual(default, item.CreatedAt);
             Assert.Equal(item.CreatedAt.Value, item.LastUpdated);
+            Assert.Null(item.Priority);
+            Assert.Equal(text, item.Text);
+
+            // Act - Update the item to be high priority
+            await client.Api.Items[new(itemId)].Priority.PatchAsync(
+                new() { Priority = TodoPriority.High },
+                cancellationToken: cancellationToken);
+
+            item = await client.Api.Items[new(itemId)].GetAsync(cancellationToken: cancellationToken);
+
+            Assert.NotNull(item);
+            Assert.Equal(itemId, item.Id);
+            Assert.Null(item.CompletedAt);
+            Assert.NotEqual(default, item.CreatedAt);
+            Assert.Equal(item.CreatedAt.Value, item.LastUpdated);
+            Assert.Equal(TodoPriority.High, item.Priority);
             Assert.Equal(text, item.Text);
 
             // Act - Mark the item as being completed
@@ -170,8 +183,32 @@ public class CodeGenerationTests(ITestOutputHelper outputHelper)
             Assert.DoesNotContain(items.Items, (x) => x.Id == itemId);
 
             // Act
-            var problem = await Assert.ThrowsAsync<TodoApp.Client.Models.ProblemDetails>(
+            var problem = await Assert.ThrowsAsync<ProblemDetails>(
                 () => client.Api.Items[new(itemId)].GetAsync(cancellationToken: cancellationToken));
+
+            // Assert
+            Assert.NotNull(problem);
+            Assert.Equal(StatusCodes.Status404NotFound, problem.Status);
+            Assert.Equal("Not Found", problem.Title);
+            Assert.Equal("Item not found.", problem.Detail);
+            Assert.Equal("https://tools.ietf.org/html/rfc9110#section-15.5.5", problem.Type);
+            Assert.Null(problem.Instance);
+
+            // Act
+            problem = await Assert.ThrowsAsync<ProblemDetails>(
+                () => client.Api.Items[new(itemId)].Complete.PostAsync(cancellationToken: cancellationToken));
+
+            // Assert
+            Assert.NotNull(problem);
+            Assert.Equal(StatusCodes.Status404NotFound, problem.Status);
+            Assert.Equal("Not Found", problem.Title);
+            Assert.Equal("Item not found.", problem.Detail);
+            Assert.Equal("https://tools.ietf.org/html/rfc9110#section-15.5.5", problem.Type);
+            Assert.Null(problem.Instance);
+
+            // Act
+            problem = await Assert.ThrowsAsync<ProblemDetails>(
+                () => client.Api.Items[new(itemId)].Priority.PatchAsync(new() { Priority = TodoPriority.Low }, cancellationToken: cancellationToken));
 
             // Assert
             Assert.NotNull(problem);
@@ -190,11 +227,10 @@ public class CodeGenerationTests(ITestOutputHelper outputHelper)
         await WithTodoAppClientAsync(async (client) =>
         {
             var cancellationToken = TestContext.Current.CancellationToken;
-            var item = new TodoApp.Client.Models.CreateTodoItemModel { Text = string.Empty };
 
             // Act
-            var problem = await Assert.ThrowsAsync<TodoApp.Client.Models.ProblemDetails>(
-                () => client.Api.Items.PostAsync(item, cancellationToken: cancellationToken));
+            var problem = await Assert.ThrowsAsync<ProblemDetails>(
+                () => client.Api.Items.PostAsync(new() { Text = string.Empty }, cancellationToken: cancellationToken));
 
             // Assert
             Assert.NotNull(problem);
@@ -213,14 +249,15 @@ public class CodeGenerationTests(ITestOutputHelper outputHelper)
         await WithTodoAppClientAsync(async (client) =>
         {
             var cancellationToken = TestContext.Current.CancellationToken;
-            var item = new TodoApp.Client.Models.CreateTodoItemModel { Text = "Something" };
 
-            var createdItem = await client.Api.Items.PostAsync(item, cancellationToken: cancellationToken);
+            var createdItem = await client.Api.Items.PostAsync(
+                new() { Text = "Something" },
+                cancellationToken: cancellationToken);
 
             await client.Api.Items[new(createdItem.Id)].Complete.PostAsync(cancellationToken: cancellationToken);
 
             // Act
-            var problem = await Assert.ThrowsAsync<TodoApp.Client.Models.ProblemDetails>(
+            var problem = await Assert.ThrowsAsync<ProblemDetails>(
                 () => client.Api.Items[new(createdItem.Id)].Complete.PostAsync(cancellationToken: cancellationToken));
 
             // Assert
@@ -240,14 +277,15 @@ public class CodeGenerationTests(ITestOutputHelper outputHelper)
         await WithTodoAppClientAsync(async (client) =>
         {
             var cancellationToken = TestContext.Current.CancellationToken;
-            var item = new TodoApp.Client.Models.CreateTodoItemModel { Text = "Something" };
 
-            var createdItem = await client.Api.Items.PostAsync(item, cancellationToken: cancellationToken);
+            var createdItem = await client.Api.Items.PostAsync(
+                new() { Text = "Something" },
+                cancellationToken: cancellationToken);
 
             await client.Api.Items[new(createdItem.Id)].DeleteAsync(cancellationToken: cancellationToken);
 
             // Act
-            var problem = await Assert.ThrowsAsync<TodoApp.Client.Models.ProblemDetails>(
+            var problem = await Assert.ThrowsAsync<ProblemDetails>(
                 () => client.Api.Items[new(createdItem.Id)].Complete.PostAsync(cancellationToken: cancellationToken));
 
             // Assert
@@ -267,14 +305,15 @@ public class CodeGenerationTests(ITestOutputHelper outputHelper)
         await WithTodoAppClientAsync(async (client) =>
         {
             var cancellationToken = TestContext.Current.CancellationToken;
-            var item = new TodoApp.Client.Models.CreateTodoItemModel { Text = "Something" };
 
-            var createdItem = await client.Api.Items.PostAsync(item, cancellationToken: cancellationToken);
+            var createdItem = await client.Api.Items.PostAsync(
+                new() { Text = "Something" },
+                cancellationToken: cancellationToken);
 
             await client.Api.Items[new(createdItem.Id)].DeleteAsync(cancellationToken: cancellationToken);
 
             // Act
-            var problem = await Assert.ThrowsAsync<TodoApp.Client.Models.ProblemDetails>(
+            var problem = await Assert.ThrowsAsync<ProblemDetails>(
                 () => client.Api.Items[new(createdItem.Id)].DeleteAsync(cancellationToken: cancellationToken));
 
             // Assert
@@ -302,14 +341,14 @@ public class CodeGenerationTests(ITestOutputHelper outputHelper)
             .First((p) => p.Key is "ProjectRoot")
             .Value!;
 
-    private static async Task WithTodoAppClientAsync(Func<TodoApp.Client.TodoApiClient, Task> callback)
+    private static async Task WithTodoAppClientAsync(Func<TodoApiClient, Task> callback)
     {
         using var httpClient = SwaggerIntegrationTests.GetHttpClientForTestApplication(typeof(TodoApp.Program));
 
         var provider = new AnonymousAuthenticationProvider();
         using var request = new HttpClientRequestAdapter(provider, httpClient: httpClient);
 
-        var client = new TodoApp.Client.TodoApiClient(request);
+        var client = new TodoApiClient(request);
 
         await callback(client);
     }

@@ -1,7 +1,7 @@
 ﻿namespace TodoApp.Models;
 
 /// <summary>
-/// Represents the model for a created Todo item. This class cannot be inherited.
+/// Represents the model for a created Todo item.
 /// </summary>
 public class CreatedTodoItemModel
 {
