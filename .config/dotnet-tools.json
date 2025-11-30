@@ -29,6 +29,13 @@
         "kiota"
       ],
       "rollForward": false
+    },
+    "nswag.consolecore": {
+      "version": "14.6.3",
+      "commands": [
+        "nswag"
+      ],
+      "rollForward": false
     }
   }
 }
