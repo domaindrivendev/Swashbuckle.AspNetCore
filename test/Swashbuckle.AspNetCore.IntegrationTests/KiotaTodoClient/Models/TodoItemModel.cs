@@ -5,7 +5,7 @@ using Microsoft.Kiota.Abstractions.Serialization;
 using System.Collections.Generic;
 using System.IO;
 using System;
-namespace TodoApp.Client.Models
+namespace TodoApp.KiotaClient.Models
 {
     /// <summary>
     /// Represents a Todo item.
@@ -28,7 +28,7 @@ namespace TodoApp.Client.Models
         /// <summary>Gets or sets the date and time the Todo item was last updated.</summary>
         public DateTimeOffset? LastUpdated { get; set; }
         /// <summary>Gets or sets the optional priority of the Todo item.</summary>
-        public global::TodoApp.Client.Models.TodoPriority? Priority { get; set; }
+        public global::TodoApp.KiotaClient.Models.TodoPriority? Priority { get; set; }
         /// <summary>Gets or sets the text of the Todo item.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -40,12 +40,12 @@ namespace TodoApp.Client.Models
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::TodoApp.Client.Models.TodoItemModel"/></returns>
+        /// <returns>A <see cref="global::TodoApp.KiotaClient.Models.TodoItemModel"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static global::TodoApp.Client.Models.TodoItemModel CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static global::TodoApp.KiotaClient.Models.TodoItemModel CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
-            return new global::TodoApp.Client.Models.TodoItemModel();
+            return new global::TodoApp.KiotaClient.Models.TodoItemModel();
         }
         /// <summary>
         /// The deserialization information for the current model
@@ -59,7 +59,7 @@ namespace TodoApp.Client.Models
                 { "createdAt", n => { CreatedAt = n.GetDateTimeOffsetValue(); } },
                 { "id", n => { Id = n.GetStringValue(); } },
                 { "lastUpdated", n => { LastUpdated = n.GetDateTimeOffsetValue(); } },
-                { "priority", n => { Priority = n.GetEnumValue<global::TodoApp.Client.Models.TodoPriority>(); } },
+                { "priority", n => { Priority = n.GetEnumValue<global::TodoApp.KiotaClient.Models.TodoPriority>(); } },
                 { "text", n => { Text = n.GetStringValue(); } },
             };
         }
@@ -74,7 +74,7 @@ namespace TodoApp.Client.Models
             writer.WriteDateTimeOffsetValue("createdAt", CreatedAt);
             writer.WriteStringValue("id", Id);
             writer.WriteDateTimeOffsetValue("lastUpdated", LastUpdated);
-            writer.WriteEnumValue<global::TodoApp.Client.Models.TodoPriority>("priority", Priority);
+            writer.WriteEnumValue<global::TodoApp.KiotaClient.Models.TodoPriority>("priority", Priority);
             writer.WriteStringValue("text", Text);
         }
     }

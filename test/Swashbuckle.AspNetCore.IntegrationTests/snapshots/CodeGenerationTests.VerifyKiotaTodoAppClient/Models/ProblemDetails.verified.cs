@@ -6,7 +6,7 @@ using Microsoft.Kiota.Abstractions;
 using System.Collections.Generic;
 using System.IO;
 using System;
-namespace TodoApp.Client.Models
+namespace TodoApp.KiotaClient.Models
 {
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     #pragma warning disable CS1591
@@ -52,12 +52,12 @@ namespace TodoApp.Client.Models
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::TodoApp.Client.Models.ProblemDetails"/></returns>
+        /// <returns>A <see cref="global::TodoApp.KiotaClient.Models.ProblemDetails"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static global::TodoApp.Client.Models.ProblemDetails CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static global::TodoApp.KiotaClient.Models.ProblemDetails CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
-            return new global::TodoApp.Client.Models.ProblemDetails();
+            return new global::TodoApp.KiotaClient.Models.ProblemDetails();
         }
         /// <summary>
         /// The deserialization information for the current model

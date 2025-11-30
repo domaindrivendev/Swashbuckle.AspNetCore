@@ -5,7 +5,7 @@ using Microsoft.Kiota.Abstractions.Serialization;
 using System.Collections.Generic;
 using System.IO;
 using System;
-namespace TodoApp.Client.Models
+namespace TodoApp.KiotaClient.Models
 {
     /// <summary>
     /// Represents a collection of Todo items.
@@ -16,20 +16,20 @@ namespace TodoApp.Client.Models
         /// <summary>Gets or sets the Todo item(s).</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public List<global::TodoApp.Client.Models.TodoItemModel>? Items { get; set; }
+        public List<global::TodoApp.KiotaClient.Models.TodoItemModel>? Items { get; set; }
 #nullable restore
 #else
-        public List<global::TodoApp.Client.Models.TodoItemModel> Items { get; set; }
+        public List<global::TodoApp.KiotaClient.Models.TodoItemModel> Items { get; set; }
 #endif
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::TodoApp.Client.Models.TodoListViewModel"/></returns>
+        /// <returns>A <see cref="global::TodoApp.KiotaClient.Models.TodoListViewModel"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static global::TodoApp.Client.Models.TodoListViewModel CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static global::TodoApp.KiotaClient.Models.TodoListViewModel CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
-            return new global::TodoApp.Client.Models.TodoListViewModel();
+            return new global::TodoApp.KiotaClient.Models.TodoListViewModel();
         }
         /// <summary>
         /// The deserialization information for the current model
@@ -39,7 +39,7 @@ namespace TodoApp.Client.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "items", n => { Items = n.GetCollectionOfObjectValues<global::TodoApp.Client.Models.TodoItemModel>(global::TodoApp.Client.Models.TodoItemModel.CreateFromDiscriminatorValue)?.AsList(); } },
+                { "items", n => { Items = n.GetCollectionOfObjectValues<global::TodoApp.KiotaClient.Models.TodoItemModel>(global::TodoApp.KiotaClient.Models.TodoItemModel.CreateFromDiscriminatorValue)?.AsList(); } },
             };
         }
         /// <summary>
@@ -49,7 +49,7 @@ namespace TodoApp.Client.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteCollectionOfObjectValues<global::TodoApp.Client.Models.TodoItemModel>("items", Items);
+            writer.WriteCollectionOfObjectValues<global::TodoApp.KiotaClient.Models.TodoItemModel>("items", Items);
         }
     }
 }

@@ -5,31 +5,25 @@ using Microsoft.Kiota.Abstractions.Serialization;
 using System.Collections.Generic;
 using System.IO;
 using System;
-namespace TodoApp.Client.Models
+namespace TodoApp.KiotaClient.Models
 {
     /// <summary>
-    /// Represents the model for a created Todo item.
+    /// Represents the model for updating the priority of a Todo item.
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-    public partial class CreatedTodoItemModel : IParsable
+    public partial class UpdateTodoItemPriorityModel : IParsable
     {
-        /// <summary>Gets or sets the ID of the created Todo item.</summary>
-#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
-#nullable enable
-        public string? Id { get; set; }
-#nullable restore
-#else
-        public string Id { get; set; }
-#endif
+        /// <summary>Gets or sets the new priority of the Todo item.</summary>
+        public global::TodoApp.KiotaClient.Models.TodoPriority? Priority { get; set; }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::TodoApp.Client.Models.CreatedTodoItemModel"/></returns>
+        /// <returns>A <see cref="global::TodoApp.KiotaClient.Models.UpdateTodoItemPriorityModel"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static global::TodoApp.Client.Models.CreatedTodoItemModel CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static global::TodoApp.KiotaClient.Models.UpdateTodoItemPriorityModel CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
-            return new global::TodoApp.Client.Models.CreatedTodoItemModel();
+            return new global::TodoApp.KiotaClient.Models.UpdateTodoItemPriorityModel();
         }
         /// <summary>
         /// The deserialization information for the current model
@@ -39,7 +33,7 @@ namespace TodoApp.Client.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
-                { "id", n => { Id = n.GetStringValue(); } },
+                { "priority", n => { Priority = n.GetEnumValue<global::TodoApp.KiotaClient.Models.TodoPriority>(); } },
             };
         }
         /// <summary>
@@ -49,7 +43,7 @@ namespace TodoApp.Client.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
-            writer.WriteStringValue("id", Id);
+            writer.WriteEnumValue<global::TodoApp.KiotaClient.Models.TodoPriority>("priority", Priority);
         }
     }
 }

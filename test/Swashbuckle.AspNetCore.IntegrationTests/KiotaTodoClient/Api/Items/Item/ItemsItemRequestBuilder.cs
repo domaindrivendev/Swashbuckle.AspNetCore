@@ -8,10 +8,10 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
-using TodoApp.Client.Api.Items.Item.Complete;
-using TodoApp.Client.Api.Items.Item.Priority;
-using TodoApp.Client.Models;
-namespace TodoApp.Client.Api.Items.Item
+using TodoApp.KiotaClient.Api.Items.Item.Complete;
+using TodoApp.KiotaClient.Api.Items.Item.Priority;
+using TodoApp.KiotaClient.Models;
+namespace TodoApp.KiotaClient.Api.Items.Item
 {
     /// <summary>
     /// Builds and executes requests for operations under \api\items\{id}
@@ -20,17 +20,17 @@ namespace TodoApp.Client.Api.Items.Item
     public partial class ItemsItemRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The complete property</summary>
-        public global::TodoApp.Client.Api.Items.Item.Complete.CompleteRequestBuilder Complete
+        public global::TodoApp.KiotaClient.Api.Items.Item.Complete.CompleteRequestBuilder Complete
         {
-            get => new global::TodoApp.Client.Api.Items.Item.Complete.CompleteRequestBuilder(PathParameters, RequestAdapter);
+            get => new global::TodoApp.KiotaClient.Api.Items.Item.Complete.CompleteRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The priority property</summary>
-        public global::TodoApp.Client.Api.Items.Item.Priority.PriorityRequestBuilder Priority
+        public global::TodoApp.KiotaClient.Api.Items.Item.Priority.PriorityRequestBuilder Priority
         {
-            get => new global::TodoApp.Client.Api.Items.Item.Priority.PriorityRequestBuilder(PathParameters, RequestAdapter);
+            get => new global::TodoApp.KiotaClient.Api.Items.Item.Priority.PriorityRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
-        /// Instantiates a new <see cref="global::TodoApp.Client.Api.Items.Item.ItemsItemRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::TodoApp.KiotaClient.Api.Items.Item.ItemsItemRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
@@ -38,7 +38,7 @@ namespace TodoApp.Client.Api.Items.Item
         {
         }
         /// <summary>
-        /// Instantiates a new <see cref="global::TodoApp.Client.Api.Items.Item.ItemsItemRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::TodoApp.KiotaClient.Api.Items.Item.ItemsItemRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
@@ -50,7 +50,7 @@ namespace TodoApp.Client.Api.Items.Item
         /// </summary>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
-        /// <exception cref="global::TodoApp.Client.Models.ProblemDetails">When receiving a 404 status code</exception>
+        /// <exception cref="global::TodoApp.KiotaClient.Models.ProblemDetails">When receiving a 404 status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
         public async Task DeleteAsync(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
@@ -63,32 +63,32 @@ namespace TodoApp.Client.Api.Items.Item
             var requestInfo = ToDeleteRequestInformation(requestConfiguration);
             var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
             {
-                { "404", global::TodoApp.Client.Models.ProblemDetails.CreateFromDiscriminatorValue },
+                { "404", global::TodoApp.KiotaClient.Models.ProblemDetails.CreateFromDiscriminatorValue },
             };
             await RequestAdapter.SendNoContentAsync(requestInfo, errorMapping, cancellationToken).ConfigureAwait(false);
         }
         /// <summary>
         /// Gets the todo item with the specified ID.
         /// </summary>
-        /// <returns>A <see cref="global::TodoApp.Client.Models.TodoItemModel"/></returns>
+        /// <returns>A <see cref="global::TodoApp.KiotaClient.Models.TodoItemModel"/></returns>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
-        /// <exception cref="global::TodoApp.Client.Models.ProblemDetails">When receiving a 404 status code</exception>
+        /// <exception cref="global::TodoApp.KiotaClient.Models.ProblemDetails">When receiving a 404 status code</exception>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<global::TodoApp.Client.Models.TodoItemModel?> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::TodoApp.KiotaClient.Models.TodoItemModel?> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<global::TodoApp.Client.Models.TodoItemModel> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::TodoApp.KiotaClient.Models.TodoItemModel> GetAsync(Action<RequestConfiguration<DefaultQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             var requestInfo = ToGetRequestInformation(requestConfiguration);
             var errorMapping = new Dictionary<string, ParsableFactory<IParsable>>
             {
-                { "404", global::TodoApp.Client.Models.ProblemDetails.CreateFromDiscriminatorValue },
+                { "404", global::TodoApp.KiotaClient.Models.ProblemDetails.CreateFromDiscriminatorValue },
             };
-            return await RequestAdapter.SendAsync<global::TodoApp.Client.Models.TodoItemModel>(requestInfo, global::TodoApp.Client.Models.TodoItemModel.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
+            return await RequestAdapter.SendAsync<global::TodoApp.KiotaClient.Models.TodoItemModel>(requestInfo, global::TodoApp.KiotaClient.Models.TodoItemModel.CreateFromDiscriminatorValue, errorMapping, cancellationToken).ConfigureAwait(false);
         }
         /// <summary>
         /// Deletes the todo item with the specified ID.
@@ -131,11 +131,11 @@ namespace TodoApp.Client.Api.Items.Item
         /// <summary>
         /// Returns a request builder with the provided arbitrary URL. Using this method means any other path or query parameters are ignored.
         /// </summary>
-        /// <returns>A <see cref="global::TodoApp.Client.Api.Items.Item.ItemsItemRequestBuilder"/></returns>
+        /// <returns>A <see cref="global::TodoApp.KiotaClient.Api.Items.Item.ItemsItemRequestBuilder"/></returns>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
-        public global::TodoApp.Client.Api.Items.Item.ItemsItemRequestBuilder WithUrl(string rawUrl)
+        public global::TodoApp.KiotaClient.Api.Items.Item.ItemsItemRequestBuilder WithUrl(string rawUrl)
         {
-            return new global::TodoApp.Client.Api.Items.Item.ItemsItemRequestBuilder(rawUrl, RequestAdapter);
+            return new global::TodoApp.KiotaClient.Api.Items.Item.ItemsItemRequestBuilder(rawUrl, RequestAdapter);
         }
     }
 }
