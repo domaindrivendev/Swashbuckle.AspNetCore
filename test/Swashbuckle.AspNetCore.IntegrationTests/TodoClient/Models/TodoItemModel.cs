@@ -27,6 +27,8 @@ namespace TodoApp.Client.Models
 #endif
         /// <summary>Gets or sets the date and time the Todo item was last updated.</summary>
         public DateTimeOffset? LastUpdated { get; set; }
+        /// <summary>The priority levels for a Todo item.</summary>
+        public global::TodoApp.Client.Models.TodoPriority? Priority { get; set; }
         /// <summary>Gets or sets the text of the Todo item.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
@@ -57,6 +59,7 @@ namespace TodoApp.Client.Models
                 { "createdAt", n => { CreatedAt = n.GetDateTimeOffsetValue(); } },
                 { "id", n => { Id = n.GetStringValue(); } },
                 { "lastUpdated", n => { LastUpdated = n.GetDateTimeOffsetValue(); } },
+                { "priority", n => { Priority = n.GetEnumValue<global::TodoApp.Client.Models.TodoPriority>(); } },
                 { "text", n => { Text = n.GetStringValue(); } },
             };
         }
@@ -71,6 +74,7 @@ namespace TodoApp.Client.Models
             writer.WriteDateTimeOffsetValue("createdAt", CreatedAt);
             writer.WriteStringValue("id", Id);
             writer.WriteDateTimeOffsetValue("lastUpdated", LastUpdated);
+            writer.WriteEnumValue<global::TodoApp.Client.Models.TodoPriority>("priority", Priority);
             writer.WriteStringValue("text", Text);
         }
     }

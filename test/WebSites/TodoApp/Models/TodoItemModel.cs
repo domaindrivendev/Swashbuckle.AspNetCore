@@ -29,4 +29,9 @@ public class TodoItemModel
     /// Gets or sets the date and time the Todo item was last updated.
     /// </summary>
     public DateTimeOffset LastUpdated { get; set; } = default!;
+
+    /// <summary>
+    /// Gets or sets the optional priority of the Todo item.
+    /// </summary>
+    public TodoPriority? Priority { get; set; }
 }

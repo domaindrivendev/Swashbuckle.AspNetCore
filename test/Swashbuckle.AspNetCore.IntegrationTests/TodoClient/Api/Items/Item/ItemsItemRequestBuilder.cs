@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System;
 using TodoApp.Client.Api.Items.Item.Complete;
+using TodoApp.Client.Api.Items.Item.Priority;
 using TodoApp.Client.Models;
 namespace TodoApp.Client.Api.Items.Item
 {
@@ -22,6 +23,11 @@ namespace TodoApp.Client.Api.Items.Item
         public global::TodoApp.Client.Api.Items.Item.Complete.CompleteRequestBuilder Complete
         {
             get => new global::TodoApp.Client.Api.Items.Item.Complete.CompleteRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The priority property</summary>
+        public global::TodoApp.Client.Api.Items.Item.Priority.PriorityRequestBuilder Priority
+        {
+            get => new global::TodoApp.Client.Api.Items.Item.Priority.PriorityRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
         /// Instantiates a new <see cref="global::TodoApp.Client.Api.Items.Item.ItemsItemRequestBuilder"/> and sets the default values.

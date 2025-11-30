@@ -45,6 +45,11 @@ public class TodoService(TodoRepository repository)
         return MapItems(items);
     }
 
+    public async Task<bool> SetPriorityAsync(Guid itemId, TodoPriority priority, CancellationToken cancellationToken)
+    {
+        return await repository.SetPriorityAsync(itemId, (int)priority, cancellationToken);
+    }
+
     private static TodoListViewModel MapItems(IList<TodoItem> items)
     {
         var result = new List<TodoItemModel>(items.Count);
@@ -65,6 +70,7 @@ public class TodoService(TodoRepository repository)
             CompletedAt = item.CompletedAt,
             CreatedAt = item.CreatedAt,
             LastUpdated = item.CompletedAt ?? item.CreatedAt,
+            Priority = item.Priority is { } priority ? (TodoPriority)priority : null,
             Text = item.Text,
         };
     }

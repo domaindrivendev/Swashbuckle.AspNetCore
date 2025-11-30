@@ -16,6 +16,9 @@ public static class TodoAppBuilder
             options.IncludeXmlComments(Assembly.GetExecutingAssembly());
             options.SupportNonNullableReferenceTypes();
 
+            //// TODO Enable to repro https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3683
+            ////options.UseAllOfToExtendReferenceSchemas();
+
             var version = "v1";
             options.SwaggerDoc(version, new() { Title = "Todo API", Version = version });
         });

@@ -123,6 +123,34 @@ public static class ApiEndpoints
                 .Produces(StatusCodes.Status204NoContent)
                 .ProducesProblem(StatusCodes.Status404NotFound);
 
+            group.MapPatch(
+                "/{id}/priority",
+                async (
+                    [Description("The Todo item's ID.")] Guid id,
+                    [Description("The Todo item's new priority.")] UpdateTodoItemPriorityModel priority,
+                    TodoService service,
+                    CancellationToken cancellationToken) =>
+                {
+                    if (priority.Priority < TodoPriority.Low || priority.Priority > TodoPriority.High)
+                    {
+                        return Results.Problem("Invalid priority.", statusCode: StatusCodes.Status400BadRequest);
+                    }
+
+                    var wasUpdated = await service.SetPriorityAsync(id, priority.Priority, cancellationToken);
+
+                    return wasUpdated switch
+                    {
+                        true => Results.NoContent(),
+                        false => Results.Problem("Item not found.", statusCode: StatusCodes.Status404NotFound),
+                    };
+                })
+                .WithName("UpdateTodoPriority")
+                .WithSummary("Updates the priority of a Todo item")
+                .WithDescription("Updates the priority of the todo item with the specified ID to the specified priority.")
+                .Produces(StatusCodes.Status204NoContent)
+                .ProducesProblem(StatusCodes.Status400BadRequest)
+                .ProducesProblem(StatusCodes.Status404NotFound);
+
             group.MapGet("/find", FindTodoItem)
                  .WithName("FindTodo")
                  .Produces<TodoListViewModel>();

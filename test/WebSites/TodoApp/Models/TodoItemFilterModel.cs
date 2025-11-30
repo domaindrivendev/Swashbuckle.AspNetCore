@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents the model for searching for Todo items.
 /// </summary>
-public sealed class TodoItemFilterModel
+public class TodoItemFilterModel
 {
     /// <summary>
     /// Gets or sets the text of the filter.
