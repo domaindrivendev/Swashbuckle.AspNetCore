@@ -1,6 +1,8 @@
 ﻿#if NET10_0_OR_GREATER
 
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Http.HttpClientLibrary;
@@ -58,7 +60,7 @@ public class CodeGenerationTests(ITestOutputHelper outputHelper)
 
     [Theory]
     [MemberData(nameof(SnapshotTestCases))]
-    public async Task OpenApiDocument_Generates_Valid_Client_Code_From_Snapshot(ClientGeneratorTool tool, string snapshot)
+    public async Task GeneratesValidClient(ClientGeneratorTool tool, string snapshot)
     {
         // Arrange
         var generator = new ClientGenerator(outputHelper);
@@ -70,6 +72,19 @@ public class CodeGenerationTests(ITestOutputHelper outputHelper)
 
         // Act and Assert
         await generator.CompileAsync(project.Path);
+
+        var hash = SHA256.HashData(Encoding.UTF8.GetBytes($"{tool}:{snapshot}"));
+        var hashString = Convert.ToHexString(hash).ToLowerInvariant()[..16];
+
+        outputHelper.WriteLine($"{nameof(tool)}={tool}, {nameof(snapshot)}={snapshot} [{hashString}]");
+
+        await VerifyDirectory(
+            project.Path,
+            pattern: "*.cs",
+            include: (p) => !p.Contains("bin") && !p.Contains("obj"),
+            options: new() { RecurseSubdirectories = true })
+            .UseDirectory("snapshots")
+            .UseFileName($"{nameof(GeneratesValidClient)}_{hashString}");
     }
 
     [Fact]
