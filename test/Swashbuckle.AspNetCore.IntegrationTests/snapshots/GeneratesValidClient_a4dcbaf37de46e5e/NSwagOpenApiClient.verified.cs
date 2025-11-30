@@ -1113,9 +1113,9 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.NSwagTests
         /// <summary>
         /// Gets or sets the optional priority of the Todo item.
         /// </summary>
-        [Newtonsoft.Json.JsonProperty("priority", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        [Newtonsoft.Json.JsonProperty("priority", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         [Newtonsoft.Json.JsonConverter(typeof(Newtonsoft.Json.Converters.StringEnumConverter))]
-        public TodoPriority Priority { get; set; }
+        public TodoPriority? Priority { get; set; }
 
     }
 

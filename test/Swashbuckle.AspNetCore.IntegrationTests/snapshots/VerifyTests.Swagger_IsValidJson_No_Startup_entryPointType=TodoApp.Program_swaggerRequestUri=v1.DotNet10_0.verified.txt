@@ -415,9 +415,12 @@
             "format": "date-time"
           },
           "priority": {
-            "allOf": [
+            "oneOf": [
               {
                 "$ref": "#/components/schemas/TodoPriority"
+              },
+              {
+                "nullable": true
               }
             ],
             "description": "Gets or sets the optional priority of the Todo item."

@@ -66,10 +66,22 @@ public class SchemaGenerator(
             {
                 var requiredAttribute = customAttributes.OfType<RequiredAttribute>().FirstOrDefault();
 
-                // "nullable" cannot be used without "type"
-                if (!usingAllOf)
+                var nullable = IsNullable(requiredAttribute, dataProperty, memberInfo);
+
+                if (usingAllOf)
                 {
-                    var nullable = IsNullable(requiredAttribute, dataProperty, memberInfo);
+                    // When using AllOf to extend reference schemas, we need to adjust the schema to represent
+                    // nullability correctly as a property can't be null AND a specific type at the same time.
+                    // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3649.
+                    if (nullable)
+                    {
+                        concrete.OneOf = schema.AllOf;
+                        concrete.OneOf.Add(new OpenApiSchema { Type = JsonSchemaType.Null });
+                        concrete.AllOf = null;
+                    }
+                }
+                else
+                {
                     SetNullable(concrete, nullable);
                 }
 
