@@ -21,7 +21,7 @@ public class KiotaClientTests
             // Act - Get all the items
             var items = await client.Api.Items.GetAsync(cancellationToken: cancellationToken);
 
-            // Assert - There should be no items
+            // Assert
             Assert.NotNull(items);
             Assert.NotNull(items.Items);
 

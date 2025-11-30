@@ -420,7 +420,8 @@
                 "$ref": "#/components/schemas/TodoPriority"
               }
             ],
-            "description": "Gets or sets the optional priority of the Todo item."
+            "description": "Gets or sets the optional priority of the Todo item.",
+            "nullable": true
           }
         },
         "additionalProperties": false,
