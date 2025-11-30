@@ -49,12 +49,9 @@ public class SchemaGenerator(
             ? GeneratePolymorphicSchema(schemaRepository, knownTypesDataContracts)
             : GenerateConcreteSchema(dataContract, schemaRepository);
 
-        bool usingAllOf = false;
-
         if (_generatorOptions.UseAllOfToExtendReferenceSchemas && schema is OpenApiSchemaReference reference)
         {
             schema = new OpenApiSchema() { AllOf = [reference] };
-            usingAllOf = true;
         }
 
         if (schema is OpenApiSchema concrete)
@@ -66,12 +63,12 @@ public class SchemaGenerator(
             {
                 var requiredAttribute = customAttributes.OfType<RequiredAttribute>().FirstOrDefault();
 
-                // "nullable" cannot be used without "type"
-                if (!usingAllOf)
-                {
-                    var nullable = IsNullable(requiredAttribute, dataProperty, memberInfo);
-                    SetNullable(concrete, nullable);
-                }
+                // "nullable" cannot be used without "type", however this was added in a patch
+                // change to OpenAPI 3.0 which would cause compatibility issues for existing users
+                // if it were changed, so this is intentionally not compliant with the OpenAPI specification.
+                // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3683#issuecomment-3593065197.
+                var nullable = IsNullable(requiredAttribute, dataProperty, memberInfo);
+                SetNullable(concrete, nullable);
 
                 concrete.ReadOnly = dataProperty.IsReadOnly;
                 concrete.WriteOnly = dataProperty.IsWriteOnly;

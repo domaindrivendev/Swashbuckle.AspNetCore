@@ -46,7 +46,7 @@ public class NSwagClientTests
             Assert.Null(item.CompletedAt);
             Assert.NotEqual(default, item.CreatedAt);
             Assert.Equal(item.CreatedAt, item.LastUpdated);
-            Assert.Equal(TodoPriority.Normal, item.Priority);
+            Assert.Null(item.Priority);
             Assert.Equal(text, item.Text);
 
             // Act - Update the item to be high priority

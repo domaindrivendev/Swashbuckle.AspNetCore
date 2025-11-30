@@ -48,6 +48,7 @@
         "type": "object",
         "properties": {
           "child": {
+            "type": "null",
             "allOf": [
               {
                 "$ref": "#/components/schemas/Child"
