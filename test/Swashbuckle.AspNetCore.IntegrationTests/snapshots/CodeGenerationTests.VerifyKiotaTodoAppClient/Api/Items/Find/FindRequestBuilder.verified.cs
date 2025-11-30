@@ -8,8 +8,8 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
 using System;
-using TodoApp.Client.Models;
-namespace TodoApp.Client.Api.Items.Find
+using TodoApp.KiotaClient.Models;
+namespace TodoApp.KiotaClient.Api.Items.Find
 {
     /// <summary>
     /// Builds and executes requests for operations under \api\items\find
@@ -18,7 +18,7 @@ namespace TodoApp.Client.Api.Items.Find
     public partial class FindRequestBuilder : BaseRequestBuilder
     {
         /// <summary>
-        /// Instantiates a new <see cref="global::TodoApp.Client.Api.Items.Find.FindRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::TodoApp.KiotaClient.Api.Items.Find.FindRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
@@ -26,37 +26,37 @@ namespace TodoApp.Client.Api.Items.Find
         {
         }
         /// <summary>
-        /// Instantiates a new <see cref="global::TodoApp.Client.Api.Items.Find.FindRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::TodoApp.KiotaClient.Api.Items.Find.FindRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
         public FindRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/api/items/find?IsCompleted={IsCompleted}&Text={Text}", rawUrl)
         {
         }
-        /// <returns>A <see cref="global::TodoApp.Client.Models.TodoListViewModel"/></returns>
+        /// <returns>A <see cref="global::TodoApp.KiotaClient.Models.TodoListViewModel"/></returns>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public async Task<global::TodoApp.Client.Models.TodoListViewModel?> GetAsync(Action<RequestConfiguration<global::TodoApp.Client.Api.Items.Find.FindRequestBuilder.FindRequestBuilderGetQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::TodoApp.KiotaClient.Models.TodoListViewModel?> GetAsync(Action<RequestConfiguration<global::TodoApp.KiotaClient.Api.Items.Find.FindRequestBuilder.FindRequestBuilderGetQueryParameters>>? requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #nullable restore
 #else
-        public async Task<global::TodoApp.Client.Models.TodoListViewModel> GetAsync(Action<RequestConfiguration<global::TodoApp.Client.Api.Items.Find.FindRequestBuilder.FindRequestBuilderGetQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
+        public async Task<global::TodoApp.KiotaClient.Models.TodoListViewModel> GetAsync(Action<RequestConfiguration<global::TodoApp.KiotaClient.Api.Items.Find.FindRequestBuilder.FindRequestBuilderGetQueryParameters>> requestConfiguration = default, CancellationToken cancellationToken = default)
         {
 #endif
             var requestInfo = ToGetRequestInformation(requestConfiguration);
-            return await RequestAdapter.SendAsync<global::TodoApp.Client.Models.TodoListViewModel>(requestInfo, global::TodoApp.Client.Models.TodoListViewModel.CreateFromDiscriminatorValue, default, cancellationToken).ConfigureAwait(false);
+            return await RequestAdapter.SendAsync<global::TodoApp.KiotaClient.Models.TodoListViewModel>(requestInfo, global::TodoApp.KiotaClient.Models.TodoListViewModel.CreateFromDiscriminatorValue, default, cancellationToken).ConfigureAwait(false);
         }
         /// <returns>A <see cref="RequestInformation"/></returns>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
 #nullable enable
-        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<global::TodoApp.Client.Api.Items.Find.FindRequestBuilder.FindRequestBuilderGetQueryParameters>>? requestConfiguration = default)
+        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<global::TodoApp.KiotaClient.Api.Items.Find.FindRequestBuilder.FindRequestBuilderGetQueryParameters>>? requestConfiguration = default)
         {
 #nullable restore
 #else
-        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<global::TodoApp.Client.Api.Items.Find.FindRequestBuilder.FindRequestBuilderGetQueryParameters>> requestConfiguration = default)
+        public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<global::TodoApp.KiotaClient.Api.Items.Find.FindRequestBuilder.FindRequestBuilderGetQueryParameters>> requestConfiguration = default)
         {
 #endif
             var requestInfo = new RequestInformation(Method.GET, UrlTemplate, PathParameters);
@@ -67,11 +67,11 @@ namespace TodoApp.Client.Api.Items.Find
         /// <summary>
         /// Returns a request builder with the provided arbitrary URL. Using this method means any other path or query parameters are ignored.
         /// </summary>
-        /// <returns>A <see cref="global::TodoApp.Client.Api.Items.Find.FindRequestBuilder"/></returns>
+        /// <returns>A <see cref="global::TodoApp.KiotaClient.Api.Items.Find.FindRequestBuilder"/></returns>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
-        public global::TodoApp.Client.Api.Items.Find.FindRequestBuilder WithUrl(string rawUrl)
+        public global::TodoApp.KiotaClient.Api.Items.Find.FindRequestBuilder WithUrl(string rawUrl)
         {
-            return new global::TodoApp.Client.Api.Items.Find.FindRequestBuilder(rawUrl, RequestAdapter);
+            return new global::TodoApp.KiotaClient.Api.Items.Find.FindRequestBuilder(rawUrl, RequestAdapter);
         }
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
         #pragma warning disable CS1591

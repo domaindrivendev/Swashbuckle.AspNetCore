@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System;
-using TodoApp.Client.Api.Items;
-namespace TodoApp.Client.Api
+using TodoApp.KiotaClient.Api.Items;
+namespace TodoApp.KiotaClient.Api
 {
     /// <summary>
     /// Builds and executes requests for operations under \api
@@ -16,12 +16,12 @@ namespace TodoApp.Client.Api
     public partial class ApiRequestBuilder : BaseRequestBuilder
     {
         /// <summary>The items property</summary>
-        public global::TodoApp.Client.Api.Items.ItemsRequestBuilder Items
+        public global::TodoApp.KiotaClient.Api.Items.ItemsRequestBuilder Items
         {
-            get => new global::TodoApp.Client.Api.Items.ItemsRequestBuilder(PathParameters, RequestAdapter);
+            get => new global::TodoApp.KiotaClient.Api.Items.ItemsRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>
-        /// Instantiates a new <see cref="global::TodoApp.Client.Api.ApiRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::TodoApp.KiotaClient.Api.ApiRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
@@ -29,7 +29,7 @@ namespace TodoApp.Client.Api
         {
         }
         /// <summary>
-        /// Instantiates a new <see cref="global::TodoApp.Client.Api.ApiRequestBuilder"/> and sets the default values.
+        /// Instantiates a new <see cref="global::TodoApp.KiotaClient.Api.ApiRequestBuilder"/> and sets the default values.
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>

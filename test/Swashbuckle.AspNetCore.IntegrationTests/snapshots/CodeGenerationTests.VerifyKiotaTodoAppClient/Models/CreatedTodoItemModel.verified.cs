@@ -5,7 +5,7 @@ using Microsoft.Kiota.Abstractions.Serialization;
 using System.Collections.Generic;
 using System.IO;
 using System;
-namespace TodoApp.Client.Models
+namespace TodoApp.KiotaClient.Models
 {
     /// <summary>
     /// Represents the model for a created Todo item.
@@ -24,12 +24,12 @@ namespace TodoApp.Client.Models
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value
         /// </summary>
-        /// <returns>A <see cref="global::TodoApp.Client.Models.CreatedTodoItemModel"/></returns>
+        /// <returns>A <see cref="global::TodoApp.KiotaClient.Models.CreatedTodoItemModel"/></returns>
         /// <param name="parseNode">The parse node to use to read the discriminator value and create the object</param>
-        public static global::TodoApp.Client.Models.CreatedTodoItemModel CreateFromDiscriminatorValue(IParseNode parseNode)
+        public static global::TodoApp.KiotaClient.Models.CreatedTodoItemModel CreateFromDiscriminatorValue(IParseNode parseNode)
         {
             if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
-            return new global::TodoApp.Client.Models.CreatedTodoItemModel();
+            return new global::TodoApp.KiotaClient.Models.CreatedTodoItemModel();
         }
         /// <summary>
         /// The deserialization information for the current model

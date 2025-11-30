@@ -10,15 +10,15 @@ $ProgressPreference = "SilentlyContinue"
 
 $env:KIOTA_TUTORIAL_ENABLED = "false"
 
-$OutputPath = "./TodoClient"
+$OutputPath = "./KiotaTodoClient"
 
 dotnet kiota generate `
     --additional-data false `
-    --class-name TodoApiClient `
+    --class-name KiotaTodoApiClient `
     --clean-output `
     --exclude-backward-compatible `
     --language csharp `
-    --namespace-name TodoApp.Client `
+    --namespace-name TodoApp.KiotaClient `
     --openapi $OpenApiUrl `
     --output $OutputPath `
     --structured-mime-types "application/json"
