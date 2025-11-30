@@ -27,7 +27,7 @@ namespace TodoApp.Client.Models
 #endif
         /// <summary>Gets or sets the date and time the Todo item was last updated.</summary>
         public DateTimeOffset? LastUpdated { get; set; }
-        /// <summary>The priority levels for a Todo item.</summary>
+        /// <summary>Gets or sets the optional priority of the Todo item.</summary>
         public global::TodoApp.Client.Models.TodoPriority? Priority { get; set; }
         /// <summary>Gets or sets the text of the Todo item.</summary>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER

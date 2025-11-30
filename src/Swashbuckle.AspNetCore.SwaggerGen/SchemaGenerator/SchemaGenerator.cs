@@ -49,12 +49,9 @@ public class SchemaGenerator(
             ? GeneratePolymorphicSchema(schemaRepository, knownTypesDataContracts)
             : GenerateConcreteSchema(dataContract, schemaRepository);
 
-        bool usingAllOf = false;
-
         if (_generatorOptions.UseAllOfToExtendReferenceSchemas && schema is OpenApiSchemaReference reference)
         {
             schema = new OpenApiSchema() { AllOf = [reference] };
-            usingAllOf = true;
         }
 
         if (schema is OpenApiSchema concrete)
@@ -68,22 +65,7 @@ public class SchemaGenerator(
 
                 var nullable = IsNullable(requiredAttribute, dataProperty, memberInfo);
 
-                if (usingAllOf)
-                {
-                    // When using AllOf to extend reference schemas, we need to adjust the schema to represent
-                    // nullability correctly as a property can't be null AND a specific type at the same time.
-                    // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3649.
-                    if (nullable)
-                    {
-                        concrete.OneOf = schema.AllOf;
-                        concrete.OneOf.Add(new OpenApiSchema { Type = JsonSchemaType.Null });
-                        concrete.AllOf = null;
-                    }
-                }
-                else
-                {
-                    SetNullable(concrete, nullable);
-                }
+                SetNullable(concrete, nullable);
 
                 concrete.ReadOnly = dataProperty.IsReadOnly;
                 concrete.WriteOnly = dataProperty.IsWriteOnly;

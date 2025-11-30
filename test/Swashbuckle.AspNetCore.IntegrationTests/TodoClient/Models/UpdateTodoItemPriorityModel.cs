@@ -13,7 +13,7 @@ namespace TodoApp.Client.Models
     [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
     public partial class UpdateTodoItemPriorityModel : IParsable
     {
-        /// <summary>The priority levels for a Todo item.</summary>
+        /// <summary>Gets or sets the new priority of the Todo item.</summary>
         public global::TodoApp.Client.Models.TodoPriority? Priority { get; set; }
         /// <summary>
         /// Creates a new instance of the appropriate class based on discriminator value

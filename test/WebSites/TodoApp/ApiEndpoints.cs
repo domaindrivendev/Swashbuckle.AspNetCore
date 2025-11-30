@@ -22,6 +22,13 @@ public static class ApiEndpoints
             options.SerializerOptions.PropertyNamingPolicy = TodoJsonSerializerContext.Default.Options.PropertyNamingPolicy;
             options.SerializerOptions.WriteIndented = TodoJsonSerializerContext.Default.Options.WriteIndented;
             options.SerializerOptions.TypeInfoResolverChain.Add(TodoJsonSerializerContext.Default);
+
+            options.SerializerOptions.Converters.Clear();
+
+            foreach (var converter in TodoJsonSerializerContext.Default.Options.Converters)
+            {
+                options.SerializerOptions.Converters.Add(converter);
+            }
         });
 
         return services;
