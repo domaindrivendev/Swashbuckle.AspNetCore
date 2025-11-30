@@ -28,12 +28,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <AssemblyMetadata Include="ProjectRoot" Value="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))" />
+    <AssemblyMetadata Include="SolutionRoot" Value="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..'))" />
     <Compile Remove="snapshots\**\*.cs" />
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net10.0'))">
-    <AssemblyMetadata Include="ProjectRoot" Value="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))" />
-    <AssemblyMetadata Include="SolutionRoot" Value="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)\..\..'))" />
     <PackageReference Include="Microsoft.Build" />
     <PackageReference Include="MSBuild.ProjectCreation" />
     <PackageReference Include="NSwag.CodeGeneration.CSharp" />
