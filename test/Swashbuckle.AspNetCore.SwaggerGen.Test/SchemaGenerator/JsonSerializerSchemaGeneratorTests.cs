@@ -718,6 +718,60 @@ public class JsonSerializerSchemaGeneratorTests
     }
 
     [Fact]
+    public void GenerateSchema_PreservesIntermediateBaseProperties_WhenUsingOneOfPolymorphism()
+    {
+        // Arrange - define a type hierarchy A <- B <- C where only A and C are selected as known subtypes
+        var subject = Subject(configureGenerator: c =>
+        {
+            c.UseOneOfForPolymorphism = true;
+            c.SubTypesSelector = (type) => type == typeof(AbcTests_A) ? new[] { typeof(AbcTests_C) } : Array.Empty<Type>();
+        });
+
+        var schemaRepository = new SchemaRepository();
+
+        // Act
+        var schema = subject.GenerateSchema(typeof(AbcTests_A), schemaRepository);
+
+        // Assert - polymorphic schema should be present
+        Assert.NotNull(schema.OneOf);
+
+        // Ensure base A schema contains PropA
+        Assert.True(schemaRepository.Schemas.ContainsKey(nameof(AbcTests_A)));
+        var aSchema = schemaRepository.Schemas[nameof(AbcTests_A)];
+        Assert.True(aSchema.Properties.ContainsKey(nameof(AbcTests_A.PropA)));
+
+        // Find the C schema in the OneOf and assert it preserves B's properties while not duplicating A's
+        var cRef = schema.OneOf
+            .OfType<OpenApiSchemaReference>()
+            .First(r => r.Reference.Id == nameof(AbcTests_C));
+
+        var cSchema = schemaRepository.Schemas[nameof(AbcTests_C)];
+
+        // C should include PropC and properties declared on intermediate B
+        Assert.True(cSchema.Properties.ContainsKey(nameof(AbcTests_C.PropC)));
+        Assert.True(cSchema.Properties.ContainsKey(nameof(AbcTests_B.PropB)));
+
+        // A's property should not be in C's inline properties because it's provided by the referenced base schema
+        Assert.False(cSchema.Properties.ContainsKey(nameof(AbcTests_A.PropA)));
+    }
+
+    // Helper test types for the A/B/C regression
+    public abstract class AbcTests_A
+    {
+        public string PropA { get; set; }
+    }
+
+    public class AbcTests_B : AbcTests_A
+    {
+        public string PropB { get; set; }
+    }
+
+    public class AbcTests_C : AbcTests_B
+    {
+        public string PropC { get; set; }
+    }
+
+    [Fact]
     public void GenerateSchema_SupportsOption_UseAllOfToExtendReferenceSchemas()
     {
         var subject = Subject(
