@@ -405,7 +405,7 @@ public class SchemaGenerator(
                 }
 
                 applicableDataProperties = applicableDataProperties
-                    .Where(dataProperty => dataProperty.MemberInfo.DeclaringType == dataContract.UnderlyingType);
+                    .Where(dataProperty => dataProperty.MemberInfo.DeclaringType != baseTypeDataContract.UnderlyingType);
             }
 
             if (IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts))
