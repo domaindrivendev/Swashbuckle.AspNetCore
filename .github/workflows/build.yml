@@ -239,7 +239,8 @@ jobs:
         API_KEY: ${{ secrets.MYGET_TOKEN }}
         PACKAGE_VERSION: ${{ needs.build.outputs.package-version }}
         SOURCE: "https://www.myget.org/F/domaindrivendev/api/v3/index.json"
-      run: dotnet nuget push "*.nupkg" --api-key "${API_KEY}" --skip-duplicate --source "${SOURCE}" && echo "::notice title=myget.org::Published version ${PACKAGE_VERSION} to MyGet."
+      run: | # zizmor: ignore[use-trusted-publishing] MyGet does not support trusted publishing
+        dotnet nuget push "*.nupkg" --api-key "${API_KEY}" --skip-duplicate --source "${SOURCE}" && echo "::notice title=myget.org::Published version ${PACKAGE_VERSION} to MyGet."
 
   publish-nuget:
     needs: [ build, validate-packages ]
@@ -269,4 +270,5 @@ jobs:
         API_KEY: ${{ secrets.NUGET_TOKEN }}
         PACKAGE_VERSION: ${{ needs.build.outputs.package-version }}
         SOURCE: https://api.nuget.org/v3/index.json
-      run: dotnet nuget push "*.nupkg" --api-key "${API_KEY}" --skip-duplicate --source "${SOURCE}" && echo "::notice title=nuget.org::Published version ${PACKAGE_VERSION} to NuGet.org."
+      run: |
+        dotnet nuget push "*.nupkg" --api-key "${API_KEY}" --skip-duplicate --source "${SOURCE}" && echo "::notice title=nuget.org::Published version ${PACKAGE_VERSION} to NuGet.org."
