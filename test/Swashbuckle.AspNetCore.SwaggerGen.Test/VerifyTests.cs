@@ -1118,7 +1118,7 @@ public partial class VerifyTests
         var subject = Subject(
             apiDescriptions:
             [
-                ApiDescriptionFactory.Create<FakeController>(
+                ApiDescriptionFactory.Create<FakeControllerWithInheritance>(
                     c => nameof(c.ActionWithDerivedObjectParameter),
                     groupName: "v1",
                     httpMethod: "POST",
@@ -1129,8 +1129,26 @@ public partial class VerifyTests
                         {
                             Name = "param1",
                             Source = BindingSource.Body,
-                            Type = typeof(FakeController.AbcTests_C), // most derived type
-                            ModelMetadata = ModelMetadataFactory.CreateForType(typeof(FakeController.AbcTests_C)),
+                            Type = typeof(FakeControllerWithInheritance.AbcTests_C), // most derived type
+                            ModelMetadata = ModelMetadataFactory.CreateForType(typeof(FakeControllerWithInheritance.AbcTests_C)),
+                        },
+                    ],
+                    supportedRequestFormats:
+                    [
+                        new ApiRequestFormat { MediaType = "application/json" },
+                    ]),
+                ApiDescriptionFactory.Create<FakeControllerWithInheritance>(
+                    c => nameof(c.ActionWithDerivedObjectResponse),
+                    groupName: "v1",
+                    httpMethod: "GET",
+                    relativePath: "resource",
+                    parameterDescriptions: [],
+                    supportedResponseTypes: [
+                        new ApiResponseType
+                        {
+                            ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
+                            StatusCode = 200,
+                            Type = typeof(FakeControllerWithInheritance.AbcTests_A),
                         },
                     ]),
             ],
@@ -1139,8 +1157,8 @@ public partial class VerifyTests
                 c.UseOneOfForPolymorphism = true;
                 c.SubTypesSelector =
                     (type) => (Type[])(
-                        type == typeof(FakeController.AbcTests_A)
-                            ? [typeof(FakeController.AbcTests_C)]
+                        type == typeof(FakeControllerWithInheritance.AbcTests_A)
+                            ? [typeof(FakeControllerWithInheritance.AbcTests_C)]
                             : []
                     );
             }

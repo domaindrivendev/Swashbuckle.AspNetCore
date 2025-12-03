@@ -8,14 +8,44 @@
     "/resource": {
       "post": {
         "tags": [
-          "Fake"
+          "FakeWithInheritance"
         ],
         "requestBody": {
-          "content": { }
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AbcTests_C"
+              }
+            }
+          }
         },
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "FakeWithInheritance"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/AbcTests_C"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -56,7 +86,7 @@
   },
   "tags": [
     {
-      "name": "Fake"
+      "name": "FakeWithInheritance"
     }
   ]
 }
