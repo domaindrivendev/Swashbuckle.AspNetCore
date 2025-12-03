@@ -2,34 +2,37 @@
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 
-public class FakeControllerWithInheritance
+#pragma warning disable CA1822
+
+public class FakeControllerWithInheritance : Controller
 {
-    public void ActionWithDerivedObjectParameter([FromBody] AbcTests_C param)
-    { }
+    public void ActionWithDerivedObjectParameter([FromBody] MostDerivedClass param)
+    {
+        System.Diagnostics.Debug.Assert(param is not null);
+    }
 
-    public List<AbcTests_A> ActionWithDerivedObjectResponse()
+    public List<BaseClass> ActionWithDerivedObjectResponse()
     {
         return null!;
     }
 
-    public AbcTests_B ActionWithDerivedObjectResponse_ExcludedFromInheritanceConfig()
+    public DerivedClass ActionWithDerivedObjectResponse_ExcludedFromInheritanceConfig()
     {
         return null!;
     }
 
-    // Helper test types for GenerateSchema_PreservesIntermediateBaseProperties_WhenUsingOneOfPolymorphism
-    public abstract class AbcTests_A
+    public abstract class BaseClass
     {
-        public string PropA { get; set; }
+        public string BaseProperty { get; set; }
     }
 
-    public class AbcTests_B : AbcTests_A
+    public class DerivedClass : BaseClass
     {
-        public string PropB { get; set; }
+        public string DerivedProperty { get; set; }
     }
 
-    public class AbcTests_C : AbcTests_B
+    public class MostDerivedClass : DerivedClass
     {
-        public string PropC { get; set; }
+        public string MoreDerivedProperty { get; set; }
     }
 }
