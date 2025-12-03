@@ -39,6 +39,9 @@
                   "items": {
                     "oneOf": [
                       {
+                        "$ref": "#/components/schemas/AbcTests_B"
+                      },
+                      {
                         "$ref": "#/components/schemas/AbcTests_C"
                       }
                     ]
@@ -61,7 +64,14 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AbcTests_B"
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/AbcTests_B"
+                    },
+                    {
+                      "$ref": "#/components/schemas/AbcTests_C"
+                    }
+                  ]
                 }
               }
             }
@@ -84,11 +94,12 @@
       },
       "AbcTests_B": {
         "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AbcTests_A"
+          }
+        ],
         "properties": {
-          "PropA": {
-            "type": "string",
-            "nullable": true
-          },
           "PropB": {
             "type": "string",
             "nullable": true
@@ -100,11 +111,11 @@
         "type": "object",
         "allOf": [
           {
-            "$ref": "#/components/schemas/AbcTests_A"
+            "$ref": "#/components/schemas/AbcTests_B"
           }
         ],
         "properties": {
-          "PropB": {
+          "PropA": {
             "type": "string",
             "nullable": true
           },

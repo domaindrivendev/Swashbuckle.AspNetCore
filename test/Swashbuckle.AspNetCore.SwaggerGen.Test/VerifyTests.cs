@@ -1151,6 +1151,20 @@ public partial class VerifyTests
                             Type = typeof(FakeControllerWithInheritance.AbcTests_A),
                         },
                     ]),
+                ApiDescriptionFactory.Create<FakeControllerWithInheritance>(
+                    c => nameof(c.ActionWithDerivedObjectResponse_ExcludedFromInheritanceConfig),
+                    groupName: "v1",
+                    httpMethod: "GET",
+                    relativePath: "resourceB",
+                    parameterDescriptions: [],
+                    supportedResponseTypes: [
+                        new ApiResponseType
+                        {
+                            ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
+                            StatusCode = 200,
+                            Type = typeof(FakeControllerWithInheritance.AbcTests_B),
+                        },
+                    ]),
             ],
             configureSchemaGeneratorOptions: c =>
             {
@@ -1160,6 +1174,76 @@ public partial class VerifyTests
                         type == typeof(FakeControllerWithInheritance.AbcTests_A)
                             ? [typeof(FakeControllerWithInheritance.AbcTests_C)]
                             : []
+                    );
+            }
+        );
+        var document = subject.GetSwagger("v1");
+
+        await Verify(document);
+    }
+
+    [Fact]
+    public async Task GenerateSchema_PreservesMultiLevelInheritance()
+    {
+        var subject = Subject(
+            apiDescriptions:
+            [
+                ApiDescriptionFactory.Create<FakeControllerWithInheritance>(
+                    c => nameof(c.ActionWithDerivedObjectParameter),
+                    groupName: "v1",
+                    httpMethod: "POST",
+                    relativePath: "resource",
+                    parameterDescriptions:
+                    [
+                        new ApiParameterDescription
+                        {
+                            Name = "param1",
+                            Source = BindingSource.Body,
+                            Type = typeof(FakeControllerWithInheritance.AbcTests_C), // most derived type
+                            ModelMetadata = ModelMetadataFactory.CreateForType(typeof(FakeControllerWithInheritance.AbcTests_C)),
+                        },
+                    ],
+                    supportedRequestFormats:
+                    [
+                        new ApiRequestFormat { MediaType = "application/json" },
+                    ]),
+                ApiDescriptionFactory.Create<FakeControllerWithInheritance>(
+                    c => nameof(c.ActionWithDerivedObjectResponse),
+                    groupName: "v1",
+                    httpMethod: "GET",
+                    relativePath: "resource",
+                    parameterDescriptions: [],
+                    supportedResponseTypes: [
+                        new ApiResponseType
+                        {
+                            ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
+                            StatusCode = 200,
+                            Type = typeof(FakeControllerWithInheritance.AbcTests_A),
+                        },
+                    ]),
+                ApiDescriptionFactory.Create<FakeControllerWithInheritance>(
+                    c => nameof(c.ActionWithDerivedObjectResponse_ExcludedFromInheritanceConfig),
+                    groupName: "v1",
+                    httpMethod: "GET",
+                    relativePath: "resourceB",
+                    parameterDescriptions: [],
+                    supportedResponseTypes: [
+                        new ApiResponseType
+                        {
+                            ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
+                            StatusCode = 200,
+                            Type = typeof(FakeControllerWithInheritance.AbcTests_B),
+                        },
+                    ]),
+            ],
+            configureSchemaGeneratorOptions: c =>
+            {
+                c.UseOneOfForPolymorphism = true;
+                c.SubTypesSelector =
+                    (type) => (Type[])(
+                        type == typeof(FakeControllerWithInheritance.AbcTests_A) ? [typeof(FakeControllerWithInheritance.AbcTests_B), typeof(FakeControllerWithInheritance.AbcTests_C)]
+                        : type == typeof(FakeControllerWithInheritance.AbcTests_B) ? [typeof(FakeControllerWithInheritance.AbcTests_C)]
+                        : []
                     );
             }
         );

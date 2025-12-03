@@ -49,6 +49,25 @@
           }
         }
       }
+    },
+    "/resourceB": {
+      "get": {
+        "tags": [
+          "FakeWithInheritance"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AbcTests_B"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -57,6 +76,20 @@
         "type": "object",
         "properties": {
           "PropA": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AbcTests_B": {
+        "type": "object",
+        "properties": {
+          "PropA": {
+            "type": "string",
+            "nullable": true
+          },
+          "PropB": {
             "type": "string",
             "nullable": true
           }

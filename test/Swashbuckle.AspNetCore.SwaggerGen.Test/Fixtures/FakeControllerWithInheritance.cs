@@ -12,6 +12,11 @@ public class FakeControllerWithInheritance
         return null!;
     }
 
+    public AbcTests_B ActionWithDerivedObjectResponse_ExcludedFromInheritanceConfig()
+    {
+        return null!;
+    }
+
     // Helper test types for GenerateSchema_PreservesIntermediateBaseProperties_WhenUsingOneOfPolymorphism
     public abstract class AbcTests_A
     {
