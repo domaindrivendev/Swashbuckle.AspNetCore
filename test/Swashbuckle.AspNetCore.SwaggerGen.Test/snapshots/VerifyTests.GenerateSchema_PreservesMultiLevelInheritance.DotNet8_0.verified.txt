@@ -115,10 +115,6 @@
           }
         ],
         "properties": {
-          "PropA": {
-            "type": "string",
-            "nullable": true
-          },
           "PropC": {
             "type": "string",
             "nullable": true

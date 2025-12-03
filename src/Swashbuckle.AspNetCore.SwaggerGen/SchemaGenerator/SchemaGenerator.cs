@@ -405,7 +405,8 @@ public class SchemaGenerator(
                 }
 
                 applicableDataProperties = applicableDataProperties
-                    .Where(dataProperty => dataProperty.MemberInfo.DeclaringType != baseTypeDataContract.UnderlyingType);
+                    // if the property is declared on a type other than (the one we just added as a base or one of its parents)
+                    .Where(dataProperty => !baseTypeDataContract.UnderlyingType.IsAssignableTo(dataProperty.MemberInfo.DeclaringType));
             }
 
             if (IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts))
