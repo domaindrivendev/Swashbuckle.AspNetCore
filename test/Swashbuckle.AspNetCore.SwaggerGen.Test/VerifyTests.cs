@@ -1113,6 +1113,44 @@ public partial class VerifyTests
     }
 
     [Fact]
+    public async Task GenerateSchema_PreservesIntermediateBaseProperties_WhenUsingOneOfPolymorphism()
+    {
+        var subject = Subject(
+            apiDescriptions:
+            [
+                ApiDescriptionFactory.Create<FakeController>(
+                    c => nameof(c.ActionWithDerivedObjectParameter),
+                    groupName: "v1",
+                    httpMethod: "POST",
+                    relativePath: "resource",
+                    parameterDescriptions:
+                    [
+                        new ApiParameterDescription
+                        {
+                            Name = "param1",
+                            Source = BindingSource.Body,
+                            Type = typeof(FakeController.AbcTests_C), // most derived type
+                            ModelMetadata = ModelMetadataFactory.CreateForType(typeof(FakeController.AbcTests_C)),
+                        },
+                    ]),
+            ],
+            configureSchemaGeneratorOptions: c =>
+            {
+                c.UseOneOfForPolymorphism = true;
+                c.SubTypesSelector =
+                    (type) => (Type[])(
+                        type == typeof(FakeController.AbcTests_A)
+                            ? [typeof(FakeController.AbcTests_C)]
+                            : []
+                    );
+            }
+        );
+        var document = subject.GetSwagger("v1");
+
+        await Verify(document);
+    }
+
+    [Fact]
     public async Task GetSwagger_Works_As_Expected_When_FromFormObject()
     {
         var subject = Subject(
@@ -1465,12 +1503,16 @@ public partial class VerifyTests
             IEnumerable<ApiDescription> apiDescriptions,
             SwaggerGeneratorOptions options = null,
             IEnumerable<AuthenticationScheme> authenticationSchemes = null,
-            List<ISchemaFilter> schemaFilters = null)
+            List<ISchemaFilter> schemaFilters = null,
+            Action<SchemaGeneratorOptions> configureSchemaGeneratorOptions = null)
     {
+        var schemaGeneratorOptions = new SchemaGeneratorOptions() { SchemaFilters = schemaFilters ?? [] };
+        configureSchemaGeneratorOptions?.Invoke(schemaGeneratorOptions);
+
         return new SwaggerGenerator(
             options ?? DefaultOptions,
             new FakeApiDescriptionGroupCollectionProvider(apiDescriptions),
-            new SchemaGenerator(new SchemaGeneratorOptions() { SchemaFilters = schemaFilters ?? [] }, new JsonSerializerDataContractResolver(new JsonSerializerOptions())),
+            new SchemaGenerator(schemaGeneratorOptions, new JsonSerializerDataContractResolver(new JsonSerializerOptions())),
             new FakeAuthenticationSchemeProvider(authenticationSchemes ?? [])
         );
     }

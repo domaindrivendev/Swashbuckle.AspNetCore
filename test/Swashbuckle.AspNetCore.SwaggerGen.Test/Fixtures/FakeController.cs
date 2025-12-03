@@ -70,6 +70,25 @@ public class FakeController
     public void ActionWithObjectParameter(XmlAnnotatedType param)
     { }
 
+    public void ActionWithDerivedObjectParameter(AbcTests_C param)
+    { }
+
+    // Helper test types for GenerateSchema_PreservesIntermediateBaseProperties_WhenUsingOneOfPolymorphism
+    public abstract class AbcTests_A
+    {
+        public string PropA { get; set; }
+    }
+
+    public class AbcTests_B : AbcTests_A
+    {
+        public string PropB { get; set; }
+    }
+
+    public class AbcTests_C : AbcTests_B
+    {
+        public string PropC { get; set; }
+    }
+
     public class TypeWithRequiredProperty
     {
         public required string RequiredProperty { get; set; }

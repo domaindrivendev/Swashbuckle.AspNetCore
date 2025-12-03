@@ -1,0 +1,62 @@
+﻿{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Test API",
+    "version": "V1"
+  },
+  "paths": {
+    "/resource": {
+      "post": {
+        "tags": [
+          "Fake"
+        ],
+        "requestBody": {
+          "content": { }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AbcTests_A": {
+        "type": "object",
+        "properties": {
+          "PropA": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AbcTests_C": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/AbcTests_A"
+          }
+        ],
+        "properties": {
+          "PropB": {
+            "type": "string",
+            "nullable": true
+          },
+          "PropC": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Fake"
+    }
+  ]
+}
