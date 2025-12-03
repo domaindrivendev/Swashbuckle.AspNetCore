@@ -1129,26 +1129,24 @@ public partial class VerifyTests
                         {
                             Name = "param1",
                             Source = BindingSource.Body,
-                            Type = typeof(FakeControllerWithInheritance.AbcTests_C), // most derived type
-                            ModelMetadata = ModelMetadataFactory.CreateForType(typeof(FakeControllerWithInheritance.AbcTests_C)),
+                            Type = typeof(FakeControllerWithInheritance.MostDerivedClass),
+                            ModelMetadata = ModelMetadataFactory.CreateForType(typeof(FakeControllerWithInheritance.MostDerivedClass)),
                         },
                     ],
-                    supportedRequestFormats:
-                    [
-                        new ApiRequestFormat { MediaType = "application/json" },
-                    ]),
+                    supportedRequestFormats: [new ApiRequestFormat { MediaType = "application/json" }]),
                 ApiDescriptionFactory.Create<FakeControllerWithInheritance>(
                     c => nameof(c.ActionWithDerivedObjectResponse),
                     groupName: "v1",
                     httpMethod: "GET",
                     relativePath: "resource",
                     parameterDescriptions: [],
-                    supportedResponseTypes: [
+                    supportedResponseTypes:
+                    [
                         new ApiResponseType
                         {
                             ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
                             StatusCode = 200,
-                            Type = typeof(FakeControllerWithInheritance.AbcTests_A),
+                            Type = typeof(FakeControllerWithInheritance.BaseClass),
                         },
                     ]),
                 ApiDescriptionFactory.Create<FakeControllerWithInheritance>(
@@ -1157,12 +1155,13 @@ public partial class VerifyTests
                     httpMethod: "GET",
                     relativePath: "resourceB",
                     parameterDescriptions: [],
-                    supportedResponseTypes: [
+                    supportedResponseTypes:
+                    [
                         new ApiResponseType
                         {
                             ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
                             StatusCode = 200,
-                            Type = typeof(FakeControllerWithInheritance.AbcTests_B),
+                            Type = typeof(FakeControllerWithInheritance.DerivedClass),
                         },
                     ]),
             ],
@@ -1170,11 +1169,10 @@ public partial class VerifyTests
             {
                 c.UseOneOfForPolymorphism = true;
                 c.SubTypesSelector =
-                    (type) => (Type[])(
-                        type == typeof(FakeControllerWithInheritance.AbcTests_A)
-                            ? [typeof(FakeControllerWithInheritance.AbcTests_C)]
-                            : []
-                    );
+                    (type) =>
+                        type == typeof(FakeControllerWithInheritance.BaseClass)
+                            ? [typeof(FakeControllerWithInheritance.MostDerivedClass)]
+                            : [];
             }
         );
         var document = subject.GetSwagger("v1");
@@ -1199,26 +1197,24 @@ public partial class VerifyTests
                         {
                             Name = "param1",
                             Source = BindingSource.Body,
-                            Type = typeof(FakeControllerWithInheritance.AbcTests_C), // most derived type
-                            ModelMetadata = ModelMetadataFactory.CreateForType(typeof(FakeControllerWithInheritance.AbcTests_C)),
+                            Type = typeof(FakeControllerWithInheritance.MostDerivedClass),
+                            ModelMetadata = ModelMetadataFactory.CreateForType(typeof(FakeControllerWithInheritance.MostDerivedClass)),
                         },
                     ],
-                    supportedRequestFormats:
-                    [
-                        new ApiRequestFormat { MediaType = "application/json" },
-                    ]),
+                    supportedRequestFormats: [new ApiRequestFormat { MediaType = "application/json" }]),
                 ApiDescriptionFactory.Create<FakeControllerWithInheritance>(
                     c => nameof(c.ActionWithDerivedObjectResponse),
                     groupName: "v1",
                     httpMethod: "GET",
                     relativePath: "resource",
                     parameterDescriptions: [],
-                    supportedResponseTypes: [
+                    supportedResponseTypes:
+                    [
                         new ApiResponseType
                         {
                             ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
                             StatusCode = 200,
-                            Type = typeof(FakeControllerWithInheritance.AbcTests_A),
+                            Type = typeof(FakeControllerWithInheritance.BaseClass),
                         },
                     ]),
                 ApiDescriptionFactory.Create<FakeControllerWithInheritance>(
@@ -1227,12 +1223,13 @@ public partial class VerifyTests
                     httpMethod: "GET",
                     relativePath: "resourceB",
                     parameterDescriptions: [],
-                    supportedResponseTypes: [
+                    supportedResponseTypes:
+                    [
                         new ApiResponseType
                         {
                             ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
                             StatusCode = 200,
-                            Type = typeof(FakeControllerWithInheritance.AbcTests_B),
+                            Type = typeof(FakeControllerWithInheritance.DerivedClass),
                         },
                     ]),
             ],
@@ -1240,11 +1237,10 @@ public partial class VerifyTests
             {
                 c.UseOneOfForPolymorphism = true;
                 c.SubTypesSelector =
-                    (type) => (Type[])(
-                        type == typeof(FakeControllerWithInheritance.AbcTests_A) ? [typeof(FakeControllerWithInheritance.AbcTests_B), typeof(FakeControllerWithInheritance.AbcTests_C)]
-                        : type == typeof(FakeControllerWithInheritance.AbcTests_B) ? [typeof(FakeControllerWithInheritance.AbcTests_C)]
-                        : []
-                    );
+                    (type) =>
+                        type == typeof(FakeControllerWithInheritance.BaseClass) ? [typeof(FakeControllerWithInheritance.DerivedClass), typeof(FakeControllerWithInheritance.MostDerivedClass)]
+                        : type == typeof(FakeControllerWithInheritance.DerivedClass) ? [typeof(FakeControllerWithInheritance.MostDerivedClass)]
+                        : [];
             }
         );
         var document = subject.GetSwagger("v1");

@@ -14,7 +14,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AbcTests_C"
+                "$ref": "#/components/schemas/MostDerivedClass"
               }
             }
           }
@@ -39,10 +39,10 @@
                   "items": {
                     "oneOf": [
                       {
-                        "$ref": "#/components/schemas/AbcTests_B"
+                        "$ref": "#/components/schemas/DerivedClass"
                       },
                       {
-                        "$ref": "#/components/schemas/AbcTests_C"
+                        "$ref": "#/components/schemas/MostDerivedClass"
                       }
                     ]
                   }
@@ -66,10 +66,10 @@
                 "schema": {
                   "oneOf": [
                     {
-                      "$ref": "#/components/schemas/AbcTests_B"
+                      "$ref": "#/components/schemas/DerivedClass"
                     },
                     {
-                      "$ref": "#/components/schemas/AbcTests_C"
+                      "$ref": "#/components/schemas/MostDerivedClass"
                     }
                   ]
                 }
@@ -82,40 +82,40 @@
   },
   "components": {
     "schemas": {
-      "AbcTests_A": {
+      "BaseClass": {
         "type": "object",
         "properties": {
-          "PropA": {
+          "BaseProperty": {
             "type": "string",
             "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "AbcTests_B": {
+      "DerivedClass": {
         "type": "object",
         "allOf": [
           {
-            "$ref": "#/components/schemas/AbcTests_A"
+            "$ref": "#/components/schemas/BaseClass"
           }
         ],
         "properties": {
-          "PropB": {
+          "DerivedProperty": {
             "type": "string",
             "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "AbcTests_C": {
+      "MostDerivedClass": {
         "type": "object",
         "allOf": [
           {
-            "$ref": "#/components/schemas/AbcTests_B"
+            "$ref": "#/components/schemas/DerivedClass"
           }
         ],
         "properties": {
-          "PropC": {
+          "MoreDerivedProperty": {
             "type": "string",
             "nullable": true
           }

@@ -721,54 +721,53 @@ public class JsonSerializerSchemaGeneratorTests
     public void GenerateSchema_PreservesIntermediateBaseProperties_WhenUsingOneOfPolymorphism()
     {
         // Arrange - define a type hierarchy A <- B <- C where only A and C are selected as known subtypes
-        var subject = Subject(configureGenerator: c =>
+        var subject = Subject(configureGenerator: (c) =>
         {
             c.UseOneOfForPolymorphism = true;
-            c.SubTypesSelector = (type) => type == typeof(AbcTests_A) ? new[] { typeof(AbcTests_C) } : Array.Empty<Type>();
+            c.SubTypesSelector = (type) => type == typeof(ModelOfA) ? [typeof(ModelOfC)] : [];
         });
 
         var schemaRepository = new SchemaRepository();
 
         // Act
-        var schema = subject.GenerateSchema(typeof(AbcTests_A), schemaRepository);
+        var schema = subject.GenerateSchema(typeof(ModelOfA), schemaRepository);
 
         // Assert - polymorphic schema should be present
         Assert.NotNull(schema.OneOf);
 
         // Ensure base A schema contains PropA
-        Assert.True(schemaRepository.Schemas.ContainsKey(nameof(AbcTests_A)));
-        var aSchema = schemaRepository.Schemas[nameof(AbcTests_A)];
-        Assert.True(aSchema.Properties.ContainsKey(nameof(AbcTests_A.PropA)));
+        Assert.True(schemaRepository.Schemas.ContainsKey(nameof(ModelOfA)));
+        var aSchema = schemaRepository.Schemas[nameof(ModelOfA)];
+        Assert.True(aSchema.Properties.ContainsKey(nameof(ModelOfA.PropertyOfA)));
 
         // Find the C schema in the OneOf and assert it preserves B's properties while not duplicating A's
         var cRef = schema.OneOf
             .OfType<OpenApiSchemaReference>()
-            .First(r => r.Reference.Id == nameof(AbcTests_C));
+            .First(r => r.Reference.Id == nameof(ModelOfC));
 
-        var cSchema = schemaRepository.Schemas[nameof(AbcTests_C)];
+        var cSchema = schemaRepository.Schemas[nameof(ModelOfC)];
 
         // C should include PropC and properties declared on intermediate B
-        Assert.True(cSchema.Properties.ContainsKey(nameof(AbcTests_C.PropC)));
-        Assert.True(cSchema.Properties.ContainsKey(nameof(AbcTests_B.PropB)));
+        Assert.True(cSchema.Properties.ContainsKey(nameof(ModelOfC.PropertyOfC)));
+        Assert.True(cSchema.Properties.ContainsKey(nameof(ModelOfB.PropertyOfB)));
 
         // A's property should not be in C's inline properties because it's provided by the referenced base schema
-        Assert.False(cSchema.Properties.ContainsKey(nameof(AbcTests_A.PropA)));
+        Assert.False(cSchema.Properties.ContainsKey(nameof(ModelOfA.PropertyOfA)));
     }
 
-    // Helper test types for the A/B/C regression
-    public abstract class AbcTests_A
+    public abstract class ModelOfA
     {
-        public string PropA { get; set; }
+        public string PropertyOfA { get; set; }
     }
 
-    public class AbcTests_B : AbcTests_A
+    public class ModelOfB : ModelOfA
     {
-        public string PropB { get; set; }
+        public string PropertyOfB { get; set; }
     }
 
-    public class AbcTests_C : AbcTests_B
+    public class ModelOfC : ModelOfB
     {
-        public string PropC { get; set; }
+        public string PropertyOfC { get; set; }
     }
 
     [Fact]

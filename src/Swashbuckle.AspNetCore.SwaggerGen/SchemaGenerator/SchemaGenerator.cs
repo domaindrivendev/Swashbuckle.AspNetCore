@@ -404,9 +404,10 @@ public class SchemaGenerator(
                     schema.AllOf.Add(baseTypeSchema);
                 }
 
-                applicableDataProperties = applicableDataProperties
-                    // if the property is declared on a type other than (the one we just added as a base or one of its parents)
-                    .Where(dataProperty => !baseTypeDataContract.UnderlyingType.IsAssignableTo(dataProperty.MemberInfo.DeclaringType));
+                // If the property is declared on a type other than the one we just added as a base (or one of its parents)
+                // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3201.
+                applicableDataProperties = applicableDataProperties.Where(
+                    (dataProperty) => !baseTypeDataContract.UnderlyingType.IsAssignableTo(dataProperty.MemberInfo.DeclaringType));
             }
 
             if (IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts))

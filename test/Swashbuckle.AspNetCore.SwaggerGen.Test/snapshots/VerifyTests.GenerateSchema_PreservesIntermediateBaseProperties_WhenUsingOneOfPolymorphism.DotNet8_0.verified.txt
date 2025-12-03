@@ -14,7 +14,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AbcTests_C"
+                "$ref": "#/components/schemas/MostDerivedClass"
               }
             }
           }
@@ -39,7 +39,7 @@
                   "items": {
                     "oneOf": [
                       {
-                        "$ref": "#/components/schemas/AbcTests_C"
+                        "$ref": "#/components/schemas/MostDerivedClass"
                       }
                     ]
                   }
@@ -61,7 +61,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AbcTests_B"
+                  "$ref": "#/components/schemas/DerivedClass"
                 }
               }
             }
@@ -72,43 +72,43 @@
   },
   "components": {
     "schemas": {
-      "AbcTests_A": {
+      "BaseClass": {
         "type": "object",
         "properties": {
-          "PropA": {
+          "BaseProperty": {
             "type": "string",
             "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "AbcTests_B": {
+      "DerivedClass": {
         "type": "object",
         "properties": {
-          "PropA": {
+          "BaseProperty": {
             "type": "string",
             "nullable": true
           },
-          "PropB": {
+          "DerivedProperty": {
             "type": "string",
             "nullable": true
           }
         },
         "additionalProperties": false
       },
-      "AbcTests_C": {
+      "MostDerivedClass": {
         "type": "object",
         "allOf": [
           {
-            "$ref": "#/components/schemas/AbcTests_A"
+            "$ref": "#/components/schemas/BaseClass"
           }
         ],
         "properties": {
-          "PropB": {
+          "DerivedProperty": {
             "type": "string",
             "nullable": true
           },
-          "PropC": {
+          "MoreDerivedProperty": {
             "type": "string",
             "nullable": true
           }
