@@ -16,7 +16,7 @@ permissions: {}
 env:
   FORCE_COLOR: 3
   TERM: xterm
-  ZIZMOR_VERSION: '1.16.3'
+  ZIZMOR_VERSION: '1.18.0'
 
 jobs:
   lint:
@@ -30,7 +30,7 @@ jobs:
     steps:
 
     - name: Checkout code
-      uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       with:
         filter: 'tree:0'
         persist-credentials: false
@@ -56,3 +56,17 @@ jobs:
         config: '.markdownlint.json'
         globs: |
           **/*.md
+
+    - name: Setup Node
+      uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
+      with:
+        node-version: '24.x'
+
+    - name: Install Spectral
+      run: npm install --global "@stoplight/spectral-cli@${SPECTRAL_VERSION}"
+      env:
+        # renovate: datasource=npm packageName=@stoplight/spectral-cli
+        SPECTRAL_VERSION: '6.15.0'
+
+    - name: Run Spectral
+      run: spectral lint "./test/Swashbuckle.AspNetCore.IntegrationTests/snapshots/*" --display-only-failures --fail-severity error --format github-actions

@@ -65,7 +65,7 @@ jobs:
         }
 
     - name: Checkout code
-      uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
       with:
         filter: 'tree:0'
         persist-credentials: false
@@ -79,7 +79,7 @@ jobs:
           9.0.x
 
     - name: Setup Node
-      uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
+      uses: actions/setup-node@395ad3262231945c25e8478fd5baf05154b1d79f # v6.1.0
       with:
         node-version: '24'
         package-manager-cache: false
@@ -87,6 +87,11 @@ jobs:
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@2016bd2012dba4e32de620c46fe006a3ac9f0602 # v5.0.1
       id: setup-dotnet
+
+    - name: Install .NET tools
+      shell: pwsh
+      run: |
+        dotnet tool restore
 
     - name: Build, Package and Test
       id: build
@@ -234,7 +239,8 @@ jobs:
         API_KEY: ${{ secrets.MYGET_TOKEN }}
         PACKAGE_VERSION: ${{ needs.build.outputs.package-version }}
         SOURCE: "https://www.myget.org/F/domaindrivendev/api/v3/index.json"
-      run: dotnet nuget push "*.nupkg" --api-key "${API_KEY}" --skip-duplicate --source "${SOURCE}" && echo "::notice title=myget.org::Published version ${PACKAGE_VERSION} to MyGet."
+      run: | # zizmor: ignore[use-trusted-publishing] MyGet does not support trusted publishing
+        dotnet nuget push "*.nupkg" --api-key "${API_KEY}" --skip-duplicate --source "${SOURCE}" && echo "::notice title=myget.org::Published version ${PACKAGE_VERSION} to MyGet."
 
   publish-nuget:
     needs: [ build, validate-packages ]
@@ -273,4 +279,5 @@ jobs:
         API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
         PACKAGE_VERSION: ${{ needs.build.outputs.package-version }}
         SOURCE: https://api.nuget.org/v3/index.json
-      run: dotnet nuget push "*.nupkg" --api-key "${API_KEY}" --skip-duplicate --source "${SOURCE}" && echo "::notice title=nuget.org::Published version ${PACKAGE_VERSION} to NuGet.org."
+      run: |
+        dotnet nuget push "*.nupkg" --api-key "${API_KEY}" --skip-duplicate --source "${SOURCE}" && echo "::notice title=nuget.org::Published version ${PACKAGE_VERSION} to NuGet.org."

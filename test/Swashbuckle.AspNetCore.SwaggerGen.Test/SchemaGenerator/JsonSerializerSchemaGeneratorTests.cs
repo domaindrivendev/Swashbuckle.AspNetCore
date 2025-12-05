@@ -718,6 +718,59 @@ public class JsonSerializerSchemaGeneratorTests
     }
 
     [Fact]
+    public void GenerateSchema_PreservesIntermediateBaseProperties_WhenUsingOneOfPolymorphism()
+    {
+        // Arrange - define a type hierarchy A <- B <- C where only A and C are selected as known subtypes
+        var subject = Subject(configureGenerator: (c) =>
+        {
+            c.UseOneOfForPolymorphism = true;
+            c.SubTypesSelector = (type) => type == typeof(ModelOfA) ? [typeof(ModelOfC)] : [];
+        });
+
+        var schemaRepository = new SchemaRepository();
+
+        // Act
+        var schema = subject.GenerateSchema(typeof(ModelOfA), schemaRepository);
+
+        // Assert - polymorphic schema should be present
+        Assert.NotNull(schema.OneOf);
+
+        // Ensure base A schema contains PropA
+        Assert.True(schemaRepository.Schemas.ContainsKey(nameof(ModelOfA)));
+        var aSchema = schemaRepository.Schemas[nameof(ModelOfA)];
+        Assert.True(aSchema.Properties.ContainsKey(nameof(ModelOfA.PropertyOfA)));
+
+        // Find the C schema in the OneOf and assert it preserves B's properties while not duplicating A's
+        var cRef = schema.OneOf
+            .OfType<OpenApiSchemaReference>()
+            .First(r => r.Reference.Id == nameof(ModelOfC));
+
+        var cSchema = schemaRepository.Schemas[nameof(ModelOfC)];
+
+        // C should include PropC and properties declared on intermediate B
+        Assert.True(cSchema.Properties.ContainsKey(nameof(ModelOfC.PropertyOfC)));
+        Assert.True(cSchema.Properties.ContainsKey(nameof(ModelOfB.PropertyOfB)));
+
+        // A's property should not be in C's inline properties because it's provided by the referenced base schema
+        Assert.False(cSchema.Properties.ContainsKey(nameof(ModelOfA.PropertyOfA)));
+    }
+
+    public abstract class ModelOfA
+    {
+        public string PropertyOfA { get; set; }
+    }
+
+    public class ModelOfB : ModelOfA
+    {
+        public string PropertyOfB { get; set; }
+    }
+
+    public class ModelOfC : ModelOfB
+    {
+        public string PropertyOfC { get; set; }
+    }
+
+    [Fact]
     public void GenerateSchema_SupportsOption_UseAllOfToExtendReferenceSchemas()
     {
         var subject = Subject(

@@ -1,0 +1,473 @@
+﻿{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Todo API",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/items": {
+      "get": {
+        "tags": [
+          "TodoApp"
+        ],
+        "summary": "Get all Todo items",
+        "description": "Gets all of the current user's todo items.",
+        "operationId": "ListTodos",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TodoListViewModel"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "TodoApp"
+        ],
+        "summary": "Create a new Todo item",
+        "description": "Creates a new todo item for the current user and returns its ID.",
+        "operationId": "CreateTodo",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateTodoItemModel"
+                  }
+                ],
+                "description": "Represents the model for creating a new Todo item."
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedTodoItemModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/items/{id}": {
+      "get": {
+        "tags": [
+          "TodoApp"
+        ],
+        "summary": "Get a specific Todo item",
+        "description": "Gets the todo item with the specified ID.",
+        "operationId": "GetTodo",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The Todo item's ID.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The Todo item's ID.",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TodoItemModel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "TodoApp"
+        ],
+        "summary": "Delete a Todo item",
+        "description": "Deletes the todo item with the specified ID.",
+        "operationId": "DeleteTodo",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The Todo item's ID.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The Todo item's ID.",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/items/{id}/complete": {
+      "post": {
+        "tags": [
+          "TodoApp"
+        ],
+        "summary": "Mark a Todo item as completed",
+        "description": "Marks the todo item with the specified ID as complete.",
+        "operationId": "CompleteTodo",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The Todo item's ID.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The Todo item's ID.",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/items/{id}/priority": {
+      "patch": {
+        "tags": [
+          "TodoApp"
+        ],
+        "summary": "Updates the priority of a Todo item",
+        "description": "Updates the priority of the todo item with the specified ID to the specified priority.",
+        "operationId": "UpdateTodoPriority",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The Todo item's ID.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "The Todo item's ID.",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/UpdateTodoItemPriorityModel"
+                  }
+                ],
+                "description": "Represents the model for updating the priority of a Todo item."
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/items/find": {
+      "get": {
+        "tags": [
+          "TodoApp"
+        ],
+        "operationId": "FindTodo",
+        "parameters": [
+          {
+            "name": "Text",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "IsCompleted",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TodoListViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/items/getAfter": {
+      "get": {
+        "tags": [
+          "TodoApp"
+        ],
+        "operationId": "GetAfterDate",
+        "parameters": [
+          {
+            "name": "value",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TodoListViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CreateTodoItemModel": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "Gets or sets the text of the Todo item."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents the model for creating a new Todo item."
+      },
+      "CreatedTodoItemModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Gets or sets the ID of the created Todo item."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents the model for a created Todo item."
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
+      "TodoItemModel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Gets or sets the ID of the Todo item."
+          },
+          "text": {
+            "type": "string",
+            "description": "Gets or sets the text of the Todo item."
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Gets or sets the date and time the item was created.",
+            "format": "date-time"
+          },
+          "completedAt": {
+            "type": "string",
+            "description": "Gets or sets the date and time the item was completed.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastUpdated": {
+            "type": "string",
+            "description": "Gets or sets the date and time the Todo item was last updated.",
+            "format": "date-time"
+          },
+          "priority": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TodoPriority"
+              }
+            ],
+            "description": "Gets or sets the optional priority of the Todo item.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a Todo item."
+      },
+      "TodoListViewModel": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TodoItemModel"
+            },
+            "description": "Gets or sets the Todo item(s)."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a collection of Todo items."
+      },
+      "TodoPriority": {
+        "enum": [
+          "Normal",
+          "Low",
+          "High"
+        ],
+        "type": "string",
+        "description": "The priority levels for a Todo item."
+      },
+      "UpdateTodoItemPriorityModel": {
+        "type": "object",
+        "properties": {
+          "priority": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TodoPriority"
+              }
+            ],
+            "description": "Gets or sets the new priority of the Todo item."
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents the model for updating the priority of a Todo item."
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "TodoApp"
+    }
+  ]
+}

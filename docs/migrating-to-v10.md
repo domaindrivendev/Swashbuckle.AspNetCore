@@ -6,9 +6,9 @@
 ## Why breaking changes?
 
 While the [OpenAPI 3.1 specification][openapi-specification] is a minor release compared to OpenAPI 3.0, the OpenAPI specification does
-not use Semantic Versioning (SemVer). The changes introduced between the two versions are quite breaking in a practical sense, so major
-changes were required to be made to [Microsoft.OpenApi][microsoft-openapi-package], the package which Swashbuckle.AspNetCore builds upon,
-in order to allow applications to produce OpenAPI 3.1 documents.
+not use [Semantic Versioning (SemVer)][semver]. The changes introduced between the two versions are quite breaking in a practical sense,
+so major changes were required to be made to [Microsoft.OpenApi][microsoft-openapi-package], the package which Swashbuckle.AspNetCore
+builds upon, in order to allow applications to produce OpenAPI 3.1 documents.
 
 These changes were introduced in [Microsoft.OpenApi v2.0.0][microsoft-openapi-v2-migration-guide], which _does_ follow SemVer. As a result,
 Swashbuckle.AspNetCore v10+ now depends on Microsoft.OpenApi v2+ to allow users to produce OpenAPI 3.1 documents, fulfilling a
@@ -17,10 +17,11 @@ long-standing feature request: [Plans on official support for OpenApi 3.1.0 #234
 These changes are unfortunately required, even if you still wish to target Swagger 2.0 or OpenAPI 3.0 documents, as the same library is used
 to produce all three document format versions.
 
-For the same breaking changes, ASP.NET Core v10+ also depends on Microsoft.OpenApi v2+, so these changes were also required to allow applications
-using ASP.NET Core 10 to use Swashbuckle.AspNetCore effectively with minimal friction. This also helps support users who may wish to migrate an
-application from Swashbuckle.AspNetCore to Microsoft.AspNetCore.OpenApi (for example if they need native AoT support). More information about the
-breaking changes in ASP.NET Core 10 can be found in this document: _[What's new in ASP.NET Core in .NET 10][breaking-changes-aspnetcore]_.
+For the same reason, ASP.NET Core v10+ also depends on Microsoft.OpenApi v2+ if you use the [Microsoft.AspNetCore.OpenApi][microsoft-aspnetcore-openapi-package]
+NuGet package, so these changes were also required to allow applications using ASP.NET Core 10 to use Swashbuckle.AspNetCore effectively with
+minimal friction. This also helps support users who may wish to migrate an application from Swashbuckle.AspNetCore to Microsoft.AspNetCore.OpenApi
+(for example if they need native AoT support). More information about the breaking changes in ASP.NET Core 10 can be found in this
+document: _[What's new in ASP.NET Core in .NET 10][breaking-changes-aspnetcore]_.
 
 The refactoring required to support OpenAPI 3.1 in Swashbuckle.AspNetCore was significant. If you're interested in what exactly what was changed,
 you can check out the PR to implement it that was worked on over the course of .NET 10's development (it's quite large): _[Support .NET 10 #3283][swashbuckle-aspnetcore-10]_.
@@ -100,6 +101,7 @@ Migrating to Swashbuckle.AspNetCore v10+ will likely involve changes in the foll
 [microsoft-openapi-v2-migration-guide]: https://github.com/microsoft/OpenAPI.NET/blob/main/docs/upgrade-guide-2.md "Microsoft OpenAPI.NET v2 migration guide"
 [openapi-specification]: https://swagger.io/specification/ "OpenAPI Specification"
 [security]: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/v10.0.0/docs/configure-and-customize-swaggergen.md#add-security-definitions-and-requirements "Add Security Definitions and Requirements"
+[semver]: https://semver.org/ "Semantic Versioning 2.0.0"
 [swashbuckle-aspnetcore-906]: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/releases/tag/v9.0.6 "Swashbuckle.AspNetCore v9.0.6"
 [swashbuckle-aspnetcore-10]: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/pull/3283 "Support .NET 10"
 [withopenapi-deprecation]: https://github.com/aspnet/Announcements/issues/519 "[Breaking change]: Deprecation of WithOpenApi extension method"

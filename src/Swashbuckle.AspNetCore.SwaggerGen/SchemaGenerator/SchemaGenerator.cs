@@ -49,12 +49,9 @@ public class SchemaGenerator(
             ? GeneratePolymorphicSchema(schemaRepository, knownTypesDataContracts)
             : GenerateConcreteSchema(dataContract, schemaRepository);
 
-        bool usingAllOf = false;
-
         if (_generatorOptions.UseAllOfToExtendReferenceSchemas && schema is OpenApiSchemaReference reference)
         {
             schema = new OpenApiSchema() { AllOf = [reference] };
-            usingAllOf = true;
         }
 
         if (schema is OpenApiSchema concrete)
@@ -66,24 +63,12 @@ public class SchemaGenerator(
             {
                 var requiredAttribute = customAttributes.OfType<RequiredAttribute>().FirstOrDefault();
 
+                // "nullable" cannot be used without "type", however this was added in a patch
+                // change to OpenAPI 3.0 which would cause compatibility issues for existing users
+                // if it were changed, so this is intentionally not compliant with the OpenAPI specification.
+                // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3683#issuecomment-3593065197.
                 var nullable = IsNullable(requiredAttribute, dataProperty, memberInfo);
-
-                if (usingAllOf)
-                {
-                    // When using AllOf to extend reference schemas, we need to adjust the schema to represent
-                    // nullability correctly as a property can't be null AND a specific type at the same time.
-                    // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3649.
-                    if (nullable)
-                    {
-                        concrete.OneOf = schema.AllOf;
-                        concrete.OneOf.Add(new OpenApiSchema { Type = JsonSchemaType.Null });
-                        concrete.AllOf = null;
-                    }
-                }
-                else
-                {
-                    SetNullable(concrete, nullable);
-                }
+                SetNullable(concrete, nullable);
 
                 concrete.ReadOnly = dataProperty.IsReadOnly;
                 concrete.WriteOnly = dataProperty.IsWriteOnly;
@@ -419,8 +404,10 @@ public class SchemaGenerator(
                     schema.AllOf.Add(baseTypeSchema);
                 }
 
-                applicableDataProperties = applicableDataProperties
-                    .Where(dataProperty => dataProperty.MemberInfo.DeclaringType == dataContract.UnderlyingType);
+                // If the property is declared on a type other than the one we just added as a base (or one of its parents)
+                // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3201.
+                applicableDataProperties = applicableDataProperties.Where(
+                    (dataProperty) => !baseTypeDataContract.UnderlyingType.IsAssignableTo(dataProperty.MemberInfo.DeclaringType));
             }
 
             if (IsBaseTypeWithKnownTypesDefined(dataContract, out var knownTypesDataContracts))
