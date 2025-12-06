@@ -42,4 +42,23 @@ public class SchemaRepository(string documentName = null)
 
         return new OpenApiSchemaReference(schemaId);
     }
+
+    public bool ReplaceSchemaId(Type oldSchemaType, string newSchemaId)
+    {
+        ArgumentNullException.ThrowIfNull(oldSchemaType);
+        ArgumentException.ThrowIfNullOrEmpty(newSchemaId);
+
+        if (_reservedIds.TryGetValue(oldSchemaType, out string oldSchemaId) &&
+            oldSchemaId != newSchemaId && Schemas.TryGetValue(oldSchemaId, out var targetSchema))
+        {
+            if (Schemas.TryAdd(newSchemaId, targetSchema))
+            {
+                Schemas.Remove(oldSchemaId);
+                _reservedIds.Remove(oldSchemaType);
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
