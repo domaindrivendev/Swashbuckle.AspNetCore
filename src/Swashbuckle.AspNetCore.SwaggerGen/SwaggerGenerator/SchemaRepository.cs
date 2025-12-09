@@ -43,18 +43,19 @@ public class SchemaRepository(string documentName = null)
         return new OpenApiSchemaReference(schemaId);
     }
 
-    public bool ReplaceSchemaId(Type oldSchemaType, string newSchemaId)
+    public bool ReplaceSchemaId(Type schemaType, string replacementSchemaId)
     {
-        ArgumentNullException.ThrowIfNull(oldSchemaType);
-        ArgumentException.ThrowIfNullOrEmpty(newSchemaId);
+        ArgumentNullException.ThrowIfNull(schemaType);
+        ArgumentException.ThrowIfNullOrEmpty(replacementSchemaId);
 
-        if (_reservedIds.TryGetValue(oldSchemaType, out string oldSchemaId) &&
-            oldSchemaId != newSchemaId && Schemas.TryGetValue(oldSchemaId, out var targetSchema))
+        if (_reservedIds.TryGetValue(schemaType, out string oldSchemaId) &&
+            oldSchemaId != replacementSchemaId &&
+            Schemas.TryGetValue(oldSchemaId, out var targetSchema))
         {
-            if (Schemas.TryAdd(newSchemaId, targetSchema))
+            if (Schemas.TryAdd(replacementSchemaId, targetSchema))
             {
                 Schemas.Remove(oldSchemaId);
-                _reservedIds.Remove(oldSchemaType);
+                _reservedIds.Remove(schemaType);
                 return true;
             }
         }

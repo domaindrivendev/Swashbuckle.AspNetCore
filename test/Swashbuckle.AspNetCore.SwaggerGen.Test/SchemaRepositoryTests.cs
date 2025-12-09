@@ -2,10 +2,10 @@
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 
-public class SchemaRepositoryTests
+public static class SchemaRepositoryTests
 {
     [Fact]
-    public void ReplaceSchemaId_ExistingSchema_ReplacesSchemaId()
+    public static void ReplaceSchemaId_ExistingSchema_ReplacesSchemaId()
     {
         var repository = new SchemaRepository();
         (string oldSchemaId, IOpenApiSchema exampleSchema) = GenerateSchemaForType(typeof(Example), repository);
@@ -20,7 +20,7 @@ public class SchemaRepositoryTests
     }
 
     [Fact]
-    public void ReplaceSchemaId_MissingSchema_DoesNotChange()
+    public static void ReplaceSchemaId_MissingSchema_DoesNotChange()
     {
         var repository = new SchemaRepository();
 
@@ -32,7 +32,7 @@ public class SchemaRepositoryTests
     }
 
     [Fact]
-    public void ReplaceSchemaId_UnchangedId_DoesNotChange()
+    public static void ReplaceSchemaId_UnchangedId_DoesNotChange()
     {
         var repository = new SchemaRepository();
         (string schemaId, IOpenApiSchema exampleSchema) = GenerateSchemaForType(typeof(Example), repository);
@@ -45,7 +45,7 @@ public class SchemaRepositoryTests
     }
 
     [Fact]
-    public void ReplaceSchemaId_ExistingId_DoesNotChange()
+    public static void ReplaceSchemaId_ExistingId_DoesNotChange()
     {
         var repository = new SchemaRepository();
 
@@ -63,7 +63,7 @@ public class SchemaRepositoryTests
     }
 
     [Fact]
-    public void ReplaceSchemaId_CanGenerateMultipleTimes()
+    public static void ReplaceSchemaId_CanGenerateMultipleTimes()
     {
         var repository = new SchemaRepository();
         GenerateSchemaForType(typeof(Example), repository);
