@@ -20,6 +20,24 @@ public static class SchemaRepositoryTests
     }
 
     [Fact]
+    public static void ReplaceSchemaId_MultipleSchemas_ReplacesSchemaId()
+    {
+        var repository = new SchemaRepository();
+        (string oldSchemaId, IOpenApiSchema exampleSchema) = GenerateSchemaForType(typeof(Example), repository);
+        (string otherSchemaId, IOpenApiSchema otherSchema) = GenerateSchemaForType(typeof(Exception), repository);
+
+        string newSchemaId = "alternateId";
+        bool result = repository.ReplaceSchemaId(typeof(Example), newSchemaId);
+
+        Assert.True(result);
+        Assert.DoesNotContain(oldSchemaId, repository.Schemas);
+        Assert.Contains(newSchemaId, repository.Schemas);
+        Assert.Same(exampleSchema, repository.Schemas[newSchemaId]);
+        Assert.Contains(otherSchemaId, repository.Schemas);
+        Assert.Same(otherSchema, repository.Schemas[otherSchemaId]);
+    }
+
+    [Fact]
     public static void ReplaceSchemaId_MissingSchema_DoesNotChange()
     {
         var repository = new SchemaRepository();
