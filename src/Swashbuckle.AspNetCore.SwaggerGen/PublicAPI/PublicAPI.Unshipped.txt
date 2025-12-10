@@ -1,1 +1,1 @@
-﻿
+﻿Swashbuckle.AspNetCore.SwaggerGen.SchemaRepository.ReplaceSchemaId(System.Type schemaType, string replacementSchemaId) -> bool
