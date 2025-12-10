@@ -27,7 +27,7 @@ public class SchemaRepository(string documentName = null)
     public bool TryLookupByType(Type type, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out OpenApiSchemaReference referenceSchema)
     {
         referenceSchema = null;
-        bool result =_reservedIds.TryGetValue(type, out string schemaId);
+        bool result = _reservedIds.TryGetValue(type, out string schemaId);
 
         if (result)
         {
