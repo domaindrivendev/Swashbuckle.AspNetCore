@@ -282,4 +282,3 @@ jobs:
         SOURCE: https://api.nuget.org/v3/index.json
       run: |
         dotnet nuget push "*.nupkg" --api-key "${API_KEY}" --skip-duplicate --source "${SOURCE}" && echo "::notice title=nuget.org::Published version ${PACKAGE_VERSION} to NuGet.org."
-
