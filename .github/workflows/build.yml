@@ -114,10 +114,11 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Upload test results to Codecov
-      uses: codecov/test-results-action@0fa95f0e1eeaafde2c782583b36b28ad0d8c77d3 # v1.2.1
+      uses: codecov/codecov-action@671740ac38dd9b0130fbe1cec585b89eea48d3de # v5.5.2
       if: ${{ !cancelled() }}
       with:
         flags: ${{ runner.os }}
+        report_type: test_results
         token: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Generate SBOM
@@ -281,3 +282,4 @@ jobs:
         SOURCE: https://api.nuget.org/v3/index.json
       run: |
         dotnet nuget push "*.nupkg" --api-key "${API_KEY}" --skip-duplicate --source "${SOURCE}" && echo "::notice title=nuget.org::Published version ${PACKAGE_VERSION} to NuGet.org."
+
