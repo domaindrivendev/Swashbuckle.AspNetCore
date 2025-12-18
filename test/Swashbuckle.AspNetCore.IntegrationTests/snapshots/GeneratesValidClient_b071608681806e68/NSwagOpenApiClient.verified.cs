@@ -402,7 +402,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.NSwagTests
 
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task ProductsPATCHAsync(int id, System.Collections.Generic.IDictionary<string, object> body)
+        public virtual System.Threading.Tasks.Task ProductsPATCHAsync(int id, object body)
         {
             return ProductsPATCHAsync(id, body, System.Threading.CancellationToken.None);
         }
@@ -410,7 +410,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.NSwagTests
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task ProductsPATCHAsync(int id, System.Collections.Generic.IDictionary<string, object> body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task ProductsPATCHAsync(int id, object body, System.Threading.CancellationToken cancellationToken)
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");

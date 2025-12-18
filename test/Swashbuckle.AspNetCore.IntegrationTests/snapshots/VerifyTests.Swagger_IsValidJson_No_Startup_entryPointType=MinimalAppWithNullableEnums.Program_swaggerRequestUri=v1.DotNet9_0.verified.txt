@@ -41,8 +41,7 @@
           "name": {
             "type": "string"
           }
-        },
-        "additionalProperties": false
+        }
       },
       "Parent": {
         "type": "object",
@@ -67,8 +66,7 @@
             ],
             "format": "int32"
           }
-        },
-        "additionalProperties": false
+        }
       }
     }
   },
