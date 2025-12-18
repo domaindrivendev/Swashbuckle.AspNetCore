@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.OpenApi" VersionOverride="2.4.0" />
+    <PackageReference Include="Microsoft.OpenApi" VersionOverride="2.4.1" />
   </ItemGroup>
 
   <ItemGroup>
