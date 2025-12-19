@@ -16,7 +16,7 @@ permissions: {}
 env:
   FORCE_COLOR: 3
   TERM: xterm
-  ZIZMOR_VERSION: '1.18.0'
+  ZIZMOR_VERSION: '1.19.0'
 
 jobs:
   lint:
@@ -70,3 +70,4 @@ jobs:
 
     - name: Run Spectral
       run: spectral lint "./test/Swashbuckle.AspNetCore.IntegrationTests/snapshots/*" --display-only-failures --fail-severity error --format github-actions
+
