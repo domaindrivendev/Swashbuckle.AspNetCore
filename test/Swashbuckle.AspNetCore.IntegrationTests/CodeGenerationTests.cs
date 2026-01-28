@@ -79,7 +79,19 @@ public class CodeGenerationTests(ITestOutputHelper outputHelper)
             include: (p) => !p.Contains("bin") && !p.Contains("obj"),
             options: new() { RecurseSubdirectories = true })
             .UseDirectory("snapshots")
-            .UseFileName($"{nameof(GeneratesValidClient)}_{hashString}");
+            .UseFileName($"{nameof(GeneratesValidClient)}_{hashString}")
+            .AddScrubber((builder) =>
+            {
+                var content = builder.ToString();
+                int start = content.IndexOf("RequestAdapter.BaseUrl = \"file://");
+                if (start >= 0)
+                {
+                    int end = content.IndexOf(';', start);
+                    builder.Replace(
+                        content[start..(end + 1)],
+                        "RequestAdapter.BaseUrl = \"file:/{TempPath}\";");
+                }
+            });
     }
 
     [Fact]

@@ -39,7 +39,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests
             ApiClientBuilder.RegisterDefaultDeserializer<FormParseNodeFactory>();
             if (string.IsNullOrEmpty(RequestAdapter.BaseUrl))
             {
-                RequestAdapter.BaseUrl = "file://{TempPath}tmpgin0h3.tm";
+                RequestAdapter.BaseUrl = "file:/{TempPath}";
             }
             PathParameters.TryAdd("baseurl", RequestAdapter.BaseUrl);
         }
