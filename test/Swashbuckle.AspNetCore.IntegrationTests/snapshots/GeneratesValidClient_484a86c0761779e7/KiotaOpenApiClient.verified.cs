@@ -37,6 +37,11 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests
             ApiClientBuilder.RegisterDefaultDeserializer<JsonParseNodeFactory>();
             ApiClientBuilder.RegisterDefaultDeserializer<TextParseNodeFactory>();
             ApiClientBuilder.RegisterDefaultDeserializer<FormParseNodeFactory>();
+            if (string.IsNullOrEmpty(RequestAdapter.BaseUrl))
+            {
+                RequestAdapter.BaseUrl = "file://{TempPath}";
+            }
+            PathParameters.TryAdd("baseurl", RequestAdapter.BaseUrl);
         }
     }
 }
