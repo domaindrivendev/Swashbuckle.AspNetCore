@@ -89,7 +89,7 @@ public class CodeGenerationTests(ITestOutputHelper outputHelper)
                     int end = content.IndexOf(';', start);
                     builder.Replace(
                         content[start..(end + 1)],
-                        "RequestAdapter.BaseUrl = \"file:/{TempPath}\";");
+                        "RequestAdapter.BaseUrl = \"file://{TempPath}\";");
                 }
             });
     }
