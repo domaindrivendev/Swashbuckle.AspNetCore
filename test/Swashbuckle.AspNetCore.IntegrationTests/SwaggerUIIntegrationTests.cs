@@ -381,4 +381,35 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
         using var stream = await cached.Content.ReadAsStreamAsync(cancellationToken);
         Assert.Equal(0, stream.Length);
     }
+
+    [Fact]
+    public async Task DocumentUrlsEndpoint_ReturnsJsonWithCacheHeaders()
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        var site = new TestSite(typeof(MultipleVersions.Startup), outputHelper);
+        using var client = site.BuildClient();
+
+        // Act
+        using var response = await client.GetAsync("/swagger/documentUrls", cancellationToken);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("application/javascript;charset=utf-8", response.Content.Headers.ContentType.ToString());
+
+        var content = await response.Content.ReadAsStringAsync(cancellationToken);
+        Assert.NotEmpty(content);
+        Assert.Contains("Version 1.0", content);
+        Assert.Contains("Version 2.0", content);
+
+        // Verify cache headers are set
+        Assert.NotNull(response.Headers.ETag);
+        Assert.True(response.Headers.ETag.IsWeak);
+        Assert.NotEmpty(response.Headers.ETag.Tag);
+
+        Assert.NotNull(response.Headers.CacheControl);
+        Assert.True(response.Headers.CacheControl.Private);
+        Assert.Equal(TimeSpan.FromDays(7), response.Headers.CacheControl.MaxAge);
+    }
 }
