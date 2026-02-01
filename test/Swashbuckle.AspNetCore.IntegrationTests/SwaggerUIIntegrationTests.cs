@@ -396,7 +396,7 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.Equal("application/javascript;charset=utf-8", response.Content.Headers.ContentType.ToString());
+        Assert.Equal("application/javascript; charset=utf-8", response.Content.Headers.ContentType.ToString());
 
         var content = await response.Content.ReadAsStringAsync(cancellationToken);
         Assert.NotEmpty(content);
