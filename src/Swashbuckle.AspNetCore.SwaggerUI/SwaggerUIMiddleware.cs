@@ -159,14 +159,6 @@ internal sealed partial class SwaggerUIMiddleware
 
             await response.WriteAsync(text, Encoding.UTF8, cancellationToken);
         }
-
-        static string HashText(string text)
-        {
-            var buffer = Encoding.UTF8.GetBytes(text);
-            var hash = SHA1.HashData(buffer);
-
-            return Convert.ToBase64String(hash);
-        }
     }
 
     [UnconditionalSuppressMessage(
@@ -192,7 +184,18 @@ internal sealed partial class SwaggerUIMiddleware
 
         json ??= JsonSerializer.Serialize(_options.ConfigObject, _jsonSerializerOptions);
 
+        var etag = HashText(json);
+        SetHeaders(response, _options, etag);
+
         await response.WriteAsync(json, Encoding.UTF8);
+    }
+
+    private static string HashText(string text)
+    {
+        var buffer = Encoding.UTF8.GetBytes(text);
+        var hash = SHA1.HashData(buffer);
+
+        return Convert.ToBase64String(hash);
     }
 
     [UnconditionalSuppressMessage(
