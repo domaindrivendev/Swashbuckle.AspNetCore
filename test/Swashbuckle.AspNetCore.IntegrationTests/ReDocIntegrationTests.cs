@@ -39,17 +39,17 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
 
         AssertResource(htmlResponse);
         AssertResource(cssResponse);
-        AssertResource(jsResponse, weakETag: false);
+        AssertResource(jsResponse);
 
-        static void AssertResource(HttpResponseMessage response, bool weakETag = true)
+        static void AssertResource(HttpResponseMessage response)
         {
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.NotNull(response.Headers.ETag);
-            Assert.Equal(weakETag, response.Headers.ETag.IsWeak);
+            Assert.False(response.Headers.ETag.IsWeak);
             Assert.NotEmpty(response.Headers.ETag.Tag);
             Assert.NotNull(response.Headers.CacheControl);
             Assert.True(response.Headers.CacheControl.Private);
-            Assert.Equal(TimeSpan.FromDays(7), response.Headers.CacheControl.MaxAge);
+            Assert.Equal(TimeSpan.Zero, response.Headers.CacheControl.MaxAge);
         }
     }
 
@@ -61,7 +61,9 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
         var site = new TestSite(typeof(ReDocApp.Startup), outputHelper);
         using var client = site.BuildClient();
 
-        using var response = await client.GetAsync("/api-docs/index.js", cancellationToken);
+        var requestUri = "/api-docs/index.js";
+
+        using var response = await client.GetAsync(requestUri, cancellationToken);
         var content = await response.Content.ReadAsStringAsync(cancellationToken);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -70,6 +72,16 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
         Assert.DoesNotContain("%(HeadContent)", content);
         Assert.DoesNotContain("%(SpecUrl)", content);
         Assert.DoesNotContain("%(ConfigObject)", content);
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+        request.Headers.IfNoneMatch.Add(response.Headers.ETag);
+
+        using var cached = await client.SendAsync(request, cancellationToken);
+
+        Assert.Equal(HttpStatusCode.NotModified, cached.StatusCode);
+
+        using var stream = await cached.Content.ReadAsStreamAsync(cancellationToken);
+        Assert.Equal(0, stream.Length);
     }
 
     [Fact]
@@ -229,7 +241,7 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
 
         Assert.NotNull(response.Headers.CacheControl);
         Assert.True(response.Headers.CacheControl.Private);
-        Assert.Equal(TimeSpan.FromDays(7), response.Headers.CacheControl.MaxAge);
+        Assert.Equal(TimeSpan.Zero, response.Headers.CacheControl.MaxAge);
 
         Assert.Equal(response.Content.Headers.ContentLength, actual.Length);
     }
@@ -293,7 +305,7 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
 
         Assert.NotNull(response.Headers.CacheControl);
         Assert.True(response.Headers.CacheControl.Private);
-        Assert.Equal(TimeSpan.FromDays(7), response.Headers.CacheControl.MaxAge);
+        Assert.Equal(TimeSpan.Zero, response.Headers.CacheControl.MaxAge);
 
         Assert.Equal(response.Content.Headers.ContentLength, actual.Length);
     }
