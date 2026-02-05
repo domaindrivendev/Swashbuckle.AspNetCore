@@ -183,16 +183,12 @@ internal sealed partial class SwaggerUIMiddleware
     private async Task RespondWithDocumentUrls(HttpContext context)
     {
         var response = context.Response;
+        var urls = _options.ConfigObject.Urls ?? [];
 
-        string json = "[]";
-
-        if (_jsonSerializerOptions is null)
-        {
-            var l = new List<UrlDescriptor>(_options.ConfigObject.Urls);
-            json = JsonSerializer.Serialize(l, SwaggerUIOptionsJsonContext.Default.ListUrlDescriptor);
-        }
-
-        json ??= JsonSerializer.Serialize(_options.ConfigObject.Urls, _jsonSerializerOptions);
+        string json =
+            _jsonSerializerOptions is { } options ?
+            JsonSerializer.Serialize(urls, options) :
+            JsonSerializer.Serialize([.. urls], SwaggerUIOptionsJsonContext.Default.ListUrlDescriptor);
 
         var etag = GetETag(json);
         var ifNoneMatch = context.Request.Headers.IfNoneMatch;
