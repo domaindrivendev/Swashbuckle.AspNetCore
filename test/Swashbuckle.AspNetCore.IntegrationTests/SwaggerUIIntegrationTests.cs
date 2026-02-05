@@ -72,23 +72,23 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
         AssertResource(htmlResponse);
 
         using var jsResponse = await client.GetAsync(swaggerUijsPath, cancellationToken);
-        AssertResource(jsResponse, weakETag: false);
+        AssertResource(jsResponse);
 
         using var indexCss = await client.GetAsync(indexCssPath, cancellationToken);
-        AssertResource(indexCss, weakETag: false);
+        AssertResource(indexCss);
 
         using var cssResponse = await client.GetAsync(swaggerUiCssPath, cancellationToken);
-        AssertResource(cssResponse, weakETag: false);
+        AssertResource(cssResponse);
 
-        static void AssertResource(HttpResponseMessage response, bool weakETag = true)
+        static void AssertResource(HttpResponseMessage response)
         {
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
             Assert.NotNull(response.Headers.ETag);
-            Assert.Equal(weakETag, response.Headers.ETag.IsWeak);
+            Assert.False(response.Headers.ETag.IsWeak);
             Assert.NotEmpty(response.Headers.ETag.Tag);
             Assert.NotNull(response.Headers.CacheControl);
             Assert.True(response.Headers.CacheControl.Private);
-            Assert.Equal(TimeSpan.FromDays(7), response.Headers.CacheControl.MaxAge);
+            Assert.Equal(TimeSpan.Zero, response.Headers.CacheControl.MaxAge);
         }
     }
 
@@ -104,11 +104,11 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
         var site = new TestSite(startupType, outputHelper);
         using var client = site.BuildClient();
 
-        using var jsResponse = await client.GetAsync(indexJsPath, cancellationToken);
+        using var response = await client.GetAsync(indexJsPath, cancellationToken);
 
-        Assert.Equal(HttpStatusCode.OK, jsResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-        var jsContent = await jsResponse.Content.ReadAsStringAsync(cancellationToken);
+        var jsContent = await response.Content.ReadAsStringAsync(cancellationToken);
 
         Assert.Contains("SwaggerUIBundle", jsContent);
         Assert.DoesNotContain("%(DocumentTitle)", jsContent);
@@ -119,6 +119,16 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
         Assert.DoesNotContain("%(ConfigObject)", jsContent);
         Assert.DoesNotContain("%(OAuthConfigObject)", jsContent);
         Assert.DoesNotContain("%(Interceptors)", jsContent);
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, indexJsPath);
+        request.Headers.IfNoneMatch.Add(response.Headers.ETag);
+
+        using var cached = await client.SendAsync(request, cancellationToken);
+
+        Assert.Equal(HttpStatusCode.NotModified, cached.StatusCode);
+
+        using var stream = await cached.Content.ReadAsStreamAsync(cancellationToken);
+        Assert.Equal(0, stream.Length);
     }
 
     [Fact]
@@ -282,7 +292,7 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
 
         Assert.NotNull(response.Headers.CacheControl);
         Assert.True(response.Headers.CacheControl.Private);
-        Assert.Equal(TimeSpan.FromDays(7), response.Headers.CacheControl.MaxAge);
+        Assert.Equal(TimeSpan.Zero, response.Headers.CacheControl.MaxAge);
 
         Assert.Equal(response.Content.Headers.ContentLength, actual.Length);
     }
@@ -341,7 +351,7 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
 
         Assert.NotNull(response.Headers.CacheControl);
         Assert.True(response.Headers.CacheControl.Private);
-        Assert.Equal(TimeSpan.FromDays(7), response.Headers.CacheControl.MaxAge);
+        Assert.Equal(TimeSpan.Zero, response.Headers.CacheControl.MaxAge);
 
         Assert.Equal(response.Content.Headers.ContentLength, actual.Length);
     }
@@ -370,7 +380,7 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
 
         // Arrange
         using var request = new HttpRequestMessage(HttpMethod.Get, fileName);
-        request.Headers.IfNoneMatch.Add(new(uncached.Headers.ETag.Tag));
+        request.Headers.IfNoneMatch.Add(uncached.Headers.ETag);
 
         // Act
         using var cached = await client.SendAsync(request, cancellationToken);
@@ -391,8 +401,10 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
         var site = new TestSite(typeof(MultipleVersions.Startup), outputHelper);
         using var client = site.BuildClient();
 
+        var requestUri = "/swagger/documentUrls";
+
         // Act
-        using var response = await client.GetAsync("/swagger/documentUrls", cancellationToken);
+        using var response = await client.GetAsync(requestUri, cancellationToken);
 
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -405,11 +417,21 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
 
         // Verify cache headers are set
         Assert.NotNull(response.Headers.ETag);
-        Assert.True(response.Headers.ETag.IsWeak);
+        Assert.False(response.Headers.ETag.IsWeak);
         Assert.NotEmpty(response.Headers.ETag.Tag);
 
         Assert.NotNull(response.Headers.CacheControl);
         Assert.True(response.Headers.CacheControl.Private);
-        Assert.Equal(TimeSpan.FromDays(7), response.Headers.CacheControl.MaxAge);
+        Assert.Equal(TimeSpan.Zero, response.Headers.CacheControl.MaxAge);
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+        request.Headers.IfNoneMatch.Add(response.Headers.ETag);
+
+        using var cached = await client.SendAsync(request, cancellationToken);
+
+        Assert.Equal(HttpStatusCode.NotModified, cached.StatusCode);
+
+        using var stream = await cached.Content.ReadAsStreamAsync(cancellationToken);
+        Assert.Equal(0, stream.Length);
     }
 }
