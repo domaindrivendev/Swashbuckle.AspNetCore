@@ -208,7 +208,7 @@ internal sealed partial class SwaggerUIMiddleware
 
             SetHeaders(response, _options, etag);
 
-            await response.WriteAsync(json, Encoding.UTF8);
+            await response.WriteAsync(json, Encoding.UTF8, context.RequestAborted);
         }
     }
 
