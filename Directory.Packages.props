@@ -16,7 +16,7 @@
     <PackageVersion Include="Microsoft.Build" Version="18.0.2" />
     <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="4.14.0" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.1" />
-    <PackageVersion Include="Microsoft.Kiota.Bundle" Version="1.21.2" />
+    <PackageVersion Include="Microsoft.Kiota.Bundle" Version="1.21.3" />
     <PackageVersion Include="Microsoft.OpenApi" Version="2.4.1" />
     <PackageVersion Include="Microsoft.OpenApi.YamlReader" Version="2.4.1" />
     <PackageVersion Include="Microsoft.Playwright" Version="1.58.0" />
