@@ -16,7 +16,7 @@ permissions: {}
 env:
   FORCE_COLOR: 3
   TERM: xterm
-  ZIZMOR_VERSION: '1.21.0'
+  ZIZMOR_VERSION: '1.22.0'
 
 jobs:
   lint:
