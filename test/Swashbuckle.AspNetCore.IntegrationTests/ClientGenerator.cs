@@ -233,7 +233,7 @@ internal sealed class ClientGenerator(ITestOutputHelper outputHelper)
             .Property("NoWarn", "$(NoWarn)")
             .Property("Nullable", "enable")
             .Property("OutputType", "Library")
-            .Property("TargetFramework", "net10.0")
+            .Property("TargetFramework", $"net{Environment.Version.ToString(2)}")
             .Property("TreatWarningsAsErrors", "false");
 
         foreach (var name in packageReferences)

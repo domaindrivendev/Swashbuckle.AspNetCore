@@ -9,7 +9,7 @@ public partial class VerifyTests(ITestOutputHelper outputHelper)
     [Theory]
     [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
     [InlineData(typeof(NSwagClientExample.Startup), "/swagger/v1/swagger.json")]
-    [InlineData(typeof(CliExample.Startup), "/swagger/v1/swagger_net8.0.json")]
+    [InlineData(typeof(CliExample.Startup), "/swagger/v1/swagger_net10.0.json")]
     [InlineData(typeof(ConfigFromFile.Startup), "/swagger/v1/swagger.json")]
     [InlineData(typeof(CustomDocumentSerializer.Startup), "/swagger/v1/swagger.json")]
     [InlineData(typeof(CustomUIConfig.Startup), "/swagger/v1/swagger.json")]
@@ -40,7 +40,7 @@ public partial class VerifyTests(ITestOutputHelper outputHelper)
     public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_ForAutofaq()
     {
         var startupType = typeof(CliExampleWithFactory.Startup);
-        const string swaggerRequestUri = "/swagger/v1/swagger_net8.0.json";
+        const string swaggerRequestUri = "/swagger/v1/swagger_net10.0.json";
 
         var testSite = new TestSiteAutofaq(startupType, outputHelper);
         using var client = testSite.BuildClient();
