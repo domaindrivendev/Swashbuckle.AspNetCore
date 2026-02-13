@@ -22,6 +22,11 @@ public static class SnapshotTestData
 
         foreach (var path in Directory.EnumerateFiles(snapshotsPath, "*.txt", SearchOption.AllDirectories))
         {
+            if (Path.GetFileName(path).Contains(".received."))
+            {
+                continue;
+            }
+
             using var snapshot = File.OpenRead(path);
             using var document = JsonDocument.Parse(snapshot);
 
