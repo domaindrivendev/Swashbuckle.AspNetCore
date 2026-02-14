@@ -17,9 +17,9 @@ internal static class XmlCommentsExampleHelper
             value.HasFlag(JsonSchemaType.String) &&
             !value.HasFlag(JsonSchemaType.Null);
 
-        if (isStringType && !"null".Equals(exampleString))
+        if (isStringType)
         {
-            return JsonValue.Create(exampleString);
+            return "null".Equals(exampleString) ? null : JsonValue.Create(exampleString);
         }
 
         // HACK If the value is a string, but we can't detect it as one, then
