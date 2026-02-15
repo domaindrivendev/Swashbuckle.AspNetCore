@@ -21,12 +21,6 @@ public class CodeGenerationTests(ITestOutputHelper outputHelper)
             var path = testCase.Data.Item1;
             var documentVersion = testCase.Data.Item2;
 
-            // Deduplicate by ignoring snapshots for other TFMs
-            if (!path.EndsWith(".DotNet10_0.verified.txt", StringComparison.Ordinal))
-            {
-                continue;
-            }
-
             var version = documentVersion switch
             {
                 { Major: 2 } => OpenApiSpecVersion.OpenApi2_0,
@@ -78,7 +72,7 @@ public class CodeGenerationTests(ITestOutputHelper outputHelper)
             pattern: "*.cs",
             include: (p) => !p.Contains("bin") && !p.Contains("obj"),
             options: new() { RecurseSubdirectories = true })
-            .UseDirectory("snapshots")
+            .UseDirectory("snapshots/code")
             .UseFileName($"{nameof(GeneratesValidClient)}_{hashString}")
             .AddScrubber((builder) =>
             {
