@@ -11,14 +11,16 @@ public static class SnapshotTestData
             .First((p) => p.Key is "ProjectRoot")
             .Value!;
 
-    public static string SnapshotsPath() => Path.Combine(_projectRoot, "snapshots");
+    public static string SnapshotsDirectory { get; } = $"snapshots/{Environment.Version.Major}_{Environment.Version.Minor}";
+
+    public static string SnapshotsPath() => Path.Combine(_projectRoot, "snapshots", $"{Environment.Version.Major}_{Environment.Version.Minor}");
 
     public static string SchemasPath() => Path.Combine(_projectRoot, "schemas");
 
     public static TheoryData<string, Version> Snapshots()
     {
         var testCases = new TheoryData<string, Version>();
-        var snapshotsPath = Path.Combine(_projectRoot, "snapshots");
+        var snapshotsPath = Path.Combine(_projectRoot, "snapshots", $"{Environment.Version.Major}_{Environment.Version.Minor}");
 
         foreach (var path in Directory.EnumerateFiles(snapshotsPath, "*.txt", SearchOption.AllDirectories))
         {

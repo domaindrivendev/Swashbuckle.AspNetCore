@@ -18,6 +18,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 
 public partial class VerifyTests
 {
+    private static string SnapshotsDirectory { get; } = $"snapshots/{Environment.Version.Major}_{Environment.Version.Minor}";
+
     [Fact]
     public async Task ApiDescriptionsWithMatchingGroupName()
     {
@@ -402,9 +404,8 @@ public partial class VerifyTests
         var document = subject.GetSwagger("v1");
 
         await Verifier.Verify(ToJson(document))
-            .UseDirectory("snapshots")
-            .UseParameters(bindingSourceId)
-            .UniqueForTargetFrameworkAndVersion();
+            .UseDirectory(SnapshotsDirectory)
+            .UseParameters(bindingSourceId);
     }
 
     [Fact]
@@ -519,9 +520,8 @@ public partial class VerifyTests
         var document = subject.GetSwagger("v1");
 
         await Verifier.Verify(ToJson(document))
-            .UseDirectory("snapshots")
-            .UseParameters(action)
-            .UniqueForTargetFrameworkAndVersion();
+            .UseDirectory(SnapshotsDirectory)
+            .UseParameters(action);
     }
 
     [Theory]
@@ -590,10 +590,9 @@ public partial class VerifyTests
         var document = subject.GetSwagger("v1");
 
         await Verifier.Verify(ToJson(document))
-            .UseDirectory("snapshots")
+            .UseDirectory(SnapshotsDirectory)
             .UseParameters(action)
-            .UseMethodName("IllegalHeaderForOperation")
-            .UniqueForTargetFrameworkAndVersion();
+            .UseMethodName("IllegalHeaderForOperation");
     }
 
     [Fact]
@@ -650,9 +649,8 @@ public partial class VerifyTests
         var document = subject.GetSwagger("v1");
 
         await Verifier.Verify(ToJson(document))
-            .UseDirectory("snapshots")
-            .UseParameters(action)
-            .UniqueForTargetFrameworkAndVersion();
+            .UseDirectory(SnapshotsDirectory)
+            .UseParameters(action);
     }
 
     [Theory]
@@ -686,9 +684,8 @@ public partial class VerifyTests
         var document = subject.GetSwagger("v1");
 
         await Verifier.Verify(ToJson(document))
-            .UseDirectory("snapshots")
-            .UseParameters(action)
-            .UniqueForTargetFrameworkAndVersion();
+            .UseDirectory(SnapshotsDirectory)
+            .UseParameters(action);
     }
 
     [Fact]
@@ -891,9 +888,8 @@ public partial class VerifyTests
         var document = subject.GetSwagger("v1");
 
         await Verifier.Verify(ToJson(document))
-            .UseDirectory("snapshots")
-            .UseParameters(bindingSourceId)
-            .UniqueForTargetFrameworkAndVersion();
+            .UseDirectory(SnapshotsDirectory)
+            .UseParameters(bindingSourceId);
     }
 
     [Fact]
@@ -1636,8 +1632,7 @@ public partial class VerifyTests
     private static async Task Verify(OpenApiDocument document)
     {
         await Verifier.Verify(ToJson(document))
-            .UseDirectory("snapshots")
-            .UniqueForTargetFrameworkAndVersion();
+                      .UseDirectory($"snapshots/{Environment.Version.Major}_{Environment.Version.Minor}");
     }
 
     private static string NormalizeLineBreaks(string swagger)

@@ -6,6 +6,8 @@ namespace Swashbuckle.AspNetCore.IntegrationTests;
 [Collection("TestSite")]
 public partial class VerifyTests(ITestOutputHelper outputHelper)
 {
+    private static string SnapshotsDirectory { get; } = SnapshotTestData.SnapshotsDirectory;
+
     [Theory]
     [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
     [InlineData(typeof(NSwagClientExample.Startup), "/swagger/v1/swagger.json")]
@@ -31,9 +33,8 @@ public partial class VerifyTests(ITestOutputHelper outputHelper)
         var swagger = await swaggerResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
         await Verify(NormalizeLineBreaks(swagger))
-            .UseDirectory("snapshots")
-            .UseParameters(startupType, GetVersion(swaggerRequestUri))
-            .UniqueForTargetFrameworkAndVersion();
+            .UseDirectory(SnapshotsDirectory)
+            .UseParameters(startupType, GetVersion(swaggerRequestUri));
     }
 
     [Fact]
@@ -49,9 +50,8 @@ public partial class VerifyTests(ITestOutputHelper outputHelper)
         var swagger = await swaggerResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
         await Verify(swagger)
-            .UseDirectory("snapshots")
-            .UseParameters(startupType, GetVersion(swaggerRequestUri))
-            .UniqueForTargetFrameworkAndVersion();
+            .UseDirectory(SnapshotsDirectory)
+            .UseParameters(startupType, GetVersion(swaggerRequestUri));
     }
 
     [Theory]
@@ -69,9 +69,8 @@ public partial class VerifyTests(ITestOutputHelper outputHelper)
         var swaggerResponse = await SwaggerEndpointReturnsValidSwaggerJson(entryPointType, swaggerRequestUri);
 
         await Verify(swaggerResponse)
-            .UseDirectory("snapshots")
-            .UseParameters(entryPointType, GetVersion(swaggerRequestUri))
-            .UniqueForTargetFrameworkAndVersion();
+            .UseDirectory(SnapshotsDirectory)
+            .UseParameters(entryPointType, GetVersion(swaggerRequestUri));
     }
 
     [Fact]
@@ -82,9 +81,7 @@ public partial class VerifyTests(ITestOutputHelper outputHelper)
 
         var swaggerResponse = await SwaggerResponse(client, "/swagger/v1/swagger.json");
 
-        await Verify(swaggerResponse)
-            .UseDirectory("snapshots")
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(swaggerResponse).UseDirectory(SnapshotsDirectory);
     }
 
     private static async Task<string> SwaggerEndpointReturnsValidSwaggerJson(Type entryPointType, string swaggerRequestUri)
