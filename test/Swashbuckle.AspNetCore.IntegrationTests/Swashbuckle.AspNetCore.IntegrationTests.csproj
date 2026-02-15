@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Swashbuckle.AspNetCore.TestSupport\Swashbuckle.AspNetCore.TestSupport.csproj" />
     <ProjectReference Include="..\WebSites\**\*.csproj" />
     <ProjectReference Remove="..\WebSites\TestFirst.IntegrationTests\TestFirst.IntegrationTests.csproj" />
   </ItemGroup>
@@ -17,11 +18,14 @@
     <PackageReference Include="MartinCostello.Logging.XUnit.v3" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" />
+    <PackageReference Include="Microsoft.Build" />
     <PackageReference Include="Microsoft.Kiota.Bundle" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="Microsoft.OpenApi.YamlReader" />
     <PackageReference Include="Microsoft.Playwright" />
+    <PackageReference Include="MSBuild.ProjectCreation" />
     <PackageReference Include="NJsonSchema" />
+    <PackageReference Include="NSwag.CodeGeneration.CSharp" />
     <PackageReference Include="Verify.XunitV3" />
     <PackageReference Include="xunit.runner.visualstudio" />
     <PackageReference Include="xunit.v3.mtp-off" />
@@ -33,31 +37,19 @@
     <Compile Remove="snapshots\**\*.cs" />
   </ItemGroup>
 
-  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net10.0'))">
-    <PackageReference Include="Microsoft.Build" />
-    <PackageReference Include="MSBuild.ProjectCreation" />
-    <PackageReference Include="NSwag.CodeGeneration.CSharp" />
-    <ProjectReference Include="..\Swashbuckle.AspNetCore.TestSupport\Swashbuckle.AspNetCore.TestSupport.csproj" />
-  </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="../../src/Swashbuckle.AspNetCore.SwaggerUI/node_modules/swagger-ui-dist/**/*" Exclude="**/*/index.html;**/*/index.js;**/*/*.map;**/*/*.json;**/*/*.md;**/*/swagger-ui-es-*;**/*/LICENSE;**/*/NOTICE" Link="Embedded/SwaggerUI/%(RecursiveDir)%(FileName)%(Extension)" />
     <EmbeddedResource Include="../../src/Swashbuckle.AspNetCore.ReDoc/node_modules/redoc/bundles/redoc.standalone.js" Link="Embedded/ReDoc/%(RecursiveDir)%(FileName)%(Extension)" />
   </ItemGroup>
 
-  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))">
-    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="8.0.22" />
-    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="8.0.22" />
-  </ItemGroup>
-
-  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))">
-    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="9.0.11" />
-    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="9.0.11" />
-  </ItemGroup>
-
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net10.0'))">
     <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="10.0.1" />
     <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="10.0.1" />
+  </ItemGroup>
+
+  <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11.0'))">
+    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="11.0.0-preview.1.26104.118" />
+    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="11.0.0-preview.1.26104.118" />
   </ItemGroup>
 
 </Project>

@@ -24,6 +24,9 @@ Once you have an API that can describe itself with a OpenAPI document, you've op
 tools including a client generator that can be targeted to a wide range of popular platforms. See [swagger-codegen][swagger-codegen]
 for more details.
 
+<!-- TODO Updates for ASP.NET Core 11 -->
+<!-- TODO Migration Guide and docs for ASP.NET Core 11 -->
+
 > [!IMPORTANT]  
 > Version 10.0 of Swashbuckle.AspNetCore introduces breaking changes due to upgrading our dependency on [Microsoft.OpenApi][microsoft-openapi]
 > to version 2.x.x to add support for generating OpenAPI 3.1 documents. Please see _[Migrating to Swashbuckle.AspNetCore v10][v10-migration]_ for more details.
