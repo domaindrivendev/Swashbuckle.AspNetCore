@@ -12,6 +12,8 @@ namespace Swashbuckle.AspNetCore.IntegrationTests;
 /// </summary>
 public class CodeGenerationTests(ITestOutputHelper outputHelper)
 {
+    private const string SnapshotsDirectory = "snapshots/code";
+
     public static TheoryData<ClientGeneratorTool, string> SnapshotTestCases()
     {
         var testCases = new TheoryData<ClientGeneratorTool, string>();
@@ -72,7 +74,7 @@ public class CodeGenerationTests(ITestOutputHelper outputHelper)
             pattern: "*.cs",
             include: (p) => !p.Contains("bin") && !p.Contains("obj"),
             options: new() { RecurseSubdirectories = true })
-            .UseDirectory("snapshots/code")
+            .UseDirectory(SnapshotsDirectory)
             .UseFileName($"{nameof(GeneratesValidClient)}_{hashString}")
             .AddScrubber((builder) =>
             {
@@ -94,7 +96,7 @@ public class CodeGenerationTests(ITestOutputHelper outputHelper)
         await VerifyDirectory(
             Path.Combine(GetProjectRoot(), "KiotaTodoClient"),
             pattern: "*.cs",
-            options: new() { RecurseSubdirectories = true }).UseDirectory("snapshots");
+            options: new() { RecurseSubdirectories = true }).UseDirectory(SnapshotsDirectory);
     }
 
     [Fact]
@@ -103,7 +105,7 @@ public class CodeGenerationTests(ITestOutputHelper outputHelper)
         await VerifyDirectory(
             Path.Combine(GetProjectRoot(), "NSwagTodoClient"),
             pattern: "*.cs",
-            options: new() { RecurseSubdirectories = true }).UseDirectory("snapshots");
+            options: new() { RecurseSubdirectories = true }).UseDirectory(SnapshotsDirectory);
     }
 
     private static string GetProjectRoot() =>
