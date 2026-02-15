@@ -1013,11 +1013,7 @@ public class SwaggerGenerator(
         string statusCode,
         ApiResponseType apiResponseType)
     {
-        string description = null;
-
-#if NET10_0_OR_GREATER
-        description = apiResponseType.Description;
-#endif
+        string description = apiResponseType.Description;
 
         if (string.IsNullOrEmpty(description))
         {
