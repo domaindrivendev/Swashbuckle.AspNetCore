@@ -16,7 +16,7 @@ internal static class JsonExtensions
 
     public static string ToJson(this JsonNode value)
     {
-        if (value == JsonNullSentinel.JsonNull)
+        if (value.IsJsonNullSentinel())
         {
             return "null";
         }
