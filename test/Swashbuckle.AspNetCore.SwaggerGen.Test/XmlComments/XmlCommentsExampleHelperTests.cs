@@ -80,7 +80,8 @@ public class XmlCommentsExampleHelperTests
         var example = XmlCommentsExampleHelper.Create(
             schemaRepository, schema, "null");
 
-        Assert.Null(example);
+        Assert.NotNull(example);
+        Assert.Equal("null", example.ToJson());
     }
 
     [Fact]
