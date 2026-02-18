@@ -274,6 +274,7 @@
           {
             "name": "Text",
             "in": "query",
+            "description": "Gets or sets the text of the filter.",
             "required": true,
             "schema": {
               "type": "string"
@@ -282,6 +283,7 @@
           {
             "name": "IsCompleted",
             "in": "query",
+            "description": "Gets or sets a value indicating whether to search completed Todo items.",
             "required": true,
             "schema": {
               "type": "boolean"
