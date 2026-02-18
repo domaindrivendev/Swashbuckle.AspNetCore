@@ -22,7 +22,7 @@ internal static class XmlCommentsExampleHelper
         {
             bool createNullValue = type is { } jsonSchema
                 && (jsonSchema.HasFlag(JsonSchemaType.Null)
-                || (jsonSchema.HasFlag(JsonSchemaType.String) && !_stringFormatsWithNullable.Contains(schema.Format))
+                || (jsonSchema.HasFlag(JsonSchemaType.String) && !_stringFormatsWithNullable.Contains(schema?.Format))
                 || jsonSchema.HasFlag(JsonSchemaType.Object));
 
             return createNullValue ? JsonNullSentinel.JsonNull : null;
