@@ -60,7 +60,8 @@ public class JsonSerializerDataContractResolver(JsonSerializerOptions serializer
                 // This is a special case where we know the possible key values
                 var enumValuesAsJson = keyType.GetEnumValues()
                     .Cast<object>()
-                    .Select(value => JsonConverterFunc(value, keyType));
+                    .Select(value => JsonConverterFunc(value, keyType))
+                    .Distinct();
 
                 keys =
                     enumValuesAsJson.Any(json => json.StartsWith('\"'))
