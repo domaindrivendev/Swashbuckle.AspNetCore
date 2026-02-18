@@ -19,7 +19,7 @@ internal static class XmlCommentsExampleHelper
 
         if (isStringType)
         {
-            return string.Equals(exampleString, "null") ? null : JsonValue.Create(exampleString);
+            return string.Equals(exampleString, "null") ? JsonNullSentinel.JsonNull : JsonValue.Create(exampleString);
         }
 
         // HACK If the value is a string, but we can't detect it as one, then
