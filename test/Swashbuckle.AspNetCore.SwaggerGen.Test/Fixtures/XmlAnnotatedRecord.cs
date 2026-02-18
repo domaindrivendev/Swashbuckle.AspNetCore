@@ -2,6 +2,7 @@
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 
+#nullable enable
 /// <summary>
 /// Summary for XmlAnnotatedRecord
 /// </summary>
@@ -13,10 +14,18 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 /// <param name="DateTimeProperty" example="6/22/2022 12:00:00 AM">Summary for DateTimeProperty</param>
 /// <param name="EnumProperty" example="2">Summary for EnumProperty</param>
 /// <param name="GuidProperty" example="d3966535-2637-48fa-b911-e3c27405ee09">Summary for GuidProperty</param>
+/// <param name="NullableStringPropertyWithNullExample" example="null">Summary for Nullable NullableStringPropertyWithNullExample</param>
 /// <param name="StringPropertyWithNullExample" example="null">Summary for Nullable StringPropertyWithNullExample</param>
+/// <param name="NullableIntPropertyWithNotNullExample" example="3">Summary for Nullable NullableIntPropertyWithNotNullExample</param>
+/// <param name="NullableIntPropertyWithNullExample" example="null">Summary for Nullable NullableIntPropertyWithNullExample</param>
+/// <param name="IntPropertyWithNullExample" example="null">Summary for Nullable IntPropertyWithNullExample</param>
+/// <param name="NullableGuidPropertyWithNullExample" example="null">Summary for Nullable NullableGuidPropertyWithNullExample</param>
+/// <param name="GuidPropertyWithNullExample" example="null">Summary for Nullable GuidPropertyWithNullExample</param>
 /// <param name="StringProperty" example="Example for StringProperty">Summary for StringProperty</param>
 /// <param name="StringPropertyWithUri" example="https://test.com/a?b=1&amp;c=2">Summary for StringPropertyWithUri</param>
 /// <param name="ObjectProperty" example="{&quot;prop1&quot;: 1, &quot;prop2&quot;: &quot;foobar&quot;}">Summary for ObjectProperty</param>
+/// <param name="ObjectPropertyNullExample" example="null">Summary for ObjectPropertyNullExample</param>
+/// <param name="NullableObjectPropertyNullExample" example="null">Summary for NullableObjectPropertyNullExample</param>
 public record XmlAnnotatedRecord(
     bool BoolProperty,
     int IntProperty,
@@ -26,8 +35,16 @@ public record XmlAnnotatedRecord(
     DateTime DateTimeProperty,
     IntEnum EnumProperty,
     Guid GuidProperty,
+    string? NullableStringPropertyWithNullExample,
     string StringPropertyWithNullExample,
+    int? NullableIntPropertyWithNotNullExample,
+    int? NullableIntPropertyWithNullExample,
+    int IntPropertyWithNullExample,
+    Guid? NullableGuidPropertyWithNullExample,
+    Guid GuidPropertyWithNullExample,
     string StringProperty,
     string StringPropertyWithUri,
-    object ObjectProperty
+    object ObjectProperty,
+    object ObjectPropertyNullExample,
+    object? NullableObjectPropertyNullExample
     );
