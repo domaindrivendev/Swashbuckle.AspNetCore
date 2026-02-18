@@ -327,7 +327,7 @@ public class NewtonsoftSchemaGeneratorTests
     [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.IntArrayWithDefault), "[\n  1,\n  2,\n  3\n]")]
     [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.StringArrayWithDefault), "[\n  \"foo\",\n  \"bar\"\n]")]
     [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.NullableIntWithDefaultValue), "2147483647")]
-    [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.NullableIntWithDefaultNullValue), null)]
+    [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.NullableIntWithDefaultNullValue), "null")]
     public void GenerateSchema_SetsDefault_IfPropertyHasDefaultValueAttribute(
         Type declaringType,
         string propertyName,
@@ -783,7 +783,7 @@ public class NewtonsoftSchemaGeneratorTests
 
         var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
         Assert.Equal(JsonSchemaTypes.String, schema.Type);
-        Assert.Equal(["\"Value1\"", "\"Value2\"", "\"X-foo\""], schema.Enum.Select(openApiAny => openApiAny.ToJson()));
+        Assert.Equal(["\"Value1\"", "\"Value2\"", "\"X-foo\"", "\"null\""], schema.Enum.Select(openApiAny => openApiAny.ToJson()));
     }
 
     [Fact]

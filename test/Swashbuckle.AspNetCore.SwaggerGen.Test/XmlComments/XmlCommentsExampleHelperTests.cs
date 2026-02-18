@@ -72,7 +72,20 @@ public class XmlCommentsExampleHelperTests
     }
 
     [Fact]
-    public void Create_Returns_Null_When_Type_String_And_Value_Null_String_Literal()
+    public void Create_Returns_Null_When_Type_NullableString_And_Value_Null_String_Literal()
+    {
+        var schema = new OpenApiSchema { Type = JsonSchemaTypes.String | JsonSchemaType.Null };
+        schemaRepository.AddDefinition("test", schema);
+
+        var example = XmlCommentsExampleHelper.Create(
+            schemaRepository, schema, "null");
+
+        Assert.NotNull(example);
+        Assert.Equal("null", example.ToJson());
+    }
+
+    [Fact]
+    public void Create_Returns_StringNull_When_Type_NotNullableString_And_Value_Null_String_Literal()
     {
         var schema = new OpenApiSchema { Type = JsonSchemaTypes.String };
         schemaRepository.AddDefinition("test", schema);
@@ -81,7 +94,7 @@ public class XmlCommentsExampleHelperTests
             schemaRepository, schema, "null");
 
         Assert.NotNull(example);
-        Assert.Equal("null", example.ToJson());
+        Assert.Equal("\"null\"", example.ToJson());
     }
 
     [Fact]

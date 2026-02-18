@@ -10,5 +10,7 @@ public enum JsonConverterAnnotatedEnum
     Value1 = 2,
     Value2 = 4,
     [EnumMember(Value = "X-foo")]
-    X = 8
+    X = 8,
+    [EnumMember(Value = "null")]
+    ValueNull
 }
