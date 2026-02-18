@@ -89,11 +89,27 @@ public class XmlCommentsSchemaFilterTests
         { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.NullableGuidPropertyWithNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null", "uuid" },
         { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.NullableGuidPropertyWithNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null", "uuid" },
         { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.GuidPropertyWithNullExample), JsonSchemaTypes.String, null,"uuid"  },
-        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedRecord.GuidPropertyWithNullExample), JsonSchemaTypes.String, null,"uuid"  },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.GuidPropertyWithNullExample), JsonSchemaTypes.String, null,"uuid"  },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.ObjectPropertyNullExample), JsonSchemaTypes.String, "null",null },
         { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.ObjectPropertyNullExample), JsonSchemaTypes.String, "null",null },
-        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedType.ObjectPropertyNullExample), JsonSchemaTypes.String, "null",null },
-        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.NullableObjectPropertyNullExample), JsonSchemaTypes.Object, "null",null},
-        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedType.NullableObjectPropertyNullExample), JsonSchemaTypes.Object, "null",null }
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.NullableObjectPropertyNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null",null},
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.NullableObjectPropertyNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null",null},
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.NullableDateTimePropertyWithNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null", "date-time" },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.NullableDateTimePropertyWithNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null","date-time" },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.DateTimePropertyWithNullExample), JsonSchemaTypes.String, null, "date-time" },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.DateTimePropertyWithNullExample), JsonSchemaTypes.String, null, "date-time" },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.NullableTimeOnlyPropertyWithNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null","time"  },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.NullableTimeOnlyPropertyWithNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null","time"  },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedRecord.TimeOnlyPropertyWithNullExample), JsonSchemaTypes.String, null,"time"  },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.TimeOnlyPropertyWithNullExample), JsonSchemaTypes.String, null,"time"  },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.NullableTimeSpanPropertyWithNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null", "date-span" },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.NullableTimeSpanPropertyWithNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null", "date-span" },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.TimeSpanPropertyWithNullExample), JsonSchemaTypes.String, null, "date-span" },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.TimeSpanPropertyWithNullExample), JsonSchemaTypes.String, null, "date-span" },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.NullableDateOnlyPropertyWithNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null","date"  },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.NullableDateOnlyPropertyWithNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null","date"  },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.DateOnlyPropertyWithNullExample), JsonSchemaTypes.String, null,"date"  },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.DateOnlyPropertyWithNullExample), JsonSchemaTypes.String, null,"date"  }
     };
 
     [Theory]

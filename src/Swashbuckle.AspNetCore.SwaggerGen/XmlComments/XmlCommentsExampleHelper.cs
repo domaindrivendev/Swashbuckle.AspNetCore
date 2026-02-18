@@ -6,6 +6,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen;
 
 internal static class XmlCommentsExampleHelper
 {
+    private static HashSet<string> _stringFormatsWithNullable = ["uuid", "date-time", "time", "date-span", "date"];
     public static JsonNode Create(
         SchemaRepository schemaRepository,
         IOpenApiSchema schema,
@@ -21,7 +22,7 @@ internal static class XmlCommentsExampleHelper
         {
             bool createNullValue = type is { } jsonSchema &&
                 (jsonSchema.HasFlag(JsonSchemaType.Null) ||
-                (jsonSchema.HasFlag(JsonSchemaType.String) && !string.Equals(schema.Format, "uuid") && !jsonSchema.HasFlag(JsonSchemaType.Null))
+                (jsonSchema.HasFlag(JsonSchemaType.String) && !_stringFormatsWithNullable.Contains(schema.Format))
                 || jsonSchema.HasFlag(JsonSchemaType.Object));
 
             return createNullValue ? JsonNullSentinel.JsonNull : null;
