@@ -13,18 +13,16 @@ internal static class XmlCommentsExampleHelper
     {
         var type = schema?.ResolveType(schemaRepository);
 
-        if (type is { } value)
-        {
-            if (string.Equals(exampleString, "null"))
-            {
-                return type is { } jsonSchema && jsonSchema.HasFlag(JsonSchemaType.Null) ? JsonNullSentinel.JsonNull : null;
-            }
 
-            if (value.HasFlag(JsonSchemaType.String) &&
-            !value.HasFlag(JsonSchemaType.Null))
-            {
-                return JsonValue.Create(exampleString);
-            }
+        if (string.Equals(exampleString, "null"))
+        {
+            return type?.HasFlag(JsonSchemaType.Null) ?? false ? JsonNullSentinel.JsonNull : null;
+        }
+
+        if (type is { } value && value.HasFlag(JsonSchemaType.String) &&
+        !value.HasFlag(JsonSchemaType.Null))
+        {
+            return JsonValue.Create(exampleString);
         }
 
 
