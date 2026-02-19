@@ -19,8 +19,9 @@ internal static class XmlCommentsExampleHelper
             return type?.HasFlag(JsonSchemaType.Null) ?? false ? JsonNullSentinel.JsonNull : null;
         }
 
-        if (type is { } value && value.HasFlag(JsonSchemaType.String) &&
-        !value.HasFlag(JsonSchemaType.Null))
+        if (type is { } value
+        && value.HasFlag(JsonSchemaType.String)
+        && !value.HasFlag(JsonSchemaType.Null))
         {
             return JsonValue.Create(exampleString);
         }
