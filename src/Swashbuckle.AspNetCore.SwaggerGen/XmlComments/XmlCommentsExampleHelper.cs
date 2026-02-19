@@ -26,18 +26,6 @@ internal static class XmlCommentsExampleHelper
         if (isStringType)
         {
             return JsonValue.Create(exampleString);
-        if (string.Equals(exampleString, "null"))
-        {
-            return type is { } jsonSchema && jsonSchema.HasFlag(JsonSchemaType.Null) ? JsonNullSentinel.JsonNull : null;
-        }
-        
-   var isStringType = type is { } value &&
-       value.HasFlag(JsonSchemaType.String) &&
-       !value.HasFlag(JsonSchemaType.Null);
-   if (isStringType)
-   {
-        return JsonValue.Create(exampleString);
-   }
 
         // HACK If the value is a string, but we can't detect it as one, then
         // if parsing it fails, assume it is a string that isn't quoted. There's
