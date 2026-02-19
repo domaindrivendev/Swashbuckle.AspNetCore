@@ -802,9 +802,9 @@
             "required": true,
             "schema": {
               "type": "string",
-              "example": null
+              "example": "null"
             },
-            "example": null
+            "example": "null"
           },
           {
             "name": "city",
