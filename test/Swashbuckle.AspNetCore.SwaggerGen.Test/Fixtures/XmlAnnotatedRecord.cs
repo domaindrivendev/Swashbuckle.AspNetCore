@@ -17,6 +17,9 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 /// <param name="StringProperty" example="Example for StringProperty">Summary for StringProperty</param>
 /// <param name="StringPropertyWithUri" example="https://test.com/a?b=1&amp;c=2">Summary for StringPropertyWithUri</param>
 /// <param name="ObjectProperty" example="{&quot;prop1&quot;: 1, &quot;prop2&quot;: &quot;foobar&quot;}">Summary for ObjectProperty</param>
+/// <param name="ObjectPropertyWithNullExample" example="null">Summary for ObjectPropertyWithNullExample</param>
+/// <param name="ArrayProperty" example="[&quot;value1&quot;, &quot;value2&quot;]">Summary for ArrayProperty</param>
+/// <param name="ArrayPropertyWithNullExample" example="null">Summary for ArrayPropertyWithNullExample</param>
 public record XmlAnnotatedRecord(
     bool BoolProperty,
     int IntProperty,
@@ -29,5 +32,8 @@ public record XmlAnnotatedRecord(
     string StringPropertyWithNullExample,
     string StringProperty,
     string StringPropertyWithUri,
-    object ObjectProperty
+    object ObjectProperty,
+    object ObjectPropertyWithNullExample,
+    string[] ArrayProperty,
+    string[] ArrayPropertyWithNullExample
     );

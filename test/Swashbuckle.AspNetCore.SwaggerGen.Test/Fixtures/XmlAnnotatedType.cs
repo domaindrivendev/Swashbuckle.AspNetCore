@@ -86,6 +86,25 @@ public class XmlAnnotatedType
     public object ObjectProperty { get; set; }
 
     /// <summary>
+    /// Summary for ObjectPropertyWithNullExample 
+    /// </summary>
+    /// <example>null</example>
+    public object ObjectPropertyWithNullExample { get; set; }
+
+    /// <summary>
+    /// Summary for ArrayProperty
+    /// </summary>
+    /// <example>["value1", "value2"]</example>
+    public string[] ArrayProperty { get; set; }
+
+
+    /// <summary>
+    /// Summary for ArrayPropertyWithNullExample
+    /// </summary>
+    /// <example>null</example>
+    public string[] ArrayPropertyWithNullExample { get; set; }
+
+    /// <summary>
     /// Summary for AcceptsNothing
     /// </summary>
     public void AcceptsNothing()
