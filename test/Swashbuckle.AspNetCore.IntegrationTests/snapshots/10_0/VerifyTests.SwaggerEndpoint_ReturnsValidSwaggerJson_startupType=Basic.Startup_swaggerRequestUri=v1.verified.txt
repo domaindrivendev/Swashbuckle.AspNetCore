@@ -801,10 +801,8 @@
             "description": "3-letter ISO country code",
             "required": true,
             "schema": {
-              "type": "string",
-              "example": null
-            },
-            "example": null
+              "type": "string"
+            }
           },
           {
             "name": "city",
