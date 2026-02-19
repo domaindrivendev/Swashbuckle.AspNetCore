@@ -20,8 +20,7 @@ internal static class XmlCommentsExampleHelper
         }
 
         if (type is { } value
-        && value.HasFlag(JsonSchemaType.String)
-        && !value.HasFlag(JsonSchemaType.Null))
+        && value.HasFlag(JsonSchemaType.String))
         {
             return JsonValue.Create(exampleString);
         }
