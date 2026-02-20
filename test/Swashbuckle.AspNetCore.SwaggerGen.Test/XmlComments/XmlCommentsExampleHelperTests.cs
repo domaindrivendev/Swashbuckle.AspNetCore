@@ -74,7 +74,7 @@ public class XmlCommentsExampleHelperTests
     [Fact]
     public void Create_Returns_Null_When_Type_String_And_Value_Null_String_Literal()
     {
-        var schema = new OpenApiSchema { Type = JsonSchemaTypes.String };
+        var schema = new OpenApiSchema { Type = JsonSchemaTypes.String | JsonSchemaType.Null };
         schemaRepository.AddDefinition("test", schema);
 
         var example = XmlCommentsExampleHelper.Create(

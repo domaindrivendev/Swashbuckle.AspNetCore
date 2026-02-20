@@ -13,14 +13,17 @@ internal static class XmlCommentsExampleHelper
     {
         var type = schema?.ResolveType(schemaRepository);
 
-        var isStringType = type is { } value &&
-            value.HasFlag(JsonSchemaType.String) &&
-            !value.HasFlag(JsonSchemaType.Null);
 
-        if (isStringType)
+        if (string.Equals(exampleString, "null"))
         {
-            return string.Equals(exampleString, "null") ? JsonNullSentinel.JsonNull : JsonValue.Create(exampleString);
+            return (type?.HasFlag(JsonSchemaType.Null) ?? false) ? JsonNullSentinel.JsonNull : null;
         }
+
+        if (type is { } value && value.HasFlag(JsonSchemaType.String))
+        {
+            return JsonValue.Create(exampleString);
+        }
+
 
         // HACK If the value is a string, but we can't detect it as one, then
         // if parsing it fails, assume it is a string that isn't quoted. There's
