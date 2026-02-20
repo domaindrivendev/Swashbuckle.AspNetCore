@@ -16,6 +16,7 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 /// <param name="GuidProperty" example="d3966535-2637-48fa-b911-e3c27405ee09">Summary for GuidProperty</param>
 /// <param name="NullableStringPropertyWithNullExample" example="null">Summary for NullableStringPropertyWithNullExample</param>
 /// <param name="StringPropertyWithNullExample" example="null">Summary for StringPropertyWithNullExample</param>
+/// <param name="NullableStringPropertyWithNotNullExample" example="example">Summary for NullableStringPropertyWithNotNullExample</param>
 /// <param name="NullableIntPropertyWithNotNullExample" example="3">Summary for NullableIntPropertyWithNotNullExample</param>
 /// <param name="NullableIntPropertyWithNullExample" example="null">Summary for NullableIntPropertyWithNullExample</param>
 /// <param name="IntPropertyWithNullExample" example="null">Summary for IntPropertyWithNullExample</param>
@@ -45,6 +46,7 @@ public record XmlAnnotatedRecord(
     Guid GuidProperty,
     string? NullableStringPropertyWithNullExample,
     string StringPropertyWithNullExample,
+    string? NullableStringPropertyWithNotNullExample,
     int? NullableIntPropertyWithNotNullExample,
     int? NullableIntPropertyWithNullExample,
     int IntPropertyWithNullExample,

@@ -80,6 +80,8 @@ public class XmlCommentsSchemaFilterTests
         { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.StringPropertyWithNullExample), JsonSchemaTypes.String, null, null },
         { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.NullableStringPropertyWithNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null",null },
         { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.NullableStringPropertyWithNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null",null },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.NullableStringPropertyWithNotNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "\"example\"",null },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.NullableStringPropertyWithNotNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "\"example\"",null },
         { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.NullableIntPropertyWithNotNullExample), JsonSchemaTypes.Integer | JsonSchemaType.Null, "3", "int32" },
         { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.NullableIntPropertyWithNotNullExample), JsonSchemaTypes.Integer | JsonSchemaType.Null, "3", "int32" },
         { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.NullableIntPropertyWithNullExample), JsonSchemaTypes.Integer | JsonSchemaType.Null, "null" , "int32"},

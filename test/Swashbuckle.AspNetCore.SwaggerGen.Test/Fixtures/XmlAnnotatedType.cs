@@ -68,6 +68,12 @@ public class XmlAnnotatedType
     public string? NullableStringPropertyWithNullExample { get; set; }
 
     /// <summary>
+    /// Summary for NullableStringPropertyWithNotNullExample
+    /// </summary>
+    /// <example>example</example>
+    public string? NullableStringPropertyWithNotNullExample { get; set; }
+
+    /// <summary>
     /// Summary for StringPropertyWithNullExample
     /// </summary>
     /// <example>null</example>
@@ -142,7 +148,7 @@ public class XmlAnnotatedType
     public void AcceptsArrayOfConstructedGenericType(int?[] param)
     {
     }
-    ///
+
     /// <summary>
     /// >Summary for NullableIntPropertyWithNotNullExample
     /// </summary>
@@ -159,77 +165,66 @@ public class XmlAnnotatedType
     /// Summary for IntPropertyWithNullExample
     /// </summary>
     /// <example>null</example>
-
     public int IntPropertyWithNullExample { get; set; }
 
     /// <summary>
     /// Summary for NullableGuidPropertyWithNullExample
     /// </summary>
     /// <example>null</example>
-
     public Guid? NullableGuidPropertyWithNullExample { get; set; }
 
     /// <summary>
     /// Summary for GuidPropertyWithNullExample
     /// </summary>
     /// <example>null</example>
-
     public Guid GuidPropertyWithNullExample { get; set; }
 
     /// <summary>
     /// Summary for NullableDateTimePropertyWithNullExample
     /// </summary>
     /// <example>null</example>
-
     public DateTime? NullableDateTimePropertyWithNullExample { get; set; }
 
     /// <summary>
     /// Summary for DateTimePropertyWithNullExample
     /// </summary>
     /// <example>null</example>
-
     public DateTime DateTimePropertyWithNullExample { get; set; }
 
     /// <summary>
     /// Summary for NullableTimeOnlyPropertyWithNullExample
     /// </summary>
     /// <example>null</example>
-
     public TimeOnly? NullableTimeOnlyPropertyWithNullExample { get; set; }
 
     /// <summary>
     /// Summary for TimeOnlyPropertyWithNullExample
     /// </summary>
     /// <example>null</example>
-
     public TimeOnly TimeOnlyPropertyWithNullExample { get; set; }
 
     /// <summary>
     /// Summary for NullableTimeSpanPropertyWithNullExample
     /// </summary>
     /// <example>null</example>
-
     public TimeSpan? NullableTimeSpanPropertyWithNullExample { get; set; }
 
     /// <summary>
     /// Summary for TimeSpanPropertyWithNullExample
     /// </summary>
     /// <example>null</example>
-
     public TimeSpan TimeSpanPropertyWithNullExample { get; set; }
 
     /// <summary>
     /// Summary for NullableDateOnlyPropertyWithNullExample
     /// </summary>
     /// <example>null</example>
-
     public DateOnly? NullableDateOnlyPropertyWithNullExample { get; set; }
 
     /// <summary>
     /// Summary for DateOnlyPropertyWithNullExample
     /// </summary>
     /// <example>null</example>
-
     public DateOnly DateOnlyPropertyWithNullExample { get; set; }
 
     /// <summary>
