@@ -1,7 +1,7 @@
 ﻿using Swashbuckle.AspNetCore.TestSupport;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
-
+#nullable enable
 /// <summary>
 /// Summary for XmlAnnotatedType
 /// </summary>
@@ -62,28 +62,52 @@ public class XmlAnnotatedType
     public Guid GuidProperty { get; set; }
 
     /// <summary>
-    /// Summary for Nullable StringPropertyWithNullExample
+    /// Summary for NullableStringPropertyWithNullExample
     /// </summary>
     /// <example>null</example>
-    public string StringPropertyWithNullExample { get; set; }
+    public string? NullableStringPropertyWithNullExample { get; set; }
+
+    /// <summary>
+    /// Summary for NullableStringPropertyWithNotNullExample
+    /// </summary>
+    /// <example>example</example>
+    public string? NullableStringPropertyWithNotNullExample { get; set; }
+
+    /// <summary>
+    /// Summary for StringPropertyWithNullExample
+    /// </summary>
+    /// <example>null</example>
+    public required string StringPropertyWithNullExample { get; set; }
 
     /// <summary>
     /// Summary for StringProperty
     /// </summary>
     /// <example>Example for StringProperty</example>
-    public string StringProperty { get; set; }
+    public required string StringProperty { get; set; }
 
     /// <summary>
     /// Summary for StringPropertyWithUri
     /// </summary>
     /// <example><![CDATA[https://test.com/a?b=1&c=2]]></example>
-    public string StringPropertyWithUri { get; set; }
+    public required string StringPropertyWithUri { get; set; }
 
     /// <summary>
     /// Summary for ObjectProperty
     /// </summary>
     /// <example>{"prop1": 1, "prop2": "foobar"}</example>
-    public object ObjectProperty { get; set; }
+    public required object ObjectProperty { get; set; }
+
+    /// <summary>
+    /// Summary for ObjectPropertyNullExample
+    /// </summary>
+    /// <example>null</example>
+    public required object ObjectPropertyNullExample { get; set; }
+
+    /// <summary>
+    /// Summary for NullableObjectPropertyNullExample
+    /// </summary>
+    /// <example>null</example>
+    public object? NullableObjectPropertyNullExample { get; set; }
 
     /// <summary>
     /// Summary for AcceptsNothing
@@ -126,18 +150,96 @@ public class XmlAnnotatedType
     }
 
     /// <summary>
+    /// >Summary for NullableIntPropertyWithNotNullExample
+    /// </summary>
+    /// <example>3</example>
+    public int? NullableIntPropertyWithNotNullExample { get; set; }
+
+    /// <summary>
+    /// Summary for NullableIntPropertyWithNullExample
+    /// </summary>
+    /// <example>null</example>
+    public int? NullableIntPropertyWithNullExample { get; set; }
+
+    /// <summary>
+    /// Summary for IntPropertyWithNullExample
+    /// </summary>
+    /// <example>null</example>
+    public int IntPropertyWithNullExample { get; set; }
+
+    /// <summary>
+    /// Summary for NullableGuidPropertyWithNullExample
+    /// </summary>
+    /// <example>null</example>
+    public Guid? NullableGuidPropertyWithNullExample { get; set; }
+
+    /// <summary>
+    /// Summary for GuidPropertyWithNullExample
+    /// </summary>
+    /// <example>null</example>
+    public Guid GuidPropertyWithNullExample { get; set; }
+
+    /// <summary>
+    /// Summary for NullableDateTimePropertyWithNullExample
+    /// </summary>
+    /// <example>null</example>
+    public DateTime? NullableDateTimePropertyWithNullExample { get; set; }
+
+    /// <summary>
+    /// Summary for DateTimePropertyWithNullExample
+    /// </summary>
+    /// <example>null</example>
+    public DateTime DateTimePropertyWithNullExample { get; set; }
+
+    /// <summary>
+    /// Summary for NullableTimeOnlyPropertyWithNullExample
+    /// </summary>
+    /// <example>null</example>
+    public TimeOnly? NullableTimeOnlyPropertyWithNullExample { get; set; }
+
+    /// <summary>
+    /// Summary for TimeOnlyPropertyWithNullExample
+    /// </summary>
+    /// <example>null</example>
+    public TimeOnly TimeOnlyPropertyWithNullExample { get; set; }
+
+    /// <summary>
+    /// Summary for NullableTimeSpanPropertyWithNullExample
+    /// </summary>
+    /// <example>null</example>
+    public TimeSpan? NullableTimeSpanPropertyWithNullExample { get; set; }
+
+    /// <summary>
+    /// Summary for TimeSpanPropertyWithNullExample
+    /// </summary>
+    /// <example>null</example>
+    public TimeSpan TimeSpanPropertyWithNullExample { get; set; }
+
+    /// <summary>
+    /// Summary for NullableDateOnlyPropertyWithNullExample
+    /// </summary>
+    /// <example>null</example>
+    public DateOnly? NullableDateOnlyPropertyWithNullExample { get; set; }
+
+    /// <summary>
+    /// Summary for DateOnlyPropertyWithNullExample
+    /// </summary>
+    /// <example>null</example>
+    public DateOnly DateOnlyPropertyWithNullExample { get; set; }
+
+    /// <summary>
     /// Summary for NestedType
     /// </summary>
     public class NestedType
     {
-        public string Property { get; set; }
+        public required string Property { get; set; }
 
         public class InnerNestedType
         {
             /// <summary>
             /// Summary of DoubleNestedType.InnerType.Property
             /// </summary>
-            public string InnerProperty { get; set; }
+            public required string InnerProperty { get; set; }
         }
     }
 }

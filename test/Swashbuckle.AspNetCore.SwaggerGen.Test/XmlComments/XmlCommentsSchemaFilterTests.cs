@@ -52,32 +52,66 @@ public class XmlCommentsSchemaFilterTests
         Assert.Equal(expectedDescription, schema.Description);
     }
 
-    public static TheoryData<Type, string, JsonSchemaType, string> Apply_SetsExample_FromPropertyExampleTag_Data() => new()
+    public static TheoryData<Type, string, JsonSchemaType, string, string> Apply_SetsExample_FromPropertyExampleTag_Data() => new()
     {
-        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.BoolProperty), JsonSchemaTypes.Boolean, "true" },
-        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.IntProperty), JsonSchemaTypes.Integer, "10" },
-        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.LongProperty), JsonSchemaTypes.Integer, "4294967295" },
-        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.FloatProperty), JsonSchemaTypes.Number, "1.2" },
-        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.DoubleProperty), JsonSchemaTypes.Number, "1.25" },
-        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.DateTimeProperty), JsonSchemaTypes.String, "\"6/22/2022 12:00:00 AM\"" },
-        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.EnumProperty), JsonSchemaTypes.Integer, "2" },
-        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.GuidProperty), JsonSchemaTypes.String, "\"d3966535-2637-48fa-b911-e3c27405ee09\"" },
-        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringProperty), JsonSchemaTypes.String, "\"Example for StringProperty\"" },
-        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.ObjectProperty), JsonSchemaTypes.Object, "{\n  \"prop1\": 1,\n  \"prop2\": \"foobar\"\n}" },
-        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.BoolProperty), JsonSchemaTypes.Boolean, "true" },
-        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.IntProperty), JsonSchemaTypes.Integer, "10" },
-        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.LongProperty), JsonSchemaTypes.Integer, "4294967295" },
-        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.FloatProperty), JsonSchemaTypes.Number, "1.2" },
-        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.DoubleProperty), JsonSchemaTypes.Number, "1.25" },
-        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.DateTimeProperty), JsonSchemaTypes.String, "\"6/22/2022 12:00:00 AM\"" },
-        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.EnumProperty), JsonSchemaTypes.Integer, "2" },
-        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.GuidProperty), JsonSchemaTypes.String, "\"d3966535-2637-48fa-b911-e3c27405ee09\"" },
-        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.StringProperty), JsonSchemaTypes.String, "\"Example for StringProperty\"" },
-        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.ObjectProperty), JsonSchemaTypes.Object, "{\n  \"prop1\": 1,\n  \"prop2\": \"foobar\"\n}" },
-        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringPropertyWithUri), JsonSchemaTypes.String, "\"https://test.com/a?b=1\\u0026c=2\"" },
-        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.StringPropertyWithUri), JsonSchemaTypes.String, "\"https://test.com/a?b=1\\u0026c=2\"" },
-        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringPropertyWithNullExample), JsonSchemaTypes.String, "null" },
-        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.StringPropertyWithNullExample), JsonSchemaTypes.String, "null" },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.BoolProperty), JsonSchemaTypes.Boolean, "true",null },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.IntProperty), JsonSchemaTypes.Integer, "10","int32" },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.LongProperty), JsonSchemaTypes.Integer, "4294967295","int64" },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.FloatProperty), JsonSchemaTypes.Number, "1.2", "float" },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.DoubleProperty), JsonSchemaTypes.Number, "1.25","double" },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.DateTimeProperty), JsonSchemaTypes.String, "\"6/22/2022 12:00:00 AM\"","date-time" },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.EnumProperty), JsonSchemaTypes.Integer, "2","int32" },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.GuidProperty), JsonSchemaTypes.String, "\"d3966535-2637-48fa-b911-e3c27405ee09\"","uuid" },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringProperty), JsonSchemaTypes.String, "\"Example for StringProperty\"",null },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.ObjectProperty), JsonSchemaTypes.Object, "{\n  \"prop1\": 1,\n  \"prop2\": \"foobar\"\n}", null },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.BoolProperty), JsonSchemaTypes.Boolean, "true",null },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.IntProperty), JsonSchemaTypes.Integer, "10" , "int32"},
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.LongProperty), JsonSchemaTypes.Integer, "4294967295","int64" },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.FloatProperty), JsonSchemaTypes.Number, "1.2", "float" },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.DoubleProperty), JsonSchemaTypes.Number, "1.25", "double" },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.DateTimeProperty), JsonSchemaTypes.String, "\"6/22/2022 12:00:00 AM\"", "date-time" },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.EnumProperty), JsonSchemaTypes.Integer, "2" , "int32"},
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.GuidProperty), JsonSchemaTypes.String, "\"d3966535-2637-48fa-b911-e3c27405ee09\"" , "uuid"},
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.StringProperty), JsonSchemaTypes.String, "\"Example for StringProperty\"", null },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.ObjectProperty), JsonSchemaTypes.Object, "{\n  \"prop1\": 1,\n  \"prop2\": \"foobar\"\n}", null },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringPropertyWithUri), JsonSchemaTypes.String, "\"https://test.com/a?b=1\\u0026c=2\"", null },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.StringPropertyWithUri), JsonSchemaTypes.String, "\"https://test.com/a?b=1\\u0026c=2\"", null },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringPropertyWithNullExample), JsonSchemaTypes.String, null, null },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.StringPropertyWithNullExample), JsonSchemaTypes.String, null, null },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.NullableStringPropertyWithNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null",null },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.NullableStringPropertyWithNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null",null },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.NullableStringPropertyWithNotNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "\"example\"",null },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.NullableStringPropertyWithNotNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "\"example\"",null },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.NullableIntPropertyWithNotNullExample), JsonSchemaTypes.Integer | JsonSchemaType.Null, "3", "int32" },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.NullableIntPropertyWithNotNullExample), JsonSchemaTypes.Integer | JsonSchemaType.Null, "3", "int32" },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.NullableIntPropertyWithNullExample), JsonSchemaTypes.Integer | JsonSchemaType.Null, "null" , "int32"},
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.NullableIntPropertyWithNullExample), JsonSchemaTypes.Integer | JsonSchemaType.Null, "null", "int32" },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.IntPropertyWithNullExample), JsonSchemaTypes.Integer, null , "int32"},
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.IntPropertyWithNullExample), JsonSchemaTypes.Integer, null, "int32" },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.NullableGuidPropertyWithNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null", "uuid" },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.NullableGuidPropertyWithNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null", "uuid" },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.GuidPropertyWithNullExample), JsonSchemaTypes.String, null,"uuid"  },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.GuidPropertyWithNullExample), JsonSchemaTypes.String, null,"uuid"  },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.ObjectPropertyNullExample), JsonSchemaTypes.Object, null,null },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.ObjectPropertyNullExample), JsonSchemaTypes.Object, null,null },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.NullableObjectPropertyNullExample), JsonSchemaTypes.Object | JsonSchemaType.Null, "null",null},
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.NullableObjectPropertyNullExample), JsonSchemaTypes.Object | JsonSchemaType.Null, "null",null},
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.NullableDateTimePropertyWithNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null", "date-time" },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.NullableDateTimePropertyWithNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null","date-time" },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.DateTimePropertyWithNullExample), JsonSchemaTypes.String, null, "date-time" },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.DateTimePropertyWithNullExample), JsonSchemaTypes.String, null, "date-time" },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.NullableTimeOnlyPropertyWithNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null","time"  },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.NullableTimeOnlyPropertyWithNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null","time"  },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedRecord.TimeOnlyPropertyWithNullExample), JsonSchemaTypes.String, null,"time"  },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.TimeOnlyPropertyWithNullExample), JsonSchemaTypes.String, null,"time"  },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.NullableTimeSpanPropertyWithNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null", "date-span" },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.NullableTimeSpanPropertyWithNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null", "date-span" },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.TimeSpanPropertyWithNullExample), JsonSchemaTypes.String, null, "date-span" },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.TimeSpanPropertyWithNullExample), JsonSchemaTypes.String, null, "date-span" },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.NullableDateOnlyPropertyWithNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null","date"  },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.NullableDateOnlyPropertyWithNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null","date"  },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.DateOnlyPropertyWithNullExample), JsonSchemaTypes.String, null,"date"  },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.DateOnlyPropertyWithNullExample), JsonSchemaTypes.String, null,"date"  }
     };
 
     [Theory]
@@ -86,13 +120,14 @@ public class XmlCommentsSchemaFilterTests
         Type declaringType,
         string propertyName,
         JsonSchemaType schemaType,
-        string expectedExampleAsJson)
+        string expectedExampleAsJson,
+        string format)
     {
         // Arrange
         CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
 
         var propertyInfo = declaringType.GetProperty(propertyName);
-        var schema = new OpenApiSchema { Type = schemaType };
+        var schema = new OpenApiSchema { Type = schemaType, Format = format };
         var filterContext = new SchemaFilterContext(propertyInfo.PropertyType, null, null, memberInfo: propertyInfo);
 
         // Act
