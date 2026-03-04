@@ -24,7 +24,6 @@ internal static class XmlCommentsExampleHelper
             return JsonValue.Create(exampleString);
         }
 
-
         // HACK If the value is a string, but we can't detect it as one, then
         // if parsing it fails, assume it is a string that isn't quoted. There's
         // probably a much better way to deal with this scenario.
