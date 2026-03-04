@@ -19,4 +19,19 @@ public class SwaggerAndSwaggerUIIntegrationTests
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Equal(mediaType, response.Content.Headers.ContentType?.MediaType);
     }
+
+    [Theory]
+    [InlineData("/swagger/index.html", "text/html")]
+    [InlineData("/swagger/v1/swagger.json", "application/json")]
+    [InlineData("/swagger/v1/swagger.yaml", "text/yaml")]
+    [InlineData("/swagger/v1/swagger.yml", "text/yaml")]
+    public async Task MapSwaggerUI_And_MapSwagger_ReturnExpectedEndpoints(string path, string mediaType)
+    {
+        var client = new WebApplicationFactory<WebApi.Map.Program>().CreateClient();
+
+        var response = await client.GetAsync(path, TestContext.Current.CancellationToken);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(mediaType, response.Content.Headers.ContentType?.MediaType);
+    }
 }

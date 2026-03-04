@@ -1,1 +1,1 @@
-﻿
+﻿static Microsoft.AspNetCore.Builder.SwaggerUIBuilderExtensions.MapSwaggerUI(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder endpoints, System.Action<Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIOptions> setupAction = null) -> Microsoft.AspNetCore.Builder.IEndpointConventionBuilder

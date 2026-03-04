@@ -244,3 +244,25 @@ app.UseSwaggerUI(options =>
 <!-- markdownlint-enable MD031 MD033 -->
 
 [swagger-ui]: https://github.com/swagger-api/swagger-ui
+
+## Use `MapSwaggerUI` with endpoint routing
+
+`MapSwaggerUI` is an endpoint-routing alternative to `UseSwaggerUI`. The options API is the same, so all customization examples in this page also apply when using `MapSwaggerUI`.
+
+```cs
+app.MapSwagger();
+app.MapSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
+});
+```
+
+The main differences are:
+
+- **Use**SwaggerUI adds middleware directly to the request pipeline and returns `IApplicationBuilder`.
+- **Map**SwaggerUI maps the Swagger UI via endpoint routing and returns `IEndpointConventionBuilder`.
+
+- Because `MapSwaggerUI` returns an endpoint convention builder, you can attach endpoint metadata/conventions (for example, authorization policies) directly to the mapped UI endpoint.
+    ```csharp
+    app.MapSwaggerUI().RequireAuthorization();
+    ```
