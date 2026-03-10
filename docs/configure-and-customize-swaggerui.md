@@ -249,13 +249,16 @@ app.UseSwaggerUI(options =>
 
 `MapSwaggerUI` is an endpoint-routing alternative to `UseSwaggerUI`. The options API is the same, so all customization examples on this page also apply when using `MapSwaggerUI`.
 
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerUI-MapSwaggerUI -->
+<a id='snippet-SwaggerUI-MapSwaggerUI'></a>
 ```cs
 app.MapSwagger();
-app.MapSwaggerUI(options =>
-{
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs");
-});
+app.MapSwaggerUI(options => { options.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs"); });
 ```
+<sup><a href='/test/WebSites/WebApi.Map/Program.cs#L22-L25' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-MapSwaggerUI' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
 
 The main differences are:
 
@@ -263,6 +266,13 @@ The main differences are:
 - **Map**SwaggerUI maps the Swagger UI via endpoint routing and returns `IEndpointConventionBuilder`.
 
 - Because `MapSwaggerUI` returns an endpoint convention builder, you can attach endpoint metadata/conventions (for example, authorization policies) directly to the mapped UI endpoint.
-    ```csharp
-    app.MapSwaggerUI().RequireAuthorization();
-    ```
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: SwaggerUI-MapSwaggerUI-RequireAuthorization -->
+<a id='snippet-SwaggerUI-MapSwaggerUI-RequireAuthorization'></a>
+```cs
+app.MapSwaggerUI(o => { o.RoutePrefix = "swagger-auth"; })
+    .RequireAuthorization(); // Remember to also add RequireAuthorization to MapSwagger.
+```
+<sup><a href='/test/WebSites/WebApi.Map/Program.cs#L27-L30' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-MapSwaggerUI-RequireAuthorization' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
