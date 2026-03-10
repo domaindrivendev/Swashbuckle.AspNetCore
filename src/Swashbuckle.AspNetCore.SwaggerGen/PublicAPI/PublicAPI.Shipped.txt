@@ -230,6 +230,7 @@ Swashbuckle.AspNetCore.SwaggerGen.SchemaRepository
 Swashbuckle.AspNetCore.SwaggerGen.SchemaRepository.AddDefinition(string schemaId, Microsoft.OpenApi.OpenApiSchema schema) -> Microsoft.OpenApi.OpenApiSchemaReference
 Swashbuckle.AspNetCore.SwaggerGen.SchemaRepository.DocumentName.get -> string
 Swashbuckle.AspNetCore.SwaggerGen.SchemaRepository.RegisterType(System.Type type, string schemaId) -> void
+Swashbuckle.AspNetCore.SwaggerGen.SchemaRepository.ReplaceSchemaId(System.Type schemaType, string replacementSchemaId) -> bool
 Swashbuckle.AspNetCore.SwaggerGen.SchemaRepository.SchemaRepository(string documentName = null) -> void
 Swashbuckle.AspNetCore.SwaggerGen.SchemaRepository.Schemas.get -> System.Collections.Generic.Dictionary<string, Microsoft.OpenApi.IOpenApiSchema>
 Swashbuckle.AspNetCore.SwaggerGen.SchemaRepository.TryLookupByType(System.Type type, out Microsoft.OpenApi.OpenApiSchemaReference referenceSchema) -> bool

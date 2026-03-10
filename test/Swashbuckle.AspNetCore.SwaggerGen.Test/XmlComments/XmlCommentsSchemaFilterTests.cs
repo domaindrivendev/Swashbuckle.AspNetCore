@@ -76,8 +76,14 @@ public class XmlCommentsSchemaFilterTests
         { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.ObjectProperty), JsonSchemaTypes.Object, "{\n  \"prop1\": 1,\n  \"prop2\": \"foobar\"\n}" },
         { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringPropertyWithUri), JsonSchemaTypes.String, "\"https://test.com/a?b=1\\u0026c=2\"" },
         { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.StringPropertyWithUri), JsonSchemaTypes.String, "\"https://test.com/a?b=1\\u0026c=2\"" },
-        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringPropertyWithNullExample), JsonSchemaTypes.String, "\"null\"" },
-        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.StringPropertyWithNullExample), JsonSchemaTypes.String, "\"null\"" },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.StringPropertyWithNullExample), JsonSchemaTypes.String, "null" },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.StringPropertyWithNullExample), JsonSchemaTypes.String, "null" },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.NullableStringPropertyWithNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null" },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.NullableStringPropertyWithNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "null" },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.NullableStringPropertyWithNotNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "\"example\"" },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.NullableStringPropertyWithNotNullExample), JsonSchemaTypes.String | JsonSchemaType.Null, "\"example\"" },
+        { typeof(XmlAnnotatedType), nameof(XmlAnnotatedType.NullableIntPropertyWithNotNullExample), JsonSchemaTypes.Integer | JsonSchemaType.Null, "3" },
+        { typeof(XmlAnnotatedRecord), nameof(XmlAnnotatedRecord.NullableIntPropertyWithNotNullExample), JsonSchemaTypes.Integer | JsonSchemaType.Null, "3" },
     };
 
     [Theory]

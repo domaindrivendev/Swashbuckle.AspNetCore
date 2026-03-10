@@ -1,0 +1,125 @@
+﻿{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Test API",
+    "version": "V1"
+  },
+  "paths": {
+    "/resource": {
+      "post": {
+        "tags": [
+          "FakeWithInheritance"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MostDerivedClass"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "FakeWithInheritance"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/MostDerivedClass"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/resourceB": {
+      "get": {
+        "tags": [
+          "FakeWithInheritance"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DerivedClass"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BaseClass": {
+        "type": "object",
+        "properties": {
+          "BaseProperty": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "DerivedClass": {
+        "type": "object",
+        "properties": {
+          "BaseProperty": {
+            "type": "string",
+            "nullable": true
+          },
+          "DerivedProperty": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MostDerivedClass": {
+        "type": "object",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/BaseClass"
+          }
+        ],
+        "properties": {
+          "DerivedProperty": {
+            "type": "string",
+            "nullable": true
+          },
+          "MoreDerivedProperty": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "FakeWithInheritance"
+    }
+  ]
+}

@@ -4,7 +4,7 @@
 #Requires -Version 7
 
 param(
-    [Parameter(Mandatory = $false)][string] $Framework = "net8.0",
+    [Parameter(Mandatory = $false)][string] $Framework = "net10.0",
     [Parameter(Mandatory = $false)][string] $Job = ""
 )
 

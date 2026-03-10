@@ -11,7 +11,7 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
 {
     [Theory]
     [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
-    [InlineData(typeof(CliExample.Startup), "/swagger/v1/swagger_net8.0.json")]
+    [InlineData(typeof(CliExample.Startup), "/swagger/v1/swagger_net10.0.json")]
     [InlineData(typeof(ConfigFromFile.Startup), "/swagger/v1/swagger.json")]
     [InlineData(typeof(CustomUIConfig.Startup), "/swagger/v1/swagger.json")]
     [InlineData(typeof(CustomUIIndex.Startup), "/swagger/v1/swagger.json")]
@@ -38,7 +38,7 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
         var testSite = new TestSiteAutofaq(typeof(CliExampleWithFactory.Startup), outputHelper);
         using var client = testSite.BuildClient();
 
-        await AssertValidSwaggerJson(client, "/swagger/v1/swagger_net8.0.json");
+        await AssertValidSwaggerJson(client, "/swagger/v1/swagger_net10.0.json");
     }
 
     [Fact]
@@ -116,8 +116,10 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
 
     [Theory]
     [InlineData(typeof(MinimalApp.Program), "/swagger/v1/swagger.json")]
-    [InlineData(typeof(TopLevelSwaggerDoc.Program), "/swagger/v1.json")]
+    [InlineData(typeof(MinimalAppWithNullableEnums.Program), "/swagger/v1/swagger.json")]
     [InlineData(typeof(MvcWithNullable.Program), "/swagger/v1/swagger.json")]
+    [InlineData(typeof(TodoApp.Program), "/swagger/v1/swagger.json")]
+    [InlineData(typeof(TopLevelSwaggerDoc.Program), "/swagger/v1.json")]
     [InlineData(typeof(WebApi.Program), "/swagger/v1/swagger.json")]
     [InlineData(typeof(WebApi.Aot.Program), "/swagger/v1/swagger.json")]
     public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_Without_Startup(

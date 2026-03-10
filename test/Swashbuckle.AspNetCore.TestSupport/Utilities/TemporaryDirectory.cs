@@ -2,7 +2,7 @@
 
 public sealed class TemporaryDirectory : IDisposable
 {
-    private readonly DirectoryInfo _directory = Directory.CreateDirectory(System.IO.Path.Join(System.IO.Path.GetTempPath(), System.IO.Path.GetRandomFileName()));
+    private readonly DirectoryInfo _directory = Directory.CreateTempSubdirectory();
 
     public string Path => _directory.FullName;
 

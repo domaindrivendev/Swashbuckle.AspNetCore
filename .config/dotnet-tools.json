@@ -3,23 +3,37 @@
   "isRoot": true,
   "tools": {
     "dotnet-validate": {
-      "version": "0.0.1-preview.537",
+      "version": "0.0.1-preview.582",
       "commands": [
         "dotnet-validate"
       ],
       "rollForward": false
     },
     "markdownsnippets.tool": {
-      "version": "27.0.2",
+      "version": "28.0.1",
       "commands": [
         "mdsnippets"
       ],
       "rollForward": false
     },
     "meziantou.framework.nugetpackagevalidation.tool": {
-      "version": "1.0.35",
+      "version": "1.0.44",
       "commands": [
         "meziantou.validate-nuget-package"
+      ],
+      "rollForward": false
+    },
+    "microsoft.openapi.kiota": {
+      "version": "1.30.0",
+      "commands": [
+        "kiota"
+      ],
+      "rollForward": false
+    },
+    "nswag.consolecore": {
+      "version": "14.6.3",
+      "commands": [
+        "nswag"
       ],
       "rollForward": false
     }

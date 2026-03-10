@@ -1,7 +1,7 @@
 ﻿using Swashbuckle.AspNetCore.TestSupport;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
-
+#nullable enable
 /// <summary>
 /// Summary for XmlAnnotatedType
 /// </summary>
@@ -62,28 +62,40 @@ public class XmlAnnotatedType
     public Guid GuidProperty { get; set; }
 
     /// <summary>
-    /// Summary for Nullable StringPropertyWithNullExample
+    /// Summary for NullableStringPropertyWithNullExample
     /// </summary>
     /// <example>null</example>
-    public string StringPropertyWithNullExample { get; set; }
+    public string? NullableStringPropertyWithNullExample { get; set; }
+
+    /// <summary>
+    /// Summary for NullableStringPropertyWithNotNullExample
+    /// </summary>
+    /// <example>example</example>
+    public string? NullableStringPropertyWithNotNullExample { get; set; }
+
+    /// <summary>
+    /// Summary for StringPropertyWithNullExample
+    /// </summary>
+    /// <example>null</example>
+    public required string StringPropertyWithNullExample { get; set; }
 
     /// <summary>
     /// Summary for StringProperty
     /// </summary>
     /// <example>Example for StringProperty</example>
-    public string StringProperty { get; set; }
+    public required string StringProperty { get; set; }
 
     /// <summary>
     /// Summary for StringPropertyWithUri
     /// </summary>
     /// <example><![CDATA[https://test.com/a?b=1&c=2]]></example>
-    public string StringPropertyWithUri { get; set; }
+    public required string StringPropertyWithUri { get; set; }
 
     /// <summary>
     /// Summary for ObjectProperty
     /// </summary>
     /// <example>{"prop1": 1, "prop2": "foobar"}</example>
-    public object ObjectProperty { get; set; }
+    public required object ObjectProperty { get; set; }
 
     /// <summary>
     /// Summary for AcceptsNothing
@@ -126,18 +138,24 @@ public class XmlAnnotatedType
     }
 
     /// <summary>
+    /// >Summary for NullableIntPropertyWithNotNullExample
+    /// </summary>
+    /// <example>3</example>
+    public int? NullableIntPropertyWithNotNullExample { get; set; }
+
+    /// <summary>
     /// Summary for NestedType
     /// </summary>
     public class NestedType
     {
-        public string Property { get; set; }
+        public required string Property { get; set; }
 
         public class InnerNestedType
         {
             /// <summary>
             /// Summary of DoubleNestedType.InnerType.Property
             /// </summary>
-            public string InnerProperty { get; set; }
+            public required string InnerProperty { get; set; }
         }
     }
 }

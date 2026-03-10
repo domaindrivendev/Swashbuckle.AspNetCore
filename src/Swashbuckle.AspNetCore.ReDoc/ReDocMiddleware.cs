@@ -58,7 +58,7 @@ internal sealed class ReDocMiddleware
 
             if (match.Success)
             {
-                await RespondWithFile(httpContext.Response, match.Groups[1].Value, httpContext.RequestAborted);
+                await RespondWithFile(httpContext, match.Groups[1].Value);
                 return;
             }
         }
@@ -99,7 +99,7 @@ internal sealed class ReDocMiddleware
             };
         }
 
-        headers.ETag = new($"\"{etag}\"", isWeak: true);
+        headers.ETag = new(etag);
     }
 
     private static void RespondWithRedirect(HttpResponse response, string location)
@@ -108,11 +108,11 @@ internal sealed class ReDocMiddleware
         response.Headers.Location = location;
     }
 
-    private async Task RespondWithFile(
-        HttpResponse response,
-        string fileName,
-        CancellationToken cancellationToken)
+    private async Task RespondWithFile(HttpContext context, string fileName)
     {
+        var cancellationToken = context.RequestAborted;
+        var response = context.Response;
+
         response.StatusCode = StatusCodes.Status200OK;
 
         Stream stream;
@@ -153,19 +153,27 @@ internal sealed class ReDocMiddleware
             }
 
             var text = content.ToString();
-            var etag = HashText(text);
+            var etag = GetETag(text);
+
+            var ifNoneMatch = context.Request.Headers.IfNoneMatch;
+
+            if (ifNoneMatch == etag)
+            {
+                response.StatusCode = StatusCodes.Status304NotModified;
+                return;
+            }
 
             SetHeaders(response, _options, etag);
 
             await response.WriteAsync(text, Encoding.UTF8, cancellationToken);
         }
 
-        static string HashText(string text)
+        static string GetETag(string text)
         {
             var buffer = Encoding.UTF8.GetBytes(text);
             var hash = SHA1.HashData(buffer);
 
-            return Convert.ToBase64String(hash);
+            return $"\"{Convert.ToBase64String(hash)}\"";
         }
     }
 

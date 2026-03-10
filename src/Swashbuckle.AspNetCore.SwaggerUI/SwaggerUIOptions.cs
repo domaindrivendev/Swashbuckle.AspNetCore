@@ -75,7 +75,7 @@ public class SwaggerUIOptions
     /// Gets or sets the cache lifetime to use for the SwaggerUI files, if any.
     /// </summary>
     /// <remarks>
-    /// The default value is 7 days.
+    /// The default value is 0 days (ETags are used to check if resources have been updated).
     /// </remarks>
-    public TimeSpan? CacheLifetime { get; set; } = TimeSpan.FromDays(7);
+    public TimeSpan? CacheLifetime { get; set; } = TimeSpan.Zero;
 }

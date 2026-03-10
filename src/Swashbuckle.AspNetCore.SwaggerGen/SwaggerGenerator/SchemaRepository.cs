@@ -8,7 +8,7 @@ public class SchemaRepository(string documentName = null)
 
     public string DocumentName { get; } = documentName;
 
-    public Dictionary<string, IOpenApiSchema> Schemas { get; private set; } = [];
+    public Dictionary<string, IOpenApiSchema> Schemas { get; } = [];
 
     public void RegisterType(Type type, string schemaId)
     {
@@ -24,16 +24,17 @@ public class SchemaRepository(string documentName = null)
         _reservedIds.Add(type, schemaId);
     }
 
-    public bool TryLookupByType(Type type, out OpenApiSchemaReference referenceSchema)
+    public bool TryLookupByType(Type type, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out OpenApiSchemaReference referenceSchema)
     {
-        if (_reservedIds.TryGetValue(type, out string schemaId))
+        referenceSchema = null;
+        bool result = _reservedIds.TryGetValue(type, out string schemaId);
+
+        if (result)
         {
             referenceSchema = new OpenApiSchemaReference(schemaId);
-            return true;
         }
 
-        referenceSchema = null;
-        return false;
+        return result;
     }
 
     public OpenApiSchemaReference AddDefinition(string schemaId, OpenApiSchema schema)
@@ -41,5 +42,25 @@ public class SchemaRepository(string documentName = null)
         Schemas.Add(schemaId, schema);
 
         return new OpenApiSchemaReference(schemaId);
+    }
+
+    public bool ReplaceSchemaId(Type schemaType, string replacementSchemaId)
+    {
+        ArgumentNullException.ThrowIfNull(schemaType);
+        ArgumentException.ThrowIfNullOrEmpty(replacementSchemaId);
+
+        if (_reservedIds.TryGetValue(schemaType, out string oldSchemaId) &&
+            oldSchemaId != replacementSchemaId &&
+            Schemas.TryGetValue(oldSchemaId, out var targetSchema))
+        {
+            if (Schemas.TryAdd(replacementSchemaId, targetSchema))
+            {
+                Schemas.Remove(oldSchemaId);
+                _reservedIds.Remove(schemaType);
+                return true;
+            }
+        }
+
+        return false;
     }
 }

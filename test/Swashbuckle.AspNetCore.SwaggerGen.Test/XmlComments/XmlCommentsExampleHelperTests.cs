@@ -81,7 +81,7 @@ public class XmlCommentsExampleHelperTests
             schemaRepository, schema, "null");
 
         Assert.NotNull(example);
-        Assert.Equal("null", example.GetValue<string>());
+        Assert.Equal("null", example.ToJson());
     }
 
     [Fact]

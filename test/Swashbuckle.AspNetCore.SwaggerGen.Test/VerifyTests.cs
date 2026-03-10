@@ -18,6 +18,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 
 public partial class VerifyTests
 {
+    private static string SnapshotsDirectory { get; } = $"snapshots/{Environment.Version.Major}_{Environment.Version.Minor}";
+
     [Fact]
     public async Task ApiDescriptionsWithMatchingGroupName()
     {
@@ -402,9 +404,8 @@ public partial class VerifyTests
         var document = subject.GetSwagger("v1");
 
         await Verifier.Verify(ToJson(document))
-            .UseDirectory("snapshots")
-            .UseParameters(bindingSourceId)
-            .UniqueForTargetFrameworkAndVersion();
+            .UseDirectory(SnapshotsDirectory)
+            .UseParameters(bindingSourceId);
     }
 
     [Fact]
@@ -519,9 +520,8 @@ public partial class VerifyTests
         var document = subject.GetSwagger("v1");
 
         await Verifier.Verify(ToJson(document))
-            .UseDirectory("snapshots")
-            .UseParameters(action)
-            .UniqueForTargetFrameworkAndVersion();
+            .UseDirectory(SnapshotsDirectory)
+            .UseParameters(action);
     }
 
     [Theory]
@@ -590,10 +590,9 @@ public partial class VerifyTests
         var document = subject.GetSwagger("v1");
 
         await Verifier.Verify(ToJson(document))
-            .UseDirectory("snapshots")
+            .UseDirectory(SnapshotsDirectory)
             .UseParameters(action)
-            .UseMethodName("IllegalHeaderForOperation")
-            .UniqueForTargetFrameworkAndVersion();
+            .UseMethodName("IllegalHeaderForOperation");
     }
 
     [Fact]
@@ -650,9 +649,8 @@ public partial class VerifyTests
         var document = subject.GetSwagger("v1");
 
         await Verifier.Verify(ToJson(document))
-            .UseDirectory("snapshots")
-            .UseParameters(action)
-            .UniqueForTargetFrameworkAndVersion();
+            .UseDirectory(SnapshotsDirectory)
+            .UseParameters(action);
     }
 
     [Theory]
@@ -686,9 +684,8 @@ public partial class VerifyTests
         var document = subject.GetSwagger("v1");
 
         await Verifier.Verify(ToJson(document))
-            .UseDirectory("snapshots")
-            .UseParameters(action)
-            .UniqueForTargetFrameworkAndVersion();
+            .UseDirectory(SnapshotsDirectory)
+            .UseParameters(action);
     }
 
     [Fact]
@@ -891,9 +888,8 @@ public partial class VerifyTests
         var document = subject.GetSwagger("v1");
 
         await Verifier.Verify(ToJson(document))
-            .UseDirectory("snapshots")
-            .UseParameters(bindingSourceId)
-            .UniqueForTargetFrameworkAndVersion();
+            .UseDirectory(SnapshotsDirectory)
+            .UseParameters(bindingSourceId);
     }
 
     [Fact]
@@ -1106,6 +1102,142 @@ public partial class VerifyTests
                         }
                     ])
             ]
+        );
+        var document = subject.GetSwagger("v1");
+
+        await Verify(document);
+    }
+
+    [Fact]
+    public async Task GenerateSchema_PreservesIntermediateBaseProperties_WhenUsingOneOfPolymorphism()
+    {
+        var subject = Subject(
+            apiDescriptions:
+            [
+                ApiDescriptionFactory.Create<FakeControllerWithInheritance>(
+                    c => nameof(c.ActionWithDerivedObjectParameter),
+                    groupName: "v1",
+                    httpMethod: "POST",
+                    relativePath: "resource",
+                    parameterDescriptions:
+                    [
+                        new ApiParameterDescription
+                        {
+                            Name = "param1",
+                            Source = BindingSource.Body,
+                            Type = typeof(FakeControllerWithInheritance.MostDerivedClass),
+                            ModelMetadata = ModelMetadataFactory.CreateForType(typeof(FakeControllerWithInheritance.MostDerivedClass)),
+                        },
+                    ],
+                    supportedRequestFormats: [new ApiRequestFormat { MediaType = "application/json" }]),
+                ApiDescriptionFactory.Create<FakeControllerWithInheritance>(
+                    c => nameof(c.ActionWithDerivedObjectResponse),
+                    groupName: "v1",
+                    httpMethod: "GET",
+                    relativePath: "resource",
+                    parameterDescriptions: [],
+                    supportedResponseTypes:
+                    [
+                        new ApiResponseType
+                        {
+                            ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
+                            StatusCode = 200,
+                            Type = typeof(FakeControllerWithInheritance.BaseClass),
+                        },
+                    ]),
+                ApiDescriptionFactory.Create<FakeControllerWithInheritance>(
+                    c => nameof(c.ActionWithDerivedObjectResponse_ExcludedFromInheritanceConfig),
+                    groupName: "v1",
+                    httpMethod: "GET",
+                    relativePath: "resourceB",
+                    parameterDescriptions: [],
+                    supportedResponseTypes:
+                    [
+                        new ApiResponseType
+                        {
+                            ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
+                            StatusCode = 200,
+                            Type = typeof(FakeControllerWithInheritance.DerivedClass),
+                        },
+                    ]),
+            ],
+            configureSchemaGeneratorOptions: c =>
+            {
+                c.UseOneOfForPolymorphism = true;
+                c.SubTypesSelector =
+                    (type) =>
+                        type == typeof(FakeControllerWithInheritance.BaseClass)
+                            ? [typeof(FakeControllerWithInheritance.MostDerivedClass)]
+                            : [];
+            }
+        );
+        var document = subject.GetSwagger("v1");
+
+        await Verify(document);
+    }
+
+    [Fact]
+    public async Task GenerateSchema_PreservesMultiLevelInheritance()
+    {
+        var subject = Subject(
+            apiDescriptions:
+            [
+                ApiDescriptionFactory.Create<FakeControllerWithInheritance>(
+                    c => nameof(c.ActionWithDerivedObjectParameter),
+                    groupName: "v1",
+                    httpMethod: "POST",
+                    relativePath: "resource",
+                    parameterDescriptions:
+                    [
+                        new ApiParameterDescription
+                        {
+                            Name = "param1",
+                            Source = BindingSource.Body,
+                            Type = typeof(FakeControllerWithInheritance.MostDerivedClass),
+                            ModelMetadata = ModelMetadataFactory.CreateForType(typeof(FakeControllerWithInheritance.MostDerivedClass)),
+                        },
+                    ],
+                    supportedRequestFormats: [new ApiRequestFormat { MediaType = "application/json" }]),
+                ApiDescriptionFactory.Create<FakeControllerWithInheritance>(
+                    c => nameof(c.ActionWithDerivedObjectResponse),
+                    groupName: "v1",
+                    httpMethod: "GET",
+                    relativePath: "resource",
+                    parameterDescriptions: [],
+                    supportedResponseTypes:
+                    [
+                        new ApiResponseType
+                        {
+                            ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
+                            StatusCode = 200,
+                            Type = typeof(FakeControllerWithInheritance.BaseClass),
+                        },
+                    ]),
+                ApiDescriptionFactory.Create<FakeControllerWithInheritance>(
+                    c => nameof(c.ActionWithDerivedObjectResponse_ExcludedFromInheritanceConfig),
+                    groupName: "v1",
+                    httpMethod: "GET",
+                    relativePath: "resourceB",
+                    parameterDescriptions: [],
+                    supportedResponseTypes:
+                    [
+                        new ApiResponseType
+                        {
+                            ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
+                            StatusCode = 200,
+                            Type = typeof(FakeControllerWithInheritance.DerivedClass),
+                        },
+                    ]),
+            ],
+            configureSchemaGeneratorOptions: c =>
+            {
+                c.UseOneOfForPolymorphism = true;
+                c.SubTypesSelector =
+                    (type) =>
+                        type == typeof(FakeControllerWithInheritance.BaseClass) ? [typeof(FakeControllerWithInheritance.DerivedClass), typeof(FakeControllerWithInheritance.MostDerivedClass)]
+                        : type == typeof(FakeControllerWithInheritance.DerivedClass) ? [typeof(FakeControllerWithInheritance.MostDerivedClass)]
+                        : [];
+            }
         );
         var document = subject.GetSwagger("v1");
 
@@ -1465,12 +1597,16 @@ public partial class VerifyTests
             IEnumerable<ApiDescription> apiDescriptions,
             SwaggerGeneratorOptions options = null,
             IEnumerable<AuthenticationScheme> authenticationSchemes = null,
-            List<ISchemaFilter> schemaFilters = null)
+            List<ISchemaFilter> schemaFilters = null,
+            Action<SchemaGeneratorOptions> configureSchemaGeneratorOptions = null)
     {
+        var schemaGeneratorOptions = new SchemaGeneratorOptions() { SchemaFilters = schemaFilters ?? [] };
+        configureSchemaGeneratorOptions?.Invoke(schemaGeneratorOptions);
+
         return new SwaggerGenerator(
             options ?? DefaultOptions,
             new FakeApiDescriptionGroupCollectionProvider(apiDescriptions),
-            new SchemaGenerator(new SchemaGeneratorOptions() { SchemaFilters = schemaFilters ?? [] }, new JsonSerializerDataContractResolver(new JsonSerializerOptions())),
+            new SchemaGenerator(schemaGeneratorOptions, new JsonSerializerDataContractResolver(new JsonSerializerOptions())),
             new FakeAuthenticationSchemeProvider(authenticationSchemes ?? [])
         );
     }
@@ -1496,8 +1632,7 @@ public partial class VerifyTests
     private static async Task Verify(OpenApiDocument document)
     {
         await Verifier.Verify(ToJson(document))
-            .UseDirectory("snapshots")
-            .UniqueForTargetFrameworkAndVersion();
+                      .UseDirectory($"snapshots/{Environment.Version.Major}_{Environment.Version.Minor}");
     }
 
     private static string NormalizeLineBreaks(string swagger)

@@ -6,10 +6,12 @@ namespace Swashbuckle.AspNetCore.IntegrationTests;
 [Collection("TestSite")]
 public partial class VerifyTests(ITestOutputHelper outputHelper)
 {
+    private static string SnapshotsDirectory { get; } = SnapshotTestData.SnapshotsDirectory;
+
     [Theory]
     [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
     [InlineData(typeof(NSwagClientExample.Startup), "/swagger/v1/swagger.json")]
-    [InlineData(typeof(CliExample.Startup), "/swagger/v1/swagger_net8.0.json")]
+    [InlineData(typeof(CliExample.Startup), "/swagger/v1/swagger_net10.0.json")]
     [InlineData(typeof(ConfigFromFile.Startup), "/swagger/v1/swagger.json")]
     [InlineData(typeof(CustomDocumentSerializer.Startup), "/swagger/v1/swagger.json")]
     [InlineData(typeof(CustomUIConfig.Startup), "/swagger/v1/swagger.json")]
@@ -31,16 +33,15 @@ public partial class VerifyTests(ITestOutputHelper outputHelper)
         var swagger = await swaggerResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
         await Verify(NormalizeLineBreaks(swagger))
-            .UseDirectory("snapshots")
-            .UseParameters(startupType, GetVersion(swaggerRequestUri))
-            .UniqueForTargetFrameworkAndVersion();
+            .UseDirectory(SnapshotsDirectory)
+            .UseParameters(startupType, GetVersion(swaggerRequestUri));
     }
 
     [Fact]
     public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_ForAutofaq()
     {
         var startupType = typeof(CliExampleWithFactory.Startup);
-        const string swaggerRequestUri = "/swagger/v1/swagger_net8.0.json";
+        const string swaggerRequestUri = "/swagger/v1/swagger_net10.0.json";
 
         var testSite = new TestSiteAutofaq(startupType, outputHelper);
         using var client = testSite.BuildClient();
@@ -49,15 +50,16 @@ public partial class VerifyTests(ITestOutputHelper outputHelper)
         var swagger = await swaggerResponse.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 
         await Verify(swagger)
-            .UseDirectory("snapshots")
-            .UseParameters(startupType, GetVersion(swaggerRequestUri))
-            .UniqueForTargetFrameworkAndVersion();
+            .UseDirectory(SnapshotsDirectory)
+            .UseParameters(startupType, GetVersion(swaggerRequestUri));
     }
 
     [Theory]
     [InlineData(typeof(MinimalApp.Program), "/swagger/v1/swagger.json")]
-    [InlineData(typeof(TopLevelSwaggerDoc.Program), "/swagger/v1.json")]
+    [InlineData(typeof(MinimalAppWithNullableEnums.Program), "/swagger/v1/swagger.json")]
     [InlineData(typeof(MvcWithNullable.Program), "/swagger/v1/swagger.json")]
+    [InlineData(typeof(TodoApp.Program), "/swagger/v1/swagger.json")]
+    [InlineData(typeof(TopLevelSwaggerDoc.Program), "/swagger/v1.json")]
     [InlineData(typeof(WebApi.Program), "/swagger/v1/swagger.json")]
     [InlineData(typeof(WebApi.Aot.Program), "/swagger/v1/swagger.json")]
     public async Task Swagger_IsValidJson_No_Startup(
@@ -67,9 +69,8 @@ public partial class VerifyTests(ITestOutputHelper outputHelper)
         var swaggerResponse = await SwaggerEndpointReturnsValidSwaggerJson(entryPointType, swaggerRequestUri);
 
         await Verify(swaggerResponse)
-            .UseDirectory("snapshots")
-            .UseParameters(entryPointType, GetVersion(swaggerRequestUri))
-            .UniqueForTargetFrameworkAndVersion();
+            .UseDirectory(SnapshotsDirectory)
+            .UseParameters(entryPointType, GetVersion(swaggerRequestUri));
     }
 
     [Fact]
@@ -80,9 +81,7 @@ public partial class VerifyTests(ITestOutputHelper outputHelper)
 
         var swaggerResponse = await SwaggerResponse(client, "/swagger/v1/swagger.json");
 
-        await Verify(swaggerResponse)
-            .UseDirectory("snapshots")
-            .UniqueForTargetFrameworkAndVersion();
+        await Verify(swaggerResponse).UseDirectory(SnapshotsDirectory);
     }
 
     private static async Task<string> SwaggerEndpointReturnsValidSwaggerJson(Type entryPointType, string swaggerRequestUri)

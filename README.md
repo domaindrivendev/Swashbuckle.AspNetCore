@@ -25,24 +25,19 @@ tools including a client generator that can be targeted to a wide range of popul
 for more details.
 
 > [!IMPORTANT]  
-> Version 10.0 of Swashbuckle.AspNetCore introduces breaking changes due to upgrading our dependency on [Microsoft.OpenApi][microsoft-openapi]
-> to version 2.x.x to add support for generating OpenAPI 3.1 documents. Please see _[Migrating to Swashbuckle.AspNetCore v10][v10-migration]_ for more details.
-
-> [!IMPORTANT]  
 > Version 11.0 of Swashbuckle.AspNetCore introduces breaking changes due to upgrading our dependency on [Microsoft.OpenApi][microsoft-openapi]
 > to version 3.x.x to add support for generating OpenAPI 3.2 documents. Please see _[Migrating to Swashbuckle.AspNetCore v11][v11-migration]_ for more details.
 
 ## Compatibility
 
-<!-- TODO Update compatibility table for OpenAPI 3.2 -->
+<!-- TODO Update compatibility table for OpenAPI 3.2 and v11 -->
 
-| **Swashbuckle Version**                                                                                          | **ASP.NET Core**       | **OpenAPI/Swagger Versions** | **Microsoft.OpenApi**                                                                        | **swagger-ui**                                                                            | **Redoc**                                                                    |
-|:-----------------------------------------------------------------------------------------------------------------|:-----------------------|:-----------------------------|:---------------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------|
-| [![CI Swashbuckle.AspNetCore version][swashbuckle-version-vnext-badge]][swashbuckle-version-vnext-release]       | >= 8.0.0               | 3.1, **3.0**, 2.0            | [![Microsoft.OpenApi version][openapi-version-vnext-badge]][openapi-version-vnext-release]   | [![swagger-ui version][swaggerui-version-vnext-badge]][swaggerui-version-vnext-release]   | [![Redoc version][redoc-version-vnext-badge]][redoc-version-vnext-release]   |
-| [![Latest Swashbuckle.AspNetCore version][swashbuckle-version-latest-badge]][swashbuckle-version-latest-release] | >= 8.0.0               | 3.1, **3.0**, 2.0            | [![Microsoft.OpenApi version][openapi-version-latest-badge]][openapi-version-latest-release] | [![swagger-ui version][swaggerui-version-latest-badge]][swaggerui-version-latest-release] | [![Redoc version][redoc-version-latest-badge]][redoc-version-latest-release] |
-| [![Last v9 Swashbuckle.AspNetCore version][swashbuckle-version-v9-badge]][swashbuckle-version-v9-release]        | >= 8.0.0               | **3.0**, 2.0                 | [![Microsoft.OpenApi version][openapi-version-v9-badge]][openapi-version-v9-release]         | [![swagger-ui version][swaggerui-version-v9-badge]][swaggerui-version-v9-release]         | [![Redoc version][redoc-version-v9-badge]][redoc-version-v9-release]         |
-| [![Last v8 Swashbuckle.AspNetCore version][swashbuckle-version-v8-badge]][swashbuckle-version-v8-release]        | >= 8.0.0, 2.3.x        | **3.0**, 2.0                 | [![Microsoft.OpenApi version][openapi-version-v8-badge]][openapi-version-v8-release]         | [![swagger-ui version][swaggerui-version-v8-badge]][swaggerui-version-v8-release]         | [![Redoc version][redoc-version-v8-badge]][redoc-version-v8-release]         |
-| [![Last v7 Swashbuckle.AspNetCore version][swashbuckle-version-v7-badge]][swashbuckle-version-v7-release]        | >= 8.0.0, 6.0.x, 2.1.x | **3.0**, 2.0                 | [![Microsoft.OpenApi version][openapi-version-v7-badge]][openapi-version-v7-release]         | [![swagger-ui version][swaggerui-version-v7-badge]][swaggerui-version-v7-release]         | [![Redoc version][redoc-version-v7-badge]][redoc-version-v7-release]         |
+| **Swashbuckle Version**                                                                                          | **ASP.NET Core**           | **OpenAPI/Swagger Versions** | **Microsoft.OpenApi**                                                                        | **swagger-ui**                                                                            | **Redoc**                                                                    |
+|:-----------------------------------------------------------------------------------------------------------------|:---------------------------|:-----------------------------|:---------------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------------|:-----------------------------------------------------------------------------|
+| [![CI Swashbuckle.AspNetCore version][swashbuckle-version-vnext-badge]][swashbuckle-version-vnext-release]       | >= 8.0.0                   | 3.1, **3.0**, 2.0            | [![Microsoft.OpenApi version][openapi-version-vnext-badge]][openapi-version-vnext-release]   | [![swagger-ui version][swaggerui-version-vnext-badge]][swaggerui-version-vnext-release]   | [![Redoc version][redoc-version-vnext-badge]][redoc-version-vnext-release]   |
+| [![Latest Swashbuckle.AspNetCore version][swashbuckle-version-latest-badge]][swashbuckle-version-latest-release] | >= 8.0.0                   | 3.1, **3.0**, 2.0            | [![Microsoft.OpenApi version][openapi-version-latest-badge]][openapi-version-latest-release] | [![swagger-ui version][swaggerui-version-latest-badge]][swaggerui-version-latest-release] | [![Redoc version][redoc-version-latest-badge]][redoc-version-latest-release] |
+| [![Last v9 Swashbuckle.AspNetCore version][swashbuckle-version-v9-badge]][swashbuckle-version-v9-release]        | 9.0.x, 8.0.x               | **3.0**, 2.0                 | [![Microsoft.OpenApi version][openapi-version-v9-badge]][openapi-version-v9-release]         | [![swagger-ui version][swaggerui-version-v9-badge]][swaggerui-version-v9-release]         | [![Redoc version][redoc-version-v9-badge]][redoc-version-v9-release]         |
+| [![Last v8 Swashbuckle.AspNetCore version][swashbuckle-version-v8-badge]][swashbuckle-version-v8-release]        | 9.0.x, 8.0.x, 2.3.x        | **3.0**, 2.0                 | [![Microsoft.OpenApi version][openapi-version-v8-badge]][openapi-version-v8-release]         | [![swagger-ui version][swaggerui-version-v8-badge]][swaggerui-version-v8-release]         | [![Redoc version][redoc-version-v8-badge]][redoc-version-v8-release]         |
 
 [swashbuckle-version-vnext-badge]: https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2FHEAD%2FDirectory.Build.props&query=(%2F%2FProject%2FPropertyGroup%2FVersionPrefix)%5B1%5D&prefix=v&suffix=-*&logo=github&label=CI
 [swashbuckle-version-vnext-release]: https://www.myget.org/gallery/domaindrivendev
@@ -52,41 +47,33 @@ for more details.
 [swashbuckle-version-v9-release]: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/releases/tag/v9.0.6
 [swashbuckle-version-v8-badge]: https://img.shields.io/badge/v8-v8.1.4-blue?logo=github
 [swashbuckle-version-v8-release]: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/releases/tag/v8.1.4
-[swashbuckle-version-v7-badge]: https://img.shields.io/badge/v7-v7.3.2-blue?logo=github
-[swashbuckle-version-v7-release]: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/releases/tag/v7.3.2
 
 [openapi-version-vnext-badge]: https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2FHEAD%2Fsrc%2FSwashbuckle.AspNetCore.Swagger%2FSwashbuckle.AspNetCore.Swagger.csproj&query=%2F%2FPackageReference%5B%40Include%3D'Microsoft.OpenApi'%5D%2F%40VersionOverride&logo=openapiinitiative&label=Microsoft.OpenApi
 [openapi-version-vnext-release]: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/HEAD/src/Swashbuckle.AspNetCore.Swagger/Swashbuckle.AspNetCore.Swagger.csproj#L20
-[openapi-version-latest-badge]: https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv10.0.1%2Fsrc%2FSwashbuckle.AspNetCore.Swagger%2FSwashbuckle.AspNetCore.Swagger.csproj&query=%2F%2FPackageReference%5B%40Include%3D'Microsoft.OpenApi'%5D%2F%40VersionOverride&logo=openapiinitiative&label=Microsoft.OpenApi
-[openapi-version-latest-release]: https://github.com/microsoft/OpenAPI.NET/releases/tag/v2.3.0
+[openapi-version-latest-badge]: https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv10.1.5%2Fsrc%2FSwashbuckle.AspNetCore.Swagger%2FSwashbuckle.AspNetCore.Swagger.csproj&query=%2F%2FPackageReference%5B%40Include%3D'Microsoft.OpenApi'%5D%2F%40VersionOverride&logo=openapiinitiative&label=Microsoft.OpenApi
+[openapi-version-latest-release]: https://github.com/microsoft/OpenAPI.NET/releases/tag/v2.4.1
 [openapi-version-v9-badge]: https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv9.0.6%2FDirectory.Packages.props&query=%2F%2FPackageVersion%5B%40Include%3D'Microsoft.OpenApi'%5D%2F%40Version&logo=openapiinitiative&label=Microsoft.OpenApi
 [openapi-version-v9-release]: https://github.com/microsoft/OpenAPI.NET/releases/tag/v1.6.25
 [openapi-version-v8-badge]: https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv8.1.4%2FDirectory.Packages.props&query=%2F%2FPackageVersion%5B%40Include%3D'Microsoft.OpenApi'%5D%2F%40Version&logo=openapiinitiative&label=Microsoft.OpenApi
 [openapi-version-v8-release]: https://github.com/microsoft/OpenAPI.NET/releases/tag/1.6.23
-[openapi-version-v7-badge]: https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv7.3.2%2FDirectory.Packages.props&query=%2F%2FPackageVersion%5B%40Include%3D'Microsoft.OpenApi'%5D%2F%40Version&logo=openapiinitiative&label=Microsoft.OpenApi
-[openapi-version-v7-release]: https://github.com/microsoft/OpenAPI.NET/releases/tag/1.6.22
 
 [swaggerui-version-vnext-badge]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2FHEAD%2Fsrc%2FSwashbuckle.AspNetCore.SwaggerUI%2Fpackage.json&query=%24.dependencies.swagger-ui-dist&style=flat&label=swagger-ui
 [swaggerui-version-vnext-release]: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/HEAD/src/Swashbuckle.AspNetCore.SwaggerUI/package.json#L6
-[swaggerui-version-latest-badge]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv10.0.1%2Fsrc%2FSwashbuckle.AspNetCore.SwaggerUI%2Fpackage.json&query=%24.dependencies.swagger-ui-dist&style=flat&label=swagger-ui
-[swaggerui-version-latest-release]: https://github.com/swagger-api/swagger-ui/releases/tag/v5.30.2
+[swaggerui-version-latest-badge]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv10.1.5%2Fsrc%2FSwashbuckle.AspNetCore.SwaggerUI%2Fpackage.json&query=%24.dependencies.swagger-ui-dist&style=flat&label=swagger-ui
+[swaggerui-version-latest-release]: https://github.com/swagger-api/swagger-ui/releases/tag/v5.31.1
 [swaggerui-version-v9-badge]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv9.0.6%2Fsrc%2FSwashbuckle.AspNetCore.SwaggerUI%2Fpackage.json&query=%24.dependencies.swagger-ui-dist&style=flat&label=swagger-ui
 [swaggerui-version-v9-release]: https://github.com/swagger-api/swagger-ui/releases/tag/v5.29.2
 [swaggerui-version-v8-badge]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv8.1.4%2Fsrc%2FSwashbuckle.AspNetCore.SwaggerUI%2Fpackage.json&query=%24.dependencies.swagger-ui-dist&style=flat&label=swagger-ui
 [swaggerui-version-v8-release]: https://github.com/swagger-api/swagger-ui/releases/tag/v5.22.0
-[swaggerui-version-v7-badge]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv7.3.2%2Fsrc%2FSwashbuckle.AspNetCore.SwaggerUI%2Fpackage.json&query=%24.dependencies.swagger-ui-dist&style=flat&label=swagger-ui
-[swaggerui-version-v7-release]: https://github.com/swagger-api/swagger-ui/releases/tag/v5.20.1
 
 [redoc-version-vnext-badge]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2FHEAD%2Fsrc%2FSwashbuckle.AspNetCore.ReDoc%2Fpackage.json&query=%24.dependencies.redoc&style=flat&label=Redoc
 [redoc-version-vnext-release]: https://github.com/domaindrivendev/Swashbuckle.AspNetCore/blob/HEAD/src/Swashbuckle.AspNetCore.ReDoc/package.json#L6
-[redoc-version-latest-badge]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv10.0.1%2Fsrc%2FSwashbuckle.AspNetCore.ReDoc%2Fpackage.json&query=%24.dependencies.redoc&style=flat&label=Redoc
+[redoc-version-latest-badge]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv10.1.5%2Fsrc%2FSwashbuckle.AspNetCore.ReDoc%2Fpackage.json&query=%24.dependencies.redoc&style=flat&label=Redoc
 [redoc-version-latest-release]: https://github.com/Redocly/redoc/releases/tag/v2.5.2
 [redoc-version-v9-badge]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv9.0.6%2Fsrc%2FSwashbuckle.AspNetCore.ReDoc%2Fpackage.json&query=%24.dependencies.redoc&style=flat&label=Redoc
 [redoc-version-v9-release]: https://github.com/Redocly/redoc/releases/tag/v2.5.1
 [redoc-version-v8-badge]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv8.1.4%2Fsrc%2FSwashbuckle.AspNetCore.ReDoc%2Fpackage.json&query=%24.dependencies.redoc&style=flat&label=Redoc
 [redoc-version-v8-release]: https://github.com/Redocly/redoc/releases/tag/v2.5.0
-[redoc-version-v7-badge]: https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fraw.githubusercontent.com%2Fdomaindrivendev%2FSwashbuckle.AspNetCore%2Frefs%2Ftags%2Fv7.3.2%2Fsrc%2FSwashbuckle.AspNetCore.ReDoc%2Fpackage.json&query=%24.dependencies.redoc&style=flat&label=Redoc
-[redoc-version-v7-release]: https://github.com/Redocly/redoc/releases/tag/v2.4.0
 
 ## Getting Started
 
@@ -303,7 +290,7 @@ Additionally, there are add-on packages (CLI tools, [an alternate UI using Redoc
 ### "Core" Packages
 
 | **Package** | **NuGet** | **Description** |
-|-------------|--------------------|-----------------|
+| ----------- | --------- | --------------- |
 | [Swashbuckle.AspNetCore.Swagger][swashbuckle-aspnetcore-swagger] | [![NuGet](https://img.shields.io/nuget/v/Swashbuckle.AspNetCore.Swagger?logo=nuget&label=Latest&color=blue)][swashbuckle-aspnetcore-swagger] | Exposes OpenAPI JSON endpoints. It expects an implementation of `ISwaggerProvider` to be registered in the DI container, which it queries to retrieve `OpenApiDocument` instance(s) that are then exposed as serialized JSON. |
 | [Swashbuckle.AspNetCore.SwaggerGen][swashbuckle-aspnetcore-swaggergen] | [![NuGet](https://img.shields.io/nuget/v/Swashbuckle.AspNetCore.SwaggerGen?logo=nuget&label=Latest&color=blue)][swashbuckle-aspnetcore-swaggergen] | Injects an implementation of `ISwaggerProvider` that can be used by the above component. This particular implementation generates `OpenApiDocument` instance(s) from your application endpoints (controllers, minimal endpoints etc.). |
 | [Swashbuckle.AspNetCore.SwaggerUI][swashbuckle-aspnetcore-swaggerui] | [![NuGet](https://img.shields.io/nuget/v/Swashbuckle.AspNetCore.SwaggerUI?logo=nuget&label=Latest&color=blue)][swashbuckle-aspnetcore-swaggerui] | Exposes an embedded version of [swagger-ui][swagger-ui]. You specify the API endpoints where it can obtain OpenAPI documents from, and it uses them to power interactive documentation for your API. |
@@ -311,7 +298,7 @@ Additionally, there are add-on packages (CLI tools, [an alternate UI using Redoc
 ### Additional Packages
 
 | **Package** | **NuGet** | **Description** |
-|-------------|--------------------|-----------------|
+| ----------- | --------- | --------------- |
 | [Swashbuckle.AspNetCore.Annotations][swashbuckle-aspnetcore-annotations] | [![NuGet](https://img.shields.io/nuget/v/Swashbuckle.AspNetCore.Annotations?logo=nuget&label=Latest&color=blue)][swashbuckle-aspnetcore-annotations] | Includes a set of custom attributes that can be applied to controllers/endpoints, actions and models to enrich the generated documentation. |
 | [Swashbuckle.AspNetCore.Cli][swashbuckle-aspnetcore-cli] | [![NuGet](https://img.shields.io/nuget/v/Swashbuckle.AspNetCore.Cli?logo=nuget&label=Latest&color=blue)][swashbuckle-aspnetcore-cli] | Provides a command line interface (CLI) for retrieving OpenAPI documents directly from an application start-up assembly and then writing to a file. |
 | [Swashbuckle.AspNetCore.ReDoc][swashbuckle-aspnetcore-redoc] | [![NuGet](https://img.shields.io/nuget/v/Swashbuckle.AspNetCore.ReDoc?logo=nuget&label=Latest&color=blue)][swashbuckle-aspnetcore-redoc] | Exposes an embedded version of the [Redoc UI][redoc] (an alternative to [swagger-ui][swagger-ui]). |
@@ -321,7 +308,7 @@ Additionally, there are add-on packages (CLI tools, [an alternate UI using Redoc
 These packages are provided by the .NET open-source community.
 
 | **Package** | **NuGet** | **Description** |
-|-------------|--------------------|-----------------|
+| ----------- | --------- | --------------- |
 | [Swashbuckle.AspNetCore.Filters][swashbuckle-aspnetcore-filters] | [![NuGet](https://img.shields.io/nuget/v/Swashbuckle.AspNetCore.Filters?logo=nuget&label=Latest&color=blue)][swashbuckle-aspnetcore-filters] | Some useful Swashbuckle.AspNetCore filters which add additional documentation, e.g. request and response examples, authorization information, etc. See its README for more details. |
 | [Unchase.Swashbuckle.AspNetCore.Extensions][unchase-swashbuckle-aspnetcore-extensions] | [![NuGet](https://img.shields.io/nuget/v/Unchase.Swashbuckle.AspNetCore.Extensions?logo=nuget&label=Latest&color=blue)][unchase-swashbuckle-aspnetcore-extensions] | Some useful extensions (filters), which add additional documentation, e.g. hide `PathItems` for unaccepted roles, fix enumerations for client code generation, etc. See its README for more details. |
 | [MicroElements.Swashbuckle.FluentValidation][microelements-swashbuckle-fluentvalidation] | [![NuGet](https://img.shields.io/nuget/v/MicroElements.Swashbuckle.FluentValidation?logo=nuget&label=Latest&color=blue)][microelements-swashbuckle-fluentvalidation] | Use [FluentValidation][fluentvalidation] rules instead of ComponentModel attributes to augment generated OpenAPI schemas. |
@@ -333,11 +320,11 @@ The steps described above will get you up and running with minimal set up. Howev
 
 Check out the table below for the full list of possible configuration options.
 
-| **Component** | **Configuration and Customization** |
-| ------------- | ----------------------------------- |
+| **Component**                          | **Configuration and Customization**                                                                                                                                         |
+| -------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Swashbuckle.AspNetCore.Swagger**     | [Change the Path for OpenAPI JSON Endpoints](docs/configure-and-customize-swagger.md#change-the-path-for-openapi-json-endpoints)                                            |
 |                                        | [Modify OpenAPI with Request Context](docs/configure-and-customize-swagger.md#modify-openapi-with-request-context)                                                          |
-|                                        | [Serialize OpenAPI JSON in the 3.1 or 3.2 formats](docs/configure-and-customize-swagger.md#serialize-openapi-in-the-31-or-32-formats)                                                      |
+|                                        | [Serialize OpenAPI JSON in the 3.1 or 3.2 formats](docs/configure-and-customize-swagger.md#serialize-openapi-in-the-31-or-32-formats)                                       |
 |                                        | [Serialize Swagger JSON in the 2.0 format](docs/configure-and-customize-swagger.md#serialize-swagger-in-the-20-format)                                                      |
 |                                        | [Working with Virtual Directories and Reverse Proxies](docs/configure-and-customize-swagger.md#working-with-virtual-directories-and-reverse-proxies)                        |
 |                                        | [Customizing how the OpenAPI document is serialized](docs/configure-and-customize-swagger.md#customizing-how-the-openapi-document-is-serialized)                            |
@@ -422,5 +409,4 @@ Check out the table below for the full list of possible configuration options.
 [swagger-ui]: https://github.com/swagger-api/swagger-ui "The swagger-ui project in GitHub"
 [system-text-json]: https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/overview "JSON serialization and deserialization in .NET - overview"
 [unchase-swashbuckle-aspnetcore-extensions]: https://github.com/unchase/Unchase.Swashbuckle.AspNetCore.Extensions "Unchase.Swashbuckle.AspNetCore.Extensions on GitHub"
-[v10-migration]: docs/migrating-to-v10.md "Migrating to Swashbuckle.AspNetCore v10"
 [v11-migration]: docs/migrating-to-v11.md "Migrating to Swashbuckle.AspNetCore v11"

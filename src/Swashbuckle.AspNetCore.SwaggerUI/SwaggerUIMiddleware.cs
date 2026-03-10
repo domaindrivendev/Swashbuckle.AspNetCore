@@ -58,14 +58,14 @@ internal sealed partial class SwaggerUIMiddleware
 
             if (match.Success)
             {
-                await RespondWithFile(httpContext.Response, match.Groups[1].Value, httpContext.RequestAborted);
+                await RespondWithFile(httpContext, match.Groups[1].Value);
                 return;
             }
 
             var pattern = $"^/?{Regex.Escape(_options.RoutePrefix)}/{_options.SwaggerDocumentUrlsPath}/?$";
             if (Regex.IsMatch(path, pattern, RegexOptions.IgnoreCase))
             {
-                await RespondWithDocumentUrls(httpContext.Response);
+                await RespondWithDocumentUrls(httpContext);
                 return;
             }
         }
@@ -106,7 +106,7 @@ internal sealed partial class SwaggerUIMiddleware
             };
         }
 
-        headers.ETag = new($"\"{etag}\"", isWeak: true);
+        headers.ETag = new(etag);
     }
 
     private static void RespondWithRedirect(HttpResponse response, string location)
@@ -115,23 +115,22 @@ internal sealed partial class SwaggerUIMiddleware
         response.Headers.Location = location;
     }
 
-    private async Task RespondWithFile(
-        HttpResponse response,
-        string fileName,
-        CancellationToken cancellationToken)
+    private async Task RespondWithFile(HttpContext context, string fileName)
     {
-        response.StatusCode = StatusCodes.Status200OK;
+        var cancellationToken = context.RequestAborted;
+        var response = context.Response;
 
+        string contentType;
         Stream stream;
 
         if (fileName == "index.js")
         {
-            response.ContentType = "application/javascript;charset=utf-8";
+            contentType = "application/javascript;charset=utf-8";
             stream = ResourceHelper.GetEmbeddedResource(fileName);
         }
         else
         {
-            response.ContentType = "text/html;charset=utf-8";
+            contentType = "text/html;charset=utf-8";
             stream = _options.IndexStream();
         }
 
@@ -153,19 +152,23 @@ internal sealed partial class SwaggerUIMiddleware
             }
 
             var text = content.ToString();
-            var etag = HashText(text);
+            var etag = GetETag(text);
 
-            SetHeaders(response, _options, etag);
+            var ifNoneMatch = context.Request.Headers.IfNoneMatch;
 
-            await response.WriteAsync(text, Encoding.UTF8, cancellationToken);
-        }
+            if (ifNoneMatch == etag)
+            {
+                response.StatusCode = StatusCodes.Status304NotModified;
+            }
+            else
+            {
+                response.ContentType = contentType;
+                response.StatusCode = StatusCodes.Status200OK;
 
-        static string HashText(string text)
-        {
-            var buffer = Encoding.UTF8.GetBytes(text);
-            var hash = SHA1.HashData(buffer);
+                SetHeaders(response, _options, etag);
 
-            return Convert.ToBase64String(hash);
+                await response.WriteAsync(text, Encoding.UTF8, cancellationToken);
+            }
         }
     }
 
@@ -177,22 +180,40 @@ internal sealed partial class SwaggerUIMiddleware
         "AOT",
         "IL3050:RequiresDynamicCode",
         Justification = "Method is only called if the user provides their own custom JsonSerializerOptions.")]
-    private async Task RespondWithDocumentUrls(HttpResponse response)
+    private async Task RespondWithDocumentUrls(HttpContext context)
     {
-        response.StatusCode = 200;
+        var response = context.Response;
+        var urls = _options.ConfigObject.Urls ?? [];
 
-        response.ContentType = "application/javascript;charset=utf-8";
-        string json = "[]";
+        string json =
+            _jsonSerializerOptions is { } options ?
+            JsonSerializer.Serialize(urls, options) :
+            JsonSerializer.Serialize([.. urls], SwaggerUIOptionsJsonContext.Default.ListUrlDescriptor);
 
-        if (_jsonSerializerOptions is null)
+        var etag = GetETag(json);
+        var ifNoneMatch = context.Request.Headers.IfNoneMatch;
+
+        if (ifNoneMatch == etag)
         {
-            var l = new List<UrlDescriptor>(_options.ConfigObject.Urls);
-            json = JsonSerializer.Serialize(l, SwaggerUIOptionsJsonContext.Default.ListUrlDescriptor);
+            response.StatusCode = StatusCodes.Status304NotModified;
         }
+        else
+        {
+            response.StatusCode = StatusCodes.Status200OK;
+            response.ContentType = "application/javascript;charset=utf-8";
 
-        json ??= JsonSerializer.Serialize(_options.ConfigObject, _jsonSerializerOptions);
+            SetHeaders(response, _options, etag);
 
-        await response.WriteAsync(json, Encoding.UTF8);
+            await response.WriteAsync(json, Encoding.UTF8, context.RequestAborted);
+        }
+    }
+
+    private static string GetETag(string text)
+    {
+        var buffer = Encoding.UTF8.GetBytes(text);
+        var hash = SHA1.HashData(buffer);
+
+        return $"\"{Convert.ToBase64String(hash)}\"";
     }
 
     [UnconditionalSuppressMessage(
