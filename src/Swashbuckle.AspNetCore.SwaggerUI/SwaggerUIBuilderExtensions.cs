@@ -56,7 +56,6 @@ public static class SwaggerUIBuilderExtensions
 
     private static SwaggerUIOptions ResolveOptions(IServiceProvider serviceProvider, Action<SwaggerUIOptions> setupAction)
     {
-        // To simplify the common case, use a default that will work with the SwaggerMiddleware defaults
         using var scope = serviceProvider.CreateScope();
         var options = scope.ServiceProvider.GetRequiredService<IOptionsSnapshot<SwaggerUIOptions>>().Value;
         setupAction?.Invoke(options);
@@ -65,12 +64,8 @@ public static class SwaggerUIBuilderExtensions
 
     private static void EnsureDefaultUrl(SwaggerUIOptions options, string applicationName)
     {
-        if (options.ConfigObject.Urls != null)
-        {
-            return;
-        }
-
-        options.ConfigObject.Urls = [new UrlDescriptor { Name = $"{applicationName} v1", Url = "v1/swagger.json" }];
+        // To simplify the common case, use a default that will work with the SwaggerMiddleware defaults
+        options.ConfigObject.Urls ??= [new UrlDescriptor { Name = $"{applicationName} v1", Url = "v1/swagger.json" }];
     }
 
     private static string GetRoutePattern(string routePrefix)
