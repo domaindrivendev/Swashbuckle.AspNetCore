@@ -408,4 +408,3 @@ Check out the table below for the full list of possible configuration options.
 [system-text-json]: https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/overview "JSON serialization and deserialization in .NET - overview"
 [unchase-swashbuckle-aspnetcore-extensions]: https://github.com/unchase/Unchase.Swashbuckle.AspNetCore.Extensions "Unchase.Swashbuckle.AspNetCore.Extensions on GitHub"
 [v10-migration]: docs/migrating-to-v10.md "Migrating to Swashbuckle.AspNetCore v10"
-
