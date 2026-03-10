@@ -10,14 +10,14 @@
       "rollForward": false
     },
     "markdownsnippets.tool": {
-      "version": "28.0.0",
+      "version": "28.0.1",
       "commands": [
         "mdsnippets"
       ],
       "rollForward": false
     },
     "meziantou.framework.nugetpackagevalidation.tool": {
-      "version": "1.0.43",
+      "version": "1.0.44",
       "commands": [
         "meziantou.validate-nuget-package"
       ],

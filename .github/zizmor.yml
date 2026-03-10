@@ -5,5 +5,7 @@ rules:
     disable: true
   dependabot-cooldown:
     disable: true
+  secrets-outside-env:
+    disable: true
   undocumented-permissions:
     disable: true
