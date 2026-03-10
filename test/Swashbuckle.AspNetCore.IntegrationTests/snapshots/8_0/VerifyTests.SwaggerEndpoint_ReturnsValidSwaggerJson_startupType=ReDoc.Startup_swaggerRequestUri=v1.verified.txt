@@ -138,7 +138,8 @@
             "name": "body",
             "required": true,
             "schema": {
-              "type": "object"
+              "type": "object",
+              "additionalProperties": { }
             }
           }
         ],
