@@ -247,7 +247,7 @@ app.UseSwaggerUI(options =>
 
 ## Use `MapSwaggerUI` with endpoint routing
 
-`MapSwaggerUI` is an endpoint-routing alternative to `UseSwaggerUI`. The options API is the same, so all customization examples in this page also apply when using `MapSwaggerUI`.
+`MapSwaggerUI` is an endpoint-routing alternative to `UseSwaggerUI`. The options API is the same, so all customization examples on this page also apply when using `MapSwaggerUI`.
 
 ```cs
 app.MapSwagger();
