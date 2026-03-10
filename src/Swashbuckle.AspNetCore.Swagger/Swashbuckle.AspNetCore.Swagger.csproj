@@ -17,7 +17,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.OpenApi" VersionOverride="2.4.1" />
+    <PackageReference Include="Microsoft.OpenApi" VersionOverride="2.7.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net11.0' ">
+    <!-- TODO Update to 3.4.0 for .NET 11 preview.2 -->
+    <PackageReference Update="Microsoft.OpenApi" VersionOverride="2.7.0" />
   </ItemGroup>
 
   <ItemGroup>
