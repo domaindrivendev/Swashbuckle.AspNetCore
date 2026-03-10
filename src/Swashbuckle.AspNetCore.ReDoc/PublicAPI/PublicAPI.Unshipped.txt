@@ -1,1 +1,1 @@
-﻿
+﻿static Microsoft.AspNetCore.Builder.ReDocBuilderExtensions.MapReDoc(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder endpoints, System.Action<Swashbuckle.AspNetCore.ReDoc.ReDocOptions> setupAction = null) -> Microsoft.AspNetCore.Builder.IEndpointConventionBuilder
