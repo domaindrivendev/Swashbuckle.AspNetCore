@@ -146,7 +146,7 @@ app.UseReDoc(options =>
 ```cs
 app.MapReDoc();
 ```
-<sup><a href='/test/WebSites/WebApi.Map/Program.cs#L34-L36' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-MapReDoc' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/WebApi.Map/Program.cs#L33-L35' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-MapReDoc' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -161,9 +161,9 @@ The main differences are:
 <!-- snippet: Redoc-MapReDoc-RequireAuthorization -->
 <a id='snippet-Redoc-MapReDoc-RequireAuthorization'></a>
 ```cs
-app.MapReDoc(reDocOptions => { reDocOptions.RoutePrefix = "redoc-auth"; })
-    .RequireAuthorization(); // Remember to also add RequireAuthorization to MapSwagger
+app.MapReDoc(reDocOptions => reDocOptions.RoutePrefix = "redoc-auth")
+   .RequireAuthorization(); // Remember to also add RequireAuthorization to MapSwagger
 ```
-<sup><a href='/test/WebSites/WebApi.Map/Program.cs#L38-L41' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-MapReDoc-RequireAuthorization' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/WebApi.Map/Program.cs#L37-L40' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-MapReDoc-RequireAuthorization' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->

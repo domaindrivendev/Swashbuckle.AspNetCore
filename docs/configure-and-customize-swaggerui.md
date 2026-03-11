@@ -254,9 +254,9 @@ app.UseSwaggerUI(options =>
 <a id='snippet-SwaggerUI-MapSwaggerUI'></a>
 ```cs
 app.MapSwagger();
-app.MapSwaggerUI(options => { options.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs"); });
+app.MapSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs"));
 ```
-<sup><a href='/test/WebSites/WebApi.Map/Program.cs#L22-L25' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-MapSwaggerUI' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/WebApi.Map/Program.cs#L21-L24' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-MapSwaggerUI' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
@@ -271,9 +271,9 @@ The main differences are:
 <!-- snippet: SwaggerUI-MapSwaggerUI-RequireAuthorization -->
 <a id='snippet-SwaggerUI-MapSwaggerUI-RequireAuthorization'></a>
 ```cs
-app.MapSwaggerUI(o => { o.RoutePrefix = "swagger-auth"; })
-    .RequireAuthorization(); // Remember to also add RequireAuthorization to MapSwagger.
+app.MapSwaggerUI(o => o.RoutePrefix = "swagger-auth")
+   .RequireAuthorization(); // Remember to also add RequireAuthorization to MapSwagger.
 ```
-<sup><a href='/test/WebSites/WebApi.Map/Program.cs#L27-L30' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-MapSwaggerUI-RequireAuthorization' title='Start of snippet'>anchor</a></sup>
+<sup><a href='/test/WebSites/WebApi.Map/Program.cs#L26-L29' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-MapSwaggerUI-RequireAuthorization' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
