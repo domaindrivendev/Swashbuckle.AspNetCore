@@ -21,8 +21,7 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net11.0' ">
-    <!-- TODO Update to 3.4.0 for .NET 11 preview.2 -->
-    <PackageReference Update="Microsoft.OpenApi" VersionOverride="2.7.0" />
+    <PackageReference Update="Microsoft.OpenApi" VersionOverride="3.4.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -855,7 +855,11 @@ public class SwaggerGenerator(
                 (contentType) => new OpenApiMediaType
                 {
                     Schema = schema
-                }),
+                }
+#if NET11_0_OR_GREATER
+                as IOpenApiMediaType
+#endif
+                ),
         };
     }
 
@@ -909,7 +913,11 @@ public class SwaggerGenerator(
                         (entry) => entry.Key,
                         (entry) => new OpenApiEncoding { Style = ParameterStyle.Form }
                     ) ?? []
-                })
+                }
+#if NET11_0_OR_GREATER
+                as IOpenApiMediaType
+#endif
+                )
         };
     }
 
@@ -1059,7 +1067,13 @@ public class SwaggerGenerator(
             .Distinct()];
     }
 
-    private OpenApiMediaType CreateResponseMediaType(Type modelType, SchemaRepository schemaRepository)
+    private
+#if NET11_0_OR_GREATER
+        IOpenApiMediaType
+#else
+        OpenApiMediaType
+#endif
+        CreateResponseMediaType(Type modelType, SchemaRepository schemaRepository)
     {
         return new OpenApiMediaType
         {
