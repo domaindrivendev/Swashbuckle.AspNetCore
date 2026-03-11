@@ -266,6 +266,7 @@ The main differences are:
 - **Map**SwaggerUI maps the Swagger UI via endpoint routing and returns `IEndpointConventionBuilder`.
 
 - Because `MapSwaggerUI` returns an endpoint convention builder, you can attach endpoint metadata/conventions (for example, authorization policies) directly to the mapped UI endpoint.
+
 <!-- markdownlint-disable MD031 MD033 -->
 <!-- snippet: SwaggerUI-MapSwaggerUI-RequireAuthorization -->
 <a id='snippet-SwaggerUI-MapSwaggerUI-RequireAuthorization'></a>

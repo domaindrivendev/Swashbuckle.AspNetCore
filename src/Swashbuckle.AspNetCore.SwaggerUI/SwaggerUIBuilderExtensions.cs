@@ -34,10 +34,10 @@ public static class SwaggerUIBuilderExtensions
     /// </summary>
     /// <remarks>
     /// This is a convenience extension method that combines the registration of the SwaggerUI middleware with endpoint
-    /// routing. It allows you to specify the route pattern for the SwaggerUI and optionally configure the SwaggerUIOptions.
+    /// routing. It allows you to specify the route pattern for the SwaggerUI and optionally configure the <see cref="SwaggerUIOptions"/>.
     /// </remarks>
     /// <param name="endpoints">Endpoint route builder to which the SwaggerUI middleware will be mapped.</param>
-    /// <param name="setupAction">Optional setup action to configure the SwaggerUIOptions.</param>
+    /// <param name="setupAction">Optional setup action to configure the <see cref="SwaggerUIOptions"/>.</param>
     /// <returns>An <see cref="IEndpointConventionBuilder"/> that can be used to further configure the endpoint.</returns>
     public static IEndpointConventionBuilder MapSwaggerUI(
         this IEndpointRouteBuilder endpoints,

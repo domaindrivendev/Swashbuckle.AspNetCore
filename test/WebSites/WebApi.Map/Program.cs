@@ -5,8 +5,7 @@ using Microsoft.AspNetCore.Http.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.Configure<JsonOptions>(options => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter())
-);
+builder.Services.Configure<JsonOptions>(options => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options => { options.SwaggerDoc("v1", new() { Title = "WebApi", Version = "v1" }); });
 
@@ -21,12 +20,12 @@ app.UseAuthorization();
 
 // begin-snippet: SwaggerUI-MapSwaggerUI
 app.MapSwagger();
-app.MapSwaggerUI(options => { options.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs"); });
+app.MapSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs"));
 // end-snippet
 
 // begin-snippet: SwaggerUI-MapSwaggerUI-RequireAuthorization
-app.MapSwaggerUI(o => { o.RoutePrefix = "swagger-auth"; })
-    .RequireAuthorization(); // Remember to also add RequireAuthorization to MapSwagger.
+app.MapSwaggerUI(o => o.RoutePrefix = "swagger-auth")
+   .RequireAuthorization(); // Remember to also add RequireAuthorization to MapSwagger.
 // end-snippet
 
 
@@ -36,8 +35,8 @@ app.MapReDoc();
 // end-snippet
 
 // begin-snippet: Redoc-MapReDoc-RequireAuthorization
-app.MapReDoc(reDocOptions => { reDocOptions.RoutePrefix = "redoc-auth"; })
-    .RequireAuthorization(); // Remember to also add RequireAuthorization to MapSwagger
+app.MapReDoc(reDocOptions => reDocOptions.RoutePrefix = "redoc-auth")
+   .RequireAuthorization(); // Remember to also add RequireAuthorization to MapSwagger
 // end-snippet
 
 app.UseHttpsRedirection();

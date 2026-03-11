@@ -136,7 +136,6 @@ app.UseReDoc(options =>
 
 [redoc-options]: https://github.com/Redocly/redoc/blob/main/docs/deployment/html.md#the-redoc-object
 
-
 ## Use `MapReDoc` with endpoint routing
 
 `MapReDoc` is an endpoint-routing alternative to `UseReDoc`. The options API is the same, so all customization examples on this page also apply when using `MapReDoc`.
@@ -157,6 +156,7 @@ The main differences are:
 - **Map**ReDoc maps ReDoc via endpoint routing and returns `IEndpointConventionBuilder`.
 
 - Because `MapReDoc` returns an endpoint convention builder, you can attach endpoint metadata/conventions (for example, authorization policies) directly to the mapped ReDoc endpoint.
+
 <!-- markdownlint-disable MD031 MD033 -->
 <!-- snippet: Redoc-MapReDoc-RequireAuthorization -->
 <a id='snippet-Redoc-MapReDoc-RequireAuthorization'></a>
