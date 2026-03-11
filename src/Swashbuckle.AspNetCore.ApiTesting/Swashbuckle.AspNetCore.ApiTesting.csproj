@@ -19,10 +19,8 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net11.0' ">
-    <!-- HACK Workaround for https://github.com/dotnet/aspnetcore/issues/65410 -->
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="11.0.0-preview.1.26104.118" />
-    <!-- TODO Update to 3.4.0 for .NET 11 preview.2 -->
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="11.0.0-preview.2.26159.112" />
+    <!-- TODO Update to 3.4.0 for .NET 11 preview.2 once changes from https://github.com/domaindrivendev/Swashbuckle.AspNetCore/pull/3646 incorporated -->
     <PackageReference Update="Microsoft.OpenApi" VersionOverride="2.7.0" />
   </ItemGroup>
 
