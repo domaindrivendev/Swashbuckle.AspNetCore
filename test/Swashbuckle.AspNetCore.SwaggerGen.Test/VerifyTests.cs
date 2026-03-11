@@ -142,9 +142,9 @@ public partial class VerifyTests
                         ["200"] = new OpenApiResponse()
                         {
 #if NET11_0_OR_GREATER
-                        Content = new Dictionary<string, IOpenApiMediaType>
+                            Content = new Dictionary<string, IOpenApiMediaType>
 #else
-                        Content = new Dictionary<string, OpenApiMediaType>
+                            Content = new Dictionary<string, OpenApiMediaType>
 #endif
                             {
                                 ["application/someMediaType"] = new OpenApiMediaType()
