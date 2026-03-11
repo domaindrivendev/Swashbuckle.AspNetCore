@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Swashbuckle.AspNetCore.ReDoc;
 using ReDocApp = ReDoc;
 
@@ -52,6 +53,32 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
             Assert.Equal(TimeSpan.Zero, response.Headers.CacheControl.MaxAge);
         }
     }
+
+
+    [Theory]
+    [InlineData("/swagger/v1/swagger.json", "application/json")]
+    [InlineData("/swagger/v1/swagger.yaml", "text/yaml")]
+    [InlineData("/swagger/v1/swagger.yml", "text/yaml")]
+    [InlineData("/api-docs/index.html", "text/html")]
+    public async Task MapSwaggerAndMapReDoc_ReturnExpectedEndpoints(string path, string mediaType)
+    {
+        var client = new WebApplicationFactory<WebApi.Map.Program>().CreateClient();
+
+        var response = await client.GetAsync(path, TestContext.Current.CancellationToken);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(mediaType, response.Content.Headers.ContentType?.MediaType);
+    }
+
+    [Theory]
+    [InlineData("/redoc-auth/index.html")]
+    public async Task MapReDoc_RequireAuthorization_ReturnUnauthorized(string path)
+    {
+        var client = new WebApplicationFactory<WebApi.Map.Program>().CreateClient();
+        var response = await client.GetAsync(path, TestContext.Current.CancellationToken);
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
 
     [Fact]
     public async Task RedocMiddleware_ReturnsInitializerScript()
