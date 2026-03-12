@@ -1,33 +1,40 @@
 ﻿namespace Swashbuckle.AspNetCore.TestSupport;
 
-public enum ByteEnum:byte
+public enum ByteEnum : byte
 {
     Value2 = 2,
     Value4 = 4,
     Value8 = 8,
 }
 
-public enum ShortEnum:short
+public enum ShortEnum : short
 {
     Value2 = 2,
     Value4 = 4,
     Value8 = 8,
 }
 
-public enum EmptyIntEnum:int
+public enum EmptyIntEnum : int
 {
 }
 
-public enum IntEnum:int
+public enum IntEnum : int
 {
     Value2 = 2,
     Value4 = 4,
     Value8 = 8,
 }
 
-public enum LongEnum:long
+public enum LongEnum : long
 {
     Value2 = 2,
     Value4 = 4,
     Value8 = 8,
+}
+
+public enum IntEnumWithDuplicateValues : int
+{
+    Unknown = 0,
+    PreferredName = 1,
+    OldNameForBackwardsCompatibility = PreferredName,
 }

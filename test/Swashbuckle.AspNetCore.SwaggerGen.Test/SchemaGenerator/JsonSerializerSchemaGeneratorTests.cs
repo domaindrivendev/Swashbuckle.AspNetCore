@@ -1276,6 +1276,20 @@ public class JsonSerializerSchemaGeneratorTests
     }
 
     [Fact]
+    public void GenerateSchema_GeneratesDictionarySchema_IfEnumKeyHasDuplicateValues()
+    {
+        // Regression test for https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/2956
+        var subject = Subject(
+            configureSerializer: c => c.Converters.Add(new JsonStringEnumConverter()));
+        var schemaRepository = new SchemaRepository();
+
+        var schema = subject.GenerateSchema(typeof(Dictionary<IntEnumWithDuplicateValues, string>), schemaRepository);
+
+        Assert.Equal(JsonSchemaTypes.Object, schema.Type);
+        Assert.Equal(["Unknown", "PreferredName"], schema.Properties.Keys);
+    }
+
+    [Fact]
     public void GenerateSchema_HonorsSerializerAttribute_StringEnumConverter()
     {
         var schemaRepository = new SchemaRepository();
