@@ -161,7 +161,7 @@ The main differences are:
 <!-- snippet: Redoc-MapReDoc-RequireAuthorization -->
 <a id='snippet-Redoc-MapReDoc-RequireAuthorization'></a>
 ```cs
-app.MapReDoc(reDocOptions => reDocOptions.RoutePrefix = "redoc-auth")
+app.MapReDoc("redoc-auth")
    .RequireAuthorization(); // Remember to also add RequireAuthorization to MapSwagger
 ```
 <sup><a href='/test/WebSites/WebApi.Map/Program.cs#L37-L40' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-MapReDoc-RequireAuthorization' title='Start of snippet'>anchor</a></sup>

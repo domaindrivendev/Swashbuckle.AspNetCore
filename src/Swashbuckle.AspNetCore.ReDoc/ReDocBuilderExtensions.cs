@@ -32,13 +32,16 @@ public static class ReDocBuilderExtensions
     /// Maps the Redoc middleware to the specified endpoint route.
     /// </summary>
     /// <param name="endpoints">Endpoint route builder to which the Redoc middleware will be mapped.</param>
+    /// <param name="routePrefix">Optional route prefix for the Redoc endpoint. If not provided, the <see cref="ReDocOptions.RoutePrefix"/> value is used.</param>
     /// <param name="setupAction">Optional setup action to configure the Redoc options.</param>
     /// <returns>An <see cref="IEndpointConventionBuilder"/> that can be used to further configure the endpoint.</returns>
     public static IEndpointConventionBuilder MapReDoc(
         this IEndpointRouteBuilder endpoints,
+        string routePrefix = null,
         Action<ReDocOptions> setupAction = null)
     {
         var options = ResolveOptions(endpoints.ServiceProvider, setupAction);
+        if (routePrefix != null) options.RoutePrefix = routePrefix;
         EnsureDefaultSpecUrl(options);
 
         var pipeline = endpoints.CreateApplicationBuilder()

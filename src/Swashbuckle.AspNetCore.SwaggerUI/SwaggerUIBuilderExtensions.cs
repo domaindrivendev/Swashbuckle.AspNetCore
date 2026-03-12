@@ -37,13 +37,18 @@ public static class SwaggerUIBuilderExtensions
     /// routing. It allows you to specify the route pattern for the SwaggerUI and optionally configure the <see cref="SwaggerUIOptions"/>.
     /// </remarks>
     /// <param name="endpoints">Endpoint route builder to which the SwaggerUI middleware will be mapped.</param>
+    /// <param name="routePrefix">Optional: The route to register SwaggerUI on. Defaults to the <see cref="SwaggerUIOptions.RoutePrefix"/> value.</param>
     /// <param name="setupAction">Optional setup action to configure the <see cref="SwaggerUIOptions"/>.</param>
     /// <returns>An <see cref="IEndpointConventionBuilder"/> that can be used to further configure the endpoint.</returns>
     public static IEndpointConventionBuilder MapSwaggerUI(
         this IEndpointRouteBuilder endpoints,
+        string routePrefix = null,
         Action<SwaggerUIOptions> setupAction = null)
     {
         var options = ResolveOptions(endpoints.ServiceProvider, setupAction);
+
+        if (routePrefix != null) options.RoutePrefix = routePrefix;
+
         var hostingEnv = endpoints.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
         EnsureDefaultUrl(options, hostingEnv.ApplicationName);
 

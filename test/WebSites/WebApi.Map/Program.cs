@@ -20,11 +20,11 @@ app.UseAuthorization();
 
 // begin-snippet: SwaggerUI-MapSwaggerUI
 app.MapSwagger();
-app.MapSwaggerUI(options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs"));
+app.MapSwaggerUI("swagger", options => options.SwaggerEndpoint("/swagger/v1/swagger.json", "V1 Docs"));
 // end-snippet
 
 // begin-snippet: SwaggerUI-MapSwaggerUI-RequireAuthorization
-app.MapSwaggerUI(o => o.RoutePrefix = "swagger-auth")
+app.MapSwaggerUI("swagger-auth")
    .RequireAuthorization(); // Remember to also add RequireAuthorization to MapSwagger.
 // end-snippet
 
@@ -35,7 +35,7 @@ app.MapReDoc();
 // end-snippet
 
 // begin-snippet: Redoc-MapReDoc-RequireAuthorization
-app.MapReDoc(reDocOptions => reDocOptions.RoutePrefix = "redoc-auth")
+app.MapReDoc("redoc-auth")
    .RequireAuthorization(); // Remember to also add RequireAuthorization to MapSwagger
 // end-snippet
 
