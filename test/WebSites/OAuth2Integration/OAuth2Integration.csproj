@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Duende.IdentityServer" VersionOverride="7.4.6" />
+    <PackageReference Include="Duende.IdentityServer" VersionOverride="7.4.7" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
