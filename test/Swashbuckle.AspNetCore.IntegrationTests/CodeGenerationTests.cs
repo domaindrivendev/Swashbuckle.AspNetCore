@@ -1,6 +1,4 @@
-﻿#if NET10_0_OR_GREATER
-
-using System.Reflection;
+﻿using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.OpenApi;
@@ -114,5 +112,3 @@ public class CodeGenerationTests(ITestOutputHelper outputHelper)
             .First((p) => p.Key is "ProjectRoot")
             .Value!;
 }
-
-#endif
