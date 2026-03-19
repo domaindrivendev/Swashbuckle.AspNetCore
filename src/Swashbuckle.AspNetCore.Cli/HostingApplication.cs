@@ -88,7 +88,7 @@ internal class HostingApplication
 
             return services;
         }
-        catch (InvalidOperationException)
+        catch (InvalidOperationException exception)
         {
             // We're unable to resolve the host, log the exception and return null
             Console.Error.WriteLine(exception.ToString());
