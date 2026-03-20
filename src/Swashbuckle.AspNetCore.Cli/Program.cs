@@ -105,6 +105,7 @@ internal class Program
                         "2.0" => OpenApiSpecVersion.OpenApi2_0,
                         "3.0" => OpenApiSpecVersion.OpenApi3_0,
                         "3.1" => OpenApiSpecVersion.OpenApi3_1,
+                        "3.2" => OpenApiSpecVersion.OpenApi3_2,
                         _ => throw new NotSupportedException($"The specified OpenAPI version \"{versionArg}\" is not supported."),
                     };
                 }
