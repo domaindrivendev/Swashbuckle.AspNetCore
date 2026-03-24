@@ -23,12 +23,12 @@
     <Folder Include="NSwagClient\" />
   </ItemGroup>
 
-  <Target Name="SwaggerToFile" AfterTargets="AfterBuild">
+  <Target Name="SwaggerToFile" AfterTargets="AfterBuild" Condition=" '$(IsDependabotJob)' != 'true' ">
     <Exec Command="dotnet dotnet-swagger.dll tofile --host http://example.com --output %22$(MSBuildThisFileDirectory)swagger_$(TargetFramework).json%22 %22$(OutputPath)$(AssemblyName).dll%22 v1"
           WorkingDirectory="$(DotNetSwaggerPath)" />
   </Target>
 
-  <Target Name="NSwag" AfterTargets="SwaggerToFile">
+  <Target Name="NSwag" AfterTargets="SwaggerToFile" Condition=" '$(IsDependabotJob)' != 'true' ">
     <Exec Command="$(_NSwagTool) openapi2csclient /input:swagger_$(TargetFramework).json /namespace:NSwagClient /output:NSwagClient/Client.cs" />
   </Target>
 

@@ -38,7 +38,7 @@
     <Compile Include="..\Shared\EmbeddedResourceProvider.cs" Link="EmbeddedResourceProvider.cs" />
   </ItemGroup>
 
-  <Target Name="NpmInstall" BeforeTargets="DispatchToInnerBuilds" Condition=" '$(CI)' != '' OR !Exists('$(MSBuildThisFileDirectory)\node_modules') ">
+  <Target Name="NpmInstall" BeforeTargets="DispatchToInnerBuilds" Condition=" ('$(CI)' != '' OR !Exists('$(MSBuildThisFileDirectory)\node_modules')) AND '$(IsDependabotJob)' != 'true' ">
     <Exec Command="npm ci" ContinueOnError="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
     </Exec>
