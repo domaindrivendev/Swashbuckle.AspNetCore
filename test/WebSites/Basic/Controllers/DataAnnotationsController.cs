@@ -30,10 +30,17 @@ public class DataAnnotationsController : Controller
         return Ok();
     }
 
+    /// <summary>
+    /// Retrieves the list of appointments this week for the specified day.
+    /// </summary>
+    /// <param name="dayOfWeek">The day of week for which to get appointments.</param>
+    /// <returns>
+    /// The list of appointments for the specified day.
+    /// </returns>
     [HttpPut("get-weekly-apppointments")]
     public IActionResult GetWeeklyAppointments(
         [DefaultValue(DayOfWeek.Thursday)]
-        [SwaggerSchema("The day of week for which to get appointments.")]
+        [SwaggerSchema("The day of the week.")]
         DayOfWeek? dayOfWeek)
     {
         Debug.Assert(dayOfWeek is null || Enum.IsDefined(dayOfWeek.Value));

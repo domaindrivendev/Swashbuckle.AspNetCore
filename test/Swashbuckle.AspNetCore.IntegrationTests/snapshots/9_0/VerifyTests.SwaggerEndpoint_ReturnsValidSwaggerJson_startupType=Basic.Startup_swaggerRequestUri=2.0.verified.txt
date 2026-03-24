@@ -295,10 +295,12 @@
         "tags": [
           "DataAnnotations"
         ],
+        "summary": "Retrieves the list of appointments this week for the specified day.",
         "parameters": [
           {
             "in": "query",
             "name": "dayOfWeek",
+            "description": "The day of week for which to get appointments.",
             "type": "string"
           }
         ],
@@ -604,6 +606,7 @@
           {
             "in": "formData",
             "name": "logLevel",
+            "description": "Summary for LogLevel",
             "type": "string"
           },
           {

@@ -128,9 +128,9 @@ public class SchemaGenerator(
             }
 
             schema.ApplyValidationAttributes(customAttributes);
-
-            ApplyFilters(schema, modelType, schemaRepository, memberInfo: memberInfo);
         }
+
+        ApplyFilters(schema, modelType, schemaRepository, memberInfo: memberInfo);
 
         return schema;
     }
@@ -198,9 +198,9 @@ public class SchemaGenerator(
             {
                 schema.ApplyRouteConstraints(routeInfo);
             }
-
-            ApplyFilters(schema, modelType, schemaRepository, parameterInfo: parameterInfo);
         }
+
+        ApplyFilters(schema, modelType, schemaRepository, parameterInfo: parameterInfo);
 
         return schema;
     }

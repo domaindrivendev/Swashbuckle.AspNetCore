@@ -74,7 +74,7 @@ public class AnnotationsSchemaFilter(IServiceProvider serviceProvider) : ISchema
 
     private static void ApplySchemaAttribute(IOpenApiSchema schema, SwaggerSchemaAttribute schemaAttribute)
     {
-        if (schemaAttribute.Description is { } description)
+        if (schema.Description is null && schemaAttribute.Description is { } description)
         {
             schema.Description = description;
         }

@@ -343,10 +343,12 @@
         "tags": [
           "DataAnnotations"
         ],
+        "summary": "Retrieves the list of appointments this week for the specified day.",
         "parameters": [
           {
             "name": "dayOfWeek",
             "in": "query",
+            "description": "The day of week for which to get appointments.",
             "schema": {
               "$ref": "#/components/schemas/DayOfWeek"
             }

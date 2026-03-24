@@ -177,16 +177,19 @@
           "content": {
             "application/json": {
               "schema": {
+                "description": "Represents a product",
                 "$ref": "#/components/schemas/Product"
               }
             },
             "text/json": {
               "schema": {
+                "description": "Represents a product",
                 "$ref": "#/components/schemas/Product"
               }
             },
             "application/*+json": {
               "schema": {
+                "description": "Represents a product",
                 "$ref": "#/components/schemas/Product"
               }
             }
@@ -350,11 +353,14 @@
         "tags": [
           "DataAnnotations"
         ],
+        "summary": "Retrieves the list of appointments this week for the specified day.",
         "parameters": [
           {
             "name": "dayOfWeek",
             "in": "query",
+            "description": "The day of week for which to get appointments.",
             "schema": {
+              "description": "The day of the week.",
               "default": 4,
               "$ref": "#/components/schemas/DayOfWeek"
             }
@@ -756,6 +762,7 @@
                     "description": "Summary for PhoneNumbers"
                   },
                   "logLevel": {
+                    "description": "Summary for LogLevel",
                     "$ref": "#/components/schemas/LogLevel"
                   },
                   "formFile": {
@@ -1390,6 +1397,7 @@
             "$ref": "#/components/schemas/CartType"
           },
           "basketType": {
+            "description": "The cart type",
             "deprecated": true,
             "$ref": "#/components/schemas/CartType"
           }
