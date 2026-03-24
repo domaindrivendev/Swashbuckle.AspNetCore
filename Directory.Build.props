@@ -31,7 +31,7 @@
     <PackageReadmeFile>package-readme.md</PackageReadmeFile>
     <PackageReleaseNotes>See $(PackageProjectUrl)/releases for details.</PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <PackageValidationBaselineVersion>10.1.5</PackageValidationBaselineVersion>
+    <PackageValidationBaselineVersion>10.1.6</PackageValidationBaselineVersion>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>$(PackageProjectUrl).git</RepositoryUrl>
@@ -66,5 +66,8 @@
     <ExcludeByAttribute>GeneratedCodeAttribute</ExcludeByAttribute>
     <Include>[Swashbuckle.*]*</Include>
     <Threshold></Threshold>
+  </PropertyGroup>
+  <PropertyGroup>
+    <IsDependabotJob Condition=" '$(GITHUB_ACTIONS)' == 'true' AND '$(DEPENDABOT_JOB_ID)' != '' ">true</IsDependabotJob>
   </PropertyGroup>
 </Project>

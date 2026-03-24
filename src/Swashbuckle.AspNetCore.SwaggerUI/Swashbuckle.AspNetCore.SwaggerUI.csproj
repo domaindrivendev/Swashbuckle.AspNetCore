@@ -38,7 +38,7 @@
     <Compile Include="..\Shared\EmbeddedResourceProvider.cs" Link="EmbeddedResourceProvider.cs" />
   </ItemGroup>
 
-  <Target Name="NpmInstall" BeforeTargets="DispatchToInnerBuilds" Condition=" '$(CI)' != '' OR !Exists('$(MSBuildThisFileDirectory)\node_modules') ">
+  <Target Name="NpmInstall" BeforeTargets="DispatchToInnerBuilds" Condition=" ('$(CI)' != '' OR !Exists('$(MSBuildThisFileDirectory)\node_modules')) AND '$(IsDependabotJob)' != 'true' ">
     <Exec Command="npm ci" ContinueOnError="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
     </Exec>
@@ -79,7 +79,7 @@
   <ItemGroup>
     <CompressFiles Include="node_modules/swagger-ui-dist/**/*" Exclude="**/*/index.html;**/*/*.map;**/*/*.json;**/*/*.md;**/*/*.txt;**/*/swagger-ui-es-*" />
   </ItemGroup>
-  <Target Name="_CompressAssets" BeforeTargets="CheckForDuplicateItems">
+  <Target Name="_CompressAssets" BeforeTargets="CheckForDuplicateItems" Condition=" '$(IsDependabotJob)' != 'true' ">
     <GZipCompress FilesToCompress="@(CompressFiles)" OutputDirectory="$(IntermediateOutputPath)CompressedAssets">
       <Output TaskParameter="CompressedFiles" ItemName="_CompressedAssetsFile" />
     </GZipCompress>
