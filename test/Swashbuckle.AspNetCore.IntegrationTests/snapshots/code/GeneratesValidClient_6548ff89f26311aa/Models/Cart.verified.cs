@@ -13,6 +13,8 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Models
     #pragma warning restore CS1591
     {
         /// <summary>The cart type</summary>
+        public int? BasketType { get; set; }
+        /// <summary>The cart type</summary>
         public int? CartType { get; set; }
         /// <summary>The cart identifier</summary>
         public int? Id { get; private set; }
@@ -34,6 +36,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Models
         {
             return new Dictionary<string, Action<IParseNode>>
             {
+                { "basketType", n => { BasketType = n.GetIntValue(); } },
                 { "cartType", n => { CartType = n.GetIntValue(); } },
                 { "id", n => { Id = n.GetIntValue(); } },
             };
@@ -45,6 +48,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Models
         public virtual void Serialize(ISerializationWriter writer)
         {
             if(ReferenceEquals(writer, null)) throw new ArgumentNullException(nameof(writer));
+            writer.WriteIntValue("basketType", BasketType);
             writer.WriteIntValue("cartType", CartType);
         }
     }

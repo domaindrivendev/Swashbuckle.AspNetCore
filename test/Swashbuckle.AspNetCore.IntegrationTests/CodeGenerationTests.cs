@@ -31,10 +31,21 @@ public class CodeGenerationTests(ITestOutputHelper outputHelper)
 
             foreach (var tool in Enum.GetValues<ClientGeneratorTool>())
             {
-                if (tool is ClientGeneratorTool.NSwag && Path.GetFileNameWithoutExtension(path).Contains("Basic.Startup"))
+                var fileName = Path.GetFileNameWithoutExtension(path);
+
+                if (fileName.Contains("Basic.Startup"))
                 {
-                    // NSwag doesn't generate valid compilation due to a missing FileResponse type
-                    continue;
+                    if (tool is ClientGeneratorTool.NSwag)
+                    {
+                        // NSwag doesn't generate valid compilation due to a missing FileResponse type
+                        continue;
+                    }
+
+                    if (!fileName.Contains("=v1."))
+                    {
+                        // Ignore duplicative test cases for Swagger 2.0 and OpenAPI 3.1
+                        continue;
+                    }
                 }
 
                 if (ClientGenerator.IsSupported(tool, "json", version))

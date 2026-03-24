@@ -1,6 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Basic.Controllers;
 
@@ -25,6 +27,23 @@ public class DataAnnotationsController : Controller
     public IActionResult CancelPayment([MinLength(6)] string paymentId)
     {
         Debug.Assert(paymentId is not null);
+        return Ok();
+    }
+
+    /// <summary>
+    /// Retrieves the list of appointments this week for the specified day.
+    /// </summary>
+    /// <param name="dayOfWeek">The day of week for which to get appointments.</param>
+    /// <returns>
+    /// The list of appointments for the specified day.
+    /// </returns>
+    [HttpPut("get-weekly-apppointments")]
+    public IActionResult GetWeeklyAppointments(
+        [DefaultValue(DayOfWeek.Thursday)]
+        [SwaggerSchema("The day of the week.")]
+        DayOfWeek? dayOfWeek)
+    {
+        Debug.Assert(dayOfWeek is null || Enum.IsDefined(dayOfWeek.Value));
         return Ok();
     }
 }

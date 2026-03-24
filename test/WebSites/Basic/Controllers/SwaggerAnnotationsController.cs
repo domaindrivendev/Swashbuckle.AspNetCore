@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel;
+using System.Diagnostics;
 using Basic.Swagger;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -45,7 +46,12 @@ public class Cart
     [SwaggerSchema("The cart identifier", ReadOnly = true)]
     public int Id { get; set; }
 
+    [DefaultValue(CartType.Anonymous)]
+    [SwaggerSchema("The type of the cart")]
     public CartType CartType { get; set; }
+
+    [Obsolete("Use CartType instead.")]
+    public CartType BasketType { get; set; }
 }
 
 [SwaggerSchema(Description = "The cart type")]

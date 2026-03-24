@@ -1,5 +1,5 @@
 ﻿{
-  "openapi": "3.0.4",
+  "openapi": "3.1.2",
   "info": {
     "title": "Test API V1",
     "description": "A sample API for testing Swashbuckle",
@@ -20,16 +20,19 @@
           "content": {
             "application/json": {
               "schema": {
+                "description": "Represents a product",
                 "$ref": "#/components/schemas/Product"
               }
             },
             "text/json": {
               "schema": {
+                "description": "Represents a product",
                 "$ref": "#/components/schemas/Product"
               }
             },
             "application/*+json": {
               "schema": {
+                "description": "Represents a product",
                 "$ref": "#/components/schemas/Product"
               }
             }
@@ -43,6 +46,7 @@
             "content": {
               "application/json": {
                 "schema": {
+                  "description": "Represents a product",
                   "$ref": "#/components/schemas/Product"
                 }
               }
@@ -77,6 +81,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
+                    "description": "Represents a product",
                     "$ref": "#/components/schemas/Product"
                   }
                 }
@@ -102,6 +107,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
+                    "description": "Represents a product",
                     "$ref": "#/components/schemas/Product"
                   }
                 }
@@ -138,6 +144,7 @@
             "content": {
               "application/json": {
                 "schema": {
+                  "description": "Represents a product",
                   "$ref": "#/components/schemas/Product"
                 }
               }
@@ -170,16 +177,19 @@
           "content": {
             "application/json": {
               "schema": {
+                "description": "Represents a product",
                 "$ref": "#/components/schemas/Product"
               }
             },
             "text/json": {
               "schema": {
+                "description": "Represents a product",
                 "$ref": "#/components/schemas/Product"
               }
             },
             "application/*+json": {
               "schema": {
+                "description": "Represents a product",
                 "$ref": "#/components/schemas/Product"
               }
             }
@@ -350,6 +360,8 @@
             "in": "query",
             "description": "The day of week for which to get appointments.",
             "schema": {
+              "description": "The day of the week.",
+              "default": 4,
               "$ref": "#/components/schemas/DayOfWeek"
             }
           }
@@ -750,6 +762,7 @@
                     "description": "Summary for PhoneNumbers"
                   },
                   "logLevel": {
+                    "description": "Summary for LogLevel",
                     "$ref": "#/components/schemas/LogLevel"
                   },
                   "formFile": {
@@ -758,6 +771,7 @@
                     "format": "binary"
                   },
                   "dateTimeKind": {
+                    "description": "Description for dateTimeKind",
                     "$ref": "#/components/schemas/DateTimeKind"
                   }
                 }
@@ -1378,9 +1392,13 @@
             "readOnly": true
           },
           "cartType": {
+            "description": "The type of the cart",
+            "default": 0,
             "$ref": "#/components/schemas/CartType"
           },
           "basketType": {
+            "description": "The cart type",
+            "deprecated": true,
             "$ref": "#/components/schemas/CartType"
           }
         },
@@ -1490,8 +1508,10 @@
             "format": "int32"
           },
           "description": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "total": {
             "type": "number",
@@ -1525,9 +1545,11 @@
             "format": "int32"
           },
           "description": {
-            "type": "string",
-            "description": "Describes the product",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Describes the product"
           },
           "status": {
             "$ref": "#/components/schemas/ProductStatus"
@@ -1536,13 +1558,13 @@
             "$ref": "#/components/schemas/ProductStatus"
           },
           "price": {
-            "maximum": 122.9,
-            "exclusiveMaximum": true,
-            "minimum": 0.1,
-            "exclusiveMinimum": true,
-            "type": "number",
-            "format": "double",
-            "nullable": true
+            "exclusiveMaximum": 122.9,
+            "exclusiveMinimum": 0.1,
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
           }
         },
         "additionalProperties": false,
@@ -1566,8 +1588,10 @@
         "type": "object",
         "properties": {
           "promo-code": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "discountType": {
             "$ref": "#/components/schemas/DiscountType"
@@ -1606,8 +1630,10 @@
             "type": "string"
           },
           "name": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
         "additionalProperties": false,
@@ -1627,8 +1653,10 @@
             "format": "int32"
           },
           "location": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
         "additionalProperties": false
@@ -1667,8 +1695,10 @@
             "format": "double"
           },
           "note": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
         "additionalProperties": false
@@ -1677,35 +1707,47 @@
         "type": "object",
         "properties": {
           "type": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "title": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "status": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
           },
           "detail": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "instance": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "errors": {
-            "type": "object",
+            "type": [
+              "null",
+              "object"
+            ],
             "additionalProperties": {
               "type": "array",
               "items": {
                 "type": "string"
               }
-            },
-            "nullable": true
+            }
           }
         },
         "additionalProperties": { }
