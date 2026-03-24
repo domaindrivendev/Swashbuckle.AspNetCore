@@ -225,7 +225,7 @@ public class NewtonsoftSchemaGeneratorTests
     }
 
     [Theory]
-    [InlineData(typeof(ComplexType), "ComplexType", new[] { "Property1", "Property2" })]
+    [InlineData(typeof(ComplexType), "ComplexType", new[] { "Property1", "Property2", "Property3" })]
     [InlineData(typeof(GenericType<bool, int>), "BooleanInt32GenericType", new[] { "Property1", "Property2" })]
     [InlineData(typeof(GenericType<bool, int[]>), "BooleanInt32ArrayGenericType", new[] { "Property1", "Property2" })]
     [InlineData(typeof(ContainingType.NestedType), "NestedType", new[] { "Property2" })]

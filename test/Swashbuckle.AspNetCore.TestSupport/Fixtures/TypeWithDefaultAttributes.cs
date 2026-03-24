@@ -36,4 +36,7 @@ public class TypeWithDefaultAttributes
 
     [DefaultValue(int.MaxValue)]
     public int? NullableIntWithDefaultValue { get; set; }
+
+    [DefaultValue(DayOfWeek.Thursday)]
+    public DayOfWeek EnumWithDefaultValue { get; set; }
 }

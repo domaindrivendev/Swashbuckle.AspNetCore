@@ -216,7 +216,7 @@ public class JsonSerializerSchemaGeneratorTests
     }
 
     [Theory]
-    [InlineData(typeof(ComplexType), "ComplexType", new[] { "Property1", "Property2" })]
+    [InlineData(typeof(ComplexType), "ComplexType", new[] { "Property1", "Property2", "Property3" })]
     [InlineData(typeof(GenericType<bool, int>), "BooleanInt32GenericType", new[] { "Property1", "Property2" })]
     [InlineData(typeof(GenericType<bool, int[]>), "BooleanInt32ArrayGenericType", new[] { "Property1", "Property2" })]
     [InlineData(typeof(ContainingType.NestedType), "NestedType", new[] { "Property2" })]
@@ -324,6 +324,7 @@ public class JsonSerializerSchemaGeneratorTests
     [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.StringArrayWithDefault), "[\n  \"foo\",\n  \"bar\"\n]")]
     [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.NullableIntWithDefaultNullValue), null)]
     [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.NullableIntWithDefaultValue), "2147483647")]
+    [InlineData(typeof(TypeWithDefaultAttributes), nameof(TypeWithDefaultAttributes.EnumWithDefaultValue), "4")]
     public void GenerateSchema_SetsDefault_IfPropertyHasDefaultValueAttribute(
         Type declaringType,
         string propertyName,
@@ -1237,7 +1238,7 @@ public class JsonSerializerSchemaGeneratorTests
 
         var reference = Assert.IsType<OpenApiSchemaReference>(referenceSchema);
         var schema = schemaRepository.Schemas[reference.Reference.Id];
-        Assert.Equal(["property1", "property2"], schema.Properties.Keys);
+        Assert.Equal(["property1", "property2", "property3"], schema.Properties.Keys);
     }
 
     [Theory]
@@ -1250,7 +1251,7 @@ public class JsonSerializerSchemaGeneratorTests
     {
         var subject = Subject(
             configureGenerator: c => { c.UseInlineDefinitionsForEnums = true; },
-            configureSerializer: c => { c.Converters.Add(new JsonStringEnumConverter(namingPolicy: (camelCaseText ? JsonNamingPolicy.CamelCase : null), true)); }
+            configureSerializer: c => { c.Converters.Add(new JsonStringEnumConverter(namingPolicy: camelCaseText ? JsonNamingPolicy.CamelCase : null, true)); }
         );
         var schemaRepository = new SchemaRepository();
 

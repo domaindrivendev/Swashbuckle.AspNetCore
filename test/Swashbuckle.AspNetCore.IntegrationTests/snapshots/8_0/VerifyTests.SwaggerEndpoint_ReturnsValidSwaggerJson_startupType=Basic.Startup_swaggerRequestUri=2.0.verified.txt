@@ -1,0 +1,1441 @@
+﻿{
+  "swagger": "2.0",
+  "info": {
+    "title": "Test API V1",
+    "description": "A sample API for testing Swashbuckle",
+    "termsOfService": "http://tempuri.org/terms",
+    "version": "v1"
+  },
+  "paths": {
+    "/products": {
+      "post": {
+        "tags": [
+          "CrudActions"
+        ],
+        "summary": "Creates a product",
+        "description": "## Heading 1\r\n\r\n    POST /products\r\n    {\r\n        \"id\": \"123\",\r\n        \"description\": \"Some product\"\r\n    }",
+        "operationId": "CreateProduct",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Product"
+            },
+            "x-purpose": "test"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          }
+        },
+        "x-purpose": "test"
+      },
+      "get": {
+        "tags": [
+          "CrudActions"
+        ],
+        "summary": "Searches the collection of products by description key words",
+        "operationId": "SearchProducts",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "kw",
+            "description": "A list of search terms",
+            "type": "string",
+            "default": "foobar"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Product"
+              }
+            }
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/products/all": {
+      "get": {
+        "tags": [
+          "CrudActions"
+        ],
+        "summary": "Get all products",
+        "description": "```\r\n{\r\n  \"Id\":1,\r\n  \"Description\":\"\",\r\n  \"Status\": 0,\r\n  \"Status2\": 1\r\n}\r\n            \r\n```",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Product"
+              }
+            }
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/products/{id}": {
+      "get": {
+        "tags": [
+          "CrudActions"
+        ],
+        "summary": "Returns a specific product",
+        "operationId": "GetProduct",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "The product id",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Product"
+            }
+          }
+        },
+        "x-purpose": "test"
+      },
+      "put": {
+        "tags": [
+          "CrudActions"
+        ],
+        "summary": "Updates all properties of a specific product",
+        "operationId": "UpdateProduct",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Product"
+            },
+            "x-purpose": "test"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      },
+      "patch": {
+        "tags": [
+          "CrudActions"
+        ],
+        "summary": "Updates some properties of a specific product",
+        "description": "\r\nOnly provided properties will be updated,\r\n                    other remain unchanged.\r\n\r\nIdentifier must be non-default value\r\n\r\nBody must be specified",
+        "operationId": "PatchProduct",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "additionalProperties": { }
+            },
+            "x-purpose": "test"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      },
+      "delete": {
+        "tags": [
+          "CrudActions"
+        ],
+        "summary": "Deletes a specific product",
+        "operationId": "DeleteProduct",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/payments/authorize": {
+      "post": {
+        "tags": [
+          "DataAnnotations"
+        ],
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PaymentRequest"
+            },
+            "x-purpose": "test"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/payments/{paymentId}/cancel": {
+      "put": {
+        "tags": [
+          "DataAnnotations"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "paymentId",
+            "required": true,
+            "type": "string",
+            "minLength": 6
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/kittens": {
+      "post": {
+        "tags": [
+          "DynamicTypes"
+        ],
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": { },
+            "x-purpose": "test"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/unicorns": {
+      "get": {
+        "tags": [
+          "DynamicTypes"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "additionalProperties": { }
+            }
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/dragons": {
+      "post": {
+        "tags": [
+          "DynamicTypes"
+        ],
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": { },
+            "x-purpose": "test"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/files/single": {
+      "post": {
+        "tags": [
+          "Files"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "file",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/files/multiple": {
+      "post": {
+        "tags": [
+          "Files"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "files",
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "binary"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/files/form-with-file": {
+      "post": {
+        "tags": [
+          "Files"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "file",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/files/{name}": {
+      "get": {
+        "tags": [
+          "Files"
+        ],
+        "produces": [
+          "text/plain",
+          "application/zip"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "format": "binary",
+              "allOf": [
+                {
+                  "type": "string",
+                  "format": "binary"
+                }
+              ]
+            }
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/registrations": {
+      "post": {
+        "tags": [
+          "FromFormParams"
+        ],
+        "summary": "Form parameters with description",
+        "consumes": [
+          "application/x-www-form-urlencoded"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "name",
+            "description": "Summary for Name",
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "phoneNumbers",
+            "description": "Summary for PhoneNumbers",
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "in": "formData",
+            "name": "formFile",
+            "description": "Description for file",
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "text",
+            "description": "Description for Text",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/registrationsWithIgnoreProperties": {
+      "post": {
+        "tags": [
+          "FromFormParams"
+        ],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "phoneNumbers",
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/registrationsWithEnumParameter": {
+      "post": {
+        "tags": [
+          "FromFormParams"
+        ],
+        "summary": "Form parameters with description",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "name",
+            "description": "Summary for Name",
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "phoneNumbers",
+            "description": "Summary for PhoneNumbers",
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "in": "formData",
+            "name": "logLevel",
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "formFile",
+            "description": "Description for file",
+            "type": "string"
+          },
+          {
+            "in": "formData",
+            "name": "dateTimeKind",
+            "description": "Description for dateTimeKind",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/country/validate": {
+      "get": {
+        "tags": [
+          "FromHeaderParams"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "country",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/addresses/validate": {
+      "get": {
+        "tags": [
+          "FromQueryParams"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "country",
+            "description": "3-letter ISO country code",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "query",
+            "name": "city",
+            "description": "Name of city",
+            "type": "string",
+            "default": "Seattle"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/zip-codes/validate": {
+      "get": {
+        "tags": [
+          "FromQueryParams"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "zipCodes",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/Issue3013/Get": {
+      "get": {
+        "tags": [
+          "Issue3013"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/TestResponse"
+            }
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/promotions": {
+      "get": {
+        "tags": [
+          "JsonAnnotations"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Promotion"
+              }
+            }
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/shapes": {
+      "post": {
+        "tags": [
+          "PolymorphicTypes"
+        ],
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/Rectangle"
+                }
+              ]
+            },
+            "x-purpose": "test"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/orders": {
+      "post": {
+        "tags": [
+          "ResponseTypeAnnotations"
+        ],
+        "summary": "Creates an order",
+        "consumes": [
+          "application/xml"
+        ],
+        "produces": [
+          "application/xml"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Order"
+            },
+            "x-purpose": "test"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Order created",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "400": {
+            "description": "Order invalid",
+            "schema": {
+              "$ref": "#/definitions/ValidationProblemDetails"
+            }
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/carts": {
+      "post": {
+        "tags": [
+          "SwaggerAnnotations"
+        ],
+        "operationId": "CreateCart",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "The cart request body",
+            "schema": {
+              "$ref": "#/definitions/Cart"
+            },
+            "x-purpose": "test"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "The cart was created",
+            "schema": {
+              "$ref": "#/definitions/Cart"
+            }
+          },
+          "400": {
+            "description": "The cart data is invalid"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/carts/{id}": {
+      "get": {
+        "tags": [
+          "SwaggerAnnotations"
+        ],
+        "externalDocs": {
+          "description": "External docs for CartsByIdGet",
+          "url": "https://tempuri.org/carts-by-id-get"
+        },
+        "operationId": "GetCart",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "The cart identifier",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Cart"
+            }
+          }
+        },
+        "x-purpose": "test"
+      },
+      "delete": {
+        "tags": [
+          "SwaggerAnnotations"
+        ],
+        "summary": "Deletes a specific cart",
+        "description": "Requires admin privileges",
+        "operationId": "DeleteCart",
+        "produces": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "description": "The cart identifier",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Cart"
+            }
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/stores": {
+      "post": {
+        "tags": [
+          "UnboundParams"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "id",
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "in": "query",
+            "name": "location",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        },
+        "x-purpose": "test"
+      },
+      "get": {
+        "tags": [
+          "UnboundParams"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "locations",
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Store"
+              }
+            }
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
+    "/stores/{id}": {
+      "get": {
+        "tags": [
+          "UnboundParams"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Store"
+            }
+          }
+        },
+        "x-purpose": "test"
+      },
+      "put": {
+        "tags": [
+          "UnboundParams"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "id",
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "in": "query",
+            "name": "location",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      },
+      "delete": {
+        "tags": [
+          "UnboundParams"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    }
+  },
+  "definitions": {
+    "Cart": {
+      "type": "object",
+      "required": [
+        "Id"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "The cart identifier",
+          "format": "int32",
+          "readOnly": true
+        },
+        "cartType": {
+          "$ref": "#/definitions/CartType"
+        },
+        "basketType": {
+          "$ref": "#/definitions/CartType"
+        }
+      },
+      "additionalProperties": false
+    },
+    "CartType": {
+      "type": "integer",
+      "description": "The cart type",
+      "format": "int32",
+      "enum": [
+        0,
+        1
+      ]
+    },
+    "Circle": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Shape"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "radius": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "CreditCard": {
+      "type": "object",
+      "required": [
+        "cardNumber",
+        "expMonth",
+        "expYear"
+      ],
+      "properties": {
+        "cardNumber": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[3-6]?\\d{12,15}$"
+        },
+        "expMonth": {
+          "type": "integer",
+          "format": "int32",
+          "maximum": 12,
+          "minimum": 1
+        },
+        "expYear": {
+          "type": "integer",
+          "format": "int32",
+          "maximum": 99,
+          "minimum": 14
+        }
+      },
+      "additionalProperties": false
+    },
+    "DateTimeKind": {
+      "type": "integer",
+      "format": "int32",
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "DiscountType": {
+      "type": "string",
+      "enum": [
+        "Percentage",
+        "Amount"
+      ]
+    },
+    "LogLevel": {
+      "type": "integer",
+      "format": "int32",
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    },
+    "Order": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "description": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "total": {
+          "type": "number",
+          "format": "double"
+        }
+      },
+      "additionalProperties": false
+    },
+    "PaymentRequest": {
+      "type": "object",
+      "required": [
+        "creditCard",
+        "transaction"
+      ],
+      "properties": {
+        "transaction": {
+          "$ref": "#/definitions/Transaction"
+        },
+        "creditCard": {
+          "$ref": "#/definitions/CreditCard"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Product": {
+      "type": "object",
+      "description": "Represents a product",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "Uniquely identifies the product",
+          "format": "int32"
+        },
+        "description": {
+          "type": "string",
+          "description": "Describes the product",
+          "x-nullable": true
+        },
+        "status": {
+          "$ref": "#/definitions/ProductStatus"
+        },
+        "status2": {
+          "$ref": "#/definitions/ProductStatus"
+        },
+        "price": {
+          "type": "number",
+          "format": "double",
+          "maximum": 122.9,
+          "exclusiveMaximum": true,
+          "minimum": 0.1,
+          "exclusiveMinimum": true,
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false,
+      "example": {
+        "id": 123,
+        "description": "foobar",
+        "price": 14.37
+      }
+    },
+    "ProductStatus": {
+      "type": "integer",
+      "format": "int32",
+      "enum": [
+        0,
+        1,
+        2
+      ]
+    },
+    "Promotion": {
+      "type": "object",
+      "properties": {
+        "promo-code": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "discountType": {
+          "$ref": "#/definitions/DiscountType"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Rectangle": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/Shape"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "height": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "width": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "Shape": {
+      "type": "object",
+      "required": [
+        "TypeName"
+      ],
+      "properties": {
+        "TypeName": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false,
+      "discriminator": "TypeName"
+    },
+    "Store": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "location": {
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "TestResponse": {
+      "type": "object",
+      "properties": {
+        "foo": {
+          "$ref": "#/definitions/TestStruct"
+        }
+      },
+      "additionalProperties": false
+    },
+    "TestStruct": {
+      "type": "object",
+      "properties": {
+        "a": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "b": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Transaction": {
+      "type": "object",
+      "required": [
+        "amount"
+      ],
+      "properties": {
+        "amount": {
+          "type": "number",
+          "format": "double"
+        },
+        "note": {
+          "type": "string",
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "ValidationProblemDetails": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "title": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "status": {
+          "type": "integer",
+          "format": "int32",
+          "x-nullable": true
+        },
+        "detail": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "instance": {
+          "type": "string",
+          "x-nullable": true
+        },
+        "errors": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "x-nullable": true
+        }
+      },
+      "additionalProperties": { }
+    }
+  },
+  "tags": [
+    {
+      "name": "CrudActions"
+    },
+    {
+      "name": "DataAnnotations"
+    },
+    {
+      "name": "DynamicTypes"
+    },
+    {
+      "name": "Files"
+    },
+    {
+      "name": "FromFormParams"
+    },
+    {
+      "name": "FromHeaderParams"
+    },
+    {
+      "name": "FromQueryParams"
+    },
+    {
+      "name": "Issue3013"
+    },
+    {
+      "name": "JsonAnnotations"
+    },
+    {
+      "name": "PolymorphicTypes"
+    },
+    {
+      "name": "ResponseTypeAnnotations"
+    },
+    {
+      "name": "SwaggerAnnotations",
+      "description": "Manipulate Carts to your heart's content",
+      "externalDocs": {
+        "url": "http://www.tempuri.org"
+      }
+    },
+    {
+      "name": "UnboundParams"
+    }
+  ]
+}

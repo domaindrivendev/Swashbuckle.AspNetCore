@@ -49,9 +49,28 @@ public class SchemaGenerator(
             ? GeneratePolymorphicSchema(schemaRepository, knownTypesDataContracts)
             : GenerateConcreteSchema(dataContract, schemaRepository);
 
-        if (_generatorOptions.UseAllOfToExtendReferenceSchemas && schema is OpenApiSchemaReference reference)
+        if (schema is OpenApiSchemaReference reference)
         {
-            schema = new OpenApiSchema() { AllOf = [reference] };
+            if (_generatorOptions.UseAllOfToExtendReferenceSchemas)
+            {
+                schema = new OpenApiSchema() { AllOf = [reference] };
+            }
+            else
+            {
+                var customAttributes = memberInfo.GetInlineAndMetadataAttributes();
+
+                var defaultValueAttribute = customAttributes.OfType<DefaultValueAttribute>().FirstOrDefault();
+                if (defaultValueAttribute != null)
+                {
+                    reference.Default = GenerateDefaultValue(dataContract, modelType, defaultValueAttribute.Value);
+                }
+
+                var obsoleteAttribute = customAttributes.OfType<ObsoleteAttribute>().FirstOrDefault();
+                if (obsoleteAttribute != null)
+                {
+                    reference.Deprecated = true;
+                }
+            }
         }
 
         if (schema is OpenApiSchema concrete)
@@ -438,7 +457,7 @@ public class SchemaGenerator(
 
             var memberType = dataProperty.MemberType;
 
-            schema.Properties[dataProperty.Name] = (dataProperty.MemberInfo != null)
+            schema.Properties[dataProperty.Name] = dataProperty.MemberInfo != null
                 ? GenerateSchemaForMember(memberType, schemaRepository, dataProperty.MemberInfo, dataProperty)
                 : GenerateSchemaForType(memberType, schemaRepository);
 

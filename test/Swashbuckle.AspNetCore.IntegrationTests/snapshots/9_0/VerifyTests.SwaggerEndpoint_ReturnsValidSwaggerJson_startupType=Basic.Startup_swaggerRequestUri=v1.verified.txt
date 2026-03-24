@@ -1355,6 +1355,9 @@
           },
           "cartType": {
             "$ref": "#/components/schemas/CartType"
+          },
+          "basketType": {
+            "$ref": "#/components/schemas/CartType"
           }
         },
         "additionalProperties": false
