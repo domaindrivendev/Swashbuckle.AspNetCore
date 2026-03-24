@@ -64,4 +64,7 @@
     <Include>[Swashbuckle.*]*</Include>
     <Threshold></Threshold>
   </PropertyGroup>
+  <PropertyGroup>
+    <IsDependabotJob Condition=" '$(GITHUB_ACTIONS)' == 'true' AND '$(DEPENDABOT_JOB_ID)' != '' ">true</IsDependabotJob>
+  </PropertyGroup>
 </Project>

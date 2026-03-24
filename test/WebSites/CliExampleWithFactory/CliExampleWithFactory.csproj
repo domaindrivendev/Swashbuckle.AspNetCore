@@ -30,7 +30,7 @@
     HOWEVER ... This example invokes the CLI DLL directly so that its source code can be tested during the Swashbuckle build process
   -->
 
-  <Target Name="SwaggerToFile" AfterTargets="AfterBuild">
+  <Target Name="SwaggerToFile" AfterTargets="AfterBuild" Condition=" '$(IsDependabotJob)' != 'true' ">
     <Exec Command="dotnet dotnet-swagger.dll tofile --host http://localhost:57556/ --output %22$(MSBuildThisFileDirectory)wwwroot/swagger/v1/swagger_$(TargetFramework).json%22 %22$(OutputPath)$(AssemblyName).dll%22 v1"
           WorkingDirectory="$(DotNetSwaggerPath)" />
   </Target>
