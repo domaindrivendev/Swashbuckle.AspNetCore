@@ -47,6 +47,7 @@ public class Cart
     public int Id { get; set; }
 
     [DefaultValue(CartType.Anonymous)]
+    [SwaggerSchema("The type of the cart")]
     public CartType CartType { get; set; }
 
     [Obsolete("Use CartType instead.")]

@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Basic.Controllers;
 
@@ -30,7 +31,10 @@ public class DataAnnotationsController : Controller
     }
 
     [HttpPut("get-weekly-apppointments")]
-    public IActionResult GetWeeklyAppointments([DefaultValue(DayOfWeek.Thursday)] DayOfWeek? dayOfWeek)
+    public IActionResult GetWeeklyAppointments(
+        [DefaultValue(DayOfWeek.Thursday)]
+        [SwaggerSchema("The day of week for which to get appointments.")]
+        DayOfWeek? dayOfWeek)
     {
         Debug.Assert(dayOfWeek is null || Enum.IsDefined(dayOfWeek.Value));
         return Ok();

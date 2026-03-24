@@ -213,13 +213,11 @@ public class SchemaGenerator(
             ? GeneratePolymorphicSchema(schemaRepository, knownTypesDataContracts)
             : GenerateConcreteSchema(dataContract, schemaRepository);
 
-        if (schema is not OpenApiSchemaReference)
+        ApplyFilters(schema, modelType, schemaRepository);
+         
+        if (Nullable.GetUnderlyingType(modelType) != null && schema is OpenApiSchema concrete)
         {
-            ApplyFilters(schema, modelType, schemaRepository);
-            if (Nullable.GetUnderlyingType(modelType) != null && schema is OpenApiSchema concrete)
-            {
-                SetNullable(concrete, true);
-            }
+            SetNullable(concrete, true);
         }
 
         return schema;

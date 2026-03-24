@@ -20,16 +20,19 @@
           "content": {
             "application/json": {
               "schema": {
+                "description": "Represents a product",
                 "$ref": "#/components/schemas/Product"
               }
             },
             "text/json": {
               "schema": {
+                "description": "Represents a product",
                 "$ref": "#/components/schemas/Product"
               }
             },
             "application/*+json": {
               "schema": {
+                "description": "Represents a product",
                 "$ref": "#/components/schemas/Product"
               }
             }
@@ -43,6 +46,7 @@
             "content": {
               "application/json": {
                 "schema": {
+                  "description": "Represents a product",
                   "$ref": "#/components/schemas/Product"
                 }
               }
@@ -77,6 +81,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
+                    "description": "Represents a product",
                     "$ref": "#/components/schemas/Product"
                   }
                 }
@@ -102,6 +107,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
+                    "description": "Represents a product",
                     "$ref": "#/components/schemas/Product"
                   }
                 }
@@ -138,6 +144,7 @@
             "content": {
               "application/json": {
                 "schema": {
+                  "description": "Represents a product",
                   "$ref": "#/components/schemas/Product"
                 }
               }
@@ -1378,6 +1385,7 @@
             "readOnly": true
           },
           "cartType": {
+            "description": "The cart type",
             "default": 0,
             "$ref": "#/components/schemas/CartType"
           },
