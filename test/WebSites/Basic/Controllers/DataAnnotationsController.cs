@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,6 +26,13 @@ public class DataAnnotationsController : Controller
     public IActionResult CancelPayment([MinLength(6)] string paymentId)
     {
         Debug.Assert(paymentId is not null);
+        return Ok();
+    }
+
+    [HttpPut("get-weekly-apppointments")]
+    public IActionResult GetWeeklyAppointments([DefaultValue(DayOfWeek.Thursday)] DayOfWeek? dayOfWeek)
+    {
+        Debug.Assert(dayOfWeek is null || Enum.IsDefined(dayOfWeek.Value));
         return Ok();
     }
 }

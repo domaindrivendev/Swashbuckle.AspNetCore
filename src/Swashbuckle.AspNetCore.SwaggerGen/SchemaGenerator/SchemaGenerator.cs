@@ -49,9 +49,28 @@ public class SchemaGenerator(
             ? GeneratePolymorphicSchema(schemaRepository, knownTypesDataContracts)
             : GenerateConcreteSchema(dataContract, schemaRepository);
 
-        if (_generatorOptions.UseAllOfToExtendReferenceSchemas && schema is OpenApiSchemaReference reference)
+        if (schema is OpenApiSchemaReference reference)
         {
-            schema = new OpenApiSchema() { AllOf = [reference] };
+            if (_generatorOptions.UseAllOfToExtendReferenceSchemas)
+            {
+                schema = new OpenApiSchema() { AllOf = [reference] };
+            }
+            else
+            {
+                var customAttributes = memberInfo.GetInlineAndMetadataAttributes();
+
+                var defaultValueAttribute = customAttributes.OfType<DefaultValueAttribute>().FirstOrDefault();
+                if (defaultValueAttribute != null)
+                {
+                    reference.Default = GenerateDefaultValue(dataContract, modelType, defaultValueAttribute.Value);
+                }
+
+                var obsoleteAttribute = customAttributes.OfType<ObsoleteAttribute>().FirstOrDefault();
+                if (obsoleteAttribute != null)
+                {
+                    reference.Deprecated = true;
+                }
+            }
         }
 
         if (schema is OpenApiSchema concrete)
@@ -96,9 +115,11 @@ public class SchemaGenerator(
                     .Where(t => t.IsGenericType)
                     .ToArray();
 
-                var isDictionaryType =
-                    genericTypes.Any(t => t.GetGenericTypeDefinition() == typeof(IDictionary<,>)) ||
-                    genericTypes.Any(t => t.GetGenericTypeDefinition() == typeof(IReadOnlyDictionary<,>));
+                var isDictionaryType = genericTypes.Any(static (type) =>
+                {
+                    var definition = type.GetGenericTypeDefinition();
+                    return definition == typeof(IDictionary<,>) || definition == typeof(IReadOnlyDictionary<,>);
+                });
 
                 if (isDictionaryType && schema.AdditionalProperties is OpenApiSchema additionalProperties)
                 {
@@ -138,9 +159,25 @@ public class SchemaGenerator(
             ? GeneratePolymorphicSchema(schemaRepository, knownTypesDataContracts)
             : GenerateConcreteSchema(dataContract, schemaRepository);
 
-        if (_generatorOptions.UseAllOfToExtendReferenceSchemas && schema is OpenApiSchemaReference reference)
+        if (schema is OpenApiSchemaReference reference)
         {
-            schema = new OpenApiSchema() { AllOf = [reference] };
+            if (_generatorOptions.UseAllOfToExtendReferenceSchemas)
+            {
+                schema = new OpenApiSchema() { AllOf = [reference] };
+            }
+            else
+            {
+                var customAttributes = parameterInfo.GetCustomAttributes();
+
+                var defaultValue = parameterInfo.HasDefaultValue
+                    ? parameterInfo.DefaultValue
+                    : customAttributes.OfType<DefaultValueAttribute>().FirstOrDefault()?.Value;
+
+                if (defaultValue != null)
+                {
+                    reference.Default = GenerateDefaultValue(dataContract, modelType, defaultValue);
+                }
+            }
         }
 
         if (schema is OpenApiSchema concrete)
@@ -438,7 +475,7 @@ public class SchemaGenerator(
 
             var memberType = dataProperty.MemberType;
 
-            schema.Properties[dataProperty.Name] = (dataProperty.MemberInfo != null)
+            schema.Properties[dataProperty.Name] = dataProperty.MemberInfo != null
                 ? GenerateSchemaForMember(memberType, schemaRepository, dataProperty.MemberInfo, dataProperty)
                 : GenerateSchemaForType(memberType, schemaRepository);
 

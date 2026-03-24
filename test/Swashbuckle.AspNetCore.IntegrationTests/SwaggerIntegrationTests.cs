@@ -11,6 +11,8 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
 {
     [Theory]
     [InlineData(typeof(Basic.Startup), "/swagger/v1/swagger.json")]
+    [InlineData(typeof(Basic.Startup), "/swagger/v1/swaggerv2.json")]
+    [InlineData(typeof(Basic.Startup), "/swagger/v1/swaggerv3_1.json")]
     [InlineData(typeof(CliExample.Startup), "/swagger/v1/swagger_net10.0.json")]
     [InlineData(typeof(ConfigFromFile.Startup), "/swagger/v1/swagger.json")]
     [InlineData(typeof(CustomUIConfig.Startup), "/swagger/v1/swagger.json")]

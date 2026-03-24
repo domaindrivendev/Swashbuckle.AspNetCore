@@ -1,5 +1,5 @@
 ﻿{
-  "openapi": "3.0.4",
+  "openapi": "3.1.1",
   "info": {
     "title": "Test API V1",
     "description": "A sample API for testing Swashbuckle",
@@ -348,6 +348,7 @@
             "name": "dayOfWeek",
             "in": "query",
             "schema": {
+              "default": 4,
               "$ref": "#/components/schemas/DayOfWeek"
             }
           }
@@ -756,6 +757,7 @@
                     "format": "binary"
                   },
                   "dateTimeKind": {
+                    "description": "Description for dateTimeKind",
                     "$ref": "#/components/schemas/DateTimeKind"
                   }
                 }
@@ -1376,9 +1378,11 @@
             "readOnly": true
           },
           "cartType": {
+            "default": 0,
             "$ref": "#/components/schemas/CartType"
           },
           "basketType": {
+            "deprecated": true,
             "$ref": "#/components/schemas/CartType"
           }
         },
@@ -1488,8 +1492,10 @@
             "format": "int32"
           },
           "description": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "total": {
             "type": "number",
@@ -1523,9 +1529,11 @@
             "format": "int32"
           },
           "description": {
-            "type": "string",
-            "description": "Describes the product",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Describes the product"
           },
           "status": {
             "$ref": "#/components/schemas/ProductStatus"
@@ -1534,13 +1542,13 @@
             "$ref": "#/components/schemas/ProductStatus"
           },
           "price": {
-            "maximum": 122.9,
-            "exclusiveMaximum": true,
-            "minimum": 0.1,
-            "exclusiveMinimum": true,
-            "type": "number",
-            "format": "double",
-            "nullable": true
+            "exclusiveMaximum": 122.9,
+            "exclusiveMinimum": 0.1,
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
           }
         },
         "additionalProperties": false,
@@ -1564,8 +1572,10 @@
         "type": "object",
         "properties": {
           "promo-code": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "discountType": {
             "$ref": "#/components/schemas/DiscountType"
@@ -1604,8 +1614,10 @@
             "type": "string"
           },
           "name": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
         "additionalProperties": false,
@@ -1625,8 +1637,10 @@
             "format": "int32"
           },
           "location": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
         "additionalProperties": false
@@ -1665,8 +1679,10 @@
             "format": "double"
           },
           "note": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
         "additionalProperties": false
@@ -1675,35 +1691,47 @@
         "type": "object",
         "properties": {
           "type": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "title": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "status": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
           },
           "detail": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "instance": {
-            "type": "string",
-            "nullable": true
+            "type": [
+              "null",
+              "string"
+            ]
           },
           "errors": {
-            "type": "object",
+            "type": [
+              "null",
+              "object"
+            ],
             "additionalProperties": {
               "type": "array",
               "items": {
                 "type": "string"
               }
-            },
-            "nullable": true
+            }
           }
         },
         "additionalProperties": { }

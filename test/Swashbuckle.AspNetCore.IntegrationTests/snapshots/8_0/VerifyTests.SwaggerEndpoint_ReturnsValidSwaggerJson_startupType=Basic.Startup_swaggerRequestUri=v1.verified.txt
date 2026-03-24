@@ -338,6 +338,28 @@
         "x-purpose": "test"
       }
     },
+    "/get-weekly-apppointments": {
+      "put": {
+        "tags": [
+          "DataAnnotations"
+        ],
+        "parameters": [
+          {
+            "name": "dayOfWeek",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/DayOfWeek"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
     "/kittens": {
       "post": {
         "tags": [
@@ -1355,6 +1377,9 @@
           },
           "cartType": {
             "$ref": "#/components/schemas/CartType"
+          },
+          "basketType": {
+            "$ref": "#/components/schemas/CartType"
           }
         },
         "additionalProperties": false
@@ -1418,6 +1443,19 @@
           0,
           1,
           2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "DayOfWeek": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
         ],
         "type": "integer",
         "format": "int32"
