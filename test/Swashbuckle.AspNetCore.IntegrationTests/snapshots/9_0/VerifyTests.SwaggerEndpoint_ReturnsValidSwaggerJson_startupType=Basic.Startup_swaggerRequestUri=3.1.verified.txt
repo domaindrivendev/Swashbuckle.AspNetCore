@@ -1392,7 +1392,7 @@
             "readOnly": true
           },
           "cartType": {
-            "description": "The cart type",
+            "description": "The type of the cart",
             "default": 0,
             "$ref": "#/components/schemas/CartType"
           },
