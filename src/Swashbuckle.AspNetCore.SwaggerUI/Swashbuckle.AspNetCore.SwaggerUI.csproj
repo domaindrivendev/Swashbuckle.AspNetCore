@@ -79,7 +79,7 @@
   <ItemGroup>
     <CompressFiles Include="node_modules/swagger-ui-dist/**/*" Exclude="**/*/index.html;**/*/*.map;**/*/*.json;**/*/*.md;**/*/*.txt;**/*/swagger-ui-es-*" />
   </ItemGroup>
-  <Target Name="_CompressAssets" BeforeTargets="CheckForDuplicateItems">
+  <Target Name="_CompressAssets" BeforeTargets="CheckForDuplicateItems" Condition=" '$(IsDependabotJob)' != 'true' ">
     <GZipCompress FilesToCompress="@(CompressFiles)" OutputDirectory="$(IntermediateOutputPath)CompressedAssets">
       <Output TaskParameter="CompressedFiles" ItemName="_CompressedAssetsFile" />
     </GZipCompress>

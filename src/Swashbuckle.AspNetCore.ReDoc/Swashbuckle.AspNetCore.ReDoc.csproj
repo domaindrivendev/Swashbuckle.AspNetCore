@@ -85,7 +85,7 @@
   <ItemGroup>
     <CompressFiles Include="node_modules/redoc/bundles/redoc.standalone.js" />
   </ItemGroup>
-  <Target Name="_CompressAssets" BeforeTargets="CheckForDuplicateItems">
+  <Target Name="_CompressAssets" BeforeTargets="CheckForDuplicateItems" Condition=" '$(IsDependabotJob)' != 'true' ">
     <GZipCompress FilesToCompress="@(CompressFiles)" OutputDirectory="$(IntermediateOutputPath)CompressedAssets">
       <Output TaskParameter="CompressedFiles" ItemName="_CompressedAssetsFile" />
     </GZipCompress>
