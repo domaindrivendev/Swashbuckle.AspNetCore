@@ -290,6 +290,26 @@
         "x-purpose": "test"
       }
     },
+    "/get-weekly-apppointments": {
+      "put": {
+        "tags": [
+          "DataAnnotations"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "dayOfWeek",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "x-purpose": "test"
+      }
+    },
     "/kittens": {
       "post": {
         "tags": [
@@ -1148,6 +1168,19 @@
         0,
         1,
         2
+      ]
+    },
+    "DayOfWeek": {
+      "type": "integer",
+      "format": "int32",
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
       ]
     },
     "DiscountType": {

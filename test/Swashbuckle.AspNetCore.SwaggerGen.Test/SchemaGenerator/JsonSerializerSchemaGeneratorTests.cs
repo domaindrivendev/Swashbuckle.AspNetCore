@@ -520,6 +520,22 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal("3", schema.Default.ToJson());
     }
 
+    [Fact]
+    public void GenerateSchema_SetsDefault_IfParameterHasEnumDefaultValueAttribute()
+    {
+        var schemaRepository = new SchemaRepository();
+
+        var parameterInfo = typeof(FakeController)
+            .GetMethod(nameof(FakeController.ActionWithEnumParameterWithDefaultValueAttribute))
+            .GetParameters()
+            .First();
+
+        var schema = Subject().GenerateSchema(parameterInfo.ParameterType, schemaRepository, parameterInfo: parameterInfo);
+
+        Assert.NotNull(schema.Default);
+        Assert.Equal("4", schema.Default.ToJson());
+    }
+
     [Theory]
     [InlineData(typeof(ComplexType), typeof(ComplexType))]
     [InlineData(typeof(GenericType<int, string>), typeof(GenericType<int, string>))]

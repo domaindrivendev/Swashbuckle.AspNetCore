@@ -49,6 +49,9 @@ public class FakeController
     public void ActionWithIntParameterWithDefaultValueAttribute([DefaultValue(3)] int param)
     { }
 
+    public void ActionWithEnumParameterWithDefaultValueAttribute([DefaultValue(DayOfWeek.Thursday)] DayOfWeek param)
+    { }
+
     public void ActionWithIntFromQueryParameter([FromQuery] int param)
     { }
 

@@ -157,9 +157,25 @@ public class SchemaGenerator(
             ? GeneratePolymorphicSchema(schemaRepository, knownTypesDataContracts)
             : GenerateConcreteSchema(dataContract, schemaRepository);
 
-        if (_generatorOptions.UseAllOfToExtendReferenceSchemas && schema is OpenApiSchemaReference reference)
+        if (schema is OpenApiSchemaReference reference)
         {
-            schema = new OpenApiSchema() { AllOf = [reference] };
+            if (_generatorOptions.UseAllOfToExtendReferenceSchemas)
+            {
+                schema = new OpenApiSchema() { AllOf = [reference] };
+            }
+            else
+            {
+                var customAttributes = parameterInfo.GetCustomAttributes();
+
+                var defaultValue = parameterInfo.HasDefaultValue
+                    ? parameterInfo.DefaultValue
+                    : customAttributes.OfType<DefaultValueAttribute>().FirstOrDefault()?.Value;
+
+                if (defaultValue != null)
+                {
+                    reference.Default = GenerateDefaultValue(dataContract, modelType, defaultValue);
+                }
+            }
         }
 
         if (schema is OpenApiSchema concrete)

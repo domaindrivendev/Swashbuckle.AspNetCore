@@ -11,6 +11,7 @@ using Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Carts;
 using Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Country;
 using Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Dragons;
 using Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Files;
+using Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.GetWeeklyApppointments;
 using Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Issue3013;
 using Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Kittens;
 using Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Orders;
@@ -60,6 +61,11 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests
         public global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Files.FilesRequestBuilder Files
         {
             get => new global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Files.FilesRequestBuilder(PathParameters, RequestAdapter);
+        }
+        /// <summary>The getWeeklyApppointments property</summary>
+        public global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.GetWeeklyApppointments.GetWeeklyApppointmentsRequestBuilder GetWeeklyApppointments
+        {
+            get => new global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.GetWeeklyApppointments.GetWeeklyApppointmentsRequestBuilder(PathParameters, RequestAdapter);
         }
         /// <summary>The Issue3013 property</summary>
         public global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Issue3013.Issue3013RequestBuilder Issue3013
