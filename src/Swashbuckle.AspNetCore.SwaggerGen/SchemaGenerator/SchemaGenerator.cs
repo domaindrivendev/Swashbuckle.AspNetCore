@@ -115,9 +115,11 @@ public class SchemaGenerator(
                     .Where(t => t.IsGenericType)
                     .ToArray();
 
-                var isDictionaryType =
-                    genericTypes.Any(t => t.GetGenericTypeDefinition() == typeof(IDictionary<,>)) ||
-                    genericTypes.Any(t => t.GetGenericTypeDefinition() == typeof(IReadOnlyDictionary<,>));
+                var isDictionaryType = genericTypes.Any(static (type) =>
+                {
+                    var definition = type.GetGenericTypeDefinition();
+                    return definition == typeof(IDictionary<,>) || definition == typeof(IReadOnlyDictionary<,>);
+                });
 
                 if (isDictionaryType && schema.AdditionalProperties is OpenApiSchema additionalProperties)
                 {
