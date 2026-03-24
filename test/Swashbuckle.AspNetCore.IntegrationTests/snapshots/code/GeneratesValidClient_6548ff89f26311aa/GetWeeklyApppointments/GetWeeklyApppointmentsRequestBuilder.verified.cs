@@ -32,6 +32,9 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.GetWeeklyApppointme
         public GetWeeklyApppointmentsRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/get-weekly-apppointments{?dayOfWeek*}", rawUrl)
         {
         }
+        /// <summary>
+        /// Retrieves the list of appointments this week for the specified day.
+        /// </summary>
         /// <returns>A <see cref="Stream"/></returns>
         /// <param name="cancellationToken">Cancellation token to use when cancelling requests</param>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
@@ -47,6 +50,9 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.GetWeeklyApppointme
             var requestInfo = ToPutRequestInformation(requestConfiguration);
             return await RequestAdapter.SendPrimitiveAsync<Stream>(requestInfo, default, cancellationToken).ConfigureAwait(false);
         }
+        /// <summary>
+        /// Retrieves the list of appointments this week for the specified day.
+        /// </summary>
         /// <returns>A <see cref="RequestInformation"/></returns>
         /// <param name="requestConfiguration">Configuration for the request such as headers, query parameters, and middleware options.</param>
 #if NETSTANDARD2_1_OR_GREATER || NETCOREAPP3_1_OR_GREATER
@@ -71,11 +77,13 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.GetWeeklyApppointme
         {
             return new global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.GetWeeklyApppointments.GetWeeklyApppointmentsRequestBuilder(rawUrl, RequestAdapter);
         }
+        /// <summary>
+        /// Retrieves the list of appointments this week for the specified day.
+        /// </summary>
         [global::System.CodeDom.Compiler.GeneratedCode("Kiota", "1.0.0")]
-        #pragma warning disable CS1591
         public partial class GetWeeklyApppointmentsRequestBuilderPutQueryParameters 
-        #pragma warning restore CS1591
         {
+            /// <summary>The day of week for which to get appointments.</summary>
             [QueryParameter("dayOfWeek")]
             public int? DayOfWeek { get; set; }
         }
