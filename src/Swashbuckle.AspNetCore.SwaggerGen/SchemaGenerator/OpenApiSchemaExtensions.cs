@@ -169,9 +169,14 @@ public static class OpenApiSchemaExtensions
 
     private static void ApplyDataTypeAttribute(OpenApiSchema schema, DataTypeAttribute dataTypeAttribute)
     {
+
         if (DataFormatMappings.TryGetValue(dataTypeAttribute.DataType, out string format))
         {
             schema.Format = format;
+        }
+        else if (dataTypeAttribute.DataType == AnnotationsDataType.Custom)
+        {
+            schema.Format = dataTypeAttribute.CustomDataType;
         }
     }
 
