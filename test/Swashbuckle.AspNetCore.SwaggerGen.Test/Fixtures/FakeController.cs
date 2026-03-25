@@ -34,6 +34,9 @@ public class FakeController
     public void ActionWithParameterWithRequiredAttribute([Required] string param)
     { }
 
+    public void ActionWithParameterWithCustomDataTypeAttribute([DataType("uuid")] string param)
+    { }
+
     public void ActionWithParameterWithBindRequiredAttribute([BindRequired] string param)
     { }
 
