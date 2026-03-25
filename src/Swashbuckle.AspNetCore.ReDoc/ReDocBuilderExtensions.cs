@@ -41,7 +41,11 @@ public static class ReDocBuilderExtensions
         Action<ReDocOptions> setupAction = null)
     {
         var options = ResolveOptions(endpoints.ServiceProvider, setupAction);
-        if (routePrefix != null) options.RoutePrefix = routePrefix;
+
+        if (routePrefix != null)
+        {
+            options.RoutePrefix = routePrefix;
+        }
         EnsureDefaultSpecUrl(options);
 
         var pipeline = endpoints.CreateApplicationBuilder()

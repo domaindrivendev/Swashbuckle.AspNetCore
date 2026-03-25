@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<JsonOptions>(options => options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options => { options.SwaggerDoc("v1", new() { Title = "WebApi", Version = "v1" }); });
+builder.Services.AddSwaggerGen(options => options.SwaggerDoc("v1", new() { Title = "WebApi", Version = "v1" }));
 
 // Authentication and Authorization are added to verify that MapSwaggerUI and MapReDoc work as expected when RequireAuthorization is used.
 builder.Services.AddAuthentication().AddBearerToken();

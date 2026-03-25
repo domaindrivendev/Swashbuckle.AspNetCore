@@ -47,7 +47,10 @@ public static class SwaggerUIBuilderExtensions
     {
         var options = ResolveOptions(endpoints.ServiceProvider, setupAction);
 
-        if (routePrefix != null) options.RoutePrefix = routePrefix;
+        if (routePrefix != null)
+        {
+            options.RoutePrefix = routePrefix;
+        }
 
         var hostingEnv = endpoints.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
         EnsureDefaultUrl(options, hostingEnv.ApplicationName);
