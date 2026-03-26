@@ -80,6 +80,7 @@
     <Project Path="test/WebSites/TodoApp/TodoApp.csproj" />
     <Project Path="test/WebSites/TopLevelSwaggerDoc/TopLevelSwaggerDoc.csproj" />
     <Project Path="test/WebSites/WebApi.Aot/WebApi.Aot.csproj" />
+    <Project Path="test/WebSites/WebApi.Map/WebApi.Map.csproj" />
     <Project Path="test/WebSites/WebApi/WebApi.csproj" />
   </Folder>
 </Solution>
