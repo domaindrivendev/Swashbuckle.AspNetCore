@@ -630,6 +630,33 @@ public partial class VerifyTests
         await Verify(document);
     }
 
+    [Fact]
+    public async Task ActionWithCustomDataTypeQueryParameter()
+    {
+        var subject = Subject(
+            apiDescriptions:
+            [
+                ApiDescriptionFactory.Create(
+                    methodInfo: typeof(FakeController).GetMethod(nameof(FakeController.ActionWithParameterWithCustomDataTypeAttribute)),
+                    groupName: "v1",
+                    httpMethod: "POST",
+                    relativePath: "resource",
+                    parameterDescriptions:
+                    [
+                        new ApiParameterDescription
+                        {
+                            Name = "param",
+                            Source = BindingSource.Query
+                        }
+                    ])
+            ]
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        await Verify(document);
+    }
+
     [Theory]
     [InlineData(nameof(FakeController.ActionWithParameterWithRequiredAttribute))]
     [InlineData(nameof(FakeController.ActionWithParameterWithBindRequiredAttribute))]

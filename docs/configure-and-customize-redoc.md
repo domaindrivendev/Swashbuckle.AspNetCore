@@ -134,4 +134,36 @@ app.UseReDoc(options =>
 > [!TIP]
 > To get started, you should base your custom `index.html` on the [default version](../src/Swashbuckle.AspNetCore.ReDoc/index.html).
 
+## Use `MapReDoc` with endpoint routing
+
+`MapReDoc` is an endpoint-routing alternative to `UseReDoc`. The options API is the same, so all customization examples on this page also apply when using `MapReDoc`.
+
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: Redoc-MapReDoc -->
+<a id='snippet-Redoc-MapReDoc'></a>
+```cs
+app.MapReDoc();
+```
+<sup><a href='/test/WebSites/WebApi.Map/Program.cs#L33-L35' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-MapReDoc' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
+
+The main differences are:
+
+- **Use**ReDoc adds middleware directly to the request pipeline and returns `IApplicationBuilder`.
+- **Map**ReDoc maps ReDoc via endpoint routing and returns `IEndpointConventionBuilder`.
+
+- Because `MapReDoc` returns an endpoint convention builder, you can attach endpoint metadata/conventions (for example, authorization policies) directly to the mapped ReDoc endpoint.
+
+<!-- markdownlint-disable MD031 MD033 -->
+<!-- snippet: Redoc-MapReDoc-RequireAuthorization -->
+<a id='snippet-Redoc-MapReDoc-RequireAuthorization'></a>
+```cs
+app.MapReDoc("redoc-auth")
+   .RequireAuthorization(); // Remember to also add RequireAuthorization to MapSwagger
+```
+<sup><a href='/test/WebSites/WebApi.Map/Program.cs#L37-L40' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-MapReDoc-RequireAuthorization' title='Start of snippet'>anchor</a></sup>
+<!-- endSnippet -->
+<!-- markdownlint-enable MD031 MD033 -->
+
 [redoc-options]: https://github.com/Redocly/redoc/blob/main/docs/deployment/html.md#the-redoc-object

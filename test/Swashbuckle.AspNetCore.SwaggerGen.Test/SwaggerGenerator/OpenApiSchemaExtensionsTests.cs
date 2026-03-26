@@ -134,6 +134,21 @@ public static class OpenApiSchemaExtensionsTests
         Assert.Null(schema.Maximum);
     }
 
+    [Fact]
+    public static void ApplyValidationAttributes_Handles_DataTypeAttribute_CustomDataType_Correctly()
+    {
+        // Arrange
+        string customDataType = "uuid";
+        var dataTypeAttribute = new DataTypeAttribute(customDataType);
+        var schema = new OpenApiSchema();
+
+        // Act
+        schema.ApplyValidationAttributes([dataTypeAttribute]);
+
+        // Assert
+        Assert.Equal(customDataType, schema.Format);
+    }
+
     private sealed class CultureSwitcher : IDisposable
     {
         private readonly CultureInfo _previous;

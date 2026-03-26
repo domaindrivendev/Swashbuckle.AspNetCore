@@ -173,6 +173,10 @@ public static class OpenApiSchemaExtensions
         {
             schema.Format = format;
         }
+        else if (dataTypeAttribute.DataType == AnnotationsDataType.Custom)
+        {
+            schema.Format = dataTypeAttribute.CustomDataType;
+        }
     }
 
     private static void ApplyMinLengthAttribute(OpenApiSchema schema, MinLengthAttribute minLengthAttribute)
