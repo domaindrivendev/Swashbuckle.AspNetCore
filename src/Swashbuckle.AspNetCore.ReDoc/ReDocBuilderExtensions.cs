@@ -11,9 +11,7 @@ public static class ReDocBuilderExtensions
     /// Register the Redoc middleware with provided options
     /// </summary>
     public static IApplicationBuilder UseReDoc(this IApplicationBuilder app, ReDocOptions options)
-    {
-        return app.UseMiddleware<ReDocMiddleware>(options);
-    }
+        => app.UseMiddleware<ReDocMiddleware>(options);
 
     /// <summary>
     /// Register the Redoc middleware with optional setup action for DI-injected options
@@ -23,6 +21,7 @@ public static class ReDocBuilderExtensions
         Action<ReDocOptions> setupAction = null)
     {
         var options = ResolveOptions(app.ApplicationServices, setupAction);
+
         EnsureDefaultSpecUrl(options);
 
         return app.UseReDoc(options);
@@ -46,6 +45,7 @@ public static class ReDocBuilderExtensions
         {
             options.RoutePrefix = routePrefix;
         }
+
         EnsureDefaultSpecUrl(options);
 
         var pipeline = endpoints.CreateApplicationBuilder()

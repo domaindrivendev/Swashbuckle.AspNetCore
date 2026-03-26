@@ -56,27 +56,21 @@ string[] summaries =
 ];
 
 app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-            new
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = summaries[Random.Shared.Next(summaries.Length)]
-            }
-        )
-        .ToArray();
-    return forecast;
-});
+    Enumerable.Range(1, 5)
+    .Select(index => new Forecast(
+        DateTime.Now.AddDays(index),
+        Random.Shared.Next(-20, 55),
+        summaries[Random.Shared.Next(summaries.Length)]))
+    .ToArray());
 
 app.Run();
+
+internal record Forecast(DateTime Date, int TemperatureC, string Summary);
 
 namespace WebApi.Map
 {
     /// <summary>
     /// Expose the Program class for use with <c>WebApplicationFactory</c>
     /// </summary>
-    public partial class Program
-    {
-    }
+    public partial class Program;
 }

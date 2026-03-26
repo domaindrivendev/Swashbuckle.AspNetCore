@@ -243,8 +243,6 @@ app.UseSwaggerUI(options =>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
 
-[swagger-ui]: https://github.com/swagger-api/swagger-ui
-
 ## Use `MapSwaggerUI` with endpoint routing
 
 `MapSwaggerUI` is an endpoint-routing alternative to `UseSwaggerUI`. The options API is the same, so all customization examples on this page also apply when using `MapSwaggerUI`.
@@ -277,3 +275,5 @@ app.MapSwaggerUI("swagger-auth")
 <sup><a href='/test/WebSites/WebApi.Map/Program.cs#L26-L29' title='Snippet source file'>snippet source</a> | <a href='#snippet-SwaggerUI-MapSwaggerUI-RequireAuthorization' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
+
+[swagger-ui]: https://github.com/swagger-api/swagger-ui

@@ -1,0 +1,58 @@
+﻿{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "WebApi",
+    "version": "v1"
+  },
+  "paths": {
+    "/weatherforecast": {
+      "get": {
+        "tags": [
+          "WebApi.Map"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Forecast"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Forecast": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "temperatureC": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "WebApi.Map"
+    }
+  ]
+}
