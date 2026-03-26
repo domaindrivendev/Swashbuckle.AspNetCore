@@ -134,8 +134,6 @@ app.UseReDoc(options =>
 > [!TIP]
 > To get started, you should base your custom `index.html` on the [default version](../src/Swashbuckle.AspNetCore.ReDoc/index.html).
 
-[redoc-options]: https://github.com/Redocly/redoc/blob/main/docs/deployment/html.md#the-redoc-object
-
 ## Use `MapReDoc` with endpoint routing
 
 `MapReDoc` is an endpoint-routing alternative to `UseReDoc`. The options API is the same, so all customization examples on this page also apply when using `MapReDoc`.
@@ -167,3 +165,5 @@ app.MapReDoc("redoc-auth")
 <sup><a href='/test/WebSites/WebApi.Map/Program.cs#L37-L40' title='Snippet source file'>snippet source</a> | <a href='#snippet-Redoc-MapReDoc-RequireAuthorization' title='Start of snippet'>anchor</a></sup>
 <!-- endSnippet -->
 <!-- markdownlint-enable MD031 MD033 -->
+
+[redoc-options]: https://github.com/Redocly/redoc/blob/main/docs/deployment/html.md#the-redoc-object

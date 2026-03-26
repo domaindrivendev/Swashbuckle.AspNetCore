@@ -53,6 +53,7 @@ public static class SwaggerUIBuilderExtensions
         }
 
         var hostingEnv = endpoints.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
+
         EnsureDefaultUrl(options, hostingEnv.ApplicationName);
 
         var pipeline = endpoints.CreateApplicationBuilder()
@@ -66,7 +67,9 @@ public static class SwaggerUIBuilderExtensions
     {
         using var scope = serviceProvider.CreateScope();
         var options = scope.ServiceProvider.GetRequiredService<IOptionsSnapshot<SwaggerUIOptions>>().Value;
+
         setupAction?.Invoke(options);
+
         return options;
     }
 
