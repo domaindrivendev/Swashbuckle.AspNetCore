@@ -27,6 +27,19 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
     }
 
     [Fact]
+    public async Task IndexUrl_HeadRequest_ReturnsMetadata()
+    {
+        var site = new TestSite(typeof(ReDocApp.Startup), outputHelper);
+        using var client = site.BuildClient();
+        using var request = new HttpRequestMessage(HttpMethod.Head, "/api-docs/index.html");
+        using var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.True(response.Content.Headers.ContentLength > 0, $"Content-Length should be greater than 0, but was {response.Content.Headers.ContentLength}");
+        Assert.Empty(await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
+    }
+
+    [Fact]
     public async Task IndexUrl_ReturnsEmbeddedVersionOfTheRedocUI()
     {
         var cancellationToken = TestContext.Current.CancellationToken;

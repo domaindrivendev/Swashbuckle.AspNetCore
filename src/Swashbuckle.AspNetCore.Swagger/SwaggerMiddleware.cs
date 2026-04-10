@@ -12,6 +12,7 @@ namespace Swashbuckle.AspNetCore.Swagger;
 internal sealed class SwaggerMiddleware
 {
     private static readonly Encoding UTF8WithoutBom = new UTF8Encoding(false);
+    private static readonly string[] AllowedHttpMethods = [HttpMethods.Get, HttpMethods.Head];
 
     private readonly RequestDelegate _next;
     private readonly SwaggerOptions _options;
@@ -74,13 +75,15 @@ internal sealed class SwaggerMiddleware
                 filter(swagger, httpContext.Request);
             }
 
+            var isHeadRequest = HttpMethods.IsHead(httpContext.Request.Method);
+
             if (extension is ".yaml" or ".yml")
             {
-                await RespondWithSwaggerYaml(httpContext.Response, swagger);
+                await RespondWithSwaggerYaml(httpContext.Response, swagger, isHeadRequest);
             }
             else
             {
-                await RespondWithSwaggerJson(httpContext.Response, swagger);
+                await RespondWithSwaggerJson(httpContext.Response, swagger, isHeadRequest);
             }
         }
         catch (UnknownSwaggerDocument)
@@ -94,7 +97,7 @@ internal sealed class SwaggerMiddleware
         documentName = null;
         extension = null;
 
-        if (!HttpMethods.IsGet(request.Method))
+        if (!AllowedHttpMethods.Contains(request.Method, StringComparer.OrdinalIgnoreCase))
         {
             return false;
         }
@@ -125,7 +128,7 @@ internal sealed class SwaggerMiddleware
         return false;
     }
 
-    private async Task RespondWithSwaggerJson(HttpResponse response, OpenApiDocument swagger)
+    private async Task RespondWithSwaggerJson(HttpResponse response, OpenApiDocument swagger, bool isHeadRequest)
     {
         string json;
 
@@ -140,11 +143,15 @@ internal sealed class SwaggerMiddleware
 
         response.StatusCode = 200;
         response.ContentType = "application/json;charset=utf-8";
+        response.ContentLength = UTF8WithoutBom.GetByteCount(json);
 
-        await response.WriteAsync(json, UTF8WithoutBom);
+        if (!isHeadRequest)
+        {
+            await response.WriteAsync(json, UTF8WithoutBom);
+        }
     }
 
-    private async Task RespondWithSwaggerYaml(HttpResponse response, OpenApiDocument swagger)
+    private async Task RespondWithSwaggerYaml(HttpResponse response, OpenApiDocument swagger, bool isHeadRequest)
     {
         string yaml;
 
@@ -159,8 +166,12 @@ internal sealed class SwaggerMiddleware
 
         response.StatusCode = 200;
         response.ContentType = "text/yaml;charset=utf-8";
+        response.ContentLength = UTF8WithoutBom.GetByteCount(yaml);
 
-        await response.WriteAsync(yaml, UTF8WithoutBom);
+        if (!isHeadRequest)
+        {
+            await response.WriteAsync(yaml, UTF8WithoutBom);
+        }
     }
 
     private void SerializeDocument(

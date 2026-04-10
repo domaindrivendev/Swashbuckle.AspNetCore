@@ -10,6 +10,7 @@ namespace Swashbuckle.AspNetCore.SwaggerUI;
 
 internal sealed partial class SwaggerUIMiddleware
 {
+    private static readonly string[] AllowedHttpMethods = [HttpMethods.Get, HttpMethods.Head];
     private static readonly string SwaggerUIVersion = GetSwaggerUIVersion();
 
     private readonly RequestDelegate _next;
@@ -37,7 +38,7 @@ internal sealed partial class SwaggerUIMiddleware
 
     public async Task Invoke(HttpContext httpContext)
     {
-        if (HttpMethods.IsGet(httpContext.Request.Method))
+        if (AllowedHttpMethods.Contains(httpContext.Request.Method, StringComparer.OrdinalIgnoreCase))
         {
             var path = httpContext.Request.Path.Value;
 
@@ -167,7 +168,12 @@ internal sealed partial class SwaggerUIMiddleware
 
                 SetHeaders(response, _options, etag);
 
-                await response.WriteAsync(text, Encoding.UTF8, cancellationToken);
+                response.ContentLength = Encoding.UTF8.GetByteCount(text);
+
+                if (!HttpMethods.IsHead(context.Request.Method))
+                {
+                    await response.WriteAsync(text, Encoding.UTF8, cancellationToken);
+                }
             }
         }
     }

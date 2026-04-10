@@ -1,6 +1,7 @@
 ﻿using System.IO.Compression;
 using System.Net;
 using System.Security.Cryptography;
+using Microsoft.Net.Http.Headers;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests;
 
@@ -51,6 +52,23 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
 
         Assert.Equal(HttpStatusCode.MovedPermanently, response.StatusCode);
         Assert.Equal(expectedRedirectPath, response.Headers.Location.ToString());
+    }
+
+    [Theory]
+    [InlineData(typeof(Basic.Startup), "/index.html")]
+    [InlineData(typeof(CustomUIConfig.Startup), "/swagger/index.html")]
+    public async Task IndexUrl_HeadRequest_ReturnsMetadata(
+        Type startupType,
+        string requestPath)
+    {
+        var site = new TestSite(startupType, outputHelper);
+        using var client = site.BuildClient();
+        using var request = new HttpRequestMessage(HttpMethod.Head, requestPath);
+        using var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.True(response.Content.Headers.ContentLength > 0, $"{HeaderNames.ContentLength} should be greater than 0, but was {response.Content.Headers.ContentLength}");
+        Assert.Empty(await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
     }
 
     [Theory]
