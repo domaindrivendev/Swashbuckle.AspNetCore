@@ -3,7 +3,6 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
-using Microsoft.Net.Http.Headers;
 using ReDocApp = ReDoc;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests;
