@@ -65,7 +65,7 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
         using var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.True(response.Content.Headers.ContentLength > 0, $"{HeaderNames.ContentLength} should be greater than 0, but was {response.Content.Headers.ContentLength}");
+        Assert.True(response.Content.Headers.ContentLength > 0, "Content-Length should not be zero.");
         Assert.Empty(await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
     }
 

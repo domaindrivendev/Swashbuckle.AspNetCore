@@ -12,7 +12,7 @@ namespace Swashbuckle.AspNetCore.Swagger;
 internal sealed class SwaggerMiddleware
 {
     private static readonly Encoding UTF8WithoutBom = new UTF8Encoding(false);
-    private static readonly string[] AllowedHttpMethods = [HttpMethods.Get, HttpMethods.Head];
+    private static readonly HashSet<string> AllowedHttpMethods = new(StringComparer.OrdinalIgnoreCase) { HttpMethods.Get, HttpMethods.Head };
 
     private readonly RequestDelegate _next;
     private readonly SwaggerOptions _options;
@@ -97,7 +97,7 @@ internal sealed class SwaggerMiddleware
         documentName = null;
         extension = null;
 
-        if (!AllowedHttpMethods.Contains(request.Method, StringComparer.OrdinalIgnoreCase))
+        if (!AllowedHttpMethods.Contains(request.Method))
         {
             return false;
         }
@@ -143,9 +143,13 @@ internal sealed class SwaggerMiddleware
 
         response.StatusCode = 200;
         response.ContentType = "application/json;charset=utf-8";
-        response.ContentLength = UTF8WithoutBom.GetByteCount(json);
 
-        if (!isHeadRequest)
+        if (isHeadRequest)
+        {
+            // HEAD response must have an empty body, but have correct Content-Length header
+            response.ContentLength = UTF8WithoutBom.GetByteCount(json);
+        }
+        else
         {
             await response.WriteAsync(json, UTF8WithoutBom);
         }
@@ -166,9 +170,13 @@ internal sealed class SwaggerMiddleware
 
         response.StatusCode = 200;
         response.ContentType = "text/yaml;charset=utf-8";
-        response.ContentLength = UTF8WithoutBom.GetByteCount(yaml);
 
-        if (!isHeadRequest)
+        if (isHeadRequest)
+        {
+            // HEAD response must have an empty body, but have correct Content-Length header
+            response.ContentLength = UTF8WithoutBom.GetByteCount(yaml);
+        }
+        else
         {
             await response.WriteAsync(yaml, UTF8WithoutBom);
         }
