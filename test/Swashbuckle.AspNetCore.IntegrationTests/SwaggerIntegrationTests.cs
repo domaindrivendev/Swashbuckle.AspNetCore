@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
@@ -51,7 +52,20 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
 
         using var swaggerResponse = await client.GetAsync("/swagger/v2/swagger.json", TestContext.Current.CancellationToken);
 
-        Assert.Equal(System.Net.HttpStatusCode.NotFound, swaggerResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, swaggerResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task SwaggerEndpoint_ReturnsMetadata_ForHeadRequest()
+    {
+        var testSite = new TestSite(typeof(Basic.Startup), outputHelper);
+        using var client = testSite.BuildClient();
+        using var request = new HttpRequestMessage(HttpMethod.Head, "/swagger/v1/swagger.json");
+        using var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.True(response.Content.Headers.ContentLength > 0, "Content-Length should not be zero.");
+        Assert.Empty(await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
     }
 
     [Fact]

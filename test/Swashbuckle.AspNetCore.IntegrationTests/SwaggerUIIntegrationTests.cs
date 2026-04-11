@@ -54,6 +54,23 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
     }
 
     [Theory]
+    [InlineData(typeof(Basic.Startup), "/index.html")]
+    [InlineData(typeof(CustomUIConfig.Startup), "/swagger/index.html")]
+    public async Task IndexUrl_HeadRequest_ReturnsMetadata(
+        Type startupType,
+        string requestPath)
+    {
+        var site = new TestSite(startupType, outputHelper);
+        using var client = site.BuildClient();
+        using var request = new HttpRequestMessage(HttpMethod.Head, requestPath);
+        using var response = await client.SendAsync(request, TestContext.Current.CancellationToken);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.True(response.Content.Headers.ContentLength > 0, "Content-Length should not be be 0.");
+        Assert.Empty(await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
+    }
+
+    [Theory]
     [InlineData(typeof(Basic.Startup), "/index.html", "/swagger-ui.js", "/index.css", "/swagger-ui.css")]
     [InlineData(typeof(CustomUIConfig.Startup), "/swagger/index.html", "/swagger/swagger-ui.js", "swagger/index.css", "/swagger/swagger-ui.css")]
     public async Task IndexUrl_ReturnsEmbeddedVersionOfTheSwaggerUI(
