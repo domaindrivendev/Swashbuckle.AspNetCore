@@ -23,7 +23,7 @@
         <dependency id="Swashbuckle.AspNetCore.Swagger" version="$version$" exclude="Build,Analyzers" />
         <dependency id="Swashbuckle.AspNetCore.SwaggerGen" version="$version$" exclude="Build,Analyzers" />
         <dependency id="Swashbuckle.AspNetCore.SwaggerUI" version="$version$" exclude="Build,Analyzers" />
-        <dependency id="Microsoft.Extensions.ApiDescription.Server" version="11.0.0-preview.2.26159.112" />
+        <dependency id="Microsoft.Extensions.ApiDescription.Server" version="11.0.0-preview.3.26207.106" />
       </group>
     </dependencies>
   </metadata>
