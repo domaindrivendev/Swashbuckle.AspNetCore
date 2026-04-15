@@ -10,7 +10,7 @@
       "rollForward": false
     },
     "markdownsnippets.tool": {
-      "version": "28.0.2",
+      "version": "28.1.0",
       "commands": [
         "mdsnippets"
       ],
