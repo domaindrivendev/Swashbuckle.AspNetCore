@@ -10,6 +10,7 @@ namespace Swashbuckle.AspNetCore.ReDoc;
 
 internal sealed class ReDocMiddleware
 {
+    private static readonly HashSet<string> AllowedHttpMethods = new(StringComparer.OrdinalIgnoreCase) { HttpMethods.Get, HttpMethods.Head };
     private static readonly string ReDocVersion = GetReDocVersion();
 
     private readonly RequestDelegate _next;
@@ -37,7 +38,7 @@ internal sealed class ReDocMiddleware
 
     public async Task Invoke(HttpContext httpContext)
     {
-        if (HttpMethods.IsGet(httpContext.Request.Method))
+        if (AllowedHttpMethods.Contains(httpContext.Request.Method))
         {
             var path = httpContext.Request.Path.Value;
 
@@ -165,7 +166,15 @@ internal sealed class ReDocMiddleware
 
             SetHeaders(response, _options, etag);
 
-            await response.WriteAsync(text, Encoding.UTF8, cancellationToken);
+            if (HttpMethods.IsGet(context.Request.Method))
+            {
+                await response.WriteAsync(text, Encoding.UTF8, cancellationToken);
+            }
+            else if (HttpMethods.IsHead(context.Request.Method))
+            {
+                // HEAD response must have an empty body, but have correct Content-Length header
+                response.ContentLength = Encoding.UTF8.GetByteCount(text);
+            }
         }
 
         static string GetETag(string text)

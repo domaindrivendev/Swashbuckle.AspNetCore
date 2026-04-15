@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.AspNetCore.Routing.Template;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
@@ -46,7 +47,7 @@ public static class SwaggerBuilderExtensions
             .UseSwagger(Configure)
             .Build();
 
-        return endpoints.MapGet(pattern, pipeline);
+        return endpoints.MapMethods(pattern, [HttpMethods.Get, HttpMethods.Head], pipeline);
 
         void Configure(SwaggerOptions options)
         {
