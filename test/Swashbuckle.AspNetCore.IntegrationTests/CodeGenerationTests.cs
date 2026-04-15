@@ -3,6 +3,7 @@
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.OpenApi;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests;
@@ -10,7 +11,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests;
 /// <summary>
 /// Tests that validate that OpenAPI documents produce valid C# code when used with code generation tools.
 /// </summary>
-public class CodeGenerationTests(ITestOutputHelper outputHelper)
+public partial class CodeGenerationTests(ITestOutputHelper outputHelper)
 {
     private const string SnapshotsDirectory = "snapshots/code";
 
@@ -87,6 +88,8 @@ public class CodeGenerationTests(ITestOutputHelper outputHelper)
             options: new() { RecurseSubdirectories = true })
             .UseDirectory(SnapshotsDirectory)
             .UseFileName($"{nameof(GeneratesValidClient)}_{hashString}")
+            .ScrubLinesWithReplace(line => GeneratedCodeRegex().Replace(line, "[GeneratedCode]"))
+            .ScrubLinesWithReplace(line => NSwagGenerationComment().Replace(line, "//     Generated using the NSwag toolchain"))
             .AddScrubber((builder) =>
             {
                 var content = builder.ToString();
@@ -124,6 +127,12 @@ public class CodeGenerationTests(ITestOutputHelper outputHelper)
             .GetCustomAttributes<AssemblyMetadataAttribute>()
             .First((p) => p.Key is "ProjectRoot")
             .Value!;
+
+    [GeneratedRegex(@"\[System\.CodeDom\.Compiler\.GeneratedCode\(\"".*\""\)]")]
+    private static partial Regex GeneratedCodeRegex();
+
+    [GeneratedRegex(@"^//     Generated using the NSwag toolchain.*$")]
+    private static partial Regex NSwagGenerationComment();
 }
 
 #endif
