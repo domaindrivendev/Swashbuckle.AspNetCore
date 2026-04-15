@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net10.0' ">
-    <PackageReference Update="Microsoft.OpenApi.YamlReader" VersionOverride="2.7.0" />
+    <PackageReference Update="Microsoft.OpenApi.YamlReader" VersionOverride="2.7.3" />
   </ItemGroup>
 
   <ItemGroup>
