@@ -31,7 +31,7 @@
       "rollForward": false
     },
     "nswag.consolecore": {
-      "version": "14.6.3",
+      "version": "14.7.0",
       "commands": [
         "nswag"
       ],
