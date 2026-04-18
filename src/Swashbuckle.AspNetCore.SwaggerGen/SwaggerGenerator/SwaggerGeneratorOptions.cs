@@ -81,7 +81,10 @@ public class SwaggerGeneratorOptions
 
     private bool DefaultDocInclusionPredicate(string documentName, ApiDescription apiDescription)
     {
-        return apiDescription.GroupName == null || apiDescription.GroupName == documentName;
+        // If the endpoint's GroupName doesn't match any registered document, treat it as
+        // ungrouped (include it). This ensures endpoints with a GroupName that's not mapped
+        // to a specific document are not inadvertently excluded from the OpenAPI document.
+        return !_options.SwaggerDocs.ContainsKey(apiDescription.GroupName) || apiDescription.GroupName == documentName;
     }
 
     private string DefaultOperationIdSelector(ApiDescription apiDescription)
