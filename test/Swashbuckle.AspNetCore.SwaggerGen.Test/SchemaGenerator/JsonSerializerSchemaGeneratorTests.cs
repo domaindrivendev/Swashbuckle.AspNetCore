@@ -483,6 +483,31 @@ public class JsonSerializerSchemaGeneratorTests
         AssertIsNullable(schema.Properties["RequiredNonNullableString"], false);
         Assert.Contains("RequiredNonNullableString", schema.Required.ToArray());
     }
+
+    [Fact]
+    public void GenerateSchema_NonNullableReferenceTypesAsRequired_PreservesNullable_IfPropertyHasRequiredKeywordAndIsNullable()
+    {
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Subject(configureGenerator: (c) => c.NonNullableReferenceTypesAsRequired = true).GenerateSchema(typeof(TypeWithNullableReferenceTypes), schemaRepository);
+
+        var reference = Assert.IsType<OpenApiSchemaReference>(referenceSchema);
+
+        Assert.NotNull(reference);
+        Assert.NotNull(reference.Reference);
+        Assert.NotNull(reference.Reference.Id);
+
+        var schema = schemaRepository.Schemas[reference.Reference.Id];
+        Assert.NotNull(schema.Properties);
+
+        // required string? — must be present (required) AND may be null (nullable: true)
+        AssertIsNullable(schema.Properties["RequiredNullableString"]);
+        Assert.Contains("RequiredNullableString", schema.Required.ToArray());
+
+        // required string — must be present (required) AND must have a value (nullable: false)
+        AssertIsNullable(schema.Properties["RequiredNonNullableString"], false);
+        Assert.Contains("RequiredNonNullableString", schema.Required.ToArray());
+    }
 #nullable disable
 
     [Theory]
