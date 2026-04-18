@@ -1127,6 +1127,23 @@ public class JsonSerializerSchemaGeneratorTests
     }
 
     [Theory]
+    [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextAnnotated.NonNullableString))]
+    [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextNotAnnotated.NonNullableString))]
+    public void GenerateSchema_NonNullableReferenceTypesAsRequired_DoesNotMarkPropertyAsNullable(
+        Type declaringType,
+        string subType,
+        string propertyName)
+    {
+        var subject = Subject(c => c.NonNullableReferenceTypesAsRequired = true);
+        var schemaRepository = new SchemaRepository();
+
+        subject.GenerateSchema(declaringType, schemaRepository);
+
+        var propertySchema = schemaRepository.Schemas[subType].Properties[propertyName];
+        AssertIsNullable(propertySchema, expected: false);
+    }
+
+    [Theory]
     [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithNestedSubType.Nested), nameof(TypeWithNullableContextAnnotated.SubTypeWithNestedSubType.Nested.NullableString), true)]
     [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithNestedSubType.Nested), nameof(TypeWithNullableContextAnnotated.SubTypeWithNestedSubType.Nested.NonNullableString), false)]
     [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.SubTypeWithNestedSubType.Nested), nameof(TypeWithNullableContextAnnotated.SubTypeWithNestedSubType.Nested.NullableString), true)]
