@@ -4,7 +4,7 @@ internal class CommandRunner(string commandName, string commandDescription, Text
 {
     private readonly Dictionary<string, string> _argumentDescriptors = [];
     private readonly Dictionary<string, OptionDescriptor> _optionDescriptors = [];
-    private Func<IDictionary<string, string>, int> _runFunc = (_) => 1;
+    private Func<IDictionary<string, string>, Task<int>> _runFunc = (_) => Task.FromResult(1);
     private readonly List<CommandRunner> _subRunners = [];
     private readonly TextWriter _output = output;
 
@@ -27,7 +27,7 @@ internal class CommandRunner(string commandName, string commandDescription, Text
         _optionDescriptors.Add(name, new OptionDescriptor { Description = description, IsFlag = isFlag });
     }
 
-    public void OnRun(Func<IDictionary<string, string>, int> runFunc)
+    public void OnRun(Func<IDictionary<string, string>, Task<int>> runFunc)
     {
         _runFunc = runFunc;
     }
@@ -39,12 +39,12 @@ internal class CommandRunner(string commandName, string commandDescription, Text
         _subRunners.Add(runner);
     }
 
-    public int Run(IEnumerable<string> args)
+    public async Task<int> RunAsync(IEnumerable<string> args)
     {
         if (args.Any())
         {
             var subRunner = _subRunners.FirstOrDefault(r => r.CommandName.Split(' ').Last() == args.First());
-            if (subRunner != null) return subRunner.Run(args.Skip(1));
+            if (subRunner != null) return await subRunner.RunAsync(args.Skip(1));
         }
 
         if (_subRunners.Count != 0 || !TryParseArgs(args, out IDictionary<string, string> namedArgs))
@@ -53,7 +53,7 @@ internal class CommandRunner(string commandName, string commandDescription, Text
             return 1;
         }
 
-        return _runFunc(namedArgs);
+        return await _runFunc(namedArgs);
     }
 
     private bool TryParseArgs(IEnumerable<string> args, out IDictionary<string, string> namedArgs)

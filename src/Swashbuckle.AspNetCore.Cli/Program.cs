@@ -16,7 +16,7 @@ internal class Program
 {
     private const string OpenApiVersionOption = "--openapiversion";
 
-    public static int Main(string[] args)
+    public static async Task<int> Main(string[] args)
     {
         // Helper to simplify command line parsing etc.
         var runner = new CommandRunner("dotnet swagger", "Swashbuckle (Swagger) Command Line Tools", Console.Out);
@@ -45,7 +45,7 @@ internal class Program
                 using var child = Process.Start("dotnet", subProcessCommandLine);
 
                 child.WaitForExit();
-                return child.ExitCode;
+                return Task.FromResult(child.ExitCode);
             });
         });
 
@@ -60,14 +60,16 @@ internal class Program
             c.Option(OpenApiVersionOption, "");
             c.Option("--yaml", "", true);
 
-            c.OnRun((namedArgs) =>
+            c.OnRun(async (namedArgs) =>
             {
-                SetupAndRetrieveSwaggerProviderAndOptions(namedArgs, out var swaggerProvider, out var swaggerOptions);
+                SetupAndRetrieveSwaggerProviderAndOptions(namedArgs, out var asyncSwaggerProvider, out var swaggerProvider, out var swaggerOptions);
                 var swaggerDocumentSerializer = swaggerOptions?.Value?.CustomDocumentSerializer;
-                var swagger = swaggerProvider.GetSwagger(
-                    namedArgs["swaggerdoc"],
-                    namedArgs.TryGetValue("--host", out var arg) ? arg : null,
-                    namedArgs.TryGetValue("--basepath", out var namedArg) ? namedArg : null);
+
+                var host = namedArgs.TryGetValue("--host", out var arg) ? arg : null;
+                var basePath = namedArgs.TryGetValue("--basepath", out var namedArg) ? namedArg : null;
+                var swagger = asyncSwaggerProvider != null
+                    ? await asyncSwaggerProvider.GetSwaggerAsync(namedArgs["swaggerdoc"], host, basePath)
+                    : swaggerProvider.GetSwagger(namedArgs["swaggerdoc"], host, basePath);
 
                 // 4) Serialize to specified output location or stdout
                 var outputPath = namedArgs.TryGetValue("--output", out var arg1)
@@ -139,7 +141,7 @@ internal class Program
                 using var child = Process.Start("dotnet", subProcessCommandLine);
 
                 child.WaitForExit();
-                return child.ExitCode;
+                return Task.FromResult(child.ExitCode);
             });
         });
 
@@ -150,7 +152,7 @@ internal class Program
             c.Option("--output", "");
             c.OnRun((namedArgs) =>
             {
-                SetupAndRetrieveSwaggerProviderAndOptions(namedArgs, out var swaggerProvider, out var swaggerOptions);
+                SetupAndRetrieveSwaggerProviderAndOptions(namedArgs, out _, out var swaggerProvider, out var swaggerOptions);
                 IList<string> docNames = [];
 
                 string outputPath = namedArgs.TryGetValue("--output", out var arg1)
@@ -172,7 +174,7 @@ internal class Program
                 if (swaggerProvider is not ISwaggerDocumentMetadataProvider docMetaProvider)
                 {
                     writer.WriteLine($"The registered {nameof(ISwaggerProvider)} instance does not implement {nameof(ISwaggerDocumentMetadataProvider)}; unable to list the Swagger document names.");
-                    return -1;
+                    return Task.FromResult(-1);
                 }
 
                 docNames = docMetaProvider.GetDocumentNames();
@@ -182,14 +184,14 @@ internal class Program
                     writer.WriteLine($"\"{name}\"");
                 }
 
-                return 0;
+                return Task.FromResult(0);
             });
         });
 
-        return runner.Run(args);
+        return await runner.RunAsync(args);
     }
 
-    private static void SetupAndRetrieveSwaggerProviderAndOptions(IDictionary<string, string> namedArgs, out ISwaggerProvider swaggerProvider, out IOptions<SwaggerOptions> swaggerOptions)
+    private static void SetupAndRetrieveSwaggerProviderAndOptions(IDictionary<string, string> namedArgs, out IAsyncSwaggerProvider asyncSwaggerProvider, out ISwaggerProvider swaggerProvider, out IOptions<SwaggerOptions> swaggerOptions)
     {
         // 1) Configure host with provided startupassembly
         var startupAssembly = AssemblyLoadContext.Default.LoadFromAssemblyPath(
@@ -199,6 +201,7 @@ internal class Program
         var serviceProvider = GetServiceProvider(startupAssembly);
 
         // 3) Retrieve Swagger via configured provider
+        asyncSwaggerProvider = serviceProvider.GetService<IAsyncSwaggerProvider>();
         swaggerProvider = serviceProvider.GetRequiredService<ISwaggerProvider>();
         swaggerOptions = serviceProvider.GetService<IOptions<SwaggerOptions>>();
     }
