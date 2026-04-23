@@ -58,6 +58,7 @@
     <Project Path="test/Swashbuckle.AspNetCore.TestSupport/Swashbuckle.AspNetCore.TestSupport.csproj" />
   </Folder>
   <Folder Name="/test/WebSites/">
+    <Project Path="test/WebSites/Authorization/Authorization.csproj" />
     <Project Path="test/WebSites/Basic/Basic.csproj" />
     <Project Path="test/WebSites/CliExample/CliExample.csproj" />
     <Project Path="test/WebSites/CliExampleWithFactory/CliExampleWithFactory.csproj" />

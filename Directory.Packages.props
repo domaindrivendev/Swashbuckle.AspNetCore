@@ -23,12 +23,12 @@
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.4.0" />
     <PackageVersion Include="MSBuild.ProjectCreation" Version="17.0.1" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageVersion Include="NJsonSchema" Version="11.6.0" />
+    <PackageVersion Include="NJsonSchema" Version="11.6.1" />
     <PackageVersion Include="NSubstitute" Version="5.3.0" />
-    <PackageVersion Include="NSwag.CodeGeneration.CSharp" Version="14.7.0" />
+    <PackageVersion Include="NSwag.CodeGeneration.CSharp" Version="14.7.1" />
     <PackageVersion Include="NSwag.MSBuild" Version="14.7.0" />
     <PackageVersion Include="ReportGenerator" Version="5.5.4" />
-    <PackageVersion Include="Verify.XunitV3" Version="31.15.0" />
+    <PackageVersion Include="Verify.XunitV3" Version="31.16.1" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
     <PackageVersion Include="xunit.v3.mtp-off" Version="3.2.2" />

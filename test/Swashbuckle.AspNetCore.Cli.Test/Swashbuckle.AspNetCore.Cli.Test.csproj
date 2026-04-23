@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Swashbuckle.AspNetCore.TestSupport\Swashbuckle.AspNetCore.TestSupport.csproj" />
+    <ProjectReference Include="..\WebSites\Authorization\Authorization.csproj" />
     <ProjectReference Include="..\WebSites\Basic\Basic.csproj" />
     <ProjectReference Include="..\WebSites\CustomDocumentSerializer\CustomDocumentSerializer.csproj" />
     <ProjectReference Include="..\WebSites\MinimalAppWithHostedServices\MinimalAppWithHostedServices.csproj" />

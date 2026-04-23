@@ -8,9 +8,9 @@ namespace Swashbuckle.AspNetCore.Cli.Test;
 public static class ToolTests
 {
     [Fact]
-    public static void Can_Output_Swagger_Document_Names()
+    public static async Task Can_Output_Swagger_Document_Names()
     {
-        var result = RunToStringCommand((outputPath) =>
+        var result = await RunToStringCommandAsync((outputPath) =>
         [
             "list",
             "--output",
@@ -22,17 +22,17 @@ public static class ToolTests
     }
 
     [Fact]
-    public static void Throws_When_Startup_Assembly_Does_Not_Exist()
+    public static async Task Throws_When_Startup_Assembly_Does_Not_Exist()
     {
         string[] args = ["tofile", "--output", "swagger.json", "--openapiversion", "2.0", "./does_not_exist.dll", "v1"];
-        Assert.Throws<FileNotFoundException>(() => Program.Main(args));
+        await Assert.ThrowsAsync<FileNotFoundException>(() => Program.Main(args));
     }
 
     [Theory]
     [InlineData("a")]
     [InlineData("1.9")]
     [InlineData("3.2")]
-    public static void Error_When_OpenApiVersion_Is_Not_Supported(string version)
+    public static async Task Error_When_OpenApiVersion_Is_Not_Supported(string version)
     {
         string[] args =
         [
@@ -44,13 +44,13 @@ public static class ToolTests
             Path.Combine(Directory.GetCurrentDirectory(), "Basic.dll"),
             "v1"
         ];
-        Assert.NotEqual(0, Program.Main(args));
+        Assert.NotEqual(0, await Program.Main(args));
     }
 
     [Fact]
-    public static void Can_Generate_Swagger_Json_v2_OpenApiVersion()
+    public static async Task Can_Generate_Swagger_Json_v2_OpenApiVersion()
     {
-        using var document = RunToJsonCommand((outputPath) =>
+        using var document = await RunToJsonCommandAsync((outputPath) =>
         [
             "tofile",
             "--output",
@@ -70,9 +70,9 @@ public static class ToolTests
     }
 
     [Fact]
-    public static void Can_Generate_Swagger_Json_v3()
+    public static async Task Can_Generate_Swagger_Json_v3()
     {
-        using var document = RunToJsonCommand((outputPath) =>
+        using var document = await RunToJsonCommandAsync((outputPath) =>
         [
             "tofile",
             "--output",
@@ -90,9 +90,9 @@ public static class ToolTests
     }
 
     [Fact]
-    public static void Can_Generate_Swagger_Json_v3_1()
+    public static async Task Can_Generate_Swagger_Json_v3_1()
     {
-        using var document = RunToJsonCommand((outputPath) =>
+        using var document = await RunToJsonCommandAsync((outputPath) =>
         [
             "tofile",
             "--output",
@@ -112,9 +112,9 @@ public static class ToolTests
     }
 
     [Fact]
-    public static void Can_Generate_Swagger_Json_v3_OpenApiVersion()
+    public static async Task Can_Generate_Swagger_Json_v3_OpenApiVersion()
     {
-        using var document = RunToJsonCommand((outputPath) =>
+        using var document = await RunToJsonCommandAsync((outputPath) =>
         [
             "tofile",
             "--output",
@@ -134,9 +134,35 @@ public static class ToolTests
     }
 
     [Fact]
-    public static void Overwrites_Existing_File()
+    public static async Task Can_Generate_Swagger_Json_With_Async_Operation_Filters()
     {
-        using var document = RunToJsonCommand((outputPath) =>
+        using var document = await RunToJsonCommandAsync((outputPath) =>
+        [
+            "tofile",
+            "--output",
+            outputPath,
+            Path.Combine(Directory.GetCurrentDirectory(), "Authorization.dll"),
+            "v1"
+        ]);
+
+        var paths = document.RootElement.GetProperty("paths");
+        var resourcesPath = paths.GetProperty("/resources/{id}");
+        var getOp = resourcesPath.GetProperty("get");
+
+        // verify that the async operation filter resolved authorization policies and added security requirements
+        Assert.True(getOp.TryGetProperty("security", out var security));
+        Assert.True(security.GetArrayLength() > 0);
+
+        // verify that 401/403 responses were added by the async filter
+        var responses = getOp.GetProperty("responses");
+        Assert.True(responses.TryGetProperty("401", out _));
+        Assert.True(responses.TryGetProperty("403", out _));
+    }
+
+    [Fact]
+    public static async Task Overwrites_Existing_File()
+    {
+        using var document = await RunToJsonCommandAsync((outputPath) =>
         {
             File.WriteAllText(outputPath, new string('x', 100_000));
 
@@ -159,9 +185,9 @@ public static class ToolTests
     }
 
     [Fact]
-    public static void CustomDocumentSerializer_Writes_Custom_V2_Document()
+    public static async Task CustomDocumentSerializer_Writes_Custom_V2_Document()
     {
-        using var document = RunToJsonCommand((outputPath) =>
+        using var document = await RunToJsonCommandAsync((outputPath) =>
         [
             "tofile",
             "--output",
@@ -178,9 +204,9 @@ public static class ToolTests
     }
 
     [Fact]
-    public static void CustomDocumentSerializer_Writes_Custom_V3_Document()
+    public static async Task CustomDocumentSerializer_Writes_Custom_V3_Document()
     {
-        using var document = RunToJsonCommand((outputPath) =>
+        using var document = await RunToJsonCommandAsync((outputPath) =>
         [
             "tofile",
             "--output",
@@ -196,9 +222,9 @@ public static class ToolTests
     }
 
     [Fact]
-    public static void CustomDocumentSerializer_Writes_Custom_V3_1_Document()
+    public static async Task CustomDocumentSerializer_Writes_Custom_V3_1_Document()
     {
-        using var document = RunToJsonCommand((outputPath) =>
+        using var document = await RunToJsonCommandAsync((outputPath) =>
         [
             "tofile",
             "--output",
@@ -216,9 +242,9 @@ public static class ToolTests
     }
 
     [Fact]
-    public static void Can_Generate_Swagger_Json_ForTopLevelApp()
+    public static async Task Can_Generate_Swagger_Json_ForTopLevelApp()
     {
-        using var document = RunToJsonCommand((outputPath) =>
+        using var document = await RunToJsonCommandAsync((outputPath) =>
         [
             "tofile",
             "--output",
@@ -236,9 +262,9 @@ public static class ToolTests
     }
 
     [Fact]
-    public static void Does_Not_Run_Crashing_HostedService()
+    public static async Task Does_Not_Run_Crashing_HostedService()
     {
-        using var document = RunToJsonCommand((outputPath) =>
+        using var document = await RunToJsonCommandAsync((outputPath) =>
         [
             "tofile",
             "--output",
@@ -254,9 +280,9 @@ public static class ToolTests
     }
 
     [Fact]
-    public static void Creates_New_Folder_Path()
+    public static async Task Creates_New_Folder_Path()
     {
-        using var document = RunToJsonCommand(outputPath =>
+        using var document = await RunToJsonCommandAsync(outputPath =>
         [
             "tofile",
             "--output",
@@ -273,7 +299,7 @@ public static class ToolTests
         Assert.True(productsPath.TryGetProperty("post", out _));
     }
 
-    private static string RunToStringCommand(Func<string, string[]> setup, string subOutputPath = default)
+    private static async Task<string> RunToStringCommandAsync(Func<string, string[]> setup, string subOutputPath = default)
     {
         using var temporaryDirectory = new TemporaryDirectory();
 
@@ -283,14 +309,14 @@ public static class ToolTests
 
         string[] args = setup(outputPath);
 
-        Assert.Equal(0, Program.Main(args));
+        Assert.Equal(0, await Program.Main(args));
 
         return File.ReadAllText(outputPath);
     }
 
-    private static JsonDocument RunToJsonCommand(Func<string, string[]> setup, string subOutputPath = default)
+    private static async Task<JsonDocument> RunToJsonCommandAsync(Func<string, string[]> setup, string subOutputPath = default)
     {
-        string json = RunToStringCommand(setup, subOutputPath);
+        string json = await RunToStringCommandAsync(setup, subOutputPath);
         return JsonDocument.Parse(json);
     }
 

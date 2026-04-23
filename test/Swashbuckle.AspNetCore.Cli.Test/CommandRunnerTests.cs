@@ -5,7 +5,7 @@ namespace Swashbuckle.AspNetCore.Cli.Test;
 public static class CommandRunnerTests
 {
     [Fact]
-    public static void Run_ParsesArgumentsAndExecutesCommands_AccordingToConfiguredMetadata()
+    public static async Task Run_ParsesArgumentsAndExecutesCommands_AccordingToConfiguredMetadata()
     {
         var receivedValues = new List<string>();
         var subject = new CommandRunner("test", "a test", new StringWriter());
@@ -18,7 +18,7 @@ public static class CommandRunnerTests
                 receivedValues.Add(namedArgs["--opt1"]);
                 receivedValues.Add(namedArgs["--opt2"]);
                 receivedValues.Add(namedArgs["arg1"]);
-                return 2;
+                return Task.FromResult(2);
             });
         });
         subject.SubCommand("cmd2", "", c => {
@@ -30,12 +30,12 @@ public static class CommandRunnerTests
                 receivedValues.Add(namedArgs["--opt1"]);
                 receivedValues.Add(namedArgs["--opt2"]);
                 receivedValues.Add(namedArgs["arg1"]);
-                return 3;
+                return Task.FromResult(3);
             });
         });
 
-        var cmd1ExitCode = subject.Run(["cmd1", "--opt1", "foo", "--opt2", "bar"]);
-        var cmd2ExitCode = subject.Run(["cmd2", "--opt1", "blah", "--opt2", "dblah"]);
+        var cmd1ExitCode = await subject.RunAsync(["cmd1", "--opt1", "foo", "--opt2", "bar"]);
+        var cmd2ExitCode = await subject.RunAsync(["cmd2", "--opt1", "blah", "--opt2", "dblah"]);
 
         Assert.Equal(2, cmd1ExitCode);
         Assert.Equal(3, cmd2ExitCode);
@@ -43,14 +43,14 @@ public static class CommandRunnerTests
     }
 
     [Fact]
-    public static void Run_PrintsAvailableCommands_WhenUnexpectedCommandIsProvided()
+    public static async Task Run_PrintsAvailableCommands_WhenUnexpectedCommandIsProvided()
     {
         var output = new StringWriter();
         var subject = new CommandRunner("test", "a test", output);
         subject.SubCommand("cmd", "does something", c => {
         });
 
-        var exitCode = subject.Run(["foo"]);
+        var exitCode = await subject.RunAsync(["foo"]);
 
         Assert.StartsWith("a test", output.ToString());
         Assert.Contains("Commands:", output.ToString());
@@ -58,14 +58,14 @@ public static class CommandRunnerTests
     }
 
     [Fact]
-    public static void Run_PrintsAvailableCommands_WhenHelpOptionIsProvided()
+    public static async Task Run_PrintsAvailableCommands_WhenHelpOptionIsProvided()
     {
         var output = new StringWriter();
         var subject = new CommandRunner("test", "a test", output);
         subject.SubCommand("cmd", "does something", c => {
         });
 
-        var exitCode = subject.Run(["--help"]);
+        var exitCode = await subject.RunAsync(["--help"]);
 
         Assert.StartsWith("a test", output.ToString());
         Assert.Contains("Commands:", output.ToString());
@@ -81,7 +81,7 @@ public static class CommandRunnerTests
     [InlineData(new string[0], new[] { "arg1" }, new[] { "cmd", "--opt1" }, true)]
     [InlineData(new string[0], new[] { "arg1" }, new[] { "cmd", "foo", "bar" }, true)]
     [InlineData(new string[0], new[] { "arg1" }, new[] { "cmd", "foo" }, false)]
-    public static void Run_PrintsCommandUsage_WhenUnexpectedArgumentsAreProvided(
+    public static async Task Run_PrintsCommandUsage_WhenUnexpectedArgumentsAreProvided(
         string[] optionNames,
         string[] argNames,
         string[] providedArgs,
@@ -97,7 +97,7 @@ public static class CommandRunnerTests
                 c.Argument(name, "");
         });
 
-        subject.Run(providedArgs);
+        await subject.RunAsync(providedArgs);
 
         if (shouldPrintUsage)
             Assert.StartsWith("Usage: test cmd", output.ToString());

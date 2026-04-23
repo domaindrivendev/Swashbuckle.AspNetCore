@@ -141,6 +141,7 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
     [InlineData(typeof(TopLevelSwaggerDoc.Program), "/swagger/v1.json")]
     [InlineData(typeof(WebApi.Program), "/swagger/v1/swagger.json")]
     [InlineData(typeof(WebApi.Aot.Program), "/swagger/v1/swagger.json")]
+    [InlineData(typeof(Authorization.Program), "/swagger/v1/swagger.json")]
     public async Task SwaggerEndpoint_ReturnsValidSwaggerJson_Without_Startup(
         Type entryPointType,
         string swaggerRequestUri)
