@@ -27,6 +27,7 @@ jobs:
     timeout-minutes: 15
 
     outputs:
+      artifact-id: ${{ steps.upload-artifacts.outputs.artifact-id }}
       dotnet-sdk-version: ${{ steps.setup-dotnet.outputs.dotnet-version }}
       dotnet-validate-version: ${{ steps.get-dotnet-tools-versions.outputs.dotnet-validate-version }}
       nuget-package-validation-version: ${{ steps.get-dotnet-tools-versions.outputs.nuget-package-validation-version }}
@@ -144,6 +145,7 @@ jobs:
 
     - name: Publish NuGet packages
       uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      id: upload-artifacts
       if: ${{ !cancelled() }}
       with:
         name: packages-${{ runner.os }}
@@ -282,3 +284,24 @@ jobs:
         SOURCE: https://api.nuget.org/v3/index.json
       run: |
         dotnet nuget push "*.nupkg" --api-key "${API_KEY}" --skip-duplicate --source "${SOURCE}" && echo "::notice title=nuget.org::Published version ${PACKAGE_VERSION} to NuGet.org."
+
+  notify-nuget:
+    needs: [ build, publish-nuget ]
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+
+    - name: Publish nuget_packages_published
+      uses: peter-evans/repository-dispatch@28959ce8df70de7be546dd1250a005dd32156697 # v4.0.1
+      with:
+        event-type: nuget_packages_published
+        token: ${{ secrets.GITHUB_TOKEN }}
+        client-payload: |-
+          {
+            "artifact_id": "${{ needs.build.outputs.artifact-id }}",
+            "run_id": "${{ github.run_id }}",
+            "version": "${{ needs.build.outputs.package-version }}"
+          }
