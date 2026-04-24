@@ -185,6 +185,10 @@ public static class OpenApiSchemaExtensions
         {
             schema.MinItems = minLengthAttribute.Length;
         }
+        else if (schema.Type is { } objectType && objectType.HasFlag(JsonSchemaTypes.Object))
+        {
+            schema.MinProperties = minLengthAttribute.Length;
+        }
         else
         {
             schema.MinLength = minLengthAttribute.Length;
@@ -208,6 +212,10 @@ public static class OpenApiSchemaExtensions
         if (schema.Type is { } type && type.HasFlag(JsonSchemaTypes.Array))
         {
             schema.MaxItems = maxLengthAttribute.Length;
+        }
+        else if (schema.Type is { } objectType && objectType.HasFlag(JsonSchemaTypes.Object))
+        {
+            schema.MaxProperties = maxLengthAttribute.Length;
         }
         else
         {
@@ -233,6 +241,11 @@ public static class OpenApiSchemaExtensions
         {
             schema.MinItems = lengthAttribute.MinimumLength;
             schema.MaxItems = lengthAttribute.MaximumLength;
+        }
+        else if (schema.Type is { } objectType && objectType.HasFlag(JsonSchemaTypes.Object))
+        {
+            schema.MinProperties = lengthAttribute.MinimumLength;
+            schema.MaxProperties = lengthAttribute.MaximumLength;
         }
         else
         {

@@ -149,6 +149,99 @@ public static class OpenApiSchemaExtensionsTests
         Assert.Equal(customDataType, schema.Format);
     }
 
+    [Fact]
+    public static void ApplyValidationAttributes_MinLength_On_Dictionary_Maps_To_MinProperties()
+    {
+        // Arrange — dictionary schema is represented as an Object with AdditionalProperties
+        var schema = new OpenApiSchema
+        {
+            Type = JsonSchemaType.Object,
+            AdditionalPropertiesAllowed = true,
+            AdditionalProperties = new OpenApiSchema { Type = JsonSchemaType.String },
+        };
+
+        // Act
+        schema.ApplyValidationAttributes([new MinLengthAttribute(1)]);
+
+        // Assert
+        Assert.Equal(1, schema.MinProperties);
+        Assert.Null(schema.MinLength);
+        Assert.Null(schema.MinItems);
+    }
+
+    [Fact]
+    public static void ApplyValidationAttributes_MaxLength_On_Dictionary_Maps_To_MaxProperties()
+    {
+        // Arrange
+        var schema = new OpenApiSchema
+        {
+            Type = JsonSchemaType.Object,
+            AdditionalPropertiesAllowed = true,
+            AdditionalProperties = new OpenApiSchema { Type = JsonSchemaType.String },
+        };
+
+        // Act
+        schema.ApplyValidationAttributes([new MaxLengthAttribute(10)]);
+
+        // Assert
+        Assert.Equal(10, schema.MaxProperties);
+        Assert.Null(schema.MaxLength);
+        Assert.Null(schema.MaxItems);
+    }
+
+    [Fact]
+    public static void ApplyValidationAttributes_Length_On_Dictionary_Maps_To_Min_And_MaxProperties()
+    {
+        // Arrange
+        var schema = new OpenApiSchema
+        {
+            Type = JsonSchemaType.Object,
+            AdditionalPropertiesAllowed = true,
+            AdditionalProperties = new OpenApiSchema { Type = JsonSchemaType.String },
+        };
+
+        // Act
+        schema.ApplyValidationAttributes([new LengthAttribute(2, 5)]);
+
+        // Assert
+        Assert.Equal(2, schema.MinProperties);
+        Assert.Equal(5, schema.MaxProperties);
+        Assert.Null(schema.MinLength);
+        Assert.Null(schema.MaxLength);
+        Assert.Null(schema.MinItems);
+        Assert.Null(schema.MaxItems);
+    }
+
+    [Fact]
+    public static void ApplyValidationAttributes_MinLength_On_String_Still_Maps_To_MinLength()
+    {
+        // Arrange — regression guard for the existing string path
+        var schema = new OpenApiSchema { Type = JsonSchemaType.String };
+
+        // Act
+        schema.ApplyValidationAttributes([new MinLengthAttribute(3)]);
+
+        // Assert
+        Assert.Equal(3, schema.MinLength);
+        Assert.Null(schema.MinProperties);
+        Assert.Null(schema.MinItems);
+    }
+
+    [Fact]
+    public static void ApplyValidationAttributes_MinLength_On_Array_Still_Maps_To_MinItems()
+    {
+        // Arrange — regression guard for the existing array path
+        var schema = new OpenApiSchema { Type = JsonSchemaType.Array };
+
+        // Act
+        schema.ApplyValidationAttributes([new MinLengthAttribute(3)]);
+
+        // Assert
+        Assert.Equal(3, schema.MinItems);
+        Assert.Null(schema.MinProperties);
+        Assert.Null(schema.MinLength);
+    }
+
     private sealed class CultureSwitcher : IDisposable
     {
         private readonly CultureInfo _previous;
