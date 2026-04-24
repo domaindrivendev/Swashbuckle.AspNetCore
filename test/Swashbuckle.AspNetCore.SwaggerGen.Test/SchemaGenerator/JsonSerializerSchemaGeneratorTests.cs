@@ -373,10 +373,16 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal(3, schema.Properties["StringWithMinMaxLength"].MaxLength);
         Assert.Equal(1, schema.Properties["ArrayWithMinMaxLength"].MinItems);
         Assert.Equal(3, schema.Properties["ArrayWithMinMaxLength"].MaxItems);
+        Assert.Equal(1, schema.Properties["DictionaryWithMinMaxLength"].MinProperties);
+        Assert.Equal(3, schema.Properties["DictionaryWithMinMaxLength"].MaxProperties);
+        Assert.Null(schema.Properties["DictionaryWithMinMaxLength"].MinLength);
+        Assert.Null(schema.Properties["DictionaryWithMinMaxLength"].MaxLength);
         Assert.Equal(1, schema.Properties["StringWithLength"].MinLength);
         Assert.Equal(3, schema.Properties["StringWithLength"].MaxLength);
         Assert.Equal(1, schema.Properties["ArrayWithLength"].MinItems);
         Assert.Equal(3, schema.Properties["ArrayWithLength"].MaxItems);
+        Assert.Equal(1, schema.Properties["DictionaryWithLength"].MinProperties);
+        Assert.Equal(3, schema.Properties["DictionaryWithLength"].MaxProperties);
         Assert.NotNull(schema.Properties["IntWithExclusiveRange"].ExclusiveMinimum);
         Assert.NotNull(schema.Properties["IntWithExclusiveRange"].ExclusiveMaximum);
         Assert.Equal("byte", schema.Properties["StringWithBase64"].Format);
