@@ -483,6 +483,31 @@ public class JsonSerializerSchemaGeneratorTests
         AssertIsNullable(schema.Properties["RequiredNonNullableString"], false);
         Assert.Contains("RequiredNonNullableString", schema.Required.ToArray());
     }
+
+    [Fact]
+    public void GenerateSchema_NonNullableReferenceTypesAsRequired_PreservesNullable_IfPropertyHasRequiredKeywordAndIsNullable()
+    {
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Subject(configureGenerator: (c) => c.NonNullableReferenceTypesAsRequired = true).GenerateSchema(typeof(TypeWithNullableReferenceTypes), schemaRepository);
+
+        var reference = Assert.IsType<OpenApiSchemaReference>(referenceSchema);
+
+        Assert.NotNull(reference);
+        Assert.NotNull(reference.Reference);
+        Assert.NotNull(reference.Reference.Id);
+
+        var schema = schemaRepository.Schemas[reference.Reference.Id];
+        Assert.NotNull(schema.Properties);
+
+        // required string? — must be present (required) AND may be null (nullable: true)
+        AssertIsNullable(schema.Properties["RequiredNullableString"]);
+        Assert.Contains("RequiredNullableString", schema.Required.ToArray());
+
+        // required string — must be present (required) AND must have a value (nullable: false)
+        AssertIsNullable(schema.Properties["RequiredNonNullableString"], false);
+        Assert.Contains("RequiredNonNullableString", schema.Required.ToArray());
+    }
 #nullable disable
 
     [Theory]
@@ -1124,6 +1149,23 @@ public class JsonSerializerSchemaGeneratorTests
 
         var propertyIsRequired = schemaRepository.Schemas[subType].Required.Contains(propertyName);
         Assert.True(propertyIsRequired);
+    }
+
+    [Theory]
+    [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextAnnotated.NonNullableString))]
+    [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextNotAnnotated.NonNullableString))]
+    public void GenerateSchema_NonNullableReferenceTypesAsRequired_DoesNotMarkPropertyAsNullable(
+        Type declaringType,
+        string subType,
+        string propertyName)
+    {
+        var subject = Subject(c => c.NonNullableReferenceTypesAsRequired = true);
+        var schemaRepository = new SchemaRepository();
+
+        subject.GenerateSchema(declaringType, schemaRepository);
+
+        var propertySchema = schemaRepository.Schemas[subType].Properties[propertyName];
+        AssertIsNullable(propertySchema, expected: false);
     }
 
     [Theory]
