@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Swashbuckle.AspNetCore.TestSupport;
@@ -14,11 +15,17 @@ public class TypeWithValidationAttributes
     [MinLength(1), MaxLength(3)]
     public string[] ArrayWithMinMaxLength { get; set; }
 
+    [MinLength(1), MaxLength(3)]
+    public IReadOnlyDictionary<string, string> BoundedReadOnlyDictionary { get; set; }
+
     [Length(1, 3)]
     public string StringWithLength { get; set; }
 
     [Length(1, 3)]
     public string[] ArrayWithLength { get; set; }
+
+    [Length(1, 3)]
+    public Dictionary<string, string> BoundedDictionary { get; set; }
 
     [Range(1, 10, MinimumIsExclusive = true, MaximumIsExclusive = true)]
     public int IntWithExclusiveRange { get; set; }
