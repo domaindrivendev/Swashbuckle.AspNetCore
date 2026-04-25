@@ -14,13 +14,13 @@ public class TypeWithValidationAttributesViaMetadataType
 
     public string[] ArrayWithMinMaxLength { get; set; }
 
-    public IReadOnlyDictionary<string, string> IReadOnlyDictionaryWithMinMaxLength { get; set; }
+    public IReadOnlyDictionary<string, string> BoundedReadOnlyDictionary { get; set; }
 
     public string StringWithLength { get; set; }
 
     public string[] ArrayWithLength { get; set; }
 
-    public Dictionary<string, string> DictionaryWithLengthAttribute { get; set; }
+    public Dictionary<string, string> BoundedDictionary { get; set; }
 
     public string StringWithBase64 { get; set; }
 
@@ -55,7 +55,7 @@ public class MetadataType
     public string[] ArrayWithMinMaxLength { get; set; }
 
     [MinLength(1), MaxLength(3)]
-    public IReadOnlyDictionary<string, string> IReadOnlyDictionaryWithMinMaxLength { get; set; }
+    public IReadOnlyDictionary<string, string> BoundedReadOnlyDictionary { get; set; }
 
     [Length(1, 3)]
     public string StringWithLength { get; set; }
@@ -64,7 +64,7 @@ public class MetadataType
     public string[] ArrayWithLength { get; set; }
 
     [Length(1, 3)]
-    public Dictionary<string, string> DictionaryWithLengthAttribute { get; set; }
+    public Dictionary<string, string> BoundedDictionary { get; set; }
 
     [Range(1, 10, MinimumIsExclusive = true, MaximumIsExclusive = true)]
     public int IntWithExclusiveRange { get; set; }
