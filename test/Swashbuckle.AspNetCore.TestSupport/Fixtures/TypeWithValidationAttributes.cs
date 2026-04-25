@@ -25,7 +25,7 @@ public class TypeWithValidationAttributes
     public string[] ArrayWithLength { get; set; }
 
     [Length(1, 3)]
-    public Dictionary<string, string> DictionaryWithLength { get; set; }
+    public Dictionary<string, string> DictionaryWithLengthAttribute { get; set; }
 
     [Range(1, 10, MinimumIsExclusive = true, MaximumIsExclusive = true)]
     public int IntWithExclusiveRange { get; set; }
