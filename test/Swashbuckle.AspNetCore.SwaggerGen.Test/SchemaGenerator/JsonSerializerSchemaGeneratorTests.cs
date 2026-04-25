@@ -373,10 +373,10 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal(3, schema.Properties["StringWithMinMaxLength"].MaxLength);
         Assert.Equal(1, schema.Properties["ArrayWithMinMaxLength"].MinItems);
         Assert.Equal(3, schema.Properties["ArrayWithMinMaxLength"].MaxItems);
-        Assert.Equal(1, schema.Properties["DictionaryWithMinMaxLength"].MinProperties);
-        Assert.Equal(3, schema.Properties["DictionaryWithMinMaxLength"].MaxProperties);
-        Assert.Null(schema.Properties["DictionaryWithMinMaxLength"].MinLength);
-        Assert.Null(schema.Properties["DictionaryWithMinMaxLength"].MaxLength);
+        Assert.Equal(1, schema.Properties["IReadOnlyDictionaryWithMinMaxLength"].MinProperties);
+        Assert.Equal(3, schema.Properties["IReadOnlyDictionaryWithMinMaxLength"].MaxProperties);
+        Assert.Null(schema.Properties["IReadOnlyDictionaryWithMinMaxLength"].MinLength);
+        Assert.Null(schema.Properties["IReadOnlyDictionaryWithMinMaxLength"].MaxLength);
         Assert.Equal(1, schema.Properties["StringWithLength"].MinLength);
         Assert.Equal(3, schema.Properties["StringWithLength"].MaxLength);
         Assert.Equal(1, schema.Properties["ArrayWithLength"].MinItems);
@@ -401,6 +401,33 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal(["NullableIntEnumWithRequired", "StringWithRequired", "StringWithRequiredAllowEmptyTrue"], schema.Required);
         Assert.Equal("Description", schema.Properties[nameof(TypeWithValidationAttributes.StringWithDescription)].Description);
         Assert.True(schema.Properties[nameof(TypeWithValidationAttributes.StringWithReadOnly)].ReadOnly);
+    }
+
+    [Theory]
+    [InlineData(typeof(TypeWithValidationAttributes))]
+    [InlineData(typeof(TypeWithValidationAttributesViaMetadataType))]
+    public void GenerateSchema_DictionaryWithLengthAttributes_OpenApiJsonUsesMinAndMaxProperties(Type type)
+    {
+        // Arrange
+        var schemaRepository = new SchemaRepository();
+        Subject().GenerateSchema(type, schemaRepository);
+
+        var document = new OpenApiDocument
+        {
+            Components = new OpenApiComponents { Schemas = schemaRepository.Schemas },
+        };
+
+        // Act - serialize to OpenAPI 3.0 JSON, the same writer used by the runtime
+        using var writer = new StringWriter();
+        var jsonWriter = new OpenApiJsonWriter(writer);
+        document.SerializeAsV3(jsonWriter);
+        var json = writer.ToString();
+
+        // Assert - the dictionary constraints surface as minProperties/maxProperties
+        // in the generated OpenAPI document. Before the fix these would have been
+        // emitted as minLength/maxLength on an object schema, which is invalid per spec.
+        Assert.Contains("\"minProperties\": 1", json);
+        Assert.Contains("\"maxProperties\": 3", json);
     }
 
     [Fact]

@@ -153,7 +153,7 @@ public static class OpenApiSchemaExtensionsTests
     [Fact]
     public static void ApplyValidationAttributes_MinLength_On_Dictionary_Maps_To_MinProperties()
     {
-        // Arrange — dictionary schema is represented as an Object with AdditionalProperties
+        // Arrange - dictionary schema is represented as an Object with AdditionalProperties
         var schema = new OpenApiSchema
         {
             Type = JsonSchemaType.Object,
@@ -216,7 +216,7 @@ public static class OpenApiSchemaExtensionsTests
     [Fact]
     public static void ApplyValidationAttributes_MinLength_On_String_Still_Maps_To_MinLength()
     {
-        // Arrange — regression guard for the existing string path
+        // Arrange - regression guard for the existing string path
         var schema = new OpenApiSchema { Type = JsonSchemaType.String };
 
         // Act
@@ -231,7 +231,7 @@ public static class OpenApiSchemaExtensionsTests
     [Fact]
     public static void ApplyValidationAttributes_MinLength_On_Array_Still_Maps_To_MinItems()
     {
-        // Arrange — regression guard for the existing array path
+        // Arrange - regression guard for the existing array path
         var schema = new OpenApiSchema { Type = JsonSchemaType.Array };
 
         // Act

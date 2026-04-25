@@ -373,10 +373,10 @@ public class NewtonsoftSchemaGeneratorTests
         Assert.Equal(3, schema.Properties["StringWithMinMaxLength"].MaxLength);
         Assert.Equal(1, schema.Properties["ArrayWithMinMaxLength"].MinItems);
         Assert.Equal(3, schema.Properties["ArrayWithMinMaxLength"].MaxItems);
-        Assert.Equal(1, schema.Properties["DictionaryWithMinMaxLength"].MinProperties);
-        Assert.Equal(3, schema.Properties["DictionaryWithMinMaxLength"].MaxProperties);
-        Assert.Null(schema.Properties["DictionaryWithMinMaxLength"].MinLength);
-        Assert.Null(schema.Properties["DictionaryWithMinMaxLength"].MaxLength);
+        Assert.Equal(1, schema.Properties["IReadOnlyDictionaryWithMinMaxLength"].MinProperties);
+        Assert.Equal(3, schema.Properties["IReadOnlyDictionaryWithMinMaxLength"].MaxProperties);
+        Assert.Null(schema.Properties["IReadOnlyDictionaryWithMinMaxLength"].MinLength);
+        Assert.Null(schema.Properties["IReadOnlyDictionaryWithMinMaxLength"].MaxLength);
         Assert.Equal(1, schema.Properties["StringWithLength"].MinLength);
         Assert.Equal(3, schema.Properties["StringWithLength"].MaxLength);
         Assert.Equal(1, schema.Properties["ArrayWithLength"].MinItems);
