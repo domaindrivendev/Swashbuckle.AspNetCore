@@ -21,7 +21,8 @@ public class FakeControllerWithXmlComments
     /// <param name="param1" example="Example for &quot;param1&quot;">Description for param1</param>
     /// <param name="param2" example="http://test.com/?param1=1&amp;param2=2">Description for param2</param>
     /// <param name="param3" example="">Description for param3 with empty example</param>
-    public void ActionWithParamTags(string param1, string param2, string param3)
+    /// <param name="param4"></param>
+    public void ActionWithParamTags(string param1, string param2, string param3, string param4)
     {
     }
 

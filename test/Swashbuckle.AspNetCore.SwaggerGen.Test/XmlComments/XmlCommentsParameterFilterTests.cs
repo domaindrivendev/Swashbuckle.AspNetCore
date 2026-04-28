@@ -13,6 +13,7 @@ public class XmlCommentsParameterFilterTests
     [InlineData(0, "Description for param1", "\"Example for \\u0022param1\\u0022\"")]
     [InlineData(1, "Description for param2", "\"http://test.com/?param1=1\\u0026param2=2\"")]
     [InlineData(2, "Description for param3 with empty example", "\"\"")]
+    [InlineData(3, "", null)]
     public void Apply_SetsDescriptionAndExample_FromActionParamTag(int p, string expectedDescription, string expectedExample)
     {
         var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String } };
@@ -25,15 +26,14 @@ public class XmlCommentsParameterFilterTests
         Subject().Apply(parameter, filterContext);
 
         Assert.Equal(expectedDescription, parameter.Description);
-        Assert.NotNull(parameter.Example);
-
-        Assert.Equal(expectedExample, parameter.Example.ToJson());
+        Assert.Equal(expectedExample, parameter.Example?.ToJson());
     }
 
     [Theory]
     [InlineData(0, "Description for param1", "\"Example for \\u0022param1\\u0022\"")]
     [InlineData(1, "Description for param2", "\"http://test.com/?param1=1\\u0026param2=2\"")]
     [InlineData(2, "Description for param3 with empty example", "\"\"")]
+    [InlineData(3, "", null)]
     public void Apply_SetsDescriptionAndExample_FromUnderlyingGenericTypeActionParamTag(int p, string expectedDescription, string expectedExample)
     {
         var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String } };
@@ -46,9 +46,7 @@ public class XmlCommentsParameterFilterTests
         Subject().Apply(parameter, filterContext);
 
         Assert.Equal(expectedDescription, parameter.Description);
-        Assert.NotNull(parameter.Example);
-
-        Assert.Equal(expectedExample, parameter.Example.ToJson());
+        Assert.Equal(expectedExample, parameter.Example?.ToJson());
     }
 
     [Fact]
