@@ -115,7 +115,11 @@ public class XmlCommentsBenchmark
         // Request Body
         _requestBody = new OpenApiRequestBody
         {
-            Content = new Dictionary<string, OpenApiMediaType>()
+#if NET11_0_OR_GREATER
+            Content = new Dictionary<string, IOpenApiMediaType>
+#else
+            Content = new Dictionary<string, OpenApiMediaType>
+#endif
             {
                 ["application/json"] = new OpenApiMediaType()
                 {
