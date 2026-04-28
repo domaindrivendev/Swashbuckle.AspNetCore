@@ -20,8 +20,9 @@ public class GenericControllerWithXmlComments<T>
     }
 
     /// <param name="param1" example="Example for &quot;param1&quot;">Description for param1</param>
-    /// <param name="param2" example="Example for &quot;param2&quot;">Description for param2</param>
-    public void ActionWithParamTags(T param1, T param2)
+    /// <param name="param2" example="http://test.com/?param1=1&amp;param2=2">Description for param2</param>
+    /// <param name="param3" example="">Description for param3 with empty example</param>
+    public void ActionWithParamTags(T param1, T param2, T param3)
     {
     }
 }

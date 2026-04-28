@@ -74,7 +74,7 @@ public class XmlCommentsParameterFilter(IReadOnlyDictionary<string, XPathNavigat
             if (parameter is OpenApiParameter concrete)
             {
                 var example = paramNode.GetAttribute("example");
-                if (!string.IsNullOrEmpty(example))
+                if (example != null)
                 {
                     concrete.Example = XmlCommentsExampleHelper.Create(context.SchemaRepository, parameter.Schema, example);
                 }
