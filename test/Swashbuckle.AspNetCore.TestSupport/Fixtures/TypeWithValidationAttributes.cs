@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
 namespace Swashbuckle.AspNetCore.TestSupport;
@@ -46,6 +46,10 @@ public class TypeWithValidationAttributes
 
     [ReadOnly(true)]
     public string StringWithReadOnly { get; set; }
+
+    [MinLength(1)]
+    [MaxLength(10)]
+    public IReadOnlyDictionary<string, string?> DictionaryWithMinMaxLength { get; set; }
 
     [Required]
     public IntEnum? NullableIntEnumWithRequired { get; set; }

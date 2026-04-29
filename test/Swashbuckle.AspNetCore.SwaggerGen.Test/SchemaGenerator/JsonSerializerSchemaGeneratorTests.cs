@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.ComponentModel.DataAnnotations;
 using System.Dynamic;
 using System.Globalization;
@@ -377,6 +377,10 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal(3, schema.Properties["StringWithLength"].MaxLength);
         Assert.Equal(1, schema.Properties["ArrayWithLength"].MinItems);
         Assert.Equal(3, schema.Properties["ArrayWithLength"].MaxItems);
+        Assert.Equal(1, schema.Properties["DictionaryWithMinMaxLength"].MinProperties);
+        Assert.Equal(10, schema.Properties["DictionaryWithMinMaxLength"].MaxProperties);
+        Assert.Null(schema.Properties["DictionaryWithMinMaxLength"].MinLength);
+        Assert.Null(schema.Properties["DictionaryWithMinMaxLength"].MaxLength);
         Assert.NotNull(schema.Properties["IntWithExclusiveRange"].ExclusiveMinimum);
         Assert.NotNull(schema.Properties["IntWithExclusiveRange"].ExclusiveMaximum);
         Assert.Equal("byte", schema.Properties["StringWithBase64"].Format);

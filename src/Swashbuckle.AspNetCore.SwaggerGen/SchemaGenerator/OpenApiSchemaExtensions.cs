@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -185,6 +185,10 @@ public static class OpenApiSchemaExtensions
         {
             schema.MinItems = minLengthAttribute.Length;
         }
+        else if (schema.Type is { } objType && objType.HasFlag(JsonSchemaTypes.Object))
+        {
+            schema.MinProperties = minLengthAttribute.Length;
+        }
         else
         {
             schema.MinLength = minLengthAttribute.Length;
@@ -196,6 +200,10 @@ public static class OpenApiSchemaExtensions
         if (schema.Type is { } type && type.HasFlag(JsonSchemaTypes.Array))
         {
             schema.MinItems = minLengthRouteConstraint.MinLength;
+        }
+        else if (schema.Type is { } objType && objType.HasFlag(JsonSchemaTypes.Object))
+        {
+            schema.MinProperties = minLengthRouteConstraint.MinLength;
         }
         else
         {
@@ -209,6 +217,10 @@ public static class OpenApiSchemaExtensions
         {
             schema.MaxItems = maxLengthAttribute.Length;
         }
+        else if (schema.Type is { } objType && objType.HasFlag(JsonSchemaTypes.Object))
+        {
+            schema.MaxProperties = maxLengthAttribute.Length;
+        }
         else
         {
             schema.MaxLength = maxLengthAttribute.Length;
@@ -220,6 +232,10 @@ public static class OpenApiSchemaExtensions
         if (schema.Type is { } type && type.HasFlag(JsonSchemaTypes.Array))
         {
             schema.MaxItems = maxLengthRouteConstraint.MaxLength;
+        }
+        else if (schema.Type is { } objType && objType.HasFlag(JsonSchemaTypes.Object))
+        {
+            schema.MaxProperties = maxLengthRouteConstraint.MaxLength;
         }
         else
         {
@@ -233,6 +249,11 @@ public static class OpenApiSchemaExtensions
         {
             schema.MinItems = lengthAttribute.MinimumLength;
             schema.MaxItems = lengthAttribute.MaximumLength;
+        }
+        else if (schema.Type is { } objType && objType.HasFlag(JsonSchemaTypes.Object))
+        {
+            schema.MinProperties = lengthAttribute.MinimumLength;
+            schema.MaxProperties = lengthAttribute.MaximumLength;
         }
         else
         {
@@ -343,7 +364,20 @@ public static class OpenApiSchemaExtensions
 
     private static void ApplyLengthRouteConstraint(OpenApiSchema schema, LengthRouteConstraint lengthRouteConstraint)
     {
-        schema.MinLength = lengthRouteConstraint.MinLength;
-        schema.MaxLength = lengthRouteConstraint.MaxLength;
+        if (schema.Type is { } type && type.HasFlag(JsonSchemaTypes.Array))
+        {
+            schema.MinItems = lengthRouteConstraint.MinLength;
+            schema.MaxItems = lengthRouteConstraint.MaxLength;
+        }
+        else if (schema.Type is { } objType && objType.HasFlag(JsonSchemaTypes.Object))
+        {
+            schema.MinProperties = lengthRouteConstraint.MinLength;
+            schema.MaxProperties = lengthRouteConstraint.MaxLength;
+        }
+        else
+        {
+            schema.MinLength = lengthRouteConstraint.MinLength;
+            schema.MaxLength = lengthRouteConstraint.MaxLength;
+        }
     }
 }
