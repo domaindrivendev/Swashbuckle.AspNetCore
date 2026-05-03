@@ -403,33 +403,6 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.True(schema.Properties[nameof(TypeWithValidationAttributes.StringWithReadOnly)].ReadOnly);
     }
 
-    [Theory]
-    [InlineData(typeof(TypeWithValidationAttributes))]
-    [InlineData(typeof(TypeWithValidationAttributesViaMetadataType))]
-    public void GenerateSchema_BoundedDictionarys_OpenApiJsonUsesMinAndMaxProperties(Type type)
-    {
-        // Arrange
-        var schemaRepository = new SchemaRepository();
-        Subject().GenerateSchema(type, schemaRepository);
-
-        var document = new OpenApiDocument
-        {
-            Components = new OpenApiComponents { Schemas = schemaRepository.Schemas },
-        };
-
-        // Act - serialize to OpenAPI 3.0 JSON, the same writer used by the runtime
-        using var writer = new StringWriter();
-        var jsonWriter = new OpenApiJsonWriter(writer);
-        document.SerializeAsV3(jsonWriter);
-        var json = writer.ToString();
-
-        // Assert - the dictionary constraints surface as minProperties/maxProperties
-        // in the generated OpenAPI document. Before the fix these would have been
-        // emitted as minLength/maxLength on an object schema, which is invalid per spec.
-        Assert.Contains("\"minProperties\": 1", json);
-        Assert.Contains("\"maxProperties\": 3", json);
-    }
-
     [Fact]
     public void GenerateSchema_SetsReadOnlyAndWriteOnlyFlags_IfPropertyIsRestricted()
     {

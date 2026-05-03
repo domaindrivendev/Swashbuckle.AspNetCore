@@ -1135,6 +1135,40 @@ public partial class VerifyTests
         await Verify(document);
     }
 
+    [Theory]
+    [InlineData(typeof(TypeWithValidationAttributes))]
+    [InlineData(typeof(TypeWithValidationAttributesViaMetadataType))]
+    public async Task GenerateSchema_BoundedDictionaries_UsesMinAndMaxProperties(Type type)
+    {
+        var subject = Subject(
+            apiDescriptions:
+            [
+                ApiDescriptionFactory.Create<FakeController>(
+                    c => nameof(c.ActionWithNoParameters),
+                    groupName: "v1",
+                    httpMethod: "POST",
+                    relativePath: "resource",
+                    parameterDescriptions:
+                    [
+                        new ApiParameterDescription
+                        {
+                            Name = "body",
+                            Source = BindingSource.Body,
+                            ModelMetadata = ModelMetadataFactory.CreateForType(type),
+                            Type = type
+                        }
+                    ],
+                    supportedRequestFormats: [new ApiRequestFormat { MediaType = "application/json" }])
+            ]
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        await Verifier.Verify(ToJson(document))
+            .UseDirectory(SnapshotsDirectory)
+            .UseParameters(type);
+    }
+
     [Fact]
     public async Task GenerateSchema_PreservesIntermediateBaseProperties_WhenUsingOneOfPolymorphism()
     {
