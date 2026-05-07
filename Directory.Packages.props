@@ -3,7 +3,7 @@
     <PackageVersion Include="Autofac.Extensions.DependencyInjection" Version="11.0.0" />
     <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
     <PackageVersion Include="coverlet.msbuild" Version="6.0.4" />
-    <PackageVersion Include="GitHubActionsTestLogger" Version="3.0.3" />
+    <PackageVersion Include="GitHubActionsTestLogger" Version="3.0.4" />
     <PackageVersion Include="IdentityServer4" Version="3.1.4" />
     <PackageVersion Include="IdentityServer4.AccessTokenValidation" Version="3.0.1" />
     <PackageVersion Include="JunitXml.TestLogger" Version="8.0.0" />
@@ -16,11 +16,11 @@
     <PackageVersion Include="Microsoft.Build" Version="18.4.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="4.14.0" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="11.0.0-preview.3.26207.106" />
-    <PackageVersion Include="Microsoft.Kiota.Bundle" Version="1.22.1" />
+    <PackageVersion Include="Microsoft.Kiota.Bundle" Version="1.22.2" />
     <PackageVersion Include="Microsoft.OpenApi" Version="3.5.3" />
-    <PackageVersion Include="Microsoft.OpenApi.YamlReader" Version="3.5.2" />
+    <PackageVersion Include="Microsoft.OpenApi.YamlReader" Version="3.5.3" />
     <PackageVersion Include="Microsoft.Playwright" Version="1.59.0" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.4.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.5.1" />
     <PackageVersion Include="MSBuild.ProjectCreation" Version="17.0.1" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageVersion Include="NJsonSchema" Version="11.6.1" />
