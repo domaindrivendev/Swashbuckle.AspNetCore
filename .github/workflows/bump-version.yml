@@ -15,7 +15,7 @@ permissions: {}
 
 jobs:
   bump-version:
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ ubuntu-24.04 ]
 
     concurrency:
       group: '${{ github.workflow }}-version'
@@ -142,7 +142,7 @@ jobs:
             }
 
   close-milestone:
-    runs-on: [ ubuntu-latest ]
+    runs-on: [ ubuntu-24.04 ]
     if: github.event_name == 'release'
 
     concurrency:
