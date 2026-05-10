@@ -22,8 +22,8 @@ permissions:
 
 jobs:
   build:
-    name: ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.os-name }}
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 15
 
     outputs:
@@ -40,10 +40,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - macos-26
-          - ubuntu-24.04
-          - windows-2025
+        include:
+          - os-name: macos-latest
+            runner: macos-26
+          - os-name: linux-latest
+            runner: ubuntu-24.04
+          - os-name: windows-latest
+            runner: windows-2025
 
     steps:
 
