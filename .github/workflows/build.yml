@@ -43,7 +43,7 @@ jobs:
         include:
           - os-name: macos-latest
             runner: macos-26
-          - os-name: linux-latest
+          - os-name: ubuntu-latest
             runner: ubuntu-24.04
           - os-name: windows-latest
             runner: windows-2025
