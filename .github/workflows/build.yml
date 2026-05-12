@@ -22,8 +22,8 @@ permissions:
 
 jobs:
   build:
-    name: ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
+    name: ${{ matrix.os-name }}
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 15
 
     outputs:
@@ -40,10 +40,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os:
-          - macos-latest
-          - ubuntu-latest
-          - windows-latest
+        include:
+          - os-name: macos-latest
+            runner: macos-26
+          - os-name: ubuntu-latest
+            runner: ubuntu-24.04
+          - os-name: windows-latest
+            runner: windows-2025
 
     steps:
 
@@ -161,7 +164,7 @@ jobs:
 
   validate-packages:
     needs: build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
 
     - name: Download packages
@@ -211,7 +214,7 @@ jobs:
 
   publish-myget:
     needs: [ build, validate-packages ]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: |
       github.event.repository.fork == false &&
       (github.ref_name == github.event.repository.default_branch ||
@@ -244,7 +247,7 @@ jobs:
 
   publish-nuget:
     needs: [ build, validate-packages ]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: |
       github.event.repository.fork == false &&
       startsWith(github.ref, 'refs/tags/v')
@@ -284,7 +287,7 @@ jobs:
 
   notify-nuget:
     needs: [ build, publish-nuget ]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     permissions:
       contents: write
