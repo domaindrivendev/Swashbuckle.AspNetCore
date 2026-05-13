@@ -16,7 +16,7 @@
     <PackageVersion Include="Microsoft.Build" Version="18.4.0" />
     <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="4.14.0" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="11.0.0-preview.4.26230.115" />
-    <PackageVersion Include="Microsoft.Kiota.Bundle" Version="1.22.2" />
+    <PackageVersion Include="Microsoft.Kiota.Bundle" Version="2.0.0" />
     <PackageVersion Include="Microsoft.OpenApi" Version="3.5.3" />
     <PackageVersion Include="Microsoft.OpenApi.YamlReader" Version="3.5.3" />
     <PackageVersion Include="Microsoft.Playwright" Version="1.59.0" />
@@ -28,7 +28,7 @@
     <PackageVersion Include="NSwag.CodeGeneration.CSharp" Version="14.7.1" />
     <PackageVersion Include="NSwag.MSBuild" Version="14.7.1" />
     <PackageVersion Include="ReportGenerator" Version="5.5.7" />
-    <PackageVersion Include="Verify.XunitV3" Version="31.16.2" />
+    <PackageVersion Include="Verify.XunitV3" Version="31.16.3" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
     <PackageVersion Include="xunit.v3.mtp-off" Version="3.2.2" />
