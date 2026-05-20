@@ -499,12 +499,13 @@ public class JsonSerializerSchemaGeneratorTests
 
         var schema = schemaRepository.Schemas[reference.Reference.Id];
         Assert.NotNull(schema.Properties);
+        Assert.NotNull(schema.Required);
 
-        // required string? — must be present (required) AND may be null (nullable: true)
+        // required string? - must be present (required) AND may be null (nullable: true)
         AssertIsNullable(schema.Properties["RequiredNullableString"]);
         Assert.Contains("RequiredNullableString", schema.Required.ToArray());
 
-        // required string — must be present (required) AND must have a value (nullable: false)
+        // required string - must be present (required) AND must have a value (nullable: false)
         AssertIsNullable(schema.Properties["RequiredNonNullableString"], false);
         Assert.Contains("RequiredNonNullableString", schema.Required.ToArray());
     }
