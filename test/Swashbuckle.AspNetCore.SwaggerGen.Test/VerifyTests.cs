@@ -1166,7 +1166,7 @@ public partial class VerifyTests
 
         await Verifier.Verify(ToJson(document))
             .UseDirectory(SnapshotsDirectory)
-            .UseParameters(type);
+            .UseTextForParameters(type.Name);
     }
 
     [Fact]
