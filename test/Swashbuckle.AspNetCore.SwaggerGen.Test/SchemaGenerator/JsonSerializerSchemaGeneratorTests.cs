@@ -32,7 +32,7 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal("binary", schema.Format);
     }
 
-    public static TheoryData<Type, JsonSchemaType, string> PrimitiveTypeData => new()
+    public static TheoryData<Type, JsonSchemaType?, string> PrimitiveTypeData => new()
     {
         { typeof(bool), JsonSchemaTypes.Boolean, null },
         { typeof(byte), JsonSchemaTypes.Integer, "int32" },
@@ -67,13 +67,14 @@ public class JsonSerializerSchemaGeneratorTests
         { typeof(Int128?), JsonSchemaTypes.Integer | JsonSchemaType.Null, "int128" },
         { typeof(UInt128), JsonSchemaTypes.Integer, "int128" },
         { typeof(UInt128?), JsonSchemaTypes.Integer | JsonSchemaType.Null, "int128" },
+        { typeof(object), null, null },
     };
 
     [Theory]
     [MemberData(nameof(PrimitiveTypeData))]
     public void GenerateSchema_GeneratesPrimitiveSchema_IfPrimitiveOrNullablePrimitiveType(
         Type type,
-        JsonSchemaType expectedSchemaType,
+        JsonSchemaType? expectedSchemaType,
         string expectedFormat)
     {
         var schema = Subject().GenerateSchema(type, new SchemaRepository());
@@ -122,9 +123,13 @@ public class JsonSerializerSchemaGeneratorTests
     public static TheoryData<Type, JsonSchemaType?> CollectionTypeData => new()
     {
         { typeof(IDictionary<string, int>), JsonSchemaTypes.Integer },
+        { typeof(IDictionary<string, int?>), JsonSchemaTypes.Integer | JsonSchemaType.Null },
         { typeof(IDictionary<EmptyIntEnum, int>), JsonSchemaTypes.Integer },
         { typeof(IReadOnlyDictionary<string, bool>), JsonSchemaTypes.Boolean },
+        { typeof(IReadOnlyDictionary<string, bool?>), JsonSchemaTypes.Boolean | JsonSchemaType.Null },
         { typeof(IDictionary), null },
+        { typeof(IDictionary<string, object>), null },
+        { typeof(IDictionary<string, object?>), null },
         { typeof(ExpandoObject), null },
     };
 
@@ -136,6 +141,43 @@ public class JsonSerializerSchemaGeneratorTests
     {
         var schema = Subject().GenerateSchema(type, new SchemaRepository());
 
+        Assert.Equal(JsonSchemaTypes.Object, schema.Type);
+        Assert.True(schema.AdditionalPropertiesAllowed);
+        Assert.NotNull(schema.AdditionalProperties);
+        Assert.Equal(expectedAdditionalPropertiesType, schema.AdditionalProperties.Type);
+    }
+
+    private record TestRecordStringInteger(IDictionary<string, int> Property);
+    private record TestRecordStringIntegerNullable(IDictionary<string, int?> Property);
+    private record TestRecordEmptyIntEnumInteger(IDictionary<EmptyIntEnum, int> Property);
+    private record TestRecordStringBoolean(IDictionary<string, bool> Property);
+    private record TestRecordStringBooleanNullable(IDictionary<string, bool?> Property);
+    private record TestRecordDictionary(IDictionary Property);
+    private record TestRecordStringObject(IDictionary<string, object> Property);
+    private record TestRecordStringObjectNullable(IDictionary<string, object?> Property);
+    private record TestRecordExpandoObject(ExpandoObject Property);
+
+    public static TheoryData<Type, JsonSchemaType?> GenericArgumentsTypeData => new()
+    {
+        { typeof(TestRecordStringInteger), JsonSchemaTypes.Integer },
+        { typeof(TestRecordStringIntegerNullable), JsonSchemaTypes.Integer | JsonSchemaType.Null },
+        { typeof(TestRecordEmptyIntEnumInteger), JsonSchemaTypes.Integer },
+        { typeof(TestRecordStringBoolean), JsonSchemaTypes.Boolean },
+        { typeof(TestRecordStringBooleanNullable), JsonSchemaTypes.Boolean | JsonSchemaType.Null },
+        { typeof(TestRecordDictionary), null },
+        { typeof(TestRecordStringObject), null },
+        { typeof(TestRecordStringObjectNullable), JsonSchemaTypes.Null | JsonSchemaTypes.Boolean | JsonSchemaTypes.Integer | JsonSchemaTypes.Number | JsonSchemaTypes.String | JsonSchemaTypes.Array | JsonSchemaTypes.Object },
+        { typeof(TestRecordExpandoObject), null },
+    };
+
+    [Theory]
+    [MemberData(nameof(GenericArgumentsTypeData))]
+    public void GenerateSchema_GeneratesDictionarySchema_IfDictionaryTypeMember(
+        Type type,
+        JsonSchemaType? expectedAdditionalPropertiesType)
+    {
+        var memberInfo = type.GetProperties().First();
+        var schema = Subject(configureGenerator: g => g.SupportNonNullableReferenceTypes = true).GenerateSchema(memberInfo.PropertyType, new SchemaRepository(), memberInfo: memberInfo);
         Assert.Equal(JsonSchemaTypes.Object, schema.Type);
         Assert.True(schema.AdditionalPropertiesAllowed);
         Assert.NotNull(schema.AdditionalProperties);
