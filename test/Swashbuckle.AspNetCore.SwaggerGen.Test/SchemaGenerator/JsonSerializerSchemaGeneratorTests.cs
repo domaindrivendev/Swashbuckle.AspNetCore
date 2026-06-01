@@ -157,7 +157,7 @@ public class JsonSerializerSchemaGeneratorTests
     private record TestRecordStringObjectNullable(IDictionary<string, object?> Property);
     private record TestRecordExpandoObject(ExpandoObject Property);
 
-    public static TheoryData<Type, JsonSchemaType?> GenericArgumentsTypeData => new()
+    public static TheoryData<Type, JsonSchemaType?> DictionaryWrappersData => new()
     {
         { typeof(TestRecordStringInteger), JsonSchemaTypes.Integer },
         { typeof(TestRecordStringIntegerNullable), JsonSchemaTypes.Integer | JsonSchemaType.Null },
@@ -171,7 +171,7 @@ public class JsonSerializerSchemaGeneratorTests
     };
 
     [Theory]
-    [MemberData(nameof(GenericArgumentsTypeData))]
+    [MemberData(nameof(DictionaryWrappersData))]
     public void GenerateSchema_GeneratesDictionarySchema_IfDictionaryTypeMember(
         Type type,
         JsonSchemaType? expectedAdditionalPropertiesType)
