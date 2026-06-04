@@ -117,11 +117,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Animals
                 if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
                 var mappingValue = parseNode.GetChildNode("animalType")?.GetStringValue();
                 var result = new global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Animals.AnimalsRequestBuilder.AnimalsPostRequestBody();
-                if("".Equals(mappingValue, StringComparison.OrdinalIgnoreCase))
-                {
-                    result.Animal = new global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Models.Animal();
-                }
-                else if("Cat".Equals(mappingValue, StringComparison.OrdinalIgnoreCase))
+                if("Cat".Equals(mappingValue, StringComparison.OrdinalIgnoreCase))
                 {
                     result.Cat = new global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Models.Cat();
                 }
