@@ -58,6 +58,11 @@ public static class SwaggerUIBuilderExtensions
 
         var pipeline = endpoints.CreateApplicationBuilder()
             .UseSwaggerUI(options)
+            .Use((context, next) =>
+            {
+                context.Response.StatusCode = 404;
+                return Task.CompletedTask;
+            })
             .Build();
 
         return endpoints.Map(GetRoutePattern(options.RoutePrefix), pipeline);
