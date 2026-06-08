@@ -64,7 +64,7 @@ internal sealed partial class SwaggerUIMiddleware
             }
 
             var pattern = $"^/?{Regex.Escape(_options.RoutePrefix)}/{_options.SwaggerDocumentUrlsPath}/?$";
-            if (Regex.IsMatch(path, pattern, RegexOptions.IgnoreCase))
+            if (_options.ExposeSwaggerDocumentUrlsRoute && Regex.IsMatch(path, pattern, RegexOptions.IgnoreCase))
             {
                 await RespondWithDocumentUrls(httpContext);
                 return;
