@@ -70,6 +70,35 @@ public class AnnotationsSchemaFilter(IServiceProvider serviceProvider) : ISchema
         {
             ApplySchemaAttribute(schema, schemaAttribute);
         }
+
+        // Handle MinLength attribute for dictionary properties
+        var minLengthAttribute = memberInfo.GetCustomAttribute<System.ComponentModel.DataAnnotations.MinLengthAttribute>();
+        if (minLengthAttribute != null)
+        {
+            var memberType = (memberInfo as PropertyInfo)?.PropertyType;
+            if (memberType != null)
+            {
+                // Check if the type is a dictionary type
+                bool isDictionary = memberType.GetInterfaces()
+                    .Any(i => i == typeof(IDictionary) || 
+                              (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>)) ||
+                              (i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IReadOnlyDictionary<,>)));
+
+                if (isDictionary)
+                {
+                    if (schema is OpenApiSchema concrete)
+                    {
+                        concrete.MinProperties = minLengthAttribute.Length;
+                    }
+                    return; // Don't process other length attributes for dictionaries
+                }
+            }
+            
+            if (schema is OpenApiSchema concreteSchema && !isDictionary)
+            {
+                concreteSchema.MinLength = minLengthAttribute.Length;
+            }
+        }
     }
 
     private static void ApplySchemaAttribute(IOpenApiSchema schema, SwaggerSchemaAttribute schemaAttribute)
