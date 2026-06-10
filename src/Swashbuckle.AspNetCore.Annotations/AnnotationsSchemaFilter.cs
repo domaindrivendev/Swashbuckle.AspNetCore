@@ -102,9 +102,10 @@ public class AnnotationsSchemaFilter(IServiceProvider serviceProvider) : ISchema
         if (schemaAttribute.NullableFlag is { } nullable)
         {
             // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3387
+            // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3936
             if (nullable)
             {
-                concrete.Type ??= JsonSchemaType.Null;
+                concrete.Type ??= JsonSchemaType.Boolean | JsonSchemaType.Integer | JsonSchemaType.Number | JsonSchemaType.String | JsonSchemaType.Object | JsonSchemaType.Array;
                 concrete.Type |= JsonSchemaType.Null;
             }
             else if (concrete.Type.HasValue)

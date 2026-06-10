@@ -214,7 +214,7 @@ public class SchemaGenerator(
             : GenerateConcreteSchema(dataContract, schemaRepository);
 
         ApplyFilters(schema, modelType, schemaRepository);
-         
+
         if (Nullable.GetUnderlyingType(modelType) != null && schema is OpenApiSchema concrete)
         {
             SetNullable(concrete, true);
@@ -632,10 +632,29 @@ public class SchemaGenerator(
     private static void SetNullable(OpenApiSchema schema, bool nullable)
     {
         // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3387
+        // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3936
         if (nullable)
         {
-            schema.Type ??= JsonSchemaType.Null;
-            schema.Type |= JsonSchemaType.Null;
+            if (schema.AllOf is { Count: > 0 } allOf)
+            {
+                schema.Type ??= JsonSchemaType.Null;
+            }
+            else if (schema.AnyOf is { Count: > 0 } anyOf)
+            {
+                anyOf.Add(new OpenApiSchema { Type = JsonSchemaType.Null });
+            }
+            else if (schema.OneOf is { Count: > 0 } oneOf)
+            {
+                oneOf.Add(new OpenApiSchema { Type = JsonSchemaType.Null });
+            }
+            else
+            {
+                schema.Type ??= JsonSchemaType.Boolean | JsonSchemaType.Integer | JsonSchemaType.Number | JsonSchemaType.String | JsonSchemaType.Object | JsonSchemaType.Array;
+            }
+            if (schema.Type.HasValue)
+            {
+                schema.Type |= JsonSchemaType.Null;
+            }
         }
         else if (schema.Type.HasValue)
         {
