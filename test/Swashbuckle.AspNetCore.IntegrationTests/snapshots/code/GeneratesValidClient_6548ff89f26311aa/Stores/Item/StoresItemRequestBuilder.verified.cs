@@ -22,7 +22,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Stores.Item
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public StoresItemRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/stores/{id}", pathParameters)
+        public StoresItemRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/stores/{id}{?id*,location*}", pathParameters)
         {
         }
         /// <summary>
@@ -30,7 +30,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Stores.Item
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public StoresItemRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/stores/{id}", rawUrl)
+        public StoresItemRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/stores/{id}{?id*,location*}", rawUrl)
         {
         }
         /// <returns>A <see cref="Stream"/></returns>
@@ -120,7 +120,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Stores.Item
         public RequestInformation ToPutRequestInformation(Action<RequestConfiguration<global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Stores.Item.StoresItemRequestBuilder.StoresItemRequestBuilderPutQueryParameters>> requestConfiguration = default)
         {
 #endif
-            var requestInfo = new RequestInformation(Method.PUT, "{+baseurl}/stores/{id}{?id*,location*}", PathParameters);
+            var requestInfo = new RequestInformation(Method.PUT, UrlTemplate, PathParameters);
             requestInfo.Configure(requestConfiguration);
             return requestInfo;
         }
