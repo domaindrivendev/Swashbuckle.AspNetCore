@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using Microsoft.OpenApi;
 
@@ -147,6 +148,189 @@ public static class OpenApiSchemaExtensionsTests
 
         // Assert
         Assert.Equal(customDataType, schema.Format);
+    }
+
+    [Fact]
+    public static void ApplyValidationAttributes_MinLength_On_Dictionary_Maps_To_MinProperties()
+    {
+        // Arrange - dictionary schema is represented as an Object with AdditionalProperties
+        var schema = new OpenApiSchema
+        {
+            Type = JsonSchemaType.Object,
+            AdditionalPropertiesAllowed = true,
+            AdditionalProperties = new OpenApiSchema { Type = JsonSchemaType.String },
+        };
+
+        // Act
+        schema.ApplyValidationAttributes([new MinLengthAttribute(1)]);
+
+        // Assert
+        Assert.Equal(1, schema.MinProperties);
+        Assert.Null(schema.MinLength);
+        Assert.Null(schema.MinItems);
+    }
+
+    [Fact]
+    public static void ApplyValidationAttributes_MaxLength_On_Dictionary_Maps_To_MaxProperties()
+    {
+        // Arrange
+        var schema = new OpenApiSchema
+        {
+            Type = JsonSchemaType.Object,
+            AdditionalPropertiesAllowed = true,
+            AdditionalProperties = new OpenApiSchema { Type = JsonSchemaType.String },
+        };
+
+        // Act
+        schema.ApplyValidationAttributes([new MaxLengthAttribute(10)]);
+
+        // Assert
+        Assert.Equal(10, schema.MaxProperties);
+        Assert.Null(schema.MaxLength);
+        Assert.Null(schema.MaxItems);
+    }
+
+    [Fact]
+    public static void ApplyValidationAttributes_Length_On_Dictionary_Maps_To_Min_And_MaxProperties()
+    {
+        // Arrange
+        var schema = new OpenApiSchema
+        {
+            Type = JsonSchemaType.Object,
+            AdditionalPropertiesAllowed = true,
+            AdditionalProperties = new OpenApiSchema { Type = JsonSchemaType.String },
+        };
+
+        // Act
+        schema.ApplyValidationAttributes([new LengthAttribute(2, 5)]);
+
+        // Assert
+        Assert.Equal(2, schema.MinProperties);
+        Assert.Equal(5, schema.MaxProperties);
+        Assert.Null(schema.MinLength);
+        Assert.Null(schema.MaxLength);
+        Assert.Null(schema.MinItems);
+        Assert.Null(schema.MaxItems);
+    }
+
+    [Fact]
+    public static void ApplyValidationAttributes_MinLength_On_String_Still_Maps_To_MinLength()
+    {
+        // Arrange - regression guard for the existing string path
+        var schema = new OpenApiSchema { Type = JsonSchemaType.String };
+
+        // Act
+        schema.ApplyValidationAttributes([new MinLengthAttribute(3)]);
+
+        // Assert
+        Assert.Equal(3, schema.MinLength);
+        Assert.Null(schema.MinProperties);
+        Assert.Null(schema.MinItems);
+    }
+
+    [Fact]
+    public static void ApplyValidationAttributes_MinLength_On_Array_Still_Maps_To_MinItems()
+    {
+        // Arrange - regression guard for the existing array path
+        var schema = new OpenApiSchema { Type = JsonSchemaType.Array };
+
+        // Act
+        schema.ApplyValidationAttributes([new MinLengthAttribute(3)]);
+
+        // Assert
+        Assert.Equal(3, schema.MinItems);
+        Assert.Null(schema.MinProperties);
+        Assert.Null(schema.MinLength);
+    }
+
+    [Fact]
+    public static void ApplyValidationAttributes_MaxLength_On_String_Still_Maps_To_MaxLength()
+    {
+        var schema = new OpenApiSchema { Type = JsonSchemaType.String };
+
+        schema.ApplyValidationAttributes([new MaxLengthAttribute(5)]);
+
+        Assert.Equal(5, schema.MaxLength);
+        Assert.Null(schema.MaxProperties);
+        Assert.Null(schema.MaxItems);
+    }
+
+    [Fact]
+    public static void ApplyValidationAttributes_MaxLength_On_Array_Still_Maps_To_MaxItems()
+    {
+        var schema = new OpenApiSchema { Type = JsonSchemaType.Array };
+
+        schema.ApplyValidationAttributes([new MaxLengthAttribute(5)]);
+
+        Assert.Equal(5, schema.MaxItems);
+        Assert.Null(schema.MaxProperties);
+        Assert.Null(schema.MaxLength);
+    }
+
+    [Fact]
+    public static void ApplyValidationAttributes_Length_On_String_Still_Maps_To_MinAndMaxLength()
+    {
+        var schema = new OpenApiSchema { Type = JsonSchemaType.String };
+
+        schema.ApplyValidationAttributes([new LengthAttribute(1, 5)]);
+
+        Assert.Equal(1, schema.MinLength);
+        Assert.Equal(5, schema.MaxLength);
+        Assert.Null(schema.MinProperties);
+        Assert.Null(schema.MaxProperties);
+    }
+
+    [Fact]
+    public static void ApplyValidationAttributes_Length_On_Array_Still_Maps_To_MinAndMaxItems()
+    {
+        var schema = new OpenApiSchema { Type = JsonSchemaType.Array };
+
+        schema.ApplyValidationAttributes([new LengthAttribute(1, 5)]);
+
+        Assert.Equal(1, schema.MinItems);
+        Assert.Equal(5, schema.MaxItems);
+        Assert.Null(schema.MinProperties);
+        Assert.Null(schema.MaxProperties);
+    }
+
+    [Fact]
+    public static void ApplyValidationAttributes_MinLength_On_EnumKeyedDictionarySchema_Maps_To_MinProperties()
+    {
+        // Enum-keyed dictionaries are emitted as Object with known Properties and
+        // AdditionalPropertiesAllowed = false (see SchemaGenerator.CreateDictionarySchema).
+        // The fix must still route MinLength to MinProperties in this shape.
+        var schema = new OpenApiSchema
+        {
+            Type = JsonSchemaType.Object,
+            Properties = new Dictionary<string, IOpenApiSchema>
+            {
+                ["Foo"] = new OpenApiSchema { Type = JsonSchemaType.String },
+                ["Bar"] = new OpenApiSchema { Type = JsonSchemaType.String },
+            },
+            AdditionalPropertiesAllowed = false,
+        };
+
+        schema.ApplyValidationAttributes([new MinLengthAttribute(1)]);
+
+        Assert.Equal(1, schema.MinProperties);
+        Assert.Null(schema.MinLength);
+    }
+
+    [Fact]
+    public static void ApplyValidationAttributes_MinLength_On_NullableObjectSchema_Maps_To_MinProperties()
+    {
+        // A nullable dictionary has Type = Object | Null. HasFlag(Object) must still route to MinProperties.
+        var schema = new OpenApiSchema
+        {
+            Type = JsonSchemaType.Object | JsonSchemaType.Null,
+            AdditionalPropertiesAllowed = true,
+            AdditionalProperties = new OpenApiSchema { Type = JsonSchemaType.String },
+        };
+
+        schema.ApplyValidationAttributes([new MinLengthAttribute(2)]);
+
+        Assert.Equal(2, schema.MinProperties);
+        Assert.Null(schema.MinLength);
     }
 
     private sealed class CultureSwitcher : IDisposable
