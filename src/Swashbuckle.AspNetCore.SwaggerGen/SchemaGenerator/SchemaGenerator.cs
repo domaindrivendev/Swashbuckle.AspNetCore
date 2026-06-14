@@ -139,7 +139,8 @@ public class SchemaGenerator(
     {
         var nullable = dataProperty.IsNullable && requiredAttribute == null;
 
-        if (_generatorOptions.SupportNonNullableReferenceTypes)
+        if (_generatorOptions.SupportNonNullableReferenceTypes
+            && !dataProperty.MemberType.IsValueType)
         {
             nullable &= !memberInfo.IsNonNullableReferenceType();
         }
@@ -214,7 +215,7 @@ public class SchemaGenerator(
             : GenerateConcreteSchema(dataContract, schemaRepository);
 
         ApplyFilters(schema, modelType, schemaRepository);
-         
+
         if (Nullable.GetUnderlyingType(modelType) != null && schema is OpenApiSchema concrete)
         {
             SetNullable(concrete, true);
