@@ -214,7 +214,7 @@ public class SchemaGenerator(
             : GenerateConcreteSchema(dataContract, schemaRepository);
 
         ApplyFilters(schema, modelType, schemaRepository);
-         
+
         if (Nullable.GetUnderlyingType(modelType) != null && schema is OpenApiSchema concrete)
         {
             SetNullable(concrete, true);
