@@ -1,5 +1,4 @@
-﻿#if NET10_0_OR_GREATER
-using ReDocApp = ReDoc;
+﻿using ReDocApp = ReDoc;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests;
 
@@ -45,4 +44,3 @@ public class UITests(PlaywrightFixture fixture) : IClassFixture<PlaywrightFixtur
 
     private sealed class SwaggerUIFixture : HttpApplicationFixture<Basic.Startup>;
 }
-#endif

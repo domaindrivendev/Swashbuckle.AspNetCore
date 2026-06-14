@@ -70,17 +70,18 @@ internal sealed class EmbeddedResourceProvider(
         responseHeaders.ContentType = contentType;
         responseHeaders.ETag = etag;
 
-        using var compressed = GetResource(cacheEntry);
+        ReadOnlyMemory<byte> body;
 
         if (serveCompressed)
         {
-            await compressed.CopyToAsync(response.Body, httpContext.RequestAborted);
+            body = cacheEntry.Compressed;
         }
         else
         {
-            using var decompressed = new GZipStream(compressed, CompressionMode.Decompress);
-            await decompressed.CopyToAsync(response.Body, httpContext.RequestAborted);
+            body = cacheEntry.Decompressed;
         }
+
+        await response.BodyWriter.WriteAsync(body, httpContext.RequestAborted);
 
         return true;
     }
@@ -146,15 +147,26 @@ internal sealed class EmbeddedResourceProvider(
 
             gzip.CopyTo(decompressed);
 
-            compressed.Seek(0, SeekOrigin.Begin);
-            decompressed.Seek(0, SeekOrigin.Begin);
+            entry.Decompressed = decompressed.ToArray();
 
             // Some embedded resources may already be compressed or compress worse than the original
             entry.SupportsCompression = compressed.Length < decompressed.Length;
 
-            var content = entry.SupportsCompression
-                ? compressed
-                : decompressed;
+            byte[] content;
+
+            if (entry.SupportsCompression)
+            {
+                compressed.Seek(0, SeekOrigin.Begin);
+
+                using var memoryStream = new MemoryStream((int)compressed.Length);
+                compressed.CopyTo(memoryStream);
+
+                content = entry.Compressed = memoryStream.ToArray();
+            }
+            else
+            {
+                content = entry.Decompressed;
+            }
 
             var hash = SHA1.HashData(content);
 
@@ -182,5 +194,9 @@ internal sealed class EmbeddedResourceProvider(
         public string ResourceName { get; } = resourceName;
 
         public bool SupportsCompression { get; set; }
+
+        public byte[]? Compressed { get; set; }
+
+        public byte[]? Decompressed { get; set; }
     }
 }

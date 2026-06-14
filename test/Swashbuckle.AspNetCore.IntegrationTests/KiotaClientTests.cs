@@ -1,6 +1,4 @@
-﻿#if NET10_0_OR_GREATER
-
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Kiota.Abstractions.Authentication;
 using Microsoft.Kiota.Http.HttpClientLibrary;
 using TodoApp.KiotaClient;
@@ -262,5 +260,3 @@ public class KiotaClientTests
         await callback(client);
     }
 }
-
-#endif
