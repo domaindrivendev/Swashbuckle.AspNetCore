@@ -9,58 +9,44 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 
 public class XmlCommentsParameterFilterTests
 {
-    [Fact]
-    public void Apply_SetsDescriptionAndExample_FromActionParamTag()
+    [Theory]
+    [InlineData(0, "Description for param1", "\"Example for \\u0022param1\\u0022\"")]
+    [InlineData(1, "Description for param2", "\"http://test.com/?param1=1\\u0026param2=2\"")]
+    [InlineData(2, "Description for param3 with empty example", "\"\"")]
+    [InlineData(3, "", null)]
+    public void Apply_SetsDescriptionAndExample_FromActionParamTag(int p, string expectedDescription, string expectedExample)
     {
         var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String } };
         var parameterInfo = typeof(FakeControllerWithXmlComments)
             .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithParamTags))
-            .GetParameters()[0];
+            .GetParameters()[p];
         var apiParameterDescription = new ApiParameterDescription { };
         var filterContext = new ParameterFilterContext(apiParameterDescription, null, null, null, parameterInfo: parameterInfo);
 
         Subject().Apply(parameter, filterContext);
 
-        Assert.Equal("Description for param1", parameter.Description);
-        Assert.NotNull(parameter.Example);
-
-        Assert.Equal("\"Example for \\u0022param1\\u0022\"", parameter.Example.ToJson());
+        Assert.Equal(expectedDescription, parameter.Description);
+        Assert.Equal(expectedExample, parameter.Example?.ToJson());
     }
 
-    [Fact]
-    public void Apply_SetsDescriptionAndExample_FromUriTypeActionParamTag()
-    {
-        var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String } };
-        var parameterInfo = typeof(FakeControllerWithXmlComments)
-            .GetMethod(nameof(FakeControllerWithXmlComments.ActionWithParamTags))
-            .GetParameters()[1];
-        var apiParameterDescription = new ApiParameterDescription { };
-        var filterContext = new ParameterFilterContext(apiParameterDescription, null, null, null, parameterInfo: parameterInfo);
-
-        Subject().Apply(parameter, filterContext);
-
-        Assert.Equal("Description for param2", parameter.Description);
-        Assert.NotNull(parameter.Example);
-
-        Assert.Equal("\"http://test.com/?param1=1\\u0026param2=2\"", parameter.Example.ToJson());
-    }
-
-    [Fact]
-    public void Apply_SetsDescriptionAndExample_FromUnderlyingGenericTypeActionParamTag()
+    [Theory]
+    [InlineData(0, "Description for param1", "\"Example for \\u0022param1\\u0022\"")]
+    [InlineData(1, "Description for param2", "\"http://test.com/?param1=1\\u0026param2=2\"")]
+    [InlineData(2, "Description for param3 with empty example", "\"\"")]
+    [InlineData(3, "", null)]
+    public void Apply_SetsDescriptionAndExample_FromUnderlyingGenericTypeActionParamTag(int p, string expectedDescription, string expectedExample)
     {
         var parameter = new OpenApiParameter { Schema = new OpenApiSchema { Type = JsonSchemaTypes.String } };
         var parameterInfo = typeof(FakeConstructedControllerWithXmlComments)
             .GetMethod(nameof(FakeConstructedControllerWithXmlComments.ActionWithParamTags))
-            .GetParameters()[0];
+            .GetParameters()[p];
         var apiParameterDescription = new ApiParameterDescription { };
         var filterContext = new ParameterFilterContext(apiParameterDescription, null, null, null, parameterInfo: parameterInfo);
 
         Subject().Apply(parameter, filterContext);
 
-        Assert.Equal("Description for param1", parameter.Description);
-        Assert.NotNull(parameter.Example);
-
-        Assert.Equal("\"Example for \\u0022param1\\u0022\"", parameter.Example.ToJson());
+        Assert.Equal(expectedDescription, parameter.Description);
+        Assert.Equal(expectedExample, parameter.Example?.ToJson());
     }
 
     [Fact]
