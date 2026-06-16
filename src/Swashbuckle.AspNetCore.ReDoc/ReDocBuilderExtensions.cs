@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Routing;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.ReDoc;
@@ -52,7 +53,20 @@ public static class ReDocBuilderExtensions
             .UseReDoc(options)
             .Build();
 
-        return endpoints.Map(GetRoutePattern(options.RoutePrefix), pipeline);
+        return endpoints.Map(GetRoutePattern(options.RoutePrefix), async (context) =>
+        {
+            var endpoint = context.GetEndpoint();
+            context.SetEndpoint(null);
+
+            try
+            {
+                await pipeline(context);
+            }
+            finally
+            {
+                context.SetEndpoint(endpoint);
+            }
+        });
     }
 
     private static ReDocOptions ResolveOptions(IServiceProvider serviceProvider, Action<ReDocOptions> setupAction)
