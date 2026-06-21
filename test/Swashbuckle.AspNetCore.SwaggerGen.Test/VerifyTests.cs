@@ -1654,6 +1654,38 @@ public partial class VerifyTests
         await Verify(document);
     }
 
+#nullable enable
+    [Fact]
+    public async Task GenerateSchema_CustomResolver_OptionOfString_RendersCorrectly()
+    {
+        var generatorOptions = new SchemaGeneratorOptions
+        {
+            // We enable NRT so we can verify the underlying nullability.
+            SupportNonNullableReferenceTypes = true
+        };
+        var subject = new SchemaGenerator(
+            generatorOptions,
+            new OptionalValueDataContractResolver(
+                new JsonSerializerDataContractResolver(new JsonSerializerOptions()),
+                generatorOptions
+            )
+        );
+        var schemaRepository = new SchemaRepository();
+
+        subject.GenerateSchema(typeof(TypeWithOptionProperty), schemaRepository);
+
+        var document = new OpenApiDocument
+        {
+            Components = new OpenApiComponents
+            {
+                Schemas = schemaRepository.Schemas
+            }
+        };
+
+        await VerifyV31(document);
+    }
+#nullable restore
+
     private static SwaggerGenerator Subject(
             IEnumerable<ApiDescription> apiDescriptions,
             SwaggerGeneratorOptions options = null,
@@ -1690,9 +1722,25 @@ public partial class VerifyTests
         return NormalizeLineBreaks(stringWriter.ToString());
     }
 
+    private static string ToJsonV31(OpenApiDocument document)
+    {
+        using var stringWriter = new StringWriter();
+        var jsonWriter = new OpenApiJsonWriter(stringWriter);
+
+        document.SerializeAsV31(jsonWriter);
+
+        return NormalizeLineBreaks(stringWriter.ToString());
+    }
+
     private static async Task Verify(OpenApiDocument document)
     {
         await Verifier.Verify(ToJson(document))
+                      .UseDirectory($"snapshots/{Environment.Version.Major}_{Environment.Version.Minor}");
+    }
+
+    private static async Task VerifyV31(OpenApiDocument document)
+    {
+        await Verifier.Verify(ToJsonV31(document))
                       .UseDirectory($"snapshots/{Environment.Version.Major}_{Environment.Version.Minor}");
     }
 

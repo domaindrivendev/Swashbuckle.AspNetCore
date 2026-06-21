@@ -1519,21 +1519,6 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal(JsonSchemaTypes.Integer, schema.Type);
     }
 
-    [Fact]
-    public void GenerateSchema_SupportNonNullableReferenceTypes_DoesNotOverrideDataPropertyNullable_ForValueTypeMembers()
-    {
-        var subject = new SchemaGenerator(
-            new SchemaGeneratorOptions { SupportNonNullableReferenceTypes = true },
-            new NullableValueTypeDataContractResolver());
-        var schemaRepository = new SchemaRepository();
-
-        var referenceSchema = subject.GenerateSchema(typeof(TypeWithNullableValueTypeWrapper), schemaRepository);
-
-        var reference = Assert.IsType<OpenApiSchemaReference>(referenceSchema);
-        var propertySchema = schemaRepository.Schemas[reference.Reference.Id].Properties[nameof(TypeWithNullableValueTypeWrapper.Optional)];
-        AssertIsNullable(propertySchema);
-    }
-
     private static SchemaGenerator Subject(
         Action<SchemaGeneratorOptions> configureGenerator = null,
         Action<JsonSerializerOptions> configureSerializer = null)
@@ -1552,41 +1537,4 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.True(schema.Type.HasValue);
         Assert.Equal(expected, schema.Type.Value.HasFlag(JsonSchemaType.Null));
     }
-
-    private sealed class NullableValueTypeDataContractResolver : ISerializerDataContractResolver
-    {
-        public DataContract GetDataContractForType(Type type)
-        {
-            if (type == typeof(TypeWithNullableValueTypeWrapper))
-            {
-                return DataContract.ForObject(
-                    underlyingType: type,
-                    properties:
-                    [
-                        new DataProperty(
-                            name: nameof(TypeWithNullableValueTypeWrapper.Optional),
-                            memberType: typeof(NullableValueTypeWrapper),
-                            isNullable: true,
-                            memberInfo: type.GetProperty(nameof(TypeWithNullableValueTypeWrapper.Optional)))
-                    ]);
-            }
-
-            if (type == typeof(NullableValueTypeWrapper))
-            {
-                return DataContract.ForPrimitive(
-                    underlyingType: type,
-                    dataType: DataType.String,
-                    dataFormat: null);
-            }
-
-            throw new InvalidOperationException($"Unexpected type: {type}");
-        }
-    }
-
-    private sealed class TypeWithNullableValueTypeWrapper
-    {
-        public NullableValueTypeWrapper Optional { get; set; }
-    }
-
-    private readonly struct NullableValueTypeWrapper;
 }
