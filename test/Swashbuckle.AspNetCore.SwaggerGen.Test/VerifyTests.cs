@@ -1666,7 +1666,7 @@ public partial class VerifyTests
         var subject = new SchemaGenerator(
             generatorOptions,
             new OptionalValueDataContractResolver(
-                new JsonSerializerDataContractResolver(new JsonSerializerOptions()),
+                new JsonSerializerDataContractResolver(new JsonSerializerOptions(), generatorOptions),
                 generatorOptions
             )
         );
@@ -1699,7 +1699,7 @@ public partial class VerifyTests
         return new SwaggerGenerator(
             options ?? DefaultOptions,
             new FakeApiDescriptionGroupCollectionProvider(apiDescriptions),
-            new SchemaGenerator(schemaGeneratorOptions, new JsonSerializerDataContractResolver(new JsonSerializerOptions())),
+            new SchemaGenerator(schemaGeneratorOptions, new JsonSerializerDataContractResolver(new JsonSerializerOptions(), schemaGeneratorOptions)),
             new FakeAuthenticationSchemeProvider(authenticationSchemes ?? [])
         );
     }

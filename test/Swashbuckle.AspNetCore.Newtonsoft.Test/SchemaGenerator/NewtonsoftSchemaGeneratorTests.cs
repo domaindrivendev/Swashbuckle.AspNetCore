@@ -1005,6 +1005,6 @@ public class NewtonsoftSchemaGeneratorTests
         var serializerSettings = new JsonSerializerSettings();
         configureSerializer?.Invoke(serializerSettings);
 
-        return new SchemaGenerator(generatorOptions, new NewtonsoftDataContractResolver(serializerSettings));
+        return new SchemaGenerator(generatorOptions, new NewtonsoftDataContractResolver(serializerSettings, generatorOptions));
     }
 }

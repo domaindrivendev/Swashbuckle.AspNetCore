@@ -1,0 +1,1 @@
+Swashbuckle.AspNetCore.Newtonsoft.NewtonsoftDataContractResolver.NewtonsoftDataContractResolver(Newtonsoft.Json.JsonSerializerSettings serializerSettings, Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions generatorOptions) -> void
