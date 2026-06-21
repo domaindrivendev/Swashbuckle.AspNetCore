@@ -1654,7 +1654,6 @@ public partial class VerifyTests
         await Verify(document);
     }
 
-#nullable enable
     [Fact]
     public async Task GenerateSchema_CustomResolver_OptionOfString_RendersCorrectly()
     {
@@ -1684,7 +1683,6 @@ public partial class VerifyTests
 
         await VerifyV31(document);
     }
-#nullable restore
 
     private static SwaggerGenerator Subject(
             IEnumerable<ApiDescription> apiDescriptions,
