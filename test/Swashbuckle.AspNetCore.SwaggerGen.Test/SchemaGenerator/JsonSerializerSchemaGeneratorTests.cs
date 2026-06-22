@@ -373,10 +373,16 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal(3, schema.Properties["StringWithMinMaxLength"].MaxLength);
         Assert.Equal(1, schema.Properties["ArrayWithMinMaxLength"].MinItems);
         Assert.Equal(3, schema.Properties["ArrayWithMinMaxLength"].MaxItems);
+        Assert.Equal(1, schema.Properties["BoundedReadOnlyDictionary"].MinProperties);
+        Assert.Equal(3, schema.Properties["BoundedReadOnlyDictionary"].MaxProperties);
+        Assert.Null(schema.Properties["BoundedReadOnlyDictionary"].MinLength);
+        Assert.Null(schema.Properties["BoundedReadOnlyDictionary"].MaxLength);
         Assert.Equal(1, schema.Properties["StringWithLength"].MinLength);
         Assert.Equal(3, schema.Properties["StringWithLength"].MaxLength);
         Assert.Equal(1, schema.Properties["ArrayWithLength"].MinItems);
         Assert.Equal(3, schema.Properties["ArrayWithLength"].MaxItems);
+        Assert.Equal(1, schema.Properties["BoundedDictionary"].MinProperties);
+        Assert.Equal(3, schema.Properties["BoundedDictionary"].MaxProperties);
         Assert.NotNull(schema.Properties["IntWithExclusiveRange"].ExclusiveMinimum);
         Assert.NotNull(schema.Properties["IntWithExclusiveRange"].ExclusiveMaximum);
         Assert.Equal("byte", schema.Properties["StringWithBase64"].Format);
@@ -480,6 +486,32 @@ public class JsonSerializerSchemaGeneratorTests
         AssertIsNullable(schema.Properties["RequiredNullableString"]);
         Assert.NotNull(schema.Required);
         Assert.Contains("RequiredNullableString", schema.Required.ToArray());
+        AssertIsNullable(schema.Properties["RequiredNonNullableString"], false);
+        Assert.Contains("RequiredNonNullableString", schema.Required.ToArray());
+    }
+
+    [Fact]
+    public void GenerateSchema_NonNullableReferenceTypesAsRequired_PreservesNullable_IfPropertyHasRequiredKeywordAndIsNullable()
+    {
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Subject(configureGenerator: (c) => c.NonNullableReferenceTypesAsRequired = true).GenerateSchema(typeof(TypeWithNullableReferenceTypes), schemaRepository);
+
+        var reference = Assert.IsType<OpenApiSchemaReference>(referenceSchema);
+
+        Assert.NotNull(reference);
+        Assert.NotNull(reference.Reference);
+        Assert.NotNull(reference.Reference.Id);
+
+        var schema = schemaRepository.Schemas[reference.Reference.Id];
+        Assert.NotNull(schema.Properties);
+        Assert.NotNull(schema.Required);
+
+        // required string? - must be present (required) AND may be null (nullable: true)
+        AssertIsNullable(schema.Properties["RequiredNullableString"]);
+        Assert.Contains("RequiredNullableString", schema.Required.ToArray());
+
+        // required string - must be present (required) AND must have a value (nullable: false)
         AssertIsNullable(schema.Properties["RequiredNonNullableString"], false);
         Assert.Contains("RequiredNonNullableString", schema.Required.ToArray());
     }
@@ -1124,6 +1156,23 @@ public class JsonSerializerSchemaGeneratorTests
 
         var propertyIsRequired = schemaRepository.Schemas[subType].Required.Contains(propertyName);
         Assert.True(propertyIsRequired);
+    }
+
+    [Theory]
+    [InlineData(typeof(TypeWithNullableContextAnnotated), nameof(TypeWithNullableContextAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextAnnotated.NonNullableString))]
+    [InlineData(typeof(TypeWithNullableContextNotAnnotated), nameof(TypeWithNullableContextNotAnnotated.SubTypeWithOneNonNullableContent), nameof(TypeWithNullableContextNotAnnotated.NonNullableString))]
+    public void GenerateSchema_NonNullableReferenceTypesAsRequired_DoesNotMarkPropertyAsNullable(
+        Type declaringType,
+        string subType,
+        string propertyName)
+    {
+        var subject = Subject(c => c.NonNullableReferenceTypesAsRequired = true);
+        var schemaRepository = new SchemaRepository();
+
+        subject.GenerateSchema(declaringType, schemaRepository);
+
+        var propertySchema = schemaRepository.Schemas[subType].Properties[propertyName];
+        AssertIsNullable(propertySchema, expected: false);
     }
 
     [Theory]

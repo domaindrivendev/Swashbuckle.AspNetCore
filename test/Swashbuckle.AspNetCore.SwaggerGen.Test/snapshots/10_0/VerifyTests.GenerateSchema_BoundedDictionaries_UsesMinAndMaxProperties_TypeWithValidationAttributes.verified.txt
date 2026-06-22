@@ -1,0 +1,164 @@
+﻿{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "Test API",
+    "version": "V1"
+  },
+  "paths": {
+    "/resource": {
+      "post": {
+        "tags": [
+          "Fake"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TypeWithValidationAttributes"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "IntEnum": {
+        "enum": [
+          2,
+          4,
+          8
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "TypeWithValidationAttributes": {
+        "required": [
+          "NullableIntEnumWithRequired",
+          "StringWithRequired",
+          "StringWithRequiredAllowEmptyTrue"
+        ],
+        "type": "object",
+        "properties": {
+          "StringWithDataTypeCreditCard": {
+            "type": "string",
+            "format": "credit-card",
+            "nullable": true
+          },
+          "StringWithMinMaxLength": {
+            "maxLength": 3,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          },
+          "ArrayWithMinMaxLength": {
+            "maxItems": 3,
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "BoundedReadOnlyDictionary": {
+            "maxProperties": 3,
+            "minProperties": 1,
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "nullable": true
+            },
+            "nullable": true
+          },
+          "StringWithLength": {
+            "maxLength": 3,
+            "minLength": 1,
+            "type": "string",
+            "nullable": true
+          },
+          "ArrayWithLength": {
+            "maxItems": 3,
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "BoundedDictionary": {
+            "maxProperties": 3,
+            "minProperties": 1,
+            "type": "object",
+            "additionalProperties": {
+              "type": "string",
+              "nullable": true
+            },
+            "nullable": true
+          },
+          "IntWithExclusiveRange": {
+            "maximum": 10,
+            "exclusiveMaximum": true,
+            "minimum": 1,
+            "exclusiveMinimum": true,
+            "type": "integer",
+            "format": "int32"
+          },
+          "StringWithBase64": {
+            "type": "string",
+            "format": "byte",
+            "nullable": true
+          },
+          "IntWithRange": {
+            "maximum": 10,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "StringWithRegularExpression": {
+            "pattern": "^[3-6]?\\d{12,15}$",
+            "type": "string",
+            "nullable": true
+          },
+          "StringWithStringLength": {
+            "maxLength": 10,
+            "minLength": 5,
+            "type": "string",
+            "nullable": true
+          },
+          "StringWithRequired": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "StringWithRequiredAllowEmptyTrue": {
+            "type": "string"
+          },
+          "StringWithDescription": {
+            "type": "string",
+            "description": "Description",
+            "nullable": true
+          },
+          "StringWithReadOnly": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "NullableIntEnumWithRequired": {
+            "$ref": "#/components/schemas/IntEnum"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Fake"
+    }
+  ]
+}
