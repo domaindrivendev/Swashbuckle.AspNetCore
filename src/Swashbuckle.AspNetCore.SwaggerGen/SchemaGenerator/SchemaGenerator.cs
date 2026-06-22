@@ -471,8 +471,7 @@ public class SchemaGenerator(
                 : GenerateSchemaForType(memberType, schemaRepository);
 
             var markNonNullableTypeAsRequired =
-                _generatorOptions.NonNullableReferenceTypesAsRequired &&
-                (dataProperty.MemberInfo?.IsNonNullableReferenceType() ?? false);
+                _generatorOptions.NonNullableReferenceTypesAsRequired && !dataProperty.IsNullable;
 
             if ((
                 dataProperty.IsRequired

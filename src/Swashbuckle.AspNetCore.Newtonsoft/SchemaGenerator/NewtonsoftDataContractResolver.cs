@@ -219,7 +219,8 @@ public class NewtonsoftDataContractResolver : ISerializerDataContractResolver
     {
         var nullable = propertyType.IsReferenceOrNullableType();
 
-        if (_generatorOptions.SupportNonNullableReferenceTypes
+        if ((_generatorOptions.SupportNonNullableReferenceTypes
+                || _generatorOptions.NonNullableReferenceTypesAsRequired)
             && memberInfo != null)
         {
             nullable &= !memberInfo.IsNonNullableReferenceType();

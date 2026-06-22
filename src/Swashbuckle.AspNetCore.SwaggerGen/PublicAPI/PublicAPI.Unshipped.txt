@@ -1,2 +1,1 @@
-﻿
-Swashbuckle.AspNetCore.SwaggerGen.JsonSerializerDataContractResolver.JsonSerializerDataContractResolver(System.Text.Json.JsonSerializerOptions serializerOptions, Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions generatorOptions) -> void
+﻿Swashbuckle.AspNetCore.SwaggerGen.JsonSerializerDataContractResolver.JsonSerializerDataContractResolver(System.Text.Json.JsonSerializerOptions serializerOptions, Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions generatorOptions) -> void
