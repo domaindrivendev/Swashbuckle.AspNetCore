@@ -940,8 +940,8 @@
           }
         ],
         "responses": {
-          "default": {
-            "description": "A Product",
+          "200": {
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -950,8 +950,8 @@
               }
             }
           },
-          "200": {
-            "description": "OK",
+          "default": {
+            "description": "A Product",
             "content": {
               "application/json": {
                 "schema": {
