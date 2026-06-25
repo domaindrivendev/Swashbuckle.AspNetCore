@@ -34,14 +34,14 @@ public class SchemaRepository(string? documentName = null)
     public bool TryLookupByType(Type type, [NotNullWhen(true)] out OpenApiSchemaReference? referenceSchema)
     {
         referenceSchema = null;
-        bool result = _reservedIds.TryGetValue(type, out string? schemaId);
 
-        if (result)
+        if (_reservedIds.TryGetValue(type, out string? schemaId) && schemaId is not null)
         {
-            referenceSchema = new OpenApiSchemaReference(schemaId!);
+            referenceSchema = new OpenApiSchemaReference(schemaId);
+            return true;
         }
 
-        return result;
+        return false;
     }
 
     public OpenApiSchemaReference AddDefinition(string schemaId, OpenApiSchema schema)
