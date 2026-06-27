@@ -369,7 +369,7 @@ public class SchemaGenerator(
                     .Select(g => g.First())
                     .Select(x => (IOpenApiSchema)new OpenApiSchema
                     {
-                        Const = x.Json,
+                        Const = JsonModelFactory.CreateFromJson(x.Json)?.ToString(),
                         Description = GetEnumMemberDescription(underlyingType, x.Raw)
                     })];
             }

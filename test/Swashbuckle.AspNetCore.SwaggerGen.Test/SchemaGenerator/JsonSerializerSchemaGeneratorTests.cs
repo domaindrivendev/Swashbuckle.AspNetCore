@@ -1585,11 +1585,11 @@ public class JsonSerializerSchemaGeneratorTests
         var schema = schemaRepository.Schemas[reference.Reference.Id];
         Assert.NotNull(schema.OneOf);
         Assert.Equal(3, schema.OneOf.Count);
-        Assert.Equal("\"Zero\"", schema.OneOf[0].Const);
+        Assert.Equal("Zero", schema.OneOf[0].Const);
         Assert.Equal("Value zero description", schema.OneOf[0].Description);
-        Assert.Equal("\"One\"", schema.OneOf[1].Const);
+        Assert.Equal("One", schema.OneOf[1].Const);
         Assert.Equal("Value one description", schema.OneOf[1].Description);
-        Assert.Equal("\"Two\"", schema.OneOf[2].Const);
+        Assert.Equal("Two", schema.OneOf[2].Const);
         Assert.Null(schema.OneOf[2].Description);
     }
 
