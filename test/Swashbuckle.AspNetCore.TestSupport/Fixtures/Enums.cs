@@ -1,4 +1,7 @@
-﻿namespace Swashbuckle.AspNetCore.TestSupport;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+
+namespace Swashbuckle.AspNetCore.TestSupport;
 
 public enum ByteEnum : byte
 {
@@ -37,4 +40,26 @@ public enum IntEnumWithDuplicateValues : int
     Unknown = 0,
     PreferredName = 1,
     OldNameForBackwardsCompatibility = PreferredName,
+}
+
+public enum IntEnumWithDescriptions : int
+{
+    [Description("Value zero description")]
+    Zero = 0,
+
+    [Description("Value one description")]
+    One = 1,
+
+    Two = 2,
+}
+
+public enum IntEnumWithDisplayDescriptions : int
+{
+    [Display(Description = "Value zero display description")]
+    Zero = 0,
+
+    [Display(Description = "Value one display description")]
+    One = 1,
+
+    Two = 2,
 }

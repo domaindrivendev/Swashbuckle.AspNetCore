@@ -18,6 +18,8 @@ public class SchemaGeneratorOptions
 
     public bool UseInlineDefinitionsForEnums { get; set; }
 
+    public bool UseAnnotatedEnumValues { get; set; }
+
     public Func<Type, string> SchemaIdSelector { get; set; }
 
     public bool IgnoreObsoleteProperties { get; set; }

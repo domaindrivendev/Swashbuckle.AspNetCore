@@ -1,1 +1,3 @@
-﻿
+Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions.UseAnnotatedEnumValues.get -> bool
+Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions.UseAnnotatedEnumValues.set -> void
+static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.UseAnnotatedEnumValues(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions) -> void

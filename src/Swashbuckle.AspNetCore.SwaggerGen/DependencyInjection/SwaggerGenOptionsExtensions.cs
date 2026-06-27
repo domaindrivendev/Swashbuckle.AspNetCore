@@ -189,6 +189,17 @@ public static class SwaggerGenOptionsExtensions
     }
 
     /// <summary>
+    /// Generate enum schemas as annotated enumerations (oneOf with const + description sub-schemas)
+    /// when enum members have <see cref="System.ComponentModel.DescriptionAttribute"/> or
+    /// <see cref="System.ComponentModel.DataAnnotations.DisplayAttribute"/> descriptions.
+    /// </summary>
+    /// <param name="swaggerGenOptions"></param>
+    public static void UseAnnotatedEnumValues(this SwaggerGenOptions swaggerGenOptions)
+    {
+        swaggerGenOptions.SchemaGeneratorOptions.UseAnnotatedEnumValues = true;
+    }
+
+    /// <summary>
     /// Provide a custom strategy for generating the unique Ids that are used to reference object Schemas
     /// </summary>
     /// <param name="swaggerGenOptions"></param>

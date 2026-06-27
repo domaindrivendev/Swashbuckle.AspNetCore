@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi;
+using DisplayAttribute = System.ComponentModel.DataAnnotations.DisplayAttribute;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -292,7 +293,7 @@ public class SchemaGenerator(
             case DataType.Number:
             case DataType.String:
                 {
-                    schemaFactory = () => CreatePrimitiveSchema(dataContract);
+                    schemaFactory = () => CreatePrimitiveSchema(dataContract, _generatorOptions);
                     returnAsReference = dataContract.UnderlyingType.IsEnum && !_generatorOptions.UseInlineDefinitionsForEnums;
                     break;
                 }
@@ -338,7 +339,7 @@ public class SchemaGenerator(
             (modelType.IsConstructedGenericType && _generatorOptions.CustomTypeMappings.TryGetValue(modelType.GetGenericTypeDefinition(), out schemaFactory));
     }
 
-    private static OpenApiSchema CreatePrimitiveSchema(DataContract dataContract)
+    private static OpenApiSchema CreatePrimitiveSchema(DataContract dataContract, SchemaGeneratorOptions options = null)
     {
         var schema = new OpenApiSchema
         {
@@ -360,13 +361,42 @@ public class SchemaGenerator(
                 enumValues = enumValues.Append(null);
             }*/
 
-            schema.Enum = [.. enumValues
-                .Select(value => dataContract.JsonConverter(value))
-                .Distinct()
-                .Select(JsonModelFactory.CreateFromJson)];
+            if (options?.UseAnnotatedEnumValues == true && HasEnumMemberDescriptions(underlyingType))
+            {
+                schema.OneOf = [.. enumValues
+                    .Select(value => (Raw: value, Json: dataContract.JsonConverter(value)))
+                    .GroupBy(x => x.Json)
+                    .Select(g => g.First())
+                    .Select(x => (IOpenApiSchema)new OpenApiSchema
+                    {
+                        Const = x.Json,
+                        Description = GetEnumMemberDescription(underlyingType, x.Raw)
+                    })];
+            }
+            else
+            {
+                schema.Enum = [.. enumValues
+                    .Select(value => dataContract.JsonConverter(value))
+                    .Distinct()
+                    .Select(JsonModelFactory.CreateFromJson)];
+            }
         }
 
         return schema;
+    }
+
+    private static bool HasEnumMemberDescriptions(Type enumType) =>
+        enumType.GetFields(BindingFlags.Public | BindingFlags.Static)
+            .Any(f => f.GetCustomAttribute<DescriptionAttribute>() != null
+                   || f.GetCustomAttribute<DisplayAttribute>()?.GetDescription() != null);
+
+    private static string GetEnumMemberDescription(Type enumType, object value)
+    {
+        var name = Enum.GetName(enumType, value);
+        if (name is null) return null;
+        var field = enumType.GetField(name);
+        return field?.GetCustomAttribute<DescriptionAttribute>()?.Description
+            ?? field?.GetCustomAttribute<DisplayAttribute>()?.GetDescription();
     }
 
     private OpenApiSchema CreateArraySchema(DataContract dataContract, SchemaRepository schemaRepository)

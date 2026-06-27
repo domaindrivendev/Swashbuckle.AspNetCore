@@ -1519,6 +1519,80 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal(JsonSchemaTypes.Integer, schema.Type);
     }
 
+    [Fact]
+    public void GenerateSchema_GeneratesOneOfEnumSchema_WhenUseAnnotatedEnumValuesEnabled()
+    {
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Subject(configureGenerator: c => c.UseAnnotatedEnumValues = true)
+            .GenerateSchema(typeof(IntEnumWithDescriptions), schemaRepository);
+
+        var reference = Assert.IsType<OpenApiSchemaReference>(referenceSchema);
+        var schema = schemaRepository.Schemas[reference.Reference.Id];
+        Assert.NotNull(schema.OneOf);
+        Assert.Null(schema.Enum);
+        Assert.Equal(3, schema.OneOf.Count);
+        Assert.Equal("0", schema.OneOf[0].Const);
+        Assert.Equal("Value zero description", schema.OneOf[0].Description);
+        Assert.Equal("1", schema.OneOf[1].Const);
+        Assert.Equal("Value one description", schema.OneOf[1].Description);
+        Assert.Equal("2", schema.OneOf[2].Const);
+        Assert.Null(schema.OneOf[2].Description);
+    }
+
+    [Fact]
+    public void GenerateSchema_GeneratesOneOfEnumSchema_HonorsDisplayAttribute_ForEnumDescription()
+    {
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Subject(configureGenerator: c => c.UseAnnotatedEnumValues = true)
+            .GenerateSchema(typeof(IntEnumWithDisplayDescriptions), schemaRepository);
+
+        var reference = Assert.IsType<OpenApiSchemaReference>(referenceSchema);
+        var schema = schemaRepository.Schemas[reference.Reference.Id];
+        Assert.NotNull(schema.OneOf);
+        Assert.Equal(3, schema.OneOf.Count);
+        Assert.Equal("Value zero display description", schema.OneOf[0].Description);
+        Assert.Equal("Value one display description", schema.OneOf[1].Description);
+        Assert.Null(schema.OneOf[2].Description);
+    }
+
+    [Fact]
+    public void GenerateSchema_StillGeneratesFlatEnum_WhenUseAnnotatedEnumValuesNotEnabled()
+    {
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Subject()
+            .GenerateSchema(typeof(IntEnumWithDescriptions), schemaRepository);
+
+        var reference = Assert.IsType<OpenApiSchemaReference>(referenceSchema);
+        var schema = schemaRepository.Schemas[reference.Reference.Id];
+        Assert.NotNull(schema.Enum);
+        Assert.Null(schema.OneOf);
+    }
+
+    [Fact]
+    public void GenerateSchema_GeneratesOneOfEnumSchema_ForStringEnum_WhenUseAnnotatedEnumValuesEnabled()
+    {
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Subject(
+                configureGenerator: c => c.UseAnnotatedEnumValues = true,
+                configureSerializer: c => c.Converters.Add(new JsonStringEnumConverter()))
+            .GenerateSchema(typeof(IntEnumWithDescriptions), schemaRepository);
+
+        var reference = Assert.IsType<OpenApiSchemaReference>(referenceSchema);
+        var schema = schemaRepository.Schemas[reference.Reference.Id];
+        Assert.NotNull(schema.OneOf);
+        Assert.Equal(3, schema.OneOf.Count);
+        Assert.Equal("\"Zero\"", schema.OneOf[0].Const);
+        Assert.Equal("Value zero description", schema.OneOf[0].Description);
+        Assert.Equal("\"One\"", schema.OneOf[1].Const);
+        Assert.Equal("Value one description", schema.OneOf[1].Description);
+        Assert.Equal("\"Two\"", schema.OneOf[2].Const);
+        Assert.Null(schema.OneOf[2].Description);
+    }
+
     private static SchemaGenerator Subject(
         Action<SchemaGeneratorOptions> configureGenerator = null,
         Action<JsonSerializerOptions> configureSerializer = null)

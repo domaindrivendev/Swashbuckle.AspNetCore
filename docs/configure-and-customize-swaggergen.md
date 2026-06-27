@@ -854,6 +854,60 @@ services.AddSwaggerGen(options =>
 > Filter pipelines are DI-aware. That is, you can create filters with constructor parameters and if the parameter types
 > are registered with the DI framework, they'll be automatically injected when the filters are instantiated.
 
+### Describe Enum Members with Annotated Enum Values
+
+By default, Swashbuckle generates enum schemas as a flat array of values:
+
+```yaml
+CvvCheckResult:
+  type: string
+  enum:
+    - D
+    - M
+    - N
+```
+
+If your enum members are annotated with `[Description]` or `[Display(Description = "...")]`, you can opt in to generating per-value descriptions using the [OpenAPI annotated enumeration pattern](https://spec.openapis.org/oas/v3.1.1.html#fixed-fields-20) (`oneOf` with `const` + `description` sub-schemas):
+
+```cs
+services.AddSwaggerGen(options =>
+{
+    options.UseAnnotatedEnumValues();
+});
+```
+
+With this option enabled, enum members decorated with `[Description]` or `[Display(Description = "...")]`:
+
+```cs
+public enum CvvCheckResult
+{
+    [Description("Suspicious transaction")]
+    D,
+
+    [Description("Match")]
+    M,
+
+    [Description("No Match")]
+    N,
+}
+```
+
+…are rendered as:
+
+```yaml
+CvvCheckResult:
+  type: string
+  oneOf:
+    - const: '"D"'
+      description: Suspicious transaction
+    - const: '"M"'
+      description: Match
+    - const: '"N"'
+      description: No Match
+```
+
+Members without a `[Description]` still appear in the `oneOf` list; their `description` field is simply omitted.
+
 ### Schema Filters
 
 Swashbuckle.AspnetCore generates an OpenAPI-flavored [JSONSchema](https://swagger.io/specification/#schema-object) for every parameter, response

@@ -24,6 +24,7 @@ internal class ConfigureSchemaGeneratorOptions(
     {
         target.CustomTypeMappings = new Dictionary<Type, Func<IOpenApiSchema>>(source.CustomTypeMappings);
         target.UseInlineDefinitionsForEnums = source.UseInlineDefinitionsForEnums;
+        target.UseAnnotatedEnumValues = source.UseAnnotatedEnumValues;
         target.SchemaIdSelector = source.SchemaIdSelector;
         target.IgnoreObsoleteProperties = source.IgnoreObsoleteProperties;
         target.UseAllOfForInheritance = source.UseAllOfForInheritance;
