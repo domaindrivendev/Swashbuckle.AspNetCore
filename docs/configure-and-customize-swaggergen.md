@@ -892,7 +892,7 @@ public enum CvvCheckResult
 }
 ```
 
-…are rendered as:
+...are rendered as:
 
 ```yaml
 CvvCheckResult:
