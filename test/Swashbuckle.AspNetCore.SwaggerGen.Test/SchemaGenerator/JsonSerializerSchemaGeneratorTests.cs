@@ -1623,6 +1623,59 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Equal(["Two", "Four", "Eight"], strSchema.OneOf.Select(s => s.Const));
     }
 
+    [Fact]
+    public void GenerateSchema_GeneratesOneOfEnumSchema_WhenUseAnnotatedEnumValuesEnabled_AndTargetVersionIs31()
+    {
+        // Default AnnotatedEnumOpenApiVersion is OpenApi3_1 — oneOf/const schema is generated.
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Subject(configureGenerator: c =>
+            {
+                c.UseAnnotatedEnumValues = true;
+                c.AnnotatedEnumOpenApiVersion = OpenApiSpecVersion.OpenApi3_1;
+            })
+            .GenerateSchema(typeof(IntEnumWithDescriptions), schemaRepository);
+
+        var reference = Assert.IsType<OpenApiSchemaReference>(referenceSchema);
+        var schema = schemaRepository.Schemas[reference.Reference.Id];
+
+        Assert.NotNull(schema.OneOf);
+        Assert.Null(schema.Enum);
+        Assert.Equal(3, schema.OneOf.Count);
+        Assert.Equal("2", schema.OneOf[0].Const);
+        Assert.Equal("Value two description", schema.OneOf[0].Description);
+        Assert.Equal("4", schema.OneOf[1].Const);
+        Assert.Equal("Value four description", schema.OneOf[1].Description);
+        Assert.Equal("8", schema.OneOf[2].Const);
+        Assert.Null(schema.OneOf[2].Description);
+    }
+
+    [Fact]
+    public void GenerateSchema_GeneratesFlatEnumSchema_WhenUseAnnotatedEnumValuesEnabled_AndTargetVersionIsLessThan31()
+    {
+        // For target versions < 3.1, oneOf/const cannot be expressed correctly (const is a
+        // 3.1-only keyword). The generator falls back to a flat enum array; per-value
+        // descriptions are dropped as they have no standard representation in < 3.1.
+        foreach (var version in new[] { OpenApiSpecVersion.OpenApi3_0, OpenApiSpecVersion.OpenApi2_0 })
+        {
+            var schemaRepository = new SchemaRepository();
+
+            var referenceSchema = Subject(configureGenerator: c =>
+                {
+                    c.UseAnnotatedEnumValues = true;
+                    c.AnnotatedEnumOpenApiVersion = version;
+                })
+                .GenerateSchema(typeof(IntEnumWithDescriptions), schemaRepository);
+
+            var reference = Assert.IsType<OpenApiSchemaReference>(referenceSchema);
+            var schema = schemaRepository.Schemas[reference.Reference.Id];
+
+            Assert.Null(schema.OneOf);
+            Assert.NotNull(schema.Enum);
+            Assert.Equal(3, schema.Enum.Count);
+        }
+    }
+
     private static SchemaGenerator Subject(
         Action<SchemaGeneratorOptions> configureGenerator = null,
         Action<JsonSerializerOptions> configureSerializer = null)

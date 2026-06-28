@@ -189,14 +189,25 @@ public static class SwaggerGenOptionsExtensions
     }
 
     /// <summary>
-    /// Generate enum schemas as annotated enumerations when enum members have
+    /// Generates enum schemas as <c>oneOf/const</c> enumerations (OpenAPI 3.1+) or as
+    /// flat <c>enum</c> arrays (&lt;3.1) when enum members have
     /// <see cref="System.ComponentModel.DescriptionAttribute"/> or
     /// <see cref="System.ComponentModel.DataAnnotations.DisplayAttribute"/> descriptions.
     /// </summary>
     /// <param name="swaggerGenOptions"></param>
-    public static void UseAnnotatedEnumValues(this SwaggerGenOptions swaggerGenOptions)
+    /// <param name="openApiVersion">
+    /// Target OpenAPI version. Use <see cref="OpenApiSpecVersion.OpenApi3_1"/> (default) to emit
+    /// <c>oneOf/const/description</c> per enum member. Use <see cref="OpenApiSpecVersion.OpenApi3_0"/>
+    /// or <see cref="OpenApiSpecVersion.OpenApi2_0"/> to fall back to a flat <c>enum</c> array
+    /// (per-value descriptions are dropped as they cannot be expressed in those versions).
+    /// This must match the <c>OpenApiVersion</c> configured on <c>UseSwagger</c>.
+    /// </param>
+    public static void UseAnnotatedEnumValues(
+        this SwaggerGenOptions swaggerGenOptions,
+        OpenApiSpecVersion openApiVersion = OpenApiSpecVersion.OpenApi3_1)
     {
         swaggerGenOptions.SchemaGeneratorOptions.UseAnnotatedEnumValues = true;
+        swaggerGenOptions.SchemaGeneratorOptions.AnnotatedEnumOpenApiVersion = openApiVersion;
     }
 
     /// <summary>

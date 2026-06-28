@@ -20,6 +20,8 @@ public class SchemaGeneratorOptions
 
     public bool UseAnnotatedEnumValues { get; set; }
 
+    public OpenApiSpecVersion AnnotatedEnumOpenApiVersion { get; set; } = OpenApiSpecVersion.OpenApi3_1;
+
     public Func<Type, string> SchemaIdSelector { get; set; }
 
     public bool IgnoreObsoleteProperties { get; set; }

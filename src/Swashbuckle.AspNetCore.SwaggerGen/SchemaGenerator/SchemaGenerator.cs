@@ -361,7 +361,9 @@ public class SchemaGenerator(
                 enumValues = enumValues.Append(null);
             }*/
 
-            if (options?.UseAnnotatedEnumValues == true && HasEnumMemberDescriptions(underlyingType))
+            if (options?.UseAnnotatedEnumValues == true
+                && options.AnnotatedEnumOpenApiVersion >= OpenApiSpecVersion.OpenApi3_1
+                && HasEnumMemberDescriptions(underlyingType))
             {
                 schema.OneOf = [.. enumValues
                     .Select(value => (Raw: value, Json: dataContract.JsonConverter(value)))
