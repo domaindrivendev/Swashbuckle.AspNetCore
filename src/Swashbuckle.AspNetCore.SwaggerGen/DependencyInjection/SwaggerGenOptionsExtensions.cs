@@ -189,8 +189,8 @@ public static class SwaggerGenOptionsExtensions
     }
 
     /// <summary>
-    /// Generate enum schemas as annotated enumerations (oneOf with const + description sub-schemas)
-    /// when enum members have <see cref="System.ComponentModel.DescriptionAttribute"/> or
+    /// Generate enum schemas as annotated enumerations when enum members have
+    /// <see cref="System.ComponentModel.DescriptionAttribute"/> or
     /// <see cref="System.ComponentModel.DataAnnotations.DisplayAttribute"/> descriptions.
     /// </summary>
     /// <param name="swaggerGenOptions"></param>
