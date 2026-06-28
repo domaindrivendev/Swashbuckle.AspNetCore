@@ -395,7 +395,12 @@ public class SchemaGenerator(
     private static string GetEnumMemberDescription(Type enumType, object value)
     {
         var name = Enum.GetName(enumType, value);
-        if (name is null) return null;
+
+        if (name is null)
+        {
+            return null;
+        }
+
         var field = enumType.GetField(name);
         return field?.GetCustomAttribute<DescriptionAttribute>()?.Description
             ?? field?.GetCustomAttribute<DisplayAttribute>()?.GetDescription();
