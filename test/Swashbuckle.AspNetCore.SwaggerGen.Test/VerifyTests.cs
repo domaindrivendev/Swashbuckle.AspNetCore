@@ -1714,6 +1714,90 @@ public partial class VerifyTests
         await VerifyV31(document);
     }
 
+    [Fact]
+    public async Task GenerateSchema_AnnotatedEnum_WhenXmlDocComment()
+    {
+        var subject = Subject(
+            apiDescriptions:
+            [
+                ApiDescriptionFactory.Create<FakeController>(
+                    c => nameof(c.ActionWithParameter),
+                    groupName: "v1",
+                    httpMethod: "GET",
+                    relativePath: "resource",
+                    parameterDescriptions:
+                    [
+                        new ApiParameterDescription
+                        {
+                            Name = "param",
+                            Source = BindingSource.Query,
+                            Type = typeof(IntEnumWithXmlComments),
+                            ModelMetadata = ModelMetadataFactory.CreateForType(typeof(IntEnumWithXmlComments)),
+                        },
+                    ]),
+            ],
+            configureSchemaGeneratorOptions: c =>
+            {
+                c.UseAnnotatedEnumValues = true;
+                c.EnumMemberDescriptionProviders.Add(field =>
+                    field.DeclaringType == typeof(IntEnumWithXmlComments)
+                        ? field.Name switch
+                        {
+                            "Two" => "Value two xml comment",
+                            "Four" => "Value four xml comment",
+                            _ => null,
+                        }
+                        : null);
+            }
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        await VerifyV31(document);
+    }
+
+    [Fact]
+    public async Task GenerateSchema_AnnotatedEnum_WhenXmlDocCommentAndDescriptionAttribute_AttributeWins()
+    {
+        var subject = Subject(
+            apiDescriptions:
+            [
+                ApiDescriptionFactory.Create<FakeController>(
+                    c => nameof(c.ActionWithParameter),
+                    groupName: "v1",
+                    httpMethod: "GET",
+                    relativePath: "resource",
+                    parameterDescriptions:
+                    [
+                        new ApiParameterDescription
+                        {
+                            Name = "param",
+                            Source = BindingSource.Query,
+                            Type = typeof(IntEnumWithXmlCommentsAndDescriptionAttribute),
+                            ModelMetadata = ModelMetadataFactory.CreateForType(typeof(IntEnumWithXmlCommentsAndDescriptionAttribute)),
+                        },
+                    ]),
+            ],
+            configureSchemaGeneratorOptions: c =>
+            {
+                c.UseAnnotatedEnumValues = true;
+                c.EnumMemberDescriptionProviders.Add(field =>
+                    field.DeclaringType == typeof(IntEnumWithXmlCommentsAndDescriptionAttribute)
+                        ? field.Name switch
+                        {
+                            "Two" => "Should be ignored",
+                            "Four" => "Value four xml comment",
+                            _ => null,
+                        }
+                        : null);
+            }
+        );
+
+        var document = subject.GetSwagger("v1");
+
+        await VerifyV31(document);
+    }
+
     private static SwaggerGenerator Subject(
             IEnumerable<ApiDescription> apiDescriptions,
             SwaggerGeneratorOptions options = null,

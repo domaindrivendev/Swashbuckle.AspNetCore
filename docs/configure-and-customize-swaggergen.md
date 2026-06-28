@@ -867,7 +867,7 @@ CvvCheckResult:
     - N
 ```
 
-If your enum members are annotated with `[Description]` or `[Display(Description = "...")]`, you can opt in to generating per-value descriptions using the [OpenAPI annotated enumeration pattern](https://spec.openapis.org/oas/v3.1.1.html#fixed-fields-20) (`oneOf` with `const` + `description` sub-schemas):
+If your enum members are annotated with `[Description]`, `[Display(Description = "...")]`, or XML doc comments (`/// <summary>`), you can opt in to generating per-value descriptions using the [OpenAPI annotated enumeration pattern](https://spec.openapis.org/oas/v3.1.1.html#fixed-fields-20) (`oneOf` with `const` + `description` sub-schemas):
 
 ```cs
 services.AddSwaggerGen(options =>
@@ -907,6 +907,34 @@ CvvCheckResult:
 ```
 
 Members without a `[Description]` still appear in the `oneOf` list; their `description` field is simply omitted.
+
+#### XML Doc Comments as Descriptions
+
+If you have called `IncludeXmlComments`, XML `<summary>` comments on enum members are also used as descriptions:
+
+```cs
+services.AddSwaggerGen(options =>
+{
+    options.UseAnnotatedEnumValues();
+    options.IncludeXmlComments("MyApi.xml");
+});
+```
+
+```cs
+public enum CvvCheckResult
+{
+    /// <summary>Suspicious transaction</summary>
+    D,
+
+    /// <summary>Match</summary>
+    M,
+
+    /// <summary>No Match</summary>
+    N,
+}
+```
+
+When a member has both an attribute and an XML doc comment, the attribute takes priority and the XML comment is ignored for that member.
 
 ### Schema Filters
 

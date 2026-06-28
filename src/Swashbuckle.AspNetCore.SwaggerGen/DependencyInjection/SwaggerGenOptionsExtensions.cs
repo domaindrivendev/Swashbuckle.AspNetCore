@@ -823,6 +823,18 @@ public static class SwaggerGenOptionsExtensions
         swaggerGenOptions.AddOperationFilterInstance(new XmlCommentsOperationFilter(xmlDocMembers, swaggerGenOptions.SwaggerGeneratorOptions));
         swaggerGenOptions.AddSchemaFilterInstance(new XmlCommentsSchemaFilter(xmlDocMembers, swaggerGenOptions.SwaggerGeneratorOptions));
 
+        swaggerGenOptions.SchemaGeneratorOptions.EnumMemberDescriptionProviders.Add(field =>
+        {
+            var memberName = XmlCommentsNodeNameHelper.GetMemberNameForFieldOrProperty(field);
+            if (xmlDocMembers.TryGetValue(memberName, out var memberNode))
+            {
+                var summaryNode = memberNode.SelectFirstChild("summary");
+                if (summaryNode != null)
+                    return XmlCommentsTextHelper.Humanize(summaryNode.InnerXml, swaggerGenOptions.SwaggerGeneratorOptions.XmlCommentEndOfLine);
+            }
+            return null;
+        });
+
         if (includeControllerXmlComments)
         {
             swaggerGenOptions.AddDocumentFilterInstance(new XmlCommentsDocumentFilter(xmlDocMembers, swaggerGenOptions.SwaggerGeneratorOptions));

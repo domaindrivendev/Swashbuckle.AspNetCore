@@ -63,3 +63,26 @@ public enum IntEnumWithDisplayDescriptions : int
 
     Eight = 8,
 }
+
+public enum IntEnumWithXmlComments : int
+{
+    /// <summary>Value two xml comment</summary>
+    Two = 2,
+
+    /// <summary>Value four xml comment</summary>
+    Four = 4,
+
+    Eight = 8,
+}
+
+public enum IntEnumWithXmlCommentsAndDescriptionAttribute : int
+{
+    [Description("Attribute wins")]
+    /// <summary>Should be ignored</summary>
+    Two = 2,
+
+    /// <summary>Value four xml comment</summary>
+    Four = 4,
+
+    Eight = 8,
+}

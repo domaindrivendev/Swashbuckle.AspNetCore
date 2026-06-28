@@ -363,7 +363,7 @@ public class SchemaGenerator(
 
             if (options?.UseAnnotatedEnumValues == true
                 && options.AnnotatedEnumOpenApiVersion >= OpenApiSpecVersion.OpenApi3_1
-                && HasEnumMemberDescriptions(underlyingType))
+                && HasEnumMemberDescriptions(underlyingType, options))
             {
                 schema.OneOf = [.. enumValues
                     .Select(value => (Raw: value, Json: dataContract.JsonConverter(value)))
@@ -372,7 +372,7 @@ public class SchemaGenerator(
                     .Select(x => (IOpenApiSchema)new OpenApiSchema
                     {
                         Const = JsonModelFactory.CreateFromJson(x.Json)?.ToString(),
-                        Description = GetEnumMemberDescription(underlyingType, x.Raw)
+                        Description = GetEnumMemberDescription(underlyingType, x.Raw, options)
                     })];
             }
             else
@@ -387,12 +387,11 @@ public class SchemaGenerator(
         return schema;
     }
 
-    private static bool HasEnumMemberDescriptions(Type enumType) =>
+    private static bool HasEnumMemberDescriptions(Type enumType, SchemaGeneratorOptions options) =>
         enumType.GetFields(BindingFlags.Public | BindingFlags.Static)
-            .Any(f => f.GetCustomAttribute<DescriptionAttribute>() != null
-                   || f.GetCustomAttribute<DisplayAttribute>()?.GetDescription() != null);
+            .Any(f => GetFieldDescription(f, options) != null);
 
-    private static string GetEnumMemberDescription(Type enumType, object value)
+    private static string GetEnumMemberDescription(Type enumType, object value, SchemaGeneratorOptions options)
     {
         var name = Enum.GetName(enumType, value);
 
@@ -402,8 +401,34 @@ public class SchemaGenerator(
         }
 
         var field = enumType.GetField(name);
-        return field?.GetCustomAttribute<DescriptionAttribute>()?.Description
-            ?? field?.GetCustomAttribute<DisplayAttribute>()?.GetDescription();
+        return GetFieldDescription(field, options);
+    }
+
+    private static string GetFieldDescription(FieldInfo field, SchemaGeneratorOptions options)
+    {
+        if (field is null)
+        {
+            return null;
+        }
+
+        var description = field.GetCustomAttribute<DescriptionAttribute>()?.Description
+            ?? field.GetCustomAttribute<DisplayAttribute>()?.GetDescription();
+
+        if (description != null)
+        {
+            return description;
+        }
+
+        if (options?.EnumMemberDescriptionProviders is { Count: > 0 } providers)
+        {
+            foreach (var provider in providers)
+            {
+                var result = provider(field);
+                if (result != null) return result;
+            }
+        }
+
+        return null;
     }
 
     private OpenApiSchema CreateArraySchema(DataContract dataContract, SchemaRepository schemaRepository)
