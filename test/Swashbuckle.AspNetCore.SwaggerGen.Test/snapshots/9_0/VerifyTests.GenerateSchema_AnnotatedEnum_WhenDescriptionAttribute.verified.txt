@@ -1,0 +1,56 @@
+﻿{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "Test API",
+    "version": "V1"
+  },
+  "paths": {
+    "/resource": {
+      "get": {
+        "tags": [
+          "Fake"
+        ],
+        "parameters": [
+          {
+            "name": "param",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/IntEnumWithDescriptions"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "IntEnumWithDescriptions": {
+        "type": "integer",
+        "oneOf": [
+          {
+            "const": "2",
+            "description": "Value two description"
+          },
+          {
+            "const": "4",
+            "description": "Value four description"
+          },
+          {
+            "const": "8"
+          }
+        ],
+        "format": "int32"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Fake"
+    }
+  ]
+}
