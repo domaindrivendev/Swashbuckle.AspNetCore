@@ -44,22 +44,22 @@ public enum IntEnumWithDuplicateValues : int
 
 public enum IntEnumWithDescriptions : int
 {
-    [Description("Value zero description")]
-    Zero = 0,
-
-    [Description("Value one description")]
-    One = 1,
-
+    [Description("Value two description")]
     Two = 2,
+
+    [Description("Value four description")]
+    Four = 4,
+
+    Eight = 8,
 }
 
 public enum IntEnumWithDisplayDescriptions : int
 {
-    [Display(Description = "Value zero display description")]
-    Zero = 0,
-
-    [Display(Description = "Value one display description")]
-    One = 1,
-
+    [Display(Description = "Value two display description")]
     Two = 2,
+
+    [Display(Description = "Value four display description")]
+    Four = 4,
+
+    Eight = 8,
 }

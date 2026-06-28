@@ -1532,11 +1532,14 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.NotNull(schema.OneOf);
         Assert.Null(schema.Enum);
         Assert.Equal(3, schema.OneOf.Count);
-        Assert.Equal("0", schema.OneOf[0].Const);
-        Assert.Equal("Value zero description", schema.OneOf[0].Description);
-        Assert.Equal("1", schema.OneOf[1].Const);
-        Assert.Equal("Value one description", schema.OneOf[1].Description);
-        Assert.Equal("2", schema.OneOf[2].Const);
+        // Const reflects the actual underlying integer value serialized as a string
+        // (OpenApiSchema.Const is typed System.String, so const is always a JSON string:
+        // https://learn.microsoft.com/en-us/dotnet/api/microsoft.openapi.openapischema.const)
+        Assert.Equal("2", schema.OneOf[0].Const);
+        Assert.Equal("Value two description", schema.OneOf[0].Description);
+        Assert.Equal("4", schema.OneOf[1].Const);
+        Assert.Equal("Value four description", schema.OneOf[1].Description);
+        Assert.Equal("8", schema.OneOf[2].Const);
         Assert.Null(schema.OneOf[2].Description);
     }
 
@@ -1552,8 +1555,8 @@ public class JsonSerializerSchemaGeneratorTests
         var schema = schemaRepository.Schemas[reference.Reference.Id];
         Assert.NotNull(schema.OneOf);
         Assert.Equal(3, schema.OneOf.Count);
-        Assert.Equal("Value zero display description", schema.OneOf[0].Description);
-        Assert.Equal("Value one display description", schema.OneOf[1].Description);
+        Assert.Equal("Value two display description", schema.OneOf[0].Description);
+        Assert.Equal("Value four display description", schema.OneOf[1].Description);
         Assert.Null(schema.OneOf[2].Description);
     }
 
@@ -1585,12 +1588,39 @@ public class JsonSerializerSchemaGeneratorTests
         var schema = schemaRepository.Schemas[reference.Reference.Id];
         Assert.NotNull(schema.OneOf);
         Assert.Equal(3, schema.OneOf.Count);
-        Assert.Equal("Zero", schema.OneOf[0].Const);
-        Assert.Equal("Value zero description", schema.OneOf[0].Description);
-        Assert.Equal("One", schema.OneOf[1].Const);
-        Assert.Equal("Value one description", schema.OneOf[1].Description);
-        Assert.Equal("Two", schema.OneOf[2].Const);
+        // With JsonStringEnumConverter, Const reflects the member name (not the numeric value)
+        Assert.Equal("Two", schema.OneOf[0].Const);
+        Assert.Equal("Value two description", schema.OneOf[0].Description);
+        Assert.Equal("Four", schema.OneOf[1].Const);
+        Assert.Equal("Value four description", schema.OneOf[1].Description);
+        Assert.Equal("Eight", schema.OneOf[2].Const);
         Assert.Null(schema.OneOf[2].Description);
+    }
+
+    [Fact]
+    public void GenerateSchema_GeneratesOneOfEnumSchema_ConstIsAlwaysStringTyped_ForBothIntegerAndStringSerializedEnums()
+    {
+        // OpenApiSchema.Const is System.String, so const is always emitted as a JSON string regardless of
+        // how the enum serializes. See:
+        // https://learn.microsoft.com/en-us/dotnet/api/microsoft.openapi.openapischema.const
+        //
+        // Integer-serialized enum (default): Const = the string form of the numeric value ("2","4","8").
+        var intRepository = new SchemaRepository();
+        var intReferenceSchema = Subject(configureGenerator: c => c.UseAnnotatedEnumValues = true)
+            .GenerateSchema(typeof(IntEnumWithDescriptions), intRepository);
+        var intReference = Assert.IsType<OpenApiSchemaReference>(intReferenceSchema);
+        var intSchema = intRepository.Schemas[intReference.Reference.Id];
+        Assert.Equal(["2", "4", "8"], intSchema.OneOf.Select(s => s.Const));
+
+        // String-serialized enum (JsonStringEnumConverter): Const = the member name ("Two","Four","Eight").
+        var strRepository = new SchemaRepository();
+        var strReferenceSchema = Subject(
+                configureGenerator: c => c.UseAnnotatedEnumValues = true,
+                configureSerializer: c => c.Converters.Add(new JsonStringEnumConverter()))
+            .GenerateSchema(typeof(IntEnumWithDescriptions), strRepository);
+        var strReference = Assert.IsType<OpenApiSchemaReference>(strReferenceSchema);
+        var strSchema = strRepository.Schemas[strReference.Reference.Id];
+        Assert.Equal(["Two", "Four", "Eight"], strSchema.OneOf.Select(s => s.Const));
     }
 
     private static SchemaGenerator Subject(
