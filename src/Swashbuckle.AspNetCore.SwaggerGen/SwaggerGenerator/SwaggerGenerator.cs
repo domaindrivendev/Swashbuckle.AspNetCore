@@ -855,7 +855,11 @@ public class SwaggerGenerator(
                 (contentType) => new OpenApiMediaType
                 {
                     Schema = schema
-                }),
+                }
+#if NET11_0_OR_GREATER
+                as IOpenApiMediaType
+#endif
+                ),
         };
     }
 
@@ -909,7 +913,11 @@ public class SwaggerGenerator(
                         (entry) => entry.Key,
                         (entry) => new OpenApiEncoding { Style = ParameterStyle.Form }
                     ) ?? []
-                })
+                }
+#if NET11_0_OR_GREATER
+                as IOpenApiMediaType
+#endif
+                )
         };
     }
 
@@ -995,8 +1003,12 @@ public class SwaggerGenerator(
         ApiDescription apiDescription,
         SchemaRepository schemaRepository)
     {
+        // The order in which the API explorer returns the default response relative to
+        // numeric status codes is not stable across runtimes, so sort it to the end while
+        // preserving the relative order of the numeric status codes.
         var supportedResponseTypes = apiDescription.SupportedResponseTypes
-            .DefaultIfEmpty(new ApiResponseType { StatusCode = 200 });
+            .DefaultIfEmpty(new ApiResponseType { StatusCode = 200 })
+            .OrderBy((responseType) => responseType.IsDefaultResponse() ? 1 : 0);
 
         var responses = new OpenApiResponses();
         foreach (var responseType in supportedResponseTypes)
@@ -1013,11 +1025,7 @@ public class SwaggerGenerator(
         string statusCode,
         ApiResponseType apiResponseType)
     {
-        string description = null;
-
-#if NET10_0_OR_GREATER
-        description = apiResponseType.Description;
-#endif
+        string description = apiResponseType.Description;
 
         if (string.IsNullOrEmpty(description))
         {
@@ -1063,7 +1071,13 @@ public class SwaggerGenerator(
             .Distinct()];
     }
 
-    private OpenApiMediaType CreateResponseMediaType(Type modelType, SchemaRepository schemaRepository)
+    private
+#if NET11_0_OR_GREATER
+        IOpenApiMediaType
+#else
+        OpenApiMediaType
+#endif
+        CreateResponseMediaType(Type modelType, SchemaRepository schemaRepository)
     {
         return new OpenApiMediaType
         {
