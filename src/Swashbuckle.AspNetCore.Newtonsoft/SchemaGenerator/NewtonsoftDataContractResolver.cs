@@ -10,11 +10,32 @@ namespace Swashbuckle.AspNetCore.Newtonsoft;
 /// <summary>
 /// A class representing an <see cref="ISerializerDataContractResolver"/> implementation that uses Newtonsoft.Json.
 /// </summary>
-/// <param name="serializerSettings">The <see cref="JsonSerializerSettings"/> to use.</param>
-public class NewtonsoftDataContractResolver(JsonSerializerSettings serializerSettings) : ISerializerDataContractResolver
+public class NewtonsoftDataContractResolver : ISerializerDataContractResolver
 {
-    private readonly JsonSerializerSettings _serializerSettings = serializerSettings;
-    private readonly IContractResolver _contractResolver = serializerSettings.ContractResolver ?? new DefaultContractResolver();
+    private readonly JsonSerializerSettings _serializerSettings;
+    private readonly SchemaGeneratorOptions _generatorOptions;
+    private readonly IContractResolver _contractResolver;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NewtonsoftDataContractResolver"/> class.
+    /// </summary>
+    /// <param name="serializerSettings">The <see cref="JsonSerializerSettings"/> to use.</param>
+    public NewtonsoftDataContractResolver(JsonSerializerSettings serializerSettings)
+        : this(serializerSettings, new SchemaGeneratorOptions())
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NewtonsoftDataContractResolver"/> class.
+    /// </summary>
+    /// <param name="serializerSettings">The <see cref="JsonSerializerSettings"/> to use.</param>
+    /// <param name="generatorOptions">The <see cref="SchemaGeneratorOptions"/> to use.</param>
+    public NewtonsoftDataContractResolver(JsonSerializerSettings serializerSettings, SchemaGeneratorOptions generatorOptions)
+    {
+        _serializerSettings = serializerSettings;
+        _generatorOptions = generatorOptions ?? new SchemaGeneratorOptions();
+        _contractResolver = serializerSettings.ContractResolver ?? new DefaultContractResolver();
+    }
 
     /// <inheritdoc/>
     public DataContract GetDataContractForType(Type type)
@@ -164,14 +185,16 @@ public class NewtonsoftDataContractResolver(JsonSerializerSettings serializerSet
                         string.Equals(p.Name, jsonProperty.PropertyName, StringComparison.OrdinalIgnoreCase);
                 });
 
+            var propertyType = jsonProperty.PropertyType;
+
             dataProperties.Add(
                 new DataProperty(
                     name: jsonProperty.PropertyName,
                     isRequired: required == Required.Always || required == Required.AllowNull,
-                    isNullable: (required == Required.AllowNull || required == Required.Default) && jsonProperty.PropertyType.IsReferenceOrNullableType(),
+                    isNullable: (required == Required.AllowNull || required == Required.Default) && IsNullable(memberInfo, propertyType),
                     isReadOnly: jsonProperty.Readable && !jsonProperty.Writable && !isSetViaConstructor,
                     isWriteOnly: jsonProperty.Writable && !jsonProperty.Readable,
-                    memberType: jsonProperty.PropertyType,
+                    memberType: propertyType,
                     memberInfo: memberInfo));
         }
 
@@ -190,6 +213,20 @@ public class NewtonsoftDataContractResolver(JsonSerializerSettings serializerSet
         }
 
         return dataProperties;
+    }
+
+    private bool IsNullable(MemberInfo memberInfo, Type propertyType)
+    {
+        var nullable = propertyType.IsReferenceOrNullableType();
+
+        if ((_generatorOptions.SupportNonNullableReferenceTypes
+                || _generatorOptions.NonNullableReferenceTypesAsRequired)
+            && memberInfo != null)
+        {
+            nullable &= !memberInfo.IsNonNullableReferenceType();
+        }
+
+        return nullable;
     }
 
     private static readonly Dictionary<Type, Tuple<DataType, string>> PrimitiveTypesAndFormats = new()
