@@ -24,14 +24,14 @@
       "rollForward": false
     },
     "meziantou.framework.nugetpackagevalidation.tool": {
-      "version": "1.0.58",
+      "version": "1.0.59",
       "commands": [
         "meziantou.validate-nuget-package"
       ],
       "rollForward": false
     },
     "microsoft.openapi.kiota": {
-      "version": "1.32.2",
+      "version": "1.32.4",
       "commands": [
         "kiota"
       ],
