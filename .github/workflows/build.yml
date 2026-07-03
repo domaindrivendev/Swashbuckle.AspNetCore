@@ -103,11 +103,10 @@ jobs:
     - name: Build, Package and Test
       id: build
       shell: pwsh
-      env:
-        MSBuildDebugEngine: '1'
       run: |
         ./build.ps1
       env:
+        MSBuildDebugEngine: '1'
         SOURCE_DATE_EPOCH: ${{ steps.get-commit-timestamp.outputs.epoch }}
 
     - name: Upload MSBuild binlogs
