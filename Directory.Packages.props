@@ -15,10 +15,10 @@
     <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="10.0.9" />
     <PackageVersion Include="Microsoft.Build" Version="18.6.3" />
     <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="4.14.0" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="11.0.0-preview.4.26230.115" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="11.0.0-preview.5.26302.115" />
     <PackageVersion Include="Microsoft.Kiota.Bundle" Version="2.0.0" />
-    <PackageVersion Include="Microsoft.OpenApi" Version="3.6.0" />
-    <PackageVersion Include="Microsoft.OpenApi.YamlReader" Version="3.6.0" />
+    <PackageVersion Include="Microsoft.OpenApi" Version="3.7.0" />
+    <PackageVersion Include="Microsoft.OpenApi.YamlReader" Version="3.7.0" />
     <PackageVersion Include="Microsoft.Playwright" Version="1.61.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.7.0" />
     <PackageVersion Include="MSBuild.ProjectCreation" Version="19.1.2" />
