@@ -86,12 +86,6 @@ jobs:
           8.0.x
           9.0.x
 
-    - name: Setup Node
-      uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
-      with:
-        node-version: '24'
-        package-manager-cache: false
-
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5.4.0
       id: setup-dotnet
@@ -100,6 +94,20 @@ jobs:
       shell: pwsh
       run: |
         dotnet tool restore
+
+    - name: Setup Node
+      uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+      with:
+        node-version: '24'
+        package-manager-cache: false
+
+    - name: Install npm packages for ReDoc
+      run:  npm ci
+      working-directory: src/Swashbuckle.AspNetCore.ReDoc
+
+    - name: Install npm packages for SwaggerUI
+      run:  npm ci
+      working-directory: src/Swashbuckle.AspNetCore.SwaggerUI
 
     - name: Build, Package and Test
       id: build
