@@ -97,8 +97,18 @@ jobs:
     - name: Build, Package and Test
       id: build
       shell: pwsh
+      env:
+        MSBuildDebugEngine: '1'
       run: |
         ./build.ps1
+
+    - name: Upload MSBuild binlogs
+      if: always()
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      with:
+        name: MSBuild-binlogs-${{ runner.os }}
+        path: ./**/msbuild.binlog
+        if-no-files-found: error
 
     - name: Upload Coverage Reports
       if: always()
