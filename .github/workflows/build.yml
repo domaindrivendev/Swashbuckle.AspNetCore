@@ -67,11 +67,17 @@ jobs:
         }
 
     - name: Checkout code
-      uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       with:
         filter: 'tree:0'
         persist-credentials: false
         show-progress: false
+
+    - name: Get Git commit timestamp
+      id: get-commit-timestamp
+      shell: pwsh
+      run: |
+        "epoch=$(git log -1 --pretty=%ct)" >> ${env:GITHUB_OUTPUT}
 
     - name: Setup .NET SDKs
       uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
@@ -101,6 +107,8 @@ jobs:
         MSBuildDebugEngine: '1'
       run: |
         ./build.ps1
+      env:
+        SOURCE_DATE_EPOCH: ${{ steps.get-commit-timestamp.outputs.epoch }}
 
     - name: Upload MSBuild binlogs
       if: always()
@@ -119,13 +127,13 @@ jobs:
         if-no-files-found: ignore
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # v6.0.1
+      uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
       with:
         flags: ${{ runner.os }}
         token: ${{ secrets.CODECOV_TOKEN }}
 
     - name: Upload test results to Codecov
-      uses: codecov/codecov-action@e79a6962e0d4c0c17b229090214935d2e33f8354 # v6.0.1
+      uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
       if: ${{ !cancelled() }}
       with:
         flags: ${{ runner.os }}
@@ -187,6 +195,14 @@ jobs:
       with:
         dotnet-version: ${{ needs.build.outputs.dotnet-sdk-version }}
 
+    # HACK Install 10 and 11 until https://github.com/dotnet/sdk/issues/54676 is resolved
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
+      with:
+        dotnet-version: |
+          10.0.x
+          11.0.x
+
     - name: Install NuGet package validation tools
       shell: pwsh
       env:
@@ -247,13 +263,21 @@ jobs:
       with:
         dotnet-version: ${{ needs.build.outputs.dotnet-sdk-version }}
 
+    # HACK Install 10 and 11 until https://github.com/dotnet/sdk/issues/54676 is resolved
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@9a946fdbd5fb07b82b2f5a4466058b876ab72bb2 # v5.3.0
+      with:
+        dotnet-version: |
+          10.0.x
+          11.0.x
+
     - name: Push NuGet packages to MyGet.org
       env:
-        API_KEY: ${{ secrets.MYGET_TOKEN }}
+        NUGET_API_KEY: ${{ secrets.MYGET_TOKEN }}
         PACKAGE_VERSION: ${{ needs.build.outputs.package-version }}
         SOURCE: "https://www.myget.org/F/domaindrivendev/api/v3/index.json"
       run: | # zizmor: ignore[use-trusted-publishing] MyGet does not support trusted publishing
-        dotnet nuget push "*.nupkg" --api-key "${API_KEY}" --skip-duplicate --source "${SOURCE}" && echo "::notice title=myget.org::Published version ${PACKAGE_VERSION} to MyGet."
+        dotnet nuget push "*.nupkg" --skip-duplicate --source "${SOURCE}" && echo "::notice title=myget.org::Published version ${PACKAGE_VERSION} to MyGet."
 
   publish-nuget:
     needs: [ build, validate-packages ]
@@ -289,11 +313,11 @@ jobs:
 
     - name: Push NuGet packages to NuGet.org
       env:
-        API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+        NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
         PACKAGE_VERSION: ${{ needs.build.outputs.package-version }}
         SOURCE: https://api.nuget.org/v3/index.json
       run: |
-        dotnet nuget push "*.nupkg" --api-key "${API_KEY}" --skip-duplicate --source "${SOURCE}" && echo "::notice title=nuget.org::Published version ${PACKAGE_VERSION} to NuGet.org."
+        dotnet nuget push "*.nupkg" --skip-duplicate --source "${SOURCE}" && echo "::notice title=nuget.org::Published version ${PACKAGE_VERSION} to NuGet.org."
 
   notify-nuget:
     needs: [ build, publish-nuget ]

@@ -48,7 +48,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Stores
         /// </summary>
         /// <param name="pathParameters">Path parameters for the request</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public StoresRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "", pathParameters)
+        public StoresRequestBuilder(Dictionary<string, object> pathParameters, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/stores{?id*,location*,locations*}", pathParameters)
         {
         }
         /// <summary>
@@ -56,7 +56,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Stores
         /// </summary>
         /// <param name="rawUrl">The raw URL to use for the request builder.</param>
         /// <param name="requestAdapter">The request adapter to use to execute the requests.</param>
-        public StoresRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "", rawUrl)
+        public StoresRequestBuilder(string rawUrl, IRequestAdapter requestAdapter) : base(requestAdapter, "{+baseurl}/stores{?id*,location*,locations*}", rawUrl)
         {
         }
         /// <returns>A List&lt;global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Models.Store&gt;</returns>
@@ -101,7 +101,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Stores
         public RequestInformation ToGetRequestInformation(Action<RequestConfiguration<global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Stores.StoresRequestBuilder.StoresRequestBuilderGetQueryParameters>> requestConfiguration = default)
         {
 #endif
-            var requestInfo = new RequestInformation(Method.GET, "{+baseurl}/stores{?locations*}", PathParameters);
+            var requestInfo = new RequestInformation(Method.GET, UrlTemplate, PathParameters);
             requestInfo.Configure(requestConfiguration);
             requestInfo.Headers.TryAdd("Accept", "application/json");
             return requestInfo;
@@ -117,7 +117,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Stores
         public RequestInformation ToPostRequestInformation(Action<RequestConfiguration<global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Stores.StoresRequestBuilder.StoresRequestBuilderPostQueryParameters>> requestConfiguration = default)
         {
 #endif
-            var requestInfo = new RequestInformation(Method.POST, "{+baseurl}/stores{?id*,location*}", PathParameters);
+            var requestInfo = new RequestInformation(Method.POST, UrlTemplate, PathParameters);
             requestInfo.Configure(requestConfiguration);
             requestInfo.Headers.TryAdd("Accept", "application/json");
             return requestInfo;
