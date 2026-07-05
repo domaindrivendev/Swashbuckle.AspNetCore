@@ -139,7 +139,7 @@ public class SchemaGenerator(
     {
         var nullable = dataProperty.IsNullable && requiredAttribute == null;
 
-        if (_generatorOptions.SupportNonNullableReferenceTypes)
+        if (_generatorOptions.SupportNonNullableReferenceTypes || _generatorOptions.NonNullableReferenceTypesAsRequired)
         {
             nullable &= !memberInfo.IsNonNullableReferenceType();
         }

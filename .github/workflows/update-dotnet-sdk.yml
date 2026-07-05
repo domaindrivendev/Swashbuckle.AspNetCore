@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   update-dotnet-sdk:
-    uses: martincostello/update-dotnet-sdk/.github/workflows/update-dotnet-sdk.yml@ffae562e59f60282d6673755eb968a0a32c22518 # v5.0.3
+    uses: martincostello/update-dotnet-sdk/.github/workflows/update-dotnet-sdk.yml@46a749340f1074b411229cc31dde7a3678d70b23 # v6.1.2
     permissions:
       contents: write
       pull-requests: write
