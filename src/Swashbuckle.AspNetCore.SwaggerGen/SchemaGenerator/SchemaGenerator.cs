@@ -139,7 +139,7 @@ public class SchemaGenerator(
     {
         var nullable = dataProperty.IsNullable && requiredAttribute == null;
 
-        if (_generatorOptions.SupportNonNullableReferenceTypes)
+        if (_generatorOptions.SupportNonNullableReferenceTypes || _generatorOptions.NonNullableReferenceTypesAsRequired)
         {
             nullable &= !memberInfo.IsNonNullableReferenceType();
         }
@@ -637,7 +637,13 @@ public class SchemaGenerator(
         {
             if (schema.AllOf is { Count: > 0 } allOf)
             {
-                schema.Type ??= JsonSchemaType.Null;
+                schema.AllOf = null;
+                schema.Type = null;
+                schema.AnyOf =
+                [
+                    new OpenApiSchema { AllOf = [.. allOf] },
+                    new OpenApiSchema { Type = JsonSchemaType.Null }
+                ];
             }
             else if (schema.AnyOf is { Count: > 0 } anyOf)
             {

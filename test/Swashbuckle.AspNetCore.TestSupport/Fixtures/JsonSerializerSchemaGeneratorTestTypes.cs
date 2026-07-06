@@ -30,11 +30,18 @@ public record TestRecordStringComplexTypeNullable(IDictionary<string, ComplexTyp
 
 public class CustomAnyOfType;
 
+public class CustomAllOfType;
+
 public class CustomOneOfType;
 
 public class TypeWithNullableCustomAnyOfProperty
 {
     public CustomAnyOfType? Property { get; set; }
+}
+
+public class TypeWithNullableCustomAllOfProperty
+{
+    public CustomAllOfType? Property { get; set; }
 }
 
 public class TypeWithNullableCustomOneOfProperty

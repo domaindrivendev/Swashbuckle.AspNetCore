@@ -1,7 +1,7 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Patterns;
 using Microsoft.AspNetCore.Routing.Template;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Swashbuckle.AspNetCore.Swagger;
@@ -47,7 +47,20 @@ public static class SwaggerBuilderExtensions
             .UseSwagger(Configure)
             .Build();
 
-        return endpoints.MapMethods(pattern, [HttpMethods.Get, HttpMethods.Head], pipeline);
+        return endpoints.MapMethods(pattern, [HttpMethods.Get, HttpMethods.Head], async (context) =>
+        {
+            var endpoint = context.GetEndpoint();
+            context.SetEndpoint(null);
+
+            try
+            {
+                await pipeline(context);
+            }
+            finally
+            {
+                context.SetEndpoint(endpoint);
+            }
+        });
 
         void Configure(SwaggerOptions options)
         {

@@ -105,8 +105,33 @@ public class AnnotationsSchemaFilter(IServiceProvider serviceProvider) : ISchema
             // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3936
             if (nullable)
             {
-                concrete.Type ??= JsonSchemaType.Boolean | JsonSchemaType.Integer | JsonSchemaType.Number | JsonSchemaType.String | JsonSchemaType.Object | JsonSchemaType.Array;
-                concrete.Type |= JsonSchemaType.Null;
+                if (concrete.AllOf is { Count: > 0 } allOf)
+                {
+                    concrete.AllOf = null;
+                    concrete.Type = null;
+                    concrete.AnyOf =
+                    [
+                        new OpenApiSchema { AllOf = [.. allOf] },
+                        new OpenApiSchema { Type = JsonSchemaType.Null }
+                    ];
+                }
+                else if (concrete.AnyOf is { Count: > 0 } anyOf)
+                {
+                    anyOf.Add(new OpenApiSchema { Type = JsonSchemaType.Null });
+                }
+                else if (concrete.OneOf is { Count: > 0 } oneOf)
+                {
+                    oneOf.Add(new OpenApiSchema { Type = JsonSchemaType.Null });
+                }
+                else
+                {
+                    concrete.Type ??= JsonSchemaType.Boolean | JsonSchemaType.Integer | JsonSchemaType.Number | JsonSchemaType.String | JsonSchemaType.Object | JsonSchemaType.Array;
+                }
+
+                if (concrete.Type.HasValue)
+                {
+                    concrete.Type |= JsonSchemaType.Null;
+                }
             }
             else if (concrete.Type.HasValue)
             {

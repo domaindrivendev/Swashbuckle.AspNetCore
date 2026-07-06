@@ -117,11 +117,7 @@ namespace Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.SystemTextJsonDefau
                 if(ReferenceEquals(parseNode, null)) throw new ArgumentNullException(nameof(parseNode));
                 var mappingValue = parseNode.GetChildNode("$type")?.GetStringValue();
                 var result = new global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.SystemTextJsonDefaultDiscriminatorAnimals.SystemTextJsonDefaultDiscriminatorAnimalsRequestBuilder.SystemTextJsonDefaultDiscriminatorAnimalsPostRequestBody();
-                if("".Equals(mappingValue, StringComparison.OrdinalIgnoreCase))
-                {
-                    result.SystemTextJsonDefaultDiscriminatorAnimal = new global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Models.SystemTextJsonDefaultDiscriminatorAnimal();
-                }
-                else if("Cat".Equals(mappingValue, StringComparison.OrdinalIgnoreCase))
+                if("Cat".Equals(mappingValue, StringComparison.OrdinalIgnoreCase))
                 {
                     result.SystemTextJsonDefaultDiscriminatorCat = new global::Swashbuckle.AspNetCore.IntegrationTests.KiotaTests.Models.SystemTextJsonDefaultDiscriminatorCat();
                 }
