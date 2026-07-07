@@ -17,11 +17,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.OpenApi" VersionOverride="2.9.0" />
+    <PackageReference Include="Microsoft.OpenApi" VersionOverride="2.10.0" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net11.0' ">
-    <PackageReference Update="Microsoft.OpenApi" VersionOverride="3.7.0" />
+    <PackageReference Update="Microsoft.OpenApi" VersionOverride="3.8.0" />
   </ItemGroup>
 
   <ItemGroup>
