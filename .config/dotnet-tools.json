@@ -10,7 +10,7 @@
       "rollForward": false
     },
     "markdownsnippets.tool": {
-      "version": "28.3.1",
+      "version": "28.4.0",
       "commands": [
         "mdsnippets"
       ],
@@ -24,14 +24,14 @@
       "rollForward": false
     },
     "meziantou.framework.nugetpackagevalidation.tool": {
-      "version": "1.0.59",
+      "version": "2.0.1",
       "commands": [
         "meziantou.validate-nuget-package"
       ],
       "rollForward": false
     },
     "microsoft.openapi.kiota": {
-      "version": "1.32.4",
+      "version": "1.33.0",
       "commands": [
         "kiota"
       ],
