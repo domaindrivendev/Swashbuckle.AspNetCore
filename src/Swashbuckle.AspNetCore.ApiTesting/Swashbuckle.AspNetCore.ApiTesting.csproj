@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net11.0' ">
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="11.0.0-preview.6.26328.106" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="11.0.0-preview.6.26359.118" />
     <PackageReference Update="Microsoft.OpenApi" VersionOverride="3.8.0" />
   </ItemGroup>
 

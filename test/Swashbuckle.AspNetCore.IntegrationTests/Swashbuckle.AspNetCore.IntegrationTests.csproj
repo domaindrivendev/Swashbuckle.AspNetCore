@@ -52,8 +52,8 @@
   </ItemGroup>
 
   <ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net11.0'))">
-    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="11.0.0-preview.6.26328.106" />
-    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="11.0.0-preview.6.26328.106" />
+    <PackageReference Update="Microsoft.AspNetCore.Mvc.Testing" VersionOverride="11.0.0-preview.6.26359.118" />
+    <PackageReference Update="Microsoft.AspNetCore.TestHost" VersionOverride="11.0.0-preview.6.26359.118" />
   </ItemGroup>
 
 </Project>
