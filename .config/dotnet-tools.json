@@ -31,7 +31,7 @@
       "rollForward": false
     },
     "microsoft.openapi.kiota": {
-      "version": "1.33.0",
+      "version": "1.34.1",
       "commands": [
         "kiota"
       ],
