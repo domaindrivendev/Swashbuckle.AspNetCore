@@ -2,6 +2,11 @@ version: 2
 updates:
 - package-ecosystem: "github-actions"
   directory: "/"
+  groups:
+    github/codeql-action:
+      patterns:
+        - github/codeql-action/analyze
+        - github/codeql-action/init
   schedule:
     interval: weekly
     day: wednesday
