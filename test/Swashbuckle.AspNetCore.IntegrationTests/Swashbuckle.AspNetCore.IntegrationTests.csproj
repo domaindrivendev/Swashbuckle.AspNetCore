@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Swashbuckle.AspNetCore.TestSupport\Swashbuckle.AspNetCore.TestSupport.csproj" />
     <ProjectReference Include="..\WebSites\**\*.csproj" />
     <ProjectReference Remove="..\WebSites\TestFirst.IntegrationTests\TestFirst.IntegrationTests.csproj" />
   </ItemGroup>
