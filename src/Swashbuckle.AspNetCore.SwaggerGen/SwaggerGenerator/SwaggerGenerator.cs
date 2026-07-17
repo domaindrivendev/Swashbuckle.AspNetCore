@@ -995,8 +995,12 @@ public class SwaggerGenerator(
         ApiDescription apiDescription,
         SchemaRepository schemaRepository)
     {
+        // The order in which the API explorer returns the default response relative to
+        // numeric status codes is not stable across runtimes, so sort it to the end while
+        // preserving the relative order of the numeric status codes.
         var supportedResponseTypes = apiDescription.SupportedResponseTypes
-            .DefaultIfEmpty(new ApiResponseType { StatusCode = 200 });
+            .DefaultIfEmpty(new ApiResponseType { StatusCode = 200 })
+            .OrderBy((responseType) => responseType.IsDefaultResponse() ? 1 : 0);
 
         var responses = new OpenApiResponses();
         foreach (var responseType in supportedResponseTypes)
