@@ -17,8 +17,8 @@
     <PackageVersion Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" Version="5.6.0" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="11.0.0-preview.6.26359.118" />
     <PackageVersion Include="Microsoft.Kiota.Bundle" Version="2.0.0" />
-    <PackageVersion Include="Microsoft.OpenApi" Version="3.8.0" />
-    <PackageVersion Include="Microsoft.OpenApi.YamlReader" Version="3.8.0" />
+    <PackageVersion Include="Microsoft.OpenApi" Version="3.9.0" />
+    <PackageVersion Include="Microsoft.OpenApi.YamlReader" Version="3.9.0" />
     <PackageVersion Include="Microsoft.Playwright" Version="1.61.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.8.1" />
     <PackageVersion Include="MSBuild.ProjectCreation" Version="19.1.4" />
