@@ -614,7 +614,58 @@ public class JsonSerializerSchemaGeneratorTests
     }
 
     [Fact]
-    public void GenerateSchema_SerializesNullableAllOfSchema_CorrectlyForOpenApi3_0And3_1()
+    public void GenerateSchema_SetsNullableFlag_IfMemberSchemaHasAnyOf()
+    {
+        var subject = Subject(configureGenerator: c =>
+        {
+            c.SupportNonNullableReferenceTypes = true;
+            c.CustomTypeMappings.Add(typeof(CustomAnyOfType), () => new OpenApiSchema
+            {
+                AnyOf =
+                [
+                    new OpenApiSchema { Type = JsonSchemaTypes.String }
+                ]
+            });
+        });
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Assert.IsType<OpenApiSchemaReference>(subject.GenerateSchema(typeof(TypeWithNullableCustomAnyOfProperty), schemaRepository));
+        var generatedSchema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+        var propertySchema = Assert.IsType<OpenApiSchema>(generatedSchema.Properties[nameof(TypeWithNullableCustomAnyOfProperty.Property)]);
+
+        Assert.Null(propertySchema.Type);
+        Assert.NotNull(propertySchema.AnyOf);
+        Assert.Equal(2, propertySchema.AnyOf.Count);
+        Assert.Contains(propertySchema.AnyOf, s => s.Type == JsonSchemaType.Null);
+    }
+
+    [Fact]
+    public void GenerateSchema_SetsNullableFlag_IfMemberSchemaHasOneOf()
+    {
+        var subject = Subject(configureGenerator: c =>
+        {
+            c.SupportNonNullableReferenceTypes = true;
+            c.CustomTypeMappings.Add(typeof(CustomOneOfType), () => new OpenApiSchema
+            {
+                OneOf =
+                [
+                    new OpenApiSchema { Type = JsonSchemaTypes.String }
+                ]
+            });
+        });
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Assert.IsType<OpenApiSchemaReference>(subject.GenerateSchema(typeof(TypeWithNullableCustomOneOfProperty), schemaRepository));
+        var generatedSchema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+        var propertySchema = Assert.IsType<OpenApiSchema>(generatedSchema.Properties[nameof(TypeWithNullableCustomOneOfProperty.Property)]);
+
+        Assert.Null(propertySchema.Type);
+        Assert.NotNull(propertySchema.OneOf);
+        Assert.Equal(2, propertySchema.OneOf.Count);
+        Assert.Contains(propertySchema.OneOf, s => s.Type == JsonSchemaType.Null);
+    }
+
+    private OpenApiSchema GenerateNullableAllOfPropertySchema()
     {
         var subject = Subject(configureGenerator: c =>
         {
@@ -630,22 +681,36 @@ public class JsonSerializerSchemaGeneratorTests
         var schemaRepository = new SchemaRepository();
         var referenceSchema = Assert.IsType<OpenApiSchemaReference>(subject.GenerateSchema(typeof(TypeWithNullableCustomAllOfProperty), schemaRepository));
         var generatedSchema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-        var propertySchema = Assert.IsType<OpenApiSchema>(generatedSchema.Properties[nameof(TypeWithNullableCustomAllOfProperty.Property)]);
+        return Assert.IsType<OpenApiSchema>(generatedSchema.Properties[nameof(TypeWithNullableCustomAllOfProperty.Property)]);
+    }
 
-        var serializedAs3_1 = SerializeSchemaInDocument(propertySchema, OpenApiSpecVersion.OpenApi3_1);
-        using var json3_1 = JsonDocument.Parse(serializedAs3_1);
-        var schema3_1 = json3_1.RootElement.GetProperty("components").GetProperty("schemas").GetProperty("Test");
-        Assert.True(schema3_1.TryGetProperty("anyOf", out var anyOf3_1));
-        Assert.Equal(2, anyOf3_1.GetArrayLength());
-        Assert.Contains(anyOf3_1.EnumerateArray(), element => element.TryGetProperty("type", out var type) && type.GetString() == "null");
-        Assert.Contains(anyOf3_1.EnumerateArray(), element => element.TryGetProperty("allOf", out _));
+    [Fact]
+    public void GenerateSchema_SerializesNullableAllOfSchema_AsAnyOfWithNull_ForOpenApi3_1()
+    {
+        var propertySchema = GenerateNullableAllOfPropertySchema();
 
-        var serializedAs3_0 = SerializeSchemaInDocument(propertySchema, OpenApiSpecVersion.OpenApi3_0);
-        using var json3_0 = JsonDocument.Parse(serializedAs3_0);
-        var schema3_0 = json3_0.RootElement.GetProperty("components").GetProperty("schemas").GetProperty("Test");
-        Assert.True(schema3_0.TryGetProperty("nullable", out var nullable3_0));
-        Assert.True(nullable3_0.GetBoolean());
-        Assert.True(schema3_0.TryGetProperty("allOf", out _) || schema3_0.TryGetProperty("anyOf", out _));
+        var serialized = SerializeSchemaInDocument(propertySchema, OpenApiSpecVersion.OpenApi3_1);
+
+        using var json = JsonDocument.Parse(serialized);
+        var schema = json.RootElement.GetProperty("components").GetProperty("schemas").GetProperty("Test");
+        Assert.True(schema.TryGetProperty("anyOf", out var anyOf));
+        Assert.Equal(2, anyOf.GetArrayLength());
+        Assert.Contains(anyOf.EnumerateArray(), element => element.TryGetProperty("type", out var type) && type.GetString() == "null");
+        Assert.Contains(anyOf.EnumerateArray(), element => element.TryGetProperty("allOf", out _));
+    }
+
+    [Fact]
+    public void GenerateSchema_SerializesNullableAllOfSchema_AsNullableAllOf_ForOpenApi3_0()
+    {
+        var propertySchema = GenerateNullableAllOfPropertySchema();
+
+        var serialized = SerializeSchemaInDocument(propertySchema, OpenApiSpecVersion.OpenApi3_0);
+
+        using var json = JsonDocument.Parse(serialized);
+        var schema = json.RootElement.GetProperty("components").GetProperty("schemas").GetProperty("Test");
+        Assert.True(schema.TryGetProperty("nullable", out var nullable));
+        Assert.True(nullable.GetBoolean());
+        Assert.True(schema.TryGetProperty("allOf", out _) || schema.TryGetProperty("anyOf", out _));
     }
 
     [Theory]
@@ -1618,14 +1683,7 @@ public class JsonSerializerSchemaGeneratorTests
             }
         };
 
-        if (version == OpenApiSpecVersion.OpenApi3_1)
-        {
-            document.SerializeAsV31(jsonWriter);
-        }
-        else
-        {
-            document.SerializeAsV3(jsonWriter);
-        }
+        document.SerializeAs(version, jsonWriter);
 
         return stringWriter.ToString();
     }

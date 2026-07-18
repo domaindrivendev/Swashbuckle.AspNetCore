@@ -1,32 +1,8 @@
-using System.Collections;
 using System.ComponentModel.DataAnnotations;
-using System.Dynamic;
 
 namespace Swashbuckle.AspNetCore.TestSupport;
 
 #nullable enable
-
-public record TestRecordStringInteger(IDictionary<string, int> Property);
-
-public record TestRecordStringIntegerNullable(IDictionary<string, int?> Property);
-
-public record TestRecordEmptyIntEnumInteger(IDictionary<EmptyIntEnum, int> Property);
-
-public record TestRecordStringBoolean(IDictionary<string, bool> Property);
-
-public record TestRecordStringBooleanNullable(IDictionary<string, bool?> Property);
-
-public record TestRecordDictionary(IDictionary Property);
-
-public record TestRecordStringObject(IDictionary<string, object> Property);
-
-public record TestRecordStringObjectNullable(IDictionary<string, object?> Property);
-
-public record TestRecordExpandoObject(ExpandoObject Property);
-
-public record TestRecordStringComplexType(IDictionary<string, ComplexType> Property);
-
-public record TestRecordStringComplexTypeNullable(IDictionary<string, ComplexType?> Property);
 
 public class CustomAnyOfType;
 

@@ -123,13 +123,10 @@ public class AnnotationsSchemaFilter(IServiceProvider serviceProvider) : ISchema
                 {
                     oneOf.Add(new OpenApiSchema { Type = JsonSchemaType.Null });
                 }
-                else
+                else if (concrete.Type.HasValue)
                 {
-                    concrete.Type ??= JsonSchemaType.Boolean | JsonSchemaType.Integer | JsonSchemaType.Number | JsonSchemaType.String | JsonSchemaType.Object | JsonSchemaType.Array;
-                }
-
-                if (concrete.Type.HasValue)
-                {
+                    // A schema without a "type" already validates every JSON type, including null,
+                    // so the null flag is only added when a concrete type is present.
                     concrete.Type |= JsonSchemaType.Null;
                 }
             }
