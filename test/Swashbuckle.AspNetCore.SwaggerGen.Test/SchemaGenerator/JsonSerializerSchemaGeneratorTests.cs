@@ -605,12 +605,13 @@ public class JsonSerializerSchemaGeneratorTests
         var generatedSchema = schemaRepository.Schemas[referenceSchema.Reference.Id];
         var propertySchema = Assert.IsType<OpenApiSchema>(generatedSchema.Properties[nameof(TypeWithNullableCustomAllOfProperty.Property)]);
 
-        Assert.Null(propertySchema.AllOf);
-        Assert.Null(propertySchema.Type);
-        Assert.NotNull(propertySchema.AnyOf);
-        Assert.Equal(2, propertySchema.AnyOf.Count);
-        Assert.Contains(propertySchema.AnyOf, s => s.Type == JsonSchemaType.Null);
-        Assert.Contains(propertySchema.AnyOf, s => s.AllOf is { Count: 1 });
+        // The allOf composition is preserved as-is: restructuring it into an anyOf would
+        // stop client generators resolving the $ref once serialized as OpenAPI 3.0.
+        Assert.Null(propertySchema.AnyOf);
+        Assert.NotNull(propertySchema.AllOf);
+        Assert.Single(propertySchema.AllOf);
+        Assert.True(propertySchema.Type.HasValue);
+        Assert.True(propertySchema.Type.Value.HasFlag(JsonSchemaType.Null));
     }
 
     [Fact]
@@ -690,7 +691,7 @@ public class JsonSerializerSchemaGeneratorTests
     }
 
     [Fact]
-    public void GenerateSchema_SerializesNullableAllOfSchema_AsAnyOfWithNull_ForOpenApi3_1()
+    public void GenerateSchema_SerializesNullableAllOfSchema_AsAllOfWithNullType_ForOpenApi3_1()
     {
         var propertySchema = GenerateNullableAllOfPropertySchema();
 
@@ -698,12 +699,14 @@ public class JsonSerializerSchemaGeneratorTests
 
         using var json = JsonDocument.Parse(serialized);
         var schema = json.RootElement.GetProperty("components").GetProperty("schemas").GetProperty("Test");
-        Assert.True(schema.TryGetProperty("anyOf", out var anyOf));
-        Assert.Equal(2, anyOf.GetArrayLength());
-        Assert.Contains(anyOf.EnumerateArray(), element => element.TryGetProperty("type", out var type) && type.GetString() == "null");
-        Assert.Contains(anyOf.EnumerateArray(), element => element.TryGetProperty("allOf", out _));
+        Assert.True(schema.TryGetProperty("allOf", out var allOf));
+        Assert.Equal(1, allOf.GetArrayLength());
+        Assert.True(schema.TryGetProperty("type", out var type));
+        Assert.Equal("null", type.GetString());
     }
 
+    // The allOf must survive down-conversion unwrapped, otherwise client generators cannot
+    // resolve the referenced schema and degrade the property to an untyped value.
     [Fact]
     public void GenerateSchema_SerializesNullableAllOfSchema_AsNullableAllOf_ForOpenApi3_0()
     {
@@ -715,7 +718,9 @@ public class JsonSerializerSchemaGeneratorTests
         var schema = json.RootElement.GetProperty("components").GetProperty("schemas").GetProperty("Test");
         Assert.True(schema.TryGetProperty("nullable", out var nullable));
         Assert.True(nullable.GetBoolean());
-        Assert.True(schema.TryGetProperty("allOf", out _) || schema.TryGetProperty("anyOf", out _));
+        Assert.True(schema.TryGetProperty("allOf", out var allOf));
+        Assert.Equal(1, allOf.GetArrayLength());
+        Assert.False(schema.TryGetProperty("anyOf", out _));
     }
 
     [Theory]

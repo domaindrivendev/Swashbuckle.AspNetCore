@@ -127,7 +127,7 @@ public class AnnotationsSchemaFilterTests
     }
 
     [Fact]
-    public void Apply_WrapsAllOfInAnyOf_IfNullableSchemaHasAllOf()
+    public void Apply_PreservesAllOf_IfNullableSchemaHasAllOf()
     {
         var schema = new OpenApiSchema
         {
@@ -139,12 +139,13 @@ public class AnnotationsSchemaFilterTests
 
         Subject().Apply(schema, ContextForProperty(nameof(TypeWithNullableComposedSchemas.AllOfProperty)));
 
-        Assert.Null(schema.AllOf);
-        Assert.Null(schema.Type);
-        Assert.NotNull(schema.AnyOf);
-        Assert.Equal(2, schema.AnyOf.Count);
-        Assert.Contains(schema.AnyOf, s => s.Type == JsonSchemaType.Null);
-        Assert.Contains(schema.AnyOf, s => s.AllOf is { Count: 1 });
+        // The composition is left intact: wrapping it in an anyOf would stop client
+        // generators resolving the $ref once serialized as OpenAPI 3.0.
+        Assert.Null(schema.AnyOf);
+        Assert.NotNull(schema.AllOf);
+        Assert.Single(schema.AllOf);
+        Assert.True(schema.Type.HasValue);
+        Assert.True(schema.Type.Value.HasFlag(JsonSchemaType.Null));
     }
 
     [Theory]
