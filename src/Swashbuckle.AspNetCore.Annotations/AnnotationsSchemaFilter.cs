@@ -105,15 +105,13 @@ public class AnnotationsSchemaFilter(IServiceProvider serviceProvider) : ISchema
             // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3936
             if (nullable)
             {
-                if (concrete.AllOf is { Count: > 0 } allOf)
+                if (concrete.AllOf is { Count: > 0 })
                 {
-                    concrete.AllOf = null;
-                    concrete.Type = null;
-                    concrete.AnyOf =
-                    [
-                        new OpenApiSchema { AllOf = [.. allOf] },
-                        new OpenApiSchema { Type = JsonSchemaType.Null }
-                    ];
+                    // Do not restructure the composition here: wrapping the allOf in an anyOf
+                    // prevents client generators from resolving the referenced schema when the
+                    // document is serialized as OpenAPI 3.0, where the null member is dropped.
+                    concrete.Type ??= JsonSchemaType.Null;
+                    concrete.Type |= JsonSchemaType.Null;
                 }
                 else if (concrete.AnyOf is { Count: > 0 } anyOf)
                 {

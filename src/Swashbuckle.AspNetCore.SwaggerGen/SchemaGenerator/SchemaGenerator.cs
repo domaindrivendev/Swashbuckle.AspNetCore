@@ -635,15 +635,13 @@ public class SchemaGenerator(
         // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3936
         if (nullable)
         {
-            if (schema.AllOf is { Count: > 0 } allOf)
+            if (schema.AllOf is { Count: > 0 })
             {
-                schema.AllOf = null;
-                schema.Type = null;
-                schema.AnyOf =
-                [
-                    new OpenApiSchema { AllOf = [.. allOf] },
-                    new OpenApiSchema { Type = JsonSchemaType.Null }
-                ];
+                // Do not restructure the composition here: wrapping the allOf in an anyOf
+                // prevents client generators from resolving the referenced schema when the
+                // document is serialized as OpenAPI 3.0, where the null member is dropped.
+                schema.Type ??= JsonSchemaType.Null;
+                schema.Type |= JsonSchemaType.Null;
             }
             else if (schema.AnyOf is { Count: > 0 } anyOf)
             {
