@@ -37,7 +37,7 @@ trim_trailing_whitespace = true
 dotnet_sort_system_directives_first = true
 
 # Verify settings
-[*.{received,verified}.{txt,xml,json}]
+[*.{received,verified}.{cs,txt,xml,json}]
 charset = "utf-8-bom"
 end_of_line = lf
 indent_size = unset
