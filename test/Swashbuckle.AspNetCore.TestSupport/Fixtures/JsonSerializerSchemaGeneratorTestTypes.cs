@@ -25,6 +25,12 @@ public class TypeWithNullableCustomOneOfProperty
     public CustomOneOfType? Property { get; set; }
 }
 
+// See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3936
+public class TypeWithNullableObjectDictionary
+{
+    public IDictionary<string, object?> Property { get; set; } = default!;
+}
+
 public class TypeWithRequiredProperties
 {
     public required string RequiredString { get; set; }

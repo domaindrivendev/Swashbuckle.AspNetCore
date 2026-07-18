@@ -665,23 +665,28 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Contains(propertySchema.OneOf, s => s.Type == JsonSchemaType.Null);
     }
 
-    private OpenApiSchema GenerateNullableAllOfPropertySchema()
+    // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3936
+    [Fact]
+    public void GenerateSchema_DoesNotRestrictTypeToNull_IfDictionaryValueIsNullableObject()
     {
-        var subject = Subject(configureGenerator: c =>
-        {
-            c.SupportNonNullableReferenceTypes = true;
-            c.CustomTypeMappings.Add(typeof(CustomAllOfType), () => new OpenApiSchema
-            {
-                AllOf =
-                [
-                    new OpenApiSchema { Type = JsonSchemaTypes.String }
-                ]
-            });
-        });
-        var schemaRepository = new SchemaRepository();
-        var referenceSchema = Assert.IsType<OpenApiSchemaReference>(subject.GenerateSchema(typeof(TypeWithNullableCustomAllOfProperty), schemaRepository));
-        var generatedSchema = schemaRepository.Schemas[referenceSchema.Reference.Id];
-        return Assert.IsType<OpenApiSchema>(generatedSchema.Properties[nameof(TypeWithNullableCustomAllOfProperty.Property)]);
+        var contentSchema = GenerateNullableObjectDictionaryContentSchema();
+
+        // A schema with no "type" already validates every JSON type, including null,
+        // so no type should be emitted. Before #3936 this was "null" alone, which
+        // restricted the value to null only.
+        Assert.Null(contentSchema.Type);
+    }
+
+    [Fact]
+    public void GenerateSchema_SerializesNullableObjectDictionaryValue_WithoutType_ForOpenApi3_1()
+    {
+        var contentSchema = GenerateNullableObjectDictionaryContentSchema();
+
+        var serialized = SerializeSchemaInDocument(contentSchema, OpenApiSpecVersion.OpenApi3_1);
+
+        using var json = JsonDocument.Parse(serialized);
+        var schema = json.RootElement.GetProperty("components").GetProperty("schemas").GetProperty("Test");
+        Assert.False(schema.TryGetProperty("type", out _));
     }
 
     [Fact]
@@ -1664,6 +1669,39 @@ public class JsonSerializerSchemaGeneratorTests
     {
         Assert.True(schema.Type.HasValue);
         Assert.Equal(expected, schema.Type.Value.HasFlag(JsonSchemaType.Null));
+    }
+
+    private static OpenApiSchema GenerateNullableAllOfPropertySchema()
+    {
+        var subject = Subject(configureGenerator: c =>
+        {
+            c.SupportNonNullableReferenceTypes = true;
+            c.CustomTypeMappings.Add(typeof(CustomAllOfType), () => new OpenApiSchema
+            {
+                AllOf =
+                [
+                    new OpenApiSchema { Type = JsonSchemaTypes.String }
+                ]
+            });
+        });
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Assert.IsType<OpenApiSchemaReference>(subject.GenerateSchema(typeof(TypeWithNullableCustomAllOfProperty), schemaRepository));
+        var generatedSchema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+
+        return Assert.IsType<OpenApiSchema>(generatedSchema.Properties[nameof(TypeWithNullableCustomAllOfProperty.Property)]);
+    }
+
+    private static OpenApiSchema GenerateNullableObjectDictionaryContentSchema()
+    {
+        var subject = Subject(configureGenerator: c => c.SupportNonNullableReferenceTypes = true);
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Assert.IsType<OpenApiSchemaReference>(subject.GenerateSchema(typeof(TypeWithNullableObjectDictionary), schemaRepository));
+        var generatedSchema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+        var propertySchema = generatedSchema.Properties[nameof(TypeWithNullableObjectDictionary.Property)];
+
+        return Assert.IsType<OpenApiSchema>(propertySchema.AdditionalProperties);
     }
 
     private static string SerializeSchemaInDocument(OpenApiSchema schema, OpenApiSpecVersion version)
