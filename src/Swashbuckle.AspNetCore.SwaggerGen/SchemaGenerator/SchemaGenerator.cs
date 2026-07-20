@@ -214,7 +214,7 @@ public class SchemaGenerator(
             : GenerateConcreteSchema(dataContract, schemaRepository);
 
         ApplyFilters(schema, modelType, schemaRepository);
-         
+
         if (Nullable.GetUnderlyingType(modelType) != null && schema is OpenApiSchema concrete)
         {
             SetNullable(concrete, true);
@@ -632,14 +632,43 @@ public class SchemaGenerator(
     private static void SetNullable(OpenApiSchema schema, bool nullable)
     {
         // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3387
+        // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3936
         if (nullable)
         {
-            schema.Type ??= JsonSchemaType.Null;
-            schema.Type |= JsonSchemaType.Null;
+            if (schema.AllOf is { Count: > 0 })
+            {
+                // Do not restructure the composition here: wrapping the allOf in an anyOf
+                // prevents client generators from resolving the referenced schema when the
+                // document is serialized as OpenAPI 3.0, where the null member is dropped.
+                schema.Type ??= JsonSchemaType.Null;
+                schema.Type |= JsonSchemaType.Null;
+            }
+            else if (schema.AnyOf is { Count: > 0 } anyOf)
+            {
+                TryAddNullSchema(anyOf);
+            }
+            else if (schema.OneOf is { Count: > 0 } oneOf)
+            {
+                TryAddNullSchema(oneOf);
+            }
+            else if (schema.Type.HasValue)
+            {
+                // A schema without a "type" already validates every JSON type, including null,
+                // so the null flag is only added when a concrete type is present.
+                schema.Type |= JsonSchemaType.Null;
+            }
         }
         else if (schema.Type.HasValue)
         {
             schema.Type &= ~JsonSchemaType.Null;
+        }
+    }
+
+    private static void TryAddNullSchema(IList<IOpenApiSchema> schemas)
+    {
+        if (!schemas.Any(static s => s.Type is { } type && type.HasFlag(JsonSchemaType.Null)))
+        {
+            schemas.Add(new OpenApiSchema { Type = JsonSchemaType.Null });
         }
     }
 
