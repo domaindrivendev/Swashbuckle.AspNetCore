@@ -666,6 +666,58 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Contains(propertySchema.OneOf, s => s.Type == JsonSchemaType.Null);
     }
 
+    [Fact]
+    public void GenerateSchema_DoesNotAddDuplicateNullType_IfMemberSchemaAnyOfAlreadyAllowsNull()
+    {
+        var subject = Subject(configureGenerator: c =>
+        {
+            c.SupportNonNullableReferenceTypes = true;
+            c.CustomTypeMappings.Add(typeof(CustomAnyOfType), () => new OpenApiSchema
+            {
+                AnyOf =
+                [
+                    new OpenApiSchema { Type = JsonSchemaTypes.String },
+                    new OpenApiSchema { Type = JsonSchemaType.Null },
+                ]
+            });
+        });
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Assert.IsType<OpenApiSchemaReference>(subject.GenerateSchema(typeof(TypeWithNullableCustomAnyOfProperty), schemaRepository));
+        var generatedSchema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+        var propertySchema = Assert.IsType<OpenApiSchema>(generatedSchema.Properties[nameof(TypeWithNullableCustomAnyOfProperty.Property)]);
+
+        Assert.NotNull(propertySchema.AnyOf);
+        Assert.Equal(2, propertySchema.AnyOf.Count);
+        Assert.Single(propertySchema.AnyOf, s => s.Type == JsonSchemaType.Null);
+    }
+
+    [Fact]
+    public void GenerateSchema_DoesNotAddDuplicateNullType_IfMemberSchemaOneOfAlreadyAllowsNull()
+    {
+        var subject = Subject(configureGenerator: c =>
+        {
+            c.SupportNonNullableReferenceTypes = true;
+            c.CustomTypeMappings.Add(typeof(CustomOneOfType), () => new OpenApiSchema
+            {
+                OneOf =
+                [
+                    new OpenApiSchema { Type = JsonSchemaTypes.String },
+                    new OpenApiSchema { Type = JsonSchemaType.Null },
+                ]
+            });
+        });
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Assert.IsType<OpenApiSchemaReference>(subject.GenerateSchema(typeof(TypeWithNullableCustomOneOfProperty), schemaRepository));
+        var generatedSchema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+        var propertySchema = Assert.IsType<OpenApiSchema>(generatedSchema.Properties[nameof(TypeWithNullableCustomOneOfProperty.Property)]);
+
+        Assert.NotNull(propertySchema.OneOf);
+        Assert.Equal(2, propertySchema.OneOf.Count);
+        Assert.Single(propertySchema.OneOf, s => s.Type == JsonSchemaType.Null);
+    }
+
     // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3936
     [Fact]
     public void GenerateSchema_DoesNotRestrictTypeToNull_IfDictionaryValueIsNullableObject()
@@ -718,6 +770,23 @@ public class JsonSerializerSchemaGeneratorTests
         var schema = json.RootElement.GetProperty("components").GetProperty("schemas").GetProperty("Test");
         Assert.True(schema.TryGetProperty("nullable", out var nullable));
         Assert.True(nullable.GetBoolean());
+        Assert.True(schema.TryGetProperty("allOf", out var allOf));
+        Assert.Equal(1, allOf.GetArrayLength());
+        Assert.False(schema.TryGetProperty("anyOf", out _));
+    }
+
+    // Swagger 2.0 has no way to express nullability, so the null member is dropped, but the
+    // allOf must still survive unwrapped so client generators can resolve the referenced schema.
+    [Fact]
+    public void GenerateSchema_SerializesNullableAllOfSchema_AsAllOf_ForSwagger2_0()
+    {
+        var propertySchema = GenerateNullableAllOfPropertySchema();
+
+        var serialized = SerializeSchemaInDocument(propertySchema, OpenApiSpecVersion.OpenApi2_0);
+
+        using var json = JsonDocument.Parse(serialized);
+        Assert.Equal("2.0", json.RootElement.GetProperty("swagger").GetString());
+        var schema = json.RootElement.GetProperty("definitions").GetProperty("Test");
         Assert.True(schema.TryGetProperty("allOf", out var allOf));
         Assert.Equal(1, allOf.GetArrayLength());
         Assert.False(schema.TryGetProperty("anyOf", out _));

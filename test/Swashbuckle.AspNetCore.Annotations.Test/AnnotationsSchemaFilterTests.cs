@@ -127,6 +127,44 @@ public class AnnotationsSchemaFilterTests
     }
 
     [Fact]
+    public void Apply_DoesNotAddNullSchema_IfNullableSchemaAnyOfAlreadyAllowsNull()
+    {
+        var schema = new OpenApiSchema
+        {
+            AnyOf =
+            [
+                new OpenApiSchema { Type = JsonSchemaTypes.String },
+                new OpenApiSchema { Type = JsonSchemaType.Null },
+            ]
+        };
+
+        Subject().Apply(schema, ContextForProperty(nameof(TypeWithNullableComposedSchemas.AnyOfProperty)));
+
+        Assert.NotNull(schema.AnyOf);
+        Assert.Equal(2, schema.AnyOf.Count);
+        Assert.Single(schema.AnyOf, s => s.Type == JsonSchemaType.Null);
+    }
+
+    [Fact]
+    public void Apply_DoesNotAddNullSchema_IfNullableSchemaOneOfAlreadyAllowsNull()
+    {
+        var schema = new OpenApiSchema
+        {
+            OneOf =
+            [
+                new OpenApiSchema { Type = JsonSchemaTypes.String },
+                new OpenApiSchema { Type = JsonSchemaType.Null },
+            ]
+        };
+
+        Subject().Apply(schema, ContextForProperty(nameof(TypeWithNullableComposedSchemas.OneOfProperty)));
+
+        Assert.NotNull(schema.OneOf);
+        Assert.Equal(2, schema.OneOf.Count);
+        Assert.Single(schema.OneOf, s => s.Type == JsonSchemaType.Null);
+    }
+
+    [Fact]
     public void Apply_PreservesAllOf_IfNullableSchemaHasAllOf()
     {
         var schema = new OpenApiSchema
