@@ -645,11 +645,11 @@ public class SchemaGenerator(
             }
             else if (schema.AnyOf is { Count: > 0 } anyOf)
             {
-                AddNullSchema(anyOf);
+                TryAddNullSchema(anyOf);
             }
             else if (schema.OneOf is { Count: > 0 } oneOf)
             {
-                AddNullSchema(oneOf);
+                TryAddNullSchema(oneOf);
             }
             else if (schema.Type.HasValue)
             {
@@ -664,12 +664,8 @@ public class SchemaGenerator(
         }
     }
 
-    private static void AddNullSchema(IList<IOpenApiSchema> schemas)
+    private static void TryAddNullSchema(IList<IOpenApiSchema> schemas)
     {
-        // Only add a null member if the composition does not already allow null,
-        // otherwise a schema that is nullable through multiple mechanisms (e.g. a
-        // nullable reference type also annotated with [SwaggerSchema(Nullable = true)])
-        // would end up with the null type listed more than once.
         if (!schemas.Any(static s => s.Type is { } type && type.HasFlag(JsonSchemaType.Null)))
         {
             schemas.Add(new OpenApiSchema { Type = JsonSchemaType.Null });

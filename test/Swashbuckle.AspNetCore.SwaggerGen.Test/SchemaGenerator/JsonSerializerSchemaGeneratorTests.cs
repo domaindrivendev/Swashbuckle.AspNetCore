@@ -775,8 +775,6 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.False(schema.TryGetProperty("anyOf", out _));
     }
 
-    // Swagger 2.0 has no way to express nullability, so the null member is dropped, but the
-    // allOf must still survive unwrapped so client generators can resolve the referenced schema.
     [Fact]
     public void GenerateSchema_SerializesNullableAllOfSchema_AsAllOf_ForSwagger2_0()
     {
