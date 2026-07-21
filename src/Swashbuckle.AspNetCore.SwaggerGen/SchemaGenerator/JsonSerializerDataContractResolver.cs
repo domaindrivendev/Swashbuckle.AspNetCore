@@ -262,8 +262,8 @@ public class JsonSerializerDataContractResolver : ISerializerDataContractResolve
     {
         var nullable = propertyType.IsReferenceOrNullableType();
 
-        if (_generatorOptions.SupportNonNullableReferenceTypes
-            || _generatorOptions.NonNullableReferenceTypesAsRequired)
+        if (_generatorOptions.SupportNonNullableReferenceTypes ||
+            _generatorOptions.NonNullableReferenceTypesAsRequired)
         {
             nullable &= !propertyInfo.IsNonNullableReferenceType();
         }

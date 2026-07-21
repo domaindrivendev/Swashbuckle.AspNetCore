@@ -6,6 +6,7 @@ public readonly struct OptionalValue<T>
     {
         HasValue = false;
     }
+
     public OptionalValue(T value)
     {
         Value = value;

@@ -4,8 +4,8 @@ namespace Swashbuckle.AspNetCore.SwaggerGen.Test;
 
 public sealed class OptionalValueDataContractResolver(
     ISerializerDataContractResolver innerResolver,
-    SchemaGeneratorOptions generatorOptions
-) : ISerializerDataContractResolver
+    SchemaGeneratorOptions generatorOptions)
+    : ISerializerDataContractResolver
 {
     public DataContract GetDataContractForType(Type type)
     {
@@ -57,7 +57,7 @@ public sealed class OptionalValueDataContractResolver(
                 effectiveProperties,
                 dataContract.ObjectExtensionDataType,
                 dataContract.ObjectTypeNameProperty,
-                dataContract.ObjectTypeNameProperty,
+                dataContract.ObjectTypeNameValue,
                 dataContract.JsonConverter);
         }
 

@@ -1666,9 +1666,7 @@ public partial class VerifyTests
             generatorOptions,
             new OptionalValueDataContractResolver(
                 new JsonSerializerDataContractResolver(new JsonSerializerOptions(), generatorOptions),
-                generatorOptions
-            )
-        );
+                generatorOptions));
         var schemaRepository = new SchemaRepository();
 
         subject.GenerateSchema(typeof(TypeWithOptionProperty), schemaRepository);
@@ -1681,7 +1679,7 @@ public partial class VerifyTests
             }
         };
 
-        await VerifyV31(document);
+        await Verify(document, OpenApiSpecVersion.OpenApi3_1);
     }
 
     private static SwaggerGenerator Subject(
@@ -1710,35 +1708,23 @@ public partial class VerifyTests
         }
     };
 
-    private static string ToJson(OpenApiDocument document)
+    private static string ToJson(
+        OpenApiDocument document,
+        OpenApiSpecVersion version = OpenApiSpecVersion.OpenApi3_0)
     {
         using var stringWriter = new StringWriter();
         var jsonWriter = new OpenApiJsonWriter(stringWriter);
 
-        document.SerializeAsV3(jsonWriter);
+        document.SerializeAs(version, jsonWriter);
 
         return NormalizeLineBreaks(stringWriter.ToString());
     }
 
-    private static string ToJsonV31(OpenApiDocument document)
+    private static async Task Verify(
+        OpenApiDocument document,
+        OpenApiSpecVersion version = OpenApiSpecVersion.OpenApi3_0)
     {
-        using var stringWriter = new StringWriter();
-        var jsonWriter = new OpenApiJsonWriter(stringWriter);
-
-        document.SerializeAsV31(jsonWriter);
-
-        return NormalizeLineBreaks(stringWriter.ToString());
-    }
-
-    private static async Task Verify(OpenApiDocument document)
-    {
-        await Verifier.Verify(ToJson(document))
-                      .UseDirectory($"snapshots/{Environment.Version.Major}_{Environment.Version.Minor}");
-    }
-
-    private static async Task VerifyV31(OpenApiDocument document)
-    {
-        await Verifier.Verify(ToJsonV31(document))
+        await Verifier.Verify(ToJson(document, version))
                       .UseDirectory($"snapshots/{Environment.Version.Major}_{Environment.Version.Minor}");
     }
 
