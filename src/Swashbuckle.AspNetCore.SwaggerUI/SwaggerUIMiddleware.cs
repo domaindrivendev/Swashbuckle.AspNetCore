@@ -55,7 +55,7 @@ internal sealed partial class SwaggerUIMiddleware
                 return;
             }
 
-            var match = Regex.Match(path, $"^/{Regex.Escape(_options.RoutePrefix)}/?(index.(html|js))$", RegexOptions.IgnoreCase);
+            var match = Regex.Match(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?(index.(html|js))$", RegexOptions.IgnoreCase);
 
             if (match.Success)
             {
