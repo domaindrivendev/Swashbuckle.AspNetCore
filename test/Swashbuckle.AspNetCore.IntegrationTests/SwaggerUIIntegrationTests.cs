@@ -37,6 +37,8 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
 
     [Theory]
     [InlineData(typeof(Basic.Startup), "/", "index.html")]
+    [InlineData(typeof(Basic.StartupWithAbsoluteRoutePrefix), "/abs", "abs/index.html")]
+    [InlineData(typeof(Basic.StartupWithRelativeRoutePrefix), "/rel", "rel/index.html")]
     [InlineData(typeof(CustomUIConfig.Startup), "/swagger", "swagger/index.html")]
     [InlineData(typeof(CustomUIConfig.Startup), "/swagger/", "index.html")]
     public async Task RoutePrefix_RedirectsToPathRelativeIndexUrl(
@@ -55,6 +57,8 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
 
     [Theory]
     [InlineData(typeof(Basic.Startup), "/index.html")]
+    [InlineData(typeof(Basic.StartupWithAbsoluteRoutePrefix), "/abs/index.html")]
+    [InlineData(typeof(Basic.StartupWithRelativeRoutePrefix), "/rel/index.html")]
     [InlineData(typeof(CustomUIConfig.Startup), "/swagger/index.html")]
     public async Task IndexUrl_HeadRequest_ReturnsMetadata(
         Type startupType,
@@ -72,6 +76,8 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
 
     [Theory]
     [InlineData(typeof(Basic.Startup), "/index.html", "/swagger-ui.js", "/index.css", "/swagger-ui.css")]
+    [InlineData(typeof(Basic.StartupWithAbsoluteRoutePrefix), "/abs/index.html", "/abs/swagger-ui.js", "/abs/index.css", "/abs/swagger-ui.css")]
+    [InlineData(typeof(Basic.StartupWithRelativeRoutePrefix), "/rel/index.html", "/rel/swagger-ui.js", "/rel/index.css", "/rel/swagger-ui.css")]
     [InlineData(typeof(CustomUIConfig.Startup), "/swagger/index.html", "/swagger/swagger-ui.js", "swagger/index.css", "/swagger/swagger-ui.css")]
     public async Task IndexUrl_ReturnsEmbeddedVersionOfTheSwaggerUI(
         Type startupType,
