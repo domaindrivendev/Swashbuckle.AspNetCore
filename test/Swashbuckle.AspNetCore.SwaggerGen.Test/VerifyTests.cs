@@ -1654,6 +1654,34 @@ public partial class VerifyTests
         await Verify(document);
     }
 
+    [Fact]
+    public async Task GenerateSchema_CustomResolver_OptionOfString_RendersCorrectly()
+    {
+        var generatorOptions = new SchemaGeneratorOptions
+        {
+            // We enable NRT so we can verify the underlying nullability.
+            SupportNonNullableReferenceTypes = true
+        };
+        var subject = new SchemaGenerator(
+            generatorOptions,
+            new OptionalValueDataContractResolver(
+                new JsonSerializerDataContractResolver(new JsonSerializerOptions(), generatorOptions),
+                generatorOptions));
+        var schemaRepository = new SchemaRepository();
+
+        subject.GenerateSchema(typeof(TypeWithOptionProperty), schemaRepository);
+
+        var document = new OpenApiDocument
+        {
+            Components = new OpenApiComponents
+            {
+                Schemas = schemaRepository.Schemas
+            }
+        };
+
+        await Verify(document, OpenApiSpecVersion.OpenApi3_1);
+    }
+
     private static SwaggerGenerator Subject(
             IEnumerable<ApiDescription> apiDescriptions,
             SwaggerGeneratorOptions options = null,
@@ -1667,7 +1695,7 @@ public partial class VerifyTests
         return new SwaggerGenerator(
             options ?? DefaultOptions,
             new FakeApiDescriptionGroupCollectionProvider(apiDescriptions),
-            new SchemaGenerator(schemaGeneratorOptions, new JsonSerializerDataContractResolver(new JsonSerializerOptions())),
+            new SchemaGenerator(schemaGeneratorOptions, new JsonSerializerDataContractResolver(new JsonSerializerOptions(), schemaGeneratorOptions)),
             new FakeAuthenticationSchemeProvider(authenticationSchemes ?? [])
         );
     }
@@ -1680,19 +1708,23 @@ public partial class VerifyTests
         }
     };
 
-    private static string ToJson(OpenApiDocument document)
+    private static string ToJson(
+        OpenApiDocument document,
+        OpenApiSpecVersion version = OpenApiSpecVersion.OpenApi3_0)
     {
         using var stringWriter = new StringWriter();
         var jsonWriter = new OpenApiJsonWriter(stringWriter);
 
-        document.SerializeAsV3(jsonWriter);
+        document.SerializeAs(version, jsonWriter);
 
         return NormalizeLineBreaks(stringWriter.ToString());
     }
 
-    private static async Task Verify(OpenApiDocument document)
+    private static async Task Verify(
+        OpenApiDocument document,
+        OpenApiSpecVersion version = OpenApiSpecVersion.OpenApi3_0)
     {
-        await Verifier.Verify(ToJson(document))
+        await Verifier.Verify(ToJson(document, version))
                       .UseDirectory($"snapshots/{Environment.Version.Major}_{Environment.Version.Minor}");
     }
 

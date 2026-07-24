@@ -1,0 +1,67 @@
+﻿{
+  "openapi": "3.1.1",
+  "info": { },
+  "paths": { },
+  "components": {
+    "schemas": {
+      "TypeWithOptionProperty": {
+        "type": "object",
+        "properties": {
+          "Int": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "NullableInt": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "OptionalInt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "NullableOptionalInt": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "String": {
+            "type": "string"
+          },
+          "NullableString": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "OptionalString": {
+            "type": "string"
+          },
+          "NullableOptionalString": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "Self": {
+            "$ref": "#/components/schemas/TypeWithOptionProperty"
+          },
+          "NullableSelf": {
+            "$ref": "#/components/schemas/TypeWithOptionProperty"
+          },
+          "OptionalSelf": {
+            "$ref": "#/components/schemas/TypeWithOptionProperty"
+          },
+          "NullableOptionalSelf": {
+            "$ref": "#/components/schemas/TypeWithOptionProperty"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

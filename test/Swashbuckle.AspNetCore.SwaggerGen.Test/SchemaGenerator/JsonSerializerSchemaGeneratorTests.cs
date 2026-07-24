@@ -1414,7 +1414,7 @@ public class JsonSerializerSchemaGeneratorTests
 
         var serializerOptions = new JsonSerializerOptions();
 
-        var subject = new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions));
+        var subject = new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions, generatorOptions));
         var schemaRepository = new SchemaRepository();
 
         subject.GenerateSchema(type, schemaRepository);
@@ -1734,7 +1734,7 @@ public class JsonSerializerSchemaGeneratorTests
         var serializerOptions = new JsonSerializerOptions();
         configureSerializer?.Invoke(serializerOptions);
 
-        return new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions));
+        return new SchemaGenerator(generatorOptions, new JsonSerializerDataContractResolver(serializerOptions, generatorOptions));
     }
 
     private static void AssertIsNullable(IOpenApiSchema schema, bool expected = true)

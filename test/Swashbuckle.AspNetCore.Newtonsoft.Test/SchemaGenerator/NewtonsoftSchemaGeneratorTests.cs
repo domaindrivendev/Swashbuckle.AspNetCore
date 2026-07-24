@@ -288,6 +288,20 @@ public class NewtonsoftSchemaGeneratorTests
     }
 
     [Fact]
+    public void GenerateSchema_SupportsOption_SupportNonNullableReferenceTypes()
+    {
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Assert.IsType<OpenApiSchemaReference>(
+            Subject(configureGenerator: c => c.SupportNonNullableReferenceTypes = true)
+                .GenerateSchema(typeof(TypeWithNullableContextAnnotated), schemaRepository));
+
+        var schema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+        Assert.True(schema.Properties[nameof(TypeWithNullableContextAnnotated.NullableString)].Type.Value.HasFlag(JsonSchemaType.Null));
+        Assert.False(schema.Properties[nameof(TypeWithNullableContextAnnotated.NonNullableString)].Type.Value.HasFlag(JsonSchemaType.Null));
+    }
+
+    [Fact]
     public void GenerateSchema_DoesNotSetNullableFlag_IfReferencedEnum()
     {
         var schemaRepository = new SchemaRepository();
@@ -1005,6 +1019,6 @@ public class NewtonsoftSchemaGeneratorTests
         var serializerSettings = new JsonSerializerSettings();
         configureSerializer?.Invoke(serializerSettings);
 
-        return new SchemaGenerator(generatorOptions, new NewtonsoftDataContractResolver(serializerSettings));
+        return new SchemaGenerator(generatorOptions, new NewtonsoftDataContractResolver(serializerSettings, generatorOptions));
     }
 }
