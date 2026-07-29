@@ -1,0 +1,56 @@
+﻿{
+  "openapi": "3.1.1",
+  "info": {
+    "title": "Test API",
+    "version": "V1"
+  },
+  "paths": {
+    "/resource": {
+      "get": {
+        "tags": [
+          "Fake"
+        ],
+        "parameters": [
+          {
+            "name": "param",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/IntEnumWithXmlComments"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "IntEnumWithXmlComments": {
+        "type": "integer",
+        "oneOf": [
+          {
+            "const": "2",
+            "description": "Value two xml comment"
+          },
+          {
+            "const": "4",
+            "description": "Value four xml comment"
+          },
+          {
+            "const": "8"
+          }
+        ],
+        "format": "int32"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Fake"
+    }
+  ]
+}

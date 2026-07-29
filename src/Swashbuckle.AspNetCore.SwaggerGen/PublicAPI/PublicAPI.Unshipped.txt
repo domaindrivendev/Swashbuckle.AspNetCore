@@ -1,1 +1,7 @@
-﻿
+Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions.AnnotatedEnumOpenApiVersion.get -> Microsoft.OpenApi.OpenApiSpecVersion
+Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions.AnnotatedEnumOpenApiVersion.set -> void
+Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions.EnumMemberDescriptionProviders.get -> System.Collections.Generic.IList<System.Func<System.Reflection.FieldInfo, string>>
+Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions.EnumMemberDescriptionProviders.set -> void
+Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions.UseAnnotatedEnumValues.get -> bool
+Swashbuckle.AspNetCore.SwaggerGen.SchemaGeneratorOptions.UseAnnotatedEnumValues.set -> void
+static Microsoft.Extensions.DependencyInjection.SwaggerGenOptionsExtensions.UseAnnotatedEnumValues(this Swashbuckle.AspNetCore.SwaggerGen.SwaggerGenOptions swaggerGenOptions, Microsoft.OpenApi.OpenApiSpecVersion openApiVersion = Microsoft.OpenApi.OpenApiSpecVersion.OpenApi3_1) -> void

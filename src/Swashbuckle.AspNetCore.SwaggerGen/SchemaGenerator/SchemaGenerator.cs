@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.OpenApi;
+using DisplayAttribute = System.ComponentModel.DataAnnotations.DisplayAttribute;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -292,7 +293,7 @@ public class SchemaGenerator(
             case DataType.Number:
             case DataType.String:
                 {
-                    schemaFactory = () => CreatePrimitiveSchema(dataContract);
+                    schemaFactory = () => CreatePrimitiveSchema(dataContract, _generatorOptions);
                     returnAsReference = dataContract.UnderlyingType.IsEnum && !_generatorOptions.UseInlineDefinitionsForEnums;
                     break;
                 }
@@ -338,7 +339,7 @@ public class SchemaGenerator(
             (modelType.IsConstructedGenericType && _generatorOptions.CustomTypeMappings.TryGetValue(modelType.GetGenericTypeDefinition(), out schemaFactory));
     }
 
-    private static OpenApiSchema CreatePrimitiveSchema(DataContract dataContract)
+    private static OpenApiSchema CreatePrimitiveSchema(DataContract dataContract, SchemaGeneratorOptions options = null)
     {
         var schema = new OpenApiSchema
         {
@@ -360,13 +361,74 @@ public class SchemaGenerator(
                 enumValues = enumValues.Append(null);
             }*/
 
-            schema.Enum = [.. enumValues
-                .Select(value => dataContract.JsonConverter(value))
-                .Distinct()
-                .Select(JsonModelFactory.CreateFromJson)];
+            if (options?.UseAnnotatedEnumValues == true
+                && options.AnnotatedEnumOpenApiVersion >= OpenApiSpecVersion.OpenApi3_1
+                && HasEnumMemberDescriptions(underlyingType, options))
+            {
+                schema.OneOf = [.. enumValues
+                    .Select(value => (Raw: value, Json: dataContract.JsonConverter(value)))
+                    .GroupBy(x => x.Json)
+                    .Select(g => g.First())
+                    .Select(x => (IOpenApiSchema)new OpenApiSchema
+                    {
+                        Const = JsonModelFactory.CreateFromJson(x.Json)?.ToString(),
+                        Description = GetEnumMemberDescription(underlyingType, x.Raw, options)
+                    })];
+            }
+            else
+            {
+                schema.Enum = [.. enumValues
+                    .Select(value => dataContract.JsonConverter(value))
+                    .Distinct()
+                    .Select(JsonModelFactory.CreateFromJson)];
+            }
         }
 
         return schema;
+    }
+
+    private static bool HasEnumMemberDescriptions(Type enumType, SchemaGeneratorOptions options) =>
+        enumType.GetFields(BindingFlags.Public | BindingFlags.Static)
+            .Any(f => GetFieldDescription(f, options) != null);
+
+    private static string GetEnumMemberDescription(Type enumType, object value, SchemaGeneratorOptions options)
+    {
+        var name = Enum.GetName(enumType, value);
+
+        if (name is null)
+        {
+            return null;
+        }
+
+        var field = enumType.GetField(name);
+        return GetFieldDescription(field, options);
+    }
+
+    private static string GetFieldDescription(FieldInfo field, SchemaGeneratorOptions options)
+    {
+        if (field is null)
+        {
+            return null;
+        }
+
+        var description = field.GetCustomAttribute<DescriptionAttribute>()?.Description
+            ?? field.GetCustomAttribute<DisplayAttribute>()?.GetDescription();
+
+        if (description != null)
+        {
+            return description;
+        }
+
+        if (options?.EnumMemberDescriptionProviders is { Count: > 0 } providers)
+        {
+            foreach (var provider in providers)
+            {
+                var result = provider(field);
+                if (result != null) return result;
+            }
+        }
+
+        return null;
     }
 
     private OpenApiSchema CreateArraySchema(DataContract dataContract, SchemaRepository schemaRepository)
