@@ -27,7 +27,7 @@
     <PackageVersion Include="NSubstitute" Version="6.0.0" />
     <PackageVersion Include="NSwag.CodeGeneration.CSharp" Version="14.7.1" />
     <PackageVersion Include="NSwag.MSBuild" Version="14.7.1" />
-    <PackageVersion Include="ReportGenerator" Version="5.5.10" />
+    <PackageVersion Include="ReportGenerator" Version="5.5.11" />
     <PackageVersion Include="Verify.XunitV3" Version="31.27.0" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
