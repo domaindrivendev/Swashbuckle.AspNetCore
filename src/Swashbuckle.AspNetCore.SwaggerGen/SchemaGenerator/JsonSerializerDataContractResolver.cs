@@ -6,9 +6,21 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace Swashbuckle.AspNetCore.SwaggerGen;
 
-public class JsonSerializerDataContractResolver(JsonSerializerOptions serializerOptions) : ISerializerDataContractResolver
+public class JsonSerializerDataContractResolver : ISerializerDataContractResolver
 {
-    private readonly JsonSerializerOptions _serializerOptions = serializerOptions;
+    private readonly JsonSerializerOptions _serializerOptions;
+    private readonly SchemaGeneratorOptions _generatorOptions;
+
+    public JsonSerializerDataContractResolver(JsonSerializerOptions serializerOptions)
+        : this(serializerOptions, new SchemaGeneratorOptions())
+    {
+    }
+
+    public JsonSerializerDataContractResolver(JsonSerializerOptions serializerOptions, SchemaGeneratorOptions generatorOptions)
+    {
+        _serializerOptions = serializerOptions;
+        _generatorOptions = generatorOptions ?? new SchemaGeneratorOptions();
+    }
 
     public DataContract GetDataContractForType(Type type)
     {
@@ -230,18 +242,33 @@ public class JsonSerializerDataContractResolver(JsonSerializerOptions serializer
 
             isRequired = propertyInfo.GetCustomAttribute<JsonRequiredAttribute>() != null;
 
+            var propertyType = propertyInfo.PropertyType;
+
             dataProperties.Add(
                 new DataProperty(
                     name: name,
                     isRequired: isRequired,
-                    isNullable: propertyInfo.PropertyType.IsReferenceOrNullableType(),
+                    isNullable: IsNullable(propertyInfo, propertyType),
                     isReadOnly: propertyInfo.IsPubliclyReadable() && !propertyInfo.IsPubliclyWritable() && !isDeserializedViaConstructor,
                     isWriteOnly: propertyInfo.IsPubliclyWritable() && !propertyInfo.IsPubliclyReadable(),
-                    memberType: propertyInfo.PropertyType,
+                    memberType: propertyType,
                     memberInfo: propertyInfo));
         }
 
         return dataProperties;
+    }
+
+    private bool IsNullable(PropertyInfo propertyInfo, Type propertyType)
+    {
+        var nullable = propertyType.IsReferenceOrNullableType();
+
+        if (_generatorOptions.SupportNonNullableReferenceTypes ||
+            _generatorOptions.NonNullableReferenceTypesAsRequired)
+        {
+            nullable &= !propertyInfo.IsNonNullableReferenceType();
+        }
+
+        return nullable;
     }
 
     private static readonly Dictionary<Type, Tuple<DataType, string>> PrimitiveTypesAndFormats = new()

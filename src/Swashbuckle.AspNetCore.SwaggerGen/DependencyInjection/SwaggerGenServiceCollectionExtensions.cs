@@ -33,7 +33,8 @@ public static class SwaggerGenServiceCollectionExtensions
         services.TryAddSingleton<ISerializerDataContractResolver>(s =>
         {
             var serializerOptions = s.GetRequiredService<JsonSerializerOptionsProvider>().Options;
-            return new JsonSerializerDataContractResolver(serializerOptions);
+            var generatorOptions = s.GetRequiredService<IOptions<SchemaGeneratorOptions>>().Value;
+            return new JsonSerializerDataContractResolver(serializerOptions, generatorOptions);
         });
 
         // Used by the <c>dotnet-getdocument</c> tool from the Microsoft.Extensions.ApiDescription.Server package.
