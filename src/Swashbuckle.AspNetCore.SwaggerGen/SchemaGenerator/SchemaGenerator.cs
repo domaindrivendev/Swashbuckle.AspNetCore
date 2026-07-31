@@ -137,14 +137,7 @@ public class SchemaGenerator(
 
     private bool IsNullable(RequiredAttribute requiredAttribute, DataProperty dataProperty, MemberInfo memberInfo)
     {
-        var nullable = dataProperty.IsNullable && requiredAttribute == null;
-
-        if (_generatorOptions.SupportNonNullableReferenceTypes || _generatorOptions.NonNullableReferenceTypesAsRequired)
-        {
-            nullable &= !memberInfo.IsNonNullableReferenceType();
-        }
-
-        return nullable;
+        return dataProperty.IsNullable && requiredAttribute == null;
     }
 
     private IOpenApiSchema GenerateSchemaForParameter(
@@ -478,8 +471,7 @@ public class SchemaGenerator(
                 : GenerateSchemaForType(memberType, schemaRepository);
 
             var markNonNullableTypeAsRequired =
-                _generatorOptions.NonNullableReferenceTypesAsRequired &&
-                (dataProperty.MemberInfo?.IsNonNullableReferenceType() ?? false);
+                _generatorOptions.NonNullableReferenceTypesAsRequired && !dataProperty.IsNullable;
 
             if ((
                 dataProperty.IsRequired

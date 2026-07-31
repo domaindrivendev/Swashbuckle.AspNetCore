@@ -25,8 +25,9 @@ public static class NewtonsoftServiceCollectionExtensions
             {
                 var serializerSettings = s.GetRequiredService<IOptions<MvcNewtonsoftJsonOptions>>().Value?.SerializerSettings
                     ?? new();
+                var generatorOptions = s.GetRequiredService<IOptions<SchemaGeneratorOptions>>().Value;
 
-                return new NewtonsoftDataContractResolver(serializerSettings);
+                return new NewtonsoftDataContractResolver(serializerSettings, generatorOptions);
             }));
     }
 }
