@@ -1,1 +1,1 @@
-Redoc.init('%(SpecUrl)', JSON.parse('%(ConfigObject)'), document.getElementById('redoc-container'));
+Redoc.init(%(SpecUrl), %(ConfigObject), document.getElementById('redoc-container'));

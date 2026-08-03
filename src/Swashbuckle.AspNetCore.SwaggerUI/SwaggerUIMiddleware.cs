@@ -55,7 +55,7 @@ internal sealed partial class SwaggerUIMiddleware
                 return;
             }
 
-            var match = Regex.Match(path, $"^/?{Regex.Escape(_options.RoutePrefix)}/?(index.(html|js))$", RegexOptions.IgnoreCase);
+            var match = Regex.Match(path, $@"^/?{Regex.Escape(_options.RoutePrefix)}/?(index\.(html|js))$", RegexOptions.IgnoreCase);
 
             if (match.Success)
             {
@@ -65,19 +65,21 @@ internal sealed partial class SwaggerUIMiddleware
 
             if (_options.ExposeSwaggerDocumentUrlsRoute)
             {
-                var pattern = $"^/?{Regex.Escape(_options.RoutePrefix)}/{_options.SwaggerDocumentUrlsPath}/?$";
+                var pattern = $"^/?{Regex.Escape(_options.RoutePrefix)}/{Regex.Escape(_options.SwaggerDocumentUrlsPath)}/?$";
                 if (Regex.IsMatch(path, pattern, RegexOptions.IgnoreCase))
                 {
                     await RespondWithDocumentUrls(httpContext);
                     return;
                 }
             }
+
+            if (await _resourceProvider.TryRespondWithFileAsync(httpContext))
+            {
+                return;
+            }
         }
 
-        if (!await _resourceProvider.TryRespondWithFileAsync(httpContext))
-        {
-            await _next(httpContext);
-        }
+        await _next(httpContext);
     }
 
     private static string GetSwaggerUIVersion()
@@ -119,6 +121,9 @@ internal sealed partial class SwaggerUIMiddleware
         response.Headers.Location = location;
     }
 
+    [GeneratedRegex(@"%\([A-Za-z]+\)")]
+    private static partial Regex IndexArgumentPattern();
+
     private async Task RespondWithFile(HttpContext context, string fileName)
     {
         var cancellationToken = context.RequestAborted;
@@ -127,10 +132,13 @@ internal sealed partial class SwaggerUIMiddleware
         string contentType;
         Stream stream;
 
-        if (fileName == "index.js")
+        // The route is matched case-insensitively, so the file must be selected the same way,
+        // otherwise a request for "INDEX.JS" is answered with the HTML document instead. The canonical
+        // name is used to look the resource up, as manifest resource names are case-sensitive.
+        if (string.Equals(fileName, "index.js", StringComparison.OrdinalIgnoreCase))
         {
             contentType = "application/javascript;charset=utf-8";
-            stream = ResourceHelper.GetEmbeddedResource(fileName);
+            stream = ResourceHelper.GetEmbeddedResource("index.js");
         }
         else
         {
@@ -148,14 +156,15 @@ internal sealed partial class SwaggerUIMiddleware
                 template = await reader.ReadToEndAsync(cancellationToken);
             }
 
-            var content = new StringBuilder(template);
+            var arguments = GetIndexArguments();
 
-            foreach (var entry in GetIndexArguments())
-            {
-                content.Replace(entry.Key, entry.Value);
-            }
+            // Single pass over the original template: replacement values are never re-scanned for
+            // further placeholder matches, so a value that happens to look like another placeholder
+            // token cannot be substituted a second time.
+            var text = IndexArgumentPattern().Replace(
+                template,
+                (match) => arguments.TryGetValue(match.Value, out var value) ? value : match.Value);
 
-            var text = content.ToString();
             var etag = GetETag(text);
 
             var ifNoneMatch = context.Request.Headers.IfNoneMatch;
@@ -255,7 +264,7 @@ internal sealed partial class SwaggerUIMiddleware
 
         return new Dictionary<string, string>()
         {
-            { "%(DocumentTitle)", _options.DocumentTitle },
+            { "%(DocumentTitle)", System.Net.WebUtility.HtmlEncode(_options.DocumentTitle) },
             { "%(HeadContent)", _options.HeadContent },
             { "%(StylesPath)", _options.StylesPath },
             { "%(ScriptBundlePath)", _options.ScriptBundlePath },

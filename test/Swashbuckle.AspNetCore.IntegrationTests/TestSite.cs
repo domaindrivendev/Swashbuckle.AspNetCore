@@ -14,6 +14,30 @@ public class TestSite(Type startupType, ITestOutputHelper outputHelper)
     private IHost _host;
     private TestServer _server;
 
+    public static TestServer CreateServer(
+        Action<IApplicationBuilder> configure,
+        Action<IServiceCollection> configureServices = null)
+    {
+        var builder = new HostBuilder()
+            .ConfigureWebHost((webHost) =>
+            {
+                webHost.UseTestServer();
+                webHost.ConfigureServices((services) =>
+                {
+                    services.AddRouting();
+                    services.AddControllers();
+                    services.AddSwaggerGen();
+                    configureServices?.Invoke(services);
+                });
+                webHost.Configure(configure);
+            });
+
+        var host = builder.Build();
+        host.Start();
+
+        return host.GetTestServer();
+    }
+
     public virtual TestServer BuildServer()
     {
         if (_server is null)

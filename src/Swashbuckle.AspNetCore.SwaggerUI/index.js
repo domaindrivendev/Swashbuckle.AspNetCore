@@ -28,8 +28,10 @@ function parseFunction(str) {
 }
 
 window.onload = function () {
-    var configObject = JSON.parse('%(ConfigObject)');
-    var oauthConfigObject = JSON.parse('%(OAuthConfigObject)');
+    // The serialized JSON is emitted as a JavaScript object literal rather than being spliced into a
+    // quoted string, so it cannot terminate a string literal regardless of how it was encoded.
+    var configObject = %(ConfigObject);
+    var oauthConfigObject = %(OAuthConfigObject);
 
     // Workaround for https://github.com/swagger-api/swagger-ui/issues/5945
     configObject.urls.forEach(function (item) {
@@ -51,7 +53,7 @@ window.onload = function () {
     configObject.layout = "StandaloneLayout";
 
     // Parse and add interceptor functions
-    var interceptors = JSON.parse('%(Interceptors)');
+    var interceptors = %(Interceptors);
     if (interceptors.RequestInterceptorFunction)
         configObject.requestInterceptor = parseFunction(interceptors.RequestInterceptorFunction);
     if (interceptors.ResponseInterceptorFunction)

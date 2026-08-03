@@ -47,9 +47,7 @@ internal sealed class SwaggerMiddleware
 
         try
         {
-            var basePath = httpContext.Request.PathBase.HasValue
-                ? httpContext.Request.PathBase.Value
-                : null;
+            var basePath = GetBasePath(httpContext.Request);
 
             OpenApiDocument swagger;
             var asyncSwaggerProvider = httpContext.RequestServices.GetService<IAsyncSwaggerProvider>();
@@ -75,6 +73,14 @@ internal sealed class SwaggerMiddleware
                 filter(swagger, httpContext.Request);
             }
 
+            if (basePath is not null)
+            {
+                // The document embeds the request's path base, which is not necessarily fixed by the
+                // application (see GetBasePath), so the response is not safe for a shared cache to
+                // store and replay to a client whose request had a different path base.
+                httpContext.Response.GetTypedHeaders().CacheControl = new() { Private = true };
+            }
+
             var isHeadRequest = HttpMethods.IsHead(httpContext.Request.Method);
 
             if (extension is ".yaml" or ".yml")
@@ -90,6 +96,38 @@ internal sealed class SwaggerMiddleware
         {
             httpContext.Response.StatusCode = 404;
         }
+    }
+
+    /// <summary>
+    /// Gets the base path to use for the document's server URL, or <see langword="null"/> if there is none.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The value becomes <c>servers[].url</c>, which consumers such as the Swagger UI resolve as a URI
+    /// reference to determine where to send requests. <see cref="HttpRequest.PathBase"/> is only ever a
+    /// path, but a value beginning <c>//</c> or <c>/\</c> is a network-path reference that a browser
+    /// resolves against a different authority, so such a value is discarded rather than emitted.
+    /// </para>
+    /// <para>
+    /// This matters because the path base is not necessarily fixed by the application: it is derived
+    /// from the request when <c>X-Forwarded-Prefix</c> is honoured by the forwarded headers middleware.
+    /// </para>
+    /// </remarks>
+    private static string GetBasePath(HttpRequest request)
+    {
+        if (!request.PathBase.HasValue)
+        {
+            return null;
+        }
+
+        var basePath = request.PathBase.Value;
+
+        if (basePath.Length > 1 && basePath[0] is '/' && basePath[1] is '/' or '\\')
+        {
+            return null;
+        }
+
+        return basePath;
     }
 
     private bool RequestingSwaggerDocument(HttpRequest request, out string documentName, out string extension)
