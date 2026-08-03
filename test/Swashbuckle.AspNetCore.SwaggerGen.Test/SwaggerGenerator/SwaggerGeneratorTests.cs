@@ -2138,6 +2138,61 @@ public class SwaggerGeneratorTests
     }
 
     [Fact]
+    public void GetSwagger_GenerateRequestBodyFromFormParameters_DoesNotRequireNestedPropertyOfOptionalContainer()
+    {
+        var modelParameterInfo = typeof(FakeController)
+            .GetMethod(nameof(FakeController.ActionHavingFromFormAttributeWithNestedModel))
+            .GetParameters()[0];
+
+        var apiDescription = ApiDescriptionFactory.Create<FakeController>(
+            c => nameof(c.ActionHavingFromFormAttributeWithNestedModel),
+            groupName: "v1",
+            httpMethod: "POST",
+            relativePath: "resource",
+            parameterDescriptions:
+            [
+                new ApiParameterDescription
+                {
+                    Name = "Inner.Prop",
+                    Source = BindingSource.Form,
+                    Type = typeof(string),
+                    ModelMetadata = ModelMetadataFactory.CreateForProperty(typeof(FakeFormNestedType), nameof(FakeFormNestedType.Prop))
+                },
+                new ApiParameterDescription
+                {
+                    Name = "Other",
+                    Source = BindingSource.Form,
+                    Type = typeof(string),
+                    ModelMetadata = ModelMetadataFactory.CreateForProperty(typeof(FakeFormModelWithNestedType), nameof(FakeFormModelWithNestedType.Other))
+                }
+            ]);
+
+        // ApiExplorer assigns the root parameter's descriptor to every flattened member,
+        // which ApiDescriptionFactory's name-based matching cannot express
+        foreach (var parameter in apiDescription.ParameterDescriptions)
+        {
+            parameter.ParameterDescriptor = new ControllerParameterDescriptor
+            {
+                Name = "param1",
+                ParameterInfo = modelParameterInfo,
+                ParameterType = typeof(FakeFormModelWithNestedType)
+            };
+        }
+
+        var subject = Subject(apiDescriptions: [apiDescription]);
+
+        var document = subject.GetSwagger("v1");
+
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
+        Assert.NotNull(operation.RequestBody);
+        var mediaType = operation.RequestBody.Content["multipart/form-data"];
+        Assert.NotNull(mediaType.Schema);
+        Assert.Equal(["Inner.Prop", "Other"], mediaType.Schema.Properties.Keys);
+        Assert.NotNull(mediaType.Schema.Required);
+        Assert.Equal(["Other"], mediaType.Schema.Required);
+    }
+
+    [Fact]
     public void GetSwagger_Works_As_Expected_When_FromFormObject()
     {
         var subject = Subject(

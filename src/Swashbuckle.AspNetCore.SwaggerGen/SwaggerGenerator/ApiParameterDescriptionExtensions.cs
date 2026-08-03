@@ -36,14 +36,60 @@ public static class ApiParameterDescriptionExtensions
         // This is the default logic for IsRequired
         bool IsRequired() => apiParameter.CustomAttributes().Any(attr => RequiredAttributeTypes.Contains(attr.GetType()));
 
-        // This is to keep compatibility with MVC controller logic that has existed in the past
-        if (apiParameter.ParameterDescriptor is ControllerParameterDescriptor)
+        // This is to keep compatibility with MVC controller logic that has existed in the past.
+        // For non-controllers, prefer the IsRequired flag if we're not on netstandard 2.0, otherwise fallback to the default logic.
+        var isRequired = apiParameter.ParameterDescriptor is ControllerParameterDescriptor
+            ? IsRequired()
+            : apiParameter.IsRequired;
+
+        // A member flattened from a nested model (e.g. "Inner.Prop") can only be required
+        // if every property in its container chain is required as well
+        return isRequired && HasRequiredContainerChain(apiParameter);
+    }
+
+    private static bool HasRequiredContainerChain(ApiParameterDescription apiParameter)
+    {
+        var name = apiParameter.Name;
+        if (name is null || !name.Contains('.') || apiParameter.ModelMetadata?.ContainerType is null)
         {
-            return IsRequired();
+            return true;
         }
 
-        // For non-controllers, prefer the IsRequired flag if we're not on netstandard 2.0, otherwise fallback to the default logic.
-        return apiParameter.IsRequired;
+        var containerType =
+            apiParameter.ParameterDescriptor?.ParameterType ??
+            apiParameter.ParameterInfo()?.ParameterType;
+
+        var segments = name.Split('.');
+
+        // Walk the container chain, i.e. every segment except the last one, which is the
+        // member itself. If the chain cannot be resolved (custom binding names, collection
+        // indexers, etc.), assume the container is required to keep the previous behavior.
+        for (var i = 0; i < segments.Length - 1 && containerType is not null; i++)
+        {
+            PropertyInfo containerProperty;
+            try
+            {
+                containerProperty = containerType.GetProperty(segments[i], BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
+            }
+            catch (AmbiguousMatchException)
+            {
+                return true;
+            }
+
+            if (containerProperty is null)
+            {
+                return true;
+            }
+
+            if (!containerProperty.GetCustomAttributes(true).Any(attr => RequiredAttributeTypes.Contains(attr.GetType())))
+            {
+                return false;
+            }
+
+            containerType = Nullable.GetUnderlyingType(containerProperty.PropertyType) ?? containerProperty.PropertyType;
+        }
+
+        return true;
     }
 
     public static ParameterInfo ParameterInfo(this ApiParameterDescription apiParameter)

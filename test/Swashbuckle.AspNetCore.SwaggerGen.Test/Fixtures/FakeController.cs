@@ -120,4 +120,6 @@ public class FakeController
     { }
     public void ActionHavingFromFormObjectAndString([FromForm] SwaggerIngoreAnnotatedType param1, [FromForm] string param2)
     { }
+    public void ActionHavingFromFormAttributeWithNestedModel([FromForm] FakeFormModelWithNestedType param1)
+    { }
 }
