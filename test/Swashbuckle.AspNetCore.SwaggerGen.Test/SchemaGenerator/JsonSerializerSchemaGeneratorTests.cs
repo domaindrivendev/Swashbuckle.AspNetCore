@@ -718,6 +718,139 @@ public class JsonSerializerSchemaGeneratorTests
         Assert.Single(propertySchema.OneOf, s => s.Type == JsonSchemaType.Null);
     }
 
+    [Fact]
+    public void GenerateSchema_RemovesNullType_IfNonNullableMemberSchemaHasAnyOf()
+    {
+        var subject = Subject(configureGenerator: c =>
+        {
+            c.SupportNonNullableReferenceTypes = true;
+            c.CustomTypeMappings.Add(typeof(CustomAnyOfType), () => new OpenApiSchema
+            {
+                AnyOf =
+                [
+                    new OpenApiSchema { Type = JsonSchemaTypes.String },
+                    new OpenApiSchema { Type = JsonSchemaType.Null },
+                ]
+            });
+        });
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Assert.IsType<OpenApiSchemaReference>(subject.GenerateSchema(typeof(TypeWithNonNullableCustomAnyOfProperty), schemaRepository));
+        var generatedSchema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+        var propertySchema = Assert.IsType<OpenApiSchema>(generatedSchema.Properties[nameof(TypeWithNonNullableCustomAnyOfProperty.Property)]);
+
+        // The mirror image of GenerateSchema_SetsNullableFlag_IfMemberSchemaHasAnyOf: nullability
+        // is expressed as a member of the composition, so that is where it is removed from.
+        Assert.NotNull(propertySchema.AnyOf);
+        Assert.Single(propertySchema.AnyOf);
+        Assert.DoesNotContain(propertySchema.AnyOf, s => s.Type == JsonSchemaType.Null);
+    }
+
+    [Fact]
+    public void GenerateSchema_RemovesNullType_IfNonNullableMemberSchemaHasOneOf()
+    {
+        var subject = Subject(configureGenerator: c =>
+        {
+            c.SupportNonNullableReferenceTypes = true;
+            c.CustomTypeMappings.Add(typeof(CustomOneOfType), () => new OpenApiSchema
+            {
+                OneOf =
+                [
+                    new OpenApiSchema { Type = JsonSchemaTypes.String },
+                    new OpenApiSchema { Type = JsonSchemaType.Null },
+                ]
+            });
+        });
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Assert.IsType<OpenApiSchemaReference>(subject.GenerateSchema(typeof(TypeWithNonNullableCustomOneOfProperty), schemaRepository));
+        var generatedSchema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+        var propertySchema = Assert.IsType<OpenApiSchema>(generatedSchema.Properties[nameof(TypeWithNonNullableCustomOneOfProperty.Property)]);
+
+        Assert.NotNull(propertySchema.OneOf);
+        Assert.Single(propertySchema.OneOf);
+        Assert.DoesNotContain(propertySchema.OneOf, s => s.Type == JsonSchemaType.Null);
+    }
+
+    [Fact]
+    public void GenerateSchema_ClearsNullType_IfNonNullableMemberSchemaAnyOfMemberAllowsOtherTypes()
+    {
+        var subject = Subject(configureGenerator: c =>
+        {
+            c.SupportNonNullableReferenceTypes = true;
+            c.CustomTypeMappings.Add(typeof(CustomAnyOfType), () => new OpenApiSchema
+            {
+                AnyOf =
+                [
+                    new OpenApiSchema { Type = JsonSchemaTypes.String | JsonSchemaType.Null },
+                ]
+            });
+        });
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Assert.IsType<OpenApiSchemaReference>(subject.GenerateSchema(typeof(TypeWithNonNullableCustomAnyOfProperty), schemaRepository));
+        var generatedSchema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+        var propertySchema = Assert.IsType<OpenApiSchema>(generatedSchema.Properties[nameof(TypeWithNonNullableCustomAnyOfProperty.Property)]);
+
+        // The member is not removed, as that would discard the other types it permits.
+        Assert.NotNull(propertySchema.AnyOf);
+        Assert.Single(propertySchema.AnyOf);
+        Assert.Equal(JsonSchemaTypes.String, propertySchema.AnyOf[0].Type);
+    }
+
+    [Fact]
+    public void GenerateSchema_PreservesLoneNullType_IfNonNullableMemberSchemaAnyOfOnlyAllowsNull()
+    {
+        var subject = Subject(configureGenerator: c =>
+        {
+            c.SupportNonNullableReferenceTypes = true;
+            c.CustomTypeMappings.Add(typeof(CustomAnyOfType), () => new OpenApiSchema
+            {
+                AnyOf =
+                [
+                    new OpenApiSchema { Type = JsonSchemaType.Null },
+                ]
+            });
+        });
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Assert.IsType<OpenApiSchemaReference>(subject.GenerateSchema(typeof(TypeWithNonNullableCustomAnyOfProperty), schemaRepository));
+        var generatedSchema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+        var propertySchema = Assert.IsType<OpenApiSchema>(generatedSchema.Properties[nameof(TypeWithNonNullableCustomAnyOfProperty.Property)]);
+
+        // Removing the only member would emit an empty anyOf, which is not valid.
+        Assert.NotNull(propertySchema.AnyOf);
+        Assert.Single(propertySchema.AnyOf);
+        Assert.Equal(JsonSchemaType.Null, propertySchema.AnyOf[0].Type);
+    }
+
+    [Fact]
+    public void GenerateSchema_RemovesNullTypeFromType_IfNonNullableMemberSchemaHasAllOf()
+    {
+        var subject = Subject(configureGenerator: c =>
+        {
+            c.SupportNonNullableReferenceTypes = true;
+            c.CustomTypeMappings.Add(typeof(CustomAllOfType), () => new OpenApiSchema
+            {
+                Type = JsonSchemaTypes.String | JsonSchemaType.Null,
+                AllOf =
+                [
+                    new OpenApiSchema { Type = JsonSchemaTypes.String }
+                ]
+            });
+        });
+        var schemaRepository = new SchemaRepository();
+
+        var referenceSchema = Assert.IsType<OpenApiSchemaReference>(subject.GenerateSchema(typeof(TypeWithNonNullableCustomAllOfProperty), schemaRepository));
+        var generatedSchema = schemaRepository.Schemas[referenceSchema.Reference.Id];
+        var propertySchema = Assert.IsType<OpenApiSchema>(generatedSchema.Properties[nameof(TypeWithNonNullableCustomAllOfProperty.Property)]);
+
+        // An allOf records its nullability on "type", so that is where it is removed from.
+        Assert.NotNull(propertySchema.AllOf);
+        Assert.Single(propertySchema.AllOf);
+        Assert.Equal(JsonSchemaTypes.String, propertySchema.Type);
+    }
+
     // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3936
     [Fact]
     public void GenerateSchema_DoesNotRestrictTypeToNull_IfDictionaryValueIsNullableObject()
@@ -739,6 +872,32 @@ public class JsonSerializerSchemaGeneratorTests
 
         using var json = JsonDocument.Parse(serialized);
         var schema = json.RootElement.GetProperty("components").GetProperty("schemas").GetProperty("Test");
+        Assert.False(schema.TryGetProperty("type", out _));
+    }
+
+    [Fact]
+    public void GenerateSchema_SerializesNullableObjectDictionaryValue_WithoutType_ForOpenApi3_0()
+    {
+        var contentSchema = GenerateNullableObjectDictionaryContentSchema();
+
+        var serialized = SerializeSchemaInDocument(contentSchema, OpenApiSpecVersion.OpenApi3_0);
+
+        using var json = JsonDocument.Parse(serialized);
+        var schema = json.RootElement.GetProperty("components").GetProperty("schemas").GetProperty("Test");
+        Assert.False(schema.TryGetProperty("type", out _));
+        Assert.False(schema.TryGetProperty("nullable", out _));
+    }
+
+    [Fact]
+    public void GenerateSchema_SerializesNullableObjectDictionaryValue_WithoutType_ForSwagger2_0()
+    {
+        var contentSchema = GenerateNullableObjectDictionaryContentSchema();
+
+        var serialized = SerializeSchemaInDocument(contentSchema, OpenApiSpecVersion.OpenApi2_0);
+
+        using var json = JsonDocument.Parse(serialized);
+        Assert.Equal("2.0", json.RootElement.GetProperty("swagger").GetString());
+        var schema = json.RootElement.GetProperty("definitions").GetProperty("Test");
         Assert.False(schema.TryGetProperty("type", out _));
     }
 
