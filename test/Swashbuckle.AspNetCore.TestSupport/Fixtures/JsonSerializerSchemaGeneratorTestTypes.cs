@@ -25,6 +25,21 @@ public class TypeWithNullableCustomOneOfProperty
     public CustomOneOfType? Property { get; set; }
 }
 
+public class TypeWithNonNullableCustomAnyOfProperty
+{
+    public CustomAnyOfType Property { get; set; } = default!;
+}
+
+public class TypeWithNonNullableCustomAllOfProperty
+{
+    public CustomAllOfType Property { get; set; } = default!;
+}
+
+public class TypeWithNonNullableCustomOneOfProperty
+{
+    public CustomOneOfType Property { get; set; } = default!;
+}
+
 // See https://github.com/domaindrivendev/Swashbuckle.AspNetCore/issues/3936
 public class TypeWithNullableObjectDictionary
 {
