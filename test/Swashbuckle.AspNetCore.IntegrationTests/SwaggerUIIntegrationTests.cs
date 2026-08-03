@@ -1,12 +1,16 @@
 ﻿using System.IO.Compression;
 using System.Net;
 using System.Security.Cryptography;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using Microsoft.AspNetCore.Builder;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests;
 
 [Collection("TestSite")]
 public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
 {
+    private const string CssAsset = "/swagger/swagger-ui.css";
     private const string EmptyStringSha256Hash = "2jmj7l5rSw0yVb/vlWAYkK/YBwk=";
 
     public static TheoryData<string, string> SwaggerUIFiles()
@@ -456,5 +460,351 @@ public class SwaggerUIIntegrationTests(ITestOutputHelper outputHelper)
 
         using var stream = await cached.Content.ReadAsStreamAsync(cancellationToken);
         Assert.Equal(0, stream.Length);
+    }
+
+    [Fact]
+    public async Task SwaggerUIMiddleware_Uses_A_Distinct_ETag_Per_Representation()
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        using var server = TestSite.CreateServer((app) => app.UseSwaggerUI());
+        using var client = server.CreateClient();
+
+        using var identityRequest = new HttpRequestMessage(HttpMethod.Get, CssAsset);
+
+        using var gzipRequest = new HttpRequestMessage(HttpMethod.Get, CssAsset);
+        gzipRequest.Headers.AcceptEncoding.Add(new("gzip"));
+
+        // Act
+        using var identity = await client.SendAsync(identityRequest, cancellationToken);
+        using var gzip = await client.SendAsync(gzipRequest, cancellationToken);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, identity.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, gzip.StatusCode);
+
+        var identityBody = await identity.Content.ReadAsByteArrayAsync(cancellationToken);
+        var gzipBody = await gzip.Content.ReadAsByteArrayAsync(cancellationToken);
+
+        outputHelper.WriteLine($"identity: {identityBody.Length} bytes, ETag {identity.Headers.ETag}");
+        outputHelper.WriteLine($"gzip:     {gzipBody.Length} bytes, ETag {gzip.Headers.ETag}");
+
+        Assert.Empty(identity.Content.Headers.ContentEncoding);
+        Assert.Equal(["gzip"], [.. gzip.Content.Headers.ContentEncoding]);
+        Assert.NotEqual(identityBody.Length, gzipBody.Length);
+
+        Assert.NotNull(identity.Headers.ETag);
+        Assert.NotNull(gzip.Headers.ETag);
+        Assert.NotEqual(identity.Headers.ETag, gzip.Headers.ETag);
+
+        Assert.Equal(["Accept-Encoding"], [.. identity.Headers.Vary]);
+        Assert.Equal(["Accept-Encoding"], [.. gzip.Headers.Vary]);
+
+        Assert.Equal($"\"{Convert.ToBase64String(SHA1.HashData(identityBody))}\"", identity.Headers.ETag.ToString());
+        Assert.Equal($"\"{Convert.ToBase64String(SHA1.HashData(gzipBody))}\"", gzip.Headers.ETag.ToString());
+    }
+
+    [Fact]
+    public async Task SwaggerUIMiddleware_Does_Not_Return_NotModified_For_A_Representation_The_Client_Never_Received()
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        using var server = TestSite.CreateServer((app) => app.UseSwaggerUI());
+        using var client = server.CreateClient();
+
+        using var identity = await client.GetAsync(CssAsset, cancellationToken);
+
+        Assert.Equal(HttpStatusCode.OK, identity.StatusCode);
+        Assert.Empty(identity.Content.Headers.ContentEncoding);
+
+        var etag = identity.Headers.ETag;
+        Assert.NotNull(etag);
+
+        // Act
+        using var request = new HttpRequestMessage(HttpMethod.Get, CssAsset);
+        request.Headers.IfNoneMatch.Add(etag);
+        request.Headers.AcceptEncoding.Add(new("gzip"));
+
+        using var response = await client.SendAsync(request, cancellationToken);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(["gzip"], [.. response.Content.Headers.ContentEncoding]);
+        Assert.NotEqual(etag, response.Headers.ETag);
+    }
+
+    [Fact]
+    public async Task SwaggerUIMiddleware_Returns_NotModified_For_The_Representation_The_Client_Holds()
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        using var server = TestSite.CreateServer((app) => app.UseSwaggerUI());
+        using var client = server.CreateClient();
+
+        using var firstRequest = new HttpRequestMessage(HttpMethod.Get, CssAsset);
+        firstRequest.Headers.AcceptEncoding.Add(new("gzip"));
+
+        using var first = await client.SendAsync(firstRequest, cancellationToken);
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.NotNull(first.Headers.ETag);
+
+        // Act
+        using var request = new HttpRequestMessage(HttpMethod.Get, CssAsset);
+        request.Headers.IfNoneMatch.Add(first.Headers.ETag);
+        request.Headers.AcceptEncoding.Add(new("gzip"));
+
+        using var response = await client.SendAsync(request, cancellationToken);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotModified, response.StatusCode);
+        Assert.Equal(["Accept-Encoding"], [.. response.Headers.Vary]);
+    }
+
+    [Fact]
+    public async Task SwaggerUIMiddleware_DocumentUrlsPath_Is_Treated_As_A_Literal_Path()
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        using var server = TestSite.CreateServer((app) => app.UseSwaggerUI((options) =>
+        {
+            options.ExposeSwaggerDocumentUrlsRoute = true;
+            options.SwaggerDocumentUrlsPath = ".*";
+        }));
+
+        using var client = server.CreateClient();
+
+        // Act
+        using var shadowed = await client.GetAsync("/swagger/v1/swagger.json", cancellationToken);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, shadowed.StatusCode);
+
+        using var literal = await client.GetAsync("/swagger/.*", cancellationToken);
+
+        Assert.Equal(HttpStatusCode.OK, literal.StatusCode);
+        Assert.Equal("application/javascript", literal.Content.Headers.ContentType?.MediaType);
+
+        var body = await literal.Content.ReadAsStringAsync(cancellationToken);
+        outputHelper.WriteLine(body);
+
+        Assert.StartsWith("[", body);
+    }
+
+    [Fact]
+    public async Task SwaggerUIMiddleware_DocumentUrlsPath_Containing_Regex_Metacharacters_Does_Not_Fault()
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        using var server = TestSite.CreateServer((app) => app.UseSwaggerUI((options) =>
+        {
+            options.ExposeSwaggerDocumentUrlsRoute = true;
+            options.SwaggerDocumentUrlsPath = "urls(";
+        }));
+
+        using var client = server.CreateClient();
+
+        // Act
+        using var unrelated = await client.GetAsync("/some/unrelated/path", cancellationToken);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, unrelated.StatusCode);
+
+        using var literal = await client.GetAsync("/swagger/urls(", cancellationToken);
+
+        Assert.Equal(HttpStatusCode.OK, literal.StatusCode);
+        Assert.Equal("application/javascript", literal.Content.Headers.ContentType?.MediaType);
+    }
+
+    [Fact]
+    public async Task SwaggerUIMiddleware_Does_Not_Serve_Html_For_Paths_That_Are_Not_index_html()
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        using var server = TestSite.CreateServer((app) => app.UseSwaggerUI());
+        using var client = server.CreateClient();
+
+        // Act
+        using var response = await client.GetAsync("/swagger/indexXjs", cancellationToken);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Theory]
+    [InlineData("/swagger/index.html", "text/html", "<div id=\"swagger-ui\"></div>")]
+    [InlineData("/swagger/INDEX.HTML", "text/html", "<div id=\"swagger-ui\"></div>")]
+    [InlineData("/swagger/index.js", "application/javascript", "var configObject")]
+    [InlineData("/swagger/INDEX.JS", "application/javascript", "var configObject")]
+    public async Task SwaggerUIMiddleware_Selects_The_File_Case_Insensitively(
+        string requestPath,
+        string expectedMediaType,
+        string expectedContent)
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        using var server = TestSite.CreateServer((app) => app.UseSwaggerUI());
+        using var client = server.CreateClient();
+
+        // Act
+        using var response = await client.GetAsync(requestPath, cancellationToken);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(expectedMediaType, response.Content.Headers.ContentType?.MediaType);
+
+        var body = await response.Content.ReadAsStringAsync(cancellationToken);
+        Assert.Contains(expectedContent, body);
+    }
+
+    [Theory]
+    [InlineData("POST")]
+    [InlineData("PUT")]
+    [InlineData("DELETE")]
+    [InlineData("TRACE")]
+    public async Task SwaggerUIMiddleware_Does_Not_Serve_Assets_For_Unsupported_Http_Methods(string method)
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        using var server = TestSite.CreateServer((app) => app.UseSwaggerUI());
+        using var client = server.CreateClient();
+
+        using var request = new HttpRequestMessage(new(method), CssAsset);
+
+        // Act
+        using var response = await client.SendAsync(request, cancellationToken);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Theory]
+    [InlineData("GET")]
+    [InlineData("HEAD")]
+    public async Task SwaggerUIMiddleware_Still_Serves_Assets_For_Supported_Http_Methods(string method)
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        using var server = TestSite.CreateServer((app) => app.UseSwaggerUI());
+        using var client = server.CreateClient();
+
+        using var request = new HttpRequestMessage(new(method), CssAsset);
+
+        // Act
+        using var response = await client.SendAsync(request, cancellationToken);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("text/css", response.Content.Headers.ContentType?.MediaType);
+        Assert.True(response.Content.Headers.ContentLength > 0);
+    }
+
+    [Theory]
+    [InlineData("/swagger.swagger-ui.css")]
+    [InlineData("/swaggerXswagger-ui.css")]
+    public async Task SwaggerUIMiddleware_Requires_A_Segment_Boundary_After_The_Route_Prefix(string requestPath)
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        using var server = TestSite.CreateServer((app) => app.UseSwaggerUI());
+        using var client = server.CreateClient();
+
+        // Act
+        using var response = await client.GetAsync(requestPath, cancellationToken);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("swagger")]
+    [InlineData("a/nested/prefix")]
+    public async Task SwaggerUIMiddleware_Still_Serves_Assets_Below_The_Route_Prefix(string routePrefix)
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        using var server = TestSite.CreateServer((app) => app.UseSwaggerUI((options) => options.RoutePrefix = routePrefix));
+        using var client = server.CreateClient();
+
+        var requestPath = string.IsNullOrEmpty(routePrefix) ? "/swagger-ui.css" : $"/{routePrefix}/swagger-ui.css";
+
+        // Act
+        using var response = await client.GetAsync(requestPath, cancellationToken);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("text/css", response.Content.Headers.ContentType?.MediaType);
+    }
+
+    [Fact]
+    public async Task SwaggerUIMiddleware_Encodes_DocumentTitle()
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        using var server = TestSite.CreateServer((app) => app.UseSwaggerUI(
+            (options) => options.DocumentTitle = "</title><script>alert(1)</script>"));
+
+        using var client = server.CreateClient();
+
+        // Act
+        using var response = await client.GetAsync("/swagger/index.html", cancellationToken);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var body = await response.Content.ReadAsStringAsync(cancellationToken);
+        outputHelper.WriteLine(body);
+
+        Assert.DoesNotContain("<title></title><script>alert(1)</script></title>", body);
+        Assert.Contains("<title>&lt;/title&gt;&lt;script&gt;alert(1)&lt;/script&gt;</title>", body);
+    }
+
+    [Fact]
+    public async Task SwaggerUIMiddleware_ConfigObject_Is_Not_Spliced_Into_A_String_Literal()
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        using var server = TestSite.CreateServer((app) => app.UseSwaggerUI((options) =>
+        {
+            options.ConfigObject.Urls = [new() { Url = "v1/swagger.json", Name = "x');alert(1);//" }];
+            options.JsonSerializerOptions = new() { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+        }));
+
+        using var client = server.CreateClient();
+
+        // Act
+        using var response = await client.GetAsync("/swagger/index.js", cancellationToken);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var body = await response.Content.ReadAsStringAsync(cancellationToken);
+
+        const string Prefix = "var configObject =";
+
+        var line = body.Split('\n').First((p) => p.Contains(Prefix));
+        outputHelper.WriteLine(line);
+
+        Assert.DoesNotContain("JSON.parse('", body);
+
+        var json = line[(line.IndexOf(Prefix, StringComparison.Ordinal) + Prefix.Length)..].Trim().TrimEnd(';');
+
+        using var config = JsonDocument.Parse(json);
+
+        Assert.Equal("x');alert(1);//", config.RootElement.GetProperty("urls")[0].GetProperty("name").GetString());
     }
 }

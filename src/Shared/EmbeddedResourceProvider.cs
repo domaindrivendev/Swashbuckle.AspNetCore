@@ -19,6 +19,7 @@ internal sealed class EmbeddedResourceProvider(
 {
     private const string GZipEncodingValue = "gzip";
     private static readonly StringValues GZipEncodingHeader = new(GZipEncodingValue);
+    private static readonly StringValues VaryAcceptEncodingHeader = new(HeaderNames.AcceptEncoding);
 
     private readonly Assembly _assembly = assembly;
     private readonly StringValues _cacheControl = GetCacheControlHeader(cacheLifetime);
@@ -32,33 +33,36 @@ internal sealed class EmbeddedResourceProvider(
 
     public async Task<bool> TryRespondWithFileAsync(HttpContext httpContext)
     {
-        var path = httpContext.Request.Path.Value ?? string.Empty;
-        if (!path.StartsWith(_pathPrefix, StringComparison.OrdinalIgnoreCase))
-        {
-            return false;
-        }
-
-        path = path[_pathPrefix.Length..].Replace('/', '.');
-
-        if (!_resourceCache.TryGetValue(path, out var cacheEntry))
+        if (!TryGetResourcePath(httpContext.Request.Path.Value, out var resourcePath) ||
+            !_resourceCache.TryGetValue(resourcePath, out var cacheEntry))
         {
             return false;
         }
 
         var contentType = GetContentType(cacheEntry);
-        var (etag, supportsCompression) = GetContentProperties(cacheEntry);
+        var content = GetContent(cacheEntry);
+
+        // The representation is selected before the conditional request is evaluated: the entity tag
+        // has to identify the representation that would actually be served, otherwise a client or a
+        // cache holding one representation is told that a different one has not been modified.
+        var serveCompressed = content.SupportsCompression && IsGZipAccepted(httpContext.Request);
+
+        var etag = serveCompressed ? content.CompressedETag : content.DecompressedETag;
+        var body = serveCompressed ? content.Compressed : content.Decompressed;
 
         var response = httpContext.Response;
-        var ifNoneMatch = httpContext.Request.Headers.IfNoneMatch;
+        var responseHeaders = response.Headers;
 
-        if (ifNoneMatch == etag)
+        // The response is negotiated on Accept-Encoding, so a cache must not share it between
+        // clients that sent different values for that header.
+        responseHeaders.Vary = VaryAcceptEncodingHeader;
+        responseHeaders.ETag = etag;
+
+        if (httpContext.Request.Headers.IfNoneMatch == etag)
         {
             response.StatusCode = StatusCodes.Status304NotModified;
             return true;
         }
-
-        var serveCompressed = supportsCompression && IsGZipAccepted(httpContext.Request);
-        var responseHeaders = response.Headers;
 
         if (serveCompressed)
         {
@@ -66,22 +70,35 @@ internal sealed class EmbeddedResourceProvider(
         }
 
         responseHeaders.CacheControl = _cacheControl;
-        responseHeaders.ContentLength = serveCompressed ? cacheEntry.CompressedLength : cacheEntry.DecompressedLength;
+        responseHeaders.ContentLength = body.Length;
         responseHeaders.ContentType = contentType;
-        responseHeaders.ETag = etag;
-
-        ReadOnlyMemory<byte> body;
-
-        if (serveCompressed)
-        {
-            body = cacheEntry.Compressed;
-        }
-        else
-        {
-            body = cacheEntry.Decompressed;
-        }
 
         await response.BodyWriter.WriteAsync(body, httpContext.RequestAborted);
+
+        return true;
+    }
+
+    private bool TryGetResourcePath(string? requestPath, out string resourcePath)
+    {
+        resourcePath = string.Empty;
+
+        var path = requestPath ?? string.Empty;
+
+        if (!path.StartsWith(_pathPrefix, StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        var relativePath = path[_pathPrefix.Length..];
+
+        // The prefix has to be followed by a segment boundary, otherwise a path such as
+        // "/swaggerXfoo.css" is treated as though it were below the configured route prefix.
+        if (relativePath.Length is 0 || relativePath[0] is not '/')
+        {
+            return false;
+        }
+
+        resourcePath = relativePath.Replace('/', '.');
 
         return true;
     }
@@ -137,45 +154,54 @@ internal sealed class EmbeddedResourceProvider(
                ? contentType
                : "application/octet-stream");
 
-    private (string ETag, bool Compressed) GetContentProperties(ResourceEntry entry)
+    private ResourceContent GetContent(ResourceEntry entry)
     {
-        if (entry.ETag == null)
+        // Published as a single reference so that a concurrent reader either sees nothing at all or
+        // sees a fully initialized value, rather than a partially populated set of fields.
+        if (Volatile.Read(ref entry.Content) is { } existing)
         {
-            using var compressed = GetResource(entry);
-            using var decompressed = new MemoryStream((int)compressed.Length * 2);
-            using var gzip = new GZipStream(compressed, CompressionMode.Decompress);
-
-            gzip.CopyTo(decompressed);
-
-            entry.Decompressed = decompressed.ToArray();
-
-            // Some embedded resources may already be compressed or compress worse than the original
-            entry.SupportsCompression = compressed.Length < decompressed.Length;
-
-            byte[] content;
-
-            if (entry.SupportsCompression)
-            {
-                compressed.Seek(0, SeekOrigin.Begin);
-
-                using var memoryStream = new MemoryStream((int)compressed.Length);
-                compressed.CopyTo(memoryStream);
-
-                content = entry.Compressed = memoryStream.ToArray();
-            }
-            else
-            {
-                content = entry.Decompressed;
-            }
-
-            var hash = SHA1.HashData(content);
-
-            entry.CompressedLength = compressed.Length;
-            entry.DecompressedLength = decompressed.Length;
-            entry.ETag = $"\"{Convert.ToBase64String(hash)}\"";
+            return existing;
         }
 
-        return (entry.ETag, entry.SupportsCompression);
+        using var compressed = GetResource(entry);
+        using var decompressed = new MemoryStream((int)compressed.Length * 2);
+
+        using (var gzip = new GZipStream(compressed, CompressionMode.Decompress, leaveOpen: true))
+        {
+            gzip.CopyTo(decompressed);
+        }
+
+        var decompressedBytes = decompressed.ToArray();
+
+        // Some embedded resources may already be compressed or compress worse than the original
+        var supportsCompression = compressed.Length < decompressedBytes.Length;
+
+        byte[]? compressedBytes = null;
+        string? compressedETag = null;
+
+        if (supportsCompression)
+        {
+            compressed.Seek(0, SeekOrigin.Begin);
+
+            using var memoryStream = new MemoryStream((int)compressed.Length);
+            compressed.CopyTo(memoryStream);
+
+            compressedBytes = memoryStream.ToArray();
+            compressedETag = ComputeETag(compressedBytes);
+        }
+
+        var content = new ResourceContent(
+            decompressedBytes,
+            compressedBytes,
+            ComputeETag(decompressedBytes),
+            compressedETag,
+            supportsCompression);
+
+        Volatile.Write(ref entry.Content, content);
+
+        return content;
+
+        static string ComputeETag(byte[] content) => $"\"{Convert.ToBase64String(SHA1.HashData(content))}\"";
     }
 
     private Stream GetResource(ResourceEntry entry)
@@ -183,20 +209,28 @@ internal sealed class EmbeddedResourceProvider(
 
     private sealed class ResourceEntry(string resourceName)
     {
-        public long? CompressedLength { get; set; }
+        public ResourceContent? Content;
 
         public string? ContentType { get; set; }
 
-        public long? DecompressedLength { get; set; }
-
-        public string? ETag { get; set; }
-
         public string ResourceName { get; } = resourceName;
+    }
 
-        public bool SupportsCompression { get; set; }
+    private sealed class ResourceContent(
+        byte[] decompressed,
+        byte[]? compressed,
+        string decompressedETag,
+        string? compressedETag,
+        bool supportsCompression)
+    {
+        public byte[] Decompressed { get; } = decompressed;
 
-        public byte[]? Compressed { get; set; }
+        public byte[] Compressed { get; } = compressed ?? decompressed;
 
-        public byte[]? Decompressed { get; set; }
+        public string DecompressedETag { get; } = decompressedETag;
+
+        public string CompressedETag { get; } = compressedETag ?? decompressedETag;
+
+        public bool SupportsCompression { get; } = supportsCompression;
     }
 }

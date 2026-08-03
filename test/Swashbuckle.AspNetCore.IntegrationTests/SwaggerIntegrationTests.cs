@@ -3,6 +3,11 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.Json;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using ReDocApp = ReDoc;
 
 namespace Swashbuckle.AspNetCore.IntegrationTests;
@@ -224,5 +229,157 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
         Assert.NotNull(diagnostic);
         Assert.Empty(diagnostic.Errors);
         Assert.Empty(diagnostic.Warnings);
+    }
+
+    [Theory]
+    [InlineData("//evil.example.com")]
+    [InlineData("/\\evil.example.com")]
+    public async Task SwaggerMiddleware_Discards_A_Path_Base_That_Is_Not_Same_Origin(string forwardedPrefix)
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        using var server = TestSite.CreateServer((app) =>
+        {
+            app.UseForwardedHeaders(new() { ForwardedHeaders = ForwardedHeaders.XForwardedPrefix });
+            app.UseSwagger();
+        });
+
+        using var client = server.CreateClient();
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/swagger/v1/swagger.json");
+        request.Headers.TryAddWithoutValidation("X-Forwarded-Prefix", forwardedPrefix);
+
+        // Act
+        using var response = await client.SendAsync(request, cancellationToken);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var json = await response.Content.ReadAsStringAsync(cancellationToken);
+        outputHelper.WriteLine(json);
+
+        using var document = JsonDocument.Parse(json);
+
+        Assert.False(document.RootElement.TryGetProperty("servers", out var servers), $"servers was emitted as {servers}.");
+        Assert.DoesNotContain("evil.example.com", json);
+    }
+
+    [Theory]
+    [InlineData("/api")]
+    [InlineData("/some/nested/prefix")]
+    public async Task SwaggerMiddleware_Still_Emits_A_Same_Origin_Path_Base(string forwardedPrefix)
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        using var server = TestSite.CreateServer((app) =>
+        {
+            app.UseForwardedHeaders(new() { ForwardedHeaders = ForwardedHeaders.XForwardedPrefix });
+            app.UseSwagger();
+        });
+
+        using var client = server.CreateClient();
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/swagger/v1/swagger.json");
+        request.Headers.TryAddWithoutValidation("X-Forwarded-Prefix", forwardedPrefix);
+
+        // Act
+        using var response = await client.SendAsync(request, cancellationToken);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var json = await response.Content.ReadAsStringAsync(cancellationToken);
+        outputHelper.WriteLine(json);
+
+        using var document = JsonDocument.Parse(json);
+
+        var serverUrl = document.RootElement
+            .GetProperty("servers")[0]
+            .GetProperty("url")
+            .GetString();
+
+        Assert.Equal(forwardedPrefix, serverUrl);
+
+        var documentUrl = new Uri("https://victim.example.org/swagger/v1/swagger.json");
+        var resolved = new Uri(documentUrl, serverUrl);
+
+        Assert.Equal(documentUrl.Host, resolved.Host);
+    }
+
+    [Fact]
+    public async Task SwaggerMiddleware_Marks_A_Request_Derived_Document_As_Private()
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        using var server = TestSite.CreateServer((app) =>
+        {
+            app.UseForwardedHeaders(new() { ForwardedHeaders = ForwardedHeaders.XForwardedPrefix });
+            app.UseSwagger();
+        });
+
+        using var client = server.CreateClient();
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/swagger/v1/swagger.json");
+        request.Headers.TryAddWithoutValidation("X-Forwarded-Prefix", "/api");
+
+        // Act
+        using var response = await client.SendAsync(request, cancellationToken);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        Assert.NotNull(response.Headers.CacheControl);
+        Assert.True(response.Headers.CacheControl.Private);
+    }
+
+    [Fact]
+    public async Task SwaggerMiddleware_Leaves_Caching_Alone_When_There_Is_No_Path_Base()
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        using var server = TestSite.CreateServer((app) => app.UseSwagger());
+        using var client = server.CreateClient();
+
+        // Act
+        using var response = await client.GetAsync("/swagger/v1/swagger.json", cancellationToken);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Null(response.Headers.CacheControl);
+    }
+
+    [Fact]
+    public async Task SwaggerMiddleware_Regenerates_The_Document_For_Every_Request()
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        using var server = TestSite.CreateServer(
+            (app) => app.UseSwagger(),
+            (services) => services.AddSwaggerGen((options) => options.DocumentFilter<CountingDocumentFilter>()));
+
+        using var client = server.CreateClient();
+
+        CountingDocumentFilter.Invocations = 0;
+
+        // Act
+        for (int i = 0; i < 5; i++)
+        {
+            using var response = await client.GetAsync("/swagger/v1/swagger.json", cancellationToken);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        // Assert
+        outputHelper.WriteLine($"The document was generated {CountingDocumentFilter.Invocations} times for 5 requests.");
+        Assert.Equal(5, CountingDocumentFilter.Invocations);
+    }
+
+    private sealed class CountingDocumentFilter : IDocumentFilter
+    {
+        public static int Invocations;
+
+        public void Apply(OpenApiDocument swaggerDoc, DocumentFilterContext context)
+            => Interlocked.Increment(ref Invocations);
     }
 }

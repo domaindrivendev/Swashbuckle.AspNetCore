@@ -2,6 +2,8 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Swashbuckle.AspNetCore.ReDoc;
@@ -348,5 +350,87 @@ public class ReDocIntegrationTests(ITestOutputHelper outputHelper)
         Assert.Equal(TimeSpan.Zero, response.Headers.CacheControl.MaxAge);
 
         Assert.Equal(response.Content.Headers.ContentLength, actual.Length);
+    }
+
+    [Fact]
+    public async Task ReDocMiddleware_Encodes_SpecUrl()
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        const string Payload = "x',alert(1),'y";
+
+        using var server = TestSite.CreateServer((app) => app.UseReDoc((options) => options.SpecUrl = Payload));
+        using var client = server.CreateClient();
+
+        // Act
+        using var response = await client.GetAsync("/api-docs/index.js", cancellationToken);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var body = await response.Content.ReadAsStringAsync(cancellationToken);
+        outputHelper.WriteLine(body);
+
+        Assert.DoesNotContain(Payload, body);
+        Assert.DoesNotContain("Redoc.init('x',alert(1),'y'", body);
+
+        Assert.Contains("Redoc.init(\"x\\u0027,alert(1),\\u0027y\"", body);
+    }
+
+    [Fact]
+    public async Task ReDocMiddleware_SpecUrl_Stays_Encoded_With_The_Relaxed_Json_Encoder()
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        using var server = TestSite.CreateServer((app) => app.UseReDoc((options) =>
+        {
+            options.SpecUrl = "x\",alert(1),\"y";
+            options.JsonSerializerOptions = new() { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+        }));
+
+        using var client = server.CreateClient();
+
+        // Act
+        using var response = await client.GetAsync("/api-docs/index.js", cancellationToken);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var body = await response.Content.ReadAsStringAsync(cancellationToken);
+        outputHelper.WriteLine(body);
+
+        Assert.Contains(@"Redoc.init(""x\"",alert(1),\""y""", body);
+    }
+
+    [Fact]
+    public async Task ReDocMiddleware_ConfigObject_Is_Not_Spliced_Into_A_String_Literal()
+    {
+        // Arrange
+        var cancellationToken = TestContext.Current.CancellationToken;
+
+        using var server = TestSite.CreateServer((app) => app.UseReDoc((options) =>
+        {
+            options.ConfigObject.AdditionalItems["theme"] = "x');alert(1);//";
+            options.JsonSerializerOptions = new() { Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+        }));
+
+        using var client = server.CreateClient();
+
+        // Act
+        using var response = await client.GetAsync("/api-docs/index.js", cancellationToken);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+        var body = await response.Content.ReadAsStringAsync(cancellationToken);
+        outputHelper.WriteLine(body);
+
+        Assert.DoesNotContain("JSON.parse('", body);
+
+        using var config = JsonDocument.Parse(body[body.IndexOf('{')..(body.LastIndexOf('}') + 1)]);
+
+        Assert.Equal("x');alert(1);//", config.RootElement.GetProperty("theme").GetString());
     }
 }
