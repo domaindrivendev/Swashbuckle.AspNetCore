@@ -186,6 +186,104 @@ public class AnnotationsSchemaFilterTests
         Assert.True(schema.Type.Value.HasFlag(JsonSchemaType.Null));
     }
 
+    [Fact]
+    public void Apply_RemovesNullSchema_IfNonNullableSchemaHasAnyOf()
+    {
+        var schema = new OpenApiSchema
+        {
+            AnyOf =
+            [
+                new OpenApiSchema { Type = JsonSchemaTypes.String },
+                new OpenApiSchema { Type = JsonSchemaType.Null },
+            ]
+        };
+
+        Subject().Apply(schema, ContextForProperty(typeof(TypeWithNonNullableComposedSchemas), nameof(TypeWithNonNullableComposedSchemas.AnyOfProperty)));
+
+        // The mirror image of Apply_AddsNullSchema_IfNullableSchemaHasAnyOf: nullability is
+        // expressed as a member of the composition, so that is where it is removed from.
+        Assert.NotNull(schema.AnyOf);
+        Assert.Single(schema.AnyOf);
+        Assert.DoesNotContain(schema.AnyOf, s => s.Type == JsonSchemaType.Null);
+    }
+
+    [Fact]
+    public void Apply_RemovesNullSchema_IfNonNullableSchemaHasOneOf()
+    {
+        var schema = new OpenApiSchema
+        {
+            OneOf =
+            [
+                new OpenApiSchema { Type = JsonSchemaTypes.String },
+                new OpenApiSchema { Type = JsonSchemaType.Null },
+            ]
+        };
+
+        Subject().Apply(schema, ContextForProperty(typeof(TypeWithNonNullableComposedSchemas), nameof(TypeWithNonNullableComposedSchemas.OneOfProperty)));
+
+        Assert.NotNull(schema.OneOf);
+        Assert.Single(schema.OneOf);
+        Assert.DoesNotContain(schema.OneOf, s => s.Type == JsonSchemaType.Null);
+    }
+
+    [Fact]
+    public void Apply_ClearsNullFlag_IfNonNullableSchemaAnyOfMemberAllowsOtherTypes()
+    {
+        var schema = new OpenApiSchema
+        {
+            AnyOf =
+            [
+                new OpenApiSchema { Type = JsonSchemaTypes.String | JsonSchemaType.Null },
+            ]
+        };
+
+        Subject().Apply(schema, ContextForProperty(typeof(TypeWithNonNullableComposedSchemas), nameof(TypeWithNonNullableComposedSchemas.AnyOfProperty)));
+
+        // The member is not removed, as that would discard the other types it permits.
+        Assert.NotNull(schema.AnyOf);
+        Assert.Single(schema.AnyOf);
+        Assert.Equal(JsonSchemaTypes.String, schema.AnyOf[0].Type);
+    }
+
+    [Fact]
+    public void Apply_PreservesLoneNullSchema_IfNonNullableSchemaAnyOfOnlyAllowsNull()
+    {
+        var schema = new OpenApiSchema
+        {
+            AnyOf =
+            [
+                new OpenApiSchema { Type = JsonSchemaType.Null },
+            ]
+        };
+
+        Subject().Apply(schema, ContextForProperty(typeof(TypeWithNonNullableComposedSchemas), nameof(TypeWithNonNullableComposedSchemas.AnyOfProperty)));
+
+        // Removing the only member would emit an empty anyOf, which is not valid.
+        Assert.NotNull(schema.AnyOf);
+        Assert.Single(schema.AnyOf);
+        Assert.Equal(JsonSchemaType.Null, schema.AnyOf[0].Type);
+    }
+
+    [Fact]
+    public void Apply_RemovesNullFlagFromType_IfNonNullableSchemaHasAllOf()
+    {
+        var schema = new OpenApiSchema
+        {
+            Type = JsonSchemaTypes.String | JsonSchemaType.Null,
+            AllOf =
+            [
+                new OpenApiSchema { Type = JsonSchemaTypes.String }
+            ]
+        };
+
+        Subject().Apply(schema, ContextForProperty(typeof(TypeWithNonNullableComposedSchemas), nameof(TypeWithNonNullableComposedSchemas.AllOfProperty)));
+
+        // An allOf records its nullability on "type", so that is where it is removed from.
+        Assert.NotNull(schema.AllOf);
+        Assert.Single(schema.AllOf);
+        Assert.Equal(JsonSchemaTypes.String, schema.Type);
+    }
+
     [Theory]
     [InlineData(typeof(SwaggerAnnotatedType))]
     [InlineData(typeof(SwaggerAnnotatedStruct))]
@@ -200,8 +298,11 @@ public class AnnotationsSchemaFilterTests
     }
 
     private static SchemaFilterContext ContextForProperty(string propertyName)
+        => ContextForProperty(typeof(TypeWithNullableComposedSchemas), propertyName);
+
+    private static SchemaFilterContext ContextForProperty(Type declaringType, string propertyName)
     {
-        var propertyInfo = typeof(TypeWithNullableComposedSchemas).GetProperty(propertyName);
+        var propertyInfo = declaringType.GetProperty(propertyName);
         return new SchemaFilterContext(
             type: propertyInfo.PropertyType,
             schemaGenerator: null,
@@ -218,6 +319,18 @@ public class AnnotationsSchemaFilterTests
         public object OneOfProperty { get; set; }
 
         [SwaggerSchema(Nullable = true)]
+        public object AllOfProperty { get; set; }
+    }
+
+    private class TypeWithNonNullableComposedSchemas
+    {
+        [SwaggerSchema(Nullable = false)]
+        public object AnyOfProperty { get; set; }
+
+        [SwaggerSchema(Nullable = false)]
+        public object OneOfProperty { get; set; }
+
+        [SwaggerSchema(Nullable = false)]
         public object AllOfProperty { get; set; }
     }
 
