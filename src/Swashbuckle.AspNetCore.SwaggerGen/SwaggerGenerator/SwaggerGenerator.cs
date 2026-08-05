@@ -1006,9 +1006,7 @@ public class SwaggerGenerator(
 
         // Multiple response types can be reported for the same status code, e.g. several
         // [ProducesResponseType] attributes with the same code, or a C# union return type
-        // (.NET 11+) which the framework may surface as one entry per case. Group by status
-        // code and merge them into a single response instead of calling responses.Add twice
-        // for the same key, which would throw an ArgumentException.
+        // (.NET 11+) which the framework may surface as one entry per case.
         foreach (var responsesForStatusCode in supportedResponseTypes.GroupBy(
             (responseType) => responseType.IsDefaultResponse() ? "default" : responseType.StatusCode.ToString()))
         {
@@ -1078,8 +1076,8 @@ public class SwaggerGenerator(
     }
 
     // When more than one distinct schema is reported for the same status code and content type
-    // (e.g. multiple response types or the cases of a C# union), combine them into an anyOf
-    // schema. This mirrors how System.Text.Json's JsonSchemaExporter emits union types.
+    // (e.g. multiple response types or the cases of a C# union), combine them into an anyOf schema.
+    // This mirrors how System.Text.Json's JsonSchemaExporter emits union types.
     private static IOpenApiSchema CombineResponseSchemas(List<IOpenApiSchema> schemas)
     {
         return schemas.Count == 1
