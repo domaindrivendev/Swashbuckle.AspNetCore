@@ -23,8 +23,10 @@ public class SwaggerGeneratorUnionTests
         public Cat GetCat() => throw new NotImplementedException();
     }
 
-    [Fact]
-    public void GetSwagger_EmitsUnionResponseAsAnyOfOfReferences_AndDeduplicatesSharedCaseType()
+    [Theory]
+    [InlineData(OpenApiSpecVersion.OpenApi3_0)]
+    [InlineData(OpenApiSpecVersion.OpenApi3_1)]
+    public void GetSwagger_EmitsUnionResponseAsAnyOfOfReferences_AndDeduplicatesSharedCaseType(OpenApiSpecVersion specVersion)
     {
         // Endpoint 1 returns a union (Pet), endpoint 2 returns one of its cases (Cat) explicitly.
         var petApi = ApiDescriptionFactory.Create<UnionFakeController>(
@@ -83,8 +85,9 @@ public class SwaggerGeneratorUnionTests
         Assert.Equal(1, document.Components.Schemas.Keys.Count(id => id == nameof(Dog)));
         Assert.Equal([nameof(Cat), nameof(Dog)], document.Components.Schemas.Keys.OrderBy(id => id).ToArray());
 
-        // Assert the same properties against the actually-serialized OpenAPI JSON.
-        var json = ToJson(document);
+        // The object-model assertions above are version-independent; the serialized JSON assertions
+        // below hold for both OpenAPI 3.0 and 3.1 (the anyOf/$ref shape is identical across versions).
+        var json = ToJson(document, specVersion);
 
         Assert.Contains("\"$ref\": \"#/components/schemas/Cat\"", json);
         Assert.Contains("\"$ref\": \"#/components/schemas/Dog\"", json);
@@ -122,11 +125,11 @@ public class SwaggerGeneratorUnionTests
             new FakeAuthenticationSchemeProvider([]));
     }
 
-    private static string ToJson(OpenApiDocument document)
+    private static string ToJson(OpenApiDocument document, OpenApiSpecVersion specVersion)
     {
         using var stringWriter = new StringWriter();
         var jsonWriter = new OpenApiJsonWriter(stringWriter);
-        document.SerializeAs(OpenApiSpecVersion.OpenApi3_0, jsonWriter);
+        document.SerializeAs(specVersion, jsonWriter);
         return stringWriter.ToString();
     }
 }
