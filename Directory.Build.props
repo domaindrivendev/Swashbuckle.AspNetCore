@@ -15,7 +15,8 @@
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <ImplicitUsings>enable</ImplicitUsings>
     <IncludeSymbols>true</IncludeSymbols>
-    <LangVersion>latest</LangVersion>
+    <!-- TODO Move back to latest once it resolves to C# 15 in 11.0-rc.1 -->
+    <LangVersion>preview</LangVersion>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <NeutralLanguage>en-US</NeutralLanguage>
     <!-- TODO Remove before merge -->
