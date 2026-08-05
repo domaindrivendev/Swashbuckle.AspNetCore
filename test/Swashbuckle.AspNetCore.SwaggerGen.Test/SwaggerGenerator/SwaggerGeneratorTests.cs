@@ -1020,6 +1020,135 @@ public class SwaggerGeneratorTests
     }
 
     [Fact]
+    public void GetSwagger_MergesMultipleResponseTypesForSameStatusCode_IntoAnyOf()
+    {
+        var apiDescription = ApiDescriptionFactory.Create<FakeController>(
+            c => nameof(c.ActionWithReturnValue),
+            groupName: "v1",
+            httpMethod: "POST",
+            relativePath: "resource",
+            supportedResponseTypes:
+            [
+                new ApiResponseType
+                {
+                    ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
+                    StatusCode = 200,
+                    Type = typeof(TestDto),
+                },
+                new ApiResponseType
+                {
+                    ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
+                    StatusCode = 200,
+                    Type = typeof(int),
+                },
+            ]);
+
+        // Fall back to the explicit Type rather than the action's return type
+        foreach (var responseType in apiDescription.SupportedResponseTypes)
+        {
+            responseType.ModelMetadata = null;
+        }
+
+        var subject = Subject(apiDescriptions: [apiDescription]);
+
+        var document = subject.GetSwagger("v1");
+
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
+        Assert.Equal(["200"], operation.Responses.Keys);
+
+        var content = Assert.Single(operation.Responses["200"].Content);
+        Assert.Equal("application/json", content.Key);
+
+        var schema = content.Value.Schema;
+        Assert.NotNull(schema.AnyOf);
+        Assert.Equal(2, schema.AnyOf.Count);
+        Assert.IsType<OpenApiSchemaReference>(schema.AnyOf[0]);
+        Assert.Equal(JsonSchemaTypes.Integer, schema.AnyOf[1].Type);
+    }
+
+    [Fact]
+    public void GetSwagger_DeduplicatesResponseSchemas_WhenSameTypeReportedForStatusCode()
+    {
+        var apiDescription = ApiDescriptionFactory.Create<FakeController>(
+            c => nameof(c.ActionWithReturnValue),
+            groupName: "v1",
+            httpMethod: "POST",
+            relativePath: "resource",
+            supportedResponseTypes:
+            [
+                new ApiResponseType
+                {
+                    ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
+                    StatusCode = 200,
+                    Type = typeof(TestDto),
+                },
+                new ApiResponseType
+                {
+                    ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
+                    StatusCode = 200,
+                    Type = typeof(TestDto),
+                },
+            ]);
+
+        foreach (var responseType in apiDescription.SupportedResponseTypes)
+        {
+            responseType.ModelMetadata = null;
+        }
+
+        var subject = Subject(apiDescriptions: [apiDescription]);
+
+        var document = subject.GetSwagger("v1");
+
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
+        var content = Assert.Single(operation.Responses["200"].Content);
+
+        var schema = content.Value.Schema;
+        Assert.Null(schema.AnyOf);
+        Assert.IsType<OpenApiSchemaReference>(schema);
+    }
+
+    [Fact]
+    public void GetSwagger_IgnoresTypelessResponses_WhenMergingResponseTypesForStatusCode()
+    {
+        var apiDescription = ApiDescriptionFactory.Create<FakeController>(
+            c => nameof(c.ActionWithReturnValue),
+            groupName: "v1",
+            httpMethod: "POST",
+            relativePath: "resource",
+            supportedResponseTypes:
+            [
+                new ApiResponseType
+                {
+                    ApiResponseFormats = [new ApiResponseFormat { MediaType = "application/json" }],
+                    StatusCode = 200,
+                    Type = typeof(TestDto),
+                },
+                new ApiResponseType
+                {
+                    StatusCode = 200,
+                    Type = typeof(void),
+                },
+            ]);
+
+        foreach (var responseType in apiDescription.SupportedResponseTypes)
+        {
+            responseType.ModelMetadata = null;
+        }
+
+        var subject = Subject(apiDescriptions: [apiDescription]);
+
+        var document = subject.GetSwagger("v1");
+
+        var operation = document.Paths["/resource"].Operations[HttpMethod.Post];
+        var content = Assert.Single(operation.Responses["200"].Content);
+
+        // The typeless (void) response contributes no schema, so no anyOf is produced.
+        var schema = content.Value.Schema;
+        Assert.Null(schema.AnyOf);
+        Assert.IsType<OpenApiSchemaReference>(schema);
+    }
+
+    [Fact]
     public void GetSwagger_SetsResponseContentType_WhenActionHasFileResult()
     {
         var apiDescription = ApiDescriptionFactory.Create<FakeController>(
