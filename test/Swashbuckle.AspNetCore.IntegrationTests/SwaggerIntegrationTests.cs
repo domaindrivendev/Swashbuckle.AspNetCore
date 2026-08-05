@@ -141,6 +141,7 @@ public class SwaggerIntegrationTests(ITestOutputHelper outputHelper)
     [Theory]
     [InlineData(typeof(MinimalApp.Program), "/swagger/v1/swagger.json")]
     [InlineData(typeof(MinimalAppWithNullableEnums.Program), "/swagger/v1/swagger.json")]
+    [InlineData(typeof(MultipleResponseTypes.Program), "/swagger/v1/swagger.json")]
     [InlineData(typeof(MvcWithNullable.Program), "/swagger/v1/swagger.json")]
     [InlineData(typeof(TodoApp.Program), "/swagger/v1/swagger.json")]
     [InlineData(typeof(TopLevelSwaggerDoc.Program), "/swagger/v1.json")]

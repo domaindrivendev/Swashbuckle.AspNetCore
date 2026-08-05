@@ -1011,10 +1011,15 @@ public class SwaggerGenerator(
             .OrderBy((responseType) => responseType.IsDefaultResponse() ? 1 : 0);
 
         var responses = new OpenApiResponses();
-        foreach (var responseType in supportedResponseTypes)
+
+        // Multiple response types can be reported for the same status code, e.g. several
+        // [ProducesResponseType] attributes with the same code, or a C# union return type
+        // (.NET 11+) which the framework may surface as one entry per case.
+        foreach (var responsesForStatusCode in supportedResponseTypes.GroupBy(
+            (responseType) => responseType.IsDefaultResponse() ? "default" : responseType.StatusCode.ToString()))
         {
-            var statusCode = responseType.IsDefaultResponse() ? "default" : responseType.StatusCode.ToString();
-            responses.Add(statusCode, GenerateResponse(apiDescription, schemaRepository, statusCode, responseType));
+            var statusCode = responsesForStatusCode.Key;
+            responses.Add(statusCode, GenerateResponse(apiDescription, schemaRepository, statusCode, [.. responsesForStatusCode]));
         }
         return responses;
     }
@@ -1023,9 +1028,15 @@ public class SwaggerGenerator(
         ApiDescription apiDescription,
         SchemaRepository schemaRepository,
         string statusCode,
-        ApiResponseType apiResponseType)
+        IReadOnlyList<ApiResponseType> apiResponseTypes)
     {
-        string description = apiResponseType.Description;
+        string description = null;
+
+#if NET10_0_OR_GREATER
+        description = apiResponseTypes
+            .Select((responseType) => responseType.Description)
+            .FirstOrDefault((value) => !string.IsNullOrEmpty(value));
+#endif
 
         if (string.IsNullOrEmpty(description))
         {
@@ -1034,16 +1045,56 @@ public class SwaggerGenerator(
                 .Value;
         }
 
-        var responseContentTypes = InferResponseContentTypes(apiDescription, apiResponseType);
+        // Collect the schemas contributed by each response type, grouped by content type and
+        // preserving the order in which they are encountered. A model type is only emitted once
+        // per content type so identical response types do not produce duplicate schemas.
+        var contentTypes = new List<string>();
+        var schemasByContentType = new Dictionary<string, List<IOpenApiSchema>>();
+        var seenModelTypesByContentType = new Dictionary<string, HashSet<Type>>();
+
+        foreach (var apiResponseType in apiResponseTypes)
+        {
+            var modelType = apiResponseType.ModelMetadata?.ModelType ?? apiResponseType.Type;
+
+            foreach (var contentType in InferResponseContentTypes(apiDescription, apiResponseType))
+            {
+                if (!schemasByContentType.TryGetValue(contentType, out var schemas))
+                {
+                    contentTypes.Add(contentType);
+                    schemas = [];
+                    schemasByContentType[contentType] = schemas;
+                    seenModelTypesByContentType[contentType] = [];
+                }
+
+                if (seenModelTypesByContentType[contentType].Add(modelType ?? typeof(void)))
+                {
+                    schemas.Add(GenerateSchema(modelType, schemaRepository));
+                }
+            }
+        }
 
         return new OpenApiResponse
         {
             Description = description,
-            Content = responseContentTypes.ToDictionary(
+            Content = contentTypes.ToDictionary(
                 (contentType) => contentType,
-                (contentType) => CreateResponseMediaType(apiResponseType.ModelMetadata?.ModelType ?? apiResponseType.Type, schemaRepository)
+#if NET11_0_OR_GREATER
+                (contentType) => new OpenApiMediaType { Schema = CombineResponseSchemas(schemasByContentType[contentType]) } as IOpenApiMediaType
+#else
+                (contentType) => new OpenApiMediaType { Schema = CombineResponseSchemas(schemasByContentType[contentType]) }
+#endif
             )
         };
+    }
+
+    // When more than one distinct schema is reported for the same status code and content type
+    // (e.g. multiple response types or the cases of a C# union), combine them into an anyOf schema.
+    // This mirrors how System.Text.Json's JsonSchemaExporter emits union types.
+    private static IOpenApiSchema CombineResponseSchemas(List<IOpenApiSchema> schemas)
+    {
+        return schemas.Count == 1
+            ? schemas[0]
+            : new OpenApiSchema { AnyOf = [.. schemas] };
     }
 
     private static IEnumerable<string> InferResponseContentTypes(ApiDescription apiDescription, ApiResponseType apiResponseType)
@@ -1069,20 +1120,6 @@ public class SwaggerGenerator(
         return [.. apiResponseType.ApiResponseFormats
             .Select((responseFormat) => responseFormat.MediaType)
             .Distinct()];
-    }
-
-    private
-#if NET11_0_OR_GREATER
-        IOpenApiMediaType
-#else
-        OpenApiMediaType
-#endif
-        CreateResponseMediaType(Type modelType, SchemaRepository schemaRepository)
-    {
-        return new OpenApiMediaType
-        {
-            Schema = GenerateSchema(modelType, schemaRepository)
-        };
     }
 
     private static bool IsFromFormAttributeUsedWithIFormFile(ApiParameterDescription apiParameter)
