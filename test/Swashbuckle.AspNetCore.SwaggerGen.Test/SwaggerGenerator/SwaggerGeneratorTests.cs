@@ -208,7 +208,11 @@ public class SwaggerGeneratorTests
                     {
                         ["200"] = new OpenApiResponse()
                         {
-                            Content = new Dictionary<string, OpenApiMediaType>()
+#if NET11_0_OR_GREATER
+                            Content = new Dictionary<string, IOpenApiMediaType>
+#else
+                            Content = new Dictionary<string, OpenApiMediaType>
+#endif
                             {
                                 ["application/someMediaType"] = new OpenApiMediaType()
                             }
@@ -264,7 +268,11 @@ public class SwaggerGeneratorTests
                     OperationId = "OperationIdSetInMetadata",
                     RequestBody = new OpenApiRequestBody()
                     {
-                        Content = new Dictionary<string, OpenApiMediaType>()
+#if NET11_0_OR_GREATER
+                            Content = new Dictionary<string, IOpenApiMediaType>
+#else
+                            Content = new Dictionary<string, OpenApiMediaType>
+#endif
                         {
                             ["application/someMediaType"] = new OpenApiMediaType()
                         }
@@ -2445,7 +2453,11 @@ public class SwaggerGeneratorTests
                     OperationId = "OperationIdSetInMetadata",
                     RequestBody = new OpenApiRequestBody()
                     {
-                        Content = new Dictionary<string, OpenApiMediaType>()
+#if NET11_0_OR_GREATER
+                        Content = new Dictionary<string, IOpenApiMediaType>
+#else
+                        Content = new Dictionary<string, OpenApiMediaType>
+#endif
                         {
                             ["application/someMediaType"] = new OpenApiMediaType()
                         }
@@ -2510,7 +2522,11 @@ public class SwaggerGeneratorTests
                     OperationId = "OperationIdSetInMetadata",
                     RequestBody = new OpenApiRequestBody()
                     {
-                        Content = new Dictionary<string, OpenApiMediaType>()
+#if NET11_0_OR_GREATER
+                        Content = new Dictionary<string, IOpenApiMediaType>
+#else
+                        Content = new Dictionary<string, OpenApiMediaType>
+#endif
                         {
                             ["application/someMediaType"] = new OpenApiMediaType()
                         }
@@ -2572,7 +2588,11 @@ public class SwaggerGeneratorTests
                     OperationId = "OperationIdSetInMetadata",
                     RequestBody = new OpenApiRequestBody()
                     {
-                        Content = new Dictionary<string, OpenApiMediaType>()
+#if NET11_0_OR_GREATER
+                        Content = new Dictionary<string, IOpenApiMediaType>
+#else
+                        Content = new Dictionary<string, OpenApiMediaType>
+#endif
                         {
                             ["application/someMediaType"] = new OpenApiMediaType()
                         }
@@ -2636,7 +2656,11 @@ public class SwaggerGeneratorTests
                     OperationId = "OperationIdSetInMetadata",
                     RequestBody = new OpenApiRequestBody()
                     {
-                        Content = new Dictionary<string, OpenApiMediaType>()
+#if NET11_0_OR_GREATER
+                        Content = new Dictionary<string, IOpenApiMediaType>
+#else
+                        Content = new Dictionary<string, OpenApiMediaType>
+#endif
                         {
                             ["application/someMediaType"] = new OpenApiMediaType()
                         }
@@ -2696,7 +2720,11 @@ public class SwaggerGeneratorTests
                 {
                     RequestBody = new OpenApiRequestBody()
                     {
-                        Content = new Dictionary<string, OpenApiMediaType>()
+#if NET11_0_OR_GREATER
+                        Content = new Dictionary<string, IOpenApiMediaType>
+#else
+                        Content = new Dictionary<string, OpenApiMediaType>
+#endif
                         {
                             { "text/plain", new OpenApiMediaType() }
                         }
